@@ -63,7 +63,8 @@ std::vector<eTile*> eGameWidget::agoraBuildPlaceBR(
             for(int j = jMin; j < jMax && brLobe; j++) {
                 const auto t = mBoard->tile(i, j);
                 brLobeTiles.push_back(t);
-                if(!t || t->underBuilding() || t->isElevationTile()) {
+                const bool cb = canBuild(i, j, 1, 1);
+                if(!cb) {
                     brLobe = false;
                     break;
                 }
@@ -104,7 +105,8 @@ std::vector<eTile*> eGameWidget::agoraBuildPlaceTL(
             for(int j = jMin; j < jMax && tlLobe; j++) {
                 const auto t = mBoard->tile(i, j);
                 tlLobeTiles.push_back(t);
-                if(!t || t->underBuilding() || t->isElevationTile()) {
+                const bool cb = canBuild(i, j, 1, 1);
+                if(!cb) {
                     tlLobe = false;
                     break;
                 }
@@ -145,7 +147,8 @@ std::vector<eTile*> eGameWidget::agoraBuildPlaceBL(
             for(int i = iMin; i < iMax && blLobe; i++) {
                 const auto t = mBoard->tile(i, j);
                 blLobeTiles.push_back(t);
-                if(!t || t->underBuilding() || t->isElevationTile()) {
+                const bool cb = canBuild(i, j, 1, 1);
+                if(!cb) {
                     blLobe = false;
                     break;
                 }
@@ -186,7 +189,8 @@ std::vector<eTile*> eGameWidget::agoraBuildPlaceTR(
             for(int i = iMin; i < iMax && trLobe; i++) {
                 const auto t = mBoard->tile(i, j);
                 trLobeTiles.push_back(t);
-                if(!t || t->underBuilding() || t->isElevationTile()) {
+                const bool cb = canBuild(i, j, 1, 1);
+                if(!cb) {
                     trLobe = false;
                     break;
                 }
