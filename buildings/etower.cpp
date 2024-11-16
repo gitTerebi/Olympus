@@ -216,6 +216,7 @@ void eTower::write(eWriteStream& dst) const {
 
 bool eTower::spawn() {
     const auto archer = e::make_shared<eArcher>(getBoard());
+    archer->setCityId(cityId());
     archer->changeTile(centerTile());
     const auto a = e::make_shared<eArcherAction>(archer.get());
     archer->setAction(a);

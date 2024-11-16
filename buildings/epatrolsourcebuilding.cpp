@@ -143,6 +143,7 @@ void ePatrolSourceBuilding::spawn(const int id, eBuilding* const targetBuilding)
     const auto& target = mTargets[id];
     auto& board = getBoard();
     const auto c = eCharacter::sCreate(target.first, board);
+    c->setCityId(cityId());
     c->changeTile(centerTile());
 
     const auto finishAction = std::make_shared<ePT_spawnGetActorFinish>(

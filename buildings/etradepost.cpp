@@ -189,6 +189,7 @@ void eTradePost::spawnTrader() {
     auto& board = getBoard();
 
     const auto r = mCharGen(mRouteStart, board);
+    r->setCityId(cityId());
 
     const auto ta = e::make_shared<eTraderAction>(r.get());
     ta->setFinishOnComeback(true);

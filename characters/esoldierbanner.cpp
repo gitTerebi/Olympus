@@ -81,7 +81,8 @@ eCharacterType eSoldierBanner::characterType() const {
 stdsptr<eSoldier> eSoldierBanner::createSoldier(eTile* const t) {
     const auto ct = characterType();
     const auto c = eCharacter::sCreate(ct, mBoard);
-    const auto s = c->ref<eSoldier>();;
+    c->setCityId(cityId());
+    const auto s = c->ref<eSoldier>();
     s->setBanner(this);
     const auto a = e::make_shared<eSoldierAction>(s.get());
     c->setAction(a);

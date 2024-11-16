@@ -51,6 +51,7 @@ bool eArtisansGuild::spawnArtisan(const eArtisanPtr artisan) {
     const auto t = centerTile();
     const auto ar = e::make_shared<eArtisan>(getBoard());
     this->*artisan = ar.get();
+    ar->setCityId(cityId());
     ar->changeTile(t);
     const auto a = e::make_shared<eArtisanAction>(ar.get(), this);
     ar->setAction(a);

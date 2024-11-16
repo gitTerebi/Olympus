@@ -31,6 +31,8 @@ void eEntryPoint::spawn(eTile* const tile) {
     const int s = popData.settlers();
     if(s >= v) return;
     const auto b = e::make_shared<eSettler>(board);
+    const auto cid = tile->cityId();
+    b->setCityId(cid);
     b->setVisible(false);
     b->changeTile(tile);
     const auto a = e::make_shared<eSettlerAction>(b.get());

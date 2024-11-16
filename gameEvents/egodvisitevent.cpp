@@ -46,6 +46,7 @@ void eGodVisitEvent::trigger() {
     }
     const auto t = types.at(tid);
     const auto god = eGod::sCreateGod(t, *board);
+    god->setCityId(eCityId::neutralFriendly);
 
     const auto a = e::make_shared<eGodVisitAction>(god.get());
     god->setAction(a);

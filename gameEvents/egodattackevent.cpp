@@ -33,6 +33,7 @@ void eGodAttackEvent::trigger() {
     }
     const auto t = mTypes.at(tid);
     const auto god = eGod::sCreateGod(t, *board);
+    god->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eGodAttackAction>(god.get());
     god->setAttitude(eGodAttitude::hostile);

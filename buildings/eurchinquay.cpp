@@ -170,6 +170,7 @@ int eUrchinQuay::take(const eResourceType type, const int count) {
 void eUrchinQuay::spawnGatherer() {
     if(mGatherer) return;
     const auto b = e::make_shared<eUrchinGatherer>(getBoard());
+    b->setCityId(cityId());
     mGatherer = b.get();
     eTile* t;
     const auto ct = centerTile();

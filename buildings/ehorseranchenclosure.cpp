@@ -74,6 +74,7 @@ int eHorseRanchEnclosure::take(const eResourceType type, const int count) {
 bool eHorseRanchEnclosure::spawnHorse() {
     if(mHorses.size() > 5) return false;
     const auto h = e::make_shared<eHorse>(getBoard());
+    h->setCityId(cityId());
     const auto tile = centerTile();
     h->changeTile(tile);
     const auto walkable = eWalkableObject::sCreateRanch();

@@ -2,16 +2,12 @@
 
 #include "textures/egametextures.h"
 
-#include "spawners/eboarspawner.h"
-
 eAnimal::eAnimal(eGameBoard& board,
                  const eCharTexs charTexs,
                  const eCharacterType type) :
     eCharacter(board, type),
     mTextures(eGameTextures::characters()),
-    mCharTexs(charTexs) {
-
-}
+    mCharTexs(charTexs) {}
 
 void eAnimal::setTextures(const eCharTexs& texs) {
     mCharTexs = texs;

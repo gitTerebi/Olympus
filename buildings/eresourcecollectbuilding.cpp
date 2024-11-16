@@ -187,6 +187,7 @@ bool eResourceCollectBuilding::spawn() {
     if(!mSpawnEnabled) return false;
     const auto t = centerTile();
     const auto c = mCharGenerator();
+    c->setCityId(cityId());
     mCollector = c.get();
     c->changeTile(t);
 

@@ -74,6 +74,7 @@ bool eHuntingLodge::spawn() {
     const auto t = centerTile();
     const auto h = e::make_shared<eHunter>(getBoard());
     mHunter = h.get();
+    h->setCityId(cityId());
     h->changeTile(t);
     const auto a = e::make_shared<eHuntAction>(this, h.get());
     h->setAction(a);

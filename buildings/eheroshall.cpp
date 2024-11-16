@@ -324,6 +324,7 @@ eHero* eHerosHall::spawnHero() {
     if(mHero) mHero->kill();
     auto& board = getBoard();
     const auto c = eHero::sCreateHero(mType, board);
+    c->setCityId(cityId());
     mHero = c.get();
     const auto ct = centerTile();
     const int tx = ct->x();

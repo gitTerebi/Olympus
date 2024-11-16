@@ -210,6 +210,7 @@ int eFishery::take(const eResourceType type, const int count) {
 void eFishery::spawnBoat() {
     if(mBoat) return;
     const auto b = e::make_shared<eFishingBoat>(getBoard());
+    b->setCityId(cityId());
     mBoat = b.get();
     eTile* t;
     const auto ct = centerTile();

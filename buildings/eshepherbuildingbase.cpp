@@ -77,6 +77,7 @@ bool eShepherBuildingBase::spawn() {
     if(resource() >= maxResource()) return false;
     const auto t = centerTile();
     const auto s = mCharGenerator(getBoard());
+    s->setCityId(cityId());
     mShepherd = s.get();
     s->changeTile(t);
     const auto a = e::make_shared<eShepherdAction>(
