@@ -12,17 +12,17 @@ public:
 
 class eDoricColumn : public eColumn {
 public:
-    eDoricColumn(eGameBoard& board);
+    eDoricColumn(eGameBoard& board, const eCityId cid);
 };
 
 class eIonicColumn : public eColumn {
 public:
-    eIonicColumn(eGameBoard& board);
+    eIonicColumn(eGameBoard& board, const eCityId cid);
 };
 
 class eCorinthianColumn : public eColumn {
 public:
-    eCorinthianColumn(eGameBoard& board);
+    eCorinthianColumn(eGameBoard& board, const eCityId cid);
 };
 
 

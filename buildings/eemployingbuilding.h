@@ -8,7 +8,8 @@ public:
     eEmployingBuilding(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
-                       const int maxEmployees);
+                       const int maxEmployees,
+                       const eCityId cid);
     ~eEmployingBuilding();
 
     int employed() const { return mEmployed; }

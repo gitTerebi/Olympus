@@ -24,9 +24,10 @@ int shGA(const eAgoraOrientation o) {
     return 0;
 }
 
-eGrandAgora::eGrandAgora(const eAgoraOrientation o, eGameBoard& board) :
+eGrandAgora::eGrandAgora(const eAgoraOrientation o, eGameBoard& board,
+                         const eCityId cid) :
     eAgoraBase(board, eBuildingType::grandAgora,
-               swGA(o), shGA(o), 6), mO(o) {}
+               swGA(o), shGA(o), cid, 6), mO(o) {}
 
 SDL_Point eGrandAgora::pt(const int id) const {
     const auto rect = tileRect();

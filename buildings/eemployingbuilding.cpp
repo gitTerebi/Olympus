@@ -6,11 +6,11 @@ eEmployingBuilding::eEmployingBuilding(
         eGameBoard& board,
         const eBuildingType type,
         const int sw, const int sh,
-        const int maxEmployees) :
-    eBuildingWithResource(board, type, sw, sh),
+        const int maxEmployees,
+        const eCityId cid) :
+    eBuildingWithResource(board, type, sw, sh, cid),
     mMaxEmployees(maxEmployees) {
     board.registerEmplBuilding(this);
-    if(board.isShutDown(type)) setShutDown(true);
 }
 
 eEmployingBuilding::~eEmployingBuilding() {

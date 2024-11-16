@@ -19,12 +19,14 @@ public:
                         const eActGenerator& actGen,
                         const eBuildingType type,
                         const int sw, const int sh,
-                        const int maxEmployees);
+                        const int maxEmployees,
+                        const eCityId cid);
     ePatrolBuildingBase(eGameBoard& board,
                         const eCharGenerator& charGen,
                         const eBuildingType type,
                         const int sw, const int sh,
-                        const int maxEmployees);
+                        const int maxEmployees,
+                        const eCityId cid);
     ~ePatrolBuildingBase();
 
     static stdsptr<eCharacterAction> sDefaultActGenerator(

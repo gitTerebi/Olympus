@@ -189,9 +189,10 @@ int eEliteHousing::provide(const eProvide p, const int n) {
         const auto diff = b.difficulty();
         const int taxMult = eDifficultyHelpers::taxMultiplier(
                                 diff, type(), mLevel);
-        const double tax = mPeople * taxMult * b.taxRateF();
+        const auto cid = cityId();
+        const double tax = mPeople * taxMult * b.taxRateF(cid);
         const int iTax = std::round(tax);
-        b.payTaxes(iTax, mPeople);
+        b.payTaxes(cid, iTax, mPeople);
         mPaidTaxes = iTax;
         return iTax;
     }

@@ -347,6 +347,8 @@ SOURCES += \
         engine/boardData/eheatmaptask.cpp \
         engine/boardData/ehusbandrydata.cpp \
         engine/boardData/epopulationdata.cpp \
+        engine/eboardcity.cpp \
+        engine/eboardplayer.cpp \
         engine/ecampaign.cpp \
         engine/ecityid.cpp \
         engine/ecityrequest.cpp \
@@ -966,6 +968,8 @@ HEADERS += \
     engine/boardData/eheatmaptask.h \
     engine/boardData/ehusbandrydata.h \
     engine/boardData/epopulationdata.h \
+    engine/eboardcity.h \
+    engine/eboardplayer.h \
     engine/ecampaign.h \
     engine/ecityid.h \
     engine/ecityrequest.h \

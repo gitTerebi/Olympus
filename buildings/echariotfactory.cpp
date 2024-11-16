@@ -3,8 +3,9 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eChariotFactory::eChariotFactory(eGameBoard& board) :
-    eEmployingBuilding(board, eBuildingType::chariotFactory, 4, 4, 30) {
+eChariotFactory::eChariotFactory(
+        eGameBoard& board, const eCityId cid) :
+    eEmployingBuilding(board, eBuildingType::chariotFactory, 4, 4, 30, cid) {
     eGameTextures::loadChariotFactory();
 }
 

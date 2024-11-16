@@ -3,8 +3,9 @@
 eAnimalBuilding::eAnimalBuilding(
          eGameBoard& board,
          eCharacter* const a,
-         const eBuildingType type) :
-    eBuilding(board, type, 1, 2),
+         const eBuildingType type,
+         const eCityId cid) :
+    eBuilding(board, type, 1, 2, cid),
     mA(a) {
 
 }

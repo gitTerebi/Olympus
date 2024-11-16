@@ -12,6 +12,7 @@
 eAgoraBase::eAgoraBase(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
+                       const eCityId cid,
                        const int nPts) :
     ePatrolBuildingBase(board,
                         [this]() {
@@ -19,7 +20,7 @@ eAgoraBase::eAgoraBase(eGameBoard& board,
                             p->setAgora(this);
                             return p;
                         },
-                        type, sw, sh, 0),
+                        type, sw, sh, 0, cid),
     mNPts(nPts) {
     eGameTextures::loadAgora();
     for(int i = 0; i < mNPts; i++) {
@@ -166,11 +167,12 @@ int eAgoraBase::buildingId(const eBuilding* const b) const {
 
 void eAgoraBase::fillSpaces() {
     auto& brd = getBoard();
+    const auto cid = cityId();
     for(int i = 0; i < mNPts; i++) {
         const auto b = building(i);
         if(b) continue;
         const auto space = e::make_shared<eAgoraSpace>(
-                               ref<eAgoraBase>(), brd);
+                               ref<eAgoraBase>(), brd, cid);
         setBuilding(i, space);
     }
 }

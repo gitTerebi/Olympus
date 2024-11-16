@@ -7,7 +7,7 @@
 
 class eChariotFactory : public eEmployingBuilding {
 public:
-    eChariotFactory(eGameBoard& board);
+    eChariotFactory(eGameBoard& board, const eCityId cid);
     ~eChariotFactory();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

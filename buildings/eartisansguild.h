@@ -7,7 +7,7 @@
 
 class eArtisansGuild : public eEmployingBuilding {
 public:
-    eArtisansGuild(eGameBoard& board);
+    eArtisansGuild(eGameBoard& board, const eCityId cid);
     ~eArtisansGuild();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;

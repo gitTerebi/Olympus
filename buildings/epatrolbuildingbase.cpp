@@ -6,8 +6,9 @@ ePatrolBuildingBase::ePatrolBuildingBase(
         const eActGenerator& actGen,
         const eBuildingType type,
         const int sw, const int sh,
-        const int maxEmployees) :
-    eEmployingBuilding(board, type, sw, sh, maxEmployees),
+        const int maxEmployees,
+        const eCityId cid) :
+    eEmployingBuilding(board, type, sw, sh, maxEmployees, cid),
     mCharGenerator(charGen),
     mActGenerator(actGen) {
 
@@ -22,14 +23,14 @@ ePatrolBuildingBase::sDefaultActGenerator(
     return e::make_shared<ePatrolAction>(c, b, guides, dirTimes);
 }
 
-ePatrolBuildingBase::ePatrolBuildingBase(
-        eGameBoard& board,
+ePatrolBuildingBase::ePatrolBuildingBase(eGameBoard& board,
         const eCharGenerator& charGen,
         const eBuildingType type,
         const int sw, const int sh,
-        const int maxEmployees) :
+        const int maxEmployees,
+        const eCityId cid) :
     ePatrolBuildingBase(board, charGen, sDefaultActGenerator,
-                        type, sw, sh, maxEmployees) {}
+                        type, sw, sh, maxEmployees, cid) {}
 
 ePatrolBuildingBase::~ePatrolBuildingBase() {
     if(mChar) mChar->kill();

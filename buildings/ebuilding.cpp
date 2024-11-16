@@ -19,10 +19,12 @@
 
 eBuilding::eBuilding(eGameBoard& board,
                      const eBuildingType type,
-                     const int sw, const int sh) :
+                     const int sw, const int sh,
+                     const eCityId cid) :
     eObject(board),
     mSeed(eRand::rand()), mType(type),
-    mSpanW(sw), mSpanH(sh) {
+    mSpanW(sw), mSpanH(sh),
+    mCityId(cid) {
     getBoard().registerBuilding(this);
 }
 

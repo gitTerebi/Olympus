@@ -183,7 +183,8 @@ class eBuilding : public eObject {
 public:
     eBuilding(eGameBoard& board,
               const eBuildingType type,
-              const int sw, const int sh);
+              const int sw, const int sh,
+              const eCityId cid);
     virtual ~eBuilding();
 
     virtual std::shared_ptr<eTexture>
@@ -269,6 +270,7 @@ public:
     int maintenance() const { return mMaintance; }
 
     eCityId cityId() const { return mCityId; }
+    void setCityId(const eCityId cid) { mCityId = cid; }
 
     bool defend(const double a);
     bool dead() const;

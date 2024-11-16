@@ -18,6 +18,7 @@ public:
     eAgoraBase(eGameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
+               const eCityId cid,
                const int nPts);
 
     virtual SDL_Point pt(const int id) const = 0;

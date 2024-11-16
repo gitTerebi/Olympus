@@ -37,6 +37,9 @@
 #include "eepisodegoal.h"
 #include "eemploymentdistributor.h"
 
+#include "eboardcity.h"
+#include "eboardplayer.h"
+
 class eGameEvent;
 
 class eSpawner;
@@ -127,17 +130,6 @@ struct eMilitaryAid {
 
     stdsptr<eWorldCity> fCity;
     std::vector<stdsptr<eSoldierBanner>> fSoldiers;
-};
-
-enum class eImmigrationLimitedBy {
-    none,
-    lackOfVacancies,
-    lowWages,
-    unemployment,
-    lackOfFood,
-    highTaxes,
-    prolongedDebt,
-    excessiveMilitaryService
 };
 
 class eGameBoard : public eStdSelfRef {
@@ -268,29 +260,13 @@ public:
     eEmploymentData& employmentData() { return mEmplData; }
     eHeatMap& appealMap() { return mAppealMap; }
 
-    void payTaxes(const int d, const int people);
-    void incDrachmas(const int d);
-    int drachmas() const { return mDrachmas; }
+    void payTaxes(const eCityId cid, const int d, const int people);
     void setDifficulty(const eDifficulty d) { mDifficulty = d; }
     eDifficulty difficulty() const { return mDifficulty; }
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d);
 
     double appeal(const int tx, const int ty) const;
-
-    double taxRateF() const;
-    eTaxRate taxRate() const { return mTaxRate; }
-    eWageRate wageRate() const { return mWageRate; }
-
-    double wageMultiplier() const { return mWageMultiplier; }
-
-    void setTaxRate(const eTaxRate tr);
-    void setWageRate(const eWageRate wr);
-
-    int taxesPaidThisYear() const { return mTaxesPaidThisYear; }
-    int taxesPaidLastYear() const { return mTaxesPaidLastYear; }
-    int peoplePaidTaxesThisYear() const { return mPeoplePaidTaxesThisYear; }
-    int peoplePaidTaxesLastYear() const { return mPeoplePaidTaxesLastYear; }
 
     void addRubbish(const stdsptr<eObject>& o);
     void emptyRubbish();
@@ -366,26 +342,6 @@ public:
     bool supportsResource(const eResourceType rt) const;
     eResourceType supportedResources() const;
 
-    using eBuildingValidator = std::function<bool(eBuilding*)>;
-    std::vector<eBuilding*> buildings(const eBuildingValidator& v) const;
-    std::vector<eBuilding*> buildings(const eBuildingType type) const;
-    int countBuildings(const eBuildingValidator& v) const;
-    int countBuildings(const eBuildingType t) const;
-    int hasBuilding(const eBuildingType t) const;
-    int countAllowed(const eBuildingType t) const;
-    eBuilding* randomBuilding(const eBuildingValidator& v) const;
-    const std::vector<eBuilding*>& commemorativeBuildings() const
-    { return mCommemorativeBuildings; }
-
-    int philosophyResearchCoverage() const { return mPhilosophyCoverage; }
-    int athleticsLearningCoverage() const { return mAthleticsCoverage; }
-    int dramaAstronomyCoverage() const { return mDramaCoverage; }
-    int allCultureScienceCoverage() const { return mAllDiscCoverage; }
-    int taxesCoverage() const { return mTaxesCoverage; }
-    int unrest() const { return mUnrest; }
-    int popularity() const { return mPopularity; }
-    int health() const { return mHealth; }
-
     int wonGames() const { return mWonGames; }
 
     int horses() const;
@@ -449,7 +405,8 @@ public:
     int maxSingleSpaceForResource(const eResourceType type,
                                   eStorageBuilding** b) const;
     int resourceCount(const eResourceType type) const;
-    int takeResource(const eResourceType type,
+    int takeResource(const eCityId cid,
+                     const eResourceType type,
                      const int count);
     void request(const stdsptr<eWorldCity>& c,
                  const eResourceType type);
@@ -553,22 +510,9 @@ public:
 
     bool checkGoalsFulfilled() const;
 
-    bool manTowers() const { return mManTowers; }
-    void setManTowers(const bool m);
-
     void musterAllSoldiers();
     void sendAllSoldiersHome();
 
-    eEmploymentDistributor& employmentDistributor()
-    { return mEmplDistributor; }
-
-    void addShutDown(const eResourceType type);
-    void removeShutDown(const eResourceType type);
-    bool isShutDown(const eResourceType type) const;
-    bool isShutDown(const eBuildingType type) const;
-    int industryJobVacancies(const eResourceType type) const;
-    void distributeEmployees(const eSector s);
-    void distributeEmployees();
     void scheduleDistributeEmployees();
 
     void incPopulation(const int by);
@@ -619,9 +563,12 @@ public:
     ePlayerId cityIdToPlayerId(const eCityId cid) const;
     eTeamId cityIdToTeamId(const eCityId cid) const;
     eTeamId playerIdToTeamId(const ePlayerId pid) const;
+    void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCities() const;
     ePlayerId personPlayer() const { return mPersonPlayer; }
+    eBoardCity* boardCityWithId(const eCityId cid) const;
+    eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
 private:
     void updateNeighbours();
 
@@ -653,7 +600,8 @@ private:
     eAction mEpisodeFinishedHandler;
     eAction mAutosaver;
 
-    std::vector<eCityId> mCitiesOnBoard;
+    std::vector<stdsptr<eBoardCity>> mCitiesOnBoard;
+    std::vector<stdsptr<eBoardPlayer>> mPlayersOnBoard;
     std::map<eCityId, ePlayerId> mCityToPlayer;
     std::map<ePlayerId, eTeamId> mPlayerToTeam;
     ePlayerId mPersonPlayer;
@@ -686,9 +634,11 @@ private:
     std::vector<eInvasionEvent*> mInvasions;
     std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
 
-    int mDrachmas = 2500;
+    int mDrachmas = 2500; // moved to eBoardPlayer
+    eDate mInDebtSince; // moved to eBoardPlayer
+
+    // begin moved to eBoardCity
     double mWageMultiplier = 1.;
-    eDate mInDebtSince;
     eWageRate mWageRate{eWageRate::normal};
     eTaxRate mTaxRate{eTaxRate::normal};
 
@@ -728,22 +678,59 @@ private:
     std::vector<eSanctuary*> mSanctuaries;
     std::vector<eHerosHall*> mHeroHalls;
     std::vector<eStorageBuilding*> mStorBuildings;
-    std::vector<eCharacter*> mCharacters;
     std::vector<eCharacterAction*> mCharacterActions;
-    std::vector<eSoldier*> mSoldiers;
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eEmployingBuilding*> mEmployingBuildings;
     std::vector<eBuilding*> mAllBuildings;
     std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;
-    std::vector<eMissile*> mMissiles;
     std::vector<eMonster*> mMonsters;
     std::vector<eBanner*> mBanners;
 
-    std::vector<eSoldierBanner*> mAllSoldierBanners;
     std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
     std::vector<stdsptr<eSoldierBanner>> mPalaceSoldierBanners;
+
+    std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
+
+    bool mManTowers = true;
+
+    bool mShutdownLandTrade = false;
+    bool mShutdownSeaTrade = false;
+    int mMaxRabble = 0;
+    int mMaxHoplites = 0;
+    int mMaxHorsemen = 0;
+
+    int mAthleticsCoverage = 0;
+    int mPhilosophyCoverage = 0;
+    int mDramaCoverage = 0;
+    int mAllDiscCoverage = 0;
+    int mTaxesCoverage = 0;
+    int mUnrest = 0; // percent
+    int mPopularity = 0;
+    int mHealth = 0;
+    int mExcessiveMilitaryServiceCount = 0;
+    int mMonthsOfMilitaryService = 0;
+
+    eBuilding* mStadium = nullptr;
+    eBuilding* mMuseum = nullptr;
+    ePalace* mPalace = nullptr;
+
+    ePopulationData mPopData;
+    eHusbandryData mHusbData;
+    eEmploymentData mEmplData;
+
+    eEmploymentDistributor mEmplDistributor;
+    std::vector<eResourceType> mShutDown;
+    std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
+    // end moved to eBoardCity
+
+    int mCoverageUpdate = 10000;
+
+    std::vector<eSoldierBanner*> mAllSoldierBanners;
+    std::vector<eCharacter*> mCharacters;
+    std::vector<eSoldier*> mSoldiers;
+    std::vector<eMissile*> mMissiles;
 
     std::vector<eInvasionHandler*> mInvasionHandlers;
 
@@ -762,39 +749,9 @@ private:
 
     std::vector<eMarbleTiles> mMarbleTiles;
 
-    std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
-
-    bool mManTowers = true;
-
-    bool mShutdownLandTrade = false;
-    bool mShutdownSeaTrade = false;
-
     int mSoldiersUpdate = 10000;
-    int mMaxRabble = 0;
-    int mMaxHoplites = 0;
-    int mMaxHorsemen = 0;
-
-    int mCoverageUpdate = 10000;
-    int mAthleticsCoverage = 0;
-    int mPhilosophyCoverage = 0;
-    int mDramaCoverage = 0;
-    int mAllDiscCoverage = 0;
-    int mTaxesCoverage = 0;
-    int mUnrest = 0; // percent
-    int mPopularity = 0;
-    int mHealth = 0;
-    int mExcessiveMilitaryServiceCount = 0;
-    int mMonthsOfMilitaryService = 0;
 
     int mWonGames = 0;
-
-    eBuilding* mStadium = nullptr;
-    eBuilding* mMuseum = nullptr;
-    ePalace* mPalace = nullptr;
-
-    ePopulationData mPopData;
-    eHusbandryData mHusbData;
-    eEmploymentData mEmplData;
 
     bool mUpdateAppeal = false;
     eHeatMap mAppealMap;
@@ -822,9 +779,6 @@ private:
     std::vector<eGodQuest> mFulfilledQuests;
     std::vector<eMonsterType> mSlayedMonsters;
 
-    eEmploymentDistributor mEmplDistributor;
-    std::vector<eResourceType> mShutDown;
-    std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
     bool mEmploymentUpdateScheduled = true;
     int mEmploymentUpdateWait = __INT_MAX__/10;
 

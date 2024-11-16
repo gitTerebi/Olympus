@@ -5,7 +5,8 @@
 
 class eCommonAgora : public eAgoraBase {
 public:
-    eCommonAgora(const eAgoraOrientation o, eGameBoard& board);
+    eCommonAgora(const eAgoraOrientation o, eGameBoard& board,
+                 const eCityId cid);
 
     SDL_Point pt(const int id) const;
 

@@ -22,9 +22,10 @@ int shCA(const eAgoraOrientation o) {
     }
 }
 
-eCommonAgora::eCommonAgora(const eAgoraOrientation o, eGameBoard& board) :
+eCommonAgora::eCommonAgora(const eAgoraOrientation o, eGameBoard& board,
+                           const eCityId cid) :
     eAgoraBase(board, eBuildingType::commonAgora,
-               swCA(o), shCA(o), 3), mO(o) {}
+               swCA(o), shCA(o), cid, 3), mO(o) {}
 
 SDL_Point eCommonAgora::pt(const int id) const {
     const auto rect = tileRect();

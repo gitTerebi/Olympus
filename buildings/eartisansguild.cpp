@@ -3,8 +3,8 @@
 #include "textures/egametextures.h"
 #include "characters/actions/eartisanaction.h"
 
-eArtisansGuild::eArtisansGuild(eGameBoard& board) :
-    eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25) {
+eArtisansGuild::eArtisansGuild(eGameBoard& board, const eCityId cid) :
+    eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25, cid) {
     eGameTextures::loadArtisansGuild();
 }
 

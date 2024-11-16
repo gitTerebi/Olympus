@@ -8,7 +8,8 @@ class eAnimalBuilding : public eBuilding {
 public:
     eAnimalBuilding(eGameBoard& board,
                     eCharacter* const a,
-                    const eBuildingType type);
+                    const eBuildingType type,
+                    const eCityId cid);
     ~eAnimalBuilding();
 
     std::shared_ptr<eTexture> getTexture(

@@ -3,8 +3,8 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
-eAvenue::eAvenue(eGameBoard& board) :
-    eBuilding(board, eBuildingType::avenue, 1, 1) {
+eAvenue::eAvenue(eGameBoard& board, const eCityId cid) :
+    eBuilding(board, eBuildingType::avenue, 1, 1, cid) {
     eGameTextures::loadAvenue();
 }
 
