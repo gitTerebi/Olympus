@@ -460,12 +460,14 @@ void eSmallHouse::updateSatisfaction() {
 
 void eSmallHouse::spawnCharacter(const stdsptr<eCharacter>& c) {
     auto ts = surroundingRoad(false, true);
+    eTile* tile = nullptr;
     if(ts.empty()) {
-        c->changeTile(centerTile());
+        tile = centerTile();
     } else {
-        const auto t = ts[eRand::rand() % ts.size()];
-        c->changeTile(t);
+        tile = ts[eRand::rand() % ts.size()];
     }
+    c->changeTile(tile);
+    if(!tile) return;
     const auto a = e::make_shared<eSickDisgruntledAction>(c.get(), this);
     c->setAction(a);
 }
@@ -475,12 +477,16 @@ void eSmallHouse::spawnSick() {
     const auto c = e::make_shared<eSick>(getBoard());
     mSick = c.get();
     spawnCharacter(c);
+    const auto tile = c->tile();
+    if(!tile) return;
+    const auto cid = cityId();
+    c->setCityId(cid);
 }
 
 void eSmallHouse::spawnDisgruntled() {
     if(mDisg) mDisg->kill();
     const auto c = e::make_shared<eDisgruntled>(getBoard());
     mDisg = c.get();
-    mDisg->setPlayerId(2);
+    mDisg->setCityId(eCityId::neutralAggresive);
     spawnCharacter(c);
 }

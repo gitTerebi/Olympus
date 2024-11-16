@@ -2238,6 +2238,18 @@ bool eBuilding::accessToRoad() const {
     return false;
 }
 
+ePlayerId eBuilding::playerId() const {
+    const auto cid = cityId();
+    auto& board = getBoard();
+    return board.cityIdToPlayerId(cid);
+}
+
+eTeamId eBuilding::teamId() const {
+    const auto pid = playerId();
+    auto& board = getBoard();
+    return board.playerIdToTeamId(pid);
+}
+
 void eBuilding::read(eReadStream& src) {
     src >> mIOID;
     src >> mTileRect;
@@ -2259,7 +2271,7 @@ void eBuilding::read(eReadStream& src) {
     mCenterTile = src.readTile(board);
 
     src >> mSeed;
-    src >> mPlayerId;
+    src >> mCityId;
     src >> mHp;
     src >> mMaintance;
     src >> mEnabled;
@@ -2281,7 +2293,7 @@ void eBuilding::write(eWriteStream& dst) const {
     dst.writeTile(mCenterTile);
 
     dst << mSeed;
-    dst << mPlayerId;
+    dst << mCityId;
     dst << mHp;
     dst << mMaintance;
     dst << mEnabled;

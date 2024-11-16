@@ -6,7 +6,7 @@ eDeer::eDeer(eGameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fDeer,
                 eCharacterType::deer) {
     eGameTextures::loadDeer();
-    setPlayerId(0);
+    setCityId(eCityId::neutralFriendly);
     setAttack(0);
     setHP(100);
 }

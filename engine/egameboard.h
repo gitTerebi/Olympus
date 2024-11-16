@@ -214,7 +214,7 @@ public:
     eMuseum* museum() const;
 
     void registerPalace(ePalace* const p);
-    void unregisterPalace();
+    void unregisterPalace(const eCityId cid);
 
     void registerMonster(eMonster* const m);
     void unregisterMonster(eMonster* const m);
@@ -249,8 +249,8 @@ public:
 
     const std::vector<stdsptr<eSoldierBanner>>& banners() const
     { return mSoldierBanners; }
-    int countBanners(const eBannerType bt) const;
-    int countSoldiers(const eBannerType bt) const;
+    int countBanners(const eBannerType bt, const eCityId cid) const;
+    int countSoldiers(const eBannerType bt, const eCityId cid) const;
 
     void incTime(const int by);
     void incFrame();
@@ -472,11 +472,11 @@ public:
     void registerSoldierBanner(const stdsptr<eSoldierBanner>& b);
     bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
 
-    void killCommonFolks(int toKill);
-    void walkerKilled();
-    void rockThrowerKilled();
-    void hopliteKilled();
-    void horsemanKilled();
+    void killCommonFolks(const eCityId cid, int toKill);
+    void walkerKilled(const eCityId cid);
+    void rockThrowerKilled(const eCityId cid);
+    void hopliteKilled(const eCityId cid);
+    void horsemanKilled(const eCityId cid);
 
     eEnlistedForces getEnlistableForces() const;
 
@@ -602,9 +602,9 @@ public:
     eImmigrationLimitedBy immigrationLimit() const
     { return mImmigrationLimit; }
 
-    void updateMaxSoldiers();
-    void distributeSoldiers();
-    void consolidateSoldiers();
+    void updateMaxSoldiers(const eCityId cid);
+    void distributeSoldiers(const eCityId cid);
+    void consolidateSoldiers(const eCityId cid);
 
     bool wasHeroSummoned(const eHeroType hero) const;
     void heroSummoned(const eHeroType hero);
@@ -615,11 +615,19 @@ public:
     void incPrice(const eResourceType type, const int by);
 
     void changeWage(const int per);
+
+    ePlayerId cityIdToPlayerId(const eCityId cid) const;
+    eTeamId cityIdToTeamId(const eCityId cid) const;
+    eTeamId playerIdToTeamId(const ePlayerId pid) const;
+    std::vector<eCityId> playerCities(const ePlayerId pid) const;
+    std::vector<eCityId> personPlayerCities() const;
+    ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
     void updateNeighbours();
 
-    void addSoldier(const eCharacterType st);
+    void addSoldier(const eCharacterType st, const eCityId cid);
     void removeSoldier(const eCharacterType st,
+                       const eCityId cid,
                        const bool skipNotHome = true);
 
     void updateCoverage();
@@ -645,25 +653,14 @@ private:
     eAction mEpisodeFinishedHandler;
     eAction mAutosaver;
 
-    int mDrachmas = 2500;
-    double mWageMultiplier = 1.;
-    eDate mInDebtSince;
+    std::vector<eCityId> mCitiesOnBoard;
+    std::map<eCityId, ePlayerId> mCityToPlayer;
+    std::map<ePlayerId, eTeamId> mPlayerToTeam;
+    ePlayerId mPersonPlayer;
+
     eDifficulty mDifficulty{eDifficulty::beginner};
-    eWageRate mWageRate{eWageRate::normal};
-    eTaxRate mTaxRate{eTaxRate::normal};
 
     std::map<eResourceType, int> mPrices;
-
-    using eILB = eImmigrationLimitedBy;
-    eILB mImmigrationLimit{eILB::lackOfVacancies};
-    bool mNoFood = false;
-    eDate mNoFoodSince;
-
-    int mTaxesPaidLastYear = 0;
-    int mTaxesPaidThisYear = 0;
-
-    int mPeoplePaidTaxesLastYear = 0;
-    int mPeoplePaidTaxesThisYear = 0;
 
     int mFrame = 0;
     int mTotalTime = 0;
@@ -677,6 +674,34 @@ private:
     int mWidth = 0;
     int mHeight = 0;
     std::vector<std::vector<eTile*>> mTiles;
+
+    std::vector<stdsptr<eObject>> mRubbish;
+
+    bool mRegisterBuildingsEnabled = true;
+
+    std::vector<eGodQuestEvent*> mGodQuests;
+    std::vector<ePlayerConquestEventBase*> mConquests;
+    std::vector<eArmyEventBase*> mArmyEvents;
+    std::vector<eReceiveRequestEvent*> mCityRequests;
+    std::vector<eInvasionEvent*> mInvasions;
+    std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
+
+    int mDrachmas = 2500;
+    double mWageMultiplier = 1.;
+    eDate mInDebtSince;
+    eWageRate mWageRate{eWageRate::normal};
+    eTaxRate mTaxRate{eTaxRate::normal};
+
+    using eILB = eImmigrationLimitedBy;
+    eILB mImmigrationLimit{eILB::lackOfVacancies};
+    bool mNoFood = false;
+    eDate mNoFoodSince;
+
+    int mTaxesPaidLastYear = 0;
+    int mTaxesPaidThisYear = 0;
+
+    int mPeoplePaidTaxesLastYear = 0;
+    int mPeoplePaidTaxesThisYear = 0;
 
     eResources mResources = {{eResourceType::urchin, 0},
                              {eResourceType::fish, 0},
@@ -700,17 +725,6 @@ private:
                              {eResourceType::armor, 0},
                              {eResourceType::sculpture, 0}};
 
-    std::vector<stdsptr<eObject>> mRubbish;
-
-    bool mRegisterBuildingsEnabled = true;
-
-    std::vector<eGodQuestEvent*> mGodQuests;
-    std::vector<ePlayerConquestEventBase*> mConquests;
-    std::vector<eArmyEventBase*> mArmyEvents;
-    std::vector<eReceiveRequestEvent*> mCityRequests;
-    std::vector<eInvasionEvent*> mInvasions;
-    std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
-
     std::vector<eSanctuary*> mSanctuaries;
     std::vector<eHerosHall*> mHeroHalls;
     std::vector<eStorageBuilding*> mStorBuildings;
@@ -731,9 +745,9 @@ private:
     std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
     std::vector<stdsptr<eSoldierBanner>> mPalaceSoldierBanners;
 
-    std::vector<eSoldierBanner*> mSelectedBanners;
-
     std::vector<eInvasionHandler*> mInvasionHandlers;
+
+    std::vector<eSoldierBanner*> mSelectedBanners;
 
     std::vector<ePlannedAction*> mPlannedActions;
 

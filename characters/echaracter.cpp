@@ -24,7 +24,7 @@ eCharacter::~eCharacter() {
 
 bool eCharacter::canFight(eCharacter* const c) {
     if(dead()) return false;
-    if(playerId() == c->playerId()) return false;
+    if(!eTeamIdHelpers::isEnemy(teamId(), c->teamId())) return false;
     if(attack() == 0 && c->attack() == 0) return false;
     const auto at = actionType();
     if(at == eCharacterActionType::fight ||
@@ -295,6 +295,18 @@ void eCharacter::resumeAction() {
     setAction(p.fA);
     setActionType(p.fAt);
     setOrientation(p.fO);
+}
+
+ePlayerId eCharacter::playerId() const {
+    const auto cid = cityId();
+    auto& board = getBoard();
+    return board.cityIdToPlayerId(cid);
+}
+
+eTeamId eCharacter::teamId() const {
+    const auto pid = playerId();
+    auto& board = getBoard();
+    return board.playerIdToTeamId(pid);
 }
 
 std::shared_ptr<eTexture> eCharacter::getTexture(

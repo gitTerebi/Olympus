@@ -439,7 +439,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.resourceCount(eResourceType::armor);
         return;
     case eHeroRequirementType::hoplite: {
-        sc = board.countBanners(eBannerType::hoplite);
+        sc = board.countBanners(eBannerType::hoplite, cityId());
     } break;
     case eHeroRequirementType::sanctuaryAthena: {
         const auto sts = board.sanctuary(eGodType::athena);
@@ -482,7 +482,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.population();
         break;
     case eHeroRequirementType::horsemen: {
-        sc = board.countBanners(eBannerType::horseman);
+        sc = board.countBanners(eBannerType::horseman, cityId());
     } break;
     case eHeroRequirementType::horses:
         sc = board.horses();

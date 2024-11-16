@@ -213,6 +213,7 @@ void eTileBase::read(eReadStream& src) {
     src >> mHasUrchin;
     src >> mHasFish;
     src >> mRoadblock;
+    src >> mCityId;
 }
 
 void eTileBase::write(eWriteStream& dst) const {
@@ -227,5 +228,6 @@ void eTileBase::write(eWriteStream& dst) const {
     dst << mHasUrchin;
     dst << mHasFish;
     dst << mRoadblock;
+    dst << mCityId;
 }
 

@@ -61,13 +61,14 @@ bool eGodAction::lookForTargetedBlessCurse(
 bool eGodAction::lookForSoldierAttack(
         const int dtime, int& time,
         const int freq, const int range) {
+    const auto c = character();
+    const auto team = c->teamId();
+
     using eLFSAGA = eLookForSoldierAttackGodAct;
-    const auto act = std::make_shared<eLFSAGA>(board());
+    const auto act = std::make_shared<eLFSAGA>(board(), team);
 
     const auto at = eCharacterActionType::fight2;
     const auto s = eGodSound::attack;
-
-    const auto c = character();
     const auto chart = c->type();
     return lookForRangeAction(dtime, time, freq, range,
                               at, act, chart, s, 4);

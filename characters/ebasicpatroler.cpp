@@ -40,10 +40,8 @@ std::shared_ptr<eTexture> eBasicPatroler::getTexture(const eTileSize size) const
 }
 
 void eBasicPatroler::beingKilled() {
-    if(playerId() == 1) {
-        auto& brd = getBoard();
-        brd.walkerKilled();
-    }
+    auto& brd = getBoard();
+    brd.walkerKilled(cityId());
 }
 
 void eBasicPatroler::setCharTextures(const eCharTexs& texs) {

@@ -38,22 +38,21 @@ void eSoldier::setBanner(eSoldierBanner* const b) {
 void eSoldier::beingKilled() {
     if(mBanner) mBanner->decCount();
     setBanner(nullptr);
-    if(playerId() == 1) {
-        auto& brd = getBoard();
-        const auto ct = type();
-        switch(ct) {
-        case eCharacterType::rockThrower:
-            brd.rockThrowerKilled();
-            break;
-        case eCharacterType::hoplite:
-            brd.hopliteKilled();
-            break;
-        case eCharacterType::horseman:
-            brd.horsemanKilled();
-            break;
-        default:
-            break;
-        }
+    const auto cid = cityId();
+    auto& brd = getBoard();
+    const auto ct = type();
+    switch(ct) {
+    case eCharacterType::rockThrower:
+        brd.rockThrowerKilled(cid);
+        break;
+    case eCharacterType::hoplite:
+        brd.hopliteKilled(cid);
+        break;
+    case eCharacterType::horseman:
+        brd.horsemanKilled(cid);
+        break;
+    default:
+        break;
     }
 }
 

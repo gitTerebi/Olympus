@@ -92,6 +92,9 @@ public:
 
     void pauseAction();
     void resumeAction();
+
+    ePlayerId playerId() const;
+    eTeamId teamId() const;
 protected:
     std::shared_ptr<eTexture> getTexture(
             const eTextureCollection* const coll,

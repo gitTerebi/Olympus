@@ -94,7 +94,7 @@ void eTower::timeChanged(const int by) {
         const int tx = ct->x();
         const int ty = ct->y();
         const vec2d cpos{1.*tx, 1.*ty};
-        const int pid = playerId();
+        const auto tid = teamId();
         auto& brd = getBoard();
 
         if(mAttack) {
@@ -142,7 +142,8 @@ void eTower::timeChanged(const int by) {
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
                         if(!cc->isSoldier()) continue;
-                        if(cc->playerId() == pid) continue;
+                        const auto cctid = cc->teamId();
+                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
                         const vec2d ccpos{cc->absX(), cc->absY()};
                         const vec2d posdif = ccpos - cpos;
@@ -163,7 +164,8 @@ void eTower::timeChanged(const int by) {
                                 const auto& ccchars = tt->characters();
                                 for(const auto& ccc : ccchars) {
                                     if(!ccc->isSoldier()) continue;
-                                    if(ccc->playerId() == pid) continue;
+                                    const auto ccctid = ccc->teamId();
+                                    if(!eTeamIdHelpers::isEnemy(ccctid, tid)) continue;
                                     if(ccc->dead()) continue;
 
                                     const auto sss = static_cast<eSoldier*>(ccc.get());

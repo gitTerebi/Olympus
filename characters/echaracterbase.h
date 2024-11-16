@@ -5,6 +5,8 @@
 
 #include "fileIO/estreams.h"
 
+#include "engine/ecityid.h"
+
 enum class eCharacterType {
     none,
 
@@ -186,8 +188,8 @@ public:
     double speed() const { return mSpeed; }
     void setSpeed(const double s) { mSpeed = s; }
 
-    int playerId() const { return mPlayerId; }
-    void setPlayerId(const int i) { mPlayerId = i; }
+    eCityId cityId() const { return mCityId; }
+    void setCityId(const eCityId i) { mCityId = i; }
 
     eCharacterActionType actionType() const { return mActionType; }
     void setActionType(const eCharacterActionType t);
@@ -207,7 +209,7 @@ private:
     eCharacterType mType;
     eCharacterActionType mActionType{eCharacterActionType::none};
 
-    int mPlayerId{1}; // 0 - neutral
+    eCityId mCityId{eCityId::neutralFriendly};
 
     bool mBusy = false;
 

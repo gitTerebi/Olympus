@@ -105,6 +105,7 @@ int eEnlistedForces::strength() const {
 
 void eEnlistedForces::kill(const double killFrac) {
     for(const auto& s : fSoldiers) {
+        const auto cid = s->cityId();
         const int oC = s->count();
         int nC = std::round((1 - killFrac)*oC);
         nC = std::clamp(nC, 0, 8);
@@ -114,10 +115,10 @@ void eEnlistedForces::kill(const double killFrac) {
             s->decCount();
             switch(type) {
             case eBannerType::hoplite:
-                board.hopliteKilled();
+                board.hopliteKilled(cid);
                 break;
             case eBannerType::horseman:
-                board.horsemanKilled();
+                board.horsemanKilled(cid);
                 break;
             default:
                 break;

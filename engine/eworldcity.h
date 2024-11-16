@@ -6,6 +6,7 @@
 #include "eresourcetype.h"
 #include "pointers/estdselfref.h"
 #include "fileIO/estreams.h"
+#include "engine/ecityid.h"
 
 enum class eNationality {
     greek,
@@ -108,6 +109,7 @@ class eWorldCity {
 public:
     eWorldCity() {}
     eWorldCity(const eCityType type,
+               const eCityId id,
                const std::string& name,
                const double x, const double y);
 
@@ -120,6 +122,9 @@ public:
     static std::string sTypeName(const eCityType type);
     void setType(const eCityType type) { mType = type; }
     eCityType type() const { return mType; }
+
+    eCityId cityId() const { return mCityId; }
+    void setCityId(const eCityId cid) { mCityId = cid; }
 
     bool isDistant() const;
     bool isVassal() const;
@@ -233,21 +238,21 @@ public:
     bool conqueredByRival() const { return mConqueredBy.get(); }
     void setConqueredBy(const stdsptr<eWorldCity>& c) { mConqueredBy = c; }
 
-    static stdsptr<eWorldCity> sCreateAthens();
-    static stdsptr<eWorldCity> sCreateSparta();
-    static stdsptr<eWorldCity> sCreateKnossos();
-    static stdsptr<eWorldCity> sCreateCorinth();
-    static stdsptr<eWorldCity> sCreateOlympia();
+    static stdsptr<eWorldCity> sCreateAthens(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateSparta(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateKnossos(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateCorinth(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateOlympia(const eCityId cid);
 
-    static stdsptr<eWorldCity> sCreateEgypt();
-    static stdsptr<eWorldCity> sCreateCyprus();
+    static stdsptr<eWorldCity> sCreateEgypt(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateCyprus(const eCityId cid);
 
-    static stdsptr<eWorldCity> sCreateTroy();
+    static stdsptr<eWorldCity> sCreateTroy(const eCityId cid);
 
-    static stdsptr<eWorldCity> sCreateMtPelion();
+    static stdsptr<eWorldCity> sCreateMtPelion(const eCityId cid);
 
-    static stdsptr<eWorldCity> sCreateSardis();
-    static stdsptr<eWorldCity> sCreateHattusas();
+    static stdsptr<eWorldCity> sCreateSardis(const eCityId cid);
+    static stdsptr<eWorldCity> sCreateHattusas(const eCityId cid);
 private:
     int mIOID = -1;
 
@@ -259,6 +264,8 @@ private:
     eNationality mNationality{eNationality::greek};
     eDistantDirection mDirection{eDistantDirection::none};
     eCityState mState{eCityState::inactive};
+
+    eCityId mCityId;
 
     std::string mName;
     int mNameString = -1;

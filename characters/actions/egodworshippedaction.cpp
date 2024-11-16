@@ -137,11 +137,12 @@ void eGodWorshippedAction::lookForMonsterFight() {
     if(!ct) return;
     const int tx = ct->x();
     const int ty = ct->y();
-    auto& brd = c->getBoard();
+    auto& board = c->getBoard();
+    const auto tid = c->teamId();
     const int range = 5;
     for(int i = -range; i <= range; i++) {
         for(int j = -range; j <= range; j++) {
-            const auto t = brd.tile(tx + i, ty + j);
+            const auto t = board.tile(tx + i, ty + j);
             if(!t) continue;
             const auto& chars = t->characters();
             for(const auto& cc : chars) {
@@ -150,7 +151,8 @@ void eGodWorshippedAction::lookForMonsterFight() {
                 bool monster;
                 eMonster::sCharacterToMonsterType(cctype, &monster);
                 if(!monster) continue;
-                if(cc->playerId() == 1) continue;
+                const auto cctid = cc->teamId();
+                if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                 const auto m = static_cast<eMonster*>(cc.get());
                 const bool r = fightMonster(m);
                 if(r) return;

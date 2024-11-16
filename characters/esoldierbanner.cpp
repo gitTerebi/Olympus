@@ -96,10 +96,14 @@ void eSoldierBanner::moveTo(const int x, const int y) {
     const auto t = mBoard.tile(x, y);
     if(!t || t == mTile) return;
 
-    if(mPlayerId == 1 && mTile) {
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+
+    if(isPerson && mTile) {
         mTile->setSoldierBanner(nullptr);
     }
-    if(mPlayerId == 1 && t) {
+    if(isPerson && t) {
         t->setSoldierBanner(this);
     }
     mTile = t;
@@ -109,7 +113,10 @@ void eSoldierBanner::moveTo(const int x, const int y) {
 }
 
 void eSoldierBanner::moveToDefault() {
-    if(mPlayerId != 1) return;
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+    if(!isPerson) return;
     switch(mType) {
     case eBannerType::rockThrower:
     case eBannerType::hoplite:
@@ -148,7 +155,10 @@ void eSoldierBanner::moveToDefault() {
 
 void eSoldierBanner::goHome() {
     if(mMilitaryAid) return;
-    if(mPlayerId != 1) return;
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+    if(!isPerson) return;
     if(mHome) return;
     mHome = true;
     for(const auto s : mSoldiers) {
@@ -252,6 +262,18 @@ void eSoldierBanner::killAllWithCorpse() {
     mSoldiers.clear();
 }
 
+ePlayerId eSoldierBanner::playerId() const {
+    const auto cid = cityId();
+    auto& board = getBoard();
+    return board.cityIdToPlayerId(cid);
+}
+
+eTeamId eSoldierBanner::teamId() const {
+    const auto pid = playerId();
+    auto& board = getBoard();
+    return board.playerIdToTeamId(pid);
+}
+
 void eSoldierBanner::incCount() {
     mCount++;
     updateCount();
@@ -286,8 +308,12 @@ void eSoldierBanner::read(eReadStream& src) {
     src >> mAbroad;
     mTile = src.readTile(mBoard);
     src >> mCount;
-    src >> mPlayerId;
-    if(mPlayerId == 1 && mTile) {
+    src >> mCityId;
+
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+    if(isPerson && mTile) {
         mTile->setSoldierBanner(this);
     }
 
@@ -318,7 +344,7 @@ void eSoldierBanner::write(eWriteStream& dst) const {
     dst << mAbroad;
     dst.writeTile(mTile);
     dst << mCount;
-    dst << mPlayerId;
+    dst << mCityId;
 
     dst << mPlaces.size();
     for(const auto& p : mPlaces) {
@@ -448,6 +474,10 @@ void eSoldierBanner::updatePlaces() {
     int isld = 0;
     const int slds = mSoldiers.size();
 
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+
     const auto prcsTile = [&](const int i, const int j) {
         if(isld >= slds) return false;
         if(!mTile) return false;
@@ -455,7 +485,7 @@ void eSoldierBanner::updatePlaces() {
         const int ty = mTile->y();
         const auto tt = mBoard.tile(tx + i, ty + j);
         if(!tt) return false;
-        if(mPlayerId == 1) {
+        if(isPerson) {
             if(!eWalkableHelpers::sDefaultWalkable(tt)) return false;
         } else {
             if(!eWalkableHelpers::sBuildingsWalkable(tt)) return false;
@@ -474,7 +504,10 @@ void eSoldierBanner::updatePlaces() {
 
 void eSoldierBanner::updateCount() {
     if(mMilitaryAid) return;
-    if(mPlayerId != 1) return;
+    const auto pid = playerId();
+    const auto ppid = mBoard.personPlayer();
+    const bool isPerson = pid == ppid;
+    if(!isPerson) return;
     purgeDead();
     const int n = mSoldiers.size();
     if(!mHome && !mAbroad) {

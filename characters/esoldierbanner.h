@@ -6,6 +6,7 @@
 
 #include "pointers/eobject.h"
 #include "fileIO/estreams.h"
+#include "engine/ecityid.h"
 
 class eSoldier;
 class eGameBoard;
@@ -63,8 +64,11 @@ public:
     void setSelected(const bool s) { mSelected = s; }
     bool selected() const { return mSelected; }
 
-    void setPlayerId(const int pid) { mPlayerId = pid; }
-    int playerId() const { return mPlayerId; }
+    void setCityId(const eCityId pid) { mCityId = pid; }
+    eCityId cityId() const { return mCityId; }
+
+    ePlayerId playerId() const;
+    eTeamId teamId() const;
 
     int count() const { return mCount; }
     void incCount();
@@ -119,7 +123,7 @@ private:
 
     int mCount = 0;
 
-    int mPlayerId = 1;
+    eCityId mCityId = eCityId::neutralFriendly;
 
     std::map<eSoldier*, eTile*> mPlaces;
     std::vector<eSoldier*> mSoldiers;

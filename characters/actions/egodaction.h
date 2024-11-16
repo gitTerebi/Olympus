@@ -319,8 +319,11 @@ public:
 
 class eLookForSoldierAttackGodAct : public eGodAct {
 public:
+    eLookForSoldierAttackGodAct(eGameBoard& board, const eTeamId team) :
+        eGodAct(board, eGodActType::lookForSoldierAttack),
+        mGodTeam(team) {}
     eLookForSoldierAttackGodAct(eGameBoard& board) :
-        eGodAct(board, eGodActType::lookForSoldierAttack) {}
+        eLookForSoldierAttackGodAct(board, eTeamId::neutralFriendly) {}
 
     eMissileTarget find(eTile* const t) {
         const auto null = static_cast<eTile*>(nullptr);
@@ -330,8 +333,8 @@ public:
             if(cc->dead()) continue;
             const bool is = cc->isSoldier();
             if(!is) continue;
-            const int pid = cc->playerId();
-            if(pid == 1) continue;
+            const auto cctid = cc->teamId();
+            if(!eTeamIdHelpers::isEnemy(cctid, mGodTeam)) continue;
             mTarget = cc;
             return cc.get();
         }
@@ -345,15 +348,18 @@ public:
     }
 
     void read(eReadStream& src) {
+        src >> mGodTeam;
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mTarget = c;
         });
     }
 
     void write(eWriteStream& dst) const {
+        dst << mGodTeam;
         dst.writeCharacter(mTarget);
     }
 private:
+    eTeamId mGodTeam;
     stdptr<eCharacter> mTarget;
 };
 

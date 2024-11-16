@@ -12,10 +12,8 @@ eFireFighter::eFireFighter(eGameBoard& board) :
 }
 
 void eFireFighter::beingKilled() {
-    if(playerId() == 1) {
-        auto& brd = getBoard();
-        brd.walkerKilled();
-    }
+    auto& brd = getBoard();
+    brd.walkerKilled(cityId());
 }
 
 std::shared_ptr<eTexture> eFireFighter::getTexture(const eTileSize size) const {

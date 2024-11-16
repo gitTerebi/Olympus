@@ -9,6 +9,8 @@
 
 #include "fileIO/estreams.h"
 
+#include "engine/ecityid.h"
+
 class eCharacterBase;
 
 enum class eBuildingType;
@@ -150,6 +152,9 @@ public:
     int marbleLevel() const { return mMarbleLevel; };
     virtual void setMarbleLevel(const int l);
 
+    eCityId cityId() const { return mCityId; }
+    void setCityId(const eCityId id) { mCityId = id; }
+
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
 private:
@@ -179,6 +184,8 @@ private:
     eTerrain mTerr = eTerrain::dry;
     double mScrub = 0;
     int mAltitude = 0;
+
+    eCityId mCityId = eCityId::neutralFriendly;
 
     bool mRoadblock = false;
 };

@@ -288,12 +288,16 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::support: {
         const auto type = static_cast<eBannerType>(fEnumInt1);
-        fStatusCount = b->countSoldiers(type);
-        if(type == eBannerType::rockThrower) {
-            fStatusCount += b->countSoldiers(eBannerType::hoplite);
-            fStatusCount += b->countSoldiers(eBannerType::horseman);
-        } else if(type == eBannerType::hoplite) {
-            fStatusCount += b->countSoldiers(eBannerType::horseman);
+        const auto cs = b->personPlayerCities();
+        fStatusCount = 0;
+        for(const auto c : cs) {
+            fStatusCount += b->countSoldiers(type, c);
+            if(type == eBannerType::rockThrower) {
+                fStatusCount += b->countSoldiers(eBannerType::hoplite, c);
+                fStatusCount += b->countSoldiers(eBannerType::horseman, c);
+            } else if(type == eBannerType::hoplite) {
+                fStatusCount += b->countSoldiers(eBannerType::horseman, c);
+            }
         }
     } break;
     case eEpisodeGoalType::quest: {

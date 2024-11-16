@@ -88,7 +88,7 @@ void eDefendCityAction::increment(const int by) {
     const int tx = cTile->x();
     const int ty = cTile->y();
     const int range = this->range();
-    const int pid = c->playerId();
+    const auto tid = c->teamId();
     const auto ct = c->type();
 
     if(mAttack) {
@@ -157,7 +157,8 @@ void eDefendCityAction::increment(const int by) {
             const auto& chars = t->characters();
             for(const auto& cc : chars) {
                 if(!cc->isSoldier()) continue;
-                if(cc->playerId() == pid) continue;
+                const auto cctid = cc->teamId();
+                if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                 if(cc->dead()) continue;
                 const vec2d ccpos{cc->absX(), cc->absY()};
                 const vec2d posdif = ccpos - cpos;
@@ -186,7 +187,8 @@ void eDefendCityAction::increment(const int by) {
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
                         if(!cc->isSoldier()) continue;
-                        if(cc->playerId() == pid) continue;
+                        const auto cctid = cc->teamId();
+                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
                         const vec2d ccpos{cc->absX(), cc->absY()};
                         const vec2d posdif = ccpos - cpos;
@@ -220,7 +222,8 @@ void eDefendCityAction::increment(const int by) {
                 const auto& chars = t->characters();
                 for(const auto& cc : chars) {
                     if(!cc->isSoldier()) continue;
-                    if(cc->playerId() == pid) continue;
+                    const auto cctid = cc->teamId();
+                    if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                     if(cc->dead()) continue;
                     found = true;
                     goTo(ttx, tty, range);

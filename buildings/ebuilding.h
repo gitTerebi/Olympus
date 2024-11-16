@@ -268,7 +268,7 @@ public:
 
     int maintenance() const { return mMaintance; }
 
-    int playerId() const { return mPlayerId; }
+    eCityId cityId() const { return mCityId; }
 
     bool defend(const double a);
     bool dead() const;
@@ -288,6 +288,9 @@ public:
     int ioID() const { return mIOID; }
 
     void setHP(const int hp);
+
+    ePlayerId playerId() const;
+    eTeamId teamId() const;
 private:
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;
@@ -299,7 +302,7 @@ private:
     const int mSpanW;
     const int mSpanH;
 
-    int mPlayerId{1}; // 0 - neutral
+    eCityId mCityId{eCityId::neutralFriendly};
     double mHp = 1000;
 
     int mMaintance = 100;

@@ -43,7 +43,7 @@ eMonster* eMonsterInvasionEventBase::triggerBase() const {
     if(!board) return nullptr;
     const auto monster = eMonster::sCreateMonster(mType, *board);
     board->registerMonster(monster.get());
-    monster->setPlayerId(2);
+    monster->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eMonsterAction>(monster.get());
     monster->setAction(a);

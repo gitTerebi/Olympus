@@ -6,9 +6,10 @@
 #include "engine/egameboard.h"
 
 eWorldCity::eWorldCity(const eCityType type,
-                               const std::string& name,
-                               const double x, const double y) :
-    mType(type), mName(name), mX(x), mY(y) {}
+                       const eCityId id,
+                       const std::string& name,
+                       const double x, const double y) :
+    mType(type), mCityId(id), mName(name), mX(x), mY(y) {}
 
 std::string eWorldCity::sTypeName(const eCityType type) {
     const int group = 39;
@@ -433,6 +434,7 @@ void swrite(eWriteStream& dst,
 
 void eWorldCity::write(eWriteStream& dst) const {
     dst << mIOID;
+    dst << mCityId;
     dst.writeCity(mConqueredBy.get());
     dst << mIsCurrentCity;
     dst << mType;
@@ -475,6 +477,7 @@ void sread(eReadStream& src,
 
 void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mIOID;
+    src >> mCityId;
     src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
         mConqueredBy = c;
     });
@@ -538,93 +541,93 @@ bool eWorldCity::acceptsGift(const eResourceType type,
     }
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateAthens() {
+stdsptr<eWorldCity> eWorldCity::sCreateAthens(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 4); // athens
-    const auto c = std::make_shared<eWorldCity>(eCityType::foreignCity, name, 0.464, 0.514);
+    const auto c = std::make_shared<eWorldCity>(eCityType::foreignCity, cid, name, 0.464, 0.514);
     c->setNationality(eNationality::greek);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateSparta() {
+stdsptr<eWorldCity> eWorldCity::sCreateSparta(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 57); // sparta
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.320, 0.615);
+                       eCityType::foreignCity, cid, name, 0.320, 0.615);
     c->setNationality(eNationality::greek);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateKnossos() {
+stdsptr<eWorldCity> eWorldCity::sCreateKnossos(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 29); // knossos
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.588, 0.825);
+                       eCityType::foreignCity, cid, name, 0.588, 0.825);
     c->setNationality(eNationality::greek);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateCorinth() {
+stdsptr<eWorldCity> eWorldCity::sCreateCorinth(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 10); // corinth
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.401, 0.522);
+                       eCityType::foreignCity, cid, name, 0.401, 0.522);
     c->setNationality(eNationality::greek);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateOlympia() {
+stdsptr<eWorldCity> eWorldCity::sCreateOlympia(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 45); // olympia
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.263, 0.542);
+                       eCityType::foreignCity, cid, name, 0.263, 0.542);
     c->setNationality(eNationality::greek);
     return c;
 }
 
 
-stdsptr<eWorldCity> eWorldCity::sCreateEgypt() {
+stdsptr<eWorldCity> eWorldCity::sCreateEgypt(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 16); // egypt
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.350, 0.820);
+                       eCityType::foreignCity, cid, name, 0.350, 0.820);
     c->setNationality(eNationality::egyptian);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateCyprus() {
+stdsptr<eWorldCity> eWorldCity::sCreateCyprus(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 13); // cyprus
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.790, 0.814);
+                       eCityType::foreignCity, cid, name, 0.790, 0.814);
     c->setNationality(eNationality::greek);
     return c;
 }
 
 
-stdsptr<eWorldCity> eWorldCity::sCreateTroy() {
+stdsptr<eWorldCity> eWorldCity::sCreateTroy(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 68); // troy
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.693, 0.245);
+                       eCityType::foreignCity, cid, name, 0.693, 0.245);
     c->setNationality(eNationality::trojan);
     return c;
 }
 
 
-stdsptr<eWorldCity> eWorldCity::sCreateMtPelion() {
+stdsptr<eWorldCity> eWorldCity::sCreateMtPelion(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 46); // mt. pelion
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.356, 0.276);
+                       eCityType::foreignCity, cid, name, 0.356, 0.276);
     c->setNationality(eNationality::centaur);
     return c;
 }
 
 
-stdsptr<eWorldCity> eWorldCity::sCreateSardis() {
+stdsptr<eWorldCity> eWorldCity::sCreateSardis(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 54); // sardis
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.835, 0.443);
+                       eCityType::foreignCity, cid, name, 0.835, 0.443);
     c->setNationality(eNationality::persian);
     return c;
 }
 
-stdsptr<eWorldCity> eWorldCity::sCreateHattusas() {
+stdsptr<eWorldCity> eWorldCity::sCreateHattusas(const eCityId cid) {
     const auto name = eLanguage::zeusText(21, 24); // hattusas
     const auto c = std::make_shared<eWorldCity>(
-                       eCityType::foreignCity, name, 0.835, 0.340);
+                       eCityType::foreignCity, cid, name, 0.835, 0.340);
     c->setNationality(eNationality::persian);
     return c;
 }

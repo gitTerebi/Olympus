@@ -6,7 +6,7 @@ eWolf::eWolf(eGameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fWolf,
                 eCharacterType::wolf) {
     eGameTextures::loadWolf();
-    setPlayerId(2);
+    setCityId(eCityId::neutralAggresive);
     setAttack(0.25);
     setHP(300);
 }

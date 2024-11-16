@@ -255,6 +255,8 @@ private:
 
     std::vector<eTile*> selectedTiles() const;
 
+    eCityId mCurrentCity = eCityId::neutralFriendly;
+
     eMouseButton mPressedButtons = eMouseButton::none;
 
     bool mEditorMode = false;

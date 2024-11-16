@@ -6,7 +6,7 @@ eThreadCharacter::eThreadCharacter() :
 void eThreadCharacter::load(eCharacterBase* const character) {
     setBusy(character->busy());
     setType(character->type());
-    setPlayerId(character->playerId());
+    setCityId(character->cityId());
     setHP(character->hp());
     setActionType(character->actionType());
 }

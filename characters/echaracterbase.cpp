@@ -61,7 +61,7 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
 
 void eCharacterBase::read(eReadStream& src) {
     src >> mActionType;
-    src >> mPlayerId;
+    src >> mCityId;
     src >> mBusy;
     src >> mHP;
     src >> mAttack;
@@ -70,7 +70,7 @@ void eCharacterBase::read(eReadStream& src) {
 
 void eCharacterBase::write(eWriteStream& dst) const {
     dst << mActionType;
-    dst << mPlayerId;
+    dst << mCityId;
     dst << mBusy;
     dst << mHP;
     dst << mAttack;

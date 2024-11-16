@@ -15,7 +15,7 @@ ePalace::ePalace(eGameBoard& board, const bool r) :
 
 ePalace::~ePalace() {
     auto& b = getBoard();
-    b.unregisterPalace();
+    b.unregisterPalace(cityId());
 }
 
 void ePalace::erase() {

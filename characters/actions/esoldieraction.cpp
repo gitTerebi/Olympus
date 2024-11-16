@@ -91,6 +91,7 @@ void eSoldierAction::sSignalBeingAttack(
         eCharacter* const by,
         eGameBoard& brd) {
     const auto tt = attacked->tile();
+    const auto atid = attacked->teamId();
     const int ttx = tt->x();
     const int tty = tt->y();
     const int range = eNumbers::sSoldierBeingAttackedCallRange;
@@ -101,7 +102,7 @@ void eSoldierAction::sSignalBeingAttack(
             const auto& ccchars = tt->characters();
             for(const auto& ccc : ccchars) {
                 if(!ccc->isSoldier()) continue;
-                if(ccc->playerId() != attacked->playerId()) continue;
+                if(ccc->teamId() != atid) continue;
                 if(ccc->dead()) continue;
 
                 const auto sss = static_cast<eSoldier*>(ccc.get());
@@ -132,7 +133,7 @@ void eSoldierAction::increment(const int by) {
     if(!ct) return;
     const int tx = ct->x();
     const int ty = ct->y();
-    const int pid = c->playerId();
+    const auto tid = c->teamId();
 
     if(mAttack) {
         const auto at = c->actionType();
@@ -217,7 +218,8 @@ void eSoldierAction::increment(const int by) {
             if(!t) continue;
             const auto& chars = t->characters();
             for(const auto& cc : chars) {
-                if(cc->playerId() == pid) continue;
+                const auto cctid = cc->teamId();
+                if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                 if(cc->dead()) continue;
                 const vec2d ccpos{cc->absX(), cc->absY()};
                 const vec2d posdif = ccpos - cpos;
@@ -256,7 +258,8 @@ void eSoldierAction::increment(const int by) {
                     if(!t) continue;
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
-                        if(cc->playerId() == pid) continue;
+                        const auto cctid = cc->teamId();
+                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
                         if(!cc->isSoldier()) {
                             if(cc->isImmortal()) {
@@ -301,7 +304,8 @@ void eSoldierAction::increment(const int by) {
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
                         if(!cc->isSoldier()) continue;
-                        if(cc->playerId() == pid) continue;
+                        const auto cctid = cc->teamId();
+                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
                         found = true;
                         goTo(ttx, tty, range);
@@ -401,8 +405,11 @@ void eSoldierAction::goTo(const int fx, const int fy,
     const auto finishAct = std::make_shared<eSA_goToFinish>(
                                board(), c);
 
-    const int pid = c->playerId();
-    const bool attackBuildings = pid != 1;
+    const auto tcid = t->cityId();
+    auto& board = this->board();
+    const auto ttid = board.cityIdToTeamId(tcid);
+    const auto tid = c->teamId();
+    const bool attackBuildings = eTeamIdHelpers::isEnemy(tid, ttid);
     stdsptr<eWalkableObject> pathFindWalkable =
         eWalkableObject::sCreateDefault();
     stdsptr<eWalkableObject> moveWalkable = nullptr;
@@ -577,9 +584,9 @@ bool eSoldierAction::attackBuilding(eTile* const t, const bool range) {
     const auto ub = t->underBuilding();
     if(!ub) return false;
     const auto c = character();
-    const int pid = c->playerId();
+    const auto tid = c->teamId();
+    if(!eTeamIdHelpers::isEnemy(ub->teamId(), tid)) return false;
     const vec2d cpos{c->absX(), c->absY()};
-    if(ub->playerId() == pid) return false;
     const bool att = eBuilding::sAttackable(ub->type());
     if(!att) return false;
     mAttackTarget = eAttackTarget(ub);

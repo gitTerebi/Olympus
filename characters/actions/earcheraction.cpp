@@ -30,7 +30,7 @@ void eArcherAction::increment(const int by) {
     const int tx = ct->x();
     const int ty = ct->y();
     const vec2d cpos{c->absX(), c->absY()};
-    const int pid = c->playerId();
+    const auto tid = c->teamId();
     auto& brd = c->getBoard();
 
     if(mAttack) {
@@ -83,7 +83,8 @@ void eArcherAction::increment(const int by) {
                 const auto& chars = t->characters();
                 for(const auto& cc : chars) {
                     if(!cc->isSoldier()) continue;
-                    if(cc->playerId() == pid) continue;
+                    const auto cctid = cc->teamId();
+                    if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                     if(cc->dead()) continue;
                     const vec2d ccpos{cc->absX(), cc->absY()};
                     const vec2d posdif = ccpos - cpos;
@@ -105,7 +106,8 @@ void eArcherAction::increment(const int by) {
                             const auto& ccchars = tt->characters();
                             for(const auto& ccc : ccchars) {
                                 if(!ccc->isSoldier()) continue;
-                                if(ccc->playerId() == pid) continue;
+                                const auto ccctid = ccc->teamId();
+                                if(!eTeamIdHelpers::isEnemy(ccctid, tid)) continue;
                                 if(ccc->dead()) continue;
 
                                 const auto sss = static_cast<eSoldier*>(ccc.get());

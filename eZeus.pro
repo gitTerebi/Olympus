@@ -348,6 +348,7 @@ SOURCES += \
         engine/boardData/ehusbandrydata.cpp \
         engine/boardData/epopulationdata.cpp \
         engine/ecampaign.cpp \
+        engine/ecityid.cpp \
         engine/ecityrequest.cpp \
         engine/ecolonymonumentaction.cpp \
         engine/edate.cpp \
@@ -966,6 +967,7 @@ HEADERS += \
     engine/boardData/ehusbandrydata.h \
     engine/boardData/epopulationdata.h \
     engine/ecampaign.h \
+    engine/ecityid.h \
     engine/ecityrequest.h \
     engine/ecolonymonumentaction.h \
     engine/edate.h \
