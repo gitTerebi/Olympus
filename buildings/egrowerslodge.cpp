@@ -7,11 +7,13 @@
 
 #include <algorithm>
 
-eGrowersLodge::eGrowersLodge(eGameBoard& board, const eGrowerType type) :
+eGrowersLodge::eGrowersLodge(eGameBoard& board, const eGrowerType type,
+                             const eCityId cid) :
     eEmployingBuilding(board,
                        type == eGrowerType::grapesAndOlives ?
                            eBuildingType::growersLodge :
-                           eBuildingType::orangeTendersLodge, 2, 2, 12),
+                           eBuildingType::orangeTendersLodge, 2, 2, 12,
+                       cid),
     mType(type) {
     switch(type) {
     case eGrowerType::grapesAndOlives:

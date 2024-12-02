@@ -10,7 +10,7 @@ stdsptr<eResourceCollectorBase> cardingShedCharGenerator(eGameBoard& board) {
     return e::make_shared<eShepherd>(board);
 }
 
-eCardingShed::eCardingShed(eGameBoard& board) :
+eCardingShed::eCardingShed(eGameBoard& board, const eCityId cid) :
     eShepherBuildingBase(board, &eBuildingTextures::fCardingShed,
                          -0.98, -2.15,
                          &eBuildingTextures::fCardingShedOverlay,
@@ -18,7 +18,7 @@ eCardingShed::eCardingShed(eGameBoard& board) :
                          eBuildingType::cardingShed,
                          eResourceType::fleece,
                          eCharacterType::sheep,
-                         2, 2, 8),
+                         2, 2, 8, cid),
     mTextures(eGameTextures::buildings())  {
     eGameTextures::loadCardingShed();
 }

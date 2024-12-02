@@ -8,7 +8,8 @@ class ePalace;
 class ePalaceTile : public eBuilding {
 public:
     ePalaceTile(eGameBoard& board,
-                const bool other);
+                const bool other,
+                const eCityId cid);
 
     void erase() override;
 

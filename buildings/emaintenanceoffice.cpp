@@ -12,12 +12,13 @@ stdsptr<eCharacterAction> gFireFighterActGenerator(
     return e::make_shared<eFireFighterAction>(c, b, guides, dirTimes);
 }
 
-eMaintenanceOffice::eMaintenanceOffice(eGameBoard& board) :
+eMaintenanceOffice::eMaintenanceOffice(eGameBoard& board,
+                                       const eCityId cid) :
     ePatrolBuilding(board, &eBuildingTextures::fMaintenanceOffice,
                     -3.85, -4.35,
                     &eBuildingTextures::fMaintenanceOfficeOverlay,
                     [this]() { return e::make_shared<eFireFighter>(getBoard()); },
                     gFireFighterActGenerator,
-                    eBuildingType::maintenanceOffice, 2, 2, 5)  {
+                    eBuildingType::maintenanceOffice, 2, 2, 5, cid)  {
     eGameTextures::loadMaintenanceOffice();
 }

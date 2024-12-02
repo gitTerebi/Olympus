@@ -4,6 +4,7 @@
 #include "edate.h"
 #include "eresourcetype.h"
 #include "emessageeventtype.h"
+#include "ecityid.h"
 
 using eAction = std::function<void()>;
 using eCloseOnAction = std::function<void(const eAction&)>;
@@ -12,10 +13,12 @@ enum class eGodType;
 enum class eHeroType;
 enum class eGodQuestId;
 enum class eMonsterType;
+enum class eCityId;
 
 struct eEventData {
     eMessageEventType fType = eMessageEventType::common;
     eDate fDate = eDate(1, eMonth::january, -1500);
+    eCityId fCityId = eCityId::neutralFriendly;
     std::string fPlayerName;
     eTile* fTile = nullptr;
     stdptr<eCharacter> fChar;

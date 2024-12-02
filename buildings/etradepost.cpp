@@ -13,9 +13,10 @@
 #include "enumbers.h"
 
 eTradePost::eTradePost(eGameBoard& board, eWorldCity& city,
+                       const eCityId cid,
                        const eTradePostType type) :
     eWarehouseBase(board, eBuildingType::tradePost, 4, 4, 24,
-                   eResourceType::tradePost, 15),
+                   eResourceType::tradePost, cid, 15),
     mCity(city), mType(type) {
     eGameTextures::loadTradingPost();
     setOverlayEnabledFunc([]() { return true; });
@@ -217,7 +218,8 @@ int eTradePost::buy(const int cash) {
         b.fUsed++;
         spent += price;
     }
-    brd.incDrachmas(spent);
+    const auto pid = playerId();
+    brd.incDrachmas(pid, spent);
     return spent;
 }
 
@@ -238,7 +240,8 @@ int eTradePost::sell(const int items) {
         b.fUsed++;
         earned += price;
     }
-    brd.incDrachmas(-earned);
+    const auto pid = playerId();
+    brd.incDrachmas(pid, -earned);
     return earned;
 }
 

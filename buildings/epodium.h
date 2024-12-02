@@ -5,7 +5,7 @@
 
 class ePodium : public ePatrolTarget {
 public:
-    ePodium(eGameBoard& board);
+    ePodium(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EPODIUM_H

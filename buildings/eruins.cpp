@@ -2,8 +2,8 @@
 
 #include "textures/egametextures.h"
 
-eRuins::eRuins(eGameBoard& board) :
-    eBuilding(board, eBuildingType::ruins, 1, 1) {
+eRuins::eRuins(eGameBoard& board, const eCityId cid) :
+    eBuilding(board, eBuildingType::ruins, 1, 1, cid) {
 
 }
 

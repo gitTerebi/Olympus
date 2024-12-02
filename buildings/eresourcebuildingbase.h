@@ -11,7 +11,8 @@ public:
                           const eBuildingType type,
                           const int sw, const int sh,
                           const int maxEmployees,
-                          const eResourceType resType);
+                          const eResourceType resType,
+                          const eCityId cid);
     ~eResourceBuildingBase();
 
     void timeChanged(const int by) override;

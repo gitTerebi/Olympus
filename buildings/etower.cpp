@@ -10,8 +10,8 @@
 #include "audio/esounds.h"
 #include "enumbers.h"
 
-eTower::eTower(eGameBoard& board) :
-    eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15) {
+eTower::eTower(eGameBoard& board, const eCityId cid) :
+    eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid) {
     eGameTextures::loadGatehouseAndTower();
     setHP(eNumbers::sTowerHP);
 }

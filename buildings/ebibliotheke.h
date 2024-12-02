@@ -5,7 +5,7 @@
 
 class eBibliotheke : public ePatrolBuilding {
 public:
-    eBibliotheke(eGameBoard& board);
+    eBibliotheke(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EBIBLIOTHEKE_H

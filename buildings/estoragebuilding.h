@@ -10,6 +10,7 @@ public:
                      const int sw, const int sh,
                      const int maxEmployees,
                      const eResourceType canAccept,
+                     const eCityId cid,
                      const int spaceCount = 8);
     ~eStorageBuilding();
 

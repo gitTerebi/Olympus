@@ -19,7 +19,8 @@ public:
                     const eActGenerator& actGen,
                     const eBuildingType type,
                     const int sw, const int sh,
-                    const int maxEmployees);
+                    const int maxEmployees,
+                    const eCityId cid);
     ePatrolBuilding(eGameBoard& board,
                     const eBaseTex baseTex,
                     const double overlayX,
@@ -28,7 +29,8 @@ public:
                     const eCharGenerator& charGen,
                     const eBuildingType type,
                     const int sw, const int sh,
-                    const int maxEmployees);
+                    const int maxEmployees,
+                    const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
     std::vector<eOverlay> getOverlays(const eTileSize size) const;

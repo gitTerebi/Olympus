@@ -3,7 +3,7 @@
 #include "characters/esilverminer.h"
 #include "textures/egametextures.h"
 
-eMint::eMint(eGameBoard& board) :
+eMint::eMint(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fMint,
                              -3.73, -3.73,
@@ -12,7 +12,7 @@ eMint::eMint(eGameBoard& board) :
                              [this]() { return e::make_shared<eSilverMiner>(getBoard()); },
                              eBuildingType::mint,
                              eHasResourceObject::sCreate(eHasResourceObjectType::silver),
-                             2, 2, 15, eResourceType::silver) {
+                             2, 2, 15, eResourceType::silver, cid) {
     eGameTextures::loadMint();
     setRawCountCollect(4);
 }

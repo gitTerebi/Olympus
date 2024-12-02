@@ -7,8 +7,9 @@
 #include <math.h>
 
 eEmploymentData::eEmploymentData(const ePopulationData& popData,
+                                 const eBoardCity& city,
                                  const eGameBoard& board) :
-    mPopData(popData), mBoard(board) {
+    mPopData(popData), mCity(city), mBoard(board) {
 
 }
 
@@ -18,7 +19,7 @@ void eEmploymentData::incTotalJobVacancies(const int v) {
 
 int eEmploymentData::employable() const {
     const auto diff = mBoard.difficulty();
-    const auto wageRate = mBoard.wageRate();
+    const auto wageRate = mCity.wageRate();
     const double frac = eDifficultyHelpers::workerFrac(
                             diff, wageRate);
     return frac*mPopData.population();
@@ -29,7 +30,7 @@ int eEmploymentData::employed() const {
 }
 
 int eEmploymentData::pensions() const {
-    const auto wageRate = mBoard.wageRate();
+    const auto wageRate = mCity.wageRate();
     const auto wageMult = mBoard.wageMultiplier();
     const double frac = eWageRateHelpers::wageMultiplier(wageRate);
     return wageMult*frac*employed();

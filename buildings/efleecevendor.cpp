@@ -2,12 +2,13 @@
 
 #include "textures/egametextures.h"
 
-eFleeceVendor::eFleeceVendor(eGameBoard& board) :
+eFleeceVendor::eFleeceVendor(eGameBoard& board,
+                             const eCityId cid) :
     eVendor(board,
             eResourceType::fleece, eProvide::fleece,
             &eBuildingTextures::fFleeceVendor,
             -2.00, -2.42, &eBuildingTextures::fFleeceVendorOverlay,
             -0.50, -2.42, &eBuildingTextures::fFleeceVendorOverlay2,
-            eBuildingType::fleeceVendor, 2, 2, 4) {
+            eBuildingType::fleeceVendor, 2, 2, 4, cid) {
     eGameTextures::loadFleeceVendor();
 }

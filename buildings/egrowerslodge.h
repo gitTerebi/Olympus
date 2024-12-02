@@ -10,7 +10,8 @@ class eCartTransporter;
 
 class eGrowersLodge : public eEmployingBuilding {
 public:
-    eGrowersLodge(eGameBoard& board, const eGrowerType type);
+    eGrowersLodge(eGameBoard& board, const eGrowerType type,
+                  const eCityId cid);
     ~eGrowersLodge();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

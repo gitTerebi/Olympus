@@ -9,7 +9,7 @@ class eHunter;
 
 class eHuntingLodge : public eResourceCollectBuildingBase {
 public:
-    eHuntingLodge(eGameBoard& board);
+    eHuntingLodge(eGameBoard& board, const eCityId cid);
     ~eHuntingLodge();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

@@ -7,7 +7,7 @@ class eGoatherd;
 
 class eDairy : public eShepherBuildingBase {
 public:
-    eDairy(eGameBoard& board);
+    eDairy(eGameBoard& board, const eCityId cid);
 
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 private:

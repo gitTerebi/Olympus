@@ -26,7 +26,8 @@ public:
                              const stdsptr<eHasResourceObject>& hr,
                              const int sw, const int sh,
                              const int maxEmployees,
-                             const eResourceType resType);
+                             const eResourceType resType,
+                             const eCityId cid);
     ~eResourceCollectBuilding();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

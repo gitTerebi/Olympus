@@ -14,9 +14,10 @@ eShepherBuildingBase::eShepherBuildingBase(
         const eResourceType resType,
         const eCharacterType animalType,
         const int sw, const int sh,
-        const int maxEmployees) :
+        const int maxEmployees,
+        const eCityId cid) :
     eResourceBuildingBase(board, type, sw, sh,
-                          maxEmployees, resType),
+                          maxEmployees, resType, cid),
     mCharGenerator(charGen),
     mTextures(eGameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),

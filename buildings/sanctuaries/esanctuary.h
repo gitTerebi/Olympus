@@ -21,7 +21,8 @@ public:
     eSanctuary(eGameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
-               const int maxEmployees);
+               const int maxEmployees,
+               const eCityId cid);
     ~eSanctuary();
 
     void erase() override;

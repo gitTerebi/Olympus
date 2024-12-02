@@ -7,7 +7,7 @@
 
 class eTower : public eEmployingBuilding {
 public:
-    eTower(eGameBoard& board);
+    eTower(eGameBoard& board, const eCityId cid);
     ~eTower();
 
     std::shared_ptr<eTexture>

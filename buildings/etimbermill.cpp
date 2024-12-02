@@ -3,7 +3,7 @@
 #include "characters/elumberjack.h"
 #include "engine/egameboard.h"
 
-eTimberMill::eTimberMill(eGameBoard& board) :
+eTimberMill::eTimberMill(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fTimberMill,
                              -3.65, -3.65,
@@ -12,7 +12,7 @@ eTimberMill::eTimberMill(eGameBoard& board) :
                              [this]() { return e::make_shared<eLumberjack>(getBoard()); },
                              eBuildingType::timberMill,
                              eHasResourceObject::sCreate(eHasResourceObjectType::forest),
-                             2, 2, 12, eResourceType::wood) {
+                             2, 2, 12, eResourceType::wood, cid) {
     eGameTextures::loadTimberMill();
     setRawCountCollect(4);
 }

@@ -24,6 +24,7 @@ public:
                           const eBuildingType type,
                           const int sw, const int sh,
                           const int maxEmployees,
+                          const eCityId cid,
                           const eCharGenerator& charGen = nullptr);
 
     void timeChanged(const int by) override;

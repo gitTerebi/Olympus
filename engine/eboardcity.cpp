@@ -5,14 +5,204 @@
 #include "buildings/estoragebuilding.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
+#include "buildings/eheroshall.h"
 #include "evectorhelpers.h"
+
+#include "elanguage.h"
+#include "emessages.h"
+#include "eeventdata.h"
 
 #include "egameboard.h"
 
 eBoardCity::eBoardCity(eGameBoard& board) :
     mBoard(board),
-    mHusbData(mPopData, board), mEmplData(mPopData, board),
+    mHusbData(mPopData, board),
+    mEmplData(mPopData, *this, board),
     mEmplDistributor(mEmplData) {}
+
+void eBoardCity::incTime(const int by) {
+    mCoverageUpdate += by;
+    const int cup = 2000;
+    if(mCoverageUpdate > cup) {
+        mCoverageUpdate -= cup;
+        updateCoverage();
+    }
+
+    const auto& msgs = &eMessages::instance;
+    eEventData ed;
+    const int pop = mPopData.population();
+    if(pop >= 100 && !mPop100) {
+        mBoard.showMessage(ed, msgs->fPop100);
+        mPop100 = true;
+    } else if(pop >= 500 && !mPop500) {
+        mBoard.showMessage(ed, msgs->fPop500);
+        mPop500 = true;
+    } else if(pop >= 1000 && !mPop1000) {
+        mBoard.showMessage(ed, msgs->fPop1000);
+        allow(eBuildingType::commemorative, 0);
+        mPop1000 = true;
+    } else if(pop >= 2000 && !mPop2000) {
+        mBoard.showMessage(ed, msgs->fPop2000);
+        allow(eBuildingType::commemorative, 0);
+        mPop2000 = true;
+    } else if(pop >= 3000 && !mPop3000) {
+        mBoard.showMessage(ed, msgs->fPop3000);
+        mPop3000 = true;
+    } else if(pop >= 5000 && !mPop5000) {
+        mBoard.showMessage(ed, msgs->fPop5000);
+        allow(eBuildingType::commemorative, 0);
+        mPop5000 = true;
+    } else if(pop >= 10000 && !mPop10000) {
+        mBoard.showMessage(ed, msgs->fPop10000);
+        allow(eBuildingType::commemorative, 0);
+        mPop10000 = true;
+    } else if(pop >= 15000 && !mPop15000) {
+        mBoard.showMessage(ed, msgs->fPop15000);
+        allow(eBuildingType::commemorative, 0);
+        mPop15000 = true;
+    } else if(pop >= 20000 && !mPop20000) {
+        mBoard.showMessage(ed, msgs->fPop20000);
+        allow(eBuildingType::commemorative, 0);
+        mPop20000 = true;
+    } else if(pop >= 25000 && !mPop25000) {
+        mBoard.showMessage(ed, msgs->fPop25000);
+        allow(eBuildingType::commemorative, 0);
+        mPop25000 = true;
+    }
+
+    const int updateResWait = 1000;
+    mUpdateResources += by;
+    if(mUpdateResources > updateResWait) {
+        mUpdateResources -= updateResWait;
+        updateResources();
+    }
+
+    const int food = resourceCount(eResourceType::food);
+    bool prolongedNoFood = false;
+    const auto date = mBoard.date();
+    if(mNoFood && food < 1 && pop > 10) {
+        prolongedNoFood = date.year() - mNoFoodSince.year() > 1;
+    } else if(food < 1 && pop > 10) {
+        mNoFood = true;
+        mNoFoodSince = date;
+    } else {
+        mNoFood = false;
+    }
+    const int u = mEmplData.unemployed();
+    const int e = mEmplData.employable();
+    const int v = mPopData.vacancies();
+    const auto oldLimit = mImmigrationLimit;
+    const auto p = owningPlayer();
+    int drachmas = 0;
+    eDate inDebtSince = date;
+    if(p) {
+        drachmas = p->drachmas();
+        inDebtSince = p->inDebtSince();
+    }
+    if(prolongedNoFood) {
+        mImmigrationLimit = eILB::lackOfFood;
+    } else if(drachmas < 0 && date.year() - inDebtSince.year() > 1) {
+        mImmigrationLimit = eILB::prolongedDebt;
+    } else if(static_cast<int>(mWageRate) < static_cast<int>(eWageRate::low)) {
+        mImmigrationLimit = eILB::lowWages;
+    } else if(e < 10 ? false : (1.*u/e > 0.25 && u > 50)) {
+        mImmigrationLimit = eILB::unemployment;
+    } else if(static_cast<int>(mTaxRate) > static_cast<int>(eTaxRate::high)) {
+        mImmigrationLimit = eILB::highTaxes;
+    } else if(mExcessiveMilitaryServiceCount > 0) {
+        mImmigrationLimit = eILB::excessiveMilitaryService;
+    } else if(v <= 0) {
+        mImmigrationLimit = eILB::lackOfVacancies;
+    } else {
+        mImmigrationLimit = eILB::none;
+    }
+    if(oldLimit != mImmigrationLimit) {
+        switch(mImmigrationLimit) {
+        case eILB::lackOfFood:
+            mBoard.showTip(eLanguage::zeusText(19, 112));
+            break;
+        case eILB::prolongedDebt:
+            mBoard.showTip(eLanguage::zeusText(19, 116));
+            break;
+        case eILB::lowWages:
+            mBoard.showTip(eLanguage::zeusText(19, 115));
+            break;
+        case eILB::unemployment:
+            mBoard.showTip(eLanguage::zeusText(19, 113));
+            break;
+        case eILB::highTaxes:
+            mBoard.showTip(eLanguage::zeusText(19, 114));
+            break;
+        case eILB::excessiveMilitaryService:
+            mBoard.showTip(eLanguage::zeusText(19, 117));
+            break;
+        case eILB::lackOfVacancies:
+            mBoard.showTip(eLanguage::zeusText(19, 111));
+            break;
+        case eILB::none:
+            mBoard.showTip(eLanguage::zeusText(19, 124));
+        }
+    }
+
+}
+
+void eBoardCity::updateCoverage() {
+    int totalPeople = 0;
+    int commonPeople = 0;
+    int sport = 0;
+    int phil = 0;
+    int drama = 0;
+    int taxes = 0;
+    double totalUnrest = 0;
+    int totalSatisfaction = 0;
+    int totalHygiene = 0;
+    for(const auto b : mTimedBuildings) {
+        if(const auto h = dynamic_cast<eHouseBase*>(b)) {
+            const int p = h->people();
+            if(h->athletesScholars() > 0) {
+                sport += p;
+            }
+            if(h->philosophersInventors() > 0) {
+                phil += p;
+            }
+            if(h->actorsAstronomers() > 0) {
+                drama += p;
+            }
+            if(h->paidTaxes()) {
+                taxes += p;
+            }
+            if(const auto ch = dynamic_cast<eSmallHouse*>(b)) {
+                if(ch->disgruntled()) totalUnrest += p;
+                totalSatisfaction += p*ch->satisfaction();
+                totalHygiene += p*ch->hygiene();
+                commonPeople += p;
+            }
+            totalPeople += p;
+        }
+    }
+    if(totalPeople <= 0) {
+        mAthleticsCoverage = 0;
+        mPhilosophyCoverage = 0;
+        mDramaCoverage = 0;
+        mTaxesCoverage = 0;
+    } else {
+        mAthleticsCoverage = std::round(100.*sport/totalPeople);
+        mPhilosophyCoverage = std::round(100.*phil/totalPeople);
+        mDramaCoverage = std::round(100.*drama/totalPeople);
+        mTaxesCoverage = std::round(100.*taxes/totalPeople);
+    }
+    mAllDiscCoverage = (mAthleticsCoverage + mPhilosophyCoverage + mDramaCoverage)/3;
+
+    if(commonPeople == 0) {
+        mUnrest = 0;
+        mPopularity = 100;
+        mHealth = 100;
+    } else {
+        mUnrest = std::round(100.*totalUnrest/commonPeople);
+        mPopularity = std::round(1.*totalSatisfaction/commonPeople);
+        mHealth = std::round(1.*totalHygiene/commonPeople);
+    }
+}
 
 void eBoardCity::payTaxes(const int d, const int people) {
     mTaxesPaidThisYear += d;
@@ -117,6 +307,87 @@ bool eBoardCity::unregisterEmplBuilding(eEmployingBuilding* const b) {
     return rr;
 }
 
+bool eBoardCity::supportsBuilding(const eBuildingMode mode) const {
+    const auto type = eBuildingModeHelpers::toBuildingType(mode);
+    int id = -1;
+    switch(mode) {
+    case eBuildingMode::populationMonument:
+    case eBuildingMode::victoryMonument:
+    case eBuildingMode::colonyMonument:
+    case eBuildingMode::athleteMonument:
+    case eBuildingMode::conquestMonument:
+    case eBuildingMode::happinessMonument:
+    case eBuildingMode::heroicFigureMonument:
+    case eBuildingMode::diplomacyMonument:
+    case eBuildingMode::scholarMonument:
+        id = eBuildingModeHelpers::toCommemorativeId(mode);
+        break;
+    case eBuildingMode::aphroditeMonument:
+    case eBuildingMode::apolloMonument:
+    case eBuildingMode::aresMonument:
+    case eBuildingMode::artemisMonument:
+    case eBuildingMode::athenaMonument:
+    case eBuildingMode::atlasMonument:
+    case eBuildingMode::demeterMonument:
+    case eBuildingMode::dionysusMonument:
+    case eBuildingMode::hadesMonument:
+    case eBuildingMode::hephaestusMonument:
+    case eBuildingMode::heraMonument:
+    case eBuildingMode::hermesMonument:
+    case eBuildingMode::poseidonMonument:
+    case eBuildingMode::zeusMonument: {
+        const auto gt = eBuildingModeHelpers::toGodType(mode);
+        id = static_cast<int>(gt);
+    } break;
+    default:
+        break;
+    }
+
+    return availableBuilding(type, id);
+}
+
+bool eBoardCity::availableBuilding(const eBuildingType type,
+                                   const int id) const {
+    switch(type) {
+    case eBuildingType::chariotVendor:
+    case eBuildingType::chariotFactory: {
+        if(!mAtlantean) return false;
+    } break;
+    case eBuildingType::horseTrainer: {
+        if(mAtlantean) return false;
+    } break;
+    default:
+        break;
+    }
+
+    return mAvailableBuildings.available(type, id);
+}
+
+void eBoardCity::built(const eBuildingType type,
+                       const int id) {
+    mAvailableBuildings.built(type, id);
+    mBoard.updateButtonsVisibility();
+}
+
+void eBoardCity::destroyed(const eBuildingType type,
+                           const int id) {
+    if(!mBoard.registerBuildingsEnabled()) return;
+    mAvailableBuildings.destroyed(type, id);
+    mBoard.updateButtonsVisibility();
+}
+
+void eBoardCity::allow(const eBuildingType type,
+                       const int id) {
+    mAvailableBuildings.allow(type, id);
+    mBoard.updateButtonsVisibility();
+}
+
+void eBoardCity::disallow(const eBuildingType type,
+                          const int id) {
+    mAvailableBuildings.disallow(type, id);
+    mBoard.updateButtonsVisibility();
+}
+
 void eBoardCity::setManTowers(const bool m) {
     mManTowers = m;
 }
@@ -189,6 +460,22 @@ bool eBoardCity::isShutDown(const eBuildingType type) const {
         if(!sd) return false;
     }
     return true;
+}
+
+void eBoardCity::incDistributeEmployees(const int by) {
+    const int employmentUpdateWait = 5678;
+    mEmploymentUpdateWait += by;
+    if(mEmploymentUpdateWait > employmentUpdateWait) {
+        if(mEmploymentUpdateScheduled) {
+            mEmploymentUpdateWait = 0;
+            distributeEmployees();
+        }
+    }
+}
+
+void eBoardCity::incPopulation(const int by) {
+    mPopData.incPopulation(by);
+    mEmploymentUpdateScheduled = true;
 }
 
 void eBoardCity::addShutDown(const eResourceType type) {
@@ -318,6 +605,71 @@ eBuilding* eBoardCity::randomBuilding(const eBuildingValidator& v) const {
     return nullptr;
 }
 
+double coverageMultiplier(const int pop) {
+    if(pop < 250) return 0.125;
+    else if(pop < 500) return 0.25;
+    else if(pop < 1000) return 0.375;
+    else return 0.5;
+}
+
+double eBoardCity::coverageMultiplier() const {
+    const int pop = mPopData.population();
+    return ::coverageMultiplier(pop);
+}
+
+double eBoardCity::winningChance(const eGames game) const {
+    int coverage = 0;
+    switch(game) {
+    case eGames::isthmian:
+        coverage = mPhilosophyCoverage;
+        break;
+    case eGames::nemean:
+        coverage = mAthleticsCoverage;
+        break;
+    case eGames::pythian:
+        coverage = mDramaCoverage;
+        break;
+    case eGames::olympian:
+        coverage = mAllDiscCoverage;
+        break;
+    }
+
+    const double mult = coverageMultiplier();
+
+    if(mult*coverage < 15) {
+        return 0.;
+    } else {
+        const double coveragef = coverage/100.;
+        const double chance = mult*coveragef*coveragef;
+        return chance;
+    }
+}
+
+void eBoardCity::updateResources() {
+    for(auto& r : mResources) {
+        int& count = r.second;
+        count = 0;
+        const auto type = r.first;
+        for(const auto s : mStorBuildings) {
+            count += s->count(type);
+        }
+    }
+}
+
+int eBoardCity::resourceCount(const eResourceType type) const {
+    if(type == eResourceType::drachmas) {
+        const auto p = owningPlayer();
+        if(p) return p->drachmas();
+        return 0;
+    }
+    int result = 0;
+    for(auto& r : mResources) {
+        if(!static_cast<bool>(r.first & type)) continue;
+        result += r.second;
+    }
+    return result;
+}
+
 int eBoardCity::takeResource(const eResourceType type, const int count) {
     if(type == eResourceType::drachmas) {
         const auto p = owningPlayer();
@@ -348,6 +700,75 @@ int eBoardCity::takeResource(const eResourceType type, const int count) {
         return true;
     });
     return count - r;
+}
+
+int eBoardCity::addResource(const eResourceType type, const int count) {
+    if(type == eResourceType::drachmas) {
+        const auto p = owningPlayer();
+        if(p) p->incDrachmas(count);
+        return count;
+    }
+    int rem = count;
+    using eValidator = std::function<bool(eStorageBuilding*)>;
+    const auto addFunc = [&](const eValidator& v) {
+        if(rem <= 0) return;
+        for(const auto s : mStorBuildings) {
+            if(!v(s)) continue;
+            const int c = s->add(type, rem);
+            rem -= c;
+            if(rem <= 0) break;
+        }
+    };
+    addFunc([&](eStorageBuilding* const s) {
+        return s->get(type);
+    });
+    addFunc([&](eStorageBuilding* const s) {
+        (void)s;
+        return true;
+    });
+    return count - rem;
+}
+
+int eBoardCity::spaceForResource(const eResourceType type) const {
+    if(type == eResourceType::drachmas) {
+        return __INT_MAX__/2;
+    }
+    int r = 0;
+    for(const auto s : mStorBuildings) {
+        r += s->spaceLeft(type);
+    }
+    return r;
+}
+
+int eBoardCity::maxSingleSpaceForResource(
+        const eResourceType type,
+        eStorageBuilding** b) const {
+    *b = nullptr;
+    int r = 0;
+    for(const auto s : mStorBuildings) {
+        const int ss = s->spaceLeft(type);
+        if(ss > r) {
+            *b = s;
+            r = ss;
+        }
+    }
+    return r;
+}
+
+int eBoardCity::maxSanctuarySpaceForResource(
+        eSanctuary** b) const {
+    *b = nullptr;
+    int r = 0;
+    for(const auto s : mSanctuaries) {
+        int ss = s->spaceLeft(eResourceType::wood);
+        ss += s->spaceLeft(eResourceType::marble);
+        ss += s->spaceLeft(eResourceType::sculpture);
+        if(ss > r) {
+            *b = s;
+            r = ss;
+        }
+    }
+    return r;
 }
 
 void eBoardCity::killCommonFolks(int toKill) {
@@ -638,4 +1059,45 @@ eBoardPlayer* eBoardCity::owningPlayer() const {
     const auto pid = mBoard.cityIdToPlayerId(mId);
     const auto p = mBoard.boardPlayerWithId(pid);
     return p;
+}
+
+int eBoardCity::eliteHouses() const {
+    int r = 0;
+    for(const auto b : mTimedBuildings) {
+        const auto bt = b->type();
+        if(bt == eBuildingType::eliteHousing) r++;
+    }
+    return r;
+}
+
+eSanctuary* eBoardCity::sanctuary(const eGodType god) const {
+    for(const auto s : mSanctuaries) {
+        if(s->godType() == god) return s;
+    }
+    return nullptr;
+}
+
+eHerosHall* eBoardCity::heroHall(const eHeroType hero) const {
+    for(const auto h : mHeroHalls) {
+        if(h->heroType() == hero) return h;
+    }
+    return nullptr;
+}
+
+int eBoardCity::countBanners(const eBannerType bt) const {
+    int c = 0;
+    for(const auto& bn : mSoldierBanners) {
+        if(bn->type() != bt) continue;
+        c++;
+    }
+    return c;
+}
+
+int eBoardCity::countSoldiers(const eBannerType bt) const {
+    int c = 0;
+    for(const auto& bn : mSoldierBanners) {
+        if(bn->type() != bt) continue;
+        c += bn->count();
+    }
+    return c;
 }

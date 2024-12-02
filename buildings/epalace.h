@@ -7,7 +7,8 @@ class ePalaceTile;
 
 class ePalace : public eBuilding {
 public:
-    ePalace(eGameBoard& board, const bool r);
+    ePalace(eGameBoard& board, const bool r,
+            const eCityId cid);
     ~ePalace();
 
     void erase() override;

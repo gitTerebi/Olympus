@@ -6,9 +6,10 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eTriremeWharf::eTriremeWharf(eGameBoard& board, const eOrientation o) :
+eTriremeWharf::eTriremeWharf(eGameBoard& board, const eOrientation o,
+                             const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::triremeWharf,
-                       3, 3, 100),
+                       3, 3, 100, cid),
     mO(o) {
     eGameTextures::loadTriremeWharf();
     setStashable(eResourceType::wood | eResourceType::armor);

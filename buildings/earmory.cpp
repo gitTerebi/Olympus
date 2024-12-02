@@ -3,7 +3,8 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eArmory::eArmory(eGameBoard& board) :
+eArmory::eArmory(eGameBoard& board,
+                 const eCityId cid) :
     eProcessingBuilding(board,
                         &eBuildingTextures::fArmory,
                         -1.75, -3.15,
@@ -11,6 +12,7 @@ eArmory::eArmory(eGameBoard& board) :
                         eBuildingType::armory, 2, 2, 18,
                         eResourceType::bronze,
                         eResourceType::armor, 2,
-                        eNumbers::sArmoryProcessingPeriod) {
+                        eNumbers::sArmoryProcessingPeriod,
+                        cid) {
     eGameTextures::loadArmory();
 }

@@ -5,7 +5,7 @@
 
 class eWinery : public eProcessingBuilding {
 public:
-    eWinery(eGameBoard& board);
+    eWinery(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EWINERY_H

@@ -6,8 +6,9 @@ eSanctBuilding::eSanctBuilding(const eSanctCost& cost,
                                const int maxProgress,
                                eGameBoard& board,
                                const eBuildingType type,
-                               const int sw, const int sh) :
-    eBuilding(board, type, sw, sh),
+                               const int sw, const int sh,
+                               const eCityId cid) :
+    eBuilding(board, type, sw, sh, cid),
     mMaxProgress(maxProgress),
     mCost(cost) {
     setOverlayEnabledFunc([]() { return true; });

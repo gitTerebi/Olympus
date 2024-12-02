@@ -6,9 +6,10 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eUrchinQuay::eUrchinQuay(eGameBoard& board, const eOrientation o) :
+eUrchinQuay::eUrchinQuay(eGameBoard& board, const eOrientation o,
+                         const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::urchinQuay,
-                                 2, 2, 10, eResourceType::urchin),
+                                 2, 2, 10, eResourceType::urchin, cid),
     mO(o) {
     eGameTextures::loadUrchinQuay();
 }

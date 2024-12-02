@@ -7,8 +7,10 @@
 
 #include "ehorseranch.h"
 
-eHorseRanchEnclosure::eHorseRanchEnclosure(eGameBoard& board) :
-    eBuildingWithResource(board, eBuildingType::horseRanchEnclosure, 4, 4) {
+eHorseRanchEnclosure::eHorseRanchEnclosure(eGameBoard& board,
+                                           const eCityId cid) :
+    eBuildingWithResource(board, eBuildingType::horseRanchEnclosure, 4, 4,
+                          cid) {
     setEnabled(true);
 }
 

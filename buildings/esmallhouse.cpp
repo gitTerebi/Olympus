@@ -14,9 +14,9 @@
 #include "elanguage.h"
 #include "enumbers.h"
 
-eSmallHouse::eSmallHouse(eGameBoard& board) :
+eSmallHouse::eSmallHouse(eGameBoard& board, const eCityId cid) :
     eHouseBase(board, eBuildingType::commonHouse, 2, 2,
-               {8, 16, 24, 32, 40, 48, 60}) {
+               {8, 16, 24, 32, 40, 48, 60}, cid) {
     eGameTextures::loadCommonHouse();
 }
 
@@ -91,12 +91,14 @@ int eSmallHouse::provide(const eProvide p, const int n) {
         auto& b = getBoard();
         const auto p = b.palace();
         if(!p || p->cursed()) return 0;
-        const auto diff = b.difficulty();
+        const auto cid = cityId();
+        const auto pid = playerId();
+        const auto diff = b.difficulty(pid);
         const int taxMult = eDifficultyHelpers::taxMultiplier(
                                 diff, type(), mLevel);
-        const double tax = mPeople * taxMult * b.taxRateF();
+        const double tax = mPeople * taxMult * b.taxRateF(cid);
         const int iTax = std::round(tax);
-        b.payTaxes(iTax, mPeople);
+        b.payTaxes(cid, iTax, mPeople);
         mPaidTaxes = iTax;
         return iTax;
     }
@@ -169,7 +171,8 @@ void eSmallHouse::timeChanged(const int by) {
         const double pbi = eNumbers::sHousePlagueRiskPeriodBaseIncrement;
         const double pe = eNumbers::sHousePlagueRiskPeriodExponent;
         const int m4 = pm*pow(pbi + mHygiene, pe);
-        const auto diff = b.difficulty();
+        const auto pid = playerId();
+        const auto diff = b.difficulty(pid);
         const int plagueRisk = eDifficultyHelpers::plagueRisk(diff);
         if(plagueRisk && by) {
             const int plaguePeriod = m4/(by*plagueRisk);
@@ -184,7 +187,8 @@ void eSmallHouse::timeChanged(const int by) {
         }
     }
 
-    const auto s = b.sanctuary(eGodType::dionysus);
+    const auto cid = cityId();
+    const auto s = b.sanctuary(cid, eGodType::dionysus);
     const bool dion = s && s->finished();
     if(mDisgruntled) {
         if(dion) {
@@ -200,7 +204,8 @@ void eSmallHouse::timeChanged(const int by) {
         const double pbi = eNumbers::sHouseDisgruntledRiskPeriodBaseIncrement;
         const double pe = eNumbers::sHouseDisgruntledRiskPeriodExponent;
         const int m4 = pm*pow(pbi + mSatisfaction, pe);
-        const auto diff = b.difficulty();
+        const auto pid = playerId();
+        const auto diff = b.difficulty(pid);
         const int crimeRisk = eDifficultyHelpers::crimeRisk(diff);
         if(crimeRisk && by) {
             const int crimePeriod = m4/(by*crimeRisk);
@@ -211,14 +216,15 @@ void eSmallHouse::timeChanged(const int by) {
     }
 
     {
-        const auto s = b.sanctuary(eGodType::aphrodite);
+        const auto s = b.sanctuary(cid, eGodType::aphrodite);
         const bool aphr = s && s->finished();
         if(!aphr) {
             const double pm = eNumbers::sHouseLeaveRiskPeriodMultiplier;
             const double pbi = eNumbers::sHouseLeaveRiskPeriodBaseIncrement;
             const double pe = eNumbers::sHouseLeaveRiskPeriodExponent;
             const int m4 = pm*pow(pbi + mSatisfaction, pe);
-            const auto diff = b.difficulty();
+            const auto pid = playerId();
+            const auto diff = b.difficulty(pid);
             const int leaveRisk = eDifficultyHelpers::crimeRisk(diff);
             if(leaveRisk && by) {
                 const int leavePeriod = m4/(by*leaveRisk);
@@ -439,12 +445,15 @@ void eSmallHouse::updateSatisfaction() {
     mWaterSatisfaction = (weight*mWaterSatisfaction + waterSat)/div;
 
     auto& board = getBoard();
-    const auto empData = board.employmentData();
-    const int workSat = 100*std::pow(empData.employedFraction(), 4);
+    const auto cid = cityId();
+    const auto empData = board.employmentData(cid);
+    const int ef = empData ? empData->employedFraction() : 0;
+    const int workSat = 100*std::pow(ef, 4);
     mWorkSatisfaction = (weight*mWorkSatisfaction + workSat)/div;
 
-    const auto taxRate = board.taxRate();
-    const auto diff = board.difficulty();
+    const auto taxRate = board.taxRate(cid);
+    const auto pid = playerId();
+    const auto diff = board.difficulty(pid);
     const int ts = eDifficultyHelpers::taxSentiment(diff, taxRate);
     const int taxSatIfPaid = std::round(100.*(ts + 7.)/14.);
     const int taxSat = mPaidTaxesLastMonth ? taxSatIfPaid : 100;

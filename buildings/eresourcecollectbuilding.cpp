@@ -20,9 +20,10 @@ eResourceCollectBuilding::eResourceCollectBuilding(
         const stdsptr<eHasResourceObject>& hr,
         const int sw, const int sh,
         const int maxEmployees,
-        const eResourceType resType) :
+        const eResourceType resType,
+        const eCityId cid) :
     eResourceCollectBuildingBase(board, type, sw, sh,
-                                 maxEmployees, resType),
+                                 maxEmployees, resType, cid),
     mCharGenerator(charGen),
     mTextures(eGameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),
@@ -129,7 +130,8 @@ void eResourceCollectBuilding::timeChanged(const int by) {
                 const auto rt = resourceType();
                 if(rt == eResourceType::silver) {
                     auto& brd = getBoard();
-                    brd.incDrachmas(eNumbers::sMintDrachmasPerSilver);
+                    const auto pid = playerId();
+                    brd.incDrachmas(pid, eNumbers::sMintDrachmasPerSilver);
                     mRawCount--;
                 } else {
                     const int c = eResourceCollectBuilding::add(rt, 1);

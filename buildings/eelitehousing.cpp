@@ -7,9 +7,10 @@
 
 #include "buildings/epalace.h"
 
-eEliteHousing::eEliteHousing(eGameBoard& board) :
+eEliteHousing::eEliteHousing(eGameBoard& board,
+                             const eCityId cid) :
     eHouseBase(board, eBuildingType::eliteHousing,
-               4, 4, {6, 6, 10, 16, 20}) {}
+               4, 4, {6, 6, 10, 16, 20}, cid) {}
 
 eTextureSpace eEliteHousing::getTextureSpace(
         const int tx, const int ty,
@@ -186,10 +187,11 @@ int eEliteHousing::provide(const eProvide p, const int n) {
         auto& b = getBoard();
         const auto p = b.palace();
         if(!p || p->cursed()) return 0;
-        const auto diff = b.difficulty();
+        const auto cid = cityId();
+        const auto pid = playerId();
+        const auto diff = b.difficulty(pid);
         const int taxMult = eDifficultyHelpers::taxMultiplier(
                                 diff, type(), mLevel);
-        const auto cid = cityId();
         const double tax = mPeople * taxMult * b.taxRateF(cid);
         const int iTax = std::round(tax);
         b.payTaxes(cid, iTax, mPeople);

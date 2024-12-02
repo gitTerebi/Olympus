@@ -13,7 +13,7 @@
 #include "eiteratesquare.h"
 #include "engine/egameboard.h"
 
-eMasonryShop::eMasonryShop(eGameBoard& board) :
+eMasonryShop::eMasonryShop(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fMasonryShop,
                              0, 0, nullptr,
@@ -21,7 +21,7 @@ eMasonryShop::eMasonryShop(eGameBoard& board) :
                              [this]() { return e::make_shared<eMarbleMiner>(getBoard()); },
                              eBuildingType::masonryShop,
                              eHasResourceObject::sCreate(eHasResourceObjectType::marble),
-                             2, 2, 15, eResourceType::marble) {
+                             2, 2, 15, eResourceType::marble, cid) {
     eGameTextures::loadMasonryShop();
     setAddResource(false);
     setRawInc(8);

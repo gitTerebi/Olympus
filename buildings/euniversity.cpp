@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eUniversity::eUniversity(eGameBoard& board) :
+eUniversity::eUniversity(eGameBoard& board, const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fUniversity,
                           -3.25, -4.00,
@@ -11,6 +11,6 @@ eUniversity::eUniversity(eGameBoard& board) :
                             eBuildingType::observatory},
                            {eCharacterType::curator,
                             eBuildingType::museum}},
-                          eBuildingType::university, 3, 3, 12) {
+                          eBuildingType::university, 3, 3, 12, cid) {
     eGameTextures::loadUniversity();
 }

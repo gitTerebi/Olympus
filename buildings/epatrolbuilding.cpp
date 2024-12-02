@@ -13,8 +13,10 @@ ePatrolBuilding::ePatrolBuilding(eGameBoard& board,
                                  const eActGenerator& actGen,
                                  const eBuildingType type,
                                  const int sw, const int sh,
-                                 const int maxEmployees) :
-    ePatrolBuildingBase(board, charGen, actGen, type, sw, sh, maxEmployees),
+                                 const int maxEmployees,
+                                 const eCityId cid) :
+    ePatrolBuildingBase(board, charGen, actGen, type,
+                        sw, sh, maxEmployees, cid),
     mBaseTex(baseTex), mOverlays(overlays),
     mOverlayX(overlayX), mOverlayY(overlayY) {
     setOverlayEnabledFunc([this]() {
@@ -30,10 +32,11 @@ ePatrolBuilding::ePatrolBuilding(eGameBoard& board,
                                  const eCharGenerator& charGen,
                                  const eBuildingType type,
                                  const int sw, const int sh,
-                                 const int maxEmployees) :
+                                 const int maxEmployees,
+                                 const eCityId cid) :
     ePatrolBuilding(board, baseTex, overlayX, overlayY,
                     overlays, charGen, sDefaultActGenerator,
-                    type, sw, sh, maxEmployees) {
+                    type, sw, sh, maxEmployees, cid) {
 
 }
 

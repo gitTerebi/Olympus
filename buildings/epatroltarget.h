@@ -13,7 +13,8 @@ public:
                   const eCharGenerator& charGen,
                   const eBuildingType type,
                   const int sw, const int sh,
-                  const int maxEmployees);
+                  const int maxEmployees,
+                  const eCityId cid);
 
     bool available() const { return mAvailable > 0; }
 

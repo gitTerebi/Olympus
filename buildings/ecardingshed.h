@@ -7,7 +7,7 @@ class eShepherd;
 
 class eCardingShed : public eShepherBuildingBase {
 public:
-    eCardingShed(eGameBoard& board);
+    eCardingShed(eGameBoard& board, const eCityId cid);
 
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 private:

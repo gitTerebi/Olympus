@@ -6,8 +6,8 @@
 #include "egatehouse.h"
 #include "elanguage.h"
 
-eRoad::eRoad(eGameBoard& board) :
-    eBuilding(board, eBuildingType::road, 1, 1) {}
+eRoad::eRoad(eGameBoard& board, const eCityId cid) :
+    eBuilding(board, eBuildingType::road, 1, 1, cid) {}
 
 void eRoad::erase() {
     if(isBridge()) {

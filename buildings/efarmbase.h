@@ -10,7 +10,8 @@ public:
     eFarmBase(eGameBoard& board,
               const eBuildingType type,
               const int sw, const int sh,
-              const eResourceType resType);
+              const eResourceType resType,
+              const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;

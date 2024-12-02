@@ -9,7 +9,7 @@ class eAgoraBase;
 
 class eRoad : public eBuilding {
 public:
-    eRoad(eGameBoard& board);
+    eRoad(eGameBoard& board, const eCityId cid);
 
     void erase();
 

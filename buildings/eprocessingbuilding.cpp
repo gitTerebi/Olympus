@@ -18,8 +18,10 @@ eProcessingBuilding::eProcessingBuilding(
         const eResourceType rawMaterial,
         const eResourceType product,
         const int rawUse,
-        const int time) :
-    eResourceBuildingBase(board, type, sw, sh, maxEmployees, product),
+        const int time,
+        const eCityId cid) :
+    eResourceBuildingBase(board, type, sw, sh,
+                          maxEmployees, product, cid),
     mTextures(eGameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),
     mOverlayX(overlayX), mOverlayY(overlayY),

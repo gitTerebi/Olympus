@@ -5,7 +5,7 @@
 
 class eRuins : public eBuilding {
 public:
-    eRuins(eGameBoard& board);
+    eRuins(eGameBoard& board, const eCityId cid);
 
     stdsptr<eTexture> getTexture(const eTileSize size) const override;
 

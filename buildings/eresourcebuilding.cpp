@@ -31,8 +31,9 @@ int resourceTypeToRipePeriod(const eResourceBuildingType r) {
 }
 
 eResourceBuilding::eResourceBuilding(
-        eGameBoard& board, const eResourceBuildingType type) :
-    eBuilding(board, resourceTypeToBuildingType(type), 1, 1),
+        eGameBoard& board, const eResourceBuildingType type,
+        const eCityId cid) :
+    eBuilding(board, resourceTypeToBuildingType(type), 1, 1, cid),
     mType(type), mRipePeriod(resourceTypeToRipePeriod(type)) {
     switch(type) {
     case eResourceBuildingType::oliveTree:

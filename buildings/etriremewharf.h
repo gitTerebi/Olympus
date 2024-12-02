@@ -7,7 +7,8 @@ class eTrireme;
 
 class eTriremeWharf : public eEmployingBuilding {
 public:
-    eTriremeWharf(eGameBoard& board, const eOrientation o);
+    eTriremeWharf(eGameBoard& board, const eOrientation o,
+                  const eCityId cid);
     ~eTriremeWharf();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

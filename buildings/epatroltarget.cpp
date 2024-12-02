@@ -18,12 +18,13 @@ ePatrolTarget::ePatrolTarget(eGameBoard& board,
                              const eCharGenerator& charGen,
                              const eBuildingType type,
                              const int sw, const int sh,
-                             const int maxEmployees) :
+                             const int maxEmployees,
+                             const eCityId cid) :
     ePatrolBuilding(board, baseTex,
                     overlayX, overlayY,
                     overlays, charGen,
                     type, sw, sh,
-                    maxEmployees),
+                    maxEmployees, cid),
     mCharGen(charGen) {}
 
 void ePatrolTarget::arrived() {

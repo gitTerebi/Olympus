@@ -37,8 +37,10 @@
 eSanctuary::eSanctuary(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
-                       const int maxEmployees) :
-    eEmployingBuilding(board, type, sw, sh, maxEmployees) {
+                       const int maxEmployees,
+                       const eCityId cid) :
+    eEmployingBuilding(board, type, sw, sh,
+                       maxEmployees, cid) {
     eGameTextures::loadSanctuary();
     switch(godType()) {
     case eGodType::aphrodite:

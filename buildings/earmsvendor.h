@@ -5,7 +5,7 @@
 
 class eArmsVendor : public eVendor {
 public:
-    eArmsVendor(eGameBoard& board);
+    eArmsVendor(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EARMSVENDOR_H

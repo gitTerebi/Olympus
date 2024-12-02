@@ -26,7 +26,8 @@ public:
                          const eResourceType resType,
                          const eCharacterType animalType,
                          const int sw, const int sh,
-                         const int maxEmployees);
+                         const int maxEmployees,
+                         const eCityId cid);
     ~eShepherBuildingBase();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

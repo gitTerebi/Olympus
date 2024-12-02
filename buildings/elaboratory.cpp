@@ -3,12 +3,13 @@
 #include "characters/einventor.h"
 #include "textures/egametextures.h"
 
-eLaboratory::eLaboratory(eGameBoard& board) :
+eLaboratory::eLaboratory(eGameBoard& board,
+                         const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fLaboratory,
                   -5.55, -7.48,
                   &eBuildingTextures::fLaboratoryOverlay,
                   [this]() { return e::make_shared<eInventor>(getBoard()); },
-                  eBuildingType::laboratory, 4, 4, 9) {
+                  eBuildingType::laboratory, 4, 4, 9, cid) {
     eGameTextures::loadLaboratory();
 }

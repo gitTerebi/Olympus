@@ -5,7 +5,7 @@
 
 class eTheater : public ePatrolTarget {
 public:
-    eTheater(eGameBoard& board);
+    eTheater(eGameBoard& board, const eCityId cid);
 };
 
 #endif // ETHEATER_H

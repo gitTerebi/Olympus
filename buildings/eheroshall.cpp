@@ -434,20 +434,22 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     const int tx = t->x();
     const int ty = t->y();
     const auto& board = getBoard();
+    const auto cid = cityId();
+    const auto pid = playerId();
     int& sc = hr.fStatusCount;
     switch(hr.fType) {
     case eHeroRequirementType::armor:
-        sc = board.resourceCount(eResourceType::armor);
+        sc = board.resourceCount(cid, eResourceType::armor);
         return;
     case eHeroRequirementType::hoplite: {
-        sc = board.countBanners(eBannerType::hoplite, cityId());
+        sc = board.countBanners(eBannerType::hoplite, cid);
     } break;
     case eHeroRequirementType::sanctuaryAthena: {
-        const auto sts = board.sanctuary(eGodType::athena);
+        const auto sts = board.sanctuary(cid, eGodType::athena);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::noUnrest: {
-        const int u = board.unrest();
+        const int u = board.unrest(cid);
         if(u == 0) {
             sc = 5;
         } else if(u < 2) {
@@ -463,7 +465,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         }
     } break;
     case eHeroRequirementType::wine:
-        sc = board.resourceCount(eResourceType::wine);
+        sc = board.resourceCount(cid, eResourceType::wine);
         break;
 
     case eHeroRequirementType::hallCultureAccess:
@@ -473,52 +475,52 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc += mAthletes > 0 ? 1 : 0;
         break;
     case eHeroRequirementType::panHellenicGameWin:
-        sc = board.wonGames() > 0 ? 1 : 0;
+        sc = board.wonGames(cid) > 0 ? 1 : 0;
         break;
     case eHeroRequirementType::cityGymnasiumAccess: {
-        const int ac = board.athleticsLearningCoverage();
+        const int ac = board.athleticsLearningCoverage(cid);
         sc = ac/24;
     } break;
     case eHeroRequirementType::people:
         sc = board.population();
         break;
     case eHeroRequirementType::horsemen: {
-        sc = board.countBanners(eBannerType::horseman, cityId());
+        sc = board.countBanners(eBannerType::horseman, cid);
     } break;
     case eHeroRequirementType::horses:
         sc = board.horses();
         break;
     case eHeroRequirementType::food:
-        sc = board.resourceCount(eResourceType::food);
+        sc = board.resourceCount(cid, eResourceType::food);
         break;
 
     case eHeroRequirementType::popularity: {
-        const int p = board.popularity();
+        const int p = board.popularity(cid);
         sc = p/10;
     } break;
     case eHeroRequirementType::health: {
-        const int p = board.health();
+        const int p = board.health(cid);
         sc = p/7;
     } break;
     case eHeroRequirementType::eliteHouses:
-        sc = board.eliteHouses();
+        sc = board.eliteHouses(cid);
         break;
     case eHeroRequirementType::oil:
-        sc = board.resourceCount(eResourceType::oliveOil);
+        sc = board.resourceCount(cid, eResourceType::oliveOil);
         break;
 
     case eHeroRequirementType::sanctuaryHades: {
-        const auto sts = board.sanctuary(eGodType::hades);
+        const auto sts = board.sanctuary(cid, eGodType::hades);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::drachmas:
-        sc = board.drachmas();
+        sc = board.drachmas(pid);
         break;
     case eHeroRequirementType::fleece:
-        sc = board.resourceCount(eResourceType::fleece);
+        sc = board.resourceCount(cid, eResourceType::fleece);
         break;
     case eHeroRequirementType::sculpture:
-        sc = board.resourceCount(eResourceType::sculpture);
+        sc = board.resourceCount(cid, eResourceType::sculpture);
         break;
 
     case eHeroRequirementType::nearPalace: {
@@ -584,37 +586,38 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = r ? 0 : 1;
     } break;
     case eHeroRequirementType::marble:
-        sc = board.resourceCount(eResourceType::marble);
+        sc = board.resourceCount(cid, eResourceType::marble);
         break;
 
     case eHeroRequirementType::sanctuaryArtemis: {
-        const auto sts = board.sanctuary(eGodType::artemis);
+        const auto sts = board.sanctuary(cid, eGodType::artemis);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::stadium:
         sc = board.hasStadium() ? 1 : 0;
         break;
     case eHeroRequirementType::meat:
-        sc = board.resourceCount(eResourceType::meat);
+        sc = board.resourceCount(cid, eResourceType::meat);
         break;
     case eHeroRequirementType::wood:
-        sc = board.resourceCount(eResourceType::wood);
+        sc = board.resourceCount(cid, eResourceType::wood);
         break;
     case eHeroRequirementType::soldiers:
         sc = board.banners().size();
         break;
     case eHeroRequirementType::taxes: {
-        const int tc = board.taxesCoverage();
+        const int tc = board.taxesCoverage(cid);
         sc = tc/22;
     } break;
     case eHeroRequirementType::bronze:
-        sc = board.resourceCount(eResourceType::bronze);
+        sc = board.resourceCount(cid, eResourceType::bronze);
         break;
     }
 }
 
-eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board) :
-    eBuilding(board, sHeroTypeToHallType(type), 4, 4),
+eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
+                       const eCityId cid) :
+    eBuilding(board, sHeroTypeToHallType(type), 4, 4, cid),
     mType(type) {
     eGameTextures::loadHerosHall();
     board.registerHeroHall(this);
@@ -684,7 +687,7 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board) :
 
 eHerosHall::~eHerosHall() {
     auto& board = getBoard();
-    board.destroyed(type());
+    board.destroyed(cityId(), type());
     board.unregisterHeroHall(this);
     if(mHero) mHero->kill();
 }

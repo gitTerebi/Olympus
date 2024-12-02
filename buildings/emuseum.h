@@ -5,7 +5,7 @@
 
 class eMuseum : public ePatrolTarget {
 public:
-    eMuseum(eGameBoard& board);
+    eMuseum(eGameBoard& board, const eCityId cid);
     ~eMuseum();
 };
 

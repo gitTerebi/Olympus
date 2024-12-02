@@ -2011,7 +2011,8 @@ void eBuilding::incTime(const int by) {
             mMaintance = std::max(0, mMaintance - 1);
         }
     } else if(!isEmptyHome()) {
-        const auto diff = b.difficulty();
+        const auto pid = playerId();
+        const auto diff = b.difficulty(pid);
         const int fireRisk = eDifficultyHelpers::fireRisk(diff, mType);
         if(fireRisk && by && sFlammable(type())) {
             const double pm = eNumbers::sFireRiskPeriodMultiplier;
@@ -2098,7 +2099,8 @@ void eBuilding::collapse() {
         const auto terrain = t->terrain();
         const bool r = static_cast<bool>(eTerrain::buildable & terrain);
         if(!r) continue;
-        const auto ruins = e::make_shared<eRuins>(b);
+        const auto cid = t->cityId();
+        const auto ruins = e::make_shared<eRuins>(b, cid);
         ruins->setWasType(tp);
         ruins->setOnFire(onFire);
         ruins->setCenterTile(t);

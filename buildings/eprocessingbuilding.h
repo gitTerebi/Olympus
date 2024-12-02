@@ -21,7 +21,8 @@ public:
                         const eResourceType rawMaterial,
                         const eResourceType product,
                         const int rawUse,
-                        const int time);
+                        const int time,
+                        const eCityId cid);
     ~eProcessingBuilding();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

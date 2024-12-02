@@ -7,9 +7,10 @@
 
 #include <algorithm>
 
-eHuntingLodge::eHuntingLodge(eGameBoard& board) :
+eHuntingLodge::eHuntingLodge(eGameBoard& board,
+                             const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::huntingLodge,
-                          2, 2, 8, eResourceType::meat) {
+                          2, 2, 8, eResourceType::meat, cid) {
     eGameTextures::loadHuntingLodge();
 }
 

@@ -2,13 +2,14 @@
 
 #include "textures/egametextures.h"
 
-eDramaSchool::eDramaSchool(eGameBoard& board) :
+eDramaSchool::eDramaSchool(eGameBoard& board,
+                           const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fDramaSchool,
                           -3.08, -4.51,
                           &eBuildingTextures::fDramaSchoolOverlay,
                           {{eCharacterType::actor,
                             eBuildingType::theater}},
-                          eBuildingType::dramaSchool, 3, 3, 10) {
+                          eBuildingType::dramaSchool, 3, 3, 10, cid) {
     eGameTextures::loadDramaSchool();
 }

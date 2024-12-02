@@ -6,11 +6,13 @@
 
 #include "textures/egametextures.h"
 
-eStadium::eStadium(eGameBoard& board, const bool r) :
+eStadium::eStadium(eGameBoard& board, const bool r,
+                   const eCityId cid) :
     ePatrolTarget(board,
                   nullptr, 0, 0, eOverlays(),
                   [this]() { return e::make_shared<eCompetitor>(getBoard()); },
-                  eBuildingType::stadium, r ? 5 : 10, r ? 10 : 5, 45),
+                  eBuildingType::stadium, r ? 5 : 10, r ? 10 : 5,
+                  45, cid),
     mRotated(r) {
     eGameTextures::loadStadium();
     board.registerStadium(this);

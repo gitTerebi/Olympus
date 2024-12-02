@@ -10,7 +10,7 @@ stdsptr<eResourceCollectorBase> dairyCharGenerator(eGameBoard& board) {
     return e::make_shared<eGoatherd>(board);
 }
 
-eDairy::eDairy(eGameBoard& board) :
+eDairy::eDairy(eGameBoard& board, const eCityId cid) :
     eShepherBuildingBase(board, &eBuildingTextures::fDairy,
                          -1.35, -2.95,
                          &eBuildingTextures::fDairyOverlay,
@@ -18,7 +18,7 @@ eDairy::eDairy(eGameBoard& board) :
                          eBuildingType::dairy,
                          eResourceType::cheese,
                          eCharacterType::goat,
-                         2, 2, 8),
+                         2, 2, 8, cid),
     mTextures(eGameTextures::buildings())  {
     eGameTextures::loadDairy();
 }

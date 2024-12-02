@@ -4,9 +4,10 @@
 #include "textures/egametextures.h"
 #include "epalacetile.h"
 
-ePalace::ePalace(eGameBoard& board, const bool r) :
+ePalace::ePalace(eGameBoard& board, const bool r,
+                 const eCityId cid) :
     eBuilding(board, eBuildingType::palace,
-              r ? 4 : 8, r ? 8 : 4),
+              r ? 4 : 8, r ? 8 : 4, cid),
     mRotated(r) {
     eGameTextures::loadPalace();
     setEnabled(true);

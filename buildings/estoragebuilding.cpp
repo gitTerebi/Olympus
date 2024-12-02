@@ -8,8 +8,9 @@ eStorageBuilding::eStorageBuilding(eGameBoard& board,
                                    const int sw, const int sh,
                                    const int maxEmployees,
                                    const eResourceType canAccept,
+                                   const eCityId cid,
                                    const int spaceCount) :
-    eEmployingBuilding(board, type, sw, sh, maxEmployees),
+    eEmployingBuilding(board, type, sw, sh, maxEmployees, cid),
     mCanAccept(canAccept & board.supportedResources()),
     mSpaceCount(spaceCount) {
     const auto all = eResourceTypeHelpers::extractResourceTypes(mCanAccept);

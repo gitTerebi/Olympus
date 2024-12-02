@@ -22,7 +22,8 @@ public:
             const eOverlays& overlayTex2,
             const eBuildingType type,
             const int sw, const int sh,
-            const int maxEmployees);
+            const int maxEmployees,
+            const eCityId cid);
     ~eVendor();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

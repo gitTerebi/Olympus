@@ -5,7 +5,7 @@
 
 class eFoodVendor : public eVendor {
 public:
-    eFoodVendor(eGameBoard& board);
+    eFoodVendor(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EFOODVENDOR_H

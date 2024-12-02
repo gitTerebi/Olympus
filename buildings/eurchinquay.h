@@ -12,7 +12,8 @@ enum class eUrchinQuayState {
 
 class eUrchinQuay : public eResourceCollectBuildingBase {
 public:
-    eUrchinQuay(eGameBoard& board, const eOrientation o);
+    eUrchinQuay(eGameBoard& board, const eOrientation o,
+                const eCityId cid);
     ~eUrchinQuay();
 
     void timeChanged(const int by) override;

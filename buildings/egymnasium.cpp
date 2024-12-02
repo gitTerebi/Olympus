@@ -3,13 +3,13 @@
 #include "characters/egymnast.h"
 #include "textures/egametextures.h"
 
-eGymnasium::eGymnasium(eGameBoard& board) :
+eGymnasium::eGymnasium(eGameBoard& board, const eCityId cid) :
     ePatrolSourceBuilding(board,
                     &eBuildingTextures::fGymnasium,
                     -2.57, -4.57,
                     &eBuildingTextures::fGymnasiumOverlay,
                     {{eCharacterType::competitor, eBuildingType::stadium}},
-                    eBuildingType::gymnasium, 3, 3, 7,
+                    eBuildingType::gymnasium, 3, 3, 7, cid,
                     [this]() { return e::make_shared<eGymnast>(getBoard()); }) {
     eGameTextures::loadGymnasium();
 }

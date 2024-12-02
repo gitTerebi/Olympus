@@ -10,9 +10,11 @@
 
 #include <algorithm>
 
-eCorral::eCorral(eGameBoard& board) :
+eCorral::eCorral(eGameBoard& board,
+                 const eCityId cid) :
     eResourceBuildingBase(board, eBuildingType::corral,
-                          4, 4, 25, eResourceType::meat) {
+                          4, 4, 25, eResourceType::meat,
+                          cid) {
     eGameTextures::loadCorral();
 }
 

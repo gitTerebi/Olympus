@@ -5,7 +5,7 @@
 
 class eCarrotFarm : public eFarmBase {
 public:
-    eCarrotFarm(eGameBoard& board);
+    eCarrotFarm(eGameBoard& board, const eCityId cid);
 };
 
 #endif // ECARROTFARM_H

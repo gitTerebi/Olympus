@@ -3,13 +3,14 @@
 #include "characters/ecurator.h"
 #include "engine/egameboard.h"
 
-eMuseum::eMuseum(eGameBoard& board) :
+eMuseum::eMuseum(eGameBoard& board,
+                 const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fMuseum,
                   -11.55, -12.70,
                   &eBuildingTextures::fMuseumOverlay,
                   [this]() { return e::make_shared<eCurator>(getBoard()); },
-                  eBuildingType::museum, 6, 6, 50) {
+                  eBuildingType::museum, 6, 6, 50, cid) {
     eGameTextures::loadMuseum();
     board.registerMuseum(this);
 }

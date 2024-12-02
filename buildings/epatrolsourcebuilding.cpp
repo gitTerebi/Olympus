@@ -22,9 +22,10 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
                                              const eBuildingType type,
                                              const int sw, const int sh,
                                              const int maxEmployees,
+                                             const eCityId cid,
                                              const eCharGenerator& charGen) :
     ePatrolBuilding(board, baseTex,  overlayX, overlayY,
-                    overlays, charGen, type, sw, sh, maxEmployees),
+                    overlays, charGen, type, sw, sh, maxEmployees, cid),
     mTargets(targets) {
     for(const auto& t : mTargets) {
         (void)t;

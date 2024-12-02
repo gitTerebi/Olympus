@@ -3,6 +3,8 @@
 
 #include "ebuilding.h"
 
+class ePopulationData;
+
 enum class eHouseMissing {
     water,
     food,
@@ -21,7 +23,8 @@ public:
     eHouseBase(eGameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
-               const std::vector<int>& maxPeople);
+               const std::vector<int>& maxPeople,
+               const eCityId cid);
     ~eHouseBase();
 
     virtual eHouseMissing missing() const = 0;
@@ -76,6 +79,8 @@ protected:
     int mAthletes = 0;
     int mCompetitors = 0;
 private:
+    ePopulationData& popData();
+
     const std::vector<int> mMaxPeople;
 };
 

@@ -6,9 +6,11 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eFishery::eFishery(eGameBoard& board, const eOrientation o) :
+eFishery::eFishery(eGameBoard& board, const eOrientation o,
+                   const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::fishery,
-                                 2, 2, 10, eResourceType::fish),
+                                 2, 2, 10, eResourceType::fish,
+                                 cid),
     mO(o) {
     eGameTextures::loadFishery();
 }

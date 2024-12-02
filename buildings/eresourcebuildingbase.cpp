@@ -10,8 +10,10 @@ eResourceBuildingBase::eResourceBuildingBase(
         const eBuildingType type,
         const int sw, const int sh,
         const int maxEmployees,
-        const eResourceType resType) :
-    eEmployingBuilding(board, type, sw, sh, maxEmployees),
+        const eResourceType resType,
+        const eCityId cid) :
+    eEmployingBuilding(board, type, sw, sh,
+                       maxEmployees, cid),
     mResType(resType) {
 
 }

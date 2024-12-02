@@ -81,10 +81,7 @@
 #include "enumbers.h"
 
 eGameBoard::eGameBoard() :
-    mThreadPool(*this),
-    mHusbData(mPopData, *this),
-    mEmplData(mPopData, *this),
-    mEmplDistributor(mEmplData) {
+    mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
     for(const auto type : types) {
@@ -292,84 +289,54 @@ void eGameBoard::setButtonsVisUpdater(const eAction& u) {
     mButtonVisUpdater = u;
 }
 
-bool eGameBoard::supportsBuilding(const eBuildingMode mode) const {
-    const auto type = eBuildingModeHelpers::toBuildingType(mode);
-    int id = -1;
-    switch(mode) {
-    case eBuildingMode::populationMonument:
-    case eBuildingMode::victoryMonument:
-    case eBuildingMode::colonyMonument:
-    case eBuildingMode::athleteMonument:
-    case eBuildingMode::conquestMonument:
-    case eBuildingMode::happinessMonument:
-    case eBuildingMode::heroicFigureMonument:
-    case eBuildingMode::diplomacyMonument:
-    case eBuildingMode::scholarMonument:
-        id = eBuildingModeHelpers::toCommemorativeId(mode);
-        break;
-    case eBuildingMode::aphroditeMonument:
-    case eBuildingMode::apolloMonument:
-    case eBuildingMode::aresMonument:
-    case eBuildingMode::artemisMonument:
-    case eBuildingMode::athenaMonument:
-    case eBuildingMode::atlasMonument:
-    case eBuildingMode::demeterMonument:
-    case eBuildingMode::dionysusMonument:
-    case eBuildingMode::hadesMonument:
-    case eBuildingMode::hephaestusMonument:
-    case eBuildingMode::heraMonument:
-    case eBuildingMode::hermesMonument:
-    case eBuildingMode::poseidonMonument:
-    case eBuildingMode::zeusMonument: {
-        const auto gt = eBuildingModeHelpers::toGodType(mode);
-        id = static_cast<int>(gt);
-    } break;
-    default:
-        break;
-    }
-
-    return availableBuilding(type, id);
+bool eGameBoard::supportsBuilding(const eCityId cid,
+                                  const eBuildingMode mode) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->supportsBuilding(mode);
 }
 
-bool eGameBoard::availableBuilding(const eBuildingType type,
+bool eGameBoard::availableBuilding(const eCityId cid,
+                                   const eBuildingType type,
                                    const int id) const {
-    switch(type) {
-    case eBuildingType::chariotVendor:
-    case eBuildingType::chariotFactory: {
-        if(!mPoseidonMode) return false;
-    } break;
-    case eBuildingType::horseTrainer: {
-        if(mPoseidonMode) return false;
-    } break;
-    default:
-        break;
-    }
-
-    return mAvailableBuildings.available(type, id);
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->availableBuilding(type, id);
 }
 
-void eGameBoard::built(const eBuildingType type,
+void eGameBoard::built(const eCityId cid,
+                       const eBuildingType type,
                        const int id) {
-    mAvailableBuildings.built(type, id);
-    if(mButtonVisUpdater) mButtonVisUpdater();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->built(type, id);
 }
 
-void eGameBoard::destroyed(const eBuildingType type,
+void eGameBoard::destroyed(const eCityId cid,
+                           const eBuildingType type,
                            const int id) {
-    if(!mRegisterBuildingsEnabled) return;
-    mAvailableBuildings.destroyed(type, id);
-    if(mButtonVisUpdater) mButtonVisUpdater();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->destroyed(type, id);
 }
 
-void eGameBoard::allow(const eBuildingType type,
+void eGameBoard::allow(const eCityId cid,
+                       const eBuildingType type,
                        const int id) {
-    mAvailableBuildings.allow(type, id);
-    if(mButtonVisUpdater) mButtonVisUpdater();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->allow(type, id);
 }
 
-void eGameBoard::disallow(const eBuildingType type,
+void eGameBoard::disallow(const eCityId cid,
+                          const eBuildingType type,
                           const int id) {
-    mAvailableBuildings.disallow(type, id);
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->disallow(type, id);
+}
+
+void eGameBoard::updateButtonsVisibility() {
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
@@ -380,6 +347,12 @@ bool eGameBoard::supportsResource(const eResourceType rt) const {
 
 eResourceType eGameBoard::supportedResources() const {
     return mSupportedResources;
+}
+
+int eGameBoard::wonGames(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->wonGames();
 }
 
 int eGameBoard::horses() const {
@@ -458,7 +431,8 @@ void eGameBoard::updateMarbleTiles() {
     });
 }
 
-void eGameBoard::setFriendlyGods(const std::vector<eGodType>& gods) {
+void eGameBoard::setFriendlyGods(const eCityId cid,
+                                 const std::vector<eGodType>& gods) {
     mFriendlyGods = gods;
 
     for(const auto g : gods) {
@@ -511,7 +485,7 @@ void eGameBoard::setFriendlyGods(const std::vector<eGodType>& gods) {
             break;
         }
 
-        allow(bt);
+        allow(cid, bt);
     }
 
     const auto e = e::make_shared<eGodVisitEvent>(
@@ -553,10 +527,10 @@ void eGameBoard::setHostileMonsters(const std::vector<eMonsterType>& monsters) {
     //    addGameEvent(ec);
 }
 
-void eGameBoard::allowHero(const eHeroType heroType,
+void eGameBoard::allowHero(const eCityId cid, const eHeroType heroType,
                            const std::string& reason) {
     const auto hallType = eHerosHall::sHeroTypeToHallType(heroType);
-    allow(hallType);
+    allow(cid, hallType);
     const auto& inst = eMessages::instance;
     const auto hm = inst.heroMessages(heroType);
     if(!hm) return;
@@ -668,73 +642,36 @@ bool eGameBoard::hasActiveInvasions() const {
     return !mInvasionHandlers.empty();
 }
 
-int eGameBoard::addResource(const eResourceType type,
+int eGameBoard::addResource(const eCityId cid,
+                            const eResourceType type,
                             const int count) {
-    if(type == eResourceType::drachmas) {
-        incDrachmas(count);
-        return count;
-    }
-    int rem = count;
-    using eValidator = std::function<bool(eStorageBuilding*)>;
-    const auto addFunc = [&](const eValidator& v) {
-        if(rem <= 0) return;
-        for(const auto s : mStorBuildings) {
-            if(!v(s)) continue;
-            const int c = s->add(type, rem);
-            rem -= c;
-            if(rem <= 0) break;
-        }
-    };
-    addFunc([&](eStorageBuilding* const s) {
-        return s->get(type);
-    });
-    addFunc([&](eStorageBuilding* const s) {
-        (void)s;
-        return true;
-    });
-    return count - rem;
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->addResource(type, count);
 }
 
-int eGameBoard::spaceForResource(const eResourceType type) const {
-    if(type == eResourceType::drachmas) {
-        return __INT_MAX__/2;
-    }
-    int r = 0;
-    for(const auto s : mStorBuildings) {
-        r += s->spaceLeft(type);
-    }
-    return r;
+int eGameBoard::spaceForResource(const eCityId cid,
+                                 const eResourceType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->spaceForResource(type);
 }
 
 int eGameBoard::maxSingleSpaceForResource(
+        const eCityId cid,
         const eResourceType type,
         eStorageBuilding** b) const {
-    *b = nullptr;
-    int r = 0;
-    for(const auto s : mStorBuildings) {
-        const int ss = s->spaceLeft(type);
-        if(ss > r) {
-            *b = s;
-            r = ss;
-        }
-    }
-    return r;
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->maxSingleSpaceForResource(type, b);
 }
 
 int eGameBoard::maxSanctuarySpaceForResource(
+        const eCityId cid,
         eSanctuary** b) const {
-    *b = nullptr;
-    int r = 0;
-    for(const auto s : mSanctuaries) {
-        int ss = s->spaceLeft(eResourceType::wood);
-        ss += s->spaceLeft(eResourceType::marble);
-        ss += s->spaceLeft(eResourceType::sculpture);
-        if(ss > r) {
-            *b = s;
-            r = ss;
-        }
-    }
-    return r;
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->maxSanctuarySpaceForResource(b);
 }
 
 void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,
@@ -1353,81 +1290,80 @@ void eGameBoard::updateCoverage() {
     }
 }
 
-double coverageMultiplier(const int pop) {
-    if(pop < 250) return 0.125;
-    else if(pop < 500) return 0.25;
-    else if(pop < 1000) return 0.375;
-    else return 0.5;
-}
-
 void eGameBoard::handleGamesBegin(const eGames game) {
-    int coverage = 0;
     eGameMessages* msgs = nullptr;
     switch(game) {
     case eGames::isthmian:
         msgs = &eMessages::instance.fIsthmianGames;
-        coverage = mPhilosophyCoverage;
         break;
     case eGames::nemean:
         msgs = &eMessages::instance.fNemeanGames;
-        coverage = mAthleticsCoverage;
         break;
     case eGames::pythian:
         msgs = &eMessages::instance.fPythianGames;
-        coverage = mDramaCoverage;
         break;
     case eGames::olympian:
         msgs = &eMessages::instance.fOlympianGames;
-        coverage = mAllDiscCoverage;
         break;
     }
-    const int pop = mPopData.population();
-    const double mult = coverageMultiplier(pop);
 
     eEventData ed;
-    if(mult*coverage > 15) {
-        showMessage(ed, msgs->fBegin);
-    } else {
-        showMessage(ed, msgs->fNoPart);
+    const auto pcids = playerCities(mPersonPlayer);
+    for(const auto& cid : pcids) {
+        const auto c = boardCityWithId(cid);
+        const double chance = c->winningChance(game);
+        ed.fCityId = cid;
+        if(chance > 0) {
+            showMessage(ed, msgs->fBegin);
+        } else {
+            showMessage(ed, msgs->fNoPart);
+        }
     }
 }
 
 void eGameBoard::handleGamesEnd(const eGames game) {
-    int coverage = 0;
     eGameMessages* msgs = nullptr;
     switch(game) {
     case eGames::isthmian:
         msgs = &eMessages::instance.fIsthmianGames;
-        coverage = mPhilosophyCoverage;
         break;
     case eGames::nemean:
         msgs = &eMessages::instance.fNemeanGames;
-        coverage = mAthleticsCoverage;
         break;
     case eGames::pythian:
         msgs = &eMessages::instance.fPythianGames;
-        coverage = mDramaCoverage;
         break;
     case eGames::olympian:
         msgs = &eMessages::instance.fOlympianGames;
-        coverage = mAllDiscCoverage;
         break;
     }
 
-    const int pop = mPopData.population();
-    const double mult = coverageMultiplier(pop);
+    using eCityChance = std::pair<eCityId, double>;
+    std::vector<eCityChance> chances;
+    const auto ppid = eGameBoard::personPlayer();
+    for(const auto& c : mCitiesOnBoard) {
+        const auto id = c->id();
+        const double chance = c->winningChance(game);
+        chances.push_back(eCityChance{id, chance});
+    }
+    std::random_shuffle(chances.begin(), chances.end());
 
-    if(mult*coverage < 15) {
-        return;
-    } else {
-        const double coveragef = coverage/100.;
-        const double chance = mult*coveragef*coveragef;
-        const bool won = eRand::rand() % 101 < 100*chance;
-
-        eEventData ed;
+    eCityId winner = eCityId::neutralFriendly;
+    eEventData ed;
+    for(const auto& c : chances) {
+        const bool won = eRand::rand() % 101 < 100*c.second;
+        if(!won) continue;
+        const auto cid = c.first;
+        const auto city = boardCityWithId(cid);
+        const auto player = cityIdToPlayerId(cid);
+        const bool personPlayer = ppid == player;
         if(won) {
-            showMessage(ed, msgs->fWon);
-            mWonGames++;
+            winner = cid;
+            if(personPlayer) {
+                ed.fCityId = cid;
+                showMessage(ed, msgs->fWon);
+            }
+            city->incWonGames();
             int id = 0;
             switch(game) {
             case eGames::isthmian:
@@ -1443,14 +1379,24 @@ void eGameBoard::handleGamesEnd(const eGames game) {
                 id = 8;
                 break;
             }
-            allow(eBuildingType::commemorative, id);
+            allow(c.first, eBuildingType::commemorative, id);
+        }
+        break;
+    }
+    eCityId secondCid = eCityId::neutralFriendly;
+    for(const auto& c : mCitiesOnBoard) {
+        const auto cid = c->id();
+        if(cid == winner) continue;
+        const auto player = cityIdToPlayerId(cid);
+        if(player != ppid) continue;
+        const double chance = c->winningChance(game);
+        const bool second = eRand::rand() % 101 < 200*chance;
+        ed.fCityId = cid;
+        if(second && secondCid == eCityId::neutralFriendly) {
+            secondCid = cid;
+            showMessage(ed, msgs->fSecond);
         } else {
-            const bool second = eRand::rand() % 101 < 200*chance;
-            if(second) {
-                showMessage(ed, msgs->fSecond);
-            } else {
-                showMessage(ed, msgs->fLost);
-            }
+            showMessage(ed, msgs->fLost);
         }
     }
 }
@@ -1466,6 +1412,78 @@ eTile* eGameBoard::dtile(const int x, const int y) const {
     if(x < 0 || x >= mWidth) return nullptr;
     if(y < 0 || y >= mHeight) return nullptr;
     return mTiles[x][y];
+}
+
+double eGameBoard::taxRateF(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 1.;
+    return city->taxRateF();
+}
+
+eTaxRate eGameBoard::taxRate(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return eTaxRate::normal;
+    return city->taxRate();
+}
+
+int eGameBoard::philosophyResearchCoverage(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->philosophyResearchCoverage();
+}
+
+int eGameBoard::athleticsLearningCoverage(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->athleticsLearningCoverage();
+}
+
+int eGameBoard::dramaAstronomyCoverage(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->dramaAstronomyCoverage();
+}
+
+int eGameBoard::allCultureScienceCoverage(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->allCultureScienceCoverage();
+}
+
+int eGameBoard::taxesCoverage(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->philosophyResearchCoverage();
+}
+
+int eGameBoard::unrest(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->unrest();
+}
+
+int eGameBoard::popularity(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->popularity();
+}
+
+int eGameBoard::health(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->health();
+}
+
+int eGameBoard::drachmas(const ePlayerId pid) const {
+    const auto player = boardPlayerWithId(pid);
+    if(!player) return 0;
+    return player->drachmas();
+}
+
+void eGameBoard::incDrachmas(const ePlayerId pid, const int by) {
+    const auto player = boardPlayerWithId(pid);
+    if(!player) return;
+    return player->incDrachmas(by);
 }
 
 void eGameBoard::registerCharacter(eCharacter* const c) {
@@ -1778,119 +1796,8 @@ void eGameBoard::incTime(const int by) {
         i->incTime(by);
     }
 
-    mCoverageUpdate += by;
-    const int cup = 2000;
-    if(mCoverageUpdate > cup) {
-        mCoverageUpdate -= cup;
-        updateCoverage();
-    }
-
-    const auto& msgs = &eMessages::instance;
-    eEventData ed;
-    const int pop = mPopData.population();
-    if(pop >= 100 && !mPop100) {
-        showMessage(ed, msgs->fPop100);
-        mPop100 = true;
-    } else if(pop >= 500 && !mPop500) {
-        showMessage(ed, msgs->fPop500);
-        mPop500 = true;
-    } else if(pop >= 1000 && !mPop1000) {
-        showMessage(ed, msgs->fPop1000);
-        allow(eBuildingType::commemorative, 0);
-        mPop1000 = true;
-    } else if(pop >= 2000 && !mPop2000) {
-        showMessage(ed, msgs->fPop2000);
-        allow(eBuildingType::commemorative, 0);
-        mPop2000 = true;
-    } else if(pop >= 3000 && !mPop3000) {
-        showMessage(ed, msgs->fPop3000);
-        mPop3000 = true;
-    } else if(pop >= 5000 && !mPop5000) {
-        showMessage(ed, msgs->fPop5000);
-        allow(eBuildingType::commemorative, 0);
-        mPop5000 = true;
-    } else if(pop >= 10000 && !mPop10000) {
-        showMessage(ed, msgs->fPop10000);
-        allow(eBuildingType::commemorative, 0);
-        mPop10000 = true;
-    } else if(pop >= 15000 && !mPop15000) {
-        showMessage(ed, msgs->fPop15000);
-        allow(eBuildingType::commemorative, 0);
-        mPop15000 = true;
-    } else if(pop >= 20000 && !mPop20000) {
-        showMessage(ed, msgs->fPop20000);
-        allow(eBuildingType::commemorative, 0);
-        mPop20000 = true;
-    } else if(pop >= 25000 && !mPop25000) {
-        showMessage(ed, msgs->fPop25000);
-        allow(eBuildingType::commemorative, 0);
-        mPop25000 = true;
-    }
-
-    const int updateResWait = 1000;
-    mUpdateResources += by;
-    if(mUpdateResources > updateResWait) {
-        mUpdateResources -= updateResWait;
-        updateResources();
-    }
-
-    const int food = resourceCount(eResourceType::food);
-    bool prolongedNoFood = false;
-    if(mNoFood && food < 1 && pop > 10) {
-        prolongedNoFood = mDate.year() - mNoFoodSince.year() > 1;
-    } else if(food < 1 && pop > 10) {
-        mNoFood = true;
-        mNoFoodSince = mDate;
-    } else {
-        mNoFood = false;
-    }
-    const int u = mEmplData.unemployed();
-    const int e = mEmplData.employable();
-    const int v = mPopData.vacancies();
-    const auto oldLimit = mImmigrationLimit;
-    if(prolongedNoFood) {
-        mImmigrationLimit = eILB::lackOfFood;
-    } else if(mDrachmas < 0 && mDate.year() - mInDebtSince.year() > 1) {
-        mImmigrationLimit = eILB::prolongedDebt;
-    } else if(static_cast<int>(mWageRate) < static_cast<int>(eWageRate::low)) {
-        mImmigrationLimit = eILB::lowWages;
-    } else if(e < 10 ? false : (1.*u/e > 0.25 && u > 50)) {
-        mImmigrationLimit = eILB::unemployment;
-    } else if(static_cast<int>(mTaxRate) > static_cast<int>(eTaxRate::high)) {
-        mImmigrationLimit = eILB::highTaxes;
-    } else if(mExcessiveMilitaryServiceCount > 0) {
-        mImmigrationLimit = eILB::excessiveMilitaryService;
-    } else if(v <= 0) {
-        mImmigrationLimit = eILB::lackOfVacancies;
-    } else {
-        mImmigrationLimit = eILB::none;
-    }
-    if(oldLimit != mImmigrationLimit) {
-        switch(mImmigrationLimit) {
-        case eILB::lackOfFood:
-            showTip(eLanguage::zeusText(19, 112));
-            break;
-        case eILB::prolongedDebt:
-            showTip(eLanguage::zeusText(19, 116));
-            break;
-        case eILB::lowWages:
-            showTip(eLanguage::zeusText(19, 115));
-            break;
-        case eILB::unemployment:
-            showTip(eLanguage::zeusText(19, 113));
-            break;
-        case eILB::highTaxes:
-            showTip(eLanguage::zeusText(19, 114));
-            break;
-        case eILB::excessiveMilitaryService:
-            showTip(eLanguage::zeusText(19, 117));
-            break;
-        case eILB::lackOfVacancies:
-            showTip(eLanguage::zeusText(19, 111));
-            break;
-        case eILB::none:
-            showTip(eLanguage::zeusText(19, 124));
-        }
+    for(const auto& c : mCitiesOnBoard) {
+        c->incTime(by);
     }
 
     mTime += by;
@@ -2023,15 +1930,8 @@ void eGameBoard::incTime(const int by) {
         }
     }
 
-    const int employmentUpdateWait = 5678;
-    mEmploymentUpdateWait += by;
-    if(mEmploymentUpdateWait > employmentUpdateWait) {
-        if(mEmploymentUpdateScheduled) {
-            mEmploymentUpdateWait = 0;
-            for(const auto& c : mCitiesOnBoard) {
-                c->distributeEmployees();
-            }
-        }
+    for(const auto& c : mCitiesOnBoard) {
+        c->incDistributeEmployees(by);
     }
 }
 
@@ -2047,6 +1947,24 @@ void eGameBoard::scheduleDataUpdate() {
     mThreadPool.scheduleDataUpdate();
 }
 
+ePopulationData* eGameBoard::populationData(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->populationData();
+}
+
+eHusbandryData* eGameBoard::husbandryData(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->husbandryData();
+}
+
+eEmploymentData* eGameBoard::employmentData(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->employmentData();
+}
+
 void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
     const auto c = boardCityWithId(cid);
     if(!c) return;
@@ -2055,6 +1973,12 @@ void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
     const auto p = boardPlayerWithId(pid);
     if(!p) return;
     p->incDrachmas(d);
+}
+
+eDifficulty eGameBoard::difficulty(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return eDifficulty::beginner;
+    return p->difficulty();
 }
 
 void eGameBoard::setDate(const eDate& d) {
@@ -2119,7 +2043,7 @@ void eGameBoard::requestForces(const eEnlistAction& action,
         auto f = getEnlistableForces();
         std::vector<bool> heroesAbroad;
         for(const auto h : f.fHeroes) {
-            const auto hh = heroHall(h);
+            const auto hh = heroHall(eCityId::city0, h);
             const bool abroad = !hh ? true : hh->heroOnQuest();
             heroesAbroad.push_back(abroad);
         }
@@ -2165,27 +2089,23 @@ void eGameBoard::updateNeighbours() {
     }
 }
 
-void eGameBoard::updateResources() {
-    for(auto& r : mResources) {
-        int& count = r.second;
-        count = 0;
-        const auto type = r.first;
-        for(const auto s : mStorBuildings) {
-            count += s->count(type);
-        }
-    }
+void eGameBoard::updateResources(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->updateResources();
 }
 
-int eGameBoard::resourceCount(const eResourceType type) const {
-    if(type == eResourceType::drachmas) {
-        return mDrachmas;
-    }
-    int result = 0;
-    for(auto& r : mResources) {
-        if(!static_cast<bool>(r.first & type)) continue;
-        result += r.second;
-    }
-    return result;
+const eGameBoard::eResources* eGameBoard::resources(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->resources();
+}
+
+int eGameBoard::resourceCount(const eCityId cid,
+                              const eResourceType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->resourceCount(type);
 }
 
 int eGameBoard::takeResource(const eCityId cid,
@@ -2196,51 +2116,48 @@ int eGameBoard::takeResource(const eCityId cid,
     return c->takeResource(type, count);
 }
 
-int eGameBoard::eliteHouses() const {
-    int r = 0;
-    for(const auto b : mTimedBuildings) {
-        const auto bt = b->type();
-        if(bt == eBuildingType::eliteHousing) r++;
-    }
-    return r;
+int eGameBoard::eliteHouses(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->eliteHouses();
 }
 
-eSanctuary* eGameBoard::sanctuary(const eGodType god) const {
-    for(const auto s : mSanctuaries) {
-        if(s->godType() == god) return s;
-    }
-    return nullptr;
+const std::vector<eSanctuary*>* eGameBoard::sanctuaries(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->sanctuaries();
 }
 
-eHerosHall* eGameBoard::heroHall(const eHeroType hero) const {
-    for(const auto h : mHeroHalls) {
-        if(h->heroType() == hero) return h;
-    }
-    return nullptr;
+eSanctuary* eGameBoard::sanctuary(const eCityId cid, const eGodType god) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->sanctuary(god);
+}
+
+const std::vector<eHerosHall*>* eGameBoard::heroHalls(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->heroHalls();
+}
+
+eHerosHall* eGameBoard::heroHall(const eCityId cid, const eHeroType hero) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->heroHall(hero);
 }
 
 int eGameBoard::countBanners(const eBannerType bt,
                              const eCityId cid) const {
-    int c = 0;
-    for(const auto& bn : mSoldierBanners) {
-        const auto bcid = bn->cityId();
-        if(bcid != cid) continue;
-        if(bn->type() != bt) continue;
-        c++;
-    }
-    return c;
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->countBanners(bt);
 }
 
 int eGameBoard::countSoldiers(const eBannerType bt,
                               const eCityId cid) const {
-    int c = 0;
-    for(const auto& bn : mSoldierBanners) {
-        const auto bcid = bn->cityId();
-        if(bcid != cid) continue;
-        if(bn->type() != bt) continue;
-        c += bn->count();
-    }
-    return c;
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->countSoldiers(bt);
 }
 
 void eGameBoard::addFulfilledQuest(const eGodQuest q) {
@@ -2327,13 +2244,10 @@ void eGameBoard::sendAllSoldiersHome() {
     }
 }
 
-void eGameBoard::scheduleDistributeEmployees() {
-    mEmploymentUpdateScheduled = true;
-}
-
-void eGameBoard::incPopulation(const int by) {
-    mPopData.incPopulation(by);
-    scheduleDistributeEmployees();
+void eGameBoard::incPopulation(const eCityId cid, const int by) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->incPopulation(by);
 }
 
 void eGameBoard::topElevationExtremas(int& min, int& max) const {

@@ -10,6 +10,7 @@
 #include "boardData/ehusbandrydata.h"
 #include "boardData/eemploymentdata.h"
 #include "eemploymentdistributor.h"
+#include "buildings/eavailablebuildings.h"
 
 class ePalace;
 class eSanctuary;
@@ -22,6 +23,8 @@ class eMonster;
 struct eMilitaryAid;
 class eBoardPlayer;
 enum class eCharacterType;
+enum class eBuildingMode;
+enum struct eHeroType;
 
 enum class eImmigrationLimitedBy {
     none,
@@ -34,12 +37,23 @@ enum class eImmigrationLimitedBy {
     excessiveMilitaryService
 };
 
+enum class eGames {
+    isthmian,
+    nemean,
+    pythian,
+    olympian
+};
+
 class eBoardCity {
 public:
     eBoardCity(eGameBoard& board);
 
     eCityId id() const { return mId; }
     void setId(const eCityId id) { mId = id; }
+
+    void incTime(const int by);
+
+    void updateCoverage();
 
     void payTaxes(const int d, const int people);
 
@@ -49,8 +63,6 @@ public:
     eTaxRate taxRate() const { return mTaxRate; }
     eWageRate wageRate() const { return mWageRate; }
 
-    double wageMultiplier() const { return mWageMultiplier; }
-
     void setTaxRate(const eTaxRate tr);
     void setWageRate(const eWageRate wr);
 
@@ -59,14 +71,22 @@ public:
     int peoplePaidTaxesThisYear() const { return mPeoplePaidTaxesThisYear; }
     int peoplePaidTaxesLastYear() const { return mPeoplePaidTaxesLastYear; }
 
-    void updateResources();
-    using eResources = std::vector<std::pair<eResourceType, int>>;
-    const eResources& resources() const { return mResources; }
-
     void registerBuilding(eBuilding* const b);
 
     void registerEmplBuilding(eEmployingBuilding* const b);
     bool unregisterEmplBuilding(eEmployingBuilding* const b);
+
+    bool supportsBuilding(const eBuildingMode mode) const;
+    bool availableBuilding(const eBuildingType type,
+                           const int id = -1) const;
+    void built(const eBuildingType type,
+               const int id = -1);
+    void destroyed(const eBuildingType type,
+                   const int id = -1);
+    void allow(const eBuildingType type,
+               const int id = -1);
+    void disallow(const eBuildingType type,
+                  const int id = -1);
 
     bool manTowers() const { return mManTowers; }
     void setManTowers(const bool m);
@@ -77,6 +97,12 @@ public:
     bool isShutDown(const eResourceType type) const;
     bool isShutDown(const eBuildingType type) const;
 
+    void incDistributeEmployees(const int by);
+    void incPopulation(const int by);
+
+    ePopulationData& populationData() { return mPopData; }
+    eHusbandryData& husbandryData() { return mHusbData; }
+    eEmploymentData& employmentData() { return mEmplData; }
     eEmploymentDistributor& employmentDistributor()
     { return mEmplDistributor; }
 
@@ -104,7 +130,22 @@ public:
     int popularity() const { return mPopularity; }
     int health() const { return mHealth; }
 
+    int wonGames() const { return mWonGames; }
+    void incWonGames() { mWonGames++; }
+
+    double coverageMultiplier() const;
+    double winningChance(const eGames game) const;
+
+    void updateResources();
+    using eResources = std::vector<std::pair<eResourceType, int>>;
+    const eResources& resources() const { return mResources; }
+    int resourceCount(const eResourceType type) const;
     int takeResource(const eResourceType type, const int count);
+    int addResource(const eResourceType type, const int count);
+    int spaceForResource(const eResourceType type) const;
+    int maxSanctuarySpaceForResource(eSanctuary** b) const;
+    int maxSingleSpaceForResource(const eResourceType type,
+                                  eStorageBuilding** b) const;
 
     void killCommonFolks(int toKill);
     void walkerKilled();
@@ -122,6 +163,16 @@ public:
     bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
 
     eBoardPlayer* owningPlayer() const;
+
+    int eliteHouses() const;
+    eSanctuary* sanctuary(const eGodType god) const;
+    eHerosHall* heroHall(const eHeroType hero) const;
+    int countBanners(const eBannerType bt) const;
+    int countSoldiers(const eBannerType bt) const;
+    const std::vector<eSanctuary*>& sanctuaries() const
+    { return mSanctuaries; }
+    const std::vector<eHerosHall*>& heroHalls() const
+    { return mHeroHalls; }
 private:
     void payPensions();
 
@@ -129,8 +180,8 @@ private:
 
     eCityId mId;
     std::vector<eTile*> mTiles;
+    bool mAtlantean = false;
 
-    double mWageMultiplier = 1.;
     eWageRate mWageRate{eWageRate::normal};
     eTaxRate mTaxRate{eTaxRate::normal};
 
@@ -206,6 +257,8 @@ private:
     int mExcessiveMilitaryServiceCount = 0;
     int mMonthsOfMilitaryService = 0;
 
+    int mWonGames = 0;
+
     eBuilding* mStadium = nullptr;
     eBuilding* mMuseum = nullptr;
     ePalace* mPalace = nullptr;
@@ -214,9 +267,29 @@ private:
     eHusbandryData mHusbData;
     eEmploymentData mEmplData;
 
+    int mEmploymentUpdateWait = __INT_MAX__/10;
+    bool mEmploymentUpdateScheduled = true;
+
     eEmploymentDistributor mEmplDistributor;
     std::vector<eResourceType> mShutDown;
     std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
+
+    eAvailableBuildings mAvailableBuildings;
+    eResourceType mSupportedResources;
+
+    bool mPop100 = false;
+    bool mPop500 = false;
+    bool mPop1000 = false;
+    bool mPop2000 = false;
+    bool mPop3000 = false;
+    bool mPop5000 = false;
+    bool mPop10000 = false;
+    bool mPop15000 = false;
+    bool mPop20000 = false;
+    bool mPop25000 = false;
+
+    int mUpdateResources = 999999;
+    int mCoverageUpdate = 10000;
 };
 
 #endif // EBOARDCITY_H

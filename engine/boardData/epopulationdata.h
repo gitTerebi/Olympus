@@ -3,6 +3,7 @@
 
 class ePopulationData {
     friend class eGameBoard;
+    friend class eBoardCity;
 public:
     ePopulationData();
 

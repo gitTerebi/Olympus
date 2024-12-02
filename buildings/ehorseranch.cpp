@@ -7,8 +7,9 @@
 
 #include <algorithm>
 
-eHorseRanch::eHorseRanch(eGameBoard& board) :
-    eEmployingBuilding(board, eBuildingType::horseRanch, 3, 3, 15) {
+eHorseRanch::eHorseRanch(eGameBoard& board,
+                         const eCityId cid) :
+    eEmployingBuilding(board, eBuildingType::horseRanch, 3, 3, 15, cid) {
     eGameTextures::loadHorseRanch();
 }
 

@@ -3,8 +3,9 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
-ePier::ePier(eGameBoard& board, const eOrientation o) :
-    eBuilding(board, eBuildingType::pier, 2, 2),
+ePier::ePier(eGameBoard& board, const eOrientation o,
+             const eCityId cid) :
+    eBuilding(board, eBuildingType::pier, 2, 2, cid),
     mO(o) {
     eGameTextures::loadPier();
 }

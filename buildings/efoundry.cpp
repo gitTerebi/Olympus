@@ -3,7 +3,7 @@
 #include "characters/ebronzeminer.h"
 #include "textures/egametextures.h"
 
-eFoundry::eFoundry(eGameBoard& board) :
+eFoundry::eFoundry(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fFoundry,
                              -3.80, -3.78,
@@ -12,7 +12,7 @@ eFoundry::eFoundry(eGameBoard& board) :
                              [this]() { return e::make_shared<eBronzeMiner>(getBoard()); },
                              eBuildingType::foundry,
                              eHasResourceObject::sCreate(eHasResourceObjectType::copper),
-                             2, 2, 15, eResourceType::bronze) {
+                             2, 2, 15, eResourceType::bronze, cid) {
     eGameTextures::loadFoundry();
     setRawCountCollect(4);
 }

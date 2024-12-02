@@ -5,7 +5,7 @@
 
 class eTimberMill : public eResourceCollectBuilding {
 public:
-    eTimberMill(eGameBoard& board);
+    eTimberMill(eGameBoard& board, const eCityId cid);
 };
 
 

@@ -8,8 +8,9 @@
 eFarmBase::eFarmBase(eGameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
-                     const eResourceType resType) :
-    eResourceBuildingBase(board, type, sw, sh, 10, resType),
+                     const eResourceType resType,
+                     const eCityId cid) :
+    eResourceBuildingBase(board, type, sw, sh, 10, resType, cid),
     mTextures(eGameTextures::buildings())  {
     eGameTextures::loadPlantation();
 }

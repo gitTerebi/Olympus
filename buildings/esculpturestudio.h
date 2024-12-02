@@ -5,7 +5,7 @@
 
 class eSculptureStudio : public eProcessingBuilding {
 public:
-    eSculptureStudio(eGameBoard& board);
+    eSculptureStudio(eGameBoard& board, const eCityId cid);
 };
 
 #endif // ESCULPTURESTUDIO_H

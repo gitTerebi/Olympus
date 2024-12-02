@@ -10,17 +10,18 @@
 eHouseBase::eHouseBase(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
-                       const std::vector<int>& maxPeople) :
-    eBuilding(board, type, sw, sh),
+                       const std::vector<int>& maxPeople,
+                       const eCityId cid) :
+    eBuilding(board, type, sw, sh, cid),
     mMaxPeople(maxPeople) {
-    auto& popData = getBoard().populationData();
+    auto& popData = eHouseBase::popData();
     popData.incVacancies(mMaxPeople[0]);
 }
 
 eHouseBase::~eHouseBase() {
     auto& board = getBoard();
-    auto& popData = board.populationData();
-    board.incPopulation(-mPeople);
+    auto& popData = eHouseBase::popData();
+    board.incPopulation(cityId(), -mPeople);
     popData.incVacancies(-vacancies());
 }
 
@@ -60,7 +61,7 @@ int eHouseBase::moveIn(int c) {
 void eHouseBase::leave() {
     if(mPeople <= 0) return;
     auto& board = getBoard();
-    auto& popData = board.populationData();
+    auto& popData = eHouseBase::popData();
     popData.incLeft(mPeople);
     setPeople(0);
 
@@ -150,7 +151,7 @@ void eHouseBase::setLevel(const int l) {
     mLevel = std::clamp(l, 0, maxLevel);
     const int nv = vacancies();
 
-    auto& popData = getBoard().populationData();
+    auto& popData = eHouseBase::popData();
     popData.incVacancies(nv - ov);
 
     evict();
@@ -168,15 +169,25 @@ void eHouseBase::setPeople(const int p) {
     if(p == mPeople) return;
 
     auto& board = getBoard();
-    auto& popData = board.populationData();
+    const auto cid = cityId();
 
     const int pc = p - mPeople;
-    board.incPopulation(pc);
+    board.incPopulation(cid, pc);
 
     const int vb = vacancies();
     mPeople = p;
     const int va = vacancies();
 
-    const int vc = va - vb;
-    popData.incVacancies(vc);
+    const auto popData = board.populationData(cid);
+    if(popData) {
+        const int vc = va - vb;
+        popData->incVacancies(vc);
+    }
+}
+
+ePopulationData& eHouseBase::popData() {
+    auto& board = getBoard();
+    const auto cid = cityId();
+    const auto c = board.boardCityWithId(cid);
+    return c->populationData();
 }

@@ -6,8 +6,8 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eWall::eWall(eGameBoard& board) :
-    eBuilding(board, eBuildingType::wall, 1, 1) {
+eWall::eWall(eGameBoard& board, const eCityId cid) :
+    eBuilding(board, eBuildingType::wall, 1, 1, cid) {
     eGameTextures::loadWall();
     setHP(eNumbers::sWallHP);
 }

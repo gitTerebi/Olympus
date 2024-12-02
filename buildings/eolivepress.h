@@ -5,7 +5,7 @@
 
 class eOlivePress : public eProcessingBuilding {
 public:
-    eOlivePress(eGameBoard& board);
+    eOlivePress(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EOLIVEPRESS_H

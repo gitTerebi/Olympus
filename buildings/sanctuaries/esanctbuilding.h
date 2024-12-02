@@ -38,7 +38,8 @@ public:
                    const int maxProgress,
                    eGameBoard& board,
                    const eBuildingType type,
-                   const int sw, const int sh);
+                   const int sw, const int sh,
+                   const eCityId cid);
 
     void erase() override;
 

@@ -5,7 +5,7 @@
 
 class eFountain : public ePatrolBuilding {
 public:
-    eFountain(eGameBoard& board);
+    eFountain(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EFOUNTAIN_H

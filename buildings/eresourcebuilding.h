@@ -12,7 +12,8 @@ enum class eResourceBuildingType {
 class eResourceBuilding : public eBuilding {
 public:
     eResourceBuilding(eGameBoard& board,
-                      const eResourceBuildingType type);
+                      const eResourceBuildingType type,
+                      const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 

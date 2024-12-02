@@ -13,6 +13,7 @@ enum class eTradePostType {
 class eTradePost : public eWarehouseBase {
 public:
     eTradePost(eGameBoard& board, eWorldCity& city,
+               const eCityId cid,
                const eTradePostType type = eTradePostType::post);
     ~eTradePost();
 

@@ -80,7 +80,8 @@ enum class eHeroSummoningStage {
 
 class eHerosHall : public eBuilding {
 public:
-    eHerosHall(const eHeroType type, eGameBoard& board);
+    eHerosHall(const eHeroType type, eGameBoard& board,
+               const eCityId cid);
     ~eHerosHall();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

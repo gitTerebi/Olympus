@@ -7,7 +7,7 @@ class eHorseRanchEnclosure;
 
 class eHorseRanch : public eEmployingBuilding {
 public:
-    eHorseRanch(eGameBoard& board);
+    eHorseRanch(eGameBoard& board, const eCityId cid);
     ~eHorseRanch();
 
     void erase() override;

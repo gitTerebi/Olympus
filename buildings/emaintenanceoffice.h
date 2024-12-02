@@ -5,7 +5,7 @@
 
 class eMaintenanceOffice : public ePatrolBuilding {
 public:
-    eMaintenanceOffice(eGameBoard& board);
+    eMaintenanceOffice(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EMAINTENANCEOFFICE_H

@@ -5,7 +5,7 @@
 
 class eMasonryShop : public eResourceCollectBuilding {
 public:
-    eMasonryShop(eGameBoard& board);
+    eMasonryShop(eGameBoard& board, const eCityId cid);
 
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 

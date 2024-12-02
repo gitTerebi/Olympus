@@ -4,8 +4,9 @@
 #include "textures/evaryingsizetex.h"
 #include "textures/eparktexture.h"
 
-ePark::ePark(eGameBoard& board) :
-    eBuilding(board, eBuildingType::park, 1, 1),
+ePark::ePark(eGameBoard& board,
+             const eCityId cid) :
+    eBuilding(board, eBuildingType::park, 1, 1, cid),
     mTextures(eGameTextures::buildings()) {
     eGameTextures::loadPark();
 }

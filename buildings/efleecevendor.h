@@ -5,7 +5,7 @@
 
 class eFleeceVendor : public eVendor {
 public:
-    eFleeceVendor(eGameBoard& board);
+    eFleeceVendor(eGameBoard& board, const eCityId cid);
 };
 
 #endif // EFLEECEVENDOR_H

@@ -2,9 +2,9 @@
 
 #include "textures/egametextures.h"
 
-eWarehouse::eWarehouse(eGameBoard& board) :
+eWarehouse::eWarehouse(eGameBoard& board, const eCityId cid) :
     eWarehouseBase(board, eBuildingType::warehouse, 3, 3, 12,
-                   eResourceType::warehouse) {
+                   eResourceType::warehouse, cid) {
     setOverlayEnabledFunc([]() { return true; });
 }
 

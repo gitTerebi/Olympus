@@ -4,8 +4,9 @@
 #include "epalace.h"
 
 ePalaceTile::ePalaceTile(eGameBoard& board,
-                         const bool other) :
-    eBuilding(board, eBuildingType::palaceTile, 1, 1),
+                         const bool other,
+                         const eCityId cid) :
+    eBuilding(board, eBuildingType::palaceTile, 1, 1, cid),
     mOther(other) {
     eGameTextures::loadPalaceTiles();
 }
