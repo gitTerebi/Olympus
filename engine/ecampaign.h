@@ -1,14 +1,9 @@
 ﻿#ifndef ECAMPAIGN_H
 #define ECAMPAIGN_H
 
-#include "egameboard.h"
+#include "eepisode.h"
 
 #include "eepisodegoal.h"
-
-enum class eEpisodeType {
-    parentCity,
-    colony
-};
 
 struct eSetAside {
     eResourceType fRes;
@@ -30,158 +25,6 @@ struct eSetAside {
     }
 };
 
-struct eEpisode {
-    virtual void read(eReadStream& src) {
-        src >> fAtlantean;
-        src >> fDrachmas;
-        fStartDate.read(src);
-        {
-            int nfg;
-            src >> nfg;
-            for(int i = 0; i < nfg; i++) {
-                eGodType g;
-                src >> g;
-                fFriendlyGods.push_back(g);
-            }
-        }
-        {
-            int nhg;
-            src >> nhg;
-            for(int i = 0; i < nhg; i++) {
-                eGodType g;
-                src >> g;
-                fHostileGods.push_back(g);
-            }
-        }
-        {
-            int nevs;
-            src >> nevs;
-            for(int i = 0; i < nevs; i++) {
-                eGameEventType type;
-                src >> type;
-                const auto branch = eGameEventBranch::root;
-                const auto e = eGameEvent::sCreate(type, branch, fBoard);
-                e->setGameBoard(fBoard);
-                e->setWorldBoard(fWorldBoard);
-                e->read(src);
-                fEvents.push_back(e);
-            }
-        }
-        {
-            int ng;
-            src >> ng;
-            for(int i = 0; i < ng; i++) {
-                const auto g = std::make_shared<eEpisodeGoal>();
-                g->read(fWorldBoard, src);
-                fGoals.push_back(g);
-            }
-        }
-        fAvailableBuildings.read(src);
-    }
-
-    virtual void write(eWriteStream& dst) const {
-        dst << fAtlantean;
-        dst << fDrachmas;
-        fStartDate.write(dst);
-        dst << fFriendlyGods.size();
-        for(const auto g : fFriendlyGods) {
-            dst << g;
-        }
-        dst << fHostileGods.size();
-        for(const auto g : fHostileGods) {
-            dst << g;
-        }
-        dst << fEvents.size();
-        for(const auto& e : fEvents) {
-            dst << e->type();
-            e->write(dst);
-        }
-        dst << fGoals.size();
-        for(const auto& g : fGoals) {
-            g->write(dst);
-        }
-        fAvailableBuildings.write(dst);
-    }
-
-    bool availableBuilding(const eBuildingType type,
-                           const int id = -1) const {
-        switch(type) {
-        case eBuildingType::chariotVendor:
-        case eBuildingType::chariotFactory: {
-            if(!fAtlantean) return false;
-        } break;
-        case eBuildingType::horseTrainer: {
-            if(fAtlantean) return false;
-        } break;
-        default:
-            break;
-        }
-
-        return fAvailableBuildings.available(type, id);
-    }
-
-    void clear() {
-        fFriendlyGods.clear();
-        fHostileGods.clear();
-        fEvents.clear();
-        fGoals.clear();
-        fAvailableBuildings = eAvailableBuildings();
-    }
-
-    eGameBoard* fBoard = nullptr;
-    eWorldBoard* fWorldBoard = nullptr;
-    bool fAtlantean = true;
-
-    int fDrachmas = 2500;
-    eDate fStartDate = eDate(1, eMonth::january, -1500);
-    double fWageMultiplier = 1.;
-    std::map<eResourceType, int> fPrices;
-
-    std::string fTitle;
-    std::string fIntroduction;
-    std::string fComplete;
-
-    std::vector<eGodType> fFriendlyGods;
-    std::vector<eGodType> fHostileGods;
-
-    std::vector<stdsptr<eGameEvent>> fEvents;
-    std::vector<stdsptr<eEpisodeGoal>> fGoals;
-
-    eAvailableBuildings fAvailableBuildings;
-};
-
-struct eParentCityEpisode : public eEpisode {
-    void read(eReadStream& src) override {
-        eEpisode::read(src);
-        src >> fNextEpisode;
-    }
-
-    void write(eWriteStream& dst) const override {
-        eEpisode::write(dst);
-        dst << fNextEpisode;
-    }
-
-    eEpisodeType fNextEpisode{eEpisodeType::parentCity};
-};
-
-struct eColonyEpisode : public eEpisode {
-    void read(eReadStream& src) override {
-        eEpisode::read(src);
-        src.readCity(fWorldBoard, [this](const stdsptr<eWorldCity>& c) {
-            fCity = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        eEpisode::write(dst);
-        dst.writeCity(fCity.get());
-    }
-
-    std::string fSelection;
-
-    stdsptr<eWorldCity> fCity;
-};
-
 struct eCampaignGlossary {
     std::string fFolderName;
     int fBitmap = 0;
@@ -196,8 +39,8 @@ public:
 
     void initialize(const std::string& name);
 
-    int initialFunds() const { return mDrachmas; }
-    void setInitialFunds(const int f) { mDrachmas = f; }
+    int initialFunds(const ePlayerId pid) const;
+    void setInitialFunds(const ePlayerId pid, const int f);
 
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d) { mDate = d; }
@@ -284,7 +127,8 @@ private:
     eEpisodeType mCurrentEpisodeType = eEpisodeType::parentCity;
     eEpisodeType mPreviousEpisodeType = eEpisodeType::parentCity;
 
-    int mDrachmas = 5000;
+    int mDrachmasDelete = 5000;
+    std::map<ePlayerId, int> mDrachmas;
     eDate mDate = eDate(1, eMonth::january, -1500);
     double mWageMultiplier = 1.;
     std::map<eResourceType, int> mPrices;

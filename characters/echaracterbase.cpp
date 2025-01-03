@@ -21,7 +21,12 @@ void eCharacterBase::setHP(const double hp) {
 
 bool eCharacterBase::fighting() const {
     return mActionType == eCharacterActionType::fight ||
-           mActionType == eCharacterActionType::fight2;
+            mActionType == eCharacterActionType::fight2;
+}
+
+void eCharacterBase::setBothCityIds(const eCityId cid) {
+    setCityId(cid);
+    setOnCityId(cid);
 }
 
 bool eCharacterBase::isSoldier() const {

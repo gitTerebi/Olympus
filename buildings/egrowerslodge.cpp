@@ -256,7 +256,7 @@ bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {
     const auto t = centerTile();
     const auto g = e::make_shared<eGrower>(getBoard());
     g->setGrowerType(mType);
-    g->setCityId(cityId());
+    g->setBothCityIds(cityId());
     g->changeTile(t);
     const auto a = e::make_shared<eGrowerAction>(
                        mType, this, g.get());

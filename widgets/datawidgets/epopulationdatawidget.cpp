@@ -158,55 +158,58 @@ void ePopulationDataWidget::initialize() {
 void ePopulationDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
-        const auto& popData = mBoard.populationData();
+        const auto cid = viewedCity();
+        const auto popData = mBoard.populationData(cid);
 
-        const int a = popData.arrived();
-        mImiLimitedW->setVisible(a <= 0);
-        mNewcomersW->setVisible(a > 0);
-        mNewcomersLabel->setText(std::to_string(a));
-        mNewcomersLabel->fitContent();
-        mNewcomersLabel->align(eAlignment::hcenter);
+        if(popData) {
+            const int a = popData->arrived();
+            mImiLimitedW->setVisible(a <= 0);
+            mNewcomersW->setVisible(a > 0);
+            mNewcomersLabel->setText(std::to_string(a));
+            mNewcomersLabel->fitContent();
+            mNewcomersLabel->align(eAlignment::hcenter);
 
-        const int l = popData.left();
-        std::string pdtxt;
-        if(l > a) {
-            pdtxt = eLanguage::zeusText(55, 21); // people are leaving the city
-        } else if(a > l) {
-            pdtxt = eLanguage::zeusText(55, 20); // people with to come to the city
+            const int l = popData->left();
+            std::string pdtxt;
+            if(l > a) {
+                pdtxt = eLanguage::zeusText(55, 21); // people are leaving the city
+            } else if(a > l) {
+                pdtxt = eLanguage::zeusText(55, 20); // people with to come to the city
+            }
+            if(!pdtxt.empty()) {
+                mPeopleDirection->setText(pdtxt);
+                mPeopleDirection->fitContent();
+                mPeopleDirection->align(eAlignment::hcenter);
+            }
+
+            const int v = popData->vacancies();
+            mVacLabel->setText(std::to_string(v));
+            mVacLabel->fitContent();
+            mVacLabel->align(eAlignment::hcenter);
+
+            const auto limit = mBoard.immigrationLimit(cid);
+            std::string ilrtxt;
+            if(v <= 0) {
+                ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
+            } else if(limit == eImmigrationLimitedBy::lowWages) {
+                ilrtxt = eLanguage::zeusText(55, 14);
+            } else if(limit == eImmigrationLimitedBy::unemployment) {
+                ilrtxt = eLanguage::zeusText(55, 15);
+            } else if(limit == eImmigrationLimitedBy::lackOfFood) {
+                ilrtxt = eLanguage::zeusText(55, 16);
+            } else if(limit == eImmigrationLimitedBy::highTaxes) {
+                ilrtxt = eLanguage::zeusText(55, 17);
+            } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
+                ilrtxt = eLanguage::zeusText(55, 18);
+            } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
+                ilrtxt = eLanguage::zeusText(55, 19);
+            } else {
+                ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
+            }
+            mImiLimitedReason->setText(ilrtxt);
+            mImiLimitedReason->fitContent();
+            mImiLimitedReason->align(eAlignment::hcenter);
         }
-        if(!pdtxt.empty()) {
-            mPeopleDirection->setText(pdtxt);
-            mPeopleDirection->fitContent();
-            mPeopleDirection->align(eAlignment::hcenter);
-        }
-
-        const int v = popData.vacancies();
-        mVacLabel->setText(std::to_string(v));
-        mVacLabel->fitContent();
-        mVacLabel->align(eAlignment::hcenter);
-
-        const auto limit = mBoard.immigrationLimit();
-        std::string ilrtxt;
-        if(v <= 0) {
-            ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
-        } else if(limit == eImmigrationLimitedBy::lowWages) {
-            ilrtxt = eLanguage::zeusText(55, 14);
-        } else if(limit == eImmigrationLimitedBy::unemployment) {
-            ilrtxt = eLanguage::zeusText(55, 15);
-        } else if(limit == eImmigrationLimitedBy::lackOfFood) {
-            ilrtxt = eLanguage::zeusText(55, 16);
-        } else if(limit == eImmigrationLimitedBy::highTaxes) {
-            ilrtxt = eLanguage::zeusText(55, 17);
-        } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
-            ilrtxt = eLanguage::zeusText(55, 18);
-        } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
-            ilrtxt = eLanguage::zeusText(55, 19);
-        } else {
-            ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
-        }
-        mImiLimitedReason->setText(ilrtxt);
-        mImiLimitedReason->fitContent();
-        mImiLimitedReason->align(eAlignment::hcenter);
     }
     eWidget::paintEvent(p);
 }

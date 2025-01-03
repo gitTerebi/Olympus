@@ -88,7 +88,7 @@ void eHeroAction::lookForMonster() {
     const auto ct = c->type();
     const auto ht = eHero::sCharacterToHeroType(ct);
     const auto& board = eHeroAction::board();
-    const auto& ms = board.monsters();
+    const auto& ms = board.monsters(cityId());
     for(const auto m : ms) {
         if(m->dead()) continue;
         const auto ct = m->type();
@@ -106,6 +106,7 @@ void eHeroAction::sendOnQuest() {
     }
     const auto c = character();
     auto& board = eHeroAction::board();
+    const auto cid = cityId();
     const auto hero = static_cast<eHero*>(c);
     const stdptr<eHero> cptr(hero);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
@@ -122,7 +123,7 @@ void eHeroAction::sendOnQuest() {
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
 
-    const auto exitPoint = board.exitPoint();
+    const auto exitPoint = board.exitPoint(cid);
     if(exitPoint) {
         a->start(exitPoint, defaultWalkable());
     } else {
@@ -141,7 +142,7 @@ void eHeroAction::sendOnQuest() {
 
 void eHeroAction::goBackToHall() {
     auto& board = eHeroAction::board();
-    const auto hh = board.heroHall(heroType());
+    const auto hh = board.heroHall(cityId(), heroType());
     if(!hh) return;
     const auto c = character();
     const auto hero = static_cast<eHero*>(c);
@@ -175,7 +176,8 @@ void eHeroAction::waitAndGoBackToHall(const int w) {
 
 void eHeroAction::defendCity() {
     auto& board = eHeroAction::board();
-    const auto i = board.invasionToDefend();
+    const auto cid = cityId();
+    const auto i = board.invasionToDefend(cid);
     if(!i) return;
     mStage = eHeroActionStage::defend;
     const auto c = character();

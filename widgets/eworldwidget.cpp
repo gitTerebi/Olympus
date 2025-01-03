@@ -195,8 +195,11 @@ void eWorldWidget::openRequestDialog() {
         d->deleteLater();
     };
     const auto requestAid = [this, d]() {
-        const auto has = mBoard->militaryAid(mCity);
-        if(has) return;
+        const auto cids = mBoard->personPlayerCities();
+        for(const auto cid : cids) {
+            const auto has = mBoard->militaryAid(cid, mCity);
+            if(has) return;
+        }
         const auto& cts = mWorldBoard->cities();
         for(const auto& ct : cts) {
             if(ct->isCurrentCity()) continue;

@@ -5,12 +5,19 @@
 
 #include "edate.h"
 #include "edifficulty.h"
+#include "egodquest.h"
 
 class eGameBoard;
+enum class eMonsterType;
+
+class eGodQuestEvent;
+class ePlayerConquestEventBase;
+class eReceiveRequestEvent;
+class eTroopsRequestEvent;
 
 class eBoardPlayer {
 public:
-    eBoardPlayer(eGameBoard& board);
+    eBoardPlayer(const ePlayerId pid, eGameBoard& board);
 
     ePlayerId id() const { return mId; }
     void setId(const ePlayerId id) { mId = id; }
@@ -22,8 +29,39 @@ public:
     void incDrachmas(const int by);
 
     eDifficulty difficulty() const { return mDifficulty; }
+    void setDifficulty(const eDifficulty d);
 
     const eDate& inDebtSince() const { return mInDebtSince; }
+
+    using eQuests = std::vector<eGodQuestEvent*>;
+    const eQuests& godQuests() const { return mGodQuests; }
+    void addGodQuest(eGodQuestEvent* const q);
+    void removeGodQuest(eGodQuestEvent* const q);
+
+    using eRequests = std::vector<eReceiveRequestEvent*>;
+    const eRequests& cityRequests() const { return mCityRequests; }
+    void addCityRequest(eReceiveRequestEvent* const q);
+    void removeCityRequest(eReceiveRequestEvent* const q);
+
+    using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
+    const eTroopsRequests& cityTroopsRequests() const { return mCityTroopsRequests; }
+    void addCityTroopsRequest(eTroopsRequestEvent* const q);
+    void removeCityTroopsRequest(eTroopsRequestEvent* const q);
+
+    using eConquests = std::vector<ePlayerConquestEventBase*>;
+    const eConquests& conquests() const { return mConquests; }
+    void addConquest(ePlayerConquestEventBase* const q);
+    void removeConquest(ePlayerConquestEventBase* const q);
+
+    const std::vector<eGodQuest>& fulfilledQuests() const
+    { return mFulfilledQuests; }
+    void addFulfilledQuest(const eGodQuest q);
+    const std::vector<eMonsterType>& slayedMonsters() const
+    { return mSlayedMonsters; }
+    void addSlayedMonster(const eMonsterType m);
+
+    void read(eReadStream& src);
+    void write(eWriteStream& dst) const;
 private:
     bool isPerson() const;
 
@@ -32,6 +70,14 @@ private:
     ePlayerId mId;
 
     eDifficulty mDifficulty{eDifficulty::beginner};
+
+    std::vector<eGodQuest> mFulfilledQuests;
+    std::vector<eMonsterType> mSlayedMonsters;
+
+    std::vector<eGodQuestEvent*> mGodQuests;
+    std::vector<ePlayerConquestEventBase*> mConquests;
+    std::vector<eReceiveRequestEvent*> mCityRequests;
+    std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
 
     int mDrachmas = 2500;
     eDate mInDebtSince;

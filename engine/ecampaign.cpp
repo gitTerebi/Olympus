@@ -38,6 +38,16 @@ void eCampaign::initialize(const std::string& name) {
     addParentCityEpisode();
 }
 
+int eCampaign::initialFunds(const ePlayerId pid) const {
+    const auto it = mDrachmas.find(pid);
+    if(it == mDrachmas.end()) return 0;
+    return it->second;
+}
+
+void eCampaign::setInitialFunds(const ePlayerId pid, const int f) {
+    mDrachmas[pid] = f;
+}
+
 bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
     std::ifstream file(path);
     if(!file.good()) {
@@ -204,7 +214,15 @@ void eCampaign::read(eReadStream& src) {
     src >> mCurrentParentEpisode;
     src >> mCurrentColonyEpisode;
     src >> mCurrentEpisodeType;
-    src >> mDrachmas;
+    {
+        int nc;
+        src >> nc;
+        for(int i = 0; i < nc; i++) {
+            ePlayerId pid;
+            src >> pid;
+            src >> mDrachmas[pid];
+        }
+    }
     mDate.read(src);
     for(auto& p : mPrices) {
         src >> p.second;
@@ -290,7 +308,11 @@ void eCampaign::write(eWriteStream& dst) const {
     dst << mCurrentParentEpisode;
     dst << mCurrentColonyEpisode;
     dst << mCurrentEpisodeType;
-    dst << mDrachmas;
+    dst << mDrachmas.size();
+    for(const auto& d : mDrachmas) {
+        dst << d.first;
+        dst << d.second;
+    }
     mDate.write(dst);
     for(const auto& p : mPrices) {
         dst << p.second;
@@ -415,7 +437,9 @@ void eCampaign::startEpisode() {
 void eCampaign::episodeFinished() {
     const auto e = currentEpisode();
     const auto board = e->fBoard;
-    mDrachmas = board->drachmas();
+    for(auto& d : mDrachmas) {
+        d.second = board->drachmas(d.first);
+    }
     mDate = board->date();
     mWageMultiplier = board->wageMultiplier();
     mPrices = board->prices();

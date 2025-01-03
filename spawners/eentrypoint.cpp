@@ -12,27 +12,30 @@ eEntryPoint::eEntryPoint(const int id,
 
 void eEntryPoint::incTime(const int by) {
     auto& board = eEntryPoint::board();
-    const int pop = board.popularity();
+    const auto tile = this->tile();
+    const auto cid = tile->cityId();
+    const int pop = board.popularity(cid);
     setSpawnPeriod(500*(115 - pop)/15);
     eSpawner::incTime(by);
 }
 
 void eEntryPoint::spawn(eTile* const tile) {
     auto& board = eEntryPoint::board();
-    const auto& ivs = board.invasionHandlers();
+    const auto cid = tile->cityId();
+    const auto& ivs = board.invasionHandlers(cid);
     if(!ivs.empty()) return;
-    const auto limit = board.immigrationLimit();
+    const auto limit = board.immigrationLimit(cid);
     if(limit != eImmigrationLimitedBy::none &&
        limit != eImmigrationLimitedBy::lackOfVacancies) {
         return;
     }
-    auto& popData = board.populationData();
-    const int v = popData.vacancies();
-    const int s = popData.settlers();
+    const auto popData = board.populationData(cid);
+    if(!popData) return;
+    const int v = popData->vacancies();
+    const int s = popData->settlers();
     if(s >= v) return;
     const auto b = e::make_shared<eSettler>(board);
-    const auto cid = tile->cityId();
-    b->setCityId(cid);
+    b->setBothCityIds(cid);
     b->setVisible(false);
     b->changeTile(tile);
     const auto a = e::make_shared<eSettlerAction>(b.get());

@@ -92,7 +92,8 @@ private:
 void eAppealDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
-        const auto& bs = mBoard.commemorativeBuildings();
+        const auto cid = viewedCity();
+        const auto& bs = mBoard.commemorativeBuildings(cid);
         const bool changed = !eVectorHelpers::same(bs, mBuildings);
         if(changed) {
             mNoMonumentsWidget->setVisible(bs.empty());

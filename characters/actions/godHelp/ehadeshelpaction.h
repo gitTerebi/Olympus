@@ -16,7 +16,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-    static bool sHelpNeeded(const eGameBoard& board);
+    static bool sHelpNeeded(const eCityId cid,
+                            const eGameBoard& board);
 private:
     void goToTarget();
     void give();
@@ -27,8 +28,11 @@ private:
 
 class eGodProvideDrachmasAct : public eGodAct {
 public:
+    eGodProvideDrachmasAct(eGameBoard& board, const eCityId cid) :
+        eGodAct(board, eGodActType::provideDrachmas),
+        mCityId(cid) {}
     eGodProvideDrachmasAct(eGameBoard& board) :
-        eGodAct(board, eGodActType::provideDrachmas) {}
+        eGodProvideDrachmasAct(board, eCityId::neutralFriendly) {}
 
     eMissileTarget find(eTile* const t) {
         (void)t;
@@ -37,16 +41,18 @@ public:
     }
 
     void act() {
-        board().addResource(eResourceType::drachmas, 1500);
+        board().addResource(mCityId, eResourceType::drachmas, 1500);
     }
 
     void read(eReadStream& src) {
-        (void)src;
+        src >> mCityId;
     }
 
     void write(eWriteStream& dst) const {
-        (void)dst;
+        dst << mCityId;
     }
+private:
+    eCityId mCityId;
 };
 
 #endif // EHADESHELPACTION_H

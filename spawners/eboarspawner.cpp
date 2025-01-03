@@ -12,5 +12,6 @@ eBoarSpawner::eBoarSpawner(const int id,
 
 stdsptr<eWildAnimal> eBoarSpawner::create(eGameBoard& board) {
     const auto b = e::make_shared<eBoar>(board);
+    b->setOnCityId(cityId());
     return b;
 }

@@ -62,7 +62,7 @@ void eStorageDataWidget::initialize() {
 
     const auto inner = innerWidget();
 
-    const auto all = mBoard.supportedResources();
+    const auto all = eResourceType::allBasic; // mBoard.supportedResources();
     const auto tps = eResourceTypeHelpers::extractResourceTypes(all);
     const auto res = resolution();
     const auto uiScale = res.uiScale();
@@ -94,16 +94,27 @@ void eStorageDataWidget::initialize() {
 void eStorageDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
-        mBoard.updateResources();
-        const auto& src = mBoard.resources();
-        const int iMax = mResourceLabels.size();
-        for(int i = 0; i < iMax; i++) {
-            const auto c = src[i].second;
-            const auto l = mResourceLabels[i];
-            l->setText(std::to_string(c));
-            l->fitContent();
-            l->align(eAlignment::right);
-        }
+        const auto cid = viewedCity();
+        mBoard.updateResources(cid);
+        const auto& src = mBoard.resources(cid);
+        if(src) {
+            const int iMax = mResourceLabels.size();
+            for(int i = 0; i < iMax; i++) {
+                const auto c = (*src)[i].second;
+                const auto l = mResourceLabels[i];
+                l->setText(std::to_string(c));
+                l->fitContent();
+                l->align(eAlignment::right);
+            }
+        }/* else {
+            const int iMax = mResourceLabels.size();
+            for(int i = 0; i < iMax; i++) {
+                const auto l = mResourceLabels[i];
+                l->setText("-");
+                l->fitContent();
+                l->align(eAlignment::right);
+            }
+        }*/
     }
     eWidget::paintEvent(p);
 }

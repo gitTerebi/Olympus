@@ -3,13 +3,15 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
-eTempleBuilding::eTempleBuilding(eGameBoard& board) :
+eTempleBuilding::eTempleBuilding(eGameBoard& board,
+                                 const eCityId cid) :
     eSanctBuilding({5, 5, 0}, 3, board,
-                   eBuildingType::temple, 4, 4) {}
+                   eBuildingType::temple, 4, 4, cid) {}
 
 eTempleBuilding::eTempleBuilding(
-        const int id, eGameBoard& board) :
-    eTempleBuilding(board) {
+        const int id, eGameBoard& board,
+        const eCityId cid) :
+    eTempleBuilding(board, cid) {
     mId = id;
     setEnabled(true);
 }

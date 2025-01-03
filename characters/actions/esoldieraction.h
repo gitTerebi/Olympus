@@ -75,6 +75,7 @@ public:
     void beingAttacked(const int ttx, const int tty);
 
     static eBuilding* sFindHome(const eCharacterType t,
+                                const eCityId cid,
                                 const eGameBoard& brd);
     static void sSignalBeingAttack(eSoldier* const attacked,
                                    eCharacter* const by,

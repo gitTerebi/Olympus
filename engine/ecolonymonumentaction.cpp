@@ -17,7 +17,9 @@ void eColonyMonumentAction::trigger(eGameBoard& board) {
     eEventData ed;
     ed.fCity = mCity;
     board.event(eEvent::colonyMonument, ed);
-    board.allow(eBuildingType::commemorative, 2);
+    const auto pid = board.personPlayer();
+    const auto capital = board.playerCapital(pid);
+    board.allow(capital, eBuildingType::commemorative, 2);
 }
 
 void eColonyMonumentAction::read(eReadStream& src, eGameBoard& board) {

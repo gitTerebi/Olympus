@@ -77,10 +77,9 @@ public:
     bool constructionHalted() const { return mHaltConstruction; }
 
 
-    static stdsptr<eSanctuary> sCreate(
-            const eBuildingType type,
+    static stdsptr<eSanctuary> sCreate(const eBuildingType type,
             const int sw, const int sh,
-            eGameBoard& board);
+            eGameBoard& board, const eCityId cid);
 
     void setRotated(const bool r) { mRotated = r; }
     bool rotated() const { return mRotated; }

@@ -18,7 +18,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-    static bool sHelpNeeded(const eGameBoard& board);
+    static bool sHelpNeeded(const eCityId cid,
+                            const eGameBoard& board);
 private:
     void goToTarget();
     void give();

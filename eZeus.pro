@@ -348,6 +348,8 @@ SOURCES += \
         engine/boardData/ehusbandrydata.cpp \
         engine/boardData/epopulationdata.cpp \
         engine/eboardcity.cpp \
+        engine/eboardcityread.cpp \
+        engine/eboardcitywrite.cpp \
         engine/eboardplayer.cpp \
         engine/ecampaign.cpp \
         engine/ecityid.cpp \
@@ -356,6 +358,7 @@ SOURCES += \
         engine/edate.cpp \
         engine/edifficulty.cpp \
         engine/eemploymentdistributor.cpp \
+        engine/eepisode.cpp \
         engine/eepisodegoal.cpp \
         engine/eeventtime.cpp \
         engine/efunctask.cpp \
@@ -366,6 +369,7 @@ SOURCES += \
         engine/egodquest.cpp \
         engine/eknownendpathfinder.cpp \
         engine/emapgenerator.cpp \
+        engine/emilitaryaid.cpp \
         engine/epathboard.cpp \
         engine/epathfinder.cpp \
         engine/eplague.cpp \
@@ -977,6 +981,7 @@ HEADERS += \
     engine/edate.h \
     engine/edifficulty.h \
     engine/eemploymentdistributor.h \
+    engine/eepisode.h \
     engine/eepisodegoal.h \
     engine/eevent.h \
     engine/eeventdata.h \
@@ -988,6 +993,7 @@ HEADERS += \
     engine/eknownendpathfinder.h \
     engine/emapgenerator.h \
     engine/emessageeventtype.h \
+    engine/emilitaryaid.h \
     engine/emovedirection.h \
     engine/eorientation.h \
     engine/epathboard.h \

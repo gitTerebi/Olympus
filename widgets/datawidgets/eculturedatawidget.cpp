@@ -130,13 +130,13 @@ void eCultureDataWidget::initialize() {
     cw->fitContent();
     iw->addWidget(cw);
     cw->setX(spacing()/2);
-
-    updateCoverage();
 }
 
 void eCultureDataWidget::updateCoverage() {
+    const auto cid = viewedCity();
+
     {
-        const int pc = mBoard.philosophyResearchCoverage();
+        const int pc = mBoard.philosophyResearchCoverage(cid);
         const auto pt = sCoverageToText(pc);
         const auto ptt = eLanguage::zeusText(58, pt);
         mPhilosophyCoverage->setText(ptt);
@@ -144,7 +144,7 @@ void eCultureDataWidget::updateCoverage() {
     }
 
     {
-        const int ac = mBoard.athleticsLearningCoverage();
+        const int ac = mBoard.athleticsLearningCoverage(cid);
         const auto at = sCoverageToText(ac);
         const auto att = eLanguage::zeusText(58, at);
         mAthleticsCoverage->setText(att);
@@ -152,7 +152,7 @@ void eCultureDataWidget::updateCoverage() {
     }
 
     {
-        const int dc = mBoard.dramaAstronomyCoverage();
+        const int dc = mBoard.dramaAstronomyCoverage(cid);
         const auto dt = sCoverageToText(dc);
         const auto dtt = eLanguage::zeusText(58, dt);
         mDramaCoverage->setText(dtt);
@@ -160,7 +160,7 @@ void eCultureDataWidget::updateCoverage() {
     }
 
     {
-        const int ddc = mBoard.allCultureScienceCoverage();
+        const int ddc = mBoard.allCultureScienceCoverage(cid);
         const auto ddt = sCoverageToText(ddc);
         const auto ddtt = eLanguage::zeusText(58, ddt);
         mAllCoverage->setText(ddtt);

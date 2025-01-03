@@ -6,6 +6,8 @@
 void eBuildingWriter::sWrite(const eBuilding* const b,
                              eWriteStream& dst) {
     auto& board = b->getBoard();
+    const auto cid = b->cityId();
+    dst << cid;
     const auto wrld = board.getWorldBoard();
     const auto type = b->type();
     switch(type) {

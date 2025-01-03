@@ -41,13 +41,15 @@ void eMonsterInvasionEventBase::read(eReadStream& src) {
 eMonster* eMonsterInvasionEventBase::triggerBase() const {
     const auto board = gameBoard();
     if(!board) return nullptr;
+    const auto cid = cityId();
     const auto monster = eMonster::sCreateMonster(mType, *board);
-    board->registerMonster(monster.get());
+    board->registerMonster(cid, monster.get());
+    monster->setOnCityId(cid);
     monster->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eMonsterAction>(monster.get());
     monster->setAction(a);
-    auto tile = board->monsterTile(mPointId);
+    auto tile = board->monsterTile(cid, mPointId);
     if(tile) {
         const int tx = tile->x();
         const int ty = tile->y();

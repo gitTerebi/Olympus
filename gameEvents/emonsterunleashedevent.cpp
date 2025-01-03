@@ -30,7 +30,8 @@ void eMonsterUnleashedEvent::trigger() {
     const auto gm = inst.godMessages(godType);
     const auto& m = gm->fMonster;
     const auto heroType = eMonster::sSlayer(type());
-    board->allowHero(heroType, m.fReason);
+    const auto cid = cityId();
+    board->allowHero(cid, heroType, m.fReason);
 }
 
 std::string eMonsterUnleashedEvent::longName() const {

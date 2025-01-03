@@ -11,9 +11,13 @@ class eSmallHouse;
 class eReadStream;
 class eWriteStream;
 
+enum class eCityId;
+
 class ePlague {
 public:
-    ePlague(eGameBoard& board);
+    ePlague(const eCityId cid, eGameBoard& board);
+
+    eCityId cityId() const { return mCityId; }
 
     void randomSpread();
     void spreadFrom(eSmallHouse* const h);
@@ -29,6 +33,7 @@ public:
     void write(eWriteStream& dst) const;
 private:
     eGameBoard& mBoard;
+    eCityId mCityId;
     eHouses mHouses;
 };
 

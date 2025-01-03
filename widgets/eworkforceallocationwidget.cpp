@@ -11,15 +11,16 @@ eWorkforceAllocationWidget::eWorkforceAllocationWidget(
         eMainWindow* const window) :
     eInfoWidget(window, false, false) {}
 
-void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
+void eWorkforceAllocationWidget::initialize(
+        eGameBoard& board, const eCityId cid) {
     mBoard = &board;
 
     const auto title = eLanguage::zeusText(50, 0);
     eInfoWidget::initialize(title);
 
     const bool a = board.poseidonMode();
-    auto& distributor = board.employmentDistributor();
-    const auto distrPtr = &distributor;
+    const auto distrPtr = board.employmentDistributor(cid);
+    auto& distributor = *distrPtr;
 
     const auto allocationW = new eWidget(window());
     allocationW->setNoPadding();
@@ -51,7 +52,7 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
 
         const auto down = new eSmallDownButton(window());
         w0->addWidget(down);
-        down->setPressAction([this, distrPtr, s, pL]() {
+        down->setPressAction([this, distrPtr, s, pL, cid]() {
             auto p = distrPtr->priority(s);
             if(p == ePriority::noPriority) return;
             p = static_cast<ePriority>(static_cast<int>(p) - 1);
@@ -59,11 +60,11 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
             pL->setText(ePriorityHelpers::sName(p));
             pL->fitContent();
             updateLabels();
-            mBoard->distributeEmployees();
+            mBoard->distributeEmployees(cid);
         });
         const auto up = new eSmallUpButton(window());
         w0->addWidget(up);
-        up->setPressAction([this, distrPtr, s, pL]() {
+        up->setPressAction([this, distrPtr, s, pL, cid]() {
             auto p = distrPtr->priority(s);
             if(p == ePriority::veryHigh) return;
             p = static_cast<ePriority>(static_cast<int>(p) + 1);
@@ -71,7 +72,7 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
             pL->setText(ePriorityHelpers::sName(p));
             pL->fitContent();
             updateLabels();
-            mBoard->distributeEmployees();
+            mBoard->distributeEmployees(cid);
         });
 
         pL->setNoPadding();
@@ -239,7 +240,7 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
     const int h = remainingHeight();
     int y = 2*p;
     for(const auto rr : r) {
-        const int vacs = mBoard->industryJobVacancies(rr);
+        const int vacs = mBoard->industryJobVacancies(cid, rr);
         if(vacs == 0) continue;
 
         const auto w = new eWidget(window());
@@ -265,7 +266,7 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
         const auto nameL = new eButton(window());
         nameL->setNoPadding();
         nameL->setSmallFontSize();
-        const bool s = mBoard->isShutDown(rr);
+        const bool s = mBoard->isShutDown(cid, rr);
         const auto name = eResourceTypeHelpers::typeName(rr);
         if(s) {
             nameL->setText(name + "*");
@@ -278,18 +279,18 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
         nameW->addWidget(nameL);
         nameW->fitHeight();
         w->addWidget(nameW);
-        nameL->setPressAction([this, rr, nameL, name]() {
-            const bool s = mBoard->isShutDown(rr);
+        nameL->setPressAction([this, rr, nameL, name, cid]() {
+            const bool s = mBoard->isShutDown(cid, rr);
             if(s) {
                 nameL->setLightFontColor();
                 nameL->setText(name);
                 nameL->fitContent();
-                mBoard->removeShutDown(rr);
+                mBoard->removeShutDown(cid, rr);
             } else {
                 nameL->setYellowFontColor();
                 nameL->setText(name + "*");
                 nameL->fitContent();
-                mBoard->addShutDown(rr);
+                mBoard->addShutDown(cid, rr);
             }
             updateLabels();
         });
@@ -342,7 +343,8 @@ void eWorkforceAllocationWidget::initialize(eGameBoard& board) {
 }
 
 void eWorkforceAllocationWidget::updateLabels() {
-    auto& distributor = mBoard->employmentDistributor();
+    const auto distrPtr = mBoard->employmentDistributor(mCityId);
+    auto& distributor = *distrPtr;
 
     const int iMin = static_cast<int>(eSector::husbandry);
     const int iMax = static_cast<int>(eSector::military);

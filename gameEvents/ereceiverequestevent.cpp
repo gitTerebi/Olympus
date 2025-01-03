@@ -146,13 +146,16 @@ void eReceiveRequestEvent::trigger() {
         return;
     }
 
-    const int avCount = board->resourceCount(mResource);
-    ed.fSpaceCount = avCount;
+    const auto cids = board->personPlayerCities();
+    for(const auto cid : cids) {
+        const int avCount = board->resourceCount(cid, mResource);
+        ed.fCSpaceCount[cid] = avCount;
 
-    if(avCount >= mCount) {
-        ed.fA0 = [this]() { // dispatch now
-            dispatch();
-        };
+        if(avCount >= mCount) {
+            ed.fCCA0[cid] = [this, cid]() { // dispatch now
+                dispatch(cid);
+            };
+        }
     }
 
     if(mPostpone < 3) {
@@ -287,10 +290,10 @@ eCityRequest eReceiveRequestEvent::cityRequest() const {
     return request;
 }
 
-void eReceiveRequestEvent::dispatch() {
+void eReceiveRequestEvent::dispatch(const eCityId cid) {
     const auto board = gameBoard();
     if(!board) return;
-    board->takeResource(mResource, mCount);
+    board->takeResource(cid, mResource, mCount);
     fulfillWithoutCost();
 }
 

@@ -25,6 +25,7 @@ struct eEventData {
     int fBribe = 0;
     eCloseOnAction fCA0 = nullptr;
     eAction fA0 = nullptr;
+    std::map<eCityId, eAction> fCCA0;
     std::string fA0Key;
     eAction fA1 = nullptr;
     std::string fA1Key;
@@ -35,6 +36,7 @@ struct eEventData {
     eResourceType fResourceType = eResourceType::drachmas;
     int fResourceCount = 0;
     int fSpaceCount = 0;
+    std::map<eCityId, int> fCSpaceCount;
     int fTime = 0;
     std::string fReason;
     eGodType fGod = static_cast<eGodType>(0);

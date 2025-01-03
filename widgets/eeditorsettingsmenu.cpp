@@ -39,7 +39,7 @@ void eEditorSettingsMenu::initialize(const bool first,
 
         const auto fundsButt = new eValueButton(window());
         fundsButt->initialize(0, 99999);
-        const int f = c->initialFunds();
+        const int f = c->initialFunds(ePlayerId::player0);
         const auto fStr = std::to_string(f);
         fundsButt->setValue(f);
         fundsButt->setText(eLanguage::zeusText(44, 39) + " " + fStr);
@@ -48,7 +48,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         fundsButt->setValueChangeAction([c, fundsButt](const int funds) {
             const auto fStr = std::to_string(funds);
             fundsButt->setText(eLanguage::zeusText(44, 39) + " " + fStr);
-            c->setInitialFunds(funds);
+            c->setInitialFunds(ePlayerId::player0, funds);
         });
         addWidget(fundsButt);
         fundsButt->align(eAlignment::hcenter);
@@ -157,10 +157,10 @@ void eEditorSettingsMenu::initialize(const bool first,
         const auto friendGodsAct = [this, ep]() {
             const auto choose = new eGodSelectionWidget(window());
             const auto act = [ep](const std::vector<eGodType>& godNs) {
-                ep->fFriendlyGods = godNs;
+                ep->fFriendlyGodsDelete = godNs;
             };
 
-            const auto& iniG = ep->fFriendlyGods;
+            const auto& iniG = ep->fFriendlyGodsDelete;
             choose->resize(width(), height());
             choose->initialize(act, iniG);
 
@@ -176,27 +176,27 @@ void eEditorSettingsMenu::initialize(const bool first,
         mythMenu->addWidget(friendGodsButt);
         friendGodsButt->align(eAlignment::hcenter);
 
-        const auto hostileGodsAct = [this, ep]() {
-            const auto choose = new eGodSelectionWidget(window());
-            const auto act = [ep](const std::vector<eGodType>& godNs) {
-                ep->fHostileGods = godNs;
-            };
+//        const auto hostileGodsAct = [this, ep]() {
+//            const auto choose = new eGodSelectionWidget(window());
+//            const auto act = [ep](const std::vector<eGodType>& godNs) {
+//                ep->fHostileGods = godNs;
+//            };
 
-            const auto& iniG = ep->fHostileGods;
-            choose->resize(width(), height());
-            choose->initialize(act, iniG);
+//            const auto& iniG = ep->fHostileGods;
+//            choose->resize(width(), height());
+//            choose->initialize(act, iniG);
 
-            window()->execDialog(choose);
-            choose->align(eAlignment::center);
-        };
+//            window()->execDialog(choose);
+//            choose->align(eAlignment::center);
+//        };
 
-        const auto hostileGodsButt = new eFramedButton(window());
-        hostileGodsButt->setUnderline(false);
-        hostileGodsButt->setText(eLanguage::zeusText(44, 173));
-        hostileGodsButt->fitContent();
-        hostileGodsButt->setPressAction(hostileGodsAct);
-        mythMenu->addWidget(hostileGodsButt);
-        hostileGodsButt->align(eAlignment::hcenter);
+//        const auto hostileGodsButt = new eFramedButton(window());
+//        hostileGodsButt->setUnderline(false);
+//        hostileGodsButt->setText(eLanguage::zeusText(44, 173));
+//        hostileGodsButt->fitContent();
+//        hostileGodsButt->setPressAction(hostileGodsAct);
+//        mythMenu->addWidget(hostileGodsButt);
+//        hostileGodsButt->align(eAlignment::hcenter);
 
 //        const auto monstersAct = [this, ep]() {
 //            const auto choose = new eMonsterSelectionWidget(window());
@@ -342,9 +342,9 @@ void eEditorSettingsMenu::initialize(const bool first,
             bb->setChecked(ep->availableBuilding(type));
             bb->setCheckAction([type, ep](const bool b) {
                 if(b) {
-                    ep->fAvailableBuildings.allow(type);
+                    ep->fAvailableBuildingsDelete.allow(type);
                 } else {
-                    ep->fAvailableBuildings.disallow(type);
+                    ep->fAvailableBuildingsDelete.disallow(type);
                 }
             });
             buttons.push_back(bb);

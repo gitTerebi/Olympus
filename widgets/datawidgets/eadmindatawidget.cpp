@@ -66,7 +66,6 @@ void eAdminDataWidget::initialize() {
         inner->addWidget(w);
         w->align(eAlignment::hcenter);
     }
-    setTaxRate(mBoard.taxRate());
 
     {
         mYields = new eLabel(window());
@@ -75,9 +74,8 @@ void eAdminDataWidget::initialize() {
         mYields->setNoPadding();
         mYields->setTinyFontSize();
         const auto yt = eLanguage::zeusText(60, 4); // yields an estimated
-        const int y = mBoard.taxesPaidLastYear();
         const auto dr = eLanguage::zeusText(8, 1);
-        mYields->setText(yt + " " + std::to_string(y) + " " + dr);
+        mYields->setText(yt + " 0 " + dr);
         mYields->fitContent();
         inner->addWidget(mYields);
         mYields->align(eAlignment::hcenter);
@@ -90,11 +88,7 @@ void eAdminDataWidget::initialize() {
         mPerPop->setNoPadding();
         mPerPop->setTinyFontSize();
         const auto pt = eLanguage::zeusText(60, 5); // of population visited by clerk
-        const int paid = mBoard.peoplePaidTaxesLastYear();
-        const int pop = mBoard.population();
-        int per = pop == 0 ? 0 : std::round(100.*paid/pop);
-        per = std::clamp(per, 0, 100);
-        mPerPop->setText(std::to_string(per) + "% " + pt);
+        mPerPop->setText("0% " + pt);
         mPerPop->fitContent();
         inner->addWidget(mPerPop);
         mPerPop->align(eAlignment::hcenter);
@@ -104,7 +98,8 @@ void eAdminDataWidget::initialize() {
 }
 
 void eAdminDataWidget::setTaxRate(const eTaxRate tr) {
-    mBoard.setTaxRate(tr);
+    const auto cid = viewedCity();
+    mBoard.setTaxRate(cid, tr);
     mTaxRate = tr;
     mTaxLabel->setText(eTaxRateHelpers::name(tr));
     mTaxLabel->fitContent();
@@ -114,9 +109,10 @@ void eAdminDataWidget::setTaxRate(const eTaxRate tr) {
 void eAdminDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
+        const auto cid = viewedCity();
         {
             const auto yt = eLanguage::zeusText(60, 4); // yields an estimated
-            const int y = mBoard.taxesPaidLastYear();
+            const int y = mBoard.taxesPaidLastYear(cid);
             const auto dr = eLanguage::zeusText(8, 1);
             mYields->setText(yt + " " + std::to_string(y) + " " + dr);
             mYields->fitContent();
@@ -124,8 +120,8 @@ void eAdminDataWidget::paintEvent(ePainter& p) {
         }
         {
             const auto pt = eLanguage::zeusText(60, 5); // of population visited by clerk
-            const int paid = mBoard.peoplePaidTaxesLastYear();
-            const int pop = mBoard.population();
+            const int paid = mBoard.peoplePaidTaxesLastYear(cid);
+            const int pop = mBoard.population(cid);
             int per = pop == 0 ? 0 : std::round(100.*paid/pop);
             per = std::clamp(per, 0, 100);
             mPerPop->setText(std::to_string(per) + "% " + pt);

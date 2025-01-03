@@ -22,6 +22,11 @@ eBanner::~eBanner() {
     mBoard.unregisterBanner(this);
 }
 
+eCityId eBanner::cityId() const {
+    if(!mTile) return eCityId::neutralFriendly;
+    return mTile->cityId();
+}
+
 bool eBanner::buildable() const {
     return mType == eBannerTypeS::disasterPoint ||
            mType == eBannerTypeS::monsterPoint;

@@ -17,20 +17,7 @@ void eGameBoard::write(eWriteStream& dst) const {
 
     dst << mEpisodeLost;
 
-    dst << mImmigrationLimit;
-    dst << mNoFood;
-    mNoFoodSince.write(dst);
-    mInDebtSince.write(dst);
-
-    dst << mDrachmas;
-    dst << mDifficulty;
-    dst << mWageRate;
     dst << mWageMultiplier;
-    dst << mTaxRate;
-    dst << mTaxesPaidLastYear;
-    dst << mTaxesPaidThisYear;
-    dst << mPeoplePaidTaxesLastYear;
-    dst << mPeoplePaidTaxesThisYear;
 
     for(const auto& p : mPrices) {
         dst << p.second;
@@ -41,36 +28,7 @@ void eGameBoard::write(eWriteStream& dst) const {
     dst << mTime;
     dst << mTotalTime;
 
-    mEmplDistributor.write(dst);
-
-    dst << mShutDown.size();
-    for(const auto i : mShutDown) {
-        dst << i;
-    }
-
-    dst << mManTowers;
-
-    dst << mShutdownLandTrade;
-    dst << mShutdownSeaTrade;
-
     dst << mSoldiersUpdate;
-    dst << mMaxRabble;
-    dst << mMaxHoplites;
-    dst << mMaxHorsemen;
-
-    dst << mCoverageUpdate;
-    dst << mAthleticsCoverage;
-    dst << mPhilosophyCoverage;
-    dst << mDramaCoverage;
-    dst << mAllDiscCoverage;
-    dst << mTaxesCoverage;
-    dst << mUnrest;
-    dst << mPopularity;
-    dst << mHealth;
-    dst << mExcessiveMilitaryServiceCount;
-    dst << mMonthsOfMilitaryService;
-
-    dst << mWonGames;
 
     {
         int id = 0;
@@ -123,46 +81,6 @@ void eGameBoard::write(eWriteStream& dst) const {
     }
 
     {
-        const int nq = mFulfilledQuests.size();
-        dst << nq;
-        for(const auto& q : mFulfilledQuests) {
-            q.write(dst);
-        }
-    }
-
-    {
-        const int nm = mSlayedMonsters.size();
-        dst << nm;
-        for(const auto m : mSlayedMonsters) {
-            dst << m;
-        }
-    }
-
-    {
-        const int nq = mGodQuests.size();
-        dst << nq;
-        for(const auto& q : mGodQuests) {
-            dst.writeGameEvent(q);
-        }
-    }
-
-    {
-        const int nq = mCityRequests.size();
-        dst << nq;
-        for(const auto& q : mCityRequests) {
-            dst.writeGameEvent(q);
-        }
-    }
-
-    {
-        const int nq = mCityTroopsRequests.size();
-        dst << nq;
-        for(const auto& q : mCityTroopsRequests) {
-            dst.writeGameEvent(q);
-        }
-    }
-
-    {
         const int nbs = mAllBuildings.size();
         dst << nbs;
         for(const auto b : mAllBuildings) {
@@ -181,27 +99,11 @@ void eGameBoard::write(eWriteStream& dst) const {
     }
 
     {
-        const int nb = mSoldierBanners.size();
+        const int nb = mAllSoldierBanners.size();
         dst << nb;
-        for(const auto& b : mSoldierBanners) {
+        for(const auto& b : mAllSoldierBanners) {
             dst << b->type();
             b->write(dst);
-        }
-    }
-
-    {
-        const int ni = mInvasionHandlers.size();
-        dst << ni;
-        for(const auto i : mInvasionHandlers) {
-            i->write(dst);
-        }
-    }
-
-    {
-        dst << mPlagues.size();
-
-        for(const auto& p : mPlagues) {
-            p->write(dst);
         }
     }
 
@@ -212,34 +114,6 @@ void eGameBoard::write(eWriteStream& dst) const {
             dst << c->type();
             c->write(dst);
         }
-    }
-
-    {
-        const int ngs = mAttackingGods.size();
-        dst << ngs;
-        for(const auto g : mAttackingGods) {
-            dst.writeCharacter(g);
-        }
-    }
-
-    {
-        const int nms = mMonsters.size();
-        dst << nms;
-        for(const auto g : mMonsters) {
-            dst.writeCharacter(g);
-        }
-    }
-
-    const int nfg = mFriendlyGods.size();
-    dst << nfg;
-    for(const auto g : mFriendlyGods) {
-        dst << g;
-    }
-
-    const int nrg = mHostileGods.size();
-    dst << nrg;
-    for(const auto g : mHostileGods) {
-        dst << g;
     }
 
     dst << mGameEvents.size();
@@ -253,13 +127,6 @@ void eGameBoard::write(eWriteStream& dst) const {
         g->write(dst);
     }
 
-    mAvailableBuildings.write(dst);
-
-    dst << mMilitaryAid.size();
-    for(const auto& a : mMilitaryAid) {
-        a->write(dst);
-    }
-
     dst << mProgressEarthquakes;
     dst << mEarthquakes.size();
     for(const auto& e : mEarthquakes) {
@@ -268,19 +135,12 @@ void eGameBoard::write(eWriteStream& dst) const {
 
     dst << mDefeatedBy.size();
     for(const auto& c : mDefeatedBy) {
-        dst.writeCity(c.get());
+        dst << c.first;
+        dst << c.second.size();
+        for(const auto& cc : c.second) {
+            dst.writeCity(cc.get());
+        }
     }
-
-    dst << mPop100;
-    dst << mPop500;
-    dst << mPop1000;
-    dst << mPop2000;
-    dst << mPop3000;
-    dst << mPop5000;
-    dst << mPop10000;
-    dst << mPop15000;
-    dst << mPop20000;
-    dst << mPop25000;
 
     dst << mPlannedActions.size();
     for(const auto a : mPlannedActions) {
@@ -288,8 +148,19 @@ void eGameBoard::write(eWriteStream& dst) const {
         a->write(dst);
     }
 
-    dst << mSummonedHeroes.size();
-    for(const auto h : mSummonedHeroes) {
-        dst << h;
+    {
+        dst << mCitiesOnBoard.size();
+        for(const auto& c : mCitiesOnBoard) {
+            dst << c->id();
+            c->write(dst);
+        }
+    }
+
+    {
+        dst << mPlayersOnBoard.size();
+        for(const auto& p : mPlayersOnBoard) {
+            dst << p->id();
+            p->write(dst);
+        }
     }
 }

@@ -13,6 +13,7 @@
 #include "widgets/eworldwidget.h"
 #include "widgets/elabel.h"
 #include "emainwindow.h"
+#include "echoosebutton.h"
 
 eFulfillDialog::eFulfillDialog(eMainWindow* const window) :
     eInfoWidget(window, true, true) {}
@@ -33,7 +34,8 @@ void eFulfillDialog::initialize(eGameBoard* const board,
     const auto iw = addFramedWidget(remainingHeight());
     const int bw = iw->width() - 2*p;
     int y = p;
-    const auto& qs = board->cityRequests();
+    const auto pid = board->personPlayer();
+    const auto& qs = board->cityRequests(pid);
 //    std::vector<stdsptr<eReceiveRequestEvent>> qs;
 //    const auto q = e::make_shared<eReceiveRequestEvent>(eGameEventBranch::root);
 //    q->initialize(0, eResourceType::fleece, 10, city);
@@ -47,28 +49,48 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         const auto b = new eFramedButton(window());
         b->setNoPadding();
         b->setRenderBg(true);
+
         b->setPressAction([this, q, board, resource, count]() {
-            const auto bcount = board->resourceCount(resource);
-            const auto w = window();
-            const auto ww = w->worldWidget();
-            if(bcount >= count) {
-                const auto acceptA = [q]() {
-                    q->dispatch();
-                };
-                const auto title = eLanguage::zeusText(5, 6); // Request
-                const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
+            const auto wboard = board->getWorldBoard();
+            const auto cids = board->personPlayerCities();
 
-                const auto qw = new eQuestionWidget(window());
-                qw->initialize(title, text, acceptA, nullptr);
-                ww->openDialog(qw);
-            } else {
-                const auto title = eLanguage::zeusText(5, 6); // Request
-                const auto text = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
-
-                const auto qw = new eMessageWidget(window());
-                qw->initialize(title, text);
-                ww->openDialog(qw);
+            std::vector<eCityId> validCities;
+            std::vector<std::string> cityNames;
+            for(const auto cid : cids) {
+                const auto c = wboard->cityWithId(cid);
+                cityNames.push_back(c->name());
+                validCities.push_back(cid);
             }
+            if(validCities.empty()) return;
+            const auto choose = new eChooseButton(window());
+            const auto act = [this, q, validCities, resource, count, board](const int val) {
+                const auto cid = validCities[val];
+                const auto bcount = board->resourceCount(cid, resource);
+                const auto w = window();
+                const auto ww = w->worldWidget();
+                if(bcount >= count) {
+                    const auto acceptA = [q, cid]() {
+                        q->dispatch(cid);
+                    };
+                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
+
+                    const auto qw = new eQuestionWidget(window());
+                    qw->initialize(title, text, acceptA, nullptr);
+                    ww->openDialog(qw);
+                } else {
+                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto text = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+
+                    const auto qw = new eMessageWidget(window());
+                    qw->initialize(title, text);
+                    ww->openDialog(qw);
+                }
+            };
+            choose->initialize(8, cityNames, act);
+
+            window()->execDialog(choose);
+            choose->align(eAlignment::center);
         });
 
         const auto iww = new eWidget(window());
@@ -76,7 +98,13 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         b->addWidget(iww);
         iww->move(p, p);
 
-        const bool f = board->resourceCount(resource) >= count;
+        const auto cids = board->personPlayerCities();
+
+        bool f = false;
+        for(const auto cid : cids) {
+            f = board->resourceCount(cid, resource) >= count;
+            if(f) break;
+        }
 
         const auto stateLabel = new eLabel(window());
         stateLabel->setNoPadding();
@@ -114,26 +142,29 @@ void eFulfillDialog::initialize(eGameBoard* const board,
     }
 
     bool hasArmy = false;
-    const auto& bs = board->banners();
-    for(const auto& b : bs) {
-        const bool a = b->isAbroad();
-        if(!a) {
-            hasArmy = true;
-            break;
-        }
-    }
-    if(!hasArmy) {
-        const auto& hs = board->heroHalls();
-        for(const auto h : hs) {
-            const bool a = h->heroOnQuest();
+    const auto cids = board->personPlayerCities();
+    for(const auto cid : cids) {
+        const auto& bs = board->banners(cid);
+        for(const auto& b : bs) {
+            const bool a = b->isAbroad();
             if(!a) {
                 hasArmy = true;
                 break;
             }
         }
+        if(!hasArmy) {
+            const auto& hs = board->heroHalls(cid);
+            for(const auto h : hs) {
+                const bool a = h->heroOnQuest();
+                if(!a) {
+                    hasArmy = true;
+                    break;
+                }
+            }
+        }
     }
 
-    const auto& qqs = board->cityTroopsRequests();
+    const auto& qqs = board->cityTroopsRequests(pid);
 //    std::vector<stdsptr<eTroopsRequestEvent>> qqs;
 //    const auto qq = e::make_shared<eTroopsRequestEvent>(eGameEventBranch::root);
 //    qq->initialize(0, city, city, false);

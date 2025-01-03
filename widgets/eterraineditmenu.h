@@ -47,7 +47,9 @@ enum class eTerrainEditMode {
     monsterPoint,
 
     quake,
-    disasterPoint
+    disasterPoint,
+
+    cityTerritory
 };
 
 enum class eBrushType {

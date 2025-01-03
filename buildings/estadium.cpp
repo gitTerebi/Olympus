@@ -20,7 +20,7 @@ eStadium::eStadium(eGameBoard& board, const bool r,
 
 eStadium::~eStadium() {
     auto& b = getBoard();
-    b.unregisterStadium();
+    b.unregisterStadium(cityId());
 }
 
 eTextureSpace eStadium::getTextureSpace(const int tx, const int ty,

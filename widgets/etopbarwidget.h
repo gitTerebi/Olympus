@@ -5,6 +5,7 @@
 #include "elabel.h"
 
 class eGameBoard;
+class eGameWidget;
 class eButton;
 
 class eTopWidget : public eWidget {
@@ -48,10 +49,13 @@ public:
 
     void initialize();
     void setBoard(eGameBoard* const board);
+    void setGameWidget(eGameWidget* const gw);
 
     void paintEvent(ePainter& p);
 private:
     eGameBoard* mBoard = nullptr;
+    eGameWidget* mGW = nullptr;
+    eLabel* mCityLabel = nullptr;
     eTopWidget* mDrachmasWidget = nullptr;
     eTopWidget* mPopulationWidget = nullptr;
     eButton* mDateLabel = nullptr;

@@ -100,7 +100,8 @@ void eHygieneSafetyDataWidget::initialize() {
 void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
-        const int hygiene = mBoard.health();
+        const auto cid = viewedCity();
+        const int hygiene = mBoard.health(cid);
         int hString = -1;
         if(hygiene > 90) {
             hString = 12;
@@ -129,7 +130,7 @@ void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
         mHygieneLabel->fitContent();
         mHygieneLabel->align(eAlignment::hcenter);
 
-        const int unrest = mBoard.unrest();
+        const int unrest = mBoard.unrest(cid);
         int uString = -1;
         if(unrest > 8) {
             uString = 19;

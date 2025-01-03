@@ -49,8 +49,9 @@ void eSettlerAction::write(eWriteStream& dst) const {
 
 void eSettlerAction::setNumberPeople(const int p) {
     auto& board = this->board();
-    auto& popData = board.populationData();
-    popData.incSettlers(p - mNPeople);
+    const auto popData = board.populationData(cityId());
+    if(!popData) return;
+    popData->incSettlers(p - mNPeople);
     mNPeople = p;
 }
 

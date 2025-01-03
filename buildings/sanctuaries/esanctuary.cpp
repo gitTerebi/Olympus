@@ -95,7 +95,7 @@ eSanctuary::eSanctuary(eGameBoard& board,
 eSanctuary::~eSanctuary() {
     if(mCart) mCart->kill();
     auto& board = getBoard();
-    board.destroyed(type());
+    board.destroyed(cityId(), type());
     board.unregisterSanctuary(this);
 }
 
@@ -183,7 +183,7 @@ eGodType eSanctuary::godType() const {
 eGod* eSanctuary::spawnGod() {
     auto& board = getBoard();
     const auto c = eGod::sCreateGod(godType(), board);
-    c->setCityId(cityId());
+    c->setBothCityIds(cityId());
     c->setAttitude(eGodAttitude::worshipped);
     mGod = c.get();
     const auto ct = centerTile();
@@ -213,7 +213,7 @@ void eSanctuary::buildingProgressed() {
             if(ub) ub->erase();
             const auto build = [&](const eResourceBuildingType type) {
                 const auto b = e::make_shared<eResourceBuilding>(
-                            board, type);
+                            board, type, cityId());
                 b->setSanctuary(true);
                 b->setCenterTile(s);
                 b->setTileRect({s->x(), s->y(), 1, 1});
@@ -258,36 +258,37 @@ void eSanctuary::setConstructionHalted(const bool h) {
 stdsptr<eSanctuary> eSanctuary::sCreate(
         const eBuildingType type,
         const int sw, const int sh,
-        eGameBoard& board) {
+        eGameBoard& board,
+        const eCityId cid) {
     switch(type) {
     case eBuildingType::templeAphrodite:
-        return e::make_shared<eAphroditeSanctuary>(sw, sh, board);
+        return e::make_shared<eAphroditeSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeApollo:
-        return e::make_shared<eApolloSanctuary>(sw, sh, board);
+        return e::make_shared<eApolloSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeAres:
-        return e::make_shared<eAresSanctuary>(sw, sh, board);
+        return e::make_shared<eAresSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeArtemis:
-        return e::make_shared<eArtemisSanctuary>(sw, sh, board);
+        return e::make_shared<eArtemisSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeAthena:
-        return e::make_shared<eAthenaSanctuary>(sw, sh, board);
+        return e::make_shared<eAthenaSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeAtlas:
-        return e::make_shared<eAtlasSanctuary>(sw, sh, board);
+        return e::make_shared<eAtlasSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeDemeter:
-        return e::make_shared<eDemeterSanctuary>(sw, sh, board);
+        return e::make_shared<eDemeterSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeDionysus:
-        return e::make_shared<eDionysusSanctuary>(sw, sh, board);
+        return e::make_shared<eDionysusSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeHades:
-        return e::make_shared<eHadesSanctuary>(sw, sh, board);
+        return e::make_shared<eHadesSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeHephaestus:
-        return e::make_shared<eHephaestusSanctuary>(sw, sh, board);
+        return e::make_shared<eHephaestusSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeHera:
-        return e::make_shared<eHeraSanctuary>(sw, sh, board);
+        return e::make_shared<eHeraSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeHermes:
-        return e::make_shared<eHermesSanctuary>(sw, sh, board);
+        return e::make_shared<eHermesSanctuary>(sw, sh, board, cid);
     case eBuildingType::templePoseidon:
-        return e::make_shared<ePoseidonSanctuary>(sw, sh, board);
+        return e::make_shared<ePoseidonSanctuary>(sw, sh, board, cid);
     case eBuildingType::templeZeus:
-        return e::make_shared<eZeusSanctuary>(sw, sh, board);
+        return e::make_shared<eZeusSanctuary>(sw, sh, board, cid);
     default:
         return nullptr;
     }
@@ -512,49 +513,52 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
     }
     auto& board = getBoard();
     const auto type = godType();
+    const auto cid = cityId();
     bool r = false;
     switch(type) {
     case eGodType::aphrodite: {
-        r = eAphroditeHelpAction::sHelpNeeded(board);
+        r = eAphroditeHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::apollo: {
-        r = eApolloHelpAction::sHelpNeeded(board);
+        r = eApolloHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::ares: {
-        r = eAresHelpAction::sHelpNeeded(board);
+        const auto pid = board.cityIdToPlayerId(cid);
+        r = eAresHelpAction::sHelpNeeded(pid, board);
     } break;
     case eGodType::artemis: {
-        r = eArtemisHelpAction::sHelpNeeded(board);
+        r = eArtemisHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::athena: {
-        r = eAthenaHelpAction::sHelpNeeded(board);
+        r = eAthenaHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::atlas: {
-        r = eAtlasHelpAction::sHelpNeeded(board);
+        r = eAtlasHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::demeter: {
-        r = eDemeterHelpAction::sHelpNeeded(board);
+        r = eDemeterHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::dionysus: {
-        r = eDionysusHelpAction::sHelpNeeded(board);
+        r = eDionysusHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::hades: {
-        r = eHadesHelpAction::sHelpNeeded(board);
+        r = eHadesHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::hera: {
-        r = eHeraHelpAction::sHelpNeeded(board);
+        r = eHeraHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::hephaestus: {
-        r = eHephaestusHelpAction::sHelpNeeded(board);
+        r = eHephaestusHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::hermes: {
-        r = eHermesHelpAction::sHelpNeeded(board);
+        const auto pid = board.cityIdToPlayerId(cid);
+        r = eHermesHelpAction::sHelpNeeded(pid, board);
     } break;
     case eGodType::poseidon: {
-        r = ePoseidonHelpAction::sHelpNeeded(board);
+        r = ePoseidonHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::zeus: {
-        r = eZeusHelpAction::sHelpNeeded(board);
+        r = eZeusHelpAction::sHelpNeeded(cid, board);
     } break;
     }
     if(!r) {
@@ -635,7 +639,9 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
     ed.fTile = c->tile();
     board.event(eEvent::godHelp, ed);
     if(type == eGodType::ares) {
-        const auto& cs = board.conquests();
+        const auto cid = cityId();
+        const auto pid = board.cityIdToPlayerId(cid);
+        const auto& cs = board.conquests(pid);
         if(cs.empty()) return true;
         cs[0]->addAres();
         mGodAbroad = true;

@@ -64,6 +64,10 @@ void eDataWidget::shown() {
     mTime = 0;
 }
 
+void eDataWidget::update() {
+    mTime = 0;
+}
+
 void eDataWidget::addViewButton(eViewModeButton* const b) {
     mButtons.push_back(b);
 }
@@ -84,4 +88,8 @@ int eDataWidget::sCoverageToText(const int c) {
     if(c < 60) return 12; // ok
     if(c < 80) return 11; // not bad
     return 10; // good
+}
+
+eCityId eDataWidget::viewedCity() const {
+    return mGW->viewedCity();
 }

@@ -250,6 +250,7 @@ void eGameWidget::initialize() {
     mTopBar->setWidth(gw);
     mTopBar->initialize();
     mTopBar->setBoard(mBoard);
+    mTopBar->setGameWidget(this);
     addWidget(mTopBar);
     mTopBar->align(eAlignment::top);
 
@@ -462,6 +463,10 @@ bool eGameWidget::tileVisible(eTile* const tile) const {
     if(tyf > bottom) return false;
     if(tyf < top) return false;
     return true;
+}
+
+eCityId eGameWidget::viewedCity() const {
+    return mViewedCityId;
 }
 
 void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
@@ -1468,9 +1473,10 @@ bool eGameWidget::build(const int tx, const int ty,
         }
     }
 
-    const auto diff = mBoard->difficulty();
+    const auto ppid = mBoard->personPlayer();
+    const auto diff = mBoard->difficulty(ppid);
     const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-    mBoard->incDrachmas(-cost);
+    mBoard->incDrachmas(ppid, -cost);
     return true;
 }
 
@@ -1491,7 +1497,7 @@ void eGameWidget::buildAnimal(eTile* const tile,
 
     build(tx, ty, 1, 2, [this, sh, type]() {
         return e::make_shared<eAnimalBuilding>(
-                    *mBoard, sh.get(), type);
+                    *mBoard, sh.get(), type, mViewedCityId);
     }, true, true);
 }
 
@@ -1752,6 +1758,8 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
                mode == eTerrainEditMode::resetElev) {
                 updateTopBottomAltitude();
                 updateMinMaxAltitude();
+            } else if(mode == eTerrainEditMode::cityTerritory) {
+                mBoard->updateTerritoryBorders();
             }
             mBoard->updateMarbleTiles();
             mBoard->scheduleTerrainUpdate();
@@ -1894,6 +1902,7 @@ void eGameWidget::setDX(const int dx) {
     clampViewBox();
     updateMinimap();
     mPressedX += mDX - oldDX;
+    mUpdateViewedTileScheduled = true;
 }
 
 void eGameWidget::setDY(const int dy) {
@@ -1902,6 +1911,7 @@ void eGameWidget::setDY(const int dy) {
     clampViewBox();
     updateMinimap();
     mPressedY += mDY - oldDY;
+    mUpdateViewedTileScheduled = true;
 }
 
 void eGameWidget::clampViewBox() {

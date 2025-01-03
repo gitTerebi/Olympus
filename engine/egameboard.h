@@ -77,54 +77,6 @@ struct eEpisode;
 
 using eAction = std::function<void()>;
 
-struct eMilitaryAid {
-    bool count() const {
-        int c = 0;
-        for(const auto& s : fSoldiers) {
-            c += s->count();
-        }
-        return c;
-    }
-
-    bool allDead() const {
-        return count() == 0;
-    }
-
-    void goBack() {
-        for(const auto& s : fSoldiers) {
-            s->goAbroad();
-        }
-        fSoldiers.clear();
-    }
-
-    void write(eWriteStream& dst) {
-        dst.writeCity(fCity.get());
-        dst << fSoldiers.size();
-        for(const auto& s : fSoldiers) {
-            dst << s->type();
-            s->write(dst);
-        }
-    }
-
-    void read(eReadStream& src, eGameBoard* const board) {
-        src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-            fCity = c;
-        });
-        int ns;
-        src >> ns;
-        for(int i = 0; i < ns; i++) {
-            eBannerType type;
-            src >> type;
-            const auto b = e::make_shared<eSoldierBanner>(type, *board);
-            b->read(src);
-            fSoldiers.push_back(b);
-        }
-    }
-
-    stdsptr<eWorldCity> fCity;
-    std::vector<stdsptr<eSoldierBanner>> fSoldiers;
-};
-
 class eGameBoard : public eStdSelfRef {
 public:
     eGameBoard();
@@ -151,6 +103,15 @@ public:
 
     double taxRateF(const eCityId cid) const;
     eTaxRate taxRate(const eCityId cid) const;
+    eWageRate wageRate(const eCityId cid) const;
+
+    void setTaxRate(const eCityId cid, const eTaxRate tr);
+    void setWageRate(const eCityId cid, const eWageRate wr);
+
+    int taxesPaidThisYear(const eCityId cid) const;
+    int taxesPaidLastYear(const eCityId cid) const;
+    int peoplePaidTaxesThisYear(const eCityId cid) const;
+    int peoplePaidTaxesLastYear(const eCityId cid) const;
 
     int philosophyResearchCoverage(const eCityId cid) const;
     int athleticsLearningCoverage(const eCityId cid) const;
@@ -163,6 +124,7 @@ public:
 
     int drachmas(const ePlayerId pid) const;
     void incDrachmas(const ePlayerId pid, const int by);
+    void setDrachmas(const ePlayerId pid, const int to);
 
     void registerCharacter(eCharacter* const c);
     bool unregisterCharacter(eCharacter* const c);
@@ -185,16 +147,16 @@ public:
 
     void registerTradePost(eTradePost* const b);
     bool unregisterTradePost(eTradePost* const b);
-    bool hasTradePost(const eWorldCity& city);
+    bool hasTradePost(const eCityId cid, const eWorldCity& city);
 
     void registerSpawner(eSpawner* const s);
     bool unregisterSpawner(eSpawner* const s);
 
-    void registerStadium(eBuilding* const s);
-    void unregisterStadium();
+    void registerStadium(eStadium* const s);
+    void unregisterStadium(const eCityId cid);
 
-    void registerMuseum(eBuilding* const s);
-    void unregisterMuseum();
+    void registerMuseum(eMuseum* const s);
+    void unregisterMuseum(const eCityId cid);
 
     void registerStorBuilding(eStorageBuilding* const b);
     bool unregisterStorBuilding(eStorageBuilding* const b);
@@ -208,45 +170,47 @@ public:
     void registerMissile(eMissile* const m);
     bool unregisterMissile(eMissile* const m);
 
-    bool hasStadium() const { return mStadium; }
-    bool hasMuseum() const { return mMuseum; }
-    eStadium* stadium() const;
-    eMuseum* museum() const;
+    bool hasStadium(const eCityId cid) const;
+    bool hasMuseum(const eCityId cid) const;
+    eStadium* stadium(const eCityId cid) const;
+    eMuseum* museum(const eCityId cid) const;
 
     void registerPalace(ePalace* const p);
     void unregisterPalace(const eCityId cid);
 
-    void registerMonster(eMonster* const m);
-    void unregisterMonster(eMonster* const m);
+    void registerMonster(const eCityId cid, eMonster* const m);
+    void unregisterMonster(const eCityId cid, eMonster* const m);
 
-    eBanner* banner(const eBannerTypeS type, const int id = 0) const;
+    eBanner* banner(const eCityId cid,
+                    const eBannerTypeS type,
+                    const int id = 0) const;
     void registerBanner(eBanner* const b);
     void unregisterBanner(eBanner* const b);
 
     void registerAllSoldierBanner(eSoldierBanner* const b);
-    void unregisterAllSoldierBanner(eSoldierBanner* const b);
+    void unregisterAllSoldierBanner(eSoldierBanner* const b);    
 
-    const std::vector<eMonster*>& monsters() const { return mMonsters; }
+    bool manTowers(const eCityId cid) const;
+    void setManTowers(const eCityId cid, const bool m);
 
-    std::vector<eAgoraBase*> agoras() const;
+    std::vector<eAgoraBase*> agoras(const eCityId cid) const;
 
     void updateResources(const eCityId cid);
     using eResources = std::vector<std::pair<eResourceType, int>>;
     const eResources* resources(const eCityId cid) const;
 
-    ePalace* palace() const { return mPalace; }
-    bool hasPalace() const { return mPalace; }
+    ePalace* palace(const eCityId cid) const;
+    bool hasPalace(const eCityId cid) const;
 
     int eliteHouses(const eCityId cid) const;
 
-    const std::vector<eSanctuary*>* sanctuaries(const eCityId cid) const;
+    std::vector<eSanctuary*> sanctuaries(const eCityId cid) const;
     eSanctuary* sanctuary(const eCityId cid, const eGodType god) const;
 
-    const std::vector<eHerosHall*>* heroHalls(const eCityId cid) const;
+    std::vector<eHerosHall*> heroHalls(const eCityId cid) const;
     eHerosHall* heroHall(const eCityId cid, const eHeroType hero) const;
 
-    const std::vector<stdsptr<eSoldierBanner>>& banners() const
-    { return mSoldierBanners; }
+    std::vector<stdsptr<eSoldierBanner>> banners(const eCityId cid) const;
     int countBanners(const eBannerType bt, const eCityId cid) const;
     int countSoldiers(const eBannerType bt, const eCityId cid) const;
 
@@ -259,15 +223,32 @@ public:
 
     eThreadPool& threadPool() { return mThreadPool; }
 
-    int population() const { return mPopData.population(); }
+    int population(const ePlayerId pid) const;
+    int population(const eCityId cid) const;
 
     ePopulationData* populationData(const eCityId cid);
     eHusbandryData* husbandryData(const eCityId cid);
     eEmploymentData* employmentData(const eCityId cid);
     eHeatMap& appealMap() { return mAppealMap; }
 
+    eEmploymentDistributor* employmentDistributor(const eCityId cid) const;
+
+    void addShutDown(const eCityId cid, const eResourceType type);
+    void removeShutDown(const eCityId cid, const eResourceType type);
+    int industryJobVacancies(const eCityId cid, const eResourceType type) const;
+
+    void distributeEmployees(const eCityId cid, const eSector s);
+    void distributeEmployees(const eCityId cid);
+
+    bool isShutDown(const eCityId cid,
+                    const eResourceType type) const;
+    bool isShutDown(const eCityId cid,
+                    const eBuildingType type) const;
+
     void payTaxes(const eCityId cid, const int d, const int people);
-    void setDifficulty(const eDifficulty d) { mDifficulty = d; }
+    void setDifficulty(const eDifficulty d);
+    void setDifficulty(const ePlayerId pid, const eDifficulty d);
+    eDifficulty personPlayerDifficulty() const;
     eDifficulty difficulty(const ePlayerId pid) const;
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d);
@@ -333,6 +314,24 @@ public:
 
     void setButtonsVisUpdater(const eAction& u);
 
+    using eBuildingValidator = std::function<bool(eBuilding*)>;
+    std::vector<eBuilding*> buildings(const eCityId cid,
+                                      const eBuildingValidator& v) const;
+    std::vector<eBuilding*> buildings(const eCityId cid,
+                                      const eBuildingType type) const;
+    int countBuildings(const eCityId cid,
+                       const eBuildingValidator& v) const;
+    int countBuildings(const eCityId cid,
+                       const eBuildingType t) const;
+    int hasBuilding(const eCityId cid,
+                    const eBuildingType t) const;
+    int countAllowed(const eCityId cid,
+                     const eBuildingType t) const;
+    eBuilding* randomBuilding(const eCityId cid,
+                              const eBuildingValidator& v) const;
+    std::vector<eBuilding*> commemorativeBuildings(
+            const eCityId cid) const;
+
     bool supportsBuilding(const eCityId cid,
                           const eBuildingMode mode) const;
     bool availableBuilding(const eCityId cid,
@@ -354,8 +353,8 @@ public:
     bool registerBuildingsEnabled() const
     { return mRegisterBuildingsEnabled; }
 
-    bool supportsResource(const eResourceType rt) const;
-    eResourceType supportedResources() const;
+    bool supportsResource(const eCityId cid, const eResourceType rt) const;
+    eResourceType supportedResources(const eCityId cid) const;
 
     int wonGames(const eCityId cid) const;
 
@@ -368,12 +367,6 @@ public:
 
     void setFriendlyGods(const eCityId cid,
                          const std::vector<eGodType>& gods);
-    void setHostileGods(const std::vector<eGodType>& gods);
-    void setHostileMonsters(const std::vector<eMonsterType>& monsters);
-
-    const std::vector<eGodType>& friendlyGods() { return mFriendlyGods; }
-    const std::vector<eGodType>& hostileGods() { return mHostileGods; }
-    const std::vector<eMonsterType>& hostileMonsters() { return mHostileMonsters; }
 
     void allowHero(const eCityId cid, const eHeroType heroType,
                    const std::string& reason = "");
@@ -405,15 +398,20 @@ public:
     eSoldierBanner* soldierBannerWithIOID(const int id) const;
     eGameEvent* eventWithIOID(const int id) const;
 
-    eTile* monsterTile(const int id) const;
-    eTile* landInvasionTile(const int id) const;
-    eTile* disasterTile(const int id) const;
+    eTile* monsterTile(const eCityId cid,
+                       const int id) const;
+    eTile* landInvasionTile(const eCityId cid,
+                            const int id) const;
+    eTile* disasterTile(const eCityId cid,
+                        const int id) const;
 
-    using eIV = std::vector<eInvasionHandler*>;
-    const eIV& invasionHandlers() const;
-    void addInvasionHandler(eInvasionHandler* const i);
-    void removeInvasionHandler(eInvasionHandler* const i);
-    bool hasActiveInvasions() const;
+    std::vector<eInvasionHandler*> invasionHandlers(
+            const eCityId cid) const;
+    void addInvasionHandler(const eCityId cid,
+                            eInvasionHandler* const i);
+    void removeInvasionHandler(const eCityId cid,
+                               eInvasionHandler* const i);
+    bool hasActiveInvasions(const eCityId cid) const;
 
     int addResource(const eCityId cid,
                     const eResourceType type,
@@ -457,56 +455,58 @@ public:
     void hopliteKilled(const eCityId cid);
     void horsemanKilled(const eCityId cid);
 
-    eEnlistedForces getEnlistableForces() const;
+    eEnlistedForces getEnlistableForces(const ePlayerId pid) const;
 
     using eQuests = std::vector<eGodQuestEvent*>;
-    const eQuests& godQuests() const { return mGodQuests; }
+    eQuests godQuests(const ePlayerId pid) const;
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
     using eRequests = std::vector<eReceiveRequestEvent*>;
-    const eRequests& cityRequests() const { return mCityRequests; }
+    eRequests cityRequests(const ePlayerId pid) const;
     void addCityRequest(eReceiveRequestEvent* const q);
     void removeCityRequest(eReceiveRequestEvent* const q);
 
     using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
-    const eTroopsRequests& cityTroopsRequests() const { return mCityTroopsRequests; }
+    eTroopsRequests cityTroopsRequests(const ePlayerId pid) const;
     void addCityTroopsRequest(eTroopsRequestEvent* const q);
     void removeCityTroopsRequest(eTroopsRequestEvent* const q);
 
     using eConquests = std::vector<ePlayerConquestEventBase*>;
-    const eConquests& conquests() const { return mConquests; }
+    eConquests conquests(const ePlayerId pid) const;
     void addConquest(ePlayerConquestEventBase* const q);
     void removeConquest(ePlayerConquestEventBase* const q);
 
     using eInvasions = std::vector<eInvasionEvent*>;
     const eInvasions& invasions() const { return mInvasions; }
-    eInvasionEvent* invasionToDefend() const;
+    eInvasionEvent* invasionToDefend(const eCityId cid) const;
     void addInvasion(eInvasionEvent* const i);
     void removeInvasion(eInvasionEvent* const i);
 
     using eArmyEvents = std::vector<eArmyEventBase*>;
-    const eArmyEvents& armyEvents() const { return mArmyEvents; }
+    eArmyEvents armyEvents() const;
     void addArmyEvent(eArmyEventBase* const q);
     void removeArmyEvent(eArmyEventBase* const q);
 
+    std::vector<eMonster*> monsters(const eCityId cid) const;
     using eChars = std::vector<eCharacter*>;
-    const eChars& attackingGods() const { return mAttackingGods; }
-    void registerAttackingGod(eCharacter* const c);
+    eChars attackingGods(const eCityId cid) const;
+    void registerAttackingGod(const eCityId cid, eCharacter* const c);
 
     void startPlague(eSmallHouse* const h);
     stdsptr<ePlague> plagueForHouse(eSmallHouse* const h);
     void healPlague(const stdsptr<ePlague>& p);
     void healHouse(eSmallHouse* const h);
     using ePlagues = std::vector<stdsptr<ePlague>>;
-    const ePlagues& plagues() const { return mPlagues; }
-    stdsptr<ePlague> nearestPlague(const int tx, const int ty,
+    ePlagues plagues(const eCityId cid) const;
+    stdsptr<ePlague> nearestPlague(const eCityId cid,
+                                   const int tx, const int ty,
                                    int& dist) const;
 
     void updateMusic();
 
-    eTile* entryPoint() const;
-    eTile* exitPoint() const;
+    eTile* entryPoint(const eCityId cid) const;
+    eTile* exitPoint(const eCityId cid) const;
 
     bool editorMode() const { return mEditorMode; }
     void setEditorMode(const bool m) { mEditorMode = m; }
@@ -519,21 +519,14 @@ public:
 
     void setWorldBoard(eWorldBoard* const wb);
 
-    const std::vector<eGodQuest>& fulfilledQuests() const
-    { return mFulfilledQuests; }
-    void addFulfilledQuest(const eGodQuest q);
-    const std::vector<eMonsterType>& slayedMonsters() const
-    { return mSlayedMonsters; }
-    void addSlayedMonster(const eMonsterType m);
-
     using eWC = stdsptr<eWorldCity>;
     void startEpisode(eEpisode* const e,
                       const eWC& lastPlayedColony);
 
     bool checkGoalsFulfilled() const;
 
-    void musterAllSoldiers();
-    void sendAllSoldiersHome();
+    void musterAllSoldiers(const eCityId cid);
+    void sendAllSoldiersHome(const eCityId cid);
 
     void scheduleDistributeEmployees();
 
@@ -552,9 +545,12 @@ public:
     bool seaTradeShutdown() const { return mShutdownSeaTrade; }
     void setSeaTradeShutdown(const bool s) { mShutdownSeaTrade = s; }
 
-    eMilitaryAid* militaryAid(const stdsptr<eWorldCity>& c) const;
-    void removeMilitaryAid(const stdsptr<eWorldCity>& c);
-    void addMilitaryAid(const stdsptr<eMilitaryAid>& a);
+    eMilitaryAid* militaryAid(const eCityId cid,
+                              const stdsptr<eWorldCity>& c) const;
+    void removeMilitaryAid(const eCityId cid,
+                           const stdsptr<eWorldCity>& c);
+    void addMilitaryAid(const eCityId cid,
+                        const stdsptr<eMilitaryAid>& a);
 
     void setEpisodeLost() const;
     bool episodeLost() const { return mEpisodeLost; }
@@ -563,17 +559,23 @@ public:
     void earthquake(eTile* const startTile, const int size);
     bool duringEarthquake() const;
 
-    void defeatedBy(const stdsptr<eWorldCity>& c);
+    void defeatedBy(const eCityId defeated,
+                    const stdsptr<eWorldCity>& by);
 
-    eImmigrationLimitedBy immigrationLimit() const
-    { return mImmigrationLimit; }
+    eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
 
     void updateMaxSoldiers(const eCityId cid);
     void distributeSoldiers(const eCityId cid);
     void consolidateSoldiers(const eCityId cid);
 
-    bool wasHeroSummoned(const eHeroType hero) const;
-    void heroSummoned(const eHeroType hero);
+    void addFulfilledQuest(const ePlayerId pid, const eGodQuest q);
+    void addSlayedMonster(const ePlayerId pid, const eMonsterType m);
+
+    std::vector<eGodQuest> fulfilledQuests(const ePlayerId pid) const;
+    std::vector<eMonsterType> slayedMonsters(const ePlayerId pid) const;
+
+    bool wasHeroSummoned(const eCityId cid, const eHeroType hero) const;
+    void heroSummoned(const eCityId cid, const eHeroType hero);
 
     const std::map<eResourceType, int>& prices() const
     { return mPrices; }
@@ -583,15 +585,20 @@ public:
     double wageMultiplier() const { return mWageMultiplier; }
     void changeWage(const int per);
 
+    void updateTerritoryBorders();
+
     ePlayerId cityIdToPlayerId(const eCityId cid) const;
     eTeamId cityIdToTeamId(const eCityId cid) const;
     eTeamId playerIdToTeamId(const ePlayerId pid) const;
     void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
+    eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCities() const;
-    ePlayerId personPlayer() const { return mPersonPlayer; }
+    ePlayerId personPlayer() const;
     eBoardCity* boardCityWithId(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
+    std::vector<eCityId> citiesOnBoard() const;
+    std::string cityName(const eCityId cid) const;
 private:
     void updateNeighbours();
 
@@ -599,8 +606,6 @@ private:
     void removeSoldier(const eCharacterType st,
                        const eCityId cid,
                        const bool skipNotHome = true);
-
-    void updateCoverage();
 
     void handleGamesBegin(const eGames game);
     void handleGamesEnd(const eGames game);
@@ -625,9 +630,6 @@ private:
 
     std::vector<stdsptr<eBoardCity>> mCitiesOnBoard;
     std::vector<stdsptr<eBoardPlayer>> mPlayersOnBoard;
-    std::map<eCityId, ePlayerId> mCityToPlayer;
-    std::map<ePlayerId, eTeamId> mPlayerToTeam;
-    ePlayerId mPersonPlayer;
 
     std::map<eResourceType, int> mPrices;
 
@@ -635,7 +637,8 @@ private:
     int mTotalTime = 0;
     int mTime = 0;
     int mEmploymentCheckTime = 0;
-    int mLastEmploymentState = 0;
+    struct int0 { int fV = 0; };
+    std::map<eCityId, int0> mLastEmploymentState;
     eDate mDate = eDate(1, eMonth::january, -1500);
 
     eThreadPool mThreadPool;
@@ -648,117 +651,27 @@ private:
 
     bool mRegisterBuildingsEnabled = true;
 
-    std::vector<eGodQuestEvent*> mGodQuests;
-    std::vector<ePlayerConquestEventBase*> mConquests;
     std::vector<eArmyEventBase*> mArmyEvents;
-    std::vector<eReceiveRequestEvent*> mCityRequests;
-    std::vector<eInvasionEvent*> mInvasions;
-    std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
-
     double mWageMultiplier = 1.;
 
-    eDifficulty mDifficulty{eDifficulty::beginner}; // moved to eBoardPlayer
-
-    int mDrachmas = 2500; // moved to eBoardPlayer
-    eDate mInDebtSince; // moved to eBoardPlayer
-
     // begin moved to eBoardCity
-    eWageRate mWageRate{eWageRate::normal};
-    eTaxRate mTaxRate{eTaxRate::normal};
+    bool mShutdownLandTrade;
+    bool mShutdownSeaTrade;
 
-    using eILB = eImmigrationLimitedBy;
-    eILB mImmigrationLimit{eILB::lackOfVacancies};
-    bool mNoFood = false;
-    eDate mNoFoodSince;
-
-    int mTaxesPaidLastYear = 0;
-    int mTaxesPaidThisYear = 0;
-
-    int mPeoplePaidTaxesLastYear = 0;
-    int mPeoplePaidTaxesThisYear = 0;
-
-    eResources mResources = {{eResourceType::urchin, 0},
-                             {eResourceType::fish, 0},
-                             {eResourceType::meat, 0},
-                             {eResourceType::cheese, 0},
-                             {eResourceType::carrots, 0},
-                             {eResourceType::onions, 0},
-                             {eResourceType::wheat, 0},
-                             {eResourceType::oranges, 0},
-
-                             {eResourceType::grapes, 0},
-                             {eResourceType::olives, 0},
-                             {eResourceType::wine, 0},
-                             {eResourceType::oliveOil, 0},
-                             {eResourceType::fleece, 0},
-
-                             {eResourceType::wood, 0},
-                             {eResourceType::bronze, 0},
-                             {eResourceType::marble, 0},
-
-                             {eResourceType::armor, 0},
-                             {eResourceType::sculpture, 0}};
-
-    std::vector<eSanctuary*> mSanctuaries;
-    std::vector<eHerosHall*> mHeroHalls;
-    std::vector<eStorageBuilding*> mStorBuildings;
     std::vector<eCharacterAction*> mCharacterActions;
-    std::vector<eBuilding*> mTimedBuildings;
-    std::vector<eEmployingBuilding*> mEmployingBuildings;
-    std::vector<eBuilding*> mAllBuildings;
-    std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eTradePost*> mTradePosts;
+    std::vector<eBuilding*> mTimedBuildings;
+    std::vector<eBuilding*> mAllBuildings;
     std::vector<eSpawner*> mSpawners;
-    std::vector<eMonster*> mMonsters;
     std::vector<eBanner*> mBanners;
 
-    std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
-    std::vector<stdsptr<eSoldierBanner>> mPalaceSoldierBanners;
-
-    std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
-
-    bool mManTowers = true;
-
-    bool mShutdownLandTrade = false;
-    bool mShutdownSeaTrade = false;
-    int mMaxRabble = 0;
-    int mMaxHoplites = 0;
-    int mMaxHorsemen = 0;
-
-    int mAthleticsCoverage = 0;
-    int mPhilosophyCoverage = 0;
-    int mDramaCoverage = 0;
-    int mAllDiscCoverage = 0;
-    int mTaxesCoverage = 0;
-    int mUnrest = 0; // percent
-    int mPopularity = 0;
-    int mHealth = 0;
-    int mExcessiveMilitaryServiceCount = 0;
-    int mMonthsOfMilitaryService = 0;
-
-    int mWonGames = 0;
-
-    eBuilding* mStadium = nullptr;
-    eBuilding* mMuseum = nullptr;
-    ePalace* mPalace = nullptr;
-
-    ePopulationData mPopData;
-    eHusbandryData mHusbData;
-    eEmploymentData mEmplData;
-
-    eEmploymentDistributor mEmplDistributor;
-    std::vector<eResourceType> mShutDown;
-    std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
-
-    int mCoverageUpdate = 10000;
+    std::vector<eInvasionEvent*> mInvasions;
     // end moved to eBoardCity
 
     std::vector<eSoldierBanner*> mAllSoldierBanners;
     std::vector<eCharacter*> mCharacters;
     std::vector<eSoldier*> mSoldiers;
     std::vector<eMissile*> mMissiles;
-
-    std::vector<eInvasionHandler*> mInvasionHandlers;
 
     std::vector<eSoldierBanner*> mSelectedBanners;
 
@@ -787,18 +700,6 @@ private:
     std::vector<stdsptr<eGameEvent>> mGameEvents;
     int mGoalsCheckTime = 0;
     std::vector<stdsptr<eEpisodeGoal>> mGoals;
-
-    std::vector<eMonsterType> mHostileMonsters;
-    std::vector<eGodType> mFriendlyGods;
-    std::vector<eGodType> mHostileGods;
-    std::vector<eHeroType> mSummonedHeroes;
-
-    std::vector<eCharacter*> mAttackingGods;
-
-    std::vector<stdsptr<ePlague>> mPlagues;
-
-    std::vector<eGodQuest> mFulfilledQuests;
-    std::vector<eMonsterType> mSlayedMonsters;
 
     struct eEarthquake {
         eTile* fStartTile = nullptr;
@@ -829,25 +730,7 @@ private:
     int mProgressEarthquakes = 0;
     std::vector<stdsptr<eEarthquake>> mEarthquakes;
 
-    std::vector<stdsptr<eWorldCity>> mDefeatedBy;
-
-    // begin moved to eBoardCity
-    eAvailableBuildings mAvailableBuildings;
-    eResourceType mSupportedResources;
-
-    bool mPop100 = false;
-    bool mPop500 = false;
-    bool mPop1000 = false;
-    bool mPop2000 = false;
-    bool mPop3000 = false;
-    bool mPop5000 = false;
-    bool mPop10000 = false;
-    bool mPop15000 = false;
-    bool mPop20000 = false;
-    bool mPop25000 = false;
-
-    int mUpdateResources = 999999;
-    // end moved to eBoardCity
+    std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
 };
 
 #endif // EGAMEBOARD_H

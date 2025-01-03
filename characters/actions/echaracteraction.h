@@ -10,6 +10,8 @@
 
 class eCharacter;
 
+enum class eCityId;
+
 enum class eCharacterActionState {
     running, finished, failed
 };
@@ -80,6 +82,8 @@ public:
     virtual void increment(const int by) = 0;
 
     eCharacter* character() const { return mCharacter; }
+    eCityId cityId() const;
+    eCityId onCityId() const;
     eCharacterActionState state() const { return mState; }
     void setState(const eCharacterActionState state);
 

@@ -307,8 +307,9 @@ void eOverviewDataWidget::setMap(eMiniMap* const map) {
 void eOverviewDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
+        const auto cid = viewedCity();
         {
-            const int pop = mBoard.popularity();
+            const int pop = mBoard.popularity(cid);
             int string = -1;
             if(pop > 90) {
                 string = 38; // superb
@@ -332,39 +333,43 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
             mPopularity->setText(eLanguage::zeusText(61, string));
         }
         {
-            const auto& husbData = mBoard.husbandryData();
-            const int a = husbData.canSupport();
-            const int pop = mBoard.population();
-            int string = -1;
-            if(pop == 0 || a < 0.75*pop) {
-                string = 94; // too low
-            } else if(a < 0.85*pop) {
-                string = 95; // low
-            } else {
-                string = 97; // good
-            }
-            mFoodLevel->setText(eLanguage::zeusText(61, string));
-        }
-        {
-            const auto& emplData = mBoard.employmentData();
-            const int f = emplData.freeJobVacancies();
-            const int w = emplData.employable();
-            const int u = emplData.unemployed();
-            if(u == 0) {
-                mUnemployment->setTitle(eLanguage::zeusText(61, 115)); // employment good
-                mUnemployment->setText("");
-            } else if(f > 0) {
-                mUnemployment->setTitle(eLanguage::zeusText(61, 111)); // workers needed
-                mUnemployment->setText(std::to_string(f));
-            } else {
-                mUnemployment->setTitle(eLanguage::zeusText(61, 107)); // unemployment
-                int per = w == 0 ? 0 : std::round(100.*u/w);
-                per = std::clamp(per, 0, 100);
-                mUnemployment->setText(std::to_string(per) + "%");
+            const auto husbData = mBoard.husbandryData(cid);
+            if(husbData) {
+                const int a = husbData->canSupport();
+                const int pop = mBoard.population(cid);
+                int string = -1;
+                if(pop == 0 || a < 0.75*pop) {
+                    string = 94; // too low
+                } else if(a < 0.85*pop) {
+                    string = 95; // low
+                } else {
+                    string = 97; // good
+                }
+                mFoodLevel->setText(eLanguage::zeusText(61, string));
             }
         }
         {
-            const int hygiene = mBoard.health();
+            const auto emplData = mBoard.employmentData(cid);
+            if(emplData) {
+                const int f = emplData->freeJobVacancies();
+                const int w = emplData->employable();
+                const int u = emplData->unemployed();
+                if(u == 0) {
+                    mUnemployment->setTitle(eLanguage::zeusText(61, 115)); // employment good
+                    mUnemployment->setText("");
+                } else if(f > 0) {
+                    mUnemployment->setTitle(eLanguage::zeusText(61, 111)); // workers needed
+                    mUnemployment->setText(std::to_string(f));
+                } else {
+                    mUnemployment->setTitle(eLanguage::zeusText(61, 107)); // unemployment
+                    int per = w == 0 ? 0 : std::round(100.*u/w);
+                    per = std::clamp(per, 0, 100);
+                    mUnemployment->setText(std::to_string(per) + "%");
+                }
+            }
+        }
+        {
+            const int hygiene = mBoard.health(cid);
             int string = -1;
             if(hygiene > 90) {
                 string = 137; // perfect
@@ -392,7 +397,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
             mHygiene->setText(eLanguage::zeusText(61, string));
         }
         {
-            const int unrest = mBoard.unrest();
+            const int unrest = mBoard.unrest(cid);
             int string = -1;
             if(unrest == 0) {
                 string = 149; // none
@@ -417,14 +422,20 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
 }
 
 bool sHeroReady(eGameBoard& board, const eHeroType hero) {
-    const auto hh = board.heroHall(hero);
+    eHerosHall* hh = nullptr;
+    const auto cids = board.personPlayerCities();
+    for(const auto cid : cids) {
+        hh = board.heroHall(cid, hero);
+        if(hh) break;
+    }
     if(!hh) return false;
     const auto s = hh->stage();
     return s == eHeroSummoningStage::arrived;
 }
 
 void eOverviewDataWidget::addGodQuests() {
-    const auto& qs = mBoard.godQuests();
+    const auto pid = mBoard.personPlayer();
+    const auto& qs = mBoard.godQuests(pid);
     for(const auto qq : qs) {
         const auto q = qq->godQuest();
         const auto god = q.fGod;
@@ -434,7 +445,12 @@ void eOverviewDataWidget::addGodQuests() {
             return sHeroReady(mBoard, q.fHero);
         });
         b->setPressAction([this, q, qq]() {
-            const auto hh = mBoard.heroHall(q.fHero);
+            eHerosHall* hh = nullptr;
+            const auto cids = mBoard.personPlayerCities();
+            for(const auto cid : cids) {
+                hh = mBoard.heroHall(cid, q.fHero);
+                if(hh) break;
+            }
             const auto heroName = eHero::sHeroName(q.fHero);
             const auto gw = gameWidget();
             if(hh) {
@@ -463,46 +479,57 @@ void eOverviewDataWidget::addGodQuests() {
 }
 
 void eOverviewDataWidget::addCityRequests() {
-    const auto& qs = mBoard.cityRequests();
+    const auto pid = mBoard.personPlayer();
+    const auto& qs = mBoard.cityRequests(pid);
     for(const auto& qq : qs) {
         const auto q = qq->cityRequest();
         const auto b = new eResourceRequestButton(window());
         b->setWidth(mQuestButtons->width());
         b->initialize(q.fType, q.fCity, [this, q]() {
-            const auto count = mBoard.resourceCount(q.fType);
-            return count >= q.fCount;
+            const auto cids = mBoard.personPlayerCities();
+            for(const auto cid : cids) {
+                const auto count = mBoard.resourceCount(cid, q.fType);
+                if(count >= q.fCount) return true;
+            }
+            return false;
         });
         b->setPressAction([this, q, qq]() {
             const auto gw = gameWidget();
-            const auto count = mBoard.resourceCount(q.fType);
-            if(count >= q.fCount) {
-                const auto acceptA = [qq]() {
-                    qq->dispatch();
-                };
-                const auto title = eLanguage::zeusText(5, 6); // Request
-                const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
-                gw->showQuestion(title, text, acceptA);
-            } else {
-                const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
-                gw->showTip(tip);
+            const auto cids = mBoard.personPlayerCities();
+            for(const auto cid : cids) {
+                const auto count = mBoard.resourceCount(cid, q.fType);
+                if(count >= q.fCount) {
+                    const auto acceptA = [qq, cid]() {
+                        qq->dispatch(cid);
+                    };
+                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
+                    gw->showQuestion(title, text, acceptA);
+                } else {
+                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    gw->showTip(tip);
+                }
             }
         });
         mQuestButtons->addWidget(b);
     }
-    const auto& qqs = mBoard.cityTroopsRequests();
+    const auto& qqs = mBoard.cityTroopsRequests(pid);
     for(const auto& qq : qqs) {
         const auto b = new eTroopsRequestButton(window());
         b->setWidth(mQuestButtons->width());
         b->initialize(qq->city(), [this]() {
-            const auto& bs = mBoard.banners();
-            for(const auto& b : bs) {
-                const bool a = b->isAbroad();
-                if(!a) return true;
-            }
-            const auto& hs = mBoard.heroHalls();
-            for(const auto h : hs) {
-                const bool a = h->heroOnQuest();
-                if(!a) return true;
+            const auto cids = mBoard.personPlayerCities();
+            for(const auto cid : cids) {
+                const auto& bs = mBoard.banners(cid);
+                for(const auto& b : bs) {
+                    const bool a = b->isAbroad();
+                    if(!a) return true;
+                }
+                const auto hs = mBoard.heroHalls(cid);
+                for(const auto h : hs) {
+                    const bool a = h->heroOnQuest();
+                    if(!a) return true;
+                }
             }
             return false;
         });

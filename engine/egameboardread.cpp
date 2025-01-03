@@ -16,24 +16,11 @@ void eGameBoard::read(eReadStream& src) {
     src >> h;
     initialize(w, h);
 
-    src >> mPoseidonMode;
+    src >> mPoseidonMode; // !!! delete?
 
     src >> mEpisodeLost;
 
-    src >> mImmigrationLimit;
-    src >> mNoFood;
-    mNoFoodSince.read(src);
-    mInDebtSince.read(src);
-
-    src >> mDrachmas;
-    src >> mDifficulty;
-    src >> mWageRate;
     src >> mWageMultiplier;
-    src >> mTaxRate;
-    src >> mTaxesPaidLastYear;
-    src >> mTaxesPaidThisYear;
-    src >> mPeoplePaidTaxesLastYear;
-    src >> mPeoplePaidTaxesThisYear;
 
     for(auto& p : mPrices) {
         src >> p.second;
@@ -44,39 +31,7 @@ void eGameBoard::read(eReadStream& src) {
     src >> mTime;
     src >> mTotalTime;
 
-    mEmplDistributor.read(src);
-
-    int ns;
-    src >> ns;
-    for(int i = 0; i < ns; i++) {
-        eResourceType type;
-        src >> type;
-        mShutDown.push_back(type);
-    }
-
-    src >> mManTowers;
-
-    src >> mShutdownLandTrade;
-    src >> mShutdownSeaTrade;
-
     src >> mSoldiersUpdate;
-    src >> mMaxRabble;
-    src >> mMaxHoplites;
-    src >> mMaxHorsemen;
-
-    src >> mCoverageUpdate;
-    src >> mAthleticsCoverage;
-    src >> mPhilosophyCoverage;
-    src >> mDramaCoverage;
-    src >> mAllDiscCoverage;
-    src >> mTaxesCoverage;
-    src >> mUnrest;
-    src >> mPopularity;
-    src >> mHealth;
-    src >> mExcessiveMilitaryServiceCount;
-    src >> mMonthsOfMilitaryService;
-
-    src >> mWonGames;
 
     mUpdateAppeal = true;
 
@@ -92,57 +47,6 @@ void eGameBoard::read(eReadStream& src) {
             src >> id;
             const auto b = eBanner::sCreate(id, t, *this, type);
             b->read(src);
-        }
-    }
-
-    {
-        int nq;
-        src >> nq;
-        for(int i = 0; i < nq; i++) {
-            auto& q = mFulfilledQuests.emplace_back();
-            q.read(src);
-        }
-    }
-
-    {
-        int nm;
-        src >> nm;
-        for(int i = 0; i < nm; i++) {
-            auto& m = mSlayedMonsters.emplace_back();
-            src >> m;
-        }
-    }
-
-    {
-        int nq;
-        src >> nq;
-        for(int i = 0; i < nq; i++) {
-            src.readGameEvent(this, [this](eGameEvent* const e) {
-                const auto ge = static_cast<eGodQuestEvent*>(e);
-                mGodQuests.push_back(ge);
-            });
-        }
-    }
-
-    {
-        int nq;
-        src >> nq;
-        for(int i = 0; i < nq; i++) {
-            src.readGameEvent(this, [this](eGameEvent* const e) {
-                const auto re = static_cast<eReceiveRequestEvent*>(e);
-                mCityRequests.push_back(re);
-            });
-        }
-    }
-
-    {
-        int nq;
-        src >> nq;
-        for(int i = 0; i < nq; i++) {
-            src.readGameEvent(this, [this](eGameEvent* const e) {
-                const auto re = static_cast<eTroopsRequestEvent*>(e);
-                mCityTroopsRequests.push_back(re);
-            });
         }
     }
 
@@ -183,27 +87,6 @@ void eGameBoard::read(eReadStream& src) {
     }
 
     {
-        int ni;
-        src >> ni;
-
-        for(int i = 0; i < ni; i++) {
-            const auto ii = new eInvasionHandler(*this, nullptr, nullptr);
-            ii->read(src);
-        }
-    }
-
-    {
-        int n;
-        src >> n;
-
-        for(int i = 0; i < n; i++) {
-            const auto p = std::make_shared<ePlague>(*this);
-            p->read(src);
-            mPlagues.push_back(p);
-        }
-    }
-
-    {
         int ncs;
         src >> ncs;
 
@@ -213,42 +96,6 @@ void eGameBoard::read(eReadStream& src) {
             const auto c = eMissile::sCreate(*this, type);
             c->read(src);
         }
-    }
-
-    {
-        int ngs;
-        src >> ngs;
-        for(int i = 0; i < ngs; i++) {
-            src.readCharacter(this, [this](eCharacter* const c) {
-                mAttackingGods.push_back(c);
-            });
-        }
-    }
-
-    {
-        int nms;
-        src >> nms;
-        for(int i = 0; i < nms; i++) {
-            src.readCharacter(this, [this](eCharacter* const c) {
-                mMonsters.push_back(static_cast<eMonster*>(c));
-            });
-        }
-    }
-
-    int nfg;
-    src >> nfg;
-    for(int i = 0; i < nfg; i++) {
-        eGodType type;
-        src >> type;
-        mFriendlyGods.push_back(type);
-    }
-
-    int nrg;
-    src >> nrg;
-    for(int i = 0; i < nrg; i++) {
-        eGodType type;
-        src >> type;
-        mHostileGods.push_back(type);
     }
 
     int nevs;
@@ -272,16 +119,6 @@ void eGameBoard::read(eReadStream& src) {
         mGoals.push_back(g);
     }
 
-    mAvailableBuildings.read(src);
-
-    int na;
-    src >> na;
-    for(int i = 0; i < na; i++) {
-        const auto ma = std::make_shared<eMilitaryAid>();
-        ma->read(src, this);
-        addMilitaryAid(ma);
-    }
-
     src >> mProgressEarthquakes;
     int ne;
     src >> ne;
@@ -294,21 +131,16 @@ void eGameBoard::read(eReadStream& src) {
     int nd;
     src >> nd;
     for(int i = 0; i < nd; i++) {
-        src.readCity(this, [this](const stdsptr<eWorldCity>& c) {
-            mDefeatedBy.push_back(c);
-        });
+        eCityId cid;
+        src >> cid;
+        int nc;
+        src >> nc;
+        for(int j = 0; j < nc; j++) {
+            src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
+                mDefeatedBy[cid].push_back(c);
+            });
+        }
     }
-
-     src >> mPop100;
-     src >> mPop500;
-     src >> mPop1000;
-     src >> mPop2000;
-     src >> mPop3000;
-     src >> mPop5000;
-     src >> mPop10000;
-     src >> mPop15000;
-     src >> mPop20000;
-     src >> mPop25000;
 
      int npa;
      src >> npa;
@@ -318,15 +150,32 @@ void eGameBoard::read(eReadStream& src) {
          const auto a = ePlannedAction::sCreate(type);
          a->read(src, *this);
          mPlannedActions.push_back(a);
+    }
+
+     {
+         int nc;
+         src >> nc;
+         for(int i = 0; i < nc; i++) {
+             eCityId cid;
+             src >> cid;
+             const auto c = std::make_shared<eBoardCity>(cid, *this);
+             c->read(src);
+             mCitiesOnBoard.push_back(c);
+         }
      }
 
-     int nh;
-     src >> nh;
-     for(int i = 0; i < nh; i++) {
-         eHeroType h;
-         src >> h;
-         mSummonedHeroes.push_back(h);
+     {
+         int np;
+         src >> np;
+         for(int i = 0; i < np; i++) {
+             ePlayerId pid;
+             src >> pid;
+             const auto p = std::make_shared<eBoardPlayer>(pid, *this);
+             p->read(src);
+             mPlayersOnBoard.push_back(p);
+         }
      }
 
      updateMarbleTiles();
+     updateTerritoryBorders();
 }

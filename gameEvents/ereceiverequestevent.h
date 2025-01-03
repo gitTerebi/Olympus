@@ -35,7 +35,7 @@ public:
     void setResourceCount(const int c);
 
     eCityRequest cityRequest() const;
-    void dispatch();
+    void dispatch(const eCityId cid);
     void fulfillWithoutCost();
 
     void setTributeRequest(const bool t) { mTributeRequest = t; }

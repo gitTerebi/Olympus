@@ -273,13 +273,14 @@ void eDefendCityAction::write(eWriteStream& dst) const {
 
 void eDefendCityAction::goToTarget() {
     auto& board = eDefendCityAction::board();
-    mEvent = board.invasionToDefend();
+    const auto cid = cityId();
+    mEvent = board.invasionToDefend(cid);
     if(!mEvent) {
         mStage = eDefendCityStage::comeback;
         return;
     }
     const int ip = mEvent->invasionPoint();
-    const auto tile = board.landInvasionTile(ip);
+    const auto tile = board.landInvasionTile(cid, ip);
     if(!tile) {
         mStage = eDefendCityStage::comeback;
         return;

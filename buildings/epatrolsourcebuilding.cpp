@@ -71,14 +71,15 @@ bool operator==(const SDL_Rect& r1, const SDL_Rect& r2) {
 
 void ePatrolSourceBuilding::spawn(const int id) {
     auto& board = getBoard();
+    const auto cid = cityId();
     const auto& target = mTargets[id];
     const auto targetType = target.second;
     if(targetType == eBuildingType::stadium) {
-        const auto s = board.stadium();
+        const auto s = board.stadium(cid);
         if(!s) return;
         return spawn(id, s);
     } else if(targetType == eBuildingType::museum) {
-        const auto m = board.museum();
+        const auto m = board.museum(cid);
         if(!m) return;
         return spawn(id, m);
     }
@@ -144,7 +145,7 @@ void ePatrolSourceBuilding::spawn(const int id, eBuilding* const targetBuilding)
     const auto& target = mTargets[id];
     auto& board = getBoard();
     const auto c = eCharacter::sCreate(target.first, board);
-    c->setCityId(cityId());
+    c->setBothCityIds(cityId());
     c->changeTile(centerTile());
 
     const auto finishAction = std::make_shared<ePT_spawnGetActorFinish>(

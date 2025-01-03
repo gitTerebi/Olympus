@@ -4,12 +4,13 @@
 #include "infowidgets/einfowidget.h"
 
 class eGameBoard;
+enum class eCityId;
 
 class eMilitaryMoreInfoWidget : public eInfoWidget {
 public:
     eMilitaryMoreInfoWidget(eMainWindow* const window);
 
-    void initialize(eGameBoard& board);
+    void initialize(eGameBoard& board, const eCityId cid);
 private:
     eGameBoard* mBoard = nullptr;
 };

@@ -64,8 +64,13 @@ public:
     void setSelected(const bool s) { mSelected = s; }
     bool selected() const { return mSelected; }
 
+    void setBothCityIds(const eCityId cid);
+
     void setCityId(const eCityId pid) { mCityId = pid; }
     eCityId cityId() const { return mCityId; }
+
+    void setOnCityId(const eCityId pid) { mOnCityId = pid; }
+    eCityId onCityId() const { return mOnCityId; }
 
     ePlayerId playerId() const;
     eTeamId teamId() const;
@@ -124,6 +129,7 @@ private:
     int mCount = 0;
 
     eCityId mCityId = eCityId::neutralFriendly;
+    eCityId mOnCityId = eCityId::neutralFriendly;
 
     std::map<eSoldier*, eTile*> mPlaces;
     std::vector<eSoldier*> mSoldiers;

@@ -50,6 +50,14 @@ int eWorldBoard::cityId(const eWorldCity& city) const {
     return id;
 }
 
+stdsptr<eWorldCity> eWorldBoard::cityWithId(const eCityId cid) const {
+    const int id = static_cast<int>(cid);
+    if(id < 0) return nullptr;
+    const int iMax = mCities.size() - 1;
+    if(id > iMax) return nullptr;
+    return mCities[id];
+}
+
 stdsptr<eWorldCity> eWorldBoard::cityWithIOID(const int id) const {
     for(const auto& c : mCities) {
         const int i = c->ioID();
@@ -74,6 +82,24 @@ void eWorldBoard::write(eWriteStream& dst) const {
     for(const auto& c : mCities) {
         c->write(dst);
     }
+
+    {
+        dst << mCityToPlayer.size();
+        for(const auto ctp : mCityToPlayer) {
+            dst << ctp.first;
+            dst << ctp.second;
+        }
+    }
+
+    dst << mPersonPlayer;
+
+    {
+        dst << mPlayerToTeam.size();
+        for(const auto ptt : mPlayerToTeam) {
+            dst << ptt.first;
+            dst << ptt.second;
+        }
+    }
 }
 
 void eWorldBoard::read(eReadStream& src) {
@@ -85,6 +111,32 @@ void eWorldBoard::read(eReadStream& src) {
         const auto c = std::make_shared<eWorldCity>();
         c->read(src, this);
         addCity(c);
+    }
+
+    {
+        int nc;
+        src >> nc;
+        for(int i = 0; i < nc; i++) {
+            eCityId cid;
+            src >> cid;
+            ePlayerId pid;
+            src >> pid;
+            mCityToPlayer[cid] = pid;
+        }
+    }
+
+    src >> mPersonPlayer;
+
+    {
+        int np;
+        src >> np;
+        for(int i = 0; i < np; i++) {
+            ePlayerId pid;
+            src >> pid;
+            eTeamId tid;
+            src >> tid;
+            mPlayerToTeam[pid] = tid;
+        }
     }
 }
 
@@ -132,4 +184,75 @@ void eWorldBoard::setParentAsCurrentCity() {
             c->setIsCurrentCity(false);
         }
     }
+}
+
+ePlayerId eWorldBoard::cityIdToPlayerId(const eCityId cid) const {
+    if(cid == eCityId::neutralFriendly) {
+        return ePlayerId::neutralFriendly;
+    } else if(cid == eCityId::neutralAggresive) {
+        return ePlayerId::neutralAggresive;
+    }
+    const auto it = mCityToPlayer.find(cid);
+    if(it == mCityToPlayer.end()) {
+        return ePlayerId::neutralFriendly;
+    }
+    return it->second;
+}
+
+eTeamId eWorldBoard::cityIdToTeamId(const eCityId cid) const {
+    const auto pid = cityIdToPlayerId(cid);
+    return playerIdToTeamId(pid);
+}
+
+eTeamId eWorldBoard::playerIdToTeamId(const ePlayerId pid) const {
+    if(pid == ePlayerId::neutralFriendly) {
+        return eTeamId::neutralFriendly;
+    } else if(pid == ePlayerId::neutralAggresive) {
+        return eTeamId::neutralAggresive;
+    }
+    const auto it = mPlayerToTeam.find(pid);
+    if(it == mPlayerToTeam.end()) {
+        return eTeamId::neutralFriendly;
+    }
+    return it->second;
+}
+
+void eWorldBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
+    mCityToPlayer[cid] = pid;
+}
+
+std::vector<eCityId> eWorldBoard::playerCities(const ePlayerId pid) const {
+    if(pid == ePlayerId::neutralFriendly) {
+        return {eCityId::neutralFriendly};
+    } else if(pid == ePlayerId::neutralAggresive) {
+        return {eCityId::neutralAggresive};
+    }
+    std::vector<eCityId> result;
+    for(const auto it : mCityToPlayer) {
+        if(it.second == pid) {
+            result.push_back(it.first);
+        }
+    }
+    return result;
+}
+
+eCityId eWorldBoard::playerCapital(const ePlayerId pid) const {
+    if(pid == ePlayerId::neutralFriendly) {
+        return eCityId::neutralFriendly;
+    } else if(pid == ePlayerId::neutralAggresive) {
+        return eCityId::neutralAggresive;
+    }
+    for(const auto it : mCityToPlayer) {
+        if(it.second == pid) {
+            const auto cid = it.first;
+            const auto c = cityWithId(cid);
+            const bool isc = c->isCapital(pid);
+            if(isc) return cid;
+        }
+    }
+    return eCityId::neutralFriendly;
+}
+
+std::vector<eCityId> eWorldBoard::personPlayerCities() const {
+    return playerCities(mPersonPlayer);
 }

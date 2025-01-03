@@ -243,7 +243,8 @@ public:
     }
 };
 
-void eMilitaryMoreInfoWidget::initialize(eGameBoard& board) {
+void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
+                                         const eCityId cid) {
     eInfoWidget::initialize("");
 
     mBoard = &board;
@@ -268,7 +269,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board) {
     leftW->addWidget(citizenArmy);
     citizenArmy->align(eAlignment::hcenter);
 
-    const auto& banners = board.banners();
+    const auto& banners = board.banners(cid);
 //    std::vector<stdsptr<eSoldierBanner>> banners;
 //    for(int i = 0; i < 3; i++) {
 //        banners.push_back(e::make_shared<eSoldierBanner>(

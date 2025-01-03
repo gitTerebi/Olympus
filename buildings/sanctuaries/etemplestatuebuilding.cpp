@@ -5,9 +5,11 @@
 
 eTempleStatueBuilding::eTempleStatueBuilding(
         const eGodType god,
-        const int id, eGameBoard& board) :
+        const int id, eGameBoard& board,
+        const eCityId cid) :
     eSanctBuilding({0, 0, 1}, 1, board,
-                   eBuildingType::templeStatue, 1, 1),
+                   eBuildingType::templeStatue,
+                   1, 1, cid),
     mGod(god), mId(id) {
 
 }

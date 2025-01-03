@@ -50,7 +50,7 @@ public:
     void initialize(eGameBoard* const b,
                     const eAction& goalsView);
 
-    int cityId() const { return mCityId; }
+    int tradeCityId() const { return mTradeCityId; }
     eBuildingMode mode() const { return mMode; }
     void clearMode() { mMode = eBuildingMode::none; }
 
@@ -67,6 +67,7 @@ public:
     void setBuildWidget(eBuildWidget* const bw);
 
     void updateButtonsVisibility();
+    void viewedCityChanged();
     void openBuildWidget(const int cmx, const int cmy,
                          const std::vector<eSPR>& cs);
 
@@ -75,6 +76,8 @@ public:
     void updateRequestButtons();
 
     void setWorldDirection(const eWorldDirection dir);
+
+    void update();
 protected:
     bool mousePressEvent(const eMouseEvent& e);
 private:
@@ -88,6 +91,7 @@ private:
     eWidget* createPriceWidget(const eInterfaceTextures& coll);
 
     eGameBoard* mBoard{nullptr};
+    eGameWidget* mGW = nullptr;
 
     eBuildWidget* mBuildWidget = nullptr;
 
@@ -115,7 +119,7 @@ private:
 
     eMiniMap* mMiniMap = nullptr;
 
-    int mCityId = -1;
+    int mTradeCityId = -1;
     eBuildingMode mMode{eBuildingMode::none};
 
     std::vector<eWid> mWidgets;

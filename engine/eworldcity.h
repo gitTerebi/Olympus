@@ -200,6 +200,9 @@ public:
     void setAbroad(const bool a) { mAbroad = a; }
     bool abroad() const { return mAbroad; }
 
+    void setIsOnBoard(const bool i) { mIsOnBoard = i; }
+    bool isOnBoard() const { return mIsOnBoard; }
+
     const std::vector<eResourceTrade>& buys() const
     { return mBuys; }
     std::vector<eResourceTrade>& buys()
@@ -238,6 +241,9 @@ public:
     bool conqueredByRival() const { return mConqueredBy.get(); }
     void setConqueredBy(const stdsptr<eWorldCity>& c) { mConqueredBy = c; }
 
+    void setIsCapital(const ePlayerId pid);
+    bool isCapital(const ePlayerId pid) const;
+
     static stdsptr<eWorldCity> sCreateAthens(const eCityId cid);
     static stdsptr<eWorldCity> sCreateSparta(const eCityId cid);
     static stdsptr<eWorldCity> sCreateKnossos(const eCityId cid);
@@ -258,6 +264,8 @@ private:
 
     stdsptr<eWorldCity> mConqueredBy;
 
+    ePlayerId mCapital = ePlayerId::neutralFriendly;
+    bool mIsOnBoard = false;
     bool mIsCurrentCity = false;
     eCityType mType{eCityType::foreignCity};
 

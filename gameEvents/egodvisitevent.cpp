@@ -23,8 +23,9 @@ void eGodVisitEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     std::vector<eGodType> types;
+    const auto cid = cityId();
     for(const auto t : mTypes) {
-        const auto s = board->sanctuary(t);
+        const auto s = board->sanctuary(cid, t);
         if(!s || !s->finished()) {
             types.push_back(t);
         }
@@ -46,6 +47,7 @@ void eGodVisitEvent::trigger() {
     }
     const auto t = types.at(tid);
     const auto god = eGod::sCreateGod(t, *board);
+    god->setOnCityId(cityId());
     god->setCityId(eCityId::neutralFriendly);
 
     const auto a = e::make_shared<eGodVisitAction>(god.get());

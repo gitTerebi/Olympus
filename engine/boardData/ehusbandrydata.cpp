@@ -5,8 +5,9 @@
 #include "engine/egameboard.h"
 
 eHusbandryData::eHusbandryData(const ePopulationData& popData,
+                               const eBoardCity& city,
                                const eGameBoard& board) :
-    mPopData(popData), mBoard(board) {}
+    mPopData(popData), mCity(city), mBoard(board) {}
 
 int eHusbandryData::canSupport() const {
     const auto validator = [](eBuilding* const b) {
@@ -26,7 +27,8 @@ int eHusbandryData::canSupport() const {
             return false;
         }
     };
-    const auto buildings = mBoard.buildings(validator);
+    const auto cid = mCity.id();
+    const auto buildings = mBoard.buildings(cid, validator);
     return buildings.size()*256;
 }
 
@@ -35,7 +37,8 @@ int eHusbandryData::storedFood() const {
     if(pop <= 0) return 0;
     const double foodPerPersonPerMonth = 0.002727381;
     const double foodPerPopPerMonth = pop*foodPerPersonPerMonth;
-    const int nFood = mBoard.resourceCount(eResourceType::food);
+    const auto cid = mCity.id();
+    const int nFood = mBoard.resourceCount(cid, eResourceType::food);
     const double nMonths = nFood/foodPerPopPerMonth;
     const int iNMonths = std::floor(nMonths);
     return iNMonths;

@@ -42,14 +42,16 @@ void eApolloHelpAction::write(eWriteStream& dst) const {
     dst << mStage;
 }
 
-bool eApolloHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto& ps = board.plagues();
+bool eApolloHelpAction::sHelpNeeded(const eCityId cid,
+                                    const eGameBoard& board) {
+    const auto& ps = board.plagues(cid);
     return !ps.empty();
 }
 
 void eApolloHelpAction::goToTarget() {
     auto& board = this->board();
-    const auto& plagues = board.plagues();
+    const auto cid = cityId();
+    const auto& plagues = board.plagues(cid);
     if(plagues.empty()) {
         mStage = eApolloHelpStage::disappear;
         disappear();

@@ -39,8 +39,9 @@ void eZeusHelpAction::write(eWriteStream& dst) const {
     dst << mStage;
 }
 
-bool eZeusHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto& ivs = board.invasionHandlers();
+bool eZeusHelpAction::sHelpNeeded(const eCityId cid,
+                                  const eGameBoard& board) {
+    const auto& ivs = board.invasionHandlers(cid);
     return !ivs.empty();
 }
 
@@ -49,7 +50,8 @@ void eZeusHelpAction::kill() {
     c->setActionType(eCharacterActionType::fight2);
     const auto a = e::make_shared<eWaitAction>(c);
     using eF = eZHA_killFinish;
-    const auto finish = std::make_shared<eF>(board());
+    const auto cid = cityId();
+    const auto finish = std::make_shared<eF>(board(), cid);
     a->setFailAction(finish);
     a->setFinishAction(finish);
     a->setTime(500);
@@ -58,7 +60,7 @@ void eZeusHelpAction::kill() {
 
 void eZHA_killFinish::call() {
     const auto& b = board();
-    const auto& ivs = b.invasionHandlers();
+    const auto& ivs = b.invasionHandlers(mCid);
     for(const auto iv : ivs) {
         iv->killAllWithCorpse();
     }

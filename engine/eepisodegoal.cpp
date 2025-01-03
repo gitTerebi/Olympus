@@ -255,10 +255,11 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
 }
 
 void eEpisodeGoal::update(const eGameBoard* const b) {
+    const auto pid = b->personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
         const bool wasMet = met();
-        fStatusCount = b->population();
+        fStatusCount = b->population(pid);
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 73));
@@ -268,7 +269,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::treasury: {
         const bool wasMet = met();
-        fStatusCount = b->drachmas();
+        fStatusCount = b->drachmas(pid);
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 75));
@@ -279,8 +280,13 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     case eEpisodeGoalType::sanctuary: {
         const bool wasMet = met();
         const auto type = static_cast<eGodType>(fEnumInt1);
-        const auto s = b->sanctuary(type);
-        fStatusCount = s ? s->progress() : 0;
+        fStatusCount = 0;
+        const auto cids = b->personPlayerCities();
+        for(const auto cid : cids) {
+            const auto s = b->sanctuary(cid, type);
+            const int sc = s ? s->progress() : 0;
+            if(sc > fStatusCount) fStatusCount = sc;
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 77));
@@ -302,7 +308,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::quest: {
         const bool wasMet = met();
-        fStatusCount = b->fulfilledQuests().size();
+        fStatusCount = b->fulfilledQuests(pid).size();
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 81));
@@ -310,7 +316,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::slay: {
         const bool wasMet = met();
-        fStatusCount = b->slayedMonsters().size();
+        fStatusCount = b->slayedMonsters(pid).size();
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 83));
@@ -329,16 +335,19 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         fStatusCount = 0;
         const auto type = fEnumInt1 == 0 ? eBuildingType::commonHouse :
                                            eBuildingType::eliteHousing;
-        b->buildings([&](eBuilding* const b) {
-            const auto btype = b->type();
-            if(btype != type) return false;
-            const auto h = static_cast<eHouseBase*>(b);
-            const int l = h->level();
-            if(l >= fEnumInt2) {
-                fStatusCount += h->people();
-            }
-            return false;
-        });
+        const auto cids = b->personPlayerCities();
+        for(const auto cid : cids) {
+            b->buildings(cid, [&](eBuilding* const b) {
+                const auto btype = b->type();
+                if(btype != type) return false;
+                const auto h = static_cast<eHouseBase*>(b);
+                const int l = h->level();
+                if(l >= fEnumInt2) {
+                    fStatusCount += h->people();
+                }
+                return false;
+            });
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(eLanguage::zeusText(194, 91));
@@ -348,7 +357,11 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::setAsideGoods: {
         const auto res = static_cast<eResourceType>(fEnumInt1);
-        fPreviewCount = b->resourceCount(res);
+        fPreviewCount = 0;
+        const auto cids = b->personPlayerCities();
+        for(const auto cid : cids) {
+            fPreviewCount += b->resourceCount(cid, res);
+        }
     } break;
     case eEpisodeGoalType::surviveUntil: {
         const auto sdate = date();

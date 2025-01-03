@@ -42,6 +42,7 @@ public:
     void setMap(const eWorldMap m) { mMap = m; }
 
     int cityId(const eWorldCity& city) const;
+    stdsptr<eWorldCity> cityWithId(const eCityId cid) const;
 
     stdsptr<eWorldCity> cityWithIOID(const int id) const;
     void setIOIDs() const;
@@ -61,11 +62,24 @@ public:
     void setEditorMode(const bool m) { mEditorMode = m; }
     bool poseidonMode() const { return mPoseidonMode; }
     void setPoseidonMode(const bool p) { mPoseidonMode = p; }
+
+    ePlayerId cityIdToPlayerId(const eCityId cid) const;
+    eTeamId cityIdToTeamId(const eCityId cid) const;
+    eTeamId playerIdToTeamId(const ePlayerId pid) const;
+    void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
+    std::vector<eCityId> playerCities(const ePlayerId pid) const;
+    eCityId playerCapital(const ePlayerId pid) const;
+    std::vector<eCityId> personPlayerCities() const;
+    ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
     bool mEditorMode = false;
     bool mPoseidonMode = true;
     eWorldMap mMap{eWorldMap::greece8};
     std::vector<stdsptr<eWorldCity>> mCities;
+
+    std::map<eCityId, ePlayerId> mCityToPlayer;
+    ePlayerId mPersonPlayer;
+    std::map<ePlayerId, eTeamId> mPlayerToTeam;
 };
 
 #endif // EWORLDBOARD_H

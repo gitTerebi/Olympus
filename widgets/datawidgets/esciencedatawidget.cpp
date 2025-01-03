@@ -121,8 +121,9 @@ void eScienceDataWidget::initialize() {
 }
 
 void eScienceDataWidget::updateCoverage() {
+    const auto cid = viewedCity();
     {
-        const int pc = mBoard.philosophyResearchCoverage();
+        const int pc = mBoard.philosophyResearchCoverage(cid);
         const auto pt = sCoverageToText(pc);
         const auto ptt = eLanguage::zeusText(58, pt);
         mResearchCoverage->setText(ptt);
@@ -130,7 +131,7 @@ void eScienceDataWidget::updateCoverage() {
     }
 
     {
-        const int ac = mBoard.athleticsLearningCoverage();
+        const int ac = mBoard.athleticsLearningCoverage(cid);
         const auto at = sCoverageToText(ac);
         const auto att = eLanguage::zeusText(58, at);
         mLearningCoverage->setText(att);
@@ -138,7 +139,7 @@ void eScienceDataWidget::updateCoverage() {
     }
 
     {
-        const int dc = mBoard.dramaAstronomyCoverage();
+        const int dc = mBoard.dramaAstronomyCoverage(cid);
         const auto dt = sCoverageToText(dc);
         const auto dtt = eLanguage::zeusText(58, dt);
         mAstronomyCoverage->setText(dtt);
@@ -146,7 +147,7 @@ void eScienceDataWidget::updateCoverage() {
     }
 
     {
-        const auto m = mBoard.museum();
+        const auto m = mBoard.museum(cid);
         const bool exhibits = m ? m->available() : false;
         const auto ddtt = eLanguage::zeusText(18, exhibits ? 1 : 0);
         mExhibits->setText(ddtt);

@@ -11,7 +11,7 @@ eEarthquakeEvent::eEarthquakeEvent(const eGameEventBranch branch) :
 void eEarthquakeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    const auto startTile = board->disasterTile(mDisasterPoint);
+    const auto startTile = board->disasterTile(cityId(), mDisasterPoint);
     if(!startTile) return;
     eEventData ed;
     ed.fGod = mGod;

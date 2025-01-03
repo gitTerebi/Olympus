@@ -185,9 +185,9 @@ int eEliteHousing::provide(const eProvide p, const int n) {
     case eProvide::taxes: {
         if(mPaidTaxes) return 0;
         auto& b = getBoard();
-        const auto p = b.palace();
-        if(!p || p->cursed()) return 0;
         const auto cid = cityId();
+        const auto p = b.palace(cid);
+        if(!p || p->cursed()) return 0;
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
         const int taxMult = eDifficultyHelpers::taxMultiplier(

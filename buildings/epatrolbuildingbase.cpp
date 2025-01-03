@@ -70,7 +70,7 @@ bool ePatrolBuildingBase::spawn() {
     const auto chr = mCharGenerator();
     mChar = chr.get();
     if(!mChar) return false;
-    chr->setCityId(cityId());
+    chr->setBothCityIds(cityId());
     if(mPatrolGuides.empty()) {
         eTile* t = nullptr;
         const auto bt = type();

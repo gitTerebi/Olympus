@@ -217,56 +217,60 @@ void eEmploymentDataWidget::initialize() {
         mVacanciesWidget = cw5;
     }
 
-    setWageRate(mBoard.wageRate());
-
     showMoreInfoButton();
 }
 
 void eEmploymentDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
-        const auto& emplData = mBoard.employmentData();
+        const auto cid = viewedCity();
+        const auto& emplData = mBoard.employmentData(cid);
+        if(emplData) {
+            const bool vacsVisible = emplData->freeJobVacancies() > 0;
+            mVacanciesWidget->setVisible(vacsVisible);
+            mUnemployedWidget->setVisible(!vacsVisible);
 
-        const bool vacsVisible = emplData.freeJobVacancies() > 0;
-        mVacanciesWidget->setVisible(vacsVisible);
-        mUnemployedWidget->setVisible(!vacsVisible);
+            const int p = emplData->pensions();
+            const auto pStr = std::to_string(p);
+            const auto dr = eLanguage::zeusText(6, 0);
+            mPensionsLabel->setText(pStr + " " + dr);
+            mPensionsLabel->fitContent();
+            mPensionsLabel->align(eAlignment::hcenter);
 
-        const int p = emplData.pensions();
-        const auto pStr = std::to_string(p);
-        const auto dr = eLanguage::zeusText(6, 0);
-        mPensionsLabel->setText(pStr + " " + dr);
-        mPensionsLabel->fitContent();
-        mPensionsLabel->align(eAlignment::hcenter);
+            const int w = emplData->employed();
+            mWorkforceLabel->setText(std::to_string(w));
+            mWorkforceLabel->fitContent();
+            mWorkforceLabel->align(eAlignment::hcenter);
 
-        const int w = emplData.employed();
-        mWorkforceLabel->setText(std::to_string(w));
-        mWorkforceLabel->fitContent();
-        mWorkforceLabel->align(eAlignment::hcenter);
+            const int v = emplData->freeJobVacancies();
+            mVacanciesNLabel->setText(std::to_string(v));
+            mVacanciesNLabel->fitContent();
+            mVacanciesNLabel->align(eAlignment::hcenter);
 
-        const int v = emplData.freeJobVacancies();
-        mVacanciesNLabel->setText(std::to_string(v));
-        mVacanciesNLabel->fitContent();
-        mVacanciesNLabel->align(eAlignment::hcenter);
-
-        const int u = emplData.unemployed();
-        const int e = emplData.employable();
-        const auto perStr = e ? " (" + std::to_string(100*u/e) + "%)" : "";
-        mUnemployedNLabel->setText(std::to_string(u) + perStr);
-        mUnemployedNLabel->fitContent();
-        mUnemployedNLabel->align(eAlignment::hcenter);
+            const int u = emplData->unemployed();
+            const int e = emplData->employable();
+            const auto perStr = e ? " (" + std::to_string(100*u/e) + "%)" : "";
+            mUnemployedNLabel->setText(std::to_string(u) + perStr);
+            mUnemployedNLabel->fitContent();
+            mUnemployedNLabel->align(eAlignment::hcenter);
+        }
     }
     eDataWidget::paintEvent(p);
 }
 
 void eEmploymentDataWidget::setWageRate(const eWageRate wr) {
-    mBoard.setWageRate(wr);
+    const auto cid = viewedCity();
+    mBoard.setWageRate(cid, wr);
     mWageRate = wr;
     mWageLabel->setText(eWageRateHelpers::name(wr));
 }
 
 void eEmploymentDataWidget::openMoreInfoWiget() {
+    const auto cid = viewedCity();
+    if(cid == eCityId::neutralFriendly ||
+       cid == eCityId::neutralAggresive) return;
     const auto w = new eWorkforceAllocationWidget(window());
-    w->initialize(mBoard);
+    w->initialize(mBoard, cid);
     const auto gw = gameWidget();
     gw->openDialog(w);
 }

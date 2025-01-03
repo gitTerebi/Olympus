@@ -16,6 +16,18 @@ eCharacterAction::~eCharacterAction() {
     }
 }
 
+eCityId eCharacterAction::cityId() const {
+    const auto c = character();
+    if(!c) return eCityId::neutralFriendly;
+    return c->cityId();
+}
+
+eCityId eCharacterAction::onCityId() const {
+    const auto c = character();
+    if(!c) return eCityId::neutralFriendly;
+    return c->onCityId();
+}
+
 void eCharacterAction::setState(const eCharacterActionState state) {
     if(state == mState) return;
     mState = state;

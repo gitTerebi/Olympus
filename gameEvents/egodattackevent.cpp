@@ -33,6 +33,7 @@ void eGodAttackEvent::trigger() {
     }
     const auto t = mTypes.at(tid);
     const auto god = eGod::sCreateGod(t, *board);
+    god->setOnCityId(cityId());
     god->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eGodAttackAction>(god.get());
@@ -43,7 +44,7 @@ void eGodAttackEvent::trigger() {
     ed.fChar = god.get();
     ed.fTile = god->tile();
     ed.fGod = t;
-    board->registerAttackingGod(god.get());
+    board->registerAttackingGod(cityId(), god.get());
     board->event(eEvent::godInvasion, ed);
     if(t == eGodType::zeus) {
         board->setLandTradeShutdown(true);

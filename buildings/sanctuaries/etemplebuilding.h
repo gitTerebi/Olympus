@@ -5,8 +5,9 @@
 
 class eTempleBuilding : public eSanctBuilding {
 public:
-    eTempleBuilding(eGameBoard& board);
-    eTempleBuilding(const int id, eGameBoard& board);
+    eTempleBuilding(eGameBoard& board, const eCityId cid);
+    eTempleBuilding(const int id, eGameBoard& board,
+                    const eCityId cid);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;

@@ -682,6 +682,7 @@ void eBuilding::sInfoText(eBuilding* const b,
                           std::string& additionalInfo) {
     if(!b) return;
     auto& board = b->getBoard();
+    const auto cid = b->cityId();
     int e = 0;
     int maxE = 0;
     if(const auto eb = dynamic_cast<eEmployingBuilding*>(b)) {
@@ -1212,7 +1213,7 @@ void eBuilding::sInfoText(eBuilding* const b,
         }
     } break;
     case eBuildingType::taxOffice: {
-        const auto p = board.palace();
+        const auto p = board.palace(cid);
         group = 106;
         if(onFire) {
             employmentInfoString = 13;

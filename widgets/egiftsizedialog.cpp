@@ -34,7 +34,12 @@ void eGiftSizeDialog::initialize(const eResourceType type,
     innerWid->addWidget(rofLabel);
 
     const int baseCount = eGiftHelpers::giftCount(type);
-    const auto avCount = board.resourceCount(type);
+    int avCount = 0;
+    const auto cids = board.personPlayerCities();
+    for(const auto cid : cids) {
+        const int r = board.resourceCount(cid, type);
+        if(r > avCount) avCount = r;
+    }
     using gsType = std::vector<std::pair<int, int>>;
     gsType gs{{baseCount, 22}, // small
               {2*baseCount, 23}, // medium
@@ -49,8 +54,20 @@ void eGiftSizeDialog::initialize(const eResourceType type,
         eStringHelpers::replace(giftStr, "[amount]", countStr);
         eStringHelpers::replace(giftStr, "[item]", typeStr);
 
+//        const auto boardPtr = &board;
         const auto b = new eFramedButtonWithIcon(window());
-        b->setPressAction([type, count, func]() {
+        b->setPressAction([/*boardPtr, */type, count, func]() {
+//            const auto& board = *boardPtr;
+//            const auto cids = board.personPlayerCities();
+//            std::vector<eCityId> validCids;
+//            for(const auto cid : cids) {
+//                const int r = board.resourceCount(cid, type);
+//                if(r >= count) {
+//                    validCids.push_back(cid);
+//                }
+//            }
+//            if(validCids.empty()) return;
+
             func(type, count);
         });
         b->initialize(type, giftStr);

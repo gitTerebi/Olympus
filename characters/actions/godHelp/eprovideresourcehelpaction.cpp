@@ -64,10 +64,11 @@ void eProvideResourceHelpAction::decCount(const int by) {
     mCount -= by;
 }
 
-bool eProvideResourceHelpAction::sHelpNeeded(const eGameBoard& board,
+bool eProvideResourceHelpAction::sHelpNeeded(const eCityId cid,
+                                             const eGameBoard& board,
                                              const eResourceType res,
                                              const int minSpace) {
-    const int r = board.spaceForResource(res);
+    const int r = board.spaceForResource(cid, res);
     return r > minSpace;
 }
 
@@ -76,7 +77,8 @@ void eProvideResourceHelpAction::goToTarget() {
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board, this);
     eStorageBuilding* target = nullptr;
-    board.maxSingleSpaceForResource(mResource, &target);
+    const auto cid = cityId();
+    board.maxSingleSpaceForResource(cid, mResource, &target);
     mTarget = target;
     if(mTarget) {
         const auto ct = mTarget->centerTile();

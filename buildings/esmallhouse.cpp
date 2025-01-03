@@ -89,9 +89,9 @@ int eSmallHouse::provide(const eProvide p, const int n) {
     case eProvide::taxes: {
         if(mPaidTaxes) return 0;
         auto& b = getBoard();
-        const auto p = b.palace();
-        if(!p || p->cursed()) return 0;
         const auto cid = cityId();
+        const auto p = b.palace(cid);
+        if(!p || p->cursed()) return 0;
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
         const int taxMult = eDifficultyHelpers::taxMultiplier(
@@ -181,7 +181,8 @@ void eSmallHouse::timeChanged(const int by) {
                 const int tx = center->x();
                 const int ty = center->y();
                 int dist;
-                b.nearestPlague(tx, ty, dist);
+                const auto cid = cityId();
+                b.nearestPlague(cid, tx, ty, dist);
                 if(dist > 5) b.startPlague(this);
             }
         }
@@ -489,13 +490,15 @@ void eSmallHouse::spawnSick() {
     const auto tile = c->tile();
     if(!tile) return;
     const auto cid = cityId();
-    c->setCityId(cid);
+    c->setBothCityIds(cid);
 }
 
 void eSmallHouse::spawnDisgruntled() {
     if(mDisg) mDisg->kill();
     const auto c = e::make_shared<eDisgruntled>(getBoard());
     mDisg = c.get();
+    const auto cid = cityId();
+    mDisg->setOnCityId(cid);
     mDisg->setCityId(eCityId::neutralAggresive);
     spawnCharacter(c);
 }

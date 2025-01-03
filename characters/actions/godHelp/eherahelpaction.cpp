@@ -11,7 +11,8 @@ bool eHeraHelpAction::decide() {
         break;
     case eHeraHelpStage::appear: {
         auto& board = this->board();
-        const auto as = board.agoras();
+        const auto cid = cityId();
+        const auto as = board.agoras(cid);
         for(const auto a : as) {
             mFutureTargets.push_back(a);
         }
@@ -58,8 +59,9 @@ void eHeraHelpAction::write(eWriteStream& dst) const {
     }
 }
 
-bool eHeraHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto as = board.agoras();
+bool eHeraHelpAction::sHelpNeeded(const eCityId cid,
+                                  const eGameBoard& board) {
+    const auto as = board.agoras(cid);
     for(const auto a : as) {
         int space = 0;
         space += a->spaceLeft(eResourceType::food);

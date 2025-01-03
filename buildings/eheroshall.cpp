@@ -317,14 +317,14 @@ void eHerosHall::arrive() {
     ed.fChar = mHero;
     ed.fTile = mHero ? mHero->tile() : nullptr;
     board.event(eEvent::heroArrival, ed);
-    board.heroSummoned(mType);
+    board.heroSummoned(cityId(), mType);
 }
 
 eHero* eHerosHall::spawnHero() {
     if(mHero) mHero->kill();
     auto& board = getBoard();
     const auto c = eHero::sCreateHero(mType, board);
-    c->setCityId(cityId());
+    c->setBothCityIds(cityId());
     mHero = c.get();
     const auto ct = centerTile();
     const int tx = ct->x();
@@ -482,7 +482,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = ac/24;
     } break;
     case eHeroRequirementType::people:
-        sc = board.population();
+        sc = board.population(pid);
         break;
     case eHeroRequirementType::horsemen: {
         sc = board.countBanners(eBannerType::horseman, cid);
@@ -524,7 +524,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         break;
 
     case eHeroRequirementType::nearPalace: {
-        const auto p = board.palace();
+        const auto p = board.palace(cid);
         if(!p) {
             sc = 0;
         } else {
@@ -594,7 +594,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::stadium:
-        sc = board.hasStadium() ? 1 : 0;
+        sc = board.hasStadium(cid) ? 1 : 0;
         break;
     case eHeroRequirementType::meat:
         sc = board.resourceCount(cid, eResourceType::meat);
@@ -603,7 +603,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.resourceCount(cid, eResourceType::wood);
         break;
     case eHeroRequirementType::soldiers:
-        sc = board.banners().size();
+        sc = board.banners(cityId()).size();
         break;
     case eHeroRequirementType::taxes: {
         const int tc = board.taxesCoverage(cid);
@@ -681,7 +681,7 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
     }
     updateRequirementsStatus();
 
-    const bool s = board.wasHeroSummoned(type);
+    const bool s = board.wasHeroSummoned(cid, type);
     if(s) mStage = eHeroSummoningStage::arrived;
 }
 

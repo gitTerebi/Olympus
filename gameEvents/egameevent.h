@@ -5,6 +5,7 @@
 
 #include "engine/edate.h"
 #include "eeventtrigger.h"
+#include "engine/ecityid.h"
 
 #include <functional>
 
@@ -89,6 +90,9 @@ public:
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
+
+    eCityId cityId() const { return mCityId; }
+    void setCityId(const eCityId cid) { mCityId = cid; }
 
     void setupStartDate(const eDate& currentDate);
 
@@ -180,6 +184,8 @@ private:
 
     eGameBoard* mBoard = nullptr;
     eWorldBoard* mWorldBoard = nullptr;
+
+    eCityId mCityId = eCityId::neutralFriendly;
 
     stdptr<eGameEvent> mParent;
 

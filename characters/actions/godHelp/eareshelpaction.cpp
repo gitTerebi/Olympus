@@ -25,8 +25,9 @@ bool eAresHelpAction::decide() {
     return true;
 }
 
-bool eAresHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto& cs = board.conquests();
+bool eAresHelpAction::sHelpNeeded(const ePlayerId pid,
+                                  const eGameBoard& board) {
+    const auto& cs = board.conquests(pid);
     return !cs.empty();
 }
 
@@ -43,6 +44,7 @@ void eAresHelpAction::write(eWriteStream& dst) const {
 void eAresHelpAction::goToTarget() {
     const auto c = character();
     auto& board = eGodAction::board();
+    const auto cid = cityId();
     const auto hero = static_cast<eHero*>(c);
     const stdptr<eHero> cptr(hero);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
@@ -59,7 +61,7 @@ void eAresHelpAction::goToTarget() {
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
 
-    const auto exitPoint = board.exitPoint();
+    const auto exitPoint = board.exitPoint(cid);
     if(exitPoint) {
         a->start(exitPoint);
     } else {

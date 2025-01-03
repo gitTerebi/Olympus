@@ -82,6 +82,7 @@ stdsptr<eSoldier> eSoldierBanner::createSoldier(eTile* const t) {
     const auto ct = characterType();
     const auto c = eCharacter::sCreate(ct, mBoard);
     c->setCityId(cityId());
+    c->setOnCityId(onCityId());
     const auto s = c->ref<eSoldier>();
     s->setBanner(this);
     const auto a = e::make_shared<eSoldierAction>(s.get());
@@ -114,6 +115,7 @@ void eSoldierBanner::moveTo(const int x, const int y) {
 }
 
 void eSoldierBanner::moveToDefault() {
+    const auto cid = cityId();
     const auto pid = playerId();
     const auto ppid = mBoard.personPlayer();
     const bool isPerson = pid == ppid;
@@ -122,7 +124,7 @@ void eSoldierBanner::moveToDefault() {
     case eBannerType::rockThrower:
     case eBannerType::hoplite:
     case eBannerType::horseman: {
-        const auto palace = mBoard.palace();
+        const auto palace = mBoard.palace(cid);
         if(!palace) return;
         const auto ts = palace->tiles();
         for(const auto t : ts) {
@@ -138,8 +140,8 @@ void eSoldierBanner::moveToDefault() {
     case eBannerType::amazon:
     case eBannerType::aresWarrior: {
         const auto s = mType == eBannerType::amazon ?
-                            mBoard.sanctuary(eGodType::artemis) :
-                            mBoard.sanctuary(eGodType::ares);
+                            mBoard.sanctuary(cid, eGodType::artemis) :
+                            mBoard.sanctuary(cid, eGodType::ares);
         if(!s) return;
         const auto ts = s->warriorTiles();
         for(const auto t : ts) {
@@ -194,7 +196,8 @@ void eSoldierBanner::backFromAbroad(int& wait) {
     }
     mAbroad = false;
     moveToDefault();
-    const auto entryPoint = mBoard.entryPoint();
+    const auto cid = cityId();
+    const auto entryPoint = mBoard.entryPoint(cid);
     if(entryPoint) {
         while((int)mSoldiers.size() < mCount) {
             const auto s = createSoldier(entryPoint);
@@ -263,6 +266,11 @@ void eSoldierBanner::killAllWithCorpse() {
     mSoldiers.clear();
 }
 
+void eSoldierBanner::setBothCityIds(const eCityId cid) {
+    mCityId = cid;
+    mOnCityId = cid;
+}
+
 ePlayerId eSoldierBanner::playerId() const {
     const auto cid = cityId();
     auto& board = getBoard();
@@ -310,6 +318,7 @@ void eSoldierBanner::read(eReadStream& src) {
     mTile = src.readTile(mBoard);
     src >> mCount;
     src >> mCityId;
+    src >> mOnCityId;
 
     const auto pid = playerId();
     const auto ppid = mBoard.personPlayer();
@@ -346,6 +355,7 @@ void eSoldierBanner::write(eWriteStream& dst) const {
     dst.writeTile(mTile);
     dst << mCount;
     dst << mCityId;
+    dst << mOnCityId;
 
     dst << mPlaces.size();
     for(const auto& p : mPlaces) {
@@ -505,6 +515,7 @@ void eSoldierBanner::updatePlaces() {
 
 void eSoldierBanner::updateCount() {
     if(mMilitaryAid) return;
+    const auto cid = cityId();
     const auto pid = playerId();
     const auto ppid = mBoard.personPlayer();
     const bool isPerson = pid == ppid;
@@ -533,7 +544,7 @@ void eSoldierBanner::updateCount() {
             case eBannerType::enemy:
                 return;
             }
-            const auto home = eSoldierAction::sFindHome(cht, mBoard);
+            const auto home = eSoldierAction::sFindHome(cht, cid, mBoard);
             if(!home) break;
             createSoldier(home->centerTile());
         }

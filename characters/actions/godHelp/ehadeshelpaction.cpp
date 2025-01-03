@@ -46,15 +46,17 @@ void eHadesHelpAction::write(eWriteStream& dst) const {
     dst.writeBuilding(mTarget);
 }
 
-bool eHadesHelpAction::sHelpNeeded(const eGameBoard& board) {
-    return board.hasPalace();
+bool eHadesHelpAction::sHelpNeeded(const eCityId cid,
+                                   const eGameBoard& board) {
+    return board.hasPalace(cid);
 }
 
 void eHadesHelpAction::goToTarget() {
     auto& board = this->board();
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board, this);
-    mTarget = board.palace();
+    const auto cid = cityId();
+    mTarget = board.palace(cid);
     if(mTarget) {
         const auto ct = mTarget->centerTile();
         const int tx = ct->x();
@@ -75,7 +77,8 @@ void eHadesHelpAction::give() {
             std::make_shared<eGA_LFRAF>(
                 board(), this);
     using eGPDA = eGodProvideDrachmasAct;
-    const auto act = std::make_shared<eGPDA>(board());
+    const auto cid = mTarget->cityId();
+    const auto act = std::make_shared<eGPDA>(board(), cid);
     pauseAction();
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,

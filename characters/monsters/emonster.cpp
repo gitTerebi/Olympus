@@ -15,7 +15,8 @@ eMonster::eMonster(eGameBoard& board, const eMonsterType mt) :
 
 eMonster::~eMonster() {
     auto& board = getBoard();
-    board.unregisterMonster(this);
+    const auto ocid = onCityId();
+    board.unregisterMonster(ocid, this);
 }
 
 eMonsterType eMonster::sCharacterToMonsterType(const eCharacterType type,

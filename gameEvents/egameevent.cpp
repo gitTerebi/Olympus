@@ -343,6 +343,7 @@ void eGameEvent::addTrigger(const stdsptr<eEventTrigger>& et) {
 
 void eGameEvent::write(eWriteStream& dst) const {
     dst << mIOID;
+    dst << mCityId;
     dst << mDatePlusDays;
     dst << mDatePlusMonths;
     dst << mDatePlusYears;
@@ -374,6 +375,7 @@ void eGameEvent::write(eWriteStream& dst) const {
 
 void eGameEvent::read(eReadStream& src) {
     src >> mIOID;
+    src >> mCityId;
     src >> mDatePlusDays;
     src >> mDatePlusMonths;
     src >> mDatePlusYears;

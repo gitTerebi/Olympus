@@ -34,6 +34,17 @@ struct eTileTerrainPainter {
     int fDrawDim = 1;
 };
 
+struct eTerritoryBorder {
+    bool fTR = false;
+    bool fR = false;
+    bool fBR = false;
+    bool fB = false;
+    bool fBL = false;
+    bool fL = false;
+    bool fTL = false;
+    bool fT = false;
+};
+
 class eTile : public eTileBase {
 public:
     eTile(const int x, const int y,
@@ -103,6 +114,9 @@ public:
     void addTerrainTile(eTile* const tile) { mTerrainTiles.push_back(tile); }
     std::vector<eTile*>& terrainTiles() { return mTerrainTiles; }
 
+    const eTerritoryBorder& territoryBorder() const { return mBorder; }
+    void updateTerritoryBorder();
+
     eTileTerrainPainter& terrainPainter() { return mTerrainPainter; }
     bool updateTerrain() const { return mUpdateTerrain; }
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
@@ -118,6 +132,7 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     eTileTerrainPainter mTerrainPainter;
+    eTerritoryBorder mBorder;
     bool mUpdateTerrain = false;
     std::vector<eTile*> mTerrainTiles;
 

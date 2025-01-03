@@ -5,9 +5,10 @@
 #include "esanctuary.h"
 #include "engine/egameboard.h"
 
-eTempleAltarBuilding::eTempleAltarBuilding(eGameBoard& board) :
+eTempleAltarBuilding::eTempleAltarBuilding(eGameBoard& board,
+                                           const eCityId cid) :
     eSanctBuilding({0, 4, 0}, 1, board,
-                   eBuildingType::templeAltar, 2, 2) {
+                   eBuildingType::templeAltar, 2, 2, cid) {
     setOverlayEnabledFunc([this]() {
         const auto s = sanctuary();
         return s->finished();

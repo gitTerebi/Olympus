@@ -90,7 +90,8 @@ bool eViewModeHelpers::buildingVisible(
     } break;
     case eViewMode::hazards: {
         auto& board = b->getBoard();
-        const auto diff = board.difficulty();
+        const auto pid = board.personPlayer();
+        const auto diff = board.difficulty(pid);
         const int fr = eDifficultyHelpers::fireRisk(diff, bt);
         const int dr = eDifficultyHelpers::damageRisk(diff, bt);
         return (fr || dr) && b->maintenance() < 90;

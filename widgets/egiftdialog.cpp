@@ -36,11 +36,16 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
     auto all = eResourceTypeHelpers::extractResourceTypes(
                 eResourceType::allBasic);
     all.push_back(eResourceType::drachmas);
+    const auto cids = board.personPlayerCities();
     for(const auto r : all) {
         const int count = eGiftHelpers::giftCount(r);
-        const int c = board.resourceCount(r);
-
-        if(c >= count) gifts.push_back(r);
+        for(const auto cid : cids) {
+            const int c = board.resourceCount(cid, r);
+            if(c >= count) {
+                gifts.push_back(r);
+                break;
+            }
+        }
     }
 
     eWidget* ng = nullptr;

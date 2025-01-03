@@ -9,7 +9,8 @@
 class eTempleMonumentBuilding : public eSanctBuilding {
 public:
     eTempleMonumentBuilding(const eGodType god,
-                            const int id, eGameBoard& board);
+                            const int id, eGameBoard& board,
+                            const eCityId cid);
 
     static const eTextureCollection* sGodMonumentTextureCollection(
             const eTileSize size, const eGodType god);

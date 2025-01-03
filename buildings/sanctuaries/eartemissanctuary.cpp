@@ -39,7 +39,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             }
             b->setName(name);
             mSoldierBanners.push_back(b);
-            b->setCityId(cityId());
+            b->setBothCityIds(cityId());
             board.registerSoldierBanner(b);
             b->moveToDefault();
             id++;

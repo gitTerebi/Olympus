@@ -18,7 +18,9 @@ void eEmploymentData::incTotalJobVacancies(const int v) {
 }
 
 int eEmploymentData::employable() const {
-    const auto diff = mBoard.difficulty();
+    const auto cid = mCity.id();
+    const auto pid = mBoard.cityIdToPlayerId(cid);
+    const auto diff = mBoard.difficulty(pid);
     const auto wageRate = mCity.wageRate();
     const double frac = eDifficultyHelpers::workerFrac(
                             diff, wageRate);

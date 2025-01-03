@@ -13,6 +13,7 @@ class eReadStream;
 class eWriteStream;
 class eWorldCity;
 class eSoldierBanner;
+enum class eCityId;
 
 enum class eInvasionStage {
     spread, wait, invade, comeback
@@ -21,6 +22,7 @@ enum class eInvasionStage {
 class eInvasionHandler {
 public:
     eInvasionHandler(eGameBoard& board,
+                     const eCityId targetCity,
                      const stdsptr<eWorldCity>& city,
                      eInvasionEvent* const event);
     ~eInvasionHandler();
@@ -44,6 +46,7 @@ public:
                         int& toX,int& toY) const;
 private:
     eGameBoard& mBoard;
+    eCityId mTargetCity;
     stdsptr<eWorldCity> mCity;
     stdptr<eInvasionEvent> mEvent;
     eTile* mTile = nullptr;

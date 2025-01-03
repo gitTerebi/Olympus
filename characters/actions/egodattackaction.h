@@ -92,7 +92,8 @@ public:
             const auto att = loserGod->attitude();
             if(att == eGodAttitude::worshipped) {
                 const auto type = loserGod->type();
-                const auto s = board.sanctuary(type);
+                const auto cid = loserGod->cityId();
+                const auto s = board.sanctuary(cid, type);
                 if(s) s->setSpawnWait(40000);
             }
             const auto finish = std::make_shared<eGAA_loserDisappearFinish>(

@@ -141,7 +141,8 @@ public:
         const int ty = tile->y();
         int dist;
         auto& board = this->board();
-        board.nearestPlague(tx, ty, dist);
+        const auto cid = tile->cityId();
+        board.nearestPlague(cid, tx, ty, dist);
         if(dist < 10) return null;
         mTarget = static_cast<eSmallHouse*>(b);
         return tile;

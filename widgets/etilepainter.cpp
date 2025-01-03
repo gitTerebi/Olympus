@@ -65,8 +65,8 @@ void eTilePainter::handleScheduledDraw() {
     mScheduled.clear();
 }
 
-void eTilePainter::drawPolygon(
-        std::vector<SDL_Point> pts, const SDL_Color& color) {
+void eTilePainter::drawPolygon(const std::vector<SDL_Point>& pts,
+                               const SDL_Color& color) const {
     std::vector<SDL_Point> ppts;
     ppts.reserve(pts.size());
     for(const auto& pt : pts) {
@@ -76,6 +76,15 @@ void eTilePainter::drawPolygon(
         ppts.push_back({pixX, pixY});
     }
     mP.drawPolygon(ppts, color);
+}
+
+void eTilePainter::fillRect(const double x, const double y,
+                            const int w, const int h,
+                            const SDL_Color& color) const {
+    int pixX;
+    int pixY;
+    drawPositon(x, y, pixX, pixY);
+    mP.fillRect(SDL_Rect{pixX - w/2, pixY - h/2, w, h}, color);
 }
 
 void eTilePainter::drawPositon(const double x, const double y,

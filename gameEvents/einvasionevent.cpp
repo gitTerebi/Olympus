@@ -69,6 +69,7 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
+    const auto cid = cityId();
     board->removeInvasion(this);
     eEventData ed;
     ed.fCity = mCity;
@@ -84,9 +85,11 @@ void eInvasionEvent::trigger() {
         board->event(eEvent::invasionDefeat, ed);
         board->updateMusic();
     };
-    if(board->drachmas() >= bribe) { // bribe
-        ed.fA1 = [board, bribe, city]() {
-            board->incDrachmas(-bribe);
+    const auto pid = board->cityIdToPlayerId(cid);
+    const int drachmas = board->drachmas(pid);
+    if(drachmas >= bribe) { // bribe
+        ed.fA1 = [board, pid, bribe, city]() {
+            board->incDrachmas(pid, -bribe);
             eEventData ed;
             ed.fCity = city;
             board->event(eEvent::invasionBribed, ed);
@@ -160,11 +163,11 @@ void eInvasionEvent::trigger() {
         }
     }
 
-    const auto tile = board->landInvasionTile(mInvasionPoint);
+    const auto tile = board->landInvasionTile(cid, mInvasionPoint);
     ed.fTile = tile;
-    ed.fA2 = [this, board, tile, city, infantry, cavalry, archers]() { // fight
+    ed.fA2 = [this, board, tile, cid, city, infantry, cavalry, archers]() { // fight
         if(!tile) return;
-        const auto eh = new eInvasionHandler(*board, city, this);
+        const auto eh = new eInvasionHandler(*board, cid, city, this);
         eh->initialize(tile, infantry, cavalry, archers);
     };
     board->event(eEvent::invasion, ed);
@@ -275,7 +278,9 @@ bool eInvasionEvent::nearestSoldier(const int fromX, const int fromY,
 int eInvasionEvent::bribeCost() const {
     const auto board = gameBoard();
     if(!board) return 0;
-    const auto diff = board->difficulty();
+    const auto cid = cityId();
+    const auto pid = board->cityIdToPlayerId(cid);
+    const auto diff = board->difficulty(pid);
     const int rt = eDifficultyHelpers::soliderBribe(
                        diff, eCharacterType::rockThrower);
     const int ht = eDifficultyHelpers::soliderBribe(

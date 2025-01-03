@@ -136,8 +136,9 @@ void eMythologyDataWidget::initialize() {
 void eMythologyDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
+        const auto cid = viewedCity();
         {
-            const auto ss = mBoard.sanctuaries();
+            const auto ss = mBoard.sanctuaries(cid);
             bool changed = false;
             if(ss.size() != mSanctuariesV.size()) {
                 changed = true;
@@ -228,7 +229,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
         }
 
         {
-            const auto ga = mBoard.attackingGods();
+            const auto ga = mBoard.attackingGods(cid);
             const bool changed = !eVectorHelpers::same(ga, mGodsAttackingV);
 
             if(changed || mGodsAttackingF) {
@@ -268,7 +269,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
         }
 
         {
-            const auto ma = mBoard.monsters();
+            const auto ma = mBoard.monsters(cid);
             const bool changed = !eVectorHelpers::same(ma, mMonstersAttackingV);
 
             if(changed || mMonstersAttackingF) {

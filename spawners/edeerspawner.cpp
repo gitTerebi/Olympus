@@ -13,5 +13,6 @@ eDeerSpawner::eDeerSpawner(const int id,
 
 stdsptr<eWildAnimal> eDeerSpawner::create(eGameBoard& board) {
     const auto b = e::make_shared<eDeer>(board);
+    b->setOnCityId(cityId());
     return b;
 }

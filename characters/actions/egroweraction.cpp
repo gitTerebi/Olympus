@@ -174,8 +174,9 @@ bool eGrowerAction::findResourceDecision() {
 
     const auto gt = mType;
     auto& board = this->board();
-    const bool gd = board.isShutDown(eResourceType::grapes);
-    const bool od = board.isShutDown(eResourceType::olives);
+    const auto cid = cityId();
+    const bool gd = board.isShutDown(cid, eResourceType::grapes);
+    const bool od = board.isShutDown(cid, eResourceType::olives);
     const auto hha = [gt, gd, od](eThreadTile* const tile) {
         return hasResource(tile, gt, gd, od);
     };

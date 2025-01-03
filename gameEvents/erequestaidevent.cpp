@@ -1,5 +1,6 @@
 #include "erequestaidevent.h"
 
+#include "engine/emilitaryaid.h"
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
@@ -15,14 +16,18 @@ void eRequestAidEvent::trigger() {
     eEventData ed;
     ed.fCity = mCity;
 
-   const auto date = board->date();
+    const auto date = board->date();
+    const auto cid = mCity->cityId();
+    const auto entryPoint = board->entryPoint(cid);
+    if(!entryPoint) return;
+    const auto ocid = cityId();
 
     if(mEnd) {
-        const auto ma = board->militaryAid(mCity);
+        const auto ma = board->militaryAid(cid, mCity);
         if(ma->allDead()) {
             board->event(eEvent::aidDefeated, ed);
         } else {
-            const auto& ivhs = board->invasionHandlers();
+            const auto& ivhs = board->invasionHandlers(cid);
             const auto& ivs = board->invasions();
             const bool needed = !ivhs.empty() || !ivs.empty();
             const int days = date - mArrivalDate;
@@ -31,7 +36,7 @@ void eRequestAidEvent::trigger() {
                     ma->goBack();
                     const int t = mCity->troops();
                     mCity->setTroops(t + ma->count());
-                    board->removeMilitaryAid(mCity);
+                    board->removeMilitaryAid(cid, mCity);
                 }
                 board->event(eEvent::aidDeparts, ed);
             }
@@ -43,8 +48,6 @@ void eRequestAidEvent::trigger() {
         mCity->setTroops(t - arrived);
 
         mArrivalDate = date;
-        const auto entryPoint = board->entryPoint();
-        if(!entryPoint) return;
 
         const auto ma = std::make_shared<eMilitaryAid>();
         ma->fCity = mCity;
@@ -64,6 +67,8 @@ void eRequestAidEvent::trigger() {
         while(remRabble > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::rockThrower, *board);
+            b->setOnCityId(ocid);
+            b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
             for(int i = 0; i < 8 && i < remRabble; i++) {
@@ -78,6 +83,8 @@ void eRequestAidEvent::trigger() {
         while(remHoplites > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::hoplite, *board);
+            b->setOnCityId(ocid);
+            b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
             for(int i = 0; i < 8 && i < remHoplites; i++) {
@@ -92,6 +99,8 @@ void eRequestAidEvent::trigger() {
         while(remHorsemen > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::horseman, *board);
+            b->setOnCityId(ocid);
+            b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
             for(int i = 0; i < 8 && i < remHorsemen; i++) {
@@ -110,7 +119,7 @@ void eRequestAidEvent::trigger() {
         const int ctx = entryPoint->x();
         const int cty = entryPoint->y();
         eSoldierBanner::sPlace(banners, ctx, cty, *board, 3, 3);
-        board->addMilitaryAid(ma);
+        board->addMilitaryAid(cid, ma);
     }
 
     const auto e = e::make_shared<eRequestAidEvent>(

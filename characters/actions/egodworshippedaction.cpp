@@ -96,7 +96,7 @@ bool eGodWorshippedAction::decide() {
 
 void eGodWorshippedAction::lookForMonster() {
     const auto& board = eGodWorshippedAction::board();
-    const auto& ms = board.monsters();
+    const auto& ms = board.monsters(onCityId());
     for(const auto m : ms) {
         if(m->dead()) continue;
         huntMonster(m, false);
@@ -123,7 +123,8 @@ void eGodWorshippedAction::write(eWriteStream& dst) const {
 
 void eGodWorshippedAction::defendCity() {
     auto& board = eGodWorshippedAction::board();
-    const auto i = board.invasionToDefend();
+    const auto cid = cityId();
+    const auto i = board.invasionToDefend(cid);
     if(!i) return;
     mStage = eGodWorshippedStage::defend;
     const auto c = character();

@@ -195,6 +195,25 @@ void eTile::rotatedNeighbours(eTilePtr& tr,
     }
 }
 
+void eTile::updateTerritoryBorder() {
+    const auto cid = cityId();
+    const auto set = [cid](const eTile* const other, bool& border) {
+        if(!other) {
+            border = false;
+            return;
+        }
+        const auto ocid = other->cityId();
+        border = ocid != cid;
+    };
+
+    set(topRight<eTile>(), mBorder.fTR);
+    set(bottomRight<eTile>(), mBorder.fBR);
+    set(bottomLeft<eTile>(), mBorder.fBL);
+    set(topLeft<eTile>(), mBorder.fTL);
+
+    set(top<eTile>(), mBorder.fT);
+}
+
 bool eTile::onFire() const {
     const auto ub = underBuilding();
     if(!ub) return false;

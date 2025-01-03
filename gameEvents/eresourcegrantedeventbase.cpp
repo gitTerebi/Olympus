@@ -44,14 +44,20 @@ void eResourceGrantedEventBase::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    const int space = board->spaceForResource(mResource);
     eEventData ed;
     ed.fCity = mCity;
-    ed.fSpaceCount = space;
+    int maxSpace = 0;
+    const auto cids = board->personPlayerCities();
+    for(const auto cid : cids) {
+        const int space = board->spaceForResource(cid, mResource);
+        if(space > maxSpace) maxSpace = space;
+        ed.fCSpaceCount[cid] = space;
+    }
+    ed.fSpaceCount = maxSpace;
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
 
-    if(space == 0) {
+    if(maxSpace == 0) {
         ed.fType = eMessageEventType::resourceGranted;
         if(mPostpone) {
             const auto branch = eGameEventBranch::child;
@@ -67,21 +73,23 @@ void eResourceGrantedEventBase::trigger() {
         }
     } else {
         ed.fType = eMessageEventType::requestTributeGranted;
-        if(space != 0) {
-            ed.fA0 = [this, board]() { // accept
-                const int a = board->addResource(mResource, mCount);
-                eEventData ed;
-                ed.fType = eMessageEventType::resourceGranted;
-                ed.fCity = mCity;
-                ed.fResourceType = mResource;
-                ed.fResourceCount = a;
-                if(mResource == eResourceType::drachmas) {
-                    board->event(mGiftCashAccepted, ed);
-                } else {
-                    if(a == mCount) return;
-                    board->event(mGiftAccepted, ed);
-                }
-            };
+        if(maxSpace != 0) {
+            for(const auto cid : cids) {
+                ed.fCCA0[cid] = [this, board, cid]() { // accept
+                    const int a = board->addResource(cid, mResource, mCount);
+                    eEventData ed;
+                    ed.fType = eMessageEventType::resourceGranted;
+                    ed.fCity = mCity;
+                    ed.fResourceType = mResource;
+                    ed.fResourceCount = a;
+                    if(mResource == eResourceType::drachmas) {
+                        board->event(mGiftCashAccepted, ed);
+                    } else {
+                        if(a == mCount) return;
+                        board->event(mGiftAccepted, ed);
+                    }
+                };
+            }
         }
 
         if(mPostpone) {
@@ -116,16 +124,16 @@ void eResourceGrantedEventBase::trigger() {
         };
     }
     if(!mPostpone) {
-        if(space == 0) {
+        if(maxSpace == 0) {
             board->event(mGiftForfeited, ed);
-        } else if(space >= mCount) {
+        } else if(maxSpace >= mCount) {
             board->event(mGiftGranted, ed);
         } else {
             board->event(mGiftLastChance, ed);
         }
-    } else if(space == 0) {
+    } else if(maxSpace == 0) {
         board->event(mGiftInsufficientSpace, ed);
-    } else if(space >= mCount) {
+    } else if(maxSpace >= mCount) {
         board->event(mGiftGranted, ed);
     } else {
         board->event(mGiftPartialSpace, ed);

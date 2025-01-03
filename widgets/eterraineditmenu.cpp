@@ -140,8 +140,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         w9->addAction(eLanguage::zeusText(48, 70 + i), [this, i]() {
             mMode = eTerrainEditMode::disasterPoint;
             mModeId = i;
-        }, [board, i]() {
-            const auto b = board->banner(eBannerTypeS::disasterPoint, i);
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i);
             return b != nullptr;
         });
     }
@@ -156,8 +157,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         w11->addAction("Land inv pt " + std::to_string(i + 1), [this, i]() {
             mMode = eTerrainEditMode::landInvasion;
             mModeId = i;
-        }, [board, i]() {
-            const auto b = board->banner(eBannerTypeS::landInvasion, i);
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::landInvasion, i);
             return b != nullptr;
         });
     }
@@ -165,8 +167,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         w11->addAction("Monster Point " + std::to_string(i + 1), [this, i]() {
             mMode = eTerrainEditMode::monsterPoint;
             mModeId = i;
-        }, [board, i]() {
-            const auto b = board->banner(eBannerTypeS::monsterPoint, i);
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::monsterPoint, i);
             return b != nullptr;
         });
     }
@@ -177,17 +180,27 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w12->addAction("Entry Point", [this]() {
         mMode = eTerrainEditMode::entryPoint;
         mModeId = 0;
-    }, [board]() {
-        const auto b = board->banner(eBannerTypeS::entryPoint);
+    }, [board, gw]() {
+        const auto cid = gw->viewedCity();
+        const auto b = board->banner(cid, eBannerTypeS::entryPoint);
         return b != nullptr;
     });
     w12->addAction("Exit Point", [this]() {
         mMode = eTerrainEditMode::exitPoint;
         mModeId = 0;
-    }, [board]() {
-        const auto b = board->banner(eBannerTypeS::exitPoint);
+    }, [board, gw]() {
+        const auto cid = gw->viewedCity();
+        const auto b = board->banner(cid, eBannerTypeS::exitPoint);
         return b != nullptr;
     });
+    const auto cids = board->citiesOnBoard();
+    for(const auto cid : cids) {
+        const auto name = board->cityName(cid);
+        w12->addAction(name + " Territory", [this, cid]() {
+            mMode = eTerrainEditMode::cityTerritory;
+            mModeId = static_cast<int>(cid);
+        });
+    }
     w12->stackVertically(spacing);
     w12->fitContent();
 
@@ -197,8 +210,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         w13->addAction("Boar spawn " + std::to_string(i + 1), [this, i]() {
             mMode = eTerrainEditMode::boar;
             mModeId = i;
-        }, [board, i]() {
-            const auto b = board->banner(eBannerTypeS::boar, i);
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::boar, i);
             return b != nullptr;
         });
     }
@@ -206,8 +220,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         w13->addAction("Deer spawn " + std::to_string(i + 1), [this, i]() {
             mMode = eTerrainEditMode::deer;
             mModeId = i;
-        }, [board, i]() {
-            const auto b = board->banner(eBannerTypeS::deer, i);
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::deer, i);
             return b != nullptr;
         });
     }
@@ -299,15 +314,28 @@ void eTerrainEditMenu::setWorldDirection(const eWorldDirection dir) {
     mRotateButton->setDirection(dir);
 }
 
+bool sizeOneAction(const eTerrainEditMode mode) {
+    return mode == eTerrainEditMode::quake ||
+           mode == eTerrainEditMode::disasterPoint ||
+           mode == eTerrainEditMode::entryPoint ||
+           mode == eTerrainEditMode::exitPoint ||
+           mode == eTerrainEditMode::deer ||
+           mode == eTerrainEditMode::boar ||
+           mode == eTerrainEditMode::fish ||
+           mode == eTerrainEditMode::urchin ||
+           mode == eTerrainEditMode::landInvasion ||
+           mode == eTerrainEditMode::monsterPoint;
+}
+
 eBrushType eTerrainEditMenu::brushType() const {
-    if(mMode == eTerrainEditMode::quake) {
+    if(sizeOneAction(mMode)) {
         return eBrushType::brush;
     }
     return mBrushType;
 }
 
 int eTerrainEditMenu::brushSize() const {
-    if(mMode == eTerrainEditMode::quake) {
+    if(sizeOneAction(mMode)) {
         return 1;
     }
     return mBrushSize;

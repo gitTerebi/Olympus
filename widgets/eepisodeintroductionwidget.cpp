@@ -82,7 +82,11 @@ void eEpisodeIntroductionWidget::initialize(
         const auto e = c->currentEpisode();
         const auto et = c->currentEpisodeType();
         const auto board = e->fBoard;
-        board->updateResources();
+        const auto ppid = board->personPlayer();
+        const auto cids = board->playerCities(ppid);
+        for(const auto cid : cids) {
+            board->updateResources(cid);
+        }
 
         if(type == eEpisodeIntroType::goals) {
             board->checkGoalsFulfilled();
@@ -118,7 +122,11 @@ void eEpisodeIntroductionWidget::initialize(
                 bool addStatusText = true;
                 if(g->fType == eEpisodeGoalType::setAsideGoods) {
                     const auto res = static_cast<eResourceType>(g->fEnumInt1);
-                    const int has = board->resourceCount(res);
+                    int has = 0;
+                    const auto cids = board->personPlayerCities();
+                    for(const auto cid : cids) {
+                        has += board->resourceCount(cid, res);
+                    }
                     if(!g->met() && has >= g->fRequiredCount) {
                         const auto setAside = new eFramedButton(window());
                         setAside->setUnderline(false);
@@ -131,8 +139,12 @@ void eEpisodeIntroductionWidget::initialize(
                         w->addWidget(setAside);
                         setAside->align(eAlignment::vcenter | eAlignment::right);
                         setAside->setPressAction([board, res, g, setAside,
-                                                  checkBox, ctexs]() {
-                            board->takeResource(res, g->fRequiredCount);
+                                                  checkBox, ctexs, cids]() {
+                            int rem = g->fRequiredCount;
+                            for(const auto cid : cids) {
+                                rem -= board->takeResource(cid, res, rem);
+                                if(rem <= 0) break;
+                            }
                             g->fStatusCount = g->fRequiredCount;
                             setAside->hide();
                             checkBox->setTexture(ctexs.getTexture(0));

@@ -21,7 +21,8 @@ public:
 
     void decCount(const int by);
 
-    static bool sHelpNeeded(const eGameBoard& board,
+    static bool sHelpNeeded(const eCityId cid,
+                            const eGameBoard& board,
                             const eResourceType res,
                             const int minSpace);
 private:

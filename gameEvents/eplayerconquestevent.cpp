@@ -60,7 +60,8 @@ void ePlayerConquestEvent::trigger() {
     } else {
         if(conquered) {
             board->event(eEvent::cityConquered, ed);
-            board->allow(eBuildingType::commemorative, 4);
+            const auto cid = cityId();
+            board->allow(cid, eBuildingType::commemorative, 4);
             mCity->setRelationship(eForeignCityRelationship::vassal);
         } else {
             board->event(eEvent::cityConquerFailed, ed);

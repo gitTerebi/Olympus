@@ -11,6 +11,7 @@
 #include "boardData/eemploymentdata.h"
 #include "eemploymentdistributor.h"
 #include "buildings/eavailablebuildings.h"
+#include "characters/eenlistedforces.h"
 
 class ePalace;
 class eSanctuary;
@@ -21,10 +22,20 @@ class eTradePost;
 class eSpawner;
 class eMonster;
 struct eMilitaryAid;
+class eInvasionEvent;
+class ePlague;
+class eSmallHouse;
 class eBoardPlayer;
+class eAgoraBase;
+class eInvasionHandler;
+class eStadium;
+class eMuseum;
 enum class eCharacterType;
 enum class eBuildingMode;
 enum struct eHeroType;
+enum class eBannerTypeS;
+enum class eMonsterType;
+struct eEpisode;
 
 enum class eImmigrationLimitedBy {
     none,
@@ -45,11 +56,15 @@ enum class eGames {
 };
 
 class eBoardCity {
+    friend class eGameBoard;
 public:
-    eBoardCity(eGameBoard& board);
+    eBoardCity(const eCityId cid, eGameBoard& board);
 
     eCityId id() const { return mId; }
     void setId(const eCityId id) { mId = id; }
+
+    const std::vector<eTile*>& tiles() const { return mTiles; }
+    void updateTiles();
 
     void incTime(const int by);
 
@@ -57,6 +72,7 @@ public:
 
     void payTaxes(const int d, const int people);
 
+    void nextYear();
     void nextMonth();
 
     double taxRateF() const;
@@ -72,6 +88,7 @@ public:
     int peoplePaidTaxesLastYear() const { return mPeoplePaidTaxesLastYear; }
 
     void registerBuilding(eBuilding* const b);
+    bool unregisterBuilding(eBuilding* const b);
 
     void registerEmplBuilding(eEmployingBuilding* const b);
     bool unregisterEmplBuilding(eEmployingBuilding* const b);
@@ -164,6 +181,48 @@ public:
 
     eBoardPlayer* owningPlayer() const;
 
+    bool supportsResource(const eResourceType rt) const;
+    eResourceType supportedResources() const { return mSupportedResources; }
+
+    std::vector<eAgoraBase*> agoras() const;
+
+    void registerTradePost(eTradePost* const b);
+    bool unregisterTradePost(eTradePost* const b);
+    bool hasTradePost(const eWorldCity& city);
+
+    void registerSpawner(eSpawner* const s);
+    bool unregisterSpawner(eSpawner* const s);
+
+    void registerStadium(eStadium* const s);
+    void unregisterStadium();
+
+    void registerMuseum(eMuseum* const s);
+    void unregisterMuseum();
+
+    void registerStorBuilding(eStorageBuilding* const b);
+    bool unregisterStorBuilding(eStorageBuilding* const b);
+
+    void registerSanctuary(eSanctuary* const b);
+    bool unregisterSanctuary(eSanctuary* const b);
+
+    void registerHeroHall(eHerosHall* const b);
+    bool unregisterHeroHall(eHerosHall* const b);
+
+    bool unregisterCommonHouse(eSmallHouse* const ch);
+
+    bool hasStadium() const { return mStadium; }
+    bool hasMuseum() const { return mMuseum; }
+    eStadium* stadium() const { return mStadium; }
+    eMuseum* museum() const { return mMuseum; }
+
+    void registerPalace(ePalace* const p);
+    void unregisterPalace();
+
+    ePalace* palace() const { return mPalace; }
+    bool hasPalace() const { return mPalace; }
+
+    int population() const { return mPopData.population(); }
+
     int eliteHouses() const;
     eSanctuary* sanctuary(const eGodType god) const;
     eHerosHall* heroHall(const eHeroType hero) const;
@@ -173,6 +232,64 @@ public:
     { return mSanctuaries; }
     const std::vector<eHerosHall*>& heroHalls() const
     { return mHeroHalls; }
+
+    void startPlague(eSmallHouse* const h);
+    stdsptr<ePlague> plagueForHouse(eSmallHouse* const h);
+    void healPlague(const stdsptr<ePlague>& p);
+    using ePlagues = std::vector<stdsptr<ePlague>>;
+    const ePlagues& plagues() const;
+    stdsptr<ePlague> nearestPlague(const int tx, const int ty,
+                                   int& dist) const;
+
+    eInvasionEvent* invasionToDefend() const;
+
+    void musterAllSoldiers();
+    void sendAllSoldiersHome();
+
+    eEnlistedForces getEnlistableForces() const;
+
+    eImmigrationLimitedBy immigrationLimit() const
+    { return mImmigrationLimit; }
+
+    const std::vector<eInvasionHandler*>& invasionHandlers() const {
+        return mInvasionHandlers;
+    }
+
+    void addInvasionHandler(eInvasionHandler* const i);
+    void removeInvasionHandler(eInvasionHandler* const i);
+    bool hasActiveInvasions() const;
+
+    const std::vector<stdsptr<eSoldierBanner>>& banners() const
+    { return mSoldierBanners; }
+    eBanner* banner(const eBannerTypeS type, const int id = 0) const;
+    eTile* entryPoint() const;
+    eTile* exitPoint() const;
+    void registerBanner(eBanner* const b);
+    void unregisterBanner(eBanner* const b);
+
+    eTile* monsterTile(const int id) const;
+    eTile* landInvasionTile(const int id) const;
+    eTile* disasterTile(const int id) const;
+
+    const std::vector<eMonster*>& monsters() const;
+    void registerMonster(eMonster* const m);
+    void unregisterMonster(eMonster* const m);
+    using eChars = std::vector<eCharacter*>;
+    const eChars& attackingGods() const;
+    void registerAttackingGod(eCharacter* const c);
+    bool unregisterAttackingGod(eCharacter* const c);
+
+    eMilitaryAid* militaryAid(const stdsptr<eWorldCity>& c) const;
+    void removeMilitaryAid(const stdsptr<eWorldCity>& c);
+    void addMilitaryAid(const stdsptr<eMilitaryAid>& a);
+
+    bool wasHeroSummoned(const eHeroType hero) const;
+    void heroSummoned(const eHeroType hero);
+
+    void startEpisode(eEpisode* const e);
+
+    void read(eReadStream& src);
+    void write(eWriteStream& dst) const;
 private:
     void payPensions();
 
@@ -238,6 +355,15 @@ private:
 
     std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
 
+    std::vector<eInvasionEvent*> mInvasions;
+    std::vector<eInvasionHandler*> mInvasionHandlers;
+
+    std::vector<eHeroType> mSummonedHeroes;
+
+    std::vector<eCharacter*> mAttackingGods;
+
+    std::vector<stdsptr<ePlague>> mPlagues;
+
     bool mManTowers = true;
 
     bool mShutdownLandTrade = false;
@@ -259,8 +385,8 @@ private:
 
     int mWonGames = 0;
 
-    eBuilding* mStadium = nullptr;
-    eBuilding* mMuseum = nullptr;
+    eStadium* mStadium = nullptr;
+    eMuseum* mMuseum = nullptr;
     ePalace* mPalace = nullptr;
 
     ePopulationData mPopData;
@@ -275,7 +401,7 @@ private:
     std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
 
     eAvailableBuildings mAvailableBuildings;
-    eResourceType mSupportedResources;
+    eResourceType mSupportedResources = eResourceType::allBasic;
 
     bool mPop100 = false;
     bool mPop500 = false;

@@ -227,6 +227,16 @@ void eGameWidget::updateTerrainTextures() {
 }
 
 void eGameWidget::paintEvent(ePainter& p) {
+    if(mUpdateViewedTileScheduled) {
+        mUpdateViewedTileScheduled = false;
+        const auto oldC = mViewedTile ? mViewedTile->cityId() :
+                                        eCityId::neutralFriendly;
+        mViewedTile = viewedTile();
+        const auto newC = mViewedTile ? mViewedTile->cityId() :
+                                        eCityId::neutralFriendly;
+        mViewedCityId = newC;
+        if(oldC != newC) mGm->viewedCityChanged();
+    }
     if(mBoard->duringEarthquake()) {
         mDX += (eRand::rand() % 11) - 5;
         mDY += (eRand::rand() % 11) - 5;
@@ -380,6 +390,29 @@ void eGameWidget::paintEvent(ePainter& p) {
             tp.drawTexture(rx, ry, tex, eAlignment::top);
             if(eraseCm || patrolCm || editorHover) tex->clearColorMod();
         }
+
+        {
+            const auto& border = tile->territoryBorder();
+            const int tx = tile->x();
+            const int ty = tile->y();
+            int rtx;
+            int rty;
+            eTileHelper::tileIdToRotatedTileId(tx, ty,
+                                               rtx, rty, dir,
+                                               boardw, boardh);
+            SDL_Color color{255, 255, 255, 255};
+            const int dim = mTileW/10;
+            const int ta = tile->altitude();
+            if(border.fT) {
+                tp.fillRect(rtx - ta, rty - ta, dim, dim, color);
+            }
+            if(border.fTR) {
+                tp.fillRect(rtx + 0.5 - ta, rty - ta, dim, dim, color);
+            }
+            if(border.fTL) {
+                tp.fillRect(rtx - ta, rty + 0.5 - ta, dim, dim, color);
+            }
+        }
     };
 
 
@@ -457,7 +490,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             const double cdx = -0.65;
             const double cdy = -0.65;
             if(mViewMode == eViewMode::hazards) {
-                const auto diff = mBoard->difficulty();
+                const auto pid = mBoard->personPlayer();
+                const auto diff = mBoard->difficulty(pid);
                 const int fr = eDifficultyHelpers::fireRisk(diff, bt);
                 const int dr = eDifficultyHelpers::damageRisk(diff, bt);
                 if(const auto h = dynamic_cast<eHouseBase*>(ub)) {
@@ -1526,7 +1560,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto tex = trrTexs.fBuildingBase;
             tex->setColorMod(0, 255, 0);
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-            const int allowed = mBoard->countAllowed(bt);
+            const int allowed = mBoard->countAllowed(mViewedCityId, bt);
             int n = 1;
             for(int x = sMinX; x <= sMaxX; x++) {
                 for(int y = sMinY; y <= sMaxY; y++) {
@@ -1621,7 +1655,7 @@ void eGameWidget::paintEvent(ePainter& p) {
        mode == eBuildingMode::cattle) {
         if(mLeftPressed) return;
         const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-        const int allowed = mBoard->countAllowed(bt);
+        const int allowed = mBoard->countAllowed(mViewedCityId, bt);
         double rx;
         double ry;
         const auto t = mBoard->tile(mHoverTX, mHoverTY);
@@ -1972,14 +2006,14 @@ void eGameWidget::paintEvent(ePainter& p) {
         case eBuildingMode::palace: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
-                if(mBoard->hasPalace()) return false;
+                if(mBoard->hasPalace(mViewedCityId)) return false;
                 return canBuild(tx, ty, sw, sh, fertile);
             };
         } break;
         case eBuildingMode::stadium: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
-                if(mBoard->hasStadium()) return false;
+                if(mBoard->hasStadium(mViewedCityId)) return false;
                 return canBuild(tx, ty, sw, sh, fertile);
             };
         } break;
@@ -2275,14 +2309,14 @@ void eGameWidget::paintEvent(ePainter& p) {
 //            }
         } break;
         case eBuildingMode::road: {
-            const auto b1 = e::make_shared<eRoad>(*mBoard);
+            const auto b1 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::bridge: {
 
         } break;
         case eBuildingMode::roadblock: {
-            const auto b1 = e::make_shared<eRoad>(*mBoard);
+            const auto b1 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
             b1->setRoadblock(true);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             canBuildFunc = [&](const int tx, const int ty,
@@ -2310,51 +2344,51 @@ void eGameWidget::paintEvent(ePainter& p) {
         case eBuildingMode::theseusHall: {
             const auto hallType = eBuildingModeHelpers::toBuildingType(mode);
             const auto heroType = eHerosHall::sHallTypeToHeroType(hallType);
-            const auto b1 = e::make_shared<eHerosHall>(heroType, *mBoard);
+            const auto b1 = e::make_shared<eHerosHall>(heroType, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::commonHousing: {
-            const auto b1 = e::make_shared<eSmallHouse>(*mBoard);
+            const auto b1 = e::make_shared<eSmallHouse>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::gymnasium: {
-            const auto b1 = e::make_shared<eGymnasium>(*mBoard);
+            const auto b1 = e::make_shared<eGymnasium>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::podium: {
-            const auto b1 = e::make_shared<ePodium>(*mBoard);
+            const auto b1 = e::make_shared<ePodium>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::fountain: {
-            const auto b1 = e::make_shared<eFountain>(*mBoard);
+            const auto b1 = e::make_shared<eFountain>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::watchpost: {
-            const auto b1 = e::make_shared<eWatchpost>(*mBoard);
+            const auto b1 = e::make_shared<eWatchpost>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::maintenanceOffice: {
-            const auto b1 = e::make_shared<eMaintenanceOffice>(*mBoard);
+            const auto b1 = e::make_shared<eMaintenanceOffice>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::college: {
-            const auto b1 = e::make_shared<eCollege>(*mBoard);
+            const auto b1 = e::make_shared<eCollege>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::dramaSchool: {
-            const auto b1 = e::make_shared<eDramaSchool>(*mBoard);
+            const auto b1 = e::make_shared<eDramaSchool>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::theater: {
-            const auto b1 = e::make_shared<eTheater>(*mBoard);
+            const auto b1 = e::make_shared<eTheater>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::hospital: {
-            const auto b1 = e::make_shared<eHospital>(*mBoard);
+            const auto b1 = e::make_shared<eHospital>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::stadium: {
-            const auto b1 = e::make_shared<eStadium>(*mBoard, mRotate);
+            const auto b1 = e::make_shared<eStadium>(*mBoard, mRotate, mViewedCityId);
             auto& ebs1 = ebs.emplace_back(mHoverTX, mHoverTY, b1);
             ebs1.fBR = e::make_shared<eStadium1Renderer>(b1);
             int dx;
@@ -2370,33 +2404,33 @@ void eGameWidget::paintEvent(ePainter& p) {
             ebs2.fBR = e::make_shared<eStadium2Renderer>(b1);
         } break;
         case eBuildingMode::bibliotheke: {
-            const auto b1 = e::make_shared<eBibliotheke>(*mBoard);
+            const auto b1 = e::make_shared<eBibliotheke>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::observatory: {
-            const auto b1 = e::make_shared<eObservatory>(*mBoard);
+            const auto b1 = e::make_shared<eObservatory>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::university: {
-            const auto b1 = e::make_shared<eUniversity>(*mBoard);
+            const auto b1 = e::make_shared<eUniversity>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::laboratory: {
-            const auto b1 = e::make_shared<eLaboratory>(*mBoard);
+            const auto b1 = e::make_shared<eLaboratory>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::inventorsWorkshop: {
-            const auto b1 = e::make_shared<eInventorsWorkshop>(*mBoard);
+            const auto b1 = e::make_shared<eInventorsWorkshop>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::museum: {
-            const auto b1 = e::make_shared<eMuseum>(*mBoard);
+            const auto b1 = e::make_shared<eMuseum>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::palace: {
             const int tx = mHoverTX;
             const int ty = mHoverTY;
-            const auto b1 = e::make_shared<ePalace>(*mBoard, mRotate);
+            const auto b1 = e::make_shared<ePalace>(*mBoard, mRotate, mViewedCityId);
 
             int dx;
             int dy;
@@ -2436,7 +2470,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         }
                     }
                     const auto b0 = e::make_shared<ePalaceTile>(
-                                        *mBoard, other);
+                                        *mBoard, other, mViewedCityId);
                     b0->setPalace(b1.get());
                     ebs.emplace_back(x, y, b0);
                 }
@@ -2496,7 +2530,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 dx4 = 2;
                 dy4 = 2;
             }
-            const auto b1 = e::make_shared<eEliteHousing>(*mBoard);
+            const auto b1 = e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
             auto& ebs1 = ebs.emplace_back(mHoverTX + dx1, mHoverTY + dy1, b1);
             ebs1.fBR = e::make_shared<eEliteHousingRenderer>(
                            eEliteRendererType::top, b1);
@@ -2511,79 +2545,79 @@ void eGameWidget::paintEvent(ePainter& p) {
                            eEliteRendererType::left, b1);
         } break;
         case eBuildingMode::taxOffice: {
-            const auto b1 = e::make_shared<eTaxOffice>(*mBoard);
+            const auto b1 = e::make_shared<eTaxOffice>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::mint: {
-            const auto b1 = e::make_shared<eMint>(*mBoard);
+            const auto b1 = e::make_shared<eMint>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::foundry: {
-            const auto b1 = e::make_shared<eFoundry>(*mBoard);
+            const auto b1 = e::make_shared<eFoundry>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::timberMill: {
-            const auto b1 = e::make_shared<eTimberMill>(*mBoard);
+            const auto b1 = e::make_shared<eTimberMill>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::masonryShop: {
-            const auto b1 = e::make_shared<eMasonryShop>(*mBoard);
+            const auto b1 = e::make_shared<eMasonryShop>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::oliveTree: {
             const auto b1 = e::make_shared<eResourceBuilding>(
-                                *mBoard, eResourceBuildingType::oliveTree);
+                                *mBoard, eResourceBuildingType::oliveTree, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
         case eBuildingMode::vine: {
             const auto b1 = e::make_shared<eResourceBuilding>(
-                                *mBoard, eResourceBuildingType::vine);
+                                *mBoard, eResourceBuildingType::vine, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
         case eBuildingMode::orangeTree: {
             const auto b1 = e::make_shared<eResourceBuilding>(
-                                *mBoard, eResourceBuildingType::orangeTree);
+                                *mBoard, eResourceBuildingType::orangeTree, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
 
         case eBuildingMode::huntingLodge: {
-            const auto b1 = e::make_shared<eHuntingLodge>(*mBoard);
+            const auto b1 = e::make_shared<eHuntingLodge>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::corral: {
-            const auto b1 = e::make_shared<eCorral>(*mBoard);
+            const auto b1 = e::make_shared<eCorral>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::urchinQuay: {
             eOrientation o = eOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
-            const auto b1 = e::make_shared<eUrchinQuay>(*mBoard, o);
+            const auto b1 = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::fishery: {
             eOrientation o = eOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
-            const auto b1 = e::make_shared<eFishery>(*mBoard, o);
+            const auto b1 = e::make_shared<eFishery>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::pier: {
             eOrientation o = eOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
-            const auto b1 = e::make_shared<ePier>(*mBoard, o);
+            const auto b1 = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
-            const int ctid = mGm->cityId();
+            const int ctid = mGm->tradeCityId();
             const auto cts = wrld->cities();
             const auto ct = cts[ctid];
             const auto b2 = e::make_shared<eTradePost>(
-                                *mBoard, *ct, eTradePostType::pier);
+                                *mBoard, *ct, mViewedCityId, eTradePostType::pier);
             int tx = mHoverTX;
             int ty = mHoverTY;
             switch(o) {
@@ -2623,57 +2657,57 @@ void eGameWidget::paintEvent(ePainter& p) {
         } break;
 
         case eBuildingMode::wheatFarm: {
-            const auto b1 = e::make_shared<eWheatFarm>(*mBoard);
+            const auto b1 = e::make_shared<eWheatFarm>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
         case eBuildingMode::onionFarm: {
-            const auto b1 = e::make_shared<eOnionFarm>(*mBoard);
+            const auto b1 = e::make_shared<eOnionFarm>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
         case eBuildingMode::carrotFarm: {
-            const auto b1 = e::make_shared<eCarrotFarm>(*mBoard);
+            const auto b1 = e::make_shared<eCarrotFarm>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             fertile = true;
         } break;
 
         case eBuildingMode::growersLodge: {
             const auto b1 = e::make_shared<eGrowersLodge>(
-                                *mBoard, eGrowerType::grapesAndOlives);
+                                *mBoard, eGrowerType::grapesAndOlives, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::orangeTendersLodge: {
             const auto b1 = e::make_shared<eGrowersLodge>(
-                                *mBoard, eGrowerType::oranges);
+                                *mBoard, eGrowerType::oranges, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::granary: {
-            const auto b1 = e::make_shared<eGranary>(*mBoard);
+            const auto b1 = e::make_shared<eGranary>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::warehouse: {
-            const auto b1 = e::make_shared<eWarehouse>(*mBoard);
+            const auto b1 = e::make_shared<eWarehouse>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::tradePost: {
-            const int ctid = mGm->cityId();
+            const int ctid = mGm->tradeCityId();
             const auto cts = wrld->cities();
             const auto ct = cts[ctid];
-            const auto b1 = e::make_shared<eTradePost>(*mBoard, *ct);
+            const auto b1 = e::make_shared<eTradePost>(*mBoard, *ct, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
 
         case eBuildingMode::wall: {
-            const auto b1 = e::make_shared<eWall>(*mBoard);
+            const auto b1 = e::make_shared<eWall>(*mBoard, mViewedCityId);
             b1->setDeleteArchers(false);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::tower: {
-            const auto b1 = e::make_shared<eTower>(*mBoard);
+            const auto b1 = e::make_shared<eTower>(*mBoard, mViewedCityId);
             b1->setDeleteArchers(false);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
@@ -2727,7 +2761,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 std::swap(x1, x2);
                 std::swap(y1, y2);
             }
-            const auto b1 = e::make_shared<eGatehouse>(*mBoard, mRotate);
+            const auto b1 = e::make_shared<eGatehouse>(*mBoard, mRotate, mViewedCityId);
             auto& ebs1 = ebs.emplace_back(x1, y1, b1);
             ebs1.fBR = e::make_shared<eGatehouseRenderer>(
                            mRotate, eGatehouseRendererType::grt1, b1);
@@ -2737,13 +2771,13 @@ void eGameWidget::paintEvent(ePainter& p) {
         } break;
 
         case eBuildingMode::armory: {
-            const auto b1 = e::make_shared<eArmory>(*mBoard);
+            const auto b1 = e::make_shared<eArmory>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::horseRanch: {
             const int tx = mHoverTX;
             const int ty = mHoverTY;
-            const auto b1 = e::make_shared<eHorseRanch>(*mBoard);
+            const auto b1 = e::make_shared<eHorseRanch>(*mBoard, mViewedCityId);
             ebs.emplace_back(tx, ty, b1);
 
             int dx = 0;
@@ -2770,7 +2804,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             } else if(dir == eWorldDirection::W) {
                 under = mRotateId == 2 || mRotateId == 3; // topRight, bottomRight
             }
-            const auto b2 = e::make_shared<eHorseRanchEnclosure>(*mBoard);
+            const auto b2 = e::make_shared<eHorseRanchEnclosure>(*mBoard, mViewedCityId);
             b2->setRanch(b1.get());
             b1->setEnclosure(b2.get());
             if(under) {
@@ -2780,120 +2814,120 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
         } break;
         case eBuildingMode::chariotFactory: {
-            const auto b1 = e::make_shared<eChariotFactory>(*mBoard);
+            const auto b1 = e::make_shared<eChariotFactory>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::olivePress: {
-            const auto b1 = e::make_shared<eOlivePress>(*mBoard);
+            const auto b1 = e::make_shared<eOlivePress>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::winery: {
-            const auto b1 = e::make_shared<eWinery>(*mBoard);
+            const auto b1 = e::make_shared<eWinery>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::sculptureStudio: {
-            const auto b1 = e::make_shared<eSculptureStudio>(*mBoard);
+            const auto b1 = e::make_shared<eSculptureStudio>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::artisansGuild: {
-            const auto b1 = e::make_shared<eArtisansGuild>(*mBoard);
+            const auto b1 = e::make_shared<eArtisansGuild>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::dairy: {
-            const auto b1 = e::make_shared<eDairy>(*mBoard);
+            const auto b1 = e::make_shared<eDairy>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::cardingShed: {
-            const auto b1 = e::make_shared<eCardingShed>(*mBoard);
+            const auto b1 = e::make_shared<eCardingShed>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::foodVendor: {
-            const auto b1 = e::make_shared<eFoodVendor>(*mBoard);
+            const auto b1 = e::make_shared<eFoodVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::fleeceVendor: {
-            const auto b1 = e::make_shared<eFleeceVendor>(*mBoard);
+            const auto b1 = e::make_shared<eFleeceVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::oilVendor: {
-            const auto b1 = e::make_shared<eOilVendor>(*mBoard);
+            const auto b1 = e::make_shared<eOilVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::wineVendor: {
-            const auto b1 = e::make_shared<eWineVendor>(*mBoard);
+            const auto b1 = e::make_shared<eWineVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::armsVendor: {
-            const auto b1 = e::make_shared<eArmsVendor>(*mBoard);
+            const auto b1 = e::make_shared<eArmsVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::horseTrainer: {
-            const auto b1 = e::make_shared<eHorseVendor>(*mBoard);
+            const auto b1 = e::make_shared<eHorseVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::chariotVendor: {
-            const auto b1 = e::make_shared<eChariotVendor>(*mBoard);
+            const auto b1 = e::make_shared<eChariotVendor>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::park: {
-            const auto b1 = e::make_shared<ePark>(*mBoard);
+            const auto b1 = e::make_shared<ePark>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::doricColumn: {
-            const auto b1 = e::make_shared<eDoricColumn>(*mBoard);
+            const auto b1 = e::make_shared<eDoricColumn>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::ionicColumn: {
-            const auto b1 = e::make_shared<eIonicColumn>(*mBoard);
+            const auto b1 = e::make_shared<eIonicColumn>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::corinthianColumn: {
-            const auto b1 = e::make_shared<eCorinthianColumn>(*mBoard);
+            const auto b1 = e::make_shared<eCorinthianColumn>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::avenue: {
-            const auto b1 = e::make_shared<eAvenue>(*mBoard);
+            const auto b1 = e::make_shared<eAvenue>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::populationMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(0, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(0, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::victoryMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(1, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(1, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::colonyMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(2, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(2, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::athleteMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(3, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(3, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::conquestMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(4, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(4, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::happinessMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(5, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(5, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::heroicFigureMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(6, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(6, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::diplomacyMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(7, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(7, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::scholarMonument: {
-            const auto b1 = e::make_shared<eCommemorative>(8, *mBoard);
+            const auto b1 = e::make_shared<eCommemorative>(8, *mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
@@ -2922,12 +2956,12 @@ void eGameWidget::paintEvent(ePainter& p) {
                            static_cast<int>(am);
             const auto gt = static_cast<eGodType>(id);
             const auto b1 = e::make_shared<eGodMonument>(
-                                gt, eGodQuestId::godQuest1, *mBoard);
+                                gt, eGodQuestId::godQuest1, *mBoard, mViewedCityId);
 
             for(int x = tminX; x < tmaxX; x++) {
                 for(int y = tminY; y < tmaxY; y++) {
                     const auto b0 = e::make_shared<eGodMonumentTile>(
-                                        *mBoard);
+                                        *mBoard, mViewedCityId);
                     b0->setMonument(b1.get());
                     ebs.emplace_back(x, y, b0);
                 }
@@ -2937,74 +2971,74 @@ void eGameWidget::paintEvent(ePainter& p) {
         } break;
 
         case eBuildingMode::bench: {
-            const auto b1 = e::make_shared<eBench>(*mBoard);
+            const auto b1 = e::make_shared<eBench>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::flowerGarden: {
-            const auto b1 = e::make_shared<eFlowerGarden>(*mBoard);
+            const auto b1 = e::make_shared<eFlowerGarden>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::gazebo: {
-            const auto b1 = e::make_shared<eGazebo>(*mBoard);
+            const auto b1 = e::make_shared<eGazebo>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::hedgeMaze: {
-            const auto b1 = e::make_shared<eHedgeMaze>(*mBoard);
+            const auto b1 = e::make_shared<eHedgeMaze>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::fishPond: {
-            const auto b1 = e::make_shared<eFishPond>(*mBoard);
+            const auto b1 = e::make_shared<eFishPond>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::waterPark: {
-            const auto b1 = e::make_shared<eWaterPark>(*mBoard);
+            const auto b1 = e::make_shared<eWaterPark>(*mBoard, mViewedCityId);
             b1->setId(waterParkId());
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::birdBath: {
-            const auto b1 = e::make_shared<eBirdBath>(*mBoard);
+            const auto b1 = e::make_shared<eBirdBath>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::shortObelisk: {
-            const auto b1 = e::make_shared<eShortObelisk>(*mBoard);
+            const auto b1 = e::make_shared<eShortObelisk>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::tallObelisk: {
-            const auto b1 = e::make_shared<eTallObelisk>(*mBoard);
+            const auto b1 = e::make_shared<eTallObelisk>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::shellGarden: {
-            const auto b1 = e::make_shared<eShellGarden>(*mBoard);
+            const auto b1 = e::make_shared<eShellGarden>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::sundial: {
-            const auto b1 = e::make_shared<eSundial>(*mBoard);
+            const auto b1 = e::make_shared<eSundial>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::orrery: {
-            const auto b1 = e::make_shared<eOrrery>(*mBoard);
+            const auto b1 = e::make_shared<eOrrery>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::dolphinSculpture: {
-            const auto b1 = e::make_shared<eDolphinSculpture>(*mBoard);
+            const auto b1 = e::make_shared<eDolphinSculpture>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::spring: {
-            const auto b1 = e::make_shared<eSpring>(*mBoard);
+            const auto b1 = e::make_shared<eSpring>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::topiary: {
-            const auto b1 = e::make_shared<eTopiary>(*mBoard);
+            const auto b1 = e::make_shared<eTopiary>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::baths: {
-            const auto b1 = e::make_shared<eBaths>(*mBoard);
+            const auto b1 = e::make_shared<eBaths>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         case eBuildingMode::stoneCircle: {
-            const auto b1 = e::make_shared<eStoneCircle>(*mBoard);
+            const auto b1 = e::make_shared<eStoneCircle>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
         default: break;

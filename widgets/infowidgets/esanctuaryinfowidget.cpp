@@ -155,7 +155,8 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
             addText(eLanguage::zeusText(132, 130));
         }
         auto& board = s->getBoard();
-        const int na = board.countBuildings(eBuildingType::artisansGuild);
+        const auto cid = s->cityId();
+        const int na = board.countBuildings(cid, eBuildingType::artisansGuild);
         if(na == 0) {
             addText(eLanguage::zeusText(178, 0));
         }

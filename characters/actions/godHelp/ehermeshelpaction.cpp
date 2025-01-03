@@ -39,15 +39,17 @@ void eHermesHelpAction::write(eWriteStream& dst) const {
     dst << mStage;
 }
 
-bool eHermesHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto& crs = board.cityRequests();
+bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,
+                                    const eGameBoard& board) {
+    const auto& crs = board.cityRequests(pid);
     return !crs.empty();
 }
 
 void eHermesHelpAction::provide() {
     auto& board = eHermesHelpAction::board();
     const auto c = character();
-    const auto p = board.palace();
+    const auto cid = cityId();
+    const auto p = board.palace(cid);
     const int bw = board.width();
     const int bh = board.height();
     const auto centerTile = board.dtile(bw/2, bh/2);
@@ -60,7 +62,8 @@ void eHermesHelpAction::provide() {
                     c->type(), targetTile,
                     eGodSound::santcify, nullptr,
                     finishAttackA);
-    const auto& crs = board.cityRequests();
+    const auto pid = board.cityIdToPlayerId(cid);
+    const auto& crs = board.cityRequests(pid);
     if(crs.empty()) return;
     crs[0]->fulfillWithoutCost();
 }

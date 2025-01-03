@@ -188,8 +188,13 @@ public:
     double speed() const { return mSpeed; }
     void setSpeed(const double s) { mSpeed = s; }
 
+    void setBothCityIds(const eCityId cid);
+
     eCityId cityId() const { return mCityId; }
     void setCityId(const eCityId i) { mCityId = i; }
+
+    eCityId onCityId() const { return mOnCityId; }
+    void setOnCityId(const eCityId i) { mOnCityId = i; }
 
     eCharacterActionType actionType() const { return mActionType; }
     void setActionType(const eCharacterActionType t);
@@ -210,6 +215,7 @@ private:
     eCharacterActionType mActionType{eCharacterActionType::none};
 
     eCityId mCityId{eCityId::neutralFriendly};
+    eCityId mOnCityId{eCityId::neutralFriendly};
 
     bool mBusy = false;
 

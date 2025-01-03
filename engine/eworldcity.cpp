@@ -334,7 +334,7 @@ std::string eWorldCity::anArmy() const {
 }
 
 void eWorldCity::nextMonth(eGameBoard* const board) {
-    const auto diff = board->difficulty();
+    const auto diff = board->personPlayerDifficulty();
     double mult;
     switch(diff) {
     case eDifficulty::beginner:
@@ -435,7 +435,9 @@ void swrite(eWriteStream& dst,
 void eWorldCity::write(eWriteStream& dst) const {
     dst << mIOID;
     dst << mCityId;
+    dst << mIsOnBoard;
     dst.writeCity(mConqueredBy.get());
+    dst << mCapital;
     dst << mIsCurrentCity;
     dst << mType;
     dst << mNationality;
@@ -478,9 +480,11 @@ void sread(eReadStream& src,
 void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mIOID;
     src >> mCityId;
+    src >> mIsOnBoard;
     src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
         mConqueredBy = c;
     });
+    src >> mCapital;
     src >> mIsCurrentCity;
     src >> mType;
     src >> mNationality;
@@ -539,6 +543,14 @@ bool eWorldCity::acceptsGift(const eResourceType type,
         const int max = 3 * eGiftHelpers::giftCount(type);
         return it->second < max;
     }
+}
+
+void eWorldCity::setIsCapital(const ePlayerId pid) {
+    mCapital = pid;
+}
+
+bool eWorldCity::isCapital(const ePlayerId pid) const {
+    return mCapital == pid;
 }
 
 stdsptr<eWorldCity> eWorldCity::sCreateAthens(const eCityId cid) {

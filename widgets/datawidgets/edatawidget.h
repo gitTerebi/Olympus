@@ -7,6 +7,7 @@ class eViewModeButton;
 class eGameWidget;
 class eGameBoard;
 class eBasicButton;
+enum class eCityId;
 
 class eDataWidget : public eWidget {
 public:
@@ -16,6 +17,7 @@ public:
 
     void setGameWidget(eGameWidget* const gw);
     virtual void shown();
+    void update();
 protected:
     virtual void openMoreInfoWiget() {}
 
@@ -26,6 +28,8 @@ protected:
     void showMoreInfoButton();
 
     static int sCoverageToText(const int c);
+
+    eCityId viewedCity() const;
 
     eGameBoard& mBoard;
     int mTime = 0;

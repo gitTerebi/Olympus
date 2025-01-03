@@ -42,8 +42,9 @@ void eAphroditeHelpAction::write(eWriteStream& dst) const {
     dst << mStage;
 }
 
-bool eAphroditeHelpAction::sHelpNeeded(const eGameBoard& board) {
-    const auto bs = board.buildings([](eBuilding* const b) {
+bool eAphroditeHelpAction::sHelpNeeded(const eCityId cid,
+                                       const eGameBoard& board) {
+    const auto bs = board.buildings(cid, [](eBuilding* const b) {
         const auto type = b->type();
         return type == eBuildingType::commonHouse ||
                type == eBuildingType::eliteHousing;
@@ -63,7 +64,8 @@ eHouseBase* eAphroditeHelpAction::nearestHouseWithVacancies() {
     const int cx = cTile->x();
     const int cy = cTile->y();
     auto& board = this->board();
-    const auto bs = board.buildings([](eBuilding* const b) {
+    const auto cid = cityId();
+    const auto bs = board.buildings(cid, [](eBuilding* const b) {
         const auto type = b->type();
         return type == eBuildingType::commonHouse ||
                type == eBuildingType::eliteHousing;

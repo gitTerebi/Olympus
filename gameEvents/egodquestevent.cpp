@@ -33,7 +33,7 @@ void eGodQuestEvent::trigger() {
     board->event(eEvent::godQuest, ed);
     const auto& inst = eMessages::instance;
     const auto gm = inst.godMessages(god());
-    if(!gm) return board->allowHero(hero());
+    if(!gm) return board->allowHero(cityId(), hero());
     const eQuestMessages* qm = nullptr;
     switch(id()) {
     case eGodQuestId::godQuest1:
@@ -44,7 +44,7 @@ void eGodQuestEvent::trigger() {
         break;
     }
     const auto reason = qm->fQuest.fReason;
-    board->allowHero(hero(), reason);
+    board->allowHero(cityId(), hero(), reason);
 }
 
 std::string eGodQuestEvent::longName() const {
@@ -68,7 +68,7 @@ void eGodQuestEvent::write(eWriteStream& dst) const {
 void eGodQuestEvent::fulfill() {
     const auto board = gameBoard();
     if(!board) return;
-    const auto hh = board->heroHall(hero());
+    const auto hh = board->heroHall(cityId(), hero());
     if(!hh) return;
     const auto s = hh->stage();
     if(s != eHeroSummoningStage::arrived) return;

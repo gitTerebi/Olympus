@@ -455,7 +455,9 @@ void eSoldierAction::waitAndGoHome(const int w) {
 void eSoldierAction::goHome() {
     const auto c = character();
     const auto& brd = c->getBoard();
-    const auto b = sFindHome(c->type(), brd);
+    const auto type = c->type();
+    const auto cid = cityId();
+    const auto b = sFindHome(type, cid, brd);
     if(!b) {
         c->kill();
         return;
@@ -480,6 +482,7 @@ void eSoldierAction::goHome() {
 void eSoldierAction::goAbroad() {
     const auto c = character();
     auto& board = eSoldierAction::board();
+    const auto cid = cityId();
     const auto hero = static_cast<eCharacter*>(c);
     const stdptr<eCharacter> cptr(hero);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
@@ -496,7 +499,7 @@ void eSoldierAction::goAbroad() {
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
 
-    const auto exitPoint = board.exitPoint();
+    const auto exitPoint = board.exitPoint(cid);
     if(exitPoint) {
         a->start(exitPoint);
     } else {
@@ -527,6 +530,7 @@ void eSoldierAction::beingAttacked(const int ttx, const int tty) {
 }
 
 eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
+                                     const eCityId cid,
                                      const eGameBoard& brd) {
     eGameBoard::eBuildingValidator v;
     if(t == eCharacterType::rockThrower) {
@@ -576,7 +580,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
     } else {
         return nullptr;
     }
-    const auto b = brd.randomBuilding(v);
+    const auto b = brd.randomBuilding(cid, v);
     return b;
 }
 

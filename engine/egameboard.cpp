@@ -53,6 +53,8 @@
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/ereceiverequestevent.h"
 #include "gameEvents/erequestaidevent.h"
+#include "gameEvents/eplayerconquesteventbase.h"
+#include "gameEvents/etroopsrequestevent.h"
 
 #include "eeventdata.h"
 
@@ -87,7 +89,6 @@ eGameBoard::eGameBoard() :
     for(const auto type : types) {
         mPrices[type] = eResourceTypeHelpers::defaultPrice(type);
     }
-    mSupportedResources = eResourceType::allBasic;
 }
 
 eGameBoard::~eGameBoard() {
@@ -242,8 +243,13 @@ void eGameBoard::enlistForces(const eEnlistedForces& forces) {
     for(const auto& b : forces.fSoldiers) {
         b->goAbroad();
     }
+    const auto cids = personPlayerCities();
     for(const auto h : forces.fHeroes) {
-        const auto hh = heroHall(h);
+        eHerosHall* hh = nullptr;
+        for(const auto cid : cids) {
+            hh = heroHall(cid, h);
+            if(hh) break;
+        }
         if(!hh) continue;
         hh->sendHeroOnQuest();
     }
@@ -287,6 +293,76 @@ void eGameBoard::setRegisterBuildingsEnabled(const bool e) {
 
 void eGameBoard::setButtonsVisUpdater(const eAction& u) {
     mButtonVisUpdater = u;
+}
+
+bool eGameBoard::isShutDown(const eCityId cid,
+                            const eResourceType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->isShutDown(type);
+}
+
+bool eGameBoard::isShutDown(const eCityId cid,
+                            const eBuildingType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->isShutDown(type);
+}
+
+std::vector<eBuilding*> eGameBoard::buildings(
+        const eCityId cid, const eBuildingValidator& v) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->buildings(v);
+}
+
+std::vector<eBuilding*> eGameBoard::buildings(
+        const eCityId cid, const eBuildingType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->buildings(type);
+}
+
+int eGameBoard::countBuildings(
+        const eCityId cid, const eBuildingValidator& v) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->countBuildings(v);
+}
+
+int eGameBoard::countBuildings(
+        const eCityId cid, const eBuildingType t) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->countBuildings(t);
+}
+
+int eGameBoard::hasBuilding(
+        const eCityId cid, const eBuildingType t) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->hasBuilding(t);
+}
+
+int eGameBoard::countAllowed(
+        const eCityId cid, const eBuildingType t) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->countAllowed(t);
+}
+
+eBuilding* eGameBoard::randomBuilding(
+        const eCityId cid, const eBuildingValidator& v) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->randomBuilding(v);
+}
+
+std::vector<eBuilding*> eGameBoard::commemorativeBuildings(
+        const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->commemorativeBuildings();
 }
 
 bool eGameBoard::supportsBuilding(const eCityId cid,
@@ -340,13 +416,17 @@ void eGameBoard::updateButtonsVisibility() {
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
-bool eGameBoard::supportsResource(const eResourceType rt) const {
-    const auto s = mSupportedResources & rt;
-    return static_cast<bool>(s);
+bool eGameBoard::supportsResource(
+        const eCityId cid, const eResourceType rt) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->supportsResource(rt);
 }
 
-eResourceType eGameBoard::supportedResources() const {
-    return mSupportedResources;
+eResourceType eGameBoard::supportedResources(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return eResourceType::none;
+    return c->supportedResources();
 }
 
 int eGameBoard::wonGames(const eCityId cid) const {
@@ -433,8 +513,6 @@ void eGameBoard::updateMarbleTiles() {
 
 void eGameBoard::setFriendlyGods(const eCityId cid,
                                  const std::vector<eGodType>& gods) {
-    mFriendlyGods = gods;
-
     for(const auto g : gods) {
         eBuildingType bt;
         switch(g) {
@@ -490,6 +568,7 @@ void eGameBoard::setFriendlyGods(const eCityId cid,
 
     const auto e = e::make_shared<eGodVisitEvent>(
                        eGameEventBranch::root);
+    e->setCityId(cid);
     e->setIsEpisodeEvent(true);
     e->setGameBoard(this);
     eDate date = mDate;
@@ -498,33 +577,6 @@ void eGameBoard::setFriendlyGods(const eCityId cid,
     e->initializeDate(date, period, 10000);
     e->setTypes(gods);
     addRootGameEvent(e);
-}
-
-void eGameBoard::setHostileGods(const std::vector<eGodType>& gods) {
-    mHostileGods = gods;
-
-    const auto e = e::make_shared<eGodAttackEvent>(
-                       eGameEventBranch::root);
-    e->setIsEpisodeEvent(true);
-    e->setGameBoard(this);
-    eDate date = mDate;
-    const int period = 900;
-    date += period;
-    e->initializeDate(date, period, 10000);
-    e->setTypes(gods);
-    addRootGameEvent(e);
-}
-
-void eGameBoard::setHostileMonsters(const std::vector<eMonsterType>& monsters) {
-    mHostileMonsters = monsters;
-
-//    const auto e = e::make_shared<eMonsterAttackEvent>(*this);
-//    e->setTypes(monsters);
-//    const int period = 150;
-//    const auto date = mDate + period;
-//    const auto ec = e::make_shared<eGameEventCycle>(
-//                        e, date, period, 2, *this);
-    //    addGameEvent(ec);
 }
 
 void eGameBoard::allowHero(const eCityId cid, const eHeroType heroType,
@@ -609,37 +661,51 @@ eGameEvent* eGameBoard::eventWithIOID(const int id) const {
     return nullptr;
 }
 
-eTile* eGameBoard::monsterTile(const int id) const {
-    const auto b = banner(eBannerTypeS::monsterPoint, id);
-    return b ? b->tile() : nullptr;
+eTile* eGameBoard::monsterTile(const eCityId cid, const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->monsterTile(id);
 }
 
-eTile* eGameBoard::landInvasionTile(const int id) const {
-    const auto b = banner(eBannerTypeS::landInvasion, id);
-    return b ? b->tile() : nullptr;
+eTile* eGameBoard::landInvasionTile(const eCityId cid, const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->landInvasionTile(id);
 }
 
-eTile* eGameBoard::disasterTile(const int id) const {
-    const auto b = banner(eBannerTypeS::disasterPoint, id);
-    return b ? b->tile() : nullptr;
+eTile* eGameBoard::disasterTile(const eCityId cid, const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->disasterTile(id);
 }
 
-const eGameBoard::eIV& eGameBoard::invasionHandlers() const {
-    return mInvasionHandlers;
+std::vector<eInvasionHandler*> eGameBoard::invasionHandlers(
+        const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->invasionHandlers();
 }
 
-void eGameBoard::addInvasionHandler(eInvasionHandler* const i) {
-    mInvasionHandlers.push_back(i);
+void eGameBoard::addInvasionHandler(const eCityId cid,
+                                    eInvasionHandler* const i) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->addInvasionHandler(i);
     updateMusic();
 }
 
-void eGameBoard::removeInvasionHandler(eInvasionHandler* const i) {
-    eVectorHelpers::remove(mInvasionHandlers, i);
+void eGameBoard::removeInvasionHandler(const eCityId cid,
+                                       eInvasionHandler* const i) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->removeInvasionHandler(i);
     updateMusic();
 }
 
-bool eGameBoard::hasActiveInvasions() const {
-    return !mInvasionHandlers.empty();
+bool eGameBoard::hasActiveInvasions(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->hasActiveInvasions();
 }
 
 int eGameBoard::addResource(const eCityId cid,
@@ -719,19 +785,22 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
     eEventData ed;
     ed.fType = eMessageEventType::requestTributeGranted;
     ed.fCity = c;
-    ed.fSpaceCount = spaceForResource(type);
+    const auto cids = personPlayerCities();
+    for(const auto cid : cids) {
+        ed.fCSpaceCount[cid] = spaceForResource(cid, type);
+        ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
+            const int a = addResource(cid, type, count);
+            if(a == count) return;
+            eEventData ed;
+            ed.fType = eMessageEventType::resourceGranted;
+            ed.fCity = c;
+            ed.fResourceType = type;
+            ed.fResourceCount = a;
+            event(eEvent::tributeAccepted, ed);
+        };
+    }
     ed.fResourceType = c->tributeType();
     ed.fResourceCount = c->tributeCount();
-    ed.fA0 = [this, c, type, count]() { // accept
-        const int a = addResource(type, count);
-        if(a == count) return;
-        eEventData ed;
-        ed.fType = eMessageEventType::resourceGranted;
-        ed.fCity = c;
-        ed.fResourceType = type;
-        ed.fResourceCount = a;
-        event(eEvent::tributeAccepted, ed);
-    };
     if(postpone) {
         ed.fA1 = [this, c, type, count]() { // postpone
             eEventData ed;
@@ -766,7 +835,7 @@ void eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
                         const eResourceType type,
                         const int count) {
     int remC = count;
-    const auto cts = playerCities(mPersonPlayer);
+    const auto cts = playerCities(personPlayer());
     for(const auto cid : cts) {
         const auto c = boardCityWithId(cid);
         if(!c) continue;
@@ -828,12 +897,40 @@ void eGameBoard::consolidateSoldiers(const eCityId cid) {
     c->consolidateSoldiers();
 }
 
-bool eGameBoard::wasHeroSummoned(const eHeroType hero) const {
-    return eVectorHelpers::contains(mSummonedHeroes, hero);
+void eGameBoard::addFulfilledQuest(const ePlayerId pid, const eGodQuest q) {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addFulfilledQuest(q);
 }
 
-void eGameBoard::heroSummoned(const eHeroType hero) {
-    mSummonedHeroes.push_back(hero);
+void eGameBoard::addSlayedMonster(const ePlayerId pid, const eMonsterType m) {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addSlayedMonster(m);
+}
+
+std::vector<eGodQuest> eGameBoard::fulfilledQuests(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->fulfilledQuests();
+}
+
+std::vector<eMonsterType> eGameBoard::slayedMonsters(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->slayedMonsters();
+}
+
+bool eGameBoard::wasHeroSummoned(const eCityId cid, const eHeroType hero) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->wasHeroSummoned(hero);
+}
+
+void eGameBoard::heroSummoned(const eCityId cid, const eHeroType hero) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->heroSummoned(hero);
 }
 
 int eGameBoard::price(const eResourceType type) const {
@@ -851,17 +948,21 @@ void eGameBoard::changeWage(const int per) {
     mWageMultiplier *= mult;
 }
 
+void eGameBoard::updateTerritoryBorders() {
+    iterateOverAllTiles([](eTile* const tile) {
+        tile->updateTerritoryBorder();
+    });
+    for(const auto& c : mCitiesOnBoard) {
+        c->updateTiles();
+    }
+}
+
+std::vector<eCityId> eGameBoard::personPlayerCities() const {
+    return mWorldBoard->personPlayerCities();
+}
+
 ePlayerId eGameBoard::cityIdToPlayerId(const eCityId cid) const {
-    if(cid == eCityId::neutralFriendly) {
-        return ePlayerId::neutralFriendly;
-    } else if(cid == eCityId::neutralAggresive) {
-        return ePlayerId::neutralAggresive;
-    }
-    const auto it = mCityToPlayer.find(cid);
-    if(it == mCityToPlayer.end()) {
-        return ePlayerId::neutralFriendly;
-    }
-    return it->second;
+    return mWorldBoard->cityIdToPlayerId(cid);
 }
 
 eTeamId eGameBoard::cityIdToTeamId(const eCityId cid) const {
@@ -870,39 +971,23 @@ eTeamId eGameBoard::cityIdToTeamId(const eCityId cid) const {
 }
 
 eTeamId eGameBoard::playerIdToTeamId(const ePlayerId pid) const {
-    if(pid == ePlayerId::neutralFriendly) {
-        return eTeamId::neutralFriendly;
-    } else if(pid == ePlayerId::neutralAggresive) {
-        return eTeamId::neutralAggresive;
-    }
-    const auto it = mPlayerToTeam.find(pid);
-    if(it == mPlayerToTeam.end()) {
-        return eTeamId::neutralFriendly;
-    }
-    return it->second;
+    return mWorldBoard->playerIdToTeamId(pid);
 }
 
 void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
-    mCityToPlayer[cid] = pid;
+    return mWorldBoard->moveCityToPlayer(cid, pid);
 }
 
 std::vector<eCityId> eGameBoard::playerCities(const ePlayerId pid) const {
-    if(pid == ePlayerId::neutralFriendly) {
-        return {eCityId::neutralFriendly};
-    } else if(pid == ePlayerId::neutralAggresive) {
-        return {eCityId::neutralAggresive};
-    }
-    std::vector<eCityId> result;
-    for(const auto it : mCityToPlayer) {
-        if(it.second == pid) {
-            result.push_back(it.first);
-        }
-    }
-    return result;
+    return mWorldBoard->playerCities(pid);
 }
 
-std::vector<eCityId> eGameBoard::personPlayerCities() const {
-    return playerCities(mPersonPlayer);
+eCityId eGameBoard::playerCapital(const ePlayerId pid) const {
+    return mWorldBoard->playerCapital(pid);
+}
+
+ePlayerId eGameBoard::personPlayer() const {
+    return mWorldBoard->personPlayer();
 }
 
 eBoardCity* eGameBoard::boardCityWithId(const eCityId cid) const {
@@ -917,6 +1002,20 @@ eBoardPlayer* eGameBoard::boardPlayerWithId(const ePlayerId pid) const {
         if(p->id() == pid) return p.get();
     }
     return nullptr;
+}
+
+std::vector<eCityId> eGameBoard::citiesOnBoard() const {
+    std::vector<eCityId> result;
+    for(const auto& c : mCitiesOnBoard) {
+        result.push_back(c->id());
+    }
+    return result;
+}
+
+std::string eGameBoard::cityName(const eCityId cid) const {
+    const auto c = mWorldBoard->cityWithId(cid);
+    if(!c) return "Invalid";
+    return c->name();
 }
 
 void eGameBoard::updateMaxSoldiers(const eCityId cid) {
@@ -976,28 +1075,14 @@ void eGameBoard::horsemanKilled(const eCityId cid) {
     c->horsemanKilled();
 }
 
-eEnlistedForces eGameBoard::getEnlistableForces() const {
+eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
     eEnlistedForces result;
 
-    for(const auto& s : mSoldierBanners) {
-        if(s->count() <= 0) continue;
-        switch(s->type()) {
-        case eBannerType::hoplite:
-        case eBannerType::horseman:
-        case eBannerType::amazon:
-        case eBannerType::aresWarrior:
-            result.fSoldiers.push_back(s);
-            break;
-        default:
-            break;
-        }
-    }
-
-    for(const auto& h : mHeroHalls) {
-        const auto s = h->stage();
-        if(s != eHeroSummoningStage::arrived) continue;
-        const auto ht = h->heroType();
-        result.fHeroes.push_back(ht);
+    const auto cids = playerCities(pid);
+    for(const auto cid : cids) {
+        const auto c = boardCityWithId(cid);
+        const auto e = c->getEnlistableForces();
+        result.add(e);
     }
 
     const auto& cts = mWorldBoard->cities();
@@ -1017,50 +1102,105 @@ eEnlistedForces eGameBoard::getEnlistableForces() const {
     return result;
 }
 
+eGameBoard::eQuests eGameBoard::godQuests(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->godQuests();
+}
+
 void eGameBoard::addGodQuest(eGodQuestEvent* const q) {
-    eVectorHelpers::remove(mGodQuests, q);
-    mGodQuests.push_back(q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addGodQuest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
 void eGameBoard::removeGodQuest(eGodQuestEvent* const q) {
-    eVectorHelpers::remove(mGodQuests, q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->removeGodQuest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
+eGameBoard::eRequests eGameBoard::cityRequests(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->cityRequests();
+}
+
 void eGameBoard::addCityRequest(eReceiveRequestEvent* const q) {
-    mCityRequests.push_back(q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addCityRequest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
 void eGameBoard::removeCityRequest(eReceiveRequestEvent* const q) {
-    eVectorHelpers::remove(mCityRequests, q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->removeCityRequest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
+eGameBoard::eTroopsRequests eGameBoard::cityTroopsRequests(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->cityTroopsRequests();
+}
+
 void eGameBoard::addCityTroopsRequest(eTroopsRequestEvent* const q) {
-    mCityTroopsRequests.push_back(q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addCityTroopsRequest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
 void eGameBoard::removeCityTroopsRequest(eTroopsRequestEvent* const q) {
-    eVectorHelpers::remove(mCityTroopsRequests, q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->removeCityTroopsRequest(q);
     if(mRequestUpdateHandler) mRequestUpdateHandler();
 }
 
+eGameBoard::eConquests eGameBoard::conquests(const ePlayerId pid) const {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return {};
+    return p->conquests();
+}
+
 void eGameBoard::addConquest(ePlayerConquestEventBase* const q) {
-    mConquests.push_back(q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->addConquest(q);
 }
 
 void eGameBoard::removeConquest(ePlayerConquestEventBase* const q) {
-    eVectorHelpers::remove(mConquests, q);
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->removeConquest(q);
 }
 
-eInvasionEvent* eGameBoard::invasionToDefend() const {
+eInvasionEvent* eGameBoard::invasionToDefend(const eCityId cid) const {
     const auto date = eGameBoard::date();
     for(const auto i : mInvasions) {
         const int ip = i->invasionPoint();
-        const auto t = landInvasionTile(ip);
+        const auto t = landInvasionTile(cid, ip);
         if(!t) continue;
         const auto sDate = i->nextDate();
         if(sDate - date < 120) {
@@ -1078,6 +1218,10 @@ void eGameBoard::removeInvasion(eInvasionEvent* const i) {
     eVectorHelpers::remove(mInvasions, i);
 }
 
+eGameBoard::eArmyEvents eGameBoard::armyEvents() const {
+    return mArmyEvents;
+}
+
 void eGameBoard::addArmyEvent(eArmyEventBase* const q) {
     mArmyEvents.push_back(q);
 }
@@ -1086,30 +1230,55 @@ void eGameBoard::removeArmyEvent(eArmyEventBase* const q) {
     eVectorHelpers::remove(mArmyEvents, q);
 }
 
-void eGameBoard::registerAttackingGod(eCharacter* const c) {
-    mAttackingGods.push_back(c);
+std::vector<eMonster*> eGameBoard::monsters(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->monsters();
+}
+
+eGameBoard::eChars eGameBoard::attackingGods(
+        const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->attackingGods();
+}
+
+void eGameBoard::registerAttackingGod(const eCityId cid,
+                                      eCharacter* const c) {
+    const auto cc = boardCityWithId(cid);
+    if(!c) return;
+    cc->registerAttackingGod(c);
     updateMusic();
 }
 
 void eGameBoard::startPlague(eSmallHouse* const h) {
-    const auto plague = std::make_shared<ePlague>(*this);
-    plague->spreadFrom(h);
-    mPlagues.push_back(plague);
-    eEventData ed;
-    ed.fTile = h->centerTile();
-    event(eEvent::plague, ed);
+    if(!h) return;
+    const auto cid = h->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->startPlague(h);
+    const auto pid = cityIdToPlayerId(cid);
+    if(pid == personPlayer()) {
+        eEventData ed;
+        ed.fTile = h->centerTile();
+        event(eEvent::plague, ed);
+    }
 }
 
 stdsptr<ePlague> eGameBoard::plagueForHouse(eSmallHouse* const h) {
-    for(const auto& p : mPlagues) {
-        if(p->hasHouse(h)) return p;
-    }
-    return nullptr;
+    if(!h) return nullptr;
+    const auto cid = h->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->plagueForHouse(h);
 }
 
 void eGameBoard::healPlague(const stdsptr<ePlague>& p) {
-    p->healAll();
-    eVectorHelpers::remove(mPlagues, p);
+    if(!p) return;
+    const auto cid = p->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->healPlague(p);
 }
 
 void eGameBoard::healHouse(eSmallHouse* const h) {
@@ -1122,68 +1291,69 @@ void eGameBoard::healHouse(eSmallHouse* const h) {
     }
 }
 
+eGameBoard::ePlagues eGameBoard::plagues(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->plagues();
+}
+
 stdsptr<ePlague> eGameBoard::nearestPlague(
-        const int tx, const int ty, int& dist) const {
+        const eCityId cid,
+        const int tx, const int ty,
+        int& dist) const {
     dist = __INT_MAX__/2;
-    stdsptr<ePlague> result;
-    for(const auto& p : mPlagues) {
-        const auto& hs = p->houses();
-        for(const auto h : hs) {
-            const auto tt = h->centerTile();
-            const int ttx = tt->x();
-            const int tty = tt->y();
-            const int d = sqrt((ttx - tx)*(ttx - tx) +
-                               (tty - ty)*(tty - ty));
-            if(d < dist) {
-                dist = d;
-                result = p;
-            }
-        }
-    }
-    return result;
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->nearestPlague(tx, ty, dist);
 }
 
 void eGameBoard::updateMusic() {
-    bool monsterActiveAttack = false;
-    for(const auto m : mMonsters) {
-        const auto a = m->action();
-        if(const auto ma = dynamic_cast<eMonsterAction*>(a)) {
-            const auto stage = ma->stage();
-            if(stage == eMonsterAttackStage::none ||
-               stage == eMonsterAttackStage::wait) {
-                continue;
-            }
-            monsterActiveAttack = true;
+    bool battle = false;
+    const auto cids = personPlayerCities();
+    for(const auto cid : cids) {
+        const auto c = boardCityWithId(cid);
+        if(!c) continue;
+        const bool i = c->hasActiveInvasions();
+        if(i) {
+            battle = true;
             break;
         }
+        const bool a = !c->attackingGods().empty();
+        if(a) {
+            battle = true;
+            break;
+        }
+
+        for(const auto m : c->monsters()) {
+            const auto a = m->action();
+            if(const auto ma = dynamic_cast<eMonsterAction*>(a)) {
+                const auto stage = ma->stage();
+                if(stage == eMonsterAttackStage::none ||
+                   stage == eMonsterAttackStage::wait) {
+                    continue;
+                }
+                battle = true;
+                break;
+            }
+        }
     }
-    if(!monsterActiveAttack &&
-       mInvasionHandlers.empty() &&
-       mAttackingGods.empty()) {
-        eMusic::playRandomMusic();
-    } else {
+    if(battle) {
         eMusic::playRandomBattleMusic();
+    } else {
+        eMusic::playRandomMusic();
     }
 }
 
-eTile* eGameBoard::entryPoint() const {
-    for(const auto b : mBanners) {
-        const auto type = b->type();
-        if(type == eBannerTypeS::entryPoint) {
-            return b->tile();
-        }
-    }
-    return nullptr;
+eTile* eGameBoard::entryPoint(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->entryPoint();
 }
 
-eTile* eGameBoard::exitPoint() const {
-    for(const auto b : mBanners) {
-        const auto type = b->type();
-        if(type == eBannerTypeS::exitPoint) {
-            return b->tile();
-        }
-    }
-    return nullptr;
+eTile* eGameBoard::exitPoint(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->exitPoint();
 }
 
 void eGameBoard::setPoseidonMode(const bool p) {
@@ -1232,64 +1402,6 @@ void eGameBoard::removeGameEvent(eGameEvent* const e) {
     eVectorHelpers::remove(mAllGameEvents, e);
 }
 
-void eGameBoard::updateCoverage() {
-    int totalPeople = 0;
-    int commonPeople = 0;
-    int sport = 0;
-    int phil = 0;
-    int drama = 0;
-    int taxes = 0;
-    double totalUnrest = 0;
-    int totalSatisfaction = 0;
-    int totalHygiene = 0;
-    for(const auto b : mTimedBuildings) {
-        if(const auto h = dynamic_cast<eHouseBase*>(b)) {
-            const int p = h->people();
-            if(h->athletesScholars() > 0) {
-                sport += p;
-            }
-            if(h->philosophersInventors() > 0) {
-                phil += p;
-            }
-            if(h->actorsAstronomers() > 0) {
-                drama += p;
-            }
-            if(h->paidTaxes()) {
-                taxes += p;
-            }
-            if(const auto ch = dynamic_cast<eSmallHouse*>(b)) {
-                if(ch->disgruntled()) totalUnrest += p;
-                totalSatisfaction += p*ch->satisfaction();
-                totalHygiene += p*ch->hygiene();
-                commonPeople += p;
-            }
-            totalPeople += p;
-        }
-    }
-    if(totalPeople <= 0) {
-        mAthleticsCoverage = 0;
-        mPhilosophyCoverage = 0;
-        mDramaCoverage = 0;
-        mTaxesCoverage = 0;
-    } else {
-        mAthleticsCoverage = std::round(100.*sport/totalPeople);
-        mPhilosophyCoverage = std::round(100.*phil/totalPeople);
-        mDramaCoverage = std::round(100.*drama/totalPeople);
-        mTaxesCoverage = std::round(100.*taxes/totalPeople);
-    }
-    mAllDiscCoverage = (mAthleticsCoverage + mPhilosophyCoverage + mDramaCoverage)/3;
-
-    if(commonPeople == 0) {
-        mUnrest = 0;
-        mPopularity = 100;
-        mHealth = 100;
-    } else {
-        mUnrest = std::round(100.*totalUnrest/commonPeople);
-        mPopularity = std::round(1.*totalSatisfaction/commonPeople);
-        mHealth = std::round(1.*totalHygiene/commonPeople);
-    }
-}
-
 void eGameBoard::handleGamesBegin(const eGames game) {
     eGameMessages* msgs = nullptr;
     switch(game) {
@@ -1308,7 +1420,7 @@ void eGameBoard::handleGamesBegin(const eGames game) {
     }
 
     eEventData ed;
-    const auto pcids = playerCities(mPersonPlayer);
+    const auto pcids = playerCities(personPlayer());
     for(const auto& cid : pcids) {
         const auto c = boardCityWithId(cid);
         const double chance = c->winningChance(game);
@@ -1426,6 +1538,48 @@ eTaxRate eGameBoard::taxRate(const eCityId cid) const {
     return city->taxRate();
 }
 
+eWageRate eGameBoard::wageRate(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return eWageRate::normal;
+    return city->wageRate();
+}
+
+void eGameBoard::setTaxRate(const eCityId cid, const eTaxRate tr) {
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    return city->setTaxRate(tr);
+}
+
+void eGameBoard::setWageRate(const eCityId cid, const eWageRate wr) {
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    return city->setWageRate(wr);
+}
+
+int eGameBoard::taxesPaidThisYear(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->taxesPaidThisYear();
+}
+
+int eGameBoard::taxesPaidLastYear(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->taxesPaidThisYear();
+}
+
+int eGameBoard::peoplePaidTaxesThisYear(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->taxesPaidThisYear();
+}
+
+int eGameBoard::peoplePaidTaxesLastYear(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->taxesPaidThisYear();
+}
+
 int eGameBoard::philosophyResearchCoverage(const eCityId cid) const {
     const auto city = boardCityWithId(cid);
     if(!city) return 0;
@@ -1486,13 +1640,23 @@ void eGameBoard::incDrachmas(const ePlayerId pid, const int by) {
     return player->incDrachmas(by);
 }
 
+void eGameBoard::setDrachmas(const ePlayerId pid, const int to) {
+    const auto player = boardPlayerWithId(pid);
+    if(!player) return;
+    return player->setDrachmas(to);
+}
+
 void eGameBoard::registerCharacter(eCharacter* const c) {
     mCharacters.push_back(c);
 }
 
 bool eGameBoard::unregisterCharacter(eCharacter* const c) {
-    const bool r = eVectorHelpers::remove(mAttackingGods, c);
-    if(r) updateMusic();
+    bool updateMusic = false;
+    for(const auto& cc : mCitiesOnBoard) {
+        const bool r = cc->unregisterAttackingGod(c);
+        updateMusic = updateMusic || r;
+    }
+    if(updateMusic) this->updateMusic();
     return eVectorHelpers::remove(mCharacters, c);
 }
 
@@ -1519,40 +1683,34 @@ void eGameBoard::registerBuilding(eBuilding* const b) {
     if(eBuilding::sTimedBuilding(bt)) {
         mTimedBuildings.push_back(b);
     }
-    if(bt == eBuildingType::commemorative ||
-       bt == eBuildingType::godMonument) {
-        mCommemorativeBuildings.push_back(b);
-    }
-    scheduleAppealMapUpdate();
-
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
     if(!city) return;
     city->registerBuilding(b);
+    scheduleAppealMapUpdate();
 }
 
 bool eGameBoard::unregisterBuilding(eBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return false;
     eVectorHelpers::remove(mAllBuildings, b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    if(!city) return false;
+    city->unregisterBuilding(b);
     eVectorHelpers::remove(mTimedBuildings, b);
-    eVectorHelpers::remove(mCommemorativeBuildings, b);
     scheduleAppealMapUpdate();
     return true;
 }
 
 bool eGameBoard::unregisterCommonHouse(eSmallHouse* const ch) {
-    const auto p = plagueForHouse(ch);
-    if(p) {
-        p->removeHouse(ch);
-        const int c = p->houseCount();
-        if(c <= 0) healPlague(p);
-    }
-    return true;
+    if(!mRegisterBuildingsEnabled) return false;
+    const auto cid = ch->cityId();
+    const auto city = boardCityWithId(cid);
+    return city->unregisterCommonHouse(ch);
 }
 
 void eGameBoard::registerEmplBuilding(eEmployingBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    mEmployingBuildings.push_back(b);
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
     city->registerEmplBuilding(b);
@@ -1560,32 +1718,32 @@ void eGameBoard::registerEmplBuilding(eEmployingBuilding* const b) {
 
 bool eGameBoard::unregisterEmplBuilding(eEmployingBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return false;
-    const bool rr = eVectorHelpers::remove(mEmployingBuildings, b);
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
-    city->unregisterEmplBuilding(b);
-    return rr;
+    return city->unregisterEmplBuilding(b);
 }
 
 void eGameBoard::registerTradePost(eTradePost* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    mTradePosts.push_back(b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerTradePost(b);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
 bool eGameBoard::unregisterTradePost(eTradePost* const b) {
     if(!mRegisterBuildingsEnabled) return false;
-    const bool r = eVectorHelpers::remove(mTradePosts, b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    const bool r = city->unregisterTradePost(b);
     if(r && mButtonVisUpdater) mButtonVisUpdater();
     return r;
 }
 
-bool eGameBoard::hasTradePost(const eWorldCity& city) {
-    for(const auto t : mTradePosts) {
-        const bool r = &t->city() == &city;
-        if(r) return true;
-    }
-    return false;
+bool eGameBoard::hasTradePost(const eCityId cid, const eWorldCity& city) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->hasTradePost(city);
 }
 
 void eGameBoard::registerSpawner(eSpawner* const s) {
@@ -1596,61 +1754,81 @@ bool eGameBoard::unregisterSpawner(eSpawner* const s) {
     return eVectorHelpers::remove(mSpawners, s);;
 }
 
-void eGameBoard::registerStadium(eBuilding* const s) {
+void eGameBoard::registerStadium(eStadium* const s) {
     if(!mRegisterBuildingsEnabled) return;
-    mStadium = s;
+    const auto cid = s->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerStadium(s);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
-void eGameBoard::unregisterStadium() {
+void eGameBoard::unregisterStadium(const eCityId cid) {
     if(!mRegisterBuildingsEnabled) return;
-    mStadium = nullptr;
+    const auto city = boardCityWithId(cid);
+    city->unregisterStadium();
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
-void eGameBoard::registerMuseum(eBuilding* const s) {
+void eGameBoard::registerMuseum(eMuseum* const s) {
     if(!mRegisterBuildingsEnabled) return;
-    mMuseum = s;
+    const auto cid = s->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerMuseum(s);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
-void eGameBoard::unregisterMuseum() {
+void eGameBoard::unregisterMuseum(const eCityId cid) {
     if(!mRegisterBuildingsEnabled) return;
-    mMuseum = nullptr;
+    const auto city = boardCityWithId(cid);
+    city->unregisterMuseum();
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
 void eGameBoard::registerStorBuilding(eStorageBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    mStorBuildings.push_back(b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerStorBuilding(b);
 }
 
 bool eGameBoard::unregisterStorBuilding(eStorageBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return false;
-    return eVectorHelpers::remove(mStorBuildings, b);
-    return true;
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    return city->unregisterStorBuilding(b);
 }
 
 void eGameBoard::registerSanctuary(eSanctuary* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    mSanctuaries.push_back(b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerSanctuary(b);
+    if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
 bool eGameBoard::unregisterSanctuary(eSanctuary* const b) {
     if(!mRegisterBuildingsEnabled) return false;
-    return eVectorHelpers::remove(mSanctuaries, b);
-    return true;
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    const bool r = city->unregisterSanctuary(b);
+    if(r && mButtonVisUpdater) mButtonVisUpdater();
+    return r;
 }
 
 void eGameBoard::registerHeroHall(eHerosHall* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    mHeroHalls.push_back(b);
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerHeroHall(b);
 }
 
 bool eGameBoard::unregisterHeroHall(eHerosHall* const b) {
     if(!mRegisterBuildingsEnabled) return false;
-    return eVectorHelpers::remove(mHeroHalls, b);
-    return true;
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    const bool r = city->unregisterHeroHall(b);
+    if(r && mButtonVisUpdater) mButtonVisUpdater();
+    return r;
 }
 
 void eGameBoard::registerMissile(eMissile* const m) {
@@ -1661,60 +1839,87 @@ bool eGameBoard::unregisterMissile(eMissile* const m) {
     return eVectorHelpers::remove(mMissiles, m);
 }
 
-eStadium* eGameBoard::stadium() const {
-    return static_cast<eStadium*>(mStadium);
+bool eGameBoard::hasStadium(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return false;
+    return city->hasStadium();
 }
 
-eMuseum* eGameBoard::museum() const {
-    return static_cast<eMuseum*>(mMuseum);
+bool eGameBoard::hasMuseum(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return false;
+    return city->hasMuseum();
+}
+
+eStadium* eGameBoard::stadium(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return nullptr;
+    return city->stadium();
+}
+
+eMuseum* eGameBoard::museum(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return nullptr;
+    return city->museum();
 }
 
 void eGameBoard::registerPalace(ePalace* const p) {
     if(!mRegisterBuildingsEnabled) return;
-    mPalace = p;
+    const auto cid = p->cityId();
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    city->registerPalace(p);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
 void eGameBoard::unregisterPalace(const eCityId cid) {
     if(!mRegisterBuildingsEnabled) return;
-    mPalace = nullptr;
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    city->unregisterPalace();
     updateMaxSoldiers(cid);
     distributeSoldiers(cid);
     consolidateSoldiers(cid);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
-void eGameBoard::registerMonster(eMonster* const m) {
-    mMonsters.push_back(m);
+void eGameBoard::registerMonster(const eCityId cid, eMonster* const m) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->registerMonster(m);
 }
 
-void eGameBoard::unregisterMonster(eMonster* const m) {
-    eVectorHelpers::remove(mMonsters, m);
+void eGameBoard::unregisterMonster(const eCityId cid, eMonster* const m) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->unregisterMonster(m);
     updateMusic();
 }
 
-eBanner* eGameBoard::banner(const eBannerTypeS type, const int id) const {
-    for(const auto b : mBanners) {
-        const int bid = b->id();
-        if(bid != id) continue;
-        const auto btype = b->type();
-        if(btype != type) continue;
-        return b;
-    }
-    return nullptr;
+eBanner* eGameBoard::banner(const eCityId cid,
+                            const eBannerTypeS type,
+                            const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->banner(type, id);
 }
 
 void eGameBoard::registerBanner(eBanner* const b) {
-    const int id = b->id();
-    const auto type = b->type();
-    const auto bb = banner(type, id);
-    const auto t = bb ? bb->tile() : nullptr;
-    if(t) t->setBanner(nullptr);
+    const auto t = b->tile();
+    const auto cid = t->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
     mBanners.push_back(b);
+    return c->registerBanner(b);
 }
 
 void eGameBoard::unregisterBanner(eBanner* const b) {
+    const auto t = b->tile();
+    const auto cid = t->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
     eVectorHelpers::remove(mBanners, b);
+    return c->unregisterBanner(b);
 }
 
 void eGameBoard::registerAllSoldierBanner(eSoldierBanner* const b) {
@@ -1725,14 +1930,22 @@ void eGameBoard::unregisterAllSoldierBanner(eSoldierBanner* const b) {
     eVectorHelpers::remove(mAllSoldierBanners, b);
 }
 
-std::vector<eAgoraBase*> eGameBoard::agoras() const {
-    std::vector<eAgoraBase*> r;
-    for(const auto b : mAllBuildings) {
-        const auto a = dynamic_cast<eAgoraBase*>(b);
-        if(!a) continue;
-        r.push_back(a);
-    }
-    return r;
+bool eGameBoard::manTowers(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return false;
+    return city->manTowers();
+}
+
+void eGameBoard::setManTowers(const eCityId cid, const bool m) {
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    city->setManTowers(m);
+}
+
+std::vector<eAgoraBase*> eGameBoard::agoras(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return {};
+    return city->agoras();
 }
 
 void eGameBoard::incTime(const int by) {
@@ -1792,10 +2005,6 @@ void eGameBoard::incTime(const int by) {
         }
     }
 
-    for(const auto i : mInvasionHandlers) {
-        i->incTime(by);
-    }
-
     for(const auto& c : mCitiesOnBoard) {
         c->incTime(by);
     }
@@ -1819,23 +2028,26 @@ void eGameBoard::incTime(const int by) {
     }
 
     if(nextYear) {
-        mTaxesPaidLastYear = mTaxesPaidThisYear;
-        mTaxesPaidThisYear = 0;
-        mPeoplePaidTaxesLastYear = mPeoplePaidTaxesThisYear;
-        mPeoplePaidTaxesThisYear = 0;
+        for(const auto& c : mCitiesOnBoard) {
+            c->nextYear();
+        }
 
-        for(const auto& c : mDefeatedBy) {
-            if(!c->isRival()) continue;
-            const auto rr = e::make_shared<eReceiveRequestEvent>(
-                                eGameEventBranch::root);
-            const auto type = c->recTributeType();
-            const int count = c->recTributeCount();
-            rr->initialize(0, type, count, c, false);
-            rr->setTributeRequest(true);
-            rr->initializeDate(mDate);
-            rr->setGameBoard(this);
-            rr->setWorldBoard(mWorldBoard);
-            addRootGameEvent(rr);
+        const auto ppcs = personPlayerCities();
+        for(const auto cid : ppcs) {
+            auto& defs = mDefeatedBy[cid];
+            for(const auto& cc : defs) {
+                if(!cc->isRival()) continue;
+                const auto rr = e::make_shared<eReceiveRequestEvent>(
+                                    eGameEventBranch::root);
+                const auto type = cc->recTributeType();
+                const int count = cc->recTributeCount();
+                rr->initialize(0, type, count, cc, false);
+                rr->setTributeRequest(true);
+                rr->initializeDate(mDate);
+                rr->setGameBoard(this);
+                rr->setWorldBoard(mWorldBoard);
+                addRootGameEvent(rr);
+            }
         }
     }
     if(nextMonth) {
@@ -1862,26 +2074,33 @@ void eGameBoard::incTime(const int by) {
     mEmploymentCheckTime += by;
     if(mEmploymentCheckTime > ect) {
         mEmploymentCheckTime -= ect;
-        const double employable = mEmplData.employable();
-        const double jobVacs = mEmplData.totalJobVacancies();
-        int emplState = 0;
-        if(employable < jobVacs*0.75) {
-            emplState = 1;
-        } else if(employable > jobVacs*1.25) {
-            emplState = -1;
-        } else {
-            emplState = 0;
-        }
-        if(mLastEmploymentState != emplState) {
-            const auto& inst = eMessages::instance;
-            eEventData ed;
-            if(emplState == -1) { // unemployed
-                showMessage(ed, inst.fUnemployment);
-            } else if(emplState == 1) { // employed
-                showMessage(ed, inst.fEmployees);
+        const auto ppcs = personPlayerCities();
+        for(const auto cid : ppcs) {
+            const auto c = boardCityWithId(cid);
+            const auto& emplData = c->employmentData();
+            const double employable = emplData.employable();
+            const double jobVacs = emplData.totalJobVacancies();
+            int emplState = 0;
+            if(employable < jobVacs*0.75) {
+                emplState = 1;
+            } else if(employable > jobVacs*1.25) {
+                emplState = -1;
+            } else {
+                emplState = 0;
             }
+            auto& les = mLastEmploymentState[cid];
+            if(les.fV != emplState) {
+                const auto& inst = eMessages::instance;
+                eEventData ed;
+                ed.fCityId = cid;
+                if(emplState == -1) { // unemployed
+                    showMessage(ed, inst.fUnemployment);
+                } else if(emplState == 1) { // employed
+                    showMessage(ed, inst.fEmployees);
+                }
+            }
+            les.fV = emplState;
         }
-        mLastEmploymentState = emplState;
     }
 
     if(nextMonth) {
@@ -1947,6 +2166,21 @@ void eGameBoard::scheduleDataUpdate() {
     mThreadPool.scheduleDataUpdate();
 }
 
+int eGameBoard::population(const ePlayerId pid) const {
+    int result = 0;
+    const auto cids = playerCities(pid);
+    for(const auto cid : cids) {
+        result += population(cid);
+    }
+    return result;
+}
+
+int eGameBoard::population(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->population();
+}
+
 ePopulationData* eGameBoard::populationData(const eCityId cid) {
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
@@ -1965,6 +2199,43 @@ eEmploymentData* eGameBoard::employmentData(const eCityId cid) {
     return &c->employmentData();
 }
 
+eEmploymentDistributor* eGameBoard::employmentDistributor(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return &c->employmentDistributor();
+}
+
+void eGameBoard::addShutDown(const eCityId cid, const eResourceType type) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->addShutDown(type);
+}
+
+void eGameBoard::removeShutDown(const eCityId cid, const eResourceType type) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->removeShutDown(type);
+}
+
+int eGameBoard::industryJobVacancies(const eCityId cid, const eResourceType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->industryJobVacancies(type);
+}
+
+void eGameBoard::distributeEmployees(
+        const eCityId cid, const eSector s) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->distributeEmployees(s);
+}
+
+void eGameBoard::distributeEmployees(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->distributeEmployees();
+}
+
 void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
     const auto c = boardCityWithId(cid);
     if(!c) return;
@@ -1973,6 +2244,21 @@ void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
     const auto p = boardPlayerWithId(pid);
     if(!p) return;
     p->incDrachmas(d);
+}
+
+void eGameBoard::setDifficulty(const eDifficulty d) {
+    const auto ppid = personPlayer();
+    setDifficulty(ppid, d);
+}
+
+void eGameBoard::setDifficulty(const ePlayerId pid, const eDifficulty d) {
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return;
+    p->setDifficulty(d);
+}
+
+eDifficulty eGameBoard::personPlayerDifficulty() const {
+    return difficulty(personPlayer());
 }
 
 eDifficulty eGameBoard::difficulty(const ePlayerId pid) const {
@@ -2040,7 +2326,7 @@ void eGameBoard::requestForces(const eEnlistAction& action,
                                const std::vector<eResourceType>& plunderResources,
                                const std::vector<stdsptr<eWorldCity>>& exclude) {
     if(mEnlistRequester) {
-        auto f = getEnlistableForces();
+        auto f = getEnlistableForces(personPlayer());
         std::vector<bool> heroesAbroad;
         for(const auto h : f.fHeroes) {
             const auto hh = heroHall(eCityId::city0, h);
@@ -2101,6 +2387,18 @@ const eGameBoard::eResources* eGameBoard::resources(const eCityId cid) const {
     return &c->resources();
 }
 
+ePalace* eGameBoard::palace(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->palace();
+}
+
+bool eGameBoard::hasPalace(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->hasPalace();
+}
+
 int eGameBoard::resourceCount(const eCityId cid,
                               const eResourceType type) const {
     const auto c = boardCityWithId(cid);
@@ -2122,10 +2420,10 @@ int eGameBoard::eliteHouses(const eCityId cid) const {
     return c->eliteHouses();
 }
 
-const std::vector<eSanctuary*>* eGameBoard::sanctuaries(const eCityId cid) const {
+std::vector<eSanctuary*> eGameBoard::sanctuaries(const eCityId cid) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return nullptr;
-    return &c->sanctuaries();
+    if(!c) return {};
+    return c->sanctuaries();
 }
 
 eSanctuary* eGameBoard::sanctuary(const eCityId cid, const eGodType god) const {
@@ -2134,16 +2432,22 @@ eSanctuary* eGameBoard::sanctuary(const eCityId cid, const eGodType god) const {
     return c->sanctuary(god);
 }
 
-const std::vector<eHerosHall*>* eGameBoard::heroHalls(const eCityId cid) const {
+std::vector<eHerosHall*> eGameBoard::heroHalls(const eCityId cid) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return nullptr;
-    return &c->heroHalls();
+    if(!c) return {};
+    return c->heroHalls();
 }
 
 eHerosHall* eGameBoard::heroHall(const eCityId cid, const eHeroType hero) const {
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
     return c->heroHall(hero);
+}
+
+std::vector<stdsptr<eSoldierBanner>> eGameBoard::banners(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->banners();
 }
 
 int eGameBoard::countBanners(const eBannerType bt,
@@ -2158,14 +2462,6 @@ int eGameBoard::countSoldiers(const eBannerType bt,
     const auto c = boardCityWithId(cid);
     if(!c) return 0;
     return c->countSoldiers(bt);
-}
-
-void eGameBoard::addFulfilledQuest(const eGodQuest q) {
-    mFulfilledQuests.push_back(q);
-}
-
-void eGameBoard::addSlayedMonster(const eMonsterType m) {
-    mSlayedMonsters.push_back(m);
 }
 
 void eGameBoard::startEpisode(eEpisode* const e,
@@ -2196,7 +2492,9 @@ void eGameBoard::startEpisode(eEpisode* const e,
     mWorldBoard = e->fWorldBoard;
     const auto& date = e->fStartDate;
     setDate(date);
-    mDrachmas = e->fDrachmas;
+    for(const auto& d : e->fDrachmas) {
+        setDrachmas(d.first, d.second);
+    }
     mWageMultiplier = e->fWageMultiplier;
     mPrices = e->fPrices;
     const auto& es = e->fEvents;
@@ -2205,8 +2503,10 @@ void eGameBoard::startEpisode(eEpisode* const e,
         eee->setupStartDate(date);
         mGameEvents.push_back(eee);
     }
-    mAvailableBuildings.startEpisode(e->fAvailableBuildings);
-    setFriendlyGods(e->fFriendlyGods);
+    for(const auto& c : mCitiesOnBoard) {
+        c->startEpisode(e);
+    }
+//    setFriendlyGods(e->fFriendlyGods);
     mPoseidonMode = e->fAtlantean;
     const auto& gs = e->fGoals;
     for(const auto& g : gs) {
@@ -2232,16 +2532,16 @@ bool eGameBoard::checkGoalsFulfilled() const {
     return result;
 }
 
-void eGameBoard::musterAllSoldiers() {
-    for(const auto& s : mSoldierBanners) {
-        s->backFromHome();
-    }
+void eGameBoard::musterAllSoldiers(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->musterAllSoldiers();
 }
 
-void eGameBoard::sendAllSoldiersHome() {
-    for(const auto& s : mSoldierBanners) {
-        s->goHome();
-    }
+void eGameBoard::sendAllSoldiersHome(const eCityId cid) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->sendAllSoldiersHome();
 }
 
 void eGameBoard::incPopulation(const eCityId cid, const int by) {
@@ -2307,25 +2607,25 @@ void eGameBoard::minMaxAltitude(int& min, int& max) const {
     }
 }
 
-eMilitaryAid* eGameBoard::militaryAid(const stdsptr<eWorldCity>& c) const {
-    for(const auto& m : mMilitaryAid) {
-        if(m->fCity == c) return m.get();
-    }
-    return nullptr;
+eMilitaryAid* eGameBoard::militaryAid(const eCityId cid,
+                                      const stdsptr<eWorldCity>& c) const {
+    const auto cc = boardCityWithId(cid);
+    if(!cc) return nullptr;
+    return cc->militaryAid(c);
 }
 
-void eGameBoard::removeMilitaryAid(const stdsptr<eWorldCity>& c) {
-    const int iMax = mMilitaryAid.size();
-    for(int i = 0; i < iMax; i++) {
-        const auto& m = mMilitaryAid[i];
-        if(m->fCity != c) continue;
-        mMilitaryAid.erase(mMilitaryAid.begin() + i);
-        break;
-    }
+void eGameBoard::removeMilitaryAid(const eCityId cid,
+                                   const stdsptr<eWorldCity>& c) {
+    const auto cc = boardCityWithId(cid);
+    if(!cc) return;
+    cc->removeMilitaryAid(c);
 }
 
-void eGameBoard::addMilitaryAid(const stdsptr<eMilitaryAid>& a) {
-    mMilitaryAid.push_back(a);
+void eGameBoard::addMilitaryAid(const eCityId cid,
+                                const stdsptr<eMilitaryAid>& a) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->addMilitaryAid(a);
 }
 
 void eGameBoard::setEpisodeLost() const {
@@ -2409,13 +2709,21 @@ bool eGameBoard::duringEarthquake() const {
     return !mEarthquakes.empty();
 }
 
-void eGameBoard::defeatedBy(const stdsptr<eWorldCity>& c) {
-    const bool r = eVectorHelpers::contains(mDefeatedBy, c);
+void eGameBoard::defeatedBy(const eCityId defeated,
+                            const stdsptr<eWorldCity>& by) {
+    auto& defs = mDefeatedBy[defeated];
+    const bool r = eVectorHelpers::contains(defs, by);
     if(r) {
         setEpisodeLost();
     } else {
-        mDefeatedBy.push_back(c);
+        defs.push_back(by);
     }
+}
+
+eImmigrationLimitedBy eGameBoard::immigrationLimit(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return eImmigrationLimitedBy::none;
+    return c->immigrationLimit();
 }
 
 void eGameBoard::progressEarthquakes() {

@@ -3,9 +3,10 @@
 #include "egameboard.h"
 #include "eevent.h"
 #include "eeventdata.h"
+#include "evectorhelpers.h"
 
-eBoardPlayer::eBoardPlayer(eGameBoard& board) :
-    mBoard(board) {}
+eBoardPlayer::eBoardPlayer(const ePlayerId pid, eGameBoard& board) :
+    mBoard(board), mId(pid) {}
 
 void eBoardPlayer::nextMonth() {
     if(mDrachmas < 0) {
@@ -30,6 +31,120 @@ void eBoardPlayer::incDrachmas(const int by) {
     }
 }
 
+void eBoardPlayer::setDifficulty(const eDifficulty d) {
+    mDifficulty = d;
+}
+
 bool eBoardPlayer::isPerson() const {
     return mBoard.personPlayer() == mId;
+}
+
+void eBoardPlayer::addFulfilledQuest(const eGodQuest q) {
+    mFulfilledQuests.push_back(q);
+}
+
+void eBoardPlayer::addSlayedMonster(const eMonsterType m) {
+    mSlayedMonsters.push_back(m);
+}
+
+void eBoardPlayer::addGodQuest(eGodQuestEvent* const q) {
+    eVectorHelpers::remove(mGodQuests, q);
+    mGodQuests.push_back(q);
+}
+
+void eBoardPlayer::removeGodQuest(eGodQuestEvent* const q) {
+    eVectorHelpers::remove(mGodQuests, q);
+}
+
+void eBoardPlayer::addCityRequest(eReceiveRequestEvent* const q) {
+    mCityRequests.push_back(q);
+}
+
+void eBoardPlayer::removeCityRequest(eReceiveRequestEvent* const q) {
+    eVectorHelpers::remove(mCityRequests, q);
+}
+
+void eBoardPlayer::addCityTroopsRequest(eTroopsRequestEvent* const q) {
+    mCityTroopsRequests.push_back(q);
+}
+
+void eBoardPlayer::removeCityTroopsRequest(eTroopsRequestEvent* const q) {
+    eVectorHelpers::remove(mCityTroopsRequests, q);
+}
+
+void eBoardPlayer::addConquest(ePlayerConquestEventBase* const q) {
+    mConquests.push_back(q);
+}
+
+void eBoardPlayer::removeConquest(ePlayerConquestEventBase* const q) {
+    eVectorHelpers::remove(mConquests, q);
+}
+
+void eBoardPlayer::read(eReadStream& src) {
+    src >> mId;
+    src >> mDifficulty;
+
+    {
+        int nq;
+        src >> nq;
+        for(int i = 0; i < nq; i++) {
+            auto& q = mFulfilledQuests.emplace_back();
+            q.read(src);
+        }
+    }
+
+    {
+        int nm;
+        src >> nm;
+        for(int i = 0; i < nm; i++) {
+            auto& m = mSlayedMonsters.emplace_back();
+            src >> m;
+        }
+    }
+
+    {
+        int nq;
+        src >> nq;
+        for(int i = 0; i < nq; i++) {
+            src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
+                const auto ge = static_cast<eGodQuestEvent*>(e);
+                mGodQuests.push_back(ge);
+            });
+        }
+    }
+
+    src >> mDrachmas;
+    mInDebtSince.read(src);
+}
+
+void eBoardPlayer::write(eWriteStream& dst) const {
+    dst << mId;
+    dst << mDifficulty;
+
+    {
+        const int nq = mFulfilledQuests.size();
+        dst << nq;
+        for(const auto& q : mFulfilledQuests) {
+            q.write(dst);
+        }
+    }
+
+    {
+        const int nm = mSlayedMonsters.size();
+        dst << nm;
+        for(const auto m : mSlayedMonsters) {
+            dst << m;
+        }
+    }
+
+    {
+        const int nq = mGodQuests.size();
+        dst << nq;
+        for(const auto& q : mGodQuests) {
+            dst.writeGameEvent(q);
+        }
+    }
+
+    dst << mDrachmas;
+    mInDebtSince.write(dst);
 }

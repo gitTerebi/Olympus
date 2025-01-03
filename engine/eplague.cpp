@@ -4,8 +4,8 @@
 #include "egameboard.h"
 #include "evectorhelpers.h"
 
-ePlague::ePlague(eGameBoard& board) :
-    mBoard(board) {}
+ePlague::ePlague(const eCityId cid, eGameBoard& board) :
+    mBoard(board), mCityId(cid) {}
 
 void ePlague::randomSpread() {
     if(mHouses.empty()) return;
@@ -58,6 +58,7 @@ void ePlague::removeHouse(eSmallHouse* const h) {
 }
 
 void ePlague::read(eReadStream& src) {
+    src >> mCityId;
     int n;
     src >> n;
     for(int i = 0 ; i < n; i++) {
@@ -69,6 +70,7 @@ void ePlague::read(eReadStream& src) {
 }
 
 void ePlague::write(eWriteStream& dst) const {
+    dst << mCityId;
     dst << mHouses.size();
     for(const auto& ch : mHouses) {
         dst.writeBuilding(ch);

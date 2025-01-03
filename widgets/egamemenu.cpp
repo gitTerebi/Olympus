@@ -40,7 +40,7 @@ struct eSubButtonData {
     std::vector<eSPR> fSpr = {};
 };
 
-void tradePosts(std::vector<eSPR>& cs, eGameBoard& board) {
+void tradePosts(const eCityId cid, std::vector<eSPR>& cs, eGameBoard& board) {
     const auto& wrld = board.getWorldBoard();
     int i = -1;
     for(const auto& c : wrld->cities()) {
@@ -48,7 +48,7 @@ void tradePosts(std::vector<eSPR>& cs, eGameBoard& board) {
         if(c->isRival()) continue;
         if(c->isCurrentCity()) continue;
         if(!c->active()) continue;
-        if(!board.hasTradePost(*c)) {
+        if(!board.hasTradePost(cid, *c)) {
             if(!c->buys().empty() || !c->sells().empty()) {
                 if(c->waterTrade()) {
                     const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
@@ -75,15 +75,15 @@ public:
         mChildren(children),
         mBoard(board) {}
 
-    void updateVisible() {
+    void updateVisible(const eCityId cid) {
         if(mMode == eBuildingMode::tradePost) {
             std::vector<eSPR> cs;
-            tradePosts(cs, mBoard);
+            tradePosts(cid, cs, mBoard);
             mButton->setVisible(!cs.empty());
         } else if(mMode == eBuildingMode::none) {
             bool found = false;
             for(const auto& c : mChildren) {
-                const bool s = mBoard.supportsBuilding(c.fMode);
+                const bool s = mBoard.supportsBuilding(cid, c.fMode);
                 if(s) {
                     found = true;
                     break;
@@ -91,7 +91,7 @@ public:
             }
             mButton->setVisible(found);
         } else {
-            const bool s = mBoard.supportsBuilding(mMode);
+            const bool s = mBoard.supportsBuilding(cid, mMode);
             mButton->setVisible(s);
         }
     }
@@ -166,7 +166,7 @@ eWidget* eGameMenu::createSubButtons(
         }
 
         const auto subButton = new eSubButton(c.fMode, b, c.fSpr, *mBoard);
-        subButton->updateVisible();
+        subButton->updateVisible(eCityId::neutralFriendly);
         mSubButtons.push_back(subButton);
     }
 
@@ -178,14 +178,15 @@ eWidget* eGameMenu::createSubButtons(
 
 eBuildButton* eGameMenu::createBuildButton(const eSPR& c) {
     const auto bb = new eBuildButton(window());
-    const auto diff = mBoard->difficulty();
+    const auto pid = mBoard->personPlayer();
+    const auto diff = mBoard->difficulty(pid);
     const auto mode = c.fMode;
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
     const int cost = eDifficultyHelpers::buildingCost(diff, t);
     bb->initialize(c.fName, c.fMarbleCost, cost);
     bb->setPressAction([this, c]() {
         setMode(c.fMode);
-        mCityId = c.fCity;
+        mTradeCityId = c.fCity;
         closeBuildWidget();
     });
     return bb;
@@ -193,9 +194,13 @@ eBuildButton* eGameMenu::createBuildButton(const eSPR& c) {
 
 void eGameMenu::openBuildWidget(const int cmx, const int cmy,
                                 const std::vector<eSPR>& cs) {
+    const auto cid = mGW->viewedCity();
+    const auto pid = mBoard->cityIdToPlayerId(cid);
+    const auto ppid = mBoard->personPlayer();
+    if(pid != ppid) return;
     std::vector<eBuildButton*> ws;
     for(const auto& c : cs) {
-        if(!mBoard->supportsBuilding(c.fMode)) continue;
+        if(!mBoard->supportsBuilding(cid, c.fMode)) continue;
         const auto bb = createBuildButton(c);
         ws.push_back(bb);
     }
@@ -216,6 +221,10 @@ void eGameMenu::updateRequestButtons() {
 
 void eGameMenu::setWorldDirection(const eWorldDirection dir) {
     mRotateButton->setDirection(dir);
+}
+
+void eGameMenu::update() {
+
 }
 
 void eGameMenu::displayPrice(const int price, const int loc) {
@@ -328,7 +337,8 @@ void eGameMenu::initialize(eGameBoard* const b,
 
     mPopDataW = new ePopulationDataWidget(*b, window());
 
-    const auto diff = mBoard->difficulty();
+    const auto pid = mBoard->personPlayer();
+    const auto diff = mBoard->difficulty(pid);
     const int cost1 = eDifficultyHelpers::buildingCost(
                           diff, eBuildingType::commonHouse);
     const int cost2 = eDifficultyHelpers::buildingCost(
@@ -464,7 +474,8 @@ void eGameMenu::initialize(eGameBoard* const b,
     };
     const auto t3 = [this, cmx, cmy]() {
         std::vector<eSPR> cs;
-        tradePosts(cs, *mBoard);
+        const auto cid = mGW->viewedCity();
+        tradePosts(cid, cs, *mBoard);
         openBuildWidget(cmx, cmy, cs);
     };
 
@@ -949,6 +960,7 @@ void eGameMenu::initialize(eGameBoard* const b,
 }
 
 void eGameMenu::setGameWidget(eGameWidget* const gw) {
+    mGW = gw;
     mPopDataW->setGameWidget(gw);
     mHusbDataW->setGameWidget(gw);
     mEmplDataW->setGameWidget(gw);
@@ -969,6 +981,7 @@ void eGameMenu::setGameWidget(eGameWidget* const gw) {
     mRotateButton->setDirectionSetter([gw](const eWorldDirection dir) {
         gw->setWorldDirection(dir);
     });
+    updateButtonsVisibility();
 }
 
 eMiniMap* eGameMenu::miniMap() const {
@@ -995,12 +1008,30 @@ void eGameMenu::setBuildWidget(eBuildWidget* const bw) {
 }
 
 void eGameMenu::updateButtonsVisibility() {
+    const auto cid = mGW ? mGW->viewedCity() :
+                           eCityId::neutralFriendly;
     for(const auto s : mSubButtons) {
-        s->updateVisible();
+        s->updateVisible(cid);
     }
-    mPalaceButton->setVisible(!mBoard->hasPalace());
-    if(mStadiumButton) mStadiumButton->setVisible(!mBoard->hasStadium());
-    if(mMuseumButton) mMuseumButton->setVisible(!mBoard->hasMuseum());
+    mPalaceButton->setVisible(!mBoard->hasPalace(cid));
+    if(mStadiumButton) mStadiumButton->setVisible(!mBoard->hasStadium(cid));
+    if(mMuseumButton) mMuseumButton->setVisible(!mBoard->hasMuseum(cid));
+}
+
+void eGameMenu::viewedCityChanged() {
+    mPopDataW->update();
+    mHusbDataW->update();
+    mEmplDataW->update();
+    mStrgDataW->update();
+    mApplDataW->update();
+    mHySaDataW->update();
+    mMiltDataW->update();
+    mMythDataW->update();
+    mAdminDataW->update();
+    if(mCultureDataW) mCultureDataW->update();
+    if(mScienceDataW) mScienceDataW->update();
+    mOverDataW->update();
+    updateButtonsVisibility();
 }
 
 void eGameMenu::setMode(const eBuildingMode mode) {

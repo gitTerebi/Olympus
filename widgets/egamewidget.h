@@ -1,4 +1,4 @@
-﻿#ifndef EGAMEWIDGET_H
+#ifndef EGAMEWIDGET_H
 #define EGAMEWIDGET_H
 
 #include <deque>
@@ -94,6 +94,7 @@ public:
     void viewTile(eTile* const tile);
     eTile* viewedTile() const;
     bool tileVisible(eTile* const tile) const;
+    eCityId viewedCity() const;
 
     void setBoard(eGameBoard* const board);
 
@@ -340,6 +341,10 @@ private:
     std::map<eTileSize, std::vector<stdsptr<eTexture>>> mNumbers;
     std::vector<eTile*> mInflTiles;
     std::vector<eTile*> mHoverTiles;
+
+    eTile* mViewedTile = nullptr;
+    eCityId mViewedCityId = eCityId::neutralFriendly;
+    bool mUpdateViewedTileScheduled = true;
 };
 
 #endif // EGAMEWIDGET_H

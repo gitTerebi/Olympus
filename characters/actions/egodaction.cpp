@@ -199,7 +199,7 @@ void eGodAction::fightGod(
 
 void eGodAction::goBackToSanctuary() {
     auto& board = eGodAction::board();
-    const auto s = board.sanctuary(type());
+    const auto s = board.sanctuary(cityId(), type());
     if(!s) return;
     const auto c = character();
     const auto god = static_cast<eGod*>(c);

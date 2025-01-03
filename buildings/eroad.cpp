@@ -12,7 +12,8 @@ eRoad::eRoad(eGameBoard& board, const eCityId cid) :
 void eRoad::erase() {
     if(isBridge()) {
         auto& board = getBoard();
-        const bool a = board.hasActiveInvasions();
+        const auto cid = cityId();
+        const bool a = board.hasActiveInvasions(cid);
         if(a) {
             board.showTip(eLanguage::zeusText(19, 229)); // can't demolish during invasion
             return;

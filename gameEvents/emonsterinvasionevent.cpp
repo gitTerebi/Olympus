@@ -117,7 +117,8 @@ void eMonsterInvasionEvent::trigger() {
     const auto gm = inst.monsterMessages(type());
     const auto& m = gm->fToSlainReason;
     const auto heroType = eMonster::sSlayer(type());
-    board->allowHero(heroType, m);
+    const auto cid = cityId();
+    board->allowHero(cid, heroType, m);
 }
 
 std::string eMonsterInvasionEvent::longName() const {

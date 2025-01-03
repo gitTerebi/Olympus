@@ -5,6 +5,7 @@ class eGameBoard;
 class eReadStream;
 class eWriteStream;
 class eTile;
+enum class eCityId;
 
 enum class eBannerTypeS {
     boar,
@@ -25,6 +26,7 @@ public:
     virtual ~eBanner();
 
     eTile* tile() const { return mTile; }
+    eCityId cityId() const;
     eGameBoard& board() { return mBoard; }
 
     int id() const { return mId; }

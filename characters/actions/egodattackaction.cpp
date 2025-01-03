@@ -300,6 +300,7 @@ void eGodAttackAction::write(eWriteStream& dst) const {
 
 void eGodAttackAction::initialize() {
     auto& board = this->board();
+    const auto cid = cityId();
     const auto c = character();
     const auto tile = c->tile();
     if(!tile) return;
@@ -318,7 +319,7 @@ void eGodAttackAction::initialize() {
             fa = a.get();
         }
     } else if(type == eGodType::hades) {
-        const auto p = board.palace();
+        const auto p = board.palace(cid);
         if(p) p->setBlessed(-1.);
         const auto& chars = board.characters();
         for(const auto c : chars) {

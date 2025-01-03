@@ -41,14 +41,16 @@ void eHephaestusHelpAction::write(eWriteStream& dst) const {
     dst << mStage;
 }
 
-bool eHephaestusHelpAction::sHelpNeeded(const eGameBoard& board) {
-    return board.invasionToDefend();
+bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,
+                                        const eGameBoard& board) {
+    return board.invasionToDefend(cid);
 }
 
 void eHephaestusHelpAction::provide() {
     auto& board = eHephaestusHelpAction::board();
     const auto c = character();
-    const auto p = board.palace();
+    const auto cid = cityId();
+    const auto p = board.palace(cid);
     const int bw = board.width();
     const int bh = board.height();
     const auto centerTile = board.dtile(bw/2, bh/2);

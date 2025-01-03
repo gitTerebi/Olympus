@@ -39,6 +39,8 @@ void eSoldier::beingKilled() {
     if(mBanner) mBanner->decCount();
     setBanner(nullptr);
     const auto cid = cityId();
+    const auto ocid = onCityId();
+    if(cid != ocid) return;
     auto& brd = getBoard();
     const auto ct = type();
     switch(ct) {

@@ -19,7 +19,7 @@ void eCityBecomesEvent::trigger() {
     switch(mType) {
     case eCityBecomesType::ally: {
         mCity->setRelationship(eForeignCityRelationship::ally);
-        board->allow(eBuildingType::commemorative, 7);
+        board->allow(cityId(), eBuildingType::commemorative, 7);
         board->event(eEvent::cityBecomesAlly, ed);
     } break;
     case eCityBecomesType::rival: {

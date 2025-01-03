@@ -25,7 +25,8 @@ void eMakeRequestEvent::trigger() {
     if(!board) return;
     const int count = 2*eGiftHelpers::giftCount(mResource);
 
-    const int space = board->spaceForResource(mResource);
+    const auto cid = cityId();
+    const int space = board->spaceForResource(cid, mResource);
     eEventData ed;
     ed.fCity = mCity;
     ed.fSpaceCount = space;
@@ -45,8 +46,8 @@ void eMakeRequestEvent::trigger() {
     } else {
         ed.fType = eMessageEventType::requestTributeGranted;
         if(space != 0) {
-            ed.fA0 = [this, board, count]() { // accept
-                const int a = board->addResource(mResource, count);
+            ed.fA0 = [this, cid, board, count]() { // accept
+                const int a = board->addResource(cid, mResource, count);
                 if(a == count) return;
                 eEventData ed;
                 ed.fType = eMessageEventType::resourceGranted;
