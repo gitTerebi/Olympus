@@ -7,11 +7,12 @@
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
 #include "emainwindow.h"
 #include "elanguage.h"
+#include "egamedir.h"
 
 eGameLoadingWidget::eGameLoadingWidget(eMainWindow* const window) :
     eLoadingWidget(eGameTextures::gameSize(window->settings()) + 4,
                    [window](std::string& text) {
-        const auto& sett = window->settings();
+        const auto sett = window->settings();
         const bool r = eGameTextures::loadNextGame(sett, text);
         if(r) {
             const bool r = eMusic::loaded();

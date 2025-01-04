@@ -665,7 +665,6 @@ HEADERS += \
     audio/emusicvector.h \
     audio/esounds.h \
     audio/esoundvector.h \
-    binary.h \
     buildings/allbuildings.h \
     buildings/eaestheticsbuilding.h \
     buildings/eagorabase.h \
@@ -1024,6 +1023,7 @@ HEADERS += \
     epathfindtask.h \
     erand.h \
     esettings.h \
+    esplitbinary.h \
     estringhelpers.h \
     etexture.h \
     etexturecollection.h \
@@ -1860,6 +1860,10 @@ HEADERS += \
     spriteData/interfaceWorldSide30.h \
     spriteData/interfaceWorldSide45.h \
     spriteData/interfaceWorldSide60.h \
+    spriteData/interface_stor_bays15.h \
+    spriteData/interface_stor_bays30.h \
+    spriteData/interface_stor_bays45.h \
+    spriteData/interface_stor_bays60.h \
     spriteData/inventor15.h \
     spriteData/inventor30.h \
     spriteData/inventor45.h \
@@ -2910,6 +2914,7 @@ DISTFILES += \
     textureTemplates/interfaceRadar \
     textureTemplates/interfaceSprites \
     textureTemplates/interfaceWorldSide \
+    textureTemplates/interface_stor_bays \
     textureTemplates/inventor \
     textureTemplates/inventorsWorkshop \
     textureTemplates/jason \

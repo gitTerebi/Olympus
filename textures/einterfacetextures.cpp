@@ -5,10 +5,10 @@
 #include "spriteData/interfaceBanners45.h"
 #include "spriteData/interfaceBanners60.h"
 
-#include "spriteData/stor_bays15.h"
-#include "spriteData/stor_bays30.h"
-#include "spriteData/stor_bays45.h"
-#include "spriteData/stor_bays60.h"
+#include "spriteData/interface_stor_bays15.h"
+#include "spriteData/interface_stor_bays30.h"
+#include "spriteData/interface_stor_bays45.h"
+#include "spriteData/interface_stor_bays60.h"
 
 #include "spriteData/paneling15.h"
 #include "spriteData/paneling30.h"
@@ -1221,69 +1221,69 @@ void eInterfaceTextures::load() {
 
     {
         const auto& sds = spriteData(fTileH,
-                                     eStor_baysSpriteData15,
-                                     eStor_baysSpriteData30,
-                                     eStor_baysSpriteData45,
-                                     eStor_baysSpriteData60);
-        eSpriteLoader loader(fTileH, "stor_bays", sds,
+                                     eInterface_stor_baysSpriteData15,
+                                     eInterface_stor_baysSpriteData30,
+                                     eInterface_stor_baysSpriteData45,
+                                     eInterface_stor_baysSpriteData60);
+        eSpriteLoader loader(fTileH, "interface_stor_bays", sds,
                              nullptr, fRenderer);
 
-        fUrchinUnit = loader.load(1, 117);
-        fFishUnit = loader.load(1, 118);
-        fMeatUnit = loader.load(1, 119);
-        fCheeseUnit = loader.load(1, 120);
-        fCarrotsUnit = loader.load(1, 121);
-        fOnionsUnit = loader.load(1, 122);
-        fWheatUnit = loader.load(1, 123);
+        fUrchinUnit = loader.load(117, 117);
+        fFishUnit = loader.load(117, 118);
+        fMeatUnit = loader.load(117, 119);
+        fCheeseUnit = loader.load(117, 120);
+        fCarrotsUnit = loader.load(117, 121);
+        fOnionsUnit = loader.load(117, 122);
+        fWheatUnit = loader.load(117, 123);
 
-        fWoodUnit = loader.load(1, 124);
-        fBronzeUnit = loader.load(1, 125);
-        fMarbleUnit = loader.load(1, 126);
-        fGrapesUnit = loader.load(1, 127);
-        fOlivesUnit = loader.load(1, 128);
-        fFleeceUnit = loader.load(1, 129);
-        fHorseUnit = loader.load(1, 130);
-        fArmsUnit = loader.load(1, 131);
-        fSculptureUnit = loader.load(1, 132);
-        fOliveOilUnit = loader.load(1, 133);
-        fWineUnit = loader.load(1, 134);
-        fFoodUnit = loader.load(1, 135);
+        fWoodUnit = loader.load(117, 124);
+        fBronzeUnit = loader.load(117, 125);
+        fMarbleUnit = loader.load(117, 126);
+        fGrapesUnit = loader.load(117, 127);
+        fOlivesUnit = loader.load(117, 128);
+        fFleeceUnit = loader.load(117, 129);
+        fHorseUnit = loader.load(117, 130);
+        fArmsUnit = loader.load(117, 131);
+        fSculptureUnit = loader.load(117, 132);
+        fOliveOilUnit = loader.load(117, 133);
+        fWineUnit = loader.load(117, 134);
+        fFoodUnit = loader.load(117, 135);
 
-        fSuppliesBg = loader.load(1, 137);
-        fEliteSuppliesBg = loader.load(1, 139);
+        fSuppliesBg = loader.load(117, 137);
+        fEliteSuppliesBg = loader.load(117, 139);
 
-        fHasFood = loader.load(1, 155);
-        fHasFleece = loader.load(1, 153);
-        fHasOil = loader.load(1, 156);
-        fHasWine = loader.load(1, 157);
-        fHasArms = loader.load(1, 154);
-        fHasHorses = loader.load(1, 158);
+        fHasFood = loader.load(117, 155);
+        fHasFleece = loader.load(117, 153);
+        fHasOil = loader.load(117, 156);
+        fHasWine = loader.load(117, 157);
+        fHasArms = loader.load(117, 154);
+        fHasHorses = loader.load(117, 158);
 
-        fNHasFood = loader.load(1, 161);
-        fNHasFleece = loader.load(1, 159);
-        fNHasOil = loader.load(1, 162);
-        fNHasWine = loader.load(1, 163);
-        fNHasArms = loader.load(1, 160);
-        fNHasHorses = loader.load(1, 164);
+        fNHasFood = loader.load(117, 161);
+        fNHasFleece = loader.load(117, 159);
+        fNHasOil = loader.load(117, 162);
+        fNHasWine = loader.load(117, 163);
+        fNHasArms = loader.load(117, 160);
+        fNHasHorses = loader.load(117, 164);
 
-        fZeusQuestIcon = loader.load(1, 171);
-        fPoseidonQuestIcon = loader.load(1, 172);
-        fDemeterQuestIcon = loader.load(1, 173);
-        fApolloQuestIcon = loader.load(1, 174);
-        fArtemisQuestIcon = loader.load(1, 175);
-        fAresQuestIcon = loader.load(1, 176);
-        fAphroditeQuestIcon = loader.load(1, 177);
-        fHermesQuestIcon = loader.load(1, 178);
-        fAthenaQuestIcon = loader.load(1, 179);
-        fHephaestusQuestIcon = loader.load(1, 180);
-        fDionysusQuestIcon = loader.load(1, 181);
-        fHadesQuestIcon = loader.load(1, 182);
+        fZeusQuestIcon = loader.load(117, 171);
+        fPoseidonQuestIcon = loader.load(117, 172);
+        fDemeterQuestIcon = loader.load(117, 173);
+        fApolloQuestIcon = loader.load(117, 174);
+        fArtemisQuestIcon = loader.load(117, 175);
+        fAresQuestIcon = loader.load(117, 176);
+        fAphroditeQuestIcon = loader.load(117, 177);
+        fHermesQuestIcon = loader.load(117, 178);
+        fAthenaQuestIcon = loader.load(117, 179);
+        fHephaestusQuestIcon = loader.load(117, 180);
+        fDionysusQuestIcon = loader.load(117, 181);
+        fHadesQuestIcon = loader.load(117, 182);
 
-        fTroopsRequestIcon = loader.load(1, 183);
+        fTroopsRequestIcon = loader.load(117, 183);
 
-        fDrachmasUnit = loader.load(1, 184);
-        fDrachmasTopMenu = loader.load(1, 185);
-        fPopulationTopMenu = loader.load(1, 186);
+        fDrachmasUnit = loader.load(117, 184);
+        fDrachmasTopMenu = loader.load(117, 185);
+        fPopulationTopMenu = loader.load(117, 186);
     }
 }
 

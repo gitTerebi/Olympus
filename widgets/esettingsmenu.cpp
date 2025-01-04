@@ -7,6 +7,9 @@
 #include "eokbutton.h"
 
 #include "elanguage.h"
+#include "egamedir.h"
+
+#include <filesystem>
 
 eSettingsMenu::eSettingsMenu(const eSettings& iniSettings,
                              eMainWindow* const window) :
@@ -20,7 +23,9 @@ eWidget* createTextureBox(eMainWindow* const window,
                           const bool checked,
                           const eCheckAction& checkA,
                           const std::string& text,
-                          const int p) {
+                          const int p,
+                          const std::string& path) {
+    const bool missing = !std::filesystem::exists(path);
     const auto w = new eWidget(window);
     w->setNoPadding();
 
@@ -29,6 +34,7 @@ eWidget* createTextureBox(eMainWindow* const window,
     b->setChecked(checked);
     b->setCheckAction(checkA);
     b->fitContent();
+    if(missing) b->hide();
 
     const auto l = new eLabel(window);
     l->setNoPadding();
@@ -163,7 +169,8 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
             };
             const bool checked = mSettings.fTinyTextures;
             const auto text = eLanguage::text("tiny_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p);
+            const auto w = createTextureBox(window(), checked, checkA, text, p,
+                                            eGameDir::i15BinaryPath());
             texsWid->addWidget(w);
         }
 
@@ -173,7 +180,8 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
             };
             const bool checked = mSettings.fSmallTextures;
             const auto text = eLanguage::text("small_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p);
+            const auto w = createTextureBox(window(), checked, checkA, text, p,
+                                            eGameDir::i30BinaryPath());
             texsWid->addWidget(w);
         }
 
@@ -183,7 +191,8 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
             };
             const bool checked = mSettings.fMediumTextures;
             const auto text = eLanguage::text("medium_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p);
+            const auto w = createTextureBox(window(), checked, checkA, text, p,
+                                            eGameDir::i45BinaryPath());
             texsWid->addWidget(w);
         }
 
@@ -193,7 +202,8 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
             };
             const bool checked = mSettings.fLargeTextures;
             const auto text = eLanguage::text("large_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p);
+            const auto w = createTextureBox(window(), checked, checkA, text, p,
+                                            eGameDir::i60BinaryPath());
             texsWid->addWidget(w);
         }
 

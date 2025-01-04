@@ -28,8 +28,24 @@ std::string eGameDir::numbersPath() {
     return exeDir() + "../numbers.txt";
 }
 
-std::string eGameDir::binaryPath() {
-    return exeDir() + "../binary.e";
+std::string eGameDir::iBinaryPath() {
+    return exeDir() + "../interface.e";
+}
+
+std::string eGameDir::i15BinaryPath() {
+    return exeDir() + "../i15.e";
+}
+
+std::string eGameDir::i30BinaryPath() {
+    return exeDir() + "../i30.e";
+}
+
+std::string eGameDir::i45BinaryPath() {
+    return exeDir() + "../i45.e";
+}
+
+std::string eGameDir::i60BinaryPath() {
+    return exeDir() + "../i60.e";
 }
 
 std::string eGameDir::exeDir() {
