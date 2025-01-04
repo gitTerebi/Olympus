@@ -2217,8 +2217,15 @@ bool checkTextureFiles() {
 
 bool eGameTextures::initialize(SDL_Renderer* const r) {
     if(sInitialized) return true;
-    const bool e = checkTextureFiles();
-    if(!e) return false;
+//    const bool e = checkTextureFiles();
+    const auto path = eGameDir::path("DATA");
+    const bool e = std::filesystem::exists(path);
+    if(!e) {
+        printf("DATA folder missing from Zeus and Poseidon directory.\n"
+               "Expected to find %s\n",
+               path.c_str());
+        return false;
+    }
     int i = 0;
     for(const auto& s : {std::pair<int, int>{30, 15},
                          std::pair<int, int>{60, 30},
