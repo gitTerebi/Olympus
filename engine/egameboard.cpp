@@ -159,6 +159,7 @@ void eGameBoard::resize(const int w, const int h) {
     updateNeighbours();
     updateMarbleTiles();
     scheduleTerrainUpdate();
+    updateTerritoryBorders();
 }
 
 void eGameBoard::clear() {

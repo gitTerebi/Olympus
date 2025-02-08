@@ -193,6 +193,12 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         const auto b = board->banner(cid, eBannerTypeS::exitPoint);
         return b != nullptr;
     });
+    {
+        w12->addAction("Neutral Territory", [this]() {
+            mMode = eTerrainEditMode::cityTerritory;
+            mModeId = static_cast<int>(eCityId::neutralFriendly);
+        });
+    }
     const auto cids = board->citiesOnBoard();
     for(const auto cid : cids) {
         const auto name = board->cityName(cid);
