@@ -59,6 +59,7 @@ bool ePathFinder::findPath(eTileBase* const start,
         if(onlyDiagonal && notDiagonal) return;
         auto tt = tileGetter(brd, tile->first, x, y);
         if(!tt.first || !tt.second) return;
+        if(tt.first->cityId() != tile->first->cityId()) return;
         const int dinc = distance ? distance(tt.first) : 1;
         const int newDist = dist + dinc;
         if(mFinish(tt.first)) {
@@ -73,57 +74,48 @@ bool ePathFinder::findPath(eTileBase* const start,
         }
         if(!mWalkable(tt.first)) return;
         if(notDiagonal) {
+            const auto checkWalkable = [&](const int dx, const int dy) {
+                const auto ttt = tileGetter(brd, tile->first, dx, dy);
+                if(ttt.first && ttt.second) {
+                    return mWalkable(ttt.first);
+                }
+                return false;
+            };
             if(x == -1 && y == -1) { // top
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 0, -1);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(0, -1);
+                    if(!w) return;
                 }
                 {
-                    const auto ttt = tileGetter(brd, tile->first, -1, 0);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(-1, 0);
+                    if(!w) return;
                 }
             } else if(x == -1 && y == 1) { // left
                 {
-                    const auto ttt = tileGetter(brd, tile->first, -1, 0);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(-1, 0);
+                    if(!w) return;
                 }
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 0, 1);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(0, 1);
+                    if(!w) return;
                 }
             } else if(x == 1 && y == 1) { // bottom
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 1, 0);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(1, 0);
+                    if(!w) return;
                 }
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 0, 1);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(0, 1);
+                    if(!w) return;
                 }
             } else if(x == 1 && y == -1) { // right
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 1, 0);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(1, 0);
+                    if(!w) return;
                 }
                 {
-                    const auto ttt = tileGetter(brd, tile->first, 0, -1);
-                    if(ttt.first && ttt.second) {
-                        if(!mWalkable(ttt.first)) return;
-                    }
+                    const bool w = checkWalkable(0, -1);
+                    if(!w) return;
                 }
             }
         }
