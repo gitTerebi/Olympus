@@ -392,7 +392,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
 
         {
-            const auto& border = tile->territoryBorder();
+            auto border = tile->territoryBorder();
             const int tx = tile->x();
             const int ty = tile->y();
             int rtx;
@@ -400,9 +400,30 @@ void eGameWidget::paintEvent(ePainter& p) {
             eTileHelper::tileIdToRotatedTileId(tx, ty,
                                                rtx, rty, dir,
                                                boardw, boardh);
+
             SDL_Color color{255, 255, 255, 255};
             const int dim = mTileW/10;
             const int ta = tile->altitude();
+
+            switch(dir) {
+            case eWorldDirection::N: {
+            } break;
+            case eWorldDirection::E: {
+                border.fT = border.fR;
+                border.fTL = border.fTR;
+                border.fTR = border.fBR;
+            } break;
+            case eWorldDirection::S: {
+                border.fT = border.fB;
+                border.fTR = border.fBL;
+                border.fTL = border.fBR;
+            } break;
+            case eWorldDirection::W: {
+                border.fT = border.fL;
+                border.fTR = border.fTL;
+                border.fTL = border.fBL;
+            } break;
+            }
             if(border.fT) {
                 tp.fillRect(rtx - ta, rty - ta, dim, dim, color);
             }

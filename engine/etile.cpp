@@ -212,6 +212,9 @@ void eTile::updateTerritoryBorder() {
     set(topLeft<eTile>(), mBorder.fTL);
 
     set(top<eTile>(), mBorder.fT);
+    set(bottom<eTile>(), mBorder.fB);
+    set(left<eTile>(), mBorder.fL);
+    set(right<eTile>(), mBorder.fR);
 }
 
 bool eTile::onFire() const {
