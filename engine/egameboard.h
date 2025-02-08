@@ -593,9 +593,11 @@ public:
     void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
+    std::vector<eCityId> playerCitiesOnBoard(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCitiesOnBoard() const;
     ePlayerId personPlayer() const;
     eBoardCity* boardCityWithId(const eCityId cid) const;
+    SDL_Rect boardCityTileBRect(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
     std::string cityName(const eCityId cid) const;

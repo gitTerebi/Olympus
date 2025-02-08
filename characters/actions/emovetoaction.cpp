@@ -85,7 +85,9 @@ void eMoveToAction::start(const eTileFinal& final,
         setState(eCharacterActionState::failed);
     };
 
-    const auto pft = new ePathFindTask(onCityId(),
+    const auto cid = onCityId();
+    const auto tileBRect = brd.boardCityTileBRect(cid);
+    const auto pft = new ePathFindTask(cid, tileBRect,
                                        startTile,
                                        pathFindWalkable,
                                        final, finishFunc,

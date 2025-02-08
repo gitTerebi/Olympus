@@ -982,7 +982,7 @@ bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
     const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
     const int w = mBoard->width();
     const int h = mBoard->height();
-    const bool r = p.findPath(startTile, 100, true, w, h);
+    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
     if(!r) return false;
     return p.extractPath(path);
 }
@@ -1006,7 +1006,7 @@ bool eGameWidget::columnPath(std::vector<eOrientation>& path) {
     const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
     const int w = mBoard->width();
     const int h = mBoard->height();
-    const bool r = p.findPath(startTile, 100, true, w, h);
+    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
     if(!r) return false;
     return p.extractPath(path);
 }
@@ -1170,7 +1170,7 @@ void eGameWidget::updatePatrolPath() {
             ePathFinder p(valid, final);
             const int w = mBoard->width();
             const int h = mBoard->height();
-            const bool r = p.findPath(to, 100, true, w, h,
+            const bool r = p.findPath({0, 0, w, h}, to, 100, true, w, h,
                                       eWalkableHelpers::sRoadAvenueTileDistance);
             if(!r) return false;
             std::vector<eTile*> path;

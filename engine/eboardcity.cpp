@@ -33,10 +33,24 @@ eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
 
 void eBoardCity::updateTiles() {
     mTiles.clear();
-    mBoard.iterateOverAllTiles([this](eTile* const tile) {
+    bool first = true;
+    mBoard.iterateOverAllTiles([&](eTile* const tile) {
         const auto cid = tile->cityId();
         if(cid != mId) return;
         mTiles.push_back(tile);
+        SDL_Rect tRect;
+        tRect.x = tile->dx();
+        tRect.y = tile->dy();
+        tRect.w = 1;
+        tRect.h = 1;
+        if(first) {
+            first = false;
+            mTileBRect = tRect;
+        } else {
+            SDL_Rect result;
+            SDL_UnionRect(&mTileBRect, &tRect, &result);
+            mTileBRect = result;
+        }
     });
 }
 

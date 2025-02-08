@@ -65,6 +65,7 @@ public:
 
     const std::vector<eTile*>& tiles() const { return mTiles; }
     void updateTiles();
+    const SDL_Rect& tileBRect() const { return mTileBRect; }
 
     void incTime(const int by);
 
@@ -297,6 +298,7 @@ private:
 
     eCityId mId;
     std::vector<eTile*> mTiles;
+    SDL_Rect mTileBRect;
     bool mAtlantean = false;
 
     eWageRate mWageRate{eWageRate::normal};

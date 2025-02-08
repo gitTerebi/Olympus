@@ -582,7 +582,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         const auto startTile = board.tile(tx, ty);
         const int w = board.width();
         const int h = board.height();
-        const bool r = p.findPath(startTile, 100, true, w, h);
+        const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
         sc = r ? 0 : 1;
     } break;
     case eHeroRequirementType::marble:

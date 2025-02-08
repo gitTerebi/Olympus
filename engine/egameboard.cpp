@@ -847,7 +847,7 @@ void eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
                         const eResourceType type,
                         const int count) {
     int remC = count;
-    const auto cts = playerCities(personPlayer());
+    const auto cts = personPlayerCitiesOnBoard();
     for(const auto cid : cts) {
         const auto c = boardCityWithId(cid);
         if(!c) continue;
@@ -970,15 +970,7 @@ void eGameBoard::updateTerritoryBorders() {
 }
 
 std::vector<eCityId> eGameBoard::personPlayerCitiesOnBoard() const {
-    std::vector<eCityId> result;
-    for(const auto& c : mCitiesOnBoard) {
-        const auto cid = c->id();
-        const auto pid = cityIdToPlayerId(cid);
-        if(pid == personPlayer()) {
-            result.push_back(cid);
-        }
-    }
-    return result;
+    return playerCitiesOnBoard(personPlayer());
 }
 
 ePlayerId eGameBoard::cityIdToPlayerId(const eCityId cid) const {
@@ -1006,6 +998,18 @@ eCityId eGameBoard::playerCapital(const ePlayerId pid) const {
     return mWorldBoard->playerCapital(pid);
 }
 
+std::vector<eCityId> eGameBoard::playerCitiesOnBoard(const ePlayerId pid) const {
+    std::vector<eCityId> result;
+    for(const auto& c : mCitiesOnBoard) {
+        const auto cid = c->id();
+        const auto ppid = cityIdToPlayerId(cid);
+        if(pid == ppid) {
+            result.push_back(cid);
+        }
+    }
+    return result;
+}
+
 ePlayerId eGameBoard::personPlayer() const {
     return mWorldBoard->personPlayer();
 }
@@ -1015,6 +1019,13 @@ eBoardCity* eGameBoard::boardCityWithId(const eCityId cid) const {
         if(c->id() == cid) return c.get();
     }
     return nullptr;
+}
+
+SDL_Rect eGameBoard::boardCityTileBRect(const eCityId cid) const {
+    for(const auto& c : mCitiesOnBoard) {
+        if(c->id() == cid) return c->tileBRect();
+    }
+    return SDL_Rect{0, 0, 0, 0};
 }
 
 eBoardPlayer* eGameBoard::boardPlayerWithId(const ePlayerId pid) const {
@@ -1098,7 +1109,7 @@ void eGameBoard::horsemanKilled(const eCityId cid) {
 eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
     eEnlistedForces result;
 
-    const auto cids = playerCities(pid);
+    const auto cids = playerCitiesOnBoard(pid);
     for(const auto cid : cids) {
         const auto c = boardCityWithId(cid);
         const auto e = c->getEnlistableForces();
@@ -1440,7 +1451,7 @@ void eGameBoard::handleGamesBegin(const eGames game) {
     }
 
     eEventData ed;
-    const auto pcids = playerCities(personPlayer());
+    const auto pcids = personPlayerCitiesOnBoard();
     for(const auto& cid : pcids) {
         const auto c = boardCityWithId(cid);
         const double chance = c->winningChance(game);
@@ -2188,7 +2199,7 @@ void eGameBoard::scheduleDataUpdate() {
 
 int eGameBoard::population(const ePlayerId pid) const {
     int result = 0;
-    const auto cids = playerCities(pid);
+    const auto cids = playerCitiesOnBoard(pid);
     for(const auto cid : cids) {
         result += population(cid);
     }

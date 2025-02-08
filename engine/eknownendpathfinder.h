@@ -11,7 +11,8 @@ public:
                         eTileBase* const endTile);
 
     using eTileDistance = std::function<int(eTileBase* const)>;
-    bool findPath(eTileBase* const startTile,
+    bool findPath(const SDL_Rect& tileBRect,
+                  eTileBase* const startTile,
                   const int maxDist,
                   const bool onlyDiagonal,
                   const int srcW, const int srcH,

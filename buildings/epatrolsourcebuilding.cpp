@@ -131,7 +131,8 @@ void ePatrolSourceBuilding::spawn(const int id) {
         spawn(id, targetBuilding);
     };
 
-    const auto pft = new ePathFindTask(cityId(),
+    const auto tileBRect = board.boardCityTileBRect(cid);
+    const auto pft = new ePathFindTask(cid, tileBRect,
                                        startTile, walkable,
                                        finalTile, finishFunc,
                                        failFunc, true, 200,

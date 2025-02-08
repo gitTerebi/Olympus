@@ -24,11 +24,14 @@ int manhattanDistance(const eTileBase* const t0,
 }
 
 bool eKnownEndPathFinder::findPath(
+        const SDL_Rect& tileBRect,
         eTileBase* const start,
         const int maxDist,
         const bool onlyDiagonal,
         const int srcW, const int srcH,
         const eTileDistance& distance) {
+    (void)srcW;
+    (void)srcH;
     if(!start) return false;
 
     const bool finishOnFound = mMode == ePathFinderMode::findSingle;
@@ -47,20 +50,17 @@ bool eKnownEndPathFinder::findPath(
 
     auto& brd = mData.fBoard;
     {
-//        const int startX = start->dx();
-//        const int startY = start->dy();
+        const int startX = start->dx();
+        const int startY = start->dy();
 
-//        const int minX = std::max(0, startX - maxDist);
-//        int minY = std::max(0, startY - maxDist);
-//        if(minY % 2) {
-//            minY--;
-//        }
+        const int minX = std::max(tileBRect.x, startX - maxDist);
+        const int minY = std::max(tileBRect.y, startY - maxDist);
 
-//        const int maxX = std::min(srcW, startX + maxDist);
-//        const int maxY = std::min(srcH, startY + maxDist);
+        const int maxX = std::min(tileBRect.x + tileBRect.w - 1, startX + maxDist);
+        const int maxY = std::min(tileBRect.y + tileBRect.h - 1, startY + maxDist);
 
-//        brd = ePathBoard(minX, minY, maxX - minX, maxY - minY);
-        brd = ePathBoard(0, 0, srcW, srcH);
+        brd = ePathBoard(minX, minY, maxX - minX + 1, maxY - minY + 1);
+//        brd = ePathBoard(0, 0, srcW, srcH);
     }
 
     std::map<int, std::vector<eTilePair>> toProcess;
