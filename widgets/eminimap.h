@@ -27,6 +27,7 @@ public:
 protected:
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;
+    bool mouseReleaseEvent(const eMouseEvent& e) override;
 
     void paintEvent(ePainter& p) override;
 private:

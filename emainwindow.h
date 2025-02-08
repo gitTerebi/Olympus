@@ -36,6 +36,7 @@ public:
     int width() const { return resolution().width(); }
     int height() const { return resolution().height(); }
     const eResolution& resolution() const { return mSettings.fRes; }
+    SDL_Window* window() const { return mSdlWindow; }
     SDL_Renderer* renderer() const { return mSdlRenderer; }
 
     void setResolution(const eResolution& res);

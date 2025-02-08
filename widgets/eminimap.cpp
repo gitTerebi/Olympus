@@ -4,6 +4,8 @@
 
 #include "etilehelper.h"
 
+#include "emainwindow.h"
+
 void eMiniMap::renderTargetsReset() {
     eWidget::renderTargetsReset();
     scheduleUpdate();
@@ -29,6 +31,8 @@ bool eMiniMap::mousePressEvent(const eMouseEvent& e) {
 
     if(mChangeAction) mChangeAction();
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     return true;
 }
 
@@ -41,11 +45,25 @@ bool eMiniMap::mouseMoveEvent(const eMouseEvent& e) {
     const int dy = e.y() - mMouseY;
     viewAbsPix(mCenterX + dx, mCenterY + dy);
 
-    mMouseX = e.x();
-    mMouseY = e.y();
+//    mMouseX = e.x();
+//    mMouseY = e.y();
+
+    {
+        int cx;
+        int cy;
+        SDL_GetMouseState(&cx, &cy);
+        const auto w = window()->window();
+        SDL_WarpMouseInWindow(w, cx - dx, cy - dy);
+    }
 
     if(mChangeAction) mChangeAction();
 
+    return true;
+}
+
+bool eMiniMap::mouseReleaseEvent(const eMouseEvent& e) {
+    (void)e;
+    SDL_ShowCursor(SDL_ENABLE);
     return true;
 }
 
