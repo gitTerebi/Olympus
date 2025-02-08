@@ -35,7 +35,7 @@ void eGiftSizeDialog::initialize(const eResourceType type,
 
     const int baseCount = eGiftHelpers::giftCount(type);
     int avCount = 0;
-    const auto cids = board.personPlayerCities();
+    const auto cids = board.personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         const int r = board.resourceCount(cid, type);
         if(r > avCount) avCount = r;

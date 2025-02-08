@@ -33,8 +33,6 @@ void eGameBoard::read(eReadStream& src) {
 
     src >> mSoldiersUpdate;
 
-    mUpdateAppeal = true;
-
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->read(src);
@@ -161,6 +159,8 @@ void eGameBoard::read(eReadStream& src) {
              const auto c = std::make_shared<eBoardCity>(cid, *this);
              c->read(src);
              mCitiesOnBoard.push_back(c);
+             scheduleAppealMapUpdate(cid);
+             mThreadPool.addBoard(cid);
          }
      }
 

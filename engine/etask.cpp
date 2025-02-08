@@ -1,5 +1,5 @@
 #include "etask.h"
 
-eTask::eTask() {}
+eTask::eTask(const eCityId cid) : mCid(cid) {}
 
 eTask::~eTask() {}

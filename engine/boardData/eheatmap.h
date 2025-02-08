@@ -34,6 +34,9 @@ public:
 
     int width() const { return mWidth; }
     int height() const { return mHeight; }
+
+    void set(const int x, const int y,
+             const bool e, const double h);
 private:
     int mWidth = 0;
     int mHeight = 0;

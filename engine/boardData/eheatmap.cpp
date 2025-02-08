@@ -67,3 +67,10 @@ bool eHeatMap::enabled(const int x, const int y) const {
 double eHeatMap::heat(const int x, const int y) const {
     return mMap[x][y].fAppeal;
 }
+
+void eHeatMap::set(const int x, const int y,
+                   const bool e, const double h) {
+    auto& tile = mMap[x][y];
+    tile.fEnabled = e;
+    tile.fAppeal = h;
+}

@@ -178,7 +178,8 @@ void eTradePost::updateRouteStart() {
         mRouteStart = nullptr;
     };
 
-    const auto pft = new ePathFindTask(startTile, walkable,
+    const auto pft = new ePathFindTask(cityId(),
+                                       startTile, walkable,
                                        final, finishFunc,
                                        findFailFunc, true,
                                        10000);

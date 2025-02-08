@@ -85,7 +85,8 @@ void eMoveToAction::start(const eTileFinal& final,
         setState(eCharacterActionState::failed);
     };
 
-    const auto pft = new ePathFindTask(startTile,
+    const auto pft = new ePathFindTask(onCityId(),
+                                       startTile,
                                        pathFindWalkable,
                                        final, finishFunc,
                                        findFailFunc, mDiagonalOnly,

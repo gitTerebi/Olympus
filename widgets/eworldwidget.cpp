@@ -195,7 +195,7 @@ void eWorldWidget::openRequestDialog() {
         d->deleteLater();
     };
     const auto requestAid = [this, d]() {
-        const auto cids = mBoard->personPlayerCities();
+        const auto cids = mBoard->personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
             const auto has = mBoard->militaryAid(cid, mCity);
             if(has) return;

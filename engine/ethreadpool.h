@@ -17,6 +17,7 @@ public:
     ~eThreadPool();
 
     void initialize(const int w, const int h);
+    void addBoard(const eCityId cid);
 
     void queueTask(eTask* const task);
     void handleFinished();

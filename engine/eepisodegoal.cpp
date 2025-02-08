@@ -281,7 +281,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         const bool wasMet = met();
         const auto type = static_cast<eGodType>(fEnumInt1);
         fStatusCount = 0;
-        const auto cids = b->personPlayerCities();
+        const auto cids = b->personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
             const auto s = b->sanctuary(cid, type);
             const int sc = s ? s->progress() : 0;
@@ -294,7 +294,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::support: {
         const auto type = static_cast<eBannerType>(fEnumInt1);
-        const auto cs = b->personPlayerCities();
+        const auto cs = b->personPlayerCitiesOnBoard();
         fStatusCount = 0;
         for(const auto c : cs) {
             fStatusCount += b->countSoldiers(type, c);
@@ -335,7 +335,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         fStatusCount = 0;
         const auto type = fEnumInt1 == 0 ? eBuildingType::commonHouse :
                                            eBuildingType::eliteHousing;
-        const auto cids = b->personPlayerCities();
+        const auto cids = b->personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
             b->buildings(cid, [&](eBuilding* const b) {
                 const auto btype = b->type();
@@ -358,7 +358,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     case eEpisodeGoalType::setAsideGoods: {
         const auto res = static_cast<eResourceType>(fEnumInt1);
         fPreviewCount = 0;
-        const auto cids = b->personPlayerCities();
+        const auto cids = b->personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
             fPreviewCount += b->resourceCount(cid, res);
         }

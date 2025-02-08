@@ -178,7 +178,7 @@ void eGodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
             setCurrentAction(nullptr);
         }
     };
-    const auto task = new eHeatMapTask(hg, hmFinish);
+    const auto task = new eHeatMapTask(onCityId(), hg, hmFinish);
     auto& board = c->getBoard();
     auto& tp = board.threadPool();
     tp.queueTask(task);

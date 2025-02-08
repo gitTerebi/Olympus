@@ -123,7 +123,7 @@ void eEpisodeIntroductionWidget::initialize(
                 if(g->fType == eEpisodeGoalType::setAsideGoods) {
                     const auto res = static_cast<eResourceType>(g->fEnumInt1);
                     int has = 0;
-                    const auto cids = board->personPlayerCities();
+                    const auto cids = board->personPlayerCitiesOnBoard();
                     for(const auto cid : cids) {
                         has += board->resourceCount(cid, res);
                     }

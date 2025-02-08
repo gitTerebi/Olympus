@@ -423,7 +423,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
 
 bool sHeroReady(eGameBoard& board, const eHeroType hero) {
     eHerosHall* hh = nullptr;
-    const auto cids = board.personPlayerCities();
+    const auto cids = board.personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         hh = board.heroHall(cid, hero);
         if(hh) break;
@@ -446,7 +446,7 @@ void eOverviewDataWidget::addGodQuests() {
         });
         b->setPressAction([this, q, qq]() {
             eHerosHall* hh = nullptr;
-            const auto cids = mBoard.personPlayerCities();
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
                 hh = mBoard.heroHall(cid, q.fHero);
                 if(hh) break;
@@ -486,7 +486,7 @@ void eOverviewDataWidget::addCityRequests() {
         const auto b = new eResourceRequestButton(window());
         b->setWidth(mQuestButtons->width());
         b->initialize(q.fType, q.fCity, [this, q]() {
-            const auto cids = mBoard.personPlayerCities();
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
                 const auto count = mBoard.resourceCount(cid, q.fType);
                 if(count >= q.fCount) return true;
@@ -495,7 +495,7 @@ void eOverviewDataWidget::addCityRequests() {
         });
         b->setPressAction([this, q, qq]() {
             const auto gw = gameWidget();
-            const auto cids = mBoard.personPlayerCities();
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
                 const auto count = mBoard.resourceCount(cid, q.fType);
                 if(count >= q.fCount) {
@@ -518,7 +518,7 @@ void eOverviewDataWidget::addCityRequests() {
         const auto b = new eTroopsRequestButton(window());
         b->setWidth(mQuestButtons->width());
         b->initialize(qq->city(), [this]() {
-            const auto cids = mBoard.personPlayerCities();
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
                 const auto& bs = mBoard.banners(cid);
                 for(const auto& b : bs) {

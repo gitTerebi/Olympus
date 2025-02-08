@@ -295,7 +295,7 @@ public:
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverAllTiles(const eTileAction& a);
 
-    void scheduleAppealMapUpdate();
+    void scheduleAppealMapUpdate(const eCityId cid);
     void updateAppealMapIfNeeded();
 
     eWorldBoard* getWorldBoard() const { return mWorldBoard; }
@@ -593,7 +593,7 @@ public:
     void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
-    std::vector<eCityId> personPlayerCities() const;
+    std::vector<eCityId> personPlayerCitiesOnBoard() const;
     ePlayerId personPlayer() const;
     eBoardCity* boardCityWithId(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
@@ -690,7 +690,7 @@ private:
 
     int mSoldiersUpdate = 10000;
 
-    bool mUpdateAppeal = false;
+    std::map<eCityId, eTrueBool> mUpdateAppeal;
     eHeatMap mAppealMap;
 
     eAction mButtonVisUpdater;

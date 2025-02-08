@@ -47,7 +47,7 @@ void eResourceGrantedEventBase::trigger() {
     eEventData ed;
     ed.fCity = mCity;
     int maxSpace = 0;
-    const auto cids = board->personPlayerCities();
+    const auto cids = board->personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         const int space = board->spaceForResource(cid, mResource);
         if(space > maxSpace) maxSpace = space;

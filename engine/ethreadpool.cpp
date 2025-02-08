@@ -34,6 +34,12 @@ void eThreadPool::initialize(const int w, const int h) {
     }
 }
 
+void eThreadPool::addBoard(const eCityId cid) {
+    for(auto& t : mThreadData) {
+        t->addBoard(cid);
+    }
+}
+
 void eThreadPool::threadEntry(eThreadData* data) {
     eTask* task = nullptr;
     while(!mQuit) {
@@ -59,9 +65,10 @@ void eThreadPool::threadEntry(eThreadData* data) {
 
 //                const auto t1 = high_resolution_clock::now();
 
+                const auto cid = task->cid();
                 data->setRunning(true);
-                data->updateBoard();
-                auto& b = data->board();
+                data->updateBoard(cid);
+                auto& b = data->board(cid);
                 task->run(b);
                 data->setRunning(false);
 
@@ -79,11 +86,18 @@ void eThreadPool::threadEntry(eThreadData* data) {
 }
 
 void eThreadPool::queueTask(eTask* const task) {
+    if(mTaskId == 0) {
+        for(const auto d : mThreadData) {
+            d->scheduleUpdate(mBoard);
+        }
+    }
+    const auto cid = task->cid();
     const int threadId = mTaskId++ % mThreadData.size();
     const auto d = mThreadData[threadId];
-    if(d->fDataUpdateScheduled) {
-        d->fDataUpdateScheduled = false;
-        d->scheduleUpdate(mBoard);
+    auto& cidV = d->fDataUpdateScheduled[cid].fV;
+    if(cidV) {
+        cidV = false;
+        d->scheduleUpdate(mBoard, cid);
     }
     std::unique_lock<std::mutex> lock(d->fTasksMutex);
     d->fTasks.emplace(task);
@@ -104,11 +118,8 @@ void eThreadPool::handleFinished() {
 
 void eThreadPool::scheduleDataUpdate() {
     for(const auto d : mThreadData) {
-        d->fDataUpdateScheduled = true;
-        std::lock_guard lock(d->fTasksMutex);
-        if(!d->fTasks.empty()) {
-            d->fDataUpdateScheduled = false;
-            d->scheduleUpdate(mBoard);
+        for(auto& f : d->fDataUpdateScheduled) {
+            f.second.fV = true;
         }
     }
 }

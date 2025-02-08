@@ -1,7 +1,8 @@
 #include "efunctask.h"
 
-eFuncTask::eFuncTask(const eRunFunc& runFunc, const eFunc& finishFunc) :
-    mRun(runFunc), mFinish(finishFunc) {}
+eFuncTask::eFuncTask(const eCityId cid, const eRunFunc& runFunc,
+                     const eFunc& finishFunc) :
+    eTask(cid), mRun(runFunc), mFinish(finishFunc) {}
 
 void eFuncTask::run(eThreadBoard& data) {
     if(mRun) mRun(data);

@@ -15,7 +15,8 @@ eTileDistance tileDist(const stdsptr<eWalkableObject>& w,
     }
 }
 
-ePathFindTask::ePathFindTask(const eTileGetter& startTile,
+ePathFindTask::ePathFindTask(const eCityId cid,
+                             const eTileGetter& startTile,
                              const stdsptr<eWalkableObject>& tileWalkable,
                              const eTileChecker& endTileFunc,
                              const eFinishFunc& finishFunc,
@@ -25,6 +26,7 @@ ePathFindTask::ePathFindTask(const eTileGetter& startTile,
                              const eTileDistance& distance,
                              const eTileGetter& endTile,
                              const bool findAll) :
+    eTask(cid),
     mStartTile(startTile),
     mEndTile(endTile),
     mTileWalkable(tileWalkable),

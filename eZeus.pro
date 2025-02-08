@@ -386,6 +386,7 @@ SOURCES += \
         engine/eworldboard.cpp \
         engine/eworldcity.cpp \
         engine/thread/ethreadboard.cpp \
+        engine/thread/ethreadboardhandler.cpp \
         engine/thread/ethreadbuilding.cpp \
         engine/thread/ethreadcharacter.cpp \
         engine/thread/ethreaddata.cpp \
@@ -1014,6 +1015,7 @@ HEADERS += \
     engine/eworldcity.h \
     engine/eworlddirection.h \
     engine/thread/ethreadboard.h \
+    engine/thread/ethreadboardhandler.h \
     engine/thread/ethreadbuilding.h \
     engine/thread/ethreadcharacter.h \
     engine/thread/ethreaddata.h \

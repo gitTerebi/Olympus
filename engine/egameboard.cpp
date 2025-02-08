@@ -225,25 +225,37 @@ void eGameBoard::iterateOverAllTiles(const eTileAction& a) {
     }
 }
 
-void eGameBoard::scheduleAppealMapUpdate() {
-    mUpdateAppeal = true;
+void eGameBoard::scheduleAppealMapUpdate(const eCityId cid) {
+    mUpdateAppeal[cid].fV = true;
 }
 
 void eGameBoard::updateAppealMapIfNeeded() {
-    if(!mUpdateAppeal) return;
-    mUpdateAppeal = false;
-    const auto finish = [this](eHeatMap& map) {
-        std::swap(appealMap(), map);
-    };
-    const auto task = new eHeatMapTask(eHeatGetters::appeal, finish);
-    mThreadPool.queueTask(task);
+    for(auto& c : mUpdateAppeal) {
+        bool& fV = c.second.fV;
+        if(!fV) continue;
+        fV = false;
+        const auto cid = c.first;
+        const auto finish = [this, cid](eHeatMap& map) {
+            const auto c = boardCityWithId(cid);
+            const auto& tiles = c->tiles();
+            for(const auto t : tiles) {
+                const int dx = t->dx();
+                const int dy = t->dy();
+                const bool e = map.enabled(dx, dy);
+                const double h = map.heat(dx, dy);
+                mAppealMap.set(dx, dy, e, h);
+            }
+        };
+        const auto task = new eHeatMapTask(cid, eHeatGetters::appeal, finish);
+        mThreadPool.queueTask(task);
+    }
 }
 
 void eGameBoard::enlistForces(const eEnlistedForces& forces) {
     for(const auto& b : forces.fSoldiers) {
         b->goAbroad();
     }
-    const auto cids = personPlayerCities();
+    const auto cids = personPlayerCitiesOnBoard();
     for(const auto h : forces.fHeroes) {
         eHerosHall* hh = nullptr;
         for(const auto cid : cids) {
@@ -785,7 +797,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
     eEventData ed;
     ed.fType = eMessageEventType::requestTributeGranted;
     ed.fCity = c;
-    const auto cids = personPlayerCities();
+    const auto cids = personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         ed.fCSpaceCount[cid] = spaceForResource(cid, type);
         ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
@@ -957,8 +969,16 @@ void eGameBoard::updateTerritoryBorders() {
     }
 }
 
-std::vector<eCityId> eGameBoard::personPlayerCities() const {
-    return mWorldBoard->personPlayerCities();
+std::vector<eCityId> eGameBoard::personPlayerCitiesOnBoard() const {
+    std::vector<eCityId> result;
+    for(const auto& c : mCitiesOnBoard) {
+        const auto cid = c->id();
+        const auto pid = cityIdToPlayerId(cid);
+        if(pid == personPlayer()) {
+            result.push_back(cid);
+        }
+    }
+    return result;
 }
 
 ePlayerId eGameBoard::cityIdToPlayerId(const eCityId cid) const {
@@ -1309,7 +1329,7 @@ stdsptr<ePlague> eGameBoard::nearestPlague(
 
 void eGameBoard::updateMusic() {
     bool battle = false;
-    const auto cids = personPlayerCities();
+    const auto cids = personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         const auto c = boardCityWithId(cid);
         if(!c) continue;
@@ -1687,7 +1707,7 @@ void eGameBoard::registerBuilding(eBuilding* const b) {
     const auto city = boardCityWithId(cid);
     if(!city) return;
     city->registerBuilding(b);
-    scheduleAppealMapUpdate();
+    scheduleAppealMapUpdate(cid);
 }
 
 bool eGameBoard::unregisterBuilding(eBuilding* const b) {
@@ -1698,7 +1718,7 @@ bool eGameBoard::unregisterBuilding(eBuilding* const b) {
     if(!city) return false;
     city->unregisterBuilding(b);
     eVectorHelpers::remove(mTimedBuildings, b);
-    scheduleAppealMapUpdate();
+    scheduleAppealMapUpdate(cid);
     return true;
 }
 
@@ -2032,7 +2052,7 @@ void eGameBoard::incTime(const int by) {
             c->nextYear();
         }
 
-        const auto ppcs = personPlayerCities();
+        const auto ppcs = personPlayerCitiesOnBoard();
         for(const auto cid : ppcs) {
             auto& defs = mDefeatedBy[cid];
             for(const auto& cc : defs) {
@@ -2074,7 +2094,7 @@ void eGameBoard::incTime(const int by) {
     mEmploymentCheckTime += by;
     if(mEmploymentCheckTime > ect) {
         mEmploymentCheckTime -= ect;
-        const auto ppcs = personPlayerCities();
+        const auto ppcs = personPlayerCitiesOnBoard();
         for(const auto cid : ppcs) {
             const auto c = boardCityWithId(cid);
             const auto& emplData = c->employmentData();

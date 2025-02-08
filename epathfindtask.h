@@ -13,7 +13,8 @@ public:
     using eFinishFunc = std::function<void(const ePath&)>;
     using eFailFunc = std::function<void()>;
     using eTileDistance = std::function<int(eTileBase* const)>;
-    ePathFindTask(const eTileGetter& startTile,
+    ePathFindTask(const eCityId cid,
+                  const eTileGetter& startTile,
                   const stdsptr<eWalkableObject>& tileWalkable,
                   const eTileChecker& endTileFunc,
                   const eFinishFunc& finishFunc,

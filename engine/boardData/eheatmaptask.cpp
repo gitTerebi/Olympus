@@ -2,9 +2,10 @@
 
 #include "../thread/ethreadboard.h"
 
-eHeatMapTask::eHeatMapTask(const eHeatGetter& heatGetter,
+eHeatMapTask::eHeatMapTask(const eCityId cid,
+                           const eHeatGetter& heatGetter,
                            const eFunc& finish) :
-    mHeatGetter(heatGetter), mFinish(finish) {
+    eTask(cid), mHeatGetter(heatGetter), mFinish(finish) {
 
 }
 

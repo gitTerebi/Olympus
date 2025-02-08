@@ -36,7 +36,7 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
     auto all = eResourceTypeHelpers::extractResourceTypes(
                 eResourceType::allBasic);
     all.push_back(eResourceType::drachmas);
-    const auto cids = board.personPlayerCities();
+    const auto cids = board.personPlayerCitiesOnBoard();
     for(const auto r : all) {
         const int count = eGiftHelpers::giftCount(r);
         for(const auto cid : cids) {

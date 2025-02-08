@@ -13,7 +13,8 @@ class eHeatMapTask : public eTask {
 public:
     using eHeatGetter = std::function<eHeat(eBuildingType)>;
     using eFunc = std::function<void(eHeatMap&)>;
-    eHeatMapTask(const eHeatGetter& heatGetter,
+    eHeatMapTask(const eCityId cid,
+                 const eHeatGetter& heatGetter,
                  const eFunc& finish);
 
     void run(eThreadBoard& board);

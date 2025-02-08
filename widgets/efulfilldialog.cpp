@@ -52,7 +52,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
 
         b->setPressAction([this, q, board, resource, count]() {
             const auto wboard = board->getWorldBoard();
-            const auto cids = board->personPlayerCities();
+            const auto cids = board->personPlayerCitiesOnBoard();
 
             std::vector<eCityId> validCities;
             std::vector<std::string> cityNames;
@@ -98,7 +98,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         b->addWidget(iww);
         iww->move(p, p);
 
-        const auto cids = board->personPlayerCities();
+        const auto cids = board->personPlayerCitiesOnBoard();
 
         bool f = false;
         for(const auto cid : cids) {
@@ -142,7 +142,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
     }
 
     bool hasArmy = false;
-    const auto cids = board->personPlayerCities();
+    const auto cids = board->personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         const auto& bs = board->banners(cid);
         for(const auto& b : bs) {

@@ -146,7 +146,7 @@ void eReceiveRequestEvent::trigger() {
         return;
     }
 
-    const auto cids = board->personPlayerCities();
+    const auto cids = board->personPlayerCitiesOnBoard();
     for(const auto cid : cids) {
         const int avCount = board->resourceCount(cid, mResource);
         ed.fCSpaceCount[cid] = avCount;
