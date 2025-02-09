@@ -1615,7 +1615,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         mLastX = e.x();
         mLastY = e.y();
         return true;
-    case eMouseButton::left:
+    case eMouseButton::left: {
         if(mInfoWidget) return true;
         mLeftPressed = true;
         int tx;
@@ -1625,8 +1625,11 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         mPressedTY = ty;
         mPressedX = e.x();
         mPressedY = e.y();
+        const auto tile = mBoard->tile(tx, ty);
+        if(mTem->visible()) {
+            mInflTiles = mHoverTiles;
+        }
         if(mPatrolBuilding) {
-            const auto tile = mBoard->tile(tx, ty);
             if(!tile) return true;
             auto& pgs = mPatrolBuilding->patrolGuides();
             const auto it = findGuide(tx, ty);
@@ -1637,7 +1640,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
             }
             updatePatrolPath();
         }
-        return true;
+    } return true;
     case eMouseButton::right: {
         if(mInfoWidget) {
             mInfoWidget->deleteLater();
@@ -1741,28 +1744,18 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
 
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
         if(left && mTem->visible()) {
-            const auto btype = mTem->brushType();
-            if(btype == eBrushType::apply) return true;
-            const auto apply = editFunc();
-            if(!apply) return true;
+//            const auto btype = mTem->brushType();
+//            if(btype == eBrushType::apply) return true;
+//            const auto apply = editFunc();
+//            if(!apply) return true;
             for(const auto t : mHoverTiles) {
                 const bool r = eVectorHelpers::contains(mInflTiles, t);
                 if(r) continue;
-                apply(t);
+//                apply(t);
                 mInflTiles.push_back(t);
             }
-            const auto mode = mTem->mode();
-            if(mode == eTerrainEditMode::raise ||
-               mode == eTerrainEditMode::lower ||
-               mode == eTerrainEditMode::levelOut ||
-               mode == eTerrainEditMode::resetElev) {
-                updateTopBottomAltitude();
-                updateMinMaxAltitude();
-            } else if(mode == eTerrainEditMode::cityTerritory) {
-                mBoard->updateTerritoryBorders();
-            }
-            mBoard->updateMarbleTiles();
-            mBoard->scheduleTerrainUpdate();
+//            mBoard->updateMarbleTiles();
+//            mBoard->scheduleTerrainUpdate();
         }
     }
     return true;
@@ -1955,13 +1948,19 @@ void eGameWidget::updateMinMaxAltitude() {
     mBoard->minMaxAltitude(mMinAltitude, mMaxAltitude);
 }
 
-void eGameWidget::updateMaps() {
+void eGameWidget::updateMaps(const bool totalUpdate) {
     const auto mm = mGm->miniMap();
-    mm->scheduleUpdate();
     const auto mma = mAm->miniMap();
-    mma->scheduleUpdate();
     const auto mmt = mTem->miniMap();
-    mmt->scheduleUpdate();
+    const auto dir = mBoard->direction();
+    mm->setDirection(dir);
+    mma->setDirection(dir);
+    mmt->setDirection(dir);
+    const auto func = totalUpdate ? &eMiniMap::scheduleTotalUpdate :
+                                    &eMiniMap::scheduleUpdate;
+    (mm->*func)();
+    (mma->*func)();
+    (mmt->*func)();
 }
 
 void eGameWidget::setTileSize(const eTileSize size) {
@@ -2016,7 +2015,7 @@ void eGameWidget::setWorldDirection(const eWorldDirection dir) {
     updateTopBottomAltitude();
     viewTile(tile);
     clampViewBox();
-    updateMaps();
+    updateMaps(false);
     updateViewBoxSize();
     mGm->setWorldDirection(dir);
     if(mTem) mTem->setWorldDirection(dir);
@@ -2028,22 +2027,6 @@ void eGameWidget::openDialog(eWidget* const d) {
     d->setY(d->y() + mTopBar->height());
     d->setX(x() + (width() - d->width() - mGm->width())/2);
     window()->execDialog(d);
-}
-
-void eGameWidget::actionOnSelectedTiles(const eTileAction& apply) {
-    if(!apply) return;
-    const int minX = std::min(mPressedTX, mHoverTX);
-    const int minY = std::min(mPressedTY, mHoverTY);
-    const int maxX = std::max(mPressedTX, mHoverTX);
-    const int maxY = std::max(mPressedTY, mHoverTY);
-
-    for(int x = minX; x <= maxX; x++) {
-        for(int y = minY; y <= maxY; y++) {
-            const auto tile = mBoard->tile(x, y);
-            if(!tile) continue;
-            apply(tile);
-        }
-    }
 }
 
 void eGameWidget::updateRequestButtons() {

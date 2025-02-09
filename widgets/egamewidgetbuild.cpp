@@ -454,11 +454,13 @@ bool eGameWidget::buildMouseRelease() {
     const auto ppid = mBoard->personPlayer();
     eApply apply;
     if(mTem->visible()) {
-        mInflTiles.clear();
-        const auto brushType = mTem->brushType();
-        if(brushType != eBrushType::apply) return true;
+//        const auto brushType = mTem->brushType();
+//        if(brushType != eBrushType::apply) return true;
         apply = editFunc();
-        if(!apply) return true;
+        if(!apply) {
+            mInflTiles.clear();
+            return true;
+        }
     } else {
         const auto mode = mGm->mode();
         const int d = mBoard->drachmas(ppid);
@@ -1926,7 +1928,28 @@ bool eGameWidget::buildMouseRelease() {
         }
     }
 
-    actionOnSelectedTiles(apply);
+    if(apply) {
+        const auto btype = mTem->brushType();
+        if(btype == eBrushType::apply) {
+            mInflTiles.clear();
+            const int minX = std::min(mPressedTX, mHoverTX);
+            const int minY = std::min(mPressedTY, mHoverTY);
+            const int maxX = std::max(mPressedTX, mHoverTX);
+            const int maxY = std::max(mPressedTY, mHoverTY);
+
+            for(int x = minX; x <= maxX; x++) {
+                for(int y = minY; y <= maxY; y++) {
+                    const auto tile = mBoard->tile(x, y);
+                    if(!tile) continue;
+                    mInflTiles.push_back(tile);
+                }
+            }
+        }
+        for(const auto tile : mInflTiles) {
+            apply(tile);
+        }
+        mInflTiles.clear();
+    }
     if(mTem->visible()) {
         const auto mode = mTem->mode();
         if(mode == eTerrainEditMode::raise ||

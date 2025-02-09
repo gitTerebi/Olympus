@@ -361,7 +361,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             bool patrolCm = false;
             bool editorHover = false;
             if(mTem->visible()) {
-                editorHover = eVectorHelpers::contains(mHoverTiles, tile);
+                editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
+                              eVectorHelpers::contains(mInflTiles, tile);
                 if(editorHover) {
                     tex->setColorMod(255, 175, 255);
                 }

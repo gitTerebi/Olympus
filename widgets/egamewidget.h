@@ -110,7 +110,7 @@ public:
     void updateViewBoxSize();
     void updateTopBottomAltitude();
     void updateMinMaxAltitude();
-    void updateMaps();
+    void updateMaps(const bool totalUpdate);
 
     void setWorldDirection(const eWorldDirection dir);
 
@@ -146,8 +146,6 @@ private:
     void iterateOverVisibleTiles(const eTileAction& a);
 
     void setTileSize(const eTileSize size);
-
-    void actionOnSelectedTiles(const eTileAction& apply);
 
     using eSpecialRequirement = std::function<bool(eTile*)>;
     bool canBuildBase(const int minX, const int maxX,

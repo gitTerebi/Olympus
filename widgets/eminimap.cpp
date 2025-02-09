@@ -1,4 +1,4 @@
-#include "eminimap.h"
+﻿#include "eminimap.h"
 
 #include "textures/egametextures.h"
 
@@ -6,15 +6,28 @@
 
 #include "emainwindow.h"
 
+eMiniMap::eMiniMap(eMainWindow* const window) :
+    eWidget(window) {
+    mTexture = &mTextures[eWorldDirection::N];
+    mTextures[eWorldDirection::E];
+    mTextures[eWorldDirection::S];
+    mTextures[eWorldDirection::W];
+}
+
 void eMiniMap::renderTargetsReset() {
     eWidget::renderTargetsReset();
-    scheduleUpdate();
+    scheduleTotalUpdate();
 }
 
 void eMiniMap::setBoard(eGameBoard* const board) {
     mBoard = board;
     if(mBoard) viewTile(board->width()/2, board->height()/2);
-    scheduleUpdate();
+    scheduleTotalUpdate();
+}
+
+void eMiniMap::setDirection(const eWorldDirection dir) {
+    if(dir == mDir) return;
+    mTexture = &mTextures[dir];
 }
 
 void eMiniMap::setChangeAction(const eAction& act) {
@@ -69,16 +82,36 @@ bool eMiniMap::mouseReleaseEvent(const eMouseEvent& e) {
 
 void eMiniMap::paintEvent(ePainter& p) {
     mTime++;
-    if(!mTexture || mTime % 60 == 0 || mUpdateScheduled) {
-        updateTexture();
-        mUpdateScheduled = false;
+    const auto cities = mBoard->citiesOnBoard();
+    const int nc = cities.size();
+    const int period = nc > 0 ? 60/nc : 60;
+
+    if(!mTexture->fTexture || mTexture->fTotalUpdateScheduled) {
+        updateTexture(eCityId::neutralFriendly);
+        mTexture->fTotalUpdateScheduled = false;
+        mTexture->fUpdateScheduled = false;
+        mTexture->fTilesToUpdate.clear();
+    } else if(mTexture->fUpdateScheduled) {
+        for(const auto cid : cities) {
+            updateTexture(cid);
+        }
+        mTexture->fUpdateScheduled = false;
+    } else if(nc > 0 && mTime % period == 0) {
+        const int id = mCityCounter % nc;
+        const auto cid = cities[id];
+        updateTexture(cid);
+        mCityCounter++;
     }
-    if(!mTexture) return;
+    if(!mTexture->fTilesToUpdate.empty()) {
+        updateTexture(eCityId::neutralAggresive);
+        mTexture->fTilesToUpdate.clear();
+    }
+    if(!mTexture->fTexture) return;
     const SDL_Rect clip{0, 0, width(), height()};
     p.setClipRect(&clip);
     const int xMin = (mCenterX - mDrawX - width()/2);
     const int yMin = (mCenterY - mDrawY - height()/2);
-    p.drawTexture(-xMin, -yMin, mTexture);
+    p.drawTexture(-xMin, -yMin, mTexture->fTexture);
     p.setClipRect(nullptr);
     const int w = mViewBoxW*mBoard->rotatedWidth()*mTDim;
     const int h = mViewBoxH*mBoard->rotatedHeight()*mTDim/2;
@@ -175,27 +208,25 @@ SDL_Color colorForTile(eTile* const tile) {
     return {66, 89, 148, 255};
 }
 
-void eMiniMap::updateTexture() {
+void eMiniMap::updateTexture(const eCityId cid) {
     if(!mBoard) return;
     const auto rend = renderer();
-    mTexture = std::make_shared<eTexture>();
     const int w = mBoard->rotatedWidth()*mTDim;
     const int h = mBoard->rotatedHeight()*mTDim/2;
-    const bool v = mTexture->create(rend, w, h);
-    if(!v) {
-        mTexture.reset();
-        return;
+    auto& fTex = mTexture->fTexture;
+    const int tw = fTex ? fTex->width() : -1;
+    const int th = fTex ? fTex->height() : -1;
+    if(tw != w || th != h) {
+        fTex = std::make_shared<eTexture>();
+        const bool v = fTex->create(rend, w, h);
+        if(!v) {
+            fTex.reset();
+            return;
+        }
     }
-    mTexture->setAsRenderTarget(rend);
+    fTex->setAsRenderTarget(rend);
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
-    SDL_RenderClear(rend);
     ePainter p(rend);
-
-//    const int xMin = (mCenterX - mDrawX - width()/2)/mTDim;
-//    const int xMax = (mCenterX - mDrawX + width()/2)/mTDim;
-
-//    const int yMin = 2*(mCenterY - mDrawY - height()/2)/mTDim;
-//    const int yMax = 2*(mCenterY - mDrawY + height()/2)/mTDim;
 
     const auto& intrfc = eGameTextures::interface();
     const int id = static_cast<int>(resolution().uiScale());
@@ -208,15 +239,51 @@ void eMiniMap::updateTexture() {
     const int yMin = 0;
     const int yMax = mBoard->rotatedHeight();
 
-    for(int x = xMin; x < xMax; x++) {
-        for(int y = yMin; y < yMax; y++) {
-            const auto tile = mBoard->rotateddtile(x, y);
-            if(!tile) continue;
-            const auto color = colorForTile(tile);
-            dtex->setColorMod(color.r, color.g, color.b);
-            const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
-            const int py = (y - yMin)*mTDim/2;
-            p.drawTexture(px, py, dtex);
+    const auto drawTile = [&](eTile* const tile, const int x, const int y) {
+        if(!tile) return;
+        const auto color = colorForTile(tile);
+        dtex->setColorMod(color.r, color.g, color.b);
+        const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
+        const int py = (y - yMin)*mTDim/2;
+        p.drawTexture(px, py, dtex);
+    };
+
+    if(cid == eCityId::neutralFriendly) {
+        SDL_RenderClear(rend);
+        for(int x = xMin; x < xMax; x++) {
+            for(int y = yMin; y < yMax; y++) {
+                const auto tile = mBoard->rotateddtile(x, y);
+                drawTile(tile, x, y);
+            }
+        }
+    } else if(cid == eCityId::neutralAggresive) {
+        const auto dir = mBoard->direction();
+        const int bw = mBoard->width();
+        const int bh = mBoard->height();
+        const auto& tiles = mTexture->fTilesToUpdate;
+        for(const auto tile : tiles) {
+            const int dx = tile->dx();
+            const int dy = tile->dy();
+            int rdx;
+            int rdy;
+            eTileHelper::dTileIdToRotatedDTileId(
+                        dx, dy, rdx, rdy, dir, bw, bh);
+            drawTile(tile, rdx, rdy);
+        }
+    } else {
+        const auto dir = mBoard->direction();
+        const int bw = mBoard->width();
+        const int bh = mBoard->height();
+        const auto c = mBoard->boardCityWithId(cid);
+        const auto& tiles = c->tiles();
+        for(const auto tile : tiles) {
+            const int dx = tile->dx();
+            const int dy = tile->dy();
+            int rdx;
+            int rdy;
+            eTileHelper::dTileIdToRotatedDTileId(
+                        dx, dy, rdx, rdy, dir, bw, bh);
+            drawTile(tile, rdx, rdy);
         }
     }
 
@@ -278,5 +345,20 @@ void eMiniMap::viewAbsPix(const int px, const int py) {
 }
 
 void eMiniMap::scheduleUpdate() {
-    mUpdateScheduled = true;
+    for(auto& t : mTextures) {
+        t.second.fUpdateScheduled = true;
+    }
+}
+
+void eMiniMap::scheduleTotalUpdate() {
+    for(auto& t : mTextures) {
+        t.second.fTotalUpdateScheduled = true;
+    }
+}
+
+void eMiniMap::scheduleTilesUpdate(const std::vector<eTile*>& tiles) {
+    for(auto& t : mTextures) {
+        auto& ts = t.second.fTilesToUpdate;
+        ts.insert(ts.end(), tiles.begin(), tiles.end());
+    }
 }

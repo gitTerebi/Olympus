@@ -86,7 +86,7 @@ void eBoardSettingsMenu::initialize(
             gw->updateViewBoxSize();
             gw->updateTopBottomAltitude();
             gw->updateMinMaxAltitude();
-            gw->updateMaps();
+            gw->updateMaps(true);
             resizeMenu->deleteLater();
         });
         cancel->setPressAction([resizeMenu]() {
@@ -252,7 +252,7 @@ void eBoardSettingsMenu::initialize(
             g.generate(sett);
             gw->updateTopBottomAltitude();
             gw->updateMinMaxAltitude();
-            gw->updateMaps();
+            gw->updateMaps(true);
             generateMenu->deleteLater();
         });
         cancel->setPressAction([generateMenu]() {
@@ -284,7 +284,7 @@ void eBoardSettingsMenu::initialize(
     clearButt->setPressAction([gw, boardPtr]() {
         boardPtr->initialize(boardPtr->width(), boardPtr->height());
         gw->updateTopBottomAltitude();
-        gw->updateMaps();
+        gw->updateMaps(true);
     });
     addWidget(clearButt);
     clearButt->align(eAlignment::hcenter);

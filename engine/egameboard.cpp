@@ -119,7 +119,7 @@ void eGameBoard::initialize(const int w, const int h) {
     mAppealMap.initialize(w, h);
 
     updateNeighbours();
-    updateMarbleTiles();
+//    updateMarbleTiles();
     scheduleTerrainUpdate();
 }
 
@@ -157,7 +157,7 @@ void eGameBoard::resize(const int w, const int h) {
     mAppealMap.initialize(w, h);
 
     updateNeighbours();
-    updateMarbleTiles();
+//    updateMarbleTiles();
     scheduleTerrainUpdate();
     updateTerritoryBorders();
 }

@@ -5,13 +5,22 @@
 
 #include "engine/egameboard.h"
 
+struct eDirectionTexture {
+    bool fTotalUpdateScheduled = true;
+    bool fUpdateScheduled = false;
+    std::shared_ptr<eTexture> fTexture;
+    std::vector<eTile*> fTilesToUpdate;
+};
+
 class eMiniMap : public eWidget {
 public:
-    using eWidget::eWidget;
+    eMiniMap(eMainWindow* const window);
 
     void renderTargetsReset() override;
 
     void setBoard(eGameBoard* const board);
+
+    void setDirection(const eWorldDirection dir);
 
     void setChangeAction(const eAction& act);
 
@@ -24,6 +33,8 @@ public:
     void setViewBoxSize(const double fx, const double fy);
 
     void scheduleUpdate();
+    void scheduleTotalUpdate();
+    void scheduleTilesUpdate(const std::vector<eTile*>& tiles);
 protected:
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;
@@ -31,11 +42,12 @@ protected:
 
     void paintEvent(ePainter& p) override;
 private:
-    void updateTexture();
+    void updateTexture(const eCityId cid);
     void viewRelPix(const int pixX, const int pixY);
     void viewAbsPix(const int px, const int py);
 
     int mTime = 0;
+    int mCityCounter = 0;
 
     int mMouseX = 0;
     int mMouseY = 0;
@@ -53,8 +65,9 @@ private:
 
     eGameBoard* mBoard = nullptr;
 
-    bool mUpdateScheduled = false;
-    std::shared_ptr<eTexture> mTexture;
+    std::map<eWorldDirection, eDirectionTexture> mTextures;
+    eWorldDirection mDir = eWorldDirection::N;
+    eDirectionTexture* mTexture = nullptr;
 
     eAction mChangeAction;
 };

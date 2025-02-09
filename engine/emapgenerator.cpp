@@ -232,7 +232,7 @@ void eMapGenerator::generate(const eMGS& settings) {
     generateTerrain(settings);
 //    generateSilverAndBronze(settings);
 //    generateAnimals(settings);
-    mBoard.updateMarbleTiles();
+//    mBoard.updateMarbleTiles();
     mBoard.scheduleTerrainUpdate();
 }
 
