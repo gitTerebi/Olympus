@@ -1948,6 +1948,7 @@ bool eGameWidget::buildMouseRelease() {
         for(const auto tile : mInflTiles) {
             apply(tile);
         }
+        updateMaps(mInflTiles);
         mInflTiles.clear();
     }
     if(mTem->visible()) {

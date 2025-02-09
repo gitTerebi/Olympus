@@ -1963,6 +1963,15 @@ void eGameWidget::updateMaps(const bool totalUpdate) {
     (mmt->*func)();
 }
 
+void eGameWidget::updateMaps(const std::vector<eTile*>& tiles) {
+    const auto mm = mGm->miniMap();
+    const auto mma = mAm->miniMap();
+    const auto mmt = mTem->miniMap();
+    mm->scheduleTilesUpdate(tiles);
+    mma->scheduleTilesUpdate(tiles);
+    mmt->scheduleTilesUpdate(tiles);
+}
+
 void eGameWidget::setTileSize(const eTileSize size) {
     const auto& setts = window()->settings();
     const auto sizes = setts.availableSizes();

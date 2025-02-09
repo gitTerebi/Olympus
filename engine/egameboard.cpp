@@ -121,6 +121,9 @@ void eGameBoard::initialize(const int w, const int h) {
     updateNeighbours();
 //    updateMarbleTiles();
     scheduleTerrainUpdate();
+    for(const auto& c : mCitiesOnBoard) {
+        c->clearTiles();
+    }
 }
 
 void eGameBoard::resize(const int w, const int h) {

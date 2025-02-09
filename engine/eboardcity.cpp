@@ -52,6 +52,12 @@ void eBoardCity::updateTiles() {
             mTileBRect = result;
         }
     });
+    if(mTiles.empty()) clearTiles();
+}
+
+void eBoardCity::clearTiles() {
+    mTiles.clear();
+    mTileBRect = SDL_Rect{0, 0, 0, 0};
 }
 
 void eBoardCity::incTime(const int by) {

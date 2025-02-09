@@ -111,6 +111,7 @@ public:
     void updateTopBottomAltitude();
     void updateMinMaxAltitude();
     void updateMaps(const bool totalUpdate);
+    void updateMaps(const std::vector<eTile*>& tiles);
 
     void setWorldDirection(const eWorldDirection dir);
 
