@@ -82,6 +82,9 @@
 #include "elanguage.h"
 #include "enumbers.h"
 
+#include "characters/actions/eanimalaction.h"
+#include "buildings/eanimalbuilding.h"
+
 eGameBoard::eGameBoard() :
     mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
@@ -2813,4 +2816,185 @@ void eGameBoard::progressEarthquakes() {
         }
     }
     scheduleTerrainUpdate();
+}
+
+void centerTile(const int minX, const int minY,
+                const int sw, const int sh,
+                int& tx, int& ty) {
+    tx = minX;
+    ty = minY;
+
+    if(sw == 2 && sh == 2) {
+        ty += 1;
+    } else if(sw == 3 && sh == 3) {
+        tx += 1;
+        ty += 1;
+    } else if(sw == 4 || sh == 4) {
+        tx += 1;
+        ty += 2;
+    } else if(sw == 5 || sh == 5) {
+        tx += 2;
+        ty += 2;
+    } else if(sw == 6 || sh == 6) {
+        tx += 2;
+        ty += 2;
+    }
+}
+
+void buildTiles(int& minX, int& minY,
+                int& maxX, int& maxY,
+                const int tx, const int ty,
+                const int sw, const int sh) {
+    minX = tx;
+    minY = ty;
+
+    if(sw == 2 && sh == 2) {
+        minY -= 1;
+    } else if(sw == 3 && sh == 3) {
+        minX -= 1;
+        minY -= 1;
+    } else if(sw == 4 || sh == 4) {
+        minX -= 1;
+        minY -= 2;
+    } else if(sw == 5 || sh == 5) {
+        minX -= 2;
+        minY -= 2;
+    } else if(sw == 6 || sh == 6) {
+        minX -= 2;
+        minY -= 2;
+    }
+
+    maxX = minX + sw;
+    maxY = minY + sh;
+}
+
+bool eGameBoard::canBuildBase(const int minX, const int maxX,
+                              const int minY, const int maxY,
+                              const bool fertile,
+                              const bool flat) const {
+    bool fertileFound = false;
+    for(int x = minX; x < maxX; x++) {
+        for(int y = minY; y < maxY; y++) {
+            const auto t = tile(x, y);
+            if(!t) return false;
+            if(t->underBuilding()) return false;
+            const auto banner = t->banner();
+            if(banner && !banner->buildable()) return false;
+            const auto ttt = t->terrain();
+            if(fertile && ttt == eTerrain::fertile) {
+                fertileFound = true;
+            }
+
+            const auto ttta = ttt & eTerrain::buildable;
+            if(!static_cast<bool>(ttta)) return false;
+
+            if(!t->walkableElev() && t->isElevationTile()) return false;
+
+            if(!flat) {
+                const auto& chars = t->characters();
+                if(!chars.empty()) return false;
+            }
+        }
+    }
+    if(fertile) return fertileFound;
+    return true;
+}
+
+bool eGameBoard::canBuild(const int tx, const int ty,
+                          const int sw, const int sh,
+                          const bool fertile,
+                          const bool flat) const {
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+    buildTiles(minX, minY, maxX, maxY, tx, ty, sw, sh);
+    return canBuildBase(minX, maxX, minY, maxY, fertile, flat);
+}
+
+
+bool eGameBoard::buildBase(const int minX, const int minY,
+                           const int maxX, const int maxY,
+                           const eBuildingCreator& bc,
+                           const ePlayerId pid,
+                           const bool fertile,
+                           const bool flat) {
+    const int sw = maxX - minX + 1;
+    const int sh = maxY - minY + 1;
+    const bool cb = canBuildBase(minX, maxX + 1, minY, maxY + 1, fertile, flat);
+    if(!cb) return false;
+    if(!bc) return false;
+    const auto b = bc();
+    if(!b) return false;
+    const bool isRoad = b->type() == eBuildingType::road;
+    if(!isRoad) {
+        for(int x = minX; x <= maxX; x++) {
+            for(int y = minY; y <= maxY; y++) {
+                const auto t = tile(x, y);
+                if(!t) return false;
+                if(t->isElevationTile()) return false;
+            }
+        }
+    }
+    int tx;
+    int ty;
+    centerTile(minX, minY, sw, sh, tx, ty);
+    const auto tile = this->tile(tx, ty);
+    if(!tile) return false;
+    b->setCenterTile(tile);
+    b->setTileRect({minX, minY, sw, sh});
+    for(int x = minX; x <= maxX; x++) {
+        for(int y = minY; y <= maxY; y++) {
+            const auto t = this->tile(x, y);
+            if(t) {
+                t->setUnderBuilding(b);
+                b->addUnderBuilding(t);
+            }
+        }
+    }
+
+    const auto diff = difficulty(pid);
+    const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+    incDrachmas(pid, -cost);
+    return true;
+}
+
+bool eGameBoard::build(const int tx, const int ty,
+                       const int sw, const int sh,
+                       const eBuildingCreator& bc,
+                       const bool fertile,
+                       const bool flat) {
+    const auto tile = this->tile(tx, ty);
+    if(!tile) return false;
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+    buildTiles(minX, minY, maxX, maxY,
+               tx, ty, sw, sh);
+    const auto ppid = personPlayer();
+    return buildBase(minX, minY, maxX - 1, maxY - 1,
+                     bc, ppid, fertile, flat);
+}
+
+void eGameBoard::buildAnimal(eTile* const tile,
+                             const eBuildingType type,
+                             const eAnimalCreator& creator,
+                             const eCityId cid) {
+    const int tx = tile->x();
+    const int ty = tile->y();
+    const bool cb = canBuild(tx, ty, 1, 2, true, true);
+    if(!cb) return;
+    const auto sh = creator(*this);
+    sh->changeTile(tile);
+    const auto o = static_cast<eOrientation>(eRand::rand() % 8);
+    sh->setOrientation(o);
+    const auto w = eWalkableObject::sCreateFertile();
+    const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
+    sh->setAction(a);
+
+    build(tx, ty, 1, 2, [this, sh, type, cid]() {
+        return e::make_shared<eAnimalBuilding>(
+                    *this, sh.get(), type, cid);
+    }, true, true);
 }

@@ -1652,7 +1652,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         }
                     }
                     if(!cbr) continue;
-                    const bool cb = canBuildBase(x, x + 2, y, y + 2);
+                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2);
                     if(!cb) continue;
                     double rx;
                     double ry;
@@ -1684,7 +1684,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(!t) return;
         const int tx = t->x();
         const int ty = t->y();
-        const bool cb = allowed > 0 && canBuild(tx, ty, 1, 2, true, true);
+        const bool cb = allowed > 0 && mBoard->canBuild(tx, ty, 1, 2, true, true);
         const auto& tex = trrTexs.fBuildingBase;
         tex->setColorMod(cb ? 0 : 255, cb ? 255 : 0, 0);
         const int a = t->altitude();
@@ -2029,14 +2029,14 @@ void eGameWidget::paintEvent(ePainter& p) {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 if(mBoard->hasPalace(mViewedCityId)) return false;
-                return canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh, fertile);
             };
         } break;
         case eBuildingMode::stadium: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 if(mBoard->hasStadium(mViewedCityId)) return false;
-                return canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh, fertile);
             };
         } break;
         case eBuildingMode::foodVendor: {
@@ -2107,7 +2107,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         default: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
-                return canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh, fertile);
             };
         } break;
         }
@@ -2148,7 +2148,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int yMin = mHoverTY - sh/2;
             const int xMax = xMin + sw;
             const int yMax = yMin + sh;
-            const bool cb = canBuildBase(xMin, xMax, yMin, yMax);
+            const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax);
            if(!cb) {
                 tex->setColorMod(255, 0, 0);
             }

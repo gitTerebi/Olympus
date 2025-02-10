@@ -601,6 +601,35 @@ public:
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
     std::string cityName(const eCityId cid) const;
+
+    bool canBuildBase(const int minX, const int maxX,
+                      const int minY, const int maxY,
+                      const bool fertile = false,
+                      const bool flat = false) const;
+    bool canBuild(const int tx, const int ty,
+                  const int sw, const int sh,
+                  const bool fertile = false,
+                  const bool flat = false) const;
+
+    using eBuildingCreator = std::function<stdsptr<eBuilding>()>;
+    bool buildBase(const int minX, const int minY,
+                   const int maxX, const int maxY,
+                   const eBuildingCreator& bc,
+                   const ePlayerId pid,
+                   const bool fertile = false,
+                   const bool flat = false);
+    bool build(const int tx, const int ty,
+               const int sw, const int sh,
+               const eBuildingCreator& bc,
+               const bool fertile = false,
+               const bool flat = false);
+
+    using eDA = eCharacter;
+    using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;
+    void buildAnimal(eTile* const tile,
+                     const eBuildingType type,
+                     const eAnimalCreator& creator,
+                     const eCityId cid);
 private:
     void updateNeighbours();
 

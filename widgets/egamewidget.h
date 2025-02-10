@@ -149,37 +149,12 @@ private:
     void setTileSize(const eTileSize size);
 
     using eSpecialRequirement = std::function<bool(eTile*)>;
-    bool canBuildBase(const int minX, const int maxX,
-                      const int minY, const int maxY,
-                      const bool fertile = false,
-                      const bool flat = false) const;
-    bool canBuild(const int tx, const int ty,
-                  const int sw, const int sh,
-                  const bool fertile = false,
-                  const bool flat = false) const;
     bool canBuildVendor(const int tx, const int ty,
                         const eResourceType resType) const;
     bool canBuildFishery(const int tx, const int ty,
                          eOrientation& o) const;
     bool canBuildPier(const int tx, const int ty,
                       eOrientation& o) const;
-
-    bool buildBase(const int minX, const int minY,
-                   const int maxX, const int maxY,
-                   const eBuildingCreator& bc,
-                   const ePlayerId pid,
-                   const bool fertile = false,
-                   const bool flat = false);
-    bool build(const int tx, const int ty,
-               const int sw, const int sh,
-               const eBuildingCreator& bc,
-               const bool fertile = false,
-               const bool flat = false);
-    using eDA = eCharacter;
-    using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;
-    void buildAnimal(eTile* const tile,
-                     const eBuildingType type,
-                     const eAnimalCreator& creator);
 
     std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile) const;
     std::vector<eTile*> agoraBuildPlaceTL(eTile* const tile) const;
