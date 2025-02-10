@@ -164,6 +164,11 @@ private:
     bool canBuildPier(const int tx, const int ty,
                       eOrientation& o) const;
 
+    bool buildBase(const int minX, const int minY,
+                   const int maxX, const int maxY,
+                   const eBuildingCreator& bc,
+                   const bool fertile = false,
+                   const bool flat = false);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
                const eBuildingCreator& bc,

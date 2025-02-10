@@ -503,6 +503,29 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
     }
 }
 
+void centerTile(const int minX, const int minY,
+                const int sw, const int sh,
+                int& tx, int& ty) {
+    tx = minX;
+    ty = minY;
+
+    if(sw == 2 && sh == 2) {
+        ty += 1;
+    } else if(sw == 3 && sh == 3) {
+        tx += 1;
+        ty += 1;
+    } else if(sw == 4 || sh == 4) {
+        tx += 1;
+        ty += 2;
+    } else if(sw == 5 || sh == 5) {
+        tx += 2;
+        ty += 2;
+    } else if(sw == 6 || sh == 6) {
+        tx += 2;
+        ty += 2;
+    }
+}
+
 void buildTiles(int& minX, int& minY,
                 int& maxX, int& maxY,
                 const int tx, const int ty,
@@ -1441,27 +1464,34 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
     return false;
 }
 
-bool eGameWidget::build(const int tx, const int ty,
-                        const int sw, const int sh,
-                        const eBuildingCreator& bc,
-                        const bool fertile,
-                        const bool flat) {
-    if(!bc) return false;
-    const auto tile = mBoard->tile(tx, ty);
-    if(!tile) return false;
-    const bool cb = canBuild(tx, ty, sw, sh, fertile, flat);
+bool eGameWidget::buildBase(const int minX, const int minY,
+                            const int maxX, const int maxY,
+                            const eBuildingCreator& bc,
+                            const bool fertile,
+                            const bool flat) {
+    const int sw = maxX - minX;
+    const int sh = maxY - minY;
+    const bool cb = canBuildBase(minX, maxX, minY, maxY, fertile, flat);
     if(!cb) return false;
+    if(!bc) return false;
     const auto b = bc();
     if(!b) return false;
     const bool isRoad = b->type() == eBuildingType::road;
-    if(!isRoad && tile->isElevationTile()) return false;
+    if(!isRoad) {
+        for(int x = minX; x < maxX; x++) {
+            for(int y = minY; y < maxY; y++) {
+                const auto t = mBoard->tile(x, y);
+                if(!t) return false;
+                if(t->isElevationTile()) return false;
+            }
+        }
+    }
+    int tx;
+    int ty;
+    centerTile(minX, minY, sw, sh, tx, ty);
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return false;
     b->setCenterTile(tile);
-    int minX;
-    int minY;
-    int maxX;
-    int maxY;
-    buildTiles(minX, minY, maxX, maxY,
-               tx, ty, sw, sh);
     b->setTileRect({minX, minY, sw, sh});
     for(int x = minX; x < maxX; x++) {
         for(int y = minY; y < maxY; y++) {
@@ -1478,6 +1508,22 @@ bool eGameWidget::build(const int tx, const int ty,
     const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
     mBoard->incDrachmas(ppid, -cost);
     return true;
+}
+
+bool eGameWidget::build(const int tx, const int ty,
+                        const int sw, const int sh,
+                        const eBuildingCreator& bc,
+                        const bool fertile,
+                        const bool flat) {
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return false;
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+    buildTiles(minX, minY, maxX, maxY,
+               tx, ty, sw, sh);
+    return buildBase(minX, minY, maxX, maxY, bc, fertile, flat);
 }
 
 void eGameWidget::buildAnimal(eTile* const tile,
