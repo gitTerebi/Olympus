@@ -1467,6 +1467,7 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
 bool eGameWidget::buildBase(const int minX, const int minY,
                             const int maxX, const int maxY,
                             const eBuildingCreator& bc,
+                            const ePlayerId pid,
                             const bool fertile,
                             const bool flat) {
     const int sw = maxX - minX + 1;
@@ -1503,10 +1504,9 @@ bool eGameWidget::buildBase(const int minX, const int minY,
         }
     }
 
-    const auto ppid = mBoard->personPlayer();
-    const auto diff = mBoard->difficulty(ppid);
+    const auto diff = mBoard->difficulty(pid);
     const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-    mBoard->incDrachmas(ppid, -cost);
+    mBoard->incDrachmas(pid, -cost);
     return true;
 }
 
@@ -1523,7 +1523,9 @@ bool eGameWidget::build(const int tx, const int ty,
     int maxY;
     buildTiles(minX, minY, maxX, maxY,
                tx, ty, sw, sh);
-    return buildBase(minX, minY, maxX - 1, maxY - 1, bc, fertile, flat);
+    const auto ppid = mBoard->personPlayer();
+    return buildBase(minX, minY, maxX - 1, maxY - 1,
+                     bc, ppid, fertile, flat);
 }
 
 void eGameWidget::buildAnimal(eTile* const tile,

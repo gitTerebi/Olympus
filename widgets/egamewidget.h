@@ -167,6 +167,7 @@ private:
     bool buildBase(const int minX, const int minY,
                    const int maxX, const int maxY,
                    const eBuildingCreator& bc,
+                   const ePlayerId pid,
                    const bool fertile = false,
                    const bool flat = false);
     bool build(const int tx, const int ty,
