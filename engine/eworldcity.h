@@ -241,8 +241,11 @@ public:
     bool conqueredByRival() const { return mConqueredBy.get(); }
     void setConqueredBy(const stdsptr<eWorldCity>& c) { mConqueredBy = c; }
 
-    void setIsCapital(const ePlayerId pid);
-    bool isCapital(const ePlayerId pid) const;
+    void setPlayerId(const ePlayerId pid);
+    ePlayerId playerId() const { return mPlayerId; }
+
+    void setCapitalOf(const ePlayerId pid);
+    bool isCapitalOf(const ePlayerId pid) const;
 
     static stdsptr<eWorldCity> sCreateAthens(const eCityId cid);
     static stdsptr<eWorldCity> sCreateSparta(const eCityId cid);
@@ -264,7 +267,8 @@ private:
 
     stdsptr<eWorldCity> mConqueredBy;
 
-    ePlayerId mCapital = ePlayerId::neutralFriendly;
+    ePlayerId mPlayerId = ePlayerId::neutralFriendly;
+    ePlayerId mCapitalOf = ePlayerId::neutralFriendly;
     bool mIsOnBoard = false;
     bool mIsCurrentCity = false;
     eCityType mType{eCityType::foreignCity};

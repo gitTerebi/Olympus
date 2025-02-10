@@ -41,7 +41,9 @@ public:
     eWorldMap map() const { return mMap; }
     void setMap(const eWorldMap m) { mMap = m; }
 
-    int cityId(const eWorldCity& city) const;
+    eCityId firstFreeCityId() const;
+    ePlayerId firstFreePlayerId() const;
+
     stdsptr<eWorldCity> cityWithId(const eCityId cid) const;
 
     stdsptr<eWorldCity> cityWithIOID(const int id) const;
@@ -67,6 +69,7 @@ public:
     eTeamId cityIdToTeamId(const eCityId cid) const;
     eTeamId playerIdToTeamId(const ePlayerId pid) const;
     void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
+    void setPlayerTeam(const ePlayerId pid, const eTeamId tid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCities() const;

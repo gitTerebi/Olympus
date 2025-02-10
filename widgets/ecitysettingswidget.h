@@ -8,7 +8,8 @@ class eCitySettingsWidget : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(const stdsptr<eWorldCity>& c);
+    void initialize(const stdsptr<eWorldCity>& c,
+                    eWorldBoard* const wb);
 };
 
 #endif // ECITYSETTINGSWIDGET_H

@@ -91,7 +91,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         const auto tpt = tp->tpType();
         dst << tpt;
         dst << tp->orientation();
-        dst << wrld->cityId(tp->city());
+        dst << tp->cityId();
 
         if(tpt == eTradePostType::pier) {
             const auto ub = tp->unpackBuilding();

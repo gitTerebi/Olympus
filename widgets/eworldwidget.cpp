@@ -127,7 +127,16 @@ void eWorldWidget::initialize() {
     addWidget(mAddCityButton);
     mAddCityButton->setPressAction([this]() {
         if(!mWorldBoard) return;
-        mWorldBoard->addCity(std::make_shared<eWorldCity>());
+        const auto c = std::make_shared<eWorldCity>();
+        const auto cid = mWorldBoard->firstFreeCityId();
+        c->setCityId(cid);
+        const auto pid = mWorldBoard->firstFreePlayerId();
+        c->setCapitalOf(pid);
+        const auto ppid = mWorldBoard->personPlayer();
+        const auto ptid = mWorldBoard->playerIdToTeamId(ppid);
+        mWorldBoard->setPlayerTeam(pid, ptid);
+        mWorldBoard->addCity(c);
+        mWorldBoard->moveCityToPlayer(cid, pid);
         mWMW->updateWidgets();
     });
     const int xx = width() - mWM->width() - p - mAddCityButton->width();
@@ -143,7 +152,7 @@ void eWorldWidget::initialize() {
     mSettingsButton->setPressAction([this]() {
         if(!mCity) return;
         const auto d = new eCitySettingsWidget(window());
-        d->initialize(mCity);
+        d->initialize(mCity, mWorldBoard);
 
         window()->execDialog(d);
         d->align(eAlignment::center);

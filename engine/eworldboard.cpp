@@ -1,5 +1,7 @@
 #include "eworldboard.h"
 
+#include "evectorhelpers.h"
+
 eWorldBoard::eWorldBoard() {}
 
 void eWorldBoard::nextMonth(eGameBoard* const board) {
@@ -41,13 +43,32 @@ stdsptr<eWorldCity> eWorldBoard::currentCity() const {
     return nullptr;
 }
 
-int eWorldBoard::cityId(const eWorldCity& city) const {
-    int id = -1;
+eCityId eWorldBoard::firstFreeCityId() const {
+    std::vector<eCityId> used;
     for(const auto& c : mCities) {
-        id++;
-        if(c.get() == &city) return id;
+        const auto cid = c->cityId();
+        used.push_back(cid);
     }
-    return id;
+    for(int i = 0;; i++) {
+        const auto cid = static_cast<eCityId>(i);
+        const bool r = eVectorHelpers::contains(used, cid);
+        if(!r) return cid;
+    }
+    return eCityId::neutralFriendly;
+}
+
+ePlayerId eWorldBoard::firstFreePlayerId() const {
+    std::vector<ePlayerId> used;
+    for(const auto& c : mCityToPlayer) {
+        const auto pid = c.second;
+        used.push_back(pid);
+    }
+    for(int i = 0;; i++) {
+        const auto pid = static_cast<ePlayerId>(i);
+        const bool r = eVectorHelpers::contains(used, pid);
+        if(!r) return pid;
+    }
+    return ePlayerId::neutralFriendly;
 }
 
 stdsptr<eWorldCity> eWorldBoard::cityWithId(const eCityId cid) const {
@@ -218,7 +239,13 @@ eTeamId eWorldBoard::playerIdToTeamId(const ePlayerId pid) const {
 }
 
 void eWorldBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
+    const auto c = cityWithId(cid);
+    c->setPlayerId(pid);
     mCityToPlayer[cid] = pid;
+}
+
+void eWorldBoard::setPlayerTeam(const ePlayerId pid, const eTeamId tid) {
+    mPlayerToTeam[pid] = tid;
 }
 
 std::vector<eCityId> eWorldBoard::playerCities(const ePlayerId pid) const {
@@ -246,7 +273,7 @@ eCityId eWorldBoard::playerCapital(const ePlayerId pid) const {
         if(it.second == pid) {
             const auto cid = it.first;
             const auto c = cityWithId(cid);
-            const bool isc = c->isCapital(pid);
+            const bool isc = c->isCapitalOf(pid);
             if(isc) return cid;
         }
     }

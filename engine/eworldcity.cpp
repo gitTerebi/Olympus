@@ -437,7 +437,8 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mCityId;
     dst << mIsOnBoard;
     dst.writeCity(mConqueredBy.get());
-    dst << mCapital;
+    dst << mPlayerId;
+    dst << mCapitalOf;
     dst << mIsCurrentCity;
     dst << mType;
     dst << mNationality;
@@ -484,7 +485,8 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
         mConqueredBy = c;
     });
-    src >> mCapital;
+    src >> mPlayerId;
+    src >> mCapitalOf;
     src >> mIsCurrentCity;
     src >> mType;
     src >> mNationality;
@@ -545,12 +547,16 @@ bool eWorldCity::acceptsGift(const eResourceType type,
     }
 }
 
-void eWorldCity::setIsCapital(const ePlayerId pid) {
-    mCapital = pid;
+void eWorldCity::setPlayerId(const ePlayerId pid) {
+    mPlayerId = pid;
 }
 
-bool eWorldCity::isCapital(const ePlayerId pid) const {
-    return mCapital == pid;
+void eWorldCity::setCapitalOf(const ePlayerId pid) {
+    mCapitalOf = pid;
+}
+
+bool eWorldCity::isCapitalOf(const ePlayerId pid) const {
+    return mCapitalOf == pid;
 }
 
 stdsptr<eWorldCity> eWorldCity::sCreateAthens(const eCityId cid) {
