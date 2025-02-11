@@ -820,10 +820,8 @@ bool eGameWidget::buildMouseRelease() {
             if(!t2) return true;
             const bool cb2 = mBoard->canBuild(t2->x(), t2->y(), 5, 5);
             if(!cb2) return true;
-            stdsptr<eStadium> s;
             mBoard->build(t1->x(), t1->y(), sw, sh, [&]() {
-                s = e::make_shared<eStadium>(*mBoard, mRotate, mViewedCityId);
-                return s;
+                return e::make_shared<eStadium>(*mBoard, mRotate, mViewedCityId);
             });
             mGm->clearMode();
 
@@ -920,10 +918,8 @@ bool eGameWidget::buildMouseRelease() {
             if(!t1) return true;
             const bool cb = mBoard->canBuild(t1->x() + 1, t1->y() + 1, 4, 4);
             if(!cb) return true;
-            stdsptr<eEliteHousing> s;
             mBoard->build(t1->x() + 1, t1->y() + 1, 4, 4, [&]() {
-                s = e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
-                return s;
+                return e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
             });
         } break;
         case eBuildingMode::taxOffice: {

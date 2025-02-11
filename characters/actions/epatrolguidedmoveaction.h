@@ -3,14 +3,11 @@
 
 #include "ecomplexaction.h"
 
+#include "engine/epatrolguide.h"
+
 #include <SDL2/SDL_rect.h>
 
 class ePatrolBuildingBase;
-
-struct ePatrolGuide {
-    int fX;
-    int fY;
-};
 
 class ePatrolGuidedMoveAction : public eComplexAction {
 public:

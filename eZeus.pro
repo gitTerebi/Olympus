@@ -341,6 +341,7 @@ SOURCES += \
         emainwindow.cpp \
         emessage.cpp \
         emessages.cpp \
+        engine/ai/eaicityplan.cpp \
         engine/boardData/eemploymentdata.cpp \
         engine/boardData/eheatmap.cpp \
         engine/boardData/eheatmapdivisor.cpp \
@@ -966,6 +967,7 @@ HEADERS += \
     emainwindow.h \
     emessage.h \
     emessages.h \
+    engine/ai/eaicityplan.h \
     engine/boardData/eemploymentdata.h \
     engine/boardData/eheatmap.h \
     engine/boardData/eheatmapdivisor.h \
@@ -999,6 +1001,7 @@ HEADERS += \
     engine/epathboard.h \
     engine/epathfinder.h \
     engine/epathfinderbase.h \
+    engine/epatrolguide.h \
     engine/eplague.h \
     engine/eplannedaction.h \
     engine/eprovide.h \
