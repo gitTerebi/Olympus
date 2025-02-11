@@ -31,6 +31,8 @@ enum class eTerrain {
                quake,
 
     buildable = dry | beach | fertile,
+    buildableAfterClear = dry | beach | fertile |
+                          forest | choppedForest,
     walkable = dry | beach | fertile |
                forest | choppedForest |
                marble | quake,

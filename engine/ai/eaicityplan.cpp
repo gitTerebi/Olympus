@@ -66,9 +66,96 @@
 #include "buildings/egranary.h"
 #include "buildings/ewarehouse.h"
 
-eAICityPlan::eAICityPlan()
-{
+#include "evectorhelpers.h"
 
+#include "engine/epathfinder.h"
+
+eAICityPlan::eAICityPlan(const ePlayerId pid,
+                         const eCityId cid) :
+    mPid(pid), mCid(cid) {}
+
+void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
+    const bool c = districtBuilt(id);
+    if(!c) mBuiltDistrics.push_back(id);
+    mDistricts[id].build(board, mPid, mCid);
+    connectAllBuiltDistricts(board);
+}
+
+void eAICityPlan::rebuildDistricts(eGameBoard& board) {
+    for(const int id : mBuiltDistrics) {
+        mDistricts[id].build(board, mPid, mCid);
+    }
+}
+
+bool eAICityPlan::connectDistricts(eGameBoard& board,
+                                   const int id1, const int id2) {
+    if(!districtBuilt(id1)) return false;
+    if(!districtBuilt(id2)) return false;
+
+    const auto& d1 = mDistricts[id1];
+    int r1x;
+    int r1y;
+    const bool road1 = d1.road(r1x, r1y);
+    if(!road1) return false;
+
+    const auto& d2 = mDistricts[id2];
+    int r2x;
+    int r2y;
+    const bool road2 = d2.road(r2x, r2y);
+    if(!road2) return false;
+
+    ePathFinder p([](eTileBase* const t) {
+        const auto terr = t->terrain();
+        const bool tr = static_cast<bool>(eTerrain::buildableAfterClear & terr);
+        if(!tr) return false;
+        const auto bt = t->underBuildingType();
+        const bool r = bt == eBuildingType::road ||
+                       bt == eBuildingType::none;
+        if(!r) return false;
+        if(!t->walkableElev() && t->isElevationTile()) return false;
+        return true;
+    }, [&](eTileBase* const t) {
+        return t->x() == r2x && t->y() == r2y;
+    });
+    const auto startTile = board.tile(r1x, r1y);
+    const int w = board.width();
+    const int h = board.height();
+    const bool r = p.findPath({0, 0, w, h}, startTile, 1000, true, w, h);
+    if(!r) return false;
+    std::vector<eOrientation> path;
+    const bool rr = p.extractPath(path);
+    if(!rr) return false;
+    const auto boardPtr = &board;
+    const auto cid = mCid;
+    eTile* t = startTile;
+    const auto buildRoad = [&]() {
+        const auto terr = t->terrain();
+        const bool tr = static_cast<bool>(eTerrain::buildable & terr);
+        if(!tr) t->setTerrain(eTerrain::dry);
+        board.build(t->x(), t->y(), 1, 1,
+              [boardPtr, cid]() { return e::make_shared<eRoad>(*boardPtr, cid); },
+              false, true);
+    };
+    for(int i = path.size() - 1; i >= 0; i--) {
+        if(!t) break;
+        buildRoad();
+        t = t->neighbour<eTile>(path[i]);
+    }
+    if(t) buildRoad();
+    return true;
+}
+
+void eAICityPlan::connectAllBuiltDistricts(eGameBoard& board) {
+    for(const int i : mBuiltDistrics) {
+        for(const int j : mBuiltDistrics) {
+            if(i == j) continue;
+            connectDistricts(board, i, j);
+        }
+    }
+}
+
+bool eAICityPlan::districtBuilt(const int id) const {
+    return eVectorHelpers::contains(mBuiltDistrics, id);
 }
 
 template <class T>
@@ -531,7 +618,7 @@ void gBuild(const eAIBuilding& b,
 
 void eAIDistrict::build(eGameBoard& board,
                         const ePlayerId pid,
-                        const eCityId cid) {
+                        const eCityId cid) const {
     for(const auto& b : mBuildings) {
         const auto rect = b.fRect;
         const int xMin = rect.x;
@@ -579,4 +666,16 @@ void eAIDistrict::build(eGameBoard& board,
 
         gBuild(b, pid, cid, board);
     }
+}
+
+bool eAIDistrict::road(int& x, int& y) const {
+    for(const auto& b : mBuildings) {
+        if(b.fType == eBuildingType::road) {
+            x = b.fRect.x;
+            y = b.fRect.y;
+            return true;
+        }
+    }
+
+    return false;
 }

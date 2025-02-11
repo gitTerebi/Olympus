@@ -148,16 +148,30 @@ class eAIDistrict {
 public:
     void build(eGameBoard& board,
                const ePlayerId pid,
-               const eCityId cid);
+               const eCityId cid) const;
+
+    bool road(int& x, int& y) const;
 private:
     std::vector<eAIBuilding> mBuildings;
 };
 
 class eAICityPlan {
 public:
-    eAICityPlan();
+    eAICityPlan(const ePlayerId pid,
+                const eCityId cid);
 
+    void buildDistrict(eGameBoard& board,
+                       const int id);
+    void rebuildDistricts(eGameBoard& board);
+    bool connectDistricts(eGameBoard& board,
+                          const int id1, const int id2);
+    void connectAllBuiltDistricts(eGameBoard& board);
+    bool districtBuilt(const int id) const;
 private:
+    ePlayerId mPid;
+    eCityId mCid;
+
+    std::vector<int> mBuiltDistrics;
     std::vector<eAIDistrict> mDistricts;
 };
 
