@@ -105,10 +105,87 @@ struct eAIRoadPath {
         return std::max(fY, yEnd());
     }
 
+    void coordinatesAt(int displ, int& x, int& y) {
+        displ = std::max(0, std::min(fLen - 1, displ));
+        switch(fO) {
+        case eOrientation::topRight:
+            x = fX;
+            y = fY - displ;
+            break;
+        case eOrientation::bottomRight:
+            x = fX + displ;
+            y = fY;
+            break;
+        case eOrientation::bottomLeft:
+            x = fX;
+            y = fY + displ;
+            break;
+        case eOrientation::topLeft:
+            x = fX - displ;
+            y = fY;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void updateCoordinates() {
+        for(auto& b : fBranches) {
+            coordinatesAt(b.fDisplacement, b.fX, b.fY);
+            b.updateCoordinates();
+        }
+    }
+
+    void allBranches(std::vector<eAIRoadPath*>& result) {
+        result.push_back(this);
+        for(auto& b : fBranches) {
+            b.allBranches(result);
+        }
+    }
+
+    eAIRoadPath& branchAt(int id) {
+        if(id <= 0) return *this;
+        id--;
+        for(auto& b : fBranches) {
+            const int n = b.totalBranchesCount();
+            if(id < n) {
+                return b.branchAt(id);
+            } else {
+                id -= n;
+            }
+        }
+        return *this;
+    }
+
+    eAIRoadPath& randomBranch() {
+        const int n = totalBranchesCount();
+        const int id = eRand::rand() % n;
+        return branchAt(id);
+    }
+
+    int totalBranchesCount() const {
+        int result = 1;
+        for(const auto& b : fBranches) {
+            result += b.totalBranchesCount();
+        }
+        return result;
+    }
+
+    int totalBranchesLen() const {
+        int result = fLen;
+        for(const auto& b : fBranches) {
+            result += b.totalBranchesLen();
+        }
+        return result;
+    }
+
     int fX;
     int fY;
+    int fDisplacement;
     eOrientation fO;
     int fLen;
+
+    std::vector<eAIRoadPath> fBranches;
 };
 
 bool gHasRoad(const int xMin, const int yMin,
@@ -144,14 +221,16 @@ bool gNextToRoad(const int xMin, const int yMin,
 
 struct eAICDistrict {
 
-    void addToCityPlan(eAICityPlan& result) const {
+    void addToCityPlan(eAICityPlan& result) {
         eAIDistrict district;
 
-        for(const auto& road : fRoads) {
-            const int xMin = road.minX();
-            const int xMax = road.maxX();
-            const int yMin = road.minY();
-            const int yMax = road.maxY();
+        std::vector<eAIRoadPath*> allRoads;
+        fRoads.allBranches(allRoads);
+        for(const auto& road : allRoads) {
+            const int xMin = road->minX();
+            const int xMax = road->maxX();
+            const int yMin = road->minY();
+            const int yMax = road->maxY();
 
             for(int x = xMin; x <= xMax; x++) {
                 for(int y = yMin; y <= yMax; y++) {
@@ -214,21 +293,18 @@ struct eAICDistrict {
 
         const int itype = eRand::rand() % static_cast<int>(eType::count);
         auto type = static_cast<eType>(itype);
-        const int nR = fRoads.size();
+        std::vector<eAIRoadPath*> allRoads;
+        fRoads.allBranches(allRoads);
+        const int nR = allRoads.size();
         if(nR == 1 && type == eType::remove) return false;
-        const int srcRoadId = eRand::rand() % fRoads.size();
-        auto& srcRoad = fRoads[srcRoadId];
+        const int srcRoadId = eRand::rand() % allRoads.size();
+        auto& srcRoad = *allRoads[srcRoadId];
         switch(type) {
         case eType::add: {
-            const int xMin = srcRoad.minX();
-            const int xMax = srcRoad.maxX();
-            const int yMin = srcRoad.minY();
-            const int yMax = srcRoad.maxY();
-
             eAIRoadPath newRoad;
-            newRoad.fX = xMin + (eRand::rand() % (xMax - xMin + 1));
-            newRoad.fY = yMin + (eRand::rand() % (yMax - yMin + 1));
+            newRoad.fDisplacement = 2 + (eRand::rand() % 10);
             newRoad.fLen = 2 + (eRand::rand() % 10);
+            srcRoad.coordinatesAt(newRoad.fDisplacement, newRoad.fX, newRoad.fY);
             const int oi = eRand::rand() % 2;
             switch(srcRoad.fO) {
             case eOrientation::topRight:
@@ -252,11 +328,14 @@ struct eAICDistrict {
 
             const bool r = validRoad(board, newRoad);
             if(!r) return false;
-            fRoads.push_back(newRoad);
+            srcRoad.fBranches.push_back(newRoad);
             return true;
         } break;
         case eType::remove: {
-            fRoads.erase(fRoads.begin() + srcRoadId);
+            auto& bs = srcRoad.fBranches;
+            if(bs.empty()) return false;
+            const int toDelete = eRand::rand() % bs.size();
+            bs.erase(bs.begin() + toDelete);
             return true;
         } break;
         case eType::resize: {
@@ -265,21 +344,33 @@ struct eAICDistrict {
             while(by == 0) {
                 by = 2 - (eRand::rand() % 5);
             }
-            const int newLen = tmp.fLen + by;
-            if(newLen < 1) return false;
-            tmp.fLen = newLen;
-            const bool r = validRoad(board, tmp);
-            if(!r) return false;
+            tmp.fLen = std::max(1, tmp.fLen + by);
+            tmp.updateCoordinates();
+            std::vector<eAIRoadPath*> allTmp;
+            tmp.allBranches(allTmp);
+            for(const auto t : allTmp) {
+                const bool r = validRoad(board, *t);
+                if(!r) return false;
+            }
             srcRoad = tmp;
             return true;
         } break;
         case eType::move: {
-            eAIRoadPath tmp = srcRoad;
-            tmp.fX += 2 - (eRand::rand() % 5);
-            tmp.fY += 2 - (eRand::rand() % 5);
-            const bool r = validRoad(board, tmp);
-            if(!r) return false;
-            srcRoad = tmp;
+            auto& bs = srcRoad.fBranches;
+            if(bs.empty()) return false;
+            const int toMoveId = eRand::rand() % bs.size();
+            auto& toMove = bs[toMoveId];
+            eAIRoadPath tmp = toMove;
+            tmp.fDisplacement += 2 - (eRand::rand() % 5);
+            srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
+            tmp.updateCoordinates();
+            std::vector<eAIRoadPath*> allTmp;
+            tmp.allBranches(allTmp);
+            for(const auto t : allTmp) {
+                const bool r = validRoad(board, *t);
+                if(!r) return false;
+            }
+            toMove = tmp;
             return true;
         } break;
         case eType::count:
@@ -291,17 +382,19 @@ struct eAICDistrict {
 
     bool move(eThreadBoard& board,
               const int byX, const int byY) {
-        for(auto& road : fRoads) {
-            const int xMin = road.minX() + byX;
-            const int xMax = road.maxX() + byX;
-            const int yMin = road.minY() + byY;
-            const int yMax = road.maxY() + byY;
+        std::vector<eAIRoadPath*> allRoads;
+        fRoads.allBranches(allRoads);
+        for(const auto road : allRoads) {
+            const int xMin = road->minX() + byX;
+            const int xMax = road->maxX() + byX;
+            const int yMin = road->minY() + byY;
+            const int yMax = road->maxY() + byY;
             const bool r = validRoad(board, xMin, xMax, yMin, yMax);
             if(!r) return false;
         }
-        for(auto& road : fRoads) {
-            road.fX += byX;
-            road.fY += byY;
+        for(const auto road : allRoads) {
+            road->fX += byX;
+            road->fY += byY;
         }
         return true;
     }
@@ -406,11 +499,14 @@ struct eAICDistrict {
                              eAIBoard& aiBoard) {
         SDL_Rect roadsBRect{0, 0, 0, 0};
 
-        for(const auto& r : fRoads) {
-            const int xMin = r.minX();
-            const int xMax = r.maxX();
-            const int yMin = r.minY();
-            const int yMax = r.maxY();
+        fRoads.updateCoordinates();
+        std::vector<eAIRoadPath*> allRoads;
+        fRoads.allBranches(allRoads);
+        for(const auto r : allRoads) {
+            const int xMin = r->minX();
+            const int xMax = r->maxX();
+            const int yMin = r->minY();
+            const int yMax = r->maxY();
 
             for(int x = xMin; x <= xMax; x++) {
                 for(int y = yMin; y <= yMax; y++) {
@@ -448,11 +544,8 @@ struct eAICDistrict {
               eAIBoard& aiBoard) const {
         int result = 0;
 
-        result -= fRoads.size();
-
-        for(const auto& road : fRoads) {
-            result -= road.fLen;
-        }
+        result -= fRoads.totalBranchesCount();
+        result -= fRoads.totalBranchesLen();
 
         result -= fBuildings.size();
 
@@ -528,7 +621,7 @@ struct eAICDistrict {
     }
 
     eCityId fCid;
-    std::vector<eAIRoadPath> fRoads;
+    eAIRoadPath fRoads;
     std::vector<eAICBuilding> fBuildings;
 };
 
@@ -589,10 +682,10 @@ struct eAICSpeciman {
     }
 
     eAICityPlan cityPlan(const ePlayerId pid,
-                         const eCityId cid) const {
+                         const eCityId cid) {
         eAICityPlan result(pid, cid);
 
-        for(const auto& d : fDistricts) {
+        for(auto& d : fDistricts) {
             d.addToCityPlan(result);
         }
 
@@ -616,7 +709,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         auto& s = population.emplace_back();
         auto& district = s.fDistricts.emplace_back();
         district.fCid = cid();
-        auto& road = district.fRoads.emplace_back();
+        auto& road = district.fRoads;
         road.fLen = 4;
         const int drx = mBRect.x + (eRand::rand() % mBRect.w);
         const int dry = mBRect.y + (eRand::rand() % mBRect.h);
