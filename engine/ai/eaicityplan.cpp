@@ -677,6 +677,31 @@ void eAIDistrict::build(eGameBoard& board,
         }
 
         gBuild(b, pid, cid, board);
+
+        if(b.fType == eBuildingType::commonHouse ||
+           b.fType == eBuildingType::eliteHousing) {
+            const auto& bRect = b.fRect;
+            for(int x = xMin - 1; x <= xMax + 1; x++) {
+                for(int y = yMin - 1; y <= yMax + 1; y++) {
+                    const SDL_Point p{x, y};
+                    const bool i = SDL_PointInRect(&p, &bRect);
+                    if(i) continue;
+                    const auto tile = board.tile(x, y);
+                    const auto terr = tile->terrain();
+                    if(terr == eTerrain::forest ||
+                       terr == eTerrain::choppedForest) {
+                        tile->setTerrain(eTerrain::dry);
+                    }
+                    const auto ub = tile->underBuilding();
+                    if(ub) continue;
+                    const bool c = board.canBuildAvenue(tile);
+                    if(!c) continue;
+                    board.buildBase(x, y, x, y, [&]() {
+                        return e::make_shared<eAvenue>(board, cid);
+                    }, pid);
+                }
+            }
+        }
     }
 }
 

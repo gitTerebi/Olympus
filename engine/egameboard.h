@@ -602,6 +602,7 @@ public:
     std::vector<eCityId> citiesOnBoard() const;
     std::string cityName(const eCityId cid) const;
 
+    bool canBuildAvenue(eTile* const t) const;
     bool canBuildBase(const int minX, const int maxX,
                       const int minY, const int maxY,
                       const bool fertile = false,

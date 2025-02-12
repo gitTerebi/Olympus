@@ -49,6 +49,32 @@ struct eAIBoard {
     std::vector<std::vector<eAITile>> fTiles;
 };
 
+struct eRoadBoard {
+    char* tile(const int dx, const int dy) {
+        if(dx < 0) return nullptr;
+        if(dy < 0) return nullptr;
+        if(dx >= fW) return nullptr;
+        if(dy >= fH) return nullptr;
+        return &fTiles[dx][dy];
+    }
+
+    void initialize(const int w, const int h) {
+        fW = w;
+        fH = h;
+        fTiles.clear();
+        for(int x = 0; x < w; x++) {
+            auto& row = fTiles.emplace_back();
+            for(int y = 0; y < h; y++) {
+                row.emplace_back() = 0;
+            }
+        }
+    }
+
+    int fW = 0;
+    int fH = 0;
+    std::vector<std::vector<char>> fTiles;
+};
+
 struct eAICBuilding {
     eBuildingType fType;
     eResourceType fGet = static_cast<eResourceType>(0);
@@ -193,33 +219,53 @@ struct eAIRoadPath {
 
 bool gHasRoad(const int xMin, const int yMin,
               const int xMax, const int yMax,
-              eAIBoard& aiBoard) {
+              eRoadBoard& roadBoard) {
     for(int x = xMin; x <= xMax; x++) {
         for(int y = yMin; y <= yMax; y++) {
             int dx;
             int dy;
             eTileHelper::tileIdToDTileId(x, y, dx, dy);
-            const auto tile = aiBoard.tile(dx, dy);
+            const auto tile = roadBoard.tile(dx, dy);
             if(!tile) continue;
-            const bool r = tile->fBuilding == eBuildingType::road;
+            const bool r = *tile == 1;
             if(r) return true;
         }
     }
     return false;
 }
 
+enum class eDiagonalOrientation {
+    topRight,
+    bottomRight,
+    bottomLeft,
+    topLeft
+};
+
 bool gNextToRoad(const int xMin, const int yMin,
                  const int xMax, const int yMax,
-                 eAIBoard& aiBoard) {
-    const bool r1 = gHasRoad(xMin, yMin - 1, xMax, yMin - 1, aiBoard);
-    if(r1) return true;
-    const bool r2 = gHasRoad(xMin, yMax + 1, xMax, yMax + 1, aiBoard);
-    if(r2) return true;
-    const bool r3 = gHasRoad(xMin - 1, yMin, xMin - 1, yMax, aiBoard);
-    if(r3) return true;
-    const bool r4 = gHasRoad(xMax + 1, yMin, xMax + 1, yMax, aiBoard);
-    if(r4) return true;
-    return false;
+                 eRoadBoard& roadBoard,
+                 std::vector<eDiagonalOrientation>* const o) {
+    const bool r1 = gHasRoad(xMin, yMin - 1, xMax, yMin - 1, roadBoard);
+    if(r1) {
+        if(!o) return true;
+        o->push_back(eDiagonalOrientation::topRight);
+    }
+    const bool r2 = gHasRoad(xMin, yMax + 1, xMax, yMax + 1, roadBoard);
+    if(r2) {
+        if(!o) return true;
+        o->push_back(eDiagonalOrientation::bottomLeft);
+    }
+    const bool r3 = gHasRoad(xMin - 1, yMin, xMin - 1, yMax, roadBoard);
+    if(r3) {
+        if(!o) return true;
+        o->push_back(eDiagonalOrientation::topLeft);
+    }
+    const bool r4 = gHasRoad(xMax + 1, yMin, xMax + 1, yMax, roadBoard);
+    if(r4) {
+        if(!o) return true;
+        o->push_back(eDiagonalOrientation::bottomRight);
+    }
+    return o ? !o->empty() : false;
 }
 
 struct eAICDistrict {
@@ -424,12 +470,15 @@ struct eAICDistrict {
     bool placeBuilding(const SDL_Rect& roadsBRect,
                        eThreadBoard& board,
                        eAIBoard& aiBoard,
+                       eRoadBoard& roadBoard,
                        eAICBuilding& b) {
         bool needsFertile = false;
+        bool useAvenue = false;
         int w;
         int h;
         switch(b.fType) {
         case eBuildingType::commonHouse:
+            useAvenue = true;
         case eBuildingType::maintenanceOffice:
         case eBuildingType::taxOffice:
         case eBuildingType::podium:
@@ -438,9 +487,20 @@ struct eAICDistrict {
             w = 2;
             h = 2;
         } break;
+        case eBuildingType::eliteHousing: {
+            useAvenue = true;
+            w = 4;
+            h = 4;
+        } break;
+        case eBuildingType::dramaSchool:
+        case eBuildingType::college:
         case eBuildingType::gymnasium: {
             w = 3;
             h = 3;
+        } break;
+        case eBuildingType::theater: {
+            w = 5;
+            h = 5;
         } break;
         case eBuildingType::onionsFarm:
         case eBuildingType::carrotsFarm:
@@ -453,6 +513,10 @@ struct eAICDistrict {
             w = 4;
             h = 4;
         } break;
+        case eBuildingType::warehouse: {
+            w = 3;
+            h = 3;
+        } break;
         }
 
         const int xMin1 = roadsBRect.x - w;
@@ -461,16 +525,48 @@ struct eAICDistrict {
         const int yMax1 = roadsBRect.y + roadsBRect.h;
         for(int x1 = xMin1; x1 <= xMax1; x1++) {
             for(int y1 = yMin1; y1 <= yMax1; y1++) {
-                const int xMin = x1;
-                const int xMax = x1 + w - 1;
-                const int yMin = y1;
-                const int yMax = y1 + h - 1;
-                const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, aiBoard);
+                int xMin = x1;
+                int xMax = x1 + w - 1;
+                int yMin = y1;
+                int yMax = y1 + h - 1;
+                std::vector<eDiagonalOrientation> os;
+                const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, roadBoard,
+                                                    useAvenue ? &os : nullptr);
                 if(!nextToRoad) continue;
+                int totalXMin = xMin;
+                int totalXMax = xMax;
+                int totalYMin = yMin;
+                int totalYMax = yMax;
+                if(useAvenue) {
+                    for(const auto o : os) {
+                        switch(o) {
+                        case eDiagonalOrientation::topRight: {
+                            yMin++;
+                            yMax++;
+                            totalYMax++;
+                        } break;
+                        case eDiagonalOrientation::bottomRight: {
+                            xMin--;
+                            xMax--;
+                            totalXMin--;
+                        } break;
+                        case eDiagonalOrientation::bottomLeft: {
+                            yMin--;
+                            yMax--;
+                            totalYMin--;
+                        } break;
+                        case eDiagonalOrientation::topLeft: {
+                            xMin++;
+                            xMax++;
+                            totalXMax++;
+                        } break;
+                        }
+                    }
+                }
                 bool ok = true;
                 bool foundFertile = false;
-                for(int x = xMin; x <= xMax; x++) {
-                    for(int y = yMin; y <= yMax; y++) {
+                for(int x = totalXMin; x <= totalXMax; x++) {
+                    for(int y = totalYMin; y <= totalYMax; y++) {
                         int dx;
                         int dy;
                         eTileHelper::tileIdToDTileId(x, y, dx, dy);
@@ -521,6 +617,8 @@ struct eAICDistrict {
         fRoads.updateCoordinates();
         std::vector<eAIRoadPath*> allRoads;
         fRoads.allBranches(allRoads);
+        eRoadBoard roadBoard;
+        roadBoard.initialize(aiBoard.fW, aiBoard.fH);
         for(const auto r : allRoads) {
             const int xMin = r->minX();
             const int xMax = r->maxX();
@@ -549,13 +647,17 @@ struct eAICDistrict {
                     if(!btile) continue;
                     if(btile->cityId() != fCid) continue;
                     tile->fBuilding = eBuildingType::road;
+                    {
+                        const auto tile = roadBoard.tile(dx, dy);
+                        *tile = 1;
+                    }
                 }
             }
         }
 
         for(auto& b : fBuildings) {
             b.fRectTmp = {0, 0, 0, 0};
-            placeBuilding(roadsBRect, board, aiBoard, b);
+            placeBuilding(roadsBRect, board, aiBoard, roadBoard, b);
         }
     }
 
@@ -743,6 +845,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             district.addBuilding(eBuildingType::podium);
             district.addBuilding(eBuildingType::watchPost);
             district.addBuilding(eBuildingType::fountain);
+            district.addBuilding(eBuildingType::theater);
         }
         {
             auto& district = s.fDistricts.emplace_back();
