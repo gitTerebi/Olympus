@@ -151,6 +151,8 @@ public:
                const eCityId cid) const;
 
     bool road(int& x, int& y) const;
+
+    void addBuilding(const eAIBuilding& a);
 private:
     std::vector<eAIBuilding> mBuildings;
 };
@@ -160,8 +162,11 @@ public:
     eAICityPlan(const ePlayerId pid,
                 const eCityId cid);
 
+    void addDistrict(const eAIDistrict& a);
+
     void buildDistrict(eGameBoard& board,
                        const int id);
+    void buildAllDistricts(eGameBoard& board);
     void rebuildDistricts(eGameBoard& board);
     bool connectDistricts(eGameBoard& board,
                           const int id1, const int id2);

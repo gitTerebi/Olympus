@@ -1,0 +1,674 @@
+﻿#include "eaicityplanningtask.h"
+
+#include "buildings/ebuilding.h"
+#include "engine/eresourcetype.h"
+#include "engine/epatrolguide.h"
+#include "etilehelper.h"
+#include "engine/thread/ethreadboard.h"
+#include "eaicityplan.h"
+
+struct eAITile {
+    eBuildingType fBuilding = eBuildingType::none;
+    bool fMaintanance = false;
+    bool fSecurity = false;
+    bool fHealth = false;
+    bool fTax = false;
+    bool fPodium = false;
+    bool fGymnasium = false;
+    bool fTheater = false;
+    bool fStadium = false;
+    bool fAgora = false;
+};
+
+struct eAIBoard {
+    eAITile* tile(const int dx, const int dy) {
+        if(dx < 0) return nullptr;
+        if(dy < 0) return nullptr;
+        if(dx >= fW) return nullptr;
+        if(dy >= fH) return nullptr;
+        return &fTiles[dx][dy];
+    }
+
+    void initialize(const int w, const int h) {
+        fW = w;
+        fH = h;
+        fTiles.clear();
+        for(int x = 0; x < w; x++) {
+            auto& row = fTiles.emplace_back();
+            for(int y = 0; y < h; y++) {
+                row.emplace_back();
+            }
+        }
+    }
+
+    int fW = 0;
+    int fH = 0;
+    std::vector<std::vector<eAITile>> fTiles;
+};
+
+struct eAICBuilding {
+    eBuildingType fType;
+    eResourceType fGet = static_cast<eResourceType>(0);
+    eResourceType fEmpty = static_cast<eResourceType>(0);
+    eResourceType fAccept = static_cast<eResourceType>(0);
+    std::vector<int> fGuideIds;
+    eOrientation fO;
+
+    std::vector<int> fGuidesTmp;
+    SDL_Rect fRectTmp;
+};
+
+struct eAIRoadPath {
+    int xEnd() const {
+        switch(fO) {
+        case eOrientation::topRight:
+            return fX;
+        case eOrientation::bottomRight:
+            return fX + fLen - 1;
+        case eOrientation::bottomLeft:
+            return fX;
+        case eOrientation::topLeft:
+            return fX - fLen + 1;
+        default:
+            return fX;
+        }
+    }
+
+    int yEnd() const {
+        switch(fO) {
+        case eOrientation::topRight:
+            return fY - fLen + 1;
+        case eOrientation::bottomRight:
+            return fY;
+        case eOrientation::bottomLeft:
+            return fY + fLen - 1;
+        case eOrientation::topLeft:
+            return fY;
+        default:
+            return fY;
+        }
+    }
+
+    int minX() const {
+        return std::min(fX, xEnd());
+    }
+
+    int maxX() const {
+        return std::max(fX, xEnd());
+    }
+
+    int minY() const {
+        return std::min(fY, yEnd());
+    }
+
+    int maxY() const {
+        return std::max(fY, yEnd());
+    }
+
+    int fX;
+    int fY;
+    eOrientation fO;
+    int fLen;
+};
+
+bool gHasRoad(const int xMin, const int yMin,
+              const int xMax, const int yMax,
+              eAIBoard& aiBoard) {
+    for(int x = xMin; x <= xMax; x++) {
+        for(int y = yMin; y <= yMax; y++) {
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x, y, dx, dy);
+            const auto tile = aiBoard.tile(dx, dy);
+            if(!tile) continue;
+            const bool r = tile->fBuilding == eBuildingType::road;
+            if(r) return true;
+        }
+    }
+    return false;
+}
+
+bool gNextToRoad(const int xMin, const int yMin,
+                 const int xMax, const int yMax,
+                 eAIBoard& aiBoard) {
+    const bool r1 = gHasRoad(xMin, yMin - 1, xMax, yMin - 1, aiBoard);
+    if(r1) return true;
+    const bool r2 = gHasRoad(xMin, yMax + 1, xMax, yMax + 1, aiBoard);
+    if(r2) return true;
+    const bool r3 = gHasRoad(xMin - 1, yMin, xMin - 1, yMax, aiBoard);
+    if(r3) return true;
+    const bool r4 = gHasRoad(xMax + 1, yMin, xMax + 1, yMax, aiBoard);
+    if(r4) return true;
+    return false;
+}
+
+struct eAICDistrict {
+
+    void addToCityPlan(eAICityPlan& result) const {
+        eAIDistrict district;
+
+        for(const auto& road : fRoads) {
+            const int xMin = road.minX();
+            const int xMax = road.maxX();
+            const int yMin = road.minY();
+            const int yMax = road.maxY();
+
+            for(int x = xMin; x <= xMax; x++) {
+                for(int y = yMin; y <= yMax; y++) {
+                    eAIBuilding b;
+                    b.fType = eBuildingType::road;
+                    b.fRect = SDL_Rect{x, y, 1, 1};
+                    district.addBuilding(b);
+                }
+            }
+        }
+
+        for(const auto& b : fBuildings) {
+            const auto& rect = b.fRectTmp;
+            if(rect.w == 0) continue;
+            eAIBuilding bb;
+            bb.fType = b.fType;
+            bb.fRect = b.fRectTmp;
+            district.addBuilding(bb);
+        }
+
+        result.addDistrict(district);
+    }
+
+    bool validRoad(eThreadBoard& board,
+                   const int xMin, const int xMax,
+                   const int yMin, const int yMax) {
+        for(int x = xMin; x <= xMax; x++) {
+            for(int y = yMin; y <= yMax; y++) {
+                const auto tile = board.tile(x, y);
+                if(!tile) return false;
+                const auto terr = tile->terrain();
+                const bool b = static_cast<bool>(terr & eTerrain::buildableAfterClear);
+                if(!b) return false;
+                const auto cid = tile->cityId();
+                if(cid != fCid) return false;
+            }
+        }
+        return true;
+    }
+
+    bool validRoad(eThreadBoard& board,
+                   const eAIRoadPath& road) {
+        const int xMin = road.minX();
+        const int xMax = road.maxX();
+        const int yMin = road.minY();
+        const int yMax = road.maxY();
+
+        return validRoad(board, xMin, xMax, yMin, yMax);
+    }
+
+    bool changeRoad(eThreadBoard& board) {
+        enum class eType {
+            add,
+            remove,
+            resize,
+            move,
+
+            count
+        };
+
+        const int itype = eRand::rand() % static_cast<int>(eType::count);
+        auto type = static_cast<eType>(itype);
+        const int nR = fRoads.size();
+        if(nR == 1 && type == eType::remove) return false;
+        const int srcRoadId = eRand::rand() % fRoads.size();
+        auto& srcRoad = fRoads[srcRoadId];
+        switch(type) {
+        case eType::add: {
+            const int xMin = srcRoad.minX();
+            const int xMax = srcRoad.maxX();
+            const int yMin = srcRoad.minY();
+            const int yMax = srcRoad.maxY();
+
+            eAIRoadPath newRoad;
+            newRoad.fX = xMin + (eRand::rand() % (xMax - xMin + 1));
+            newRoad.fY = yMin + (eRand::rand() % (yMax - yMin + 1));
+            newRoad.fLen = 2 + (eRand::rand() % 10);
+            const int oi = eRand::rand() % 2;
+            switch(srcRoad.fO) {
+            case eOrientation::topRight:
+            case eOrientation::bottomLeft: {
+                if(oi) {
+                    newRoad.fO = eOrientation::topLeft;
+                } else {
+                    newRoad.fO = eOrientation::bottomRight;
+                }
+            } break;
+            case eOrientation::topLeft:
+            case eOrientation::bottomRight:
+            default: {
+                if(oi) {
+                    newRoad.fO = eOrientation::topRight;
+                } else {
+                    newRoad.fO = eOrientation::bottomLeft;
+                }
+            } break;
+            }
+
+            const bool r = validRoad(board, newRoad);
+            if(!r) return false;
+            fRoads.push_back(newRoad);
+            return true;
+        } break;
+        case eType::remove: {
+            fRoads.erase(fRoads.begin() + srcRoadId);
+            return true;
+        } break;
+        case eType::resize: {
+            eAIRoadPath tmp = srcRoad;
+            int by = 0;
+            while(by == 0) {
+                by = 2 - (eRand::rand() % 5);
+            }
+            const int newLen = tmp.fLen + by;
+            if(newLen < 1) return false;
+            tmp.fLen = newLen;
+            const bool r = validRoad(board, tmp);
+            if(!r) return false;
+            srcRoad = tmp;
+            return true;
+        } break;
+        case eType::move: {
+            eAIRoadPath tmp = srcRoad;
+            tmp.fX += 2 - (eRand::rand() % 5);
+            tmp.fY += 2 - (eRand::rand() % 5);
+            const bool r = validRoad(board, tmp);
+            if(!r) return false;
+            srcRoad = tmp;
+            return true;
+        } break;
+        case eType::count:
+            return false;
+        }
+
+        return false;
+    }
+
+    bool move(eThreadBoard& board,
+              const int byX, const int byY) {
+        for(auto& road : fRoads) {
+            const int xMin = road.minX() + byX;
+            const int xMax = road.maxX() + byX;
+            const int yMin = road.minY() + byY;
+            const int yMax = road.maxY() + byY;
+            const bool r = validRoad(board, xMin, xMax, yMin, yMax);
+            if(!r) return false;
+        }
+        for(auto& road : fRoads) {
+            road.fX += byX;
+            road.fY += byY;
+        }
+        return true;
+    }
+
+    bool swapBuildings(const int b1, const int b2) {
+        if(b1 == b2) return false;
+        std::swap(fBuildings[b1], fBuildings[b2]);
+        return true;
+    }
+
+    bool swapBuildings() {
+        if(fBuildings.size() < 2) return false;
+        const int b1 = eRand::rand() % fBuildings.size();
+        const int b2 = eRand::rand() % fBuildings.size();
+        return swapBuildings(b1, b2);
+    }
+
+    eAICBuilding& addBuilding(const eBuildingType type) {
+        auto& result = fBuildings.emplace_back();
+        result.fType = type;
+        return result;
+    }
+
+    bool placeBuilding(const SDL_Rect& roadsBRect,
+                       eThreadBoard& board,
+                       eAIBoard& aiBoard,
+                       eAICBuilding& b) {
+        int w;
+        int h;
+        switch(b.fType) {
+        case eBuildingType::commonHouse:
+        case eBuildingType::maintenanceOffice:
+        case eBuildingType::taxOffice:
+        case eBuildingType::podium:
+        case eBuildingType::watchPost:
+        case eBuildingType::fountain: {
+            w = 2;
+            h = 2;
+        } break;
+        case eBuildingType::gymnasium: {
+            w = 3;
+            h = 3;
+        } break;
+        }
+
+        const int xMin1 = roadsBRect.x - w;
+        const int xMax1 = roadsBRect.x + roadsBRect.w;
+        const int yMin1 = roadsBRect.y - h;
+        const int yMax1 = roadsBRect.y + roadsBRect.h;
+        for(int x1 = xMin1; x1 <= xMax1; x1++) {
+            for(int y1 = yMin1; y1 <= yMax1; y1++) {
+                const int xMin = x1;
+                const int xMax = x1 + w - 1;
+                const int yMin = y1;
+                const int yMax = y1 + h - 1;
+                const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, aiBoard);
+                if(!nextToRoad) continue;
+                bool ok = true;
+                for(int x = xMin; x <= xMax; x++) {
+                    for(int y = yMin; y <= yMax; y++) {
+                        int dx;
+                        int dy;
+                        eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                        const auto tile = aiBoard.tile(dx, dy);
+                        if(!tile) {
+                            ok = false;
+                            break;
+                        }
+                        if(tile->fBuilding != eBuildingType::none) {
+                            ok = false;
+                            break;
+                        }
+                        const auto vtile = board.dtile(dx, dy);
+                        const auto terr = vtile->terrain();
+                        const bool v = static_cast<bool>(terr & eTerrain::buildableAfterClear);
+                        if(!v) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if(!ok) break;
+                }
+                if(!ok) continue;
+
+                b.fRectTmp = SDL_Rect{xMin, yMin, w, h};
+                for(int x = xMin; x <= xMax; x++) {
+                    for(int y = yMin; y <= yMax; y++) {
+                        int dx;
+                        int dy;
+                        eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                        const auto tile = aiBoard.tile(dx, dy);
+                        tile->fBuilding = b.fType;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void distributeBuildings(eThreadBoard& board,
+                             eAIBoard& aiBoard) {
+        SDL_Rect roadsBRect{0, 0, 0, 0};
+
+        for(const auto& r : fRoads) {
+            const int xMin = r.minX();
+            const int xMax = r.maxX();
+            const int yMin = r.minY();
+            const int yMax = r.maxY();
+
+            for(int x = xMin; x <= xMax; x++) {
+                for(int y = yMin; y <= yMax; y++) {
+                    if(roadsBRect.w == 0) {
+                        roadsBRect.x = x;
+                        roadsBRect.y = y;
+                        roadsBRect.w = 1;
+                        roadsBRect.h = 1;
+                    } else {
+                        const SDL_Rect a = roadsBRect;
+                        const SDL_Rect b{x, y, 1, 1};
+                        SDL_UnionRect(&a, &b, &roadsBRect);
+                    }
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                    const auto tile = aiBoard.tile(dx, dy);
+                    if(!tile) continue;
+                    if(tile->fBuilding != eBuildingType::none) continue;
+                    const auto btile = board.dtile(dx, dy);
+                    if(!btile) continue;
+                    if(btile->cityId() != fCid) continue;
+                    tile->fBuilding = eBuildingType::road;
+                }
+            }
+        }
+
+        for(auto& b : fBuildings) {
+            b.fRectTmp = {0, 0, 0, 0};
+            placeBuilding(roadsBRect, board, aiBoard, b);
+        }
+    }
+
+    int grade(eThreadBoard& board,
+              eAIBoard& aiBoard) const {
+        int result = 0;
+
+        result -= fRoads.size();
+
+        for(const auto& road : fRoads) {
+            result -= road.fLen;
+        }
+
+        result -= fBuildings.size();
+
+        for(const auto& b : fBuildings) {
+            if(b.fRectTmp.w == 0) continue;
+
+            const auto type = b.fType;
+
+            bool maintanance = false;
+            bool security = false;
+            bool health = false;
+            bool tax = false;
+            bool podium = false;
+            bool gymnasium = false;
+            bool theater = false;
+            bool stadium = false;
+            bool agora = false;
+
+            const auto& rect = b.fRectTmp;
+            const int xMin = rect.x;
+            const int xMax = xMin + rect.w - 1;
+            const int yMin = rect.y;
+            const int yMax = yMin + rect.h - 1;
+
+            for(int x = xMin - 1; x <= xMax + 1; x++) {
+                for(int y = yMin - 1; y <= yMax + 1; y++) {
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                    const auto aiTile = aiBoard.tile(dx, dy);
+                    if(!aiTile) continue;
+                    if(aiTile->fMaintanance) maintanance = true;
+                }
+            }
+
+            result += 15;
+
+            if(!maintanance) {
+                result -= 10;
+            }
+
+            if(type == eBuildingType::commonHouse) {
+                result += 5;
+
+                if(security) {
+                    result += 5;
+                }
+                if(health) {
+                    result += 5;
+                }
+                if(tax) {
+                    result += 5;
+                }
+                if(podium) {
+                    result += 5;
+                }
+                if(gymnasium) {
+                    result += 5;
+                }
+                if(theater) {
+                    result += 5;
+                }
+                if(stadium) {
+                    result += 5;
+                }
+                if(agora) {
+                    result += 5;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    eCityId fCid;
+    std::vector<eAIRoadPath> fRoads;
+    std::vector<eAICBuilding> fBuildings;
+};
+
+eAICityPlanningTask::eAICityPlanningTask(
+        eGameBoard& board,
+        const SDL_Rect& bRect,
+        const ePlayerId pid,
+        const eCityId cid) :
+    eTask(cid), mBoard(board), mBRect(bRect), mPid(pid) {
+
+}
+
+struct eAICSpeciman {
+    int grade(eThreadBoard& board, eAIBoard& aiBoard) const {
+        int result = 0;
+        for(const auto& d : fDistricts) {
+            result += d.grade(board, aiBoard);
+        }
+        return result;
+    }
+
+    bool mutate(eThreadBoard& board) {
+        if(fDistricts.empty()) return false;
+        auto& d = fDistricts[eRand::rand() % fDistricts.size()];
+
+        enum class eType {
+            move,
+            changeRoad,
+            swapBuildings,
+
+            count
+        };
+
+        const int itype = eRand::rand() % static_cast<int>(eType::count);
+        const auto type = static_cast<eType>(itype);
+        switch(type) {
+        case eType::move: {
+            const int byX = 2 - (eRand::rand() % 5);
+            const int byY = 2 - (eRand::rand() % 5);
+            return d.move(board, byX, byY);
+        } break;
+        case eType::changeRoad: {
+            return d.changeRoad(board);
+        } break;
+        case eType::swapBuildings: {
+            return d.swapBuildings();
+        } break;
+        case eType::count:
+            break;
+        }
+        return false;
+    }
+
+    void distributeBuildings(eThreadBoard& board, eAIBoard& aiBoard) {
+        for(auto& d : fDistricts) {
+            d.distributeBuildings(board, aiBoard);
+        }
+    }
+
+    eAICityPlan cityPlan(const ePlayerId pid,
+                         const eCityId cid) const {
+        eAICityPlan result(pid, cid);
+
+        for(const auto& d : fDistricts) {
+            d.addToCityPlan(result);
+        }
+
+        return result;
+    }
+
+    std::vector<eAICDistrict> fDistricts;
+    int fGrade = 0;
+};
+
+void eAICityPlanningTask::run(eThreadBoard& data) {
+    eAIBoard aiBoard;
+
+    std::vector<eAICSpeciman> population;
+
+    const int iterations = 1000;
+    const int popSize = 100;
+    const int mutateSize = 25;
+
+    for(int i = 0; i < popSize; i++) {
+        auto& s = population.emplace_back();
+        auto& district = s.fDistricts.emplace_back();
+        district.fCid = cid();
+        auto& road = district.fRoads.emplace_back();
+        road.fLen = 4;
+        const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+        const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+        eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+        for(int i = 0; i < 12; i++) {
+            district.addBuilding(eBuildingType::commonHouse);
+        }
+        district.addBuilding(eBuildingType::maintenanceOffice);
+        district.addBuilding(eBuildingType::taxOffice);
+        district.addBuilding(eBuildingType::gymnasium);
+        district.addBuilding(eBuildingType::podium);
+        district.addBuilding(eBuildingType::watchPost);
+        district.addBuilding(eBuildingType::fountain);
+
+        aiBoard.initialize(data.width(), data.height());
+        s.distributeBuildings(data, aiBoard);
+        s.fGrade = s.grade(data, aiBoard);
+    }
+
+    for(int i = 0; i < iterations; i++) {
+        for(int j = 0; j < mutateSize; j++) {
+            auto& s = population.emplace_back();
+            const int srcId = eRand::rand() % popSize;
+            const auto& srcS = population[srcId];
+            s = srcS;
+            const bool c = s.mutate(data);
+            if(c) {
+                aiBoard.initialize(data.width(), data.height());
+                s.distributeBuildings(data, aiBoard);
+                s.fGrade = s.grade(data, aiBoard);
+            }
+        }
+
+        std::sort(population.begin(), population.end(),
+                  [](const eAICSpeciman& s1, const eAICSpeciman& s2) {
+            return s1.fGrade > s2.fGrade;
+        });
+
+        for(int j = 0; j < mutateSize; j++) {
+            population.pop_back();
+        }
+        printf("iter %d, best grade %d\n", i, population.front().fGrade);
+    }
+
+    const auto s = new eAICSpeciman();
+    *s = population.front();
+    mBest = s;
+}
+
+void eAICityPlanningTask::finish() {
+    const auto s = static_cast<eAICSpeciman*>(mBest);
+    auto plan = s->cityPlan(mPid, cid());
+    plan.buildAllDistricts(mBoard);
+    delete s;
+}

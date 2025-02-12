@@ -74,10 +74,22 @@ eAICityPlan::eAICityPlan(const ePlayerId pid,
                          const eCityId cid) :
     mPid(pid), mCid(cid) {}
 
+void eAICityPlan::addDistrict(const eAIDistrict& a) {
+    mDistricts.push_back(a);
+}
+
 void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
     const bool c = districtBuilt(id);
     if(!c) mBuiltDistrics.push_back(id);
     mDistricts[id].build(board, mPid, mCid);
+    connectAllBuiltDistricts(board);
+}
+
+void eAICityPlan::buildAllDistricts(eGameBoard& board) {
+    const int iMax = mDistricts.size();
+    for(int i = 0; i < iMax; i++) {
+        buildDistrict(board, i);
+    }
     connectAllBuiltDistricts(board);
 }
 
@@ -678,4 +690,8 @@ bool eAIDistrict::road(int& x, int& y) const {
     }
 
     return false;
+}
+
+void eAIDistrict::addBuilding(const eAIBuilding& a) {
+    mBuildings.push_back(a);
 }
