@@ -670,8 +670,20 @@ struct eAICDistrict {
 
         result -= fBuildings.size();
 
+        SDL_Rect bRect{0, 0, 0, 0};
+
+        int placed = 0;
+
         for(const auto& b : fBuildings) {
             if(b.fRectTmp.w == 0) continue;
+            placed++;
+
+            if(bRect.w == 0) {
+                bRect = b.fRectTmp;
+            } else {
+                const auto tmp = bRect;
+                SDL_UnionRect(&b.fRectTmp, &tmp, &bRect);
+            }
 
             const auto type = b.fType;
 
@@ -736,6 +748,10 @@ struct eAICDistrict {
                     result += 5;
                 }
             }
+        }
+
+        if(placed != 0) {
+            result -= round(double(bRect.w*bRect.h)/placed);
         }
 
         return result;
@@ -889,7 +905,11 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             const int srcId = eRand::rand() % popSize;
             const auto& srcS = population[srcId];
             s = srcS;
-            const bool c = s.mutate(data);
+            bool c = false;
+            const int kMax = 1 + (eRand::rand() % 3);
+            for(int k = 0; k < kMax; k++) {
+                c = c || s.mutate(data);
+            }
             if(c) {
                 aiBoard.initialize(data.width(), data.height());
                 s.distributeBuildings(data, aiBoard);
