@@ -6,6 +6,9 @@
 #include "etilehelper.h"
 #include "engine/thread/ethreadboard.h"
 #include "eaicityplan.h"
+#include "engine/boardData/eheatmaptask.h"
+#include "engine/boardData/eheatmapdivisor.h"
+#include "buildings/eheatgetters.h"
 
 struct eAITile {
     eBuildingType fBuilding = eBuildingType::none;
@@ -422,6 +425,7 @@ struct eAICDistrict {
                        eThreadBoard& board,
                        eAIBoard& aiBoard,
                        eAICBuilding& b) {
+        bool needsFertile = false;
         int w;
         int h;
         switch(b.fType) {
@@ -438,6 +442,17 @@ struct eAICDistrict {
             w = 3;
             h = 3;
         } break;
+        case eBuildingType::onionsFarm:
+        case eBuildingType::carrotsFarm:
+        case eBuildingType::wheatFarm: {
+            w = 3;
+            h = 3;
+            needsFertile = true;
+        } break;
+        case eBuildingType::granary: {
+            w = 4;
+            h = 4;
+        } break;
         }
 
         const int xMin1 = roadsBRect.x - w;
@@ -453,6 +468,7 @@ struct eAICDistrict {
                 const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, aiBoard);
                 if(!nextToRoad) continue;
                 bool ok = true;
+                bool foundFertile = false;
                 for(int x = xMin; x <= xMax; x++) {
                     for(int y = yMin; y <= yMax; y++) {
                         int dx;
@@ -469,6 +485,8 @@ struct eAICDistrict {
                         }
                         const auto vtile = board.dtile(dx, dy);
                         const auto terr = vtile->terrain();
+                        const bool f = static_cast<bool>(terr & eTerrain::fertile);
+                        if(f) foundFertile = true;
                         const bool v = static_cast<bool>(terr & eTerrain::buildableAfterClear);
                         if(!v) {
                             ok = false;
@@ -477,6 +495,7 @@ struct eAICDistrict {
                     }
                     if(!ok) break;
                 }
+                if(needsFertile && !foundFertile) continue;
                 if(!ok) continue;
 
                 b.fRectTmp = SDL_Rect{xMin, yMin, w, h};
@@ -707,22 +726,54 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
     for(int i = 0; i < popSize; i++) {
         auto& s = population.emplace_back();
-        auto& district = s.fDistricts.emplace_back();
-        district.fCid = cid();
-        auto& road = district.fRoads;
-        road.fLen = 4;
-        const int drx = mBRect.x + (eRand::rand() % mBRect.w);
-        const int dry = mBRect.y + (eRand::rand() % mBRect.h);
-        eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
-        for(int i = 0; i < 12; i++) {
-            district.addBuilding(eBuildingType::commonHouse);
+        {
+            auto& district = s.fDistricts.emplace_back();
+            district.fCid = cid();
+            auto& road = district.fRoads;
+            road.fLen = 4;
+            const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+            const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+            eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+            for(int i = 0; i < 24; i++) {
+                district.addBuilding(eBuildingType::commonHouse);
+            }
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            district.addBuilding(eBuildingType::taxOffice);
+            district.addBuilding(eBuildingType::gymnasium);
+            district.addBuilding(eBuildingType::podium);
+            district.addBuilding(eBuildingType::watchPost);
+            district.addBuilding(eBuildingType::fountain);
         }
-        district.addBuilding(eBuildingType::maintenanceOffice);
-        district.addBuilding(eBuildingType::taxOffice);
-        district.addBuilding(eBuildingType::gymnasium);
-        district.addBuilding(eBuildingType::podium);
-        district.addBuilding(eBuildingType::watchPost);
-        district.addBuilding(eBuildingType::fountain);
+        {
+            auto& district = s.fDistricts.emplace_back();
+            district.fCid = cid();
+            auto& road = district.fRoads;
+            road.fLen = 4;
+
+            {
+                eHeatMap map;
+                eHeatMapTask::sRun(data, &eHeatGetters::fertile, map);
+
+                eHeatMapDivisor divisor(map);
+                divisor.divide(10);
+                int dtx;
+                int dty;
+                const bool r = divisor.randomHeatTile(dtx, dty);
+                if(r) {
+                    eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
+                } else {
+                    const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+                    const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+                    eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+                }
+            }
+
+            for(int i = 0; i < 8; i++) {
+                district.addBuilding(eBuildingType::wheatFarm);
+            }
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            district.addBuilding(eBuildingType::granary);
+        }
 
         aiBoard.initialize(data.width(), data.height());
         s.distributeBuildings(data, aiBoard);

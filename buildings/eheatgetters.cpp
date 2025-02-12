@@ -322,3 +322,12 @@ eHeat eHeatGetters::any(const eBuildingType type) {
     default: return {2, 5};
     }
 }
+
+eHeat eHeatGetters::fertile(eTileBase* const tile) {
+    const auto terr = tile->terrain();
+    if(terr == eTerrain::fertile) {
+        return {2, 8};
+    } else {
+        return {0, 0};
+    }
+}

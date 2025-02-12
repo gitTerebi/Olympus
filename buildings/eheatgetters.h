@@ -20,6 +20,8 @@ namespace eHeatGetters {
 
     eHeat empty(const eBuildingType type);
     eHeat any(const eBuildingType type);
+
+    eHeat fertile(eTileBase* const tile);
 }
 
 #endif // EHEATGETTERS_H

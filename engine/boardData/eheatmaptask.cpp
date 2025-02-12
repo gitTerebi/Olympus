@@ -9,10 +9,12 @@ eHeatMapTask::eHeatMapTask(const eCityId cid,
 
 }
 
-void eHeatMapTask::run(eThreadBoard& board) {
+void eHeatMapTask::sRun(eThreadBoard& board,
+                        const eHeatGetter& heatGetter,
+                        eHeatMap& map) {
     const int w = board.width();
     const int h = board.height();
-    mMap.initialize(w, h);
+    map.initialize(w, h);
     for(int tx = 0; tx < w; tx++) {
         for(int ty = 0; ty < h; ty++) {
             const auto t = board.dtile(tx, ty);
@@ -23,10 +25,29 @@ void eHeatMapTask::run(eThreadBoard& board) {
             const int ttx = t->x();
             const int tty = t->y();
             if(ttx != rect.x || tty != rect.y) continue;
-            const auto a = mHeatGetter(ubt);
-            mMap.addHeat(a, rect);
+            const auto a = heatGetter(ubt);
+            map.addHeat(a, rect);
         }
     }
+}
+
+void eHeatMapTask::sRun(eThreadBoard& board,
+                        const eTileHeatGetter& heatGetter,
+                        eHeatMap& map) {
+    const int w = board.width();
+    const int h = board.height();
+    map.initialize(w, h);
+    for(int tx = 0; tx < w; tx++) {
+        for(int ty = 0; ty < h; ty++) {
+            const auto t = board.dtile(tx, ty);
+            const auto a = heatGetter(t);
+            map.addHeat(a, {t->x(), t->y(), 1, 1});
+        }
+    }
+}
+
+void eHeatMapTask::run(eThreadBoard& board) {
+    sRun(board, mHeatGetter, mMap);
 }
 
 void eHeatMapTask::finish() {
