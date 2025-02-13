@@ -711,18 +711,27 @@ struct eAICDistrict {
                     const auto aiTile = aiBoard.tile(dx, dy);
                     if(!aiTile) continue;
                     if(aiTile->fMaintanance) maintanance = true;
+
+                    if(x >= xMin && x <= xMax &&
+                       y >= yMin && y <= yMax) {
+                        const auto tile = board.dtile(dx, dy);
+                        if(tile) {
+                            const auto terr = tile->terrain();
+                            if(terr == eTerrain::fertile) {
+                                result--;
+                            }
+                        }
+                    }
                 }
             }
 
-            result += 15;
+            result += 2*rect.w*rect.h;
 
-            if(!maintanance) {
-                result -= 10;
+            if(maintanance) {
+                result += 5;
             }
 
             if(type == eBuildingType::commonHouse) {
-                result += 5;
-
                 if(security) {
                     result += 5;
                 }
