@@ -42,8 +42,8 @@ public:
 
     void setWalkable(const stdsptr<eWalkableObject>& w);
     void setUnpackBuilding(eBuilding* const b);
-    void setOrientation(const eOrientation o);
-    eOrientation orientation() const;
+    void setOrientation(const eDiagonalOrientation o);
+    eDiagonalOrientation orientation() const;
     eTradePostType tpType() const { return mType; }
 
     using eCharacterCreator =
@@ -61,7 +61,7 @@ private:
     const eTradePostType mType;
     eResourceType mImports = eResourceType::none;
     eResourceType mExports = eResourceType::none;
-    eOrientation mO = eOrientation::topLeft;
+    eDiagonalOrientation mO = eDiagonalOrientation::topLeft;
 
     eCharacterCreator mCharGen;
     stdsptr<eWalkableObject> mWalkable = eWalkableObject::sCreateDefault();

@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
-ePier::ePier(eGameBoard& board, const eOrientation o,
+ePier::ePier(eGameBoard& board, const eDiagonalOrientation o,
              const eCityId cid) :
     eBuilding(board, eBuildingType::pier, 2, 2, cid),
     mO(o) {
@@ -19,16 +19,16 @@ std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const {
     const auto o = sRotated(mO, dir);
     int id = 3;
     switch(o) {
-    case eOrientation::topRight:
+    case eDiagonalOrientation::topRight:
         id = 0;
         break;
-    case eOrientation::bottomRight:
+    case eDiagonalOrientation::bottomRight:
         id = 1;
         break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         id = 2;
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         id = 3;
         break;
     default:

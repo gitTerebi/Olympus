@@ -81,7 +81,7 @@ struct eAICBuilding {
     eResourceType fEmpty = static_cast<eResourceType>(0);
     eResourceType fAccept = static_cast<eResourceType>(0);
     std::vector<int> fGuideIds;
-    eOrientation fO;
+    eDiagonalOrientation fO = eDiagonalOrientation::topLeft;
 
     std::vector<int> fGuidesTmp;
     SDL_Rect fRectTmp;
@@ -233,13 +233,6 @@ bool gHasRoad(const int xMin, const int yMin,
     }
     return false;
 }
-
-enum class eDiagonalOrientation {
-    topRight,
-    bottomRight,
-    bottomLeft,
-    topLeft
-};
 
 bool gNextToRoad(const int xMin, const int yMin,
                  const int xMax, const int yMax,
@@ -476,6 +469,8 @@ struct eAICDistrict {
         bool useAvenue = false;
         int w;
         int h;
+        int findW;
+        int findH;
         switch(b.fType) {
         case eBuildingType::commonHouse:
             useAvenue = true;
@@ -517,11 +512,45 @@ struct eAICDistrict {
             w = 3;
             h = 3;
         } break;
+        case eBuildingType::commonAgora: {
+            if(b.fO == eDiagonalOrientation::topLeft ||
+               b.fO == eDiagonalOrientation::bottomRight) {
+                w = 3;
+                h = 6;
+                findW = 2;
+                findH = 0;
+            } else {
+                w = 6;
+                h = 3;
+                findW = 0;
+                findH = 2;
+            }
+        } break;
+        case eBuildingType::grandAgora: {
+            if(b.fO == eDiagonalOrientation::topLeft ||
+               b.fO == eDiagonalOrientation::bottomRight) {
+                w = 5;
+                h = 6;
+                findW = 2;
+                findH = 0;
+            } else {
+                w = 6;
+                h = 5;
+                findW = 0;
+                findH = 2;
+            }
+        } break;
         }
 
-        const int xMin1 = roadsBRect.x - w;
+        if(b.fType != eBuildingType::commonAgora &&
+           b.fType != eBuildingType::grandAgora) {
+            findW = w;
+            findH = h;
+        }
+
+        const int xMin1 = roadsBRect.x - findW;
         const int xMax1 = roadsBRect.x + roadsBRect.w;
-        const int yMin1 = roadsBRect.y - h;
+        const int yMin1 = roadsBRect.y - findH;
         const int yMax1 = roadsBRect.y + roadsBRect.h;
         for(int x1 = xMin1; x1 <= xMax1; x1++) {
             for(int y1 = yMin1; y1 <= yMax1; y1++) {
@@ -529,37 +558,48 @@ struct eAICDistrict {
                 int xMax = x1 + w - 1;
                 int yMin = y1;
                 int yMax = y1 + h - 1;
-                std::vector<eDiagonalOrientation> os;
-                const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, roadBoard,
-                                                    useAvenue ? &os : nullptr);
-                if(!nextToRoad) continue;
                 int totalXMin = xMin;
                 int totalXMax = xMax;
                 int totalYMin = yMin;
                 int totalYMax = yMax;
-                if(useAvenue) {
-                    for(const auto o : os) {
-                        switch(o) {
-                        case eDiagonalOrientation::topRight: {
-                            yMin++;
-                            yMax++;
-                            totalYMax++;
-                        } break;
-                        case eDiagonalOrientation::bottomRight: {
-                            xMin--;
-                            xMax--;
-                            totalXMin--;
-                        } break;
-                        case eDiagonalOrientation::bottomLeft: {
-                            yMin--;
-                            yMax--;
-                            totalYMin--;
-                        } break;
-                        case eDiagonalOrientation::topLeft: {
-                            xMin++;
-                            xMax++;
-                            totalXMax++;
-                        } break;
+                const bool isAgora = b.fType == eBuildingType::commonAgora ||
+                                     b.fType == eBuildingType::grandAgora;
+                const bool zero = b.fType == eBuildingType::commonAgora &&
+                                  (b.fO == eDiagonalOrientation::bottomRight ||
+                                   b.fO == eDiagonalOrientation::bottomLeft);
+                const int allowedRoadX = isAgora ? (w == 6 ? __INT_MAX__ : (zero ? x1 : (x1 + 2))) : __INT_MAX__;
+                const int allowedRoadY = isAgora ? (w == 6 ? (zero ? y1 : (y1 + 2)) : __INT_MAX__) : __INT_MAX__;
+                if(isAgora) {
+
+                } else {
+                    std::vector<eDiagonalOrientation> os;
+                    const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, roadBoard,
+                                                        useAvenue ? &os : nullptr);
+                    if(!nextToRoad) continue;
+                    if(useAvenue) {
+                        for(const auto o : os) {
+                            switch(o) {
+                            case eDiagonalOrientation::topRight: {
+                                yMin++;
+                                yMax++;
+                                totalYMax++;
+                            } break;
+                            case eDiagonalOrientation::bottomRight: {
+                                xMin--;
+                                xMax--;
+                                totalXMin--;
+                            } break;
+                            case eDiagonalOrientation::bottomLeft: {
+                                yMin--;
+                                yMax--;
+                                totalYMin--;
+                            } break;
+                            case eDiagonalOrientation::topLeft: {
+                                xMin++;
+                                xMax++;
+                                totalXMax++;
+                            } break;
+                            }
                         }
                     }
                 }
@@ -575,7 +615,13 @@ struct eAICDistrict {
                             ok = false;
                             break;
                         }
-                        if(tile->fBuilding != eBuildingType::none) {
+                        const auto type = tile->fBuilding;
+                        if(x == allowedRoadX || y == allowedRoadY) {
+                            if(type != eBuildingType::road) {
+                                ok = false;
+                                break;
+                            }
+                        } else if(type != eBuildingType::none) {
                             ok = false;
                             break;
                         }
@@ -601,7 +647,13 @@ struct eAICDistrict {
                         int dy;
                         eTileHelper::tileIdToDTileId(x, y, dx, dy);
                         const auto tile = aiBoard.tile(dx, dy);
-                        tile->fBuilding = b.fType;
+                        const auto type = tile->fBuilding;
+                        if(type == eBuildingType::road &&
+                           (x == allowedRoadX || y == allowedRoadY)) {
+
+                        } else {
+                            tile->fBuilding = b.fType;
+                        }
                     }
                 }
                 return true;
@@ -725,7 +777,7 @@ struct eAICDistrict {
                 }
             }
 
-            result += 2*rect.w*rect.h;
+            result += 5*rect.w*rect.h;
 
             if(maintanance) {
                 result += 5;
@@ -861,7 +913,8 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             const int drx = mBRect.x + (eRand::rand() % mBRect.w);
             const int dry = mBRect.y + (eRand::rand() % mBRect.h);
             eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
-            for(int i = 0; i < 24; i++) {
+            district.addBuilding(eBuildingType::commonAgora);
+            for(int i = 0; i < 36; i++) {
                 district.addBuilding(eBuildingType::commonHouse);
             }
             district.addBuilding(eBuildingType::maintenanceOffice);
@@ -870,6 +923,24 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             district.addBuilding(eBuildingType::podium);
             district.addBuilding(eBuildingType::watchPost);
             district.addBuilding(eBuildingType::fountain);
+            district.addBuilding(eBuildingType::theater);
+        }
+        {
+            auto& district = s.fDistricts.emplace_back();
+            district.fCid = cid();
+            auto& road = district.fRoads;
+            road.fLen = 4;
+            const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+            const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+            eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+            district.addBuilding(eBuildingType::grandAgora);
+            for(int i = 0; i < 12; i++) {
+                district.addBuilding(eBuildingType::eliteHousing);
+            }
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            district.addBuilding(eBuildingType::taxOffice);
+            district.addBuilding(eBuildingType::gymnasium);
+            district.addBuilding(eBuildingType::podium);
             district.addBuilding(eBuildingType::theater);
         }
         {

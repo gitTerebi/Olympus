@@ -663,6 +663,21 @@ void eAIDistrict::build(eGameBoard& board,
             if(!buildable) continue;
         }
 
+        int allowRoadX = __INT_MAX__;
+        int allowRoadY = __INT_MAX__;
+
+        if(b.fType == eBuildingType::commonAgora ||
+           b.fType == eBuildingType::grandAgora) {
+            const bool zero = b.fType == eBuildingType::commonAgora &&
+                              (b.fO == eDiagonalOrientation::bottomRight ||
+                               b.fO == eDiagonalOrientation::bottomLeft);
+            const int x1 = rect.x;
+            const int y1 = rect.y;
+            const int w = rect.w;
+            allowRoadX = w == 6 ? __INT_MAX__ : (zero ? x1 : (x1 + 2));
+            allowRoadY = w == 6 ? (zero ? y1 : (y1 + 2)) : __INT_MAX__;
+        }
+
         for(int x = xMin; x <= xMax; x++) {
             for(int y = yMin; y <= yMax; y++) {
                 const auto tile = board.tile(x, y);
@@ -670,6 +685,9 @@ void eAIDistrict::build(eGameBoard& board,
                 if(terr == eTerrain::forest ||
                    terr == eTerrain::choppedForest) {
                     tile->setTerrain(eTerrain::dry);
+                }
+                if(x == allowRoadX || y == allowRoadY) {
+                    if(tile->hasRoad()) continue;
                 }
                 const auto ub = tile->underBuilding();
                 if(ub) ub->erase();
@@ -687,6 +705,7 @@ void eAIDistrict::build(eGameBoard& board,
                     const bool i = SDL_PointInRect(&p, &bRect);
                     if(i) continue;
                     const auto tile = board.tile(x, y);
+                    if(!tile) continue;
                     const auto terr = tile->terrain();
                     if(terr == eTerrain::forest ||
                        terr == eTerrain::choppedForest) {

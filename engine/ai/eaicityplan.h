@@ -141,7 +141,7 @@ struct eAIBuilding {
     eResourceType fEmpty = static_cast<eResourceType>(0);
     eResourceType fAccept = static_cast<eResourceType>(0);
     std::vector<ePatrolGuide> fGuides;
-    eOrientation fO;
+    eDiagonalOrientation fO;
 };
 
 class eAIDistrict {

@@ -679,7 +679,7 @@ bool canBuildFisheryTL(eTile* const t) {
 }
 
 bool eGameWidget::canBuildFishery(const int tx, const int ty,
-                                  eOrientation& o) const {
+                                  eDiagonalOrientation& o) const {
     for(int x = tx; x < tx + 2; x++) {
         for(int y = ty - 1; y < ty - 1 + 2; y++) {
             const auto t = mBoard->tile(x, y);
@@ -696,49 +696,49 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
     if(!t) return false;
     const bool tr = canBuildFisheryTR(t);
     if(tr) {
-        o = eOrientation::topRight;
+        o = eDiagonalOrientation::topRight;
         return true;
     }
     const bool br = canBuildFisheryBR(t);
     if(br) {
-        o = eOrientation::bottomRight;
+        o = eDiagonalOrientation::bottomRight;
         return true;
     }
     const bool bl = canBuildFisheryBL(t);
     if(bl) {
-        o = eOrientation::bottomLeft;
+        o = eDiagonalOrientation::bottomLeft;
         return true;
     }
     const bool tl = canBuildFisheryTL(t);
     if(tl) {
-        o = eOrientation::topLeft;
+        o = eDiagonalOrientation::topLeft;
         return true;
     }
     return false;
 }
 
 bool eGameWidget::canBuildPier(const int tx, const int ty,
-                               eOrientation& o) const {
+                               eDiagonalOrientation& o) const {
     const bool r = canBuildFishery(tx, ty, o);
     if(!r) return false;
     switch(o) {
-    case eOrientation::topRight: {
+    case eDiagonalOrientation::topRight: {
         const int minX = tx - 1;
         const int minY = ty + 1;
         return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
     } break;
-    case eOrientation::bottomRight: {
+    case eDiagonalOrientation::bottomRight: {
         const int minX = tx - 4;
         const int minY = ty - 2;
         return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
     } break;
-    case eOrientation::bottomLeft: {
+    case eDiagonalOrientation::bottomLeft: {
         const int minX = tx - 1;
         const int minY = ty - 5;
         return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
     } break;
     default:
-    case eOrientation::topLeft: {
+    case eDiagonalOrientation::topLeft: {
         const int minX = tx + 2;
         const int minY = ty - 2;
         return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);

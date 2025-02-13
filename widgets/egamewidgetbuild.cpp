@@ -989,7 +989,7 @@ bool eGameWidget::buildMouseRelease() {
 
 
         case eBuildingMode::urchinQuay: {
-            eOrientation o;
+            eDiagonalOrientation o;
             const bool c = canBuildFishery(mHoverTX, mHoverTY, o);
             if(c) {
                 const auto b = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
@@ -1015,7 +1015,7 @@ bool eGameWidget::buildMouseRelease() {
             }
         } break;
         case eBuildingMode::fishery: {
-            eOrientation o;
+            eDiagonalOrientation o;
             const bool c = canBuildFishery(mHoverTX, mHoverTY, o);
             if(c) {
                 const auto b = e::make_shared<eFishery>(*mBoard, o, mViewedCityId);
@@ -1043,7 +1043,7 @@ bool eGameWidget::buildMouseRelease() {
 
 
         case eBuildingMode::pier: {
-            eOrientation o;
+            eDiagonalOrientation o;
             const bool c = canBuildPier(mHoverTX, mHoverTY, o);
             if(c) {
                 const auto b = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
@@ -1065,17 +1065,17 @@ bool eGameWidget::buildMouseRelease() {
                 int ty = mHoverTY;
 
                 switch(o) {
-                case eOrientation::topRight: {
+                case eDiagonalOrientation::topRight: {
                     ty += 3;
                 } break;
-                case eOrientation::bottomRight: {
+                case eDiagonalOrientation::bottomRight: {
                     tx -= 3;
                 } break;
-                case eOrientation::bottomLeft: {
+                case eDiagonalOrientation::bottomLeft: {
                     ty -= 3;
                 } break;
                 default:
-                case eOrientation::topLeft: {
+                case eDiagonalOrientation::topLeft: {
                     tx += 3;
                 } break;
                 }

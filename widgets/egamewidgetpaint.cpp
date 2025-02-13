@@ -2013,7 +2013,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                const int sw, const int sh) {
                 (void)sw;
                 (void)sh;
-                eOrientation o;
+                eDiagonalOrientation o;
                 return canBuildFishery(tx, ty, o);
             };
         } break;
@@ -2021,7 +2021,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 if(sw > 2 || sh > 2) return true;
-                eOrientation o;
+                eDiagonalOrientation o;
                 return canBuildPier(tx, ty, o);
             };
         } break;
@@ -2617,21 +2617,21 @@ void eGameWidget::paintEvent(ePainter& p) {
         } break;
 
         case eBuildingMode::urchinQuay: {
-            eOrientation o = eOrientation::topRight;
+            eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::fishery: {
-            eOrientation o = eOrientation::topRight;
+            eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<eFishery>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 
         case eBuildingMode::pier: {
-            eOrientation o = eOrientation::topRight;
+            eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
@@ -2643,33 +2643,33 @@ void eGameWidget::paintEvent(ePainter& p) {
             int tx = mHoverTX;
             int ty = mHoverTY;
             switch(o) {
-            case eOrientation::topRight: {
+            case eDiagonalOrientation::topRight: {
                 ty += 3;
             } break;
-            case eOrientation::bottomRight: {
+            case eDiagonalOrientation::bottomRight: {
                 tx -= 3;
             } break;
-            case eOrientation::bottomLeft: {
+            case eDiagonalOrientation::bottomLeft: {
                 ty -= 3;
             } break;
             default:
-            case eOrientation::topLeft: {
+            case eDiagonalOrientation::topLeft: {
                 tx += 3;
             } break;
             }
             bool insert = false;
             if(dir == eWorldDirection::N) {
-                insert = o == eOrientation::bottomRight ||
-                         o == eOrientation::bottomLeft;
+                insert = o == eDiagonalOrientation::bottomRight ||
+                         o == eDiagonalOrientation::bottomLeft;
             } else if(dir == eWorldDirection::E) {
-                insert = o == eOrientation::topLeft ||
-                         o == eOrientation::bottomLeft;
+                insert = o == eDiagonalOrientation::topLeft ||
+                         o == eDiagonalOrientation::bottomLeft;
             } else if(dir == eWorldDirection::S) {
-                insert = o == eOrientation::topRight ||
-                         o == eOrientation::topLeft;
+                insert = o == eDiagonalOrientation::topRight ||
+                         o == eDiagonalOrientation::topLeft;
             } else { // if(dir == eWorldDirection::W) {
-                insert = o == eOrientation::topRight ||
-                         o == eOrientation::bottomRight;
+                insert = o == eDiagonalOrientation::topRight ||
+                         o == eDiagonalOrientation::bottomRight;
             }
             if(insert) {
                 ebs.insert(ebs.begin(), {tx, ty, b2});

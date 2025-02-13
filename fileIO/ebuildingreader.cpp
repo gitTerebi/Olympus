@@ -162,18 +162,18 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     } break;
 
     case eBuildingType::urchinQuay: {
-        eOrientation o;
+        eDiagonalOrientation o;
         src >> o;
         b = e::make_shared<eUrchinQuay>(board, o, cid);
     } break;
     case eBuildingType::fishery: {
-        eOrientation o;
+        eDiagonalOrientation o;
         src >> o;
         b = e::make_shared<eFishery>(board, o, cid);
     } break;
 
     case eBuildingType::pier: {
-        eOrientation o;
+        eDiagonalOrientation o;
         src >> o;
         const auto p = e::make_shared<ePier>(board, o, cid);
         b = p;
@@ -185,7 +185,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::tradePost: {
         eTradePostType tpt;
         src >> tpt;
-        eOrientation o;
+        eDiagonalOrientation o;
         src >> o;
 
         int ctid;

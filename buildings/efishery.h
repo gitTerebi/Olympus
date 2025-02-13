@@ -14,7 +14,8 @@ enum class eFisheryState {
 
 class eFishery : public eResourceCollectBuildingBase {
 public:
-    eFishery(eGameBoard& board, const eOrientation o,
+    eFishery(eGameBoard& board,
+             const eDiagonalOrientation o,
              const eCityId cid);
     ~eFishery();
 
@@ -30,14 +31,14 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-    eOrientation orientation() const { return mO; }
+    eDiagonalOrientation orientation() const { return mO; }
 
     eFisheryState state() const { return mState; }
 private:
     void spawnBoat();
     void updateDisabled();
 
-    const eOrientation mO;
+    const eDiagonalOrientation mO;
 
     bool mDisabled = false;
     int mStateCount = 0;

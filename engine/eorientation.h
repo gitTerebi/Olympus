@@ -5,6 +5,53 @@
 
 #include <cmath>
 
+enum class eDiagonalOrientation {
+    topRight,
+    bottomRight,
+    bottomLeft,
+    topLeft
+};
+
+inline eDiagonalOrientation sRotated(const eDiagonalOrientation o,
+                                     const eWorldDirection dir) {
+    if(dir == eWorldDirection::N) {
+        return o;
+    } else if(dir == eWorldDirection::E) {
+        switch(o) {
+        case eDiagonalOrientation::topRight:
+            return eDiagonalOrientation::topLeft;
+        case eDiagonalOrientation::bottomRight:
+            return eDiagonalOrientation::topRight;
+        case eDiagonalOrientation::bottomLeft:
+            return eDiagonalOrientation::bottomRight;
+        case eDiagonalOrientation::topLeft:
+            return eDiagonalOrientation::bottomLeft;
+        }
+    } else if(dir == eWorldDirection::S) {
+        switch(o) {
+        case eDiagonalOrientation::topRight:
+            return eDiagonalOrientation::bottomLeft;
+        case eDiagonalOrientation::bottomRight:
+            return eDiagonalOrientation::topLeft;
+        case eDiagonalOrientation::bottomLeft:
+            return eDiagonalOrientation::topRight;
+        case eDiagonalOrientation::topLeft:
+            return eDiagonalOrientation::bottomRight;
+        }
+    } else { // if(dir == eWorldDirection::W) {
+        switch(o) {
+        case eDiagonalOrientation::topRight:
+            return eDiagonalOrientation::bottomRight;
+        case eDiagonalOrientation::bottomRight:
+            return eDiagonalOrientation::bottomLeft;
+        case eDiagonalOrientation::bottomLeft:
+            return eDiagonalOrientation::topLeft;
+        case eDiagonalOrientation::topLeft:
+            return eDiagonalOrientation::topRight;
+        }
+    }
+}
+
 enum class eOrientation {
     topRight,
     right,
@@ -114,6 +161,19 @@ inline eOrientation sRotated(const eOrientation o,
         case eOrientation::top:
             return eOrientation::right;
         }
+    }
+}
+
+inline eOrientation sConvert(const eDiagonalOrientation o) {
+    switch(o) {
+    case eDiagonalOrientation::topRight:
+        return eOrientation::topRight;
+    case eDiagonalOrientation::bottomRight:
+        return eOrientation::bottomRight;
+    case eDiagonalOrientation::bottomLeft:
+        return eOrientation::bottomLeft;
+    case eDiagonalOrientation::topLeft:
+        return eOrientation::topLeft;
     }
 }
 

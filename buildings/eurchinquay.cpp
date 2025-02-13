@@ -6,7 +6,8 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eUrchinQuay::eUrchinQuay(eGameBoard& board, const eOrientation o,
+eUrchinQuay::eUrchinQuay(eGameBoard& board,
+                         const eDiagonalOrientation o,
                          const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::urchinQuay,
                                  2, 2, 10, eResourceType::urchin, cid),
@@ -49,16 +50,16 @@ std::shared_ptr<eTexture> eUrchinQuay::getTexture(const eTileSize size) const {
     const auto oo = sRotated(mO, dir);
     int id = 3;
     switch(oo) {
-    case eOrientation::topRight:
+    case eDiagonalOrientation::topRight:
         id = 0;
         break;
-    case eOrientation::bottomRight:
+    case eDiagonalOrientation::bottomRight:
         id = 1;
         break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         id = 2;
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         id = 3;
         break;
     default:
@@ -80,23 +81,23 @@ std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
         eOverlay o;
         const eTextureCollection* coll;
         switch(oo) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryOverlay[0];
             o.fX = -0.25;
             o.fY = -2.5;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             coll = &blds.fFisheryOverlay[4];
             o.fX = 0.25;
             o.fY = -1.38;
             break;
         default:
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             coll = &blds.fFisheryOverlay[6];
             o.fX = -0.75;
             o.fY = -2.2;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             coll = &blds.fFisheryOverlay[2];
             o.fX = 0.5;
             o.fY = -2.25;
@@ -111,23 +112,23 @@ std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
         eOverlay o;
         const eTextureCollection* coll;
         switch(oo) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             coll = &blds.fUrchinQuayUnpackingOverlayTR;
             o.fX = 0.19;
             o.fY = -1.84;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             coll = &blds.fUrchinQuayUnpackingOverlayBL;
             o.fX = 0.05;
             o.fY = -1.40;
             break;
         default:
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             coll = &blds.fUrchinQuayUnpackingOverlayTL;
             o.fX = 0.05;
             o.fY = -2.1;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             coll = &blds.fUrchinQuayUnpackingOverlayBR;
             o.fX = 0.60;
             o.fY = -1.45;
@@ -146,19 +147,19 @@ void eUrchinQuay::addRaw() {
     mState = eUrchinQuayState::unpacking;
     mStateCount = 0;
     if(mGatherer) {
-        eOrientation o;
+        eDiagonalOrientation o;
         switch(mO) {
-        case eOrientation::bottomLeft:
-        case eOrientation::topRight:
-            o = eOrientation::topLeft;
+        case eDiagonalOrientation::bottomLeft:
+        case eDiagonalOrientation::topRight:
+            o = eDiagonalOrientation::topLeft;
             break;
         default:
-        case eOrientation::bottomRight:
-        case eOrientation::topLeft:
-            o = eOrientation::topRight;
+        case eDiagonalOrientation::bottomRight:
+        case eDiagonalOrientation::topLeft:
+            o = eDiagonalOrientation::topRight;
             break;
         }
-        mGatherer->setOrientation(o);
+        mGatherer->setOrientation(sConvert(o));
     }
 }
 
@@ -176,19 +177,19 @@ void eUrchinQuay::spawnGatherer() {
     eTile* t;
     const auto ct = centerTile();
     switch(mO) {
-    case eOrientation::topRight: {
+    case eDiagonalOrientation::topRight: {
         const auto tr = ct->topRight<eTile>();
         if(!tr) return;
         t = tr->topRight<eTile>();
     } break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         t = ct->bottom<eTile>();
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         t = ct->topLeft<eTile>();
         break;
     default:
-    case eOrientation::bottomRight: {
+    case eDiagonalOrientation::bottomRight: {
         const auto r = ct->right<eTile>();
         if(!r) return;
         t = r->bottomRight<eTile>();

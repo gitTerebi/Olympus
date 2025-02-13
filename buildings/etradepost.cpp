@@ -256,11 +256,11 @@ void eTradePost::setUnpackBuilding(eBuilding* const b) {
     mUnpackBuilding = b;
 }
 
-void eTradePost::setOrientation(const eOrientation o) {
+void eTradePost::setOrientation(const eDiagonalOrientation o) {
     mO = o;
 }
 
-eOrientation eTradePost::orientation() const {
+eDiagonalOrientation eTradePost::orientation() const {
     return mO;
 }
 

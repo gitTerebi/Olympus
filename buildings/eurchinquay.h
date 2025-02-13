@@ -12,7 +12,8 @@ enum class eUrchinQuayState {
 
 class eUrchinQuay : public eResourceCollectBuildingBase {
 public:
-    eUrchinQuay(eGameBoard& board, const eOrientation o,
+    eUrchinQuay(eGameBoard& board,
+                const eDiagonalOrientation o,
                 const eCityId cid);
     ~eUrchinQuay();
 
@@ -28,14 +29,14 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-    eOrientation orientation() const { return mO; }
+    eDiagonalOrientation orientation() const { return mO; }
 
     eUrchinQuayState state() const { return mState; }
 private:
     void spawnGatherer();
     void updateDisabled();
 
-    const eOrientation mO;
+    const eDiagonalOrientation mO;
 
     bool mDisabled = false;
     int mStateCount = 0;

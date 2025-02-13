@@ -6,7 +6,8 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eFishery::eFishery(eGameBoard& board, const eOrientation o,
+eFishery::eFishery(eGameBoard& board,
+                   const eDiagonalOrientation o,
                    const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::fishery,
                                  2, 2, 10, eResourceType::fish,
@@ -57,16 +58,16 @@ std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
     const auto o = sRotated(mO, dir);
     int id = 3;
     switch(o) {
-    case eOrientation::topRight:
+    case eDiagonalOrientation::topRight:
         id = 0;
         break;
-    case eOrientation::bottomRight:
+    case eDiagonalOrientation::bottomRight:
         id = 1;
         break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         id = 2;
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         id = 3;
         break;
     default:
@@ -88,23 +89,23 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
         eOverlay o;
         const eTextureCollection* coll;
         switch(oo) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryBoatBuildingH;
             o.fX = 0.2;
             o.fY = -2.25;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             coll = &blds.fFisheryBoatBuildingH;
             o.fX = -0.3;
             o.fY = -2.38;
             break;
         default:
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             coll = &blds.fFisheryBoatBuildingW;
             o.fX = 0.0;
             o.fY = -2.0;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             coll = &blds.fFisheryBoatBuildingW;
             o.fX = -0.25;
             o.fY = -1.9;
@@ -119,23 +120,23 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
         eOverlay o;
         const eTextureCollection* coll;
         switch(oo) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryOverlay[0];
             o.fX = 0.2;
             o.fY = -2.0;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             coll = &blds.fFisheryOverlay[4];
             o.fX = -0.3;
             o.fY = -2.38;
             break;
         default:
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             coll = &blds.fFisheryOverlay[6];
             o.fX = 0.25;
             o.fY = -2.2;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             coll = &blds.fFisheryOverlay[2];
             o.fX = -0.25;
             o.fY = -1.9;
@@ -150,23 +151,23 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
         eOverlay o;
         const eTextureCollection* coll;
         switch(oo) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryUnpackingOverlayTR;
             o.fX = -0.3;
             o.fY = -2.95;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             coll = &blds.fFisheryUnpackingOverlayBL;
             o.fX = -0.35;
             o.fY = -1.75;
             break;
         default:
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             coll = &blds.fFisheryUnpackingOverlayTL;
             o.fX = -0.75;
             o.fY = -2.3;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             coll = &blds.fFisheryUnpackingOverlayBR;
             o.fX = 0.20;
             o.fY = -2.3;
@@ -187,19 +188,19 @@ void eFishery::addRaw() {
     mState = eFisheryState::unpacking;
     mStateCount = 0;
     if(mBoat) {
-        eOrientation o;
+        eDiagonalOrientation o;
         switch(mO) {
-        case eOrientation::bottomLeft:
-        case eOrientation::topRight:
-            o = eOrientation::topLeft;
+        case eDiagonalOrientation::bottomLeft:
+        case eDiagonalOrientation::topRight:
+            o = eDiagonalOrientation::topLeft;
             break;
         default:
-        case eOrientation::bottomRight:
-        case eOrientation::topLeft:
-            o = eOrientation::topRight;
+        case eDiagonalOrientation::bottomRight:
+        case eDiagonalOrientation::topLeft:
+            o = eDiagonalOrientation::topRight;
             break;
         }
-        mBoat->setOrientation(o);
+        mBoat->setOrientation(sConvert(o));
     }
 }
 
@@ -217,19 +218,19 @@ void eFishery::spawnBoat() {
     eTile* t;
     const auto ct = centerTile();
     switch(mO) {
-    case eOrientation::topRight: {
+    case eDiagonalOrientation::topRight: {
         const auto tr = ct->topRight<eTile>();
         if(!tr) return;
         t = tr->topRight<eTile>();
     } break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         t = ct->bottom<eTile>();
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         t = ct->topLeft<eTile>();
         break;
     default:
-    case eOrientation::bottomRight: {
+    case eDiagonalOrientation::bottomRight: {
         const auto r = ct->right<eTile>();
         if(!r) return;
         t = r->bottomRight<eTile>();

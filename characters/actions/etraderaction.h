@@ -110,13 +110,13 @@ public:
             const auto o = t->mTradePost->orientation();
             eOrientation oo;
             switch(o) {
-            case eOrientation::bottomLeft:
-            case eOrientation::topRight:
+            case eDiagonalOrientation::bottomLeft:
+            case eDiagonalOrientation::topRight:
                 oo = eOrientation::topLeft;
                 break;
             default:
-            case eOrientation::bottomRight:
-            case eOrientation::topLeft:
+            case eDiagonalOrientation::bottomRight:
+            case eDiagonalOrientation::topLeft:
                 oo = eOrientation::topRight;
                 break;
             }

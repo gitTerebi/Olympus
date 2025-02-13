@@ -152,9 +152,9 @@ private:
     bool canBuildVendor(const int tx, const int ty,
                         const eResourceType resType) const;
     bool canBuildFishery(const int tx, const int ty,
-                         eOrientation& o) const;
+                         eDiagonalOrientation& o) const;
     bool canBuildPier(const int tx, const int ty,
-                      eOrientation& o) const;
+                      eDiagonalOrientation& o) const;
 
     std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile) const;
     std::vector<eTile*> agoraBuildPlaceTL(eTile* const tile) const;
