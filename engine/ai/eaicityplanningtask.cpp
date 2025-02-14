@@ -49,6 +49,44 @@ struct eAIBoard {
     std::vector<std::vector<eAITile>> fTiles;
 };
 
+bool gBuildableTile(eAIBoard& aiBoard,
+                    const int dx, const int dy) {
+    const auto tile = aiBoard.tile(dx, dy);
+    if(!tile || tile->fBuilding != eBuildingType::none) {
+        return false;
+    }
+    return true;
+}
+
+bool gBuildableTile(eThreadBoard& board,
+                    const int dx, const int dy,
+                    const eCityId cid, const bool isRoad) {
+    const auto btile = board.dtile(dx, dy);
+    if(!btile || btile->cityId() != cid) {
+        return false;
+    }
+    const auto terr = btile->terrain();
+    if(!static_cast<bool>(terr & eTerrain::buildableAfterClear)) {
+        return false;
+    }
+    const bool e = btile->isElevationTile();
+    if(e) {
+        if(isRoad) {
+            return btile->walkableElev();
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool gBuildableTile(eThreadBoard& board, eAIBoard& aiBoard,
+                    const int dx, const int dy,
+                    const eCityId cid, const bool isRoad) {
+    if(!gBuildableTile(aiBoard, dx, dy)) return false;
+    return gBuildableTile(board, dx, dy, cid, isRoad);
+}
+
 struct eRoadBoard {
     char* tile(const int dx, const int dy) {
         if(dx < 0) return nullptr;
@@ -293,6 +331,15 @@ struct eAICDistrict {
             district.addBuilding(bb);
         }
 
+        for(const auto& b : fTmpBuildings) {
+            const auto& rect = b.fRectTmp;
+            if(rect.w == 0) continue;
+            eAIBuilding bb;
+            bb.fType = b.fType;
+            bb.fRect = b.fRectTmp;
+            district.addBuilding(bb);
+        }
+
         result.addDistrict(district);
     }
 
@@ -301,13 +348,11 @@ struct eAICDistrict {
                    const int yMin, const int yMax) {
         for(int x = xMin; x <= xMax; x++) {
             for(int y = yMin; y <= yMax; y++) {
-                const auto tile = board.tile(x, y);
-                if(!tile) return false;
-                const auto terr = tile->terrain();
-                const bool b = static_cast<bool>(terr & eTerrain::buildableAfterClear);
+                int dx;
+                int dy;
+                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                const bool b = gBuildableTile(board, dx, dy, fCid, true);
                 if(!b) return false;
-                const auto cid = tile->cityId();
-                if(cid != fCid) return false;
             }
         }
         return true;
@@ -464,7 +509,8 @@ struct eAICDistrict {
                        eThreadBoard& board,
                        eAIBoard& aiBoard,
                        eRoadBoard& roadBoard,
-                       eAICBuilding& b) {
+                       eAICBuilding& b,
+                       SDL_Rect& buildingsBRect) {
         bool needsFertile = false;
         bool useAvenue = false;
         int w;
@@ -569,10 +615,10 @@ struct eAICDistrict {
                                    b.fO == eDiagonalOrientation::bottomLeft);
                 const int allowedRoadX = isAgora ? (w == 6 ? __INT_MAX__ : (zero ? x1 : (x1 + 2))) : __INT_MAX__;
                 const int allowedRoadY = isAgora ? (w == 6 ? (zero ? y1 : (y1 + 2)) : __INT_MAX__) : __INT_MAX__;
+                std::vector<eDiagonalOrientation> os;
                 if(isAgora) {
 
                 } else {
-                    std::vector<eDiagonalOrientation> os;
                     const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, roadBoard,
                                                         useAvenue ? &os : nullptr);
                     if(!nextToRoad) continue;
@@ -630,7 +676,7 @@ struct eAICDistrict {
                         const bool f = static_cast<bool>(terr & eTerrain::fertile);
                         if(f) foundFertile = true;
                         const bool v = static_cast<bool>(terr & eTerrain::buildableAfterClear);
-                        if(!v) {
+                        if(!v || vtile->isElevationTile()) {
                             ok = false;
                             break;
                         }
@@ -653,6 +699,77 @@ struct eAICDistrict {
 
                         } else {
                             tile->fBuilding = b.fType;
+                        }
+                    }
+                }
+                if(buildingsBRect.w == 0) {
+                    buildingsBRect = b.fRectTmp;
+                } else {
+                    const auto tmp = buildingsBRect;
+                    SDL_UnionRect(&b.fRectTmp, &tmp, &buildingsBRect);
+                }
+
+                if(b.fType == eBuildingType::commonHouse) {
+                    for(const auto o : os) {
+                        int xMinG = xMin;
+                        int yMinG = yMin;
+                        switch(o) {
+                        case eDiagonalOrientation::topRight: {
+                            yMinG += 2;
+                        } break;
+                        case eDiagonalOrientation::bottomRight: {
+                            xMinG -= 2;
+                        } break;
+                        case eDiagonalOrientation::bottomLeft: {
+                            yMinG -= 2;
+                        } break;
+                        case eDiagonalOrientation::topLeft: {
+                            xMinG += 2;
+                        } break;
+                        }
+
+                        const int xMaxG = xMinG + 1;
+                        const int yMaxG = yMinG + 1;
+                        bool ok = true;
+                        for(int x = xMinG; x <= xMaxG; x++) {
+                            for(int y = yMinG; y <= yMaxG; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                                if(!b) {
+                                    ok = false;
+                                    break;
+                                }
+                            }
+                            if(!ok) break;
+                        }
+                        if(!ok) continue;
+
+                        auto& b = fTmpBuildings.emplace_back();
+                        const int par = (xMinG + yMinG) % 6;
+                        if(par < 2) {
+                            b.fType = eBuildingType::gazebo;
+                        } else if(par < 4) {
+                            b.fType = eBuildingType::flowerGarden;
+                        } else if(par < 6) {
+                            b.fType = eBuildingType::shellGarden;
+                        }
+                        b.fRectTmp = SDL_Rect{xMinG, yMinG, 2, 2};
+                        for(int x = xMinG; x <= xMaxG; x++) {
+                            for(int y = yMinG; y <= yMaxG; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const auto tile = aiBoard.tile(dx, dy);
+                                tile->fBuilding = b.fType;
+                            }
+                        }
+                        if(buildingsBRect.w == 0) {
+                            buildingsBRect = b.fRectTmp;
+                        } else {
+                            const auto tmp = buildingsBRect;
+                            SDL_UnionRect(&b.fRectTmp, &tmp, &buildingsBRect);
                         }
                     }
                 }
@@ -707,14 +824,15 @@ struct eAICDistrict {
             }
         }
 
+        fTmpBuildings.clear();
+        SDL_Rect buildingsBRect{0, 0, 0, 0};
         for(auto& b : fBuildings) {
             b.fRectTmp = {0, 0, 0, 0};
-            placeBuilding(roadsBRect, board, aiBoard, roadBoard, b);
+            placeBuilding(roadsBRect, board, aiBoard, roadBoard, b, buildingsBRect);
         }
     }
 
-    int grade(eThreadBoard& board,
-              eAIBoard& aiBoard) const {
+    int grade(eThreadBoard& board, eAIBoard& aiBoard) const {
         int result = 0;
 
         result -= fRoads.totalBranchesCount();
@@ -773,6 +891,26 @@ struct eAICDistrict {
                                 result--;
                             }
                         }
+                    } else if(type == eBuildingType::commonHouse) {
+                        const auto ttype = aiTile->fBuilding;
+                        if(ttype == type) {
+                            result++;
+                        } else if(ttype == eBuildingType::granary ||
+                                  ttype == eBuildingType::warehouse) {
+                            result -= 5;
+                        } else if(ttype == eBuildingType::gazebo) {
+                            result++;
+                        }
+                    } else if(type == eBuildingType::eliteHousing) {
+                        const auto ttype = aiTile->fBuilding;
+                        if(ttype == eBuildingType::gazebo) {
+                            result++;
+                        } else if(ttype == eBuildingType::commemorative) {
+                            result++;
+                        } else if(ttype == eBuildingType::granary ||
+                                  ttype == eBuildingType::warehouse) {
+                            result -= 5;
+                        }
                     }
                 }
             }
@@ -820,6 +958,7 @@ struct eAICDistrict {
 
     eCityId fCid;
     eAIRoadPath fRoads;
+    std::vector<eAICBuilding> fTmpBuildings;
     std::vector<eAICBuilding> fBuildings;
 };
 
@@ -924,6 +1063,9 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             district.addBuilding(eBuildingType::watchPost);
             district.addBuilding(eBuildingType::fountain);
             district.addBuilding(eBuildingType::theater);
+
+            district.addBuilding(eBuildingType::granary);
+            district.addBuilding(eBuildingType::warehouse);
         }
         {
             auto& district = s.fDistricts.emplace_back();
@@ -942,6 +1084,9 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             district.addBuilding(eBuildingType::gymnasium);
             district.addBuilding(eBuildingType::podium);
             district.addBuilding(eBuildingType::theater);
+
+            district.addBuilding(eBuildingType::granary);
+            district.addBuilding(eBuildingType::warehouse);
         }
         {
             auto& district = s.fDistricts.emplace_back();

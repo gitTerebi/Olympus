@@ -66,6 +66,8 @@
 #include "buildings/egranary.h"
 #include "buildings/ewarehouse.h"
 
+#include "buildings/eaestheticsbuilding.h"
+
 #include "evectorhelpers.h"
 
 #include "engine/epathfinder.h"
@@ -624,6 +626,25 @@ void gBuild(const eAIBuilding& b,
         };
         board.buildBase(minX, minY, maxX, maxY, bc, pid);
     } break;
+
+    case eBuildingType::gazebo: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eGazebo>(*boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
+    case eBuildingType::shellGarden: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eShellGarden>(*boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
+    case eBuildingType::flowerGarden: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eFlowerGarden>(*boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
     }
 
 }
@@ -697,7 +718,8 @@ void eAIDistrict::build(eGameBoard& board,
         gBuild(b, pid, cid, board);
 
         if(b.fType == eBuildingType::commonHouse ||
-           b.fType == eBuildingType::eliteHousing) {
+           b.fType == eBuildingType::eliteHousing ||
+           b.fType == eBuildingType::gazebo) {
             const auto& bRect = b.fRect;
             for(int x = xMin - 1; x <= xMax + 1; x++) {
                 for(int y = yMin - 1; y <= yMax + 1; y++) {
