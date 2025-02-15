@@ -246,6 +246,17 @@ struct eAIRoadPath {
         return result;
     }
 
+    enum class eType {
+        branch,
+        cycle
+    };
+
+    struct eCycleTurn {
+        int fDisplacement;
+        eOrientation fO;
+    };
+
+    eType fType = eType::branch;
     int fX;
     int fY;
     int fDisplacement;
@@ -253,6 +264,10 @@ struct eAIRoadPath {
     int fLen;
 
     std::vector<eAIRoadPath> fBranches;
+
+    // only for cycle
+    int fWidth;
+    std::vector<eCycleTurn> fTurns;
 };
 
 bool gHasRoad(const int x, const int y,
@@ -378,19 +393,23 @@ struct eAICDistrict {
             add,
             remove,
             resize,
-            move,
-
-            count
+            move
         };
 
-        const int itype = eRand::rand() % static_cast<int>(eType::count);
-        auto type = static_cast<eType>(itype);
         std::vector<eAIRoadPath*> allRoads;
         fRoads.allBranches(allRoads);
-        const int nR = allRoads.size();
-        if(nR == 1 && type == eType::remove) return false;
         const int srcRoadId = eRand::rand() % allRoads.size();
         auto& srcRoad = *allRoads[srcRoadId];
+        std::vector<eType> types;
+        if(srcRoad.fType == eAIRoadPath::eType::cycle) {
+            types = {eType::resize, eType::move};
+        } else if(srcRoad.fBranches.empty()) {
+            types = {eType::add, eType::resize, eType::move};
+        } else {
+            types = {eType::add, eType::remove, eType::resize, eType::move};
+        }
+        if(types.empty()) return false;
+        const auto type = types[eRand::rand() % types.size()];
         switch(type) {
         case eType::add: {
             eAIRoadPath newRoad;
@@ -448,10 +467,8 @@ struct eAICDistrict {
             return true;
         } break;
         case eType::move: {
-            auto& bs = srcRoad.fBranches;
-            if(bs.empty()) return false;
-            const int toMoveId = eRand::rand() % bs.size();
-            auto& toMove = bs[toMoveId];
+            const int toMoveId = eRand::rand() % allRoads.size();
+            auto& toMove = *allRoads[toMoveId];
             eAIRoadPath tmp = toMove;
             tmp.fDisplacement += 2 - (eRand::rand() % 5);
             srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
@@ -465,8 +482,6 @@ struct eAICDistrict {
             toMove = tmp;
             return true;
         } break;
-        case eType::count:
-            return false;
         }
 
         return false;
