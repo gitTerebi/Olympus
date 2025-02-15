@@ -12,6 +12,16 @@ enum class eDiagonalOrientation {
     topLeft
 };
 
+inline eDiagonalOrientation operator!(const eDiagonalOrientation o) {
+    switch(o) {
+    case eDiagonalOrientation::topRight: return eDiagonalOrientation::bottomLeft;
+    case eDiagonalOrientation::bottomRight: return eDiagonalOrientation::topLeft;
+    case eDiagonalOrientation::bottomLeft: return eDiagonalOrientation::topRight;
+    case eDiagonalOrientation::topLeft: return eDiagonalOrientation::bottomRight;
+    }
+    return eDiagonalOrientation::topRight;
+}
+
 inline eDiagonalOrientation sRotated(const eDiagonalOrientation o,
                                      const eWorldDirection dir) {
     if(dir == eWorldDirection::N) {

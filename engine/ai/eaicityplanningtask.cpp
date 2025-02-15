@@ -128,30 +128,26 @@ struct eAICBuilding {
 struct eAIRoadPath {
     int xEnd() const {
         switch(fO) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             return fX;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             return fX + fLen - 1;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             return fX;
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             return fX - fLen + 1;
-        default:
-            return fX;
         }
     }
 
     int yEnd() const {
         switch(fO) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             return fY - fLen + 1;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             return fY;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             return fY + fLen - 1;
-        case eOrientation::topLeft:
-            return fY;
-        default:
+        case eDiagonalOrientation::topLeft:
             return fY;
         }
     }
@@ -175,23 +171,21 @@ struct eAIRoadPath {
     void coordinatesAt(int displ, int& x, int& y) {
         displ = std::max(0, std::min(fLen - 1, displ));
         switch(fO) {
-        case eOrientation::topRight:
+        case eDiagonalOrientation::topRight:
             x = fX;
             y = fY - displ;
             break;
-        case eOrientation::bottomRight:
+        case eDiagonalOrientation::bottomRight:
             x = fX + displ;
             y = fY;
             break;
-        case eOrientation::bottomLeft:
+        case eDiagonalOrientation::bottomLeft:
             x = fX;
             y = fY + displ;
             break;
-        case eOrientation::topLeft:
+        case eDiagonalOrientation::topLeft:
             x = fX - displ;
             y = fY;
-            break;
-        default:
             break;
         }
     }
@@ -208,6 +202,51 @@ struct eAIRoadPath {
         for(auto& b : fBranches) {
             b.allBranches(result);
         }
+    }
+
+    void updateCycleBranches() {
+        fBranches.clear();
+
+        auto& b0 = fBranches.emplace_back();
+        b0.fX = fX;
+        b0.fY = fY;
+        b0.fDisplacement = 0;
+        b0.fLen = fLen;
+        b0.fO = fO;
+
+        auto& b1 = b0.fBranches.emplace_back();
+        b1.fX = b0.xEnd();
+        b1.fY = b0.yEnd();
+        b1.fDisplacement = b0.fLen;
+        b1.fLen = fWidth + 2;
+        switch(b0.fO) {
+        case eDiagonalOrientation::topRight:
+            b1.fO = eDiagonalOrientation::bottomRight;
+            break;
+        case eDiagonalOrientation::bottomRight:
+            b1.fO = eDiagonalOrientation::bottomLeft;
+            break;
+        case eDiagonalOrientation::bottomLeft:
+            b1.fO = eDiagonalOrientation::topLeft;
+            break;
+        case eDiagonalOrientation::topLeft:
+            b1.fO = eDiagonalOrientation::topRight;
+            break;
+        }
+
+        auto& b2 = b1.fBranches.emplace_back();
+        b2.fX = b1.xEnd();
+        b2.fY = b1.yEnd();
+        b2.fDisplacement = b1.fLen;
+        b2.fLen = b0.fLen;
+        b2.fO = !b0.fO;
+
+        auto& b3 = b2.fBranches.emplace_back();
+        b3.fX = b2.xEnd();
+        b3.fY = b2.yEnd();
+        b3.fDisplacement = b2.fLen;
+        b3.fLen = fWidth + 2;
+        b3.fO = !b1.fO;
     }
 
     eAIRoadPath& branchAt(int id) {
@@ -253,14 +292,14 @@ struct eAIRoadPath {
 
     struct eCycleTurn {
         int fDisplacement;
-        eOrientation fO;
+        eDiagonalOrientation fO;
     };
 
     eType fType = eType::branch;
     int fX;
     int fY;
     int fDisplacement;
-    eOrientation fO;
+    eDiagonalOrientation fO;
     int fLen;
 
     std::vector<eAIRoadPath> fBranches;
@@ -380,12 +419,20 @@ struct eAICDistrict {
 
     bool validRoad(eThreadBoard& board,
                    const eAIRoadPath& road) {
-        const int xMin = road.minX();
-        const int xMax = road.maxX();
-        const int yMin = road.minY();
-        const int yMax = road.maxY();
+        if(road.fType == eAIRoadPath::eType::branch) {
+            const int xMin = road.minX();
+            const int xMax = road.maxX();
+            const int yMin = road.minY();
+            const int yMax = road.maxY();
 
-        return validRoad(board, xMin, xMax, yMin, yMax);
+            return validRoad(board, xMin, xMax, yMin, yMax);
+        } else { // cycle
+            for(const auto& b : road.fBranches) {
+                const bool r = validRoad(board, b);
+                if(!r) return false;
+            }
+            return true;
+        }
     }
 
     bool changeRoad(eThreadBoard& board) {
@@ -393,6 +440,7 @@ struct eAICDistrict {
             add,
             remove,
             resize,
+            changeWidth, // for cycle
             move
         };
 
@@ -402,6 +450,8 @@ struct eAICDistrict {
         auto& srcRoad = *allRoads[srcRoadId];
         std::vector<eType> types;
         if(srcRoad.fType == eAIRoadPath::eType::cycle) {
+            types = {eType::changeWidth, eType::resize, eType::move};
+        } else if(srcRoad.fLen <= 0) {
             types = {eType::resize, eType::move};
         } else if(srcRoad.fBranches.empty()) {
             types = {eType::add, eType::resize, eType::move};
@@ -413,28 +463,59 @@ struct eAICDistrict {
         switch(type) {
         case eType::add: {
             eAIRoadPath newRoad;
-            newRoad.fDisplacement = 2 + (eRand::rand() % 10);
-            newRoad.fLen = 2 + (eRand::rand() % 10);
-            srcRoad.coordinatesAt(newRoad.fDisplacement, newRoad.fX, newRoad.fY);
-            const int oi = eRand::rand() % 2;
-            switch(srcRoad.fO) {
-            case eOrientation::topRight:
-            case eOrientation::bottomLeft: {
-                if(oi) {
-                    newRoad.fO = eOrientation::topLeft;
-                } else {
-                    newRoad.fO = eOrientation::bottomRight;
+            const int type = eRand::rand() % 2;
+            if(type) { // branch
+                newRoad.fType = eAIRoadPath::eType::branch;
+                newRoad.fDisplacement = eRand::rand() % srcRoad.fLen;
+                newRoad.fLen = 2 + (eRand::rand() % 10);
+                srcRoad.coordinatesAt(newRoad.fDisplacement, newRoad.fX, newRoad.fY);
+                const int oi = eRand::rand() % 2;
+                switch(srcRoad.fO) {
+                case eDiagonalOrientation::topRight:
+                case eDiagonalOrientation::bottomLeft: {
+                    if(oi) {
+                        newRoad.fO = eDiagonalOrientation::topLeft;
+                    } else {
+                        newRoad.fO = eDiagonalOrientation::bottomRight;
+                    }
+                } break;
+                case eDiagonalOrientation::topLeft:
+                case eDiagonalOrientation::bottomRight:
+                default: {
+                    if(oi) {
+                        newRoad.fO = eDiagonalOrientation::topRight;
+                    } else {
+                        newRoad.fO = eDiagonalOrientation::bottomLeft;
+                    }
+                } break;
                 }
-            } break;
-            case eOrientation::topLeft:
-            case eOrientation::bottomRight:
-            default: {
-                if(oi) {
-                    newRoad.fO = eOrientation::topRight;
-                } else {
-                    newRoad.fO = eOrientation::bottomLeft;
+            } else { // cycle
+                newRoad.fType = eAIRoadPath::eType::cycle;
+                newRoad.fDisplacement = eRand::rand() % srcRoad.fLen;
+                newRoad.fLen = 2 + (eRand::rand() % 10);
+                newRoad.fWidth = 2 + (eRand::rand() % 10);
+                srcRoad.coordinatesAt(newRoad.fDisplacement, newRoad.fX, newRoad.fY);
+                const int oi = eRand::rand() % 2;
+                switch(srcRoad.fO) {
+                case eDiagonalOrientation::topRight:
+                case eDiagonalOrientation::bottomLeft: {
+                    if(oi) {
+                        newRoad.fO = eDiagonalOrientation::topLeft;
+                    } else {
+                        newRoad.fO = eDiagonalOrientation::bottomRight;
+                    }
+                } break;
+                case eDiagonalOrientation::topLeft:
+                case eDiagonalOrientation::bottomRight:
+                default: {
+                    if(oi) {
+                        newRoad.fO = eDiagonalOrientation::topRight;
+                    } else {
+                        newRoad.fO = eDiagonalOrientation::bottomLeft;
+                    }
+                } break;
                 }
-            } break;
+                newRoad.updateCycleBranches();
             }
 
             const bool r = validRoad(board, newRoad);
@@ -456,7 +537,29 @@ struct eAICDistrict {
                 by = 2 - (eRand::rand() % 5);
             }
             tmp.fLen = std::max(1, tmp.fLen + by);
-            tmp.updateCoordinates();
+            if(tmp.fType == eAIRoadPath::eType::cycle) {
+                tmp.updateCycleBranches();
+            } else {
+                tmp.updateCoordinates();
+            }
+            std::vector<eAIRoadPath*> allTmp;
+            tmp.allBranches(allTmp);
+            for(const auto t : allTmp) {
+                const bool r = validRoad(board, *t);
+                if(!r) return false;
+            }
+            srcRoad = tmp;
+            return true;
+        } break;
+        case eType::changeWidth: {
+            if(srcRoad.fType != eAIRoadPath::eType::cycle) return false;
+            eAIRoadPath tmp = srcRoad;
+            int by = 0;
+            while(by == 0) {
+                by = 2 - (eRand::rand() % 5);
+            }
+            tmp.fWidth = std::max(2, tmp.fLen + by);
+            tmp.updateCycleBranches();
             std::vector<eAIRoadPath*> allTmp;
             tmp.allBranches(allTmp);
             for(const auto t : allTmp) {
