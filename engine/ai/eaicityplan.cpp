@@ -67,6 +67,7 @@
 #include "buildings/ewarehouse.h"
 
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/epark.h"
 
 #include "evectorhelpers.h"
 
@@ -642,6 +643,24 @@ void gBuild(const eAIBuilding& b,
     case eBuildingType::flowerGarden: {
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eFlowerGarden>(*boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
+    case eBuildingType::commemorative: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eCommemorative>(0, *boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
+    case eBuildingType::hedgeMaze: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eHedgeMaze>(*boardPtr, cid);
+        };
+        board.buildBase(minX, minY, maxX, maxY, bc, pid);
+    } break;
+    case eBuildingType::park: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<ePark>(*boardPtr, cid);
         };
         board.buildBase(minX, minY, maxX, maxY, bc, pid);
     } break;

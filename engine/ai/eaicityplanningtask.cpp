@@ -1,4 +1,4 @@
-﻿#include "eaicityplanningtask.h"
+#include "eaicityplanningtask.h"
 
 #include "buildings/ebuilding.h"
 #include "engine/eresourcetype.h"
@@ -255,17 +255,22 @@ struct eAIRoadPath {
     std::vector<eAIRoadPath> fBranches;
 };
 
+bool gHasRoad(const int x, const int y,
+              eRoadBoard& roadBoard) {
+    int dx;
+    int dy;
+    eTileHelper::tileIdToDTileId(x, y, dx, dy);
+    const auto tile = roadBoard.tile(dx, dy);
+    if(!tile) return false;
+    return *tile == 1;
+}
+
 bool gHasRoad(const int xMin, const int yMin,
               const int xMax, const int yMax,
               eRoadBoard& roadBoard) {
     for(int x = xMin; x <= xMax; x++) {
         for(int y = yMin; y <= yMax; y++) {
-            int dx;
-            int dy;
-            eTileHelper::tileIdToDTileId(x, y, dx, dy);
-            const auto tile = roadBoard.tile(dx, dy);
-            if(!tile) continue;
-            const bool r = *tile == 1;
+            const bool r = gHasRoad(x, y, roadBoard);
             if(r) return true;
         }
     }
@@ -622,6 +627,24 @@ struct eAICDistrict {
                     const bool nextToRoad = gNextToRoad(xMin, yMin, xMax, yMax, roadBoard,
                                                         useAvenue ? &os : nullptr);
                     if(!nextToRoad) continue;
+                    if(b.fType == eBuildingType::eliteHousing) {
+                        for(const auto o : os) {
+                            switch(o) {
+                            case eDiagonalOrientation::bottomLeft:
+                            case eDiagonalOrientation::topRight: {
+                                xMin++;
+                                xMax++;
+                                totalXMax += 2;
+                            } break;
+                            case eDiagonalOrientation::topLeft:
+                            case eDiagonalOrientation::bottomRight: {
+                                yMin++;
+                                yMax++;
+                                totalYMax += 2;
+                            } break;
+                            }
+                        }
+                    }
                     if(useAvenue) {
                         for(const auto o : os) {
                             switch(o) {
@@ -772,6 +795,118 @@ struct eAICDistrict {
                             SDL_UnionRect(&b.fRectTmp, &tmp, &buildingsBRect);
                         }
                     }
+                } else if(b.fType == eBuildingType::eliteHousing) {
+                    const auto place = [&](const eBuildingType type,
+                                          const int xMinC, const int yMinC,
+                                          const int xMaxC, const int yMaxC) {
+                        for(int x = xMinC; x <= xMaxC; x++) {
+                            for(int y = yMinC; y <= yMaxC; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                                if(!b) return;
+                            }
+                        }
+
+                        auto& b = fTmpBuildings.emplace_back();
+                        b.fType = type;
+                        b.fRectTmp = SDL_Rect{xMinC, yMinC, 3, 3};
+                        for(int x = xMinC; x <= xMaxC; x++) {
+                            for(int y = yMinC; y <= yMaxC; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const auto tile = aiBoard.tile(dx, dy);
+                                tile->fBuilding = b.fType;
+                            }
+                        }
+                        if(buildingsBRect.w == 0) {
+                            buildingsBRect = b.fRectTmp;
+                        } else {
+                            const auto tmp = buildingsBRect;
+                            SDL_UnionRect(&b.fRectTmp, &tmp, &buildingsBRect);
+                        }
+                    };
+                    {
+                        int xMinC = xMin;
+                        int yMinC = yMin;
+                        for(const auto o : os) {
+                            switch(o) {
+                            case eDiagonalOrientation::topRight: {
+                                xMinC -= 1;
+                                yMinC += 4;
+                            } break;
+                            case eDiagonalOrientation::bottomRight: {
+                                xMinC -= 3;
+                                yMinC -= 1;
+                            } break;
+                            case eDiagonalOrientation::bottomLeft: {
+                                xMinC -= 1;
+                                yMinC -= 3;
+                            } break;
+                            case eDiagonalOrientation::topLeft: {
+                                xMinC += 4;
+                                yMinC -= 1;
+                            } break;
+                            }
+                        }
+
+                        const int xMaxC = xMinC + 2;
+                        const int yMaxC = yMinC + 2;
+
+                        place(eBuildingType::commemorative, xMinC, yMinC, xMaxC, yMaxC);
+                    }
+                    {
+                        int xMinC = xMin;
+                        int yMinC = yMin;
+                        for(const auto o : os) {
+                            switch(o) {
+                            case eDiagonalOrientation::topRight: {
+                                xMinC += 2;
+                                yMinC += 4;
+                            } break;
+                            case eDiagonalOrientation::bottomRight: {
+                                xMinC -= 3;
+                                yMinC += 2;
+                            } break;
+                            case eDiagonalOrientation::bottomLeft: {
+                                xMinC += 2;
+                                yMinC -= 3;
+                            } break;
+                            case eDiagonalOrientation::topLeft: {
+                                xMinC += 4;
+                                yMinC += 2;
+                            } break;
+                            }
+                        }
+
+                        const int xMaxC = xMinC + 2;
+                        const int yMaxC = yMinC + 2;
+
+                        place(eBuildingType::hedgeMaze, xMinC, yMinC, xMaxC, yMaxC);
+                    }
+                    for(int x = totalXMin; x <= totalXMax; x++) {
+                        for(int y = totalYMin; y <= totalYMax; y++) {
+                            int dx;
+                            int dy;
+                            eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                            const bool bb = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                            if(!bb) continue;
+                            auto& b = fTmpBuildings.emplace_back();
+                            const bool r = gHasRoad(x - 1, y - 1, x + 1, y + 1, roadBoard);
+                            b.fType = r ? eBuildingType::avenue : eBuildingType::park;
+                            b.fRectTmp = SDL_Rect{x, y, 1, 1};
+                            const auto tile = aiBoard.tile(dx, dy);
+                            tile->fBuilding = b.fType;
+                            if(buildingsBRect.w == 0) {
+                                buildingsBRect = b.fRectTmp;
+                            } else {
+                                const auto tmp = buildingsBRect;
+                                SDL_UnionRect(&b.fRectTmp, &tmp, &buildingsBRect);
+                            }
+                        }
+                    }
                 }
                 return true;
             }
@@ -906,6 +1041,8 @@ struct eAICDistrict {
                         if(ttype == eBuildingType::gazebo) {
                             result++;
                         } else if(ttype == eBuildingType::commemorative) {
+                            result++;
+                        } else if(ttype == eBuildingType::hedgeMaze) {
                             result++;
                         } else if(ttype == eBuildingType::granary ||
                                   ttype == eBuildingType::warehouse) {
