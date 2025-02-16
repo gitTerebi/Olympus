@@ -220,7 +220,7 @@ struct eAIRoadPath {
         b1.fX = b0.xEnd();
         b1.fY = b0.yEnd();
         b1.fDisplacement = b0.fLen;
-        b1.fLen = fWidth + 2;
+        b1.fLen = fWidth;
         switch(b0.fO) {
         case eDiagonalOrientation::topRight:
             b1.fO = eDiagonalOrientation::bottomRight;
@@ -247,7 +247,7 @@ struct eAIRoadPath {
         b3.fX = b2.xEnd();
         b3.fY = b2.yEnd();
         b3.fDisplacement = b2.fLen;
-        b3.fLen = fWidth + 2;
+        b3.fLen = fWidth;
         b3.fO = !b1.fO;
     }
 
@@ -556,7 +556,7 @@ struct eAICDistrict {
             while(by == 0) {
                 by = 2 - (eRand::rand() % 5);
             }
-            tmp.fWidth = std::max(2, tmp.fLen + by);
+            tmp.fWidth = std::max(1, tmp.fWidth + by);
             tmp.updateCycleBranches();
             const bool r = validRoad(board, tmp);
             if(!r) return false;
@@ -1083,6 +1083,7 @@ struct eAICDistrict {
         result -= fRoads.totalBranchesLen();
 
         result -= fBuildings.size();
+        result -= fTmpBuildings.size();
 
         SDL_Rect bRect{0, 0, 0, 0};
 
