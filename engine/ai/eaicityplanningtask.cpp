@@ -197,10 +197,12 @@ struct eAIRoadPath {
         }
     }
 
-    void allBranches(std::vector<eAIRoadPath*>& result) {
+    void allBranches(std::vector<eAIRoadPath*>& result,
+                     const bool skipCycleBranches) {
         result.push_back(this);
+        if(fType == eType::cycle && skipCycleBranches) return;
         for(auto& b : fBranches) {
-            b.allBranches(result);
+            b.allBranches(result, skipCycleBranches);
         }
     }
 
@@ -364,7 +366,7 @@ struct eAICDistrict {
         eAIDistrict district;
 
         std::vector<eAIRoadPath*> allRoads;
-        fRoads.allBranches(allRoads);
+        fRoads.allBranches(allRoads, false);
         for(const auto& road : allRoads) {
             const int xMin = road->minX();
             const int xMax = road->maxX();
@@ -445,7 +447,7 @@ struct eAICDistrict {
         };
 
         std::vector<eAIRoadPath*> allRoads;
-        fRoads.allBranches(allRoads);
+        fRoads.allBranches(allRoads, true);
         const int srcRoadId = eRand::rand() % allRoads.size();
         auto& srcRoad = *allRoads[srcRoadId];
         std::vector<eType> types;
@@ -543,7 +545,7 @@ struct eAICDistrict {
                 tmp.updateCoordinates();
             }
             std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp);
+            tmp.allBranches(allTmp, false);
             for(const auto t : allTmp) {
                 const bool r = validRoad(board, *t);
                 if(!r) return false;
@@ -561,7 +563,7 @@ struct eAICDistrict {
             tmp.fWidth = std::max(2, tmp.fLen + by);
             tmp.updateCycleBranches();
             std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp);
+            tmp.allBranches(allTmp, false);
             for(const auto t : allTmp) {
                 const bool r = validRoad(board, *t);
                 if(!r) return false;
@@ -577,7 +579,7 @@ struct eAICDistrict {
             srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
             tmp.updateCoordinates();
             std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp);
+            tmp.allBranches(allTmp, false);
             for(const auto t : allTmp) {
                 const bool r = validRoad(board, *t);
                 if(!r) return false;
@@ -593,7 +595,7 @@ struct eAICDistrict {
     bool move(eThreadBoard& board,
               const int byX, const int byY) {
         std::vector<eAIRoadPath*> allRoads;
-        fRoads.allBranches(allRoads);
+        fRoads.allBranches(allRoads, false);
         for(const auto road : allRoads) {
             const int xMin = road->minX() + byX;
             const int xMax = road->maxX() + byX;
@@ -1038,7 +1040,7 @@ struct eAICDistrict {
 
         fRoads.updateCoordinates();
         std::vector<eAIRoadPath*> allRoads;
-        fRoads.allBranches(allRoads);
+        fRoads.allBranches(allRoads, false);
         eRoadBoard roadBoard;
         roadBoard.initialize(aiBoard.fW, aiBoard.fH);
         for(const auto r : allRoads) {
