@@ -427,14 +427,14 @@ struct eAICDistrict {
             const int yMin = road.minY();
             const int yMax = road.maxY();
 
-            return validRoad(board, xMin, xMax, yMin, yMax);
-        } else { // cycle
-            for(const auto& b : road.fBranches) {
-                const bool r = validRoad(board, b);
-                if(!r) return false;
-            }
-            return true;
+            const bool r = validRoad(board, xMin, xMax, yMin, yMax);
+            if(!r) return false;
         }
+        for(const auto& b : road.fBranches) {
+            const bool r = validRoad(board, b);
+            if(!r) return false;
+        }
+        return true;
     }
 
     bool changeRoad(eThreadBoard& board) {
@@ -544,12 +544,8 @@ struct eAICDistrict {
             } else {
                 tmp.updateCoordinates();
             }
-            std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp, false);
-            for(const auto t : allTmp) {
-                const bool r = validRoad(board, *t);
-                if(!r) return false;
-            }
+            const bool r = validRoad(board, tmp);
+            if(!r) return false;
             srcRoad = tmp;
             return true;
         } break;
@@ -562,12 +558,8 @@ struct eAICDistrict {
             }
             tmp.fWidth = std::max(2, tmp.fLen + by);
             tmp.updateCycleBranches();
-            std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp, false);
-            for(const auto t : allTmp) {
-                const bool r = validRoad(board, *t);
-                if(!r) return false;
-            }
+            const bool r = validRoad(board, tmp);
+            if(!r) return false;
             srcRoad = tmp;
             return true;
         } break;
@@ -578,12 +570,8 @@ struct eAICDistrict {
             tmp.fDisplacement += 2 - (eRand::rand() % 5);
             srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
             tmp.updateCoordinates();
-            std::vector<eAIRoadPath*> allTmp;
-            tmp.allBranches(allTmp, false);
-            for(const auto t : allTmp) {
-                const bool r = validRoad(board, *t);
-                if(!r) return false;
-            }
+            const bool r = validRoad(board, tmp);
+            if(!r) return false;
             toMove = tmp;
             return true;
         } break;
@@ -597,6 +585,7 @@ struct eAICDistrict {
         std::vector<eAIRoadPath*> allRoads;
         fRoads.allBranches(allRoads, false);
         for(const auto road : allRoads) {
+            if(road->fType == eAIRoadPath::eType::cycle) continue;
             const int xMin = road->minX() + byX;
             const int xMax = road->maxX() + byX;
             const int yMin = road->minY() + byY;
