@@ -23,6 +23,7 @@ private:
     const SDL_Rect mBRect;
     const ePlayerId mPid;
     void* mBest = nullptr;
+    int mStage = 0;
 };
 
 #endif // EAICITYPLANNINGTASK_H

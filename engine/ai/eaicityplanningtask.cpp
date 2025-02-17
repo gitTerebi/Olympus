@@ -9,6 +9,7 @@
 #include "engine/boardData/eheatmaptask.h"
 #include "engine/boardData/eheatmapdivisor.h"
 #include "buildings/eheatgetters.h"
+#include "engine/egameboard.h"
 
 struct eAITile {
     eBuildingType fBuilding = eBuildingType::none;
@@ -1334,16 +1335,44 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     const int popSize = 100;
     const int mutateSize = 25;
 
+    enum class eDistrictType {
+        commonHousing,
+        eliteHousing,
+        farms
+    };
+
+    std::vector<eDistrictType> dists = {eDistrictType::farms,
+                                        eDistrictType::commonHousing,
+                                        eDistrictType::eliteHousing};
+
+    const auto dist = dists[mStage];
+
     for(int i = 0; i < popSize; i++) {
         auto& s = population.emplace_back();
-        {
+        if(dist == eDistrictType::commonHousing) {
             auto& district = s.fDistricts.emplace_back();
             district.fCid = cid();
             auto& road = district.fRoads;
             road.fLen = 4;
-            const int drx = mBRect.x + (eRand::rand() % mBRect.w);
-            const int dry = mBRect.y + (eRand::rand() % mBRect.h);
-            eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+
+            {
+                eHeatMap map;
+                eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+
+                eHeatMapDivisor divisor(map);
+                divisor.divide(10);
+                int dtx;
+                int dty;
+                const bool r = divisor.randomHeatTile(dtx, dty);
+                if(r) {
+                    eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
+                } else {
+                    const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+                    const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+                    eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+                }
+            }
+
             district.addBuilding(eBuildingType::commonAgora);
             for(int i = 0; i < 36; i++) {
                 district.addBuilding(eBuildingType::commonHouse);
@@ -1358,15 +1387,30 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
             district.addBuilding(eBuildingType::granary);
             district.addBuilding(eBuildingType::warehouse);
-        }
-        {
+        } else if(dist == eDistrictType::eliteHousing) {
             auto& district = s.fDistricts.emplace_back();
             district.fCid = cid();
             auto& road = district.fRoads;
             road.fLen = 4;
-            const int drx = mBRect.x + (eRand::rand() % mBRect.w);
-            const int dry = mBRect.y + (eRand::rand() % mBRect.h);
-            eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+
+            {
+                eHeatMap map;
+                eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+
+                eHeatMapDivisor divisor(map);
+                divisor.divide(10);
+                int dtx;
+                int dty;
+                const bool r = divisor.randomHeatTile(dtx, dty);
+                if(r) {
+                    eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
+                } else {
+                    const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+                    const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+                    eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+                }
+            }
+
             district.addBuilding(eBuildingType::grandAgora);
             for(int i = 0; i < 12; i++) {
                 district.addBuilding(eBuildingType::eliteHousing);
@@ -1379,8 +1423,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
             district.addBuilding(eBuildingType::granary);
             district.addBuilding(eBuildingType::warehouse);
-        }
-        {
+        } else if(dist == eDistrictType::farms) {
             auto& district = s.fDistricts.emplace_back();
             district.fCid = cid();
             auto& road = district.fRoads;
@@ -1455,4 +1498,10 @@ void eAICityPlanningTask::finish() {
     auto plan = s->cityPlan(mPid, cid());
     plan.buildAllDistricts(mBoard);
     delete s;
+    mBest = nullptr;
+    if(++mStage > 2) return;
+    auto& tp = mBoard.threadPool();
+    const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
+    task->mStage = mStage;
+    tp.queueTask(task);
 }
