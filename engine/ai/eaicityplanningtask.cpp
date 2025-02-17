@@ -50,10 +50,17 @@ struct eAIBoard {
 };
 
 bool gBuildableTile(eAIBoard& aiBoard,
-                    const int dx, const int dy) {
+                    const int dx, const int dy,
+                    const bool isRoad) {
     const auto tile = aiBoard.tile(dx, dy);
-    if(!tile || tile->fBuilding != eBuildingType::none) {
-        return false;
+    if(!tile) return false;
+    const auto btype = tile->fBuilding;
+    if(btype != eBuildingType::none) {
+        if(btype == eBuildingType::road) {
+            if(!isRoad) return false;
+        } else {
+            return false;
+        }
     }
     return true;
 }
@@ -69,6 +76,14 @@ bool gBuildableTile(eThreadBoard& board,
     if(!static_cast<bool>(terr & eTerrain::buildableAfterClear)) {
         return false;
     }
+    const auto btype = btile->underBuildingType();
+    if(btype != eBuildingType::none) {
+        if(btype == eBuildingType::road) {
+            if(!isRoad) return false;
+        } else {
+            return false;
+        }
+    }
     const bool e = btile->isElevationTile();
     if(e) {
         if(isRoad) {
@@ -83,7 +98,7 @@ bool gBuildableTile(eThreadBoard& board,
 bool gBuildableTile(eThreadBoard& board, eAIBoard& aiBoard,
                     const int dx, const int dy,
                     const eCityId cid, const bool isRoad) {
-    if(!gBuildableTile(aiBoard, dx, dy)) return false;
+    if(!gBuildableTile(aiBoard, dx, dy, isRoad)) return false;
     return gBuildableTile(board, dx, dy, cid, isRoad);
 }
 
