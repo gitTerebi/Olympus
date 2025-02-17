@@ -1162,6 +1162,36 @@ struct eAICDistrict {
                 }
             }
 
+            if(type == eBuildingType::commonHouse ||
+               type == eBuildingType::eliteHousing) {
+                int minDistToUgly = 5;
+
+                for(int x = xMin - 5; x <= xMax + 5; x++) {
+                    for(int y = yMin - 5; y <= yMax + 5; y++) {
+                        if(x >= xMin && x <= xMax &&
+                           y >= yMin && y <= yMax) {
+                            continue;
+                        }
+                        int dx;
+                        int dy;
+                        eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                        const auto aiTile = aiBoard.tile(dx, dy);
+                        if(!aiTile) continue;
+                        const auto ttype = aiTile->fBuilding;
+                        if(ttype == eBuildingType::granary ||
+                           ttype == eBuildingType::warehouse) {
+                            for(int xx = xMin; xx <= xMax; xx++) {
+                                for(int yy = yMin; yy <= yMax; yy++) {
+                                    const int dist = sqrt(pow(xx - x, 2) + pow(yy - y, 2));
+                                    if(dist < minDistToUgly) minDistToUgly = dist;
+                                }
+                            }
+                        }
+                    }
+                }
+                result += 5*minDistToUgly;
+            }
+
             result += 5*rect.w*rect.h;
 
             if(maintanance) {
