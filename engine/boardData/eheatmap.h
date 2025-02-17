@@ -16,6 +16,9 @@ public:
         double fAppeal = 0;
     };
 
+    void add(const eHeatMap& other);
+    void multiply(const eHeatMap& other);
+
     void reset();
     void initialize(const int w, const int h);
 

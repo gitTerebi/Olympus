@@ -3,6 +3,49 @@
 #include "etilehelper.h"
 
 #include <algorithm>
+#include <cassert>
+
+void eHeatMap::add(const eHeatMap& other) {
+    assert(mWidth == other.mWidth);
+    assert(mHeight == other.mHeight);
+    for(int x = 0; x < mWidth; x++) {
+        auto& tRow = mMap[x];
+        const auto& oRow = other.mMap[x];
+        for(int y = 0; y < mHeight; y++) {
+            auto& tCell = tRow[y];
+            const auto& oCell = oRow[y];
+
+            if(tCell.fEnabled || oCell.fEnabled) {
+                tCell.fEnabled = true;
+                tCell.fAppeal += oCell.fAppeal;
+            } else {
+                tCell.fEnabled = false;
+                tCell.fAppeal = 0;
+            }
+        }
+    }
+}
+
+void eHeatMap::multiply(const eHeatMap& other) {
+    assert(mWidth == other.mWidth);
+    assert(mHeight == other.mHeight);
+    for(int x = 0; x < mWidth; x++) {
+        auto& tRow = mMap[x];
+        const auto& oRow = other.mMap[x];
+        for(int y = 0; y < mHeight; y++) {
+            auto& tCell = tRow[y];
+            const auto& oCell = oRow[y];
+
+            if(tCell.fEnabled && oCell.fEnabled) {
+                tCell.fEnabled = true;
+                tCell.fAppeal *= oCell.fAppeal;
+            } else {
+                tCell.fEnabled = false;
+                tCell.fAppeal = 0;
+            }
+        }
+    }
+}
 
 void eHeatMap::reset() {
     initialize(mWidth, mHeight);
