@@ -631,6 +631,8 @@ public:
                      const eBuildingType type,
                      const eAnimalCreator& creator,
                      const eCityId cid);
+
+    void removeAllBuildings();
 private:
     void updateNeighbours();
 

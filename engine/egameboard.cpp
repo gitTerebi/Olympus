@@ -3032,3 +3032,9 @@ void eGameBoard::buildAnimal(eTile* const tile,
                     *this, sh.get(), type, cid);
     }, true, true);
 }
+
+void eGameBoard::removeAllBuildings() {
+    for(const auto& b : mAllBuildings) {
+        b->erase();
+    }
+}
