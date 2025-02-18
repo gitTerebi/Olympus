@@ -9,6 +9,7 @@
 #include "egameboard.h"
 
 #include "evectorhelpers.h"
+#include "spawners/ebanner.h"
 
 eTile::eTile(const int x, const int y,
              const int dx, const int dy) {
@@ -307,6 +308,12 @@ eBuildingType eTile::underBuildingType() const {
 
 void eTile::setBanner(const stdsptr<eBanner>& b) {
     mBanner = b;
+    if(b && (b->type() == eBannerTypeS::boar ||
+             b->type() == eBannerTypeS::deer)) {
+        setHasPrey(true);
+    } else {
+        setHasPrey(false);
+    }
 }
 
 void eTile::setSoldierBanner(eSoldierBanner* const b) {

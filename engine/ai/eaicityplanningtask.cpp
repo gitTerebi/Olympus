@@ -830,7 +830,8 @@ struct eAICDistrict {
         case eBuildingType::winery:
         case eBuildingType::armory:
         case eBuildingType::dairy:
-        case eBuildingType::cardingShed: {
+        case eBuildingType::cardingShed:
+        case eBuildingType::huntingLodge: {
             w = 2;
             h = 2;
         } break;
@@ -1452,6 +1453,37 @@ struct eAICDistrict {
                 if(count != 0) {
                     result -= std::round(distSum/count);
                 }
+            } else if(type == eBuildingType::huntingLodge) {
+                int minDist = 10000;
+                bool found = false;
+
+                const int cx = rect.x;
+                const int cy = rect.y;
+                const auto prcsTile = [&](const int x, const int y) {
+                    const int tx = cx + x;
+                    const int ty = cy + y;
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(tx, ty, dx, dy);
+                    const auto btile = board.dtile(dx, dy);
+                    if(!btile) return false;
+                    const bool p = btile->hasPrey();
+                    if(p) {
+                        const int ddx = cx - tx;
+                        const int ddy = cy - ty;
+                        minDist = sqrt(ddx*ddx + ddy*ddy);
+                        if(minDist < 4) {
+                            minDist += 2*(4 - minDist);
+                        }
+                        found = true;
+                    }
+                    return found;
+                };
+                for(int k = 0; k < 100; k++) {
+                    eIterateSquare::iterateSquare(k, prcsTile, 1);
+                    if(found) break;
+                }
+                result += 100 - minDist;
             }
         }
 
@@ -1558,10 +1590,12 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         orangeFarm,
         sheepFarm,
         goatFarm,
-        cattleFarm
+        cattleFarm,
+        hunters
     };
 
-    std::vector<eDistrictType> dists = {eDistrictType::sheepFarm,
+    std::vector<eDistrictType> dists = {eDistrictType::hunters,
+                                        eDistrictType::sheepFarm,
                                         eDistrictType::cattleFarm,
                                         eDistrictType::oliveFarm,
                                         eDistrictType::farms,
@@ -1625,6 +1659,13 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
               dist == eDistrictType::goatFarm ||
               dist == eDistrictType::cattleFarm) {
         eHeatMapTask::sRun(data, &eHeatGetters::distanceFromFertile<4, 5, 5>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<4, 5, 5>, map2);
+            map.add(map2);
+        }
+    } else if(dist == eDistrictType::hunters) {
+        eHeatMapTask::sRun(data, &eHeatGetters::distanceFromPrey<4, 10, 10>, map);
         {
             eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<4, 5, 5>, map2);
@@ -1733,6 +1774,12 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             district.addBuilding(eBuildingType::granary);
             district.addBuilding(eBuildingType::maintenanceOffice);
             district.addBuilding(eBuildingType::cattle);
+        } else if(dist == eDistrictType::hunters) {
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::huntingLodge);
+            }
+            district.addBuilding(eBuildingType::granary);
+            district.addBuilding(eBuildingType::maintenanceOffice);
         }
 
         aiBoard.initialize(data.width(), data.height());

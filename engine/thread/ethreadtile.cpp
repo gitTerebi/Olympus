@@ -18,6 +18,7 @@ void eThreadTile::load(eTile* const src) {
     setOnFire(src->onFire());
     setHasFish(src->hasFish());
     setHasUrchin(src->hasUrchin());
+    setHasPrey(src->hasPrey());
     setCityId(src->cityId());
 
     mCharacters.clear();
