@@ -814,6 +814,16 @@ struct eAICDistrict {
                 findH = 2;
             }
         } break;
+        case eBuildingType::palace: {
+            if(b.fO == eDiagonalOrientation::topLeft ||
+               b.fO == eDiagonalOrientation::bottomRight) {
+                w = 9;
+                h = 6;
+            } else {
+                w = 6;
+                h = 9;
+            }
+        } break;
         }
 
         if(b.fType != eBuildingType::commonAgora &&
@@ -1429,12 +1439,15 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     enum class eDistrictType {
         commonHousing,
         eliteHousing,
-        farms
+        farms,
+        palace
     };
 
-    std::vector<eDistrictType> dists = {eDistrictType::farms,
+    std::vector<eDistrictType> dists = {eDistrictType::palace,
+                                        eDistrictType::farms,
                                         eDistrictType::commonHousing,
                                         eDistrictType::eliteHousing,
+                                        eDistrictType::palace,
                                         eDistrictType::farms,
                                         eDistrictType::commonHousing,
                                         eDistrictType::eliteHousing,
@@ -1473,6 +1486,13 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         }
     } else if(dist == eDistrictType::farms) {
         eHeatMapTask::sRun(data, &eHeatGetters::fertile, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
+            map.add(map2);
+        }
+    } else if(dist == eDistrictType::palace) {
+        eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
         {
             eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
@@ -1573,6 +1593,27 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             }
             district.addBuilding(eBuildingType::maintenanceOffice);
             district.addBuilding(eBuildingType::granary);
+        } else if(dist == eDistrictType::palace) {
+            auto& district = s.fDistricts.emplace_back();
+            district.fCid = cid();
+            auto& road = district.fRoads;
+            road.fLen = 4;
+
+            {
+                int dtx;
+                int dty;
+                const bool r = divisor.randomHeatTile(dtx, dty);
+                if(r) {
+                    eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
+                } else {
+                    const int drx = mBRect.x + (eRand::rand() % mBRect.w);
+                    const int dry = mBRect.y + (eRand::rand() % mBRect.h);
+                    eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+                }
+            }
+
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            district.addBuilding(eBuildingType::palace);
         }
 
         aiBoard.initialize(data.width(), data.height());

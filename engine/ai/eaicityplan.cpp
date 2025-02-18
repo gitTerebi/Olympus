@@ -352,7 +352,7 @@ void gBuild(const eAIBuilding& b,
                 return t;
             });
         });
-        board.buildBase(minX, minY, maxX, maxY, [&]() {
+        board.buildBase(tminX + 1, tminY + 1, tminX + sw, tminY + sh, [&]() {
             return s;
         }, pid);
 
