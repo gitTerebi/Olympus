@@ -124,6 +124,35 @@ struct eRoadBoard {
         }
     }
 
+    bool hasRoad(const int dx, const int dy) {
+        const auto t = tile(dx, dy);
+        if(!t) return false;
+        return *t == 1;
+    }
+
+    bool isCorner(int x, int y,
+                  const eDiagonalOrientation o) {
+        switch(o) {
+        case eDiagonalOrientation::topRight: {
+            y--;
+        } break;
+        case eDiagonalOrientation::bottomRight: {
+            x++;
+        } break;
+        case eDiagonalOrientation::bottomLeft: {
+            y++;
+        } break;
+        case eDiagonalOrientation::topLeft: {
+            x--;
+        } break;
+        }
+
+        int dx;
+        int dy;
+        eTileHelper::tileIdToDTileId(x, y, dx, dy);
+        return hasRoad(dx, dy);
+    }
+
     int fW = 0;
     int fH = 0;
     std::vector<std::vector<char>> fTiles;
@@ -349,26 +378,48 @@ bool gHasRoad(const int xMin, const int yMin,
     return false;
 }
 
+bool gHasRoad(const int xMin, const int yMin,
+              const int xMax, const int yMax,
+              eRoadBoard& roadBoard,
+              const eDiagonalOrientation o) {
+    bool found = false;
+    for(int x = xMin; x <= xMax; x++) {
+        for(int y = yMin; y <= yMax; y++) {
+            const bool r = gHasRoad(x, y, roadBoard);
+            if(r) {
+                found = true;
+                const bool c = roadBoard.isCorner(x, y, o);
+                if(c) return false;
+            }
+        }
+    }
+    return found;
+}
+
 bool gNextToRoad(const int xMin, const int yMin,
                  const int xMax, const int yMax,
                  eRoadBoard& roadBoard,
                  std::vector<eDiagonalOrientation>* const o) {
-    const bool r1 = gHasRoad(xMin, yMin - 1, xMax, yMin - 1, roadBoard);
+    const bool r1 = gHasRoad(xMin, yMin - 1, xMax, yMin - 1, roadBoard,
+                             eDiagonalOrientation::topRight);
     if(r1) {
         if(!o) return true;
         o->push_back(eDiagonalOrientation::topRight);
     }
-    const bool r2 = gHasRoad(xMin, yMax + 1, xMax, yMax + 1, roadBoard);
+    const bool r2 = gHasRoad(xMin, yMax + 1, xMax, yMax + 1, roadBoard,
+                             eDiagonalOrientation::bottomLeft);
     if(r2) {
         if(!o) return true;
         o->push_back(eDiagonalOrientation::bottomLeft);
     }
-    const bool r3 = gHasRoad(xMin - 1, yMin, xMin - 1, yMax, roadBoard);
+    const bool r3 = gHasRoad(xMin - 1, yMin, xMin - 1, yMax, roadBoard,
+                             eDiagonalOrientation::topLeft);
     if(r3) {
         if(!o) return true;
         o->push_back(eDiagonalOrientation::topLeft);
     }
-    const bool r4 = gHasRoad(xMax + 1, yMin, xMax + 1, yMax, roadBoard);
+    const bool r4 = gHasRoad(xMax + 1, yMin, xMax + 1, yMax, roadBoard,
+                             eDiagonalOrientation::bottomRight);
     if(r4) {
         if(!o) return true;
         o->push_back(eDiagonalOrientation::bottomRight);
