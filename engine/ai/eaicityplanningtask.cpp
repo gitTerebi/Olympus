@@ -1438,6 +1438,44 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
     const auto dist = dists[mStage];
 
+    eHeatMap map;
+
+    if(dist == eDistrictType::commonHousing) {
+        eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::notFertile, map2);
+            map.add(map2);
+        }
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<8, 5, 5>, map2);
+            map.add(map2);
+        }
+    } else if(dist == eDistrictType::eliteHousing) {
+        eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::notFertile, map2);
+            map.add(map2);
+        }
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<8, 5, 5>, map2);
+            map.add(map2);
+        }
+    } else if(dist == eDistrictType::farms) {
+        eHeatMapTask::sRun(data, &eHeatGetters::fertile, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
+            map.add(map2);
+        }
+    }
+
+    eHeatMapDivisor divisor(map);
+    divisor.divide(10);
+
     for(int i = 0; i < popSize; i++) {
         auto& s = population.emplace_back();
         if(dist == eDistrictType::commonHousing) {
@@ -1447,11 +1485,6 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             road.fLen = 4;
 
             {
-                eHeatMap map;
-                eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
-
-                eHeatMapDivisor divisor(map);
-                divisor.divide(10);
                 int dtx;
                 int dty;
                 const bool r = divisor.randomHeatTile(dtx, dty);
@@ -1485,11 +1518,6 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             road.fLen = 4;
 
             {
-                eHeatMap map;
-                eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
-
-                eHeatMapDivisor divisor(map);
-                divisor.divide(10);
                 int dtx;
                 int dty;
                 const bool r = divisor.randomHeatTile(dtx, dty);
@@ -1521,11 +1549,6 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             road.fLen = 4;
 
             {
-                eHeatMap map;
-                eHeatMapTask::sRun(data, &eHeatGetters::fertile, map);
-
-                eHeatMapDivisor divisor(map);
-                divisor.divide(10);
                 int dtx;
                 int dty;
                 const bool r = divisor.randomHeatTile(dtx, dty);

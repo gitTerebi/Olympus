@@ -331,3 +331,12 @@ eHeat eHeatGetters::fertile(eTileBase* const tile) {
         return {0, 0};
     }
 }
+
+eHeat eHeatGetters::notFertile(eTileBase* const tile) {
+    const auto terr = tile->terrain();
+    if(terr == eTerrain::fertile) {
+        return {0, 0};
+    } else {
+        return {2, 8};
+    }
+}
