@@ -820,6 +820,15 @@ struct eAICDistrict {
                             break;
                         }
                         const auto vtile = board.dtile(dx, dy);
+                        if(!vtile) {
+                            ok = false;
+                            break;
+                        }
+                        const auto ttype = vtile->underBuildingType();
+                        if(ttype != eBuildingType::none) {
+                            ok = false;
+                            break;
+                        }
                         const auto terr = vtile->terrain();
                         const bool f = static_cast<bool>(terr & eTerrain::fertile);
                         if(f) foundFertile = true;
@@ -1069,12 +1078,10 @@ struct eAICDistrict {
                     int dx;
                     int dy;
                     eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                    const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, true);
+                    if(!b) continue;
                     const auto tile = aiBoard.tile(dx, dy);
                     if(!tile) continue;
-                    if(tile->fBuilding != eBuildingType::none) continue;
-                    const auto btile = board.dtile(dx, dy);
-                    if(!btile) continue;
-                    if(btile->cityId() != fCid) continue;
                     tile->fBuilding = eBuildingType::road;
                     {
                         const auto tile = roadBoard.tile(dx, dy);
@@ -1331,7 +1338,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
     std::vector<eAICSpeciman> population;
 
-    const int iterations = 1000;
+    const int iterations = 100;
     const int popSize = 100;
     const int mutateSize = 25;
 
@@ -1459,7 +1466,9 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         s.fGrade = s.grade(data, aiBoard);
     }
 
-    for(int i = 0; i < iterations; i++) {
+    int lastBestGrade = 0;
+    int bestGradeSince = 0;
+    for(int i = 0; bestGradeSince < iterations; i++) {
         for(int j = 0; j < mutateSize; j++) {
             auto& s = population.emplace_back();
             const int srcId = eRand::rand() % popSize;
@@ -1485,7 +1494,14 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         for(int j = 0; j < mutateSize; j++) {
             population.pop_back();
         }
-        printf("iter %d, best grade %d\n", i, population.front().fGrade);
+        const int newBestGrade = population.front().fGrade;
+        if(newBestGrade != lastBestGrade) {
+            lastBestGrade = newBestGrade;
+            bestGradeSince = 0;
+        } else {
+            bestGradeSince++;
+        }
+        printf("iter %d, best grade %d\n", i, newBestGrade);
     }
 
     const auto s = new eAICSpeciman();
