@@ -1434,9 +1434,16 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
     std::vector<eDistrictType> dists = {eDistrictType::farms,
                                         eDistrictType::commonHousing,
+                                        eDistrictType::eliteHousing,
+                                        eDistrictType::farms,
+                                        eDistrictType::commonHousing,
+                                        eDistrictType::eliteHousing,
+                                        eDistrictType::farms,
+                                        eDistrictType::commonHousing,
                                         eDistrictType::eliteHousing};
 
     const auto dist = dists[mStage];
+    if(mStage == int(dists.size() - 1)) mStage = -1;
 
     eHeatMap map;
 
@@ -1622,9 +1629,9 @@ void eAICityPlanningTask::finish() {
     plan.buildAllDistricts(mBoard);
     delete s;
     mBest = nullptr;
-    if(++mStage > 2) return;
+    if(mStage < 0) return;
     auto& tp = mBoard.threadPool();
     const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
-    task->mStage = mStage;
+    task->mStage = mStage + 1;
     tp.queueTask(task);
 }
