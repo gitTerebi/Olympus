@@ -130,27 +130,74 @@ struct eRoadBoard {
         return *t == 1;
     }
 
-    bool isCorner(int x, int y,
+    bool isCorner(const int x, const int y,
                   const eDiagonalOrientation o) {
+        int x1 = x;
+        int y1 = y;
         switch(o) {
         case eDiagonalOrientation::topRight: {
-            y--;
+            y1--;
         } break;
         case eDiagonalOrientation::bottomRight: {
-            x++;
+            x1++;
         } break;
         case eDiagonalOrientation::bottomLeft: {
-            y++;
+            y1++;
         } break;
         case eDiagonalOrientation::topLeft: {
-            x--;
+            x1--;
         } break;
         }
 
         int dx;
         int dy;
-        eTileHelper::tileIdToDTileId(x, y, dx, dy);
-        return hasRoad(dx, dy);
+        eTileHelper::tileIdToDTileId(x1, y1, dx, dy);
+        const bool r = hasRoad(dx, dy);
+        if(!r) return false;
+
+        int n = 0;
+
+        {
+            const int x2 = x - 1;
+            const int y2 = y;
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x2, y2, dx, dy);
+            const bool r = hasRoad(dx, dy);
+            if(r) n++;
+        }
+
+        {
+            const int x3 = x + 1;
+            const int y3 = y;
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x3, y3, dx, dy);
+            const bool r = hasRoad(dx, dy);
+            if(r) n++;
+        }
+
+        {
+            const int x4 = x;
+            const int y4 = y - 1;
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x4, y4, dx, dy);
+            const bool r = hasRoad(dx, dy);
+            if(r) n++;
+        }
+
+        {
+            const int x5 = x;
+            const int y5 = y + 1;
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x5, y5, dx, dy);
+            const bool r = hasRoad(dx, dy);
+            if(r) n++;
+        }
+
+        return n < 3;
     }
 
     int fW = 0;
@@ -1071,6 +1118,9 @@ struct eAICDistrict {
 
                         place(eBuildingType::hedgeMaze, xMinC, yMinC, xMaxC, yMaxC);
                     }
+                }
+                if(b.fType == eBuildingType::commonHouse ||
+                   b.fType == eBuildingType::eliteHousing) {
                     for(int x = totalXMin; x <= totalXMax; x++) {
                         for(int y = totalYMin; y <= totalYMax; y++) {
                             int dx;
@@ -1210,28 +1260,11 @@ struct eAICDistrict {
                                 result--;
                             }
                         }
-                    } else if(type == eBuildingType::commonHouse) {
+                    } else if(type == eBuildingType::commonHouse ||
+                              type == eBuildingType::eliteHousing) {
                         const auto ttype = aiTile->fBuilding;
-                        if(ttype == type) {
-                            result++;
-                        } else if(ttype == eBuildingType::granary ||
-                                  ttype == eBuildingType::warehouse) {
-                            result -= 5;
-                        } else if(ttype == eBuildingType::gazebo) {
-                            result++;
-                        }
-                    } else if(type == eBuildingType::eliteHousing) {
-                        const auto ttype = aiTile->fBuilding;
-                        if(ttype == eBuildingType::gazebo) {
-                            result++;
-                        } else if(ttype == eBuildingType::commemorative) {
-                            result++;
-                        } else if(ttype == eBuildingType::hedgeMaze) {
-                            result++;
-                        } else if(ttype == eBuildingType::granary ||
-                                  ttype == eBuildingType::warehouse) {
-                            result -= 5;
-                        }
+                        const auto heat = eHeatGetters::appeal(ttype);
+                        result += heat.fValue;
                     }
                 }
             }
@@ -1252,8 +1285,8 @@ struct eAICDistrict {
                         const auto aiTile = aiBoard.tile(dx, dy);
                         if(!aiTile) continue;
                         const auto ttype = aiTile->fBuilding;
-                        if(ttype == eBuildingType::granary ||
-                           ttype == eBuildingType::warehouse) {
+                        const auto heat = eHeatGetters::appeal(ttype);
+                        if(heat.fValue < 0) {
                             for(int xx = xMin; xx <= xMax; xx++) {
                                 for(int yy = yMin; yy <= yMax; yy++) {
                                     const int dist = sqrt(pow(xx - x, 2) + pow(yy - y, 2));
