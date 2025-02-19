@@ -664,6 +664,25 @@ void gBuild(const eAIBuilding& b,
         };
         board.buildBase(minX, minY, maxX, maxY, bc, pid);
     } break;
+
+    case eBuildingType::templeAphrodite:
+    case eBuildingType::templeApollo:
+    case eBuildingType::templeAres:
+    case eBuildingType::templeArtemis:
+    case eBuildingType::templeAthena:
+    case eBuildingType::templeAtlas:
+    case eBuildingType::templeDemeter:
+    case eBuildingType::templeDionysus:
+    case eBuildingType::templeHades:
+    case eBuildingType::templeHephaestus:
+    case eBuildingType::templeHera:
+    case eBuildingType::templeHermes:
+    case eBuildingType::templePoseidon:
+    case eBuildingType::templeZeus: {
+        const bool rotate = b.fO == eDiagonalOrientation::topLeft ||
+                            b.fO == eDiagonalOrientation::bottomRight;
+        board.buildSanctuary(minX, maxX, minY, maxY, b.fType, rotate, cid);
+    } break;
     }
 
 }

@@ -87,6 +87,17 @@
 
 #include "engine/ai/eaicityplanningtask.h"
 
+#include "buildings/eplaceholder.h"
+#include "buildings/sanctuaries/ezeussanctuary.h"
+#include "buildings/sanctuaries/ehephaestussanctuary.h"
+#include "buildings/sanctuaries/eartemissanctuary.h"
+#include "buildings/sanctuaries/estairsrenderer.h"
+#include "buildings/sanctuaries/etempletilebuilding.h"
+#include "buildings/sanctuaries/etemplestatuebuilding.h"
+#include "buildings/sanctuaries/etemplemonumentbuilding.h"
+#include "buildings/sanctuaries/etemplealtarbuilding.h"
+#include "buildings/sanctuaries/etemplebuilding.h"
+
 eGameBoard::eGameBoard() :
     mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
@@ -3037,4 +3048,209 @@ void eGameBoard::removeAllBuildings() {
     for(const auto& b : mAllBuildings) {
         b->erase();
     }
+}
+
+bool eGameBoard::buildSanctuary(const int minX, const int maxX,
+                                const int minY, const int maxY,
+                                const eBuildingType bt,
+                                const bool rotate,
+                                const eCityId cid) {
+    const bool cb = canBuildBase(minX, maxX, minY, maxY);
+    if(!cb) return true;
+
+    const auto ppid = cityIdToPlayerId(cid);
+
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, rotate);
+
+    const int sw = h->fW;
+    const int sh = h->fH;
+
+    const auto b = eSanctuary::sCreate(bt, sw, sh, *this, cid);
+    b->setRotated(rotate);
+    const auto god = b->godType();
+
+    const auto diff = difficulty(ppid);
+    const int cost = eDifficultyHelpers::buildingCost(diff, bt);
+    incDrachmas(ppid, -cost);
+    const int m = eBuilding::sInitialMarbleCost(bt);
+    takeResource(cid, eResourceType::marble, m);
+
+    built(cid, bt);
+
+    const auto mint = this->tile(minX, minY);
+    const int a = mint->altitude();
+    b->setAltitude(a);
+
+    const SDL_Rect sanctRect{minX, minY, sw, sh};
+    b->setTileRect(sanctRect);
+    const auto ct = this->tile((minX + maxX)/2, (minY + maxY)/2);
+    b->setCenterTile(ct);
+
+    if(god == eGodType::demeter) {
+        const int xMin = sanctRect.x - 3;
+        const int yMin = sanctRect.y - 3;
+        const int xMax = sanctRect.x + sanctRect.w + 3;
+        const int yMax = sanctRect.y + sanctRect.h + 3;
+        for(int x = xMin; x < xMax; x++) {
+            for(int y = yMin; y < yMax; y++) {
+                const SDL_Point pt{x, y};
+                const bool in = SDL_PointInRect(&pt, &sanctRect);
+                if(in) continue;
+                const auto tile = this->tile(x, y);
+                if(!tile) continue;
+                const auto terr = tile->terrain();
+                if(terr == eTerrain::dry) {
+                    tile->setTerrain(eTerrain::fertile);
+                }
+            }
+        }
+    }
+
+    for(const auto& tv : h->fTiles) {
+        for(const auto& t : tv) {
+            const int tx = minX + t.fX;
+            const int ty = minY + t.fY;
+            const auto tile = this->tile(tx, ty);
+            eGodType statueType;
+            switch(t.fType) {
+            case eSanctEleType::aphroditeStatue:
+                statueType = eGodType::aphrodite;
+                break;
+            case eSanctEleType::apolloStatue:
+                statueType = eGodType::apollo;
+                break;
+            case eSanctEleType::aresStatue:
+                statueType = eGodType::ares;
+                break;
+            case eSanctEleType::artemisStatue:
+                statueType = eGodType::artemis;
+                break;
+            case eSanctEleType::athenaStatue:
+                statueType = eGodType::athena;
+                break;
+            case eSanctEleType::atlasStatue:
+                statueType = eGodType::atlas;
+                break;
+            case eSanctEleType::demeterStatue:
+                statueType = eGodType::demeter;
+                break;
+            case eSanctEleType::dionysusStatue:
+                statueType = eGodType::dionysus;
+                break;
+            case eSanctEleType::hadesStatue:
+                statueType = eGodType::hades;
+                break;
+            case eSanctEleType::hephaestusStatue:
+                statueType = eGodType::hephaestus;
+                break;
+            case eSanctEleType::heraStatue:
+                statueType = eGodType::hera;
+                break;
+            case eSanctEleType::hermesStatue:
+                statueType = eGodType::hermes;
+                break;
+            case eSanctEleType::poseidonStatue:
+                statueType = eGodType::poseidon;
+                break;
+            case eSanctEleType::zeusStatue:
+                statueType = eGodType::zeus;
+                break;
+            default:
+                statueType = god;
+            }
+
+            switch(t.fType) {
+            case eSanctEleType::copper:
+            case eSanctEleType::silver:
+            case eSanctEleType::oliveTree:
+            case eSanctEleType::vine:
+            case eSanctEleType::orangeTree: {
+                build(tile->x(), tile->y(), 1, 1,
+                      [this, cid]() { return e::make_shared<ePlaceholder>(*this, cid); });
+                b->addSpecialTile(tile);
+            } break;
+            case eSanctEleType::defaultStatue:
+            case eSanctEleType::aphroditeStatue:
+            case eSanctEleType::apolloStatue:
+            case eSanctEleType::aresStatue:
+            case eSanctEleType::artemisStatue:
+            case eSanctEleType::athenaStatue:
+            case eSanctEleType::atlasStatue:
+            case eSanctEleType::demeterStatue:
+            case eSanctEleType::dionysusStatue:
+            case eSanctEleType::hadesStatue:
+            case eSanctEleType::hephaestusStatue:
+            case eSanctEleType::heraStatue:
+            case eSanctEleType::hermesStatue:
+            case eSanctEleType::poseidonStatue:
+            case eSanctEleType::zeusStatue: {
+                const auto tt = e::make_shared<eTempleStatueBuilding>(
+                                   statueType, t.fId, *this, cid);
+                tt->setSanctuary(b.get());
+                this->build(tx, ty, 1, 1, [tt]() { return tt; });
+                b->registerElement(tt);
+            } break;
+            case eSanctEleType::monument: {
+                const auto tt = e::make_shared<eTempleMonumentBuilding>(
+                                    god, t.fId, *this, cid);
+                tt->setSanctuary(b.get());
+                const int d = rotate ? 1 : 0;
+                this->build(tx - d, ty + d, 2, 2, [tt]() { return tt; });
+                b->registerElement(tt);
+            } break;
+            case eSanctEleType::altar: {
+                const auto tt = e::make_shared<eTempleAltarBuilding>(
+                                    *this, cid);
+                tt->setSanctuary(b.get());
+                const int d = rotate ? 1 : 0;
+                this->build(tx - d, ty + d, 2, 2, [tt]() { return tt; });
+                b->registerElement(tt);
+            } break;
+            case eSanctEleType::sanctuary: {
+                const auto tb = e::make_shared<eTempleBuilding>(
+                            t.fId, *this, cid);
+                tb->setSanctuary(b.get());
+                b->registerElement(tb);
+                if(rotate) {
+                    this->build(tx - 2, ty + 2, 4, 4, [tb]() { return tb; });
+                } else {
+                    this->build(tx + 1, ty - 1, 4, 4, [tb]() { return tb; });
+                }
+            } break;
+            case eSanctEleType::tile: {
+                const auto tt = e::make_shared<eTempleTileBuilding>(
+                                    t.fId, *this, cid);
+                tt->setSanctuary(b.get());
+                this->build(tx, ty, 1, 1, [tt]() { return tt; });
+                b->registerElement(tt);
+                if(t.fWarrior) b->addWarriorTile(tile);
+            } break;
+            case eSanctEleType::stairs: {
+                tile->setSeed(t.fId);
+                tile->setWalkableElev(true);
+            } break;
+            case eSanctEleType::none:
+                break;
+            }
+        }
+    }
+    for(const auto& tv : h->fTiles) {
+        for(const auto& t : tv) {
+            const int tx = minX + t.fX;
+            const int ty = minY + t.fY;
+            const auto tile = this->tile(tx, ty);
+            tile->setAltitude(tile->altitude() + t.fA);
+            const auto trr = tile->terrain();
+            const bool bldbl = static_cast<bool>(
+                                   trr & eTerrain::buildable);
+            if(!tile->underBuilding() && bldbl) {
+                tile->setUnderBuilding(b);
+                b->addUnderBuilding(tile);
+            }
+        }
+    }
+
+    b->buildingProgressed();
+
+    return false;
 }

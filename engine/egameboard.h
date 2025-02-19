@@ -633,6 +633,12 @@ public:
                      const eCityId cid);
 
     void removeAllBuildings();
+
+    bool buildSanctuary(const int minX, const int maxX,
+                        const int minY, const int maxY,
+                        const eBuildingType bt,
+                        const bool rotate,
+                        const eCityId cid);
 private:
     void updateNeighbours();
 

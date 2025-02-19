@@ -1,4 +1,4 @@
-#include "eaicityplanningtask.h"
+﻿#include "eaicityplanningtask.h"
 
 #include "buildings/ebuilding.h"
 #include "engine/eresourcetype.h"
@@ -487,7 +487,21 @@ enum class eDistrictType {
     sheepFarm,
     goatFarm,
     cattleFarm,
-    hunters
+    hunters,
+    templeAphrodite,
+    templeApollo,
+    templeAres,
+    templeArtemis,
+    templeAthena,
+    templeAtlas,
+    templeDemeter,
+    templeDionysus,
+    templeHades,
+    templeHephaestus,
+    templeHera,
+    templeHermes,
+    templePoseidon,
+    templeZeus
 };
 
 struct eAICDistrict {
@@ -519,6 +533,7 @@ struct eAICDistrict {
             eAIBuilding bb;
             bb.fType = b.fType;
             bb.fRect = b.fRectTmp;
+            bb.fO = b.fO;
             district.addBuilding(bb);
         }
 
@@ -528,6 +543,7 @@ struct eAICDistrict {
             eAIBuilding bb;
             bb.fType = b.fType;
             bb.fRect = b.fRectTmp;
+            bb.fO = b.fO;
             district.addBuilding(bb);
         }
 
@@ -831,7 +847,28 @@ struct eAICDistrict {
         int h;
         int findW;
         int findH;
+        const bool rotate = b.fO == eDiagonalOrientation::topLeft ||
+                            b.fO == eDiagonalOrientation::bottomRight;
         switch(b.fType) {
+        case eBuildingType::templeAphrodite:
+        case eBuildingType::templeApollo:
+        case eBuildingType::templeAres:
+        case eBuildingType::templeArtemis:
+        case eBuildingType::templeAthena:
+        case eBuildingType::templeAtlas:
+        case eBuildingType::templeDemeter:
+        case eBuildingType::templeDionysus:
+        case eBuildingType::templeHades:
+        case eBuildingType::templeHephaestus:
+        case eBuildingType::templeHera:
+        case eBuildingType::templeHermes:
+        case eBuildingType::templePoseidon:
+        case eBuildingType::templeZeus: {
+            const auto bp = eSanctBlueprints::sSanctuaryBlueprint(
+                               b.fType, rotate);
+            w = bp->fW;
+            h = bp->fH;
+        } break;
         case eBuildingType::commonHouse:
             useAvenue = true;
         case eBuildingType::maintenanceOffice:
@@ -843,6 +880,9 @@ struct eAICDistrict {
         case eBuildingType::orangeTendersLodge:
         case eBuildingType::olivePress:
         case eBuildingType::winery:
+        case eBuildingType::foundry:
+        case eBuildingType::masonryShop:
+        case eBuildingType::timberMill:
         case eBuildingType::armory:
         case eBuildingType::dairy:
         case eBuildingType::cardingShed:
@@ -1055,6 +1095,30 @@ struct eAICDistrict {
                         }
                     }
                     if(!ok) break;
+                }
+                if(!foundFertile && fType == eDistrictType::templeDemeter) {
+                    SDL_Rect fertileRect{0, 0, 0, 0};
+                    for(const auto& b : fBuildings) {
+                        if(b.fType != eBuildingType::templeDemeter) continue;
+                        if(b.fRectTmp.w == 0) break;
+                        fertileRect = b.fRectTmp;
+                        fertileRect.x -= 3;
+                        fertileRect.y -= 3;
+                        fertileRect.w += 6;
+                        fertileRect.h += 6;
+                        for(int x = totalXMin; x <= totalXMax; x++) {
+                            for(int y = totalYMin; y <= totalYMax; y++) {
+                                const SDL_Point pt{x, y};
+                                const bool r = SDL_PointInRect(&pt, &fertileRect);
+                                if(r) {
+                                    foundFertile = true;
+                                    break;
+                                }
+                            }
+                            if(foundFertile) break;
+                        }
+                        break;
+                    }
                 }
                 if(needsFertile && !foundFertile) continue;
                 if(!ok) continue;
@@ -1314,6 +1378,8 @@ struct eAICDistrict {
         SDL_Rect buildingsBRect{0, 0, 0, 0};
         for(auto& b : fBuildings) {
             b.fRectTmp = {0, 0, 0, 0};
+        }
+        for(auto& b : fBuildings) {
             placeBuilding(roadsBRect, board, aiBoard, roadBoard, b, buildingsBRect);
         }
     }
@@ -1614,7 +1680,8 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     const int popSize = 100;
     const int mutateSize = 25;
 
-    std::vector<eDistrictType> dists = {eDistrictType::hunters,
+    std::vector<eDistrictType> dists = {eDistrictType::templeDemeter,
+                                        eDistrictType::hunters,
                                         eDistrictType::sheepFarm,
                                         eDistrictType::cattleFarm,
                                         eDistrictType::oliveFarm,
@@ -1689,6 +1756,26 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         {
             eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<4, 5, 5>, map2);
+            map.add(map2);
+        }
+    } else if(dist == eDistrictType::templeAphrodite ||
+              dist == eDistrictType::templeApollo ||
+              dist == eDistrictType::templeAres ||
+              dist == eDistrictType::templeArtemis ||
+              dist == eDistrictType::templeAthena ||
+              dist == eDistrictType::templeAtlas ||
+              dist == eDistrictType::templeDemeter ||
+              dist == eDistrictType::templeDionysus ||
+              dist == eDistrictType::templeHades ||
+              dist == eDistrictType::templeHephaestus ||
+              dist == eDistrictType::templeHera ||
+              dist == eDistrictType::templeHermes ||
+              dist == eDistrictType::templePoseidon ||
+              dist == eDistrictType::templeZeus) {
+        eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
             map.add(map2);
         }
     }
@@ -1800,6 +1887,87 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
                 district.addBuilding(eBuildingType::huntingLodge);
             }
             district.addBuilding(eBuildingType::granary);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeAphrodite) {
+            district.addBuilding(eBuildingType::templeAphrodite);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeApollo) {
+            district.addBuilding(eBuildingType::templeApollo);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeAres) {
+            district.addBuilding(eBuildingType::templeAres);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeArtemis) {
+            district.addBuilding(eBuildingType::templeArtemis);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeAthena) {
+            district.addBuilding(eBuildingType::templeAthena);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::growersLodge);
+            }
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::olivePress);
+            }
+            district.addBuilding(eBuildingType::warehouse);
+        } else if(dist == eDistrictType::templeAtlas) {
+            district.addBuilding(eBuildingType::templeAtlas);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeDemeter) {
+            district.addBuilding(eBuildingType::templeDemeter);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            for(int i = 0; i < 8; i++) {
+                district.addBuilding(eBuildingType::wheatFarm);
+            }
+        } else if(dist == eDistrictType::templeDionysus) {
+            district.addBuilding(eBuildingType::templeDionysus);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::growersLodge);
+            }
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::winery);
+            }
+            district.addBuilding(eBuildingType::warehouse);
+        } else if(dist == eDistrictType::templeHades) {
+            district.addBuilding(eBuildingType::templeHades);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeHephaestus) {
+            district.addBuilding(eBuildingType::templeHephaestus);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::foundry);
+            }
+            district.addBuilding(eBuildingType::warehouse);
+        } else if(dist == eDistrictType::templeHera) {
+            district.addBuilding(eBuildingType::templeHera);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+            for(int i = 0; i < 4; i++) {
+                district.addBuilding(eBuildingType::orangeTendersLodge);
+            }
+            district.addBuilding(eBuildingType::granary);
+        } else if(dist == eDistrictType::templeHermes) {
+            district.addBuilding(eBuildingType::templeHermes);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templePoseidon) {
+            district.addBuilding(eBuildingType::templePoseidon);
+            district.addBuilding(eBuildingType::artisansGuild);
+            district.addBuilding(eBuildingType::maintenanceOffice);
+        } else if(dist == eDistrictType::templeZeus) {
+            district.addBuilding(eBuildingType::templeZeus);
+            district.addBuilding(eBuildingType::artisansGuild);
             district.addBuilding(eBuildingType::maintenanceOffice);
         }
 
