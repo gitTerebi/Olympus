@@ -475,6 +475,20 @@ bool gNextToRoad(const int xMin, const int yMin,
     return o ? !o->empty() : false;
 }
 
+enum class eDistrictType {
+    commonHousing,
+    eliteHousing,
+    farms,
+    palace,
+    oliveFarm,
+    vineFarm,
+    orangeFarm,
+    sheepFarm,
+    goatFarm,
+    cattleFarm,
+    hunters
+};
+
 struct eAICDistrict {
 
     void addToCityPlan(eAICityPlan& result) {
@@ -1453,37 +1467,6 @@ struct eAICDistrict {
                 if(count != 0) {
                     result -= std::round(distSum/count);
                 }
-            } else if(type == eBuildingType::huntingLodge) {
-                int minDist = 10000;
-                bool found = false;
-
-                const int cx = rect.x;
-                const int cy = rect.y;
-                const auto prcsTile = [&](const int x, const int y) {
-                    const int tx = cx + x;
-                    const int ty = cy + y;
-                    int dx;
-                    int dy;
-                    eTileHelper::tileIdToDTileId(tx, ty, dx, dy);
-                    const auto btile = board.dtile(dx, dy);
-                    if(!btile) return false;
-                    const bool p = btile->hasPrey();
-                    if(p) {
-                        const int ddx = cx - tx;
-                        const int ddy = cy - ty;
-                        minDist = sqrt(ddx*ddx + ddy*ddy);
-                        if(minDist < 4) {
-                            minDist += 2*(4 - minDist);
-                        }
-                        found = true;
-                    }
-                    return found;
-                };
-                for(int k = 0; k < 100; k++) {
-                    eIterateSquare::iterateSquare(k, prcsTile, 1);
-                    if(found) break;
-                }
-                result += 100 - minDist;
             }
         }
 
@@ -1491,9 +1474,52 @@ struct eAICDistrict {
             result -= round(double(bRect.w*bRect.h)/placed);
         }
 
+        if(fType == eDistrictType::hunters) {
+            int nFree = 0;
+
+            const int cx = bRect.x + bRect.w/2;
+            const int cy = bRect.y + bRect.h/2;
+            const auto prcsTile1 = [&](const int x, const int y) {
+                const int tx = cx + x;
+                const int ty = cy + y;
+                int dx;
+                int dy;
+                eTileHelper::tileIdToDTileId(tx, ty, dx, dy);
+                const auto btile = board.dtile(dx, dy);
+                if(!btile) return false;
+                const bool p = btile->hasPrey();
+                if(p) {
+                    nFree += 4*4;
+                    const auto prcsTile2 = [&](const int x, const int y) {
+                        const int ttx = tx + x;
+                        const int tty = ty + y;
+                        int dx;
+                        int dy;
+                        eTileHelper::tileIdToDTileId(ttx, tty, dx, dy);
+                        const auto btile = board.dtile(dx, dy);
+                        if(!btile) return false;
+                        const auto type = btile->underBuildingType();
+                        if(type == eBuildingType::huntingLodge) {
+                            nFree--;
+                        }
+                        return false;
+                    };
+                    for(int k = 0; k < 18; k++) {
+                        eIterateSquare::iterateSquare(k, prcsTile2, 1);
+                    }
+                }
+                return false;
+            };
+            for(int k = 0; k < 15; k++) {
+                eIterateSquare::iterateSquare(k, prcsTile1, 1);
+            }
+            result += nFree;
+        }
+
         return result;
     }
 
+    eDistrictType fType;
     eCityId fCid;
     eAIRoadPath fRoads;
     std::vector<eAICBuilding> fTmpBuildings;
@@ -1579,20 +1605,6 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     const int iterations = 100;
     const int popSize = 100;
     const int mutateSize = 25;
-
-    enum class eDistrictType {
-        commonHousing,
-        eliteHousing,
-        farms,
-        palace,
-        oliveFarm,
-        vineFarm,
-        orangeFarm,
-        sheepFarm,
-        goatFarm,
-        cattleFarm,
-        hunters
-    };
 
     std::vector<eDistrictType> dists = {eDistrictType::hunters,
                                         eDistrictType::sheepFarm,
@@ -1680,6 +1692,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         auto& s = population.emplace_back();
 
         auto& district = s.fDistricts.emplace_back();
+        district.fType = dist;
         district.fCid = cid();
         auto& road = district.fRoads;
         road.fLen = 4;
