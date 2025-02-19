@@ -1718,12 +1718,6 @@ bool eGameWidget::buildMouseRelease() {
                 return false;
             }
 
-            const auto diff = mBoard->difficulty(ppid);
-            const int cost = eDifficultyHelpers::buildingCost(
-                                 diff, bt);
-            mBoard->incDrachmas(ppid, -cost);
-            mBoard->takeResource(mViewedCityId, eResourceType::marble, m);
-
             const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotate);
 
             const int sw = h->fW;
@@ -1740,9 +1734,12 @@ bool eGameWidget::buildMouseRelease() {
             b->setRotated(mRotate);
             const auto god = b->godType();
 
-            const bool r = mBoard->canBuildBase(minX, maxX, minY, maxY);
-            if(!r) return true;
-            else mBoard->built(mViewedCityId, bt);
+            const auto diff = mBoard->difficulty(ppid);
+            const int cost = eDifficultyHelpers::buildingCost(diff, bt);
+            mBoard->incDrachmas(ppid, -cost);
+            mBoard->takeResource(mViewedCityId, eResourceType::marble, m);
+
+            mBoard->built(mViewedCityId, bt);
             mGm->clearMode();
 
             const auto mint = mBoard->tile(mHoverTX, mHoverTY);
