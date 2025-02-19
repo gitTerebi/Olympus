@@ -11,6 +11,7 @@
 #include "buildings/eheatgetters.h"
 #include "engine/egameboard.h"
 #include "eiteratesquare.h"
+#include "evectorhelpers.h"
 
 struct eAITile {
     eBuildingType fBuilding = eBuildingType::none;
@@ -845,7 +846,8 @@ struct eAICDistrict {
         case eBuildingType::armory:
         case eBuildingType::dairy:
         case eBuildingType::cardingShed:
-        case eBuildingType::huntingLodge: {
+        case eBuildingType::huntingLodge:
+        case eBuildingType::artisansGuild: {
             w = 2;
             h = 2;
         } break;
@@ -1476,6 +1478,7 @@ struct eAICDistrict {
 
         if(fType == eDistrictType::hunters) {
             int nFree = 0;
+            std::vector<std::pair<int, int>> counted;
 
             const int cx = bRect.x + bRect.w/2;
             const int cy = bRect.y + bRect.h/2;
@@ -1500,7 +1503,12 @@ struct eAICDistrict {
                         if(!btile) return false;
                         const auto type = btile->underBuildingType();
                         if(type == eBuildingType::huntingLodge) {
-                            nFree--;
+                            const std::pair<int, int> pt{ttx, tty};
+                            const bool r = eVectorHelpers::contains(counted, pt);
+                            if(!r) {
+                                nFree--;
+                                counted.push_back(pt);
+                            }
                         }
                         return false;
                     };
