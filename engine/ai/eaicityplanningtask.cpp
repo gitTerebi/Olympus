@@ -1095,43 +1095,52 @@ struct eAICDistrict {
             }
             bool ok = true;
             bool foundFertile = false;
-            for(int x = totalXMin; x <= totalXMax; x++) {
-                for(int y = totalYMin; y <= totalYMax; y++) {
+            for(int x = totalXMin - 1; x <= totalXMax + 1; x++) {
+                for(int y = totalYMin - 1; y <= totalYMax + 1; y++) {
                     int dx;
                     int dy;
                     eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                    const auto tile = aiBoard.tile(dx, dy);
-                    if(!tile) {
-                        ok = false;
-                        break;
-                    }
-                    const auto type = tile->fBuilding;
-                    if(x == allowedRoadX || y == allowedRoadY) {
-                        if(type != eBuildingType::road) {
-                            ok = false;
-                            break;
-                        }
-                    } else if(type != eBuildingType::none) {
-                        ok = false;
-                        break;
-                    }
                     const auto vtile = board.dtile(dx, dy);
                     if(!vtile) {
                         ok = false;
                         break;
                     }
                     const auto ttype = vtile->underBuildingType();
-                    if(ttype != eBuildingType::none) {
+                    if(ttype != eBuildingType::none &&
+                       ttype != eBuildingType::road) {
                         ok = false;
                         break;
                     }
                     const auto terr = vtile->terrain();
-                    const bool f = static_cast<bool>(terr & eTerrain::fertile);
-                    if(f) foundFertile = true;
                     const bool v = static_cast<bool>(terr & eTerrain::buildableAfterClear);
                     if(!v || vtile->isElevationTile()) {
                         ok = false;
                         break;
+                    }
+                    if(x >= totalXMin && x <= totalXMax &&
+                       y >= totalYMin && y <= totalYMax) {
+                        const auto ttype = vtile->underBuildingType();
+                        if(ttype != eBuildingType::none) {
+                            ok = false;
+                            break;
+                        }
+                        const bool f = static_cast<bool>(terr & eTerrain::fertile);
+                        if(f) foundFertile = true;
+                        const auto tile = aiBoard.tile(dx, dy);
+                        if(!tile) {
+                            ok = false;
+                            break;
+                        }
+                        const auto type = tile->fBuilding;
+                        if(x == allowedRoadX || y == allowedRoadY) {
+                            if(type != eBuildingType::road) {
+                                ok = false;
+                                break;
+                            }
+                        } else if(type != eBuildingType::none) {
+                            ok = false;
+                            break;
+                        }
                     }
                 }
                 if(!ok) break;
@@ -1208,15 +1217,23 @@ struct eAICDistrict {
                     const int xMaxG = xMinG + 1;
                     const int yMaxG = yMinG + 1;
                     bool ok = true;
-                    for(int x = xMinG; x <= xMaxG; x++) {
-                        for(int y = yMinG; y <= yMaxG; y++) {
+                    for(int x = xMinG - 1; x <= xMaxG + 1; x++) {
+                        for(int y = yMinG - 1; y <= yMaxG + 1; y++) {
                             int dx;
                             int dy;
                             eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                            const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                            const bool b = gBuildableTile(board, dx, dy, fCid, true);
                             if(!b) {
                                 ok = false;
                                 break;
+                            }
+                            if(x >= xMinG && x <= xMaxG &&
+                               y >= yMinG && y <= yMaxG) {
+                                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                                if(!b) {
+                                    ok = false;
+                                    break;
+                                }
                             }
                         }
                         if(!ok) break;
@@ -1253,13 +1270,18 @@ struct eAICDistrict {
                 const auto place = [&](const eBuildingType type,
                                       const int xMinC, const int yMinC,
                                       const int xMaxC, const int yMaxC) {
-                    for(int x = xMinC; x <= xMaxC; x++) {
-                        for(int y = yMinC; y <= yMaxC; y++) {
+                    for(int x = xMinC - 1; x <= xMaxC + 1; x++) {
+                        for(int y = yMinC - 1; y <= yMaxC + 1; y++) {
                             int dx;
                             int dy;
                             eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                            const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                            const bool b = gBuildableTile(board, dx, dy, fCid, true);
                             if(!b) return;
+                            if(x >= xMinC && x <= xMaxC &&
+                               y >= yMinC && y <= yMaxC) {
+                                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
+                                if(!b) return;
+                            }
                         }
                     }
 
@@ -1350,6 +1372,21 @@ struct eAICDistrict {
                         eTileHelper::tileIdToDTileId(x, y, dx, dy);
                         const bool bb = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
                         if(!bb) continue;
+                        bool ok = true;
+                        for(int xx = x - 1; xx <= x + 1; xx++) {
+                            for(int yy = y - 1; yy <= y + 1; yy++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const bool bb = gBuildableTile(board, dx, dy, fCid, true);
+                                if(!bb) {
+                                    ok = false;
+                                    break;
+                                }
+                            }
+                            if(!ok) break;
+                        }
+                        if(!ok) continue;
                         auto& b = fTmpBuildings.emplace_back();
                         const bool r = gHasRoad(x - 1, y - 1, x + 1, y + 1, roadBoard);
                         b.fType = r ? eBuildingType::avenue : eBuildingType::park;
