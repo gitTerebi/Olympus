@@ -612,7 +612,7 @@ struct eAICDistrict {
         auto& srcRoad = *allRoads[srcRoadId];
         std::vector<eType> types;
         if(srcRoad.fType == eAIRoadPath::eType::cycle) {
-            types = {eType::changeWidth, eType::resize, eType::move};
+            types = {eType::changeWidth, eType::resize};
         } else if(srcRoad.fLen <= 0) {
             types = {eType::resize, eType::move};
         } else if(srcRoad.fBranches.empty()) {
@@ -724,8 +724,10 @@ struct eAICDistrict {
             return true;
         } break;
         case eType::move: {
-            const int toMoveId = eRand::rand() % allRoads.size();
-            auto& toMove = *allRoads[toMoveId];
+            auto& roads = srcRoad.fBranches;
+            if(roads.empty()) return false;
+            const int toMoveId = eRand::rand() % roads.size();
+            auto& toMove = roads[toMoveId];
             eAIRoadPath tmp = toMove;
             tmp.fDisplacement += 2 - (eRand::rand() % 5);
             srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
