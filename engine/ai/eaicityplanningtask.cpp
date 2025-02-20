@@ -778,7 +778,17 @@ struct eAICDistrict {
         const int b1 = eRand::rand() % fBuildings.size();
         auto& b = fBuildings[b1];
         if(b.fType == eBuildingType::palace ||
+           b.fType == eBuildingType::commonAgora ||
+           b.fType == eBuildingType::grandAgora ||
            eSanctuary::sSanctuaryBuilding(b.fType)) {
+            if(b.fO == eDiagonalOrientation::topLeft ||
+               b.fO == eDiagonalOrientation::bottomRight) {
+                b.fO = static_cast<eDiagonalOrientation>(2*(eRand::rand() % 2));
+            } else {
+                b.fO = static_cast<eDiagonalOrientation>(1 + 2*(eRand::rand() % 2));
+            }
+            return true;
+        } else if(b.fType == eBuildingType::horseRanch) {
             if(eRand::rand() % 2) {
                 b.fO = static_cast<eDiagonalOrientation>(eRand::rand() % 4);
                 return true;
