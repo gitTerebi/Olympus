@@ -299,6 +299,13 @@ struct eAIRoadPath {
 
     void allBranches(std::vector<eAIRoadPath*>& result,
                      const bool skipCycleBranches) {
+        using eV = std::vector<const eAIRoadPath*>;
+        auto& r = reinterpret_cast<eV&>(result);
+        allBranches(r, skipCycleBranches);
+    }
+
+    void allBranches(std::vector<const eAIRoadPath*>& result,
+                     const bool skipCycleBranches) const {
         result.push_back(this);
         if(fType == eType::cycle && skipCycleBranches) return;
         for(auto& b : fBranches) {
@@ -372,7 +379,7 @@ struct eAIRoadPath {
     }
 
     int totalBranchesCount() const {
-        int result = 1;
+        int result = fType == eType::branch ? 1 : 0;
         for(const auto& b : fBranches) {
             result += b.totalBranchesCount();
         }
@@ -380,7 +387,7 @@ struct eAIRoadPath {
     }
 
     int totalBranchesLen() const {
-        int result = fLen;
+        int result = fType == eType::branch ? fLen : 0;
         for(const auto& b : fBranches) {
             result += b.totalBranchesLen();
         }
@@ -1462,6 +1469,28 @@ struct eAICDistrict {
 
         result -= fRoads.totalBranchesCount();
         result -= fRoads.totalBranchesLen();
+
+        {
+            std::vector<const eAIRoadPath*> allRoads;
+            fRoads.allBranches(allRoads, false);
+            for(const auto r : allRoads) {
+                if(r->fType == eAIRoadPath::eType::cycle) continue;
+                const int xMin = r->minX();
+                const int xMax = r->maxX();
+                const int yMin = r->minY();
+                const int yMax = r->maxY();
+                for(int x = xMin; x <= xMax; x++) {
+                    for(int y = yMin; y <= yMax; y++) {
+                        const auto tile = board.tile(x, y);
+                        if(!tile) continue;
+                        const auto terr = tile->terrain();
+                        if(static_cast<bool>(terr & eTerrain::fertile)) {
+                            result--;
+                        }
+                    }
+                }
+            }
+        }
 
         result -= fBuildings.size();
         result -= fTmpBuildings.size();
