@@ -525,6 +525,7 @@ struct eAICDistrict {
         std::vector<eAIRoadPath*> allRoads;
         fRoads.allBranches(allRoads, false);
         for(const auto& road : allRoads) {
+            if(road->fType == eAIRoadPath::eType::cycle) continue;
             const int xMin = road->minX();
             const int xMax = road->maxX();
             const int yMin = road->minY();
