@@ -845,6 +845,20 @@ struct eAICDistrict {
                 if(terr == eTerrain::fertile) {
                     bool r = true;
                     for(int yy = 0; yy < h; yy++) {
+                        for(int x = tx - 1; x <= tx + 1; x++) {
+                            for(int y = ty + yy - 1; y <= ty + yy + 1; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const bool rr = gBuildableTile(board, dx, dy, fCid, true);
+                                if(!rr) {
+                                    r = false;
+                                    break;
+                                }
+                            }
+                            if(!r) break;
+                        }
+                        if(!r) break;
                         int ddx;
                         int ddy;
                         if(yy == 0) {
