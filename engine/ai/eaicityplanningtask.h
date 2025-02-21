@@ -7,6 +7,8 @@
 
 enum class ePlayerId;
 class eGameBoard;
+class eAICityPlan;
+class eAICSpeciman;
 
 class eAICityPlanningTask : public eTask {
 public:
@@ -22,7 +24,8 @@ private:
     eGameBoard& mBoard;
     const SDL_Rect mBRect;
     const ePlayerId mPid;
-    void* mBest = nullptr;
+    eAICSpeciman* mBest = nullptr;
+    eAICityPlan* mPlan = nullptr;
     int mStage = 0;
 };
 

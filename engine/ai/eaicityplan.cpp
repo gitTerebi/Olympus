@@ -132,10 +132,15 @@ bool eAICityPlan::connectDistricts(eGameBoard& board,
     }, [&](eTileBase* const t) {
         return t->x() == r2x && t->y() == r2y;
     });
+
     const auto startTile = board.tile(r1x, r1y);
     const int w = board.width();
     const int h = board.height();
-    const bool r = p.findPath({0, 0, w, h}, startTile, 1000, true, w, h);
+    const auto distance = [](eTileBase* const tile) {
+        if(tile->hasRoad()) return 1;
+        return 6;
+    };
+    const bool r = p.findPath({0, 0, w, h}, startTile, 10000, true, w, h, distance);
     if(!r) return false;
     std::vector<eOrientation> path;
     const bool rr = p.extractPath(path);
@@ -699,7 +704,9 @@ void eAIDistrict::build(eGameBoard& board,
         {
             const auto minTile = board.tile(xMin, yMin);
             const auto minTileBT = minTile->underBuildingType();
-            if(minTileBT == b.fType) continue;
+            if(eBuilding::sSanctuaryBuilding(minTileBT)) {
+                if(eBuilding::sSanctuaryBuilding(b.fType)) continue;
+            } else if(minTileBT == b.fType) continue;
         }
         if(!eBuilding::sFlatBuilding(b.fType)) {
             bool buildable = true;

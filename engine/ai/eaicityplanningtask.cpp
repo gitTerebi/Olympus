@@ -1826,15 +1826,10 @@ struct eAICSpeciman {
         }
     }
 
-    eAICityPlan cityPlan(const ePlayerId pid,
-                         const eCityId cid) {
-        eAICityPlan result(pid, cid);
-
+    void addToCityPlan(eAICityPlan& plan) {
         for(auto& d : fDistricts) {
-            d.addToCityPlan(result);
+            d.addToCityPlan(plan);
         }
-
-        return result;
     }
 
     std::vector<eAICDistrict> fDistricts;
@@ -2188,14 +2183,20 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 }
 
 void eAICityPlanningTask::finish() {
-    const auto s = static_cast<eAICSpeciman*>(mBest);
-    auto plan = s->cityPlan(mPid, cid());
-    plan.buildAllDistricts(mBoard);
-    delete s;
+    if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
+    mBest->addToCityPlan(*mPlan);
+    mPlan->buildAllDistricts(mBoard);
+    delete mBest;
     mBest = nullptr;
-    if(mStage < 0) return;
+    if(mStage < 0) {
+        delete mPlan;
+        mPlan = nullptr;
+        return;
+    }
     auto& tp = mBoard.threadPool();
     const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
+    task->mPlan = mPlan;
+    mPlan = nullptr;
     task->mStage = mStage + 1;
     tp.queueTask(task);
 }
