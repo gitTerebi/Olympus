@@ -66,6 +66,7 @@ void eHouseBase::leave() {
     setPeople(0);
 
     const auto c = e::make_shared<eSettler>(getBoard());
+    c->setBothCityIds(cityId());
     c->changeTile(centerTile());
     const stdptr<eSettler> cptr(c.get());
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
