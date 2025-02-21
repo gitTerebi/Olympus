@@ -8,7 +8,7 @@
 enum class ePlayerId;
 class eGameBoard;
 class eAICityPlan;
-class eAICSpeciman;
+struct eAICSpeciman;
 
 class eAICityPlanningTask : public eTask {
 public:

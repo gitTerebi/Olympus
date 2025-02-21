@@ -80,12 +80,9 @@ bool gBuildableTile(eThreadBoard& board,
         return false;
     }
     const auto btype = btile->underBuildingType();
-    if(btype != eBuildingType::none) {
-        if(btype == eBuildingType::road) {
-            if(!isRoad) return false;
-        } else {
-            return false;
-        }
+    if(btype != eBuildingType::none &&
+       btype != eBuildingType::road) {
+        return false;
     }
     const bool e = btile->isElevationTile();
     if(e) {
@@ -1136,7 +1133,8 @@ struct eAICDistrict {
                     if(x >= totalXMin && x <= totalXMax &&
                        y >= totalYMin && y <= totalYMax) {
                         const auto ttype = vtile->underBuildingType();
-                        if(ttype != eBuildingType::none) {
+                        if(ttype != eBuildingType::none &&
+                           ttype != eBuildingType::road) {
                             ok = false;
                             break;
                         }
@@ -1784,12 +1782,13 @@ struct eAICSpeciman {
         return result;
     }
 
-    bool mutate(eThreadBoard& board) {
+    bool mutate(eThreadBoard& board, const eHeatMapDivisor& heatMap) {
         if(fDistricts.empty()) return false;
         auto& d = fDistricts[eRand::rand() % fDistricts.size()];
 
         enum class eType {
             move,
+            moveFar,
             changeRoad,
             swapBuildings,
             alignBuildings,
@@ -1803,6 +1802,17 @@ struct eAICSpeciman {
         case eType::move: {
             const int byX = 2 - (eRand::rand() % 5);
             const int byY = 2 - (eRand::rand() % 5);
+            return d.move(board, byX, byY);
+        } break;
+        case eType::moveFar: {
+            int dx;
+            int dy;
+            heatMap.randomHeatTile(dx, dy);
+            int x;
+            int y;
+            eTileHelper::dtileIdToTileId(dx, dy, x, y);
+            const int byX = x - d.fRoads.fX;
+            const int byY = y - d.fRoads.fY;
             return d.move(board, byX, byY);
         } break;
         case eType::changeRoad: {
@@ -2151,7 +2161,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             s = srcS;
             const int kMax = 1 + (eRand::rand() % 3);
             for(int k = 0; k < kMax; k++) {
-                const bool c = s.mutate(data);
+                const bool c = s.mutate(data, divisor);
                 if(!c) k--;
             }
             aiBoard.initialize(data.width(), data.height());
