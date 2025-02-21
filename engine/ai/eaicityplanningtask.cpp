@@ -2154,16 +2154,14 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             const int srcId = eRand::rand() % popSize;
             const auto& srcS = population[srcId];
             s = srcS;
-            bool c = false;
             const int kMax = 1 + (eRand::rand() % 3);
             for(int k = 0; k < kMax; k++) {
-                c = c || s.mutate(data);
+                const bool c = s.mutate(data);
+                if(!c) k--;
             }
-            if(c) {
-                aiBoard.initialize(data.width(), data.height());
-                s.distributeBuildings(data, aiBoard);
-                s.fGrade = s.grade(data, aiBoard);
-            }
+            aiBoard.initialize(data.width(), data.height());
+            s.distributeBuildings(data, aiBoard);
+            s.fGrade = s.grade(data, aiBoard);
         }
 
         std::sort(population.begin(), population.end(),
@@ -2171,7 +2169,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             return s1.fGrade > s2.fGrade;
         });
 
-        for(int j = 0; j < mutateSize; j++) {
+        while(population.size() > popSize) {
             population.pop_back();
         }
         const int newBestGrade = population.front().fGrade;
