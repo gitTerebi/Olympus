@@ -1911,6 +1911,11 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
         {
             eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::notFertile, map2);
+            map.add(map2);
+        }
+        {
+            eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
             map.add(map2);
         }
@@ -1928,6 +1933,11 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         }
     } else if(dist == eDistrictType::hunters) {
         eHeatMapTask::sRun(data, &eHeatGetters::distanceFromPrey<4, 10, 10>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::notFertile, map2);
+            map.add(map2);
+        }
         {
             eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<4, 5, 5>, map2);
@@ -1948,6 +1958,11 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
               dist == eDistrictType::templePoseidon ||
               dist == eDistrictType::templeZeus) {
         eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 5>, map);
+        {
+            eHeatMap map2;
+            eHeatMapTask::sRun(data, &eHeatGetters::notFertile, map2);
+            map.add(map2);
+        }
         {
             eHeatMap map2;
             eHeatMapTask::sRun(data, &eHeatGetters::distanceFromNotBuildable<6, 5, 5>, map2);
