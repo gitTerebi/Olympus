@@ -22,13 +22,22 @@ void eThreadData::updateBoard(const eCityId cid) {
 }
 
 eThreadBoard& eThreadData::board(const eCityId cid) {
-    return mBoards[cid].board();
+    auto& bh = mBoards[cid];
+    std::printf("Access board %p\n", &bh);
+    return bh.board();
 }
 
 void eThreadData::scheduleUpdate(eGameBoard& board) {
     for(auto& b : mBoards) {
         b.second.scheduleUpdate(board);
     }
+}
+
+void eThreadData::iniScheduleUpdate(eGameBoard& board, const eCityId cid) {
+    auto& b = mBoards[cid];
+    b.scheduleUpdate(board);
+    b.updateBoard();
+    b.scheduleUpdate(board);
 }
 
 void eThreadData::scheduleUpdate(eGameBoard& board, const eCityId cid) {

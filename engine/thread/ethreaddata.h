@@ -12,6 +12,7 @@ class eGameBoard;
 class eTask;
 
 struct eTrueBool {
+    bool fIni = true;
     bool fV = true;
 };
 
@@ -26,6 +27,7 @@ public:
     eThreadBoard& board(const eCityId cid);
 
     void scheduleUpdate(eGameBoard& board);
+    void iniScheduleUpdate(eGameBoard& board, const eCityId cid);
     void scheduleUpdate(eGameBoard& board, const eCityId cid);
 
     void setRunning(const bool r);

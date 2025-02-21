@@ -68,6 +68,7 @@ void eThreadPool::threadEntry(eThreadData* data) {
                 const auto cid = task->cid();
                 data->setRunning(true);
                 data->updateBoard(cid);
+                std::printf("Run task %p\n", task);
                 auto& b = data->board(cid);
                 task->run(b);
                 data->setRunning(false);
@@ -86,18 +87,19 @@ void eThreadPool::threadEntry(eThreadData* data) {
 }
 
 void eThreadPool::queueTask(eTask* const task) {
-    if(mTaskId == 0) {
-        for(const auto d : mThreadData) {
-            d->scheduleUpdate(mBoard);
-        }
-    }
     const auto cid = task->cid();
     const int threadId = mTaskId++ % mThreadData.size();
     const auto d = mThreadData[threadId];
-    auto& cidV = d->fDataUpdateScheduled[cid].fV;
-    if(cidV) {
-        cidV = false;
-        d->scheduleUpdate(mBoard, cid);
+    auto& cidV = d->fDataUpdateScheduled[cid];
+    std::printf("Que task %p in %p\n", task, d);
+    if(cidV.fV) {
+        cidV.fV = false;
+        if(cidV.fIni) {
+            cidV.fIni = false;
+            d->iniScheduleUpdate(mBoard, cid);
+        } else {
+            d->scheduleUpdate(mBoard, cid);
+        }
     }
     std::unique_lock<std::mutex> lock(d->fTasksMutex);
     d->fTasks.emplace(task);

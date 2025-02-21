@@ -17,6 +17,8 @@ void eThreadBoardHandler::scheduleUpdate(eGameBoard& board) {
 
 //    const auto t1 = high_resolution_clock::now();
 
+    std::printf("Update tmp board %p\n", this);
+
     std::lock_guard l(mTmpBoardMutex);
     mTmpChanged = true;
     for(int i = 0; i < board.width(); i++) {
@@ -35,6 +37,8 @@ void eThreadBoardHandler::scheduleUpdate(eGameBoard& board) {
 }
 
 void eThreadBoardHandler::scheduleUpdate(eGameBoard& board, const eCityId cid) {
+    std::printf("Update tmp board %p\n", this);
+
     const auto c = board.boardCityWithId(cid);
     const auto& tiles = c->tiles();
 
@@ -51,6 +55,7 @@ void eThreadBoardHandler::scheduleUpdate(eGameBoard& board, const eCityId cid) {
 
 void eThreadBoardHandler::updateBoard() {
     if(mTmpChanged) {
+        std::printf("Swap boards %p\n", this);
         std::lock_guard l(mTmpBoardMutex);
         std::swap(mBoard, mTmpBoard);
         mTmpChanged = false;

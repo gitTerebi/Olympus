@@ -1851,7 +1851,7 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
 
     std::vector<eAICSpeciman> population;
 
-    const int iterations = 100;
+    const int iterations = 1;
     const int popSize = 100;
     const int mutateSize = 25;
 
@@ -2199,15 +2199,19 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
         } else {
             bestGradeSince++;
         }
-        printf("iter %d, best grade %d\n", i, newBestGrade);
+        // printf("iter %d, best grade %d\n", i, newBestGrade);
     }
 
     const auto s = new eAICSpeciman();
     *s = population.front();
     mBest = s;
+    printf("Generated district\n");
 }
 
 void eAICityPlanningTask::finish() {
+    printf("Generated district main thread\n");
+    auto& tp = mBoard.threadPool();
+    tp.scheduleDataUpdate();
     if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
     mBest->addToCityPlan(*mPlan);
     mPlan->buildAllDistricts(mBoard);
@@ -2218,7 +2222,6 @@ void eAICityPlanningTask::finish() {
         mPlan = nullptr;
         return;
     }
-    auto& tp = mBoard.threadPool();
     const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
     task->mPlan = mPlan;
     mPlan = nullptr;

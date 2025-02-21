@@ -168,8 +168,9 @@ public:
                        const int id);
     void buildAllDistricts(eGameBoard& board);
     void rebuildDistricts(eGameBoard& board);
-    bool connectDistricts(eGameBoard& board,
-                          const int id1, const int id2);
+    using ePoints = std::vector<std::pair<SDL_Point, SDL_Point>>;
+    bool connectDistricts(const int id1, const int id2,
+                          ePoints& points);
     void connectAllBuiltDistricts(eGameBoard& board);
     bool districtBuilt(const int id) const;
 private:

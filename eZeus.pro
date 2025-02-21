@@ -343,6 +343,7 @@ SOURCES += \
         emessages.cpp \
         engine/ai/eaicityplan.cpp \
         engine/ai/eaicityplanningtask.cpp \
+        engine/ai/eaiconnectwithroadtask.cpp \
         engine/boardData/eemploymentdata.cpp \
         engine/boardData/eheatmap.cpp \
         engine/boardData/eheatmapdivisor.cpp \
@@ -970,6 +971,7 @@ HEADERS += \
     emessages.h \
     engine/ai/eaicityplan.h \
     engine/ai/eaicityplanningtask.h \
+    engine/ai/eaiconnectwithroadtask.h \
     engine/boardData/eemploymentdata.h \
     engine/boardData/eheatmap.h \
     engine/boardData/eheatmapdivisor.h \
