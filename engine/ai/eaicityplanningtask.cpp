@@ -2213,6 +2213,7 @@ void eAICityPlanningTask::finish() {
     if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
     mBest->addToCityPlan(*mPlan);
     mPlan->buildAllDistricts(mBoard);
+    mPlan->connectAllBuiltDistricts(mBoard);
     delete mBest;
     mBest = nullptr;
     if(mStage < 0) {

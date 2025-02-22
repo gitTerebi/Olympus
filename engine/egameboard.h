@@ -214,6 +214,8 @@ public:
     int countBanners(const eBannerType bt, const eCityId cid) const;
     int countSoldiers(const eBannerType bt, const eCityId cid) const;
 
+    int state() const { return mState; }
+    void incState() { mState++; }
     void incTime(const int by);
     void incFrame();
     int frame() const { return mFrame; }
@@ -673,6 +675,7 @@ private:
 
     std::map<eResourceType, int> mPrices;
 
+    int mState = 0;
     int mFrame = 0;
     int mTotalTime = 0;
     int mTime = 0;

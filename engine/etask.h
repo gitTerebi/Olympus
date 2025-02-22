@@ -12,10 +12,14 @@ public:
     virtual ~eTask();
 
     eCityId cid() const { return mCid; }
+
+    int expectedState() const { return mExpectedState; }
+    void setExpectedState(const int state) { mExpectedState = state; }
 protected:
     virtual void run(eThreadBoard& data) { (void)data; }
     virtual void finish() {}
 private:
+    int mExpectedState;
     const eCityId mCid;
 };
 

@@ -87,7 +87,6 @@ void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
     const bool c = districtBuilt(id);
     if(!c) mBuiltDistrics.push_back(id);
     mDistricts[id].build(board, mPid, mCid);
-    connectAllBuiltDistricts(board);
 }
 
 void eAICityPlan::buildAllDistricts(eGameBoard& board) {
@@ -95,7 +94,6 @@ void eAICityPlan::buildAllDistricts(eGameBoard& board) {
     for(int i = 0; i < iMax; i++) {
         buildDistrict(board, i);
     }
-    connectAllBuiltDistricts(board);
 }
 
 void eAICityPlan::rebuildDistricts(eGameBoard& board) {
@@ -129,9 +127,9 @@ bool eAICityPlan::connectDistricts(const int id1, const int id2,
 void eAICityPlan::connectAllBuiltDistricts(eGameBoard& board) {
     ePoints points;
 
-    for(const int i : mBuiltDistrics) {
-        for(const int j : mBuiltDistrics) {
-            if(i == j) continue;
+    const int ijMax = mBuiltDistrics.size();
+    for(int i = 0; i < ijMax; i++) {
+        for(int j = i + 1; j < ijMax; j++) {
             connectDistricts(i, j, points);
         }
     }

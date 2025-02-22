@@ -44,9 +44,11 @@ void eMoveToAction::start(const eTileFinal& final,
         return board.tile(tx, ty);
     };
 
+    const stdptr<eCharacter> cptr(c);
     const stdptr<eMoveToAction> tptr(this);
-    const auto finishFunc = [tptr, this, c, moveWalkable](
+    const auto finishFunc = [tptr, this, cptr, moveWalkable](
                             std::vector<eOrientation> path) {
+        if(!cptr) return;
         if(!tptr) return;
         const auto r = ref<eMoveToAction>();
         const auto failFunc = std::make_shared<eAA_patrolFail>(
@@ -67,7 +69,7 @@ void eMoveToAction::start(const eTileFinal& final,
             return;
         }
         const auto a  = e::make_shared<eMovePathAction>(
-                            c, path, moveWalkable);
+                            cptr, path, moveWalkable);
         a->setFailAction(failFunc);
         a->setFinishAction(finishAction);
         a->setObsticleHandler(mObstHandler);

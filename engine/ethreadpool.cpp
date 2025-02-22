@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "evectorhelpers.h"
+#include "engine/egameboard.h"
 
 eThreadPool::eThreadPool(eGameBoard& board) :
     mBoard(board) {}
@@ -72,6 +73,9 @@ void eThreadPool::threadEntry(eThreadData* data) {
                 data->updateBoard(cid);
                 std::printf("Run task %p\n", task);
                 auto& b = data->board(cid);
+                if(task->expectedState() > b.state()) {
+                    printf("Old state!\n");
+                }
                 task->run(b);
                 data->setRunning(false);
 
@@ -89,7 +93,12 @@ void eThreadPool::threadEntry(eThreadData* data) {
 }
 
 void eThreadPool::queueTask(eTask* const task) {
+    task->setExpectedState(mBoard.state());
     const auto cid = task->cid();
+    if(cid == eCityId::neutralAggresive ||
+       cid == eCityId::neutralFriendly) {
+        printf("Wrong city id\n");
+    }
     const int threadId = mTaskId++ % mThreadData.size();
     const auto d = mThreadData[threadId];
     auto& cidV = d->fDataUpdateScheduled[cid];
@@ -121,6 +130,7 @@ void eThreadPool::handleFinished() {
 }
 
 void eThreadPool::scheduleDataUpdate() {
+    mBoard.incState();
     for(const auto d : mThreadData) {
 //        for(auto& f : d->fDataUpdateScheduled) {
 //            f.second.fV = true;
