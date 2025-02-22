@@ -169,6 +169,8 @@ bool eCorral::takeCattle() {
     if(mNCattle >= 3) return false;
     auto& board = getBoard();
     const auto c = e::make_shared<eButcher>(board);
+    const auto cid = cityId();
+    c->setBothCityIds(cid);
     const auto tile = centerTile();
     c->changeTile(tile);
     const auto a = e::make_shared<eTakeCattleAction>(c.get(), this);
@@ -179,9 +181,12 @@ bool eCorral::takeCattle() {
 void eCorral::replaceCattle() {
     auto& board = getBoard();
     const auto c = e::make_shared<eButcher>(board);
+    const auto cid = cityId();
+    c->setBothCityIds(cid);
     const auto tile = centerTile();
     c->changeTile(tile);
     const auto cc = e::make_shared<eCattle>(board, eCharacterType::cattle1);
+    cc->setBothCityIds(cid);
     cc->changeTile(tile);
     const auto fa = e::make_shared<eFollowAction>(c.get(), cc.get());
     cc->setAction(fa);
