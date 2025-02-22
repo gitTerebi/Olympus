@@ -1104,6 +1104,26 @@ struct eAICDistrict {
                         } break;
                         }
                     }
+                    if(!eVectorHelpers::contains(os, eDiagonalOrientation::topRight)) {
+                        const bool r = gHasRoad(xMin, yMin - 2, xMax, yMin - 2, roadBoard,
+                                                eDiagonalOrientation::topRight);
+                        if(r) os.push_back(eDiagonalOrientation::topRight);
+                    }
+                    if(!eVectorHelpers::contains(os, eDiagonalOrientation::bottomRight)) {
+                        const bool r = gHasRoad(xMax + 2, yMin, xMax + 2, yMax, roadBoard,
+                                                eDiagonalOrientation::bottomRight);
+                        if(r) os.push_back(eDiagonalOrientation::bottomRight);
+                    }
+                    if(!eVectorHelpers::contains(os, eDiagonalOrientation::topLeft)) {
+                        const bool r = gHasRoad(xMin - 2, yMin, xMin - 2, yMax, roadBoard,
+                                                eDiagonalOrientation::topLeft);
+                        if(r) os.push_back(eDiagonalOrientation::topLeft);
+                    }
+                    if(!eVectorHelpers::contains(os, eDiagonalOrientation::bottomLeft)) {
+                        const bool r = gHasRoad(xMin, yMax + 2, xMax, yMax + 2, roadBoard,
+                                                eDiagonalOrientation::bottomLeft);
+                        if(r) os.push_back(eDiagonalOrientation::bottomLeft);
+                    }
                 }
             }
             bool ok = true;
@@ -1210,9 +1230,9 @@ struct eAICDistrict {
             }
 
             if(b.fType == eBuildingType::commonHouse) {
+                int xMinG = xMin;
+                int yMinG = yMin;
                 for(const auto o : os) {
-                    int xMinG = xMin;
-                    int yMinG = yMin;
                     switch(o) {
                     case eDiagonalOrientation::topRight: {
                         yMinG += 2;
@@ -1227,33 +1247,33 @@ struct eAICDistrict {
                         xMinG += 2;
                     } break;
                     }
+                }
 
-                    const int xMaxG = xMinG + 1;
-                    const int yMaxG = yMinG + 1;
-                    bool ok = true;
-                    for(int x = xMinG - 1; x <= xMaxG + 1; x++) {
-                        for(int y = yMinG - 1; y <= yMaxG + 1; y++) {
-                            int dx;
-                            int dy;
-                            eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                            const bool b = gBuildableTile(board, dx, dy, fCid, true);
+                const int xMaxG = xMinG + 1;
+                const int yMaxG = yMinG + 1;
+                bool ok = true;
+                for(int x = xMinG - 1; x <= xMaxG + 1; x++) {
+                    for(int y = yMinG - 1; y <= yMaxG + 1; y++) {
+                        int dx;
+                        int dy;
+                        eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                        const bool b = gBuildableTile(board, dx, dy, fCid, true);
+                        if(!b) {
+                            ok = false;
+                            break;
+                        }
+                        if(x >= xMinG && x <= xMaxG &&
+                           y >= yMinG && y <= yMaxG) {
+                            const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
                             if(!b) {
                                 ok = false;
                                 break;
                             }
-                            if(x >= xMinG && x <= xMaxG &&
-                               y >= yMinG && y <= yMaxG) {
-                                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, false);
-                                if(!b) {
-                                    ok = false;
-                                    break;
-                                }
-                            }
                         }
-                        if(!ok) break;
                     }
-                    if(!ok) continue;
-
+                    if(!ok) break;
+                }
+                if(ok) {
                     auto& b = fTmpBuildings.emplace_back();
                     const int par = (xMinG + yMinG) % 6;
                     if(par < 2) {
@@ -1855,7 +1875,8 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     const int popSize = 100;
     const int mutateSize = 25;
 
-    std::vector<eDistrictType> dists = {eDistrictType::templeDemeter,
+    std::vector<eDistrictType> dists = {eDistrictType::commonHousing,
+                                        eDistrictType::templeDemeter,
                                         eDistrictType::hunters,
                                         eDistrictType::sheepFarm,
                                         eDistrictType::cattleFarm,
