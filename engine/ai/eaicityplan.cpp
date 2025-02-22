@@ -138,6 +138,7 @@ void eAICityPlan::connectAllBuiltDistricts(eGameBoard& board) {
 
     if(points.empty()) return;
     auto& tp = board.threadPool();
+    tp.scheduleDataUpdate();
     const auto task = new eAIConnectWithRoadTask(
                           board, points, mPid, mCid);
     tp.queueTask(task);

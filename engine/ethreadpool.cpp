@@ -2,6 +2,8 @@
 
 #include <chrono>
 
+#include "evectorhelpers.h"
+
 eThreadPool::eThreadPool(eGameBoard& board) :
     mBoard(board) {}
 
@@ -120,8 +122,30 @@ void eThreadPool::handleFinished() {
 
 void eThreadPool::scheduleDataUpdate() {
     for(const auto d : mThreadData) {
+//        for(auto& f : d->fDataUpdateScheduled) {
+//            f.second.fV = true;
+//        }
+        std::vector<eCityId> taskCid;
+        std::queue<eTask*> tasks;
+        {
+            std::lock_guard lock(d->fTasksMutex);
+            tasks = d->fTasks;
+        }
+        while(!tasks.empty()) {
+            const auto task = tasks.front();
+            const auto cid = task->cid();
+            const bool r = eVectorHelpers::contains(taskCid, cid);
+            if(!r) taskCid.push_back(cid);
+            tasks.pop();
+        }
         for(auto& f : d->fDataUpdateScheduled) {
-            f.second.fV = true;
+            const auto cid = f.first;
+            const bool r = eVectorHelpers::contains(taskCid, cid);
+            if(r) {
+                d->scheduleUpdate(mBoard, cid);
+            } else {
+                f.second.fV = true;
+            }
         }
     }
 }
