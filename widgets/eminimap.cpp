@@ -122,6 +122,39 @@ void eMiniMap::paintEvent(ePainter& p) {
     p.drawRect(rect, {255, 255, 255, 255}, 1);
 }
 
+SDL_Color gTerrainColor(eTile* const tile) {
+    switch(tile->terrain()) {
+    case eTerrain::dry:
+        if(tile->scrub() < 0.2) {
+            return {214, 170, 99, 255};
+        } else if(tile->scrub() < 0.4) {
+            return {185, 170, 99, 255};
+        } else if(tile->scrub() < 0.6) {
+            return {155, 170, 99, 255};
+        } else if(tile->scrub() < 0.8) {
+            return {125, 170, 99, 255};
+        } else {
+            return {95, 170, 99, 255};
+        }
+    case eTerrain::beach:
+        return {238, 202, 164, 255};
+    case eTerrain::fertile:
+        return {155, 110, 110, 255};
+    case eTerrain::forest:
+    case eTerrain::choppedForest:
+        return {90, 129, 41, 255};
+    case eTerrain::water:
+        return {25, 105, 115, 255};
+    case eTerrain::copper:
+        return {206, 105, 8, 255};
+    case eTerrain::silver:
+    case eTerrain::marble:
+        return {125, 235, 255, 255};
+    default:
+        return {66, 89, 148, 255};
+    }
+}
+
 SDL_Color colorForTile(eTile* const tile) {
     if(!tile) return {0, 0, 0, 255};
     if(const auto b = tile->underBuilding()) {
@@ -166,6 +199,16 @@ SDL_Color colorForTile(eTile* const tile) {
 
         case eBuildingType::palace:
             return {230, 162, 0, 255};
+
+        case eBuildingType::sheep:
+        case eBuildingType::cattle:
+        case eBuildingType::goat: {
+            if(!tile->characters().empty()) {
+                return {0, 0, 0, 255};
+            } else {
+                return gTerrainColor(tile);
+            }
+        } break;
         default:
             return {0, 0, 0, 255};
         }
@@ -175,35 +218,7 @@ SDL_Color colorForTile(eTile* const tile) {
         if(tile->isElevationTile()) {
             return {123, 146, 164, 255};
         }
-        switch(tile->terrain()) {
-        case eTerrain::dry:
-            if(tile->scrub() < 0.2) {
-                return {214, 170, 99, 255};
-            } else if(tile->scrub() < 0.4) {
-                return {185, 170, 99, 255};
-            } else if(tile->scrub() < 0.6) {
-                return {155, 170, 99, 255};
-            } else if(tile->scrub() < 0.8) {
-                return {125, 170, 99, 255};
-            } else {
-                return {95, 170, 99, 255};
-            }
-        case eTerrain::beach:
-            return {238, 202, 164, 255};
-        case eTerrain::fertile:
-            return {155, 110, 110, 255};
-        case eTerrain::forest:
-        case eTerrain::choppedForest:
-            return {90, 129, 41, 255};
-        case eTerrain::water:
-            return {25, 105, 115, 255};
-        case eTerrain::copper:
-            return {206, 105, 8, 255};
-        case eTerrain::silver:
-        case eTerrain::marble:
-            return {125, 235, 255, 255};
-        default: break;
-        }
+        return gTerrainColor(tile);
     }
     return {66, 89, 148, 255};
 }
