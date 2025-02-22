@@ -67,6 +67,23 @@ void eGameBoard::write(eWriteStream& dst) const {
         }
     }
 
+
+    {
+        dst << mCitiesOnBoard.size();
+        for(const auto& c : mCitiesOnBoard) {
+            dst << c->id();
+            c->write(dst);
+        }
+    }
+
+    {
+        dst << mPlayersOnBoard.size();
+        for(const auto& p : mPlayersOnBoard) {
+            dst << p->id();
+            p->write(dst);
+        }
+    }
+
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->write(dst);
@@ -146,21 +163,5 @@ void eGameBoard::write(eWriteStream& dst) const {
     for(const auto a : mPlannedActions) {
         dst << a->type();
         a->write(dst);
-    }
-
-    {
-        dst << mCitiesOnBoard.size();
-        for(const auto& c : mCitiesOnBoard) {
-            dst << c->id();
-            c->write(dst);
-        }
-    }
-
-    {
-        dst << mPlayersOnBoard.size();
-        for(const auto& p : mPlayersOnBoard) {
-            dst << p->id();
-            p->write(dst);
-        }
     }
 }

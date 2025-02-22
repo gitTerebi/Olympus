@@ -33,6 +33,32 @@ void eGameBoard::read(eReadStream& src) {
 
     src >> mSoldiersUpdate;
 
+    {
+        int nc;
+        src >> nc;
+        for(int i = 0; i < nc; i++) {
+            eCityId cid;
+            src >> cid;
+            const auto c = std::make_shared<eBoardCity>(cid, *this);
+            c->read(src);
+            mCitiesOnBoard.push_back(c);
+            scheduleAppealMapUpdate(cid);
+            mThreadPool.addBoard(cid);
+        }
+    }
+
+    {
+        int np;
+        src >> np;
+        for(int i = 0; i < np; i++) {
+            ePlayerId pid;
+            src >> pid;
+            const auto p = std::make_shared<eBoardPlayer>(pid, *this);
+            p->read(src);
+            mPlayersOnBoard.push_back(p);
+        }
+    }
+
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->read(src);
@@ -148,32 +174,6 @@ void eGameBoard::read(eReadStream& src) {
          const auto a = ePlannedAction::sCreate(type);
          a->read(src, *this);
          mPlannedActions.push_back(a);
-    }
-
-     {
-         int nc;
-         src >> nc;
-         for(int i = 0; i < nc; i++) {
-             eCityId cid;
-             src >> cid;
-             const auto c = std::make_shared<eBoardCity>(cid, *this);
-             c->read(src);
-             mCitiesOnBoard.push_back(c);
-             scheduleAppealMapUpdate(cid);
-             mThreadPool.addBoard(cid);
-         }
-     }
-
-     {
-         int np;
-         src >> np;
-         for(int i = 0; i < np; i++) {
-             ePlayerId pid;
-             src >> pid;
-             const auto p = std::make_shared<eBoardPlayer>(pid, *this);
-             p->read(src);
-             mPlayersOnBoard.push_back(p);
-         }
      }
 
      updateMarbleTiles();
