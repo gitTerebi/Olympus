@@ -1546,7 +1546,8 @@ struct eAICDistrict {
         }
     }
 
-    int grade(eThreadBoard& board, eAIBoard& aiBoard) const {
+    int grade(eThreadBoard& board, eAIBoard& aiBoard,
+              const eHeatMap& closenessMap) const {
         int result = 0;
 
         result -= fRoads.totalBranchesCount();
@@ -1668,6 +1669,14 @@ struct eAICDistrict {
             }
 
             result += 5*rect.w*rect.h;
+            {
+                const int x = rect.x + rect.w/2;
+                const int y = rect.y + rect.h/2;
+                int dx;
+                int dy;
+                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                result += closenessMap.heat(dx, dy);
+            }
 
             if(maintanance) {
                 result += 5;
@@ -1795,10 +1804,11 @@ eAICityPlanningTask::eAICityPlanningTask(
 }
 
 struct eAICSpeciman {
-    int grade(eThreadBoard& board, eAIBoard& aiBoard) const {
+    int grade(eThreadBoard& board, eAIBoard& aiBoard,
+              const eHeatMap& closenessMap) const {
         int result = 0;
         for(const auto& d : fDistricts) {
-            result += d.grade(board, aiBoard);
+            result += d.grade(board, aiBoard, closenessMap);
         }
         return result;
     }
@@ -1905,6 +1915,9 @@ void eAICityPlanningTask::run(eThreadBoard& data,
 
     const auto dist = dists[mStage];
     if(mStage == int(dists.size() - 1)) mStage = -1;
+
+    eHeatMap closenessMap;
+    eHeatMapTask::sRun(data, &eHeatGetters::distanceFromBuilding<4, 5, 50>, closenessMap);
 
     eHeatMap map;
 
@@ -2196,7 +2209,7 @@ void eAICityPlanningTask::run(eThreadBoard& data,
 
         aiBoard.initialize(data.width(), data.height());
         s.distributeBuildings(data, aiBoard);
-        s.fGrade = s.grade(data, aiBoard);
+        s.fGrade = s.grade(data, aiBoard, closenessMap);
     }
 
     int lastBestGrade = 0;
@@ -2219,7 +2232,7 @@ void eAICityPlanningTask::run(eThreadBoard& data,
             }
             aiBoard.initialize(data.width(), data.height());
             s.distributeBuildings(data, aiBoard);
-            s.fGrade = s.grade(data, aiBoard);
+            s.fGrade = s.grade(data, aiBoard, closenessMap);
             if(interrupt) {
                 mInterrupted = true;
                 break;
