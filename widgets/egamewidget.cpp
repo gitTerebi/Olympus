@@ -121,6 +121,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         e->setX(x() + (width() - e->width() - mGm->width())/2);
     });
     mBoard->setAutosaver([this]() {
+        mBoard->waitUntilFinished();
         const auto w = window();
         const auto dir = w->leaderSaveDir();
         w->saveGame(dir + "autosave history.ez");
