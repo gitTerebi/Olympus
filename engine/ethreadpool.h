@@ -26,13 +26,17 @@ public:
 
     bool finished();
     void waitFinished();
+    void interrupt();
+    void resume();
 private:
     void threadEntry(eThreadData* data);
 
+    int mAI = 0;
     int mTaskId = 0;
 
     eGameBoard& mBoard;
 
+    bool mInterrupted = false;
     bool mQuit = false;
 
     std::mutex mFinishedTasksMutex;
@@ -40,6 +44,8 @@ private:
 
     std::vector<std::thread> mThreads;
     std::vector<eThreadData*> mThreadData;
+
+    std::vector<eTask*> mWaitingTasks;
 };
 
 #endif // ETHREADPOOL_H

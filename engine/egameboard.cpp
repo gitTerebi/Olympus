@@ -918,6 +918,7 @@ void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,
 
 void eGameBoard::waitUntilFinished() {
     while(!mThreadPool.finished()) {
+        mThreadPool.interrupt();
         mThreadPool.waitFinished();
         mThreadPool.handleFinished();
     }
@@ -2001,6 +2002,7 @@ std::vector<eAgoraBase*> eGameBoard::agoras(const eCityId cid) const {
 
 void eGameBoard::incTime(const int by) {
     if(mEpisodeLost) return;
+    mThreadPool.resume();
     const int dayLen = eNumbers::sDayLength;
     { // autosave
         const int time = mTime + by;

@@ -1790,7 +1790,8 @@ eAICityPlanningTask::eAICityPlanningTask(
         const ePlayerId pid,
         const eCityId cid) :
     eTask(cid), mBoard(board), mBRect(bRect), mPid(pid) {
-
+    setAI(true);
+    setRunInterrupted(false);
 }
 
 struct eAICSpeciman {
@@ -1866,10 +1867,20 @@ struct eAICSpeciman {
     int fGrade = 0;
 };
 
-void eAICityPlanningTask::run(eThreadBoard& data) {
-    eAIBoard aiBoard;
+eAICityPlanningTask::~eAICityPlanningTask() {
+    for(const auto s : mPopulation) {
+        delete s;
+    }
+}
 
-    std::vector<eAICSpeciman> population;
+void eAICityPlanningTask::run(eThreadBoard& data,
+                              const std::atomic_bool& interrupt) {
+    if(interrupt) {
+        mInterrupted = true;
+        return;
+    }
+
+    eAIBoard aiBoard;
 
     const int iterations = 100;
     const int popSize = 100;
@@ -1994,9 +2005,10 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     eHeatMapDivisor divisor(map);
     divisor.divide(10);
 
-    for(int i = 0; i < popSize; i++) {
-        auto& s = population.emplace_back();
-
+    while(mPopulation.size() < popSize) {
+        const auto sPtr = new eAICSpeciman();
+        mPopulation.push_back(sPtr);
+        auto& s = *sPtr;
         auto& district = s.fDistricts.emplace_back();
         district.fType = dist;
         district.fCid = cid();
@@ -2188,12 +2200,17 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
     }
 
     int lastBestGrade = 0;
-    int bestGradeSince = 0;
-    for(int i = 0; bestGradeSince < iterations; i++) {
+    for(int i = 0; mBestGradeSince < iterations; i++) {
+        if(interrupt) {
+            mInterrupted = true;
+            break;
+        }
         for(int j = 0; j < mutateSize; j++) {
-            auto& s = population.emplace_back();
+            const auto sPtr = new eAICSpeciman();
+            mPopulation.push_back(sPtr);
+            auto& s = *sPtr;
             const int srcId = eRand::rand() % popSize;
-            const auto& srcS = population[srcId];
+            const auto& srcS = *mPopulation[srcId];
             s = srcS;
             const int kMax = 1 + (eRand::rand() % 3);
             for(int k = 0; k < kMax; k++) {
@@ -2203,50 +2220,59 @@ void eAICityPlanningTask::run(eThreadBoard& data) {
             aiBoard.initialize(data.width(), data.height());
             s.distributeBuildings(data, aiBoard);
             s.fGrade = s.grade(data, aiBoard);
+            if(interrupt) {
+                mInterrupted = true;
+                break;
+            }
         }
 
-        std::sort(population.begin(), population.end(),
-                  [](const eAICSpeciman& s1, const eAICSpeciman& s2) {
-            return s1.fGrade > s2.fGrade;
+        std::sort(mPopulation.begin(), mPopulation.end(),
+                  [](eAICSpeciman* const s1, eAICSpeciman* const s2) {
+            return s1->fGrade > s2->fGrade;
         });
 
-        while(population.size() > popSize) {
-            population.pop_back();
+        while(mPopulation.size() > popSize) {
+            mPopulation.pop_back();
         }
-        const int newBestGrade = population.front().fGrade;
+        const int newBestGrade = mPopulation.front()->fGrade;
         if(newBestGrade != lastBestGrade) {
             lastBestGrade = newBestGrade;
-            bestGradeSince = 0;
+            mBestGradeSince = 0;
         } else {
-            bestGradeSince++;
+            mBestGradeSince++;
         }
-        // printf("iter %d, best grade %d\n", i, newBestGrade);
+        printf("iter %d, best grade %d\n", i, newBestGrade);
     }
 
-    const auto s = new eAICSpeciman();
-    *s = population.front();
-    mBest = s;
-    printf("Generated district\n");
+    if(!mInterrupted) {
+        printf("Generated district\n");
+    }
 }
 
 void eAICityPlanningTask::finish() {
-    printf("Generated district main thread\n");
-    if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
-    mBest->addToCityPlan(*mPlan);
-    mPlan->buildAllDistricts(mBoard);
-    mPlan->connectAllBuiltDistricts(mBoard);
-    delete mBest;
-    mBest = nullptr;
-    if(mStage < 0) {
-        delete mPlan;
-        mPlan = nullptr;
-        return;
-    }
     auto& tp = mBoard.threadPool();
-    tp.scheduleDataUpdate();
-    const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
-    task->mPlan = mPlan;
-    mPlan = nullptr;
-    task->mStage = mStage + 1;
-    tp.queueTask(task);
+    if(mInterrupted) {
+        mInterrupted = false;
+        setShouldDelete(false);
+        tp.queueTask(this);
+    } else {
+        setShouldDelete(true);
+        printf("Generated district main thread\n");
+        const auto best = mPopulation.front();
+        if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
+        best->addToCityPlan(*mPlan);
+        mPlan->buildAllDistricts(mBoard);
+        mPlan->connectAllBuiltDistricts(mBoard);
+        if(mStage < 0) {
+            delete mPlan;
+            mPlan = nullptr;
+            return;
+        }
+        tp.scheduleDataUpdate();
+        const auto task = new eAICityPlanningTask(mBoard, mBRect, mPid, cid());
+        task->mPlan = mPlan;
+        mPlan = nullptr;
+        task->mStage = mStage + 1;
+        tp.queueTask(task);
+    }
 }

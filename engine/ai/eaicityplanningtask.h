@@ -1,7 +1,8 @@
 #ifndef EAICITYPLANNINGTASK_H
 #define EAICITYPLANNINGTASK_H
 
-#include "SDL2/SDL_rect.h"
+#include <vector>
+#include <SDL2/SDL_rect.h>
 
 #include "engine/etask.h"
 
@@ -16,17 +17,20 @@ public:
                         const SDL_Rect& bRect,
                         const ePlayerId pid,
                         const eCityId cid);
-
+    ~eAICityPlanningTask();
 protected:
-    void run(eThreadBoard& data);
+    void run(eThreadBoard& data,
+             const std::atomic_bool& interrupt);
     void finish();
 private:
     eGameBoard& mBoard;
     const SDL_Rect mBRect;
     const ePlayerId mPid;
-    eAICSpeciman* mBest = nullptr;
+    std::vector<eAICSpeciman*> mPopulation;
     eAICityPlan* mPlan = nullptr;
     int mStage = 0;
+    bool mInterrupted = false;
+    int mBestGradeSince = 0;
 };
 
 #endif // EAICITYPLANNINGTASK_H
