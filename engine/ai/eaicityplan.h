@@ -1,4 +1,4 @@
-#ifndef EAICITYPLAN_H
+﻿#ifndef EAICITYPLAN_H
 #define EAICITYPLAN_H
 
 #include <SDL2/SDL_rect.h>
@@ -7,6 +7,7 @@
 #include "pointers/estdselfref.h"
 #include "engine/epatrolguide.h"
 #include "engine/eorientation.h"
+#include "buildings/ebuilding.h"
 
 enum class eBuildingType;
 enum class eResourceType;
@@ -153,14 +154,55 @@ public:
     bool road(int& x, int& y) const;
 
     void addBuilding(const eAIBuilding& a);
-private:
-    std::vector<eAIBuilding> mBuildings;
+
+    std::vector<eAIBuilding> fBuildings;
+};
+
+struct eAITile {
+    eBuildingType fBuilding = eBuildingType::none;
+    bool fMaintanance = false;
+    bool fSecurity = false;
+    bool fHealth = false;
+    bool fTax = false;
+    bool fPodium = false;
+    bool fGymnasium = false;
+    bool fTheater = false;
+    bool fStadium = false;
+    bool fAgora = false;
+};
+
+struct eAIBoard {
+    eAITile* tile(const int dx, const int dy) {
+        if(dx < 0) return nullptr;
+        if(dy < 0) return nullptr;
+        if(dx >= fW) return nullptr;
+        if(dy >= fH) return nullptr;
+        return &fTiles[dx][dy];
+    }
+
+    void initialize(const int w, const int h) {
+        fW = w;
+        fH = h;
+        fTiles.clear();
+        for(int x = 0; x < w; x++) {
+            auto& row = fTiles.emplace_back();
+            for(int y = 0; y < h; y++) {
+                row.emplace_back();
+            }
+        }
+    }
+
+    int fW = 0;
+    int fH = 0;
+    std::vector<std::vector<eAITile>> fTiles;
 };
 
 class eAICityPlan {
 public:
     eAICityPlan(const ePlayerId pid,
                 const eCityId cid);
+
+    eAIBoard aiBoard(const int w, const int h) const;
 
     void addDistrict(const eAIDistrict& a);
 

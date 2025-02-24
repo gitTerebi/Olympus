@@ -74,10 +74,34 @@
 #include "engine/epathfinder.h"
 
 #include "eaiconnectwithroadtask.h"
+#include "etilehelper.h"
 
 eAICityPlan::eAICityPlan(const ePlayerId pid,
                          const eCityId cid) :
     mPid(pid), mCid(cid) {}
+
+eAIBoard eAICityPlan::aiBoard(const int w, const int h) const {
+    eAIBoard result;
+    result.initialize(w, h);
+    for(const auto& d : mDistricts) {
+        for(const auto& b : d.fBuildings) {
+            const int xMin = b.fRect.x;
+            const int xMax = xMin + b.fRect.w - 1;
+            const int yMin = b.fRect.y;
+            const int yMax = yMin + b.fRect.h - 1;
+            for(int x = xMin; x <= xMax; x++) {
+                for(int y = yMin; y <= yMax; y++) {
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                    const auto t = result.tile(dx, dy);
+                    t->fBuilding = b.fType;
+                }
+            }
+        }
+    }
+    return result;
+}
 
 void eAICityPlan::addDistrict(const eAIDistrict& a) {
     mDistricts.push_back(a);
@@ -663,7 +687,7 @@ void gBuild(const eAIBuilding& b,
 void eAIDistrict::build(eGameBoard& board,
                         const ePlayerId pid,
                         const eCityId cid) const {
-    for(const auto& b : mBuildings) {
+    for(const auto& b : fBuildings) {
         const auto rect = b.fRect;
         const int xMin = rect.x;
         const int yMin = rect.y;
@@ -760,7 +784,7 @@ void eAIDistrict::build(eGameBoard& board,
 }
 
 bool eAIDistrict::road(int& x, int& y) const {
-    for(const auto& b : mBuildings) {
+    for(const auto& b : fBuildings) {
         if(b.fType == eBuildingType::road) {
             x = b.fRect.x;
             y = b.fRect.y;
@@ -772,5 +796,5 @@ bool eAIDistrict::road(int& x, int& y) const {
 }
 
 void eAIDistrict::addBuilding(const eAIBuilding& a) {
-    mBuildings.push_back(a);
+    fBuildings.push_back(a);
 }
