@@ -475,6 +475,44 @@ enum class eDistrictType {
     templeZeus
 };
 
+bool gValidRoad(eThreadBoard& board,
+                eAIBoard& aiBoard,
+                const int xMin, const int xMax,
+                const int yMin, const int yMax,
+                const eCityId cid) {
+    for(int x = xMin; x <= xMax; x++) {
+        for(int y = yMin; y <= yMax; y++) {
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x, y, dx, dy);
+            const bool b = gBuildableTile(board, aiBoard, dx, dy, cid, true);
+            if(!b) return false;
+        }
+    }
+    return true;
+}
+
+bool gValidRoad(eThreadBoard& board,
+                eAIBoard& aiBoard,
+                const eAIRoadPath& road,
+                const eCityId cid) {
+    if(road.fType == eAIRoadPath::eType::branch) {
+        const int xMin = road.minX();
+        const int xMax = road.maxX();
+        const int yMin = road.minY();
+        const int yMax = road.maxY();
+
+        const bool r = gValidRoad(board, aiBoard, xMin, xMax,
+                                 yMin, yMax, cid);
+        if(!r) return false;
+    }
+    for(const auto& b : road.fBranches) {
+        const bool r = gValidRoad(board, aiBoard, b, cid);
+        if(!r) return false;
+    }
+    return true;
+}
+
 struct eAICDistrict {
 
     void addToCityPlan(eAICityPlan& result) {
@@ -520,41 +558,6 @@ struct eAICDistrict {
         }
 
         result.addDistrict(district);
-    }
-
-    bool validRoad(eThreadBoard& board,
-                   eAIBoard& aiBoard,
-                   const int xMin, const int xMax,
-                   const int yMin, const int yMax) {
-        for(int x = xMin; x <= xMax; x++) {
-            for(int y = yMin; y <= yMax; y++) {
-                int dx;
-                int dy;
-                eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                const bool b = gBuildableTile(board, aiBoard, dx, dy, fCid, true);
-                if(!b) return false;
-            }
-        }
-        return true;
-    }
-
-    bool validRoad(eThreadBoard& board,
-                   eAIBoard& aiBoard,
-                   const eAIRoadPath& road) {
-        if(road.fType == eAIRoadPath::eType::branch) {
-            const int xMin = road.minX();
-            const int xMax = road.maxX();
-            const int yMin = road.minY();
-            const int yMax = road.maxY();
-
-            const bool r = validRoad(board, aiBoard, xMin, xMax, yMin, yMax);
-            if(!r) return false;
-        }
-        for(const auto& b : road.fBranches) {
-            const bool r = validRoad(board, aiBoard, b);
-            if(!r) return false;
-        }
-        return true;
     }
 
     bool changeRoad(eThreadBoard& board,
@@ -641,7 +644,7 @@ struct eAICDistrict {
                 newRoad.updateCycleBranches();
             }
 
-            const bool r = validRoad(board, aiBoard, newRoad);
+            const bool r = gValidRoad(board, aiBoard, newRoad, fCid);
             if(!r) return false;
             srcRoad.fBranches.push_back(newRoad);
             return true;
@@ -665,7 +668,7 @@ struct eAICDistrict {
             } else {
                 tmp.updateCoordinates();
             }
-            const bool r = validRoad(board, aiBoard, tmp);
+            const bool r = gValidRoad(board, aiBoard, tmp, fCid);
             if(!r) return false;
             srcRoad = tmp;
             return true;
@@ -679,7 +682,7 @@ struct eAICDistrict {
             }
             tmp.fWidth = std::max(1, tmp.fWidth + by);
             tmp.updateCycleBranches();
-            const bool r = validRoad(board, aiBoard, tmp);
+            const bool r = gValidRoad(board, aiBoard, tmp, fCid);
             if(!r) return false;
             srcRoad = tmp;
             return true;
@@ -693,7 +696,7 @@ struct eAICDistrict {
             tmp.fDisplacement += 2 - (eRand::rand() % 5);
             srcRoad.coordinatesAt(tmp.fDisplacement, tmp.fX, tmp.fY);
             tmp.updateCoordinates();
-            const bool r = validRoad(board, aiBoard, tmp);
+            const bool r = gValidRoad(board, aiBoard, tmp, fCid);
             if(!r) return false;
             toMove = tmp;
             return true;
@@ -714,7 +717,8 @@ struct eAICDistrict {
             const int xMax = road->maxX() + byX;
             const int yMin = road->minY() + byY;
             const int yMax = road->maxY() + byY;
-            const bool r = validRoad(board, aiBoard, xMin, xMax, yMin, yMax);
+            const bool r = gValidRoad(board, aiBoard, xMin, xMax,
+                                      yMin, yMax, fCid);
             if(!r) return false;
         }
         for(const auto road : allRoads) {
@@ -2005,18 +2009,22 @@ void eAICityPlanningTask::run(eThreadBoard& data,
         auto& road = district.fRoads;
         road.fLen = 4;
 
-        {
+        int tryId = 0;
+        bool valid = false;
+        while(!valid) {
             int dtx;
             int dty;
             const bool r = divisor.randomHeatTile(dtx, dty);
-            if(r) {
-                eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
-            } else {
-                const int drx = mBRect.x + (eRand::rand() % mBRect.w);
-                const int dry = mBRect.y + (eRand::rand() % mBRect.h);
-                eTileHelper::dtileIdToTileId(drx, dry, road.fX, road.fY);
+            if(!r) {
+                dtx = mBRect.x + (eRand::rand() % mBRect.w);
+                dty = mBRect.y + (eRand::rand() % mBRect.h);
             }
+            eTileHelper::dtileIdToTileId(dtx, dty, road.fX, road.fY);
+            valid = gValidRoad(data, aiBoardBase, road, cid());
+            tryId++;
+            if(tryId > 100) break;
         }
+        if(!valid) break;
         if(dist == eDistrictType::commonHousing) {
             district.addBuilding(eBuildingType::commonAgora);
             for(int i = 0; i < 36; i++) {
