@@ -1,5 +1,7 @@
 #include "eiteratesquare.h"
 
+#include <cmath>
+
 void eIterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
                                    const int inc) {
     if(k == 0) {
@@ -37,4 +39,16 @@ void eIterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
     i = k;
     const bool r3 = jiter();
     if(r3) return;
+}
+
+void eIterateSquare::iterateDistance(const int k, const eTileFunc& prcs,
+                                     const int inc) {
+    for(int dist = 0; dist < k; dist += inc) {
+        for(int x = -dist; x <= dist; x++) {
+            for(int y = -dist; y <= dist; y++) {
+                const int d = sqrt(x*x + y*y);
+                if(d == dist) prcs(x, y);
+            }
+        }
+    }
 }
