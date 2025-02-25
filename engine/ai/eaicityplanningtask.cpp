@@ -1332,7 +1332,7 @@ struct eAICDistrict {
                 if(b.fType == eBuildingType::cardingShed ||
                    b.fType == eBuildingType::dairy ||
                    b.fType == eBuildingType::corral) {
-                    missing = 10;
+                    missing = 15;
                     h = 2;
                 }
                 eBuildingType btype;
@@ -1709,16 +1709,17 @@ struct eAICDistrict {
                     const int dx = rect.x + rect.w/2 - bbrect.x;
                     const int dy = rect.y + rect.h/2 - bbrect.y;
                     const int dist = sqrt(dx*dx + dy*dy);
-                    distSum += dist;
+                    distSum += dist > 5 ? dist : 5;
                     count++;
                 }
 
                 if(count != 0) {
                     const double avgDist = distSum/count;
                     closenessMult = std::clamp(pow(4/avgDist, 4), 0., 1.);
-                    printf("Average distance: %f; Multiplier: %f\n",
-                           avgDist, closenessMult);
-                    result += 500/(1 + avgDist);
+                    const int distReward = 500/(1 + avgDist);
+//                    printf("Average distance: %f; Multiplier: %f; Reward: %d\n",
+//                           avgDist, closenessMult, distReward);
+                    result += distReward;
                 }
             }
             {
@@ -1727,7 +1728,9 @@ struct eAICDistrict {
                 int dx;
                 int dy;
                 eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                result += closenessMult*closenessMap.heat(dx, dy);
+                const double heat = closenessMap.heat(dx, dy);
+//                printf("Heat %f\n", heat);
+                result += closenessMult*heat;
             }
 
             if(maintanance) {
