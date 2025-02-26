@@ -1091,6 +1091,108 @@ struct eAICDistrict {
             }
             if(needsFertile && !foundFertile) return false;
             if(!ok) return false;
+            if(b.fType == eBuildingType::growersLodge ||
+               b.fType == eBuildingType::orangeTendersLodge ||
+               b.fType == eBuildingType::cardingShed ||
+               b.fType == eBuildingType::dairy ||
+               b.fType == eBuildingType::corral) {
+                int hb = 1;
+                int missing = 25;
+                if(b.fType == eBuildingType::cardingShed ||
+                   b.fType == eBuildingType::dairy ||
+                   b.fType == eBuildingType::corral) {
+                    missing = 15;
+                    hb = 2;
+                }
+                std::vector<SDL_Point> planned;
+                eBuildingType btype;
+                if(fType == eDistrictType::vineFarm) {
+                    btype = eBuildingType::vine;
+                } else if(fType == eDistrictType::oliveFarm) {
+                    btype = eBuildingType::oliveTree;
+                } else if(fType == eDistrictType::orangeFarm) {
+                    btype = eBuildingType::orangeTree;
+                } else if(fType == eDistrictType::sheepFarm) {
+                    btype = eBuildingType::sheep;
+                } else if(fType == eDistrictType::cattleFarm) {
+                    btype = eBuildingType::cattle;
+                } else if(fType == eDistrictType::goatFarm) {
+                    btype = eBuildingType::goat;
+                }
+
+                const int cx = xMin + w/2;
+                const int cy = yMin + h/2;
+                const auto prcsTile = [&](const int x, const int y) {
+                    const int tx = cx + x;
+                    const int ty = cy + y;
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(tx, ty, dx, dy);
+                    const auto btile = board.dtile(dx, dy);
+                    if(!btile) return false;
+                    const auto terr = btile->terrain();
+                    if(terr != eTerrain::fertile) return false;
+                    bool r = true;
+                    for(int yy = 0; yy < hb; yy++) {
+                        if(tx >= xMin && tx <= xMax &&
+                           ty + yy >= yMin && ty + yy <= yMax) return false;
+                        const int tty = ty + yy;
+                        if(hb > 1) {
+                            for(const auto& pt : planned) {
+                                if(pt.x == tx && (pt.y == tty || pt.y + 1 == tty)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        for(int x = tx - 1; x <= tx + 1; x++) {
+                            for(int y = tty - 1; y <= tty + 1; y++) {
+                                int dx;
+                                int dy;
+                                eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                                const bool rr = gBuildableTile(board, aiBoardBase, dx, dy, fCid, true);
+                                if(!rr) return false;
+                            }
+                        }
+                        int ddx;
+                        int ddy;
+                        if(yy == 0) {
+                            ddx = dx;
+                            ddy = dy;
+                        } else {
+                            eTileHelper::tileIdToDTileId(tx, tty, ddx, ddy);
+                        }
+                        const bool rr = gBuildableTile(board, aiBoard, ddx, ddy, fCid, false);
+                        if(!rr) return false;
+                    }
+                    if(r) {
+                        missing--;
+                        planned.push_back(SDL_Point{tx, ty});
+                    }
+                    return missing <= 0;
+                };
+                for(int k = 0; k < 15; k++) {
+                    eIterateSquare::iterateDistance(k, prcsTile, 1);
+                    if(missing <= 0) break;
+                }
+                if(missing <= 0) {
+                    for(const auto& pt : planned) {
+                        const int tx = pt.x;
+                        const int ty = pt.y;
+                        auto& tb = fTmpBuildings.emplace_back();
+                        tb.fType = btype;
+                        tb.fRectTmp = SDL_Rect{tx, ty, 1, hb};
+                        for(int yy = 0; yy < hb; yy++) {
+                            int ddx;
+                            int ddy;
+                            eTileHelper::tileIdToDTileId(tx, ty + yy, ddx, ddy);
+                            const auto atile = aiBoard.tile(ddx, ddy);
+                            atile->fBuilding = btype;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            }
 
             b.fRectTmp = SDL_Rect{xMin, yMin, w, h};
             for(int x = xMin; x <= xMax; x++) {
@@ -1322,103 +1424,6 @@ struct eAICDistrict {
                     }
                 }
             }
-            if(b.fType == eBuildingType::growersLodge ||
-               b.fType == eBuildingType::orangeTendersLodge ||
-               b.fType == eBuildingType::cardingShed ||
-               b.fType == eBuildingType::dairy ||
-               b.fType == eBuildingType::corral) {
-                int h = 1;
-                int missing = 25;
-                if(b.fType == eBuildingType::cardingShed ||
-                   b.fType == eBuildingType::dairy ||
-                   b.fType == eBuildingType::corral) {
-                    missing = 15;
-                    h = 2;
-                }
-                eBuildingType btype;
-                if(fType == eDistrictType::vineFarm) {
-                    btype = eBuildingType::vine;
-                } else if(fType == eDistrictType::oliveFarm) {
-                    btype = eBuildingType::oliveTree;
-                } else if(fType == eDistrictType::orangeFarm) {
-                    btype = eBuildingType::orangeTree;
-                } else if(fType == eDistrictType::sheepFarm) {
-                    btype = eBuildingType::sheep;
-                } else if(fType == eDistrictType::cattleFarm) {
-                    btype = eBuildingType::cattle;
-                } else if(fType == eDistrictType::goatFarm) {
-                    btype = eBuildingType::goat;
-                }
-
-                const int cx = b.fRectTmp.x + b.fRectTmp.w/2;
-                const int cy = b.fRectTmp.y + b.fRectTmp.h/2;
-                const auto prcsTile = [&](const int x, const int y) {
-                    const int tx = cx + x;
-                    const int ty = cy + y;
-                    int dx;
-                    int dy;
-                    eTileHelper::tileIdToDTileId(tx, ty, dx, dy);
-                    const auto btile = board.dtile(dx, dy);
-                    if(!btile) return false;
-                    const auto terr = btile->terrain();
-                    if(terr == eTerrain::fertile) {
-                        bool r = true;
-                        for(int yy = 0; yy < h; yy++) {
-                            for(int x = tx - 1; x <= tx + 1; x++) {
-                                for(int y = ty + yy - 1; y <= ty + yy + 1; y++) {
-                                    int dx;
-                                    int dy;
-                                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                                    const bool rr = gBuildableTile(board, aiBoardBase, dx, dy, fCid, true);
-                                    if(!rr) {
-                                        r = false;
-                                        break;
-                                    }
-                                }
-                                if(!r) break;
-                            }
-                            if(!r) break;
-                            int ddx;
-                            int ddy;
-                            if(yy == 0) {
-                                ddx = dx;
-                                ddy = dy;
-                            } else {
-                                eTileHelper::tileIdToDTileId(tx, ty + yy, ddx, ddy);
-                            }
-                            const bool rr = gBuildableTile(board, aiBoard, ddx, ddy, fCid, false);
-                            if(!rr) {
-                                r = false;
-                                break;
-                            }
-                        }
-                        if(r) {
-                            missing--;
-                            auto& tb = fTmpBuildings.emplace_back();
-                            tb.fType = btype;
-                            tb.fRectTmp = SDL_Rect{tx, ty, 1, h};
-                            for(int yy = 0; yy < h; yy++) {
-                                int ddx;
-                                int ddy;
-                                if(yy == 0) {
-                                    ddx = dx;
-                                    ddy = dy;
-                                } else {
-                                    eTileHelper::tileIdToDTileId(tx, ty + yy, ddx, ddy);
-                                }
-                                const auto atile = aiBoard.tile(ddx, ddy);
-                                atile->fBuilding = btype;
-                            }
-                        }
-                    }
-                    return missing <= 0;
-                };
-                for(int k = 0; k < 100; k++) {
-                    eIterateSquare::iterateSquare(k, prcsTile, 1);
-                    if(missing <= 0) break;
-                }
-                return true;
-            }
             return true;
         };
 
@@ -1525,6 +1530,7 @@ struct eAICDistrict {
         for(auto& b : fBuildings) {
             b.fRectTmp = {0, 0, 0, 0};
         }
+
         for(auto& b : fBuildings) {
             placeBuilding(roadsBRect, board, aiBoard, aiBoardBase,
                           roadBoard, b, buildingsBRect);
