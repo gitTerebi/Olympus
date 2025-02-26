@@ -43,12 +43,29 @@ void eIterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
 
 void eIterateSquare::iterateDistance(const int k, const eTileFunc& prcs,
                                      const int inc) {
-    for(int dist = 0; dist < k; dist += inc) {
-        for(int x = -dist; x <= dist; x++) {
-            for(int y = -dist; y <= dist; y++) {
-                const int d = sqrt(x*x + y*y);
-                if(d == dist) prcs(x, y);
-            }
+//    for(int dist = 0; dist < k; dist += inc) {
+//        for(int x = -dist; x <= dist; x++) {
+//            for(int y = -dist; y <= dist; y++) {
+//                const int d = sqrt(x*x + y*y);
+//                if(d == dist) prcs(x, y);
+//            }
+//        }
+//    }
+    for(int x = -k; x <= k; x += inc) {
+        const double y = sqrt(k*k - x*x);
+        const int minY = floor(y);
+        const int minYDist = sqrt(x*x + minY*minY);
+        if(minYDist == k) {
+            prcs(x, minY);
+            if(minY != 0) prcs(x, -minY);
+            continue;
+        }
+        const int maxY = ceil(y);
+        const int maxYDist = sqrt(x*x + maxY*maxY);
+        if(maxYDist == k) {
+            prcs(x, maxY);
+            if(maxY != 0) prcs(x, -maxY);
+            continue;
         }
     }
 }
