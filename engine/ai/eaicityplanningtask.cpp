@@ -12,6 +12,7 @@
 #include "engine/egameboard.h"
 #include "eiteratesquare.h"
 #include "evectorhelpers.h"
+#include "ebuildablehelpers.h"
 
 bool gBuildableTile(eAIBoard& aiBoard,
                     const int dx, const int dy,
@@ -61,6 +62,92 @@ bool gBuildableTile(eThreadBoard& board, eAIBoard& aiBoard,
                     const eCityId cid, const bool isRoad) {
     if(!gBuildableTile(aiBoard, dx, dy, isRoad)) return false;
     return gBuildableTile(board, dx, dy, cid, isRoad);
+}
+
+bool gBuildableRect(eThreadBoard& board, eAIBoard& aiBoard,
+                    const int minX, const int maxX,
+                    const int minY, const int maxY,
+                    const eCityId cid, const bool isRoad) {
+    for(int x = minX; x <= maxX; x++) {
+        for(int y = minY; y <= maxY; y++) {
+            int dx;
+            int dy;
+            eTileHelper::tileIdToDTileId(x, y, dx, dy);
+            const bool b = gBuildableTile(board, aiBoard, dx, dy, cid, isRoad);
+            if(!b) return false;
+        }
+    }
+    return true;
+}
+
+bool gCanBuildFishery(eThreadBoard& board, eAIBoard& aiBoard,
+                      const eTileBase* const tile,
+                      eDiagonalOrientation& o,
+                      const eCityId cid) {
+    if(!tile) return false;
+    const int tx = tile->x();
+    const int ty = tile->y();
+    const int minX = tx;
+    const int minY = ty - 1;
+    const int maxX = minX + 1;
+    const int maxY = minY + 1;
+    const bool b = gBuildableRect(board, aiBoard, minX, maxX,
+                                  minY, maxY, cid, false);
+    if(!b) return false;
+    const bool tr = eBuildableHelpers::canBuildFisheryTR(tile);
+    if(tr) {
+        o = eDiagonalOrientation::topRight;
+        return true;
+    }
+    const bool br = eBuildableHelpers::canBuildFisheryBR(tile);
+    if(br) {
+        o = eDiagonalOrientation::bottomRight;
+        return true;
+    }
+    const bool bl = eBuildableHelpers::canBuildFisheryBL(tile);
+    if(bl) {
+        o = eDiagonalOrientation::bottomLeft;
+        return true;
+    }
+    const bool tl = eBuildableHelpers::canBuildFisheryTL(tile);
+    if(tl) {
+        o = eDiagonalOrientation::topLeft;
+        return true;
+    }
+    return false;
+}
+
+bool gCanBuildPier(eThreadBoard& board, eAIBoard& aiBoard,
+                   const eTileBase* const tile,
+                   eDiagonalOrientation& o,
+                   const eCityId cid) {
+    const bool r = gCanBuildFishery(board, aiBoard, tile, o, cid);
+    if(!r) return false;
+    const int tx = tile->x();
+    const int ty = tile->y();
+    int minX;
+    int minY;
+    switch(o) {
+    case eDiagonalOrientation::topRight: {
+        minX = tx - 1;
+        minY = ty + 1;
+    } break;
+    case eDiagonalOrientation::bottomRight: {
+        minX = tx - 4;
+        minY = ty - 2;
+    } break;
+    case eDiagonalOrientation::bottomLeft: {
+        minX = tx - 1;
+        minY = ty - 5;
+    } break;
+    default:
+    case eDiagonalOrientation::topLeft: {
+        minX = tx + 2;
+        minY = ty - 2;
+    } break;
+    }
+    return gBuildableRect(board, aiBoard, minX, minX + 3,
+                          minY, minY + 3, cid, false);
 }
 
 struct eRoadBoard {

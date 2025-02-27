@@ -332,6 +332,7 @@ SOURCES += \
         characters/monsters/emonster.cpp \
         characters/monsters/ewatermonster.cpp \
         ebinaryimageloader.cpp \
+        ebuildablehelpers.cpp \
         efontcolor.cpp \
         egamedir.cpp \
         einvasionhandler.cpp \
@@ -959,6 +960,7 @@ HEADERS += \
     characters/monsters/emonster.h \
     characters/monsters/ewatermonster.h \
     ebinaryimageloader.h \
+    ebuildablehelpers.h \
     efontcolor.h \
     egamedir.h \
     einvasionhandler.h \

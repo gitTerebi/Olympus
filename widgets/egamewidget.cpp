@@ -58,6 +58,8 @@
 #include "audio/emusic.h"
 #include "spawners/ebanner.h"
 
+#include "ebuildablehelpers.h"
+
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eWidget(window) {}
 
@@ -520,165 +522,6 @@ bool eGameWidget::canBuildVendor(const int tx, const int ty,
     return ct->x() == tx && ct->y() == ty;
 }
 
-bool tileDry(eTile* const t) {
-    if(!t) return false;
-    return t->terrain() == eTerrain::dry ||
-           t->terrain() == eTerrain::fertile;
-}
-
-bool tileWater(eTile* const t) {
-    if(!t) return false;
-    return t->terrain() == eTerrain::water;
-}
-
-bool canBuildFisheryTR(eTile* const t) {
-    if(!t) return false;
-    if(!tileDry(t)) return false;
-
-    const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
-    if(!tileWater(tr)) return false;
-
-    const auto trtr = tr->topRight<eTile>();
-    if(!trtr) return false;
-    if(!tileWater(trtr)) return false;
-    if(trtr->isShoreTile()) return false;
-
-    const auto trtl = tr->topLeft<eTile>();
-    if(!trtl) return false;
-    if(!tileWater(trtl)) return false;
-
-    const auto trbr = tr->bottomRight<eTile>();
-    if(!trbr) return false;
-    if(!tileWater(trbr)) return false;
-
-    const auto trbrtr = trbr->topRight<eTile>();
-    if(!trbrtr) return false;
-    if(!tileWater(trbrtr)) return false;
-    if(trbrtr->isShoreTile()) return false;
-
-    const auto trbrbr = trbr->bottomRight<eTile>();
-    if(!trbrbr) return false;
-    if(!tileWater(trbrbr)) return false;
-
-    const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
-    if(!tileDry(br)) return false;
-
-    return true;
-}
-
-bool canBuildFisheryBR(eTile* const t) {
-    if(!t) return false;
-    if(!tileDry(t)) return false;
-
-    const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
-    if(!tileDry(tr)) return false;
-
-    const auto trbr = tr->bottomRight<eTile>();
-    if(!trbr) return false;
-    if(!tileWater(trbr)) return false;
-
-    const auto trbrbr = trbr->bottomRight<eTile>();
-    if(!trbrbr) return false;
-    if(!tileWater(trbrbr)) return false;
-    if(trbrbr->isShoreTile()) return false;
-
-    const auto trbrtr = trbr->topRight<eTile>();
-    if(!trbrtr) return false;
-    if(!tileWater(trbrtr)) return false;
-
-    const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
-    if(!tileWater(br)) return false;
-
-    const auto brbr = br->bottomRight<eTile>();
-    if(!brbr) return false;
-    if(!tileWater(brbr)) return false;
-    if(brbr->isShoreTile()) return false;
-
-    const auto brbl = br->bottomLeft<eTile>();
-    if(!brbl) return false;
-    if(!tileWater(brbl)) return false;
-
-    return true;
-}
-
-bool canBuildFisheryBL(eTile* const t) {
-    if(!t) return false;
-    if(!tileWater(t)) return false;
-
-    const auto bl = t->bottomLeft<eTile>();
-    if(!bl) return false;
-    if(!tileWater(bl)) return false;
-    if(bl->isShoreTile()) return false;
-
-    const auto tl = t->topLeft<eTile>();
-    if(!tl) return false;
-    if(!tileWater(tl)) return false;
-
-    const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
-    if(!tileDry(tr)) return false;
-
-    const auto trbr = tr->bottomRight<eTile>();
-    if(!trbr) return false;
-    if(!tileDry(trbr)) return false;
-
-    const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
-    if(!tileWater(br)) return false;
-
-    const auto brbl = br->bottomLeft<eTile>();
-    if(!brbl) return false;
-    if(!tileWater(brbl)) return false;
-    if(brbl->isShoreTile()) return false;
-
-    const auto brbr = br->bottomRight<eTile>();
-    if(!brbr) return false;
-    if(!tileWater(brbr)) return false;
-
-    return true;
-}
-
-bool canBuildFisheryTL(eTile* const t) {
-    if(!t) return false;
-    if(!tileWater(t)) return false;
-
-    const auto tl = t->topLeft<eTile>();
-    if(!tl) return false;
-    if(!tileWater(tl)) return false;
-    if(tl->isShoreTile()) return false;
-
-    const auto bl = t->bottomLeft<eTile>();
-    if(!bl) return false;
-    if(!tileWater(bl)) return false;
-
-    const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
-    if(!tileWater(tr)) return false;
-
-    const auto trtl = tr->topLeft<eTile>();
-    if(!trtl) return false;
-    if(!tileWater(trtl)) return false;
-    if(trtl->isShoreTile()) return false;
-
-    const auto trtr = tr->topRight<eTile>();
-    if(!trtr) return false;
-    if(!tileWater(trtr)) return false;
-
-    const auto trbr = tr->bottomRight<eTile>();
-    if(!trbr) return false;
-    if(!tileDry(trbr)) return false;
-
-    const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
-    if(!tileDry(br)) return false;
-
-    return true;
-}
-
 bool eGameWidget::canBuildFishery(const int tx, const int ty,
                                   eDiagonalOrientation& o) const {
     for(int x = tx; x < tx + 2; x++) {
@@ -695,22 +538,22 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
     }
     const auto t = mBoard->tile(tx, ty);
     if(!t) return false;
-    const bool tr = canBuildFisheryTR(t);
+    const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
     if(tr) {
         o = eDiagonalOrientation::topRight;
         return true;
     }
-    const bool br = canBuildFisheryBR(t);
+    const bool br = eBuildableHelpers::canBuildFisheryBR(t);
     if(br) {
         o = eDiagonalOrientation::bottomRight;
         return true;
     }
-    const bool bl = canBuildFisheryBL(t);
+    const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
     if(bl) {
         o = eDiagonalOrientation::bottomLeft;
         return true;
     }
-    const bool tl = canBuildFisheryTL(t);
+    const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
     if(tl) {
         o = eDiagonalOrientation::topLeft;
         return true;
@@ -722,29 +565,28 @@ bool eGameWidget::canBuildPier(const int tx, const int ty,
                                eDiagonalOrientation& o) const {
     const bool r = canBuildFishery(tx, ty, o);
     if(!r) return false;
+    int minX;
+    int minY;
     switch(o) {
     case eDiagonalOrientation::topRight: {
-        const int minX = tx - 1;
-        const int minY = ty + 1;
-        return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
+        minX = tx - 1;
+        minY = ty + 1;
     } break;
     case eDiagonalOrientation::bottomRight: {
-        const int minX = tx - 4;
-        const int minY = ty - 2;
-        return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
+        minX = tx - 4;
+        minY = ty - 2;
     } break;
     case eDiagonalOrientation::bottomLeft: {
-        const int minX = tx - 1;
-        const int minY = ty - 5;
-        return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
+        minX = tx - 1;
+        minY = ty - 5;
     } break;
     default:
     case eDiagonalOrientation::topLeft: {
-        const int minX = tx + 2;
-        const int minY = ty - 2;
-        return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
+        minX = tx + 2;
+        minY = ty - 2;
     } break;
     }
+    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
 }
 
 std::vector<ePatrolGuide>::iterator
