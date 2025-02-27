@@ -8,6 +8,7 @@ class eTile;
 enum class eCityId;
 
 enum class eBannerTypeS {
+    none,
     boar,
     deer,
     landInvasion,
@@ -36,6 +37,7 @@ public:
 
     eBannerTypeS type() const { return mType; }
 
+    static bool sBuildable(const eBannerTypeS type);
     bool buildable() const;
 
     virtual void read(eReadStream& src);;

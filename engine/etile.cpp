@@ -308,12 +308,11 @@ eBuildingType eTile::underBuildingType() const {
 
 void eTile::setBanner(const stdsptr<eBanner>& b) {
     mBanner = b;
-    if(b && (b->type() == eBannerTypeS::boar ||
-             b->type() == eBannerTypeS::deer)) {
-        setHasPrey(true);
-    } else {
-        setHasPrey(false);
-    }
+}
+
+eBannerTypeS eTile::bannerType() const {
+    if(!mBanner) return eBannerTypeS::none;
+    return mBanner->type();
 }
 
 void eTile::setSoldierBanner(eSoldierBanner* const b) {

@@ -27,9 +27,14 @@ eCityId eBanner::cityId() const {
     return mTile->cityId();
 }
 
+bool eBanner::sBuildable(const eBannerTypeS type) {
+    return type == eBannerTypeS::none ||
+           type == eBannerTypeS::disasterPoint ||
+           type == eBannerTypeS::monsterPoint;
+}
+
 bool eBanner::buildable() const {
-    return mType == eBannerTypeS::disasterPoint ||
-           mType == eBannerTypeS::monsterPoint;
+    return sBuildable(mType);
 }
 
 void eBanner::read(eReadStream& src) {
@@ -46,6 +51,8 @@ eBanner* eBanner::sCreate(const int id,
                           const eBannerTypeS type) {
     stdsptr<eBanner> b;
     switch(type) {
+    case eBannerTypeS::none:
+        break;
     case eBannerTypeS::boar:
         b = std::make_shared<eBoarSpawner>(id, tile, board);
         break;

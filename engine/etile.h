@@ -74,6 +74,7 @@ public:
 
     void setBanner(const stdsptr<eBanner>& b);
     eBanner* banner() const { return mBanner.get(); }
+    eBannerTypeS bannerType() const override;
 
     void setSoldierBanner(eSoldierBanner* const b);
     eSoldierBanner* soldierBanner() const { return mSoldierBanner; }

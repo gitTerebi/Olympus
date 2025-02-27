@@ -14,6 +14,7 @@
 class eCharacterBase;
 
 enum class eBuildingType;
+enum class eBannerTypeS;
 
 class eTileBase {
 public:
@@ -27,6 +28,8 @@ public:
 
     virtual bool onFire() const = 0;
     virtual void setOnFire(const bool f) = 0;
+
+    virtual eBannerTypeS bannerType() const = 0;
 
     bool hasTerrain(const eTerrain terr) const;
     bool hasBridge() const;
@@ -136,8 +139,7 @@ public:
     void setWalkableElev(const bool w);
     void setElevation(const bool e);
 
-    bool hasPrey() const { return mHasPrey; }
-    void setHasPrey(const bool f) { mHasPrey = f; }
+    bool hasPrey() const;
 
     bool hasFish() const { return mHasFish; }
     void setHasFish(const bool f) { mHasFish = f; }
@@ -169,7 +171,6 @@ private:
     int mX;
     int mY;
 
-    bool mHasPrey{false};
     bool mHasFish{false};
     bool mHasUrchin{false};
 
