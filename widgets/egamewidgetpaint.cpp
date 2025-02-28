@@ -878,7 +878,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                    bt == eBuildingType::goat ||
                    bt == eBuildingType::cattle) {
                     const auto tex = trrTexs.fBuildingBase;
+                    const bool e = inErase(ub);
+                    if(e) tex->setColorMod(255, 175, 175);
                     tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    if(e) tex->clearColorMod();
                     bd = true;
                 }
             }
