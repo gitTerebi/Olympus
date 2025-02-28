@@ -256,7 +256,14 @@ void eMiniMap::updateTexture(const eCityId cid) {
 
     const auto drawTile = [&](eTile* const tile, const int x, const int y) {
         if(!tile) return;
-        const auto color = colorForTile(tile);
+        auto color = colorForTile(tile);
+        const auto cid = tile->cityId();
+        if(cid == eCityId::neutralFriendly) {
+            const int l = 0.2126*color.r + 0.7152*color.g + 0.0722*color.b;
+            color.r = l;
+            color.g = l;
+            color.b = l;
+        }
         dtex->setColorMod(color.r, color.g, color.b);
         const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
         const int py = (y - yMin)*mTDim/2;
