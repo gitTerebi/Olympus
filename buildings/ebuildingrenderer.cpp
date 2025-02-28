@@ -29,7 +29,7 @@ void eBuildingRenderer::draw(eTilePainter& p,
                              const bool erase) {
     const auto tex = getTexture(p.size());
     if(tex) {
-        if(erase) tex->setColorMod(255, 175, 255);
+        if(erase) tex->setColorMod(255, 175, 175);
         p.drawTexture(x, y, tex, eAlignment::top);
         if(erase) tex->clearColorMod();
     }
@@ -39,7 +39,7 @@ void eBuildingRenderer::draw(eTilePainter& p,
             const auto& tex = o.fTex;
             const double dx = x + o.fX;
             const double dy = y + o.fY;
-            if(erase) tex->setColorMod(255, 175, 255);
+            if(erase) tex->setColorMod(255, 175, 175);
             if(o.fAlignTop) p.drawTexture(dx, dy, tex, eAlignment::top);
             else p.drawTexture(dx, dy, tex);
             if(erase) tex->clearColorMod();

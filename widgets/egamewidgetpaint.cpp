@@ -364,7 +364,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
                               eVectorHelpers::contains(mInflTiles, tile);
                 if(editorHover) {
-                    tex->setColorMod(255, 175, 255);
+                    tex->setColorMod(255, 175, 175);
                 }
             }
             if(mPatrolBuilding && (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
@@ -386,7 +386,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 } else {
                     eraseCm = inErase(tx, ty);
                 }
-                if(eraseCm) tex->setColorMod(255, 175, 255);
+                if(eraseCm) tex->setColorMod(255, 175, 175);
             }
             tp.drawTexture(rx, ry, tex, eAlignment::top);
             if(eraseCm || patrolCm || editorHover) tex->clearColorMod();
@@ -772,7 +772,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     const bool hover = inPatrolBuildingHover(ub);
                     const auto tex = ts.fTex;
                     if(tex) {
-                        if(erase) tex->setColorMod(255, 175, 255);
+                        if(erase) tex->setColorMod(255, 175, 175);
                         else if(hover) tex->setColorMod(175, 255, 255);
                         tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                         if(erase || hover) tex->clearColorMod();
@@ -782,7 +782,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         for(const auto& o : overlays) {
                             const auto& tex = o.fTex;
                             if(!tex) continue;
-                            if(erase) tex->setColorMod(255, 175, 255);
+                            if(erase) tex->setColorMod(255, 175, 175);
                             else if(hover) tex->setColorMod(175, 255, 255);
                             if(o.fAlignTop) {
                                 tp.drawTexture(drawX + o.fX, drawY + o.fY,
