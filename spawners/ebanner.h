@@ -8,14 +8,14 @@ class eTile;
 enum class eCityId;
 
 enum class eBannerTypeS {
-    none,
     boar,
     deer,
     landInvasion,
     entryPoint,
     exitPoint,
     monsterPoint,
-    disasterPoint
+    disasterPoint,
+    none
 };
 
 class eBanner {
