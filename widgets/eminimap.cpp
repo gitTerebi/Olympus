@@ -263,6 +263,16 @@ void eMiniMap::updateTexture(const eCityId cid) {
             color.r = l;
             color.g = l;
             color.b = l;
+        } else {
+            const auto& border = tile->territoryBorder();
+            if(border.fTR || border.fR ||
+               border.fBR || border.fB ||
+               border.fBL || border.fL ||
+               border.fTL || border.fT) {
+                color.r = 255;
+                color.g = 255;
+                color.b = 255;
+            }
         }
         dtex->setColorMod(color.r, color.g, color.b);
         const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
