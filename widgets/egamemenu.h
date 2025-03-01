@@ -97,10 +97,6 @@ private:
 
     eFramedLabel* mNameLabel = nullptr;
 
-    eWidget* mStadiumButton = nullptr;
-    eWidget* mMuseumButton = nullptr;
-    eWidget* mPalaceButton = nullptr;
-
     ePopulationDataWidget* mPopDataW = nullptr;
     eEmploymentDataWidget* mEmplDataW = nullptr;
     eHusbandryDataWidget* mHusbDataW = nullptr;

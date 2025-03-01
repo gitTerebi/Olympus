@@ -41,6 +41,9 @@ struct eSubButtonData {
 };
 
 void tradePosts(const eCityId cid, std::vector<eSPR>& cs, eGameBoard& board) {
+    const auto pid = board.cityIdToPlayerId(cid);
+    const auto ppid = board.personPlayer();
+    if(pid != ppid) return;
     const auto& wrld = board.getWorldBoard();
     int i = -1;
     for(const auto& c : wrld->cities()) {
@@ -76,24 +79,32 @@ public:
         mBoard(board) {}
 
     void updateVisible(const eCityId cid) {
-        if(mMode == eBuildingMode::tradePost) {
+        bool vis = false;
+        const auto pid = mBoard.cityIdToPlayerId(cid);
+        const auto ppid = mBoard.personPlayer();
+        if(pid != ppid) {
+        } else if(mMode == eBuildingMode::tradePost) {
             std::vector<eSPR> cs;
             tradePosts(cid, cs, mBoard);
-            mButton->setVisible(!cs.empty());
+            vis = !cs.empty();
+        } else if(mMode == eBuildingMode::palace) {
+            vis = !mBoard.hasPalace(cid);
+        } else if(mMode == eBuildingMode::stadium) {
+            vis = !mBoard.poseidonMode() && !mBoard.hasStadium(cid);
+        } else if(mMode == eBuildingMode::museum) {
+            vis = mBoard.poseidonMode() && !mBoard.hasMuseum(cid);
         } else if(mMode == eBuildingMode::none) {
-            bool found = false;
             for(const auto& c : mChildren) {
                 const bool s = mBoard.supportsBuilding(cid, c.fMode);
                 if(s) {
-                    found = true;
+                    vis = true;
                     break;
                 }
             }
-            mButton->setVisible(found);
         } else {
-            const bool s = mBoard.supportsBuilding(cid, mMode);
-            mButton->setVisible(s);
+            vis = mBoard.supportsBuilding(cid, mMode);
         }
+        mButton->setVisible(vis);
     }
 private:
     const eBuildingMode mMode;
@@ -151,19 +162,6 @@ eWidget* eGameMenu::createSubButtons(
         const auto& pos = poses[i];
         b->setX(pos.first);
         b->setY(pos.second);
-
-        switch(c.fMode) {
-        case eBuildingMode::palace:
-            mPalaceButton = b;
-            break;
-        case eBuildingMode::stadium:
-            mStadiumButton = b;
-            break;
-        case eBuildingMode::museum:
-            mMuseumButton = b;
-            break;
-        default: break;
-        }
 
         const auto subButton = new eSubButton(c.fMode, b, c.fSpr, *mBoard);
         subButton->updateVisible(eCityId::neutralFriendly);
@@ -1013,9 +1011,6 @@ void eGameMenu::updateButtonsVisibility() {
     for(const auto s : mSubButtons) {
         s->updateVisible(cid);
     }
-    mPalaceButton->setVisible(!mBoard->hasPalace(cid));
-    if(mStadiumButton) mStadiumButton->setVisible(!mBoard->hasStadium(cid));
-    if(mMuseumButton) mMuseumButton->setVisible(!mBoard->hasMuseum(cid));
 }
 
 void eGameMenu::viewedCityChanged() {
