@@ -1716,7 +1716,7 @@ void eGameWidget::setWorldDirection(const eWorldDirection dir) {
     updateTopBottomAltitude();
     viewTile(tile);
     clampViewBox();
-    updateMaps(false);
+    updateMaps(true);
     updateViewBoxSize();
     mGm->setWorldDirection(dir);
     if(mTem) mTem->setWorldDirection(dir);
