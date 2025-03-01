@@ -112,8 +112,6 @@ void eScienceDataWidget::initialize() {
     mExhibits = exhibits->label();
     cw->addWidget(exhibits);
 
-    updateCoverage();
-
     cw->stackVertically();
     cw->fitContent();
     iw->addWidget(cw);

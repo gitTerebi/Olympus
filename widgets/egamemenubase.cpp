@@ -40,6 +40,11 @@ eCheckableButton* eGameMenuBase::addButton(
 }
 
 void eGameMenuBase::connectAndLayoutButtons() {
+    connectButtons();
+    layoutButtons();
+}
+
+void eGameMenuBase::layoutButtons() {
     double margin;
     switch(resolution().uiScale()) {
     case eUIScale::tiny:
@@ -61,7 +66,9 @@ void eGameMenuBase::connectAndLayoutButtons() {
     mButtonsWidget->setHeight(h);
     mButtonsWidget->layoutVerticallyWithoutSpaces();
     mButtonsWidget->fitContent();
+}
 
+void eGameMenuBase::connectButtons() {
     const int iMax = mButtons.size();
     for(int i = 0; i < iMax; i++) {
         const auto b = mButtons[i];

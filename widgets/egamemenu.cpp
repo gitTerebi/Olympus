@@ -1,4 +1,4 @@
-#include "egamemenu.h"
+﻿#include "egamemenu.h"
 
 #include "textures/egametextures.h"
 #include "emainwindow.h"
@@ -574,7 +574,8 @@ void eGameMenu::initialize(eGameBoard* const b,
 
 
     eWidget* ww6 = nullptr;
-    if(poseidon) {
+    eWidget* ww7 = nullptr;
+    {
          const std::vector<eSPR> p6spr = {eSPR{eBuildingMode::observatory, eLanguage::zeusText(28, 203)},
                                           eSPR{eBuildingMode::university, eLanguage::zeusText(28, 204)}};
          const auto p6 = [this, cmx, cmy, p6spr]() {
@@ -609,9 +610,10 @@ void eGameMenu::initialize(eGameBoard* const b,
                                  {eBuildingMode::museum,
                                   eLanguage::zeusText(28, 207),
                                   s6, cost14, 3, &coll.fMuseum}};
-         ww6 = createDataWidget(mScienceDataW, buttonsVec6,
+         ww7 = createDataWidget(mScienceDataW, buttonsVec6,
                                 eLanguage::zeusText(88, 24));
-    } else {
+    }
+    {
         const std::vector<eSPR> p6spr = {eSPR{eBuildingMode::podium, eLanguage::zeusText(28, 81)},
                                          eSPR{eBuildingMode::college, eLanguage::zeusText(28, 77)}};
         const auto p6 = [this, cmx, cmy, p6spr]() {
@@ -709,7 +711,7 @@ void eGameMenu::initialize(eGameBoard* const b,
                              hs7, 0, 1, poseidon ? &coll.fPoseidonHeroShrines :
                                                    &coll.fHeroShrines,
                              hs7spr}};
-    const auto ww7 = createDataWidget(mMythDataW, buttonsVec7,
+    const auto ww8 = createDataWidget(mMythDataW, buttonsVec7,
                                       eLanguage::zeusText(88, 7));
 
 
@@ -734,7 +736,7 @@ void eGameMenu::initialize(eGameBoard* const b,
                         {eBuildingMode::none,
                          eLanguage::zeusText(28, 140),
                          mp8, 0, 1, &coll.fMilitaryProduction, mp8spr}};
-    const auto ww8 = createDataWidget(mMiltDataW, buttonsVec8,
+    const auto ww9 = createDataWidget(mMiltDataW, buttonsVec8,
                                       eLanguage::zeusText(88, 8));
 
     const std::vector<eSPR> bb9spr = {eSPR{eBuildingMode::park, eLanguage::zeusText(28, 128)},
@@ -804,7 +806,7 @@ void eGameMenu::initialize(eGameBoard* const b,
                     {eBuildingMode::none,
                      eLanguage::zeusText(28, 157),
                      m9, 0, 2, &coll.fMonuments, m9spr}};
-    const auto ww9 = createDataWidget(mApplDataW, buttonsVec,
+    const auto ww10 = createDataWidget(mApplDataW, buttonsVec,
                                       eLanguage::zeusText(88, 9));
 
     mOverDataW = new eOverviewDataWidget(*b, window());
@@ -812,7 +814,7 @@ void eGameMenu::initialize(eGameBoard* const b,
     mOverDataW->setMap(mMiniMap);
     mMiniMap->resize(dataWidWidth, 4*dataWidWidth/5);
 
-    const auto ww10 = createDataWidgetBase(mOverDataW, mMiniMap,
+    const auto ww11 = createDataWidgetBase(mOverDataW, mMiniMap,
                                            eLanguage::zeusText(88, 10));
     mWidgets.push_back({ww0, mPopDataW});
     mWidgets.push_back({ww1, mHusbDataW});
@@ -820,12 +822,12 @@ void eGameMenu::initialize(eGameBoard* const b,
     mWidgets.push_back({www3, mStrgDataW});
     mWidgets.push_back({ww4, mHySaDataW});
     mWidgets.push_back({ww5, mAdminDataW});
-    mWidgets.push_back({ww6, poseidon ? static_cast<eDataWidget*>(mScienceDataW) :
-                                        static_cast<eDataWidget*>(mCultureDataW)});
-    mWidgets.push_back({ww7, mMythDataW});
-    mWidgets.push_back({ww8, mMiltDataW});
-    mWidgets.push_back({ww9, mApplDataW});
-    mWidgets.push_back({ww10, mOverDataW});
+    mWidgets.push_back({ww6, static_cast<eDataWidget*>(mCultureDataW)});
+    mWidgets.push_back({ww7, static_cast<eDataWidget*>(mScienceDataW)});
+    mWidgets.push_back({ww8, mMythDataW});
+    mWidgets.push_back({ww9, mMiltDataW});
+    mWidgets.push_back({ww10, mApplDataW});
+    mWidgets.push_back({ww11, mOverDataW});
 
     for(const auto& ww : mWidgets) {
         const auto w = ww.fW;
@@ -840,12 +842,12 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto b3 = addButton(coll.fDistribution, mWidgets[3]);
     const auto b4 = addButton(coll.fHygieneSafety, mWidgets[4]);
     const auto b5 = addButton(coll.fAdministration, mWidgets[5]);
-    const auto b6 = addButton(poseidon ? coll.fScience : coll.fCulture,
-                              mWidgets[6]);
-    const auto b7 = addButton(coll.fMythology, mWidgets[7]);
-    const auto b8 = addButton(coll.fMilitary, mWidgets[8]);
-    const auto b9 = addButton(coll.fAesthetics, mWidgets[9]);
-    const auto b10 = addButton(coll.fOverview, mWidgets[10]);
+    const auto b6a = addButton(coll.fCulture, mWidgets[6]);
+    mCultureButton = b6a;
+    const auto b7 = addButton(coll.fMythology, mWidgets[8]);
+    const auto b8 = addButton(coll.fMilitary, mWidgets[9]);
+    const auto b9 = addButton(coll.fAesthetics, mWidgets[10]);
+    const auto b10 = addButton(coll.fOverview, mWidgets[11]);
 
     const auto setupButtonHover =
         [this](eCheckableButton* b0, const std::string& txt) {
@@ -863,17 +865,24 @@ void eGameMenu::initialize(eGameBoard* const b,
     setupButtonHover(b3, eLanguage::zeusText(88, 3));
     setupButtonHover(b4, eLanguage::zeusText(88, 4));
     setupButtonHover(b5, eLanguage::zeusText(88, 5));
-    setupButtonHover(b6, poseidon ? eLanguage::zeusText(88, 24) :
-                                    eLanguage::zeusText(88, 6));
+    setupButtonHover(b6a, eLanguage::zeusText(88, 6));
     setupButtonHover(b7, eLanguage::zeusText(88, 7));
     setupButtonHover(b8, eLanguage::zeusText(88, 8));
     setupButtonHover(b9, eLanguage::zeusText(88, 9));
     setupButtonHover(b10, eLanguage::zeusText(88, 10));
 
     b10->setChecked(true);
-    ww10->setVisible(true);
+    ww11->setVisible(true);
 
-    connectAndLayoutButtons();
+    layoutButtons();
+
+    const auto b6b = addButton(coll.fScience, mWidgets[7]);
+    setupButtonHover(b6b, eLanguage::zeusText(88, 24));
+    b6b->hide();
+    b6b->move(b6a->x(), b6a->y());
+    mScienceButton = b6b;
+
+    connectButtons();
 
     {
         const auto btmButtons = new eWidget(window());
@@ -1010,6 +1019,18 @@ void eGameMenu::updateButtonsVisibility() {
                            eCityId::neutralFriendly;
     for(const auto s : mSubButtons) {
         s->updateVisible(cid);
+    }
+    bool science = true;
+    const auto c = mBoard->boardCityWithId(cid);
+    if(c) {
+        science = c->atlantean();
+    }
+    mScienceButton->setVisible(science);
+    mCultureButton->setVisible(!science);
+    if(science && mCultureButton->checked()) {
+        mScienceButton->trigger();
+    } else if(!science && mScienceButton->checked()) {
+        mCultureButton->trigger();
     }
 }
 

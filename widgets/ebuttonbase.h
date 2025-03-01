@@ -17,6 +17,8 @@ public:
 
     bool pressed() const;
     bool hovered() const;
+
+    void trigger() const;
 protected:
     bool mousePressEvent(const eMouseEvent& e);
     bool mouseReleaseEvent(const eMouseEvent& e);

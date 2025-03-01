@@ -70,6 +70,8 @@ public:
 
     void incTime(const int by);
 
+    bool atlantean() const { return mAtlantean; }
+
     void updateCoverage();
 
     void payTaxes(const int d, const int people);

@@ -34,6 +34,10 @@ bool eButtonBase::hovered() const {
     return mHover;
 }
 
+void eButtonBase::trigger() const {
+    if(mPressAction) mPressAction();
+}
+
 bool eButtonBase::mousePressEvent(const eMouseEvent& e) {
     if(!mEnabled) return false;
     const auto b = e.button();

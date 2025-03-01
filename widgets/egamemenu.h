@@ -97,6 +97,9 @@ private:
 
     eFramedLabel* mNameLabel = nullptr;
 
+    eCheckableButton* mScienceButton = nullptr;
+    eCheckableButton* mCultureButton = nullptr;
+
     ePopulationDataWidget* mPopDataW = nullptr;
     eEmploymentDataWidget* mEmplDataW = nullptr;
     eHusbandryDataWidget* mHusbDataW = nullptr;
