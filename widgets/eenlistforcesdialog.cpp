@@ -173,7 +173,7 @@ public:
     };
 
     void initialize(const eEnlistedForces& e,
-                    const std::vector<bool>& heroesAbroad,
+                    const std::vector<eHeroType>& heroesAbroad,
                     const eAction& selectionChanged) {
         mAll = e;
         std::vector<eEnlistData> data;
@@ -216,7 +216,7 @@ public:
         for(int i = 0; i < iMax; i++) {
             const auto h = e.fHeroes[i];
             auto& d = data.emplace_back();
-            d.fAbroad = heroesAbroad[i];
+            d.fAbroad = eVectorHelpers::contains(heroesAbroad, h);
             d.fType = eEnlistType::hero;
             d.fTitle = eHero::sHeroName(h);
             d.fId = static_cast<int>(h);
@@ -325,7 +325,7 @@ public:
     using eFramedWidget::eFramedWidget;
 
     void initialize(const eEnlistedForces& e,
-                    const std::vector<bool>& heroesAbroad,
+                    const std::vector<eHeroType>& heroesAbroad,
                     const eAction& selectionChanged,
                     const std::string& title,
                     const bool troops) {
@@ -403,7 +403,7 @@ eEnlistedForces extractType(const eBannerType type,
 
 void eEnlistForcesDialog::initialize(
         const eEnlistedForces& enlistable,
-        const std::vector<bool>& heroesAbroad,
+        const std::vector<eHeroType>& heroesAbroad,
         const eEnlistAction& action,
         const std::vector<eResourceType>& plunderResources) {
     const auto r = resolution();

@@ -13,7 +13,7 @@ public:
 
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     void initialize(const eEnlistedForces& enlistable,
-                    const std::vector<bool>& heroesAbroad,
+                    const std::vector<eHeroType>& heroesAbroad,
                     const eEnlistAction& action,
                     const std::vector<eResourceType>& plunderResources = {});
 protected:

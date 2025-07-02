@@ -131,7 +131,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     mBoard->setEnlistForcesRequest([this](
                                    const eEnlistedForces& enlistable,
-                                   const std::vector<bool>& heroesAbroad,
+                                   const std::vector<eHeroType>& heroesAbroad,
                                    const eEnlistAction& action,
                                    const std::vector<eResourceType>& plunderResources) {
         const auto w = window();

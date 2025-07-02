@@ -2410,11 +2410,11 @@ void eGameBoard::requestForces(const eEnlistAction& action,
                                const std::vector<stdsptr<eWorldCity>>& exclude) {
     if(mEnlistRequester) {
         auto f = getEnlistableForces(personPlayer());
-        std::vector<bool> heroesAbroad;
+        std::vector<eHeroType> heroesAbroad;
         for(const auto h : f.fHeroes) {
             const auto hh = heroHall(eCityId::city0, h);
             const bool abroad = !hh ? true : hh->heroOnQuest();
-            heroesAbroad.push_back(abroad);
+            if(abroad) heroesAbroad.push_back(h);
         }
         for(const auto& e : exclude) {
             eVectorHelpers::remove(f.fAllies, e);
