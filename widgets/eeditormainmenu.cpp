@@ -79,22 +79,22 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     });
     topButtons->addWidget(editWorldMap);
 
-    const auto nationality = new eFramedButton(window());
-    nationality->setSmallFontSize();
-    nationality->setSmallPadding();
-    nationality->setUnderline(false);
-    const bool a = campaign->atlantean();
-    nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
-                             eLanguage::zeusText(195, 59)); // greek
-    nationality->fitContent();
-    nationality->setTooltip(eLanguage::zeusText(278, 10));
-    nationality->setPressAction([campaign, nationality]() {
-        const bool a = !campaign->atlantean();
-        campaign->setAtlantean(a);
-        nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
-                                 eLanguage::zeusText(195, 59)); // greek
-    });
-    topButtons->addWidget(nationality);
+//    const auto nationality = new eFramedButton(window());
+//    nationality->setSmallFontSize();
+//    nationality->setSmallPadding();
+//    nationality->setUnderline(false);
+//    const bool a = campaign->atlantean();
+//    nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
+//                             eLanguage::zeusText(195, 59)); // greek
+//    nationality->fitContent();
+//    nationality->setTooltip(eLanguage::zeusText(278, 10));
+//    nationality->setPressAction([campaign, nationality]() {
+//        const bool a = !campaign->atlantean();
+//        campaign->setAtlantean(a);
+//        nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
+//                                 eLanguage::zeusText(195, 59)); // greek
+//    });
+//    topButtons->addWidget(nationality);
 
     const auto bitmap = new eFramedButton(window());
     bitmap->setSmallFontSize();

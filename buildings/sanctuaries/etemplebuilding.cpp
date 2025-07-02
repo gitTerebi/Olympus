@@ -20,12 +20,11 @@ std::shared_ptr<eTexture>
 eTempleBuilding::getTexture(const eTileSize size) const {
     const int p = progress();
     if(p <= 0) return nullptr;
-    auto& board = getBoard();
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
     const int id = p - 1;
     const int dirId = rotatedId();
-    if(board.poseidonMode() && id == 2) {
+    if(atlantean() && id == 2) {
         eGameTextures::loadPoseidonSanctuary();
         const auto& coll = blds.fPoseidonSanctuary;
         return coll.getTexture(dirId);

@@ -210,7 +210,6 @@ void eCampaign::read(eReadStream& src) {
     std::string name;
     src >> name;
     if(mName.empty()) mName = name;
-    src >> mAtlantean;
     src >> mCurrentParentEpisode;
     src >> mCurrentColonyEpisode;
     src >> mCurrentEpisodeType;
@@ -304,7 +303,6 @@ void eCampaign::write(eWriteStream& dst) const {
     dst << mBitmap;
     dst << eFileFormat::version;
     dst << mName;
-    dst << mAtlantean;
     dst << mCurrentParentEpisode;
     dst << mCurrentColonyEpisode;
     dst << mCurrentEpisodeType;
@@ -489,21 +487,6 @@ std::vector<eColonyEpisode*> eCampaign::remainingColonies() const {
     return result;
 }
 
-void eCampaign::setAtlantean(const bool a) {
-    mAtlantean = a;
-    for(const auto& e : mParentCityEpisodes) {
-        e->fAtlantean = a;
-    }
-    for(const auto& e : mColonyEpisodes) {
-        e->fAtlantean = a;
-    }
-    mWorldBoard.setPoseidonMode(a);
-    mParentBoard->setPoseidonMode(a);
-    for(const auto& b : mColonyBoards) {
-        b->setPoseidonMode(a);
-    }
-}
-
 std::vector<int> eCampaign::colonyEpisodesLeft() const {
     std::vector<int> result;
     const int iMax = mColonyEpisodes.size();
@@ -519,7 +502,6 @@ stdsptr<eParentCityEpisode> eCampaign::addParentCityEpisode() {
     const auto e = std::make_shared<eParentCityEpisode>();
     e->fBoard = mParentBoard.get();
     e->fWorldBoard = &mWorldBoard;
-    e->fAtlantean = mAtlantean;
     mParentCityEpisodes.push_back(e);
     return e;
 }

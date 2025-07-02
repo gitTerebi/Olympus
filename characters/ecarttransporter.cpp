@@ -174,7 +174,7 @@ void eCartTransporter::setType(const eCartTransporterType t) {
 
         eCharacter* follow = this;
 
-        if(!board.poseidonMode()) {
+        if(!atlantean()) {
             const auto ox = e::make_shared<eOx>(board);
             mOx = ox;
             const auto aox = e::make_shared<eFollowAction>(follow, mOx.get());
@@ -372,8 +372,7 @@ void eCartTransporter::updateTextures() {
         setCharTextures(&eCharacterTextures::fTransporter);
     } break;
     case eCartTransporterType::ox: {
-        auto& board = getBoard();
-        if(board.poseidonMode()) {
+        if(atlantean()) {
             eGameTextures::loadElephant();
             setCharTextures(&eCharacterTextures::fElephant);
         } else {

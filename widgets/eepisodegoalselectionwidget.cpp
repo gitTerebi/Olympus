@@ -15,7 +15,7 @@ void eEpisodeGoalSelectionWidget::initialize(
 
     const auto iniEs = get();
     for(const auto& e : iniEs) {
-        const auto eStr = e->text(false, false);
+        const auto eStr = e->text(false);
         addButton(eStr);
     }
 
@@ -62,7 +62,7 @@ void eEpisodeGoalSelectionWidget::initialize(
             if(e) {
                 add(e);
                 editEvent(e);
-                addButton(e->text(false, false));
+                addButton(e->text(false));
             }
         };
         echoose->initialize(8, labels, act);

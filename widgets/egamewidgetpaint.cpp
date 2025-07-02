@@ -207,7 +207,7 @@ void eGameWidget::updateTerrainTextures(eTile* const tile,
                                        painter.fFutureDim,
                                        painter.fDrawDim,
                                        &painter.fColl,
-                                       mBoard->poseidonMode(),
+                                       mBoard->rainforest(),
                                        mBoard->direction());
 }
 
@@ -1223,7 +1223,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto type = b->type();
                 const auto& tps = charTexs.fBannerTops;
                 const auto& pTps = charTexs.fPoseidonBannerTops;
-                const bool p = mBoard->poseidonMode();
+                const bool p = b->atlantean();
                 if(!p ||
                    type == eBannerType::aresWarrior ||
                    type == eBannerType::amazon) {

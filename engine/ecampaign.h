@@ -75,9 +75,6 @@ public:
     bool finished() const;
     std::vector<eColonyEpisode*> remainingColonies() const;
 
-    bool atlantean() const { return mAtlantean; }
-    void setAtlantean(const bool a);
-
     std::vector<int> colonyEpisodesLeft() const;
 
     using eParentCityEpisodes = std::vector<stdsptr<eParentCityEpisode>>;
@@ -119,8 +116,6 @@ private:
     std::string mTitle;
     std::string mIntroduction;
     std::string mComplete;
-
-    bool mAtlantean = true;
 
     int mCurrentParentEpisode = 0;
     int mCurrentColonyEpisode = 0;

@@ -62,8 +62,6 @@ public:
 
     bool editorMode() const { return mEditorMode; }
     void setEditorMode(const bool m) { mEditorMode = m; }
-    bool poseidonMode() const { return mPoseidonMode; }
-    void setPoseidonMode(const bool p) { mPoseidonMode = p; }
 
     ePlayerId cityIdToPlayerId(const eCityId cid) const;
     eTeamId cityIdToTeamId(const eCityId cid) const;
@@ -76,7 +74,6 @@ public:
     ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
     bool mEditorMode = false;
-    bool mPoseidonMode = true;
     eWorldMap mMap{eWorldMap::greece8};
     std::vector<stdsptr<eWorldCity>> mCities;
 

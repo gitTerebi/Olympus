@@ -13,7 +13,7 @@ void eGameBoard::write(eWriteStream& dst) const {
     dst << mWidth;
     dst << mHeight;
 
-    dst << mPoseidonMode;
+    dst << mRainforest;
 
     dst << mEpisodeLost;
 

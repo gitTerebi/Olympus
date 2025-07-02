@@ -37,6 +37,7 @@ struct eSubButtonData {
     int fPrice;
     int fPriceSpace;
     const eTextureCollection* fColl;
+    const eTextureCollection* fAColl;
     std::vector<eSPR> fSpr = {};
 };
 
@@ -71,10 +72,12 @@ class eSubButton {
 public:
     eSubButton(const eBuildingMode mode,
                eButton* const button,
+               eButton* const abutton,
                const std::vector<eSPR>& children,
                eGameBoard& board) :
         mMode(mode),
         mButton(button),
+        mAButton(abutton),
         mChildren(children),
         mBoard(board) {}
 
@@ -82,6 +85,7 @@ public:
         bool vis = false;
         const auto pid = mBoard.cityIdToPlayerId(cid);
         const auto ppid = mBoard.personPlayer();
+        const bool a = mBoard.atlantean(cid);
         if(pid != ppid) {
         } else if(mMode == eBuildingMode::tradePost) {
             std::vector<eSPR> cs;
@@ -90,9 +94,9 @@ public:
         } else if(mMode == eBuildingMode::palace) {
             vis = !mBoard.hasPalace(cid);
         } else if(mMode == eBuildingMode::stadium) {
-            vis = !mBoard.poseidonMode() && !mBoard.hasStadium(cid);
+            vis = !mBoard.atlantean(cid) && !mBoard.hasStadium(cid);
         } else if(mMode == eBuildingMode::museum) {
-            vis = mBoard.poseidonMode() && !mBoard.hasMuseum(cid);
+            vis = mBoard.atlantean(cid) && !mBoard.hasMuseum(cid);
         } else if(mMode == eBuildingMode::none) {
             for(const auto& c : mChildren) {
                 const bool s = mBoard.supportsBuilding(cid, c.fMode);
@@ -104,11 +108,17 @@ public:
         } else {
             vis = mBoard.supportsBuilding(cid, mMode);
         }
-        mButton->setVisible(vis);
+        if(mButton) {
+            mButton->setVisible(vis && (!a || !mAButton));
+        }
+        if(mAButton) {
+            mAButton->setVisible(vis && (a || !mButton));
+        }
     }
 private:
     const eBuildingMode mMode;
     eButton* const mButton;
+    eButton* const mAButton;
     const std::vector<eSPR> mChildren;
     eGameBoard& mBoard;
 };
@@ -149,21 +159,28 @@ eWidget* eGameMenu::createSubButtons(
     for(int i = 0; i < iMax; i++) {
         const auto& c = buttons[i];
 
-        const auto b = eButton::sCreate(*c.fColl, window(), result);
-        b->setPressAction(c.fPressedFunc);
-        b->setMouseEnterAction([c, this]() {
-            mNameLabel->setText(c.fName);
-            displayPrice(c.fPrice, c.fPriceSpace);
-        });
-        b->setMouseLeaveAction([c, this]() {
-            mNameLabel->setText("");
-            displayPrice(0, c.fPriceSpace);
-        });
-        const auto& pos = poses[i];
-        b->setX(pos.first);
-        b->setY(pos.second);
+        const auto createButton = [&](const eTextureCollection& texs) {
+            const auto b = eButton::sCreate(texs, window(), result);
+            b->setPressAction(c.fPressedFunc);
+            b->setMouseEnterAction([c, this]() {
+                mNameLabel->setText(c.fName);
+                displayPrice(c.fPrice, c.fPriceSpace);
+            });
+            b->setMouseLeaveAction([c, this]() {
+                mNameLabel->setText("");
+                displayPrice(0, c.fPriceSpace);
+            });
+            const auto& pos = poses[i];
+            b->setX(pos.first);
+            b->setY(pos.second);
 
-        const auto subButton = new eSubButton(c.fMode, b, c.fSpr, *mBoard);
+            return b;
+        };
+
+        const auto b = c.fColl ? createButton(*c.fColl) : nullptr;
+        const auto ab = c.fAColl ? createButton(*c.fAColl) : nullptr;
+
+        const auto subButton = new eSubButton(c.fMode, b, ab, c.fSpr, *mBoard);
         subButton->updateVisible(eCityId::neutralFriendly);
         mSubButtons.push_back(subButton);
     }
@@ -245,7 +262,6 @@ eGameMenu::~eGameMenu() {
 void eGameMenu::initialize(eGameBoard* const b,
                            const eAction& goalsView) {
     mBoard = b;
-    const bool poseidon = b->poseidonMode();
     eGameMenuBase::initialize();
 
     int iRes;
@@ -353,13 +369,13 @@ void eGameMenu::initialize(eGameBoard* const b,
                     {eBuildingMode::commonHousing,
                      eLanguage::zeusText(28, 2),
                      cha0, cost1, 0,
-                     poseidon ? &coll.fPoseidonCommonHousing :
-                                &coll.fCommonHousing},
+                     &coll.fCommonHousing,
+                     &coll.fPoseidonCommonHousing},
                     {eBuildingMode::eliteHousing,
                      eLanguage::zeusText(28, 9),
                      eha0, cost2, 1,
-                     poseidon ? &coll.fPoseidonEliteHousing :
-                                &coll.fEliteHousing}};
+                     &coll.fEliteHousing,
+                     &coll.fPoseidonEliteHousing}};
     const auto ww0 = createDataWidget(mPopDataW, buttonsVec0,
                                       eLanguage::zeusText(88, 0));
 
@@ -405,16 +421,16 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec1 = eButtonsDataVec{
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 30),
-                             ff1, 0, 0, &coll.fFoodFarming, ff1spr},
+                             ff1, 0, 0, &coll.fFoodFarming, nullptr, ff1spr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 34),
-                             of1, 0, 1, &coll.fOtherFarming, of1spr},
+                             of1, 0, 1, &coll.fOtherFarming, nullptr, of1spr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 38),
-                             af1, 0, 2, &coll.fAnimalFarming, af1spr},
+                             af1, 0, 2, &coll.fAnimalFarming, nullptr, af1spr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 43),
-                             ah1, 0, 3, &coll.fAnimalHunting, ah1spr}};
+                             ah1, 0, 3, &coll.fAnimalHunting, nullptr, ah1spr}};
     const auto ww1 = createDataWidget(mHusbDataW, buttonsVec1,
                                       eLanguage::zeusText(88, 1));
 
@@ -441,13 +457,13 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec2 = eButtonsDataVec{
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 47),
-                             r2, 0, 0, &coll.fResources, r2spr},
+                             r2, 0, 0, &coll.fResources, nullptr, r2spr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 52),
-                             p2, 0, 1, &coll.fProcessing, p2spr},
+                             p2, 0, 1, &coll.fProcessing, nullptr, p2spr},
                             {eBuildingMode::artisansGuild,
                              eLanguage::zeusText(28, 56),
-                             bg2, cost3, 2, &coll.fArtisansGuild}};
+                             bg2, cost3, 2, &coll.fArtisansGuild, nullptr}};
     const auto ww2 = createDataWidget(mEmplDataW, buttonsVec2,
                                       eLanguage::zeusText(88, 2));
 
@@ -487,16 +503,16 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec3 = eButtonsDataVec{
                             {eBuildingMode::granary,
                              eLanguage::zeusText(28, 57),
-                             g3, cost4, 0, &coll.fGranary},
+                             g3, cost4, 0, &coll.fGranary, nullptr},
                             {eBuildingMode::warehouse,
                              eLanguage::zeusText(28, 58),
-                             ww3, cost5, 1, &coll.fWarehouse},
+                             ww3, cost5, 1, &coll.fWarehouse, nullptr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 67),
-                             a3, 0, 2, &coll.fAgoras, a3spr},
+                             a3, 0, 2, &coll.fAgoras, nullptr, a3spr},
                             {eBuildingMode::tradePost,
                              eLanguage::zeusText(28, 26),
-                             t3, 0, 3, &coll.fTrade}};
+                             t3, 0, 3, &coll.fTrade, nullptr}};
     const auto www3 = createDataWidget(mStrgDataW, buttonsVec3,
                                        eLanguage::zeusText(88, 3));
 
@@ -526,16 +542,16 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec4 = eButtonsDataVec{
                             {eBuildingMode::fountain,
                              eLanguage::zeusText(28, 74),
-                             f4, cost6, 0, &coll.fFountain},
+                             f4, cost6, 0, &coll.fFountain, nullptr},
                             {eBuildingMode::hospital,
                              eLanguage::zeusText(28, 76),
-                             h4, cost7, 1, &coll.fHospital},
+                             h4, cost7, 1, &coll.fHospital, nullptr},
                             {eBuildingMode::maintenanceOffice,
                              eLanguage::zeusText(28, 121),
-                             ff4, cost8, 2, &coll.fFireFighter},
+                             ff4, cost8, 2, &coll.fFireFighter, nullptr},
                             {eBuildingMode::watchpost,
                              eLanguage::zeusText(28, 124),
-                             p4, cost9, 3, &coll.fPolice}};
+                             p4, cost9, 3, &coll.fPolice, nullptr}};
     const auto ww4 = createDataWidget(mHySaDataW, buttonsVec4,
                                       eLanguage::zeusText(88, 4));
 
@@ -559,15 +575,15 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec5 = eButtonsDataVec{
                             {eBuildingMode::palace,
                              eLanguage::zeusText(28, 117),
-                             p5, cost10, 0, &coll.fPalace},
+                             p5, cost10, 0, &coll.fPalace, nullptr},
                             {eBuildingMode::taxOffice,
                              eLanguage::zeusText(28, 122),
-                             tc5, cost11, 1, &coll.fTaxCollector},
+                             tc5, cost11, 1, &coll.fTaxCollector, nullptr},
                             {eBuildingMode::bridge,
                              eLanguage::zeusText(28, 120),
                              bb5, cost12, 2,
-                             poseidon ? &coll.fPoseidonBridge :
-                                        &coll.fBridge}};
+                             &coll.fBridge,
+                             &coll.fPoseidonBridge}};
     const auto ww5 = createDataWidget(mAdminDataW, buttonsVec5,
                                       eLanguage::zeusText(88, 5));
 
@@ -600,16 +616,16 @@ void eGameMenu::initialize(eGameBoard* const b,
          const auto buttonsVec6 = eButtonsDataVec{
                                  {eBuildingMode::bibliotheke,
                                   eLanguage::zeusText(28, 202),
-                                  g6, cost13, 0, &coll.fBibliotheke},
+                                  g6, cost13, 0, nullptr, &coll.fBibliotheke},
                                  {eBuildingMode::none,
                                   eLanguage::zeusText(28, 208),
-                                  p6, 0, 1, &coll.fAstronomy, p6spr},
+                                  p6, 0, 1, nullptr, &coll.fAstronomy, p6spr},
                                  {eBuildingMode::none,
                                   eLanguage::zeusText(28, 209),
-                                  d6, 0, 2, &coll.fTechnology, d6spr},
+                                  d6, 0, 2, nullptr, &coll.fTechnology, d6spr},
                                  {eBuildingMode::museum,
                                   eLanguage::zeusText(28, 207),
-                                  s6, cost14, 3, &coll.fMuseum}};
+                                  s6, cost14, 3, nullptr, &coll.fMuseum}};
          ww7 = createDataWidget(mScienceDataW, buttonsVec6,
                                 eLanguage::zeusText(88, 24));
     }
@@ -639,16 +655,16 @@ void eGameMenu::initialize(eGameBoard* const b,
         const auto buttonsVec6 = eButtonsDataVec{
                                 {eBuildingMode::none,
                                  eLanguage::zeusText(28, 137),
-                                 p6, 0, 0, &coll.fPhilosophy, p6spr},
+                                 p6, 0, 0, &coll.fPhilosophy, nullptr, p6spr},
                                 {eBuildingMode::gymnasium,
                                  eLanguage::zeusText(28, 79),
-                                 g6, cost13, 1, &coll.fGymnasium},
+                                 g6, cost13, 1, &coll.fGymnasium, nullptr},
                                 {eBuildingMode::none,
                                  eLanguage::zeusText(28, 27),
-                                 d6, 0, 2, &coll.fDrama, d6spr},
+                                 d6, 0, 2, &coll.fDrama, nullptr, d6spr},
                                 {eBuildingMode::stadium,
                                  eLanguage::zeusText(28, 80),
-                                 s6, cost14, 3, &coll.fStadium}};
+                                 s6, cost14, 3, &coll.fStadium, nullptr}};
         ww6 = createDataWidget(mCultureDataW, buttonsVec6,
                                eLanguage::zeusText(88, 6));
     }
@@ -703,13 +719,13 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec7 = eButtonsDataVec{
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 83),
-                             t7, 0, 0, poseidon ? &coll.fPoseidonTemples :
-                                                  &coll.fTemples,
+                             t7, 0, 0, &coll.fTemples,
+                             &coll.fPoseidonTemples,
                              t7spr},
                             {eBuildingMode::none,
                              eLanguage::zeusText(28, 125),
-                             hs7, 0, 1, poseidon ? &coll.fPoseidonHeroShrines :
-                                                   &coll.fHeroShrines,
+                             hs7, 0, 1, &coll.fHeroShrines,
+                             &coll.fPoseidonHeroShrines,
                              hs7spr}};
     const auto ww8 = createDataWidget(mMythDataW, buttonsVec7,
                                       eLanguage::zeusText(88, 7));
@@ -732,10 +748,10 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec8 = eButtonsDataVec{
                         {eBuildingMode::none,
                          eLanguage::zeusText(28, 139),
-                         f8, 0, 0, &coll.fFortifications, f8spr},
+                         f8, 0, 0, &coll.fFortifications, nullptr, f8spr},
                         {eBuildingMode::none,
                          eLanguage::zeusText(28, 140),
-                         mp8, 0, 1, &coll.fMilitaryProduction, mp8spr}};
+                         mp8, 0, 1, &coll.fMilitaryProduction, nullptr, mp8spr}};
     const auto ww9 = createDataWidget(mMiltDataW, buttonsVec8,
                                       eLanguage::zeusText(88, 8));
 
@@ -799,13 +815,13 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto buttonsVec = eButtonsDataVec{
                     {eBuildingMode::none,
                      eLanguage::zeusText(28, 142),
-                     bb9, 0, 0, &coll.fBeautification, bb9spr},
+                     bb9, 0, 0, &coll.fBeautification, nullptr, bb9spr},
                     {eBuildingMode::none,
                      eLanguage::zeusText(28, 141),
-                     r9, 0, 1, &coll.fRecreation, r9spr},
+                     r9, 0, 1, &coll.fRecreation, nullptr, r9spr},
                     {eBuildingMode::none,
                      eLanguage::zeusText(28, 157),
-                     m9, 0, 2, &coll.fMonuments, m9spr}};
+                     m9, 0, 2, &coll.fMonuments, nullptr, m9spr}};
     const auto ww10 = createDataWidget(mApplDataW, buttonsVec,
                                       eLanguage::zeusText(88, 9));
 

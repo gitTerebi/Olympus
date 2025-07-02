@@ -72,6 +72,8 @@ public:
     void setOnCityId(const eCityId pid) { mOnCityId = pid; }
     eCityId onCityId() const { return mOnCityId; }
 
+    bool atlantean() const;
+
     ePlayerId playerId() const;
     eTeamId teamId() const;
 

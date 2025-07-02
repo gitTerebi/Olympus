@@ -65,6 +65,7 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
 
     const auto c = e::make_shared<eCartTransporter>(board);
     c->setBothCityIds(cityId());
+    c->setAtlantean(atlantean());
     c->changeTile(t);
 
     const auto a = e::make_shared<eCartTransporterAction>(

@@ -249,7 +249,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
 
     mBoard = &board;
 
-    const bool atlantean = board.poseidonMode();
+    const bool atlantean = board.atlantean(cid);
 
     const auto res = resolution();
     const int p = res.largePadding();

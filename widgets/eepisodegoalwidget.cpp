@@ -30,7 +30,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     cont->addWidget(textL);
 
     const auto updateText = [textL, e]() {
-        textL->setText(e->text(false, false));
+        textL->setText(e->text(false));
         textL->fitContent();
         textL->align(eAlignment::hcenter);
     };

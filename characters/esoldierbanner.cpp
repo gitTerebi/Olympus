@@ -43,8 +43,7 @@ eSoldierBanner::~eSoldierBanner() {
 }
 
 eCharacterType eSoldierBanner::characterType() const {
-    const bool p = mBoard.poseidonMode();
-    if(p) {
+    if(atlantean()) {
         switch(mType) {
         case eBannerType::hoplite:
             return eCharacterType::hoplitePoseidon;
@@ -269,6 +268,10 @@ void eSoldierBanner::killAllWithCorpse() {
 void eSoldierBanner::setBothCityIds(const eCityId cid) {
     mCityId = cid;
     mOnCityId = cid;
+}
+
+bool eSoldierBanner::atlantean() const {
+    return mBoard.atlantean(mCityId);
 }
 
 ePlayerId eSoldierBanner::playerId() const {

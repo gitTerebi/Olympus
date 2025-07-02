@@ -14,6 +14,11 @@ eTower::eTower(eGameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid) {
     eGameTextures::loadGatehouseAndTower();
     setHP(eNumbers::sTowerHP);
+    if(atlantean()) {
+        eGameTextures::loadPoseidonTowerArcher();
+    } else {
+        eGameTextures::loadArcher();
+    }
 }
 
 eTower::~eTower() {
@@ -42,12 +47,9 @@ eTower::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::characters()[sizeId];
     const eArcherTextures* aTexs;
-    auto& board = getBoard();
-    if(board.poseidonMode()) {
-        eGameTextures::loadPoseidonTowerArcher();
+    if(atlantean()) {
         aTexs = &texs.fPoseidonTowerArcher;
     } else {
-        eGameTextures::loadArcher();
         aTexs = &texs.fArcher;
     }
     if(mAttack) {
@@ -217,6 +219,7 @@ void eTower::write(eWriteStream& dst) const {
 bool eTower::spawn() {
     const auto archer = e::make_shared<eArcher>(getBoard());
     archer->setBothCityIds(cityId());
+    archer->setAtlantean(atlantean());
     archer->changeTile(centerTile());
     const auto a = e::make_shared<eArcherAction>(archer.get());
     archer->setAction(a);

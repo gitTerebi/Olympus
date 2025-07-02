@@ -14,8 +14,7 @@ eArcher::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = eGameTextures::characters()[id];
     const eArcherTextures* charTexs;
-    auto& board = getBoard();
-    if(board.poseidonMode()) {
+    if(atlantean()) {
         eGameTextures::loadPoseidonTowerArcher();
         charTexs = &texs.fPoseidonTowerArcher;
     } else {

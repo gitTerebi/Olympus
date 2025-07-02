@@ -105,7 +105,7 @@ void eEpisodeIntroductionWidget::initialize(
             w->addWidget(checkBox);
 
             const bool col = et == eEpisodeType::colony;
-            const auto t = g->text(col, e->fAtlantean);
+            const auto t = g->text(col);
             const auto l = new eLabel(window());
             l->setSmallFontSize();
             l->setTinyPadding();

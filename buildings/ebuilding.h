@@ -232,6 +232,7 @@ public:
     int seed() const { return mSeed; }
     void setSeed(const int s) { mSeed = s; }
     eBuildingType type() const { return mType; }
+    bool atlantean() const { return mAtlantean; }
     int spanW() const { return mSpanW; }
     int spanH() const { return mSpanH; }
 
@@ -301,6 +302,7 @@ private:
     int mIOID = -1;
     int mSeed;
     const eBuildingType mType;
+    const bool mAtlantean;
     const int mSpanW;
     const int mSpanH;
 

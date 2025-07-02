@@ -185,8 +185,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
 
     x += food->width() + d;
 
-    auto& board = a->getBoard();
-    const bool pp = board.poseidonMode();
+    const bool pp = a->atlantean();
     const auto horseRes = pp ? eResourceType::chariot : eResourceType::horse;
 
     const auto horse = new eAgoraButton(window());

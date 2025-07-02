@@ -512,8 +512,12 @@ public:
 
     bool editorMode() const { return mEditorMode; }
     void setEditorMode(const bool m) { mEditorMode = m; }
-    bool poseidonMode() const { return mPoseidonMode; }
-    void setPoseidonMode(const bool p);
+
+    bool atlantean(const eCityId cid) const;
+    bool setAtlantean(const eCityId cid, const bool a);
+
+    bool rainforest() const { return mRainforest; }
+    void setRainforest(const bool rainforest) { mRainforest = rainforest; }
 
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
     bool terrainUpdateScheduled() const { return mUpdateTerrain; }
@@ -655,7 +659,7 @@ private:
     void progressEarthquakes();
 
     bool mEditorMode = false;
-    bool mPoseidonMode = true;
+    bool mRainforest = true;
     mutable bool mEpisodeLost = false;
     eWorldBoard* mWorldBoard = nullptr;
     eWorldDirection mDirection{eWorldDirection::N};

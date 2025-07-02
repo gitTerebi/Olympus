@@ -18,6 +18,9 @@ eSmallHouse::eSmallHouse(eGameBoard& board, const eCityId cid) :
     eHouseBase(board, eBuildingType::commonHouse, 2, 2,
                {8, 16, 24, 32, 40, 48, 60}, cid) {
     eGameTextures::loadCommonHouse();
+    if(atlantean()) {
+        eGameTextures::loadPoseidonCommonHouse();
+    }
 }
 
 eSmallHouse::~eSmallHouse() {
@@ -33,14 +36,12 @@ std::shared_ptr<eTexture> eSmallHouse::getTexture(const eTileSize size) const {
     const auto& texs = blds[sizeId];
 
     if(mPeople == 0) return blds[sizeId].fHouseSpace;
-    auto& board = getBoard();
     const eTextureCollection* coll = nullptr;
-    if(board.poseidonMode()) {
+    if(atlantean()) {
         const int id = mLevel - 2;
         if(id < 0) {
             coll = &texs.fCommonHouse[mLevel];
         } else {
-            eGameTextures::loadPoseidonCommonHouse();
             coll = &texs.fPoseidonCommonHouse[id];
         }
     } else {

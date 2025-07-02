@@ -23,6 +23,7 @@ eBuilding::eBuilding(eGameBoard& board,
                      const eCityId cid) :
     eObject(board),
     mSeed(eRand::rand()), mType(type),
+    mAtlantean(board.atlantean(cid)),
     mSpanW(sw), mSpanH(sh),
     mCityId(cid) {
     getBoard().registerBuilding(this);

@@ -131,7 +131,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto rel = c->relationship();
     relationshipButton->setVisible(type == eCityType::foreignCity);
     nationalityButton->setVisible(type == eCityType::foreignCity ||
-                                  type == eCityType::colony);
+                                  type == eCityType::colony ||
+                                  type == eCityType::parentCity);
     stateButton->setVisible(type == eCityType::colony);
     attitudeButton->setVisible(type == eCityType::foreignCity ||
                                type == eCityType::colony);
@@ -204,7 +205,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
 
             relationshipButton->setVisible(type == eCityType::foreignCity);
             nationalityButton->setVisible(type == eCityType::foreignCity ||
-                                          type == eCityType::colony);
+                                          type == eCityType::colony ||
+                                          type == eCityType::parentCity);
             stateButton->setVisible(type == eCityType::colony);
             attitudeButton->setVisible(type == eCityType::foreignCity ||
                                        type == eCityType::colony);

@@ -19,7 +19,6 @@ struct eEpisode {
 
     eGameBoard* fBoard = nullptr;
     eWorldBoard* fWorldBoard = nullptr;
-    bool fAtlantean = true;
 
     int fDrachmasDelete = 2500;
     std::map<ePlayerId, int> fDrachmas;
@@ -37,7 +36,6 @@ struct eEpisode {
     std::vector<stdsptr<eGameEvent>> fEvents;
     std::vector<stdsptr<eEpisodeGoal>> fGoals;
 
-    eAvailableBuildings fAvailableBuildingsDelete;
     std::map<eCityId, eAvailableBuildings> fAvailableBuildings;
 };
 

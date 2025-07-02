@@ -71,6 +71,7 @@ public:
     void incTime(const int by);
 
     bool atlantean() const { return mAtlantean; }
+    void setAtlantean(const bool a) { mAtlantean = a; }
 
     int basePrice() const { return mBasePrice; }
 

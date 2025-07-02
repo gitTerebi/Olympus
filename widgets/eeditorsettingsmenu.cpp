@@ -296,76 +296,100 @@ void eEditorSettingsMenu::initialize(const bool first,
         buildMenu->setType(eFrameType::message);
         buildMenu->resize(width(), height());
 
-        const std::vector<eBuildingType> bv {
-            eBuildingType::eliteHousing,
+        const auto board = ep->fBoard;
+        const auto cids = board->citiesOnBoard();
+        for(const auto cid : cids) {
+            const auto c = board->boardCityWithId(cid);
+            if(!c) continue;
+            const auto ab = &ep->fAvailableBuildings[cid];
 
-            eBuildingType::wheatFarm,
-            eBuildingType::carrotsFarm,
-            eBuildingType::onionsFarm,
+            const auto cbuildingsAct = [this, ab]() {
+                const auto buildMenu = new eFramedWidget(window());
+                buildMenu->setType(eFrameType::message);
+                buildMenu->resize(width(), height());
 
-            eBuildingType::vine,
-            eBuildingType::oliveTree,
-            eBuildingType::orangeTree,
+                const std::vector<eBuildingType> bv {
+                    eBuildingType::eliteHousing,
 
-            eBuildingType::dairy,
-            eBuildingType::cardingShed,
+                    eBuildingType::wheatFarm,
+                    eBuildingType::carrotsFarm,
+                    eBuildingType::onionsFarm,
 
-            eBuildingType::fishery,
-            eBuildingType::urchinQuay,
-            eBuildingType::huntingLodge,
-            eBuildingType::corral,
+                    eBuildingType::vine,
+                    eBuildingType::oliveTree,
+                    eBuildingType::orangeTree,
 
-            eBuildingType::mint,
-            eBuildingType::foundry,
-            eBuildingType::timberMill,
-            eBuildingType::masonryShop,
+                    eBuildingType::dairy,
+                    eBuildingType::cardingShed,
 
-            eBuildingType::winery,
-            eBuildingType::olivePress,
-            eBuildingType::sculptureStudio,
+                    eBuildingType::fishery,
+                    eBuildingType::urchinQuay,
+                    eBuildingType::huntingLodge,
+                    eBuildingType::corral,
 
-            eBuildingType::armory,
+                    eBuildingType::mint,
+                    eBuildingType::foundry,
+                    eBuildingType::timberMill,
+                    eBuildingType::masonryShop,
 
-            eBuildingType::horseRanch,
-            eBuildingType::chariotFactory,
-        };
+                    eBuildingType::winery,
+                    eBuildingType::olivePress,
+                    eBuildingType::sculptureStudio,
 
-        int w = 0;
-        std::vector<eCheckableButton*> buttons;
-        for(const auto& type : bv) {
-            const auto bb = new eCheckableButton(window());
-            bb->setSmallFontSize();
-            bb->setSmallPadding();
-            bb->setText(eBuilding::sNameForBuilding(type));
-            bb->fitContent();
-            w = std::max(w, bb->width());
-            bb->setChecked(ep->availableBuilding(type));
-            bb->setCheckAction([type, ep](const bool b) {
-                if(b) {
-                    ep->fAvailableBuildingsDelete.allow(type);
-                } else {
-                    ep->fAvailableBuildingsDelete.disallow(type);
+                    eBuildingType::armory,
+
+                    eBuildingType::horseRanch,
+                    eBuildingType::chariotFactory,
+                };
+
+                int w = 0;
+                std::vector<eCheckableButton*> buttons;
+                for(const auto& type : bv) {
+                    const auto bb = new eCheckableButton(window());
+                    bb->setSmallFontSize();
+                    bb->setSmallPadding();
+                    bb->setText(eBuilding::sNameForBuilding(type));
+                    bb->fitContent();
+                    w = std::max(w, bb->width());
+                    bb->setChecked(ab->available(type));
+                    bb->setCheckAction([type, ab](const bool b) {
+                        if(b) {
+                            ab->allow(type);
+                        } else {
+                            ab->disallow(type);
+                        }
+                    });
+                    buttons.push_back(bb);
+                    buildMenu->addWidget(bb);
                 }
-            });
-            buttons.push_back(bb);
-            buildMenu->addWidget(bb);
-        }
-        const int p = padding();
-        int x = 2*p;
-        int y = 2*p;
-        for(const auto b : buttons) {
-            b->setWidth(w);
-            const int bh = b->height();
-            if(y + bh + 2*p > buildMenu->height()) {
-                x += w;
-                y = 2*p;
-            }
-            b->move(x, y);
-            y += bh + p;
-        }
+                const int p = padding();
+                int x = 2*p;
+                int y = 2*p;
+                for(const auto b : buttons) {
+                    b->setWidth(w);
+                    const int bh = b->height();
+                    if(y + bh + 2*p > buildMenu->height()) {
+                        x += w;
+                        y = 2*p;
+                    }
+                    b->move(x, y);
+                    y += bh + p;
+                }
 
+                window()->execDialog(buildMenu);
+                buildMenu->align(eAlignment::center);
+            };
+            const auto cButt = new eFramedButton(window());
+            cButt->setUnderline(false);
+            cButt->setText(board->cityName(cid));
+            cButt->fitContent();
+            cButt->setPressAction(cbuildingsAct);
+            buildMenu->addWidget(cButt);
+            cButt->align(eAlignment::hcenter);
+        }
         window()->execDialog(buildMenu);
         buildMenu->align(eAlignment::center);
+        buildMenu->layoutVertically();
     };
 
     const auto buildingsButt = new eFramedButton(window());

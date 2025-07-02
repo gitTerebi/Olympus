@@ -620,6 +620,10 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
     eBuilding(board, sHeroTypeToHallType(type), 4, 4, cid),
     mType(type) {
     eGameTextures::loadHerosHall();
+    if(atlantean()) {
+        eGameTextures::loadPoseidonHerosHall();
+    } else {
+    }
     board.registerHeroHall(this);
     setOverlayEnabledFunc([]() { return true; });
 
@@ -695,9 +699,7 @@ eHerosHall::~eHerosHall() {
 std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
-    auto& board = getBoard();
-    if(board.poseidonMode()) {
-        eGameTextures::loadPoseidonHerosHall();
+    if(atlantean()) {
         return texs.fPoseidonHeroHall;
     } else {
         return texs.fHeroHall;

@@ -50,7 +50,6 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
-    const bool poseidon = mWorldBoard->poseidonMode();
     const bool editor = mWorldBoard->editorMode();
 
     const auto handleCity = [&](const stdsptr<eWorldCity>& ct) {
@@ -59,20 +58,21 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             const bool c = eVectorHelpers::contains(mColonySelection, ct);
             if(!c) return;
         }
+        const bool atlantean = ct->nationality() == eNationality::atlantean;
         const auto t = ct->type();
         stdsptr<eTexture> tex;
         switch(t) {
         case eCityType::parentCity: {
-            if(poseidon) tex = texs.fPoseidonMainCity;
+            if(atlantean) tex = texs.fPoseidonMainCity;
             else tex = texs.fZeusMainCity;
         } break;
         case eCityType::colony: {
             const bool active = ct->active();
             if(active) {
-                if(poseidon) tex = texs.fPoseidonCollony;
+                if(atlantean) tex = texs.fPoseidonCollony;
                 else tex = texs.fZeusCollony;
             } else {
-                if(poseidon) tex = texs.fPoseidonDisabledCollony;
+                if(atlantean) tex = texs.fPoseidonDisabledCollony;
                 else tex = texs.fZeusDisabledCollony;
             }
         } break;
@@ -276,8 +276,9 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             const int s = forces.fSoldiers.size();
             if(s != 0) {
                 const int n = std::clamp(s/3, 0, 2);
-                const eTextureCollection* coll = nullptr;;
-                if(poseidon) coll = &texs.fPoseidonPlayerArmy;
+                const eTextureCollection* coll = nullptr;
+                const bool atlantean = hc->nationality() == eNationality::atlantean;
+                if(atlantean) coll = &texs.fPoseidonPlayerArmy;
                 else coll = &texs.fZeusPlayerArmy;;
                 const auto& tex = coll->getTexture(n);
                 p.drawTexture(x, y, tex, eAlignment::center);

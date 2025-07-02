@@ -193,6 +193,9 @@ public:
     eCityId cityId() const { return mCityId; }
     void setCityId(const eCityId i) { mCityId = i; }
 
+    bool atlantean() const { return mAtlantean; }
+    void setAtlantean(const bool a) { mAtlantean = a; }
+
     eCityId onCityId() const { return mOnCityId; }
     void setOnCityId(const eCityId i) { mOnCityId = i; }
 
@@ -216,6 +219,8 @@ private:
 
     eCityId mCityId{eCityId::neutralFriendly};
     eCityId mOnCityId{eCityId::neutralFriendly};
+
+    bool mAtlantean = false;
 
     bool mBusy = false;
 

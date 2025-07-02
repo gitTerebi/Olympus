@@ -1,7 +1,6 @@
 #include "eepisode.h"
 
 void eEpisode::read(eReadStream& src) {
-    src >> fAtlantean;
     {
         int nc;
         src >> nc;
@@ -65,7 +64,6 @@ void eEpisode::read(eReadStream& src) {
 }
 
 void eEpisode::write(eWriteStream& dst) const {
-    dst << fAtlantean;
     {
         dst << fDrachmas.size();
         for(const auto& d : fDrachmas) {
@@ -99,25 +97,8 @@ void eEpisode::write(eWriteStream& dst) const {
     }
 }
 
-bool eEpisode::availableBuilding(const eBuildingType type, const int id) const {
-    switch(type) {
-    case eBuildingType::chariotVendor:
-    case eBuildingType::chariotFactory: {
-        if(!fAtlantean) return false;
-    } break;
-    case eBuildingType::horseTrainer: {
-        if(fAtlantean) return false;
-    } break;
-    default:
-        break;
-    }
-
-    return fAvailableBuildingsDelete.available(type, id);
-}
-
 void eEpisode::clear() {
     fFriendlyGodsDelete.clear();
     fEvents.clear();
     fGoals.clear();
-    fAvailableBuildingsDelete = eAvailableBuildings();
 }

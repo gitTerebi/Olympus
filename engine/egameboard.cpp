@@ -1408,9 +1408,18 @@ eTile* eGameBoard::exitPoint(const eCityId cid) const {
     return c->exitPoint();
 }
 
-void eGameBoard::setPoseidonMode(const bool p) {
-    mPoseidonMode = p;
+bool eGameBoard::atlantean(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->atlantean();
+}
+
+bool eGameBoard::setAtlantean(const eCityId cid, const bool a) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    c->setAtlantean(a);
     scheduleTerrainUpdate();
+    return true;
 }
 
 void eGameBoard::setWorldBoard(eWorldBoard* const wb) {
@@ -2119,7 +2128,7 @@ void eGameBoard::incTime(const int by) {
             p->nextMonth();
         }
 
-        if(!mPoseidonMode) {
+        if(!mRainforest) {
             const auto m = mDate.month();
             const int ng = std::abs(mDate.year() % 4);
             const auto game = static_cast<eGames>(ng);
@@ -2568,7 +2577,6 @@ void eGameBoard::startEpisode(eEpisode* const e,
         c->startEpisode(e);
     }
 //    setFriendlyGods(e->fFriendlyGods);
-    mPoseidonMode = e->fAtlantean;
     const auto& gs = e->fGoals;
     for(const auto& g : gs) {
         const auto gg = g->makeCopy();

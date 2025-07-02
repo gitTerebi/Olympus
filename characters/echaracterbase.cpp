@@ -71,6 +71,7 @@ void eCharacterBase::read(eReadStream& src) {
     src >> mHP;
     src >> mAttack;
     src >> mSpeed;
+    src >> mAtlantean;
 }
 
 void eCharacterBase::write(eWriteStream& dst) const {
@@ -80,4 +81,5 @@ void eCharacterBase::write(eWriteStream& dst) const {
     dst << mHP;
     dst << mAttack;
     dst << mSpeed;
+    dst << mAtlantean;
 }

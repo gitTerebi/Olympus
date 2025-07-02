@@ -97,7 +97,6 @@ void eWorldBoard::setIOIDs() const {
 void eWorldBoard::write(eWriteStream& dst) const {
     setIOIDs();
 
-    dst << mPoseidonMode;
     dst << mMap;
     dst << mCities.size();
     for(const auto& c : mCities) {
@@ -124,7 +123,6 @@ void eWorldBoard::write(eWriteStream& dst) const {
 }
 
 void eWorldBoard::read(eReadStream& src) {
-    src >> mPoseidonMode;
     src >> mMap;
     int nc;
     src >> nc;

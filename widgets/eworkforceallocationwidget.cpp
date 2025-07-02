@@ -18,7 +18,7 @@ void eWorkforceAllocationWidget::initialize(
     const auto title = eLanguage::zeusText(50, 0);
     eInfoWidget::initialize(title);
 
-    const bool a = board.poseidonMode();
+    const bool a = board.atlantean(cid);
     const auto distrPtr = board.employmentDistributor(cid);
     auto& distributor = *distrPtr;
 

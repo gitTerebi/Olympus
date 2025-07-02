@@ -66,8 +66,7 @@ void eForcesWidget::setBanners(const eSoldierBanners& ss,
         {
             int topId = 0;
             const auto sType = s->type();
-            auto& board = s->getBoard();
-            const bool p = board.poseidonMode();
+            const bool p = s->atlantean();
             if(!p || sType == eBannerType::amazon ||
                sType == eBannerType::aresWarrior) {
                 switch(sType) {

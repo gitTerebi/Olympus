@@ -69,8 +69,7 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
     }
 }
 
-std::string eEpisodeGoal::text(const bool colonyEpisode,
-                               const bool atlantean) const {
+std::string eEpisodeGoal::text(const bool colonyEpisode) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto t = eLanguage::zeusText(194, 17);
@@ -92,7 +91,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
         auto t = eLanguage::zeusText(194, 24);
         const auto type = static_cast<eBannerType>(fEnumInt1);
         eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
-        const auto name = eSoldierBanner::sName(type, atlantean);
+        const auto name = eSoldierBanner::sName(type, false/*atlantean*/);
         eStringHelpers::replace(t, "[military_or_better]", name);
         return t;
     } break;

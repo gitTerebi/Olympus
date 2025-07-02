@@ -91,7 +91,7 @@ eTextureSpace eEliteHousing::getTextureSpace(
 
 std::vector<eOverlay> eEliteHousing::getOverlays(const eTileSize size) const {
 //    auto& board = getBoard();
-//    if(board.poseidonMode()) return {};
+//    if(board.atlantean()) return {};
 //    return getHorseOverlays(size);
     (void)size;
     return {};
@@ -323,8 +323,7 @@ const eTextureCollection& eEliteHousing::getTextureCollection(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
-    auto& board = getBoard();
-    if(board.poseidonMode()) {
+    if(atlantean()) {
         eGameTextures::loadPoseidonEliteHouse();
         if(mPeople <= 0) return blds.fPoseidonEliteHouse[0];
         return blds.fPoseidonEliteHouse[mLevel + 1];
