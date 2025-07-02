@@ -2062,14 +2062,14 @@ void eGameBoard::incTime(const int by) {
         c->incTime(by);
     }
 
-    if(mTotalTime == 0) {
-        const auto c = mCitiesOnBoard[0];
-        const auto brect = c->tileBRect();
-        const auto pid = personPlayer();
-        const auto cid = c->id();
-        const auto task = new eAICityPlanningTask(*this, brect, pid, cid);
-        mThreadPool.queueTask(task);
-    }
+//    if(mTotalTime == 0) {
+//        const auto c = mCitiesOnBoard[0];
+//        const auto brect = c->tileBRect();
+//        const auto pid = personPlayer();
+//        const auto cid = c->id();
+//        const auto task = new eAICityPlanningTask(*this, brect, pid, cid);
+//        mThreadPool.queueTask(task);
+//    }
     mTime += by;
     mTotalTime += by;
     bool nextMonth = false;
