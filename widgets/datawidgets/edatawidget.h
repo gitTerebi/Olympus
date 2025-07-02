@@ -2,6 +2,7 @@
 #define EDATAWIDGET_H
 
 #include "../ewidget.h"
+#include "engine/ecityid.h"
 
 class eViewModeButton;
 class eGameWidget;
@@ -21,6 +22,9 @@ public:
 protected:
     virtual void openMoreInfoWiget() {}
 
+    void setLastPersonCityId(const eCityId id) { mLastPersonCityId = id; }
+    eCityId lastPersonCityId() const { return mLastPersonCityId; }
+
     void addViewButton(eViewModeButton* const b);
     eWidget* innerWidget() const { return mInnerWidget; }
     eGameWidget* gameWidget() const { return mGW; }
@@ -29,11 +33,12 @@ protected:
 
     static int sCoverageToText(const int c);
 
-    eCityId viewedCity() const;
+    eCityId viewedCity();
 
     eGameBoard& mBoard;
     int mTime = 0;
 private:
+    eCityId mLastPersonCityId = eCityId::neutralFriendly;
     eGameWidget* mGW = nullptr;
     eBasicButton* mMoreInfo = nullptr;
     eWidget* mInnerWidget = nullptr;

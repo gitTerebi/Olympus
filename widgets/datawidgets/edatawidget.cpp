@@ -3,6 +3,7 @@
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
 #include "elanguage.h"
+#include "engine/egameboard.h"
 
 eDataWidget::eDataWidget(eGameBoard& b, eMainWindow* const w) :
     eWidget(w), mBoard(b) {}
@@ -90,6 +91,14 @@ int eDataWidget::sCoverageToText(const int c) {
     return 10; // good
 }
 
-eCityId eDataWidget::viewedCity() const {
-    return mGW->viewedCity();
+eCityId eDataWidget::viewedCity() {
+    auto cid = mGW->viewedCity();
+    const auto ppid = mBoard.personPlayer();
+    const auto pid = mBoard.cityIdToPlayerId(cid);
+    if(ppid != pid) {
+        cid = lastPersonCityId();
+    } else {
+        setLastPersonCityId(cid);
+    }
+    return cid;
 }

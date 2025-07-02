@@ -853,17 +853,27 @@ void eGameMenu::initialize(eGameBoard* const b,
     }
 
     const auto b0 = addButton(coll.fPopulation, mWidgets[0]);
+    mPopulationButton = b0;
     const auto b1 = addButton(coll.fHusbandry, mWidgets[1]);
+    mHusbandryButton = b1;
     const auto b2 = addButton(coll.fIndustry, mWidgets[2]);
+    mIndustryButton = b2;
     const auto b3 = addButton(coll.fDistribution, mWidgets[3]);
+    mDistributionButton = b3;
     const auto b4 = addButton(coll.fHygieneSafety, mWidgets[4]);
+    mHygieneSafetyButton = b4;
     const auto b5 = addButton(coll.fAdministration, mWidgets[5]);
+    mAdministrationButton = b5;
     const auto b6a = addButton(coll.fCulture, mWidgets[6]);
     mCultureButton = b6a;
     const auto b7 = addButton(coll.fMythology, mWidgets[8]);
+    mMythologyButton = b7;
     const auto b8 = addButton(coll.fMilitary, mWidgets[9]);
+    mMilitaryButton = b8;
     const auto b9 = addButton(coll.fAesthetics, mWidgets[10]);
+    mAesthethicsButton = b9;
     const auto b10 = addButton(coll.fOverview, mWidgets[11]);
+    mOverviewButton = b10;
 
     const auto setupButtonHover =
         [this](eCheckableButton* b0, const std::string& txt) {
@@ -1036,11 +1046,26 @@ void eGameMenu::updateButtonsVisibility() {
     for(const auto s : mSubButtons) {
         s->updateVisible(cid);
     }
-    bool science = true;
     const auto c = mBoard->boardCityWithId(cid);
-    if(c) {
-        science = c->atlantean();
-    }
+    const bool science = c ? c->atlantean() : false;
+
+    const auto pid = mBoard->cityIdToPlayerId(cid);
+    const auto ppid = mBoard->personPlayer();
+    const bool e = c && pid == ppid;
+
+    mPopulationButton->setEnabled(e);
+    mHusbandryButton->setEnabled(e);
+    mIndustryButton->setEnabled(e);
+    mDistributionButton->setEnabled(e);
+    mHygieneSafetyButton->setEnabled(e);
+    mAdministrationButton->setEnabled(e);
+    mScienceButton->setEnabled(e);
+    mCultureButton->setEnabled(e);
+    mMythologyButton->setEnabled(e);
+    mMilitaryButton->setEnabled(e);
+    mAesthethicsButton->setEnabled(e);
+    mOverviewButton->setEnabled(e);
+
     mScienceButton->setVisible(science);
     mCultureButton->setVisible(!science);
     if(science && mCultureButton->checked()) {
