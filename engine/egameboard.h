@@ -277,7 +277,10 @@ public:
 
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     using eEnlistRequest = std::function<void(const eEnlistedForces& enlistable,
+                                              const std::vector<eCityId>& cids,
+                                              const std::vector<std::string>& cnames,
                                               const std::vector<eHeroType>& heroesAbroad,
+                                              const std::map<eHeroType, eCityId>& heroesCity,
                                               const eEnlistAction& action,
                                               const std::vector<eResourceType>& plunderResources)>;
     void setEnlistForcesRequest(const eEnlistRequest& req);

@@ -26,9 +26,11 @@ public:
             const eEnlistAction& a,
             const std::vector<stdsptr<eWorldCity>>& exclude,
             const std::vector<eResourceType>& plunderResources = {});
-    void openEnlistForcesDialog(
-            const eEnlistedForces& enlistable,
+    void openEnlistForcesDialog(const eEnlistedForces& enlistable,
+            const std::vector<eCityId>& cids,
+            const std::vector<std::string>& cnames,
             const std::vector<eHeroType>& heroesAbroad,
+            const std::map<eHeroType, eCityId>& heroesCity,
             const eEnlistAction& action,
             const std::vector<eResourceType>& plunderResources = {});
 

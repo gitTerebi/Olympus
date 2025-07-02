@@ -369,7 +369,10 @@ void eWorldWidget::openDialog(eWidget* const d) {
 
 void eWorldWidget::openEnlistForcesDialog(
         const eEnlistedForces& enlistable,
+        const std::vector<eCityId>& cids,
+        const std::vector<std::string>& cnames,
         const std::vector<eHeroType>& heroesAbroad,
+        const std::map<eHeroType, eCityId>& heroesCity,
         const eEnlistAction& action,
         const std::vector<eResourceType>& plunderResources) {
 
@@ -402,7 +405,9 @@ void eWorldWidget::openEnlistForcesDialog(
 //    }
 
     const auto d = new eEnlistForcesDialog(window());
-    d->initialize(enlistable, heroesAbroad, action, plunderResources);
+    d->initialize(enlistable, cids, cnames,
+                  heroesAbroad, heroesCity,
+                  action, plunderResources);
     openDialog(d);
 }
 

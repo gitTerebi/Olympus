@@ -2409,17 +2409,34 @@ void eGameBoard::requestForces(const eEnlistAction& action,
                                const std::vector<eResourceType>& plunderResources,
                                const std::vector<stdsptr<eWorldCity>>& exclude) {
     if(mEnlistRequester) {
-        auto f = getEnlistableForces(personPlayer());
+        const auto ppid = personPlayer();
+        const auto cids = playerCitiesOnBoard(ppid);
+        std::vector<std::string> cnames;
+        for(const auto cid : cids) {
+            const auto n = cityName(cid);
+            cnames.push_back(n);
+        }
+        auto f = getEnlistableForces(ppid);
         std::vector<eHeroType> heroesAbroad;
+        std::map<eHeroType, eCityId> heroesCity;
         for(const auto h : f.fHeroes) {
-            const auto hh = heroHall(eCityId::city0, h);
+            eCityId hcid = eCityId::neutralFriendly;
+            eHerosHall* hh = nullptr;
+            for(const auto cid : cids) {
+                hh = heroHall(cid, h);
+                if(hh) {
+                    hcid = cid;
+                    break;
+                }
+            }
+            heroesCity[h] = hcid;
             const bool abroad = !hh ? true : hh->heroOnQuest();
             if(abroad) heroesAbroad.push_back(h);
         }
         for(const auto& e : exclude) {
             eVectorHelpers::remove(f.fAllies, e);
         }
-        mEnlistRequester(f, heroesAbroad, action, plunderResources);
+        mEnlistRequester(f, cids, cnames, heroesAbroad, heroesCity, action, plunderResources);
     }
 }
 
