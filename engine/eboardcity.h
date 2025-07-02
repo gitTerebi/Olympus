@@ -72,6 +72,8 @@ public:
 
     bool atlantean() const { return mAtlantean; }
 
+    int basePrice() const { return mBasePrice; }
+
     void updateCoverage();
 
     void payTaxes(const int d, const int people);
@@ -300,6 +302,7 @@ private:
     eGameBoard& mBoard;
 
     eCityId mId;
+    int mBasePrice = 5000;
     std::vector<eTile*> mTiles;
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
