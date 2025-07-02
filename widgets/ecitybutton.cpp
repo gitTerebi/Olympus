@@ -1,6 +1,6 @@
 #include "ecitybutton.h"
 
-#include "echoosebutton.h"
+#include "echoosecitydialog.h"
 #include "emainwindow.h"
 #include "engine/egameboard.h"
 #include "elanguage.h"
@@ -9,25 +9,12 @@ void eCityButton::initialize(eWorldBoard* const board,
                              const eCityAction& cact) {
     setUnderline(false);
     setPressAction([this, board, cact]() {
-        const auto& cities = board->cities();
-        std::vector<stdsptr<eWorldCity>> validCities;
-        std::vector<std::string> cityNames;
-        for(const auto& c : cities) {
-            if(mValidator) {
-                const bool v = mValidator(c);
-                if(!v) continue;
-            }
-            cityNames.push_back(c->name());
-            validCities.push_back(c);
-        }
-        if(cityNames.empty()) return;
-        const auto choose = new eChooseButton(window());
-        const auto act = [this, validCities, cact](const int val) {
-            const auto c = validCities[val];
+        const auto choose = new eChooseCityDialog(window());
+        const auto act = [this, cact](const stdsptr<eWorldCity>& c) {
             setCity(c);
             if(cact) cact(c);
         };
-        choose->initialize(8, cityNames, act);
+        choose->initialize(board, cact);
 
         window()->execDialog(choose);
         choose->align(eAlignment::center);

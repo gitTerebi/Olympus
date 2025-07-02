@@ -10,6 +10,7 @@
 #include "echoosebutton.h"
 #include "enamewidget.h"
 #include "engine/eworldboard.h"
+#include "engine/egameboard.h"
 
 #include <algorithm>
 
@@ -55,6 +56,7 @@ public:
 };
 
 void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
+                                     eGameBoard* const board,
                                      eWorldBoard* const wb) {
     if(!c) return;
     setType(eFrameType::message);
@@ -173,7 +175,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto typeName = eWorldCity::sTypeName(type);
     typeButton->setText(typeName);
     typeButton->fitContent();
-    typeButton->setPressAction([this, relationshipButton, typeButton,
+    typeButton->setPressAction([this, board,
+                               relationshipButton, typeButton,
                                directionButton, teamButton,
                                nationalityButton,
                                stateButton, attitudeButton,
@@ -190,13 +193,24 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sTypeName(t);
             typeNames.push_back(name);
         }
-        const auto act = [relationshipButton, nationalityButton,
+        const auto act = [board,
+                          relationshipButton, nationalityButton,
                           stateButton, directionButton, teamButton,
                           attitudeButton, c, buttonsW1,
                           types, typeNames, typeButton,
                           updatePlayerTeam](const int val) {
             const auto type = types[val];
             c->setType(type);
+            if(type == eCityType::colony ||
+               type == eCityType::parentCity) {
+                const auto cid = c->cityId();
+                if(c->nationality() == eNationality::atlantean) {
+                    board->setAtlantean(cid, true);
+                } else {
+                    c->setNationality(eNationality::greek);
+                    board->setAtlantean(cid, false);
+                }
+            }
             const auto rel = c->relationship();
             const auto name = typeNames[val];
             typeButton->setText(name);
@@ -356,9 +370,17 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto nationality = c->nationality();
     nationalityButton->setText(eWorldCity::sNationalityName(nationality));
     nationalityButton->fitContent();
-    nationalityButton->setPressAction([this, nationalityButton, c]() {
+    nationalityButton->setPressAction([this, board, type,
+                                      nationalityButton, c]() {
         const auto d = new eChooseButton(window());
-        const std::vector<eNationality> nationalities =
+        std::vector<eNationality> nationalities;
+        if(type == eCityType::parentCity ||
+           type == eCityType::colony) {
+            nationalities =
+            {eNationality::greek,
+             eNationality::atlantean};
+        } else {
+            nationalities =
             {eNationality::greek,
              eNationality::trojan,
              eNationality::persian,
@@ -370,15 +392,19 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
              eNationality::phoenician,
              eNationality::oceanid,
              eNationality::atlantean};
+        }
         std::vector<std::string> nationalityNames;
         for(const auto r : nationalities) {
             const auto name = eWorldCity::sNationalityName(r);
             nationalityNames.push_back(name);
         }
-        const auto act = [nationalities, nationalityNames,
+        const auto act = [board,
+                          nationalities, nationalityNames,
                           c, nationalityButton](const int val) {
             const auto nat = nationalities[val];
             c->setNationality(nat);
+            const auto cid = c->cityId();
+            board->setAtlantean(cid, nat == eNationality::atlantean);
             const auto name = nationalityNames[val];
             nationalityButton->setText(name);
             nationalityButton->fitContent();

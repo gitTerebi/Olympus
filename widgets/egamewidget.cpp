@@ -1664,6 +1664,10 @@ void eGameWidget::updateMaps(const std::vector<eTile*>& tiles) {
     mmt->scheduleTilesUpdate(tiles);
 }
 
+void eGameWidget::updateCitiesOnBoard() {
+    mTem->updateCitiesOnBoard(*mBoard);
+}
+
 void eGameWidget::setTileSize(const eTileSize size) {
     const auto& setts = window()->settings();
     const auto sizes = setts.availableSizes();

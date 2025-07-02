@@ -13,11 +13,48 @@
 #include "emainwindow.h"
 #include "egamewidget.h"
 
+#include "estringhelpers.h"
+
+#include "ecityonboardselectionwidget.h"
+
 void eBoardSettingsMenu::initialize(
         eGameWidget* const gw, eGameBoard& board) {
     setType(eFrameType::message);
 
     const auto boardPtr = &board;
+
+    const auto citiesButt = new eFramedButton(window());
+    citiesButt->setUnderline(false);
+    citiesButt->setText(eLanguage::text("cities_on_board"));
+    citiesButt->fitContent();
+    citiesButt->setPressAction([this, gw, boardPtr]() {
+        const auto citiesMenu = new eCityOnBoardSelectionWidget(window());
+        citiesMenu->resize(width(), height());
+
+        const auto get = [boardPtr]() {
+            return boardPtr->citiesOnBoard();
+        };
+
+        const auto add = [boardPtr, gw](const eCityId cid) {
+            boardPtr->addCityToBoard(cid);
+            gw->updateMaps(true);
+            gw->updateCitiesOnBoard();
+        };
+
+        const auto remove = [boardPtr, gw](const eCityId cid) {
+            boardPtr->removeCityFromBoard(cid);
+            gw->updateMaps(true);
+            gw->updateCitiesOnBoard();
+        };
+
+        const auto wboard = boardPtr->getWorldBoard();
+        citiesMenu->initialize(get, add, remove, boardPtr, wboard);
+
+        window()->execDialog(citiesMenu);
+        citiesMenu->align(eAlignment::center);
+    });
+    addWidget(citiesButt);
+    citiesButt->align(eAlignment::hcenter);
 
     const auto resizeButt = new eFramedButton(window());
     resizeButt->setUnderline(false);

@@ -47,10 +47,12 @@ private:
     eStateChecker mStateChecker = nullptr;
 };
 
-void eActionListWidget::addAction(const std::string& text,
-                                  const eAction& a,
-                                  const eStateChecker& stateChecker) {
+eWidget* eActionListWidget::addAction(
+        const std::string& text,
+        const eAction& a,
+        const eStateChecker& stateChecker) {
     const auto b = new eStateCheckingFlatButton(window());
     b->initialize(text, a, stateChecker);
     addWidget(b);
+    return b;
 }

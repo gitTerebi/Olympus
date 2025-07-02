@@ -1065,9 +1065,22 @@ std::vector<eCityId> eGameBoard::citiesOnBoard() const {
 }
 
 std::string eGameBoard::cityName(const eCityId cid) const {
-    const auto c = mWorldBoard->cityWithId(cid);
-    if(!c) return "Invalid";
-    return c->name();
+    return mWorldBoard->cityName(cid);
+}
+
+eBoardCity* eGameBoard::addCityToBoard(const eCityId cid) {
+    const auto c = std::make_shared<eBoardCity>(cid, *this);
+    mCitiesOnBoard.push_back(c);
+    return c.get();
+}
+
+void eGameBoard::removeCityFromBoard(const eCityId cid) {
+    for(auto it = mCitiesOnBoard.begin(); it < mCitiesOnBoard.end(); it++) {
+        const auto c = it->get();
+        if(c->id() != cid) continue;
+        mCitiesOnBoard.erase(it);
+        return;
+    }
 }
 
 void eGameBoard::updateMaxSoldiers(const eCityId cid) {
@@ -1418,7 +1431,6 @@ bool eGameBoard::setAtlantean(const eCityId cid, const bool a) {
     const auto c = boardCityWithId(cid);
     if(!c) return false;
     c->setAtlantean(a);
-    scheduleTerrainUpdate();
     return true;
 }
 
@@ -1484,6 +1496,7 @@ void eGameBoard::handleGamesBegin(const eGames game) {
     const auto pcids = personPlayerCitiesOnBoard();
     for(const auto& cid : pcids) {
         const auto c = boardCityWithId(cid);
+        if(c->atlantean()) continue;
         const double chance = c->winningChance(game);
         ed.fCityId = cid;
         if(chance > 0) {
@@ -1515,10 +1528,12 @@ void eGameBoard::handleGamesEnd(const eGames game) {
     std::vector<eCityChance> chances;
     const auto ppid = eGameBoard::personPlayer();
     for(const auto& c : mCitiesOnBoard) {
+        if(c->atlantean()) continue;
         const auto id = c->id();
         const double chance = c->winningChance(game);
         chances.push_back(eCityChance{id, chance});
     }
+    if(chances.empty()) return;
     std::random_shuffle(chances.begin(), chances.end());
 
     eCityId winner = eCityId::neutralFriendly;
@@ -1557,18 +1572,18 @@ void eGameBoard::handleGamesEnd(const eGames game) {
         break;
     }
     eCityId secondCid = eCityId::neutralFriendly;
-    for(const auto& c : mCitiesOnBoard) {
-        const auto cid = c->id();
+    for(const auto& c : chances) {
+        const auto cid = c.first;
         if(cid == winner) continue;
         const auto player = cityIdToPlayerId(cid);
-        if(player != ppid) continue;
-        const double chance = c->winningChance(game);
-        const bool second = eRand::rand() % 101 < 200*chance;
+        const bool second = eRand::rand() % 101 < 200*c.second;
         ed.fCityId = cid;
         if(second && secondCid == eCityId::neutralFriendly) {
             secondCid = cid;
+            if(player != ppid) continue;
             showMessage(ed, msgs->fSecond);
         } else {
+            if(player != ppid) continue;
             showMessage(ed, msgs->fLost);
         }
     }
@@ -2128,15 +2143,13 @@ void eGameBoard::incTime(const int by) {
             p->nextMonth();
         }
 
-        if(!mRainforest) {
-            const auto m = mDate.month();
-            const int ng = std::abs(mDate.year() % 4);
-            const auto game = static_cast<eGames>(ng);
-            if(m == eMonth::june) {
-                handleGamesBegin(game);
-            } else if(m == eMonth::august) {
-                handleGamesEnd(game);
-            }
+        const auto m = mDate.month();
+        const int ng = std::abs(mDate.year() % 4);
+        const auto game = static_cast<eGames>(ng);
+        if(m == eMonth::june) {
+            handleGamesBegin(game);
+        } else if(m == eMonth::august) {
+            handleGamesEnd(game);
         }
     }
 

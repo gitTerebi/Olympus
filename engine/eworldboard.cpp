@@ -79,6 +79,12 @@ stdsptr<eWorldCity> eWorldBoard::cityWithId(const eCityId cid) const {
     return mCities[id];
 }
 
+std::string eWorldBoard::cityName(const eCityId cid) const {
+    const auto c = cityWithId(cid);
+    if(!c) return "Invalid";
+    return c->name();
+}
+
 stdsptr<eWorldCity> eWorldBoard::cityWithIOID(const int id) const {
     for(const auto& c : mCities) {
         const int i = c->ioID();

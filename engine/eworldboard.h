@@ -45,7 +45,7 @@ public:
     ePlayerId firstFreePlayerId() const;
 
     stdsptr<eWorldCity> cityWithId(const eCityId cid) const;
-
+    std::string cityName(const eCityId cid) const;
     stdsptr<eWorldCity> cityWithIOID(const int id) const;
     void setIOIDs() const;
 

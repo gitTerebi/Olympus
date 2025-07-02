@@ -9,6 +9,7 @@
 class eRotateButton;
 class eMiniMap;
 class eGameWidget;
+class eActionListWidget;
 
 enum class eTerrainEditMode {
     dry = static_cast<int>(eTerrain::dry),
@@ -74,15 +75,21 @@ public:
 
     eBrushType brushType() const;
     int brushSize() const;
+
+    void updateCitiesOnBoard(eGameBoard& board);
 private:
     eBrushType mBrushType = eBrushType::apply;
     int mBrushSize = 1;
     eTerrainEditMode mMode = eTerrainEditMode::dry;
     int mModeId = 0;
+    int mSpacing = 0;
 
     eCheckableButton* mB1 = nullptr;
     eCheckableButton* mB4 = nullptr;
     eCheckableButton* mB7 = nullptr;
+
+    std::map<eCityId, eWidget*> mTerrioryButtons;
+    eActionListWidget* mW12 = nullptr;
 
     eRotateButton* mRotateButton = nullptr;
     eMiniMap* mMiniMap = nullptr;

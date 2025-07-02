@@ -24,7 +24,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     setPadding(0);
     fitContent();
 
-    const int spacing = 2*mult;
+    mSpacing = 2*mult;
 
     const auto w0 = new eActionListWidget(window());
     w0->addAction("Apply", [this]() {
@@ -50,7 +50,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
                    mBrushSize == i + 2;
         });
     }
-    w0->stackVertically(spacing);
+    w0->stackVertically(mSpacing);
     w0->fitContent();
 
     const auto w1 = new eWidget(window());
@@ -62,7 +62,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w2->addAction("Chopped Forest", [this]() {
         mMode = eTerrainEditMode::choppedForest;
     });
-    w2->stackVertically(spacing);
+    w2->stackVertically(mSpacing);
     w2->fitContent();
 
     const auto w3 = new eActionListWidget(window());
@@ -72,7 +72,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w3->addAction("Beach", [this]() {
         mMode = eTerrainEditMode::beach;
     });
-    w3->stackVertically(spacing);
+    w3->stackVertically(mSpacing);
     w3->fitContent();
 
     const auto w4 = new eWidget(window());
@@ -83,7 +83,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w5->addAction("Urchin", [this]() {
         mMode = eTerrainEditMode::urchin;
     });
-    w5->stackVertically(spacing);
+    w5->stackVertically(mSpacing);
     w5->fitContent();
 
     const auto w6 = new eActionListWidget(window());
@@ -102,7 +102,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w6->addAction("Silver Ore", [this]() {
         mMode = eTerrainEditMode::silver;
     });
-    w6->stackVertically(spacing);
+    w6->stackVertically(mSpacing);
     w6->fitContent();
 
     const auto w7 = new eWidget(window());
@@ -123,7 +123,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w8->addAction("Make Walkable", [this]() {
         mMode = eTerrainEditMode::makeWalkable;
     });
-    w8->stackVertically(spacing);
+    w8->stackVertically(mSpacing);
     w8->fitContent();
 
     const auto w9 = new eActionListWidget(window());
@@ -146,7 +146,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             return b != nullptr;
         });
     }
-    w9->stackVertically(spacing);
+    w9->stackVertically(mSpacing);
     w9->fitContent();
 
     const auto w10 = new eWidget(window());
@@ -173,11 +173,11 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             return b != nullptr;
         });
     }
-    w11->stackVertically(spacing);
+    w11->stackVertically(mSpacing);
     w11->fitContent();
 
-    const auto w12 = new eActionListWidget(window());
-    w12->addAction("Entry Point", [this]() {
+    mW12 = new eActionListWidget(window());
+    mW12->addAction("Entry Point", [this]() {
         mMode = eTerrainEditMode::entryPoint;
         mModeId = 0;
     }, [board, gw]() {
@@ -185,7 +185,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         const auto b = board->banner(cid, eBannerTypeS::entryPoint);
         return b != nullptr;
     });
-    w12->addAction("Exit Point", [this]() {
+    mW12->addAction("Exit Point", [this]() {
         mMode = eTerrainEditMode::exitPoint;
         mModeId = 0;
     }, [board, gw]() {
@@ -194,21 +194,14 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         return b != nullptr;
     });
     {
-        w12->addAction("Neutral Territory", [this]() {
+        mW12->addAction("Neutral Territory", [this]() {
             mMode = eTerrainEditMode::cityTerritory;
             mModeId = static_cast<int>(eCityId::neutralFriendly);
         });
     }
-    const auto cids = board->citiesOnBoard();
-    for(const auto cid : cids) {
-        const auto name = board->cityName(cid);
-        w12->addAction(name + " Territory", [this, cid]() {
-            mMode = eTerrainEditMode::cityTerritory;
-            mModeId = static_cast<int>(cid);
-        });
-    }
-    w12->stackVertically(spacing);
-    w12->fitContent();
+    updateCitiesOnBoard(*board);
+    mW12->stackVertically(mSpacing);
+    mW12->fitContent();
 
 
     const auto w13 = new eActionListWidget(window());
@@ -232,7 +225,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             return b != nullptr;
         });
     }
-    w13->stackVertically(spacing);
+    w13->stackVertically(mSpacing);
     w13->fitContent();
 
     mWidgets.push_back(w0);
@@ -247,7 +240,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     mWidgets.push_back(w9);
     mWidgets.push_back(w10);
     mWidgets.push_back(w11);
-    mWidgets.push_back(w12);
+    mWidgets.push_back(mW12);
     mWidgets.push_back(w13);
 
     for(const auto w : mWidgets) {
@@ -278,7 +271,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     const auto b9 = addButton(coll.fDisasters, w9);
     const auto b10 = addButton(coll.fWaterPoints, w10);
     const auto b11 = addButton(coll.fLandInvasionPoints, w11);
-    const auto b12 = addButton(coll.fExitEndEntryPoints, w12);
+    const auto b12 = addButton(coll.fExitEndEntryPoints, mW12);
     const auto b13 = addButton(coll.fAnimalPoints, w13);
 
     connectAndLayoutButtons();
@@ -345,4 +338,22 @@ int eTerrainEditMenu::brushSize() const {
         return 1;
     }
     return mBrushSize;
+}
+
+void eTerrainEditMenu::updateCitiesOnBoard(eGameBoard& board) {
+    for(const auto tb : mTerrioryButtons) {
+        tb.second->deleteLater();
+    }
+    mTerrioryButtons.clear();
+    const auto cids = board.citiesOnBoard();
+    for(const auto cid : cids) {
+        const auto name = board.cityName(cid);
+        const auto w = mW12->addAction(name + " Territory", [this, cid]() {
+            mMode = eTerrainEditMode::cityTerritory;
+            mModeId = static_cast<int>(cid);
+        });
+        mTerrioryButtons[cid] = w;
+    }
+    mW12->stackVertically(mSpacing);
+    mW12->fitContent();
 }

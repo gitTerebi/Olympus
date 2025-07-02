@@ -39,9 +39,8 @@ void eGameBoard::read(eReadStream& src) {
         for(int i = 0; i < nc; i++) {
             eCityId cid;
             src >> cid;
-            const auto c = std::make_shared<eBoardCity>(cid, *this);
+            const auto c = addCityToBoard(cid);
             c->read(src);
-            mCitiesOnBoard.push_back(c);
             scheduleAppealMapUpdate(cid);
             mThreadPool.addBoard(cid);
         }

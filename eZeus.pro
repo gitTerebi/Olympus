@@ -535,8 +535,10 @@ SOURCES += \
         widgets/echeckablebutton.cpp \
         widgets/echeckbox.cpp \
         widgets/echoosebutton.cpp \
+        widgets/echoosecitydialog.cpp \
         widgets/echoosegameeditmenu.cpp \
         widgets/ecitybutton.cpp \
+        widgets/ecityonboardselectionwidget.cpp \
         widgets/ecitysettingswidget.cpp \
         widgets/eclosabledialog.cpp \
         widgets/edatebutton.cpp \
@@ -2608,8 +2610,10 @@ HEADERS += \
     widgets/echeckablebutton.h \
     widgets/echeckbox.h \
     widgets/echoosebutton.h \
+    widgets/echoosecitydialog.h \
     widgets/echoosegameeditmenu.h \
     widgets/ecitybutton.h \
+    widgets/ecityonboardselectionwidget.h \
     widgets/ecitysettingswidget.h \
     widgets/eclosabledialog.h \
     widgets/edatebutton.h \

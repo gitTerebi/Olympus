@@ -8,6 +8,7 @@ map "Map"
 name "Name"
 leader "Leader"
 
+cities_on_board "Cities on board"
 resize "Resize"
 width "Width"
 height "Height"
@@ -33,6 +34,7 @@ land_trade "Land trade"
 none "None"
 
 add "Add"
+
 
 gift_of_from "Gift of %1 from %2"
 gift_of_to "Gift of %1 to %2"

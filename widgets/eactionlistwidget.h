@@ -3,13 +3,15 @@
 
 #include "ewidget.h"
 
+class eStateCheckingFlatButton;
+
 class eActionListWidget : public eWidget {
 public:
     using eWidget::eWidget;
 
     using eStateChecker = std::function<bool()>;
-    void addAction(const std::string& text, const eAction& a,
-                   const eStateChecker& stateChecker = nullptr);
+    eWidget* addAction(const std::string& text, const eAction& a,
+                       const eStateChecker& stateChecker = nullptr);
 };
 
 #endif // EACTIONLISTWIDGET_H

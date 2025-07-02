@@ -607,6 +607,8 @@ public:
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
     std::string cityName(const eCityId cid) const;
+    eBoardCity* addCityToBoard(const eCityId cid);
+    void removeCityFromBoard(const eCityId cid);
 
     bool canBuildAvenue(eTile* const t) const;
     bool canBuildBase(const int minX, const int maxX,
