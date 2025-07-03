@@ -77,11 +77,7 @@
 #include "etilehelper.h"
 
 eAICityPlan::eAICityPlan(const eCityId cid) :
-    mPid(ePlayerId::neutralFriendly), mCid(cid) {}
-
-eAICityPlan::eAICityPlan(const ePlayerId pid,
-                         const eCityId cid) :
-    mPid(pid), mCid(cid) {}
+    mCid(cid) {}
 
 eAIBoard eAICityPlan::aiBoard(const int w, const int h) const {
     eAIBoard result;
@@ -113,7 +109,8 @@ void eAICityPlan::addDistrict(const eAIDistrict& a) {
 int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
     int result = 0;
     const auto d = mDistricts[id];
-    const auto diff = board.difficulty(mPid);
+    const auto pid = board.cityIdToPlayerId(mCid);
+    const auto diff = board.difficulty(pid);
     for(const auto& b : d.fBuildings) {
         result += eDifficultyHelpers::buildingCost(diff, b.fType);
     }
@@ -123,7 +120,8 @@ int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
 void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
     const bool c = districtBuilt(id);
     if(!c) mBuiltDistrics.push_back(id);
-    mDistricts[id].build(board, mPid, mCid);
+    const auto pid = board.cityIdToPlayerId(mCid);
+    mDistricts[id].build(board, pid, mCid);
 }
 
 void eAICityPlan::buildAllDistricts(eGameBoard& board) {
@@ -134,8 +132,9 @@ void eAICityPlan::buildAllDistricts(eGameBoard& board) {
 }
 
 void eAICityPlan::rebuildDistricts(eGameBoard& board) {
+    const auto pid = board.cityIdToPlayerId(mCid);
     for(const int id : mBuiltDistrics) {
-        mDistricts[id].build(board, mPid, mCid);
+        mDistricts[id].build(board, pid, mCid);
     }
 }
 
@@ -174,8 +173,9 @@ void eAICityPlan::connectAllBuiltDistricts(eGameBoard& board) {
     if(points.empty()) return;
     auto& tp = board.threadPool();
     tp.scheduleDataUpdate();
+    const auto pid = board.cityIdToPlayerId(mCid);
     const auto task = new eAIConnectWithRoadTask(
-                          board, points, mPid, mCid);
+                          board, points, pid, mCid);
     tp.queueTask(task);
 }
 

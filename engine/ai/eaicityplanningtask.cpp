@@ -2408,7 +2408,7 @@ void eAICityPlanningTask::finish() {
         setShouldDelete(true);
         printf("Generated district main thread\n");
         const auto best = mPopulation.front();
-        if(!mPlan) mPlan = new eAICityPlan(mPid, cid());
+        if(!mPlan) mPlan = new eAICityPlan(cid());
         best->addToCityPlan(*mPlan);
         mPlan->buildAllDistricts(mBoard);
         mPlan->connectAllBuiltDistricts(mBoard);

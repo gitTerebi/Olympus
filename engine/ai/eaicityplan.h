@@ -200,10 +200,6 @@ struct eAIBoard {
 class eAICityPlan {
 public:
     eAICityPlan(const eCityId cid);
-    eAICityPlan(const ePlayerId pid,
-                const eCityId cid);
-
-    void setPlayerId(const ePlayerId pid) { mPid = pid; }
 
     eAIBoard aiBoard(const int w, const int h) const;
 
@@ -221,7 +217,6 @@ public:
     void connectAllBuiltDistricts(eGameBoard& board);
     bool districtBuilt(const int id) const;
 private:
-    ePlayerId mPid;
     eCityId mCid;
 
     std::vector<int> mBuiltDistrics;
