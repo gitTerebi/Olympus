@@ -620,15 +620,18 @@ public:
     void removeCityFromBoard(const eCityId cid);
 
     bool canBuildAvenue(eTile* const t, const eCityId cid,
-                        const ePlayerId pid) const;
+                        const ePlayerId pid,
+                        const bool forestAllowed) const;
     bool canBuildBase(const int minX, const int maxX,
                       const int minY, const int maxY,
+                      const bool forestAllowed,
                       const eCityId cid,
                       const ePlayerId pid,
                       const bool fertile = false,
                       const bool flat = false) const;
     bool canBuild(const int tx, const int ty,
                   const int sw, const int sh,
+                  const bool forestAllowed,
                   const eCityId cid,
                   const ePlayerId pid,
                   const bool fertile = false,
@@ -640,12 +643,14 @@ public:
                    const eBuildingCreator& bc,
                    const ePlayerId pid,
                    const eCityId cid,
+                   const bool forestAllowed,
                    const bool fertile = false,
                    const bool flat = false);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
                const eCityId cid,
                const ePlayerId pid,
+               const bool forestAllowed,
                const eBuildingCreator& bc,
                const bool fertile = false,
                const bool flat = false);
@@ -656,7 +661,8 @@ public:
                      const eBuildingType type,
                      const eAnimalCreator& creator,
                      const eCityId cid,
-                     const ePlayerId pid);
+                     const ePlayerId pid,
+                     const bool forestAllowed);
 
     void removeAllBuildings();
 
@@ -665,7 +671,8 @@ public:
                         const eBuildingType bt,
                         const bool rotate,
                         const eCityId cid,
-                        const ePlayerId pid);
+                        const ePlayerId pid,
+                        const bool forestAllowed);
 private:
     void updateNeighbours();
 

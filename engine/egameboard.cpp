@@ -2969,10 +2969,11 @@ void buildTiles(int& minX, int& minY,
 }
 
 bool eGameBoard::canBuildAvenue(eTile* const t, const eCityId cid,
-                                const ePlayerId pid) const {
+                                const ePlayerId pid,
+                                const bool forestAllowed) const {
     const int tx = t->x();
     const int ty = t->y();
-    const bool cb = canBuildBase(tx, tx + 1, ty, ty + 1, cid, pid);
+    const bool cb = canBuildBase(tx, tx + 1, ty, ty + 1, forestAllowed, cid, pid);
     if(!cb) return false;
     const auto tr = t->topRight<eTile>();
     const auto br = t->bottomRight<eTile>();
@@ -2995,6 +2996,7 @@ bool eGameBoard::canBuildAvenue(eTile* const t, const eCityId cid,
 
 bool eGameBoard::canBuildBase(const int minX, const int maxX,
                               const int minY, const int maxY,
+                              const bool forestAllowed,
                               const eCityId cid,
                               const ePlayerId pid,
                               const bool fertile,
@@ -3014,7 +3016,9 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
                 fertileFound = true;
             }
 
-            const auto ttta = ttt & eTerrain::buildable;
+            const auto ttta = forestAllowed ?
+                                  ttt & eTerrain::buildableAfterClear :
+                                  ttt & eTerrain::buildable;
             if(!static_cast<bool>(ttta)) return false;
 
             if(!t->walkableElev() && t->isElevationTile()) return false;
@@ -3031,6 +3035,7 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
 
 bool eGameBoard::canBuild(const int tx, const int ty,
                           const int sw, const int sh,
+                          const bool forestAllowed,
                           const eCityId cid,
                           const ePlayerId pid,
                           const bool fertile,
@@ -3040,7 +3045,9 @@ bool eGameBoard::canBuild(const int tx, const int ty,
     int maxX;
     int maxY;
     buildTiles(minX, minY, maxX, maxY, tx, ty, sw, sh);
-    return canBuildBase(minX, maxX, minY, maxY, cid, pid, fertile, flat);
+    return canBuildBase(minX, maxX, minY, maxY,
+                        forestAllowed, cid, pid,
+                        fertile, flat);
 }
 
 
@@ -3049,11 +3056,13 @@ bool eGameBoard::buildBase(const int minX, const int minY,
                            const eBuildingCreator& bc,
                            const ePlayerId pid,
                            const eCityId cid,
+                           const bool forestAllowed,
                            const bool fertile,
                            const bool flat) {
     const int sw = maxX - minX + 1;
     const int sh = maxY - minY + 1;
     const bool cb = canBuildBase(minX, maxX + 1, minY, maxY + 1,
+                                 forestAllowed,
                                  cid, pid, fertile, flat);
     if(!cb) return false;
     if(!bc) return false;
@@ -3096,6 +3105,7 @@ bool eGameBoard::build(const int tx, const int ty,
                        const int sw, const int sh,
                        const eCityId cid,
                        const ePlayerId pid,
+                       const bool forestAllowed,
                        const eBuildingCreator& bc,
                        const bool fertile,
                        const bool flat) {
@@ -3108,17 +3118,18 @@ bool eGameBoard::build(const int tx, const int ty,
     buildTiles(minX, minY, maxX, maxY,
                tx, ty, sw, sh);
     return buildBase(minX, minY, maxX - 1, maxY - 1,
-                     bc, pid, cid, fertile, flat);
+                     bc, pid, cid, forestAllowed, fertile, flat);
 }
 
 void eGameBoard::buildAnimal(eTile* const tile,
                              const eBuildingType type,
                              const eAnimalCreator& creator,
                              const eCityId cid,
-                             const ePlayerId pid) {
+                             const ePlayerId pid,
+                             const bool forestAllowed) {
     const int tx = tile->x();
     const int ty = tile->y();
-    const bool cb = canBuild(tx, ty, 1, 2, cid, pid, true, true);
+    const bool cb = canBuild(tx, ty, 1, 2, forestAllowed, cid, pid, true, true);
     if(!cb) return;
     const auto sh = creator(*this);
     sh->changeTile(tile);
@@ -3128,7 +3139,7 @@ void eGameBoard::buildAnimal(eTile* const tile,
     const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
     sh->setAction(a);
 
-    build(tx, ty, 1, 2, cid, pid, [this, sh, type, cid]() {
+    build(tx, ty, 1, 2, cid, pid, forestAllowed, [this, sh, type, cid]() {
         return e::make_shared<eAnimalBuilding>(
                     *this, sh.get(), type, cid);
     }, true, true);
@@ -3145,8 +3156,10 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                 const eBuildingType bt,
                                 const bool rotate,
                                 const eCityId cid,
-                                const ePlayerId pid) {
-    const bool cb = canBuildBase(minX, maxX, minY, maxY, cid, pid);
+                                const ePlayerId pid,
+                                const bool forestAllowed) {
+    const bool cb = canBuildBase(minX, maxX, minY, maxY,
+                                 forestAllowed, cid, pid);
     if(!cb) return true;
 
     const auto ppid = cityIdToPlayerId(cid);
@@ -3256,7 +3269,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::oliveTree:
             case eSanctEleType::vine:
             case eSanctEleType::orangeTree: {
-                build(tile->x(), tile->y(), 1, 1, cid, pid,
+                build(tile->x(), tile->y(), 1, 1, cid, pid, forestAllowed,
                       [this, cid]() { return e::make_shared<ePlaceholder>(*this, cid); });
                 b->addSpecialTile(tile);
             } break;
@@ -3278,7 +3291,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                 const auto tt = e::make_shared<eTempleStatueBuilding>(
                                    statueType, t.fId, *this, cid);
                 tt->setSanctuary(b.get());
-                this->build(tx, ty, 1, 1, cid, pid, [tt]() { return tt; });
+                this->build(tx, ty, 1, 1, cid, pid, forestAllowed, [tt]() { return tt; });
                 b->registerElement(tt);
             } break;
             case eSanctEleType::monument: {
@@ -3286,7 +3299,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                     god, t.fId, *this, cid);
                 tt->setSanctuary(b.get());
                 const int d = rotate ? 1 : 0;
-                this->build(tx - d, ty + d, 2, 2, cid, pid, [tt]() { return tt; });
+                this->build(tx - d, ty + d, 2, 2, cid, pid, forestAllowed, [tt]() { return tt; });
                 b->registerElement(tt);
             } break;
             case eSanctEleType::altar: {
@@ -3294,7 +3307,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                     *this, cid);
                 tt->setSanctuary(b.get());
                 const int d = rotate ? 1 : 0;
-                this->build(tx - d, ty + d, 2, 2, cid, pid, [tt]() { return tt; });
+                this->build(tx - d, ty + d, 2, 2, cid, pid, forestAllowed, [tt]() { return tt; });
                 b->registerElement(tt);
             } break;
             case eSanctEleType::sanctuary: {
@@ -3303,16 +3316,16 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                 tb->setSanctuary(b.get());
                 b->registerElement(tb);
                 if(rotate) {
-                    this->build(tx - 2, ty + 2, 4, 4, cid, pid, [tb]() { return tb; });
+                    this->build(tx - 2, ty + 2, 4, 4, cid, pid, forestAllowed, [tb]() { return tb; });
                 } else {
-                    this->build(tx + 1, ty - 1, 4, 4, cid, pid, [tb]() { return tb; });
+                    this->build(tx + 1, ty - 1, 4, 4, cid, pid, forestAllowed, [tb]() { return tb; });
                 }
             } break;
             case eSanctEleType::tile: {
                 const auto tt = e::make_shared<eTempleTileBuilding>(
                                     t.fId, *this, cid);
                 tt->setSanctuary(b.get());
-                this->build(tx, ty, 1, 1, cid, pid, [tt]() { return tt; });
+                this->build(tx, ty, 1, 1, cid, pid, forestAllowed, [tt]() { return tt; });
                 b->registerElement(tt);
                 if(t.fWarrior) b->addWarriorTile(tile);
             } break;

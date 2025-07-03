@@ -59,11 +59,11 @@ void eAIConnectWithRoadTask::finish() {
         if(bt != eBuildingType::none &&
            bt != eBuildingType::road) {
             t->underBuilding()->erase();
-            mBoard.build(t->x(), t->y(), 1, 1, cid(), mPid,
+            mBoard.build(t->x(), t->y(), 1, 1, cid(), mPid, false,
                               [&]() { return e::make_shared<ePark>(mBoard, cid()); },
                               false, true);
         } else {
-            mBoard.build(t->x(), t->y(), 1, 1, cid(), mPid,
+            mBoard.build(t->x(), t->y(), 1, 1, cid(), mPid, false,
                   [&]() { return e::make_shared<eRoad>(mBoard, cid()); },
                   false, true);
         }

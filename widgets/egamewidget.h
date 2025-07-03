@@ -161,7 +161,7 @@ private:
                          eDiagonalOrientation& o) const;
     bool canBuildPier(const int tx, const int ty,
                       eDiagonalOrientation& o, const eCityId cid,
-                      const ePlayerId pid) const;
+                      const ePlayerId pid, const bool forestAllowed) const;
 
     std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile,
                                           const eCityId cid,
@@ -224,7 +224,8 @@ private:
                      std::vector<eTile*>& tiles,
                      bool& rotated);
     bool canBuildAvenue(eTile* const t, const eCityId cid,
-                        const ePlayerId pid) const;
+                        const ePlayerId pid,
+                        const bool forestAllowed) const;
 
     bool inErase(const int tx, const int ty);
     bool inErase(const SDL_Rect& rect);
@@ -257,6 +258,7 @@ private:
     eMouseButton mPressedButtons = eMouseButton::none;
 
     bool mEditorMode = false;
+    bool mTerrainEditMode = false;
 
     bool mRotate = false;
     int mRotateId = 0;

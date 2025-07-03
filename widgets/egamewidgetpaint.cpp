@@ -193,8 +193,8 @@ void eGameWidget::setArmyMenuVisible(const bool v) {
         const auto map = mAm->miniMap();
         map->scheduleUpdate();
     } else {
-        mTem->setVisible(mEditorMode);
-        mGm->setVisible(!mEditorMode);
+        mTem->setVisible(mTerrainEditMode);
+        mGm->setVisible(!mTerrainEditMode);
     }
 }
 
@@ -1642,7 +1642,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                     if(!b) continue;
                     if(t->underBuilding()) continue;
                     if(mode == eBuildingMode::avenue) {
-                        const bool hr = canBuildAvenue(t, mViewedCityId, ppid);
+                        const bool hr = canBuildAvenue(t, mViewedCityId, ppid,
+                                                       mEditorMode);
                         if(!hr) continue;
                     }
                     const int a = t->altitude();
@@ -1669,7 +1670,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                     }
                     if(!cbr) continue;
                     const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2,
-                                                         mViewedCityId, ppid);
+                                                         mEditorMode,
+                                                         mViewedCityId, ppid,
+                                                         mEditorMode);
                     if(!cb) continue;
                     double rx;
                     double ry;
@@ -1703,6 +1706,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         const int ty = t->y();
         const bool cb = allowed > 0 && mBoard->canBuild(
                             tx, ty, 1, 2,
+                            mEditorMode,
                             mViewedCityId, ppid,
                             true, true);
         const auto& tex = trrTexs.fBuildingBase;
@@ -2042,7 +2046,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                const int sw, const int sh) {
                 if(sw > 2 || sh > 2) return true;
                 eDiagonalOrientation o;
-                return canBuildPier(tx, ty, o, mViewedCityId, ppid);
+                return canBuildPier(tx, ty, o, mViewedCityId, ppid, mEditorMode);
             };
         } break;
         case eBuildingMode::palace: {
@@ -2050,6 +2054,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                const int sw, const int sh) {
                 if(mBoard->hasPalace(mViewedCityId)) return false;
                 return mBoard->canBuild(tx, ty, sw, sh,
+                                        mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
             };
@@ -2059,6 +2064,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                const int sw, const int sh) {
                 if(mBoard->hasStadium(mViewedCityId)) return false;
                 return mBoard->canBuild(tx, ty, sw, sh,
+                                        mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
             };
@@ -2125,13 +2131,14 @@ void eGameWidget::paintEvent(ePainter& p) {
                 (void)sw;
                 (void)sh;
                 const auto t = mBoard->tile(tx, ty);
-                return canBuildAvenue(t, mViewedCityId, ppid);
+                return canBuildAvenue(t, mViewedCityId, ppid, mEditorMode);
             };
         } break;
         default: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 return mBoard->canBuild(tx, ty, sw, sh,
+                                        mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
             };
@@ -2175,6 +2182,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int xMax = xMin + sw;
             const int yMax = yMin + sh;
             const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
+                                                 mEditorMode,
                                                  mViewedCityId, ppid);
            if(!cb) {
                 tex->setColorMod(255, 0, 0);

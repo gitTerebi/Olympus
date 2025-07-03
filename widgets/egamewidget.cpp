@@ -304,13 +304,14 @@ void eGameWidget::initialize() {
     settingsButt->move(mGm->x() - settingsButt->width() - p,
                        editorSwitch->y() + editorSwitch->height() + p);
     editorSwitch->setPressAction([this, settingsButt]() {
-        mEditorMode = !mEditorMode;
-        mTem->setVisible(mEditorMode);
-        mGm->setVisible(!mEditorMode);
-        settingsButt->setVisible(mEditorMode);
+        mTerrainEditMode = !mTerrainEditMode;
+        mTem->setVisible(mTerrainEditMode);
+        mGm->setVisible(!mTerrainEditMode);
+        settingsButt->setVisible(mTerrainEditMode);
     });
     addWidget(editorSwitch);
-    editorSwitch->setVisible(mBoard->editorMode());
+    mEditorMode = mBoard->editorMode();
+    editorSwitch->setVisible(mEditorMode);
 
     {
         const auto buyCityWidget = new eFramedWidget(window());
@@ -648,7 +649,8 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
 bool eGameWidget::canBuildPier(const int tx, const int ty,
                                eDiagonalOrientation& o,
                                const eCityId cid,
-                               const ePlayerId pid) const {
+                               const ePlayerId pid,
+                               const bool forestAllowed) const {
     const bool r = canBuildFishery(tx, ty, o);
     if(!r) return false;
     int minX;
@@ -672,7 +674,8 @@ bool eGameWidget::canBuildPier(const int tx, const int ty,
         minY = ty - 2;
     } break;
     }
-    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4, cid, pid);
+    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4,
+                                forestAllowed, cid, pid);
 }
 
 std::vector<ePatrolGuide>::iterator
@@ -973,8 +976,9 @@ bool eGameWidget::bridgeTiles(eTile* const t, const eTerrain terr,
 }
 
 bool eGameWidget::canBuildAvenue(eTile* const t, const eCityId cid,
-                                 const ePlayerId pid) const {
-    return mBoard->canBuildAvenue(t, cid, pid);
+                                 const ePlayerId pid,
+                                 const bool forestAllowed) const {
+    return mBoard->canBuildAvenue(t, cid, pid, forestAllowed);
 }
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
