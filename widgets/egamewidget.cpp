@@ -312,6 +312,61 @@ void eGameWidget::initialize() {
     addWidget(editorSwitch);
     editorSwitch->setVisible(mBoard->editorMode());
 
+    {
+        const auto buyCityWidget = new eFramedWidget(window());
+        mBuyCityWidget = buyCityWidget;
+        buyCityWidget->setType(eFrameType::message);
+        const auto innerWidget = new eWidget(window());
+        buyCityWidget->addWidget(innerWidget);
+        innerWidget->move(p, p);
+
+        const auto cityLabel = new eLabel(window());
+        mBuyCityName = cityLabel;
+        cityLabel->setText("City Placeholder");
+        cityLabel->fitContent();
+        innerWidget->addWidget(cityLabel);
+
+        const auto priceWidget = new eWidget(window());
+
+        const auto iconLabel = new eLabel(window());
+        iconLabel->setNoPadding();
+        const auto& intrfc = eGameTextures::interface();
+        const auto uiScale = resolution().uiScale();
+        const int icoll = static_cast<int>(uiScale);
+        const auto& coll = intrfc[icoll];
+        iconLabel->setTexture(coll.fDrachmasTopMenu);
+        iconLabel->fitContent();
+        priceWidget->addWidget(iconLabel);
+
+        const auto priceLabel = new eLabel(window());
+        mBuyCityPrice = priceLabel;
+        priceLabel->setNoPadding();
+        priceLabel->setText("99999");
+        priceLabel->fitContent();
+        priceWidget->addWidget(priceLabel);
+
+        priceWidget->stackHorizontally(p);
+        priceWidget->fitContent();
+        innerWidget->addWidget(priceWidget);
+
+        const auto button = new eFramedButton(window());
+        mBuyCityButton = button;
+        button->setUnderline(false);
+        button->setText(eLanguage::zeusText(44, 5));
+        button->fitContent();
+        innerWidget->addWidget(button);
+
+        innerWidget->stackVertically(p);
+        innerWidget->fitContent();
+        cityLabel->align(eAlignment::hcenter);
+        priceWidget->align(eAlignment::hcenter);
+        button->align(eAlignment::hcenter);
+        buyCityWidget->resize(innerWidget->width() + 2*p,
+                              innerWidget->height() + 2*p);
+        addWidget(buyCityWidget);
+        buyCityWidget->align(eAlignment::center);
+    }
+
     const auto& setts = window()->settings();
     const auto sizes = setts.availableSizes();
     setTileSize(sizes.front());
@@ -474,6 +529,31 @@ bool eGameWidget::tileVisible(eTile* const tile) const {
 
 eCityId eGameWidget::viewedCity() const {
     return mViewedCityId;
+}
+
+void eGameWidget::showBuyCity(const eCityId cid) {
+    const auto c = mBoard->boardCityWithId(cid);
+    const int price = c->basePrice();
+    mBuyCityName->setText(mBoard->cityName(cid));
+    mBuyCityName->align(eAlignment::hcenter);
+    mBuyCityPrice->setText(std::to_string(price));
+    mBuyCityWidget->show();
+    mBuyCityButton->setPressAction([this, cid, price]() {
+        const auto ppid = mBoard->personPlayer();
+        const int d = mBoard->drachmas(ppid);
+        if(d >= price) {
+            mBoard->moveCityToPlayer(cid, ppid);
+            mBoard->incDrachmas(ppid, -price);
+            hideBuyCity();
+            mGm->viewedCityChanged();
+        } else {
+            showTip(eLanguage::zeusText(19, 19));
+        }
+    });
+}
+
+void eGameWidget::hideBuyCity() {
+    mBuyCityWidget->hide();
 }
 
 void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {

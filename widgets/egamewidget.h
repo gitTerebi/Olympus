@@ -34,6 +34,8 @@ class eMessageBox;
 class eGameBoard;
 class eAgoraBase;
 class eInfoWidget;
+class eFramedButton;
+
 enum class eAgoraOrientation;
 enum class eGodType;
 enum class eHeroType;
@@ -95,6 +97,9 @@ public:
     eTile* viewedTile() const;
     bool tileVisible(eTile* const tile) const;
     eCityId viewedCity() const;
+
+    void showBuyCity(const eCityId cid);
+    void hideBuyCity();
 
     void setBoard(eGameBoard* const board);
 
@@ -326,6 +331,11 @@ private:
     eTile* mViewedTile = nullptr;
     eCityId mViewedCityId = eCityId::neutralFriendly;
     bool mUpdateViewedTileScheduled = true;
+
+    eWidget* mBuyCityWidget = nullptr;
+    eLabel* mBuyCityName = nullptr;
+    eLabel* mBuyCityPrice = nullptr;
+    eFramedButton* mBuyCityButton = nullptr;
 };
 
 #endif // EGAMEWIDGET_H

@@ -235,7 +235,15 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto newC = mViewedTile ? mViewedTile->cityId() :
                                         eCityId::neutralFriendly;
         mViewedCityId = newC;
-        if(oldC != newC) mGm->viewedCityChanged();
+        if(oldC != newC) {
+            const auto c = mBoard->boardCityWithId(newC);
+            if(c && c->owningPlayer() == nullptr) {
+                showBuyCity(newC);
+            } else {
+                hideBuyCity();
+            }
+            mGm->viewedCityChanged();
+        }
     }
     if(mBoard->duringEarthquake()) {
         mDX += (eRand::rand() % 11) - 5;
@@ -272,7 +280,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     mBoard->incFrame();
     const int nc = children().size() - mTips.size();
 //    printf("%d\n", nc);
-    if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 7) {
+    if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 8) {
         const bool lost = mBoard->episodeLost();
         if(lost) {
             const auto w = window();
