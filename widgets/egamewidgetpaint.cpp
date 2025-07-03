@@ -23,6 +23,8 @@
 #include "emainwindow.h"
 #include "eminimap.h"
 
+#include <string>
+
 bool sDontDrawAppeal(const eTerrain terr) {
     return terr == eTerrain::stones ||
            terr == eTerrain::flatStones ||

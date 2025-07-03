@@ -129,8 +129,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto attitudeButton = new eFramedButton(window());
     const auto directionButton = new eFramedButton(window());
     const auto teamButton = new eFramedButton(window());
+    const auto playerButton = new eFramedButton(window());
     const auto type = c->type();
-    const auto rel = c->relationship();
     relationshipButton->setVisible(type == eCityType::foreignCity);
     nationalityButton->setVisible(type == eCityType::foreignCity ||
                                   type == eCityType::colony ||
@@ -139,35 +139,27 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     attitudeButton->setVisible(type == eCityType::foreignCity ||
                                type == eCityType::colony);
     directionButton->setVisible(type == eCityType::distantCity);
-    teamButton->setVisible(type == eCityType::foreignCity &&
-                           rel == eForeignCityRelationship::rival);
 
-    const auto updatePlayerTeam = [c, wb, teamButton]() {
-        const auto type = c->type();
-        const auto rel = c->relationship();
-        const auto pid = c->playerId();
-        eTeamId tid;
-        const auto ppid = wb->personPlayer();
-        const auto ptid = wb->playerIdToTeamId(ppid);
-        if(rel == eForeignCityRelationship::rival &&
-           type == eCityType::foreignCity) {
-            const auto ctid = wb->playerIdToTeamId(pid);
-            if(ctid == ptid) {
-                tid = static_cast<eTeamId>(static_cast<int>(ptid) + 1);
-            } else {
-                tid = ctid;
-            }
-        } else if(type == eCityType::distantCity ||
-                  type == eCityType::destroyedCity ||
-                  type == eCityType::enchantedPlace) {
-            tid = eTeamId::neutralFriendly;
+    const auto teamIdToName = [](const eTeamId id) {
+        if(id == eTeamId::neutralAggresive) {
+            return std::string("Neutral unfriendly");
+        } else if(id == eTeamId::neutralFriendly) {
+            return std::string("Neutral friendly");
         } else {
-            tid = ptid;
+            const int i = static_cast<int>(id);
+            return "Team " + std::to_string(i);
         }
-        wb->setPlayerTeam(pid, tid);
-        const int tidi = static_cast<int>(tid);
-        teamButton->setText("Team: " + std::to_string(tidi));
-        teamButton->fitContent();
+    };
+
+    const auto playerIdToName = [](const ePlayerId id) {
+        if(id == ePlayerId::neutralAggresive) {
+            return std::string("Neutral unfriendly");
+        } else if(id == ePlayerId::neutralFriendly) {
+            return std::string("Neutral friendly");
+        } else {
+            const int i = static_cast<int>(id);
+            return "Player " + std::to_string(i);
+        }
     };
 
     const auto typeButton = new eFramedButton(window());
@@ -177,10 +169,10 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     typeButton->fitContent();
     typeButton->setPressAction([this, board,
                                relationshipButton, typeButton,
-                               directionButton, teamButton,
+                               directionButton,
                                nationalityButton,
                                stateButton, attitudeButton,
-                               c, buttonsW1, updatePlayerTeam]() {
+                               c, buttonsW1]() {
         const std::vector<eCityType> types =
             {eCityType::parentCity,
              eCityType::colony,
@@ -195,10 +187,9 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
         }
         const auto act = [board,
                           relationshipButton, nationalityButton,
-                          stateButton, directionButton, teamButton,
+                          stateButton, directionButton,
                           attitudeButton, c, buttonsW1,
-                          types, typeNames, typeButton,
-                          updatePlayerTeam](const int val) {
+                          types, typeNames, typeButton](const int val) {
             const auto type = types[val];
             c->setType(type);
             if(type == eCityType::colony ||
@@ -211,7 +202,6 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                     board->setAtlantean(cid, false);
                 }
             }
-            const auto rel = c->relationship();
             const auto name = typeNames[val];
             typeButton->setText(name);
             typeButton->fitContent();
@@ -225,16 +215,12 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             attitudeButton->setVisible(type == eCityType::foreignCity ||
                                        type == eCityType::colony);
             directionButton->setVisible(type == eCityType::distantCity);
-            teamButton->setVisible(type == eCityType::foreignCity &&
-                                   rel == eForeignCityRelationship::rival);
             buttonsW1->layoutVertically(true);
 
             const auto attitude = c->attitudeClass();
             attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
-
-            updatePlayerTeam();
         };
         const auto d = new eChooseButton(window());
         d->initialize(3, typeNames, act);
@@ -249,8 +235,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto relationship = c->relationship();
     relationshipButton->setText(eWorldCity::sRelationshipName(relationship));
     relationshipButton->fitContent();
-    relationshipButton->setPressAction([this, attitudeButton, teamButton,
-                                       relationshipButton, c, updatePlayerTeam]() {
+    relationshipButton->setPressAction([this, attitudeButton,
+                                       relationshipButton, c]() {
         const auto d = new eChooseButton(window());
         const std::vector<eForeignCityRelationship> relationships =
             {eForeignCityRelationship::vassal,
@@ -261,10 +247,9 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sRelationshipName(r);
             relationshipNames.push_back(name);
         }
-        const auto act = [attitudeButton, teamButton,
+        const auto act = [attitudeButton,
                           relationships, relationshipNames,
-                          c, relationshipButton,
-                          updatePlayerTeam](const int val) {
+                          c, relationshipButton](const int val) {
             const auto rel = relationships[val];
             c->setRelationship(rel);
             const auto name = relationshipNames[val];
@@ -276,11 +261,6 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
-
-            const auto type = c->type();
-            teamButton->setVisible(type == eCityType::foreignCity &&
-                                   rel == eForeignCityRelationship::rival);
-            updatePlayerTeam();
         };
         d->initialize(5, relationshipNames, act);
 
@@ -418,24 +398,63 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     buttonsW1->addWidget(nationalityButton);
     nationalityButton->align(eAlignment::hcenter);
 
-    teamButton->setUnderline(false);
+    playerButton->setUnderline(false);
     const auto cid = c->cityId();
+    const auto pid = wb->cityIdToPlayerId(cid);
+    playerButton->setText(playerIdToName(pid));
+    playerButton->fitContent();
+    playerButton->setPressAction([this, c, wb,
+                                  playerButton, playerIdToName,
+                                  teamButton, teamIdToName]() {
+        const auto d = new eChooseButton(window());
+        std::vector<std::string> playerNames;
+        playerNames.push_back("Neutral unfriendly");
+        playerNames.push_back("Neutral friendly");
+        for(int i = 0; i <= 11; i++) {
+            const auto id = static_cast<ePlayerId>(i);
+            const auto name = playerIdToName(id);
+            playerNames.push_back(name);
+        }
+        const auto act = [c, wb,
+                         playerButton, playerIdToName,
+                         teamButton, teamIdToName](const int val) {
+            const auto pid = static_cast<ePlayerId>(val - 2);
+            const auto cid = c->cityId();
+            wb->moveCityToPlayer(cid, pid);
+            playerButton->setText(playerIdToName(pid));
+            playerButton->fitContent();
+
+            const auto tid = wb->playerIdToTeamId(pid);
+            teamButton->setText(teamIdToName(tid));
+            teamButton->fitContent();
+        };
+        d->initialize(8, playerNames, act);
+
+        window()->execDialog(d);
+        d->align(eAlignment::center);
+    });
+    buttonsW1->addWidget(playerButton);
+    playerButton->align(eAlignment::hcenter);
+
+    teamButton->setUnderline(false);
     const auto tid = wb->cityIdToTeamId(cid);
-    const int tidi = static_cast<int>(tid);
-    teamButton->setText("Team: " + std::to_string(tidi));
+    teamButton->setText(teamIdToName(tid));
     teamButton->fitContent();
-    teamButton->setPressAction([this, c, wb, teamButton]() {
+    teamButton->setPressAction([this, c, wb, teamButton, teamIdToName]() {
         const auto d = new eChooseButton(window());
         std::vector<std::string> teamNames;
-        for(int i = 0; i < 16; i++) {
-            teamNames.push_back("Team " + std::to_string(i));
+        teamNames.push_back("Neutral unfriendly");
+        teamNames.push_back("Neutral friendly");
+        for(int i = 0; i <= 11; i++) {
+            const auto id = static_cast<eTeamId>(i);
+            const auto name = teamIdToName(id);
+            teamNames.push_back(name);
         }
-        const auto act = [c, wb, teamButton](const int val) {
+        const auto act = [c, wb, teamButton, teamIdToName](const int val) {
             const auto pid = c->playerId();
-            const auto tid = static_cast<eTeamId>(val);
+            const auto tid = static_cast<eTeamId>(val - 2);
             wb->setPlayerTeam(pid, tid);
-            const int tidi = static_cast<int>(tid);
-            teamButton->setText("Team: " + std::to_string(tidi));
+            teamButton->setText(teamIdToName(tid));
             teamButton->fitContent();
         };
         d->initialize(8, teamNames, act);

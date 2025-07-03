@@ -197,7 +197,12 @@ void eWorldBoard::setColonyAsCurrentCity(const int id) {
         c->setIsCurrentCity(false);
     }
     const auto c = colonyWithId(id);
-    if(c) c->setIsCurrentCity(true);
+    if(c) {
+        c->setIsCurrentCity(true);
+        const auto cid = c->cityId();
+        const auto pid = cityIdToPlayerId(cid);
+        setPersonPlayer(pid);
+    }
 }
 
 void eWorldBoard::setParentAsCurrentCity() {
@@ -205,6 +210,9 @@ void eWorldBoard::setParentAsCurrentCity() {
         const auto type = c->type();
         if(type == eCityType::parentCity) {
             c->setIsCurrentCity(true);
+            const auto cid = c->cityId();
+            const auto pid = cityIdToPlayerId(cid);
+            setPersonPlayer(pid);
         } else {
             c->setIsCurrentCity(false);
         }

@@ -37,12 +37,14 @@ void eBoardSettingsMenu::initialize(
 
         const auto add = [boardPtr, gw](const eCityId cid) {
             boardPtr->addCityToBoard(cid);
+            boardPtr->updatePlayersOnBoard();
             gw->updateMaps(true);
             gw->updateCitiesOnBoard();
         };
 
         const auto remove = [boardPtr, gw](const eCityId cid) {
             boardPtr->removeCityFromBoard(cid);
+            boardPtr->updatePlayersOnBoard();
             gw->updateMaps(true);
             gw->updateCitiesOnBoard();
         };

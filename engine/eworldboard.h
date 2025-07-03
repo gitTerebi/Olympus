@@ -71,6 +71,7 @@ public:
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCities() const;
+    void setPersonPlayer(const ePlayerId pid) { mPersonPlayer = pid; }
     ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
     bool mEditorMode = false;
@@ -78,7 +79,7 @@ private:
     std::vector<stdsptr<eWorldCity>> mCities;
 
     std::map<eCityId, ePlayerId> mCityToPlayer;
-    ePlayerId mPersonPlayer;
+    ePlayerId mPersonPlayer = ePlayerId::player0;
     std::map<ePlayerId, eTeamId> mPlayerToTeam;
 };
 

@@ -610,6 +610,11 @@ public:
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
     std::string cityName(const eCityId cid) const;
+
+    void updatePlayersOnBoard();
+    eBoardPlayer* addPlayerToBoard(const ePlayerId pid);
+    void removePlayerFromBoard(const ePlayerId pid);
+
     eBoardCity* addCityToBoard(const eCityId cid);
     void removeCityFromBoard(const eCityId cid);
 

@@ -1068,6 +1068,38 @@ std::string eGameBoard::cityName(const eCityId cid) const {
     return mWorldBoard->cityName(cid);
 }
 
+void eGameBoard::updatePlayersOnBoard() {
+    for(const auto& p : mPlayersOnBoard) {
+        const auto pid = p->id();
+        const auto cids = playerCitiesOnBoard(pid);
+        if(cids.empty()) removePlayerFromBoard(pid);
+    }
+    for(const auto& c : mCitiesOnBoard) {
+        const auto cid = c->id();
+        const auto pid = cityIdToPlayerId(cid);
+        if(pid == ePlayerId::neutralAggresive ||
+           pid == ePlayerId::neutralFriendly) continue;
+        const auto p = boardPlayerWithId(pid);
+        if(p) continue;
+        addPlayerToBoard(pid);
+    }
+}
+
+eBoardPlayer* eGameBoard::addPlayerToBoard(const ePlayerId pid) {
+    const auto p = std::make_shared<eBoardPlayer>(pid, *this);
+    mPlayersOnBoard.push_back(p);
+    return p.get();
+}
+
+void eGameBoard::removePlayerFromBoard(const ePlayerId pid) {
+    for(auto it = mPlayersOnBoard.begin(); it < mPlayersOnBoard.end(); it++) {
+        const auto p = it->get();
+        if(p->id() != pid) continue;
+        mPlayersOnBoard.erase(it);
+        return;
+    }
+}
+
 eBoardCity* eGameBoard::addCityToBoard(const eCityId cid) {
     const auto c = std::make_shared<eBoardCity>(cid, *this);
     mCitiesOnBoard.push_back(c);
