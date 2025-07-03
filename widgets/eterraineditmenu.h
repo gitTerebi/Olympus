@@ -50,7 +50,8 @@ enum class eTerrainEditMode {
     quake,
     disasterPoint,
 
-    cityTerritory
+    cityTerritory,
+    assignAllCityTerritory
 };
 
 enum class eBrushType {

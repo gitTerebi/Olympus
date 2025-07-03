@@ -194,6 +194,10 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         return b != nullptr;
     });
     {
+        mW12->addAction("Assign All", [this, board]() {
+            const auto cid = static_cast<eCityId>(mModeId);
+            board->assignAllTerritory(cid);
+        });
         mW12->addAction("Neutral Territory", [this]() {
             mMode = eTerrainEditMode::cityTerritory;
             mModeId = static_cast<int>(eCityId::neutralFriendly);

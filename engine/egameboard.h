@@ -595,6 +595,7 @@ public:
     void changeWage(const int per);
 
     void updateTerritoryBorders();
+    void assignAllTerritory(const eCityId cid);
 
     ePlayerId cityIdToPlayerId(const eCityId cid) const;
     eTeamId cityIdToTeamId(const eCityId cid) const;

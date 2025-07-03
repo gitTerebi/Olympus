@@ -990,6 +990,13 @@ void eGameBoard::updateTerritoryBorders() {
     }
 }
 
+void eGameBoard::assignAllTerritory(const eCityId cid) {
+    iterateOverAllTiles([cid](eTile* const tile) {
+        tile->setCityId(cid);
+    });
+    updateTerritoryBorders();
+}
+
 std::vector<eCityId> eGameBoard::personPlayerCitiesOnBoard() const {
     return playerCitiesOnBoard(personPlayer());
 }
