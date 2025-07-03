@@ -117,6 +117,16 @@ int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
     return result;
 }
 
+int eAICityPlan::nextDistrictId() {
+    const int iMax = mDistricts.size();
+    for(int i = 0; i < iMax; i++) {
+        const bool b = eVectorHelpers::contains(mBuiltDistrics, i);
+        if(b) continue;
+        return i;
+    }
+    return -1;
+}
+
 void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
     const bool c = districtBuilt(id);
     if(!c) mBuiltDistrics.push_back(id);

@@ -19,6 +19,13 @@ void eBoardPlayer::nextMonth() {
                 mBoard.event(eEvent::debtAnniversary, ed);
             }
         }
+    } else if(!isPerson()) {
+        const auto cids = mBoard.playerCitiesOnBoard(mId);
+        for(const auto cid : cids) {
+            const auto c = mBoard.boardCityWithId(cid);
+            c->rebuildDistricts();
+            c->buildNextDistrict(mDrachmas);
+        }
     }
 }
 

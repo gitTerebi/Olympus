@@ -1471,6 +1471,18 @@ void eBoardCity::heroSummoned(const eHeroType hero) {
     mSummonedHeroes.push_back(hero);
 }
 
+void eBoardCity::rebuildDistricts() {
+    mCityPlan.rebuildDistricts(mBoard);
+}
+
+void eBoardCity::buildNextDistrict(const int drachmas) {
+    const int id = mCityPlan.nextDistrictId();
+    if(id == -1) return;
+    const int c = mCityPlan.districtCost(mBoard, id);
+    if(c > drachmas) return;
+    mCityPlan.buildDistrict(mBoard, id);
+}
+
 void eBoardCity::startEpisode(eEpisode* const e) {
     const auto& ab = e->fAvailableBuildings[mId];
     mAvailableBuildings.startEpisode(ab);

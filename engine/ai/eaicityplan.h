@@ -206,9 +206,9 @@ public:
     void addDistrict(const eAIDistrict& a);
 
     int districtCost(eGameBoard& board, const int id) const;
+    int nextDistrictId();
 
-    void buildDistrict(eGameBoard& board,
-                       const int id);
+    void buildDistrict(eGameBoard& board, const int id);
     void buildAllDistricts(eGameBoard& board);
     void rebuildDistricts(eGameBoard& board);
     using ePoints = std::vector<std::pair<SDL_Point, SDL_Point>>;

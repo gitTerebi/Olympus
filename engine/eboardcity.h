@@ -294,6 +294,9 @@ public:
     bool wasHeroSummoned(const eHeroType hero) const;
     void heroSummoned(const eHeroType hero);
 
+    void rebuildDistricts();
+    void buildNextDistrict(const int drachmas);
+
     void startEpisode(eEpisode* const e);
 
     void read(eReadStream& src);
