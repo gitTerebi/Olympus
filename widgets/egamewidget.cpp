@@ -646,7 +646,9 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
 }
 
 bool eGameWidget::canBuildPier(const int tx, const int ty,
-                               eDiagonalOrientation& o) const {
+                               eDiagonalOrientation& o,
+                               const eCityId cid,
+                               const ePlayerId pid) const {
     const bool r = canBuildFishery(tx, ty, o);
     if(!r) return false;
     int minX;
@@ -670,7 +672,7 @@ bool eGameWidget::canBuildPier(const int tx, const int ty,
         minY = ty - 2;
     } break;
     }
-    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4);
+    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4, cid, pid);
 }
 
 std::vector<ePatrolGuide>::iterator
@@ -970,8 +972,9 @@ bool eGameWidget::bridgeTiles(eTile* const t, const eTerrain terr,
     return false;
 }
 
-bool eGameWidget::canBuildAvenue(eTile* const t) const {
-    return mBoard->canBuildAvenue(t);
+bool eGameWidget::canBuildAvenue(eTile* const t, const eCityId cid,
+                                 const ePlayerId pid) const {
+    return mBoard->canBuildAvenue(t, cid, pid);
 }
 
 using ePatrolGuides = std::vector<ePatrolGuide>;

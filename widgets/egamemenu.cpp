@@ -1089,6 +1089,7 @@ void eGameMenu::viewedCityChanged() {
     if(mScienceDataW) mScienceDataW->update();
     mOverDataW->update();
     updateButtonsVisibility();
+    setMode(eBuildingMode::none);
 }
 
 void eGameMenu::setMode(const eBuildingMode mode) {

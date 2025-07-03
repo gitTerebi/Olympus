@@ -280,6 +280,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     mBoard->updateAppealMapIfNeeded();
     mBoard->handleFinishedTasks();
     mBoard->incFrame();
+    const auto ppid = mBoard->personPlayer();
     const int nc = children().size() - mTips.size();
 //    printf("%d\n", nc);
     if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 8) {
@@ -1132,6 +1133,8 @@ void eGameWidget::paintEvent(ePainter& p) {
 
                 std::shared_ptr<eTexture> topTex;
                 switch(b->type()) {
+                case eBannerTypeS::none:
+                    break;
                 case eBannerTypeS::boar:
                     topTex = builTexs.fBoarPoint;
                     break;
@@ -1639,7 +1642,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     if(!b) continue;
                     if(t->underBuilding()) continue;
                     if(mode == eBuildingMode::avenue) {
-                        const bool hr = canBuildAvenue(t);
+                        const bool hr = canBuildAvenue(t, mViewedCityId, ppid);
                         if(!hr) continue;
                     }
                     const int a = t->altitude();
@@ -1665,7 +1668,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                         }
                     }
                     if(!cbr) continue;
-                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2);
+                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2,
+                                                         mViewedCityId, ppid);
                     if(!cb) continue;
                     double rx;
                     double ry;
@@ -1697,7 +1701,10 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(!t) return;
         const int tx = t->x();
         const int ty = t->y();
-        const bool cb = allowed > 0 && mBoard->canBuild(tx, ty, 1, 2, true, true);
+        const bool cb = allowed > 0 && mBoard->canBuild(
+                            tx, ty, 1, 2,
+                            mViewedCityId, ppid,
+                            true, true);
         const auto& tex = trrTexs.fBuildingBase;
         tex->setColorMod(cb ? 0 : 255, cb ? 255 : 0, 0);
         const int a = t->altitude();
@@ -1720,7 +1727,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto& agrr = builTexs.fAgoraRoad;
 
         eAgoraOrientation bt;
-        const auto p = agoraBuildPlaceIter(t, false, bt);
+        const auto p = agoraBuildPlaceIter(t, false, bt, mViewedCityId, ppid);
         if(p.empty()) {
             const auto& tex = trrTexs.fBuildingBase;
             tex->setColorMod(255, 0, 0);
@@ -1907,7 +1914,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto& agrr = builTexs.fAgoraRoad;
 
         eAgoraOrientation bt;
-        const auto p = agoraBuildPlaceIter(t, true, bt);
+        const auto p = agoraBuildPlaceIter(t, true, bt, mViewedCityId, ppid);
         if(p.empty()) {
             const auto& tex = trrTexs.fBuildingBase;
             tex->setColorMod(255, 0, 0);
@@ -2035,21 +2042,25 @@ void eGameWidget::paintEvent(ePainter& p) {
                                const int sw, const int sh) {
                 if(sw > 2 || sh > 2) return true;
                 eDiagonalOrientation o;
-                return canBuildPier(tx, ty, o);
+                return canBuildPier(tx, ty, o, mViewedCityId, ppid);
             };
         } break;
         case eBuildingMode::palace: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 if(mBoard->hasPalace(mViewedCityId)) return false;
-                return mBoard->canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh,
+                                        mViewedCityId, ppid,
+                                        fertile);
             };
         } break;
         case eBuildingMode::stadium: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
                 if(mBoard->hasStadium(mViewedCityId)) return false;
-                return mBoard->canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh,
+                                        mViewedCityId, ppid,
+                                        fertile);
             };
         } break;
         case eBuildingMode::foodVendor: {
@@ -2114,13 +2125,15 @@ void eGameWidget::paintEvent(ePainter& p) {
                 (void)sw;
                 (void)sh;
                 const auto t = mBoard->tile(tx, ty);
-                return canBuildAvenue(t);
+                return canBuildAvenue(t, mViewedCityId, ppid);
             };
         } break;
         default: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
-                return mBoard->canBuild(tx, ty, sw, sh, fertile);
+                return mBoard->canBuild(tx, ty, sw, sh,
+                                        mViewedCityId, ppid,
+                                        fertile);
             };
         } break;
         }
@@ -2161,7 +2174,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int yMin = mHoverTY - sh/2;
             const int xMax = xMin + sw;
             const int yMax = yMin + sh;
-            const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax);
+            const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
+                                                 mViewedCityId, ppid);
            if(!cb) {
                 tex->setColorMod(255, 0, 0);
             }

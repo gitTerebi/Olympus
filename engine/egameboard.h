@@ -619,13 +619,18 @@ public:
     eBoardCity* addCityToBoard(const eCityId cid);
     void removeCityFromBoard(const eCityId cid);
 
-    bool canBuildAvenue(eTile* const t) const;
+    bool canBuildAvenue(eTile* const t, const eCityId cid,
+                        const ePlayerId pid) const;
     bool canBuildBase(const int minX, const int maxX,
                       const int minY, const int maxY,
+                      const eCityId cid,
+                      const ePlayerId pid,
                       const bool fertile = false,
                       const bool flat = false) const;
     bool canBuild(const int tx, const int ty,
                   const int sw, const int sh,
+                  const eCityId cid,
+                  const ePlayerId pid,
                   const bool fertile = false,
                   const bool flat = false) const;
 
@@ -634,10 +639,13 @@ public:
                    const int maxX, const int maxY,
                    const eBuildingCreator& bc,
                    const ePlayerId pid,
+                   const eCityId cid,
                    const bool fertile = false,
                    const bool flat = false);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
+               const eCityId cid,
+               const ePlayerId pid,
                const eBuildingCreator& bc,
                const bool fertile = false,
                const bool flat = false);
@@ -647,7 +655,8 @@ public:
     void buildAnimal(eTile* const tile,
                      const eBuildingType type,
                      const eAnimalCreator& creator,
-                     const eCityId cid);
+                     const eCityId cid,
+                     const ePlayerId pid);
 
     void removeAllBuildings();
 
@@ -655,7 +664,8 @@ public:
                         const int minY, const int maxY,
                         const eBuildingType bt,
                         const bool rotate,
-                        const eCityId cid);
+                        const eCityId cid,
+                        const ePlayerId pid);
 private:
     void updateNeighbours();
 

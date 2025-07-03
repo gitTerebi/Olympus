@@ -160,15 +160,26 @@ private:
     bool canBuildFishery(const int tx, const int ty,
                          eDiagonalOrientation& o) const;
     bool canBuildPier(const int tx, const int ty,
-                      eDiagonalOrientation& o) const;
+                      eDiagonalOrientation& o, const eCityId cid,
+                      const ePlayerId pid) const;
 
-    std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile) const;
-    std::vector<eTile*> agoraBuildPlaceTL(eTile* const tile) const;
-    std::vector<eTile*> agoraBuildPlaceBL(eTile* const tile) const;
-    std::vector<eTile*> agoraBuildPlaceTR(eTile* const tile) const;
+    std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile,
+                                          const eCityId cid,
+                                          const ePlayerId pid) const;
+    std::vector<eTile*> agoraBuildPlaceTL(eTile* const tile,
+                                          const eCityId cid,
+                                          const ePlayerId pid) const;
+    std::vector<eTile*> agoraBuildPlaceBL(eTile* const tile,
+                                          const eCityId cid,
+                                          const ePlayerId pid) const;
+    std::vector<eTile*> agoraBuildPlaceTR(eTile* const tile,
+                                          const eCityId cid,
+                                          const ePlayerId pid) const;
     std::vector<eTile*> agoraBuildPlaceIter(
             eTile* const tile, const bool grand,
-            eAgoraOrientation& bt) const;
+            eAgoraOrientation& bt,
+            const eCityId cid,
+            const ePlayerId pid) const;
 
     std::vector<ePatrolGuide>::iterator
         findGuide(const int tx, const int ty);
@@ -212,7 +223,8 @@ private:
     bool bridgeTiles(eTile* const t, const eTerrain terr,
                      std::vector<eTile*>& tiles,
                      bool& rotated);
-    bool canBuildAvenue(eTile* const t) const;
+    bool canBuildAvenue(eTile* const t, const eCityId cid,
+                        const ePlayerId pid) const;
 
     bool inErase(const int tx, const int ty);
     bool inErase(const SDL_Rect& rect);
@@ -241,8 +253,6 @@ private:
             const int boardw, const int boardh);
 
     std::vector<eTile*> selectedTiles() const;
-
-    eCityId mCurrentCity = eCityId::neutralFriendly;
 
     eMouseButton mPressedButtons = eMouseButton::none;
 
