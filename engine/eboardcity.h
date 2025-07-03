@@ -12,6 +12,7 @@
 #include "eemploymentdistributor.h"
 #include "buildings/eavailablebuildings.h"
 #include "characters/eenlistedforces.h"
+#include "ai/eaicityplan.h"
 
 class ePalace;
 class eSanctuary;
@@ -61,7 +62,7 @@ public:
     eBoardCity(const eCityId cid, eGameBoard& board);
 
     eCityId id() const { return mId; }
-    void setId(const eCityId id) { mId = id; }
+//    void setId(const eCityId id) { mId = id; }
 
     const std::vector<eTile*>& tiles() const { return mTiles; }
     void updateTiles();
@@ -307,6 +308,8 @@ private:
     std::vector<eTile*> mTiles;
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
+
+    eAICityPlan mCityPlan;
 
     eWageRate mWageRate{eWageRate::normal};
     eTaxRate mTaxRate{eTaxRate::normal};

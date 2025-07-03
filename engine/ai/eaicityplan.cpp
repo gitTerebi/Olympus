@@ -76,6 +76,9 @@
 #include "eaiconnectwithroadtask.h"
 #include "etilehelper.h"
 
+eAICityPlan::eAICityPlan(const eCityId cid) :
+    mPid(ePlayerId::neutralFriendly), mCid(cid) {}
+
 eAICityPlan::eAICityPlan(const ePlayerId pid,
                          const eCityId cid) :
     mPid(pid), mCid(cid) {}
@@ -105,6 +108,16 @@ eAIBoard eAICityPlan::aiBoard(const int w, const int h) const {
 
 void eAICityPlan::addDistrict(const eAIDistrict& a) {
     mDistricts.push_back(a);
+}
+
+int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
+    int result = 0;
+    const auto d = mDistricts[id];
+    const auto diff = board.difficulty(mPid);
+    for(const auto& b : d.fBuildings) {
+        result += eDifficultyHelpers::buildingCost(diff, b.fType);
+    }
+    return result;
 }
 
 void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {

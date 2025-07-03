@@ -199,12 +199,17 @@ struct eAIBoard {
 
 class eAICityPlan {
 public:
+    eAICityPlan(const eCityId cid);
     eAICityPlan(const ePlayerId pid,
                 const eCityId cid);
+
+    void setPlayerId(const ePlayerId pid) { mPid = pid; }
 
     eAIBoard aiBoard(const int w, const int h) const;
 
     void addDistrict(const eAIDistrict& a);
+
+    int districtCost(eGameBoard& board, const int id) const;
 
     void buildDistrict(eGameBoard& board,
                        const int id);
