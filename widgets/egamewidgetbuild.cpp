@@ -512,7 +512,7 @@ bool eGameWidget::buildMouseRelease() {
 
             const int nErased = eraser.erase(false);
             totalCost += cost*nErased;
-            mBoard->incDrachmas(ppid, -totalCost);
+            if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost);
             mBoard->scheduleTerrainUpdate();
 
             std::string title;
@@ -530,7 +530,7 @@ bool eGameWidget::buildMouseRelease() {
                 auto e = eraser;
                 const int nErased = e.erase(true);
                 const int totalCost = cost*nErased;
-                mBoard->incDrachmas(ppid, -totalCost);
+                if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost);
             };
             showQuestion(title, text, acceptA);
         } break;

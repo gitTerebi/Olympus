@@ -354,6 +354,7 @@ void eGameWidget::initialize() {
         cityEditorSwitch->move(p, mTopBar->height() + p);
         cityEditorSwitch->setPressAction([this, cityEditorWidget]() {
             mEditorShowBuildings = !mEditorShowBuildings;
+            mGm->setShowAllPossibleBuildings(mEditorShowBuildings);
             if(mEditorShowBuildings) {
                 if(mBoard->editorCurrentDistrict() == -1) {
                     mBoard->setEditorCurrentDistrict(0);

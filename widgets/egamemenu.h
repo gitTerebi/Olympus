@@ -78,6 +78,8 @@ public:
     void setWorldDirection(const eWorldDirection dir);
 
     void update();
+
+    void setShowAllPossibleBuildings(const bool b);
 protected:
     bool mousePressEvent(const eMouseEvent& e);
 private:
@@ -141,6 +143,8 @@ private:
     std::vector<eSubButton*> mSubButtons;
 
     eAction mModeChangeAct;
+
+    bool mShowAllPossibleBuildings = false;
 };
 
 #endif // EGAMEMENU_H

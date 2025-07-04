@@ -81,7 +81,7 @@ public:
         mChildren(children),
         mBoard(board) {}
 
-    void updateVisible(const eCityId cid) {
+    void updateVisible(const eCityId cid, const bool showAllPossibleBuildings) {
         bool vis = false;
         const auto pid = mBoard.cityIdToPlayerId(cid);
         const auto ppid = mBoard.personPlayer();
@@ -99,14 +99,16 @@ public:
             vis = mBoard.atlantean(cid) && !mBoard.hasMuseum(cid);
         } else if(mMode == eBuildingMode::none) {
             for(const auto& c : mChildren) {
-                const bool s = mBoard.supportsBuilding(cid, c.fMode);
+                const bool s = showAllPossibleBuildings ||
+                               mBoard.supportsBuilding(cid, c.fMode);
                 if(s) {
                     vis = true;
                     break;
                 }
             }
         } else {
-            vis = mBoard.supportsBuilding(cid, mMode);
+            vis = showAllPossibleBuildings ||
+                  mBoard.supportsBuilding(cid, mMode);
         }
         if(mButton) {
             mButton->setVisible(vis && (!a || !mAButton));
@@ -181,7 +183,8 @@ eWidget* eGameMenu::createSubButtons(
         const auto ab = c.fAColl ? createButton(*c.fAColl) : nullptr;
 
         const auto subButton = new eSubButton(c.fMode, b, ab, c.fSpr, *mBoard);
-        subButton->updateVisible(eCityId::neutralFriendly);
+        subButton->updateVisible(eCityId::neutralFriendly,
+                                 mShowAllPossibleBuildings);
         mSubButtons.push_back(subButton);
     }
 
@@ -215,7 +218,8 @@ void eGameMenu::openBuildWidget(const int cmx, const int cmy,
     if(pid != ppid) return;
     std::vector<eBuildButton*> ws;
     for(const auto& c : cs) {
-        if(!mBoard->supportsBuilding(cid, c.fMode)) continue;
+        if(!mBoard->supportsBuilding(cid, c.fMode) &&
+           !mShowAllPossibleBuildings) continue;
         const auto bb = createBuildButton(c);
         ws.push_back(bb);
     }
@@ -240,6 +244,11 @@ void eGameMenu::setWorldDirection(const eWorldDirection dir) {
 
 void eGameMenu::update() {
 
+}
+
+void eGameMenu::setShowAllPossibleBuildings(const bool b) {
+    mShowAllPossibleBuildings = b;
+    updateButtonsVisibility();
 }
 
 void eGameMenu::displayPrice(const int price, const int loc) {
@@ -1044,14 +1053,14 @@ void eGameMenu::updateButtonsVisibility() {
     const auto cid = mGW ? mGW->viewedCity() :
                            eCityId::neutralFriendly;
     for(const auto s : mSubButtons) {
-        s->updateVisible(cid);
+        s->updateVisible(cid, mShowAllPossibleBuildings);
     }
     const auto c = mBoard->boardCityWithId(cid);
     const bool science = c ? c->atlantean() : false;
 
     const auto pid = mBoard->cityIdToPlayerId(cid);
     const auto ppid = mBoard->personPlayer();
-    const bool e = c && pid == ppid;
+    const bool e = (c && pid == ppid) || mShowAllPossibleBuildings;
 
     mPopulationButton->setEnabled(e);
     mHusbandryButton->setEnabled(e);
