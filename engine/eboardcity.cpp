@@ -8,6 +8,10 @@
 #include "buildings/eheroshall.h"
 #include "buildings/eagorabase.h"
 #include "buildings/etradepost.h"
+#include "buildings/eurchinquay.h"
+#include "buildings/efishery.h"
+#include "buildings/epier.h"
+
 #include "evectorhelpers.h"
 
 #include "gameEvents/einvasionevent.h"
@@ -319,6 +323,24 @@ void eBoardCity::saveEditorCityPlan() {
         eAIBuilding ab;
         ab.fType = b->type();
         ab.fRect = b->tileRect();
+        if(const auto sb = dynamic_cast<eStorageBuilding*>(b)) {
+            ab.fGet = sb->get();
+            ab.fEmpty = sb->empties();
+            ab.fAccept = sb->accepts();
+            ab.fSpace = sb->maxCount();
+        } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
+            ab.fGuides = pb->patrolGuides();
+        } else if(const auto s = dynamic_cast<eSanctuary*>(b)) {
+            const bool r = s->rotated();
+            ab.fO = r ? eDiagonalOrientation::topLeft :
+                        eDiagonalOrientation::topRight;
+        } else if(const auto uq = dynamic_cast<eUrchinQuay*>(b)) {
+            ab.fO = uq->orientation();
+        } else if(const auto f = dynamic_cast<eFishery*>(b)) {
+            ab.fO = f->orientation();
+        } else if(const auto p = dynamic_cast<ePier*>(b)) {
+            ab.fO = p->orientation();
+        }
         d.addBuilding(ab);
     }
 }
@@ -337,7 +359,31 @@ void eBoardCity::rebuildDistricts() {
     mCityPlan.rebuildDistricts(mBoard);
 }
 
+bool eBoardCity::previousDistrictFulfilled() {
+    const int id = mCityPlan.lastBuiltDistrictId();
+    if(id == -1) return true;
+    const auto& d = mCityPlan.district(id);
+    for(const auto& b : d.fBuildings) {
+        if(b.fType == eBuildingType::warehouse ||
+           b.fType == eBuildingType::granary) {
+            const auto bb = mBoard.buildingAt(b.fRect.x, b.fRect.y);
+            if(!bb) continue;
+            if(bb->type() != b.fType) continue;
+            const auto sb = static_cast<eStorageBuilding*>(bb);
+            const auto gets = sb->get();
+            const auto g = eResourceTypeHelpers::extractResourceTypes(gets);
+            for(const auto r : g) {
+                const int s = sb->spaceLeft(r);
+                if(s > 0) return false;
+            }
+        }
+    }
+    return true;
+}
+
 void eBoardCity::buildNextDistrict(const int drachmas) {
+    const bool pf = previousDistrictFulfilled();
+    if(!pf) return;
     const int id = mCityPlan.nextDistrictId();
     if(id == -1) return;
     const int c = mCityPlan.districtCost(mBoard, id);

@@ -65,7 +65,8 @@ public:
     void addDistrict(const eAIDistrict& a);
 
     int districtCost(eGameBoard& board, const int id) const;
-    int nextDistrictId();
+    int nextDistrictId() const;
+    int lastBuiltDistrictId() const;
 
     void buildDistrict(eGameBoard& board, const int id);
     void buildAllDistricts(eGameBoard& board);

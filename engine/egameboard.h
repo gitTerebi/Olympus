@@ -319,6 +319,8 @@ public:
 
     void setButtonsVisUpdater(const eAction& u);
 
+    eBuilding* buildingAt(const int x, const int y) const;
+
     using eBuildingValidator = std::function<bool(eBuilding*)>;
     std::vector<eBuilding*> buildings(const eCityId cid,
                                       const eBuildingValidator& v) const;

@@ -100,6 +100,7 @@ public:
     void editorDisplayBuildings();
 
     void rebuildDistricts();
+    bool previousDistrictFulfilled();
     void buildNextDistrict(const int drachmas);
 
     void registerBuilding(eBuilding* const b);

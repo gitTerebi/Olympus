@@ -58,12 +58,21 @@ int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
     return result;
 }
 
-int eAICityPlan::nextDistrictId() {
+int eAICityPlan::nextDistrictId() const {
     const int iMax = mDistricts.size();
     for(int i = 0; i < iMax; i++) {
         const bool b = eVectorHelpers::contains(mBuiltDistrics, i);
         if(b) continue;
         return i;
+    }
+    return -1;
+}
+
+int eAICityPlan::lastBuiltDistrictId() const {
+    const int iMax = mDistricts.size() - 1;
+    for(int i = iMax; i >= 0; i--) {
+        const bool b = eVectorHelpers::contains(mBuiltDistrics, i);
+        if(b) return i;
     }
     return -1;
 }

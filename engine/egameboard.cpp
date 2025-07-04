@@ -327,6 +327,12 @@ void eGameBoard::setButtonsVisUpdater(const eAction& u) {
     mButtonVisUpdater = u;
 }
 
+eBuilding* eGameBoard::buildingAt(const int x, const int y) const {
+    const auto t = tile(x, y);
+    if(!t) return nullptr;
+    return t->underBuilding();
+}
+
 bool eGameBoard::isShutDown(const eCityId cid,
                             const eResourceType type) const {
     const auto c = boardCityWithId(cid);
