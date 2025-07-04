@@ -10,6 +10,8 @@ void eBoardCity::write(eWriteStream& dst) const {
 
     dst << mAtlantean;
 
+    mCityPlan.write(dst);
+
     dst << mWageRate;
     dst << mTaxRate;
     dst << mTaxesPaidLastYear;

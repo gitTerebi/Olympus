@@ -10,6 +10,8 @@ void eBoardCity::read(eReadStream& src) {
 
     src >> mAtlantean;
 
+    mCityPlan.read(src);
+
     src >> mWageRate;
     src >> mTaxRate;
     src >> mTaxesPaidLastYear;

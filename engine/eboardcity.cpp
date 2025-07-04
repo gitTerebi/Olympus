@@ -308,6 +308,43 @@ void eBoardCity::setWageRate(const eWageRate wr) {
     distributeEmployees();
 }
 
+void eBoardCity::saveEditorCityPlan() {
+    mCityPlan = eAICityPlan(mId);
+    for(const auto b : mAllBuildings) {
+        const int did = b->editorDistrict();
+        while(did >= mCityPlan.districtCount()) {
+            mCityPlan.addDistrict(eAIDistrict());
+        }
+        auto& d = mCityPlan.district(did);
+        eAIBuilding ab;
+        ab.fType = b->type();
+        ab.fRect = b->tileRect();
+        d.addBuilding(ab);
+    }
+}
+
+void eBoardCity::editorClearBuildings() {
+    for(const auto b : mAllBuildings) {
+        b->erase();
+    }
+}
+
+void eBoardCity::editorDisplayBuildings() {
+    mCityPlan.editorDisplayBuildings(mBoard);
+}
+
+void eBoardCity::rebuildDistricts() {
+    mCityPlan.rebuildDistricts(mBoard);
+}
+
+void eBoardCity::buildNextDistrict(const int drachmas) {
+    const int id = mCityPlan.nextDistrictId();
+    if(id == -1) return;
+    const int c = mCityPlan.districtCost(mBoard, id);
+    if(c > drachmas) return;
+    mCityPlan.buildDistrict(mBoard, id);
+}
+
 void eBoardCity::registerBuilding(eBuilding* const b) {
     mAllBuildings.push_back(b);
     const auto bt = b->type();
@@ -1469,18 +1506,6 @@ bool eBoardCity::wasHeroSummoned(const eHeroType hero) const {
 
 void eBoardCity::heroSummoned(const eHeroType hero) {
     mSummonedHeroes.push_back(hero);
-}
-
-void eBoardCity::rebuildDistricts() {
-    mCityPlan.rebuildDistricts(mBoard);
-}
-
-void eBoardCity::buildNextDistrict(const int drachmas) {
-    const int id = mCityPlan.nextDistrictId();
-    if(id == -1) return;
-    const int c = mCityPlan.districtCost(mBoard, id);
-    if(c > drachmas) return;
-    mCityPlan.buildDistrict(mBoard, id);
 }
 
 void eBoardCity::startEpisode(eEpisode* const e) {

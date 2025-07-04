@@ -515,6 +515,11 @@ public:
 
     bool editorMode() const { return mEditorMode; }
     void setEditorMode(const bool m) { mEditorMode = m; }
+    void editorClearBuildings();
+    void editorDisplayBuildings();
+    void saveEditorCityPlan();
+    int editorCurrentDistrict() const { return mEditorCurrentDistrict; }
+    void setEditorCurrentDistrict(const int id);
 
     bool atlantean(const eCityId cid) const;
     bool setAtlantean(const eCityId cid, const bool a);
@@ -643,14 +648,14 @@ public:
                    const eBuildingCreator& bc,
                    const ePlayerId pid,
                    const eCityId cid,
-                   const bool forestAllowed,
+                   const bool editorDisplay,
                    const bool fertile = false,
                    const bool flat = false);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
                const eCityId cid,
                const ePlayerId pid,
-               const bool forestAllowed,
+               const bool editorDisplay,
                const eBuildingCreator& bc,
                const bool fertile = false,
                const bool flat = false);
@@ -662,7 +667,7 @@ public:
                      const eAnimalCreator& creator,
                      const eCityId cid,
                      const ePlayerId pid,
-                     const bool forestAllowed);
+                     const bool editorDisplay);
 
     void removeAllBuildings();
 
@@ -672,7 +677,7 @@ public:
                         const bool rotate,
                         const eCityId cid,
                         const ePlayerId pid,
-                        const bool forestAllowed);
+                        const bool editorDisplay);
 private:
     void updateNeighbours();
 
@@ -687,6 +692,7 @@ private:
     void progressEarthquakes();
 
     bool mEditorMode = false;
+    int mEditorCurrentDistrict = -1;
     bool mRainforest = true;
     mutable bool mEpisodeLost = false;
     eWorldBoard* mWorldBoard = nullptr;

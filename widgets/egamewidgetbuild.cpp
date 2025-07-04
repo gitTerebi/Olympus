@@ -577,9 +577,11 @@ bool eGameWidget::buildMouseRelease() {
 
             b->fillSpaces();
 
-            const auto diff = mBoard->difficulty(ppid);
-            const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-            mBoard->incDrachmas(ppid, -cost);
+            if(!mEditorMode) {
+                const auto diff = mBoard->difficulty(ppid);
+                const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+                mBoard->incDrachmas(ppid, -cost);
+            }
 
             showTip(eLanguage::zeusText(19, 228)); // add vendors
         } break;
@@ -626,9 +628,11 @@ bool eGameWidget::buildMouseRelease() {
 
             b->fillSpaces();
 
-            const auto diff = mBoard->difficulty(ppid);
-            const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-            mBoard->incDrachmas(ppid, -cost);
+            if(!mEditorMode) {
+                const auto diff = mBoard->difficulty(ppid);
+                const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+                mBoard->incDrachmas(ppid, -cost);
+            }
             showTip(eLanguage::zeusText(19, 228)); // add vendors
         } break;
         case eBuildingMode::road: {
@@ -681,10 +685,12 @@ bool eGameWidget::buildMouseRelease() {
                     b->addUnderBuilding(t);
                 }
 
-                const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(
-                                     diff, eBuildingType::bridge);
-                mBoard->incDrachmas(ppid, -path.size()*cost);
+                if(!mEditorMode) {
+                    const auto diff = mBoard->difficulty(ppid);
+                    const int cost = eDifficultyHelpers::buildingCost(
+                                         diff, eBuildingType::bridge);
+                    mBoard->incDrachmas(ppid, -path.size()*cost);
+                }
             }
         } break;
         case eBuildingMode::commonHousing: {
@@ -1017,10 +1023,12 @@ bool eGameWidget::buildMouseRelease() {
                     }
                 }
 
-                const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(
-                                     diff, eBuildingType::urchinQuay);
-                mBoard->incDrachmas(ppid, -cost);
+                if(!mEditorMode) {
+                    const auto diff = mBoard->difficulty(ppid);
+                    const int cost = eDifficultyHelpers::buildingCost(
+                                         diff, eBuildingType::urchinQuay);
+                    mBoard->incDrachmas(ppid, -cost);
+                }
             }
         } break;
         case eBuildingMode::fishery: {
@@ -1043,10 +1051,12 @@ bool eGameWidget::buildMouseRelease() {
                     }
                 }
 
-                const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(
-                                     diff, eBuildingType::fishery);
-                mBoard->incDrachmas(ppid, -cost);
+                if(!mEditorMode) {
+                    const auto diff = mBoard->difficulty(ppid);
+                    const int cost = eDifficultyHelpers::buildingCost(
+                                         diff, eBuildingType::fishery);
+                    mBoard->incDrachmas(ppid, -cost);
+                }
             }
         } break;
 
@@ -1329,10 +1339,12 @@ bool eGameWidget::buildMouseRelease() {
                 t3->setUnderBuilding(r2);
                 r2->setCenterTile(t3);
             }
-            const auto diff = mBoard->difficulty(ppid);
-            const int cost = eDifficultyHelpers::buildingCost(
-                                 diff, eBuildingType::gatehouse);
-            mBoard->incDrachmas(ppid, -cost);
+            if(!mEditorMode) {
+                const auto diff = mBoard->difficulty(ppid);
+                const int cost = eDifficultyHelpers::buildingCost(
+                                     diff, eBuildingType::gatehouse);
+                mBoard->incDrachmas(ppid, -cost);
+            }
         } break;
 
         case eBuildingMode::armory: {
@@ -1719,7 +1731,7 @@ bool eGameWidget::buildMouseRelease() {
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
             const int m = eBuilding::sInitialMarbleCost(bt);
             const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);
-            if(hasM < m) {
+            if(!mEditorMode && hasM < m) {
                 auto text = eLanguage::zeusText(19, 201);
                 const auto mStr = std::to_string(m);
                 eStringHelpers::replace(text, "[warning_amount]", mStr);

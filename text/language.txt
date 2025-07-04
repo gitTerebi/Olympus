@@ -1,5 +1,6 @@
 settings "Settings"
 editor "Editor"
+city_editor "City Editor"
 tribute "Tribute"
 rec_tribute "Rec tribute"
 choose "Choose"

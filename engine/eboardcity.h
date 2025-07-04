@@ -95,6 +95,13 @@ public:
     int peoplePaidTaxesThisYear() const { return mPeoplePaidTaxesThisYear; }
     int peoplePaidTaxesLastYear() const { return mPeoplePaidTaxesLastYear; }
 
+    void saveEditorCityPlan();
+    void editorClearBuildings();
+    void editorDisplayBuildings();
+
+    void rebuildDistricts();
+    void buildNextDistrict(const int drachmas);
+
     void registerBuilding(eBuilding* const b);
     bool unregisterBuilding(eBuilding* const b);
 
@@ -294,9 +301,6 @@ public:
     bool wasHeroSummoned(const eHeroType hero) const;
     void heroSummoned(const eHeroType hero);
 
-    void rebuildDistricts();
-    void buildNextDistrict(const int drachmas);
-
     void startEpisode(eEpisode* const e);
 
     void read(eReadStream& src);
@@ -312,6 +316,7 @@ private:
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
 
+    int mEditorCurrentDistrict = -1; // -1 when not editing
     eAICityPlan mCityPlan;
 
     eWageRate mWageRate{eWageRate::normal};

@@ -258,6 +258,7 @@ private:
     eMouseButton mPressedButtons = eMouseButton::none;
 
     bool mEditorMode = false;
+    bool mEditorShowBuildings = false;
     bool mTerrainEditMode = false;
 
     bool mRotate = false;

@@ -70,6 +70,10 @@ eGameWidget::~eGameWidget() {
 void eGameWidget::setBoard(eGameBoard* const board) {
     if(mBoard == board) return;
     if(mBoard) {
+        if(mEditorShowBuildings) {
+            mBoard->saveEditorCityPlan();
+            mBoard->editorClearBuildings();
+        }
         mBoard->setEventHandler(nullptr);
         mBoard->setRequestUpdateHandler(nullptr);
         mBoard->setVisibilityChecker(nullptr);
@@ -294,24 +298,121 @@ void eGameWidget::initialize() {
         settingsMenu->align(eAlignment::center);
     });
 
-    const auto editorSwitch = new eFramedButton(window());
-    editorSwitch->setRenderBg(true);
-    editorSwitch->setUnderline(false);
-    editorSwitch->setText(eLanguage::text("editor"));
-    editorSwitch->fitContent();
-    editorSwitch->move(mGm->x() - editorSwitch->width() - p,
-                       mTopBar->height() + p);
-    settingsButt->move(mGm->x() - settingsButt->width() - p,
-                       editorSwitch->y() + editorSwitch->height() + p);
-    editorSwitch->setPressAction([this, settingsButt]() {
-        mTerrainEditMode = !mTerrainEditMode;
-        mTem->setVisible(mTerrainEditMode);
-        mGm->setVisible(!mTerrainEditMode);
-        settingsButt->setVisible(mTerrainEditMode);
-    });
-    addWidget(editorSwitch);
-    mEditorMode = mBoard->editorMode();
-    editorSwitch->setVisible(mEditorMode);
+    {
+        const auto editorSwitch = new eFramedButton(window());
+        editorSwitch->setRenderBg(true);
+        editorSwitch->setUnderline(false);
+        editorSwitch->setText(eLanguage::text("editor"));
+        editorSwitch->fitContent();
+        editorSwitch->move(mGm->x() - editorSwitch->width() - p,
+                           mTopBar->height() + p);
+        settingsButt->move(mGm->x() - settingsButt->width() - p,
+                           editorSwitch->y() + editorSwitch->height() + p);
+        editorSwitch->setPressAction([this, settingsButt]() {
+            mTerrainEditMode = !mTerrainEditMode;
+            mTem->setVisible(mTerrainEditMode);
+            mGm->setVisible(!mTerrainEditMode);
+            settingsButt->setVisible(mTerrainEditMode);
+        });
+        addWidget(editorSwitch);
+        mEditorMode = mBoard->editorMode();
+        editorSwitch->setVisible(mEditorMode);
+    }
+
+    {
+        const auto cityEditorWidget = new eWidget(window());
+
+        const auto saveButton = new eFramedButton(window());
+        saveButton->setRenderBg(true);
+        saveButton->setUnderline(false);
+        saveButton->setText(eLanguage::zeusText(44, 74));
+        saveButton->fitContent();
+        cityEditorWidget->addWidget(saveButton);
+        saveButton->setPressAction([this]() {
+            mBoard->saveEditorCityPlan();
+        });
+
+        const auto restoreButton = new eFramedButton(window());
+        restoreButton->setRenderBg(true);
+        restoreButton->setUnderline(false);
+        restoreButton->setText(eLanguage::text("restore"));
+        restoreButton->fitContent();
+        cityEditorWidget->addWidget(restoreButton);
+        restoreButton->setPressAction([this]() {
+            mBoard->editorClearBuildings();
+            mBoard->editorDisplayBuildings();
+        });
+
+        cityEditorWidget->stackVertically(p);
+        addWidget(cityEditorWidget);
+
+        const auto cityEditorSwitch = new eFramedButton(window());
+        cityEditorSwitch->setRenderBg(true);
+        cityEditorSwitch->setUnderline(false);
+        cityEditorSwitch->setText(eLanguage::text("city_editor"));
+        cityEditorSwitch->fitContent();
+        cityEditorSwitch->move(p, mTopBar->height() + p);
+        cityEditorSwitch->setPressAction([this, cityEditorWidget]() {
+            mEditorShowBuildings = !mEditorShowBuildings;
+            if(mEditorShowBuildings) {
+                if(mBoard->editorCurrentDistrict() == -1) {
+                    mBoard->setEditorCurrentDistrict(0);
+                }
+                mBoard->editorDisplayBuildings();
+            } else {
+                mBoard->saveEditorCityPlan();
+                mBoard->editorClearBuildings();
+            }
+            cityEditorWidget->setVisible(mEditorShowBuildings);
+        });
+        addWidget(cityEditorSwitch);
+        cityEditorSwitch->setVisible(mEditorMode);
+        const int y = cityEditorSwitch->y() + cityEditorSwitch->height() + p;
+        cityEditorWidget->move(p, y);
+
+        {
+            int x = 0;
+            const int y0 = restoreButton->y() + restoreButton->height() + p;
+            int y = y0;
+            const int iMax = 16;
+            std::vector<eFramedButton*> iButtons;
+            for(int i = 0; i < iMax; i++) {
+                const auto iButton = new eFramedButton(window());
+                iButton->setUnderline(false);
+                iButton->setRenderBg(true);
+                iButton->setText(std::to_string(i));
+                iButton->fitContent();
+                cityEditorWidget->addWidget(iButton);
+                iButtons.push_back(iButton);
+                iButton->move(x, y);
+                const int h = iButton->height();
+                y += h + p;
+                const int nextBottom = y + h;
+                int gx = 0;
+                int gy = nextBottom;
+                cityEditorWidget->mapToParent(gx, gy);
+                if(gy > height() - h - 2*p) {
+                    y = y0;
+                    x += iButton->width() + p;
+                }
+            }
+            for(int i = 0; i < iMax; i++) {
+                const auto iButton = iButtons[i];
+                iButton->setPressAction([this, i, iButton, iButtons]() {
+                    iButton->setText("*" + std::to_string(i) + "*");
+                    mBoard->setEditorCurrentDistrict(i);
+                    for(int j = 0; j < iMax; j++) {
+                        if(j == i) continue;
+                        const auto jButton = iButtons[j];
+                        jButton->setText(std::to_string(j));
+                    }
+                });
+                if(i == 0) iButton->trigger();
+            }
+        }
+        cityEditorWidget->fitContent();
+        cityEditorWidget->hide();
+    }
 
     {
         const auto buyCityWidget = new eFramedWidget(window());

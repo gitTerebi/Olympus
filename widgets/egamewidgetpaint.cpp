@@ -283,7 +283,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     const auto ppid = mBoard->personPlayer();
     const int nc = children().size() - mTips.size();
 //    printf("%d\n", nc);
-    if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 8) {
+    if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 10) {
         const bool lost = mBoard->episodeLost();
         if(lost) {
             const auto w = window();
@@ -781,27 +781,54 @@ void eGameWidget::paintEvent(ePainter& p) {
 
                     const bool erase = inErase(ub);
                     const bool hover = inPatrolBuildingHover(ub);
+                    bool colorMod = false;
+                    int cred = 255;
+                    int cgreen = 255;
+                    int cblue = 255;
+                    if(erase) {
+                        colorMod = true;
+                        cred = 255;
+                        cgreen = 175;
+                        cblue = 175;
+                    } else if(hover) {
+                        colorMod = true;
+                        cred = 175;
+                        cgreen = 255;
+                        cblue = 255;
+                    } else if(mEditorMode) {
+                        colorMod = true;
+                        const int eid = ub->editorDistrict();
+                        const auto cid = ub->cityId();
+                        const auto ecid = mBoard->editorCurrentDistrict();
+                        if(ecid == eid) {
+                            cred = 200;
+                            cgreen = 255;
+                            cblue = 200;
+                        } else {
+                            cred = 255;
+                            cgreen = 200;
+                            cblue = 200;
+                        }
+                    }
                     const auto tex = ts.fTex;
                     if(tex) {
-                        if(erase) tex->setColorMod(255, 175, 175);
-                        else if(hover) tex->setColorMod(175, 255, 255);
+                        if(colorMod) tex->setColorMod(cred, cgreen, cblue);
                         tp.drawTexture(drawX, drawY, tex, eAlignment::top);
-                        if(erase || hover) tex->clearColorMod();
+                        if(colorMod) tex->clearColorMod();
                     }
                     if(ub->overlayEnabled() && ts.fOvelays) {
                         const auto overlays = ub->getOverlays(size);
                         for(const auto& o : overlays) {
                             const auto& tex = o.fTex;
                             if(!tex) continue;
-                            if(erase) tex->setColorMod(255, 175, 175);
-                            else if(hover) tex->setColorMod(175, 255, 255);
+                            if(colorMod) tex->setColorMod(cred, cgreen, cblue);
                             if(o.fAlignTop) {
                                 tp.drawTexture(drawX + o.fX, drawY + o.fY,
                                                tex, eAlignment::top);
                             } else {
                                 tp.drawTexture(drawX + o.fX, drawY + o.fY, tex);
                             }
-                            if(erase || hover) tex->clearColorMod();
+                            if(colorMod) tex->clearColorMod();
                         }
                     }
                     SDL_RenderSetClipRect(p.renderer(), nullptr);
