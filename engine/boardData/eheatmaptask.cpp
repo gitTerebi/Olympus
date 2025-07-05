@@ -3,20 +3,19 @@
 #include "../thread/ethreadboard.h"
 
 eHeatMapTask::eHeatMapTask(const eCityId cid,
+                           const SDL_Rect& bRect,
                            const eHeatGetter& heatGetter,
                            const eFunc& finish) :
-    eTask(cid), mHeatGetter(heatGetter), mFinish(finish) {
-
-}
+    eTask(cid), mHeatGetter(heatGetter), mFinish(finish),
+    mBRect(bRect) {}
 
 void eHeatMapTask::sRun(eThreadBoard& board,
+                        const SDL_Rect bRect,
                         const eHeatGetter& heatGetter,
                         eHeatMap& map) {
-    const int w = board.width();
-    const int h = board.height();
-    map.initialize(w, h);
-    for(int tx = 0; tx < w; tx++) {
-        for(int ty = 0; ty < h; ty++) {
+    map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);
+    for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
+        for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
             const auto t = board.dtile(tx, ty);
             const auto& ub = t->underBuilding();
             const auto ubt = ub.type();
@@ -32,13 +31,12 @@ void eHeatMapTask::sRun(eThreadBoard& board,
 }
 
 void eHeatMapTask::sRun(eThreadBoard& board,
+                        const SDL_Rect bRect,
                         const eTileHeatGetter& heatGetter,
                         eHeatMap& map) {
-    const int w = board.width();
-    const int h = board.height();
-    map.initialize(w, h);
-    for(int tx = 0; tx < w; tx++) {
-        for(int ty = 0; ty < h; ty++) {
+    map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);
+    for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
+        for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
             const auto t = board.dtile(tx, ty);
             const auto a = heatGetter(t);
             map.addHeat(a, {t->x(), t->y(), 1, 1});
@@ -47,7 +45,7 @@ void eHeatMapTask::sRun(eThreadBoard& board,
 }
 
 void eHeatMapTask::run(eThreadBoard& board) {
-    sRun(board, mHeatGetter, mMap);
+    sRun(board, mBRect, mHeatGetter, mMap);
 }
 
 void eHeatMapTask::finish() {

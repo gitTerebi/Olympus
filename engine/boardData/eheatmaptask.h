@@ -16,13 +16,16 @@ public:
     using eTileHeatGetter = std::function<eHeat(eTileBase* const)>;
     using eFunc = std::function<void(eHeatMap&)>;
     eHeatMapTask(const eCityId cid,
+                 const SDL_Rect& bRect,
                  const eHeatGetter& heatGetter,
                  const eFunc& finish);
 
     static void sRun(eThreadBoard& board,
+                     const SDL_Rect bRect,
                      const eHeatGetter& heatGetter,
                      eHeatMap& map);
     static void sRun(eThreadBoard& board,
+                     const SDL_Rect bRect,
                      const eTileHeatGetter& heatGetter,
                      eHeatMap& map);
 
@@ -31,6 +34,7 @@ public:
 private:
     const eHeatGetter mHeatGetter;
     const eFunc mFinish;
+    const SDL_Rect mBRect;
     eHeatMap mMap;
 };
 

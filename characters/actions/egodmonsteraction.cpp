@@ -178,8 +178,11 @@ void eGodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
             setCurrentAction(nullptr);
         }
     };
-    const auto task = new eHeatMapTask(onCityId(), hg, hmFinish);
+    const auto cid = onCityId();
     auto& board = c->getBoard();
+    const auto cc = board.boardCityWithId(cid);
+    const auto rect = cc->tileBRect();
+    const auto task = new eHeatMapTask(cid, rect, hg, hmFinish);
     auto& tp = board.threadPool();
     tp.queueTask(task);
     wait();

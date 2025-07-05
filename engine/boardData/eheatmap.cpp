@@ -6,6 +6,8 @@
 #include <cassert>
 
 void eHeatMap::add(const eHeatMap& other) {
+    assert(mDX == other.mDX);
+    assert(mDY == other.mDY);
     assert(mWidth == other.mWidth);
     assert(mHeight == other.mHeight);
     for(int x = 0; x < mWidth; x++) {
@@ -27,6 +29,8 @@ void eHeatMap::add(const eHeatMap& other) {
 }
 
 void eHeatMap::multiply(const eHeatMap& other) {
+    assert(mDX == other.mDX);
+    assert(mDY == other.mDY);
     assert(mWidth == other.mWidth);
     assert(mHeight == other.mHeight);
     for(int x = 0; x < mWidth; x++) {
@@ -48,11 +52,14 @@ void eHeatMap::multiply(const eHeatMap& other) {
 }
 
 void eHeatMap::reset() {
-    initialize(mWidth, mHeight);
+    initialize(mDX, mDY, mWidth, mHeight);
 }
 
-void eHeatMap::initialize(const int w, const int h) {
+void eHeatMap::initialize(const int dx, const int dy,
+                          const int w, const int h) {
     mMap.clear();
+    mDX = dx;
+    mDY = dy;
     mWidth = w;
     mHeight = h;
     if(w > 0) mMap.reserve(w);
@@ -68,7 +75,7 @@ void eHeatMap::initialize(const int w, const int h) {
 void eHeatMap::addHeat(const eHeat& a,
                        const SDL_Rect& tileRect) {
     addHeat(a, tileRect.x, tileRect.y,
-              tileRect.w, tileRect.h);
+               tileRect.w, tileRect.h);
 }
 
 void eHeatMap::addHeat(const eHeat& a,
@@ -96,24 +103,24 @@ void eHeatMap::addHeat(const eHeat& a,
 
 void eHeatMap::addHeat(const int x, const int y,
                        const double a) {
-    if(x < 0 || y < 0 ||
-       x >= mWidth || y >= mHeight) return;
-    auto& tile = mMap[x][y];
+    if(x < mDX || y < mDY ||
+       x >= mWidth + mDX || y >= mHeight + mDY) return;
+    auto& tile = mMap[x - mDX][y - mDY];
     tile.fEnabled = true;
     tile.fAppeal += a/2;
 }
 
 bool eHeatMap::enabled(const int x, const int y) const {
-    return mMap[x][y].fEnabled;
+    return mMap[x - mDX][y - mDY].fEnabled;
 }
 
 double eHeatMap::heat(const int x, const int y) const {
-    return mMap[x][y].fAppeal;
+    return mMap[x - mDX][y - mDY].fAppeal;
 }
 
 void eHeatMap::set(const int x, const int y,
                    const bool e, const double h) {
-    auto& tile = mMap[x][y];
+    auto& tile = mMap[x - mDX][y - mDY];
     tile.fEnabled = e;
     tile.fAppeal = h;
 }

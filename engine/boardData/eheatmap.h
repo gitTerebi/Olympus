@@ -20,7 +20,8 @@ public:
     void multiply(const eHeatMap& other);
 
     void reset();
-    void initialize(const int w, const int h);
+    void initialize(const int dx, const int dy,
+                    const int w, const int h);
 
     void addHeat(const eHeat& a,
                  const SDL_Rect& tileRect);
@@ -35,12 +36,17 @@ public:
     bool enabled(const int x, const int y) const;
     double heat(const int x, const int y) const;
 
+    int dx() const { return mDX; }
+    int dy() const { return mDY; }
+
     int width() const { return mWidth; }
     int height() const { return mHeight; }
 
     void set(const int x, const int y,
              const bool e, const double h);
 private:
+    int mDX = 0;
+    int mDY = 0;
     int mWidth = 0;
     int mHeight = 0;
     std::vector<std::vector<eHeatTile>> mMap;

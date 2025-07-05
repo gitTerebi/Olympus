@@ -130,7 +130,7 @@ void eGameBoard::initialize(const int w, const int h) {
     mWidth = w;
     mHeight = h;
 
-    mAppealMap.initialize(w, h);
+    mAppealMap.initialize(0, 0, w, h);
 
     updateNeighbours();
 //    updateMarbleTiles();
@@ -171,7 +171,7 @@ void eGameBoard::resize(const int w, const int h) {
     mWidth = w;
     mHeight = h;
 
-    mAppealMap.initialize(w, h);
+    mAppealMap.initialize(0, 0, w, h);
 
     updateNeighbours();
 //    updateMarbleTiles();
@@ -264,7 +264,10 @@ void eGameBoard::updateAppealMapIfNeeded() {
                 mAppealMap.set(dx, dy, e, h);
             }
         };
-        const auto task = new eHeatMapTask(cid, eHeatGetters::appeal, finish);
+        const auto cc = boardCityWithId(cid);
+        const auto rect = cc->tileBRect();
+        const auto task = new eHeatMapTask(cid, rect,
+                                           eHeatGetters::appeal, finish);
         mThreadPool.queueTask(task);
     }
 }

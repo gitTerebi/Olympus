@@ -24,10 +24,14 @@ eHeatMapDivisor::eHeatMapDivisor(const eHeatMap& map) :
 }
 
 void eHeatMapDivisor::divide(const int dim) {
-    for(int x = 0; x < mMap.width(); x += dim) {
-        for(int y = 0; y < mMap.height(); y += dim) {
-            const int w = std::min(mMap.width() - x, dim);
-            const int h = std::min(mMap.height() - y, dim);
+    const int mdx = mMap.dx();
+    const int mdy = mMap.dy();
+    const int mw = mMap.width();
+    const int mh = mMap.height();
+    for(int x = mdx; x < mdx + mw; x += dim) {
+        for(int y = mdy; y < mdy + mh; y += dim) {
+            const int w = std::min(mdx + mw - x, dim);
+            const int h = std::min(mdy + mh - y, dim);
             double maxHeat = -DBL_MAX;
             int maxHeatX = x;
             int maxHeatY = y;
