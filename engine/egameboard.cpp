@@ -1083,7 +1083,8 @@ std::string eGameBoard::cityName(const eCityId cid) const {
 }
 
 void eGameBoard::updatePlayersOnBoard() {
-    for(const auto& p : mPlayersOnBoard) {
+    const auto ps = mPlayersOnBoard;
+    for(const auto& p : ps) {
         const auto pid = p->id();
         const auto cids = playerCitiesOnBoard(pid);
         if(cids.empty()) removePlayerFromBoard(pid);
