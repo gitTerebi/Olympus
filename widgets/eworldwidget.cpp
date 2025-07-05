@@ -152,7 +152,7 @@ void eWorldWidget::initialize() {
     mSettingsButton->setPressAction([this]() {
         if(!mCity) return;
         const auto d = new eCitySettingsWidget(window());
-        d->initialize(mCity, mBoard, mWorldBoard);
+        d->initialize(mCity, nullptr, mWorldBoard);
 
         window()->execDialog(d);
         d->align(eAlignment::center);

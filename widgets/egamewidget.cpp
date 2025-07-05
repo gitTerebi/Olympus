@@ -510,6 +510,7 @@ void eGameWidget::initialize() {
                               innerWidget->height() + 2*p);
         addWidget(buyCityWidget);
         buyCityWidget->align(eAlignment::center);
+        buyCityWidget->hide();
     }
 
     const auto& setts = window()->settings();

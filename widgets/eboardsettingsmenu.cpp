@@ -35,8 +35,13 @@ void eBoardSettingsMenu::initialize(
             return boardPtr->citiesOnBoard();
         };
 
-        const auto add = [boardPtr, gw](const eCityId cid) {
-            boardPtr->addCityToBoard(cid);
+        const auto wboard = boardPtr->getWorldBoard();
+
+        const auto add = [boardPtr, wboard, gw](const eCityId cid) {
+            const auto c = boardPtr->addCityToBoard(cid);
+            const auto wc = wboard->cityWithId(cid);
+            const auto nat = wc->nationality();
+            c->setAtlantean(nat == eNationality::atlantean);
             boardPtr->updatePlayersOnBoard();
             gw->updateMaps(true);
             gw->updateCitiesOnBoard();
@@ -49,7 +54,6 @@ void eBoardSettingsMenu::initialize(
             gw->updateCitiesOnBoard();
         };
 
-        const auto wboard = boardPtr->getWorldBoard();
         citiesMenu->initialize(get, add, remove, boardPtr, wboard);
 
         window()->execDialog(citiesMenu);

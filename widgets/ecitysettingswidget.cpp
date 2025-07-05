@@ -195,10 +195,10 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                type == eCityType::parentCity) {
                 const auto cid = c->cityId();
                 if(c->nationality() == eNationality::atlantean) {
-                    board->setAtlantean(cid, true);
+                    if(board) board->setAtlantean(cid, true);
                 } else {
                     c->setNationality(eNationality::greek);
-                    board->setAtlantean(cid, false);
+                    if(board) board->setAtlantean(cid, false);
                 }
             }
             const auto name = typeNames[val];
@@ -383,7 +383,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto nat = nationalities[val];
             c->setNationality(nat);
             const auto cid = c->cityId();
-            board->setAtlantean(cid, nat == eNationality::atlantean);
+            if(board) board->setAtlantean(cid, nat == eNationality::atlantean);
             const auto name = nationalityNames[val];
             nationalityButton->setText(name);
             nationalityButton->fitContent();
