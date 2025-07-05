@@ -85,8 +85,6 @@
 #include "characters/actions/eanimalaction.h"
 #include "buildings/eanimalbuilding.h"
 
-#include "engine/ai/eaicityplanningtask.h"
-
 #include "buildings/eplaceholder.h"
 #include "buildings/sanctuaries/ezeussanctuary.h"
 #include "buildings/sanctuaries/ehephaestussanctuary.h"
@@ -2156,14 +2154,6 @@ void eGameBoard::incTime(const int by) {
         c->incTime(by);
     }
 
-//    if(mTotalTime == 0) {
-//        const auto c = mCitiesOnBoard[0];
-//        const auto brect = c->tileBRect();
-//        const auto pid = personPlayer();
-//        const auto cid = c->id();
-//        const auto task = new eAICityPlanningTask(*this, brect, pid, cid);
-//        mThreadPool.queueTask(task);
-//    }
     mTime += by;
     mTotalTime += by;
     bool nextMonth = false;

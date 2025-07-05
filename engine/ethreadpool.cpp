@@ -71,7 +71,7 @@ void eThreadPool::threadEntry(eThreadData* data) {
                 const auto cid = task->cid();
                 data->setRunning(true);
                 data->updateBoard(cid);
-                std::printf("Run task %p\n", task);
+//                std::printf("Run task %p\n", task);
                 auto& b = data->board(cid);
                 if(task->expectedState() > b.state()) {
                     printf("Old state!\n");
@@ -121,7 +121,7 @@ void eThreadPool::queueTask(eTask* const task) {
         d = mThreadData[threadId];
     }
     auto& cidV = d->fDataUpdateScheduled[cid];
-    std::printf("Que task %p in %p\n", task, d);
+//    std::printf("Que task %p in %p\n", task, d);
     if(cidV.fV) {
         cidV.fV = false;
         if(cidV.fIni) {

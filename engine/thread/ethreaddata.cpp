@@ -23,7 +23,7 @@ void eThreadData::updateBoard(const eCityId cid) {
 
 eThreadBoard& eThreadData::board(const eCityId cid) {
     auto& bh = mBoards[cid];
-    std::printf("Access board %p\n", &bh);
+//    std::printf("Access board %p\n", &bh);
     return bh.board();
 }
 

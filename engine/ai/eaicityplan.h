@@ -71,10 +71,6 @@ public:
     void buildDistrict(eGameBoard& board, const int id);
     void buildAllDistricts(eGameBoard& board);
     void rebuildDistricts(eGameBoard& board);
-    using ePoints = std::vector<std::pair<SDL_Point, SDL_Point>>;
-    bool connectDistricts(const int id1, const int id2,
-                          ePoints& points);
-    void connectAllBuiltDistricts(eGameBoard& board);
     bool districtBuilt(const int id) const;
 
     void editorDisplayBuildings(eGameBoard& board);

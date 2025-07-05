@@ -6,7 +6,6 @@
 
 #include "engine/epathfinder.h"
 
-#include "eaiconnectwithroadtask.h"
 #include "etilehelper.h"
 
 eAICityPlan::eAICityPlan(const eCityId cid) :
@@ -100,47 +99,6 @@ void eAICityPlan::rebuildDistricts(eGameBoard& board) {
         board.setCurrentDistrictId(id);
         mDistricts[id].build(board, pid, mCid, false);
     }
-}
-
-bool eAICityPlan::connectDistricts(const int id1, const int id2,
-                                   ePoints& points) {
-    if(!districtBuilt(id1)) return false;
-    if(!districtBuilt(id2)) return false;
-
-    const auto& d1 = mDistricts[id1];
-    int r1x;
-    int r1y;
-    const bool road1 = d1.road(r1x, r1y);
-    if(!road1) return false;
-
-    const auto& d2 = mDistricts[id2];
-    int r2x;
-    int r2y;
-    const bool road2 = d2.road(r2x, r2y);
-    if(!road2) return false;
-
-    points.push_back({SDL_Point{r1x, r1y}, SDL_Point{r2x, r2y}});
-
-    return true;
-}
-
-void eAICityPlan::connectAllBuiltDistricts(eGameBoard& board) {
-    ePoints points;
-
-    const int ijMax = mBuiltDistrics.size();
-    for(int i = 0; i < ijMax; i++) {
-        for(int j = i + 1; j < ijMax; j++) {
-            connectDistricts(i, j, points);
-        }
-    }
-
-    if(points.empty()) return;
-    auto& tp = board.threadPool();
-    tp.scheduleDataUpdate();
-    const auto pid = board.cityIdToPlayerId(mCid);
-    const auto task = new eAIConnectWithRoadTask(
-                          board, points, pid, mCid);
-    tp.queueTask(task);
 }
 
 bool eAICityPlan::districtBuilt(const int id) const {
