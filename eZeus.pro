@@ -543,8 +543,10 @@ SOURCES += \
         widgets/ecityonboardselectionwidget.cpp \
         widgets/ecitysettingswidget.cpp \
         widgets/eclosabledialog.cpp \
+        widgets/econditionsettingswidget.cpp \
         widgets/edatebutton.cpp \
         widgets/edatewidget.cpp \
+        widgets/edistrictconditionswidget.cpp \
         widgets/edownbutton.cpp \
         widgets/eeditormainmenu.cpp \
         widgets/eeditorsettingsmenu.cpp \
@@ -2620,8 +2622,10 @@ HEADERS += \
     widgets/ecityonboardselectionwidget.h \
     widgets/ecitysettingswidget.h \
     widgets/eclosabledialog.h \
+    widgets/econditionsettingswidget.h \
     widgets/edatebutton.h \
     widgets/edatewidget.h \
+    widgets/edistrictconditionswidget.h \
     widgets/edownbutton.h \
     widgets/eeditormainmenu.h \
     widgets/eeditorsettingsmenu.h \

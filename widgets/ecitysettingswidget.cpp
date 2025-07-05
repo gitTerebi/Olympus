@@ -69,8 +69,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
 
     const auto buttonsW1 = new eWidget(window());
     buttonsW1->setNoPadding();
-    addWidget(buttonsW1);
-    buttonsW1->move(p, p);
+    addWidget(buttonsW1); buttonsW1->move(p, p);
     const int ww = (w - 3*p)/2;
     const int hh = h - 2*p;
     buttonsW1->resize(ww, hh);

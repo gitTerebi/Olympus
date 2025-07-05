@@ -60,6 +60,8 @@
 
 #include "ebuildablehelpers.h"
 
+#include "edistrictconditionswidget.h"
+
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eWidget(window) {}
 
@@ -322,6 +324,46 @@ void eGameWidget::initialize() {
     {
         const auto cityEditorWidget = new eWidget(window());
 
+        const auto condButton = new eFramedButton(window());
+        condButton->setRenderBg(true);
+        condButton->setUnderline(false);
+        condButton->setText(eLanguage::text("conditions"));
+        condButton->fitContent();
+        cityEditorWidget->addWidget(condButton);
+        condButton->setPressAction([this]() {
+            const auto condsMenu = new eDistrictConditionsWidget(window());
+            condsMenu->resize(width()/2, 2*height()/3);
+
+            const auto get = [this]() {
+                const auto c = mBoard->boardCityWithId(mViewedCityId);
+                if(!c) return std::vector<eDistrictReadyCondition>{};
+                return c->getDistrictReadyConditions();
+            };
+
+            const auto add = [this](const eDistrictReadyCondition& cond) {
+                const auto c = mBoard->boardCityWithId(mViewedCityId);
+                if(!c) return;
+                c->addDistrictReadyCondition(cond);
+            };
+
+            const auto remove = [this](const int id) {
+                const auto c = mBoard->boardCityWithId(mViewedCityId);
+                if(!c) return;
+                c->removeDistrictReadyCondition(id);
+            };
+
+            const auto set = [this](const int id, const eDistrictReadyCondition& cond) {
+                const auto c = mBoard->boardCityWithId(mViewedCityId);
+                if(!c) return;
+                c->setDistrictReadyCondition(id, cond);
+            };
+
+            condsMenu->initialize(get, add, set, remove);
+
+            window()->execDialog(condsMenu);
+            condsMenu->align(eAlignment::center);
+        });
+
         const auto saveButton = new eFramedButton(window());
         saveButton->setRenderBg(true);
         saveButton->setUnderline(false);
@@ -356,8 +398,8 @@ void eGameWidget::initialize() {
             mEditorShowBuildings = !mEditorShowBuildings;
             mGm->setShowAllPossibleBuildings(mEditorShowBuildings);
             if(mEditorShowBuildings) {
-                if(mBoard->editorCurrentDistrict() == -1) {
-                    mBoard->setEditorCurrentDistrict(0);
+                if(mBoard->currentDistrictId() == -1) {
+                    mBoard->setCurrentDistrictId(0);
                 }
                 mBoard->editorDisplayBuildings();
             } else {
@@ -401,7 +443,7 @@ void eGameWidget::initialize() {
                 const auto iButton = iButtons[i];
                 iButton->setPressAction([this, i, iButton, iButtons]() {
                     iButton->setText("*" + std::to_string(i) + "*");
-                    mBoard->setEditorCurrentDistrict(i);
+                    mBoard->setCurrentDistrictId(i);
                     for(int j = 0; j < iMax; j++) {
                         if(j == i) continue;
                         const auto jButton = iButtons[j];

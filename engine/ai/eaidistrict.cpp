@@ -69,6 +69,8 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/epark.h"
 
+#include "elanguage.h"
+#include "estringhelpers.h"
 
 template <class T>
 bool gBuildVendor(eGameBoard& brd,
@@ -718,6 +720,13 @@ void eAIDistrict::read(eReadStream& src) {
         auto& b = fBuildings.emplace_back();
         b.read(src);
     }
+
+    int nc;
+    src >> nc;
+    for(int i = 0; i < nc; i++) {
+        auto& c = fReadyConditions.emplace_back();
+        c.read(src);
+    }
 }
 
 void eAIDistrict::write(eWriteStream& dst) const {
@@ -725,4 +734,80 @@ void eAIDistrict::write(eWriteStream& dst) const {
     for(const auto& b : fBuildings) {
         b.write(dst);
     }
+
+    dst << fReadyConditions.size();
+    for(const auto& c : fReadyConditions) {
+        c.write(dst);
+    }
+}
+
+std::string eDistrictReadyCondition::sName(const eType type) {
+    switch(type) {
+    case eType::districtResourceCount:
+        return eLanguage::text("district_resource_count_type");
+    case eType::totalResourceCount:
+        return eLanguage::text("total_resource_count_type");
+    case eType::districtPopulation:
+        return eLanguage::text("district_population_type");
+    case eType::totalPopulation:
+        return eLanguage::text("total_population_type");
+    case eType::sanctuaryReady:
+        return eLanguage::text("sanctuary_ready_type");
+    case eType::count:
+        return "";
+    }
+}
+
+std::string eDistrictReadyCondition::name() const {
+    std::string result;
+    switch(fType) {
+    case eType::districtResourceCount:
+        result = eLanguage::text("district_resource_count");
+        break;
+    case eType::totalResourceCount:
+        result = eLanguage::text("total_resource_count");
+        break;
+    case eType::districtPopulation:
+        result = eLanguage::text("district_population");
+        break;
+    case eType::totalPopulation:
+        result = eLanguage::text("total_population");
+        break;
+    case eType::sanctuaryReady:
+        result = eLanguage::text("sanctuary_ready");
+        break;
+    case eType::count:
+        return "";
+    }
+    switch(fType) {
+    case eType::districtResourceCount:
+    case eType::totalResourceCount:
+        eStringHelpers::replace(result, "%1", eResourceTypeHelpers::typeName(fResource));
+        eStringHelpers::replace(result, "%2", std::to_string(fValue));
+        break;
+    case eType::districtPopulation:
+    case eType::totalPopulation:
+        eStringHelpers::replace(result, "%1", std::to_string(fValue));
+        break;
+    case eType::sanctuaryReady:
+        eStringHelpers::replace(result, "%1", eGod::sGodName(fSanctuary));
+        break;
+    case eType::count:
+        return "";
+    }
+    return result;
+}
+
+void eDistrictReadyCondition::read(eReadStream& src) {
+    src >> fType;
+    src >> fResource;
+    src >> fSanctuary;
+    src >> fValue;
+}
+
+void eDistrictReadyCondition::write(eWriteStream& dst) const {
+    dst << fType;
+    dst << fResource;
+    dst << fSanctuary;
+    dst << fValue;
 }

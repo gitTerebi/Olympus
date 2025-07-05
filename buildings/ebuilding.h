@@ -295,8 +295,8 @@ public:
     ePlayerId playerId() const;
     eTeamId teamId() const;
 
-    void setEditorDistrict(const int id) { mEditorDistrict = id; }
-    int editorDistrict() const { return mEditorDistrict; }
+    void setDistrictId(const int id) { mDistrictId = id; }
+    int districtId() const { return mDistrictId; }
 private:
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;
@@ -304,7 +304,7 @@ private:
 
     int mIOID = -1;
     int mSeed;
-    int mEditorDistrict = -1; // -1 for none
+    int mDistrictId = -1; // -1 for none
     const eBuildingType mType;
     const bool mAtlantean;
     const int mSpanW;

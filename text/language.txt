@@ -9,6 +9,20 @@ map "Map"
 name "Name"
 leader "Leader"
 
+district_resource_count_type "District Resource Count"
+total_resource_count_type "Total Resource Count"
+district_population_type "District Population"
+total_population_type "Total Population"
+sanctuary_ready_type "Sanctuary Ready"
+
+district_resource_count "District %1 Count %2"
+total_resource_count "Total %1 Count %2"
+district_population "District Population %1"
+total_population "Total Population %1"
+sanctuary_ready "%1 Sanctuary Ready"
+
+conditions "Conditions"
+
 cities_on_board "Cities on board"
 resize "Resize"
 width "Width"

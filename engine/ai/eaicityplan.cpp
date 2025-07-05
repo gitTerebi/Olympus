@@ -81,6 +81,8 @@ void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
     const bool c = districtBuilt(id);
     if(!c) mBuiltDistrics.push_back(id);
     const auto pid = board.cityIdToPlayerId(mCid);
+    eDistrictIdTmp idTmp(board);
+    board.setCurrentDistrictId(id);
     mDistricts[id].build(board, pid, mCid, false);
 }
 
@@ -92,8 +94,10 @@ void eAICityPlan::buildAllDistricts(eGameBoard& board) {
 }
 
 void eAICityPlan::rebuildDistricts(eGameBoard& board) {
+    eDistrictIdTmp idTmp(board);
     const auto pid = board.cityIdToPlayerId(mCid);
     for(const int id : mBuiltDistrics) {
+        board.setCurrentDistrictId(id);
         mDistricts[id].build(board, pid, mCid, false);
     }
 }
@@ -144,14 +148,13 @@ bool eAICityPlan::districtBuilt(const int id) const {
 }
 
 void eAICityPlan::editorDisplayBuildings(eGameBoard& board) {
-    const int tmpi = board.editorCurrentDistrict();
+    eDistrictIdTmp idTmp(board);
     int i = 0;
     for(const auto& d : mDistricts) {
-        board.setEditorCurrentDistrict(i++);
+        board.setCurrentDistrictId(i++);
         const auto pid = board.cityIdToPlayerId(mCid);
         d.build(board, pid, mCid, true);
     }
-    board.setEditorCurrentDistrict(tmpi);
 }
 
 void eAICityPlan::read(eReadStream& src) {

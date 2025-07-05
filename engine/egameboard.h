@@ -77,6 +77,15 @@ struct eEpisode;
 
 using eAction = std::function<void()>;
 
+class eDistrictIdTmp {
+public:
+    eDistrictIdTmp(eGameBoard& board);
+    ~eDistrictIdTmp();
+private:
+    eGameBoard& mBoard;
+    const int mTmpId;
+};
+
 class eGameBoard : public eStdSelfRef {
 public:
     eGameBoard();
@@ -520,8 +529,8 @@ public:
     void editorClearBuildings();
     void editorDisplayBuildings();
     void saveEditorCityPlan();
-    int editorCurrentDistrict() const { return mEditorCurrentDistrict; }
-    void setEditorCurrentDistrict(const int id);
+    int currentDistrictId() const { return mCurrentDistrictId; }
+    void setCurrentDistrictId(const int id);
 
     bool atlantean(const eCityId cid) const;
     bool setAtlantean(const eCityId cid, const bool a);
@@ -694,7 +703,7 @@ private:
     void progressEarthquakes();
 
     bool mEditorMode = false;
-    int mEditorCurrentDistrict = -1;
+    int mCurrentDistrictId = -1;
     bool mRainforest = true;
     mutable bool mEpisodeLost = false;
     eWorldBoard* mWorldBoard = nullptr;

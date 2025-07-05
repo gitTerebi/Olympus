@@ -102,6 +102,12 @@ public:
     void rebuildDistricts();
     bool previousDistrictFulfilled();
     void buildNextDistrict(const int drachmas);
+    void setCurrentDistrictId(const int id) { mCurrentDistrictId = id; }
+    using eCondition = eDistrictReadyCondition;
+    std::vector<eCondition> getDistrictReadyConditions();
+    void addDistrictReadyCondition(const eCondition& c);
+    void removeDistrictReadyCondition(const int id);
+    void setDistrictReadyCondition(const int id, const eCondition& c);
 
     void registerBuilding(eBuilding* const b);
     bool unregisterBuilding(eBuilding* const b);
@@ -317,7 +323,8 @@ private:
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
 
-    int mEditorCurrentDistrict = -1; // -1 when not editing
+    std::map<int, std::vector<eDistrictReadyCondition>> mEditorDistrictConditions;
+    int mCurrentDistrictId = -1; // -1 when not editing
     eAICityPlan mCityPlan;
 
     eWageRate mWageRate{eWageRate::normal};

@@ -4,9 +4,13 @@
 #include "emainwindow.h"
 
 void eResourceButton::initialize(const eResourceAction& ract,
-                                 const eResourceType res) {
-    setPressAction([this, ract, res]() {
-        const auto resources = eResourceTypeHelpers::extractResourceTypes(res);
+                                 const eResourceType res,
+                                 const bool showFood) {
+    setPressAction([this, ract, res, showFood]() {
+        auto resources = eResourceTypeHelpers::extractResourceTypes(res);
+        if(showFood) {
+            resources.push_back(eResourceType::food);
+        }
 
         std::vector<std::string> resourceNames;
         for(const auto res : resources) {

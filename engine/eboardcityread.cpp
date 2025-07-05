@@ -11,6 +11,10 @@ void eBoardCity::read(eReadStream& src) {
     src >> mAtlantean;
 
     mCityPlan.read(src);
+    for(int i = 0; i < mCityPlan.districtCount(); i++) {
+        const auto& d = mCityPlan.district(i);
+        mEditorDistrictConditions[i] = d.fReadyConditions;
+    }
 
     src >> mWageRate;
     src >> mTaxRate;

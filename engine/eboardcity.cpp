@@ -315,9 +315,12 @@ void eBoardCity::setWageRate(const eWageRate wr) {
 void eBoardCity::saveEditorCityPlan() {
     mCityPlan = eAICityPlan(mId);
     for(const auto b : mAllBuildings) {
-        const int did = b->editorDistrict();
+        const int did = b->districtId();
         while(did >= mCityPlan.districtCount()) {
-            mCityPlan.addDistrict(eAIDistrict());
+            const int id = mCityPlan.districtCount();
+            eAIDistrict d;
+            d.fReadyConditions = mEditorDistrictConditions[id];
+            mCityPlan.addDistrict(d);
         }
         auto& d = mCityPlan.district(did);
         eAIBuilding ab;
@@ -363,19 +366,48 @@ bool eBoardCity::previousDistrictFulfilled() {
     const int id = mCityPlan.lastBuiltDistrictId();
     if(id == -1) return true;
     const auto& d = mCityPlan.district(id);
-    for(const auto& b : d.fBuildings) {
-        if(b.fType == eBuildingType::warehouse ||
-           b.fType == eBuildingType::granary) {
-            const auto bb = mBoard.buildingAt(b.fRect.x, b.fRect.y);
-            if(!bb) continue;
-            if(bb->type() != b.fType) continue;
-            const auto sb = static_cast<eStorageBuilding*>(bb);
-            const auto gets = sb->get();
-            const auto g = eResourceTypeHelpers::extractResourceTypes(gets);
-            for(const auto r : g) {
-                const int s = sb->spaceLeft(r);
-                if(s > 0) return false;
+    const auto& cs = d.fReadyConditions;
+    if(cs.empty()) return true;
+    for(const auto& c : cs) {
+        using eType = eDistrictReadyCondition::eType;
+        if(c.fType == eType::districtResourceCount ||
+           c.fType == eType::totalResourceCount) {
+            int total = 0;
+            if(c.fResource == eResourceType::drachmas) {
+                const auto pid = mBoard.cityIdToPlayerId(mId);
+                total = mBoard.drachmas(pid);
+            } else {
+                const bool totalType = c.fType == eType::totalResourceCount;
+                for(const auto& b : mStorBuildings) {
+                    if(!totalType) {
+                        const int did = b->districtId();
+                        if(did != id) continue;
+                    }
+                    const int cc = b->count(c.fResource);
+                    total += cc;
+                    if(total >= c.fValue) break;
+                }
             }
+            if(total < c.fValue) return false;
+        } else if(c.fType == eType::districtPopulation) {
+            int total = 0;
+            for(const auto& b : mTimedBuildings) {
+                if(const auto hb = dynamic_cast<eHouseBase*>(b)) {
+                    const int did = b->districtId();
+                    if(did != id) continue;
+                    const int cc = hb->people();
+                    total += cc;
+                    if(total >= c.fValue) break;
+                }
+            }
+            if(total < c.fValue) return false;
+        } else if(c.fType == eType::totalPopulation) {
+            const int p = population();
+            if(p < c.fValue) return false;
+        } else if(c.fType == eType::sanctuaryReady) {
+            const auto s = sanctuary(c.fSanctuary);
+            if(!s) return false;
+            if(!s->finished()) return false;
         }
     }
     return true;
@@ -391,7 +423,40 @@ void eBoardCity::buildNextDistrict(const int drachmas) {
     mCityPlan.buildDistrict(mBoard, id);
 }
 
+std::vector<eBoardCity::eCondition> eBoardCity::getDistrictReadyConditions() {
+    const auto& v = mEditorDistrictConditions[mCurrentDistrictId];
+    return v;
+    if(mCurrentDistrictId >= mCityPlan.districtCount()) return {};
+    const auto& d = mCityPlan.district(mCurrentDistrictId);
+    return d.fReadyConditions;
+}
+
+void eBoardCity::addDistrictReadyCondition(const eCondition& c) {
+    auto& v = mEditorDistrictConditions[mCurrentDistrictId];
+    v.push_back(c);
+    if(mCurrentDistrictId >= mCityPlan.districtCount()) return;
+    auto& d = mCityPlan.district(mCurrentDistrictId);
+    d.fReadyConditions.push_back(c);
+}
+
+void eBoardCity::removeDistrictReadyCondition(const int id) {
+    auto& v = mEditorDistrictConditions[mCurrentDistrictId];
+    v.erase(v.begin() + id);
+    if(mCurrentDistrictId >= mCityPlan.districtCount()) return;
+    auto& d = mCityPlan.district(mCurrentDistrictId);
+    d.fReadyConditions.erase(d.fReadyConditions.begin() + id);
+}
+
+void eBoardCity::setDistrictReadyCondition(const int id, const eCondition& c) {
+    auto& v = mEditorDistrictConditions[mCurrentDistrictId];
+    v[id] = c;
+    if(mCurrentDistrictId >= mCityPlan.districtCount()) return;
+    auto& d = mCityPlan.district(mCurrentDistrictId);
+    d.fReadyConditions[id] = c;
+}
+
 void eBoardCity::registerBuilding(eBuilding* const b) {
+    b->setDistrictId(mCurrentDistrictId);
     mAllBuildings.push_back(b);
     const auto bt = b->type();
     if(eBuilding::sTimedBuilding(bt)) {

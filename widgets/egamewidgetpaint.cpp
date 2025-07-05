@@ -399,8 +399,21 @@ void eGameWidget::paintEvent(ePainter& p) {
                 }
                 if(eraseCm) tex->setColorMod(255, 175, 175);
             }
+
+            if(mEditorMode) {
+                const auto ub = tile->underBuilding();
+                if(ub) {
+                    const int eid = ub->districtId();
+                    const auto ecid = mBoard->currentDistrictId();
+                    if(ecid == eid) {
+                        tex->setColorMod(200, 255, 200);
+                    } else {
+                        tex->setColorMod(255, 200, 200);
+                    }
+                }
+            }
             tp.drawTexture(rx, ry, tex, eAlignment::top);
-            if(eraseCm || patrolCm || editorHover) tex->clearColorMod();
+            if(eraseCm || patrolCm || editorHover || mEditorMode) tex->clearColorMod();
         }
 
         {
@@ -797,9 +810,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                         cblue = 255;
                     } else if(mEditorMode) {
                         colorMod = true;
-                        const int eid = ub->editorDistrict();
-                        const auto cid = ub->cityId();
-                        const auto ecid = mBoard->editorCurrentDistrict();
+                        const int eid = ub->districtId();
+                        const auto ecid = mBoard->currentDistrictId();
                         if(ecid == eid) {
                             cred = 200;
                             cgreen = 255;

@@ -1484,8 +1484,11 @@ void eGameBoard::saveEditorCityPlan() {
     }
 }
 
-void eGameBoard::setEditorCurrentDistrict(const int id) {
-    mEditorCurrentDistrict = id;
+void eGameBoard::setCurrentDistrictId(const int id) {
+    mCurrentDistrictId = id;
+    for(const auto& c : mCitiesOnBoard) {
+        c->setCurrentDistrictId(id);
+    }
 }
 
 bool eGameBoard::atlantean(const eCityId cid) const {
@@ -1821,7 +1824,6 @@ bool eGameBoard::unregisterSoldier(eSoldier* const c) {
 
 void eGameBoard::registerBuilding(eBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return;
-    b->setEditorDistrict(mEditorCurrentDistrict);
     mAllBuildings.push_back(b);
     const auto bt = b->type();
     if(eBuilding::sTimedBuilding(bt)) {
@@ -3390,4 +3392,11 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
     b->buildingProgressed();
 
     return false;
+}
+
+eDistrictIdTmp::eDistrictIdTmp(eGameBoard& board) :
+    mBoard(board), mTmpId(board.currentDistrictId()) {}
+
+eDistrictIdTmp::~eDistrictIdTmp() {
+    mBoard.setCurrentDistrictId(mTmpId);
 }
