@@ -149,76 +149,36 @@ void eEditorSettingsMenu::initialize(const bool first,
         pricesButt->align(eAlignment::hcenter);
     }
 
-    const auto mythologyAct = [this, ep]() {
+    const auto mythologyAct = [this, ep, board]() {
         const auto mythMenu = new eFramedWidget(window());
         mythMenu->setType(eFrameType::message);
         mythMenu->resize(width(), height());
 
-        const auto friendGodsAct = [this, ep]() {
-            const auto choose = new eGodSelectionWidget(window());
-            const auto act = [ep](const std::vector<eGodType>& godNs) {
-                ep->fFriendlyGodsDelete = godNs;
+        const auto cids = ep->fBoard->citiesOnBoard();
+        for(const auto& cid : cids) {
+            const auto friendGodsAct = [this, ep, cid]() {
+                const auto choose = new eGodSelectionWidget(window());
+                const auto act = [ep, cid](const std::vector<eGodType>& godNs) {
+                    ep->fFriendlyGods[cid] = godNs;
+                };
+
+                const auto& iniG = ep->fFriendlyGods[cid];
+                choose->resize(width(), height());
+                choose->initialize(act, iniG);
+
+                window()->execDialog(choose);
+                choose->align(eAlignment::center);
             };
 
-            const auto& iniG = ep->fFriendlyGodsDelete;
-            choose->resize(width(), height());
-            choose->initialize(act, iniG);
-
-            window()->execDialog(choose);
-            choose->align(eAlignment::center);
-        };
-
-        const auto friendGodsButt = new eFramedButton(window());
-        friendGodsButt->setUnderline(false);
-        friendGodsButt->setText(eLanguage::zeusText(44, 174));
-        friendGodsButt->fitContent();
-        friendGodsButt->setPressAction(friendGodsAct);
-        mythMenu->addWidget(friendGodsButt);
-        friendGodsButt->align(eAlignment::hcenter);
-
-//        const auto hostileGodsAct = [this, ep]() {
-//            const auto choose = new eGodSelectionWidget(window());
-//            const auto act = [ep](const std::vector<eGodType>& godNs) {
-//                ep->fHostileGods = godNs;
-//            };
-
-//            const auto& iniG = ep->fHostileGods;
-//            choose->resize(width(), height());
-//            choose->initialize(act, iniG);
-
-//            window()->execDialog(choose);
-//            choose->align(eAlignment::center);
-//        };
-
-//        const auto hostileGodsButt = new eFramedButton(window());
-//        hostileGodsButt->setUnderline(false);
-//        hostileGodsButt->setText(eLanguage::zeusText(44, 173));
-//        hostileGodsButt->fitContent();
-//        hostileGodsButt->setPressAction(hostileGodsAct);
-//        mythMenu->addWidget(hostileGodsButt);
-//        hostileGodsButt->align(eAlignment::hcenter);
-
-//        const auto monstersAct = [this, ep]() {
-//            const auto choose = new eMonsterSelectionWidget(window());
-//            const auto act = [ep](const std::vector<eMonsterType>& monsters) {
-//                ep->setHostileMonsters(monsters);
-//            };
-
-//            const auto& iniM = ep->hostileMonsters();
-//            choose->resize(width(), height());
-//            choose->initialize(act, iniM);
-
-//            window()->execDialog(choose);
-//            choose->align(eAlignment::center);
-//        };
-
-//        const auto monstersButt = new eFramedButton(window());
-//        monstersButt->setUnderline(false);
-//        monstersButt->setText(eLanguage::zeusText(44, 175));
-//        monstersButt->fitContent();
-//        monstersButt->setPressAction(monstersAct);
-//        mythMenu->addWidget(monstersButt);
-//        monstersButt->align(eAlignment::hcenter);
+            const auto friendGodsButt = new eFramedButton(window());
+            friendGodsButt->setUnderline(false);
+            const auto name = board->cityName(cid);
+            friendGodsButt->setText(name);
+            friendGodsButt->fitContent();
+            friendGodsButt->setPressAction(friendGodsAct);
+            mythMenu->addWidget(friendGodsButt);
+            friendGodsButt->align(eAlignment::hcenter);
+        }
 
         window()->execDialog(mythMenu);
         mythMenu->align(eAlignment::center);

@@ -98,7 +98,7 @@ void eEpisode::write(eWriteStream& dst) const {
 }
 
 void eEpisode::clear() {
-    fFriendlyGodsDelete.clear();
+    fFriendlyGods.clear();
     fEvents.clear();
     fGoals.clear();
 }
