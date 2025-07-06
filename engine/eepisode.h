@@ -30,10 +30,9 @@ struct eEpisode {
     std::string fIntroduction;
     std::string fComplete;
 
-    std::vector<eGodType> fFriendlyGodsDelete;
     std::map<eCityId, std::vector<eGodType>> fFriendlyGods;
 
-    std::vector<stdsptr<eGameEvent>> fEvents;
+    std::map<eCityId, std::vector<stdsptr<eGameEvent>>> fEvents;
     std::vector<stdsptr<eEpisodeGoal>> fGoals;
 
     std::map<eCityId, eAvailableBuildings> fAvailableBuildings;

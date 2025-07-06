@@ -4,11 +4,26 @@
 #include "engine/eplague.h"
 #include "characters/monsters/emonster.h"
 #include "engine/emilitaryaid.h"
+#include "gameEvents/egameevent.h"
+#include "engine/egameboard.h"
 
 void eBoardCity::read(eReadStream& src) {
     src >> mId;
 
     src >> mAtlantean;
+
+    int nevs;
+    src >> nevs;
+    for(int i = 0; i < nevs; i++) {
+        eGameEventType type;
+        src >> type;
+        const auto branch = eGameEventBranch::root;
+        const auto e = eGameEvent::sCreate(type, branch, &mBoard);
+        e->setGameBoard(&mBoard);
+        e->setWorldBoard(mBoard.getWorldBoard());
+        e->read(src);
+        addRootGameEvent(e);
+    }
 
     mCityPlan.read(src);
     for(int i = 0; i < mCityPlan.districtCount(); i++) {

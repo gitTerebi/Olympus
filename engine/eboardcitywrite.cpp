@@ -4,11 +4,18 @@
 #include "engine/eplague.h"
 #include "engine/emilitaryaid.h"
 #include "characters/monsters/emonster.h"
+#include "gameEvents/egameevent.h"
 
 void eBoardCity::write(eWriteStream& dst) const {
     dst << mId;
 
     dst << mAtlantean;
+
+    dst << mGameEvents.size();
+    for(const auto& e : mGameEvents) {
+        dst << e->type();
+        e->write(dst);
+    }
 
     mCityPlan.write(dst);
 

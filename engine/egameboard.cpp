@@ -1008,6 +1008,13 @@ eTeamId eGameBoard::playerIdToTeamId(const ePlayerId pid) const {
 }
 
 void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
+    const auto oldPid = cityIdToPlayerId(cid);
+    if(oldPid == ePlayerId::neutralAggresive ||
+       oldPid == ePlayerId::neutralFriendly) {
+        const auto c = boardCityWithId(cid);
+        mActiveCitiesOnBoard.push_back(c);
+        c->acquired();
+    }
     return mWorldBoard->moveCityToPlayer(cid, pid);
 }
 
@@ -1104,10 +1111,21 @@ void eGameBoard::removePlayerFromBoard(const ePlayerId pid) {
 eBoardCity* eGameBoard::addCityToBoard(const eCityId cid) {
     const auto c = std::make_shared<eBoardCity>(cid, *this);
     mCitiesOnBoard.push_back(c);
+    const auto pid = cityIdToPlayerId(cid);
+    if(pid != ePlayerId::neutralFriendly &&
+       pid != ePlayerId::neutralAggresive) {
+        mActiveCitiesOnBoard.push_back(c.get());
+    }
     return c.get();
 }
 
 void eGameBoard::removeCityFromBoard(const eCityId cid) {
+    for(auto it = mActiveCitiesOnBoard.begin(); it < mActiveCitiesOnBoard.end(); it++) {
+        const auto c = *it;
+        if(c->id() != cid) continue;
+        mActiveCitiesOnBoard.erase(it);
+        break;
+    }
     for(auto it = mCitiesOnBoard.begin(); it < mCitiesOnBoard.end(); it++) {
         const auto c = it->get();
         if(c->id() != cid) continue;
@@ -1494,7 +1512,7 @@ bool eGameBoard::setAtlantean(const eCityId cid, const bool a) {
 
 void eGameBoard::setWorldBoard(eWorldBoard* const wb) {
     mWorldBoard = wb;
-    for(const auto& e : mGameEvents) {
+    for(const auto& e : mAllGameEvents) {
         e->setWorldBoard(wb);
     }
 }
@@ -1516,13 +1534,15 @@ bool eGameBoard::unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b) {
 }
 
 void eGameBoard::addRootGameEvent(const stdsptr<eGameEvent>& e) {
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
-    mGameEvents.push_back(e);
+    const auto cid = e->cityId();
+    const auto c = boardCityWithId(cid);
+    c->addRootGameEvent(e);
 }
 
 void eGameBoard::removeRootGameEvent(const stdsptr<eGameEvent>& e) {
-    eVectorHelpers::remove(mGameEvents, e);
+    const auto cid = e->cityId();
+    const auto c = boardCityWithId(cid);
+    c->removeRootGameEvent(e);
 }
 
 void eGameBoard::addGameEvent(eGameEvent* const e) {
@@ -1585,7 +1605,7 @@ void eGameBoard::handleGamesEnd(const eGames game) {
     using eCityChance = std::pair<eCityId, double>;
     std::vector<eCityChance> chances;
     const auto ppid = eGameBoard::personPlayer();
-    for(const auto& c : mCitiesOnBoard) {
+    for(const auto& c : mActiveCitiesOnBoard) {
         if(c->atlantean()) continue;
         const auto id = c->id();
         const double chance = c->winningChance(game);
@@ -2140,7 +2160,7 @@ void eGameBoard::incTime(const int by) {
         }
     }
 
-    for(const auto& c : mCitiesOnBoard) {
+    for(const auto& c : mActiveCitiesOnBoard) {
         c->incTime(by);
     }
 
@@ -2152,18 +2172,8 @@ void eGameBoard::incTime(const int by) {
     mDate.nextDays(nd, nextMonth, nextYear);
     mTime -= nd*dayLen;
 
-    for(int i = 0; i < (int)mGameEvents.size(); i++) {
-        const auto& e = mGameEvents[i];
-        if(e->finished() && !e->hasActiveConsequences()) {
-            eVectorHelpers::remove(mGameEvents, e);
-            i--;
-        } else {
-            e->handleNewDate(mDate);
-        }
-    }
-
     if(nextYear) {
-        for(const auto& c : mCitiesOnBoard) {
+        for(const auto& c : mActiveCitiesOnBoard) {
             c->nextYear();
         }
 
@@ -2186,7 +2196,7 @@ void eGameBoard::incTime(const int by) {
         }
     }
     if(nextMonth) {
-        for(const auto& c : mCitiesOnBoard) {
+        for(const auto& c : mActiveCitiesOnBoard) {
             c->nextMonth();
         }
         for(const auto& p : mPlayersOnBoard) {
@@ -2282,7 +2292,7 @@ void eGameBoard::incTime(const int by) {
         }
     }
 
-    for(const auto& c : mCitiesOnBoard) {
+    for(const auto& c : mActiveCitiesOnBoard) {
         c->incDistributeEmployees(by);
     }
 }
@@ -2626,18 +2636,11 @@ void eGameBoard::startEpisode(eEpisode* const e,
         }
     }
     mDefeatedBy.clear();
-    for(int i = 0; i < static_cast<int>(mGameEvents.size()); i++) {
-        const auto& e = mGameEvents[i];
-        const auto type = e->type();
-        if(type == eGameEventType::godQuest) continue;
-        e->startingNewEpisode();
-        if(e->finished()) {
-            if(!e->hasActiveConsequences()) {
-                mGameEvents.erase(mGameEvents.begin() + i);
-                i--;
-            }
-        }
+
+    for(const auto& c : mCitiesOnBoard) {
+        c->clearAfterLastEpisode();
     }
+
     mGoals.clear();
     mWorldBoard = e->fWorldBoard;
     const auto& date = e->fStartDate;
@@ -2647,12 +2650,7 @@ void eGameBoard::startEpisode(eEpisode* const e,
     }
     mWageMultiplier = e->fWageMultiplier;
     mPrices = e->fPrices;
-    const auto& es = e->fEvents;
-    for(const auto& ee : es) {
-        const auto eee = ee->makeCopy();
-        eee->setupStartDate(date);
-        mGameEvents.push_back(eee);
-    }
+
     for(const auto& c : mCitiesOnBoard) {
         c->startEpisode(e);
     }

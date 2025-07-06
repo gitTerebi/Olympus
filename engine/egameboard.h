@@ -387,17 +387,14 @@ public:
     void allowHero(const eCityId cid, const eHeroType heroType,
                    const std::string& reason = "");
 
-    using eGameEvents = std::vector<stdsptr<eGameEvent>>;
-    const eGameEvents& gameEvents() const { return mGameEvents; }
-
-    using eGoals = std::vector<stdsptr<eEpisodeGoal>>;
-    const eGoals& goals() const { return mGoals; }
-
     void addRootGameEvent(const stdsptr<eGameEvent>& e);
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);
 
     void addGameEvent(eGameEvent* const e);
     void removeGameEvent(eGameEvent* const e);
+
+    using eGoals = std::vector<stdsptr<eEpisodeGoal>>;
+    const eGoals& goals() const { return mGoals; }
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
@@ -714,6 +711,7 @@ private:
     eAction mEpisodeFinishedHandler;
     eAction mAutosaver;
 
+    std::vector<eBoardCity*> mActiveCitiesOnBoard;
     std::vector<stdsptr<eBoardCity>> mCitiesOnBoard;
     std::vector<stdsptr<eBoardPlayer>> mPlayersOnBoard;
 
@@ -784,7 +782,6 @@ private:
     eMessageShower mMsgShower;
 
     std::vector<eGameEvent*> mAllGameEvents;
-    std::vector<stdsptr<eGameEvent>> mGameEvents;
     int mGoalsCheckTime = 0;
     std::vector<stdsptr<eEpisodeGoal>> mGoals;
 

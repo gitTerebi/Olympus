@@ -121,19 +121,6 @@ void eGameBoard::read(eReadStream& src) {
         }
     }
 
-    int nevs;
-    src >> nevs;
-    for(int i = 0; i < nevs; i++) {
-        eGameEventType type;
-        src >> type;
-        const auto branch = eGameEventBranch::root;
-        const auto e = eGameEvent::sCreate(type, branch, this);
-        e->setGameBoard(this);
-        e->setWorldBoard(mWorldBoard);
-        e->read(src);
-        addRootGameEvent(e);
-    }
-
     int ng;
     src >> ng;
     for(int i = 0; i < ng; i++) {

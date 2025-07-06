@@ -193,26 +193,48 @@ void eEditorSettingsMenu::initialize(const bool first,
     addWidget(mythButt);
     mythButt->align(eAlignment::hcenter);
 
-    const auto eventsAct = [this, ep]() {
-        const auto choose = new eEventSelectionWidget(
-                                eGameEventBranch::root,
-                                window());
+    const auto eventsAct = [this, ep, board]() {
+        const auto mythMenu = new eFramedWidget(window());
+        mythMenu->setType(eFrameType::message);
+        mythMenu->resize(width(), height());
 
-        choose->resize(width(), height());
-        const auto get = [ep]() {
-            return ep->fEvents;
-        };
-        const auto add = [ep](const stdsptr<eGameEvent>& e) {
-            e->setWorldBoard(ep->fWorldBoard);
-            ep->fEvents.push_back(e);
-        };
-        const auto remove = [ep](const stdsptr<eGameEvent>& e) {
-            eVectorHelpers::remove(ep->fEvents, e);
-        };
-        choose->initialize(get, add, remove);
+        const auto cids = ep->fBoard->citiesOnBoard();
+        for(const auto& cid : cids) {
+            const auto eventsAct = [this, ep, cid]() {
+                const auto choose = new eEventSelectionWidget(
+                                        eGameEventBranch::root,
+                                        window());
 
-        window()->execDialog(choose);
-        choose->align(eAlignment::center);
+                choose->resize(width(), height());
+                const auto get = [ep, cid]() {
+                    return ep->fEvents[cid];
+                };
+                const auto add = [ep, cid](const stdsptr<eGameEvent>& e) {
+                    e->setWorldBoard(ep->fWorldBoard);
+                    ep->fEvents[cid].push_back(e);
+                };
+                const auto remove = [ep, cid](const stdsptr<eGameEvent>& e) {
+                    eVectorHelpers::remove(ep->fEvents[cid], e);
+                };
+                choose->initialize(get, add, remove);
+
+                window()->execDialog(choose);
+                choose->align(eAlignment::center);
+            };
+
+            const auto friendGodsButt = new eFramedButton(window());
+            friendGodsButt->setUnderline(false);
+            const auto name = board->cityName(cid);
+            friendGodsButt->setText(name);
+            friendGodsButt->fitContent();
+            friendGodsButt->setPressAction(eventsAct);
+            mythMenu->addWidget(friendGodsButt);
+            friendGodsButt->align(eAlignment::hcenter);
+        }
+
+        window()->execDialog(mythMenu);
+        mythMenu->align(eAlignment::center);
+        mythMenu->layoutVertically();
     };
 
     const auto eventsButt = new eFramedButton(window());

@@ -28,17 +28,23 @@ void eEpisode::read(eReadStream& src) {
         }
     }
     {
-        int nevs;
-        src >> nevs;
-        for(int i = 0; i < nevs; i++) {
-            eGameEventType type;
-            src >> type;
-            const auto branch = eGameEventBranch::root;
-            const auto e = eGameEvent::sCreate(type, branch, fBoard);
-            e->setGameBoard(fBoard);
-            e->setWorldBoard(fWorldBoard);
-            e->read(src);
-            fEvents.push_back(e);
+        int ncs;
+        src >> ncs;
+        for(int i = 0; i < ncs; i++) {
+            eCityId cid;
+            src >> cid;
+            int ne;
+            src >> ne;
+            for(int j = 0; j < ne; j++) {
+                eGameEventType type;
+                src >> type;
+                const auto branch = eGameEventBranch::root;
+                const auto e = eGameEvent::sCreate(type, branch, fBoard);
+                e->setGameBoard(fBoard);
+                e->setWorldBoard(fWorldBoard);
+                e->read(src);
+                fEvents[cid].push_back(e);
+            }
         }
     }
     {
@@ -81,9 +87,13 @@ void eEpisode::write(eWriteStream& dst) const {
         }
     }
     dst << fEvents.size();
-    for(const auto& e : fEvents) {
-        dst << e->type();
-        e->write(dst);
+    for(const auto& ce : fEvents) {
+        dst << ce.first;
+        dst << ce.second.size();
+        for(const auto& e : ce.second) {
+            dst << e->type();
+            e->write(dst);
+        }
     }
     dst << fGoals.size();
     for(const auto& g : fGoals) {

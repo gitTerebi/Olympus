@@ -192,6 +192,22 @@ void eBoardCity::incTime(const int by) {
     for(const auto i : mInvasionHandlers) {
         i->incTime(by);
     }
+
+    for(int i = 0; i < (int)mGameEvents.size(); i++) {
+        const auto& e = mGameEvents[i];
+        if(e->finished() && !e->hasActiveConsequences()) {
+            eVectorHelpers::remove(mGameEvents, e);
+            i--;
+        } else {
+            e->handleNewDate(date);
+        }
+    }
+}
+
+void eBoardCity::acquired() {
+    for(const auto& e : mGameEvents) {
+        e->setupStartDate(mBoard.date());
+    }
 }
 
 void eBoardCity::updateCoverage() {
@@ -1633,7 +1649,39 @@ void eBoardCity::heroSummoned(const eHeroType hero) {
     mSummonedHeroes.push_back(hero);
 }
 
+void eBoardCity::addRootGameEvent(const stdsptr<eGameEvent>& e) {
+    e->setGameBoard(&mBoard);
+    e->setWorldBoard(mBoard.getWorldBoard());
+    mGameEvents.push_back(e);
+}
+
+void eBoardCity::removeRootGameEvent(const stdsptr<eGameEvent>& e) {
+    eVectorHelpers::remove(mGameEvents, e);
+}
+
+void eBoardCity::clearAfterLastEpisode() {
+    for(int i = 0; i < static_cast<int>(mGameEvents.size()); i++) {
+        const auto& e = mGameEvents[i];
+        const auto type = e->type();
+        if(type == eGameEventType::godQuest) continue;
+        e->startingNewEpisode();
+        if(e->finished()) {
+            if(!e->hasActiveConsequences()) {
+                mGameEvents.erase(mGameEvents.begin() + i);
+                i--;
+            }
+        }
+    }
+}
+
 void eBoardCity::startEpisode(eEpisode* const e) {
+    const auto& es = e->fEvents[mId];
+    for(const auto& ee : es) {
+        const auto eee = ee->makeCopy();
+        eee->setupStartDate(mBoard.date());
+        mGameEvents.push_back(eee);
+    }
+
     const auto& ab = e->fAvailableBuildings[mId];
     mAvailableBuildings.startEpisode(ab);
 }

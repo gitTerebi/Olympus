@@ -71,6 +71,8 @@ public:
 
     void incTime(const int by);
 
+    void acquired();
+
     bool atlantean() const { return mAtlantean; }
     void setAtlantean(const bool a) { mAtlantean = a; }
 
@@ -308,7 +310,17 @@ public:
     bool wasHeroSummoned(const eHeroType hero) const;
     void heroSummoned(const eHeroType hero);
 
+    void clearAfterLastEpisode();
     void startEpisode(eEpisode* const e);
+
+    using eGameEvents = std::vector<stdsptr<eGameEvent>>;
+    const eGameEvents& gameEvents() const { return mGameEvents; }
+
+    void addRootGameEvent(const stdsptr<eGameEvent>& e);
+    void removeRootGameEvent(const stdsptr<eGameEvent>& e);
+
+    void addGameEvent(eGameEvent* const e);
+    void removeGameEvent(eGameEvent* const e);
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
@@ -322,6 +334,8 @@ private:
     std::vector<eTile*> mTiles;
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
+
+    std::vector<stdsptr<eGameEvent>> mGameEvents;
 
     std::map<int, std::vector<eDistrictReadyCondition>> mEditorDistrictConditions;
     int mCurrentDistrictId = -1; // -1 when not editing

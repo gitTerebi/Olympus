@@ -133,12 +133,6 @@ void eGameBoard::write(eWriteStream& dst) const {
         }
     }
 
-    dst << mGameEvents.size();
-    for(const auto& e : mGameEvents) {
-        dst << e->type();
-        e->write(dst);
-    }
-
     dst << mGoals.size();
     for(const auto& g : mGoals) {
         g->write(dst);
