@@ -399,11 +399,6 @@ public:
     void addGameEvent(eGameEvent* const e);
     void removeGameEvent(eGameEvent* const e);
 
-    void planInvasion(const eDate& date,
-                      const int infantry,
-                      const int cavalry,
-                      const int archers);
-
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 

@@ -632,20 +632,6 @@ void eGameBoard::allowHero(const eCityId cid, const eHeroType heroType,
     showMessage(ed, msg);
 }
 
-void eGameBoard::planInvasion(const eDate& date,
-                              const int infantry,
-                              const int cavalry,
-                              const int archers) {
-    const auto e = e::make_shared<eInvasionEvent>(
-                       eGameEventBranch::root);
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
-    const auto city = mWorldBoard->cities().front();
-    e->initialize(city, infantry, cavalry, archers);
-    e->initializeDate(date, 0, 1);
-    addRootGameEvent(e);
-}
-
 eBuilding* eGameBoard::buildingWithIOID(const int id) const {
     if(id == -1) return nullptr;
     for(const auto b : mAllBuildings) {
