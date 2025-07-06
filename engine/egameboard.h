@@ -618,6 +618,7 @@ public:
     SDL_Rect boardCityTileBRect(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
+    std::vector<ePlayerId> playersOnBoard() const;
     std::string cityName(const eCityId cid) const;
 
     void updatePlayersOnBoard();

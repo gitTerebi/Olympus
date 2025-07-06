@@ -37,18 +37,44 @@ void eEditorSettingsMenu::initialize(const bool first,
         addWidget(dateButt);
         dateButt->align(eAlignment::hcenter);
 
-        const auto fundsButt = new eValueButton(window());
-        fundsButt->initialize(0, 99999);
-        const int f = c->initialFunds(ePlayerId::player0);
-        const auto fStr = std::to_string(f);
-        fundsButt->setValue(f);
-        fundsButt->setText(eLanguage::zeusText(44, 39) + " " + fStr);
-        fundsButt->setUnderline(false);
+        const auto fundsButt = new eFramedButton(window());
+        fundsButt->setText(eLanguage::zeusText(44, 39));
         fundsButt->fitContent();
-        fundsButt->setValueChangeAction([c, fundsButt](const int funds) {
-            const auto fStr = std::to_string(funds);
-            fundsButt->setText(eLanguage::zeusText(44, 39) + " " + fStr);
-            c->setInitialFunds(ePlayerId::player0, funds);
+        fundsButt->setUnderline(false);
+
+        fundsButt->setPressAction([this, ep, c]() {
+            const auto fundsMenu = new eFramedWidget(window());
+            fundsMenu->setType(eFrameType::message);
+            fundsMenu->resize(width(), height());
+
+            const auto& board = ep->fBoard;
+            const auto pids = board->playersOnBoard();
+            for(const auto& pid : pids) {
+                const auto cts = board->playerCitiesOnBoard(pid);
+                std::string name = "none";
+                if(cts.size() > 0) {
+                    name = board->cityName(cts[0]);
+                }
+                const auto fundsButt = new eValueButton(window());
+                fundsButt->initialize(0, 99999);
+                const int f = c->initialFunds(pid);
+                const auto fStr = std::to_string(f);
+                fundsButt->setValue(f);
+                fundsButt->setText(name + " " + fStr);
+                fundsButt->setUnderline(false);
+                fundsButt->fitContent();
+                fundsButt->setValueChangeAction([c, fundsButt, pid, name](const int funds) {
+                    const auto fStr = std::to_string(funds);
+                    fundsButt->setText(name + " " + fStr);
+                    c->setInitialFunds(pid, funds);
+                });
+                fundsMenu->addWidget(fundsButt);
+                fundsButt->align(eAlignment::hcenter);
+            }
+
+            window()->execDialog(fundsMenu);
+            fundsMenu->align(eAlignment::center);
+            fundsMenu->layoutVertically();
         });
         addWidget(fundsButt);
         fundsButt->align(eAlignment::hcenter);

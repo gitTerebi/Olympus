@@ -1071,6 +1071,17 @@ std::vector<eCityId> eGameBoard::citiesOnBoard() const {
     return result;
 }
 
+std::vector<ePlayerId> eGameBoard::playersOnBoard() const {
+    std::vector<ePlayerId> result;
+    for(const auto& c : mCitiesOnBoard) {
+        const auto cid = c->id();
+        const auto pid = cityIdToPlayerId(cid);
+        if(eVectorHelpers::contains(result, pid)) continue;
+        result.push_back(pid);
+    }
+    return result;
+}
+
 std::string eGameBoard::cityName(const eCityId cid) const {
     return mWorldBoard->cityName(cid);
 }
