@@ -15,50 +15,12 @@ enum class ePlayerId;
 enum class eCityId;
 class eGameBoard;
 
-struct eAITile {
-    eBuildingType fBuilding = eBuildingType::none;
-    bool fMaintanance = false;
-    bool fSecurity = false;
-    bool fHealth = false;
-    bool fTax = false;
-    bool fPodium = false;
-    bool fGymnasium = false;
-    bool fTheater = false;
-    bool fStadium = false;
-    bool fAgora = false;
-};
-
-struct eAIBoard {
-    eAITile* tile(const int dx, const int dy) {
-        if(dx < 0) return nullptr;
-        if(dy < 0) return nullptr;
-        if(dx >= fW) return nullptr;
-        if(dy >= fH) return nullptr;
-        return &fTiles[dx][dy];
-    }
-
-    void initialize(const int w, const int h) {
-        fW = w;
-        fH = h;
-        fTiles.clear();
-        for(int x = 0; x < w; x++) {
-            auto& row = fTiles.emplace_back();
-            for(int y = 0; y < h; y++) {
-                row.emplace_back();
-            }
-        }
-    }
-
-    int fW = 0;
-    int fH = 0;
-    std::vector<std::vector<eAITile>> fTiles;
-};
-
 class eAICityPlan {
 public:
     eAICityPlan(const eCityId cid);
 
-    eAIBoard aiBoard(const int w, const int h) const;
+    void addScheduledBuilding(const int did, const SDL_Rect& bRect);
+    void addScheduledBuilding(const int did, const eAIBuilding& b);
 
     int districtCount() const;
     eAIDistrict& district(const int id);
@@ -68,9 +30,9 @@ public:
     int nextDistrictId() const;
     int lastBuiltDistrictId() const;
 
-    void buildDistrict(eGameBoard& board, const int id);
+    bool buildNextDistrict(eGameBoard& board);
     void buildAllDistricts(eGameBoard& board);
-    void rebuildDistricts(eGameBoard& board);
+    void buildScheduled(eGameBoard& board);
     bool districtBuilt(const int id) const;
 
     void editorDisplayBuildings(eGameBoard& board);
@@ -80,8 +42,9 @@ public:
 private:
     eCityId mCid;
 
-    std::vector<int> mBuiltDistrics;
+    int mLastBuildDistrict = -1;
     std::vector<eAIDistrict> mDistricts;
+    std::vector<std::pair<int, eAIBuilding>> mScheduledBuildings;
 };
 
 #endif // EAICITYPLAN_H

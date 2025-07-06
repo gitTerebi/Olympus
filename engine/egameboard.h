@@ -673,7 +673,7 @@ public:
 
     using eDA = eCharacter;
     using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;
-    void buildAnimal(eTile* const tile,
+    bool buildAnimal(eTile* const tile,
                      const eBuildingType type,
                      const eAnimalCreator& creator,
                      const eCityId cid,

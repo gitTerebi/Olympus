@@ -358,8 +358,8 @@ void eBoardCity::editorDisplayBuildings() {
     mCityPlan.editorDisplayBuildings(mBoard);
 }
 
-void eBoardCity::rebuildDistricts() {
-    mCityPlan.rebuildDistricts(mBoard);
+void eBoardCity::buildScheduled() {
+    mCityPlan.buildScheduled(mBoard);
 }
 
 bool eBoardCity::previousDistrictFulfilled() {
@@ -418,9 +418,16 @@ void eBoardCity::buildNextDistrict(const int drachmas) {
     if(!pf) return;
     const int id = mCityPlan.nextDistrictId();
     if(id == -1) return;
-    const int c = mCityPlan.districtCost(mBoard, id);
+    int c = 0;
+    if(mNextDistrictCost == -1) {
+        c = mCityPlan.districtCost(mBoard, id);
+        mNextDistrictCost = c;
+    } else {
+        c = mNextDistrictCost;
+    }
     if(c > drachmas) return;
-    mCityPlan.buildDistrict(mBoard, id);
+    mCityPlan.buildNextDistrict(mBoard);
+    mNextDistrictCost = -1;
 }
 
 std::vector<eBoardCity::eCondition> eBoardCity::getDistrictReadyConditions() {
@@ -469,6 +476,13 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
 }
 
 bool eBoardCity::unregisterBuilding(eBuilding* const b) {
+    if(!mBoard.editorMode()) {
+        const int did = b->districtId();
+        if(did != -1) {
+            const auto bRect = b->tileRect();
+            mCityPlan.addScheduledBuilding(did, bRect);
+        }
+    }
     eVectorHelpers::remove(mAllBuildings, b);
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);

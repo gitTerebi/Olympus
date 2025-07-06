@@ -23,7 +23,7 @@ void eBoardPlayer::nextMonth() {
         const auto cids = mBoard.playerCitiesOnBoard(mId);
         for(const auto cid : cids) {
             const auto c = mBoard.boardCityWithId(cid);
-            c->rebuildDistricts();
+            c->buildScheduled();
             c->buildNextDistrict(mDrachmas);
         }
     }

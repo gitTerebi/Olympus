@@ -3148,7 +3148,7 @@ bool eGameBoard::build(const int tx, const int ty,
                      bc, pid, cid, editorDisplay, fertile, flat);
 }
 
-void eGameBoard::buildAnimal(eTile* const tile,
+bool eGameBoard::buildAnimal(eTile* const tile,
                              const eBuildingType type,
                              const eAnimalCreator& creator,
                              const eCityId cid,
@@ -3157,7 +3157,7 @@ void eGameBoard::buildAnimal(eTile* const tile,
     const int tx = tile->x();
     const int ty = tile->y();
     const bool cb = canBuild(tx, ty, 1, 2, editorDisplay, cid, pid, true, true);
-    if(!cb) return;
+    if(!cb) return false;
     const auto sh = creator(*this);
     sh->changeTile(tile);
     const auto o = static_cast<eOrientation>(eRand::rand() % 8);
@@ -3166,7 +3166,7 @@ void eGameBoard::buildAnimal(eTile* const tile,
     const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
     sh->setAction(a);
 
-    build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]() {
+    return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]() {
         return e::make_shared<eAnimalBuilding>(
                     *this, sh.get(), type, cid);
     }, true, true);

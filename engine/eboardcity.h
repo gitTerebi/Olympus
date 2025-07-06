@@ -99,7 +99,7 @@ public:
     void editorClearBuildings();
     void editorDisplayBuildings();
 
-    void rebuildDistricts();
+    void buildScheduled();
     bool previousDistrictFulfilled();
     void buildNextDistrict(const int drachmas);
     void setCurrentDistrictId(const int id) { mCurrentDistrictId = id; }
@@ -326,6 +326,7 @@ private:
     std::map<int, std::vector<eDistrictReadyCondition>> mEditorDistrictConditions;
     int mCurrentDistrictId = -1; // -1 when not editing
     eAICityPlan mCityPlan;
+    int mNextDistrictCost = -1;
 
     eWageRate mWageRate{eWageRate::normal};
     eTaxRate mTaxRate{eTaxRate::normal};

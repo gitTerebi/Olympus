@@ -11,27 +11,19 @@
 eAICityPlan::eAICityPlan(const eCityId cid) :
     mCid(cid) {}
 
-eAIBoard eAICityPlan::aiBoard(const int w, const int h) const {
-    eAIBoard result;
-    result.initialize(w, h);
-    for(const auto& d : mDistricts) {
-        for(const auto& b : d.fBuildings) {
-            const int xMin = b.fRect.x;
-            const int xMax = xMin + b.fRect.w - 1;
-            const int yMin = b.fRect.y;
-            const int yMax = yMin + b.fRect.h - 1;
-            for(int x = xMin; x <= xMax; x++) {
-                for(int y = yMin; y <= yMax; y++) {
-                    int dx;
-                    int dy;
-                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
-                    const auto t = result.tile(dx, dy);
-                    t->fBuilding = b.fType;
-                }
-            }
-        }
+void eAICityPlan::addScheduledBuilding(
+        const int did, const SDL_Rect& bRect) {
+    const auto& d = mDistricts[did];
+    for(const auto& b : d.fBuildings) {
+        const auto bbRect = b.fRect;
+        if(!SDL_RectEquals(&bRect, &bbRect)) continue;
+        addScheduledBuilding(did, b);
+        break;
     }
-    return result;
+}
+
+void eAICityPlan::addScheduledBuilding(const int did, const eAIBuilding& b) {
+    mScheduledBuildings.push_back({did, b});
 }
 
 int eAICityPlan::districtCount() const {
@@ -58,51 +50,54 @@ int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
 }
 
 int eAICityPlan::nextDistrictId() const {
-    const int iMax = mDistricts.size();
-    for(int i = 0; i < iMax; i++) {
-        const bool b = eVectorHelpers::contains(mBuiltDistrics, i);
-        if(b) continue;
-        return i;
-    }
-    return -1;
+    const int iMax = mDistricts.size() - 1;
+    if(mLastBuildDistrict >= iMax) return -1;
+    return mLastBuildDistrict + 1;
 }
 
 int eAICityPlan::lastBuiltDistrictId() const {
-    const int iMax = mDistricts.size() - 1;
-    for(int i = iMax; i >= 0; i--) {
-        const bool b = eVectorHelpers::contains(mBuiltDistrics, i);
-        if(b) return i;
-    }
-    return -1;
+    return mLastBuildDistrict;
 }
 
-void eAICityPlan::buildDistrict(eGameBoard& board, const int id) {
-    const bool c = districtBuilt(id);
-    if(!c) mBuiltDistrics.push_back(id);
+bool eAICityPlan::buildNextDistrict(eGameBoard& board) {
+    const int id = nextDistrictId();
+    if(id == -1) return false;
+    mLastBuildDistrict = id;
     const auto pid = board.cityIdToPlayerId(mCid);
     eDistrictIdTmp idTmp(board);
     board.setCurrentDistrictId(id);
-    mDistricts[id].build(board, pid, mCid, false);
+    const auto scha = [this, id](const eAIBuilding& b) {
+        addScheduledBuilding(id, b);
+    };
+    mDistricts[id].build(board, pid, mCid, false, scha);
+    return true;
 }
 
 void eAICityPlan::buildAllDistricts(eGameBoard& board) {
     const int iMax = mDistricts.size();
     for(int i = 0; i < iMax; i++) {
-        buildDistrict(board, i);
+        buildNextDistrict(board);
     }
 }
 
-void eAICityPlan::rebuildDistricts(eGameBoard& board) {
+void eAICityPlan::buildScheduled(eGameBoard& board) {
     eDistrictIdTmp idTmp(board);
     const auto pid = board.cityIdToPlayerId(mCid);
-    for(const int id : mBuiltDistrics) {
-        board.setCurrentDistrictId(id);
-        mDistricts[id].build(board, pid, mCid, false);
+    for(int i = 0; i < int(mScheduledBuildings.size()); i++) {
+        const auto& bp = mScheduledBuildings[i];
+        const int did = bp.first;
+        const auto& b = bp.second;
+        board.setCurrentDistrictId(did);
+        const bool r = eAIDistrict::sBuild(board, pid, mCid, false, b);
+        if(r) {
+            mScheduledBuildings.erase(mScheduledBuildings.begin() + i);
+            i--;
+        }
     }
 }
 
 bool eAICityPlan::districtBuilt(const int id) const {
-    return eVectorHelpers::contains(mBuiltDistrics, id);
+    return id <= mLastBuildDistrict;
 }
 
 void eAICityPlan::editorDisplayBuildings(eGameBoard& board) {
@@ -118,13 +113,7 @@ void eAICityPlan::editorDisplayBuildings(eGameBoard& board) {
 void eAICityPlan::read(eReadStream& src) {
     src >> mCid;
 
-    int bd;
-    src >> bd;
-    for(int i = 0; i < bd; i++) {
-        int d;
-        src >> d;
-        mBuiltDistrics.push_back(d);
-    }
+    src >> mLastBuildDistrict;
 
     int ds;
     src >> ds;
@@ -132,18 +121,31 @@ void eAICityPlan::read(eReadStream& src) {
         auto& d = mDistricts.emplace_back();
         d.read(src);
     }
+
+    int ns;
+    src >> ns;
+    for(int i = 0; i < ns; i++) {
+        int did;
+        src >> did;
+        eAIBuilding b;
+        b.read(src);
+        mScheduledBuildings.push_back({did, b});
+    }
 }
 
 void eAICityPlan::write(eWriteStream& dst) const {
     dst << mCid;
 
-    dst << mBuiltDistrics.size();
-    for(const int d : mBuiltDistrics) {
-        dst << d;
-    }
+    dst << mLastBuildDistrict;
 
     dst << mDistricts.size();
     for(const auto& d : mDistricts) {
         d.write(dst);
+    }
+
+    dst << mScheduledBuildings.size();
+    for(const auto& bp : mScheduledBuildings) {
+        dst << bp.first;
+        bp.second.write(dst);
     }
 }
