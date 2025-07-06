@@ -87,6 +87,7 @@ public:
         const auto ppid = mBoard.personPlayer();
         const bool a = mBoard.atlantean(cid);
         if(pid != ppid) {
+            vis = showAllPossibleBuildings;
         } else if(mMode == eBuildingMode::tradePost) {
             std::vector<eSPR> cs;
             tradePosts(cid, cs, mBoard);

@@ -3026,7 +3026,7 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
                               const ePlayerId pid,
                               const bool fertile,
                               const bool flat) const {
-    if(pid != cityIdToPlayerId(cid)) return false;
+    if(pid != cityIdToPlayerId(cid) && !mEditorMode) return false;
     bool fertileFound = false;
     for(int x = minX; x < maxX; x++) {
         for(int y = minY; y < maxY; y++) {
