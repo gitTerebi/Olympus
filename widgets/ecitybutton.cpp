@@ -14,7 +14,7 @@ void eCityButton::initialize(eWorldBoard* const board,
             setCity(c);
             if(cact) cact(c);
         };
-        choose->initialize(board, cact);
+        choose->initialize(board, act);
 
         window()->execDialog(choose);
         choose->align(eAlignment::center);
