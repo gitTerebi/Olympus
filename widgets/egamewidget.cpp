@@ -75,6 +75,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         if(mEditorShowBuildings) {
             mBoard->saveEditorCityPlan();
             mBoard->editorClearBuildings();
+            mBoard->emptyRubbish();
         }
         mBoard->setEventHandler(nullptr);
         mBoard->setRequestUpdateHandler(nullptr);

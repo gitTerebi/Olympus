@@ -400,7 +400,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 if(eraseCm) tex->setColorMod(255, 175, 175);
             }
 
-            if(mEditorMode) {
+            if(mEditorMode && !eraseCm && !patrolCm) {
                 const auto ub = tile->underBuilding();
                 if(ub) {
                     const int eid = ub->districtId();
@@ -1710,8 +1710,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     if(!cbr) continue;
                     const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2,
                                                          mEditorMode,
-                                                         mViewedCityId, ppid,
-                                                         mEditorMode);
+                                                         mViewedCityId, ppid);
                     if(!cb) continue;
                     double rx;
                     double ry;

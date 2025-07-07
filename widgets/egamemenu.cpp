@@ -216,7 +216,7 @@ void eGameMenu::openBuildWidget(const int cmx, const int cmy,
     const auto cid = mGW->viewedCity();
     const auto pid = mBoard->cityIdToPlayerId(cid);
     const auto ppid = mBoard->personPlayer();
-    if(pid != ppid) return;
+    if(pid != ppid && !mShowAllPossibleBuildings) return;
     std::vector<eBuildButton*> ws;
     for(const auto& c : cs) {
         if(!mBoard->supportsBuilding(cid, c.fMode) &&
