@@ -51,6 +51,7 @@ void eResourceGrantedEventBase::trigger() {
     for(const auto cid : cids) {
         const int space = board->spaceForResource(cid, mResource);
         if(space > maxSpace) maxSpace = space;
+        ed.fCityNames[cid] = board->cityName(cid);
         ed.fCSpaceCount[cid] = space;
     }
     ed.fSpaceCount = maxSpace;

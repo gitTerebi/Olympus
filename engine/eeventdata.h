@@ -25,6 +25,7 @@ struct eEventData {
     int fBribe = 0;
     eCloseOnAction fCA0 = nullptr;
     eAction fA0 = nullptr;
+    std::map<eCityId, std::string> fCityNames;
     std::map<eCityId, eAction> fCCA0;
     std::string fA0Key;
     eAction fA1 = nullptr;

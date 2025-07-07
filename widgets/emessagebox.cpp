@@ -16,6 +16,9 @@
 #include "engine/eworldcity.h"
 #include "widgets/egamewidget.h"
 
+#include "widgets/echoosebutton.h"
+#include "emainwindow.h"
+
 template<typename ... Args>
 std::string string_format(const std::string& format, Args... args) {
     const int size_s = std::snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
@@ -26,7 +29,8 @@ std::string string_format(const std::string& format, Args... args) {
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-void eMessageBox::initialize(const eEventData& ed,
+void eMessageBox::initialize(eGameWidget* const gw,
+                             const eEventData& ed,
                              const eAction& viewTile,
                              const eAction& closeFunc,
                              eMessage msg) {
@@ -150,7 +154,7 @@ void eMessageBox::initialize(const eEventData& ed,
 
     eOkButton* ok = nullptr;
     eWidget* wid = nullptr;
-    const bool addOk = !ed.fCA0 && !ed.fA0 && !ed.fA1 && !ed.fA2;
+    const bool addOk = !ed.fCA0 && ed.fCCA0.empty() && !ed.fA0 && !ed.fA1 && !ed.fA2;
     if(addOk) {
         ok = new eOkButton(window());
         ok->setPressAction([this]() {
@@ -215,7 +219,9 @@ void eMessageBox::initialize(const eEventData& ed,
         const auto c = ed.fCity;
         if(!c) return;
         const int space = ed.fSpaceCount;
-        const auto tributeWid = createTributeWidget(type, count, space);
+        eLabel* spaceLabel = nullptr;
+        const auto tributeWid = createTributeWidget(type, count, space,
+                                                    -1, &spaceLabel);
 
         ww->addWidget(tributeWid);
         tributeWid->setX(p);
@@ -228,12 +234,59 @@ void eMessageBox::initialize(const eEventData& ed,
         acceptB->setUnderline(false);
         acceptB->setText(eLanguage::zeusText(44, 209));
         acceptB->fitContent();
-        wid->addWidget(acceptB);
-        acceptB->setPressAction([this, ed]() {
-            if(ed.fA0) ed.fA0();
-            close();
-        });
-        acceptB->setVisible(space > 0 || type == eResourceType::drachmas);
+        if(type == eResourceType::drachmas) {
+            wid->addWidget(acceptB);
+            acceptB->setPressAction([this, ed]() {
+                if(ed.fA0) ed.fA0();
+                close();
+            });
+        } else {
+            const auto iniC = ed.fCityNames.begin();
+            const auto iniCid = iniC->first;
+            const auto iniName = iniC->second;
+
+            const auto cityB = new eFramedButton(window());
+            cityB->setSmallFontSize();
+            cityB->setUnderline(false);
+            const auto setCid = [this, ed, cityB, acceptB, spaceLabel, count](const eCityId cid) {
+                cityB->setText(ed.fCityNames.at(cid));
+                cityB->fitContent();
+                const int space = ed.fCSpaceCount.at(cid);
+                if(spaceLabel) {
+                    const int c = std::min(space, count);
+                    const auto cStr = std::to_string(c);
+                    spaceLabel->setText(cStr);
+                }
+                acceptB->setVisible(space > 0);
+                acceptB->setPressAction([this, ed, cid]() {
+                    const auto a0 = ed.fCCA0.at(cid);
+                    if(a0) a0();
+                    close();
+                });
+            };
+            setCid(iniCid);
+            cityB->setPressAction([this, gw, ed, setCid]() {
+                const auto c = new eChooseButton(window());
+                std::vector<eCityId> cids;
+                std::vector<std::string> names;
+                for(const auto& c : ed.fCityNames) {
+                    cids.push_back(c.first);
+                    names.push_back(c.second);
+                }
+                const int nRows = std::ceil(ed.fCityNames.size()*.5);
+                c->initialize(nRows, names,
+                              [cids, setCid](const int id) {
+                    const auto cid = cids[id];
+                    setCid(cid);
+                });
+
+                window()->execDialog(c);
+                gw->centerDialog(c);
+            });
+
+            wid->addWidget(cityB);
+            wid->addWidget(acceptB);
+        }
 
         const auto postponeB = new eFramedButton(window());
         postponeB->setSmallFontSize();
@@ -263,9 +316,11 @@ void eMessageBox::initialize(const eEventData& ed,
         wid->layoutHorizontallyWithoutSpaces();
         wid->fitContent();
         wid->setWidth(w);
-        acceptB->align(eAlignment::vcenter);
-        postponeB->align(eAlignment::vcenter);
-        declineB->align(eAlignment::vcenter);
+
+        const auto cs = wid->children();
+        for(const auto c : cs) {
+            c->align(eAlignment::vcenter);
+        }
 
         addWidget(wid);
     } else if(ed.fType == eMessageEventType::resourceGranted) {
@@ -443,7 +498,8 @@ void eMessageBox::close() {
 eWidget* eMessageBox::createTributeWidget(const eResourceType type,
                                           const int count,
                                           const int space,
-                                          const int months) {
+                                          const int months,
+                                          eLabel** spaceLabelPtr) {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const auto tributeWid = new eWidget(window());
@@ -460,8 +516,9 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
     const auto countLabel = new eLabel(window());
     countLabel->setSmallFontSize();
     countLabel->setNoPadding();
-    countLabel->setText(countStr);
+    countLabel->setText("9999");
     countLabel->fitContent();
+    countLabel->setText(countStr);
     tributeWid->addWidget(countLabel);
 
     const auto name = eResourceTypeHelpers::typeLongName(type);
@@ -490,7 +547,7 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
         const auto textLabel = new eLabel(window());
         textLabel->setSmallFontSize();
         textLabel->setNoPadding();
-        textLabel->setText(" / " + eLanguage::text("can_accept") + " ");
+        textLabel->setText(" / " + eLanguage::zeusText(130, 6) + " ");
         textLabel->fitContent();
         tributeWid->addWidget(textLabel);
 
@@ -504,8 +561,10 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
         const auto countLabel = new eLabel(window());
         countLabel->setSmallFontSize();
         countLabel->setNoPadding();
-        countLabel->setText(countStr);
+        if(spaceLabelPtr) *spaceLabelPtr = countLabel;
+        countLabel->setText("9999");
         countLabel->fitContent();
+        countLabel->setText(countStr);
         tributeWid->addWidget(countLabel);
 
         const auto name = eResourceTypeHelpers::typeLongName(type);

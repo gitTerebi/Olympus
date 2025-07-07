@@ -121,6 +121,7 @@ public:
 
     void setWorldDirection(const eWorldDirection dir);
 
+    void centerDialog(eWidget* const d);
     void openDialog(eWidget* const d);
 protected:
     void paintEvent(ePainter& p) override;

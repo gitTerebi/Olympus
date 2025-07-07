@@ -9,12 +9,16 @@
 class eWorldCity;
 struct eEventData;
 enum class eResourceType;
+enum class eCityId;
+class eLabel;
+class eGameWidget;
 
 class eMessageBox : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(const eEventData& ed,
+    void initialize(eGameWidget* const gw,
+                    const eEventData& ed,
                     const eAction& viewTile,
                     const eAction& closeFunc,
                     eMessage msg);
@@ -24,7 +28,8 @@ public:
 
     eWidget* createTributeWidget(const eResourceType type,
                                  const int count, const int space,
-                                 const int months = -1);
+                                 const int months = -1,
+                                 eLabel** spaceLabelPtr = nullptr);
 protected:
 //    void paintEvent(ePainter& p);
     bool keyPressEvent(const eKeyPressEvent& e);

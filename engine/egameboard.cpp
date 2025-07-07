@@ -805,27 +805,37 @@ void eGameBoard::requestAid(const stdsptr<eWorldCity>& c) {
 void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
                              const bool postpone) {
     const auto type = c->tributeType();
-    const auto count = c->tributeCount();
+    const int count = c->tributeCount();
 
     eEventData ed;
     ed.fType = eMessageEventType::requestTributeGranted;
     ed.fCity = c;
-    const auto cids = personPlayerCitiesOnBoard();
-    for(const auto cid : cids) {
-        ed.fCSpaceCount[cid] = spaceForResource(cid, type);
-        ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
-            const int a = addResource(cid, type, count);
-            if(a == count) return;
-            eEventData ed;
-            ed.fType = eMessageEventType::resourceGranted;
-            ed.fCity = c;
-            ed.fResourceType = type;
-            ed.fResourceCount = a;
-            event(eEvent::tributeAccepted, ed);
+    if(type == eResourceType::drachmas) {
+        ed.fA0 = [this, c, count]() { // accept
+            const auto pid = personPlayer();
+            const auto p = boardPlayerWithId(pid);
+            if(p) p->incDrachmas(count);
+            return count;
         };
+    } else {
+        const auto cids = personPlayerCitiesOnBoard();
+        for(const auto cid : cids) {
+            ed.fCSpaceCount[cid] = spaceForResource(cid, type);
+            ed.fCityNames[cid] = cityName(cid);
+            ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
+                const int a = addResource(cid, type, count);
+                if(a == count) return;
+                eEventData ed;
+                ed.fType = eMessageEventType::resourceGranted;
+                ed.fCity = c;
+                ed.fResourceType = type;
+                ed.fResourceCount = a;
+                event(eEvent::tributeAccepted, ed);
+            };
+        }
     }
-    ed.fResourceType = c->tributeType();
-    ed.fResourceCount = c->tributeCount();
+    ed.fResourceType = type;
+    ed.fResourceCount = count;
     if(postpone) {
         ed.fA1 = [this, c, type, count]() { // postpone
             eEventData ed;
@@ -2260,7 +2270,7 @@ void eGameBoard::incTime(const int by) {
     if(nextMonth) {
         mWorldBoard->nextMonth(this);
     }
-    if(nextYear) {
+    if(nextYear || true) {
         mWorldBoard->nextYear();
         const auto cs = mWorldBoard->getTribute();
         for(const auto& c : cs) {

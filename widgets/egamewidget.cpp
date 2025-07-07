@@ -510,7 +510,7 @@ void eGameWidget::initialize() {
         buyCityWidget->resize(innerWidget->width() + 2*p,
                               innerWidget->height() + 2*p);
         addWidget(buyCityWidget);
-        buyCityWidget->align(eAlignment::center);
+        centerDialog(buyCityWidget);
         buyCityWidget->hide();
     }
 
@@ -964,7 +964,7 @@ void eGameWidget::showMessage(eEventData& ed,
         mSavedMsgs.pop_front();
     };
 
-    msgb->initialize(ed, a, close, msg);
+    msgb->initialize(this, ed, a, close, msg);
 
     window()->execDialog(msgb, msgb->closable(), close, this);
     msgb->align(eAlignment::bottom | eAlignment::hcenter);
@@ -1963,11 +1963,14 @@ void eGameWidget::setWorldDirection(const eWorldDirection dir) {
     if(mTem) mTem->setWorldDirection(dir);
 }
 
+void eGameWidget::centerDialog(eWidget* const d) {
+    d->setY((height() - d->height() - mTopBar->height())/2);
+    d->setX((width() - d->width() - mGm->width())/2);
+}
+
 void eGameWidget::openDialog(eWidget* const d) {
     addWidget(d);
-    d->align(eAlignment::vcenter);
-    d->setY(d->y() + mTopBar->height());
-    d->setX(x() + (width() - d->width() - mGm->width())/2);
+    centerDialog(d);
     window()->execDialog(d);
 }
 
