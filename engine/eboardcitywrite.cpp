@@ -11,11 +11,7 @@ void eBoardCity::write(eWriteStream& dst) const {
 
     dst << mAtlantean;
 
-    dst << mGameEvents.size();
-    for(const auto& e : mGameEvents) {
-        dst << e->type();
-        e->write(dst);
-    }
+    mCityEvents.write(dst);
 
     mCityPlan.write(dst);
 

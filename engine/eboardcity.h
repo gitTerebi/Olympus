@@ -13,6 +13,7 @@
 #include "buildings/eavailablebuildings.h"
 #include "characters/eenlistedforces.h"
 #include "ai/eaicityplan.h"
+#include "egameevents.h"
 
 class ePalace;
 class eSanctuary;
@@ -313,9 +314,6 @@ public:
     void clearAfterLastEpisode();
     void startEpisode(eEpisode* const e);
 
-    using eGameEvents = std::vector<stdsptr<eGameEvent>>;
-    const eGameEvents& gameEvents() const { return mGameEvents; }
-
     void addRootGameEvent(const stdsptr<eGameEvent>& e);
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);
 
@@ -335,7 +333,7 @@ private:
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
 
-    std::vector<stdsptr<eGameEvent>> mGameEvents;
+    eGameEvents mCityEvents;
 
     std::map<int, std::vector<eDistrictReadyCondition>> mEditorDistrictConditions;
     int mCurrentDistrictId = -1; // -1 when not editing

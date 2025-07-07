@@ -12,18 +12,7 @@ void eBoardCity::read(eReadStream& src) {
 
     src >> mAtlantean;
 
-    int nevs;
-    src >> nevs;
-    for(int i = 0; i < nevs; i++) {
-        eGameEventType type;
-        src >> type;
-        const auto branch = eGameEventBranch::root;
-        const auto e = eGameEvent::sCreate(type, branch, &mBoard);
-        e->setGameBoard(&mBoard);
-        e->setWorldBoard(mBoard.getWorldBoard());
-        e->read(src);
-        addRootGameEvent(e);
-    }
+    mCityEvents.read(src);
 
     mCityPlan.read(src);
     for(int i = 0; i < mCityPlan.districtCount(); i++) {

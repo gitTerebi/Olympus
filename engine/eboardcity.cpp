@@ -31,6 +31,7 @@
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
     mId(cid),
+    mCityEvents(board),
     mCityPlan(cid),
     mHusbData(mPopData, *this, board),
     mEmplData(mPopData, *this, board),
@@ -193,21 +194,11 @@ void eBoardCity::incTime(const int by) {
         i->incTime(by);
     }
 
-    for(int i = 0; i < (int)mGameEvents.size(); i++) {
-        const auto& e = mGameEvents[i];
-        if(e->finished() && !e->hasActiveConsequences()) {
-            eVectorHelpers::remove(mGameEvents, e);
-            i--;
-        } else {
-            e->handleNewDate(date);
-        }
-    }
+    mCityEvents.handleNewDate(date);
 }
 
 void eBoardCity::acquired() {
-    for(const auto& e : mGameEvents) {
-        e->setupStartDate(mBoard.date());
-    }
+    mCityEvents.setupStartDate(mBoard.date());
 }
 
 void eBoardCity::updateCoverage() {
@@ -1650,28 +1641,15 @@ void eBoardCity::heroSummoned(const eHeroType hero) {
 }
 
 void eBoardCity::addRootGameEvent(const stdsptr<eGameEvent>& e) {
-    e->setGameBoard(&mBoard);
-    e->setWorldBoard(mBoard.getWorldBoard());
-    mGameEvents.push_back(e);
+    mCityEvents.addEvent(e);
 }
 
 void eBoardCity::removeRootGameEvent(const stdsptr<eGameEvent>& e) {
-    eVectorHelpers::remove(mGameEvents, e);
+    mCityEvents.removeEvent(e);
 }
 
 void eBoardCity::clearAfterLastEpisode() {
-    for(int i = 0; i < static_cast<int>(mGameEvents.size()); i++) {
-        const auto& e = mGameEvents[i];
-        const auto type = e->type();
-        if(type == eGameEventType::godQuest) continue;
-        e->startingNewEpisode();
-        if(e->finished()) {
-            if(!e->hasActiveConsequences()) {
-                mGameEvents.erase(mGameEvents.begin() + i);
-                i--;
-            }
-        }
-    }
+    mCityEvents.clearAfterLastEpisode();
 }
 
 void eBoardCity::startEpisode(eEpisode* const e) {
@@ -1679,7 +1657,7 @@ void eBoardCity::startEpisode(eEpisode* const e) {
     for(const auto& ee : es) {
         const auto eee = ee->makeCopy();
         eee->setupStartDate(mBoard.date());
-        mGameEvents.push_back(eee);
+        mCityEvents.addEvent(eee);
     }
 
     const auto& ab = e->fAvailableBuildings[mId];

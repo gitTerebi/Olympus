@@ -369,6 +369,7 @@ SOURCES += \
         engine/egameboard.cpp \
         engine/egameboardread.cpp \
         engine/egameboardwrite.cpp \
+        engine/egameevents.cpp \
         engine/egifthelpers.cpp \
         engine/egodquest.cpp \
         engine/eknownendpathfinder.cpp \
@@ -1000,6 +1001,7 @@ HEADERS += \
     engine/eeventtime.h \
     engine/efunctask.h \
     engine/egameboard.h \
+    engine/egameevents.h \
     engine/egifthelpers.h \
     engine/egodquest.h \
     engine/eknownendpathfinder.h \
