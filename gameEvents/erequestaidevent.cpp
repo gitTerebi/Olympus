@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 eRequestAidEvent::eRequestAidEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::requestAid, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::requestAid, branch, board) {}
 
 void eRequestAidEvent::trigger() {
     if(!mCity) return;
@@ -124,7 +126,7 @@ void eRequestAidEvent::trigger() {
     }
 
     const auto e = e::make_shared<eRequestAidEvent>(
-                       eGameEventBranch::child, *board);
+                       cityId(), eGameEventBranch::child, *board);
     e->setCity(mCity);
     e->setEnd(true);
     e->setArrivalDate(mArrivalDate);

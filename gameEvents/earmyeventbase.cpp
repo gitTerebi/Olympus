@@ -2,10 +2,11 @@
 
 #include "engine/egameboard.h"
 
-eArmyEventBase::eArmyEventBase(const eGameEventType type,
+eArmyEventBase::eArmyEventBase(const eCityId cid,
+                               const eGameEventType type,
                                const eGameEventBranch branch,
                                eGameBoard& board) :
-    eGameEvent(type, branch, board) {
+    eGameEvent(cid, type, branch, board) {
     board.addArmyEvent(this);
 }
 

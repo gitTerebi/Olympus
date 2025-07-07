@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 eRequestStrikeEvent::eRequestStrikeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::requestStrike, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::requestStrike, branch, board) {}
 
 const double gStrikeFrac = 0.67;
 
@@ -45,7 +47,7 @@ void eRequestStrikeEvent::trigger() {
         }
     } else {
         const auto e = e::make_shared<eRequestStrikeEvent>(
-                           eGameEventBranch::child, *board);
+                           cityId(), eGameEventBranch::child, *board);
         e->setCity(mCity);
         e->setRivalCity(mRivalCity);
         e->setEnd(true);

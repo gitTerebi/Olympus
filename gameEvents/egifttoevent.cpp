@@ -4,9 +4,11 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 
-eGiftToEvent::eGiftToEvent(const eGameEventBranch branch,
-                           eGameBoard& board) :
-    eGameEvent(eGameEventType::giftTo, branch, board) {}
+eGiftToEvent::eGiftToEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::giftTo, branch, board) {}
 
 void eGiftToEvent::initialize(const stdsptr<eWorldCity>& c,
                               const eResourceType type,

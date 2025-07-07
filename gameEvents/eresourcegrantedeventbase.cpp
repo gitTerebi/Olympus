@@ -7,6 +7,7 @@
 #include "engine/eevent.h"
 
 eResourceGrantedEventBase::eResourceGrantedEventBase(
+        const eCityId cid,
         const eEvent giftCashAccepted,
         const eEvent giftAccepted,
         const eEvent giftPostponed,
@@ -19,7 +20,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eGameEventType type,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(type, branch, board),
+    eGameEvent(cid, type, branch, board),
     mGiftCashAccepted(giftCashAccepted),
     mGiftAccepted(giftAccepted),
     mGiftPostponed(giftPostponed),
@@ -63,7 +64,7 @@ void eResourceGrantedEventBase::trigger() {
         ed.fType = eMessageEventType::resourceGranted;
         if(mPostpone) {
             const auto branch = eGameEventBranch::child;
-            const auto e = eGameEvent::sCreate(type(), branch, *board);
+            const auto e = eGameEvent::sCreate(cityId(), type(), branch, *board);
             using eRGEB = eResourceGrantedEventBase;
             const auto ee = static_cast<eRGEB*>(e.get());
             ee->initialize(false, mResource, mCount, mCity);
@@ -102,7 +103,7 @@ void eResourceGrantedEventBase::trigger() {
                 board->event(mGiftPostponed, ed);
 
                 const auto branch = eGameEventBranch::child;
-                const auto e = eGameEvent::sCreate(type(), branch, *board);
+                const auto e = eGameEvent::sCreate(cityId(), type(), branch, *board);
                 using eRGEB = eResourceGrantedEventBase;
                 const auto ee = static_cast<eRGEB*>(e.get());
                 ee->initialize(false, mResource, mCount, mCity);

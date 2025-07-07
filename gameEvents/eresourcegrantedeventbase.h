@@ -8,7 +8,8 @@
 
 class eResourceGrantedEventBase : public eGameEvent {
 public:
-    eResourceGrantedEventBase(const eEvent giftCashAccepted,
+    eResourceGrantedEventBase(const eCityId cid,
+                              const eEvent giftCashAccepted,
                               const eEvent giftAccepted,
                               const eEvent giftPostponed,
                               const eEvent giftRefused,

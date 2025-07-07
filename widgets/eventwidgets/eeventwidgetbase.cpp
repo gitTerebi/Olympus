@@ -251,7 +251,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
                     t->removeEvent(e);
                 };
                 auto& board = *e->gameBoard();
-                choose->initialize(get, add, remove, board);
+                choose->initialize(e->cityId(), get, add, remove, board);
 
                 window()->execDialog(choose);
                 choose->align(eAlignment::center);

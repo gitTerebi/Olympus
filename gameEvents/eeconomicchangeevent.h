@@ -5,7 +5,8 @@
 
 class eEconomicChangeEvent : public eEconomicMilitaryChangeEventBase {
 public:
-    eEconomicChangeEvent(const eGameEventBranch branch,
+    eEconomicChangeEvent(const eCityId cid,
+                         const eGameEventBranch branch,
                          eGameBoard& board);
 
    void trigger() override;

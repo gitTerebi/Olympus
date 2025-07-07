@@ -31,7 +31,7 @@
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
     mId(cid),
-    mCityEvents(board),
+    mCityEvents(cid, board),
     mCityPlan(cid),
     mHusbData(mPopData, *this, board),
     mEmplData(mPopData, *this, board),

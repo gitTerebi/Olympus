@@ -39,7 +39,7 @@ void eEpisode::read(eReadStream& src) {
                 eGameEventType type;
                 src >> type;
                 const auto branch = eGameEventBranch::root;
-                const auto e = eGameEvent::sCreate(type, branch, *fBoard);
+                const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
                 e->read(src);
                 fEvents[cid].push_back(e);
             }

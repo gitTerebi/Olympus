@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 eSupplyChangeEvent::eSupplyChangeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eSupplyDemandChangeEvent(eGameEventType::supplyChange, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eSupplyDemandChangeEvent(cid, eGameEventType::supplyChange, branch, board) {}
 
 void eSupplyChangeEvent::trigger() {
     const auto city = this->city();

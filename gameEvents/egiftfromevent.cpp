@@ -6,9 +6,11 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
-eGiftFromEvent::eGiftFromEvent(const eGameEventBranch branch,
+eGiftFromEvent::eGiftFromEvent(const eCityId cid,
+                               const eGameEventBranch branch,
                                eGameBoard& board) :
     eResourceGrantedEventBase(
+        cid,
         eEvent::giftCashAccepted,
         eEvent::giftAccepted,
         eEvent::giftPostponed,

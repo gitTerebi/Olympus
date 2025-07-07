@@ -4,9 +4,11 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 
-ePayTributeEvent::ePayTributeEvent(const eGameEventBranch branch,
-                                   eGameBoard& board) :
-    eGameEvent(eGameEventType::payTribute, branch, board) {}
+ePayTributeEvent::ePayTributeEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::payTribute, branch, board) {}
 
 void ePayTributeEvent::initialize(const stdsptr<eWorldCity>& c) {
     mCity = c;

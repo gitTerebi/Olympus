@@ -5,7 +5,8 @@
 
 class eGodQuestFulfilledEvent : public eGodQuestEventBase {
 public:
-    eGodQuestFulfilledEvent(const eGameEventBranch branch,
+    eGodQuestFulfilledEvent(const eCityId cid,
+                            const eGameEventBranch branch,
                             eGameBoard& board);
 
     void trigger() override;

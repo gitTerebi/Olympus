@@ -5,7 +5,8 @@
 
 class eWageChangeEvent : public eGameEvent {
 public:
-    eWageChangeEvent(const eGameEventBranch branch,
+    eWageChangeEvent(const eCityId cid,
+                     const eGameEventBranch branch,
                      eGameBoard& board);
 
     void write(eWriteStream& dst) const override;

@@ -5,7 +5,8 @@
 
 class eTradeShutDownEvent : public eBasicCityEvent {
 public:
-    eTradeShutDownEvent(const eGameEventBranch branch,
+    eTradeShutDownEvent(const eCityId cid,
+                        const eGameEventBranch branch,
                         eGameBoard& board);
 
     void trigger() override;

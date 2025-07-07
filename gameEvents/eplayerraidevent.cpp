@@ -8,9 +8,11 @@
 #include "eraidresourceevent.h"
 
 ePlayerRaidEvent::ePlayerRaidEvent(
+        const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    ePlayerConquestEventBase(eGameEventType::playerRaidEvent,
+    ePlayerConquestEventBase(cid,
+                             eGameEventType::playerRaidEvent,
                              branch, board) {}
 
 void ePlayerRaidEvent::initialize(
@@ -61,7 +63,7 @@ void ePlayerRaidEvent::trigger() {
         }
         const int count = 2*eGiftHelpers::giftCount(res);
         const auto e = e::make_shared<eRaidResourceEvent>(
-                           eGameEventBranch::child, *board);
+                           cityId(), eGameEventBranch::child, *board);
         const auto boardDate = board->date();
         const int period = 75;
         const auto date = boardDate + period;

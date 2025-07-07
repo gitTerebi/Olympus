@@ -7,7 +7,8 @@
 
 class eEarthquakeEvent : public eGameEvent {
 public:
-    eEarthquakeEvent(const eGameEventBranch branch,
+    eEarthquakeEvent(const eCityId cid,
+                     const eGameEventBranch branch,
                      eGameBoard& board);
 
     void trigger() override;

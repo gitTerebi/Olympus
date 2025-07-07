@@ -42,6 +42,7 @@ void eWorldWidget::initialize() {
                                          const eResourceType r) {
             mBoard->enlistForces(forces);
             const auto e = e::make_shared<ePlayerRaidEvent>(
+                               mBoard->personPlayerCapital(),
                                eGameEventBranch::root, *mBoard);
             const auto boardDate = mBoard->date();
             const int period = eNumbers::sArmyTravelTime;
@@ -66,6 +67,7 @@ void eWorldWidget::initialize() {
             (void)r;
             mBoard->enlistForces(forces);
             const auto e = e::make_shared<ePlayerConquestEvent>(
+                               mBoard->personPlayerCapital(),
                                eGameEventBranch::root, *mBoard);
             const auto boardDate = mBoard->date();
             const int period = eNumbers::sArmyTravelTime;
@@ -290,6 +292,7 @@ void eWorldWidget::openRequestDialog() {
             const auto cancel = new eCancelButton(window());
             accept->setPressAction([this, w, rivals, cityButton]() {
                 const auto e = e::make_shared<eRequestStrikeEvent>(
+                                   mBoard->personPlayerCapital(),
                                    eGameEventBranch::root, *mBoard);
                 e->setCity(mCity);
                 e->setRivalCity(cityButton->city());

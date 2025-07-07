@@ -7,8 +7,10 @@
 #include "emessages.h"
 
 eMonsterInvasionWarningEvent::eMonsterInvasionWarningEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::monsterInvasionWarning, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::monsterInvasionWarning, branch, board) {}
 
 void eMonsterInvasionWarningEvent::initialize(
         const eMonsterInvasionWarningType type,
@@ -62,12 +64,13 @@ void eMonsterInvasionWarningEvent::read(eReadStream& src) {
 }
 
 eMonsterInvasionEvent::eMonsterInvasionEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eMonsterInvasionEventBase(eGameEventType::monsterInvasion,
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eMonsterInvasionEventBase(cid, eGameEventType::monsterInvasion,
                               branch, board) {}
 
 void eMonsterInvasionEvent::pointerCreated() {
-
     const auto warnTypes = {
         eMonsterInvasionWarningType::warning36,
         eMonsterInvasionWarningType::warning24,
@@ -96,7 +99,7 @@ void eMonsterInvasionEvent::pointerCreated() {
         }
         const int daysBefore = 31*months;
         const auto e = e::make_shared<eMonsterInvasionWarningEvent>(
-                           eGameEventBranch::child, *gameBoard());
+                           cityId(), eGameEventBranch::child, *gameBoard());
         e->initialize(w, type());
         addWarning(daysBefore, e);
     }

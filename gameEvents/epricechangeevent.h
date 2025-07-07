@@ -7,7 +7,8 @@
 
 class ePriceChangeEvent : public eGameEvent {
 public:
-    ePriceChangeEvent(const eGameEventBranch branch,
+    ePriceChangeEvent(const eCityId cid,
+                      const eGameEventBranch branch,
                       eGameBoard& board);
 
     void write(eWriteStream& dst) const override;

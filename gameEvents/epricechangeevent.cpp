@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 ePriceChangeEvent::ePriceChangeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::priceChange, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::priceChange, branch, board) {}
 
 void ePriceChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);

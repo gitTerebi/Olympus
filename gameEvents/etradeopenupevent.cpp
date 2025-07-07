@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 eTradeOpenUpEvent::eTradeOpenUpEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eBasicCityEvent(eGameEventType::tradeOpensUp, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eBasicCityEvent(cid, eGameEventType::tradeOpensUp, branch, board) {}
 
 void eTradeOpenUpEvent::trigger() {
     const auto city = this->city();

@@ -5,7 +5,8 @@
 
 class eArmyReturnEvent : public eArmyEventBase {
 public:
-    eArmyReturnEvent(const eGameEventBranch branch,
+    eArmyReturnEvent(const eCityId cid,
+                     const eGameEventBranch branch,
                      eGameBoard& board);
 
     void initialize(const eEnlistedForces& forces,

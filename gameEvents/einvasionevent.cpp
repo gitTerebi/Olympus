@@ -12,9 +12,11 @@
 
 #include <algorithm>
 
-eInvasionEvent::eInvasionEvent(const eGameEventBranch branch,
-                               eGameBoard& board) :
-    eGameEvent(eGameEventType::invasion, branch, board) {}
+eInvasionEvent::eInvasionEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::invasion, branch, board) {}
 
 eInvasionEvent::~eInvasionEvent() {
     const auto board = gameBoard();
@@ -50,7 +52,7 @@ void eInvasionEvent::pointerCreated() {
         }
         const int daysBefore = 31*months;
         const auto e = e::make_shared<eInvasionWarningEvent>(
-                           eGameEventBranch::child, *gameBoard());
+                           cityId(), eGameEventBranch::child, *gameBoard());
         e->initialize(w, mCity);
         addWarning(daysBefore, e);
     }

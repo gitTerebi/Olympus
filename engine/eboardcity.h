@@ -317,9 +317,6 @@ public:
     void addRootGameEvent(const stdsptr<eGameEvent>& e);
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);
 
-    void addGameEvent(eGameEvent* const e);
-    void removeGameEvent(eGameEvent* const e);
-
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:

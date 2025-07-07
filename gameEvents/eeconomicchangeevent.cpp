@@ -6,9 +6,11 @@
 #include "elanguage.h"
 
 eEconomicChangeEvent::eEconomicChangeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
     eEconomicMilitaryChangeEventBase(
-        eGameEventType::economicChange, branch, board) {}
+        cid, eGameEventType::economicChange, branch, board) {}
 
 void eEconomicChangeEvent::trigger() {
     const auto city = this->city();

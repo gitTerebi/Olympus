@@ -5,7 +5,8 @@
 
 class eRivalArmyAwayEvent : public eGameEvent {
 public:
-    eRivalArmyAwayEvent(const eGameEventBranch branch,
+    eRivalArmyAwayEvent(const eCityId cid,
+                        const eGameEventBranch branch,
                         eGameBoard& board);
 
     void trigger() override;

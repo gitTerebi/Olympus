@@ -7,9 +7,11 @@
 #include "engine/eevent.h"
 #include "engine/egifthelpers.h"
 
-eMakeRequestEvent::eMakeRequestEvent(const eGameEventBranch branch,
-                                     eGameBoard& board) :
-    eGameEvent(eGameEventType::makeRequest, branch, board) {}
+eMakeRequestEvent::eMakeRequestEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::makeRequest, branch, board) {}
 
 void eMakeRequestEvent::initialize(
         const bool postpone,

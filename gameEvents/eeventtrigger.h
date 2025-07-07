@@ -8,10 +8,13 @@
 
 class eGameEvent;
 class eWorldBoard;
+enum class eCityId;
 
 class eEventTrigger : public eStdSelfRef {
 public:
-    eEventTrigger(const std::string& name, eGameBoard& board);
+    eEventTrigger(const eCityId cid,
+                  const std::string& name,
+                  eGameBoard& board);
 
     const std::string& name() const { return mName; }
 
@@ -34,6 +37,7 @@ public:
     void setGameBoard(eGameBoard* const b);
     void setWorldBoard(eWorldBoard* const b);
 private:
+    const eCityId mCid;
     eGameBoard& mBoard;
 
     std::string mName;

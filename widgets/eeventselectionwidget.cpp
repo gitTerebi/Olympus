@@ -23,6 +23,7 @@ eEventSelectionWidget::eEventSelectionWidget(
     mBranch(branch) {}
 
 void eEventSelectionWidget::initialize(
+        const eCityId cid,
         const eEventsGetter& get,
         const eEventAdder& add,
         const eEventRemover& remove,
@@ -52,7 +53,7 @@ void eEventSelectionWidget::initialize(
 
     const auto boardPtr = &board;
 
-    setButtonCreateEvent([this, add, editEvent, boardPtr]() {
+    setButtonCreateEvent([this, cid, add, editEvent, boardPtr]() {
         const std::vector<eGameEventType> types = {
 //            eGameEventType::godVisit,
             eGameEventType::godAttack,
@@ -106,9 +107,9 @@ void eEventSelectionWidget::initialize(
             eLanguage::text("wage_change")
         };
         const auto echoose = new eChooseButton(window());
-        const auto act = [this, add, types, labels, editEvent, boardPtr](const int val) {
+        const auto act = [this, cid, add, types, labels, editEvent, boardPtr](const int val) {
             const auto type = types[val];
-            const auto e = eGameEvent::sCreate(type, mBranch, *boardPtr);
+            const auto e = eGameEvent::sCreate(cid, type, mBranch, *boardPtr);
 
             if(e) {
                 e->setIsEpisodeEvent(true);

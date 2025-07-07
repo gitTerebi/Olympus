@@ -5,7 +5,8 @@
 
 class eSupplyChangeEvent : public eSupplyDemandChangeEvent {
 public:
-    eSupplyChangeEvent(const eGameEventBranch branch,
+    eSupplyChangeEvent(const eCityId cid,
+                       const eGameEventBranch branch,
                        eGameBoard& board);
 
     void trigger() override;

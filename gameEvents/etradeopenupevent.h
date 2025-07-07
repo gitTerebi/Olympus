@@ -5,7 +5,8 @@
 
 class eTradeOpenUpEvent : public eBasicCityEvent {
 public:
-    eTradeOpenUpEvent(const eGameEventBranch branch,
+    eTradeOpenUpEvent(const eCityId cid,
+                      const eGameEventBranch branch,
                       eGameBoard& board);
 
     void trigger() override;

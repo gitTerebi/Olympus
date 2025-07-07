@@ -5,7 +5,8 @@
 
 class eTroopsRequestFulfilledEvent : public ePlayerConquestEventBase {
 public:
-    eTroopsRequestFulfilledEvent(const eGameEventBranch branch,
+    eTroopsRequestFulfilledEvent(const eCityId cid,
+                                 const eGameEventBranch branch,
                                  eGameBoard& board);
 
     void initialize(const eEnlistedForces& forces,

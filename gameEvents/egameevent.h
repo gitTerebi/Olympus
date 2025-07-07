@@ -69,7 +69,8 @@ enum class eGameEventBranch {
 
 class eGameEvent : public eStdSelfRef {
 public:
-    eGameEvent(const eGameEventType type,
+    eGameEvent(const eCityId cid,
+               const eGameEventType type,
                const eGameEventBranch branch,
                eGameBoard& board);
     ~eGameEvent();
@@ -83,7 +84,8 @@ public:
     virtual void write(eWriteStream& dst) const;
     virtual void read(eReadStream& src);
 
-    static stdsptr<eGameEvent> sCreate(const eGameEventType type,
+    static stdsptr<eGameEvent> sCreate(const eCityId cid,
+                                       const eGameEventType type,
                                        const eGameEventBranch branch,
                                        eGameBoard& board);
 
@@ -93,7 +95,7 @@ public:
     int ioID() const { return mIOID; }
 
     eCityId cityId() const { return mCityId; }
-    void setCityId(const eCityId cid) { mCityId = cid; }
+    ePlayerId playerId() const { return mPlayerId; }
 
     void setupStartDate(const eDate& currentDate);
 
@@ -173,6 +175,7 @@ public:
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
 private:
+    const eCityId mCid;
     const eGameEventType mType;
     const eGameEventBranch mBranch;
     eGameBoard& mBoard;
@@ -183,6 +186,7 @@ private:
     eWorldBoard* mWorldBoard = nullptr;
 
     eCityId mCityId = eCityId::neutralFriendly;
+    ePlayerId mPlayerId = ePlayerId::neutralFriendly;
 
     stdptr<eGameEvent> mParent;
 

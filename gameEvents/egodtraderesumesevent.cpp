@@ -6,8 +6,10 @@
 #include "elanguage.h"
 
 eGodTradeResumesEvent::eGodTradeResumesEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::godTradeResumes, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::godTradeResumes, branch, board) {}
 
 void eGodTradeResumesEvent::trigger() {
     const auto board = gameBoard();

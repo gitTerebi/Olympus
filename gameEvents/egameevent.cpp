@@ -37,10 +37,11 @@
 #include "epricechangeevent.h"
 #include "ewagechangeevent.h"
 
-eGameEvent::eGameEvent(const eGameEventType type,
+eGameEvent::eGameEvent(const eCityId cid,
+                       const eGameEventType type,
                        const eGameEventBranch branch,
                        eGameBoard& board) :
-    mType(type), mBranch(branch), mBoard(board) {
+    mCid(cid), mType(type), mBranch(branch), mBoard(board) {
     mBoard.addGameEvent(this);
 }
 
@@ -57,7 +58,7 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         eWriteStream dst(target);
         write(dst);
     }
-    const auto result = sCreate(mType, mBranch, mBoard);
+    const auto result = sCreate(mCid, mType, mBranch, mBoard);
     {
         eReadSource source(mem);
         eReadStream src(source);
@@ -70,89 +71,91 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
     return result;
 }
 
-stdsptr<eGameEvent> eGameEvent::sCreate(const eGameEventType type,
-                                        const eGameEventBranch branch,
-                                        eGameBoard& board) {
+stdsptr<eGameEvent> eGameEvent::sCreate(
+        const eCityId cid,
+        const eGameEventType type,
+        const eGameEventBranch branch,
+        eGameBoard& board) {
     switch(type) {
     case eGameEventType::godVisit:
-        return e::make_shared<eGodVisitEvent>(branch, board);
+        return e::make_shared<eGodVisitEvent>(cid, branch, board);
     case eGameEventType::godAttack:
-        return e::make_shared<eGodAttackEvent>(branch, board);
+        return e::make_shared<eGodAttackEvent>(cid, branch, board);
     case eGameEventType::monsterUnleashed:
-        return e::make_shared<eMonsterUnleashedEvent>(branch, board);
+        return e::make_shared<eMonsterUnleashedEvent>(cid, branch, board);
     case eGameEventType::monsterInvasion:
-        return e::make_shared<eMonsterInvasionEvent>(branch, board);
+        return e::make_shared<eMonsterInvasionEvent>(cid, branch, board);
     case eGameEventType::monsterInvasionWarning:
-        return e::make_shared<eMonsterInvasionWarningEvent>(branch, board);
+        return e::make_shared<eMonsterInvasionWarningEvent>(cid, branch, board);
     case eGameEventType::invasion:
-        return e::make_shared<eInvasionEvent>(branch, board);
+        return e::make_shared<eInvasionEvent>(cid, branch, board);
     case eGameEventType::invasionWarning:
-        return e::make_shared<eInvasionWarningEvent>(branch, board);
+        return e::make_shared<eInvasionWarningEvent>(cid, branch, board);
     case eGameEventType::payTribute:
-        return e::make_shared<ePayTributeEvent>(branch, board);
+        return e::make_shared<ePayTributeEvent>(cid, branch, board);
     case eGameEventType::makeRequest:
-        return e::make_shared<eMakeRequestEvent>(branch, board);
+        return e::make_shared<eMakeRequestEvent>(cid, branch, board);
     case eGameEventType::receiveRequest:
-        return e::make_shared<eReceiveRequestEvent>(branch, board);
+        return e::make_shared<eReceiveRequestEvent>(cid, branch, board);
     case eGameEventType::giftTo:
-        return e::make_shared<eGiftToEvent>(branch, board);
+        return e::make_shared<eGiftToEvent>(cid, branch, board);
     case eGameEventType::giftFrom:
-        return e::make_shared<eGiftFromEvent>(branch, board);
+        return e::make_shared<eGiftFromEvent>(cid, branch, board);
     case eGameEventType::godQuest:
-        return e::make_shared<eGodQuestEvent>(branch, board);
+        return e::make_shared<eGodQuestEvent>(cid, branch, board);
     case eGameEventType::godQuestFulfilled:
-        return e::make_shared<eGodQuestFulfilledEvent>(branch, board);
+        return e::make_shared<eGodQuestFulfilledEvent>(cid, branch, board);
     case eGameEventType::playerConquestEvent:
-        return e::make_shared<ePlayerConquestEvent>(branch, board);
+        return e::make_shared<ePlayerConquestEvent>(cid, branch, board);
     case eGameEventType::raidResourceReceive:
-        return e::make_shared<eRaidResourceEvent>(branch, board);
+        return e::make_shared<eRaidResourceEvent>(cid, branch, board);
     case eGameEventType::playerRaidEvent:
-        return e::make_shared<ePlayerRaidEvent>(branch, board);
+        return e::make_shared<ePlayerRaidEvent>(cid, branch, board);
     case eGameEventType::armyReturnEvent:
-        return e::make_shared<eArmyReturnEvent>(branch, board);
+        return e::make_shared<eArmyReturnEvent>(cid, branch, board);
     case eGameEventType::economicChange:
-        return e::make_shared<eEconomicChangeEvent>(branch, board);
+        return e::make_shared<eEconomicChangeEvent>(cid, branch, board);
     case eGameEventType::militaryChange:
-        return e::make_shared<eMilitaryChangeEvent>(branch, board);
+        return e::make_shared<eMilitaryChangeEvent>(cid, branch, board);
 
     case eGameEventType::troopsRequest:
-        return e::make_shared<eTroopsRequestEvent>(branch, board);
+        return e::make_shared<eTroopsRequestEvent>(cid, branch, board);
     case eGameEventType::troopsRequestFulfilled:
-        return e::make_shared<eTroopsRequestFulfilledEvent>(branch, board);
+        return e::make_shared<eTroopsRequestFulfilledEvent>(cid, branch, board);
 
     case eGameEventType::godDisaster:
-        return e::make_shared<eGodDisasterEvent>(branch, board);
+        return e::make_shared<eGodDisasterEvent>(cid, branch, board);
     case eGameEventType::godTradeResumes:
-        return e::make_shared<eGodTradeResumesEvent>(branch, board);
+        return e::make_shared<eGodTradeResumesEvent>(cid, branch, board);
 
     case eGameEventType::requestAid:
-        return e::make_shared<eRequestAidEvent>(branch, board);
+        return e::make_shared<eRequestAidEvent>(cid, branch, board);
     case eGameEventType::requestStrike:
-        return e::make_shared<eRequestStrikeEvent>(branch, board);
+        return e::make_shared<eRequestStrikeEvent>(cid, branch, board);
 
     case eGameEventType::rivalArmyAway:
-        return e::make_shared<eRivalArmyAwayEvent>(branch, board);
+        return e::make_shared<eRivalArmyAwayEvent>(cid, branch, board);
 
     case eGameEventType::earthquake:
-        return e::make_shared<eEarthquakeEvent>(branch, board);
+        return e::make_shared<eEarthquakeEvent>(cid, branch, board);
 
     case eGameEventType::cityBecomes:
-        return e::make_shared<eCityBecomesEvent>(branch, board);
+        return e::make_shared<eCityBecomesEvent>(cid, branch, board);
 
     case eGameEventType::tradeShutdowns:
-        return e::make_shared<eTradeShutDownEvent>(branch, board);
+        return e::make_shared<eTradeShutDownEvent>(cid, branch, board);
     case eGameEventType::tradeOpensUp:
-        return e::make_shared<eTradeOpenUpEvent>(branch, board);
+        return e::make_shared<eTradeOpenUpEvent>(cid, branch, board);
 
     case eGameEventType::supplyChange:
-        return e::make_shared<eSupplyChangeEvent>(branch, board);
+        return e::make_shared<eSupplyChangeEvent>(cid, branch, board);
     case eGameEventType::demandChange:
-        return e::make_shared<eDemandChangeEvent>(branch, board);
+        return e::make_shared<eDemandChangeEvent>(cid, branch, board);
 
     case eGameEventType::priceChange:
-        return e::make_shared<ePriceChangeEvent>(branch, board);
+        return e::make_shared<ePriceChangeEvent>(cid, branch, board);
     case eGameEventType::wageChange:
-        return e::make_shared<eWageChangeEvent>(branch, board);
+        return e::make_shared<eWageChangeEvent>(cid, branch, board);
     }
     return nullptr;
 }
@@ -367,7 +370,7 @@ void eGameEvent::read(eReadStream& src) {
         src >> type;
         eGameEventBranch branch;
         src >> branch;
-        const auto e = eGameEvent::sCreate(type, branch, mBoard);
+        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         e->read(src);
         addConsequence(e);
     }

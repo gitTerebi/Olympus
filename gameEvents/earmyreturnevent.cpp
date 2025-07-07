@@ -9,9 +9,10 @@
 #include "characters/actions/egodworshippedaction.h"
 
 eArmyReturnEvent::eArmyReturnEvent(
+        const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eArmyEventBase(eGameEventType::armyReturnEvent, branch, board) {}
+    eArmyEventBase(cid, eGameEventType::armyReturnEvent, branch, board) {}
 
 void eArmyReturnEvent::initialize(
         const eEnlistedForces& forces,

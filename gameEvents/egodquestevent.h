@@ -5,7 +5,8 @@
 
 class eGodQuestEvent : public eGodQuestEventBase {
 public:
-    eGodQuestEvent(const eGameEventBranch branch,
+    eGodQuestEvent(const eCityId cid,
+                   const eGameEventBranch branch,
                    eGameBoard& board);
     ~eGodQuestEvent();
 

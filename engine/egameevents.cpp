@@ -3,8 +3,8 @@
 #include "evectorhelpers.h"
 #include "egameboard.h"
 
-eGameEvents::eGameEvents(eGameBoard& board) :
-    mBoard(board) {}
+eGameEvents::eGameEvents(const eCityId cid, eGameBoard& board) :
+    mCid(cid), mBoard(board) {}
 
 void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {
     mGameEvents.push_back(e);
@@ -62,7 +62,7 @@ void eGameEvents::read(eReadStream& src) {
         eGameEventType type;
         src >> type;
         const auto branch = eGameEventBranch::root;
-        const auto e = eGameEvent::sCreate(type, branch, mBoard);
+        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         e->read(src);
         addEvent(e);
     }

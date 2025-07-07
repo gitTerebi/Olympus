@@ -7,8 +7,10 @@
 #include "elanguage.h"
 
 eWageChangeEvent::eWageChangeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(eGameEventType::wageChange, branch, board) {}
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::wageChange, branch, board) {}
 
 void eWageChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);

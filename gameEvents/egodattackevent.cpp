@@ -6,9 +6,11 @@
 #include "characters/actions/egodattackaction.h"
 #include "egodtraderesumesevent.h"
 
-eGodAttackEvent::eGodAttackEvent(const eGameEventBranch branch,
-                                 eGameBoard& board) :
-    eGameEvent(eGameEventType::godAttack, branch, board) {}
+eGodAttackEvent::eGodAttackEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, eGameEventType::godAttack, branch, board) {}
 
 void eGodAttackEvent::setTypes(const std::vector<eGodType>& types) {
     mTypes = types;
@@ -59,7 +61,7 @@ void eGodAttackEvent::trigger() {
        t == eGodType::poseidon ||
        t == eGodType::hermes) {
         const auto e = e::make_shared<eGodTradeResumesEvent>(
-                           eGameEventBranch::child, *board);
+                           cityId(), eGameEventBranch::child, *board);
         e->setGod(t);
         e->initializeDate(board->date() + 365);
         addConsequence(e);

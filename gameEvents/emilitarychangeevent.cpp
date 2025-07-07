@@ -6,8 +6,10 @@
 #include "elanguage.h"
 
 eMilitaryChangeEvent::eMilitaryChangeEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    eEconomicMilitaryChangeEventBase(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eEconomicMilitaryChangeEventBase(cid,
         eGameEventType::militaryChange, branch, board) {}
 
 void eMilitaryChangeEvent::trigger() {

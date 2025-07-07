@@ -7,8 +7,11 @@
 #include "engine/eevent.h"
 
 eRaidResourceEvent::eRaidResourceEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
     eResourceGrantedEventBase(
+        cid,
         eEvent::raidCashAccepted,
         eEvent::raidAccepted,
         eEvent::raidPostponed,

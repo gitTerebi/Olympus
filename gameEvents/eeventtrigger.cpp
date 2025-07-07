@@ -4,8 +4,10 @@
 #include "evectorhelpers.h"
 #include "engine/egameboard.h"
 
-eEventTrigger::eEventTrigger(const std::string& name, eGameBoard& board) :
-    mBoard(board), mName(name) {}
+eEventTrigger::eEventTrigger(const eCityId cid,
+                             const std::string& name,
+                             eGameBoard& board) :
+    mCid(cid), mBoard(board), mName(name) {}
 
 void eEventTrigger::trigger(eGameEvent& parent,
                             const eDate& date,
@@ -38,7 +40,7 @@ void eEventTrigger::read(eReadStream& src) {
         eGameEventType type;
         src >> type;
         const auto branch = eGameEventBranch::trigger;
-        const auto e = eGameEvent::sCreate(type, branch, mBoard);
+        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         e->read(src);
         mEvents.emplace_back(e);
     }

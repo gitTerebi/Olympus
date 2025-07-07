@@ -614,6 +614,7 @@ public:
     std::vector<eCityId> playerCitiesOnBoard(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCitiesOnBoard() const;
     ePlayerId personPlayer() const;
+    eCityId personPlayerCapital() const;
     eBoardCity* boardCityWithId(const eCityId cid) const;
     SDL_Rect boardCityTileBRect(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;

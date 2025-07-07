@@ -225,7 +225,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         mythMenu->resize(width(), height());
 
         const auto cids = ep->fBoard->citiesOnBoard();
-        for(const auto& cid : cids) {
+        for(const auto cid : cids) {
             const auto eventsAct = [this, ep, cid]() {
                 const auto choose = new eEventSelectionWidget(
                                         eGameEventBranch::root,
@@ -242,7 +242,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                     eVectorHelpers::remove(ep->fEvents[cid], e);
                 };
                 auto& board = *ep->fBoard;
-                choose->initialize(get, add, remove, board);
+                choose->initialize(cid, get, add, remove, board);
 
                 window()->execDialog(choose);
                 choose->align(eAlignment::center);

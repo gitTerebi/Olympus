@@ -5,7 +5,7 @@
 
 class eGameEvents {
 public:
-    eGameEvents(eGameBoard& board);
+    eGameEvents(const eCityId cid, eGameBoard& board);
 
     void addEvent(const stdsptr<eGameEvent>& e);
     void removeEvent(const stdsptr<eGameEvent>& e);
@@ -16,6 +16,7 @@ public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 private:
+    const eCityId mCid;
     eGameBoard& mBoard;
     std::vector<stdsptr<eGameEvent>> mGameEvents;
 };

@@ -7,9 +7,10 @@
 #include "eiteratesquare.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
+        const eCityId cid,
         const eGameEventType type,
         const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(type, branch, board) {}
+    eGameEvent(cid, type, branch, board) {}
 
 
 void eMonsterInvasionEventBase::setType(const eMonsterType type) {

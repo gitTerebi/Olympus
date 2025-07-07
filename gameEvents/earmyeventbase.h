@@ -9,7 +9,8 @@
 
 class eArmyEventBase : public eGameEvent {
 public:
-    eArmyEventBase(const eGameEventType type,
+    eArmyEventBase(const eCityId cid,
+                   const eGameEventType type,
                    const eGameEventBranch branch,
                    eGameBoard& board);
     ~eArmyEventBase();

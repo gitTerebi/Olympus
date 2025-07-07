@@ -5,7 +5,8 @@
 
 class eRequestAidEvent : public eGameEvent {
 public:
-    eRequestAidEvent(const eGameEventBranch branch,
+    eRequestAidEvent(const eCityId cid,
+                     const eGameEventBranch branch,
                      eGameBoard& board);
 
     void trigger() override;

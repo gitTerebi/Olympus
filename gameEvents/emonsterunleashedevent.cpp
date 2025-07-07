@@ -7,9 +7,11 @@
 #include "emessages.h"
 
 eMonsterUnleashedEvent::eMonsterUnleashedEvent(
+        const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eMonsterInvasionEventBase(eGameEventType::monsterUnleashed, branch,
+    eMonsterInvasionEventBase(cid,
+                              eGameEventType::monsterUnleashed, branch,
                               board) {}
 
 void eMonsterUnleashedEvent::trigger() {

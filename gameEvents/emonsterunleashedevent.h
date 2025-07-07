@@ -5,7 +5,8 @@
 
 class eMonsterUnleashedEvent : public eMonsterInvasionEventBase {
 public:
-    eMonsterUnleashedEvent(const eGameEventBranch branch,
+    eMonsterUnleashedEvent(const eCityId cid,
+                           const eGameEventBranch branch,
                            eGameBoard& board);
 
     void trigger() override;

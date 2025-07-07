@@ -5,9 +5,11 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-ePlayerConquestEvent::ePlayerConquestEvent(const eGameEventBranch branch,
-                                           eGameBoard& board) :
-    ePlayerConquestEventBase(eGameEventType::playerConquestEvent,
+ePlayerConquestEvent::ePlayerConquestEvent(
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    ePlayerConquestEventBase(cid, eGameEventType::playerConquestEvent,
                              branch, board) {}
 
 void ePlayerConquestEvent::initialize(

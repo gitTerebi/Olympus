@@ -7,8 +7,10 @@
 #include "etroopsrequestevent.h"
 
 eTroopsRequestFulfilledEvent::eTroopsRequestFulfilledEvent(
-        const eGameEventBranch branch, eGameBoard& board) :
-    ePlayerConquestEventBase(eGameEventType::troopsRequestFulfilled,
+        const eCityId cid,
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    ePlayerConquestEventBase(cid, eGameEventType::troopsRequestFulfilled,
                              branch, board) {}
 
 void eTroopsRequestFulfilledEvent::initialize(

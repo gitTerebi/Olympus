@@ -7,7 +7,8 @@
 
 class eGodTradeResumesEvent : public eGameEvent {
 public:
-    eGodTradeResumesEvent(const eGameEventBranch branch,
+    eGodTradeResumesEvent(const eCityId cid,
+                          const eGameEventBranch branch,
                           eGameBoard& board);
 
     void trigger() override;

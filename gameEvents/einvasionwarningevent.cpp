@@ -9,9 +9,10 @@
 #include "einvasionevent.h"
 
 eInvasionWarningEvent::eInvasionWarningEvent(
+        const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(eGameEventType::invasionWarning, branch, board) {}
+    eGameEvent(cid, eGameEventType::invasionWarning, branch, board) {}
 
 void eInvasionWarningEvent::initialize(
         const eInvasionWarningType type,

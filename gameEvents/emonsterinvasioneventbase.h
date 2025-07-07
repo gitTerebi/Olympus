@@ -6,7 +6,8 @@
 
 class eMonsterInvasionEventBase : public eGameEvent {
 public:
-    eMonsterInvasionEventBase(const eGameEventType type,
+    eMonsterInvasionEventBase(const eCityId cid,
+                              const eGameEventType type,
                               const eGameEventBranch branch,
                               eGameBoard& board);
 
