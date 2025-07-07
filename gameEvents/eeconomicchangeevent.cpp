@@ -5,9 +5,10 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-eEconomicChangeEvent::eEconomicChangeEvent(const eGameEventBranch branch) :
+eEconomicChangeEvent::eEconomicChangeEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
     eEconomicMilitaryChangeEventBase(
-        eGameEventType::economicChange, branch) {}
+        eGameEventType::economicChange, branch, board) {}
 
 void eEconomicChangeEvent::trigger() {
     const auto city = this->city();

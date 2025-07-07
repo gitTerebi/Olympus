@@ -18,7 +18,8 @@ public:
                               const eEvent giftInsufficientSpace,
                               const eEvent giftPartialSpace,
                               const eGameEventType type,
-                              const eGameEventBranch branch);
+                              const eGameEventBranch branch,
+                              eGameBoard& board);
 
     void initialize(const bool postpone,
                     const eResourceType res,

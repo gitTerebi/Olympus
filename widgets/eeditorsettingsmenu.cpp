@@ -236,13 +236,13 @@ void eEditorSettingsMenu::initialize(const bool first,
                     return ep->fEvents[cid];
                 };
                 const auto add = [ep, cid](const stdsptr<eGameEvent>& e) {
-                    e->setWorldBoard(ep->fWorldBoard);
                     ep->fEvents[cid].push_back(e);
                 };
                 const auto remove = [ep, cid](const stdsptr<eGameEvent>& e) {
                     eVectorHelpers::remove(ep->fEvents[cid], e);
                 };
-                choose->initialize(get, add, remove);
+                auto& board = *ep->fBoard;
+                choose->initialize(get, add, remove, board);
 
                 window()->execDialog(choose);
                 choose->align(eAlignment::center);

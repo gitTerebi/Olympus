@@ -606,10 +606,9 @@ void eGameBoard::setFriendlyGods(const eCityId cid,
     }
 
     const auto e = e::make_shared<eGodVisitEvent>(
-                       eGameEventBranch::root);
+                       eGameEventBranch::root, *this);
     e->setCityId(cid);
     e->setIsEpisodeEvent(true);
-    e->setGameBoard(this);
     eDate date = mDate;
     const int period = eNumbers::sFriendlyGodVisitPeriod;
     date += period;
@@ -770,9 +769,7 @@ void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,
                               const int count,
                               const int delay) {
     const auto e = e::make_shared<eGiftFromEvent>(
-                       eGameEventBranch::root);
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
+                       eGameEventBranch::root, *this);
     e->initialize(true, type, count, c);
     const auto date = mDate + delay;
     e->initializeDate(date);
@@ -782,9 +779,7 @@ void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,
 void eGameBoard::request(const stdsptr<eWorldCity>& c,
                          const eResourceType type) {
     const auto e = e::make_shared<eMakeRequestEvent>(
-                       eGameEventBranch::root);
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
+                       eGameEventBranch::root, *this);
     e->initialize(true, type, c);
     const auto date = mDate + 90;
     e->initializeDate(date);
@@ -793,9 +788,7 @@ void eGameBoard::request(const stdsptr<eWorldCity>& c,
 
 void eGameBoard::requestAid(const stdsptr<eWorldCity>& c) {
     const auto e = e::make_shared<eRequestAidEvent>(
-                       eGameEventBranch::root);
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
+                       eGameEventBranch::root, *this);
     e->setCity(c);
     const auto date = mDate + 30;
     e->initializeDate(date);
@@ -846,9 +839,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
             event(eEvent::tributePostponed, ed);
 
             const auto e = e::make_shared<ePayTributeEvent>(
-                               eGameEventBranch::root);
-            e->setGameBoard(this);
-            e->setWorldBoard(mWorldBoard);
+                               eGameEventBranch::root, *this);
             e->initialize(c);
             const auto date = mDate + 31;
             e->initializeDate(date);
@@ -879,9 +870,7 @@ void eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
         if(remC <= 0) break;
     }
     const auto e = e::make_shared<eGiftToEvent>(
-                       eGameEventBranch::root);
-    e->setGameBoard(this);
-    e->setWorldBoard(mWorldBoard);
+                       eGameEventBranch::root, *this);
     e->initialize(c, type, count);
     const auto date = mDate + 90;
     e->initializeDate(date);
@@ -1533,9 +1522,6 @@ bool eGameBoard::setAtlantean(const eCityId cid, const bool a) {
 
 void eGameBoard::setWorldBoard(eWorldBoard* const wb) {
     mWorldBoard = wb;
-    for(const auto& e : mAllGameEvents) {
-        e->setWorldBoard(wb);
-    }
 }
 
 void eGameBoard::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
@@ -2204,14 +2190,12 @@ void eGameBoard::incTime(const int by) {
             for(const auto& cc : defs) {
                 if(!cc->isRival()) continue;
                 const auto rr = e::make_shared<eReceiveRequestEvent>(
-                                    eGameEventBranch::root);
+                                    eGameEventBranch::root, *this);
                 const auto type = cc->recTributeType();
                 const int count = cc->recTributeCount();
                 rr->initialize(0, type, count, cc, false);
                 rr->setTributeRequest(true);
                 rr->initializeDate(mDate);
-                rr->setGameBoard(this);
-                rr->setWorldBoard(mWorldBoard);
                 addRootGameEvent(rr);
             }
         }

@@ -7,7 +7,8 @@
 
 class ePayTributeEvent : public eGameEvent {
 public:
-    ePayTributeEvent(const eGameEventBranch branch);
+    ePayTributeEvent(const eGameEventBranch branch,
+                     eGameBoard& board);
 
     void initialize(const stdsptr<eWorldCity>& c);
 

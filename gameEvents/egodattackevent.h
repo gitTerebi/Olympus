@@ -6,7 +6,8 @@
 
 class eGodAttackEvent : public eGameEvent {
 public:
-    eGodAttackEvent(const eGameEventBranch branch);
+    eGodAttackEvent(const eGameEventBranch branch,
+                    eGameBoard& board);
 
     const std::vector<eGodType>& types() const { return mTypes; }
     void setTypes(const std::vector<eGodType>& types);

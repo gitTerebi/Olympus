@@ -6,9 +6,10 @@
 #include "emonsterinvasionevent.h"
 #include "eiteratesquare.h"
 
-eMonsterInvasionEventBase::eMonsterInvasionEventBase(const eGameEventType type,
-        const eGameEventBranch branch) :
-    eGameEvent(type, branch) {}
+eMonsterInvasionEventBase::eMonsterInvasionEventBase(
+        const eGameEventType type,
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(type, branch, board) {}
 
 
 void eMonsterInvasionEventBase::setType(const eMonsterType type) {

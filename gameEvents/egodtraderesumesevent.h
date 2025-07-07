@@ -7,7 +7,8 @@
 
 class eGodTradeResumesEvent : public eGameEvent {
 public:
-    eGodTradeResumesEvent(const eGameEventBranch branch);
+    eGodTradeResumesEvent(const eGameEventBranch branch,
+                          eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

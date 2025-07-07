@@ -6,7 +6,8 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
-eRaidResourceEvent::eRaidResourceEvent(const eGameEventBranch branch) :
+eRaidResourceEvent::eRaidResourceEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
     eResourceGrantedEventBase(
         eEvent::raidCashAccepted,
         eEvent::raidAccepted,
@@ -17,7 +18,8 @@ eRaidResourceEvent::eRaidResourceEvent(const eGameEventBranch branch) :
         eEvent::raidLastChance,
         eEvent::raidInsufficientSpace,
         eEvent::raidPartialSpace,
-        eGameEventType::raidResourceReceive, branch) {}
+        eGameEventType::raidResourceReceive, branch,
+        board) {}
 
 std::string eRaidResourceEvent::longName() const {
     return eLanguage::text("raid_resource_long_name");

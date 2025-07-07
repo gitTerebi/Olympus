@@ -5,7 +5,8 @@
 
 class eDemandChangeEvent : public eSupplyDemandChangeEvent {
 public:
-    eDemandChangeEvent(const eGameEventBranch branch);
+    eDemandChangeEvent(const eGameEventBranch branch,
+                       eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

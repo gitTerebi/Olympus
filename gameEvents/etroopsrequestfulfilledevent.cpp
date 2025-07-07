@@ -7,7 +7,7 @@
 #include "etroopsrequestevent.h"
 
 eTroopsRequestFulfilledEvent::eTroopsRequestFulfilledEvent(
-        const eGameEventBranch branch, eGameBoard* const board) :
+        const eGameEventBranch branch, eGameBoard& board) :
     ePlayerConquestEventBase(eGameEventType::troopsRequestFulfilled,
                              branch, board) {}
 

@@ -6,7 +6,7 @@
 #include "elanguage.h"
 
 ePlayerConquestEvent::ePlayerConquestEvent(const eGameEventBranch branch,
-                                           eGameBoard* const board) :
+                                           eGameBoard& board) :
     ePlayerConquestEventBase(eGameEventType::playerConquestEvent,
                              branch, board) {}
 

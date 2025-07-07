@@ -5,8 +5,9 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-eRivalArmyAwayEvent::eRivalArmyAwayEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::rivalArmyAway, branch) {}
+eRivalArmyAwayEvent::eRivalArmyAwayEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::rivalArmyAway, branch, board) {}
 
 void eRivalArmyAwayEvent::trigger() {
     if(!mCity) return;
@@ -23,7 +24,7 @@ void eRivalArmyAwayEvent::trigger() {
         mCity->setTroops(t - mTroopsTaken);
 
         const auto e = e::make_shared<eRivalArmyAwayEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *board);
         e->setCity(mCity);
         e->setEnd(true);
         e->setDuration(mDuration);

@@ -7,7 +7,8 @@
 
 class eEarthquakeEvent : public eGameEvent {
 public:
-    eEarthquakeEvent(const eGameEventBranch branch);
+    eEarthquakeEvent(const eGameEventBranch branch,
+                     eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

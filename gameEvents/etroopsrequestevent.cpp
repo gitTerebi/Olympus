@@ -10,18 +10,19 @@
 
 #include "etroopsrequestfulfilledevent.h"
 
-eTroopsRequestEvent::eTroopsRequestEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::troopsRequest, branch) {
+eTroopsRequestEvent::eTroopsRequestEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::troopsRequest, branch, board) {
     const auto e1 = eLanguage::text("early");
-    mEarlyTrigger = e::make_shared<eEventTrigger>(e1);
+    mEarlyTrigger = e::make_shared<eEventTrigger>(e1, board);
     const auto e2 = eLanguage::text("comply");
-    mComplyTrigger = e::make_shared<eEventTrigger>(e2);
+    mComplyTrigger = e::make_shared<eEventTrigger>(e2, board);
     const auto e3 = eLanguage::text("too_late");
-    mTooLateTrigger = e::make_shared<eEventTrigger>(e3);
+    mTooLateTrigger = e::make_shared<eEventTrigger>(e3, board);
     const auto e4 = eLanguage::text("refuse");
-    mRefuseTrigger = e::make_shared<eEventTrigger>(e4);
+    mRefuseTrigger = e::make_shared<eEventTrigger>(e4, board);
     const auto e5 = eLanguage::text("lost_battle");
-    mLostBattleTrigger = e::make_shared<eEventTrigger>(e5);
+    mLostBattleTrigger = e::make_shared<eEventTrigger>(e5, board);
 
     addTrigger(mEarlyTrigger);
     addTrigger(mComplyTrigger);
@@ -112,7 +113,7 @@ void eTroopsRequestEvent::trigger() {
     if(mPostpone < 2) {
         ed.fA1 = [this, board]() { // postpone
             const auto e = e::make_shared<eTroopsRequestEvent>(
-                               eGameEventBranch::child);
+                               eGameEventBranch::child, *board);
             e->initialize(mPostpone + 1, mCity, mRivalCity);
             const auto date = board->date() + gPostponeDays;
             e->initializeDate(date);
@@ -123,7 +124,7 @@ void eTroopsRequestEvent::trigger() {
     ed.fA2 = [this, board]() { // refuse
         board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
         const auto e = e::make_shared<eTroopsRequestEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *board);
         e->initialize(5, mCity, mRivalCity, true);
         const auto date = board->date() + 31;
         e->initializeDate(date);
@@ -179,7 +180,7 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
         board->enlistForces(f);
         board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
         const auto e = e::make_shared<eTroopsRequestFulfilledEvent>(
-                           eGameEventBranch::child, board);
+                           eGameEventBranch::child, *board);
         const auto currentDate = board->date();
         e->initialize(f, mCity, mRivalCity);
         const auto edate = currentDate + 3*31;

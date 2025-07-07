@@ -5,7 +5,8 @@
 
 class eTradeOpenUpEvent : public eBasicCityEvent {
 public:
-    eTradeOpenUpEvent(const eGameEventBranch branch);
+    eTradeOpenUpEvent(const eGameEventBranch branch,
+                      eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;;

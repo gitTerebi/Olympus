@@ -38,25 +38,26 @@
 #include "ewagechangeevent.h"
 
 eGameEvent::eGameEvent(const eGameEventType type,
-                       const eGameEventBranch branch) :
-    mType(type), mBranch(branch) {}
+                       const eGameEventBranch branch,
+                       eGameBoard& board) :
+    mType(type), mBranch(branch), mBoard(board) {
+    mBoard.addGameEvent(this);
+}
 
 eGameEvent::~eGameEvent() {
-    if(mBoard) mBoard->removeGameEvent(this);
+    mBoard.removeGameEvent(this);
 }
 
 stdsptr<eGameEvent> eGameEvent::makeCopy() const {
     const size_t size = 1000000;
     void* mem = malloc(size);
     {
-        mWorldBoard->setIOIDs();
+        worldBoard()->setIOIDs();
         eWriteTarget target(mem);
         eWriteStream dst(target);
         write(dst);
     }
     const auto result = sCreate(mType, mBranch, mBoard);
-    result->setGameBoard(mBoard);
-    result->setWorldBoard(mWorldBoard);
     {
         eReadSource source(mem);
         eReadStream src(source);
@@ -71,87 +72,87 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
 
 stdsptr<eGameEvent> eGameEvent::sCreate(const eGameEventType type,
                                         const eGameEventBranch branch,
-                                        eGameBoard* const board) {
+                                        eGameBoard& board) {
     switch(type) {
     case eGameEventType::godVisit:
-        return e::make_shared<eGodVisitEvent>(branch);
+        return e::make_shared<eGodVisitEvent>(branch, board);
     case eGameEventType::godAttack:
-        return e::make_shared<eGodAttackEvent>(branch);
+        return e::make_shared<eGodAttackEvent>(branch, board);
     case eGameEventType::monsterUnleashed:
-        return e::make_shared<eMonsterUnleashedEvent>(branch);
+        return e::make_shared<eMonsterUnleashedEvent>(branch, board);
     case eGameEventType::monsterInvasion:
-        return e::make_shared<eMonsterInvasionEvent>(branch);
+        return e::make_shared<eMonsterInvasionEvent>(branch, board);
     case eGameEventType::monsterInvasionWarning:
-        return e::make_shared<eMonsterInvasionWarningEvent>(branch);
+        return e::make_shared<eMonsterInvasionWarningEvent>(branch, board);
     case eGameEventType::invasion:
-        return e::make_shared<eInvasionEvent>(branch);
+        return e::make_shared<eInvasionEvent>(branch, board);
     case eGameEventType::invasionWarning:
-        return e::make_shared<eInvasionWarningEvent>(branch);
+        return e::make_shared<eInvasionWarningEvent>(branch, board);
     case eGameEventType::payTribute:
-        return e::make_shared<ePayTributeEvent>(branch);
+        return e::make_shared<ePayTributeEvent>(branch, board);
     case eGameEventType::makeRequest:
-        return e::make_shared<eMakeRequestEvent>(branch);
+        return e::make_shared<eMakeRequestEvent>(branch, board);
     case eGameEventType::receiveRequest:
-        return e::make_shared<eReceiveRequestEvent>(branch);
+        return e::make_shared<eReceiveRequestEvent>(branch, board);
     case eGameEventType::giftTo:
-        return e::make_shared<eGiftToEvent>(branch);
+        return e::make_shared<eGiftToEvent>(branch, board);
     case eGameEventType::giftFrom:
-        return e::make_shared<eGiftFromEvent>(branch);
+        return e::make_shared<eGiftFromEvent>(branch, board);
     case eGameEventType::godQuest:
-        return e::make_shared<eGodQuestEvent>(branch);
+        return e::make_shared<eGodQuestEvent>(branch, board);
     case eGameEventType::godQuestFulfilled:
-        return e::make_shared<eGodQuestFulfilledEvent>(branch);
+        return e::make_shared<eGodQuestFulfilledEvent>(branch, board);
     case eGameEventType::playerConquestEvent:
         return e::make_shared<ePlayerConquestEvent>(branch, board);
     case eGameEventType::raidResourceReceive:
-        return e::make_shared<eRaidResourceEvent>(branch);
+        return e::make_shared<eRaidResourceEvent>(branch, board);
     case eGameEventType::playerRaidEvent:
         return e::make_shared<ePlayerRaidEvent>(branch, board);
     case eGameEventType::armyReturnEvent:
         return e::make_shared<eArmyReturnEvent>(branch, board);
     case eGameEventType::economicChange:
-        return e::make_shared<eEconomicChangeEvent>(branch);
+        return e::make_shared<eEconomicChangeEvent>(branch, board);
     case eGameEventType::militaryChange:
-        return e::make_shared<eMilitaryChangeEvent>(branch);
+        return e::make_shared<eMilitaryChangeEvent>(branch, board);
 
     case eGameEventType::troopsRequest:
-        return e::make_shared<eTroopsRequestEvent>(branch);
+        return e::make_shared<eTroopsRequestEvent>(branch, board);
     case eGameEventType::troopsRequestFulfilled:
         return e::make_shared<eTroopsRequestFulfilledEvent>(branch, board);
 
     case eGameEventType::godDisaster:
-        return e::make_shared<eGodDisasterEvent>(branch);
+        return e::make_shared<eGodDisasterEvent>(branch, board);
     case eGameEventType::godTradeResumes:
-        return e::make_shared<eGodTradeResumesEvent>(branch);
+        return e::make_shared<eGodTradeResumesEvent>(branch, board);
 
     case eGameEventType::requestAid:
-        return e::make_shared<eRequestAidEvent>(branch);
+        return e::make_shared<eRequestAidEvent>(branch, board);
     case eGameEventType::requestStrike:
-        return e::make_shared<eRequestStrikeEvent>(branch);
+        return e::make_shared<eRequestStrikeEvent>(branch, board);
 
     case eGameEventType::rivalArmyAway:
-        return e::make_shared<eRivalArmyAwayEvent>(branch);
+        return e::make_shared<eRivalArmyAwayEvent>(branch, board);
 
     case eGameEventType::earthquake:
-        return e::make_shared<eEarthquakeEvent>(branch);
+        return e::make_shared<eEarthquakeEvent>(branch, board);
 
     case eGameEventType::cityBecomes:
-        return e::make_shared<eCityBecomesEvent>(branch);
+        return e::make_shared<eCityBecomesEvent>(branch, board);
 
     case eGameEventType::tradeShutdowns:
-        return e::make_shared<eTradeShutDownEvent>(branch);
+        return e::make_shared<eTradeShutDownEvent>(branch, board);
     case eGameEventType::tradeOpensUp:
-        return e::make_shared<eTradeOpenUpEvent>(branch);
+        return e::make_shared<eTradeOpenUpEvent>(branch, board);
 
     case eGameEventType::supplyChange:
-        return e::make_shared<eSupplyChangeEvent>(branch);
+        return e::make_shared<eSupplyChangeEvent>(branch, board);
     case eGameEventType::demandChange:
-        return e::make_shared<eDemandChangeEvent>(branch);
+        return e::make_shared<eDemandChangeEvent>(branch, board);
 
     case eGameEventType::priceChange:
-        return e::make_shared<ePriceChangeEvent>(branch);
+        return e::make_shared<ePriceChangeEvent>(branch, board);
     case eGameEventType::wageChange:
-        return e::make_shared<eWageChangeEvent>(branch);
+        return e::make_shared<eWageChangeEvent>(branch, board);
     }
     return nullptr;
 }
@@ -183,8 +184,6 @@ void eGameEvent::addWarning(const int daysBefore,
     event->initializeDate(startDate, period(), repeat());
     event->setReason(reason());
     event->mParent = this;
-    event->setGameBoard(mBoard);
-    event->setWorldBoard(mWorldBoard);
     mWarnings.emplace_back(daysBefore, event);
 }
 
@@ -213,8 +212,6 @@ void eGameEvent::addConsequence(const stdsptr<eGameEvent>& event) {
     if(event->branch() == eGameEventBranch::child) {
         event->setReason(reason());
     }
-    event->setGameBoard(mBoard);
-    event->setWorldBoard(mWorldBoard);
     event->mParent = this;
 }
 
@@ -291,36 +288,8 @@ int eGameEvent::triggerEventsCount() const {
     return r;
 }
 
-void eGameEvent::setGameBoard(eGameBoard* const b) {
-    if(mBoard) {
-        mBoard->removeGameEvent(this);
-    }
-    mBoard = b;
-    if(mBoard) {
-        mBoard->addGameEvent(this);
-    }
-    for(const auto& c : mConsequences) {
-        c->setGameBoard(b);
-    }
-    for(const auto& w : mWarnings) {
-        w.second->setGameBoard(b);
-    }
-    for(const auto& t : mTriggers) {
-        t->setGameBoard(b);
-    }
-}
-
-void eGameEvent::setWorldBoard(eWorldBoard* const b) {
-    mWorldBoard = b;
-    for(const auto& c : mConsequences) {
-        c->setWorldBoard(b);
-    }
-    for(const auto& w : mWarnings) {
-        w.second->setWorldBoard(b);
-    }
-    for(const auto& t : mTriggers) {
-        t->setWorldBoard(b);
-    }
+eWorldBoard* eGameEvent::worldBoard() const {
+    return mBoard.getWorldBoard();
 }
 
 void eGameEvent::startingNewEpisode() {
@@ -399,8 +368,6 @@ void eGameEvent::read(eReadStream& src) {
         eGameEventBranch branch;
         src >> branch;
         const auto e = eGameEvent::sCreate(type, branch, mBoard);
-        e->setGameBoard(mBoard);
-        e->setWorldBoard(mWorldBoard);
         e->read(src);
         addConsequence(e);
     }

@@ -9,7 +9,7 @@
 
 ePlayerRaidEvent::ePlayerRaidEvent(
         const eGameEventBranch branch,
-        eGameBoard* const board) :
+        eGameBoard& board) :
     ePlayerConquestEventBase(eGameEventType::playerRaidEvent,
                              branch, board) {}
 
@@ -61,7 +61,7 @@ void ePlayerRaidEvent::trigger() {
         }
         const int count = 2*eGiftHelpers::giftCount(res);
         const auto e = e::make_shared<eRaidResourceEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *board);
         const auto boardDate = board->date();
         const int period = 75;
         const auto date = boardDate + period;

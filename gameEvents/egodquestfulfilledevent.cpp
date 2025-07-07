@@ -9,8 +9,8 @@
 #include "buildings/eheroshall.h"
 
 eGodQuestFulfilledEvent::eGodQuestFulfilledEvent(
-        const eGameEventBranch branch) :
-    eGodQuestEventBase(eGameEventType::godQuestFulfilled, branch) {}
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGodQuestEventBase(eGameEventType::godQuestFulfilled, branch, board) {}
 
 void eGodQuestFulfilledEvent::trigger() {
     const auto board = gameBoard();

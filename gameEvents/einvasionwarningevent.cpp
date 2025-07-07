@@ -8,8 +8,10 @@
 #include "engine/eeventdata.h"
 #include "einvasionevent.h"
 
-eInvasionWarningEvent::eInvasionWarningEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::invasionWarning, branch) {}
+eInvasionWarningEvent::eInvasionWarningEvent(
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(eGameEventType::invasionWarning, branch, board) {}
 
 void eInvasionWarningEvent::initialize(
         const eInvasionWarningType type,

@@ -6,7 +6,8 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
-eGiftFromEvent::eGiftFromEvent(const eGameEventBranch branch) :
+eGiftFromEvent::eGiftFromEvent(const eGameEventBranch branch,
+                               eGameBoard& board) :
     eResourceGrantedEventBase(
         eEvent::giftCashAccepted,
         eEvent::giftAccepted,
@@ -17,7 +18,7 @@ eGiftFromEvent::eGiftFromEvent(const eGameEventBranch branch) :
         eEvent::giftLastChance,
         eEvent::giftInsufficientSpace,
         eEvent::giftPartialSpace,
-        eGameEventType::giftFrom, branch) {}
+        eGameEventType::giftFrom, branch, board) {}
 
 std::string eGiftFromEvent::longName() const {
     auto tmpl = eLanguage::text("gift_of_from");

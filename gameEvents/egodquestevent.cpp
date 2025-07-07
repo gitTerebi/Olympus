@@ -9,10 +9,11 @@
 #include "buildings/eheroshall.h"
 #include "estringhelpers.h"
 
-eGodQuestEvent::eGodQuestEvent(const eGameEventBranch branch) :
-    eGodQuestEventBase(eGameEventType::godQuest, branch) {
+eGodQuestEvent::eGodQuestEvent(const eGameEventBranch branch,
+                               eGameBoard& board) :
+    eGodQuestEventBase(eGameEventType::godQuest, branch, board) {
     const auto e4 = eLanguage::text("fulfilled_trigger");
-    mFulfilledTrigger = e::make_shared<eEventTrigger>(e4);
+    mFulfilledTrigger = e::make_shared<eEventTrigger>(e4, board);
 
     addTrigger(mFulfilledTrigger);
 }
@@ -76,7 +77,7 @@ void eGodQuestEvent::fulfill() {
     board->removeGodQuest(this);
 
     const auto e = e::make_shared<eGodQuestFulfilledEvent>(
-                       eGameEventBranch::child);
+                       eGameEventBranch::child, *board);
     const auto boardDate = board->date();
     const int period = 150;
     const auto date = boardDate + period;

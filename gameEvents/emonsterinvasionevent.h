@@ -15,7 +15,8 @@ class eMonsterInvasionEvent;
 
 class eMonsterInvasionWarningEvent : public eGameEvent {
 public:
-    eMonsterInvasionWarningEvent(const eGameEventBranch branch);
+    eMonsterInvasionWarningEvent(const eGameEventBranch branch,
+                                 eGameBoard& board);
 
     void initialize(const eMonsterInvasionWarningType type,
                     const eMonsterType monster);
@@ -34,7 +35,8 @@ private:
 
 class eMonsterInvasionEvent : public eMonsterInvasionEventBase {
 public:
-    eMonsterInvasionEvent(const eGameEventBranch branch);
+    eMonsterInvasionEvent(const eGameEventBranch branch,
+                          eGameBoard& board);
 
     void pointerCreated() override;
 

@@ -9,7 +9,8 @@ struct eReason;
 
 class eTroopsRequestEvent : public eGameEvent {
 public:
-    eTroopsRequestEvent(const eGameEventBranch branch);
+    eTroopsRequestEvent(const eGameEventBranch branch,
+                        eGameBoard& board);
    ~eTroopsRequestEvent();
 
     void initialize(const int postpone,

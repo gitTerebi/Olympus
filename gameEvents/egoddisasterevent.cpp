@@ -5,8 +5,9 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-eGodDisasterEvent::eGodDisasterEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::godDisaster, branch) {}
+eGodDisasterEvent::eGodDisasterEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::godDisaster, branch, board) {}
 
 void eGodDisasterEvent::trigger() {
     if(!mCity) return;
@@ -21,7 +22,7 @@ void eGodDisasterEvent::trigger() {
     } else {
         mCity->setTradeShutdown(true);
         const auto e = e::make_shared<eGodDisasterEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *board);
         e->setGod(mGod);
         e->setCity(mCity);
         e->setEnd(true);

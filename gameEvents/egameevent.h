@@ -70,7 +70,8 @@ enum class eGameEventBranch {
 class eGameEvent : public eStdSelfRef {
 public:
     eGameEvent(const eGameEventType type,
-               const eGameEventBranch branch);
+               const eGameEventBranch branch,
+               eGameBoard& board);
     ~eGameEvent();
 
     virtual void trigger() = 0;
@@ -84,7 +85,7 @@ public:
 
     static stdsptr<eGameEvent> sCreate(const eGameEventType type,
                                        const eGameEventBranch branch,
-                                       eGameBoard* const board);
+                                       eGameBoard& board);
 
     eGameEventType type() const { return mType; }
 
@@ -162,11 +163,8 @@ public:
 
     eGameEvent* parent() const { return mParent; }
 
-    eGameBoard* gameBoard() const { return mBoard; }
-    eWorldBoard* worldBoard() const { return mWorldBoard; }
-
-    void setGameBoard(eGameBoard* const b);
-    void setWorldBoard(eWorldBoard* const b);
+    eGameBoard* gameBoard() const { return &mBoard; }
+    eWorldBoard* worldBoard() const;
 
     void startingNewEpisode();
 
@@ -177,12 +175,11 @@ protected:
 private:
     const eGameEventType mType;
     const eGameEventBranch mBranch;
+    eGameBoard& mBoard;
 
     void setStartDate(const eDate& d);
 
     bool mEpisodeEvent = false;
-
-    eGameBoard* mBoard = nullptr;
     eWorldBoard* mWorldBoard = nullptr;
 
     eCityId mCityId = eCityId::neutralFriendly;

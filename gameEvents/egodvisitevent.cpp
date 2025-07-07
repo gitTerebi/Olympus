@@ -6,8 +6,9 @@
 #include "characters/actions/egodvisitaction.h"
 #include "elanguage.h"
 
-eGodVisitEvent::eGodVisitEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::godVisit, branch) {}
+eGodVisitEvent::eGodVisitEvent(const eGameEventBranch branch,
+                               eGameBoard& board) :
+    eGameEvent(eGameEventType::godVisit, branch, board) {}
 
 void eGodVisitEvent::setTypes(const std::vector<eGodType>& types) {
     mTypes = types;

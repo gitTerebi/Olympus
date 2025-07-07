@@ -7,8 +7,8 @@
 #include "emessages.h"
 
 eMonsterInvasionWarningEvent::eMonsterInvasionWarningEvent(
-        const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::monsterInvasionWarning, branch) {}
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::monsterInvasionWarning, branch, board) {}
 
 void eMonsterInvasionWarningEvent::initialize(
         const eMonsterInvasionWarningType type,
@@ -61,9 +61,10 @@ void eMonsterInvasionWarningEvent::read(eReadStream& src) {
     src >> mMonster;
 }
 
-eMonsterInvasionEvent::eMonsterInvasionEvent(const eGameEventBranch branch) :
+eMonsterInvasionEvent::eMonsterInvasionEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
     eMonsterInvasionEventBase(eGameEventType::monsterInvasion,
-                              branch) {}
+                              branch, board) {}
 
 void eMonsterInvasionEvent::pointerCreated() {
 
@@ -95,7 +96,7 @@ void eMonsterInvasionEvent::pointerCreated() {
         }
         const int daysBefore = 31*months;
         const auto e = e::make_shared<eMonsterInvasionWarningEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *gameBoard());
         e->initialize(w, type());
         addWarning(daysBefore, e);
     }

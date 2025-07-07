@@ -7,8 +7,6 @@ eGameEvents::eGameEvents(eGameBoard& board) :
     mBoard(board) {}
 
 void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {
-    e->setGameBoard(&mBoard);
-    e->setWorldBoard(mBoard.getWorldBoard());
     mGameEvents.push_back(e);
 }
 
@@ -64,9 +62,7 @@ void eGameEvents::read(eReadStream& src) {
         eGameEventType type;
         src >> type;
         const auto branch = eGameEventBranch::root;
-        const auto e = eGameEvent::sCreate(type, branch, &mBoard);
-        e->setGameBoard(&mBoard);
-        e->setWorldBoard(mBoard.getWorldBoard());
+        const auto e = eGameEvent::sCreate(type, branch, mBoard);
         e->read(src);
         addEvent(e);
     }

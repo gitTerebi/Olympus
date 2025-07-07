@@ -20,7 +20,8 @@ public:
     using eEventRemover = std::function<void(const stdsptr<eGameEvent>&)>;
     void initialize(const eEventsGetter& get,
                     const eEventAdder& add,
-                    const eEventRemover& remove);
+                    const eEventRemover& remove,
+                    eGameBoard& board);
 private:
     const eGameEventBranch mBranch;
 };

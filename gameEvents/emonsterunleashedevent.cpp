@@ -6,8 +6,11 @@
 #include "engine/eevent.h"
 #include "emessages.h"
 
-eMonsterUnleashedEvent::eMonsterUnleashedEvent(const eGameEventBranch branch) :
-    eMonsterInvasionEventBase(eGameEventType::monsterUnleashed, branch) {}
+eMonsterUnleashedEvent::eMonsterUnleashedEvent(
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eMonsterInvasionEventBase(eGameEventType::monsterUnleashed, branch,
+                              board) {}
 
 void eMonsterUnleashedEvent::trigger() {
     const auto board = gameBoard();

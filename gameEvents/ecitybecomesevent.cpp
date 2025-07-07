@@ -7,8 +7,9 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 
-eCityBecomesEvent::eCityBecomesEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::cityBecomes, branch) {}
+eCityBecomesEvent::eCityBecomesEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::cityBecomes, branch, board) {}
 
 void eCityBecomesEvent::trigger() {
     if(!mCity) return;

@@ -9,7 +9,8 @@ enum class eCityBecomesType {
 
 class eCityBecomesEvent : public eGameEvent {
 public:
-    eCityBecomesEvent(const eGameEventBranch branch);
+    eCityBecomesEvent(const eGameEventBranch branch,
+                      eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

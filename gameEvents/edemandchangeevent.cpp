@@ -6,8 +6,9 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 
-eDemandChangeEvent::eDemandChangeEvent(const eGameEventBranch branch) :
-    eSupplyDemandChangeEvent(eGameEventType::demandChange, branch) {}
+eDemandChangeEvent::eDemandChangeEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eSupplyDemandChangeEvent(eGameEventType::demandChange, branch, board) {}
 
 void eDemandChangeEvent::trigger() {
     const auto city = this->city();

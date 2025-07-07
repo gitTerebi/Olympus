@@ -6,8 +6,9 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 
-eTradeShutDownEvent::eTradeShutDownEvent(const eGameEventBranch branch) :
-    eBasicCityEvent(eGameEventType::tradeShutdowns, branch) {}
+eTradeShutDownEvent::eTradeShutDownEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eBasicCityEvent(eGameEventType::tradeShutdowns, branch, board) {}
 
 void eTradeShutDownEvent::trigger() {
     const auto city = this->city();

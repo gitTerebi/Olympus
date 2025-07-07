@@ -8,16 +8,17 @@
 #include "emessages.h"
 #include "engine/ecityrequest.h"
 
-eReceiveRequestEvent::eReceiveRequestEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::receiveRequest, branch) {
+eReceiveRequestEvent::eReceiveRequestEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::receiveRequest, branch, board) {
     const auto e1 = eLanguage::text("early");
-    mEarlyTrigger = e::make_shared<eEventTrigger>(e1);
+    mEarlyTrigger = e::make_shared<eEventTrigger>(e1, board);
     const auto e2 = eLanguage::text("comply");
-    mComplyTrigger = e::make_shared<eEventTrigger>(e2);
+    mComplyTrigger = e::make_shared<eEventTrigger>(e2, board);
     const auto e3 = eLanguage::text("too_late");
-    mTooLateTrigger = e::make_shared<eEventTrigger>(e3);
+    mTooLateTrigger = e::make_shared<eEventTrigger>(e3, board);
     const auto e4 = eLanguage::text("refuse");
-    mRefuseTrigger = e::make_shared<eEventTrigger>(e4);
+    mRefuseTrigger = e::make_shared<eEventTrigger>(e4, board);
 
     addTrigger(mEarlyTrigger);
     addTrigger(mComplyTrigger);
@@ -162,7 +163,7 @@ void eReceiveRequestEvent::trigger() {
     if(mPostpone < 3) {
         ed.fA1 = [this, board]() { // postpone
             const auto e = e::make_shared<eReceiveRequestEvent>(
-                               eGameEventBranch::child);
+                               eGameEventBranch::child, *board);
             e->initialize(mPostpone + 1, mResource, mCount, mCity);
             const auto date = board->date() + gPostponeDays;
             e->initializeDate(date);
@@ -173,7 +174,7 @@ void eReceiveRequestEvent::trigger() {
     ed.fA2 = [this, board]() { // refuse
         board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
         const auto e = e::make_shared<eReceiveRequestEvent>(
-                           eGameEventBranch::child);
+                           eGameEventBranch::child, *board);
         e->initialize(5, mResource, mCount, mCity);
         const auto date = board->date() + 31;
         e->initializeDate(date);

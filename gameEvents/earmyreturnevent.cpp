@@ -10,7 +10,7 @@
 
 eArmyReturnEvent::eArmyReturnEvent(
         const eGameEventBranch branch,
-        eGameBoard* const board) :
+        eGameBoard& board) :
     eArmyEventBase(eGameEventType::armyReturnEvent, branch, board) {}
 
 void eArmyReturnEvent::initialize(

@@ -6,7 +6,7 @@
 class ePlayerConquestEvent : public ePlayerConquestEventBase {
 public:
     ePlayerConquestEvent(const eGameEventBranch branch,
-                         eGameBoard* const board);
+                         eGameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
                     const stdsptr<eWorldCity>& city);

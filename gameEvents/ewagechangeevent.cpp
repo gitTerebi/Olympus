@@ -6,8 +6,9 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 
-eWageChangeEvent::eWageChangeEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::wageChange, branch) {}
+eWageChangeEvent::eWageChangeEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::wageChange, branch, board) {}
 
 void eWageChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);

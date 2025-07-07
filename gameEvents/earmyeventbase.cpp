@@ -4,10 +4,9 @@
 
 eArmyEventBase::eArmyEventBase(const eGameEventType type,
                                const eGameEventBranch branch,
-                               eGameBoard* const board) :
-    eGameEvent(type, branch) {
-    setGameBoard(board);
-    board->addArmyEvent(this);
+                               eGameBoard& board) :
+    eGameEvent(type, branch, board) {
+    board.addArmyEvent(this);
 }
 
 eArmyEventBase::~eArmyEventBase() {

@@ -5,7 +5,8 @@
 
 class eRequestStrikeEvent : public eGameEvent {
 public:
-    eRequestStrikeEvent(const eGameEventBranch branch);
+    eRequestStrikeEvent(const eGameEventBranch branch,
+                        eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

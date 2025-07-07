@@ -5,8 +5,9 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-eEarthquakeEvent::eEarthquakeEvent(const eGameEventBranch branch) :
-    eGameEvent(eGameEventType::earthquake, branch) {}
+eEarthquakeEvent::eEarthquakeEvent(
+        const eGameEventBranch branch, eGameBoard& board) :
+    eGameEvent(eGameEventType::earthquake, branch, board) {}
 
 void eEarthquakeEvent::trigger() {
     const auto board = gameBoard();
