@@ -25,7 +25,7 @@ void eDemandChangeEvent::trigger() {
     }
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fCity = city;
     ed.fResourceType = type;
     const auto e = by > 0 ? eEvent::demandIncrease :

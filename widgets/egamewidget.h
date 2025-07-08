@@ -192,7 +192,7 @@ private:
     void handleGodVisitEvent(eEventData& ed);
     void handleGodInvasionEvent(eEventData& ed);
     void handleGodHelpEvent(eEventData& ed);
-    void handleSanctuaryComplete(const eGodType god);
+    void handleSanctuaryComplete(eEventData& ed);
     void handleMonsterUnleashEvent(eEventData& ed);
     void handleMonsterInvasion36Event(eEventData& ed);
     void handleMonsterInvasion24Event(eEventData& ed);

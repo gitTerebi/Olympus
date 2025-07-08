@@ -24,7 +24,7 @@ void eMonsterUnleashedEvent::trigger() {
 
     const auto monster = triggerBase();
 
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fChar = monster;
     ed.fTile = monster->tile();
     ed.fGod = godType;

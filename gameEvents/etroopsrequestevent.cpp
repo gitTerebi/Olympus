@@ -91,7 +91,7 @@ void eTroopsRequestEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
     ed.fTime = 6;
@@ -196,7 +196,7 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
 void eTroopsRequestEvent::won() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
     ed.fType = eMessageEventType::common;
@@ -223,7 +223,7 @@ void eTroopsRequestEvent::won() {
 void eTroopsRequestEvent::lost() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
     ed.fType = eMessageEventType::common;

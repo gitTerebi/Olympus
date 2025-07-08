@@ -17,7 +17,7 @@ void eCityBecomesEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fCity = mCity;
     switch(mType) {
     case eCityBecomesType::ally: {

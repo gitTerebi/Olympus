@@ -14,11 +14,11 @@ eColonyMonumentAction::eColonyMonumentAction() :
     eColonyMonumentAction(nullptr) {}
 
 void eColonyMonumentAction::trigger(eGameBoard& board) {
-    eEventData ed;
-    ed.fCity = mCity;
-    board.event(eEvent::colonyMonument, ed);
     const auto pid = board.personPlayer();
     const auto capital = board.playerCapital(pid);
+    eEventData ed(capital);
+    ed.fCity = mCity;
+    board.event(eEvent::colonyMonument, ed);
     board.allow(capital, eBuildingType::commemorative, 2);
 }
 

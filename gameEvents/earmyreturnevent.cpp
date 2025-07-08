@@ -70,7 +70,7 @@ void eArmyReturnEvent::trigger() {
         a->setAbroad(false);
     }
 
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fTile = entryPoint;
     ed.fCity = mCity;
     board->event(eEvent::armyReturns, ed);

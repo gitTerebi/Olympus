@@ -15,7 +15,7 @@ void eRivalArmyAwayEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fCity = mCity;
     if(mEnd) {
         const int t = mCity->troops();

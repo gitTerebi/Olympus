@@ -21,7 +21,7 @@ void eEconomicChangeEvent::trigger() {
     city->setWealth(w);
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fCity = city;
     if(by > 0) board->event(eEvent::economicProsperity, ed);
     else board->event(eEvent::economicDecline, ed);

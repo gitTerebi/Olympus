@@ -22,7 +22,7 @@ void eGodTradeResumesEvent::trigger() {
     } else if(mGod == eGodType::hermes) {
         board->setLandTradeShutdown(false);
     }
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fGod = mGod;
     board->event(eEvent::godTradeResumes, ed);
 }

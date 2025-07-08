@@ -312,7 +312,7 @@ void eHerosHall::arrive() {
 
     spawnHero();
 
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fHero = mType;
     ed.fChar = mHero;
     ed.fTile = mHero ? mHero->tile() : nullptr;

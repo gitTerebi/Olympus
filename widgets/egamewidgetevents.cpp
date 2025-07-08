@@ -73,11 +73,10 @@ void eGameWidget::handleGodHelpEvent(eEventData& ed) {
     eSounds::playGodSound(ed.fGod, eGodSound::help);
 }
 
-void eGameWidget::handleSanctuaryComplete(const eGodType god) {
+void eGameWidget::handleSanctuaryComplete(eEventData& ed) {
     const auto& inst = eMessages::instance;
-    const auto gm = inst.godMessages(god);
+    const auto gm = inst.godMessages(ed.fGod);
     if(!gm) return;
-    eEventData ed;
     showMessage(ed, gm->fSanctuaryComplete);
 }
 
@@ -208,7 +207,7 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::sanctuaryComplete: {
-        handleSanctuaryComplete(ed.fGod);
+        handleSanctuaryComplete(ed);
         return;
     } break;
 

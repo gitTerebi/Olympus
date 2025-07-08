@@ -21,7 +21,7 @@ void eMilitaryChangeEvent::trigger() {
     city->setMilitaryStrength(s);
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fCity = city;
     if(by > 0) board->event(eEvent::militaryBuildup, ed);
     else board->event(eEvent::militaryDecline, ed);

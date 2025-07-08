@@ -1998,7 +1998,7 @@ void eBuilding::incTime(const int by) {
             spreadFire();
             eSounds::playFireSound();
         } else if(eRand::rand() % (eNumbers::sFireCollapsePeriod/by) == 0) {
-            eEventData ed;
+            eEventData ed(cityId());
             ed.fTile = centerTile();
             b.event(eEvent::collapse, ed);
             collapse();
@@ -2024,7 +2024,7 @@ void eBuilding::incTime(const int by) {
             const int firePeriod = m4/(by*fireRisk);
             if(firePeriod && eRand::rand() % firePeriod == 0) {
                 setOnFire(true);
-                eEventData ed;
+                eEventData ed(cityId());
                 ed.fTile = centerTile();
                 b.event(eEvent::fire, ed);
             }
@@ -2037,7 +2037,7 @@ void eBuilding::incTime(const int by) {
             const int m4 = pm*pow(pbi + mMaintance, pe);
             const int damagePeriod = m4/(by*damageRisk);
             if(damagePeriod && eRand::rand() % damagePeriod == 0) {
-                eEventData ed;
+                eEventData ed(cityId());
                 ed.fTile = centerTile();
                 b.event(eEvent::collapse, ed);
                 collapse();

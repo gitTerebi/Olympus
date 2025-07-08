@@ -74,7 +74,7 @@ void eInvasionEvent::trigger() {
     if(!board) return;
     const auto cid = cityId();
     board->removeInvasion(this);
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fCity = mCity;
     ed.fType = eMessageEventType::invasion;
     const int bribe = bribeCost();
@@ -82,8 +82,8 @@ void eInvasionEvent::trigger() {
     ed.fReason = reason();
 
     const auto city = mCity;
-    ed.fA0 = [board, city]() { // surrender
-        eEventData ed;
+    ed.fA0 = [board, city, cid]() { // surrender
+        eEventData ed(cid);
         ed.fCity = city;
         board->event(eEvent::invasionDefeat, ed);
         board->updateMusic();
@@ -91,9 +91,9 @@ void eInvasionEvent::trigger() {
     const auto pid = board->cityIdToPlayerId(cid);
     const int drachmas = board->drachmas(pid);
     if(drachmas >= bribe) { // bribe
-        ed.fA1 = [board, pid, bribe, city]() {
+        ed.fA1 = [board, pid, bribe, city, cid]() {
             board->incDrachmas(pid, -bribe);
-            eEventData ed;
+            eEventData ed(cid);
             ed.fCity = city;
             board->event(eEvent::invasionBribed, ed);
             board->updateMusic();

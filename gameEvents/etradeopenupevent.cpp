@@ -18,7 +18,7 @@ void eTradeOpenUpEvent::trigger() {
     city->setTradeShutdown(false);
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fCity = city;
     board->event(eEvent::tradeOpensUp, ed);
 }

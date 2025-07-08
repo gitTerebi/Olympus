@@ -26,7 +26,7 @@ void eMonsterInvasionWarningEvent::setMonster(const eMonsterType m) {
 void eMonsterInvasionWarningEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fMonster = mMonster;
     switch(mType) {
     case eMonsterInvasionWarningType::warning36: {
@@ -111,7 +111,7 @@ void eMonsterInvasionEvent::trigger() {
 
     const auto monster = triggerBase();
 
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fChar = monster;
     ed.fTile = monster->tile();
     ed.fMonster = type();

@@ -41,7 +41,7 @@ void ePlayerConquestEvent::trigger() {
 
     const bool conquered = str > enemyStr;
 
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     const auto rel = mCity->relationship();
     if(rel == eForeignCityRelationship::ally) {

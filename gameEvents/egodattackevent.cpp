@@ -43,7 +43,7 @@ void eGodAttackEvent::trigger() {
     god->setAttitude(eGodAttitude::hostile);
     god->setAction(a);
     a->increment(1);
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fChar = god.get();
     ed.fTile = god->tile();
     ed.fGod = t;

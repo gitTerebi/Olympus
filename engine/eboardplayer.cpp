@@ -14,10 +14,8 @@ void eBoardPlayer::nextMonth() {
         const bool sameMonth = date.month() == mInDebtSince.month();
         const bool oneYear = date.year() - mInDebtSince.year() == 1;
         if(sameMonth && oneYear) {
-            if(isPerson()) {
-                eEventData ed;
-                mBoard.event(eEvent::debtAnniversary, ed);
-            }
+            eEventData ed(mId);
+            mBoard.event(eEvent::debtAnniversary, ed);
         }
     } else if(!isPerson()) {
         const auto cids = mBoard.playerCitiesOnBoard(mId);

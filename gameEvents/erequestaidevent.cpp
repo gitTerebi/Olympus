@@ -16,7 +16,7 @@ void eRequestAidEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fCity = mCity;
 
     const auto date = board->date();

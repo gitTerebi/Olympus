@@ -52,7 +52,7 @@ void eReceiveRequestEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;

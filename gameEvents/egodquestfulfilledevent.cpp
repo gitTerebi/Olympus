@@ -17,13 +17,13 @@ eGodQuestFulfilledEvent::eGodQuestFulfilledEvent(
 void eGodQuestFulfilledEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    const auto cid = cityId();
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fHero = hero();
     ed.fQuestId = id();
     ed.fGod = god();
     board->event(eEvent::godQuestFulfilled, ed);
-    const auto cid = cityId();
-    const auto pid = board->cityIdToPlayerId(cid);
     board->allow(cid, eBuildingType::godMonument, static_cast<int>(god()));
     board->addFulfilledQuest(pid, godQuest());
     const auto hh = board->heroHall(cid, hero());

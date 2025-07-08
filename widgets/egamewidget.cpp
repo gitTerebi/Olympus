@@ -947,6 +947,16 @@ void eGameWidget::updateTipPositions() {
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessage& msg,
                               const bool prepend) {
+    const auto& target = ed.fTarget;
+    const auto ppid = mBoard->personPlayer();
+    if(target.isPlayerTarget()) {
+        const auto pid = target.playerTarget();
+        if(pid != ppid) return;
+    } else if(target.isCityTarget()) {
+        const auto cid = target.cityTarget();
+        const auto pid = mBoard->cityIdToPlayerId(cid);
+        if(pid != ppid) return;
+    }
     if(mMsgBox) {
         auto& smsg = prepend ? mSavedMsgs.emplace_front() :
                                mSavedMsgs.emplace_back();

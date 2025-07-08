@@ -18,7 +18,7 @@ void eRequestStrikeEvent::trigger() {
     if(!mCity || !mRivalCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
 

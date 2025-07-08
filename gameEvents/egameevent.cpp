@@ -160,6 +160,10 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
     return nullptr;
 }
 
+ePlayerId eGameEvent::playerId() const {
+    return mBoard.cityIdToPlayerId(mCityId);
+}
+
 void eGameEvent::setupStartDate(const eDate& currentDate) {
     mStartDate = currentDate;
     mStartDate.nextYears(mDatePlusYears);

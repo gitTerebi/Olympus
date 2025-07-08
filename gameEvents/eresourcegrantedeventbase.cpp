@@ -46,7 +46,7 @@ void eResourceGrantedEventBase::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(playerId());
     ed.fCity = mCity;
     int maxSpace = 0;
     const auto cids = board->personPlayerCitiesOnBoard();
@@ -75,27 +75,36 @@ void eResourceGrantedEventBase::trigger() {
     } else {
         ed.fType = eMessageEventType::requestTributeGranted;
         if(maxSpace != 0) {
-            for(const auto cid : cids) {
-                ed.fCCA0[cid] = [this, board, cid]() { // accept
-                    const int a = board->addResource(cid, mResource, mCount);
-                    eEventData ed;
-                    ed.fType = eMessageEventType::resourceGranted;
-                    ed.fCity = mCity;
-                    ed.fResourceType = mResource;
-                    ed.fResourceCount = a;
-                    if(mResource == eResourceType::drachmas) {
-                        board->event(mGiftCashAccepted, ed);
-                    } else {
-                        if(a == mCount) return;
-                        board->event(mGiftAccepted, ed);
-                    }
+            if(mResource == eResourceType::drachmas) {
+                ed.fA0 = [this, board]() { // accept
+                    const auto pid = board->personPlayer();
+                    const auto p = board->boardPlayerWithId(pid);
+                    if(p) p->incDrachmas(mCount);
+                    return mCount;
                 };
+            } else {
+                for(const auto cid : cids) {
+                    ed.fCCA0[cid] = [this, board, cid]() { // accept
+                        const int a = board->addResource(cid, mResource, mCount);
+                        eEventData ed(cid);
+                        ed.fType = eMessageEventType::resourceGranted;
+                        ed.fCity = mCity;
+                        ed.fResourceType = mResource;
+                        ed.fResourceCount = a;
+                        if(mResource == eResourceType::drachmas) {
+                            board->event(mGiftCashAccepted, ed);
+                        } else {
+                            if(a == mCount) return;
+                            board->event(mGiftAccepted, ed);
+                        }
+                    };
+                }
             }
         }
 
         if(mPostpone) {
             ed.fA1 = [this, board]() { // postpone
-                eEventData ed;
+                eEventData ed(playerId());
                 ed.fType = eMessageEventType::resourceGranted;
                 ed.fCity = mCity;
                 ed.fResourceType = mResource;
@@ -114,7 +123,7 @@ void eResourceGrantedEventBase::trigger() {
         }
 
         ed.fA2 = [this, board]() { // decline
-            eEventData ed;
+            eEventData ed(playerId());
             ed.fType = eMessageEventType::resourceGranted;
             ed.fCity = mCity;
             ed.fResourceType = mResource;

@@ -112,14 +112,14 @@ public:
     void call() {
         if(!mMptr || mMptr->dead()) return;
         auto& board = eCharActFunc::board();
-        eEventData ed;
+        const auto cid = mMptr->onCityId();
+        eEventData ed(cid);
         const auto ct = mMptr->type();
         const auto mt = eMonster::sCharacterToMonsterType(ct);
         ed.fMonster = mt;
         ed.fTile = mMptr->tile();
         board.event(eEvent::monsterSlain, ed);
         mMptr->killWithCorpse();
-        const auto cid = mMptr->onCityId();
         const auto pid = board.cityIdToPlayerId(cid);
         board.addSlayedMonster(pid, mt);
     }

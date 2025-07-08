@@ -28,7 +28,7 @@ void ePriceChangeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     board->incPrice(mType, mBy);
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     ed.fResourceType = mType;
     const auto e = mBy > 0 ? eEvent::priceIncrease :
                              eEvent::priceDecrease;

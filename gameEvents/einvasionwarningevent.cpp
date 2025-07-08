@@ -24,7 +24,7 @@ void eInvasionWarningEvent::initialize(
 void eInvasionWarningEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fCity = mCity;
     switch(mType) {
     case eInvasionWarningType::warning36: {

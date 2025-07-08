@@ -623,7 +623,7 @@ void eGameBoard::allowHero(const eCityId cid, const eHeroType heroType,
     const auto& inst = eMessages::instance;
     const auto hm = inst.heroMessages(heroType);
     if(!hm) return;
-    eEventData ed;
+    eEventData ed(cid);
     auto msg = hm->fHallAvailable;
     eStringHelpers::replaceAll(msg.fFull.fText, "[reason_phrase]",
                                reason.empty() ? msg.fNoReason : reason);
@@ -802,7 +802,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
     const auto type = c->tributeType();
     const int count = c->tributeCount();
 
-    eEventData ed;
+    eEventData ed(personPlayer());
     ed.fType = eMessageEventType::requestTributeGranted;
     ed.fCity = c;
     if(type == eResourceType::drachmas) {
@@ -820,7 +820,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
             ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
                 const int a = addResource(cid, type, count);
                 if(a == count) return;
-                eEventData ed;
+                eEventData ed(personPlayer());
                 ed.fType = eMessageEventType::resourceGranted;
                 ed.fCity = c;
                 ed.fResourceType = type;
@@ -833,7 +833,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
     ed.fResourceCount = count;
     if(postpone) {
         ed.fA1 = [this, c, type, count]() { // postpone
-            eEventData ed;
+            eEventData ed(personPlayer());
             ed.fType = eMessageEventType::resourceGranted;
             ed.fCity = c;
             ed.fResourceType = type;
@@ -850,7 +850,7 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
         };
     }
     ed.fA2 = [this, c, type, count]() { // decline
-        eEventData ed;
+        eEventData ed(personPlayer());
         ed.fType = eMessageEventType::resourceGranted;
         ed.fCity = c;
         ed.fResourceType = type;
@@ -885,7 +885,7 @@ void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,
                                 const eResourceType type,
                                 const int count) {
     const bool a = c->acceptsGift(type, count);
-    eEventData ed;
+    eEventData ed(personPlayer());
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = c;
     ed.fResourceType = type;
@@ -1392,12 +1392,9 @@ void eGameBoard::startPlague(eSmallHouse* const h) {
     const auto c = boardCityWithId(cid);
     if(!c) return;
     c->startPlague(h);
-    const auto pid = cityIdToPlayerId(cid);
-    if(pid == personPlayer()) {
-        eEventData ed;
-        ed.fTile = h->centerTile();
-        event(eEvent::plague, ed);
-    }
+    eEventData ed(cid);
+    ed.fTile = h->centerTile();
+    event(eEvent::plague, ed);
 }
 
 stdsptr<ePlague> eGameBoard::plagueForHouse(eSmallHouse* const h) {
@@ -1586,13 +1583,12 @@ void eGameBoard::handleGamesBegin(const eGames game) {
         break;
     }
 
-    eEventData ed;
     const auto pcids = personPlayerCitiesOnBoard();
     for(const auto& cid : pcids) {
         const auto c = boardCityWithId(cid);
         if(c->atlantean()) continue;
         const double chance = c->winningChance(game);
-        ed.fCityId = cid;
+        eEventData ed(cid);
         if(chance > 0) {
             showMessage(ed, msgs->fBegin);
         } else {
@@ -1620,7 +1616,6 @@ void eGameBoard::handleGamesEnd(const eGames game) {
 
     using eCityChance = std::pair<eCityId, double>;
     std::vector<eCityChance> chances;
-    const auto ppid = eGameBoard::personPlayer();
     for(const auto& c : mActiveCitiesOnBoard) {
         if(c->atlantean()) continue;
         const auto id = c->id();
@@ -1631,20 +1626,15 @@ void eGameBoard::handleGamesEnd(const eGames game) {
     std::random_shuffle(chances.begin(), chances.end());
 
     eCityId winner = eCityId::neutralFriendly;
-    eEventData ed;
     for(const auto& c : chances) {
         const bool won = eRand::rand() % 101 < 100*c.second;
         if(!won) continue;
         const auto cid = c.first;
         const auto city = boardCityWithId(cid);
-        const auto player = cityIdToPlayerId(cid);
-        const bool personPlayer = ppid == player;
         if(won) {
             winner = cid;
-            if(personPlayer) {
-                ed.fCityId = cid;
-                showMessage(ed, msgs->fWon);
-            }
+            eEventData ed(cid);
+            showMessage(ed, msgs->fWon);
             city->incWonGames();
             int id = 0;
             switch(game) {
@@ -1669,15 +1659,12 @@ void eGameBoard::handleGamesEnd(const eGames game) {
     for(const auto& c : chances) {
         const auto cid = c.first;
         if(cid == winner) continue;
-        const auto player = cityIdToPlayerId(cid);
         const bool second = eRand::rand() % 101 < 200*c.second;
-        ed.fCityId = cid;
+        eEventData ed(cid);
         if(second && secondCid == eCityId::neutralFriendly) {
             secondCid = cid;
-            if(player != ppid) continue;
             showMessage(ed, msgs->fSecond);
         } else {
-            if(player != ppid) continue;
             showMessage(ed, msgs->fLost);
         }
     }
@@ -2249,8 +2236,7 @@ void eGameBoard::incTime(const int by) {
             auto& les = mLastEmploymentState[cid];
             if(les.fV != emplState) {
                 const auto& inst = eMessages::instance;
-                eEventData ed;
-                ed.fCityId = cid;
+                eEventData ed(cid);
                 if(emplState == -1) { // unemployed
                     showMessage(ed, inst.fUnemployment);
                 } else if(emplState == 1) { // employed

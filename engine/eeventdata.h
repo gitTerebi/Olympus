@@ -16,9 +16,13 @@ enum class eMonsterType;
 enum class eCityId;
 
 struct eEventData {
+    eEventData() : fTarget(ePlayerCityTarget()) {}
+    eEventData(const ePlayerCityTarget& target) :
+        fTarget(target) {}
+
+    ePlayerCityTarget fTarget;
     eMessageEventType fType = eMessageEventType::common;
     eDate fDate = eDate(1, eMonth::january, -1500);
-    eCityId fCityId = eCityId::neutralFriendly;
     std::string fPlayerName;
     eTile* fTile = nullptr;
     stdptr<eCharacter> fChar;

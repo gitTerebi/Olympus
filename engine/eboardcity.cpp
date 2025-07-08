@@ -75,7 +75,7 @@ void eBoardCity::incTime(const int by) {
     }
 
     const auto& msgs = &eMessages::instance;
-    eEventData ed;
+    eEventData ed(mId);
     const int pop = mPopData.population();
     if(pop >= 100 && !mPop100) {
         mBoard.showMessage(ed, msgs->fPop100);

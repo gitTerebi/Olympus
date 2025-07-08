@@ -289,8 +289,7 @@ void eInvasionHandler::incTime(const int by) {
         for(const auto& b : mBanners) {
             ss += b->count();
         }
-        eEventData ed;
-        ed.fCityId = mTargetCity;
+        eEventData ed(mTargetCity);
         ed.fCity = mCity;
         if(ss == 0) {
             const bool monn = eRand::rand() % 2;

@@ -241,7 +241,7 @@ void eSanctuary::buildingProgressed() {
             }
         }
 
-        eEventData ed;
+        eEventData ed(cityId());
         ed.fGod = g;
         board.event(eEvent::sanctuaryComplete, ed);
     }
@@ -633,7 +633,7 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
     mHelpTimer = 0;
     mAskedForHelp = false;
     c->setAction(a);
-    eEventData ed;
+    eEventData ed(cityId());
     ed.fGod = type;
     ed.fChar = c;
     ed.fTile = c->tile();

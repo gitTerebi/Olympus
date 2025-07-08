@@ -26,7 +26,7 @@ void eWageChangeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     board->changeWage(mBy);
-    eEventData ed;
+    eEventData ed((ePlayerCityTarget()));
     const auto e = mBy > 0 ? eEvent::wageIncrease :
                              eEvent::wageDecrease;
     board->event(e, ed);
