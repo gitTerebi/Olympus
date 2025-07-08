@@ -12,6 +12,7 @@ struct eHeat {
 class eHeatMap {
 public:
     struct eHeatTile {
+        bool fOutsideRange = false;
         bool fEnabled = false;
         double fAppeal = 0;
     };
@@ -33,6 +34,7 @@ public:
     void addHeat(const int x, const int y,
                  const double a);
 
+    void setOutsideRange(const int x, const int y);
     bool enabled(const int x, const int y) const;
     double heat(const int x, const int y) const;
 

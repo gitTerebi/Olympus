@@ -10,6 +10,7 @@ eHeatMapTask::eHeatMapTask(const eCityId cid,
     mBRect(bRect) {}
 
 void eHeatMapTask::sRun(eThreadBoard& board,
+                        const eCityId cid,
                         const SDL_Rect bRect,
                         const eHeatGetter& heatGetter,
                         eHeatMap& map) {
@@ -17,6 +18,7 @@ void eHeatMapTask::sRun(eThreadBoard& board,
     for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
         for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
             const auto t = board.dtile(tx, ty);
+            if(t->cityId() != cid) map.setOutsideRange(tx, ty);
             const auto& ub = t->underBuilding();
             const auto ubt = ub.type();
             if(ubt == eBuildingType::none) continue;
@@ -30,22 +32,8 @@ void eHeatMapTask::sRun(eThreadBoard& board,
     }
 }
 
-void eHeatMapTask::sRun(eThreadBoard& board,
-                        const SDL_Rect bRect,
-                        const eTileHeatGetter& heatGetter,
-                        eHeatMap& map) {
-    map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);
-    for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
-        for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
-            const auto t = board.dtile(tx, ty);
-            const auto a = heatGetter(t);
-            map.addHeat(a, {t->x(), t->y(), 1, 1});
-        }
-    }
-}
-
 void eHeatMapTask::run(eThreadBoard& board) {
-    sRun(board, mBRect, mHeatGetter, mMap);
+    sRun(board, cid(), mBRect, mHeatGetter, mMap);
 }
 
 void eHeatMapTask::finish() {

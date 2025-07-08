@@ -21,12 +21,9 @@ public:
                  const eFunc& finish);
 
     static void sRun(eThreadBoard& board,
+                     const eCityId cid,
                      const SDL_Rect bRect,
                      const eHeatGetter& heatGetter,
-                     eHeatMap& map);
-    static void sRun(eThreadBoard& board,
-                     const SDL_Rect bRect,
-                     const eTileHeatGetter& heatGetter,
                      eHeatMap& map);
 
     void run(eThreadBoard& board);

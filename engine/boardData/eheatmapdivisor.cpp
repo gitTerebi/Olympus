@@ -37,11 +37,14 @@ void eHeatMapDivisor::divide(const int dim) {
             int maxHeatY = y;
             for(int xx = x; xx < x + w; xx++) {
                 for(int yy = y; yy < y + h; yy++) {
-                    const double h = mMap.heat(xx, yy);
-                    if(h > maxHeat) {
-                        maxHeat = h;
-                        maxHeatX = xx;
-                        maxHeatY = yy;
+                    const bool e = mMap.enabled(xx, yy);
+                    if(e) {
+                        const double h = mMap.heat(xx, yy);
+                        if(h > maxHeat) {
+                            maxHeat = h;
+                            maxHeatX = xx;
+                            maxHeatY = yy;
+                        }
                     }
                 }
             }

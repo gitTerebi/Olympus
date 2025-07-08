@@ -110,8 +110,16 @@ void eHeatMap::addHeat(const int x, const int y,
     tile.fAppeal += a/2;
 }
 
+void eHeatMap::setOutsideRange(const int x, const int y) {
+    if(x < mDX || y < mDY ||
+       x >= mWidth + mDX || y >= mHeight + mDY) return;
+    auto& tile = mMap[x - mDX][y - mDY];
+    tile.fOutsideRange = true;
+}
+
 bool eHeatMap::enabled(const int x, const int y) const {
-    return mMap[x - mDX][y - mDY].fEnabled;
+    const auto& t = mMap[x - mDX][y - mDY];
+    return t.fEnabled && !t.fOutsideRange;
 }
 
 double eHeatMap::heat(const int x, const int y) const {

@@ -118,8 +118,7 @@ void eGodMonsterAction::randomPlaceOnBoard() {
     int tx;
     int ty;
     eTileHelper::dtileIdToTileId(rdx, rdy, tx, ty);
-    const auto tile = eTileHelper::closestRoad(tx, ty,
-                                               board);
+    const auto tile = eTileHelper::closestRoad(tx, ty, board);
     if(!tile) return;
     c->changeTile(tile);
 }
