@@ -111,13 +111,11 @@ void eGodMonsterAction::hermesRun(const bool appear) {
 void eGodMonsterAction::randomPlaceOnBoard() {
     const auto c = character();
     auto& board = c->getBoard();
-    const int w = board.width();
-    const int h = board.height();
-    const int rdx = eRand::rand() % w;
-    const int rdy = eRand::rand() % h;
-    int tx;
-    int ty;
-    eTileHelper::dtileIdToTileId(rdx, rdy, tx, ty);
+    const auto cid = c->onCityId();
+    const auto city = board.boardCityWithId(cid);
+    const auto rtile = city->randomTile();
+    const int tx = rtile->x();
+    const int ty = rtile->y();
     const auto tile = eTileHelper::closestRoad(tx, ty, board);
     if(!tile) return;
     c->changeTile(tile);

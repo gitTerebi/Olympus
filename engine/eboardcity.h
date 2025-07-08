@@ -160,6 +160,7 @@ public:
     int hasBuilding(const eBuildingType t) const;
     int countAllowed(const eBuildingType t) const;
     eBuilding* randomBuilding(const eBuildingValidator& v) const;
+    eTile* randomTile() const;
     const std::vector<eBuilding*>& commemorativeBuildings() const
     { return mCommemorativeBuildings; }
 

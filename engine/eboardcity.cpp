@@ -906,6 +906,12 @@ eBuilding* eBoardCity::randomBuilding(const eBuildingValidator& v) const {
     return nullptr;
 }
 
+eTile* eBoardCity::randomTile() const {
+    if(mTiles.empty()) return nullptr;
+    const int id = eRand::rand() % mTiles.size();
+    return mTiles[id];
+}
+
 double coverageMultiplier(const int pop) {
     if(pop < 250) return 0.125;
     else if(pop < 500) return 0.25;

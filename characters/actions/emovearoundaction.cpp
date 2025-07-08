@@ -60,12 +60,13 @@ eCharacterActionState eMoveAroundAction::nextTurn(eOrientation& turn) {
     if(keepO) os.insert(os.begin(), c->orientation());
     const auto t = c->tile();
     if(!t) return eCharacterActionState::failed;
+    const auto cid = t->cityId();
     const int tx = t->x() - mStartTX;
     const int ty = t->y() - mStartTY;
     const int oldDist = std::sqrt(tx*tx + ty*ty);
     for(const auto o : os) {
         const auto tt = t->neighbour(o);
-        if(!tt || !walkable(tt)) continue;
+        if(!tt || !walkable(tt) || tt->cityId() != cid) continue;
         const int ttx = tt->x() - mStartTX;
         const int tty = tt->y() - mStartTY;
         const int dist = std::sqrt(ttx*ttx + tty*tty);
