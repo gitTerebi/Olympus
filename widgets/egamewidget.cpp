@@ -104,8 +104,9 @@ void eGameWidget::setBoard(eGameBoard* const board) {
     mBoard->setMessageShower([this](eEventData& ed, const eMessageType& msg) {
         showMessage(ed, msg);
     });
-    mBoard->setTipShower([this](const std::string& tip) {
-        showTip(tip);
+    mBoard->setTipShower([this](const ePlayerCityTarget& target,
+                                const std::string& tip) {
+        showTip(target, tip);
     });
     mBoard->setEpisodeFinishedHandler([this]() {
         eMusic::playMissionVictoryMusic();
@@ -685,8 +686,8 @@ void eGameWidget::showBuyCity(const eCityId cid) {
     mBuyCityName->align(eAlignment::hcenter);
     mBuyCityPrice->setText(std::to_string(price));
     mBuyCityWidget->show();
-    mBuyCityButton->setPressAction([this, cid, price]() {
-        const auto ppid = mBoard->personPlayer();
+    const auto ppid = mBoard->personPlayer();
+    mBuyCityButton->setPressAction([this, cid, price, ppid]() {
         const int d = mBoard->drachmas(ppid);
         if(d >= price) {
             mBoard->moveCityToPlayer(cid, ppid);
@@ -694,7 +695,7 @@ void eGameWidget::showBuyCity(const eCityId cid) {
             hideBuyCity();
             mGm->viewedCityChanged();
         } else {
-            showTip(eLanguage::zeusText(19, 19));
+            showTip(ppid, eLanguage::zeusText(19, 19));
         }
     });
 }
@@ -859,21 +860,43 @@ void eGameWidget::showMessage(eEventData& ed,
     showMessage(ed, msg.fFull, prepend);
 }
 
-void eGameWidget::showTip(const std::string& tip) {
+void eGameWidget::showTip(const ePlayerCityTarget& target,
+                          const std::string& tip) {
     for(const auto& t : mTips) {
-        if(t.fText == tip) return;
+        if(t.fText == tip && t.fTarget == target) return;
+    }
+    std::string text;
+    const auto ppid = mBoard->personPlayer();
+    if(target.isCityTarget()) {
+        const auto cid = target.cityTarget();
+        const auto pid = mBoard->cityIdToPlayerId(cid);
+        if(pid != ppid) return;
+        const auto cts = mBoard->personPlayerCitiesOnBoard();
+        if(cts.size() > 1) {
+            const auto name = mBoard->cityName(cid);
+            text = name + ": " + tip;
+        } else {
+            text = tip;
+        }
+    } else {
+        if(target.isPlayerTarget()) {
+            const auto pid = target.playerTarget();
+            if(pid != ppid) return;
+        }
+        text = tip;
     }
     const auto msgb = new eFramedLabel(window());
     msgb->setType(eFrameType::message);
     msgb->setWrapWidth(width()/2);
     msgb->setSmallFontSize();
-    msgb->setText(tip);
+    msgb->setText(text);
     msgb->fitContent();
     const int p = msgb->padding();
     addWidget(msgb);
     msgb->resize(msgb->width() + 2*p, msgb->height() + 2*p);
     msgb->setX((width() - mGm->width() - msgb->width())/2);
     eTip etip;
+    etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
     etip.fLastFrame = mFrame + 200;

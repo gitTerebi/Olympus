@@ -423,8 +423,9 @@ void eHerosHall::updateRequirementsStatus() {
             break;
         }
         auto& board = getBoard();
-        board.showTip(eLanguage::zeusText(19, string));
-        board.showTip(eLanguage::zeusText(19, 242));
+        const auto cid = cityId();
+        board.showTip(cid, eLanguage::zeusText(19, string));
+        board.showTip(cid, eLanguage::zeusText(19, 242));
     }
 }
 

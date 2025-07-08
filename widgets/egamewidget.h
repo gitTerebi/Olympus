@@ -107,7 +107,8 @@ public:
     void setSettings(const eGameWidgetSettings& s);
 
     void updateRequestButtons();
-    void showTip(const std::string& tip);
+    void showTip(const ePlayerCityTarget& target,
+                 const std::string& tip);
     void showQuestion(const std::string& title,
                       const std::string& q,
                       const eAction& action);
@@ -331,6 +332,7 @@ private:
     eWorldWidget* mWW = nullptr;
 
     struct eTip {
+        ePlayerCityTarget fTarget;
         std::string fText;
         eWidget* fWid = nullptr;
         int fLastFrame = 0;

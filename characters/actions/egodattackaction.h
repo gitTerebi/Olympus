@@ -85,9 +85,11 @@ public:
 
     void call() override {
         auto& board = this->board();
+        ePlayerCityTarget target;
         if(mWinnerPtr) mWinnerPtr->resumeAction();
         if(mLoserPtr) {
             const auto loser = mLoserPtr->character();
+            target = ePlayerCityTarget(loser->onCityId());
             const auto loserGod = static_cast<eGod*>(loser);
             const auto att = loserGod->attitude();
             if(att == eGodAttitude::worshipped) {
@@ -101,7 +103,7 @@ public:
             mLoserPtr->disappear(true, finish);
         }
         const auto tip = eGod::sFightResultString(mWt, mLt);
-        board.showTip(tip);
+        board.showTip(target, tip);
     }
 
     void read(eReadStream& src) override {

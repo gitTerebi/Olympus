@@ -15,7 +15,7 @@ void eRoad::erase() {
         const auto cid = cityId();
         const bool a = board.hasActiveInvasions(cid);
         if(a) {
-            board.showTip(eLanguage::zeusText(19, 229)); // can't demolish during invasion
+            board.showTip(cid, eLanguage::zeusText(19, 229)); // can't demolish during invasion
             return;
         }
         std::vector<eTile*> tiles;
@@ -23,7 +23,7 @@ void eRoad::erase() {
         for(const auto t : tiles) {
             const auto c = t->characters();
             if(!c.empty()) {
-                board.showTip(eLanguage::zeusText(19, 24)); // can't demolish water crossing with people
+                board.showTip(cid, eLanguage::zeusText(19, 24)); // can't demolish water crossing with people
                 return;
             }
         }

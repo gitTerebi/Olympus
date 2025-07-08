@@ -444,7 +444,7 @@ void eOverviewDataWidget::addGodQuests() {
         b->initialize(god, [this, q]() {
             return sHeroReady(mBoard, q.fHero);
         });
-        b->setPressAction([this, q, qq]() {
+        b->setPressAction([this, q, qq, pid]() {
             eHerosHall* hh = nullptr;
             const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
@@ -466,12 +466,12 @@ void eOverviewDataWidget::addGodQuests() {
                 } else {
                     auto tip = eLanguage::text("quest_tip_summon_hero");
                     eStringHelpers::replace(tip, "%1", heroName);
-                    gw->showTip(tip);
+                    gw->showTip(pid, tip);
                 }
             } else {
                 auto tip = eLanguage::text("quest_tip_build_hh");
                 eStringHelpers::replace(tip, "%1", heroName);
-                gw->showTip(tip);
+                gw->showTip(pid, tip);
             }
         });
         mQuestButtons->addWidget(b);
@@ -493,7 +493,7 @@ void eOverviewDataWidget::addCityRequests() {
             }
             return false;
         });
-        b->setPressAction([this, q, qq]() {
+        b->setPressAction([this, q, qq, pid]() {
             const auto gw = gameWidget();
             const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
@@ -507,7 +507,7 @@ void eOverviewDataWidget::addCityRequests() {
                     gw->showQuestion(title, text, acceptA);
                 } else {
                     const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
-                    gw->showTip(tip);
+                    gw->showTip(pid, tip);
                 }
             }
         });

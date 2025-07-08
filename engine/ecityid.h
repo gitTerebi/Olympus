@@ -46,6 +46,40 @@ enum class eTeamId {
     team9 = 9
 };
 
+class ePlayerCityTarget {
+public:
+    ePlayerCityTarget() :
+        mType(eType::none) {}
+    ePlayerCityTarget(const eCityId cid) :
+        mType(eType::city), mCid(cid) {}
+    ePlayerCityTarget(const ePlayerId pid) :
+        mType(eType::player), mPid(pid) {}
+
+    bool isCityTarget() const { return mType == eType::city; }
+    bool isPlayerTarget() const { return mType == eType::player; }
+
+    eCityId cityTarget() const { return mCid; }
+    ePlayerId playerTarget() const { return mPid; }
+
+    bool operator==(const ePlayerCityTarget& o) const {
+        if(mType != o.mType) return false;
+        if(mType == eType::city) {
+            return mCid == o.mCid;
+        } else if(mType == eType::player) {
+            return mPid == o.mPid;
+        } else {
+            return true;
+        }
+    }
+private:
+    enum class eType {
+        none, city, player
+    };
+    eType mType;
+    eCityId mCid;
+    ePlayerId mPid;
+};
+
 namespace eTeamIdHelpers {
     bool isEnemy(const eTeamId t1, const eTeamId t2);
 }

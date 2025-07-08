@@ -2472,8 +2472,9 @@ void eGameBoard::setTipShower(const eTipShower& ts) {
     mTipShower = ts;
 }
 
-void eGameBoard::showTip(const std::string& tip) const {
-    if(mTipShower) mTipShower(tip);
+void eGameBoard::showTip(const ePlayerCityTarget& target,
+                         const std::string& tip) const {
+    if(mTipShower) mTipShower(target, tip);
 }
 
 void eGameBoard::setEnlistForcesRequest(const eEnlistRequest& req) {

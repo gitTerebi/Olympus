@@ -165,28 +165,28 @@ void eBoardCity::incTime(const int by) {
     if(oldLimit != mImmigrationLimit) {
         switch(mImmigrationLimit) {
         case eILB::lackOfFood:
-            mBoard.showTip(eLanguage::zeusText(19, 112));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 112));
             break;
         case eILB::prolongedDebt:
-            mBoard.showTip(eLanguage::zeusText(19, 116));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 116));
             break;
         case eILB::lowWages:
-            mBoard.showTip(eLanguage::zeusText(19, 115));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 115));
             break;
         case eILB::unemployment:
-            mBoard.showTip(eLanguage::zeusText(19, 113));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 113));
             break;
         case eILB::highTaxes:
-            mBoard.showTip(eLanguage::zeusText(19, 114));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 114));
             break;
         case eILB::excessiveMilitaryService:
-            mBoard.showTip(eLanguage::zeusText(19, 117));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 117));
             break;
         case eILB::lackOfVacancies:
-            mBoard.showTip(eLanguage::zeusText(19, 111));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 111));
             break;
         case eILB::none:
-            mBoard.showTip(eLanguage::zeusText(19, 124));
+            mBoard.showTip(mId, eLanguage::zeusText(19, 124));
         }
     }
 

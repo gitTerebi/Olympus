@@ -280,9 +280,11 @@ public:
     using eVisibilityChecker = std::function<bool(eTile*)>;
     void setVisibilityChecker(const eVisibilityChecker& vc);
 
-    using eTipShower = std::function<void(const std::string&)>;
+    using eTipShower = std::function<void(const ePlayerCityTarget&,
+                                          const std::string&)>;
     void setTipShower(const eTipShower& ts);
-    void showTip(const std::string& tip) const;
+    void showTip(const ePlayerCityTarget& target,
+                 const std::string& tip) const;
 
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     using eEnlistRequest = std::function<void(const eEnlistedForces& enlistable,

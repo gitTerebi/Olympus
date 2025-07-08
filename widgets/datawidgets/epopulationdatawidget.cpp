@@ -174,7 +174,7 @@ void ePopulationDataWidget::paintEvent(ePainter& p) {
             if(l > a) {
                 pdtxt = eLanguage::zeusText(55, 21); // people are leaving the city
             } else if(a > l) {
-                pdtxt = eLanguage::zeusText(55, 20); // people with to come to the city
+                pdtxt = eLanguage::zeusText(55, 20); // people wish to come to the city
             }
             if(!pdtxt.empty()) {
                 mPeopleDirection->setText(pdtxt);
