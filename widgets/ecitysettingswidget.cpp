@@ -129,6 +129,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto directionButton = new eFramedButton(window());
     const auto teamButton = new eFramedButton(window());
     const auto playerButton = new eFramedButton(window());
+    const auto capitalButton = new eFramedButton(window());
     const auto type = c->type();
     relationshipButton->setVisible(type == eCityType::foreignCity);
     nationalityButton->setVisible(type == eCityType::foreignCity ||
@@ -155,6 +156,16 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             return std::string("Neutral unfriendly");
         } else if(id == ePlayerId::neutralFriendly) {
             return std::string("Neutral friendly");
+        } else {
+            const int i = static_cast<int>(id);
+            return "Player " + std::to_string(i);
+        }
+    };
+
+    const auto playerCaptialIdToName = [](const ePlayerId id) {
+        if(id == ePlayerId::neutralFriendly ||
+           id == ePlayerId::neutralAggresive) {
+            return std::string("None");
         } else {
             const int i = static_cast<int>(id);
             return "Player " + std::to_string(i);
@@ -407,9 +418,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                                   teamButton, teamIdToName]() {
         const auto d = new eChooseButton(window());
         std::vector<std::string> playerNames;
-        playerNames.push_back("Neutral unfriendly");
-        playerNames.push_back("Neutral friendly");
-        for(int i = 0; i <= 11; i++) {
+        for(int i = -2; i <= 11; i++) {
             const auto id = static_cast<ePlayerId>(i);
             const auto name = playerIdToName(id);
             playerNames.push_back(name);
@@ -442,9 +451,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     teamButton->setPressAction([this, c, wb, teamButton, teamIdToName]() {
         const auto d = new eChooseButton(window());
         std::vector<std::string> teamNames;
-        teamNames.push_back("Neutral unfriendly");
-        teamNames.push_back("Neutral friendly");
-        for(int i = 0; i <= 11; i++) {
+        for(int i = -2; i <= 11; i++) {
             const auto id = static_cast<eTeamId>(i);
             const auto name = teamIdToName(id);
             teamNames.push_back(name);
@@ -463,6 +470,31 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     });
     buttonsW1->addWidget(teamButton);
     teamButton->align(eAlignment::hcenter);
+
+    capitalButton->setUnderline(false);
+    capitalButton->setText("Capital " + playerCaptialIdToName(pid));
+    capitalButton->fitContent();
+    capitalButton->setPressAction([this, c, capitalButton, playerCaptialIdToName]() {
+        const auto d = new eChooseButton(window());
+        std::vector<std::string> playerNames;
+        for(int i = -1; i <= 11; i++) {
+            const auto id = static_cast<ePlayerId>(i);
+            const auto name = playerCaptialIdToName(id);
+            playerNames.push_back(name);
+        }
+        const auto act = [c, capitalButton, playerCaptialIdToName](const int val) {
+            const auto pid = static_cast<ePlayerId>(val - 1);
+            c->setCapitalOf(pid);
+            capitalButton->setText("Capital " + playerCaptialIdToName(pid));
+            capitalButton->fitContent();
+        };
+        d->initialize(8, playerNames, act);
+
+        window()->execDialog(d);
+        d->align(eAlignment::center);
+    });
+    buttonsW1->addWidget(capitalButton);
+    capitalButton->align(eAlignment::hcenter);
 
     directionButton->setUnderline(false);
     const auto dir = c->direction();
