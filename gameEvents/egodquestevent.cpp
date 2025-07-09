@@ -29,7 +29,7 @@ void eGodQuestEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     board->addGodQuest(this);
-    eEventData ed(playerId());
+    eEventData ed(cityId());
     ed.fHero = hero();
     ed.fQuestId = id();
     ed.fGod = god();
