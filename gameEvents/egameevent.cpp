@@ -161,7 +161,7 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
 }
 
 ePlayerId eGameEvent::playerId() const {
-    return mBoard.cityIdToPlayerId(mCityId);
+    return mBoard.cityIdToPlayerId(mCid);
 }
 
 void eGameEvent::setupStartDate(const eDate& currentDate) {
@@ -319,7 +319,6 @@ void eGameEvent::addTrigger(const stdsptr<eEventTrigger>& et) {
 
 void eGameEvent::write(eWriteStream& dst) const {
     dst << mIOID;
-    dst << mCityId;
     dst << mDatePlusDays;
     dst << mDatePlusMonths;
     dst << mDatePlusYears;
@@ -351,7 +350,8 @@ void eGameEvent::write(eWriteStream& dst) const {
 
 void eGameEvent::read(eReadStream& src) {
     src >> mIOID;
-    src >> mCityId;
+    eCityId cid;
+    src >> cid;
     src >> mDatePlusDays;
     src >> mDatePlusMonths;
     src >> mDatePlusYears;

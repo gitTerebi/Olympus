@@ -16,7 +16,7 @@ public:
     using eSwitchAction = std::function<void(int)>;
     void setSwitchAction(const eSwitchAction& a);
 
-    void fitValialbeContent();
+    void fitValidContent();
 private:
     int mCurrentValue = 0;
     std::vector<std::string> mValues;

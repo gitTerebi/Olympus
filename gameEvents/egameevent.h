@@ -94,7 +94,7 @@ public:
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
-    eCityId cityId() const { return mCityId; }
+    eCityId cityId() const { return mCid; }
     ePlayerId playerId() const;
 
     void setupStartDate(const eDate& currentDate);
@@ -184,8 +184,6 @@ private:
 
     bool mEpisodeEvent = false;
     eWorldBoard* mWorldBoard = nullptr;
-
-    eCityId mCityId = eCityId::neutralFriendly;
 
     stdptr<eGameEvent> mParent;
 

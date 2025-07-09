@@ -35,7 +35,7 @@ void eGodQuestEventWidget::initialize(
     const auto idButton = new eSwitchButton(window());
     idButton->addValue("1");
     idButton->addValue("2");
-    idButton->fitValialbeContent();
+    idButton->fitValidContent();
     const auto iniId = e->id();
     idButton->setValue(iniId == eGodQuestId::godQuest1 ? 0 : 1);
     idButton->setSwitchAction(switchAct);

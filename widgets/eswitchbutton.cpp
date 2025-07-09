@@ -29,8 +29,9 @@ void eSwitchButton::setSwitchAction(const eSwitchAction& a) {
     mSwitchAction = a;
 }
 
-void eSwitchButton::fitValialbeContent() {
+void eSwitchButton::fitValidContent() {
     int w = 0;
+    const auto tmp = text();
     for(const auto& v : mValues) {
         setText(v);
         fitContent();
@@ -38,4 +39,5 @@ void eSwitchButton::fitValialbeContent() {
         if(wv > w) w = wv;
     }
     setWidth(w);
+    setText(tmp);
 }

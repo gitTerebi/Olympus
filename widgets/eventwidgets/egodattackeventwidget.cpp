@@ -15,7 +15,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
     randomButton->setSwitchAction([e](const int v) {
         e->setRandom(v);
     });
-    randomButton->fitValialbeContent();
+    randomButton->fitValidContent();
     randomButton->setUnderline(false);
     randomButton->setValue(e->random() ? 1 : 0);
     addWidget(randomButton);

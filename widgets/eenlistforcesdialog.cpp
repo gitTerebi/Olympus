@@ -478,7 +478,7 @@ void eEnlistForcesDialog::initialize(
             for(const auto& cn : cnames) {
                 cButton->addValue(cn);
             }
-            cButton->fitValialbeContent();
+            cButton->fitValidContent();
             titleW->addWidget(cButton);
             cw = cButton->width() + p;
         }
@@ -562,7 +562,7 @@ void eEnlistForcesDialog::initialize(
     const auto allies = new eEnlistWidget(window());
 
     if(cButton) cButton->setSwitchAction([cids, horsemen, hoplite, navy,
-                             heroes, mythical](const int id) {
+                                          heroes, mythical](const int id) {
         const auto cid = cids[id];
         horsemen->setCurrentCity(cid);
         hoplite->setCurrentCity(cid);
