@@ -86,8 +86,10 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
         value = value + line.substr(valueStart, valueLen);
 
         if(foundEnd) {
+            value = std::regex_replace(value, std::regex("^@L"), "");
             value = std::regex_replace(value, std::regex("@L"), "\n");
-            value = std::regex_replace(value, std::regex("@P"), "\n");
+            value = std::regex_replace(value, std::regex("^@P"), "   ");
+            value = std::regex_replace(value, std::regex("@P"), "\n\n   ");
             map[key] = value;
             key = "";
             value = "";

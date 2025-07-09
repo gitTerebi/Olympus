@@ -89,7 +89,8 @@ SDL_Texture*  generateTextTexture(SDL_Renderer* const r,
 
 std::vector<std::string> textLines(const std::string& text,
                                    TTF_Font& font,
-                                   const int width) {
+                                   const int width,
+                                   const bool keepSpaces) {
     std::vector<std::string> result;
     const int ts = text.size();
     std::string word;
@@ -106,6 +107,7 @@ std::vector<std::string> textLines(const std::string& text,
             TTF_SizeUTF8(&font, newLine.c_str(), &w, &h);
             if(line.empty() || w < width) {
                 line = newLine;
+                if(keepSpaces && c == ' ') line += ' ';
                 if(c == '\n') {
                     result.push_back(line);
                     line = "";
@@ -142,7 +144,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
         int h;
         TTF_SizeUTF8(&font, text.c_str(), &w, &h);
         if(w > width) {
-            const auto lines = textLines(text, font, width);
+            const auto lines = textLines(text, font, width, true);
             mWidth = 0;
             mHeight = 0;
             std::vector<std::shared_ptr<eTexture>> texs;
