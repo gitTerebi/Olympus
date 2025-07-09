@@ -105,7 +105,15 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w6->stackVertically(mSpacing);
     w6->fitContent();
 
-    const auto w7 = new eWidget(window());
+    const auto w7 = new eActionListWidget(window());
+    w7->addAction("Scrub", [this]() {
+        mMode = eTerrainEditMode::scrub;
+    });
+    w7->addAction("Soften Scrub", [this]() {
+        mMode = eTerrainEditMode::softenScrub;
+    });
+    w7->stackVertically(mSpacing);
+    w7->fitContent();
 
     const auto w8 = new eActionListWidget(window());
     w8->addAction("Raise", [this]() {
@@ -270,7 +278,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     mB4 = addButton(coll.fMeadow, w4);
     const auto b5 = addButton(coll.fFishAndUrchin, w5);
     const auto b6 = addButton(coll.fRocks, w6);
-    mB7 = addButton(coll.fScrub, w7);
+    const auto b7 = addButton(coll.fScrub, w7);
     const auto b8 = addButton(coll.fElevation, w8);
     const auto b9 = addButton(coll.fDisasters, w9);
     const auto b10 = addButton(coll.fWaterPoints, w10);
@@ -307,8 +315,6 @@ eTerrainEditMode eTerrainEditMenu::mode() const {
         return eTerrainEditMode::dry;
     } else if(mB4->checked()) {
         return eTerrainEditMode::fertile;
-    } else if(mB7->checked()) {
-        return eTerrainEditMode::scrub;
     }
     return mMode;
 }

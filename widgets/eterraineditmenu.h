@@ -27,6 +27,7 @@ enum class eTerrainEditMode {
 
     none,
     scrub,
+    softenScrub,
 
     raise,
     lower,
@@ -87,7 +88,6 @@ private:
 
     eCheckableButton* mB1 = nullptr;
     eCheckableButton* mB4 = nullptr;
-    eCheckableButton* mB7 = nullptr;
 
     std::map<eCityId, eWidget*> mTerrioryButtons;
     eActionListWidget* mW12 = nullptr;
