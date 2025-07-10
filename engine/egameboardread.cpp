@@ -16,6 +16,7 @@ void eGameBoard::read(eReadStream& src) {
     src >> h;
     initialize(w, h);
 
+    src >> mFogOfWar;
     src >> mRainforest;
 
     src >> mEpisodeLost;

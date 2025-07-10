@@ -529,6 +529,9 @@ public:
     bool atlantean(const eCityId cid) const;
     bool setAtlantean(const eCityId cid, const bool a);
 
+    bool fogOfWar() const { return mFogOfWar; }
+    void setFogOfWar(const bool fog) { mFogOfWar = fog; }
+
     bool rainforest() const { return mRainforest; }
     void setRainforest(const bool rainforest) { mRainforest = rainforest; }
 
@@ -699,8 +702,9 @@ private:
     void progressEarthquakes();
 
     bool mEditorMode = false;
+    bool mFogOfWar = true;
     int mCurrentDistrictId = -1;
-    bool mRainforest = true;
+    bool mRainforest = false;
     mutable bool mEpisodeLost = false;
     eWorldBoard* mWorldBoard = nullptr;
     eWorldDirection mDirection{eWorldDirection::N};

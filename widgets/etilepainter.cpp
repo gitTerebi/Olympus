@@ -78,13 +78,22 @@ void eTilePainter::drawPolygon(const std::vector<SDL_Point>& pts,
     mP.drawPolygon(ppts, color);
 }
 
+void eTilePainter::fillRectCenter(const double x, const double y,
+                                  const int w, const int h,
+                                  const SDL_Color& color) const {
+    int pixX;
+    int pixY;
+    drawPositon(x, y, pixX, pixY);
+    mP.fillRect(SDL_Rect{pixX - w/2, pixY - h/2, w, h}, color);
+}
+
 void eTilePainter::fillRect(const double x, const double y,
                             const int w, const int h,
                             const SDL_Color& color) const {
     int pixX;
     int pixY;
     drawPositon(x, y, pixX, pixY);
-    mP.fillRect(SDL_Rect{pixX - w/2, pixY - h/2, w, h}, color);
+    mP.fillRect(SDL_Rect{pixX, pixY, w, h}, color);
 }
 
 void eTilePainter::drawPositon(const double x, const double y,

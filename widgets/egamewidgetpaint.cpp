@@ -23,6 +23,8 @@
 #include "emainwindow.h"
 #include "eminimap.h"
 
+#include "eiteratesquare.h"
+
 #include <string>
 
 bool sDontDrawAppeal(const eTerrain terr) {
@@ -334,9 +336,44 @@ void eGameWidget::paintEvent(ePainter& p) {
         mBoard->afterTerrainUpdated();
     }
 
+    const bool terrainEditing = mTem->visible();
+    const bool fogOfWar = !terrainEditing && mBoard->fogOfWar();
     const auto drawTerrain = [&](eTile* const tile) {
         const int tx = tile->x();
         const int ty = tile->y();
+
+        auto border = tile->territoryBorder();
+        int rtx;
+        int rty;
+        eTileHelper::tileIdToRotatedTileId(tx, ty,
+                                           rtx, rty, dir,
+                                           boardw, boardh);
+
+        const int ta = tile->altitude();
+
+        switch(dir) {
+        case eWorldDirection::N: {
+        } break;
+        case eWorldDirection::E: {
+            border.fT = border.fR;
+            border.fTL = border.fTR;
+            border.fTR = border.fBR;
+        } break;
+        case eWorldDirection::S: {
+            border.fT = border.fB;
+            border.fTR = border.fBL;
+            border.fTL = border.fBR;
+        } break;
+        case eWorldDirection::W: {
+            border.fT = border.fL;
+            border.fTR = border.fTL;
+            border.fTL = border.fBL;
+        } break;
+        }
+
+        const auto cid = tile->cityId();
+        const bool tileFogOfWar = fogOfWar &&
+                                  cid == eCityId::neutralFriendly;
 
         if(tile->updateTerrain() || tile->hasRoad()) {
             if(!terrUpdated) {
@@ -371,7 +408,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             bool eraseCm = false;
             bool patrolCm = false;
             bool editorHover = false;
-            if(mTem->visible()) {
+            if(terrainEditing) {
                 editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
                               eVectorHelpers::contains(mInflTiles, tile);
                 if(editorHover) {
@@ -412,51 +449,30 @@ void eGameWidget::paintEvent(ePainter& p) {
                     }
                 }
             }
+
+            if(tileFogOfWar) {
+                const int maxDist = eTile::sMaxDistanceToBorder;
+                const double dist = tile->distanceToBorder();
+                const int val = std::round((maxDist - dist)*255/maxDist);
+                tex->setColorMod(val, val, val);
+            }
             tp.drawTexture(rx, ry, tex, eAlignment::top);
-            if(eraseCm || patrolCm || editorHover || mEditorMode) tex->clearColorMod();
+            if(eraseCm || patrolCm || editorHover || mEditorMode || tileFogOfWar) tex->clearColorMod();
         }
 
         {
-            auto border = tile->territoryBorder();
-            const int tx = tile->x();
-            const int ty = tile->y();
-            int rtx;
-            int rty;
-            eTileHelper::tileIdToRotatedTileId(tx, ty,
-                                               rtx, rty, dir,
-                                               boardw, boardh);
-
-            SDL_Color color{255, 255, 255, 255};
-            const int dim = mTileW/10;
-            const int ta = tile->altitude();
-
-            switch(dir) {
-            case eWorldDirection::N: {
-            } break;
-            case eWorldDirection::E: {
-                border.fT = border.fR;
-                border.fTL = border.fTR;
-                border.fTR = border.fBR;
-            } break;
-            case eWorldDirection::S: {
-                border.fT = border.fB;
-                border.fTR = border.fBL;
-                border.fTL = border.fBR;
-            } break;
-            case eWorldDirection::W: {
-                border.fT = border.fL;
-                border.fTR = border.fTL;
-                border.fTL = border.fBL;
-            } break;
-            }
-            if(border.fT) {
-                tp.fillRect(rtx - ta, rty - ta, dim, dim, color);
-            }
-            if(border.fTR) {
-                tp.fillRect(rtx + 0.5 - ta, rty - ta, dim, dim, color);
-            }
-            if(border.fTL) {
-                tp.fillRect(rtx - ta, rty + 0.5 - ta, dim, dim, color);
+            if(!tileFogOfWar || true) {
+                const int dim = mTileW/10;
+                const SDL_Color color{255, 255, 255, 255};
+                if(border.fT) {
+                    tp.fillRectCenter(rtx - ta, rty - ta, dim, dim, color);
+                }
+                if(border.fTR) {
+                    tp.fillRectCenter(rtx + 0.5 - ta, rty - ta, dim, dim, color);
+                }
+                if(border.fTL) {
+                    tp.fillRectCenter(rtx - ta, rty + 0.5 - ta, dim, dim, color);
+                }
             }
         }
     };

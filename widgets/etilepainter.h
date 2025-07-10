@@ -34,6 +34,9 @@ public:
 
     void drawPolygon(const std::vector<SDL_Point>& pts,
                      const SDL_Color& color) const;
+    void fillRectCenter(const double x, const double y,
+                        const int w, const int h,
+                        const SDL_Color& color) const;
     void fillRect(const double x, const double y,
                   const int w, const int h,
                   const SDL_Color& color) const;

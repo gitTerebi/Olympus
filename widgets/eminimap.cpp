@@ -254,24 +254,38 @@ void eMiniMap::updateTexture(const eCityId cid) {
     const int yMin = 0;
     const int yMax = mBoard->rotatedHeight();
 
+    const bool fogOfWar = mBoard->fogOfWar() && !mBoard->editorMode();
+
     const auto drawTile = [&](eTile* const tile, const int x, const int y) {
         if(!tile) return;
         auto color = colorForTile(tile);
         const auto cid = tile->cityId();
-        if(cid == eCityId::neutralFriendly) {
-            const int l = 0.2126*color.r + 0.7152*color.g + 0.0722*color.b;
-            color.r = l;
-            color.g = l;
-            color.b = l;
+        if(fogOfWar) {
+            const int maxDist = eTile::sMaxDistanceToBorder;
+            const int idist = tile->distanceToBorder();
+            if(idist != 0) {
+                const double dist = idist;
+                const double mult = (maxDist - dist)/maxDist;
+                color.r *= mult;
+                color.g *= mult;
+                color.b *= mult;
+            }
         } else {
-            const auto& border = tile->territoryBorder();
-            if(border.fTR || border.fR ||
-               border.fBR || border.fB ||
-               border.fBL || border.fL ||
-               border.fTL || border.fT) {
-                color.r = 255;
-                color.g = 255;
-                color.b = 255;
+            if(cid == eCityId::neutralFriendly) {
+                const int l = 0.2126*color.r + 0.7152*color.g + 0.0722*color.b;
+                color.r = l;
+                color.g = l;
+                color.b = l;
+            } else {
+                const auto& border = tile->territoryBorder();
+                if(border.fTR || border.fR ||
+                   border.fBR || border.fB ||
+                   border.fBL || border.fL ||
+                   border.fTL || border.fT) {
+                    color.r = 255;
+                    color.g = 255;
+                    color.b = 255;
+                }
             }
         }
         dtex->setColorMod(color.r, color.g, color.b);

@@ -115,6 +115,9 @@ public:
     void addTerrainTile(eTile* const tile) { mTerrainTiles.push_back(tile); }
     std::vector<eTile*>& terrainTiles() { return mTerrainTiles; }
 
+    static const int sMaxDistanceToBorder = 8;
+    int distanceToBorder() const { return mDistanceToBorder; }
+
     const eTerritoryBorder& territoryBorder() const { return mBorder; }
     void updateTerritoryBorder();
 
@@ -134,6 +137,7 @@ public:
 private:
     eTileTerrainPainter mTerrainPainter;
     eTerritoryBorder mBorder;
+    int mDistanceToBorder = 0;
     bool mUpdateTerrain = false;
     std::vector<eTile*> mTerrainTiles;
 

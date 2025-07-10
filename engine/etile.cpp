@@ -11,6 +11,8 @@
 #include "evectorhelpers.h"
 #include "spawners/ebanner.h"
 
+#include "eiteratesquare.h"
+
 eTile::eTile(const int x, const int y,
              const int dx, const int dy) {
     setSeed(eRand::rand());
@@ -216,6 +218,24 @@ void eTile::updateTerritoryBorder() {
     set(bottom<eTile>(), mBorder.fB);
     set(left<eTile>(), mBorder.fL);
     set(right<eTile>(), mBorder.fR);
+
+    mDistanceToBorder = sMaxDistanceToBorder;
+    bool found = false;
+    for(int k = 0; k < sMaxDistanceToBorder; k++) {
+        const auto prcs = [&](const int dx, const int dy) {
+            const auto t = tileRel(dx, dy);
+            if(!t) return false;
+            const auto cid = t->cityId();
+            if(cid != eCityId::neutralFriendly) {
+                mDistanceToBorder = k;
+                found = true;
+                return true;
+            }
+            return false;
+        };
+        eIterateSquare::iterateSquare(k, prcs);
+        if(found) break;
+    }
 }
 
 bool eTile::onFire() const {
