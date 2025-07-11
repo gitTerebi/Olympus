@@ -244,6 +244,7 @@ void eGameBoard::iterateOverAllTiles(const eTileAction& a) {
 }
 
 void eGameBoard::scheduleAppealMapUpdate(const eCityId cid) {
+    if(mEditorMode) return;
     mUpdateAppeal[cid].fV = true;
 }
 

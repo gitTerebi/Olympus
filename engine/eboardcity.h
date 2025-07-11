@@ -318,6 +318,15 @@ public:
     void addRootGameEvent(const stdsptr<eGameEvent>& e);
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);
 
+    void addExported(const eCityId cid,
+                     const eResourceType type,
+                     const int count);
+    void removeExported(const eCityId cid,
+                        const eResourceType type,
+                        const int count);
+    int exported(const eCityId cid, const eResourceType type);
+    std::map<eResourceType, int> exported(const eCityId cid) const;
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
@@ -373,6 +382,8 @@ private:
 
                              {eResourceType::armor, 0},
                              {eResourceType::sculpture, 0}};
+
+    std::map<eCityId, std::map<eResourceType, int>> mExported;
 
     std::vector<eSanctuary*> mSanctuaries;
     std::vector<eHerosHall*> mHeroHalls;

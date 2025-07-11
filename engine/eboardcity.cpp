@@ -1654,6 +1654,44 @@ void eBoardCity::removeRootGameEvent(const stdsptr<eGameEvent>& e) {
     mCityEvents.removeEvent(e);
 }
 
+void eBoardCity::addExported(const eCityId cid,
+                             const eResourceType type,
+                             const int count) {
+    auto& map = mExported[cid];
+    const auto it = map.find(type);
+    if(it == map.end()) {
+        map[type] = count;
+    } else {
+        map[type] += count;
+    }
+}
+
+void eBoardCity::removeExported(const eCityId cid,
+                                const eResourceType type,
+                                const int count) {
+    auto& map = mExported[cid];
+    const auto it = map.find(type);
+    if(it != map.end()) {
+        map[type] -= count;
+    }
+}
+
+int eBoardCity::exported(const eCityId cid, const eResourceType type) {
+    auto& map = mExported[cid];
+    const auto it = map.find(type);
+    if(it != map.end()) {
+        return map[type];
+    } else {
+        return 0;
+    }
+}
+
+std::map<eResourceType, int> eBoardCity::exported(const eCityId cid) const {
+    const auto it = mExported.find(cid);
+    if(it == mExported.end()) return {};
+    return it->second;
+}
+
 void eBoardCity::clearAfterLastEpisode() {
     mCityEvents.clearAfterLastEpisode();
 }

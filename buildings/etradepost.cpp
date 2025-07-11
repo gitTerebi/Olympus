@@ -203,25 +203,55 @@ void eTradePost::spawnTrader() {
     r->setAction(ta);
 }
 
+bool eTradePost::playerTwoWay() const {
+    auto& brd = getBoard();
+    const auto targetCid = mCity.cityId();
+    const auto targetPid = brd.cityIdToPlayerId(targetCid);
+    const bool targetOnBoard = brd.boardCityWithId(targetCid);
+    const auto thisPid = playerId();
+    return targetOnBoard && targetPid == thisPid;
+}
+
 int eTradePost::buy(const int cash) {
     if(!trades()) return 0;
     int spent = 0;
     auto& brd = getBoard();
-    for(auto& b : mCity.buys()) {
-        const auto expt = mExports & b.fType;
-        const int price = brd.price(b.fType);
-        const bool exp = static_cast<bool>(expt);
-        if(!exp) continue;
-        if(b.fUsed >= b.fMax) continue;
-        if(price > cash) continue;
-        const int c = count(b.fType);
-        if(c <= 0) continue;
-        take(b.fType, 1);
-        b.fUsed++;
-        spent += price;
+    const auto targetCid = mCity.cityId();
+    const auto targetPid = brd.cityIdToPlayerId(targetCid);
+    const bool targetOnBoard = brd.boardCityWithId(targetCid);
+    const auto thisCid = cityId();
+    const auto thisPid = playerId();
+    if(targetOnBoard && targetPid == thisPid) {
+        const auto thisC = brd.boardCityWithId(thisCid);
+        const auto es = eResourceTypeHelpers::extractResourceTypes(mExports);
+        for(const auto e : es) {
+            const int price = brd.price(e);
+            if(price > cash) continue;
+            const int c = count(e);
+            if(c <= 0) continue;
+            const int max = e == eResourceType::sculpture ? 4 : 8;
+            if(thisC->exported(targetCid, e) > max) continue;
+            take(e, 1);
+            thisC->addExported(targetCid, e, 1);
+            spent += price;
+        }
+    } else {
+        for(auto& b : mCity.buys()) {
+            const auto expt = mExports & b.fType;
+            const int price = brd.price(b.fType);
+            const bool exp = static_cast<bool>(expt);
+            if(!exp) continue;
+            if(b.fUsed >= b.fMax) continue;
+            if(price > cash) continue;
+            const int c = count(b.fType);
+            if(c <= 0) continue;
+            take(b.fType, 1);
+            b.fUsed++;
+            spent += price;
+        }
+        const auto pid = playerId();
+        brd.incDrachmas(pid, spent);
     }
-    const auto pid = playerId();
-    brd.incDrachmas(pid, spent);
     return spent;
 }
 
@@ -229,21 +259,41 @@ int eTradePost::sell(const int items) {
     if(!trades()) return 0;
     int earned = 0;
     auto& brd = getBoard();
-    for(auto& b : mCity.sells()) {
-        const auto impt = mImports & b.fType;
-        const bool imp = static_cast<bool>(impt);
-        const int price = brd.price(b.fType);
-        if(!imp) continue;
-        if(b.fUsed >= b.fMax) continue;
-        if(price > items) continue;
-        const int c = spaceLeftDontAccept(b.fType);
-        if(c <= 0) continue;
-        addNotAccept(b.fType, 1);
-        b.fUsed++;
-        earned += price;
+    const auto srcCid = mCity.cityId();
+    const auto srcPid = brd.cityIdToPlayerId(srcCid);
+    const bool targetOnBoard = brd.boardCityWithId(srcCid);
+    const auto thisCid = cityId();
+    const auto thisPid = playerId();
+    if(targetOnBoard && srcPid == thisPid) {
+        const auto srcC = brd.boardCityWithId(srcCid);
+        const auto es = srcC->exported(thisCid);
+        for(const auto& e : es) {
+            if(e.second < 1) continue;
+            const int price = brd.price(e.first);
+            if(price > items) continue;
+            const int c = spaceLeftDontAccept(e.first);
+            if(c <= 0) continue;
+            addNotAccept(e.first, 1);
+            srcC->removeExported(thisCid, e.first, 1);
+            earned += price;
+        }
+    } else {
+        for(auto& b : mCity.sells()) {
+            const auto impt = mImports & b.fType;
+            const bool imp = static_cast<bool>(impt);
+            const int price = brd.price(b.fType);
+            if(!imp) continue;
+            if(b.fUsed >= b.fMax) continue;
+            if(price > items) continue;
+            const int c = spaceLeftDontAccept(b.fType);
+            if(c <= 0) continue;
+            addNotAccept(b.fType, 1);
+            b.fUsed++;
+            earned += price;
+        }
+        const auto pid = playerId();
+        brd.incDrachmas(pid, -earned);
     }
-    const auto pid = playerId();
-    brd.incDrachmas(pid, -earned);
     return earned;
 }
 

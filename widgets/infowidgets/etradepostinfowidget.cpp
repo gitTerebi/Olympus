@@ -17,7 +17,8 @@ public:
                     const std::map<eResourceType, int>& maxCount,
                     const std::string& notBuyingTxt,
                     const std::string& buyingTxt,
-                    const eAction& changed) {
+                    const eAction& changed,
+                    const bool twoWay) {
         const auto countW = new eWidget(window());
         const auto iconsW = new eWidget(window());
         const auto namesW = new eWidget(window());
@@ -100,6 +101,7 @@ public:
             pw->stackHorizontally();
             pw->fitContent();
             pw->setHeight(rowHeight);
+            if(twoWay) pw->hide();
 
             pi->align(eAlignment::vcenter);
             p->align(eAlignment::vcenter);
@@ -231,7 +233,9 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
         stor->setMaxCount(maxCount);
     };
 
-    {
+    const bool twoWay = stor->playerTwoWay();
+
+    if(!twoWay) {
         const auto wrapper = new eWidget(window());
         const auto importsLabel = new eLabel(eLanguage::zeusText(130, 17), window());
         importsLabel->fitContent();
@@ -244,7 +248,7 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
                       mImportButtons, mSpinBoxes, maxCount,
                       eLanguage::zeusText(130, 20),
                       eLanguage::zeusText(130, 12),
-                      changed);
+                      changed, twoWay);
 
         wrapper->addWidget(importsLabel);
         wrapper->addWidget(r);
@@ -262,13 +266,31 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
 
         const auto r = new eResourceStorageStack(window());
 
-        const auto& cbuys = city.buys();
+        std::vector<eResourceTrade> cbuys;
+        if(twoWay) {
+            const auto all = eResourceTypeHelpers::extractResourceTypes(
+                                 eResourceType::allBasic);
+            const auto thisCid = stor->cityId();
+            const auto& board = stor->getBoard();
+            const auto thisC = board.boardCityWithId(thisCid);
+            const auto dstCid = city.cityId();
+            for(const auto r : all) {
+                const int count = thisC->resourceCount(r);
+                const bool ex = static_cast<bool>(exports & r);
+                if(count < 1 && !ex) continue;
+                const int e = thisC->exported(dstCid, r);
+                const int max = r == eResourceType::sculpture ? 4 : 8;
+                cbuys.push_back(eResourceTrade{r, e, max});
+            }
+        } else {
+            cbuys = city.buys();
+        }
 
         r->initialize(stor, cbuys, exports,
                       mExportButtons, mSpinBoxes, maxCount,
                       eLanguage::zeusText(130, 21),
                       eLanguage::zeusText(130, 13),
-                      changed);
+                      changed, twoWay);
 
         wrapper->addWidget(exportsLabel);
         wrapper->addWidget(r);

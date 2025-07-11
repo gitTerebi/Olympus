@@ -37,6 +37,8 @@ public:
 
     void spawnTrader();
 
+    bool playerTwoWay() const;
+
     int buy(const int cash);
     int sell(const int items);
 
