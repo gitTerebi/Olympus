@@ -23,6 +23,8 @@ sanctuary_ready "%1 Sanctuary Ready"
 
 conditions "Conditions"
 
+fog_of_war "Fog of War"
+no_fog_of_war "No Fog of War"
 cities_on_board "Cities on board"
 resize "Resize"
 width "Width"

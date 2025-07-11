@@ -130,6 +130,9 @@ public:
     void setScrub(const double s);
     void incScrub(const double s);
 
+    bool rainforest() const { return mRainforest; }
+    void setRainforest(const bool r) { mRainforest = r; }
+
     void setTopLeft(eTileBase* const tl);
     void setTopRight(eTileBase* const tr);
     void setBottomRight(eTileBase* const br);
@@ -187,6 +190,7 @@ private:
     eTileBase* mBottomLeft = nullptr;
 
     eTerrain mTerr = eTerrain::dry;
+    bool mRainforest = false;
     double mScrub = 0;
     int mAltitude = 0;
 

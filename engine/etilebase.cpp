@@ -206,6 +206,7 @@ void eTileBase::read(eReadStream& src) {
     eTerrain terr;
     src >> terr;
     setTerrain(terr);
+    src >> mRainforest;
 
     src >> mScrub;
 
@@ -226,6 +227,7 @@ void eTileBase::read(eReadStream& src) {
 void eTileBase::write(eWriteStream& dst) const {
     dst << mSeed;
     dst << mTerr;
+    dst << mRainforest;
     dst << mScrub;
     dst << mMarbleLevel;
     dst << mAltitude;

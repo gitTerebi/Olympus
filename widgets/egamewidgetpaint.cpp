@@ -211,7 +211,6 @@ void eGameWidget::updateTerrainTextures(eTile* const tile,
                                        painter.fFutureDim,
                                        painter.fDrawDim,
                                        &painter.fColl,
-                                       mBoard->rainforest(),
                                        mBoard->direction());
 }
 

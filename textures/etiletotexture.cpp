@@ -50,7 +50,6 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
                              int& futureDim,
                              int& drawDim,
                              const eTextureCollection** coll,
-                             const bool atlantean,
                              const eWorldDirection dir) {
     drawDim = 1;
     futureDim = 1;
@@ -512,22 +511,23 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
         }
     } break;
     case eTerrain::forest: {
-        if(atlantean) eGameTextures::loadPoseidonTrees();
+        const bool rainforest = tile->rainforest();
+        if(rainforest) eGameTextures::loadPoseidonTrees();
         const auto id = eForestToDry::get(tile, dir);
         switch(id) {
         case eForestToDryId::none: {
-            const auto& coll = atlantean ? textures.fPoseidonForestTerrainTexs :
+            const auto& coll = rainforest ? textures.fPoseidonForestTerrainTexs :
                                               textures.fForestTerrainTexs;
             const int texId = seed % coll.size();
             return coll.getTexture(texId);
         } break;
         case eForestToDryId::somewhere: {
-            const auto& coll = atlantean ? textures.fPoseidonForestToScrubTerrainTexs :
+            const auto& coll = rainforest ? textures.fPoseidonForestToScrubTerrainTexs :
                                               textures.fForestToScrubTerrainTexs;
             const int scrubCount = coll.size();
             const int scrub = tile->scrubId(scrubCount) - 1;
             if(scrub == -1) {
-                const auto& vec = atlantean ? textures.fPoseidonForestToDryTerrainTexs :
+                const auto& vec = rainforest ? textures.fPoseidonForestToDryTerrainTexs :
                                                  textures.fForestToDryTerrainTexs;;
                 const int collId = seed % vec.size();
                 const auto& coll = vec[collId];

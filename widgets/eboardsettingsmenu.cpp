@@ -12,6 +12,7 @@
 #include "engine/egameboard.h"
 #include "emainwindow.h"
 #include "egamewidget.h"
+#include "eswitchbutton.h"
 
 #include "estringhelpers.h"
 
@@ -22,6 +23,18 @@ void eBoardSettingsMenu::initialize(
     setType(eFrameType::message);
 
     const auto boardPtr = &board;
+
+    const auto fogButt = new eSwitchButton(window());
+    fogButt->setUnderline(false);
+    fogButt->addValue(eLanguage::text("no_fog_of_war"));
+    fogButt->addValue(eLanguage::text("fog_of_war"));
+    fogButt->fitValidContent();
+    fogButt->setValue(board.fogOfWar() ? 1 : 0);
+    fogButt->setSwitchAction([boardPtr](const int val) {
+        boardPtr->setFogOfWar(val);
+    });
+    addWidget(fogButt);
+    fogButt->align(eAlignment::hcenter);
 
     const auto citiesButt = new eFramedButton(window());
     citiesButt->setUnderline(false);

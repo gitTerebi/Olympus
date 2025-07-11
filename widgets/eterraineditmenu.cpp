@@ -62,6 +62,12 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w2->addAction("Chopped Forest", [this]() {
         mMode = eTerrainEditMode::choppedForest;
     });
+    w2->addAction("Rainforest", [this]() {
+        mMode = eTerrainEditMode::rainforest;
+    });
+    w2->addAction("Normal Forest", [this]() {
+        mMode = eTerrainEditMode::normalForest;
+    });
     w2->stackVertically(mSpacing);
     w2->fitContent();
 

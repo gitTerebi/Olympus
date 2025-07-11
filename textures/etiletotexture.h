@@ -20,7 +20,6 @@ namespace eTileToTexture {
                  int& futureDim,
                  int& drawDim,
                  const eTextureCollection** coll,
-                 const bool atlantean,
                  const eWorldDirection dir);
 };
 

@@ -532,9 +532,6 @@ public:
     bool fogOfWar() const { return mFogOfWar; }
     void setFogOfWar(const bool fog) { mFogOfWar = fog; }
 
-    bool rainforest() const { return mRainforest; }
-    void setRainforest(const bool rainforest) { mRainforest = rainforest; }
-
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
     bool terrainUpdateScheduled() const { return mUpdateTerrain; }
     void afterTerrainUpdated() { mUpdateTerrain = false; }
@@ -704,7 +701,6 @@ private:
     bool mEditorMode = false;
     bool mFogOfWar = true;
     int mCurrentDistrictId = -1;
-    bool mRainforest = false;
     mutable bool mEpisodeLost = false;
     eWorldBoard* mWorldBoard = nullptr;
     eWorldDirection mDirection{eWorldDirection::N};

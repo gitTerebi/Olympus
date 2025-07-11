@@ -363,6 +363,14 @@ eGameWidget::eApply eGameWidget::editFunc() {
             ss = ss/(1 + ns.size());
             tile->setScrub(ss);
         };
+    } else if(mode == eTerrainEditMode::rainforest) {
+        return [](eTile* const tile) {
+            tile->setRainforest(true);
+        };
+    } else if(mode == eTerrainEditMode::normalForest) {
+        return [](eTile* const tile) {
+            tile->setRainforest(false);
+        };
     } else if(mode == eTerrainEditMode::raise) {
         return [](eTile* const tile) {
             tile->setAltitude(tile->altitude() + 1);
