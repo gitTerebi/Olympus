@@ -103,7 +103,7 @@ int eEnlistedForces::strength() const {
     return str;
 }
 
-void eEnlistedForces::kill(const double killFrac) {
+void eEnlistedForces::kill(const double killFrac) const {
     for(const auto& s : fSoldiers) {
         const auto cid = s->cityId();
         const int oC = s->count();
@@ -130,4 +130,22 @@ void eEnlistedForces::kill(const double killFrac) {
         const int t = c->troops();
         c->setTroops((1 - gHelpFrac*killFrac)*t);
     }
+}
+
+int eEnlistedForces::count() const {
+    int result = 0;
+    for(const auto& b : fSoldiers) {
+        result += b->count();
+    }
+    for(const auto& f : fAllies) {
+        std::vector<eSoldierBanner*> solds;
+        int infantry;
+        int cavalry;
+        int archers;
+        f->troopsByType(infantry, cavalry, archers);
+        result += infantry;
+        result += cavalry;
+        result += archers;
+    }
+    return result;
 }

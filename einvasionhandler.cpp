@@ -47,6 +47,7 @@
 #include "buildings/epalace.h"
 
 #include "gameEvents/einvasionevent.h"
+#include "gameEvents/eplayerconquestevent.h"
 
 eInvasionHandler::eInvasionHandler(eGameBoard& board,
                                    const eCityId targetCity,
@@ -261,7 +262,9 @@ void eInvasionHandler::initialize(eTile* const tile,
 }
 
 void eInvasionHandler::initialize(eTile* const tile,
-                                  const eEnlistedForces& forces) {
+                                  const eEnlistedForces& forces,
+                                  ePlayerConquestEvent* const conquestEvent) {
+    mConquestEvent = conquestEvent;
     mTile = tile;
 
     const auto cid = mCity->cityId();
@@ -419,8 +422,6 @@ eInvasionHandler::generateSoldiersForCity(
 }
 
 void eInvasionHandler::incTime(const int by) {
-    const auto targetPlayer = mBoard.cityIdToPlayerId(mTargetCity);
-    const bool personIsTarget = targetPlayer == mBoard.personPlayer();
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
         solds.push_back(b.get());
@@ -464,28 +465,54 @@ void eInvasionHandler::incTime(const int by) {
         }
         eEventData ed(mTargetCity);
         ed.fCity = mCity;
+
+        const auto invadingCid = mCity->cityId();
+        const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
+        const auto invadingC = mBoard.boardCityWithId(invadingCid);
+        const auto wboard = mBoard.getWorldBoard();
+        eEventData ied(invadingPid);
+        const auto targetWCity = wboard->cityWithId(mTargetCity);
+        ied.fCity = targetWCity;
         if(ss == 0) {
             const bool monn = eRand::rand() % 2;
             if(monn) {
                 mBoard.allow(mTargetCity, eBuildingType::commemorative, 1);
-                if(personIsTarget) {
-                    mBoard.event(eEvent::invasionVictoryMonn, ed);
-                }
+                mBoard.event(eEvent::invasionVictoryMonn, ed);
             } else {
-                if(personIsTarget) {
-                    mBoard.event(eEvent::invasionVictory, ed);
+                mBoard.event(eEvent::invasionVictory, ed);
+            }
+            if(invadingC) {
+                mBoard.event(eEvent::cityConquerFailed, ied);
+                if(mConquestEvent) {
+                    const auto& forces = mConquestEvent->forces();
+                    forces.kill(1.);
+//                    mConquestEvent->planArmyReturn();
                 }
             }
         } else if(p) {
             mStage = eInvasionStage::spread;
         } else {
             mBoard.defeatedBy(mTargetCity, mCity);
-            if(personIsTarget) {
-                mBoard.event(eEvent::invasionDefeat, ed);
-            }
+            mBoard.event(eEvent::invasionDefeat, ed);
             const int tx = mTile->x();
             const int ty = mTile->y();
             eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+            if(invadingC) {
+                mBoard.event(eEvent::cityConquered, ied);
+                mBoard.allow(invadingCid, eBuildingType::commemorative, 4);
+                targetWCity->setRelationship(eForeignCityRelationship::vassal);
+                mBoard.moveCityToPlayer(mTargetCity, invadingPid);
+                if(mConquestEvent) {
+                    const auto& forces = mConquestEvent->forces();
+                    const int iniCount = forces.count();
+                    int count = 0;
+                    for(const auto& b : mBanners) {
+                        count += b->count();
+                    }
+                    forces.kill(1 - double(count)/iniCount);
+                    mConquestEvent->planArmyReturn();
+                }
+            }
         }
     } break;
     case eInvasionStage::comeback: {
@@ -522,6 +549,9 @@ void eInvasionHandler::read(eReadStream& src) {
         mEvent = static_cast<eInvasionEvent*>(e);
         if(mEvent) mEvent->addInvasionHandler(this);
     });
+    src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
+        mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
+    });
 }
 
 void eInvasionHandler::write(eWriteStream& dst) const {
@@ -540,6 +570,7 @@ void eInvasionHandler::write(eWriteStream& dst) const {
 
     dst << mWait;
     dst.writeGameEvent(mEvent);
+    dst.writeGameEvent(mConquestEvent);
 }
 
 void eInvasionHandler::killAllWithCorpse() {

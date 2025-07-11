@@ -3,6 +3,8 @@
 
 #include "eplayerconquesteventbase.h"
 
+class eInvasionEvent;
+
 class ePlayerConquestEvent : public ePlayerConquestEventBase {
 public:
     ePlayerConquestEvent(const eCityId cid,
@@ -14,6 +16,15 @@ public:
 
     void trigger() override;
     std::string longName() const override;
+
+    bool finished() const override;
+
+    void write(eWriteStream& dst) const override;
+    void read(eReadStream& src) override;
+
+    using ePlayerConquestEventBase::planArmyReturn;
+private:
+    stdptr<eInvasionEvent> mInvasionEvent;
 };
 
 #endif // EPLAYERCONQUESTEVENT_H

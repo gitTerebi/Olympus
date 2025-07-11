@@ -20,7 +20,9 @@ struct eEnlistedForces {
     void add(const eEnlistedForces& o);
 
     int strength() const;
-    void kill(const double killFrac);
+    void kill(const double killFrac) const;
+
+    int count() const;
 };
 
 #endif // EENLISTEDFORCES_H

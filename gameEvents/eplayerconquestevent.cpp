@@ -39,8 +39,9 @@ void ePlayerConquestEvent::trigger() {
         const int period = 1;
         const auto date = boardDate + period;
         e->initializeDate(date, period, 1);
-        e->initialize(playerCity, mForces);
+        e->initialize(playerCity, mForces, this);
         c->addRootGameEvent(e);
+        mInvasionEvent = e.get();
     } else {
         const int enemyStr = mCity->troops();
         const int str = mForces.strength();
@@ -93,4 +94,23 @@ void ePlayerConquestEvent::trigger() {
 
 std::string ePlayerConquestEvent::longName() const {
     return eLanguage::text("player_conquest_event_long_name");
+}
+
+bool ePlayerConquestEvent::finished() const {
+    return ePlayerConquestEventBase::finished() &&
+            (!mInvasionEvent || mInvasionEvent->finished());
+}
+
+void ePlayerConquestEvent::write(eWriteStream& dst) const {
+    ePlayerConquestEventBase::write(dst);
+
+    dst.writeGameEvent(mInvasionEvent);
+}
+
+void ePlayerConquestEvent::read(eReadStream& src) {
+    ePlayerConquestEventBase::read(src);
+
+    src.readGameEvent(gameBoard(), [this](eGameEvent* const e) {
+        mInvasionEvent = static_cast<eInvasionEvent*>(e);
+    });
 }

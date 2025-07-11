@@ -7,6 +7,7 @@
 #include "characters/eenlistedforces.h"
 
 class eInvasionHandler;
+class ePlayerConquestEvent;
 
 class eInvasionEvent : public eGameEvent {
 public:
@@ -22,7 +23,8 @@ public:
                     const int cavalry,
                     const int archers);
     void initialize(const stdsptr<eWorldCity>& city,
-                    const eEnlistedForces& forces);
+                    const eEnlistedForces& forces,
+                    ePlayerConquestEvent* const conquestEvent);
 
     void trigger() override;
     std::string longName() const override;
@@ -70,6 +72,7 @@ private:
     int mCavalry = 10;
     int mArchers = 10;
 
+    stdptr<ePlayerConquestEvent> mConquestEvent;
     eEnlistedForces mForces;
 
     int mInvasionPoint = 1;

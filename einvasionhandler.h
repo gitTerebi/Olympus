@@ -14,6 +14,7 @@ class eWriteStream;
 class eWorldCity;
 class eSoldierBanner;
 class eEnlistedForces;
+class ePlayerConquestEvent;
 enum class eCityId;
 enum class eNationality;
 
@@ -48,7 +49,8 @@ public:
                     const int archers);
 
     void initialize(eTile* const tile,
-                    const eEnlistedForces& forces);
+                    const eEnlistedForces& forces,
+                    ePlayerConquestEvent* const conquestEvent);
 
     void incTime(const int by);
 
@@ -82,6 +84,7 @@ private:
     eCityId mTargetCity;
     stdsptr<eWorldCity> mCity;
     stdptr<eInvasionEvent> mEvent;
+    stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
     eInvasionStage mStage = eInvasionStage::spread;
     std::vector<stdsptr<eSoldierBanner>> mBanners;

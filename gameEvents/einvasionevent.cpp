@@ -9,6 +9,7 @@
 #include "einvasionwarningevent.h"
 #include "audio/emusic.h"
 #include "evectorhelpers.h"
+#include "eplayerconquestevent.h"
 
 #include <algorithm>
 
@@ -70,10 +71,12 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
 }
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
-                                const eEnlistedForces& forces) {
+                                const eEnlistedForces& forces,
+                                ePlayerConquestEvent* const conquestEvent) {
     setCity(city);
 
     mForces = forces;
+    mConquestEvent = conquestEvent;
 }
 
 void eInvasionEvent::trigger() {
@@ -103,7 +106,7 @@ void eInvasionEvent::trigger() {
         const auto invadingCid = mCity->cityId();
         const auto invadingC = board->boardCityWithId(invadingCid);
         if(invadingC) {
-            eh->initialize(tile, mForces);
+            eh->initialize(tile, mForces, mConquestEvent);
         } else {
             eh->initialize(tile, infantry, cavalry, archers);
         }
@@ -162,6 +165,7 @@ void eInvasionEvent::write(eWriteStream& dst) const {
     dst << mCavalry;
     dst << mArchers;
 
+    dst.writeGameEvent(mConquestEvent);
     mForces.write(dst);
 
     dst << mInvasionPoint;
@@ -183,6 +187,9 @@ void eInvasionEvent::read(eReadStream& src) {
     src >> mCavalry;
     src >> mArchers;
 
+    src.readGameEvent(board, [this](eGameEvent* const e) {
+        mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
+    });
     const auto wboard = board->getWorldBoard();
     mForces.read(*board, *wboard, src);
 
