@@ -4,6 +4,7 @@
 #include "egameevent.h"
 
 #include "engine/eworldcity.h"
+#include "characters/eenlistedforces.h"
 
 class eInvasionHandler;
 
@@ -20,6 +21,8 @@ public:
                     const int infantry,
                     const int cavalry,
                     const int archers);
+    void initialize(const stdsptr<eWorldCity>& city,
+                    const eEnlistedForces& forces);
 
     void trigger() override;
     std::string longName() const override;
@@ -66,6 +69,8 @@ private:
     int mInfantry = 10;
     int mCavalry = 10;
     int mArchers = 10;
+
+    eEnlistedForces mForces;
 
     int mInvasionPoint = 1;
 

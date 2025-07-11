@@ -96,6 +96,8 @@ public:
 
     eCityId cityId() const { return mCid; }
     ePlayerId playerId() const;
+    bool isOnBoard() const;
+    bool isPersonPlayer() const;
 
     void setupStartDate(const eDate& currentDate);
 

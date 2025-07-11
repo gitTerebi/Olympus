@@ -5,6 +5,8 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
+#include "einvasionevent.h"
+
 ePlayerConquestEvent::ePlayerConquestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
@@ -26,52 +28,67 @@ void ePlayerConquestEvent::trigger() {
     removeConquestEvent();
     if(!mCity) return;
 
-    const int enemyStr = mCity->troops();
-    const int str = mForces.strength();
-
-    {
-        const double killFrac = std::clamp(0.5*enemyStr/str, 0., 1.);
-        mForces.kill(killFrac);
-    }
-
-    {
-        const double killFrac = std::clamp(0.5*str/enemyStr, 0., 1.);
-        mCity->setTroops((1 - killFrac)*enemyStr);
-    }
-
-    const bool conquered = str > enemyStr;
-
-    eEventData ed(playerId());
-    ed.fCity = mCity;
-    const auto rel = mCity->relationship();
-    if(rel == eForeignCityRelationship::ally) {
-        const auto w = worldBoard();
-        if(w) w->attackedAlly();
-        board->event(eEvent::allyAttackedByPlayer, ed);
-    }
-    if(conquered) {
-        mCity->setConqueredBy(nullptr);
-    }
-    if(mCity->isColony()) {
-        if(conquered) {
-            board->event(eEvent::colonyRestored, ed);
-            mCity->incAttitude(50);
-        } else {
-            board->event(eEvent::cityConquerFailed, ed);
-        }
+    const auto cid = mCity->cityId();
+    const auto c = board->boardCityWithId(cid);
+    if(c) {
+        const auto e = e::make_shared<eInvasionEvent>(
+                           cid, eGameEventBranch::root, *board);
+        const auto wBoard = board->getWorldBoard();
+        const auto playerCity = wBoard->cityWithId(cityId());
+        const auto boardDate = board->date();
+        const int period = 1;
+        const auto date = boardDate + period;
+        e->initializeDate(date, period, 1);
+        e->initialize(playerCity, mForces);
+        c->addRootGameEvent(e);
     } else {
-        if(conquered) {
-            board->event(eEvent::cityConquered, ed);
-            const auto cid = cityId();
-            board->allow(cid, eBuildingType::commemorative, 4);
-            mCity->setRelationship(eForeignCityRelationship::vassal);
-        } else {
-            board->event(eEvent::cityConquerFailed, ed);
-        }
-        mCity->incAttitude(-50);
-    }
+        const int enemyStr = mCity->troops();
+        const int str = mForces.strength();
 
-    planArmyReturn();
+        {
+            const double killFrac = std::clamp(0.5*enemyStr/str, 0., 1.);
+            mForces.kill(killFrac);
+        }
+
+        {
+            const double killFrac = std::clamp(0.5*str/enemyStr, 0., 1.);
+            mCity->setTroops((1 - killFrac)*enemyStr);
+        }
+
+        const bool conquered = str > enemyStr;
+
+        eEventData ed(playerId());
+        ed.fCity = mCity;
+        const auto rel = mCity->relationship();
+        if(rel == eForeignCityRelationship::ally) {
+            const auto w = worldBoard();
+            if(w) w->attackedAlly();
+            board->event(eEvent::allyAttackedByPlayer, ed);
+        }
+        if(conquered) {
+            mCity->setConqueredBy(nullptr);
+        }
+        if(mCity->isColony()) {
+            if(conquered) {
+                board->event(eEvent::colonyRestored, ed);
+                mCity->incAttitude(50);
+            } else {
+                board->event(eEvent::cityConquerFailed, ed);
+            }
+        } else {
+            if(conquered) {
+                board->event(eEvent::cityConquered, ed);
+                const auto cid = cityId();
+                board->allow(cid, eBuildingType::commemorative, 4);
+                mCity->setRelationship(eForeignCityRelationship::vassal);
+            } else {
+                board->event(eEvent::cityConquerFailed, ed);
+            }
+            mCity->incAttitude(-50);
+        }
+
+        planArmyReturn();
+    }
 }
 
 std::string ePlayerConquestEvent::longName() const {

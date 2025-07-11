@@ -371,6 +371,67 @@ void eWorldCity::nextYear() {
     mYearsElapsed++;
 }
 
+void eWorldCity::troopsByType(int& infantry,
+                              int& cavalry,
+                              int& archers) const {
+    const int troops = std::max(12, 2*this->troops()/3);
+    const auto n = nationality();
+    switch(n) {
+    case eNationality::greek: {
+        infantry = std::ceil(0.6*troops);
+        cavalry = std::ceil(0.2*troops);
+        archers = std::ceil(0.2*troops);
+    } break;
+    case eNationality::trojan: {
+        infantry = std::ceil(0.5*troops);
+        cavalry = std::ceil(0.3*troops);
+        archers = std::ceil(0.2*troops);
+    } break;
+    case eNationality::persian: {
+        infantry = std::ceil(0.3*troops);
+        cavalry = std::ceil(0.3*troops);
+        archers = std::ceil(0.4*troops);
+    } break;
+    case eNationality::centaur: {
+        infantry = 0;
+        cavalry = std::ceil(0.5*troops);
+        archers = std::ceil(0.5*troops);
+    } break;
+    case eNationality::amazon: {
+        infantry = std::ceil(0.75*troops);
+        cavalry = 0;
+        archers = std::ceil(0.25*troops);
+    } break;
+
+    case eNationality::egyptian: {
+        infantry = std::ceil(0.5*troops);
+        cavalry = std::ceil(0.2*troops);
+        archers = std::ceil(0.3*troops);
+    } break;
+    case eNationality::mayan: {
+        infantry = std::ceil(0.25*troops);
+        cavalry = 0;
+        archers = std::ceil(0.75*troops);
+    } break;
+    case eNationality::phoenician: {
+        infantry = 0;
+        cavalry = std::ceil(0.3*troops);
+        archers = std::ceil(0.7*troops);
+    } break;
+    case eNationality::oceanid: {
+        infantry = std::ceil(0.5*troops);
+        cavalry = 0;
+        archers = std::ceil(0.5*troops);
+    } break;
+    case eNationality::atlantean: {
+        infantry = std::ceil(0.4*troops);
+        cavalry = std::ceil(0.3*troops);
+        archers = std::ceil(0.3*troops);
+    } break;
+    }
+
+}
+
 int eWorldCity::shields() const {
     return std::clamp(1 + mTroops/20, 1, 5);
 }

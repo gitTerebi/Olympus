@@ -184,6 +184,9 @@ public:
 
     void setTroops(const int t) { mTroops = t; }
     int troops() const { return mTroops; }
+    void troopsByType(int& infantry,
+                      int& cavalry,
+                      int& archers) const;
 
     int shields() const;
     int militaryStrength() const { return mMilitaryStrength; }

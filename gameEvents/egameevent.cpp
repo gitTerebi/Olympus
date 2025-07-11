@@ -164,6 +164,14 @@ ePlayerId eGameEvent::playerId() const {
     return mBoard.cityIdToPlayerId(mCid);
 }
 
+bool eGameEvent::isOnBoard() const {
+    return mBoard.boardCityWithId(mCid);
+}
+
+bool eGameEvent::isPersonPlayer() const {
+    return mBoard.personPlayer() == playerId();
+}
+
 void eGameEvent::setupStartDate(const eDate& currentDate) {
     mStartDate = currentDate;
     mStartDate.nextYears(mDatePlusYears);

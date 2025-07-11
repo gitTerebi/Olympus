@@ -13,10 +13,25 @@ class eReadStream;
 class eWriteStream;
 class eWorldCity;
 class eSoldierBanner;
+class eEnlistedForces;
 enum class eCityId;
+enum class eNationality;
 
 enum class eInvasionStage {
     spread, wait, invade, comeback
+};
+
+enum class ePlayerSoldierType {
+    greekHoplite,
+    greekHorseman,
+    greekRockthrower,
+
+    atlanteanHoplite,
+    atlanteanArcher,
+    atlanteanChariot,
+
+    aresWarrior,
+    amazon
 };
 
 class eInvasionHandler {
@@ -32,6 +47,9 @@ public:
                     const int cavalry,
                     const int archers);
 
+    void initialize(eTile* const tile,
+                    const eEnlistedForces& forces);
+
     void incTime(const int by);
 
     void read(eReadStream& src);
@@ -45,6 +63,21 @@ public:
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
 private:
+    void
+    generateSoldiersForCity(eTile* const tile,
+                            const int infantry,
+                            const int cavalry,
+                            const int archers,
+                            const eCityId cid,
+                            const eNationality nat,
+                            std::vector<eSoldierBanner*>& solds);
+    using eSs = std::vector<std::pair<ePlayerSoldierType, int>>;
+    void
+    generateSoldiersForCity(eTile* const tile,
+                            const eSs& soldTypes,
+                            const eCityId cid,
+                            std::vector<eSoldierBanner*>& solds);
+
     eGameBoard& mBoard;
     eCityId mTargetCity;
     stdsptr<eWorldCity> mCity;

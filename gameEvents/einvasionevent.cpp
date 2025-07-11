@@ -69,112 +69,79 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
     mArchers = archers;
 }
 
+void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
+                                const eEnlistedForces& forces) {
+    setCity(city);
+
+    mForces = forces;
+}
+
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     const auto cid = cityId();
     board->removeInvasion(this);
-    eEventData ed(cityId());
-    ed.fCity = mCity;
-    ed.fType = eMessageEventType::invasion;
-    const int bribe = bribeCost();
-    ed.fBribe = bribe;
-    ed.fReason = reason();
-
-    const auto city = mCity;
-    ed.fA0 = [board, city, cid]() { // surrender
-        eEventData ed(cid);
-        ed.fCity = city;
-        board->event(eEvent::invasionDefeat, ed);
-        board->updateMusic();
-    };
-    const auto pid = board->cityIdToPlayerId(cid);
-    const int drachmas = board->drachmas(pid);
-    if(drachmas >= bribe) { // bribe
-        ed.fA1 = [board, pid, bribe, city, cid]() {
-            board->incDrachmas(pid, -bribe);
-            eEventData ed(cid);
-            ed.fCity = city;
-            board->event(eEvent::invasionBribed, ed);
-            board->updateMusic();
-        };
-    }
+    const auto tile = board->landInvasionTile(cid, mInvasionPoint);
 
     int infantry = 0;
     int cavalry = 0;
     int archers = 0;
+
+    const auto city = mCity;
 
     if(mHardcoded) {
         infantry = mInfantry;
         cavalry = mCavalry;
         archers = mArchers;
     } else {
-        const int troops = std::max(12, 2*city->troops()/3);
-        const auto n = city->nationality();
-        switch(n) {
-        case eNationality::greek: {
-            infantry = std::ceil(0.6*troops);
-            cavalry = std::ceil(0.2*troops);
-            archers = std::ceil(0.2*troops);
-        } break;
-        case eNationality::trojan: {
-            infantry = std::ceil(0.5*troops);
-            cavalry = std::ceil(0.3*troops);
-            archers = std::ceil(0.2*troops);
-        } break;
-        case eNationality::persian: {
-            infantry = std::ceil(0.3*troops);
-            cavalry = std::ceil(0.3*troops);
-            archers = std::ceil(0.4*troops);
-        } break;
-        case eNationality::centaur: {
-            infantry = 0;
-            cavalry = std::ceil(0.5*troops);
-            archers = std::ceil(0.5*troops);
-        } break;
-        case eNationality::amazon: {
-            infantry = std::ceil(0.75*troops);
-            cavalry = 0;
-            archers = std::ceil(0.25*troops);
-        } break;
-
-        case eNationality::egyptian: {
-            infantry = std::ceil(0.5*troops);
-            cavalry = std::ceil(0.2*troops);
-            archers = std::ceil(0.3*troops);
-        } break;
-        case eNationality::mayan: {
-            infantry = std::ceil(0.25*troops);
-            cavalry = 0;
-            archers = std::ceil(0.75*troops);
-        } break;
-        case eNationality::phoenician: {
-            infantry = 0;
-            cavalry = std::ceil(0.3*troops);
-            archers = std::ceil(0.7*troops);
-        } break;
-        case eNationality::oceanid: {
-            infantry = std::ceil(0.5*troops);
-            cavalry = 0;
-            archers = std::ceil(0.5*troops);
-        } break;
-        case eNationality::atlantean: {
-            infantry = std::ceil(0.4*troops);
-            cavalry = std::ceil(0.3*troops);
-            archers = std::ceil(0.3*troops);
-        } break;
-        }
+        city->troopsByType(infantry, cavalry, archers);
     }
 
-    const auto tile = board->landInvasionTile(cid, mInvasionPoint);
-    ed.fTile = tile;
-    ed.fA2 = [this, board, tile, cid, city, infantry, cavalry, archers]() { // fight
+    if(!isPersonPlayer()) {
         if(!tile) return;
-        const auto eh = new eInvasionHandler(*board, cid, city, this);
-        eh->initialize(tile, infantry, cavalry, archers);
-    };
-    board->event(eEvent::invasion, ed);
-    eMusic::playRandomBattleMusic();
+        const auto eh = new eInvasionHandler(*board, cid, mCity, this);
+        const auto invadingCid = mCity->cityId();
+        const auto invadingC = board->boardCityWithId(invadingCid);
+        if(invadingC) {
+            eh->initialize(tile, mForces);
+        } else {
+            eh->initialize(tile, infantry, cavalry, archers);
+        }
+    } else {
+        eEventData ed(cityId());
+        ed.fCity = mCity;
+        ed.fType = eMessageEventType::invasion;
+        const int bribe = bribeCost();
+        ed.fBribe = bribe;
+        ed.fReason = reason();
+
+        ed.fA0 = [board, city, cid]() { // surrender
+            eEventData ed(cid);
+            ed.fCity = city;
+            board->event(eEvent::invasionDefeat, ed);
+            board->updateMusic();
+        };
+        const auto pid = board->cityIdToPlayerId(cid);
+        const int drachmas = board->drachmas(pid);
+        if(drachmas >= bribe) { // bribe
+            ed.fA1 = [board, pid, bribe, city, cid]() {
+                board->incDrachmas(pid, -bribe);
+                eEventData ed(cid);
+                ed.fCity = city;
+                board->event(eEvent::invasionBribed, ed);
+                board->updateMusic();
+            };
+        }
+
+        ed.fTile = tile;
+        ed.fA2 = [this, board, tile, cid, city, infantry, cavalry, archers]() { // fight
+            if(!tile) return;
+            const auto eh = new eInvasionHandler(*board, cid, city, this);
+            eh->initialize(tile, infantry, cavalry, archers);
+        };
+        board->event(eEvent::invasion, ed);
+        eMusic::playRandomBattleMusic();
+    }
 }
 
 std::string eInvasionEvent::longName() const {
@@ -195,6 +162,8 @@ void eInvasionEvent::write(eWriteStream& dst) const {
     dst << mCavalry;
     dst << mArchers;
 
+    mForces.write(dst);
+
     dst << mInvasionPoint;
 
     dst << mWarned;
@@ -213,6 +182,9 @@ void eInvasionEvent::read(eReadStream& src) {
     src >> mInfantry;
     src >> mCavalry;
     src >> mArchers;
+
+    const auto wboard = board->getWorldBoard();
+    mForces.read(*board, *wboard, src);
 
     src >> mInvasionPoint;
 
