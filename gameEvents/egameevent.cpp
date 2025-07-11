@@ -350,8 +350,6 @@ void eGameEvent::write(eWriteStream& dst) const {
 
 void eGameEvent::read(eReadStream& src) {
     src >> mIOID;
-    eCityId cid;
-    src >> cid;
     src >> mDatePlusDays;
     src >> mDatePlusMonths;
     src >> mDatePlusYears;
