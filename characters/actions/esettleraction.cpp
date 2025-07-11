@@ -112,14 +112,8 @@ void eSettlerAction::leave() {
     });
     c->setAction(a);
     c->setActionType(eCharacterActionType::walk);
-    const int bw = board.width();
-    const int bh = board.height();
-    const auto edgeTile = [bw, bh](eTileBase* const tile) {
-        const int tx = tile->dx();
-        if(tx == 0 || tx >= bw) return true;
-        const int ty = tile->dy();
-        if(ty == 0 || ty >= bh) return true;
-        return false;
+    const auto edgeTile = [](eTileBase* const tile) {
+        return tile->isCityEdge();
     };
     a->start(edgeTile);
 }

@@ -126,6 +126,14 @@ void eTileBase::setY(const int y) {
     mY = y;
 }
 
+bool eTileBase::isCityEdge() const {
+    if(!mTopRight || mTopRight->cityId() != cityId()) return true;
+    if(!mBottomRight || mBottomRight->cityId() != cityId()) return true;
+    if(!mBottomLeft || mBottomLeft->cityId() != cityId()) return true;
+    if(!mTopLeft || mTopLeft->cityId() != cityId()) return true;
+    return false;
+}
+
 std::vector<eTileBase::eTO> eTileBase::neighbours(const eTileVerifier& v) const {
     std::vector<eTileBase::eTO> result;
     for(int i = 0; i < 8; i++) {

@@ -64,6 +64,8 @@ public:
     void setX(const int x);
     void setY(const int y);
 
+    bool isCityEdge() const;
+
     template <typename T = eTileBase>
     T* topLeft() const { return static_cast<T*>(mTopLeft); }
     template <typename T = eTileBase>

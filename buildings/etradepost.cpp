@@ -154,11 +154,10 @@ void eTradePost::updateRouteStart() {
 
     const auto final = [finalTile, walkable](eTileBase* const t) {
         if(!walkable->walkable(t)) return false;
-        *finalTile = {t->x(), t->y()};
-        if(!t->topRight()) return true;
-        if(!t->bottomRight()) return true;
-        if(!t->bottomLeft()) return true;
-        if(!t->topLeft()) return true;
+        if(t->isCityEdge()) {
+            *finalTile = {t->x(), t->y()};
+            return true;
+        }
         return false;
     };
 
