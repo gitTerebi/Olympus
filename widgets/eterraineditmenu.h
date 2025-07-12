@@ -27,6 +27,7 @@ enum class eTerrainEditMode {
 
     none,
     scrub,
+    removeScrub,
     softenScrub,
 
     rainforest,

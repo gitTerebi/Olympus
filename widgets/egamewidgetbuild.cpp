@@ -353,7 +353,11 @@ eGameWidget::eApply eGameWidget::editFunc() {
         return [](eTile* const tile) {
             tile->incScrub(0.1);
         };
-    } else if(mode == eTerrainEditMode::softenScrub) {
+    } else if(mode == eTerrainEditMode::removeScrub) {
+        return [](eTile* const tile) {
+            tile->incScrub(-0.1);
+        };
+    }  else if(mode == eTerrainEditMode::softenScrub) {
         return [](eTile* const tile) {
             const auto ns = tile->neighbours(nullptr);
             double ss = tile->scrub();

@@ -115,6 +115,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w7->addAction("Scrub", [this]() {
         mMode = eTerrainEditMode::scrub;
     });
+    w7->addAction("Remove crub", [this]() {
+        mMode = eTerrainEditMode::removeScrub;
+    });
     w7->addAction("Soften Scrub", [this]() {
         mMode = eTerrainEditMode::softenScrub;
     });
