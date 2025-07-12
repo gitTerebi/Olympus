@@ -31,6 +31,23 @@ void eBoardCity::read(eReadStream& src) {
     src >> mNoFood;
     mNoFoodSince.read(src);
 
+    int ne;
+    src >> ne;
+    for(int i = 0; i < ne; i++) {
+        eCityId cid;
+        src >> cid;
+        auto& e = mExported[cid];
+        int nr;
+        src >> nr;
+        for(int j = 0; j < nr; j++) {
+            eResourceType r;
+            src >> r;
+            int n;
+            src >> n;
+            e[r] = n;
+        }
+    }
+
     mEmplDistributor.read(src);
 
     int ns;

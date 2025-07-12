@@ -26,6 +26,17 @@ void eBoardCity::write(eWriteStream& dst) const {
     dst << mNoFood;
     mNoFoodSince.write(dst);
 
+    dst << mExported.size();
+    for(const auto& e : mExported) {
+        dst << e.first;
+        const auto& map = e.second;
+        dst << map.size();
+        for(const auto& r : map) {
+            dst << r.first;
+            dst << r.second;
+        }
+    }
+
     mEmplDistributor.write(dst);
 
     dst << mShutDown.size();
