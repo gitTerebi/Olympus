@@ -53,7 +53,11 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs, eGameBoard& board) {
         if(c->isCurrentCity()) continue;
         if(!c->active()) continue;
         if(!board.hasTradePost(cid, *c)) {
-            if(!c->buys().empty() || !c->sells().empty()) {
+            const auto tradeCid = c->cityId();
+            const auto tradePid = board.cityIdToPlayerId(tradeCid);
+            const auto tradeC = board.boardCityWithId(tradeCid);
+            if(!c->buys().empty() || !c->sells().empty() ||
+               (tradeC && pid == tradePid)) {
                 if(c->waterTrade()) {
                     const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
                     const eSPR s{eBuildingMode::pier, name, 0, i};
