@@ -218,10 +218,10 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mTributeWidget = new eWorldTributeWidget(window());
         addWidget(mTributeWidget);
 
-        mTributeWidget->setX(mult*8);
+        mTributeWidget->setX(mult*7);
         mTributeWidget->setY(mult*205);
 
-        mTributeWidget->setWidth(mult*79);
+        mTributeWidget->setWidth(mult*84);
         mTributeWidget->setHeight(mult*21);
 
         mTributeWidget->initialize();
