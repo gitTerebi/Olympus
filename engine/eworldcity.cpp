@@ -496,7 +496,6 @@ void swrite(eWriteStream& dst,
 void eWorldCity::write(eWriteStream& dst) const {
     dst << mIOID;
     dst << mCityId;
-    dst << mIsOnBoard;
     dst.writeCity(mConqueredBy.get());
     dst << mPlayerId;
     dst << mCapitalOf;
@@ -542,7 +541,6 @@ void sread(eReadStream& src,
 void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mIOID;
     src >> mCityId;
-    src >> mIsOnBoard;
     src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
         mConqueredBy = c;
     });
