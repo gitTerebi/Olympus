@@ -362,10 +362,10 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
 
 void eWorldCity::nextYear() {
     for(auto& b : mBuys) {
-        b.fUsed = 0;
+        b.zeroUsed();
     }
     for(auto& s : mSells) {
-        s.fUsed = 0;
+        s.zeroUsed();
     }
     mReceived.clear();
     mYearsElapsed++;
@@ -529,7 +529,7 @@ void eWorldCity::write(eWriteStream& dst) const {
 }
 
 void sread(eReadStream& src,
-            std::vector<eResourceTrade>& v) {
+           std::vector<eResourceTrade>& v) {
     int n;
     src >> n;
     for(int i = 0; i < n; i++) {

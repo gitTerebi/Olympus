@@ -71,7 +71,7 @@ void eTradeEditWidget::initialize(std::vector<eResourceTrade>* const trade) {
 
     mTrade = trade;
 
-    for(const auto r : *trade) {
+    for(const auto& r : *trade) {
         const auto b = new eTradeResourceButton(window());
         b->initialize(r.fType, r.fMax, changeAction,
                       [this, b, changeAction]() {
@@ -123,7 +123,6 @@ void eTradeEditWidget::updateVector() {
         eResourceTrade rt;
         rt.fMax = count;
         rt.fType = type;
-        rt.fUsed = 0;
         mTrade->push_back(rt);
     }
 }

@@ -241,12 +241,12 @@ int eTradePost::buy(const int cash) {
             const int price = brd.price(b.fType);
             const bool exp = static_cast<bool>(expt);
             if(!exp) continue;
-            if(b.fUsed >= b.fMax) continue;
+            if(b.used(thisPid) >= b.fMax) continue;
             if(price > cash) continue;
             const int c = count(b.fType);
             if(c <= 0) continue;
             take(b.fType, 1);
-            b.fUsed++;
+            b.incUsed(thisPid, 1);
             spent += price;
         }
         const auto pid = playerId();
@@ -283,12 +283,12 @@ int eTradePost::sell(const int items) {
             const bool imp = static_cast<bool>(impt);
             const int price = brd.price(b.fType);
             if(!imp) continue;
-            if(b.fUsed >= b.fMax) continue;
+            if(b.used(thisPid) >= b.fMax) continue;
             if(price > items) continue;
             const int c = spaceLeftDontAccept(b.fType);
             if(c <= 0) continue;
             addNotAccept(b.fType, 1);
-            b.fUsed++;
+            b.incUsed(thisPid, 1);
             earned += price;
         }
         const auto pid = playerId();

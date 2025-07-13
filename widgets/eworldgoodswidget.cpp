@@ -19,7 +19,8 @@ void eTradeTypesWidget::initialize() {
     setType(eFrameType::inner);
 }
 
-void eTradeTypesWidget::setTrade(const std::vector<eResourceTrade>& trade) {
+void eTradeTypesWidget::setTrade(const ePlayerId pid,
+                                 const std::vector<eResourceTrade>& trade) {
     const auto uiScale = resolution().uiScale();
     int iRes;
     int mult;
@@ -55,7 +56,7 @@ void eTradeTypesWidget::setTrade(const std::vector<eResourceTrade>& trade) {
         nameLabel->align(eAlignment::vcenter | eAlignment::left);
         nameLabel->setX(iconLabel->x() + iconLabel->width());
 
-        const auto used = std::to_string(t.fUsed);
+        const auto used = std::to_string(t.used(pid));
         const auto max = std::to_string(t.fMax);
         const auto str = used + "/" + max;
         const auto usedLabel = new eLabel(str, window());
@@ -101,10 +102,11 @@ void eWorldTradeWidget::setName(const std::string &name) {
     mNameLabel->align(eAlignment::top | eAlignment::hcenter);
 }
 
-void eWorldTradeWidget::setTrade(std::vector<eResourceTrade>* const trade) {
+void eWorldTradeWidget::setTrade(const ePlayerId pid,
+                                 std::vector<eResourceTrade>* const trade) {
     mTrade = trade;
     const int oh = height();
-    mTradeTypesWidget->setTrade(trade ? *trade : std::vector<eResourceTrade>{});
+    mTradeTypesWidget->setTrade(pid, trade ? *trade : std::vector<eResourceTrade>{});
     fitContent();
     const int nh = height();
     setY(y() + oh - nh);
@@ -152,8 +154,8 @@ void eWorldGoodsWidget::setCity(const stdsptr<eWorldCity>& c) {
     const auto buys = c ? &c->buys() : nullptr;
     const auto sells = c ? &c->sells() : nullptr;
     const bool cc = c && c->isCurrentCity();
-    mBuysWidget->setTrade(buys);
-    mSellsWidget->setTrade(sells);
+    mBuysWidget->setTrade(mPid, buys);
+    mSellsWidget->setTrade(mPid, sells);
     const bool neb = buys && !buys->empty();
     const bool nes = sells && !sells->empty();
     mBuysWidget->setVisible(neb && !cc);

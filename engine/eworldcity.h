@@ -89,18 +89,55 @@ enum class eCityState {
 
 struct eResourceTrade {
     eResourceType fType;
-    int fUsed;
+    std::map<ePlayerId, int> fUsed;
     int fMax;
+
+    int used(const ePlayerId pid) const {
+        const auto it = fUsed.find(pid);
+        if(it == fUsed.end()) return 0;
+        return it->second;
+    }
+
+    void incUsed(const ePlayerId pid, const int by) {
+        const auto it = fUsed.find(pid);
+        if(it == fUsed.end()) {
+            fUsed[pid] = by;
+        } else {
+            fUsed[pid] += by;
+        }
+    }
+
+    void zeroUsed() {
+        for(const auto& u : fUsed) {
+            fUsed[u.first] = 0;
+        }
+    }
 
     void write(eWriteStream& dst) const {
         dst << fType;
-        dst << fUsed;
+
+        dst << fUsed.size();
+        for(const auto& u : fUsed) {
+            dst << u.first;
+            dst << u.second;
+        }
+
         dst << fMax;
     }
 
     void read(eReadStream& src) {
         src >> fType;
-        src >> fUsed;
+
+        int nu;
+        src >> nu;
+        for(int i = 0; i < nu; i++) {
+            ePlayerId pid;
+            src >> pid;
+            int c;
+            src >> c;
+            fUsed[pid] = c;
+        }
+
         src >> fMax;
     }
 };

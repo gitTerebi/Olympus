@@ -16,7 +16,8 @@ public:
 
     void initialize();
 
-    void setTrade(const std::vector<eResourceTrade>& trade);
+    void setTrade(const ePlayerId pid,
+                  const std::vector<eResourceTrade>& trade);
 };
 
 class eWorldTradeWidget : public eWidget {
@@ -25,7 +26,8 @@ public:
 
     void initialize(const std::string& name);
     void setName(const std::string& name);
-    void setTrade(std::vector<eResourceTrade>* const trade);
+    void setTrade(const ePlayerId pid,
+                  std::vector<eResourceTrade>* const trade);
 private:
     std::vector<eResourceTrade>* mTrade = nullptr;
 
@@ -40,10 +42,11 @@ public:
     void initialize();
 
     void setCity(const stdsptr<eWorldCity>& c);
+    void setPlayerId(const ePlayerId pid) { mPid = pid; }
 private:
     void updateTradeY() const;
 
-    eGameBoard* mBoard = nullptr;
+    ePlayerId mPid = ePlayerId::neutralFriendly;
 
     eLabel* mGoodsLabel = nullptr;
     eButton* mOrdersButton = nullptr;

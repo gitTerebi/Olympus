@@ -269,6 +269,8 @@ void eWorldMenu::setCity(const stdsptr<eWorldCity>& c) {
     mRaidButton->setEnabled(c.get() && !vassalOrColony && !distant && !cc);
     mConquerButton->setEnabled(c.get() && (!vassalOrColony || c->conqueredByRival()) && !distant && !cc);
 
+    const auto pid = mBoard->personPlayer();
+    mGoodsWidget->setPlayerId(pid);
     mGoodsWidget->setCity(c);
     mTributeWidget->setCity(c);
 }

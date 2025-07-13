@@ -143,7 +143,8 @@ public:
 
             const auto t = new eLabel(window());
             t->setSmallFontSize();
-            const int cc = trade.fUsed;
+            const auto pid = stor->playerId();
+            const int cc = trade.used(pid);
             const int ccc = trade.fMax;
             t->setText(std::to_string(cc) + " " + eLanguage::zeusText(44, 148) + " " + std::to_string(ccc));
             t->fitContent();
@@ -271,6 +272,7 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
             const auto all = eResourceTypeHelpers::extractResourceTypes(
                                  eResourceType::allBasic);
             const auto thisCid = stor->cityId();
+            const auto thisPid = stor->playerId();
             const auto& board = stor->getBoard();
             const auto thisC = board.boardCityWithId(thisCid);
             const auto dstCid = city.cityId();
@@ -280,7 +282,9 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
                 if(count < 1 && !ex) continue;
                 const int e = thisC->exported(dstCid, r);
                 const int max = r == eResourceType::sculpture ? 4 : 8;
-                cbuys.push_back(eResourceTrade{r, e, max});
+                std::map<ePlayerId, int> em;
+                em[thisPid] = e;
+                cbuys.push_back(eResourceTrade{r, em, max});
             }
         } else {
             cbuys = city.buys();
