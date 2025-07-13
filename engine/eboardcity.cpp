@@ -11,6 +11,7 @@
 #include "buildings/eurchinquay.h"
 #include "buildings/efishery.h"
 #include "buildings/epier.h"
+#include "buildings/eaestheticsbuilding.h"
 
 #include "evectorhelpers.h"
 
@@ -269,12 +270,69 @@ void eBoardCity::nextYear() {
     mTaxesPaidThisYear = 0;
     mPeoplePaidTaxesLastYear = mPeoplePaidTaxesThisYear;
     mPeoplePaidTaxesThisYear = 0;
+    bool r = true;
+    while(r) {
+        r = replace3By3AestheticByCommemorative(true);
+//        if(!r) r = replace3By3AestheticByCommemorative(false);
+    }
 }
 
 void eBoardCity::payPensions() {
     const auto p = owningPlayer();
     const int d = std::ceil(mEmplData.pensions()/12.);
     if(p) p->incDrachmas(-d);
+}
+
+bool eBoardCity::replace3By3AestheticByCommemorative(
+        const bool skipNextToComm) {
+    int id = -1;
+    for(int i = 0; i <= 8; i++) {
+        const bool a = mAvailableBuildings.available(
+                           eBuildingType::commemorative, i);
+        if(a) {
+            id = i;
+            break;
+        }
+    }
+    if(id == -1) return false;
+    for(const auto b : mAllBuildings) {
+        const auto type = b->type();
+        switch(type) {
+        case eBuildingType::hedgeMaze:
+        case eBuildingType::dolphinSculpture:
+        case eBuildingType::orrery:
+        case eBuildingType::spring:
+        case eBuildingType::topiary: {
+            const auto rect = b->tileRect();
+            if(skipNextToComm) {
+                for(int x = rect.x - 1; x < rect.x + rect.w + 1; x++) {
+                    for(int y = rect.y - 1; y < rect.y + rect.h + 1; y++) {
+                        const auto at = mBoard.buildingAt(x, y);
+                        if(!at) continue;
+                        const auto t = at->type();
+                        if(t == eBuildingType::commemorative) return false;
+                    }
+                }
+            }
+            const int did = b->districtId();
+            b->setDistrictId(-1);
+            b->erase();
+            const auto bc = [&]() {
+                const auto c = e::make_shared<eCommemorative>(id, mBoard, mId);
+                c->setDistrictId(did);
+                return c;
+            };
+            const auto pid = mBoard.cityIdToPlayerId(mId);
+            return mBoard.buildBase(rect.x, rect.y,
+                                    rect.x + rect.w - 1,
+                                    rect.y + rect.h - 1,
+                                    bc, pid, mId, true);
+        } break;
+        default:
+            break;
+        }
+    }
+    return false;
 }
 
 void eBoardCity::nextMonth() {

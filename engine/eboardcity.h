@@ -331,6 +331,7 @@ public:
     void write(eWriteStream& dst) const;
 private:
     void payPensions();
+    bool replace3By3AestheticByCommemorative(const bool skipNextToComm);
 
     eGameBoard& mBoard;
 
