@@ -1085,6 +1085,8 @@ std::vector<ePlayerId> eGameBoard::playersOnBoard() const {
     for(const auto& c : mCitiesOnBoard) {
         const auto cid = c->id();
         const auto pid = cityIdToPlayerId(cid);
+        if(pid == ePlayerId::neutralFriendly ||
+           pid == ePlayerId::neutralAggresive) continue;
         if(eVectorHelpers::contains(result, pid)) continue;
         result.push_back(pid);
     }
