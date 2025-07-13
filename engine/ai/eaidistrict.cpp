@@ -525,6 +525,7 @@ bool gBuild(const eAIBuilding& b,
         const auto bc = [boardPtr, cid, b]() {
             const auto g = e::make_shared<eGranary>(*boardPtr, cid);
             g->setOrders(b.fGet, b.fEmpty, b.fAccept);
+            g->setMaxCount(b.fSpace);
             return g;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -533,6 +534,7 @@ bool gBuild(const eAIBuilding& b,
         const auto bc = [boardPtr, cid, b]() {
             const auto w = e::make_shared<eWarehouse>(*boardPtr, cid);
             w->setOrders(b.fGet, b.fEmpty, b.fAccept);
+            w->setMaxCount(b.fSpace);
             return w;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
