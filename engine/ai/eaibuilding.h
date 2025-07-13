@@ -5,6 +5,7 @@
 #include "engine/epatrolguide.h"
 
 enum class eResourceType;
+enum class eTradePostType;
 
 struct eAIBuilding {
     eBuildingType fType;
@@ -15,6 +16,9 @@ struct eAIBuilding {
     std::map<eResourceType, int> fSpace;
     std::vector<ePatrolGuide> fGuides;
     eDiagonalOrientation fO;
+    eCityId fTradingPartner;
+    eTradePostType fTradePostType;
+    SDL_Rect fOtherRect;
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;

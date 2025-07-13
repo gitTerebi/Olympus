@@ -37,6 +37,7 @@ public:
                const eCityId cid,
                const bool editorDisplay,
                const eScheduleBuildingAction& scha = nullptr) const;
+    using eAction = std::function<void()>;
     static bool sBuild(eGameBoard& board,
                        const ePlayerId pid,
                        const eCityId cid,

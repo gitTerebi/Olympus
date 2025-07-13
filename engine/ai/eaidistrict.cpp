@@ -65,8 +65,11 @@
 
 #include "buildings/egranary.h"
 #include "buildings/ewarehouse.h"
+#include "buildings/etradepost.h"
+#include "buildings/epier.h"
 
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/ecolumn.h"
 #include "buildings/epark.h"
 
 #include "elanguage.h"
@@ -539,16 +542,75 @@ bool gBuild(const eAIBuilding& b,
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
+    case eBuildingType::tradePost: {
+        const bool cb = board.canBuild(b.fOtherRect.x, b.fOtherRect.y,
+                                       b.fOtherRect.w, b.fOtherRect.h,
+                                       true, cid, pid);
+        if(!cb) return false;
+        eTradePost* tpPtr = nullptr;
+        const auto bc = [boardPtr, cid, b, &tpPtr]() {
+            const auto wboard = boardPtr->getWorldBoard();
+            const auto wc = wboard->cityWithId(b.fTradingPartner);
+            const auto tp = e::make_shared<eTradePost>(*boardPtr, *wc.get(), cid,
+                                                       b.fTradePostType);
+            tpPtr = tp.get();
+            tp->setOrientation(b.fO);
+            tp->setOrders(b.fGet, b.fEmpty);
+            tp->setMaxCount(b.fSpace);
+            return tp;
+        };
+        const bool tpr = board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+        if(b.fTradePostType == eTradePostType::post) return tpr;
+        if(!tpr) return false;
+        const auto bcp = [boardPtr, cid, b, tpPtr]() {
+            const auto wboard = boardPtr->getWorldBoard();
+            const auto wc = wboard->cityWithId(b.fTradingPartner);
+            const auto p = e::make_shared<ePier>(*boardPtr, b.fO, cid);
+            p->setTradePost(tpPtr);
+            tpPtr->setUnpackBuilding(p.get());
+            return p;
+        };
+        const auto& oR = b.fOtherRect;
+        return board.buildBase(oR.x, oR.y, oR.x + oR.w - 1, oR.y + oR.h - 1,
+                               bcp, pid, cid, editorDisplay);
+    } break;
 
-    case eBuildingType::gazebo: {
+
+    case eBuildingType::park: {
         const auto bc = [boardPtr, cid, b]() {
-            return e::make_shared<eGazebo>(*boardPtr, cid);
+            return e::make_shared<ePark>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
-    case eBuildingType::shellGarden: {
+    case eBuildingType::doricColumn: {
         const auto bc = [boardPtr, cid, b]() {
-            return e::make_shared<eShellGarden>(*boardPtr, cid);
+            return e::make_shared<eDoricColumn>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::ionicColumn: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eIonicColumn>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::corinthianColumn: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eCorinthianColumn>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+
+    case eBuildingType::commemorative: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eCommemorative>(0, *boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+
+    case eBuildingType::bench: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eBench>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
@@ -558,9 +620,9 @@ bool gBuild(const eAIBuilding& b,
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
-    case eBuildingType::commemorative: {
+    case eBuildingType::gazebo: {
         const auto bc = [boardPtr, cid, b]() {
-            return e::make_shared<eCommemorative>(0, *boardPtr, cid);
+            return e::make_shared<eGazebo>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
@@ -570,9 +632,81 @@ bool gBuild(const eAIBuilding& b,
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
-    case eBuildingType::park: {
+    case eBuildingType::fishPond: {
         const auto bc = [boardPtr, cid, b]() {
-            return e::make_shared<ePark>(*boardPtr, cid);
+            return e::make_shared<eFishPond>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::waterPark: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eWaterPark>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::birdBath: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eBirdBath>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::shortObelisk: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eShortObelisk>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::tallObelisk: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eTallObelisk>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::shellGarden: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eShellGarden>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::sundial: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eSundial>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::dolphinSculpture: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eDolphinSculpture>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::orrery: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eOrrery>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::spring: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eSpring>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::topiary: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eTopiary>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::baths: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eBaths>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::stoneCircle: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eStoneCircle>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
@@ -611,10 +745,10 @@ void eAIDistrict::build(eGameBoard& board,
 }
 
 bool eAIDistrict::sBuild(eGameBoard& board,
-                        const ePlayerId pid,
-                        const eCityId cid,
-                        const bool editorDisplay,
-                        const eAIBuilding& b) {
+                         const ePlayerId pid,
+                         const eCityId cid,
+                         const bool editorDisplay,
+                         const eAIBuilding& b) {
     const auto rect = b.fRect;
     const int xMin = rect.x;
     const int yMin = rect.y;

@@ -338,6 +338,18 @@ void eBoardCity::saveEditorCityPlan() {
             ab.fEmpty = sb->empties();
             ab.fAccept = sb->accepts();
             ab.fSpace = sb->maxCount();
+            if(const auto p = dynamic_cast<eTradePost*>(b)) {
+                ab.fO = p->orientation();
+                ab.fTradePostType = p->tpType();
+                const auto city = p->city();
+                ab.fTradingPartner = city.cityId();
+                if(ab.fTradePostType == eTradePostType::pier) {
+                    const auto pier = p->unpackBuilding();
+                    ab.fOtherRect = pier->tileRect();
+                }
+            }
+        } else if(ab.fType == eBuildingType::pier) {
+            continue;
         } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
             ab.fGuides = pb->patrolGuides();
         } else if(const auto s = dynamic_cast<eSanctuary*>(b)) {
@@ -348,8 +360,6 @@ void eBoardCity::saveEditorCityPlan() {
             ab.fO = uq->orientation();
         } else if(const auto f = dynamic_cast<eFishery*>(b)) {
             ab.fO = f->orientation();
-        } else if(const auto p = dynamic_cast<ePier*>(b)) {
-            ab.fO = p->orientation();
         }
         d.addBuilding(ab);
     }

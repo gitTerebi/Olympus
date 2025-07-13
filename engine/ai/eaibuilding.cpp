@@ -1,14 +1,5 @@
 #include "eaibuilding.h"
 
-eBuildingType fType;
-SDL_Rect fRect;
-eResourceType fGet = static_cast<eResourceType>(0);
-eResourceType fEmpty = static_cast<eResourceType>(0);
-eResourceType fAccept = static_cast<eResourceType>(0);
-std::map<eResourceType, int> fSpace;
-std::vector<ePatrolGuide> fGuides;
-eDiagonalOrientation fO;
-
 void eAIBuilding::read(eReadStream& src) {
     src >> fType;
     src >> fRect;
@@ -35,6 +26,10 @@ void eAIBuilding::read(eReadStream& src) {
     }
 
     src >> fO;
+
+    src >> fTradingPartner;
+    src >> fTradePostType;
+    src >> fOtherRect;
 }
 
 void eAIBuilding::write(eWriteStream& dst) const {
@@ -57,4 +52,8 @@ void eAIBuilding::write(eWriteStream& dst) const {
     }
 
     dst << fO;
+
+    dst << fTradingPartner;
+    dst << fTradePostType;
+    dst << fOtherRect;
 }
