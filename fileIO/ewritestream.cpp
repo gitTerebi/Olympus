@@ -10,8 +10,11 @@
 #include "spawners/ebanner.h"
 
 eWriteStream::eWriteStream(const eWriteTarget& dst) :
-    mDst(dst) {
+    mDst(dst) {}
 
+void eWriteStream::writeFormat(const std::string& format) {
+    *this << std::string(format);
+    *this << eFileFormat::version;
 }
 
 void eWriteStream::writeTile(eTile* const tile) {

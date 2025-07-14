@@ -199,6 +199,7 @@ bool eCampaign::sReadGlossary(const std::string& name,
     if(!file) return false;
     eReadSource source(&file);
     eReadStream src(source);
+    src.readFormat();
     src >> glossary.fBitmap;
     file.close();
     return true;
@@ -206,9 +207,6 @@ bool eCampaign::sReadGlossary(const std::string& name,
 
 void eCampaign::read(eReadStream& src) {
     src >> mBitmap;
-    int version;
-    src >> version;
-    src.setFormat(version);
     std::string name;
     src >> name;
     if(mName.empty()) mName = name;
@@ -303,7 +301,6 @@ void eCampaign::read(eReadStream& src) {
 
 void eCampaign::write(eWriteStream& dst) const {
     dst << mBitmap;
-    dst << eFileFormat::version;
     dst << mName;
     dst << mCurrentParentEpisode;
     dst << mCurrentColonyEpisode;
@@ -365,6 +362,18 @@ bool eCampaign::load(const std::string& name) {
     if(!file) return false;
     eReadSource source(&file);
     eReadStream src(source);
+    src.readFormat();
+    const auto& format = src.format();
+    const int version = src.formatVersion();
+    if(format != "eZeus.epak") {
+        printf("Invalid file '%s' format '%s', expected 'eZeus.epak'.\n",
+               pakFile.c_str(), format.c_str());
+        return false;
+    }
+    if(version > eFileFormat::version) {
+        printf("Attempting to read '%s' format '%s' version '%i' newer than the executable.\n",
+               pakFile.c_str(), format.c_str(), version);
+    }
     read(src);
     src.handlePostFuncs();
     file.close();
@@ -387,6 +396,7 @@ bool eCampaign::save() const {
     if(!file) return false;
     eWriteTarget target(&file);
     eWriteStream dst(target);
+    dst.writeFormat("eZeus.epak");
     write(dst);
     file.close();
     return true;
@@ -539,11 +549,13 @@ void eCampaign::copyEpisodeSettings(eEpisode* const from,
         mWorldBoard.setIOIDs();
         eWriteTarget target(mem);
         eWriteStream dst(target);
+        dst.writeFormat("eZeus");
         from->write(dst);
     }
     {
         eReadSource source(mem);
         eReadStream src(source);
+        src.readFormat();
         to->read(src);
         src.handlePostFuncs();
     }

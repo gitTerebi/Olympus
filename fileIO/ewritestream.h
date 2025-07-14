@@ -57,6 +57,8 @@ class eWriteStream {
 public:
     eWriteStream(const eWriteTarget& dst);
 
+    void writeFormat(const std::string& format);
+
     inline size_t write(const void* const data, const size_t len) {
         return mDst.write(data, len);
     }

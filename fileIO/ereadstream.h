@@ -62,6 +62,8 @@ class eReadStream {
 public:
     eReadStream(const eReadSource& src);
 
+    void readFormat();
+
     inline size_t read(void* const data, const size_t len) {
         return mSrc.read(data, len);
     }
@@ -158,14 +160,15 @@ public:
     void addPostFunc(const eFunc& func);
     void handlePostFuncs();
 
-    void setFormat(const int f) { mFileFormat = f; }
-    int format() const { return mFileFormat; }
+    const std::string& format() const { return mFormat; }
+    int formatVersion() const { return mFormatVersion; }
 private:
     std::vector<eFunc> mPostFuncs;
 
     eReadSource mSrc;
 
-    int mFileFormat = 0;
+    std::string mFormat;
+    int mFormatVersion = 0;
 };
 
 #endif // EREADSTREAM_H

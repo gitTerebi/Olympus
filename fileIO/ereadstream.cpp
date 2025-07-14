@@ -9,8 +9,11 @@
 #include "characters/actions/epatrolaction.h"
 
 eReadStream::eReadStream(const eReadSource& src) :
-    mSrc(src) {
+    mSrc(src) {}
 
+void eReadStream::readFormat() {
+    *this >> mFormat;
+    *this >> mFormatVersion;
 }
 
 eTile* eReadStream::readTile(eGameBoard& board) {

@@ -56,12 +56,14 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         worldBoard()->setIOIDs();
         eWriteTarget target(mem);
         eWriteStream dst(target);
+        dst.writeFormat("eZeus");
         write(dst);
     }
     const auto result = sCreate(mCid, mType, mBranch, mBoard);
     {
         eReadSource source(mem);
         eReadStream src(source);
+        src.readFormat();
         result->read(src);
         src.handlePostFuncs();
     }

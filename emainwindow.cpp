@@ -248,6 +248,7 @@ bool eMainWindow::saveGame(const std::string& path) {
     if(!file) return false;
     eWriteTarget target(&file);
     eWriteStream dst(target);
+    dst.writeFormat("eZeus.ez");
     if(mGW) {
         const auto s = mGW->settings();
         s.write(dst);
@@ -266,6 +267,18 @@ bool eMainWindow::loadGame(const std::string& path) {
     if(!file) return false;
     eReadSource source(&file);
     eReadStream src(source);
+    src.readFormat();
+    const auto& format = src.format();
+    const int version = src.formatVersion();
+    if(format != "eZeus.ez") {
+        printf("Invalid file '%s' format '%s', expected 'eZeus.ez'.\n",
+               path.c_str(), format.c_str());
+        return false;
+    }
+    if(version > eFileFormat::version) {
+        printf("Attempting to read '%s' format '%s' version '%i' newer than the executable.\n",
+               path.c_str(), format.c_str(), version);
+    }
     eGameWidgetSettings s;
     s.read(src);
     const auto c = std::make_shared<eCampaign>();
