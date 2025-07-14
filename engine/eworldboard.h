@@ -57,6 +57,7 @@ public:
     stdsptr<eWorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);
 
+    void setCitiesOnBoard(const std::vector<eCityId>& cids);
     void setColonyAsCurrentCity(const int id);
     void setParentAsCurrentCity();
 

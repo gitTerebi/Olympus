@@ -186,6 +186,9 @@ public:
     bool isCurrentCity() const { return mIsCurrentCity; }
     void setIsCurrentCity(const bool c) { mIsCurrentCity = c; }
 
+    bool isOnBoard() const { return mIsOnBoard; }
+    void setIsOnBoard(const bool is) { mIsOnBoard = is; }
+
     static std::string sRelationshipName(
             const eForeignCityRelationship r);
     eForeignCityRelationship relationship() const { return mRel; }
@@ -307,6 +310,7 @@ private:
     ePlayerId mPlayerId = ePlayerId::neutralFriendly;
     ePlayerId mCapitalOf = ePlayerId::neutralFriendly;
     bool mIsCurrentCity = false;
+    bool mIsOnBoard = false;
     eCityType mType{eCityType::foreignCity};
 
     eNationality mNationality{eNationality::greek};

@@ -500,6 +500,7 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mPlayerId;
     dst << mCapitalOf;
     dst << mIsCurrentCity;
+    dst << mIsOnBoard;
     dst << mType;
     dst << mNationality;
     dst << mDirection;
@@ -547,6 +548,7 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mPlayerId;
     src >> mCapitalOf;
     src >> mIsCurrentCity;
+    src >> mIsOnBoard;
     src >> mType;
     src >> mNationality;
     src >> mDirection;

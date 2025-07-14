@@ -192,6 +192,14 @@ void eWorldBoard::activateColony(const int id) {
     if(c) c->setState(eCityState::active);
 }
 
+void eWorldBoard::setCitiesOnBoard(const std::vector<eCityId>& cids) {
+    for(const auto& c : mCities) {
+        const auto cid = c->cityId();
+        const bool is = eVectorHelpers::contains(cids, cid);
+        c->setIsOnBoard(is);
+    }
+}
+
 void eWorldBoard::setColonyAsCurrentCity(const int id) {
     for(const auto& c : mCities) {
         c->setIsCurrentCity(false);

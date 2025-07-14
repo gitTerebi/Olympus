@@ -428,6 +428,8 @@ void eCampaign::startEpisode() {
     e->fWageMultiplier = mWageMultiplier;
     e->fPrices = mPrices;
     const auto board = e->fBoard;
+    const auto citiesOnBoard = board->citiesOnBoard();
+    mWorldBoard.setCitiesOnBoard(citiesOnBoard);
     const bool pcol = mPreviousEpisodeType == eEpisodeType::colony;
     const auto col = pcol ? lastPlayedColony() : nullptr;
     board->startEpisode(e, col);
