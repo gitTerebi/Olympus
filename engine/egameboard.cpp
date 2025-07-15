@@ -2660,8 +2660,9 @@ void eGameBoard::startEpisode(eEpisode* const e,
 
     for(const auto& c : mCitiesOnBoard) {
         c->startEpisode(e);
+        const auto cid = c->id();
+        setFriendlyGods(cid, e->fFriendlyGods[cid]);
     }
-//    setFriendlyGods(e->fFriendlyGods);
     const auto& gs = e->fGoals;
     for(const auto& g : gs) {
         const auto gg = g->makeCopy();
