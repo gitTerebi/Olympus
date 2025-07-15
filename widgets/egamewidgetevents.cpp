@@ -154,6 +154,16 @@ void eGameWidget::handleHeroArrivalEvent(eEventData& ed) {
 }
 
 void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
+    const auto& target = ed.fTarget;
+    const auto ppid = mBoard->personPlayer();
+    if(target.isPlayerTarget()) {
+        const auto pid = target.playerTarget();
+        if(pid != ppid) return;
+    } else if(target.isCityTarget()) {
+        const auto cid = target.cityTarget();
+        const auto pid = mBoard->cityIdToPlayerId(cid);
+        if(pid != ppid) return;
+    }
     const auto& inst = eMessages::instance;
     switch(e) {
     case eEvent::fire: {
