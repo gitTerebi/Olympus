@@ -582,7 +582,7 @@ bool gBuild(const eAIBuilding& b,
                                                        b.fTradePostType);
             tpPtr = tp.get();
             tp->setOrientation(b.fO);
-            tp->setOrders(b.fGet, b.fEmpty);
+            tp->setOrders(b.fEmpty, b.fGet);
             tp->setMaxCount(b.fSpace);
             return tp;
         };
