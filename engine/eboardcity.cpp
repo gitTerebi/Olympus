@@ -425,6 +425,21 @@ void eBoardCity::saveEditorCityPlan() {
 
 void eBoardCity::editorClearBuildings() {
     for(const auto b : mAllBuildings) {
+        const auto type = b->type();
+        switch(type) {
+        case eBuildingType::agoraSpace:
+        case eBuildingType::foodVendor:
+        case eBuildingType::fleeceVendor:
+        case eBuildingType::oilVendor:
+        case eBuildingType::wineVendor:
+        case eBuildingType::armsVendor:
+        case eBuildingType::horseTrainer:
+        case eBuildingType::chariotVendor:
+            continue;
+        default:
+            break;
+        }
+
         b->erase();
     }
 }

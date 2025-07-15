@@ -208,13 +208,13 @@ bool gBuild(const eAIBuilding& b,
     } break;
 
     case eBuildingType::palace: {
-        const int tminX = minX;
-        const int tminY = minY;
+        const int tminX = minX - 1;
+        const int tminY = minY - 1;
         int sw;
         int sh;
         int tmaxX;
         int tmaxY;
-        const bool rotate = rect.w == 6;
+        const bool rotate = rect.w == 4;
         if(rotate) {
             sw = 4;
             sh = 8;
