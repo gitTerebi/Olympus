@@ -2869,7 +2869,8 @@ void eGameBoard::defeatedBy(const eCityId defeated,
     auto& defs = mDefeatedBy[defeated];
     const bool r = eVectorHelpers::contains(defs, by);
     if(r) {
-        setEpisodeLost();
+        const auto ccid = personPlayerCapital();
+        if(defeated == ccid) setEpisodeLost();
     } else {
         defs.push_back(by);
     }
