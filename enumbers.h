@@ -194,6 +194,9 @@ struct eNumbers {
     static int sDefendCityMaxKilled;
     static int sDefendCityTalosMaxKilled;
 
+    static int sAttackCityMaxKilled;
+    static int sAttackCityAresMaxKilled;
+
     static int sBasicVendorMaxResourceTakeDistance;
     static int sHorseVendorMaxResourceTakeDistance;
     static int sResourceBuildingMaxResourceGiveDistance;

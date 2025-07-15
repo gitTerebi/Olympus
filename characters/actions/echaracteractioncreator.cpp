@@ -49,6 +49,7 @@
 #include "godHelp/ehephaestushelpaction.h"
 
 #include "edefendcityaction.h"
+#include "eattackcityaction.h"
 
 stdsptr<eCharacterAction> eCharacterAction::sCreate(
         eCharacter* const c, const eCharActionType type) {
@@ -154,6 +155,8 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
 
     case eCharActionType::defendCityAction:
         return e::make_shared<eDefendCityAction>(c);
+    case eCharActionType::attackCityAction:
+        return e::make_shared<eAttackCityAction>(c);
     }
     return nullptr;
 }

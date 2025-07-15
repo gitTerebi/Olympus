@@ -305,6 +305,10 @@ public:
     void registerAttackingGod(eCharacter* const c);
     bool unregisterAttackingGod(eCharacter* const c);
 
+    bool nearestEnemySoldier(const eTeamId tid,
+                             const int tx, const int ty,
+                             int& nX, int& nY) const;
+
     eMilitaryAid* militaryAid(const stdsptr<eWorldCity>& c) const;
     void removeMilitaryAid(const stdsptr<eWorldCity>& c);
     void addMilitaryAid(const stdsptr<eMilitaryAid>& a);

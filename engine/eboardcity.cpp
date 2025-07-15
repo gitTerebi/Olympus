@@ -29,6 +29,8 @@
 #include "engine/eepisode.h"
 #include "egameboard.h"
 
+#include "eiteratesquare.h"
+
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
     mId(cid),
@@ -1699,6 +1701,41 @@ void eBoardCity::registerAttackingGod(eCharacter* const c) {
 
 bool eBoardCity::unregisterAttackingGod(eCharacter* const c) {
     return eVectorHelpers::remove(mAttackingGods, c);
+}
+
+bool eBoardCity::nearestEnemySoldier(const eTeamId tid,
+                                     const int tx, const int ty,
+                                     int& nX, int& nY) const {
+    bool found = false;
+    bool kNoTles = true;
+    const auto prcs = [&](const int dx, const int dy) {
+        const int x = tx + dx;
+        const int y = ty + dy;
+        const auto tile = mBoard.tile(x, y);
+        if(!tile) return false;
+        const auto tcid = tile->cityId();
+        if(tcid != mId) return false;
+        kNoTles = false;
+        const auto& chars = tile->characters();
+        for(const auto& c : chars) {
+            const auto ctid = c->teamId();
+            const bool e = eTeamIdHelpers::isEnemy(tid, ctid);
+            if(e) {
+                found = true;
+                nX = x;
+                nY = y;
+                return true;
+            }
+        }
+        return false;
+    };
+    for(int k = 0;; k++) {
+        kNoTles = true;
+        eIterateSquare::iterateSquare(k, prcs);
+        if(kNoTles) return false;
+        if(found) return true;
+    }
+    return false;
 }
 
 eMilitaryAid* eBoardCity::militaryAid(const stdsptr<eWorldCity>& c) const {

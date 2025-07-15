@@ -196,6 +196,9 @@ int eNumbers::sWatchmanSatisfactionProvide;
 int eNumbers::sDefendCityMaxKilled;
 int eNumbers::sDefendCityTalosMaxKilled;
 
+int eNumbers::sAttackCityMaxKilled;
+int eNumbers::sAttackCityAresMaxKilled;
+
 int eNumbers::sBasicVendorMaxResourceTakeDistance;
 int eNumbers::sHorseVendorMaxResourceTakeDistance;
 int eNumbers::sResourceBuildingMaxResourceGiveDistance;
@@ -442,6 +445,9 @@ void eNumbers::sLoad() {
 
     loadI("defend_city_max_killed_i", sDefendCityMaxKilled, 6);
     loadI("defend_city_talos_max_killed_i", sDefendCityTalosMaxKilled, 16);
+
+    loadI("attack_city_max_killed_i", sAttackCityMaxKilled, 4);
+    loadI("attack_city_ares_max_killed_i", sAttackCityAresMaxKilled, 8);
 
     loadI("basic_vendor_max_resource_take_distance_i", sBasicVendorMaxResourceTakeDistance, 60);
     loadI("horse_vendor_max_resource_take_distance_i", sHorseVendorMaxResourceTakeDistance, 200);

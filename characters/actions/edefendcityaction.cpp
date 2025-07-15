@@ -1,30 +1,24 @@
 #include "edefendcityaction.h"
 
-#include "characters/echaracter.h"
-#include "engine/egameboard.h"
 #include "gameEvents/einvasionevent.h"
 #include "egodaction.h"
-#include "emovetoaction.h"
-#include "vec2.h"
-#include "characters/esoldier.h"
-#include "characters/actions/esoldieraction.h"
 #include "enumbers.h"
 
 eDefendCityAction::eDefendCityAction(eCharacter* const c) :
-    eGodMonsterAction(c, eCharActionType::defendCityAction) {
+    eDefendAttackCityAction(c, eCharActionType::defendCityAction) {
     const auto ctype = c->type();
     if(ctype == eCharacterType::talos) {
-        mMaxKilled = eNumbers::sDefendCityTalosMaxKilled;
+        setMaxKilled(eNumbers::sDefendCityTalosMaxKilled);
     } else {
-        mMaxKilled = eNumbers::sDefendCityMaxKilled;
+        setMaxKilled(eNumbers::sDefendCityMaxKilled);
     }
 }
 
 bool eDefendCityAction::decide() {
     const auto c = character();
     switch(mStage) {
-    case eDefendCityStage::none:
-        mStage = eDefendCityStage::appear;
+    case eDefendAttackCityStage::none:
+        mStage = eDefendAttackCityStage::appear;
         if(!c->tile()) randomPlaceOnBoard();
         if(!c->tile()) {
             c->kill();
@@ -32,243 +26,57 @@ bool eDefendCityAction::decide() {
             appear();
         }
         break;
-    case eDefendCityStage::appear:
-        mStage = eDefendCityStage::goTo;
+    case eDefendAttackCityStage::appear:
+        mStage = eDefendAttackCityStage::goTo;
         mStartTile = c->tile();
         goToTarget();
         break;
-    case eDefendCityStage::goTo:
-    case eDefendCityStage::wait: {
-        if(!mEvent || mKilled >= mMaxKilled) {
-            mStage = eDefendCityStage::comeback;
+    case eDefendAttackCityStage::goTo:
+    case eDefendAttackCityStage::wait: {
+        if(!mEvent || killed() >= maxKilled()) {
+            mStage = eDefendAttackCityStage::comeback;
             goBack();
         } else {
             if(mEvent->activeInvasions()) {
                 const bool r = goToNearestSoldier();
                 if(r) {
-                    mStage = eDefendCityStage::fight;
+                    mStage = eDefendAttackCityStage::fight;
                     moveAround(nullptr, 15000);
                 } else {
-                    mStage = eDefendCityStage::goTo;
+                    mStage = eDefendAttackCityStage::goTo;
                 }
             } else {
-                mStage = eDefendCityStage::wait;
+                mStage = eDefendAttackCityStage::wait;
                 moveAround();
             }
         }
     }   break;
-    case eDefendCityStage::fight:
-        mStage = eDefendCityStage::comeback;
+    case eDefendAttackCityStage::fight:
+        mStage = eDefendAttackCityStage::comeback;
         goBack();
         break;
-    case eDefendCityStage::comeback:
-        mStage = eDefendCityStage::disappear;
+    case eDefendAttackCityStage::comeback:
+        mStage = eDefendAttackCityStage::disappear;
         disappear();
         break;
-    case eDefendCityStage::disappear:
+    case eDefendAttackCityStage::disappear:
         c->kill();
         break;
     }
     return true;
 }
 
-void eDefendCityAction::increment(const int by) {
-    if(mKilled >= mMaxKilled) {
-        return eGodMonsterAction::increment(by);
-    }
-    const int rangeAttackCheck = 500;
-    const int lookForEnemyCheck = 500;
-    int missileCheck = 200;
-
-    auto& brd = board();
-    const auto c = character();
-    if(c->dead()) return;
-    const auto cTile = c->tile();
-    if(!cTile) return;
-    const int tx = cTile->x();
-    const int ty = cTile->y();
-    const int range = this->range();
-    const auto tid = c->teamId();
-    const auto ct = c->type();
-
-    if(mAttack) {
-        if(range > 0 && mAttackTarget && mAttackTarget->tile()) {
-            bool isGod;
-            const auto gt = eGod::sCharacterToGodType(ct, &isGod);
-            if(isGod) {
-                missileCheck = eGod::sGodAttackTime(gt);
-            } else {
-                bool isHero;
-                const auto ht = eHero::sCharacterToHeroType(ct, &isHero);
-                if(isHero) {
-                    missileCheck = eHero::sHeroAttackTime(ht);
-                } else {
-                    bool isMonster;
-                    const auto mt = eMonster::sCharacterToMonsterType(ct, &isMonster);
-                    if(isMonster) {
-                        missileCheck = eMonster::sMonsterAttackTime(mt);
-                    } else {
-                        missileCheck = 200;
-                    }
-                }
-            }
-            mMissile += by;
-            if(mMissile > missileCheck) {
-                mMissile -= missileCheck;
-                const auto tt = mAttackTarget->tile();
-                spawnMissile(eCharacterActionType::fight2,
-                             ct, missileCheck, tt,
-                             nullptr, nullptr);
-            }
-        }
-        mAttackTime += by;
-        bool finishAttack = !mAttackTarget ||
-                            mAttackTarget->dead() ||
-                            mAttackTime > 1000;
-        if(mAttackTarget && !mAttackTarget->dead()) {
-            const double att = by*c->attack();
-            const bool d = mAttackTarget->defend(att);
-            if(d) finishAttack = true;
-        }
-        if(finishAttack) {
-            mAttack = false;
-            mAttackTarget.clear();
-            mAttackTime = 0;
-            mRangeAttack = rangeAttackCheck;
-            c->setActionType(eCharacterActionType::stand);
-            setCurrentAction(nullptr);
-            mLookForEnemy = lookForEnemyCheck;
-            mKilled++;
-            if(mKilled >= mMaxKilled) {
-                mStage = eDefendCityStage::comeback;
-                goBack();
-                return eGodMonsterAction::increment(by);
-            }
-        } else {
-            return;
-        }
-    }
-
-    const vec2d cpos{c->absX(), c->absY()};
-    for(int i = -1; i <= 1; i++) {
-        for(int j = -1; j <= 1; j++) {
-            const auto t = brd.tile(tx + i, ty + j);
-            if(!t) continue;
-            const auto& chars = t->characters();
-            for(const auto& cc : chars) {
-                if(!cc->isSoldier()) continue;
-                const auto cctid = cc->teamId();
-                if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
-                if(cc->dead()) continue;
-                const vec2d ccpos{cc->absX(), cc->absY()};
-                const vec2d posdif = ccpos - cpos;
-                const double dist = posdif.length();
-                if(dist > 1.) continue;
-                mAttackTarget = cc;
-                mAttack = true;
-                mAttackTime = 0;
-                c->setActionType(eCharacterActionType::fight);
-                mAngle = posdif.angle();
-                const auto o = sAngleOrientation(mAngle);
-                c->setOrientation(o);
-                return;
-            }
-        }
-    }
-
-    if(range > 0) {
-        mRangeAttack += by;
-        if(mRangeAttack > rangeAttackCheck) {
-            mRangeAttack -= rangeAttackCheck;
-            for(int i = -range; i <= range; i++) {
-                for(int j = -range; j <= range; j++) {
-                    const auto t = brd.tile(tx + i, ty + j);
-                    if(!t) continue;
-                    const auto& chars = t->characters();
-                    for(const auto& cc : chars) {
-                        if(!cc->isSoldier()) continue;
-                        const auto cctid = cc->teamId();
-                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
-                        if(cc->dead()) continue;
-                        const vec2d ccpos{cc->absX(), cc->absY()};
-                        const vec2d posdif = ccpos - cpos;
-                        mAttackTarget = cc;
-                        mAttack = true;
-                        mAttackTime = 0;
-                        c->setActionType(eCharacterActionType::fight2);
-                        mAngle = posdif.angle();
-                        const auto o = sAngleOrientation(mAngle);
-                        c->setOrientation(o);
-                        const auto ss = static_cast<eSoldier*>(cc.get());
-                        eSoldierAction::sSignalBeingAttack(ss, c, brd);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    mLookForEnemy += by;
-    if(mLookForEnemy > lookForEnemyCheck) {
-        mLookForEnemy -= lookForEnemyCheck;
-        const int erange = 3 + range;
-        bool found = false;
-        for(int i = -erange; i <= erange && !found; i++) {
-            for(int j = -erange; j <= erange && !found; j++) {
-                const int ttx = tx + i;
-                const int tty = ty + j;
-                const auto t = brd.tile(ttx, tty);
-                if(!t) continue;
-                const auto& chars = t->characters();
-                for(const auto& cc : chars) {
-                    if(!cc->isSoldier()) continue;
-                    const auto cctid = cc->teamId();
-                    if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
-                    if(cc->dead()) continue;
-                    found = true;
-                    goTo(ttx, tty, range);
-                    break;
-                }
-            }
-        }
-    }
-
-    eGodMonsterAction::increment(by);
-}
-
 void eDefendCityAction::read(eReadStream& src) {
     auto& board = eDefendCityAction::board();
-    eGodMonsterAction::read(src);
+    eDefendAttackCityAction::read(src);
     src.readGameEvent(&board, [this](eGameEvent* const e) {
         mEvent = static_cast<eInvasionEvent*>(e);
     });
-    src >> mStage;
-    mStartTile = src.readTile(board);
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mAttackTarget = c;
-    });
-    src >> mAttack;
-    src >> mLookForEnemy;
-    src >> mAttackTime;
-    src >> mRangeAttack;
-    src >> mAngle;
-    src >> mMissile;
-    src >> mKilled;
 }
 
 void eDefendCityAction::write(eWriteStream& dst) const {
-    eGodMonsterAction::write(dst);
+    eDefendAttackCityAction::write(dst);
     dst.writeGameEvent(mEvent);
-    dst << mStage;
-    dst.writeTile(mStartTile);
-    dst.writeCharacter(mAttackTarget);
-    dst << mAttack;
-    dst << mLookForEnemy;
-    dst << mAttackTime;
-    dst << mRangeAttack;
-    dst << mAngle;
-    dst << mMissile;
-    dst << mKilled;
 }
 
 void eDefendCityAction::goToTarget() {
@@ -276,59 +84,18 @@ void eDefendCityAction::goToTarget() {
     const auto cid = cityId();
     mEvent = board.invasionToDefend(cid);
     if(!mEvent) {
-        mStage = eDefendCityStage::comeback;
+        mStage = eDefendAttackCityStage::comeback;
         return;
     }
     const int ip = mEvent->invasionPoint();
     const auto tile = board.landInvasionTile(cid, ip);
     if(!tile) {
-        mStage = eDefendCityStage::comeback;
+        mStage = eDefendAttackCityStage::comeback;
         return;
     }
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board, this);
     goToTile(tile, tele);
-}
-
-void eDefendCityAction::goBack() {
-    auto& board = eDefendCityAction::board();
-    using eGTTT = eGoToTargetTeleport;
-    const auto tele = std::make_shared<eGTTT>(board, this);
-    goToTile(mStartTile, tele);
-}
-
-bool eDefendCityAction::goTo(const int fx, const int fy, const int dist) {
-    const auto c = character();
-    const auto t = c->tile();
-    const int sx = t->x();
-    const int sy = t->y();
-    const int dx = fx - sx;
-    const int dy = fy - sy;
-    if(sqrt(dx*dx + dy*dy) <= dist) return true;
-
-    const auto hha = [fx, fy, dist](eThreadTile* const t) {
-        const int dx = fx - t->x();
-        const int dy = fy - t->y();
-        return sqrt(dx*dx + dy*dy) <= dist;
-    };
-
-    const auto walkable =
-        eWalkableObject::sCreateDefault();
-
-    const auto a = e::make_shared<eMoveToAction>(c);
-
-    const stdptr<eCharacter> cptr(character());
-    const stdptr<eDefendCityAction> tptr(this);
-    a->setFoundAction([cptr, tptr]() {
-        if(!cptr) return;
-        cptr->setActionType(eCharacterActionType::walk);
-    });
-    a->start(hha, walkable, nullptr,
-             [fx, fy](eThreadBoard& board) {
-        return board.tile(fx, fy);
-    });
-    setCurrentAction(a);
-    return false;
 }
 
 bool eDefendCityAction::goToNearestSoldier() {
@@ -344,19 +111,4 @@ bool eDefendCityAction::goToNearestSoldier() {
     const int range = this->range();
     const bool rr = goTo(nX, nY, range);
     return rr;
-}
-
-int eDefendCityAction::range() const {
-    const auto c = character();
-    const auto ct = c->type();
-    switch(ct) {
-    case eCharacterType::atalanta:
-        return 5;
-    case eCharacterType::artemis:
-    case eCharacterType::apollo:
-        return 5;
-    default:
-        return 0;
-    }
-    return 0;
 }

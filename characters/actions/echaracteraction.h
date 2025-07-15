@@ -69,6 +69,7 @@ enum class eCharActionType {
     waitAction,
     sickDisgruntledAction,
     defendCityAction,
+    attackCityAction,
 
     dionysusFollowAction
 };

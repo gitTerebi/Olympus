@@ -152,6 +152,7 @@ SOURCES += \
         characters/actions/eanimalaction.cpp \
         characters/actions/earcheraction.cpp \
         characters/actions/eartisanaction.cpp \
+        characters/actions/eattackcityaction.cpp \
         characters/actions/ebuildaction.cpp \
         characters/actions/ecarttransporteraction.cpp \
         characters/actions/echaracteraction.cpp \
@@ -161,6 +162,7 @@ SOURCES += \
         characters/actions/ecollectaction.cpp \
         characters/actions/ecollectresourceaction.cpp \
         characters/actions/ecomplexaction.cpp \
+        characters/actions/edefendattackcityaction.cpp \
         characters/actions/edefendcityaction.cpp \
         characters/actions/edieaction.cpp \
         characters/actions/edionysusfollowaction.cpp \
@@ -789,6 +791,7 @@ HEADERS += \
     characters/actions/eanimalaction.h \
     characters/actions/earcheraction.h \
     characters/actions/eartisanaction.h \
+    characters/actions/eattackcityaction.h \
     characters/actions/ebuildaction.h \
     characters/actions/ecarttransporteraction.h \
     characters/actions/echaracteraction.h \
@@ -797,6 +800,7 @@ HEADERS += \
     characters/actions/ecollectaction.h \
     characters/actions/ecollectresourceaction.h \
     characters/actions/ecomplexaction.h \
+    characters/actions/edefendattackcityaction.h \
     characters/actions/edefendcityaction.h \
     characters/actions/edieaction.h \
     characters/actions/edionysusfollowaction.h \
