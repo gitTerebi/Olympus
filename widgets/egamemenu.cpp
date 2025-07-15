@@ -41,10 +41,11 @@ struct eSubButtonData {
     std::vector<eSPR> fSpr = {};
 };
 
-void tradePosts(const eCityId cid, std::vector<eSPR>& cs, eGameBoard& board) {
+void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
+                eGameBoard& board, const bool showAllPossibleBuildings) {
     const auto pid = board.cityIdToPlayerId(cid);
     const auto ppid = board.personPlayer();
-    if(pid != ppid) return;
+    if(pid != ppid && !showAllPossibleBuildings) return;
     const auto& wrld = board.getWorldBoard();
     int i = -1;
     for(const auto& c : wrld->cities()) {
@@ -94,7 +95,7 @@ public:
             vis = showAllPossibleBuildings;
         } else if(mMode == eBuildingMode::tradePost) {
             std::vector<eSPR> cs;
-            tradePosts(cid, cs, mBoard);
+            tradePosts(cid, cs, mBoard, showAllPossibleBuildings);
             vis = !cs.empty();
         } else if(mMode == eBuildingMode::palace) {
             vis = !mBoard.hasPalace(cid);
@@ -503,7 +504,7 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto t3 = [this, cmx, cmy]() {
         std::vector<eSPR> cs;
         const auto cid = mGW->viewedCity();
-        tradePosts(cid, cs, *mBoard);
+        tradePosts(cid, cs, *mBoard, mShowAllPossibleBuildings);
         openBuildWidget(cmx, cmy, cs);
     };
 
