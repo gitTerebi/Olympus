@@ -64,6 +64,19 @@ bool eWorldCity::isAlly() const {
             mRel == eForeignCityRelationship::ally;
 }
 
+bool eWorldCity::isOnBoardColony() const {
+    return mIsOnBoard && isColony();
+}
+
+bool eWorldCity::isOnBoardNeutral() const {
+    return mIsOnBoard && (mPlayerId == ePlayerId::neutralFriendly ||
+            mPlayerId == ePlayerId::neutralAggresive);
+}
+
+bool eWorldCity::isOnBoardEnemy() const {
+    return mIsOnBoard && mRel == eForeignCityRelationship::rival;
+}
+
 std::string eWorldCity::sDirectionName(const eDistantDirection d) {
     switch(d) {
     case eDistantDirection::none: return "none";

@@ -16,11 +16,13 @@ void eWorldBoard::nextYear() {
     }
 }
 
-std::vector<stdsptr<eWorldCity>> eWorldBoard::getTribute() const {
+std::vector<stdsptr<eWorldCity>> eWorldBoard::getTribute(
+        const ePlayerId pid) const {
     std::vector<stdsptr<eWorldCity>> r;
     for(const auto& c : mCities) {
         if(c->isCurrentCity()) continue;
         if(!c->active()) continue;
+        if(c->isOnBoard() && c->playerId() == pid) continue;
         const auto type = c->type();
         const auto rel = c->relationship();
         const bool e = type == eCityType::colony ||

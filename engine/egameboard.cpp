@@ -798,30 +798,30 @@ void eGameBoard::requestAid(const stdsptr<eWorldCity>& c) {
     addRootGameEvent(e);
 }
 
-void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
+void eGameBoard::tributeFrom(const ePlayerId pid,
+                             const stdsptr<eWorldCity>& c,
                              const bool postpone) {
     const auto type = c->tributeType();
     const int count = c->tributeCount();
 
-    eEventData ed(personPlayer());
+    eEventData ed(pid);
     ed.fType = eMessageEventType::requestTributeGranted;
     ed.fCity = c;
     if(type == eResourceType::drachmas) {
-        ed.fA0 = [this, c, count]() { // accept
-            const auto pid = personPlayer();
+        ed.fA0 = [this, c, count, pid]() { // accept
             const auto p = boardPlayerWithId(pid);
             if(p) p->incDrachmas(count);
             return count;
         };
     } else {
-        const auto cids = personPlayerCitiesOnBoard();
+        const auto cids = playerCitiesOnBoard(pid);
         for(const auto cid : cids) {
             ed.fCSpaceCount[cid] = spaceForResource(cid, type);
             ed.fCityNames[cid] = cityName(cid);
-            ed.fCCA0[cid] = [this, cid, c, type, count]() { // accept
+            ed.fCCA0[cid] = [this, cid, c, type, count, pid]() { // accept
                 const int a = addResource(cid, type, count);
                 if(a == count) return;
-                eEventData ed(personPlayer());
+                eEventData ed(pid);
                 ed.fType = eMessageEventType::resourceGranted;
                 ed.fCity = c;
                 ed.fResourceType = type;
@@ -833,8 +833,8 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
     ed.fResourceType = type;
     ed.fResourceCount = count;
     if(postpone) {
-        ed.fA1 = [this, c, type, count]() { // postpone
-            eEventData ed(personPlayer());
+        ed.fA1 = [this, c, type, count, pid]() { // postpone
+            eEventData ed(pid);
             ed.fType = eMessageEventType::resourceGranted;
             ed.fCity = c;
             ed.fResourceType = type;
@@ -850,8 +850,8 @@ void eGameBoard::tributeFrom(const stdsptr<eWorldCity>& c,
             addRootGameEvent(e);
         };
     }
-    ed.fA2 = [this, c, type, count]() { // decline
-        eEventData ed(personPlayer());
+    ed.fA2 = [this, c, type, count, pid]() { // decline
+        eEventData ed(pid);
         ed.fType = eMessageEventType::resourceGranted;
         ed.fCity = c;
         ed.fResourceType = type;
@@ -1226,6 +1226,7 @@ eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
     const auto& cts = mWorldBoard->cities();
     for(const auto& c : cts) {
         if(!c->active()) continue;
+        if(c->isOnBoard() && c->playerId() == pid) continue;
         const auto type = c->type();
         const auto rel = c->relationship();
         const bool e = type == eCityType::colony ||
@@ -2255,10 +2256,11 @@ void eGameBoard::incTime(const int by) {
     }
     if(nextYear || true) {
         mWorldBoard->nextYear();
-        const auto cs = mWorldBoard->getTribute();
+        const auto ppid = personPlayer();
+        const auto cs = mWorldBoard->getTribute(ppid);
         for(const auto& c : cs) {
             if(c->conqueredByRival()) continue;
-            tributeFrom(c, true);
+            tributeFrom(ppid, c, true);
         }
     }
     const auto chars = mCharacters;

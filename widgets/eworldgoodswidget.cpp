@@ -160,7 +160,7 @@ void eWorldGoodsWidget::setCity(const stdsptr<eWorldCity>& c) {
     const bool nes = sells && !sells->empty();
     mBuysWidget->setVisible(neb && !cc);
     mSellsWidget->setVisible(nes && !cc);
-    mGoodsLabel->setVisible(c.get() && !cc);
+    mGoodsLabel->setVisible(c.get() && !cc && (neb || nes));
     mOrdersButton->setVisible((neb || nes) && !cc);
     updateTradeY();
 

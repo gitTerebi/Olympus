@@ -202,7 +202,7 @@ void eWorldWidget::openRequestDialog() {
             ct->incAttitude(-10);
         }
         mCity->incAttitude(-10);
-        mWM->updateRelationshipLabel();
+        mWM->updateLabels();
         d->deleteLater();
     };
     const auto requestAid = [this, d]() {
@@ -217,7 +217,7 @@ void eWorldWidget::openRequestDialog() {
             ct->incAttitude(-10);
         }
         mCity->incAttitude(-10);
-        mWM->updateRelationshipLabel();
+        mWM->updateLabels();
 
         mBoard->requestAid(mCity);
 

@@ -169,6 +169,9 @@ public:
     bool isParentCity() const;
     bool isRival() const;
     bool isAlly() const;
+    bool isOnBoardColony() const;
+    bool isOnBoardNeutral() const;
+    bool isOnBoardEnemy() const;
 
     static std::string sNationalityName(const eNationality type);
     void setNationality(const eNationality n) { mNationality = n; }

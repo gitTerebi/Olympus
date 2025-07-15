@@ -18,7 +18,8 @@ void ePayTributeEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    board->tributeFrom(mCity, false);
+    const auto pid = playerId();
+    board->tributeFrom(pid, mCity, false);
 }
 
 std::string ePayTributeEvent::longName() const {

@@ -240,57 +240,9 @@ void eWorldMenu::setCity(const stdsptr<eWorldCity>& c) {
     }
 
     mCity = c;
-    const bool cc = c ? c->isCurrentCity() : false;
 
-    bool vassalOrColony = false;
-    bool distant = false;
-    bool onBoard = false;
-    bool onBoardEnemy = false;
-    bool onBoardNeutral = false;
-    bool onBoardPlayerCity = false;
-
-    if(c) {
-        const auto cpid = c->playerId();
-        const auto rel = c->relationship();
-        const auto type = c->type();
-        vassalOrColony = (type == eCityType::foreignCity &&
-                          rel == eForeignCityRelationship::vassal) ||
-                         type == eCityType::colony;
-        distant = type == eCityType::distantCity;
-        onBoard = c->isOnBoard();
-        onBoardEnemy = onBoard && rel == eForeignCityRelationship::rival;
-        onBoardNeutral = onBoard && (cpid == ePlayerId::neutralFriendly ||
-                         cpid == ePlayerId::neutralAggresive);
-        onBoardPlayerCity = onBoard && cpid == mBoard->personPlayer();
-        updateRelationshipLabel();
-        mNameLabel->setText(c->name());
-        const auto leader = eLanguage::zeusText(44, 328);
-        if(onBoardNeutral) {
-            mAttitudeLabel->setText("");
-            mRelationshipLabel->setText("");
-            mLeaderLabel->setText("");
-        } else {
-            mLeaderLabel->setText(leader + " " + c->leader());
-        }
-    } else {
-        mAttitudeLabel->setText("");
-        mRelationshipLabel->setText("");
-        mNameLabel->setText("");
-        mLeaderLabel->setText("");
-    }
-
-    mRequestButton->setEnabled(c.get() && !distant && !cc &&
-                               !onBoardPlayerCity && !onBoardNeutral);
-    mFulfillButton->setEnabled(c.get() && !distant && !cc &&
-                               !onBoardPlayerCity && !onBoardNeutral);
-    mGiftButton->setEnabled(c.get() && !distant && !cc &&
-                            !onBoardPlayerCity && !onBoardNeutral);
-    mRaidButton->setEnabled(c.get() && !vassalOrColony &&
-                            !distant && !cc && !onBoard);
-    mConquerButton->setEnabled(c.get() &&
-                               (!vassalOrColony || c->conqueredByRival()) &&
-                               !distant && !cc && !onBoardPlayerCity &&
-                               !onBoardNeutral);
+    updateButtonsEnabled();
+    updateLabels();
 
     if(mBoard) {
         const auto pid = mBoard->personPlayer();
@@ -310,14 +262,34 @@ void eWorldMenu::setText(const std::string& text) {
     mTextLabel->show();
 }
 
-void eWorldMenu::updateRelationshipLabel() const {
+void eWorldMenu::updateLabels() const {
     if(!mCity) {
-        mRelationshipLabel->setText("");
         mAttitudeLabel->setText("");
+        mRelationshipLabel->setText("");
+        mNameLabel->setText("");
+        mLeaderLabel->setText("");
         return;
     }
 
-    if(mCity->isCurrentCity()) {
+    const auto rel = mCity->relationship();
+    const auto type = mCity->type();
+    const bool cc = mCity->isCurrentCity();
+    const bool onBoardNeutral = mCity->isOnBoardNeutral();
+    const bool onBoardColony = mCity->isOnBoardColony();
+    mNameLabel->setText(mCity->name());
+    const auto leader = eLanguage::zeusText(44, 328);
+    if(onBoardNeutral) {
+        mAttitudeLabel->setText("");
+        mRelationshipLabel->setText("");
+        mLeaderLabel->setText("");
+    } else if(onBoardColony) {
+        mAttitudeLabel->setText("");
+        mLeaderLabel->setText("");
+    } else {
+        mLeaderLabel->setText(leader + " " + mCity->leader());
+    }
+
+    if(cc || onBoardColony) {
         mAttitudeLabel->setText("");
     } else {
         const auto at = mCity->attitudeClass();
@@ -330,11 +302,11 @@ void eWorldMenu::updateRelationshipLabel() const {
     {
         int group = -1;
         int string = -1;
-        if(mCity->isCurrentCity()) {
+        if(cc) {
             group = 47;
             string = 0;
         } else {
-            switch(mCity->type()) {
+            switch(type) {
             case eCityType::parentCity:
                 group = 39;
                 string = 0;
@@ -344,7 +316,7 @@ void eWorldMenu::updateRelationshipLabel() const {
                 string = 3;
                 break;
             case eCityType::foreignCity: {
-                switch(mCity->relationship()) {
+                switch(rel) {
                 case eForeignCityRelationship::vassal:
                     group = 253;
                     string = 2;
@@ -378,5 +350,38 @@ void eWorldMenu::updateRelationshipLabel() const {
         mRelationshipLabel->setText(relStr);
         mRelationshipLabel->fitContent();
         mRelationshipLabel->align(eAlignment::hcenter);
+    }
+}
+
+void eWorldMenu::updateButtonsEnabled() const {
+    if(!mCity) {
+        mRequestButton->setEnabled(false);
+        mFulfillButton->setEnabled(false);
+        mGiftButton->setEnabled(false);
+        mRaidButton->setEnabled(false);
+        mConquerButton->setEnabled(false);
+    } else {
+        const bool cc = mCity->isCurrentCity();
+        const auto rel = mCity->relationship();
+        const auto type = mCity->type();
+        const bool vassalOrColony = (type == eCityType::foreignCity &&
+                                     rel == eForeignCityRelationship::vassal) ||
+                                    type == eCityType::colony;
+        const bool distant = type == eCityType::distantCity;
+        const bool onBoard = mCity->isOnBoard();
+        const bool onBoardNeutral = mCity->isOnBoardNeutral();
+        const bool onBoardPlayerCity = mCity->isOnBoardColony();
+
+        mRequestButton->setEnabled(!distant && !cc &&
+                                   !onBoardPlayerCity && !onBoardNeutral);
+        mFulfillButton->setEnabled(!distant && !cc &&
+                                   !onBoardPlayerCity && !onBoardNeutral);
+        mGiftButton->setEnabled(!distant && !cc &&
+                                !onBoardPlayerCity && !onBoardNeutral);
+        mRaidButton->setEnabled(!vassalOrColony &&
+                                !distant && !cc && !onBoard);
+        mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival()) &&
+                                   !distant && !cc && !onBoardPlayerCity &&
+                                   !onBoardNeutral);
     }
 }

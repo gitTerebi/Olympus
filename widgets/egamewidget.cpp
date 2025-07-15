@@ -690,6 +690,9 @@ void eGameWidget::showBuyCity(const eCityId cid) {
     mBuyCityButton->setPressAction([this, cid, price, ppid]() {
         const int d = mBoard->drachmas(ppid);
         if(d >= price) {
+            const auto wboard = mBoard->getWorldBoard();
+            const auto wc = wboard->cityWithId(cid);
+            wc->setState(eCityState::active);
             mBoard->moveCityToPlayer(cid, ppid);
             mBoard->incDrachmas(ppid, -price);
             hideBuyCity();

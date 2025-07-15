@@ -53,7 +53,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     const bool editor = mWorldBoard->editorMode();
 
     const auto handleCity = [&](const stdsptr<eWorldCity>& ct) {
-        if(!mSelectColonyMode && !editor && !ct->active()) return;
+        if(!mSelectColonyMode && !editor &&
+           (!ct->active() && !ct->isOnBoard())) return;
         if(mSelectColonyMode) {
             const bool c = eVectorHelpers::contains(mColonySelection, ct);
             if(!c) return;
@@ -164,7 +165,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         const int flagY = y + tex->height()/2;
         if(ct->isParentCity()) {
             p.drawTexture(flagX, flagY, texs.fMainCityFlag, flagAl);
-        } else if(ct->isVassal() || ct->isColony()) {
+        } else if(ct->isVassal() || (ct->isColony() && ct->active())) {
             p.drawTexture(flagX, flagY, texs.fEmpireCityFlag, flagAl);
         } else if(ct->isAlly()) {
             const auto& coll = texs.fAllyCityFlag;
@@ -177,7 +178,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         if(ct != hc &&
            t != eCityType::destroyedCity &&
            t != eCityType::distantCity &&
-           t != eCityType::enchantedPlace) {
+           t != eCityType::enchantedPlace &&
+           (editor || ct->active())) {
             const auto& aColl = texs.fCityArmy;
             const auto& wColl = texs.fCityWealth;
             const int s = editor ? ct->militaryStrength() :

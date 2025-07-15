@@ -40,6 +40,7 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
     mTypeIcon->hide();
     mTextLabel->hide();
     if(c) {
+        if(c->isOnBoardColony()) return;
         const bool isDist = c->isDistant();
         if(isDist) {
             mAlliesLabel->setText(eLanguage::zeusText(44, 325));

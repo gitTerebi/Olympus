@@ -29,7 +29,8 @@ public:
     void nextMonth(eGameBoard* const board);
     void nextYear();
 
-    std::vector<stdsptr<eWorldCity>> getTribute() const;
+    std::vector<stdsptr<eWorldCity>> getTribute(
+            const ePlayerId pid) const;
 
     void setHomeCity(const stdsptr<eWorldCity>& hc);
     void addCity(const stdsptr<eWorldCity>& c);

@@ -26,7 +26,8 @@ public:
     void setCity(const stdsptr<eWorldCity>& c);
     void setWorldBoard(eWorldBoard* const b);
     void setText(const std::string& text);
-    void updateRelationshipLabel() const;
+    void updateLabels() const;
+    void updateButtonsEnabled() const;
 private:
     eWorldBoard* mBoard = nullptr;
 
