@@ -15,6 +15,7 @@ struct eAIBuilding {
     eResourceType fAccept = static_cast<eResourceType>(0);
     std::map<eResourceType, int> fSpace;
     std::vector<ePatrolGuide> fGuides;
+    bool fGuidesBothDirections;
     eDiagonalOrientation fO;
     eCityId fTradingPartner;
     eTradePostType fTradePostType;

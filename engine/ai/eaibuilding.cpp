@@ -24,6 +24,7 @@ void eAIBuilding::read(eReadStream& src) {
         src >> pg.fX;
         src >> pg.fY;
     }
+    src >> fGuidesBothDirections;
 
     src >> fO;
 
@@ -50,6 +51,7 @@ void eAIBuilding::write(eWriteStream& dst) const {
         dst << pg.fX;
         dst << pg.fY;
     }
+    dst << fGuidesBothDirections;
 
     dst << fO;
 
