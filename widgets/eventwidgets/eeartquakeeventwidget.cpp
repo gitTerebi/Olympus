@@ -35,7 +35,7 @@ void eEartquakeEventWidget::initialize(eEarthquakeEvent* const e) {
     disasterPointButton->setValueChangeAction([e](const int p) {
         e->setDisasterPoint(p - 1);
     });
-    disasterPointButton->initialize(0, 999);
+    disasterPointButton->initialize(1, 999);
     disasterPointButton->setValue(e->disasterPoint() + 1);
     disasterPointButtonL->setup(eLanguage::text("disaster_point:"), disasterPointButton);
     addWidget(disasterPointButtonL);

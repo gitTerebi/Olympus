@@ -74,7 +74,7 @@ void eInvasionEventWidget::initialize(eInvasionEvent* const e) {
     invasionPointButton->setValueChangeAction([e](const int p) {
         e->setInvasionPoint(p - 1);
     });
-    invasionPointButton->initialize(0, 999);
+    invasionPointButton->initialize(1, 999);
     invasionPointButton->setValue(e->invasionPoint() + 1);
     invasionPointButtonL->setup(eLanguage::text("invasion_point:"), invasionPointButton);
     addWidget(invasionPointButtonL);

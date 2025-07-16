@@ -29,7 +29,7 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     invasionPointButton->setValueChangeAction([e](const int p) {
         e->setPointId(p - 1);
     });
-    invasionPointButton->initialize(0, 999);
+    invasionPointButton->initialize(1, 999);
     invasionPointButton->setValue(e->pointId() + 1);
     invasionPointButtonL->setup(eLanguage::text("invasion_point:"), invasionPointButton);
     addWidget(invasionPointButtonL);
