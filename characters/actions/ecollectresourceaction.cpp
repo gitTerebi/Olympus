@@ -106,6 +106,8 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
         break;
     case eTileActionType::masonry: {
         const auto r = e::make_shared<eCartTransporter>(board());
+        const auto cid = tile->cityId();
+        r->setBothCityIds(cid);
         r->changeTile(tile);
         r->setBigTrailer(true);
         r->setResource(eResourceType::marble, 1);
