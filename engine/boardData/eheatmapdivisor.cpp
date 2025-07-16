@@ -32,6 +32,7 @@ void eHeatMapDivisor::divide(const int dim) {
         for(int y = mdy; y < mdy + mh; y += dim) {
             const int w = std::min(mdx + mw - x, dim);
             const int h = std::min(mdy + mh - y, dim);
+            bool found = false;
             double maxHeat = -DBL_MAX;
             int maxHeatX = x;
             int maxHeatY = y;
@@ -44,10 +45,12 @@ void eHeatMapDivisor::divide(const int dim) {
                             maxHeat = h;
                             maxHeatX = xx;
                             maxHeatY = yy;
+                            found = true;
                         }
                     }
                 }
             }
+            if(!found) continue;
             eHeatMapRectangle div(maxHeat,
                                   maxHeatX,
                                   maxHeatY,
