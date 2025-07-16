@@ -44,6 +44,7 @@
 #include "characters/ecattle.h"
 
 #include "buildings/earmory.h"
+#include "buildings/esculpturestudio.h"
 #include "buildings/eolivepress.h"
 #include "buildings/ewinery.h"
 #include "buildings/eartisansguild.h"
@@ -413,6 +414,12 @@ bool gBuild(const eAIBuilding& b,
     case eBuildingType::armory: {
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eArmory>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::sculptureStudio: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eSculptureStudio>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
