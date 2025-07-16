@@ -188,10 +188,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         eDiagonalOrientation o;
         src >> o;
 
-        int ctid;
+        eCityId ctid;
         src >> ctid;
-        const auto& cts = wrld->cities();
-        const auto ct = cts[ctid];
+        const auto ct = wrld->cityWithId(ctid);
 
         const auto tp = e::make_shared<eTradePost>(board, *ct, cid, tpt);
         b = tp;
