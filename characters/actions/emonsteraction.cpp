@@ -86,13 +86,16 @@ void eMonsterAction::write(eWriteStream& dst) const {
 
 eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
     const auto c = character();
+    const auto cid = c->onCityId();
     auto& board = c->getBoard();
     eTile* plainTile = nullptr;
     const auto prcsTile = [&](const int i, const int j) {
         const int tx = rdx + i;
         const int ty = rdy + j;
-        const auto tt = board.dtile(tx, ty);
+        const auto tt = board.tile(tx, ty);
         if(!tt) return false;
+        const auto ttcid = tt->cityId();
+        if(ttcid != cid) return false;
         if(!plainTile && tt->walkable()) {
             plainTile = tt;
             return true;
@@ -109,12 +112,13 @@ eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
 
 void eMonsterAction::randomPlaceOnBoard() {
     const auto c = character();
+    const auto cid = c->onCityId();
     auto& board = c->getBoard();
-    const int w = board.width();
-    const int h = board.height();
-    const int rdx = eRand::rand() % w;
-    const int rdy = eRand::rand() % h;
-    const auto tile = closestEmptySpace(rdx, rdy);
+    const auto city = board.boardCityWithId(cid);
+    const auto rtile = city->randomTile();
+    const int tx = rtile->x();
+    const int ty = rtile->y();
+    const auto tile = closestEmptySpace(tx, ty);
     if(!tile) return;
     c->changeTile(tile);
     mHomeTile = tile;

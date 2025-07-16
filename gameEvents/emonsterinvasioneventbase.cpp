@@ -51,7 +51,7 @@ eMonster* eMonsterInvasionEventBase::triggerBase() const {
 
     const auto a = e::make_shared<eMonsterAction>(monster.get());
     monster->setAction(a);
-    auto tile = board->monsterTile(cid, mPointId);
+    const auto tile = board->monsterTile(cid, mPointId);
     if(tile) {
         const int tx = tile->x();
         const int ty = tile->y();
