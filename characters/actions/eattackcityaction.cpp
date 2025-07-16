@@ -13,6 +13,18 @@ eAttackCityAction::eAttackCityAction(eCharacter* const c) :
     }
 }
 
+void eAttackCityAction::increment(const int by) {
+    const auto c = character();
+    const auto at = c->actionType();
+    if(at == eCharacterActionType::walk) {
+        const int lookForGodCheck = 1000;
+        const int godFightRange = eNumbers::sGodAttackGodFightRange;
+        lookForGodAttack(by, mLookForGod, lookForGodCheck, godFightRange);
+    }
+
+    eDefendAttackCityAction::increment(by);
+}
+
 bool eAttackCityAction::decide() {
     const auto c = character();
     switch(mStage) {
@@ -60,7 +72,19 @@ bool eAttackCityAction::decide() {
     return true;
 }
 
+void eAttackCityAction::read(eReadStream& src) {
+    eDefendAttackCityAction::read(src);
+    src >> mLookForGod;
+}
+
+void eAttackCityAction::write(eWriteStream& dst) const {
+    eDefendAttackCityAction::write(dst);
+    dst << mLookForGod;
+}
+
 void eAttackCityAction::invasionFinished() {
+    if(mStage == eDefendAttackCityStage::comeback ||
+       mStage == eDefendAttackCityStage::disappear) return;
     mStage = eDefendAttackCityStage::comeback;
     goBack();
 }

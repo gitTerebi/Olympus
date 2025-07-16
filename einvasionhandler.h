@@ -9,6 +9,7 @@
 class eGameBoard;
 class eInvasionEvent;
 class eTile;
+class eCharacter;
 class eReadStream;
 class eWriteStream;
 class eWorldCity;
@@ -80,6 +81,8 @@ private:
                             const eCityId cid,
                             std::vector<eSoldierBanner*>& solds);
 
+    void tellHeroesAndGodsToGoBack() const;
+
     eGameBoard& mBoard;
     eCityId mTargetCity;
     stdsptr<eWorldCity> mCity;
@@ -88,6 +91,7 @@ private:
     eTile* mTile = nullptr;
     eInvasionStage mStage = eInvasionStage::spread;
     std::vector<stdsptr<eSoldierBanner>> mBanners;
+    std::vector<stdptr<eCharacter>> mHeroesAndGods;
 
     int mWait = 0;
 };

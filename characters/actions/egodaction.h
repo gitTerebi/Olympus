@@ -511,23 +511,6 @@ public:
                          const eGodSound sound,
                          const stdsptr<eGodAct>& act,
                          const stdsptr<eCharActFunc>& finishAttackA = nullptr);
-    void spawnGodMultipleMissiles(
-            const eCharacterActionType at,
-            const eCharacterType chart,
-            const eMissileTarget& target,
-            const eGodSound sound,
-            const stdsptr<eGodAct>& playHitSound,
-            const stdsptr<eCharActFunc>& finishA,
-            const int nMissiles);
-    void spawnGodTimedMissiles(const eCharacterActionType at,
-            const eCharacterType chart,
-            eTile* const target,
-            const eGodSound sound,
-            const stdsptr<eGodAct>& playHitSound,
-            const stdsptr<eCharActFunc>& finishA,
-            const int time);
-
-    void fightGod(eGod* const g, const stdsptr<eCharActFunc>& finishAttackA);
 
     void goBackToSanctuary();
     void goToTarget();

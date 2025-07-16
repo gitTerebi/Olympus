@@ -9,7 +9,9 @@
 
 #include "textures/edestructiontextures.h"
 
+class eGod;
 class eGodAct;
+enum class eGodSound;
 
 enum class eFindFailFuncType {
     teleport,
@@ -122,6 +124,26 @@ public:
                             const stdsptr<eCharActFunc>& finishA,
                             const int time);
 
+    bool lookForGodAttack(const int dtime, int& time,
+                          const int freq, const int range);
+    void fightGod(eGod* const g, const stdsptr<eCharActFunc>& finishAttackA);
+
+    void spawnGodMultipleMissiles(
+            const eCharacterActionType at,
+            const eCharacterType chart,
+            const eMissileTarget& target,
+            const eGodSound sound,
+            const stdsptr<eGodAct>& playHitSound,
+            const stdsptr<eCharActFunc>& finishA,
+            const int nMissiles);
+    void spawnGodTimedMissiles(const eCharacterActionType at,
+            const eCharacterType chart,
+            eTile* const target,
+            const eGodSound sound,
+            const stdsptr<eGodAct>& playHitSound,
+            const stdsptr<eCharActFunc>& finishA,
+            const int time);
+
     void patrol(const stdsptr<eCharActFunc>& finishAct = nullptr,
                 const int dist = 100);
     void goToNearestRoad(const stdsptr<eCharActFunc>& finishAct = nullptr,
@@ -147,6 +169,43 @@ private:
     void hermesRun(const bool appear);
 
     std::vector<ePausedAction> mPausedActions;
+};
+
+class eGAA_fightFinish : public eCharActFunc {
+public:
+    eGAA_fightFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::GAA_fightFinish) {}
+    eGAA_fightFinish(eGameBoard& board, eGodMonsterAction* const winnerA,
+                     eGodMonsterAction* const loserA, const eGodType wt,
+                     const eGodType lt) :
+        eCharActFunc(board, eCharActFuncType::GAA_fightFinish),
+        mWinnerPtr(winnerA), mLoserPtr(loserA),
+        mWt(wt), mLt(lt) {}
+
+    void call() override;
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mWinnerPtr = static_cast<eGodMonsterAction*>(ca);
+        });
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mLoserPtr = static_cast<eGodMonsterAction*>(ca);
+        });
+        src >> mWt;
+        src >> mLt;
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mWinnerPtr);
+        dst.writeCharacterAction(mLoserPtr);
+        dst << mWt;
+        dst << mLt;
+    }
+private:
+    stdptr<eGodMonsterAction> mWinnerPtr;
+    stdptr<eGodMonsterAction> mLoserPtr;
+    eGodType mWt;
+    eGodType mLt;
 };
 
 class eGMA_patrolFailFail : public eCharActFunc {

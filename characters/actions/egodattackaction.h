@@ -28,8 +28,6 @@ private:
     bool lookForTargetedAttack(const int dtime, int& time,
                                const int freq, const int range);
 
-    bool lookForGodAttack(const int dtime, int& time,
-                          const int freq, const int range);
     void goToTarget();
     stdsptr<eObsticleHandler> obsticleHandler();
     void destroyBuilding(eBuilding* const b);
@@ -48,7 +46,7 @@ class eGAA_loserDisappearFinish : public eCharActFunc {
 public:
     eGAA_loserDisappearFinish(eGameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish) {}
-    eGAA_loserDisappearFinish(eGameBoard& board, eGodAction* const ca) :
+    eGAA_loserDisappearFinish(eGameBoard& board, eGodMonsterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish),
         mLoserPtr(ca) {}
 
@@ -69,66 +67,9 @@ public:
         dst.writeCharacterAction(mLoserPtr);
     }
 private:
-    stdptr<eGodAction> mLoserPtr;
+    stdptr<eGodMonsterAction> mLoserPtr;
 };
 
-class eGAA_fightFinish : public eCharActFunc {
-public:
-    eGAA_fightFinish(eGameBoard& board) :
-        eCharActFunc(board, eCharActFuncType::GAA_fightFinish) {}
-    eGAA_fightFinish(eGameBoard& board, eGodAction* const winnerA,
-                     eGodAction* const loserA, const eGodType wt,
-                     const eGodType lt) :
-        eCharActFunc(board, eCharActFuncType::GAA_fightFinish),
-        mWinnerPtr(winnerA), mLoserPtr(loserA),
-        mWt(wt), mLt(lt) {}
-
-    void call() override {
-        auto& board = this->board();
-        ePlayerCityTarget target;
-        if(mWinnerPtr) mWinnerPtr->resumeAction();
-        if(mLoserPtr) {
-            const auto loser = mLoserPtr->character();
-            target = ePlayerCityTarget(loser->onCityId());
-            const auto loserGod = static_cast<eGod*>(loser);
-            const auto att = loserGod->attitude();
-            if(att == eGodAttitude::worshipped) {
-                const auto type = loserGod->type();
-                const auto cid = loserGod->cityId();
-                const auto s = board.sanctuary(cid, type);
-                if(s) s->setSpawnWait(40000);
-            }
-            const auto finish = std::make_shared<eGAA_loserDisappearFinish>(
-                                    board, mLoserPtr);
-            mLoserPtr->disappear(true, finish);
-        }
-        const auto tip = eGod::sFightResultString(mWt, mLt);
-        board.showTip(target, tip);
-    }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mWinnerPtr = static_cast<eGodAction*>(ca);
-        });
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mLoserPtr = static_cast<eGodAction*>(ca);
-        });
-        src >> mWt;
-        src >> mLt;
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mWinnerPtr);
-        dst.writeCharacterAction(mLoserPtr);
-        dst << mWt;
-        dst << mLt;
-    }
-private:
-    stdptr<eGodAction> mWinnerPtr;
-    stdptr<eGodAction> mLoserPtr;
-    eGodType mWt;
-    eGodType mLt;
-};
 
 class eGAA_destroyBuildingFinish : public eCharActFunc {
 public:

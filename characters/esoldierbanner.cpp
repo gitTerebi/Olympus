@@ -377,8 +377,9 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
                             eGameBoard& board, const int dist,
                             const int minDistFromEdge) {
     if(bs.empty()) return;
+    const auto onCid = bs[0]->onCityId();
     const auto tt = board.tile(ctx, cty);
-    if(tt) {
+    if(tt && tt->cityId() == onCid) {
         const auto b = tt->underBuilding();
         if(b) {
             const auto bt = b->type();
@@ -424,6 +425,8 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
         const int ty = cty + j;
         const auto tt = board.tile(tx, ty);
         if(!tt) return false;
+        const auto ttCid = tt->cityId();
+        if(ttCid != onCid) return false;
         const int dtx = tt->dx();
         const int dty = tt->dy();
         if(dtx < minDistFromEdge) return false;

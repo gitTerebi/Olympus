@@ -41,6 +41,8 @@
 #include "characters/eamazon.h"
 #include "characters/eareswarrior.h"
 
+#include "characters/actions/eattackcityaction.h"
+
 #include "engine/eevent.h"
 
 #include "etilehelper.h"
@@ -48,6 +50,8 @@
 
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/eplayerconquestevent.h"
+
+#include "eiteratesquare.h"
 
 eInvasionHandler::eInvasionHandler(eGameBoard& board,
                                    const eCityId targetCity,
@@ -344,8 +348,47 @@ void eInvasionHandler::initialize(eTile* const tile,
                                 cid, nat, solds);
     }
 
+    const auto tileCid = tile->cityId();
     const int tx = tile->x();
     const int ty = tile->y();
+
+    const auto prcsAttack = [&](const stdsptr<eCharacter>& c) {
+        c->setOnCityId(tileCid);
+        c->setCityId(cid);
+        bool found = false;
+        const auto prcsTile = [&](const int dx, const int dy) {
+            const int x = tx + dx;
+            const int y = ty + dy;
+            const auto t = mBoard.tile(x, y);
+            if(!t) return false;
+            const auto tCid = t->cityId();
+            if(tCid != tileCid) return false;
+            const auto& chars = t->characters();
+            if(!chars.empty()) return false;
+            c->changeTile(t);
+            found = true;
+            return true;
+        };
+        for(int k = 0; !found; k++) {
+            (void)found;
+            eIterateSquare::iterateSquare(k, prcsTile);
+        }
+        const auto a = e::make_shared<eAttackCityAction>(c.get());
+        c->setAction(a);
+        mHeroesAndGods.push_back(c);
+    };
+
+    if(forces.fAres) {
+        const auto god = eGod::sCreateGod(eGodType::ares, mBoard);
+        god->setAttitude(eGodAttitude::hostile);
+        prcsAttack(god);
+    }
+
+    for(const auto h : forces.fHeroes) {
+        const auto hero = eHero::sCreateHero(h, mBoard);
+        prcsAttack(hero);
+    }
+
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
 }
 
@@ -421,6 +464,16 @@ eInvasionHandler::generateSoldiersForCity(
     }
 }
 
+void eInvasionHandler::tellHeroesAndGodsToGoBack() const {
+    for(const auto& c : mHeroesAndGods) {
+        if(!c) continue;
+        const auto a = c->action();
+        if(const auto aa = dynamic_cast<eAttackCityAction*>(a)) {
+            aa->invasionFinished();
+        }
+    }
+}
+
 void eInvasionHandler::incTime(const int by) {
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
@@ -474,6 +527,7 @@ void eInvasionHandler::incTime(const int by) {
         const auto targetWCity = wboard->cityWithId(mTargetCity);
         ied.fCity = targetWCity;
         if(ss == 0) {
+            tellHeroesAndGodsToGoBack();
             const bool monn = eRand::rand() % 2;
             if(monn) {
                 mBoard.allow(mTargetCity, eBuildingType::commemorative, 1);
@@ -497,6 +551,7 @@ void eInvasionHandler::incTime(const int by) {
             const int tx = mTile->x();
             const int ty = mTile->y();
             eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+            tellHeroesAndGodsToGoBack();
             if(invadingC) {
                 mBoard.event(eEvent::cityConquered, ied);
                 mBoard.allow(invadingCid, eBuildingType::commemorative, 4);
@@ -552,6 +607,14 @@ void eInvasionHandler::read(eReadStream& src) {
     src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
         mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
     });
+
+    int nhg;
+    src >> nhg;
+    for(int i = 0; i < nhg; i++) {
+        src.readCharacter(&mBoard, [this](eCharacter* const c) {
+            mHeroesAndGods.push_back(c);
+        });
+    }
 }
 
 void eInvasionHandler::write(eWriteStream& dst) const {
@@ -571,12 +634,33 @@ void eInvasionHandler::write(eWriteStream& dst) const {
     dst << mWait;
     dst.writeGameEvent(mEvent);
     dst.writeGameEvent(mConquestEvent);
+
+    dst << mHeroesAndGods.size();
+    for(const auto& c : mHeroesAndGods) {
+        dst.writeCharacter(c.get());
+    }
 }
 
 void eInvasionHandler::killAllWithCorpse() {
     mWait = 0;
     for(const auto& b : mBanners) {
         b->killAllWithCorpse();
+    }
+    for(const auto& c : mHeroesAndGods) {
+        if(!c) continue;
+        bool isGod = false;
+        const auto cType = c->type();
+        eGod::sCharacterToGodType(cType, &isGod);
+        if(isGod) {
+            const auto a = c->action();
+            if(const auto aa = dynamic_cast<eGodMonsterAction*>(a)) {
+                aa->disappear(true);
+            } else {
+                c->killWithCorpse();
+            }
+        } else {
+            c->killWithCorpse();
+        }
     }
 }
 

@@ -151,52 +151,6 @@ void eGodAction::spawnGodMissile(
                  playSound, act, finishAttackA);
 }
 
-void eGodAction::spawnGodMultipleMissiles(
-        const eCharacterActionType at,
-        const eCharacterType chart,
-        const eMissileTarget& target,
-        const eGodSound sound,
-        const stdsptr<eGodAct>& playHitSound,
-        const stdsptr<eCharActFunc>& finishA,
-        const int nMissiles) {
-    const int time = eGod::sGodAttackTime(type());
-    const auto c = character();
-    using eGA_SGMPS = eGA_spawnGodMissilePlaySound;
-    const auto playSound = std::make_shared<eGA_SGMPS>(
-                               board(), sound, c);
-    spawnMultipleMissiles(at, chart, time, target,
-                          playSound, playHitSound,
-                          finishA, nMissiles);
-}
-
-void eGodAction::spawnGodTimedMissiles(
-        const eCharacterActionType at,
-        const eCharacterType chart,
-        eTile* const target,
-        const eGodSound sound,
-        const stdsptr<eGodAct>& playHitSound,
-        const stdsptr<eCharActFunc>& finishA,
-        const int time) {
-    const int atime = eGod::sGodAttackTime(type());
-    const int n = std::round(double(time)/atime);
-    spawnGodMultipleMissiles(at, chart, target,
-                             sound, playHitSound,
-                             finishA, n);
-}
-
-void eGodAction::fightGod(
-        eGod* const g,
-        const stdsptr<eCharActFunc>& finishAttackA) {
-    const auto at = eCharacterActionType::fight2;
-    const auto s = eGodSound::attack;
-    using ePFGHSGA = ePlayFightGodHitSoundGodAct;
-    const auto playHitSound = std::make_shared<ePFGHSGA>(
-                                  board(), g);
-    const auto c = character();
-    spawnGodTimedMissiles(at, c->type(), g->tile(), s,
-                          playHitSound, finishAttackA, 6000);
-}
-
 void eGodAction::goBackToSanctuary() {
     auto& board = eGodAction::board();
     const auto s = board.sanctuary(cityId(), type());
