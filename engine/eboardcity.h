@@ -350,7 +350,12 @@ private:
     std::map<int, std::vector<eDistrictReadyCondition>> mEditorDistrictConditions;
     int mCurrentDistrictId = -1; // -1 when not editing
     eAICityPlan mCityPlan;
-    int mNextDistrictCost = -1;
+    struct eDistrictCost {
+        int fDrachmas = -1;
+        int fMarble = -1;
+    };
+
+    eDistrictCost mNextDistrictCost;
 
     eWageRate mWageRate{eWageRate::normal};
     eTaxRate mTaxRate{eTaxRate::normal};

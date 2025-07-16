@@ -511,16 +511,15 @@ void eBoardCity::buildNextDistrict(const int drachmas) {
     if(!pf) return;
     const int id = mCityPlan.nextDistrictId();
     if(id == -1) return;
-    int c = 0;
-    if(mNextDistrictCost == -1) {
-        c = mCityPlan.districtCost(mBoard, id);
-        mNextDistrictCost = c;
-    } else {
-        c = mNextDistrictCost;
+    auto& c = mNextDistrictCost;
+    if(c.fDrachmas == -1) {
+        c.fDrachmas = mCityPlan.districtCost(mBoard, id, &c.fMarble);
     }
-    if(c > drachmas) return;
+    if(c.fDrachmas > drachmas) return;
+    const int marble = resourceCount(eResourceType::marble);
+    if(c.fMarble > marble) return;
     mCityPlan.buildNextDistrict(mBoard);
-    mNextDistrictCost = -1;
+    c.fDrachmas = -1;
 }
 
 std::vector<eBoardCity::eCondition> eBoardCity::getDistrictReadyConditions() {

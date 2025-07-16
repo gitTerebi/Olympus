@@ -26,7 +26,8 @@ public:
     eAIDistrict& district(const int id);
     void addDistrict(const eAIDistrict& a);
 
-    int districtCost(eGameBoard& board, const int id) const;
+    int districtCost(eGameBoard& board, const int id,
+                     int* const marble = nullptr) const;
     int nextDistrictId() const;
     int lastBuiltDistrictId() const;
 

@@ -38,13 +38,16 @@ void eAICityPlan::addDistrict(const eAIDistrict& a) {
     mDistricts.push_back(a);
 }
 
-int eAICityPlan::districtCost(eGameBoard& board, const int id) const {
+int eAICityPlan::districtCost(eGameBoard& board, const int id,
+                              int* const marble) const {
     int result = 0;
     const auto d = mDistricts[id];
     const auto pid = board.cityIdToPlayerId(mCid);
     const auto diff = board.difficulty(pid);
+    if(marble) *marble = 0;
     for(const auto& b : d.fBuildings) {
         result += eDifficultyHelpers::buildingCost(diff, b.fType);
+        if(marble) *marble += eBuilding::sInitialMarbleCost(b.fType);
     }
     return result;
 }
