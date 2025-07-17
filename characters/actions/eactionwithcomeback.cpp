@@ -49,8 +49,14 @@ void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {
 
 void eActionWithComeback::goBack(eBuilding* const b,
                                  const stdsptr<eWalkableObject>& walkable) {
-    const auto rect = b->tileRect();
-    goBack(rect, walkable);
+    const auto type = b->type();
+    if(type == eBuildingType::commonAgora ||
+       type == eBuildingType::grandAgora) {
+        goBack(walkable);
+    } else {
+        const auto rect = b->tileRect();
+        goBack(rect, walkable);
+    }
 }
 
 void eActionWithComeback::goBack(const SDL_Rect& rect,
