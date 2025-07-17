@@ -471,7 +471,7 @@ bool eBoardCity::previousDistrictFulfilled() {
                 total = mBoard.drachmas(pid);
             } else {
                 const bool totalType = c.fType == eType::totalResourceCount;
-                for(const auto& b : mStorBuildings) {
+                for(const auto b : mStorBuildings) {
                     if(!totalType) {
                         const int did = b->districtId();
                         if(did != id) continue;
