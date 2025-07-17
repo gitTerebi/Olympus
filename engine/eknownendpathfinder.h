@@ -3,9 +3,8 @@
 
 #include "epathfinderbase.h"
 
-class eKnownEndPathFinder {
+class eKnownEndPathFinder : public ePathFinderBase {
 public:
-    using eTileWalkable = std::function<bool(eTileBase* const)>;
     using eTileFinish = std::function<bool(eTileBase* const)>;
     eKnownEndPathFinder(const eTileWalkable& walkable,
                         eTileBase* const endTile);
@@ -16,24 +15,9 @@ public:
                   const int maxDist,
                   const bool onlyDiagonal,
                   const int srcW, const int srcH,
-                  const eTileDistance& distance = nullptr);
-    bool extractPath(std::vector<eOrientation>& path);
-    bool extractPath(std::vector<std::pair<int, int>>& path);
-    bool extractPath(std::vector<eTile*>& path,
-                     eGameBoard& board);
-    using ePathFunc = std::function<void(const eNeigh&)>;
-    bool extractPath(const ePathFunc& pathFunc);
-    bool extractData(ePathFindData& data);
-
-    void setMode(const ePathFinderMode m)
-    { mMode = m; }
+                  const eTileDistance& distance = nullptr) override;
 private:
-    const eTileWalkable mWalkable;
     eTileBase* const mEndTile;
-
-    ePathFinderMode mMode = ePathFinderMode::findSingle;
-
-    ePathFindData mData;
 };
 
 #endif // EKNOWNENDPATHFINDER_H

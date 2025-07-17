@@ -379,6 +379,7 @@ SOURCES += \
         engine/emilitaryaid.cpp \
         engine/epathboard.cpp \
         engine/epathfinder.cpp \
+        engine/epathfinderbase.cpp \
         engine/eplague.cpp \
         engine/eplannedaction.cpp \
         engine/eregrowforestaction.cpp \

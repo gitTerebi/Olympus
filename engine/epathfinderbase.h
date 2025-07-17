@@ -42,4 +42,41 @@ inline eTilePair tileGetter(ePathBoard& brd,
     return eTilePair{tile, value};
 };
 
+class ePathFinderBase {
+public:
+    using eTileWalkable = std::function<bool(eTileBase* const)>;
+    ePathFinderBase(const eTileWalkable& walkable);
+
+    using eTileDistance = std::function<int(eTileBase* const)>;
+    virtual bool findPath(const SDL_Rect& tileBRect,
+                          eTileBase* const startTile,
+                          const int maxDist,
+                          const bool onlyDiagonal,
+                          const int srcW, const int srcH,
+                          const eTileDistance& distance = nullptr) = 0;
+
+    bool extractPath(std::vector<eOrientation>& path);
+    bool extractPath(std::vector<std::pair<int, int>>& path);
+    bool extractPath(std::vector<eTile*>& path,
+                     eGameBoard& board);
+    using ePathFunc = std::function<void(const eNeigh&)>;
+    bool extractPath(const ePathFunc& pathFunc);
+    bool extractData(ePathFindData& data);
+
+    void setMode(const ePathFinderMode m)
+    { mMode = m; }
+protected:
+    void initializeBoard(ePathBoard& brd,
+                         const SDL_Rect& tileBRect,
+                         eTileBase* const start,
+                         const int maxDist);
+    bool checkNotDiagonalWalkable(ePathBoard& brd,
+                                  const int x, const int y,
+                                  eTilePair* const tile);
+
+    const eTileWalkable mWalkable;
+    ePathFinderMode mMode = ePathFinderMode::findSingle;
+    ePathFindData mData;
+};
+
 #endif // EPATHFINDERBASE_H
