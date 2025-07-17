@@ -7,7 +7,8 @@ class eSanctuary;
 
 class eSanctuaryInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eSanctuaryInfoWidget(eMainWindow* const window);
+    eSanctuaryInfoWidget(eMainWindow* const window,
+                         eMainWidget* const mw);
 
     void initialize(eSanctuary* const s);
 };

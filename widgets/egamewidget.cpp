@@ -63,7 +63,7 @@
 #include "edistrictconditionswidget.h"
 
 eGameWidget::eGameWidget(eMainWindow* const window) :
-    eWidget(window) {}
+    eMainWidget(window) {}
 
 eGameWidget::~eGameWidget() {
     setBoard(nullptr);

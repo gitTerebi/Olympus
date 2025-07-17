@@ -10,6 +10,7 @@ void eCityButton::initialize(eWorldBoard* const board,
     setUnderline(false);
     setPressAction([this, board, cact]() {
         const auto choose = new eChooseCityDialog(window());
+        choose->setValidator(mValidator);
         const auto act = [this, cact](const stdsptr<eWorldCity>& c) {
             setCity(c);
             if(cact) cact(c);

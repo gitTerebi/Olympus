@@ -98,8 +98,9 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     resize(cw->width() + 10*m, cw->height() + 10*m);
 }
 
-eAgoraInfoWidget::eAgoraInfoWidget(eMainWindow* const window) :
-    eEmployingBuildingInfoWidget(window, true, true) {}
+eAgoraInfoWidget::eAgoraInfoWidget(
+        eMainWindow* const window, eMainWidget* const mw) :
+    eEmployingBuildingInfoWidget(window, mw, true, true) {}
 
 void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
     const auto title = eBuilding::sNameForBuilding(a);

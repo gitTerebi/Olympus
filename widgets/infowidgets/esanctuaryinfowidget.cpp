@@ -6,10 +6,14 @@
 #include "estringhelpers.h"
 #include "buildings/sanctuaries/esanctuary.h"
 #include "engine/egameboard.h"
+#include "widgets/echoosecitydialog.h"
+#include "evectorhelpers.h"
+#include "widgets/egamewidget.h"
 
 eSanctuaryInfoWidget::eSanctuaryInfoWidget(
-        eMainWindow* const window) :
-    eEmployingBuildingInfoWidget(window, false, false) {}
+        eMainWindow* const window,
+        eMainWidget* const mw) :
+    eEmployingBuildingInfoWidget(window, mw, false, false) {}
 
 int sTextGodId(const eGodType god) {
     switch(god) {
@@ -100,42 +104,123 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         reasonLabel->setWrapWidth(cww);
         buttonReasonW->addWidget(reasonLabel);
 
-        const int string = 10 + godId;
-        const auto txt = eLanguage::zeusText(132, string);
-        const auto pb = new eFramedButton(txt, window());
-        pb->setUnderline(false);
-        pb->fitContent();
-        buttonReasonW->addWidget(pb);
-        pb->align(eAlignment::hcenter);
-        pb->setPressAction([s, godId, buttonReasonW, reasonLabel]() {
-            eHelpDenialReason reason;
-            const bool r = s->askForHelp(reason);
-            int string;
-            if(!r) {
-                switch(reason) {
-                case eHelpDenialReason::tooSoon:
-                    string = 52 + godId;
-                    break;
-                case eHelpDenialReason::noTarget:
-                    string = 38 + godId;
-                    break;
-                case eHelpDenialReason::error:
-                    string = -1;
-                    break;
-                }
-                reasonLabel->setYellowFontColor();
-            } else {
-                string = 24 + godId;
-                reasonLabel->setLightFontColor();
-            }
-            const auto txt = eLanguage::zeusText(132, string);
-            reasonLabel->setText(txt);
-            reasonLabel->fitContent();
+        const auto buttonsW = new eWidget(window());
+        buttonsW->setNoPadding();
 
-            buttonReasonW->stackVertically();
-            buttonReasonW->fitHeight();
-            buttonReasonW->align(eAlignment::bottom);
-        });
+        {
+            const int string = 10 + godId;
+            const auto txt = eLanguage::zeusText(132, string);
+            const auto pb = new eFramedButton(txt, window());
+            pb->setUnderline(false);
+            pb->fitContent();
+            buttonsW->addWidget(pb);
+            pb->align(eAlignment::hcenter);
+            pb->setPressAction([s, godId, buttonReasonW, reasonLabel]() {
+                eHelpDenialReason reason;
+                const bool r = s->askForHelp(reason);
+                int string;
+                if(!r) {
+                    switch(reason) {
+                    case eHelpDenialReason::tooSoon:
+                        string = 52 + godId;
+                        break;
+                    case eHelpDenialReason::noTarget:
+                        string = 38 + godId;
+                        break;
+                    case eHelpDenialReason::error:
+                        string = -1;
+                        break;
+                    }
+                    reasonLabel->setYellowFontColor();
+                } else {
+                    string = 24 + godId;
+                    reasonLabel->setLightFontColor();
+                }
+                const auto txt = eLanguage::zeusText(132, string);
+                reasonLabel->setText(txt);
+                reasonLabel->fitContent();
+
+                buttonReasonW->stackVertically();
+                buttonReasonW->fitHeight();
+                buttonReasonW->align(eAlignment::bottom);
+            });
+        }
+        const auto& board = s->getBoard();
+        const auto cids = board.citiesOnBoard();
+        const auto ppid = board.personPlayer();
+        const auto ptid = board.playerIdToTeamId(ppid);
+        std::vector<eCityId> enemyCids;
+        for(const auto cid : cids) {
+            const auto ctid = board.cityIdToTeamId(cid);
+            if(ctid == eTeamId::neutralFriendly) continue;
+            if(ctid == eTeamId::neutralAggresive) continue;
+            if(ctid == ptid) continue;
+            enemyCids.push_back(cid);
+        }
+        if(!enemyCids.empty()) {
+            const auto txt = eLanguage::zeusText(156, 27);
+            const auto pb = new eFramedButton(txt, window());
+            pb->setUnderline(false);
+            pb->fitContent();
+            buttonsW->addWidget(pb);
+            pb->align(eAlignment::hcenter);
+            const auto wboard = board.getWorldBoard();
+            pb->setPressAction([this, wboard, s, buttonReasonW, reasonLabel, enemyCids]() {
+                const auto askForAttack = [s, buttonReasonW, reasonLabel](const eCityId cid) {
+                    eHelpDenialReason reason;
+                    const bool r = s->askForAttack(cid, reason);
+                    int string;
+                    if(!r) {
+                        switch(reason) {
+                        case eHelpDenialReason::tooSoon:
+                            string = 19 + (eRand::rand() % 6);
+                            break;
+                        case eHelpDenialReason::noTarget:
+                        case eHelpDenialReason::error:
+                            string = -1;
+                            break;
+                        }
+                        reasonLabel->setYellowFontColor();
+                    } else {
+                        string = 25;
+                        reasonLabel->setLightFontColor();
+                    }
+                    const auto godType = s->godType();
+                    const auto godName = eGod::sGodName(godType);
+                    const auto txt = godName + " " + eLanguage::zeusText(59, string);
+                    reasonLabel->setText(txt);
+                    reasonLabel->fitContent();
+
+                    buttonReasonW->stackVertically();
+                    buttonReasonW->fitHeight();
+                    buttonReasonW->align(eAlignment::bottom);
+                };
+                if(enemyCids.size() == 1) {
+                    askForAttack(enemyCids[0]);
+                } else {
+                    const auto choose = new eChooseCityDialog(window());
+                    choose->setValidator([enemyCids](const stdsptr<eWorldCity>& c) {
+                        const auto cid = c->cityId();
+                        return eVectorHelpers::contains(enemyCids, cid);
+                    });
+                    const auto act = [askForAttack](const stdsptr<eWorldCity>& c) {
+                        const auto cid = c->cityId();
+                        askForAttack(cid);
+                    };
+                    choose->initialize(wboard, act);
+
+                    const auto mw = mainWidget();
+                    mw->openDialog(choose);
+                }
+            });
+        }
+
+        const int p = resolution().largePadding();
+        buttonsW->stackHorizontally(p);
+        buttonsW->fitContent();
+
+        buttonReasonW->addWidget(buttonsW);
+        buttonsW->align(eAlignment::hcenter);
 
         buttonReasonW->stackVertically();
         buttonReasonW->fitHeight();

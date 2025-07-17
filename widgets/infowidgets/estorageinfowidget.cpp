@@ -166,8 +166,9 @@ public:
     }
 };
 
-eStorageInfoWidget::eStorageInfoWidget(eMainWindow* const window) :
-    eEmployingBuildingInfoWidget(window, true, false) {}
+eStorageInfoWidget::eStorageInfoWidget(
+        eMainWindow* const window, eMainWidget* const mw) :
+    eEmployingBuildingInfoWidget(window, mw, true, false) {}
 
 void eStorageInfoWidget::initialize(eStorageBuilding* const stor) {
     const auto title = eBuilding::sNameForBuilding(stor);

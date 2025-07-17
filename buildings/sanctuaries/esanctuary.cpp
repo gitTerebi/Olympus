@@ -24,6 +24,8 @@
 #include "characters/actions/godHelp/eposeidonhelpaction.h"
 #include "characters/actions/godHelp/ezeushelpaction.h"
 
+#include "gameEvents/egodattackevent.h"
+
 #include "buildings/eresourcebuilding.h"
 #include "buildings/eplaceholder.h"
 
@@ -504,6 +506,36 @@ void eSanctuary::addWarriorTile(eTile* const t) {
 
 void eSanctuary::addSpecialTile(eTile* const t) {
     mSpecialTiles.push_back(t);
+}
+
+bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
+    if(mGodAbroad || mHelpTimer < eNumbers::sGodHelpAttackPeriod) {
+        reason = eHelpDenialReason::tooSoon;
+        return false;
+    }
+    auto& board = getBoard();
+    const auto ee = eGameEvent::sCreate(cid,
+                                        eGameEventType::godAttack,
+                                        eGameEventBranch::root,
+                                        board);
+
+    const auto e = ee->ref<eGodAttackEvent>();
+    e->setTypes({godType()});
+    e->setDatePlusDays(1);
+    e->setDatePlusMonths(0);
+    e->setDatePlusYears(0);
+    auto date = board.date();
+    date += 1;
+    e->initializeDate(date);
+    const auto c = board.boardCityWithId(cid);
+    c->addRootGameEvent(e);
+    const auto scid = cityId();
+    const auto pid = board.cityIdToPlayerId(scid);
+    const auto ppid = board.personPlayer();
+    if(pid == ppid) {
+        eSounds::playGodSound(godType(), eGodSound::invade);
+    }
+    return true;
 }
 
 bool eSanctuary::askForHelp(eHelpDenialReason& reason) {

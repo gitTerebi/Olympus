@@ -269,8 +269,9 @@ void eEmploymentDataWidget::openMoreInfoWiget() {
     const auto cid = viewedCity();
     if(cid == eCityId::neutralFriendly ||
        cid == eCityId::neutralAggresive) return;
-    const auto w = new eWorkforceAllocationWidget(window());
-    w->initialize(mBoard, cid);
     const auto gw = gameWidget();
+    const auto w = new eWorkforceAllocationWidget(
+                       window(), gw);
+    w->initialize(mBoard, cid);
     gw->openDialog(w);
 }

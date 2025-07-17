@@ -125,6 +125,7 @@ struct eNumbers {
 
     static int sFriendlyGodVisitPeriod;
     static int sGodHelpPeriod;
+    static int sGodHelpAttackPeriod;
 
     static int sGodAttackCursePeriod;
     static int sGodAttackCurseRange;

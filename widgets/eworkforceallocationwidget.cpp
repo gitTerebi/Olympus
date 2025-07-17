@@ -8,8 +8,9 @@
 #include "elanguage.h"
 
 eWorkforceAllocationWidget::eWorkforceAllocationWidget(
-        eMainWindow* const window) :
-    eInfoWidget(window, false, false) {}
+        eMainWindow* const window,
+        eMainWidget* const mw) :
+    eInfoWidget(window, mw, false, false) {}
 
 void eWorkforceAllocationWidget::initialize(
         eGameBoard& board, const eCityId cid) {

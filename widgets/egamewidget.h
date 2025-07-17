@@ -3,7 +3,7 @@
 
 #include <deque>
 
-#include "ewidget.h"
+#include "emainwidget.h"
 #include "eframedlabel.h"
 
 #include "engine/etile.h"
@@ -79,7 +79,7 @@ struct eGameWidgetSettings {
     }
 };
 
-class eGameWidget : public eWidget {
+class eGameWidget : public eMainWidget {
 public:
     eGameWidget(eMainWindow* const window);
     ~eGameWidget();

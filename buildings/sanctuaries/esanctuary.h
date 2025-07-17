@@ -45,6 +45,7 @@ public:
     void addWarriorTile(eTile* const t);
     void addSpecialTile(eTile* const t);
 
+    bool askForAttack(const eCityId cid, eHelpDenialReason& reason);
     bool askForHelp(eHelpDenialReason& reason);
 
     eGod* god() const { return mGod; }

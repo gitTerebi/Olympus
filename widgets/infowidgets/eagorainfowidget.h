@@ -7,7 +7,8 @@
 
 class eAgoraInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eAgoraInfoWidget(eMainWindow* const window);
+    eAgoraInfoWidget(eMainWindow* const window,
+                     eMainWidget* const mw);
 
     void initialize(eAgoraBase* const a);
 };

@@ -593,6 +593,7 @@ SOURCES += \
         widgets/eloadingwidget.cpp \
         widgets/emainmenu.cpp \
         widgets/emainmenubase.cpp \
+        widgets/emainwidget.cpp \
         widgets/emenuloadingwidget.cpp \
         widgets/emessagebox.cpp \
         widgets/emessagewidget.cpp \
@@ -2670,6 +2671,7 @@ HEADERS += \
     widgets/eloadingwidget.h \
     widgets/emainmenu.h \
     widgets/emainmenubase.h \
+    widgets/emainwidget.h \
     widgets/emenuloadingwidget.h \
     widgets/emessagebox.h \
     widgets/emessagewidget.h \

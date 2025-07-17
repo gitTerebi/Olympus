@@ -333,7 +333,7 @@ void eWorldWidget::openRequestDialog() {
 }
 
 void eWorldWidget::openFulfillDialog() {
-    const auto d = new eFulfillDialog(window());
+    const auto d = new eFulfillDialog(window(), this);
     d->initialize(mBoard, mCity);
     openDialog(d);
 }

@@ -209,8 +209,9 @@ public:
     }
 };
 
-eTradePostInfoWidget::eTradePostInfoWidget(eMainWindow* const window) :
-    eEmployingBuildingInfoWidget(window, false, false) {}
+eTradePostInfoWidget::eTradePostInfoWidget(
+        eMainWindow* const window, eMainWidget* const mw) :
+    eEmployingBuildingInfoWidget(window, mw, false, false) {}
 
 void eTradePostInfoWidget::initialize(eTradePost* const stor) {
     const auto& city = stor->city();

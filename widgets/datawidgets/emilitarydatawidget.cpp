@@ -254,9 +254,9 @@ void eMilitaryDataWidget::paintEvent(ePainter& p) {
 }
 
 void eMilitaryDataWidget::openMoreInfoWiget() {
-    const auto w = new eMilitaryMoreInfoWidget(window());
-    w->initialize(mBoard, viewedCity());
     const auto gw = gameWidget();
+    const auto w = new eMilitaryMoreInfoWidget(window(), gw);
+    w->initialize(mBoard, viewedCity());
     gw->openDialog(w);
 }
 

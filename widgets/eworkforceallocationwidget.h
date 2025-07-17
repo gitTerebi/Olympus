@@ -9,7 +9,8 @@ enum class eCityId;
 
 class eWorkforceAllocationWidget : public eInfoWidget {
 public:
-    eWorkforceAllocationWidget(eMainWindow* const window);
+    eWorkforceAllocationWidget(eMainWindow* const window,
+                               eMainWidget* const mw);
 
     void initialize(eGameBoard& board, const eCityId cid);
 private:

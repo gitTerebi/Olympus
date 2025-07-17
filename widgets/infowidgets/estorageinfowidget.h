@@ -12,7 +12,8 @@
 
 class eStorageInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eStorageInfoWidget(eMainWindow* const window);
+    eStorageInfoWidget(eMainWindow* const window,
+                       eMainWidget* const mw);
 
     void initialize(eStorageBuilding* const stor);
     void get(eResourceType& get,

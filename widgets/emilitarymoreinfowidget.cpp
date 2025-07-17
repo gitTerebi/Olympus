@@ -7,8 +7,9 @@
 #include "elanguage.h"
 
 eMilitaryMoreInfoWidget::eMilitaryMoreInfoWidget(
-        eMainWindow* const window) :
-    eInfoWidget(window, false, false) {}
+        eMainWindow* const window,
+        eMainWidget* const mw) :
+    eInfoWidget(window, mw, false, false) {}
 
 void sArmySectionButtonUpdate(const stdsptr<eSoldierBanner>& b,
                               eMicroButton* const mb) {

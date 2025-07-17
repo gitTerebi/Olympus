@@ -9,9 +9,11 @@
 #include "elanguage.h"
 
 eInfoWidget::eInfoWidget(eMainWindow* const window,
+                         eMainWidget* const mw,
                          const bool narrow, const bool shrt) :
     eFramedWidget(window),
-    mNarrow(narrow), mShort(shrt) {
+    mNarrow(narrow), mShort(shrt),
+    mMW(mw) {
     setType(eFrameType::message);
 }
 

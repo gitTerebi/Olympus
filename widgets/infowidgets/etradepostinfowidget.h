@@ -12,7 +12,8 @@
 
 class eTradePostInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eTradePostInfoWidget(eMainWindow* const window);
+    eTradePostInfoWidget(eMainWindow* const window,
+                         eMainWidget* const mw);
 
     void initialize(eTradePost* const stor);
     void get(eResourceType& imports,

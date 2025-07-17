@@ -10,8 +10,10 @@
 
 #include <algorithm>
 
-eCommonHouseInfoWidget::eCommonHouseInfoWidget(eMainWindow* const window) :
-    eInfoWidget(window, true, true) {}
+eCommonHouseInfoWidget::eCommonHouseInfoWidget(
+        eMainWindow* const window,
+        eMainWidget* const mw) :
+    eInfoWidget(window, mw, true, true) {}
 
 void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
     const int people = house->people();

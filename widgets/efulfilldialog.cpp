@@ -15,8 +15,9 @@
 #include "emainwindow.h"
 #include "echoosebutton.h"
 
-eFulfillDialog::eFulfillDialog(eMainWindow* const window) :
-    eInfoWidget(window, true, true) {}
+eFulfillDialog::eFulfillDialog(eMainWindow* const window,
+                               eMainWidget* const mw) :
+    eInfoWidget(window, mw, true, true) {}
 
 void eFulfillDialog::initialize(eGameBoard* const board,
                                 const eCity& city) {

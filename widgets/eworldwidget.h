@@ -1,7 +1,7 @@
 #ifndef EWORLDWIDGET_H
 #define EWORLDWIDGET_H
 
-#include "ewidget.h"
+#include "emainwidget.h"
 #include "engine/egameboard.h"
 
 #include "widgets/eenlistforcesdialog.h"
@@ -10,9 +10,9 @@ class eWorldMenu;
 class eWorldMapWidget;
 class eFramedButton;
 
-class eWorldWidget : public eWidget {
+class eWorldWidget : public eMainWidget {
 public:
-    using eWidget::eWidget;
+    using eMainWidget::eMainWidget;
 
     void initialize();
 
