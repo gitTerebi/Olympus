@@ -2260,6 +2260,8 @@ void eBuilding::read(eReadStream& src) {
     src >> mIOID;
     src >> mTileRect;
 
+    src >> mDistrictId;
+
     auto& board = getBoard();
 
     int ntiles;
@@ -2289,6 +2291,8 @@ void eBuilding::read(eReadStream& src) {
 void eBuilding::write(eWriteStream& dst) const {
     dst << mIOID;
     dst << mTileRect;
+
+    dst << mDistrictId;
 
     dst << mUnderBuilding.size();
     for(const auto t : mUnderBuilding) {
