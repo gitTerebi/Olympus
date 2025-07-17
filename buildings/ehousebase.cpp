@@ -92,6 +92,15 @@ int eHouseBase::vacancies() const {
     return mMaxPeople[mLevel] - mPeople;
 }
 
+double eHouseBase::appeal() const {
+    const auto& b = getBoard();
+    const auto t = centerTile();
+    if(!t) return 0;
+    const int dx = t->dx();
+    const int dy = t->dy();
+    return b.appeal(dx ,dy);
+}
+
 void eHouseBase::read(eReadStream& src) {
     eBuilding::read(src);
 

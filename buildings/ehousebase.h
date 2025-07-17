@@ -55,6 +55,8 @@ public:
 
     int vacancies() const;
 
+    double appeal() const;
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 protected:

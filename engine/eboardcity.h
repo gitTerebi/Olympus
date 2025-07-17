@@ -341,7 +341,7 @@ public:
     void write(eWriteStream& dst) const;
 private:
     void payPensions();
-    bool replace3By3AestheticByCommemorative(const bool skipNextToComm);
+    bool replace3By3AestheticByCommemorative();
 
     eGameBoard& mBoard;
 
@@ -409,6 +409,7 @@ private:
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eEmployingBuilding*> mEmployingBuildings;
     std::vector<eBuilding*> mAllBuildings;
+    std::vector<eBuilding*> m3x3AestheticBuildings;
     std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;

@@ -30,6 +30,7 @@
 #include "egameboard.h"
 
 #include "eiteratesquare.h"
+#include "etilehelper.h"
 
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
@@ -272,11 +273,6 @@ void eBoardCity::nextYear() {
     mTaxesPaidThisYear = 0;
     mPeoplePaidTaxesLastYear = mPeoplePaidTaxesThisYear;
     mPeoplePaidTaxesThisYear = 0;
-    bool r = true;
-    while(r) {
-        r = replace3By3AestheticByCommemorative(true);
-//        if(!r) r = replace3By3AestheticByCommemorative(false);
-    }
 }
 
 void eBoardCity::payPensions() {
@@ -285,8 +281,7 @@ void eBoardCity::payPensions() {
     if(p) p->incDrachmas(-d);
 }
 
-bool eBoardCity::replace3By3AestheticByCommemorative(
-        const bool skipNextToComm) {
+bool eBoardCity::replace3By3AestheticByCommemorative() {
     int id = -1;
     for(int i = 0; i <= 8; i++) {
         const bool a = mAvailableBuildings.available(
@@ -297,7 +292,9 @@ bool eBoardCity::replace3By3AestheticByCommemorative(
         }
     }
     if(id == -1) return false;
-    for(const auto b : mAllBuildings) {
+    double mostMissingAppeal = 0.;
+    eBuilding* toReplace = nullptr;
+    for(const auto b : m3x3AestheticBuildings) {
         const auto type = b->type();
         switch(type) {
         case eBuildingType::hedgeMaze:
@@ -305,36 +302,60 @@ bool eBoardCity::replace3By3AestheticByCommemorative(
         case eBuildingType::orrery:
         case eBuildingType::spring:
         case eBuildingType::topiary: {
+            const int did = b->districtId();
+            if(did == -1) continue;
             const auto rect = b->tileRect();
-            if(skipNextToComm) {
-                for(int x = rect.x - 1; x < rect.x + rect.w + 1; x++) {
-                    for(int y = rect.y - 1; y < rect.y + rect.h + 1; y++) {
-                        const auto at = mBoard.buildingAt(x, y);
-                        if(!at) continue;
-                        const auto t = at->type();
-                        if(t == eBuildingType::commemorative) return false;
+            const int range = 3;
+            for(int x = rect.x - range; x < rect.x + rect.w + range; x++) {
+                for(int y = rect.y - range; y < rect.y + rect.h + range; y++) {
+                    const SDL_Point p{x, y};
+                    const bool in = SDL_PointInRect(&p, &rect);
+                    if(in) continue;
+                    int dx;
+                    int dy;
+                    eTileHelper::tileIdToDTileId(x, y, dx, dy);
+                    const auto tile = mBoard.dtile(dx, dy);
+                    if(!tile) continue;
+                    const auto ub = tile->underBuilding();
+                    if(!ub) continue;
+                    if(const auto h = dynamic_cast<eHouseBase*>(ub)) {
+                        const double goodAppeal =
+                                type == eBuildingType::eliteHousing ?
+                                    10.1 : 8.1;
+                        const double a = h->appeal();
+                        const double missing = goodAppeal - a;
+                        if(missing > mostMissingAppeal) {
+                            mostMissingAppeal = missing;
+                            toReplace = b;
+                        }
                     }
                 }
             }
-            const int did = b->districtId();
-            b->setDistrictId(-1);
-            b->erase();
-            const auto bc = [&]() {
-                const auto c = e::make_shared<eCommemorative>(id, mBoard, mId);
-                c->setDistrictId(did);
-                return c;
-            };
-            const auto pid = mBoard.cityIdToPlayerId(mId);
-            return mBoard.buildBase(rect.x, rect.y,
-                                    rect.x + rect.w - 1,
-                                    rect.y + rect.h - 1,
-                                    bc, pid, mId, true);
         } break;
         default:
             break;
         }
     }
-    return false;
+    if(!toReplace) return false;
+    const auto b = toReplace;
+    const auto rect = b->tileRect();
+
+    const int did = b->districtId();
+    b->setDistrictId(-1);
+    b->erase();
+    const auto bc = [&]() {
+        const auto c = e::make_shared<eCommemorative>(id, mBoard, mId);
+        c->setDistrictId(did);
+        return c;
+    };
+
+    const auto pid = mBoard.cityIdToPlayerId(mId);
+    const bool r = mBoard.buildBase(rect.x, rect.y,
+                                    rect.x + rect.w - 1,
+                                    rect.y + rect.h - 1,
+                                    bc, pid, mId, true);
+    if(r) mAvailableBuildings.built(eBuildingType::commemorative, id);
+    return r;
 }
 
 void eBoardCity::nextMonth() {
@@ -364,6 +385,8 @@ void eBoardCity::nextMonth() {
     }
 
     mPopData.nextMonth();
+
+    replace3By3AestheticByCommemorative();
 }
 
 double eBoardCity::taxRateF() const {
@@ -557,12 +580,23 @@ void eBoardCity::setDistrictReadyCondition(const int id, const eCondition& c) {
 void eBoardCity::registerBuilding(eBuilding* const b) {
     b->setDistrictId(mCurrentDistrictId);
     mAllBuildings.push_back(b);
-    const auto bt = b->type();
-    if(eBuilding::sTimedBuilding(bt)) {
+    const auto type = b->type();
+    if(eBuilding::sTimedBuilding(type)) {
         mTimedBuildings.push_back(b);
     }
-    if(bt == eBuildingType::commemorative ||
-       bt == eBuildingType::godMonument) {
+    switch(type) {
+    case eBuildingType::hedgeMaze:
+    case eBuildingType::dolphinSculpture:
+    case eBuildingType::orrery:
+    case eBuildingType::spring:
+    case eBuildingType::topiary:
+        m3x3AestheticBuildings.push_back(b);
+        break;
+    default:
+        break;
+    }
+    if(type == eBuildingType::commemorative ||
+       type == eBuildingType::godMonument) {
         mCommemorativeBuildings.push_back(b);
     }
 }
@@ -576,6 +610,7 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
         }
     }
     eVectorHelpers::remove(mAllBuildings, b);
+    eVectorHelpers::remove(m3x3AestheticBuildings, b);
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);
     return true;
