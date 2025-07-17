@@ -12,6 +12,8 @@ void eBoardCity::read(eReadStream& src) {
 
     src >> mAtlantean;
 
+    mAvailableBuildings.read(src);
+
     mCityEvents.read(src);
 
     mCityPlan.read(src);

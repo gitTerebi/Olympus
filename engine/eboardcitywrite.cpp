@@ -11,6 +11,8 @@ void eBoardCity::write(eWriteStream& dst) const {
 
     dst << mAtlantean;
 
+    mAvailableBuildings.write(dst);
+
     mCityEvents.write(dst);
 
     mCityPlan.write(dst);
