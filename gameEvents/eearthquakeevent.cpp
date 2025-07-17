@@ -14,9 +14,10 @@ eEarthquakeEvent::eEarthquakeEvent(
 void eEarthquakeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    const auto startTile = board->disasterTile(cityId(), mDisasterPoint);
+    const auto cid = cityId();
+    const auto startTile = board->disasterTile(cid, mDisasterPoint);
     if(!startTile) return;
-    eEventData ed(cityId());
+    eEventData ed(cid);
     ed.fGod = mGod;
     ed.fTile = startTile;
     board->earthquake(startTile, mSize);
