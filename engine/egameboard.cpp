@@ -2171,6 +2171,11 @@ void eGameBoard::incTime(const int by) {
         c->incTime(by);
     }
 
+    if(mTotalTime == 0) { // start building AI cities
+        for(const auto& p : mPlayersOnBoard) {
+            p->nextMonth();
+        }
+    }
     mTime += by;
     mTotalTime += by;
     bool nextMonth = false;
