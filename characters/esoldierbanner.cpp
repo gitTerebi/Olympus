@@ -114,11 +114,9 @@ void eSoldierBanner::moveTo(const int x, const int y) {
 }
 
 void eSoldierBanner::moveToDefault() {
+    const auto onCid = onCityId();
     const auto cid = cityId();
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
-    if(!isPerson) return;
+    if(onCid != cid) return;
     switch(mType) {
     case eBannerType::rockThrower:
     case eBannerType::hoplite:
@@ -157,10 +155,9 @@ void eSoldierBanner::moveToDefault() {
 
 void eSoldierBanner::goHome() {
     if(mMilitaryAid) return;
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
-    if(!isPerson) return;
+    const auto onCid = onCityId();
+    const auto cid = cityId();
+    if(onCid != cid) return;
     if(mHome) return;
     mHome = true;
     for(const auto s : mSoldiers) {
@@ -326,7 +323,7 @@ void eSoldierBanner::read(eReadStream& src) {
     const auto pid = playerId();
     const auto ppid = mBoard.personPlayer();
     const bool isPerson = pid == ppid;
-    if(isPerson && mTile) {
+    if((isPerson) && mTile) {
         mTile->setSoldierBanner(this);
     }
 
@@ -491,9 +488,10 @@ void eSoldierBanner::updatePlaces() {
     int isld = 0;
     const int slds = mSoldiers.size();
 
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
+    const auto onCid = onCityId();
+    const auto cid = cityId();
+    const auto onTid = mBoard.cityIdToTeamId(onCid);
+    const auto tid = mBoard.cityIdToTeamId(cid);
 
     const auto prcsTile = [&](const int i, const int j) {
         if(isld >= slds) return false;
@@ -502,7 +500,7 @@ void eSoldierBanner::updatePlaces() {
         const int ty = mTile->y();
         const auto tt = mBoard.tile(tx + i, ty + j);
         if(!tt) return false;
-        if(isPerson) {
+        if(onTid == tid) {
             if(!eWalkableHelpers::sDefaultWalkable(tt)) return false;
         } else {
             if(!eWalkableHelpers::sBuildingsWalkable(tt)) return false;
@@ -521,11 +519,9 @@ void eSoldierBanner::updatePlaces() {
 
 void eSoldierBanner::updateCount() {
     if(mMilitaryAid) return;
+    const auto onCid = onCityId();
     const auto cid = cityId();
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
-    if(!isPerson) return;
+    if(onCid != cid) return;
     purgeDead();
     const int n = mSoldiers.size();
     if(!mHome && !mAbroad) {
