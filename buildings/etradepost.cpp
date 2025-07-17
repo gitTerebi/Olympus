@@ -336,9 +336,10 @@ void eTradePost::write(eWriteStream& dst) const {
 bool eTradePost::trades() const {
     if(!mCity.trades()) return false;
     auto& board = getBoard();
+    const auto cid = cityId();
     if(mType == eTradePostType::pier) {
-        return !board.seaTradeShutdown();
+        return !board.seaTradeShutdown(cid);
     } else {
-        return !board.landTradeShutdown();
+        return !board.landTradeShutdown(cid);
     }
 }

@@ -2767,6 +2767,32 @@ void eGameBoard::minMaxAltitude(int& min, int& max) const {
     }
 }
 
+bool eGameBoard::landTradeShutdown(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->landTradeShutdown();
+}
+
+void eGameBoard::setLandTradeShutdown(
+        const eCityId cid, const bool s) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->setLandTradeShutdown(s);
+}
+
+bool eGameBoard::seaTradeShutdown(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return false;
+    return c->seaTradeShutdown();
+}
+
+void eGameBoard::setSeaTradeShutdown(
+        const eCityId cid, const bool s) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    return c->setSeaTradeShutdown(s);
+}
+
 eMilitaryAid* eGameBoard::militaryAid(const eCityId cid,
                                       const stdsptr<eWorldCity>& c) const {
     const auto cc = boardCityWithId(cid);

@@ -216,6 +216,12 @@ public:
     bool unregisterTradePost(eTradePost* const b);
     bool hasTradePost(const eWorldCity& city);
 
+    bool landTradeShutdown() const { return mShutdownLandTrade; }
+    void setLandTradeShutdown(const bool s) { mShutdownLandTrade = s; }
+
+    bool seaTradeShutdown() const { return mShutdownSeaTrade; }
+    void setSeaTradeShutdown(const bool s) { mShutdownSeaTrade = s; }
+
     void registerSpawner(eSpawner* const s);
     bool unregisterSpawner(eSpawner* const s);
 

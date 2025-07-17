@@ -559,11 +559,11 @@ public:
 
     void minMaxAltitude(int& min, int& max) const;
 
-    bool landTradeShutdown() const { return mShutdownLandTrade; }
-    void setLandTradeShutdown(const bool s) { mShutdownLandTrade = s; }
+    bool landTradeShutdown(const eCityId cid) const;
+    void setLandTradeShutdown(const eCityId cid, const bool s);
 
-    bool seaTradeShutdown() const { return mShutdownSeaTrade; }
-    void setSeaTradeShutdown(const bool s) { mShutdownSeaTrade = s; }
+    bool seaTradeShutdown(const eCityId cid) const;
+    void setSeaTradeShutdown(const eCityId cid, const bool s);
 
     eMilitaryAid* militaryAid(const eCityId cid,
                               const stdsptr<eWorldCity>& c) const;
@@ -745,9 +745,6 @@ private:
     double mWageMultiplier = 1.;
 
     // begin moved to eBoardCity
-    bool mShutdownLandTrade;
-    bool mShutdownSeaTrade;
-
     std::vector<eCharacterAction*> mCharacterActions;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eBuilding*> mTimedBuildings;

@@ -14,15 +14,16 @@ eGodTradeResumesEvent::eGodTradeResumesEvent(
 void eGodTradeResumesEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
+    const auto cid = cityId();
     if(mGod == eGodType::zeus) {
-        board->setLandTradeShutdown(false);
-        board->setSeaTradeShutdown(false);
+        board->setLandTradeShutdown(cid, false);
+        board->setSeaTradeShutdown(cid, false);
     } else if(mGod == eGodType::poseidon) {
-        board->setSeaTradeShutdown(false);
+        board->setSeaTradeShutdown(cid, false);
     } else if(mGod == eGodType::hermes) {
-        board->setLandTradeShutdown(false);
+        board->setLandTradeShutdown(cid, false);
     }
-    eEventData ed(cityId());
+    eEventData ed(cid);
     ed.fGod = mGod;
     board->event(eEvent::godTradeResumes, ed);
 }

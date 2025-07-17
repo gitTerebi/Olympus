@@ -43,19 +43,20 @@ void eGodAttackEvent::trigger() {
     god->setAttitude(eGodAttitude::hostile);
     god->setAction(a);
     a->increment(1);
-    eEventData ed(cityId());
+    const auto cid = cityId();
+    eEventData ed(cid);
     ed.fChar = god.get();
     ed.fTile = god->tile();
     ed.fGod = t;
-    board->registerAttackingGod(cityId(), god.get());
+    board->registerAttackingGod(cid, god.get());
     board->event(eEvent::godInvasion, ed);
     if(t == eGodType::zeus) {
-        board->setLandTradeShutdown(true);
-        board->setSeaTradeShutdown(true);
+        board->setLandTradeShutdown(cid, true);
+        board->setSeaTradeShutdown(cid, true);
     } else if(t == eGodType::poseidon) {
-        board->setSeaTradeShutdown(true);
+        board->setSeaTradeShutdown(cid, true);
     } else if(t == eGodType::hermes) {
-        board->setLandTradeShutdown(true);
+        board->setLandTradeShutdown(cid, true);
     }
     if(t == eGodType::zeus ||
        t == eGodType::poseidon ||
