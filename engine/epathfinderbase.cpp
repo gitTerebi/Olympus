@@ -42,15 +42,20 @@ bool ePathFinderBase::extractPath(
     auto& brd = mData.fBoard;
     using eBFinder = std::function<bool(const eTilePair&)>;
     eBFinder bestFinder;
+
+    const auto start = mData.fStart;
+    const int startX = start->x();
+    const int startY = start->y();
+    const int finalX = mData.fFinalX;
+    const int finalY = mData.fFinalY;
+
     bestFinder = [&](const eTilePair& from) {
         if(!from.first || !from.second) return false;
         const auto tile = from.first;
         const int dist = *from.second;
         const int tx = tile->x();
         const int ty = tile->y();
-        const int dtx = mData.fStart->x();
-        const int dty = mData.fStart->y();
-        if(tx == dtx && ty == dty) return true;
+        if(tx == startX && ty == startY) return true;
 
         const auto tr = tileGetter(brd, tile, 0, -1);
         const auto br = tileGetter(brd, tile, 1, 0);
@@ -58,19 +63,28 @@ bool ePathFinderBase::extractPath(
         const auto tl = tileGetter(brd, tile, -1, 0);
 
         const bool od = mData.fOnlyDiagonal;
+        const bool isFinal = tx == finalX && ty == finalY;
         std::vector<eNeigh> neighs{
                 {eOrientation::bottomLeft, tr},
                 {eOrientation::topLeft, br},
                 {eOrientation::topRight, bl},
                 {eOrientation::bottomRight, tl},
-                {eOrientation::left, od ? eTilePair{nullptr, nullptr}
-                                        : tileGetter(brd, tile, 1, -1)},
-                {eOrientation::top, od ? eTilePair{nullptr, nullptr}
-                                       : tileGetter(brd, tile, 1, 1)},
-                {eOrientation::right, od ? eTilePair{nullptr, nullptr}
-                                         : tileGetter(brd, tile, -1, 1)},
-                {eOrientation::bottom, od ? eTilePair{nullptr, nullptr}
-                                          : tileGetter(brd, tile, -1, -1)}};
+                {eOrientation::left,
+                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, 1, -1, &from))) ?
+                            eTilePair{nullptr, nullptr} :
+                            tileGetter(brd, tile, 1, -1)},
+                {eOrientation::top,
+                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, 1, 1, &from))) ?
+                            eTilePair{nullptr, nullptr} :
+                            tileGetter(brd, tile, 1, 1)},
+                {eOrientation::right,
+                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, -1, 1, &from))) ?
+                            eTilePair{nullptr, nullptr} :
+                            tileGetter(brd, tile, -1, 1)},
+                {eOrientation::bottom,
+                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, -1, -1, &from))) ?
+                            eTilePair{nullptr, nullptr} :
+                            tileGetter(brd, tile, -1, -1)}};
 
         int distP = __INT_MAX__;
         eNeigh best{eOrientation::topRight, {nullptr, &distP}};
@@ -92,12 +106,9 @@ bool ePathFinderBase::extractPath(
         return false;
     };
 
-    const auto start = mData.fStart;
-    const int startX = start->x();
-    const int startY = start->y();
     const auto t = tileGetter(brd, mData.fStart,
-                              mData.fFinalX - startX,
-                              mData.fFinalY - startY);
+                              finalX - startX,
+                              finalY - startY);
     const bool r = bestFinder(t);
     return r;
 }
@@ -128,7 +139,7 @@ void ePathFinderBase::initializeBoard(
 bool ePathFinderBase::checkNotDiagonalWalkable(
             ePathBoard& brd,
             const int x, const int y,
-            eTilePair* const tile) {
+            const eTilePair* const tile) {
     const auto checkWalkable = [&](const int dx, const int dy) {
         const auto ttt = tileGetter(brd, tile->first, dx, dy);
         if(ttt.first && ttt.second) {

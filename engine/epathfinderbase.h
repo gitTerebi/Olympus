@@ -72,7 +72,7 @@ protected:
                          const int maxDist);
     bool checkNotDiagonalWalkable(ePathBoard& brd,
                                   const int x, const int y,
-                                  eTilePair* const tile);
+                                  const eTilePair* const tile);
 
     const eTileWalkable mWalkable;
     ePathFinderMode mMode = ePathFinderMode::findSingle;
