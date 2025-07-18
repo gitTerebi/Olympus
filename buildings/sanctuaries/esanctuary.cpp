@@ -258,6 +258,20 @@ void eSanctuary::setConstructionHalted(const bool h) {
     mHaltConstruction = h;
 }
 
+double eSanctuary::helpTimeFraction() const {
+    return double(mHelpTimer)/eNumbers::sGodHelpPeriod;
+}
+
+double eSanctuary::helpAttackTimeFraction() const {
+    auto& board = getBoard();
+    const auto pid = playerId();
+    const auto p = board.boardPlayerWithId(pid);
+    const int pTimer = p->godAttackTimer();
+    const double v1 = double(mHelpTimer)/eNumbers::sGodHelpAttackPeriod;
+    const double v2 = double(pTimer)/eNumbers::sGodHelpAttackPlayerPeriod;
+    return std::min(v1, v2);
+}
+
 stdsptr<eSanctuary> eSanctuary::sCreate(
         const eBuildingType type,
         const int sw, const int sh,

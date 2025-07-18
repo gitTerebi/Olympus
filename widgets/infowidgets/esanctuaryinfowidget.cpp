@@ -9,6 +9,7 @@
 #include "widgets/echoosecitydialog.h"
 #include "evectorhelpers.h"
 #include "widgets/egamewidget.h"
+#include "widgets/eprogressbar.h"
 
 eSanctuaryInfoWidget::eSanctuaryInfoWidget(
         eMainWindow* const window,
@@ -50,6 +51,7 @@ int sTextGodId(const eGodType god) {
 }
 
 void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
+    const int p = resolution().largePadding();
     if(s->finished()) {
         const auto title = eBuilding::sNameForBuilding(s);
         eInfoWidget::initialize(title);
@@ -108,13 +110,15 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         buttonsW->setNoPadding();
 
         {
+            const auto bw = new eWidget(window());
+            bw->setNoPadding();
+            buttonsW->addWidget(bw);
             const int string = 10 + godId;
             const auto txt = eLanguage::zeusText(132, string);
             const auto pb = new eFramedButton(txt, window());
             pb->setUnderline(false);
             pb->fitContent();
-            buttonsW->addWidget(pb);
-            pb->align(eAlignment::hcenter);
+            bw->addWidget(pb);
             pb->setPressAction([s, godId, buttonReasonW, reasonLabel]() {
                 eHelpDenialReason reason;
                 const bool r = s->askForHelp(reason);
@@ -144,11 +148,21 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
                 buttonReasonW->fitHeight();
                 buttonReasonW->align(eAlignment::bottom);
             });
+            const auto bar = new eProgressBar(window());
+            bar->setRange(0, 100);
+            const double frac = s->helpTimeFraction();
+            bar->setValue(std::clamp(int(std::floor(100*frac)), 5, 100));
+            bw->addWidget(bar);
+            const int w = pb->width();
+            bar->resize(w, p);
+
+            bw->stackVertically(p);
+            bw->fitContent();
         }
         const auto& board = s->getBoard();
         const auto cids = board.citiesOnBoard();
-        const auto ppid = board.personPlayer();
-        const auto ptid = board.playerIdToTeamId(ppid);
+        const auto pid = s->playerId();
+        const auto ptid = board.playerIdToTeamId(pid);
         std::vector<eCityId> enemyCids;
         for(const auto cid : cids) {
             const auto ctid = board.cityIdToTeamId(cid);
@@ -158,12 +172,14 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
             enemyCids.push_back(cid);
         }
         if(!enemyCids.empty()) {
+            const auto bw = new eWidget(window());
+            bw->setNoPadding();
+            buttonsW->addWidget(bw);
             const auto txt = eLanguage::zeusText(156, 27);
             const auto pb = new eFramedButton(txt, window());
             pb->setUnderline(false);
             pb->fitContent();
-            buttonsW->addWidget(pb);
-            pb->align(eAlignment::hcenter);
+            bw->addWidget(pb);
             const auto wboard = board.getWorldBoard();
             pb->setPressAction([this, wboard, s, buttonReasonW, reasonLabel, enemyCids]() {
                 const auto askForAttack = [s, buttonReasonW, reasonLabel](const eCityId cid) {
@@ -213,9 +229,18 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
                     mw->openDialog(choose);
                 }
             });
+            const auto bar = new eProgressBar(window());
+            bar->setRange(0, 100);
+            const double frac = s->helpAttackTimeFraction();
+            bar->setValue(std::clamp(int(std::floor(100*frac)), 5, 100));
+            bw->addWidget(bar);
+            const int w = pb->width();
+            bar->resize(w, p);
+
+            bw->stackVertically(p);
+            bw->fitContent();
         }
 
-        const int p = resolution().largePadding();
         buttonsW->stackHorizontally(p);
         buttonsW->fitContent();
 

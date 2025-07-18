@@ -78,6 +78,8 @@ public:
     void setConstructionHalted(const bool h);
     bool constructionHalted() const { return mHaltConstruction; }
 
+    double helpTimeFraction() const;
+    double helpAttackTimeFraction() const;
 
     static stdsptr<eSanctuary> sCreate(
             const eBuildingType type,
