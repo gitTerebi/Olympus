@@ -333,6 +333,31 @@ void eSanctuary::timeChanged(const int by) {
     }
 }
 
+void eSanctuary::nextMonth() {
+    eEmployingBuilding::nextMonth();
+    const bool person = isPersonPlayer();
+    if(person) return;
+    eHelpDenialReason reason;
+    if(eRand::rand() % 5 == 0) {
+        const bool r = askForHelp(reason);
+        mAskedForHelp = false;
+        if(r) return;
+    }
+    const auto& board = getBoard();
+    auto cids = board.citiesOnBoard();
+    std::random_shuffle(cids.begin(), cids.end());
+    const auto thisTid = teamId();
+    for(const auto cid : cids) {
+        const auto tid = board.cityIdToTeamId(cid);
+        if(tid == thisTid) continue;
+        const auto c = board.boardCityWithId(cid);
+        const auto& gods = c->attackingGods();
+        if(!gods.empty()) continue;
+        askForAttack(cid, reason);
+        break;
+    }
+}
+
 int eSanctuary::spaceLeft(const eResourceType type) const {
     const auto c = cost();
     if(type == eResourceType::marble) {
@@ -529,10 +554,7 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
     e->initializeDate(date);
     const auto c = board.boardCityWithId(cid);
     c->addRootGameEvent(e);
-    const auto scid = cityId();
-    const auto pid = board.cityIdToPlayerId(scid);
-    const auto ppid = board.personPlayer();
-    if(pid == ppid) {
+    if(isPersonPlayer()) {
         eSounds::playGodSound(godType(), eGodSound::invade);
     }
     return true;

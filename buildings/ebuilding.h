@@ -292,6 +292,7 @@ public:
 
     void setHP(const int hp);
 
+    bool isPersonPlayer() const;
     ePlayerId playerId() const;
     eTeamId teamId() const;
 

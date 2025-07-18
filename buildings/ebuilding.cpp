@@ -2244,6 +2244,13 @@ bool eBuilding::accessToRoad() const {
     return false;
 }
 
+bool eBuilding::isPersonPlayer() const {
+    auto& board = getBoard();
+    const auto ppid =  board.personPlayer();
+    const auto pid = playerId();
+    return ppid == pid;
+}
+
 ePlayerId eBuilding::playerId() const {
     const auto cid = cityId();
     auto& board = getBoard();

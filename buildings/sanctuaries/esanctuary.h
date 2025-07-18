@@ -32,6 +32,7 @@ public:
     { return nullptr; }
 
     void timeChanged(const int by) override;
+    void nextMonth() override;
 
     int spaceLeft(const eResourceType type) const override;
     int add(const eResourceType type, const int count) override;
