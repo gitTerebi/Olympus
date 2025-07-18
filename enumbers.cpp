@@ -379,7 +379,7 @@ void eNumbers::sLoad() {
 
     loadI("friendly_god_visit_period_i", sFriendlyGodVisitPeriod, 450);
     loadI("god_help_period_i", sGodHelpPeriod, 250000);
-    loadI("god_help_attack_period_i", sGodHelpAttackPeriod, 750000);
+    loadI("god_help_attack_period_i", sGodHelpAttackPeriod, 500000);
     loadI("god_help_attack_player_period_i", sGodHelpAttackPlayerPeriod, 250000);
 
     loadI("god_attack_curse_period_i", sGodAttackCursePeriod, 6000);

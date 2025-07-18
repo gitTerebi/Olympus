@@ -155,7 +155,6 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-
     void appear();
     void disappear(const bool die = false,
                    const stdsptr<eCharActFunc>& finish = nullptr);

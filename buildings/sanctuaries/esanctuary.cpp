@@ -25,6 +25,7 @@
 #include "characters/actions/godHelp/ezeushelpaction.h"
 
 #include "gameEvents/egodattackevent.h"
+#include "characters/actions/ekillcharacterfinishfail.h"
 
 #include "buildings/eresourcebuilding.h"
 #include "buildings/eplaceholder.h"
@@ -569,7 +570,9 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
     if(mGod) {
         const auto a = mGod->action();
         if(const auto gma = dynamic_cast<eGodMonsterAction*>(a)) {
-            gma->disappear();
+            using eKill = eKillCharacterFinishFail;
+            const auto finish = std::make_shared<eKill>(board, mGod.get());
+            gma->disappear(false, finish);
         } else {
             mGod->kill();
         }
