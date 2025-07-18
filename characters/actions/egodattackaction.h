@@ -14,12 +14,15 @@ class eGodAttackAction : public eGodAction {
     friend class eGodObsticleHandler;
 public:
     eGodAttackAction(eCharacter* const c);
+    ~eGodAttackAction();
 
     void increment(const int by) override;
     bool decide() override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    void setSanctuary(const stdptr<eSanctuary>& s);
 private:
     void initialize();
 
@@ -40,6 +43,8 @@ private:
     int mLookForTargetedAttack = eRand::rand() % 2000;
     int mLookForGod = eRand::rand() % 2000;
     int mLookForSpecial = eRand::rand() % 2000;
+
+    stdptr<eSanctuary> mSanctuary;
 };
 
 class eGAA_loserDisappearFinish : public eCharActFunc {

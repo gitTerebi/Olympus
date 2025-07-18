@@ -44,6 +44,10 @@ bool eBoardPlayer::isPerson() const {
     return mBoard.personPlayer() == mId;
 }
 
+void eBoardPlayer::incTime(const int by) {
+    mGodAttackTimer += by;
+}
+
 void eBoardPlayer::addFulfilledQuest(const eGodQuest q) {
     mFulfilledQuests.push_back(q);
 }
@@ -120,6 +124,8 @@ void eBoardPlayer::read(eReadStream& src) {
 
     src >> mDrachmas;
     mInDebtSince.read(src);
+
+    src >> mGodAttackTimer;
 }
 
 void eBoardPlayer::write(eWriteStream& dst) const {
@@ -152,4 +158,6 @@ void eBoardPlayer::write(eWriteStream& dst) const {
 
     dst << mDrachmas;
     mInDebtSince.write(dst);
+
+    dst << mGodAttackTimer;
 }

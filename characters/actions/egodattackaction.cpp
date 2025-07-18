@@ -11,6 +11,10 @@
 eGodAttackAction::eGodAttackAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godAttackAction) {}
 
+eGodAttackAction::~eGodAttackAction() {
+    if(mSanctuary) mSanctuary->godComeback();
+}
+
 void eGodAttackAction::increment(const int by) {
     const auto c = character();
     const auto type = this->type();
@@ -218,6 +222,10 @@ void eGodAttackAction::read(eReadStream& src) {
     src >> mLookForTargetedAttack;
     src >> mLookForGod;
     src >> mLookForSpecial;
+    auto& board = this->board();
+    src.readBuilding(&board, [this](eBuilding* const b) {
+        mSanctuary = static_cast<eSanctuary*>(b);
+    });
 }
 
 void eGodAttackAction::write(eWriteStream& dst) const {
@@ -229,6 +237,11 @@ void eGodAttackAction::write(eWriteStream& dst) const {
     dst << mLookForTargetedAttack;
     dst << mLookForGod;
     dst << mLookForSpecial;
+    dst.writeBuilding(mSanctuary);
+}
+
+void eGodAttackAction::setSanctuary(const stdptr<eSanctuary>& s) {
+    mSanctuary = s;
 }
 
 void eGodAttackAction::initialize() {

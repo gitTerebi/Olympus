@@ -534,26 +534,43 @@ void eSanctuary::addSpecialTile(eTile* const t) {
 }
 
 bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
-    if(mGodAbroad || mHelpTimer < eNumbers::sGodHelpAttackPeriod) {
+    auto& board = getBoard();
+    const auto pid = playerId();
+    const auto p = board.boardPlayerWithId(pid);
+    const int pTimer = p->godAttackTimer();
+    if(mGodAbroad || mHelpTimer < eNumbers::sGodHelpAttackPeriod ||
+       pTimer < eNumbers::sGodHelpAttackPlayerPeriod) {
         reason = eHelpDenialReason::tooSoon;
         return false;
     }
-    auto& board = getBoard();
+    mHelpTimer = 0;
+    p->resetGodAttackTimer();
     const auto ee = eGameEvent::sCreate(cid,
                                         eGameEventType::godAttack,
                                         eGameEventBranch::root,
                                         board);
 
     const auto e = ee->ref<eGodAttackEvent>();
+    e->setSanctuary(this);
     e->setTypes({godType()});
-    e->setDatePlusDays(1);
+    const int delay = 5;
+    e->setDatePlusDays(delay);
     e->setDatePlusMonths(0);
     e->setDatePlusYears(0);
     auto date = board.date();
-    date += 1;
+    date += delay;
     e->initializeDate(date);
     const auto c = board.boardCityWithId(cid);
     c->addRootGameEvent(e);
+    mGodAbroad = true;
+    if(mGod) {
+        const auto a = mGod->action();
+        if(const auto gma = dynamic_cast<eGodMonsterAction*>(a)) {
+            gma->disappear();
+        } else {
+            mGod->kill();
+        }
+    }
     if(isPersonPlayer()) {
         eSounds::playGodSound(godType(), eGodSound::invade);
     }

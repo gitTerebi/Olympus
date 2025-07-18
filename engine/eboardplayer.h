@@ -22,6 +22,9 @@ public:
     ePlayerId id() const { return mId; }
     void setId(const ePlayerId id) { mId = id; }
 
+    bool isPerson() const;
+
+    void incTime(const int by);
     void nextMonth();
 
     int drachmas() const { return mDrachmas; }
@@ -60,11 +63,12 @@ public:
     { return mSlayedMonsters; }
     void addSlayedMonster(const eMonsterType m);
 
+    int godAttackTimer() const { return mGodAttackTimer; }
+    void resetGodAttackTimer() { mGodAttackTimer = 0; }
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
-    bool isPerson() const;
-
     eGameBoard& mBoard;
 
     ePlayerId mId;
@@ -81,6 +85,8 @@ private:
 
     int mDrachmas = 2500;
     eDate mInDebtSince;
+
+    int mGodAttackTimer = 10000000;
 };
 
 #endif // EBOARDPLAYER_H

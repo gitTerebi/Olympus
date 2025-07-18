@@ -12,6 +12,10 @@ eGodAttackEvent::eGodAttackEvent(
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::godAttack, branch, board) {}
 
+void eGodAttackEvent::setSanctuary(const stdptr<eSanctuary>& s) {
+    mSanctuary = s;
+}
+
 void eGodAttackEvent::setTypes(const std::vector<eGodType>& types) {
     mTypes = types;
     const int nTypes = mTypes.size();
@@ -40,6 +44,7 @@ void eGodAttackEvent::trigger() {
     god->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eGodAttackAction>(god.get());
+    if(mSanctuary) a->setSanctuary(mSanctuary);
     god->setAttitude(eGodAttitude::hostile);
     god->setAction(a);
     a->increment(1);
@@ -81,6 +86,7 @@ void eGodAttackEvent::write(eWriteStream& dst) const {
     }
     dst << mRandom;
     dst << mNextId;
+    dst.writeBuilding(mSanctuary);
 }
 
 void eGodAttackEvent::read(eReadStream& src) {
@@ -94,4 +100,8 @@ void eGodAttackEvent::read(eReadStream& src) {
     }
     src >> mRandom;
     src >> mNextId;
+    const auto board = gameBoard();
+    src.readBuilding(board, [this](eBuilding* const b) {
+        mSanctuary = static_cast<eSanctuary*>(b);
+    });
 }

@@ -6,7 +6,6 @@
 eAresHelpAction::eAresHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::aresHelpAction) {}
 
-
 bool eAresHelpAction::decide() {
     switch(mStage) {
     case eAresHelpStage::none:
@@ -45,12 +44,12 @@ void eAresHelpAction::goToTarget() {
     const auto c = character();
     auto& board = eGodAction::board();
     const auto cid = cityId();
-    const auto hero = static_cast<eHero*>(c);
-    const stdptr<eHero> cptr(hero);
+    const auto god = static_cast<eGod*>(c);
+    const stdptr<eGod> cptr(god);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
-                          board, hero);
+                          board, god);
     const auto finish = std::make_shared<eKillCharacterFinishFail>(
-                            board, hero);
+                            board, god);
 
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setFailAction(fail);

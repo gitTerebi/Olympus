@@ -107,7 +107,7 @@ private:
 
     bool mAskedForHelp = false;
     int mCheckHelpNeeded = 0;
-    int mHelpTimer = 1000000;
+    int mHelpTimer = 10000000;
 
     std::vector<eTile*> mWarriorTiles;
     std::vector<eTile*> mSpecialTiles;

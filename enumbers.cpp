@@ -128,6 +128,7 @@ int eNumbers::sWaterMonsterInvadePeriod;
 int eNumbers::sFriendlyGodVisitPeriod;
 int eNumbers::sGodHelpPeriod;
 int eNumbers::sGodHelpAttackPeriod;
+int eNumbers::sGodHelpAttackPlayerPeriod;
 
 int eNumbers::sGodAttackCursePeriod;
 int eNumbers::sGodAttackCurseRange;
@@ -379,6 +380,7 @@ void eNumbers::sLoad() {
     loadI("friendly_god_visit_period_i", sFriendlyGodVisitPeriod, 450);
     loadI("god_help_period_i", sGodHelpPeriod, 250000);
     loadI("god_help_attack_period_i", sGodHelpAttackPeriod, 750000);
+    loadI("god_help_attack_period_i", sGodHelpAttackPlayerPeriod, 250000);
 
     loadI("god_attack_curse_period_i", sGodAttackCursePeriod, 6000);
     loadI("god_attack_curse_range_i", sGodAttackCurseRange, 10);
