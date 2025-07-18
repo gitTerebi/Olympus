@@ -433,6 +433,34 @@ void eBoardCity::saveEditorCityPlan() {
             }
         } else if(ab.fType == eBuildingType::pier) {
             continue;
+        } else if(ab.fType == eBuildingType::agoraSpace) {
+            continue;
+        } else if(ab.fType == eBuildingType::foodVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::fleeceVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::oilVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::wineVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::armsVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::chariotVendor) {
+            continue;
+        } else if(ab.fType == eBuildingType::horseTrainer) {
+            continue;
+        } else if(ab.fType == eBuildingType::palaceTile) {
+            continue;
+        } else if(ab.fType == eBuildingType::templeTile) {
+            continue;
+        } else if(ab.fType == eBuildingType::templeAltar) {
+            continue;
+        } else if(ab.fType == eBuildingType::templeMonument) {
+            continue;
+        } else if(ab.fType == eBuildingType::templeStatue) {
+            continue;
+        } else if(ab.fType == eBuildingType::temple) {
+            continue;
         } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
             ab.fGuides = pb->patrolGuides();
             ab.fGuidesBothDirections = pb->bothDirections();
