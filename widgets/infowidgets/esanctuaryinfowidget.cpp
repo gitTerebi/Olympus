@@ -188,9 +188,11 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
                     int string;
                     if(!r) {
                         switch(reason) {
-                        case eHelpDenialReason::tooSoon:
-                            string = 19 + (eRand::rand() % 6);
-                            break;
+                        case eHelpDenialReason::tooSoon: {
+                            const double frac = s->helpAttackTimeFraction();
+                            const int per = std::clamp(int(std::floor(100*frac)), 0, 100);
+                            string = 19 + per/17;
+                        } break;
                         case eHelpDenialReason::noTarget:
                         case eHelpDenialReason::error:
                             string = -1;
