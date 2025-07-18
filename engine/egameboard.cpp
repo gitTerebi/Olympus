@@ -612,6 +612,7 @@ void eGameBoard::setFriendlyGods(const eCityId cid,
     eDate date = mDate;
     const int period = eNumbers::sFriendlyGodVisitPeriod;
     date += period;
+    date += eRand::rand() % 60;
     e->initializeDate(date, period, 10000);
     e->setTypes(gods);
     addRootGameEvent(e);
