@@ -71,6 +71,11 @@ std::vector<eOverlay> eGranary::getOverlays(const eTileSize size) const {
         }
         o.fX = xy[i].first;
         o.fY = xy[i].second;
+        if(type == eResourceType::carrots) {
+            o.fY += 0.15;
+        } else if(type == eResourceType::fish) {
+            o.fX -= 0.15;
+        }
     }
     return os;
 }
