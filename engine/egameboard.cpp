@@ -1588,7 +1588,7 @@ void eGameBoard::handleGamesBegin(const eGames game) {
     }
 
     const auto pcids = personPlayerCitiesOnBoard();
-    for(const auto& cid : pcids) {
+    for(const auto cid : pcids) {
         const auto c = boardCityWithId(cid);
         if(c->atlantean()) continue;
         const double chance = c->winningChance(game);
@@ -1620,7 +1620,7 @@ void eGameBoard::handleGamesEnd(const eGames game) {
 
     using eCityChance = std::pair<eCityId, double>;
     std::vector<eCityChance> chances;
-    for(const auto& c : mActiveCitiesOnBoard) {
+    for(const auto c : mActiveCitiesOnBoard) {
         if(c->atlantean()) continue;
         const auto id = c->id();
         const double chance = c->winningChance(game);
