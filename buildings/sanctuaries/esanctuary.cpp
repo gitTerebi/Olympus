@@ -337,6 +337,7 @@ void eSanctuary::nextMonth() {
     eEmployingBuilding::nextMonth();
     const bool person = isPersonPlayer();
     if(person) return;
+    if(!finished()) return;
     eHelpDenialReason reason;
     if(eRand::rand() % 5 == 0) {
         const bool r = askForHelp(reason);
@@ -349,6 +350,8 @@ void eSanctuary::nextMonth() {
     const auto thisTid = teamId();
     for(const auto cid : cids) {
         const auto tid = board.cityIdToTeamId(cid);
+        if(tid == eTeamId::neutralFriendly) continue;
+        if(tid == eTeamId::neutralAggresive) continue;
         if(tid == thisTid) continue;
         const auto c = board.boardCityWithId(cid);
         const auto& gods = c->attackingGods();
