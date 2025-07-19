@@ -109,6 +109,23 @@ eGodTextures::eGodTextures(const int tileW, const int tileH,
 
 }
 
+void eGodTextures::loadAll() {
+    loadAphrodite();
+    loadApollo();
+    loadAres();
+    loadArtemis();
+    loadAthena();
+    loadAtlas();
+    loadDemeter();
+    loadDionysus();
+    loadHades();
+    loadHephaestus();
+    loadHera();
+    loadHermes();
+    loadPoseidon();
+    loadZeus();
+}
+
 void loadBasicGod(eBasicGodTextures& god,
                   const int w0, const int w1,
                   const int d0, const int d1,

@@ -308,6 +308,29 @@ eInterfaceTextures::eInterfaceTextures(const int tileW, const int tileH,
     fInterfaceBannerTops(renderer),
     fPoseidonInterfaceBannerTops(renderer) {}
 
+void eInterfaceTextures::loadAll() {
+    loadMapOfGreece1();
+    loadMapOfGreece2();
+    loadMapOfGreece3();
+    loadMapOfGreece4();
+    loadMapOfGreece5();
+    loadMapOfGreece6();
+    loadMapOfGreece7();
+    loadMapOfGreece8();
+
+    loadPoseidonMap1();
+    loadPoseidonMap2();
+    loadPoseidonMap3();
+    loadPoseidonMap4();
+
+    loadPoseidonCampaign1();
+    loadPoseidonCampaign2();
+    loadPoseidonCampaign3();
+    loadPoseidonCampaign4();
+    loadPoseidonCampaign5();
+    loadPoseidonCampaign6();
+}
+
 void eInterfaceTextures::load() {
     if(fLoaded) return;
     fLoaded = true;

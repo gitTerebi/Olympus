@@ -12,6 +12,8 @@ public:
     const int fTileH;
     SDL_Renderer* const fRenderer;
 
+    void loadAll();
+
     bool fFireLoaded = false;
     void loadFire();
 
@@ -72,21 +74,21 @@ public:
     eTextureCollection fBlackArrow;
     eTextureCollection fArrow;
 
-    eTextureCollection fBless;
-    eTextureCollection fCurse;
+    std::vector<eTextureCollection> fBless;
+    std::vector<eTextureCollection> fCurse;
 
     eTextureCollection fPlague;
 
-    eTextureCollection fGodOrangeMissile;
-    eTextureCollection fGodBlueArrow;
-    eTextureCollection fGodOrangeArrow;
-    eTextureCollection fMonsterMissile;
-    eTextureCollection fGodBlueMissile;
-    eTextureCollection fGodRedMissile;
-    eTextureCollection fGodGreenMissile;
-    eTextureCollection fGodPinkMissile;
-    eTextureCollection fGodPurpleMissile;
-    eTextureCollection fOrichalcMissile;
+    std::vector<eTextureCollection> fGodOrangeMissile;
+    std::vector<eTextureCollection> fGodBlueArrow;
+    std::vector<eTextureCollection> fGodOrangeArrow;
+    std::vector<eTextureCollection> fMonsterMissile;
+    std::vector<eTextureCollection> fGodBlueMissile;
+    std::vector<eTextureCollection> fGodRedMissile;
+    std::vector<eTextureCollection> fGodGreenMissile;
+    std::vector<eTextureCollection> fGodPinkMissile;
+    std::vector<eTextureCollection> fGodPurpleMissile;
+    std::vector<eTextureCollection> fOrichalcMissile;
 };
 
 #endif // EDESTRUCTIONTEXTURES_H

@@ -173,6 +173,8 @@ public:
     eCharacterTextures(const int tileW, const int tileH,
                        SDL_Renderer* const renderer);
 
+    void loadAll();
+
     bool fPeddlerLoaded = false;
     void loadPeddler();
     bool fActorLoaded = false;
@@ -233,6 +235,7 @@ public:
     void loadTransporter();
     bool fGrowerLoaded = false;
     void loadGrower();
+    bool fOrangeTenderLoded = false;
     void loadOrangeTender();
     bool fTraderLoaded = false;
     void loadTrader();
@@ -306,8 +309,11 @@ public:
     void loadHealer();
     bool fCartLoaded = false;
     void loadCart();
+    bool fOrichalcCartLoaded = false;
     void loadOrichalcCart();
+    bool fOrangesCartLoaded = false;
     void loadOrangesCart();
+    bool fBlackMarbleTrailerLoaded = false;
     void loadBlackMarbleTrailer();
     bool fBoarLoaded = false;
     void loadBoar();
@@ -321,6 +327,7 @@ public:
     void loadWolf();
     bool fHunterLoaded = false;
     void loadHunter();
+    bool fDeerHunterLoaded = false;
     void loadDeerHunter();
     bool fPhilosopherLoaded = false;
     void loadPhilosopher();
@@ -439,11 +446,11 @@ public:
     bool fSatyrLoaded = false;
     void loadSatyr();
 
-    void loadBanners();
     bool fBannersLoaded = false;
+    void loadBanners();
 
-    void loadEliteCitizen();
     bool fEliteCitizenLoaded = false;
+    void loadEliteCitizen();
 
     const int fTileW;
     const int fTileH;

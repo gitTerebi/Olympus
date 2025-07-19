@@ -125,22 +125,37 @@ eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
     fBlackArrow(renderer),
     fArrow(renderer),
 
-    fBless(renderer),
-    fCurse(renderer),
+    fPlague(renderer) {
 
-    fPlague(renderer),
+}
 
-    fGodOrangeMissile(renderer),
-    fGodBlueArrow(renderer),
-    fGodOrangeArrow(renderer),
-    fMonsterMissile(renderer),
-    fGodBlueMissile(renderer),
-    fGodRedMissile(renderer),
-    fGodGreenMissile(renderer),
-    fGodPinkMissile(renderer),
-    fGodPurpleMissile(renderer),
-    fOrichalcMissile(renderer) {
+void eDestructionTextures::loadAll() {
+    loadFire();
 
+    loadBlessed();
+    loadCursed();
+
+    loadRock();
+    loadBlackSpear();
+    loadSpear();
+    loadBlackArrow();
+    loadArrow();
+
+    loadBless();
+    loadCurse();
+
+    loadPlague();
+
+    loadGodOrangeMissile();
+    loadGodBlueArrow();
+    loadGodOrangeArrow();
+    loadMonsterMissile();
+    loadGodBlueMissile();
+    loadGodRedMissile();
+    loadGodGreenMissile();
+    loadGodPinkMissile();
+    loadGodPurpleMissile();
+    loadOrichalcMissile();
 }
 
 void eDestructionTextures::loadFire() {
@@ -285,10 +300,7 @@ void eDestructionTextures::loadBlackArrow() {
                                  eBlackArrowSpriteData60);
     eSpriteLoader loader(fTileH, "blackArrow", sds,
                          &eSprAmbientOffset, fRenderer);
-
-    for(int i = 2575; i < 2607; i++) {
-        loader.load(2575, i, fBlackArrow);
-    }
+    loader.loadArrowSkipFlipped(2575, 2575, 2607, fBlackArrow);
 }
 
 void eDestructionTextures::loadArrow() {
@@ -302,10 +314,7 @@ void eDestructionTextures::loadArrow() {
                                  eArrowSpriteData60);
     eSpriteLoader loader(fTileH, "arrow", sds,
                          &eSprAmbientOffset, fRenderer);
-
-    for(int i = 2607; i < 2639; i++) {
-        loader.load(2607, i, fArrow);
-    }
+    loader.loadArrowSkipFlipped(2607, 2607, 2639, fArrow);
 }
 
 void eDestructionTextures::loadBless() {
@@ -319,9 +328,7 @@ void eDestructionTextures::loadBless() {
                                  eBlessSpriteData60);
     eSpriteLoader loader(fTileH, "bless", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 492; i < 692; i++) {
-        loader.load(492, i, fBless);
-    }
+    loader.loadSkipFlipped(492, 492, 692, fBless);
 }
 
 void eDestructionTextures::loadCurse() {
@@ -335,9 +342,7 @@ void eDestructionTextures::loadCurse() {
                                  eCurseSpriteData60);
     eSpriteLoader loader(fTileH, "curse", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 807; i < 1007; i++) {
-        loader.load(807, i, fCurse);
-    }
+    loader.loadSkipFlipped(807, 807, 1007, fCurse);
 }
 
 void eDestructionTextures::loadPlague() {
@@ -367,9 +372,7 @@ void eDestructionTextures::loadGodOrangeMissile() {
                                  eGodOrangeMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godOrangeMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1103; i < 1167; i++) {
-        loader.load(1103, i, fGodOrangeMissile);
-    }
+    loader.loadSkipFlipped(1103, 1103, 1167, fGodOrangeMissile);
 }
 
 void eDestructionTextures::loadGodBlueArrow() {
@@ -383,9 +386,7 @@ void eDestructionTextures::loadGodBlueArrow() {
                                  eGodBlueArrowSpriteData60);
     eSpriteLoader loader(fTileH, "godBlueArrow", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1212; i < 1276; i++) {
-        loader.load(1212, i, fGodBlueArrow);
-    }
+    loader.loadSkipFlipped(1212, 1212, 1276, fGodBlueArrow);
 }
 
 void eDestructionTextures::loadGodOrangeArrow() {
@@ -399,9 +400,7 @@ void eDestructionTextures::loadGodOrangeArrow() {
                                  eGodOrangeArrowSpriteData60);
     eSpriteLoader loader(fTileH, "godOrangeArrow", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1276; i < 1340; i++) {
-        loader.load(1276, i, fGodOrangeArrow);
-    }
+    loader.loadSkipFlipped(1276, 1276, 1340, fGodOrangeArrow);
 }
 
 void eDestructionTextures::loadMonsterMissile() {
@@ -415,9 +414,7 @@ void eDestructionTextures::loadMonsterMissile() {
                                  eMonsterMissileSpriteData60);
     eSpriteLoader loader(fTileH, "monsterMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1340; i < 1404; i++) {
-        loader.load(1340, i, fMonsterMissile);
-    }
+    loader.loadSkipFlipped(1340, 1340, 1404, fMonsterMissile);
 }
 
 void eDestructionTextures::loadGodBlueMissile() {
@@ -431,9 +428,7 @@ void eDestructionTextures::loadGodBlueMissile() {
                                  eGodBlueMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godBlueMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1404; i < 1468; i++) {
-        loader.load(1404, i, fGodBlueMissile);
-    }
+    loader.loadSkipFlipped(1404, 1404, 1468, fGodBlueMissile);
 }
 
 void eDestructionTextures::loadGodRedMissile() {
@@ -447,9 +442,7 @@ void eDestructionTextures::loadGodRedMissile() {
                                  eGodRedMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godRedMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1468; i < 1532; i++) {
-        loader.load(1468, i, fGodRedMissile);
-    }
+    loader.loadSkipFlipped(1468, 1468, 1532, fGodRedMissile);
 }
 
 void eDestructionTextures::loadGodGreenMissile() {
@@ -463,9 +456,7 @@ void eDestructionTextures::loadGodGreenMissile() {
                                  eGodGreenMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godGreenMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1532; i < 1596; i++) {
-        loader.load(1532, i, fGodGreenMissile);
-    }
+    loader.loadSkipFlipped(1532, 1532, 1596, fGodGreenMissile);
 }
 
 void eDestructionTextures::loadGodPinkMissile() {
@@ -479,9 +470,7 @@ void eDestructionTextures::loadGodPinkMissile() {
                                  eGodPinkMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godPinkMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1596; i < 1660; i++) {
-        loader.load(1596, i, fGodPinkMissile);
-    }
+    loader.loadSkipFlipped(1596, 1596, 1660, fGodPinkMissile);
 }
 
 void eDestructionTextures::loadGodPurpleMissile() {
@@ -495,9 +484,7 @@ void eDestructionTextures::loadGodPurpleMissile() {
                                  eGodPurpleMissileSpriteData60);
     eSpriteLoader loader(fTileH, "godPurpleMissile", sds,
                          &eDestructionOffset, fRenderer);
-    for(int i = 1750; i < 1814; i++) {
-        loader.load(1750, i, fGodPurpleMissile);
-    }
+    loader.loadSkipFlipped(1750, 1750, 1814, fGodPurpleMissile);
 }
 
 void eDestructionTextures::loadOrichalcMissile() {
@@ -511,7 +498,5 @@ void eDestructionTextures::loadOrichalcMissile() {
                                  eOrichalcMissileSpriteData60);
     eSpriteLoader loader(fTileH, "orichalcMissile", sds,
                          &ePoseidonImpsOffset, fRenderer);
-    for(int i = 4718; i < 4758; i++) {
-        loader.load(4718, i, fOrichalcMissile);
-    }
+    loader.loadSkipFlipped(4718, 4718, 4758, fOrichalcMissile);
 }

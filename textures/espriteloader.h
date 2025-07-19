@@ -19,9 +19,22 @@ public:
         mSize(std::to_string(size)), mName(name),
         mSds(sds), mOffs(offs), mRenderer(r) {}
 
+    void loadTrailer(const int doff,
+                     const int min, const int max,
+                     eTextureCollection& coll,
+                     const int dy);
+    void loadArrowSkipFlipped(const int doff,
+                              const int min, const int max,
+                              eTextureCollection& coll);
+    void loadSkipFlipped(const int doff,
+                         const int min, const int max,
+                         eTextureCollection& coll);
     void loadSkipFlipped(const int doff,
                          const int min, const int max,
                          std::vector<eTextureCollection>& colls);
+    void loadBoatSkipFlipped(const int doff,
+                             const int min, const int max,
+                             std::vector<eTextureCollection>& colls);
 
     const std::shared_ptr<eTexture>& load(
             const int doff, const int i,

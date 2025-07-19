@@ -35,6 +35,8 @@
 #include "spriteData/blackMarbleTrailer60.h"
 
 void eCharacterTextures::loadBlackMarbleTrailer() {
+    if(fBlackMarbleTrailerLoaded) return;
+    fBlackMarbleTrailerLoaded = true;
     const auto& sds = spriteData(fTileH,
                                  eBlackMarbleTrailerSpriteData15,
                                  eBlackMarbleTrailerSpriteData30,
@@ -43,22 +45,14 @@ void eCharacterTextures::loadBlackMarbleTrailer() {
     eSpriteLoader loader(fTileH, "blackMarbleTrailer", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
-    const auto loadTrailer =
-            [&](const int min, const int max,
-                eTextureCollection& coll,
-                const int dy) {
-        for(int i = min; i < max; i++) {
-            const auto& tex = loader.load(1019, i, coll);
-            tex->setOffset(tex->offsetX(), tex->offsetY() + dy);
-        }
-    };
-
-    loadTrailer(1019, 1027, fBlackMarbleBigTrailer, -4);
-    loadTrailer(1027, 1035, fBlackMarbleTrailer1, -7);
-    loadTrailer(1035, 1043, fBlackMarbleTrailer2, -7);
+    loader.loadTrailer(1019, 1019, 1027, fBlackMarbleBigTrailer, -4);
+    loader.loadTrailer(1019, 1027, 1035, fBlackMarbleTrailer1, -7);
+    loader.loadTrailer(1019, 1035, 1043, fBlackMarbleTrailer2, -7);
 }
 
 void eCharacterTextures::loadOrangeTender() {
+    if(fOrangeTenderLoded) return;
+    fOrangeTenderLoded = true;
     const auto& sds = spriteData(fTileH,
                                  eOrangeTenderSpriteData15,
                                  eOrangeTenderSpriteData30,
@@ -77,6 +71,8 @@ void eCharacterTextures::loadOrangeTender() {
 }
 
 void eCharacterTextures::loadOrangesCart() {
+    if(fOrangesCartLoaded) return;
+    fOrangesCartLoaded = true;
     const auto& sds = spriteData(fTileH,
                                  eOrangesCartSpriteData15,
                                  eOrangesCartSpriteData30,
@@ -89,6 +85,8 @@ void eCharacterTextures::loadOrangesCart() {
 }
 
 void eCharacterTextures::loadOrichalcCart() {
+    if(fOrichalcCartLoaded) return;
+    fOrichalcCartLoaded = true;
     const auto& sds = spriteData(fTileH,
                                  eOrichalcCartSpriteData15,
                                  eOrichalcCartSpriteData30,
@@ -101,6 +99,8 @@ void eCharacterTextures::loadOrichalcCart() {
 }
 
 void eCharacterTextures::loadDeerHunter() {
+    if(fDeerHunterLoaded) return;
+    fDeerHunterLoaded = true;
     const auto& sds = spriteData(fTileH,
                                  eDeerHunterSpriteData15,
                                  eDeerHunterSpriteData30,

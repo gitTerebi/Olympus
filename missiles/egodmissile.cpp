@@ -11,14 +11,14 @@ std::shared_ptr<eTexture>
 eGodMissile::getTexture(const eTileSize size) const {
     auto& board = this->board();
     const auto dir = board.direction();
-    using eTexPtr = eTextureCollection eDestructionTextures::*;
-    eTexPtr texptr;
+    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
+    eTexPtr collsptr;
     if(mActionType == eCharacterActionType::bless) {
         eGameTextures::loadBless();
-        texptr = &eDestructionTextures::fBless;
+        collsptr = &eDestructionTextures::fBless;
     } else if(mActionType == eCharacterActionType::curse) {
         eGameTextures::loadCurse();
-        texptr = &eDestructionTextures::fCurse;
+        collsptr = &eDestructionTextures::fCurse;
     } else {
         switch(mCharType) {
         case eCharacterType::aphrodite:
@@ -36,25 +36,27 @@ eGodMissile::getTexture(const eTileSize size) const {
         case eCharacterType::poseidon:
         case eCharacterType::zeus: {
             const auto gt = eGod::sCharacterToGodType(mCharType);
-            texptr = eGod::sGodMissile(gt);
+            collsptr = eGod::sGodMissile(gt);
         } break;
         case eCharacterType::atalanta: {
             const auto ht = eHero::sCharacterToHeroType(mCharType);
-            texptr = eHero::sHeroMissile(ht);
+            collsptr = eHero::sHeroMissile(ht);
         } break;
         default:
             eGameTextures::loadMonsterMissile();
-            texptr = &eDestructionTextures::fMonsterMissile;
+            collsptr = &eDestructionTextures::fMonsterMissile;
         }
     }
 
     const int id = static_cast<int>(size);
     const auto& textures = eGameTextures::destrution();
-    const auto& coll = textures[id].*texptr;
     const double a = angle();
     const auto o = sAngleOrientation(a);
     const auto oo = sRotated(o, dir);
-    const int texId = static_cast<int>(oo) + 8*textureTime();
+    const int ooid = static_cast<int>(oo);
+    const auto& colls = textures[id].*collsptr;
+    const auto& coll = colls[ooid];
+    const int texId = textureTime();
     return coll.getTexture(texId % coll.size());
 }
 

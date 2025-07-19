@@ -30,30 +30,9 @@ void eCharacterTextures::loadTrireme() {
     eSpriteLoader loader(fTileH, "trireme", sds,
                          &eSprMainOffset, fRenderer);
 
-
-    for(int j = 0; j < 8; j++) {
-        fTrireme.fSwim.emplace_back(fRenderer);
-    }
-
-    for(int i = 6570; i < 6633;) {
-        for(int j = 0; j < 8; j++, i += 2) {
-            loader.load(6569, i, fTrireme.fSwim[j]);
-        }
-    }
-
-    for(int j = 0; j < 8; j++) {
-        fTrireme.fDie.emplace_back(fRenderer);
-    }
-
-    for(int i = 6633; i < 6729;) {
-        for(int j = 0; j < 8; j++, i++) {
-            loader.load(6569, i, fTrireme.fDie[j]);
-        }
-    }
-
-    for(int i = 6729; i < 6737; i++) {
-        loader.load(6569, i, fTrireme.fStand);
-    }
+    loader.loadBoatSkipFlipped(6569, 6570, 6633, fTrireme.fSwim);
+    loader.loadSkipFlipped(6569, 6633, 6729, fTrireme.fDie);
+    loader.loadSkipFlipped(6569, 6729, 6737, fTrireme.fStand);
 }
 
 void eCharacterTextures::loadEnemyBoat() {
@@ -67,30 +46,9 @@ void eCharacterTextures::loadEnemyBoat() {
     eSpriteLoader loader(fTileH, "enemyBoat", sds,
                          &eSprMainOffset, fRenderer);
 
-
-    for(int j = 0; j < 8; j++) {
-        fEnemyBoat.fSwim.emplace_back(fRenderer);
-    }
-
-    for(int i = 4834; i < 4897;) {
-        for(int j = 0; j < 8; j++, i += 2) {
-            loader.load(4833, i, fEnemyBoat.fSwim[j]);
-        }
-    }
-
-    for(int j = 0; j < 8; j++) {
-        fEnemyBoat.fDie.emplace_back(fRenderer);
-    }
-
-    for(int i = 4897; i < 4993;) {
-        for(int j = 0; j < 8; j++, i++) {
-            loader.load(4833, i, fEnemyBoat.fDie[j]);
-        }
-    }
-
-    for(int i = 4993; i < 5001; i++) {
-        loader.load(4833, i, fEnemyBoat.fStand);
-    }
+    loader.loadBoatSkipFlipped(4833, 4834, 4897, fEnemyBoat.fSwim);
+    loader.loadSkipFlipped(4833, 4897, 4993, fEnemyBoat.fDie);
+    loader.loadSkipFlipped(4833, 4993, 5001, fEnemyBoat.fStand);
 }
 
 void eCharacterTextures::loadEliteCitizen() {

@@ -25,7 +25,7 @@ public:
     static bool sRangedHero(const eHeroType ht);
     static int sHeroAttackTime(const eHeroType ht);
 
-    using eTexPtr = eTextureCollection eDestructionTextures::*;
+    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
     static eTexPtr sHeroMissile(const eHeroType gt);
 
     static eCharacterType sHeroToCharacterType(

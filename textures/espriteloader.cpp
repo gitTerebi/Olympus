@@ -1,5 +1,53 @@
 #include "espriteloader.h"
 
+void eSpriteLoader::loadTrailer(const int doff,
+                                const int min, const int max,
+                                eTextureCollection& coll, const int dy) {
+    loadSkipFlipped(doff, min, max, coll);
+    for(int i = 0; i < max - min; i++) {
+        const auto& tex = coll.getTexture(i);
+        tex->setOffset(tex->offsetX(), tex->offsetY() + dy);
+    }
+}
+
+void eSpriteLoader::loadArrowSkipFlipped(const int doff,
+                                         const int min, const int max,
+                                         eTextureCollection& coll) {
+    for(int i = min; i < max; i++) {
+        if(i - min > 15 && i - min < 31) {
+            auto& tex = coll.addTexture();
+            const auto& flipTex = coll.getTexture(min + 30 - i);
+            tex->setFlipTex(flipTex);
+            if(mOffs) {
+                const auto& offset = (*mOffs)[i - 1];
+                tex->setOffset(offset.first, offset.second);
+            }
+        } else {
+            load(doff, i, coll);
+        }
+    }
+}
+
+void eSpriteLoader::loadSkipFlipped(const int doff,
+                                    const int min, const int max,
+                                    eTextureCollection& coll) {
+    for(int i = min; i < max;) {
+        for(int j = 0; j < 8; j++, i++) {
+            if(j > 3 && j < 7) {
+                auto& tex = coll.addTexture();
+                const auto& flipTex = coll.getTexture(6 - j);
+                tex->setFlipTex(flipTex);
+                if(mOffs) {
+                    const auto& offset = (*mOffs)[i - 1];
+                    tex->setOffset(offset.first, offset.second);
+                }
+            } else {
+                load(doff, i, coll);
+            }
+        }
+    }
+}
+
 void eSpriteLoader::loadSkipFlipped(const int doff,
                                     const int min, const int max,
                                     std::vector<eTextureCollection>& colls) {
@@ -9,6 +57,32 @@ void eSpriteLoader::loadSkipFlipped(const int doff,
     int k = 0;
     for(int i = min; i < max;) {
         for(int j = 0; j < 8; j++, i++) {
+            auto& coll = colls[j];
+            if(j > 3 && j < 7) {
+                const auto& flipTex = colls[6 - j].getTexture(k);
+                auto& tex = coll.addTexture();
+                tex->setFlipTex(flipTex);
+                if(mOffs) {
+                    const auto& offset = (*mOffs)[i - 1];
+                    tex->setOffset(offset.first, offset.second);
+                }
+            } else {
+                load(doff, i, coll);
+            }
+        }
+        k++;
+    }
+}
+
+void eSpriteLoader::loadBoatSkipFlipped(const int doff,
+                                        const int min, const int max,
+                                        std::vector<eTextureCollection>& colls) {
+    for(int j = 0; j < 8; j++) {
+        colls.emplace_back(mRenderer);
+    }
+    int k = 0;
+    for(int i = min; i < max;) {
+        for(int j = 0; j < 8; j++, i += 2) {
             auto& coll = colls[j];
             if(j > 3 && j < 7) {
                 const auto& flipTex = colls[6 - j].getTexture(k);

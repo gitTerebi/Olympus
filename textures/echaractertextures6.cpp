@@ -318,7 +318,7 @@ void eCharacterTextures::loadAmazonArcher() {
                          &eZeus_amazonOffset, fRenderer);
 
     loader.loadSkipFlipped(261, 261, 381, fAmazonArcher.fWalk);
-    loader.loadSkipFlipped(261, 121, 525, fAmazonArcher.fFight);
+    loader.loadSkipFlipped(261, 381, 525, fAmazonArcher.fFight);
 
     for(int i = 525; i < 540; i++) {
         loader.load(261, i, fAmazonArcher.fDie);

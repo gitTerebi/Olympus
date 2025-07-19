@@ -105,7 +105,7 @@ void eCharacterTextures::loadOrichalcMiner() {
     eSpriteLoader loader(fTileH, "orichalcMiner", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
-    loader.loadSkipFlipped(1507, 1507, 2691, fOrichalcMiner.fWalk);
+    loader.loadSkipFlipped(1507, 1507, 1603, fOrichalcMiner.fWalk);
     loader.loadSkipFlipped(1507, 1719, 1815, fOrichalcMiner.fCarry);
     loader.loadSkipFlipped(1507, 1611, 1707, fOrichalcMiner.fCollect);
 

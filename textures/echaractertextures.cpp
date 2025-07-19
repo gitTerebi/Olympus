@@ -435,6 +435,159 @@ eCharacterTextures::eCharacterTextures(const int tileW, const int tileH,
 
 }
 
+void eCharacterTextures::loadAll() {
+    loadPeddler();
+    loadActor();
+    loadOx();
+    loadPorter();
+    loadOxHandler();
+    loadTrailer();
+    loadSettlers();
+    loadFireFighter();
+    loadWatchman();
+    loadGoatherd();
+    loadBronzeMiner();
+    loadOrichalcMiner();
+    loadArtisan();
+    loadFoodVendor();
+    loadFleeceVendor();
+    loadOilVendor();
+    loadWineVendor();
+    loadArmsVendor();
+    loadHorseVendor();
+    loadSheep();
+    loadHorse();
+    loadShepherd();
+    loadMarbleMiner();
+    loadSilverMiner();
+    loadArcher();
+    loadPoseidonTowerArcher();
+    loadLumberjack();
+    loadTaxCollector();
+    loadTransporter();
+    loadGrower();
+    loadOrangeTender();
+    loadTrader();
+    loadWaterDistributor();
+
+    loadRockThrower();
+    loadHoplite();
+    loadHorseman();
+
+    loadAmazonSpear();
+    loadAmazonArcher();
+
+    loadTrojanHoplite();
+    loadTrojanSpearthrower();
+    loadTrojanHorseman();
+
+    loadCentaurHorseman();
+    loadCentaurArcher();
+
+    loadPersianHoplite();
+    loadPersianHorseman();
+    loadPersianArcher();
+
+    loadEgyptianHoplite();
+    loadEgyptianChariot();
+    loadEgyptianArcher();
+
+    loadMayanHoplite();
+    loadMayanArcher();
+
+    loadOceanidHoplite();
+    loadOceanidSpearthrower();
+
+    loadPhoenicianHorseman();
+    loadPhoenicianArcher();
+
+    loadAtlanteanHoplite();
+    loadAtlanteanChariot();
+    loadAtlanteanArcher();
+
+    loadAresWarrior();
+
+    loadHealer();
+    loadCart();
+    loadOrichalcCart();
+    loadOrangesCart();
+    loadBlackMarbleTrailer();
+    loadBoar();
+    loadGymnast();
+    loadCompetitor();
+    loadGoat();
+    loadWolf();
+    loadHunter();
+    loadDeerHunter();
+    loadPhilosopher();
+    loadUrchinGatherer();
+    loadFishingBoat();
+    loadTradeBoat();
+    loadTrireme();
+    loadTriremeOverlay();
+    loadEnemyBoat();
+    loadDeer();
+    loadGreekHoplite();
+    loadGreekHorseman();
+    loadGreekRockThrower();
+    loadDonkey();
+
+    loadDisgruntled();
+    loadSick();
+    loadHomeless();
+
+    loadCalydonianBoar();
+    loadCerberus();
+    loadChimera();
+    loadCyclops();
+    loadDragon();
+    loadEchidna();
+    loadHarpie();
+    loadHector();
+    loadHydra();
+    loadKraken();
+    loadMaenads();
+    loadMedusa();
+    loadMinotaur();
+    loadScylla();
+    loadSphinx();
+    loadTalos();
+
+    loadAchilles();
+    loadAtalanta();
+    loadBellerophon();
+    loadHeracles();
+    loadJason();
+    loadOdysseus();
+    loadPerseus();
+    loadTheseus();
+
+    loadScholar();
+    loadAstronomer();
+    loadInventor();
+    loadCurator();
+
+    loadHoplitePoseidon();
+    loadArcherPoseidon();
+    loadChariotPoseidon();
+
+    loadCattle();
+    loadBull();
+    loadButcher();
+
+    loadChariotVendor();
+
+    loadChariot();
+
+    loadElephant();
+
+    loadSatyr();
+
+    loadBanners();
+
+    loadEliteCitizen();
+}
+
 void loadBasicTexture(eBasicCharacterTextures& tex,
                       const int start,
                       eSpriteLoader& loader) {
@@ -538,24 +691,14 @@ void eCharacterTextures::loadTrailer() {
     eSpriteLoader loader(fTileH, "trailer", sds,
                          &eSprMainOffset, fRenderer);
 
-    const auto loadTrailer =
-            [&](const int min, const int max,
-                eTextureCollection& coll,
-                const int dy) {
-        for(int i = min; i < max; i++) {
-            const auto& tex = loader.load(2991, i, coll);
-            tex->setOffset(tex->offsetX(), tex->offsetY() + dy);
-        }
-    };
-
-    loadTrailer(2991, 2999, fEmptyTrailer, -7);
-    loadTrailer(2999, 3007, fWoodTrailer1, -7);
-    loadTrailer(3007, 3015, fWoodTrailer2, -7);
-    loadTrailer(3015, 3023, fMarbleTrailer1, -7);
-    loadTrailer(3023, 3031, fMarbleTrailer2, -7);
-    loadTrailer(3031, 3039, fSculptureTrailer, -7);
-    loadTrailer(3039, 3047, fEmptyBigTrailer, -4);
-    loadTrailer(3047, 3055, fMarbleBigTrailer, -4);
+    loader.loadTrailer(2991, 2991, 2999, fEmptyTrailer, -7);
+    loader.loadTrailer(2991, 2999, 3007, fWoodTrailer1, -7);
+    loader.loadTrailer(2991, 3007, 3015, fWoodTrailer2, -7);
+    loader.loadTrailer(2991, 3015, 3023, fMarbleTrailer1, -7);
+    loader.loadTrailer(2991, 3023, 3031, fMarbleTrailer2, -7);
+    loader.loadTrailer(2991, 3031, 3039, fSculptureTrailer, -7);
+    loader.loadTrailer(2991, 3039, 3047, fEmptyBigTrailer, -4);
+    loader.loadTrailer(2991, 3047, 3055, fMarbleBigTrailer, -4);
 }
 
 void eCharacterTextures::loadSettlers() {
@@ -1101,9 +1244,7 @@ void eCharacterTextures::loadCart() {
         eSpriteLoader loader(fTileH, "cart", sds,
                              &eSprMainOffset, fRenderer);
 
-        for(int i = 8428; i < 8436; i++) {
-            loader.load(8428, i, fEmptyCart);
-        }
+        loader.loadSkipFlipped(8428, 8428, 8436, fEmptyCart);
         loader.loadSkipFlipped(8428, 8436, 8460, fUrchinCart);
         loader.loadSkipFlipped(8428, 8460, 8484, fFishCart);
         loader.loadSkipFlipped(8428, 8484, 8508, fMeatCart);
@@ -1280,36 +1421,10 @@ void eCharacterTextures::loadFishingBoat() {
     eSpriteLoader loader(fTileH, "fishingBoat", sds,
                          &eSprMainOffset, fRenderer);
 
-    for(int j = 0; j < 8; j++) {
-        fFishingBoat.fSwim.emplace_back(fRenderer);
-    }
-
-    for(int i = 10797; i < 10860;) {
-        for(int j = 0; j < 8; j++, i += 2) {
-            loader.load(10797, i, fFishingBoat.fSwim[j]);
-        }
-    }
-
-    for(int j = 0; j < 8; j++) {
-        fFishingBoat.fCollect.emplace_back(fRenderer);
-        fFishingBoat.fDie.emplace_back(fRenderer);
-    }
-
-    for(int i = 10860; i < 10940;) {
-        for(int j = 0; j < 8; j++, i++) {
-            loader.load(10797, i, fFishingBoat.fCollect[j]);
-        }
-    }
-
-    for(int i = 10940; i < 10948; i++) {
-        loader.load(10797, i, fFishingBoat.fStand);
-    }
-
-    for(int i = 10948; i < 11036;) {
-        for(int j = 0; j < 8; j++, i++) {
-            loader.load(10797, i, fFishingBoat.fDie[j]);
-        }
-    }
+    loader.loadBoatSkipFlipped(10796, 10797, 10860, fFishingBoat.fSwim);
+    loader.loadSkipFlipped(10796, 10860, 10940, fFishingBoat.fCollect);
+    loader.loadSkipFlipped(10796, 10940, 10948, fFishingBoat.fStand);
+    loader.loadSkipFlipped(10796, 10948, 11036, fFishingBoat.fDie);
 }
 
 void eCharacterTextures::loadTradeBoat() {
@@ -1324,29 +1439,9 @@ void eCharacterTextures::loadTradeBoat() {
     eSpriteLoader loader(fTileH, "tradeBoat", sds,
                          &eSprMainOffset, fRenderer);
 
-    for(int j = 0; j < 8; j++) {
-        fTradeBoat.fSwim.emplace_back(fRenderer);
-    }
-
-    for(int i = 10421; i < 10484;) {
-        for(int j = 0; j < 8; j++, i += 2) {
-            loader.load(10420, i, fTradeBoat.fSwim[j]);
-        }
-    }
-
-    for(int j = 0; j < 8; j++) {
-        fTradeBoat.fDie.emplace_back(fRenderer);
-    }
-
-    for(int i = 10484; i < 10580;) {
-        for(int j = 0; j < 8; j++, i++) {
-            loader.load(10420, i, fTradeBoat.fDie[j]);
-        }
-    }
-
-    for(int i = 10580; i < 10588; i++) {
-        loader.load(10420, i, fTradeBoat.fStand);
-    }
+    loader.loadBoatSkipFlipped(10420, 10421, 10484, fTradeBoat.fSwim);
+    loader.loadSkipFlipped(10420, 10484, 10580, fTradeBoat.fDie);
+    loader.loadSkipFlipped(10420, 10580, 10588, fTradeBoat.fStand);
 }
 
 void eCharacterTextures::loadGreekRockThrower() {

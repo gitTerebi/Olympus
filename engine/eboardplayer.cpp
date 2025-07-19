@@ -92,6 +92,7 @@ void eBoardPlayer::removeConquest(ePlayerConquestEventBase* const q) {
 void eBoardPlayer::read(eReadStream& src) {
     src >> mId;
     src >> mDifficulty;
+    mDifficulty = eDifficulty::hero; // !!!
 
     {
         int nq;

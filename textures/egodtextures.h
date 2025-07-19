@@ -87,6 +87,8 @@ public:
     static const int sZeusFTime = (394 - 226)/8;
     static const int sZeusBTime = (651 - 395)/8;
 
+    void loadAll();
+
     bool fAphroditeLoaded = false;
     void loadAphrodite();
     bool fApolloLoaded = false;

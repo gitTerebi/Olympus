@@ -127,6 +127,14 @@ eTerrainTextures::eTerrainTextures(const int tileW, const int tileH,
 
     fQuakeTexs(renderer) {}
 
+void eTerrainTextures::loadAll() {
+    load();
+
+    loadPoseidonTrees();
+    loadBlackMarble();
+    loadOrichalc();
+}
+
 void loadWaterToX(SDL_Renderer* const renderer, int i0,
                   std::vector<eTextureCollection>& result,
                   eSpriteLoader& loader) {

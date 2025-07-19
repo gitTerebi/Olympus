@@ -19,20 +19,20 @@ const auto eArrowSpriteData30 = std::vector<eSpriteData> {
    eSpriteData{0, 186, 0, 8, 11}, // 2620
    eSpriteData{0, 194, 0, 6, 12}, // 2621
    eSpriteData{0, 200, 0, 3, 12}, // 2622
-   eSpriteData{0, 203, 0, 6, 12}, // 2623
-   eSpriteData{0, 209, 0, 8, 11}, // 2624
-   eSpriteData{0, 217, 0, 11, 10}, // 2625
-   eSpriteData{0, 228, 0, 14, 9}, // 2626
-   eSpriteData{0, 242, 0, 16, 8}, // 2627
-   eSpriteData{0, 258, 0, 17, 6}, // 2628
-   eSpriteData{0, 275, 0, 18, 4}, // 2629
-   eSpriteData{0, 293, 0, 19, 3}, // 2630
-   eSpriteData{0, 312, 0, 19, 4}, // 2631
-   eSpriteData{0, 331, 0, 17, 6}, // 2632
-   eSpriteData{0, 348, 0, 16, 7}, // 2633
-   eSpriteData{0, 364, 0, 14, 9}, // 2634
-   eSpriteData{0, 378, 0, 12, 10}, // 2635
-   eSpriteData{0, 390, 0, 8, 11}, // 2636
-   eSpriteData{0, 398, 0, 5, 12}, // 2637
-   eSpriteData{0, 403, 0, 3, 12}, // 2638
+   eSpriteData{-1, 0, 0, 0, 0}, // 2623
+   eSpriteData{-1, 0, 0, 0, 0}, // 2624
+   eSpriteData{-1, 0, 0, 0, 0}, // 2625
+   eSpriteData{-1, 0, 0, 0, 0}, // 2626
+   eSpriteData{-1, 0, 0, 0, 0}, // 2627
+   eSpriteData{-1, 0, 0, 0, 0}, // 2628
+   eSpriteData{-1, 0, 0, 0, 0}, // 2629
+   eSpriteData{-1, 0, 0, 0, 0}, // 2630
+   eSpriteData{-1, 0, 0, 0, 0}, // 2631
+   eSpriteData{-1, 0, 0, 0, 0}, // 2632
+   eSpriteData{-1, 0, 0, 0, 0}, // 2633
+   eSpriteData{-1, 0, 0, 0, 0}, // 2634
+   eSpriteData{-1, 0, 0, 0, 0}, // 2635
+   eSpriteData{-1, 0, 0, 0, 0}, // 2636
+   eSpriteData{-1, 0, 0, 0, 0}, // 2637
+   eSpriteData{0, 203, 0, 3, 12}, // 2638
 };

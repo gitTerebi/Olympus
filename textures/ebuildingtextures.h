@@ -10,6 +10,8 @@ public:
     eBuildingTextures(const int tileW, const int tileH,
                      SDL_Renderer* const renderer);
 
+    void loadAll();
+
     void load();
     bool fLoaded = false;
 

@@ -858,6 +858,127 @@ eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
 
     fSpawner(renderer) {}
 
+void eBuildingTextures::loadAll() {
+    load();
+
+    loadCommonHouse();
+    loadPoseidonCommonHouse();
+    loadEliteHouse();
+    loadPoseidonEliteHouse();
+    loadCollege();
+    loadGymnasium();
+    loadDramaSchool();
+    loadPodium();
+    loadTheater();
+    loadStadium();
+    loadFountain();
+    loadHospital();
+    loadOliveTree();
+    loadVine();
+    loadPlantation();
+    loadHuntingLodge();
+    loadFishery();
+    loadUrchinQuay();
+    loadCardingShed();
+    loadDairy();
+    loadGrowersLodge();
+    loadTimberMill();
+    loadMasonryShop();
+    loadBlackMarbleWorkshop();
+    loadRefinery();
+    loadOrichalcTowerOverlay();
+    loadMasonryShopOverlays();
+    loadMint();
+    loadFoundry();
+    loadArtisansGuild();
+    loadOlivePress();
+    loadWinery();
+    loadSculptureStudio();
+    loadTriremeWharf();
+    loadHorseRanch();
+    loadArmory();
+    loadGatehouseAndTower();
+    loadWall();
+    loadMaintenanceOffice();
+    loadTaxOffice();
+    loadWatchpost();
+    loadRoadblock();
+    loadBridge();
+    loadPoseidonBridge();
+    loadPalace();
+    loadPalaceTiles();
+    loadSanctuary();
+    loadZeusSanctuary();
+    loadPoseidonSanctuary();
+    loadPyramid();
+    loadPyramid2();
+    loadPoseidonHerosHall();
+    loadHerosHall();
+    loadWaitingOverlay();
+    loadOrangeTendersLodge();
+    loadWaterPark();
+    loadShortObelisk();
+    loadBirdBath();
+    loadBaths();
+    loadShellGarden();
+    loadOrrery();
+    loadDolphinSculpture();
+    loadStoneCircle();
+    loadSpring();
+    loadTopiary();
+    loadSundial();
+    loadTallObelisk();
+    loadAvenue();
+    loadColumns();
+    loadCommemorative();
+    loadFishPond();
+    loadHedgeMaze();
+    loadGazebo();
+    loadFlowerGarden();
+    loadBench();
+    loadPark();
+
+    loadZeusMonuments();
+    loadPoseidonMonuments();
+    loadHadesMonuments();
+    loadDemeterMonuments();
+    loadAthenaMonuments();
+    loadArtemisMonuments();
+    loadApolloMonuments();
+    loadAresMonuments();
+    loadHephaestusMonuments();
+    loadAphroditeMonuments();
+    loadHermesMonuments();
+    loadDionysusMonuments();
+
+    loadHeraMonuments();
+    loadAtlasMonuments();
+
+    loadAgora();
+    loadGranary();
+    loadPier();
+    loadTradingPost();
+
+    loadBibliotheke();
+    loadObservatory();
+    loadUniversity();
+    loadLaboratory();
+    loadInventorsWorkshop();
+    loadMuseum();
+
+    loadCorral();
+
+    loadChariotFactory();
+
+    loadChariotVendor();
+
+    loadWineVendor();
+
+    loadAltarBullOverlay();
+    loadAltarSheepOverlay();
+    loadAltarGoodsOverlay();
+}
+
 void eBuildingTextures::loadAltarSheepOverlay() {
     if(fAltarSheepOverlayLoaded) return;
     fAltarSheepOverlayLoaded = true;

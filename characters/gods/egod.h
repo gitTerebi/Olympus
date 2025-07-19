@@ -42,7 +42,7 @@ public:
     static eCharacterType sGodToCharacterType(const eGodType type);
     static stdsptr<eGod> sCreateGod(const eGodType type, eGameBoard& board);
 
-    using eTexPtr = eTextureCollection eDestructionTextures::*;
+    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
     static eTexPtr sGodMissile(const eGodType gt);
 
     static eGodType sFightWinner(const eGodType g1, const eGodType g2);
