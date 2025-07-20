@@ -277,25 +277,32 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
     if(updateTips) updateTipPositions();
-    mBoard->scheduleDataUpdate();
-    mBoard->updateAppealMapIfNeeded();
-    mBoard->handleFinishedTasks();
     mBoard->incFrame();
-    const auto ppid = mBoard->personPlayer();
-    const int nc = children().size() - mTips.size();
-//    printf("%d\n", nc);
-    if(!mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 10) {
-        const bool lost = mBoard->episodeLost();
-        if(lost) {
-            const auto w = window();
-            w->episodeLost();
-            return;
-        } else {
-            mTime += mSpeed;
-            mBoard->incTime(mSpeed);
+
+    const bool iterate = mSpeedId == sMaxSpeedId;
+    const int iMax = iterate ? 5 : 1;
+    for(int i = 0; i < iMax; i++) {
+        mBoard->scheduleDataUpdate();
+        mBoard->updateAppealMapIfNeeded();
+        mBoard->handleFinishedTasks();
+        const int nc = children().size() - mTips.size();
+        const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 10;
+        if(incTime) {
+            const bool lost = mBoard->episodeLost();
+            if(lost) {
+                const auto w = window();
+                w->episodeLost();
+                return;
+            } else {
+                mTime += mSpeed;
+                mBoard->incTime(mSpeed);
+            }
         }
+        mBoard->emptyRubbish();
+        if(iterate) mBoard->waitUntilFinished();
+        if(!incTime) break;
     }
-    mBoard->emptyRubbish();
+
     if(mHoverX == 0) {
         setDX(mDX + 35);
     } else if(mHoverX == width() - 1) {
@@ -312,6 +319,8 @@ void eGameWidget::paintEvent(ePainter& p) {
     p.translate(mDX, mDY);
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto& numbers = mNumbers[mTileSize];
+
+    const auto ppid = mBoard->personPlayer();
 
     const int tid = static_cast<int>(mTileSize);
     const auto& trrTexs = eGameTextures::terrain().at(tid);

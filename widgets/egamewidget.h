@@ -266,7 +266,8 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[5] = {2, 10, 25, 50, 100};
+    const int sSpeeds[6] = {2, 10, 25, 50, 100, 100};
+    const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
     bool mLocked = false;
