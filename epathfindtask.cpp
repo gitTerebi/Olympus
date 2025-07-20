@@ -42,24 +42,13 @@ ePathFindTask::ePathFindTask(const eCityId cid,
 
 void ePathFindTask::run(eThreadBoard& data) {
     if(mEndTile) {
-        const auto startT = mStartTile(data);
         const auto endT = mEndTile(data);
         eKnownEndPathFinder pf0(
         [&](eTileBase* const t) {
             return mTileWalkable->walkable(t);
         }, endT);
-        if(mFindAll) pf0.setMode(ePathFinderMode::findAll);
-        const bool r = pf0.findPath(mTileBRect,
-                                    startT, mRange, mOnlyDiagonal,
-                                    data.width(), data.height(),
-                                    mDistance);
-        if(r) {
-            mR = pf0.extractPath(mPath);
-        } else {
-            mR = false;
-        }
+        runImpl(data, pf0);
     } else if(mEndTileFunc) {
-        const auto t = mStartTile(data);
         ePathFinder pf0(
         [&](eTileBase* const t) {
             return mTileWalkable->walkable(t);
@@ -67,20 +56,25 @@ void ePathFindTask::run(eThreadBoard& data) {
         [&](eTileBase* const t) {
            return mEndTileFunc(static_cast<eThreadTile*>(t));
         });
-        if(mFindAll) pf0.setMode(ePathFinderMode::findAll);
-        const bool r = pf0.findPath(mTileBRect,
-                                    t, mRange, mOnlyDiagonal,
-                                    data.width(), data.height(),
-                                    mDistance);
-        if(r) {
-            mR = pf0.extractPath(mPath);
-        } else {
-            mR = false;
-        }
+        runImpl(data, pf0);
     }
 }
 
 void ePathFindTask::finish() {
     if(mR) mFinish(mPath);
     else mFailFunc();
+}
+
+void ePathFindTask::runImpl(eThreadBoard& data, ePathFinderBase& pf0) {
+    if(mFindAll) pf0.setMode(ePathFinderMode::findAll);
+    const auto startT = mStartTile(data);
+    const bool r = pf0.findPath(mTileBRect,
+                                startT, mRange, mOnlyDiagonal,
+                                data.width(), data.height(),
+                                mDistance);
+    if(r) {
+        mR = pf0.extractPath(mPath);
+    } else {
+        mR = false;
+    }
 }

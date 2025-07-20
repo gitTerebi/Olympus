@@ -39,9 +39,9 @@ bool ePathFinderBase::extractPath(
 
 bool ePathFinderBase::extractPath(
         const ePathFunc& pathFunc) {
+    if(!mData.fFound) return false;
+    if(mData.fDistance == 0) return true;
     auto& brd = mData.fBoard;
-    using eBFinder = std::function<bool(const eTilePair&)>;
-    eBFinder bestFinder;
 
     const auto start = mData.fStart;
     const int startX = start->x();
@@ -49,6 +49,8 @@ bool ePathFinderBase::extractPath(
     const int finalX = mData.fFinalX;
     const int finalY = mData.fFinalY;
 
+    using eBFinder = std::function<bool(const eTilePair&)>;
+    eBFinder bestFinder;
     bestFinder = [&](const eTilePair& from) {
         if(!from.first || !from.second) return false;
         const auto tile = from.first;

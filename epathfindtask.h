@@ -5,6 +5,8 @@
 #include "engine/thread/ethreadtile.h"
 #include "engine/thread/ethreaddata.h"
 
+class ePathFinderBase;
+
 class ePathFindTask : public eTask {
 public:
     using ePath = std::vector<eOrientation>;
@@ -40,6 +42,8 @@ private:
     const int mRange;
     const eTileDistance mDistance;
     const bool mFindAll;
+
+    void runImpl(eThreadBoard& data, ePathFinderBase& pf0);
 
     bool mR{false};
     ePath mPath;
