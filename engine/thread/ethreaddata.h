@@ -39,7 +39,6 @@ public:
     std::condition_variable fCvFinished;
     std::queue<eTask*> fTasks;
     std::atomic_bool fInterrupted{false};
-    std::atomic_int fAI = 0;
 private:
     int mW = 0;
     int mH = 0;

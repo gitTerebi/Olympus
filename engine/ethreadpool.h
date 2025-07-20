@@ -26,12 +26,9 @@ public:
 
     bool finished();
     void waitFinished();
-    void interrupt();
-    void resume();
 private:
     void threadEntry(eThreadData* data);
 
-    int mAI = 0;
     int mTaskId = 0;
 
     eGameBoard& mBoard;

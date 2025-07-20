@@ -78,7 +78,6 @@ void eThreadPool::threadEntry(eThreadData* data) {
                 }
                 task->run(b, data->fInterrupted);
                 data->setRunning(false);
-                if(task->ai()) data->fAI--;
 
 //                const auto t2 = high_resolution_clock::now();
 
@@ -88,6 +87,7 @@ void eThreadPool::threadEntry(eThreadData* data) {
             std::lock_guard lock(mFinishedTasksMutex);
             mFinishedTasks.push_back(task);
             data->fBusy = false;
+//            std::printf("Task finished %p in %p\n", task, data);
             data->fCvFinished.notify_one();
         }
     }
@@ -104,22 +104,8 @@ void eThreadPool::queueTask(eTask* const task) {
        cid == eCityId::neutralFriendly) {
         printf("Wrong city id\n");
     }
-    eThreadData* d = nullptr;
-    const bool ai = task->ai();
-    if(ai && mAI > 0) {
-        while(!d || d->fAI == 0) {
-            const int threadId = mTaskId++ % mThreadData.size();
-            d = mThreadData[threadId];
-        }
-    } else if(!ai && mAI > 0) {
-        while(!d || d->fAI > 0) {
-            const int threadId = mTaskId++ % mThreadData.size();
-            d = mThreadData[threadId];
-        }
-    } else {
-        const int threadId = mTaskId++ % mThreadData.size();
-        d = mThreadData[threadId];
-    }
+    const int threadId = mTaskId++ % mThreadData.size();
+    const auto d = mThreadData[threadId];
     auto& cidV = d->fDataUpdateScheduled[cid];
 //    std::printf("Que task %p in %p\n", task, d);
     if(cidV.fV) {
@@ -130,10 +116,6 @@ void eThreadPool::queueTask(eTask* const task) {
         } else {
             d->scheduleUpdate(mBoard, cid);
         }
-    }
-    if(task->ai()) {
-        d->fAI++;
-        mAI++;
     }
     std::unique_lock<std::mutex> lock(d->fTasksMutex);
     d->fTasks.emplace(task);
@@ -147,7 +129,6 @@ void eThreadPool::handleFinished() {
         std::swap(tasks, mFinishedTasks);
     }
     for(const auto t : tasks) {
-        if(t->ai()) mAI--;
         t->finish();
         if(t->shouldDelete()) delete t;
     }
@@ -200,23 +181,4 @@ void eThreadPool::waitFinished() {
             return d->fTasks.empty() && !d->fBusy;
         });
     }
-}
-
-void eThreadPool::interrupt() {
-    mInterrupted = true;
-    for(const auto d : mThreadData) {
-        d->fInterrupted = true;
-    }
-}
-
-void eThreadPool::resume() {
-    if(!mInterrupted) return;
-    mInterrupted = false;
-    for(const auto d : mThreadData) {
-        d->fInterrupted = false;
-    }
-    for(const auto task : mWaitingTasks) {
-        queueTask(task);
-    }
-    mWaitingTasks.clear();
 }
