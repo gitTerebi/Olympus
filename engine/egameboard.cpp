@@ -2409,8 +2409,35 @@ void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
 }
 
 void eGameBoard::setDifficulty(const eDifficulty d) {
+    std::map<eDifficulty, eDifficulty> rivalDiff =
+        {{eDifficulty::beginner, eDifficulty::hero},
+         {eDifficulty::mortal, eDifficulty::hero},
+         {eDifficulty::hero, eDifficulty::mortal},
+         {eDifficulty::titan, eDifficulty::mortal},
+         {eDifficulty::olympian, eDifficulty::beginner}};
+    std::map<eDifficulty, eDifficulty> allyDiff =
+        {{eDifficulty::beginner, eDifficulty::beginner},
+         {eDifficulty::mortal, eDifficulty::mortal},
+         {eDifficulty::hero, eDifficulty::mortal},
+         {eDifficulty::titan, eDifficulty::hero},
+         {eDifficulty::olympian, eDifficulty::hero}};
     const auto ppid = personPlayer();
-    setDifficulty(ppid, d);
+    const auto ptid = playerIdToTeamId(ppid);
+    for(const auto& p : mPlayersOnBoard) {
+        const auto pid = p->id();
+        eDifficulty pd;
+        if(pid == ppid) {
+            pd = d;
+        } else {
+            const auto tid = playerIdToTeamId(pid);
+            if(tid == ptid) {
+                pd = allyDiff[d];
+            } else {
+                pd = rivalDiff[d];
+            }
+        }
+        setDifficulty(pid, pd);
+    }
 }
 
 void eGameBoard::setDifficulty(const ePlayerId pid, const eDifficulty d) {
