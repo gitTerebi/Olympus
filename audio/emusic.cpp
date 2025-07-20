@@ -2,48 +2,50 @@
 
 #include "egamedir.h"
 
-eMusic eMusic::sInstance;
+eMusic* eMusic::sInstance = nullptr;
 
-eMusic::eMusic() {}
+eMusic::eMusic() {
+    sInstance = this;
+}
 
 void eMusic::loadMenu() {
-    sInstance.loadMenuImpl();
+    sInstance->loadMenuImpl();
 }
 
 void eMusic::load() {
-    sInstance.loadImpl();
+    sInstance->loadImpl();
 }
 
 bool eMusic::loaded() {
-    return sInstance.mLoaded;
+    return sInstance->mLoaded;
 }
 
 void eMusic::incTime() {
-    sInstance.incTimeImpl();
+    sInstance->incTimeImpl();
 }
 
 void eMusic::playMenuMusic() {
-    sInstance.playMenuMusicImpl();
+    sInstance->playMenuMusicImpl();
 }
 
 void eMusic::playRandomMusic() {
-    sInstance.playRandomMusicImpl();
+    sInstance->playRandomMusicImpl();
 }
 
 void eMusic::playRandomBattleMusic() {
-    sInstance.playRandomBattleMusicImpl();
+    sInstance->playRandomBattleMusicImpl();
 }
 
 void eMusic::playMissionIntroMusic() {
-    sInstance.playMissionIntroMusicImpl();
+    sInstance->playMissionIntroMusicImpl();
 }
 
 void eMusic::playMissionVictoryMusic() {
-    sInstance.playMissionVictoryMusicImpl();
+    sInstance->playMissionVictoryMusicImpl();
 }
 
 void eMusic::playCampaignVictoryMusic() {
-    sInstance.playCampaignVictoryMusicImpl();
+    sInstance->playCampaignVictoryMusicImpl();
 }
 
 void eMusic::incTimeImpl() {
@@ -72,7 +74,7 @@ void eMusic::playMenuMusicImpl() {
         return;
     }
     Mix_HaltMusic();
-    mSetupMusic->playRandomSound(true);
+    mSetupMusic.playRandomSound(true);
 }
 
 void eMusic::playRandomMusicImpl() {
@@ -84,7 +86,7 @@ void eMusic::playRandomMusicImpl() {
         return;
     }
     Mix_HaltMusic();
-    mMusic->playRandomSound();
+    mMusic.playRandomSound();
 }
 
 void eMusic::playRandomBattleMusicImpl() {
@@ -96,7 +98,7 @@ void eMusic::playRandomBattleMusicImpl() {
         return;
     }
     Mix_HaltMusic();
-    mBattleMusic->playRandomSound();
+    mBattleMusic.playRandomSound();
 }
 
 void eMusic::playMissionIntroMusicImpl() {
@@ -119,25 +121,25 @@ void eMusic::loadImpl() {
     mLoaded = true;
     const std::string dir{eGameDir::path("Audio/Music/")};
 
-    mMusic->addPath(dir + "Afigisi.mp3");
-    mMusic->addPath(dir + "Amolfi.mp3");
-    mMusic->addPath(dir + "Eilavia.mp3");
-    mMusic->addPath(dir + "Eplitha.mp3");
-    mMusic->addPath(dir + "Fengari.mp3");
-    mMusic->addPath(dir + "Iremos.mp3");
-    mMusic->addPath(dir + "Mnimio.mp3");
-    mMusic->addPath(dir + "Naoss.mp3");
-    mMusic->addPath(dir + "Oyonos.mp3");
-    mMusic->addPath(dir + "Perifanos.mp3");
-    mMusic->addPath(dir + "Pnevma.mp3");
-    mMusic->addPath(dir + "Proi.mp3");
+    mMusic.addPath(dir + "Afigisi.mp3");
+    mMusic.addPath(dir + "Amolfi.mp3");
+    mMusic.addPath(dir + "Eilavia.mp3");
+    mMusic.addPath(dir + "Eplitha.mp3");
+    mMusic.addPath(dir + "Fengari.mp3");
+    mMusic.addPath(dir + "Iremos.mp3");
+    mMusic.addPath(dir + "Mnimio.mp3");
+    mMusic.addPath(dir + "Naoss.mp3");
+    mMusic.addPath(dir + "Oyonos.mp3");
+    mMusic.addPath(dir + "Perifanos.mp3");
+    mMusic.addPath(dir + "Pnevma.mp3");
+    mMusic.addPath(dir + "Proi.mp3");
 
-    mBattleMusic->addPath(dir + "Battle1.mp3");
-    mBattleMusic->addPath(dir + "Battle2.mp3");
-    mBattleMusic->addPath(dir + "Battle3.mp3");
-    mBattleMusic->addPath(dir + "Battle4.mp3");
-    mBattleMusic->addPath(dir + "Battle_long.mp3");
-    mBattleMusic->addPath(dir + "Battle_long2.mp3");
+    mBattleMusic.addPath(dir + "Battle1.mp3");
+    mBattleMusic.addPath(dir + "Battle2.mp3");
+    mBattleMusic.addPath(dir + "Battle3.mp3");
+    mBattleMusic.addPath(dir + "Battle4.mp3");
+    mBattleMusic.addPath(dir + "Battle_long.mp3");
+    mBattleMusic.addPath(dir + "Battle_long2.mp3");
 
     mMissionVictory.addPath(dir + "mission_victory.wav");
     mCampaignVictory.addPath(dir + "campaign_victory.wav");
@@ -147,6 +149,6 @@ void eMusic::loadMenuImpl() {
     if(mMenuLoaded) return;
     mMenuLoaded = true;
     const std::string dir{eGameDir::path("Audio/Music/")};
-    mSetupMusic->addPath(dir + "Setup.mp3");
+    mSetupMusic.addPath(dir + "Setup.mp3");
     mMissionIntro.addPath(dir + "mission_intro.wav");
 }

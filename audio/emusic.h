@@ -37,15 +37,15 @@ private:
 
     void loadImpl();
     void loadMenuImpl();
-    static eMusic sInstance;
+    static eMusic* sInstance;
 
     bool mLoaded{false};
     bool mMenuLoaded{false};
     eMusicType mMusicType{eMusicType::none};
 
-    std::shared_ptr<eMusicVector> mSetupMusic = std::make_shared<eMusicVector>();
-    std::shared_ptr<eMusicVector> mMusic = std::make_shared<eMusicVector>();
-    std::shared_ptr<eMusicVector> mBattleMusic = std::make_shared<eMusicVector>();
+    eMusicVector mSetupMusic;
+    eMusicVector mMusic;
+    eMusicVector mBattleMusic;
     eMusicVector mMissionIntro;
     eMusicVector mMissionVictory;
     eMusicVector mCampaignVictory;

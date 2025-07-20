@@ -13,6 +13,9 @@
 #include "egamedir.h"
 #include "enumbers.h"
 
+#include "audio/emusic.h"
+#include "audio/esounds.h"
+
 bool init() {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n",
@@ -167,14 +170,17 @@ int main() {
         close();
         return 1;
     }
-    eMainWindow w;
-    const bool i = w.initialize(settings);
-    if(!i) return 1;
-    const bool e = eGameTextures::initialize(w.renderer());
 
     int r = 0;
-    if(e) {
-        r = w.exec();
+    {
+        eMusic music;
+        eSounds sounds;
+        eMainWindow w;
+        const bool i = w.initialize(settings);
+        if(!i) return 1;
+        const bool e = eGameTextures::initialize(w.renderer());
+
+        if(e) r = w.exec();
     }
 
     close();
