@@ -34,9 +34,9 @@ public:
             const eEnlistAction& action,
             const std::vector<eResourceType>& plunderResources = {});
 
-    void openDialog(eWidget* const d);
+    void openDialog(eWidget* const d) override;
 protected:
-    bool keyPressEvent(const eKeyPressEvent& e);
+    bool keyPressEvent(const eKeyPressEvent& e) override;
 private:
     void openRequestDialog();
     void openFulfillDialog();
