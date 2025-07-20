@@ -193,6 +193,12 @@ void eGameBoard::clear() {
     mWidth = 0;
     mHeight = 0;
     emptyRubbish();
+    mCitiesOnBoard.clear();
+    mPlayersOnBoard.clear();
+    mDefeatedBy.clear();
+    mEarthquakes.clear();
+    mGoals.clear();
+    emptyRubbish();
 }
 
 void eGameBoard::setWorldDirection(const eWorldDirection dir) {
