@@ -442,7 +442,7 @@ void eGodMonsterAction::goToNearestRoad(
         return;
     }
     const auto cr = eTileHelper::closestRoad(t->x(), t->y(), board());
-    if(cr) {
+    if(cr && cr->hasRoad()) {
         const auto fail = std::make_shared<eGMA_patrolFailFail>(
                               board(), this, finishAct);
         const auto finish = std::make_shared<eGMA_patrolFailFinish>(
