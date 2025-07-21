@@ -37,7 +37,8 @@ void eThreadBoardHandler::scheduleUpdate(eGameBoard& board) {
     //    printf("update board: %f ms\n", ms.count());
 }
 
-void eThreadBoardHandler::scheduleUpdate(eGameBoard& board, const eCityId cid) {
+void eThreadBoardHandler::scheduleUpdate(eGameBoard& board, const eCityId cid,
+                                         const eStateRelevance rel) {
 //    std::printf("Update tmp board %p to %d\n", this, board.state());
 
     const auto c = board.boardCityWithId(cid);
@@ -45,14 +46,35 @@ void eThreadBoardHandler::scheduleUpdate(eGameBoard& board, const eCityId cid) {
 
     std::lock_guard l(mTmpBoardMutex);
     mTmpChanged = true;
-    for(const auto src : tiles) {
-        const int dx = src->dx();
-        const int dy = src->dy();
-        const auto dst = mTmpBoard.dtile(dx, dy);
-        if(!dst) continue;
-        dst->load(src);
+
+    if(rel == eStateRelevance::all ||
+       (static_cast<bool>(rel & eStateRelevance::buildings) &&
+        c->allBuildingsState() != mTmpBoard.allBuildingsState())) {
+        for(const auto src : tiles) {
+            const int dx = src->dx();
+            const int dy = src->dy();
+            const auto dst = mTmpBoard.dtile(dx, dy);
+            if(!dst) continue;
+            dst->load(src);
+        }
+        mTmpBoard.setState(board.state());
+        mTmpBoard.setAllBuildingsState(c->allBuildingsState());
+        printf("Update all\n");
+    } else if(static_cast<bool>(rel & eStateRelevance::resourcesInBuildings)) {
+        const auto& bs = c->buildingsWithResource();
+        for(const auto b : bs) {
+            for(const auto src : b->tilesUnder()) {
+                const int dx = src->dx();
+                const int dy = src->dy();
+                const auto dst = mTmpBoard.dtile(dx, dy);
+                if(!dst) continue;
+                dst->load(src);
+            }
+        }
+        printf("Update resources\n");
+    } else {
+        printf("Invalid\n");
     }
-    mTmpBoard.setState(board.state());
 }
 
 void eThreadBoardHandler::updateBoard() {

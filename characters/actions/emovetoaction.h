@@ -6,6 +6,7 @@
 #include "engine/etile.h"
 #include "engine/thread/ethreadtile.h"
 #include "ewalkablehelpers.h"
+#include "engine/estaterelevance.h"
 
 class eThreadBoard;
 
@@ -73,7 +74,10 @@ public:
 
     using eTileDistance = std::function<int(eTileBase* const)>;
     void setTileDistance(const eTileDistance& dist);
+
+    void setStateRelevance(const eStateRelevance rel) { mRelevance = rel; }
 private:
+    eStateRelevance mRelevance = eStateRelevance::all;
     eAction mFoundAction;
     eAction mFindFailAction;
     bool mRemoveLastTurn = false;

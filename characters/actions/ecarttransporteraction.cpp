@@ -179,6 +179,8 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                                   board(), this);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::resourcesInBuildings |
+                         eStateRelevance::buildings);
     a->setFinishAction(finishAction);
 
     a->setFoundAction([tptr, this, c, ttask, bx, by, finishAction]() {

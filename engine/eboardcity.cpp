@@ -652,6 +652,7 @@ void eBoardCity::setDistrictReadyCondition(const int id, const eCondition& c) {
 void eBoardCity::registerBuilding(eBuilding* const b) {
     b->setDistrictId(mCurrentDistrictId);
     mAllBuildings.push_back(b);
+    mAllBuildingsState++;
     const auto type = b->type();
     if(eBuilding::sTimedBuilding(type)) {
         mTimedBuildings.push_back(b);
@@ -664,6 +665,31 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::topiary:
         m3x3AestheticBuildings.push_back(b);
         break;
+    case eBuildingType::granary:
+    case eBuildingType::warehouse:
+    case eBuildingType::tradePost:
+    case eBuildingType::horseRanch:
+    case eBuildingType::horseRanchEnclosure:
+    case eBuildingType::chariotFactory:
+    case eBuildingType::corral:
+    case eBuildingType::carrotsFarm:
+    case eBuildingType::onionsFarm:
+    case eBuildingType::wheatFarm:
+    case eBuildingType::fishery:
+    case eBuildingType::olivePress:
+    case eBuildingType::growersLodge:
+    case eBuildingType::orangeTendersLodge:
+    case eBuildingType::winery:
+    case eBuildingType::timberMill:
+    case eBuildingType::masonryShop:
+    case eBuildingType::foundry:
+    case eBuildingType::armory:
+    case eBuildingType::sculptureStudio:
+    case eBuildingType::dairy:
+    case eBuildingType::urchinQuay:
+    case eBuildingType::cardingShed:
+    case eBuildingType::huntingLodge:
+        mBuildingsWithResource.push_back(b);
     default:
         break;
     }
@@ -681,7 +707,9 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
             mCityPlan.addScheduledBuilding(did, bRect);
         }
     }
+    mAllBuildingsState++;
     eVectorHelpers::remove(mAllBuildings, b);
+    eVectorHelpers::remove(mBuildingsWithResource, b);
     eVectorHelpers::remove(m3x3AestheticBuildings, b);
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);

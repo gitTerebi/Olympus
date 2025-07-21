@@ -97,6 +97,7 @@ void eMoveToAction::start(const eTileFinal& final,
                                        mMaxFindDistance,
                                        mDistance,
                                        endTile);
+    pft->setRelevance(mRelevance);
     tp.queueTask(pft);
 
     if(mWait) {

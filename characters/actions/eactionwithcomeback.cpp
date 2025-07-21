@@ -3,6 +3,8 @@
 #include "characters/echaracter.h"
 #include "emovetoaction.h"
 
+#include "engine/etask.h"
+
 eActionWithComeback::eActionWithComeback(
         eCharacter* const c,
         eTile* const startTile,
@@ -92,6 +94,7 @@ void eActionWithComeback::goBackInternal(stdsptr<eWalkableObject> walkable) {
         finishFunc = std::make_shared<eAWC_goBackFinish>(board(), this);
     }
     const auto a = e::make_shared<eMoveToAction>(c);
+//    a->setStateRelevance(eStateRelevance::buildings);
     a->setFinishAction(finishFunc);
     a->setFailAction(failFunc);
 

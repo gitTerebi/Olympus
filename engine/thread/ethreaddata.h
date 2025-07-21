@@ -28,7 +28,8 @@ public:
 
     void scheduleUpdate(eGameBoard& board);
     void iniScheduleUpdate(eGameBoard& board, const eCityId cid);
-    void scheduleUpdate(eGameBoard& board, const eCityId cid);
+    void scheduleUpdate(eGameBoard& board, const eCityId cid,
+                        const eStateRelevance rel);
 
     std::map<eCityId, eTrueBool> fDataUpdateScheduled;
     std::atomic_bool fBusy{false};

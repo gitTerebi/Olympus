@@ -344,6 +344,11 @@ public:
     int exported(const eCityId cid, const eResourceType type);
     std::map<eResourceType, int> exported(const eCityId cid) const;
 
+    int allBuildingsState() const { return mAllBuildingsState; }
+
+    std::vector<eBuilding*> buildingsWithResource() const
+    { return mBuildingsWithResource; }
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
@@ -416,6 +421,7 @@ private:
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eEmployingBuilding*> mEmployingBuildings;
     std::vector<eBuilding*> mAllBuildings;
+    std::vector<eBuilding*> mBuildingsWithResource;
     std::vector<eBuilding*> m3x3AestheticBuildings;
     std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eTradePost*> mTradePosts;
@@ -490,6 +496,8 @@ private:
 
     int mUpdateResources = 999999;
     int mCoverageUpdate = 10000;
+
+    int mAllBuildingsState = 0;
 };
 
 #endif // EBOARDCITY_H

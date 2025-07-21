@@ -1026,6 +1026,7 @@ HEADERS += \
     engine/eprovide.h \
     engine/eregrowforestaction.h \
     engine/eresourcetype.h \
+    engine/estaterelevance.h \
     engine/etask.h \
     engine/etaxrate.h \
     engine/eterrain.h \

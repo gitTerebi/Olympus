@@ -40,7 +40,8 @@ void eThreadData::iniScheduleUpdate(eGameBoard& board, const eCityId cid) {
     b.scheduleUpdate(board);
 }
 
-void eThreadData::scheduleUpdate(eGameBoard& board, const eCityId cid) {
+void eThreadData::scheduleUpdate(eGameBoard& board, const eCityId cid,
+                                 const eStateRelevance rel) {
     auto& b = mBoards[cid];
-    b.scheduleUpdate(board, cid);
+    b.scheduleUpdate(board, cid, rel);
 }

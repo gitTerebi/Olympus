@@ -7,6 +7,8 @@
 
 #include "engine/thread/ethreadboard.h"
 
+enum class eStateRelevance;
+
 class eThreadBoardHandler {
 public:
     eThreadBoardHandler();
@@ -14,7 +16,8 @@ public:
     void initialize(const int w, const int h);
 
     void scheduleUpdate(eGameBoard& board);
-    void scheduleUpdate(eGameBoard& board, const eCityId cid);
+    void scheduleUpdate(eGameBoard& board, const eCityId cid,
+                        const eStateRelevance rel);
 
     void updateBoard();
 

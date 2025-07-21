@@ -16,10 +16,15 @@ public:
 
     int state() const { return mState; }
     void setState(const int s) { mState = s; }
+
+    int allBuildingsState() const { return mAllBuildingsState; }
+    void setAllBuildingsState(const int s) { mAllBuildingsState = s; }
 private:
     void updateNeighbours();
 
     int mState = 0;
+    int mAllBuildingsState = -1;
+
     int mWidth = 0;
     int mHeight = 0;
     std::vector<std::vector<eThreadTile>> mTiles;
