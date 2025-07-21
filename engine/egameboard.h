@@ -584,10 +584,6 @@ public:
 
     eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
 
-    void updateMaxSoldiers(const eCityId cid);
-    void distributeSoldiers(const eCityId cid);
-    void consolidateSoldiers(const eCityId cid);
-
     void addFulfilledQuest(const ePlayerId pid, const eGodQuest q);
     void addSlayedMonster(const ePlayerId pid, const eMonsterType m);
 

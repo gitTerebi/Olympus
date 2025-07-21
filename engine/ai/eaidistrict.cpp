@@ -288,10 +288,6 @@ bool gBuild(const eAIBuilding& b,
             return s;
         }, pid, cid, editorDisplay);
 
-        board.updateMaxSoldiers(cid);
-        board.distributeSoldiers(cid);
-        board.consolidateSoldiers(cid);
-
         return r;
     } break;
 

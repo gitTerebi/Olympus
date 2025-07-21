@@ -943,11 +943,6 @@ bool eGameWidget::buildMouseRelease() {
                 return s;
             });
 
-            const auto cid = s->cityId();
-            mBoard->updateMaxSoldiers(cid);
-            mBoard->distributeSoldiers(cid);
-            mBoard->consolidateSoldiers(cid);
-
             mGm->clearMode();
         } break;
         case eBuildingMode::eliteHousing: {

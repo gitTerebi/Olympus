@@ -927,12 +927,6 @@ void eGameBoard::waitUntilFinished() {
     }
 }
 
-void eGameBoard::consolidateSoldiers(const eCityId cid) {
-    const auto c = boardCityWithId(cid);
-    if(!c) return;
-    c->consolidateSoldiers();
-}
-
 void eGameBoard::addFulfilledQuest(const ePlayerId pid, const eGodQuest q) {
     const auto p = boardPlayerWithId(pid);
     if(!p) return;
@@ -1160,33 +1154,6 @@ void eGameBoard::removeCityFromBoard(const eCityId cid) {
         mCitiesOnBoard.erase(it);
         return;
     }
-}
-
-void eGameBoard::updateMaxSoldiers(const eCityId cid) {
-    const auto c = boardCityWithId(cid);
-    if(!c) return;
-    c->updateMaxSoldiers();
-}
-
-void eGameBoard::addSoldier(const eCharacterType st,
-                            const eCityId cid) {
-    const auto c = boardCityWithId(cid);
-    if(!c) return;
-    c->addSoldier(st);
-}
-
-void eGameBoard::removeSoldier(const eCharacterType st,
-                               const eCityId cid,
-                               const bool skipNotHome) {
-    const auto c = boardCityWithId(cid);
-    if(!c) return;
-    c->removeSoldier(st, skipNotHome);
-}
-
-void eGameBoard::distributeSoldiers(const eCityId cid) {
-    const auto c = boardCityWithId(cid);
-    if(!c) return;
-    c->distributeSoldiers();
 }
 
 void eGameBoard::killCommonFolks(const eCityId cid, int toKill) {
@@ -2044,9 +2011,6 @@ void eGameBoard::unregisterPalace(const eCityId cid) {
     const auto city = boardCityWithId(cid);
     if(!city) return;
     city->unregisterPalace();
-    updateMaxSoldiers(cid);
-    distributeSoldiers(cid);
-    consolidateSoldiers(cid);
     if(mButtonVisUpdater) mButtonVisUpdater();
 }
 
@@ -2165,10 +2129,7 @@ void eGameBoard::incTime(const int by) {
     if(mSoldiersUpdate > sup) {
         mSoldiersUpdate -= sup;
         for(const auto& c : mCitiesOnBoard) {
-            const auto cid = c->id();
-            updateMaxSoldiers(cid);
-            distributeSoldiers(cid);
-            consolidateSoldiers(cid);
+            c->soldierBannersUpdate();
         }
     }
 

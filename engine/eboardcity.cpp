@@ -750,10 +750,12 @@ bool eBoardCity::unregisterCommonHouse(eSmallHouse* const ch) {
 
 void eBoardCity::registerPalace(ePalace* const p) {
     mPalace = p;
+    soldierBannersUpdate();
 }
 
 void eBoardCity::unregisterPalace() {
     mPalace = nullptr;
+    soldierBannersUpdate();
 }
 
 bool eBoardCity::supportsBuilding(const eBuildingMode mode) const {
@@ -1283,6 +1285,24 @@ void eBoardCity::horsemanKilled() {
     }
 }
 
+int eBoardCity::maxPalaceBannerCount() const {
+    const auto pid = owningPlayerId();
+    const auto ppid = mBoard.personPlayer();
+    int nSpaces = 20;
+    if(pid == ppid) return nSpaces;
+    for(const auto& b : mPalaceSoldierBanners) {
+        const bool a = b->isAbroad();
+        if(a) nSpaces++;
+    }
+    return nSpaces;
+}
+
+void eBoardCity::soldierBannersUpdate() {
+    updateMaxSoldiers();
+    distributeSoldiers();
+    consolidateSoldiers();
+}
+
 void eBoardCity::updateMaxSoldiers() {
     mMaxRabble = 0;
     mMaxHoplites = 0;
@@ -1322,7 +1342,7 @@ void eBoardCity::updateMaxSoldiers() {
     }
     mMaxRabble /= 6;
 
-    const int nSpaces = 20;
+    const int nSpaces = maxPalaceBannerCount();
     mMaxHorsemen = std::min(8*nSpaces, mMaxHorsemen);
     mMaxHorsemen = std::max(0, mMaxHorsemen);
     const int nHorsemenB = std::ceil(mMaxHorsemen/8.);
@@ -1444,8 +1464,9 @@ void eBoardCity::addSoldier(const eCharacterType st) {
         }
     }
     if(found) return;
-    const int nSpaces = 20;
-    if(mPalaceSoldierBanners.size() >= nSpaces) return;
+    const int nSpaces = maxPalaceBannerCount();
+    const int nB = mPalaceSoldierBanners.size();
+    if(nB >= nSpaces) return;
     eBannerType bt;
     if(st == eCharacterType::rockThrower) {
         bt = eBannerType::rockThrower;
@@ -1511,8 +1532,12 @@ bool eBoardCity::unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b) {
     return eVectorHelpers::remove(mSoldierBanners, b);
 }
 
+ePlayerId eBoardCity::owningPlayerId() const {
+    return mBoard.cityIdToPlayerId(mId);
+}
+
 eBoardPlayer* eBoardCity::owningPlayer() const {
-    const auto pid = mBoard.cityIdToPlayerId(mId);
+    const auto pid = owningPlayerId();
     const auto p = mBoard.boardPlayerWithId(pid);
     return p;
 }

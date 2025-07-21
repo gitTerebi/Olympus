@@ -196,6 +196,8 @@ public:
     void hopliteKilled();
     void horsemanKilled();
 
+    int maxPalaceBannerCount() const;
+    void soldierBannersUpdate();
     void updateMaxSoldiers();
     void distributeSoldiers();
     void consolidateSoldiers();
@@ -205,6 +207,7 @@ public:
     void registerSoldierBanner(const stdsptr<eSoldierBanner>& b);
     bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
 
+    ePlayerId owningPlayerId() const;
     eBoardPlayer* owningPlayer() const;
 
     bool supportsResource(const eResourceType rt) const;
