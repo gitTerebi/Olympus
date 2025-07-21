@@ -30,8 +30,6 @@ public:
     void iniScheduleUpdate(eGameBoard& board, const eCityId cid);
     void scheduleUpdate(eGameBoard& board, const eCityId cid);
 
-    void setRunning(const bool r);
-
     std::map<eCityId, eTrueBool> fDataUpdateScheduled;
     std::atomic_bool fBusy{false};
     std::mutex fTasksMutex;
@@ -42,7 +40,6 @@ public:
 private:
     int mW = 0;
     int mH = 0;
-    std::atomic_bool mRunning{false};
 
     std::map<eCityId, eThreadBoardHandler> mBoards;
 };

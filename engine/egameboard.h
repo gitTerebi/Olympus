@@ -620,6 +620,7 @@ public:
     std::vector<eCityId> citiesOnBoard() const;
     std::vector<ePlayerId> playersOnBoard() const;
     std::string cityName(const eCityId cid) const;
+    std::vector<eCityId> enemyCidsOnBoard(const eTeamId ptid) const;
 
     void updatePlayersOnBoard();
     eBoardPlayer* addPlayerToBoard(const ePlayerId pid);

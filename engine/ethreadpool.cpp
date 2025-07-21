@@ -12,6 +12,7 @@ eThreadPool::~eThreadPool() {
     {
         mQuit = true;
         for(const auto d : mThreadData) {
+            { std::unique_lock<std::mutex> lock(d->fTasksMutex); }
             d->fCv.notify_all();
         }
     }
@@ -69,24 +70,27 @@ void eThreadPool::threadEntry(eThreadData* data) {
 //                const auto t1 = high_resolution_clock::now();
 
                 const auto cid = task->cid();
-                data->setRunning(true);
                 data->updateBoard(cid);
 //                std::printf("Run task %p\n", task);
                 auto& b = data->board(cid);
-                if(task->expectedState() > b.state()) {
-                    printf("Old state!\n");
-                }
-                task->run(b, data->fInterrupted);
-                data->setRunning(false);
+//                if(task->expectedState() > b.state()) {
+//                    printf("Old state!\n");
+//                }
+                task->run(b);
 
 //                const auto t2 = high_resolution_clock::now();
 
 //                const duration<double, std::milli> ms = t2 - t1;
 //                printf("run task: %f ms\n", ms.count());
             }
-            std::lock_guard lock(mFinishedTasksMutex);
-            mFinishedTasks.push_back(task);
-            data->fBusy = false;
+            {
+                std::lock_guard lock(mFinishedTasksMutex);
+                mFinishedTasks.push_back(task);
+            }
+            {
+                std::unique_lock<std::mutex> lock(data->fTasksMutex);
+                data->fBusy = false;
+            }
 //            std::printf("Task finished %p in %p\n", task, data);
             data->fCvFinished.notify_one();
         }
@@ -94,16 +98,12 @@ void eThreadPool::threadEntry(eThreadData* data) {
 }
 
 void eThreadPool::queueTask(eTask* const task) {
-    if(mInterrupted && !task->runInterrupted()) {
-        mWaitingTasks.push_back(task);
-        return;
-    }
     task->setExpectedState(mBoard.state());
     const auto cid = task->cid();
-    if(cid == eCityId::neutralAggresive ||
-       cid == eCityId::neutralFriendly) {
-        printf("Wrong city id\n");
-    }
+//    if(cid == eCityId::neutralAggresive ||
+//       cid == eCityId::neutralFriendly) {
+//        printf("Wrong city id\n");
+//    }
     const int threadId = mTaskId++ % mThreadData.size();
     const auto d = mThreadData[threadId];
     auto& cidV = d->fDataUpdateScheduled[cid];
@@ -130,7 +130,7 @@ void eThreadPool::handleFinished() {
     }
     for(const auto t : tasks) {
         t->finish();
-        if(t->shouldDelete()) delete t;
+        delete t;
     }
 }
 

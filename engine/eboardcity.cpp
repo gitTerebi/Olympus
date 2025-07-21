@@ -16,6 +16,7 @@
 #include "evectorhelpers.h"
 
 #include "gameEvents/einvasionevent.h"
+#include "gameEvents/eplayerconquestevent.h"
 #include "engine/emilitaryaid.h"
 #include "spawners/ebanner.h"
 #include "einvasionhandler.h"
@@ -387,6 +388,49 @@ void eBoardCity::nextMonth() {
     mPopData.nextMonth();
 
     replace3By3AestheticByCommemorative();
+
+    const bool pp = personPlayerOwner();
+    if(!pp) {
+        const int space = maxPalaceBannerCount();
+        if(space == sPalaceTiles) {
+            const int soldiers = mMaxHoplites + mMaxHorsemen;
+            const int missingArmor = missingArmorFromEliteHouses();
+            const auto pid = owningPlayerId();
+            const auto tid = mBoard.playerIdToTeamId(pid);
+            if(soldiers > 20 && missingArmor == 0) {
+                auto enemyCids = mBoard.enemyCidsOnBoard(tid);
+                if(!enemyCids.empty()) {
+                    std::random_shuffle(enemyCids.begin(), enemyCids.end());
+                    const auto targetCid = enemyCids[0];
+                    const auto wboard = mBoard.getWorldBoard();
+                    const auto wc = wboard->cityWithId(targetCid);
+                    eEnlistedForces forces;
+                    for(const auto& b : mSoldierBanners) {
+                        const auto type = b->type();
+                        if(type == eBannerType::rockThrower) continue;
+                        forces.fSoldiers.push_back(b);
+                    }
+                    for(const auto hh : mHeroHalls) {
+                        const auto stage = hh->stage();
+                        if(stage != eHeroSummoningStage::arrived) continue;
+                        const bool abroad = hh->heroOnQuest();
+                        if(abroad) continue;
+                        const auto type = hh->heroType();
+                        forces.fHeroes.push_back(type);
+                    }
+                    mBoard.enlistForces(forces);
+                    const auto e = e::make_shared<ePlayerConquestEvent>(
+                                       mId, eGameEventBranch::root, mBoard);
+                    const auto boardDate = mBoard.date();
+                    const int period = eNumbers::sArmyTravelTime;
+                    const auto date = boardDate + period;
+                    e->initializeDate(date, period, 1);
+                    e->initialize(date, forces, wc);
+                    mBoard.addRootGameEvent(e);
+                }
+            }
+        }
+    }
 }
 
 double eBoardCity::taxRateF() const {
@@ -1285,10 +1329,23 @@ void eBoardCity::horsemanKilled() {
     }
 }
 
+int eBoardCity::missingArmorFromEliteHouses() const {
+    int result = 0;
+    for(const auto b : mTimedBuildings) {
+        const auto bt = b->type();
+        if(bt == eBuildingType::eliteHousing) {
+            const auto eh = static_cast<eEliteHousing*>(b);
+            const int a = eh->arms();
+            result += 4 - a;
+        }
+    }
+    return result;
+}
+
 int eBoardCity::maxPalaceBannerCount() const {
     const auto pid = owningPlayerId();
     const auto ppid = mBoard.personPlayer();
-    int nSpaces = 20;
+    int nSpaces = sPalaceTiles;
     if(pid == ppid) return nSpaces;
     for(const auto& b : mPalaceSoldierBanners) {
         const bool a = b->isAbroad();
@@ -1530,6 +1587,12 @@ bool eBoardCity::unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b) {
     b->setRegistered(false);
     eVectorHelpers::remove(mPalaceSoldierBanners, b);
     return eVectorHelpers::remove(mSoldierBanners, b);
+}
+
+bool eBoardCity::personPlayerOwner() const {
+    const auto ppid = mBoard.personPlayer();
+    const auto pid = owningPlayerId();
+    return ppid == pid;
 }
 
 ePlayerId eBoardCity::owningPlayerId() const {

@@ -196,6 +196,9 @@ public:
     void hopliteKilled();
     void horsemanKilled();
 
+    int missingArmorFromEliteHouses() const;
+
+    static const int sPalaceTiles = 20;
     int maxPalaceBannerCount() const;
     void soldierBannersUpdate();
     void updateMaxSoldiers();
@@ -207,6 +210,7 @@ public:
     void registerSoldierBanner(const stdsptr<eSoldierBanner>& b);
     bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
 
+    bool personPlayerOwner() const;
     ePlayerId owningPlayerId() const;
     eBoardPlayer* owningPlayer() const;
 

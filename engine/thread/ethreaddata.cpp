@@ -44,7 +44,3 @@ void eThreadData::scheduleUpdate(eGameBoard& board, const eCityId cid) {
     auto& b = mBoards[cid];
     b.scheduleUpdate(board, cid);
 }
-
-void eThreadData::setRunning(const bool r) {
-    mRunning = r;
-}

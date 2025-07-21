@@ -283,7 +283,7 @@ void eGameBoard::enlistForces(const eEnlistedForces& forces) {
     for(const auto& b : forces.fSoldiers) {
         b->goAbroad();
     }
-    const auto cids = personPlayerCitiesOnBoard();
+    const auto cids = citiesOnBoard();
     for(const auto h : forces.fHeroes) {
         eHerosHall* hh = nullptr;
         for(const auto cid : cids) {
@@ -1095,6 +1095,20 @@ std::vector<ePlayerId> eGameBoard::playersOnBoard() const {
 
 std::string eGameBoard::cityName(const eCityId cid) const {
     return mWorldBoard->cityName(cid);
+}
+
+std::vector<eCityId> eGameBoard::enemyCidsOnBoard(const eTeamId ptid) const {
+    std::vector<eCityId> result;
+    std::vector<eCityId> enemyCids;
+    for(const auto c : mActiveCitiesOnBoard) {
+        const auto cid = c->id();
+        const auto ctid = cityIdToTeamId(cid);
+        if(ctid == eTeamId::neutralFriendly) continue;
+        if(ctid == eTeamId::neutralAggresive) continue;
+        if(ctid == ptid) continue;
+        enemyCids.push_back(cid);
+    }
+    return result;
 }
 
 void eGameBoard::updatePlayersOnBoard() {
