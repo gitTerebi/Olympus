@@ -11,7 +11,8 @@ public:
                          const eGameEventBranch branch,
                          eGameBoard& board);
 
-    void initialize(const eEnlistedForces& forces,
+    void initialize(const eDate& date,
+                    const eEnlistedForces& forces,
                     const stdsptr<eWorldCity>& city);
 
     void trigger() override;

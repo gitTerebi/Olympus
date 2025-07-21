@@ -500,6 +500,8 @@ void eSoldierBanner::updatePlaces() {
         const int ty = mTile->y();
         const auto tt = mBoard.tile(tx + i, ty + j);
         if(!tt) return false;
+        const auto cid = tt->cityId();
+        if(cid != onCid) return false;
         if(onTid == tid) {
             if(!eWalkableHelpers::sDefaultWalkable(tt)) return false;
         } else {

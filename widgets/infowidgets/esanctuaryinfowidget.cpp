@@ -163,14 +163,7 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         const auto cids = board.citiesOnBoard();
         const auto pid = s->playerId();
         const auto ptid = board.playerIdToTeamId(pid);
-        std::vector<eCityId> enemyCids;
-        for(const auto cid : cids) {
-            const auto ctid = board.cityIdToTeamId(cid);
-            if(ctid == eTeamId::neutralFriendly) continue;
-            if(ctid == eTeamId::neutralAggresive) continue;
-            if(ctid == ptid) continue;
-            enemyCids.push_back(cid);
-        }
+        const auto enemyCids = board.enemyCidsOnBoard(ptid);
         if(!enemyCids.empty()) {
             const auto bw = new eWidget(window());
             bw->setNoPadding();

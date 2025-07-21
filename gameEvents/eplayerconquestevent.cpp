@@ -15,10 +15,29 @@ ePlayerConquestEvent::ePlayerConquestEvent(
                              branch, board) {}
 
 void ePlayerConquestEvent::initialize(
+        const eDate& date,
         const eEnlistedForces& forces,
         const stdsptr<eWorldCity>& city) {
     mForces = forces;
     mCity = city;
+
+    const auto board = gameBoard();
+    if(!board) return;
+    if(!mCity) return;
+
+    const auto cid = mCity->cityId();
+    const auto c = board->boardCityWithId(cid);
+    if(c) {
+        const auto e = e::make_shared<eInvasionEvent>(
+                           cid, eGameEventBranch::root, *board);
+        const auto wBoard = board->getWorldBoard();
+        const auto pcid = cityId();
+        const auto playerCity = wBoard->cityWithId(pcid);
+        e->initializeDate(date, 0, 1);
+        e->initialize(playerCity, mForces, this);
+        c->addRootGameEvent(e);
+        mInvasionEvent = e.get();
+    }
 }
 
 void ePlayerConquestEvent::trigger() {
@@ -31,17 +50,6 @@ void ePlayerConquestEvent::trigger() {
     const auto cid = mCity->cityId();
     const auto c = board->boardCityWithId(cid);
     if(c) {
-        const auto e = e::make_shared<eInvasionEvent>(
-                           cid, eGameEventBranch::root, *board);
-        const auto wBoard = board->getWorldBoard();
-        const auto playerCity = wBoard->cityWithId(cityId());
-        const auto boardDate = board->date();
-        const int period = 1;
-        const auto date = boardDate + period;
-        e->initializeDate(date, period, 1);
-        e->initialize(playerCity, mForces, this);
-        c->addRootGameEvent(e);
-        mInvasionEvent = e.get();
     } else {
         const int enemyStr = mCity->troops();
         const int str = mForces.strength();

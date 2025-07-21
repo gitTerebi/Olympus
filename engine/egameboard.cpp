@@ -1099,14 +1099,13 @@ std::string eGameBoard::cityName(const eCityId cid) const {
 
 std::vector<eCityId> eGameBoard::enemyCidsOnBoard(const eTeamId ptid) const {
     std::vector<eCityId> result;
-    std::vector<eCityId> enemyCids;
     for(const auto c : mActiveCitiesOnBoard) {
         const auto cid = c->id();
         const auto ctid = cityIdToTeamId(cid);
         if(ctid == eTeamId::neutralFriendly) continue;
         if(ctid == eTeamId::neutralAggresive) continue;
         if(ctid == ptid) continue;
-        enemyCids.push_back(cid);
+        result.push_back(cid);
     }
     return result;
 }
@@ -1325,6 +1324,8 @@ void eGameBoard::removeConquest(ePlayerConquestEventBase* const q) {
 eInvasionEvent* eGameBoard::invasionToDefend(const eCityId cid) const {
     const auto date = eGameBoard::date();
     for(const auto i : mInvasions) {
+        const auto icid = i->cityId();
+        if(icid != cid) continue;
         const int ip = i->invasionPoint();
         const auto t = landInvasionTile(cid, ip);
         if(!t) continue;

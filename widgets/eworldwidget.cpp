@@ -73,7 +73,7 @@ void eWorldWidget::initialize() {
             const int period = eNumbers::sArmyTravelTime;
             const auto date = boardDate + period;
             e->initializeDate(date, period, 1);
-            e->initialize(forces, mCity);
+            e->initialize(date, forces, mCity);
             mBoard->addRootGameEvent(e);
             update();
         };

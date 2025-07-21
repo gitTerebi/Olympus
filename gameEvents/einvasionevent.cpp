@@ -100,7 +100,8 @@ void eInvasionEvent::trigger() {
         city->troopsByType(infantry, cavalry, archers);
     }
 
-    if(!isPersonPlayer()) {
+    const auto startInvasion = [this, board, tile, cid, city,
+                                infantry, cavalry, archers ]() {
         if(!tile) return;
         const auto eh = new eInvasionHandler(*board, cid, mCity, this);
         const auto invadingCid = mCity->cityId();
@@ -110,6 +111,10 @@ void eInvasionEvent::trigger() {
         } else {
             eh->initialize(tile, infantry, cavalry, archers);
         }
+    };
+
+    if(!isPersonPlayer()) {
+        startInvasion();
     } else {
         eEventData ed(cityId());
         ed.fCity = mCity;
@@ -137,11 +142,7 @@ void eInvasionEvent::trigger() {
         }
 
         ed.fTile = tile;
-        ed.fA2 = [this, board, tile, cid, city, infantry, cavalry, archers]() { // fight
-            if(!tile) return;
-            const auto eh = new eInvasionHandler(*board, cid, city, this);
-            eh->initialize(tile, infantry, cavalry, archers);
-        };
+        ed.fA2 = startInvasion; // fight
         board->event(eEvent::invasion, ed);
         eMusic::playRandomBattleMusic();
     }

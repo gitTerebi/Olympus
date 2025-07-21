@@ -75,7 +75,7 @@ private:
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eEnlistedForces mForces;
 
-    int mInvasionPoint = 1;
+    int mInvasionPoint = 0;
 
     bool mWarned = false;
     eDate mFirstWarning;
