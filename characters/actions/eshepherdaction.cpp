@@ -151,6 +151,9 @@ bool eShepherdAction::findResourceDecision() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(mCharacter);
+    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFoundAction([tptr, this]() {
         if(!tptr) return;
         if(!mCharacter) return;

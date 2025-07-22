@@ -83,6 +83,7 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
         mTmpBoard.setResourcesInBuildingsState(bState);
         mTmpBoard.setHouseVacanciesState(bState);
         mTmpBoard.setTreesAndVinesState(bState);
+        mTmpBoard.setDomesticatedAnimalsState(bState);
         mTmpBoard.setSanctuariesState(cSState);
     } else {
         if(static_cast<bool>(rel & eStateRelevance::resourcesInBuildings) &&
@@ -113,6 +114,13 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
                 update(tiles);
             }
             mTmpBoard.setTreesAndVinesState(bState);
+        }
+
+        if(static_cast<bool>(rel & eStateRelevance::domesticatedAnimals) &&
+           bState != mTmpBoard.domesticatedAnimalsState()) {
+            const auto& tiles = c->animalBuildingsTiles();
+            update(tiles);
+            mTmpBoard.setDomesticatedAnimalsState(bState);
         }
     }
 }

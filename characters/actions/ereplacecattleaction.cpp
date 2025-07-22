@@ -70,6 +70,9 @@ void eRC_finishAction::call() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
 
     const auto finish = std::make_shared<eRC_finishWalkingAction>(
                             board(), c);

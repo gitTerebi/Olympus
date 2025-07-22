@@ -700,6 +700,12 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::vine:
         mTreesAndVines.push_back(b);
         break;
+    case eBuildingType::sheep:
+    case eBuildingType::goat:
+    case eBuildingType::cattle:
+        mAnimalBuildings.push_back(b);
+        mAnimalBuildingsSurroundingUpdate = true;
+        break;
     default:
         break;
     }
@@ -725,6 +731,8 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);
     eVectorHelpers::remove(mTreesAndVines, b);
+    const bool r = eVectorHelpers::remove(mAnimalBuildings, b);
+    if(r) mAnimalBuildingsSurroundingUpdate = true;
     return true;
 }
 
@@ -2003,6 +2011,31 @@ std::map<eResourceType, int> eBoardCity::exported(const eCityId cid) const {
     const auto it = mExported.find(cid);
     if(it == mExported.end()) return {};
     return it->second;
+}
+
+const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
+    if(mAnimalBuildingsSurroundingUpdate) {
+        mAnimalBuildingsSurrounding.clear();
+        const int range = eNumbers::sAnimalMoveRange + 2;
+        for(const auto b : mAnimalBuildings) {
+            const auto center = b->centerTile();
+            const int x = center->x();
+            const int y = center->y();
+            for(int i = x - range; i <= x + range; i++) {
+                for(int j = y - range; i <= y + range; i++) {
+                    const auto tile = mBoard.tile(i, j);
+                    const auto cid = tile->cityId();
+                    if(cid != mId) continue;
+                    const bool r = eVectorHelpers::contains(
+                                       mAnimalBuildingsSurrounding, tile);
+                    if(r) continue;
+                    mAnimalBuildingsSurrounding.push_back(tile);
+                }
+            }
+        }
+        mAnimalBuildingsSurroundingUpdate = false;
+    }
+    return mAnimalBuildingsSurrounding;
 }
 
 void eBoardCity::clearAfterLastEpisode() {

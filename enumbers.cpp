@@ -32,6 +32,7 @@ int eNumbers::sShepherdGoatherdWaitTime;
 
 int eNumbers::sSheepMaxGroom;
 int eNumbers::sGoatMaxGroom;
+int eNumbers::sAnimalMoveRange;
 
 int eNumbers::sCorralProcessingPeriod;
 int eNumbers::sCorralTakePeriod;
@@ -284,6 +285,7 @@ void eNumbers::sLoad() {
 
     loadI("sheep_max_groom_i", sSheepMaxGroom, 15);
     loadI("goat_max_groom_i", sGoatMaxGroom, 10);
+    loadI("animal_move_range_i", sAnimalMoveRange, 5);
 
     loadI("corral_processing_period_i", sCorralProcessingPeriod, 10000);
     loadI("corral_take_period_i", sCorralTakePeriod, 10000);

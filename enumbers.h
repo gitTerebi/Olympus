@@ -30,6 +30,7 @@ struct eNumbers {
 
     static int sSheepMaxGroom;
     static int sGoatMaxGroom;
+    static int sAnimalMoveRange;
 
     static int sCorralProcessingPeriod;
     static int sCorralTakePeriod;

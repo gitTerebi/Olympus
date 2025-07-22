@@ -94,6 +94,9 @@ void eTakeCattleAction::goGetCattle() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     const stdptr<eTakeCattleAction> tptr(this);
     const stdptr<eCharacter> cptr(c);
     a->setFoundAction([tptr, this, cptr, c]() {

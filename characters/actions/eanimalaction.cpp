@@ -2,6 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "ewaitaction.h"
+#include "enumbers.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
                              const int spawnerX, const int spawnerY,
@@ -20,6 +21,7 @@ bool eAnimalAction::decide() {
         const auto m = e::make_shared<eMoveAroundAction>(
                            c, mSpawnerX, mSpawnerY,
                            mTileWalkable);
+        m->setMaxDistance(eNumbers::sAnimalMoveRange);
         m->setTime(mWalkTime);
         setCurrentAction(m);
     } else {
