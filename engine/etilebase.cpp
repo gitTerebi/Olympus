@@ -13,12 +13,6 @@ void eTileBase::setElevation(const bool e) {
     mElevation = e;
 }
 
-bool eTileBase::hasPrey() const {
-    const auto type = bannerType();
-    return type == eBannerTypeS::boar ||
-           type == eBannerTypeS::deer;
-}
-
 void eTileBase::decResource(const int by) {
     setResource(mResource - by);
 }

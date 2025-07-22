@@ -115,6 +115,8 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
         const auto finish = std::make_shared<eCRA_callCollectedActionFinish>(
                                 board(), mBuilding);
         const auto a = e::make_shared<eMoveToAction>(r.get());
+        a->setStateRelevance(eStateRelevance::terrain |
+                             eStateRelevance::buildings);
         a->setFinishAction(finish);
         a->start(mBuilding);
         r->setAction(a);

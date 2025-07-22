@@ -52,6 +52,8 @@ void eAresHelpAction::goToTarget() {
                             board, god);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {

@@ -32,6 +32,7 @@ class eAgoraBase;
 class eInvasionHandler;
 class eStadium;
 class eMuseum;
+class eHouseBase;
 enum class eCharacterType;
 enum class eBuildingMode;
 enum struct eHeroType;
@@ -346,8 +347,16 @@ public:
 
     int allBuildingsState() const { return mAllBuildingsState; }
 
+    int terrainState() const { return mTerrainState; }
+    void incTerrainState() { mTerrainState++; }
+
+    int forestsState() const { return mForestsState; }
+    void incForestsState() { mForestsState++; }
+
     std::vector<eBuilding*> buildingsWithResource() const
     { return mBuildingsWithResource; }
+    std::vector<eHouseBase*> houses() const
+    { return mHouses; }
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
@@ -422,6 +431,7 @@ private:
     std::vector<eEmployingBuilding*> mEmployingBuildings;
     std::vector<eBuilding*> mAllBuildings;
     std::vector<eBuilding*> mBuildingsWithResource;
+    std::vector<eHouseBase*> mHouses;
     std::vector<eBuilding*> m3x3AestheticBuildings;
     std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eTradePost*> mTradePosts;
@@ -498,6 +508,8 @@ private:
     int mCoverageUpdate = 10000;
 
     int mAllBuildingsState = 0;
+    int mTerrainState = 0;
+    int mForestsState = 0;
 };
 
 #endif // EBOARDCITY_H

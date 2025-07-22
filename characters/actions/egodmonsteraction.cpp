@@ -198,6 +198,8 @@ void eGodMonsterAction::goToTile(
     const auto ff = std::make_shared<eGMA_goToTargetFail>(
                         board, tile, findFailFunc);
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(ff);
     a->setFindFailAction([findFailFunc, tile]() {
         if(findFailFunc) findFailFunc->call(tile);
@@ -448,6 +450,8 @@ void eGodMonsterAction::goToNearestRoad(
         const auto finish = std::make_shared<eGMA_patrolFailFinish>(
                                 board(), this, finishAct, dist);
         const auto a = e::make_shared<eMoveToAction>(c);
+        a->setStateRelevance(eStateRelevance::buildings |
+                             eStateRelevance::terrain);
         a->setFailAction(fail);
         a->setFinishAction(finish);
         a->start(cr);

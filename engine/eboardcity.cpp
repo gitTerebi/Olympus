@@ -690,6 +690,11 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::cardingShed:
     case eBuildingType::huntingLodge:
         mBuildingsWithResource.push_back(b);
+        break;
+    case eBuildingType::eliteHousing:
+    case eBuildingType::commonHouse:
+        mHouses.push_back(static_cast<eHouseBase*>(b));
+        break;
     default:
         break;
     }
@@ -710,6 +715,7 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
     mAllBuildingsState++;
     eVectorHelpers::remove(mAllBuildings, b);
     eVectorHelpers::remove(mBuildingsWithResource, b);
+    eVectorHelpers::remove(mHouses, static_cast<eHouseBase*>(b));
     eVectorHelpers::remove(m3x3AestheticBuildings, b);
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);

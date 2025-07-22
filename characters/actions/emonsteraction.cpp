@@ -162,6 +162,8 @@ void eMonsterAction::goToTarget() {
         };
 
         const auto a = e::make_shared<eMoveToAction>(c);
+        a->setStateRelevance(eStateRelevance::buildings |
+                             eStateRelevance::terrain);
         const stdptr<eMonsterAction> tptr(this);
         a->setFoundAction([tptr, this]() {
             if(!tptr) return;
@@ -189,6 +191,8 @@ void eMonsterAction::goBack() {
     const auto c = character();
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setTileDistance(eWalkableHelpers::sMonsterTileDistance);
     a->setObsticleHandler(obsticleHandler());
     a->setFindFailAction([](){});

@@ -5,6 +5,7 @@
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
+#include <set>
 
 #include "engine/thread/ethreadboardhandler.h"
 
@@ -26,19 +27,15 @@ public:
     void updateBoard(const eCityId cid);
     eThreadBoard& board(const eCityId cid);
 
-    void scheduleUpdate(eGameBoard& board);
-    void iniScheduleUpdate(eGameBoard& board, const eCityId cid);
-    void scheduleUpdate(eGameBoard& board, const eCityId cid,
-                        const eStateRelevance rel);
+    void update(eGameBoard& board, const eCityId cid,
+                const eStateRelevance rel);
 
-    std::map<eCityId, eTrueBool> fDataUpdateScheduled;
     std::atomic_bool fBusy{false};
     std::mutex fTasksMutex;
     std::condition_variable fCv;
     std::condition_variable fCvFinished;
     std::queue<eTask*> fTasks;
-    std::atomic_bool fInterrupted{false};
-private:
+private:    
     int mW = 0;
     int mH = 0;
 

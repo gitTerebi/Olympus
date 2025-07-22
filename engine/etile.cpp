@@ -330,6 +330,12 @@ void eTile::setBanner(const stdsptr<eBanner>& b) {
     mBanner = b;
 }
 
+bool eTile::hasPrey() const {
+    const auto type = bannerType();
+    return type == eBannerTypeS::boar ||
+           type == eBannerTypeS::deer;
+}
+
 eBannerTypeS eTile::bannerType() const {
     if(!mBanner) return eBannerTypeS::none;
     return mBanner->type();

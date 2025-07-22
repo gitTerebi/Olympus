@@ -74,6 +74,8 @@ void eTraderAction::goToTradePost() {
                             board(), this);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setRemoveLastTurn(true);

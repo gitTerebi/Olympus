@@ -75,6 +75,8 @@ void eHouseBase::leave() {
                             board, c.get());
 
     const auto a = e::make_shared<eMoveToAction>(c.get());
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {

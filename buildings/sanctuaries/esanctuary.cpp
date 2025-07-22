@@ -103,11 +103,11 @@ eSanctuary::~eSanctuary() {
 }
 
 void eSanctuary::erase() {
-    const auto& brd = getBoard();
+    const auto& board = getBoard();
     const auto rect = tileRect();
     for(int x = rect.x; x < rect.x + rect.w; x++) {
         for(int y = rect.y; y < rect.y + rect.h; y++) {
-            const auto tile = brd.tile(x, y);
+            const auto tile = board.tile(x, y);
             tile->setAltitude(mAltitude);
             tile->setWalkableElev(false);
             const auto ub = tile->underBuilding();
@@ -140,6 +140,14 @@ void eSanctuary::erase() {
         default:
             break;
         }
+    }
+    const auto g = godType();
+    if(g == eGodType::hephaestus ||
+       g == eGodType::hades ||
+       g == eGodType::demeter) {
+        const auto cid = cityId();
+        const auto c = board.boardCityWithId(cid);
+        if(c) c->incTerrainState();
     }
     eBuilding::erase();
 }
@@ -242,6 +250,14 @@ void eSanctuary::buildingProgressed() {
             default:
                 break;
             }
+        }
+
+        if(g == eGodType::hephaestus ||
+           g == eGodType::hades ||
+           g == eGodType::demeter) {
+            const auto cid = cityId();
+            const auto c = board.boardCityWithId(cid);
+            if(c) c->incTerrainState();
         }
 
         eEventData ed(cityId());

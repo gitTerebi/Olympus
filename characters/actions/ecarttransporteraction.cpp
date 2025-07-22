@@ -371,6 +371,7 @@ void eCartTransporterAction::waitOutside() {
     const auto stand = std::make_shared<eCTA_waitOutsideFinish>(
                            board(), this);
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings);
     a->setFinishAction(stand);
     a->setFailAction(stand);
 
@@ -391,6 +392,7 @@ void eCartTransporterAction::spread() {
     const auto stand = std::make_shared<eCTA_spreadFinish>(
                            board(), ct);
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings);
     a->setFailAction(stand);
     a->setFinishAction(stand);
 

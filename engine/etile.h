@@ -74,7 +74,7 @@ public:
 
     void setBanner(const stdsptr<eBanner>& b);
     eBanner* banner() const { return mBanner.get(); }
-    eBannerTypeS bannerType() const override;
+    eBannerTypeS bannerType() const;
 
     void setSoldierBanner(eSoldierBanner* const b);
     eSoldierBanner* soldierBanner() const { return mSoldierBanner; }
@@ -125,6 +125,8 @@ public:
     bool updateTerrain() const { return mUpdateTerrain; }
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
     void terrainUpdated() { mUpdateTerrain = false; }
+
+    bool hasPrey() const;
 
     bool onFire() const override;
     void setOnFire(const bool f) override;

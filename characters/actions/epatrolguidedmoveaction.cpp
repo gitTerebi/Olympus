@@ -66,6 +66,7 @@ void ePatrolGuidedMoveAction::nextGuide() {
                               board(), this);
 
     const auto a  = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings);
     a->setFailAction(failFunc);
     a->setFoundAction([tptr, this, a]() {
         if(!tptr) return;

@@ -15,14 +15,17 @@ public:
 
     void initialize(const int w, const int h);
 
-    void scheduleUpdate(eGameBoard& board);
-    void scheduleUpdate(eGameBoard& board, const eCityId cid,
-                        const eStateRelevance rel);
+    void update(eGameBoard& board, const eCityId cid,
+                const eStateRelevance rel);
 
     void updateBoard();
 
     eThreadBoard& board() { return mBoard; }
 private:
+    void update(const std::vector<eTile*>& tiles);
+    void updateAll(eGameBoard& board);
+
+    bool mInitialized = false;
     eThreadBoard mBoard;
     std::atomic_bool mTmpChanged{false};
     eThreadBoard mTmpBoard;

@@ -835,6 +835,9 @@ bool eAIDistrict::sBuild(eGameBoard& board,
                 if(terr == eTerrain::forest ||
                    terr == eTerrain::choppedForest) {
                     tile->setTerrain(eTerrain::dry);
+                    const auto cid = tile->cityId();
+                    const auto c = board.boardCityWithId(cid);
+                    if(c) c->incForestsState();
                 }
                 if(x == allowRoadX || y == allowRoadY) {
                     if(tile->hasRoad()) continue;

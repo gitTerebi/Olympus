@@ -1,6 +1,7 @@
 #include "eregrowforestaction.h"
 
 #include "engine/etile.h"
+#include "engine/egameboard.h"
 
 eRegrowForestAction::eRegrowForestAction(eTile* const tile) :
     ePlannedAction(false, 500000, ePlannedActionType::regrowForest),
@@ -13,6 +14,9 @@ void eRegrowForestAction::trigger(eGameBoard& board) {
     (void)board;
     if(mTile->terrain() != eTerrain::choppedForest) return;
     mTile->setTerrain(eTerrain::forest);
+    const auto cid = mTile->cityId();
+    const auto c = board.boardCityWithId(cid);
+    if(c) c->incForestsState();
 }
 
 void eRegrowForestAction::read(eReadStream& src, eGameBoard& board) {

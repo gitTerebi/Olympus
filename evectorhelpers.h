@@ -2,9 +2,16 @@
 #define EVECTORHELPERS_H
 
 #include <vector>
+#include <set>
 #include <algorithm>
 
 namespace eVectorHelpers {
+    template <typename T>
+    bool contains(const std::set<T>& v, const T& t) {
+        const auto it = std::find(v.begin(), v.end(), t);
+        return it != v.end();
+    }
+
     template <typename T>
     bool contains(const std::vector<T>& v, const T& t) {
         const auto it = std::find(v.begin(), v.end(), t);

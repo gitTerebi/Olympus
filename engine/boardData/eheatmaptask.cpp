@@ -7,7 +7,9 @@ eHeatMapTask::eHeatMapTask(const eCityId cid,
                            const eHeatGetter& heatGetter,
                            const eFunc& finish) :
     eTask(cid), mHeatGetter(heatGetter), mFinish(finish),
-    mBRect(bRect) {}
+    mBRect(bRect) {
+    setRelevance(eStateRelevance::buildings);
+}
 
 void eHeatMapTask::sRun(eThreadBoard& board,
                         const eCityId cid,

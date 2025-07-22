@@ -419,6 +419,8 @@ void eSoldierAction::goTo(const int fx, const int fy,
     }
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(finishAct);
     a->setFinishAction(finishAct);
     a->setFindFailAction(findFailAct);
@@ -469,6 +471,8 @@ void eSoldierAction::goHome() {
                                board(), c);
 
     const auto a = e::make_shared<eMoveToAction>(cptr.get());
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(finishAct);
     a->setFinishAction(finishAct);
     a->setFoundAction([tptr, cptr]() {
@@ -491,6 +495,8 @@ void eSoldierAction::goAbroad() {
                             board, hero);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {

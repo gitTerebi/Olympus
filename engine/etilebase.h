@@ -29,8 +29,6 @@ public:
     virtual bool onFire() const = 0;
     virtual void setOnFire(const bool f) = 0;
 
-    virtual eBannerTypeS bannerType() const = 0;
-
     bool hasTerrain(const eTerrain terr) const;
     bool hasBridge() const;
     bool hasWater() const;
@@ -143,8 +141,6 @@ public:
     bool walkableElev() const { return mWalkableElev; }
     void setWalkableElev(const bool w);
     void setElevation(const bool e);
-
-    bool hasPrey() const;
 
     bool hasFish() const { return mHasFish; }
     void setHasFish(const bool f) { mHasFish = f; }

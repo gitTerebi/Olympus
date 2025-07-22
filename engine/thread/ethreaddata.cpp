@@ -27,21 +27,8 @@ eThreadBoard& eThreadData::board(const eCityId cid) {
     return bh.board();
 }
 
-void eThreadData::scheduleUpdate(eGameBoard& board) {
-    for(auto& b : mBoards) {
-        b.second.scheduleUpdate(board);
-    }
-}
-
-void eThreadData::iniScheduleUpdate(eGameBoard& board, const eCityId cid) {
+void eThreadData::update(eGameBoard& board, const eCityId cid,
+                         const eStateRelevance rel) {
     auto& b = mBoards[cid];
-    b.scheduleUpdate(board);
-    b.updateBoard();
-    b.scheduleUpdate(board);
-}
-
-void eThreadData::scheduleUpdate(eGameBoard& board, const eCityId cid,
-                                 const eStateRelevance rel) {
-    auto& b = mBoards[cid];
-    b.scheduleUpdate(board, cid, rel);
+    b.update(board, cid, rel);
 }

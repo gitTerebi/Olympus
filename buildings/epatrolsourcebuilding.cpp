@@ -154,6 +154,7 @@ void ePatrolSourceBuilding::spawn(const int id, eBuilding* const targetBuilding)
                                   board, patrolTarget);
 
     const auto a = e::make_shared<eMoveToAction>(c.get());
+    a->setStateRelevance(eStateRelevance::buildings);
     a->setFinishAction(finishAction);
     c->setAction(a);
     c->setActionType(eCharacterActionType::walk);

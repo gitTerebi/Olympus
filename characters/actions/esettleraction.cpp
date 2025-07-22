@@ -74,6 +74,9 @@ void eSettlerAction::findHouse() {
     c->setActionType(eCharacterActionType::walk);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::houseVacancies |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(failFunc);
     a->setFinishAction(finishAction);
     a->setFindFailAction([tptr, this]() {
@@ -105,6 +108,8 @@ void eSettlerAction::leave() {
                             board, c);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {

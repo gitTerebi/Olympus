@@ -9,6 +9,7 @@
 
 class eThreadTile : public eTileBase {
 public:
+    void loadInitial(eTile* const src);
     void load(eTile* const src);
 
     bool hasRoad() const override;
@@ -22,11 +23,8 @@ public:
 
     bool onFire() const override { return mOnFire; }
     void setOnFire(const bool f) override { mOnFire = f; }
-
-    eBannerTypeS bannerType() const override { return mBannerType; }
 private:
     bool mOnFire = false;
-    eBannerTypeS mBannerType = eBannerTypeS::none;
     std::vector<eThreadCharacter> mCharacters;
     eThreadBuilding mUnderBuilding;
 };

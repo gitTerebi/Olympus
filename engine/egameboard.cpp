@@ -2938,6 +2938,9 @@ void eGameBoard::progressEarthquakes() {
             const bool r = eVectorHelpers::contains(e->fTiles, t);
             if(!r) return false;
             t->setTerrain(eTerrain::quake);
+            const auto cid = t->cityId();
+            const auto c = boardCityWithId(cid);
+            if(c) c->incTerrainState();
             if(const auto ub = t->underBuilding()) {
                 const auto type = ub->type();
                 const bool s = eBuilding::sSanctuaryBuilding(type);
@@ -3270,6 +3273,8 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                 }
             }
         }
+        const auto c = boardCityWithId(cid);
+        if(c) c->incTerrainState();
     }
 
     for(const auto& tv : h->fTiles) {

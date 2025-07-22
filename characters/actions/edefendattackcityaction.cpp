@@ -57,6 +57,8 @@ bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {
             eWalkableObject::sCreateDefault();
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
 
     const stdptr<eCharacter> cptr(character());
     const stdptr<eDefendAttackCityAction> tptr(this);

@@ -23,10 +23,13 @@ void transformMarble(eTile* const t, eGameBoard& board) {
     board.restockMarbleTiles();
 }
 
-void transformForest(eTile* const t, eGameBoard& brd) {
+void transformForest(eTile* const t, eGameBoard& board) {
     t->setTerrain(eTerrain::choppedForest);
+    const auto cid = t->cityId();
+    const auto c = board.boardCityWithId(cid);
+    if(c) c->incForestsState();
     const auto a = new eRegrowForestAction(t);
-    brd.planAction(a);
+    board.planAction(a);
 }
 
 void eCollectAction::increment(const int by) {

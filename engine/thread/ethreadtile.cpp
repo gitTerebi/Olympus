@@ -2,24 +2,31 @@
 
 #include "characters/echaracter.h"
 
-void eThreadTile::load(eTile* const src) {
+void eThreadTile::loadInitial(eTile* const src) {
     setSeed(src->seed());
     setX(src->x());
     setY(src->y());
     setDX(src->dx());
     setDY(src->dy());
+    setScrub(src->scrub());
+    setHasFish(src->hasFish());
+    setHasUrchin(src->hasUrchin());
+    setCityId(src->cityId());
+
+    load(src);
+}
+
+void eThreadTile::load(eTile* const src) {
+    // for sanctuary building
     setWalkableElev(src->walkableElev());
     setElevation(src->isElevationTile());
+    setAltitude(src->altitude(), false);
+    //
+
     setBusy(src->busy());
     setResource(src->resource());
     setTerrain(src->terrain());
-    setScrub(src->scrub());
-    setAltitude(src->altitude(), false);
     setOnFire(src->onFire());
-    setHasFish(src->hasFish());
-    setHasUrchin(src->hasUrchin());
-    mBannerType = src->bannerType();
-    setCityId(src->cityId());
 
     mCharacters.clear();
     const auto& chars = src->characters();

@@ -519,6 +519,9 @@ bool eGameWidget::buildMouseRelease() {
                 for(int y = minY; y <= maxY; y++) {
                     const auto tile = mBoard->tile(x, y);
                     if(!tile) continue;
+                    const auto cid = tile->cityId();
+                    const auto pid = mBoard->cityIdToPlayerId(cid);
+                    if(pid != ppid) continue;
                     if(const auto b = tile->underBuilding()) {
                         if(b->isOnFire()) continue;
                         eraser.addBuilding(b);
@@ -526,6 +529,8 @@ bool eGameWidget::buildMouseRelease() {
                         const auto t = tile->terrain();
                         if(t == eTerrain::forest || t == eTerrain::choppedForest) {
                             tile->setTerrain(eTerrain::dry);
+                            const auto c = mBoard->boardCityWithId(cid);
+                            if(c) c->incForestsState();
                             totalCost += cost;
                         }
                     }

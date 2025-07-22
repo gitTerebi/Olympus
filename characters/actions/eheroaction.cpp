@@ -115,6 +115,8 @@ void eHeroAction::sendOnQuest() {
                             board, hero);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {
@@ -147,6 +149,8 @@ void eHeroAction::goBackToHall() {
                             board, hero);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setFindFailAction([cptr]() {
@@ -280,6 +284,8 @@ void eHeroAction::huntMonster(eMonster* const m, const bool second) {
                             board(), this);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(finish);
     a->setFinishAction(finish);
     const stdptr<eHeroAction> tptr(this);

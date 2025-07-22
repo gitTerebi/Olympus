@@ -211,6 +211,8 @@ void eGodWorshippedAction::huntMonster(eMonster* const m, const bool second) {
                             board(), this);
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFailAction(finish);
     a->setFinishAction(finish);
     const stdptr<eGodWorshippedAction> tptr(this);

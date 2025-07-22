@@ -112,29 +112,21 @@ void eThreadPool::queueTask(eTask* const task) {
 //    }
     const int threadId = mTaskId++ % mThreadData.size();
     const auto d = mThreadData[threadId];
-    auto& cidV = d->fDataUpdateScheduled[cid];
 //    std::printf("Que task %p in %p\n", task, d);
+
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
     const auto t1 = high_resolution_clock::now();
-    if(cidV.fV) {
-        cidV.fV = false;
-        if(cidV.fIni) {
-            cidV.fIni = false;
-            d->iniScheduleUpdate(mBoard, cid);
-        } else {
-            d->scheduleUpdate(mBoard, cid, task->relevance());
-        }
-    }
-
+    d->update(mBoard, cid, task->relevance());
     const auto t2 = high_resolution_clock::now();
 
     const duration<double, std::milli> ms = t2 - t1;
     gMainThreadTime += ms.count();
     printf("gMainThreadTime %f ms\n", gMainThreadTime);
+
     std::unique_lock<std::mutex> lock(d->fTasksMutex);
     d->fTasks.emplace(task);
     d->fCv.notify_one();
@@ -154,10 +146,10 @@ void eThreadPool::handleFinished() {
 
 void eThreadPool::scheduleDataUpdate() {
     mBoard.incState();
-    for(const auto d : mThreadData) {
-        for(auto& f : d->fDataUpdateScheduled) {
-            f.second.fV = true;
-        }
+//    for(const auto d : mThreadData) {
+//        for(auto& f : d->fDataUpdateScheduled) {
+//            f.second.fV = true;
+//        }
 //        std::vector<eCityId> taskCid;
 //        std::queue<eTask*> tasks;
 //        {
@@ -180,7 +172,7 @@ void eThreadPool::scheduleDataUpdate() {
 //                f.second.fV = true;
 //            }
 //        }
-    }
+//    }
 }
 
 bool eThreadPool::finished() {

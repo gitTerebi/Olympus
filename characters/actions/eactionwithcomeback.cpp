@@ -94,7 +94,8 @@ void eActionWithComeback::goBackInternal(stdsptr<eWalkableObject> walkable) {
         finishFunc = std::make_shared<eAWC_goBackFinish>(board(), this);
     }
     const auto a = e::make_shared<eMoveToAction>(c);
-//    a->setStateRelevance(eStateRelevance::buildings);
+    a->setStateRelevance(eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFinishAction(finishFunc);
     a->setFailAction(failFunc);
 
