@@ -364,6 +364,8 @@ public:
     { return mTreesAndVines; }
     const std::vector<eTile*>& resourceTiles();
     const std::vector<eTile*>& forestTiles();
+    const std::vector<eBuilding*>& sanctBuildings() const
+    { return mSanctBuildings; }
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
@@ -451,6 +453,7 @@ private:
     bool mResourceTilesUpdate = true;
     std::vector<eTile*> mForestTiles;
     bool mForestTilesUpdate = true;
+    std::vector<eBuilding*> mSanctBuildings;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;
     std::vector<eMonster*> mMonsters;

@@ -743,6 +743,13 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
         mAnimalBuildings.push_back(b);
         mAnimalBuildingsSurroundingUpdate = true;
         break;
+    case eBuildingType::templeAltar:
+    case eBuildingType::temple:
+    case eBuildingType::templeMonument:
+    case eBuildingType::templeStatue:
+    case eBuildingType::templeTile:
+        mSanctBuildings.push_back(b);
+        break;
     default:
         break;
     }
@@ -768,6 +775,7 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);
     eVectorHelpers::remove(mTreesAndVines, b);
+    eVectorHelpers::remove(mSanctBuildings, b);
     const bool r = eVectorHelpers::remove(mAnimalBuildings, b);
     if(r) mAnimalBuildingsSurroundingUpdate = true;
     return true;

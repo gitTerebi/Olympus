@@ -89,6 +89,9 @@ bool eArtisanAction::findTargetDecision() {
 
     const auto c = character();
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::sanctBuildings |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     const stdptr<eCharacter> cptr(c);
     a->setFoundAction([cptr]() {
         if(!cptr) return;

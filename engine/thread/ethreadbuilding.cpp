@@ -1,4 +1,4 @@
-#include "ethreadbuilding.h"
+﻿#include "ethreadbuilding.h"
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
@@ -28,19 +28,50 @@ void eThreadBuilding::load(eBuilding* const src) {
         mType = src->type();
         mTileRect = src->tileRect();
         mCleared = false;
-        if(mType == eBuildingType::road) {
+        switch(mType) {
+        case eBuildingType::road:
+        case eBuildingType::park:
+        case eBuildingType::doricColumn:
+        case eBuildingType::ionicColumn:
+        case eBuildingType::corinthianColumn:
+        case eBuildingType::avenue:
+
+        case eBuildingType::commemorative:
+        case eBuildingType::godMonument:
+        case eBuildingType::godMonumentTile:
+
+        case eBuildingType::bench:
+        case eBuildingType::flowerGarden:
+        case eBuildingType::gazebo:
+        case eBuildingType::hedgeMaze:
+        case eBuildingType::fishPond:
+
+        case eBuildingType::waterPark:
+
+        case eBuildingType::birdBath:
+        case eBuildingType::shortObelisk:
+        case eBuildingType::tallObelisk:
+        case eBuildingType::shellGarden:
+        case eBuildingType::sundial:
+        case eBuildingType::dolphinSculpture:
+        case eBuildingType::orrery:
+        case eBuildingType::spring:
+        case eBuildingType::topiary:
+        case eBuildingType::baths:
+        case eBuildingType::stoneCircle:
             mCleared = true;
-        } else if(eAestheticsBuilding::sAestheticsBuilding(mType)) {
-            mCleared = true;
-        } else if(mType == eBuildingType::commonHouse) {
+            break;
+        case eBuildingType::commonHouse: {
             const auto h = static_cast<eSmallHouse*>(src);
             mVacancies = h->vacancies();
-        } else if(mType == eBuildingType::eliteHousing) {
+        } break;
+        case eBuildingType::eliteHousing: {
             const auto h = static_cast<eEliteHousing*>(src);
             mVacancies = h->vacancies();
-        } else if(mType == eBuildingType::granary ||
-                  mType == eBuildingType::warehouse ||
-                  mType == eBuildingType::tradePost) {
+        } break;
+        case eBuildingType::granary:
+        case eBuildingType::warehouse:
+        case eBuildingType::tradePost: {
             const auto s = static_cast<eStorageBuilding*>(src);
             mAccepts = s->accepts();
             mGet = s->get();
@@ -53,28 +84,59 @@ void eThreadBuilding::load(eBuilding* const src) {
                 mResource[i] = rt[i];
             }
             mMaxCount = s->maxCount();
-        } else if(const auto b = dynamic_cast<eResourceBuildingBase*>(src)) {
+        } break;
+        case eBuildingType::corral:
+        case eBuildingType::carrotsFarm:
+        case eBuildingType::onionsFarm:
+        case eBuildingType::wheatFarm:
+        case eBuildingType::dairy:
+        case eBuildingType::cardingShed:
+        case eBuildingType::armory:
+        case eBuildingType::olivePress:
+        case eBuildingType::sculptureStudio:
+        case eBuildingType::winery:
+        case eBuildingType::fishery:
+        case eBuildingType::huntingLodge:
+        case eBuildingType::urchinQuay:
+        case eBuildingType::foundry:
+        case eBuildingType::masonryShop:
+        case eBuildingType::mint:
+        case eBuildingType::timberMill: {
+            const auto b = static_cast<eResourceBuildingBase*>(src);
             mResource[0] = b->resourceType();
             mResourceCount[0] = b->resource();
             mSpaceCount = 1;
-        } else if(mType == eBuildingType::horseRanch) {
+        } break;
+        case eBuildingType::horseRanch: {
             const auto b = static_cast<eHorseRanch*>(src);
             mResource[0] = eResourceType::horse;
             mResourceCount[0] = b->horseCount();
             mSpaceCount = 1;
-        } else if(mType == eBuildingType::horseRanchEnclosure) {
+        } break;
+        case eBuildingType::horseRanchEnclosure: {
             const auto e = static_cast<eHorseRanchEnclosure*>(src);
             mResource[0] = eResourceType::horse;
             mResourceCount[0] = e->horseCount();
             mSpaceCount = 1;
-        } else if(mType == eBuildingType::chariotFactory) {
+        } break;
+        case eBuildingType::chariotFactory: {
             const auto b = static_cast<eChariotFactory*>(src);
             mResource[0] = eResourceType::chariot;
             mResourceCount[0] = b->chariotCount();
             mSpaceCount = 1;
-        } else if(const auto b = dynamic_cast<eResourceBuilding*>(src)) {
+        } break;
+        case eBuildingType::vine:
+        case eBuildingType::oliveTree:
+        case eBuildingType::orangeTree: {
+            const auto b = static_cast<eResourceBuilding*>(src);
             mWorkedOn = b->workedOn();
-        } else if(const auto b = dynamic_cast<eSanctBuilding*>(src)) {
+        } break;
+        case eBuildingType::templeAltar:
+        case eBuildingType::temple:
+        case eBuildingType::templeMonument:
+        case eBuildingType::templeStatue:
+        case eBuildingType::templeTile: {
+            const auto b = static_cast<eSanctBuilding*>(src);
             mWorkedOn = b->workedOn();
             const auto s = b->sanctuary();
             const bool h = s->constructionHalted();
@@ -83,8 +145,15 @@ void eThreadBuilding::load(eBuilding* const src) {
             } else {
                 mResourcesAvailable = b->resourcesAvailable();
             }
-        } else if(const auto b = dynamic_cast<eAnimalBuilding*>(src)) {
+        } break;
+        case eBuildingType::sheep:
+        case eBuildingType::goat:
+        case eBuildingType::cattle: {
+            const auto b = static_cast<eAnimalBuilding*>(src);
             mWorkedOn = b->animal();
+        } break;
+        default:
+            break;
         }
     } else {
         mType = eBuildingType::none;

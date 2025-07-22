@@ -140,6 +140,16 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
             update(tiles);
             mTmpBoard.setForestsState(bState);
         }
+
+        if(static_cast<bool>(rel & eStateRelevance::sanctBuildings) &&
+           bState != mTmpBoard.sanctBuildingsState()) {
+            const auto& bs = c->sanctBuildings();
+            for(const auto b : bs) {
+                const auto& tiles = b->tilesUnder();
+                update(tiles);
+            }
+            mTmpBoard.setSanctBuildingsState(bState);
+        }
     }
 }
 
