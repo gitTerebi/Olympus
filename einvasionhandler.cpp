@@ -520,6 +520,7 @@ void eInvasionHandler::incTime(const int by) {
         ed.fCity = mCity;
 
         const auto invadingCid = mCity->cityId();
+        const auto ppid = mBoard.personPlayer();
         const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
         const auto invadingC = mBoard.boardCityWithId(invadingCid);
         const auto wboard = mBoard.getWorldBoard();
@@ -555,8 +556,13 @@ void eInvasionHandler::incTime(const int by) {
             if(invadingC) {
                 mBoard.event(eEvent::cityConquered, ied);
                 mBoard.allow(invadingCid, eBuildingType::commemorative, 4);
-                targetWCity->setRelationship(eForeignCityRelationship::vassal);
-                mBoard.moveCityToPlayer(mTargetCity, invadingPid);
+                if(invadingPid == ppid) {
+                    targetWCity->setRelationship(eForeignCityRelationship::vassal);
+                }
+                const auto ppc = mBoard.personPlayerCapital();
+                if(mTargetCity != ppc) {
+                    mBoard.moveCityToPlayer(mTargetCity, invadingPid);
+                }
                 if(mConquestEvent) {
                     const auto& forces = mConquestEvent->forces();
                     const int iniCount = forces.count();
