@@ -33,6 +33,8 @@
 #include "eiteratesquare.h"
 #include "etilehelper.h"
 
+#include "spawners/espawner.h"
+
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
     mId(cid),
@@ -2077,7 +2079,7 @@ const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
             const int x = center->x();
             const int y = center->y();
             for(int i = x - range; i <= x + range; i++) {
-                for(int j = y - range; i <= y + range; i++) {
+                for(int j = y - range; j <= y + range; j++) {
                     const auto tile = mBoard.tile(i, j);
                     const auto cid = tile->cityId();
                     if(cid != mId) continue;
@@ -2091,6 +2093,34 @@ const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
         mAnimalBuildingsSurroundingUpdate = false;
     }
     return mAnimalBuildingsSurrounding;
+}
+
+const std::vector<eTile*>& eBoardCity::huntingTiles() {
+    if(mHuntingTilesUpdate) {
+        mHuntingTiles.clear();
+        const int range = eNumbers::sAnimalMoveRange + 2;
+        for(const auto s : mSpawners) {
+            const auto type = s->type();
+            if(type != eBannerTypeS::boar &&
+               type != eBannerTypeS::deer) continue;
+            const auto tile = s->tile();
+            const int x = tile->x();
+            const int y = tile->y();
+            for(int i = x - range; i <= x + range; i++) {
+                for(int j = y - range; j <= y + range; j++) {
+                    const auto tile = mBoard.tile(i, j);
+                    const auto cid = tile->cityId();
+                    if(cid != mId) continue;
+                    const bool r = eVectorHelpers::contains(
+                                       mHuntingTiles, tile);
+                    if(r) continue;
+                    mHuntingTiles.push_back(tile);
+                }
+            }
+        }
+        mHuntingTilesUpdate = false;
+    }
+    return mHuntingTiles;
 }
 
 const std::vector<eTile*>& eBoardCity::resourceTiles() {

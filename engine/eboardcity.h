@@ -355,6 +355,7 @@ public:
     int sanctuariesState() const { return mSanctuariesState; }
 
     const std::vector<eTile*>& animalBuildingsTiles();
+    const std::vector<eTile*>& huntingTiles();
 
     const std::vector<eBuilding*>& buildingsWithResource() const
     { return mBuildingsWithResource; }
@@ -451,6 +452,8 @@ private:
     std::vector<eTile*> mAnimalBuildingsSurrounding;
     std::vector<eTile*> mResourceTiles;
     bool mResourceTilesUpdate = true;
+    std::vector<eTile*> mHuntingTiles;
+    bool mHuntingTilesUpdate = true;
     std::vector<eTile*> mForestTiles;
     bool mForestTilesUpdate = true;
     std::vector<eBuilding*> mSanctBuildings;

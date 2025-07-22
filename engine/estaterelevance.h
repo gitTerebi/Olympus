@@ -12,7 +12,8 @@ enum class eStateRelevance {
     domesticatedAnimals = 1 << 6,
     resources = 1 << 7,
     sanctBuildings = 1 << 8,
-    all = (1 << 9) - 1,
+    huntingGrounds = 1 << 9,
+    all = (1 << 10) - 1,
 };
 
 inline eStateRelevance operator|(const eStateRelevance a, const eStateRelevance b) {

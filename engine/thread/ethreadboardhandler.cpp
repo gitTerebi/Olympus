@@ -82,6 +82,8 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
         mTmpBoard.setDomesticatedAnimalsState(bState);
         mTmpBoard.setSanctuariesState(cSState);
         mTmpBoard.setResourcesState(bState);
+        mTmpBoard.setSanctBuildingsState(bState);
+        mTmpBoard.setHuntingGroundsState(bState);
     } else {
         if(static_cast<bool>(rel & eStateRelevance::resourcesInBuildings) &&
            bState != mTmpBoard.resourcesInBuildingsState()) {
@@ -120,11 +122,11 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
             mTmpBoard.setDomesticatedAnimalsState(bState);
         }
 
-        if(static_cast<bool>(rel & eStateRelevance::domesticatedAnimals) &&
-           bState != mTmpBoard.domesticatedAnimalsState()) {
-            const auto& tiles = c->animalBuildingsTiles();
+        if(static_cast<bool>(rel & eStateRelevance::huntingGrounds) &&
+           bState != mTmpBoard.huntingGroundsState()) {
+            const auto& tiles = c->huntingTiles();
             update(tiles);
-            mTmpBoard.setDomesticatedAnimalsState(bState);
+            mTmpBoard.setHuntingGroundsState(bState);
         }
 
         if(static_cast<bool>(rel & eStateRelevance::resources) &&

@@ -145,6 +145,9 @@ void eHuntAction::findResourceDecision() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::huntingGrounds |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFoundAction([tptr, this, c, aType]() {
         if(tptr) {
             if(*aType == eCharacterType::deer) {
