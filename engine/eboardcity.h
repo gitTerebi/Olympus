@@ -348,27 +348,30 @@ public:
     int allBuildingsState() const { return mAllBuildingsState; }
 
     int terrainState() const { return mTerrainState; }
-    void incTerrainState() { mTerrainState++; }
+    void incTerrainState();
 
-    int forestsState() const { return mForestsState; }
-    void incForestsState() { mForestsState++; }
+    void incForestsState();
 
     int sanctuariesState() const { return mSanctuariesState; }
 
     const std::vector<eTile*>& animalBuildingsTiles();
 
-    std::vector<eBuilding*> buildingsWithResource() const
+    const std::vector<eBuilding*>& buildingsWithResource() const
     { return mBuildingsWithResource; }
-    std::vector<eHouseBase*> houses() const
+    const std::vector<eHouseBase*>& houses() const
     { return mHouses; }
-    std::vector<eBuilding*> treesAndVines() const
+    const std::vector<eBuilding*>& treesAndVines() const
     { return mTreesAndVines; }
+    const std::vector<eTile*>& resourceTiles();
+    const std::vector<eTile*>& forestTiles();
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
     void payPensions();
     bool replace3By3AestheticByCommemorative();
+    void updateResourceTiles();
+    void updateForestTiles();
 
     eGameBoard& mBoard;
 
@@ -444,6 +447,10 @@ private:
     std::vector<eBuilding*> mAnimalBuildings;
     bool mAnimalBuildingsSurroundingUpdate = false;
     std::vector<eTile*> mAnimalBuildingsSurrounding;
+    std::vector<eTile*> mResourceTiles;
+    bool mResourceTilesUpdate = true;
+    std::vector<eTile*> mForestTiles;
+    bool mForestTilesUpdate = true;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;
     std::vector<eMonster*> mMonsters;

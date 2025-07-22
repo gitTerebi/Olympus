@@ -359,6 +359,43 @@ bool eBoardCity::replace3By3AestheticByCommemorative() {
     return r;
 }
 
+void eBoardCity::updateResourceTiles() {
+    mResourceTiles.clear();
+    for(const auto tile : mTiles) {
+        if(tile->hasFish() || tile->hasUrchin()) {
+            mResourceTiles.push_back(tile);
+            continue;
+        }
+        const auto terr = tile->terrain();
+        switch(terr) {
+        case eTerrain::marble:
+        case eTerrain::copper:
+        case eTerrain::silver:
+        case eTerrain::forest:
+        case eTerrain::choppedForest:
+            mResourceTiles.push_back(tile);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void eBoardCity::updateForestTiles() {
+    mForestTiles.clear();
+    for(const auto tile : mTiles) {
+        const auto terr = tile->terrain();
+        switch(terr) {
+        case eTerrain::forest:
+        case eTerrain::choppedForest:
+            mForestTiles.push_back(tile);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
 void eBoardCity::nextMonth() {
     payPensions();
 
@@ -2013,6 +2050,16 @@ std::map<eResourceType, int> eBoardCity::exported(const eCityId cid) const {
     return it->second;
 }
 
+void eBoardCity::incTerrainState() {
+    mTerrainState++;
+    mResourceTilesUpdate = true;
+}
+
+void eBoardCity::incForestsState() {
+    mForestsState++;
+    mForestTilesUpdate = true;
+}
+
 const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
     if(mAnimalBuildingsSurroundingUpdate) {
         mAnimalBuildingsSurrounding.clear();
@@ -2036,6 +2083,22 @@ const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
         mAnimalBuildingsSurroundingUpdate = false;
     }
     return mAnimalBuildingsSurrounding;
+}
+
+const std::vector<eTile*>& eBoardCity::resourceTiles() {
+    if(mResourceTilesUpdate) {
+        updateResourceTiles();
+        mResourceTilesUpdate = false;
+    }
+    return mResourceTiles;
+}
+
+const std::vector<eTile*>& eBoardCity::forestTiles() {
+    if(mForestTilesUpdate) {
+        updateForestTiles();
+        mForestTilesUpdate = false;
+    }
+    return mForestTiles;
 }
 
 void eBoardCity::clearAfterLastEpisode() {

@@ -14,9 +14,6 @@ void eRegrowForestAction::trigger(eGameBoard& board) {
     (void)board;
     if(mTile->terrain() != eTerrain::choppedForest) return;
     mTile->setTerrain(eTerrain::forest);
-    const auto cid = mTile->cityId();
-    const auto c = board.boardCityWithId(cid);
-    if(c) c->incForestsState();
 }
 
 void eRegrowForestAction::read(eReadStream& src, eGameBoard& board) {

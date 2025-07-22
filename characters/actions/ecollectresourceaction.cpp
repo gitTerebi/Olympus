@@ -169,6 +169,16 @@ bool eCollectResourceAction::findResourceDecision() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
+    const auto type = hr->type();
+    if(type == eHasResourceObjectType::forest) {
+        a->setStateRelevance(eStateRelevance::forests |
+                             eStateRelevance::buildings |
+                             eStateRelevance::terrain);
+    } else {
+        a->setStateRelevance(eStateRelevance::resources |
+                             eStateRelevance::buildings |
+                             eStateRelevance::terrain);
+    }
 
     const stdptr<eCharacter> cptr(c);
     a->setFoundAction([cptr, tptr, this]() {

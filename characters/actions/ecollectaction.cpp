@@ -25,9 +25,6 @@ void transformMarble(eTile* const t, eGameBoard& board) {
 
 void transformForest(eTile* const t, eGameBoard& board) {
     t->setTerrain(eTerrain::choppedForest);
-    const auto cid = t->cityId();
-    const auto c = board.boardCityWithId(cid);
-    if(c) c->incForestsState();
     const auto a = new eRegrowForestAction(t);
     board.planAction(a);
 }

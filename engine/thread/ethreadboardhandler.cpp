@@ -59,32 +59,29 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
 
     const int cABState = c->allBuildingsState();
     const int cTState = c->terrainState();
-    const int cFState = c->forestsState();
     const int cSState = c->sanctuariesState();
     const int tABState = mTmpBoard.allBuildingsState();
     const int tTState = mTmpBoard.terrainState();
-    const int tFState = mTmpBoard.forestsState();
     const int tSState = mTmpBoard.sanctuariesState();
 
     if(rel == eStateRelevance::all ||
        (static_cast<bool>(rel & eStateRelevance::buildings) &&
         cABState != tABState) ||
        (static_cast<bool>(rel & eStateRelevance::terrain) &&
-        cTState != tTState) ||
-       (static_cast<bool>(rel & eStateRelevance::forests) &&
-        cFState != tFState)) {
+        cTState != tTState)) {
         const auto& tiles = c->tiles();
         if(cSState != tSState) updateSanctuary(tiles);
         else update(tiles);
         mTmpBoard.setState(bState);
         mTmpBoard.setTerrainState(cTState);
-        mTmpBoard.setForestsState(cFState);
+        mTmpBoard.setForestsState(bState);
         mTmpBoard.setAllBuildingsState(cABState);
         mTmpBoard.setResourcesInBuildingsState(bState);
         mTmpBoard.setHouseVacanciesState(bState);
         mTmpBoard.setTreesAndVinesState(bState);
         mTmpBoard.setDomesticatedAnimalsState(bState);
         mTmpBoard.setSanctuariesState(cSState);
+        mTmpBoard.setResourcesState(bState);
     } else {
         if(static_cast<bool>(rel & eStateRelevance::resourcesInBuildings) &&
            bState != mTmpBoard.resourcesInBuildingsState()) {
@@ -121,6 +118,27 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
             const auto& tiles = c->animalBuildingsTiles();
             update(tiles);
             mTmpBoard.setDomesticatedAnimalsState(bState);
+        }
+
+        if(static_cast<bool>(rel & eStateRelevance::domesticatedAnimals) &&
+           bState != mTmpBoard.domesticatedAnimalsState()) {
+            const auto& tiles = c->animalBuildingsTiles();
+            update(tiles);
+            mTmpBoard.setDomesticatedAnimalsState(bState);
+        }
+
+        if(static_cast<bool>(rel & eStateRelevance::resources) &&
+           bState != mTmpBoard.resourcesState()) {
+            const auto& tiles = c->resourceTiles();
+            update(tiles);
+            mTmpBoard.setResourcesState(bState);
+        }
+
+        if(static_cast<bool>(rel & eStateRelevance::forests) &&
+           bState != mTmpBoard.forestsState()) {
+            const auto& tiles = c->forestTiles();
+            update(tiles);
+            mTmpBoard.setForestsState(bState);
         }
     }
 }
