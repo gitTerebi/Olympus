@@ -44,7 +44,7 @@ void eThreadPool::addBoard(const eCityId cid) {
     }
 }
 
-double gThreadedTime = 0.;
+//double gThreadedTime = 0.;
 
 void eThreadPool::threadEntry(eThreadData* data) {
     eTask* task = nullptr;
@@ -64,12 +64,12 @@ void eThreadPool::threadEntry(eThreadData* data) {
         }
         if(task) {
             {
-                using std::chrono::high_resolution_clock;
-                using std::chrono::duration_cast;
-                using std::chrono::duration;
-                using std::chrono::milliseconds;
+//                using std::chrono::high_resolution_clock;
+//                using std::chrono::duration_cast;
+//                using std::chrono::duration;
+//                using std::chrono::milliseconds;
 
-                const auto t1 = high_resolution_clock::now();
+//                const auto t1 = high_resolution_clock::now();
 
                 const auto cid = task->cid();
                 data->updateBoard(cid);
@@ -80,11 +80,11 @@ void eThreadPool::threadEntry(eThreadData* data) {
 //                }
                 task->run(b);
 
-                const auto t2 = high_resolution_clock::now();
+//                const auto t2 = high_resolution_clock::now();
 
-                const duration<double, std::milli> ms = t2 - t1;
-                gThreadedTime += ms.count();
-                printf("gThreadedTime %f ms\n", gThreadedTime);
+//                const duration<double, std::milli> ms = t2 - t1;
+//                gThreadedTime += ms.count();
+//                printf("gThreadedTime %f ms\n", gThreadedTime);
 //                printf("run task: %f ms\n", ms.count());
             }
             {
@@ -101,7 +101,7 @@ void eThreadPool::threadEntry(eThreadData* data) {
     }
 }
 
-double gMainThreadTime = 0.;
+//double gMainThreadTime = 0.;
 
 void eThreadPool::queueTask(eTask* const task) {
     task->setExpectedState(mBoard.state());
@@ -114,18 +114,18 @@ void eThreadPool::queueTask(eTask* const task) {
     const auto d = mThreadData[threadId];
 //    std::printf("Que task %p in %p\n", task, d);
 
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
+//    using std::chrono::high_resolution_clock;
+//    using std::chrono::duration_cast;
+//    using std::chrono::duration;
+//    using std::chrono::milliseconds;
 
-    const auto t1 = high_resolution_clock::now();
+//    const auto t1 = high_resolution_clock::now();
     d->update(mBoard, cid, task->relevance());
-    const auto t2 = high_resolution_clock::now();
+//    const auto t2 = high_resolution_clock::now();
 
-    const duration<double, std::milli> ms = t2 - t1;
-    gMainThreadTime += ms.count();
-    printf("gMainThreadTime %f ms\n", gMainThreadTime);
+//    const duration<double, std::milli> ms = t2 - t1;
+//    gMainThreadTime += ms.count();
+//    printf("gMainThreadTime %f ms\n", gMainThreadTime);
 
     std::unique_lock<std::mutex> lock(d->fTasksMutex);
     d->fTasks.emplace(task);
