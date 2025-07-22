@@ -13,16 +13,18 @@ void eThreadTile::loadInitial(eTile* const src) {
     setHasUrchin(src->hasUrchin());
     setCityId(src->cityId());
 
+    loadSanctuary(src);
+}
+
+void eThreadTile::loadSanctuary(eTile* const src) {
+    setWalkableElev(src->walkableElev());
+    setElevation(src->isElevationTile());
+    setAltitude(src->altitude(), false);
+
     load(src);
 }
 
 void eThreadTile::load(eTile* const src) {
-    // for sanctuary building
-    setWalkableElev(src->walkableElev());
-    setElevation(src->isElevationTile());
-    setAltitude(src->altitude(), false);
-    //
-
     setBusy(src->busy());
     setResource(src->resource());
     setTerrain(src->terrain());

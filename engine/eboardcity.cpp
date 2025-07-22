@@ -801,10 +801,12 @@ bool eBoardCity::unregisterStorBuilding(eStorageBuilding* const b) {
 }
 
 void eBoardCity::registerSanctuary(eSanctuary* const b) {
+    mSanctuariesState++;
     mSanctuaries.push_back(b);
 }
 
 bool eBoardCity::unregisterSanctuary(eSanctuary* const b) {
+    mSanctuariesState++;
     return eVectorHelpers::remove(mSanctuaries, b);
 }
 

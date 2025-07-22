@@ -31,6 +31,9 @@ public:
 
     int forestsState() const { return mForestsState; }
     void setForestsState(const int s) { mForestsState = s; }
+
+    int sanctuariesState() const { return mSanctuariesState; }
+    void setSanctuariesState(const int s) { mSanctuariesState = s; }
 private:
     void updateNeighbours();
 
@@ -40,6 +43,7 @@ private:
     int mHouseVacanciesState = 0;
     int mTerrainState = 0;
     int mForestsState = 0;
+    int mSanctuariesState = 0;
 
     int mWidth = 0;
     int mHeight = 0;

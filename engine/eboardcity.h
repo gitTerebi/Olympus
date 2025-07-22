@@ -353,6 +353,8 @@ public:
     int forestsState() const { return mForestsState; }
     void incForestsState() { mForestsState++; }
 
+    int sanctuariesState() const { return mSanctuariesState; }
+
     std::vector<eBuilding*> buildingsWithResource() const
     { return mBuildingsWithResource; }
     std::vector<eHouseBase*> houses() const
@@ -510,6 +512,7 @@ private:
     int mAllBuildingsState = 0;
     int mTerrainState = 0;
     int mForestsState = 0;
+    int mSanctuariesState = 0;
 };
 
 #endif // EBOARDCITY_H

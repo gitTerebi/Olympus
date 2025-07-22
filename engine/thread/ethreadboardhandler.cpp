@@ -60,9 +60,11 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
     const int cABState = c->allBuildingsState();
     const int cTState = c->terrainState();
     const int cFState = c->forestsState();
+    const int cSState = c->sanctuariesState();
     const int tABState = mTmpBoard.allBuildingsState();
     const int tTState = mTmpBoard.terrainState();
     const int tFState = mTmpBoard.forestsState();
+    const int tSState = mTmpBoard.sanctuariesState();
 
     if(rel == eStateRelevance::all ||
        (static_cast<bool>(rel & eStateRelevance::buildings) &&
@@ -72,13 +74,15 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
        (static_cast<bool>(rel & eStateRelevance::forests) &&
         cFState != tFState)) {
         const auto& tiles = c->tiles();
-        update(tiles);
+        if(cSState != tSState) updateSanctuary(tiles);
+        else update(tiles);
         mTmpBoard.setState(bState);
         mTmpBoard.setTerrainState(cTState);
         mTmpBoard.setForestsState(cFState);
         mTmpBoard.setAllBuildingsState(cABState);
         mTmpBoard.setResourcesInBuildingsState(bState);
         mTmpBoard.setHouseVacanciesState(bState);
+        mTmpBoard.setSanctuariesState(cSState);
     } else {
         if(static_cast<bool>(rel & eStateRelevance::resourcesInBuildings) &&
            bState != mTmpBoard.resourcesInBuildingsState()) {
@@ -118,5 +122,15 @@ void eThreadBoardHandler::update(const std::vector<eTile*>& tiles) {
         const auto dst = mTmpBoard.dtile(dx, dy);
         if(!dst) continue;
         dst->load(src);
+    }
+}
+
+void eThreadBoardHandler::updateSanctuary(const std::vector<eTile*>& tiles) {
+    for(const auto src : tiles) {
+        const int dx = src->dx();
+        const int dy = src->dy();
+        const auto dst = mTmpBoard.dtile(dx, dy);
+        if(!dst) continue;
+        dst->loadSanctuary(src);
     }
 }

@@ -10,6 +10,7 @@
 class eThreadTile : public eTileBase {
 public:
     void loadInitial(eTile* const src);
+    void loadSanctuary(eTile* const src);
     void load(eTile* const src);
 
     bool hasRoad() const override;

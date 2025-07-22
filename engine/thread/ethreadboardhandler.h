@@ -23,6 +23,7 @@ public:
     eThreadBoard& board() { return mBoard; }
 private:
     void update(const std::vector<eTile*>& tiles);
+    void updateSanctuary(const std::vector<eTile*>& tiles);
     void updateAll(eGameBoard& board);
 
     bool mInitialized = false;
