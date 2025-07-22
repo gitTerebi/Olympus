@@ -8,7 +8,8 @@ enum class eStateRelevance {
     buildings = 1 << 2,
     resourcesInBuildings = 1 << 3,
     houseVacancies = 1 << 4,
-    all = (1 << 5) - 1,
+    treesAndVines = 1 << 5,
+    all = (1 << 6) - 1,
 };
 
 inline eStateRelevance operator|(const eStateRelevance a, const eStateRelevance b) {

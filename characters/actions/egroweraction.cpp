@@ -182,6 +182,9 @@ bool eGrowerAction::findResourceDecision() {
     };
 
     const auto a = e::make_shared<eMoveToAction>(mGrower);
+    a->setStateRelevance(eStateRelevance::treesAndVines |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
     a->setFoundAction([tptr, this]() {
         if(!tptr) return;
         if(mLodge) mLodge->setNoTarget(false);

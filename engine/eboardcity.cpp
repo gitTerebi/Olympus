@@ -695,6 +695,11 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::commonHouse:
         mHouses.push_back(static_cast<eHouseBase*>(b));
         break;
+    case eBuildingType::orangeTree:
+    case eBuildingType::oliveTree:
+    case eBuildingType::vine:
+        mTreesAndVines.push_back(b);
+        break;
     default:
         break;
     }
@@ -719,6 +724,7 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
     eVectorHelpers::remove(m3x3AestheticBuildings, b);
     eVectorHelpers::remove(mTimedBuildings, b);
     eVectorHelpers::remove(mCommemorativeBuildings, b);
+    eVectorHelpers::remove(mTreesAndVines, b);
     return true;
 }
 

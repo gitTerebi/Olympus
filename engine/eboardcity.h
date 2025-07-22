@@ -359,6 +359,8 @@ public:
     { return mBuildingsWithResource; }
     std::vector<eHouseBase*> houses() const
     { return mHouses; }
+    std::vector<eBuilding*> treesAndVines() const
+    { return mTreesAndVines; }
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
@@ -436,6 +438,7 @@ private:
     std::vector<eHouseBase*> mHouses;
     std::vector<eBuilding*> m3x3AestheticBuildings;
     std::vector<eBuilding*> mCommemorativeBuildings;
+    std::vector<eBuilding*> mTreesAndVines;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;
     std::vector<eMonster*> mMonsters;
