@@ -29,6 +29,7 @@ public:
 
     SDL_Rect tileRect() const { return mTileRect; }
 private:
+    bool mCleared = false;
     SDL_Rect mTileRect;
     eBuildingType mType{eBuildingType::none};
 

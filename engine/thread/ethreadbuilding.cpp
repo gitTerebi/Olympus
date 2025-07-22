@@ -10,20 +10,29 @@
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/eaestheticsbuilding.h"
 
 void eThreadBuilding::load(eBuilding* const src) {
-    mVacancies = 0;
+    if(!mCleared) {
+        mVacancies = 0;
 
-    memset(mResourceCount, 0, sizeof(mResourceCount));
-    memset(mResource, 0, sizeof(mResourceCount));
-    mGet = eResourceType::none;
-    mEmpty = eResourceType::none;
-    mAccepts = eResourceType::none;
+        memset(mResourceCount, 0, sizeof(mResourceCount));
+        memset(mResource, 0, sizeof(mResourceCount));
+        mGet = eResourceType::none;
+        mEmpty = eResourceType::none;
+        mAccepts = eResourceType::none;
+        mCleared = true;
+    }
 
     if(src) {
         mType = src->type();
         mTileRect = src->tileRect();
-        if(mType == eBuildingType::commonHouse) {
+        mCleared = false;
+        if(mType == eBuildingType::road) {
+            mCleared = true;
+        } else if(eAestheticsBuilding::sAestheticsBuilding(mType)) {
+            mCleared = true;
+        } else if(mType == eBuildingType::commonHouse) {
             const auto h = static_cast<eSmallHouse*>(src);
             mVacancies = h->vacancies();
         } else if(mType == eBuildingType::eliteHousing) {
@@ -48,15 +57,18 @@ void eThreadBuilding::load(eBuilding* const src) {
             mResource[0] = b->resourceType();
             mResourceCount[0] = b->resource();
             mSpaceCount = 1;
-        } else if(const auto b = dynamic_cast<eHorseRanch*>(src)) {
+        } else if(mType == eBuildingType::horseRanch) {
+            const auto b = static_cast<eHorseRanch*>(src);
             mResource[0] = eResourceType::horse;
             mResourceCount[0] = b->horseCount();
             mSpaceCount = 1;
-        } else if(const auto e = dynamic_cast<eHorseRanchEnclosure*>(src)) {
+        } else if(mType == eBuildingType::horseRanchEnclosure) {
+            const auto e = static_cast<eHorseRanchEnclosure*>(src);
             mResource[0] = eResourceType::horse;
             mResourceCount[0] = e->horseCount();
             mSpaceCount = 1;
-        } else if(const auto b = dynamic_cast<eChariotFactory*>(src)) {
+        } else if(mType == eBuildingType::chariotFactory) {
+            const auto b = static_cast<eChariotFactory*>(src);
             mResource[0] = eResourceType::chariot;
             mResourceCount[0] = b->chariotCount();
             mSpaceCount = 1;
