@@ -350,7 +350,7 @@ private:
     std::vector<eResourceTrade> mBuys;
     std::vector<eResourceTrade> mSells;
 
-    std::vector<std::pair<eResourceType, int>> mReceived;
+    std::map<eResourceType, int> mReceived;
 
     eResourceType mTributeType = eResourceType::drachmas;
     int mTributeCount = 500;

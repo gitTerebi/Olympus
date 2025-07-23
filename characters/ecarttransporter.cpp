@@ -19,6 +19,7 @@ eCartTransporter::eCartTransporter(eGameBoard& board) :
 }
 
 eCartTransporter::~eCartTransporter() {
+    setResourceValue(eResourceType::none, 0);
     if(mOx) mOx->kill();
     if(mTrailer) mTrailer->kill();
     for(const auto& f : mFollowers) {
@@ -198,10 +199,27 @@ void eCartTransporter::setBigTrailer(const bool b) {
     if(mTrailer) mTrailer->setBig(b);
 }
 
-void eCartTransporter::setResource(const eResourceType type,
-                                   const int count) {
+void eCartTransporter::setResourceValue(const eResourceType type,
+                                        const int count) {
+    auto& board = getBoard();
+    const auto cid = cityId();
+    const auto c = board.boardCityWithId(cid);
+
+    if(mResourceType != eResourceType::none) {
+        c->incWaitingCount(mResourceType, -mResourceCount);
+    }
+
     mResourceType = type;
     mResourceCount = count;
+
+    if(mResourceType != eResourceType::none) {
+        c->incWaitingCount(mResourceType, mResourceCount);
+    }
+}
+
+void eCartTransporter::setResource(const eResourceType type,
+                                   const int count) {
+    setResourceValue(type, count);
 
     if(mType == eCartTransporterType::ox ||
        mType == eCartTransporterType::basic) {
@@ -319,9 +337,12 @@ void eCartTransporter::catchUp() {
 
 void eCartTransporter::read(eReadStream& src) {
     eBasicPatroler::read(src);
-    src >> mResourceCount;
+    int count;
+    src >> count;
     src >> mType;
-    src >> mResourceType;
+    eResourceType type;
+    src >> type;
+    setResourceValue(type, count);
     src >> mSupports;
     src >> mSupport;
     src >> mWaiting;

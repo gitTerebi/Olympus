@@ -9,7 +9,7 @@ class eGiftDialog : public eClosableDialog {
 public:
     using eClosableDialog::eClosableDialog;
 
-    using eRequestFunction = std::function<void(eResourceType)>;
+    using eRequestFunction = std::function<void(eResourceType, eCityId)>;
     void initialize(const stdsptr<eWorldCity>& c,
                     const eRequestFunction& func,
                     const eGameBoard& board);

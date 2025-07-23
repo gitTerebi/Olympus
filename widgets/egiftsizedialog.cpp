@@ -10,7 +10,8 @@
 void eGiftSizeDialog::initialize(const eResourceType type,
                                  const stdsptr<eWorldCity>& c,
                                  const eRequestFunction& func,
-                                 const eGameBoard& board) {
+                                 const eGameBoard& board,
+                                 const eCityId cid) {
     const auto r = resolution();
     const double mult = r.multiplier();
 
@@ -34,12 +35,7 @@ void eGiftSizeDialog::initialize(const eResourceType type,
     innerWid->addWidget(rofLabel);
 
     const int baseCount = eGiftHelpers::giftCount(type);
-    int avCount = 0;
-    const auto cids = board.personPlayerCitiesOnBoard();
-    for(const auto cid : cids) {
-        const int r = board.resourceCount(cid, type);
-        if(r > avCount) avCount = r;
-    }
+    const int avCount = board.resourceCount(cid, type);
     using gsType = std::vector<std::pair<int, int>>;
     gsType gs{{baseCount, 22}, // small
               {2*baseCount, 23}, // medium
@@ -54,21 +50,9 @@ void eGiftSizeDialog::initialize(const eResourceType type,
         eStringHelpers::replace(giftStr, "[amount]", countStr);
         eStringHelpers::replace(giftStr, "[item]", typeStr);
 
-//        const auto boardPtr = &board;
         const auto b = new eFramedButtonWithIcon(window());
-        b->setPressAction([/*boardPtr, */type, count, func]() {
-//            const auto& board = *boardPtr;
-//            const auto cids = board.personPlayerCities();
-//            std::vector<eCityId> validCids;
-//            for(const auto cid : cids) {
-//                const int r = board.resourceCount(cid, type);
-//                if(r >= count) {
-//                    validCids.push_back(cid);
-//                }
-//            }
-//            if(validCids.empty()) return;
-
-            func(type, count);
+        b->setPressAction([type, count, func, cid]() {
+            func(type, count, cid);
         });
         b->initialize(type, giftStr);
         innerWid->addWidget(b);

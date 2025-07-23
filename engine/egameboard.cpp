@@ -793,6 +793,14 @@ void eGameBoard::request(const stdsptr<eWorldCity>& c,
     const auto date = mDate + 90;
     e->initializeDate(date);
     addRootGameEvent(e);
+
+    const auto pid = cityIdToPlayerId(cid);
+    const auto& cts = mWorldBoard->cities();
+    for(const auto& ct : cts) {
+        if(ct->isCurrentCity()) continue;
+        ct->incAttitude(-10, pid);
+    }
+    c->incAttitude(-10, pid);
 }
 
 void eGameBoard::requestAid(const stdsptr<eWorldCity>& c) {
@@ -868,25 +876,21 @@ void eGameBoard::tributeFrom(const ePlayerId pid,
     event(eEvent::tributePaid, ed);
 }
 
-void eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
+bool eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
                         const eResourceType type,
-                        const int count) {
-    int remC = count;
-    const auto cts = personPlayerCitiesOnBoard();
-    for(const auto cid : cts) {
-        const auto c = boardCityWithId(cid);
-        if(!c) continue;
-        const int t = c->takeResource(type, remC);
-        remC -= t;
-        if(remC <= 0) break;
-    }
+                        const int count,
+                        const eCityId cid) {
+    const auto cc = boardCityWithId(cid);
+    const int has = cc->resourceCount(type);
+    if(has < count) return false;
+    cc->takeResource(type, count);
     const auto e = e::make_shared<eGiftToEvent>(
-                       personPlayerCapital(),
-                       eGameEventBranch::root, *this);
+                       cid, eGameEventBranch::root, *this);
     e->initialize(c, type, count);
     const auto date = mDate + 90;
     e->initializeDate(date);
     addRootGameEvent(e);
+    return true;
 }
 
 void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,

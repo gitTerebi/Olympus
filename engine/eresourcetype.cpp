@@ -345,3 +345,8 @@ int eResourceTypeHelpers::defaultPrice(const eResourceType type) {
     }
     return 0;
 }
+
+bool eResourceTypeHelpers::isSingleType(const eResourceType type) {
+    const int v = static_cast<int>(type);
+    return v == (v & -v);
+}

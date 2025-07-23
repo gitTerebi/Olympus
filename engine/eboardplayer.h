@@ -86,7 +86,7 @@ private:
 
     int mDrachmas = 2500;
     eDate mInDebtSince;
-    int mStuckDrachmas = mDrachmas;
+    int mLastMonthDrachmas = mDrachmas;
     int mStuckFinanciallyMonths = -1;
 
     int mGodAttackTimer = 10000000;

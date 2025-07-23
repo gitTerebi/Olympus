@@ -470,7 +470,7 @@ bool eWorldCity::trades() const {
 
 bool eWorldCity::buys(const eResourceType type) const {
     for(const auto& rt : mBuys) {
-        if(rt.fType == type) return true;
+        if(static_cast<bool>(rt.fType & type)) return true;
     }
     return false;
 }
@@ -495,7 +495,7 @@ void eWorldCity::changeSupply(const eResourceType res, const int by) {
 
 bool eWorldCity::sells(const eResourceType type) const {
     for(const auto& rt : mSells) {
-        if(rt.fType == type) return true;
+        if(static_cast<bool>(rt.fType & type)) return true;
     }
     return false;
 }
@@ -533,6 +533,12 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mTradeShutdown;
     dst << mRebellion;
     dst << mRel;
+
+    dst << mReceived.size();
+    for(const auto& r : mReceived) {
+        dst << r.first;
+        dst << r.second;
+    }
 
     dst << mAtt.size();
     for(const auto& att : mAtt) {
@@ -591,6 +597,16 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mRebellion;
     src >> mRel;
 
+    int nrec;
+    src >> nrec;
+    for(int i = 0; i < nrec; i++) {
+        eResourceType type;
+        src >> type;
+        int count;
+        src >> count;
+        mReceived[type] = count;
+    }
+
     int natt;
     src >> natt;
     for(int i = 0; i < natt; i++) {
@@ -620,9 +636,9 @@ void eWorldCity::gifted(const eResourceType type, const int count) {
     };
     const auto it = std::find_if(mReceived.begin(), mReceived.end(), comp);
     if(it == mReceived.end()) {
-        mReceived.push_back({type, count});
+        mReceived[type] = count;
     } else {
-        it->second += count;
+        mReceived[type] += count;
     }
 }
 

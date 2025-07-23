@@ -449,9 +449,9 @@ public:
     void tributeFrom(const ePlayerId pid,
                      const stdsptr<eWorldCity>& c,
                      const bool postpone);
-    void giftTo(const stdsptr<eWorldCity>& c,
+    bool giftTo(const stdsptr<eWorldCity>& c,
                 const eResourceType type,
-                const int count);
+                const int count, const eCityId cid);
     void giftToReceived(const stdsptr<eWorldCity>& c,
                         const eResourceType type,
                         const int count,

@@ -23,6 +23,7 @@
 #include "ecancelbutton.h"
 #include "estringhelpers.h"
 #include "widgets/ecitybutton.h"
+#include "widgets/echoosecitydialog.h"
 
 #include "buildings/eheroshall.h"
 
@@ -195,14 +196,8 @@ void eWorldWidget::openEnlistForcesDialog(
 void eWorldWidget::openRequestDialog() {
     const auto ppid = mBoard->personPlayer();
     const auto d = new eRequestDialog(window());
-    const auto func = [this, d, ppid](const eResourceType type) {
+    const auto func = [this, d](const eResourceType type) {
         mBoard->request(mCity, type, mBoard->personPlayerCapital());
-        const auto& cts = mWorldBoard->cities();
-        for(const auto& ct : cts) {
-            if(ct->isCurrentCity()) continue;
-            ct->incAttitude(-10, ppid);
-        }
-        mCity->incAttitude(-10, ppid);
         mWM->updateLabels();
         d->deleteLater();
     };
@@ -341,15 +336,19 @@ void eWorldWidget::openFulfillDialog() {
 
 void eWorldWidget::openGiftDialog() {
     const auto d = new eGiftDialog(window());
-    const auto func = [this, d](const eResourceType type) {
+    const auto func = [this, d](
+                      const eResourceType type,
+                      const eCityId cid) {
         const auto dd = new eGiftSizeDialog(window());
-        const auto func = [this, d, dd](const eResourceType type,
-                                        const int count) {
-            mBoard->giftTo(mCity, type, count);
+        const auto func = [this, d, dd](
+                          const eResourceType type,
+                          const int count,
+                          const eCityId cid) {
+            mBoard->giftTo(mCity, type, count, cid);
             d->deleteLater();
             dd->deleteLater();
         };
-        dd->initialize(type, mCity, func, *mBoard);
+        dd->initialize(type, mCity, func, *mBoard, cid);
         openDialog(dd);
     };
     d->initialize(mCity, func, *mBoard);

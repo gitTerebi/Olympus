@@ -67,6 +67,7 @@ namespace eResourceTypeHelpers {
     std::shared_ptr<eTexture> icon(const eUIScale scale, const eResourceType type);
     int transportSize(const eResourceType type);
     int defaultPrice(const eResourceType type);
+    bool isSingleType(const eResourceType type);
 }
 
 #endif // ERESOURCETYPE_H

@@ -42,6 +42,8 @@ public:
     int resCount() const { return mResourceCount; }
     bool hasResource() const { return mResourceCount > 0; }
 
+    void setResourceValue(const eResourceType type,
+                          const int count);
     void setResource(const eResourceType type,
                      const int count);
 

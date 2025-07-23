@@ -10,11 +10,13 @@ public:
     using eClosableDialog::eClosableDialog;
 
     using eRequestFunction = std::function<void(eResourceType,
-                                                const int)>;
+                                                const int,
+                                                const eCityId)>;
     void initialize(const eResourceType type,
                     const stdsptr<eWorldCity>& c,
                     const eRequestFunction& func,
-                    const eGameBoard& board);
+                    const eGameBoard& board,
+                    const eCityId cid);
 private:
     stdsptr<eWorldCity> mCity;
 };

@@ -46,10 +46,11 @@ void eResourceGrantedEventBase::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     int maxSpace = 0;
-    const auto cids = board->personPlayerCitiesOnBoard();
+    const auto cids = board->playerCitiesOnBoard(pid);
     for(const auto cid : cids) {
         const int space = board->spaceForResource(cid, mResource);
         if(space > maxSpace) maxSpace = space;
@@ -71,8 +72,7 @@ void eResourceGrantedEventBase::trigger() {
         addConsequence(e);
     };
 
-    const auto acceptDrachmas = [this, board]() { // accept
-        const auto pid = board->personPlayer();
+    const auto acceptDrachmas = [this, board, pid]() { // accept
         const auto p = board->boardPlayerWithId(pid);
         if(p) p->incDrachmas(mCount);
         return mCount;
@@ -97,7 +97,11 @@ void eResourceGrantedEventBase::trigger() {
         if(mResource == eResourceType::drachmas) {
             acceptDrachmas();
         } else if(maxSpace == 0) {
-            if(mPostpone) postpone();
+            if(mPostpone) {
+                postpone();
+            } else {
+                board->event(mGiftForfeited, ed);
+            }
         } else {
             for(const auto& c : ed.fCSpaceCount) {
                 const int count = c.second;

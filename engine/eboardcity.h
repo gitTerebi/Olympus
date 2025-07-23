@@ -105,7 +105,8 @@ public:
 
     void buildScheduled();
     bool previousDistrictFulfilled();
-    void buildNextDistrict(const int drachmas);
+    int nextDistrictCost(int* const marble = nullptr);
+    bool buildNextDistrict(const int drachmas);
     void setCurrentDistrictId(const int id) { mCurrentDistrictId = id; }
     using eCondition = eDistrictReadyCondition;
     std::vector<eCondition> getDistrictReadyConditions();
@@ -190,6 +191,9 @@ public:
     int maxSanctuarySpaceForResource(eSanctuary** b) const;
     int maxSingleSpaceForResource(const eResourceType type,
                                   eStorageBuilding** b) const;
+
+    int waitingCount(const eResourceType type) const;
+    void incWaitingCount(const eResourceType type, const int by);
 
     void killCommonFolks(int toKill);
     void walkerKilled();
@@ -431,6 +435,28 @@ private:
 
                              {eResourceType::armor, 0},
                              {eResourceType::sculpture, 0}};
+
+    std::map<eResourceType, int> mWaiting = {{eResourceType::urchin, 0},
+                                             {eResourceType::fish, 0},
+                                             {eResourceType::meat, 0},
+                                             {eResourceType::cheese, 0},
+                                             {eResourceType::carrots, 0},
+                                             {eResourceType::onions, 0},
+                                             {eResourceType::wheat, 0},
+                                             {eResourceType::oranges, 0},
+
+                                             {eResourceType::grapes, 0},
+                                             {eResourceType::olives, 0},
+                                             {eResourceType::wine, 0},
+                                             {eResourceType::oliveOil, 0},
+                                             {eResourceType::fleece, 0},
+
+                                             {eResourceType::wood, 0},
+                                             {eResourceType::bronze, 0},
+                                             {eResourceType::marble, 0},
+
+                                             {eResourceType::armor, 0},
+                                             {eResourceType::sculpture, 0}};
 
     std::map<eCityId, std::map<eResourceType, int>> mExported;
 

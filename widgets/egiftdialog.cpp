@@ -63,8 +63,8 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
         } else {
             for(const auto s : gifts) {
                 const auto b = new eFramedButtonWithIcon(window());
-                b->setPressAction([s, func]() {
-                    func(s);
+                b->setPressAction([s, func, cid]() {
+                    func(s, cid);
                 });
                 const auto typeName = eResourceTypeHelpers::typeLongName(s);
                 const auto text = " " + typeName;

@@ -640,20 +640,30 @@ bool eBoardCity::previousDistrictFulfilled() {
     return true;
 }
 
-void eBoardCity::buildNextDistrict(const int drachmas) {
-    const bool pf = previousDistrictFulfilled();
-    if(!pf) return;
+int eBoardCity::nextDistrictCost(int* const marble) {
     const int id = mCityPlan.nextDistrictId();
-    if(id == -1) return;
+    if(id == -1) return 0;
     auto& c = mNextDistrictCost;
     if(c.fDrachmas == -1) {
         c.fDrachmas = mCityPlan.districtCost(mBoard, id, &c.fMarble);
     }
-    if(c.fDrachmas > drachmas) return;
+    if(marble) *marble = c.fMarble;
+    return c.fDrachmas;
+}
+
+bool eBoardCity::buildNextDistrict(const int drachmas) {
+    const bool pf = previousDistrictFulfilled();
+    if(!pf) return false;
+    const int id = mCityPlan.nextDistrictId();
+    if(id == -1) return false;
+    int marbleCost = 0;
+    const int cost = nextDistrictCost(&marbleCost);
+    if(cost > drachmas) return false;
     const int marble = resourceCount(eResourceType::marble);
-    if(c.fMarble > marble) return;
+    if(marbleCost > marble) return false;
     mCityPlan.buildNextDistrict(mBoard);
-    c.fDrachmas = -1;
+    mNextDistrictCost.fDrachmas = -1;
+    return true;
 }
 
 std::vector<eBoardCity::eCondition> eBoardCity::getDistrictReadyConditions() {
@@ -1297,7 +1307,7 @@ int eBoardCity::takeResource(const eResourceType type, const int count) {
         (void)s;
         return true;
     });
-    return count - r;
+    return r;
 }
 
 int eBoardCity::addResource(const eResourceType type, const int count) {
@@ -1351,6 +1361,25 @@ int eBoardCity::maxSingleSpaceForResource(
         }
     }
     return r;
+}
+
+int eBoardCity::waitingCount(const eResourceType type) const {
+    const bool single = eResourceTypeHelpers::isSingleType(type);
+    if(single) {
+        const auto it = mWaiting.find(type);
+        if(it == mWaiting.end()) return 0;
+        return it->second;
+    }
+    int result = 0;
+    for(auto& r : mWaiting) {
+        if(!static_cast<bool>(r.first & type)) continue;
+        result += r.second;
+    }
+    return result;
+}
+
+void eBoardCity::incWaitingCount(const eResourceType type, const int by) {
+    mWaiting[type] += by;
 }
 
 int eBoardCity::maxSanctuarySpaceForResource(
