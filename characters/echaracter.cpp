@@ -24,13 +24,21 @@ eCharacter::~eCharacter() {
 
 bool eCharacter::canFight(eCharacter* const c) {
     if(dead()) return false;
-    if(!eTeamIdHelpers::isEnemy(teamId(), c->teamId())) return false;
+    const auto ct = c->type();
+    const auto t = type();
+    if((t == eCharacterType::hunter &&
+        (ct == eCharacterType::boar ||
+         ct == eCharacterType::deer)) ||
+        (ct == eCharacterType::hunter &&
+         (t == eCharacterType::boar ||
+          t == eCharacterType::deer))) {
+    } else {
+        if(!eTeamIdHelpers::isEnemy(teamId(), c->teamId())) return false;
+    }
     if(attack() == 0 && c->attack() == 0) return false;
     const auto at = actionType();
     if(at == eCharacterActionType::fight ||
        at == eCharacterActionType::fight2) return false;
-    const auto ct = c->type();
-    const auto t = type();
     if(t == eCharacterType::disgruntled) {
         if(ct == eCharacterType::watchman) return true;
         else if(eRand::rand() % 10) return false;
