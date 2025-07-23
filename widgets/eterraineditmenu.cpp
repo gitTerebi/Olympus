@@ -346,14 +346,14 @@ bool sizeOneAction(const eTerrainEditMode mode) {
 }
 
 eBrushType eTerrainEditMenu::brushType() const {
-    if(sizeOneAction(mMode)) {
+    if(sizeOneAction(mode())) {
         return eBrushType::brush;
     }
     return mBrushType;
 }
 
 int eTerrainEditMenu::brushSize() const {
-    if(sizeOneAction(mMode)) {
+    if(sizeOneAction(mode())) {
         return 1;
     }
     return mBrushSize;
