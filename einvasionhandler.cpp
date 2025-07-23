@@ -520,7 +520,6 @@ void eInvasionHandler::incTime(const int by) {
         ed.fCity = mCity;
 
         const auto invadingCid = mCity->cityId();
-        const auto ppid = mBoard.personPlayer();
         const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
         const auto invadingC = mBoard.boardCityWithId(invadingCid);
         const auto wboard = mBoard.getWorldBoard();
@@ -547,33 +546,21 @@ void eInvasionHandler::incTime(const int by) {
         } else if(p) {
             mStage = eInvasionStage::spread;
         } else {
-            mBoard.defeatedBy(mTargetCity, mCity);
-            mBoard.event(eEvent::invasionDefeat, ed);
             const int tx = mTile->x();
             const int ty = mTile->y();
             eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
             tellHeroesAndGodsToGoBack();
-            if(invadingC) {
-                mBoard.event(eEvent::cityConquered, ied);
-                mBoard.allow(invadingCid, eBuildingType::commemorative, 4);
-                if(invadingPid == ppid) {
-                    targetWCity->setRelationship(eForeignCityRelationship::vassal);
+            if(mConquestEvent) {
+                const auto& forces = mConquestEvent->forces();
+                const int iniCount = forces.count();
+                int count = 0;
+                for(const auto& b : mBanners) {
+                    count += b->count();
                 }
-                const auto ppc = mBoard.personPlayerCapital();
-                if(mTargetCity != ppc) {
-                    mBoard.moveCityToPlayer(mTargetCity, invadingPid);
-                }
-                if(mConquestEvent) {
-                    const auto& forces = mConquestEvent->forces();
-                    const int iniCount = forces.count();
-                    int count = 0;
-                    for(const auto& b : mBanners) {
-                        count += b->count();
-                    }
-                    forces.kill(1 - double(count)/iniCount);
-                    mConquestEvent->planArmyReturn();
-                }
+                forces.kill(1 - double(count)/iniCount);
             }
+            assert(mEvent);
+            mEvent->defeated();
         }
     } break;
     case eInvasionStage::comeback: {

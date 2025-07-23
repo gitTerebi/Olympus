@@ -116,28 +116,32 @@ void eInvasionEvent::trigger() {
     if(!isPersonPlayer()) {
         startInvasion();
     } else {
-        eEventData ed(cityId());
+        eEventData ed(cid);
         ed.fCity = mCity;
         ed.fType = eMessageEventType::invasion;
         const int bribe = bribeCost();
         ed.fBribe = bribe;
         ed.fReason = reason();
 
-        ed.fA0 = [board, city, cid]() { // surrender
+        ed.fA0 = [this, board, city, cid]() { // surrender
             eEventData ed(cid);
             ed.fCity = city;
             board->event(eEvent::invasionDefeat, ed);
             board->updateMusic();
+            defeated();
         };
         const auto pid = board->cityIdToPlayerId(cid);
         const int drachmas = board->drachmas(pid);
         if(drachmas >= bribe) { // bribe
-            ed.fA1 = [board, pid, bribe, city, cid]() {
+            ed.fA1 = [this, board, pid, bribe, city, cid]() {
                 board->incDrachmas(pid, -bribe);
                 eEventData ed(cid);
                 ed.fCity = city;
                 board->event(eEvent::invasionBribed, ed);
                 board->updateMusic();
+                if(mConquestEvent) {
+                    mConquestEvent->planArmyReturn();
+                }
             };
         }
 
@@ -272,4 +276,33 @@ int eInvasionEvent::bribeCost() const {
                        diff, eCharacterType::horseman);
     const int bribe = rt*mArchers + ht*mInfantry + hm*mCavalry;
     return bribe;
+}
+
+void eInvasionEvent::defeated() {
+    auto& board = *gameBoard();
+    const auto targetCity = cityId();
+    board.defeatedBy(targetCity, mCity);
+    eEventData ed(targetCity);
+    ed.fCity = mCity;
+    board.event(eEvent::invasionDefeat, ed);
+    const auto invadingCid = mCity->cityId();
+    const auto invadingPid = board.cityIdToPlayerId(invadingCid);
+    const auto invadingC = board.boardCityWithId(invadingCid);
+    const auto ppid = board.personPlayer();
+    const auto wboard = board.getWorldBoard();
+    const auto targetWCity = wboard->cityWithId(targetCity);
+    if(invadingC) {
+        eEventData ied(invadingPid);
+        board.event(eEvent::cityConquered, ied);
+        board.allow(invadingCid, eBuildingType::commemorative, 4);
+        if(invadingPid == ppid) {
+            targetWCity->setRelationship(eForeignCityRelationship::vassal);
+        }
+        const auto ppc = board.personPlayerCapital();
+        if(targetCity != ppc) {
+            board.moveCityToPlayer(targetCity, invadingPid);
+        }
+        assert(mConquestEvent);
+        mConquestEvent->planArmyReturn();
+    }
 }
