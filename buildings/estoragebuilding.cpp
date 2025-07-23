@@ -189,7 +189,18 @@ int eStorageBuilding::sSpaceLeftDontAccept(
             count += c;
         }
     }
-    const int max = maxCounts.at(type);
+    int max;
+    if(eResourceTypeHelpers::isSingleType(type)) {
+        max = maxCounts.at(type);
+    } else {
+        max = 0;
+        for(const auto& m : maxCounts) {
+            if(static_cast<bool>(type & m.first)) {
+                max += m.second;
+            }
+        }
+    }
+
     return std::min(std::max(0, max - count), space);
 }
 
