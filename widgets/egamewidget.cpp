@@ -1636,7 +1636,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         const auto cid = tile->cityId();
         const auto pid = mBoard->cityIdToPlayerId(cid);
         const auto ppid = mBoard->personPlayer();
-        if(pid != ppid) return true;
+        if(pid != ppid && !mBoard->editorMode()) return true;
         mInfoWidget = openInfoWidget(b);
     } break;
     default: return true;
@@ -1762,7 +1762,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                         const auto cid = tile->cityId();
                         const auto pid = mBoard->cityIdToPlayerId(cid);
                         const auto ppid = mBoard->personPlayer();
-                        if(pid == ppid) {
+                        if(pid == ppid || mBoard->editorMode()) {
                             if(const auto pb = dynamic_cast<ePatrolBuilding*>(b)) {
                                 if(pb->spawnsPatrolers()) setPatrolBuilding(pb);
                             } else if(const auto v = dynamic_cast<eVendor*>(b)) {
