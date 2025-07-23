@@ -21,6 +21,7 @@ public:
 
     ePlayerId id() const { return mId; }
     void setId(const ePlayerId id) { mId = id; }
+    eTeamId teamId() const;
 
     bool isPerson() const;
 
@@ -85,6 +86,8 @@ private:
 
     int mDrachmas = 2500;
     eDate mInDebtSince;
+    int mStuckDrachmas = mDrachmas;
+    int mStuckFinanciallyMonths = -1;
 
     int mGodAttackTimer = 10000000;
 };

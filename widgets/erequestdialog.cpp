@@ -10,7 +10,8 @@
 void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
                                 const eRequestFunction& func,
                                 const eAction& requestDefensiveAid,
-                                const eAction& requestStrike) {
+                                const eAction& requestStrike,
+                                const ePlayerId pid) {
     const auto r = resolution();
     const double mult = r.multiplier();
 
@@ -38,7 +39,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     for(const auto& ts : tradeSells) {
         sells.push_back(ts.fType);
     }
-    const int att = c->attitude();
+    const int att = c->attitude(pid);
     sells.push_back(eResourceType::drachmas);
     if(att <= 50 && !c->isRival()) {
         const auto notReg = eLanguage::zeusText(41, 11); // not regarded

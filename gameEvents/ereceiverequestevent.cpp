@@ -52,7 +52,8 @@ void eReceiveRequestEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
@@ -84,7 +85,7 @@ void eReceiveRequestEvent::trigger() {
                 rrmsgs = &msgs.fGeneralRequestAllyS;
             }
             board->event(event, ed);
-            mCity->incAttitude(-5);
+            mCity->incAttitude(-5, pid);
 
             const auto& reason = rrmsgs->fTooLateReason;
             const auto me = mainEvent<eReceiveRequestEvent>();
@@ -110,7 +111,7 @@ void eReceiveRequestEvent::trigger() {
                 rrmsgs = &msgs.fGeneralRequestAllyS;
             }
             board->event(event, ed);
-            mCity->incAttitude(10);
+            mCity->incAttitude(10, pid);
 
             const auto& reason = rrmsgs->fComplyReason;
             const auto me = mainEvent<eReceiveRequestEvent>();
@@ -141,7 +142,7 @@ void eReceiveRequestEvent::trigger() {
             rrmsgs = &msgs.fGeneralRequestAllyS;
         }
         board->event(event, ed);
-        mCity->incAttitude(-15);
+        mCity->incAttitude(-15, pid);
 
         auto& reason = rrmsgs->fRefuseReason;
         const auto me = mainEvent<eReceiveRequestEvent>();

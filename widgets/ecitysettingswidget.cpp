@@ -59,6 +59,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                                      eGameBoard* const board,
                                      eWorldBoard* const wb) {
     if(!c) return;
+    const auto ppid = board->personPlayer();
     setType(eFrameType::message);
     const auto res = resolution();
     const int w = res.centralWidgetLargeWidth();
@@ -177,7 +178,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto typeName = eWorldCity::sTypeName(type);
     typeButton->setText(typeName);
     typeButton->fitContent();
-    typeButton->setPressAction([this, board,
+    typeButton->setPressAction([this, board, ppid,
                                relationshipButton, typeButton,
                                directionButton,
                                nationalityButton,
@@ -195,7 +196,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sTypeName(t);
             typeNames.push_back(name);
         }
-        const auto act = [board,
+        const auto act = [board, ppid,
                           relationshipButton, nationalityButton,
                           stateButton, directionButton,
                           attitudeButton, c, buttonsW1,
@@ -227,7 +228,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             directionButton->setVisible(type == eCityType::distantCity);
             buttonsW1->layoutVertically(true);
 
-            const auto attitude = c->attitudeClass();
+            const auto attitude = c->attitudeClass(ppid);
             attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
@@ -245,7 +246,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto relationship = c->relationship();
     relationshipButton->setText(eWorldCity::sRelationshipName(relationship));
     relationshipButton->fitContent();
-    relationshipButton->setPressAction([this, attitudeButton,
+    relationshipButton->setPressAction([this, attitudeButton, ppid,
                                        relationshipButton, c]() {
         const auto d = new eChooseButton(window());
         const std::vector<eForeignCityRelationship> relationships =
@@ -257,7 +258,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sRelationshipName(r);
             relationshipNames.push_back(name);
         }
-        const auto act = [attitudeButton,
+        const auto act = [attitudeButton, ppid,
                           relationships, relationshipNames,
                           c, relationshipButton](const int val) {
             const auto rel = relationships[val];
@@ -267,7 +268,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             relationshipButton->fitContent();
             relationshipButton->align(eAlignment::hcenter);
 
-            const auto attitude = c->attitudeClass();
+            const auto attitude = c->attitudeClass(ppid);
             attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
@@ -310,10 +311,10 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     stateButton->align(eAlignment::hcenter);
 
     attitudeButton->setUnderline(false);
-    const auto attitude = c->attitudeClass();
+    const auto attitude = c->attitudeClass(ppid);
     attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
     attitudeButton->fitContent();
-    attitudeButton->setPressAction([this, attitudeButton, c]() {
+    attitudeButton->setPressAction([this, attitudeButton, c, ppid]() {
         const auto d = new eChooseButton(window());
         std::vector<eCityAttitude> attitudes;
         if(c->isAlly()) {
@@ -340,9 +341,9 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sAttitudeName(r);
             attitudeNames.push_back(name);
         }
-        const auto act = [attitudes, attitudeNames,
+        const auto act = [attitudes, attitudeNames, ppid,
                           c, attitudeButton](const int val) {
-            c->setAttitude(10 + val*20);
+            c->setAttitude(10 + val*20, ppid);
             const auto name = attitudeNames[val];
             attitudeButton->setText(name);
             attitudeButton->fitContent();

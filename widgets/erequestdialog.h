@@ -13,7 +13,8 @@ public:
     void initialize(const stdsptr<eWorldCity>& c,
                     const eRequestFunction& func,
                     const eAction& requestDefensiveAid,
-                    const eAction& requestStrike);
+                    const eAction& requestStrike,
+                    const ePlayerId pid);
 };
 
 #endif // EREQUESTDIALOG_H

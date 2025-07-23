@@ -204,10 +204,10 @@ public:
                                  mState == eCityState::active; }
 
     static std::string sAttitudeName(const eCityAttitude at);
-    eCityAttitude attitudeClass() const;
-    int attitude() const { return mAt; }
-    void setAttitude(const int a);
-    void incAttitude(const int a);
+    eCityAttitude attitudeClass(const ePlayerId pid) const;
+    int attitude(const ePlayerId pid) const;
+    void setAttitude(const int a, const ePlayerId pid);
+    void incAttitude(const int a, const ePlayerId pid);
 
     static std::vector<std::string> sNames();
     void setName(const std::string& name);
@@ -336,7 +336,7 @@ private:
     bool mRebellion = false;
 
     eForeignCityRelationship mRel{eForeignCityRelationship::ally};
-    int mAt{60};
+    std::map<ePlayerId, int> mAtt;
 
     bool mAbroad = false;
 

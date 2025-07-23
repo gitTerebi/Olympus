@@ -203,9 +203,9 @@ std::string eWorldCity::sAttitudeName(const eCityAttitude at) {
     return eLanguage::zeusText(group, string);
 }
 
-eCityAttitude eWorldCity::attitudeClass() const {
+eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const {
     eCityAttitude at;
-    const int iat = attitude();
+    const int iat = attitude(pid);
     if(isAlly()) {
         if(iat < 20) at = eCityAttitude::annoyed;
         else if(iat < 40) at = eCityAttitude::apatheticA;
@@ -228,12 +228,18 @@ eCityAttitude eWorldCity::attitudeClass() const {
     return at;
 }
 
-void eWorldCity::setAttitude(const int a) {
-    mAt = std::clamp(a, 0, 100);
+int eWorldCity::attitude(const ePlayerId pid) const {
+    const auto it = mAtt.find(pid);
+    if(it == mAtt.end()) return 60;
+    return it->second;
 }
 
-void eWorldCity::incAttitude(const int a) {
-    setAttitude(mAt + a);
+void eWorldCity::setAttitude(const int a, const ePlayerId pid) {
+    mAtt[pid] = std::clamp(a, 0, 100);
+}
+
+void eWorldCity::incAttitude(const int a, const ePlayerId pid) {
+    setAttitude(attitude(pid) + a, pid);
 }
 
 std::vector<std::string> eWorldCity::sNames() {
@@ -527,7 +533,13 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mTradeShutdown;
     dst << mRebellion;
     dst << mRel;
-    dst << mAt;
+
+    dst << mAtt.size();
+    for(const auto& att : mAtt) {
+        dst << att.first;
+        dst << att.second;
+    }
+
     dst << mAbroad;
     dst << mMilitaryStrength;
     dst << mTroops;
@@ -578,7 +590,16 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mTradeShutdown;
     src >> mRebellion;
     src >> mRel;
-    src >> mAt;
+
+    int natt;
+    src >> natt;
+    for(int i = 0; i < natt; i++) {
+        ePlayerId pid;
+        src >> pid;
+        int& att = mAtt[pid];
+        src >> att;
+    }
+
     src >> mAbroad;
     src >> mMilitaryStrength;
     src >> mTroops;

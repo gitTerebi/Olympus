@@ -439,7 +439,8 @@ public:
                      const eResourceType type,
                      const int count);
     void request(const stdsptr<eWorldCity>& c,
-                 const eResourceType type);
+                 const eResourceType type,
+                 const eCityId cid);
     void requestAid(const stdsptr<eWorldCity>& c);
     void planGiftFrom(const stdsptr<eWorldCity>& c,
                       const eResourceType type,
@@ -447,13 +448,14 @@ public:
                       const int delay);
     void tributeFrom(const ePlayerId pid,
                      const stdsptr<eWorldCity>& c,
-                    const bool postpone);
+                     const bool postpone);
     void giftTo(const stdsptr<eWorldCity>& c,
-              const eResourceType type,
-              const int count);
+                const eResourceType type,
+                const int count);
     void giftToReceived(const stdsptr<eWorldCity>& c,
-                      const eResourceType type,
-                      const int count);
+                        const eResourceType type,
+                        const int count,
+                        const ePlayerId pid);
 
     void waitUntilFinished();
 

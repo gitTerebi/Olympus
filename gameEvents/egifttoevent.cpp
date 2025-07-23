@@ -21,7 +21,9 @@ void eGiftToEvent::initialize(const stdsptr<eWorldCity>& c,
 void eGiftToEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    board->giftToReceived(mCity, mResource, mCount);
+    const auto cid = cityId();
+    const auto pid = board->cityIdToPlayerId(cid);
+    board->giftToReceived(mCity, mResource, mCount, pid);
 }
 
 std::string eGiftToEvent::longName() const {

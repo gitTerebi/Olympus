@@ -8,6 +8,10 @@
 eBoardPlayer::eBoardPlayer(const ePlayerId pid, eGameBoard& board) :
     mBoard(board), mId(pid) {}
 
+eTeamId eBoardPlayer::teamId() const {
+    return mBoard.playerIdToTeamId(mId);
+}
+
 void eBoardPlayer::nextMonth() {
     if(mDrachmas < 0) {
         const auto date = mBoard.date();
@@ -23,6 +27,34 @@ void eBoardPlayer::nextMonth() {
             const auto c = mBoard.boardCityWithId(cid);
             c->buildScheduled();
             c->buildNextDistrict(mDrachmas);
+        }
+        if(mStuckFinanciallyMonths == -1) {
+            mStuckFinanciallyMonths = 0;
+            mStuckDrachmas = mDrachmas;
+        } else if(mStuckFinanciallyMonths > 3) {
+            const auto wboard = mBoard.getWorldBoard();
+            const auto& cities = wboard->cities();
+            stdsptr<eWorldCity> city;
+            const auto tid = teamId();
+            for(const auto& c : cities) {
+                const auto cid = c->cityId();
+                const auto ctid = mBoard.cityIdToTeamId(cid);
+                if(tid != ctid) continue;
+                const int att = c->attitude(mId);
+                if(att >= 50) {
+                    city = c;
+                    break;
+                }
+            }
+            const auto pCities =  mBoard.playerCities(mId);
+            if(city && !pCities.empty()) {
+                mBoard.request(city, eResourceType::drachmas,
+                               pCities[0]);
+            }
+        } else if(mDrachmas - mStuckDrachmas < 50) {
+            mStuckFinanciallyMonths++;
+        } else {
+            mStuckFinanciallyMonths = 0;
         }
     }
 }

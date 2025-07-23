@@ -167,13 +167,13 @@ void eWorldBoard::read(eReadStream& src) {
     }
 }
 
-void eWorldBoard::attackedAlly() {
+void eWorldBoard::attackedAlly(const ePlayerId pid) {
     for(const auto& c : mCities) {
         const auto type = c->type();
         const auto rel = c->relationship();
         if(type == eCityType::foreignCity &&
            rel == eForeignCityRelationship::ally) {
-            c->incAttitude(-25);
+            c->incAttitude(-25, pid);
         }
     }
 }

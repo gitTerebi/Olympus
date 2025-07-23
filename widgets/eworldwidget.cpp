@@ -193,19 +193,20 @@ void eWorldWidget::openEnlistForcesDialog(
 }
 
 void eWorldWidget::openRequestDialog() {
+    const auto ppid = mBoard->personPlayer();
     const auto d = new eRequestDialog(window());
-    const auto func = [this, d](const eResourceType type) {
-        mBoard->request(mCity, type);
+    const auto func = [this, d, ppid](const eResourceType type) {
+        mBoard->request(mCity, type, mBoard->personPlayerCapital());
         const auto& cts = mWorldBoard->cities();
         for(const auto& ct : cts) {
             if(ct->isCurrentCity()) continue;
-            ct->incAttitude(-10);
+            ct->incAttitude(-10, ppid);
         }
-        mCity->incAttitude(-10);
+        mCity->incAttitude(-10, ppid);
         mWM->updateLabels();
         d->deleteLater();
     };
-    const auto requestAid = [this, d]() {
+    const auto requestAid = [this, d, ppid]() {
         const auto cids = mBoard->personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
             const auto has = mBoard->militaryAid(cid, mCity);
@@ -214,9 +215,9 @@ void eWorldWidget::openRequestDialog() {
         const auto& cts = mWorldBoard->cities();
         for(const auto& ct : cts) {
             if(ct->isCurrentCity()) continue;
-            ct->incAttitude(-10);
+            ct->incAttitude(-10, ppid);
         }
-        mCity->incAttitude(-10);
+        mCity->incAttitude(-10, ppid);
         mWM->updateLabels();
 
         mBoard->requestAid(mCity);
@@ -328,7 +329,7 @@ void eWorldWidget::openRequestDialog() {
         }
         d->deleteLater();
     };
-    d->initialize(mCity, func, requestAid, requestStrike);
+    d->initialize(mCity, func, requestAid, requestStrike, ppid);
     openDialog(d);
 }
 

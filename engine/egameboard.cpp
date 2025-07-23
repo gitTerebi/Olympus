@@ -785,10 +785,10 @@ void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,
 }
 
 void eGameBoard::request(const stdsptr<eWorldCity>& c,
-                         const eResourceType type) {
+                         const eResourceType type,
+                         const eCityId cid) {
     const auto e = e::make_shared<eMakeRequestEvent>(
-                       personPlayerCapital(),
-                       eGameEventBranch::root, *this);
+                       cid, eGameEventBranch::root, *this);
     e->initialize(true, type, c);
     const auto date = mDate + 90;
     e->initializeDate(date);
@@ -891,9 +891,10 @@ void eGameBoard::giftTo(const stdsptr<eWorldCity>& c,
 
 void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,
                                 const eResourceType type,
-                                const int count) {
+                                const int count,
+                                const ePlayerId pid) {
     const bool a = c->acceptsGift(type, count);
-    eEventData ed(personPlayer());
+    eEventData ed(pid);
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = c;
     ed.fResourceType = type;
@@ -903,16 +904,16 @@ void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,
         const bool s = c->sells(type);
         if(type == eResourceType::drachmas) {
             event(eEvent::giftReceivedDrachmas, ed);
-            c->incAttitude(10);
+            c->incAttitude(10, pid);
         } else if(b) {
             event(eEvent::giftReceivedNeeded, ed);
-            c->incAttitude(10);
+            c->incAttitude(10, pid);
         } else if(s) {
             event(eEvent::giftReceivedSells, ed);
-            c->incAttitude(5);
+            c->incAttitude(5, pid);
         } else {
             event(eEvent::giftReceivedNotNeeded, ed);
-            c->incAttitude(5);
+            c->incAttitude(5, pid);
         }
         c->gifted(type, count);
     } else {
@@ -1212,14 +1213,15 @@ eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
     const auto& cts = mWorldBoard->cities();
     for(const auto& c : cts) {
         if(!c->active()) continue;
-        if(c->isOnBoard() && c->playerId() == pid) continue;
+        const auto cpid = c->playerId();
+        if(c->isOnBoard() && cpid == pid) continue;
         const auto type = c->type();
         const auto rel = c->relationship();
         const bool e = type == eCityType::colony ||
                        (type == eCityType::foreignCity &&
                         (rel == eForeignCityRelationship::ally ||
                          rel == eForeignCityRelationship::vassal));
-        if(e && c->attitude() > 50) {
+        if(e && c->attitude(pid) > 50) {
             result.fAllies.push_back(c);
         }
     }

@@ -38,12 +38,13 @@ void ePlayerRaidEvent::trigger() {
     mForces.kill(killFrac);
 
     const bool raided = str > 0.75*enemyStr;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     const auto rel = mCity->relationship();
     if(rel == eForeignCityRelationship::ally) {
         const auto wboard = worldBoard();
-        wboard->attackedAlly();
+        wboard->attackedAlly(pid);
         board->event(eEvent::allyAttackedByPlayer, ed);
     }
     if(raided) {

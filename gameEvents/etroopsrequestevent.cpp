@@ -196,7 +196,8 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
 void eTroopsRequestEvent::won() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
     ed.fType = eMessageEventType::common;
@@ -213,7 +214,7 @@ void eTroopsRequestEvent::won() {
         rrmsgs = &msgs.fAllyTroopsRequest;
     }
     board->event(eEvent::troopsRequestAttackAverted, ed);
-    mCity->incAttitude(10);
+    mCity->incAttitude(10, pid);
 
     const auto& reason = rrmsgs->fComplyReason;
     const auto me = mainEvent<eTroopsRequestEvent>();
@@ -223,7 +224,8 @@ void eTroopsRequestEvent::won() {
 void eTroopsRequestEvent::lost() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
     ed.fType = eMessageEventType::common;
@@ -247,7 +249,7 @@ void eTroopsRequestEvent::lost() {
         rrmsgs = &msgs.fAllyTroopsRequest;
     }
     board->event(event, ed);
-    mCity->incAttitude(-25);
+    mCity->incAttitude(-25, pid);
     mCity->setRelationship(eForeignCityRelationship::rival);
     mCity->setConqueredBy(mRivalCity);
 

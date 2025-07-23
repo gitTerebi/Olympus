@@ -292,7 +292,8 @@ void eWorldMenu::updateLabels() const {
     if(cc || onBoardColony) {
         mAttitudeLabel->setText("");
     } else {
-        const auto at = mCity->attitudeClass();
+        const auto ppid = mBoard->personPlayer();
+        const auto at = mCity->attitudeClass(ppid);
         const auto atStr = eWorldCity::sAttitudeName(at);
         mAttitudeLabel->setText(atStr);
         mAttitudeLabel->fitContent();
