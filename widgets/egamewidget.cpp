@@ -1236,8 +1236,6 @@ void eGameWidget::updatePatrolPath() {
 
 void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
     if(pb) {
-        eSounds::playSoundForBuilding(pb);
-
         setViewMode(eViewMode::patrolBuilding);
 
         const auto fw = new eFramedWidget(window());
@@ -1452,6 +1450,11 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
     const auto mode = mGm->mode();
     const bool e = mode == eBuildingMode::none;
     if(!e) return false;
+    if(!b) return false;
+    const auto cid = b->cityId();
+    const auto pid = mBoard->cityIdToPlayerId(cid);
+    const auto ppid = mBoard->personPlayer();
+    if(pid != ppid) return false;
     if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
         if(!pb->spawnsPatrolers()) return false;
         const auto r = pb->tileRect();
@@ -1629,8 +1632,12 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         if(!tile) return true;
         const auto b = tile->underBuilding();
         if(!b) return true;
-        mInfoWidget = openInfoWidget(b);
         eSounds::playSoundForBuilding(b);
+        const auto cid = tile->cityId();
+        const auto pid = mBoard->cityIdToPlayerId(cid);
+        const auto ppid = mBoard->personPlayer();
+        if(pid != ppid) return true;
+        mInfoWidget = openInfoWidget(b);
     } break;
     default: return true;
     }
@@ -1751,12 +1758,18 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                     if(!sb->selected()) mBoard->selectBanner(sb);
                 } else if(!mPatrolBuilding && tile) {
                     if(const auto b = tile->underBuilding()) {
-                        if(const auto pb = dynamic_cast<ePatrolBuilding*>(b)) {
-                            if(pb->spawnsPatrolers()) setPatrolBuilding(pb);
-                        } else if(const auto v = dynamic_cast<eVendor*>(b)) {
-                            setPatrolBuilding(v->agora());
-                        } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
-                            setPatrolBuilding(s->agora());
+                        eSounds::playSoundForBuilding(b);
+                        const auto cid = tile->cityId();
+                        const auto pid = mBoard->cityIdToPlayerId(cid);
+                        const auto ppid = mBoard->personPlayer();
+                        if(pid == ppid) {
+                            if(const auto pb = dynamic_cast<ePatrolBuilding*>(b)) {
+                                if(pb->spawnsPatrolers()) setPatrolBuilding(pb);
+                            } else if(const auto v = dynamic_cast<eVendor*>(b)) {
+                                setPatrolBuilding(v->agora());
+                            } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
+                                setPatrolBuilding(s->agora());
+                            }
                         }
                     }
                 }
