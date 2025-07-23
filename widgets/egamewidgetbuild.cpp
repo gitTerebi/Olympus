@@ -521,7 +521,7 @@ bool eGameWidget::buildMouseRelease() {
                     if(!tile) continue;
                     const auto cid = tile->cityId();
                     const auto pid = mBoard->cityIdToPlayerId(cid);
-                    if(pid != ppid) continue;
+                    if(pid != ppid && !mEditorMode) continue;
                     if(const auto b = tile->underBuilding()) {
                         if(b->isOnFire()) continue;
                         eraser.addBuilding(b);
