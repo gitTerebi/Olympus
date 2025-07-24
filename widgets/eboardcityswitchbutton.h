@@ -16,6 +16,8 @@ public:
     using eSwitchAction = std::function<void(eCityId)>;
     void initialize(const eGameBoard& board, const eValidator& v,
                     const eSwitchAction& a);
+    void initialize(const std::map<eCityId, std::string>& map,
+                    const eSwitchAction& a);
 
     eCityId currentCity() const;
     bool setCurrentCity(const eCityId cid);

@@ -419,7 +419,7 @@ void eGameWidget::initialize() {
             int x = 0;
             const int y0 = restoreButton->y() + restoreButton->height() + p;
             int y = y0;
-            const int iMax = 16;
+            const int iMax = 21;
             std::vector<eFramedButton*> iButtons;
             for(int i = 0; i < iMax; i++) {
                 const auto iButton = new eFramedButton(window());

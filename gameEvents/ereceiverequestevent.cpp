@@ -58,9 +58,6 @@ void eReceiveRequestEvent::trigger() {
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
     ed.fTime = 6;
-    ed.fA0Key = eLanguage::zeusText(44, 275);
-    ed.fA1Key = eLanguage::zeusText(44, 211);
-    ed.fA2Key = eLanguage::zeusText(44, 212);
 
     if(mFinish) {
         auto& msgs = eMessages::instance;
@@ -150,16 +147,27 @@ void eReceiveRequestEvent::trigger() {
         return;
     }
 
-    const auto cids = board->personPlayerCitiesOnBoard();
-    for(const auto cid : cids) {
-        const int avCount = board->resourceCount(cid, mResource);
-        ed.fCityNames[cid] = board->cityName(cid);
-        ed.fCSpaceCount[cid] = avCount;
-
+    if(mResource == eResourceType::drachmas) {
+        const auto pid = board->personPlayer();
+        const int avCount = board->drachmas(pid);
         if(avCount >= mCount) {
-            ed.fCCA0[cid] = [this, cid]() { // dispatch now
-                dispatch(cid);
+            ed.fA0 = [this, pid]() {
+                const auto board = gameBoard();
+                board->incDrachmas(pid, -mCount);
             };
+        }
+    } else {
+        const auto cids = board->personPlayerCitiesOnBoard();
+        for(const auto cid : cids) {
+            const int avCount = board->resourceCount(cid, mResource);
+            ed.fCityNames[cid] = board->cityName(cid);
+            ed.fCSpaceCount[cid] = avCount;
+
+            if(avCount >= mCount) {
+                ed.fCCA0[cid] = [this, cid]() { // dispatch now
+                    dispatch(cid);
+                };
+            }
         }
     }
 

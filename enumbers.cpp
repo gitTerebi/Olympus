@@ -261,7 +261,7 @@ void eNumbers::sLoad() {
     };
     loadI("day_length_i", sDayLength, 350);
 
-    loadI("army_travel_time_i", sArmyTravelTime, 150);
+    loadI("army_travel_time_i", sArmyTravelTime, 200);
 
     loadI("earthquake_progress_period_i", sEarthquakeProgressPeriod, 500);
 

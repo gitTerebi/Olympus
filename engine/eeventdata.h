@@ -31,16 +31,12 @@ struct eEventData {
     eAction fA0 = nullptr;
     std::map<eCityId, std::string> fCityNames;
     std::map<eCityId, eAction> fCCA0;
-    std::string fA0Key;
     eAction fA1 = nullptr;
-    std::string fA1Key;
     eAction fA2 = nullptr;
-    std::string fA2Key;
     stdsptr<eWorldCity> fCity;
     stdsptr<eWorldCity> fRivalCity;
     eResourceType fResourceType = eResourceType::drachmas;
     int fResourceCount = 0;
-    int fSpaceCount = 0;
     std::map<eCityId, int> fCSpaceCount;
     int fTime = 0;
     std::string fReason;

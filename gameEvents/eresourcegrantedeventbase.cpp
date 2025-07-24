@@ -57,7 +57,6 @@ void eResourceGrantedEventBase::trigger() {
         ed.fCityNames[cid] = board->cityName(cid);
         ed.fCSpaceCount[cid] = space;
     }
-    ed.fSpaceCount = maxSpace;
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
 

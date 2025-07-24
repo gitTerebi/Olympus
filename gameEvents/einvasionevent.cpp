@@ -282,6 +282,17 @@ int eInvasionEvent::bribeCost() const {
     return bribe;
 }
 
+void eInvasionEvent::updateWarnings() {
+    auto& board = *gameBoard();
+    const auto date = board.date();
+    const auto& ws = warnings();
+    for(const auto& w : ws) {
+        const auto we = w.second;
+        const auto wnd = we->nextDate();
+        if(date > wnd) we->setRepeat(0);
+    }
+}
+
 void eInvasionEvent::defeated() {
     auto& board = *gameBoard();
     const auto targetCity = cityId();

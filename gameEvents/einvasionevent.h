@@ -61,6 +61,8 @@ public:
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
     void defeated();
+
+    void updateWarnings();
 private:
     int bribeCost() const;
 

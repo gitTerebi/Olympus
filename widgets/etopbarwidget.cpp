@@ -94,6 +94,7 @@ void eTopBarWidget::paintEvent(ePainter& p) {
     if(mBoard) {
         const auto cid = mGW->viewedCity();
         const auto pid = mBoard->personPlayer();
+//        const auto pid = mBoard->cityIdToPlayerId(cid);
         const auto wb = mBoard->getWorldBoard();
         const auto c = wb->cityWithId(cid);
 

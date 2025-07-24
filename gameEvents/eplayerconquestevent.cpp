@@ -35,6 +35,7 @@ void ePlayerConquestEvent::initialize(
         const auto playerCity = wBoard->cityWithId(pcid);
         e->initializeDate(date, 0, 1);
         e->initialize(playerCity, mForces, this);
+        e->updateWarnings();
         c->addRootGameEvent(e);
         mInvasionEvent = e.get();
     }

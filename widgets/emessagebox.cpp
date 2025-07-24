@@ -18,6 +18,7 @@
 
 #include "widgets/echoosebutton.h"
 #include "emainwindow.h"
+#include "eboardcityswitchbutton.h"
 
 template<typename ... Args>
 std::string string_format(const std::string& format, Args... args) {
@@ -218,9 +219,8 @@ void eMessageBox::initialize(eGameWidget* const gw,
     } else if(ed.fType == eMessageEventType::requestTributeGranted) {
         const auto c = ed.fCity;
         if(!c) return;
-        const int space = ed.fSpaceCount;
         eLabel* spaceLabel = nullptr;
-        const auto tributeWid = createTributeWidget(type, count, space,
+        const auto tributeWid = createTributeWidget(type, count, 0,
                                                     -1, &spaceLabel);
 
         ww->addWidget(tributeWid);
@@ -240,17 +240,23 @@ void eMessageBox::initialize(eGameWidget* const gw,
                 if(ed.fA0) ed.fA0();
                 close();
             });
+        } else if(ed.fCityNames.size() == 1) {
+            const auto iniC = ed.fCityNames.begin();
+            const auto iniCid = iniC->first;
+            wid->addWidget(acceptB);
+            acceptB->setPressAction([this, ed, iniCid]() {
+                const auto a0 = ed.fCCA0.at(iniCid);
+                if(a0) a0();
+                close();
+            });
         } else {
             const auto iniC = ed.fCityNames.begin();
             const auto iniCid = iniC->first;
             const auto iniName = iniC->second;
 
-            const auto cityB = new eFramedButton(window());
+            const auto cityB = new eBoardCitySwitchButton(window());
             cityB->setSmallFontSize();
-            cityB->setUnderline(false);
-            const auto setCid = [this, ed, cityB, acceptB, spaceLabel, count](const eCityId cid) {
-                cityB->setText(ed.fCityNames.at(cid));
-                cityB->fitContent();
+            const auto setCid = [this, ed, acceptB, spaceLabel, count](const eCityId cid) {
                 const int space = ed.fCSpaceCount.at(cid);
                 if(spaceLabel) {
                     const int c = std::min(space, count);
@@ -264,25 +270,9 @@ void eMessageBox::initialize(eGameWidget* const gw,
                     close();
                 });
             };
+            cityB->initialize(ed.fCityNames, setCid);
             setCid(iniCid);
-            cityB->setPressAction([this, gw, ed, setCid]() {
-                const auto c = new eChooseButton(window());
-                std::vector<eCityId> cids;
-                std::vector<std::string> names;
-                for(const auto& c : ed.fCityNames) {
-                    cids.push_back(c.first);
-                    names.push_back(c.second);
-                }
-                const int nRows = std::ceil(ed.fCityNames.size()*.5);
-                c->initialize(nRows, names,
-                              [cids, setCid](const int id) {
-                    const auto cid = cids[id];
-                    setCid(cid);
-                });
-
-                window()->execDialog(c);
-                gw->centerDialog(c);
-            });
+            cityB->setCurrentCity(iniCid);
 
             wid->addWidget(cityB);
             wid->addWidget(acceptB);
@@ -331,10 +321,9 @@ void eMessageBox::initialize(eGameWidget* const gw,
     } else if(ed.fType == eMessageEventType::generalRequestGranted) {
         const auto c = ed.fCity;
         if(!c) return;
-        const int space = ed.fSpaceCount;
         const int time = ed.fTime;
         const auto timeStr = std::to_string(time);
-        const auto tributeWid = createTributeWidget(type, count, space, time);
+        const auto tributeWid = createTributeWidget(type, count, 0, time);
 
         eStringHelpers::replaceAll(msg.fText, "[time_allotted]",
                                    timeStr);
@@ -348,19 +337,54 @@ void eMessageBox::initialize(eGameWidget* const gw,
         const auto a0B = new eFramedButton(window());
         a0B->setSmallFontSize();
         a0B->setUnderline(false);
-        a0B->setText(ed.fA0Key);
+        a0B->setText(eLanguage::zeusText(44, 275));
         a0B->fitContent();
-        wid->addWidget(a0B);
-        a0B->setPressAction([this, ed]() {
-            if(ed.fA0) ed.fA0();
-            close();
-        });
-        a0B->setVisible(ed.fA0 != nullptr);
+
+        if(type == eResourceType::drachmas) {
+            wid->addWidget(a0B);
+            a0B->setPressAction([this, ed]() {
+                if(ed.fA0) ed.fA0();
+                close();
+            });
+            a0B->setVisible(ed.fA0 != nullptr);
+        } else if(ed.fCityNames.size() == 1) {
+            const auto iniC = ed.fCityNames.begin();
+            const auto iniCid = iniC->first;
+            wid->addWidget(a0B);
+            a0B->setVisible(ed.fCSpaceCount.at(iniCid) >= ed.fResourceCount);
+            a0B->setPressAction([this, ed, iniCid]() {
+                const auto a0 = ed.fCCA0.at(iniCid);
+                if(a0) a0();
+                close();
+            });
+        } else {
+            const auto iniC = ed.fCityNames.begin();
+            const auto iniCid = iniC->first;
+            const auto iniName = iniC->second;
+
+            const auto cityB = new eBoardCitySwitchButton(window());
+            cityB->setSmallFontSize();
+            const auto setCid = [this, ed, a0B](const eCityId cid) {
+                const int count = ed.fCSpaceCount.at(cid);
+                a0B->setVisible(count >= ed.fResourceCount);
+                a0B->setPressAction([this, ed, cid]() {
+                    const auto a0 = ed.fCCA0.at(cid);
+                    if(a0) a0();
+                    close();
+                });
+            };
+            cityB->initialize(ed.fCityNames, setCid);
+            setCid(iniCid);
+            cityB->setCurrentCity(iniCid);
+
+            wid->addWidget(cityB);
+            wid->addWidget(a0B);
+        }
 
         const auto a1B = new eFramedButton(window());
         a1B->setSmallFontSize();
         a1B->setUnderline(false);
-        a1B->setText(ed.fA1Key);
+        a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
         a1B->setPressAction([this, ed]() {
@@ -372,7 +396,7 @@ void eMessageBox::initialize(eGameWidget* const gw,
         const auto a2B = new eFramedButton(window());
         a2B->setSmallFontSize();
         a2B->setUnderline(false);
-        a2B->setText(ed.fA2Key);
+        a2B->setText(eLanguage::zeusText(44, 212));
         a2B->fitContent();
         wid->addWidget(a2B);
         a2B->setPressAction([this, ed]() {
@@ -405,7 +429,7 @@ void eMessageBox::initialize(eGameWidget* const gw,
         const auto a0B = new eFramedButton(window());
         a0B->setSmallFontSize();
         a0B->setUnderline(false);
-        a0B->setText(ed.fA0Key);
+        a0B->setText(eLanguage::zeusText(44, 275));
         a0B->fitContent();
         wid->addWidget(a0B);
         if(ed.fCA0) {
@@ -423,7 +447,7 @@ void eMessageBox::initialize(eGameWidget* const gw,
         const auto a1B = new eFramedButton(window());
         a1B->setSmallFontSize();
         a1B->setUnderline(false);
-        a1B->setText(ed.fA1Key);
+        a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
         a1B->setPressAction([this, ed]() {
@@ -435,7 +459,7 @@ void eMessageBox::initialize(eGameWidget* const gw,
         const auto a2B = new eFramedButton(window());
         a2B->setSmallFontSize();
         a2B->setUnderline(false);
-        a2B->setText(ed.fA2Key);
+        a2B->setText(eLanguage::zeusText(44, 212));
         a2B->fitContent();
         wid->addWidget(a2B);
         a2B->setPressAction([this, ed]() {

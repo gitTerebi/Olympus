@@ -6,12 +6,22 @@
 void eBoardCitySwitchButton::initialize(
         const eGameBoard& board, const eValidator& v,
         const eSwitchAction& a) {
-    setUnderline(false);
     const auto cids = board.citiesOnBoard();
+    std::map<eCityId, std::string> map;
     for(const auto cid : cids) {
         if(v && !v(cid)) continue;
-        mCities.push_back(cid);
-        addValue(board.cityName(cid));
+        map[cid] = board.cityName(cid);
+    }
+    initialize(map, a);
+}
+
+void eBoardCitySwitchButton::initialize(
+        const std::map<eCityId, std::string>& map,
+        const eSwitchAction& a) {
+    setUnderline(false);
+    for(const auto& c : map) {
+        mCities.push_back(c.first);
+        addValue(c.second);
     }
     fitValidContent();
 
