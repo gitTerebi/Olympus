@@ -29,13 +29,15 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
                                        {1, -1},
                                        {1, -2},
                                        {1, -3}};
+    const double e = effectiveness();
+    const int usedFields = std::clamp((int)std::round(1 + e*4), 0, 5);
     for(int i = 0; i < 5; i++) {
         eOverlay& o = os.emplace_back();
         const auto& xxyy = xy[i];
         o.fX = xxyy.first;
         o.fY = xxyy.second;
         o.fAlignTop = true;
-        const int texId = std::clamp(mRipe, 0, 5);
+        const int texId = i >= usedFields ? 0 : std::clamp(mRipe, 0, 5);
         const auto type = resourceType();
         switch(type) {
         case eResourceType::onions:
