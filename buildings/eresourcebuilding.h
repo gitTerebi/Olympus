@@ -20,6 +20,8 @@ public:
     void erase() override;
     void sanctuaryErase();
 
+    static bool sIsResourceBuilding(const eBuildingType type);
+
     eResourceBuildingType type() const { return mType; }
 
     bool fullyRipe() const { return mRipe == 5; }

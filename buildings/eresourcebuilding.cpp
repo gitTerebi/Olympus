@@ -72,6 +72,12 @@ void eResourceBuilding::sanctuaryErase() {
     eBuilding::erase();
 }
 
+bool eResourceBuilding::sIsResourceBuilding(const eBuildingType type) {
+    return type == eBuildingType::oliveTree ||
+           type == eBuildingType::orangeTree ||
+           type == eBuildingType::vine;
+}
+
 int eResourceBuilding::takeResource(const int by) {
     if(mResource == 0) return 0;
     const int take = std::clamp(by, 0, mResource);

@@ -914,7 +914,11 @@ void eGameWidget::paintEvent(ePainter& p) {
                     drawFire(ubt);
                 }
             }
-            drawBlessedCursed(rx + 0.75, ry);
+            bool drawBlessed = true;
+            if(eResourceBuilding::sIsResourceBuilding(bt)) {
+                drawBlessed = tx % 2 && ty % 2;
+            }
+            if(drawBlessed) drawBlessedCursed(rx + 0.75, ry);
         }
     };
     iterateOverVisibleTiles([&](eTile* const tile) {
