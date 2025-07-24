@@ -113,13 +113,28 @@ void eInvasionEvent::trigger() {
         }
     };
 
+    const auto pid = board->cityIdToPlayerId(cid);
+    const int drachmas = board->drachmas(pid);
+    const int bribe = bribeCost();
+    const auto bribeFunc = [this, board, pid, bribe, city, cid]() {
+        const auto invadingPid = mCity->playerId();
+        board->incDrachmas(invadingPid, bribe);
+        board->incDrachmas(pid, -bribe);
+        eEventData ed(cid);
+        ed.fCity = city;
+        board->event(eEvent::invasionBribed, ed);
+        board->updateMusic();
+        if(mConquestEvent) {
+            mConquestEvent->planArmyReturn();
+        }
+    };
+
     if(!isPersonPlayer()) {
         startInvasion();
     } else {
         eEventData ed(cid);
         ed.fCity = mCity;
         ed.fType = eMessageEventType::invasion;
-        const int bribe = bribeCost();
         ed.fBribe = bribe;
         ed.fReason = reason();
 
@@ -130,19 +145,8 @@ void eInvasionEvent::trigger() {
             board->updateMusic();
             defeated();
         };
-        const auto pid = board->cityIdToPlayerId(cid);
-        const int drachmas = board->drachmas(pid);
         if(drachmas >= bribe) { // bribe
-            ed.fA1 = [this, board, pid, bribe, city, cid]() {
-                board->incDrachmas(pid, -bribe);
-                eEventData ed(cid);
-                ed.fCity = city;
-                board->event(eEvent::invasionBribed, ed);
-                board->updateMusic();
-                if(mConquestEvent) {
-                    mConquestEvent->planArmyReturn();
-                }
-            };
+            ed.fA1 = bribeFunc;
         }
 
         ed.fTile = tile;

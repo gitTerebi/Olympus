@@ -239,7 +239,7 @@ void eBoardPlayer::giftAllies() {
     }
 }
 
-bool eBoardPlayer::askForDrachmas() {
+bool eBoardPlayer::askFor(const eResourceType type, const eCityId cid) {
     const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
     const auto wboard = mBoard.getWorldBoard();
     stdsptr<eWorldCity> city;
@@ -251,8 +251,13 @@ bool eBoardPlayer::askForDrachmas() {
             break;
         }
     }
-    const auto pCities =  mBoard.playerCities(mId);
-    if(!city || pCities.empty()) return false;
-    mBoard.request(city, eResourceType::drachmas, pCities[0]);
+    if(!city) return false;
+    mBoard.request(city, type, cid);
     return true;
+}
+
+bool eBoardPlayer::askForDrachmas() {
+    const auto pCities =  mBoard.playerCities(mId);
+    if(pCities.empty()) return false;
+    return askFor(eResourceType::drachmas, pCities[0]);
 }

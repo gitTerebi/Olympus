@@ -14,6 +14,7 @@ class eGodQuestEvent;
 class ePlayerConquestEventBase;
 class eReceiveRequestEvent;
 class eTroopsRequestEvent;
+enum class eResourceType;
 
 class eBoardPlayer {
 public:
@@ -66,6 +67,8 @@ public:
 
     int godAttackTimer() const { return mGodAttackTimer; }
     void resetGodAttackTimer() { mGodAttackTimer = 0; }
+
+    bool askFor(const eResourceType type, const eCityId cid);
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
