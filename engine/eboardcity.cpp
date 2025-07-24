@@ -428,10 +428,21 @@ void eBoardCity::nextMonth() {
 
     replace3By3AestheticByCommemorative();
 
+    const auto date = mBoard.date();
     const bool pp = personPlayerOwner();
     if(!pp) {
         const int space = maxPalaceBannerCount();
         if(space == sPalaceTiles) {
+            if(mNextAttackPlanned) {
+                if(date < mNextAttackDate) {
+                    return;
+                }
+            } else {
+                mNextAttackPlanned = true;
+                mNextAttackDate = date;
+                mNextAttackDate.nextYears(4);
+                return;
+            }
             const int soldiers = mMaxHoplites + mMaxHorsemen;
             const int missingArmor = missingArmorFromEliteHouses();
             const auto pid = owningPlayerId();
@@ -466,6 +477,7 @@ void eBoardCity::nextMonth() {
                     e->initializeDate(date, period, 1);
                     e->initialize(date, forces, wc);
                     mBoard.addRootGameEvent(e);
+                    mNextAttackPlanned = false;
                 }
             }
         }
@@ -2174,12 +2186,17 @@ void eBoardCity::clearAfterLastEpisode() {
 
 void eBoardCity::startEpisode(eEpisode* const e) {
     const auto& es = e->fEvents[mId];
+    const auto date = mBoard.date();
     for(const auto& ee : es) {
         const auto eee = ee->makeCopy();
-        eee->setupStartDate(mBoard.date());
+        eee->setupStartDate(date);
         mCityEvents.addEvent(eee);
     }
 
     const auto& ab = e->fAvailableBuildings[mId];
     mAvailableBuildings.startEpisode(ab);
+
+    mNextAttackDate = date;
+    mNextAttackDate.nextYears(5);
+    mNextAttackPlanned = true;
 }

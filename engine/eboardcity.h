@@ -560,6 +560,9 @@ private:
     int mTerrainState = 0;
     int mForestsState = 0;
     int mSanctuariesState = 0;
+
+    bool mNextAttackPlanned = false;
+    eDate mNextAttackDate;
 };
 
 #endif // EBOARDCITY_H

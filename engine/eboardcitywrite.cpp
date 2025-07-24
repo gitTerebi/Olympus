@@ -120,4 +120,7 @@ void eBoardCity::write(eWriteStream& dst) const {
     for(const auto h : mSummonedHeroes) {
         dst << h;
     }
+
+    dst << mNextAttackPlanned;
+    mNextAttackDate.write(dst);
 }

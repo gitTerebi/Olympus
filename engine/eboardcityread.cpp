@@ -153,4 +153,7 @@ void eBoardCity::read(eReadStream& src) {
             mSummonedHeroes.push_back(h);
         }
     }
+
+    src >> mNextAttackPlanned;
+    mNextAttackDate.read(src);
 }

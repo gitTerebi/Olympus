@@ -30,8 +30,9 @@ void ePlayerConquestEventBase::removeConquestEvent() {
 void ePlayerConquestEventBase::planArmyReturn() {
     const auto board = gameBoard();
     if(!board) return;
+    const auto cid = cityId();
     const auto e = e::make_shared<eArmyReturnEvent>(
-                       cityId(), eGameEventBranch::child, *board);
+                       cid, eGameEventBranch::child, *board);
     const auto boardDate = board->date();
     const int period = eNumbers::sArmyTravelTime;
     const auto date = boardDate + period;
