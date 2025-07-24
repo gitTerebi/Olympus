@@ -228,17 +228,17 @@ eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const {
     return at;
 }
 
-int eWorldCity::attitude(const ePlayerId pid) const {
+double eWorldCity::attitude(const ePlayerId pid) const {
     const auto it = mAtt.find(pid);
     if(it == mAtt.end()) return 60;
     return it->second;
 }
 
-void eWorldCity::setAttitude(const int a, const ePlayerId pid) {
-    mAtt[pid] = std::clamp(a, 0, 100);
+void eWorldCity::setAttitude(const double a, const ePlayerId pid) {
+    mAtt[pid] = std::clamp(a, 0., 100.);
 }
 
-void eWorldCity::incAttitude(const int a, const ePlayerId pid) {
+void eWorldCity::incAttitude(const double a, const ePlayerId pid) {
     setAttitude(attitude(pid) + a, pid);
 }
 
@@ -612,7 +612,7 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     for(int i = 0; i < natt; i++) {
         ePlayerId pid;
         src >> pid;
-        int& att = mAtt[pid];
+        double& att = mAtt[pid];
         src >> att;
     }
 

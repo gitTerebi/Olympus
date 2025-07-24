@@ -205,9 +205,9 @@ public:
 
     static std::string sAttitudeName(const eCityAttitude at);
     eCityAttitude attitudeClass(const ePlayerId pid) const;
-    int attitude(const ePlayerId pid) const;
-    void setAttitude(const int a, const ePlayerId pid);
-    void incAttitude(const int a, const ePlayerId pid);
+    double attitude(const ePlayerId pid) const;
+    void setAttitude(const double a, const ePlayerId pid);
+    void incAttitude(const double a, const ePlayerId pid);
 
     static std::vector<std::string> sNames();
     void setName(const std::string& name);
@@ -336,7 +336,7 @@ private:
     bool mRebellion = false;
 
     eForeignCityRelationship mRel{eForeignCityRelationship::ally};
-    std::map<ePlayerId, int> mAtt;
+    std::map<ePlayerId, double> mAtt;
 
     bool mAbroad = false;
 
