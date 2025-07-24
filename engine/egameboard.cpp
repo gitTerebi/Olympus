@@ -904,20 +904,21 @@ void eGameBoard::giftToReceived(const stdsptr<eWorldCity>& c,
     ed.fResourceType = type;
     ed.fResourceCount = count;
     if(a) {
+        const int mult = count/eGiftHelpers::giftCount(type);
         const bool b = c->buys(type);
         const bool s = c->sells(type);
         if(type == eResourceType::drachmas) {
             event(eEvent::giftReceivedDrachmas, ed);
-            c->incAttitude(10, pid);
+            c->incAttitude(3*mult, pid);
         } else if(b) {
             event(eEvent::giftReceivedNeeded, ed);
-            c->incAttitude(10, pid);
+            c->incAttitude(3*mult, pid);
         } else if(s) {
             event(eEvent::giftReceivedSells, ed);
-            c->incAttitude(5, pid);
+            c->incAttitude(1.5*mult, pid);
         } else {
             event(eEvent::giftReceivedNotNeeded, ed);
-            c->incAttitude(5, pid);
+            c->incAttitude(1.5*mult, pid);
         }
         c->gifted(type, count);
     } else {
@@ -1100,6 +1101,23 @@ std::vector<ePlayerId> eGameBoard::playersOnBoard() const {
 
 std::string eGameBoard::cityName(const eCityId cid) const {
     return mWorldBoard->cityName(cid);
+}
+
+std::vector<eCityId> eGameBoard::allyCidsNotOnBoard(const ePlayerId pid) const {
+    std::vector<eCityId> result;
+    const auto tid = playerIdToTeamId(pid);
+    const auto& cities = mWorldBoard->cities();
+    for(const auto& c : cities) {
+        const bool onBoard = c->isOnBoard();
+        if(onBoard) continue;
+        const auto cid = c->cityId();
+        const auto cpid = cityIdToPlayerId(cid);
+        if(cpid == pid) continue;
+        const auto ctid = playerIdToTeamId(cpid);
+        if(tid != ctid) continue;
+        result.push_back(cid);
+    }
+    return result;
 }
 
 std::vector<eCityId> eGameBoard::enemyCidsOnBoard(const eTeamId ptid) const {

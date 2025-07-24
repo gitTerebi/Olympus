@@ -70,6 +70,9 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void giftAllies();
+    bool askForDrachmas();
+
     eGameBoard& mBoard;
 
     ePlayerId mId;

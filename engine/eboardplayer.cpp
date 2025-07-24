@@ -23,6 +23,7 @@ void eBoardPlayer::nextMonth() {
             mBoard.event(eEvent::debtAnniversary, ed);
         }
     } else if(!isPerson()) {
+        giftAllies();
         bool built = false;
         const auto cids = mBoard.playerCitiesOnBoard(mId);
         for(const auto cid : cids) {
@@ -37,69 +38,8 @@ void eBoardPlayer::nextMonth() {
                 mStuckFinanciallyMonths = 0;
                 mLastMonthDrachmas = mDrachmas;
             } else if(mStuckFinanciallyMonths > 3) {
-                const auto wboard = mBoard.getWorldBoard();
-                const auto& cities = wboard->cities();
-                std::vector<stdsptr<eWorldCity>> allyCities;
-                stdsptr<eWorldCity> city;
-                const auto tid = teamId();
-                for(const auto& c : cities) {
-                    const auto cid = c->cityId();
-                    const auto cpid = mBoard.cityIdToPlayerId(cid);
-                    if(cpid == mId) continue;
-                    const auto ctid = mBoard.playerIdToTeamId(cpid);
-                    if(tid != ctid) continue;
-                    allyCities.push_back(c);
-                    const int att = c->attitude(mId);
-                    if(att >= 50) {
-                        city = c;
-                        break;
-                    }
-                }
-                const auto pCities =  mBoard.playerCities(mId);
-                if(city && !pCities.empty()) {
-                    mBoard.request(city, eResourceType::drachmas,
-                                   pCities[0]);
-                    mStuckFinanciallyMonths = 0;
-                }
-                if(!city && !allyCities.empty()) {
-                    for(const auto cid : pCities) {
-                        const auto c = mBoard.boardCityWithId(cid);
-                        for(const auto& c : allyCities) {
-                            const int att = c->attitude(mId);
-                            if(att < 50) {
-                                city = c;
-                                break;
-                            }
-                        }
-                        const auto tryGift = [&](const eResourceType type) {
-                            const int giftSize = eGiftHelpers::giftCount(type);
-                            const int waiting = c->waitingCount(type);
-                            if(waiting < giftSize) return false;
-                            const int space = c->spaceForResource(type);
-                            if(space > waiting/2) return false;
-                            const int count = c->resourceCount(type);
-                            if(count < 2*giftSize) return false;
-                            mBoard.giftTo(city, type, giftSize, cid);
-                            return true;
-                        };
-                        const auto& buys = city->buys();
-                        bool r = false;
-                        for(const auto& b : buys) {
-                            r = tryGift(b.fType);
-                            if(r) break;
-                        }
-                        if(!r) r = tryGift(eResourceType::food);
-                        if(!r) r = tryGift(eResourceType::fleece);
-                        if(!r) r = tryGift(eResourceType::oliveOil);
-                        if(!r) r = tryGift(eResourceType::wine);
-                        if(!r) r = tryGift(eResourceType::armor);
-                        if(!r) r = tryGift(eResourceType::marble);
-                        if(!r) r = tryGift(eResourceType::wood);
-                        if(!r) r = tryGift(eResourceType::bronze);
-                        if(!r) r = tryGift(eResourceType::marble);
-                        if(!r) r = tryGift(eResourceType::sculpture);
-                    }
-                }
+                const bool r = askForDrachmas();
+                if(r) mStuckFinanciallyMonths = 0;
             } else if(mDrachmas - mLastMonthDrachmas < 50) {
                 const auto cities = mBoard.playerCitiesOnBoard(mId);
                 bool stuck = true;
@@ -251,4 +191,68 @@ void eBoardPlayer::write(eWriteStream& dst) const {
     mInDebtSince.write(dst);
 
     dst << mGodAttackTimer;
+}
+
+void eBoardPlayer::giftAllies() {
+    const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
+    const auto wboard = mBoard.getWorldBoard();
+    stdsptr<eWorldCity> city;
+    const auto pCities =  mBoard.playerCities(mId);
+    for(const auto cid : pCities) {
+        const auto c = mBoard.boardCityWithId(cid);
+        for(const auto cid : allyCids) {
+            const auto c = wboard->cityWithId(cid);
+            const int att = c->attitude(mId);
+            if(att < 50) {
+                city = c;
+                break;
+            }
+        }
+        if(!city) break;
+        const auto tryGift = [&](const eResourceType type) {
+            const int giftSize = eGiftHelpers::giftCount(type);
+            const int waiting = c->waitingCount(type);
+            if(waiting < giftSize) return false;
+            const int space = c->spaceForResource(type);
+            if(space > waiting/2) return false;
+            const int count = c->resourceCount(type);
+            if(count < 2*giftSize) return false;
+            mBoard.giftTo(city, type, giftSize, cid);
+            return true;
+        };
+        const auto& buys = city->buys();
+        bool r = false;
+        for(const auto& b : buys) {
+            r = tryGift(b.fType);
+            if(r) break;
+        }
+        if(!r) r = tryGift(eResourceType::food);
+        if(!r) r = tryGift(eResourceType::fleece);
+        if(!r) r = tryGift(eResourceType::oliveOil);
+        if(!r) r = tryGift(eResourceType::wine);
+        if(!r) r = tryGift(eResourceType::armor);
+        if(!r) r = tryGift(eResourceType::marble);
+        if(!r) r = tryGift(eResourceType::wood);
+        if(!r) r = tryGift(eResourceType::bronze);
+        if(!r) r = tryGift(eResourceType::marble);
+        if(!r) r = tryGift(eResourceType::sculpture);
+    }
+}
+
+bool eBoardPlayer::askForDrachmas() {
+    const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
+    const auto wboard = mBoard.getWorldBoard();
+    stdsptr<eWorldCity> city;
+    for(const auto cid : allyCids) {
+        const auto c = wboard->cityWithId(cid);
+        const int att = c->attitude(mId);
+        if(att >= 50) {
+            city = c;
+            break;
+        }
+    }
+    const auto pCities =  mBoard.playerCities(mId);
+    if(!city || pCities.empty()) return false;
+    mBoard.request(city, eResourceType::drachmas, pCities[0]);
+    return true;
 }
