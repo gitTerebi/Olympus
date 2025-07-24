@@ -28,6 +28,7 @@ public:
     int takeResource(const int by);
     bool workedOn() const { return mWorkedOn; }
     void workOn();
+    bool sanctuary() const { return mSanctuary; }
     void setSanctuary(const bool s);
     void timeChanged(const int by) override;
 

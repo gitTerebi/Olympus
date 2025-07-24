@@ -7,6 +7,7 @@
 #include "engine/egameboard.h"
 #include "audio/esounds.h"
 #include "buildings/esmallhouse.h"
+#include "buildings/eresourcebuilding.h"
 
 class eDestructionTextures;
 enum class eGodSound;
@@ -280,6 +281,9 @@ public:
         }
         if(b->blessed() || b->cursed()) {
             return null;
+        }
+        if(const auto rb = dynamic_cast<eResourceBuilding*>(b)) {
+            if(rb->sanctuary()) return null;
         }
         mTarget = b;
         return b->centerTile();
