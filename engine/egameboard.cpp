@@ -2408,17 +2408,17 @@ void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
 
 void eGameBoard::setDifficulty(const eDifficulty d) {
     std::map<eDifficulty, eDifficulty> rivalDiff =
-        {{eDifficulty::beginner, eDifficulty::hero},
-         {eDifficulty::mortal, eDifficulty::hero},
-         {eDifficulty::hero, eDifficulty::mortal},
+        {{eDifficulty::beginner, eDifficulty::olympian},
+         {eDifficulty::mortal, eDifficulty::titan},
+         {eDifficulty::hero, eDifficulty::hero},
          {eDifficulty::titan, eDifficulty::mortal},
          {eDifficulty::olympian, eDifficulty::beginner}};
     std::map<eDifficulty, eDifficulty> allyDiff =
         {{eDifficulty::beginner, eDifficulty::beginner},
          {eDifficulty::mortal, eDifficulty::mortal},
-         {eDifficulty::hero, eDifficulty::mortal},
-         {eDifficulty::titan, eDifficulty::hero},
-         {eDifficulty::olympian, eDifficulty::hero}};
+         {eDifficulty::hero, eDifficulty::hero},
+         {eDifficulty::titan, eDifficulty::titan},
+         {eDifficulty::olympian, eDifficulty::olympian}};
     const auto ppid = personPlayer();
     const auto ptid = playerIdToTeamId(ppid);
     for(const auto& p : mPlayersOnBoard) {
