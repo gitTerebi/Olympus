@@ -302,7 +302,6 @@ void eInvasionEvent::defeated() {
         if(targetCity != ppc) {
             board.moveCityToPlayer(targetCity, invadingPid);
         }
-        assert(mConquestEvent);
-        mConquestEvent->planArmyReturn();
+        if(mConquestEvent) mConquestEvent->planArmyReturn();
     }
 }
