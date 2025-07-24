@@ -50,9 +50,16 @@ int eEmploymentData::totalJobVacancies() const {
     return mTotalJobVacs;
 }
 
+double eEmploymentData::vacanciesFilledFraction() const {
+    if(mTotalJobVacs == 0) return 1;
+    const double e = employed();
+    return e/mTotalJobVacs;
+}
+
 double eEmploymentData::employedFraction() const {
-    const int v = mTotalJobVacs;
-    if(v == 0) return 1;
-    return double(employed())/v;
+    const int e = employable();
+    if(e == 0) return 1.;
+    const double ee = employed();
+    return ee/e;
 }
 

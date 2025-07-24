@@ -20,6 +20,7 @@ public:
     int freeJobVacancies() const;
     int totalJobVacancies() const;
 
+    double vacanciesFilledFraction() const;
     double employedFraction() const;
 private:
     const ePopulationData& mPopData;

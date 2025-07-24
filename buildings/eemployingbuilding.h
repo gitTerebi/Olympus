@@ -16,7 +16,7 @@ public:
     void setEmployed(const int e);
     void setMaxEmployees(const int m) { mMaxEmployees = m; }
     int maxEmployees() const { return mMaxEmployees; }
-    double employedFraction() const;
+    double vacanciesFilledFraction() const;
     double effectiveness() const;
     bool shutDown() const { return mShutDown; }
     void setShutDown(const bool sd);

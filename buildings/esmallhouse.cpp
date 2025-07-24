@@ -444,7 +444,7 @@ void eSmallHouse::updateSatisfaction() {
     auto& board = getBoard();
     const auto cid = cityId();
     const auto empData = board.employmentData(cid);
-    const int ef = empData ? empData->employedFraction() : 0;
+    const double ef = empData ? empData->employedFraction() : 0.;
     const int workSat = 100*std::pow(ef, 4);
     mWorkSatisfaction = (weight*mWorkSatisfaction + workSat)/div;
 
