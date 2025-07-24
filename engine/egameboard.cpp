@@ -1484,6 +1484,7 @@ void eGameBoard::updateMusic() {
                 break;
             }
         }
+        if(battle) break;
     }
     if(battle) {
         eMusic::playRandomBattleMusic();
