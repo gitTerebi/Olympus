@@ -2963,6 +2963,13 @@ void eGameBoard::progressEarthquakes() {
             const bool r = eVectorHelpers::contains(e->fTiles, t);
             if(!r) return false;
             t->setTerrain(eTerrain::quake);
+            for(int xx = -1; xx <= 1; xx++) {
+                for(int yy = -1; yy <= 1; yy++) {
+                    if(xx == 0 && yy == 0) continue;
+                    const auto tt = t->tileRel<eTile>(xx, yy);
+                    tt->scheduleTerrainUpdate();
+                }
+            }
             const auto cid = t->cityId();
             const auto c = boardCityWithId(cid);
             if(c) c->incTerrainState();
@@ -2986,6 +2993,9 @@ void eGameBoard::progressEarthquakes() {
                         if(g) g->collapse();
                         r->eBuilding::erase();
                     } else {
+                        if(type == eBuildingType::park) {
+                            scheduleTerrainUpdate();
+                        }
                         ub->collapse();
                     }
                     eSounds::playCollapseSound();
@@ -3001,7 +3011,6 @@ void eGameBoard::progressEarthquakes() {
             i--;
         }
     }
-    scheduleTerrainUpdate();
 }
 
 void centerTile(const int minX, const int minY,
