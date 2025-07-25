@@ -86,26 +86,29 @@ void eMiniMap::paintEvent(ePainter& p) {
     const int nc = cities.size();
     const int period = nc > 0 ? 60/nc : 60;
 
+    const bool useTexture = false;
+
     if(!mTexture->fTexture || mTexture->fTotalUpdateScheduled) {
-        updateTexture(eCityId::neutralFriendly);
+        updateTexture(eCityId::neutralFriendly, useTexture);
         mTexture->fTotalUpdateScheduled = false;
         mTexture->fUpdateScheduled = false;
         mTexture->fTilesToUpdate.clear();
     } else if(mTexture->fUpdateScheduled) {
         for(const auto cid : cities) {
-            updateTexture(cid);
+            updateTexture(cid, useTexture);
         }
         mTexture->fUpdateScheduled = false;
     } else if(nc > 0 && mTime % period == 0) {
         const int id = mCityCounter % nc;
         const auto cid = cities[id];
-        updateTexture(cid);
+        updateTexture(cid, useTexture);
         mCityCounter++;
     }
     if(!mTexture->fTilesToUpdate.empty()) {
-        updateTexture(eCityId::neutralAggresive);
+        updateTexture(eCityId::neutralAggresive, useTexture);
         mTexture->fTilesToUpdate.clear();
     }
+
     if(!mTexture->fTexture) return;
     const SDL_Rect clip{0, 0, width(), height()};
     p.setClipRect(&clip);
@@ -223,7 +226,7 @@ SDL_Color colorForTile(eTile* const tile) {
     return {66, 89, 148, 255};
 }
 
-void eMiniMap::updateTexture(const eCityId cid) {
+void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
     if(!mBoard) return;
     const auto rend = renderer();
     const int w = mBoard->rotatedWidth()*mTDim;
@@ -288,10 +291,11 @@ void eMiniMap::updateTexture(const eCityId cid) {
                 }
             }
         }
-        dtex->setColorMod(color.r, color.g, color.b);
+        if(useTexture) dtex->setColorMod(color.r, color.g, color.b);
         const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
         const int py = (y - yMin)*mTDim/2;
-        p.drawTexture(px, py, dtex);
+        p.fillRect(SDL_Rect{px, py, mTDim, mTDim}, color);
+        if(useTexture) p.drawTexture(px, py, dtex);
     };
 
     if(cid == eCityId::neutralFriendly) {

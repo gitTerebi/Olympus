@@ -42,7 +42,7 @@ protected:
 
     void paintEvent(ePainter& p) override;
 private:
-    void updateTexture(const eCityId cid);
+    void updateTexture(const eCityId cid, const bool useTexture);
     void viewRelPix(const int pixX, const int pixY);
     void viewAbsPix(const int px, const int py);
 
