@@ -286,7 +286,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         mBoard->updateAppealMapIfNeeded();
         mBoard->handleFinishedTasks();
         const int nc = children().size() - mTips.size();
-        const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 10;
+        const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 6;
         if(incTime) {
             const bool lost = mBoard->episodeLost();
             if(lost) {

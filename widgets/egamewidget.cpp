@@ -219,6 +219,7 @@ void eGameWidget::initializeNumbers() {
 }
 
 void eGameWidget::initialize() {
+    mEditorMode = mBoard->editorMode();
     initializeNumbers();
     mGm = new eGameMenu(window());
     const auto viewGoals = [this]() {
@@ -283,47 +284,47 @@ void eGameWidget::initialize() {
         viewFraction(fx, fy);
     });
 
-    const auto str = eLanguage::text("settings");
-    const auto settingsButt = new eFramedButton(str, window());
-    settingsButt->fitContent();
-    addWidget(settingsButt);
     const int p = padding();
-    settingsButt->move(mGm->x() - settingsButt->width() - p,
-                       mTopBar->height() + p);
-    settingsButt->hide();
-    settingsButt->setUnderline(false);
-    settingsButt->setRenderBg(true);
-    settingsButt->setPressAction([this]() {
-        const auto settingsMenu = new eBoardSettingsMenu(window());
-        settingsMenu->resize(width()/2, 2*height()/3);
-        settingsMenu->initialize(this, *mBoard);
 
-        window()->execDialog(settingsMenu);
-        settingsMenu->align(eAlignment::center);
-    });
-
-    {
-        const auto editorSwitch = new eFramedButton(window());
-        editorSwitch->setRenderBg(true);
-        editorSwitch->setUnderline(false);
-        editorSwitch->setText(eLanguage::text("editor"));
-        editorSwitch->fitContent();
-        editorSwitch->move(mGm->x() - editorSwitch->width() - p,
-                           mTopBar->height() + p);
+    if(mEditorMode) {
+        const auto str = eLanguage::text("settings");
+        const auto settingsButt = new eFramedButton(str, window());
+        settingsButt->fitContent();
+        addWidget(settingsButt);
         settingsButt->move(mGm->x() - settingsButt->width() - p,
-                           editorSwitch->y() + editorSwitch->height() + p);
-        editorSwitch->setPressAction([this, settingsButt]() {
-            mTerrainEditMode = !mTerrainEditMode;
-            mTem->setVisible(mTerrainEditMode);
-            mGm->setVisible(!mTerrainEditMode);
-            settingsButt->setVisible(mTerrainEditMode);
-        });
-        addWidget(editorSwitch);
-        mEditorMode = mBoard->editorMode();
-        editorSwitch->setVisible(mEditorMode);
-    }
+                           mTopBar->height() + p);
+        settingsButt->hide();
+        settingsButt->setUnderline(false);
+        settingsButt->setRenderBg(true);
+        settingsButt->setPressAction([this]() {
+            const auto settingsMenu = new eBoardSettingsMenu(window());
+            settingsMenu->resize(width()/2, 2*height()/3);
+            settingsMenu->initialize(this, *mBoard);
 
-    {
+            window()->execDialog(settingsMenu);
+            settingsMenu->align(eAlignment::center);
+        });
+
+        {
+            const auto editorSwitch = new eFramedButton(window());
+            editorSwitch->setRenderBg(true);
+            editorSwitch->setUnderline(false);
+            editorSwitch->setText(eLanguage::text("editor"));
+            editorSwitch->fitContent();
+            editorSwitch->move(mGm->x() - editorSwitch->width() - p,
+                               mTopBar->height() + p);
+            settingsButt->move(mGm->x() - settingsButt->width() - p,
+                               editorSwitch->y() + editorSwitch->height() + p);
+            editorSwitch->setPressAction([this, settingsButt]() {
+                mTerrainEditMode = !mTerrainEditMode;
+                mTem->setVisible(mTerrainEditMode);
+                mGm->setVisible(!mTerrainEditMode);
+                settingsButt->setVisible(mTerrainEditMode);
+            });
+            addWidget(editorSwitch);
+            editorSwitch->setVisible(mEditorMode);
+        }
+
         const auto cityEditorWidget = new eWidget(window());
 
         const auto condButton = new eFramedButton(window());
