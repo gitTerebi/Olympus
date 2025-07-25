@@ -131,7 +131,9 @@ stdsptr<eTexture> eGameWidget::getBasementTexture(
         id = 1;
     }
     const eTextureCollection* coll = nullptr;
-    if(d->type() == eBuildingType::commonHouse) {
+    const auto type = d->type();
+    if(type == eBuildingType::commonHouse ||
+       type == eBuildingType::eliteHousing) {
         coll = &trrTexs.fBuildingBase3;
     } else {
         coll = &trrTexs.fBuildingBase2;
@@ -989,7 +991,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(!v && mViewMode == eViewMode::appeal) {
                 const auto& am = mBoard->appealMap();
                 const auto ae = am.enabled(dtx, dty);
-                const bool ch = bt == eBuildingType::commonHouse;
+                const bool ch = bt == eBuildingType::commonHouse ||
+                                bt == eBuildingType::eliteHousing;
                 if(ae || ch || tile->underBuilding()) {
                     const eTextureCollection* coll;
                     if(ch) {
