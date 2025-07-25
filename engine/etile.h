@@ -136,9 +136,6 @@ public:
 
     void setTerrain(const eTerrain terr) override;
     void setMarbleLevel(const int l) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 private:
     eTileTerrainPainter mTerrainPainter;
     eTerritoryBorder mBorder;

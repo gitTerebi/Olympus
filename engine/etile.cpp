@@ -273,16 +273,6 @@ void eTile::setMarbleLevel(const int l) {
     }
 }
 
-void eTile::read(eReadStream& src) {
-    eTileBase::read(src);
-    src >> mUpdateTerrain;
-}
-
-void eTile::write(eWriteStream& dst) const {
-    eTileBase::write(dst);
-    dst << mUpdateTerrain;
-}
-
 void eTile::addCharacter(const stdsptr<eCharacter>& c,
                          const bool prepend) {
     if(prepend) {
