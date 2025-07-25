@@ -151,7 +151,7 @@ std::vector<eTileBase::eTO> eTileBase::diagonalNeighbours(const eTileVerifier& v
         const auto o = static_cast<eOrientation>(i);
         const auto t = neighbour(o);
         if(!t) continue;
-        if(v(t)) result.push_back({o, t});
+        if(!v || v(t)) result.push_back({o, t});
     }
     return result;
 }

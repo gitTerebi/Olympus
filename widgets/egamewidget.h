@@ -238,6 +238,7 @@ private:
 
     void setArmyMenuVisible(const bool v);
 
+    void scheduleConnectedTerrainUpdate(eTile* const startTile);
     void updateTerrainTextures(eTile* const tile,
                                const eTerrainTextures& trrTexs,
                                const eBuildingTextures& builTexs);
