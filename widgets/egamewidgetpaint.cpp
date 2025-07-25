@@ -210,7 +210,6 @@ void eGameWidget::updateTerrainTextures(eTile* const tile,
     painter.fColl = nullptr;
     painter.fTex = eTileToTexture::get(tile, trrTexs, builTexs,
                                        mTileSize, mDrawElevation,
-                                       painter.fFutureDim,
                                        painter.fDrawDim,
                                        &painter.fColl,
                                        mBoard->direction());
@@ -224,7 +223,7 @@ void eGameWidget::updateTerrainTextures() {
     mBoard->iterateOverAllTiles([&](eTile* const tile) {
         auto& p = tile->terrainPainter();
         p.fDrawDim = 1;
-        p.fFutureDim = 1;
+        tile->setUnderTile(nullptr);
     });
     mBoard->iterateOverAllTiles([&](eTile* const tile) {
         updateTerrainTextures(tile, trrTexs, builTexs);
@@ -352,6 +351,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         const int tx = tile->x();
         const int ty = tile->y();
 
+        const auto terr = tile->terrain();
+
         auto border = tile->territoryBorder();
         int rtx;
         int rty;
@@ -391,30 +392,57 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
             tile->terrainUpdated();
         }
-        auto& painter = tile->terrainPainter();
+        const auto& painter = tile->terrainPainter();
 
         const int drawDim = painter.fDrawDim;
-        stdsptr<eTexture> tex;
-        if(const auto coll = painter.fColl) {
-            const int ff = mFrame/20;
-            const int id = ff % coll->size();
-            tex = coll->getTexture(id);
-        } else {
-            tex = painter.fTex;
-        }
 
         double rx;
         double ry;
         const int a = mDrawElevation ? tile->altitude() : 0;
         drawXY(tx, ty, rx, ry, drawDim, drawDim, a);
 
-        if(tex) {
-            if(drawDim == 2) {
-//                rx -= 1;
-            } else if(drawDim == 3) {
-                rx += 1;
-                ry -= 1;
+        stdsptr<eTexture> tex;
+        if(drawDim == 0) {
+            const auto u = tile->underTile();
+            if(u) {
+                const auto& upainter = u->terrainPainter();
+                const int dx = tile->underTileDX();
+                const int dy = tile->underTileDY();
+                const int uDrawDim = upainter.fDrawDim;
+                const bool fitX = dx == uDrawDim - 1;
+                const bool fitY = dy == uDrawDim - 1;
+                if(fitX || fitY) {
+                    rx += 0.5*(uDrawDim - 1) - dx;
+                    ry += 1.5*(uDrawDim - 1) - dy;
+                    if(const auto coll = upainter.fColl) {
+                        const int ff = mFrame/20;
+                        const int id = ff % coll->size();
+                        tex = coll->getTexture(id);
+                    } else {
+                        tex = upainter.fTex;
+                    }
+                    if(tex) {
+                        SDL_Rect clipRect;
+                        clipRect.y = -10000;
+                        clipRect.h = 20000;
+                        const int d = fitY ? 1 : 0;
+                        clipRect.x = mDX + (rtx - rty - d)*mTileW/2;
+                        clipRect.w = fitX && fitY ? mTileW : mTileW/2;
+                        SDL_RenderSetClipRect(p.renderer(), &clipRect);
+                    }
+                }
             }
+        } else if(drawDim == 1) {
+            if(const auto coll = painter.fColl) {
+                const int ff = mFrame/20;
+                const int id = ff % coll->size();
+                tex = coll->getTexture(id);
+            } else {
+                tex = painter.fTex;
+            }
+        }
+
+        if(tex) {
             bool eraseCm = false;
             bool patrolCm = false;
             bool editorHover = false;
@@ -437,10 +465,17 @@ void eGameWidget::paintEvent(ePainter& p) {
                         tex->setColorMod(255, 175, 175);
                     }
                 }
-            } else if(!mTem->visible() || mTem->brushType() == eBrushType::apply) {
+            } else if((!terrainEditing &&
+                       !static_cast<bool>(terr & eTerrain::stones)) ||
+                      (terrainEditing &&
+                       mTem->brushType() == eBrushType::apply)) {
                 const auto ub = tile->underBuilding();
                 if(ub) {
                     eraseCm = inErase(ub);
+                    const auto type = ub->type();
+                    if(type == eBuildingType::park) {
+                        eraseCm = eraseCm && drawDim == 1;
+                    }
                 } else {
                     eraseCm = inErase(tx, ty);
                 }
@@ -467,6 +502,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 tex->setColorMod(val, val, val);
             }
             tp.drawTexture(rx, ry, tex, eAlignment::top);
+            if(drawDim == 0) SDL_RenderSetClipRect(p.renderer(), nullptr);
             if(eraseCm || patrolCm || editorHover || mEditorMode || tileFogOfWar) tex->clearColorMod();
         }
 

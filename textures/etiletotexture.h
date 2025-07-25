@@ -17,7 +17,6 @@ namespace eTileToTexture {
                  const eBuildingTextures& blds,
                  const eTileSize tileSize,
                  const bool drawElev,
-                 int& futureDim,
                  int& drawDim,
                  const eTextureCollection** coll,
                  const eWorldDirection dir);

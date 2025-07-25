@@ -238,6 +238,13 @@ void eTile::updateTerritoryBorder() {
     }
 }
 
+void eTile::setUnderTile(eTile* const tile,
+                         const int dx, const int dy) {
+    mUnderTile = tile;
+    mUnderTileDX = dx;
+    mUnderTileDY = dy;
+}
+
 bool eTile::onFire() const {
     const auto ub = underBuilding();
     if(!ub) return false;
@@ -345,6 +352,6 @@ void eTile::setSoldierBanner(eSoldierBanner* const b) {
     mSoldierBanner = b;
 }
 
-void eTile::setFutureDimension(const int futureDim) {
-    mTerrainPainter.fFutureDim = futureDim;
+void eTile::setDrawDim(const int drawDim) {
+    mTerrainPainter.fDrawDim = drawDim;
 }

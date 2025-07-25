@@ -33,12 +33,12 @@ std::shared_ptr<eTexture> getStonesTexture(eTile* const tile,
                           const eTextureCollection& small,
                           const eTextureCollection& large,
                           const eTextureCollection& huge,
-                          int& futureDim, int& drawDim,
+                          int& drawDim,
                           const eWorldDirection dir) {
     return eVaryingSizeTex::getVaryingTexture(
                  eStonesToDry::get, tile,
                  small, large, huge,
-                 futureDim, drawDim,
+                 drawDim,
                  dir);
 }
 
@@ -47,12 +47,10 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
                              const eBuildingTextures& blds,
                              const eTileSize tileSize,
                              const bool drawElev,
-                             int& futureDim,
                              int& drawDim,
                              const eTextureCollection** coll,
                              const eWorldDirection dir) {
     drawDim = 1;
-    futureDim = 1;
     const int seed = tile->seed();
 
     const auto ut = tile->underBuildingType();
@@ -184,7 +182,7 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
                              blds.fPark,
                              blds.fLargePark,
                              blds.fHugePark,
-                             futureDim, drawDim,
+                             drawDim,
                              dir);
     } break;
     default: break;
@@ -557,25 +555,25 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
         return getStonesTexture(tile, textures.fFlatStonesTerrainTexs,
                                 textures.fLargeFlatStonesTerrainTexs,
                                 textures.fHugeFlatStonesTerrainTexs,
-                                futureDim, drawDim, dir);
+                                drawDim, dir);
     } break;
     case eTerrain::copper: {
         return getStonesTexture(tile, textures.fBronzeTerrainTexs,
                                 textures.fLargeBronzeTerrainTexs,
                                 textures.fHugeBronzeTerrainTexs,
-                                futureDim, drawDim, dir);
+                                drawDim, dir);
     } break;
     case eTerrain::silver: {
         return getStonesTexture(tile, textures.fSilverTerrainTexs,
                                 textures.fLargeSilverTerrainTexs,
                                 textures.fHugeSilverTerrainTexs,
-                                futureDim, drawDim, dir);
+                                drawDim, dir);
     } break;
     case eTerrain::tallStones: {
         return getStonesTexture(tile, textures.fTallStoneTerrainTexs,
                                 textures.fLargeTallStoneTerrainTexs,
                                 textures.fHugeTallStoneTerrainTexs,
-                                futureDim, drawDim, dir);
+                                drawDim, dir);
     } break;
     case eTerrain::marble: {
         return eMarbleTile::get(tile, textures, dir);

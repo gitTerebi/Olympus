@@ -6,7 +6,6 @@ enum class eWorldDirection;
 
 namespace eParkTexture {
     void get(eTile* const tile,
-             int& futureDim,
              int& drawDim,
              const eWorldDirection dir);
 };

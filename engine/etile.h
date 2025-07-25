@@ -30,7 +30,6 @@ enum class eWorldDirection;
 struct eTileTerrainPainter {
     stdsptr<eTexture> fTex = nullptr;
     const eTextureCollection* fColl = nullptr;
-    int fFutureDim = 1;
     int fDrawDim = 1;
 };
 
@@ -80,8 +79,8 @@ public:
     eSoldierBanner* soldierBanner() const { return mSoldierBanner; }
 
     // used for stones rendering
-    void setFutureDimension(const int futureDim);
-    int futureDim() const { return mTerrainPainter.fFutureDim; }
+    void setDrawDim(const int drawDim);
+    int drawDim() const { return mTerrainPainter.fDrawDim; }
 
     std::vector<eTile*> surroundingRoads() const;
     eTile* nearestRoad() const;
@@ -112,9 +111,6 @@ public:
                            eTilePtr& t,
                            const eWorldDirection dir) const;
 
-    void addTerrainTile(eTile* const tile) { mTerrainTiles.push_back(tile); }
-    std::vector<eTile*>& terrainTiles() { return mTerrainTiles; }
-
     static const int sMaxDistanceToBorder = 8;
     int distanceToBorder() const { return mDistanceToBorder; }
 
@@ -125,6 +121,13 @@ public:
     bool updateTerrain() const { return mUpdateTerrain; }
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
     void terrainUpdated() { mUpdateTerrain = false; }
+
+    void setUnderTile(eTile* const tile,
+                      const int dx = 0,
+                      const int dy = 0);
+    eTile* underTile() const { return mUnderTile; }
+    int underTileDX() const { return mUnderTileDX; }
+    int underTileDY() const { return mUnderTileDY; }
 
     bool hasPrey() const;
 
@@ -141,7 +144,9 @@ private:
     eTerritoryBorder mBorder;
     int mDistanceToBorder = 0;
     bool mUpdateTerrain = false;
-    std::vector<eTile*> mTerrainTiles;
+    eTile* mUnderTile = nullptr;
+    int mUnderTileDX = 0;
+    int mUnderTileDY = 0;
 
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;
