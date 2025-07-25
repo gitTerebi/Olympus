@@ -21,6 +21,17 @@
 #include "buildings/edramaschool.h"
 #include "buildings/estadium.h"
 
+#include "buildings/ebibliotheke.h"
+#include "buildings/eobservatory.h"
+#include "buildings/euniversity.h"
+#include "buildings/elaboratory.h"
+#include "buildings/einventorsworkshop.h"
+#include "buildings/emuseum.h"
+
+#include "buildings/ehorseranch.h"
+#include "buildings/ehorseranchenclosure.h"
+#include "buildings/echariotfactory.h"
+
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
 
@@ -228,6 +239,81 @@ bool gBuild(const eAIBuilding& b,
             const auto bb = e::make_shared<eStadium>(*boardPtr, rotated, cid);
             bb->setPatrolGuides(b.fGuides);
             bb->setBothDirections(b.fGuidesBothDirections);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+
+    case eBuildingType::bibliotheke: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eBibliotheke>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::observatory: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eObservatory>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::university: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eUniversity>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::laboratory: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eLaboratory>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::inventorsWorkshop: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eInventorsWorkshop>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::museum: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eMuseum>(*boardPtr, cid);
+            return bb;
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+
+    case eBuildingType::horseRanch: {
+        const bool cb = board.canBuild(b.fOtherRect.x, b.fOtherRect.y,
+                                       b.fOtherRect.w, b.fOtherRect.h,
+                                       true, cid, pid);
+        if(!cb) return false;
+        eHorseRanch* tpPtr = nullptr;
+        const auto bc = [boardPtr, cid, b, &tpPtr]() {
+            const auto tp = e::make_shared<eHorseRanch>(*boardPtr, cid);
+            tpPtr = tp.get();
+            return tp;
+        };
+        const bool tpr = board.buildBase(minX, minY, maxX, maxY, bc,
+                                         pid, cid, editorDisplay);
+        if(!tpr) return false;
+        const auto bcp = [boardPtr, cid, b, tpPtr]() {
+            const auto p = e::make_shared<eHorseRanchEnclosure>(*boardPtr, cid);
+            p->setRanch(tpPtr);
+            tpPtr->setEnclosure(p.get());
+            return p;
+        };
+        const auto& oR = b.fOtherRect;
+        return board.buildBase(oR.x, oR.y, oR.x + oR.w - 1, oR.y + oR.h - 1,
+                               bcp, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::chariotFactory: {
+        const auto bc = [boardPtr, cid, b]() {
+            const auto bb = e::make_shared<eChariotFactory>(*boardPtr, cid);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -526,6 +612,12 @@ bool gBuild(const eAIBuilding& b,
         gBuildVendor<eOilVendor>(board, a.get(), 2, pid, cid, editorDisplay);
         gBuildVendor<eWineVendor>(board, a.get(), 3, pid, cid, editorDisplay);
         gBuildVendor<eArmsVendor>(board, a.get(), 4, pid, cid, editorDisplay);
+        const auto c = board.boardCityWithId(cid);
+        if(c->atlantean()) {
+            gBuildVendor<eChariotVendor>(board, a.get(), 5, pid, cid, editorDisplay);
+        } else {
+            gBuildVendor<eHorseVendor>(board, a.get(), 5, pid, cid, editorDisplay);
+        }
         return true;
     } break;
 

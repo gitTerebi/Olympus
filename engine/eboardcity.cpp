@@ -12,6 +12,8 @@
 #include "buildings/efishery.h"
 #include "buildings/epier.h"
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/ehorseranch.h"
+#include "buildings/ehorseranchenclosure.h"
 
 #include "evectorhelpers.h"
 
@@ -527,6 +529,11 @@ void eBoardCity::saveEditorCityPlan() {
                 }
             }
         } else if(ab.fType == eBuildingType::pier) {
+            continue;
+        } else if(const auto hr = dynamic_cast<eHorseRanch*>(b)) {
+            const auto e = hr->enclosure();
+            ab.fOtherRect = e->tileRect();
+        } else if(ab.fType == eBuildingType::horseRanchEnclosure) {
             continue;
         } else if(ab.fType == eBuildingType::agoraSpace) {
             continue;
