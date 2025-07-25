@@ -1805,7 +1805,7 @@ bool eGameWidget::buildMouseRelease() {
             const bool r = mBoard->buildSanctuary(
                                minX, maxX, minY, maxY,
                                bt, mRotate, mViewedCityId, pid, mEditorMode);
-            if(r) return true;
+            if(!r) return true;
             mGm->clearMode();
         } break;
         default:

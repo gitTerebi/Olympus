@@ -556,6 +556,8 @@ void eBoardCity::saveEditorCityPlan() {
             continue;
         } else if(ab.fType == eBuildingType::temple) {
             continue;
+        } else if(ab.fType == eBuildingType::placeholder) {
+            continue;
         } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
             ab.fGuides = pb->patrolGuides();
             ab.fGuidesBothDirections = pb->bothDirections();

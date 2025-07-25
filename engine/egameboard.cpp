@@ -3257,7 +3257,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                 const bool editorDisplay) {
     const bool cb = canBuildBase(minX, maxX, minY, maxY,
                                  editorDisplay, cid, pid);
-    if(!cb) return true;
+    if(!cb) return false;
 
     const auto ppid = cityIdToPlayerId(cid);
 
@@ -3457,7 +3457,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
 
     b->buildingProgressed();
 
-    return false;
+    return true;
 }
 
 eDistrictIdTmp::eDistrictIdTmp(eGameBoard& board) :
