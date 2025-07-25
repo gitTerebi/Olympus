@@ -92,6 +92,36 @@ eHeat eHeatGetters::appeal(const eBuildingType type) {
     case eBuildingType::baths: return {15, 6};
     case eBuildingType::stoneCircle: return {24, 4};
 
+    case eBuildingType::templeAphrodite:
+    case eBuildingType::templeApollo:
+    case eBuildingType::templeAres:
+    case eBuildingType::templeArtemis:
+    case eBuildingType::templeAthena:
+    case eBuildingType::templeAtlas:
+    case eBuildingType::templeDemeter:
+    case eBuildingType::templeDionysus:
+    case eBuildingType::templeHades:
+    case eBuildingType::templeHephaestus:
+    case eBuildingType::templeHera:
+    case eBuildingType::templeHermes:
+    case eBuildingType::templePoseidon:
+    case eBuildingType::templeZeus: return {20, 6};
+
+    case eBuildingType::artisansGuild: return {-6, 3};
+
+    case eBuildingType::achillesHall:
+    case eBuildingType::atalantaHall:
+    case eBuildingType::bellerophonHall:
+    case eBuildingType::herculesHall:
+    case eBuildingType::jasonHall:
+    case eBuildingType::odysseusHall:
+    case eBuildingType::perseusHall:
+    case eBuildingType::theseusHall: return {15, 6};
+
+    case eBuildingType::triremeWharf: return {-12, 4};
+
+    case eBuildingType::chariotFactory: return {-10, 4};
+
     default: return {0, 0};
     }
 }
