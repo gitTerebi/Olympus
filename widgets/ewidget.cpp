@@ -350,11 +350,6 @@ std::string eWidget::sTooltip() {
 template <typename T>
 eWidget* eWidget::mouseEvent(const T& e, const TMouseEvent<T> event,
                              const bool overwrite) {
-    if(mMouseReceiver && overwrite) {
-        const auto te = e.translated(mMouseReceiverDx,
-                                     mMouseReceiverDy);
-        return mMouseReceiver->mouseEvent(te, event);
-    }
     if(!contains(e.x(), e.y())) return nullptr;
     for(auto w = mChildren.rbegin(); w != mChildren.rend(); w++) {
         const auto& ww = *w;
@@ -362,6 +357,11 @@ eWidget* eWidget::mouseEvent(const T& e, const TMouseEvent<T> event,
         const auto we = e.translated(-ww->x(), -ww->y());
         const auto www = ww->mouseEvent(we, event, overwrite);
         if(www) return www;
+    }
+    if(mMouseReceiver && overwrite) {
+        const auto te = e.translated(mMouseReceiverDx,
+                                     mMouseReceiverDy);
+        return mMouseReceiver->mouseEvent(te, event);
     }
     const bool r = (this->*event)(e);
     if(r) return this;
