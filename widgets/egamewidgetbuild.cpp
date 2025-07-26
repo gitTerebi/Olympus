@@ -1509,7 +1509,8 @@ bool eGameWidget::buildMouseRelease() {
         case eBuildingMode::park:
             apply = [this, cid, pid](eTile* const tile) {
                 mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<ePark>(*mBoard, mViewedCityId); });
+                      [this]() { return e::make_shared<ePark>(*mBoard, mViewedCityId); },
+                      false, true);
             };
             mBoard->scheduleTerrainUpdate();
             break;
