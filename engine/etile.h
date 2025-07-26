@@ -8,10 +8,11 @@
 #include "eterrain.h"
 #include "eorientation.h"
 
-#include "pointers/estdselfref.h"
 #include "pointers/estdpointer.h"
 
 #include "characters/esoldierbanner.h"
+
+#include "etileterrainpainter.h"
 
 enum class eTileSize : int {
     s15, s30, s45, s60
@@ -23,15 +24,7 @@ class eBuilding;
 class eBuildingRenderer;
 class eBanner;
 class eSoldierBanner;
-class eTexture;
-class eTextureCollection;
 enum class eWorldDirection;
-
-struct eTileTerrainPainter {
-    stdsptr<eTexture> fTex = nullptr;
-    const eTextureCollection* fColl = nullptr;
-    int fDrawDim = 1;
-};
 
 struct eTerritoryBorder {
     bool fTR = false;

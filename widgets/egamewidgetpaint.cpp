@@ -487,19 +487,16 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const int dx = tile->underTileDX();
                 const int dy = tile->underTileDY();
                 const int uDrawDim = upainter.fDrawDim;
+                const auto type = u->underBuildingType();
+                const bool isPark = type == eBuildingType::park;
+                if(isPark && !(dy == uDrawDim - 1 && dx == 0)) return;
                 const bool fitX = dx == uDrawDim - 1;
                 const bool fitY = dy == uDrawDim - 1;
                 if(fitX || fitY) {
                     rx += 0.5*(uDrawDim - 1) - dx;
                     ry += 1.5*(uDrawDim - 1) - dy;
-                    if(const auto coll = upainter.fColl) {
-                        const int ff = mFrame/20;
-                        const int id = ff % coll->size();
-                        tex = coll->getTexture(id);
-                    } else {
-                        tex = upainter.fTex;
-                    }
-                    if(tex) {
+                    tex = upainter.getTexture(mFrame);
+                    if(tex && !isPark) {
                         SDL_Rect clipRect;
                         clipRect.y = -10000;
                         clipRect.h = 20000;
@@ -511,13 +508,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 }
             }
         } else if(drawDim == 1) {
-            if(const auto coll = painter.fColl) {
-                const int ff = mFrame/20;
-                const int id = ff % coll->size();
-                tex = coll->getTexture(id);
-            } else {
-                tex = painter.fTex;
-            }
+            tex = painter.getTexture(mFrame);
         }
 
         if(tex) {

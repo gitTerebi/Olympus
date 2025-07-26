@@ -390,6 +390,7 @@ SOURCES += \
         engine/ethreadpool.cpp \
         engine/etile.cpp \
         engine/etilebase.cpp \
+        engine/etileterrainpainter.cpp \
         engine/ewagerate.cpp \
         engine/eworldboard.cpp \
         engine/eworldcity.cpp \
@@ -1033,6 +1034,7 @@ HEADERS += \
     engine/ethreadpool.h \
     engine/etile.h \
     engine/etilebase.h \
+    engine/etileterrainpainter.h \
     engine/ewagerate.h \
     engine/eworldboard.h \
     engine/eworldcity.h \
