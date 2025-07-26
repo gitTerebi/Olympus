@@ -154,6 +154,7 @@ void eSoldierBanner::moveToDefault() {
 }
 
 void eSoldierBanner::goHome() {
+    if(mAbroad) return;
     if(mMilitaryAid) return;
     const auto onCid = onCityId();
     const auto cid = cityId();
@@ -209,6 +210,7 @@ void eSoldierBanner::backFromAbroad(int& wait) {
 }
 
 void eSoldierBanner::backFromHome() {
+    if(mAbroad) return;
     if(!mHome) return;
     mHome = false;
     for(const auto s : mSoldiers) {
