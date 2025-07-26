@@ -263,6 +263,7 @@ public:
                 if(first) {
                     const int wh = w->height();
                     scrollW->setHeight(maxBanners*wh);
+                    scrollW->initializeButtons();
                     first = false;
                 }
             } else {

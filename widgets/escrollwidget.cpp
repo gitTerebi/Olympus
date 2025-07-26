@@ -2,6 +2,27 @@
 
 #include <algorithm>
 
+#include "widgets/esmallupbutton.h"
+#include "widgets/esmalldownbutton.h"
+
+void eScrollWidget::initializeButtons() {
+    const auto up = new eSmallUpButton(window());
+    addWidget(up);
+    up->align(eAlignment::top | eAlignment::right);
+    up->setPressAction([this]() {
+        scrollUp();
+    });
+    const auto down = new eSmallDownButton(window());
+    addWidget(down);
+    down->align(eAlignment::bottom | eAlignment::right);
+    down->setPressAction([this]() {
+        scrollDown();
+    });
+    mUpButton = up;
+    mDownButton = down;
+    clampDY();
+}
+
 void eScrollWidget::setScrollArea(eWidget* const w) {
     setMouseReceiver(w);
     mScrollArea = w;
@@ -59,15 +80,19 @@ void eScrollWidget::clampDY() {
     if(mScrollArea) {
         const int sh = mScrollArea->height();
         const int h = height();
+        const int maxH = sh - h;
         if(h > sh) {
             mDy = 0;
         } else {
-            const int maxH = sh - h;
             mDy = std::clamp(mDy, 0, maxH);
         }
         setMouseReceiverDXDY(0, mDy);
+        if(mUpButton) mUpButton->setVisible(mDy > 0);
+        if(mDownButton) mDownButton->setVisible(mDy < maxH);
     } else {
         mDy = 0;
+        if(mUpButton) mUpButton->hide();
+        if(mDownButton) mDownButton->hide();
     }
 }
 

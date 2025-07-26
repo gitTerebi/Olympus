@@ -144,7 +144,7 @@ void eMilitaryDataWidget::initialize() {
     const int iw = inner->width();
     const int ih = inner->height();
 
-    const auto forcesScroll = new eScrollWidget(window());
+    mForcesScroll = new eScrollWidget(window());
 
     mForcesWidget = new eWidget(window());
     mForcesWidget->setNoPadding();
@@ -170,8 +170,8 @@ void eMilitaryDataWidget::initialize() {
 
     mForcesWidget->stackVertically();
     mForcesWidget->fitHeight();
-    forcesScroll->setScrollArea(mForcesWidget);
-    inner->addWidget(forcesScroll);
+    mForcesScroll->setScrollArea(mForcesWidget);
+    inner->addWidget(mForcesScroll);
 
     const auto buttonsW = new eWidget(window());
     buttonsW->setNoPadding();
@@ -247,7 +247,9 @@ void eMilitaryDataWidget::initialize() {
     inner->addWidget(buttonsW);
     buttonsW->align(eAlignment::bottom);
 
-    forcesScroll->resize(iw, ih - buttonsW->height());
+    const int bh = buttonsW->height();
+    mForcesScroll->resize(iw, ih - bh);
+    mForcesScroll->initializeButtons();
 
     showMoreInfoButton();
 }
@@ -355,4 +357,6 @@ void eMilitaryDataWidget::updateWidgets() {
             updateWidgets();
         });
     }
+
+    mForcesScroll->clampDY();
 }

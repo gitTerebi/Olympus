@@ -7,6 +7,7 @@
 class eGameBoard;
 class eSoldierBanner;
 class eMicroButton;
+class eScrollWidget;
 
 using eSB = stdptr<eSoldierBanner>;
 using eSoldierBanners = std::vector<eSB>;
@@ -38,6 +39,7 @@ private:
 
     eViewModeButton* mSeeSecurity = nullptr;
 
+    eScrollWidget* mForcesScroll = nullptr;
     eWidget* mForcesWidget = nullptr;
 
     eForcesWidget* mAbroad = nullptr;

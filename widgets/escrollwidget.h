@@ -7,6 +7,8 @@ class eScrollWidget : public eWidget {
 public:
     using eWidget::eWidget;
 
+    void initializeButtons();
+
     void setScrollArea(eWidget* const w);
     eWidget* scrollArea() const { return mScrollArea; }
 
@@ -25,6 +27,8 @@ private:
     int mDy = 0;
 
     eWidget* mScrollArea = nullptr;
+    eWidget* mUpButton = nullptr;
+    eWidget* mDownButton = nullptr;
 };
 
 #endif // ESCROLLWIDGET_H
