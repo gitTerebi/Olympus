@@ -1010,9 +1010,11 @@ void eGameWidget::showMessage(eEventData& ed,
 }
 
 bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
-    ePathFinder p([](eTileBase* const t) {
+    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear :
+                                       eTerrain::buildable;
+    ePathFinder p([allowed](eTileBase* const t) {
         const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(eTerrain::buildable & terr);
+        const bool tr = static_cast<bool>(allowed & terr);
         if(!tr) return false;
         const auto bt = t->underBuildingType();
         const bool r = bt == eBuildingType::road ||
