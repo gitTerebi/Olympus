@@ -8,6 +8,7 @@
 #include "widgets/emicrobutton.h"
 #include "widgets/ebasicbutton.h"
 #include "widgets/emilitarymoreinfowidget.h"
+#include "widgets/escrollwidget.h"
 
 void eForcesWidget::initialize(const std::string& title) {
     setNoPadding();
@@ -141,6 +142,9 @@ void eMilitaryDataWidget::initialize() {
 
     const auto inner = innerWidget();
     const int iw = inner->width();
+    const int ih = inner->height();
+
+    const auto forcesScroll = new eScrollWidget(window());
 
     mForcesWidget = new eWidget(window());
     mForcesWidget->setNoPadding();
@@ -166,7 +170,8 @@ void eMilitaryDataWidget::initialize() {
 
     mForcesWidget->stackVertically();
     mForcesWidget->fitHeight();
-    inner->addWidget(mForcesWidget);
+    forcesScroll->setScrollArea(mForcesWidget);
+    inner->addWidget(forcesScroll);
 
     const auto buttonsW = new eWidget(window());
     buttonsW->setNoPadding();
@@ -241,6 +246,8 @@ void eMilitaryDataWidget::initialize() {
     buttonsW->fitHeight();
     inner->addWidget(buttonsW);
     buttonsW->align(eAlignment::bottom);
+
+    forcesScroll->resize(iw, ih - buttonsW->height());
 
     showMoreInfoButton();
 }
