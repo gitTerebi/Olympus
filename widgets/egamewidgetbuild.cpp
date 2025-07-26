@@ -1017,7 +1017,7 @@ bool eGameWidget::buildMouseRelease() {
                 mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
                       [this]() { return e::make_shared<eResourceBuilding>(
                                 *mBoard, eResourceBuildingType::oliveTree, mViewedCityId); },
-                      true);
+                      true, true);
             };
             break;
         case eBuildingMode::vine:
@@ -1025,7 +1025,7 @@ bool eGameWidget::buildMouseRelease() {
                 mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
                       [this]() { return e::make_shared<eResourceBuilding>(
                                 *mBoard, eResourceBuildingType::vine, mViewedCityId); },
-                      true);
+                      true, true);
             };
             break;
         case eBuildingMode::orangeTree:
@@ -1033,7 +1033,7 @@ bool eGameWidget::buildMouseRelease() {
                 mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
                       [this]() { return e::make_shared<eResourceBuilding>(
                                 *mBoard, eResourceBuildingType::orangeTree, mViewedCityId); },
-                      true);
+                      true, true);
             };
             break;
 
@@ -1561,7 +1561,8 @@ bool eGameWidget::buildMouseRelease() {
                 const bool hr = canBuildAvenue(tile, cid, pid, mEditorMode);
                 if(!hr) return;
                 mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<eAvenue>(*mBoard, mViewedCityId); });
+                      [this]() { return e::make_shared<eAvenue>(*mBoard, mViewedCityId); },
+                      false, true);
             };
             mBoard->scheduleTerrainUpdate();
             break;
