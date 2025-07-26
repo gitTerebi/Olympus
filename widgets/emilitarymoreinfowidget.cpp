@@ -5,6 +5,7 @@
 #include "elabel.h"
 #include "emicrobutton.h"
 #include "elanguage.h"
+#include "escrollwidget.h"
 
 eMilitaryMoreInfoWidget::eMilitaryMoreInfoWidget(
         eMainWindow* const window,
@@ -64,20 +65,44 @@ public:
                     const bool atlantean) {
         setType(eFrameType::inner);
 
+        int abroad = 0;
+        for(const auto& b : banners) {
+            if(b->isAbroad()) abroad++;
+        }
+        const int nb = banners.size();
+        const int notAbroad = nb - abroad;
+        const int maxBanners = std::max(6, notAbroad);
+        const bool scroll = nb > maxBanners;
+
         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const auto& intrfc = eGameTextures::interface();
         const auto& coll = intrfc[static_cast<int>(uiScale)];
         const int p = padding();
 
-        const auto iw = new eWidget(window());
-        iw->setNoPadding();
-        iw->setWidth(width() - 2*p);
+        const auto inner = new eWidget(window());
+        inner->setNoPadding();
+        const int iw = width() - 2*p;
+        inner->setWidth(iw);
+
+        eScrollWidget* scrollW = nullptr;
+        eWidget* scrollableW = nullptr;
+        if(scroll) {
+            scrollW = new eScrollWidget(window());
+            scrollW->setWidth(iw);
+            scrollW->setNoPadding();
+            inner->addWidget(scrollW);
+
+            scrollableW = new eWidget(window());
+            scrollableW->setWidth(iw);
+            scrollableW->setNoPadding();
+            scrollW->setScrollArea(scrollableW);
+        }
 
         if(!name.empty()) {
             const auto rowW = new eWidget(window());
             rowW->setNoPadding();
-            rowW->setWidth(iw->width() - 2*p);
+            rowW->setWidth(inner->width() - 2*p);
 
             const auto nameL = new eLabel(window());
             nameL->setNoPadding();
@@ -105,13 +130,14 @@ public:
             noneL->setTinyFontSize();
             noneL->setText(eLanguage::zeusText(283, 12));
             noneL->fitContent();
-            iw->addWidget(noneL);
+            inner->addWidget(noneL);
         }
 
+        bool first = true;
         for(const auto& b : banners) {
             const auto w = new eWidget(window());
             w->setNoPadding();
-            w->setWidth(iw->width());
+            w->setWidth(inner->width());
 
             const int id = b->id();
             const auto type = b->type();
@@ -232,14 +258,28 @@ public:
             ww->align(eAlignment::right);
 
             w->fitHeight();
-            iw->addWidget(w);
+            if(scrollW) {
+                scrollableW->addWidget(w);
+                if(first) {
+                    const int wh = w->height();
+                    scrollW->setHeight(maxBanners*wh);
+                    first = false;
+                }
+            } else {
+                inner->addWidget(w);
+            }
         }
 
-        iw->stackVertically();
-        iw->fitHeight();
-        setHeight(iw->height() + 2*p);
-        iw->move(p, p);
-        addWidget(iw);
+        if(scrollableW) {
+            scrollableW->stackVertically();
+            scrollableW->fitHeight();
+        }
+        inner->stackVertically();
+        inner->fitHeight();
+        const int ih = inner->height();
+        setHeight(ih + 2*p);
+        inner->move(p, p);
+        addWidget(inner);
         stackVertically();
     }
 };
