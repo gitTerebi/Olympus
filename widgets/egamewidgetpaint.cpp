@@ -744,54 +744,47 @@ void eGameWidget::paintEvent(ePainter& p) {
                 }
             } else if(mViewMode == eViewMode::actors ||
                       mViewMode == eViewMode::astronomers) {
-                if(bt == eBuildingType::commonHouse) {
-                    const auto ch = static_cast<eSmallHouse*>(ub);
-                    if(ch->people() == 0) return;
-                    const int a = ch->actorsAstronomers()/2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
-                } else if(bt == eBuildingType::eliteHousing) {
-                    const auto ch = static_cast<eEliteHousing*>(ub);
+                if(bt == eBuildingType::commonHouse ||
+                   bt == eBuildingType::eliteHousing) {
+                    const auto ch = static_cast<eHouseBase*>(ub);
                     if(ch->people() == 0) return;
                     const int a = ch->actorsAstronomers()/2;
                     drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             } else if(mViewMode == eViewMode::philosophers ||
                       mViewMode == eViewMode::inventors) {
-                if(bt == eBuildingType::commonHouse) {
-                    const auto ch = static_cast<eSmallHouse*>(ub);
-                    if(ch->people() == 0) return;
-                    const int a = ch->philosophersInventors()/2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
-                } else if(bt == eBuildingType::eliteHousing) {
-                    const auto ch = static_cast<eEliteHousing*>(ub);
+                if(bt == eBuildingType::commonHouse ||
+                   bt == eBuildingType::eliteHousing) {
+                    const auto ch = static_cast<eHouseBase*>(ub);
                     if(ch->people() == 0) return;
                     const int a = ch->philosophersInventors()/2;
                     drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             } else if(mViewMode == eViewMode::athletes ||
                       mViewMode == eViewMode::scholars) {
-                if(bt == eBuildingType::commonHouse) {
-                    const auto ch = static_cast<eSmallHouse*>(ub);
-                    if(ch->people() == 0) return;
-                    const int a = ch->athletesScholars()/2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
-                } else if(bt == eBuildingType::eliteHousing) {
-                    const auto ch = static_cast<eEliteHousing*>(ub);
+                if(bt == eBuildingType::commonHouse ||
+                   bt == eBuildingType::eliteHousing) {
+                    const auto ch = static_cast<eHouseBase*>(ub);
                     if(ch->people() == 0) return;
                     const int a = ch->athletesScholars()/2;
                     drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             } else if(mViewMode == eViewMode::competitors ||
                       mViewMode == eViewMode::curators) {
-                if(bt == eBuildingType::commonHouse) {
-                    const auto ch = static_cast<eSmallHouse*>(ub);
+                if(bt == eBuildingType::commonHouse ||
+                   bt == eBuildingType::eliteHousing) {
+                    const auto ch = static_cast<eHouseBase*>(ub);
                     if(ch->people() == 0) return;
                     const int a = ch->competitorsCurators()/2;
                     drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
-                } else if(bt == eBuildingType::eliteHousing) {
-                    const auto ch = static_cast<eEliteHousing*>(ub);
+                }
+            } else if(mViewMode == eViewMode::allCulture ||
+                      mViewMode == eViewMode::allScience) {
+                if(bt == eBuildingType::commonHouse ||
+                   bt == eBuildingType::eliteHousing) {
+                    const auto ch = static_cast<eHouseBase*>(ub);
                     if(ch->people() == 0) return;
-                    const int a = ch->competitorsCurators()/2;
+                    const int a = ch->allCultureScience();
                     drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             } else if(mViewMode == eViewMode::supplies) {
@@ -902,116 +895,115 @@ void eGameWidget::paintEvent(ePainter& p) {
             };
             const auto size = tp.size();
             const auto ts = ub->getTextureSpace(tx, ty, size);
-            const auto tsRect = ts.fRect;
+            const auto& tsRect = ts.fRect;
             const auto rtsRect = eTileHelper::toRotatedRect(
                                      tsRect, dir, boardw, boardh);
             const int fitY = rtsRect.y + rtsRect.h - 1;
             const int fitX = rtsRect.x + rtsRect.w - 1;
+            const bool fitXB = rtx == fitX;
+            const bool fitYB = rty == fitY;
             double dx;
             double dy;
             getDisplacement(tsRect.w, tsRect.h, dx, dy);
             const double drawX = fitX + dx + 1 - a;
             const double drawY = fitY + dy + 1 - a;
-            if(rty == fitY || rtx == fitX) {
-                const auto bRender = [&](const int tx, const int ty,
-                                         const bool last) {
-                    SDL_Rect clipRect;
-                    clipRect.y = -10000;
-                    clipRect.h = 20000;
-                    const int d = ty == fitY ? 1 : 0;
-                    clipRect.x = mDX + (tx - ty - d)*mTileW/2;
-                    clipRect.w = mTileW/2;
-                    SDL_RenderSetClipRect(p.renderer(), &clipRect);
+            if(fitXB || fitYB) {
+                const bool last = fitXB && fitYB;
+                SDL_Rect clipRect;
+                clipRect.y = -10000;
+                clipRect.h = 20000;
+                const int d = fitYB ? 1 : 0;
+                clipRect.x = mDX + (rtx - rty - d)*mTileW/2;
+                clipRect.w = last ? mTileW : mTileW/2;
+                SDL_RenderSetClipRect(p.renderer(), &clipRect);
 
-                    const bool erase = inErase(ub);
-                    const bool hover = inPatrolBuildingHover(ub);
-                    bool colorMod = false;
-                    int cred = 255;
-                    int cgreen = 255;
-                    int cblue = 255;
-                    if(erase) {
-                        colorMod = true;
-                        cred = 255;
-                        cgreen = 175;
-                        cblue = 175;
-                    } else if(hover) {
-                        colorMod = true;
-                        cred = 175;
+                const bool erase = inErase(ub);
+                const bool hover = inPatrolBuildingHover(ub);
+                bool colorMod = false;
+                int cred = 255;
+                int cgreen = 255;
+                int cblue = 255;
+                if(erase) {
+                    colorMod = true;
+                    cred = 255;
+                    cgreen = 175;
+                    cblue = 175;
+                } else if(hover) {
+                    colorMod = true;
+                    cred = 175;
+                    cgreen = 255;
+                    cblue = 255;
+                } else if(mEditorMode) {
+                    colorMod = true;
+                    const int eid = ub->districtId();
+                    const auto ecid = mBoard->currentDistrictId();
+                    if(ecid == eid) {
+                        cred = 200;
                         cgreen = 255;
-                        cblue = 255;
-                    } else if(mEditorMode) {
-                        colorMod = true;
-                        const int eid = ub->districtId();
-                        const auto ecid = mBoard->currentDistrictId();
-                        if(ecid == eid) {
-                            cred = 200;
-                            cgreen = 255;
-                            cblue = 200;
-                        } else {
-                            cred = 255;
-                            cgreen = 200;
-                            cblue = 200;
-                        }
+                        cblue = 200;
+                    } else {
+                        cred = 255;
+                        cgreen = 200;
+                        cblue = 200;
                     }
-                    const auto tex = ts.fTex;
-                    if(tex) {
+                }
+                const auto tex = ts.fTex;
+                if(tex) {
+                    if(colorMod) tex->setColorMod(cred, cgreen, cblue);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    if(colorMod) tex->clearColorMod();
+                }
+                if(ub->overlayEnabled() && ts.fOvelays) {
+                    const auto overlays = ub->getOverlays(size);
+                    for(const auto& o : overlays) {
+                        const auto& tex = o.fTex;
+                        if(!tex) continue;
                         if(colorMod) tex->setColorMod(cred, cgreen, cblue);
-                        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                        if(o.fAlignTop) {
+                            tp.drawTexture(drawX + o.fX, drawY + o.fY,
+                                           tex, eAlignment::top);
+                        } else {
+                            tp.drawTexture(drawX + o.fX, drawY + o.fY, tex);
+                        }
                         if(colorMod) tex->clearColorMod();
                     }
-                    if(ub->overlayEnabled() && ts.fOvelays) {
-                        const auto overlays = ub->getOverlays(size);
-                        for(const auto& o : overlays) {
-                            const auto& tex = o.fTex;
-                            if(!tex) continue;
-                            if(colorMod) tex->setColorMod(cred, cgreen, cblue);
-                            if(o.fAlignTop) {
-                                tp.drawTexture(drawX + o.fX, drawY + o.fY,
-                                               tex, eAlignment::top);
-                            } else {
-                                tp.drawTexture(drawX + o.fX, drawY + o.fY, tex);
-                            }
-                            if(colorMod) tex->clearColorMod();
+                }
+                SDL_RenderSetClipRect(p.renderer(), nullptr);
+
+                if(last) {
+                    bool globalLast = true;
+                    if(bt == eBuildingType::eliteHousing) {
+                        const auto ubRect = ub->tileRect();
+                        const auto rubRect = eTileHelper::toRotatedRect(
+                                                 ubRect, dir, boardw, boardh);
+                        const int globalFitY = rubRect.y + rubRect.h - 1;
+                        const int globalFitX = rubRect.x + rubRect.w - 1;
+                        globalLast = rtx == globalFitX && rty == globalFitY;
+                    }
+                    if(bt == eBuildingType::commonHouse) {
+                        const auto ch = static_cast<eSmallHouse*>(ub);
+                        const bool p = ch->plague();
+                        if(p && ch->people()) {
+                            eGameTextures::loadPlague();
+                            const auto& blsd = destTexs.fPlague;
+                            const int texId = ub->textureTime() % blsd.size();
+                            const auto tex = blsd.getTexture(texId);
+
+                            tp.drawTexture(drawX + 3, drawY + 1, tex, eAlignment::top);
                         }
                     }
-                    SDL_RenderSetClipRect(p.renderer(), nullptr);
-
-                    if(last) {
-                        bool globalLast = true;
-                        if(bt == eBuildingType::eliteHousing) {
-                            const auto ubRect = ub->tileRect();
-                            const int globalFitY = ubRect.y + ubRect.h - 1;
-                            const int globalFitX = ubRect.x + ubRect.w - 1;
-                            globalLast = rtx == globalFitX && rty == globalFitY;
+                    if(ub->isOnFire()) {
+                        const auto& ubts = ub->tilesUnder();
+                        for(const auto& ubt : ubts) {
+                            drawFire(ubt);
                         }
-                        if(const auto ch = dynamic_cast<eSmallHouse*>(ub)) {
-                            const bool p = ch->plague();
-                            if(p && ch->people()) {
-                                eGameTextures::loadPlague();
-                                const auto& blsd = destTexs.fPlague;
-                                const int texId = ub->textureTime() % blsd.size();
-                                const auto tex = blsd.getTexture(texId);
-
-                                tp.drawTexture(drawX + 3, drawY + 1, tex, eAlignment::top);
-                            }
-                        }
-                        if(ub->isOnFire()) {
-                            const auto& ubts = ub->tilesUnder();
-                            for(const auto& ubt : ubts) {
-                                drawFire(ubt);
-                            }
-                        }
-                        if(ts.fOvelays && tex) {
-                            const int bx = drawX;
-                            const int by = drawY - tsRect.h;
-                            drawBlessedCursed(bx, by);
-                        }
-                        if(globalLast) drawBuildingModes();
                     }
-                };
-                bRender(rtx, rty, false);
-                if(rtx == fitX && rty == fitY) {
-                    bRender(rtx + 1, rty + 1, true);
+                    if(ts.fOvelays && tex) {
+                        const int bx = drawX;
+                        const int by = drawY - tsRect.h;
+                        drawBlessedCursed(bx, by);
+                    }
+                    if(globalLast) drawBuildingModes();
                 }
             }
         } else if(ub) {

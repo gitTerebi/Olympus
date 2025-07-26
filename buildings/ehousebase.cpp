@@ -38,6 +38,15 @@ void eHouseBase::timeChanged(const int by) {
     eBuilding::timeChanged(by);
 }
 
+int eHouseBase::allCultureScience() const {
+    int result = 0;
+    if(mPhilosophers > 0) result++;
+    if(mActors > 0) result++;
+    if(mAthletes > 0) result++;
+    if(mCompetitors > 0) result++;
+    return result;
+}
+
 void eHouseBase::levelUp() {
     setLevel(mLevel + 1);
 }

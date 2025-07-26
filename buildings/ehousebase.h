@@ -42,6 +42,7 @@ public:
     int actorsAstronomers() const { return mActors; }
     int athletesScholars() const { return mAthletes; }
     int competitorsCurators() const { return mCompetitors; }
+    int allCultureScience() const;
 
     void levelUp();
     void levelDown();
