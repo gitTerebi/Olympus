@@ -288,8 +288,8 @@ bool gBuild(const eAIBuilding& b,
     } break;
 
     case eBuildingType::horseRanch: {
-        const bool cb = board.canBuild(b.fOtherRect.x, b.fOtherRect.y,
-                                       b.fOtherRect.w, b.fOtherRect.h,
+        const auto& oR = b.fOtherRect;
+        const bool cb = board.canBuild(oR.x, oR.y, oR.w, oR.h,
                                        true, cid, pid);
         if(!cb) return false;
         eHorseRanch* tpPtr = nullptr;
@@ -307,7 +307,6 @@ bool gBuild(const eAIBuilding& b,
             tpPtr->setEnclosure(p.get());
             return p;
         };
-        const auto& oR = b.fOtherRect;
         return board.buildBase(oR.x, oR.y, oR.x + oR.w - 1, oR.y + oR.h - 1,
                                bcp, pid, cid, editorDisplay);
     } break;
@@ -665,10 +664,13 @@ bool gBuild(const eAIBuilding& b,
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
     case eBuildingType::tradePost: {
-        const bool cb = board.canBuild(b.fOtherRect.x, b.fOtherRect.y,
-                                       b.fOtherRect.w, b.fOtherRect.h,
-                                       true, cid, pid);
-        if(!cb) return false;
+        const auto& oR = b.fOtherRect;
+        if(b.fTradePostType == eTradePostType::pier) {
+            const bool cb = board.canBuild(oR.x, oR.y,
+                                           oR.w, oR.h,
+                                           true, cid, pid);
+            if(!cb) return false;
+        }
         eTradePost* tpPtr = nullptr;
         const auto bc = [boardPtr, cid, b, &tpPtr]() {
             const auto wboard = boardPtr->getWorldBoard();
@@ -692,7 +694,6 @@ bool gBuild(const eAIBuilding& b,
             tpPtr->setUnpackBuilding(p.get());
             return p;
         };
-        const auto& oR = b.fOtherRect;
         return board.buildBase(oR.x, oR.y, oR.x + oR.w - 1, oR.y + oR.h - 1,
                                bcp, pid, cid, editorDisplay);
     } break;
@@ -872,73 +873,85 @@ bool eAIDistrict::sBuild(eGameBoard& board,
                          const eCityId cid,
                          const bool editorDisplay,
                          const eAIBuilding& b) {
-    const auto rect = b.fRect;
-    const int xMin = rect.x;
-    const int yMin = rect.y;
-    const int xMax = rect.x + rect.w - 1;
-    const int yMax = rect.y + rect.h - 1;
-    {
-        const auto minTile = board.tile(xMin, yMin);
-        const auto minTileBT = minTile->underBuildingType();
-        if(eBuilding::sSanctuaryBuilding(minTileBT)) {
-            if(eBuilding::sSanctuaryBuilding(b.fType)) return false;
-        } else if(minTileBT == b.fType) return false;
-    }
-    if(!editorDisplay) {
-        if(!eBuilding::sFlatBuilding(b.fType)) {
-            bool buildable = true;
+    const auto processRect = [&](const SDL_Rect& rect) {
+        const int xMin = rect.x;
+        const int yMin = rect.y;
+        const int xMax = rect.x + rect.w - 1;
+        const int yMax = rect.y + rect.h - 1;
+        {
+            const auto minTile = board.tile(xMin, yMin);
+            const auto minTileBT = minTile->underBuildingType();
+            if(eBuilding::sSanctuaryBuilding(minTileBT)) {
+                if(eBuilding::sSanctuaryBuilding(b.fType)) return false;
+            } else if(minTileBT == b.fType) return false;
+        }
+        if(!editorDisplay) {
+            if(!eBuilding::sFlatBuilding(b.fType)) {
+                bool buildable = true;
+                for(int x = xMin; x <= xMax; x++) {
+                    for(int y = yMin; y <= yMax; y++) {
+                        const auto tile = board.tile(x, y);
+                        const bool of = tile->onFire();
+                        if(of) {
+                            buildable = false;
+                            break;
+                        }
+                        const auto& chars = tile->characters();
+                        if(!chars.empty()) {
+                            buildable = false;
+                            break;
+                        }
+                    }
+                    if(!buildable) break;
+                }
+                if(!buildable) return false;
+            }
+
+            int allowRoadX = __INT_MAX__;
+            int allowRoadY = __INT_MAX__;
+
+            if(b.fType == eBuildingType::commonAgora ||
+               b.fType == eBuildingType::grandAgora) {
+                const bool zero = b.fType == eBuildingType::commonAgora &&
+                                  (b.fO == eDiagonalOrientation::bottomRight ||
+                                   b.fO == eDiagonalOrientation::bottomLeft);
+                const int x1 = rect.x;
+                const int y1 = rect.y;
+                const int w = rect.w;
+                allowRoadX = w == 6 ? __INT_MAX__ : (zero ? x1 : (x1 + 2));
+                allowRoadY = w == 6 ? (zero ? y1 : (y1 + 2)) : __INT_MAX__;
+            }
+
             for(int x = xMin; x <= xMax; x++) {
                 for(int y = yMin; y <= yMax; y++) {
                     const auto tile = board.tile(x, y);
-                    const bool of = tile->onFire();
-                    if(of) {
-                        buildable = false;
-                        break;
+                    const auto terr = tile->terrain();
+                    if(terr == eTerrain::forest ||
+                       terr == eTerrain::choppedForest) {
+                        tile->setTerrain(eTerrain::dry);
+                        const auto cid = tile->cityId();
+                        const auto c = board.boardCityWithId(cid);
+                        if(c) c->incForestsState();
                     }
-                    const auto& chars = tile->characters();
-                    if(!chars.empty()) {
-                        buildable = false;
-                        break;
+                    if(x == allowRoadX || y == allowRoadY) {
+                        if(tile->hasRoad()) continue;
                     }
+                    const auto ub = tile->underBuilding();
+                    if(ub) ub->erase();
                 }
-                if(!buildable) break;
-            }
-            if(!buildable) return false;
-        }
-
-        int allowRoadX = __INT_MAX__;
-        int allowRoadY = __INT_MAX__;
-
-        if(b.fType == eBuildingType::commonAgora ||
-           b.fType == eBuildingType::grandAgora) {
-            const bool zero = b.fType == eBuildingType::commonAgora &&
-                              (b.fO == eDiagonalOrientation::bottomRight ||
-                               b.fO == eDiagonalOrientation::bottomLeft);
-            const int x1 = rect.x;
-            const int y1 = rect.y;
-            const int w = rect.w;
-            allowRoadX = w == 6 ? __INT_MAX__ : (zero ? x1 : (x1 + 2));
-            allowRoadY = w == 6 ? (zero ? y1 : (y1 + 2)) : __INT_MAX__;
-        }
-
-        for(int x = xMin; x <= xMax; x++) {
-            for(int y = yMin; y <= yMax; y++) {
-                const auto tile = board.tile(x, y);
-                const auto terr = tile->terrain();
-                if(terr == eTerrain::forest ||
-                   terr == eTerrain::choppedForest) {
-                    tile->setTerrain(eTerrain::dry);
-                    const auto cid = tile->cityId();
-                    const auto c = board.boardCityWithId(cid);
-                    if(c) c->incForestsState();
-                }
-                if(x == allowRoadX || y == allowRoadY) {
-                    if(tile->hasRoad()) continue;
-                }
-                const auto ub = tile->underBuilding();
-                if(ub) ub->erase();
             }
         }
+        return true;
+    };
+    const bool r = processRect(b.fRect);
+    if(!r) return false;
+    if(b.fType == eBuildingType::horseRanch) {
+        const bool r = processRect(b.fOtherRect);
+        if(!r) return false;
+    } else if(b.fType == eBuildingType::tradePost &&
+              b.fTradePostType == eTradePostType::pier) {
+        const bool r = processRect(b.fOtherRect);
+        if(!r) return false;
     }
 
     return gBuild(b, pid, cid, board, editorDisplay);
