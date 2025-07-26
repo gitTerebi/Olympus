@@ -274,6 +274,7 @@ public:
         if(scrollableW) {
             scrollableW->stackVertically();
             scrollableW->fitHeight();
+            scrollW->clampDY();
         }
         inner->stackVertically();
         inner->fitHeight();
