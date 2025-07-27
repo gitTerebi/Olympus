@@ -8,6 +8,8 @@
 #include "evectorhelpers.h"
 #include "egamedir.h"
 
+#include "pak/zeusfile.h"
+
 eCampaign::eCampaign() {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
@@ -350,6 +352,14 @@ void eCampaign::write(eWriteStream& dst) const {
     for(const auto& e : mForParent) {
         e.write(dst);
     }
+}
+
+void eCampaign::readPak(const std::string& path) {
+    ZeusFile file(path);
+    const int n = file.getNumMaps();
+    mParentBoard = e::make_shared<eGameBoard>();
+    mParentBoard->setWorldBoard(&mWorldBoard);
+    file.loadBoard(*mParentBoard);
 }
 
 bool eCampaign::load(const std::string& name) {

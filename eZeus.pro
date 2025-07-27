@@ -466,6 +466,10 @@ SOURCES += \
         missiles/emissile.cpp \
         missiles/erockmissile.cpp \
         missiles/espearmissile.cpp \
+        pak/gamefile.cpp \
+        pak/pkwareinputstream.cpp \
+        pak/qfile.cpp \
+        pak/zeusfile.cpp \
         pointers/eobject.cpp \
         pointers/estdselfref.cpp \
         spawners/eanimalspawner.cpp \
@@ -1168,6 +1172,11 @@ HEADERS += \
     offsets/zeus_scylla.h \
     offsets/zeus_talos.h \
     offsets/zeus_theseus.h \
+    pak/gamefile.h \
+    pak/grid.h \
+    pak/pkwareinputstream.h \
+    pak/qfile.h \
+    pak/zeusfile.h \
     pointers/eobject.h \
     pointers/eobject.h \
     pointers/estdpointer.h \
