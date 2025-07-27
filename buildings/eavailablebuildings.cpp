@@ -30,6 +30,9 @@ void eAvailableBuildings::read(eReadStream& src) {
     src >> fTimberMill;
     src >> fMasonryShop;
 
+    src >> fRefinery;
+    src >> fBlackMarbleWorkshop;
+
     src >> fWinery;
     src >> fOlivePress;
     src >> fSculptureStudio;
@@ -102,6 +105,9 @@ void eAvailableBuildings::write(eWriteStream& dst) const {
     dst << fFoundry;
     dst << fTimberMill;
     dst << fMasonryShop;
+
+    dst << fRefinery;
+    dst << fBlackMarbleWorkshop;
 
     dst << fWinery;
     dst << fOlivePress;
@@ -216,6 +222,10 @@ bool eAvailableBuildings::available(
         return fTimberMill;
     case eBuildingType::masonryShop:
         return fMasonryShop;
+    case eBuildingType::refinery:
+        return fRefinery;
+    case eBuildingType::blackMarbleWorkshop:
+        return fBlackMarbleWorkshop;
 
     case eBuildingType::winery: {
         const bool s = fDionysusSanctuary == eAvailable::built;
@@ -465,6 +475,8 @@ void eAvailableBuildings::startEpisode(const eAvailableBuildings& o) {
     startEpisode(o, &eAvailableBuildings::fFoundry);
     startEpisode(o, &eAvailableBuildings::fTimberMill);
     startEpisode(o, &eAvailableBuildings::fMasonryShop);
+    startEpisode(o, &eAvailableBuildings::fRefinery);
+    startEpisode(o, &eAvailableBuildings::fBlackMarbleWorkshop);
 
     startEpisode(o, &eAvailableBuildings::fWinery);
     startEpisode(o, &eAvailableBuildings::fOlivePress);
@@ -543,6 +555,10 @@ bool* eAvailableBuildings::allowedPtr(const eBuildingType type) {
         return &fTimberMill;
     case eBuildingType::masonryShop:
         return &fMasonryShop;
+    case eBuildingType::refinery:
+        return &fRefinery;
+    case eBuildingType::blackMarbleWorkshop:
+        return &fBlackMarbleWorkshop;
 
     case eBuildingType::winery:
         return &fWinery;

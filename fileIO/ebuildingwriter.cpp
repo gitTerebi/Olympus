@@ -64,6 +64,8 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::mint:
     case eBuildingType::foundry:
     case eBuildingType::timberMill:
+    case eBuildingType::refinery:
+    case eBuildingType::blackMarbleWorkshop:
     case eBuildingType::masonryShop:
     case eBuildingType::oliveTree:
     case eBuildingType::vine:

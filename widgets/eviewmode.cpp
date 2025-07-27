@@ -58,6 +58,8 @@ bool eViewModeHelpers::buildingVisible(
                bt == eBuildingType::mint ||
                bt == eBuildingType::foundry ||
                bt == eBuildingType::winery ||
+               bt == eBuildingType::refinery ||
+               bt == eBuildingType::blackMarbleWorkshop ||
                bt == eBuildingType::sculptureStudio ||
                bt == eBuildingType::armory;
     } break;

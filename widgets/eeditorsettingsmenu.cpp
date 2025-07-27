@@ -337,6 +337,8 @@ void eEditorSettingsMenu::initialize(const bool first,
                     eBuildingType::foundry,
                     eBuildingType::timberMill,
                     eBuildingType::masonryShop,
+                    eBuildingType::refinery,
+                    eBuildingType::blackMarbleWorkshop,
 
                     eBuildingType::winery,
                     eBuildingType::olivePress,

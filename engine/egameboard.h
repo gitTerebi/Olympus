@@ -383,6 +383,9 @@ public:
     void restockMarbleTiles();
     void updateMarbleTiles();
 
+    void restockBlackMarbleTiles();
+    void updateBlackMarbleTiles();
+
     void setFriendlyGods(const eCityId cid,
                          const std::vector<eGodType>& gods);
 
@@ -774,6 +777,7 @@ private:
     };
 
     std::vector<eMarbleTiles> mMarbleTiles;
+    std::vector<eMarbleTiles> mBlackMarbleTiles;
 
     int mSoldiersUpdate = 10000;
 

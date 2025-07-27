@@ -40,6 +40,8 @@ enum class eBuildingMode {
     foundry,
     timberMill,
     masonryShop,
+    refinery,
+    blackMarbleWorkshop,
 
     winery,
     olivePress,

@@ -202,6 +202,8 @@ bool eSectorHelpers::sBuildingSector(const eBuildingType type,
     case eBuildingType::masonryShop:
     case eBuildingType::mint:
     case eBuildingType::foundry:
+    case eBuildingType::refinery:
+    case eBuildingType::blackMarbleWorkshop:
     case eBuildingType::olivePress:
     case eBuildingType::winery:
     case eBuildingType::sculptureStudio:
@@ -288,6 +290,10 @@ std::vector<eResourceType> eIndustryHelpers::sIndustries(
         return {eResourceType::marble};
     case eBuildingType::foundry:
         return {eResourceType::bronze};
+    case eBuildingType::refinery:
+        return {eResourceType::orichalc};
+    case eBuildingType::blackMarbleWorkshop:
+        return {eResourceType::blackMarble};
     case eBuildingType::olivePress:
         return {eResourceType::oliveOil};
     case eBuildingType::winery:
@@ -335,6 +341,10 @@ std::vector<eBuildingType> eIndustryHelpers::sBuildings(const eResourceType type
         return {eBuildingType::masonryShop};
     case eResourceType::bronze:
         return {eBuildingType::foundry};
+    case eResourceType::orichalc:
+        return {eBuildingType::refinery};
+    case eResourceType::blackMarble:
+        return {eBuildingType::blackMarbleWorkshop};
     case eResourceType::oliveOil:
         return {eBuildingType::olivePress};
     case eResourceType::wine:

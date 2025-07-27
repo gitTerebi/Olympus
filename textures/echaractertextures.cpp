@@ -699,6 +699,8 @@ void eCharacterTextures::loadTrailer() {
     loader.loadTrailer(2991, 3031, 3039, fSculptureTrailer, -7);
     loader.loadTrailer(2991, 3039, 3047, fEmptyBigTrailer, -4);
     loader.loadTrailer(2991, 3047, 3055, fMarbleBigTrailer, -4);
+
+    loadBlackMarbleTrailer();
 }
 
 void eCharacterTextures::loadSettlers() {
@@ -1261,6 +1263,7 @@ void eCharacterTextures::loadCart() {
         loader.loadSkipFlipped(8428, 8716, 8732, fWineCart);
     }
     loadOrangesCart();
+    loadOrichalcCart();
 }
 
 void eCharacterTextures::loadBoar() {

@@ -8,7 +8,8 @@
 enum class eTranformFunc {
     none,
     tree,
-    marble
+    marble,
+    blackMarble
 };
 
 class eCollectAction : public eCharacterAction {

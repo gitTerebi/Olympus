@@ -40,6 +40,9 @@ std::vector<eResourceType> eResourceTypeHelpers::extractResourceTypes(const eRes
     extractResourceType(from, eResourceType::sculpture, result);
     extractResourceType(from, eResourceType::horse, result);
     extractResourceType(from, eResourceType::chariot, result);
+
+    extractResourceType(from, eResourceType::orichalc, result);
+    extractResourceType(from, eResourceType::blackMarble, result);
     return result;
 }
 
@@ -116,6 +119,12 @@ std::string eResourceTypeHelpers::typeName(const eResourceType type) {
         break;
     case eResourceType::chariot:
         string = 22;
+        break;
+    case eResourceType::orichalc:
+        string = 17;
+        break;
+    case eResourceType::blackMarble:
+        string = 16;
         break;
     default:
         break;
@@ -197,6 +206,12 @@ std::string eResourceTypeHelpers::typeLongName(const eResourceType type) {
     case eResourceType::chariot:
         string = 22;
         break;
+    case eResourceType::orichalc:
+        string = 17;
+        break;
+    case eResourceType::blackMarble:
+        string = 16;
+        break;
     default:
         break;
     }
@@ -256,6 +271,11 @@ std::shared_ptr<eTexture> eResourceTypeHelpers::icon(
     case eResourceType::silver:
     case eResourceType::drachmas:
         return coll.fDrachmasUnit;
+
+    case eResourceType::orichalc:
+        return coll.fOrichalcUnit;
+    case eResourceType::blackMarble:
+        return coll.fBlackMarbleUnit;
     default:
         return nullptr;
     }
@@ -283,6 +303,8 @@ int eResourceTypeHelpers::transportSize(const eResourceType type) {
     case eResourceType::wood:
     case eResourceType::bronze:
     case eResourceType::marble:
+    case eResourceType::orichalc:
+    case eResourceType::blackMarble:
 
     case eResourceType::armor:
         return 4;
@@ -331,6 +353,12 @@ int eResourceTypeHelpers::defaultPrice(const eResourceType type) {
 
     case eResourceType::sculpture:
         return 640;
+
+    case eResourceType::orichalc:
+        return 140;
+
+    case eResourceType::blackMarble:
+        return 88;
 
     case eResourceType::food:
     case eResourceType::warehouse:

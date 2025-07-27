@@ -19,6 +19,7 @@ enum class eTerrain {
     quake = 1 << 11,
 
     orichalc = 1 << 12,
+    blackMarble = 1 << 13,
 
     dryBased = dry |
                fertile |
@@ -31,19 +32,21 @@ enum class eTerrain {
                orichalc |
                tallStones |
                marble |
+               blackMarble |
                quake,
 
     buildable = dry | beach | fertile,
     buildableAfterClear = buildable | forest | choppedForest,
     walkable = dry | beach | fertile |
                forest | choppedForest |
-               marble | quake,
+               marble | blackMarble | quake,
     stones = flatStones |
              copper |
              silver |
              orichalc |
              tallStones |
              marble |
+             blackMarble |
              quake
 };
 

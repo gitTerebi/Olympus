@@ -100,6 +100,8 @@ void eThreadBuilding::load(eBuilding* const src) {
         case eBuildingType::urchinQuay:
         case eBuildingType::foundry:
         case eBuildingType::masonryShop:
+        case eBuildingType::refinery:
+        case eBuildingType::blackMarbleWorkshop:
         case eBuildingType::mint:
         case eBuildingType::timberMill: {
             const auto b = static_cast<eResourceBuildingBase*>(src);

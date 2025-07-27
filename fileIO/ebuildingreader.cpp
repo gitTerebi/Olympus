@@ -134,6 +134,12 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::foundry: {
         b = e::make_shared<eFoundry>(board, cid);
     } break;
+    case eBuildingType::refinery: {
+        b = e::make_shared<eRefinery>(board, cid);
+    } break;
+    case eBuildingType::blackMarbleWorkshop: {
+        b = e::make_shared<eBlackMarbleWorkshop>(board, cid);
+    } break;
     case eBuildingType::timberMill: {
         b = e::make_shared<eTimberMill>(board, cid);
     } break;

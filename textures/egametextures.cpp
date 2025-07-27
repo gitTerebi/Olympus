@@ -1206,6 +1206,13 @@ void eGameTextures::loadFoundry() {
     });
 }
 
+void eGameTextures::loadRefinery() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadRefinery();
+    });
+}
+
 void eGameTextures::loadArtisansGuild() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

@@ -21,8 +21,10 @@ eHeat eHeatGetters::appeal(const eBuildingType type) {
 
     case eBuildingType::timberMill: return {-5, 4};
     case eBuildingType::masonryShop: return {-6, 4};
+    case eBuildingType::blackMarbleWorkshop: return {-6, 4};
     case eBuildingType::mint:
     case eBuildingType::foundry: return {-10, 6};
+    case eBuildingType::refinery: return {-10, 6};
     case eBuildingType::sculptureStudio: return {-2, 2};
     case eBuildingType::olivePress: return {-4, 4};
     case eBuildingType::winery: return {4, 4};

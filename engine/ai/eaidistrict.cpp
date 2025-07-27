@@ -76,6 +76,8 @@
 #include "buildings/efoundry.h"
 #include "buildings/emasonryshop.h"
 #include "buildings/etimbermill.h"
+#include "buildings/erefinery.h"
+#include "buildings/eblackmarbleworkshop.h"
 
 #include "buildings/egranary.h"
 #include "buildings/ewarehouse.h"
@@ -635,6 +637,18 @@ bool gBuild(const eAIBuilding& b,
     case eBuildingType::masonryShop: {
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eMasonryShop>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::refinery: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eRefinery>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::blackMarbleWorkshop: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eBlackMarbleWorkshop>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;

@@ -424,6 +424,12 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::masonryShop:
         string = 49;
         break;
+    case eBuildingType::refinery:
+        string = 211;
+        break;
+    case eBuildingType::blackMarbleWorkshop:
+        string = 213;
+        break;
 
     case eBuildingType::winery:
         string = 53;
@@ -1342,10 +1348,50 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 10;
         }
     } break;
+    case eBuildingType::refinery: {
+        const auto r = static_cast<eRefinery*>(b);
+        const bool sd = r->shutDown();
+        group = 109;
+        if(sd) {
+            employmentInfoString = 4;
+        } else if(e == 0) {
+            employmentInfoString = 5;
+        } else if(e == maxE) {
+            employmentInfoString = 6;
+        } else if(e > 12) {
+            employmentInfoString = 7;
+        } else if(e > 9) {
+            employmentInfoString = 8;
+        } else if(e > 6) {
+            employmentInfoString = 9;
+        } else {
+            employmentInfoString = 10;
+        }
+    } break;
     case eBuildingType::masonryShop: {
         const auto ms = static_cast<eMasonryShop*>(b);
         const bool sd = ms->shutDown();
         group = 118;
+        if(sd) {
+            employmentInfoString = 4;
+        } else if(e == 0) {
+            employmentInfoString = 5;
+        } else if(e == maxE) {
+            employmentInfoString = 6;
+        } else if(e > 12) {
+            employmentInfoString = 7;
+        } else if(e > 9) {
+            employmentInfoString = 8;
+        } else if(e > 6) {
+            employmentInfoString = 9;
+        } else {
+            employmentInfoString = 10;
+        }
+    } break;
+    case eBuildingType::blackMarbleWorkshop: {
+        const auto ms = static_cast<eBlackMarbleWorkshop*>(b);
+        const bool sd = ms->shutDown();
+        group = 169;
         if(sd) {
             employmentInfoString = 4;
         } else if(e == 0) {

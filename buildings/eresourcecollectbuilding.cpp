@@ -95,6 +95,11 @@ std::vector<eOverlay> eResourceCollectBuilding::
         case eResourceType::bronze:
             coll = &texs.fWaitingBronze;
             break;
+        case eResourceType::orichalc:
+            x += 0.25;
+            y -= 0.50;
+            coll = &texs.fWaitingOrichalc;
+            break;
         case eResourceType::grapes:
             coll = &texs.fWaitingGrapes;
             break;

@@ -528,9 +528,12 @@ bool eGod::sTarget(const eGodType gt, const eBuildingType bt) {
                bt == eBuildingType::wineVendor;
     case eGodType::hades:
         return bt == eBuildingType::foundry ||
+               bt == eBuildingType::refinery ||
                bt == eBuildingType::mint;
     case eGodType::hephaestus:
         return bt == eBuildingType::foundry ||
+               bt == eBuildingType::refinery ||
+               bt == eBuildingType::blackMarbleWorkshop ||
                bt == eBuildingType::mint ||
                bt == eBuildingType::armory ||
                bt == eBuildingType::sculptureStudio;

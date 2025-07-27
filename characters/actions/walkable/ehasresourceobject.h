@@ -12,7 +12,8 @@ enum class eHasResourceObjectType {
     copper,
     orichalc,
     forest,
-    marble
+    marble,
+    blackMarble
 };
 
 class eHasResourceObject {
@@ -38,7 +39,12 @@ public:
             const int r = t->resource();
             if(r <= 0) return false;
             return t->terrain() == eTerrain::marble;
-        }
+        } break;
+        case eHasResourceObjectType::blackMarble: {
+            const int r = t->resource();
+            if(r <= 0) return false;
+            return t->terrain() == eTerrain::blackMarble;
+        } break;
         case eHasResourceObjectType::nonBusy:
             return false;
         }

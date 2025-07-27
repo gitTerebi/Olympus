@@ -34,17 +34,20 @@ enum class eResourceType {
     armor = 1 << 16,
     sculpture = 1 << 17,
 
-    allBasic = (1 << 18) - 1,
+    orichalc = 1 << 18,
+    blackMarble = 1 << 19,
+
+    allBasic = (1 << 20) - 1,
     warehouse = (allBasic & ~food) | wheat,
     tradePost = allBasic,
 
-    horse = 1 << 18,
-    chariot = 1 << 19,
+    horse = 1 << 20,
+    chariot = 1 << 21,
 
-    allTransportable = (1 << 20) - 1,
+    allTransportable = (1 << 22) - 1,
 
-    silver = 1 << 20,
-    drachmas = 1 << 21
+    silver = 1 << 22,
+    drachmas = 1 << 23
 };
 
 inline eResourceType operator|(const eResourceType a, const eResourceType b) {

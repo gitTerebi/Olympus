@@ -452,7 +452,9 @@ void eGameMenu::initialize(eGameBoard* const b,
     const std::vector<eSPR> r2spr = {eSPR{eBuildingMode::mint, eLanguage::zeusText(28, 48)},
                                      eSPR{eBuildingMode::foundry, eLanguage::zeusText(28, 50)},
                                      eSPR{eBuildingMode::timberMill, eLanguage::zeusText(28, 51)},
-                                     eSPR{eBuildingMode::masonryShop, eLanguage::zeusText(28, 49)}};
+                                     eSPR{eBuildingMode::masonryShop, eLanguage::zeusText(28, 49)},
+                                     eSPR{eBuildingMode::refinery, eLanguage::zeusText(28, 211)},
+                                     eSPR{eBuildingMode::blackMarbleWorkshop, eLanguage::zeusText(28, 218)}};
     const auto r2 = [this, cmx, cmy, r2spr]() {
         openBuildWidget(cmx, cmy, r2spr);
     };

@@ -62,6 +62,7 @@ eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
     case eResourceType::oliveOil:
     case eResourceType::fleece:
     case eResourceType::bronze:
+    case eResourceType::orichalc:
     case eResourceType::armor:
         ci = std::clamp(rCount/4, 0, 1);
         break;
@@ -152,6 +153,9 @@ eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
         case eResourceType::bronze:
             tex = texs.fBronzeCart[oi].getTexture(ci);
             break;
+        case eResourceType::orichalc:
+            tex = texs.fOrichalcCart[oi].getTexture(ci);
+            break;
         case eResourceType::armor:
             tex = texs.fArmorCart[oi].getTexture(ci);
             break;
@@ -225,6 +229,7 @@ void eCartTransporter::setResource(const eResourceType type,
        mType == eCartTransporterType::basic) {
         switch(mResourceType) {
         case eResourceType::marble:
+        case eResourceType::blackMarble:
         case eResourceType::wood:
         case eResourceType::sculpture:
             setType(eCartTransporterType::ox);

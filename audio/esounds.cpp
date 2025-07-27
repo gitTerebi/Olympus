@@ -110,7 +110,12 @@ bool eSounds::playSoundForBuilding(eBuilding* const b) {
         eSounds::playStorageSound();
         return true;
     case eBuildingType::foundry:
+    case eBuildingType::refinery:
         eSounds::playFoundrySound();
+        return true;
+    case eBuildingType::masonryShop:
+    case eBuildingType::blackMarbleWorkshop:
+        eSounds::playMarbleSound();
         return true;
     case eBuildingType::growersLodge:
     case eBuildingType::orangeTendersLodge:
@@ -368,6 +373,10 @@ void eSounds::playMaintananceSound() {
 
 void eSounds::playFoundrySound() {
     sInstance->mFoundry.playRandomSound();
+}
+
+void eSounds::playMarbleSound() {
+    sInstance->mMarble.playRandomSound();
 }
 
 void eSounds::playMintSound() {

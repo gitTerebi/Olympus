@@ -101,16 +101,20 @@ void eCollectResourceAction::setCollectedAction(const eTileActionType a) {
 }
 
 void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
+    eResourceType marbleType = eResourceType::marble;
     switch(mCollectedAction) {
     case eTileActionType::none:
         break;
+    case eTileActionType::blackMasonry:
+        marbleType = eResourceType::blackMarble;
+        [[fallthrough]];
     case eTileActionType::masonry: {
         const auto r = e::make_shared<eCartTransporter>(board());
         const auto cid = tile->cityId();
         r->setBothCityIds(cid);
         r->changeTile(tile);
         r->setBigTrailer(true);
-        r->setResource(eResourceType::marble, 1);
+        r->setResource(marbleType, 1);
 
         const auto finish = std::make_shared<eCRA_callCollectedActionFinish>(
                                 board(), mBuilding);
@@ -222,6 +226,8 @@ bool eCollectResourceAction::collect(eTile* const tile) {
         func = eTranformFunc::tree;
     } else if(terr == eTerrain::marble) {
         func = eTranformFunc::marble;
+    } else if(terr == eTerrain::blackMarble) {
+        func = eTranformFunc::blackMarble;
     }
     const auto a = e::make_shared<eCollectAction>(c, func);
     a->setFailAction(failAction);

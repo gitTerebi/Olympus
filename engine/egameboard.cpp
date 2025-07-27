@@ -557,6 +557,26 @@ void eGameBoard::updateMarbleTiles() {
     });
 }
 
+void eGameBoard::restockBlackMarbleTiles() {
+    for(const auto& mt : mMarbleTiles) {
+        mt.restock();
+    }
+}
+
+void eGameBoard::updateBlackMarbleTiles() {
+    mBlackMarbleTiles.clear();
+    iterateOverAllTiles([&](eTile* const t) {
+        const auto terr = t->terrain();
+        if(terr != eTerrain::blackMarble) return;
+        for(const auto& mt : mBlackMarbleTiles) {
+            const bool c = mt.contains(t);
+            if(c) return;
+        }
+        auto& mt = mBlackMarbleTiles.emplace_back();
+        mt.addWithNeighbours(t);
+    });
+}
+
 void eGameBoard::setFriendlyGods(const eCityId cid,
                                  const std::vector<eGodType>& gods) {
     for(const auto g : gods) {

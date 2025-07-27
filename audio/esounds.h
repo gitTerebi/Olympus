@@ -61,6 +61,7 @@ public:
     static void playMaintananceSound();
 
     static void playFoundrySound();
+    static void playMarbleSound();
     static void playMintSound();
     static void playTimberMillSound();
 

@@ -17,7 +17,8 @@ class eResourceCollectBuildingBase;
 
 enum class eTileActionType {
     none,
-    masonry
+    masonry,
+    blackMasonry
 };
 
 class eCollectResourceAction : public eActionWithComeback {

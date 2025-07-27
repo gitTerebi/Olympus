@@ -170,7 +170,10 @@ enum class eBuildingType {
     theseusHall,
 
     ruins,
-    placeholder
+    placeholder,
+
+    refinery,
+    blackMarbleWorkshop
 };
 
 struct eTextureSpace {

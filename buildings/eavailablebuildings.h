@@ -63,6 +63,8 @@ public:
     bool fFoundry = false;
     bool fTimberMill = false;
     bool fMasonryShop = false;
+    bool fBlackMarbleWorkshop = false;
+    bool fRefinery = false;
 
     bool fWinery = false;
     bool fOlivePress = false;

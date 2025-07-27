@@ -68,6 +68,10 @@ int costBase(const eBuildingType type) {
         return 60;
     case eBuildingType::masonryShop:
         return 75;
+    case eBuildingType::refinery:
+        return 65;
+    case eBuildingType::blackMarbleWorkshop:
+        return 75;
     case eBuildingType::mint:
         return 100;
     case eBuildingType::olivePress:
@@ -457,6 +461,10 @@ int damageRiskBase(const eBuildingType type) {
     case eBuildingType::foundry:
         return 10;
     case eBuildingType::masonryShop:
+        return 10;
+    case eBuildingType::refinery:
+        return 10;
+    case eBuildingType::blackMarbleWorkshop:
         return 10;
     case eBuildingType::mint:
         return 10;

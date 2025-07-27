@@ -20,6 +20,8 @@
 #include "buildings/epalacetile.h"
 #include "buildings/emint.h"
 #include "buildings/efoundry.h"
+#include "buildings/eblackmarbleworkshop.h"
+#include "buildings/erefinery.h"
 #include "buildings/etimbermill.h"
 #include "buildings/emasonryshop.h"
 #include "buildings/etaxoffice.h"

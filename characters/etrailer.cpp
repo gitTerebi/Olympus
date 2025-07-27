@@ -36,6 +36,17 @@ eTrailer::getTexture(const eTileSize size) const {
                 }
             }
         } break;
+        case eResourceType::blackMarble: {
+            if(mIsBig) {
+                coll = &charTexs.fBlackMarbleBigTrailer;
+            } else {
+                if(resCount >= 4) {
+                    coll = &charTexs.fBlackMarbleTrailer2;
+                } else {
+                    coll = &charTexs.fBlackMarbleTrailer1;
+                }
+            }
+        } break;
         case eResourceType::wood: {
             if(resCount >= 8) {
                 coll = &charTexs.fWoodTrailer2;

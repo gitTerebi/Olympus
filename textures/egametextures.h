@@ -210,6 +210,7 @@ public:
     static void loadMasonryShop();
     static void loadMint();
     static void loadFoundry();
+    static void loadRefinery();
     static void loadArtisansGuild();
     static void loadOlivePress();
     static void loadWinery();

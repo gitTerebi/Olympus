@@ -50,6 +50,7 @@ SOURCES += \
         buildings/eavailablebuildings.cpp \
         buildings/eavenue.cpp \
         buildings/ebibliotheke.cpp \
+        buildings/eblackmarbleworkshop.cpp \
         buildings/ebuilding.cpp \
         buildings/ebuildingrenderer.cpp \
         buildings/ebuildingwithresource.cpp \
@@ -108,6 +109,7 @@ SOURCES += \
         buildings/eplaceholder.cpp \
         buildings/epodium.cpp \
         buildings/eprocessingbuilding.cpp \
+        buildings/erefinery.cpp \
         buildings/eresourcebuilding.cpp \
         buildings/eresourcebuildingbase.cpp \
         buildings/eresourcecollectbuilding.cpp \
@@ -696,6 +698,7 @@ HEADERS += \
     buildings/eavailablebuildings.h \
     buildings/eavenue.h \
     buildings/ebibliotheke.h \
+    buildings/eblackmarbleworkshop.h \
     buildings/ebuilding.h \
     buildings/ebuildingrenderer.h \
     buildings/ebuildingwithresource.h \
@@ -754,6 +757,7 @@ HEADERS += \
     buildings/eplaceholder.h \
     buildings/epodium.h \
     buildings/eprocessingbuilding.h \
+    buildings/erefinery.h \
     buildings/eresourcebuilding.h \
     buildings/eresourcebuildingbase.h \
     buildings/eresourcecollectbuilding.h \

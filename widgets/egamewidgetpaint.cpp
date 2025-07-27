@@ -2788,6 +2788,14 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto b1 = e::make_shared<eMasonryShop>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
+        case eBuildingMode::refinery: {
+            const auto b1 = e::make_shared<eRefinery>(*mBoard, mViewedCityId);
+            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+        } break;
+        case eBuildingMode::blackMarbleWorkshop: {
+            const auto b1 = e::make_shared<eBlackMarbleWorkshop>(*mBoard, mViewedCityId);
+            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+        } break;
 
         case eBuildingMode::oliveTree: {
             const auto b1 = e::make_shared<eResourceBuilding>(

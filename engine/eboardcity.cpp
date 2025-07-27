@@ -373,6 +373,7 @@ void eBoardCity::updateResourceTiles() {
         const auto terr = tile->terrain();
         switch(terr) {
         case eTerrain::marble:
+        case eTerrain::blackMarble:
         case eTerrain::copper:
         case eTerrain::silver:
         case eTerrain::orichalc:
@@ -755,6 +756,8 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::masonryShop:
     case eBuildingType::foundry:
     case eBuildingType::armory:
+    case eBuildingType::refinery:
+    case eBuildingType::blackMarbleWorkshop:
     case eBuildingType::sculptureStudio:
     case eBuildingType::dairy:
     case eBuildingType::urchinQuay:

@@ -61,6 +61,10 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
         return eBuildingType::timberMill;
     case eBuildingMode::masonryShop:
         return eBuildingType::masonryShop;
+    case eBuildingMode::refinery:
+        return eBuildingType::refinery;
+    case eBuildingMode::blackMarbleWorkshop:
+        return eBuildingType::blackMarbleWorkshop;
 
     case eBuildingMode::winery:
         return eBuildingType::winery;

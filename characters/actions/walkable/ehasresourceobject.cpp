@@ -13,6 +13,8 @@ stdsptr<eHasResourceObject> eHasResourceObject::sCreate(
     case eHasResourceObjectType::copper:
     case eHasResourceObjectType::forest:
     case eHasResourceObjectType::marble:
+    case eHasResourceObjectType::orichalc:
+    case eHasResourceObjectType::blackMarble:
         return std::make_shared<eHasResourceObject>(type);
     }
 }

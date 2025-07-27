@@ -1010,6 +1010,14 @@ bool eGameWidget::buildMouseRelease() {
             mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eMasonryShop>(*mBoard, mViewedCityId); });
         } break;
+        case eBuildingMode::refinery: {
+            mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode,
+                  [this]() { return e::make_shared<eRefinery>(*mBoard, mViewedCityId); });
+        } break;
+        case eBuildingMode::blackMarbleWorkshop: {
+            mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode,
+                  [this]() { return e::make_shared<eBlackMarbleWorkshop>(*mBoard, mViewedCityId); });
+        } break;
 
 
         case eBuildingMode::oliveTree:
