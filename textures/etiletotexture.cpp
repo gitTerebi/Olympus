@@ -482,7 +482,7 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
     } break;
     case eTerrain::fertile: {
         const auto id = eFertileToDry::get(tile, dir);
-        const int scrubCount = textures.fFertileToScrubTerrainTexs.size();
+        const int scrubCount = 12;
         const int scrub = tile->scrubId(scrubCount) - 1;
         switch(id) {
         case eFertileToDryId::none: {
