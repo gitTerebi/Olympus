@@ -32,7 +32,7 @@ ZeusFile::ZeusFile(const std::string &filename)
 
 int ZeusFile::getNumMaps() {
 	// Check if file is open
-    if (!in.isReadable()) {
+    if(!in.isReadable()) {
 		return 0;
 	}
 	
@@ -56,7 +56,7 @@ int ZeusFile::getNumMaps() {
 }
 
 bool ZeusFile::loadBoard(eGameBoard& board) {
-	if (retrievedMaps >= numMaps) {
+    if(retrievedMaps >= numMaps) {
         return false;
 	}
 	
@@ -64,7 +64,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 	
     Grid<uint32_t> *terrain = NULL;
     Grid<uint8_t> *edges = NULL, *random = NULL, *fertile = NULL,
-                  *scrub = NULL, *marble = NULL;
+                  *scrub = NULL, *elevation = NULL;
 	
 	int mapsize;
 	bool is_poseidon = false;
@@ -93,15 +93,16 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     skipCompressed(); // 36 bytes
     skipBytes(144);
     scrub = readCompressedByteGrid();
+    elevation = readCompressedByteGrid();
 
 	// Extra sanity check
-	if (!ok || mapsize > MAX_MAPSIZE) {
-		if (terrain) delete terrain;
-		if (edges)   delete edges;
-		if (random)  delete random;
-		if (fertile) delete fertile;
-		if (scrub)   delete scrub;
-		if (marble)  delete marble;
+    if(!ok || mapsize > MAX_MAPSIZE) {
+        if(terrain) delete terrain;
+        if(edges) delete edges;
+        if(random) delete random;
+        if(fertile) delete fertile;
+        if(scrub) delete scrub;
+        if(elevation) delete elevation;
 		
         return false;
 	}
@@ -111,44 +112,45 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 	int border = (MAX_MAPSIZE - mapsize) / 2;
 	int max = border + mapsize;
 	int start, end;
-    uint8_t t_random, t_meadow, t_scrub, t_marble;
+    uint8_t t_random, t_meadow, t_scrub, t_elevation;
     uint32_t t_terrain;
 
     const int shift = mapsize/4;
     board.initialize(mapsize/2 - 1, mapsize);
-	
+
     for (int y = border; y < max; y++) {
         start = (y < half) ? (border + half - y - 1) : (border + y - half);
-        end   = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
+        end = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
         for (int x = start; x < end; x++) {
             t_terrain  = terrain->get(x, y);
 			t_random = random->get(x, y);
 			t_meadow = fertile->get(x, y);
 			t_scrub = scrub->get(x, y);
-			t_marble = (marble) ? marble->get(x, y) : 255;
+            t_elevation = elevation->get(x, y);
 
             const int dy = 1 + x + y - mapsize / 2;
             const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 :  1))/2 - 2 - shift;
             const auto tile = board.dtile(dx, dy);
             if(!tile) continue;
+            tile->setAltitude(t_elevation);
 
             if(t_terrain & 0x1) {
                 tile->setTerrain(eTerrain::forest);
             } else if(t_terrain & 0x2) {
-                if ((t_terrain & 0x300002) == 0x100002) { // copper ore
+                if((t_terrain & 0x300002) == 0x100002) { // copper ore
                     tile->setTerrain(eTerrain::copper);
-                } else if ((t_terrain & 0x300002) == 0x200002) { // silver ore
+                } else if((t_terrain & 0x300002) == 0x200002) { // silver ore
                     tile->setTerrain(eTerrain::silver);
                 } else { // normal (0x2) or cliff rock (0x300002)
                     // or black marble quarry (0x120000) ??
                     tile->setTerrain(eTerrain::flatStones);
                 }
-            } else if (t_terrain & 0x10000000 && (!(t_terrain & 0x8) || t_terrain & 0x40)) {
+            } else if(t_terrain & 0x10000000 && (!(t_terrain & 0x8) || t_terrain & 0x40)) {
                 // sanctuary or pyramid
-            } else if (t_terrain & 0x8) { // building, fill in for boulevard or avenue
-            } else if (t_terrain & 0x20) { // park
-            } else if (t_terrain & 0x200) { // elevation
-            } else if (t_terrain & 0x40) { // road
+            } else if(t_terrain & 0x8) { // building, fill in for boulevard or avenue
+            } else if(t_terrain & 0x20) { // park
+            } else if(t_terrain & 0x200) { // elevation
+            } else if(t_terrain & 0x40) { // road
                 const auto cid = tile->cityId();
                 const auto road = e::make_shared<eRoad>(board, cid);
                 tile->setUnderBuilding(road);
@@ -158,175 +160,48 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
                 int y;
                 eTileHelper::dtileIdToTileId(dx, dy, x, y);
                 road->setTileRect({x, y, 1, 1});
-            } else if (t_terrain & 0x4) { // water
-                if (t_terrain & 0x4000000) { // deep water
+            } else if(t_terrain & 0x4) { // water
+                if(t_terrain & 0x4000000) { // deep water
                 } else { // shallow water
                 }
                 tile->setTerrain(eTerrain::water);
-            } else if (t_terrain & 0x20000) { // marble quarry
-                if (t_terrain & 0x100000) { // black marble
-                    if (t_marble == 255) {
-                    } else if (t_marble == 0x64) {
-                    } else { // marble == 0
-                    }
+            } else if(t_terrain & 0x20000) { // marble quarry
+                if(t_terrain & 0x100000) { // black marble
                 } else { // normal marble
-                    if (t_marble == 255) {
-                    } else if (t_marble == 0x64) {
-                    } else {
-                    }
                     tile->setTerrain(eTerrain::marble);
                 }
-            } else if ((t_terrain & 0x300000) == 0x300000) { // orichalc
-            } else if (t_terrain & 0x4000) { // wall
-            } else if (t_terrain & 0x800) { // meadow
+            } else if((t_terrain & 0x300000) == 0x300000) { // orichalc
+            } else if(t_terrain & 0x4000) { // wall
+            } else if(t_terrain & 0x800) { // meadow
                 tile->setTerrain(eTerrain::fertile);
                 tile->setScrub(0.01*t_scrub);
-            } else if (t_terrain & 0x80) { // beach / beach edge / scrub
-                if (t_terrain & 0x10000) { // beach sand
+            } else if(t_terrain & 0x80) { // beach / beach edge / scrub
+                if(t_terrain & 0x10000) { // beach sand
                     tile->setTerrain(eTerrain::beach);
                 } else { // beach edge OR scrub
-                    if (t_scrub <= 0x18) {
-                    } else if (t_scrub <= 0x38) {
-                    } else if (t_scrub <= 0x48) {
-                    } else if (t_scrub <= 0x50) {
+                    if(t_scrub <= 0x18) {
+                    } else if(t_scrub <= 0x38) {
+                    } else if(t_scrub <= 0x48) {
+                    } else if(t_scrub <= 0x50) {
                     } else {
                     }
                     tile->setScrub(0.01*t_scrub);
                 }
-            } else if (t_terrain & 0x40000) { // marshland
-            } else if (t_terrain & 0x1000000) { // molten lava
+            } else if(t_terrain & 0x40000) { // marshland
+            } else if(t_terrain & 0x1000000) { // molten lava
             } else { // empty land
                 tile->setScrub(0.01*t_scrub);
             }
 		}
 	}
-	if (terrain) delete terrain;
-	if (random)  delete random;
-	if (fertile) delete fertile;
-	if (scrub)   delete scrub;
-	if (marble)  delete marble;
-
-	if (edges) delete edges;
+    if(terrain) delete terrain;
+    if(random) delete random;
+    if(fertile) delete fertile;
+    if(scrub) delete scrub;
+    if(elevation) delete elevation;
+    if(edges) delete edges;
     return true;
 }
-
-///**
-//* Figures out what the t_terrain colours for this tile are
-//*/
-//void ZeusFile::getTerrainColours(uint32_t t_terrain, uint8_t random,
-//        uint8_t meadow, uint8_t scrub, uint8_t marble, int *c1, int *c2) {
-//	if (t_terrain & 0x80000) {
-//		*c1 = *c2 = colours->colour(ZeusColours::MAP_BACKGROUND, 0);
-//		return;
-//	}
-	
-//	int num3 = random & 3;
-//	if (t_terrain & 0x1) { // tree/shrub
-//		*c1 = colours->colour(ZeusColours::MAP_TREE1, num3);
-//		*c2 = colours->colour(ZeusColours::MAP_TREE2, num3);
-//	} else if (t_terrain & 0x2) { // rock or ore-bearing rock
-//		if ((t_terrain & 0x300002) == 0x100002) { // copper ore
-//			*c1 = colours->colour(ZeusColours::MAP_COPPER1, num3);
-//			*c2 = colours->colour(ZeusColours::MAP_COPPER2, num3);
-//		} else if ((t_terrain & 0x300002) == 0x200002) { // silver ore
-//			*c1 = colours->colour(ZeusColours::MAP_SILVER1, num3);
-//			*c2 = colours->colour(ZeusColours::MAP_SILVER2, num3);
-//		} else { // normal (0x2) or cliff rock (0x300002)
-//			// or black marble quarry (0x120000) ??
-//			*c1 = colours->colour(ZeusColours::MAP_ROCK1, num3);
-//			*c2 = colours->colour(ZeusColours::MAP_ROCK2, num3);
-//		}
-//	} else if (t_terrain & 0x10000000 && (!(t_terrain & 0x8) || t_terrain & 0x40)) {
-//		// sanctuary or pyramid
-//		*c1 = colours->colour(ZeusColours::MAP_SANCTUARY, 2);
-//		*c2 = colours->colour(ZeusColours::MAP_SANCTUARY, 3);
-//	} else if (t_terrain & 0x8) { // building, fill in for boulevard or avenue
-//		*c1 = colours->colour(ZeusColours::MAP_AESTHETICS, 1);
-//		*c2 = colours->colour(ZeusColours::MAP_AESTHETICS, 0);
-//	} else if (t_terrain & 0x20) { // park
-//		*c1 = colours->colour(ZeusColours::MAP_AESTHETICS, 4);
-//		*c2 = colours->colour(ZeusColours::MAP_AESTHETICS, 5);
-//	} else if (t_terrain & 0x200) { // elevation
-//		*c1 = colours->colour(ZeusColours::MAP_ELEVATION1, num3);
-//		*c2 = colours->colour(ZeusColours::MAP_ELEVATION2, num3);
-//	} else if (t_terrain & 0x40) { // road
-//		*c1 = colours->colour(ZeusColours::MAP_ROAD, 0);
-//		*c2 = colours->colour(ZeusColours::MAP_ROAD, 1);
-//	} else if (t_terrain & 0x4) { // water
-//		if (t_terrain & 0x4000000) { // deep water
-//			*c1 = colours->colour(ZeusColours::MAP_DEEPWATER1, num3);
-//			*c2 = colours->colour(ZeusColours::MAP_DEEPWATER2, num3);
-//		} else { // shallow water
-//			*c1 = colours->colour(ZeusColours::MAP_WATER1, num3);
-//			*c2 = colours->colour(ZeusColours::MAP_WATER2, num3);
-//		}
-//	} else if (t_terrain & 0x20000) { // marble quarry
-//		if (t_terrain & 0x100000) { // black marble
-//			if (marble == 255) {
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, 2);
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, 2);
-//			} else if (marble == 0x64) {
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, 3);
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, 3);
-//			} else { // marble == 0
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, 5);
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, 5);
-//			}
-//		} else { // normal marble
-//			if (marble == 255) {
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, num3 & 1);
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, num3 & 1);
-//			} else if (marble == 0x64) {
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, 2 + (num3 & 1));
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, 2 + (num3 & 1));
-//			} else {
-//				*c1 = colours->colour(ZeusColours::MAP_QUARRY1, 4 + (num3 & 1));
-//				*c2 = colours->colour(ZeusColours::MAP_QUARRY2, 4 + (num3 & 1));
-//			}
-//		}
-//	} else if ((t_terrain & 0x300000) == 0x300000) { // orichalc
-//		*c1 = colours->colour(ZeusColours::MAP_ORICHALC1, num3);
-//		*c2 = colours->colour(ZeusColours::MAP_ORICHALC2, num3);
-//	} else if (t_terrain & 0x4000) { // wall
-//		*c1 = colours->colour(ZeusColours::MAP_WALL, 0);
-//		*c2 = colours->colour(ZeusColours::MAP_WALL, 1);
-//	} else if (t_terrain & 0x800) { // meadow
-//		meadow >>= 5;
-//		*c1 = colours->colour(ZeusColours::MAP_FERTILE1, meadow);
-//		*c2 = colours->colour(ZeusColours::MAP_FERTILE2, meadow);
-//	} else if (t_terrain & 0x80) { // beach / beach edge / scrub
-//		if (t_terrain & 0x10000) { // beach sand
-//			*c1 = colours->colour(ZeusColours::MAP_BEACH1, random & 7);
-//			*c2 = colours->colour(ZeusColours::MAP_BEACH2, random & 7);
-//		} else { // beach edge OR scrub
-//			if (scrub <= 0x18) {
-//				*c1 = colours->colour(ZeusColours::MAP_BEACH_EDGE1, random & 1);
-//				*c2 = colours->colour(ZeusColours::MAP_BEACH_EDGE2, random & 1);
-//			} else if (scrub <= 0x38) {
-//				*c1 = colours->colour(ZeusColours::MAP_BEACH_EDGE1, 1);
-//				*c2 = colours->colour(ZeusColours::MAP_BEACH_EDGE2, 1);
-//			} else if (scrub <= 0x48) {
-//				*c1 = colours->colour(ZeusColours::MAP_BEACH_EDGE1, (random & 1) + 1);
-//				*c2 = colours->colour(ZeusColours::MAP_BEACH_EDGE2, (random & 1) + 1);
-//			} else if (scrub <= 0x50) {
-//				*c1 = colours->colour(ZeusColours::MAP_BEACH_EDGE1, (random & 1) + 2);
-//				*c2 = colours->colour(ZeusColours::MAP_BEACH_EDGE2, (random & 1) + 2);
-//			} else {
-//				*c1 = colours->colour(ZeusColours::MAP_BEACH_EDGE1, (random & 1) + 3);
-//				*c2 = colours->colour(ZeusColours::MAP_BEACH_EDGE2, (random & 1) + 3);
-//			}
-//		}
-//	} else if (t_terrain & 0x40000) { // marshland
-//		*c1 = colours->colour(ZeusColours::MAP_MARSH, (random & 4) >> 2);
-//		*c2 = colours->colour(ZeusColours::MAP_MARSH, ((random & 4) >> 2) + 2);
-//	} else if (t_terrain & 0x1000000) { // molten lava
-//		*c1 = colours->colour(ZeusColours::MAP_LAVA, (random % 2));
-//		*c2 = colours->colour(ZeusColours::MAP_LAVA, (random % 2) + 2);
-//	} else { // empty land
-//		*c1 = colours->colour(ZeusColours::MAP_EMPTY1, (random >> 1) % 4);
-//		*c2 = colours->colour(ZeusColours::MAP_EMPTY2, (random >> 1) % 4);
-//	}
-//}
 
 /**
 * Gets the map size from the saved game, which is
