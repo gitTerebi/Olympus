@@ -171,6 +171,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
                     tile->setTerrain(eTerrain::marble);
                 }
             } else if((t_terrain & 0x300000) == 0x300000) { // orichalc
+                tile->setTerrain(eTerrain::orichalc);
             } else if(t_terrain & 0x4000) { // wall
             } else if(t_terrain & 0x800) { // meadow
                 tile->setTerrain(eTerrain::fertile);

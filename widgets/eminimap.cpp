@@ -150,6 +150,8 @@ SDL_Color gTerrainColor(eTile* const tile) {
         return {25, 105, 115, 255};
     case eTerrain::copper:
         return {206, 105, 8, 255};
+    case eTerrain::orichalc:
+        return {255, 0, 0, 255};
     case eTerrain::silver:
     case eTerrain::marble:
         return {125, 235, 255, 255};

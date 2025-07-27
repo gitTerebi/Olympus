@@ -10,6 +10,7 @@ enum class eHasResourceObjectType {
     urchin,
     silver,
     copper,
+    orichalc,
     forest,
     marble
 };
@@ -29,6 +30,8 @@ public:
             return t->terrain() == eTerrain::silver;
         case eHasResourceObjectType::copper:
             return t->terrain() == eTerrain::copper;
+        case eHasResourceObjectType::orichalc:
+            return t->terrain() == eTerrain::orichalc;
         case eHasResourceObjectType::forest:
             return t->terrain() == eTerrain::forest;
         case eHasResourceObjectType::marble: {

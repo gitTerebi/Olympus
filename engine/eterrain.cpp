@@ -12,6 +12,7 @@ double eTerrainTools::speed(const eTerrain t) {
         case eTerrain::flatStones: return 0;
         case eTerrain::copper: return 0;
         case eTerrain::silver: return 0;
+        case eTerrain::orichalc: return 0;
         case eTerrain::tallStones: return 0;
         case eTerrain::marble: return 1;
 

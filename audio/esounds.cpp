@@ -251,6 +251,7 @@ bool eSounds::playSoundForTerrain(const eTerrain terrain) {
         return true;
     case eTerrain::silver:
     case eTerrain::copper:
+    case eTerrain::orichalc:
     case eTerrain::flatStones:
     case eTerrain::tallStones:
         eSounds::playRockySound();

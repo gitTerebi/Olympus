@@ -108,6 +108,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w6->addAction("Silver Ore", [this]() {
         mMode = eTerrainEditMode::silver;
     });
+    w6->addAction("Orichalc", [this]() {
+        mMode = eTerrainEditMode::orichalc;
+    });
     w6->stackVertically(mSpacing);
     w6->fitContent();
 

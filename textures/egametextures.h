@@ -332,6 +332,7 @@ public:
     static void loadBull();
 
     static void loadPoseidonTrees();
+    static void loadOrichalc();
 
     static void loadEliteCitizen();
 

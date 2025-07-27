@@ -33,6 +33,7 @@ bool sDontDrawAppeal(const eTerrain terr) {
            terr == eTerrain::tallStones ||
            terr == eTerrain::copper ||
            terr == eTerrain::silver ||
+           terr == eTerrain::orichalc ||
            terr == eTerrain::water;
 }
 

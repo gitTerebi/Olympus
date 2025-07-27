@@ -1955,6 +1955,13 @@ void eGameTextures::loadPoseidonTrees() {
     });
 }
 
+void eGameTextures::loadOrichalc() {
+    loadTexture([](const int i) {
+        auto& c = sTerrainTextures[i];
+        c.loadOrichalc();
+    });
+}
+
 void eGameTextures::loadEliteCitizen() {
     loadTexture([](const int i) {
         auto& c = sCharacterTextures[i];

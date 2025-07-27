@@ -22,6 +22,7 @@ enum class eTerrainEditMode {
     flatStones = static_cast<int>(eTerrain::flatStones),
     bronze = static_cast<int>(eTerrain::copper),
     silver = static_cast<int>(eTerrain::silver),
+    orichalc = static_cast<int>(eTerrain::orichalc),
     tallStones = static_cast<int>(eTerrain::tallStones),
     marble = static_cast<int>(eTerrain::marble),
 

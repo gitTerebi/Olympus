@@ -375,6 +375,7 @@ void eBoardCity::updateResourceTiles() {
         case eTerrain::marble:
         case eTerrain::copper:
         case eTerrain::silver:
+        case eTerrain::orichalc:
         case eTerrain::forest:
         case eTerrain::choppedForest:
             mResourceTiles.push_back(tile);

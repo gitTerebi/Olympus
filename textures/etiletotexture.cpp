@@ -563,6 +563,13 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
                                 textures.fHugeBronzeTerrainTexs,
                                 drawDim, dir);
     } break;
+    case eTerrain::orichalc: {
+        eGameTextures::loadOrichalc();
+        return getStonesTexture(tile, textures.fOrichalcTerrainTexs,
+                                textures.fLargeOrichalcTerrainTexs,
+                                textures.fHugeOrichalcTerrainTexs,
+                                drawDim, dir);
+    } break;
     case eTerrain::silver: {
         return getStonesTexture(tile, textures.fSilverTerrainTexs,
                                 textures.fLargeSilverTerrainTexs,
