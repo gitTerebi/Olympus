@@ -197,6 +197,26 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     if(scrub) delete scrub;
     if(elevation) delete elevation;
     if(edges) delete edges;
+
+    // Fix for the Odyssey 1. colony
+    board.iterateOverAllTiles([&](eTile* const tile) {
+        const auto terr = tile->terrain();
+        if(terr != eTerrain::beach) return;
+        const auto tr = tile->topRight<eTile>();
+        const auto br = tile->bottomRight<eTile>();
+        const auto bl = tile->bottomLeft<eTile>();
+        const auto tl = tile->topLeft<eTile>();
+        const auto trt = tr ? tr->terrain() : terr;
+        const auto brt = br ? br->terrain() : terr;
+        const auto blt = bl ? bl->terrain() : terr;
+        const auto tlt = tl ? tl->terrain() : terr;
+        if(trt == eTerrain::dry && blt == eTerrain::dry) {
+            tile->setTerrain(eTerrain::dry);
+        } else if(tlt == eTerrain::dry && brt == eTerrain::dry) {
+            tile->setTerrain(eTerrain::dry);
+        }
+    });
+
     return true;
 }
 
