@@ -129,6 +129,17 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
             const auto tile = board.dtile(dx, dy);
             if(!tile) continue;
             tile->setAltitude(t_elevation);
+            const auto buildRoad = [&]() {
+                const auto cid = tile->cityId();
+                const auto road = e::make_shared<eRoad>(board, cid);
+                tile->setUnderBuilding(road);
+                road->addUnderBuilding(tile);
+                road->setCenterTile(tile);
+                int x;
+                int y;
+                eTileHelper::dtileIdToTileId(dx, dy, x, y);
+                road->setTileRect({x, y, 1, 1});
+            };
 
             if(t_terrain & 0x1) {
                 tile->setTerrain(eTerrain::forest);
@@ -146,16 +157,14 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
             } else if(t_terrain & 0x8) { // building, fill in for boulevard or avenue
             } else if(t_terrain & 0x20) { // park
             } else if(t_terrain & 0x200) { // elevation
+                if(t_terrain == 1600) {
+                    tile->setWalkableElev(true);
+                    buildRoad();
+                } else if(t_terrain == 1536) {
+                    tile->setWalkableElev(true);
+                }
             } else if(t_terrain & 0x40) { // road
-                const auto cid = tile->cityId();
-                const auto road = e::make_shared<eRoad>(board, cid);
-                tile->setUnderBuilding(road);
-                road->addUnderBuilding(tile);
-                road->setCenterTile(tile);
-                int x;
-                int y;
-                eTileHelper::dtileIdToTileId(dx, dy, x, y);
-                road->setTileRect({x, y, 1, 1});
+                buildRoad();
             } else if(t_terrain & 0x4) { // water
                 if(t_terrain & 0x4000000) { // deep water
                 } else { // shallow water
@@ -191,6 +200,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
             }
 		}
 	}
+
     if(terrain) delete terrain;
     if(random) delete random;
     if(fertile) delete fertile;
