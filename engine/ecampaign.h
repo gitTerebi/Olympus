@@ -26,7 +26,12 @@ struct eSetAside {
 };
 
 struct eCampaignGlossary {
+    bool fIsPak;
+
     std::string fFolderName;
+
+    std::string fPakPath;
+
     int fBitmap = 0;
     std::string fTitle;
     std::string fIntroduction;

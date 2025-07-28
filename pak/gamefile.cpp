@@ -170,13 +170,23 @@ Grid<uint32_t> *GameFile::readCompressedIntGrid() {
 		ok = false;
 		return NULL;
 	}
-	return g;
+    return g;
+}
+
+int64_t GameFile::pos() {
+    return in.pos();
+}
+
+void GameFile::seek(const int64_t pos) {
+    if (!ok) return;
+
+    in.seek(pos);
 }
 
 /**
 * Skips some bytes
 */
-void GameFile::skipBytes(int bytes) {
+void GameFile::skipBytes(const int bytes) {
 	if (!ok) return;
 	
     in.seek(in.pos() + bytes);

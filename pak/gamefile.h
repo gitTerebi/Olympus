@@ -26,7 +26,9 @@
 class GameFile {
 public:
     GameFile(const std::string &file);
-protected:
+
+    bool isOk() const { return ok; }
+
     Grid<uint8_t> *readByteGrid();
     Grid<uint16_t> *readShortGrid();
     Grid<uint32_t> *readIntGrid();
@@ -35,7 +37,10 @@ protected:
     Grid<uint16_t> *readCompressedShortGrid();
     Grid<uint32_t> *readCompressedIntGrid();
 
-    void skipBytes(int bytes);
+    int64_t pos();
+
+    void seek(const int64_t pos);
+    void skipBytes(const int bytes);
     void skipCompressed();
 
     uint8_t readByte();
@@ -49,11 +54,10 @@ protected:
 
     bool searchPattern(const uint8_t pattern[], int length);
 
+protected:
     QFile in;
     int MAX_MAPSIZE;
-    int MAX_WALKERS;
-    int MAX_BUILDINGS;
-    bool ok;
+    bool ok = true;
 };
 
 #endif /* GAMEFILE_H */

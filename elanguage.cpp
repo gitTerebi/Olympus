@@ -15,6 +15,10 @@ const std::string& eLanguage::zeusText(const int g, const int s) {
     return instance.fZeusText[g][s];
 }
 
+const eLanguage::eMM& eLanguage::zeusMM(const int id) {
+    return instance.fZeusMM[id];
+}
+
 bool eLanguage::load() {
     return instance.loadImpl();
 }
@@ -28,6 +32,7 @@ bool eLanguage::loadImpl() {
     mLoaded = true;
 
     eXmlParser::sParse(fZeusText, eGameDir::exeDir() + "../Zeus_Text.xml");
+    eXmlParser::sParse(fZeusMM, eGameDir::exeDir() + "../Zeus_MM.xml");
 
     const std::string path = eGameDir::exeDir() + "../Text/language.txt";
     return eLoadTextHelper::load(path, fText);

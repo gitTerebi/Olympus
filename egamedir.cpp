@@ -58,6 +58,10 @@ std::string eGameDir::adventuresDir() {
     return exeDir() + "../Adventures/";
 }
 
+std::string eGameDir::pakAdventuresDir() {
+    return eGameDir::path("Adventures/");
+}
+
 std::string eGameDir::saveDir() {
     return exeDir() + "../Save/";
 }

@@ -16,6 +16,7 @@ public:
     static std::string i60BinaryPath();
     static std::string exeDir();
     static std::string adventuresDir();
+    static std::string pakAdventuresDir();
     static std::string saveDir();
     static std::string texturesDir();
 private:

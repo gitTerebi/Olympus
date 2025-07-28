@@ -185,6 +185,7 @@ bool eCampaign::writeStrings(const std::string& path) const {
 
 bool eCampaign::sReadGlossary(const std::string& name,
                               eCampaignGlossary& glossary) {
+    glossary.fIsPak = false;
     const auto baseDir = eGameDir::adventuresDir();
     const auto aDir = baseDir + name + "/";
     const auto txtFile = aDir + name + ".txt";

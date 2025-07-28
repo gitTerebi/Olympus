@@ -16,10 +16,13 @@ public:
     static const std::string& text(const std::string& key);
 
     static const std::string& zeusText(const int g, const int s);
+    using eMM = std::pair<std::string, std::string>;
+    static const eMM& zeusMM(const int id);
 
     std::map<std::string, std::string> fText;
 
     std::map<int, std::map<int, std::string>> fZeusText;
+    std::map<int, eMM> fZeusMM;
 private:
     bool loadImpl();
     bool mLoaded = false;

@@ -27,6 +27,15 @@ void skipSpaces(const std::string& line, int& index) {
     }
 }
 
+void skipTo(const std::string& line, const char c, int& index) {
+    const int ls = line.size();
+    if(index >= ls) return;
+    while(line[index] != c) {
+        index++;
+        if(index >= ls) break;
+    }
+}
+
 bool readId(const std::string& line,
             const int oldIndex,
             int& newIndex,
@@ -101,6 +110,73 @@ bool eXmlParser::sParse(eTextStrings& strings,
                 if(index >= ls) continue;
                 if(!group) continue;
                 auto& str = (*group)[id];
+                while(index < ls && line[index] != '<') {
+                    str.push_back(line[index++]);
+                }
+                continue;
+            }
+        }
+    }
+    return true;
+}
+
+bool eXmlParser::sParse(eMMStrings& strings,
+                        const std::string& filePath) {
+    std::ifstream file(filePath);
+    if(!file.good()) {
+        printf("File missing %s\n", filePath.c_str());
+        return false;
+    }
+    eMM* group = nullptr;
+    std::string line;
+    while(std::getline(file, line)) {
+        if(line.empty()) continue;
+        const int ls = line.size();
+        int index = 0;
+        {
+            skipSpaces(line, index);
+            if(index >= ls) continue;
+        }
+        {
+            int newIndex;
+            const bool isMessage = match("<message id=", line, index, newIndex);
+            if(isMessage) {
+                index = newIndex;
+                if(index >= ls) continue;
+                int id;
+                const bool r = readId(line, index, newIndex, id);
+                if(!r) continue;
+                index = newIndex;
+                if(index >= ls) continue;
+                group = &strings[id];
+                continue;
+            }
+        }
+        {
+            int newIndex;
+            const bool isTitle = match("<title ", line, index, newIndex);
+            if(isTitle) {
+                index = newIndex;
+                if(index >= ls) continue;
+                skipTo(line, '>', newIndex);
+                index = newIndex + 1;
+                if(index >= ls) continue;
+                if(!group) continue;
+                auto& str = (*group).first;
+                while(index < ls && line[index] != '<') {
+                    str.push_back(line[index++]);
+                }
+                continue;
+            }
+        }
+        {
+            int newIndex;
+            const bool isContent = match("<content>", line, index, newIndex);
+            if(isContent) {
+                index = newIndex;
+                if(index >= ls) continue;
+                if(!group) continue;
+                auto& str = (*group).second;
                 while(index < ls && line[index] != '<') {
                     str.push_back(line[index++]);
                 }

@@ -15,25 +15,122 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "egamedir.h"
+#include "evectorhelpers.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
+
+#include "pak/gamefile.h"
+
+int pakBitmapIdConvert(const int id) {
+    if(id == 1) return 0;
+    else if(id == 2) return 6;
+    else if(id == 3) return 1;
+    else if(id == 4) return 11;
+    else if(id == 5) return 9;
+    else if(id == 6) return 10;
+    else if(id == 7) return 3;
+    else if(id == 8) return 0;
+    else if(id == 9) return 12;
+    else if(id == 10) return 13;
+    else if(id == 11) return 14;
+    else if(id == 12) return 15;
+    else if(id == 13) return 16;
+    else if(id == 14) return 4;
+    return 0;
+}
+
+bool readPakGlossary(const std::string& filename,
+                     eCampaignGlossary& glossary) {
+    glossary.fIsPak = true;
+    const auto name = eStringHelpers::pathToName(filename);
+    const bool test = name.find("Test") != name.npos;
+    if(test) return false;
+    const auto ext = name.substr(name.size() - 3);
+    if(ext != "pak") return false;
+    const auto txtFile = filename.substr(0, filename.size() - 3) + "txt";
+    glossary.fPakPath = filename;
+    std::ifstream file(txtFile);
+    GameFile in(filename);
+    in.seek(4);
+    const bool newVersion = in.readByte() == 0x1a;
+    in.seek(7788);
+    const bool atlantean = in.readByte();
+    uint8_t bitmapId;
+    if(newVersion) {
+        in.seek(836249);
+    } else {
+        in.seek(835185);
+    }
+    bitmapId = in.readByte();
+    glossary.fBitmap = pakBitmapIdConvert(bitmapId);
+    if(file.good()) {
+        std::map<std::string, std::string> map;
+        const bool r = eCampaign::sLoadStrings(txtFile, map);
+        if(!r) return false;
+        glossary.fTitle = map["Adventure_Title"];
+        glossary.fIntroduction = map["Adventure_Introduction"];
+        glossary.fComplete = map["Adventure_Complete"];
+    } else {
+        const std::vector<char> special = {'@', '[', '&', ']',
+                                           '{', '}', '^', '#'};
+        bool found = false;
+        for(const auto c : special) {
+            const auto pos = std::find(name.begin(), name.end(), c);
+            if(pos != name.end()) {
+                found = true;
+                break;
+            }
+        }
+        if(!found) return false;
+        in.seek(35648);
+        const auto briefId = in.readShort();
+
+        const auto brief = eLanguage::zeusMM(briefId);
+        glossary.fTitle = brief.first;
+        glossary.fIntroduction = brief.second;
+    }
+    return true;
+}
 
 void eChooseGameEditMenu::initialize(const bool editor) {
     eMainMenuBase::initialize();
 
     std::vector<eCampaignGlossary> glossaries;
-    const auto folder = eGameDir::adventuresDir();
-    std::filesystem::create_directories(folder);
-    for(const auto& entry : fs::directory_iterator(folder)) {
-        const bool dir = entry.is_directory();
-        if(!dir) continue;
-        const auto path = entry.path();
-        const std::string pathStr = path.u8string();
-        const auto name = eStringHelpers::pathToName(pathStr);
-        eCampaignGlossary glossary;
-        const bool r = eCampaign::sReadGlossary(name, glossary);
-        if(r) glossaries.push_back(glossary);
+    {
+        const auto folder = eGameDir::adventuresDir();
+        std::filesystem::create_directories(folder);
+        for(const auto& entry : fs::directory_iterator(folder)) {
+            const bool dir = entry.is_directory();
+            if(!dir) continue;
+            const auto path = entry.path();
+            const std::string pathStr = path.u8string();
+            const auto name = eStringHelpers::pathToName(pathStr);
+            eCampaignGlossary glossary;
+            const bool r = eCampaign::sReadGlossary(name, glossary);
+            if(r) glossaries.push_back(glossary);
+        }
+    }
+    {
+        std::function<void(std::string)> procesFolder;
+        procesFolder = [&](const std::string& folder) {
+            for(const auto& entry : fs::directory_iterator(folder)) {
+                const bool dir = entry.is_directory();
+                const auto path = entry.path();
+                if(dir) {
+                    procesFolder(path);
+                    continue;
+                }
+                const std::string pathStr = path.u8string();
+                const auto ext = pathStr.substr(pathStr.size() - 3);
+                if(ext != "pak") continue;
+                eCampaignGlossary glossary;
+                const bool r = readPakGlossary(pathStr, glossary);
+                if(r) glossaries.push_back(glossary);
+            }
+        };
+        const auto folder = eGameDir::pakAdventuresDir();
+        procesFolder(folder);
     }
 
     const auto iww = new eWidget(window());
@@ -216,21 +313,23 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     const auto proceedB = new eProceedButton(window());
     proceedB->setPressAction([this, editor]() {
-        const auto name = mSelected.fFolderName;
-        if(name.empty()) return;
+        if(!mSelected.fIsPak && mSelected.fFolderName.empty()) return;
+        if(mSelected.fIsPak && mSelected.fPakPath.empty()) return;
         const auto w = window();
 
         if(editor) {
             const auto e = new eEditorMainMenu(window());
             e->resize(w->width(), w->height());
             const auto c = std::make_shared<eCampaign>();
-            c->load(name);
+            if(mSelected.fIsPak) c->readPak(mSelected.fPakPath);
+            else c->load(mSelected.fFolderName);
             c->setEditorMode(true);
             e->initialize(c);
             w->setWidget(e);
         } else {
             const auto c = std::make_shared<eCampaign>();
-            c->load(name);
+            if(mSelected.fIsPak) c->readPak(mSelected.fPakPath);
+            else c->load(mSelected.fFolderName);
             w->showEpisodeIntroduction(c);
         }
     });
@@ -313,8 +412,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         bool first = true;
         for(const auto& g : glossaries) {
             const auto w = new eButtonBase(window());
-            w->setSmallFontSize();
-            w->setTinyPadding();
+            w->setTinyFontSize();
+            w->setNoPadding();
             w->setText(g.fTitle);
             w->fitContent();
             w->setMouseEnterAction([w]() {

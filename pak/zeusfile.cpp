@@ -25,8 +25,6 @@
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
 	MAX_MAPSIZE = 228;
-	MAX_WALKERS = 2000;
-	MAX_BUILDINGS = 4000;
 	retrievedMaps = numMaps = 0;
 }
 
@@ -59,8 +57,6 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     if(retrievedMaps >= numMaps) {
         return false;
 	}
-	
-	ok = true;
 	
     Grid<uint32_t> *terrain = NULL;
     Grid<uint8_t> *edges = NULL, *random = NULL, *fertile = NULL,
@@ -106,7 +102,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 		
         return false;
 	}
-	
+
 	// Transform it to something useful
 	int half = MAX_MAPSIZE / 2;
 	int border = (MAX_MAPSIZE - mapsize) / 2;
