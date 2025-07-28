@@ -124,7 +124,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 			t_scrub = scrub->get(x, y);
             t_elevation = elevation->get(x, y);
 
-            const int dy = 1 + x + y - mapsize / 2;
+            const int dy = 1 + x + y - mapsize / 2 - 2*border;
             const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 :  1))/2 - 2 - shift;
             const auto tile = board.dtile(dx, dy);
             if(!tile) continue;
