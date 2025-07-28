@@ -28,7 +28,7 @@ void eCampaign::initialize(const std::string& name) {
     for(int i = 0; i < 4; i++) {
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>();
-        board->initialize(100, 100);
+        board->initialize(1, 1);
         board->setWorldBoard(&mWorldBoard);
 
         const auto e = std::make_shared<eColonyEpisode>();
@@ -361,6 +361,21 @@ void eCampaign::readPak(const std::string& path) {
     mParentBoard = e::make_shared<eGameBoard>();
     mParentBoard->setWorldBoard(&mWorldBoard);
     file.loadBoard(*mParentBoard);
+
+    for(int i = 0; i < 4; i++) {
+        auto& board = mColonyBoards.emplace_back();
+        board = e::make_shared<eGameBoard>();
+        board->setWorldBoard(&mWorldBoard);
+        const bool r = file.loadBoard(*board);
+        if(!r) board->initialize(1, 1);
+
+        const auto e = std::make_shared<eColonyEpisode>();
+        e->fBoard = board.get();
+        e->fWorldBoard = &mWorldBoard;
+        mColonyEpisodes.push_back(e);
+    }
+
+    addParentCityEpisode();
 }
 
 bool eCampaign::load(const std::string& name) {
