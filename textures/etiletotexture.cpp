@@ -219,7 +219,11 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
         const auto& delev = textures.fDoubleElevation;
         const auto& delev2 = textures.fDoubleElevation2;
         const bool w = tile->walkableElev();
-        if(tra > a && tla > a) {
+        if(ta - a == 2 && a == bra && ta - tra == 1) {
+            return delev.getTexture(16);
+        } else if(ta - a == 2 && a == bla && ta - tla == 1) {
+            return delev.getTexture(15);
+        } else if(tra > a && tla > a) {
             if(tra - a == 2 || tla - a == 2) {
                 return delev.getTexture(8);
             } else {
