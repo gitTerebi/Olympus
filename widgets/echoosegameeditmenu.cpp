@@ -54,8 +54,6 @@ bool readPakGlossary(const std::string& filename,
     GameFile in(filename);
     in.seek(4);
     const bool newVersion = in.readUByte() == 0x1a;
-    in.seek(7788);
-    const bool atlantean = in.readUByte();
     uint8_t bitmapId;
     if(newVersion) {
         in.seek(836249);

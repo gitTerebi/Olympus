@@ -385,17 +385,263 @@ eWorldMap pakMapIdToMap(const uint8_t mapId) {
     return eWorldMap::greece1;
 }
 
+eResourceType pakResourceByteToType(const uint8_t byte) {
+    if(byte == 0) {
+        return eResourceType::none;
+    } else if(byte == 1) {
+        return eResourceType::urchin;
+    } else if(byte == 2) {
+        return eResourceType::fish;
+    } else if(byte == 3) {
+        return eResourceType::meat;
+    } else if(byte == 4) {
+        return eResourceType::cheese;
+    } else if(byte == 5) {
+        return eResourceType::carrots;
+    } else if(byte == 6) {
+        return eResourceType::onions;
+    } else if(byte == 7) {
+        return eResourceType::wheat;
+    } else if(byte == 8) {
+        return eResourceType::oranges;
+    } else if(byte == 9) {
+        return eResourceType::wood;
+    } else if(byte == 10) {
+        return eResourceType::bronze;
+    } else if(byte == 11) {
+        return eResourceType::marble;
+    } else if(byte == 12) {
+        return eResourceType::grapes;
+    } else if(byte == 13) {
+        return eResourceType::olives;
+    } else if(byte == 14) {
+        return eResourceType::fleece;
+    } else if(byte == 15) {
+        return eResourceType::blackMarble;
+    } else if(byte == 16) {
+        return eResourceType::orichalc;
+    }
+
+    printf("Invalid resource byte %i\n", byte);
+    return eResourceType::none;
+}
+
 void eCampaign::readPak(const std::string& path) {
     ZeusFile file(path);
+    mParentBoard = e::make_shared<eGameBoard>();
+    mParentBoard->setWorldBoard(&mWorldBoard);
+
+    file.getNumMaps();
+    file.loadBoard(*mParentBoard);
 
     file.seek(8);
     const uint8_t nParentEps = file.readUByte();
+    file.seek(7788);
+    const bool atlantean = file.readUByte();
+
+    {
+        const auto c = std::make_shared<eWorldCity>(
+                           eCityType::parentCity,
+                           eCityId::city0,
+                           "Athens", 0.5, 0.5);
+        mWorldBoard.addCity(c);
+        mWorldBoard.moveCityToPlayer(eCityId::city0, ePlayerId::player0);
+        mWorldBoard.setPlayerTeam(ePlayerId::player0, eTeamId::team0);
+    }
+    {
+        const auto c = mParentBoard->addCityToBoard(eCityId::city0);
+        c->setAtlantean(atlantean);
+    }
 
     for(int i = 0; i < nParentEps; i++) {
+        const auto ep = addParentCityEpisode();
         file.seek(104 + i*356);
         const auto nextByte = file.readUByte();
         const bool nextColony = nextByte == 1;
-        const auto ep = addParentCityEpisode();
+        /*
+        8174 // mint
+        8176 // hunting lodge
+        8178 // olive press
+        8180 // grand agora
+        8184 // corral
+        8186 // granary
+        8188 // common agora
+        8190 // storehouse
+        8192 // trade buildings
+        8194 // museum
+        8196 // laboratory
+        8198 // bibliotheke
+        8200 // winery
+        8202 // sculpture studio
+        8204 // observatory
+        8206 // university
+        8208 // fountain
+        8210 // horse ranch
+        8212 // inventors workshop
+        8214 // maintanance
+        8216 // hospital
+        8218 // tax office
+        8220 // watchpost
+        8222 // palace
+        8224 // hero's hall
+        8226 // road block
+        8228 // bridge
+        8230 // column
+        8232 // park
+        8234 // avenue
+        8236 // boulevards
+        8238 // walls
+        8240 // towers
+        8242 // gatehouse
+        8244 // bench
+        8246 // gazebo
+        8248 // flower garden
+        8250 // hedgemaze
+        8252 // fish pond
+        8254 // armory
+        8256 // frigate wharf
+        8258 // elite housing
+        8260 // hippodrome
+        8262 // chariot factory
+        8264 // tall obelisk
+        8266 // sundial
+        8268 // topiary
+        8270 // spring
+        8272 // stone circle
+        8274 // short obelisk
+        8276 // water park
+        8278 // dolphin sculpture
+        8280 // orrery
+        8282 // shell garden
+        8284 // baths
+        8286 // bird bath
+        */
+        file.seek(8174 + i*2032); // mint
+        auto& av = ep->fAvailableBuildings[eCityId::city0];
+        for(const auto type : {eBuildingType::mint,
+                               eBuildingType::huntingLodge,
+                               eBuildingType::olivePress,
+                               eBuildingType::grandAgora,
+                               eBuildingType::corral,
+                               eBuildingType::granary,
+                               eBuildingType::commonAgora,
+                               eBuildingType::warehouse,
+                               eBuildingType::tradePost, // trade buildings
+                               atlantean ? eBuildingType::museum : eBuildingType::stadium,
+                               atlantean ? eBuildingType::laboratory : eBuildingType::theater,
+                               atlantean ? eBuildingType::bibliotheke : eBuildingType::gymnasium,
+                               eBuildingType::winery,
+                               eBuildingType::sculptureStudio,
+                               atlantean ? eBuildingType::observatory : eBuildingType::podium,
+                               atlantean ? eBuildingType::university : eBuildingType::college,
+                               eBuildingType::fountain,
+                               eBuildingType::horseRanch,
+                               atlantean ? eBuildingType::inventorsWorkshop : eBuildingType::dramaSchool,
+                               eBuildingType::maintenanceOffice,
+                               eBuildingType::hospital,
+                               eBuildingType::taxOffice,
+                               eBuildingType::watchPost,
+                               eBuildingType::palace,
+                               eBuildingType::none, // hero's hall
+                               eBuildingType::none, // road block
+                               eBuildingType::bridge,
+                               eBuildingType::none, // columns
+                               eBuildingType::park,
+                               eBuildingType::avenue,
+                               eBuildingType::none, // boulevards
+                               eBuildingType::wall,
+                               eBuildingType::tower,
+                               eBuildingType::gatehouse,
+                               eBuildingType::bench,
+                               eBuildingType::gazebo,
+                               eBuildingType::flowerGarden,
+                               eBuildingType::hedgeMaze,
+                               eBuildingType::fishPond,
+                               eBuildingType::armory,
+                               eBuildingType::triremeWharf,
+                               eBuildingType::eliteHousing,
+                               eBuildingType::none, // hippodrome
+                               eBuildingType::chariotFactory,
+                               eBuildingType::tallObelisk,
+                               eBuildingType::sundial,
+                               eBuildingType::topiary,
+                               eBuildingType::spring,
+                               eBuildingType::stoneCircle,
+                               eBuildingType::shortObelisk,
+                               eBuildingType::waterPark,
+                               eBuildingType::dolphinSculpture,
+                               eBuildingType::orrery,
+                               eBuildingType::shellGarden,
+                               eBuildingType::baths,
+                               eBuildingType::birdBath}) {
+            const auto allowedByte = file.readUByte();
+            file.skipBytes(1);
+            if(type == eBuildingType::grandAgora) file.skipBytes(2);
+            const bool allowed = allowedByte == 1;
+            if(allowed) av.allow(type);
+            else av.disallow(type);
+        }
+        file.seek(9100 + i*2032);
+        for(int j = 0; j < 12; j++) {
+            const auto resourceByte = file.readUByte();
+            const auto type = pakResourceByteToType(resourceByte);
+            switch(type) {
+            case eResourceType::urchin:
+                av.allow(eBuildingType::urchinQuay);
+                break;
+            case eResourceType::fish:
+                av.allow(eBuildingType::fishery);
+                break;
+            case eResourceType::meat:
+                av.allow(eBuildingType::none);
+                break;
+            case eResourceType::cheese:
+                av.allow(eBuildingType::dairy);
+                av.allow(eBuildingType::goat);
+                break;
+            case eResourceType::carrots:
+                av.allow(eBuildingType::carrotsFarm);
+                break;
+            case eResourceType::onions:
+                av.allow(eBuildingType::onionsFarm);
+                break;
+            case eResourceType::wheat:
+                av.allow(eBuildingType::wheatFarm);
+                break;
+            case eResourceType::oranges:
+                av.allow(eBuildingType::orangeTendersLodge);
+                av.allow(eBuildingType::orangeTree);
+                break;
+            case eResourceType::wood:
+                av.allow(eBuildingType::timberMill);
+                break;
+            case eResourceType::bronze:
+                av.allow(eBuildingType::foundry);
+                break;
+            case eResourceType::marble:
+                av.allow(eBuildingType::masonryShop);
+                break;
+            case eResourceType::grapes:
+                av.allow(eBuildingType::growersLodge);
+                av.allow(eBuildingType::vine);
+                break;
+            case eResourceType::olives:
+                av.allow(eBuildingType::growersLodge);
+                av.allow(eBuildingType::oliveTree);
+                break;
+            case eResourceType::fleece:
+                av.allow(eBuildingType::cardingShed);
+                break;
+            case eResourceType::blackMarble:
+                av.allow(eBuildingType::blackMarbleWorkshop);
+                break;
+            case eResourceType::orichalc:
+                av.allow(eBuildingType::refinery);
+                break;
+            default:
+                break;
+            }
+        }
         ep->fNextEpisode = nextColony ? eEpisodeType::colony :
                                         eEpisodeType::parentCity;
     }
@@ -408,12 +654,6 @@ void eCampaign::readPak(const std::string& path) {
     setInitialFunds(ePlayerId::player0, initialFunds);
 
     setDate(eDate{1, eMonth::january, startDate});
-
-    file.seek(0);
-    file.getNumMaps();
-    mParentBoard = e::make_shared<eGameBoard>();
-    mParentBoard->setWorldBoard(&mWorldBoard);
-    file.loadBoard(*mParentBoard);
 
     for(int i = 0; i < 4; i++) {
         auto& board = mColonyBoards.emplace_back();
