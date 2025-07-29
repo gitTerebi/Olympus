@@ -20,7 +20,7 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-#include "pak/gamefile.h"
+#include "pak/zeusfile.h"
 
 int pakBitmapIdConvert(const int id) {
     if(id == 1) return 0;
@@ -51,9 +51,9 @@ bool readPakGlossary(const std::string& filename,
     const auto txtFile = filename.substr(0, filename.size() - 3) + "txt";
     glossary.fPakPath = filename;
     std::ifstream file(txtFile);
-    GameFile in(filename);
-    in.seek(4);
-    const bool newVersion = in.readUByte() == 0x1a;
+    ZeusFile in(filename);
+    in.readVersion();
+    const bool newVersion = in.isNewVersion();
     uint8_t bitmapId;
     if(newVersion) {
         in.seek(836249);

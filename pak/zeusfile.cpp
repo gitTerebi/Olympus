@@ -25,7 +25,16 @@
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
 	MAX_MAPSIZE = 228;
-	retrievedMaps = numMaps = 0;
+    retrievedMaps = numMaps = 0;
+}
+
+void ZeusFile::readVersion() {
+    in.seek(4);
+    mNewVersion = readUByte() == 0x1a;
+}
+
+bool ZeusFile::isNewVersion() const {
+    return mNewVersion;
 }
 
 int ZeusFile::getNumMaps() {

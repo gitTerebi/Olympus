@@ -30,6 +30,10 @@ class ZeusFile : public GameFile {
 		
         ZeusFile(const std::string& filename);
 		
+        void readVersion();
+
+        bool isNewVersion() const;
+
 		/**
 		* Returns the number of maps in this file. Call this function
 		* before attempting to get any images from this map using
@@ -46,6 +50,7 @@ class ZeusFile : public GameFile {
 	private:
 		int getMapsize();
 
+        bool mNewVersion;
 		int filetype;
 		int numMaps;
 		int retrievedMaps;
