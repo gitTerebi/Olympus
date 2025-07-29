@@ -43,9 +43,11 @@ public:
     void skipBytes(const int bytes);
     void skipCompressed();
 
-    uint8_t readByte();
-    uint16_t readShort();
-    uint32_t readInt();
+    uint8_t readUByte();
+    uint16_t readUShort();
+    uint32_t readUInt();
+
+    int16_t readShort();
 
     void getDiamondBitmapCoordinates(int x, int y, int mapsize,
         int *x_out, int *y_out);

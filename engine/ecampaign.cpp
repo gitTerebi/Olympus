@@ -355,8 +355,56 @@ void eCampaign::write(eWriteStream& dst) const {
     }
 }
 
+eWorldMap pakMapIdToMap(const uint8_t mapId) {
+    if(mapId == 1) {
+        return eWorldMap::greece1;
+    } else if(mapId == 2) {
+        return eWorldMap::greece2;
+    } else if(mapId == 3) {
+        return eWorldMap::greece3;
+    } else if(mapId == 4) {
+        return eWorldMap::greece4;
+    } else if(mapId == 5) {
+        return eWorldMap::greece5;
+    } else if(mapId == 6) {
+        return eWorldMap::greece6;
+    } else if(mapId == 7) {
+        return eWorldMap::greece7;
+    } else if(mapId == 8 || mapId == 9 || mapId == 10) {
+        return eWorldMap::greece8;
+    } else if(mapId == 11) {
+        return eWorldMap::poseidon1;
+    } else if(mapId == 12) {
+        return eWorldMap::poseidon2;
+    } else if(mapId == 13) {
+        return eWorldMap::poseidon3;
+    } else if(mapId == 14) {
+        return eWorldMap::poseidon4;
+    }
+    printf("Unknown pak map id %i\n", mapId);
+    return eWorldMap::greece1;
+}
+
 void eCampaign::readPak(const std::string& path) {
     ZeusFile file(path);
+
+    file.seek(8);
+    const uint8_t nParentEps = file.readUByte();
+    file.seek(7140);
+    const int16_t startDate = file.readShort();
+    file.seek(7172);
+    const uint16_t initialFunds = file.readUShort();
+    file.seek(394705);
+    const uint8_t mapId = file.readUByte();
+    file.seek(0);
+
+    for(int i = 0; i < nParentEps; i++) {
+        addParentCityEpisode();
+    }
+
+    setDate(eDate{1, eMonth::january, startDate});
+    mWorldBoard.setMap(pakMapIdToMap(mapId));
+
     const int n = file.getNumMaps();
     mParentBoard = e::make_shared<eGameBoard>();
     mParentBoard->setWorldBoard(&mWorldBoard);
@@ -374,8 +422,6 @@ void eCampaign::readPak(const std::string& path) {
         e->fWorldBoard = &mWorldBoard;
         mColonyEpisodes.push_back(e);
     }
-
-    addParentCityEpisode();
 }
 
 bool eCampaign::load(const std::string& name) {

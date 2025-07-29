@@ -45,7 +45,7 @@ bool readPakGlossary(const std::string& filename,
     glossary.fIsPak = true;
     const auto name = eStringHelpers::pathToName(filename);
     const bool test = name.find("Test") != name.npos;
-    if(test) return false;
+    if(test && name != "Test6.pak") return false;
     const auto ext = name.substr(name.size() - 3);
     if(ext != "pak") return false;
     const auto txtFile = filename.substr(0, filename.size() - 3) + "txt";
@@ -53,16 +53,16 @@ bool readPakGlossary(const std::string& filename,
     std::ifstream file(txtFile);
     GameFile in(filename);
     in.seek(4);
-    const bool newVersion = in.readByte() == 0x1a;
+    const bool newVersion = in.readUByte() == 0x1a;
     in.seek(7788);
-    const bool atlantean = in.readByte();
+    const bool atlantean = in.readUByte();
     uint8_t bitmapId;
     if(newVersion) {
         in.seek(836249);
     } else {
         in.seek(835185);
     }
-    bitmapId = in.readByte();
+    bitmapId = in.readUByte();
     glossary.fBitmap = pakBitmapIdConvert(bitmapId);
     if(file.good()) {
         std::map<std::string, std::string> map;
@@ -84,7 +84,7 @@ bool readPakGlossary(const std::string& filename,
         }
         if(!found) return false;
         in.seek(35648);
-        const auto briefId = in.readShort();
+        const auto briefId = in.readUShort();
 
         const auto brief = eLanguage::zeusMM(briefId);
         glossary.fTitle = brief.first;

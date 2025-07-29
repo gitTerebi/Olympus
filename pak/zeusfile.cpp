@@ -75,11 +75,11 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     edges = readCompressedByteGrid();
     terrain = readCompressedIntGrid();
     skipCompressed(); // byte grid: 00 or 20
-    readInt(); // indicating start of random block (or perhaps "uncompressed" indicator?)
+    readUInt(); // indicating start of random block (or perhaps "uncompressed" indicator?)
     random = readByteGrid();
     skipCompressed(); // byte grid: all zeroes
     skipBytes(60);
-    mapsize = readInt(); // Poseidon or not doesn't matter here
+    mapsize = readUInt(); // Poseidon or not doesn't matter here
     skipBytes(1984);
     fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
@@ -257,7 +257,7 @@ int ZeusFile::getMapsize() {
 	// 704 bytes to skip
 	skipBytes(704);
 	// Next int = map size
-	int mapsize = readInt();
+	int mapsize = readUInt();
 	
 	return mapsize;
 }

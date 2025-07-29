@@ -36,7 +36,7 @@ Grid<uint8_t> *GameFile::readByteGrid() {
 	
 	for (int y = 0; y < MAX_MAPSIZE; y++) {
 		for (int x = 0; x < MAX_MAPSIZE; x++) {
-			g->set(x, y, readByte());
+            g->set(x, y, readUByte());
 		}
 	}
 	return g;
@@ -56,7 +56,7 @@ Grid<uint16_t> *GameFile::readShortGrid() {
 	
 	for (int y = 0; y < MAX_MAPSIZE; y++) {
 		for (int x = 0; x < MAX_MAPSIZE; x++) {
-			g->set(x, y, readShort());
+            g->set(x, y, readUShort());
 		}
 	}
 	return g;
@@ -76,7 +76,7 @@ Grid<uint32_t> *GameFile::readIntGrid() {
 	
 	for (int y = 0; y < MAX_MAPSIZE; y++) {
 		for (int x = 0; x < MAX_MAPSIZE; x++) {
-			g->set(x, y, readInt());
+            g->set(x, y, readUInt());
 		}
 	}
 	return g;
@@ -93,7 +93,7 @@ Grid<uint8_t> *GameFile::readCompressedByteGrid() {
 		return NULL;
 	}
 	
-	int length = readInt();
+    int length = readUInt();
     Grid<uint8_t> *g = new Grid<uint8_t>(MAX_MAPSIZE, MAX_MAPSIZE);
 	
     PKWareInputStream pk(&in, length, false);
@@ -122,7 +122,7 @@ Grid<uint16_t> *GameFile::readCompressedShortGrid() {
 		return NULL;
 	}
 	
-	int length = readInt();
+    int length = readUInt();
     Grid<uint16_t> *g = new Grid<uint16_t>(MAX_MAPSIZE, MAX_MAPSIZE);
 	
     PKWareInputStream pk(&in, length, false);
@@ -153,7 +153,7 @@ Grid<uint32_t> *GameFile::readCompressedIntGrid() {
 		return NULL;
 	}
 	
-	int length = readInt();
+    int length = readUInt();
     Grid<uint32_t> *g = new Grid<uint32_t>(MAX_MAPSIZE, MAX_MAPSIZE);
 	
     PKWareInputStream pk(&in, length, false);
@@ -198,14 +198,14 @@ void GameFile::skipBytes(const int bytes) {
 void GameFile::skipCompressed() {
 	if (!ok) return;
 	
-	int skip = readInt();
+    int skip = readUInt();
     in.seek(in.pos() + skip);
 }
 
 /**
 * Reads a byte from the stream
 */
-uint8_t GameFile::readByte() {
+uint8_t GameFile::readUByte() {
 	if (!ok) return 0;
 	
 	char data;
@@ -219,7 +219,7 @@ uint8_t GameFile::readByte() {
 /**
 * Reads a short from the stream
 */
-uint16_t GameFile::readShort() {
+uint16_t GameFile::readUShort() {
 	if (!ok) return 0;
 	
 	char data[2];
@@ -233,7 +233,7 @@ uint16_t GameFile::readShort() {
 /**
 * Reads an integer from the stream
 */
-uint32_t GameFile::readInt() {
+uint32_t GameFile::readUInt() {
 	if (!ok) return 0;
 	
 	char data[4];
@@ -247,7 +247,18 @@ uint32_t GameFile::readInt() {
 	for (int i = 0; i < 4; i++) {
         number |= ((uint8_t)data[i] << (i*8));
 	}
-	return number;
+    return number;
+}
+
+int16_t GameFile::readShort() {
+    if (!ok) return 0;
+
+    char data[2];
+    if (in.read(data, 2) != 2) {
+        ok = false;
+        return 0;
+    }
+    return (int16_t)((int8_t)data[0] | (((int8_t)data[1]) << 8));
 }
 
 /**
