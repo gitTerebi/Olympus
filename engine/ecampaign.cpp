@@ -390,22 +390,27 @@ void eCampaign::readPak(const std::string& path) {
 
     file.seek(8);
     const uint8_t nParentEps = file.readUByte();
+
+    for(int i = 0; i < nParentEps; i++) {
+        file.seek(104 + i*356);
+        const auto nextByte = file.readUByte();
+        const bool nextColony = nextByte == 1;
+        const auto ep = addParentCityEpisode();
+        ep->fNextEpisode = nextColony ? eEpisodeType::colony :
+                                        eEpisodeType::parentCity;
+    }
+
     file.seek(7140);
     const int16_t startDate = file.readShort();
     file.seek(7172);
     const uint16_t initialFunds = file.readUShort();
-    file.seek(394705);
-    const uint8_t mapId = file.readUByte();
-    file.seek(0);
 
-    for(int i = 0; i < nParentEps; i++) {
-        addParentCityEpisode();
-    }
+    setInitialFunds(ePlayerId::player0, initialFunds);
 
     setDate(eDate{1, eMonth::january, startDate});
-    mWorldBoard.setMap(pakMapIdToMap(mapId));
 
-    const int n = file.getNumMaps();
+    file.seek(0);
+    file.getNumMaps();
     mParentBoard = e::make_shared<eGameBoard>();
     mParentBoard->setWorldBoard(&mWorldBoard);
     file.loadBoard(*mParentBoard);
