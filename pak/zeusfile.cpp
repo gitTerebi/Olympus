@@ -208,10 +208,11 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     if(elevation) delete elevation;
     if(edges) delete edges;
 
+    std::vector<eTile*> tiles;
     // Fix for the Odyssey 1. colony
     board.iterateOverAllTiles([&](eTile* const tile) {
         const auto terr = tile->terrain();
-        if(terr != eTerrain::beach) return;
+        if(terr != eTerrain::dry) return;
         const auto tr = tile->topRight<eTile>();
         const auto br = tile->bottomRight<eTile>();
         const auto bl = tile->bottomLeft<eTile>();
@@ -220,12 +221,18 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto brt = br ? br->terrain() : terr;
         const auto blt = bl ? bl->terrain() : terr;
         const auto tlt = tl ? tl->terrain() : terr;
-        if(trt == eTerrain::dry && blt == eTerrain::dry) {
-            tile->setTerrain(eTerrain::dry);
-        } else if(tlt == eTerrain::dry && brt == eTerrain::dry) {
-            tile->setTerrain(eTerrain::dry);
+        int n = 0;
+        if(trt == eTerrain::beach) n++;
+        if(brt == eTerrain::beach) n++;
+        if(blt == eTerrain::beach) n++;
+        if(tlt == eTerrain::beach) n++;
+        if(n > 1) {
+            tiles.push_back(tile);
         }
     });
+    for(const auto tile : tiles) {
+        tile->setTerrain(eTerrain::beach);
+    }
 
     return true;
 }
