@@ -24,6 +24,7 @@
 
 #include "spawners/eentrypoint.h"
 #include "spawners/eexitpoint.h"
+#include "spawners/elandinvasionpoint.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
@@ -100,7 +101,23 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     skipCompressed(); // byte grid: all zeroes
     skipBytes(60);
     mapsize = readUInt(); // Poseidon or not doesn't matter here
-    skipBytes(860);
+    skipBytes(696);
+    const int maxLandInvPts = 8;
+    struct ePt {
+        uint16_t fX;
+        uint16_t fY;
+    };
+
+    std::vector<ePt> landInvPts;
+    landInvPts.resize(maxLandInvPts);
+    for(int i = 0; i < maxLandInvPts; i++) {
+        landInvPts[i].fX = readUShort();
+    }
+    skipBytes(16);
+    for(int i = 0; i < maxLandInvPts; i++) {
+        landInvPts[i].fY = readUShort();
+    }
+    skipBytes(116);
     const uint16_t entryPtX = readUShort();
     const uint16_t entryPtY = readUShort();
     const uint16_t exitPtX = readUShort();
@@ -139,6 +156,12 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     const int shift = mapsize/4;
     board.initialize(mapsize/2, mapsize + 1);
 
+    struct eNullTile {
+        eTile* fTile = nullptr;
+    };
+
+    std::map<int, std::map<int, eNullTile>> tileMap;
+
     for (int y = border; y < max; y++) {
         start = (y < half) ? (border + half - y - 1) : (border + y - half);
         end = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
@@ -151,17 +174,12 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 
             const int dy = 2 + x + y - mapsize / 2 - 2*border;
             const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 : 1))/2 - 1 - shift;
+
             const auto tile = board.dtile(dx, dy);
+
+            tileMap[y - border][x - border].fTile = tile;
+
             if(!tile) continue;
-            if(x - border == entryPtX && y - border == entryPtY) {
-                const auto b = std::make_shared<eEntryPoint>(
-                                   0, tile, board);
-                tile->setBanner(b);
-            } else if(x - border == exitPtX && y - border == exitPtY) {
-                const auto b = std::make_shared<eExitPoint>(
-                                   0, tile, board);
-                tile->setBanner(b);
-            }
             tile->setRainforest(mAtlantean);
             tile->setAltitude(t_elevation);
             const auto buildRoad = [&]() {
@@ -243,6 +261,28 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     if(scrub) delete scrub;
     if(elevation) delete elevation;
     if(edges) delete edges;
+
+    const auto entryTile = tileMap[entryPtY][entryPtX].fTile;
+    if(entryTile) {
+        const auto b = std::make_shared<eEntryPoint>(
+                           0, entryTile, board);
+        entryTile->setBanner(b);
+    }
+    const auto exitTile = tileMap[exitPtY][exitPtX].fTile;
+    if(exitTile) {
+        const auto b = std::make_shared<eExitPoint>(
+                           0, exitTile, board);
+        exitTile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxLandInvPts; i++) {
+        const auto& pt = landInvPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eLandInvasionPoint>(
+                           i, tile, board);
+        tile->setBanner(b);
+    }
 
     for(int x = 0; x < board.width(); x++) {
         const auto tile = board.dtile(x, 0);
