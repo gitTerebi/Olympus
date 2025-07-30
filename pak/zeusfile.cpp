@@ -219,12 +219,12 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     std::vector<ePt> monsterInvPts;
     monsterInvPts.resize(maxMonsterInvPts);
     for(int i = 0; i < maxMonsterInvPts; i++) {
-        monsterInvPts[i].fX = readUByte();
-        skipBytes(3);
+        monsterInvPts[i].fX = readUShort();
+        skipBytes(2);
     }
     for(int i = 0; i < maxMonsterInvPts; i++) {
-        monsterInvPts[i].fY = readUByte();
-        skipBytes(3);
+        monsterInvPts[i].fY = readUShort();
+        skipBytes(2);
     }
 
     const int maxDisembarkPts = 3;
