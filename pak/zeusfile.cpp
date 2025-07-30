@@ -22,6 +22,9 @@
 #include "buildings/eroad.h"
 #include "etilehelper.h"
 
+#include "spawners/eentrypoint.h"
+#include "spawners/eexitpoint.h"
+
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
 	MAX_MAPSIZE = 228;
@@ -85,7 +88,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     in.seek(positions[retrievedMaps]);
 
     retrievedMaps++;
-		
+
     // Read scenario info
     skipBytes(0x1778);
     skipCompressed(); // buildings grid: there are no placable buildings
@@ -97,7 +100,12 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     skipCompressed(); // byte grid: all zeroes
     skipBytes(60);
     mapsize = readUInt(); // Poseidon or not doesn't matter here
-    skipBytes(1984);
+    skipBytes(860);
+    const uint16_t entryPtX = readUShort();
+    const uint16_t entryPtY = readUShort();
+    const uint16_t exitPtX = readUShort();
+    const uint16_t exitPtY = readUShort();
+    skipBytes(1116);
     fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
     skipCompressed(); // not of proper length: 14400
@@ -129,7 +137,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     uint32_t t_terrain;
 
     const int shift = mapsize/4;
-    board.initialize(mapsize/2 - 1, mapsize);
+    board.initialize(mapsize/2, mapsize + 1);
 
     for (int y = border; y < max; y++) {
         start = (y < half) ? (border + half - y - 1) : (border + y - half);
@@ -141,10 +149,19 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 			t_scrub = scrub->get(x, y);
             t_elevation = elevation->get(x, y);
 
-            const int dy = 1 + x + y - mapsize / 2 - 2*border;
-            const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 :  1))/2 - 2 - shift;
+            const int dy = 2 + x + y - mapsize / 2 - 2*border;
+            const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 : 1))/2 - 1 - shift;
             const auto tile = board.dtile(dx, dy);
             if(!tile) continue;
+            if(x - border == entryPtX && y - border == entryPtY) {
+                const auto b = std::make_shared<eEntryPoint>(
+                                   0, tile, board);
+                tile->setBanner(b);
+            } else if(x - border == exitPtX && y - border == exitPtY) {
+                const auto b = std::make_shared<eExitPoint>(
+                                   0, tile, board);
+                tile->setBanner(b);
+            }
             tile->setRainforest(mAtlantean);
             tile->setAltitude(t_elevation);
             const auto buildRoad = [&]() {
@@ -226,8 +243,22 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     if(elevation) delete elevation;
     if(edges) delete edges;
 
-    std::vector<eTile*> tiles;
+    for(int x = 0; x < board.width(); x++) {
+        const auto tile = board.dtile(x, 0);
+        const auto b = tile->bottom<eTile>();
+        tile->setTerrain(b->terrain());
+        tile->setScrub(b->scrub());
+    }
+
+    for(int y = 1; y < board.height(); y += 2) {
+        const auto tile = board.dtile(board.width() - 1, y);
+        const auto b = tile->left<eTile>();
+        tile->setTerrain(b->terrain());
+        tile->setScrub(b->scrub());
+    }
+
     // Fix for the Odyssey 1. colony
+    std::vector<eTile*> tiles;
     board.iterateOverAllTiles([&](eTile* const tile) {
         const auto terr = tile->terrain();
         if(terr != eTerrain::dry) return;
