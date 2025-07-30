@@ -320,7 +320,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         mViewedCityId = newC;
         if(oldC != newC) {
             const auto c = mBoard->boardCityWithId(newC);
-            if(c && c->owningPlayer() == nullptr) {
+            if(!mEditorMode && c && c->owningPlayer() == nullptr) {
                 showBuyCity(newC);
             } else {
                 hideBuyCity();
