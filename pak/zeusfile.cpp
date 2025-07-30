@@ -26,6 +26,7 @@
 #include "spawners/eexitpoint.h"
 #include "spawners/elandinvasionpoint.h"
 #include "spawners/eseainvasionpoint.h"
+#include "spawners/edisembarkpoint.h"
 #include "spawners/emonsterpoint.h"
 #include "spawners/eboarspawner.h"
 #include "spawners/edeerspawner.h"
@@ -200,6 +201,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         boarPts[i].fY = readUShort();
         skipBytes(2);
     }
+
     skipBytes(216);
 
     const int maxMonsterInvPts = 3;
@@ -214,7 +216,19 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         skipBytes(3);
     }
 
-    skipBytes(760);
+    const int maxDisembarkPts = 3;
+    std::vector<ePt> disembarkPts;
+    disembarkPts.resize(maxDisembarkPts);
+    for(int i = 0; i < maxDisembarkPts; i++) {
+        disembarkPts[i].fX = readUShort();
+        skipBytes(2);
+    }
+    for(int i = 0; i < maxDisembarkPts; i++) {
+        disembarkPts[i].fY = readUShort();
+        skipBytes(2);
+    }
+
+    skipBytes(736);
     fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
     skipCompressed(); // not of proper length: 14400
@@ -417,6 +431,15 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eMonsterPoint>(
+                           i, tile, board);
+        tile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxDisembarkPts; i++) {
+        const auto& pt = disembarkPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eDisembarkPoint>(
                            i, tile, board);
         tile->setBanner(b);
     }

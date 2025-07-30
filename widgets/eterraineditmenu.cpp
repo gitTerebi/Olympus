@@ -183,6 +183,16 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             return b != nullptr;
         });
     }
+    for(int i = 0; i < 3; i++) {
+        w10->addAction("Disembark Point " + std::to_string(i + 1), [this, i]() {
+            mMode = eTerrainEditMode::disembarkPoint;
+            mModeId = i;
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::disembarkPoint, i);
+            return b != nullptr;
+        });
+    }
     w10->stackVertically(mSpacing);
     w10->fitContent();
 

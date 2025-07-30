@@ -1313,6 +1313,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                 case eBannerTypeS::seaInvasion:
                     topTex = builTexs.fLandInvasionPoint;
                     break;
+                case eBannerTypeS::disembarkPoint:
+                    topTex = builTexs.fDisembarkPoint;
+                    break;
                 case eBannerTypeS::entryPoint:
                     topTex = builTexs.fEntryPoint;
                     break;

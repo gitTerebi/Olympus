@@ -479,6 +479,7 @@ SOURCES += \
         spawners/eboarspawner.cpp \
         spawners/edeerspawner.cpp \
         spawners/edisasterpoint.cpp \
+        spawners/edisembarkpoint.cpp \
         spawners/eentrypoint.cpp \
         spawners/eexitpoint.cpp \
         spawners/elandinvasionpoint.cpp \
@@ -1193,6 +1194,7 @@ HEADERS += \
     spawners/eboarspawner.h \
     spawners/edeerspawner.h \
     spawners/edisasterpoint.h \
+    spawners/edisembarkpoint.h \
     spawners/eentrypoint.h \
     spawners/eexitpoint.h \
     spawners/elandinvasionpoint.h \

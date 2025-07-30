@@ -600,6 +600,7 @@ void eCampaign::readPak(const std::string& path) {
     {
         const auto c = mParentBoard->addCityToBoard(cid);
         c->setAtlantean(atlantean);
+        mParentBoard->assignAllTerritory(cid);
     }
 
     for(int i = 0; i < nParentEps; i++) {
@@ -691,6 +692,7 @@ void eCampaign::readPak(const std::string& path) {
         if(r) {
             const auto c = board->addCityToBoard(cid);
             c->setAtlantean(atlantean);
+            board->assignAllTerritory(cid);
         } else {
             board->initialize(1, 1);
         }

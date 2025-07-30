@@ -53,6 +53,7 @@ enum class eTerrainEditMode {
     exitPoint,
     landInvasion,
     seaInvasion,
+    disembarkPoint,
     monsterPoint,
 
     quake,

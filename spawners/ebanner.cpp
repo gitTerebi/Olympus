@@ -6,6 +6,7 @@
 #include "edeerspawner.h"
 #include "elandinvasionpoint.h"
 #include "eseainvasionpoint.h"
+#include "edisembarkpoint.h"
 #include "emonsterpoint.h"
 #include "eentrypoint.h"
 #include "eexitpoint.h"
@@ -66,6 +67,9 @@ eBanner* eBanner::sCreate(const int id,
         break;
     case eBannerTypeS::seaInvasion:
         b = std::make_shared<eSeaInvasionPoint>(id, tile, board);
+        break;
+    case eBannerTypeS::disembarkPoint:
+        b = std::make_shared<eDisembarkPoint>(id, tile, board);
         break;
     case eBannerTypeS::monsterPoint:
         b = std::make_shared<eMonsterPoint>(id, tile, board);

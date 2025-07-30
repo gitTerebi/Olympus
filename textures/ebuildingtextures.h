@@ -676,7 +676,7 @@ public:
     std::shared_ptr<eTexture> fBoarPoint;
     std::shared_ptr<eTexture> fDeerPoint;
     std::shared_ptr<eTexture> fMonsterPoint;
-
+    std::shared_ptr<eTexture> fDisembarkPoint;
 
     std::shared_ptr<eTexture> fSuppliesBg;
     std::shared_ptr<eTexture> fEliteSuppliesBg;

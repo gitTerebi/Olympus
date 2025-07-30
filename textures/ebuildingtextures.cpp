@@ -3258,6 +3258,7 @@ void eBuildingTextures::load() {
         fWolfPoint = loader.load(1, 36);
         fBoarPoint = loader.load(1, 37);
         fMonsterPoint = loader.load(1, 38);
+        fDisembarkPoint = loader.load(1, 39);
     }
 
 
