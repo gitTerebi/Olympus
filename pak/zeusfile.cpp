@@ -109,6 +109,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     };
 
     skipBytes(620);
+
     const int maxFishingPts = 8;
     std::vector<ePt> fishingPts;
     fishingPts.resize(maxFishingPts);
@@ -118,7 +119,18 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     for(int i = 0; i < maxFishingPts; i++) {
         fishingPts[i].fY = readUShort();
     }
-    skipBytes(44);
+
+    const int maxUrchinPts = 8;
+    std::vector<ePt> urchinPts;
+    urchinPts.resize(maxUrchinPts);
+    for(int i = 0; i < maxUrchinPts; i++) {
+        urchinPts[i].fX = readUShort();
+    }
+    for(int i = 0; i < maxUrchinPts; i++) {
+        urchinPts[i].fY = readUShort();
+    }
+
+    skipBytes(12);
 
     const int maxLandInvPts = 8;
     std::vector<ePt> landInvPts;
@@ -130,6 +142,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     for(int i = 0; i < maxLandInvPts; i++) {
         landInvPts[i].fY = readUShort();
     }
+
     skipBytes(116);
     const uint16_t entryPtX = readUShort();
     const uint16_t entryPtY = readUShort();
@@ -324,6 +337,13 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         tile->setHasFish(true);
+    }
+
+    for(int i = 0; i < maxUrchinPts; i++) {
+        const auto& pt = urchinPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        tile->setHasUrchin(true);
     }
 
     for(int x = 0; x < board.width(); x++) {
