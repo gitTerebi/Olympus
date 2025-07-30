@@ -28,6 +28,7 @@
 #include "spawners/emonsterpoint.h"
 #include "spawners/eboarspawner.h"
 #include "spawners/edeerspawner.h"
+#include "spawners/ewolfspawner.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
@@ -110,7 +111,17 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         uint16_t fY;
     };
 
-    skipBytes(620);
+    skipBytes(604);
+
+    const int maxWolfPts = 4;
+    std::vector<ePt> wolfPts;
+    wolfPts.resize(maxWolfPts);
+    for(int i = 0; i < maxWolfPts; i++) {
+        wolfPts[i].fX = readUShort();
+    }
+    for(int i = 0; i < maxWolfPts; i++) {
+        wolfPts[i].fY = readUShort();
+    }
 
     const int maxFishingPts = 8;
     std::vector<ePt> fishingPts;
@@ -349,6 +360,15 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eLandInvasionPoint>(
+                           i, tile, board);
+        tile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxWolfPts; i++) {
+        const auto& pt = wolfPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eWolfSpawner>(
                            i, tile, board);
         tile->setBanner(b);
     }

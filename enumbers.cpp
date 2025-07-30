@@ -16,6 +16,8 @@ int eNumbers::sBoarMaxCount;
 int eNumbers::sBoarSpawnPeriod;
 int eNumbers::sDeerMaxCount;
 int eNumbers::sDeerSpawnPeriod;
+int eNumbers::sWolfMaxCount;
+int eNumbers::sWolfSpawnPeriod;
 
 int eNumbers::sOlivePressProcessingPeriod;
 int eNumbers::sWineryProcessingPeriod;
@@ -269,6 +271,8 @@ void eNumbers::sLoad() {
     loadI("boar_spawn_period_i", sBoarSpawnPeriod, 4000);
     loadI("deer_max_count_i", sDeerMaxCount, 8);
     loadI("deer_spawn_period_i", sDeerSpawnPeriod, 4000);
+    loadI("wolf_max_count_i", sWolfMaxCount, 8);
+    loadI("wolf_spawn_period_i", sWolfSpawnPeriod, 4000);
 
     loadI("olive_press_processing_period_i", sOlivePressProcessingPeriod, 20000);
     loadI("winery_processing_period_i", sWineryProcessingPeriod, 20000);

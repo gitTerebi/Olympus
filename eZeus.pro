@@ -484,6 +484,7 @@ SOURCES += \
         spawners/elandinvasionpoint.cpp \
         spawners/emonsterpoint.cpp \
         spawners/espawner.cpp \
+        spawners/ewolfspawner.cpp \
         textures/ebeachtodry.cpp \
         textures/ebuildingtextures.cpp \
         textures/ebuildingtextures1.cpp \
@@ -1196,6 +1197,7 @@ HEADERS += \
     spawners/elandinvasionpoint.h \
     spawners/emonsterpoint.h \
     spawners/espawner.h \
+    spawners/ewolfspawner.h \
     spriteData/achilles15.h \
     spriteData/achilles30.h \
     spriteData/achilles45.h \

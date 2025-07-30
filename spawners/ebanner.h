@@ -15,6 +15,7 @@ enum class eBannerTypeS {
     exitPoint,
     monsterPoint,
     disasterPoint,
+    wolf,
     none
 };
 

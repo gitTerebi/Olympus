@@ -1324,6 +1324,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                 case eBannerTypeS::disasterPoint:
                     topTex = builTexs.fDisasterPoint;
                     break;
+                case eBannerTypeS::wolf:
+                    topTex = builTexs.fWolfPoint;
+                    break;
                 }
                 if(topTex) {
                     tp.drawTexture(rx - 2.5, ry - 3.5, topTex,
