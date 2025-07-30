@@ -37,6 +37,15 @@ bool ZeusFile::isNewVersion() const {
     return mNewVersion;
 }
 
+void ZeusFile::readAtlantean() {
+    seek(7788);
+    mAtlantean = readUByte();
+}
+
+bool ZeusFile::isAtlantean() const {
+    return mAtlantean;
+}
+
 int ZeusFile::getNumMaps() {
 	// Check if file is open
     if(!in.isReadable()) {
@@ -72,7 +81,6 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
                   *scrub = NULL, *elevation = NULL;
 	
 	int mapsize;
-	bool is_poseidon = false;
 
     in.seek(positions[retrievedMaps]);
 
@@ -137,6 +145,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
             const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 :  1))/2 - 2 - shift;
             const auto tile = board.dtile(dx, dy);
             if(!tile) continue;
+            tile->setRainforest(mAtlantean);
             tile->setAltitude(t_elevation);
             const auto buildRoad = [&]() {
                 const auto cid = tile->cityId();

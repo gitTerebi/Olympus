@@ -565,9 +565,11 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
 void eCampaign::readPak(const std::string& path) {
     ZeusFile file(path);
     file.readVersion();
+    file.readAtlantean();
     mParentBoard = e::make_shared<eGameBoard>();
     mParentBoard->setWorldBoard(&mWorldBoard);
 
+    file.seek(0);
     file.getNumMaps();
     file.loadBoard(*mParentBoard);
 
@@ -575,8 +577,7 @@ void eCampaign::readPak(const std::string& path) {
     const uint8_t nParentEps = file.readUByte();
     file.seek(12); // and 16?
     const uint8_t nColonyEps = file.readUByte();
-    file.seek(7788);
-    const bool atlantean = file.readUByte();
+    const bool atlantean = file.isAtlantean();
 
     const auto cid = eCityId::city0;
     {

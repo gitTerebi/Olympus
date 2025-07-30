@@ -31,8 +31,11 @@ class ZeusFile : public GameFile {
         ZeusFile(const std::string& filename);
 		
         void readVersion();
-
         bool isNewVersion() const;
+
+        void readAtlantean();
+        bool isAtlantean() const;
+
 
 		/**
 		* Returns the number of maps in this file. Call this function
@@ -51,6 +54,8 @@ class ZeusFile : public GameFile {
 		int getMapsize();
 
         bool mNewVersion;
+        bool mAtlantean;
+
 		int filetype;
 		int numMaps;
 		int retrievedMaps;
