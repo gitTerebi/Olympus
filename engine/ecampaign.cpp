@@ -568,6 +568,8 @@ void eCampaign::readPak(const std::string& path) {
     file.readAtlantean();
     mParentBoard = e::make_shared<eGameBoard>();
     mParentBoard->setWorldBoard(&mWorldBoard);
+    const auto cid = eCityId::city0;
+    mParentBoard->assignAllTerritory(cid);
 
     file.seek(0);
     file.getNumMaps();
@@ -579,7 +581,6 @@ void eCampaign::readPak(const std::string& path) {
     const uint8_t nColonyEps = file.readUByte();
     const bool atlantean = file.isAtlantean();
 
-    const auto cid = eCityId::city0;
     {
         const auto c = std::make_shared<eWorldCity>(
                            eCityType::parentCity,
@@ -600,7 +601,6 @@ void eCampaign::readPak(const std::string& path) {
     {
         const auto c = mParentBoard->addCityToBoard(cid);
         c->setAtlantean(atlantean);
-        mParentBoard->assignAllTerritory(cid);
     }
 
     for(int i = 0; i < nParentEps; i++) {
@@ -687,12 +687,12 @@ void eCampaign::readPak(const std::string& path) {
         const auto cid = static_cast<eCityId>(i + 1);
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>();
+        board->assignAllTerritory(cid);
         board->setWorldBoard(&mWorldBoard);
         const bool r = file.loadBoard(*board);
         if(r) {
             const auto c = board->addCityToBoard(cid);
             c->setAtlantean(atlantean);
-            board->assignAllTerritory(cid);
         } else {
             board->initialize(1, 1);
         }
