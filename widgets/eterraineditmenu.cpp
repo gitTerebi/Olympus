@@ -172,8 +172,19 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w9->stackVertically(mSpacing);
     w9->fitContent();
 
-    const auto w10 = new eWidget(window());
-
+    const auto w10 = new eActionListWidget(window());
+    for(int i = 8; i < 16; i++) {
+        w10->addAction("Sea inv pt " + std::to_string(i + 1), [this, i]() {
+            mMode = eTerrainEditMode::seaInvasion;
+            mModeId = i;
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::seaInvasion, i);
+            return b != nullptr;
+        });
+    }
+    w10->stackVertically(mSpacing);
+    w10->fitContent();
 
     const auto w11 = new eActionListWidget(window());
     for(int i = 0; i < 8; i++) {

@@ -1910,6 +1910,11 @@ eTile* eBoardCity::landInvasionTile(const int id) const {
     return b ? b->tile() : nullptr;
 }
 
+eTile* eBoardCity::seaInvasionTile(const int id) const {
+    const auto b = banner(eBannerTypeS::seaInvasion, id);
+    return b ? b->tile() : nullptr;
+}
+
 eTile* eBoardCity::disasterTile(const int id) const {
     const auto b = banner(eBannerTypeS::disasterPoint, id);
     return b ? b->tile() : nullptr;

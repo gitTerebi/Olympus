@@ -25,6 +25,7 @@
 #include "spawners/eentrypoint.h"
 #include "spawners/eexitpoint.h"
 #include "spawners/elandinvasionpoint.h"
+#include "spawners/eseainvasionpoint.h"
 #include "spawners/emonsterpoint.h"
 #include "spawners/eboarspawner.h"
 #include "spawners/edeerspawner.h"
@@ -151,12 +152,23 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     for(int i = 0; i < maxLandInvPts; i++) {
         landInvPts[i].fX = readUShort();
     }
-    skipBytes(16);
+
+    const int maxSeaInvPts = 8;
+    std::vector<ePt> seaInvPts;
+    seaInvPts.resize(maxSeaInvPts);
+    for(int i = 0; i < maxSeaInvPts; i++) {
+        seaInvPts[i].fX = readUShort();
+    }
+
     for(int i = 0; i < maxLandInvPts; i++) {
         landInvPts[i].fY = readUShort();
     }
 
-    skipBytes(20);
+    for(int i = 0; i < maxSeaInvPts; i++) {
+        seaInvPts[i].fY = readUShort();
+    }
+
+    skipBytes(4);
 
     const int maxDeerPts = 4;
     std::vector<ePt> deerPts;
@@ -361,6 +373,15 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         if(!tile) continue;
         const auto b = std::make_shared<eLandInvasionPoint>(
                            i, tile, board);
+        tile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxSeaInvPts; i++) {
+        const auto& pt = seaInvPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eSeaInvasionPoint>(
+                           i + 8, tile, board);
         tile->setBanner(b);
     }
 

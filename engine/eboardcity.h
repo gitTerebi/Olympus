@@ -313,6 +313,7 @@ public:
 
     eTile* monsterTile(const int id) const;
     eTile* landInvasionTile(const int id) const;
+    eTile* seaInvasionTile(const int id) const;
     eTile* disasterTile(const int id) const;
 
     const std::vector<eMonster*>& monsters() const;

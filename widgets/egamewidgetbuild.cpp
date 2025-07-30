@@ -16,6 +16,7 @@
 #include "spawners/eexitpoint.h"
 #include "spawners/emonsterpoint.h"
 #include "spawners/elandinvasionpoint.h"
+#include "spawners/eseainvasionpoint.h"
 #include "spawners/edisasterpoint.h"
 
 #include "ebuildingstoerase.h"
@@ -468,6 +469,16 @@ eGameWidget::eApply eGameWidget::editFunc() {
                 return;
             }
             const auto b = std::make_shared<eLandInvasionPoint>(
+                               modeId, tile, *mBoard);
+            tile->setBanner(b);
+        };
+    } else if(mode == eTerrainEditMode::seaInvasion) {
+        return [this, modeId](eTile* const tile) {
+            if(const auto b = tile->banner()) {
+                tile->setBanner(nullptr);
+                return;
+            }
+            const auto b = std::make_shared<eSeaInvasionPoint>(
                                modeId, tile, *mBoard);
             tile->setBanner(b);
         };
