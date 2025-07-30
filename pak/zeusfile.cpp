@@ -102,13 +102,25 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
     skipCompressed(); // byte grid: all zeroes
     skipBytes(60);
     mapsize = readUInt(); // Poseidon or not doesn't matter here
-    skipBytes(696);
-    const int maxLandInvPts = 8;
+
     struct ePt {
         uint16_t fX;
         uint16_t fY;
     };
 
+    skipBytes(620);
+    const int maxFishingPts = 8;
+    std::vector<ePt> fishingPts;
+    fishingPts.resize(maxFishingPts);
+    for(int i = 0; i < maxFishingPts; i++) {
+        fishingPts[i].fX = readUShort();
+    }
+    for(int i = 0; i < maxFishingPts; i++) {
+        fishingPts[i].fY = readUShort();
+    }
+    skipBytes(44);
+
+    const int maxLandInvPts = 8;
     std::vector<ePt> landInvPts;
     landInvPts.resize(maxLandInvPts);
     for(int i = 0; i < maxLandInvPts; i++) {
@@ -305,6 +317,13 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto b = std::make_shared<eMonsterPoint>(
                            i, tile, board);
         tile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxFishingPts; i++) {
+        const auto& pt = fishingPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        tile->setHasFish(true);
     }
 
     for(int x = 0; x < board.width(); x++) {
