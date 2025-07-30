@@ -562,6 +562,26 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
     }
 }
 
+eGodType pakIdToGodType(const uint8_t id, bool& valid) {
+    valid = true;
+    if(id == 0) return eGodType::zeus;
+    else if(id == 1) return eGodType::poseidon;
+    else if(id == 2) return eGodType::demeter;
+    else if(id == 3) return eGodType::apollo;
+    else if(id == 4) return eGodType::artemis;
+    else if(id == 5) return eGodType::ares;
+    else if(id == 6) return eGodType::aphrodite;
+    else if(id == 7) return eGodType::hermes;
+    else if(id == 8) return eGodType::athena;
+    else if(id == 9) return eGodType::hephaestus;
+    else if(id == 10) return eGodType::dionysus;
+    else if(id == 11) return eGodType::hades;
+    else if(id == 12) return eGodType::hera;
+    else if(id == 13) return eGodType::atlas;
+    valid = false;
+    return eGodType::zeus;
+}
+
 void eCampaign::readPak(const std::string& path) {
     ZeusFile file(path);
     file.readVersion();
@@ -602,6 +622,15 @@ void eCampaign::readPak(const std::string& path) {
         const auto c = mParentBoard->addCityToBoard(cid);
         c->setAtlantean(atlantean);
     }
+
+
+    struct ePakGod {
+        bool fValid = false;
+        eGodType fType = eGodType::zeus;
+    };
+
+    std::vector<ePakGod> friendlyGods;
+    friendlyGods.resize(6);
 
     for(int i = 0; i < nParentEps; i++) {
         const auto ep = addParentCityEpisode();
@@ -673,6 +702,29 @@ void eCampaign::readPak(const std::string& path) {
         ep->fNextEpisode = nextColony ? eEpisodeType::colony :
                                         eEpisodeType::parentCity;
 
+        if(i == 0) {
+            file.seek(35784 + i*300);
+            for(int i = 0; i < 6; i++) {
+                auto& v = friendlyGods[i];
+                const uint8_t godId = file.readUByte();
+                v.fType = pakIdToGodType(godId, v.fValid);
+                file.skipBytes(3);
+            }
+        }
+
+        file.seek(35944 + i*300);
+        for(int i = 0; i < 6; i++) {
+            const uint8_t sanctuaryByte = file.readUByte();
+            const auto& v = friendlyGods[i];
+            const bool sanctuary = sanctuaryByte;
+            if(v.fValid && sanctuary) {
+                ep->fFriendlyGods[cid].push_back(v.fType);
+                printf("%s %i\n", eGod::sGodName(v.fType).c_str(),
+                       sanctuaryByte);
+            }
+        }
+        printf("\n");
+
         file.seek(35956 + i*300);
         const uint8_t maxSanct = file.readUByte();
         ep->fMaxSanctuaries[cid] = maxSanct;
@@ -711,6 +763,19 @@ void eCampaign::readPak(const std::string& path) {
         readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
         file.seek(29420 + i*2032);
         readEpisodeResources(*ep, file, cid);
+
+        file.seek(38944 + i*300);
+        for(int i = 0; i < 6; i++) {
+            const uint8_t sanctuaryByte = file.readUByte();
+            const auto& v = friendlyGods[i];
+            const bool sanctuary = sanctuaryByte;
+            if(v.fValid && sanctuary) {
+                ep->fFriendlyGods[cid].push_back(v.fType);
+                printf("%s %i\n", eGod::sGodName(v.fType).c_str(),
+                       sanctuaryByte);
+            }
+        }
+        printf("\n");
 
         file.seek(38956 + i*300);
         const uint8_t maxSanct = file.readUByte();
