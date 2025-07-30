@@ -78,6 +78,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w3->addAction("Beach", [this]() {
         mMode = eTerrainEditMode::beach;
     });
+    w3->addAction("Marsh", [this]() {
+        mMode = eTerrainEditMode::marsh;
+    });
     w3->stackVertically(mSpacing);
     w3->fitContent();
 

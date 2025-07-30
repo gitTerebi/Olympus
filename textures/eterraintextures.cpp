@@ -65,6 +65,8 @@ eTerrainTextures::eTerrainTextures(const int tileW, const int tileH,
     fBeachTerrainTexs(renderer),
     fBeachToDryTerrainTexs(renderer),
     fWaterTerrainTexs(renderer),
+    fDeepMarsh(renderer),
+    fMarsh(renderer),
     fFertileTerrainTexs(renderer),
     fFertileToDryTerrainTexs(renderer),
     fScrubTerrainTexs(renderer),
@@ -346,6 +348,16 @@ void eTerrainTextures::load() {
         for(int i = 253; i < 302; i++) {
             loader.load(1, i, fPrettyRoad);
         }
+
+        for(int i = 302; i < 310; i++) {
+            loader.load(1, i, fDeepMarsh);
+        }
+
+        for(int i = 310; i < 318; i++) {
+            loader.load(1, i, fMarsh);
+        }
+
+        loadWaterToX(fRenderer, 318, fMarshToDry, loader);
 
         for(int i = 99; i < 189;) {
             for(int j = 0; j < 15; j++, i++) {

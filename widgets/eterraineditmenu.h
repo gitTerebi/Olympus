@@ -15,6 +15,7 @@ enum class eTerrainEditMode {
     dry = static_cast<int>(eTerrain::dry),
     beach = static_cast<int>(eTerrain::beach),
     water = static_cast<int>(eTerrain::water),
+    marsh = static_cast<int>(eTerrain::marsh),
     fertile = static_cast<int>(eTerrain::fertile),
     forest = static_cast<int>(eTerrain::forest),
     choppedForest = static_cast<int>(eTerrain::choppedForest),

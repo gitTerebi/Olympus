@@ -20,11 +20,14 @@ enum class eTerrain {
 
     orichalc = 1 << 12,
     blackMarble = 1 << 13,
+    marsh = 1 << 14,
 
     dryBased = dry |
                fertile |
                forest |
                choppedForest |
+
+               marsh |
 
                flatStones |
                copper |
@@ -47,7 +50,8 @@ enum class eTerrain {
              tallStones |
              marble |
              blackMarble |
-             quake
+             quake,
+    all = dryBased | water | beach
 };
 
 inline eTerrain operator|(const eTerrain a, const eTerrain b) {
@@ -56,6 +60,10 @@ inline eTerrain operator|(const eTerrain a, const eTerrain b) {
 
 inline eTerrain operator&(const eTerrain a, const eTerrain b) {
     return static_cast<eTerrain>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+inline eTerrain operator^(const eTerrain a, const eTerrain b) {
+    return static_cast<eTerrain>(static_cast<int>(a) ^ static_cast<int>(b));
 }
 
 namespace eTerrainTools {

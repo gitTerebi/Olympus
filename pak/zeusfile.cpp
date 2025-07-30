@@ -229,6 +229,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
                     tile->setScrub(0.01*t_scrub);
                 }
             } else if(t_terrain & 0x40000) { // marshland
+                tile->setTerrain(eTerrain::marsh);
             } else if(t_terrain & 0x1000000) { // molten lava
             } else { // empty land
                 tile->setScrub(0.01*t_scrub);

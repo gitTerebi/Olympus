@@ -504,6 +504,7 @@ SOURCES += \
         textures/egodtextures.cpp \
         textures/einterfacetextures.cpp \
         textures/emarbletile.cpp \
+        textures/emarshtodry.cpp \
         textures/eparktexture.cpp \
         textures/espriteloader.cpp \
         textures/estonestodry.cpp \
@@ -2594,6 +2595,7 @@ HEADERS += \
     textures/egodtextures.h \
     textures/einterfacetextures.h \
     textures/emarbletile.h \
+    textures/emarshtodry.h \
     textures/eparktexture.h \
     textures/espriteloader.h \
     textures/estonestodry.h \
