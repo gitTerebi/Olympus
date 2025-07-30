@@ -2214,6 +2214,8 @@ void eBoardCity::startEpisode(eEpisode* const e) {
     const auto& ab = e->fAvailableBuildings[mId];
     mAvailableBuildings.startEpisode(ab);
 
+    mMaxSanctuaries = e->fMaxSanctuaries[mId];
+
     mNextAttackDate = date;
     mNextAttackDate.nextYears(5);
     mNextAttackPlanned = true;

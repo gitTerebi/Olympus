@@ -65,6 +65,17 @@ void eEpisode::read(eReadStream& src) {
             ab.read(src);
         }
     }
+
+    {
+        int nc;
+        src >> nc;
+        for(int i = 0; i < nc; i++) {
+            eCityId cid;
+            src >> cid;
+            int& m = fMaxSanctuaries[cid];
+            src >> m;
+        }
+    }
 }
 
 void eEpisode::write(eWriteStream& dst) const {
@@ -102,6 +113,12 @@ void eEpisode::write(eWriteStream& dst) const {
     for(const auto& ab : fAvailableBuildings) {
         dst << ab.first;
         ab.second.write(dst);
+    }
+
+    dst << fMaxSanctuaries.size();
+    for(const auto& m : fMaxSanctuaries) {
+        dst << m.first;
+        dst << m.second;
     }
 }
 

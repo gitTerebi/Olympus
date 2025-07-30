@@ -36,6 +36,8 @@ struct eEpisode {
     std::vector<stdsptr<eEpisodeGoal>> fGoals;
 
     std::map<eCityId, eAvailableBuildings> fAvailableBuildings;
+
+    std::map<eCityId, int> fMaxSanctuaries;
 };
 
 struct eParentCityEpisode : public eEpisode {

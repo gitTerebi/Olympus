@@ -24,6 +24,8 @@ void eBoardCity::write(eWriteStream& dst) const {
     dst << mPeoplePaidTaxesLastYear;
     dst << mPeoplePaidTaxesThisYear;
 
+    dst << mMaxSanctuaries;
+
     dst << mImmigrationLimit;
     dst << mNoFood;
     mNoFoodSince.write(dst);

@@ -373,6 +373,9 @@ public:
     const std::vector<eBuilding*>& sanctBuildings() const
     { return mSanctBuildings; }
 
+    void setMaxSanctuaries(const int n) { mMaxSanctuaries = n; }
+    int maxSanctuaries() const { return mMaxSanctuaries; }
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
@@ -408,6 +411,8 @@ private:
     eILB mImmigrationLimit{eILB::lackOfVacancies};
     bool mNoFood = false;
     eDate mNoFoodSince;
+
+    int mMaxSanctuaries = 16;
 
     int mTaxesPaidLastYear = 0;
     int mTaxesPaidThisYear = 0;

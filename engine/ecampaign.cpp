@@ -672,6 +672,10 @@ void eCampaign::readPak(const std::string& path) {
         readEpisodeResources(*ep, file, cid);
         ep->fNextEpisode = nextColony ? eEpisodeType::colony :
                                         eEpisodeType::parentCity;
+
+        file.seek(35956 + i*300);
+        const uint8_t maxSanct = file.readUByte();
+        ep->fMaxSanctuaries[cid] = maxSanct;
     }
 
     file.seek(7140);
@@ -707,6 +711,10 @@ void eCampaign::readPak(const std::string& path) {
         readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
         file.seek(29420 + i*2032);
         readEpisodeResources(*ep, file, cid);
+
+        file.seek(38956 + i*300);
+        const uint8_t maxSanct = file.readUByte();
+        ep->fMaxSanctuaries[cid] = maxSanct;
     }
 }
 

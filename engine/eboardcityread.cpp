@@ -29,6 +29,8 @@ void eBoardCity::read(eReadStream& src) {
     src >> mPeoplePaidTaxesLastYear;
     src >> mPeoplePaidTaxesThisYear;
 
+    src >> mMaxSanctuaries;
+
     src >> mImmigrationLimit;
     src >> mNoFood;
     mNoFoodSince.read(src);

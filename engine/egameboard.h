@@ -689,6 +689,8 @@ public:
                         const eCityId cid,
                         const ePlayerId pid,
                         const bool editorDisplay);
+
+    void setMaxSanctuaries();
 private:
     void updateNeighbours();
 
