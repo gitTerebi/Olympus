@@ -27,6 +27,7 @@
 #include "spawners/elandinvasionpoint.h"
 #include "spawners/emonsterpoint.h"
 #include "spawners/eboarspawner.h"
+#include "spawners/edeerspawner.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
@@ -144,7 +145,19 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         landInvPts[i].fY = readUShort();
     }
 
-    skipBytes(116);
+    skipBytes(20);
+
+    const int maxDeerPts = 4;
+    std::vector<ePt> deerPts;
+    deerPts.resize(maxDeerPts);
+    for(int i = 0; i < maxDeerPts; i++) {
+        deerPts[i].fX = readUShort();
+    }
+    for(int i = 0; i < maxDeerPts; i++) {
+        deerPts[i].fY = readUShort();
+    }
+
+    skipBytes(80);
 
     const uint16_t entryPtX = readUShort();
     const uint16_t entryPtY = readUShort();
@@ -164,7 +177,6 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         boarPts[i].fY = readUShort();
         skipBytes(2);
     }
-
     skipBytes(216);
 
     const int maxMonsterInvPts = 3;
@@ -337,6 +349,15 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eLandInvasionPoint>(
+                           i, tile, board);
+        tile->setBanner(b);
+    }
+
+    for(int i = 0; i < maxDeerPts; i++) {
+        const auto& pt = deerPts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eDeerSpawner>(
                            i, tile, board);
         tile->setBanner(b);
     }
