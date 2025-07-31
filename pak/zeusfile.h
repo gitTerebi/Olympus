@@ -29,7 +29,7 @@ class ZeusFile : public GameFile {
 		static const int MAX_MAPS = 5; // parent city + 4 colonies
 		
         ZeusFile(const std::string& filename);
-		
+
         void readVersion();
         bool isNewVersion() const;
 
