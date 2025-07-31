@@ -82,7 +82,7 @@ int ZeusFile::getNumMaps() {
 	return numMaps;
 }
 
-bool ZeusFile::loadBoard(eGameBoard& board) {
+bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     if(retrievedMaps >= numMaps) {
         return false;
 	}
@@ -272,6 +272,7 @@ bool ZeusFile::loadBoard(eGameBoard& board) {
 
     const int shift = mapsize/4;
     board.initialize(mapsize/2, mapsize + 1);
+    board.assignAllTerritory(cid);
 
     struct eNullTile {
         eTile* fTile = nullptr;
