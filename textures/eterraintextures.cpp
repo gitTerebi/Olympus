@@ -126,6 +126,7 @@ eTerrainTextures::eTerrainTextures(const int tileW, const int tileH,
     fElevation(renderer),
     fDoubleElevation(renderer),
     fDoubleElevation2(renderer),
+    fHalfElevation(renderer),
 
     fQuakeTexs(renderer) {}
 
@@ -297,6 +298,10 @@ void eTerrainTextures::load() {
 
             for(int i = 21; i < 45; i++) {
                 loader.load(1, i, fElevation);
+            }
+
+            for(int i = 69; i < 125; i++) {
+                loader.load(1, i, fHalfElevation);
             }
         }
 

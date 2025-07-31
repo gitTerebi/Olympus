@@ -202,116 +202,167 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
     tile->rotatedNeighbours(tr, r, br, b, bl, l, tl, t, dir);
 
     if(drawElev) {
-        const int a = tile->altitude();
+        const bool halfSlope = tile->isHalfSlope();
+        if(!halfSlope) {
+            const int tx = tile->x();
+            const int ty = tile->y();
 
-        const int tx = tile->x();
-        const int ty = tile->y();
+            const int a = tile->altitude();
 
-        const int tra = tr ? tr->altitude() : a;
-        const int ra = r ? r->altitude() : a;
-        const int bra = br ? br->altitude() : a;
-        const int ba = b ? b->altitude() : a;
-        const int bla = bl ? bl->altitude() : a;
-        const int la = l ? l->altitude() : a;
-        const int tla = tl ? tl->altitude() : a;
-        const int ta = t ? t->altitude() : a;
+            const int tra = tr ? tr->altitude() : a;
+            const int ra = r ? r->altitude() : a;
+            const int bra = br ? br->altitude() : a;
+            const int ba = b ? b->altitude() : a;
+            const int bla = bl ? bl->altitude() : a;
+            const int la = l ? l->altitude() : a;
+            const int tla = tl ? tl->altitude() : a;
+            const int ta = t ? t->altitude() : a;
 
-        const auto& elev = textures.fElevation;
-        const auto& delev = textures.fDoubleElevation;
-        const auto& delev2 = textures.fDoubleElevation2;
-        const bool w = tile->walkableElev();
-        if(ta - a == 2 && a == bra && ta - tra == 1) {
-            return delev.getTexture(16);
-        } else if(ta - a == 2 && a == bla && ta - tla == 1) {
-            return delev.getTexture(15);
-        } else if(tra > a && tla > a) {
-            if(tra - a == 2 || tla - a == 2) {
-                return delev.getTexture(8);
-            } else {
-                return elev.getTexture(8);
-            }
-        } else if(tra > a && bra > a) {
-            if(tra - a == 2 && bra - a == 2) {
-                return delev.getTexture(9);
-            } else {
-                return elev.getTexture(9);
-            }
-        } else if(bla > a && bra > a) {
-            if(bla - a == 2 && bra - a == 2) {
-                return delev.getTexture(10);
-            } else {
-                return elev.getTexture(10);
-            }
-        } else if(bla > a && tla > a) {
-            if(bla - a == 2 && tla - a == 2) {
-                return delev.getTexture(11);
-            } else {
-                return elev.getTexture(11);
-            }
-        } else if(bla > a) {
-            if(bla - a == 2) {
-                return delev.getTexture(1);
-            } else {
-                if(w) return elev.getTexture(12 + (hr ? 4 : 0));
-                else return elev.getTexture(1);
-            }
-        } else if(tla > a) {
-            if(tla - a == 2) {
-                if((tx + ty) % 2) {
-                    return delev2.getTexture(std::abs(ty) % 3);
+            const auto& elev = textures.fElevation;
+            const auto& delev = textures.fDoubleElevation;
+            const auto& delev2 = textures.fDoubleElevation2;
+            const bool w = tile->walkableElev();
+            if(ta - a == 2 && a == bra && ta - tra == 1) {
+                return delev.getTexture(16);
+            } else if(ta - a == 2 && a == bla && ta - tla == 1) {
+                return delev.getTexture(15);
+            } else if(tra > a && tla > a) {
+                if(tra - a == 2 || tla - a == 2) {
+                    return delev.getTexture(8);
                 } else {
-                    return delev.getTexture(3);
+                    return elev.getTexture(8);
+                }
+            } else if(tra > a && bra > a) {
+                if(tra - a == 2 && bra - a == 2) {
+                    return delev.getTexture(9);
+                } else {
+                    return elev.getTexture(9);
+                }
+            } else if(bla > a && bra > a) {
+                if(bla - a == 2 && bra - a == 2) {
+                    return delev.getTexture(10);
+                } else {
+                    return elev.getTexture(10);
+                }
+            } else if(bla > a && tla > a) {
+                if(bla - a == 2 && tla - a == 2) {
+                    return delev.getTexture(11);
+                } else {
+                    return elev.getTexture(11);
+                }
+            } else if(bla > a) {
+                if(bla - a == 2) {
+                    return delev.getTexture(1);
+                } else {
+                    if(w) return elev.getTexture(12 + (hr ? 4 : 0));
+                    else return elev.getTexture(1);
+                }
+            } else if(tla > a) {
+                if(tla - a == 2) {
+                    if((tx + ty) % 2) {
+                        return delev2.getTexture(std::abs(ty) % 3);
+                    } else {
+                        return delev.getTexture(3);
+                    }
+                } else {
+                    if(w) return elev.getTexture(13 + (hr ? 4 : 0));
+                    else return elev.getTexture(3);
+                }
+            } else if(tra > a) {
+                if(tra - a == 2) {
+                    if((tx + ty) % 2) {
+                        return delev2.getTexture(3 + (std::abs(tx) % 3));
+                    } else {
+                        return delev.getTexture(5);
+                    }
+                } else {
+                    if(w) return elev.getTexture(14 + (hr ? 4 : 0));
+                    else return elev.getTexture(5);
+                }
+            } else if(bra > a) {
+                if(bra - a == 2) {
+                    return delev.getTexture(7);
+                } else {
+                    if(w) return elev.getTexture(15 + (hr ? 4 : 0));
+                    else return elev.getTexture(7);
+                }
+            } else if(la > a) {
+                if(la - a == 2) {
+                    return delev.getTexture(2);
+                } else {
+                    return elev.getTexture(2);
+                }
+            } else if(ta > a) {
+                if(ta - a == 2) {
+                    if((tx + ty) % 2) {
+                        return delev2.getTexture(12);
+                    } else {
+                        return delev.getTexture(4);
+                    }
+                } else {
+                    return elev.getTexture(4);
+                }
+            } else if(ra > a) {
+                if(ra - a == 2) {
+                    return delev.getTexture(6);
+                } else {
+                    return elev.getTexture(6);
+                }
+            } else if(ba > a) {
+                if(ba - a == 2) {
+                    return delev.getTexture(0);
+                } else {
+                    return elev.getTexture(0);
+                }
+            }
+        } else {
+            const int da = tile->doubleAltitude();
+
+            const int tra = tr ? tr->doubleAltitude() : da;
+//            const int ra = r ? r->doubleAltitude() : da;
+            const int bra = br ? br->doubleAltitude() : da;
+//            const int ba = b ? b->doubleAltitude() : da;
+            const int bla = bl ? bl->doubleAltitude() : da;
+//            const int la = l ? l->doubleAltitude() : da;
+            const int tla = tl ? tl->doubleAltitude() : da;
+//            const int ta = t ? t->doubleAltitude() : da;
+
+            int relId = 0;
+            if(bla > da) {
+                relId = 0;
+            } else if(tla > da) {
+                relId = 2;
+            } else if(tra > da) {
+                relId = 4;
+            } else if(bra > da) {
+                relId = 6;
+            }
+            if(da % 2 == 0) relId++;
+
+            const bool w = tile->walkableElev();
+            int id = 0;
+            if(w) {
+                const bool hr = tile->hasRoad();
+                if(hr) {
+                    const auto r = tile->underBuilding();
+                    const auto& board = r->getBoard();
+                    const int dx = tile->dx();
+                    const int dy = tile->dy();
+                    const double appeal = board.appeal(dx, dy);
+                    const bool highAppeal = appeal > 3;
+                    if(highAppeal) {
+                        id = 93 + relId;
+                    } else {
+                        id = 85 + relId;
+                    }
+                } else {
+                    id = 77 + relId;
                 }
             } else {
-                if(w) return elev.getTexture(13 + (hr ? 4 : 0));
-                else return elev.getTexture(3);
+                id = 69 + relId;
             }
-        } else if(tra > a) {
-            if(tra - a == 2) {
-                if((tx + ty) % 2) {
-                    return delev2.getTexture(3 + (std::abs(tx) % 3));
-                } else {
-                    return delev.getTexture(5);
-                }
-            } else {
-                if(w) return elev.getTexture(14 + (hr ? 4 : 0));
-                else return elev.getTexture(5);
-            }
-        } else if(bra > a) {
-            if(bra - a == 2) {
-                return delev.getTexture(7);
-            } else {
-                if(w) return elev.getTexture(15 + (hr ? 4 : 0));
-                else return elev.getTexture(7);
-            }
-        } else if(la > a) {
-            if(la - a == 2) {
-                return delev.getTexture(2);
-            } else {
-                return elev.getTexture(2);
-            }
-        } else if(ta > a) {
-            if(ta - a == 2) {
-                if((tx + ty) % 2) {
-                    return delev2.getTexture(12);
-                } else {
-                    return delev.getTexture(4);
-                }
-            } else {
-                return elev.getTexture(4);
-            }
-        } else if(ra > a) {
-            if(ra - a == 2) {
-                return delev.getTexture(6);
-            } else {
-                return elev.getTexture(6);
-            }
-        } else if(ba > a) {
-            if(ba - a == 2) {
-                return delev.getTexture(0);
-            } else {
-                return elev.getTexture(0);
-            }
+            const auto& elev = textures.fHalfElevation;
+            return elev.getTexture(id - 69);
         }
     }
 

@@ -1120,7 +1120,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             eTileHelper::tileIdToRotatedTileId(tx, ty,
                                                rtx, rty, dir,
                                                boardw, boardh);
-            const int a = tile->altitude();
+            const int da = tile->doubleAltitude();
             const auto bttt = tile->underBuildingType();
             const bool flat = eBuilding::sFlatBuilding(bttt);
             if(flat || bttt == eBuildingType::wall) {
@@ -1147,17 +1147,17 @@ void eGameWidget::paintEvent(ePainter& p) {
                     double x;
                     double y;
                     if(dir == eWorldDirection::N) {
-                        x = tx - a + cx + 0.25;
-                        y = ty - a + cy + 0.25;
+                        x = tx - da*0.5 + cx + 0.25;
+                        y = ty - da*0.5 + cy + 0.25;
                     } else if(dir == eWorldDirection::E) {
-                        x = rtx - a + cy + 0.25;
-                        y = rty - a - cx + 1.25;
+                        x = rtx - da*0.5 + cy + 0.25;
+                        y = rty - da*0.5 - cx + 1.25;
                     } else if(dir == eWorldDirection::S) {
-                        x = rtx - a - cx + 1.25;
-                        y = rty - a - cy + 1.25;
+                        x = rtx - da*0.5 - cx + 1.25;
+                        y = rty - da*0.5 - cy + 1.25;
                     } else { // if(dir == eWorldDirection::W) {
-                        x = rtx - a - cy + 1.25;
-                        y = rty - a + cx + 0.25;
+                        x = rtx - da*0.5 - cy + 1.25;
+                        y = rty - da*0.5 + cx + 0.25;
                     }
                     {
                         const auto t = tile->topRotated<eTile>(dir);
@@ -1168,54 +1168,54 @@ void eGameWidget::paintEvent(ePainter& p) {
                         const auto tr = tile->topRightRotated<eTile>(dir);
                         const auto bl = tile->bottomLeftRotated<eTile>(dir);
                         const auto br = tile->bottomRightRotated<eTile>(dir);
-                        if(tl && tl->altitude() > a) {
+                        if(tl && tl->doubleAltitude() > da) {
                             const double mult = 1 - cx;
-                            const int tla = tl->altitude();
-                            const double da = mult*(tla - a);
-                            x -= da;
-                            y -= da;
-                        } else if(tr && tr->altitude() > a) {
+                            const int tla = tl->doubleAltitude();
+                            const double fa = mult*(tla - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(tr && tr->doubleAltitude() > da) {
                             const double mult = 1 - cy;
-                            const int tra = tr->altitude();
-                            const double da = mult*(tra - a);
-                            x -= da;
-                            y -= da;
-                        } else if(bl && bl->altitude() > a) {
+                            const int tra = tr->doubleAltitude();
+                            const double fa = mult*(tra - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(bl && bl->doubleAltitude() > da) {
                             const double mult = cy;
-                            const int bla = bl->altitude();
-                            const double da = mult*(bla - a);
-                            x -= da;
-                            y -= da;
-                        } else if(br && br->altitude() > a) {
+                            const int bla = bl->doubleAltitude();
+                            const double fa = mult*(bla - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(br && br->doubleAltitude() > da) {
                             const double mult = cx;
-                            const int bra = br->altitude();
-                            const double da = mult*(bra - a);
-                            x -= da;
-                            y -= da;
-                        } else if(t && t->altitude() > a) {
+                            const int bra = br->doubleAltitude();
+                            const double fa = mult*(bra - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(t && t->doubleAltitude() > da) {
                             const double mult = (1 - cx)*(1 - cy);
-                            const int ta = t->altitude();
-                            const double da = mult*(ta - a);
-                            x -= da;
-                            y -= da;
-                        } else if(l && l->altitude() > a) {
+                            const int ta = t->doubleAltitude();
+                            const double fa = mult*(ta - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(l && l->doubleAltitude() > da) {
                             const double mult = (1 - cx)*cy;
-                            const int la = l->altitude();
-                            const double da = mult*(la - a);
-                            x -= da;
-                            y -= da;
-                        } else if(r && r->altitude() > a) {
+                            const int la = l->doubleAltitude();
+                            const double fa = mult*(la - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(r && r->doubleAltitude() > da) {
                             const double mult = cx*(1 - cy);
-                            const int ra = r->altitude();
-                            const double da = mult*(ra - a);
-                            x -= da;
-                            y -= da;
-                        } else if(b && b->altitude() > a) {
+                            const int ra = r->doubleAltitude();
+                            const double fa = mult*(ra - da)*0.5;
+                            x -= fa;
+                            y -= fa;
+                        } else if(b && b->doubleAltitude() > da) {
                             const double mult = cx*cy;
-                            const int ba = b->altitude();
-                            const double da = mult*(ba - a);
-                            x -= da;
-                            y -= da;
+                            const int ba = b->doubleAltitude();
+                            const double fa = mult*(ba - da)*0.5;
+                            x -= fa;
+                            y -= fa;
                         }
                     }
                     const auto tex = c->getTexture(mTileSize);

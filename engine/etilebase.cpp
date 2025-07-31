@@ -55,20 +55,22 @@ bool eTileBase::walkable() const {
 }
 
 void eTileBase::updateIsElevationTile() {
-    const int a = altitude();
+    const int a = doubleAltitude();
     for(int x = -1; x < 2; x++) {
         for(int y = -1; y < 2; y++) {
             if(x == 0 && y == 0) continue;
             const auto t = tileRel(x, y);
             if(!t) continue;
-            const int ta = t->altitude();
+            const int ta = t->doubleAltitude();
             if(ta > a) {
+                mHalfSlope = ta - a == 1;
                 mElevation = true;
                 return;
             }
         }
     }
 
+    mHalfSlope = false;
     mElevation = false;
 }
 
@@ -163,7 +165,11 @@ eTileBase::eTO eTileBase::randomDiagonalNeighbour(const eTileVerifier& v) const 
 }
 
 void eTileBase::setAltitude(const int a, const bool update) {
-    mAltitude = a;
+    setDoubleAltitude(2*a, update);
+}
+
+void eTileBase::setDoubleAltitude(const int da, const bool update) {
+    mDoubleAltitude = da;
     if(!update) return;
     for(int dx = -1; dx <= 1; dx++) {
         for(int dy = -1; dy <= 1; dy++) {
@@ -216,7 +222,8 @@ void eTileBase::read(eReadStream& src) {
     src >> mlevel;
     setMarbleLevel(mlevel);
 
-    src >> mAltitude;
+    src >> mDoubleAltitude;
+    mDoubleAltitude *= 2; // !!!
     src >> mResource;
     src >> mElevation;
     src >> mWalkableElev;
@@ -232,7 +239,7 @@ void eTileBase::write(eWriteStream& dst) const {
     dst << mRainforest;
     dst << mScrub;
     dst << mMarbleLevel;
-    dst << mAltitude;
+    dst << mDoubleAltitude;
     dst << mResource;
     dst << mElevation;
     dst << mWalkableElev;

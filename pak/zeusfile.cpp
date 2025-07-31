@@ -276,9 +276,17 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
 
     struct eNullTile {
         eTile* fTile = nullptr;
+        uint32_t fTerr = 0;
     };
 
     std::map<int, std::map<int, eNullTile>> tileMap;
+    std::vector<eTile*> halfSlopes;
+
+    struct eZeroInt {
+        int fV = 0;
+    };
+
+    std::map<uint32_t, eZeroInt> elevMap;
 
     for (int y = border; y < max; y++) {
         start = (y < half) ? (border + half - y - 1) : (border + y - half);
@@ -328,11 +336,21 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             } else if(t_terrain & 0x8) { // building, fill in for boulevard or avenue
             } else if(t_terrain & 0x20) { // park
             } else if(t_terrain & 0x200) { // elevation
+                elevMap[t_terrain].fV++;
+                tileMap[y - border][x - border].fTerr = t_terrain;
                 if(t_terrain == 1600) {
                     tile->setWalkableElev(true);
                     buildRoad();
                 } else if(t_terrain == 1536) {
                     tile->setWalkableElev(true);
+                } else if(t_terrain == 8390208 ||
+                          t_terrain == 2155873856) {
+                    halfSlopes.push_back(tile);
+                    tile->setWalkableElev(true);
+                    buildRoad();
+                } else if(t_terrain == 2155872768 ||
+                          t_terrain == 8389120) {
+                    halfSlopes.push_back(tile);
                 }
             } else if(t_terrain & 0x40) { // road
                 buildRoad();
@@ -372,6 +390,55 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             }
 		}
 	}
+
+    for(const auto tile : halfSlopes) {
+        const int a = tile->altitude();
+        const auto ns = tile->diagonalNeighbours(nullptr);
+        for(const auto& n : ns) {
+            const int na = n.second->altitude();
+            if(na > a) tile->setDoubleAltitude(2*na - 1);
+        }
+    }
+
+    for(const auto& e : elevMap) {
+        printf("%" PRIu32 " %i\n", e.first, e.second.fV);
+    }
+
+    for(const auto& t : tileMap) {
+        for(const auto& tt : t.second) {
+            const auto tile = tt.second.fTile;
+            if(!tile) continue;
+            if(tt.second.fTerr == 0) continue;
+            const auto tl = tile->topLeft<eTile>();
+            if(tl && tl->hasRoad()) {
+                const auto br = tile->bottomRight<eTile>();
+                if(br) {
+                    const auto brbr = br->bottomRight<eTile>();
+                    if(brbr && brbr->hasRoad()) {
+                        printf("TL %" PRIu32 "\n", tt.second.fTerr);
+                    }
+                }
+            }
+            const auto br = tile->bottomRight<eTile>();
+            if(br && br->hasRoad()) {
+                const auto tl = tile->topLeft<eTile>();
+                if(tl) {
+                    const auto tltl = tl->topLeft<eTile>();
+                    if(tltl && tltl->hasRoad()) {
+                        printf("BR %" PRIu32 "\n", tt.second.fTerr);
+                    }
+                }
+            }
+//            const auto tr = tile->topLeft<eTile>();
+//            if(tr && tr->hasRoad()) {
+//                printf("TR %" PRIu32 "\n", tt.second.fTerr);
+//            }
+//            const auto bl = tile->bottomRight<eTile>();
+//            if(bl && bl->hasRoad()) {
+//                printf("BL %" PRIu32 "\n", tt.second.fTerr);
+//            }
+        }
+    }
 
     if(terrain) delete terrain;
     if(random) delete random;

@@ -41,8 +41,10 @@ public:
     int dy() const { return mDY; }
     int x() const { return mX; }
     int y() const { return mY; }
-    int altitude() const { return mAltitude; }
+    int doubleAltitude() const { return mDoubleAltitude; }
+    int altitude() const { return mDoubleAltitude/2; }
     bool isElevationTile() const { return mElevation; }
+    bool isHalfSlope() const { return mHalfSlope; }
     void updateIsElevationTile();
     bool isShoreTile(const eTerrain terr) const;
     bool isShoreTile() const;
@@ -126,6 +128,7 @@ public:
                       const eWorldDirection dir) const;
 
     void setAltitude(const int a, const bool update = true);
+    void setDoubleAltitude(const int da, const bool update = true);
     virtual void setTerrain(const eTerrain terr);
     void setScrub(const double s);
     void incScrub(const double s);
@@ -176,6 +179,7 @@ private:
     bool mHasUrchin{false};
 
     bool mElevation{false};
+    bool mHalfSlope{false};
     bool mWalkableElev{false};
 
     bool mBusy{false};
@@ -190,7 +194,7 @@ private:
     eTerrain mTerr = eTerrain::dry;
     bool mRainforest = false;
     double mScrub = 0;
-    int mAltitude = 0;
+    int mDoubleAltitude = 0;
 
     eCityId mCityId = eCityId::neutralFriendly;
 
