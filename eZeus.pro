@@ -2540,6 +2540,10 @@ HEADERS += \
     spriteData/zeusElevationTiles230.h \
     spriteData/zeusElevationTiles245.h \
     spriteData/zeusElevationTiles260.h \
+    spriteData/zeusElevationTiles2A15.h \
+    spriteData/zeusElevationTiles2A30.h \
+    spriteData/zeusElevationTiles2A45.h \
+    spriteData/zeusElevationTiles2A60.h \
     spriteData/zeusElevationTiles30.h \
     spriteData/zeusElevationTiles45.h \
     spriteData/zeusElevationTiles60.h \
@@ -3126,6 +3130,7 @@ DISTFILES += \
     textureTemplates/zeus \
     textureTemplates/zeusElevationTiles \
     textureTemplates/zeusElevationTiles2 \
+    textureTemplates/zeusElevationTiles2A \
     textureTemplates/zeusHerosHall \
     textureTemplates/zeusLand1 \
     textureTemplates/zeusLand3 \
