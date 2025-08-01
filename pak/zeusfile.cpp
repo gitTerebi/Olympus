@@ -85,13 +85,7 @@ int ZeusFile::getNumMaps() {
 bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     if(retrievedMaps >= numMaps) {
         return false;
-	}
-	
-    Grid<uint32_t> *terrain = NULL;
-    Grid<uint8_t> *edges = NULL, *random = NULL, *fertile = NULL,
-                  *scrub = NULL, *elevation = NULL;
-	
-	int mapsize;
+	}	
 
     in.seek(positions[retrievedMaps]);
 
@@ -100,14 +94,15 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     // Read scenario info
     skipBytes(0x1778);
     skipCompressed(); // buildings grid: there are no placable buildings
-    edges = readCompressedByteGrid();
-    terrain = readCompressedIntGrid();
+    const auto edges = readCompressedByteGrid();
+    const auto terrain = readCompressedIntGrid();
     skipCompressed(); // byte grid: 00 or 20
     readUInt(); // indicating start of random block (or perhaps "uncompressed" indicator?)
-    random = readByteGrid();
+    const auto random = readByteGrid();
     skipCompressed(); // byte grid: all zeroes
     skipBytes(60);
-    mapsize = readUInt(); // Poseidon or not doesn't matter here
+    const int mapsize = readUInt(); // Poseidon or not doesn't matter here
+    const int halfMapsize = mapsize/2;
 
     struct ePt {
         uint16_t fX;
@@ -240,15 +235,15 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     }
 
     skipBytes(736);
-    fertile = readCompressedByteGrid(); // meadow, 0-99
+    const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
     skipCompressed(); // not of proper length: 14400
     skipCompressed(); // not of proper length: 75168
     skipCompressed(); // byte grid: all ff's (counterpart of marble grid in sav?
     skipCompressed(); // 36 bytes
     skipBytes(144);
-    scrub = readCompressedByteGrid();
-    elevation = readCompressedByteGrid();
+    const auto scrub = readCompressedByteGrid();
+    const auto elevation = readCompressedByteGrid();
 
 	// Extra sanity check
     if(!ok || mapsize > MAX_MAPSIZE) {
@@ -263,12 +258,9 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
 	}
 
 	// Transform it to something useful
-	int half = MAX_MAPSIZE / 2;
-	int border = (MAX_MAPSIZE - mapsize) / 2;
-	int max = border + mapsize;
-	int start, end;
-    uint8_t t_random, t_meadow, t_scrub, t_elevation;
-    uint32_t t_terrain;
+    const int half = MAX_MAPSIZE / 2;
+    const int border = (MAX_MAPSIZE - mapsize) / 2;
+    const int max = border + mapsize;
 
     const int shift = mapsize/4;
     board.initialize(mapsize/2, mapsize + 1);
@@ -288,17 +280,31 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
 
     std::map<uint32_t, eZeroInt> elevMap;
 
-    for (int y = border; y < max; y++) {
-        start = (y < half) ? (border + half - y - 1) : (border + y - half);
-        end = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
-        for (int x = start; x < end; x++) {
-            t_terrain  = terrain->get(x, y);
-			t_random = random->get(x, y);
-			t_meadow = fertile->get(x, y);
-			t_scrub = scrub->get(x, y);
-            t_elevation = elevation->get(x, y);
+    const auto buildRoad = [&](eTile* const tile) {
+        const auto cid = tile->cityId();
+        const auto road = e::make_shared<eRoad>(board, cid);
+        tile->setUnderBuilding(road);
+        road->addUnderBuilding(tile);
+        road->setCenterTile(tile);
+        const int dx = tile->dx();
+        const int dy = tile->dy();
+        int x;
+        int y;
+        eTileHelper::dtileIdToTileId(dx, dy, x, y);
+        road->setTileRect({x, y, 1, 1});
+    };
 
-            const int dy = 2 + x + y - mapsize / 2 - 2*border;
+    for(int y = border; y < max; y++) {
+        const int start = (y < half) ? (border + half - y - 1) : (border + y - half);
+        const int end = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
+        for(int x = start; x < end; x++) {
+            const uint32_t t_terrain = terrain->get(x, y);
+            const uint8_t t_random = random->get(x, y);
+            const uint8_t t_meadow = fertile->get(x, y);
+            const uint8_t t_scrub = scrub->get(x, y);
+            const uint8_t t_elevation = elevation->get(x, y);
+
+            const int dy = 2 + x + y - halfMapsize - (halfMapsize % 2 ? 0 : 1) - 2*border;
             const int dx = mapsize / 2 + (x - y + (dy % 2 ? 0 : 1))/2 - 1 - shift;
 
             const auto tile = board.dtile(dx, dy);
@@ -308,17 +314,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             if(!tile) continue;
             tile->setRainforest(mAtlantean);
             tile->setAltitude(t_elevation);
-            const auto buildRoad = [&]() {
-                const auto cid = tile->cityId();
-                const auto road = e::make_shared<eRoad>(board, cid);
-                tile->setUnderBuilding(road);
-                road->addUnderBuilding(tile);
-                road->setCenterTile(tile);
-                int x;
-                int y;
-                eTileHelper::dtileIdToTileId(dx, dy, x, y);
-                road->setTileRect({x, y, 1, 1});
-            };
 
             if(t_terrain & 0x1) {
                 tile->setTerrain(eTerrain::forest);
@@ -340,20 +335,23 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
                 tileMap[y - border][x - border].fTerr = t_terrain;
                 if(t_terrain == 1600) {
                     tile->setWalkableElev(true);
-                    buildRoad();
+                    buildRoad(tile);
                 } else if(t_terrain == 1536) {
                     tile->setWalkableElev(true);
-                } else if(t_terrain == 8390208 ||
-                          t_terrain == 2155873856) {
+                } else if(t_terrain == 2155873856) {
                     halfSlopes.push_back(tile);
                     tile->setWalkableElev(true);
-                    buildRoad();
+                    buildRoad(tile);
+                } else if(t_terrain == 8390144 ||
+                          t_terrain == 8390208) {
+                    halfSlopes.push_back(tile);
+                    tile->setWalkableElev(true);
                 } else if(t_terrain == 2155872768 ||
                           t_terrain == 8389120) {
                     halfSlopes.push_back(tile);
                 }
             } else if(t_terrain & 0x40) { // road
-                buildRoad();
+                buildRoad(tile);
             } else if(t_terrain & 0x4) { // water
                 if(t_terrain & 0x4000000) { // deep water
                 } else { // shallow water
@@ -392,10 +390,13 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
 	}
 
     for(const auto tile : halfSlopes) {
+        const bool w = tile->walkableElev();
         const int a = tile->altitude();
         const auto ns = tile->diagonalNeighbours(nullptr);
         for(const auto& n : ns) {
-            const int na = n.second->altitude();
+            const auto ntile = n.second;
+            if(w && !tile->hasRoad() && ntile->hasRoad()) buildRoad(tile);
+            const int na = ntile->altitude();
             if(na > a) tile->setDoubleAltitude(2*na - 1);
         }
     }
