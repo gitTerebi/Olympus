@@ -83,7 +83,10 @@ void eEpisodeIntroductionWidget::initialize(
         const auto et = c->currentEpisodeType();
         const auto board = e->fBoard;
         const auto ppid = board->personPlayer();
-        const auto cids = board->playerCities(ppid);
+        const auto cids = board->playerCitiesOnBoard(ppid);
+        const auto capitalCid = board->playerCapital(ppid);
+        const auto capital = board->boardCityWithId(capitalCid);
+        const bool atlantean = capital ? capital->atlantean() : false;
         for(const auto cid : cids) {
             board->updateResources(cid);
         }
@@ -105,7 +108,7 @@ void eEpisodeIntroductionWidget::initialize(
             w->addWidget(checkBox);
 
             const bool col = et == eEpisodeType::colony;
-            const auto t = g->text(col);
+            const auto t = g->text(col, atlantean);
             const auto l = new eLabel(window());
             l->setSmallFontSize();
             l->setTinyPadding();

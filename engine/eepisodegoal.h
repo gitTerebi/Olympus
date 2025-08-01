@@ -13,7 +13,9 @@ enum class eEpisodeGoalType {
     support,
     quest,
     slay,
+    yearlyProduction,
     rule,
+    yearlyProfit,
     housing,
     setAsideGoods,
     surviveUntil,
@@ -38,7 +40,7 @@ struct eEpisodeGoal {
     bool met() const;
 
     static std::string sText(const eEpisodeGoalType type);
-    std::string text(const bool colonyEpisode) const;
+    std::string text(const bool colonyEpisode, const bool atlantean) const;
     std::string statusText(const eGameBoard* const b) const;
 
     void update(const eGameBoard* const b);

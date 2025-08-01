@@ -417,6 +417,66 @@ eResourceType pakResourceByteToType(
         return eResourceType::olives;
     } else if(byte == 14 + (newVersion ? 0 : -1)) {
         return eResourceType::fleece;
+    } else if(newVersion && byte == 15) {
+        return eResourceType::blackMarble;
+    } else if(newVersion && byte == 16) {
+        return eResourceType::orichalc;
+    } else if(!newVersion && byte == 14) {
+        return eResourceType::horse;
+    } else if(!newVersion && byte == 15) {
+        return eResourceType::armor;
+    } else if(!newVersion && byte == 16) {
+        return eResourceType::sculpture;
+    } else if(!newVersion && byte == 17) {
+        return eResourceType::oliveOil;
+    } else if(!newVersion && byte == 18) {
+        return eResourceType::wine;
+    } else if(newVersion && byte == 17) {
+        return eResourceType::armor;
+    } else if(newVersion && byte == 18) {
+        return eResourceType::sculpture;
+    } else if(newVersion && byte == 19) {
+        return eResourceType::oliveOil;
+    } else if(newVersion && byte == 20) {
+        return eResourceType::wine;
+    }
+
+    printf("Invalid resource byte %i\n", byte);
+    return eResourceType::none;
+}
+
+eResourceType pakCityResourceByteToType(
+        const uint8_t byte, const bool newVersion) {
+    if(byte == 0) {
+        return eResourceType::none;
+    } else if(byte == 1) {
+        return eResourceType::urchin;
+    } else if(byte == 2) {
+        return eResourceType::fish;
+    } else if(byte == 3) {
+        return eResourceType::meat;
+    } else if(byte == 4) {
+        return eResourceType::cheese;
+    } else if(byte == 5) {
+        return eResourceType::carrots;
+    } else if(byte == 6) {
+        return eResourceType::onions;
+    } else if(byte == 7) {
+        return eResourceType::wheat;
+    } else if(newVersion && byte == 8) {
+        return eResourceType::oranges;
+    } else if(byte == 9 + (newVersion ? 0 : -1)) {
+        return eResourceType::wood;
+    } else if(byte == 10 + (newVersion ? 0 : -1)) {
+        return eResourceType::bronze;
+    } else if(byte == 11 + (newVersion ? 0 : -1)) {
+        return eResourceType::marble;
+    } else if(byte == 12 + (newVersion ? 0 : -1)) {
+        return eResourceType::grapes;
+    } else if(byte == 13 + (newVersion ? 0 : -1)) {
+        return eResourceType::olives;
+    } else if(byte == 14 + (newVersion ? 0 : -1)) {
+        return eResourceType::fleece;
     } else if(newVersion && byte == 16) {
         return eResourceType::blackMarble;
     } else if(newVersion && byte == 17) {
@@ -506,7 +566,7 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
     const int jMax = newVersion ? 12 : 10;
     for(int j = 0; j < jMax; j++) {
         const auto resourceByte = file.readUByte();
-        const auto type = pakResourceByteToType(
+        const auto type = pakCityResourceByteToType(
                               resourceByte, newVersion);
         if(type != eResourceType::none) {
             printf("%s\n", eResourceTypeHelpers::typeName(type).c_str());
@@ -622,6 +682,87 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     return eGodType::zeus;
 }
 
+eEpisodeGoalType pakIdToEpisodeGoalType(const uint8_t id) {
+    if(id == 0) return eEpisodeGoalType::population;
+    else if(id == 1) return eEpisodeGoalType::treasury;
+    else if(id == 2) return eEpisodeGoalType::sanctuary;
+    else if(id == 3) return eEpisodeGoalType::support;
+    else if(id == 4) return eEpisodeGoalType::quest;
+    else if(id == 5) return eEpisodeGoalType::slay;
+    else if(id == 6) return eEpisodeGoalType::yearlyProduction;
+    else if(id == 7) return eEpisodeGoalType::rule;
+    else if(id == 8) return eEpisodeGoalType::yearlyProfit;
+    else if(id == 9) return eEpisodeGoalType::housing;
+    else if(id == 10) return eEpisodeGoalType::tradingPartners;
+    else if(id == 14) return eEpisodeGoalType::setAsideGoods;
+    printf("Invalid episode goal id %i\n", id);
+    return eEpisodeGoalType::population;
+}
+
+eBannerType pakIdToBannerType(const uint16_t id) {
+    if(id == 11) return eBannerType::rockThrower;
+    else if(id == 12) return eBannerType::hoplite;
+    else if(id == 13) return eBannerType::horseman;
+    // 57 - trireme
+    printf("Invalid banner type id %i\n", id);
+    return eBannerType::rockThrower;
+}
+
+void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
+    const uint8_t typeId = file.readUByte();
+    file.skipBytes(3);
+    const uint16_t value1 = file.readUShort();
+    file.skipBytes(2);
+    const uint16_t value2 = file.readUByte();
+    file.skipBytes(3);
+    const uint8_t value3 = file.readUByte();
+    file.skipBytes(63);
+
+    const auto goalType = pakIdToEpisodeGoalType(typeId);
+    printf("%s %i %i %i\n", eEpisodeGoal::sText(goalType).c_str(),
+           value1, value2, value3);
+    const auto goal = std::make_shared<eEpisodeGoal>();
+    goal->fType = goalType;
+    switch(goalType) {
+    case eEpisodeGoalType::population:
+    case eEpisodeGoalType::treasury:
+        goal->fRequiredCount = value1;
+        break;
+    case eEpisodeGoalType::sanctuary: {
+        bool valid;
+        const auto godType = pakIdToGodType(value1, valid);
+        if(valid) goal->fEnumInt1 = static_cast<int>(godType);
+        else goal->fRequiredCount = value3;
+    } break;
+    case eEpisodeGoalType::support: {
+        const auto btype = pakIdToBannerType(value1);
+        goal->fEnumInt1 = static_cast<int>(btype);
+        goal->fRequiredCount = value2;
+    } break;
+    case eEpisodeGoalType::quest:
+        break;
+    case eEpisodeGoalType::slay:
+        break;
+    case eEpisodeGoalType::yearlyProduction:
+        break;
+    case eEpisodeGoalType::rule:
+        break;
+    case eEpisodeGoalType::yearlyProfit:
+        break;
+    case eEpisodeGoalType::housing:
+        break;
+    case eEpisodeGoalType::tradingPartners:
+        break;
+    case eEpisodeGoalType::setAsideGoods:
+        const bool newVersion = file.isNewVersion();
+        const auto type = pakResourceByteToType(value1, newVersion);
+        goal->fEnumInt1 = static_cast<int>(type);
+        goal->fRequiredCount = value2;
+        break;
+    }
+    ep.fGoals.push_back(goal);
+}
+
 void eCampaign::readPak(const std::string& path) {
     ZeusFile file(path);
     file.readVersion();
@@ -695,6 +836,14 @@ void eCampaign::readPak(const std::string& path) {
 
         file.seek(35944 + i*epInc);
         readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+
+        file.seek(837263 + i*4);
+        const uint8_t nGoals = file.readUByte();
+        file.seek(837303 + i*456);
+        for(int j = 0; j < nGoals; j++) {
+            readEpisodeGoal(*ep, file);
+        }
+        printf("\n");
     }
 
     file.seek(7140);
@@ -740,6 +889,14 @@ void eCampaign::readPak(const std::string& path) {
             file.seek(38184 + i*epInc);
         }
         readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+
+        file.seek(835423 + i*4);
+        const uint8_t nGoals = file.readUByte();
+        file.seek(835439 + i*456);
+        for(int j = 0; j < nGoals; j++) {
+            readEpisodeGoal(*ep, file);
+        }
+        printf("\n");
     }
 }
 

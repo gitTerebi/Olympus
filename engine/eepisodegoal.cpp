@@ -54,8 +54,12 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
         return eLanguage::zeusText(194, 4);
     case eEpisodeGoalType::slay:
         return eLanguage::zeusText(194, 5);
+    case eEpisodeGoalType::yearlyProduction:
+        return eLanguage::zeusText(194, 6);
     case eEpisodeGoalType::rule:
         return eLanguage::zeusText(194, 7);
+    case eEpisodeGoalType::yearlyProfit:
+        return eLanguage::zeusText(194, 8);
     case eEpisodeGoalType::housing:
         return eLanguage::zeusText(194, 9);
     case eEpisodeGoalType::setAsideGoods:
@@ -69,7 +73,8 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
     }
 }
 
-std::string eEpisodeGoal::text(const bool colonyEpisode) const {
+std::string eEpisodeGoal::text(const bool colonyEpisode,
+                               const bool atlantean) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto t = eLanguage::zeusText(194, 17);
@@ -82,16 +87,24 @@ std::string eEpisodeGoal::text(const bool colonyEpisode) const {
         return t;
     } break;
     case eEpisodeGoalType::sanctuary: {
-        auto t = eLanguage::zeusText(194, 19);
-        const auto type = static_cast<eGodType>(fEnumInt1);
-        eStringHelpers::replace(t, "[god]", eGod::sGodName(type));
-        return t;
+        if(fRequiredCount == 0) {
+            auto t = eLanguage::zeusText(194, 19);
+            const auto type = static_cast<eGodType>(fEnumInt1);
+            eStringHelpers::replace(t, "[god]", eGod::sGodName(type));
+            return t;
+        } else if(fRequiredCount == 1) {
+            return eLanguage::zeusText(194, 20);
+        } else {
+            auto t = eLanguage::zeusText(194, 22);
+            eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+            return t;
+        }
     } break;
     case eEpisodeGoalType::support: {
         auto t = eLanguage::zeusText(194, 24);
         const auto type = static_cast<eBannerType>(fEnumInt1);
         eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
-        const auto name = eSoldierBanner::sName(type, false/*atlantean*/);
+        const auto name = eSoldierBanner::sName(type, atlantean);
         eStringHelpers::replace(t, "[military_or_better]", name);
         return t;
     } break;
@@ -101,10 +114,22 @@ std::string eEpisodeGoal::text(const bool colonyEpisode) const {
     case eEpisodeGoalType::slay: {
         return eLanguage::zeusText(194, 27);
     } break;
+    case eEpisodeGoalType::yearlyProduction: {
+        auto t = eLanguage::zeusText(194, 30);
+        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        const auto res = static_cast<eResourceType>(fEnumInt1);
+        const auto resName = eResourceTypeHelpers::typeLongName(res);
+        eStringHelpers::replace(t, "[item]", resName);
+    } break;
     case eEpisodeGoalType::rule: {
         auto t = eLanguage::zeusText(194, 31);
         const auto n = fCity ? fCity->name() : "";
         eStringHelpers::replace(t, "[city]", n);
+        return t;
+    } break;
+    case eEpisodeGoalType::yearlyProfit: {
+        auto t = eLanguage::zeusText(194, 32);
+        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         return t;
     } break;
     case eEpisodeGoalType::housing: {
@@ -199,8 +224,24 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
             return eLanguage::zeusText(194, 53);
         }
     } break;
+    case eEpisodeGoalType::yearlyProduction: {
+        auto t = eLanguage::zeusText(194, 55);
+        const auto countStr = std::to_string(fStatusCount);
+        eStringHelpers::replace(t, "[amount]", countStr);
+        return t;
+    } break;
     case eEpisodeGoalType::rule: {
-
+        auto t = eLanguage::zeusText(194, 56);
+        const auto rel = fCity->relationship();
+        const auto relStr = eWorldCity::sRelationshipName(rel);
+        eStringHelpers::replace(t, "[diplomatic_status]", relStr);
+        return t;
+    } break;
+    case eEpisodeGoalType::yearlyProfit: {
+        auto t = eLanguage::zeusText(194, 57);
+        const auto countStr = std::to_string(fStatusCount);
+        eStringHelpers::replace(t, "[amount]", countStr);
+        return t;
     } break;
     case eEpisodeGoalType::housing: {
         auto text = eLanguage::zeusText(194, 58);
@@ -321,12 +362,28 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
             b->showTip(pid, eLanguage::zeusText(194, 83));
         }
     } break;
+    case eEpisodeGoalType::yearlyProduction: {
+        const bool wasMet = met();
+//        fStatusCount = ;
+        const bool isMet = met();
+        if(!wasMet && isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 85));
+        }
+    } break;
     case eEpisodeGoalType::rule: {
         const bool wasMet = met();
         fStatusCount = fCity->isVassal() ? 1 : 0;
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(pid, eLanguage::zeusText(194, 87));
+        }
+    } break;
+    case eEpisodeGoalType::yearlyProfit: {
+        const bool wasMet = met();
+//        fStatusCount = ;
+        const bool isMet = met();
+        if(!wasMet && isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 89));
         }
     } break;
     case eEpisodeGoalType::housing: {
