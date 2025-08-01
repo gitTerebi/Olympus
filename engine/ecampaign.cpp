@@ -417,9 +417,9 @@ eResourceType pakResourceByteToType(
         return eResourceType::olives;
     } else if(byte == 14 + (newVersion ? 0 : -1)) {
         return eResourceType::fleece;
-    } else if(byte == 16) {
+    } else if(newVersion && byte == 16) {
         return eResourceType::blackMarble;
-    } else if(byte == 17) {
+    } else if(newVersion && byte == 17) {
         return eResourceType::orichalc;
     }
 
