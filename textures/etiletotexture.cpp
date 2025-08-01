@@ -203,10 +203,9 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
 
     if(drawElev) {
         const bool halfSlope = tile->isHalfSlope();
+        const int tx = tile->x();
+        const int ty = tile->y();
         if(!halfSlope) {
-            const int tx = tile->x();
-            const int ty = tile->y();
-
             const int a = tile->altitude();
 
             const int tra = tr ? tr->altitude() : a;
@@ -316,16 +315,61 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
                 }
             }
         } else {
+            int dx;
+            int dy;
+            eTile* const under = eVaryingSizeTex::hiddenByNeighbour(tile, dir, dx, dy);
+            if(under) {
+                tile->setUnderTile(under, dx, dy);
+                drawDim = 0;
+                return nullptr;
+            }
             const int da = tile->doubleAltitude();
 
             const int tra = tr ? tr->doubleAltitude() : da;
-//            const int ra = r ? r->doubleAltitude() : da;
+            const int ra = r ? r->doubleAltitude() : da;
             const int bra = br ? br->doubleAltitude() : da;
-//            const int ba = b ? b->doubleAltitude() : da;
+            const int ba = b ? b->doubleAltitude() : da;
             const int bla = bl ? bl->doubleAltitude() : da;
-//            const int la = l ? l->doubleAltitude() : da;
+            const int la = l ? l->doubleAltitude() : da;
             const int tla = tl ? tl->doubleAltitude() : da;
-//            const int ta = t ? t->doubleAltitude() : da;
+            const int ta = t ? t->doubleAltitude() : da;
+
+            const bool canBe2 = da % 2 == 1 && (tx + ty) % 2;
+            if(canBe2) {
+//                const bool trw = tr ? tr->walkableElev() : false;
+//                const bool rw = r ? r->walkableElev() : false;
+                const bool brw = br ? br->walkableElev() : false;
+                const bool bw = b ? b->walkableElev() : false;
+                const bool blw = bl ? bl->walkableElev() : false;
+//                const bool lw = l ? l->walkableElev() : false;
+//                const bool tlw = tl ? tl->walkableElev() : false;
+//                const bool tw = t ? t->walkableElev() : false;
+
+                int relId = 0;
+                if(bra == da && !brw && bla == da + 1 && !blw && ba == da + 1 && !bw) {
+                    relId = 1;
+                } else if(bra == da - 1 && !brw && bla == da && !blw && ba == da - 1 && !bw) {
+                    relId = 2;
+                } else if(bra == da && !brw && bla == da - 1 && !blw && ba == da - 1 && !bw) {
+                    relId = 3;
+                } else if(bra == da + 1 && !brw && bla == da && !blw && ba == da + 1 && !bw) {
+                    relId = 4;
+                }
+                const auto& elev = textures.fHalfElevation2;
+                if(relId) {
+                    drawDim = 2;
+                    const int segmentId = (tx/2 + ty/2) % 3;
+                    return elev.getTexture(segmentId*4 + relId - 1);
+                }
+            }
+            {
+                const auto& elev = textures.fElevation;
+                if(ta == da + 1 && la == da + 2) {
+                    return elev.getTexture(23 - 21);
+                } else if(ra == da + 2) {
+                    return elev.getTexture(27 - 21);
+                }
+            }
 
             int relId = 0;
             if(bla > da) {

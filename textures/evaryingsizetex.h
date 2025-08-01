@@ -11,6 +11,10 @@ namespace eVaryingSizeTex {
              int& drawDim,
              const eWorldDirection dir);
 
+    eTile* hiddenByNeighbour(
+            eTile* const tile,
+            const eWorldDirection dir,
+            int& dx, int& dy);
     using eVaryingFunc = std::function<void(eTile* const tile,
                                             int& drawDim,
                                             const eWorldDirection dir)>;

@@ -1,9 +1,9 @@
 #include "evaryingsizetex.h"
 
-
-eTile* hiddenByNeighbour(eTile* const tile,
-                         const eWorldDirection dir,
-                         int& dx, int& dy) {
+eTile* eVaryingSizeTex::hiddenByNeighbour(
+        eTile* const tile,
+        const eWorldDirection dir,
+        int& dx, int& dy) {
     for(int x = 0; x > -3; x--) {
         for(int y = 0; y > -3; y--) {
             if(x == 0 && y == 0) continue;
@@ -17,7 +17,6 @@ eTile* hiddenByNeighbour(eTile* const tile,
             }
         }
     }
-
     return nullptr;
 }
 

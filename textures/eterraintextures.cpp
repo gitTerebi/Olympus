@@ -22,6 +22,11 @@
 #include "spriteData/zeusElevationTiles245.h"
 #include "spriteData/zeusElevationTiles260.h"
 
+#include "spriteData/zeusElevationTiles2A15.h"
+#include "spriteData/zeusElevationTiles2A30.h"
+#include "spriteData/zeusElevationTiles2A45.h"
+#include "spriteData/zeusElevationTiles2A60.h"
+
 #include "spriteData/zeusLand315.h"
 #include "spriteData/zeusLand330.h"
 #include "spriteData/zeusLand345.h"
@@ -127,6 +132,7 @@ eTerrainTextures::eTerrainTextures(const int tileW, const int tileH,
     fDoubleElevation(renderer),
     fDoubleElevation2(renderer),
     fHalfElevation(renderer),
+    fHalfElevation2(renderer),
 
     fQuakeTexs(renderer) {}
 
@@ -316,6 +322,19 @@ void eTerrainTextures::load() {
 
             for(int i = 1; i < 15; i++) {
                 loader.load(1, i, fDoubleElevation2);
+            }
+        }
+        {
+            const auto& sds = spriteData(fTileH,
+                                         eZeusElevationTiles2ASpriteData15,
+                                         eZeusElevationTiles2ASpriteData30,
+                                         eZeusElevationTiles2ASpriteData45,
+                                         eZeusElevationTiles2ASpriteData60);
+            eSpriteLoader loader(fTileH, "zeusElevationTiles2A", sds,
+                                 nullptr, fRenderer);
+
+            for(int i = 1; i < 13; i++) {
+                loader.load(1, i, fHalfElevation2);
             }
         }
     }

@@ -102,6 +102,7 @@ public:
     eTextureCollection fDoubleElevation;
     eTextureCollection fDoubleElevation2;
     eTextureCollection fHalfElevation;
+    eTextureCollection fHalfElevation2;
 
     eTextureCollection fQuakeTexs;
 };
