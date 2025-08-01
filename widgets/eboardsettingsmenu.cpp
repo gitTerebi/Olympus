@@ -136,8 +136,10 @@ void eBoardSettingsMenu::initialize(
         const auto accept = new eAcceptButton(window());
         const auto cancel = new eCancelButton(window());
         accept->setPressAction([resizeMenu, width, height, boardPtr, gw]() {
-            const int w = width->value();
-            const int h = height->value();
+            int w = width->value();
+            if(w % 2) w++;
+            int h = height->value();
+            if(h % 2) h++;
             boardPtr->resize(w, h);
             gw->updateViewBoxSize();
             gw->updateTopBottomAltitude();

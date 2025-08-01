@@ -263,7 +263,11 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     const int max = border + mapsize;
 
     const int shift = mapsize/4;
-    board.initialize(mapsize/2, mapsize + 1);
+    int boardW = mapsize/2;
+    if(boardW % 2) boardW++;
+    int boardH = mapsize + 1;
+    if(boardH % 2) boardH++;
+    board.initialize(boardW, boardH);
     board.assignAllTerritory(cid);
 
     struct eNullTile {
