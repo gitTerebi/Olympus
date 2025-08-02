@@ -604,7 +604,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.resourceCount(cid, eResourceType::wood);
         break;
     case eHeroRequirementType::soldiers:
-        sc = board.banners(cityId()).size();
+        sc = board.banners(cid).size();
         break;
     case eHeroRequirementType::taxes: {
         const int tc = board.taxesCoverage(cid);
