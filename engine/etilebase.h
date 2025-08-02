@@ -195,6 +195,7 @@ T* eTileBase::bottomRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return right<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -208,6 +209,7 @@ T* eTileBase::rightRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return top<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -221,6 +223,7 @@ T* eTileBase::topRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return left<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -234,6 +237,7 @@ T* eTileBase::leftRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return bottom<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -247,6 +251,7 @@ T* eTileBase::bottomLeftRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return bottomRight<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -260,6 +265,7 @@ T* eTileBase::bottomRightRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return topRight<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -273,6 +279,7 @@ T* eTileBase::topRightRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return topLeft<T>();
     }
+    return nullptr;
 }
 
 template<typename T>
@@ -286,6 +293,7 @@ T* eTileBase::topLeftRotated(const eWorldDirection dir) const {
     } else if(dir == eWorldDirection::W) {
         return bottomLeft<T>();
     }
+    return nullptr;
 }
 
 template <typename T>
