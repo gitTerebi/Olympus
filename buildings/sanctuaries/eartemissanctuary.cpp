@@ -2,6 +2,7 @@
 
 #include "engine/egameboard.h"
 #include "elanguage.h"
+#include "enumbers.h"
 
 eArtemisSanctuary::eArtemisSanctuary(
         const int sw, const int sh, eGameBoard& board,
@@ -34,7 +35,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             }
             const auto name = eLanguage::zeusText(138, string);
             const auto b = e::make_shared<eSoldierBanner>(bt, board);
-            for(int i = 0; i < 8; i++) {
+            for(int i = 0; i < eNumbers::sSoldiersPerAresArtemisBanner; i++) {
                 b->incCount();
             }
             b->setName(name);
@@ -50,7 +51,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             mSoldierSpawn -= ssr;
             for(const auto& b : mSoldierBanners) {
                 const int count = b->count();
-                if(count >= 8) continue;
+                if(count >= eNumbers::sSoldiersPerAresArtemisBanner) continue;
                 b->incCount();
                 break;
             }

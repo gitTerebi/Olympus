@@ -1550,14 +1550,15 @@ void eBoardCity::updateMaxSoldiers() {
     }
     mMaxRabble /= 6;
 
+    const int spb = eNumbers::sSoldiersPerBanner;
     const int nSpaces = maxPalaceBannerCount();
-    mMaxHorsemen = std::min(8*nSpaces, mMaxHorsemen);
+    mMaxHorsemen = std::min(spb*nSpaces, mMaxHorsemen);
     mMaxHorsemen = std::max(0, mMaxHorsemen);
-    const int nHorsemenB = std::ceil(mMaxHorsemen/8.);
-    mMaxHoplites = std::min(8*nSpaces - 8*nHorsemenB, mMaxHoplites);
+    const int nHorsemenB = std::ceil(mMaxHorsemen/double(spb));
+    mMaxHoplites = std::min(spb*nSpaces - spb*nHorsemenB, mMaxHoplites);
     mMaxHoplites = std::max(0, mMaxHoplites);
-    const int nHoplitesB = std::ceil(mMaxHoplites/8.);
-    mMaxRabble = std::min(8*nSpaces - 8*nHorsemenB - 8*nHoplitesB, mMaxRabble);
+    const int nHoplitesB = std::ceil(mMaxHoplites/double(spb));
+    mMaxRabble = std::min(spb*nSpaces - spb*nHorsemenB - spb*nHoplitesB, mMaxRabble);
     mMaxRabble = std::max(0, mMaxRabble);
 }
 
@@ -1628,7 +1629,7 @@ void eBoardCity::consolidateSoldiers() {
         for(int i = 0; i < static_cast<int>(banners.size()); i++) {
             const auto s = banners[i];
             const int sc = s->count();
-            int sSpace = 8 - sc;
+            int sSpace = eNumbers::sSoldiersPerBanner - sc;
             if(sSpace <= 0) continue;
             for(int j = banners.size() - 1; j > i; j--) {
                 const auto ss = banners[j];
@@ -1655,7 +1656,7 @@ void eBoardCity::addSoldier(const eCharacterType st) {
         if(b->isAbroad()) continue;
         const auto bt = b->type();
         const int c = b->count();
-        if(c >= 8) continue;
+        if(c >= eNumbers::sSoldiersPerBanner) continue;
         if(bt == eBannerType::rockThrower &&
            st == eCharacterType::rockThrower) {
             found = true;

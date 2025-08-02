@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "engine/egameboard.h"
+#include "enumbers.h"
 
 void eEnlistedForces::read(eGameBoard& board,
                            eWorldBoard& wboard,
@@ -108,7 +109,7 @@ void eEnlistedForces::kill(const double killFrac) const {
         const auto cid = s->cityId();
         const int oC = s->count();
         int nC = std::round((1 - killFrac)*oC);
-        nC = std::clamp(nC, 0, 8);
+        nC = std::clamp(nC, 0, eNumbers::sSoldiersPerBanner);
         auto& board = s->getBoard();
         const auto type = s->type();
         for(int i = nC; i < oC; i++) {

@@ -10,6 +10,9 @@ int eNumbers::sDayLength;
 
 int eNumbers::sArmyTravelTime;
 
+int eNumbers::sSoldiersPerBanner;
+int eNumbers::sSoldiersPerAresArtemisBanner;
+
 int eNumbers::sEarthquakeProgressPeriod;
 
 int eNumbers::sBoarMaxCount;
@@ -264,6 +267,9 @@ void eNumbers::sLoad() {
     loadI("day_length_i", sDayLength, 350);
 
     loadI("army_travel_time_i", sArmyTravelTime, 200);
+
+    loadI("soldiers_per_banner_i", sSoldiersPerBanner, 8);
+    loadI("soldiers_per_ares_artemis_banner_i", sSoldiersPerAresArtemisBanner, 8);
 
     loadI("earthquake_progress_period_i", sEarthquakeProgressPeriod, 500);
 
