@@ -20,7 +20,9 @@ enum class eEpisodeGoalType {
     completeBefore,
     tradingPartners,
     yearlyProduction,
-    yearlyProfit
+    yearlyProfit,
+    pyramid,
+    hippodrome
 };
 
 struct eEpisodeGoal {
