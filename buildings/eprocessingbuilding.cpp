@@ -2,6 +2,7 @@
 
 #include "characters/actions/ecarttransporteraction.h"
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
 #include "enumbers.h"
 
 #include <algorithm>
@@ -64,7 +65,8 @@ void eProcessingBuilding::timeChanged(const int by) {
         if(mProcessTime > wait) {
             mProcessTime -= wait;
             if(mRawCount >= mRawUse) {
-                const int c = add(resourceType(), 1);
+                const auto type = resourceType();
+                const int c = addProduced(type, 1);
                 mRawCount -= c*mRawUse;
             }
         }

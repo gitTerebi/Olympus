@@ -13,14 +13,14 @@ enum class eEpisodeGoalType {
     support,
     quest,
     slay,
-    yearlyProduction,
     rule,
-    yearlyProfit,
     housing,
     setAsideGoods,
     surviveUntil,
     completeBefore,
-    tradingPartners
+    tradingPartners,
+    yearlyProduction,
+    yearlyProfit
 };
 
 struct eEpisodeGoal {

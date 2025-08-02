@@ -17,6 +17,8 @@ public:
 
     void timeChanged(const int by) override;
 
+    int addProduced(const eResourceType type, const int count);
+
     int add(const eResourceType type, const int count) override;
     int take(const eResourceType type, const int count) override;
 

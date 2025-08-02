@@ -39,7 +39,7 @@ void eFishery::timeChanged(const int by) {
             if(mStateCount > eNumbers::sFisheryUnpackTime) {
                 mStateCount = 0;
                 mState = eFisheryState::waiting;
-                eResourceBuildingBase::add(eResourceType::fish, 3);
+                addProduced(eResourceType::fish, 3);
                 updateDisabled();
             }
         } break;

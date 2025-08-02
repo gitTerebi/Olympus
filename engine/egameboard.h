@@ -691,6 +691,10 @@ public:
                         const bool editorDisplay);
 
     void setMaxSanctuaries();
+
+    int bestYearlyProduction(const eResourceType type) const;
+    void incProduced(const eResourceType type,
+                     const int by);
 private:
     void updateNeighbours();
 
@@ -823,6 +827,15 @@ private:
     std::vector<stdsptr<eEarthquake>> mEarthquakes;
 
     std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
+
+    // for person player
+    struct eYearlyProduction {
+        int fBest = 0;
+        int fThisYear = 0; // so far
+        int fLastYear = 0;
+    };
+
+    std::map<eResourceType, eYearlyProduction> mYearlyProduction;
 };
 
 #endif // EGAMEBOARD_H

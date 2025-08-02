@@ -2212,6 +2212,13 @@ void eGameBoard::incTime(const int by) {
     mTime -= nd*dayLen;
 
     if(nextYear) {
+        for(auto& y : mYearlyProduction) {
+            auto& p = y.second;
+            p.fLastYear = p.fThisYear;
+            p.fThisYear = 0;
+            if(p.fLastYear > p.fBest) p.fBest = p.fLastYear;
+        }
+
         for(const auto& c : mActiveCitiesOnBoard) {
             c->nextYear();
         }
@@ -3478,6 +3485,17 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
     b->buildingProgressed();
 
     return true;
+}
+
+int eGameBoard::bestYearlyProduction(const eResourceType type) const {
+    const auto it = mYearlyProduction.find(type);
+    if(it == mYearlyProduction.end()) return 0;
+    return it->second.fBest;
+}
+
+void eGameBoard::incProduced(const eResourceType type,
+                             const int by) {
+    mYearlyProduction[type].fThisYear += by;
 }
 
 eDistrictIdTmp::eDistrictIdTmp(eGameBoard& board) :

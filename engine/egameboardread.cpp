@@ -152,16 +152,27 @@ void eGameBoard::read(eReadStream& src) {
         }
     }
 
-     int npa;
-     src >> npa;
-     for(int i = 0; i < npa; i++) {
-         ePlannedActionType type;
-         src >> type;
-         const auto a = ePlannedAction::sCreate(type);
-         a->read(src, *this);
-         mPlannedActions.push_back(a);
-     }
+    int npa;
+    src >> npa;
+    for(int i = 0; i < npa; i++) {
+        ePlannedActionType type;
+        src >> type;
+        const auto a = ePlannedAction::sCreate(type);
+        a->read(src, *this);
+        mPlannedActions.push_back(a);
+    }
 
-     updateMarbleTiles();
-     updateTerritoryBorders();
+    int np;
+    src >> np;
+    for(int i = 0; i < np; i++) {
+        eResourceType type;
+        src >> type;
+        auto& y = mYearlyProduction[type];
+        src >> y.fBest;
+        src >> y.fLastYear;
+        src >> y.fThisYear;
+    }
+
+    updateMarbleTiles();
+    updateTerritoryBorders();
 }

@@ -158,4 +158,12 @@ void eGameBoard::write(eWriteStream& dst) const {
         dst << a->type();
         a->write(dst);
     }
+
+    dst << mYearlyProduction.size();
+    for(const auto& p : mYearlyProduction) {
+        dst << p.first;
+        dst << p.second.fBest;
+        dst << p.second.fLastYear;
+        dst << p.second.fThisYear;
+    }
 }

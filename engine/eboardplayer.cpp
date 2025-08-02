@@ -65,6 +65,10 @@ void eBoardPlayer::incDrachmas(const int by) {
     if(!wasInDebt && isInDebt) {
         mInDebtSince = mBoard.date();
     }
+    const bool isPp = isPerson();
+    if(isPp) {
+        mBoard.incProduced(eResourceType::drachmas, by);
+    }
 }
 
 void eBoardPlayer::setDifficulty(const eDifficulty d) {

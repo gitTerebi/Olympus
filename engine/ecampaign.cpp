@@ -709,12 +709,13 @@ eBannerType pakIdToBannerType(const uint16_t id) {
 }
 
 void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
+    const bool newVersion = file.isNewVersion();
     const uint8_t typeId = file.readUByte();
     file.skipBytes(3);
     const uint16_t value1 = file.readUShort();
     file.skipBytes(2);
-    const uint16_t value2 = file.readUByte();
-    file.skipBytes(3);
+    const uint16_t value2 = file.readUShort();
+    file.skipBytes(2);
     const uint8_t value3 = file.readUByte();
     file.skipBytes(63);
 
@@ -742,24 +743,39 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
     case eEpisodeGoalType::quest:
         break;
     case eEpisodeGoalType::slay:
+        // value1 is id?
         break;
-    case eEpisodeGoalType::yearlyProduction:
-        break;
+    case eEpisodeGoalType::yearlyProduction: {
+        goal->fRequiredCount = value2;
+        const auto type = pakCityResourceByteToType(value1, newVersion);
+        goal->fEnumInt1 = static_cast<int>(type);
+    } break;
     case eEpisodeGoalType::rule:
         break;
     case eEpisodeGoalType::yearlyProfit:
+        goal->fRequiredCount = value1;
         break;
-    case eEpisodeGoalType::housing:
-        break;
+    case eEpisodeGoalType::housing: {
+        if(value1 < 9) {
+            goal->fEnumInt1 = 0;
+            goal->fEnumInt2 = value1 - 2;
+        } else {
+            goal->fEnumInt1 = 1;
+            goal->fEnumInt2 = value1 - 10;
+        }
+        goal->fRequiredCount = value2;
+    } break;
     case eEpisodeGoalType::tradingPartners:
+        goal->fRequiredCount = value1;
         break;
     case eEpisodeGoalType::setAsideGoods:
-        const bool newVersion = file.isNewVersion();
         const auto type = pakResourceByteToType(value1, newVersion);
         goal->fEnumInt1 = static_cast<int>(type);
         goal->fRequiredCount = value2;
         break;
     }
+
+    printf("%s\n", goal->text(false, false).c_str());
     ep.fGoals.push_back(goal);
 }
 

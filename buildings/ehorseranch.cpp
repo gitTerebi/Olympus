@@ -3,6 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "ehorseranchenclosure.h"
+#include "engine/egameboard.h"
 #include "enumbers.h"
 
 #include <algorithm>
@@ -69,6 +70,12 @@ void eHorseRanch::timeChanged(const int by) {
             if(mHorseTime > eNumbers::sHorseRanchHorseSpawnPeriod) {
                 mHorseTime = 0;
                 mEnclosure->spawnHorse();
+
+                const bool isPp = isPersonPlayer();
+                if(isPp) {
+                    auto& board = getBoard();
+                    board.incProduced(eResourceType::horse, 1);
+                }
             }
         }
     }

@@ -132,14 +132,14 @@ void eResourceCollectBuilding::timeChanged(const int by) {
             const int wait = mProcessDuration/effectiveness();
             if(mProcessTime > wait) {
                 mProcessTime -= wait;
-                const auto rt = resourceType();
-                if(rt == eResourceType::silver) {
+                const auto type = resourceType();
+                if(type == eResourceType::silver) {
                     auto& brd = getBoard();
                     const auto pid = playerId();
                     brd.incDrachmas(pid, eNumbers::sMintDrachmasPerSilver);
                     mRawCount--;
                 } else {
-                    const int c = eResourceCollectBuilding::add(rt, 1);
+                    const int c = addProduced(type, 1);
                     mRawCount -= c;
                 }
                 if(mRawCount <= mRawCountCollect) enableSpawn();

@@ -223,7 +223,6 @@ void eTileBase::read(eReadStream& src) {
     setMarbleLevel(mlevel);
 
     src >> mDoubleAltitude;
-    mDoubleAltitude *= 2; // !!!
     src >> mResource;
     src >> mElevation;
     src >> mWalkableElev;

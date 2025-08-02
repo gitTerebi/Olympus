@@ -1,6 +1,7 @@
 #include "eresourcebuildingbase.h"
 
 #include "characters/actions/ecarttransporteraction.h"
+#include "engine/egameboard.h"
 #include "enumbers.h"
 
 #include <algorithm>
@@ -33,6 +34,16 @@ void eResourceBuildingBase::timeChanged(const int by) {
         }
     }
     eEmployingBuilding::timeChanged(by);
+}
+
+int eResourceBuildingBase::addProduced(const eResourceType type, const int count) {
+    const int c = add(type, count);
+    const bool isPp = isPersonPlayer();
+    if(isPp) {
+        auto& board = getBoard();
+        board.incProduced(type, c);
+    }
+    return c;
 }
 
 int eResourceBuildingBase::add(const eResourceType type,

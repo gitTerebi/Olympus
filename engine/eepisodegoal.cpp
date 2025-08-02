@@ -364,7 +364,8 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::yearlyProduction: {
         const bool wasMet = met();
-//        fStatusCount = ;
+        const auto type = static_cast<eResourceType>(fEnumInt1);
+        fStatusCount = b->bestYearlyProduction(type);
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(pid, eLanguage::zeusText(194, 85));
@@ -380,7 +381,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::yearlyProfit: {
         const bool wasMet = met();
-//        fStatusCount = ;
+        fStatusCount = b->bestYearlyProduction(eResourceType::drachmas);
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(pid, eLanguage::zeusText(194, 89));

@@ -121,9 +121,43 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         });
         detailsW->addWidget(b);
     } break;
+    case eEpisodeGoalType::yearlyProduction: {
+        const auto resButton = new eResourceButton(window());
+        resButton->initialize([e, updateText](
+                              const eResourceType r) {
+            e->fEnumInt1 = static_cast<int>(r);
+            updateText();
+        });
+        auto res = static_cast<eResourceType>(e->fEnumInt1);
+        if(res == eResourceType::none) {
+            res = eResourceType::marble;
+            e->fEnumInt1 = static_cast<int>(res);
+        }
+        resButton->setResource(res);
+        detailsW->addWidget(resButton);
+
+        const auto b = new eValueButton(window());
+        b->initialize(0, 999);
+        b->setValue(e->fRequiredCount);
+        b->setValueChangeAction([e, updateText](const int c) {
+            e->fRequiredCount = c;
+            updateText();
+        });
+        detailsW->addWidget(b);
+    } break;
     case eEpisodeGoalType::slay: {
         const auto b = new eValueButton(window());
         b->initialize(0, 9);
+        b->setValue(e->fRequiredCount);
+        b->setValueChangeAction([e, updateText](const int c) {
+            e->fRequiredCount = c;
+            updateText();
+        });
+        detailsW->addWidget(b);
+    } break;
+    case eEpisodeGoalType::yearlyProfit: {
+        const auto b = new eValueButton(window());
+        b->initialize(0, 99999);
         b->setValue(e->fRequiredCount);
         b->setValueChangeAction([e, updateText](const int c) {
             e->fRequiredCount = c;
