@@ -72,19 +72,19 @@ bool ePathFinderBase::extractPath(
                 {eOrientation::topRight, bl},
                 {eOrientation::bottomRight, tl},
                 {eOrientation::left,
-                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, 1, -1, &from))) ?
+                        (od || (!isFinal && !checkNotDiagonalWalkable(brd, 1, -1, &from))) ?
                             eTilePair{nullptr, nullptr} :
                             tileGetter(brd, tile, 1, -1)},
                 {eOrientation::top,
-                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, 1, 1, &from))) ?
+                        (od || (!isFinal && !checkNotDiagonalWalkable(brd, 1, 1, &from))) ?
                             eTilePair{nullptr, nullptr} :
                             tileGetter(brd, tile, 1, 1)},
                 {eOrientation::right,
-                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, -1, 1, &from))) ?
+                        (od || (!isFinal && !checkNotDiagonalWalkable(brd, -1, 1, &from))) ?
                             eTilePair{nullptr, nullptr} :
                             tileGetter(brd, tile, -1, 1)},
                 {eOrientation::bottom,
-                        (!isFinal && (od || !checkNotDiagonalWalkable(brd, -1, -1, &from))) ?
+                        (od || (!isFinal && !checkNotDiagonalWalkable(brd, -1, -1, &from))) ?
                             eTilePair{nullptr, nullptr} :
                             tileGetter(brd, tile, -1, -1)}};
 
