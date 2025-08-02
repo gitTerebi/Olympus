@@ -2215,6 +2215,15 @@ void eGameWidget::paintEvent(ePainter& p) {
                 return canBuildFishery(tx, ty, o);
             };
         } break;
+        case eBuildingMode::triremeWharf: {
+            canBuildFunc = [&](const int tx, const int ty,
+                               const int sw, const int sh) {
+                (void)sw;
+                (void)sh;
+                eDiagonalOrientation o;
+                return canBuildTriremeWharf(tx, ty, o);
+            };
+        } break;
         case eBuildingMode::pier: {
             canBuildFunc = [&](const int tx, const int ty,
                                const int sw, const int sh) {
@@ -2837,13 +2846,20 @@ void eGameWidget::paintEvent(ePainter& p) {
             eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
-            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+            ebs.emplace_back(tx, ty, b1);
         } break;
 
         case eBuildingMode::fishery: {
             eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<eFishery>(*mBoard, o, mViewedCityId);
+            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+        } break;
+
+        case eBuildingMode::triremeWharf: {
+            eDiagonalOrientation o = eDiagonalOrientation::topRight;
+            canBuildTriremeWharf(mHoverTX, mHoverTY, o);
+            const auto b1 = e::make_shared<eTriremeWharf>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         } break;
 

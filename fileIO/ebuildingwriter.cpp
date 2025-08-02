@@ -5,10 +5,8 @@
 
 void eBuildingWriter::sWrite(const eBuilding* const b,
                              eWriteStream& dst) {
-    auto& board = b->getBoard();
     const auto cid = b->cityId();
     dst << cid;
-    const auto wrld = board.getWorldBoard();
     const auto type = b->type();
     switch(type) {
     case eBuildingType::road: {
@@ -80,6 +78,10 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     } break;
     case eBuildingType::fishery: {
         const auto p = static_cast<const eFishery*>(b);
+        dst << p->orientation();
+    } break;
+    case eBuildingType::triremeWharf: {
+        const auto p = static_cast<const eTriremeWharf*>(b);
         dst << p->orientation();
     } break;
     case eBuildingType::pier: {

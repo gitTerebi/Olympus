@@ -1,12 +1,14 @@
 #include "etriremewharf.h"
 
 #include "characters/etrireme.h"
+#include "characters/actions/etriremeaction.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
-eTriremeWharf::eTriremeWharf(eGameBoard& board, const eOrientation o,
+eTriremeWharf::eTriremeWharf(eGameBoard& board,
+                             const eDiagonalOrientation o,
                              const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::triremeWharf,
                        3, 3, 100, cid),
@@ -29,16 +31,16 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
     const auto o = sRotated(mO, dir);
     int id = 3;
     switch(o) {
-    case eOrientation::topRight:
+    case eDiagonalOrientation::topRight:
         id = 0;
         break;
-    case eOrientation::bottomRight:
+    case eDiagonalOrientation::bottomRight:
         id = 1;
         break;
-    case eOrientation::bottomLeft:
+    case eDiagonalOrientation::bottomLeft:
         id = 2;
         break;
-    case eOrientation::topLeft:
+    case eDiagonalOrientation::topLeft:
         id = 3;
         break;
     default:
@@ -50,8 +52,69 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
 }
 
 std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
-    (void)size;
-    return {};
+    if(!enabled()) return {};
+    const int sizeId = static_cast<int>(size);
+    const auto& blds = eGameTextures::buildings()[sizeId];
+    auto& board = getBoard();
+    const auto dir = board.direction();
+    const auto oo = sRotated(mO, dir);
+    eOverlay o;
+    const eTextureCollection* coll = nullptr;
+    if(mTrireme) {
+        switch(oo) {
+        case eDiagonalOrientation::topRight:
+            coll = &blds.fTriremeWharfOverlay1TR;
+            o.fX = -0.3;
+            o.fY = -3.5;
+            break;
+        case eDiagonalOrientation::bottomLeft:
+            coll = &blds.fTriremeWharfOverlay1BL;
+            o.fX = -0.3;
+            o.fY = -2.38;
+            break;
+        default:
+        case eDiagonalOrientation::topLeft:
+            coll = &blds.fTriremeWharfOverlay1TL;
+            o.fX = -0.15;
+            o.fY = -2.4;
+            break;
+        case eDiagonalOrientation::bottomRight:
+            coll = &blds.fTriremeWharfOverlay1BR;
+            o.fX = 0.25;
+            o.fY = -3.4;
+            break;
+        }
+    } else if(mTriremeBuildingTime > 0) {
+        switch(oo) {
+        case eDiagonalOrientation::topRight:
+            coll = &blds.fTriremeWharfOverlay2TR;
+            o.fX = 0.2;
+            o.fY = -3.5;
+            break;
+        case eDiagonalOrientation::bottomLeft:
+            coll = &blds.fTriremeWharfOverlay2BL;
+            o.fX = -0.8;
+            o.fY = -3.38;
+            break;
+        default:
+        case eDiagonalOrientation::topLeft:
+            coll = &blds.fTriremeWharfOverlay2TL;
+            o.fX = -0.75;
+            o.fY = -4.0;
+            break;
+        case eDiagonalOrientation::bottomRight:
+            coll = &blds.fTriremeWharfOverlay2BR;
+            o.fX = -0.25;
+            o.fY = -3.4;
+            break;
+        }
+    }
+
+    if(!coll) return {};
+
+    const int texId = textureTime() % coll->size();
+    o.fTex = coll->getTexture(texId);
+    return {o};
 }
 
 void eTriremeWharf::timeChanged(const int by) {
@@ -59,6 +122,20 @@ void eTriremeWharf::timeChanged(const int by) {
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
             mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
+        }
+        if(!mTrireme && mWoodCount > 1 && mArmorCount > 0) {
+            mTriremeBuildingTime += by;
+            if(mTriremeBuildingTime > eNumbers::sTriremeWharfBuildTime) {
+                mTriremeBuildingStage++;
+                mTriremeBuildingTime = 0;
+                mWoodCount -= 2;
+                mArmorCount--;
+                if(mTriremeBuildingStage >= eNumbers::sTriremeWharfBuildStages) {
+                    mTriremeBuildingStage = 0;
+                    mTriremeBuildingTime = 0;
+                    spawnTrireme();
+                }
+            }
         }
     }
     eEmployingBuilding::timeChanged(by);
@@ -131,6 +208,8 @@ void eTriremeWharf::read(eReadStream& src) {
     });
     src >> mWoodCount;
     src >> mArmorCount;
+    src >> mTriremeBuildingStage;
+    src >> mTriremeBuildingTime;
 }
 
 void eTriremeWharf::write(eWriteStream& dst) const {
@@ -140,4 +219,39 @@ void eTriremeWharf::write(eWriteStream& dst) const {
     dst.writeCharacter(mTrireme);
     dst << mWoodCount;
     dst << mArmorCount;
+    dst << mTriremeBuildingStage;
+    dst << mTriremeBuildingTime;
+}
+
+void eTriremeWharf::spawnTrireme() {
+    if(mTrireme) return;
+    const auto b = e::make_shared<eTrireme>(getBoard());
+    b->setBothCityIds(cityId());
+    mTrireme = b.get();
+    eTile* t;
+    const auto ct = centerTile();
+    switch(mO) {
+    case eDiagonalOrientation::topRight: {
+        const auto tr = ct->topRight<eTile>();
+        if(!tr) return;
+        t = tr->topRight<eTile>();
+    } break;
+    case eDiagonalOrientation::bottomLeft:
+        t = ct->bottom<eTile>();
+        break;
+    case eDiagonalOrientation::topLeft:
+        t = ct->topLeft<eTile>();
+        break;
+    default:
+    case eDiagonalOrientation::bottomRight: {
+        const auto r = ct->right<eTile>();
+        if(!r) return;
+        t = r->bottomRight<eTile>();
+    } break;
+    }
+    if(!t) return;
+    b->changeTile(t);
+
+    const auto a = e::make_shared<eTriremeAction>(this, b.get());
+    b->setAction(a);
 }

@@ -177,6 +177,11 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         src >> o;
         b = e::make_shared<eFishery>(board, o, cid);
     } break;
+    case eBuildingType::triremeWharf: {
+        eDiagonalOrientation o;
+        src >> o;
+        b = e::make_shared<eTriremeWharf>(board, o, cid);
+    } break;
 
     case eBuildingType::pier: {
         eDiagonalOrientation o;
@@ -513,11 +518,6 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         b = e::make_shared<ePlaceholder>(board, cid);
     } break;
 
-    case eBuildingType::triremeWharf: {
-        eOrientation o;
-        src >> o;
-        b = e::make_shared<eTriremeWharf>(board, o, cid);
-    } break;
     case eBuildingType::none:
     case eBuildingType::erase:
     case eBuildingType::bridge:

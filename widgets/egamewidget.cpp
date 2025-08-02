@@ -797,6 +797,75 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
     return false;
 }
 
+bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
+                                       eDiagonalOrientation& o) const {
+    for(int x = tx - 1; x < tx - 1 + 3; x++) {
+        for(int y = ty - 1; y < ty - 1 + 3; y++) {
+            const auto t = mBoard->tile(x, y);
+            if(!t) return false;
+            if(t->underBuilding()) return false;
+            const auto banner = t->banner();
+            if(banner && !banner->buildable()) return false;
+            if(t->isElevationTile()) return false;
+            const auto& chars = t->characters();
+            if(!chars.empty()) return false;
+        }
+    }
+    {
+        const auto t = mBoard->tile(tx - 1, ty);
+        if(!t) return false;
+        const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
+        if(tr) {
+            const auto br = t->bottomRight<eTile>();
+            const bool tr = eBuildableHelpers::canBuildFisheryTR(br);
+            if(tr) {
+                o = eDiagonalOrientation::topRight;
+                return true;
+            }
+        }
+    }
+    {
+        const auto t = mBoard->tile(tx, ty);
+        if(!t) return false;
+        const bool br = eBuildableHelpers::canBuildFisheryBR(t);
+        if(br) {
+            const auto bl = t->bottomLeft<eTile>();
+            const bool br = eBuildableHelpers::canBuildFisheryBR(bl);
+            if(br) {
+                o = eDiagonalOrientation::bottomRight;
+                return true;
+            }
+        }
+    }
+    {
+        const auto t = mBoard->tile(tx - 1, ty + 1);
+        if(!t) return false;
+        const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
+        if(bl) {
+            const auto br = t->bottomRight<eTile>();
+            const bool bl = eBuildableHelpers::canBuildFisheryBL(br);
+            if(bl) {
+                o = eDiagonalOrientation::bottomLeft;
+                return true;
+            }
+        }
+    }
+    {
+        const auto t = mBoard->tile(tx - 1, ty + 1);
+        if(!t) return false;
+        const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
+        if(tl) {
+            const auto tr = t->topRight<eTile>();
+            const bool tl = eBuildableHelpers::canBuildFisheryTL(tr);
+            if(tl) {
+                o = eDiagonalOrientation::topLeft;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool eGameWidget::canBuildPier(const int tx, const int ty,
                                eDiagonalOrientation& o,
                                const eCityId cid,

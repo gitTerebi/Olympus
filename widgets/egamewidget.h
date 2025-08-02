@@ -161,6 +161,8 @@ private:
                         const eResourceType resType) const;
     bool canBuildFishery(const int tx, const int ty,
                          eDiagonalOrientation& o) const;
+    bool canBuildTriremeWharf(const int tx, const int ty,
+                              eDiagonalOrientation& o) const;
     bool canBuildPier(const int tx, const int ty,
                       eDiagonalOrientation& o, const eCityId cid,
                       const ePlayerId pid, const bool forestAllowed) const;

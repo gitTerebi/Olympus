@@ -196,6 +196,7 @@ SOURCES += \
         characters/actions/esoldieraction.cpp \
         characters/actions/etakecattleaction.cpp \
         characters/actions/etraderaction.cpp \
+        characters/actions/etriremeaction.cpp \
         characters/actions/ewaitaction.cpp \
         characters/actions/godHelp/eaphroditehelpaction.cpp \
         characters/actions/godHelp/eapollohelpaction.cpp \
@@ -846,6 +847,7 @@ HEADERS += \
     characters/actions/esoldieraction.h \
     characters/actions/etakecattleaction.h \
     characters/actions/etraderaction.h \
+    characters/actions/etriremeaction.h \
     characters/actions/ewaitaction.h \
     characters/actions/godHelp/eaphroditehelpaction.h \
     characters/actions/godHelp/eapollohelpaction.h \

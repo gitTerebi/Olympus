@@ -51,6 +51,8 @@ enum class eBuildingMode {
     horseRanch,
     chariotFactory,
 
+    triremeWharf,
+
     wall,
     tower,
     gatehouse,

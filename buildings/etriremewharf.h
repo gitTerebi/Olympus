@@ -7,7 +7,8 @@ class eTrireme;
 
 class eTriremeWharf : public eEmployingBuilding {
 public:
-    eTriremeWharf(eGameBoard& board, const eOrientation o,
+    eTriremeWharf(eGameBoard& board,
+                  const eDiagonalOrientation o,
                   const eCityId cid);
     ~eTriremeWharf();
 
@@ -25,11 +26,18 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    eDiagonalOrientation orientation() const { return mO; }
 private:
-    const eOrientation mO;
+    void spawnTrireme();
+
+    const eDiagonalOrientation mO;
 
     stdptr<eCartTransporter> mTakeCart;
     stdptr<eTrireme> mTrireme;
+
+    int mTriremeBuildingStage = 0;
+    int mTriremeBuildingTime = 0;
 
     const int mMaxWood = 8;
     int mWoodCount{0};

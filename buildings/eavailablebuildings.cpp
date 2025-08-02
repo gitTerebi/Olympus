@@ -42,6 +42,8 @@ void eAvailableBuildings::read(eReadStream& src) {
     src >> fHorseRanch;
     src >> fChariotFactory;
 
+    src >> fTriremeWharf;
+
     src >> fAphroditeSanctuary;
     src >> fApolloSanctuary;
     src >> fAresSanctuary;
@@ -117,6 +119,8 @@ void eAvailableBuildings::write(eWriteStream& dst) const {
 
     dst << fHorseRanch;
     dst << fChariotFactory;
+
+    dst << fTriremeWharf;
 
     dst << fAphroditeSanctuary;
     dst << fApolloSanctuary;
@@ -247,6 +251,9 @@ bool eAvailableBuildings::available(
         return fHorseRanch;
     case eBuildingType::chariotFactory:
         return fChariotFactory;
+
+    case eBuildingType::triremeWharf:
+        return fTriremeWharf;
 
     case eBuildingType::templeAphrodite:
         return fAphroditeSanctuary == eAvailable::available;
@@ -487,6 +494,8 @@ void eAvailableBuildings::startEpisode(const eAvailableBuildings& o) {
     startEpisode(o, &eAvailableBuildings::fHorseRanch);
     startEpisode(o, &eAvailableBuildings::fChariotFactory);
 
+    startEpisode(o, &eAvailableBuildings::fTriremeWharf);
+
     startEpisode(o, &eAvailableBuildings::fAphroditeSanctuary);
     startEpisode(o, &eAvailableBuildings::fApolloSanctuary);
     startEpisode(o, &eAvailableBuildings::fAresSanctuary);
@@ -574,6 +583,9 @@ bool* eAvailableBuildings::allowedPtr(const eBuildingType type) {
         return &fHorseRanch;
     case eBuildingType::chariotFactory:
         return &fChariotFactory;
+
+    case eBuildingType::triremeWharf:
+        return &fTriremeWharf;
 
     default:
         return nullptr;

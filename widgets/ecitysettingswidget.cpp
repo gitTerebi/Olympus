@@ -59,7 +59,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                                      eGameBoard* const board,
                                      eWorldBoard* const wb) {
     if(!c) return;
-    const auto ppid = board->personPlayer();
+    const auto ppid = wb->personPlayer();
     setType(eFrameType::message);
     const auto res = resolution();
     const int w = res.centralWidgetLargeWidth();

@@ -1140,6 +1140,35 @@ bool eGameWidget::buildMouseRelease() {
                 }
             }
         } break;
+        case eBuildingMode::triremeWharf: {
+            eDiagonalOrientation o;
+            const bool c = canBuildTriremeWharf(mHoverTX, mHoverTY, o);
+            if(c) {
+                const auto b = e::make_shared<eTriremeWharf>(*mBoard, o, mViewedCityId);
+                const auto tile = mBoard->tile(mHoverTX, mHoverTY);
+                b->setCenterTile(tile);
+
+                const int minX = mHoverTX - 1;
+                const int minY = mHoverTY - 1;
+                b->setTileRect({minX, minY, 3, 3});
+                for(int x = minX; x < minX + 3; x++) {
+                    for(int y = minY; y < minY + 3; y++) {
+                        const auto t = mBoard->tile(x, y);
+                        if(t) {
+                            t->setUnderBuilding(b);
+                            b->addUnderBuilding(t);
+                        }
+                    }
+                }
+
+                if(!mEditorMode) {
+                    const auto diff = mBoard->difficulty(ppid);
+                    const int cost = eDifficultyHelpers::buildingCost(
+                                         diff, eBuildingType::triremeWharf);
+                    mBoard->incDrachmas(ppid, -cost);
+                }
+            }
+        } break;
 
 
         case eBuildingMode::pier: {

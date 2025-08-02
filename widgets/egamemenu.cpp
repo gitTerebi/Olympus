@@ -756,7 +756,8 @@ void eGameMenu::initialize(eGameBoard* const b,
     };
     const std::vector<eSPR> mp8spr = {eSPR{eBuildingMode::armory, eLanguage::zeusText(28, 135)},
                                       eSPR{eBuildingMode::horseRanch, eLanguage::zeusText(28, 133)},
-                                      eSPR{eBuildingMode::chariotFactory, eLanguage::zeusText(28, 212)}};
+                                      eSPR{eBuildingMode::chariotFactory, eLanguage::zeusText(28, 212)},
+                                      eSPR{eBuildingMode::triremeWharf, eLanguage::zeusText(28, 136)}};
     const auto mp8 = [this, cmx, cmy, mp8spr]() {
         openBuildWidget(cmx, cmy, mp8spr);
     };

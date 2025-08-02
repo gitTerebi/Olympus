@@ -213,6 +213,9 @@ int eNumbers::sResourceBuildingMaxResourceGiveDistance;
 int eNumbers::sProcessingBuildingMaxResourceTakeDistance;
 int eNumbers::sTriremeWharfMaxResourceTakeDistance;
 
+int eNumbers::sTriremeWharfBuildTime;
+int eNumbers::sTriremeWharfBuildStages;
+
 void eNumbers::sLoad() {
     const auto path = eGameDir::numbersPath();
     std::map<std::string, std::string> map;
@@ -471,4 +474,6 @@ void eNumbers::sLoad() {
     loadI("resource_building_max_resource_give_distance_i", sResourceBuildingMaxResourceGiveDistance, 60);
     loadI("processing_building_max_resource_take_distance_i", sProcessingBuildingMaxResourceTakeDistance, 60);
     loadI("trireme_wharf_max_resource_take_distance_i", sTriremeWharfMaxResourceTakeDistance, 60);
+    loadI("trireme_wharf_build_time_i", sTriremeWharfBuildTime, 250000);
+    loadI("trireme_wharf_build_stages_i", sTriremeWharfBuildStages, 3);
 }
