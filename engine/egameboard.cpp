@@ -2697,6 +2697,12 @@ int eGameBoard::countSoldiers(const eBannerType bt,
     return c->countSoldiers(bt);
 }
 
+int eGameBoard::countWorkingTriremes(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->countWorkingTriremes();
+}
+
 void eGameBoard::startEpisode(eEpisode* const e,
                               const eWC& lastPlayedColony) {
     if(mTimedBuildings.empty()) { // first episode

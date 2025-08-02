@@ -19,7 +19,8 @@ enum class eBannerType {
     rockThrower,
     amazon,
     aresWarrior,
-    enemy
+    enemy,
+    trireme
 };
 
 class eSoldierBanner : public eObject {

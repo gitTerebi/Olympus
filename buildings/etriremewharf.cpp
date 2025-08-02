@@ -223,6 +223,10 @@ void eTriremeWharf::write(eWriteStream& dst) const {
     dst << mTriremeBuildingTime;
 }
 
+bool eTriremeWharf::hasTrireme() const {
+    return mTrireme;
+}
+
 void eTriremeWharf::spawnTrireme() {
     if(mTrireme) return;
     const auto b = e::make_shared<eTrireme>(getBoard());

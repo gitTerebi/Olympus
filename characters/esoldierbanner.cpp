@@ -56,6 +56,7 @@ eCharacterType eSoldierBanner::characterType() const {
         case eBannerType::aresWarrior:
             return eCharacterType::aresWarrior;
         case eBannerType::enemy:
+        case eBannerType::trireme:
             return eCharacterType::none;
         }
     } else {
@@ -71,6 +72,7 @@ eCharacterType eSoldierBanner::characterType() const {
         case eBannerType::aresWarrior:
             return eCharacterType::aresWarrior;
         case eBannerType::enemy:
+        case eBannerType::trireme:
             return eCharacterType::none;
         }
     }
@@ -149,6 +151,7 @@ void eSoldierBanner::moveToDefault() {
         }
     } break;
     case eBannerType::enemy:
+    case eBannerType::trireme:
         break;
     }
 }
@@ -454,13 +457,12 @@ std::string eSoldierBanner::sName(
         switch(type) {
         case eBannerType::hoplite:
             return eLanguage::zeusText(138, 79);
-            break;
         case eBannerType::rockThrower:
             return eLanguage::zeusText(138, 77);
-            break;
         case eBannerType::horseman:
             return eLanguage::zeusText(138, 80);
-            break;
+        case eBannerType::trireme:
+            return eLanguage::zeusText(138, 76);
         default:
             break;
         }
@@ -468,13 +470,12 @@ std::string eSoldierBanner::sName(
         switch(type) {
         case eBannerType::hoplite:
             return eLanguage::zeusText(138, 72);
-            break;
         case eBannerType::rockThrower:
             return eLanguage::zeusText(138, 74);
-            break;
         case eBannerType::horseman:
             return eLanguage::zeusText(138, 71);
-            break;
+        case eBannerType::trireme:
+            return eLanguage::zeusText(138, 73);
         default:
             break;
         }
@@ -548,6 +549,7 @@ void eSoldierBanner::updateCount() {
                 cht = eCharacterType::aresWarrior;
                 break;
             case eBannerType::enemy:
+            case eBannerType::trireme:
                 return;
             }
             const auto home = eSoldierAction::sFindHome(cht, cid, mBoard);
@@ -574,6 +576,7 @@ void eSoldierBanner::updateCount() {
         case eBannerType::aresWarrior:
             break;
         case eBannerType::enemy:
+        case eBannerType::trireme:
             break;
         }
         return;

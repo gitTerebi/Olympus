@@ -222,6 +222,7 @@ public:
     std::vector<stdsptr<eSoldierBanner>> banners(const eCityId cid) const;
     int countBanners(const eBannerType bt, const eCityId cid) const;
     int countSoldiers(const eBannerType bt, const eCityId cid) const;
+    int countWorkingTriremes(const eCityId cid) const;
 
     int state() const { return mState; }
     void incState() { mState++; }

@@ -703,7 +703,7 @@ eBannerType pakIdToBannerType(const uint16_t id) {
     if(id == 11) return eBannerType::rockThrower;
     else if(id == 12) return eBannerType::hoplite;
     else if(id == 13) return eBannerType::horseman;
-    // 57 - trireme
+    else if(id == 57) return eBannerType::trireme;
     printf("Invalid banner type id %i\n", id);
     return eBannerType::rockThrower;
 }

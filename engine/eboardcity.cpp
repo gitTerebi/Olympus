@@ -14,6 +14,7 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
+#include "buildings/etriremewharf.h"
 
 #include "evectorhelpers.h"
 
@@ -1809,6 +1810,17 @@ int eBoardCity::countSoldiers(const eBannerType bt) const {
     for(const auto& bn : mSoldierBanners) {
         if(bn->type() != bt) continue;
         c += bn->count();
+    }
+    return c;
+}
+
+int eBoardCity::countWorkingTriremes() const {
+    int c = 0;
+    for(const auto b : mTimedBuildings) {
+        const auto type = b->type();
+        if(type != eBuildingType::triremeWharf) continue;
+        const auto tw = static_cast<eTriremeWharf*>(b);
+        if(tw->hasTrireme()) c++;
     }
     return c;
 }

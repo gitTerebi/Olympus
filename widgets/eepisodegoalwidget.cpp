@@ -80,7 +80,8 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             const std::vector<eBannerType> types{
                 eBannerType::rockThrower,
                 eBannerType::hoplite,
-                eBannerType::horseman
+                eBannerType::horseman,
+                eBannerType::trireme
             };
             std::vector<std::string> names;
             for(const auto t : types) {

@@ -28,6 +28,8 @@ public:
     void write(eWriteStream& dst) const override;
 
     eDiagonalOrientation orientation() const { return mO; }
+
+    bool hasTrireme() const;
 private:
     void spawnTrireme();
 

@@ -272,6 +272,7 @@ public:
     eHerosHall* heroHall(const eHeroType hero) const;
     int countBanners(const eBannerType bt) const;
     int countSoldiers(const eBannerType bt) const;
+    int countWorkingTriremes() const;
     const std::vector<eSanctuary*>& sanctuaries() const
     { return mSanctuaries; }
     const std::vector<eHerosHall*>& heroHalls() const
