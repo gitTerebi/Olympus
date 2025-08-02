@@ -364,7 +364,8 @@ eGameWidget::eApply eGameWidget::editFunc() {
             const auto ns = tile->neighbours(nullptr);
             double ss = tile->scrub();
             for(const auto& t : ns) {
-                ss += t.second->scrub();
+                const auto tt = static_cast<eTile*>(t.second);
+                ss += tt->scrub();
             }
             ss = ss/(1 + ns.size());
             tile->setScrub(ss);

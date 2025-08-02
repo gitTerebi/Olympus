@@ -54,26 +54,6 @@ bool eTileBase::walkable() const {
     return eBuilding::sWalkableBuilding(t);
 }
 
-void eTileBase::updateIsElevationTile() {
-    const int a = doubleAltitude();
-    for(int x = -1; x < 2; x++) {
-        for(int y = -1; y < 2; y++) {
-            if(x == 0 && y == 0) continue;
-            const auto t = tileRel(x, y);
-            if(!t) continue;
-            const int ta = t->doubleAltitude();
-            if(ta > a) {
-                mHalfSlope = ta - a == 1;
-                mElevation = true;
-                return;
-            }
-        }
-    }
-
-    mHalfSlope = false;
-    mElevation = false;
-}
-
 bool eTileBase::isShoreTile(const eTerrain terr) const {
     if(mTerr != terr) return false;
     for(int x = -1; x < 2; x++) {
@@ -164,32 +144,8 @@ eTileBase::eTO eTileBase::randomDiagonalNeighbour(const eTileVerifier& v) const 
     return ts[eRand::rand() % ts.size()];
 }
 
-void eTileBase::setAltitude(const int a, const bool update) {
-    setDoubleAltitude(2*a, update);
-}
-
-void eTileBase::setDoubleAltitude(const int da, const bool update) {
-    mDoubleAltitude = da;
-    if(!update) return;
-    for(int dx = -1; dx <= 1; dx++) {
-        for(int dy = -1; dy <= 1; dy++) {
-            const auto t = tileRel<eTileBase>(dx, dy);
-            if(!t) continue;
-            t->updateIsElevationTile();
-        }
-    }
-}
-
 void eTileBase::setTerrain(const eTerrain terr) {
     mTerr = terr;
-}
-
-void eTileBase::setScrub(const double s) {
-    mScrub = std::clamp(s, 0., 1.);
-}
-
-void eTileBase::incScrub(const double s) {
-    setScrub(mScrub + s);
 }
 
 void eTileBase::setTopLeft(eTileBase* const tl) {
@@ -210,19 +166,8 @@ void eTileBase::setBottomLeft(eTileBase* const bl) {
 
 void eTileBase::read(eReadStream& src) {
     src >> mSeed;
-
-    eTerrain terr;
-    src >> terr;
-    setTerrain(terr);
-    src >> mRainforest;
-
-    src >> mScrub;
-
-    int mlevel;
-    src >> mlevel;
-    setMarbleLevel(mlevel);
-
-    src >> mDoubleAltitude;
+    src >> mTerr;
+    src >> mMarbleLevel;
     src >> mResource;
     src >> mElevation;
     src >> mWalkableElev;
@@ -235,10 +180,7 @@ void eTileBase::read(eReadStream& src) {
 void eTileBase::write(eWriteStream& dst) const {
     dst << mSeed;
     dst << mTerr;
-    dst << mRainforest;
-    dst << mScrub;
     dst << mMarbleLevel;
-    dst << mDoubleAltitude;
     dst << mResource;
     dst << mElevation;
     dst << mWalkableElev;

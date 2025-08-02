@@ -22,10 +22,54 @@ eTile::eTile(const int x, const int y,
     setDY(dy);
 }
 
+void eTile::setScrub(const double s) {
+    mScrub = std::clamp(s, 0., 1.);
+}
+
+void eTile::incScrub(const double s) {
+    setScrub(mScrub + s);
+}
+
 int eTile::scrubId(const int nLevels) const {
     const double div = 1./nLevels;
     const int i = std::round(scrub()/div);
     return std::clamp(i, 0, nLevels);
+}
+
+void eTile::setAltitude(const int a, const bool update) {
+    setDoubleAltitude(2*a, update);
+}
+
+void eTile::setDoubleAltitude(const int da, const bool update) {
+    mDoubleAltitude = da;
+    if(!update) return;
+    for(int dx = -1; dx <= 1; dx++) {
+        for(int dy = -1; dy <= 1; dy++) {
+            const auto t = tileRel<eTile>(dx, dy);
+            if(!t) continue;
+            t->updateIsElevationTile();
+        }
+    }
+}
+
+void eTile::updateIsElevationTile() {
+    const int a = doubleAltitude();
+    for(int x = -1; x < 2; x++) {
+        for(int y = -1; y < 2; y++) {
+            if(x == 0 && y == 0) continue;
+            const auto t = tileRel<eTile>(x, y);
+            if(!t) continue;
+            const int ta = t->doubleAltitude();
+            if(ta > a) {
+                mHalfSlope = ta - a == 1;
+                setElevation(true);
+                return;
+            }
+        }
+    }
+
+    mHalfSlope = false;
+    setElevation(false);
 }
 
 std::vector<eTile*> eTile::surroundingRoads() const {
@@ -271,6 +315,22 @@ void eTile::setMarbleLevel(const int l) {
             t->scheduleTerrainUpdate();
         }
     }
+}
+
+void eTile::read(eReadStream& src) {
+    eTileBase::read(src);
+    src >> mDoubleAltitude;
+    src >> mScrub;
+    src >> mRainforest;
+    src >> mHalfSlope;
+}
+
+void eTile::write(eWriteStream& dst) const {
+    eTileBase::write(dst);
+    dst << mDoubleAltitude;
+    dst << mScrub;
+    dst << mRainforest;
+    dst << mHalfSlope;
 }
 
 void eTile::addCharacter(const stdsptr<eCharacter>& c,

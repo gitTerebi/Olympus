@@ -43,6 +43,19 @@ public:
           const int dx, const int dy);
 
     int scrubId(const int nLevels) const;
+    double scrub() const { return mScrub; }
+    void setScrub(const double s);
+    void incScrub(const double s);
+
+    bool rainforest() const { return mRainforest; }
+    void setRainforest(const bool r) { mRainforest = r; }
+
+    bool isHalfSlope() const { return mHalfSlope; }
+
+    void setAltitude(const int a, const bool update = true);
+    void setDoubleAltitude(const int da, const bool update = true);
+    int doubleAltitude() const { return mDoubleAltitude; }
+    int altitude() const { return mDoubleAltitude/2; }
 
     void addCharacter(const stdsptr<eCharacter>& c,
                       const bool prepend = false);
@@ -129,7 +142,12 @@ public:
 
     void setTerrain(const eTerrain terr) override;
     void setMarbleLevel(const int l) override;
+
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
 private:
+    void updateIsElevationTile();
+
     eTileTerrainPainter mTerrainPainter;
     eTerritoryBorder mBorder;
     int mDistanceToBorder = 0;
@@ -137,6 +155,11 @@ private:
     eTile* mUnderTile = nullptr;
     int mUnderTileDX = 0;
     int mUnderTileDY = 0;
+
+    int mDoubleAltitude = 0;
+    bool mHalfSlope = false;
+    bool mRainforest = false;
+    double mScrub = 0;
 
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;

@@ -393,7 +393,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
         const int a = tile->altitude();
         const auto ns = tile->diagonalNeighbours(nullptr);
         for(const auto& n : ns) {
-            const auto ntile = n.second;
+            const auto ntile = static_cast<eTile*>(n.second);
             if(w && !tile->hasRoad() && ntile->hasRoad()) buildRoad(tile);
             const int na = ntile->altitude();
             if(na > a) tile->setDoubleAltitude(2*na - 1);

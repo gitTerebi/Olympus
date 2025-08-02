@@ -44,8 +44,8 @@ bool readPakGlossary(const std::string& filename,
                      eCampaignGlossary& glossary) {
     glossary.fIsPak = true;
     const auto name = eStringHelpers::pathToName(filename);
-    const bool test = name.find("Test") != name.npos;
-    if(test && name != "Test6.pak") return false;
+//    const bool test = name.find("Test") != name.npos;
+//    if(test && name != "Test6.pak") return false;
     const auto ext = name.substr(name.size() - 3);
     if(ext != "pak") return false;
     const auto txtFile = filename.substr(0, filename.size() - 3) + "txt";

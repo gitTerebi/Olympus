@@ -8,7 +8,6 @@ void eThreadTile::loadInitial(eTile* const src) {
     setY(src->y());
     setDX(src->dx());
     setDY(src->dy());
-    setScrub(src->scrub());
     setHasFish(src->hasFish());
     setHasUrchin(src->hasUrchin());
     setCityId(src->cityId());
@@ -19,7 +18,6 @@ void eThreadTile::loadInitial(eTile* const src) {
 void eThreadTile::loadSanctuary(eTile* const src) {
     setWalkableElev(src->walkableElev());
     setElevation(src->isElevationTile());
-    setAltitude(src->altitude(), false);
 
     load(src);
 }
