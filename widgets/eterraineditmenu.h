@@ -39,6 +39,7 @@ enum class eTerrainEditMode {
     lower,
     levelOut,
     resetElev,
+    halfSlope,
     makeWalkable,
 
     boar,

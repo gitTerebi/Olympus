@@ -406,6 +406,20 @@ eGameWidget::eApply eGameWidget::editFunc() {
         return [](eTile* const tile) {
             tile->setWalkableElev(!tile->walkableElev());
         };
+    } else if(mode == eTerrainEditMode::halfSlope) {
+        return [](eTile* const tile) {
+            const int a = tile->altitude();
+            const auto ns = tile->diagonalNeighbours(nullptr);
+            for(const auto& n : ns) {
+                const auto ntile = static_cast<eTile*>(n.second);
+                const int na = ntile->altitude();
+                if(na > a && tile->doubleAltitude() % 2 == 0) {
+                    tile->setDoubleAltitude(2*na - 1);
+                } else {
+                    tile->setDoubleAltitude(2*a);
+                }
+            }
+        };
     } else if(mode == eTerrainEditMode::boar) {
         return [this, modeId](eTile* const tile) {
             if(const auto b = tile->banner()) {

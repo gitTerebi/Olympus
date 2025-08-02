@@ -143,6 +143,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w8->addAction("Reset Elevation", [this]() {
         mMode = eTerrainEditMode::resetElev;
     });
+    w8->addAction("Half Slope", [this]() {
+        mMode = eTerrainEditMode::halfSlope;
+    });
     w8->addAction("Make Walkable", [this]() {
         mMode = eTerrainEditMode::makeWalkable;
     });
