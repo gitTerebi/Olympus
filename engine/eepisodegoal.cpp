@@ -70,6 +70,10 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
         return eLanguage::zeusText(194, 12);
     case eEpisodeGoalType::tradingPartners:
         return eLanguage::zeusText(194, 10);
+    case eEpisodeGoalType::pyramid:
+        return eLanguage::zeusText(194, 15);
+    case eEpisodeGoalType::hippodrome:
+        return eLanguage::zeusText(194, 16);
     }
 }
 
