@@ -361,6 +361,7 @@ SOURCES += \
         engine/eboardcitywrite.cpp \
         engine/eboardplayer.cpp \
         engine/ecampaign.cpp \
+        engine/ecampaignreadpak.cpp \
         engine/ecityid.cpp \
         engine/ecityrequest.cpp \
         engine/ecolonymonumentaction.cpp \
