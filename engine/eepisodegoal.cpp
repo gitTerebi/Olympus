@@ -120,6 +120,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
         const auto res = static_cast<eResourceType>(fEnumInt1);
         const auto resName = eResourceTypeHelpers::typeLongName(res);
         eStringHelpers::replace(t, "[item]", resName);
+        return t;
     } break;
     case eEpisodeGoalType::rule: {
         auto t = eLanguage::zeusText(194, 31);
