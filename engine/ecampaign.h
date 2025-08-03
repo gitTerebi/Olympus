@@ -124,6 +124,9 @@ private:
     std::string mIntroduction;
     std::string mComplete;
 
+    uint16_t mBriefId = 0;
+    uint16_t mCompleteId = 0;
+
     int mCurrentParentEpisode = 0;
     int mCurrentColonyEpisode = 0;
     eEpisodeType mCurrentEpisodeType = eEpisodeType::parentCity;

@@ -7,6 +7,7 @@
 
 #include "evectorhelpers.h"
 #include "egamedir.h"
+#include "elanguage.h"
 
 #include "pak/zeusfile.h"
 
@@ -300,6 +301,16 @@ void eCampaign::read(eReadStream& src) {
             mForParent.push_back(set);
         }
     }
+
+    src >> mBriefId;
+    src >> mCompleteId;
+
+    if(mBriefId != 0 && mCompleteId != 0) {
+        const auto& brief = eLanguage::zeusMM(mBriefId);
+        mTitle = brief.first;
+        mIntroduction = brief.second;
+        mComplete = eLanguage::zeusMM(mCompleteId).second;
+    }
 }
 
 void eCampaign::write(eWriteStream& dst) const {
@@ -353,6 +364,9 @@ void eCampaign::write(eWriteStream& dst) const {
     for(const auto& e : mForParent) {
         e.write(dst);
     }
+
+    dst << mBriefId;
+    dst << mCompleteId;
 }
 
 eWorldMap pakMapIdToMap(const uint8_t mapId) {
@@ -678,6 +692,7 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     else if(id == 11) return eGodType::hades;
     else if(id == 12) return eGodType::hera;
     else if(id == 13) return eGodType::atlas;
+    printf("Invalid god id %i\n", id);
     valid = false;
     return eGodType::zeus;
 }
@@ -749,7 +764,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
         break;
     case eEpisodeGoalType::yearlyProduction: {
         goal->fRequiredCount = value2;
-        const auto type = pakCityResourceByteToType(value1, newVersion);
+        const auto type = pakResourceByteToType(value1, newVersion);
         goal->fEnumInt1 = static_cast<int>(type);
     } break;
     case eEpisodeGoalType::rule:
@@ -782,6 +797,19 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
 
     printf("%s\n", goal->text(false, false).c_str());
     ep.fGoals.push_back(goal);
+}
+
+void readEpisodeText(eEpisode& ep, ZeusFile& file) {
+    const uint16_t introId = file.readUShort();
+    file.skipBytes(10);
+    const uint16_t completeId = file.readUShort();
+    ep.fIntroId = introId;
+    const auto intro = eLanguage::zeusMM(introId);
+    ep.fTitle = intro.first;
+    ep.fIntroduction = intro.second;
+    ep.fCompleteId = completeId;
+    const auto complete = eLanguage::zeusMM(completeId);
+    ep.fComplete = complete.second;
 }
 
 void eCampaign::readPak(const std::string& path) {
@@ -826,6 +854,18 @@ void eCampaign::readPak(const std::string& path) {
         c->setAtlantean(atlantean);
     }
 
+    file.seek(35648);
+    const uint16_t briefId = file.readUShort();
+    const auto brief = eLanguage::zeusMM(briefId);
+    mBriefId = briefId;
+    mTitle = brief.first;
+    mIntroduction = brief.second;
+
+    file.seek(35652);
+    const uint16_t completeId = file.readUShort();
+    mCompleteId = completeId;
+    mComplete = eLanguage::zeusMM(completeId).second;
+
     std::vector<ePakGod> friendlyGods;
     friendlyGods.resize(6);
 
@@ -840,6 +880,8 @@ void eCampaign::readPak(const std::string& path) {
                                         eEpisodeType::parentCity;
         file.seek(8174 + i*2032); // mint
         readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
+        file.seek(8752 + i*2032);
+        readEpisodeText(*ep, file);
         file.seek(9100 + i*2032);
         readEpisodeResources(*ep, file, cid);
 
@@ -907,6 +949,8 @@ void eCampaign::readPak(const std::string& path) {
 
         file.seek(28494 + i*2032); // mint
         readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
+        file.seek(29072 + i*2032);
+        readEpisodeText(*ep, file);
         file.seek(29420 + i*2032);
         readEpisodeResources(*ep, file, cid);
 

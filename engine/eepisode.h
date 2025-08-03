@@ -26,6 +26,9 @@ struct eEpisode {
     double fWageMultiplier = 1.;
     std::map<eResourceType, int> fPrices;
 
+    uint16_t fIntroId = 0;
+    uint16_t fCompleteId = 0;
+
     std::string fTitle;
     std::string fIntroduction;
     std::string fComplete;

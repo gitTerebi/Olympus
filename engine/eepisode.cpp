@@ -1,5 +1,7 @@
 #include "eepisode.h"
 
+#include "elanguage.h"
+
 void eEpisode::read(eReadStream& src) {
     {
         int nc;
@@ -76,6 +78,17 @@ void eEpisode::read(eReadStream& src) {
             src >> m;
         }
     }
+
+    src >> fIntroId;
+    src >> fCompleteId;
+
+    if(fIntroId != 0 && fCompleteId != 0) {
+        const auto intro = eLanguage::zeusMM(fIntroId);
+        fTitle = intro.first;
+        fIntroduction = intro.second;
+        const auto complete = eLanguage::zeusMM(fCompleteId);
+        fComplete = complete.second;
+    }
 }
 
 void eEpisode::write(eWriteStream& dst) const {
@@ -120,6 +133,9 @@ void eEpisode::write(eWriteStream& dst) const {
         dst << m.first;
         dst << m.second;
     }
+
+    dst << fIntroId;
+    dst << fCompleteId;
 }
 
 void eEpisode::clear() {
