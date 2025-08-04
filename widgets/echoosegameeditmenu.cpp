@@ -122,7 +122,9 @@ void eChooseGameEditMenu::initialize(const bool editor) {
                 const std::string pathStr = path.u8string();
                 const auto ext = pathStr.substr(pathStr.size() - 3);
                 if(ext != "pak") continue;
+                const auto name = eStringHelpers::pathToName(folder);
                 eCampaignGlossary glossary;
+                glossary.fFolderName = name;
                 const bool r = readPakGlossary(pathStr, glossary);
                 if(r) glossaries.push_back(glossary);
             }
@@ -319,14 +321,16 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto e = new eEditorMainMenu(window());
             e->resize(w->width(), w->height());
             const auto c = std::make_shared<eCampaign>();
-            if(mSelected.fIsPak) c->readPak(mSelected.fPakPath);
+            if(mSelected.fIsPak) c->readPak(mSelected.fFolderName,
+                                            mSelected.fPakPath);
             else c->load(mSelected.fFolderName);
             c->setEditorMode(true);
             e->initialize(c);
             w->setWidget(e);
         } else {
             const auto c = std::make_shared<eCampaign>();
-            if(mSelected.fIsPak) c->readPak(mSelected.fPakPath);
+            if(mSelected.fIsPak) c->readPak(mSelected.fFolderName,
+                                            mSelected.fPakPath);
             else c->load(mSelected.fFolderName);
             w->showEpisodeIntroduction(c);
         }

@@ -54,6 +54,7 @@ public:
 
     using eMap = std::map<std::string, std::string>;
     static bool sLoadStrings(const std::string& path, eMap& map);
+    static void sReplaceSpecial(std::string& value);
     bool loadStrings();
     bool writeStrings(const std::string& path) const;
 
@@ -68,7 +69,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
-    void readPak(const std::string& path);
+    void readPak(const std::string& name,
+                 const std::string& path);
 
     bool load(const std::string& name);
     bool save() const;
@@ -119,6 +121,7 @@ public:
     bool colonyEpisodeFinished(const int id) const;
 private:
     int mBitmap = 0;
+    bool mIsPak = false;
     std::string mName;
     std::string mTitle;
     std::string mIntroduction;

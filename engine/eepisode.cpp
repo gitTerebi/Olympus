@@ -1,6 +1,7 @@
 #include "eepisode.h"
 
 #include "elanguage.h"
+#include "ecampaign.h"
 
 void eEpisode::read(eReadStream& src) {
     {
@@ -86,8 +87,10 @@ void eEpisode::read(eReadStream& src) {
         const auto intro = eLanguage::zeusMM(fIntroId);
         fTitle = intro.first;
         fIntroduction = intro.second;
+        eCampaign::sReplaceSpecial(fIntroduction);
         const auto complete = eLanguage::zeusMM(fCompleteId);
         fComplete = complete.second;
+        eCampaign::sReplaceSpecial(fComplete);
     }
 }
 

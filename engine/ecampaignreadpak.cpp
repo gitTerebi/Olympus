@@ -437,16 +437,25 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
     const uint16_t introId = file.readUShort();
     file.skipBytes(10);
     const uint16_t completeId = file.readUShort();
-    ep.fIntroId = introId;
-    const auto intro = eLanguage::zeusMM(introId);
-    ep.fTitle = intro.first;
-    ep.fIntroduction = intro.second;
-    ep.fCompleteId = completeId;
-    const auto complete = eLanguage::zeusMM(completeId);
-    ep.fComplete = complete.second;
+    if(introId != 0 && introId != 65535) {
+        ep.fIntroId = introId;
+        const auto intro = eLanguage::zeusMM(introId);
+        ep.fTitle = intro.first;
+        ep.fIntroduction = intro.second;
+        eCampaign::sReplaceSpecial(ep.fIntroduction);
+    }
+    if(completeId != 0 && completeId != 65535) {
+        ep.fCompleteId = completeId;
+        const auto complete = eLanguage::zeusMM(completeId);
+        ep.fComplete = complete.second;
+        eCampaign::sReplaceSpecial(ep.fComplete);
+    }
 }
 
-void eCampaign::readPak(const std::string& path) {
+void eCampaign::readPak(const std::string& name,
+                        const std::string& path) {
+    mIsPak = true;
+    mName = name;
     ZeusFile file(path);
     file.readVersion();
     const bool newVersion = file.isNewVersion();
@@ -490,15 +499,20 @@ void eCampaign::readPak(const std::string& path) {
 
     file.seek(35648);
     const uint16_t briefId = file.readUShort();
-    const auto brief = eLanguage::zeusMM(briefId);
-    mBriefId = briefId;
-    mTitle = brief.first;
-    mIntroduction = brief.second;
+    if(briefId != 0 && briefId != 65535) {
+        mBriefId = briefId;
+        const auto brief = eLanguage::zeusMM(briefId);
+        mTitle = brief.first;
+        mIntroduction = brief.second;
+    }
+
 
     file.seek(35652);
     const uint16_t completeId = file.readUShort();
-    mCompleteId = completeId;
-    mComplete = eLanguage::zeusMM(completeId).second;
+    if(completeId != 0 && completeId != 65535) {
+        mCompleteId = completeId;
+        mComplete = eLanguage::zeusMM(completeId).second;
+    }
 
     std::vector<ePakGod> friendlyGods;
     friendlyGods.resize(6);
@@ -613,4 +627,5 @@ void eCampaign::readPak(const std::string& path) {
         }
         printf("\n");
     }
+    loadStrings();
 }

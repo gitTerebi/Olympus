@@ -87,10 +87,7 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
         value = value + line.substr(valueStart, valueLen);
 
         if(foundEnd) {
-            value = std::regex_replace(value, std::regex("^@L"), "");
-            value = std::regex_replace(value, std::regex("@L"), "\n");
-            value = std::regex_replace(value, std::regex("^@P"), "   ");
-            value = std::regex_replace(value, std::regex("@P"), "\n\n   ");
+            sReplaceSpecial(value);
             map[key] = value;
             key = "";
             value = "";
@@ -99,8 +96,16 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
     return true;
 }
 
+void eCampaign::sReplaceSpecial(std::string& value) {
+    value = std::regex_replace(value, std::regex("^@L"), "");
+    value = std::regex_replace(value, std::regex("@L"), "\n");
+    value = std::regex_replace(value, std::regex("^@P"), "   ");
+    value = std::regex_replace(value, std::regex("@P"), "\n\n   ");
+}
+
 bool eCampaign::loadStrings() {
-    const auto baseDir = eGameDir::adventuresDir();
+    const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
+                                  eGameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
     const auto txtFile = aDir + mName + ".txt";
     std::map<std::string, std::string> map;
@@ -209,6 +214,7 @@ bool eCampaign::sReadGlossary(const std::string& name,
 
 void eCampaign::read(eReadStream& src) {
     src >> mBitmap;
+    src >> mIsPak;
     std::string name;
     src >> name;
     if(mName.empty()) mName = name;
@@ -307,12 +313,15 @@ void eCampaign::read(eReadStream& src) {
         const auto& brief = eLanguage::zeusMM(mBriefId);
         mTitle = brief.first;
         mIntroduction = brief.second;
-        mComplete = eLanguage::zeusMM(mCompleteId).second;
+        const auto complete = eLanguage::zeusMM(mCompleteId);
+        mComplete = complete.second;
+        sReplaceSpecial(mComplete);
     }
 }
 
 void eCampaign::write(eWriteStream& dst) const {
     dst << mBitmap;
+    dst << mIsPak;
     dst << mName;
     dst << mCurrentParentEpisode;
     dst << mCurrentColonyEpisode;
@@ -394,7 +403,6 @@ bool eCampaign::load(const std::string& name) {
     src.handlePostFuncs();
     file.close();
 
-    const auto txtFile = aDir + mName + ".txt";
     loadStrings();
     return true;
 }
