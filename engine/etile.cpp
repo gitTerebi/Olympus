@@ -53,6 +53,11 @@ void eTile::setDoubleAltitude(const int da, const bool update) {
 }
 
 void eTile::updateIsElevationTile() {
+    mHalfSlope = false;
+    setElevation(false);
+
+    bool wholeSlope = false;
+
     const int a = doubleAltitude();
     for(int x = -1; x < 2; x++) {
         for(int y = -1; y < 2; y++) {
@@ -61,15 +66,18 @@ void eTile::updateIsElevationTile() {
             if(!t) continue;
             const int ta = t->doubleAltitude();
             if(ta > a) {
-                mHalfSlope = ta - a == 1;
+                if(ta - a == 1) {
+                    if(x == 0 || y == 0) {
+                        mHalfSlope = !wholeSlope;
+                    }
+                } else {
+                    wholeSlope = true;
+                    mHalfSlope = false;
+                }
                 setElevation(true);
-                return;
             }
         }
     }
-
-    mHalfSlope = false;
-    setElevation(false);
 }
 
 std::vector<eTile*> eTile::surroundingRoads() const {
