@@ -332,7 +332,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             } else if(t_terrain & 0x8) { // building, fill in for boulevard or avenue
             } else if(t_terrain & 0x20) { // park
             } else if(t_terrain & 0x200) { // elevation
-                if(t_terrain == 1600) {
+                if(t_terrain == 1600 ||
+                   t_terrain == 2147485248) {
                     tile->setWalkableElev(true);
                     buildRoad(tile);
                 } else if(t_terrain == 1536) {
@@ -342,7 +343,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
                     tile->setWalkableElev(true);
                     buildRoad(tile);
                 } else if(t_terrain == 8390144 ||
-                          t_terrain == 8390208) {
+                          t_terrain == 8390208 ||
+                          t_terrain == 2155873792) {
                     halfSlopes.push_back(tile);
                     tile->setWalkableElev(true);
                 } else if(t_terrain == 2155872768 ||
