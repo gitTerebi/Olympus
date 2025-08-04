@@ -25,6 +25,7 @@ class eWorldCity;
 class eBanner;
 class eSoldierBanner;
 class eGameEvent;
+class eInvasionHandler;
 
 using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
 
@@ -128,6 +129,7 @@ public:
     void writeBanner(eBanner* const b);
     void writeSoldierBanner(eSoldierBanner* const b);
     void writeGameEvent(eGameEvent* const e);
+    void writeInvasionHandler(eInvasionHandler* const i);
 private:
     eWriteTarget mDst;
 };

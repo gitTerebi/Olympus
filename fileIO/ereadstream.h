@@ -30,6 +30,7 @@ class eBanner;
 class eSoldierBanner;
 class eGameEvent;
 class eWorldBoard;
+class eInvasionHandler;
 
 using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
 
@@ -155,6 +156,8 @@ public:
     void readSoldierBanner(eGameBoard* board, const eSoldierBannerFunc& func);
     using eEventFunc = std::function<void(eGameEvent*)>;
     void readGameEvent(eGameBoard* board, const eEventFunc& func);
+    using eeInvasionHandlerFunc = std::function<void(eInvasionHandler*)>;
+    void readInvasionHandler(eGameBoard* board, const eeInvasionHandlerFunc& func);
 
     using eFunc = std::function<void()>;
     void addPostFunc(const eFunc& func);

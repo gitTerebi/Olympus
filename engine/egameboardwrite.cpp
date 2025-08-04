@@ -66,6 +66,12 @@ void eGameBoard::write(eWriteStream& dst) const {
             e->setIOID(id++);
         }
     }
+    {
+        int id = 0;
+        for(const auto& c : mCitiesOnBoard) {
+            c->setInvasionHandlersIOIDs(id);
+        }
+    }
 
 
     {

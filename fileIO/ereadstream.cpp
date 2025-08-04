@@ -184,6 +184,15 @@ void eReadStream::readGameEvent(eGameBoard* board, const eEventFunc& func) {
     });
 }
 
+void eReadStream::readInvasionHandler(eGameBoard* board, const eeInvasionHandlerFunc& func) {
+    int iid;
+    *this >> iid;
+    addPostFunc([board, func, iid]() {
+        const auto b = board->invasionHandlerWithIOID(iid);
+        func(b);
+    });
+}
+
 void eReadStream::addPostFunc(const eFunc& func) {
     mPostFuncs.push_back(func);
 }

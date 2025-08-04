@@ -41,7 +41,11 @@
 #include "characters/eamazon.h"
 #include "characters/eareswarrior.h"
 
+#include "characters/eenemyboat.h"
+
 #include "characters/actions/eattackcityaction.h"
+#include "characters/actions/emovetoaction.h"
+#include "characters/actions/ekillcharacterfinishfail.h"
 
 #include "engine/eevent.h"
 
@@ -65,6 +69,175 @@ eInvasionHandler::eInvasionHandler(eGameBoard& board,
 eInvasionHandler::~eInvasionHandler() {
     mBoard.removeInvasionHandler(mTargetCity, this);
     if(mEvent) mEvent->removeInvasionHandler(this);
+}
+
+void eInvasionHandler::disembark() {
+    const auto cid = mCity->cityId();
+
+    int mRem = mSoldiersPerBoat;
+    eSs ss;
+    for(auto& s : mForcesLeft) {
+        int& rem = s.second;
+        const int use = std::min(mRem, rem);
+        if(use > 0) {
+            rem -= use;
+            mRem -= use;
+
+            ss.push_back({s.first, use});
+        }
+    }
+    if(!ss.empty()) {
+        std::vector<eSoldierBanner*> solds;
+        generateSoldiersForCity(mTile, ss, cid, solds);
+    }
+
+    int infantry = 0;
+    int cavalry = 0;
+    int archers = 0;
+
+    {
+        const int use = std::min(mRem, mInfantryLeft);
+        if(use > 0) {
+            mRem -= use;
+            mInfantryLeft -= use;
+            infantry = use;
+        }
+    }
+    {
+        const int use = std::min(mRem, mCavalryLeft);
+        if(use > 0) {
+            mRem -= use;
+            mCavalryLeft -= use;
+            cavalry = use;
+        }
+    }
+    {
+        const int use = std::min(mRem, mArchersLeft);
+        if(use > 0) {
+            mRem -= use;
+            mArchersLeft -= use;
+            archers = use;
+        }
+    }
+    {
+        std::vector<eSoldierBanner*> solds;
+        const auto nat = mCity->nationality();
+        generateSoldiersForCity(mTile,
+                                infantry, cavalry, archers,
+                                cid, nat, solds);
+    }
+
+    for(auto& f : mAllyForcesLeft) {
+        int infantry = 0;
+        int cavalry = 0;
+        int archers = 0;
+
+        {
+            const int use = std::min(mRem, f.fInfantryLeft);
+            if(use > 0) {
+                mRem -= use;
+                f.fInfantryLeft -= use;
+                infantry = use;
+            }
+        }
+        {
+            const int use = std::min(mRem, f.fCavalryLeft);
+            if(use > 0) {
+                mRem -= use;
+                f.fCavalryLeft -= use;
+                cavalry = use;
+            }
+        }
+        {
+            const int use = std::min(mRem, f.fArchersLeft);
+            if(use > 0) {
+                mRem -= use;
+                f.fArchersLeft -= use;
+                archers = use;
+            }
+        }
+        {
+            std::vector<eSoldierBanner*> solds;
+            generateSoldiersForCity(mTile,
+                                    infantry, cavalry, archers,
+                                    f.fCid, f.fNat, solds);
+        }
+    }
+
+    std::vector<eSoldierBanner*> solds;
+    for(const auto& b : mBanners) {
+        solds.push_back(b.get());
+    }
+
+    const int tx = mTile->x();
+    const int ty = mTile->y();
+    eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+}
+
+eTile* nearestShoreTile(eTile* const tile) {
+    eTile* result = nullptr;
+    const auto prcs = [&](const int dx, const int dy) {
+        const auto t = tile->tileRel<eTile>(dx, dy);
+        if(!t->hasBridge() && t->walkable()) {
+            result = t;
+            return true;
+        }
+        return false;
+    };
+    for(int i = 0; i < 9; i++) {
+        eIterateSquare::iterateSquare(i, prcs);
+        if(result) return result;
+    }
+    return result;
+}
+
+void eInvasionHandler::initializeSeaInvasion(
+        eTile* const tile,
+        eTile* const disembarkTile,
+        const int infantry,
+        const int cavalry,
+        const int archers) {
+    mDisembarkTile = disembarkTile;
+    mTile = nearestShoreTile(disembarkTile);
+
+    mInfantryLeft = infantry;
+    mCavalryLeft = cavalry;
+    mArchersLeft = archers;
+
+    initializeBoats(tile, mInfantryLeft + mCavalryLeft + mArchersLeft);
+}
+
+void eInvasionHandler::initializeSeaInvasion(
+        eTile* const tile,
+        eTile* const disembarkTile,
+        const eEnlistedForces& forces,
+        ePlayerConquestEvent* const conquestEvent) {
+    int troops = 0;
+
+    mDisembarkTile = disembarkTile;
+    mTile = nearestShoreTile(disembarkTile);
+
+    mConquestEvent = conquestEvent;
+    extractSSFromForces(forces, mForcesLeft);
+    for(const auto& f : mForcesLeft) {
+        troops += f.second;
+    }
+    mAresLeft = forces.fAres;
+    mHeroesLeft = forces.fHeroes;
+
+    for(const auto& f : forces.fAllies) {
+        const auto cid = f->cityId();
+        const auto nat = f->nationality();
+        std::vector<eSoldierBanner*> solds;
+        int infantry;
+        int cavalry;
+        int archers;
+        f->troopsByType(infantry, cavalry, archers);
+        mAllyForcesLeft.push_back(eAllyForces{cid, nat, infantry, cavalry});
+        troops += infantry + cavalry + archers;
+    }
+
+    initializeBoats(tile, troops);
 }
 
 template <typename T>
@@ -247,10 +420,12 @@ eInvasionHandler::generateSoldiersForCity(
     }
 }
 
-void eInvasionHandler::initialize(eTile* const tile,
-                                  const int infantry,
-                                  const int cavalry,
-                                  const int archers) {
+void eInvasionHandler::initializeLandInvasion(
+        eTile* const tile,
+        const int infantry,
+        const int cavalry,
+        const int archers) {
+    mStage = eInvasionStage::spread;
     mTile = tile;
 
     const auto cid = mCity->cityId();
@@ -265,73 +440,19 @@ void eInvasionHandler::initialize(eTile* const tile,
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
 }
 
-void eInvasionHandler::initialize(eTile* const tile,
-                                  const eEnlistedForces& forces,
-                                  ePlayerConquestEvent* const conquestEvent) {
+void eInvasionHandler::initializeLandInvasion(
+        eTile* const tile,
+        const eEnlistedForces& forces,
+        ePlayerConquestEvent* const conquestEvent) {
+    mStage = eInvasionStage::spread;
     mConquestEvent = conquestEvent;
     mTile = tile;
 
     const auto cid = mCity->cityId();
-    const auto nat = mCity->nationality();
     std::vector<eSoldierBanner*> solds;
     {
-        int infantry = 0;
-        int cavalry = 0;
-        int archers = 0;
-        int aresWarriors = 0;
-        int amazons = 0;
-        for(const auto& s : forces.fSoldiers) {
-            const auto type = s->type();
-            if(type == eBannerType::hoplite) {
-                infantry += s->count();
-            } else if(type == eBannerType::horseman) {
-                cavalry += s->count();
-            } else if(type == eBannerType::rockThrower) {
-                archers += s->count();
-            } else if(type == eBannerType::aresWarrior) {
-                aresWarriors += s->count();
-            } else if(type == eBannerType::amazon) {
-                amazons += s->count();
-            }
-        }
-
         eSs ss;
-        if(infantry > 0) {
-            if(nat == eNationality::greek) {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::greekHoplite, infantry));
-            } else {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::atlanteanHoplite, infantry));
-            }
-        }
-        if(cavalry > 0) {
-            if(nat == eNationality::greek) {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::greekHorseman, infantry));
-            } else {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::atlanteanChariot, infantry));
-            }
-        }
-        if(archers > 0) {
-            if(nat == eNationality::greek) {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::greekRockthrower, infantry));
-            } else {
-                ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                    ePlayerSoldierType::atlanteanArcher, infantry));
-            }
-        }
-        if(amazons > 0) {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::amazon, amazons));
-        }
-        if(aresWarriors > 0) {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::aresWarrior, aresWarriors));
-        }
-
+        extractSSFromForces(forces, ss);
         generateSoldiersForCity(tile, ss, cid, solds);
     }
 
@@ -348,47 +469,10 @@ void eInvasionHandler::initialize(eTile* const tile,
                                 cid, nat, solds);
     }
 
-    const auto tileCid = tile->cityId();
+    generateImmortals(tile, cid, forces.fAres, forces.fHeroes);
+
     const int tx = tile->x();
     const int ty = tile->y();
-
-    const auto prcsAttack = [&](const stdsptr<eCharacter>& c) {
-        c->setOnCityId(tileCid);
-        c->setCityId(cid);
-        bool found = false;
-        const auto prcsTile = [&](const int dx, const int dy) {
-            const int x = tx + dx;
-            const int y = ty + dy;
-            const auto t = mBoard.tile(x, y);
-            if(!t) return false;
-            const auto tCid = t->cityId();
-            if(tCid != tileCid) return false;
-            const auto& chars = t->characters();
-            if(!chars.empty()) return false;
-            c->changeTile(t);
-            found = true;
-            return true;
-        };
-        for(int k = 0; !found; k++) {
-            (void)found;
-            eIterateSquare::iterateSquare(k, prcsTile);
-        }
-        const auto a = e::make_shared<eAttackCityAction>(c.get());
-        c->setAction(a);
-        mHeroesAndGods.push_back(c);
-    };
-
-    if(forces.fAres) {
-        const auto god = eGod::sCreateGod(eGodType::ares, mBoard);
-        god->setAttitude(eGodAttitude::hostile);
-        prcsAttack(god);
-    }
-
-    for(const auto h : forces.fHeroes) {
-        const auto hero = eHero::sCreateHero(h, mBoard);
-        prcsAttack(hero);
-    }
-
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
 }
 
@@ -398,7 +482,7 @@ eInvasionHandler::generateSoldiersForCity(
         const eSs& soldTypes,
         const eCityId cid,
         std::vector<eSoldierBanner*>& solds) {
-    const auto ocid = mTile->cityId();
+    const auto ocid = tile->cityId();
 
     const int tx = tile->x();
     const int ty = tile->y();
@@ -474,7 +558,127 @@ void eInvasionHandler::tellHeroesAndGodsToGoBack() const {
     }
 }
 
+void eInvasionHandler::extractSSFromForces(
+        const eEnlistedForces& forces, eSs& ss) const {
+    const auto nat = mCity->nationality();
+    int infantry = 0;
+    int cavalry = 0;
+    int archers = 0;
+    int aresWarriors = 0;
+    int amazons = 0;
+    for(const auto& s : forces.fSoldiers) {
+        const auto type = s->type();
+        if(type == eBannerType::hoplite) {
+            infantry += s->count();
+        } else if(type == eBannerType::horseman) {
+            cavalry += s->count();
+        } else if(type == eBannerType::rockThrower) {
+            archers += s->count();
+        } else if(type == eBannerType::aresWarrior) {
+            aresWarriors += s->count();
+        } else if(type == eBannerType::amazon) {
+            amazons += s->count();
+        }
+    }
+
+    if(infantry > 0) {
+        if(nat == eNationality::greek) {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::greekHoplite, infantry));
+        } else {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::atlanteanHoplite, infantry));
+        }
+    }
+    if(cavalry > 0) {
+        if(nat == eNationality::greek) {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::greekHorseman, cavalry));
+        } else {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::atlanteanChariot, cavalry));
+        }
+    }
+    if(archers > 0) {
+        if(nat == eNationality::greek) {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::greekRockthrower, archers));
+        } else {
+            ss.push_back(std::pair<ePlayerSoldierType, int>(
+                                ePlayerSoldierType::atlanteanArcher, archers));
+        }
+    }
+    if(amazons > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+                            ePlayerSoldierType::amazon, amazons));
+    }
+    if(aresWarriors > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+                            ePlayerSoldierType::aresWarrior, aresWarriors));
+    }
+}
+
 void eInvasionHandler::incTime(const int by) {
+    const auto invasionDefeated = [&]() {
+        eEventData ed(mTargetCity);
+        ed.fCity = mCity;
+
+        const auto invadingCid = mCity->cityId();
+        const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
+        const auto invadingC = mBoard.boardCityWithId(invadingCid);
+
+        tellHeroesAndGodsToGoBack();
+        const bool monn = eRand::rand() % 2;
+        if(monn) {
+            mBoard.allow(mTargetCity, eBuildingType::commemorative, 1);
+            mBoard.event(eEvent::invasionVictoryMonn, ed);
+        } else {
+            mBoard.event(eEvent::invasionVictory, ed);
+        }
+        if(invadingC) {
+            const auto wboard = mBoard.getWorldBoard();
+            eEventData ied(invadingPid);
+            const auto targetWCity = wboard->cityWithId(mTargetCity);
+            ied.fCity = targetWCity;
+
+            mBoard.event(eEvent::cityConquerFailed, ied);
+            if(mConquestEvent) {
+                const auto& forces = mConquestEvent->forces();
+                forces.kill(1.);
+//                    mConquestEvent->planArmyReturn();
+            }
+        }
+    };
+    if(mStage == eInvasionStage::arrive) {
+        if(mBoatsLeft > 0) {
+            mWait += by;
+            const int spawnPeriod = 325;
+            if(mWait < spawnPeriod) return;
+            mWait -= spawnPeriod;
+            spawnBoat();
+            mBoatsLeft--;
+            return;
+        }
+        mWait = 0;
+        bool found = false;
+        for(const auto& b : mBoats) {
+            if(b) {
+                found = true;
+                break;
+            }
+        }
+        if(!found) {
+            if(mBanners.empty()) {
+                invasionDefeated();
+                mStage = eInvasionStage::comeback;
+            } else {
+                generateImmortals(mTile, mCity->cityId(),
+                                  mAresLeft, mHeroesLeft);
+                mStage = eInvasionStage::spread;
+            }
+        }
+        return;
+    }
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
         solds.push_back(b.get());
@@ -490,7 +694,10 @@ void eInvasionHandler::incTime(const int by) {
         return;
     }
     mWait -= wait;
+
     switch(mStage) {
+    case eInvasionStage::arrive:
+        break;
     case eInvasionStage::spread:
     case eInvasionStage::wait: {
         mStage = eInvasionStage::invade;
@@ -516,33 +723,9 @@ void eInvasionHandler::incTime(const int by) {
         for(const auto& b : mBanners) {
             ss += b->count();
         }
-        eEventData ed(mTargetCity);
-        ed.fCity = mCity;
 
-        const auto invadingCid = mCity->cityId();
-        const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
-        const auto invadingC = mBoard.boardCityWithId(invadingCid);
-        const auto wboard = mBoard.getWorldBoard();
-        eEventData ied(invadingPid);
-        const auto targetWCity = wboard->cityWithId(mTargetCity);
-        ied.fCity = targetWCity;
         if(ss == 0) {
-            tellHeroesAndGodsToGoBack();
-            const bool monn = eRand::rand() % 2;
-            if(monn) {
-                mBoard.allow(mTargetCity, eBuildingType::commemorative, 1);
-                mBoard.event(eEvent::invasionVictoryMonn, ed);
-            } else {
-                mBoard.event(eEvent::invasionVictory, ed);
-            }
-            if(invadingC) {
-                mBoard.event(eEvent::cityConquerFailed, ied);
-                if(mConquestEvent) {
-                    const auto& forces = mConquestEvent->forces();
-                    forces.kill(1.);
-//                    mConquestEvent->planArmyReturn();
-                }
-            }
+            invasionDefeated();
         } else if(p) {
             mStage = eInvasionStage::spread;
         } else {
@@ -573,6 +756,7 @@ void eInvasionHandler::incTime(const int by) {
 }
 
 void eInvasionHandler::read(eReadStream& src) {
+    src >> mIOID;
     src.readCity(&mBoard, [this](const stdsptr<eWorldCity>& c) {
         mCity = c;
     });
@@ -608,9 +792,46 @@ void eInvasionHandler::read(eReadStream& src) {
             mHeroesAndGods.push_back(c);
         });
     }
+
+    src >> mInfantryLeft;
+    src >> mCavalryLeft;
+    src >> mArchersLeft;
+
+    int nf;
+    src >> nf;
+    for(int i = 0; i < nf; i++) {
+        ePlayerSoldierType type;
+        src >> type;
+        int count;
+        src >> count;
+        mForcesLeft.push_back({type, count});
+    }
+
+    src >> mAresLeft;
+
+    int nh;
+    src >> nh;
+    for(int i = 0; i < nh; i++) {
+        eHeroType h;
+        src >> h;
+        mHeroesLeft.push_back(h);
+    }
+
+    mBoatsTile = src.readTile(mBoard);
+    mDisembarkTile = src.readTile(mBoard);
+    src >> mBoatsLeft;
+
+    int nb;
+    src >> nb;
+    for(int i = 0; i < nb; i++) {
+        src.readCharacter(&mBoard, [this](eCharacter* const b) {
+            mBoats.push_back(b);
+        });
+    }
 }
 
 void eInvasionHandler::write(eWriteStream& dst) const {
+    dst << mIOID;
     dst.writeCity(mCity.get());
     dst.writeTile(mTile);
     dst << mStage;
@@ -631,6 +852,32 @@ void eInvasionHandler::write(eWriteStream& dst) const {
     dst << mHeroesAndGods.size();
     for(const auto& c : mHeroesAndGods) {
         dst.writeCharacter(c.get());
+    }
+
+    dst << mInfantryLeft;
+    dst << mCavalryLeft;
+    dst << mArchersLeft;
+
+    dst << mForcesLeft.size();
+    for(const auto& s : mForcesLeft) {
+        dst << s.first;
+        dst << s.second;
+    }
+
+    dst << mAresLeft;
+
+    dst << mHeroesLeft.size();
+    for(const auto h : mHeroesLeft) {
+        dst << h;
+    }
+
+    dst.writeTile(mBoatsTile);
+    dst.writeTile(mDisembarkTile);
+    dst << mBoatsLeft;
+
+    dst << mBoats.size();
+    for(const auto& b : mBoats) {
+        dst.writeCharacter(b);
     }
 }
 
@@ -676,4 +923,80 @@ bool eInvasionHandler::nearestSoldier(const int fromX, const int fromY,
         minDist = dist;
     }
     return found;
+}
+
+void eInvasionHandler::initializeBoats(eTile* const tile, const int troops) {
+    mBoatsTile = tile;
+    const int nBoats = std::ceil(double(troops)/mSoldiersPerBoat);
+    mBoatsLeft = nBoats;
+}
+
+void eInvasionHandler::spawnBoat() {
+    const auto cid = mCity->cityId();
+    const auto ocid = mBoatsTile->cityId();
+    const auto b = e::make_shared<eEnemyBoat>(mBoard);
+    b->setCityId(cid);
+    b->setOnCityId(ocid);
+    b->changeTile(mBoatsTile);
+    const auto a = e::make_shared<eMoveToAction>(b.get());
+    a->setStateRelevance(eStateRelevance::terrain);
+    b->setActionType(eCharacterActionType::walk);
+    b->setAction(a);
+    const auto fail = std::make_shared<eKillCharacterFinishFail>(
+                          mBoard, b.get());
+    const auto finish = std::make_shared<eEnemyBoatFinish>(
+                            mBoard, b.get(), this);
+    a->setFinishAction(finish);
+    a->setFailAction(fail);
+    const stdptr<eEnemyBoat> bptr(b.get());
+    a->setFindFailAction([bptr]() {
+        if(bptr) bptr->kill();
+    });
+    mBoats.push_back(b.get());
+    a->start(mDisembarkTile, eWalkableObject::sCreateDeepWater());
+}
+
+void eInvasionHandler::generateImmortals(
+        eTile* const tile, const eCityId cid,
+        const bool ares, const std::vector<eHeroType>& heroes) {
+    const auto tileCid = tile->cityId();
+    const int tx = tile->x();
+    const int ty = tile->y();
+
+    const auto prcsAttack = [&](const stdsptr<eCharacter>& c) {
+        c->setOnCityId(tileCid);
+        c->setCityId(cid);
+        bool found = false;
+        const auto prcsTile = [&](const int dx, const int dy) {
+            const int x = tx + dx;
+            const int y = ty + dy;
+            const auto t = mBoard.tile(x, y);
+            if(!t) return false;
+            const auto tCid = t->cityId();
+            if(tCid != tileCid) return false;
+            const auto& chars = t->characters();
+            if(!chars.empty()) return false;
+            c->changeTile(t);
+            found = true;
+            return true;
+        };
+        for(int k = 0; !found; k++) {
+            (void)found;
+            eIterateSquare::iterateSquare(k, prcsTile);
+        }
+        const auto a = e::make_shared<eAttackCityAction>(c.get());
+        c->setAction(a);
+        mHeroesAndGods.push_back(c);
+    };
+
+    if(ares) {
+        const auto god = eGod::sCreateGod(eGodType::ares, mBoard);
+        god->setAttitude(eGodAttitude::hostile);
+        prcsAttack(god);
+    }
+
+    for(const auto h : heroes) {
+        const auto hero = eHero::sCreateHero(h, mBoard);
+        prcsAttack(hero);
+    }
 }

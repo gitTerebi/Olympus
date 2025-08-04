@@ -8,6 +8,7 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "spawners/ebanner.h"
+#include "einvasionhandler.h"
 
 eWriteStream::eWriteStream(const eWriteTarget& dst) :
     mDst(dst) {}
@@ -108,4 +109,9 @@ void eWriteStream::writeSoldierBanner(eSoldierBanner* const b) {
 void eWriteStream::writeGameEvent(eGameEvent* const e) {
     const int eid = e ? e->ioID() : -1;
     *this << eid;
+}
+
+void eWriteStream::writeInvasionHandler(eInvasionHandler* const i) {
+    const int iid = i ? i->ioID() : -1;
+    *this << iid;
 }

@@ -209,6 +209,8 @@ bool eViewModeHelpers::characterVisible(
         const int iMin = static_cast<int>(eCharacterType::rockThrower);
         const int iMax = static_cast<int>(eCharacterType::greekHorseman);
         if(ic >= iMin && ic <= iMax) return true;
+        if(c == eCharacterType::trireme ||
+           c == eCharacterType::enemyBoat) return true;
         return c == eCharacterType::watchman;
     } break;
 

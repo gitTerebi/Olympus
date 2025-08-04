@@ -27,6 +27,7 @@
 #include "characters/echaracter.h"
 
 #include "spawners/eentrypoint.h"
+#include "einvasionhandler.h"
 
 stdsptr<eCharActFunc> eCharActFunc::sCreate(
         eGameBoard& board,
@@ -173,6 +174,9 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
 
     case eCharActFuncType::GWA_huntMonsterFinish:
         return std::make_shared<eGWA_huntMonsterFinish>(board);
+
+    case eCharActFuncType::enemyBoatFinish:
+        return std::make_shared<eEnemyBoatFinish>(board);
     }
     return nullptr;
 }

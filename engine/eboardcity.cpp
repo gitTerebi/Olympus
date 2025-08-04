@@ -2211,6 +2211,21 @@ const std::vector<eTile*>& eBoardCity::forestTiles() {
     return mForestTiles;
 }
 
+void eBoardCity::setInvasionHandlersIOIDs(int& id) {
+    for(const auto i : mInvasionHandlers) {
+        i->setIOID(id++);
+    }
+}
+
+eInvasionHandler* eBoardCity::invasionHandlerWithIOID(const int id) const {
+    if(id == -1) return nullptr;
+    for(const auto i : mInvasionHandlers) {
+        const int iio = i->ioID();
+        if(iio == id) return i;
+    }
+    return nullptr;
+}
+
 void eBoardCity::clearAfterLastEpisode() {
     mCityEvents.clearAfterLastEpisode();
 }

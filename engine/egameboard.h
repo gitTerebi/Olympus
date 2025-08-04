@@ -411,11 +411,16 @@ public:
     eBanner* bannerWithIOID(const int id) const;
     eSoldierBanner* soldierBannerWithIOID(const int id) const;
     eGameEvent* eventWithIOID(const int id) const;
+    eInvasionHandler* invasionHandlerWithIOID(const int id) const;
 
     eTile* monsterTile(const eCityId cid,
                        const int id) const;
     eTile* landInvasionTile(const eCityId cid,
                             const int id) const;
+    eTile* seaInvasionTile(const eCityId cid,
+                           const int id) const;
+    eTile* invasionTile(const eCityId cid,
+                        const int id) const;
     eTile* disasterTile(const eCityId cid,
                         const int id) const;
 

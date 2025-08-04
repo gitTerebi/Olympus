@@ -377,6 +377,9 @@ public:
     void setMaxSanctuaries(const int n) { mMaxSanctuaries = n; }
     int maxSanctuaries() const { return mMaxSanctuaries; }
 
+    void setInvasionHandlersIOIDs(int& id);
+    eInvasionHandler* invasionHandlerWithIOID(const int id) const;
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:

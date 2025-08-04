@@ -10,6 +10,7 @@
 #include "audio/emusic.h"
 #include "evectorhelpers.h"
 #include "eplayerconquestevent.h"
+#include "engine/epathfinder.h"
 
 #include <algorithm>
 
@@ -79,12 +80,35 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
     mConquestEvent = conquestEvent;
 }
 
+eTile* nearestDisembarkTile(eTile* const tile, eGameBoard& board,
+                            const eCityId cid) {
+    eTile* final = nullptr;
+    ePathFinder p([](eTileBase* const t) {
+        return t->hasWater();
+    }, [&](eTileBase* const t) {
+        const auto tt = static_cast<eTile*>(t);
+        if(const auto b = tt->banner()) {
+            const auto type = b->type();
+            const bool r = type == eBannerTypeS::disembarkPoint;
+            if(r) final = tt;
+            return r;
+        }
+        return false;
+    });
+    const int w = board.width();
+    const int h = board.height();
+    const auto rect = board.boardCityTileBRect(cid);
+    const bool r = p.findPath(rect, tile, 1000, true, w, h);
+    if(!r) return nullptr;
+    return final;
+}
+
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     const auto cid = cityId();
     board->removeInvasion(this);
-    const auto tile = board->landInvasionTile(cid, mInvasionPoint);
+    const auto tile = board->invasionTile(cid, mInvasionPoint);
 
     int infantry = 0;
     int cavalry = 0;
@@ -101,15 +125,26 @@ void eInvasionEvent::trigger() {
     }
 
     const auto startInvasion = [this, board, tile, cid, city,
-                                infantry, cavalry, archers ]() {
+                                infantry, cavalry, archers]() {
         if(!tile) return;
-        const auto eh = new eInvasionHandler(*board, cid, mCity, this);
         const auto invadingCid = mCity->cityId();
         const auto invadingC = board->boardCityWithId(invadingCid);
-        if(invadingC) {
-            eh->initialize(tile, mForces, mConquestEvent);
+        if(tile->hasWater()) {
+            const auto disembarkTile = nearestDisembarkTile(tile, *board, cid);
+            if(!disembarkTile) return;
+            const auto eh = new eInvasionHandler(*board, cid, mCity, this);
+            if(invadingC) {
+                eh->initializeSeaInvasion(tile, disembarkTile, mForces, mConquestEvent);
+            } else {
+                eh->initializeSeaInvasion(tile, disembarkTile, infantry, cavalry, archers);
+            }
         } else {
-            eh->initialize(tile, infantry, cavalry, archers);
+            const auto eh = new eInvasionHandler(*board, cid, mCity, this);
+            if(invadingC) {
+                eh->initializeLandInvasion(tile, mForces, mConquestEvent);
+            } else {
+                eh->initializeLandInvasion(tile, infantry, cavalry, archers);
+            }
         }
     };
 

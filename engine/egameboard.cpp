@@ -712,6 +712,14 @@ eGameEvent* eGameBoard::eventWithIOID(const int id) const {
     return nullptr;
 }
 
+eInvasionHandler* eGameBoard::invasionHandlerWithIOID(const int id) const {
+    for(const auto& c : mCitiesOnBoard) {
+        const auto i = c->invasionHandlerWithIOID(id);
+        if(i) return i;
+    }
+    return nullptr;
+}
+
 eTile* eGameBoard::monsterTile(const eCityId cid, const int id) const {
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
@@ -722,6 +730,17 @@ eTile* eGameBoard::landInvasionTile(const eCityId cid, const int id) const {
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
     return c->landInvasionTile(id);
+}
+
+eTile* eGameBoard::seaInvasionTile(const eCityId cid, const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->seaInvasionTile(id);
+}
+
+eTile* eGameBoard::invasionTile(const eCityId cid, const int id) const {
+    if(id > 7) return seaInvasionTile(cid, id);
+    return landInvasionTile(cid, id);
 }
 
 eTile* eGameBoard::disasterTile(const eCityId cid, const int id) const {
