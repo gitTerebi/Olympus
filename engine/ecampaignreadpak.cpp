@@ -494,6 +494,7 @@ void eCampaign::readPak(const std::string& name,
     }
     {
         const auto c = mParentBoard->addCityToBoard(cid);
+        mParentBoard->addPlayerToBoard(ePlayerId::player0);
         c->setAtlantean(atlantean);
     }
 
@@ -584,6 +585,7 @@ void eCampaign::readPak(const std::string& name,
         if(r) {
             const auto c = board->addCityToBoard(cid);
             c->setAtlantean(atlantean);
+            board->addPlayerToBoard(ePlayerId::player0);
         } else {
             board->initialize(1, 1);
             continue;
