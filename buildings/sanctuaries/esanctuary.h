@@ -2,9 +2,9 @@
 #define ESANCTUARY_H
 
 #include "../eemployingbuilding.h"
+#include "../emonument.h"
 
 #include "esanctuaryblueprint.h"
-#include "esanctbuilding.h"
 #include "characters/gods/egod.h"
 #include "engine/edate.h"
 
@@ -16,7 +16,7 @@ enum class eHelpDenialReason {
     error
 };
 
-class eSanctuary : public eEmployingBuilding {
+class eSanctuary : public eMonument {
 public:
     eSanctuary(eGameBoard& board,
                const eBuildingType type,
@@ -27,17 +27,10 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture>
-    getTexture(const eTileSize) const override
-    { return nullptr; }
-
     void timeChanged(const int by) override;
     void nextMonth() override;
 
-    int spaceLeft(const eResourceType type) const override;
-    int add(const eResourceType type, const int count) override;
-
-    std::vector<eCartTask> cartTasks() const override;
+    void buildingProgressed() override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
@@ -51,32 +44,13 @@ public:
 
     eGod* god() const { return mGod; }
 
-    void registerElement(const stdsptr<eSanctBuilding>& e);
-
-    int progress() const; // 0-100
-    bool finished() const;
-
-    eSanctCost cost() const;
-    const eSanctCost& stored() const { return mStored; }
-    const eSanctCost& used() const { return mUsed; }
-
-    void useResources(const eSanctCost& r);
-
-    int altitude() const { return mAltitude; }
-    void setAltitude(const int a) { mAltitude = a; }
-
     eGodType godType() const;
 
     eGod* spawnGod();
     void spawnPatrolingGod();
 
-    void buildingProgressed();
-
     void godComeback();
     bool godAbroad() const { return mGodAbroad; }
-
-    void setConstructionHalted(const bool h);
-    bool constructionHalted() const { return mHaltConstruction; }
 
     double helpTimeFraction() const;
     double helpAttackTimeFraction() const;
@@ -86,23 +60,10 @@ public:
             const int sw, const int sh,
             eGameBoard& board, const eCityId cid);
 
-    void setRotated(const bool r) { mRotated = r; }
-    bool rotated() const { return mRotated; }
-
     void setSpawnWait(const int w);
 
     bool sacrificing() const;
 private:
-    bool mHaltConstruction = false;
-    eSanctCost mStored{0, 0, 0};
-    eSanctCost mUsed{0, 0, 0};
-    int mAltitude = 0;
-    bool mRotated = false;
-
-    stdptr<eCartTransporter> mCart;
-
-    std::vector<stdsptr<eSanctBuilding>> mElements;
-
     stdptr<eGod> mGod;
     bool mGodAbroad = false;
     int mSpawnWait = 0;

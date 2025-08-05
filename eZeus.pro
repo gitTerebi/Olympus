@@ -92,6 +92,7 @@ SOURCES += \
         buildings/emaintenanceoffice.cpp \
         buildings/emasonryshop.cpp \
         buildings/emint.cpp \
+        buildings/emonument.cpp \
         buildings/emuseum.cpp \
         buildings/eobservatory.cpp \
         buildings/eoilvendor.cpp \
@@ -109,6 +110,7 @@ SOURCES += \
         buildings/eplaceholder.cpp \
         buildings/epodium.cpp \
         buildings/eprocessingbuilding.cpp \
+        buildings/epyramid.cpp \
         buildings/erefinery.cpp \
         buildings/eresourcebuilding.cpp \
         buildings/eresourcebuildingbase.cpp \
@@ -746,6 +748,7 @@ HEADERS += \
     buildings/emaintenanceoffice.h \
     buildings/emasonryshop.h \
     buildings/emint.h \
+    buildings/emonument.h \
     buildings/emuseum.h \
     buildings/eobservatory.h \
     buildings/eoilvendor.h \
@@ -763,6 +766,7 @@ HEADERS += \
     buildings/eplaceholder.h \
     buildings/epodium.h \
     buildings/eprocessingbuilding.h \
+    buildings/epyramid.h \
     buildings/erefinery.h \
     buildings/eresourcebuilding.h \
     buildings/eresourcebuildingbase.h \

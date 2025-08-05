@@ -173,7 +173,18 @@ enum class eBuildingType {
     placeholder,
 
     refinery,
-    blackMarbleWorkshop
+    blackMarbleWorkshop,
+
+    pyramid,
+    pyramidWall,
+    pyramidTop,
+    pyramidStatue,
+    pyramidMonument,
+    pyramidTile,
+    pyramidAltar,
+    pyramidTemple,
+    pyramidObservatory,
+    pyramidMuseum
 };
 
 struct eTextureSpace {

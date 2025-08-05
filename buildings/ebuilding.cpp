@@ -101,11 +101,21 @@ bool eBuilding::sFlatBuilding(const eBuildingType bt) {
 }
 
 bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
-    const int min = static_cast<int>(eBuildingType::templeAphrodite);
-    const int max = static_cast<int>(eBuildingType::templeAltar);
-    const int bi = static_cast<int>(bt);
-    const bool r = bi >= min && bi <= max;
-    return r;
+    {
+        const int min = static_cast<int>(eBuildingType::templeAphrodite);
+        const int max = static_cast<int>(eBuildingType::templeAltar);
+        const int bi = static_cast<int>(bt);
+        const bool r = bi >= min && bi <= max;
+        if(r) return true;
+    }
+    {
+        const int min = static_cast<int>(eBuildingType::pyramid);
+        const int max = static_cast<int>(eBuildingType::pyramidMuseum);
+        const int bi = static_cast<int>(bt);
+        const bool r = bi >= min && bi <= max;
+        if(r) return true;
+    }
+    return false;
 }
 
 bool eBuilding::sAestheticsBuilding(const eBuildingType bt) {

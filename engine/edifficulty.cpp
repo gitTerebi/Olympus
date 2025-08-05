@@ -251,11 +251,13 @@ int costBase(const eBuildingType type) {
     case eBuildingType::palaceTile:
     case eBuildingType::godMonument:
     case eBuildingType::godMonumentTile:
+
     case eBuildingType::temple:
     case eBuildingType::templeTile:
     case eBuildingType::templeStatue:
     case eBuildingType::templeMonument:
     case eBuildingType::templeAltar:
+
     case eBuildingType::achillesHall:
     case eBuildingType::atalantaHall:
     case eBuildingType::bellerophonHall:
@@ -264,6 +266,16 @@ int costBase(const eBuildingType type) {
     case eBuildingType::odysseusHall:
     case eBuildingType::perseusHall:
     case eBuildingType::theseusHall:
+
+    case eBuildingType::pyramidWall:
+    case eBuildingType::pyramidTop:
+    case eBuildingType::pyramidStatue:
+    case eBuildingType::pyramidMonument:
+    case eBuildingType::pyramidTile:
+    case eBuildingType::pyramidAltar:
+    case eBuildingType::pyramidTemple:
+    case eBuildingType::pyramidObservatory:
+    case eBuildingType::pyramidMuseum:
         return 0;
     }
 }

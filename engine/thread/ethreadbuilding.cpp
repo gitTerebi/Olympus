@@ -133,11 +133,21 @@ void eThreadBuilding::load(eBuilding* const src) {
             const auto b = static_cast<eResourceBuilding*>(src);
             mWorkedOn = b->workedOn();
         } break;
-        case eBuildingType::templeAltar:
         case eBuildingType::temple:
+        case eBuildingType::templeAltar:
         case eBuildingType::templeMonument:
         case eBuildingType::templeStatue:
-        case eBuildingType::templeTile: {
+        case eBuildingType::templeTile:
+
+        case eBuildingType::pyramidWall:
+        case eBuildingType::pyramidTop:
+        case eBuildingType::pyramidStatue:
+        case eBuildingType::pyramidMonument:
+        case eBuildingType::pyramidTile:
+        case eBuildingType::pyramidAltar:
+        case eBuildingType::pyramidTemple:
+        case eBuildingType::pyramidObservatory:
+        case eBuildingType::pyramidMuseum: {
             const auto b = static_cast<eSanctBuilding*>(src);
             mWorkedOn = b->workedOn();
             const auto s = b->sanctuary();
