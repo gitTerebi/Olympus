@@ -3341,28 +3341,6 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
     const auto ct = this->tile((minX + maxX)/2, (minY + maxY)/2);
     b->setCenterTile(ct);
 
-    if(god == eGodType::demeter) {
-        const int xMin = sanctRect.x - 3;
-        const int yMin = sanctRect.y - 3;
-        const int xMax = sanctRect.x + sanctRect.w + 3;
-        const int yMax = sanctRect.y + sanctRect.h + 3;
-        for(int x = xMin; x < xMax; x++) {
-            for(int y = yMin; y < yMax; y++) {
-                const SDL_Point pt{x, y};
-                const bool in = SDL_PointInRect(&pt, &sanctRect);
-                if(in) continue;
-                const auto tile = this->tile(x, y);
-                if(!tile) continue;
-                const auto terr = tile->terrain();
-                if(terr == eTerrain::dry) {
-                    tile->setTerrain(eTerrain::fertile);
-                }
-            }
-        }
-        const auto c = boardCityWithId(cid);
-        if(c) c->incTerrainState();
-    }
-
     for(const auto& tv : h->fTiles) {
         for(const auto& t : tv) {
             const int tx = minX + t.fX;
