@@ -618,6 +618,8 @@ void eInvasionHandler::extractSSFromForces(
     }
 }
 
+const int boatSpawnPeriod = 825;
+
 void eInvasionHandler::incTime(const int by) {
     const auto invasionDefeated = [&]() {
         eEventData ed(mTargetCity);
@@ -652,9 +654,8 @@ void eInvasionHandler::incTime(const int by) {
     if(mStage == eInvasionStage::arrive) {
         if(mBoatsLeft > 0) {
             mWait += by;
-            const int spawnPeriod = 325;
-            if(mWait < spawnPeriod) return;
-            mWait -= spawnPeriod;
+            if(mWait < boatSpawnPeriod) return;
+            mWait -= boatSpawnPeriod;
             spawnBoat();
             mBoatsLeft--;
             return;
@@ -929,6 +930,7 @@ void eInvasionHandler::initializeBoats(eTile* const tile, const int troops) {
     mBoatsTile = tile;
     const int nBoats = std::ceil(double(troops)/mSoldiersPerBoat);
     mBoatsLeft = nBoats;
+    mWait = boatSpawnPeriod;
 }
 
 void eInvasionHandler::spawnBoat() {
