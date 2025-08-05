@@ -374,14 +374,16 @@ void eSoldierBanner::write(eWriteStream& dst) const {
     }
 }
 
-void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
-                            const int ctx, const int cty,
-                            eGameBoard& board, const int dist,
-                            const int minDistFromEdge) {
+void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,
+                                   const int ctx, const int cty,
+                                   eGameBoard& board) {
     if(bs.empty()) return;
-    const auto onCid = bs[0]->onCityId();
+    const auto bsFirst = bs[0];
+    const auto cid = bsFirst->cityId();
+    const auto onCid = bsFirst->onCityId();
     const auto tt = board.tile(ctx, cty);
-    if(tt && tt->cityId() == onCid) {
+    const auto ttCid = tt->cityId();
+    if(tt && ttCid == onCid && ttCid == cid) {
         const auto b = tt->underBuilding();
         if(b) {
             const auto bt = b->type();
@@ -414,6 +416,21 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
             }
         }
     }
+}
+
+void eSoldierBanner::sPlaceNoPathTrace(std::vector<eSoldierBanner*> bs,
+                                       const int ctx, const int cty,
+                                       eGameBoard& board, const int dist,
+                                       const int minDistFromEdge) {
+    sPlaceDefault(bs, ctx, cty, board);
+    if(bs.empty()) return;
+
+    const auto bsFirst = bs[0];
+    const auto onCid = bsFirst->onCityId();
+    const auto cid = bsFirst->cityId();
+    const auto onTid = board.cityIdToTeamId(onCid);
+    const auto tid = board.cityIdToTeamId(cid);
+    const bool isEnemy = onTid != tid;
 
     int isld = 0;
     const int slds = bs.size();
@@ -435,8 +452,9 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
         if(dty < 2*minDistFromEdge) return false;
         if(dtx > bw - minDistFromEdge) return false;
         if(dty > bh - 2*minDistFromEdge) return false;
-        if(!tt->walkable()) return false;
-        if(tt->soldierBanner()) return false;
+        if(!isEnemy && !tt->walkable()) return false;
+        if(isEnemy && !tt->walkableTerrain()) return false;
+        if(!isEnemy && tt->soldierBanner()) return false;
 
         const auto s = bs[isld++];
         s->moveTo(tx, ty);
@@ -447,6 +465,86 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
     for(int k = 0; isld < slds; k += kinc) {
         (void)isld;
         eIterateSquare::iterateSquare(k, prcsTile, dist);
+    }
+}
+
+void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
+                            const int ctx, const int cty,
+                            eGameBoard& board, const int dist,
+                            const int minDistFromEdge) {
+    sPlaceDefault(bs, ctx, cty, board);
+    if(bs.empty()) return;
+
+    eTile* startTile = nullptr;
+
+    const auto bsFirst = bs[0];
+    const auto onCid = bsFirst->onCityId();
+    const auto cid = bsFirst->cityId();
+    const auto onTid = board.cityIdToTeamId(onCid);
+    const auto tid = board.cityIdToTeamId(cid);
+    const bool isEnemy = onTid != tid;
+
+    const int bw = board.width();
+    const int bh = board.height();
+
+    const auto prcsTile = [&](const int i, const int j) {
+        const int tx = ctx + i;
+        const int ty = cty + j;
+        const auto tt = board.tile(tx, ty);
+        if(!tt) return false;
+        const auto ttCid = tt->cityId();
+        if(ttCid != onCid) return false;
+        const int dtx = tt->dx();
+        const int dty = tt->dy();
+        if(dtx < minDistFromEdge) return false;
+        if(dty < 2*minDistFromEdge) return false;
+        if(dtx > bw - minDistFromEdge) return false;
+        if(dty > bh - 2*minDistFromEdge) return false;
+        if(!isEnemy && !tt->walkable()) return false;
+        if(isEnemy && !tt->walkableTerrain()) return false;
+        if(!isEnemy && tt->soldierBanner()) return false;
+        startTile = tt;
+        return true;
+    };
+
+    for(int k = 0; k < 9; k++) {
+        eIterateSquare::iterateSquare(k, prcsTile, dist);
+        if(startTile) break;
+    }
+
+    if(!startTile) return;
+
+    const auto rect = board.boardCityTileBRect(onCid);
+    std::vector<SDL_Point> placed;
+    for(const auto b : bs) {
+        eTile* final = nullptr;
+        ePathFinder p([&](eTileBase* const t) {
+            if(isEnemy) return t->walkableTerrain();
+            else return t->walkable();
+        }, [&](eTileBase* const t) {
+            const bool walkable = isEnemy ? t->walkableTerrain() :
+                                            t->walkable();
+            if(!walkable) return false;
+
+            const auto tt = static_cast<eTile*>(t);
+            const int tx = tt->x();
+            const int ty = tt->y();
+            for(const auto& p : placed) {
+                const double d = std::sqrt((tx - p.x)*(tx - p.x) +
+                                           (ty - p.y)*(ty - p.y));
+                if(d < dist) return false;
+            }
+            final = tt;
+            return true;
+        });
+        const int w = board.width();
+        const int h = board.height();
+        const bool r = p.findPath(rect, startTile, 100, true, w, h);
+        if(!r) break;
+        const int tx = final->x();
+        const int ty = final->y();
+        placed.push_back({tx, ty});
+        b->moveTo(tx, ty);
     }
 }
 

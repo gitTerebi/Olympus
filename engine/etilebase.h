@@ -34,6 +34,7 @@ public:
     bool hasWater() const;
     bool hasQuake() const;
 
+    bool walkableTerrain() const;
     bool walkable() const;
 
     int seed() const { return mSeed; }

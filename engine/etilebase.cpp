@@ -45,6 +45,15 @@ bool eTileBase::hasQuake() const {
     return terrain() == eTerrain::quake;
 }
 
+bool eTileBase::walkableTerrain() const {
+    const auto t = underBuildingType();
+    if(t == eBuildingType::road) return true;
+    const auto terr = terrain() & eTerrain::walkable;
+    if(!static_cast<bool>(terr)) return false;
+    if(!mWalkableElev && mElevation) return false;
+    return true;
+}
+
 bool eTileBase::walkable() const {
     const auto t = underBuildingType();
     if(t == eBuildingType::road) return true;
