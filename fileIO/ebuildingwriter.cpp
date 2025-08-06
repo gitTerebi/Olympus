@@ -225,30 +225,64 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         const auto s = static_cast<const eTempleStatueBuilding*>(b);
         dst << s->godType();
         dst << s->id();
-        const auto sanct = s->sanctuary();
+        const auto sanct = s->monument();
         dst << sanct->ioID();
     } break;
     case eBuildingType::templeMonument: {
         const auto s = static_cast<const eTempleMonumentBuilding*>(b);
         dst << s->godType();
         dst << s->id();
-        const auto sanct = s->sanctuary();
+        const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
     case eBuildingType::templeAltar: {
         const auto s = static_cast<const eTempleAltarBuilding*>(b);
-        const auto sanct = s->sanctuary();
+        const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
     case eBuildingType::temple: {
         const auto s = static_cast<const eTempleBuilding*>(b);
-        const auto sanct = s->sanctuary();
+        const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
     case eBuildingType::templeTile: {
         const auto s = static_cast<const eTempleTileBuilding*>(b);
         dst << s->id();
-        const auto sanct = s->sanctuary();
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+
+    case eBuildingType::modestPyramid:
+    case eBuildingType::pyramid:
+    case eBuildingType::greatPyramid:
+    case eBuildingType::majesticPyramid:
+
+    case eBuildingType::smallMonumentToTheSky:
+    case eBuildingType::monumentToTheSky:
+    case eBuildingType::grandMonumentToTheSky:
+
+    case eBuildingType::minorShrine:
+    case eBuildingType::shrine:
+    case eBuildingType::majorShrine:
+
+    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::altarOfOlympus:
+    case eBuildingType::templeOfOlympus:
+    case eBuildingType::observatoryKosmika:
+    case eBuildingType::museumAtlantika:
+        break;
+    case eBuildingType::pyramidWall: {
+        const auto s = static_cast<const ePyramidWall*>(b);
+        dst << s->orientation();
+        dst << s->elevation();
+        dst << s->special();
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidTop: {
+        const auto s = static_cast<const ePyramidTop*>(b);
+        dst << s->elevation();
+        const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
 

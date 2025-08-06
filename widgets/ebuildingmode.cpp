@@ -286,6 +286,40 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
     case eBuildingMode::theseusHall:
         return eBuildingType::theseusHall;
 
+    case eBuildingMode::modestPyramid: // 3x3
+        return eBuildingType::modestPyramid;
+    case eBuildingMode::pyramid: // 5x5
+        return eBuildingType::pyramid;
+    case eBuildingMode::greatPyramid: // 7x7
+        return eBuildingType::greatPyramid;
+    case eBuildingMode::majesticPyramid: // 9x9
+        return eBuildingType::majesticPyramid;
+
+    case eBuildingMode::smallMonumentToTheSky: // 5x5
+        return eBuildingType::smallMonumentToTheSky;
+    case eBuildingMode::monumentToTheSky: // 6x6
+        return eBuildingType::monumentToTheSky;
+    case eBuildingMode::grandMonumentToTheSky: // 8x8
+        return eBuildingType::grandMonumentToTheSky;
+
+    case eBuildingMode::minorShrine: // 3x3
+        return eBuildingType::minorShrine;
+    case eBuildingMode::shrine: // 6x6
+        return eBuildingType::shrine;
+    case eBuildingMode::majorShrine: // 8x8
+        return eBuildingType::majorShrine;
+
+    case eBuildingMode::pyramidToThePantheon: // 11x9
+        return eBuildingType::pyramidToThePantheon;
+    case eBuildingMode::altarOfOlympus: // 8x8
+        return eBuildingType::altarOfOlympus;
+    case eBuildingMode::templeOfOlympus: // 8x8
+        return eBuildingType::templeOfOlympus;
+    case eBuildingMode::observatoryKosmika: // 9x9
+        return eBuildingType::observatoryKosmika;
+    case eBuildingMode::museumAtlantika: // 8x8
+        return eBuildingType::museumAtlantika;
+
     default:
         return eBuildingType::none;
     }

@@ -2,28 +2,37 @@
 
 #include "esanctuary.h"
 
-eSanctBuilding::eSanctBuilding(const eSanctCost& cost,
-                               const int maxProgress,
+eSanctCost totalCost(const std::vector<eSanctCost>& cost) {
+    eSanctCost result{0, 0, 0};
+    for(const auto& c : cost) {
+        result += c;
+    }
+    return result;
+}
+
+eSanctBuilding::eSanctBuilding(const std::vector<eSanctCost>& cost,
                                eGameBoard& board,
                                const eBuildingType type,
                                const int sw, const int sh,
                                const eCityId cid) :
     eBuilding(board, type, sw, sh, cid),
-    mMaxProgress(maxProgress),
-    mCost(cost) {
+    mMaxProgress(cost.size()),
+    mCost(cost),
+    mTotalCost(totalCost(cost)) {
     setOverlayEnabledFunc([]() { return true; });
 }
 
 void eSanctBuilding::erase() {
-    mSanctuary->erase();
+    mMonument->erase();
 }
 
 bool eSanctBuilding::resourcesAvailable() const {
     if(finished()) return false;
-    const auto s = mSanctuary->stored();
-    if(s.fMarble < mCost.fMarble - mStored.fMarble) return false;
-    if(s.fWood < mCost.fWood - mStored.fWood) return false;
-    if(s.fSculpture < mCost.fSculpture - mStored.fSculpture) return false;
+    if(mHalted) return false;
+    const auto& s = mMonument->stored();
+    if(s.fMarble < mNextCost.fMarble) return false;
+    if(s.fWood < mNextCost.fWood) return false;
+    if(s.fSculpture < mNextCost.fSculpture) return false;
     return true;
 }
 
@@ -33,13 +42,12 @@ bool eSanctBuilding::finished() const {
 
 bool eSanctBuilding::incProgress() {
     if(mProgress >= mMaxProgress) return false;
-    if(mProgress == 0) {
-        mSanctuary->useResources(mCost);
-        mStored = mCost;
-    }
-    mProgress++;
+    const auto& cost = mCost[mProgress++];
+    mMonument->useResources(cost);
+    updateNextCost();
     scheduleTerrainUpdate();
-    mSanctuary->buildingProgressed();
+    progressed();
+    mMonument->buildingProgressed();
     return true;
 }
 
@@ -48,28 +56,25 @@ void eSanctBuilding::destroy() {
     scheduleTerrainUpdate();
 }
 
-void eSanctBuilding::setSanctuary(eSanctuary* const s) {
-    mSanctuary = s;
+void eSanctBuilding::setMonument(eMonument* const s) {
+    mMonument = s;
 }
 
 void eSanctBuilding::read(eReadStream& src) {
     eBuilding::read(src);
 
-    src >> mStored.fMarble;
-    src >> mStored.fSculpture;
-    src >> mStored.fWood;
-
+    src >> mWorkedOn;
     src >> mProgress;
+    src >> mHalted;
+    updateNextCost();
 }
 
 void eSanctBuilding::write(eWriteStream& dst) const {
     eBuilding::write(dst);
 
-    dst << mStored.fMarble;
-    dst << mStored.fSculpture;
-    dst << mStored.fWood;
-
+    dst << mWorkedOn;
     dst << mProgress;
+    dst << mHalted;
 }
 
 void eSanctBuilding::scheduleTerrainUpdate() {
@@ -77,5 +82,13 @@ void eSanctBuilding::scheduleTerrainUpdate() {
     if(bt == eBuildingType::templeTile) {
         const auto t = centerTile();
         if(t) t->scheduleTerrainUpdate();
+    }
+}
+
+void eSanctBuilding::updateNextCost() {
+    if(mProgress >= mMaxProgress) {
+        mNextCost = {0, 0, 0};
+    } else {
+        mNextCost = mCost[mProgress];
     }
 }

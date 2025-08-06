@@ -22,6 +22,16 @@ stdsptr<eBuilding> createVendor(eGameBoard& board,
     return v;
 }
 
+void readSanctBuildingMonument(
+        eGameBoard& board, eReadStream& src,
+        const stdsptr<eSanctBuilding>& ts) {
+    src.readBuilding(&board, [ts](eBuilding* const bb) {
+        const auto ss = static_cast<eMonument*>(bb);
+        ts->setMonument(ss);
+        ss->registerElement(ts);
+    });
+}
+
 stdsptr<eBuilding> eBuildingReader::sRead(
         eGameBoard& board, const eBuildingType type,
         eReadStream& src) {
@@ -450,11 +460,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         src >> id;
         const auto ts = e::make_shared<eTempleStatueBuilding>(godType, id, board, cid);
         b = ts;
-        src.readBuilding(&board, [ts](eBuilding* const bb) {
-            const auto ss = static_cast<eSanctuary*>(bb);
-            ts->setSanctuary(ss);
-            ss->registerElement(ts);
-        });
+        readSanctBuildingMonument(board, src, ts);
     } break;
     case eBuildingType::templeMonument: {
         eGodType godType;
@@ -463,40 +469,67 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         src >> id;
         const auto ts = e::make_shared<eTempleMonumentBuilding>(godType, id, board, cid);
         b = ts;
-        src.readBuilding(&board, [ts](eBuilding* const bb) {
-            const auto ss = static_cast<eSanctuary*>(bb);
-            ts->setSanctuary(ss);
-            ss->registerElement(ts);
-        });
+        readSanctBuildingMonument(board, src, ts);
     } break;
     case eBuildingType::templeAltar: {
         const auto ts = e::make_shared<eTempleAltarBuilding>(board, cid);
         b = ts;
-        src.readBuilding(&board, [ts](eBuilding* const bb) {
-            const auto ss = static_cast<eSanctuary*>(bb);
-            ts->setSanctuary(ss);
-            ss->registerElement(ts);
-        });
+        readSanctBuildingMonument(board, src, ts);
     } break;
     case eBuildingType::temple: {
         const auto ts = e::make_shared<eTempleBuilding>(board, cid);
         b = ts;
-        src.readBuilding(&board, [ts](eBuilding* const bb) {
-            const auto ss = static_cast<eSanctuary*>(bb);
-            ts->setSanctuary(ss);
-            ss->registerElement(ts);
-        });
+        readSanctBuildingMonument(board, src, ts);
     } break;
     case eBuildingType::templeTile: {
         int id;
         src >> id;
         const auto ts = e::make_shared<eTempleTileBuilding>(id, board, cid);
         b = ts;
-        src.readBuilding(&board, [ts](eBuilding* const bb) {
-            const auto ss = static_cast<eSanctuary*>(bb);
-            ts->setSanctuary(ss);
-            ss->registerElement(ts);
-        });
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+
+    case eBuildingType::modestPyramid:
+    case eBuildingType::pyramid:
+    case eBuildingType::greatPyramid:
+    case eBuildingType::majesticPyramid:
+
+    case eBuildingType::smallMonumentToTheSky:
+    case eBuildingType::monumentToTheSky:
+    case eBuildingType::grandMonumentToTheSky:
+
+    case eBuildingType::minorShrine:
+    case eBuildingType::shrine:
+    case eBuildingType::majorShrine:
+
+    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::altarOfOlympus:
+    case eBuildingType::templeOfOlympus:
+    case eBuildingType::observatoryKosmika:
+    case eBuildingType::museumAtlantika: {
+        int sw;
+        int sh;
+        ePyramid::sDimensions(type, sw, sh);
+        b = e::make_shared<ePyramid>(board, type, sw, sh, cid);
+    } break;
+    case eBuildingType::pyramidWall: {
+        eOrientation o;
+        src >> o;
+        int elevation;
+        src >> elevation;
+        int special;
+        src >> special;
+        const auto ts = e::make_shared<ePyramidWall>(
+                            board, o, elevation, special, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidTop: {
+        int elevation;
+        src >> elevation;
+        const auto ts = e::make_shared<ePyramidTop>(board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
     } break;
 
     case eBuildingType::achillesHall:

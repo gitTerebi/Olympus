@@ -44,6 +44,25 @@ void eAvailableBuildings::read(eReadStream& src) {
 
     src >> fTriremeWharf;
 
+    src >> fModestPyramid;
+    src >> fPyramid;
+    src >> fGreatPyramid;
+    src >> fMajesticPyramid;
+
+    src >> fSmallMonumentToTheSky;
+    src >> fMonumentToTheSky;
+    src >> fGrandMonumentTotTheSky;
+
+    src >> fMinorShrine;
+    src >> fShrine;
+    src >> fMajorShrine;
+
+    src >> fPyramidToThePantheon;
+    src >> fAltarOfOlympus;
+    src >> fTempleOfOlympus;
+    src >> fObservatoryKosmika;
+    src >> fMuseumAtlantika;
+
     src >> fAphroditeSanctuary;
     src >> fApolloSanctuary;
     src >> fAresSanctuary;
@@ -83,6 +102,12 @@ void eAvailableBuildings::read(eReadStream& src) {
         const auto t = static_cast<eGodType>(i);
         src >> mGodMonuments[t];
     }
+
+    // !!!
+    allow(eBuildingType::modestPyramid);
+    allow(eBuildingType::pyramid);
+    allow(eBuildingType::greatPyramid);
+    allow(eBuildingType::majesticPyramid);
 }
 
 void eAvailableBuildings::write(eWriteStream& dst) const {
@@ -121,6 +146,25 @@ void eAvailableBuildings::write(eWriteStream& dst) const {
     dst << fChariotFactory;
 
     dst << fTriremeWharf;
+
+    dst << fModestPyramid;
+    dst << fPyramid;
+    dst << fGreatPyramid;
+    dst << fMajesticPyramid;
+
+    dst << fSmallMonumentToTheSky;
+    dst << fMonumentToTheSky;
+    dst << fGrandMonumentTotTheSky;
+
+    dst << fMinorShrine;
+    dst << fShrine;
+    dst << fMajorShrine;
+
+    dst << fPyramidToThePantheon;
+    dst << fAltarOfOlympus;
+    dst << fTempleOfOlympus;
+    dst << fObservatoryKosmika;
+    dst << fMuseumAtlantika;
 
     dst << fAphroditeSanctuary;
     dst << fApolloSanctuary;
@@ -255,6 +299,40 @@ bool eAvailableBuildings::available(
     case eBuildingType::triremeWharf:
         return fTriremeWharf;
 
+    case eBuildingType::modestPyramid:
+        return fModestPyramid == eAvailable::available;
+    case eBuildingType::pyramid:
+        return fPyramid == eAvailable::available;
+    case eBuildingType::greatPyramid:
+        return fGreatPyramid == eAvailable::available;
+    case eBuildingType::majesticPyramid:
+        return fMajesticPyramid == eAvailable::available;
+
+    case eBuildingType::smallMonumentToTheSky:
+        return fSmallMonumentToTheSky == eAvailable::available;
+    case eBuildingType::monumentToTheSky:
+        return fMonumentToTheSky == eAvailable::available;
+    case eBuildingType::grandMonumentToTheSky:
+        return fGrandMonumentTotTheSky == eAvailable::available;
+
+    case eBuildingType::minorShrine:
+        return fMinorShrine == eAvailable::available;
+    case eBuildingType::shrine:
+        return fShrine == eAvailable::available;
+    case eBuildingType::majorShrine:
+        return fMajorShrine == eAvailable::available;
+
+    case eBuildingType::pyramidToThePantheon:
+        return fPyramidToThePantheon == eAvailable::available;
+    case eBuildingType::altarOfOlympus:
+        return fAltarOfOlympus == eAvailable::available;
+    case eBuildingType::templeOfOlympus:
+        return fTempleOfOlympus == eAvailable::available;
+    case eBuildingType::observatoryKosmika:
+        return fObservatoryKosmika == eAvailable::available;
+    case eBuildingType::museumAtlantika:
+        return fMuseumAtlantika == eAvailable::available;
+
     case eBuildingType::templeAphrodite:
         return fAphroditeSanctuary == eAvailable::available;
     case eBuildingType::templeApollo:
@@ -344,6 +422,40 @@ void eAvailableBuildings::built(
         int& c = mGodMonuments[t];
         c = std::max(0, c - 1);
     } break;
+
+    case eBuildingType::modestPyramid:
+        fModestPyramid = eAvailable::built; break;
+    case eBuildingType::pyramid:
+        fPyramid = eAvailable::built; break;
+    case eBuildingType::greatPyramid:
+        fGreatPyramid = eAvailable::built; break;
+    case eBuildingType::majesticPyramid:
+        fMajesticPyramid = eAvailable::built; break;
+
+    case eBuildingType::smallMonumentToTheSky:
+        fSmallMonumentToTheSky = eAvailable::built; break;
+    case eBuildingType::monumentToTheSky:
+        fMonumentToTheSky = eAvailable::built; break;
+    case eBuildingType::grandMonumentToTheSky:
+        fGrandMonumentTotTheSky = eAvailable::built; break;
+
+    case eBuildingType::minorShrine:
+        fMinorShrine = eAvailable::built; break;
+    case eBuildingType::shrine:
+        fShrine = eAvailable::built; break;
+    case eBuildingType::majorShrine:
+        fMajorShrine = eAvailable::built; break;
+
+    case eBuildingType::pyramidToThePantheon:
+        fPyramidToThePantheon = eAvailable::built; break;
+    case eBuildingType::altarOfOlympus:
+        fAltarOfOlympus = eAvailable::built; break;
+    case eBuildingType::templeOfOlympus:
+        fTempleOfOlympus = eAvailable::built; break;
+    case eBuildingType::observatoryKosmika:
+        fObservatoryKosmika = eAvailable::built; break;
+    case eBuildingType::museumAtlantika:
+        fMuseumAtlantika = eAvailable::built; break;
 
     case eBuildingType::templeAphrodite:
         fAphroditeSanctuary = eAvailable::built; break;
@@ -496,6 +608,25 @@ void eAvailableBuildings::startEpisode(const eAvailableBuildings& o) {
 
     startEpisode(o, &eAvailableBuildings::fTriremeWharf);
 
+    startEpisode(o, &eAvailableBuildings::fModestPyramid);
+    startEpisode(o, &eAvailableBuildings::fPyramid);
+    startEpisode(o, &eAvailableBuildings::fGreatPyramid);
+    startEpisode(o, &eAvailableBuildings::fMajesticPyramid);
+
+    startEpisode(o, &eAvailableBuildings::fSmallMonumentToTheSky);
+    startEpisode(o, &eAvailableBuildings::fMonumentToTheSky);
+    startEpisode(o, &eAvailableBuildings::fGrandMonumentTotTheSky);
+
+    startEpisode(o, &eAvailableBuildings::fMinorShrine);
+    startEpisode(o, &eAvailableBuildings::fShrine);
+    startEpisode(o, &eAvailableBuildings::fMajorShrine);
+
+    startEpisode(o, &eAvailableBuildings::fPyramidToThePantheon);
+    startEpisode(o, &eAvailableBuildings::fAltarOfOlympus);
+    startEpisode(o, &eAvailableBuildings::fTempleOfOlympus);
+    startEpisode(o, &eAvailableBuildings::fObservatoryKosmika);
+    startEpisode(o, &eAvailableBuildings::fMuseumAtlantika);
+
     startEpisode(o, &eAvailableBuildings::fAphroditeSanctuary);
     startEpisode(o, &eAvailableBuildings::fApolloSanctuary);
     startEpisode(o, &eAvailableBuildings::fAresSanctuary);
@@ -597,6 +728,40 @@ eAvailable* eAvailableBuildings::availablePtr(const eBuildingType type) {
     eAvailable* a = nullptr;
 
     switch(type) {
+    case eBuildingType::modestPyramid:
+        a = &fModestPyramid; break;
+    case eBuildingType::pyramid:
+        a = &fPyramid; break;
+    case eBuildingType::greatPyramid:
+        a = &fGreatPyramid; break;
+    case eBuildingType::majesticPyramid:
+        a = &fMajesticPyramid; break;
+
+    case eBuildingType::smallMonumentToTheSky:
+        a = &fSmallMonumentToTheSky; break;
+    case eBuildingType::monumentToTheSky:
+        a = &fMonumentToTheSky; break;
+    case eBuildingType::grandMonumentToTheSky:
+        a = &fGrandMonumentTotTheSky; break;
+
+    case eBuildingType::minorShrine:
+        a = &fMinorShrine; break;
+    case eBuildingType::shrine:
+        a = &fShrine; break;
+    case eBuildingType::majorShrine:
+        a = &fMajorShrine; break;
+
+    case eBuildingType::pyramidToThePantheon:
+        a = &fPyramidToThePantheon; break;
+    case eBuildingType::altarOfOlympus:
+        a = &fAltarOfOlympus; break;
+    case eBuildingType::templeOfOlympus:
+        a = &fTempleOfOlympus; break;
+    case eBuildingType::observatoryKosmika:
+        a = &fObservatoryKosmika; break;
+    case eBuildingType::museumAtlantika:
+        a = &fMuseumAtlantika; break;
+
     case eBuildingType::templeAphrodite:
         a = &fAphroditeSanctuary; break;
     case eBuildingType::templeApollo:

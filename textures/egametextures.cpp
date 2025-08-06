@@ -1507,6 +1507,14 @@ void eGameTextures::loadPark() {
     });
 }
 
+void eGameTextures::loadPyramid() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadPyramid();
+        c.loadPyramid2();
+    });
+}
+
 void eGameTextures::loadZeusMonuments() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

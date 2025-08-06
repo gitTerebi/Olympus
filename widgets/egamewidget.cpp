@@ -1437,7 +1437,7 @@ bool eGameWidget::inErase(eBuilding* const b) {
 
     SDL_Rect rect;
     if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
-        const auto s = sb->sanctuary();
+        const auto s = sb->monument();
         rect = s->tileRect();
     } else if(const auto v = dynamic_cast<eVendor*>(b)) {
         if(inErase(b->tileRect())) return true;

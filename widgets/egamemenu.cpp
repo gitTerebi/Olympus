@@ -732,6 +732,29 @@ void eGameMenu::initialize(eGameBoard* const b,
         openBuildWidget(cmx, cmy, hs7spr);
     };
 
+    const std::vector<eSPR> p7spr = {eSPR{eBuildingMode::modestPyramid, eLanguage::zeusText(28, 100)},
+                                     eSPR{eBuildingMode::pyramid, eLanguage::zeusText(28, 101)},
+                                     eSPR{eBuildingMode::greatPyramid, eLanguage::zeusText(28, 102)},
+                                     eSPR{eBuildingMode::majesticPyramid, eLanguage::zeusText(28, 103)},
+
+                                     eSPR{eBuildingMode::smallMonumentToTheSky, eLanguage::zeusText(28, 104)},
+                                     eSPR{eBuildingMode::monumentToTheSky, eLanguage::zeusText(28, 105)},
+                                     eSPR{eBuildingMode::grandMonumentToTheSky, eLanguage::zeusText(28, 106)},
+
+                                     eSPR{eBuildingMode::minorShrine, eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::shrine, eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::majorShrine, eLanguage::zeusText(28, 109)},
+
+                                     eSPR{eBuildingMode::pyramidToThePantheon, eLanguage::zeusText(28, 110)},
+                                     eSPR{eBuildingMode::altarOfOlympus, eLanguage::zeusText(28, 111)},
+                                     eSPR{eBuildingMode::templeOfOlympus, eLanguage::zeusText(28, 112)},
+                                     eSPR{eBuildingMode::observatoryKosmika, eLanguage::zeusText(28, 113)},
+                                     eSPR{eBuildingMode::museumAtlantika, eLanguage::zeusText(28, 114)}};
+    const auto p7 = [this, cmx, cmy, p7spr]() {
+        openBuildWidget(cmx, cmy, p7spr);
+    };
+
+
     mMythDataW = new eMythologyDataWidget(*b, window());
     const auto buttonsVec7 = eButtonsDataVec{
                             {eBuildingMode::none,
@@ -743,7 +766,12 @@ void eGameMenu::initialize(eGameBoard* const b,
                              eLanguage::zeusText(28, 125),
                              hs7, 0, 1, &coll.fHeroShrines,
                              &coll.fPoseidonHeroShrines,
-                             hs7spr}};
+                             hs7spr},
+                            {eBuildingMode::none,
+                             eLanguage::zeusText(28, 157),
+                             p7, 0, 2, &coll.fPiramids,
+                             nullptr,
+                             p7spr}};
     const auto ww8 = createDataWidget(mMythDataW, buttonsVec7,
                                       eLanguage::zeusText(88, 7));
 

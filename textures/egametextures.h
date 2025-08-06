@@ -254,6 +254,8 @@ public:
     static void loadBench();
     static void loadPark();
 
+    static void loadPyramid();
+
     static void loadZeusMonuments();
     static void loadPoseidonMonuments();
     static void loadHadesMonuments();

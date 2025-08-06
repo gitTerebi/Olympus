@@ -16,7 +16,7 @@ eTextureSpace eEliteHousing::getTextureSpace(
         const int tx, const int ty,
         const eTileSize size) const {
     const SDL_Point p{tx, ty};
-    const auto r = tileRect();
+    const auto& r = tileRect();
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
     auto& board = getBoard();
     const auto dir = board.direction();

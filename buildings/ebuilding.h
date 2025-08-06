@@ -175,7 +175,25 @@ enum class eBuildingType {
     refinery,
     blackMarbleWorkshop,
 
-    pyramid,
+    modestPyramid, // 3x3
+    pyramid, // 5x5
+    greatPyramid, // 7x7
+    majesticPyramid, // 9x9
+
+    smallMonumentToTheSky, // 5x5
+    monumentToTheSky, // 6x6
+    grandMonumentToTheSky, // 8x8
+
+    minorShrine, // 3x3
+    shrine, // 6x6
+    majorShrine, // 8x8
+
+    pyramidToThePantheon, // 11x9
+    altarOfOlympus, // 8x8
+    templeOfOlympus, // 8x8
+    observatoryKosmika, // 9x9
+    museumAtlantika, // 8x8
+
     pyramidWall,
     pyramidTop,
     pyramidStatue,
@@ -191,6 +209,8 @@ struct eTextureSpace {
     std::shared_ptr<eTexture> fTex;
     bool fOvelays = false;
     SDL_Rect fRect{0, 0, 0, 0};
+    double fX = 0;
+    double fY = 0;
 };
 
 class eBuilding : public eObject {
@@ -221,6 +241,7 @@ public:
     static bool sWalkableBuilding(const eBuildingType t);
     static bool sFlatBuilding(const eBuildingType bt);
     static bool sSanctuaryBuilding(const eBuildingType bt);
+    static bool sPyramidBuilding(const eBuildingType bt);
     static bool sAestheticsBuilding(const eBuildingType bt);
     static bool sHeroHall(const eBuildingType bt);
     static bool sFlammable(const eBuildingType bt);

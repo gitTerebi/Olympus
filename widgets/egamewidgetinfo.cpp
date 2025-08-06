@@ -54,7 +54,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             sWid->initialize(s);
             wid = sWid;
         } else if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
-            return openInfoWidget(sb->sanctuary());
+            return openInfoWidget(sb->monument());
         } else if(const auto eb = dynamic_cast<eEmployingBuilding*>(b)) {
             const auto ebWid = new eEmployingBuildingInfoWidget(
                                     window(), this, true, true);

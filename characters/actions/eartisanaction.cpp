@@ -103,7 +103,7 @@ bool eArtisanAction::findTargetDecision() {
 
     a->setFindFailAction(findFailFunc);
     a->setRemoveLastTurn(true);
-    a->start(hha, eWalkableObject::sCreateDefault());
+    a->start(hha, eWalkableObject::sCreateArtisan());
     setCurrentAction(a);
     return true;
 }
@@ -152,5 +152,5 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
 void eArtisanAction::goBackDecision() {
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
-    goBack(mGuild, eWalkableObject::sCreateDefault());
+    goBack(mGuild, eWalkableObject::sCreateArtisan());
 }

@@ -97,7 +97,8 @@ bool eBuilding::sFlatBuilding(const eBuildingType bt) {
            bt == eBuildingType::ruins ||
            bt == eBuildingType::placeholder ||
            bt == eBuildingType::palaceTile ||
-           bt == eBuildingType::godMonumentTile;
+           bt == eBuildingType::godMonumentTile ||
+           bt == eBuildingType::pyramidTile;
 }
 
 bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
@@ -116,6 +117,14 @@ bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
         if(r) return true;
     }
     return false;
+}
+
+bool eBuilding::sPyramidBuilding(const eBuildingType bt) {
+    const int min = static_cast<int>(eBuildingType::pyramid);
+    const int max = static_cast<int>(eBuildingType::pyramidMuseum);
+    const int bi = static_cast<int>(bt);
+    const bool r = bi >= min && bi <= max;
+    return r;
 }
 
 bool eBuilding::sAestheticsBuilding(const eBuildingType bt) {

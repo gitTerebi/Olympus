@@ -786,6 +786,16 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::templeMonument:
     case eBuildingType::templeStatue:
     case eBuildingType::templeTile:
+
+    case eBuildingType::pyramidWall:
+    case eBuildingType::pyramidTop:
+    case eBuildingType::pyramidStatue:
+    case eBuildingType::pyramidMonument:
+    case eBuildingType::pyramidTile:
+    case eBuildingType::pyramidAltar:
+    case eBuildingType::pyramidTemple:
+    case eBuildingType::pyramidObservatory:
+    case eBuildingType::pyramidMuseum:
         mSanctBuildings.push_back(b);
         break;
     default:

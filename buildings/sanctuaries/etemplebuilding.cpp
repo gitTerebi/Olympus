@@ -5,7 +5,7 @@
 
 eTempleBuilding::eTempleBuilding(eGameBoard& board,
                                  const eCityId cid) :
-    eSanctBuilding({5, 5, 0}, 3, board,
+    eSanctBuilding({{2, 2, 0}, {1, 1, 0}, {2, 2, 0}}, board,
                    eBuildingType::temple, 4, 4, cid) {}
 
 eTempleBuilding::eTempleBuilding(
@@ -38,7 +38,7 @@ eTempleBuilding::getTexture(const eTileSize size) const {
 }
 
 std::vector<eOverlay> eTempleBuilding::getOverlays(const eTileSize size) const {
-    const auto s = sanctuary();
+    const auto s = monument();
     if(!s->finished()) return {};
     const int dirId = rotatedId();
     if(dirId != 0 && dirId != 1) {
@@ -101,7 +101,7 @@ bool eTempleBuilding::hasNeighbour() const {
 }
 
 int eTempleBuilding::rotatedId() const {
-    const auto s = sanctuary();
+    const auto s = monument();
     const bool rotated = s->rotated();
     auto& board = getBoard();
     const auto dir = board.direction();

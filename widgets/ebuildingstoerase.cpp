@@ -67,7 +67,7 @@ void eBuildingsToErase::addBuilding(eBuilding* const b) {
         const auto p = pt->tradePost();
         if(p) bb = p;
     } else if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
-        const auto s = sb->sanctuary();
+        const auto s = sb->monument();
         if(s) bb = s;
     }
     if(isNonEmptyAgora(bb)) {

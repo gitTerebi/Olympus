@@ -150,8 +150,8 @@ void eThreadBuilding::load(eBuilding* const src) {
         case eBuildingType::pyramidMuseum: {
             const auto b = static_cast<eSanctBuilding*>(src);
             mWorkedOn = b->workedOn();
-            const auto s = b->sanctuary();
-            const bool h = s->constructionHalted();
+            const auto s = b->monument();
+            const bool h = s->constructionHalted() || b->halted();
             if(h) {
                 mResourcesAvailable = false;
             } else {

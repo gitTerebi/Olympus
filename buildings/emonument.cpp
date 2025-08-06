@@ -11,7 +11,8 @@ eMonument::eMonument(eGameBoard& board,
                        maxEmployees, cid) {
     setStashable(eResourceType::marble |
                  eResourceType::wood |
-                 eResourceType::sculpture);
+                 eResourceType::sculpture |
+                 eResourceType::orichalc);
 }
 
 eMonument::~eMonument() {
@@ -51,6 +52,8 @@ int eMonument::spaceLeft(const eResourceType type) const {
         return c.fWood - mStored.fWood - mUsed.fWood;
     } else if(type == eResourceType::sculpture) {
         return c.fSculpture - mStored.fSculpture - mUsed.fSculpture;
+    } else if(type == eResourceType::orichalc) {
+        return c.fOrichalc - mStored.fOrichalc - mUsed.fOrichalc;
     }
     return 0;
 }
@@ -64,6 +67,8 @@ int eMonument::add(const eResourceType type, const int count) {
         mStored.fWood += add;
     } else if(type == eResourceType::sculpture) {
         mStored.fSculpture += add;
+    } else if(type == eResourceType::orichalc) {
+        mStored.fOrichalc += add;
     }
     return add;
 }
@@ -76,6 +81,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
     const int m = spaceLeft(eResourceType::marble);
     const int w = spaceLeft(eResourceType::wood);
     const int s = spaceLeft(eResourceType::sculpture);
+    const int o = spaceLeft(eResourceType::orichalc);
 
     if(m > 0) {
         eCartTask task;
@@ -101,6 +107,14 @@ std::vector<eCartTask> eMonument::cartTasks() const {
         tasks.push_back(task);
     }
 
+    if(o > 0) {
+        eCartTask task;
+        task.fType = eCartActionType::take;
+        task.fResource = eResourceType::orichalc;
+        task.fMaxCount = o;
+        tasks.push_back(task);
+    }
+
     return tasks;
 }
 
@@ -111,13 +125,8 @@ void eMonument::read(eReadStream& src) {
 
     src >> mHaltConstruction;
 
-    src >> mStored.fMarble;
-    src >> mStored.fSculpture;
-    src >> mStored.fWood;
-
-    src >> mUsed.fMarble;
-    src >> mUsed.fSculpture;
-    src >> mUsed.fWood;
+    mStored.read(src);
+    mUsed.read(src);
 
     src >> mAltitude;
 
@@ -135,13 +144,8 @@ void eMonument::write(eWriteStream& dst) const {
 
     dst << mHaltConstruction;
 
-    dst << mStored.fMarble;
-    dst << mStored.fSculpture;
-    dst << mStored.fWood;
-
-    dst << mUsed.fMarble;
-    dst << mUsed.fSculpture;
-    dst << mUsed.fWood;
+    mStored.write(dst);
+    mUsed.write(dst);
 
     dst << mAltitude;
 

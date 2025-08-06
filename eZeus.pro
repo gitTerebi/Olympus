@@ -110,7 +110,6 @@ SOURCES += \
         buildings/eplaceholder.cpp \
         buildings/epodium.cpp \
         buildings/eprocessingbuilding.cpp \
-        buildings/epyramid.cpp \
         buildings/erefinery.cpp \
         buildings/eresourcebuilding.cpp \
         buildings/eresourcebuildingbase.cpp \
@@ -140,6 +139,10 @@ SOURCES += \
         buildings/ewheatfarm.cpp \
         buildings/ewinery.cpp \
         buildings/ewinevendor.cpp \
+        buildings/pyramids/epyramid.cpp \
+        buildings/pyramids/epyramidelement.cpp \
+        buildings/pyramids/epyramidtop.cpp \
+        buildings/pyramids/epyramidwall.cpp \
         buildings/sanctuaries/eartemissanctuary.cpp \
         buildings/sanctuaries/ehephaestussanctuary.cpp \
         buildings/sanctuaries/esanctbuilding.cpp \
@@ -766,7 +769,6 @@ HEADERS += \
     buildings/eplaceholder.h \
     buildings/epodium.h \
     buildings/eprocessingbuilding.h \
-    buildings/epyramid.h \
     buildings/erefinery.h \
     buildings/eresourcebuilding.h \
     buildings/eresourcebuildingbase.h \
@@ -796,6 +798,10 @@ HEADERS += \
     buildings/ewheatfarm.h \
     buildings/ewinery.h \
     buildings/ewinevendor.h \
+    buildings/pyramids/epyramid.h \
+    buildings/pyramids/epyramidelement.h \
+    buildings/pyramids/epyramidtop.h \
+    buildings/pyramids/epyramidwall.h \
     buildings/sanctuaries/eartemissanctuary.h \
     buildings/sanctuaries/ehephaestussanctuary.h \
     buildings/sanctuaries/esanctbuilding.h \

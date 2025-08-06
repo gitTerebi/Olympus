@@ -688,6 +688,14 @@ public:
 
     void removeAllBuildings();
 
+    bool buildPyramid(const int minX, const int maxX,
+                      const int minY, const int maxY,
+                      const eBuildingType type,
+                      const bool rotate,
+                      const eCityId cid,
+                      const ePlayerId pid,
+                      const bool editorDisplay);
+
     bool buildSanctuary(const int minX, const int maxX,
                         const int minY, const int maxY,
                         const eBuildingType bt,

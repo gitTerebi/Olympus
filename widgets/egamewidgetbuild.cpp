@@ -1884,6 +1884,54 @@ bool eGameWidget::buildMouseRelease() {
             if(!r) return true;
             mGm->clearMode();
         } break;
+        case eBuildingMode::modestPyramid:
+        case eBuildingMode::pyramid:
+        case eBuildingMode::greatPyramid:
+        case eBuildingMode::majesticPyramid:
+
+        case eBuildingMode::smallMonumentToTheSky:
+        case eBuildingMode::monumentToTheSky:
+        case eBuildingMode::grandMonumentToTheSky:
+
+        case eBuildingMode::minorShrine:
+        case eBuildingMode::shrine:
+        case eBuildingMode::majorShrine:
+
+        case eBuildingMode::pyramidToThePantheon:
+        case eBuildingMode::altarOfOlympus:
+        case eBuildingMode::templeOfOlympus:
+        case eBuildingMode::observatoryKosmika:
+        case eBuildingMode::museumAtlantika: {
+            const auto type = eBuildingModeHelpers::toBuildingType(mode);
+            const int m = eBuilding::sInitialMarbleCost(type);
+            const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);
+            if(!mEditorMode && hasM < m) {
+                auto text = eLanguage::zeusText(19, 201);
+                const auto mStr = std::to_string(m);
+                eStringHelpers::replace(text, "[warning_amount]", mStr);
+                showTip(cid, text);
+                if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::masonryShop)) {
+                    showTip(cid, eLanguage::zeusText(19, 202));
+                }
+                return false;
+            }
+
+            int sw;
+            int sh;
+            ePyramid::sDimensions(type, sw, sh);
+
+            const int minX = mHoverTX - sw/2;
+            const int maxX = minX + sw;
+            const int minY = mHoverTY - sh/2;
+            const int maxY = minY + sh;
+
+            const bool r = mBoard->buildPyramid(
+                               minX, maxX, minY, maxY,
+                               type, mRotate, mViewedCityId, pid,
+                               mEditorMode);
+            if(!r) return true;
+            mGm->clearMode();
+        } break;
         default:
             break;
         }

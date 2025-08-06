@@ -96,6 +96,8 @@
 #include "buildings/sanctuaries/etemplealtarbuilding.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 
+#include "buildings/pyramids/epyramid.h"
+
 eGameBoard::eGameBoard() :
     mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
@@ -3300,9 +3302,49 @@ void eGameBoard::removeAllBuildings() {
     }
 }
 
+bool eGameBoard::buildPyramid(const int minX, const int maxX,
+                              const int minY, const int maxY,
+                              const eBuildingType type,
+                              const bool rotate,
+                              const eCityId cid,
+                              const ePlayerId pid,
+                              const bool editorDisplay) {
+    (void)rotate;
+    const bool cb = canBuildBase(minX, maxX, minY, maxY,
+                                 editorDisplay, cid, pid);
+    if(!cb) return false;
+
+    int sw;
+    int sh;
+    ePyramid::sDimensions(type, sw, sh);
+    const auto p = e::make_shared<ePyramid>(*this, type, sw, sh, cid);
+    p->setTileRect({minX, minY, sw, sh});
+
+    const auto mint = this->tile(minX, minY);
+    const int a = mint->altitude();
+    p->setAltitude(a);
+
+    const auto ct = this->tile((minX + maxX)/2, (minY + maxY)/2);
+    p->setCenterTile(ct);
+
+    p->initialize();
+
+    if(!editorDisplay) {
+        const auto diff = difficulty(pid);
+        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        incDrachmas(pid, -cost);
+        const int m = eBuilding::sInitialMarbleCost(type);
+        takeResource(cid, eResourceType::marble, m);
+    }
+
+    built(cid, type);
+
+    return true;
+}
+
 bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                 const int minY, const int maxY,
-                                const eBuildingType bt,
+                                const eBuildingType type,
                                 const bool rotate,
                                 const eCityId cid,
                                 const ePlayerId pid,
@@ -3311,26 +3353,24 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                                  editorDisplay, cid, pid);
     if(!cb) return false;
 
-    const auto ppid = cityIdToPlayerId(cid);
-
-    const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, rotate);
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotate);
 
     const int sw = h->fW;
     const int sh = h->fH;
 
-    const auto b = eSanctuary::sCreate(bt, sw, sh, *this, cid);
+    const auto b = eSanctuary::sCreate(type, sw, sh, *this, cid);
     b->setRotated(rotate);
     const auto god = b->godType();
 
     if(!editorDisplay) {
-        const auto diff = difficulty(ppid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, bt);
-        incDrachmas(ppid, -cost);
-        const int m = eBuilding::sInitialMarbleCost(bt);
+        const auto diff = difficulty(pid);
+        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        incDrachmas(pid, -cost);
+        const int m = eBuilding::sInitialMarbleCost(type);
         takeResource(cid, eResourceType::marble, m);
     }
 
-    built(cid, bt);
+    built(cid, type);
 
     const auto mint = this->tile(minX, minY);
     const int a = mint->altitude();
@@ -3421,14 +3461,14 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::zeusStatue: {
                 const auto tt = e::make_shared<eTempleStatueBuilding>(
                                    statueType, t.fId, *this, cid);
-                tt->setSanctuary(b.get());
+                tt->setMonument(b.get());
                 this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; });
                 b->registerElement(tt);
             } break;
             case eSanctEleType::monument: {
                 const auto tt = e::make_shared<eTempleMonumentBuilding>(
                                     god, t.fId, *this, cid);
-                tt->setSanctuary(b.get());
+                tt->setMonument(b.get());
                 const int d = rotate ? 1 : 0;
                 this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]() { return tt; });
                 b->registerElement(tt);
@@ -3436,7 +3476,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::altar: {
                 const auto tt = e::make_shared<eTempleAltarBuilding>(
                                     *this, cid);
-                tt->setSanctuary(b.get());
+                tt->setMonument(b.get());
                 const int d = rotate ? 1 : 0;
                 this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]() { return tt; });
                 b->registerElement(tt);
@@ -3444,7 +3484,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::sanctuary: {
                 const auto tb = e::make_shared<eTempleBuilding>(
                             t.fId, *this, cid);
-                tb->setSanctuary(b.get());
+                tb->setMonument(b.get());
                 b->registerElement(tb);
                 if(rotate) {
                     this->build(tx - 2, ty + 2, 4, 4, cid, pid, editorDisplay, [tb]() { return tb; });
@@ -3455,7 +3495,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::tile: {
                 const auto tt = e::make_shared<eTempleTileBuilding>(
                                     t.fId, *this, cid);
-                tt->setSanctuary(b.get());
+                tt->setMonument(b.get());
                 this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; });
                 b->registerElement(tt);
                 if(t.fWarrior) b->addWarriorTile(tile);

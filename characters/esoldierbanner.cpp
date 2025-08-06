@@ -401,7 +401,8 @@ void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,
                     }
                 }
             } else if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
-                const auto s = sb->sanctuary();
+                const auto s = dynamic_cast<eSanctuary*>(sb->monument());
+                if(!s) return;
                 const auto gt = s->godType();
                 for(int i = 0; i < (int)bs.size(); i++) {
                     const auto bb = bs[i];

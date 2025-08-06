@@ -9,6 +9,7 @@
 #include "textures/evaryingsizetex.h"
 
 #include "buildings/allbuildings.h"
+#include "buildings/pyramids/epyramid.h"
 
 #include "missiles/emissile.h"
 #include "characters/esoldierbanner.h"
@@ -624,6 +625,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                            rtx, rty, dir,
                                            boardw, boardh);
         const int a = mDrawElevation ? tile->altitude() : 0;
+        const int da = mDrawElevation ? tile->doubleAltitude() : 0;
 
         const auto ub = tile->underBuilding();
         const auto bt = tile->underBuildingType();
@@ -906,8 +908,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             double dx;
             double dy;
             getDisplacement(tsRect.w, tsRect.h, dx, dy);
-            const double drawX = fitX + dx + 1 - a;
-            const double drawY = fitY + dy + 1 - a;
+            const double drawX = fitX + dx + 1 - da*0.5;
+            const double drawY = fitY + dy + 1 - da*0.5;
             if(fitXB || fitYB) {
                 const bool last = fitXB && fitYB;
                 SDL_Rect clipRect;
@@ -948,10 +950,11 @@ void eGameWidget::paintEvent(ePainter& p) {
                         cblue = 200;
                     }
                 }
-                const auto tex = ts.fTex;
+                const auto& tex = ts.fTex;
                 if(tex) {
                     if(colorMod) tex->setColorMod(cred, cgreen, cblue);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX + ts.fX, drawY + ts.fY,
+                                   tex, eAlignment::top);
                     if(colorMod) tex->clearColorMod();
                 }
                 if(ub->overlayEnabled() && ts.fOvelays) {
@@ -1519,7 +1522,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto t = static_cast<eTempleTileBuilding*>(ub);
             const int tid = t ? t->id() : 0;
             if(tid >= 10) {
-                const auto s = t ? t->sanctuary() : nullptr;
+                const auto s = t ? t->monument() : nullptr;
                 const int f = s && s->finished();
                 if(f) {
                     const auto& coll = builTexs.fSanctuaryFire;
@@ -2341,6 +2344,51 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         std::vector<eB> ebs;
         switch(mode) {
+        case eBuildingMode::modestPyramid:
+        case eBuildingMode::pyramid:
+        case eBuildingMode::greatPyramid:
+        case eBuildingMode::majesticPyramid:
+
+        case eBuildingMode::smallMonumentToTheSky:
+        case eBuildingMode::monumentToTheSky:
+        case eBuildingMode::grandMonumentToTheSky:
+
+        case eBuildingMode::minorShrine:
+        case eBuildingMode::shrine:
+        case eBuildingMode::majorShrine:
+
+        case eBuildingMode::pyramidToThePantheon:
+        case eBuildingMode::altarOfOlympus:
+        case eBuildingMode::templeOfOlympus:
+        case eBuildingMode::observatoryKosmika:
+        case eBuildingMode::museumAtlantika: {
+            const auto& tex = trrTexs.fBuildingBase;
+            const auto type = eBuildingModeHelpers::toBuildingType(mode);
+            int sw;
+            int sh;
+            ePyramid::sDimensions(type, sw, sh);
+            const int xMin = mHoverTX - sw/2;
+            const int yMin = mHoverTY - sh/2;
+            const int xMax = xMin + sw;
+            const int yMax = yMin + sh;
+            const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
+                                                 mEditorMode,
+                                                 mViewedCityId, ppid);
+            if(!cb) tex->setColorMod(255, 0, 0);
+            for(int x = xMin; x < xMax; x++) {
+                for(int y = yMin; y < yMax; y++) {
+                    double rx;
+                    double ry;
+                    const auto t = mBoard->tile(x, y);
+                    if(!t) continue;
+                    if(t->underBuilding()) continue;
+                    const int a = t->altitude();
+                    drawXY(x, y, rx, ry, 1, 1, a);
+                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                }
+            }
+            if(!cb) tex->clearColorMod();
+        } break;
         case eBuildingMode::templeAphrodite:
         case eBuildingMode::templeApollo:
         case eBuildingMode::templeAres:
@@ -2356,8 +2404,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         case eBuildingMode::templePoseidon:
         case eBuildingMode::templeZeus: {
             const auto& tex = trrTexs.fBuildingBase;
-            const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-            const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotate);
+            const auto type = eBuildingModeHelpers::toBuildingType(mode);
+            const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, mRotate);
             const int sw = h->fW;
             const int sh = h->fH;
             const int xMin = mHoverTX - sw/2;
@@ -2367,9 +2415,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
                                                  mEditorMode,
                                                  mViewedCityId, ppid);
-           if(!cb) {
-                tex->setColorMod(255, 0, 0);
-            }
+            if(!cb) tex->setColorMod(255, 0, 0);
             for(int x = xMin; x < xMax; x++) {
                 for(int y = yMin; y < yMax; y++) {
                     double rx;
@@ -2382,9 +2428,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     tp.drawTexture(rx, ry, tex, eAlignment::top);
                 }
             }
-           if(!cb) {
-               tex->clearColorMod();
-            }
+           if(!cb) tex->clearColorMod();
 //            const auto bt = eBuildingModeHelpers::toBuildingType(mode);
 //            const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotate);
 //            const int sw = h->fW;

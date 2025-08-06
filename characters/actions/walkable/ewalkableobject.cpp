@@ -10,6 +10,12 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
     switch(mType) {
     case eWalkableObjectType::ddefault:
         return t->walkable();
+    case eWalkableObjectType::artisan: {
+        const auto type = t->underBuildingType();
+        const bool p = eBuilding::sPyramidBuilding(type);
+        if(p) return true;
+        return t->walkable();
+    } break;
     case eWalkableObjectType::road:
         return t->hasRoad();
     case eWalkableObjectType::roadAvenue: {
@@ -108,6 +114,10 @@ stdsptr<eWalkableObject> eWalkableObject::sCreate(
 
 stdsptr<eWalkableObject> eWalkableObject::sCreateDefault() {
     return sCreate(eWalkableObjectType::ddefault);
+}
+
+stdsptr<eWalkableObject> eWalkableObject::sCreateArtisan() {
+    return sCreate(eWalkableObjectType::artisan);
 }
 
 stdsptr<eWalkableObject> eWalkableObject::sCreateRoad() {

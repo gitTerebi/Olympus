@@ -22,7 +22,8 @@ enum class eWalkableObjectType {
     water,
     ranch,
     all,
-    attacker
+    attacker,
+    artisan
 };
 
 class eHasResourceObject;
@@ -46,6 +47,7 @@ public:
     static stdsptr<eWalkableObject> sCreate(
             const eWalkableObjectType type);
     static stdsptr<eWalkableObject> sCreateDefault();
+    static stdsptr<eWalkableObject> sCreateArtisan();
     static stdsptr<eWalkableObject> sCreateRoad();
     static stdsptr<eWalkableObject> sCreateRoadAvenue();
     static stdsptr<eWalkableObject> sCreateRoadblock();

@@ -563,7 +563,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
             if(bt != eBuildingType::temple) return false;
             const auto eh = static_cast<eTempleBuilding*>(b);
             if(!eh->finished()) return false;
-            const auto s = eh->sanctuary();
+            const auto s = static_cast<eSanctuary*>(eh->monument());
             if(s->godType() != eGodType::artemis) return false;
             return true;
         };
@@ -573,7 +573,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
             if(bt != eBuildingType::temple) return false;
             const auto eh = static_cast<eTempleBuilding*>(b);
             if(!eh->finished()) return false;
-            const auto s = eh->sanctuary();
+            const auto s = static_cast<eSanctuary*>(eh->monument());
             if(s->godType() != eGodType::ares) return false;
             return true;
         };

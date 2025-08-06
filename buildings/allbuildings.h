@@ -100,6 +100,10 @@
 
 #include "buildings/eheroshall.h"
 
+#include "buildings/pyramids/epyramid.h"
+#include "buildings/pyramids/epyramidwall.h"
+#include "buildings/pyramids/epyramidtop.h"
+
 #include "buildings/ecommonagora.h"
 #include "buildings/egrandagora.h"
 

@@ -77,6 +77,25 @@ public:
 
     bool fTriremeWharf = false;
 
+    eAvailable fModestPyramid = eAvailable::notAvailable;
+    eAvailable fPyramid = eAvailable::notAvailable;
+    eAvailable fGreatPyramid = eAvailable::notAvailable;
+    eAvailable fMajesticPyramid = eAvailable::notAvailable;
+
+    eAvailable fSmallMonumentToTheSky = eAvailable::notAvailable;
+    eAvailable fMonumentToTheSky = eAvailable::notAvailable;
+    eAvailable fGrandMonumentTotTheSky = eAvailable::notAvailable;
+
+    eAvailable fMinorShrine = eAvailable::notAvailable;
+    eAvailable fShrine = eAvailable::notAvailable;
+    eAvailable fMajorShrine = eAvailable::notAvailable;
+
+    eAvailable fPyramidToThePantheon = eAvailable::notAvailable;
+    eAvailable fAltarOfOlympus = eAvailable::notAvailable;
+    eAvailable fTempleOfOlympus = eAvailable::notAvailable;
+    eAvailable fObservatoryKosmika = eAvailable::notAvailable;
+    eAvailable fMuseumAtlantika = eAvailable::notAvailable;
+
     eAvailable fAphroditeSanctuary = eAvailable::notAvailable;
     eAvailable fApolloSanctuary = eAvailable::notAvailable;
     eAvailable fAresSanctuary = eAvailable::notAvailable;

@@ -211,6 +211,40 @@ int costBase(const eBuildingType type) {
     case eBuildingType::stoneCircle:
         return 60;
 
+    case eBuildingType::modestPyramid:
+        return 0;
+    case eBuildingType::pyramid:
+        return 0;
+    case eBuildingType::greatPyramid:
+        return 0;
+    case eBuildingType::majesticPyramid:
+        return 0;
+
+    case eBuildingType::smallMonumentToTheSky:
+        return 0;
+    case eBuildingType::monumentToTheSky:
+        return 0;
+    case eBuildingType::grandMonumentToTheSky:
+        return 0;
+
+    case eBuildingType::minorShrine:
+        return 0;
+    case eBuildingType::shrine:
+        return 0;
+    case eBuildingType::majorShrine:
+        return 0;
+
+    case eBuildingType::pyramidToThePantheon:
+        return 0;
+    case eBuildingType::altarOfOlympus:
+        return 0;
+    case eBuildingType::templeOfOlympus:
+        return 0;
+    case eBuildingType::observatoryKosmika:
+        return 0;
+    case eBuildingType::museumAtlantika:
+        return 0;
+
     case eBuildingType::templeZeus:
         return 2920;
     case eBuildingType::templePoseidon:
