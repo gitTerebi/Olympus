@@ -108,6 +108,10 @@ void eAvailableBuildings::read(eReadStream& src) {
     allow(eBuildingType::pyramid);
     allow(eBuildingType::greatPyramid);
     allow(eBuildingType::majesticPyramid);
+
+    allow(eBuildingType::smallMonumentToTheSky);
+    allow(eBuildingType::monumentToTheSky);
+    allow(eBuildingType::grandMonumentToTheSky);
 }
 
 void eAvailableBuildings::write(eWriteStream& dst) const {

@@ -2,6 +2,8 @@
 
 #include "epyramidwall.h"
 #include "epyramidtop.h"
+#include "epyramidtile.h"
+#include "epyramidaltar.h"
 
 #include "engine/egameboard.h"
 
@@ -27,10 +29,17 @@ struct ePyramidWallData {
     int fSpecial;
 };
 
+enum class ePyramidTopType {
+    top, tile, statue, monument,
+    altar, temple, observatory, museum
+};
+
 struct ePyramidTopData {
+    ePyramidTopType fType;
     int fElevation;
     int fX;
     int fY;
+    int fSpecial = 0;
 };
 
 void ePyramid::initialize() {
@@ -57,7 +66,7 @@ void ePyramid::initialize() {
         };
 
         top = {
-            {1, 1, 1}
+            {ePyramidTopType::top, 1, 1, 1}
         };
     } break;
     case eBuildingType::pyramid: {
@@ -93,7 +102,7 @@ void ePyramid::initialize() {
         };
 
         top = {
-            {2, 2, 2}
+            {ePyramidTopType::top, 2, 2, 2}
         };
     } break;
     case eBuildingType::greatPyramid: {
@@ -154,7 +163,7 @@ void ePyramid::initialize() {
         };
 
         top = {
-            {3, 3, 3}
+            {ePyramidTopType::top, 3, 3, 3}
         };
     } break;
     case eBuildingType::majesticPyramid: {
@@ -248,7 +257,90 @@ void ePyramid::initialize() {
         };
 
         top = {
-            {4, 4, 4}
+            {ePyramidTopType::top, 4, 4, 4}
+        };
+    } break;
+    case eBuildingType::smallMonumentToTheSky: {
+        for(int i = 0; i < 2; i++) {
+            mDark.push_back(i % 2);
+        }
+        walls = {
+            {eOrientation::top, 0, 0, 0, 0},
+            {eOrientation::topRight, 0, 1, 0, 0},
+            {eOrientation::topRight, 0, 2, 0, 3},
+            {eOrientation::topRight, 0, 3, 0, 0},
+            {eOrientation::right, 0, 4, 0, 0},
+            {eOrientation::bottomRight, 0, 4, 1, 0},
+            {eOrientation::bottomRight, 0, 4, 2, 2},
+            {eOrientation::bottomRight, 0, 4, 3, 0},
+            {eOrientation::bottom, 0, 4, 4, 0},
+            {eOrientation::bottomLeft, 0, 3, 4, 0},
+            {eOrientation::bottomLeft, 0, 2, 4, 3},
+            {eOrientation::bottomLeft, 0, 1, 4, 0},
+            {eOrientation::left, 0, 0, 4, 0},
+            {eOrientation::topLeft, 0, 0, 3, 0},
+            {eOrientation::topLeft, 0, 0, 2, 2},
+            {eOrientation::topLeft, 0, 0, 1, 0},
+
+            {eOrientation::top, 1, 1, 1, 0},
+            {eOrientation::topRight, 1, 2, 1, 3},
+            {eOrientation::right, 1, 3, 1, 0},
+            {eOrientation::bottomRight, 1, 3, 2, 0},
+            {eOrientation::bottom, 1, 3, 3, 0},
+            {eOrientation::bottomLeft, 1, 2, 3, 3},
+            {eOrientation::left, 1, 1, 3, 0},
+            {eOrientation::topLeft, 1, 1, 2, 0}
+        };
+
+        top = {
+            {ePyramidTopType::tile, 2, 2, 2}
+        };
+    } break;
+    case eBuildingType::monumentToTheSky: {
+        for(int i = 0; i < 3; i++) {
+            mDark.push_back(i % 2);
+        }
+        walls = {
+            {eOrientation::top, 0, 0, 0, 0},
+            {eOrientation::topRight, 0, 1, 0, 2},
+            {eOrientation::topRight, 0, 2, 0, 0},
+            {eOrientation::topRight, 0, 3, 0, 0},
+            {eOrientation::topRight, 0, 4, 0, 2},
+            {eOrientation::right, 0, 5, 0, 0},
+            {eOrientation::bottomRight, 0, 5, 1, 0},
+            {eOrientation::bottomRight, 0, 5, 2, 3},
+            {eOrientation::bottomRight, 0, 5, 3, 3},
+            {eOrientation::bottomRight, 0, 5, 4, 0},
+            {eOrientation::bottom, 0, 5, 5, 0},
+            {eOrientation::bottomLeft, 0, 4, 5, 2},
+            {eOrientation::bottomLeft, 0, 3, 5, 0},
+            {eOrientation::bottomLeft, 0, 2, 5, 0},
+            {eOrientation::bottomLeft, 0, 1, 5, 2},
+            {eOrientation::left, 0, 0, 5, 0},
+            {eOrientation::topLeft, 0, 0, 4, 0},
+            {eOrientation::topLeft, 0, 0, 3, 3},
+            {eOrientation::topLeft, 0, 0, 2, 3},
+            {eOrientation::topLeft, 0, 0, 1, 0},
+
+            {eOrientation::top, 1, 1, 1, 0},
+            {eOrientation::topRight, 1, 2, 1, 0},
+            {eOrientation::topRight, 1, 3, 1, 0},
+            {eOrientation::right, 1, 4, 1, 0},
+            {eOrientation::bottomRight, 1, 4, 2, 3},
+            {eOrientation::bottomRight, 1, 4, 3, 3},
+            {eOrientation::bottom, 1, 4, 4, 0},
+            {eOrientation::bottomLeft, 1, 3, 4, 0},
+            {eOrientation::bottomLeft, 1, 2, 4, 0},
+            {eOrientation::left, 1, 1, 4, 0},
+            {eOrientation::topLeft, 1, 1, 3, 3},
+            {eOrientation::topLeft, 1, 1, 2, 3}
+        };
+
+        top = {
+            {ePyramidTopType::tile, 2, 2, 2},
+            {ePyramidTopType::tile, 2, 3, 2},
+            {ePyramidTopType::tile, 2, 2, 3},
+            {ePyramidTopType::tile, 2, 3, 3}
         };
     } break;
     default:
@@ -257,7 +349,7 @@ void ePyramid::initialize() {
 
     for(const auto& w : walls) {
         const auto b = e::make_shared<ePyramidWall>(
-                           board, w.fO, w.fElevation,
+                           this, board, w.fO, w.fElevation,
                            w.fSpecial, cid);
 
         const int tx = rect.x + w.fX;
@@ -273,8 +365,24 @@ void ePyramid::initialize() {
     }
 
     for(const auto& t : top) {
-        const auto b = e::make_shared<ePyramidTop>(
-                           board, t.fElevation, cid);
+        stdsptr<ePyramidElement> b;
+        switch(t.fType) {
+        case ePyramidTopType::top: {
+            b = e::make_shared<ePyramidTop>(
+                    this, board, t.fElevation,
+                    cid);
+        } break;
+        case ePyramidTopType::tile: {
+            b = e::make_shared<ePyramidTile>(
+                    this, board, t.fElevation,
+                    t.fSpecial, cid);
+        } break;
+        case ePyramidTopType::altar: {
+            b = e::make_shared<ePyramidAltar>(
+                    this, board, t.fElevation,
+                    cid);
+        } break;
+        }
 
         const int tx = rect.x + t.fX;
         const int ty = rect.y + t.fY;
@@ -293,6 +401,7 @@ void ePyramid::initialize() {
     add(eResourceType::wood, c.fWood);
     add(eResourceType::sculpture, c.fSculpture);
     add(eResourceType::orichalc, c.fOrichalc);
+    add(eResourceType::blackMarble, c.fBlackMarble);
 }
 
 void ePyramid::buildingProgressed() {
@@ -319,6 +428,12 @@ void ePyramid::buildingProgressed() {
 void ePyramid::read(eReadStream& src) {
     eMonument::read(src);
     mSelf = ref<ePyramid>();
+}
+
+eSanctCost ePyramid::swapMarbleIfDark(const int e, eSanctCost cost) const {
+    const bool isDark = darkLevel(e);
+    if(isDark) cost.switchMarble();
+    return cost;
 }
 
 void ePyramid::sDimensions(const eBuildingType type, int& sw, int& sh) {

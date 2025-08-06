@@ -103,6 +103,13 @@
 #include "buildings/pyramids/epyramid.h"
 #include "buildings/pyramids/epyramidwall.h"
 #include "buildings/pyramids/epyramidtop.h"
+#include "buildings/pyramids/epyramidtile.h"
+#include "buildings/pyramids/epyramidaltar.h"
+#include "buildings/pyramids/epyramidstatue.h"
+#include "buildings/pyramids/epyramidmonument.h"
+#include "buildings/pyramids/epyramidtemple.h"
+#include "buildings/pyramids/epyramidobservatory.h"
+#include "buildings/pyramids/epyramidmuseum.h"
 
 #include "buildings/ecommonagora.h"
 #include "buildings/egrandagora.h"

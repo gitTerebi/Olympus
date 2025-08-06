@@ -18,6 +18,8 @@ public:
 
     void read(eReadStream& src) override;
 
+    eSanctCost swapMarbleIfDark(const int e, eSanctCost cost) const;
+
     bool darkLevel(const int n) const { return mDark[n]; }
 
     static void sDimensions(const eBuildingType type,

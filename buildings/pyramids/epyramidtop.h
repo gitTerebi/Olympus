@@ -5,7 +5,12 @@
 
 class ePyramidTop : public ePyramidElement {
 public:
-    ePyramidTop(eGameBoard& board,
+    ePyramidTop(const std::vector<eSanctCost>& cost,
+                eGameBoard& board,
+                const int elevation,
+                const eCityId cid);
+    ePyramidTop(ePyramid* const pyramid,
+                eGameBoard& board,
                 const int elevation,
                 const eCityId cid);
 

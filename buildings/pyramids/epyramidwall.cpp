@@ -1,13 +1,27 @@
 #include "epyramidwall.h"
 
 #include "engine/egameboard.h"
+#include "epyramid.h"
 
-ePyramidWall::ePyramidWall(eGameBoard& board,
+ePyramidWall::ePyramidWall(const std::vector<eSanctCost>& cost,
+                           eGameBoard& board,
                            const eOrientation o,
                            const int elevation,
                            const int special,
                            const eCityId cid) :
-    ePyramidElement({{0, 2, 0, 1}}, board, eBuildingType::pyramidWall,
+    ePyramidElement(cost, board, eBuildingType::pyramidWall,
+                    1, 1, elevation, cid),
+    mO(o), mSpecial(special) {}
+
+ePyramidWall::ePyramidWall(ePyramid* const pyramid,
+                           eGameBoard& board,
+                           const eOrientation o,
+                           const int elevation,
+                           const int special,
+                           const eCityId cid) :
+    ePyramidElement(pyramid,
+                    {pyramid->swapMarbleIfDark(elevation, eSanctCost{0, 2, 0, 1})},
+                    board, eBuildingType::pyramidWall,
                     1, 1, elevation, cid),
     mO(o), mSpecial(special) {}
 
@@ -19,7 +33,9 @@ stdsptr<eTexture> ePyramidWall::getTexture(const eTileSize size) const {
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);
     const int e = elevation();
-    const bool isDark = e % 2;
+    const auto m = monument();
+    const auto p = static_cast<ePyramid*>(m);
+    const bool isDark = p->darkLevel(e);
     int texId = 1;
 
     switch(o) {

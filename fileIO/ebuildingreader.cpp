@@ -32,6 +32,17 @@ void readSanctBuildingMonument(
     });
 }
 
+std::vector<eSanctCost> readPyramidElementCost(eReadStream& src) {
+    int n;
+    src >> n;
+    std::vector<eSanctCost> result;
+    for(int i = 0; i < n; i++) {
+        auto& r = result.emplace_back();
+        r.read(src);
+    }
+    return result;
+}
+
 stdsptr<eBuilding> eBuildingReader::sRead(
         eGameBoard& board, const eBuildingType type,
         eReadStream& src) {
@@ -519,15 +530,89 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         src >> elevation;
         int special;
         src >> special;
+        const auto costs = readPyramidElementCost(src);
         const auto ts = e::make_shared<ePyramidWall>(
-                            board, o, elevation, special, cid);
+                            costs, board, o, elevation, special, cid);
         b = ts;
         readSanctBuildingMonument(board, src, ts);
     } break;
     case eBuildingType::pyramidTop: {
         int elevation;
         src >> elevation;
-        const auto ts = e::make_shared<ePyramidTop>(board, elevation, cid);
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidTop>(
+                            costs, board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidTile: {
+        int elevation;
+        src >> elevation;
+        int type;
+        src >> type;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidTile>(
+                            costs, board, elevation, type, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidAltar: {
+        int elevation;
+        src >> elevation;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidAltar>(
+                            costs, board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidStatue: {
+        int elevation;
+        src >> elevation;
+        eGodType type;
+        src >> type;
+        int id;
+        src >> id;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidStatue>(
+                            costs, board, elevation, type, id, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidMonument: {
+        int elevation;
+        src >> elevation;
+        eGodType type;
+        src >> type;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidMonument>(
+                            costs, board, elevation, type, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidTemple: {
+        int elevation;
+        src >> elevation;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidTemple>(
+                            costs, board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidObservatory: {
+        int elevation;
+        src >> elevation;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidObservatory>(
+                            costs, board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
+    case eBuildingType::pyramidMuseum: {
+        int elevation;
+        src >> elevation;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidMuseum>(
+                            costs, board, elevation, cid);
         b = ts;
         readSanctBuildingMonument(board, src, ts);
     } break;

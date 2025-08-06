@@ -3,9 +3,18 @@
 
 #include "../sanctuaries/esanctbuilding.h"
 
+class ePyramid;
+
 class ePyramidElement : public eSanctBuilding {
 public:
     ePyramidElement(const std::vector<eSanctCost>& cost,
+                    eGameBoard& board,
+                    const eBuildingType type,
+                    const int sw, const int sh,
+                    const int elevation,
+                    const eCityId cid);
+    ePyramidElement(ePyramid* const pyramid,
+                    const std::vector<eSanctCost>& cost,
                     eGameBoard& board,
                     const eBuildingType type,
                     const int sw, const int sh,

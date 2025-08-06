@@ -140,7 +140,14 @@ SOURCES += \
         buildings/ewinery.cpp \
         buildings/ewinevendor.cpp \
         buildings/pyramids/epyramid.cpp \
+        buildings/pyramids/epyramidaltar.cpp \
         buildings/pyramids/epyramidelement.cpp \
+        buildings/pyramids/epyramidmonument.cpp \
+        buildings/pyramids/epyramidmuseum.cpp \
+        buildings/pyramids/epyramidobservatory.cpp \
+        buildings/pyramids/epyramidstatue.cpp \
+        buildings/pyramids/epyramidtemple.cpp \
+        buildings/pyramids/epyramidtile.cpp \
         buildings/pyramids/epyramidtop.cpp \
         buildings/pyramids/epyramidwall.cpp \
         buildings/sanctuaries/eartemissanctuary.cpp \
@@ -799,7 +806,14 @@ HEADERS += \
     buildings/ewinery.h \
     buildings/ewinevendor.h \
     buildings/pyramids/epyramid.h \
+    buildings/pyramids/epyramidaltar.h \
     buildings/pyramids/epyramidelement.h \
+    buildings/pyramids/epyramidmonument.h \
+    buildings/pyramids/epyramidmuseum.h \
+    buildings/pyramids/epyramidobservatory.h \
+    buildings/pyramids/epyramidstatue.h \
+    buildings/pyramids/epyramidtemple.h \
+    buildings/pyramids/epyramidtile.h \
     buildings/pyramids/epyramidtop.h \
     buildings/pyramids/epyramidwall.h \
     buildings/sanctuaries/eartemissanctuary.h \

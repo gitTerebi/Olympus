@@ -8,12 +8,18 @@ struct eSanctCost {
     int fMarble;
     int fSculpture;
     int fOrichalc = 0;
+    int fBlackMarble = 0;
+
+    void switchMarble() {
+        std::swap(fMarble, fBlackMarble);
+    }
 
     eSanctCost& operator+=(const eSanctCost& c) {
         fWood += c.fWood;
         fMarble += c.fMarble;
         fSculpture += c.fSculpture;
         fOrichalc += c.fOrichalc;
+        fBlackMarble += c.fBlackMarble;
         return *this;
     }
 
@@ -22,6 +28,7 @@ struct eSanctCost {
         fMarble -= c.fMarble;
         fSculpture -= c.fSculpture;
         fOrichalc -= c.fOrichalc;
+        fBlackMarble -= c.fBlackMarble;
         return *this;
     }
 
@@ -37,6 +44,7 @@ struct eSanctCost {
         src >> fMarble;
         src >> fSculpture;
         src >> fOrichalc;
+        src >> fBlackMarble;
     }
 
     void write(eWriteStream& dst) const {
@@ -44,6 +52,7 @@ struct eSanctCost {
         dst << fMarble;
         dst << fSculpture;
         dst << fOrichalc;
+        dst << fBlackMarble;
     }
 };
 
@@ -81,6 +90,8 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    const std::vector<eSanctCost>& costs() const { return mCost; }
 private:
     void scheduleTerrainUpdate();
     void updateNextCost();

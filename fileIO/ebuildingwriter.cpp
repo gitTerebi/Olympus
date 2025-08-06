@@ -3,6 +3,16 @@
 #include "buildings/allbuildings.h"
 #include "engine/egameboard.h"
 
+void writePyramidElementCost(
+        const ePyramidElement* const e,
+        eWriteStream& dst) {
+    const auto& cost = e->costs();
+    dst << cost.size();
+    for(const auto& c : cost) {
+        c.write(dst);
+    }
+}
+
 void eBuildingWriter::sWrite(const eBuilding* const b,
                              eWriteStream& dst) {
     const auto cid = b->cityId();
@@ -276,12 +286,67 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         dst << s->orientation();
         dst << s->elevation();
         dst << s->special();
+        writePyramidElementCost(s, dst);
         const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
     case eBuildingType::pyramidTop: {
         const auto s = static_cast<const ePyramidTop*>(b);
         dst << s->elevation();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidTile: {
+        const auto s = static_cast<const ePyramidTile*>(b);
+        dst << s->elevation();
+        dst << s->type();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidAltar: {
+        const auto s = static_cast<const ePyramidAltar*>(b);
+        dst << s->elevation();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidStatue: {
+        const auto s = static_cast<const ePyramidStatue*>(b);
+        dst << s->elevation();
+        dst << s->type();
+        dst << s->id();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidMonument: {
+        const auto s = static_cast<const ePyramidMonument*>(b);
+        dst << s->elevation();
+        dst << s->type();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidTemple: {
+        const auto s = static_cast<const ePyramidTemple*>(b);
+        dst << s->elevation();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidObservatory: {
+        const auto s = static_cast<const ePyramidObservatory*>(b);
+        dst << s->elevation();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
+    case eBuildingType::pyramidMuseum: {
+        const auto s = static_cast<const ePyramidMuseum*>(b);
+        dst << s->elevation();
+        writePyramidElementCost(s, dst);
         const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;

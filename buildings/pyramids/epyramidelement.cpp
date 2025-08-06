@@ -4,15 +4,19 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
-std::vector<eSanctCost> addElevationCost(std::vector<eSanctCost> result,
+std::vector<eSanctCost> addElevationCost(ePyramid* const pyramid,
+                                         std::vector<eSanctCost> result,
                                          const int sw, const int sh,
                                          const int elevation) {
     for(int e = 0; e < elevation; e++) {
+        const bool isDark = pyramid->darkLevel(e);
+        auto cost = eSanctCost{0, 1, 0};
+        if(isDark) cost.switchMarble();
         for(int x = 0; x < sw; x++) {
             for(int y = 0; y < sh; y++) {
-                result.insert(result.begin(), eSanctCost{0, 1, 0});
+                result.insert(result.begin(), cost);
                 result.insert(result.begin(), eSanctCost{0, 0, 0});
-                result.insert(result.begin(), eSanctCost{0, 1, 0});
+                result.insert(result.begin(), cost);
                 result.insert(result.begin(), eSanctCost{0, 0, 0});
             }
         }
@@ -26,9 +30,18 @@ ePyramidElement::ePyramidElement(const std::vector<eSanctCost>& cost,
                                  const int sw, const int sh,
                                  const int elevation,
                                  const eCityId cid) :
-    eSanctBuilding(addElevationCost(cost, sw, sh, elevation),
-                   board, type, sw, sh, cid),
+    eSanctBuilding(cost, board, type, sw, sh, cid),
     mElevation(elevation) {}
+
+ePyramidElement::ePyramidElement(ePyramid* const pyramid,
+                                 const std::vector<eSanctCost>& cost,
+                                 eGameBoard& board,
+                                 const eBuildingType type,
+                                 const int sw, const int sh,
+                                 const int elevation,
+                                 const eCityId cid) :
+    ePyramidElement(addElevationCost(pyramid, cost, sw, sh, elevation),
+                    board, type, sw, sh, elevation, cid) {}
 
 eTextureSpace ePyramidElement::getTextureSpace(
         const int tx, const int ty,

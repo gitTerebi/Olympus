@@ -12,7 +12,8 @@ eMonument::eMonument(eGameBoard& board,
     setStashable(eResourceType::marble |
                  eResourceType::wood |
                  eResourceType::sculpture |
-                 eResourceType::orichalc);
+                 eResourceType::orichalc |
+                 eResourceType::blackMarble);
 }
 
 eMonument::~eMonument() {
@@ -54,6 +55,8 @@ int eMonument::spaceLeft(const eResourceType type) const {
         return c.fSculpture - mStored.fSculpture - mUsed.fSculpture;
     } else if(type == eResourceType::orichalc) {
         return c.fOrichalc - mStored.fOrichalc - mUsed.fOrichalc;
+    } else if(type == eResourceType::blackMarble) {
+        return c.fBlackMarble - mStored.fBlackMarble - mUsed.fBlackMarble;
     }
     return 0;
 }
@@ -69,6 +72,8 @@ int eMonument::add(const eResourceType type, const int count) {
         mStored.fSculpture += add;
     } else if(type == eResourceType::orichalc) {
         mStored.fOrichalc += add;
+    } else if(type == eResourceType::blackMarble) {
+        mStored.fBlackMarble += add;
     }
     return add;
 }
@@ -82,6 +87,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
     const int w = spaceLeft(eResourceType::wood);
     const int s = spaceLeft(eResourceType::sculpture);
     const int o = spaceLeft(eResourceType::orichalc);
+    const int bm = spaceLeft(eResourceType::blackMarble);
 
     if(m > 0) {
         eCartTask task;
@@ -112,6 +118,14 @@ std::vector<eCartTask> eMonument::cartTasks() const {
         task.fType = eCartActionType::take;
         task.fResource = eResourceType::orichalc;
         task.fMaxCount = o;
+        tasks.push_back(task);
+    }
+
+    if(bm > 0) {
+        eCartTask task;
+        task.fType = eCartActionType::take;
+        task.fResource = eResourceType::blackMarble;
+        task.fMaxCount = bm;
         tasks.push_back(task);
     }
 
@@ -161,13 +175,8 @@ eSanctCost eMonument::cost() const {
 }
 
 void eMonument::useResources(const eSanctCost& r) {
-    mStored.fMarble -= r.fMarble;
-    mStored.fWood -= r.fWood;
-    mStored.fSculpture -= r.fSculpture;
-
-    mUsed.fMarble += r.fMarble;
-    mUsed.fWood += r.fWood;
-    mUsed.fSculpture += r.fSculpture;
+    mStored -= r;
+    mUsed += r;
 }
 
 void eMonument::setConstructionHalted(const bool h) {
