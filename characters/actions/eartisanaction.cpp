@@ -42,8 +42,8 @@ bool eArtisanAction::decide() {
     } else {
         const auto& brd = board();
         eTile* tt = nullptr;
-        for(int i = -1; i < 2; i++) {
-            for(int j = -1; j < 2; j++) {
+        for(int i : {0, 1, -1}) {
+            for(int j : {0, 1, -1}) {
                 const auto ttt = brd.tile(t->x() + i, t->y() + j);
                 if(!ttt) continue;
                 const auto b = ttt->underBuilding();
@@ -51,6 +51,9 @@ bool eArtisanAction::decide() {
                     if(bb->finished()) continue;
                     if(bb->workedOn()) continue;
                     if(!bb->resourcesAvailable()) continue;
+                    const auto type = b->type();
+                    const bool pyramid = eBuilding::sPyramidBuilding(type);
+                    if(pyramid && (i != 0 || j != 0)) continue;
                     tt = ttt;
                     break;
                 }
@@ -83,12 +86,19 @@ void eArtisanAction::write(eWriteStream& dst) const {
 bool eArtisanAction::findTargetDecision() {
     const stdptr<eArtisanAction> tptr(this);
 
-    const auto hha = [](eThreadTile* const tile) {
-        return hasTarget(tile);
-    };
-
     const auto c = character();
     const auto a = e::make_shared<eMoveToAction>(c);
+    const auto aptr = eStdPointer<eMoveToAction>(a);
+    const auto hha = [aptr](eThreadTile* const tile) {
+        const bool final = hasTarget(tile);
+        if(final && aptr) {
+            const auto type = tile->underBuildingType();
+            const bool pyramid = eBuilding::sPyramidBuilding(type);
+            if(pyramid) aptr->setRemoveLastTurn(false);
+        }
+        return final;
+    };
+
     a->setStateRelevance(eStateRelevance::sanctBuildings |
                          eStateRelevance::buildings |
                          eStateRelevance::terrain);
@@ -137,7 +147,7 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
     } else if(dx > 0 && dy < 0) {
         o = eOrientation::left;
     } else {
-        o = eOrientation::topLeft;
+        o = static_cast<eOrientation>(eRand::rand() % 8);
     }
     c->setOrientation(o);
     const auto w = e::make_shared<eBuildAction>(c);

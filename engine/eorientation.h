@@ -60,6 +60,7 @@ inline eDiagonalOrientation sRotated(const eDiagonalOrientation o,
             return eDiagonalOrientation::topRight;
         }
     }
+    return eDiagonalOrientation::topRight;
 }
 
 enum class eOrientation {
@@ -172,6 +173,7 @@ inline eOrientation sRotated(const eOrientation o,
             return eOrientation::right;
         }
     }
+    return eOrientation::topRight;
 }
 
 inline eOrientation sConvert(const eDiagonalOrientation o) {
@@ -185,6 +187,7 @@ inline eOrientation sConvert(const eDiagonalOrientation o) {
     case eDiagonalOrientation::topLeft:
         return eOrientation::topLeft;
     }
+    return eOrientation::topRight;
 }
 
 #endif // EORIENTATION_H

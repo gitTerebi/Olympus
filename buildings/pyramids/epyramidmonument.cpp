@@ -16,9 +16,9 @@ ePyramidMonument::ePyramidMonument(
         const int id,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidMonument,
-                    2, 2, elevation, cid),
+                    elevation, 2, cid),
     mType(type), mId(id) {
-    eGameTextures::loadSanctuary();
+    eSanctuary::sLoadMonumentTextures(type);
 }
 
 ePyramidMonument::ePyramidMonument(
@@ -31,9 +31,9 @@ ePyramidMonument::ePyramidMonument(
     ePyramidElement(pyramid,
                     {{0, 2, 0}, {0, 3, 0}},
                     board, eBuildingType::pyramidMonument,
-                    2, 2, elevation, cid),
+                    elevation, 2, cid),
     mType(type), mId(id) {
-    eGameTextures::loadSanctuary();
+    eSanctuary::sLoadMonumentTextures(type);
 }
 
 std::shared_ptr<eTexture>

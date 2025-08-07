@@ -1927,7 +1927,8 @@ bool eGameWidget::buildMouseRelease() {
 
             const bool r = mBoard->buildPyramid(
                                minX, maxX, minY, maxY,
-                               type, mRotate, mViewedCityId, pid,
+                               type, eGodType::poseidon,
+                               mRotate, mViewedCityId, pid,
                                mEditorMode);
             if(!r) return true;
             mGm->clearMode();

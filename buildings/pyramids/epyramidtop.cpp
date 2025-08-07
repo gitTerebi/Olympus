@@ -8,7 +8,7 @@ ePyramidTop::ePyramidTop(const std::vector<eSanctCost>& cost,
                          const int elevation,
                          const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidTop,
-                    1, 1, elevation, cid) {}
+                    elevation, 1, cid) {}
 
 ePyramidTop::ePyramidTop(ePyramid* const pyramid,
                          eGameBoard& board,
@@ -17,7 +17,7 @@ ePyramidTop::ePyramidTop(ePyramid* const pyramid,
     ePyramidElement(pyramid,
                     {pyramid->swapMarbleIfDark(elevation, eSanctCost{0, 2, 0})},
                     board, eBuildingType::pyramidTop,
-                    1, 1, elevation, cid) {}
+                    elevation, 1, cid) {}
 
 stdsptr<eTexture> ePyramidTop::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;

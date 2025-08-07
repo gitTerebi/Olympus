@@ -3,14 +3,14 @@
 
 #include "eemployingbuildinginfowidget.h"
 
-class eSanctuary;
+class eMonument;
 
 class eSanctuaryInfoWidget : public eEmployingBuildingInfoWidget {
 public:
     eSanctuaryInfoWidget(eMainWindow* const window,
                          eMainWidget* const mw);
 
-    void initialize(eSanctuary* const s);
+    void initialize(eMonument* const s);
 };
 
 #endif // ESANCTUARYINFOWIDGET_H

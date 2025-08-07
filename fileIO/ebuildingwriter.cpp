@@ -275,7 +275,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::shrine:
     case eBuildingType::majorShrine:
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
     case eBuildingType::altarOfOlympus:
     case eBuildingType::templeOfOlympus:
     case eBuildingType::observatoryKosmika:
@@ -305,6 +305,13 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         const auto sanct = s->monument();
         dst.writeBuilding(sanct);
     } break;
+    case eBuildingType::pyramidPart: {
+        const auto s = static_cast<const ePyramidBuildingPart*>(b);
+        dst << s->elevation();
+        writePyramidElementCost(s, dst);
+        const auto sanct = s->monument();
+        dst.writeBuilding(sanct);
+    } break;
     case eBuildingType::pyramidAltar: {
         const auto s = static_cast<const ePyramidAltar*>(b);
         dst << s->elevation();
@@ -325,6 +332,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         const auto s = static_cast<const ePyramidMonument*>(b);
         dst << s->elevation();
         dst << s->type();
+        dst << s->id();
         writePyramidElementCost(s, dst);
         const auto sanct = s->monument();
         dst.writeBuilding(sanct);

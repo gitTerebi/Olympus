@@ -49,7 +49,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto aWid = new eAgoraInfoWidget(window(), this);
             aWid->initialize(a);
             wid = aWid;
-        } else if(const auto s = dynamic_cast<eSanctuary*>(b)) {
+        } else if(const auto s = dynamic_cast<eMonument*>(b)) {
             const auto sWid = new eSanctuaryInfoWidget(window(), this);
             sWid->initialize(s);
             wid = sWid;

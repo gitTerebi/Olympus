@@ -9,7 +9,7 @@ ePyramidMuseum::ePyramidMuseum(
         const int elevation,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidMuseum,
-                    6, 6, elevation, cid) {
+                    elevation, 6, cid) {
     eGameTextures::loadMuseum();
 }
 
@@ -21,7 +21,7 @@ ePyramidMuseum::ePyramidMuseum(
     ePyramidElement(pyramid,
                     {eSanctCost{10, 10, 0}},
                     board, eBuildingType::pyramidMuseum,
-                    6, 6, elevation, cid) {
+                    elevation, 6, cid) {
     eGameTextures::loadMuseum();
 }
 

@@ -11,13 +11,19 @@
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/sanctuaries/esanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/pyramids/epyramidelement.h"
 
 void eThreadBuilding::load(eBuilding* const src) {
     if(!mCleared) {
         mVacancies = 0;
 
+        mResourcesAvailable = false;
+        mWorkedOn = false;
+
+        mSpaceCount = 0;
         memset(mResourceCount, 0, sizeof(mResourceCount));
-        memset(mResource, 0, sizeof(mResourceCount));
+        memset(mResource, 0, sizeof(mResource));
+        mMaxCount.clear();
         mGet = eResourceType::none;
         mEmpty = eResourceType::none;
         mAccepts = eResourceType::none;
@@ -139,6 +145,7 @@ void eThreadBuilding::load(eBuilding* const src) {
         case eBuildingType::templeStatue:
         case eBuildingType::templeTile:
 
+        case eBuildingType::pyramidPart:
         case eBuildingType::pyramidWall:
         case eBuildingType::pyramidTop:
         case eBuildingType::pyramidStatue:

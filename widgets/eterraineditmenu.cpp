@@ -310,20 +310,20 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     mMiniMap->move(24*mult, wy);
     mMiniMap->setBoard(board);
 
-    const auto b0 = addButton(coll.fBrushSize, w0);
+    addButton(coll.fBrushSize, w0);
     mB1 = addButton(coll.fEmptyLand, w1);
-    const auto b2 = addButton(coll.fForest, w2);
-    const auto b3 = addButton(coll.fWaterMarshBeach, w3);
+    addButton(coll.fForest, w2);
+    addButton(coll.fWaterMarshBeach, w3);
     mB4 = addButton(coll.fMeadow, w4);
-    const auto b5 = addButton(coll.fFishAndUrchin, w5);
-    const auto b6 = addButton(coll.fRocks, w6);
-    const auto b7 = addButton(coll.fScrub, w7);
-    const auto b8 = addButton(coll.fElevation, w8);
-    const auto b9 = addButton(coll.fDisasters, w9);
-    const auto b10 = addButton(coll.fWaterPoints, w10);
-    const auto b11 = addButton(coll.fLandInvasionPoints, w11);
-    const auto b12 = addButton(coll.fExitEndEntryPoints, mW12);
-    const auto b13 = addButton(coll.fAnimalPoints, w13);
+    addButton(coll.fFishAndUrchin, w5);
+    addButton(coll.fRocks, w6);
+    addButton(coll.fScrub, w7);
+    addButton(coll.fElevation, w8);
+    addButton(coll.fDisasters, w9);
+    addButton(coll.fWaterPoints, w10);
+    addButton(coll.fLandInvasionPoints, w11);
+    addButton(coll.fExitEndEntryPoints, mW12);
+    addButton(coll.fAnimalPoints, w13);
 
     connectAndLayoutButtons();
 

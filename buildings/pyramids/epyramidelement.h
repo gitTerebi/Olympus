@@ -10,15 +10,15 @@ public:
     ePyramidElement(const std::vector<eSanctCost>& cost,
                     eGameBoard& board,
                     const eBuildingType type,
-                    const int sw, const int sh,
                     const int elevation,
+                    const int dim,
                     const eCityId cid);
     ePyramidElement(ePyramid* const pyramid,
                     const std::vector<eSanctCost>& cost,
                     eGameBoard& board,
                     const eBuildingType type,
-                    const int sw, const int sh,
                     const int elevation,
+                    const int dim,
                     const eCityId cid);
 
     eTextureSpace
@@ -30,13 +30,11 @@ public:
     int currentElevation() const { return mCurrentElevation; }
     int elevation() const { return mElevation; }
 
-    SDL_Rect nextElement() const;
-    SDL_Rect prevElement() const;
-
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
     const int mElevation = 0;
+    const int mDim = 1;
     int mCurrentElevation = 0;
 };
 

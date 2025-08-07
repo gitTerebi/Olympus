@@ -188,12 +188,13 @@ enum class eBuildingType {
     shrine, // 6x6
     majorShrine, // 8x8
 
-    pyramidToThePantheon, // 11x9
+    pyramidOfThePantheon, // 11x9
     altarOfOlympus, // 8x8
     templeOfOlympus, // 8x8
     observatoryKosmika, // 9x9
     museumAtlantika, // 8x8
 
+    pyramidPart,
     pyramidWall,
     pyramidTop,
     pyramidStatue,
@@ -211,6 +212,7 @@ struct eTextureSpace {
     SDL_Rect fRect{0, 0, 0, 0};
     double fX = 0;
     double fY = 0;
+    bool fClamp = true;
 };
 
 class eBuilding : public eObject {

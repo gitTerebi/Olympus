@@ -10,13 +10,16 @@ public:
     eArtisansGuild(eGameBoard& board, const eCityId cid);
     ~eArtisansGuild();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
-    void timeChanged(const int by);
+    void timeChanged(const int by) override;
 
     using eArtisanPtr = stdptr<eArtisan> eArtisansGuild::*;
     bool spawnArtisan(const eArtisanPtr artisan);
+
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
 private:
     stdptr<eArtisan> mArtisan;
 

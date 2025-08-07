@@ -1,4 +1,4 @@
-#include "egamewidget.h"
+﻿#include "egamewidget.h"
 
 #include "eterraineditmenu.h"
 
@@ -912,13 +912,15 @@ void eGameWidget::paintEvent(ePainter& p) {
             const double drawY = fitY + dy + 1 - da*0.5;
             if(fitXB || fitYB) {
                 const bool last = fitXB && fitYB;
-                SDL_Rect clipRect;
-                clipRect.y = -10000;
-                clipRect.h = 20000;
-                const int d = fitYB ? 1 : 0;
-                clipRect.x = mDX + (rtx - rty - d)*mTileW/2;
-                clipRect.w = last ? mTileW : mTileW/2;
-                SDL_RenderSetClipRect(p.renderer(), &clipRect);
+                if(ts.fClamp) {
+                    SDL_Rect clipRect;
+                    clipRect.y = -10000;
+                    clipRect.h = 20000;
+                    const int d = fitYB ? 1 : 0;
+                    clipRect.x = mDX + (rtx - rty - d)*mTileW/2;
+                    clipRect.w = last ? mTileW : mTileW/2;
+                    SDL_RenderSetClipRect(p.renderer(), &clipRect);
+                }
 
                 const bool erase = inErase(ub);
                 const bool hover = inPatrolBuildingHover(ub);
@@ -1126,7 +1128,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int da = tile->doubleAltitude();
             const auto bttt = tile->underBuildingType();
             const bool flat = eBuilding::sFlatBuilding(bttt);
-            if(flat || bttt == eBuildingType::wall) {
+            const bool pyramid = eBuilding::sPyramidBuilding(bttt);
+            if(flat || bttt == eBuildingType::wall || pyramid) {
                 const auto r = p.renderer();
                 const auto& chars = tile->characters();
                 for(const auto& c : chars) {

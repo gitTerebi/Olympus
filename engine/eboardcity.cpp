@@ -787,6 +787,7 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
     case eBuildingType::templeStatue:
     case eBuildingType::templeTile:
 
+    case eBuildingType::pyramidPart:
     case eBuildingType::pyramidWall:
     case eBuildingType::pyramidTop:
     case eBuildingType::pyramidStatue:

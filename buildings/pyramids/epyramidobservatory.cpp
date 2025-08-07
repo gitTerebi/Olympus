@@ -9,7 +9,7 @@ ePyramidObservatory::ePyramidObservatory(
         const int elevation,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidObservatory,
-                    5, 5, elevation, cid) {
+                    elevation, 5, cid) {
     eGameTextures::loadObservatory();
 }
 
@@ -21,7 +21,7 @@ ePyramidObservatory::ePyramidObservatory(
     ePyramidElement(pyramid,
                     {eSanctCost{5, 5, 0}},
                     board, eBuildingType::pyramidObservatory,
-                    5, 5, elevation, cid) {
+                    elevation, 5, cid) {
     eGameTextures::loadObservatory();
 }
 

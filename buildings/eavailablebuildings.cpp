@@ -102,16 +102,6 @@ void eAvailableBuildings::read(eReadStream& src) {
         const auto t = static_cast<eGodType>(i);
         src >> mGodMonuments[t];
     }
-
-    // !!!
-    allow(eBuildingType::modestPyramid);
-    allow(eBuildingType::pyramid);
-    allow(eBuildingType::greatPyramid);
-    allow(eBuildingType::majesticPyramid);
-
-    allow(eBuildingType::smallMonumentToTheSky);
-    allow(eBuildingType::monumentToTheSky);
-    allow(eBuildingType::grandMonumentToTheSky);
 }
 
 void eAvailableBuildings::write(eWriteStream& dst) const {
@@ -326,7 +316,7 @@ bool eAvailableBuildings::available(
     case eBuildingType::majorShrine:
         return fMajorShrine == eAvailable::available;
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
         return fPyramidToThePantheon == eAvailable::available;
     case eBuildingType::altarOfOlympus:
         return fAltarOfOlympus == eAvailable::available;
@@ -450,7 +440,7 @@ void eAvailableBuildings::built(
     case eBuildingType::majorShrine:
         fMajorShrine = eAvailable::built; break;
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
         fPyramidToThePantheon = eAvailable::built; break;
     case eBuildingType::altarOfOlympus:
         fAltarOfOlympus = eAvailable::built; break;
@@ -755,7 +745,7 @@ eAvailable* eAvailableBuildings::availablePtr(const eBuildingType type) {
     case eBuildingType::majorShrine:
         a = &fMajorShrine; break;
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
         a = &fPyramidToThePantheon; break;
     case eBuildingType::altarOfOlympus:
         a = &fAltarOfOlympus; break;

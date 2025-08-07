@@ -310,7 +310,7 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
         return eBuildingType::majorShrine;
 
     case eBuildingMode::pyramidToThePantheon: // 11x9
-        return eBuildingType::pyramidToThePantheon;
+        return eBuildingType::pyramidOfThePantheon;
     case eBuildingMode::altarOfOlympus: // 8x8
         return eBuildingType::altarOfOlympus;
     case eBuildingMode::templeOfOlympus: // 8x8

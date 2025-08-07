@@ -867,6 +867,8 @@ bool gBuild(const eAIBuilding& b,
         return board.buildSanctuary(minX, maxX, minY, maxY, b.fType,
                                     rotate, cid, pid, editorDisplay);
     } break;
+    default:
+        break;
     }
     return false;
 }
@@ -1030,6 +1032,7 @@ std::string eDistrictReadyCondition::sName(const eType type) {
     case eType::count:
         return "";
     }
+    return "";
 }
 
 std::string eDistrictReadyCondition::name() const {

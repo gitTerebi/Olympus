@@ -60,6 +60,8 @@ public:
             const int sw, const int sh,
             eGameBoard& board, const eCityId cid);
 
+    static void sLoadMonumentTextures(const eGodType type);
+
     void setSpawnWait(const int w);
 
     bool sacrificing() const;

@@ -57,3 +57,18 @@ bool eArtisansGuild::spawnArtisan(const eArtisanPtr artisan) {
     ar->setAction(a);
     return true;
 }
+
+void eArtisansGuild::read(eReadStream& src) {
+    eEmployingBuilding::read(src);
+    src >> mSpawnTime;
+    auto& board = getBoard();
+    src.readCharacter(&board, [this](eCharacter* const c) {
+        mArtisan = static_cast<eArtisan*>(c);
+    });
+}
+
+void eArtisansGuild::write(eWriteStream& dst) const {
+    eEmployingBuilding::write(dst);
+    dst << mSpawnTime;
+    dst.writeCharacter(mArtisan);
+}

@@ -234,7 +234,7 @@ int costBase(const eBuildingType type) {
     case eBuildingType::majorShrine:
         return 0;
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
         return 0;
     case eBuildingType::altarOfOlympus:
         return 0;
@@ -301,6 +301,7 @@ int costBase(const eBuildingType type) {
     case eBuildingType::perseusHall:
     case eBuildingType::theseusHall:
 
+    case eBuildingType::pyramidPart:
     case eBuildingType::pyramidWall:
     case eBuildingType::pyramidTop:
     case eBuildingType::pyramidStatue:

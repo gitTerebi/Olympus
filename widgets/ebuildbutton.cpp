@@ -19,7 +19,6 @@ void eBuildButton::initialize(const std::string& name,
 
     {
         const auto nameWidget = new eWidget(window());
-        nameWidget->setWidth(width/2 + 10*mult);
 
         addWidget(nameWidget);
         nameWidget->align(eAlignment::vcenter);
@@ -31,6 +30,8 @@ void eBuildButton::initialize(const std::string& name,
 
         nameWidget->addWidget(nameLabel);
 
+        nameWidget->setWidth(std::max(nameLabel->width() + 2*mult,
+                                      width/2 + 10*mult));
         nameLabel->align(eAlignment::vcenter | eAlignment::hcenter);
     }
 

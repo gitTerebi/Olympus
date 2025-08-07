@@ -97,8 +97,7 @@ bool eBuilding::sFlatBuilding(const eBuildingType bt) {
            bt == eBuildingType::ruins ||
            bt == eBuildingType::placeholder ||
            bt == eBuildingType::palaceTile ||
-           bt == eBuildingType::godMonumentTile ||
-           bt == eBuildingType::pyramidTile;
+           bt == eBuildingType::godMonumentTile;
 }
 
 bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
@@ -551,6 +550,55 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
         string = 94;
         break;
 
+    case eBuildingType::modestPyramid: // 3x3
+        string = 100;
+        break;
+    case eBuildingType::pyramid: // 5x5
+        string = 101;
+        break;
+    case eBuildingType::greatPyramid: // 7x7
+        string = 102;
+        break;
+    case eBuildingType::majesticPyramid: // 9x9
+        string = 103;
+        break;
+
+    case eBuildingType::smallMonumentToTheSky: // 5x5
+        string = 104;
+        break;
+    case eBuildingType::monumentToTheSky: // 6x6
+        string = 105;
+        break;
+    case eBuildingType::grandMonumentToTheSky: // 8x8
+        string = 106;
+        break;
+
+    case eBuildingType::minorShrine: // 3x3
+        string = 107;
+        break;
+    case eBuildingType::shrine: // 6x6
+        string = 108;
+        break;
+    case eBuildingType::majorShrine: // 8x8
+        string = 109;
+        break;
+
+    case eBuildingType::pyramidOfThePantheon: // 11x9
+        string = 110;
+        break;
+    case eBuildingType::altarOfOlympus: // 8x8
+        string = 111;
+        break;
+    case eBuildingType::templeOfOlympus: // 8x8
+        string = 112;
+        break;
+    case eBuildingType::observatoryKosmika: // 9x9
+        string = 113;
+        break;
+    case eBuildingType::museumAtlantika: // 8x8
+        string = 114;
+        break;
+
     case eBuildingType::artisansGuild:
         string = 56;
         break;
@@ -696,6 +744,17 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::templeMonument:
     case eBuildingType::templeAltar:
     case eBuildingType::placeholder:
+
+    case eBuildingType::pyramidPart:
+    case eBuildingType::pyramidWall:
+    case eBuildingType::pyramidTop:
+    case eBuildingType::pyramidStatue:
+    case eBuildingType::pyramidMonument:
+    case eBuildingType::pyramidTile:
+    case eBuildingType::pyramidAltar:
+    case eBuildingType::pyramidTemple:
+    case eBuildingType::pyramidObservatory:
+    case eBuildingType::pyramidMuseum:
         break;
     }
     return eLanguage::zeusText(group, string);
@@ -1629,6 +1688,114 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 4;
         }
     } break;
+    case eBuildingType::modestPyramid:
+        group = 132;
+        titleString = -1;
+        infoString = 114;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::pyramid:
+        group = 132;
+        titleString = -1;
+        infoString = 115;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::greatPyramid:
+        group = 132;
+        titleString = -1;
+        infoString = 116;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::majesticPyramid:
+        group = 132;
+        titleString = -1;
+        infoString = 117;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+
+    case eBuildingType::smallMonumentToTheSky:
+        group = 132;
+        titleString = -1;
+        infoString = 118;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::monumentToTheSky:
+        group = 132;
+        titleString = -1;
+        infoString = 119;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::grandMonumentToTheSky:
+        group = 132;
+        titleString = -1;
+        infoString = 120;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+
+    case eBuildingType::minorShrine:
+        group = 132;
+        titleString = -1;
+        infoString = 121;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::shrine:
+        group = 132;
+        titleString = -1;
+        infoString = 122;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::majorShrine:
+        group = 132;
+        titleString = -1;
+        infoString = 123;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+
+    case eBuildingType::pyramidOfThePantheon:
+        group = 132;
+        titleString = -1;
+        infoString = 124;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::altarOfOlympus:
+        group = 132;
+        titleString = -1;
+        infoString = 125;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::templeOfOlympus:
+        group = 132;
+        titleString = -1;
+        infoString = 126;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::observatoryKosmika:
+        group = 132;
+        titleString = -1;
+        infoString = 127;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
+    case eBuildingType::museumAtlantika:
+        group = 132;
+        titleString = -1;
+        infoString = 128;
+        employmentInfoGroup = -1;
+        employmentInfoString = -1;
+        break;
     case eBuildingType::corinthianColumn:
     case eBuildingType::doricColumn:
     case eBuildingType::ionicColumn:

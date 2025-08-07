@@ -13,7 +13,7 @@ ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
                                const int id,
                                const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidStatue,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mType(type), mId(id) {
     eGameTextures::loadSanctuary();
 }
@@ -27,7 +27,7 @@ ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
     ePyramidElement(pyramid,
                     {{0, 0, 1}},
                     board, eBuildingType::pyramidStatue,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mType(type), mId(id) {
     eGameTextures::loadSanctuary();
 }

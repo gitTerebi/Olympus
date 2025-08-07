@@ -5,6 +5,7 @@
 #include "characters/gods/egod.h"
 #include "estringhelpers.h"
 #include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/pyramids/epyramid.h"
 #include "engine/egameboard.h"
 #include "widgets/echoosecitydialog.h"
 #include "evectorhelpers.h"
@@ -50,23 +51,25 @@ int sTextGodId(const eGodType god) {
     return 0;
 }
 
-void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
+void eSanctuaryInfoWidget::initialize(eMonument* const m) {
+    assert(m);
     const int p = resolution().largePadding();
-    if(s->finished()) {
-        const auto title = eBuilding::sNameForBuilding(s);
+    eSanctuary* const s = dynamic_cast<eSanctuary*>(m);
+    if(s && s->finished()) {
+        const auto title = eBuilding::sNameForBuilding(m);
         eInfoWidget::initialize(title);
         std::string employmentInfo;
         {
             std::string title;
             std::string info;
             std::string additionalInfo;
-            eBuilding::sInfoText(s, title, info,
+            eBuilding::sInfoText(m, title, info,
                                  employmentInfo,
                                  additionalInfo);
         }
         addText(employmentInfo);
         const auto cw = addCentralWidget();
-        addEmploymentWidget(s);
+        addEmploymentWidget(m);
         const auto gt = s->godType();
 
         const int cww = cw->width();
@@ -159,9 +162,9 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
             bw->stackVertically(p);
             bw->fitContent();
         }
-        const auto& board = s->getBoard();
+        const auto& board = m->getBoard();
         const auto cids = board.citiesOnBoard();
-        const auto pid = s->playerId();
+        const auto pid = m->playerId();
         const auto ptid = board.playerIdToTeamId(pid);
         const auto enemyCids = board.enemyCidsOnBoard(ptid);
         if(!enemyCids.empty()) {
@@ -245,39 +248,55 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         buttonReasonW->stackVertically();
         buttonReasonW->fitHeight();
         buttonReasonW->align(eAlignment::bottom);
+    } else if(m->finished()) {
+        const auto p = static_cast<ePyramid*>(m);
+        const auto type = m->type();
+        const int string = 114 + static_cast<int>(type) -
+                           static_cast<int>(eBuildingType::modestPyramid);
+        auto text = eLanguage::zeusText(132, string);
+        const auto god = p->god();
+        const auto name = eGod::sGodName(god);
+        eStringHelpers::replace(text, "[god]", name);
+        addText(text);
     } else {
-        const auto name = eBuilding::sNameForBuilding(s);
+        const auto name = eBuilding::sNameForBuilding(m);
         auto title = eLanguage::zeusText(178, 2);
         eStringHelpers::replace(title, "[monument]", name);
         eInfoWidget::initialize(title);
 
-        const bool r = s->accessToRoad();
+        const bool r = m->accessToRoad();
         if(!r) {
             addText(eLanguage::zeusText(69, 4));
         }
-        const bool h = s->constructionHalted();
+        const bool h = m->constructionHalted();
         if(h) {
             addText(eLanguage::zeusText(132, 130));
         }
-        auto& board = s->getBoard();
-        const auto cid = s->cityId();
+        auto& board = m->getBoard();
+        const auto cid = m->cityId();
         const int na = board.countBuildings(cid, eBuildingType::artisansGuild);
         if(na == 0) {
             addText(eLanguage::zeusText(178, 0));
         }
 
-        const int p = s->progress();
+        const int p = m->progress();
         const auto pStr = std::to_string(p);
-        const auto god = s->godType();
-        const auto godStr = eGod::sGodName(god);
-        auto complete = eLanguage::zeusText(178, 23);
-        eStringHelpers::replace(complete, "[god]", godStr);
-        eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");
-        addText(complete);
+        if(s) {
+            const auto god = s->godType();
+            const auto godStr = eGod::sGodName(god);
+            auto complete = eLanguage::zeusText(178, 23);
+            eStringHelpers::replace(complete, "[god]", godStr);
+            eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");
+            addText(complete);
+        } else {
+            auto complete = name + " " + eLanguage::zeusText(178, 24);
+            eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");
+            addText(complete);
+        }
 
-        const auto cost = s->cost();
-        const auto stored = s->stored();
-        const auto used = s->used();
+        const auto cost = m->cost();
+        const auto stored = m->stored();
+        const auto used = m->used();
         const auto needed = cost - stored - used;
         const int nm = needed.fMarble;
         const auto nmStr = std::to_string(nm);
@@ -285,7 +304,11 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         const auto nwStr = std::to_string(nw);
         const int ns = needed.fSculpture;
         const auto nsStr = std::to_string(ns);
-        if(nm > 0 || nw > 0 || ns > 0) {
+        const int no = needed.fOrichalc;
+        const auto noStr = std::to_string(no);
+        const int nbm = needed.fBlackMarble;
+        const auto nbmStr = std::to_string(nbm);
+        if(nm > 0 || nw > 0 || ns > 0 || no > 0 || nbm > 0) {
             auto rem = eLanguage::zeusText(178, 25);
             if(nm == 1) {
                 auto remM = eLanguage::zeusText(178, 26);
@@ -314,6 +337,24 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
                 eStringHelpers::replace(remS, "[amount]", nsStr);
                 rem += "\n" + remS;
             }
+            if(no == 1) {
+                auto remO = eLanguage::zeusText(178, 34);
+                eStringHelpers::replace(remO, "[amount]", noStr);
+                rem += "\n" + remO;
+            } else if(no > 1) {
+                auto remO = eLanguage::zeusText(178, 35);
+                eStringHelpers::replace(remO, "[amount]", noStr);
+                rem += "\n" + remO;
+            }
+            if(nbm == 1) {
+                auto remNbm = eLanguage::zeusText(178, 28);
+                eStringHelpers::replace(remNbm, "[amount]", nsStr);
+                rem += "\n" + remNbm;
+            } else if(nbm > 1) {
+                auto remNbm = eLanguage::zeusText(178, 29);
+                eStringHelpers::replace(remNbm, "[amount]", nsStr);
+                rem += "\n" + remNbm;
+            }
             addText(rem);
         } else {
             const auto all = eLanguage::zeusText(178, 36);
@@ -326,10 +367,10 @@ void eSanctuaryInfoWidget::initialize(eSanctuary* const s) {
         haltB->setText(h ? eLanguage::zeusText(132, 113) :
                            eLanguage::zeusText(132, 112));
         haltB->fitContent();
-        haltB->setPressAction([s, haltB]() {
-            bool h = s->constructionHalted();
+        haltB->setPressAction([m, haltB]() {
+            bool h = m->constructionHalted();
             h = !h;
-            s->setConstructionHalted(h);
+            m->setConstructionHalted(h);
             haltB->setText(h ? eLanguage::zeusText(132, 113) :
                                eLanguage::zeusText(132, 112));
             haltB->fitContent();

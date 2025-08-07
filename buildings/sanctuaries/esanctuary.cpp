@@ -45,50 +45,7 @@ eSanctuary::eSanctuary(eGameBoard& board,
     eMonument(board, type, sw, sh,
               maxEmployees, cid) {
     eGameTextures::loadSanctuary();
-    switch(godType()) {
-    case eGodType::aphrodite:
-        eGameTextures::loadAphroditeMonuments();
-        break;
-    case eGodType::apollo:
-        eGameTextures::loadApolloMonuments();
-        break;
-    case eGodType::ares:
-        eGameTextures::loadAresMonuments();
-        break;
-    case eGodType::artemis:
-        eGameTextures::loadArtemisMonuments();
-        break;
-    case eGodType::athena:
-        eGameTextures::loadAthenaMonuments();
-        break;
-    case eGodType::atlas:
-        eGameTextures::loadAtlasMonuments();
-        break;
-    case eGodType::demeter:
-        eGameTextures::loadDemeterMonuments();
-        break;
-    case eGodType::dionysus:
-        eGameTextures::loadDionysusMonuments();
-        break;
-    case eGodType::hades:
-        eGameTextures::loadHadesMonuments();
-        break;
-    case eGodType::hephaestus:
-        eGameTextures::loadHephaestusMonuments();
-        break;
-    case eGodType::hera:
-        eGameTextures::loadHeraMonuments();
-        break;
-    case eGodType::hermes:
-        eGameTextures::loadHermesMonuments();
-        break;
-    case eGodType::poseidon:
-        eGameTextures::loadPoseidonMonuments();
-        break;
-    case eGodType::zeus:
-        eGameTextures::loadZeusMonuments();
-        break;
-    }
+    sLoadMonumentTextures(godType());
     board.registerSanctuary(this);
 }
 
@@ -301,6 +258,39 @@ stdsptr<eSanctuary> eSanctuary::sCreate(
         return e::make_shared<eZeusSanctuary>(sw, sh, board, cid);
     default:
         return nullptr;
+    }
+}
+
+void eSanctuary::sLoadMonumentTextures(const eGodType type) {
+    switch(type) {
+    case eGodType::aphrodite:
+        return eGameTextures::loadAphroditeMonuments();
+    case eGodType::apollo:
+        return eGameTextures::loadApolloMonuments();
+    case eGodType::ares:
+        return eGameTextures::loadAresMonuments();
+    case eGodType::artemis:
+        return eGameTextures::loadArtemisMonuments();
+    case eGodType::athena:
+        return eGameTextures::loadAthenaMonuments();
+    case eGodType::atlas:
+        return eGameTextures::loadAtlasMonuments();
+    case eGodType::demeter:
+        return eGameTextures::loadDemeterMonuments();
+    case eGodType::dionysus:
+        return eGameTextures::loadDionysusMonuments();
+    case eGodType::hades:
+        return eGameTextures::loadHadesMonuments();
+    case eGodType::hephaestus:
+        return eGameTextures::loadHephaestusMonuments();
+    case eGodType::hera:
+        return eGameTextures::loadHeraMonuments();
+    case eGodType::hermes:
+        return eGameTextures::loadHermesMonuments();
+    case eGodType::poseidon:
+        return eGameTextures::loadPoseidonMonuments();
+    case eGodType::zeus:
+        return eGameTextures::loadZeusMonuments();
     }
 }
 

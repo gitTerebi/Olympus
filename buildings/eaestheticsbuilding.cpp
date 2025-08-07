@@ -2,6 +2,8 @@
 
 #include "textures/egametextures.h"
 
+#include "sanctuaries/esanctuary.h"
+
 eAestheticsBuilding::eAestheticsBuilding(
         eGameBoard& board,
         const eBaseTex baseTex,
@@ -229,50 +231,7 @@ eGodMonument::eGodMonument(const eGodType god,
                            eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::godMonument, 2, 2, cid),
     mGod(god), mId(id) {
-    switch(god) {
-    case eGodType::aphrodite:
-        eGameTextures::loadAphroditeMonuments();
-        break;
-    case eGodType::apollo:
-        eGameTextures::loadApolloMonuments();
-        break;
-    case eGodType::ares:
-        eGameTextures::loadAresMonuments();
-        break;
-    case eGodType::artemis:
-        eGameTextures::loadArtemisMonuments();
-        break;
-    case eGodType::athena:
-        eGameTextures::loadAthenaMonuments();
-        break;
-    case eGodType::atlas:
-        eGameTextures::loadAtlasMonuments();
-        break;
-    case eGodType::demeter:
-        eGameTextures::loadDemeterMonuments();
-        break;
-    case eGodType::dionysus:
-        eGameTextures::loadDionysusMonuments();
-        break;
-    case eGodType::hades:
-        eGameTextures::loadHadesMonuments();
-        break;
-    case eGodType::hephaestus:
-        eGameTextures::loadHephaestusMonuments();
-        break;
-    case eGodType::hera:
-        eGameTextures::loadHeraMonuments();
-        break;
-    case eGodType::hermes:
-        eGameTextures::loadHermesMonuments();
-        break;
-    case eGodType::poseidon:
-        eGameTextures::loadPoseidonMonuments();
-        break;
-    case eGodType::zeus:
-        eGameTextures::loadZeusMonuments();
-        break;
-    }
+    eSanctuary::sLoadMonumentTextures(god);
 }
 
 void eGodMonument::erase() {

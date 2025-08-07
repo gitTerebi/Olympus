@@ -410,5 +410,101 @@ void eEditorSettingsMenu::initialize(const bool first,
     addWidget(buildingsButt);
     buildingsButt->align(eAlignment::hcenter);
 
+    const auto pyramidsAct = [this, ep]() {
+        const auto buildMenu = new eFramedWidget(window());
+        buildMenu->setType(eFrameType::message);
+        buildMenu->resize(width(), height());
+
+        const auto board = ep->fBoard;
+        const auto cids = board->citiesOnBoard();
+        for(const auto cid : cids) {
+            const auto c = board->boardCityWithId(cid);
+            if(!c) continue;
+            const auto ab = &ep->fAvailableBuildings[cid];
+
+            const auto cpyramidsAct = [this, ab]() {
+                const auto buildMenu = new eFramedWidget(window());
+                buildMenu->setType(eFrameType::message);
+                buildMenu->resize(width(), height());
+
+                const std::vector<eBuildingType> bv {
+                    eBuildingType::modestPyramid, // 3x3
+                    eBuildingType::pyramid, // 5x5
+                    eBuildingType::greatPyramid, // 7x7
+                    eBuildingType::majesticPyramid, // 9x9
+
+                    eBuildingType::smallMonumentToTheSky, // 5x5
+                    eBuildingType::monumentToTheSky, // 6x6
+                    eBuildingType::grandMonumentToTheSky, // 8x8
+
+                    eBuildingType::minorShrine, // 3x3
+                    eBuildingType::shrine, // 6x6
+                    eBuildingType::majorShrine, // 8x8
+
+                    eBuildingType::pyramidOfThePantheon, // 11x9
+                    eBuildingType::altarOfOlympus, // 8x8
+                    eBuildingType::templeOfOlympus, // 8x8
+                    eBuildingType::observatoryKosmika, // 9x9
+                    eBuildingType::museumAtlantika, // 8x8
+                };
+
+                int w = 0;
+                std::vector<eCheckableButton*> buttons;
+                for(const auto& type : bv) {
+                    const auto bb = new eCheckableButton(window());
+                    bb->setSmallFontSize();
+                    bb->setSmallPadding();
+                    bb->setText(eBuilding::sNameForBuilding(type));
+                    bb->fitContent();
+                    w = std::max(w, bb->width());
+                    bb->setChecked(ab->available(type));
+                    bb->setCheckAction([type, ab](const bool b) {
+                        if(b) {
+                            ab->allow(type);
+                        } else {
+                            ab->disallow(type);
+                        }
+                    });
+                    buttons.push_back(bb);
+                    buildMenu->addWidget(bb);
+                }
+                const int p = padding();
+                int x = 2*p;
+                int y = 2*p;
+                for(const auto b : buttons) {
+                    b->setWidth(w);
+                    const int bh = b->height();
+                    if(y + bh + 2*p > buildMenu->height()) {
+                        x += w;
+                        y = 2*p;
+                    }
+                    b->move(x, y);
+                    y += bh + p;
+                }
+
+                window()->execDialog(buildMenu);
+                buildMenu->align(eAlignment::center);
+            };
+            const auto cButt = new eFramedButton(window());
+            cButt->setUnderline(false);
+            cButt->setText(board->cityName(cid));
+            cButt->fitContent();
+            cButt->setPressAction(cpyramidsAct);
+            buildMenu->addWidget(cButt);
+            cButt->align(eAlignment::hcenter);
+        }
+        window()->execDialog(buildMenu);
+        buildMenu->align(eAlignment::center);
+        buildMenu->layoutVertically();
+    };
+
+    const auto pyramidsButt = new eFramedButton(window());
+    pyramidsButt->setUnderline(false);
+    pyramidsButt->setText(eLanguage::zeusText(44, 378));
+    pyramidsButt->fitContent();
+    pyramidsButt->setPressAction(pyramidsAct);
+    addWidget(pyramidsButt);
+    pyramidsButt->align(eAlignment::hcenter);
+
     layoutVertically();
 }

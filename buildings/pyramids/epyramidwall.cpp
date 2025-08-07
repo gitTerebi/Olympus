@@ -10,7 +10,7 @@ ePyramidWall::ePyramidWall(const std::vector<eSanctCost>& cost,
                            const int special,
                            const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidWall,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mO(o), mSpecial(special) {}
 
 ePyramidWall::ePyramidWall(ePyramid* const pyramid,
@@ -22,7 +22,7 @@ ePyramidWall::ePyramidWall(ePyramid* const pyramid,
     ePyramidElement(pyramid,
                     {pyramid->swapMarbleIfDark(elevation, eSanctCost{0, 2, 0, 1})},
                     board, eBuildingType::pyramidWall,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mO(o), mSpecial(special) {}
 
 stdsptr<eTexture> ePyramidWall::getTexture(const eTileSize size) const {

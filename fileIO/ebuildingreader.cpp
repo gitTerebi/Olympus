@@ -513,7 +513,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::shrine:
     case eBuildingType::majorShrine:
 
-    case eBuildingType::pyramidToThePantheon:
+    case eBuildingType::pyramidOfThePantheon:
     case eBuildingType::altarOfOlympus:
     case eBuildingType::templeOfOlympus:
     case eBuildingType::observatoryKosmika:
@@ -556,6 +556,15 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         b = ts;
         readSanctBuildingMonument(board, src, ts);
     } break;
+    case eBuildingType::pyramidPart: {
+        int elevation;
+        src >> elevation;
+        const auto costs = readPyramidElementCost(src);
+        const auto ts = e::make_shared<ePyramidBuildingPart>(
+                            costs, board, elevation, cid);
+        b = ts;
+        readSanctBuildingMonument(board, src, ts);
+    } break;
     case eBuildingType::pyramidAltar: {
         int elevation;
         src >> elevation;
@@ -583,9 +592,11 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         src >> elevation;
         eGodType type;
         src >> type;
+        int id;
+        src >> id;
         const auto costs = readPyramidElementCost(src);
         const auto ts = e::make_shared<ePyramidMonument>(
-                            costs, board, elevation, type, cid);
+                            costs, board, elevation, type, id, cid);
         b = ts;
         readSanctBuildingMonument(board, src, ts);
     } break;

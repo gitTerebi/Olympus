@@ -9,7 +9,7 @@ ePyramidTile::ePyramidTile(const std::vector<eSanctCost>& cost,
                            const int type,
                            const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidTile,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mType(type) {
     eGameTextures::loadPalaceTiles();
 }
@@ -22,7 +22,7 @@ ePyramidTile::ePyramidTile(ePyramid* const pyramid,
     ePyramidElement(pyramid,
                     {pyramid->swapMarbleIfDark(elevation, eSanctCost{0, 1, 0})},
                     board, eBuildingType::pyramidTile,
-                    1, 1, elevation, cid),
+                    elevation, 1, cid),
     mType(type) {
     eGameTextures::loadPalaceTiles();
 }
@@ -37,7 +37,7 @@ stdsptr<eTexture> ePyramidTile::getTexture(const eTileSize size) const {
         const auto p = static_cast<ePyramid*>(m);
         const bool isDark = e < 0 ? false : p->darkLevel(e);
         if(isDark) return blds.fPyramid2.getTexture(33 - 1);
-        else blds.fPalaceTiles.getTexture(0);
+        else return blds.fPalaceTiles.getTexture(0);
     } else if(mType == 1) {
         return blds.fPyramid2.getTexture(34 - 1);
     } else if(mType == 2) {

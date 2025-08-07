@@ -141,6 +141,7 @@ SOURCES += \
         buildings/ewinevendor.cpp \
         buildings/pyramids/epyramid.cpp \
         buildings/pyramids/epyramidaltar.cpp \
+        buildings/pyramids/epyramidbuildingpart.cpp \
         buildings/pyramids/epyramidelement.cpp \
         buildings/pyramids/epyramidmonument.cpp \
         buildings/pyramids/epyramidmuseum.cpp \
@@ -807,6 +808,7 @@ HEADERS += \
     buildings/ewinevendor.h \
     buildings/pyramids/epyramid.h \
     buildings/pyramids/epyramidaltar.h \
+    buildings/pyramids/epyramidbuildingpart.h \
     buildings/pyramids/epyramidelement.h \
     buildings/pyramids/epyramidmonument.h \
     buildings/pyramids/epyramidmuseum.h \
