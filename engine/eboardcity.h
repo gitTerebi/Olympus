@@ -165,6 +165,7 @@ public:
     eTile* randomTile() const;
     const std::vector<eBuilding*>& commemorativeBuildings() const
     { return mCommemorativeBuildings; }
+    std::vector<bool> pyramidLevels(const eBuildingType type) const;
 
     int philosophyResearchCoverage() const { return mPhilosophyCoverage; }
     int athleticsLearningCoverage() const { return mAthleticsCoverage; }

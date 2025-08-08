@@ -1893,9 +1893,50 @@ bool eGameWidget::buildMouseRelease() {
         case eBuildingMode::monumentToTheSky:
         case eBuildingMode::grandMonumentToTheSky:
 
-        case eBuildingMode::minorShrine:
-        case eBuildingMode::shrine:
-        case eBuildingMode::majorShrine:
+        case eBuildingMode::minorShrineAphrodite:
+        case eBuildingMode::minorShrineApollo:
+        case eBuildingMode::minorShrineAres:
+        case eBuildingMode::minorShrineArtemis:
+        case eBuildingMode::minorShrineAthena:
+        case eBuildingMode::minorShrineAtlas:
+        case eBuildingMode::minorShrineDemeter:
+        case eBuildingMode::minorShrineDionysus:
+        case eBuildingMode::minorShrineHades:
+        case eBuildingMode::minorShrineHephaestus:
+        case eBuildingMode::minorShrineHera:
+        case eBuildingMode::minorShrineHermes:
+        case eBuildingMode::minorShrinePoseidon:
+        case eBuildingMode::minorShrineZeus:
+
+        case eBuildingMode::shrineAphrodite:
+        case eBuildingMode::shrineApollo:
+        case eBuildingMode::shrineAres:
+        case eBuildingMode::shrineArtemis:
+        case eBuildingMode::shrineAthena:
+        case eBuildingMode::shrineAtlas:
+        case eBuildingMode::shrineDemeter:
+        case eBuildingMode::shrineDionysus:
+        case eBuildingMode::shrineHades:
+        case eBuildingMode::shrineHephaestus:
+        case eBuildingMode::shrineHera:
+        case eBuildingMode::shrineHermes:
+        case eBuildingMode::shrinePoseidon:
+        case eBuildingMode::shrineZeus:
+
+        case eBuildingMode::majorShrineAphrodite:
+        case eBuildingMode::majorShrineApollo:
+        case eBuildingMode::majorShrineAres:
+        case eBuildingMode::majorShrineArtemis:
+        case eBuildingMode::majorShrineAthena:
+        case eBuildingMode::majorShrineAtlas:
+        case eBuildingMode::majorShrineDemeter:
+        case eBuildingMode::majorShrineDionysus:
+        case eBuildingMode::majorShrineHades:
+        case eBuildingMode::majorShrineHephaestus:
+        case eBuildingMode::majorShrineHera:
+        case eBuildingMode::majorShrineHermes:
+        case eBuildingMode::majorShrinePoseidon:
+        case eBuildingMode::majorShrineZeus:
 
         case eBuildingMode::pyramidToThePantheon:
         case eBuildingMode::altarOfOlympus:
@@ -1927,8 +1968,7 @@ bool eGameWidget::buildMouseRelease() {
 
             const bool r = mBoard->buildPyramid(
                                minX, maxX, minY, maxY,
-                               type, eGodType::poseidon,
-                               mRotate, mViewedCityId, pid,
+                               type, mRotate, mViewedCityId, pid,
                                mEditorMode);
             if(!r) return true;
             mGm->clearMode();

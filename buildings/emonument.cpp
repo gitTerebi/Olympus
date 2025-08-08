@@ -22,7 +22,7 @@ eMonument::~eMonument() {
     board.destroyed(cityId(), type());
 }
 
-void eMonument::erase(){
+void eMonument::erase() {
     const auto& board = getBoard();
     const auto rect = tileRect();
     for(int x = rect.x; x < rect.x + rect.w; x++) {

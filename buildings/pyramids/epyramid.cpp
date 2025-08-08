@@ -49,20 +49,19 @@ struct ePyramidTopData {
     int fSpecial2 = 0;
 };
 
-void ePyramid::initialize(const eGodType god) {
-    mGod = god;
-    const int godI = static_cast<int>(mGod);
+void ePyramid::initialize(const std::vector<bool>& levels) {
+    mDark = levels;
+    const auto type = ePyramid::type();
+    const auto god = sGod(type);
+    const int godI = static_cast<int>(god);
     mSelf = ref<ePyramid>();
     auto& board = getBoard();
     const auto cid = cityId();
     const auto& rect = tileRect();
     std::vector<ePyramidWallData> walls;
     std::vector<ePyramidTopData> top;
-    switch(type()) {
+    switch(type) {
     case eBuildingType::modestPyramid: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 1},
@@ -79,9 +78,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::pyramid: {
-        for(int i = 0; i < 3; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 1},
@@ -115,9 +111,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::greatPyramid: {
-        for(int i = 0; i < 4; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -176,9 +169,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::majesticPyramid: {
-        for(int i = 0; i < 5; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -270,9 +260,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::smallMonumentToTheSky: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -306,9 +293,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::monumentToTheSky: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 2},
@@ -353,9 +337,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::grandMonumentToTheSky: {
-        for(int i = 0; i < 3; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 2},
@@ -428,10 +409,20 @@ void ePyramid::initialize(const eGodType god) {
             {ePyramidTopType::tile, 3, 4, 4}
         };
     } break;
-    case eBuildingType::minorShrine: {
-        for(int i = 0; i < 1; i++) {
-            mDark.push_back(i % 2);
-        }
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus: {
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 1},
@@ -447,7 +438,20 @@ void ePyramid::initialize(const eGodType god) {
             {ePyramidTopType::statue, 1, 1, 1, godI, 1}
         };
     } break;
-    case eBuildingType::shrine: {
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus: {
         for(int i = 0; i < 2; i++) {
             mDark.push_back(i % 2);
         }
@@ -491,10 +495,20 @@ void ePyramid::initialize(const eGodType god) {
             {ePyramidTopType::monument, 2, 3, 3, godI, 1}
         };
     } break;
-    case eBuildingType::majorShrine: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus: {
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -569,9 +583,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::pyramidOfThePantheon: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 1, 1, 0},
             {eOrientation::topRight, 0, 2, 1, 0},
@@ -693,9 +704,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::altarOfOlympus: {
-        for(int i = 0; i < 3; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -766,9 +774,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::templeOfOlympus: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 1},
@@ -826,9 +831,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::observatoryKosmika: {
-        for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 2},
@@ -894,9 +896,6 @@ void ePyramid::initialize(const eGodType god) {
         };
     } break;
     case eBuildingType::museumAtlantika: {
-        for(int i = 0; i < 1; i++) {
-            mDark.push_back(i % 2);
-        }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
             {eOrientation::topRight, 0, 1, 0, 0},
@@ -1065,7 +1064,6 @@ void ePyramid::buildingProgressed() {
 void ePyramid::read(eReadStream& src) {
     eMonument::read(src);
     mSelf = ref<ePyramid>();
-    src >> mGod;
     int ds;
     src >> ds;
     for(int i = 0; i < ds; i++) {
@@ -1077,7 +1075,6 @@ void ePyramid::read(eReadStream& src) {
 
 void ePyramid::write(eWriteStream& dst) const {
     eMonument::write(dst);
-    dst << mGod;
     dst << mDark.size();
     for(const bool d : mDark) {
         dst << d;
@@ -1122,15 +1119,54 @@ void ePyramid::sDimensions(const eBuildingType type, int& sw, int& sh) {
         sh = 8;
         break;
 
-    case eBuildingType::minorShrine:
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus:
         sw = 3;
         sh = 3;
         break;
-    case eBuildingType::shrine:
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus:
         sw = 6;
         sh = 6;
         break;
-    case eBuildingType::majorShrine:
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus:
         sw = 8;
         sh = 8;
         break;
@@ -1157,5 +1193,178 @@ void ePyramid::sDimensions(const eBuildingType type, int& sw, int& sh) {
         break;
     default:
         break;
+    }
+}
+
+int ePyramid::sLevels(const eBuildingType type) {
+    switch(type) {
+    case eBuildingType::modestPyramid:
+        return 2;
+    case eBuildingType::pyramid:
+        return 3;
+    case eBuildingType::greatPyramid:
+        return 4;
+    case eBuildingType::majesticPyramid:
+        return 5;
+
+    case eBuildingType::smallMonumentToTheSky:
+        return 2;
+    case eBuildingType::monumentToTheSky:
+        return 2;
+    case eBuildingType::grandMonumentToTheSky:
+        return 3;
+
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus:
+        return 1;
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus:
+        return 2;
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus:
+        return 2;
+
+    case eBuildingType::pyramidOfThePantheon:
+        return 2;
+    case eBuildingType::altarOfOlympus:
+        return 3;
+    case eBuildingType::templeOfOlympus:
+        return 2;
+    case eBuildingType::observatoryKosmika:
+        return 2;
+    case eBuildingType::museumAtlantika:
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+eGodType ePyramid::sGod(const eBuildingType type) {
+    switch(type) {
+    case eBuildingType::minorShrineAphrodite:
+        return eGodType::aphrodite;
+    case eBuildingType::minorShrineApollo:
+        return eGodType::apollo;
+    case eBuildingType::minorShrineAres:
+        return eGodType::ares;
+    case eBuildingType::minorShrineArtemis:
+        return eGodType::artemis;
+    case eBuildingType::minorShrineAthena:
+        return eGodType::athena;
+    case eBuildingType::minorShrineAtlas:
+        return eGodType::atlas;
+    case eBuildingType::minorShrineDemeter:
+        return eGodType::demeter;
+    case eBuildingType::minorShrineDionysus:
+        return eGodType::dionysus;
+    case eBuildingType::minorShrineHades:
+        return eGodType::hades;
+    case eBuildingType::minorShrineHephaestus:
+        return eGodType::hephaestus;
+    case eBuildingType::minorShrineHera:
+        return eGodType::hera;
+    case eBuildingType::minorShrineHermes:
+        return eGodType::hermes;
+    case eBuildingType::minorShrinePoseidon:
+        return eGodType::poseidon;
+    case eBuildingType::minorShrineZeus:
+        return eGodType::zeus;
+
+    case eBuildingType::shrineAphrodite:
+        return eGodType::aphrodite;
+    case eBuildingType::shrineApollo:
+        return eGodType::apollo;
+    case eBuildingType::shrineAres:
+        return eGodType::ares;
+    case eBuildingType::shrineArtemis:
+        return eGodType::artemis;
+    case eBuildingType::shrineAthena:
+        return eGodType::athena;
+    case eBuildingType::shrineAtlas:
+        return eGodType::atlas;
+    case eBuildingType::shrineDemeter:
+        return eGodType::demeter;
+    case eBuildingType::shrineDionysus:
+        return eGodType::dionysus;
+    case eBuildingType::shrineHades:
+        return eGodType::hades;
+    case eBuildingType::shrineHephaestus:
+        return eGodType::hephaestus;
+    case eBuildingType::shrineHera:
+        return eGodType::hera;
+    case eBuildingType::shrineHermes:
+        return eGodType::hermes;
+    case eBuildingType::shrinePoseidon:
+        return eGodType::poseidon;
+    case eBuildingType::shrineZeus:
+        return eGodType::zeus;
+
+    case eBuildingType::majorShrineAphrodite:
+        return eGodType::aphrodite;
+    case eBuildingType::majorShrineApollo:
+        return eGodType::apollo;
+    case eBuildingType::majorShrineAres:
+        return eGodType::ares;
+    case eBuildingType::majorShrineArtemis:
+        return eGodType::artemis;
+    case eBuildingType::majorShrineAthena:
+        return eGodType::athena;
+    case eBuildingType::majorShrineAtlas:
+        return eGodType::atlas;
+    case eBuildingType::majorShrineDemeter:
+        return eGodType::demeter;
+    case eBuildingType::majorShrineDionysus:
+        return eGodType::dionysus;
+    case eBuildingType::majorShrineHades:
+        return eGodType::hades;
+    case eBuildingType::majorShrineHephaestus:
+        return eGodType::hephaestus;
+    case eBuildingType::majorShrineHera:
+        return eGodType::hera;
+    case eBuildingType::majorShrineHermes:
+        return eGodType::hermes;
+    case eBuildingType::majorShrinePoseidon:
+        return eGodType::poseidon;
+    case eBuildingType::majorShrineZeus:
+        return eGodType::zeus;
+
+    default:
+        return eGodType::poseidon;
     }
 }

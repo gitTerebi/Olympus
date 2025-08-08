@@ -16,9 +16,18 @@ enum class eAvailable {
     built
 };
 
+struct ePyramidAvailable {
+    eAvailable fA = eAvailable::notAvailable;
+    std::vector<bool> fLevels;
+};
+
 struct eAvailableBuildings {
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+
+    void allowPyramid(const eBuildingType type,
+                      const std::vector<bool>& levels);
+    std::vector<bool> pyramidLevels(const eBuildingType type) const;
 
     bool available(const eBuildingType type,
                    const int id = -1) const;
@@ -77,25 +86,6 @@ public:
 
     bool fTriremeWharf = false;
 
-    eAvailable fModestPyramid = eAvailable::notAvailable;
-    eAvailable fPyramid = eAvailable::notAvailable;
-    eAvailable fGreatPyramid = eAvailable::notAvailable;
-    eAvailable fMajesticPyramid = eAvailable::notAvailable;
-
-    eAvailable fSmallMonumentToTheSky = eAvailable::notAvailable;
-    eAvailable fMonumentToTheSky = eAvailable::notAvailable;
-    eAvailable fGrandMonumentTotTheSky = eAvailable::notAvailable;
-
-    eAvailable fMinorShrine = eAvailable::notAvailable;
-    eAvailable fShrine = eAvailable::notAvailable;
-    eAvailable fMajorShrine = eAvailable::notAvailable;
-
-    eAvailable fPyramidToThePantheon = eAvailable::notAvailable;
-    eAvailable fAltarOfOlympus = eAvailable::notAvailable;
-    eAvailable fTempleOfOlympus = eAvailable::notAvailable;
-    eAvailable fObservatoryKosmika = eAvailable::notAvailable;
-    eAvailable fMuseumAtlantika = eAvailable::notAvailable;
-
     eAvailable fAphroditeSanctuary = eAvailable::notAvailable;
     eAvailable fApolloSanctuary = eAvailable::notAvailable;
     eAvailable fAresSanctuary = eAvailable::notAvailable;
@@ -119,6 +109,8 @@ public:
     eAvailable fOdysseusHall = eAvailable::notAvailable;
     eAvailable fPerseusHall = eAvailable::notAvailable;
     eAvailable fTheseusHall = eAvailable::notAvailable;
+
+    std::map<eBuildingType, ePyramidAvailable> fPyramids;
 
     int fPopulationMonument = 0;
     int fVictoryMonument = 0;

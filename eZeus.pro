@@ -639,6 +639,8 @@ SOURCES += \
         widgets/epainter.cpp \
         widgets/eproceedbutton.cpp \
         widgets/eprogressbar.cpp \
+        widgets/epyramidselectionwidget.cpp \
+        widgets/epyramidwidget.cpp \
         widgets/equestionwidget.cpp \
         widgets/erequestdialog.cpp \
         widgets/eresolution.cpp \
@@ -2748,6 +2750,8 @@ HEADERS += \
     widgets/epainter.h \
     widgets/eproceedbutton.h \
     widgets/eprogressbar.h \
+    widgets/epyramidselectionwidget.h \
+    widgets/epyramidwidget.h \
     widgets/equestionwidget.h \
     widgets/erequestdialog.h \
     widgets/eresolution.h \

@@ -732,28 +732,6 @@ void eGameMenu::initialize(eGameBoard* const b,
         openBuildWidget(cmx, cmy, hs7spr);
     };
 
-    const std::vector<eSPR> p7spr = {eSPR{eBuildingMode::modestPyramid, eLanguage::zeusText(28, 100)},
-                                     eSPR{eBuildingMode::pyramid, eLanguage::zeusText(28, 101)},
-                                     eSPR{eBuildingMode::greatPyramid, eLanguage::zeusText(28, 102)},
-                                     eSPR{eBuildingMode::majesticPyramid, eLanguage::zeusText(28, 103)},
-
-                                     eSPR{eBuildingMode::smallMonumentToTheSky, eLanguage::zeusText(28, 104)},
-                                     eSPR{eBuildingMode::monumentToTheSky, eLanguage::zeusText(28, 105)},
-                                     eSPR{eBuildingMode::grandMonumentToTheSky, eLanguage::zeusText(28, 106)},
-
-                                     eSPR{eBuildingMode::minorShrine, eLanguage::zeusText(28, 107)},
-                                     eSPR{eBuildingMode::shrine, eLanguage::zeusText(28, 108)},
-                                     eSPR{eBuildingMode::majorShrine, eLanguage::zeusText(28, 109)},
-
-                                     eSPR{eBuildingMode::pyramidToThePantheon, eLanguage::zeusText(28, 110)},
-                                     eSPR{eBuildingMode::altarOfOlympus, eLanguage::zeusText(28, 111)},
-                                     eSPR{eBuildingMode::templeOfOlympus, eLanguage::zeusText(28, 112)},
-                                     eSPR{eBuildingMode::observatoryKosmika, eLanguage::zeusText(28, 113)},
-                                     eSPR{eBuildingMode::museumAtlantika, eLanguage::zeusText(28, 114)}};
-    const auto p7 = [this, cmx, cmy, p7spr]() {
-        openBuildWidget(cmx, cmy, p7spr);
-    };
-
 
     mMythDataW = new eMythologyDataWidget(*b, window());
     const auto buttonsVec7 = eButtonsDataVec{
@@ -766,12 +744,7 @@ void eGameMenu::initialize(eGameBoard* const b,
                              eLanguage::zeusText(28, 125),
                              hs7, 0, 1, &coll.fHeroShrines,
                              &coll.fPoseidonHeroShrines,
-                             hs7spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 157),
-                             p7, 0, 2, &coll.fPiramids,
-                             nullptr,
-                             p7spr}};
+                             hs7spr}};
     const auto ww8 = createDataWidget(mMythDataW, buttonsVec7,
                                       eLanguage::zeusText(88, 7));
 
@@ -857,6 +830,69 @@ void eGameMenu::initialize(eGameBoard* const b,
         openBuildWidget(cmx, cmy, m9spr);
     };
 
+    const std::vector<eSPR> p9spr = {eSPR{eBuildingMode::modestPyramid, eLanguage::zeusText(28, 100)},
+                                     eSPR{eBuildingMode::pyramid, eLanguage::zeusText(28, 101)},
+                                     eSPR{eBuildingMode::greatPyramid, eLanguage::zeusText(28, 102)},
+                                     eSPR{eBuildingMode::majesticPyramid, eLanguage::zeusText(28, 103)},
+
+                                     eSPR{eBuildingMode::smallMonumentToTheSky, eLanguage::zeusText(28, 104)},
+                                     eSPR{eBuildingMode::monumentToTheSky, eLanguage::zeusText(28, 105)},
+                                     eSPR{eBuildingMode::grandMonumentToTheSky, eLanguage::zeusText(28, 106)},
+
+                                     eSPR{eBuildingMode::minorShrineAphrodite, eGod::sGodName(eGodType::aphrodite) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineApollo, eGod::sGodName(eGodType::apollo) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineAres, eGod::sGodName(eGodType::ares) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineArtemis, eGod::sGodName(eGodType::artemis) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineAthena, eGod::sGodName(eGodType::athena) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineAtlas, eGod::sGodName(eGodType::atlas) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineDemeter, eGod::sGodName(eGodType::demeter) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineDionysus, eGod::sGodName(eGodType::dionysus) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineHades, eGod::sGodName(eGodType::hades) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineHephaestus, eGod::sGodName(eGodType::hephaestus) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineHera, eGod::sGodName(eGodType::hera) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineHermes, eGod::sGodName(eGodType::hermes) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrinePoseidon, eGod::sGodName(eGodType::poseidon) + " " + eLanguage::zeusText(28, 107)},
+                                     eSPR{eBuildingMode::minorShrineZeus, eGod::sGodName(eGodType::zeus) + " " + eLanguage::zeusText(28, 107)},
+
+                                     eSPR{eBuildingMode::shrineAphrodite, eGod::sGodName(eGodType::aphrodite) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineApollo, eGod::sGodName(eGodType::apollo) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineAres, eGod::sGodName(eGodType::ares) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineArtemis, eGod::sGodName(eGodType::artemis) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineAthena, eGod::sGodName(eGodType::athena) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineAtlas, eGod::sGodName(eGodType::atlas) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineDemeter, eGod::sGodName(eGodType::demeter) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineDionysus, eGod::sGodName(eGodType::dionysus) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineHades, eGod::sGodName(eGodType::hades) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineHephaestus, eGod::sGodName(eGodType::hephaestus) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineHera, eGod::sGodName(eGodType::hera) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineHermes, eGod::sGodName(eGodType::hermes) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrinePoseidon, eGod::sGodName(eGodType::poseidon) + " " + eLanguage::zeusText(28, 108)},
+                                     eSPR{eBuildingMode::shrineZeus, eGod::sGodName(eGodType::zeus) + " " + eLanguage::zeusText(28, 108)},
+
+                                     eSPR{eBuildingMode::majorShrineAphrodite, eGod::sGodName(eGodType::aphrodite) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineApollo, eGod::sGodName(eGodType::apollo) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineAres, eGod::sGodName(eGodType::ares) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineArtemis, eGod::sGodName(eGodType::artemis) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineAthena, eGod::sGodName(eGodType::athena) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineAtlas, eGod::sGodName(eGodType::atlas) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineDemeter, eGod::sGodName(eGodType::demeter) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineDionysus, eGod::sGodName(eGodType::dionysus) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineHades, eGod::sGodName(eGodType::hades) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineHephaestus, eGod::sGodName(eGodType::hephaestus) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineHera, eGod::sGodName(eGodType::hera) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineHermes, eGod::sGodName(eGodType::hermes) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrinePoseidon, eGod::sGodName(eGodType::poseidon) + " " + eLanguage::zeusText(28, 109)},
+                                     eSPR{eBuildingMode::majorShrineZeus, eGod::sGodName(eGodType::zeus) + " " + eLanguage::zeusText(28, 109)},
+
+                                     eSPR{eBuildingMode::pyramidToThePantheon, eLanguage::zeusText(28, 110)},
+                                     eSPR{eBuildingMode::altarOfOlympus, eLanguage::zeusText(28, 111)},
+                                     eSPR{eBuildingMode::templeOfOlympus, eLanguage::zeusText(28, 112)},
+                                     eSPR{eBuildingMode::observatoryKosmika, eLanguage::zeusText(28, 113)},
+                                     eSPR{eBuildingMode::museumAtlantika, eLanguage::zeusText(28, 114)}};
+    const auto p9 = [this, cmx, cmy, p9spr]() {
+        openBuildWidget(cmx, cmy, p9spr);
+    };
+
     mApplDataW = new eAppealDataWidget(*b, window());
     const auto buttonsVec = eButtonsDataVec{
                     {eBuildingMode::none,
@@ -867,7 +903,12 @@ void eGameMenu::initialize(eGameBoard* const b,
                      r9, 0, 1, &coll.fRecreation, nullptr, r9spr},
                     {eBuildingMode::none,
                      eLanguage::zeusText(28, 157),
-                     m9, 0, 2, &coll.fMonuments, nullptr, m9spr}};
+                     m9, 0, 2, &coll.fMonuments, nullptr, m9spr},
+                    {eBuildingMode::none,
+                     eLanguage::zeusText(28, 157),
+                     p9, 0, 3, &coll.fPiramids,
+                     nullptr,
+                     p9spr}};
     const auto ww10 = createDataWidget(mApplDataW, buttonsVec,
                                       eLanguage::zeusText(88, 9));
 

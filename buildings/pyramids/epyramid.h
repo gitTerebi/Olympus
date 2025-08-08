@@ -5,6 +5,11 @@
 
 enum class eGodType;
 
+struct ePyramidSettings {
+    eBuildingType fType;
+    std::vector<bool> fLevels;
+};
+
 class ePyramid : public eMonument {
 public:
     ePyramid(eGameBoard& board,
@@ -14,7 +19,7 @@ public:
 
     void erase() override;
 
-    void initialize(const eGodType god);
+    void initialize(const std::vector<bool>& levels);
 
     void buildingProgressed() override;
 
@@ -25,14 +30,13 @@ public:
 
     bool darkLevel(const int n) const { return mDark[n]; }
 
-    eGodType god() const { return mGod; }
-
     static void sDimensions(const eBuildingType type,
                             int& sw, int& sh);
+    static int sLevels(const eBuildingType type);
+    static eGodType sGod(const eBuildingType type);
 private:
     stdsptr<ePyramid> mSelf;
 
-    eGodType mGod;
     std::vector<bool> mDark;
 };
 

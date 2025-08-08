@@ -20,6 +20,7 @@ eSanctBuilding::eSanctBuilding(const std::vector<eSanctCost>& cost,
     mCost(cost),
     mTotalCost(totalCost(cost)) {
     setOverlayEnabledFunc([]() { return true; });
+    updateNextCost();
 }
 
 void eSanctBuilding::erase() {
@@ -33,6 +34,8 @@ bool eSanctBuilding::resourcesAvailable() const {
     if(s.fMarble < mNextCost.fMarble) return false;
     if(s.fWood < mNextCost.fWood) return false;
     if(s.fSculpture < mNextCost.fSculpture) return false;
+    if(s.fBlackMarble < mNextCost.fBlackMarble) return false;
+    if(s.fOrichalc < mNextCost.fOrichalc) return false;
     return true;
 }
 

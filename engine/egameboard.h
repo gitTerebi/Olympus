@@ -691,7 +691,6 @@ public:
     bool buildPyramid(const int minX, const int maxX,
                       const int minY, const int maxY,
                       const eBuildingType type,
-                      const eGodType god,
                       const bool rotate,
                       const eCityId cid,
                       const ePlayerId pid,

@@ -11,10 +11,10 @@ std::vector<eSanctCost> addElevationCost(ePyramid* const pyramid,
         const bool isDark = pyramid->darkLevel(e);
         auto cost = eSanctCost{0, 1, 0};
         if(isDark) cost.switchMarble();
-        result.insert(result.begin(), cost);
         result.insert(result.begin(), eSanctCost{0, 0, 0});
         result.insert(result.begin(), cost);
         result.insert(result.begin(), eSanctCost{0, 0, 0});
+        result.insert(result.begin(), cost);
     }
     return result;
 }

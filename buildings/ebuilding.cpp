@@ -109,7 +109,7 @@ bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
         if(r) return true;
     }
     {
-        const int min = static_cast<int>(eBuildingType::pyramid);
+        const int min = static_cast<int>(eBuildingType::modestPyramid);
         const int max = static_cast<int>(eBuildingType::pyramidMuseum);
         const int bi = static_cast<int>(bt);
         const bool r = bi >= min && bi <= max;
@@ -119,7 +119,7 @@ bool eBuilding::sSanctuaryBuilding(const eBuildingType bt) {
 }
 
 bool eBuilding::sPyramidBuilding(const eBuildingType bt) {
-    const int min = static_cast<int>(eBuildingType::pyramid);
+    const int min = static_cast<int>(eBuildingType::modestPyramid);
     const int max = static_cast<int>(eBuildingType::pyramidMuseum);
     const int bi = static_cast<int>(bt);
     const bool r = bi >= min && bi <= max;
@@ -573,13 +573,52 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
         string = 106;
         break;
 
-    case eBuildingType::minorShrine: // 3x3
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus: // 3x3
         string = 107;
         break;
-    case eBuildingType::shrine: // 6x6
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus: // 6x6
         string = 108;
         break;
-    case eBuildingType::majorShrine: // 8x8
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus: // 8x8
         string = 109;
         break;
 
@@ -1739,21 +1778,60 @@ void eBuilding::sInfoText(eBuilding* const b,
         employmentInfoString = -1;
         break;
 
-    case eBuildingType::minorShrine:
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus:
         group = 132;
         titleString = -1;
         infoString = 121;
         employmentInfoGroup = -1;
         employmentInfoString = -1;
         break;
-    case eBuildingType::shrine:
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus:
         group = 132;
         titleString = -1;
         infoString = 122;
         employmentInfoGroup = -1;
         employmentInfoString = -1;
         break;
-    case eBuildingType::majorShrine:
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus:
         group = 132;
         titleString = -1;
         infoString = 123;
@@ -2140,6 +2218,8 @@ void eBuilding::sInfoText(eBuilding* const b,
         titleString = 15;
         infoString = -1;
         employmentInfoString = -1;
+        break;
+    default:
         break;
     }
     title = eLanguage::zeusText(group, titleString);

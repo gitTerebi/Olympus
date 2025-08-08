@@ -302,12 +302,92 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
     case eBuildingMode::grandMonumentToTheSky: // 8x8
         return eBuildingType::grandMonumentToTheSky;
 
-    case eBuildingMode::minorShrine: // 3x3
-        return eBuildingType::minorShrine;
-    case eBuildingMode::shrine: // 6x6
-        return eBuildingType::shrine;
-    case eBuildingMode::majorShrine: // 8x8
-        return eBuildingType::majorShrine;
+    case eBuildingMode::minorShrineAphrodite:
+        return eBuildingType::minorShrineAphrodite;
+    case eBuildingMode::minorShrineApollo:
+        return eBuildingType::minorShrineApollo;
+    case eBuildingMode::minorShrineAres:
+        return eBuildingType::minorShrineAres;
+    case eBuildingMode::minorShrineArtemis:
+        return eBuildingType::minorShrineArtemis;
+    case eBuildingMode::minorShrineAthena:
+        return eBuildingType::minorShrineAthena;
+    case eBuildingMode::minorShrineAtlas:
+        return eBuildingType::minorShrineAtlas;
+    case eBuildingMode::minorShrineDemeter:
+        return eBuildingType::minorShrineDemeter;
+    case eBuildingMode::minorShrineDionysus:
+        return eBuildingType::minorShrineDionysus;
+    case eBuildingMode::minorShrineHades:
+        return eBuildingType::minorShrineHades;
+    case eBuildingMode::minorShrineHephaestus:
+        return eBuildingType::minorShrineHephaestus;
+    case eBuildingMode::minorShrineHera:
+        return eBuildingType::minorShrineHera;
+    case eBuildingMode::minorShrineHermes:
+        return eBuildingType::minorShrineHermes;
+    case eBuildingMode::minorShrinePoseidon:
+        return eBuildingType::minorShrinePoseidon;
+    case eBuildingMode::minorShrineZeus:
+        return eBuildingType::minorShrineZeus;
+
+    case eBuildingMode::shrineAphrodite:
+        return eBuildingType::shrineAphrodite;
+    case eBuildingMode::shrineApollo:
+        return eBuildingType::shrineApollo;
+    case eBuildingMode::shrineAres:
+        return eBuildingType::shrineAres;
+    case eBuildingMode::shrineArtemis:
+        return eBuildingType::shrineArtemis;
+    case eBuildingMode::shrineAthena:
+        return eBuildingType::shrineAthena;
+    case eBuildingMode::shrineAtlas:
+        return eBuildingType::shrineAtlas;
+    case eBuildingMode::shrineDemeter:
+        return eBuildingType::shrineDemeter;
+    case eBuildingMode::shrineDionysus:
+        return eBuildingType::shrineDionysus;
+    case eBuildingMode::shrineHades:
+        return eBuildingType::shrineHades;
+    case eBuildingMode::shrineHephaestus:
+        return eBuildingType::shrineHephaestus;
+    case eBuildingMode::shrineHera:
+        return eBuildingType::shrineHera;
+    case eBuildingMode::shrineHermes:
+        return eBuildingType::shrineHermes;
+    case eBuildingMode::shrinePoseidon:
+        return eBuildingType::shrinePoseidon;
+    case eBuildingMode::shrineZeus:
+        return eBuildingType::shrineZeus;
+
+    case eBuildingMode::majorShrineAphrodite:
+        return eBuildingType::majorShrineAphrodite;
+    case eBuildingMode::majorShrineApollo:
+        return eBuildingType::majorShrineApollo;
+    case eBuildingMode::majorShrineAres:
+        return eBuildingType::majorShrineAres;
+    case eBuildingMode::majorShrineArtemis:
+        return eBuildingType::majorShrineArtemis;
+    case eBuildingMode::majorShrineAthena:
+        return eBuildingType::majorShrineAthena;
+    case eBuildingMode::majorShrineAtlas:
+        return eBuildingType::majorShrineAtlas;
+    case eBuildingMode::majorShrineDemeter:
+        return eBuildingType::majorShrineDemeter;
+    case eBuildingMode::majorShrineDionysus:
+        return eBuildingType::majorShrineDionysus;
+    case eBuildingMode::majorShrineHades:
+        return eBuildingType::majorShrineHades;
+    case eBuildingMode::majorShrineHephaestus:
+        return eBuildingType::majorShrineHephaestus;
+    case eBuildingMode::majorShrineHera:
+        return eBuildingType::majorShrineHera;
+    case eBuildingMode::majorShrineHermes:
+        return eBuildingType::majorShrineHermes;
+    case eBuildingMode::majorShrinePoseidon:
+        return eBuildingType::majorShrinePoseidon;
+    case eBuildingMode::majorShrineZeus:
+        return eBuildingType::majorShrineZeus;
 
     case eBuildingMode::pyramidToThePantheon: // 11x9
         return eBuildingType::pyramidOfThePantheon;

@@ -3305,7 +3305,6 @@ void eGameBoard::removeAllBuildings() {
 bool eGameBoard::buildPyramid(const int minX, const int maxX,
                               const int minY, const int maxY,
                               const eBuildingType type,
-                              const eGodType god,
                               const bool rotate,
                               const eCityId cid,
                               const ePlayerId pid,
@@ -3328,7 +3327,9 @@ bool eGameBoard::buildPyramid(const int minX, const int maxX,
     const auto ct = this->tile((minX + maxX)/2, (minY + maxY)/2);
     p->setCenterTile(ct);
 
-    p->initialize(god);
+    const auto c = boardCityWithId(cid);
+    const auto levels = c->pyramidLevels(type);
+    p->initialize(levels);
 
     if(!editorDisplay) {
         const auto diff = difficulty(pid);

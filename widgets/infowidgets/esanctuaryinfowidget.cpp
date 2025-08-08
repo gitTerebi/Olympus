@@ -249,12 +249,13 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         buttonReasonW->fitHeight();
         buttonReasonW->align(eAlignment::bottom);
     } else if(m->finished()) {
-        const auto p = static_cast<ePyramid*>(m);
+        const auto title = eBuilding::sNameForBuilding(m);
+        eInfoWidget::initialize(title);
         const auto type = m->type();
         const int string = 114 + static_cast<int>(type) -
                            static_cast<int>(eBuildingType::modestPyramid);
         auto text = eLanguage::zeusText(132, string);
-        const auto god = p->god();
+        const auto god = ePyramid::sGod(type);
         const auto name = eGod::sGodName(god);
         eStringHelpers::replace(text, "[god]", name);
         addText(text);

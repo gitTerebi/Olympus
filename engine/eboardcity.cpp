@@ -1250,6 +1250,10 @@ eTile* eBoardCity::randomTile() const {
     return mTiles[id];
 }
 
+std::vector<bool> eBoardCity::pyramidLevels(const eBuildingType type) const {
+    return mAvailableBuildings.pyramidLevels(type);
+}
+
 double coverageMultiplier(const int pop) {
     if(pop < 250) return 0.125;
     else if(pop < 500) return 0.25;

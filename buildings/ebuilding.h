@@ -184,9 +184,50 @@ enum class eBuildingType {
     monumentToTheSky, // 6x6
     grandMonumentToTheSky, // 8x8
 
-    minorShrine, // 3x3
-    shrine, // 6x6
-    majorShrine, // 8x8
+    minorShrineAphrodite, // 3x3
+    minorShrineApollo,
+    minorShrineAres,
+    minorShrineArtemis,
+    minorShrineAthena,
+    minorShrineAtlas,
+    minorShrineDemeter,
+    minorShrineDionysus,
+    minorShrineHades,
+    minorShrineHephaestus,
+    minorShrineHera,
+    minorShrineHermes,
+    minorShrinePoseidon,
+    minorShrineZeus,
+
+    shrineAphrodite, // 6x6
+    shrineApollo,
+    shrineAres,
+    shrineArtemis,
+    shrineAthena,
+    shrineAtlas,
+    shrineDemeter,
+    shrineDionysus,
+    shrineHades,
+    shrineHephaestus,
+    shrineHera,
+    shrineHermes,
+    shrinePoseidon,
+    shrineZeus,
+
+    majorShrineAphrodite, // 8x8
+    majorShrineApollo,
+    majorShrineAres,
+    majorShrineArtemis,
+    majorShrineAthena,
+    majorShrineAtlas,
+    majorShrineDemeter,
+    majorShrineDionysus,
+    majorShrineHades,
+    majorShrineHephaestus,
+    majorShrineHera,
+    majorShrineHermes,
+    majorShrinePoseidon,
+    majorShrineZeus,
 
     pyramidOfThePantheon, // 11x9
     altarOfOlympus, // 8x8
