@@ -3,6 +3,8 @@
 #include "elanguage.h"
 #include "pak/zeusfile.h"
 
+#include "buildings/pyramids/epyramid.h"
+
 eWorldMap pakMapIdToMap(const uint8_t mapId) {
     if(mapId == 1) {
         return eWorldMap::greece1;
@@ -286,6 +288,12 @@ struct ePakGod {
     eGodType fType = eGodType::zeus;
 };
 
+struct ePakPyramid {
+    bool fAllowed = false;
+    eBuildingType fType = eBuildingType::modestPyramid;
+    std::vector<bool> fLevels;
+};
+
 void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
                                    const std::vector<ePakGod>& friendlyGods,
                                    const eCityId cid) {
@@ -310,6 +318,29 @@ void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
     printf("\n");
 }
 
+eBuildingType pakIdToPyramidType(const uint8_t id) {
+    if(id == 100) return eBuildingType::modestPyramid;
+    else if(id == 101) return eBuildingType::pyramid;
+    else if(id == 102) return eBuildingType::greatPyramid;
+    else if(id == 103) return eBuildingType::majesticPyramid;
+
+    else if(id == 104) return eBuildingType::smallMonumentToTheSky;
+    else if(id == 105) return eBuildingType::monumentToTheSky;
+    else if(id == 106) return eBuildingType::grandMonumentToTheSky;
+
+    else if(id == 107) return eBuildingType::minorShrineAphrodite;
+    else if(id == 108) return eBuildingType::shrineAphrodite;
+    else if(id == 109) return eBuildingType::majorShrineAphrodite;
+
+    else if(id == 110) return eBuildingType::pyramidOfThePantheon;
+    else if(id == 111) return eBuildingType::altarOfOlympus;
+    else if(id == 112) return eBuildingType::templeOfOlympus;
+    else if(id == 113) return eBuildingType::observatoryKosmika;
+    else if(id == 114) return eBuildingType::museumAtlantika;
+    printf("Invalid pyramid type id %i\n", id);
+    return eBuildingType::modestPyramid;
+}
+
 eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     valid = true;
     if(id == 0) return eGodType::zeus;
@@ -329,6 +360,74 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     printf("Invalid god id %i\n", id);
     valid = false;
     return eGodType::zeus;
+}
+
+void readEpisodeAllowedPyramids(
+        ZeusFile& file, std::vector<ePakPyramid>& pyramids) {
+    const uint8_t n = file.readUByte();
+    file.skipBytes(3);
+    for(int i = 0; i < n; i++) {
+        const uint8_t typeId = file.readUByte();
+        std::vector<bool> levels;
+        file.skipBytes(3);
+        auto type = pakIdToPyramidType(typeId);
+        if(type == eBuildingType::minorShrineAphrodite ||
+           type == eBuildingType::shrineAphrodite ||
+           type == eBuildingType::majorShrineAphrodite) {
+            const uint8_t godId = file.readUByte();
+            bool valid;
+            const auto godType = pakIdToGodType(godId, valid);
+            type = ePyramid::sSwitchGod(type, godType);
+        } else {
+            file.skipBytes(1);
+        }
+        file.skipBytes(7);
+        pyramids.push_back({false, type, levels});
+    }
+}
+
+void readEpisodeEnabledPyramids(
+        ZeusFile& file, std::vector<ePakPyramid>& pyramids) {
+    for(auto& p : pyramids) {
+        const uint8_t id = file.readUByte();
+        uint8_t levelsId;
+        bool enabled = false;
+        if(id >= 0xC0) {
+            enabled = true;
+            levelsId = id - 0xC0;
+        } else if(id >= 0x40) {
+            enabled = true;
+            levelsId = id - 0x40;
+        } else {
+            levelsId = id;
+        }
+        const int levels = ePyramid::sLevels(p.fType);
+        p.fLevels.clear();
+        for(int i = 0; i < levels; i++) {
+            const uint8_t pow = std::pow(2, i);
+            p.fLevels.push_back(levelsId & pow);
+        }
+        p.fAllowed = p.fAllowed || enabled;
+        file.skipBytes(11);
+        if(p.fAllowed) {
+            const auto name = eBuilding::sNameForBuilding(p.fType);
+            printf("%s", name.c_str());
+            for(const bool l : p.fLevels) {
+                printf(l ? " b" : " w");
+            }
+            printf("\n");
+        }
+    }
+    printf("\n");
+}
+
+void applyPyramidsToEpisode(const std::vector<ePakPyramid>& pyramids,
+                            eEpisode& ep, const eCityId cid) {
+    auto& a = ep.fAvailableBuildings[cid];
+    for(const auto& p : pyramids) {
+        if(!p.fAllowed) continue;
+        a.allowPyramid(p.fType, p.fLevels);
+    }
 }
 
 eEpisodeGoalType pakIdToEpisodeGoalType(const uint8_t id) {
@@ -517,6 +616,7 @@ void eCampaign::readPak(const std::string& name,
 
     std::vector<ePakGod> friendlyGods;
     friendlyGods.resize(6);
+    std::vector<ePakPyramid> pyramids;
 
     for(int i = 0; i < nParentEps; i++) {
         printf("parent episode %i:\n\n", i);
@@ -544,10 +644,20 @@ void eCampaign::readPak(const std::string& name,
                 v.fType = pakIdToGodType(godId, v.fValid);
                 file.skipBytes(3);
             }
+
+            if(atlantean) {
+                file.seek(35960 + i*epInc);
+                readEpisodeAllowedPyramids(file, pyramids);
+            }
         }
 
         file.seek(35944 + i*epInc);
         readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+        if(atlantean) {
+            file.seek(35972 + i*epInc);
+            readEpisodeEnabledPyramids(file, pyramids);
+            applyPyramidsToEpisode(pyramids, *ep, cid);
+        }
 
         if(newVersion) {
             file.seek(838331 + i*4);
@@ -612,6 +722,15 @@ void eCampaign::readPak(const std::string& name,
             file.seek(38184 + i*epInc);
         }
         readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+
+        if(atlantean) {
+            std::vector<ePakPyramid> pyramids;
+            file.seek(38960 + i*epInc);
+            readEpisodeAllowedPyramids(file, pyramids);
+            file.seek(38972 + i*epInc);
+            readEpisodeEnabledPyramids(file, pyramids);
+            applyPyramidsToEpisode(pyramids, *ep, cid);
+        }
 
         if(newVersion) {
             file.seek(836491 + i*4);

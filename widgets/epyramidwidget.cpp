@@ -66,67 +66,7 @@ void ePyramidWidget::initialize(const ePSptr& e, const eAction& updater) {
     if(chooseGod) {
         const auto b = new eGodButton(window());
         b->initialize([e, updater](const eGodType god) {
-            const int godId = static_cast<int>(god);
-            eBuildingType type;
-            switch(e->fType) {
-            case eBuildingType::minorShrineAphrodite:
-            case eBuildingType::minorShrineApollo:
-            case eBuildingType::minorShrineAres:
-            case eBuildingType::minorShrineArtemis:
-            case eBuildingType::minorShrineAthena:
-            case eBuildingType::minorShrineAtlas:
-            case eBuildingType::minorShrineDemeter:
-            case eBuildingType::minorShrineDionysus:
-            case eBuildingType::minorShrineHades:
-            case eBuildingType::minorShrineHephaestus:
-            case eBuildingType::minorShrineHera:
-            case eBuildingType::minorShrineHermes:
-            case eBuildingType::minorShrinePoseidon:
-            case eBuildingType::minorShrineZeus: {
-                type = eBuildingType::minorShrineAphrodite;
-            } break;
-
-            case eBuildingType::shrineAphrodite:
-            case eBuildingType::shrineApollo:
-            case eBuildingType::shrineAres:
-            case eBuildingType::shrineArtemis:
-            case eBuildingType::shrineAthena:
-            case eBuildingType::shrineAtlas:
-            case eBuildingType::shrineDemeter:
-            case eBuildingType::shrineDionysus:
-            case eBuildingType::shrineHades:
-            case eBuildingType::shrineHephaestus:
-            case eBuildingType::shrineHera:
-            case eBuildingType::shrineHermes:
-            case eBuildingType::shrinePoseidon:
-            case eBuildingType::shrineZeus: {
-                type = eBuildingType::shrineAphrodite;
-            } break;
-
-            case eBuildingType::majorShrineAphrodite:
-            case eBuildingType::majorShrineApollo:
-            case eBuildingType::majorShrineAres:
-            case eBuildingType::majorShrineArtemis:
-            case eBuildingType::majorShrineAthena:
-            case eBuildingType::majorShrineAtlas:
-            case eBuildingType::majorShrineDemeter:
-            case eBuildingType::majorShrineDionysus:
-            case eBuildingType::majorShrineHades:
-            case eBuildingType::majorShrineHephaestus:
-            case eBuildingType::majorShrineHera:
-            case eBuildingType::majorShrineHermes:
-            case eBuildingType::majorShrinePoseidon:
-            case eBuildingType::majorShrineZeus: {
-                type = eBuildingType::majorShrineAphrodite;
-            } break;
-            default:
-                assert(false);
-                break;
-            }
-
-            const int typeId = static_cast<int>(type) + godId;
-            e->fType = static_cast<eBuildingType>(typeId);
-
+            e->fType = ePyramid::sSwitchGod(e->fType, god);
             updater();
         });
         b->setType(ePyramid::sGod(e->fType));

@@ -34,6 +34,8 @@ public:
                             int& sw, int& sh);
     static int sLevels(const eBuildingType type);
     static eGodType sGod(const eBuildingType type);
+    static eBuildingType sSwitchGod(const eBuildingType srcType,
+                                    const eGodType god);
 private:
     stdsptr<ePyramid> mSelf;
 

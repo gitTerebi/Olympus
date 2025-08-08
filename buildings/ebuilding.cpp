@@ -586,9 +586,11 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::minorShrineHera:
     case eBuildingType::minorShrineHermes:
     case eBuildingType::minorShrinePoseidon:
-    case eBuildingType::minorShrineZeus: // 3x3
+    case eBuildingType::minorShrineZeus: { // 3x3
         string = 107;
-        break;
+        const auto text = eLanguage::zeusText(group, string);
+        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+    } break;
     case eBuildingType::shrineAphrodite:
     case eBuildingType::shrineApollo:
     case eBuildingType::shrineAres:
@@ -602,9 +604,11 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::shrineHera:
     case eBuildingType::shrineHermes:
     case eBuildingType::shrinePoseidon:
-    case eBuildingType::shrineZeus: // 6x6
+    case eBuildingType::shrineZeus: { // 6x6
         string = 108;
-        break;
+        const auto text = eLanguage::zeusText(group, string);
+        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+    } break;
     case eBuildingType::majorShrineAphrodite:
     case eBuildingType::majorShrineApollo:
     case eBuildingType::majorShrineAres:
@@ -618,9 +622,11 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::majorShrineHera:
     case eBuildingType::majorShrineHermes:
     case eBuildingType::majorShrinePoseidon:
-    case eBuildingType::majorShrineZeus: // 8x8
+    case eBuildingType::majorShrineZeus: { // 8x8
         string = 109;
-        break;
+        const auto text = eLanguage::zeusText(group, string);
+        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+    } break;
 
     case eBuildingType::pyramidOfThePantheon: // 11x9
         string = 110;
