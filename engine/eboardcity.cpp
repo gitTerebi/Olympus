@@ -15,6 +15,7 @@
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/etriremewharf.h"
+#include "buildings/pyramids/epyramid.h"
 
 #include "evectorhelpers.h"
 
@@ -1838,6 +1839,24 @@ int eBoardCity::countWorkingTriremes() const {
         if(tw->hasTrireme()) c++;
     }
     return c;
+}
+
+ePyramid* eBoardCity::pyramid(const eBuildingType type) const {
+    for(const auto b : mTimedBuildings) {
+        const auto t = b->type();
+        if(t == type) return static_cast<ePyramid*>(b);
+    }
+    return nullptr;
+}
+
+std::vector<ePyramid*> eBoardCity::pyramids() const {
+    std::vector<ePyramid*> result;
+    for(const auto b : mTimedBuildings) {
+        if(const auto p = dynamic_cast<ePyramid*>(b)) {
+            result.push_back(p);
+        }
+    }
+    return result;
 }
 
 void eBoardCity::startPlague(eSmallHouse* const h) {

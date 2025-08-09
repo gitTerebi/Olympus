@@ -5,6 +5,7 @@
 
 #include "evaluebutton.h"
 #include "egodbutton.h"
+#include "epyramidbutton.h"
 #include "echoosebutton.h"
 #include "emainwindow.h"
 #include "ecitybutton.h"
@@ -12,6 +13,7 @@
 #include "eresourcebutton.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
+#include "buildings/pyramids/epyramid.h"
 #include "elanguage.h"
 #include "elabeledwidget.h"
 
@@ -41,17 +43,9 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     detailsW->setNoPadding();
 
     switch(e->fType) {
-    case eEpisodeGoalType::population: {
-        const auto b = new eValueButton(window());
-        b->initialize(0, 99999);
-        b->setValue(e->fRequiredCount);
-        b->setValueChangeAction([e, updateText](const int c) {
-            e->fRequiredCount = c;
-            updateText();
-        });
-        detailsW->addWidget(b);
-    } break;
-    case eEpisodeGoalType::treasury: {
+    case eEpisodeGoalType::population:
+    case eEpisodeGoalType::treasury:
+    case eEpisodeGoalType::hippodrome: {
         const auto b = new eValueButton(window());
         b->initialize(0, 99999);
         b->setValue(e->fRequiredCount);
@@ -62,7 +56,6 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::sanctuary: {
-        e->fRequiredCount = 100;
         const auto g = new eGodButton(window());
         g->initialize([e, updateText](const eGodType god) {
             e->fEnumInt1 = static_cast<int>(god);
@@ -71,6 +64,51 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         const auto t = static_cast<eGodType>(e->fEnumInt1);
         g->setType(t);
         detailsW->addWidget(g);
+    } break;
+    case eEpisodeGoalType::pyramid: {
+        const auto g = new eGodButton(window());
+
+        const auto b = new eValueButton(window());
+
+        const auto p = new ePyramidButton(window());
+        p->initialize([g, b, e, updateText](const eBuildingType type) {
+            const bool toGod = ePyramid::sIsToGod(type);
+            if(toGod) {
+                g->setType(ePyramid::sGod(type));
+                g->show();
+            } else {
+                g->hide();
+            }
+            const bool isNone = type == eBuildingType::none;
+            if(!isNone) e->fRequiredCount = 100;
+            else e->fRequiredCount = 1;
+            b->setVisible(isNone);
+            b->setValue(e->fRequiredCount);
+            e->fEnumInt1 = static_cast<int>(type);
+        });
+        detailsW->addWidget(p);
+        auto t = static_cast<eBuildingType>(e->fEnumInt1);
+        p->setType(t);
+
+        g->initialize([e, updateText](const eGodType god) {
+            auto t = static_cast<eBuildingType>(e->fEnumInt1);
+            t = ePyramid::sSwitchGod(t, god);
+            e->fEnumInt1 = static_cast<int>(t);
+            updateText();
+        });
+        const bool toGod = ePyramid::sIsToGod(t);
+        if(toGod) g->setType(ePyramid::sGod(t));
+        g->setVisible(toGod);
+        detailsW->addWidget(g);
+
+        b->initialize(0, 9);
+        b->setValue(e->fRequiredCount);
+        b->setValueChangeAction([e, updateText](const int c) {
+            e->fRequiredCount = c;
+            updateText();
+        });
+        b->setVisible(t == eBuildingType::none);
+        detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::support: {
         const auto type = new eFramedButton(window());
@@ -167,7 +205,6 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::rule: {
-        e->fRequiredCount = 1;
         const auto cityButton = new eCityButton(window());
         cityButton->initialize(board, [e, updateText](const stdsptr<eWorldCity>& c){
             e->fCity = c;
@@ -309,7 +346,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     }
 
-    detailsW->stackHorizontally();
+    detailsW->stackVertically(p);
     detailsW->fitContent();
     cont->addWidget(detailsW);
 

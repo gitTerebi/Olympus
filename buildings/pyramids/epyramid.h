@@ -36,6 +36,7 @@ public:
     static eGodType sGod(const eBuildingType type);
     static eBuildingType sSwitchGod(const eBuildingType srcType,
                                     const eGodType god);
+    static bool sIsToGod(const eBuildingType type);
 private:
     stdsptr<ePyramid> mSelf;
 

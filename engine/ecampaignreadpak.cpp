@@ -467,11 +467,13 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
     const uint16_t value2 = file.readUShort();
     file.skipBytes(2);
     const uint8_t value3 = file.readUByte();
-    file.skipBytes(63);
+    file.skipBytes(3);
+    const uint8_t value4 = file.readUByte();
+    file.skipBytes(59);
 
     const auto goalType = pakIdToEpisodeGoalType(typeId);
-    printf("%s %i %i %i\n", eEpisodeGoal::sText(goalType).c_str(),
-           value1, value2, value3);
+    printf("%s %i %i %i %i\n", eEpisodeGoal::sText(goalType).c_str(),
+           value1, value2, value3, value4);
     const auto goal = std::make_shared<eEpisodeGoal>();
     goal->fType = goalType;
     switch(goalType) {
@@ -479,11 +481,35 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
     case eEpisodeGoalType::treasury:
         goal->fRequiredCount = value1;
         break;
+    case eEpisodeGoalType::pyramid: {
+        if(value2 == 0) {
+            goal->fEnumInt1 = -1;
+            goal->fRequiredCount = value4;
+        } else {
+            auto type = pakIdToPyramidType(value2);
+            const bool isToGod = ePyramid::sIsToGod(type);
+            if(isToGod) {
+                bool valid;
+                const auto god = pakIdToGodType(value1, valid);
+                type = ePyramid::sSwitchGod(type, god);
+            }
+            goal->fEnumInt1 = static_cast<int>(type);
+            goal->fRequiredCount = 100;
+        }
+    } break;
+    case eEpisodeGoalType::hippodrome: {
+        goal->fRequiredCount = value1;
+    } break;
     case eEpisodeGoalType::sanctuary: {
         bool valid;
         const auto godType = pakIdToGodType(value1, valid);
-        if(valid) goal->fEnumInt1 = static_cast<int>(godType);
-        else goal->fRequiredCount = value3;
+        if(valid) {
+            goal->fEnumInt1 = static_cast<int>(godType);
+            goal->fRequiredCount = 100;
+        } else {
+            goal->fEnumInt1 = -1;
+            goal->fRequiredCount = value3;
+        }
     } break;
     case eEpisodeGoalType::support: {
         const auto btype = pakIdToBannerType(value1);

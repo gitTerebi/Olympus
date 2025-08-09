@@ -8,6 +8,7 @@
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "engine/egameboard.h"
+#include "buildings/pyramids/epyramid.h"
 
 stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     const auto result = std::make_shared<eEpisodeGoal>();
@@ -91,7 +92,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
         return t;
     } break;
     case eEpisodeGoalType::sanctuary: {
-        if(fRequiredCount == 0) {
+        if(fEnumInt1 != -1) {
             auto t = eLanguage::zeusText(194, 19);
             const auto type = static_cast<eGodType>(fEnumInt1);
             eStringHelpers::replace(t, "[god]", eGod::sGodName(type));
@@ -103,6 +104,23 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
             eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
             return t;
         }
+    } break;
+    case eEpisodeGoalType::pyramid: {
+        if(fEnumInt1 != -1) {
+            const auto type = static_cast<eBuildingType>(fEnumInt1);
+            return eBuilding::sNameForBuilding(type);
+        } else if(fRequiredCount == 1) {
+            return eLanguage::zeusText(194, 39);
+        } else {
+            auto t = eLanguage::zeusText(194, 40);
+            eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+            return t;
+        }
+    } break;
+    case eEpisodeGoalType::hippodrome: {
+        auto t = eLanguage::zeusText(194, 41);
+        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        return t;
     } break;
     case eEpisodeGoalType::support: {
         auto t = eLanguage::zeusText(194, 24);
@@ -203,11 +221,22 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
         eStringHelpers::replace(text, "[amount]", treStr);
         return text;
     } break;
-    case eEpisodeGoalType::sanctuary: {
-        auto text = eLanguage::zeusText(194, 45);
-        const auto perStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(text, "[percent]", perStr + "%");
-        return text;
+    case eEpisodeGoalType::sanctuary:
+    case eEpisodeGoalType::pyramid: {
+        if(fEnumInt1 == -1) {
+            auto text = eLanguage::zeusText(194, 48);
+            const auto perStr = std::to_string(fStatusCount);
+            eStringHelpers::replace(text, "[amount]", perStr);
+            return text;
+        } else {
+            auto text = eLanguage::zeusText(194, 45);
+            const auto perStr = std::to_string(fStatusCount);
+            eStringHelpers::replace(text, "[percent]", perStr + "%");
+            return text;
+        }
+    } break;
+    case eEpisodeGoalType::hippodrome: {
+        return eLanguage::zeusText(194, 69);
     } break;
     case eEpisodeGoalType::support: {
         auto text = eLanguage::zeusText(194, 50);
@@ -324,17 +353,65 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
     } break;
     case eEpisodeGoalType::sanctuary: {
         const bool wasMet = met();
-        const auto type = static_cast<eGodType>(fEnumInt1);
         fStatusCount = 0;
         const auto cids = b->personPlayerCitiesOnBoard();
-        for(const auto cid : cids) {
-            const auto s = b->sanctuary(cid, type);
-            const int sc = s ? s->progress() : 0;
-            if(sc > fStatusCount) fStatusCount = sc;
+        if(fEnumInt1 == -1) {
+            for(const auto cid : cids) {
+                const auto ss = b->sanctuaries(cid);
+                for(const auto s : ss) {
+                    if(s->finished()) fStatusCount++;
+                }
+            }
+        } else {
+            const auto type = static_cast<eGodType>(fEnumInt1);
+            for(const auto cid : cids) {
+                const auto s = b->sanctuary(cid, type);
+                const int sc = s ? s->progress() : 0;
+                if(sc > fStatusCount) fStatusCount = sc;
+            }
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
             b->showTip(pid, eLanguage::zeusText(194, 77));
+        } else if(wasMet && !isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 78));
+        }
+    } break;
+    case eEpisodeGoalType::pyramid: {
+        const bool wasMet = met();
+        fStatusCount = 0;
+        const auto cids = b->personPlayerCitiesOnBoard();
+        if(fEnumInt1 == -1) {
+            for(const auto cid : cids) {
+                const auto ss = b->pyramids(cid);
+                for(const auto s : ss) {
+                    if(s->finished()) fStatusCount++;
+                }
+            }
+        } else {
+            const auto type = static_cast<eBuildingType>(fEnumInt1);
+            for(const auto cid : cids) {
+                const auto s = b->pyramid(cid, type);
+                const int sc = s ? s->progress() : 0;
+                if(sc > fStatusCount) fStatusCount = sc;
+            }
+        }
+
+        const bool isMet = met();
+        if(!wasMet && isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 97));
+        } else if(wasMet && !isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 98));
+        }
+    } break;
+    case eEpisodeGoalType::hippodrome: {
+        const bool wasMet = met();
+        fStatusCount = fRequiredCount;
+        const bool isMet = met();
+        if(!wasMet && isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 99));
+        } else if(wasMet && !isMet) {
+            b->showTip(pid, eLanguage::zeusText(194, 100));
         }
     } break;
     case eEpisodeGoalType::support: {

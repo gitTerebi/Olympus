@@ -2686,6 +2686,18 @@ eSanctuary* eGameBoard::sanctuary(const eCityId cid, const eGodType god) const {
     return c->sanctuary(god);
 }
 
+std::vector<ePyramid*> eGameBoard::pyramids(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return {};
+    return c->pyramids();
+}
+
+ePyramid* eGameBoard::pyramid(const eCityId cid, const eBuildingType type) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->pyramid(type);
+}
+
 std::vector<eHerosHall*> eGameBoard::heroHalls(const eCityId cid) const {
     const auto c = boardCityWithId(cid);
     if(!c) return {};

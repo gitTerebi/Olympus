@@ -17,6 +17,7 @@
 
 class ePalace;
 class eSanctuary;
+class ePyramid;
 class eHerosHall;
 class eStorageBuilding;
 class eEmployingBuilding;
@@ -278,6 +279,9 @@ public:
     { return mSanctuaries; }
     const std::vector<eHerosHall*>& heroHalls() const
     { return mHeroHalls; }
+
+    ePyramid* pyramid(const eBuildingType type) const;
+    std::vector<ePyramid*> pyramids() const;
 
     void startPlague(eSmallHouse* const h);
     stdsptr<ePlague> plagueForHouse(eSmallHouse* const h);

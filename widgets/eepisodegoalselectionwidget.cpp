@@ -60,6 +60,18 @@ void eEpisodeGoalSelectionWidget::initialize(
             const auto type = types[val];
             const auto e = std::make_shared<eEpisodeGoal>();
             e->fType = type;
+            switch(type) {
+            case eEpisodeGoalType::sanctuary:
+                e->fRequiredCount = 100;
+                break;
+            case eEpisodeGoalType::pyramid:
+                e->fRequiredCount = 1;
+                e->fEnumInt1 = -1;
+                break;
+            case eEpisodeGoalType::rule:
+                e->fRequiredCount = 1;
+                break;
+            }
 
             if(e) {
                 add(e);

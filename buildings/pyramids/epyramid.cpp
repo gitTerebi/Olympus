@@ -1432,3 +1432,56 @@ eBuildingType ePyramid::sSwitchGod(const eBuildingType srcType,
     const int typeId = static_cast<int>(type) + godId;
     return static_cast<eBuildingType>(typeId);
 }
+
+bool ePyramid::sIsToGod(const eBuildingType type) {
+    switch(type) {
+    case eBuildingType::minorShrineAphrodite:
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus:
+
+    case eBuildingType::shrineAphrodite:
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus:
+
+    case eBuildingType::majorShrineAphrodite:
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus:
+        return true;
+    default:
+        return false;
+    }
+    return false;
+}

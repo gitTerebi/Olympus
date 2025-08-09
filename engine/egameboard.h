@@ -55,6 +55,7 @@ class eReceiveRequestEvent;
 class eInvasionEvent;
 class eAgoraBase;
 class eHerosHall;
+class ePyramid;
 
 class eThreadPool;
 
@@ -215,6 +216,9 @@ public:
 
     std::vector<eSanctuary*> sanctuaries(const eCityId cid) const;
     eSanctuary* sanctuary(const eCityId cid, const eGodType god) const;
+
+    std::vector<ePyramid*> pyramids(const eCityId cid) const;
+    ePyramid* pyramid(const eCityId cid, const eBuildingType type) const;
 
     std::vector<eHerosHall*> heroHalls(const eCityId cid) const;
     eHerosHall* heroHall(const eCityId cid, const eHeroType hero) const;
