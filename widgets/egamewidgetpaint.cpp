@@ -1462,7 +1462,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             bool flatSanct = false;
             if(terrUb) {
                 if(const auto sb = dynamic_cast<eSanctBuilding*>(terrUb)) {
-                    flatSanct = sb->progress() <= 0;
+                    const bool pyramid = eBuilding::sPyramidBuilding(terrBt);
+                    if(!pyramid) flatSanct = sb->progress() <= 0;
                 }
             }
             const auto terr = tile->terrain();
