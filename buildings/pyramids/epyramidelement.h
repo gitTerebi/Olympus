@@ -24,11 +24,16 @@ public:
     eTextureSpace
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
+    eTextureSpace
+    getBuildingTextureSpace(const int tx, const int ty,
+                            const eTileSize size) const;
 
     void progressed() override;
 
     int currentElevation() const { return mCurrentElevation; }
     int elevation() const { return mElevation; }
+
+    bool renderBuilding() const;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

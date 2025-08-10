@@ -252,8 +252,99 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         const auto title = eBuilding::sNameForBuilding(m);
         eInfoWidget::initialize(title);
         const auto type = m->type();
-        const int string = 114 + static_cast<int>(type) -
-                           static_cast<int>(eBuildingType::modestPyramid);
+        int string = -1;
+        switch(type) {
+        case eBuildingType::modestPyramid:
+            string = 114;
+            break;
+        case eBuildingType::pyramid:
+            string = 115;
+            break;
+        case eBuildingType::greatPyramid:
+            string = 116;
+            break;
+        case eBuildingType::majesticPyramid:
+            string = 117;
+            break;
+
+        case eBuildingType::smallMonumentToTheSky:
+            string = 118;
+            break;
+        case eBuildingType::monumentToTheSky:
+            string = 119;
+            break;
+        case eBuildingType::grandMonumentToTheSky:
+            string = 120;
+            break;
+
+        case eBuildingType::minorShrineAphrodite:
+        case eBuildingType::minorShrineApollo:
+        case eBuildingType::minorShrineAres:
+        case eBuildingType::minorShrineArtemis:
+        case eBuildingType::minorShrineAthena:
+        case eBuildingType::minorShrineAtlas:
+        case eBuildingType::minorShrineDemeter:
+        case eBuildingType::minorShrineDionysus:
+        case eBuildingType::minorShrineHades:
+        case eBuildingType::minorShrineHephaestus:
+        case eBuildingType::minorShrineHera:
+        case eBuildingType::minorShrineHermes:
+        case eBuildingType::minorShrinePoseidon:
+        case eBuildingType::minorShrineZeus:
+            string = 121;
+            break;
+        case eBuildingType::shrineAphrodite:
+        case eBuildingType::shrineApollo:
+        case eBuildingType::shrineAres:
+        case eBuildingType::shrineArtemis:
+        case eBuildingType::shrineAthena:
+        case eBuildingType::shrineAtlas:
+        case eBuildingType::shrineDemeter:
+        case eBuildingType::shrineDionysus:
+        case eBuildingType::shrineHades:
+        case eBuildingType::shrineHephaestus:
+        case eBuildingType::shrineHera:
+        case eBuildingType::shrineHermes:
+        case eBuildingType::shrinePoseidon:
+        case eBuildingType::shrineZeus:
+            string = 122;
+            break;
+        case eBuildingType::majorShrineAphrodite:
+        case eBuildingType::majorShrineApollo:
+        case eBuildingType::majorShrineAres:
+        case eBuildingType::majorShrineArtemis:
+        case eBuildingType::majorShrineAthena:
+        case eBuildingType::majorShrineAtlas:
+        case eBuildingType::majorShrineDemeter:
+        case eBuildingType::majorShrineDionysus:
+        case eBuildingType::majorShrineHades:
+        case eBuildingType::majorShrineHephaestus:
+        case eBuildingType::majorShrineHera:
+        case eBuildingType::majorShrineHermes:
+        case eBuildingType::majorShrinePoseidon:
+        case eBuildingType::majorShrineZeus:
+            string = 123;
+            break;
+
+        case eBuildingType::pyramidOfThePantheon:
+            string = 124;
+            break;
+        case eBuildingType::altarOfOlympus:
+            string = 125;
+            break;
+        case eBuildingType::templeOfOlympus:
+            string = 126;
+            break;
+        case eBuildingType::observatoryKosmika:
+            string = 127;
+            break;
+        case eBuildingType::museumAtlantika:
+            string = 128;
+            break;
+        default:
+            break;
+        }
+
         auto text = eLanguage::zeusText(132, string);
         const auto god = ePyramid::sGod(type);
         const auto name = eGod::sGodName(god);
@@ -349,11 +440,11 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             }
             if(nbm == 1) {
                 auto remNbm = eLanguage::zeusText(178, 28);
-                eStringHelpers::replace(remNbm, "[amount]", nsStr);
+                eStringHelpers::replace(remNbm, "[amount]", nbmStr);
                 rem += "\n" + remNbm;
             } else if(nbm > 1) {
                 auto remNbm = eLanguage::zeusText(178, 29);
-                eStringHelpers::replace(remNbm, "[amount]", nsStr);
+                eStringHelpers::replace(remNbm, "[amount]", nbmStr);
                 rem += "\n" + remNbm;
             }
             addText(rem);

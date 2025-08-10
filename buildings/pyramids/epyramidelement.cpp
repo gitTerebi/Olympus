@@ -41,33 +41,20 @@ ePyramidElement::ePyramidElement(ePyramid* const pyramid,
 eTextureSpace ePyramidElement::getTextureSpace(
         const int tx, const int ty,
         const eTileSize size) const {
-    int p = progress();
-    if(p > 4*mElevation) {
-        auto result = eSanctBuilding::getTextureSpace(tx, ty, size);
-        result.fClamp = false;
-        if(mDim == 6) {
-            result.fX = -2.5;
-            result.fY = 2.5;
-        } else if(mDim == 5) {
-            result.fX = -2.0;
-            result.fY = 2.0;
-        } else if(mDim == 4) {
-            result.fX = -1.5;
-            result.fY = 1.5;
-        } else if(mDim == 2) {
-            result.fX = -0.5;
-            result.fY = 0.5;
-        }
-        return result;
+    auto& board = getBoard();
+    if(renderBuilding()) {
+        const auto dir = board.direction();
+        if(dir != eWorldDirection::N && mDim > 1) return {nullptr};
+        return getBuildingTextureSpace(tx, ty, size);
     }
     const SDL_Point pt{tx, ty};
     const auto& r = tileRect();
     if(!SDL_PointInRect(&pt, &r)) return {nullptr};
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    int p = progress();
     if(mCurrentElevation == 0 && p == 0) {
         const auto& coll = blds.fSanctuarySpace;
-        auto& board = getBoard();
         const auto tile = board.tile(tx, ty);
         const int seed = tile->seed();
         eTextureSpace result;
@@ -158,6 +145,11 @@ void ePyramidElement::progressed() {
     }
 }
 
+bool ePyramidElement::renderBuilding() const {
+    const int p = progress();
+    return p > 4*mElevation;
+}
+
 void ePyramidElement::read(eReadStream& src) {
     eSanctBuilding::read(src);
 
@@ -168,4 +160,25 @@ void ePyramidElement::write(eWriteStream& dst) const {
     eSanctBuilding::write(dst);
 
     dst << mCurrentElevation;
+}
+
+eTextureSpace ePyramidElement::getBuildingTextureSpace(
+        const int tx, const int ty,
+        const eTileSize size) const {
+    auto result = eSanctBuilding::getTextureSpace(tx, ty, size);
+    result.fClamp = false;
+    if(mDim == 6) {
+        result.fX = -2.5;
+        result.fY = 2.5;
+    } else if(mDim == 5) {
+        result.fX = -2.0;
+        result.fY = 2.0;
+    } else if(mDim == 4) {
+        result.fX = -1.5;
+        result.fY = 1.5;
+    } else if(mDim == 2) {
+        result.fX = -0.5;
+        result.fY = 0.5;
+    }
+    return result;
 }

@@ -1030,16 +1030,26 @@ void ePyramid::initialize(const std::vector<bool>& levels) {
                 if(x == 0 && y == 0) continue;
                 const int tx = rect.x + t.fX - x;
                 const int ty = rect.y + t.fY - y;
-                const auto b = e::make_shared<ePyramidBuildingPart>(
+                const auto bb = e::make_shared<ePyramidBuildingPart>(
                                    this, board, t.fElevation, cid);
                 const auto tile = board.tile(tx, ty);
-                tile->setUnderBuilding(b);
-                b->setCenterTile(tile);
-                b->addUnderBuilding(tile);
-                b->setTileRect({tx, ty, 1, 1});
+                tile->setUnderBuilding(bb);
+                bb->setCenterTile(tile);
+                bb->addUnderBuilding(tile);
+                bb->setTileRect({tx, ty, 1, 1});
 
-                b->setMonument(this);
-                registerElement(b);
+                bb->setMonument(this);
+                registerElement(bb);
+
+                if(y == 0 && x == w - 1) {
+                    bb->setPaint(b.get(), eWorldDirection::E);
+                } else if(y == h - 1 && x == w - 1) {
+                    bb->setPaint(b.get(), eWorldDirection::S);
+                } else if(y == h - 1 && x == 0) {
+                    bb->setPaint(b.get(), eWorldDirection::W);
+                } else {
+                    bb->setPaint(b.get(), eWorldDirection::N);
+                }
             }
         }
     }
