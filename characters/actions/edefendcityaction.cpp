@@ -87,8 +87,9 @@ void eDefendCityAction::goToTarget() {
         mStage = eDefendAttackCityStage::comeback;
         return;
     }
-    const int ip = mEvent->invasionPoint();
-    const auto tile = board.landInvasionTile(cid, ip);
+    const auto shoreTile = mEvent->shoreTile();
+    const auto tile = shoreTile ? shoreTile :
+                                  mEvent->invasionTile();
     if(!tile) {
         mStage = eDefendAttackCityStage::comeback;
         return;

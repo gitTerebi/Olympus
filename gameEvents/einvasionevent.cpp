@@ -11,6 +11,7 @@
 #include "evectorhelpers.h"
 #include "eplayerconquestevent.h"
 #include "engine/epathfinder.h"
+#include "eiteratesquare.h"
 
 #include <algorithm>
 
@@ -103,12 +104,30 @@ eTile* nearestDisembarkTile(eTile* const tile, eGameBoard& board,
     return final;
 }
 
+
+eTile* nearestShoreTile(eTile* const tile) {
+    eTile* result = nullptr;
+    const auto prcs = [&](const int dx, const int dy) {
+        const auto t = tile->tileRel<eTile>(dx, dy);
+        if(!t->hasBridge() && t->walkable()) {
+            result = t;
+            return true;
+        }
+        return false;
+    };
+    for(int i = 0; i < 9; i++) {
+        eIterateSquare::iterateSquare(i, prcs);
+        if(result) return result;
+    }
+    return result;
+}
+
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     const auto cid = cityId();
     board->removeInvasion(this);
-    const auto tile = board->invasionTile(cid, mInvasionPoint);
+    const auto tile = invasionTile();
 
     int infantry = 0;
     int cavalry = 0;
@@ -130,13 +149,14 @@ void eInvasionEvent::trigger() {
         const auto invadingCid = mCity->cityId();
         const auto invadingC = board->boardCityWithId(invadingCid);
         if(tile->hasWater()) {
-            const auto disembarkTile = nearestDisembarkTile(tile, *board, cid);
-            if(!disembarkTile) return;
+            if(!mDisembarkTile || !mShoreTile) return;
             const auto eh = new eInvasionHandler(*board, cid, mCity, this);
             if(invadingC) {
-                eh->initializeSeaInvasion(tile, disembarkTile, mForces, mConquestEvent);
+                eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile,
+                                          mForces, mConquestEvent);
             } else {
-                eh->initializeSeaInvasion(tile, disembarkTile, infantry, cavalry, archers);
+                eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile,
+                                          infantry, cavalry, archers);
             }
         } else {
             const auto eh = new eInvasionHandler(*board, cid, mCity, this);
@@ -238,6 +258,7 @@ void eInvasionEvent::read(eReadStream& src) {
     mForces.read(*board, *wboard, src);
 
     src >> mInvasionPoint;
+    updateDisembarkAndShoreTile();
 
     src >> mWarned;
     mFirstWarning.read(src);
@@ -258,6 +279,18 @@ void eInvasionEvent::setCity(const stdsptr<eWorldCity>& c) {
         const auto iw = static_cast<eInvasionWarningEvent*>(ws.get());
         iw->setCity(c);
     }
+}
+
+void eInvasionEvent::setInvasionPoint(const int p) {
+    mInvasionPoint = p;
+    updateDisembarkAndShoreTile();
+}
+
+eTile* eInvasionEvent::invasionTile() const {
+    const auto cid = cityId();
+    const auto board = gameBoard();
+    const auto tile = board->invasionTile(cid, mInvasionPoint);
+    return tile;
 }
 
 void eInvasionEvent::setFirstWarning(const eDate& w) {
@@ -315,6 +348,18 @@ int eInvasionEvent::bribeCost() const {
                        diff, eCharacterType::horseman);
     const int bribe = rt*mArchers + ht*mInfantry + hm*mCavalry;
     return bribe;
+}
+
+void eInvasionEvent::updateDisembarkAndShoreTile() {
+    mDisembarkTile = nullptr;
+    const auto tile = invasionTile();
+    if(!tile) return;
+    const auto terr = tile->terrain();
+    if(terr != eTerrain::water) return;
+    auto& board = *gameBoard();
+    const auto cid = cityId();
+    mDisembarkTile = nearestDisembarkTile(tile, board, cid);
+    mShoreTile = nearestShoreTile(mDisembarkTile);
 }
 
 void eInvasionEvent::updateWarnings() {

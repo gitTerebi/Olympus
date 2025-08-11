@@ -45,7 +45,9 @@ public:
     void setArchers(const int a) { mArchers = a; }
 
     int invasionPoint() const { return mInvasionPoint; }
-    void setInvasionPoint(const int p) { mInvasionPoint = p; }
+    void setInvasionPoint(const int p);
+    eTile* invasionTile() const;
+    eTile* shoreTile() const { return mShoreTile; }
 
     void setFirstWarning(const eDate& w);
     eDate firstWarning() const { return mFirstWarning; }
@@ -65,6 +67,7 @@ public:
     void updateWarnings();
 private:
     int bribeCost() const;
+    void updateDisembarkAndShoreTile();
 
     stdsptr<eWorldCity> mCity;
     std::vector<eInvasionHandler*> mHandlers;
@@ -79,6 +82,8 @@ private:
     eEnlistedForces mForces;
 
     int mInvasionPoint = 0;
+    eTile* mDisembarkTile = nullptr;
+    eTile* mShoreTile = nullptr;
 
     bool mWarned = false;
     eDate mFirstWarning;

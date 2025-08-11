@@ -174,48 +174,33 @@ void eInvasionHandler::disembark() {
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
 }
 
-eTile* nearestShoreTile(eTile* const tile) {
-    eTile* result = nullptr;
-    const auto prcs = [&](const int dx, const int dy) {
-        const auto t = tile->tileRel<eTile>(dx, dy);
-        if(!t->hasBridge() && t->walkable()) {
-            result = t;
-            return true;
-        }
-        return false;
-    };
-    for(int i = 0; i < 9; i++) {
-        eIterateSquare::iterateSquare(i, prcs);
-        if(result) return result;
-    }
-    return result;
-}
-
 void eInvasionHandler::initializeSeaInvasion(
-        eTile* const tile,
+        eTile* const waterTile,
         eTile* const disembarkTile,
+        eTile* const shoreTile,
         const int infantry,
         const int cavalry,
         const int archers) {
     mDisembarkTile = disembarkTile;
-    mTile = nearestShoreTile(disembarkTile);
+    mTile = shoreTile;
 
     mInfantryLeft = infantry;
     mCavalryLeft = cavalry;
     mArchersLeft = archers;
 
-    initializeBoats(tile, mInfantryLeft + mCavalryLeft + mArchersLeft);
+    initializeBoats(waterTile, mInfantryLeft + mCavalryLeft + mArchersLeft);
 }
 
 void eInvasionHandler::initializeSeaInvasion(
-        eTile* const tile,
+        eTile* const waterTile,
         eTile* const disembarkTile,
+        eTile* const shoreTile,
         const eEnlistedForces& forces,
         ePlayerConquestEvent* const conquestEvent) {
     int troops = 0;
 
     mDisembarkTile = disembarkTile;
-    mTile = nearestShoreTile(disembarkTile);
+    mTile = shoreTile;
 
     mConquestEvent = conquestEvent;
     extractSSFromForces(forces, mForcesLeft);
@@ -237,7 +222,7 @@ void eInvasionHandler::initializeSeaInvasion(
         troops += infantry + cavalry + archers;
     }
 
-    initializeBoats(tile, troops);
+    initializeBoats(waterTile, troops);
 }
 
 template <typename T>

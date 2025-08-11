@@ -47,14 +47,16 @@ public:
 
     void disembark();
 
-    void initializeSeaInvasion(eTile* const tile,
+    void initializeSeaInvasion(eTile* const waterTile,
                                eTile* const disembarkTile,
+                               eTile* const shoreTile,
                                const int infantry,
                                const int cavalry,
                                const int archers);
 
-    void initializeSeaInvasion(eTile* const tile,
+    void initializeSeaInvasion(eTile* const waterTile,
                                eTile* const disembarkTile,
+                               eTile* const shoreTile,
                                const eEnlistedForces& forces,
                                ePlayerConquestEvent* const conquestEvent);
 
