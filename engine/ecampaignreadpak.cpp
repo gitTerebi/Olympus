@@ -458,6 +458,19 @@ eBannerType pakIdToBannerType(const uint16_t id) {
     return eBannerType::rockThrower;
 }
 
+eWorldMap pakIdToWorldMap(const uint8_t id) {
+    if(id == 1) return eWorldMap::greece1;
+    if(id == 2) return eWorldMap::greece2;
+    if(id == 3) return eWorldMap::greece3;
+    if(id == 4) return eWorldMap::greece4;
+    if(id == 5) return eWorldMap::greece5;
+    if(id == 6) return eWorldMap::greece6;
+    if(id == 7) return eWorldMap::greece7;
+    if(id == 8 || id == 9 || id == 10) return eWorldMap::greece8;
+
+    printf("Invalid world map type id %i\n", id);
+}
+
 void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
     const bool newVersion = file.isNewVersion();
     const uint8_t typeId = file.readUByte();
@@ -718,6 +731,7 @@ void eCampaign::readPak(const std::string& name,
         board = e::make_shared<eGameBoard>();
         board->setWorldBoard(&mWorldBoard);
         const bool r = file.loadBoard(*board, cid);
+
         if(r) {
             const auto c = board->addCityToBoard(cid);
             c->setAtlantean(atlantean);
@@ -774,5 +788,6 @@ void eCampaign::readPak(const std::string& name,
         }
         printf("\n");
     }
+
     loadStrings();
 }
