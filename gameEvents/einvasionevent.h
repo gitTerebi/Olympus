@@ -48,6 +48,7 @@ public:
     void setInvasionPoint(const int p);
     eTile* invasionTile() const;
     eTile* shoreTile() const { return mShoreTile; }
+    eTile* landInvasionTile() const;
 
     void setFirstWarning(const eDate& w);
     eDate firstWarning() const { return mFirstWarning; }

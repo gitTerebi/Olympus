@@ -392,6 +392,7 @@ private:
     bool replace3By3AestheticByCommemorative();
     void updateResourceTiles();
     void updateForestTiles();
+    void updateCityDefense();
 
     eGameBoard& mBoard;
 
@@ -503,7 +504,6 @@ private:
     std::vector<eMonster*> mMonsters;
     std::vector<eBanner*> mBanners;
 
-    std::vector<eSoldierBanner*> mAllSoldierBanners;
     std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
     std::vector<stdsptr<eSoldierBanner>> mPalaceSoldierBanners;
 
@@ -578,6 +578,8 @@ private:
 
     bool mNextAttackPlanned = false;
     eDate mNextAttackDate;
+
+    int mLookForCityDefense = 0;
 };
 
 #endif // EBOARDCITY_H

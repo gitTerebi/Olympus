@@ -293,6 +293,11 @@ eTile* eInvasionEvent::invasionTile() const {
     return tile;
 }
 
+eTile* eInvasionEvent::landInvasionTile() const {
+    if(mShoreTile) return mShoreTile;
+    return invasionTile();
+}
+
 void eInvasionEvent::setFirstWarning(const eDate& w) {
     mFirstWarning = w;
     mWarned = true;

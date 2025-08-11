@@ -206,6 +206,15 @@ void eBoardCity::incTime(const int by) {
     }
 
     mCityEvents.handleNewDate(date);
+
+    if(p && !p->isPerson()) {
+        const int lookForCityDefenseCheck = 5000;
+        mLookForCityDefense += by;
+        if(mLookForCityDefense > lookForCityDefenseCheck) {
+            mLookForCityDefense -= lookForCityDefenseCheck;
+            updateCityDefense();
+        }
+    }
 }
 
 void eBoardCity::acquired() {
@@ -400,6 +409,29 @@ void eBoardCity::updateForestTiles() {
             break;
         default:
             break;
+        }
+    }
+}
+
+void eBoardCity::updateCityDefense() {
+    const auto i = mBoard.invasionToDefend(mId);
+    if(i) {
+        const auto tile = i->landInvasionTile();
+        if(!tile) return;
+        const int tx = tile->x();
+        const int ty = tile->y();
+        std::vector<eSoldierBanner*> bs;
+        for(const auto& b : mSoldierBanners) {
+            if(b->isAbroad()) continue;
+            b->callSoldiers();
+            bs.push_back(b.get());
+        }
+        eSoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
+    } else if(mInvasionHandlers.empty()) {
+        for(const auto& b : mSoldierBanners) {
+            if(b->isAbroad()) continue;
+            b->moveToDefault();
+            b->goHome();
         }
     }
 }
