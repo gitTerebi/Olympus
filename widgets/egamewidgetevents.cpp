@@ -549,6 +549,566 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::famineAllyInitial: {
+        showMessage(ed, inst.fFamineAllyS.fInitial, true);
+        return;
+    } break;
+    case eEvent::famineAllyReminder: {
+        showMessage(ed, inst.fFamineAllyS.fReminder, true);
+        return;
+    } break;
+    case eEvent::famineAllyOverdue: {
+        showMessage(ed, inst.fFamineAllyS.fOverdue, true);
+        return;
+    } break;
+    case eEvent::famineAllyWarning: {
+        showMessage(ed, inst.fFamineAllyS.fWarning, true);
+        return;
+    } break;
+    case eEvent::famineAllyComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFamineAllyS.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineAllyTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFamineAllyS.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineAllyRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFamineAllyS.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::famineRivalInitial: {
+        showMessage(ed, inst.fFamineRivalD.fInitial, true);
+        return;
+    } break;
+    case eEvent::famineRivalReminder: {
+        showMessage(ed, inst.fFamineRivalD.fReminder, true);
+        return;
+    } break;
+    case eEvent::famineRivalOverdue: {
+        showMessage(ed, inst.fFamineRivalD.fOverdue, true);
+        return;
+    } break;
+    case eEvent::famineRivalWarning: {
+        showMessage(ed, inst.fFamineRivalD.fWarning, true);
+        return;
+    } break;
+    case eEvent::famineRivalComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFamineRivalD.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineRivalTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFamineRivalD.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineRivalRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFamineRivalD.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::famineSubjectInitial: {
+        showMessage(ed, inst.fFamineSubjectP.fInitial, true);
+        return;
+    } break;
+    case eEvent::famineSubjectReminder: {
+        showMessage(ed, inst.fFamineSubjectP.fReminder, true);
+        return;
+    } break;
+    case eEvent::famineSubjectOverdue: {
+        showMessage(ed, inst.fFamineSubjectP.fOverdue, true);
+        return;
+    } break;
+    case eEvent::famineSubjectWarning: {
+        showMessage(ed, inst.fFamineSubjectP.fWarning, true);
+        return;
+    } break;
+    case eEvent::famineSubjectComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFamineSubjectP.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineSubjectTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFamineSubjectP.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineSubjectRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFamineSubjectP.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::famineParentInitial: {
+        showMessage(ed, inst.fFamineParentR.fInitial, true);
+        return;
+    } break;
+    case eEvent::famineParentReminder: {
+        showMessage(ed, inst.fFamineParentR.fReminder, true);
+        return;
+    } break;
+    case eEvent::famineParentOverdue: {
+        showMessage(ed, inst.fFamineParentR.fOverdue, true);
+        return;
+    } break;
+    case eEvent::famineParentWarning: {
+        showMessage(ed, inst.fFamineParentR.fWarning, true);
+        return;
+    } break;
+    case eEvent::famineParentComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFamineParentR.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineParentTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFamineParentR.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::famineParentRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFamineParentR.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::projectAllyInitial: {
+        showMessage(ed, inst.fProjectAllyS.fInitial, true);
+        return;
+    } break;
+    case eEvent::projectAllyReminder: {
+        showMessage(ed, inst.fProjectAllyS.fReminder, true);
+        return;
+    } break;
+    case eEvent::projectAllyOverdue: {
+        showMessage(ed, inst.fProjectAllyS.fOverdue, true);
+        return;
+    } break;
+    case eEvent::projectAllyWarning: {
+        showMessage(ed, inst.fProjectAllyS.fWarning, true);
+        return;
+    } break;
+    case eEvent::projectAllyComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fProjectAllyS.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectAllyTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fProjectAllyS.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectAllyRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fProjectAllyS.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::projectRivalInitial: {
+        showMessage(ed, inst.fProjectRivalD.fInitial, true);
+        return;
+    } break;
+    case eEvent::projectRivalReminder: {
+        showMessage(ed, inst.fProjectRivalD.fReminder, true);
+        return;
+    } break;
+    case eEvent::projectRivalOverdue: {
+        showMessage(ed, inst.fProjectRivalD.fOverdue, true);
+        return;
+    } break;
+    case eEvent::projectRivalWarning: {
+        showMessage(ed, inst.fProjectRivalD.fWarning, true);
+        return;
+    } break;
+    case eEvent::projectRivalComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fProjectRivalD.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectRivalTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fProjectRivalD.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectRivalRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fProjectRivalD.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::projectSubjectInitial: {
+        showMessage(ed, inst.fProjectSubjectP.fInitial, true);
+        return;
+    } break;
+    case eEvent::projectSubjectReminder: {
+        showMessage(ed, inst.fProjectSubjectP.fReminder, true);
+        return;
+    } break;
+    case eEvent::projectSubjectOverdue: {
+        showMessage(ed, inst.fProjectSubjectP.fOverdue, true);
+        return;
+    } break;
+    case eEvent::projectSubjectWarning: {
+        showMessage(ed, inst.fProjectSubjectP.fWarning, true);
+        return;
+    } break;
+    case eEvent::projectSubjectComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fProjectSubjectP.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectSubjectTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fProjectSubjectP.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectSubjectRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fProjectSubjectP.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::projectParentInitial: {
+        showMessage(ed, inst.fProjectParentR.fInitial, true);
+        return;
+    } break;
+    case eEvent::projectParentReminder: {
+        showMessage(ed, inst.fProjectParentR.fReminder, true);
+        return;
+    } break;
+    case eEvent::projectParentOverdue: {
+        showMessage(ed, inst.fProjectParentR.fOverdue, true);
+        return;
+    } break;
+    case eEvent::projectParentWarning: {
+        showMessage(ed, inst.fProjectParentR.fWarning, true);
+        return;
+    } break;
+    case eEvent::projectParentComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fProjectParentR.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectParentTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fProjectParentR.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::projectParentRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fProjectParentR.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::festivalAllyInitial: {
+        showMessage(ed, inst.fFestivalAllyS.fInitial, true);
+        return;
+    } break;
+    case eEvent::festivalAllyReminder: {
+        showMessage(ed, inst.fFestivalAllyS.fReminder, true);
+        return;
+    } break;
+    case eEvent::festivalAllyOverdue: {
+        showMessage(ed, inst.fFestivalAllyS.fOverdue, true);
+        return;
+    } break;
+    case eEvent::festivalAllyWarning: {
+        showMessage(ed, inst.fFestivalAllyS.fWarning, true);
+        return;
+    } break;
+    case eEvent::festivalAllyComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFestivalAllyS.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalAllyTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFestivalAllyS.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalAllyRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFestivalAllyS.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::festivalRivalInitial: {
+        showMessage(ed, inst.fFestivalRivalD.fInitial, true);
+        return;
+    } break;
+    case eEvent::festivalRivalReminder: {
+        showMessage(ed, inst.fFestivalRivalD.fReminder, true);
+        return;
+    } break;
+    case eEvent::festivalRivalOverdue: {
+        showMessage(ed, inst.fFestivalRivalD.fOverdue, true);
+        return;
+    } break;
+    case eEvent::festivalRivalWarning: {
+        showMessage(ed, inst.fFestivalRivalD.fWarning, true);
+        return;
+    } break;
+    case eEvent::festivalRivalComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFestivalRivalD.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalRivalTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFestivalRivalD.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalRivalRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFestivalRivalD.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::festivalSubjectInitial: {
+        showMessage(ed, inst.fFestivalSubjectP.fInitial, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectReminder: {
+        showMessage(ed, inst.fFestivalSubjectP.fReminder, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectOverdue: {
+        showMessage(ed, inst.fFestivalSubjectP.fOverdue, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectWarning: {
+        showMessage(ed, inst.fFestivalSubjectP.fWarning, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFestivalSubjectP.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFestivalSubjectP.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalSubjectRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFestivalSubjectP.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::festivalParentInitial: {
+        showMessage(ed, inst.fFestivalParentR.fInitial, true);
+        return;
+    } break;
+    case eEvent::festivalParentReminder: {
+        showMessage(ed, inst.fFestivalParentR.fReminder, true);
+        return;
+    } break;
+    case eEvent::festivalParentOverdue: {
+        showMessage(ed, inst.fFestivalParentR.fOverdue, true);
+        return;
+    } break;
+    case eEvent::festivalParentWarning: {
+        showMessage(ed, inst.fFestivalParentR.fWarning, true);
+        return;
+    } break;
+    case eEvent::festivalParentComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFestivalParentR.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalParentTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFestivalParentR.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::festivalParentRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFestivalParentR.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::financialWoesAllyInitial: {
+        showMessage(ed, inst.fFinancialWoesAllyS.fInitial, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyReminder: {
+        showMessage(ed, inst.fFinancialWoesAllyS.fReminder, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyOverdue: {
+        showMessage(ed, inst.fFinancialWoesAllyS.fOverdue, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyWarning: {
+        showMessage(ed, inst.fFinancialWoesAllyS.fWarning, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFinancialWoesAllyS.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFinancialWoesAllyS.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesAllyRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFinancialWoesAllyS.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::financialWoesRivalInitial: {
+        showMessage(ed, inst.fFinancialWoesRivalD.fInitial, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalReminder: {
+        showMessage(ed, inst.fFinancialWoesRivalD.fReminder, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalOverdue: {
+        showMessage(ed, inst.fFinancialWoesRivalD.fOverdue, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalWarning: {
+        showMessage(ed, inst.fFinancialWoesRivalD.fWarning, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFinancialWoesRivalD.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFinancialWoesRivalD.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesRivalRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFinancialWoesRivalD.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::financialWoesSubjectInitial: {
+        showMessage(ed, inst.fFinancialWoesSubjectP.fInitial, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectReminder: {
+        showMessage(ed, inst.fFinancialWoesSubjectP.fReminder, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectOverdue: {
+        showMessage(ed, inst.fFinancialWoesSubjectP.fOverdue, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectWarning: {
+        showMessage(ed, inst.fFinancialWoesSubjectP.fWarning, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFinancialWoesSubjectP.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFinancialWoesSubjectP.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesSubjectRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFinancialWoesSubjectP.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
+    case eEvent::financialWoesParentInitial: {
+        showMessage(ed, inst.fFinancialWoesParentR.fInitial, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentReminder: {
+        showMessage(ed, inst.fFinancialWoesParentR.fReminder, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentOverdue: {
+        showMessage(ed, inst.fFinancialWoesParentR.fOverdue, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentWarning: {
+        showMessage(ed, inst.fFinancialWoesParentR.fWarning, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentComply: {
+        const auto m = eMessages::favorMessage(
+                    inst.fFinancialWoesParentR.fComply);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentTooLate: {
+        const auto m = eMessages::dfavorMessage(
+                    inst.fFinancialWoesParentR.fTooLate);
+        showMessage(ed, m, true);
+        return;
+    } break;
+    case eEvent::financialWoesParentRefuse: {
+        const auto m = eMessages::dfavorMessage(
+                           inst.fFinancialWoesParentR.fRefuse);
+        showMessage(ed, m, true);
+        return;
+    } break;
+
     case eEvent::unemployment: {
         showMessage(ed, inst.fUnemployment, true);
         return;

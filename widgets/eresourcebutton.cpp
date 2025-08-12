@@ -5,18 +5,22 @@
 
 void eResourceButton::initialize(const eResourceAction& ract,
                                  const eResourceType res,
-                                 const bool showFood) {
-    setPressAction([this, ract, res, showFood]() {
-        auto resources = eResourceTypeHelpers::extractResourceTypes(res);
-        if(showFood) {
-            resources.push_back(eResourceType::food);
-        }
+                                 const bool showFood,
+                                 const bool showNone) {
+    auto resources = eResourceTypeHelpers::extractResourceTypes(res);
+    if(showNone) {
+        resources.insert(resources.begin(), eResourceType::none);
+    }
+    if(showFood) {
+        resources.push_back(eResourceType::food);
+    }
 
-        std::vector<std::string> resourceNames;
-        for(const auto res : resources) {
-            const auto str = eResourceTypeHelpers::typeName(res);
-            resourceNames.push_back(str);
-        }
+    std::vector<std::string> resourceNames;
+    for(const auto res : resources) {
+        const auto str = eResourceTypeHelpers::typeName(res);
+        resourceNames.push_back(str);
+    }
+    setPressAction([this, ract, resources, resourceNames]() {
         const auto choose = new eChooseButton(window());
         const auto act = [this, resources, ract](const int val) {
             const auto r = resources[val];

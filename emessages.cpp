@@ -661,6 +661,26 @@ bool eMessages::loadImpl() {
     loadGeneralRequest(fGeneralRequestSubjectP, "P");
     loadGeneralRequest(fGeneralRequestParentR, "R");
 
+    loadGeneralRequest(fFamineAllyS, "S", "famine_relief_relief");
+    loadGeneralRequest(fFamineRivalD, "D", "famine_relief_relief");
+    loadGeneralRequest(fFamineSubjectP, "P", "famine_relief_relief");
+    loadGeneralRequest(fFamineParentR, "R", "famine_relief_relief");
+
+    loadGeneralRequest(fProjectAllyS, "S", "building_project");
+    loadGeneralRequest(fProjectRivalD, "D", "building_project");
+    loadGeneralRequest(fProjectSubjectP, "P", "building_project");
+    loadGeneralRequest(fProjectParentR, "R", "building_project");
+
+    loadGeneralRequest(fFestivalAllyS, "S", "great_festival");
+    loadGeneralRequest(fFestivalRivalD, "D", "great_festival");
+    loadGeneralRequest(fFestivalSubjectP, "P", "great_festival");
+    loadGeneralRequest(fFestivalParentR, "R", "great_festival");
+
+    loadGeneralRequest(fFinancialWoesAllyS, "S", "financial_woes");
+    loadGeneralRequest(fFinancialWoesRivalD, "D", "financial_woes");
+    loadGeneralRequest(fFinancialWoesSubjectP, "P", "financial_woes");
+    loadGeneralRequest(fFinancialWoesParentR, "R", "financial_woes");
+
     loadGeneralRequest(fTributeRequest, "D", "tribute_due");
 
     loadResourceGranted(fGiftGranted, "gift");

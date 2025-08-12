@@ -336,6 +336,6 @@ bool GameFile::searchPattern(const uint8_t pattern[], int length) {
 	} while (buflength == bufsize);
 	
     in.seek(returnpos);
-	return false;
+    return false;
 }
 

@@ -50,6 +50,9 @@ std::string eResourceTypeHelpers::typeName(const eResourceType type) {
     int group = 23;
     int string = -1;
     switch(type) {
+    case eResourceType::none:
+        string = 0;
+        break;
     case eResourceType::urchin:
         string = 1;
         break;

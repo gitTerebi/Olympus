@@ -2255,7 +2255,7 @@ void eGameBoard::incTime(const int by) {
                 const auto type = cc->recTributeType();
                 const int count = cc->recTributeCount();
                 rr->initialize(0, type, count, cc, false);
-                rr->setTributeRequest(true);
+                rr->setRequestType(eReceiveRequestType::tribute);
                 rr->initializeDate(mDate);
                 addRootGameEvent(rr);
             }

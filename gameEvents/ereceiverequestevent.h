@@ -5,8 +5,19 @@
 
 #include "engine/eworldcity.h"
 
+#include "characters/gods/egod.h"
+
 struct eReason;
 struct eCityRequest;
+
+enum class eReceiveRequestType {
+    tribute,
+    famine,
+    general,
+    project,
+    festival,
+    financialWoes
+};
 
 class eReceiveRequestEvent : public eGameEvent {
 public:
@@ -31,26 +42,53 @@ public:
     void setCity(const stdsptr<eWorldCity>& c);
 
     eResourceType resourceType() const { return mResource; }
-    void setResourceType(const eResourceType type);
-
     int resourceCount() const { return mCount; }
-    void setResourceCount(const int c);
+
+    int minResourceCount() const { return mMinCount; }
+    void setMinResourceCount(const int c) { mMinCount = c; }
+
+    int maxResourceCount() const { return mMaxCount; }
+    void setMaxResourceCount(const int c) { mMaxCount = c; }
+
+    const std::vector<eResourceType>& resourceTypes() const
+    { return mResources; }
+    eResourceType resourceType(const int id) const
+    { return mResources[id]; }
+    void setResourceType(const int id, const eResourceType type)
+    { mResources[id] = type; }
 
     eCityRequest cityRequest() const;
     void dispatch(const eCityId cid);
     void fulfillWithoutCost();
 
-    void setTributeRequest(const bool t) { mTributeRequest = t; }
-    bool tributeRequest() const { return mTributeRequest; }
+    void setRequestType(const eReceiveRequestType t)
+    { mRequestType = t; }
+    eReceiveRequestType requestType() const
+    { return mRequestType; }
+
+    void setGod(const eGodType god) { mGod = god; }
+    eGodType god() const { return mGod; }
 private:
     void finished(eEventTrigger& t, const eReason& r);
 
-    bool mTributeRequest = false;
+    void chooseTypeAndCount();
+
+    eReceiveRequestType mRequestType = eReceiveRequestType::general;
 
     bool mFinish = false;
     int mPostpone = 0;
+
+    std::vector<eResourceType> mResources = {eResourceType::fleece,
+                                             eResourceType::fleece,
+                                             eResourceType::fleece};
+    int mMinCount = 8;
+    int mMaxCount = 16;
+
     eResourceType mResource = eResourceType::fleece;
     int mCount = 16;
+
+    eGodType mGod = eGodType::zeus;
+
     stdsptr<eWorldCity> mCity;
 
     stdsptr<eEventTrigger> mEarlyTrigger;

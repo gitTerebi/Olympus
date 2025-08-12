@@ -1,9 +1,11 @@
-#include "ecampaign.h"
+﻿#include "ecampaign.h"
 
 #include "elanguage.h"
 #include "pak/zeusfile.h"
 
 #include "buildings/pyramids/epyramid.h"
+
+#include "gameEvents/ereceiverequestevent.h"
 
 eWorldMap pakMapIdToMap(const uint8_t mapId) {
     if(mapId == 1) {
@@ -77,6 +79,10 @@ eResourceType pakResourceByteToType(
         return eResourceType::oliveOil;
     } else if(!newVersion && byte == 18) {
         return eResourceType::wine;
+    } else if(!newVersion && byte == 19) {
+        return eResourceType::drachmas;
+    } else if(!newVersion && byte == 21) {
+        return eResourceType::food;
     } else if(newVersion && byte == 16) {
         return eResourceType::blackMarble;
     } else if(newVersion && byte == 17) {
@@ -318,27 +324,27 @@ void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
     printf("\n");
 }
 
-eBuildingType pakIdToPyramidType(const uint8_t id) {
-    if(id == 100) return eBuildingType::modestPyramid;
-    else if(id == 101) return eBuildingType::pyramid;
-    else if(id == 102) return eBuildingType::greatPyramid;
-    else if(id == 103) return eBuildingType::majesticPyramid;
+eGameEventType pakIdToEventType(const uint8_t id, bool& valid) {
+    if(id == 0x1A) {
+        valid = false;
+        return eGameEventType::receiveRequest;
+    }
+    valid = true;
+    if(id == 1) return eGameEventType::receiveRequest;
 
-    else if(id == 104) return eBuildingType::smallMonumentToTheSky;
-    else if(id == 105) return eBuildingType::monumentToTheSky;
-    else if(id == 106) return eBuildingType::grandMonumentToTheSky;
+    valid = false;
+    printf("Invalid event type id %i\n", id);
+    return eGameEventType::receiveRequest;
+}
 
-    else if(id == 107) return eBuildingType::minorShrineAphrodite;
-    else if(id == 108) return eBuildingType::shrineAphrodite;
-    else if(id == 109) return eBuildingType::majorShrineAphrodite;
-
-    else if(id == 110) return eBuildingType::pyramidOfThePantheon;
-    else if(id == 111) return eBuildingType::altarOfOlympus;
-    else if(id == 112) return eBuildingType::templeOfOlympus;
-    else if(id == 113) return eBuildingType::observatoryKosmika;
-    else if(id == 114) return eBuildingType::museumAtlantika;
-    printf("Invalid pyramid type id %i\n", id);
-    return eBuildingType::modestPyramid;
+eReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
+    if(id == 0) return eReceiveRequestType::general;
+    else if(id == 3) return eReceiveRequestType::festival;
+    else if(id == 4) return eReceiveRequestType::project;
+    else if(id == 5) return eReceiveRequestType::famine;
+    else if(id == 6) return eReceiveRequestType::financialWoes;
+    printf("Invalid receive request type %i\n", id);
+    return eReceiveRequestType::general;
 }
 
 eGodType pakIdToGodType(const uint8_t id, bool& valid) {
@@ -360,6 +366,127 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     printf("Invalid god id %i\n", id);
     valid = false;
     return eGodType::zeus;
+}
+
+void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
+                       const uint8_t nEvents, const eCityId cid) {
+    const bool newVersion = file.isNewVersion();
+    auto& events = ep.fEvents[cid];
+    for(int i = 0; i < nEvents; i++) {
+        const uint8_t eventTypeId = file.readUByte();
+        bool valid = false;
+        const auto type = pakIdToEventType(eventTypeId, valid);
+        if(!valid) {
+            file.skipBytes(123);
+            continue;
+        }
+
+        const uint8_t pMonths = file.readUByte();
+        file.skipBytes(2);
+        const uint16_t value1 = file.readUShort();
+        const uint16_t value2 = file.readUShort();
+        const uint16_t value3 = file.readUShort();
+        file.skipBytes(4);
+        const uint16_t value4 = file.readUShort();
+        const uint16_t value5 = file.readUShort();
+        file.skipBytes(2);
+        const uint16_t years0 = file.readUShort();
+        const uint16_t years1 = file.readUShort();
+        const uint16_t years2 = file.readUShort();
+        file.skipBytes(2);
+        const uint16_t city0 = file.readUShort();
+        const uint16_t city1 = file.readUShort();
+        const uint16_t city2 = file.readUShort();
+        file.skipBytes(4);
+        const uint16_t occuranceType = file.readUShort();
+        file.skipBytes(12);
+        const uint16_t godType = file.readUShort();
+        file.skipBytes(40);
+        const uint16_t requestType = file.readUShort();
+        file.skipBytes(28);
+
+        uint16_t city;
+        if(city0 == 0xFF) {
+            const bool first = eRand::rand() % 1;
+            city = first ? city1 : city2;
+        } else {
+            city = city0;
+        }
+
+        stdsptr<eGameEvent> e;
+        switch(type) {
+        case eGameEventType::receiveRequest: {
+            const auto type = pakIdToReceiveRequestType(requestType);
+            const auto ee = e::make_shared<eReceiveRequestEvent>(
+                    cid, eGameEventBranch::root, *ep.fBoard);
+            if(value1 == 0xFFFF) {
+                ee->setResourceType(0, eResourceType::none);
+            } else {
+                ee->setResourceType(0, pakResourceByteToType(value1, newVersion));
+            }
+            if(value2 == 0xFFFF) {
+                ee->setResourceType(1, eResourceType::none);
+            } else {
+                ee->setResourceType(1, pakResourceByteToType(value2, newVersion));
+            }
+            if(value3 == 0xFFFF) {
+                ee->setResourceType(2, eResourceType::none);
+            } else {
+                ee->setResourceType(2, pakResourceByteToType(value3, newVersion));
+            }
+            bool valid = false;
+            const auto god = pakIdToGodType(godType, valid);
+            ee->setRequestType(type);
+            ee->setGod(god);
+            ee->setMinResourceCount(value4);
+            ee->setMaxResourceCount(value5);
+            e = ee;
+        } break;
+        }
+        events.push_back(e);
+        e->setDatePlusMonths(pMonths);
+        uint16_t year;
+        if(years0 == 0xFFFF) {
+            const uint16_t yearsDiff = years2 - years1;
+            const uint16_t randDiff = yearsDiff == 0 ? 0 : (eRand::rand() % yearsDiff);
+            year = years1 + randDiff;
+        } else {
+            year = years0;
+        }
+        e->setDatePlusYears(year);
+
+        if(occuranceType == 0) { // one time event
+        } else if(occuranceType == 2) { // recurring event
+        } else {
+            printf("Invalid occurance type %id\n", occuranceType);
+        }
+
+        printf("%s\n", e->longDatedName().c_str());
+    }
+    printf("\n");
+}
+
+eBuildingType pakIdToPyramidType(const uint8_t id) {
+    if(id == 100) return eBuildingType::modestPyramid;
+    else if(id == 101) return eBuildingType::pyramid;
+    else if(id == 102) return eBuildingType::greatPyramid;
+    else if(id == 103) return eBuildingType::majesticPyramid;
+
+    else if(id == 104) return eBuildingType::smallMonumentToTheSky;
+    else if(id == 105) return eBuildingType::monumentToTheSky;
+    else if(id == 106) return eBuildingType::grandMonumentToTheSky;
+
+    else if(id == 107) return eBuildingType::minorShrineAphrodite;
+    else if(id == 108) return eBuildingType::shrineAphrodite;
+    else if(id == 109) return eBuildingType::majorShrineAphrodite;
+
+    else if(id == 110) return eBuildingType::pyramidOfThePantheon;
+    else if(id == 111) return eBuildingType::altarOfOlympus;
+    else if(id == 112) return eBuildingType::templeOfOlympus;
+    else if(id == 113) return eBuildingType::observatoryKosmika;
+    else if(id == 114) return eBuildingType::museumAtlantika;
+    printf("Invalid pyramid type id %i\n", id);
+    return eBuildingType::modestPyramid;
 }
 
 void readEpisodeAllowedPyramids(
@@ -469,6 +596,7 @@ eWorldMap pakIdToWorldMap(const uint8_t id) {
     if(id == 8 || id == 9 || id == 10) return eWorldMap::greece8;
 
     printf("Invalid world map type id %i\n", id);
+    return eWorldMap::greece1;
 }
 
 void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
@@ -697,6 +825,11 @@ void eCampaign::readPak(const std::string& name,
             readEpisodeEnabledPyramids(file, pyramids);
             applyPyramidsToEpisode(pyramids, *ep, cid);
         }
+
+        file.seek(799297 + i*4);
+        const uint8_t nEvents = file.readUByte();
+        file.seek(38874 + i*18600);
+        readEpisodeEvents(*ep, file, nEvents, cid);
 
         if(newVersion) {
             file.seek(838331 + i*4);

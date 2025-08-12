@@ -13,7 +13,8 @@ public:
     void initialize(const eResourceAction& ract,
                     const eResourceType res =
                         eResourceType::allBasic,
-                    const bool showFood = false);
+                    const bool showFood = false,
+                    const bool showNone = false);
 
     eResourceType resource() const { return mRes; }
     void setResource(const eResourceType res);

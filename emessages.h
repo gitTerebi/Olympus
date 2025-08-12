@@ -224,6 +224,26 @@ public:
     eReceiveRequestMessages fGeneralRequestSubjectP;
     eReceiveRequestMessages fGeneralRequestParentR;
 
+    eReceiveRequestMessages fFamineAllyS;
+    eReceiveRequestMessages fFamineRivalD;
+    eReceiveRequestMessages fFamineSubjectP;
+    eReceiveRequestMessages fFamineParentR;
+
+    eReceiveRequestMessages fProjectAllyS;
+    eReceiveRequestMessages fProjectRivalD;
+    eReceiveRequestMessages fProjectSubjectP;
+    eReceiveRequestMessages fProjectParentR;
+
+    eReceiveRequestMessages fFestivalAllyS;
+    eReceiveRequestMessages fFestivalRivalD;
+    eReceiveRequestMessages fFestivalSubjectP;
+    eReceiveRequestMessages fFestivalParentR;
+
+    eReceiveRequestMessages fFinancialWoesAllyS;
+    eReceiveRequestMessages fFinancialWoesRivalD;
+    eReceiveRequestMessages fFinancialWoesSubjectP;
+    eReceiveRequestMessages fFinancialWoesParentR;
+
     eReceiveRequestMessages fTributeRequest;
 
     eResourceGrantedMessages fGiftGranted;
