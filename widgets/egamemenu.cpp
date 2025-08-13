@@ -59,7 +59,7 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
             const auto tradeC = board.boardCityWithId(tradeCid);
             if(!c->buys().empty() || !c->sells().empty() ||
                (tradeC && pid == tradePid)) {
-                if(c->waterTrade()) {
+                if(c->waterTrade(cid)) {
                     const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
                     const eSPR s{eBuildingMode::pier, name, 0, i};
                     cs.push_back(s);

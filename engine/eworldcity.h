@@ -203,6 +203,9 @@ public:
     bool active() const { return mType != eCityType::colony ||
                                  mState == eCityState::active; }
 
+    bool visible() const { return mVisible; }
+    void setVisible(const bool v) { mVisible = v; }
+
     static std::string sAttitudeName(const eCityAttitude at);
     eCityAttitude attitudeClass(const ePlayerId pid) const;
     double attitude(const ePlayerId pid) const;
@@ -238,8 +241,8 @@ public:
     int wealth() const { return mWealth; }
     void setWealth(const int w) { mWealth = w; }
 
-    void setWaterTrade(const bool w) { mWaterTrade = w; }
-    bool waterTrade() const { return mWaterTrade; }
+    void setWaterTrade(const bool w, const eCityId cid);
+    bool waterTrade(const eCityId cid) const;
 
     bool trades() const;
 
@@ -345,7 +348,8 @@ private:
     int mYearsElapsed = 0;
     int mWealth = 1; // 1-5
 
-    bool mWaterTrade = false;
+    std::map<eCityId, bool> mWaterTrade;
+    bool mVisible = true;
 
     std::vector<eResourceTrade> mBuys;
     std::vector<eResourceTrade> mSells;

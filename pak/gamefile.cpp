@@ -173,6 +173,18 @@ Grid<uint32_t> *GameFile::readCompressedIntGrid() {
     return g;
 }
 
+std::vector<uint8_t> GameFile::readCompressed() {
+    std::vector<uint8_t> result;
+    const uint32_t length = readUInt();
+    PKWareInputStream pk(&in, length, false);
+    for(int y = 0;; y++) {
+        if(pk.hasError() || pk.atEnd()) break;
+        result.push_back(pk.readByte());
+    }
+    pk.empty();
+    return result;
+}
+
 int64_t GameFile::pos() {
     return in.pos();
 }
@@ -248,6 +260,10 @@ uint32_t GameFile::readUInt() {
         number |= ((uint8_t)data[i] << (i*8));
 	}
     return number;
+}
+
+uint16_t GameFile::toUShort(const uint8_t b1, const uint8_t b2) {
+    return (uint16_t)(b1 | ((b2) << 8));
 }
 
 int16_t GameFile::readShort() {

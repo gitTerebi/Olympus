@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 
 enum class eFontColor {
-    light, dark, yellow
+    light, dark, yellow, region
 };
 
 namespace eFontColorHelpers {

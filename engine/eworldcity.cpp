@@ -459,6 +459,16 @@ void eWorldCity::setMilitaryStrength(const int s) {
     mMilitaryStrength = std::clamp(s, 1, 5);
 }
 
+void eWorldCity::setWaterTrade(const bool w, const eCityId cid) {
+    mWaterTrade[cid] = w;
+}
+
+bool eWorldCity::waterTrade(const eCityId cid) const {
+    const auto it = mWaterTrade.find(cid);
+    if(it == mWaterTrade.end()) return false;
+    return it->second;
+}
+
 bool eWorldCity::trades() const {
     if(mBuys.empty() & mSells.empty()) return false;
     if(rebellion()) return false;
@@ -551,7 +561,14 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mTroops;
     dst << mYearsElapsed;
     dst << mWealth;
-    dst << mWaterTrade;
+
+    dst << mWaterTrade.size();
+    for(const auto& c : mWaterTrade) {
+        dst << c.first;
+        dst << c.second;
+    }
+
+    dst << mVisible;
     swrite(dst, mBuys);
     swrite(dst, mSells);
     dst << mTributeType;
@@ -621,7 +638,16 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mTroops;
     src >> mYearsElapsed;
     src >> mWealth;
-    src >> mWaterTrade;
+
+    int nc;
+    src >> nc;
+    for(int i = 0; i < nc; i++) {
+        eCityId cid;
+        src >> cid;
+        src >> mWaterTrade[cid];
+    }
+
+    src >> mVisible;
     sread(src, mBuys);
     sread(src, mSells);
     src >> mTributeType;

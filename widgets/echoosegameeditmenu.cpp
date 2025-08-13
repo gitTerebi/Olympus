@@ -94,6 +94,15 @@ bool readPakGlossary(const std::string& filename,
 void eChooseGameEditMenu::initialize(const bool editor) {
     eMainMenuBase::initialize();
 
+    {
+        const auto c = std::make_shared<eCampaign>();
+        c->readPak("", "/home/ailuropoda/.eZeus/pak_compare/57.pak");
+    }
+    {
+        const auto c = std::make_shared<eCampaign>();
+        c->readPak("", "/home/ailuropoda/.eZeus/pak_compare/58.pak");
+    }
+
     std::vector<eCampaignGlossary> glossaries;
     {
         const auto folder = eGameDir::adventuresDir();

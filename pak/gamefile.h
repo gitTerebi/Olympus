@@ -19,6 +19,8 @@
 #ifndef GAMEFILE_H
 #define GAMEFILE_H
 
+#include <vector>
+
 #include "qfile.h"
 
 #include "grid.h"
@@ -37,6 +39,8 @@ public:
     Grid<uint16_t> *readCompressedShortGrid();
     Grid<uint32_t> *readCompressedIntGrid();
 
+    std::vector<uint8_t> readCompressed();
+
     int64_t pos();
 
     void seek(const int64_t pos);
@@ -47,6 +51,8 @@ public:
     uint16_t readUShort();
     uint32_t readUInt();
 
+    uint16_t toUShort(const uint8_t b1, const uint8_t b2);
+
     int16_t readShort();
 
     void getDiamondBitmapCoordinates(int x, int y, int mapsize,
@@ -56,6 +62,7 @@ public:
 
     bool searchPattern(const uint8_t pattern[], int length);
 
+    QFile& file() { return in; }
 protected:
     QFile in;
     int MAX_MAPSIZE;

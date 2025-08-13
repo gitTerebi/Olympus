@@ -2,104 +2,11 @@
 
 #include "elanguage.h"
 #include "pak/zeusfile.h"
+#include "pak/epakhelpers.h"
 
 #include "buildings/pyramids/epyramid.h"
 
 #include "gameEvents/ereceiverequestevent.h"
-
-eWorldMap pakMapIdToMap(const uint8_t mapId) {
-    if(mapId == 1) {
-        return eWorldMap::greece1;
-    } else if(mapId == 2) {
-        return eWorldMap::greece2;
-    } else if(mapId == 3) {
-        return eWorldMap::greece3;
-    } else if(mapId == 4) {
-        return eWorldMap::greece4;
-    } else if(mapId == 5) {
-        return eWorldMap::greece5;
-    } else if(mapId == 6) {
-        return eWorldMap::greece6;
-    } else if(mapId == 7) {
-        return eWorldMap::greece7;
-    } else if(mapId == 8 || mapId == 9 || mapId == 10) {
-        return eWorldMap::greece8;
-    } else if(mapId == 11) {
-        return eWorldMap::poseidon1;
-    } else if(mapId == 12) {
-        return eWorldMap::poseidon2;
-    } else if(mapId == 13) {
-        return eWorldMap::poseidon3;
-    } else if(mapId == 14) {
-        return eWorldMap::poseidon4;
-    }
-    printf("Unknown pak map id %i\n", mapId);
-    return eWorldMap::greece1;
-}
-
-eResourceType pakResourceByteToType(
-        const uint8_t byte, const bool newVersion) {
-    if(byte == 0) {
-        return eResourceType::none;
-    } else if(byte == 1) {
-        return eResourceType::urchin;
-    } else if(byte == 2) {
-        return eResourceType::fish;
-    } else if(byte == 3) {
-        return eResourceType::meat;
-    } else if(byte == 4) {
-        return eResourceType::cheese;
-    } else if(byte == 5) {
-        return eResourceType::carrots;
-    } else if(byte == 6) {
-        return eResourceType::onions;
-    } else if(byte == 7) {
-        return eResourceType::wheat;
-    } else if(newVersion && byte == 8) {
-        return eResourceType::oranges;
-    } else if(byte == 9 + (newVersion ? 0 : -1)) {
-        return eResourceType::wood;
-    } else if(byte == 10 + (newVersion ? 0 : -1)) {
-        return eResourceType::bronze;
-    } else if(byte == 11 + (newVersion ? 0 : -1)) {
-        return eResourceType::marble;
-    } else if(byte == 12 + (newVersion ? 0 : -1)) {
-        return eResourceType::grapes;
-    } else if(byte == 13 + (newVersion ? 0 : -1)) {
-        return eResourceType::olives;
-    } else if(byte == 14 + (newVersion ? 0 : -1)) {
-        return eResourceType::fleece;
-    } else if(!newVersion && byte == 14) {
-        return eResourceType::horse;
-    } else if(!newVersion && byte == 15) {
-        return eResourceType::armor;
-    } else if(!newVersion && byte == 16) {
-        return eResourceType::sculpture;
-    } else if(!newVersion && byte == 17) {
-        return eResourceType::oliveOil;
-    } else if(!newVersion && byte == 18) {
-        return eResourceType::wine;
-    } else if(!newVersion && byte == 19) {
-        return eResourceType::drachmas;
-    } else if(!newVersion && byte == 21) {
-        return eResourceType::food;
-    } else if(newVersion && byte == 16) {
-        return eResourceType::blackMarble;
-    } else if(newVersion && byte == 17) {
-        return eResourceType::orichalc;
-    } else if(newVersion && byte == 18) {
-        return eResourceType::armor;
-    } else if(newVersion && byte == 19) {
-        return eResourceType::sculpture;
-    } else if(newVersion && byte == 20) {
-        return eResourceType::oliveOil;
-    } else if(newVersion && byte == 21) {
-        return eResourceType::wine;
-    }
-
-    printf("Invalid resource byte %i\n", byte);
-    return eResourceType::none;
-}
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -422,17 +329,17 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             if(value1 == 0xFFFF) {
                 ee->setResourceType(0, eResourceType::none);
             } else {
-                ee->setResourceType(0, pakResourceByteToType(value1, newVersion));
+                ee->setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
             }
             if(value2 == 0xFFFF) {
                 ee->setResourceType(1, eResourceType::none);
             } else {
-                ee->setResourceType(1, pakResourceByteToType(value2, newVersion));
+                ee->setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
             }
             if(value3 == 0xFFFF) {
                 ee->setResourceType(2, eResourceType::none);
             } else {
-                ee->setResourceType(2, pakResourceByteToType(value3, newVersion));
+                ee->setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
             }
             bool valid = false;
             const auto god = pakIdToGodType(godType, valid);
@@ -664,7 +571,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
         break;
     case eEpisodeGoalType::yearlyProduction: {
         goal->fRequiredCount = value2;
-        const auto type = pakResourceByteToType(value1, newVersion);
+        const auto type = ePakHelpers::pakResourceByteToType(value1, newVersion);
         goal->fEnumInt1 = static_cast<int>(type);
     } break;
     case eEpisodeGoalType::rule:
@@ -686,7 +593,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file) {
         goal->fRequiredCount = value1;
         break;
     case eEpisodeGoalType::setAsideGoods: {
-        const auto type = pakResourceByteToType(value1, newVersion);
+        const auto type = ePakHelpers::pakResourceByteToType(value1, newVersion);
         goal->fEnumInt1 = static_cast<int>(type);
         goal->fRequiredCount = value2;
     } break;
@@ -718,6 +625,11 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
     }
 }
 
+uint16_t toUShort(const uint8_t b1, const uint8_t b2) {
+    return (uint16_t)(b1 | ((b2) << 8));
+}
+
+#include "pak/pkwareinputstream.h"
 void eCampaign::readPak(const std::string& name,
                         const std::string& path) {
     mIsPak = true;
@@ -741,23 +653,23 @@ void eCampaign::readPak(const std::string& name,
     const uint8_t nColonyEps = file.readUByte();
     const bool atlantean = file.isAtlantean();
 
-    {
-        const auto c = std::make_shared<eWorldCity>(
-                           eCityType::parentCity,
-                           cid, "Athens", 0.5, 0.5);
-        mWorldBoard.addCity(c);
-        mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
-        mWorldBoard.setPlayerTeam(ePlayerId::player0, eTeamId::team0);
-        for(int i = 0; i < nColonyEps; i++) {
-            const auto cid = static_cast<eCityId>(i + 1);
-            const auto name = "Colony " + std::to_string(i);
-            const auto c = std::make_shared<eWorldCity>(
-                               eCityType::colony,
-                               cid, name, i*0.2, 0.75);
-            mWorldBoard.addCity(c);
-            mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
-        }
-    }
+//    {
+//        const auto c = std::make_shared<eWorldCity>(
+//                           eCityType::parentCity,
+//                           cid, "Athens", 0.5, 0.5);
+//        mWorldBoard.addCity(c);
+//        mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
+//        mWorldBoard.setPlayerTeam(ePlayerId::player0, eTeamId::team0);
+//        for(int i = 0; i < nColonyEps; i++) {
+//            const auto cid = static_cast<eCityId>(i + 1);
+//            const auto name = "Colony " + std::to_string(i);
+//            const auto c = std::make_shared<eWorldCity>(
+//                               eCityType::colony,
+//                               cid, name, i*0.2, 0.75);
+//            mWorldBoard.addCity(c);
+//            mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
+//        }
+//    }
     {
         const auto c = mParentBoard->addCityToBoard(cid);
         mParentBoard->addPlayerToBoard(ePlayerId::player0);

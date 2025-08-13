@@ -37,6 +37,10 @@ void eWorldBoard::addCity(const stdsptr<eWorldCity>& c) {
     mCities.push_back(c);
 }
 
+void eWorldBoard::addRegion(const eWorldRegion& region) {
+    mRegions.push_back(region);
+}
+
 stdsptr<eWorldCity> eWorldBoard::currentCity() const {
     for(const auto& c : mCities) {
         const bool cc = c->isCurrentCity();

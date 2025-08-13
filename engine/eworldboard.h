@@ -5,6 +5,7 @@
 
 #include "eworldcity.h"
 #include "pointers/estdselfref.h"
+#include "eworldregion.h"
 
 enum class eWorldMap {
     greece1,
@@ -34,6 +35,10 @@ public:
 
     void setHomeCity(const stdsptr<eWorldCity>& hc);
     void addCity(const stdsptr<eWorldCity>& c);
+
+    void addRegion(const eWorldRegion& region);
+    const std::vector<eWorldRegion>& regions() const
+    { return mRegions; }
 
     stdsptr<eWorldCity> currentCity() const;
     const std::vector<stdsptr<eWorldCity>>& cities() const
@@ -79,6 +84,7 @@ private:
     bool mEditorMode = false;
     eWorldMap mMap{eWorldMap::greece8};
     std::vector<stdsptr<eWorldCity>> mCities;
+    std::vector<eWorldRegion> mRegions;
 
     std::map<eCityId, ePlayerId> mCityToPlayer;
     ePlayerId mPersonPlayer = ePlayerId::player0;

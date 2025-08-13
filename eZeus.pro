@@ -411,6 +411,7 @@ SOURCES += \
         engine/ewagerate.cpp \
         engine/eworldboard.cpp \
         engine/eworldcity.cpp \
+        engine/eworldregion.cpp \
         engine/thread/ethreadboard.cpp \
         engine/thread/ethreadboardhandler.cpp \
         engine/thread/ethreadbuilding.cpp \
@@ -483,6 +484,7 @@ SOURCES += \
         missiles/emissile.cpp \
         missiles/erockmissile.cpp \
         missiles/espearmissile.cpp \
+        pak/epakhelpers.cpp \
         pak/gamefile.cpp \
         pak/pkwareinputstream.cpp \
         pak/qfile.cpp \
@@ -1083,6 +1085,7 @@ HEADERS += \
     engine/eworldboard.h \
     engine/eworldcity.h \
     engine/eworlddirection.h \
+    engine/eworldregion.h \
     engine/thread/ethreadboard.h \
     engine/thread/ethreadboardhandler.h \
     engine/thread/ethreadbuilding.h \
@@ -1212,6 +1215,7 @@ HEADERS += \
     offsets/zeus_scylla.h \
     offsets/zeus_talos.h \
     offsets/zeus_theseus.h \
+    pak/epakhelpers.h \
     pak/gamefile.h \
     pak/grid.h \
     pak/pkwareinputstream.h \

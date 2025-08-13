@@ -1,4 +1,4 @@
-/*
+﻿/*
  *   Citybuilding Mappers - create minimaps from citybuilding game files
  *   Copyright (C) 2007, 2008  Bianca van Schaik
  *
@@ -19,6 +19,8 @@
 #include "zeusfile.h"
 #include "pkwareinputstream.h"
 
+#include "epakhelpers.h"
+
 #include "buildings/eroad.h"
 #include "etilehelper.h"
 
@@ -32,6 +34,8 @@
 #include "spawners/edeerspawner.h"
 #include "spawners/ewolfspawner.h"
 #include "spawners/edisasterpoint.h"
+
+#include "elanguage.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
@@ -80,6 +84,111 @@ int ZeusFile::getNumMaps() {
     in.reset();
 
 	return numMaps;
+}
+
+std::vector<uint8_t> gCityBytes1;
+std::vector<uint8_t> gCityBytes2;
+std::vector<uint8_t> gCityBytes3;
+std::vector<uint8_t> gCityBytes4;
+std::vector<uint8_t> gCityBytes5;
+std::vector<uint8_t> gCityBytes6;
+
+eNationality pakIdToNationality(const uint8_t id) {
+    if(id == 0) {
+        return eNationality::greek;
+    } else if(id == 1) {
+        return eNationality::trojan;
+    } else if(id == 2) {
+        return eNationality::persian;
+    } else if(id == 3) {
+        return eNationality::centaur;
+    } else if(id == 4) {
+        return eNationality::amazon;
+    }
+    printf("Invalid nationality id %i\n", id);
+    return eNationality::greek;
+}
+
+eDistantDirection pakIdToDistantDirection(const uint8_t id) {
+    if(id == 0) {
+        return eDistantDirection::none;
+    } else if(id == 1) {
+        return eDistantDirection::N;
+    } else if(id == 2) {
+        return eDistantDirection::NE;
+    } else if(id == 3) {
+        return eDistantDirection::E;
+    } else if(id == 4) {
+        return eDistantDirection::SE;
+    } else if(id == 5) {
+        return eDistantDirection::S;
+    } else if(id == 6) {
+        return eDistantDirection::SW;
+    } else if(id == 7) {
+        return eDistantDirection::W;
+    } else if(id == 8) {
+        return eDistantDirection::NW;
+    }
+    printf("Invalid distant direction id %i\n", id);
+    return eDistantDirection::none;
+}
+
+eForeignCityRelationship pakIdToRelationship(const uint8_t id) {
+    if(id == 0) {
+        return eForeignCityRelationship::ally;
+    } else if(id == 1) {
+        return eForeignCityRelationship::rival;
+    } else if(id == 2) {
+        return eForeignCityRelationship::vassal;
+    }
+    printf("Invalid relationship id %i\n", id);
+    return eForeignCityRelationship::ally;
+}
+
+eCityType pakIdToCityType(const uint8_t id) {
+    if(id == 0) {
+        return eCityType::parentCity;
+    } else if(id == 1) {
+        return eCityType::colony;
+    } else if(id == 2) {
+        return eCityType::foreignCity;
+    } else if(id == 4) {
+        return eCityType::distantCity;
+    } else if(id == 5) {
+        return eCityType::enchantedPlace;
+    }
+    printf("Invalid city type id %i\n", id);
+    return eCityType::foreignCity;
+}
+
+eWorldMap pakMapIdToMap(const uint8_t mapId) {
+    if(mapId == 1) {
+        return eWorldMap::greece1;
+    } else if(mapId == 2) {
+        return eWorldMap::greece2;
+    } else if(mapId == 3) {
+        return eWorldMap::greece3;
+    } else if(mapId == 4) {
+        return eWorldMap::greece4;
+    } else if(mapId == 5) {
+        return eWorldMap::greece5;
+    } else if(mapId == 6) {
+        return eWorldMap::greece6;
+    } else if(mapId == 7) {
+        return eWorldMap::greece7;
+    } else if(mapId == 8 || mapId == 9 || mapId == 10) {
+        return eWorldMap::greece8;
+    } else if(mapId == 11) {
+        return eWorldMap::poseidon1;
+    } else if(mapId == 12) {
+        return eWorldMap::poseidon2;
+    } else if(mapId == 13) {
+        return eWorldMap::poseidon3;
+    } else if(mapId == 14) {
+        return eWorldMap::poseidon4;
+    }
+    printf("Unknown pak map id %i\n", mapId);
+    return eWorldMap::greece1;
 }
 
 bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
@@ -237,13 +346,248 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     skipBytes(736);
     const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
-    skipCompressed(); // not of proper length: 14400
-    skipCompressed(); // not of proper length: 75168
-    skipCompressed(); // byte grid: all ff's (counterpart of marble grid in sav?
-    skipCompressed(); // 36 bytes
+    const auto cityBytes1 = readCompressed(); // city positions
+    const auto cityBytes2 = readCompressed();
+    const auto cityBytes3 = readCompressed();
+    const auto cityBytes4 = readCompressed();
+//    skipCompressed(); // not of proper length: 14400
+//    skipCompressed(); // not of proper length: 75168
+//    skipCompressed(); // byte grid: all ff's (counterpart of marble grid in sav?
+//    skipCompressed(); // 36 bytes
     skipBytes(144);
     const auto scrub = readCompressedByteGrid();
     const auto elevation = readCompressedByteGrid();
+    const auto cityBytes5 = readCompressed();
+    const auto cityBytes6 = readCompressed(); // city names
+    const uint8_t mapId = readUByte();
+    if(retrievedMaps == 1) {
+        auto &world = *board.getWorldBoard();
+        const auto map = pakMapIdToMap(mapId);
+        world.setMap(map);
+        int cityId = 0;
+        for(int i = 0; i < 99; i++) {
+            const int inc1 = mNewVersion ? 72 : 40;
+            int id1 = i*inc1;
+            const uint8_t enabled = cityBytes1[id1];
+            if(enabled == 0) break;
+            id1 += 4;
+            const uint16_t cityX = toUShort(cityBytes1[id1], cityBytes1[id1 + 1]);
+            const uint16_t cityY = toUShort(cityBytes1[id1 + 2], cityBytes1[id1 + 3]);
+            const double cityXF = cityX/838.;
+            const double cityYF = cityY/738.;
+            if(enabled == 2) { // region
+                id1 = 24 + i*inc1;
+                const uint8_t nameId = cityBytes1[id1];
+                world.addRegion(eWorldRegion{nameId, cityXF, cityYF});
+                continue;
+            }
+
+            const int inc6 = mNewVersion ? 572 : 476;
+            int id6 = 2 + i*inc6;
+            const uint8_t cityTypeId = cityBytes6[id6++];
+            const uint8_t cityNameId = cityBytes6[id6];
+
+            id6 = 188 + i*inc6;
+            const uint8_t buyTypeId1 = cityBytes6[id6++];
+            const uint8_t buyTypeId2 = cityBytes6[id6++];
+            const uint8_t buyTypeId3 = cityBytes6[id6++];
+            const uint8_t buyTypeId4 = cityBytes6[id6++];
+            id6 = 196 + i*inc6;
+            const uint8_t sellTypeId1 = cityBytes6[id6++];
+            const uint8_t sellTypeId2 = cityBytes6[id6++];
+            const uint8_t sellTypeId3 = cityBytes6[id6++];
+            const uint8_t sellTypeId4 = cityBytes6[id6++];
+
+            const auto retrieveCount = [&](uint8_t& count, const uint8_t type) {
+                if(type == 0) {
+                    count = 0;
+                } else {
+                    id6 = 96 + type + i*inc6;
+                    count = cityBytes6[id6];
+                }
+            };
+            uint8_t buyCount1 = 0;
+            retrieveCount(buyCount1, buyTypeId1);
+            uint8_t buyCount2 = 0;
+            retrieveCount(buyCount2, buyTypeId2);
+            uint8_t buyCount3 = 0;
+            retrieveCount(buyCount3, buyTypeId3);
+            uint8_t buyCount4 = 0;
+            retrieveCount(buyCount4, buyTypeId4);
+            uint8_t sellCount1 = 0;
+            retrieveCount(sellCount1, sellTypeId1);
+            uint8_t sellCount2 = 0;
+            retrieveCount(sellCount2, sellTypeId2);
+            uint8_t sellCount3 = 0;
+            retrieveCount(sellCount3, sellTypeId3);
+            uint8_t sellCount4 = 0;
+            retrieveCount(sellCount4, sellTypeId4);
+
+            id6 = 204 + i*inc6;
+            const uint8_t natId = cityBytes6[id6];
+            id6 = 208 + i*inc6;
+            const uint8_t leaderNameId = cityBytes6[id6];
+            id6 = 212 + i*inc6;
+            const uint8_t relId = cityBytes6[id6];
+            id6 = 216 + i*inc6;
+            const uint8_t ecoStr = cityBytes6[id6];
+            id6 = 220 + i*inc6;
+            const uint8_t milStr = cityBytes6[id6];
+            id6 = 228 + i*inc6;
+            const uint16_t recTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
+            id6 = 232 + i*inc6;
+            const uint16_t payTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
+            id6 = 236 + i*inc6;
+            const uint8_t payTributeTypeId = cityBytes6[id6];
+            id6 = (mNewVersion ? 356 : 340) + i*inc6;
+            const uint8_t favour = cityBytes6[id6];
+            id6 = (mNewVersion ? 368 : 352) + i*inc6;
+            const uint8_t stateId = cityBytes6[id6];
+            id6 = (mNewVersion ? 372 : 356) + i*inc6;
+            const uint8_t visibleId = cityBytes6[id6];
+
+            const auto cityType = pakIdToCityType(cityTypeId);
+
+            const auto cid = static_cast<eCityId>(cityId++);
+            const auto pid = cityType == eCityType::parentCity ||
+                             cityType == eCityType::colony ?
+                                 ePlayerId::player0 :
+                                 static_cast<ePlayerId>(cityId + 1);
+
+            std::string name;
+            if(cityNameId == 0xFF) {
+                id6 = 505 + i*inc6;
+                for(int i = 0; i < 33; i++) {
+                    const uint8_t letter = cityBytes6[id6++];
+                    if(letter == 0) break;
+                    name += std::string(1, letter);
+                }
+            } else {
+                name = eLanguage::zeusText(21, cityNameId);
+            }
+            std::string leaderName;
+            if(leaderNameId == 0xFF) {
+                id6 = 537 + i*inc6;
+                for(int i = 0; i < 33; i++) {
+                    const uint8_t letter = cityBytes6[id6++];
+                    if(letter == 0) break;
+                    leaderName += std::string(1, letter);
+                }
+            } else {
+                leaderName = eLanguage::zeusText(139, leaderNameId);
+            }
+            const auto c = std::make_shared<eWorldCity>(
+                               cityType, cid, name, cityXF, cityYF);
+            const bool visible = visibleId != 0;
+            c->setVisible(visible);
+            c->setMilitaryStrength(milStr);
+            c->setWealth(ecoStr);
+            c->setAttitude(favour, ePlayerId::player0);
+            c->setRecTributeType(eResourceType::drachmas);
+            c->setRecTributeCount(recTribute);
+            const auto payTributeType = ePakHelpers::pakResourceByteToType(
+                                            payTributeTypeId, mNewVersion);
+            c->setTributeType(payTributeType);
+            c->setTributeCount(payTribute);
+
+            c->setState(stateId ? eCityState::active : eCityState::inactive);
+            c->setLeader(leaderName);
+            if(cityType == eCityType::foreignCity) {
+                const auto nat = pakIdToNationality(natId);
+                const auto rel = pakIdToRelationship(relId);
+                c->setNationality(nat);
+                c->setRelationship(rel);
+            } else if(cityType == eCityType::distantCity) {
+                const auto dir = pakIdToDistantDirection(natId);
+                c->setDirection(dir);
+            }
+
+            if(cityType == eCityType::parentCity ||
+               cityType == eCityType::colony ||
+               cityType == eCityType::distantCity ||
+               cityType == eCityType::foreignCity) {
+                const auto addBuyType = [&](const uint8_t typeId,
+                                            const uint8_t count) {
+                    const auto buyType = ePakHelpers::pakResourceByteToType(
+                                              typeId, mNewVersion);
+                    if(buyType != eResourceType::none) {
+                        c->addBuys(eResourceTrade{buyType, {}, count});
+                    }
+                };
+                addBuyType(buyTypeId1, buyCount1);
+                addBuyType(buyTypeId2, buyCount2);
+                addBuyType(buyTypeId3, buyCount3);
+                addBuyType(buyTypeId4, buyCount4);
+                const auto addSellType = [&](const uint8_t typeId,
+                                            const uint8_t count) {
+                    const auto sellType = ePakHelpers::pakResourceByteToType(
+                                              typeId, mNewVersion);
+                    if(sellType != eResourceType::none) {
+                        c->addSells(eResourceTrade{sellType, {}, count});
+                    }
+                };
+                addSellType(sellTypeId1, sellCount1);
+                addSellType(sellTypeId2, sellCount2);
+                addSellType(sellTypeId3, sellCount3);
+                addSellType(sellTypeId4, sellCount4);
+            }
+            world.addCity(c);
+            world.moveCityToPlayer(cid, pid);
+            world.setPlayerTeam(pid, eTeamId::team0);
+        }
+
+
+        if(gCityBytes1.empty()) {
+            gCityBytes1 = cityBytes1;
+            gCityBytes2 = cityBytes2;
+            gCityBytes3 = cityBytes3;
+            gCityBytes4 = cityBytes4;
+            gCityBytes5 = cityBytes5;
+            gCityBytes6 = cityBytes6;
+        } else {
+            for(int j = 1; j < 7; j++) {
+                const std::vector<uint8_t>* v1;
+                const std::vector<uint8_t>* v2;
+                if(j == 1) {
+                    v1 = &gCityBytes1;
+                    v2 = &cityBytes1;
+                } else if(j == 2) {
+                    v1 = &gCityBytes2;
+                    v2 = &cityBytes2;
+                } else if(j == 3) {
+                    v1 = &gCityBytes3;
+                    v2 = &cityBytes3;
+                } else if(j == 4) {
+                    v1 = &gCityBytes4;
+                    v2 = &cityBytes4;
+                } else if(j == 5) {
+                    v1 = &gCityBytes5;
+                    v2 = &cityBytes5;
+                } else if(j == 6) {
+                    v1 = &gCityBytes6;
+                    v2 = &cityBytes6;
+                } else {
+                    continue;
+                }
+                auto& bytes1 = *v1;
+                auto& bytes2 = *v2;
+                for(int i = 0; i < (int)bytes1.size() && i < (int)bytes2.size(); i++) {
+                    const auto b1 = bytes1[i];
+                    const auto b2 = bytes2[i];
+                    if(b1 == b2) continue;
+                    printf("%i %i %i %i\n", j, i, b1, b2);
+                }
+                for(int i = bytes1.size(); i < (int)bytes2.size(); i++) {
+                    const auto b2 = bytes2[i];
+                    printf("%i %i x %i\n", j, i, b2);
+                }
+                for(int i = bytes2.size(); i < (int)bytes1.size(); i++) {
+                    const auto b1 = bytes1[i];
+                    printf("%i %i %i x\n", j, i, b1);
+                }
+            }
+        }
+    }
 
 	// Extra sanity check
     if(!ok || mapsize > MAX_MAPSIZE) {

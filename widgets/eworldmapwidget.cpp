@@ -230,6 +230,28 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         handleCity(ct);
     }
 
+    const auto& regions = mWorldBoard->regions();
+    for(const auto& r : regions) {
+        const auto name = eLanguage::zeusText(196, r.fNameId);
+        const auto nameFind = mNames.find(name);
+        stdsptr<eTexture> nameTex;
+        if(nameFind == mNames.end()) {
+            nameTex = std::make_shared<eTexture>();
+            const auto res = resolution();
+            const int fontSize = res.smallFontSize();
+            const auto font = eFonts::defaultFont(fontSize);
+            nameTex->loadText(renderer(), name, eFontColor::region, *font);
+            mNames[name] = nameTex;
+        } else {
+            nameTex = nameFind->second;
+        }
+        const int x = r.fX*width();
+        const int y = r.fY*height();
+        const int dx = x; // - nameTex->width()/2;
+        const int dy = y - nameTex->height()/2;
+        p.drawTexture(dx, dy, nameTex);
+    }
+
     const auto cityFigures = [&](const eNationality nat) {
         switch(nat) {
         case eNationality::greek:
