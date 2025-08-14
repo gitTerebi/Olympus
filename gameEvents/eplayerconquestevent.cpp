@@ -30,9 +30,9 @@ void ePlayerConquestEvent::initialize(
     if(c) {
         const auto e = e::make_shared<eInvasionEvent>(
                            cid, eGameEventBranch::root, *board);
-        const auto wBoard = board->getWorldBoard();
+        const auto& wBoard = board->world();
         const auto pcid = cityId();
-        const auto playerCity = wBoard->cityWithId(pcid);
+        const auto playerCity = wBoard.cityWithId(pcid);
         e->initializeDate(date, 0, 1);
         e->initialize(playerCity, mForces, this);
         e->updateWarnings();

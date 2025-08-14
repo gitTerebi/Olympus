@@ -52,13 +52,13 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         b->setRenderBg(true);
 
         b->setPressAction([this, q, board, resource, count]() {
-            const auto wboard = board->getWorldBoard();
+            const auto& wboard = board->world();
             const auto cids = board->personPlayerCitiesOnBoard();
 
             std::vector<eCityId> validCities;
             std::vector<std::string> cityNames;
             for(const auto cid : cids) {
-                const auto c = wboard->cityWithId(cid);
+                const auto c = wboard.cityWithId(cid);
                 cityNames.push_back(c->name());
                 validCities.push_back(cid);
             }

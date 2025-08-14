@@ -639,8 +639,7 @@ void eCampaign::readPak(const std::string& name,
     const bool newVersion = file.isNewVersion();
     file.readAtlantean();
     printf("v%i a%i\n", file.isNewVersion() ? 1 : 0, file.isAtlantean() ? 1 : 0);
-    mParentBoard = e::make_shared<eGameBoard>();
-    mParentBoard->setWorldBoard(&mWorldBoard);
+    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
 
     file.seek(0);
     file.getNumMaps();
@@ -748,8 +747,7 @@ void eCampaign::readPak(const std::string& name,
     for(int i = 0; i < 4; i++) {
         printf("colony episode %i:\n\n", i);
         auto& board = mColonyBoards.emplace_back();
-        board = e::make_shared<eGameBoard>();
-        board->setWorldBoard(&mWorldBoard);
+        board = e::make_shared<eGameBoard>(mWorldBoard);
         eCityId colonyCid;
         const bool r = file.loadBoard(*board, *this, colonyCid);
         if(r) {

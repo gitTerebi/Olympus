@@ -55,5 +55,5 @@ void eEventTrigger::removeEvent(const stdsptr<eGameEvent>& e) {
 }
 
 eWorldBoard* eEventTrigger::worldBoard() const {
-    return mBoard.getWorldBoard();
+    return &mBoard.world();
 }

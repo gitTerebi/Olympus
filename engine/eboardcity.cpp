@@ -490,8 +490,8 @@ void eBoardCity::nextMonth() {
                 if(!enemyCids.empty()) {
                     std::random_shuffle(enemyCids.begin(), enemyCids.end());
                     const auto targetCid = enemyCids[0];
-                    const auto wboard = mBoard.getWorldBoard();
-                    const auto wc = wboard->cityWithId(targetCid);
+                    const auto& wboard = mBoard.world();
+                    const auto wc = wboard.cityWithId(targetCid);
                     eEnlistedForces forces;
                     for(const auto& b : mSoldierBanners) {
                         const auto type = b->type();

@@ -89,7 +89,7 @@ private:
 
 class eGameBoard : public eStdSelfRef {
 public:
-    eGameBoard();
+    eGameBoard(eWorldBoard& world);
     ~eGameBoard();
 
     void initialize(const int w, const int h);
@@ -319,7 +319,7 @@ public:
     void scheduleAppealMapUpdate(const eCityId cid);
     void updateAppealMapIfNeeded();
 
-    eWorldBoard* getWorldBoard() const { return mWorldBoard; }
+    eWorldBoard& world() const { return mWorld; }
 
     void enlistForces(const eEnlistedForces& forces);
     void clearBannerSelection();
@@ -552,8 +552,6 @@ public:
     bool terrainUpdateScheduled() const { return mUpdateTerrain; }
     void afterTerrainUpdated() { mUpdateTerrain = false; }
 
-    void setWorldBoard(eWorldBoard* const wb);
-
     using eWC = stdsptr<eWorldCity>;
     void startEpisode(eEpisode* const e,
                       const eWC& lastPlayedColony);
@@ -730,7 +728,7 @@ private:
     bool mFogOfWar = true;
     int mCurrentDistrictId = -1;
     mutable bool mEpisodeLost = false;
-    eWorldBoard* mWorldBoard = nullptr;
+    eWorldBoard& mWorld;
     eWorldDirection mDirection{eWorldDirection::N};
 
     bool mUpdateTerrain = true;

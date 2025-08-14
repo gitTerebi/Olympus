@@ -199,13 +199,13 @@ void eBoardPlayer::write(eWriteStream& dst) const {
 
 void eBoardPlayer::giftAllies() {
     const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
-    const auto wboard = mBoard.getWorldBoard();
+    const auto& wboard = mBoard.world();
     stdsptr<eWorldCity> city;
     const auto pCities =  mBoard.playerCities(mId);
     for(const auto cid : pCities) {
         const auto c = mBoard.boardCityWithId(cid);
         for(const auto cid : allyCids) {
-            const auto c = wboard->cityWithId(cid);
+            const auto c = wboard.cityWithId(cid);
             const int att = c->attitude(mId);
             if(att < 50) {
                 city = c;
@@ -245,10 +245,10 @@ void eBoardPlayer::giftAllies() {
 
 bool eBoardPlayer::askFor(const eResourceType type, const eCityId cid) {
     const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
-    const auto wboard = mBoard.getWorldBoard();
+    const auto& wboard = mBoard.world();
     stdsptr<eWorldCity> city;
     for(const auto cid : allyCids) {
-        const auto c = wboard->cityWithId(cid);
+        const auto c = wboard.cityWithId(cid);
         const int att = c->attitude(mId);
         if(att >= 50) {
             city = c;

@@ -48,7 +48,7 @@ void eBoardSettingsMenu::initialize(
             return boardPtr->citiesOnBoard();
         };
 
-        const auto wboard = boardPtr->getWorldBoard();
+        const auto wboard = &boardPtr->world();
 
         const auto add = [boardPtr, wboard, gw](const eCityId cid) {
             const auto c = boardPtr->addCityToBoard(cid);

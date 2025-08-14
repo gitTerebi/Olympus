@@ -306,7 +306,7 @@ int eGameEvent::triggerEventsCount() const {
 }
 
 eWorldBoard* eGameEvent::worldBoard() const {
-    return mBoard.getWorldBoard();
+    return &mBoard.world();
 }
 
 void eGameEvent::startingNewEpisode() {

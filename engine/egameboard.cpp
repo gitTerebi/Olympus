@@ -98,8 +98,8 @@
 
 #include "buildings/pyramids/epyramid.h"
 
-eGameBoard::eGameBoard() :
-    mThreadPool(*this) {
+eGameBoard::eGameBoard(eWorldBoard& world) :
+    mWorld(world), mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
     for(const auto type : types) {
@@ -836,7 +836,7 @@ void eGameBoard::request(const stdsptr<eWorldCity>& c,
     addRootGameEvent(e);
 
     const auto pid = cityIdToPlayerId(cid);
-    const auto& cts = mWorldBoard->cities();
+    const auto& cts = mWorld.cities();
     for(const auto& ct : cts) {
         if(ct->isCurrentCity()) continue;
         ct->incAttitude(-10, pid);
@@ -1046,7 +1046,7 @@ std::vector<eCityId> eGameBoard::personPlayerCitiesOnBoard() const {
 }
 
 ePlayerId eGameBoard::cityIdToPlayerId(const eCityId cid) const {
-    return mWorldBoard->cityIdToPlayerId(cid);
+    return mWorld.cityIdToPlayerId(cid);
 }
 
 eTeamId eGameBoard::cityIdToTeamId(const eCityId cid) const {
@@ -1055,7 +1055,7 @@ eTeamId eGameBoard::cityIdToTeamId(const eCityId cid) const {
 }
 
 eTeamId eGameBoard::playerIdToTeamId(const ePlayerId pid) const {
-    return mWorldBoard->playerIdToTeamId(pid);
+    return mWorld.playerIdToTeamId(pid);
 }
 
 void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
@@ -1066,15 +1066,15 @@ void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
         mActiveCitiesOnBoard.push_back(c);
         c->acquired();
     }
-    return mWorldBoard->moveCityToPlayer(cid, pid);
+    return mWorld.moveCityToPlayer(cid, pid);
 }
 
 std::vector<eCityId> eGameBoard::playerCities(const ePlayerId pid) const {
-    return mWorldBoard->playerCities(pid);
+    return mWorld.playerCities(pid);
 }
 
 eCityId eGameBoard::playerCapital(const ePlayerId pid) const {
-    return mWorldBoard->playerCapital(pid);
+    return mWorld.playerCapital(pid);
 }
 
 std::vector<eCityId> eGameBoard::playerCitiesOnBoard(const ePlayerId pid) const {
@@ -1090,7 +1090,7 @@ std::vector<eCityId> eGameBoard::playerCitiesOnBoard(const ePlayerId pid) const 
 }
 
 ePlayerId eGameBoard::personPlayer() const {
-    return mWorldBoard->personPlayer();
+    return mWorld.personPlayer();
 }
 
 eCityId eGameBoard::personPlayerCapital() const {
@@ -1141,13 +1141,13 @@ std::vector<ePlayerId> eGameBoard::playersOnBoard() const {
 }
 
 std::string eGameBoard::cityName(const eCityId cid) const {
-    return mWorldBoard->cityName(cid);
+    return mWorld.cityName(cid);
 }
 
 std::vector<eCityId> eGameBoard::allyCidsNotOnBoard(const ePlayerId pid) const {
     std::vector<eCityId> result;
     const auto tid = playerIdToTeamId(pid);
-    const auto& cities = mWorldBoard->cities();
+    const auto& cities = mWorld.cities();
     for(const auto& c : cities) {
         const bool onBoard = c->isOnBoard();
         if(onBoard) continue;
@@ -1273,7 +1273,7 @@ eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
         result.add(e);
     }
 
-    const auto& cts = mWorldBoard->cities();
+    const auto& cts = mWorld.cities();
     for(const auto& c : cts) {
         if(!c->active()) continue;
         const auto cpid = c->playerId();
@@ -1582,10 +1582,6 @@ bool eGameBoard::setAtlantean(const eCityId cid, const bool a) {
     if(!c) return false;
     c->setAtlantean(a);
     return true;
-}
-
-void eGameBoard::setWorldBoard(eWorldBoard* const wb) {
-    mWorldBoard = wb;
 }
 
 void eGameBoard::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
@@ -2312,12 +2308,12 @@ void eGameBoard::incTime(const int by) {
     }
 
     if(nextMonth) {
-        mWorldBoard->nextMonth(this);
+        mWorld.nextMonth(this);
     }
     if(nextYear) {
-        mWorldBoard->nextYear();
+        mWorld.nextYear();
         const auto ppid = personPlayer();
-        const auto cs = mWorldBoard->getTribute(ppid);
+        const auto cs = mWorld.getTribute(ppid);
         for(const auto& c : cs) {
             if(c->conqueredByRival()) continue;
             tributeFrom(ppid, c, true);
@@ -2754,7 +2750,6 @@ void eGameBoard::startEpisode(eEpisode* const e,
     }
 
     mGoals.clear();
-    mWorldBoard = e->fWorldBoard;
     const auto& date = e->fStartDate;
     setDate(date);
     for(const auto& d : e->fDrachmas) {

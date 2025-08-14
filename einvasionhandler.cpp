@@ -623,9 +623,9 @@ void eInvasionHandler::incTime(const int by) {
             mBoard.event(eEvent::invasionVictory, ed);
         }
         if(invadingC) {
-            const auto wboard = mBoard.getWorldBoard();
+            const auto& wboard = mBoard.world();
             eEventData ied(invadingPid);
-            const auto targetWCity = wboard->cityWithId(mTargetCity);
+            const auto targetWCity = wboard.cityWithId(mTargetCity);
             ied.fCity = targetWCity;
 
             mBoard.event(eEvent::cityConquerFailed, ied);

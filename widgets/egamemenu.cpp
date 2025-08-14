@@ -46,13 +46,14 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
     const auto pid = board.cityIdToPlayerId(cid);
     const auto ppid = board.personPlayer();
     if(pid != ppid && !showAllPossibleBuildings) return;
-    const auto& wrld = board.getWorldBoard();
+    const auto& wrld = board.world();
     int i = -1;
-    for(const auto& c : wrld->cities()) {
+    for(const auto& c : wrld.cities()) {
         i++;
         if(c->isRival()) continue;
         if(c->isCurrentCity()) continue;
         if(!c->active()) continue;
+        if(!c->visible()) continue;
         if(!board.hasTradePost(cid, *c)) {
             const auto tradeCid = c->cityId();
             const auto tradePid = board.cityIdToPlayerId(tradeCid);

@@ -687,8 +687,8 @@ bool gBuild(const eAIBuilding& b,
         }
         eTradePost* tpPtr = nullptr;
         const auto bc = [boardPtr, cid, b, &tpPtr]() {
-            const auto wboard = boardPtr->getWorldBoard();
-            const auto wc = wboard->cityWithId(b.fTradingPartner);
+            const auto& wboard = boardPtr->world();
+            const auto wc = wboard.cityWithId(b.fTradingPartner);
             const auto tp = e::make_shared<eTradePost>(*boardPtr, *wc.get(), cid,
                                                        b.fTradePostType);
             tpPtr = tp.get();
@@ -701,8 +701,8 @@ bool gBuild(const eAIBuilding& b,
         if(b.fTradePostType == eTradePostType::post) return tpr;
         if(!tpr) return false;
         const auto bcp = [boardPtr, cid, b, tpPtr]() {
-            const auto wboard = boardPtr->getWorldBoard();
-            const auto wc = wboard->cityWithId(b.fTradingPartner);
+            const auto& wboard = boardPtr->world();
+            const auto wc = wboard.cityWithId(b.fTradingPartner);
             const auto p = e::make_shared<ePier>(*boardPtr, b.fO, cid);
             p->setTradePost(tpPtr);
             tpPtr->setUnpackBuilding(p.get());

@@ -2206,7 +2206,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     default: break;
     }
 
-    const auto wrld = mBoard->getWorldBoard();
+    const auto& wrld = mBoard->world();
     if(t && mGm->visible()) {
         bool fertile = false;
         std::function<bool(const int tx, const int ty,
@@ -2958,7 +2958,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto b1 = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
             const int ctid = mGm->tradeCityId();
-            const auto cts = wrld->cities();
+            const auto& cts = wrld.cities();
             const auto ct = cts[ctid];
             const auto b2 = e::make_shared<eTradePost>(
                                 *mBoard, *ct, mViewedCityId, eTradePostType::pier);
@@ -3038,7 +3038,7 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         case eBuildingMode::tradePost: {
             const int ctid = mGm->tradeCityId();
-            const auto cts = wrld->cities();
+            const auto& cts = wrld.cities();
             const auto ct = cts[ctid];
             const auto b1 = e::make_shared<eTradePost>(*mBoard, *ct, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);

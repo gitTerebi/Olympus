@@ -24,7 +24,7 @@ void eWorldMapWidget::setSelectColonyMode(
 
 void eWorldMapWidget::setBoard(eGameBoard* const b) {
     mGameBoard = b;
-    setWorldBoard(b ? b->getWorldBoard() : nullptr);
+    setWorldBoard(b ? &b->world() : nullptr);
 }
 
 void eWorldMapWidget::setWorldBoard(eWorldBoard* const b) {

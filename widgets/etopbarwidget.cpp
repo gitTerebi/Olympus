@@ -95,8 +95,8 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         const auto cid = mGW->viewedCity();
         const auto pid = mBoard->personPlayer();
 //        const auto pid = mBoard->cityIdToPlayerId(cid);
-        const auto wb = mBoard->getWorldBoard();
-        const auto c = wb->cityWithId(cid);
+        const auto& wb = mBoard->world();
+        const auto c = wb.cityWithId(cid);
 
         const auto label = c ? c->name() : "-";
         mCityLabel->setText(label);

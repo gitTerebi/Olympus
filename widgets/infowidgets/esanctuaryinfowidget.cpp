@@ -176,7 +176,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             pb->setUnderline(false);
             pb->fitContent();
             bw->addWidget(pb);
-            const auto wboard = board.getWorldBoard();
+            const auto wboard = &board.world();
             pb->setPressAction([this, wboard, s, buttonReasonW, reasonLabel, enemyCids]() {
                 const auto askForAttack = [s, buttonReasonW, reasonLabel](const eCityId cid) {
                     eHelpDenialReason reason;

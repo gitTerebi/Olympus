@@ -27,6 +27,9 @@ class eWorldBoard {
 public:
     eWorldBoard();
 
+    eWorldBoard(const eWorldBoard&) = delete;
+    eWorldBoard& operator=(const eWorldBoard&) = delete;
+
     void nextMonth(eGameBoard* const board);
     void nextYear();
 

@@ -213,7 +213,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
 
     retrievedMaps++;
 
-    auto &world = *board.getWorldBoard();
+    auto &world = board.world();
 
     // Read scenario info
     skipBytes(0x1778);

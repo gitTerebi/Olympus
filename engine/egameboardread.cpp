@@ -125,7 +125,7 @@ void eGameBoard::read(eReadStream& src) {
     src >> ng;
     for(int i = 0; i < ng; i++) {
         const auto g = std::make_shared<eEpisodeGoal>();
-        g->read(mWorldBoard, src);
+        g->read(&mWorld, src);
         mGoals.push_back(g);
     }
 

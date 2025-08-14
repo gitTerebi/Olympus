@@ -20,15 +20,13 @@ eCampaign::eCampaign() {
 void eCampaign::initialize(const std::string& name) {
     mName = name;
 
-    mParentBoard = e::make_shared<eGameBoard>();
+    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
     mParentBoard->initialize(100, 100);
-    mParentBoard->setWorldBoard(&mWorldBoard);
 
     for(int i = 0; i < 4; i++) {
         auto& board = mColonyBoards.emplace_back();
-        board = e::make_shared<eGameBoard>();
+        board = e::make_shared<eGameBoard>(mWorldBoard);
         board->initialize(1, 1);
-        board->setWorldBoard(&mWorldBoard);
 
         const auto e = std::make_shared<eColonyEpisode>();
         e->fBoard = board.get();
@@ -236,8 +234,7 @@ void eCampaign::read(eReadStream& src) {
     }
     src >> mDifficulty;
     mWorldBoard.read(src);
-    mParentBoard = e::make_shared<eGameBoard>();
-    mParentBoard->setWorldBoard(&mWorldBoard);
+    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
     mParentBoard->read(src);
 
     {
@@ -256,8 +253,7 @@ void eCampaign::read(eReadStream& src) {
         for(int i = 0; i < nc; i++) {
             auto& b = mColonyBoards.emplace_back();
             const bool finished = colonyEpisodeFinished(i);
-            b = e::make_shared<eGameBoard>();
-            b->setWorldBoard(&mWorldBoard);
+            b = e::make_shared<eGameBoard>(mWorldBoard);
             if(finished) continue;
             b->read(src);
         }

@@ -254,8 +254,8 @@ void eInvasionEvent::read(eReadStream& src) {
     src.readGameEvent(board, [this](eGameEvent* const e) {
         mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
     });
-    const auto wboard = board->getWorldBoard();
-    mForces.read(*board, *wboard, src);
+    auto& wboard = board->world();
+    mForces.read(*board, wboard, src);
 
     src >> mInvasionPoint;
     updateDisembarkAndShoreTile();
@@ -389,8 +389,8 @@ void eInvasionEvent::defeated() {
     const auto invadingPid = board.cityIdToPlayerId(invadingCid);
     const auto invadingC = board.boardCityWithId(invadingCid);
     const auto ppid = board.personPlayer();
-    const auto wboard = board.getWorldBoard();
-    const auto targetWCity = wboard->cityWithId(targetCity);
+    const auto& wboard = board.world();
+    const auto targetWCity = wboard.cityWithId(targetCity);
     if(invadingC) {
         eEventData ied(invadingPid);
         board.event(eEvent::cityConquered, ied);

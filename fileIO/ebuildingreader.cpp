@@ -46,7 +46,7 @@ std::vector<eSanctCost> readPyramidElementCost(eReadStream& src) {
 stdsptr<eBuilding> eBuildingReader::sRead(
         eGameBoard& board, const eBuildingType type,
         eReadStream& src) {
-    const auto wrld = board.getWorldBoard();
+    const auto& wrld = board.world();
     eCityId cid;
     src >> cid;
     stdsptr<eBuilding> b;
@@ -222,7 +222,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
 
         eCityId ctid;
         src >> ctid;
-        const auto ct = wrld->cityWithId(ctid);
+        const auto ct = wrld.cityWithId(ctid);
 
         const auto tp = e::make_shared<eTradePost>(board, *ct, cid, tpt);
         b = tp;

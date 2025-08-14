@@ -167,7 +167,7 @@ void eWorldWidget::initialize() {
 void eWorldWidget::setBoard(eGameBoard* const board) {
     mBoard = board;
     mWMW->setBoard(board);
-    setWorldBoard(mBoard->getWorldBoard());
+    setWorldBoard(&mBoard->world());
 }
 
 void eWorldWidget::setWorldBoard(eWorldBoard* const board) {

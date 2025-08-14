@@ -546,7 +546,7 @@ bool eGameWidget::buildMouseRelease() {
     const auto cid = mViewedCityId;
     const auto pid = mBoard->personPlayer();
 
-    const auto wrld = mBoard->getWorldBoard();
+    const auto& wrld = mBoard->world();
     const auto ppid = mBoard->personPlayer();
     eApply apply;
     if(mTem->visible()) {
@@ -1223,7 +1223,7 @@ bool eGameWidget::buildMouseRelease() {
                 } break;
                 }
                 const int ctid = mGm->tradeCityId();
-                const auto& cts = wrld->cities();
+                const auto& cts = wrld.cities();
                 const auto ct = cts[ctid];
                 const auto tp = e::make_shared<eTradePost>(
                                     *mBoard, *ct, mViewedCityId, eTradePostType::pier);
@@ -1355,7 +1355,7 @@ bool eGameWidget::buildMouseRelease() {
 
         case eBuildingMode::tradePost: {
             const int ctid = mGm->tradeCityId();
-            const auto cts = wrld->cities();
+            const auto cts = wrld.cities();
             const auto ct = cts[ctid];
             mBoard->build(mHoverTX, mHoverTY, 4, 4, cid, pid, mEditorMode,
                   [this, ct]() {
