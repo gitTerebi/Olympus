@@ -645,7 +645,7 @@ void eCampaign::readPak(const std::string& name,
     file.seek(0);
     file.getNumMaps();
     const auto cid = eCityId::city0;
-    file.loadBoard(*mParentBoard, cid);
+    file.loadBoard(*mParentBoard, cid, *this);
 
     file.seek(8);
     const uint8_t nParentEps = file.readUByte();
@@ -775,7 +775,7 @@ void eCampaign::readPak(const std::string& name,
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>();
         board->setWorldBoard(&mWorldBoard);
-        const bool r = file.loadBoard(*board, cid);
+        const bool r = file.loadBoard(*board, cid, *this);
 
         if(r) {
             const auto c = board->addCityToBoard(cid);

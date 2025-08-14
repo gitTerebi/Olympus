@@ -35,6 +35,8 @@
 #include "spawners/ewolfspawner.h"
 #include "spawners/edisasterpoint.h"
 
+#include "engine/ecampaign.h"
+
 #include "elanguage.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
@@ -104,6 +106,16 @@ eNationality pakIdToNationality(const uint8_t id) {
         return eNationality::centaur;
     } else if(id == 4) {
         return eNationality::amazon;
+    } else if(id == 5) {
+        return eNationality::egyptian;
+    } else if(id == 6) {
+        return eNationality::mayan;
+    } else if(id == 7) {
+        return eNationality::phoenician;
+    } else if(id == 8) {
+        return eNationality::oceanid;
+    } else if(id == 9) {
+        return eNationality::atlantean;
     }
     printf("Invalid nationality id %i\n", id);
     return eNationality::greek;
@@ -191,7 +203,8 @@ eWorldMap pakMapIdToMap(const uint8_t mapId) {
     return eWorldMap::greece1;
 }
 
-bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
+bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
+                         eCampaign& campaign) {
     if(retrievedMaps >= numMaps) {
         return false;
 	}	
@@ -346,21 +359,51 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     skipBytes(736);
     const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
-    const auto cityBytes1 = readCompressed(); // city positions
-    const auto cityBytes2 = readCompressed(); // trade routes
-    const auto cityBytes3 = readCompressed();
-    const auto cityBytes4 = readCompressed();
-//    skipCompressed(); // not of proper length: 14400
-//    skipCompressed(); // not of proper length: 75168
-//    skipCompressed(); // byte grid: all ff's (counterpart of marble grid in sav?
-//    skipCompressed(); // 36 bytes
-    skipBytes(144);
+    std::vector<uint8_t> cityBytes1;
+    std::vector<uint8_t> cityBytes2;
+    std::vector<uint8_t> cityBytes3;
+    std::vector<uint8_t> cityBytes4;
+    std::vector<uint8_t> cityBytes5;
+    std::vector<uint8_t> cityBytes6;
+    if(retrievedMaps == 1) {
+        cityBytes1 = readCompressed(); // city positions
+        cityBytes2 = readCompressed(); // trade routes
+        cityBytes3 = readCompressed();
+        cityBytes4 = readCompressed();
+    } else {
+        skipCompressed(); // not of proper length: 14400
+        skipCompressed(); // not of proper length: 75168
+        skipCompressed(); // byte grid: all ff's (counterpart of marble grid in sav?
+        skipCompressed(); // 36 bytes 936359
+    }
+    skipBytes(4);
+    int nTypes = 0;
+    if(retrievedMaps == 1) {
+        auto& prices = campaign.prices();
+        if(mNewVersion) {
+            nTypes = 21;
+        } else {
+            nTypes = 18;
+        }
+        for(int i = 1; i < nTypes + 1; i++) {
+            const uint32_t price = readUInt();
+            if(mNewVersion && i == 15) continue;
+            if(!mNewVersion && i == 14) continue;
+            const auto type = ePakHelpers::pakResourceByteToType(
+                                  i, mNewVersion);
+            prices[type] = price;
+            const auto name = eResourceTypeHelpers::typeName(type);
+            printf("%s: %i\n", name.c_str(), price);
+        }
+        printf("\n");
+    }
+    skipBytes(140 - nTypes*4);
     const auto scrub = readCompressedByteGrid();
     const auto elevation = readCompressedByteGrid();
-    const auto cityBytes5 = readCompressed();
-    const auto cityBytes6 = readCompressed(); // city names
-    const uint8_t mapId = readUByte();
     if(retrievedMaps == 1) {
+        cityBytes5 = readCompressed();
+        cityBytes6 = readCompressed(); // city names
+        const uint8_t mapId = readUByte();
         auto &world = *board.getWorldBoard();
         const auto map = pakMapIdToMap(mapId);
         world.setMap(map);

@@ -24,6 +24,8 @@
 
 #include "engine/egameboard.h"
 
+class eCampaign;
+
 class ZeusFile : public GameFile {
 	public:
 		static const int MAX_MAPS = 5; // parent city + 4 colonies
@@ -49,7 +51,8 @@ class ZeusFile : public GameFile {
 		* image can't be loaded for whatever reason.
 		* NOTE: call getNumMaps() before calling this function
 		*/
-        bool loadBoard(eGameBoard& board, const eCityId cid);
+        bool loadBoard(eGameBoard& board, const eCityId cid,
+                       eCampaign& campaign);
 	private:
 		int getMapsize();
 
