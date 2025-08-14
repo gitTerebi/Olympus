@@ -687,6 +687,7 @@ SOURCES += \
         widgets/eventwidgets/etroopsrequesteventwidget.cpp \
         widgets/eventwidgets/ewagechangeeventwidget.cpp \
         widgets/eviewmode.cpp \
+        widgets/ewatertradewidget.cpp \
         widgets/ewidget.cpp \
         widgets/eworkforceallocationwidget.cpp \
         widgets/eworldgoodswidget.cpp \
@@ -2801,6 +2802,7 @@ HEADERS += \
     widgets/eventwidgets/etroopsrequesteventwidget.h \
     widgets/eventwidgets/ewagechangeeventwidget.h \
     widgets/eviewmode.h \
+    widgets/ewatertradewidget.h \
     widgets/ewidget.h \
     widgets/eworkforceallocationwidget.h \
     widgets/eworldgoodswidget.h \

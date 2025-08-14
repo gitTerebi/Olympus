@@ -17,7 +17,7 @@ void eCityOnBoardSelectionWidget::initialize(
     eScrollButtonsList::initialize();
 
     const auto iniCids = get();
-    for(const auto& cid : iniCids) {
+    for(const auto cid : iniCids) {
         const auto cStr = wboard->cityName(cid);
         addButton(cStr);
     }

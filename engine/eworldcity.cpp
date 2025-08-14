@@ -460,13 +460,13 @@ void eWorldCity::setMilitaryStrength(const int s) {
 }
 
 void eWorldCity::setWaterTrade(const bool w, const eCityId cid) {
-    mWaterTrade[cid] = w;
+    if(w) mWaterTrade.insert(cid);
+    else mWaterTrade.erase(cid);
 }
 
 bool eWorldCity::waterTrade(const eCityId cid) const {
     const auto it = mWaterTrade.find(cid);
-    if(it == mWaterTrade.end()) return false;
-    return it->second;
+    return it != mWaterTrade.end();
 }
 
 bool eWorldCity::trades() const {
@@ -563,9 +563,8 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mWealth;
 
     dst << mWaterTrade.size();
-    for(const auto& c : mWaterTrade) {
-        dst << c.first;
-        dst << c.second;
+    for(const auto c : mWaterTrade) {
+        dst << c;
     }
 
     dst << mVisible;
@@ -644,7 +643,7 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     for(int i = 0; i < nc; i++) {
         eCityId cid;
         src >> cid;
-        src >> mWaterTrade[cid];
+        mWaterTrade.insert(cid);
     }
 
     src >> mVisible;

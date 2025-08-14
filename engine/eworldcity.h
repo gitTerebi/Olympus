@@ -2,6 +2,7 @@
 #define EWORLDCITY_H
 
 #include <string>
+#include <set>
 
 #include "eresourcetype.h"
 #include "pointers/estdselfref.h"
@@ -243,6 +244,8 @@ public:
 
     void setWaterTrade(const bool w, const eCityId cid);
     bool waterTrade(const eCityId cid) const;
+    const std::set<eCityId>& waterTrades() const
+    { return mWaterTrade; }
 
     bool trades() const;
 
@@ -348,7 +351,7 @@ private:
     int mYearsElapsed = 0;
     int mWealth = 1; // 1-5
 
-    std::map<eCityId, bool> mWaterTrade;
+    std::set<eCityId> mWaterTrade;
     bool mVisible = true;
 
     std::vector<eResourceTrade> mBuys;

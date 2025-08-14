@@ -11,6 +11,7 @@
 #include "enamewidget.h"
 #include "engine/eworldboard.h"
 #include "engine/egameboard.h"
+#include "ewatertradewidget.h"
 
 #include <algorithm>
 
@@ -598,26 +599,39 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     });
     buttonsW2->addWidget(recTributeButton);
     recTributeButton->align(eAlignment::hcenter);
-// !!!
-//    const auto waterTradeButton = new eFramedButton(window());
-//    waterTradeButton->setUnderline(false);
-//    if(c->waterTrade()) {
-//        waterTradeButton->setText(eLanguage::text("water_trade"));
-//    } else {
-//        waterTradeButton->setText(eLanguage::text("land_trade"));
-//    }
-//    waterTradeButton->fitContent();
-//    waterTradeButton->setPressAction([c, waterTradeButton]() {
-//        const bool wt = !c->waterTrade();
-//        c->setWaterTrade(wt);
-//        if(wt) {
-//            waterTradeButton->setText(eLanguage::text("water_trade"));
-//        } else {
-//            waterTradeButton->setText(eLanguage::text("land_trade"));
-//        }
-//    });
-//    buttonsW2->addWidget(waterTradeButton);
-//    waterTradeButton->align(eAlignment::hcenter);
+
+    const auto waterTradeButton = new eFramedButton(window());
+    waterTradeButton->setUnderline(false);
+    waterTradeButton->setText(eLanguage::text("water_trade"));
+    waterTradeButton->fitContent();
+    waterTradeButton->setPressAction([this, c, wb]() {
+        const auto w = new eWaterTradeWidget(window());
+        w->resize(width(), height());
+
+        const auto get = [c]() {
+            const auto& cids = c->waterTrades();
+            std::vector<eCityId> result;
+            for(const auto cid : cids) {
+                result.push_back(cid);
+            }
+            return result;
+        };
+
+        const auto add = [c](const eCityId cid) {
+            c->setWaterTrade(true, cid);
+        };
+
+        const auto remove = [c](const eCityId cid) {
+            c->setWaterTrade(false, cid);
+        };
+
+        w->initialize(get, add, remove, wb);
+
+        window()->execDialog(w);
+        w->align(eAlignment::center);
+    });
+    buttonsW2->addWidget(waterTradeButton);
+    waterTradeButton->align(eAlignment::hcenter);
 
     const auto mStr = new eValueButton(window());
     mStr->initialize(1, 5);
