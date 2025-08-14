@@ -543,6 +543,10 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
             } else if(cityType == eCityType::distantCity) {
                 const auto dir = pakIdToDistantDirection(natId);
                 c->setDirection(dir);
+            } else if(cityType == eCityType::parentCity ||
+                      cityType == eCityType::colony) {
+                if(mAtlantean) c->setNationality(eNationality::atlantean);
+                else c->setNationality(eNationality::greek);
             }
 
             if(cityType == eCityType::parentCity ||
