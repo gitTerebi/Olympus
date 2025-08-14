@@ -347,7 +347,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
     const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
     const auto cityBytes1 = readCompressed(); // city positions
-    const auto cityBytes2 = readCompressed();
+    const auto cityBytes2 = readCompressed(); // trade routes
     const auto cityBytes3 = readCompressed();
     const auto cityBytes4 = readCompressed();
 //    skipCompressed(); // not of proper length: 14400
@@ -452,7 +452,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             const auto pid = cityType == eCityType::parentCity ||
                              cityType == eCityType::colony ?
                                  ePlayerId::player0 :
-                                 static_cast<ePlayerId>(cityId + 1);
+                                 static_cast<ePlayerId>(cityId);
 
             std::string name;
             if(cityNameId == 0xFF) {
@@ -535,7 +535,23 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid) {
             world.moveCityToPlayer(cid, pid);
             world.setPlayerTeam(pid, eTeamId::team0);
         }
-
+        int id2 = 644;
+        for(int j = 0; j < cityId; j++) {
+            for(int i = 0; i < cityId; i++) {
+                if(i >= j) continue;
+                const uint8_t byte = cityBytes2[id2];
+                const bool water = byte == 2;
+                if(water) {
+                    const auto cid1 = static_cast<eCityId>(i);
+                    const auto cid2 = static_cast<eCityId>(j);
+                    const auto c1 = world.cityWithId(cid1);
+                    const auto c2 = world.cityWithId(cid2);
+                    c1->setWaterTrade(true, cid2);
+                    c2->setWaterTrade(true, cid1);
+                }
+                id2 += 324;
+            }
+        }
 
         if(gCityBytes1.empty()) {
             gCityBytes1 = cityBytes1;
