@@ -644,37 +644,14 @@ void eCampaign::readPak(const std::string& name,
 
     file.seek(0);
     file.getNumMaps();
-    const auto cid = eCityId::city0;
-    file.loadBoard(*mParentBoard, cid, *this);
+    eCityId parentCid;
+    file.loadBoard(*mParentBoard, *this, parentCid);
 
     file.seek(8);
     const uint8_t nParentEps = file.readUByte();
     file.seek(12); // and 16?
     const uint8_t nColonyEps = file.readUByte();
     const bool atlantean = file.isAtlantean();
-
-//    {
-//        const auto c = std::make_shared<eWorldCity>(
-//                           eCityType::parentCity,
-//                           cid, "Athens", 0.5, 0.5);
-//        mWorldBoard.addCity(c);
-//        mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
-//        mWorldBoard.setPlayerTeam(ePlayerId::player0, eTeamId::team0);
-//        for(int i = 0; i < nColonyEps; i++) {
-//            const auto cid = static_cast<eCityId>(i + 1);
-//            const auto name = "Colony " + std::to_string(i);
-//            const auto c = std::make_shared<eWorldCity>(
-//                               eCityType::colony,
-//                               cid, name, i*0.2, 0.75);
-//            mWorldBoard.addCity(c);
-//            mWorldBoard.moveCityToPlayer(cid, ePlayerId::player0);
-//        }
-//    }
-    {
-        const auto c = mParentBoard->addCityToBoard(cid);
-        mParentBoard->addPlayerToBoard(ePlayerId::player0);
-        c->setAtlantean(atlantean);
-    }
 
     file.seek(35648);
     const uint16_t briefId = file.readUShort();
@@ -684,7 +661,6 @@ void eCampaign::readPak(const std::string& name,
         mTitle = brief.first;
         mIntroduction = brief.second;
     }
-
 
     file.seek(35652);
     const uint16_t completeId = file.readUShort();
@@ -707,11 +683,11 @@ void eCampaign::readPak(const std::string& name,
         ep->fNextEpisode = nextColony ? eEpisodeType::colony :
                                         eEpisodeType::parentCity;
         file.seek(8174 + i*2032); // mint
-        readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
+        readEpisodeAllowedBuildings(*ep, file, atlantean, parentCid);
         file.seek(8752 + i*2032);
         readEpisodeText(*ep, file);
         file.seek(9100 + i*2032);
-        readEpisodeResources(*ep, file, cid);
+        readEpisodeResources(*ep, file, parentCid);
 
         const int epInc = newVersion ? 300 : 224;
 
@@ -731,17 +707,17 @@ void eCampaign::readPak(const std::string& name,
         }
 
         file.seek(35944 + i*epInc);
-        readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+        readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, parentCid);
         if(atlantean) {
             file.seek(35972 + i*epInc);
             readEpisodeEnabledPyramids(file, pyramids);
-            applyPyramidsToEpisode(pyramids, *ep, cid);
+            applyPyramidsToEpisode(pyramids, *ep, parentCid);
         }
 
         file.seek(799297 + i*4);
         const uint8_t nEvents = file.readUByte();
         file.seek(38874 + i*18600);
-        readEpisodeEvents(*ep, file, nEvents, cid);
+        readEpisodeEvents(*ep, file, nEvents, parentCid);
 
         if(newVersion) {
             file.seek(838331 + i*4);
@@ -771,14 +747,13 @@ void eCampaign::readPak(const std::string& name,
 
     for(int i = 0; i < 4; i++) {
         printf("colony episode %i:\n\n", i);
-        const auto cid = static_cast<eCityId>(i + 1);
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>();
         board->setWorldBoard(&mWorldBoard);
-        const bool r = file.loadBoard(*board, cid, *this);
-
+        eCityId colonyCid;
+        const bool r = file.loadBoard(*board, *this, colonyCid);
         if(r) {
-            const auto c = board->addCityToBoard(cid);
+            const auto c = board->addCityToBoard(colonyCid);
             c->setAtlantean(atlantean);
             board->addPlayerToBoard(ePlayerId::player0);
         } else {
@@ -789,15 +764,15 @@ void eCampaign::readPak(const std::string& name,
         const auto ep = std::make_shared<eColonyEpisode>();
         ep->fBoard = board.get();
         ep->fWorldBoard = &mWorldBoard;
-        ep->fCity = mWorldBoard.cityWithId(cid);
+        ep->fCity = mWorldBoard.cityWithId(colonyCid);
         mColonyEpisodes.push_back(ep);
 
         file.seek(28494 + i*2032); // mint
-        readEpisodeAllowedBuildings(*ep, file, atlantean, cid);
+        readEpisodeAllowedBuildings(*ep, file, atlantean, colonyCid);
         file.seek(29072 + i*2032);
         readEpisodeText(*ep, file);
         file.seek(29420 + i*2032);
-        readEpisodeResources(*ep, file, cid);
+        readEpisodeResources(*ep, file, colonyCid);
 
         const int epInc = newVersion ? 300 : 224;
 
@@ -806,7 +781,7 @@ void eCampaign::readPak(const std::string& name,
         } else {
             file.seek(38184 + i*epInc);
         }
-        readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, cid);
+        readEpisodeAllowedSanctuaries(*ep, file, friendlyGods, colonyCid);
 
         if(atlantean) {
             std::vector<ePakPyramid> pyramids;
@@ -814,7 +789,7 @@ void eCampaign::readPak(const std::string& name,
             readEpisodeAllowedPyramids(file, pyramids);
             file.seek(38972 + i*epInc);
             readEpisodeEnabledPyramids(file, pyramids);
-            applyPyramidsToEpisode(pyramids, *ep, cid);
+            applyPyramidsToEpisode(pyramids, *ep, colonyCid);
         }
 
         if(newVersion) {

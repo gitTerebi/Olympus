@@ -203,8 +203,8 @@ eWorldMap pakMapIdToMap(const uint8_t mapId) {
     return eWorldMap::greece1;
 }
 
-bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
-                         eCampaign& campaign) {
+bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
+                         eCityId& cid) {
     if(retrievedMaps >= numMaps) {
         return false;
 	}	
@@ -212,6 +212,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
     in.seek(positions[retrievedMaps]);
 
     retrievedMaps++;
+
+    auto &world = *board.getWorldBoard();
 
     // Read scenario info
     skipBytes(0x1778);
@@ -404,7 +406,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
         cityBytes5 = readCompressed();
         cityBytes6 = readCompressed(); // city names
         const uint8_t mapId = readUByte();
-        auto &world = *board.getWorldBoard();
         const auto map = pakMapIdToMap(mapId);
         world.setMap(map);
         int cityId = 0;
@@ -580,7 +581,9 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
             }
             world.addCity(c);
             world.moveCityToPlayer(cid, pid);
-            world.setPlayerTeam(pid, eTeamId::team0);
+            const auto tid = c->isRival() ? eTeamId::team1 :
+                                            eTeamId::team0;
+            world.setPlayerTeam(pid, tid);
         }
         int id2 = 644;
         for(int j = 0; j < cityId; j++) {
@@ -651,6 +654,27 @@ bool ZeusFile::loadBoard(eGameBoard& board, const eCityId cid,
             }
         }
     }
+
+    const auto& cities = world.cities();
+    cid = eCityId::city0;
+    int colonyId = 0;
+    for(const auto& c: cities) {
+        if(c->isParentCity() && retrievedMaps == 1) {
+            cid = c->cityId();
+            break;
+        }
+        if(c->isColony()) {
+            if(colonyId == retrievedMaps - 2) {
+                cid = c->cityId();
+                break;
+            }
+            colonyId++;
+        }
+    }
+
+    const auto c = board.addCityToBoard(cid);
+    board.addPlayerToBoard(ePlayerId::player0);
+    c->setAtlantean(mAtlantean);
 
 	// Extra sanity check
     if(!ok || mapsize > MAX_MAPSIZE) {
