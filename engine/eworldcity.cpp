@@ -534,6 +534,7 @@ void eWorldCity::write(eWriteStream& dst) const {
     dst << mNationality;
     dst << mDirection;
     dst << mState;
+    dst << mNamePlace;
     dst << mName;
     dst << mNameString;
     dst << mLeader;
@@ -600,6 +601,7 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     src >> mNationality;
     src >> mDirection;
     src >> mState;
+    src >> mNamePlace;
     src >> mName;
     src >> mNameString;
     if(mNameString > -1 && mNameString < 82) {
@@ -607,6 +609,9 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
     }
     src >> mLeader;
     src >> mLeaderString;
+    if(mLeaderString > -1 && mLeaderString < 84) {
+        mLeader = eLanguage::zeusText(139, mLeaderString);
+    }
     src >> mX;
     src >> mY;
     src >> mTradeShutdown;

@@ -88,6 +88,13 @@ enum class eCityState {
     inactive
 };
 
+enum class eNamePlace {
+    left,
+    top,
+    right,
+    bottom
+};
+
 struct eResourceTrade {
     eResourceType fType;
     std::map<ePlayerId, int> fUsed;
@@ -213,6 +220,9 @@ public:
     void setAttitude(const double a, const ePlayerId pid);
     void incAttitude(const double a, const ePlayerId pid);
 
+    eNamePlace namePlace() const { return mNamePlace; }
+    void setNamePlace(const eNamePlace p) { mNamePlace = p; }
+
     static std::vector<std::string> sNames();
     void setName(const std::string& name);
     const std::string& name() const { return mName; }
@@ -327,6 +337,8 @@ private:
     eCityState mState{eCityState::inactive};
 
     eCityId mCityId;
+
+    eNamePlace mNamePlace = eNamePlace::bottom;
 
     std::string mName;
     int mNameString = -1;

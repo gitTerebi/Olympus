@@ -110,6 +110,12 @@ void eWorldBoard::write(eWriteStream& dst) const {
     setIOIDs();
 
     dst << mMap;
+
+    dst << mRegions.size();
+    for(const auto& r : mRegions) {
+        r.write(dst);
+    }
+
     dst << mCities.size();
     for(const auto& c : mCities) {
         c->write(dst);
@@ -136,6 +142,14 @@ void eWorldBoard::write(eWriteStream& dst) const {
 
 void eWorldBoard::read(eReadStream& src) {
     src >> mMap;
+
+    int nr;
+    src >> nr;
+    for(int i = 0; i < nr; i++) {
+        auto& r = mRegions.emplace_back();
+        r.read(src);
+    }
+
     int nc;
     src >> nc;
     for(int i = 0; i < nc; i++) {

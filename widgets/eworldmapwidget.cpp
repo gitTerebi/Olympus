@@ -52,6 +52,28 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     const auto& texs = intrfc[iRes];
     const bool editor = mWorldBoard->editorMode();
 
+    const auto& regions = mWorldBoard->regions();
+    for(const auto& r : regions) {
+        const auto name = r.getName();
+        const auto nameFind = mNames.find(name);
+        stdsptr<eTexture> nameTex;
+        if(nameFind == mNames.end()) {
+            nameTex = std::make_shared<eTexture>();
+            const auto res = resolution();
+            const int fontSize = res.smallFontSize();
+            const auto font = eFonts::defaultFont(fontSize);
+            nameTex->loadText(renderer(), name, eFontColor::region, *font);
+            mNames[name] = nameTex;
+        } else {
+            nameTex = nameFind->second;
+        }
+        const int x = r.fX*width();
+        const int y = r.fY*height();
+        const int dx = x; // - nameTex->width()/2;
+        const int dy = y - nameTex->height()/2;
+        p.drawTexture(dx, dy, nameTex);
+    }
+
     const auto handleCity = [&](const stdsptr<eWorldCity>& ct) {
         if(!mSelectColonyMode && !editor &&
            (!ct->active() && !ct->isOnBoard())) return;
@@ -218,8 +240,28 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             } else {
                 nameTex = nameFind->second;
             }
-            const int dx = x - nameTex->width()/2;
-            const int dy = y + nameTex->height();
+            int dx = x;
+            int dy = y;
+            const auto place = ct->namePlace();
+            switch(place) {
+            case eNamePlace::left:
+                dx -= tex->width()/2 + nameTex->width();
+                dy -= nameTex->height()/2;
+                break;
+            case eNamePlace::top:
+                dx -= nameTex->width()/2;
+                dy -= (tex->height() + nameTex->height())/2;
+                break;
+            case eNamePlace::right:
+                dx += tex->width()/2;
+                dy -= nameTex->height()/2;
+                break;
+            case eNamePlace::bottom:
+                dx -= nameTex->width()/2;
+                dy += tex->height()/2;
+                break;
+            }
+
             p.drawTexture(dx, dy, nameTex);
         }
     };
@@ -228,28 +270,6 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     const auto& cts = mWorldBoard->cities();
     for(const auto& ct : cts) {
         handleCity(ct);
-    }
-
-    const auto& regions = mWorldBoard->regions();
-    for(const auto& r : regions) {
-        const auto name = eLanguage::zeusText(196, r.fNameId);
-        const auto nameFind = mNames.find(name);
-        stdsptr<eTexture> nameTex;
-        if(nameFind == mNames.end()) {
-            nameTex = std::make_shared<eTexture>();
-            const auto res = resolution();
-            const int fontSize = res.smallFontSize();
-            const auto font = eFonts::defaultFont(fontSize);
-            nameTex->loadText(renderer(), name, eFontColor::region, *font);
-            mNames[name] = nameTex;
-        } else {
-            nameTex = nameFind->second;
-        }
-        const int x = r.fX*width();
-        const int y = r.fY*height();
-        const int dx = x; // - nameTex->width()/2;
-        const int dy = y - nameTex->height()/2;
-        p.drawTexture(dx, dy, nameTex);
     }
 
     const auto cityFigures = [&](const eNationality nat) {

@@ -203,6 +203,15 @@ eWorldMap pakMapIdToMap(const uint8_t mapId) {
     return eWorldMap::greece1;
 }
 
+eNamePlace pakIdToNamePlace(const uint8_t id) {
+    if(id == 0) return eNamePlace::left;
+    else if(id == 1) return eNamePlace::top;
+    else if(id == 2) return eNamePlace::right;
+    else if(id == 3) return eNamePlace::bottom;
+    printf("Invalid name place id %i\n", id);
+    return eNamePlace::bottom;
+}
+
 bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                          eCityId& cid) {
     if(retrievedMaps >= numMaps) {
@@ -422,9 +431,22 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             if(enabled == 2) { // region
                 id1 = 24 + i*inc1;
                 const uint8_t nameId = cityBytes1[id1];
-                world.addRegion(eWorldRegion{nameId, cityXF, cityYF});
+                std::string name;
+                if(nameId == 0xFF) {
+                    id1 = 40 + i*inc1;
+                    for(int i = 0; i < 33; i++) {
+                        const uint8_t letter = cityBytes1[id1++];
+                        if(letter == 0) break;
+                        name += std::string(1, letter);
+                    }
+                } else {
+                    name = eLanguage::zeusText(196, nameId);
+                }
+                world.addRegion(eWorldRegion{name, nameId, cityXF, cityYF});
                 continue;
             }
+            id1 = 19 + i*inc1;
+            const uint8_t namePlaceId = cityBytes1[id1];
 
             const int inc6 = mNewVersion ? 572 : 476;
             int id6 = 2 + i*inc6;
@@ -523,6 +545,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             const auto c = std::make_shared<eWorldCity>(
                                cityType, cid, name, cityXF, cityYF);
             const bool visible = visibleId != 0;
+            const auto namePlace = pakIdToNamePlace(namePlaceId);
+            c->setNamePlace(namePlace);
             c->setVisible(visible);
             c->setMilitaryStrength(milStr);
             c->setWealth(ecoStr);
