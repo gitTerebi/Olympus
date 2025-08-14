@@ -88,13 +88,6 @@ int ZeusFile::getNumMaps() {
 	return numMaps;
 }
 
-std::vector<uint8_t> gCityBytes1;
-std::vector<uint8_t> gCityBytes2;
-std::vector<uint8_t> gCityBytes3;
-std::vector<uint8_t> gCityBytes4;
-std::vector<uint8_t> gCityBytes5;
-std::vector<uint8_t> gCityBytes6;
-
 eNationality pakIdToNationality(const uint8_t id) {
     if(id == 0) {
         return eNationality::greek;
@@ -624,57 +617,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                     c2->setWaterTrade(true, cid1);
                 }
                 id2 += 324;
-            }
-        }
-
-        if(gCityBytes1.empty()) {
-            gCityBytes1 = cityBytes1;
-            gCityBytes2 = cityBytes2;
-            gCityBytes3 = cityBytes3;
-            gCityBytes4 = cityBytes4;
-            gCityBytes5 = cityBytes5;
-            gCityBytes6 = cityBytes6;
-        } else {
-            for(int j = 1; j < 7; j++) {
-                const std::vector<uint8_t>* v1;
-                const std::vector<uint8_t>* v2;
-                if(j == 1) {
-                    v1 = &gCityBytes1;
-                    v2 = &cityBytes1;
-                } else if(j == 2) {
-                    v1 = &gCityBytes2;
-                    v2 = &cityBytes2;
-                } else if(j == 3) {
-                    v1 = &gCityBytes3;
-                    v2 = &cityBytes3;
-                } else if(j == 4) {
-                    v1 = &gCityBytes4;
-                    v2 = &cityBytes4;
-                } else if(j == 5) {
-                    v1 = &gCityBytes5;
-                    v2 = &cityBytes5;
-                } else if(j == 6) {
-                    v1 = &gCityBytes6;
-                    v2 = &cityBytes6;
-                } else {
-                    continue;
-                }
-                auto& bytes1 = *v1;
-                auto& bytes2 = *v2;
-                for(int i = 0; i < (int)bytes1.size() && i < (int)bytes2.size(); i++) {
-                    const auto b1 = bytes1[i];
-                    const auto b2 = bytes2[i];
-                    if(b1 == b2) continue;
-                    printf("%i %i %i %i\n", j, i, b1, b2);
-                }
-                for(int i = bytes1.size(); i < (int)bytes2.size(); i++) {
-                    const auto b2 = bytes2[i];
-                    printf("%i %i x %i\n", j, i, b2);
-                }
-                for(int i = bytes2.size(); i < (int)bytes1.size(); i++) {
-                    const auto b1 = bytes1[i];
-                    printf("%i %i %i x\n", j, i, b1);
-                }
             }
         }
     }
