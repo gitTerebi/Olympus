@@ -20,7 +20,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eGameEventType type,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, type, branch, board),
+    eResourceCityEvent(cid, type, branch, board),
     mGiftCashAccepted(giftCashAccepted),
     mGiftAccepted(giftAccepted),
     mGiftPostponed(giftPostponed),
@@ -46,6 +46,11 @@ void eResourceGrantedEventBase::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
+
+    if(isMainEvent() && mPostpone) { // initial
+        chooseTypeAndCount();
+    }
+
     const auto pid = playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
@@ -171,29 +176,9 @@ void eResourceGrantedEventBase::trigger() {
 void eResourceGrantedEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     dst << mPostpone;
-    dst << mResource;
-    dst << mCount;
-    dst.writeCity(mCity.get());
 }
 
 void eResourceGrantedEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
     src >> mPostpone;
-    src >> mResource;
-    src >> mCount;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-}
-
-void eResourceGrantedEventBase::setCity(const stdsptr<eWorldCity>& c) {
-    mCity = c;
-}
-
-void eResourceGrantedEventBase::setResourceType(const eResourceType type) {
-    mResource = type;
-}
-
-void eResourceGrantedEventBase::setResourceCount(const int c) {
-    mCount = c;
 }

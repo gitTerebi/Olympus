@@ -621,27 +621,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         }
     }
 
-    const auto& cities = world.cities();
-    cid = eCityId::city0;
-    int colonyId = 0;
-    for(const auto& c: cities) {
-        if(c->isParentCity() && retrievedMaps == 1) {
-            cid = c->cityId();
-            break;
-        }
-        if(c->isColony()) {
-            if(colonyId == retrievedMaps - 2) {
-                cid = c->cityId();
-                break;
-            }
-            colonyId++;
-        }
-    }
-
-    const auto c = board.addCityToBoard(cid);
-    board.addPlayerToBoard(ePlayerId::player0);
-    c->setAtlantean(mAtlantean);
-
 	// Extra sanity check
     if(!ok || mapsize > MAX_MAPSIZE) {
         if(terrain) delete terrain;
@@ -665,6 +644,33 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     int boardH = mapsize + 1;
     if(boardH % 2) boardH++;
     board.initialize(boardW, boardH);
+
+    const auto& cities = world.cities();
+    cid = eCityId::neutralFriendly;
+    int colonyId = 0;
+    for(const auto& c: cities) {
+        if(retrievedMaps == 1) {
+            if(c->isParentCity()) {
+                cid = c->cityId();
+                break;
+            }
+        } else {
+            if(c->isColony()) {
+                if(colonyId == retrievedMaps - 2) {
+                    cid = c->cityId();
+                    break;
+                }
+                colonyId++;
+            }
+        }
+    }
+
+    if(cid != eCityId::neutralFriendly) {
+        const auto c = board.addCityToBoard(cid);
+        board.addPlayerToBoard(ePlayerId::player0);
+        c->setAtlantean(mAtlantean);
+    }
+
     board.assignAllTerritory(cid);
 
     struct eNullTile {

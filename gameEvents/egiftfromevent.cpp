@@ -23,12 +23,21 @@ eGiftFromEvent::eGiftFromEvent(const eCityId cid,
         eGameEventType::giftFrom, branch, board) {}
 
 std::string eGiftFromEvent::longName() const {
-    auto tmpl = eLanguage::text("gift_of_from");
-    const auto resName = eResourceTypeHelpers::typeName(mResource);
-    const auto cStr = std::to_string(mCount);
-    const auto none = eLanguage::text("none");
-    const auto ctstr = mCity ? mCity->name() : none;
+    auto tmpl = eLanguage::text("gift_of_from_long_name");
+    std::string resName;
+    if(mResources[0] != eResourceType::none) {
+        resName += eResourceTypeHelpers::typeName(mResources[0]);
+    }
+    if(mResources[1] != eResourceType::none) {
+        if(!resName.empty()) resName += "/";
+        resName += eResourceTypeHelpers::typeName(mResources[1]);
+    }
+    if(mResources[2] != eResourceType::none) {
+        if(!resName.empty()) resName += "/";
+        resName += eResourceTypeHelpers::typeName(mResources[2]);
+    }
+    const auto cStr = std::to_string(mMinCount) + "-" +
+                      std::to_string(mMaxCount);
     eStringHelpers::replace(tmpl, "%1", cStr + " " + resName);
-    eStringHelpers::replace(tmpl, "%2", ctstr);
     return tmpl;
 }

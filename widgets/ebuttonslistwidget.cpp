@@ -13,8 +13,8 @@ void eListButton::initialize(const std::string& text, const int id,
 
     mIdLabel = new eLabel(std::to_string(id + 1), window());
     if(small) {
-        mIdLabel->setSmallFontSize();
-        mIdLabel->setSmallPadding();
+        mIdLabel->setTinyFontSize();
+        mIdLabel->setTinyPadding();
     }
     mIdLabel->fitContent();
     mIdLabel->setWidth(mIdLabel->height());
@@ -24,8 +24,8 @@ void eListButton::initialize(const std::string& text, const int id,
 
     mButton = new eFramedButton(text, window());
     if(small) {
-        mButton->setSmallFontSize();
-        mButton->setSmallPadding();
+        mButton->setTinyFontSize();
+        mButton->setTinyPadding();
     }
     mButton->setUnderline(false);
     mButton->setRenderBg(renderBg);

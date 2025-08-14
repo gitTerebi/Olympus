@@ -1,12 +1,11 @@
 #ifndef ERESOURCEGRANTEDEVENTBASE_H
 #define ERESOURCEGRANTEDEVENTBASE_H
 
-#include "egameevent.h"
+#include "eresourcecityevent.h"
 
-#include "engine/eworldcity.h"
 #include "engine/eevent.h"
 
-class eResourceGrantedEventBase : public eGameEvent {
+class eResourceGrantedEventBase : public eResourceCityEvent {
 public:
     eResourceGrantedEventBase(const eCityId cid,
                               const eEvent giftCashAccepted,
@@ -31,20 +30,8 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
-
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-    void setCity(const stdsptr<eWorldCity>& c);
-
-    eResourceType resourceType() const { return mResource; }
-    void setResourceType(const eResourceType type);
-
-    int resourceCount() const { return mCount; }
-    void setResourceCount(const int c);
 protected:
     bool mPostpone = true;
-    eResourceType mResource = eResourceType::fleece;
-    int mCount = 16;
-    stdsptr<eWorldCity> mCity;
 private:
     eEvent mGiftCashAccepted;
     eEvent mGiftAccepted;

@@ -12,7 +12,7 @@ eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::receiveRequest, branch, board) {
+    eResourceCityEvent(cid, eGameEventType::receiveRequest, branch, board) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");
@@ -606,62 +606,36 @@ void eReceiveRequestEvent::trigger() {
 
 std::string eReceiveRequestEvent::longName() const {
     auto tmpl = eLanguage::text("receive_request_long_name");
-    const auto resName1 = eResourceTypeHelpers::typeName(mResources[0]);
-    const auto resName2 = eResourceTypeHelpers::typeName(mResources[1]);
-    const auto resName3 = eResourceTypeHelpers::typeName(mResources[2]);
+    std::string resName;
+    if(mResources[0] != eResourceType::none) {
+        resName += eResourceTypeHelpers::typeName(mResources[0]);
+    }
+    if(mResources[1] != eResourceType::none) {
+        if(!resName.empty()) resName += "/";
+        resName += eResourceTypeHelpers::typeName(mResources[1]);
+    }
+    if(mResources[2] != eResourceType::none) {
+        if(!resName.empty()) resName += "/";
+        resName += eResourceTypeHelpers::typeName(mResources[2]);
+    }
     const auto cStr = std::to_string(mMinCount) + "-" +
                       std::to_string(mMaxCount);
-    eStringHelpers::replace(tmpl, "%1", cStr + " " + resName1 + "/" +
-                            resName2 + "/" + resName3);
-    const auto none = eLanguage::text("none");
-    const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%2", ctstr);
+    eStringHelpers::replace(tmpl, "%1", cStr + " " + resName);
     return tmpl;
 }
 
 void eReceiveRequestEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
+    eResourceCityEvent::write(dst);
     dst << mRequestType;
     dst << mFinish;
     dst << mPostpone;
-    dst << mResource;
-    dst << mCount;
-    dst << mMinCount;
-    dst << mMaxCount;
-
-    dst << mResources.size();
-    for(const auto r : mResources) {
-        dst << r;
-    }
-
-    dst.writeCity(mCity.get());
 }
 
 void eReceiveRequestEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
+    eResourceCityEvent::read(src);
     src >> mRequestType;
     src >> mFinish;
     src >> mPostpone;
-    src >> mResource;
-    src >> mCount;
-    src >> mMinCount;
-    src >> mMaxCount;
-
-    int nr;
-    src >> nr;
-    for(int i = 0; i < nr; i++) {
-        eResourceType type;
-        src >> type;
-        mResources.push_back(type);
-    }
-
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-}
-
-void eReceiveRequestEvent::setCity(const stdsptr<eWorldCity>& c) {
-    mCity = c;
 }
 
 eCityRequest eReceiveRequestEvent::cityRequest() const {
@@ -708,18 +682,4 @@ void eReceiveRequestEvent::finished(eEventTrigger& t, const eReason& r) {
     const auto item = eResourceTypeHelpers::typeLongName(mResource);
     eStringHelpers::replaceAll(rFull, "[item]", item);
     t.trigger(*this, date, rFull);
-}
-
-void eReceiveRequestEvent::chooseTypeAndCount() {
-    std::vector<eResourceType> types;
-    for(const auto r : mResources) {
-        if(r == eResourceType::none) continue;
-        types.push_back(r);
-    }
-    if(types.empty()) return;
-    if(mMinCount > mMaxCount) return;
-    const int typeId = eRand::rand() % types.size();
-    mResource = types[typeId];
-    const int diff = mMaxCount - mMinCount;
-    mCount = diff == 0 ? mMinCount : (mMinCount + (eRand::rand() % diff));
 }

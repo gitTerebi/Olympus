@@ -7,6 +7,7 @@
 #include "buildings/pyramids/epyramid.h"
 
 #include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/egiftfromevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -238,6 +239,7 @@ eGameEventType pakIdToEventType(const uint8_t id, bool& valid) {
     }
     valid = true;
     if(id == 1) return eGameEventType::receiveRequest;
+    else if(id == 23) return eGameEventType::giftFrom;
 
     valid = false;
     printf("Invalid event type id %i\n", id);
@@ -276,11 +278,12 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
 }
 
 void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
-                       const uint8_t nEvents, const eCityId cid) {
+                       const eCityId cid) {
     const bool newVersion = file.isNewVersion();
     auto& events = ep.fEvents[cid];
-    for(int i = 0; i < nEvents; i++) {
+    for(int i = 0; i < 999; i++) {
         const uint8_t eventTypeId = file.readUByte();
+        if(eventTypeId == 0) break;
         bool valid = false;
         const auto type = pakIdToEventType(eventTypeId, valid);
         if(!valid) {
@@ -301,9 +304,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t years1 = file.readUShort();
         const uint16_t years2 = file.readUShort();
         file.skipBytes(2);
-        const uint16_t city0 = file.readUShort();
-        const uint16_t city1 = file.readUShort();
-        const uint16_t city2 = file.readUShort();
+        const uint16_t cityId0 = file.readUShort();
+        const uint16_t cityId1 = file.readUShort();
+        const uint16_t cityId2 = file.readUShort();
         file.skipBytes(4);
         const uint16_t occuranceType = file.readUShort();
         file.skipBytes(12);
@@ -312,13 +315,16 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t requestType = file.readUShort();
         file.skipBytes(28);
 
-        uint16_t city;
-        if(city0 == 0xFF) {
+        uint16_t cityId;
+        if(cityId0 == 0xFF) {
             const bool first = eRand::rand() % 1;
-            city = first ? city1 : city2;
+            cityId = first ? cityId1 : cityId2;
         } else {
-            city = city0;
+            cityId = cityId0;
         }
+        auto& world = *ep.fWorldBoard;
+        const auto cid = static_cast<eCityId>(cityId);
+        const auto city = world.cityWithId(cid);
 
         stdsptr<eGameEvent> e;
         switch(type) {
@@ -347,6 +353,30 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             ee->setGod(god);
             ee->setMinResourceCount(value4);
             ee->setMaxResourceCount(value5);
+            ee->setCity(city);
+            e = ee;
+        } break;
+        case eGameEventType::giftFrom: {
+            const auto ee = e::make_shared<eGiftFromEvent>(
+                    cid, eGameEventBranch::root, *ep.fBoard);
+            if(value1 == 0xFFFF) {
+                ee->setResourceType(0, eResourceType::none);
+            } else {
+                ee->setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
+            }
+            if(value2 == 0xFFFF) {
+                ee->setResourceType(1, eResourceType::none);
+            } else {
+                ee->setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
+            }
+            if(value3 == 0xFFFF) {
+                ee->setResourceType(2, eResourceType::none);
+            } else {
+                ee->setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
+            }
+            ee->setMinResourceCount(value4);
+            ee->setMaxResourceCount(value5);
+            ee->setCity(city);
             e = ee;
         } break;
         }
@@ -713,10 +743,12 @@ void eCampaign::readPak(const std::string& name,
             applyPyramidsToEpisode(pyramids, *ep, parentCid);
         }
 
-        file.seek(799297 + i*4);
-        const uint8_t nEvents = file.readUByte();
-        file.seek(38874 + i*18600);
-        readEpisodeEvents(*ep, file, nEvents, parentCid);
+        if(newVersion) {
+            file.seek(39938 + i*18600);
+        } else {
+            file.seek(38874 + i*18600);
+        }
+        readEpisodeEvents(*ep, file, parentCid);
 
         if(newVersion) {
             file.seek(838331 + i*4);
@@ -750,11 +782,7 @@ void eCampaign::readPak(const std::string& name,
         board = e::make_shared<eGameBoard>(mWorldBoard);
         eCityId colonyCid;
         const bool r = file.loadBoard(*board, *this, colonyCid);
-        if(r) {
-            const auto c = board->addCityToBoard(colonyCid);
-            c->setAtlantean(atlantean);
-            board->addPlayerToBoard(ePlayerId::player0);
-        } else {
+        if(!r) {
             board->initialize(1, 1);
             continue;
         }
