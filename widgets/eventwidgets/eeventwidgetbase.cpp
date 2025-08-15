@@ -56,7 +56,8 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         cont->addWidget(eew);
     } break;
     case eGameEventType::monsterUnleashed:
-    case eGameEventType::monsterInvasion: {
+    case eGameEventType::monsterInvasion:
+    case eGameEventType::monsterInCity: {
         const auto eew = new eMonsterAttackEventWidget(window());
         const auto maee = static_cast<eMonsterInvasionEventBase*>(e.get());
         eew->initialize(maee);

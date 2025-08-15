@@ -32,23 +32,23 @@ struct eEpisodeGoal {
     int fRequiredCount = 0;
     int fStatusCount = 0;
     int fPreviewCount = 0;
-    stdsptr<eWorldCity> fCity;
 
     stdsptr<eEpisodeGoal> makeCopy() const;
 
-    void read(eWorldBoard* const board, eReadStream& src);
+    void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
     bool met() const;
 
     static std::string sText(const eEpisodeGoalType type);
-    std::string text(const bool colonyEpisode, const bool atlantean) const;
-    std::string statusText(const eGameBoard* const b) const;
+    std::string text(const bool colonyEpisode, const bool atlantean,
+                     const eGameBoard& b) const;
+    std::string statusText(const eGameBoard& b) const;
 
-    void update(const eGameBoard* const b);
+    void update(const eGameBoard& b);
 
     eDate date() const; // for surviveUntil and completeBefore
-    void initializeDate(const eGameBoard* const b);
+    void initializeDate(const eGameBoard& b);
 };
 
 #endif // EEPISODEGOAL_H

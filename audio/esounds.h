@@ -114,6 +114,8 @@ public:
                              const eGodSound s);
     static void playHeroSound(const eHeroType h,
                               const eHeroSound s);
+    static void playMonsterSound(const eMonsterType m,
+                                 const eMonsterSound s);
 
     static void playAttackSound(eCharacter* const c);
     static void playAttackSound(const eCharacterType type);
@@ -303,6 +305,7 @@ private:
     eMonsterSounds mScylla{"scy", "scylla"};
     eMonsterSounds mSphinx{"sph", "sphinx"};
     eMonsterSounds mTalos{"tal", "talos"};
+    eSatyrSounds mSatyr;
 };
 
 #endif // ESOUNDS_H

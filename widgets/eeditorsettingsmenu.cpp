@@ -271,7 +271,7 @@ void eEditorSettingsMenu::initialize(const bool first,
     addWidget(eventsButt);
     eventsButt->align(eAlignment::hcenter);
 
-    const auto goalsAct = [this, ep, board]() {
+    const auto goalsAct = [this, ep]() {
         const auto choose = new eEpisodeGoalSelectionWidget(
                                 window());
 
@@ -285,7 +285,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         const auto remove = [ep](const stdsptr<eEpisodeGoal>& e) {
             eVectorHelpers::remove(ep->fGoals, e);
         };
-        choose->initialize(get, add, remove, board);
+        choose->initialize(get, add, remove, ep->fBoard);
 
         window()->execDialog(choose);
         choose->align(eAlignment::center);

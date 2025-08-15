@@ -58,7 +58,9 @@ enum class eGameEventType {
 
     priceChange,
 
-    wageChange
+    wageChange,
+
+    monsterInCity
 };
 
 enum class eGameEventBranch {

@@ -108,7 +108,7 @@ void eEpisodeIntroductionWidget::initialize(
             w->addWidget(checkBox);
 
             const bool col = et == eEpisodeType::colony;
-            const auto t = g->text(col, atlantean);
+            const auto t = g->text(col, atlantean, *board);
             const auto l = new eLabel(window());
             l->setSmallFontSize();
             l->setTinyPadding();
@@ -156,7 +156,7 @@ void eEpisodeIntroductionWidget::initialize(
                     }
                 }
                 if(addStatusText) {
-                    const auto st = g->statusText(board);
+                    const auto st = g->statusText(*board);
                     if(!st.empty()) {
                         const auto stl = new eLabel(window());
                         stl->setSmallFontSize();

@@ -26,7 +26,7 @@ void eMonsterSounds::load() {
     fHit->addPath(wavsDir + "M_" + fLongName + "_hit.wav");
 }
 
-void eMonsterSounds::play(const eMonsterSound s) {
+void eMonsterSoundsBase::play(const eMonsterSound s) {
     switch(s) {
     case eMonsterSound::voice:
         playVoice();
@@ -41,4 +41,22 @@ void eMonsterSounds::play(const eMonsterSound s) {
         playHit();
         break;
     }
+}
+
+void eSatyrSounds::load() {
+    if(mLoaded) return;
+    mLoaded = true;
+    const std::string voiceDir{eGameDir::path("Audio/Voice/Walker/")};
+    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+
+    fVoice->addPath(voiceDir + "sat_e_1.mp3");
+
+    for(const auto& s : {"Satyr_atk1.wav",
+                         "Satyr_atk2.wav",
+                         "Satyr_atk3.wav",
+                         "Satyr_atk4.wav"}) {
+        fAttack->addPath(wavsDir + s);
+    }
+    fDie->addPath(wavsDir + "Satyr_die.wav");
+    fHit->addPath(wavsDir + "Satyr_hit.wav");
 }

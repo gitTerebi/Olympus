@@ -205,6 +205,8 @@ private:
     void handleMonsterSlainEvent(eEventData& ed);
     void handleHeroArrivalEvent(eEventData& ed);
 
+    void handleMonsterInCityEvent(eEventData& ed);
+
     void mapDimensions(int& mdx, int& mdy) const;
     void viewBoxSize(double& fx, double& fy) const;
     void viewedFraction(double& fx, double& fy) const;

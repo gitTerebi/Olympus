@@ -16,9 +16,10 @@
 #include "buildings/pyramids/epyramid.h"
 #include "elanguage.h"
 #include "elabeledwidget.h"
+#include "engine/egameboard.h"
 
 void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
-                                    eWorldBoard* const board) {
+                                    eGameBoard* const board) {
     setType(eFrameType::message);
 
     const auto cont = new eWidget(window());
@@ -31,8 +32,8 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     textL->setSmallPadding();
     cont->addWidget(textL);
 
-    const auto updateText = [textL, e]() {
-        textL->setText(e->text(false, false));
+    const auto updateText = [textL, e, board]() {
+        textL->setText(e->text(false, false, *board));
         textL->fitContent();
         textL->align(eAlignment::hcenter);
     };
@@ -206,11 +207,14 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     case eEpisodeGoalType::rule: {
         const auto cityButton = new eCityButton(window());
-        cityButton->initialize(board, [e, updateText](const stdsptr<eWorldCity>& c){
-            e->fCity = c;
+        cityButton->initialize(&board->world(), [e, updateText](const stdsptr<eWorldCity>& c){
+            e->fEnumInt1 = static_cast<int>(c->cityId());
             updateText();
         });
-        cityButton->setCity(e->fCity);
+        const auto& world = board->world();
+        const auto cid = static_cast<eCityId>(e->fEnumInt1);
+        const auto city = world.cityWithId(cid);
+        cityButton->setCity(city);
         detailsW->addWidget(cityButton);
     } break;
     case eEpisodeGoalType::housing: {

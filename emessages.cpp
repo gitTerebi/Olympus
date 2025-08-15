@@ -108,6 +108,13 @@ void eMessages::load(eHeroMessages& hero, const std::string& heroName) {
 void eMessages::load(eMonsterMessages& monster,
                      const std::string& monsterName1,
                      const std::string& monsterName2) {
+    monster.fInCity.fFull.fTitle = fMessages["PHRASE_" + monsterName2 + "_in_city_title"];
+    monster.fInCity.fFull.fText = fMessages["PHRASE_" + monsterName2 + "_in_city_initial_announcement"];
+    monster.fInCity.fCondensed.fTitle = fMessages["PHRASE_CONDENSED_" + monsterName2 + "_in_city_title"];
+    monster.fInCity.fCondensed.fText = fMessages["PHRASE_CONDENSED_" + monsterName2 + "_in_city_initial_announcement"];
+
+    monster.fInCityReason = fMessages["PHRASE_" + monsterName2 + "_in_city_initial_reason"];
+
     monster.fSlain.fFull.fTitle = fMessages["PHRASE_" + monsterName2 + "_slain_title"];
     monster.fSlain.fFull.fText = fMessages["PHRASE_" + monsterName2 + "_slain_initial_announcement"];
     monster.fSlain.fCondensed.fTitle = fMessages["PHRASE_CONDENSED_" + monsterName2 + "_slain_title"];

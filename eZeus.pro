@@ -456,6 +456,7 @@ SOURCES += \
         gameEvents/einvasionwarningevent.cpp \
         gameEvents/emakerequestevent.cpp \
         gameEvents/emilitarychangeevent.cpp \
+        gameEvents/emonsterincityevent.cpp \
         gameEvents/emonsterinvasionevent.cpp \
         gameEvents/emonsterinvasioneventbase.cpp \
         gameEvents/emonsterunleashedevent.cpp \
@@ -1136,6 +1137,7 @@ HEADERS += \
     gameEvents/einvasionwarningevent.h \
     gameEvents/emakerequestevent.h \
     gameEvents/emilitarychangeevent.h \
+    gameEvents/emonsterincityevent.h \
     gameEvents/emonsterinvasionevent.h \
     gameEvents/emonsterinvasioneventbase.h \
     gameEvents/emonsterunleashedevent.h \

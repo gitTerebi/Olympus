@@ -9,6 +9,7 @@
 #include "buildings/eelitehousing.h"
 #include "engine/egameboard.h"
 #include "buildings/pyramids/epyramid.h"
+#include "evectorhelpers.h"
 
 stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     const auto result = std::make_shared<eEpisodeGoal>();
@@ -16,16 +17,12 @@ stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     return result;
 }
 
-void eEpisodeGoal::read(eWorldBoard* const board,
-                        eReadStream& src) {
+void eEpisodeGoal::read(eReadStream& src) {
     src >> fType;
     src >> fEnumInt1;
     src >> fEnumInt2;
     src >> fRequiredCount;
     src >> fStatusCount;
-    src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-        fCity = c;
-    });
 }
 
 void eEpisodeGoal::write(eWriteStream& dst) const {
@@ -34,7 +31,6 @@ void eEpisodeGoal::write(eWriteStream& dst) const {
     dst << fEnumInt2;
     dst << fRequiredCount;
     dst << fStatusCount;
-    dst.writeCity(fCity.get());
 }
 
 bool eEpisodeGoal::met() const {
@@ -76,10 +72,12 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
     case eEpisodeGoalType::hippodrome:
         return eLanguage::zeusText(194, 16);
     }
+    return "";
 }
 
 std::string eEpisodeGoal::text(const bool colonyEpisode,
-                               const bool atlantean) const {
+                               const bool atlantean,
+                               const eGameBoard& b) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto t = eLanguage::zeusText(194, 17);
@@ -134,7 +132,14 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
         return eLanguage::zeusText(194, 26);
     } break;
     case eEpisodeGoalType::slay: {
-        return eLanguage::zeusText(194, 27);
+        if(fEnumInt1 == -1) {
+            return eLanguage::zeusText(194, 27);
+        } else {
+            auto t = eLanguage::zeusText(194, 28);
+            const auto type = static_cast<eMonsterType>(fEnumInt1);
+            eStringHelpers::replace(t, "[monster]", eMonster::sMonsterName(type));
+            return t;
+        }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
         auto t = eLanguage::zeusText(194, 30);
@@ -145,8 +150,11 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
         return t;
     } break;
     case eEpisodeGoalType::rule: {
+        const auto& world = b.world();
+        const auto cid = static_cast<eCityId>(fEnumInt1);
+        const auto city = world.cityWithId(cid);
         auto t = eLanguage::zeusText(194, 31);
-        const auto n = fCity ? fCity->name() : "";
+        const auto n = city ? city->name() : "";
         eStringHelpers::replace(t, "[city]", n);
         return t;
     } break;
@@ -207,7 +215,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
     return "";
 }
 
-std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
+std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto text = eLanguage::zeusText(194, 43);
@@ -266,7 +274,11 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
     } break;
     case eEpisodeGoalType::rule: {
         auto t = eLanguage::zeusText(194, 56);
-        const auto rel = fCity->relationship();
+        const auto& world = b.world();
+        const auto cid = static_cast<eCityId>(fEnumInt1);
+        const auto city = world.cityWithId(cid);
+        const auto rel = city ? city->relationship() :
+                                eForeignCityRelationship::ally;
         const auto relStr = eWorldCity::sRelationshipName(rel);
         eStringHelpers::replace(t, "[diplomatic_status]", relStr);
         return t;
@@ -291,7 +303,7 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
     } break;
     case eEpisodeGoalType::surviveUntil: {
         auto text = eLanguage::zeusText(194, 63); // months remaining
-        const auto cdate = b->date();
+        const auto cdate = b.date();
         const auto sdate = date();
         int rem;
         if(cdate > sdate) {
@@ -305,7 +317,7 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
     } break;
     case eEpisodeGoalType::completeBefore: {
         auto text = eLanguage::zeusText(194, 63); // months remaining
-        const auto cdate = b->date();
+        const auto cdate = b.date();
         const auto sdate = date();
         int rem;
         if(cdate > sdate) {
@@ -328,36 +340,36 @@ std::string eEpisodeGoal::statusText(const eGameBoard* const b) const {
     return "";
 }
 
-void eEpisodeGoal::update(const eGameBoard* const b) {
-    const auto pid = b->personPlayer();
+void eEpisodeGoal::update(const eGameBoard& b) {
+    const auto pid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
         const bool wasMet = met();
-        fStatusCount = b->population(pid);
+        fStatusCount = b.population(pid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 73));
+            b.showTip(pid, eLanguage::zeusText(194, 73));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 74));
+            b.showTip(pid, eLanguage::zeusText(194, 74));
         }
     } break;
     case eEpisodeGoalType::treasury: {
         const bool wasMet = met();
-        fStatusCount = b->drachmas(pid);
+        fStatusCount = b.drachmas(pid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 75));
+            b.showTip(pid, eLanguage::zeusText(194, 75));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 76));
+            b.showTip(pid, eLanguage::zeusText(194, 76));
         }
     } break;
     case eEpisodeGoalType::sanctuary: {
         const bool wasMet = met();
         fStatusCount = 0;
-        const auto cids = b->personPlayerCitiesOnBoard();
+        const auto cids = b.personPlayerCitiesOnBoard();
         if(fEnumInt1 == -1) {
             for(const auto cid : cids) {
-                const auto ss = b->sanctuaries(cid);
+                const auto ss = b.sanctuaries(cid);
                 for(const auto s : ss) {
                     if(s->finished()) fStatusCount++;
                 }
@@ -365,25 +377,25 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         } else {
             const auto type = static_cast<eGodType>(fEnumInt1);
             for(const auto cid : cids) {
-                const auto s = b->sanctuary(cid, type);
+                const auto s = b.sanctuary(cid, type);
                 const int sc = s ? s->progress() : 0;
                 if(sc > fStatusCount) fStatusCount = sc;
             }
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 77));
+            b.showTip(pid, eLanguage::zeusText(194, 77));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 78));
+            b.showTip(pid, eLanguage::zeusText(194, 78));
         }
     } break;
     case eEpisodeGoalType::pyramid: {
         const bool wasMet = met();
         fStatusCount = 0;
-        const auto cids = b->personPlayerCitiesOnBoard();
+        const auto cids = b.personPlayerCitiesOnBoard();
         if(fEnumInt1 == -1) {
             for(const auto cid : cids) {
-                const auto ss = b->pyramids(cid);
+                const auto ss = b.pyramids(cid);
                 for(const auto s : ss) {
                     if(s->finished()) fStatusCount++;
                 }
@@ -391,7 +403,7 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         } else {
             const auto type = static_cast<eBuildingType>(fEnumInt1);
             for(const auto cid : cids) {
-                const auto s = b->pyramid(cid, type);
+                const auto s = b.pyramid(cid, type);
                 const int sc = s ? s->progress() : 0;
                 if(sc > fStatusCount) fStatusCount = sc;
             }
@@ -399,9 +411,9 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
 
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 97));
+            b.showTip(pid, eLanguage::zeusText(194, 97));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 98));
+            b.showTip(pid, eLanguage::zeusText(194, 98));
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
@@ -409,68 +421,78 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         fStatusCount = fRequiredCount;
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 99));
+            b.showTip(pid, eLanguage::zeusText(194, 99));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 100));
+            b.showTip(pid, eLanguage::zeusText(194, 100));
         }
     } break;
     case eEpisodeGoalType::support: {
         const auto type = static_cast<eBannerType>(fEnumInt1);
-        const auto cs = b->personPlayerCitiesOnBoard();
+        const auto cs = b.personPlayerCitiesOnBoard();
         fStatusCount = 0;
         for(const auto c : cs) {
             if(type == eBannerType::trireme) {
-                fStatusCount += b->countWorkingTriremes(c);
+                fStatusCount += b.countWorkingTriremes(c);
             } else {
-                fStatusCount += b->countSoldiers(type, c);
+                fStatusCount += b.countSoldiers(type, c);
                 if(type == eBannerType::rockThrower) {
-                    fStatusCount += b->countSoldiers(eBannerType::hoplite, c);
-                    fStatusCount += b->countSoldiers(eBannerType::horseman, c);
+                    fStatusCount += b.countSoldiers(eBannerType::hoplite, c);
+                    fStatusCount += b.countSoldiers(eBannerType::horseman, c);
                 } else if(type == eBannerType::hoplite) {
-                    fStatusCount += b->countSoldiers(eBannerType::horseman, c);
+                    fStatusCount += b.countSoldiers(eBannerType::horseman, c);
                 }
             }
         }
     } break;
     case eEpisodeGoalType::quest: {
         const bool wasMet = met();
-        fStatusCount = b->fulfilledQuests(pid).size();
+        fStatusCount = b.fulfilledQuests(pid).size();
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 81));
+            b.showTip(pid, eLanguage::zeusText(194, 81));
         }
     } break;
     case eEpisodeGoalType::slay: {
         const bool wasMet = met();
-        fStatusCount = b->slayedMonsters(pid).size();
+        const auto slayed = b.slayedMonsters(pid);
+        if(fEnumInt1 == -1) {
+            fStatusCount = slayed.size();
+        } else {
+            const auto type = static_cast<eMonsterType>(fEnumInt1);
+            const bool s = eVectorHelpers::contains(slayed, type);
+            fStatusCount = s ? 1 : 0;
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 83));
+            b.showTip(pid, eLanguage::zeusText(194, 83));
         }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
         const bool wasMet = met();
         const auto type = static_cast<eResourceType>(fEnumInt1);
-        fStatusCount = b->bestYearlyProduction(type);
+        fStatusCount = b.bestYearlyProduction(type);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 85));
+            b.showTip(pid, eLanguage::zeusText(194, 85));
         }
     } break;
     case eEpisodeGoalType::rule: {
         const bool wasMet = met();
-        fStatusCount = fCity->isVassal() ? 1 : 0;
+        const auto& world = b.world();
+        const auto cid = static_cast<eCityId>(fEnumInt1);
+        const auto city = world.cityWithId(cid);
+        fStatusCount = city ? (city->isVassal() ? 1 : 0) : 0;
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 87));
+            b.showTip(pid, eLanguage::zeusText(194, 87));
         }
     } break;
     case eEpisodeGoalType::yearlyProfit: {
         const bool wasMet = met();
-        fStatusCount = b->bestYearlyProduction(eResourceType::drachmas);
+        fStatusCount = b.bestYearlyProduction(eResourceType::drachmas);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 89));
+            b.showTip(pid, eLanguage::zeusText(194, 89));
         }
     } break;
     case eEpisodeGoalType::housing: {
@@ -478,9 +500,9 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         fStatusCount = 0;
         const auto type = fEnumInt1 == 0 ? eBuildingType::commonHouse :
                                            eBuildingType::eliteHousing;
-        const auto cids = b->personPlayerCitiesOnBoard();
+        const auto cids = b.personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
-            b->buildings(cid, [&](eBuilding* const b) {
+            b.buildings(cid, [&](eBuilding* const b) {
                 const auto btype = b->type();
                 if(btype != type) return false;
                 const auto h = static_cast<eHouseBase*>(b);
@@ -493,41 +515,41 @@ void eEpisodeGoal::update(const eGameBoard* const b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 91));
+            b.showTip(pid, eLanguage::zeusText(194, 91));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 92));
+            b.showTip(pid, eLanguage::zeusText(194, 92));
         }
     } break;
     case eEpisodeGoalType::setAsideGoods: {
         const auto res = static_cast<eResourceType>(fEnumInt1);
         fPreviewCount = 0;
-        const auto cids = b->personPlayerCitiesOnBoard();
+        const auto cids = b.personPlayerCitiesOnBoard();
         for(const auto cid : cids) {
-            fPreviewCount += b->resourceCount(cid, res);
+            fPreviewCount += b.resourceCount(cid, res);
         }
     } break;
     case eEpisodeGoalType::surviveUntil: {
         const auto sdate = date();
-        const auto cdate = b->date();
+        const auto cdate = b.date();
         fStatusCount = cdate > sdate ? 1 : 0;
     } break;
     case eEpisodeGoalType::completeBefore: {
         const auto sdate = date();
-        const auto cdate = b->date();
+        const auto cdate = b.date();
         if(cdate > sdate) {
-            b->setEpisodeLost();
+            b.setEpisodeLost();
         } else {
             fStatusCount = cdate < sdate ? 1 : 0;
         }
     } break;
     case eEpisodeGoalType::tradingPartners: {
         const bool wasMet = met();
-        fStatusCount = b->tradingPartners();
+        fStatusCount = b.tradingPartners();
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 93));
+            b.showTip(pid, eLanguage::zeusText(194, 93));
         } else if(wasMet && !isMet) {
-            b->showTip(pid, eLanguage::zeusText(194, 94));
+            b.showTip(pid, eLanguage::zeusText(194, 94));
         }
     } break;
     }
@@ -540,10 +562,10 @@ eDate eEpisodeGoal::date() const {
     return eDate{day, static_cast<eMonth>(month), year};
 }
 
-void eEpisodeGoal::initializeDate(const eGameBoard* const b) {
+void eEpisodeGoal::initializeDate(const eGameBoard& b) {
     if(fType != eEpisodeGoalType::surviveUntil &&
        fType != eEpisodeGoalType::completeBefore) return;
-    auto date = b->date();
+    auto date = b.date();
     const int days = fEnumInt1;
     const int months = fEnumInt2;
     const int years = fRequiredCount;

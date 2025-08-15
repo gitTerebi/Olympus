@@ -12,12 +12,12 @@ enum class eMonsterSound {
     hit
 };
 
-class eMonsterSounds {
+class eMonsterSoundsBase {
 public:
-    eMonsterSounds(const std::string& shortName,
-                   const std::string& longName);
-
-    void load();
+    std::shared_ptr<eSoundVector> fVoice = std::make_shared<eSoundVector>();
+    std::shared_ptr<eSoundVector> fAttack = std::make_shared<eSoundVector>();
+    std::shared_ptr<eSoundVector> fDie = std::make_shared<eSoundVector>();
+    std::shared_ptr<eSoundVector> fHit = std::make_shared<eSoundVector>();
 
     void play(const eMonsterSound s);
 
@@ -36,14 +36,24 @@ public:
     void playHit() {
         fHit->playRandomSound();
     }
+};
+
+class eSatyrSounds : public eMonsterSoundsBase {
+public:
+    void load();
+private:
+    bool mLoaded = false;
+};
+
+class eMonsterSounds : public eMonsterSoundsBase {
+public:
+    eMonsterSounds(const std::string& shortName,
+                   const std::string& longName);
+
+    void load();
 
     const std::string fShortName;
     const std::string fLongName;
-
-    std::shared_ptr<eSoundVector> fVoice = std::make_shared<eSoundVector>();
-    std::shared_ptr<eSoundVector> fAttack = std::make_shared<eSoundVector>();
-    std::shared_ptr<eSoundVector> fDie = std::make_shared<eSoundVector>();
-    std::shared_ptr<eSoundVector> fHit = std::make_shared<eSoundVector>();
 private:
     bool mLoaded = false;
 };

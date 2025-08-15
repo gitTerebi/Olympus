@@ -35,6 +35,8 @@ struct eGodMessages {
 };
 
 struct eMonsterMessages {
+    eMessageType fInCity;
+    std::string fInCityReason;
     eMessageType fPrediction;
     eMessageType fInvasion36;
     eMessageType fInvasion24;

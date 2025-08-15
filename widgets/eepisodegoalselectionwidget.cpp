@@ -4,18 +4,19 @@
 #include "emainwindow.h"
 #include "engine/eepisodegoal.h"
 #include "eepisodegoalwidget.h"
+#include "engine/egameboard.h"
 
 void eEpisodeGoalSelectionWidget::initialize(
         const eEventsGetter& get,
         const eEventAdder& add,
         const eEventRemover& remove,
-        eWorldBoard* const board) {
+        eGameBoard* const board) {
 
     eScrollButtonsList::initialize();
 
     const auto iniEs = get();
     for(const auto& e : iniEs) {
-        const auto eStr = e->text(false, false);
+        const auto eStr = e->text(false, false, *board);
         addButton(eStr);
     }
 
@@ -34,7 +35,7 @@ void eEpisodeGoalSelectionWidget::initialize(
         editEvent(e);
     });
 
-    setButtonCreateEvent([this, add, editEvent]() {
+    setButtonCreateEvent([this, add, editEvent, board]() {
         const std::vector<eEpisodeGoalType> types = {
             eEpisodeGoalType::population,
             eEpisodeGoalType::treasury,
@@ -56,7 +57,8 @@ void eEpisodeGoalSelectionWidget::initialize(
             labels.push_back(eEpisodeGoal::sText(t));
         }
         const auto echoose = new eChooseButton(window());
-        const auto act = [this, add, types, labels, editEvent](const int val) {
+        const auto act = [this, add, types, labels, editEvent, board](
+                         const int val) {
             const auto type = types[val];
             const auto e = std::make_shared<eEpisodeGoal>();
             e->fType = type;
@@ -76,7 +78,7 @@ void eEpisodeGoalSelectionWidget::initialize(
             if(e) {
                 add(e);
                 editEvent(e);
-                addButton(e->text(false, false));
+                addButton(e->text(false, false, *board));
             }
         };
         echoose->initialize(8, labels, act);

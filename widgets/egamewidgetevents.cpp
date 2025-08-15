@@ -88,6 +88,14 @@ void eGameWidget::handleMonsterUnleashEvent(eEventData& ed) {
     showMessage(ed, gm->fMonster, true);
 }
 
+void eGameWidget::handleMonsterInCityEvent(eEventData& ed) {
+    const auto& inst = eMessages::instance;
+    const auto gm = inst.monsterMessages(ed.fMonster);
+    if(!gm) return;
+    eSounds::playMonsterSound(ed.fMonster, eMonsterSound::voice);
+    showMessage(ed, gm->fInCity, true);
+}
+
 void eGameWidget::handleMonsterInvasion36Event(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
@@ -135,6 +143,7 @@ void eGameWidget::handleMonsterInvasionEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
+    eSounds::playMonsterSound(ed.fMonster, eMonsterSound::voice);
     showMessage(ed, gm->fInvasion, true);
 }
 
@@ -187,6 +196,10 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
 
     case eEvent::godMonsterUnleash:
         handleMonsterUnleashEvent(ed);
+        break;
+
+    case eEvent::monsterInCity:
+        handleMonsterInCityEvent(ed);
         break;
 
     case eEvent::monsterInvasion36:

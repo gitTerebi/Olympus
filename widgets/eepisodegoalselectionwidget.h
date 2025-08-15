@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class eEpisodeGoal;
-class eWorldBoard;
+class eGameBoard;
 
 enum class eGameEventBranch;
 class eEpisodeGoalSelectionWidget : public eScrollButtonsList {
@@ -19,7 +19,7 @@ public:
     void initialize(const eEventsGetter& get,
                     const eEventAdder& add,
                     const eEventRemover& remove,
-                    eWorldBoard* const board);
+                    eGameBoard* const board);
 };
 
 #endif // EEPISODEGOALSELECTIONWIDGET_H

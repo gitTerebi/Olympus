@@ -53,7 +53,7 @@ void eEpisode::read(eReadStream& src) {
         src >> ng;
         for(int i = 0; i < ng; i++) {
             const auto g = std::make_shared<eEpisodeGoal>();
-            g->read(fWorldBoard, src);
+            g->read(src);
             fGoals.push_back(g);
         }
     }

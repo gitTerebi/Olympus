@@ -577,6 +577,50 @@ void eSounds::playHeroSound(const eHeroType h, const eHeroSound s) {
     hero->play(s);
 }
 
+void eSounds::playMonsterSound(const eMonsterType m,
+                               const eMonsterSound s) {
+    eMonsterSounds* monster = nullptr;
+    switch(m) {
+    case eMonsterType::calydonianBoar:
+        monster = &sInstance->mCalydonianBoar; break;
+    case eMonsterType::cerberus:
+        monster = &sInstance->mCerberus; break;
+    case eMonsterType::chimera:
+        monster = &sInstance->mChimera; break;
+    case eMonsterType::cyclops:
+        monster = &sInstance->mCyclops; break;
+    case eMonsterType::dragon:
+        monster = &sInstance->mDragon; break;
+    case eMonsterType::echidna:
+        monster = &sInstance->mEchidna; break;
+    case eMonsterType::harpies:
+        monster = &sInstance->mHarpies; break;
+    case eMonsterType::hector:
+        monster = &sInstance->mHector; break;
+    case eMonsterType::hydra:
+        monster = &sInstance->mHydra; break;
+    case eMonsterType::kraken:
+        monster = &sInstance->mKraken; break;
+    case eMonsterType::maenads:
+        monster = &sInstance->mMaenads; break;
+    case eMonsterType::medusa:
+        monster = &sInstance->mMedusa; break;
+    case eMonsterType::minotaur:
+        monster = &sInstance->mMinotaur; break;
+    case eMonsterType::scylla:
+        monster = &sInstance->mScylla; break;
+    case eMonsterType::sphinx:
+        monster = &sInstance->mSphinx; break;
+    case eMonsterType::talos:
+        monster = &sInstance->mTalos; break;
+    case eMonsterType::satyr: {
+        sInstance->mSatyr.play(s);
+        return;
+    } break;
+    }
+    monster->play(s);
+}
+
 void eSounds::playAttackSound(eCharacter* const c) {
     const auto type = c->type();
     playAttackSound(type);

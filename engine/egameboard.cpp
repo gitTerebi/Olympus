@@ -2766,8 +2766,8 @@ void eGameBoard::startEpisode(eEpisode* const e,
     const auto& gs = e->fGoals;
     for(const auto& g : gs) {
         const auto gg = g->makeCopy();
-        gg->initializeDate(this);
-        gg->update(this);
+        gg->initializeDate(*this);
+        gg->update(*this);
         mGoals.push_back(gg);
     }
     if(lastPlayedColony) {
@@ -2780,7 +2780,7 @@ bool eGameBoard::checkGoalsFulfilled() const {
     if(mGoals.empty()) return false;
     bool result = true;
     for(const auto& g : mGoals) {
-        g->update(this);
+        g->update(*this);
         const bool m = g->met();
         if(!m) result = false;
     }

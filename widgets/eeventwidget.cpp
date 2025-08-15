@@ -68,6 +68,7 @@ eEventButton::eEventButton(const eEvent e,
         break;
     case eEvent::monsterInvasion:
     case eEvent::godMonsterUnleash:
+    case eEvent::monsterInCity:
         coll = &texs.fMonsterAltert;
         break;
     case eEvent::heroArrival:
