@@ -466,37 +466,37 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             bool valid = false;
             const auto god = pakIdToGodType(subType, valid);
             if(!valid) continue;
-            std::vector<eHeroType> heroTypes;
-            {
+           eHeroType hero;
+            if(godTypeHeroId == 0) {
                 const auto& o = opponentGods[0];
                 if(o.fValid) {
                     const auto monster = eMonster::sGodsMinion(o.fType);
-                    const auto hero = eMonster::sSlayer(monster);
-                    heroTypes.push_back(hero);
+                    hero = eMonster::sSlayer(monster);
+                } else {
+                    printf("No hero with id %i\n", godTypeHeroId);
+                    continue;
                 }
-            }
-            {
+            } else if(godTypeHeroId == 1) {
                 const auto& o = opponentGods[1];
                 if(o.fValid) {
                     const auto monster = eMonster::sGodsMinion(o.fType);
-                    const auto hero = eMonster::sSlayer(monster);
-                    heroTypes.push_back(hero);
+                    hero = eMonster::sSlayer(monster);
+                } else {
+                    printf("No hero with id %i\n", godTypeHeroId);
+                    continue;
                 }
-            }
-            if(independentMonster.fValid) {
-                const auto monster = independentMonster.fType;
-                const auto hero = eMonster::sSlayer(monster);
-                heroTypes.push_back(hero);
-            }
-            if(heroTypes.empty()) {
-                printf("No hero types to choose from\n");
-                continue;
-            }
-            if(godTypeHeroId >= heroTypes.size()) {
+            } else if(godTypeHeroId == 2) {
+                if(independentMonster.fValid) {
+                    const auto monster = independentMonster.fType;
+                    hero = eMonster::sSlayer(monster);
+                } else {
+                    printf("No hero with id %i\n", godTypeHeroId);
+                    continue;
+                }
+            } else {
                 printf("Hero id %i out of scope\n", godTypeHeroId);
                 continue;
             }
-            const auto hero = heroTypes[godTypeHeroId];
             const auto ee = e::make_shared<eGodQuestEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
             ee->setGod(god);
