@@ -297,6 +297,12 @@ public:
     eMessageType fCityBecomesRival;
     eMessageType fCityBecomesVassal;
 
+    eMessageType fCityBecomesActive;
+    eMessageType fCityBecomesInactive;
+
+    eMessageType fCityBecomesVisible;
+    eMessageType fCityBecomesInvisible;
+
     eMessageType fColonyRestored;
 
     eMessageType fDebtAnniversary;

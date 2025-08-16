@@ -1,25 +1,15 @@
 #ifndef ERESOURCECITYEVENT_H
 #define ERESOURCECITYEVENT_H
 
-#include "egameevent.h"
+#include "ebasiccityevent.h"
 
-#include "engine/eworldcity.h"
+#include "engine/eresourcetype.h"
 
-class eResourceCityEvent : public eGameEvent {
+class eResourceCityEvent : public eBasicCityEvent {
 public:
-    using eGameEvent::eGameEvent;
-
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-    void setCity(const stdsptr<eWorldCity>& c);
+    using eBasicCityEvent::eBasicCityEvent;
 
     eResourceType resourceType() const { return mResource; }
-    int resourceCount() const { return mCount; }
-
-    int minResourceCount() const { return mMinCount; }
-    void setMinResourceCount(const int c) { mMinCount = c; }
-
-    int maxResourceCount() const { return mMaxCount; }
-    void setMaxResourceCount(const int c) { mMaxCount = c; }
 
     const std::vector<eResourceType>& resourceTypes() const
     { return mResources; }
@@ -31,18 +21,17 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 protected:
-    void chooseTypeAndCount();
+    void chooseType();
+
+    virtual void longNameReplaceResource(
+            const std::string& id,
+            std::string& tmpl) const;
 
     std::vector<eResourceType> mResources = {eResourceType::fleece,
-                                             eResourceType::fleece,
-                                             eResourceType::fleece};
-    int mMinCount = 8;
-    int mMaxCount = 16;
+                                             eResourceType::none,
+                                             eResourceType::none};
 
     eResourceType mResource = eResourceType::fleece;
-    int mCount = 16;
-
-    stdsptr<eWorldCity> mCity;
 };
 
 #endif // ERESOURCECITYEVENT_H

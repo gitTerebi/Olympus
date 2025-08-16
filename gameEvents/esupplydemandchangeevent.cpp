@@ -1,13 +1,11 @@
 #include "esupplydemandchangeevent.h"
 
 void eSupplyDemandChangeEvent::write(eWriteStream& dst) const {
-    eBasicCityEvent::write(dst);
-    dst << mType;
+    eResourceCityEvent::write(dst);
     dst << mBy;
 }
 
 void eSupplyDemandChangeEvent::read(eReadStream& src) {
-    eBasicCityEvent::read(src);
-    src >> mType;
+    eResourceCityEvent::read(src);
     src >> mBy;
 }

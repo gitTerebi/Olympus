@@ -470,6 +470,7 @@ SOURCES += \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
         gameEvents/eresourcecityevent.cpp \
+        gameEvents/eresourcecountcityevent.cpp \
         gameEvents/eresourcegrantedeventbase.cpp \
         gameEvents/erivalarmyawayevent.cpp \
         gameEvents/esupplychangeevent.cpp \
@@ -1151,6 +1152,7 @@ HEADERS += \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \
     gameEvents/eresourcecityevent.h \
+    gameEvents/eresourcecountcityevent.h \
     gameEvents/eresourcegrantedeventbase.h \
     gameEvents/erivalarmyawayevent.h \
     gameEvents/esupplychangeevent.h \

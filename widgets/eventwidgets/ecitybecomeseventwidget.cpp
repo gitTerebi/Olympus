@@ -26,10 +26,22 @@ void eCityBecomesEventWidget::initialize(eCityBecomesEvent* const e) {
     const auto typeButton = new eFramedButton(window());
     const std::vector<eCityBecomesType> types{eCityBecomesType::ally,
                                               eCityBecomesType::rival,
-                                              eCityBecomesType::vassal};
+                                              eCityBecomesType::vassal,
+
+                                              eCityBecomesType::active,
+                                              eCityBecomesType::inactive,
+
+                                              eCityBecomesType::visible,
+                                              eCityBecomesType::invisible};
     const std::vector<std::string> typeNames{eLanguage::text("ally"),
                                              eLanguage::text("rival"),
-                                             eLanguage::text("vassal")};
+                                             eLanguage::text("vassal"),
+
+                                             eLanguage::text("active"),
+                                             eLanguage::text("inactive"),
+
+                                             eLanguage::text("visible"),
+                                             eLanguage::text("invisible")};
     const auto type = e->type();
     const auto typeStr = typeNames[static_cast<int>(type)];
     typeButton->setText(typeStr);

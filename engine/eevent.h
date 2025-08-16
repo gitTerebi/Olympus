@@ -309,6 +309,12 @@ enum class eEvent {
     cityBecomesRival,
     cityBecomesVassal,
 
+    cityBecomesActive,
+    cityBecomesInactive,
+
+    cityBecomesVisible,
+    cityBecomesInvisible,
+
     colonyRestored,
 
     debtAnniversary,

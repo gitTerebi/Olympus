@@ -10,34 +10,22 @@ ePriceChangeEvent::ePriceChangeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::priceChange, branch, board) {}
-
-void ePriceChangeEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    dst << mType;
-    dst << mBy;
-}
-
-void ePriceChangeEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    src >> mType;
-    src >> mBy;
-}
+    eResourceCountCityEvent(cid, eGameEventType::priceChange, branch, board) {}
 
 void ePriceChangeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    board->incPrice(mType, mBy);
+    chooseTypeAndCount();
+    board->incPrice(mResource, mCount);
     eEventData ed((ePlayerCityTarget()));
-    ed.fResourceType = mType;
-    const auto e = mBy > 0 ? eEvent::priceIncrease :
-                             eEvent::priceDecrease;
+    ed.fResourceType = resourceType();
+    const auto e = resourceCount() > 0 ? eEvent::priceIncrease :
+                                         eEvent::priceDecrease;
     board->event(e, ed);
 }
 
 std::string ePriceChangeEvent::longName() const {
     auto tmpl = eLanguage::text("price_change_long_name");
-    const auto resName = eResourceTypeHelpers::typeName(mType);
-    eStringHelpers::replace(tmpl, "%1", resName);
+    longNameReplaceResource("%1", tmpl);
     return tmpl;
 }

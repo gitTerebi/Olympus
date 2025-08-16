@@ -12,7 +12,10 @@ public:
 
     void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
     const stdsptr<eWorldCity>& city() const { return mCity; }
-private:
+protected:
+    void longNameReplaceCity(const std::string& id,
+                             std::string& tmpl) const;
+
     stdsptr<eWorldCity> mCity;
 };
 

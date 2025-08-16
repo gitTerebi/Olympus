@@ -33,6 +33,22 @@ void eCityBecomesEvent::trigger() {
         mCity->setRelationship(eForeignCityRelationship::vassal);
         board->event(eEvent::cityBecomesVassal, ed);
     } break;
+    case eCityBecomesType::active: {
+        mCity->setState(eCityState::active);
+        board->event(eEvent::cityBecomesActive, ed);
+    } break;
+    case eCityBecomesType::inactive: {
+        mCity->setState(eCityState::inactive);
+        board->event(eEvent::cityBecomesInactive, ed);
+    } break;
+    case eCityBecomesType::visible: {
+        mCity->setVisible(true);
+        board->event(eEvent::cityBecomesVisible, ed);
+    } break;
+    case eCityBecomesType::invisible: {
+        mCity->setVisible(false);
+        board->event(eEvent::cityBecomesInvisible, ed);
+    } break;
     }
 }
 
@@ -48,6 +64,18 @@ std::string eCityBecomesEvent::longName() const {
     } break;
     case eCityBecomesType::vassal: {
         key = "vassal";
+    } break;
+    case eCityBecomesType::active: {
+        key = "active";
+    } break;
+    case eCityBecomesType::inactive: {
+        key = "inactive";
+    } break;
+    case eCityBecomesType::visible: {
+        key = "visible";
+    } break;
+    case eCityBecomesType::invisible: {
+        key = "invisible";
     } break;
     }
 

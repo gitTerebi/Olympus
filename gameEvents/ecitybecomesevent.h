@@ -4,7 +4,9 @@
 #include "egameevent.h"
 
 enum class eCityBecomesType {
-    ally, rival, vassal
+    ally, rival, vassal,
+    active, inactive,
+    visible, invisible
 };
 
 class eCityBecomesEvent : public eGameEvent {

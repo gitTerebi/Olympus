@@ -21,7 +21,6 @@ void eSupplyDemandChangeEventWidget::initialize(
     cityButtonL->setup(eLanguage::text("city:"), cityButton);
     addWidget(cityButtonL);
 
-    const auto resourceL = new eLabeledWidget(window());
 
     const auto resourceCountButton = new eValueButton(window());
     resourceCountButton->setValueChangeAction([e](const int p) {
@@ -30,24 +29,19 @@ void eSupplyDemandChangeEventWidget::initialize(
     resourceCountButton->initialize(-99, 99);
     const int rc = e->by();
     resourceCountButton->setValue(rc);
+    addWidget(resourceCountButton);
 
-    const auto resourceTypeButton = new eResourceButton(window());
-    resourceTypeButton->initialize([e](const eResourceType r){
-        e->setType(r);
-    });
-    const auto rr = e->type();
-    resourceTypeButton->setResource(rr);
+    for(int i = 0; i < 3; i++) {
+        const auto resourceTypeButton = new eResourceButton(window());
+        resourceTypeButton->initialize([i, e](const eResourceType r){
+            e->setResourceType(i, r);
+        }, eResourceType::allBasic, true, true);
+        const auto rr = e->resourceType(i);
+        resourceTypeButton->setResource(rr);
+        addWidget(resourceTypeButton);
+    }
 
-    const auto resource = new eWidget(window());
-    resource->setNoPadding();
-    resource->addWidget(resourceCountButton);
-    resource->addWidget(resourceTypeButton);
     const int p = padding();
-    resource->stackHorizontally(p);
-    resource->fitContent();
-    resourceL->setup(eLanguage::text("resource:"), resource);
-    addWidget(resourceL);
-
     stackVertically(p);
     fitContent();
 }

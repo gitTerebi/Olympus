@@ -15,7 +15,8 @@ eSupplyChangeEvent::eSupplyChangeEvent(
 void eSupplyChangeEvent::trigger() {
     const auto city = this->city();
     if(!city) return;
-    const auto type = this->type();
+    chooseType();
+    const auto type = this->resourceType();
     const int by = this->by();
     auto& sells = city->sells();
     for(auto& s : sells) {
@@ -35,9 +36,7 @@ void eSupplyChangeEvent::trigger() {
 
 std::string eSupplyChangeEvent::longName() const {
     auto tmpl = eLanguage::text("supply_change_long_name");
-    const auto none = eLanguage::text("none");
-    const auto city = this->city();
-    const auto ctstr = city ? city->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
+    longNameReplaceResource("%1", tmpl);
+    longNameReplaceCity("%2", tmpl);
     return tmpl;
 }

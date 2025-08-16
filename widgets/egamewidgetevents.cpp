@@ -1394,6 +1394,24 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::cityBecomesActive: {
+        showMessage(ed, inst.fCityBecomesActive);
+        return;
+    } break;
+    case eEvent::cityBecomesInactive: {
+        showMessage(ed, inst.fCityBecomesInactive);
+        return;
+    } break;
+
+    case eEvent::cityBecomesVisible: {
+        showMessage(ed, inst.fCityBecomesVisible);
+        return;
+    } break;
+    case eEvent::cityBecomesInvisible: {
+        showMessage(ed, inst.fCityBecomesInvisible);
+        return;
+    } break;
+
     case eEvent::colonyRestored: {
         showMessage(ed, inst.fColonyRestored);
         return;

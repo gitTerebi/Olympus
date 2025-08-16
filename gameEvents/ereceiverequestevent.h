@@ -1,7 +1,7 @@
 #ifndef ERECEIVEREQUESTEVENT_H
 #define ERECEIVEREQUESTEVENT_H
 
-#include "eresourcecityevent.h"
+#include "eresourcecountcityevent.h"
 
 #include "characters/gods/egod.h"
 
@@ -17,7 +17,7 @@ enum class eReceiveRequestType {
     financialWoes
 };
 
-class eReceiveRequestEvent : public eResourceCityEvent {
+class eReceiveRequestEvent : public eResourceCountCityEvent {
 public:
     eReceiveRequestEvent(const eCityId cid,
                          const eGameEventBranch branch,

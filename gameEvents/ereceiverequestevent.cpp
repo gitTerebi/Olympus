@@ -12,7 +12,7 @@ eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eResourceCityEvent(cid, eGameEventType::receiveRequest, branch, board) {
+    eResourceCountCityEvent(cid, eGameEventType::receiveRequest, branch, board) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");

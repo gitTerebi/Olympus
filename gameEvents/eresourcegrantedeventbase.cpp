@@ -20,7 +20,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eGameEventType type,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eResourceCityEvent(cid, type, branch, board),
+    eResourceCountCityEvent(cid, type, branch, board),
     mGiftCashAccepted(giftCashAccepted),
     mGiftAccepted(giftAccepted),
     mGiftPostponed(giftPostponed),

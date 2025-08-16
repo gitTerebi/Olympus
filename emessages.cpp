@@ -824,6 +824,20 @@ bool eMessages::loadImpl() {
     fCityBecomesVassal.fCondensed.fTitle = fMessages["PHRASE_CONDENSED_becomes_vassal_title"];
     fCityBecomesVassal.fCondensed.fText = fMessages["PHRASE_CONDENSED_becomes_vassal_initial_announcement"];
 
+    loadMessage(fCityBecomesActive,
+                "city_active_title",
+                "city_active_initial_announcement");
+    loadMessage(fCityBecomesInactive,
+                "city_inactive_title",
+                "city_inactive_initial_announcement");
+
+    loadMessage(fCityBecomesVisible,
+                "city_appears_title",
+                "city_appears_initial_announcement");
+    loadMessage(fCityBecomesInvisible,
+                "city_disappears_title",
+                "city_disappears_initial_announcement");
+
     loadMessage(fTroopsRequestAttackAverted,
                 "attack_averted_title",
                 "attack_averted_initial_announcement");

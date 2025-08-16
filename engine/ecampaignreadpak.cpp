@@ -11,6 +11,17 @@
 #include "gameEvents/emonsterincityevent.h"
 #include "gameEvents/emonsterinvasionevent.h"
 #include "gameEvents/emonsterunleashedevent.h"
+#include "gameEvents/egodattackevent.h"
+#include "gameEvents/ewagechangeevent.h"
+#include "gameEvents/etradeshutdownevent.h"
+#include "gameEvents/etradeopenupevent.h"
+#include "gameEvents/esupplychangeevent.h"
+#include "gameEvents/edemandchangeevent.h"
+#include "gameEvents/epricechangeevent.h"
+#include "gameEvents/eearthquakeevent.h"
+#include "gameEvents/ecitybecomesevent.h"
+#include "gameEvents/eeconomicchangeevent.h"
+#include "gameEvents/emilitarychangeevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -240,16 +251,46 @@ void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
     printf("\n");
 }
 
-eGameEventType pakIdToEventType(const uint8_t id, bool& valid) {
+enum class ePakEventType {
+    receiveRequest,
+    earthquake,
+    godQuest,
+    wageIncrease,
+    wageDecrease,
+    demandIncrease,
+    demandDecrease,
+    supplyIncrease,
+    supplyDecrease,
+    priceIncrease,
+    priceDecrease,
+    cityStatusChange,
+    giftFrom,
+    monsterInvasion,
+    godAttack
+};
+
+ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     valid = true;
-    if(id == 1) return eGameEventType::receiveRequest;
-    else if(id == 4) return eGameEventType::godQuest;
-    else if(id == 23) return eGameEventType::giftFrom;
-    else if(id == 26) return eGameEventType::monsterInvasion;
+    if(id == 1) return ePakEventType::receiveRequest;
+    else if(id == 3) return ePakEventType::earthquake;
+    else if(id == 4) return ePakEventType::godQuest;
+    else if(id == 8) return ePakEventType::wageIncrease;
+    else if(id == 9) return ePakEventType::wageDecrease;
+    else if(id == 13) return ePakEventType::demandIncrease;
+    else if(id == 14) return ePakEventType::demandDecrease;
+    else if(id == 15) return ePakEventType::priceIncrease;
+    else if(id == 16) return ePakEventType::priceDecrease;
+    else if(id == 19) return ePakEventType::cityStatusChange;
+    else if(id == 21) return ePakEventType::supplyIncrease;
+    else if(id == 22) return ePakEventType::supplyDecrease;
+    else if(id == 23) return ePakEventType::giftFrom;
+    // 24 - lava
+    else if(id == 26) return ePakEventType::monsterInvasion;
+    else if(id == 27) return ePakEventType::godAttack;
 
     valid = false;
     printf("Invalid event type id %i\n", id);
-    return eGameEventType::receiveRequest;
+    return ePakEventType::receiveRequest;
 }
 
 eReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
@@ -325,9 +366,10 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t value1 = file.readUShort();
         const uint16_t value2 = file.readUShort();
         const uint16_t value3 = file.readUShort();
-        file.skipBytes(4);
         const uint16_t value4 = file.readUShort();
         const uint16_t value5 = file.readUShort();
+        const uint16_t value6 = file.readUShort();
+        const uint16_t value7 = file.readUShort();
         const uint16_t questId = file.readUShort();
         const uint16_t years0 = file.readUShort();
         const uint16_t years1 = file.readUShort();
@@ -346,7 +388,27 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t subType = file.readUShort();
         file.skipBytes(28);
 
-        printf("%i %i %i %i %i\n", value1, value2, value3, value4, value5);
+        printf("%i %i %i %i %i %i %i\n", value1, value2,
+               value3, value4, value5, value6, value7);
+
+        uint16_t amountMin;
+        uint16_t amountMax;
+        if(value5 == 0xFFFF) {
+            amountMin = value6;
+            amountMax = value7;
+        } else {
+            amountMin = value5;
+            amountMax = value5;
+        }
+        int randomAmount;
+        if(value6 != 0xFFFF && value7 != 0xFFFF) {
+            randomAmount = value6;
+            if(value7 > value6) {
+                randomAmount += eRand::rand() % (value7 - value6);
+            }
+        } else {
+            randomAmount = value5;
+        }
 
         uint16_t cityId;
         if(cityId0 == 0xFF) {
@@ -359,62 +421,50 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const auto cid = static_cast<eCityId>(cityId);
         const auto city = world.cityWithId(cid);
 
+        const auto setResources = [&](eResourceCityEvent& ee) {
+            if(value1 == 0xFFFF) {
+                ee.setResourceType(0, eResourceType::none);
+            } else {
+                ee.setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
+            }
+            if(value2 == 0xFFFF) {
+                ee.setResourceType(1, eResourceType::none);
+            } else {
+                ee.setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
+            }
+            if(value3 == 0xFFFF) {
+                ee.setResourceType(2, eResourceType::none);
+            } else {
+                ee.setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
+            }
+        };
+
         stdsptr<eGameEvent> e;
         switch(type) {
-        case eGameEventType::receiveRequest: {
+        case ePakEventType::receiveRequest: {
             const auto type = pakIdToReceiveRequestType(subType);
             const auto ee = e::make_shared<eReceiveRequestEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-            if(value1 == 0xFFFF) {
-                ee->setResourceType(0, eResourceType::none);
-            } else {
-                ee->setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
-            }
-            if(value2 == 0xFFFF) {
-                ee->setResourceType(1, eResourceType::none);
-            } else {
-                ee->setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
-            }
-            if(value3 == 0xFFFF) {
-                ee->setResourceType(2, eResourceType::none);
-            } else {
-                ee->setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
-            }
+            setResources(*ee);
             bool valid = false;
             const auto god = pakIdToGodType(godTypeHeroId, valid);
             ee->setRequestType(type);
             ee->setGod(god);
-            ee->setMinResourceCount(value4);
-            ee->setMaxResourceCount(value5);
+            ee->setMinResourceCount(value6);
+            ee->setMaxResourceCount(value7);
             ee->setCity(city);
             e = ee;
         } break;
-        case eGameEventType::giftFrom: {
+        case ePakEventType::giftFrom: {
             const auto ee = e::make_shared<eGiftFromEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-            if(value1 == 0xFFFF) {
-                ee->setResourceType(0, eResourceType::none);
-            } else {
-                ee->setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
-            }
-            if(value2 == 0xFFFF) {
-                ee->setResourceType(1, eResourceType::none);
-            } else {
-                ee->setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
-            }
-            if(value3 == 0xFFFF) {
-                ee->setResourceType(2, eResourceType::none);
-            } else {
-                ee->setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
-            }
-            ee->setMinResourceCount(value4);
-            ee->setMaxResourceCount(value5);
+            setResources(*ee);
+            ee->setMinResourceCount(value6);
+            ee->setMaxResourceCount(value7);
             ee->setCity(city);
             e = ee;
         } break;
-        case eGameEventType::monsterInCity:
-        case eGameEventType::monsterUnleashed:
-        case eGameEventType::monsterInvasion: {
+        case ePakEventType::monsterInvasion: {
             std::vector<eMonsterType> types;
             const auto addType = [&](const uint8_t id) {
                 if(id == 0) {
@@ -475,7 +525,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 continue;
             }
         } break;
-        case eGameEventType::godQuest: {
+        case ePakEventType::godQuest: {
             bool valid = false;
             const auto god = pakIdToGodType(subType, valid);
             if(!valid) continue;
@@ -518,6 +568,143 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                      eGodQuestId::godQuest1);
             e = ee;
         } break;
+        case ePakEventType::godAttack: {
+            std::vector<eGodType> godTypes;
+            bool valid1 = false;
+            const auto god1 = pakIdToGodType(value1, valid1);
+            if(valid1) godTypes.push_back(god1);
+            bool valid2 = false;
+            const auto god2 = pakIdToGodType(value2, valid2);
+            if(valid2) godTypes.push_back(god2);
+            bool valid3 = false;
+            const auto god3 = pakIdToGodType(value3, valid3);
+            if(valid3) godTypes.push_back(god3);
+            if(godTypes.empty()) {
+                printf("No gods to choose from\n");
+                continue;
+            }
+
+            const auto ee = e::make_shared<eGodAttackEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            ee->setTypes(godTypes);
+            ee->setRandom(true);
+            e = ee;
+        } break;
+        case ePakEventType::wageIncrease:
+        case ePakEventType::wageDecrease: {
+            const auto ee = e::make_shared<eWageChangeEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            int by = randomAmount;
+            if(type == ePakEventType::wageDecrease) {
+                by = -by;
+            }
+            ee->setBy(by);
+
+            e = ee;
+        } break;
+        case ePakEventType::demandIncrease:
+        case ePakEventType::demandDecrease: {
+            const auto ee = e::make_shared<eDemandChangeEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            setResources(*ee);
+            ee->setCity(city);
+            ee->setBy(type == ePakEventType::demandIncrease ? 12 : -12);
+
+            e = ee;
+        } break;
+        case ePakEventType::supplyIncrease:
+        case ePakEventType::supplyDecrease: {
+            const auto ee = e::make_shared<eSupplyChangeEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            setResources(*ee);
+            ee->setCity(city);
+            ee->setBy(type == ePakEventType::supplyIncrease ? 12 : -12);
+
+            e = ee;
+        } break;
+        case ePakEventType::priceIncrease:
+        case ePakEventType::priceDecrease: {
+            const auto ee = e::make_shared<ePriceChangeEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            setResources(*ee);
+            ee->setMinResourceCount(type == ePakEventType::priceIncrease ? amountMin : -amountMax);
+            ee->setMaxResourceCount(type == ePakEventType::priceIncrease ? amountMax : -amountMin);
+
+            e = ee;
+        } break;
+        case ePakEventType::cityStatusChange: {
+            if(subType == 2) {
+                const auto ee = e::make_shared<eTradeShutDownEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+
+                e = ee;
+            } else if(subType == 3) {
+                const auto ee = e::make_shared<eTradeOpenUpEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+
+                e = ee;
+            } else if(subType == 9 || subType == 10 || subType == 11 ||
+                      subType == 18 || subType == 19 ||
+                      subType == 20 || subType == 21) {
+                const auto ee = e::make_shared<eCityBecomesEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+                eCityBecomesType type;
+                if(subType == 9) {
+                    type = eCityBecomesType::ally;
+                } else if(subType == 10) {
+                    type = eCityBecomesType::rival;
+                } else if(subType == 11) {
+                    type = eCityBecomesType::vassal;
+                } else if(subType == 18) {
+                    type = eCityBecomesType::active;
+                } else if(subType == 19) {
+                    type = eCityBecomesType::inactive;
+                } else if(subType == 20) {
+                    type = eCityBecomesType::visible;
+                } else { // if(subType == 21) {
+                    type = eCityBecomesType::invisible;
+                }
+                ee->setType(type);
+
+                e = ee;
+            } else if(subType == 13) { // god disaster
+                bool valid = false;
+                const auto godType = pakIdToGodType(godTypeHeroId, valid);
+
+            } else if(subType == 14 || subType == 15) {
+                const auto ee = e::make_shared<eMilitaryChangeEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+                ee->setBy(subType == 14 ? randomAmount : -randomAmount);
+            } else if(subType == 16 || subType == 17) {
+                const auto ee = e::make_shared<eEconomicChangeEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+                ee->setBy(subType == 16 ? randomAmount : -randomAmount);
+            } else if(subType == 22) { // city conquered
+
+            } else {
+                printf("Unhandled trade change event type %i\n", subType);
+                continue;
+            }
+        } break;
+        case ePakEventType::earthquake: {
+            const auto ee = e::make_shared<eEarthquakeEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            int ptId;
+            if(cityId0 != 0xFFFF) {
+                ptId = cityId0;
+            } else {
+                const int diff = cityId2 - cityId1;
+                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff));
+            }
+            ee->setDisasterPoint(ptId);
+
+            e = ee;
+        } break;
         default:
             printf("Unhandled event type %i\n", eventTypeId);
             continue;
@@ -543,7 +730,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 period = 365*years0;
             }
             e->setPeriod(period);
-            e->setRepeat(9999);
+            e->setRepeat(99999);
         } else {
             printf("Invalid occurance type %id\n", occuranceType);
             continue;

@@ -24,20 +24,6 @@ eGiftFromEvent::eGiftFromEvent(const eCityId cid,
 
 std::string eGiftFromEvent::longName() const {
     auto tmpl = eLanguage::text("gift_of_from_long_name");
-    std::string resName;
-    if(mResources[0] != eResourceType::none) {
-        resName += eResourceTypeHelpers::typeName(mResources[0]);
-    }
-    if(mResources[1] != eResourceType::none) {
-        if(!resName.empty()) resName += "/";
-        resName += eResourceTypeHelpers::typeName(mResources[1]);
-    }
-    if(mResources[2] != eResourceType::none) {
-        if(!resName.empty()) resName += "/";
-        resName += eResourceTypeHelpers::typeName(mResources[2]);
-    }
-    const auto cStr = std::to_string(mMinCount) + "-" +
-                      std::to_string(mMaxCount);
-    eStringHelpers::replace(tmpl, "%1", cStr + " " + resName);
+    longNameReplaceResource("%1", tmpl);
     return tmpl;
 }
