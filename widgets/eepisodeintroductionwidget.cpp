@@ -14,6 +14,7 @@
 #include "edownbutton.h"
 #include "egamewidget.h"
 #include "eframedbutton.h"
+#include "estringhelpers.h"
 
 #include "audio/emusic.h"
 
@@ -280,7 +281,9 @@ void eEpisodeIntroductionWidget::initialize(
     introText->initialize();
     introText->setSmallTextFontSize();
     introText->setTinyTextPadding();
-    introText->setText(text);
+    auto textPrep = text;
+    eStringHelpers::replaceSpecial(textPrep);
+    introText->setText(textPrep);
     inner->addWidget(introText);
 
     inner->addWidget(lowerButtons);

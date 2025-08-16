@@ -54,7 +54,6 @@ public:
 
     using eMap = std::map<std::string, std::string>;
     static bool sLoadStrings(const std::string& path, eMap& map);
-    static void sReplaceSpecial(std::string& value);
     bool loadStrings();
     bool writeStrings(const std::string& path) const;
 

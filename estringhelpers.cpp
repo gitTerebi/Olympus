@@ -1,5 +1,7 @@
 #include "estringhelpers.h"
 
+#include <regex>
+
 bool eStringHelpers::replace(std::string& str, const std::string& from,
                              const std::string& to) {
     size_t start_pos = str.find(from);
@@ -39,4 +41,11 @@ std::string eStringHelpers::pathToName(const std::string& path) {
         name = c + name;
     }
     return name;
+}
+
+void eStringHelpers::replaceSpecial(std::string& value) {
+    value = std::regex_replace(value, std::regex("^@L"), "");
+    value = std::regex_replace(value, std::regex("@L"), "\n");
+    value = std::regex_replace(value, std::regex("^@P"), "   ");
+    value = std::regex_replace(value, std::regex("@P"), "\n\n   ");
 }

@@ -3,7 +3,6 @@
 #include <fstream>
 
 #include <filesystem>
-#include <regex>
 
 #include "evectorhelpers.h"
 #include "egamedir.h"
@@ -85,20 +84,12 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
         value = value + line.substr(valueStart, valueLen);
 
         if(foundEnd) {
-            sReplaceSpecial(value);
             map[key] = value;
             key = "";
             value = "";
         }
     }
     return true;
-}
-
-void eCampaign::sReplaceSpecial(std::string& value) {
-    value = std::regex_replace(value, std::regex("^@L"), "");
-    value = std::regex_replace(value, std::regex("@L"), "\n");
-    value = std::regex_replace(value, std::regex("^@P"), "   ");
-    value = std::regex_replace(value, std::regex("@P"), "\n\n   ");
 }
 
 bool eCampaign::loadStrings() {
@@ -311,7 +302,6 @@ void eCampaign::read(eReadStream& src) {
         mIntroduction = brief.second;
         const auto complete = eLanguage::zeusMM(mCompleteId);
         mComplete = complete.second;
-        sReplaceSpecial(mComplete);
     }
 }
 

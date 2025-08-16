@@ -803,13 +803,11 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
         const auto intro = eLanguage::zeusMM(introId);
         ep.fTitle = intro.first;
         ep.fIntroduction = intro.second;
-        eCampaign::sReplaceSpecial(ep.fIntroduction);
     }
     if(completeId != 0 && completeId != 65535) {
         ep.fCompleteId = completeId;
         const auto complete = eLanguage::zeusMM(completeId);
         ep.fComplete = complete.second;
-        eCampaign::sReplaceSpecial(ep.fComplete);
     }
 }
 
