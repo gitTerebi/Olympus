@@ -1014,6 +1014,20 @@ void eCampaign::readPak(const std::string& name,
         }
 
         if(newVersion) {
+            file.seek(800401 + i*4);
+        } else {
+            file.seek(799337 + i*4);
+        }
+        const uint8_t nEvents = file.readUByte();
+        if(newVersion) {
+            file.seek(225938 + i*18600);
+        } else {
+            file.seek(224874 + i*18600);
+        }
+        readEpisodeEvents(*ep, file, nEvents, parentCid,
+                          opponentGods, independentMonster);
+
+        if(newVersion) {
             file.seek(836491 + i*4);
         } else {
             file.seek(835423 + i*4);
