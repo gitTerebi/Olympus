@@ -975,6 +975,12 @@ void eCampaign::readPak(const std::string& name,
         printf("colony episode %i:\n\n", i);
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>(mWorldBoard);
+
+        const auto ep = std::make_shared<eColonyEpisode>();
+        ep->fBoard = board.get();
+        ep->fWorldBoard = &mWorldBoard;
+        mColonyEpisodes.push_back(ep);
+
         eCityId colonyCid;
         const bool r = file.loadBoard(*board, *this, colonyCid);
         if(!r) {
@@ -982,11 +988,7 @@ void eCampaign::readPak(const std::string& name,
             continue;
         }
 
-        const auto ep = std::make_shared<eColonyEpisode>();
-        ep->fBoard = board.get();
-        ep->fWorldBoard = &mWorldBoard;
         ep->fCity = mWorldBoard.cityWithId(colonyCid);
-        mColonyEpisodes.push_back(ep);
 
         file.seek(28494 + i*2032); // mint
         readEpisodeAllowedBuildings(*ep, file, atlantean, colonyCid);
