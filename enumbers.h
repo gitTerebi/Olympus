@@ -124,10 +124,22 @@ struct eNumbers {
     static int sGrowerWorkTime;
     static int sGrowerSpawnWaitTime;
 
-    static int sMonsterAttackPeriod;
     static int sMonsterAttackRange;
-    static int sLandMonsterInvadePeriod;
-    static int sWaterMonsterInvadePeriod;
+
+    static int sPassiveMonsterAttackPeriod;
+    static int sActiveMonsterAttackPeriod;
+    static int sVeryActiveMonsterAttackPeriod;
+    static int sAggressiveMonsterAttackPeriod;
+
+    static int sPassiveLandMonsterInvadePeriod;
+    static int sActiveLandMonsterInvadePeriod;
+    static int sVeryActiveLandMonsterInvadePeriod;
+    static int sAggressiveLandMonsterInvadePeriod;
+
+    static int sPassiveWaterMonsterInvadePeriod;
+    static int sActiveWaterMonsterInvadePeriod;
+    static int sVeryActiveWaterMonsterInvadePeriod;
+    static int sAggressiveWaterMonsterInvadePeriod;
 
     static int sFriendlyGodVisitPeriod;
     static int sGodHelpPeriod;

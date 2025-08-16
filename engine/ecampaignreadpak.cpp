@@ -340,7 +340,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t occuranceType = file.readUShort();
         file.skipBytes(12);
         const uint16_t godTypeHeroId = file.readUShort();
-        file.skipBytes(40);
+        file.skipBytes(6);
+        const uint16_t aggressivnessId = file.readUShort();
+        file.skipBytes(32);
         const uint16_t subType = file.readUShort();
         file.skipBytes(28);
 
@@ -441,21 +443,32 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 continue;
             }
             const int typeId = eRand::rand() % types.size();
+            eMonsterAggressivness aggressivness{eMonsterAggressivness::passive};
+            if(aggressivnessId > 3) {
+                printf("Invalid monster aggressivness id %i\n", aggressivnessId);
+            } else {
+                aggressivness = static_cast<eMonsterAggressivness>(
+                                    aggressivnessId);
+            }
+
             const auto type = types[typeId];
             if(subType == 0) { // monster in city
                 const auto ee = e::make_shared<eMonsterInCityEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setType(type);
+                ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 1) { // monster unleashed
                 const auto ee = e::make_shared<eMonsterUnleashedEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setType(type);
+                ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 2) { // monster invades
                 const auto ee = e::make_shared<eMonsterInvasionEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setType(type);
+                ee->setAggressivness(aggressivness);
                 e = ee;
             } else {
                 printf("Invalid monster invasion subtype %i\n", subType);

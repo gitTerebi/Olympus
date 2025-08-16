@@ -24,6 +24,11 @@ public:
 
     eMonsterAttackStage stage() const { return mStage; }
 
+    eMonsterAggressivness aggressivness() const
+    { return mAggressivness; }
+    void setAggressivness(const eMonsterAggressivness a)
+    { mAggressivness = a; }
+
     void goToTarget();
     void goBack();
     void monsterPatrol();
@@ -41,7 +46,11 @@ private:
                             const stdsptr<eGodAct>& act,
                             const stdsptr<eCharActFunc>& missileSound);
 
+    int attackPeriod() const;
+    int invadePeriod() const;
+
     eTile* mHomeTile = nullptr;
+    eMonsterAggressivness mAggressivness{eMonsterAggressivness::passive};
     eMonsterAttackStage mStage{eMonsterAttackStage::none};
     const eMonsterType mType;
     int mLookForAttack = 0;

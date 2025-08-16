@@ -126,10 +126,19 @@ int eNumbers::sGrowerMaxGroom;
 int eNumbers::sGrowerWorkTime;
 int eNumbers::sGrowerSpawnWaitTime;
 
-int eNumbers::sMonsterAttackPeriod;
 int eNumbers::sMonsterAttackRange;
-int eNumbers::sLandMonsterInvadePeriod;
-int eNumbers::sWaterMonsterInvadePeriod;
+int eNumbers::sPassiveMonsterAttackPeriod;
+int eNumbers::sActiveMonsterAttackPeriod;
+int eNumbers::sVeryActiveMonsterAttackPeriod;
+int eNumbers::sAggressiveMonsterAttackPeriod;
+int eNumbers::sPassiveLandMonsterInvadePeriod;
+int eNumbers::sActiveLandMonsterInvadePeriod;
+int eNumbers::sVeryActiveLandMonsterInvadePeriod;
+int eNumbers::sAggressiveLandMonsterInvadePeriod;
+int eNumbers::sPassiveWaterMonsterInvadePeriod;
+int eNumbers::sActiveWaterMonsterInvadePeriod;
+int eNumbers::sVeryActiveWaterMonsterInvadePeriod;
+int eNumbers::sAggressiveWaterMonsterInvadePeriod;
 
 int eNumbers::sFriendlyGodVisitPeriod;
 int eNumbers::sGodHelpPeriod;
@@ -387,10 +396,21 @@ void eNumbers::sLoad() {
     loadI("grower_work_time_i", sGrowerWorkTime, 2000);
     loadI("grower_spawn_wait_time_i", sGrowerSpawnWaitTime, 5000);
 
-    loadI("monster_attack_period_i", sMonsterAttackPeriod, 8000);
     loadI("monster_attack_range_i", sMonsterAttackRange, 10);
-    loadI("land_monster_invade_period_i", sLandMonsterInvadePeriod, 200000);
-    loadI("water_monster_invade_period_i", sWaterMonsterInvadePeriod, 100000);
+    loadI("passive_monster_attack_period_i", sPassiveMonsterAttackPeriod, 14000);
+    loadI("active_monster_attack_period_i", sActiveMonsterAttackPeriod, 12000);
+    loadI("very_active_monster_attack_period_i", sVeryActiveMonsterAttackPeriod, 10000);
+    loadI("aggressive_monster_attack_period_i", sAggressiveMonsterAttackPeriod, 8000);
+
+    loadI("passive_land_monster_invade_period_i", sPassiveLandMonsterInvadePeriod, 1000000);
+    loadI("active_land_monster_invade_period_i", sActiveLandMonsterInvadePeriod, 600000);
+    loadI("very_active_land_monster_invade_period_i", sVeryActiveLandMonsterInvadePeriod, 400000);
+    loadI("aggressive_land_monster_invade_period_i", sAggressiveLandMonsterInvadePeriod, 200000);
+
+    loadI("passive_water_monster_invade_period_i", sPassiveWaterMonsterInvadePeriod, 800000);
+    loadI("active_water_monster_invade_period_i", sActiveWaterMonsterInvadePeriod, 400000);
+    loadI("very_active_water_monster_invade_period_i", sVeryActiveWaterMonsterInvadePeriod, 200000);
+    loadI("aggressive_water_monster_invade_period_i", sAggressiveWaterMonsterInvadePeriod, 100000);
 
     loadI("friendly_god_visit_period_i", sFriendlyGodVisitPeriod, 450);
     loadI("god_help_period_i", sGodHelpPeriod, 250000);

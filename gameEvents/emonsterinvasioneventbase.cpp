@@ -32,12 +32,14 @@ void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     dst << mType;
     dst << mPointId;
+    dst << mAggressivness;
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
     src >> mType;
     src >> mPointId;
+    src >> mAggressivness;
 }
 
 eMonster* eMonsterInvasionEventBase::triggerBase() const {

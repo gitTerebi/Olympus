@@ -26,6 +26,13 @@ enum class eMonsterType {
     satyr
 };
 
+enum class eMonsterAggressivness {
+    passive,
+    active,
+    veryActive,
+    aggressive
+};
+
 class eMonster : public eCharacter {
 public:
     eMonster(eGameBoard& board, const eMonsterType mt);

@@ -21,7 +21,7 @@ void eMonsterAction::increment(const int by) {
     const auto at = c->actionType();
     if(at == eCharacterActionType::walk) {
         lookForAttack(by, mLookForAttack,
-                      eNumbers::sMonsterAttackPeriod,
+                      attackPeriod(),
                       eNumbers::sMonsterAttackRange);
     }
 
@@ -58,10 +58,10 @@ bool eMonsterAction::decide() {
         mStage = eMonsterAttackStage::wait;
         if(mType == eMonsterType::scylla ||
            mType == eMonsterType::kraken) {
-            moveAround(nullptr, eNumbers::sWaterMonsterInvadePeriod,
+            moveAround(nullptr, invadePeriod(),
                        eWalkableObject::sCreateDeepWater());
         } else {
-            moveAround(nullptr, eNumbers::sLandMonsterInvadePeriod);
+            moveAround(nullptr, invadePeriod());
         }
         auto& board = this->board();
         board.updateMusic();
@@ -73,6 +73,7 @@ bool eMonsterAction::decide() {
 void eMonsterAction::read(eReadStream& src) {
     eGodMonsterAction::read(src);
     mHomeTile = src.readTile(board());
+    src >> mAggressivness;
     src >> mStage;
     src >> mLookForAttack;
 }
@@ -80,6 +81,7 @@ void eMonsterAction::read(eReadStream& src) {
 void eMonsterAction::write(eWriteStream& dst) const {
     eGodMonsterAction::write(dst);
     dst.writeTile(mHomeTile);
+    dst << mAggressivness;
     dst << mStage;
     dst << mLookForAttack;
 }
@@ -292,4 +294,47 @@ bool eMonsterAction::lookForRangeAction(const int dtime,
         }
     }
     return false;
+}
+
+int eMonsterAction::attackPeriod() const {
+    switch(mAggressivness) {
+    case eMonsterAggressivness::passive:
+        return eNumbers::sPassiveMonsterAttackPeriod;
+    case eMonsterAggressivness::active:
+        return eNumbers::sActiveMonsterAttackPeriod;
+    case eMonsterAggressivness::veryActive:
+        return eNumbers::sVeryActiveMonsterAttackPeriod;
+    case eMonsterAggressivness::aggressive:
+        return eNumbers::sAggressiveMonsterAttackPeriod;
+    }
+    return eNumbers::sPassiveMonsterAttackPeriod;
+}
+
+int eMonsterAction::invadePeriod() const {
+    if(mType == eMonsterType::scylla ||
+       mType == eMonsterType::kraken) {
+        switch(mAggressivness) {
+        case eMonsterAggressivness::passive:
+            return eNumbers::sPassiveWaterMonsterInvadePeriod;
+        case eMonsterAggressivness::active:
+            return eNumbers::sActiveWaterMonsterInvadePeriod;
+        case eMonsterAggressivness::veryActive:
+            return eNumbers::sVeryActiveWaterMonsterInvadePeriod;
+        case eMonsterAggressivness::aggressive:
+            return eNumbers::sAggressiveWaterMonsterInvadePeriod;
+        }
+        return eNumbers::sPassiveWaterMonsterInvadePeriod;
+    } else {
+        switch(mAggressivness) {
+        case eMonsterAggressivness::passive:
+            return eNumbers::sPassiveLandMonsterInvadePeriod;
+        case eMonsterAggressivness::active:
+            return eNumbers::sActiveLandMonsterInvadePeriod;
+        case eMonsterAggressivness::veryActive:
+            return eNumbers::sVeryActiveLandMonsterInvadePeriod;
+        case eMonsterAggressivness::aggressive:
+            return eNumbers::sAggressiveLandMonsterInvadePeriod;
+        }
+        return eNumbers::sPassiveLandMonsterInvadePeriod;
+    }
 }

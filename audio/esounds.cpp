@@ -757,6 +757,10 @@ void eSounds::playAttackSound(const eCharacterType type) {
         sInstance->mTalos.playAttack();
         break;
 
+    case eCharacterType::satyr:
+        sInstance->mSatyr.playAttack();
+        break;
+
     case eCharacterType::achilles:
         sInstance->mAchilles.playAttack();
         break;
@@ -879,6 +883,10 @@ void eSounds::playDieSound(eCharacter* const c) {
         break;
     case eCharacterType::talos:
         sInstance->mTalos.playDie();
+        break;
+
+    case eCharacterType::satyr:
+        sInstance->mSatyr.playDie();
         break;
     default:
         sInstance->mGenDie.playRandomSound();
@@ -1023,6 +1031,10 @@ void eSounds::playHitSound(eCharacter* const c) {
     case eCharacterType::talos:
         sInstance->mTalos.playHit();
         break;
+
+    case eCharacterType::satyr:
+        sInstance->mSatyr.playHit();
+        break;
     default:
         sInstance->mGenHit.playRandomSound();
         break;
@@ -1073,6 +1085,8 @@ void eSounds::loadImpl() {
     mScylla.load();
     mSphinx.load();
     mTalos.load();
+
+    mSatyr.load();
 
     {
         const std::string layer1Dir{eGameDir::path("Audio/Ambient/Layer1/")};

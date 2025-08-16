@@ -2,6 +2,7 @@
 
 #include "widgets/eframedbutton.h"
 #include "widgets/echoosebutton.h"
+#include "widgets/eswitchbutton.h"
 
 #include "widgets/elabeledwidget.h"
 #include "widgets/emonsterbutton.h"
@@ -33,6 +34,22 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     invasionPointButton->setValue(e->pointId() + 1);
     invasionPointButtonL->setup(eLanguage::text("invasion_point:"), invasionPointButton);
     addWidget(invasionPointButtonL);
+
+    const auto aggressivnessButton = new eSwitchButton(window());
+    aggressivnessButton->setUnderline(false);
+    aggressivnessButton->addValue(eLanguage::zeusText(94, 0));
+    aggressivnessButton->addValue(eLanguage::zeusText(94, 1));
+    aggressivnessButton->addValue(eLanguage::zeusText(94, 2));
+    aggressivnessButton->addValue(eLanguage::zeusText(94, 3));
+    aggressivnessButton->fitValidContent();
+    const auto a = e->aggressivness();
+    const int v = static_cast<int>(a);
+    aggressivnessButton->setValue(v);
+    aggressivnessButton->setSwitchAction([e](const int v) {
+        const auto a = static_cast<eMonsterAggressivness>(v);
+        e->setAggressivness(a);
+    });
+    addWidget(aggressivnessButton);
 
     const int p = padding();
     stackVertically(p);

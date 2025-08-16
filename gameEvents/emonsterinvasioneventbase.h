@@ -17,6 +17,11 @@ public:
     int pointId() const { return mPointId; }
     void setPointId(const int p);
 
+    eMonsterAggressivness aggressivness() const
+    { return mAggressivness; }
+    void setAggressivness(const eMonsterAggressivness a)
+    { mAggressivness = a; }
+
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 protected:
@@ -24,6 +29,7 @@ protected:
 private:
     eMonsterType mType = eMonsterType::calydonianBoar;
     int mPointId = 1;
+    eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;
 };
 
 #endif // EMONSTERINVASIONEVENTBASE_H
