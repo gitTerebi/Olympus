@@ -32,7 +32,7 @@ void eMessages::load(eGodMessages& god, const std::string& godName) {
     god.fInvades.fFull.fTitle = loadMessage("PHRASE_" + godName + "_invades_title");
     god.fInvades.fFull.fText = loadMessage("PHRASE_" + godName + "_invades_city_attacked_alert");
     god.fInvades.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_" + godName + "_invades_title");
-    god.fInvades.fCondensed.fText = loadMessage("PHRASE_CONDENSED_" + godName + "_invades_initial_announcement");
+    god.fInvades.fCondensed.fText = loadMessage("PHRASE_CONDENSED_" + godName + "_invades_city_attacked_alert");
 
     god.fHelps.fFull.fTitle = loadMessage("PHRASE_" + godName + "_help_title");
     god.fHelps.fFull.fText = loadMessage("PHRASE_" + godName + "_help_initial_announcement");
