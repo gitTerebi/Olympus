@@ -17,20 +17,29 @@ void eCityBecomesEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(cityId());
+    auto& world = board->world();
+    const auto cid = cityId();
+    const auto tid = board->cityIdToTeamId(cid);
+    eEventData ed(cid);
     ed.fCity = mCity;
+    const auto cpid = mCity->playerId();
     switch(mType) {
     case eCityBecomesType::ally: {
         mCity->setRelationship(eForeignCityRelationship::ally);
+        world.setPlayerTeam(cpid, tid);
         board->allow(cityId(), eBuildingType::commemorative, 7);
         board->event(eEvent::cityBecomesAlly, ed);
     } break;
     case eCityBecomesType::rival: {
         mCity->setRelationship(eForeignCityRelationship::rival);
+        const auto itid = static_cast<int>(tid);
+        const auto newTid = static_cast<eTeamId>(itid + 1);
+        world.setPlayerTeam(cpid, newTid);
         board->event(eEvent::cityBecomesRival, ed);
     } break;
     case eCityBecomesType::vassal: {
         mCity->setRelationship(eForeignCityRelationship::vassal);
+        world.setPlayerTeam(cpid, tid);
         board->event(eEvent::cityBecomesVassal, ed);
     } break;
     case eCityBecomesType::active: {
