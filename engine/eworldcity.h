@@ -305,22 +305,6 @@ public:
 
     void setCapitalOf(const ePlayerId pid);
     bool isCapitalOf(const ePlayerId pid) const;
-
-    static stdsptr<eWorldCity> sCreateAthens(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateSparta(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateKnossos(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateCorinth(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateOlympia(const eCityId cid);
-
-    static stdsptr<eWorldCity> sCreateEgypt(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateCyprus(const eCityId cid);
-
-    static stdsptr<eWorldCity> sCreateTroy(const eCityId cid);
-
-    static stdsptr<eWorldCity> sCreateMtPelion(const eCityId cid);
-
-    static stdsptr<eWorldCity> sCreateSardis(const eCityId cid);
-    static stdsptr<eWorldCity> sCreateHattusas(const eCityId cid);
 private:
     int mIOID = -1;
 
