@@ -1412,6 +1412,32 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::rivalConqueredByAlly: {
+        showMessage(ed, inst.fRivalConqueredByAlly);
+        return;
+    } break;
+    case eEvent::rivalConqueredByVassal: {
+        showMessage(ed, inst.fRivalConqueredByVassal);
+        return;
+    } break;
+
+    case eEvent::allyConqueredByRival: {
+        showMessage(ed, inst.fAllyConqueredByRival);
+        return;
+    } break;
+    case eEvent::vassalConqueredByRival: {
+        showMessage(ed, inst.fVassalConqueredByRival);
+        return;
+    } break;
+    case eEvent::colonyConqueredByRival: {
+        showMessage(ed, inst.fColonyConqueredByRival);
+        return;
+    } break;
+    case eEvent::parentConqueredByRival: {
+        showMessage(ed, inst.fParentConqueredByRival);
+        return;
+    } break;
+
     case eEvent::colonyRestored: {
         showMessage(ed, inst.fColonyRestored);
         return;

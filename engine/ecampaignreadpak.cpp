@@ -22,6 +22,7 @@
 #include "gameEvents/ecitybecomesevent.h"
 #include "gameEvents/eeconomicchangeevent.h"
 #include "gameEvents/emilitarychangeevent.h"
+#include "gameEvents/egoddisasterevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -380,13 +381,17 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t cityId2 = file.readUShort();
         file.skipBytes(4);
         const uint16_t occuranceType = file.readUShort();
-        file.skipBytes(12);
+        file.skipBytes(2);
+        const uint16_t duration = file.readUShort();
+        file.skipBytes(8);
         const uint16_t godTypeHeroId = file.readUShort();
         file.skipBytes(6);
         const uint16_t aggressivnessId = file.readUShort();
         file.skipBytes(32);
         const uint16_t subType = file.readUShort();
-        file.skipBytes(28);
+        file.skipBytes(13);
+        const uint16_t attackingCity = file.readUShort();
+        file.skipBytes(13);
 
         printf("%i %i %i %i %i %i %i\n", value1, value2,
                value3, value4, value5, value6, value7);
@@ -647,7 +652,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 e = ee;
             } else if(subType == 9 || subType == 10 || subType == 11 ||
                       subType == 18 || subType == 19 ||
-                      subType == 20 || subType == 21) {
+                      subType == 20 || subType == 21 ||
+                      subType == 24) {
                 const auto ee = e::make_shared<eCityBecomesEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
@@ -664,28 +670,41 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     type = eCityBecomesType::inactive;
                 } else if(subType == 20) {
                     type = eCityBecomesType::visible;
-                } else { // if(subType == 21) {
+                } else if(subType == 21) {
                     type = eCityBecomesType::invisible;
+                } else { // if(subType == 24) {
+                    type = eCityBecomesType::conquered;
+                    const auto ccid = static_cast<eCityId>(attackingCity);
+                    const auto cc = world.cityWithId(ccid);
+                    ee->setConqueringCity(cc);
                 }
                 ee->setType(type);
 
                 e = ee;
-            } else if(subType == 13) { // god disaster
+            } else if(subType == 13) {
                 bool valid = false;
                 const auto godType = pakIdToGodType(godTypeHeroId, valid);
+                const auto ee = e::make_shared<eGodDisasterEvent>(
+                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setCity(city);
+                ee->setGod(godType);
+                ee->setDuration(30*duration);
 
+                e = ee;
             } else if(subType == 14 || subType == 15) {
                 const auto ee = e::make_shared<eMilitaryChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
                 ee->setBy(subType == 14 ? randomAmount : -randomAmount);
+
+                e = ee;
             } else if(subType == 16 || subType == 17) {
                 const auto ee = e::make_shared<eEconomicChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
                 ee->setBy(subType == 16 ? randomAmount : -randomAmount);
-            } else if(subType == 22) { // city conquered
 
+                e = ee;
             } else {
                 printf("Unhandled trade change event type %i\n", subType);
                 continue;

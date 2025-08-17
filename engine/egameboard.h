@@ -621,6 +621,7 @@ public:
     eTeamId cityIdToTeamId(const eCityId cid) const;
     eTeamId playerIdToTeamId(const ePlayerId pid) const;
     void moveCityToPlayer(const eCityId cid, const ePlayerId pid);
+    void setPlayerTeam(const ePlayerId pid, const eTeamId tid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> playerCitiesOnBoard(const ePlayerId pid) const;

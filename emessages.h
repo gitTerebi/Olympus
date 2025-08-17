@@ -104,7 +104,7 @@ public:
     static bool load();
     static bool loaded();
 
-    static const std::string& message(const std::string& key);
+    static std::string message(const std::string& key);
     static eMessageType favorMessage(const eMessageType& reason);
     static eMessageType dfavorMessage(const eMessageType& reason);
     static eMessageType invasionMessage(const eMessageType& baseMsg,
@@ -303,6 +303,14 @@ public:
     eMessageType fCityBecomesVisible;
     eMessageType fCityBecomesInvisible;
 
+    eMessageType fRivalConqueredByAlly;
+    eMessageType fRivalConqueredByVassal;
+
+    eMessageType fAllyConqueredByRival;
+    eMessageType fVassalConqueredByRival;
+    eMessageType fColonyConqueredByRival;
+    eMessageType fParentConqueredByRival;
+
     eMessageType fColonyRestored;
 
     eMessageType fDebtAnniversary;
@@ -326,6 +334,7 @@ public:
 private:
     bool loadImpl();
 
+    std::string loadMessage(const std::string& key) const;
     void loadMessage(eMessageType& m,
                      const std::string& titleKey,
                      const std::string& textKey);

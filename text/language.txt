@@ -100,6 +100,7 @@ active "active"
 inactive "inactive"
 visible "visible"
 invisible "invisible"
+conquered "conquered"
 
 quest_tip_build_hh "Build Hero's Hall for %1 to fulfill a quest"
 quest_tip_summon_hero "Summon %1 to fulfill a quest"

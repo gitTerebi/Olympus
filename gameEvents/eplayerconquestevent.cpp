@@ -92,6 +92,8 @@ void ePlayerConquestEvent::trigger() {
                 const auto cid = cityId();
                 board->allow(cid, eBuildingType::commemorative, 4);
                 mCity->setRelationship(eForeignCityRelationship::vassal);
+                const auto pid = mCity->playerId();
+                board->setPlayerTeam(pid, eTeamId::team0);
             } else {
                 board->event(eEvent::cityConquerFailed, ed);
             }

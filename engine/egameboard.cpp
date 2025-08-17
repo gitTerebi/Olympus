@@ -1069,6 +1069,10 @@ void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
     return mWorld.moveCityToPlayer(cid, pid);
 }
 
+void eGameBoard::setPlayerTeam(const ePlayerId pid, const eTeamId tid) {
+    mWorld.setPlayerTeam(pid, tid);
+}
+
 std::vector<eCityId> eGameBoard::playerCities(const ePlayerId pid) const {
     return mWorld.playerCities(pid);
 }
