@@ -75,12 +75,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     }
 
     const auto handleCity = [&](const stdsptr<eWorldCity>& ct) {
-        if(!mSelectColonyMode && !editor &&
-           (!ct->active() && !ct->isOnBoard())) return;
-        if(mSelectColonyMode) {
-            const bool c = eVectorHelpers::contains(mColonySelection, ct);
-            if(!c) return;
-        }
+        const bool v = cityVisible(ct, editor);
+        if(!v) return;
         const bool atlantean = ct->nationality() == eNationality::atlantean;
         const auto t = ct->type();
         stdsptr<eTexture> tex;
@@ -603,11 +599,8 @@ void eWorldMapWidget::updateWidgets() {
 
     const auto& cts = mWorldBoard->cities();
     for(const auto& ct : cts) {
-        if(!mSelectColonyMode && !editor && !ct->active()) continue;
-        if(mSelectColonyMode) {
-            const bool c = eVectorHelpers::contains(mColonySelection, ct);
-            if(!c) continue;
-        }
+        const bool v = cityVisible(ct, editor);
+        if(!v) continue;
         const int cx = width()*ct->x();
         const int cy = height()*ct->y();
         const int x = cx - w/2;
@@ -643,6 +636,18 @@ void eWorldMapWidget::armyDrawXY(eWorldCity& c1, eWorldCity& c2,
     const double ccy = c2.y();
     x = (hx + (ccx - hx)*frac)*width();
     y = (hy + (ccy - hy)*frac)*height();
+}
+
+bool eWorldMapWidget::cityVisible(const stdsptr<eWorldCity>& c,
+                                  const bool editor) const {
+    if(!editor && !c->visible()) return false;
+    if(!mSelectColonyMode && !editor &&
+       !c->active() && !c->isOnBoard()) return false;
+    if(mSelectColonyMode) {
+        const bool cc = eVectorHelpers::contains(mColonySelection, c);
+        if(!cc) return false;
+    }
+    return true;
 }
 
 void eWorldMapWidget::setMap(const eWorldMap map) {

@@ -30,6 +30,9 @@ private:
     void armyDrawXY(eWorldCity& c1, eWorldCity& c2,
                     const double frac, int& x, int& y);
 
+    bool cityVisible(const stdsptr<eWorldCity>& c,
+                     const bool editor) const;
+
     bool mSelectColonyMode = false;
     std::vector<stdsptr<eWorldCity>> mColonySelection;
 
