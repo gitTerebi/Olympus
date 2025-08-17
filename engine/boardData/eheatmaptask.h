@@ -22,7 +22,7 @@ public:
 
     static void sRun(eThreadBoard& board,
                      const eCityId cid,
-                     const SDL_Rect bRect,
+                     const SDL_Rect& bRect,
                      const eHeatGetter& heatGetter,
                      eHeatMap& map);
 

@@ -17,6 +17,10 @@ void eThreadData::addBoard(const eCityId cid) {
     b.initialize(mW, mH);
 }
 
+void eThreadData::removeBoard(const eCityId cid) {
+    mBoards.erase(cid);
+}
+
 void eThreadData::updateBoard(const eCityId cid) {
     mBoards[cid].updateBoard();
 }

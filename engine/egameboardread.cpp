@@ -42,7 +42,6 @@ void eGameBoard::read(eReadStream& src) {
             const auto c = addCityToBoard(cid);
             c->read(src);
             scheduleAppealMapUpdate(cid);
-            mThreadPool.addBoard(cid);
         }
     }
 

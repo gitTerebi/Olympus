@@ -331,6 +331,8 @@ void eTile::read(eReadStream& src) {
     src >> mScrub;
     src >> mRainforest;
     src >> mHalfSlope;
+    src >> mTidalWaveZone;
+    src >> mLavaZone;
 }
 
 void eTile::write(eWriteStream& dst) const {
@@ -339,6 +341,8 @@ void eTile::write(eWriteStream& dst) const {
     dst << mScrub;
     dst << mRainforest;
     dst << mHalfSlope;
+    dst << mTidalWaveZone;
+    dst << mLavaZone;
 }
 
 void eTile::addCharacter(const stdsptr<eCharacter>& c,

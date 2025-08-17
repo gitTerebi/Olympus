@@ -1219,6 +1219,7 @@ eBoardCity* eGameBoard::addCityToBoard(const eCityId cid) {
        pid != ePlayerId::neutralAggresive) {
         mActiveCitiesOnBoard.push_back(c.get());
     }
+    mThreadPool.addBoard(cid);
     return c.get();
 }
 
@@ -1233,8 +1234,9 @@ void eGameBoard::removeCityFromBoard(const eCityId cid) {
         const auto c = it->get();
         if(c->id() != cid) continue;
         mCitiesOnBoard.erase(it);
-        return;
+        break;
     }
+    mThreadPool.removeBoard(cid);
 }
 
 void eGameBoard::killCommonFolks(const eCityId cid, int toKill) {

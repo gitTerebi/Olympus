@@ -162,6 +162,12 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w9->addAction(eLanguage::zeusText(48, 67), [this]() {
         mMode = eTerrainEditMode::quake;
     });
+    w9->addAction(eLanguage::zeusText(48, 68), [this]() {
+        mMode = eTerrainEditMode::lava;
+    });
+    w9->addAction(eLanguage::zeusText(48, 69), [this]() {
+        mMode = eTerrainEditMode::tidalWave;
+    });
     for(int i = 0; i < 8; i++) {
         w9->addAction(eLanguage::zeusText(48, 70 + i), [this, i]() {
             mMode = eTerrainEditMode::disasterPoint;
@@ -177,7 +183,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
 
     const auto w10 = new eActionListWidget(window());
     for(int i = 8; i < 16; i++) {
-        w10->addAction("Sea inv pt " + std::to_string(i + 1), [this, i]() {
+        w10->addAction(eLanguage::zeusText(48, 56 + i - 8), [this, i]() {
             mMode = eTerrainEditMode::seaInvasion;
             mModeId = i;
         }, [board, i, gw]() {
@@ -187,7 +193,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         });
     }
     for(int i = 0; i < 3; i++) {
-        w10->addAction("Disembark Point " + std::to_string(i + 1), [this, i]() {
+        w10->addAction(eLanguage::zeusText(48, 64 + i), [this, i]() {
             mMode = eTerrainEditMode::disembarkPoint;
             mModeId = i;
         }, [board, i, gw]() {
@@ -201,7 +207,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
 
     const auto w11 = new eActionListWidget(window());
     for(int i = 0; i < 8; i++) {
-        w11->addAction("Land inv pt " + std::to_string(i + 1), [this, i]() {
+        w11->addAction(eLanguage::zeusText(48, 19 + i), [this, i]() {
             mMode = eTerrainEditMode::landInvasion;
             mModeId = i;
         }, [board, i, gw]() {
@@ -211,7 +217,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         });
     }
     for(int i = 0; i < 3; i++) {
-        w11->addAction("Monster Point " + std::to_string(i + 1), [this, i]() {
+        w11->addAction(eLanguage::zeusText(48, 86 + i), [this, i]() {
             mMode = eTerrainEditMode::monsterPoint;
             mModeId = i;
         }, [board, i, gw]() {

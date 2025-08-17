@@ -137,6 +137,12 @@ public:
 
     bool hasPrey() const;
 
+    bool tidalWaveZone() const { return mTidalWaveZone; }
+    void setTidalWaveZone(const bool z) { mTidalWaveZone = z; }
+
+    bool lavaZone() const { return mLavaZone; }
+    void setLavaZone(const bool z) { mLavaZone = z; }
+
     bool onFire() const override;
     void setOnFire(const bool f) override;
 
@@ -160,6 +166,8 @@ private:
     bool mHalfSlope = false;
     bool mRainforest = false;
     double mScrub = 0;
+    bool mTidalWaveZone = false;
+    bool mLavaZone = false;
 
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;

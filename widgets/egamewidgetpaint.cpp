@@ -563,6 +563,12 @@ void eGameWidget::paintEvent(ePainter& p) {
                     } else {
                         tex->setColorMod(255, 200, 200);
                     }
+                } else {
+                    if(tile->tidalWaveZone()) {
+                        tex->setColorMod(0, 0, 255);
+                    } else if(tile->lavaZone()) {
+                        tex->setColorMod(255, 0, 0);
+                    }
                 }
             }
 

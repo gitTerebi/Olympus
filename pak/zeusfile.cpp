@@ -735,24 +735,14 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             } else if(t_terrain & 0x8) { // building, fill in for boulevard or avenue
             } else if(t_terrain & 0x20) { // park
             } else if(t_terrain & 0x200) { // elevation
-                if(t_terrain == 1600 ||
-                   t_terrain == 2147485248) {
+                if(t_terrain & 8388608) {
+                    halfSlopes.push_back(tile);
+                }
+                if(t_terrain & 1536) {
                     tile->setWalkableElev(true);
+                }
+                if(t_terrain & 64) {
                     buildRoad(tile);
-                } else if(t_terrain == 1536) {
-                    tile->setWalkableElev(true);
-                } else if(t_terrain == 2155873856) {
-                    halfSlopes.push_back(tile);
-                    tile->setWalkableElev(true);
-                    buildRoad(tile);
-                } else if(t_terrain == 8390144 ||
-                          t_terrain == 8390208 ||
-                          t_terrain == 2155873792) {
-                    halfSlopes.push_back(tile);
-                    tile->setWalkableElev(true);
-                } else if(t_terrain == 2155872768 ||
-                          t_terrain == 8389120) {
-                    halfSlopes.push_back(tile);
                 }
             } else if(t_terrain & 0x40) { // road
                 buildRoad(tile);
@@ -789,6 +779,12 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             } else if(t_terrain & 0x1000000) { // molten lava
             } else { // empty land
                 tile->setScrub(0.01*t_scrub);
+            }
+            if(t_terrain & 256) { // tidal wave
+                tile->setTidalWaveZone(true);
+            }
+            if(t_terrain & 16) { // lava
+                tile->setLavaZone(true);
             }
 		}
 	}

@@ -390,6 +390,14 @@ eGameWidget::eApply eGameWidget::editFunc() {
         return [](eTile* const tile) {
             tile->setTerrain(eTerrain::quake);
         };
+    } else if(mode == eTerrainEditMode::lava) {
+        return [](eTile* const tile) {
+            tile->setLavaZone(!tile->lavaZone());
+        };
+    } else if(mode == eTerrainEditMode::tidalWave) {
+        return [](eTile* const tile) {
+            tile->setTidalWaveZone(!tile->tidalWaveZone());
+        };
     } else if(mode == eTerrainEditMode::levelOut) {
         const auto t = mBoard->tile(mPressedTX, mPressedTY);
         if(t) {

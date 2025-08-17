@@ -13,7 +13,7 @@ eHeatMapTask::eHeatMapTask(const eCityId cid,
 
 void eHeatMapTask::sRun(eThreadBoard& board,
                         const eCityId cid,
-                        const SDL_Rect bRect,
+                        const SDL_Rect& bRect,
                         const eHeatGetter& heatGetter,
                         eHeatMap& map) {
     map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);

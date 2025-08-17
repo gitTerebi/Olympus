@@ -39,8 +39,16 @@ void eThreadPool::initialize(const int w, const int h) {
 }
 
 void eThreadPool::addBoard(const eCityId cid) {
+    waitFinished();
     for(auto& t : mThreadData) {
         t->addBoard(cid);
+    }
+}
+
+void eThreadPool::removeBoard(const eCityId cid) {
+    waitFinished();
+    for(auto& t : mThreadData) {
+        t->removeBoard(cid);
     }
 }
 

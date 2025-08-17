@@ -58,6 +58,8 @@ enum class eTerrainEditMode {
     monsterPoint,
 
     quake,
+    lava,
+    tidalWave,
     disasterPoint,
 
     cityTerritory,

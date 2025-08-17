@@ -23,6 +23,7 @@ public:
 
     void initialize(const int w, const int h);
     void addBoard(const eCityId cid);
+    void removeBoard(const eCityId cid);
 
     void updateBoard(const eCityId cid);
     eThreadBoard& board(const eCityId cid);
