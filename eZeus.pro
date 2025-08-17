@@ -2558,6 +2558,10 @@ HEADERS += \
     spriteData/waterPark30.h \
     spriteData/waterPark45.h \
     spriteData/waterPark60.h \
+    spriteData/wave15.h \
+    spriteData/wave30.h \
+    spriteData/wave45.h \
+    spriteData/wave60.h \
     spriteData/wineVendor15.h \
     spriteData/wineVendor30.h \
     spriteData/wineVendor45.h \
@@ -3170,6 +3174,7 @@ DISTFILES += \
     textureTemplates/watchpost \
     textureTemplates/waterDistributor \
     textureTemplates/waterPark \
+    textureTemplates/wave \
     textureTemplates/wineVendor \
     textureTemplates/wineVendorOverlay \
     textureTemplates/winery \
