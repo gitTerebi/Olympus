@@ -208,8 +208,7 @@ public:
     static std::string sStateName(const eCityState s);
     void setState(const eCityState state) { mState = state; }
     eCityState state() const { return mState; };
-    bool active() const { return mType != eCityType::colony ||
-                                 mState == eCityState::active; }
+    bool active() const { return mState == eCityState::active; }
 
     bool visible() const { return mVisible; }
     void setVisible(const bool v) { mVisible = v; }
@@ -318,7 +317,7 @@ private:
 
     eNationality mNationality{eNationality::greek};
     eDistantDirection mDirection{eDistantDirection::none};
-    eCityState mState{eCityState::inactive};
+    eCityState mState{eCityState::active};
 
     eCityId mCityId;
 

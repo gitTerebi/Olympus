@@ -12,6 +12,7 @@
 #include "engine/eworldboard.h"
 #include "engine/egameboard.h"
 #include "ewatertradewidget.h"
+#include "eswitchbutton.h"
 
 #include <algorithm>
 
@@ -67,20 +68,27 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const int h = res.centralWidgetLargeHeight();
     resize(w, h);
 
-    const int p = 2*padding();
+    const int p = padding();
 
     const auto buttonsW1 = new eWidget(window());
     buttonsW1->setNoPadding();
-    addWidget(buttonsW1); buttonsW1->move(p, p);
-    const int ww = (w - 3*p)/2;
-    const int hh = h - 2*p;
+    addWidget(buttonsW1);
+    buttonsW1->move(2*p, 2*p);
+    const int ww = (w - 8*p)/3;
+    const int hh = h - 4*p;
     buttonsW1->resize(ww, hh);
 
     const auto buttonsW2 = new eWidget(window());
     buttonsW2->setNoPadding();
     addWidget(buttonsW2);
-    buttonsW2->move(ww + 2*p, p);
+    buttonsW2->move(ww + 4*p, 2*p);
     buttonsW2->resize(ww, hh);
+
+    const auto buttonsW3 = new eWidget(window());
+    buttonsW3->setNoPadding();
+    addWidget(buttonsW3);
+    buttonsW3->move(2*ww + 6*p, 2*p);
+    buttonsW3->resize(ww, hh);
 
     const auto nameButton = new eFramedButton(window());
     nameButton->setUnderline(false);
@@ -126,7 +134,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
 
     const auto relationshipButton = new eFramedButton(window());
     const auto nationalityButton = new eFramedButton(window());
-    const auto stateButton = new eFramedButton(window());
+    const auto stateButton = new eSwitchButton(window());
+    const auto visibleButton = new eSwitchButton(window());
     const auto attitudeButton = new eFramedButton(window());
     const auto directionButton = new eFramedButton(window());
     const auto teamButton = new eFramedButton(window());
@@ -137,7 +146,6 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     nationalityButton->setVisible(type == eCityType::foreignCity ||
                                   type == eCityType::colony ||
                                   type == eCityType::parentCity);
-    stateButton->setVisible(type == eCityType::colony);
     attitudeButton->setVisible(type == eCityType::foreignCity ||
                                type == eCityType::colony);
     directionButton->setVisible(type == eCityType::distantCity);
@@ -170,7 +178,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             return std::string("None");
         } else {
             const int i = static_cast<int>(id);
-            return "Player " + std::to_string(i);
+            return std::to_string(i);
         }
     };
 
@@ -179,11 +187,11 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     const auto typeName = eWorldCity::sTypeName(type);
     typeButton->setText(typeName);
     typeButton->fitContent();
-    typeButton->setPressAction([this, board, ppid,
+    typeButton->setPressAction([this, board, ppid, p,
                                relationshipButton, typeButton,
                                directionButton,
                                nationalityButton,
-                               stateButton, attitudeButton,
+                               attitudeButton,
                                c, buttonsW1]() {
         const std::vector<eCityType> types =
             {eCityType::parentCity,
@@ -197,9 +205,9 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             const auto name = eWorldCity::sTypeName(t);
             typeNames.push_back(name);
         }
-        const auto act = [board, ppid,
+        const auto act = [board, ppid, p,
                           relationshipButton, nationalityButton,
-                          stateButton, directionButton,
+                          directionButton,
                           attitudeButton, c, buttonsW1,
                           types, typeNames, typeButton](const int val) {
             const auto type = types[val];
@@ -223,11 +231,10 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             nationalityButton->setVisible(type == eCityType::foreignCity ||
                                           type == eCityType::colony ||
                                           type == eCityType::parentCity);
-            stateButton->setVisible(type == eCityType::colony);
             attitudeButton->setVisible(type == eCityType::foreignCity ||
                                        type == eCityType::colony);
             directionButton->setVisible(type == eCityType::distantCity);
-            buttonsW1->layoutVertically(true);
+            buttonsW1->stackVertically(p, true);
 
             const auto attitude = c->attitudeClass(ppid);
             attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
@@ -283,33 +290,28 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     relationshipButton->align(eAlignment::hcenter);
 
     stateButton->setUnderline(false);
+    stateButton->addValue(eWorldCity::sStateName(eCityState::active));
+    stateButton->addValue(eWorldCity::sStateName(eCityState::inactive));
+    stateButton->fitValidContent();
     const auto state = c->state();
-    stateButton->setText(eWorldCity::sStateName(state));
-    stateButton->fitContent();
-    stateButton->setPressAction([this, stateButton, c]() {
-        const auto d = new eChooseButton(window());
-        const std::vector<eCityState> states =
-            {eCityState::active, eCityState::inactive};
-        std::vector<std::string> stateNames;
-        for(const auto s : states) {
-            const auto name = eWorldCity::sStateName(s);
-            stateNames.push_back(name);
-        }
-        const auto act = [stateButton, states, stateNames, c](const int val) {
-            const auto state = states[val];
-            c->setState(state);
-            const auto name = stateNames[val];
-            stateButton->setText(name);
-            stateButton->fitContent();
-            stateButton->align(eAlignment::hcenter);
-        };
-        d->initialize(5, stateNames, act);
-
-        window()->execDialog(d);
-        d->align(eAlignment::center);
+    stateButton->setValue(state == eCityState::active ? 0 : 1);
+    stateButton->setSwitchAction([c](const int v) {
+        c->setState(v == 0 ? eCityState::active : eCityState::inactive);
     });
     buttonsW1->addWidget(stateButton);
     stateButton->align(eAlignment::hcenter);
+
+    visibleButton->setUnderline(false);
+    visibleButton->addValue(eLanguage::zeusText(44, 306)); // invisible
+    visibleButton->addValue(eLanguage::zeusText(44, 307)); // visible
+    visibleButton->fitValidContent();
+    const bool vis = c->visible();
+    visibleButton->setValue(vis ? 1 : 0);
+    visibleButton->setSwitchAction([c](const int v) {
+        c->setVisible(v);
+    });
+    buttonsW1->addWidget(visibleButton);
+    visibleButton->align(eAlignment::hcenter);
 
     attitudeButton->setUnderline(false);
     const auto attitude = c->attitudeClass(ppid);
@@ -443,7 +445,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
         window()->execDialog(d);
         d->align(eAlignment::center);
     });
-    buttonsW1->addWidget(playerButton);
+    buttonsW3->addWidget(playerButton);
     playerButton->align(eAlignment::hcenter);
 
     teamButton->setUnderline(false);
@@ -470,7 +472,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
         window()->execDialog(d);
         d->align(eAlignment::center);
     });
-    buttonsW1->addWidget(teamButton);
+    buttonsW3->addWidget(teamButton);
     teamButton->align(eAlignment::hcenter);
 
     capitalButton->setUnderline(false);
@@ -495,7 +497,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
         window()->execDialog(d);
         d->align(eAlignment::center);
     });
-    buttonsW1->addWidget(capitalButton);
+    buttonsW3->addWidget(capitalButton);
     capitalButton->align(eAlignment::hcenter);
 
     directionButton->setUnderline(false);
@@ -663,6 +665,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     buttonsW2->addWidget(eStr);
     eStr->align(eAlignment::hcenter);
 
-    buttonsW1->layoutVertically(true);
-    buttonsW2->layoutVertically(true);
+    buttonsW1->stackVertically(p, true);
+    buttonsW2->stackVertically(p, true);
+    buttonsW3->stackVertically(p, true);
 }

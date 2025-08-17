@@ -475,6 +475,8 @@ bool eWorldCity::trades() const {
     if(isRival()) return false;
     if(tradeShutdown()) return false;
     if(mConqueredBy) return false;
+    if(!visible()) return false;
+    if(!active()) return false;
     return true;
 }
 

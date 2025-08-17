@@ -446,9 +446,11 @@ void eWidget::removeAllWidgets() {
     mChildren.clear();
 }
 
-void eWidget::stackVertically(const int p) {
+void eWidget::stackVertically(const int p,
+                              const bool skipHidden) {
     int y = 0;
     for(const auto w : mChildren) {
+        if(skipHidden && !w->visible()) continue;
         w->setY(y);
         y += w->height() + p;
     }

@@ -106,7 +106,8 @@ public:
     void removeWidget(eWidget* const w);
     void removeAllWidgets();
 
-    void stackVertically(const int p = 0);
+    void stackVertically(const int p = 0,
+                         const bool skipHidden = false);
     void layoutVertically(const bool skipHidden = false);
     void layoutVerticallyWithoutSpaces();
     void stackHorizontally(const int p = 0);
