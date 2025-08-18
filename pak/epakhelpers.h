@@ -1,7 +1,7 @@
 #ifndef EPAKHELPERS_H
 #define EPAKHELPERS_H
 
-#include <fstream>
+#include <stdint.h>
 
 enum class eResourceType;
 

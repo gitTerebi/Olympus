@@ -20,6 +20,7 @@
 #define GAMEFILE_H
 
 #include <vector>
+#include <stdint.h>
 
 #include "qfile.h"
 
