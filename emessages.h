@@ -291,7 +291,8 @@ public:
 
     eMessageType fTroopsRequestAttackAverted;
 
-    eMessageType fEarthqauke;
+    eMessageType fEarthqaukeGod;
+    eMessageType fTidalWaveNoReason;
 
     eMessageType fCityBecomesAlly;
     eMessageType fCityBecomesRival;

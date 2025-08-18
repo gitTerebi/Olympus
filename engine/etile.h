@@ -126,6 +126,7 @@ public:
     eTileTerrainPainter& terrainPainter() { return mTerrainPainter; }
     bool updateTerrain() const { return mUpdateTerrain; }
     void scheduleTerrainUpdate() { mUpdateTerrain = true; }
+    void scheduleNeighboursTerrainUpdate(const int range = 1);
     void terrainUpdated() { mUpdateTerrain = false; }
 
     void setUnderTile(eTile* const tile,

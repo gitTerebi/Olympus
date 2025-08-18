@@ -290,6 +290,16 @@ void eTile::updateTerritoryBorder() {
     }
 }
 
+void eTile::scheduleNeighboursTerrainUpdate(const int range) {
+    for(int dx = -range; dx <= range; dx++) {
+        for(int dy = -range; dy <= range; dy++) {
+            const auto t = tileRel<eTile>(dx, dy);
+            if(!t) continue;
+            t->scheduleTerrainUpdate();
+        }
+    }
+}
+
 void eTile::setUnderTile(eTile* const tile,
                          const int dx, const int dy) {
     mUnderTile = tile;
@@ -316,13 +326,7 @@ void eTile::setTerrain(const eTerrain terr) {
 
 void eTile::setMarbleLevel(const int l) {
     eTileBase::setMarbleLevel(l);
-    for(int dx = -1; dx <= 1; dx++) {
-        for(int dy = -1; dy <= 1; dy++) {
-            const auto t = tileRel<eTile>(dx, dy);
-            if(!t) continue;
-            t->scheduleTerrainUpdate();
-        }
-    }
+    scheduleNeighboursTerrainUpdate();
 }
 
 void eTile::read(eReadStream& src) {

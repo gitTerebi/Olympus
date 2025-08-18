@@ -185,6 +185,8 @@ public:
     static void loadGodPinkMissile();
     static void loadGodPurpleMissile();
 
+    static void loadWave();
+
     static void loadCommonHouse();
     static void loadPoseidonCommonHouse();
     static void loadEliteHouse();

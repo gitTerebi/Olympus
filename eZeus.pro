@@ -475,6 +475,7 @@ SOURCES += \
         gameEvents/erivalarmyawayevent.cpp \
         gameEvents/esupplychangeevent.cpp \
         gameEvents/esupplydemandchangeevent.cpp \
+        gameEvents/etidalwaveevent.cpp \
         gameEvents/etradeopenupevent.cpp \
         gameEvents/etradeshutdownevent.cpp \
         gameEvents/etroopsrequestevent.cpp \
@@ -487,6 +488,7 @@ SOURCES += \
         missiles/emissile.cpp \
         missiles/erockmissile.cpp \
         missiles/espearmissile.cpp \
+        missiles/ewavemissile.cpp \
         pak/epakhelpers.cpp \
         pak/gamefile.cpp \
         pak/pkwareinputstream.cpp \
@@ -1157,6 +1159,7 @@ HEADERS += \
     gameEvents/erivalarmyawayevent.h \
     gameEvents/esupplychangeevent.h \
     gameEvents/esupplydemandchangeevent.h \
+    gameEvents/etidalwaveevent.h \
     gameEvents/etradeopenupevent.h \
     gameEvents/etradeshutdownevent.h \
     gameEvents/etroopsrequestevent.h \
@@ -1168,6 +1171,7 @@ HEADERS += \
     missiles/emissile.h \
     missiles/erockmissile.h \
     missiles/espearmissile.h \
+    missiles/ewavemissile.h \
     offsets/PoseidonImps.h \
     offsets/Poseidon_Atalanta.h \
     offsets/Poseidon_Atlantean.h \

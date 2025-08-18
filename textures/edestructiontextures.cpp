@@ -109,6 +109,11 @@
 #include "spriteData/orichalcMissile45.h"
 #include "spriteData/orichalcMissile60.h"
 
+#include "spriteData/wave15.h"
+#include "spriteData/wave30.h"
+#include "spriteData/wave45.h"
+#include "spriteData/wave60.h"
+
 #include "textures/espriteloader.h"
 
 eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
@@ -125,9 +130,9 @@ eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
     fBlackArrow(renderer),
     fArrow(renderer),
 
-    fPlague(renderer) {
+    fPlague(renderer),
 
-}
+    fWave(renderer) {}
 
 void eDestructionTextures::loadAll() {
     loadFire();
@@ -499,4 +504,21 @@ void eDestructionTextures::loadOrichalcMissile() {
     eSpriteLoader loader(fTileH, "orichalcMissile", sds,
                          &ePoseidonImpsOffset, fRenderer);
     loader.loadSkipFlipped(4718, 4718, 4758, fOrichalcMissile);
+}
+
+void eDestructionTextures::loadWave() {
+    if(fWaveLoaded) return;
+    fWaveLoaded = true;
+
+    const auto& sds = spriteData(fTileH,
+                                 eWaveSpriteData15,
+                                 eWaveSpriteData30,
+                                 eWaveSpriteData45,
+                                 eWaveSpriteData60);
+    eSpriteLoader loader(fTileH, "wave", sds,
+                         &eDestructionOffset, fRenderer);
+
+    for(int i = 1660; i < 1686; i++) {
+        loader.load(1660, i, fWave);
+    }
 }

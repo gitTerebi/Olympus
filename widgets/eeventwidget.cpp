@@ -57,6 +57,9 @@ eEventButton::eEventButton(const eEvent e,
     case eEvent::earthquake:
         coll = &texs.fGroundFissureAlert;
         break;
+    case eEvent::tidalWave:
+        coll = &texs.fFloodAlert;
+        break;
 
     case eEvent::godVisit:
     case eEvent::godHelp:

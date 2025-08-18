@@ -102,7 +102,8 @@ enum class eMissileType {
     arrow,
     god,
     rock,
-    spear
+    spear,
+    wave
 };
 
 class eMissile : public eStdSelfRef {
@@ -132,7 +133,7 @@ public:
     double angle() const { return mPath.angle(); }
     double height() const { return mPath.height(); }
 
-    int textureTime() const { return mTime/4; }
+    int textureTime() const { return mTime/20; }
     int time() const { return mTime; }
 
     eMissileType type() const { return mType; }

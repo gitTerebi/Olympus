@@ -150,6 +150,12 @@ void eGameBoard::write(eWriteStream& dst) const {
         e->write(dst);
     }
 
+    dst << mProgressWaves;
+    dst << mTidalWaves.size();
+    for(const auto& w : mTidalWaves) {
+        w->write(dst);
+    }
+
     dst << mDefeatedBy.size();
     for(const auto& c : mDefeatedBy) {
         dst << c.first;

@@ -27,6 +27,7 @@
 #include "engine/boardData/eheatmaptask.h"
 
 #include "missiles/emissile.h"
+#include "missiles/ewavemissile.h"
 
 #include "etilehelper.h"
 
@@ -2203,8 +2204,15 @@ void eGameBoard::incTime(const int by) {
     mProgressEarthquakes += by;
     const int earthquakeWait = eNumbers::sEarthquakeProgressPeriod;
     if(mProgressEarthquakes > earthquakeWait) {
-        mProgressEarthquakes = 0;
+        mProgressEarthquakes -= earthquakeWait;
         progressEarthquakes();
+    }
+
+    mProgressWaves += by;
+    const int tidalWaveWait = 250;
+    if(mProgressWaves > tidalWaveWait) {
+        mProgressWaves -= tidalWaveWait;
+        progressTidalWaves();
     }
 
     mSoldiersUpdate += by;
@@ -3078,6 +3086,122 @@ void eGameBoard::progressEarthquakes() {
             i--;
         }
     }
+}
+
+void eGameBoard::progressTidalWaves() {
+    if(mTidalWaves.empty()) return;
+    eSounds::playBeachSound();
+    for(int i = 0; i < (int)mTidalWaves.size(); i++) {
+        const auto& w = mTidalWaves[i];
+
+        if(w->fLastId >= 0 && w->fLastId < (int)w->fTiles.size()) {
+            const std::vector<eWaveDirection>& tiles = w->fTiles[w->fLastId];
+            for(const auto& wd : tiles) {
+                const auto t = wd.fTile;
+                const auto o = wd.fO;
+                std::vector<ePathPoint> path;
+                eTile* from = nullptr;
+                eTile* to = nullptr;
+                if(w->fRegres) {
+                    from = t;
+                    to = t->neighbour<eTile>(!o);
+                    t->setTerrain(wd.fSaved);
+                } else {
+                    from = t->neighbour<eTile>(!o);
+                    to = t;
+                    t->setTerrain(eTerrain::water);
+                }
+                double heightFrom = 2.;
+                for(int j = 0; j < 2; j++) {
+                    const auto b = from->bottom<eTile>();
+                    if(b) {
+                        from = b;
+                    } else {
+                        heightFrom -= 1;
+                    }
+                }
+                double heightTo = 2.;
+                for(int j = 0; j < 2; j++) {
+                    const auto b = to->bottom<eTile>();
+                    if(b) {
+                        to = b;
+                    } else {
+                        heightTo -= 1;
+                    }
+                }
+                t->scheduleNeighboursTerrainUpdate(2);
+                path.push_back({(double)from->x(), (double)from->y(), heightFrom});
+                path.push_back({(double)to->x(), (double)to->y(), heightTo});
+                const auto m = e::make_shared<eWaveMissile>(*this, path);
+                m->incTime(0);
+            }
+        }
+
+        if(w->fRegres) w->fLastId--;
+        else w->fLastId++;
+        if(w->fLastId < 0 || w->fLastId >= (int)w->fTiles.size()) {
+            if(w->fPermanent || w->fRegres) {
+                eVectorHelpers::remove(mTidalWaves, w);
+                i--;
+            } else {
+                w->fLastId--;
+                w->fRegres = true;
+            }
+        }
+    }
+}
+
+void eGameBoard::addTidalWave(eTile* const startTile,
+                              const bool permanent) {
+    std::vector<eTile*> shore;
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const)> addShore;
+        addShore = [&](eTile* const t) {
+            const bool c = eVectorHelpers::contains(used, t);
+            if(c) return;
+            used.push_back(t);
+            if(t->isShoreTile()) shore.push_back(t);
+            if(!t->tidalWaveZone()) return;
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                addShore(static_cast<eTile*>(n.second));
+            }
+        };
+        addShore(startTile);
+    }
+    const auto w = std::make_shared<eTidalWave>();
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const, const int)> addNeighs;
+        addNeighs = [&](eTile* const t, const int dist) {
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                const auto tt = static_cast<eTile*>(n.second);
+                if(!tt->tidalWaveZone()) return;
+                if(tt->hasWater()) return;
+                const bool c = eVectorHelpers::contains(used, tt);
+                if(c) return;
+                while((int)w->fTiles.size() < dist + 1) {
+                    w->fTiles.emplace_back();
+                }
+                used.push_back(tt);
+                w->fTiles[dist].push_back({tt, tt->terrain(), n.first});
+            }
+        };
+        for(const auto s : shore) {
+            addNeighs(s, 0);
+        }
+        for(int i = 0; i < (int)w->fTiles.size(); i++) {
+            for(const auto t : w->fTiles[i]) {
+                addNeighs(t.fTile, i + 1);
+            }
+        }
+    }
+
+    if(w->fTiles.empty()) return;
+    w->fPermanent = permanent;
+    mTidalWaves.push_back(w);
 }
 
 void centerTile(const int minX, const int minY,

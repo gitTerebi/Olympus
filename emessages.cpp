@@ -813,10 +813,15 @@ bool eMessages::loadImpl() {
     load(fColonyTroopsRequest, "colony", "P");
     load(fParentCityTroopsRequest, "parentcity", "R");
 
-    fEarthqauke.fFull.fTitle = loadMessage("PHRASE_quake_title");
-    fEarthqauke.fFull.fText = loadMessage("PHRASE_quake_phrase_by_god");
-    fEarthqauke.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_quake_title");
-    fEarthqauke.fCondensed.fText = loadMessage("PHRASE_CONDENSED_quake_phrase_by_god");
+    fEarthqaukeGod.fFull.fTitle = loadMessage("PHRASE_quake_title");
+    fEarthqaukeGod.fFull.fText = loadMessage("PHRASE_quake_phrase_by_god");
+    fEarthqaukeGod.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_quake_title");
+    fEarthqaukeGod.fCondensed.fText = loadMessage("PHRASE_CONDENSED_quake_phrase_by_god");
+
+    fTidalWaveNoReason.fFull.fTitle = loadMessage("PHRASE_flood_title");
+    fTidalWaveNoReason.fFull.fText = loadMessage("PHRASE_flood_phrase_no_reason");
+    fTidalWaveNoReason.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_flood_title");
+    fTidalWaveNoReason.fCondensed.fText = loadMessage("PHRASE_CONDENSED_flood_phrase_no_reason");
 
     fCityBecomesAlly.fFull.fTitle = loadMessage("PHRASE_becomes_ally_title");
     fCityBecomesAlly.fFull.fText = loadMessage("PHRASE_becomes_ally_initial_announcement");

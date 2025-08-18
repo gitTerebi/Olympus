@@ -1031,6 +1031,13 @@ void eGameTextures::loadGodPurpleMissile() {
     });
 }
 
+void eGameTextures::loadWave() {
+    loadTexture([](const int i) {
+        auto& c = sDestructionTextures[i];
+        c.loadWave();
+    });
+}
+
 void eGameTextures::loadCommonHouse() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

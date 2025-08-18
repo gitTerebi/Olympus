@@ -60,7 +60,8 @@ enum class eGameEventType {
 
     wageChange,
 
-    monsterInCity
+    monsterInCity,
+    tidalWave
 };
 
 enum class eGameEventBranch {

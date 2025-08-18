@@ -592,6 +592,9 @@ public:
     void earthquake(eTile* const startTile, const int size);
     bool duringEarthquake() const;
 
+    void addTidalWave(eTile* const startTile,
+                      const bool permanent);
+
     void defeatedBy(const eCityId defeated,
                     const stdsptr<eWorldCity>& by);
 
@@ -724,6 +727,7 @@ private:
     void handleGamesEnd(const eGames game);
 
     void progressEarthquakes();
+    void progressTidalWaves();
 
     bool mEditorMode = false;
     bool mFogOfWar = true;
@@ -842,6 +846,58 @@ private:
 
     int mProgressEarthquakes = 0;
     std::vector<stdsptr<eEarthquake>> mEarthquakes;
+
+    struct eWaveDirection {
+        eTile* fTile;
+        eTerrain fSaved;
+        eOrientation fO;
+    };
+
+    struct eTidalWave {
+        std::vector<std::vector<eWaveDirection>> fTiles;
+        int fLastId = 0;
+        bool fPermanent = false;
+        bool fRegres = false;
+
+        void read(eReadStream& src, eGameBoard& board) {
+            int nv;
+            src >> nv;
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles.emplace_back();
+                int nt;
+                src >> nt;
+                for(int j = 0; j < nt; j++) {
+                    const auto t = src.readTile(board);
+                    eTerrain terr;
+                    src >> terr;
+                    eOrientation o;
+                    src >> o;
+                    v.push_back({t, terr, o});
+                }
+            }
+            src >> fLastId;
+            src >> fPermanent;
+            src >> fRegres;
+        }
+
+        void write(eWriteStream& dst) {
+            dst << fTiles.size();
+            for(const auto& v : fTiles) {
+                dst << v.size();
+                for(const auto t : v) {
+                    dst.writeTile(t.fTile);
+                    dst << t.fSaved;
+                    dst << t.fO;
+                }
+            }
+            dst << fLastId;
+            dst << fPermanent;
+            dst << fRegres;
+        }
+    };
+
+    int mProgressWaves = 0;
+    std::vector<stdsptr<eTidalWave>> mTidalWaves;
 
     std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
 

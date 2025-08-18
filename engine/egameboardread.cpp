@@ -137,6 +137,15 @@ void eGameBoard::read(eReadStream& src) {
         mEarthquakes.push_back(e);
     }
 
+    src >> mProgressWaves;
+    int nw;
+    src >> nw;
+    for(int i = 0; i < nw; i++) {
+        const auto w = std::make_shared<eTidalWave>();
+        w->read(src, *this);
+        mTidalWaves.push_back(w);
+    }
+
     int nd;
     src >> nd;
     for(int i = 0; i < nd; i++) {

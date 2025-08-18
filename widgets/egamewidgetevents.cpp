@@ -1378,7 +1378,10 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     } break;
 
     case eEvent::earthquake: {
-        showMessage(ed, inst.fEarthqauke);
+        showMessage(ed, inst.fEarthqaukeGod);
+    } break;
+    case eEvent::tidalWave: {
+        showMessage(ed, inst.fTidalWaveNoReason);
     } break;
 
     case eEvent::cityBecomesAlly: {

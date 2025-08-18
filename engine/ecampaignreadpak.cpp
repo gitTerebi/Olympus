@@ -23,6 +23,7 @@
 #include "gameEvents/eeconomicchangeevent.h"
 #include "gameEvents/emilitarychangeevent.h"
 #include "gameEvents/egoddisasterevent.h"
+#include "gameEvents/etidalwaveevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -266,6 +267,7 @@ enum class ePakEventType {
     priceDecrease,
     cityStatusChange,
     giftFrom,
+    tidalWave,
     monsterInvasion,
     godAttack
 };
@@ -286,6 +288,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 22) return ePakEventType::supplyDecrease;
     else if(id == 23) return ePakEventType::giftFrom;
     // 24 - lava
+    else if(id == 25) return ePakEventType::tidalWave;
     else if(id == 26) return ePakEventType::monsterInvasion;
     else if(id == 27) return ePakEventType::godAttack;
 
@@ -391,7 +394,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t subType = file.readUShort();
         file.skipBytes(13);
         const uint16_t attackingCity = file.readUShort();
-        file.skipBytes(13);
+        file.skipBytes(8);
+        const uint16_t permanent = file.readUShort();
+        file.skipBytes(3);
 
         printf("%i %i %i %i %i %i %i\n", value1, value2,
                value3, value4, value5, value6, value7);
@@ -423,8 +428,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             cityId = cityId0;
         }
         auto& world = *ep.fWorldBoard;
-        const auto cid = static_cast<eCityId>(cityId);
-        const auto city = world.cityWithId(cid);
+        const auto cityCid = static_cast<eCityId>(cityId);
+        const auto city = world.cityWithId(cityCid);
 
         const auto setResources = [&](eResourceCityEvent& ee) {
             if(value1 == 0xFFFF) {
@@ -715,12 +720,27 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                 cid, eGameEventBranch::root, *ep.fBoard);
             int ptId;
             if(cityId0 != 0xFFFF) {
-                ptId = cityId0;
+                ptId = cityId0 - 1;
             } else {
                 const int diff = cityId2 - cityId1;
-                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff));
+                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff)) - 1;
             }
             ee->setDisasterPoint(ptId);
+
+            e = ee;
+        } break;
+        case ePakEventType::tidalWave: {
+            const auto ee = e::make_shared<eTidalWaveEvent>(
+                                cid, eGameEventBranch::root, *ep.fBoard);
+            int ptId;
+            if(cityId0 != 0xFFFF) {
+                ptId = cityId0 - 1;
+            } else {
+                const int diff = cityId2 - cityId1;
+                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff)) - 1;
+            }
+            ee->setDisasterPoint(ptId);
+            ee->setPermanent(permanent);
 
             e = ee;
         } break;
@@ -741,6 +761,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         e->setDatePlusYears(year);
 
         if(occuranceType == 0) { // one time event
+            e->setRepeat(1);
         } else if(occuranceType == 2) { // recurring event
             int period;
             if(years0 == 0xFFFF) {
