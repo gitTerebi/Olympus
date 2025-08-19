@@ -15,7 +15,7 @@
 #include "gameEvents/erivalarmyawayevent.h"
 #include "gameEvents/eearthquakeevent.h"
 #include "gameEvents/ecitybecomesevent.h"
-#include "gameEvents/ebasiccityevent.h"
+#include "gameEvents/ecityevent.h"
 #include "gameEvents/esupplydemandchangeevent.h"
 #include "gameEvents/epricechangeevent.h"
 #include "gameEvents/ewagechangeevent.h"
@@ -127,9 +127,10 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     } break;
     case eGameEventType::tradeShutdowns:
     case eGameEventType::tradeOpensUp: {
-        const auto eew = new eBasicCityEventWidget(window());
-        const auto ee = static_cast<eBasicCityEvent*>(e.get());
-        eew->initialize(ee);
+        const auto eew = new eCityEventWidget(window());
+        const auto ee = dynamic_cast<eCityEvent*>(e.get());
+        const auto world = e->worldBoard();
+        eew->initialize(ee, *world);
         cont->addWidget(eew);
     } break;
     case eGameEventType::supplyChange:

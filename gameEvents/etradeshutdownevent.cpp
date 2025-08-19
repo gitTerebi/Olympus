@@ -10,7 +10,8 @@ eTradeShutDownEvent::eTradeShutDownEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eBasicCityEvent(cid, eGameEventType::tradeShutdowns, branch, board) {}
+    eGameEvent(cid, eGameEventType::tradeShutdowns,
+                 branch, board) {}
 
 void eTradeShutDownEvent::trigger() {
     const auto city = this->city();
@@ -30,4 +31,14 @@ std::string eTradeShutDownEvent::longName() const {
     const auto ctstr = city ? city->name() : none;
     eStringHelpers::replace(tmpl, "%1", ctstr);
     return tmpl;
+}
+
+void eTradeShutDownEvent::write(eWriteStream &dst) const {
+    eGameEvent::write(dst);
+    eCityEvent::write(dst);
+}
+
+void eTradeShutDownEvent::read(eReadStream &src) {
+    eGameEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
 }

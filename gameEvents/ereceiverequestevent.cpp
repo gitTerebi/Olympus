@@ -12,7 +12,7 @@ eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eResourceCountCityEvent(cid, eGameEventType::receiveRequest, branch, board) {
+    eGameEvent(cid, eGameEventType::receiveRequest, branch, board) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");
@@ -54,7 +54,8 @@ void eReceiveRequestEvent::trigger() {
     if(!board) return;
 
     if(isMainEvent() && mPostpone == 0) { // initial
-        chooseTypeAndCount();
+        chooseType();
+        chooseCount();
         board->addCityRequest(mainEvent<eReceiveRequestEvent>());
     }
 
@@ -625,14 +626,20 @@ std::string eReceiveRequestEvent::longName() const {
 }
 
 void eReceiveRequestEvent::write(eWriteStream& dst) const {
-    eResourceCityEvent::write(dst);
+    eGameEvent::write(dst);
+    eResourceEvent::write(dst);
+    eCountEvent::write(dst);
+    eCityEvent::write(dst);
     dst << mRequestType;
     dst << mFinish;
     dst << mPostpone;
 }
 
 void eReceiveRequestEvent::read(eReadStream& src) {
-    eResourceCityEvent::read(src);
+    eGameEvent::read(src);
+    eResourceEvent::read(src);
+    eCountEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
     src >> mRequestType;
     src >> mFinish;
     src >> mPostpone;

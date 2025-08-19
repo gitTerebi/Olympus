@@ -3,13 +3,15 @@
 
 #include "../ewidget.h"
 
-class eBasicCityEvent;
+class eCityEvent;
+class eWorldBoard;
 
-class eBasicCityEventWidget : public eWidget {
+class eCityEventWidget : public eWidget {
 public:
     using eWidget::eWidget;
 
-    void initialize(eBasicCityEvent* const e);
+    void initialize(eCityEvent* const e,
+                    eWorldBoard &world);
 };
 
 #endif // EBASICCITYEVENTWIDGET_H

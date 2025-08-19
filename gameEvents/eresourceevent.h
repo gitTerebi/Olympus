@@ -1,14 +1,13 @@
-#ifndef ERESOURCECITYEVENT_H
-#define ERESOURCECITYEVENT_H
-
-#include "ebasiccityevent.h"
+#ifndef ERESOURCEEVENT_H
+#define ERESOURCEEVENT_H
 
 #include "engine/eresourcetype.h"
 
-class eResourceCityEvent : public eBasicCityEvent {
-public:
-    using eBasicCityEvent::eBasicCityEvent;
+class eWriteStream;
+class eReadStream;
 
+class eResourceEvent {
+public:
     eResourceType resourceType() const { return mResource; }
 
     const std::vector<eResourceType>& resourceTypes() const
@@ -18,8 +17,8 @@ public:
     void setResourceType(const int id, const eResourceType type)
     { mResources[id] = type; }
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const;
+    void read(eReadStream& src);
 protected:
     void chooseType();
 
@@ -34,4 +33,4 @@ protected:
     eResourceType mResource = eResourceType::fleece;
 };
 
-#endif // ERESOURCECITYEVENT_H
+#endif // ERESOURCEEVENT_H

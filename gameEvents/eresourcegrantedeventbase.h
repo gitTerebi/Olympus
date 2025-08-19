@@ -1,11 +1,17 @@
 #ifndef ERESOURCEGRANTEDEVENTBASE_H
 #define ERESOURCEGRANTEDEVENTBASE_H
 
-#include "eresourcecountcityevent.h"
+#include "egameevent.h"
+#include "ecityevent.h"
+#include "eresourceevent.h"
+#include "ecountevent.h"
 
 #include "engine/eevent.h"
 
-class eResourceGrantedEventBase : public eResourceCountCityEvent {
+class eResourceGrantedEventBase : public eGameEvent,
+                                  public eCityEvent,
+                                  public eResourceEvent,
+                                  public eCountEvent {
 public:
     eResourceGrantedEventBase(const eCityId cid,
                               const eEvent giftCashAccepted,

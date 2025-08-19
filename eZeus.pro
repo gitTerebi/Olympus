@@ -435,8 +435,9 @@ SOURCES += \
         fileIO/ewritestream.cpp \
         gameEvents/earmyeventbase.cpp \
         gameEvents/earmyreturnevent.cpp \
-        gameEvents/ebasiccityevent.cpp \
         gameEvents/ecitybecomesevent.cpp \
+        gameEvents/ecityevent.cpp \
+        gameEvents/ecountevent.cpp \
         gameEvents/edemandchangeevent.cpp \
         gameEvents/eearthquakeevent.cpp \
         gameEvents/eeconomicchangeevent.cpp \
@@ -470,8 +471,7 @@ SOURCES += \
         gameEvents/ereceiverequestevent.cpp \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
-        gameEvents/eresourcecityevent.cpp \
-        gameEvents/eresourcecountcityevent.cpp \
+        gameEvents/eresourceevent.cpp \
         gameEvents/eresourcegrantedeventbase.cpp \
         gameEvents/erivalarmyawayevent.cpp \
         gameEvents/esupplychangeevent.cpp \
@@ -1121,8 +1121,9 @@ HEADERS += \
     fileIO/ewritestream.h \
     gameEvents/earmyeventbase.h \
     gameEvents/earmyreturnevent.h \
-    gameEvents/ebasiccityevent.h \
     gameEvents/ecitybecomesevent.h \
+    gameEvents/ecityevent.h \
+    gameEvents/ecountevent.h \
     gameEvents/edemandchangeevent.h \
     gameEvents/eearthquakeevent.h \
     gameEvents/eeconomicchangeevent.h \
@@ -1156,8 +1157,7 @@ HEADERS += \
     gameEvents/ereceiverequestevent.h \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \
-    gameEvents/eresourcecityevent.h \
-    gameEvents/eresourcecountcityevent.h \
+    gameEvents/eresourceevent.h \
     gameEvents/eresourcegrantedeventbase.h \
     gameEvents/erivalarmyawayevent.h \
     gameEvents/esupplychangeevent.h \

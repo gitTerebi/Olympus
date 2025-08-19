@@ -2,7 +2,6 @@
 
 #include "engine/egameboard.h"
 #include "elanguage.h"
-#include "estringhelpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 

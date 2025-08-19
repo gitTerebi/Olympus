@@ -4,14 +4,14 @@
 #include "widgets/ecitybutton.h"
 #include "elanguage.h"
 
-#include "gameEvents/ebasiccityevent.h"
+#include "gameEvents/ecityevent.h"
 
-void eBasicCityEventWidget::initialize(eBasicCityEvent* const e) {
+void eCityEventWidget::initialize(eCityEvent* const e,
+                                       eWorldBoard& world) {
     const auto cityButtonL = new eLabeledWidget(window());
     const auto cc = e->city();
     const auto cityButton = new eCityButton(window());
-    const auto board = e->worldBoard();
-    cityButton->initialize(board, [e](const stdsptr<eWorldCity>& c){
+    cityButton->initialize(&world, [e](const stdsptr<eWorldCity>& c){
         e->setCity(c);
     });
     cityButton->setCity(cc);

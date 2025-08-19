@@ -1,14 +1,12 @@
-#ifndef EBASICCITYEVENT_H
-#define EBASICCITYEVENT_H
+#ifndef ECITYEVENT_H
+#define ECITYEVENT_H
 
-#include "egameevent.h"
+#include "engine/eworldcity.h"
 
-class eBasicCityEvent : public eGameEvent {
+class eCityEvent {
 public:
-    using eGameEvent::eGameEvent;
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const;
+    void read(eReadStream& src, eGameBoard& board);
 
     void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
     const stdsptr<eWorldCity>& city() const { return mCity; }
@@ -19,4 +17,4 @@ protected:
     stdsptr<eWorldCity> mCity;
 };
 
-#endif // EBASICCITYEVENT_H
+#endif // ECITYEVENT_H

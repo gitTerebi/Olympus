@@ -1,0 +1,31 @@
+#include "ecountevent.h"
+
+#include "erand.h"
+#include "estringhelpers.h"
+#include "fileIO/ereadstream.h"
+#include "fileIO/ewritestream.h"
+
+void eCountEvent::chooseCount() {
+    if(mMinCount > mMaxCount) return;
+    const int diff = mMaxCount - mMinCount;
+    mCount = diff == 0 ? mMinCount : (mMinCount + (eRand::rand() % diff));
+}
+
+void eCountEvent::longNameReplaceCount(
+        const std::string& id, std::string& tmpl) const {
+    const auto cStr = std::to_string(mMinCount) + "-" +
+                      std::to_string(mMaxCount);
+    eStringHelpers::replace(tmpl, id, cStr);
+}
+
+void eCountEvent::write(eWriteStream& dst) const {
+    dst << mCount;
+    dst << mMinCount;
+    dst << mMaxCount;
+}
+
+void eCountEvent::read(eReadStream& src) {
+    src >> mCount;
+    src >> mMinCount;
+    src >> mMaxCount;
+}

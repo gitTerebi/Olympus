@@ -1,11 +1,15 @@
 #include "esupplydemandchangeevent.h"
 
 void eSupplyDemandChangeEvent::write(eWriteStream& dst) const {
-    eResourceCityEvent::write(dst);
+    eGameEvent::write(dst);
+    eResourceEvent::write(dst);
+    eCityEvent::write(dst);
     dst << mBy;
 }
 
 void eSupplyDemandChangeEvent::read(eReadStream& src) {
-    eResourceCityEvent::read(src);
+    eGameEvent::read(src);
+    eResourceEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
     src >> mBy;
 }

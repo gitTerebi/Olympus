@@ -1,8 +1,6 @@
 #include "eresourcegrantedeventbase.h"
 
 #include "engine/egameboard.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
@@ -20,7 +18,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eGameEventType type,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eResourceCountCityEvent(cid, type, branch, board),
+    eGameEvent(cid, type, branch, board),
     mGiftCashAccepted(giftCashAccepted),
     mGiftAccepted(giftAccepted),
     mGiftPostponed(giftPostponed),
@@ -48,7 +46,8 @@ void eResourceGrantedEventBase::trigger() {
     if(!board) return;
 
     if(isMainEvent() && mPostpone) { // initial
-        chooseTypeAndCount();
+        chooseType();
+        chooseCount();
     }
 
     const auto pid = playerId();
@@ -175,10 +174,16 @@ void eResourceGrantedEventBase::trigger() {
 
 void eResourceGrantedEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
+    eCityEvent::write(dst);
+    eResourceEvent::write(dst);
+    eCountEvent::write(dst);
     dst << mPostpone;
 }
 
 void eResourceGrantedEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
+    eResourceEvent::read(src);
+    eCountEvent::read(src);
     src >> mPostpone;
 }

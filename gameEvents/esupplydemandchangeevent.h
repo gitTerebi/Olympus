@@ -1,13 +1,15 @@
 #ifndef ESUPPLYDEMANDCHANGEEVENT_H
 #define ESUPPLYDEMANDCHANGEEVENT_H
 
-#include "eresourcecityevent.h"
+#include "egameevent.h"
+#include "eresourceevent.h"
+#include "ecityevent.h"
 
-#include "engine/eresourcetype.h"
-
-class eSupplyDemandChangeEvent : public eResourceCityEvent {
+class eSupplyDemandChangeEvent : public eGameEvent,
+                                 public eResourceEvent,
+                                 public eCityEvent {
 public:
-    using eResourceCityEvent::eResourceCityEvent;
+    using eGameEvent::eGameEvent;
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
