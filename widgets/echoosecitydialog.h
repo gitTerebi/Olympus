@@ -10,7 +10,9 @@ public:
     using eChooseButton::eChooseButton;
 
     using eCityAction = std::function<void(const stdsptr<eWorldCity>&)>;
-    void initialize(eWorldBoard* const board, const eCityAction& cact);
+    void initialize(eWorldBoard* const board,
+                    const eCityAction& cact,
+                    const bool showId = false);
 
     using eCityValidator = std::function<bool(const stdsptr<eWorldCity>&)>;
     void setValidator(const eCityValidator& v);

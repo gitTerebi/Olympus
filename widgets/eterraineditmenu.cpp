@@ -171,7 +171,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     for(int i = 0; i < 8; i++) {
         w9->addAction(eLanguage::zeusText(48, 70 + i), [this, i]() {
             mMode = eTerrainEditMode::disasterPoint;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i);
@@ -185,7 +185,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     for(int i = 8; i < 16; i++) {
         w10->addAction(eLanguage::zeusText(48, 56 + i - 8), [this, i]() {
             mMode = eTerrainEditMode::seaInvasion;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::seaInvasion, i);
@@ -195,7 +195,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     for(int i = 0; i < 3; i++) {
         w10->addAction(eLanguage::zeusText(48, 64 + i), [this, i]() {
             mMode = eTerrainEditMode::disembarkPoint;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::disembarkPoint, i);
@@ -209,7 +209,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     for(int i = 0; i < 8; i++) {
         w11->addAction(eLanguage::zeusText(48, 19 + i), [this, i]() {
             mMode = eTerrainEditMode::landInvasion;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::landInvasion, i);
@@ -219,7 +219,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     for(int i = 0; i < 3; i++) {
         w11->addAction(eLanguage::zeusText(48, 86 + i), [this, i]() {
             mMode = eTerrainEditMode::monsterPoint;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::monsterPoint, i);

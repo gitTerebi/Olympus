@@ -116,6 +116,8 @@ public:
 
     void setMouseReceiver(eWidget* const w);
     void setMouseReceiverDXDY(const int dx, const int dy);
+
+    eMainWindow* window() const { return mWindow; }
 protected:
     virtual void sizeHint(int& w, int& h);
 
@@ -157,7 +159,6 @@ protected:
     }
 
     SDL_Renderer* renderer() const;
-    eMainWindow* window() const { return mWindow; }
     eResolution resolution() const;
 private:
     static eWidget* sWidgetUnderMouse;

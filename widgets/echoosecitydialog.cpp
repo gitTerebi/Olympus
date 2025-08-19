@@ -1,10 +1,10 @@
 #include "echoosecitydialog.h"
 
-#include "engine/egameboard.h"
-#include "emainwindow.h"
+#include "engine/eworldboard.h"
 
 void eChooseCityDialog::initialize(eWorldBoard* const board,
-                                   const eCityAction& cact) {
+                                   const eCityAction& cact,
+                                   const bool showId) {
     const auto& cities = board->cities();
     std::vector<stdsptr<eWorldCity>> validCities;
     std::vector<std::string> cityNames;
@@ -12,6 +12,12 @@ void eChooseCityDialog::initialize(eWorldBoard* const board,
         if(mValidator) {
             const bool v = mValidator(c);
             if(!v) continue;
+        }
+        std::string cname = c->name();
+        if(showId) {
+            const auto id = c->cityId();
+            const int iid = static_cast<int>(id);
+            cname += " [" + std::to_string(iid) + "]";
         }
         cityNames.push_back(c->name());
         validCities.push_back(c);

@@ -9,8 +9,11 @@
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eCityId cid,
         const eGameEventType type,
-        const eGameEventBranch branch, eGameBoard& board) :
-    eGameEvent(cid, type, branch, board) {}
+        const eGameEventBranch branch,
+        eGameBoard& board) :
+    eGameEvent(cid, type, branch, board),
+    ePointEventBase(eBannerTypeS::monsterPoint,
+                    cid, board) {}
 
 
 void eMonsterInvasionEventBase::setType(const eMonsterType type) {
@@ -24,27 +27,24 @@ void eMonsterInvasionEventBase::setType(const eMonsterType type) {
     }
 }
 
-void eMonsterInvasionEventBase::setPointId(const int p) {
-    mPointId = p;
-}
-
 void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
+    ePointEventBase::write(dst);
     dst << mType;
-    dst << mPointId;
     dst << mAggressivness;
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
+    ePointEventBase::read(src);
     src >> mType;
-    src >> mPointId;
     src >> mAggressivness;
 }
 
-eMonster* eMonsterInvasionEventBase::triggerBase() const {
+eMonster* eMonsterInvasionEventBase::triggerBase() {
     const auto board = gameBoard();
     if(!board) return nullptr;
+    choosePointId();
     const auto cid = cityId();
     const auto monster = eMonster::sCreateMonster(mType, *board);
     board->registerMonster(cid, monster.get());
@@ -53,7 +53,8 @@ eMonster* eMonsterInvasionEventBase::triggerBase() const {
 
     const auto a = e::make_shared<eMonsterAction>(monster.get());
     monster->setAction(a);
-    const auto tile = board->monsterTile(cid, mPointId);
+    const int ptId = pointId();
+    const auto tile = board->monsterTile(cid, ptId);
     if(tile) {
         const int tx = tile->x();
         const int ty = tile->y();

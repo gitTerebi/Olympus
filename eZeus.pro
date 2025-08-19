@@ -464,6 +464,7 @@ SOURCES += \
         gameEvents/eplayerconquestevent.cpp \
         gameEvents/eplayerconquesteventbase.cpp \
         gameEvents/eplayerraidevent.cpp \
+        gameEvents/epointeventbase.cpp \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
         gameEvents/ereceiverequestevent.cpp \
@@ -685,6 +686,7 @@ SOURCES += \
         widgets/eventwidgets/egodquesteventwidget.cpp \
         widgets/eventwidgets/einvasioneventwidget.cpp \
         widgets/eventwidgets/emonsterattackeventwidget.cpp \
+        widgets/eventwidgets/epointeventbasewidget.cpp \
         widgets/eventwidgets/epricechangeeventwidget.cpp \
         widgets/eventwidgets/ereceiverequesteventwidget.cpp \
         widgets/eventwidgets/erivalarmyawayeventwidget.cpp \
@@ -1148,6 +1150,7 @@ HEADERS += \
     gameEvents/eplayerconquestevent.h \
     gameEvents/eplayerconquesteventbase.h \
     gameEvents/eplayerraidevent.h \
+    gameEvents/epointeventbase.h \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
     gameEvents/ereceiverequestevent.h \
@@ -2809,6 +2812,7 @@ HEADERS += \
     widgets/eventwidgets/egodquesteventwidget.h \
     widgets/eventwidgets/einvasioneventwidget.h \
     widgets/eventwidgets/emonsterattackeventwidget.h \
+    widgets/eventwidgets/epointeventbasewidget.h \
     widgets/eventwidgets/epricechangeeventwidget.h \
     widgets/eventwidgets/ereceiverequesteventwidget.h \
     widgets/eventwidgets/erivalarmyawayeventwidget.h \

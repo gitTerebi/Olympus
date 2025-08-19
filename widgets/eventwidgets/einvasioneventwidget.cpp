@@ -2,16 +2,16 @@
 
 #include "engine/egameboard.h"
 
-#include "widgets/eframedbutton.h"
-#include "widgets/echoosebutton.h"
 #include "elanguage.h"
-#include "emainwindow.h"
 #include "widgets/elabeledwidget.h"
 #include "widgets/evaluebutton.h"
 #include "widgets/ecitybutton.h"
 #include "widgets/eswitchbutton.h"
+#include "epointeventbasewidget.h"
 
 void eInvasionEventWidget::initialize(eInvasionEvent* const e) {
+    const int p = padding();
+
     const auto cityButtonL = new eLabeledWidget(window());
     const auto cc = e->city();
     const auto cityButton = new eCityButton(window());
@@ -69,17 +69,8 @@ void eInvasionEventWidget::initialize(eInvasionEvent* const e) {
     mArchersButtonL->setup(eLanguage::text("range:"), archersButton);
     addWidget(mArchersButtonL);
 
-    const auto invasionPointButtonL = new eLabeledWidget(window());
-    const auto invasionPointButton = new eValueButton(window());
-    invasionPointButton->setValueChangeAction([e](const int p) {
-        e->setInvasionPoint(p - 1);
-    });
-    invasionPointButton->initialize(1, 999);
-    invasionPointButton->setValue(e->invasionPoint() + 1);
-    invasionPointButtonL->setup(eLanguage::text("invasion_point:"), invasionPointButton);
-    addWidget(invasionPointButtonL);
+    ePointEventBaseWidget::add(this, e);
 
-    const int p = padding();
     stackVertically(p);
     fitContent();
 

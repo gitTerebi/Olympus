@@ -1999,20 +1999,6 @@ eTile* eBoardCity::disasterTile(const int id) const {
     return b ? b->tile() : nullptr;
 }
 
-eInvasionEvent* eBoardCity::invasionToDefend() const {
-    const auto date = mBoard.date();
-    for(const auto i : mInvasions) {
-        const int ip = i->invasionPoint();
-        const auto t = landInvasionTile(ip);
-        if(!t) continue;
-        const auto sDate = i->nextDate();
-        if(sDate - date < 120) {
-            return i;
-        }
-    }
-    return nullptr;
-}
-
 void eBoardCity::musterAllSoldiers() {
     for(const auto& s : mSoldierBanners) {
         s->backFromHome();

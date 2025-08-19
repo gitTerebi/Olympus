@@ -1398,8 +1398,7 @@ eInvasionEvent* eGameBoard::invasionToDefend(const eCityId cid) const {
     for(const auto i : mInvasions) {
         const auto icid = i->cityId();
         if(icid != cid) continue;
-        const int ip = i->invasionPoint();
-        const auto t = landInvasionTile(cid, ip);
+        const auto t = i->landInvasionTile();
         if(!t) continue;
         const auto sDate = i->nextDate();
         if(sDate - date < 120) {

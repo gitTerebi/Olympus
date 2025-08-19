@@ -2,6 +2,7 @@
 #define EINVASIONEVENT_H
 
 #include "egameevent.h"
+#include "epointeventbase.h"
 
 #include "engine/eworldcity.h"
 #include "characters/eenlistedforces.h"
@@ -9,7 +10,8 @@
 class eInvasionHandler;
 class ePlayerConquestEvent;
 
-class eInvasionEvent : public eGameEvent {
+class eInvasionEvent : public eGameEvent,
+                       public ePointEventBase {
 public:
     eInvasionEvent(const eCityId cid,
                    const eGameEventBranch branch,
@@ -44,8 +46,6 @@ public:
     int archers() const { return mArchers; }
     void setArchers(const int a) { mArchers = a; }
 
-    int invasionPoint() const { return mInvasionPoint; }
-    void setInvasionPoint(const int p);
     eTile* invasionTile() const;
     eTile* shoreTile() const { return mShoreTile; }
     eTile* landInvasionTile() const;
@@ -82,7 +82,6 @@ private:
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eEnlistedForces mForces;
 
-    int mInvasionPoint = 0;
     eTile* mDisembarkTile = nullptr;
     eTile* mShoreTile = nullptr;
 

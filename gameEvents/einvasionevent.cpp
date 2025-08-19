@@ -13,13 +13,14 @@
 #include "engine/epathfinder.h"
 #include "eiteratesquare.h"
 
-#include <algorithm>
-
 eInvasionEvent::eInvasionEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::invasion, branch, board) {}
+    eGameEvent(cid, eGameEventType::invasion,
+               branch, board),
+    ePointEventBase(eBannerTypeS::landInvasion,
+                    cid, board) {}
 
 eInvasionEvent::~eInvasionEvent() {
     const auto board = gameBoard();
@@ -127,6 +128,7 @@ void eInvasionEvent::trigger() {
     if(!board) return;
     const auto cid = cityId();
     board->removeInvasion(this);
+    mWarned = false;
     const auto tile = invasionTile();
 
     int infantry = 0;
@@ -221,6 +223,7 @@ std::string eInvasionEvent::longName() const {
 
 void eInvasionEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
+    ePointEventBase::write(dst);
     dst.writeCity(mCity.get());
 
     dst << mHardcoded;
@@ -232,14 +235,13 @@ void eInvasionEvent::write(eWriteStream& dst) const {
     dst.writeGameEvent(mConquestEvent);
     mForces.write(dst);
 
-    dst << mInvasionPoint;
-
     dst << mWarned;
     mFirstWarning.write(dst);
 }
 
 void eInvasionEvent::read(eReadStream& src) {
     eGameEvent::read(src);
+    ePointEventBase::read(src);
     const auto board = gameBoard();
     src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
         mCity = c;
@@ -257,13 +259,11 @@ void eInvasionEvent::read(eReadStream& src) {
     auto& wboard = board->world();
     mForces.read(*board, wboard, src);
 
-    src >> mInvasionPoint;
-    updateDisembarkAndShoreTile();
-
     src >> mWarned;
     mFirstWarning.read(src);
     if(mWarned) {
         board->addInvasion(this);
+        updateDisembarkAndShoreTile();
     }
 }
 
@@ -281,15 +281,11 @@ void eInvasionEvent::setCity(const stdsptr<eWorldCity>& c) {
     }
 }
 
-void eInvasionEvent::setInvasionPoint(const int p) {
-    mInvasionPoint = p;
-    updateDisembarkAndShoreTile();
-}
-
 eTile* eInvasionEvent::invasionTile() const {
     const auto cid = cityId();
     const auto board = gameBoard();
-    const auto tile = board->invasionTile(cid, mInvasionPoint);
+    const int ptId = pointId();
+    const auto tile = board->invasionTile(cid, ptId);
     return tile;
 }
 
@@ -299,11 +295,13 @@ eTile* eInvasionEvent::landInvasionTile() const {
 }
 
 void eInvasionEvent::setFirstWarning(const eDate& w) {
-    mFirstWarning = w;
-    mWarned = true;
     const auto board = gameBoard();
     if(!board) return;
+    choosePointId();
+    updateDisembarkAndShoreTile();
     board->addInvasion(this);
+    mFirstWarning = w;
+    mWarned = true;
 }
 
 bool eInvasionEvent::activeInvasions() const {

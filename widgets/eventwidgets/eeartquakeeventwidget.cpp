@@ -7,8 +7,11 @@
 #include "widgets/egodbutton.h"
 
 #include "gameEvents/eearthquakeevent.h"
+#include "epointeventbasewidget.h"
 
 void eEartquakeEventWidget::initialize(eEarthquakeEvent* const e) {
+    const int p = padding();
+
     const auto godButtonL = new eLabeledWidget(window());
     const auto act = [e](const eGodType type) {
         e->setGod(type);
@@ -30,17 +33,8 @@ void eEartquakeEventWidget::initialize(eEarthquakeEvent* const e) {
     sizeButtonL->setup(eLanguage::text("size:"), sizeButton);
     addWidget(sizeButtonL);
 
-    const auto disasterPointButtonL = new eLabeledWidget(window());
-    const auto disasterPointButton = new eValueButton(window());
-    disasterPointButton->setValueChangeAction([e](const int p) {
-        e->setDisasterPoint(p - 1);
-    });
-    disasterPointButton->initialize(1, 999);
-    disasterPointButton->setValue(e->disasterPoint() + 1);
-    disasterPointButtonL->setup(eLanguage::text("disaster_point:"), disasterPointButton);
-    addWidget(disasterPointButtonL);
+    ePointEventBaseWidget::add(this, e);
 
-    const int p = padding();
     stackVertically(p);
     fitContent();
 }

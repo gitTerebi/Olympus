@@ -718,28 +718,26 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::earthquake: {
             const auto ee = e::make_shared<eEarthquakeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
-            int ptId;
             if(cityId0 != 0xFFFF) {
-                ptId = cityId0 - 1;
+                ee->setMinPointId(cityId0);
+                ee->setMaxPointId(cityId0);
             } else {
-                const int diff = cityId2 - cityId1;
-                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff)) - 1;
+                ee->setMinPointId(cityId1);
+                ee->setMaxPointId(cityId2);
             }
-            ee->setDisasterPoint(ptId);
 
             e = ee;
         } break;
         case ePakEventType::tidalWave: {
             const auto ee = e::make_shared<eTidalWaveEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
-            int ptId;
             if(cityId0 != 0xFFFF) {
-                ptId = cityId0 - 1;
+                ee->setMinPointId(cityId0);
+                ee->setMaxPointId(cityId0);
             } else {
-                const int diff = cityId2 - cityId1;
-                ptId = cityId1 + (diff == 0 ? 0 : (eRand::rand() % diff)) - 1;
+                ee->setMinPointId(cityId1);
+                ee->setMaxPointId(cityId2);
             }
-            ee->setDisasterPoint(ptId);
             ee->setPermanent(permanent);
 
             e = ee;
@@ -1055,7 +1053,6 @@ uint16_t toUShort(const uint8_t b1, const uint8_t b2) {
     return (uint16_t)(b1 | ((b2) << 8));
 }
 
-#include "pak/pkwareinputstream.h"
 void eCampaign::readPak(const std::string& name,
                         const std::string& path) {
     mIsPak = true;

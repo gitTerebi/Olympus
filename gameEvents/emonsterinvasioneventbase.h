@@ -2,9 +2,12 @@
 #define EMONSTERINVASIONEVENTBASE_H
 
 #include "egameevent.h"
+#include "epointeventbase.h"
+
 #include "characters/monsters/emonster.h"
 
-class eMonsterInvasionEventBase : public eGameEvent {
+class eMonsterInvasionEventBase : public eGameEvent,
+                                  public ePointEventBase {
 public:
     eMonsterInvasionEventBase(const eCityId cid,
                               const eGameEventType type,
@@ -14,9 +17,6 @@ public:
     eMonsterType type() const { return mType; }
     void setType(const eMonsterType type);
 
-    int pointId() const { return mPointId; }
-    void setPointId(const int p);
-
     eMonsterAggressivness aggressivness() const
     { return mAggressivness; }
     void setAggressivness(const eMonsterAggressivness a)
@@ -25,10 +25,9 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 protected:
-    eMonster* triggerBase() const;
+    eMonster* triggerBase();
 private:
     eMonsterType mType = eMonsterType::calydonianBoar;
-    int mPointId = 1;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;
 };
 

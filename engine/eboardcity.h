@@ -509,7 +509,6 @@ private:
 
     std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
 
-    std::vector<eInvasionEvent*> mInvasions;
     std::vector<eInvasionHandler*> mInvasionHandlers;
 
     std::vector<eHeroType> mSummonedHeroes;

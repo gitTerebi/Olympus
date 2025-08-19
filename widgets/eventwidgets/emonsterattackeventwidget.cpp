@@ -1,17 +1,15 @@
 #include "emonsterattackeventwidget.h"
 
-#include "widgets/eframedbutton.h"
-#include "widgets/echoosebutton.h"
 #include "widgets/eswitchbutton.h"
 
 #include "widgets/elabeledwidget.h"
 #include "widgets/emonsterbutton.h"
-#include "widgets/evaluebutton.h"
 #include "elanguage.h"
-
-#include "emainwindow.h"
+#include "epointeventbasewidget.h"
 
 void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
+    const int p = padding();
+
     const auto iniT = e->type();
     const auto monsterButtonL = new eLabeledWidget(window());
     const auto act = [e](const eMonsterType type) {
@@ -25,15 +23,7 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     monsterButtonL->setup(eLanguage::text("monster:"), monsterButton);
     addWidget(monsterButtonL);
 
-    const auto invasionPointButtonL = new eLabeledWidget(window());
-    const auto invasionPointButton = new eValueButton(window());
-    invasionPointButton->setValueChangeAction([e](const int p) {
-        e->setPointId(p - 1);
-    });
-    invasionPointButton->initialize(1, 999);
-    invasionPointButton->setValue(e->pointId() + 1);
-    invasionPointButtonL->setup(eLanguage::text("invasion_point:"), invasionPointButton);
-    addWidget(invasionPointButtonL);
+    ePointEventBaseWidget::add(this, e);
 
     const auto aggressivnessButton = new eSwitchButton(window());
     aggressivnessButton->setUnderline(false);
@@ -51,7 +41,6 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     });
     addWidget(aggressivnessButton);
 
-    const int p = padding();
     stackVertically(p);
     setNoPadding();
     fitContent();

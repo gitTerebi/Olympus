@@ -2,8 +2,10 @@
 #define ETIDALWAVEEVENT_H
 
 #include "egameevent.h"
+#include "epointeventbase.h"
 
-class eTidalWaveEvent : public eGameEvent {
+class eTidalWaveEvent : public eGameEvent,
+                        public ePointEventBase {
 public:
     eTidalWaveEvent(const eCityId cid,
                     const eGameEventBranch branch,
@@ -15,13 +17,9 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 
-    int disasterPoint() const { return mDisasterPoint; }
-    void setDisasterPoint(const int p) { mDisasterPoint = p; }
-
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
 private:
-    int mDisasterPoint = 0;
     bool mPermanent = false;
 };
 

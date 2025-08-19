@@ -6,16 +6,17 @@
 #include "elanguage.h"
 
 void eCityButton::initialize(eWorldBoard* const board,
-                             const eCityAction& cact) {
+                             const eCityAction& cact,
+                             const bool showId) {
     setUnderline(false);
-    setPressAction([this, board, cact]() {
+    setPressAction([this, board, cact, showId]() {
         const auto choose = new eChooseCityDialog(window());
         choose->setValidator(mValidator);
         const auto act = [this, cact](const stdsptr<eWorldCity>& c) {
             setCity(c);
             if(cact) cact(c);
         };
-        choose->initialize(board, act);
+        choose->initialize(board, act, showId);
 
         window()->execDialog(choose);
         choose->align(eAlignment::center);
