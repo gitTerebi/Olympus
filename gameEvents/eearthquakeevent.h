@@ -3,11 +3,15 @@
 
 #include "egameevent.h"
 #include "epointeventbase.h"
-
-#include "characters/gods/egod.h"
+#include "ecountevent.h"
+#include "egodeventvalue.h"
+#include "egodreasoneventvalue.h"
 
 class eEarthquakeEvent : public eGameEvent,
-                         public ePointEventBase {
+                         public ePointEventBase,
+                         public eCountEvent,
+                         public eGodEventValue,
+                         public eGodReasonEventValue {
 public:
     eEarthquakeEvent(const eCityId cid,
                      const eGameEventBranch branch,
@@ -18,15 +22,6 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
-
-    void setGod(const eGodType god) { mGod = god; }
-    eGodType god() const { return mGod; }
-
-    void setSize(const int s) { mSize = s; }
-    int size() const { return mSize; }
-private:
-    eGodType mGod = eGodType::zeus;
-    int mSize = 100;
 };
 
 #endif // EEARTHQUAKEEVENT_H

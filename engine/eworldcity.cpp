@@ -390,10 +390,10 @@ void eWorldCity::nextYear() {
     mYearsElapsed++;
 }
 
-void eWorldCity::troopsByType(int& infantry,
-                              int& cavalry,
-                              int& archers) const {
-    const int troops = std::max(12, 2*this->troops()/3);
+void eWorldCity::troopsByType(const int troops,
+                              int &infantry,
+                              int &cavalry,
+                              int &archers) const {
     const auto n = nationality();
     switch(n) {
     case eNationality::greek: {
@@ -448,7 +448,13 @@ void eWorldCity::troopsByType(int& infantry,
         archers = std::ceil(0.3*troops);
     } break;
     }
+}
 
+void eWorldCity::troopsByType(int& infantry,
+                              int& cavalry,
+                              int& archers) const {
+    const int troops = std::max(12, 2*this->troops()/3);
+    troopsByType(troops, infantry, cavalry, archers);
 }
 
 int eWorldCity::shields() const {

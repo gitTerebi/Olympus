@@ -5,13 +5,13 @@
 
 class eCountEvent {
 public:
-    int resourceCount() const { return mCount; }
+    int count() const { return mCount; }
 
-    int minResourceCount() const { return mMinCount; }
-    void setMinResourceCount(const int c) { mMinCount = c; }
+    int minCount() const { return mMinCount; }
+    void setMinCount(const int c) { mMinCount = c; }
 
-    int maxResourceCount() const { return mMaxCount; }
-    void setMaxResourceCount(const int c) { mMaxCount = c; }
+    int maxCount() const { return mMaxCount; }
+    void setMaxCount(const int c) { mMaxCount = c; }
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);

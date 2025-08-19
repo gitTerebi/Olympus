@@ -2,8 +2,10 @@
 #define ERIVALARMYAWAYEVENT_H
 
 #include "egameevent.h"
+#include "ecityevent.h"
 
-class eRivalArmyAwayEvent : public eGameEvent {
+class eRivalArmyAwayEvent : public eGameEvent,
+                            public eCityEvent {
 public:
     eRivalArmyAwayEvent(const eCityId cid,
                         const eGameEventBranch branch,
@@ -15,9 +17,6 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 
-    void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-
     void setEnd(const int e) { mEnd = e; }
     bool end() const { return mEnd; }
 
@@ -27,7 +26,6 @@ private:
     bool mEnd = false;
     int mDuration = 12;
     int mTroopsTaken = 0;
-    stdsptr<eWorldCity> mCity;
 };
 
 #endif // ERIVALARMYAWAYEVENT_H

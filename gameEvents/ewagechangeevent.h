@@ -2,8 +2,10 @@
 #define EWAGECHANGEEVENT_H
 
 #include "egameevent.h"
+#include "ecountevent.h"
 
-class eWageChangeEvent : public eGameEvent {
+class eWageChangeEvent : public eGameEvent,
+                         public eCountEvent {
 public:
     eWageChangeEvent(const eCityId cid,
                      const eGameEventBranch branch,
@@ -14,11 +16,6 @@ public:
 
     void trigger() override;
     std::string longName() const override;
-
-    int by() const { return mBy; }
-    void setBy(const int by) { mBy = by; }
-private:
-    int mBy = 0; // percent
 };
 
 #endif // EWAGECHANGEEVENT_H

@@ -17,20 +17,15 @@ public:
                           const eGameEventBranch branch,
                           eGameBoard& board);
 
-    void initialize(const eInvasionWarningType type,
-                    const stdsptr<eWorldCity>& city);
+    void initialize(const eInvasionWarningType type);
 
     void trigger() override;
     std::string longName() const override;
 
     void write(eWriteStream& dst) const override ;
     void read(eReadStream& src) override;
-
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-    void setCity(const stdsptr<eWorldCity>& c);
 private:
     eInvasionWarningType mType;
-    stdsptr<eWorldCity> mCity;
 };
 
 #endif // EINVASIONWARNINGEVENT_H

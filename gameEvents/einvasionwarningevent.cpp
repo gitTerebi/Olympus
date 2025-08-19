@@ -15,17 +15,26 @@ eInvasionWarningEvent::eInvasionWarningEvent(
     eGameEvent(cid, eGameEventType::invasionWarning, branch, board) {}
 
 void eInvasionWarningEvent::initialize(
-        const eInvasionWarningType type,
-        const stdsptr<eWorldCity>& city) {
+    const eInvasionWarningType type) {
     mType = type;
-    mCity = city;
 }
 
 void eInvasionWarningEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(cityId());
-    ed.fCity = mCity;
+    const auto cid = cityId();
+    eEventData ed(cid);
+
+    const auto p = parent();
+    if(const auto i = dynamic_cast<eInvasionEvent*>(p)) {
+        ed.fCity = i->city();
+        const bool w = i->warned();
+        if(!w) {
+            const auto& date = board->date();
+            i->setFirstWarning(date);
+        }
+    }
+
     switch(mType) {
     case eInvasionWarningType::warning36: {
         board->event(eEvent::invasion36, ed);
@@ -43,19 +52,19 @@ void eInvasionWarningEvent::trigger() {
         board->event(eEvent::invasion1, ed);
     } break;
     }
-
-    const auto p = parent();
-    if(const auto i = dynamic_cast<eInvasionEvent*>(p)) {
-        const bool w = i->warned();
-        if(w) return;
-        i->setFirstWarning(board->date());
-    }
 }
 
 std::string eInvasionWarningEvent::longName() const {
     auto tmpl = eLanguage::text("invasion_by");
     const auto none = eLanguage::text("none");
-    const auto cstr = mCity ? mCity->name() : none;
+    stdsptr<eWorldCity> city;
+
+    const auto p = parent();
+    if(const auto i = dynamic_cast<eInvasionEvent*>(p)) {
+        city = i->city();
+    }
+
+    const auto cstr = city ? city->name() : none;
     eStringHelpers::replace(tmpl, "%1", cstr);
     return tmpl;
 }
@@ -63,17 +72,9 @@ std::string eInvasionWarningEvent::longName() const {
 void eInvasionWarningEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     dst << mType;
-    dst.writeCity(mCity.get());
 }
 
 void eInvasionWarningEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     src >> mType;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-}
-
-void eInvasionWarningEvent::setCity(const stdsptr<eWorldCity>& c) {
-    mCity = c;
 }

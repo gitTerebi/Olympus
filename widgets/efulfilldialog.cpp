@@ -45,7 +45,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         const bool c = city == q->city();
         if(!c) continue;
         const auto resource = q->resourceType();
-        const int count = q->resourceCount();
+        const int count = q->count();
         const auto countStr = std::to_string(count);
         const auto b = new eFramedButton(window());
         b->setNoPadding();

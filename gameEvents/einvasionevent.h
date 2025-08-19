@@ -3,6 +3,8 @@
 
 #include "egameevent.h"
 #include "epointeventbase.h"
+#include "ecityevent.h"
+#include "ecountevent.h"
 
 #include "engine/eworldcity.h"
 #include "characters/eenlistedforces.h"
@@ -11,7 +13,9 @@ class eInvasionHandler;
 class ePlayerConquestEvent;
 
 class eInvasionEvent : public eGameEvent,
-                       public ePointEventBase {
+                       public ePointEventBase,
+                       public eCityEvent,
+                       public eCountEvent {
 public:
     eInvasionEvent(const eCityId cid,
                    const eGameEventBranch branch,
@@ -21,9 +25,7 @@ public:
     void pointerCreated() override;
 
     void initialize(const stdsptr<eWorldCity>& city,
-                    const int infantry,
-                    const int cavalry,
-                    const int archers);
+                    const int count);
     void initialize(const stdsptr<eWorldCity>& city,
                     const eEnlistedForces& forces,
                     ePlayerConquestEvent* const conquestEvent);
@@ -35,16 +37,6 @@ public:
     void read(eReadStream& src) override;
 
     bool finished() const override;
-
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-    void setCity(const stdsptr<eWorldCity>& c);
-
-    int infantry() const { return mInfantry; }
-    void setInfantry(const int i) { mInfantry = i; }
-    int cavalry() const { return mCavalry; }
-    void setCavalry(const int c) { mCavalry = c; }
-    int archers() const { return mArchers; }
-    void setArchers(const int a) { mArchers = a; }
 
     eTile* invasionTile() const;
     eTile* shoreTile() const { return mShoreTile; }
@@ -67,17 +59,15 @@ public:
 
     void updateWarnings();
 private:
+    void soldiersByType(int& infantry,
+                        int& cavalry,
+                        int& archers) const;
     int bribeCost() const;
     void updateDisembarkAndShoreTile();
 
-    stdsptr<eWorldCity> mCity;
     std::vector<eInvasionHandler*> mHandlers;
 
     bool mHardcoded = true;
-
-    int mInfantry = 10;
-    int mCavalry = 10;
-    int mArchers = 10;
 
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eEnlistedForces mForces;

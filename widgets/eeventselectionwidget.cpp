@@ -8,12 +8,6 @@
 
 #include "widgets/echoosebutton.h"
 
-#include "gameEvents/egodattackevent.h"
-#include "gameEvents/einvasionevent.h"
-#include "gameEvents/egiftfromevent.h"
-#include "gameEvents/emakerequestevent.h"
-#include "gameEvents/ereceiverequestevent.h"
-
 #include "engine/egameboard.h"
 
 eEventSelectionWidget::eEventSelectionWidget(
@@ -55,16 +49,12 @@ void eEventSelectionWidget::initialize(
 
     setButtonCreateEvent([this, cid, add, editEvent, boardPtr]() {
         const std::vector<eGameEventType> types = {
-//            eGameEventType::godVisit,
             eGameEventType::godAttack,
             eGameEventType::monsterUnleashed,
             eGameEventType::monsterInvasion,
             eGameEventType::monsterInCity,
             eGameEventType::invasion,
-//            eGameEventType::payTribute,
-//            eGameEventType::makeRequest,
             eGameEventType::receiveRequest,
-//            eGameEventType::giftTo,
             eGameEventType::giftFrom,
             eGameEventType::godQuest,
             eGameEventType::militaryChange,
@@ -73,6 +63,7 @@ void eEventSelectionWidget::initialize(
             eGameEventType::godDisaster,
             eGameEventType::rivalArmyAway,
             eGameEventType::earthquake,
+            eGameEventType::tidalWave,
             eGameEventType::cityBecomes,
             eGameEventType::tradeShutdowns,
             eGameEventType::tradeOpensUp,
@@ -82,24 +73,21 @@ void eEventSelectionWidget::initialize(
             eGameEventType::wageChange
         };
         const std::vector<std::string> labels = {
-//            eLanguage::text("god_visit"),
             eLanguage::text("god_attack"),
             eLanguage::text("monster_unleash_long_name"),
             eLanguage::text("monster_invasion_long_name"),
             eLanguage::text("monster_in_city_long_name"),
-            eLanguage::text("invasion"),
-//            eLanguage::text("pay_tribute"),
-//            eLanguage::text("make_request"),
-            eLanguage::text("receive_request"),
-//            eLanguage::text("gift_to"),
-            eLanguage::text("gift_from"),
-            eLanguage::text("god_quest"),
+            eLanguage::zeusText(156, 2), // invasion
+            eLanguage::zeusText(156, 1), // request
+            eLanguage::zeusText(156, 23), // gift
+            eLanguage::zeusText(156, 4), // quest
             eLanguage::text("military_change_long_name"),
             eLanguage::text("economic_change_long_name"),
             eLanguage::text("troops_request_short_name"),
-            eLanguage::text("god_disaster_long_name"),
-            eLanguage::text("rival_army_away_long_name"),
-            eLanguage::text("earthquake_long_name"),
+            eLanguage::zeusText(35, 13), // god disaster
+            eLanguage::zeusText(156, 20), // rival army away
+            eLanguage::zeusText(156, 3), // earthquake
+            eLanguage::zeusText(156, 25), // tidal wave
             eLanguage::text("city_becomes"),
             eLanguage::text("trade_shutdown_short_name"),
             eLanguage::text("trade_openup_short_name"),

@@ -3,9 +3,13 @@
 
 #include "egameevent.h"
 #include "epointeventbase.h"
+#include "egodeventvalue.h"
+#include "egodreasoneventvalue.h"
 
 class eTidalWaveEvent : public eGameEvent,
-                        public ePointEventBase {
+                        public ePointEventBase,
+                        public eGodEventValue,
+                        public eGodReasonEventValue {
 public:
     eTidalWaveEvent(const eCityId cid,
                     const eGameEventBranch branch,

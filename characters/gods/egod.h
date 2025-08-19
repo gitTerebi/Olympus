@@ -3,24 +3,9 @@
 
 #include "characters/echaracter.h"
 
-#include "textures/egametextures.h"
+#include "egodtype.h"
 
-enum class eGodType {
-    aphrodite,
-    apollo,
-    ares,
-    artemis,
-    athena,
-    atlas,
-    demeter,
-    dionysus,
-    hades,
-    hephaestus,
-    hera,
-    hermes,
-    poseidon,
-    zeus
-};
+#include "textures/edestructiontextures.h"
 
 enum class eGodQuestId {
     godQuest1,

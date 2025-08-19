@@ -448,9 +448,11 @@ SOURCES += \
         gameEvents/egifttoevent.cpp \
         gameEvents/egodattackevent.cpp \
         gameEvents/egoddisasterevent.cpp \
+        gameEvents/egodeventvalue.cpp \
         gameEvents/egodquestevent.cpp \
         gameEvents/egodquesteventbase.cpp \
         gameEvents/egodquestfulfilledevent.cpp \
+        gameEvents/egodreasoneventvalue.cpp \
         gameEvents/egodtraderesumesevent.cpp \
         gameEvents/egodvisitevent.cpp \
         gameEvents/einvasionevent.cpp \
@@ -675,24 +677,16 @@ SOURCES += \
         widgets/etriggerselectionwidget.cpp \
         widgets/eupbutton.cpp \
         widgets/evaluebutton.cpp \
-        widgets/eventwidgets/ebasiccityeventwidget.cpp \
         widgets/eventwidgets/ecitybecomeseventwidget.cpp \
-        widgets/eventwidgets/eeartquakeeventwidget.cpp \
-        widgets/eventwidgets/eeconomicmilitarychangeeventwidget.cpp \
         widgets/eventwidgets/eeventwidgetbase.cpp \
-        widgets/eventwidgets/egiftfromeventwidget.cpp \
         widgets/eventwidgets/egodattackeventwidget.cpp \
         widgets/eventwidgets/egoddisastereventwidget.cpp \
         widgets/eventwidgets/egodquesteventwidget.cpp \
         widgets/eventwidgets/einvasioneventwidget.cpp \
         widgets/eventwidgets/emonsterattackeventwidget.cpp \
-        widgets/eventwidgets/epointeventbasewidget.cpp \
-        widgets/eventwidgets/epricechangeeventwidget.cpp \
         widgets/eventwidgets/ereceiverequesteventwidget.cpp \
         widgets/eventwidgets/erivalarmyawayeventwidget.cpp \
-        widgets/eventwidgets/esupplydemandchangeeventwidget.cpp \
         widgets/eventwidgets/etroopsrequesteventwidget.cpp \
-        widgets/eventwidgets/ewagechangeeventwidget.cpp \
         widgets/eviewmode.cpp \
         widgets/ewatertradewidget.cpp \
         widgets/ewidget.cpp \
@@ -1018,6 +1012,7 @@ HEADERS += \
     characters/gods/edionysus.h \
     characters/gods/eextendedgod.h \
     characters/gods/egod.h \
+    characters/gods/egodtype.h \
     characters/gods/ehermes.h \
     characters/heroes/eachilles.h \
     characters/heroes/ebasichero.h \
@@ -1134,9 +1129,11 @@ HEADERS += \
     gameEvents/egifttoevent.h \
     gameEvents/egodattackevent.h \
     gameEvents/egoddisasterevent.h \
+    gameEvents/egodeventvalue.h \
     gameEvents/egodquestevent.h \
     gameEvents/egodquesteventbase.h \
     gameEvents/egodquestfulfilledevent.h \
+    gameEvents/egodreasoneventvalue.h \
     gameEvents/egodtraderesumesevent.h \
     gameEvents/egodvisitevent.h \
     gameEvents/einvasionevent.h \
@@ -2801,24 +2798,16 @@ HEADERS += \
     widgets/etriggerselectionwidget.h \
     widgets/eupbutton.h \
     widgets/evaluebutton.h \
-    widgets/eventwidgets/ebasiccityeventwidget.h \
     widgets/eventwidgets/ecitybecomeseventwidget.h \
-    widgets/eventwidgets/eeartquakeeventwidget.h \
-    widgets/eventwidgets/eeconomicmilitarychangeeventwidget.h \
     widgets/eventwidgets/eeventwidgetbase.h \
-    widgets/eventwidgets/egiftfromeventwidget.h \
     widgets/eventwidgets/egodattackeventwidget.h \
     widgets/eventwidgets/egoddisastereventwidget.h \
     widgets/eventwidgets/egodquesteventwidget.h \
     widgets/eventwidgets/einvasioneventwidget.h \
     widgets/eventwidgets/emonsterattackeventwidget.h \
-    widgets/eventwidgets/epointeventbasewidget.h \
-    widgets/eventwidgets/epricechangeeventwidget.h \
     widgets/eventwidgets/ereceiverequesteventwidget.h \
     widgets/eventwidgets/erivalarmyawayeventwidget.h \
-    widgets/eventwidgets/esupplydemandchangeeventwidget.h \
     widgets/eventwidgets/etroopsrequesteventwidget.h \
-    widgets/eventwidgets/ewagechangeeventwidget.h \
     widgets/eviewmode.h \
     widgets/ewatertradewidget.h \
     widgets/ewidget.h \

@@ -57,20 +57,16 @@ void eInvasionEvent::pointerCreated() {
         const int daysBefore = 31*months;
         const auto e = e::make_shared<eInvasionWarningEvent>(
                            cityId(), eGameEventBranch::child, *gameBoard());
-        e->initialize(w, mCity);
+        e->initialize(w);
         addWarning(daysBefore, e);
     }
 }
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
-                                const int infantry,
-                                const int cavalry,
-                                const int archers) {
+                                const int count) {
     setCity(city);
-
-    mInfantry = infantry;
-    mCavalry = cavalry;
-    mArchers = archers;
+    setMinCount(count);
+    setMaxCount(count);
 }
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
@@ -126,6 +122,8 @@ eTile* nearestShoreTile(eTile* const tile) {
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
+    chooseCount();
+    const int c = count();
     const auto cid = cityId();
     board->removeInvasion(this);
     mWarned = false;
@@ -138,9 +136,7 @@ void eInvasionEvent::trigger() {
     const auto city = mCity;
 
     if(mHardcoded) {
-        infantry = mInfantry;
-        cavalry = mCavalry;
-        archers = mArchers;
+        city->troopsByType(c, infantry, cavalry, archers);
     } else {
         city->troopsByType(infantry, cavalry, archers);
     }
@@ -224,13 +220,10 @@ std::string eInvasionEvent::longName() const {
 void eInvasionEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventBase::write(dst);
-    dst.writeCity(mCity.get());
+    eCityEvent::write(dst);
+    eCountEvent::write(dst);
 
     dst << mHardcoded;
-
-    dst << mInfantry;
-    dst << mCavalry;
-    dst << mArchers;
 
     dst.writeGameEvent(mConquestEvent);
     mForces.write(dst);
@@ -243,15 +236,10 @@ void eInvasionEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventBase::read(src);
     const auto board = gameBoard();
-    src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
+    eCityEvent::read(src, *board);
+    eCountEvent::read(src);
 
     src >> mHardcoded;
-
-    src >> mInfantry;
-    src >> mCavalry;
-    src >> mArchers;
 
     src.readGameEvent(board, [this](eGameEvent* const e) {
         mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
@@ -269,16 +257,6 @@ void eInvasionEvent::read(eReadStream& src) {
 
 bool eInvasionEvent::finished() const {
     return mHandlers.empty() && eGameEvent::finished();
-}
-
-void eInvasionEvent::setCity(const stdsptr<eWorldCity>& c) {
-    mCity = c;
-    const auto& ws = warnings();
-    for(const auto& w : ws) {
-        const auto& ws = w.second;
-        const auto iw = static_cast<eInvasionWarningEvent*>(ws.get());
-        iw->setCity(c);
-    }
 }
 
 eTile* eInvasionEvent::invasionTile() const {
@@ -349,7 +327,13 @@ int eInvasionEvent::bribeCost() const {
                        diff, eCharacterType::hoplite);
     const int hm = eDifficultyHelpers::soliderBribe(
                        diff, eCharacterType::horseman);
-    const int bribe = rt*mArchers + ht*mInfantry + hm*mCavalry;
+
+    int infantry = 0;
+    int cavalry = 0;
+    int archers = 0;
+    soldiersByType(infantry, archers, cavalry);
+
+    const int bribe = rt*archers + ht*infantry + hm*cavalry;
     return bribe;
 }
 
@@ -373,6 +357,19 @@ void eInvasionEvent::updateWarnings() {
         const auto we = w.second;
         const auto wnd = we->nextDate();
         if(date > wnd) we->setRepeat(0);
+    }
+}
+
+void eInvasionEvent::soldiersByType(int& infantry,
+                                    int& cavalry,
+                                    int& archers) const {
+    if(mCity) {
+        const int c = count();
+        mCity->troopsByType(c, infantry, cavalry, archers);
+    } else {
+        infantry = 0;
+        cavalry = 0;
+        archers = 0;
     }
 }
 

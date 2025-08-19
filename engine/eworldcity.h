@@ -240,6 +240,10 @@ public:
 
     void setTroops(const int t) { mTroops = t; }
     int troops() const { return mTroops; }
+    void troopsByType(const int troops,
+                      int& infantry,
+                      int& cavalry,
+                      int& archers) const;
     void troopsByType(int& infantry,
                       int& cavalry,
                       int& archers) const;

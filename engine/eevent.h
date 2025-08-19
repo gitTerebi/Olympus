@@ -304,7 +304,9 @@ enum class eEvent {
     rivalArmyAway,
 
     earthquake,
+    earthquakeGod,
     tidalWave,
+    tidalWaveGod,
 
     cityBecomesAlly,
     cityBecomesRival,

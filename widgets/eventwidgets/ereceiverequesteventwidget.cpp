@@ -76,20 +76,20 @@ void eReceiveRequestEventWidget::initialize(eReceiveRequestEvent* const e) {
         {
             const auto minCountB = new eValueButton(window());
             minCountB->setValueChangeAction([e](const int p) {
-                e->setMinResourceCount(p);
+                e->setMinCount(p);
             });
             minCountB->initialize(1, 999);
-            const int rc = e->minResourceCount();
+            const int rc = e->minCount();
             minCountB->setValue(rc);
             countW->addWidget(minCountB);
         }
         {
             const auto maxCountB = new eValueButton(window());
             maxCountB->setValueChangeAction([e](const int p) {
-                e->setMaxResourceCount(p);
+                e->setMaxCount(p);
             });
             maxCountB->initialize(1, 999);
-            const int rc = e->maxResourceCount();
+            const int rc = e->maxCount();
             maxCountB->setValue(rc);
             countW->addWidget(maxCountB);
         }

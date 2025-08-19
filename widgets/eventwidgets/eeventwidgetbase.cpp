@@ -2,7 +2,6 @@
 
 #include "gameEvents/egameevent.h"
 
-#include "widgets/edatebutton.h"
 #include "widgets/evaluebutton.h"
 #include "engine/egameboard.h"
 #include "widgets/elabeledwidget.h"
@@ -10,32 +9,28 @@
 #include "emainwindow.h"
 #include "widgets/etriggerselectionwidget.h"
 #include "widgets/eeventselectionwidget.h"
-#include "gameEvents/eeconomicmilitarychangeeventbase.h"
+
+#include "widgets/eresourcebutton.h"
+#include "widgets/ecitybutton.h"
+#include "widgets/egodbutton.h"
+#include "widgets/eswitchbutton.h"
+
 #include "gameEvents/egoddisasterevent.h"
 #include "gameEvents/erivalarmyawayevent.h"
-#include "gameEvents/eearthquakeevent.h"
 #include "gameEvents/ecitybecomesevent.h"
 #include "gameEvents/ecityevent.h"
-#include "gameEvents/esupplydemandchangeevent.h"
-#include "gameEvents/epricechangeevent.h"
-#include "gameEvents/ewagechangeevent.h"
+#include "gameEvents/egodeventvalue.h"
+#include "gameEvents/egodreasoneventvalue.h"
 
 #include "egodattackeventwidget.h"
 #include "emonsterattackeventwidget.h"
 #include "einvasioneventwidget.h"
-#include "egiftfromeventwidget.h"
 #include "ereceiverequesteventwidget.h"
 #include "egodquesteventwidget.h"
-#include "eeconomicmilitarychangeeventwidget.h"
 #include "etroopsrequesteventwidget.h"
 #include "egoddisastereventwidget.h"
 #include "erivalarmyawayeventwidget.h"
-#include "eeartquakeeventwidget.h"
 #include "ecitybecomeseventwidget.h"
-#include "ebasiccityeventwidget.h"
-#include "esupplydemandchangeeventwidget.h"
-#include "epricechangeeventwidget.h"
-#include "ewagechangeeventwidget.h"
 
 void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     setType(eFrameType::message);
@@ -47,13 +42,132 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     cont->move(2*p, 2*p);
     cont->resize(width() - 4*p, height() - 4*p);
 
+    const auto leftW = new eWidget(window());
+    leftW->setNoPadding();
+
+    if(const auto ee = dynamic_cast<ePointEventBase*>(e.get())) {
+        const auto countL = new eLabeledWidget(window());
+        const auto countW = new eWidget(window());
+        const int p = countW->padding();
+        countW->setNoPadding();
+        {
+            const auto minCountB = new eValueButton(window());
+            minCountB->setValueChangeAction([ee](const int p) {
+                ee->setMinPointId(p);
+            });
+            minCountB->initialize(1, 999);
+            const int rc = ee->minPointId();
+            minCountB->setValue(rc);
+            countW->addWidget(minCountB);
+        }
+        {
+            const auto maxCountB = new eValueButton(window());
+            maxCountB->setValueChangeAction([ee](const int p) {
+                ee->setMaxPointId(p);
+            });
+            maxCountB->initialize(1, 999);
+            const int rc = ee->maxPointId();
+            maxCountB->setValue(rc);
+            countW->addWidget(maxCountB);
+        }
+
+        countW->stackHorizontally(p);
+        countW->fitContent();
+        countL->setup(eLanguage::zeusText(44, 362), countW);
+        leftW->addWidget(countL);
+    }
+
+    if(const auto ee = dynamic_cast<eCountEvent*>(e.get())) {
+        const auto countL = new eLabeledWidget(window());
+        const auto countW = new eWidget(window());
+        countW->setNoPadding();
+        {
+            const auto minCountB = new eValueButton(window());
+            minCountB->setValueChangeAction([ee](const int p) {
+                ee->setMinCount(p);
+            });
+            minCountB->initialize(1, 999);
+            const int rc = ee->minCount();
+            minCountB->setValue(rc);
+            countW->addWidget(minCountB);
+        }
+        {
+            const auto maxCountB = new eValueButton(window());
+            maxCountB->setValueChangeAction([ee](const int p) {
+                ee->setMaxCount(p);
+            });
+            maxCountB->initialize(1, 999);
+            const int rc = ee->maxCount();
+            maxCountB->setValue(rc);
+            countW->addWidget(maxCountB);
+        }
+
+        countW->stackHorizontally(p);
+        countW->fitContent();
+        countL->setup(eLanguage::zeusText(44, 361), countW);
+        leftW->addWidget(countL);
+    }
+
+    if(const auto ee = dynamic_cast<eResourceEvent*>(e.get())) {
+        for(int i = 0; i < 3; i++) {
+            const auto resourceTypeButton = new eResourceButton(window());
+            resourceTypeButton->initialize([i, ee](const eResourceType r){
+                ee->setResourceType(i, r);
+            }, eResourceType::allBasic, true, true);
+            const auto rr = ee->resourceType(i);
+            resourceTypeButton->setResource(rr);
+            leftW->addWidget(resourceTypeButton);
+        }
+    }
+
+    if(const auto ee = dynamic_cast<eCityEvent*>(e.get())) {
+        const auto cityButtonL = new eLabeledWidget(window());
+        const auto cityButton = new eCityButton(window());
+        const auto board = e->worldBoard();
+        cityButton->initialize(board, [ee](const stdsptr<eWorldCity>& c){
+            ee->setCity(c);
+        });
+        const auto cc = ee->city();
+        cityButton->setCity(cc);
+        cityButtonL->setup(eLanguage::zeusText(44, 359), cityButton);
+        leftW->addWidget(cityButtonL);
+    }
+
+    if(const auto ee = dynamic_cast<eGodReasonEventValue*>(e.get())) {
+        const auto godButtonL = new eLabeledWidget(window());
+        const auto godButton = new eSwitchButton(window());
+        godButton->setSwitchAction([ee](const int v) {
+            ee->setGodReason(v);
+        });
+        godButton->addValue(eLanguage::zeusText(18, 0));
+        godButton->addValue(eLanguage::zeusText(18, 1));
+        godButton->fitValidContent();
+        const auto iniT = ee->godReason() ? 1 : 0;
+        godButton->setValue(iniT);
+        godButtonL->setup(eLanguage::zeusText(44, 215), godButton);
+        leftW->addWidget(godButtonL);
+    }
+
+    if(const auto ee = dynamic_cast<eGodEventValue*>(e.get())) {
+        const auto godButtonL = new eLabeledWidget(window());
+        const auto act = [ee](const eGodType type) {
+            ee->setGod(type);
+        };
+        const auto godButton = new eGodButton(window());
+        godButton->initialize(act);
+        const auto iniT = ee->god();
+        godButton->setType(iniT);
+        godButtonL->setup(eLanguage::zeusText(44, 215), godButton);
+        leftW->addWidget(godButtonL);
+    }
+
     const auto et = e->type();
     switch(et) {
     case eGameEventType::godAttack: {
         const auto eew = new eGodAttackEventWidget(window());
         const auto gaee = static_cast<eGodAttackEvent*>(e.get());
         eew->initialize(this, gaee);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::monsterUnleashed:
     case eGameEventType::monsterInvasion:
@@ -61,96 +175,50 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto eew = new eMonsterAttackEventWidget(window());
         const auto maee = static_cast<eMonsterInvasionEventBase*>(e.get());
         eew->initialize(maee);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::invasion: {
         const auto eew = new eInvasionEventWidget(window());
         const auto iee = static_cast<eInvasionEvent*>(e.get());
         eew->initialize(iee);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::giftFrom: {
-        const auto eew = new eGiftFromEventWidget(window());
-        const auto gfee = static_cast<eGiftFromEvent*>(e.get());
-        eew->initialize(gfee);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::receiveRequest: {
         const auto eew = new eReceiveRequestEventWidget(window());
         const auto rree = static_cast<eReceiveRequestEvent*>(e.get());
         eew->initialize(rree);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::troopsRequest: {
         const auto eew = new eTroopsRequestEventWidget(window());
         const auto rree = static_cast<eTroopsRequestEvent*>(e.get());
         eew->initialize(rree);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::godQuest:
     case eGameEventType::godQuestFulfilled: {
         const auto eew = new eGodQuestEventWidget(window());
         const auto gqee = static_cast<eGodQuestEventBase*>(e.get());
         eew->initialize(gqee);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::militaryChange:
-    case eGameEventType::economicChange: {
-        const auto eew = new eEconomicMilitaryChangeEventWidget(window());
-        const auto emceb = static_cast<eEconomicMilitaryChangeEventBase*>(e.get());
-        eew->initialize(emceb);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::godDisaster: {
         const auto eew = new eGodDisasterEventWidget(window());
         const auto emceb = static_cast<eGodDisasterEvent*>(e.get());
         eew->initialize(emceb);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::rivalArmyAway: {
         const auto eew = new eRivalArmyAwayEventWidget(window());
         const auto emceb = static_cast<eRivalArmyAwayEvent*>(e.get());
         eew->initialize(emceb);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::earthquake: {
-        const auto eew = new eEartquakeEventWidget(window());
-        const auto ee = static_cast<eEarthquakeEvent*>(e.get());
-        eew->initialize(ee);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     case eGameEventType::cityBecomes: {
         const auto eew = new eCityBecomesEventWidget(window());
         const auto ee = static_cast<eCityBecomesEvent*>(e.get());
         eew->initialize(ee);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::tradeShutdowns:
-    case eGameEventType::tradeOpensUp: {
-        const auto eew = new eCityEventWidget(window());
-        const auto ee = dynamic_cast<eCityEvent*>(e.get());
-        const auto world = e->worldBoard();
-        eew->initialize(ee, *world);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::supplyChange:
-    case eGameEventType::demandChange: {
-        const auto eew = new eSupplyDemandChangeEventWidget(window());
-        const auto ee = static_cast<eSupplyDemandChangeEvent*>(e.get());
-        eew->initialize(ee);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::priceChange: {
-        const auto eew = new ePriceChangeEventWidget(window());
-        const auto ee = static_cast<ePriceChangeEvent*>(e.get());
-        eew->initialize(ee);
-        cont->addWidget(eew);
-    } break;
-    case eGameEventType::wageChange: {
-        const auto eew = new eWageChangeEventWidget(window());
-        const auto ee = static_cast<eWageChangeEvent*>(e.get());
-        eew->initialize(ee);
-        cont->addWidget(eew);
+        leftW->addWidget(eew);
     } break;
     default:
         break;
@@ -266,6 +334,9 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         dateW->addWidget(triggersButt);
     }
 
+    leftW->stackVertically(p);
+    leftW->fitContent();
+    cont->addWidget(leftW);
     dateW->stackVertically(p);
     dateW->fitContent();
     cont->addWidget(dateW);

@@ -43,16 +43,14 @@ std::string eRivalArmyAwayEvent::longName() const {
 
 void eRivalArmyAwayEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst.writeCity(mCity.get());
+    eCityEvent::write(dst);
     dst << mDuration;
     dst << mEnd;
 }
 
 void eRivalArmyAwayEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
+    eCityEvent::read(src, *gameBoard());
     src >> mDuration;
     src >> mEnd;
 }

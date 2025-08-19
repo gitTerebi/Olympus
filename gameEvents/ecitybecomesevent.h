@@ -2,6 +2,7 @@
 #define ECITYBECOMESEVENT_H
 
 #include "egameevent.h"
+#include "ecityevent.h"
 
 enum class eCityBecomesType {
     ally, rival, vassal,
@@ -10,7 +11,8 @@ enum class eCityBecomesType {
     conquered
 };
 
-class eCityBecomesEvent : public eGameEvent {
+class eCityBecomesEvent : public eGameEvent,
+                          public eCityEvent {
 public:
     eCityBecomesEvent(const eCityId cid,
                       const eGameEventBranch branch,

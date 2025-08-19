@@ -3,21 +3,22 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "estringhelpers.h"
 #include "elanguage.h"
 
 eDemandChangeEvent::eDemandChangeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eSupplyDemandChangeEvent(cid, eGameEventType::demandChange, branch, board) {}
+    eSupplyDemandChangeEvent(cid, eGameEventType::demandChange,
+                             branch, board) {}
 
 void eDemandChangeEvent::trigger() {
     const auto city = this->city();
     if(!city) return;
     chooseType();
+    chooseCount();
     const auto type = this->resourceType();
-    const int by = this->by();
+    const int by = this->count();
     auto& buys = city->buys();
     for(auto& b : buys) {
         if(b.fType != type) continue;

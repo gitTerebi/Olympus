@@ -1,13 +1,11 @@
 #include "emessages.h"
 
-#include <fstream>
-
 #include "egamedir.h"
 
 #include "eloadtexthelper.h"
 #include "estringhelpers.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/egodtype.h"
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
 
@@ -813,15 +811,19 @@ bool eMessages::loadImpl() {
     load(fColonyTroopsRequest, "colony", "P");
     load(fParentCityTroopsRequest, "parentcity", "R");
 
-    fEarthqaukeGod.fFull.fTitle = loadMessage("PHRASE_quake_title");
-    fEarthqaukeGod.fFull.fText = loadMessage("PHRASE_quake_phrase_by_god");
-    fEarthqaukeGod.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_quake_title");
-    fEarthqaukeGod.fCondensed.fText = loadMessage("PHRASE_CONDENSED_quake_phrase_by_god");
+    loadMessage(fEarthqaukeNoReason,
+                "quake_title",
+                "quake_phrase_no_reason");
+    loadMessage(fEarthqaukeGod,
+                "quake_title",
+                "quake_phrase_by_god");
 
-    fTidalWaveNoReason.fFull.fTitle = loadMessage("PHRASE_flood_title");
-    fTidalWaveNoReason.fFull.fText = loadMessage("PHRASE_flood_phrase_no_reason");
-    fTidalWaveNoReason.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_flood_title");
-    fTidalWaveNoReason.fCondensed.fText = loadMessage("PHRASE_CONDENSED_flood_phrase_no_reason");
+    loadMessage(fTidalWaveNoReason,
+                "flood_title",
+                "flood_phrase_no_reason");
+    loadMessage(fTidalWaveGod,
+                "flood_title",
+                "flood_phrase_by_god");
 
     fCityBecomesAlly.fFull.fTitle = loadMessage("PHRASE_becomes_ally_title");
     fCityBecomesAlly.fFull.fText = loadMessage("PHRASE_becomes_ally_initial_announcement");

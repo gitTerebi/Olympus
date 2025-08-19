@@ -24,6 +24,7 @@
 #include "gameEvents/emilitarychangeevent.h"
 #include "gameEvents/egoddisasterevent.h"
 #include "gameEvents/etidalwaveevent.h"
+#include "gameEvents/einvasionevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -255,6 +256,7 @@ void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
 
 enum class ePakEventType {
     receiveRequest,
+    invasion,
     earthquake,
     godQuest,
     wageIncrease,
@@ -275,6 +277,7 @@ enum class ePakEventType {
 ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     valid = true;
     if(id == 1) return ePakEventType::receiveRequest;
+    else if(id == 2) return ePakEventType::invasion;
     else if(id == 3) return ePakEventType::earthquake;
     else if(id == 4) return ePakEventType::godQuest;
     else if(id == 8) return ePakEventType::wageIncrease;
@@ -387,10 +390,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         file.skipBytes(2);
         const uint16_t duration = file.readUShort();
         file.skipBytes(8);
-        const uint16_t godTypeHeroId = file.readUShort();
+        const uint16_t godTypeHeroId = file.readUShort(); // also warships
         file.skipBytes(6);
         const uint16_t aggressivnessId = file.readUShort();
-        file.skipBytes(32);
+        file.skipBytes(26);
+        const uint16_t invCityId0 = file.readUShort();
+        const uint16_t invCityId1 = file.readUShort();
+        const uint16_t invCityId2 = file.readUShort();
         const uint16_t subType = file.readUShort();
         file.skipBytes(13);
         const uint16_t attackingCity = file.readUShort();
@@ -410,26 +416,42 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             amountMin = value5;
             amountMax = value5;
         }
-        int randomAmount;
-        if(value6 != 0xFFFF && value7 != 0xFFFF) {
-            randomAmount = value6;
-            if(value7 > value6) {
-                randomAmount += eRand::rand() % (value7 - value6);
-            }
-        } else {
-            randomAmount = value5;
-        }
-
+        uint16_t cityMin;
+        uint16_t cityMax;
         uint16_t cityId;
         if(cityId0 == 0xFF) {
+            cityMin = cityId1;
+            cityMax = cityId2;
+
             const bool first = eRand::rand() % 1;
             cityId = first ? cityId1 : cityId2;
         } else {
+            cityMin = cityId0;
+            cityMax = cityId0;
+
             cityId = cityId0;
         }
         auto& world = *ep.fWorldBoard;
         const auto cityCid = static_cast<eCityId>(cityId);
         const auto city = world.cityWithId(cityCid);
+
+        uint16_t invCityMin;
+        uint16_t invCityMax;
+        uint16_t invCityId;
+        if(invCityId0 == 0xFF) {
+            invCityMin = invCityId1;
+            invCityMax = invCityId2;
+
+            const bool first = eRand::rand() % 1;
+            invCityId = first ? cityId1 : cityId2;
+        } else {
+            invCityMin = invCityId0;
+            invCityMax = invCityId0;
+
+            invCityId = invCityId0;
+        }
+        const auto invCityCid = static_cast<eCityId>(invCityId);
+        const auto invCity = world.cityWithId(invCityCid);
 
         const auto setResources = [&](eResourceEvent& ee) {
             if(value1 == 0xFFFF) {
@@ -460,8 +482,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto god = pakIdToGodType(godTypeHeroId, valid);
             ee->setRequestType(type);
             ee->setGod(god);
-            ee->setMinResourceCount(value6);
-            ee->setMaxResourceCount(value7);
+            ee->setMinCount(value6);
+            ee->setMaxCount(value7);
             ee->setCity(city);
             e = ee;
         } break;
@@ -469,8 +491,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto ee = e::make_shared<eGiftFromEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
-            ee->setMinResourceCount(value6);
-            ee->setMaxResourceCount(value7);
+            ee->setMinCount(value6);
+            ee->setMaxCount(value7);
             ee->setCity(city);
             e = ee;
         } break;
@@ -604,11 +626,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::wageDecrease: {
             const auto ee = e::make_shared<eWageChangeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
-            int by = randomAmount;
             if(type == ePakEventType::wageDecrease) {
-                by = -by;
+                ee->setMinCount(-amountMax);
+                ee->setMaxCount(-amountMin);
+            } else {
+                ee->setMinCount(amountMin);
+                ee->setMaxCount(amountMax);
             }
-            ee->setBy(by);
 
             e = ee;
         } break;
@@ -618,7 +642,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                 cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
             ee->setCity(city);
-            ee->setBy(type == ePakEventType::demandIncrease ? 12 : -12);
+            const int by = type == ePakEventType::demandIncrease ? 12 : -12;
+            ee->setMinCount(by);
+            ee->setMaxCount(by);
 
             e = ee;
         } break;
@@ -628,7 +654,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                 cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
             ee->setCity(city);
-            ee->setBy(type == ePakEventType::supplyIncrease ? 12 : -12);
+            const int by = type == ePakEventType::supplyIncrease ? 12 : -12;
+            ee->setMinCount(by);
+            ee->setMaxCount(by);
 
             e = ee;
         } break;
@@ -637,8 +665,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto ee = e::make_shared<ePriceChangeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
-            ee->setMinResourceCount(type == ePakEventType::priceIncrease ? amountMin : -amountMax);
-            ee->setMaxResourceCount(type == ePakEventType::priceIncrease ? amountMax : -amountMin);
+            ee->setMinCount(type == ePakEventType::priceIncrease ? amountMin : -amountMax);
+            ee->setMaxCount(type == ePakEventType::priceIncrease ? amountMax : -amountMin);
 
             e = ee;
         } break;
@@ -700,14 +728,16 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 const auto ee = e::make_shared<eMilitaryChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
-                ee->setBy(subType == 14 ? randomAmount : -randomAmount);
+                ee->setMinCount(amountMin);
+                ee->setMaxCount(amountMax);
 
                 e = ee;
             } else if(subType == 16 || subType == 17) {
                 const auto ee = e::make_shared<eEconomicChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
-                ee->setBy(subType == 16 ? randomAmount : -randomAmount);
+                ee->setMinCount(amountMin);
+                ee->setMaxCount(amountMax);
 
                 e = ee;
             } else {
@@ -739,6 +769,19 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setMaxPointId(cityId2);
             }
             ee->setPermanent(permanent);
+
+            e = ee;
+        } break;
+        case ePakEventType::invasion: {
+            const auto ee = e::make_shared<eInvasionEvent>(
+                cid, eGameEventBranch::root, *ep.fBoard);
+            ee->setCity(invCity);
+
+            ee->setMinCount(amountMin);
+            ee->setMaxCount(amountMax);
+
+            ee->setMinPointId(cityMin);
+            ee->setMaxPointId(cityMax);
 
             e = ee;
         } break;
@@ -1061,6 +1104,7 @@ void eCampaign::readPak(const std::string& name,
     file.readVersion();
     const bool newVersion = file.isNewVersion();
     file.readAtlantean();
+    const bool atlantean = file.isAtlantean();
     printf("v%i a%i\n", file.isNewVersion() ? 1 : 0, file.isAtlantean() ? 1 : 0);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
 
@@ -1071,9 +1115,8 @@ void eCampaign::readPak(const std::string& name,
 
     file.seek(8);
     const uint8_t nParentEps = file.readUByte();
-    file.seek(12); // and 16?
-    const uint8_t nColonyEps = file.readUByte();
-    const bool atlantean = file.isAtlantean();
+    // file.seek(12); // and 16?
+    // const uint8_t nColonyEps = file.readUByte();
 
     file.seek(35648);
     const uint16_t briefId = file.readUShort();

@@ -2,22 +2,17 @@
 #define EECONOMICMILITARYCHANGEEVENTBASE_H
 
 #include "egameevent.h"
+#include "ecountevent.h"
+#include "ecityevent.h"
 
-class eEconomicMilitaryChangeEventBase : public eGameEvent {
+class eEconomicMilitaryChangeEventBase : public eGameEvent,
+                                         public eCountEvent,
+                                         public eCityEvent {
 public:
     using eGameEvent::eGameEvent;
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
-
-    void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-
-    void setBy(const int b) { mBy = b; }
-    int by() const { return mBy; }
-private:
-    int mBy = 0;
-    stdsptr<eWorldCity> mCity;
 };
 
 #endif // EECONOMICMILITARYCHANGEEVENTBASE_H

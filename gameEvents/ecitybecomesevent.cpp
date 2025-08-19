@@ -148,17 +148,15 @@ std::string eCityBecomesEvent::longName() const {
 
 void eCityBecomesEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
+    eCityEvent::write(dst);
     dst << mType;
-    dst.writeCity(mCity.get());
     dst.writeCity(mConqueringCity.get());
 }
 
 void eCityBecomesEvent::read(eReadStream& src) {
     eGameEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
     src >> mType;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
     src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
         mConqueringCity = c;
     });

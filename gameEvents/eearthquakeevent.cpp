@@ -18,15 +18,18 @@ void eEarthquakeEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     choosePointId();
+    chooseCount();
     const auto cid = cityId();
     const int pt = pointId();
     const auto startTile = board->disasterTile(cid, pt);
     if(!startTile) return;
     eEventData ed(cid);
-    ed.fGod = mGod;
+    ed.fGod = god();
     ed.fTile = startTile;
-    board->earthquake(startTile, mSize);
-    board->event(eEvent::earthquake, ed);
+    board->earthquake(startTile, count());
+    const auto e = godReason() ? eEvent::earthquakeGod :
+                                 eEvent::earthquake;
+    board->event(e, ed);
 }
 
 std::string eEarthquakeEvent::longName() const {
@@ -36,13 +39,15 @@ std::string eEarthquakeEvent::longName() const {
 void eEarthquakeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventBase::write(dst);
-    dst << mGod;
-    dst << mSize;
+    eCountEvent::write(dst);
+    eGodEventValue::write(dst);
+    eGodReasonEventValue::write(dst);
 }
 
 void eEarthquakeEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventBase::read(src);
-    src >> mGod;
-    src >> mSize;
+    eCountEvent::read(src);
+    eGodEventValue::read(src);
+    eGodReasonEventValue::read(src);
 }

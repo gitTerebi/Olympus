@@ -19,7 +19,7 @@ void ePriceChangeEvent::trigger() {
     board->incPrice(mResource, mCount);
     eEventData ed((ePlayerCityTarget()));
     ed.fResourceType = resourceType();
-    const auto e = resourceCount() > 0 ? eEvent::priceIncrease :
+    const auto e = count() > 0 ? eEvent::priceIncrease :
                                          eEvent::priceDecrease;
     board->event(e, ed);
 }

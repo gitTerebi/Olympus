@@ -14,7 +14,8 @@ eEconomicChangeEvent::eEconomicChangeEvent(
 
 void eEconomicChangeEvent::trigger() {
     const auto city = this->city();
-    const int by = this->by();
+    chooseCount();
+    const int by = this->count();
     if(!city || by == 0) return;
     int w = city->wealth();
     w = std::clamp(w + by, 1, 5);

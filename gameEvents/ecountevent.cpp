@@ -6,9 +6,12 @@
 #include "fileIO/ewritestream.h"
 
 void eCountEvent::chooseCount() {
-    if(mMinCount > mMaxCount) return;
-    const int diff = mMaxCount - mMinCount;
-    mCount = diff == 0 ? mMinCount : (mMinCount + (eRand::rand() % diff));
+    if(mMinCount >= mMaxCount) {
+        mCount = mMinCount;
+    } else {
+        const int diff = mMaxCount - mMinCount;
+        mCount = mMinCount + (eRand::rand() % diff);
+    }
 }
 
 void eCountEvent::longNameReplaceCount(

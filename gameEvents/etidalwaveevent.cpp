@@ -23,9 +23,12 @@ void eTidalWaveEvent::trigger() {
     const auto startTile = board->disasterTile(cid, pt);
     if(!startTile) return;
     eEventData ed(cid);
+    ed.fGod = god();
     ed.fTile = startTile;
     board->addTidalWave(startTile, mPermanent);
-    board->event(eEvent::tidalWave, ed);
+    const auto e = godReason() ? eEvent::tidalWaveGod :
+                                 eEvent::tidalWave;
+    board->event(e, ed);
 }
 
 std::string eTidalWaveEvent::longName() const {
@@ -35,11 +38,15 @@ std::string eTidalWaveEvent::longName() const {
 void eTidalWaveEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventBase::write(dst);
+    eGodEventValue::write(dst);
+    eGodReasonEventValue::write(dst);
     dst << mPermanent;
 }
 
 void eTidalWaveEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventBase::read(src);
+    eGodEventValue::read(src);
+    eGodReasonEventValue::read(src);
     src >> mPermanent;
 }

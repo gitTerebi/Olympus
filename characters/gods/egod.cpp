@@ -9,6 +9,8 @@
 
 #include "buildings/ebuilding.h"
 
+#include "textures/egametextures.h"
+
 eGod::eGod(eGameBoard& board, const eGodType gt) :
     eCharacter(board, sGodToCharacterType(gt)),
     mType(gt) {

@@ -5,7 +5,6 @@
 #include "widgets/elabeledwidget.h"
 #include "widgets/emonsterbutton.h"
 #include "elanguage.h"
-#include "epointeventbasewidget.h"
 
 void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     const int p = padding();
@@ -22,8 +21,6 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     monsterButton->setType(iniT);
     monsterButtonL->setup(eLanguage::text("monster:"), monsterButton);
     addWidget(monsterButtonL);
-
-    ePointEventBaseWidget::add(this, e);
 
     const auto aggressivnessButton = new eSwitchButton(window());
     aggressivnessButton->setUnderline(false);

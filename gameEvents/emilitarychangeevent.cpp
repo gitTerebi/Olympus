@@ -14,7 +14,8 @@ eMilitaryChangeEvent::eMilitaryChangeEvent(
 
 void eMilitaryChangeEvent::trigger() {
     const auto city = this->city();
-    const int by = this->by();
+    chooseCount();
+    const int by = this->count();
     if(!city || by == 0) return;
     int s = city->militaryStrength();
     s = std::clamp(s + by, 1, 5);
