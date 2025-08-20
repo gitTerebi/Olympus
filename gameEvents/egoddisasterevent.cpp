@@ -10,9 +10,11 @@ eGodDisasterEvent::eGodDisasterEvent(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::godDisaster,
-               branch, board) {}
+               branch, board),
+    eCityEventValue(board) {}
 
 void eGodDisasterEvent::trigger() {
+    chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -28,7 +30,7 @@ void eGodDisasterEvent::trigger() {
         const auto e = e::make_shared<eGodDisasterEvent>(
                            cid, eGameEventBranch::child, *board);
         e->setGod(mGod);
-        e->setCity(mCity);
+        e->setSingleCity(mCity);
         e->setEnd(true);
         const auto date = board->date();
         e->initializeDate(date + mDuration);

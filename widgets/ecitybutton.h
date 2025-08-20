@@ -22,6 +22,7 @@ public:
     const stdsptr<eWorldCity>& city() const { return mCity; }
     void setCity(const stdsptr<eWorldCity>& c);
 private:
+    bool mShowId = false;
     stdsptr<eWorldCity> mCity;
     eCityValidator mValidator;
 };

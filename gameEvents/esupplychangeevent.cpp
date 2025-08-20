@@ -13,6 +13,7 @@ eSupplyChangeEvent::eSupplyChangeEvent(
                              branch, board) {}
 
 void eSupplyChangeEvent::trigger() {
+    chooseCity();
     const auto city = this->city();
     if(!city) return;
     chooseType();

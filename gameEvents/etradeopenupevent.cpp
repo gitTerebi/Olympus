@@ -11,9 +11,11 @@ eTradeOpenUpEvent::eTradeOpenUpEvent(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::tradeOpensUp,
-               branch, board) {}
+               branch, board),
+    eCityEventValue(board) {}
 
 void eTradeOpenUpEvent::trigger() {
+    chooseCity();
     const auto city = this->city();
     if(!city) return;
     city->setTradeShutdown(false);
@@ -25,12 +27,7 @@ void eTradeOpenUpEvent::trigger() {
 }
 
 std::string eTradeOpenUpEvent::longName() const {
-    auto tmpl = eLanguage::text("trade_openup_long_name");
-    const auto none = eLanguage::text("none");
-    const auto city = this->city();
-    const auto ctstr = city ? city->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
-    return tmpl;
+    return eLanguage::zeusText(35, 3);
 }
 
 void eTradeOpenUpEvent::write(eWriteStream &dst) const {

@@ -1,5 +1,11 @@
 #include "esupplydemandchangeevent.h"
 
+eSupplyDemandChangeEvent::eSupplyDemandChangeEvent(
+    const eCityId cid, const eGameEventType type,
+    const eGameEventBranch branch, eGameBoard &board) :
+    eGameEvent(cid, type, branch, board),
+    eCityEventValue(board) {}
+
 void eSupplyDemandChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     eResourceEventValue::write(dst);

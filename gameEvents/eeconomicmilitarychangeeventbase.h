@@ -9,7 +9,11 @@ class eEconomicMilitaryChangeEventBase : public eGameEvent,
                                          public eCountEventValue,
                                          public eCityEventValue {
 public:
-    using eGameEvent::eGameEvent;
+    eEconomicMilitaryChangeEventBase(
+        const eCityId cid,
+        const eGameEventType type,
+        const eGameEventBranch branch,
+        eGameBoard& board);
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;

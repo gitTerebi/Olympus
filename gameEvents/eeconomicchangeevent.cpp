@@ -13,6 +13,7 @@ eEconomicChangeEvent::eEconomicChangeEvent(
         cid, eGameEventType::economicChange, branch, board) {}
 
 void eEconomicChangeEvent::trigger() {
+    chooseCity();
     const auto city = this->city();
     chooseCount();
     const int by = this->count();

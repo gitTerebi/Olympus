@@ -256,6 +256,13 @@ void eWorldCity::setName(const std::string& name) {
     mNameString = eVectorHelpers::index(names, name);
 }
 
+std::string eWorldCity::nameWithId() const {
+    std::string result = mName;
+    const int iid = static_cast<int>(mCityId);
+    result += " [" + std::to_string(iid) + "]";
+    return result;
+}
+
 std::vector<std::string> eWorldCity::sLeaders() {
     std::vector<std::string> leaders;
     for(int i = 0; i < 84; i++) {

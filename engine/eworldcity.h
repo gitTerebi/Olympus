@@ -225,6 +225,7 @@ public:
     static std::vector<std::string> sNames();
     void setName(const std::string& name);
     const std::string& name() const { return mName; }
+    std::string nameWithId() const;
 
     static std::vector<std::string> sLeaders();
     void setLeader(const std::string& name);

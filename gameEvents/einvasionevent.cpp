@@ -5,7 +5,6 @@
 #include "engine/eeventdata.h"
 #include "einvasionhandler.h"
 #include "elanguage.h"
-#include "estringhelpers.h"
 #include "einvasionwarningevent.h"
 #include "audio/emusic.h"
 #include "evectorhelpers.h"
@@ -20,7 +19,8 @@ eInvasionEvent::eInvasionEvent(
     eGameEvent(cid, eGameEventType::invasion,
                branch, board),
     ePointEventValue(eBannerTypeS::landInvasion,
-                    cid, board) {}
+                    cid, board),
+    eCityEventValue(board) {}
 
 eInvasionEvent::~eInvasionEvent() {
     const auto board = gameBoard();
@@ -64,7 +64,7 @@ void eInvasionEvent::pointerCreated() {
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
                                 const int count) {
-    setCity(city);
+    setSingleCity(city);
     setMinCount(count);
     setMaxCount(count);
 }
@@ -72,8 +72,13 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
                                 const eEnlistedForces& forces,
                                 ePlayerConquestEvent* const conquestEvent) {
-    setCity(city);
-
+    mCity = city;
+    if(city) {
+        const auto cid = city->cityId();
+        const int i = static_cast<int>(cid);
+        setMinCityId(i);
+        setMaxCityId(i);
+    }
     mForces = forces;
     mConquestEvent = conquestEvent;
 }
@@ -122,6 +127,7 @@ eTile* nearestShoreTile(eTile* const tile) {
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
+    chooseCity();
     chooseCount();
     const int c = count();
     const auto cid = cityId();

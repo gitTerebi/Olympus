@@ -73,7 +73,7 @@ void eEventSelectionWidget::initialize(
             eGameEventType::wageChange
         };
         const std::vector<std::string> labels = {
-            eLanguage::zeusText(155, 27), // god invasion
+            eLanguage::zeusText(156, 27), // god invasion
             eLanguage::zeusText(182, 1), // monster unleashed
             eLanguage::zeusText(182, 2), // monster invasion
             eLanguage::zeusText(182, 0), // monster in city
@@ -83,14 +83,14 @@ void eEventSelectionWidget::initialize(
             eLanguage::zeusText(156, 4), // quest
             eLanguage::text("military_change_long_name"),
             eLanguage::text("economic_change_long_name"),
-            eLanguage::text("troops_request_short_name"),
+            eLanguage::zeusText(290, 6), // military request
             eLanguage::zeusText(35, 13), // god disaster
             eLanguage::zeusText(156, 20), // rival army away
             eLanguage::zeusText(156, 3), // earthquake
             eLanguage::zeusText(156, 25), // tidal wave
             eLanguage::zeusText(290, 35), // city status change
-            eLanguage::text("trade_shutdown_short_name"),
-            eLanguage::text("trade_openup_short_name"),
+            eLanguage::zeusText(35, 2), // trade shuts down
+            eLanguage::zeusText(35, 3), // trade opens up
             eLanguage::text("supply_change_short_name"),
             eLanguage::text("demand_change_short_name"),
             eLanguage::text("price_change_short_name"),

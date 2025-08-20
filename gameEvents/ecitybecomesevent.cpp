@@ -10,12 +10,14 @@ eCityBecomesEvent::eCityBecomesEvent(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::cityBecomes,
-               branch, board) {}
+               branch, board),
+    eCityEventValue(board) {}
 
 void eCityBecomesEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
+    chooseCity();
     auto& world = board->world();
     const auto cid = cityId();
     const auto tid = board->cityIdToTeamId(cid);

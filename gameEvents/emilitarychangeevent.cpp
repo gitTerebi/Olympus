@@ -13,6 +13,7 @@ eMilitaryChangeEvent::eMilitaryChangeEvent(
         eGameEventType::militaryChange, branch, board) {}
 
 void eMilitaryChangeEvent::trigger() {
+    chooseCity();
     const auto city = this->city();
     chooseCount();
     const int by = this->count();

@@ -239,14 +239,35 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
     if(const auto ee = dynamic_cast<eCityEventValue*>(e.get())) {
         const auto cityButtonL = new eLabeledWidget(window());
-        const auto cityButton = new eCityButton(window());
-        const auto board = e->worldBoard();
-        cityButton->initialize(board, [ee](const stdsptr<eWorldCity>& c){
-            ee->setCity(c);
-        });
-        const auto cc = ee->city();
-        cityButton->setCity(cc);
-        cityButtonL->setup(eLanguage::zeusText(44, 359), cityButton);
+
+        const auto widget = new eWidget(window());
+        widget->setNoPadding();
+        for(int i = 0; i < 2; i++) {
+            const auto cityButton = new eCityButton(window());
+            const auto board = e->worldBoard();
+            cityButton->initialize(board, [ee, i](const stdsptr<eWorldCity>& c) {
+                const auto cid = c->cityId();
+                const int iCid = static_cast<int>(cid);
+                if(i) ee->setMaxCityId(iCid);
+                else ee->setMinCityId(iCid);
+            }, true);
+            const int id = i ? ee->maxCityId() : ee->minCityId();
+            const auto cid = static_cast<eCityId>(id);
+            const auto cc = board->cityWithId(cid);
+            if(cc) {
+                cityButton->setCity(cc);
+                const auto cname = cc->nameWithId();
+                cityButton->setText(cname);
+            } else {
+                cityButton->setText(std::to_string(id));
+            }
+            widget->addWidget(cityButton);
+        }
+
+        widget->stackHorizontally(p);
+        widget->fitContent();
+
+        cityButtonL->setup(eLanguage::zeusText(44, 359), widget);
         leftW->addWidget(cityButtonL);
     }
 

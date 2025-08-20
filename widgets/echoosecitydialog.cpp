@@ -13,13 +13,8 @@ void eChooseCityDialog::initialize(eWorldBoard* const board,
             const bool v = mValidator(c);
             if(!v) continue;
         }
-        std::string cname = c->name();
-        if(showId) {
-            const auto id = c->cityId();
-            const int iid = static_cast<int>(id);
-            cname += " [" + std::to_string(iid) + "]";
-        }
-        cityNames.push_back(c->name());
+        const auto cname = showId ? c->nameWithId() : c->name();
+        cityNames.push_back(cname);
         validCities.push_back(c);
     }
     if(cityNames.empty()) return;

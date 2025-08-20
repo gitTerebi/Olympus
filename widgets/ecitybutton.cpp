@@ -8,20 +8,44 @@
 void eCityButton::initialize(eWorldBoard* const board,
                              const eCityAction& cact,
                              const bool showId) {
+    mShowId = showId;
     setUnderline(false);
-    setPressAction([this, board, cact, showId]() {
+    setPressAction([this, board, cact]() {
         const auto choose = new eChooseCityDialog(window());
         choose->setValidator(mValidator);
         const auto act = [this, cact](const stdsptr<eWorldCity>& c) {
             setCity(c);
             if(cact) cact(c);
         };
-        choose->initialize(board, act, showId);
+        choose->initialize(board, act, mShowId);
 
         window()->execDialog(choose);
         choose->align(eAlignment::center);
     });
     setCity(nullptr);
+
+    std::vector<std::string> cityNames;
+    const auto& cities = board->cities();
+    for(const auto& c : cities) {
+        if(mValidator) {
+            const bool v = mValidator(c);
+            if(!v) continue;
+        }
+        const auto cname = showId ? c->nameWithId() : c->name();
+        cityNames.push_back(cname);
+    }
+    {
+        int w = 0;
+        const auto tmp = text();
+        for(const auto& v : cityNames) {
+            setText(v);
+            fitContent();
+            const int wv = width();
+            if(wv > w) w = wv;
+        }
+        setWidth(w);
+        setText(tmp);
+    }
 }
 
 void eCityButton::setValidator(const eCityValidator& v) {
@@ -30,8 +54,8 @@ void eCityButton::setValidator(const eCityValidator& v) {
 
 void eCityButton::setCity(const stdsptr<eWorldCity>& c) {
     const auto lcity = eLanguage::text("none");
-    const auto ccname = c ? c->name() : lcity;
+    const auto ccname = c ? (mShowId ? c->nameWithId() : c->name()) :
+                            lcity;
     setText(ccname);
-    fitContent();
     mCity = c;
 }

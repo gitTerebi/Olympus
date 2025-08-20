@@ -9,9 +9,12 @@ eRivalArmyAwayEvent::eRivalArmyAwayEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::rivalArmyAway, branch, board) {}
+    eGameEvent(cid, eGameEventType::rivalArmyAway,
+               branch, board),
+    eCityEventValue(board) {}
 
 void eRivalArmyAwayEvent::trigger() {
+    chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;

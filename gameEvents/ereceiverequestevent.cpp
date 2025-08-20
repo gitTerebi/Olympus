@@ -12,7 +12,8 @@ eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::receiveRequest, branch, board) {
+    eGameEvent(cid, eGameEventType::receiveRequest, branch, board),
+    eCityEventValue(board) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");
@@ -36,6 +37,7 @@ eReceiveRequestEvent::~eReceiveRequestEvent() {
 const int gPostponeDays = 6*31;
 
 void eReceiveRequestEvent::trigger() {
+    chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -664,7 +666,7 @@ void eReceiveRequestEvent::initialize(
     mPostpone = postpone;
     mResource = res;
     mCount = count;
-    mCity = c;
+    setSingleCity(c);
     mFinish = finish;
 }
 
@@ -674,6 +676,12 @@ void eReceiveRequestEvent::set(eReceiveRequestEvent &src,
     mResource = src.mResource;
     mCount = src.mCount;
     mCity = src.mCity;
+    if(mCity) {
+        const auto cid = mCity->cityId();
+        const int i = static_cast<int>(cid);
+        setMinCityId(i);
+        setMaxCityId(i);
+    }
     mGod = src.mGod;
 
     mPostpone = postpone;

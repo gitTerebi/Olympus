@@ -12,7 +12,8 @@ eTroopsRequestEvent::eTroopsRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::troopsRequest, branch, board) {
+    eGameEvent(cid, eGameEventType::troopsRequest, branch, board),
+    eCityEventValue(board) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");
@@ -42,7 +43,7 @@ void eTroopsRequestEvent::set(
         const bool finish) {
     mType = src.mType;
     mEffect = src.mEffect;
-    mCity = src.mCity;
+    setSingleCity(src.mCity);
     mAttackingCity = src.mAttackingCity;
 
     mPostpone = postpone;
@@ -50,9 +51,7 @@ void eTroopsRequestEvent::set(
 }
 
 std::string eTroopsRequestEvent::longName() const {
-    auto tmpl = eLanguage::text("troops_request_long_name");
-    eCityEventValue::longNameReplaceCity("%1", tmpl);
-    return tmpl;
+    return eLanguage::zeusText(290, 6);
 }
 
 void eTroopsRequestEvent::write(eWriteStream& dst) const {
@@ -80,6 +79,7 @@ void eTroopsRequestEvent::read(eReadStream& src) {
 const int gPostponeDays = 6*31;
 
 void eTroopsRequestEvent::trigger() {
+    chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;

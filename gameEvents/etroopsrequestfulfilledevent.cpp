@@ -48,9 +48,5 @@ void eTroopsRequestFulfilledEvent::trigger() {
 }
 
 std::string eTroopsRequestFulfilledEvent::longName() const {
-    auto tmpl = eLanguage::text("troops_request_long_name");
-    const auto none = eLanguage::text("none");
-    const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
-    return tmpl;
+    return eLanguage::zeusText(290, 6);
 }

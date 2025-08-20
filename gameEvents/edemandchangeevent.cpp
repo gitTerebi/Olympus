@@ -13,6 +13,7 @@ eDemandChangeEvent::eDemandChangeEvent(
                              branch, board) {}
 
 void eDemandChangeEvent::trigger() {
+    chooseCity();
     const auto city = this->city();
     if(!city) return;
     chooseType();

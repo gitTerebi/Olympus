@@ -19,6 +19,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, type, branch, board),
+    eCityEventValue(board),
     mGiftCashAccepted(giftCashAccepted),
     mGiftAccepted(giftAccepted),
     mGiftPostponed(giftPostponed),
@@ -37,10 +38,11 @@ void eResourceGrantedEventBase::initialize(
     mPostpone = postpone;
     mResource = res;
     mCount = count;
-    mCity = c;
+    setSingleCity(c);
 }
 
 void eResourceGrantedEventBase::trigger() {
+    chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;

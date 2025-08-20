@@ -410,9 +410,6 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t permanent = file.readUShort();
         file.skipBytes(3);
 
-        printf("%i %i %i %i %i %i %i\n", value1, value2,
-               value3, value4, value5, value6, value7);
-
         auto& world = *ep.fWorldBoard;
         const auto attackingCityCid = static_cast<eCityId>(attackingCityId);
         const auto attackingCity = world.cityWithId(attackingCityCid);
@@ -428,39 +425,23 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         }
         uint16_t cityMin;
         uint16_t cityMax;
-        uint16_t cityId;
         if(cityId0 == 0xFFFF) {
             cityMin = cityId1;
             cityMax = cityId2;
-
-            const bool first = eRand::rand() % 1;
-            cityId = first ? cityId1 : cityId2;
         } else {
             cityMin = cityId0;
             cityMax = cityId0;
-
-            cityId = cityId0;
         }
-        const auto cityCid = static_cast<eCityId>(cityId);
-        const auto city = world.cityWithId(cityCid);
 
         uint16_t invCityMin;
         uint16_t invCityMax;
-        uint16_t invCityId;
         if(invCityId0 == 0xFFFF) {
             invCityMin = invCityId1;
             invCityMax = invCityId2;
-
-            const bool first = eRand::rand() % 1;
-            invCityId = first ? invCityId1 : invCityId2;
         } else {
             invCityMin = invCityId0;
             invCityMax = invCityId0;
-
-            invCityId = invCityId0;
         }
-        const auto invCityCid = static_cast<eCityId>(invCityId);
-        const auto invCity = world.cityWithId(invCityCid);
 
         const auto setResources = [&](eResourceEventValue& ee) {
             if(value1 == 0xFFFF) {
@@ -523,7 +504,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 }
                 ee->setType(type);
                 ee->setAttackingCity(attackingCity);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 eTroopsRequestEventEffect effect;
                 if(effectOnCityId == 0) {
                     effect = eTroopsRequestEventEffect::unaffected;
@@ -552,7 +534,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setGod(god);
                 ee->setMinCount(value6);
                 ee->setMaxCount(value7);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 e = ee;
             }
         } break;
@@ -562,7 +545,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             setResources(*ee);
             ee->setMinCount(value6);
             ee->setMaxCount(value7);
-            ee->setCity(city);
+            ee->setMinCityId(cityMin);
+            ee->setMaxCityId(cityMax);
             e = ee;
         } break;
         case ePakEventType::monsterInvasion: {
@@ -696,7 +680,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto ee = e::make_shared<eDemandChangeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
-            ee->setCity(city);
+            ee->setMinCityId(cityMin);
+            ee->setMaxCityId(cityMax);
             const int by = type == ePakEventType::demandIncrease ? 12 : -12;
             ee->setMinCount(by);
             ee->setMaxCount(by);
@@ -708,7 +693,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto ee = e::make_shared<eSupplyChangeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
-            ee->setCity(city);
+            ee->setMinCityId(cityMin);
+            ee->setMaxCityId(cityMax);
             const int by = type == ePakEventType::supplyIncrease ? 12 : -12;
             ee->setMinCount(by);
             ee->setMaxCount(by);
@@ -729,13 +715,15 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             if(subType == 2) {
                 const auto ee = e::make_shared<eTradeShutDownEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
 
                 e = ee;
             } else if(subType == 3) {
                 const auto ee = e::make_shared<eTradeOpenUpEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
 
                 e = ee;
             } else if(subType == 9 || subType == 10 || subType == 11 ||
@@ -744,7 +732,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                       subType == 24) {
                 const auto ee = e::make_shared<eCityBecomesEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 eCityBecomesType type;
                 if(subType == 9) {
                     type = eCityBecomesType::ally;
@@ -772,7 +761,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 const auto godType = pakIdToGodType(godMonsterHeroId, valid);
                 const auto ee = e::make_shared<eGodDisasterEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 ee->setGod(godType);
                 ee->setDuration(30*duration);
 
@@ -780,7 +770,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             } else if(subType == 14 || subType == 15) {
                 const auto ee = e::make_shared<eMilitaryChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 ee->setMinCount(amountMin);
                 ee->setMaxCount(amountMax);
 
@@ -788,7 +779,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             } else if(subType == 16 || subType == 17) {
                 const auto ee = e::make_shared<eEconomicChangeEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setCity(city);
+                ee->setMinCityId(cityMin);
+                ee->setMaxCityId(cityMax);
                 ee->setMinCount(amountMin);
                 ee->setMaxCount(amountMax);
 
@@ -828,7 +820,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::invasion: {
             const auto ee = e::make_shared<eInvasionEvent>(
                 cid, eGameEventBranch::root, *ep.fBoard);
-            ee->setCity(invCity);
+            ee->setMinCityId(invCityMin);
+            ee->setMaxCityId(invCityMax);
 
             ee->setMinCount(amountMin);
             ee->setMaxCount(amountMax);
@@ -841,7 +834,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::rivalArmyAway: {
             const auto ee = e::make_shared<eRivalArmyAwayEvent>(
                 cid, eGameEventBranch::root, *ep.fBoard);
-            ee->setCity(city);
+            ee->setMinCityId(cityMin);
+            ee->setMaxCityId(cityMax);
 
             e = ee;
         } break;
