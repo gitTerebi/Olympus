@@ -11,8 +11,6 @@
 
 #include "engine/egameboard.h"
 
-#include "elanguage.h"
-
 eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
     eInfoWidget* wid = nullptr;
     eAction closeAct;
@@ -100,9 +98,18 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             wid = rWid;
         } else {
             const auto bWid = new eInfoWidget(window(), this, true, true);
-            const auto title = eBuilding::sNameForBuilding(b);
-            bWid->initialize(title);
-            wid = bWid;
+            if(const auto r = dynamic_cast<eRoad*>(b)) {
+                if(r->isRoadblock()) {
+                    bWid->initialize(eLanguage::zeusText(155, 0));
+                    bWid->addText(eLanguage::zeusText(155, 1));
+                    wid = bWid;
+                }
+            }
+            if(!wid) {
+                const auto title = eBuilding::sNameForBuilding(b);
+                bWid->initialize(title);
+                wid = bWid;
+            }
         }
     }
     if(wid) {

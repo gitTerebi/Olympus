@@ -2,11 +2,7 @@
 
 #include "emainwindow.h"
 
-#include "../ebutton.h"
-
 #include "widgets/eokbutton.h"
-
-#include "elanguage.h"
 
 eInfoWidget::eInfoWidget(eMainWindow* const window,
                          eMainWidget* const mw,
