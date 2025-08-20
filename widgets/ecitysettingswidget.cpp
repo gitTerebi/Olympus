@@ -642,7 +642,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     mStr->setText(mStrStr + " " + mStr->text());
     mStr->fitContent();
     mStr->setValueChangeAction([c, mStr, mStrStr](const int v) {
-        const int vv = std::clamp(v, 1, 5);
+        const int vv = std::clamp(v, 1, 6);
         c->setMilitaryStrength(vv);
         mStr->setValue(vv);
         mStr->setText(mStrStr + " " + mStr->text());

@@ -55,18 +55,7 @@ void eInvasionWarningEvent::trigger() {
 }
 
 std::string eInvasionWarningEvent::longName() const {
-    auto tmpl = eLanguage::text("invasion_by");
-    const auto none = eLanguage::text("none");
-    stdsptr<eWorldCity> city;
-
-    const auto p = parent();
-    if(const auto i = dynamic_cast<eInvasionEvent*>(p)) {
-        city = i->city();
-    }
-
-    const auto cstr = city ? city->name() : none;
-    eStringHelpers::replace(tmpl, "%1", cstr);
-    return tmpl;
+    return eLanguage::zeusText(156, 2);
 }
 
 void eInvasionWarningEvent::write(eWriteStream& dst) const {

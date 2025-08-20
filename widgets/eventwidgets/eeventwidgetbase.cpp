@@ -3,6 +3,7 @@
 #include "gameEvents/egameevent.h"
 
 #include "widgets/evaluebutton.h"
+#include "widgets/etypebutton.h"
 #include "engine/egameboard.h"
 #include "widgets/elabeledwidget.h"
 #include "elanguage.h"
@@ -13,24 +14,25 @@
 #include "widgets/eresourcebutton.h"
 #include "widgets/ecitybutton.h"
 #include "widgets/egodbutton.h"
+#include "widgets/emonsterbutton.h"
 #include "widgets/eswitchbutton.h"
 
 #include "gameEvents/egoddisasterevent.h"
-#include "gameEvents/erivalarmyawayevent.h"
 #include "gameEvents/ecitybecomesevent.h"
 #include "gameEvents/ecityevent.h"
 #include "gameEvents/egodeventvalue.h"
 #include "gameEvents/egodreasoneventvalue.h"
+#include "gameEvents/eattackingcityeventvalue.h"
+#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/etroopsrequestevent.h"
 
 #include "egodattackeventwidget.h"
 #include "emonsterattackeventwidget.h"
 #include "einvasioneventwidget.h"
-#include "ereceiverequesteventwidget.h"
 #include "egodquesteventwidget.h"
-#include "etroopsrequesteventwidget.h"
 #include "egoddisastereventwidget.h"
-#include "erivalarmyawayeventwidget.h"
-#include "ecitybecomeseventwidget.h"
+
+#include "evectorhelpers.h"
 
 void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     setType(eFrameType::message);
@@ -44,6 +46,114 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
     const auto leftW = new eWidget(window());
     leftW->setNoPadding();
+
+    if(const auto ee = dynamic_cast<eCityBecomesEvent*>(e.get())) {
+        const auto typeButtonL = new eLabeledWidget(window());
+        const std::vector<eCityBecomesType> types{eCityBecomesType::ally,
+                                                  eCityBecomesType::rival,
+                                                  eCityBecomesType::vassal,
+
+                                                  eCityBecomesType::active,
+                                                  eCityBecomesType::inactive,
+
+                                                  eCityBecomesType::visible,
+                                                  eCityBecomesType::invisible,
+
+                                                  eCityBecomesType::conquered};
+        const std::vector<std::string> typeNames{eLanguage::zeusText(253, 0),
+                                                 eLanguage::zeusText(253, 1),
+                                                 eLanguage::zeusText(253, 2),
+
+                                                 eLanguage::zeusText(44, 248),
+                                                 eLanguage::zeusText(44, 249),
+
+                                                 eLanguage::zeusText(44, 307),
+                                                 eLanguage::zeusText(44, 306),
+
+                                                 eLanguage::zeusText(35, 24)};
+
+        const auto typeButton = new eTypeButton(window());
+        const auto type = e->type();
+        const int itype = static_cast<int>(type);
+        typeButton->initialize(itype, typeNames, [ee, types](const int val) {
+            const auto t = types[val];
+            ee->setType(t);
+        });
+
+        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        leftW->addWidget(typeButtonL);
+    }
+
+    if(const auto ee = dynamic_cast<eReceiveRequestEvent*>(e.get())) {
+        const auto typeButtonL = new eLabeledWidget(window());
+        const std::vector<eReceiveRequestType> types {
+            eReceiveRequestType::general,
+            eReceiveRequestType::festival,
+            eReceiveRequestType::project,
+            eReceiveRequestType::famine,
+            eReceiveRequestType::financialWoes
+        };
+        const std::vector<std::string> typeNames {
+            eLanguage::zeusText(290, 1),
+            eLanguage::zeusText(290, 2),
+            eLanguage::zeusText(290, 3),
+            eLanguage::zeusText(290, 4),
+            eLanguage::zeusText(290, 5)
+        };
+        const auto typeButton = new eTypeButton(window());
+        const auto type = ee->requestType();
+        const int itype = eVectorHelpers::index(types, type);
+        typeButton->initialize(itype, typeNames, [ee, types](const int val) {
+            const auto type = types[val];
+            ee->setRequestType(type);
+        });
+
+        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        leftW->addWidget(typeButtonL);
+    }
+
+    if(const auto ee = dynamic_cast<eTroopsRequestEvent*>(e.get())) {
+        const auto typeButtonL = new eLabeledWidget(window());
+        const std::vector<eTroopsRequestEventType> types {
+            eTroopsRequestEventType::cityUnderAttack,
+            eTroopsRequestEventType::cityAttacksRival,
+            eTroopsRequestEventType::greekCityTerrorized
+        };
+        const std::vector<std::string> typeNames {
+            eLanguage::zeusText(290, 7),
+            eLanguage::zeusText(290, 8),
+            eLanguage::zeusText(290, 9)
+        };
+        const auto typeButton = new eTypeButton(window());
+        const auto type = ee->type();
+        const int itype = eVectorHelpers::index(types, type);
+        typeButton->initialize(itype, typeNames, [ee, types](const int val) {
+            const auto type = types[val];
+            ee->setType(type);
+        });
+
+        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        leftW->addWidget(typeButtonL);
+
+        const auto effectButtonL = new eLabeledWidget(window());
+        const auto effectButton = new eSwitchButton(window());
+        effectButton->setUnderline(false);
+        effectButton->addValue(eLanguage::zeusText(44, 287));
+        effectButton->addValue(eLanguage::zeusText(44, 288));
+        effectButton->addValue(eLanguage::zeusText(44, 289));
+        effectButton->fitValidContent();
+        const auto eff = ee->effect();
+        const int ieff = static_cast<int>(eff);
+        effectButton->setValue(ieff);
+
+        effectButton->setSwitchAction([ee](const int val) {
+            const auto effect = static_cast<eTroopsRequestEventEffect>(val);
+            ee->setEffect(effect);
+        });
+
+        effectButtonL->setup(eLanguage::zeusText(44, 286), effectButton);
+        leftW->addWidget(effectButtonL);
+    }
 
     if(const auto ee = dynamic_cast<ePointEventBase*>(e.get())) {
         const auto countL = new eLabeledWidget(window());
@@ -109,6 +219,9 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     }
 
     if(const auto ee = dynamic_cast<eResourceEvent*>(e.get())) {
+        const auto buttonsL = new eLabeledWidget(window());
+        const auto widget = new eWidget(window());
+        widget->setNoPadding();
         for(int i = 0; i < 3; i++) {
             const auto resourceTypeButton = new eResourceButton(window());
             resourceTypeButton->initialize([i, ee](const eResourceType r){
@@ -116,8 +229,12 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             }, eResourceType::allBasic, true, true);
             const auto rr = ee->resourceType(i);
             resourceTypeButton->setResource(rr);
-            leftW->addWidget(resourceTypeButton);
+            widget->addWidget(resourceTypeButton);
         }
+        widget->stackVertically(p);
+        widget->fitContent();
+        buttonsL->setup(eLanguage::zeusText(44, 360), widget);
+        leftW->addWidget(buttonsL);
     }
 
     if(const auto ee = dynamic_cast<eCityEvent*>(e.get())) {
@@ -130,6 +247,19 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto cc = ee->city();
         cityButton->setCity(cc);
         cityButtonL->setup(eLanguage::zeusText(44, 359), cityButton);
+        leftW->addWidget(cityButtonL);
+    }
+
+    if(const auto ee = dynamic_cast<eAttackingCityEventValue*>(e.get())) {
+        const auto cityButtonL = new eLabeledWidget(window());
+        const auto cityButton = new eCityButton(window());
+        const auto board = e->worldBoard();
+        cityButton->initialize(board, [ee](const stdsptr<eWorldCity>& c){
+            ee->setAttackingCity(c);
+        });
+        const auto cc = ee->attackingCity();
+        cityButton->setCity(cc);
+        cityButtonL->setup(eLanguage::zeusText(44, 271), cityButton);
         leftW->addWidget(cityButtonL);
     }
 
@@ -161,6 +291,19 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(godButtonL);
     }
 
+    if(const auto ee = dynamic_cast<eMonsterEventValue*>(e.get())) {
+        const auto monsterButtonL = new eLabeledWidget(window());
+        const auto act = [ee](const eMonsterType type) {
+            ee->setMonster(type);
+        };
+        const auto monsterButton = new eMonsterButton(window());
+        monsterButton->initialize(act);
+        const auto iniT = ee->monster();
+        monsterButton->setType(iniT);
+        monsterButtonL->setup(eLanguage::zeusText(44, 175), monsterButton);
+        leftW->addWidget(monsterButtonL);
+    }
+
     const auto et = e->type();
     switch(et) {
     case eGameEventType::godAttack: {
@@ -183,18 +326,6 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         eew->initialize(iee);
         leftW->addWidget(eew);
     } break;
-    case eGameEventType::receiveRequest: {
-        const auto eew = new eReceiveRequestEventWidget(window());
-        const auto rree = static_cast<eReceiveRequestEvent*>(e.get());
-        eew->initialize(rree);
-        leftW->addWidget(eew);
-    } break;
-    case eGameEventType::troopsRequest: {
-        const auto eew = new eTroopsRequestEventWidget(window());
-        const auto rree = static_cast<eTroopsRequestEvent*>(e.get());
-        eew->initialize(rree);
-        leftW->addWidget(eew);
-    } break;
     case eGameEventType::godQuest:
     case eGameEventType::godQuestFulfilled: {
         const auto eew = new eGodQuestEventWidget(window());
@@ -206,18 +337,6 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto eew = new eGodDisasterEventWidget(window());
         const auto emceb = static_cast<eGodDisasterEvent*>(e.get());
         eew->initialize(emceb);
-        leftW->addWidget(eew);
-    } break;
-    case eGameEventType::rivalArmyAway: {
-        const auto eew = new eRivalArmyAwayEventWidget(window());
-        const auto emceb = static_cast<eRivalArmyAwayEvent*>(e.get());
-        eew->initialize(emceb);
-        leftW->addWidget(eew);
-    } break;
-    case eGameEventType::cityBecomes: {
-        const auto eew = new eCityBecomesEventWidget(window());
-        const auto ee = static_cast<eCityBecomesEvent*>(e.get());
-        eew->initialize(ee);
         leftW->addWidget(eew);
     } break;
     default:
@@ -236,7 +355,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     yearsButton->initialize(0, 99999);
     yearsButton->setValue(e->datePlusYears());
     yearsButton->setText("+" + yearsButton->text());
-    yearsButtonL->setup(eLanguage::text("years:"), yearsButton);
+    yearsButtonL->setup(eLanguage::zeusText(8, 9), yearsButton);
     dateW->addWidget(yearsButtonL);
 
     const auto monthssButtonL = new eLabeledWidget(window());
@@ -248,7 +367,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     monthsButton->initialize(0, 99999);
     monthsButton->setValue(e->datePlusMonths());
     monthsButton->setText("+" + monthsButton->text());
-    monthssButtonL->setup(eLanguage::text("months:"), monthsButton);
+    monthssButtonL->setup(eLanguage::zeusText(8, 5), monthsButton);
     dateW->addWidget(monthssButtonL);
 
     const auto daysButtonL = new eLabeledWidget(window());
@@ -260,7 +379,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     daysButton->initialize(0, 99999);
     daysButton->setValue(e->datePlusDays());
     daysButton->setText("+" + daysButton->text());
-    daysButtonL->setup(eLanguage::text("days:"), daysButton);
+    daysButtonL->setup(eLanguage::zeusText(8, 45), daysButton);
     dateW->addWidget(daysButtonL);
 
     const auto periodButtonL = new eLabeledWidget(window());

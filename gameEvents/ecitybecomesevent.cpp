@@ -1,17 +1,16 @@
 #include "ecitybecomesevent.h"
 
-
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "estringhelpers.h"
 #include "elanguage.h"
 
 eCityBecomesEvent::eCityBecomesEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::cityBecomes, branch, board) {}
+    eGameEvent(cid, eGameEventType::cityBecomes,
+               branch, board) {}
 
 void eCityBecomesEvent::trigger() {
     if(!mCity) return;
@@ -59,12 +58,12 @@ void eCityBecomesEvent::trigger() {
         board->event(eEvent::cityBecomesInvisible, ed);
     } break;
     case eCityBecomesType::conquered: {
-        ed.fRivalCity = mConqueringCity;
+        ed.fRivalCity = mAttackingCity;
         const auto pid = playerId();
         const auto tid = board->playerIdToTeamId(pid);
         const auto enemyTid = tid == eTeamId::team0 ? eTeamId::team1 :
                                                       eTeamId::team0;
-        if(mConqueringCity->playerId() == pid) {
+        if(mAttackingCity->playerId() == pid) {
             if(mCity->isColony()) {
                 mCity->setConqueredBy(nullptr);
                 board->event(eEvent::colonyRestored, ed);
@@ -76,19 +75,19 @@ void eCityBecomesEvent::trigger() {
                 const auto pid = mCity->playerId();
                 board->setPlayerTeam(pid, tid);
             }
-        } else if(mConqueringCity->isAlly()) {
+        } else if(mAttackingCity->isAlly()) {
             if(mCity->isRival()) {
                 board->event(eEvent::rivalConqueredByAlly, ed);
                 mCity->setRelationship(eForeignCityRelationship::ally);
                 board->setPlayerTeam(cpid, tid);
             }
-        } else if(mConqueringCity->isVassal()) {
+        } else if(mAttackingCity->isVassal()) {
             if(mCity->isRival()) {
                 board->event(eEvent::rivalConqueredByVassal, ed);
                 mCity->setRelationship(eForeignCityRelationship::vassal);
                 board->setPlayerTeam(cpid, tid);
             }
-        } else if(mConqueringCity->isRival()) {
+        } else if(mAttackingCity->isRival()) {
             if(mCity->isAlly()) {
                 board->event(eEvent::allyConqueredByRival, ed);
                 mCity->setRelationship(eForeignCityRelationship::rival);
@@ -99,7 +98,7 @@ void eCityBecomesEvent::trigger() {
                 board->setPlayerTeam(cpid, enemyTid);
             } else if(mCity->isColony()) {
                 board->event(eEvent::colonyConqueredByRival, ed);
-                mCity->setConqueredBy(mConqueringCity);
+                mCity->setConqueredBy(mAttackingCity);
             } else if(mCity->isParentCity()) {
                 board->event(eEvent::parentConqueredByRival, ed);
                 board->setEpisodeLost();
@@ -111,53 +110,37 @@ void eCityBecomesEvent::trigger() {
 }
 
 std::string eCityBecomesEvent::longName() const {
-    auto text = eLanguage::text("city_becomes_long_name");
-    std::string key;
     switch(mType) {
-    case eCityBecomesType::ally: {
-        key = "ally";
-    } break;
-    case eCityBecomesType::rival: {
-        key = "rival";
-    } break;
-    case eCityBecomesType::vassal: {
-        key = "vassal";
-    } break;
-    case eCityBecomesType::active: {
-        key = "active";
-    } break;
-    case eCityBecomesType::inactive: {
-        key = "inactive";
-    } break;
-    case eCityBecomesType::visible: {
-        key = "visible";
-    } break;
-    case eCityBecomesType::invisible: {
-        key = "invisible";
-    } break;
-    case eCityBecomesType::conquered: {
-        key = "conquered";
-    } break;
+    case eCityBecomesType::ally:
+        return eLanguage::zeusText(290, 36);
+    case eCityBecomesType::rival:
+        return eLanguage::zeusText(290, 37);
+    case eCityBecomesType::vassal:
+        return eLanguage::zeusText(290, 38);
+    case eCityBecomesType::active:
+        return eLanguage::zeusText(290, 45);
+    case eCityBecomesType::inactive:
+        return eLanguage::zeusText(290, 46);
+    case eCityBecomesType::visible:
+        return eLanguage::zeusText(290, 47);
+    case eCityBecomesType::invisible:
+        return eLanguage::zeusText(290, 48);
+    case eCityBecomesType::conquered:
+        return eLanguage::zeusText(290, 50);
     }
-
-    const auto cname = mCity ? mCity->name() : eLanguage::text("city");
-    eStringHelpers::replace(text, "%1", cname);
-    eStringHelpers::replace(text, "%2", eLanguage::text(key));
-    return text;
+    return "";
 }
 
 void eCityBecomesEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     eCityEvent::write(dst);
+    eAttackingCityEventValue::write(dst);
     dst << mType;
-    dst.writeCity(mConqueringCity.get());
 }
 
 void eCityBecomesEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     eCityEvent::read(src, *gameBoard());
+    eAttackingCityEventValue::read(src, *gameBoard());
     src >> mType;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mConqueringCity = c;
-    });
 }

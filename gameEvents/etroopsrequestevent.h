@@ -2,22 +2,33 @@
 #define ETROOPSREQUESTEVENT_H
 
 #include "egameevent.h"
-
-#include "engine/eworldcity.h"
+#include "ecityevent.h"
+#include "emonstereventvalue.h"
+#include "eattackingcityeventvalue.h"
 
 struct eReason;
 
-class eTroopsRequestEvent : public eGameEvent {
+enum class eTroopsRequestEventType {
+    cityUnderAttack,
+    cityAttacksRival,
+    greekCityTerrorized
+};
+
+enum class eTroopsRequestEventEffect {
+    unaffected,
+    destroyed,
+    conquered
+};
+
+class eTroopsRequestEvent : public eGameEvent,
+                            public eCityEvent,
+                            public eMonsterEventValue,
+                            public eAttackingCityEventValue {
 public:
     eTroopsRequestEvent(const eCityId cid,
                         const eGameEventBranch branch,
                         eGameBoard& board);
    ~eTroopsRequestEvent();
-
-    void initialize(const int postpone,
-                    const stdsptr<eWorldCity> &c,
-                    const stdsptr<eWorldCity> &rival,
-                    const bool finish = false);
 
     void trigger() override;
     std::string longName() const override;
@@ -25,24 +36,29 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 
-    const stdsptr<eWorldCity>& city() const { return mCity; }
-    void setCity(const stdsptr<eWorldCity>& c);
-
-    const stdsptr<eWorldCity>& rivalCity() const { return mRivalCity; }
-    void setRivalCity(const stdsptr<eWorldCity>& c);
-
     using eAction = std::function<void()>;
     void dispatch(const eAction& close = nullptr);
+
+    void setType(const eTroopsRequestEventType t) { mType = t; }
+    eTroopsRequestEventType type() const { return mType; }
+
+    void setEffect(const eTroopsRequestEventEffect e) { mEffect = e; }
+    eTroopsRequestEventEffect effect() const { return mEffect; }
 
     void won();
     void lost();
 private:
     void finished(eEventTrigger& t, const eReason& r);
 
+    void set(eTroopsRequestEvent& src,
+             const int postpone,
+             const bool finish = false);
+
+    eTroopsRequestEventType mType = eTroopsRequestEventType::cityUnderAttack;
+    eTroopsRequestEventEffect mEffect = eTroopsRequestEventEffect::unaffected;
+
     bool mFinish = false;
     int mPostpone = 0;
-    stdsptr<eWorldCity> mCity;
-    stdsptr<eWorldCity> mRivalCity;
 
     stdsptr<eEventTrigger> mEarlyTrigger;
     stdsptr<eEventTrigger> mComplyTrigger;

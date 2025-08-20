@@ -48,7 +48,7 @@ void eMonsterInvasionWarningEvent::trigger() {
 }
 
 std::string eMonsterInvasionWarningEvent::longName() const {
-    return eLanguage::text("monster_invasion_long_name");
+    return eLanguage::zeusText(182, 2);
 }
 
 void eMonsterInvasionWarningEvent::write(eWriteStream& dst) const {
@@ -126,5 +126,5 @@ void eMonsterInvasionEvent::trigger() {
 }
 
 std::string eMonsterInvasionEvent::longName() const {
-    return eLanguage::text("monster_invasion_long_name");
+    return eLanguage::zeusText(182, 2);
 }

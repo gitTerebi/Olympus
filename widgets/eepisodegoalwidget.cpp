@@ -14,8 +14,6 @@
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "buildings/pyramids/epyramid.h"
-#include "elanguage.h"
-#include "elabeledwidget.h"
 #include "engine/egameboard.h"
 
 void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
@@ -296,47 +294,17 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     case eEpisodeGoalType::surviveUntil:
     case eEpisodeGoalType::completeBefore: {
-        const auto dateW = new eWidget(window());
-        dateW->setNoPadding();
-
-        const auto yearsButtonL = new eLabeledWidget(window());
-        const auto yearsButton = new eValueButton(window());
-        yearsButton->setValueChangeAction([e, yearsButton](const int y) {
-            e->fRequiredCount = y;
-            yearsButton->setText("+" + yearsButton->text());
+        const auto dateB = new eDateButton(window());
+        const auto date = e->date();
+        dateB->initialize();
+        dateB->setDate(date);
+        dateB->setDateChangeAction([e](const eDate& date) {
+            e->fEnumInt1 = date.day();
+            const auto m = date.month();
+            e->fEnumInt2 = static_cast<int>(m);
+            e->fRequiredCount = date.year();
         });
-        yearsButton->initialize(0, 99999);
-        yearsButton->setValue(e->fRequiredCount);
-        yearsButton->setText("+" + yearsButton->text());
-        yearsButtonL->setup(eLanguage::text("years:"), yearsButton);
-        dateW->addWidget(yearsButtonL);
-
-        const auto monthssButtonL = new eLabeledWidget(window());
-        const auto monthsButton = new eValueButton(window());
-        monthsButton->setValueChangeAction([e, monthsButton](const int y) {
-            e->fEnumInt2 = y;
-            monthsButton->setText("+" + monthsButton->text());
-        });
-        monthsButton->initialize(0, 99999);
-        monthsButton->setValue(e->fEnumInt2);
-        monthsButton->setText("+" + monthsButton->text());
-        monthssButtonL->setup(eLanguage::text("months:"), monthsButton);
-        dateW->addWidget(monthssButtonL);
-
-        const auto daysButtonL = new eLabeledWidget(window());
-        const auto daysButton = new eValueButton(window());
-        daysButton->setValueChangeAction([e, daysButton](const int y) {
-            e->fEnumInt1 = y;
-            daysButton->setText("+" + daysButton->text());
-        });
-        daysButton->initialize(0, 99999);
-        daysButton->setValue(e->fEnumInt1);
-        daysButton->setText("+" + daysButton->text());
-        daysButtonL->setup(eLanguage::text("days:"), daysButton);
-        dateW->addWidget(daysButtonL);
-        dateW->stackVertically(p);
-        dateW->fitContent();
-        detailsW->addWidget(dateW);
+        detailsW->addWidget(dateB);
     } break;
     case eEpisodeGoalType::tradingPartners: {
         const auto b = new eValueButton(window());

@@ -210,11 +210,7 @@ void eInvasionEvent::trigger() {
 }
 
 std::string eInvasionEvent::longName() const {
-    auto tmpl = eLanguage::text("invasion_by");
-    const auto none = eLanguage::text("none");
-    const auto cstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%1", cstr);
-    return tmpl;
+    return eLanguage::zeusText(156, 2);
 }
 
 void eInvasionEvent::write(eWriteStream& dst) const {

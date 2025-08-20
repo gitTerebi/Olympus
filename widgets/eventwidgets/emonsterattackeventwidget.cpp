@@ -19,7 +19,7 @@ void eMonsterAttackEventWidget::initialize(eMonsterInvasionEventBase* const e) {
     const auto monsterButton = new eMonsterButton(window());
     monsterButton->initialize(act, withGodsOnly, withGodsOnly);
     monsterButton->setType(iniT);
-    monsterButtonL->setup(eLanguage::text("monster:"), monsterButton);
+    monsterButtonL->setup(eLanguage::zeusText(44, 360), monsterButton);
     addWidget(monsterButtonL);
 
     const auto aggressivnessButton = new eSwitchButton(window());

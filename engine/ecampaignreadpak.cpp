@@ -25,6 +25,8 @@
 #include "gameEvents/egoddisasterevent.h"
 #include "gameEvents/etidalwaveevent.h"
 #include "gameEvents/einvasionevent.h"
+#include "gameEvents/erivalarmyawayevent.h"
+#include "gameEvents/etroopsrequestevent.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool newVersion) {
@@ -268,6 +270,7 @@ enum class ePakEventType {
     priceIncrease,
     priceDecrease,
     cityStatusChange,
+    rivalArmyAway,
     giftFrom,
     tidalWave,
     monsterInvasion,
@@ -287,6 +290,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 15) return ePakEventType::priceIncrease;
     else if(id == 16) return ePakEventType::priceDecrease;
     else if(id == 19) return ePakEventType::cityStatusChange;
+    else if(id == 20) return ePakEventType::rivalArmyAway;
     else if(id == 21) return ePakEventType::supplyIncrease;
     else if(id == 22) return ePakEventType::supplyDecrease;
     else if(id == 23) return ePakEventType::giftFrom;
@@ -388,24 +392,30 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         file.skipBytes(4);
         const uint16_t occuranceType = file.readUShort();
         file.skipBytes(2);
-        const uint16_t duration = file.readUShort();
+        const uint16_t duration = file.readUShort(); // also warning
         file.skipBytes(8);
-        const uint16_t godTypeHeroId = file.readUShort(); // also warships
+        const uint16_t godMonsterHeroId = file.readUShort(); // also warships
         file.skipBytes(6);
         const uint16_t aggressivnessId = file.readUShort();
-        file.skipBytes(26);
+        file.skipBytes(22);
+        const uint16_t effectOnCityId = file.readShort();
+        file.skipBytes(2);
         const uint16_t invCityId0 = file.readUShort();
         const uint16_t invCityId1 = file.readUShort();
         const uint16_t invCityId2 = file.readUShort();
         const uint16_t subType = file.readUShort();
         file.skipBytes(13);
-        const uint16_t attackingCity = file.readUShort();
+        const uint16_t attackingCityId = file.readUShort();
         file.skipBytes(8);
         const uint16_t permanent = file.readUShort();
         file.skipBytes(3);
 
         printf("%i %i %i %i %i %i %i\n", value1, value2,
                value3, value4, value5, value6, value7);
+
+        auto& world = *ep.fWorldBoard;
+        const auto attackingCityCid = static_cast<eCityId>(attackingCityId);
+        const auto attackingCity = world.cityWithId(attackingCityCid);
 
         uint16_t amountMin;
         uint16_t amountMax;
@@ -419,7 +429,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         uint16_t cityMin;
         uint16_t cityMax;
         uint16_t cityId;
-        if(cityId0 == 0xFF) {
+        if(cityId0 == 0xFFFF) {
             cityMin = cityId1;
             cityMax = cityId2;
 
@@ -431,19 +441,18 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
 
             cityId = cityId0;
         }
-        auto& world = *ep.fWorldBoard;
         const auto cityCid = static_cast<eCityId>(cityId);
         const auto city = world.cityWithId(cityCid);
 
         uint16_t invCityMin;
         uint16_t invCityMax;
         uint16_t invCityId;
-        if(invCityId0 == 0xFF) {
+        if(invCityId0 == 0xFFFF) {
             invCityMin = invCityId1;
             invCityMax = invCityId2;
 
             const bool first = eRand::rand() % 1;
-            invCityId = first ? cityId1 : cityId2;
+            invCityId = first ? invCityId1 : invCityId2;
         } else {
             invCityMin = invCityId0;
             invCityMax = invCityId0;
@@ -471,21 +480,81 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             }
         };
 
+        const auto monsterIdToType = [&](const uint16_t id,
+                                         bool& valid) {
+            valid = true;
+            if(id == 0) {
+                const auto& o = opponentGods[0];
+                if(o.fValid) {
+                    const auto type = eMonster::sGodsMinion(o.fType);
+                    return type;
+                }
+            } else if(id == 1) {
+                const auto& o = opponentGods[1];
+                if(o.fValid) {
+                    const auto type = eMonster::sGodsMinion(o.fType);
+                    return type;
+                }
+            } else if(id == 2) {
+                if(independentMonster.fValid) {
+                    return independentMonster.fType;
+                }
+            }
+            valid = false;
+            return eMonsterType::calydonianBoar;
+        };
+
         stdsptr<eGameEvent> e;
         switch(type) {
         case ePakEventType::receiveRequest: {
-            const auto type = pakIdToReceiveRequestType(subType);
-            const auto ee = e::make_shared<eReceiveRequestEvent>(
+            if(subType == 1 || subType == 2 || subType == 7) { // troops request
+                const auto ee = e::make_shared<eTroopsRequestEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-            setResources(*ee);
-            bool valid = false;
-            const auto god = pakIdToGodType(godTypeHeroId, valid);
-            ee->setRequestType(type);
-            ee->setGod(god);
-            ee->setMinCount(value6);
-            ee->setMaxCount(value7);
-            ee->setCity(city);
-            e = ee;
+                eTroopsRequestEventType type;
+                if(subType == 1) {
+                    type = eTroopsRequestEventType::cityUnderAttack;
+                } else if(subType == 2) {
+                    type = eTroopsRequestEventType::cityAttacksRival;
+                } else if(subType == 7) {
+                    type = eTroopsRequestEventType::greekCityTerrorized;
+                } else {
+                    printf("Invalid troops request type id %i\n", subType);
+                    continue;
+                }
+                ee->setType(type);
+                ee->setAttackingCity(attackingCity);
+                ee->setCity(city);
+                eTroopsRequestEventEffect effect;
+                if(effectOnCityId == 0) {
+                    effect = eTroopsRequestEventEffect::unaffected;
+                } else if(effectOnCityId == 1) {
+                    effect = eTroopsRequestEventEffect::destroyed;
+                } else if(effectOnCityId == 2) {
+                    effect = eTroopsRequestEventEffect::conquered;
+                } else {
+                    printf("Invalid effect on city id %i\n", effectOnCityId);
+                    continue;
+                }
+                ee->setEffect(effect);
+                bool valid;
+                const auto monster = monsterIdToType(godMonsterHeroId, valid);
+                if(valid) ee->setMonster(monster);
+
+                e = ee;
+            } else {
+                const auto type = pakIdToReceiveRequestType(subType);
+                const auto ee = e::make_shared<eReceiveRequestEvent>(
+                        cid, eGameEventBranch::root, *ep.fBoard);
+                setResources(*ee);
+                bool valid = false;
+                const auto god = pakIdToGodType(godMonsterHeroId, valid);
+                ee->setRequestType(type);
+                ee->setGod(god);
+                ee->setMinCount(value6);
+                ee->setMaxCount(value7);
+                ee->setCity(city);
+                e = ee;
+            }
         } break;
         case ePakEventType::giftFrom: {
             const auto ee = e::make_shared<eGiftFromEvent>(
@@ -498,24 +567,10 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         } break;
         case ePakEventType::monsterInvasion: {
             std::vector<eMonsterType> types;
-            const auto addType = [&](const uint8_t id) {
-                if(id == 0) {
-                    const auto& o = opponentGods[0];
-                    if(o.fValid) {
-                        const auto type = eMonster::sGodsMinion(o.fType);
-                        types.push_back(type);
-                    }
-                } else if(id == 1) {
-                    const auto& o = opponentGods[1];
-                    if(o.fValid) {
-                        const auto type = eMonster::sGodsMinion(o.fType);
-                        types.push_back(type);
-                    }
-                } else if(id == 2) {
-                    if(independentMonster.fValid) {
-                        types.push_back(independentMonster.fType);
-                    }
-                }
+            const auto addType = [&](const uint16_t id) {
+                bool valid;
+                const auto type = monsterIdToType(id, valid);
+                if(valid) types.push_back(type);
             };
             addType(value1);
             addType(value2);
@@ -562,34 +617,34 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto god = pakIdToGodType(subType, valid);
             if(!valid) continue;
            eHeroType hero;
-            if(godTypeHeroId == 0) {
+            if(godMonsterHeroId == 0) {
                 const auto& o = opponentGods[0];
                 if(o.fValid) {
                     const auto monster = eMonster::sGodsMinion(o.fType);
                     hero = eMonster::sSlayer(monster);
                 } else {
-                    printf("No hero with id %i\n", godTypeHeroId);
+                    printf("No hero with id %i\n", godMonsterHeroId);
                     continue;
                 }
-            } else if(godTypeHeroId == 1) {
+            } else if(godMonsterHeroId == 1) {
                 const auto& o = opponentGods[1];
                 if(o.fValid) {
                     const auto monster = eMonster::sGodsMinion(o.fType);
                     hero = eMonster::sSlayer(monster);
                 } else {
-                    printf("No hero with id %i\n", godTypeHeroId);
+                    printf("No hero with id %i\n", godMonsterHeroId);
                     continue;
                 }
-            } else if(godTypeHeroId == 2) {
+            } else if(godMonsterHeroId == 2) {
                 if(independentMonster.fValid) {
                     const auto monster = independentMonster.fType;
                     hero = eMonster::sSlayer(monster);
                 } else {
-                    printf("No hero with id %i\n", godTypeHeroId);
+                    printf("No hero with id %i\n", godMonsterHeroId);
                     continue;
                 }
             } else {
-                printf("Hero id %i out of scope\n", godTypeHeroId);
+                printf("Hero id %i out of scope\n", godMonsterHeroId);
                 continue;
             }
             const auto ee = e::make_shared<eGodQuestEvent>(
@@ -707,16 +762,14 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     type = eCityBecomesType::invisible;
                 } else { // if(subType == 24) {
                     type = eCityBecomesType::conquered;
-                    const auto ccid = static_cast<eCityId>(attackingCity);
-                    const auto cc = world.cityWithId(ccid);
-                    ee->setConqueringCity(cc);
+                    ee->setAttackingCity(attackingCity);
                 }
                 ee->setType(type);
 
                 e = ee;
             } else if(subType == 13) {
                 bool valid = false;
-                const auto godType = pakIdToGodType(godTypeHeroId, valid);
+                const auto godType = pakIdToGodType(godMonsterHeroId, valid);
                 const auto ee = e::make_shared<eGodDisasterEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setCity(city);
@@ -782,6 +835,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
 
             ee->setMinPointId(cityMin);
             ee->setMaxPointId(cityMax);
+
+            e = ee;
+        } break;
+        case ePakEventType::rivalArmyAway: {
+            const auto ee = e::make_shared<eRivalArmyAwayEvent>(
+                cid, eGameEventBranch::root, *ep.fBoard);
+            ee->setCity(city);
 
             e = ee;
         } break;

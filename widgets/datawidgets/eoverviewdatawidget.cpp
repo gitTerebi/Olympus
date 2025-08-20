@@ -453,25 +453,25 @@ void eOverviewDataWidget::addGodQuests() {
             }
             const auto heroName = eHero::sHeroName(q.fHero);
             const auto gw = gameWidget();
+            std::string heroNeededTmpl;
+            eStringHelpers::replace(heroNeededTmpl, "[hero_name]", heroName);
             if(hh) {
                 const auto s = hh->stage();
                 if(s == eHeroSummoningStage::arrived) {
                     const auto acceptA = [qq]() {
                         qq->fulfill();
                     };
-                    const auto title = eLanguage::text("quest_question_title");
-                    auto text = eLanguage::text("quest_question");
-                    eStringHelpers::replace(text, "%1", heroName);
+                    const auto title = eLanguage::zeusText(185, 121);
+                    auto text = eLanguage::zeusText(185, 122);
+                    eStringHelpers::replace(text, "[hero_name]", heroName);
+                    const auto questName = q.name();
+                    eStringHelpers::replace(text, "[god_quest]", questName);
                     gw->showQuestion(title, text, acceptA);
                 } else {
-                    auto tip = eLanguage::text("quest_tip_summon_hero");
-                    eStringHelpers::replace(tip, "%1", heroName);
-                    gw->showTip(pid, tip);
+                    gw->showTip(pid, heroNeededTmpl);
                 }
             } else {
-                auto tip = eLanguage::text("quest_tip_build_hh");
-                eStringHelpers::replace(tip, "%1", heroName);
-                gw->showTip(pid, tip);
+                gw->showTip(pid, heroNeededTmpl);
             }
         });
         mQuestButtons->addWidget(b);

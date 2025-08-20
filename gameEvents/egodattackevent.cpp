@@ -75,7 +75,7 @@ void eGodAttackEvent::trigger() {
 }
 
 std::string eGodAttackEvent::longName() const {
-    return eLanguage::text("god_attack");
+    return eLanguage::zeusText(155, 27);
 }
 
 void eGodAttackEvent::write(eWriteStream& dst) const {

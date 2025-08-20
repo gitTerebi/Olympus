@@ -2,11 +2,9 @@
 
 #include "engine/egameboard.h"
 #include "elanguage.h"
-#include "estringhelpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "emessages.h"
-#include "engine/ecityrequest.h"
 
 #include "etroopsrequestfulfilledevent.h"
 
@@ -38,51 +36,45 @@ eTroopsRequestEvent::~eTroopsRequestEvent() {
     if(board) board->removeCityTroopsRequest(this);
 }
 
-void eTroopsRequestEvent::initialize(
+void eTroopsRequestEvent::set(
+        eTroopsRequestEvent& src,
         const int postpone,
-        const stdsptr<eWorldCity> &c,
-        const stdsptr<eWorldCity> &rival,
         const bool finish) {
+    mType = src.mType;
+    mEffect = src.mEffect;
+    mCity = src.mCity;
+    mAttackingCity = src.mAttackingCity;
+
     mPostpone = postpone;
-    mCity = c;
-    mRivalCity = rival;
     mFinish = finish;
 }
 
 std::string eTroopsRequestEvent::longName() const {
     auto tmpl = eLanguage::text("troops_request_long_name");
-    const auto none = eLanguage::text("none");
-    const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
+    eCityEvent::longNameReplaceCity("%1", tmpl);
     return tmpl;
 }
 
 void eTroopsRequestEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
+    eCityEvent::write(dst);
+    eMonsterEventValue::write(dst);
+    eAttackingCityEventValue::write(dst);
+    dst << mType;
+    dst << mEffect;
     dst << mFinish;
     dst << mPostpone;
-    dst.writeCity(mCity.get());
-    dst.writeCity(mRivalCity.get());
 }
 
 void eTroopsRequestEvent::read(eReadStream& src) {
     eGameEvent::read(src);
+    eCityEvent::read(src, *gameBoard());
+    eMonsterEventValue::read(src);
+    eAttackingCityEventValue::read(src, *gameBoard());
+    src >> mType;
+    src >> mEffect;
     src >> mFinish;
     src >> mPostpone;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mRivalCity = c;
-    });
-}
-
-void eTroopsRequestEvent::setCity(const stdsptr<eWorldCity>& c) {
-    mCity = c;
-}
-
-void eTroopsRequestEvent::setRivalCity(const stdsptr<eWorldCity>& c) {
-    mRivalCity = c;
 }
 
 const int gPostponeDays = 6*31;
@@ -91,9 +83,10 @@ void eTroopsRequestEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
-    ed.fRivalCity = mRivalCity;
+    ed.fRivalCity = mAttackingCity;
     ed.fTime = 6;
 
     if(mFinish) {
@@ -113,7 +106,7 @@ void eTroopsRequestEvent::trigger() {
         ed.fA1 = [this, board]() { // postpone
             const auto e = e::make_shared<eTroopsRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
-            e->initialize(mPostpone + 1, mCity, mRivalCity);
+            e->set(*this, mPostpone + 1);
             const auto date = board->date() + gPostponeDays;
             e->initializeDate(date);
             addConsequence(e);
@@ -124,7 +117,7 @@ void eTroopsRequestEvent::trigger() {
         board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
         const auto e = e::make_shared<eTroopsRequestEvent>(
                            cityId(), eGameEventBranch::child, *board);
-        e->initialize(5, mCity, mRivalCity, true);
+        e->set(*this, 5, true);
         const auto date = board->date() + 31;
         e->initializeDate(date);
         addConsequence(e);
@@ -181,13 +174,13 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
         const auto e = e::make_shared<eTroopsRequestFulfilledEvent>(
                            cityId(), eGameEventBranch::child, *board);
         const auto currentDate = board->date();
-        e->initialize(f, mCity, mRivalCity);
+        e->initialize(f, mCity, mAttackingCity);
         const auto edate = currentDate + 3*31;
         e->initializeDate(edate);
         clearConsequences();
         addConsequence(e);
         if(close) close();
-    }, {}, {mCity, mRivalCity});
+    }, {}, {mCity, mAttackingCity});
 }
 
 void eTroopsRequestEvent::won() {
@@ -196,7 +189,7 @@ void eTroopsRequestEvent::won() {
     const auto pid = playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
-    ed.fRivalCity = mRivalCity;
+    ed.fRivalCity = mAttackingCity;
     ed.fType = eMessageEventType::common;
 
     auto& msgs = eMessages::instance;
@@ -224,9 +217,8 @@ void eTroopsRequestEvent::lost() {
     const auto pid = playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
-    ed.fRivalCity = mRivalCity;
+    ed.fRivalCity = mAttackingCity;
     ed.fType = eMessageEventType::common;
-
 
     auto& msgs = eMessages::instance;
     eEvent event;
@@ -248,7 +240,7 @@ void eTroopsRequestEvent::lost() {
     board->event(event, ed);
     mCity->incAttitude(-25, pid);
     mCity->setRelationship(eForeignCityRelationship::rival);
-    mCity->setConqueredBy(mRivalCity);
+    mCity->setConqueredBy(mAttackingCity);
 
     const auto& reason = rrmsgs->fLostBattleReason;
     const auto me = mainEvent<eTroopsRequestEvent>();

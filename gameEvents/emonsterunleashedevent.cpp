@@ -40,5 +40,5 @@ void eMonsterUnleashedEvent::trigger() {
 }
 
 std::string eMonsterUnleashedEvent::longName() const {
-    return eLanguage::text("monster_unleash_long_name");
+    return eLanguage::zeusText(182, 1);
 }

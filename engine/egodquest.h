@@ -26,6 +26,8 @@ struct eGodQuest {
                fHero == o.fHero;
     }
 
+    std::string name() const;
+
     eGodType fGod = eGodType::zeus;
     eGodQuestId fId = eGodQuestId::godQuest1;
     eHeroType fHero = eGodQuest::sDefaultHero(fGod, fId);

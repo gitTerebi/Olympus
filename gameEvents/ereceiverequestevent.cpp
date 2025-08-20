@@ -33,19 +33,6 @@ eReceiveRequestEvent::~eReceiveRequestEvent() {
     if(board) board->removeCityRequest(this);
 }
 
-void eReceiveRequestEvent::initialize(
-        const int postpone,
-        const eResourceType res,
-        const int count,
-        const stdsptr<eWorldCity> &c,
-        const bool finish) {
-    mPostpone = postpone;
-    mResource = res;
-    mCount = count;
-    mCity = c;
-    mFinish = finish;
-}
-
 const int gPostponeDays = 6*31;
 
 void eReceiveRequestEvent::trigger() {
@@ -363,7 +350,7 @@ void eReceiveRequestEvent::trigger() {
         ed.fA1 = [this, board]() { // postpone
             const auto e = e::make_shared<eReceiveRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
-            e->initialize(mPostpone + 1, mResource, mCount, mCity);
+            e->set(*this, mPostpone + 1);
             const auto date = board->date() + gPostponeDays;
             e->initializeDate(date);
             addConsequence(e);
@@ -374,7 +361,7 @@ void eReceiveRequestEvent::trigger() {
         board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
         const auto e = e::make_shared<eReceiveRequestEvent>(
                            cityId(), eGameEventBranch::child, *board);
-        e->initialize(5, mResource, mCount, mCity);
+        e->set(*this, 5);
         const auto date = board->date() + 31;
         e->initializeDate(date);
         addConsequence(e);
@@ -607,21 +594,8 @@ void eReceiveRequestEvent::trigger() {
 
 std::string eReceiveRequestEvent::longName() const {
     auto tmpl = eLanguage::text("receive_request_long_name");
-    std::string resName;
-    if(mResources[0] != eResourceType::none) {
-        resName += eResourceTypeHelpers::typeName(mResources[0]);
-    }
-    if(mResources[1] != eResourceType::none) {
-        if(!resName.empty()) resName += "/";
-        resName += eResourceTypeHelpers::typeName(mResources[1]);
-    }
-    if(mResources[2] != eResourceType::none) {
-        if(!resName.empty()) resName += "/";
-        resName += eResourceTypeHelpers::typeName(mResources[2]);
-    }
-    const auto cStr = std::to_string(mMinCount) + "-" +
-                      std::to_string(mMaxCount);
-    eStringHelpers::replace(tmpl, "%1", cStr + " " + resName);
+    eCountEvent::longNameReplaceCount("%1", tmpl);
+    eResourceEvent::longNameReplaceResource("%2", tmpl);
     return tmpl;
 }
 
@@ -630,6 +604,7 @@ void eReceiveRequestEvent::write(eWriteStream& dst) const {
     eResourceEvent::write(dst);
     eCountEvent::write(dst);
     eCityEvent::write(dst);
+    eGodEventValue::write(dst);
     dst << mRequestType;
     dst << mFinish;
     dst << mPostpone;
@@ -640,6 +615,7 @@ void eReceiveRequestEvent::read(eReadStream& src) {
     eResourceEvent::read(src);
     eCountEvent::read(src);
     eCityEvent::read(src, *gameBoard());
+    eGodEventValue::read(src);
     src >> mRequestType;
     src >> mFinish;
     src >> mPostpone;
@@ -672,11 +648,36 @@ void eReceiveRequestEvent::fulfillWithoutCost() {
         date += gPostponeDays;
         postpone++;
     }
-    e->initialize(postpone, mResource, mCount, mCity, true);
+    e->set(*this, postpone, true);
     const auto edate = currentDate + 3*31;
     e->initializeDate(edate);
     clearConsequences();
     addConsequence(e);
+}
+
+void eReceiveRequestEvent::initialize(
+        const int postpone,
+        const eResourceType res,
+        const int count,
+        const stdsptr<eWorldCity> &c,
+        const bool finish) {
+    mPostpone = postpone;
+    mResource = res;
+    mCount = count;
+    mCity = c;
+    mFinish = finish;
+}
+
+void eReceiveRequestEvent::set(eReceiveRequestEvent &src,
+                               const int postpone,
+                               const bool finish) {
+    mResource = src.mResource;
+    mCount = src.mCount;
+    mCity = src.mCity;
+    mGod = src.mGod;
+
+    mPostpone = postpone;
+    mFinish = finish;
 }
 
 void eReceiveRequestEvent::finished(eEventTrigger& t, const eReason& r) {

@@ -61,6 +61,8 @@ eResourceType ePakHelpers::pakResourceByteToType(const uint8_t byte, const bool 
         return eResourceType::wine;
     } else if(newVersion && byte == 23) {
         return eResourceType::drachmas;
+    } else if(newVersion && byte == 25) {
+        return eResourceType::food;
     }
 
     printf("Invalid resource byte %i\n", byte);

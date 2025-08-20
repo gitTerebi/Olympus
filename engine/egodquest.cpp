@@ -1,5 +1,7 @@
 #include "egodquest.h"
 
+#include "elanguage.h"
+
 eHeroType eGodQuest::sDefaultHero(
         const eGodType gt, const eGodQuestId gqi) {
     switch(gt) {
@@ -116,4 +118,122 @@ eHeroType eGodQuest::sDefaultHero(
         }
     } break;
     }
+}
+
+std::string eGodQuest::name() const {
+    switch(fGod) {
+    case eGodType::aphrodite: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 6);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 20);
+        }
+    } break;
+    case eGodType::apollo: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 3);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 17);
+        }
+    } break;
+    case eGodType::ares: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 5);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 19);
+        }
+    } break;
+    case eGodType::artemis: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 4);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 18);
+        }
+    } break;
+    case eGodType::athena: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 8);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 22);
+        }
+    } break;
+    case eGodType::atlas: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 13);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 27);
+        }
+    } break;
+    case eGodType::demeter: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 2);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 16);
+        }
+    } break;
+    case eGodType::dionysus: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 10);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 24);
+        }
+    } break;
+    case eGodType::hades: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 11);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 25);
+        }
+    } break;
+    case eGodType::hephaestus: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 9);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 23);
+        }
+    } break;
+    case eGodType::hera: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 12);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 26);
+        }
+    } break;
+    case eGodType::hermes: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 7);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 21);
+        }
+    } break;
+    case eGodType::poseidon: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 1);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 15);
+        }
+    } break;
+    case eGodType::zeus: {
+        switch(fId) {
+        case eGodQuestId::godQuest1:
+            return eLanguage::zeusText(52, 0);
+        case eGodQuestId::godQuest2:
+            return eLanguage::zeusText(52, 14);
+        }
+    } break;
+    }
+    return "";
 }

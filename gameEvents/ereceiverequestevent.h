@@ -5,8 +5,7 @@
 #include "ecountevent.h"
 #include "eresourceevent.h"
 #include "ecityevent.h"
-
-#include "characters/gods/egod.h"
+#include "egodeventvalue.h"
 
 struct eReason;
 struct eCityRequest;
@@ -23,18 +22,13 @@ enum class eReceiveRequestType {
 class eReceiveRequestEvent : public eGameEvent,
                              public eResourceEvent,
                              public eCountEvent,
-                             public eCityEvent {
+                             public eCityEvent,
+                             public eGodEventValue {
 public:
     eReceiveRequestEvent(const eCityId cid,
                          const eGameEventBranch branch,
                          eGameBoard& board);
     ~eReceiveRequestEvent();
-
-    void initialize(const int postpone,
-                    const eResourceType res,
-                    const int count,
-                    const stdsptr<eWorldCity>& c,
-                    const bool finish = false);
 
     void trigger() override;
     std::string longName() const override;
@@ -51,17 +45,22 @@ public:
     eReceiveRequestType requestType() const
     { return mRequestType; }
 
-    void setGod(const eGodType god) { mGod = god; }
-    eGodType god() const { return mGod; }
+    void initialize(const int postpone,
+                    const eResourceType res,
+                    const int count,
+                    const stdsptr<eWorldCity> &c,
+                    const bool finish);
 private:
+    void set(eReceiveRequestEvent& src,
+             const int postpone,
+             const bool finish = false);
+
     void finished(eEventTrigger& t, const eReason& r);
 
     eReceiveRequestType mRequestType = eReceiveRequestType::general;
 
     bool mFinish = false;
     int mPostpone = 0;
-
-    eGodType mGod = eGodType::zeus;
 
     stdsptr<eEventTrigger> mEarlyTrigger;
     stdsptr<eEventTrigger> mComplyTrigger;

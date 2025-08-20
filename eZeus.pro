@@ -435,6 +435,7 @@ SOURCES += \
         fileIO/ewritestream.cpp \
         gameEvents/earmyeventbase.cpp \
         gameEvents/earmyreturnevent.cpp \
+        gameEvents/eattackingcityeventvalue.cpp \
         gameEvents/ecitybecomesevent.cpp \
         gameEvents/ecityevent.cpp \
         gameEvents/ecountevent.cpp \
@@ -459,6 +460,7 @@ SOURCES += \
         gameEvents/einvasionwarningevent.cpp \
         gameEvents/emakerequestevent.cpp \
         gameEvents/emilitarychangeevent.cpp \
+        gameEvents/emonstereventvalue.cpp \
         gameEvents/emonsterincityevent.cpp \
         gameEvents/emonsterinvasionevent.cpp \
         gameEvents/emonsterinvasioneventbase.cpp \
@@ -675,18 +677,15 @@ SOURCES += \
         widgets/etopbarwidget.cpp \
         widgets/etradeeditwidget.cpp \
         widgets/etriggerselectionwidget.cpp \
+        widgets/etypebutton.cpp \
         widgets/eupbutton.cpp \
         widgets/evaluebutton.cpp \
-        widgets/eventwidgets/ecitybecomeseventwidget.cpp \
         widgets/eventwidgets/eeventwidgetbase.cpp \
         widgets/eventwidgets/egodattackeventwidget.cpp \
         widgets/eventwidgets/egoddisastereventwidget.cpp \
         widgets/eventwidgets/egodquesteventwidget.cpp \
         widgets/eventwidgets/einvasioneventwidget.cpp \
         widgets/eventwidgets/emonsterattackeventwidget.cpp \
-        widgets/eventwidgets/ereceiverequesteventwidget.cpp \
-        widgets/eventwidgets/erivalarmyawayeventwidget.cpp \
-        widgets/eventwidgets/etroopsrequesteventwidget.cpp \
         widgets/eviewmode.cpp \
         widgets/ewatertradewidget.cpp \
         widgets/ewidget.cpp \
@@ -1020,6 +1019,7 @@ HEADERS += \
     characters/monsters/ebasicmonster.h \
     characters/monsters/ecalydonianboar.h \
     characters/monsters/emonster.h \
+    characters/monsters/emonstertype.h \
     characters/monsters/ewatermonster.h \
     ebinaryimageloader.h \
     ebuildablehelpers.h \
@@ -1116,6 +1116,7 @@ HEADERS += \
     fileIO/ewritestream.h \
     gameEvents/earmyeventbase.h \
     gameEvents/earmyreturnevent.h \
+    gameEvents/eattackingcityeventvalue.h \
     gameEvents/ecitybecomesevent.h \
     gameEvents/ecityevent.h \
     gameEvents/ecountevent.h \
@@ -1140,6 +1141,7 @@ HEADERS += \
     gameEvents/einvasionwarningevent.h \
     gameEvents/emakerequestevent.h \
     gameEvents/emilitarychangeevent.h \
+    gameEvents/emonstereventvalue.h \
     gameEvents/emonsterincityevent.h \
     gameEvents/emonsterinvasionevent.h \
     gameEvents/emonsterinvasioneventbase.h \
@@ -2796,18 +2798,15 @@ HEADERS += \
     widgets/etopbarwidget.h \
     widgets/etradeeditwidget.h \
     widgets/etriggerselectionwidget.h \
+    widgets/etypebutton.h \
     widgets/eupbutton.h \
     widgets/evaluebutton.h \
-    widgets/eventwidgets/ecitybecomeseventwidget.h \
     widgets/eventwidgets/eeventwidgetbase.h \
     widgets/eventwidgets/egodattackeventwidget.h \
     widgets/eventwidgets/egoddisastereventwidget.h \
     widgets/eventwidgets/egodquesteventwidget.h \
     widgets/eventwidgets/einvasioneventwidget.h \
     widgets/eventwidgets/emonsterattackeventwidget.h \
-    widgets/eventwidgets/ereceiverequesteventwidget.h \
-    widgets/eventwidgets/erivalarmyawayeventwidget.h \
-    widgets/eventwidgets/etroopsrequesteventwidget.h \
     widgets/eviewmode.h \
     widgets/ewatertradewidget.h \
     widgets/ewidget.h \

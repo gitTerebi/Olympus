@@ -35,5 +35,5 @@ void eMonsterInCityEvent::trigger() {
 }
 
 std::string eMonsterInCityEvent::longName() const {
-    return eLanguage::text("monster_in_city_long_name");
+    return eLanguage::zeusText(182, 0);
 }
