@@ -321,6 +321,70 @@ void eMessages::load(eTroopsRequestedMessages& troops,
     }
 }
 
+void eMessages::load(eTroopsRequestedMonsterMessages &troops,
+                     const std::string &name) {
+    loadMessage(troops.fInitialAnnouncement,
+                name + "_terrorized_title",
+                name + "_terrorized_initial_announcement");
+    loadMessage(troops.fFirstReminder,
+                name + "_terrorized_title",
+                name + "_terrorized_first_reminder");
+    loadMessage(troops.fLastReminder,
+                name + "_terrorized_title",
+                name + "_terrorized_last_reminder");
+
+    loadReason(troops.fEarlyReason,
+               name + "_terrorized_early_reason");
+    loadReason(troops.fComplyReason,
+               name + "_terrorized_comply_reason");
+    loadReason(troops.fTooLateReason,
+               name + "_terrorized_too_late_reason");
+    loadReason(troops.fRefuseReason,
+               name + "_terrorized_refuse_reason");
+    loadReason(troops.fLostBattleReason,
+               name + "_terrorized_lost_battle_reason");
+
+    if(name == "colony") {
+        loadMessage(troops.fConquered,
+                    name + "_devastated_by_monster_title",
+                    name + "_devastated_by_monster_initial_announcement");
+    } else {
+        loadMessage(troops.fConquered,
+                    name + "_destroyed_by_monster_title",
+                    name + "_destroyed_by_monster_initial_announcement");
+    }
+}
+
+void eMessages::load(eTroopsRequestedAttackMessages &troops,
+                     const std::string &name,
+                     std::string letter) {
+    if(!letter.empty()) letter = "_" + letter;
+    loadMessage(troops.fInitialAnnouncement,
+                name + "_attacks_rival_title" + letter,
+                name + "_attacks_rival_initial_announcement" + letter);
+    loadMessage(troops.fFirstReminder,
+                name + "_attacks_rival_title" + letter,
+                name + "_attacks_rival_first_reminder" + letter);
+    loadMessage(troops.fLastReminder,
+                name + "_attacks_rival_title" + letter,
+                name + "_attacks_rival_last_reminder" + letter);
+
+    loadReason(troops.fEarlyReason,
+               name + "_attacks_rival_early_reason" + letter);
+    loadReason(troops.fComplyReason,
+               name + "_attacks_rival_comply_reason" + letter);
+    loadReason(troops.fTooLateReason,
+               name + "_attacks_rival_too_late_reason" + letter);
+    loadReason(troops.fRefuseReason,
+               name + "_attacks_rival_refuse_reason" + letter);
+    loadReason(troops.fLostBattleReason,
+               name + "_under_attack_lost_battle_reason" + letter);
+
+    loadMessage(troops.fConquered,
+                name + "_conquers_rival_title",
+                name + "_conquers_rival_initial_announcement");
+}
+
 bool eMessages::loadImpl() {
     if(mLoaded) return false;
     mLoaded = true;
@@ -810,6 +874,18 @@ bool eMessages::loadImpl() {
     load(fVassalTroopsRequest, "vassal", "P");
     load(fColonyTroopsRequest, "colony", "P");
     load(fParentCityTroopsRequest, "parentcity", "R");
+
+    load(fAllyTroopsMonsterRequest, "ally");
+    load(fVassalTroopsMonsterRequest, "vassal");
+    load(fColonyTroopsMonsterRequest, "colony");
+    load(fParentCityTroopsMonsterRequest, "parentcity");
+
+    loadMessage(fTroopsMonsterRequestAttackAverted,
+                "monster_scared_off_title",
+                "monster_scared_off_initial_announcement");
+
+    load(fAllyTroopsRequest, "ally", "");
+    load(fVassalTroopsRequest, "vassal", "P");
 
     loadMessage(fEarthqaukeNoReason,
                 "quake_title",

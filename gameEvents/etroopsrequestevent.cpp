@@ -128,38 +128,97 @@ void eTroopsRequestEvent::trigger() {
     if(mPostpone == 0) { // initial
         board->addCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
     }
-    if(mCity->isVassal()) {
-        if(mPostpone == 0) { // initial
-            board->event(eEvent::troopsRequestVassalInitial, ed);
-        } else if(mPostpone == 1) { // reminder
-            board->event(eEvent::troopsRequestVassalFirstReminder, ed);
-        } else if(mPostpone == 2) { // overdue
-            board->event(eEvent::troopsRequestVassalLastReminder, ed);
+    switch(mType) {
+    case eTroopsRequestEventType::cityUnderAttack: {
+        if(mCity->isVassal()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestVassalInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestVassalFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestVassalLastReminder, ed);
+            }
+        } else if(mCity->isColony()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestColonyInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestColonyFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestColonyLastReminder, ed);
+            }
+        } else if(mCity->isParentCity()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestParentCityInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestParentCityFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestParentCityLastReminder, ed);
+            }
+        } else { // ally
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestAllyInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestAllyFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestAllyLastReminder, ed);
+            }
         }
-    } else if(mCity->isColony()) {
-        if(mPostpone == 0) { // initial
-            board->event(eEvent::troopsRequestColonyInitial, ed);
-        } else if(mPostpone == 1) { // reminder
-            board->event(eEvent::troopsRequestColonyFirstReminder, ed);
-        } else if(mPostpone == 2) { // overdue
-            board->event(eEvent::troopsRequestColonyLastReminder, ed);
+    } break;
+    case eTroopsRequestEventType::cityAttacksRival: {
+        if(mCity->isVassal()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestAttackVassalInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestAttackVassalFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestAttackVassalLastReminder, ed);
+            }
+        } else { // ally
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsRequestAttackAllyInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsRequestAttackAllyFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsRequestAttackAllyLastReminder, ed);
+            }
         }
-    } else if(mCity->isParentCity()) {
-        if(mPostpone == 0) { // initial
-            board->event(eEvent::troopsRequestParentCityInitial, ed);
-        } else if(mPostpone == 1) { // reminder
-            board->event(eEvent::troopsRequestParentCityFirstReminder, ed);
-        } else if(mPostpone == 2) { // overdue
-            board->event(eEvent::troopsRequestParentCityLastReminder, ed);
+    } break;
+    case eTroopsRequestEventType::greekCityTerrorized: {
+        ed.fMonster = mMonster;
+        if(mCity->isVassal()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsMonsterRequestVassalInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsMonsterRequestVassalFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsMonsterRequestVassalLastReminder, ed);
+            }
+        } else if(mCity->isColony()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsMonsterRequestColonyInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsMonsterRequestColonyFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsMonsterRequestColonyLastReminder, ed);
+            }
+        } else if(mCity->isParentCity()) {
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsMonsterRequestParentCityInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsMonsterRequestParentCityFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsMonsterRequestParentCityLastReminder, ed);
+            }
+        } else { // ally
+            if(mPostpone == 0) { // initial
+                board->event(eEvent::troopsMonsterRequestAllyInitial, ed);
+            } else if(mPostpone == 1) { // reminder
+                board->event(eEvent::troopsMonsterRequestAllyFirstReminder, ed);
+            } else if(mPostpone == 2) { // overdue
+                board->event(eEvent::troopsMonsterRequestAllyLastReminder, ed);
+            }
         }
-    } else { // ally
-        if(mPostpone == 0) { // initial
-            board->event(eEvent::troopsRequestAllyInitial, ed);
-        } else if(mPostpone == 1) { // reminder
-            board->event(eEvent::troopsRequestAllyFirstReminder, ed);
-        } else if(mPostpone == 2) { // overdue
-            board->event(eEvent::troopsRequestAllyLastReminder, ed);
-        }
+    } break;
     }
 }
 
@@ -194,16 +253,58 @@ void eTroopsRequestEvent::won() {
 
     auto& msgs = eMessages::instance;
     eTroopsRequestedMessages* rrmsgs = nullptr;
-    if(mCity->isVassal()) {
-        rrmsgs = &msgs.fVassalTroopsRequest;
-    } else if(mCity->isColony()) {
-        rrmsgs = &msgs.fColonyTroopsRequest;
-    } else if(mCity->isParentCity()) {
-        rrmsgs = &msgs.fParentCityTroopsRequest;
-    } else { // ally
-        rrmsgs = &msgs.fAllyTroopsRequest;
+
+    switch(mType) {
+    case eTroopsRequestEventType::cityUnderAttack: {
+        if(mCity->isVassal()) {
+            rrmsgs = &msgs.fVassalTroopsRequest;
+        } else if(mCity->isColony()) {
+            rrmsgs = &msgs.fColonyTroopsRequest;
+        } else if(mCity->isParentCity()) {
+            rrmsgs = &msgs.fParentCityTroopsRequest;
+        } else { // ally
+            rrmsgs = &msgs.fAllyTroopsRequest;
+        }
+        board->event(eEvent::troopsRequestAttackAverted, ed);
+    } break;
+    case eTroopsRequestEventType::cityAttacksRival: {
+        eEvent event;
+        if(mCity->isVassal()) {
+            event = eEvent::vassalConqueresRival;
+            rrmsgs = &msgs.fVassalTroopsAttackRequest;
+        } else { // ally
+            event = eEvent::allyConqueresRival;
+            rrmsgs = &msgs.fAllyTroopsAttackRequest;
+        }
+        board->event(event, ed);
+
+        switch(mEffect) {
+        case eTroopsRequestEventEffect::unaffected: {
+        } break;
+        case eTroopsRequestEventEffect::destroyed: {
+            mAttackingCity->setVisible(false);
+        } break;
+        case eTroopsRequestEventEffect::conquered: {
+            mAttackingCity->setRelationship(eForeignCityRelationship::ally);
+            const auto pid = mAttackingCity->playerId();
+            board->setPlayerTeam(pid, eTeamId::team0);
+        } break;
+        }
+    } break;
+    case eTroopsRequestEventType::greekCityTerrorized: {
+        ed.fMonster = mMonster;
+        if(mCity->isVassal()) {
+            rrmsgs = &msgs.fVassalTroopsMonsterRequest;
+        } else if(mCity->isColony()) {
+            rrmsgs = &msgs.fColonyTroopsMonsterRequest;
+        } else if(mCity->isParentCity()) {
+            rrmsgs = &msgs.fParentCityTroopsMonsterRequest;
+        } else { // ally
+            rrmsgs = &msgs.fAllyTroopsMonsterRequest;
+        }
+        board->event(eEvent::troopsMonsterRequestAttackAverted, ed);
+    } break;
     }
-    board->event(eEvent::troopsRequestAttackAverted, ed);
     mCity->incAttitude(10, pid);
 
     const auto& reason = rrmsgs->fComplyReason;
@@ -223,24 +324,73 @@ void eTroopsRequestEvent::lost() {
     auto& msgs = eMessages::instance;
     eEvent event;
     eTroopsRequestedMessages* rrmsgs = nullptr;
-    if(mCity->isVassal()) {
-        event = eEvent::troopsRequestVassalConquered;
-        rrmsgs = &msgs.fVassalTroopsRequest;
-    } else if(mCity->isColony()) {
-        event = eEvent::troopsRequestColonyConquered;
-        rrmsgs = &msgs.fColonyTroopsRequest;
-    } else if(mCity->isParentCity()) {
-        event = eEvent::troopsRequestParentCityConquered;
-        rrmsgs = &msgs.fParentCityTroopsRequest;
-        board->setEpisodeLost();
-    } else { // ally
-        event = eEvent::troopsRequestAllyConquered;
-        rrmsgs = &msgs.fAllyTroopsRequest;
+    switch(mType) {
+    case eTroopsRequestEventType::cityUnderAttack: {
+        if(mCity->isVassal()) {
+            event = eEvent::troopsRequestVassalConquered;
+            rrmsgs = &msgs.fVassalTroopsRequest;
+        } else if(mCity->isColony()) {
+            event = eEvent::troopsRequestColonyConquered;
+            rrmsgs = &msgs.fColonyTroopsRequest;
+        } else if(mCity->isParentCity()) {
+            event = eEvent::troopsRequestParentCityConquered;
+            rrmsgs = &msgs.fParentCityTroopsRequest;
+            board->setEpisodeLost();
+        } else { // ally
+            event = eEvent::troopsRequestAllyConquered;
+            rrmsgs = &msgs.fAllyTroopsRequest;
+        }
+
+        switch(mEffect) {
+        case eTroopsRequestEventEffect::unaffected: {
+        } break;
+        case eTroopsRequestEventEffect::destroyed: {
+            mCity->setVisible(false);
+        } break;
+        case eTroopsRequestEventEffect::conquered: {
+            if(mCity->isColony()) {
+                mCity->setConqueredBy(mAttackingCity);
+            } else {
+                mCity->setRelationship(eForeignCityRelationship::rival);
+                const auto pid = mAttackingCity->playerId();
+                board->setPlayerTeam(pid, eTeamId::team1);
+            }
+        } break;
+        }
+    } break;
+    case eTroopsRequestEventType::cityAttacksRival: {
+        return;
+    } break;
+    case eTroopsRequestEventType::greekCityTerrorized: {
+        ed.fMonster = mMonster;
+        if(mCity->isVassal()) {
+            event = eEvent::troopsMonsterRequestVassalConquered;
+            rrmsgs = &msgs.fVassalTroopsMonsterRequest;
+        } else if(mCity->isColony()) {
+            event = eEvent::troopsMonsterRequestColonyConquered;
+            rrmsgs = &msgs.fColonyTroopsMonsterRequest;
+        } else if(mCity->isParentCity()) {
+            event = eEvent::troopsMonsterRequestParentCityConquered;
+            rrmsgs = &msgs.fParentCityTroopsMonsterRequest;
+            board->setEpisodeLost();
+        } else { // ally
+            event = eEvent::troopsMonsterRequestAllyConquered;
+            rrmsgs = &msgs.fAllyTroopsMonsterRequest;
+        }
+
+        switch(mEffect) {
+        case eTroopsRequestEventEffect::unaffected: {
+        } break;
+        case eTroopsRequestEventEffect::destroyed: {
+            mCity->setVisible(false);
+        } break;
+        case eTroopsRequestEventEffect::conquered: {
+        } break;
+        }
+    } break;
     }
     board->event(event, ed);
     mCity->incAttitude(-25, pid);
-    mCity->setRelationship(eForeignCityRelationship::rival);
-    mCity->setConqueredBy(mAttackingCity);
 
     const auto& reason = rrmsgs->fLostBattleReason;
     const auto me = mainEvent<eTroopsRequestEvent>();

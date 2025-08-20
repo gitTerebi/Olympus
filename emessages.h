@@ -95,6 +95,12 @@ struct eTroopsRequestedMessages {
     eMessageType fConquered;
 };
 
+struct eTroopsRequestedMonsterMessages : public eTroopsRequestedMessages {
+};
+
+struct eTroopsRequestedAttackMessages : public eTroopsRequestedMessages {
+};
+
 class eMessages {
 public:
     eMessages() {}
@@ -291,6 +297,16 @@ public:
 
     eMessageType fTroopsRequestAttackAverted;
 
+    eTroopsRequestedMonsterMessages fAllyTroopsMonsterRequest;
+    eTroopsRequestedMonsterMessages fVassalTroopsMonsterRequest;
+    eTroopsRequestedMonsterMessages fColonyTroopsMonsterRequest;
+    eTroopsRequestedMonsterMessages fParentCityTroopsMonsterRequest;
+
+    eMessageType fTroopsMonsterRequestAttackAverted;
+
+    eTroopsRequestedAttackMessages fAllyTroopsAttackRequest;
+    eTroopsRequestedAttackMessages fVassalTroopsAttackRequest;
+
     eMessageType fEarthqaukeNoReason;
     eMessageType fEarthqaukeGod;
     eMessageType fTidalWaveNoReason;
@@ -357,6 +373,11 @@ private:
     void load(eTroopsRequestedMessages& troops,
               const std::string& name,
               const std::string& letter);
+    void load(eTroopsRequestedMonsterMessages& troops,
+              const std::string& name);
+    void load(eTroopsRequestedAttackMessages& troops,
+              const std::string& name,
+              std::string letter);
 
     bool mLoaded = false;
 };

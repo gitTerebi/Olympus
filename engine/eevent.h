@@ -289,6 +289,38 @@ enum class eEvent {
 
     troopsRequestAttackAverted,
 
+    troopsMonsterRequestVassalInitial,
+    troopsMonsterRequestVassalFirstReminder,
+    troopsMonsterRequestVassalLastReminder,
+    troopsMonsterRequestVassalConquered,
+
+    troopsMonsterRequestColonyInitial,
+    troopsMonsterRequestColonyFirstReminder,
+    troopsMonsterRequestColonyLastReminder,
+    troopsMonsterRequestColonyConquered,
+
+    troopsMonsterRequestParentCityInitial,
+    troopsMonsterRequestParentCityFirstReminder,
+    troopsMonsterRequestParentCityLastReminder,
+    troopsMonsterRequestParentCityConquered,
+
+    troopsMonsterRequestAllyInitial,
+    troopsMonsterRequestAllyFirstReminder,
+    troopsMonsterRequestAllyLastReminder,
+    troopsMonsterRequestAllyConquered,
+
+    troopsMonsterRequestAttackAverted,
+
+    troopsRequestAttackAllyInitial,
+    troopsRequestAttackAllyFirstReminder,
+    troopsRequestAttackAllyLastReminder,
+    allyConqueresRival,
+
+    troopsRequestAttackVassalInitial,
+    troopsRequestAttackVassalFirstReminder,
+    troopsRequestAttackVassalLastReminder,
+    vassalConqueresRival,
+
     godDisaster,
     godDisasterEnds,
     godTradeResumes,

@@ -1329,6 +1329,113 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::troopsMonsterRequestVassalInitial: {
+        showMessage(ed, inst.fVassalTroopsMonsterRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestColonyInitial: {
+        showMessage(ed, inst.fColonyTroopsMonsterRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestParentCityInitial: {
+        showMessage(ed, inst.fParentCityTroopsMonsterRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestAllyInitial: {
+        showMessage(ed, inst.fAllyTroopsMonsterRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+
+    case eEvent::troopsMonsterRequestVassalFirstReminder: {
+        showMessage(ed, inst.fVassalTroopsMonsterRequest.fFirstReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestColonyFirstReminder: {
+        showMessage(ed, inst.fColonyTroopsMonsterRequest.fFirstReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestParentCityFirstReminder: {
+        showMessage(ed, inst.fParentCityTroopsMonsterRequest.fFirstReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestAllyFirstReminder: {
+        showMessage(ed, inst.fAllyTroopsMonsterRequest.fFirstReminder, true);
+        return;
+    } break;
+
+    case eEvent::troopsMonsterRequestVassalLastReminder: {
+        showMessage(ed, inst.fVassalTroopsMonsterRequest.fLastReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestColonyLastReminder: {
+        showMessage(ed, inst.fColonyTroopsMonsterRequest.fLastReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestParentCityLastReminder: {
+        showMessage(ed, inst.fParentCityTroopsMonsterRequest.fLastReminder, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestAllyLastReminder: {
+        showMessage(ed, inst.fAllyTroopsMonsterRequest.fLastReminder, true);
+        return;
+    } break;
+
+    case eEvent::troopsMonsterRequestVassalConquered: {
+        showMessage(ed, inst.fVassalTroopsMonsterRequest.fConquered, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestColonyConquered: {
+        showMessage(ed, inst.fColonyTroopsMonsterRequest.fConquered, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestParentCityConquered: {
+        showMessage(ed, inst.fParentCityTroopsMonsterRequest.fConquered, true);
+        return;
+    } break;
+    case eEvent::troopsMonsterRequestAllyConquered: {
+        showMessage(ed, inst.fAllyTroopsMonsterRequest.fConquered, true);
+        return;
+    } break;
+
+    case eEvent::troopsMonsterRequestAttackAverted: {
+        showMessage(ed, inst.fTroopsMonsterRequestAttackAverted, true);
+        return;
+    } break;
+
+    case eEvent::troopsRequestAttackAllyInitial: {
+        showMessage(ed, inst.fAllyTroopsAttackRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+    case eEvent::troopsRequestAttackAllyFirstReminder: {
+        showMessage(ed, inst.fAllyTroopsAttackRequest.fFirstReminder, true);
+        return;
+    } break;
+    case eEvent::troopsRequestAttackAllyLastReminder: {
+        showMessage(ed, inst.fAllyTroopsAttackRequest.fLastReminder, true);
+        return;
+    } break;
+    case eEvent::allyConqueresRival: {
+        showMessage(ed, inst.fAllyTroopsAttackRequest.fConquered, true);
+        return;
+    } break;
+
+    case eEvent::troopsRequestAttackVassalInitial: {
+        showMessage(ed, inst.fVassalTroopsAttackRequest.fInitialAnnouncement, true);
+        return;
+    } break;
+    case eEvent::troopsRequestAttackVassalFirstReminder: {
+        showMessage(ed, inst.fVassalTroopsAttackRequest.fFirstReminder, true);
+        return;
+    } break;
+    case eEvent::troopsRequestAttackVassalLastReminder: {
+        showMessage(ed, inst.fVassalTroopsAttackRequest.fLastReminder, true);
+        return;
+    } break;
+    case eEvent::vassalConqueresRival: {
+        showMessage(ed, inst.fVassalTroopsAttackRequest.fConquered, true);
+        return;
+    } break;
+
     case eEvent::godDisaster: {
         const auto msgs = inst.godMessages(ed.fGod);
         showMessage(ed, msgs->fDisaster);
