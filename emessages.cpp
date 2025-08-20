@@ -348,6 +348,10 @@ void eMessages::load(eTroopsRequestedMonsterMessages &troops,
         loadMessage(troops.fConquered,
                     name + "_devastated_by_monster_title",
                     name + "_devastated_by_monster_initial_announcement");
+    } else if(name == "parentcity") {
+        loadMessage(troops.fConquered,
+                    "parent_city_destroyed_by_monster_title",
+                    "parent_city_destroyed_by_monster_initial_announcement");
     } else {
         loadMessage(troops.fConquered,
                     name + "_destroyed_by_monster_title",
@@ -378,7 +382,7 @@ void eMessages::load(eTroopsRequestedAttackMessages &troops,
     loadReason(troops.fRefuseReason,
                name + "_attacks_rival_refuse_reason" + letter);
     loadReason(troops.fLostBattleReason,
-               name + "_under_attack_lost_battle_reason" + letter);
+               name + "_attacks_rival_lost_battle_reason" + letter);
 
     loadMessage(troops.fConquered,
                 name + "_conquers_rival_title",
@@ -884,8 +888,8 @@ bool eMessages::loadImpl() {
                 "monster_scared_off_title",
                 "monster_scared_off_initial_announcement");
 
-    load(fAllyTroopsRequest, "ally", "");
-    load(fVassalTroopsRequest, "vassal", "P");
+    load(fAllyTroopsAttackRequest, "ally", "");
+    load(fVassalTroopsAttackRequest, "vassal", "P");
 
     loadMessage(fEarthqaukeNoReason,
                 "quake_title",
