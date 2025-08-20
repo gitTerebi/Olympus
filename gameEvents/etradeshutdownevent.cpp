@@ -35,10 +35,10 @@ std::string eTradeShutDownEvent::longName() const {
 
 void eTradeShutDownEvent::write(eWriteStream &dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
 }
 
 void eTradeShutDownEvent::read(eReadStream &src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
 }

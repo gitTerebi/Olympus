@@ -2,10 +2,10 @@
 #define EWAGECHANGEEVENT_H
 
 #include "egameevent.h"
-#include "ecountevent.h"
+#include "ecounteventvalue.h"
 
 class eWageChangeEvent : public eGameEvent,
-                         public eCountEvent {
+                         public eCountEventValue {
 public:
     eWageChangeEvent(const eCityId cid,
                      const eGameEventBranch branch,

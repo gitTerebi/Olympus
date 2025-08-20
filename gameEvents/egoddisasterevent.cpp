@@ -44,7 +44,7 @@ std::string eGodDisasterEvent::longName() const {
 void eGodDisasterEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     eGodEventValue::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
     dst << mDuration;
     dst << mEnd;
 }
@@ -52,7 +52,7 @@ void eGodDisasterEvent::write(eWriteStream& dst) const {
 void eGodDisasterEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     eGodEventValue::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
     src >> mDuration;
     src >> mEnd;
 }

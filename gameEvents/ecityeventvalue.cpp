@@ -1,20 +1,20 @@
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "engine/eworldcity.h"
 
-void eCityEvent::write(eWriteStream& dst) const {
+void eCityEventValue::write(eWriteStream& dst) const {
     dst.writeCity(mCity.get());
 }
 
-void eCityEvent::read(eReadStream& src, eGameBoard& board) {
+void eCityEventValue::read(eReadStream& src, eGameBoard& board) {
     src.readCity(&board, [this](const stdsptr<eWorldCity>& c) {
         mCity = c;
     });
 }
 
-void eCityEvent::longNameReplaceCity(
+void eCityEventValue::longNameReplaceCity(
         const std::string& id, std::string& tmpl) const {
     const auto none = eLanguage::text("none");
     const auto city = this->city();

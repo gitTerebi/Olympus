@@ -2,16 +2,16 @@
 #define ERESOURCEGRANTEDEVENTBASE_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
-#include "eresourceevent.h"
-#include "ecountevent.h"
+#include "ecityeventvalue.h"
+#include "eresourceeventvalue.h"
+#include "ecounteventvalue.h"
 
 #include "engine/eevent.h"
 
 class eResourceGrantedEventBase : public eGameEvent,
-                                  public eCityEvent,
-                                  public eResourceEvent,
-                                  public eCountEvent {
+                                  public eCityEventValue,
+                                  public eResourceEventValue,
+                                  public eCountEventValue {
 public:
     eResourceGrantedEventBase(const eCityId cid,
                               const eEvent giftCashAccepted,

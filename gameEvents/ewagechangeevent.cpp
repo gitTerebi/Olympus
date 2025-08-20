@@ -14,12 +14,12 @@ eWageChangeEvent::eWageChangeEvent(
 
 void eWageChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCountEvent::write(dst);
+    eCountEventValue::write(dst);
 }
 
 void eWageChangeEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCountEvent::read(src);
+    eCountEventValue::read(src);
 }
 
 void eWageChangeEvent::trigger() {

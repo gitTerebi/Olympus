@@ -1,11 +1,11 @@
-#ifndef EPOINTEVENTBASE_H
-#define EPOINTEVENTBASE_H
+#ifndef EPOINTEVENTVALUE_H
+#define EPOINTEVENTVALUE_H
 
 #include "spawners/ebanner.h"
 
-class ePointEventBase {
+class ePointEventValue {
 public:
-    ePointEventBase(const eBannerTypeS btype,
+    ePointEventValue(const eBannerTypeS btype,
                     const eCityId cid,
                     eGameBoard& board);
 
@@ -31,4 +31,4 @@ private:
     int mMaxPointId = 1;
 };
 
-#endif // EPOINTEVENTBASE_H
+#endif // EPOINTEVENTVALUE_H

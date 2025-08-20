@@ -2,10 +2,10 @@
 #define ETRADEOPENUPEVENT_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 
 class eTradeOpenUpEvent : public eGameEvent,
-                          public eCityEvent {
+                          public eCityEventValue {
 public:
     eTradeOpenUpEvent(const eCityId cid,
                       const eGameEventBranch branch,

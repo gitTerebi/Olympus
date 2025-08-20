@@ -19,7 +19,7 @@
 
 #include "gameEvents/egoddisasterevent.h"
 #include "gameEvents/ecitybecomesevent.h"
-#include "gameEvents/ecityevent.h"
+#include "gameEvents/ecityeventvalue.h"
 #include "gameEvents/egodeventvalue.h"
 #include "gameEvents/egodreasoneventvalue.h"
 #include "gameEvents/eattackingcityeventvalue.h"
@@ -155,7 +155,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(effectButtonL);
     }
 
-    if(const auto ee = dynamic_cast<ePointEventBase*>(e.get())) {
+    if(const auto ee = dynamic_cast<ePointEventValue*>(e.get())) {
         const auto countL = new eLabeledWidget(window());
         const auto countW = new eWidget(window());
         const int p = countW->padding();
@@ -187,7 +187,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(countL);
     }
 
-    if(const auto ee = dynamic_cast<eCountEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<eCountEventValue*>(e.get())) {
         const auto countL = new eLabeledWidget(window());
         const auto countW = new eWidget(window());
         countW->setNoPadding();
@@ -218,7 +218,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(countL);
     }
 
-    if(const auto ee = dynamic_cast<eResourceEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<eResourceEventValue*>(e.get())) {
         const auto buttonsL = new eLabeledWidget(window());
         const auto widget = new eWidget(window());
         widget->setNoPadding();
@@ -237,7 +237,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(buttonsL);
     }
 
-    if(const auto ee = dynamic_cast<eCityEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<eCityEventValue*>(e.get())) {
         const auto cityButtonL = new eLabeledWidget(window());
         const auto cityButton = new eCityButton(window());
         const auto board = e->worldBoard();

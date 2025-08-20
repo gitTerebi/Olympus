@@ -2,7 +2,7 @@
 #define ECITYBECOMESEVENT_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 #include "eattackingcityeventvalue.h"
 
 enum class eCityBecomesType {
@@ -13,7 +13,7 @@ enum class eCityBecomesType {
 };
 
 class eCityBecomesEvent : public eGameEvent,
-                          public eCityEvent,
+                          public eCityEventValue,
                           public eAttackingCityEventValue {
 public:
     eCityBecomesEvent(const eCityId cid,

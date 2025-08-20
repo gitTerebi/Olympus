@@ -174,16 +174,16 @@ void eResourceGrantedEventBase::trigger() {
 
 void eResourceGrantedEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
-    eResourceEvent::write(dst);
-    eCountEvent::write(dst);
+    eCityEventValue::write(dst);
+    eResourceEventValue::write(dst);
+    eCountEventValue::write(dst);
     dst << mPostpone;
 }
 
 void eResourceGrantedEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
-    eResourceEvent::read(src);
-    eCountEvent::read(src);
+    eCityEventValue::read(src, *gameBoard());
+    eResourceEventValue::read(src);
+    eCountEventValue::read(src);
     src >> mPostpone;
 }

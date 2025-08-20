@@ -2,10 +2,10 @@
 #define ETRADESHUTDOWNEVENT_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 
 class eTradeShutDownEvent : public eGameEvent,
-                            public eCityEvent {
+                            public eCityEventValue {
 public:
     eTradeShutDownEvent(const eCityId cid,
                         const eGameEventBranch branch,

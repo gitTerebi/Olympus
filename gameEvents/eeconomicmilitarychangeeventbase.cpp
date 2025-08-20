@@ -2,12 +2,12 @@
 
 void eEconomicMilitaryChangeEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCountEvent::write(dst);
-    eCityEvent::write(dst);
+    eCountEventValue::write(dst);
+    eCityEventValue::write(dst);
 }
 
 void eEconomicMilitaryChangeEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCountEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCountEventValue::read(src);
+    eCityEventValue::read(src, *gameBoard());
 }

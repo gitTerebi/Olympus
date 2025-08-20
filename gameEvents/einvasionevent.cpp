@@ -19,7 +19,7 @@ eInvasionEvent::eInvasionEvent(
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::invasion,
                branch, board),
-    ePointEventBase(eBannerTypeS::landInvasion,
+    ePointEventValue(eBannerTypeS::landInvasion,
                     cid, board) {}
 
 eInvasionEvent::~eInvasionEvent() {
@@ -215,9 +215,9 @@ std::string eInvasionEvent::longName() const {
 
 void eInvasionEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    ePointEventBase::write(dst);
-    eCityEvent::write(dst);
-    eCountEvent::write(dst);
+    ePointEventValue::write(dst);
+    eCityEventValue::write(dst);
+    eCountEventValue::write(dst);
 
     dst << mHardcoded;
 
@@ -230,10 +230,10 @@ void eInvasionEvent::write(eWriteStream& dst) const {
 
 void eInvasionEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    ePointEventBase::read(src);
+    ePointEventValue::read(src);
     const auto board = gameBoard();
-    eCityEvent::read(src, *board);
-    eCountEvent::read(src);
+    eCityEventValue::read(src, *board);
+    eCountEventValue::read(src);
 
     src >> mHardcoded;
 

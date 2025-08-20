@@ -2,12 +2,12 @@
 #define EPRICECHANGEEVENT_H
 
 #include "egameevent.h"
-#include "eresourceevent.h"
-#include "ecountevent.h"
+#include "eresourceeventvalue.h"
+#include "ecounteventvalue.h"
 
 class ePriceChangeEvent : public eGameEvent,
-                          public eResourceEvent,
-                          public eCountEvent {
+                          public eResourceEventValue,
+                          public eCountEventValue {
 public:
     ePriceChangeEvent(const eCityId cid,
                       const eGameEventBranch branch,

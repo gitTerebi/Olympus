@@ -1,9 +1,9 @@
-#ifndef ECOUNTEVENT_H
-#define ECOUNTEVENT_H
+#ifndef ECOUNTEVENTVALUE_H
+#define ECOUNTEVENTVALUE_H
 
-#include "eresourceevent.h"
+#include "eresourceeventvalue.h"
 
-class eCountEvent {
+class eCountEventValue {
 public:
     int count() const { return mCount; }
 
@@ -28,4 +28,4 @@ protected:
     int mCount = 16;
 };
 
-#endif // ECOUNTEVENT_H
+#endif // ECOUNTEVENTVALUE_H

@@ -11,7 +11,7 @@ eEarthquakeEvent::eEarthquakeEvent(
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::earthquake,
                branch, board),
-    ePointEventBase(eBannerTypeS::disasterPoint,
+    ePointEventValue(eBannerTypeS::disasterPoint,
                     cid, board) {}
 
 void eEarthquakeEvent::trigger() {
@@ -38,16 +38,16 @@ std::string eEarthquakeEvent::longName() const {
 
 void eEarthquakeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    ePointEventBase::write(dst);
-    eCountEvent::write(dst);
+    ePointEventValue::write(dst);
+    eCountEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
 }
 
 void eEarthquakeEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    ePointEventBase::read(src);
-    eCountEvent::read(src);
+    ePointEventValue::read(src);
+    eCountEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
 }

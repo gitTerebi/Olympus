@@ -11,7 +11,7 @@ eTidalWaveEvent::eTidalWaveEvent(
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::tidalWave,
                branch, board),
-    ePointEventBase(eBannerTypeS::disasterPoint,
+    ePointEventValue(eBannerTypeS::disasterPoint,
                     cid, board) {}
 
 void eTidalWaveEvent::trigger() {
@@ -37,7 +37,7 @@ std::string eTidalWaveEvent::longName() const {
 
 void eTidalWaveEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    ePointEventBase::write(dst);
+    ePointEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
     dst << mPermanent;
@@ -45,7 +45,7 @@ void eTidalWaveEvent::write(eWriteStream& dst) const {
 
 void eTidalWaveEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    ePointEventBase::read(src);
+    ePointEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
     src >> mPermanent;

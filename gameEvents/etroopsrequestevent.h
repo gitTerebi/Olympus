@@ -2,7 +2,7 @@
 #define ETROOPSREQUESTEVENT_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 #include "emonstereventvalue.h"
 #include "eattackingcityeventvalue.h"
 
@@ -21,7 +21,7 @@ enum class eTroopsRequestEventEffect {
 };
 
 class eTroopsRequestEvent : public eGameEvent,
-                            public eCityEvent,
+                            public eCityEventValue,
                             public eMonsterEventValue,
                             public eAttackingCityEventValue {
 public:

@@ -1,26 +1,26 @@
-#include "epointeventbase.h"
+#include "epointeventvalue.h"
 
 #include "engine/egameboard.h"
 
-ePointEventBase::ePointEventBase(
+ePointEventValue::ePointEventValue(
         const eBannerTypeS btype,
         const eCityId cid,
         eGameBoard& board) :
     mBType(btype), mCid(cid), mBoard(board) {}
 
-void ePointEventBase::write(eWriteStream &dst) const {
+void ePointEventValue::write(eWriteStream &dst) const {
     dst << mPointId;
     dst << mMinPointId;
     dst << mMaxPointId;
 }
 
-void ePointEventBase::read(eReadStream &src) {
+void ePointEventValue::read(eReadStream &src) {
     src >> mPointId;
     src >> mMinPointId;
     src >> mMaxPointId;
 }
 
-void ePointEventBase::choosePointId() {
+void ePointEventValue::choosePointId() {
     if(mMinPointId >= mMaxPointId) {
         mPointId = mMinPointId;
         return;

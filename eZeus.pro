@@ -437,8 +437,8 @@ SOURCES += \
         gameEvents/earmyreturnevent.cpp \
         gameEvents/eattackingcityeventvalue.cpp \
         gameEvents/ecitybecomesevent.cpp \
-        gameEvents/ecityevent.cpp \
-        gameEvents/ecountevent.cpp \
+        gameEvents/ecityeventvalue.cpp \
+        gameEvents/ecounteventvalue.cpp \
         gameEvents/edemandchangeevent.cpp \
         gameEvents/eearthquakeevent.cpp \
         gameEvents/eeconomicchangeevent.cpp \
@@ -469,13 +469,13 @@ SOURCES += \
         gameEvents/eplayerconquestevent.cpp \
         gameEvents/eplayerconquesteventbase.cpp \
         gameEvents/eplayerraidevent.cpp \
-        gameEvents/epointeventbase.cpp \
+        gameEvents/epointeventvalue.cpp \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
         gameEvents/ereceiverequestevent.cpp \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
-        gameEvents/eresourceevent.cpp \
+        gameEvents/eresourceeventvalue.cpp \
         gameEvents/eresourcegrantedeventbase.cpp \
         gameEvents/erivalarmyawayevent.cpp \
         gameEvents/esupplychangeevent.cpp \
@@ -1118,8 +1118,8 @@ HEADERS += \
     gameEvents/earmyreturnevent.h \
     gameEvents/eattackingcityeventvalue.h \
     gameEvents/ecitybecomesevent.h \
-    gameEvents/ecityevent.h \
-    gameEvents/ecountevent.h \
+    gameEvents/ecityeventvalue.h \
+    gameEvents/ecounteventvalue.h \
     gameEvents/edemandchangeevent.h \
     gameEvents/eearthquakeevent.h \
     gameEvents/eeconomicchangeevent.h \
@@ -1150,13 +1150,13 @@ HEADERS += \
     gameEvents/eplayerconquestevent.h \
     gameEvents/eplayerconquesteventbase.h \
     gameEvents/eplayerraidevent.h \
-    gameEvents/epointeventbase.h \
+    gameEvents/epointeventvalue.h \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
     gameEvents/ereceiverequestevent.h \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \
-    gameEvents/eresourceevent.h \
+    gameEvents/eresourceeventvalue.h \
     gameEvents/eresourcegrantedeventbase.h \
     gameEvents/erivalarmyawayevent.h \
     gameEvents/esupplychangeevent.h \

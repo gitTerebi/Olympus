@@ -462,7 +462,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const auto invCityCid = static_cast<eCityId>(invCityId);
         const auto invCity = world.cityWithId(invCityCid);
 
-        const auto setResources = [&](eResourceEvent& ee) {
+        const auto setResources = [&](eResourceEventValue& ee) {
             if(value1 == 0xFFFF) {
                 ee.setResourceType(0, eResourceType::none);
             } else {

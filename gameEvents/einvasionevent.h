@@ -2,9 +2,9 @@
 #define EINVASIONEVENT_H
 
 #include "egameevent.h"
-#include "epointeventbase.h"
-#include "ecityevent.h"
-#include "ecountevent.h"
+#include "epointeventvalue.h"
+#include "ecityeventvalue.h"
+#include "ecounteventvalue.h"
 
 #include "engine/eworldcity.h"
 #include "characters/eenlistedforces.h"
@@ -13,9 +13,9 @@ class eInvasionHandler;
 class ePlayerConquestEvent;
 
 class eInvasionEvent : public eGameEvent,
-                       public ePointEventBase,
-                       public eCityEvent,
-                       public eCountEvent {
+                       public ePointEventValue,
+                       public eCityEventValue,
+                       public eCountEventValue {
 public:
     eInvasionEvent(const eCityId cid,
                    const eGameEventBranch branch,

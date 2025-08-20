@@ -28,10 +28,10 @@ std::string eRivalArmyAwayEvent::longName() const {
 
 void eRivalArmyAwayEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
 }
 
 void eRivalArmyAwayEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
 }

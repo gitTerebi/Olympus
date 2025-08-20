@@ -2,10 +2,10 @@
 #define ERIVALARMYAWAYEVENT_H
 
 #include "egameevent.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 
 class eRivalArmyAwayEvent : public eGameEvent,
-                            public eCityEvent {
+                            public eCityEventValue {
 public:
     eRivalArmyAwayEvent(const eCityId cid,
                         const eGameEventBranch branch,

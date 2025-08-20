@@ -133,14 +133,14 @@ std::string eCityBecomesEvent::longName() const {
 
 void eCityBecomesEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
     eAttackingCityEventValue::write(dst);
     dst << mType;
 }
 
 void eCityBecomesEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
     eAttackingCityEventValue::read(src, *gameBoard());
     src >> mType;
 }

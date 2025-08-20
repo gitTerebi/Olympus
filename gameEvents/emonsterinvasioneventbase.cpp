@@ -12,7 +12,7 @@ eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, type, branch, board),
-    ePointEventBase(eBannerTypeS::monsterPoint,
+    ePointEventValue(eBannerTypeS::monsterPoint,
                     cid, board) {}
 
 
@@ -29,14 +29,14 @@ void eMonsterInvasionEventBase::setType(const eMonsterType type) {
 
 void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    ePointEventBase::write(dst);
+    ePointEventValue::write(dst);
     dst << mType;
     dst << mAggressivness;
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    ePointEventBase::read(src);
+    ePointEventValue::read(src);
     src >> mType;
     src >> mAggressivness;
 }

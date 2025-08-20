@@ -2,12 +2,12 @@
 #define ETIDALWAVEEVENT_H
 
 #include "egameevent.h"
-#include "epointeventbase.h"
+#include "epointeventvalue.h"
 #include "egodeventvalue.h"
 #include "egodreasoneventvalue.h"
 
 class eTidalWaveEvent : public eGameEvent,
-                        public ePointEventBase,
+                        public ePointEventValue,
                         public eGodEventValue,
                         public eGodReasonEventValue {
 public:

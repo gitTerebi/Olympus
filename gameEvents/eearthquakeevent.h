@@ -2,14 +2,14 @@
 #define EEARTHQUAKEEVENT_H
 
 #include "egameevent.h"
-#include "epointeventbase.h"
-#include "ecountevent.h"
+#include "epointeventvalue.h"
+#include "ecounteventvalue.h"
 #include "egodeventvalue.h"
 #include "egodreasoneventvalue.h"
 
 class eEarthquakeEvent : public eGameEvent,
-                         public ePointEventBase,
-                         public eCountEvent,
+                         public ePointEventValue,
+                         public eCountEventValue,
                          public eGodEventValue,
                          public eGodReasonEventValue {
 public:

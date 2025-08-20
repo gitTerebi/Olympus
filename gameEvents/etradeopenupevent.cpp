@@ -35,10 +35,10 @@ std::string eTradeOpenUpEvent::longName() const {
 
 void eTradeOpenUpEvent::write(eWriteStream &dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
 }
 
 void eTradeOpenUpEvent::read(eReadStream &src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
 }

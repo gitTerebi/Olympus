@@ -1,4 +1,4 @@
-#include "eresourceevent.h"
+#include "eresourceeventvalue.h"
 
 #include "erand.h"
 #include "estringhelpers.h"
@@ -6,7 +6,7 @@
 #include "fileIO/ewritestream.h"
 #include "fileIO/ereadstream.h"
 
-void eResourceEvent::chooseType() {
+void eResourceEventValue::chooseType() {
     std::vector<eResourceType> types;
     for(const auto r : mResources) {
         if(r == eResourceType::none) continue;
@@ -17,7 +17,7 @@ void eResourceEvent::chooseType() {
     mResource = types[typeId];
 }
 
-void eResourceEvent::longNameReplaceResource(
+void eResourceEventValue::longNameReplaceResource(
         const std::string& id, std::string& tmpl) const {
     std::string resName;
     if(mResources[0] != eResourceType::none) {
@@ -34,7 +34,7 @@ void eResourceEvent::longNameReplaceResource(
     eStringHelpers::replace(tmpl, id, resName);
 }
 
-void eResourceEvent::write(eWriteStream& dst) const {
+void eResourceEventValue::write(eWriteStream& dst) const {
     dst << mResource;
 
     for(const auto r : mResources) {
@@ -42,7 +42,7 @@ void eResourceEvent::write(eWriteStream& dst) const {
     }
 }
 
-void eResourceEvent::read(eReadStream& src) {
+void eResourceEventValue::read(eReadStream& src) {
     src >> mResource;
 
     for(int i = 0; i < 3; i++) {

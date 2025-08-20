@@ -1,12 +1,12 @@
-#ifndef ERESOURCEEVENT_H
-#define ERESOURCEEVENT_H
+#ifndef ERESOURCEEVENTVALUE_H
+#define ERESOURCEEVENTVALUE_H
 
 #include "engine/eresourcetype.h"
 
 class eWriteStream;
 class eReadStream;
 
-class eResourceEvent {
+class eResourceEventValue {
 public:
     eResourceType resourceType() const { return mResource; }
 
@@ -33,4 +33,4 @@ protected:
     eResourceType mResource = eResourceType::fleece;
 };
 
-#endif // ERESOURCEEVENT_H
+#endif // ERESOURCEEVENTVALUE_H

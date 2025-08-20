@@ -51,13 +51,13 @@ void eTroopsRequestEvent::set(
 
 std::string eTroopsRequestEvent::longName() const {
     auto tmpl = eLanguage::text("troops_request_long_name");
-    eCityEvent::longNameReplaceCity("%1", tmpl);
+    eCityEventValue::longNameReplaceCity("%1", tmpl);
     return tmpl;
 }
 
 void eTroopsRequestEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEvent::write(dst);
+    eCityEventValue::write(dst);
     eMonsterEventValue::write(dst);
     eAttackingCityEventValue::write(dst);
     dst << mType;
@@ -68,7 +68,7 @@ void eTroopsRequestEvent::write(eWriteStream& dst) const {
 
 void eTroopsRequestEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eCityEventValue::read(src, *gameBoard());
     eMonsterEventValue::read(src);
     eAttackingCityEventValue::read(src, *gameBoard());
     src >> mType;

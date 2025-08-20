@@ -4,11 +4,11 @@
 #include "egameevent.h"
 
 #include "egodeventvalue.h"
-#include "ecityevent.h"
+#include "ecityeventvalue.h"
 
 class eGodDisasterEvent : public eGameEvent,
                           public eGodEventValue,
-                          public eCityEvent {
+                          public eCityEventValue {
 public:
     eGodDisasterEvent(const eCityId cid,
                       const eGameEventBranch branch,

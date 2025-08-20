@@ -32,12 +32,12 @@ std::string ePriceChangeEvent::longName() const {
 
 void ePriceChangeEvent::write(eWriteStream &dst) const {
     eGameEvent::write(dst);
-    eResourceEvent::write(dst);
-    eCountEvent::write(dst);
+    eResourceEventValue::write(dst);
+    eCountEventValue::write(dst);
 }
 
 void ePriceChangeEvent::read(eReadStream &src) {
     eGameEvent::read(src);
-    eResourceEvent::read(src);
-    eCountEvent::read(src);
+    eResourceEventValue::read(src);
+    eCountEventValue::read(src);
 }

@@ -594,16 +594,16 @@ void eReceiveRequestEvent::trigger() {
 
 std::string eReceiveRequestEvent::longName() const {
     auto tmpl = eLanguage::text("receive_request_long_name");
-    eCountEvent::longNameReplaceCount("%1", tmpl);
-    eResourceEvent::longNameReplaceResource("%2", tmpl);
+    eCountEventValue::longNameReplaceCount("%1", tmpl);
+    eResourceEventValue::longNameReplaceResource("%2", tmpl);
     return tmpl;
 }
 
 void eReceiveRequestEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eResourceEvent::write(dst);
-    eCountEvent::write(dst);
-    eCityEvent::write(dst);
+    eResourceEventValue::write(dst);
+    eCountEventValue::write(dst);
+    eCityEventValue::write(dst);
     eGodEventValue::write(dst);
     dst << mRequestType;
     dst << mFinish;
@@ -612,9 +612,9 @@ void eReceiveRequestEvent::write(eWriteStream& dst) const {
 
 void eReceiveRequestEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eResourceEvent::read(src);
-    eCountEvent::read(src);
-    eCityEvent::read(src, *gameBoard());
+    eResourceEventValue::read(src);
+    eCountEventValue::read(src);
+    eCityEventValue::read(src, *gameBoard());
     eGodEventValue::read(src);
     src >> mRequestType;
     src >> mFinish;

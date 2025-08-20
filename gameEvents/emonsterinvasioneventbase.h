@@ -2,12 +2,12 @@
 #define EMONSTERINVASIONEVENTBASE_H
 
 #include "egameevent.h"
-#include "epointeventbase.h"
+#include "epointeventvalue.h"
 
 #include "characters/monsters/emonster.h"
 
 class eMonsterInvasionEventBase : public eGameEvent,
-                                  public ePointEventBase {
+                                  public ePointEventValue {
 public:
     eMonsterInvasionEventBase(const eCityId cid,
                               const eGameEventType type,

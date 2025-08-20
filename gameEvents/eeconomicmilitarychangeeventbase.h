@@ -2,12 +2,12 @@
 #define EECONOMICMILITARYCHANGEEVENTBASE_H
 
 #include "egameevent.h"
-#include "ecountevent.h"
-#include "ecityevent.h"
+#include "ecounteventvalue.h"
+#include "ecityeventvalue.h"
 
 class eEconomicMilitaryChangeEventBase : public eGameEvent,
-                                         public eCountEvent,
-                                         public eCityEvent {
+                                         public eCountEventValue,
+                                         public eCityEventValue {
 public:
     using eGameEvent::eGameEvent;
 

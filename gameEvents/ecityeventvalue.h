@@ -1,9 +1,9 @@
-#ifndef ECITYEVENT_H
-#define ECITYEVENT_H
+#ifndef ECITYEVENTVALUE_H
+#define ECITYEVENTVALUE_H
 
 #include "engine/eworldcity.h"
 
-class eCityEvent {
+class eCityEventValue {
 public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eGameBoard& board);
@@ -17,4 +17,4 @@ protected:
     stdsptr<eWorldCity> mCity;
 };
 
-#endif // ECITYEVENT_H
+#endif // ECITYEVENTVALUE_H

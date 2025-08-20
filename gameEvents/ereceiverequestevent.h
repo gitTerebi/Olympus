@@ -2,9 +2,9 @@
 #define ERECEIVEREQUESTEVENT_H
 
 #include "egameevent.h"
-#include "ecountevent.h"
-#include "eresourceevent.h"
-#include "ecityevent.h"
+#include "ecounteventvalue.h"
+#include "eresourceeventvalue.h"
+#include "ecityeventvalue.h"
 #include "egodeventvalue.h"
 
 struct eReason;
@@ -20,9 +20,9 @@ enum class eReceiveRequestType {
 };
 
 class eReceiveRequestEvent : public eGameEvent,
-                             public eResourceEvent,
-                             public eCountEvent,
-                             public eCityEvent,
+                             public eResourceEventValue,
+                             public eCountEventValue,
+                             public eCityEventValue,
                              public eGodEventValue {
 public:
     eReceiveRequestEvent(const eCityId cid,

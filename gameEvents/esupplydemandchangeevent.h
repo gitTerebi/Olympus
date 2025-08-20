@@ -2,14 +2,14 @@
 #define ESUPPLYDEMANDCHANGEEVENT_H
 
 #include "egameevent.h"
-#include "eresourceevent.h"
-#include "ecountevent.h"
-#include "ecityevent.h"
+#include "eresourceeventvalue.h"
+#include "ecounteventvalue.h"
+#include "ecityeventvalue.h"
 
 class eSupplyDemandChangeEvent : public eGameEvent,
-                                 public eResourceEvent,
-                                 public eCountEvent,
-                                 public eCityEvent {
+                                 public eResourceEventValue,
+                                 public eCountEventValue,
+                                 public eCityEventValue {
 public:
     using eGameEvent::eGameEvent;
 
