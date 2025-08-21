@@ -127,7 +127,6 @@ eTile* nearestShoreTile(eTile* const tile) {
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    chooseCity();
     chooseCount();
     const int c = count();
     const auto cid = cityId();
@@ -278,6 +277,7 @@ void eInvasionEvent::setFirstWarning(const eDate& w) {
     const auto board = gameBoard();
     if(!board) return;
     choosePointId();
+    chooseCity();
     updateDisembarkAndShoreTile();
     board->addInvasion(this);
     mFirstWarning = w;

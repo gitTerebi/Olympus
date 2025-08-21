@@ -1,8 +1,6 @@
 #include "einvasionwarningevent.h"
 
 #include "elanguage.h"
-#include "estringhelpers.h"
-#include "engine/eworldcity.h"
 #include "engine/egameboard.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
@@ -27,12 +25,12 @@ void eInvasionWarningEvent::trigger() {
 
     const auto p = parent();
     if(const auto i = dynamic_cast<eInvasionEvent*>(p)) {
-        ed.fCity = i->city();
         const bool w = i->warned();
         if(!w) {
             const auto& date = board->date();
             i->setFirstWarning(date);
         }
+        ed.fCity = i->city();
     }
 
     switch(mType) {
