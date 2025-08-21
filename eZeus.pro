@@ -457,7 +457,7 @@ SOURCES += \
         gameEvents/egodtraderesumesevent.cpp \
         gameEvents/egodvisitevent.cpp \
         gameEvents/einvasionevent.cpp \
-        gameEvents/einvasionwarningevent.cpp \
+        gameEvents/einvasionwarning.cpp \
         gameEvents/emakerequestevent.cpp \
         gameEvents/emilitarychangeevent.cpp \
         gameEvents/emonstereventvalue.cpp \
@@ -487,6 +487,7 @@ SOURCES += \
         gameEvents/etroopsrequestevent.cpp \
         gameEvents/etroopsrequestfulfilledevent.cpp \
         gameEvents/ewagechangeevent.cpp \
+        gameEvents/ewarning.cpp \
         main.cpp \
         missiles/earrowmissile.cpp \
         missiles/earrowspearbase.cpp \
@@ -1138,7 +1139,7 @@ HEADERS += \
     gameEvents/egodtraderesumesevent.h \
     gameEvents/egodvisitevent.h \
     gameEvents/einvasionevent.h \
-    gameEvents/einvasionwarningevent.h \
+    gameEvents/einvasionwarning.h \
     gameEvents/emakerequestevent.h \
     gameEvents/emilitarychangeevent.h \
     gameEvents/emonstereventvalue.h \
@@ -1168,6 +1169,7 @@ HEADERS += \
     gameEvents/etroopsrequestevent.h \
     gameEvents/etroopsrequestfulfilledevent.h \
     gameEvents/ewagechangeevent.h \
+    gameEvents/ewarning.h \
     missiles/earrowmissile.h \
     missiles/earrowspearbase.h \
     missiles/egodmissile.h \

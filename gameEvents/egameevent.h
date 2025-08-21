@@ -6,8 +6,7 @@
 #include "engine/edate.h"
 #include "eeventtrigger.h"
 #include "engine/ecityid.h"
-
-#include <functional>
+#include "ewarning.h"
 
 class eWriteStream;
 class eReadStream;
@@ -18,9 +17,9 @@ enum class eGameEventType {
     godAttack,
     monsterUnleashed,
     monsterInvasion,
-    monsterInvasionWarning,
+    monsterInvasionWarning, // old, unused
     invasion,
-    invasionWarning,
+    invasionWarning, // old, unused
     payTribute,
     receiveRequest,
     makeRequest,
@@ -114,8 +113,7 @@ public:
     bool isChildEvent() const;
     eGameEventBranch branch() const { return mBranch; }
 
-    void addWarning(const int daysBefore,
-                    const stdsptr<eGameEvent>& event);
+    void addWarning(const stdsptr<eWarning> &w);
     void clearWarnings();
 
     void addConsequence(const stdsptr<eGameEvent>& event);
@@ -141,7 +139,6 @@ public:
     void setReason(const std::string& r);
     const std::string& reason() const { return mReason; }
 
-    const eDate& startDate() const { return mStartDate; }
     const eDate& nextDate() const { return mNextDate; }
 
     int datePlusDays() const { return mDatePlusDays; }
@@ -160,8 +157,7 @@ public:
     void handleNewDate(const eDate& date);
     virtual bool finished() const { return mRemNRuns <= 0; }
 
-    using eWarning = std::pair<int, stdsptr<eGameEvent>>;
-    const std::vector<eWarning>& warnings() const
+    const std::vector<stdsptr<eWarning>>& warnings() const
     { return mWarnings; }
 
     const std::vector<stdsptr<eEventTrigger>>& triggers() const
@@ -180,12 +176,12 @@ public:
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
 private:
+    void updateWarningDates();
+
     const eCityId mCid;
     const eGameEventType mType;
     const eGameEventBranch mBranch;
     eGameBoard& mBoard;
-
-    void setStartDate(const eDate& d);
 
     bool mEpisodeEvent = false;
     eWorldBoard* mWorldBoard = nullptr;
@@ -193,12 +189,11 @@ private:
     stdptr<eGameEvent> mParent;
 
     std::vector<stdsptr<eGameEvent>> mConsequences;
-    std::vector<eWarning> mWarnings;
+    std::vector<stdsptr<eWarning>> mWarnings;
     std::vector<stdsptr<eEventTrigger>> mTriggers;
 
     std::string mReason;
 
-    eDate mStartDate{1, eMonth::january, 1};
     int mDatePlusDays = 15;
     int mDatePlusMonths = 2;
     int mDatePlusYears = 3;
@@ -206,7 +201,7 @@ private:
     int mTotNRuns = 1;
 
     int mRemNRuns = 0;
-    eDate mNextDate = mStartDate;
+    eDate mNextDate{1, eMonth::january, 1};
 
     int mIOID = -1;
 };

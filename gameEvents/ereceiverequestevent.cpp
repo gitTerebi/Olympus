@@ -644,7 +644,7 @@ void eReceiveRequestEvent::fulfillWithoutCost() {
     board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
     const auto e = e::make_shared<eReceiveRequestEvent>(*this);
     int postpone = mPostpone - 1;
-    auto date = startDate();
+    auto date = nextDate();
     const auto currentDate = board->date();
     while(date <= currentDate) {
         date += gPostponeDays;

@@ -56,8 +56,6 @@ public:
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
     void defeated();
-
-    void updateWarnings();
 private:
     void soldiersByType(int& infantry,
                         int& cavalry,

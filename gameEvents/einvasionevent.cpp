@@ -5,7 +5,7 @@
 #include "engine/eeventdata.h"
 #include "einvasionhandler.h"
 #include "elanguage.h"
-#include "einvasionwarningevent.h"
+#include "einvasionwarning.h"
 #include "audio/emusic.h"
 #include "evectorhelpers.h"
 #include "eplayerconquestevent.h"
@@ -35,6 +35,8 @@ void eInvasionEvent::pointerCreated() {
         eInvasionWarningType::warning6,
         eInvasionWarningType::warning1
     };
+    const auto cid = cityId();
+    auto& board = *gameBoard();
     for(const auto w : warnTypes) {
         int months;
         switch(w) {
@@ -55,10 +57,9 @@ void eInvasionEvent::pointerCreated() {
             break;
         }
         const int daysBefore = 31*months;
-        const auto e = e::make_shared<eInvasionWarningEvent>(
-                           cityId(), eGameEventBranch::child, *gameBoard());
-        e->initialize(w);
-        addWarning(daysBefore, e);
+        const auto e = std::make_shared<eInvasionWarning>(
+            daysBefore, *this, cid, board, w);
+        addWarning(e);
     }
 }
 
@@ -349,17 +350,6 @@ void eInvasionEvent::updateDisembarkAndShoreTile() {
     const auto cid = cityId();
     mDisembarkTile = nearestDisembarkTile(tile, board, cid);
     mShoreTile = nearestShoreTile(mDisembarkTile);
-}
-
-void eInvasionEvent::updateWarnings() {
-    auto& board = *gameBoard();
-    const auto date = board.date();
-    const auto& ws = warnings();
-    for(const auto& w : ws) {
-        const auto we = w.second;
-        const auto wnd = we->nextDate();
-        if(date > wnd) we->setRepeat(0);
-    }
 }
 
 void eInvasionEvent::soldiersByType(int& infantry,

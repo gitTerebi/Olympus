@@ -8,7 +8,6 @@
 #include "emonsterinvasionevent.h"
 #include "emonsterincityevent.h"
 #include "einvasionevent.h"
-#include "einvasionwarningevent.h"
 #include "epaytributeevent.h"
 #include "emakerequestevent.h"
 #include "ereceiverequestevent.h"
@@ -89,14 +88,14 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return e::make_shared<eMonsterUnleashedEvent>(cid, branch, board);
     case eGameEventType::monsterInvasion:
         return e::make_shared<eMonsterInvasionEvent>(cid, branch, board);
+    case eGameEventType::monsterInvasionWarning:
+        return nullptr;
     case eGameEventType::monsterInCity:
         return e::make_shared<eMonsterInCityEvent>(cid, branch, board);
-    case eGameEventType::monsterInvasionWarning:
-        return e::make_shared<eMonsterInvasionWarningEvent>(cid, branch, board);
     case eGameEventType::invasion:
         return e::make_shared<eInvasionEvent>(cid, branch, board);
     case eGameEventType::invasionWarning:
-        return e::make_shared<eInvasionWarningEvent>(cid, branch, board);
+        return nullptr;
     case eGameEventType::payTribute:
         return e::make_shared<ePayTributeEvent>(cid, branch, board);
     case eGameEventType::makeRequest:
@@ -181,33 +180,26 @@ bool eGameEvent::isPersonPlayer() const {
 }
 
 void eGameEvent::setupStartDate(const eDate& currentDate) {
-    mStartDate = currentDate;
-    mStartDate.nextYears(mDatePlusYears);
-    mStartDate.nextMonths(mDatePlusMonths);
+    mNextDate = currentDate;
+    mNextDate.nextYears(mDatePlusYears);
+    mNextDate.nextMonths(mDatePlusMonths);
     bool nextMonth;
     bool nextYear;
-    mStartDate.nextDays(mDatePlusDays, nextMonth, nextYear);
-    for(const auto& w : mWarnings) {
-        w.second->setStartDate(mStartDate - w.first);
-    }
-    mNextDate = mStartDate;
+    mNextDate.nextDays(mDatePlusDays, nextMonth, nextYear);
+    updateWarningDates();
 }
 
 void eGameEvent::initializeDate(const eDate& startDate,
                                 const int period,
                                 const int nRuns) {
-    setStartDate(startDate);
+    mNextDate = startDate;
+    updateWarningDates();
     setPeriod(period);
     setRepeat(nRuns);
 }
 
-void eGameEvent::addWarning(const int daysBefore,
-                            const stdsptr<eGameEvent>& event) {
-    const auto startDate = mStartDate - daysBefore;
-    event->initializeDate(startDate, period(), repeat());
-    event->setReason(reason());
-    event->mParent = this;
-    mWarnings.emplace_back(daysBefore, event);
+void eGameEvent::addWarning(const stdsptr<eWarning>& w) {
+    mWarnings.emplace_back(w);
 }
 
 void eGameEvent::clearWarnings() {
@@ -260,37 +252,20 @@ std::string eGameEvent::longDatedName() const {
 
 void eGameEvent::setReason(const std::string& r) {
     mReason = r;
-    for(const auto& w : mWarnings) {
-        w.second->setReason(r);
-    }
-}
-
-void eGameEvent::setStartDate(const eDate& d) {
-    mStartDate = d;
-    for(const auto& w : mWarnings) {
-        w.second->setStartDate(d - w.first);
-    }
-    mNextDate = mStartDate;
 }
 
 void eGameEvent::setPeriod(const int p) {
     mPeriodDays = p;
-    for(const auto& w : mWarnings) {
-        w.second->setPeriod(p);
-    }
 }
 
 void eGameEvent::setRepeat(const int r) {
     mTotNRuns = r;
-    for(const auto& w : mWarnings) {
-        w.second->setRepeat(r);
-    }
     mRemNRuns = mTotNRuns;
 }
 
 void eGameEvent::handleNewDate(const eDate& date) {
     for(const auto& w : mWarnings) {
-        w.second->handleNewDate(date);
+        w->handleNewDate(date);
     }
     for(const auto& c : mConsequences) {
         c->handleNewDate(date);
@@ -300,6 +275,7 @@ void eGameEvent::handleNewDate(const eDate& date) {
         trigger();
         mRemNRuns--;
         mNextDate += mPeriodDays;
+        updateWarningDates();
     }
 }
 
@@ -333,21 +309,30 @@ void eGameEvent::addTrigger(const stdsptr<eEventTrigger>& et) {
     mTriggers.push_back(et);
 }
 
+void eGameEvent::updateWarningDates() {
+    const auto& board = *gameBoard();
+    const auto currentDate = board.date();
+    for(const auto& w : mWarnings) {
+        const int days = w->warningDays();
+        const auto wdate = mNextDate - days;
+        w->setNextDate(wdate);
+        if(wdate < currentDate) w->setFinished(true);
+    }
+}
+
 void eGameEvent::write(eWriteStream& dst) const {
     dst << mIOID;
     dst << mDatePlusDays;
     dst << mDatePlusMonths;
     dst << mDatePlusYears;
     mNextDate.write(dst);
-    mStartDate.write(dst);
     dst << mPeriodDays;
     dst << mTotNRuns;
     dst << mRemNRuns;
     dst << mReason;
 
     for(const auto& w : mWarnings) {
-        const auto& event = w.second;
-        event->write(dst);
+        w->write(dst);
     }
 
     dst << mConsequences.size();
@@ -370,15 +355,13 @@ void eGameEvent::read(eReadStream& src) {
     src >> mDatePlusMonths;
     src >> mDatePlusYears;
     mNextDate.read(src);
-    mStartDate.read(src);
     src >> mPeriodDays;
     src >> mTotNRuns;
     src >> mRemNRuns;
     src >> mReason;
 
     for(const auto& w : mWarnings) {
-        const auto& event = w.second;
-        event->read(src);
+        w->read(src);
     }
 
     int ncs;

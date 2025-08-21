@@ -6,60 +6,42 @@
 #include "engine/eevent.h"
 #include "emessages.h"
 
-eMonsterInvasionWarningEvent::eMonsterInvasionWarningEvent(
-        const eCityId cid,
-        const eGameEventBranch branch,
-        eGameBoard& board) :
-    eGameEvent(cid, eGameEventType::monsterInvasionWarning, branch, board) {}
+eMonsterInvasionWarning::eMonsterInvasionWarning(const int warningDays,
+                                                           eGameEvent &parent,
+                                                           const eCityId cid,
+                                                           eGameBoard &board,
+                                                           const eMonsterInvasionWarningType type) :
+    eWarning(warningDays, parent, cid, board),
+    mType(type) {}
 
-void eMonsterInvasionWarningEvent::initialize(
-        const eMonsterInvasionWarningType type) {
-    mType = type;
-}
-
-void eMonsterInvasionWarningEvent::trigger() {
-    const auto board = gameBoard();
-    if(!board) return;
+void eMonsterInvasionWarning::trigger() {
+    auto& board = eWarning::board();
     const auto cid = cityId();
     eEventData ed(cid);
 
-    const auto p = parent();
-    if(const auto i = dynamic_cast<eMonsterInvasionEventBase*>(p)) {
+    auto& p = parent();
+    if(const auto i = dynamic_cast<eMonsterInvasionEventBase*>(&p)) {
         i->setWarned(true);
         ed.fMonster = i->monsterType();
     }
 
     switch(mType) {
     case eMonsterInvasionWarningType::warning36: {
-        board->event(eEvent::monsterInvasion36, ed);
+        board.event(eEvent::monsterInvasion36, ed);
     } break;
     case eMonsterInvasionWarningType::warning24: {
-        board->event(eEvent::monsterInvasion24, ed);
+        board.event(eEvent::monsterInvasion24, ed);
     } break;
     case eMonsterInvasionWarningType::warning12: {
-        board->event(eEvent::monsterInvasion12, ed);
+        board.event(eEvent::monsterInvasion12, ed);
     } break;
     case eMonsterInvasionWarningType::warning6: {
-        board->event(eEvent::monsterInvasion6, ed);
+        board.event(eEvent::monsterInvasion6, ed);
     } break;
     case eMonsterInvasionWarningType::warning1: {
-        board->event(eEvent::monsterInvasion1, ed);
+        board.event(eEvent::monsterInvasion1, ed);
     } break;
     }
-}
-
-std::string eMonsterInvasionWarningEvent::longName() const {
-    return eLanguage::zeusText(182, 2);
-}
-
-void eMonsterInvasionWarningEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    dst << mType;
-}
-
-void eMonsterInvasionWarningEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    src >> mType;
 }
 
 eMonsterInvasionEvent::eMonsterInvasionEvent(
@@ -78,6 +60,7 @@ void eMonsterInvasionEvent::pointerCreated() {
         eMonsterInvasionWarningType::warning1
     };
     const auto cid = cityId();
+    auto& board = *gameBoard();
     for(const auto w : warnTypes) {
         int months;
         switch(w) {
@@ -98,10 +81,9 @@ void eMonsterInvasionEvent::pointerCreated() {
             break;
         }
         const int daysBefore = 31*months;
-        const auto e = e::make_shared<eMonsterInvasionWarningEvent>(
-                           cid, eGameEventBranch::child, *gameBoard());
-        e->initialize(w);
-        addWarning(daysBefore, e);
+        const auto e = std::make_shared<eMonsterInvasionWarning>(
+            daysBefore, *this, cid, board, w);
+        addWarning(e);
     }
 }
 

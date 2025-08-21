@@ -13,21 +13,17 @@ enum class eMonsterInvasionWarningType {
 
 class eMonsterInvasionEvent;
 
-class eMonsterInvasionWarningEvent : public eGameEvent {
+class eMonsterInvasionWarning : public eWarning {
 public:
-    eMonsterInvasionWarningEvent(const eCityId cid,
-                                 const eGameEventBranch branch,
-                                 eGameBoard& board);
-
-    void initialize(const eMonsterInvasionWarningType type);
+    eMonsterInvasionWarning(const int warningDays,
+                            eGameEvent& parent,
+                            const eCityId cid,
+                            eGameBoard& board,
+                            const eMonsterInvasionWarningType type);
 
     void trigger() override;
-    std::string longName() const override;
-
-    void write(eWriteStream& dst) const override ;
-    void read(eReadStream& src) override;
 private:
-    eMonsterInvasionWarningType mType;
+    const eMonsterInvasionWarningType mType;
 };
 
 class eMonsterInvasionEvent : public eMonsterInvasionEventBase {

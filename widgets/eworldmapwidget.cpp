@@ -301,7 +301,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         const auto date = mGameBoard->date();
         const auto& cs = mGameBoard->armyEvents();
         for(const auto c : cs) {
-            const auto cDate = c->startDate();
+            const auto cDate = c->nextDate();
             const int days = cDate - date;
             const int totDays = eNumbers::sArmyTravelTime;
             const double frac = std::clamp(1. - (1.*days)/totDays, 0., 1.);
@@ -372,7 +372,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         const auto& is = mGameBoard->invasions();
         for(const auto i : is) {
             if(!i->warned()) continue;
-            const auto sDate = i->startDate();
+            const auto sDate = i->nextDate();
             const auto wDate = i->firstWarning();
             const int days = sDate - date;
             const int totDays = sDate - wDate;
@@ -508,7 +508,7 @@ void eWorldMapWidget::updateWidgets() {
         const auto date = mGameBoard->date();
         const auto& cs = mGameBoard->armyEvents();
         for(const auto c : cs) {
-            const auto cDate = c->startDate();
+            const auto cDate = c->nextDate();
             const int days = cDate - date;
             const int totDays = eNumbers::sArmyTravelTime;
             const double frac = std::clamp(1. - (1.*days)/totDays, 0., 1.);
@@ -569,7 +569,7 @@ void eWorldMapWidget::updateWidgets() {
         const auto& is = mGameBoard->invasions();
         for(const auto i : is) {
             if(!i->warned()) continue;
-            const auto sDate = i->startDate();
+            const auto sDate = i->nextDate();
             const auto wDate = i->firstWarning();
             const int days = sDate - date;
             const int totDays = sDate - wDate;
