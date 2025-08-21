@@ -3,7 +3,7 @@
 
 #include "eframedbutton.h"
 
-#include "characters/monsters/emonster.h"
+#include "characters/monsters/emonstertype.h"
 
 class eGameBoard;
 

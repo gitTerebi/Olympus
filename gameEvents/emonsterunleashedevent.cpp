@@ -19,7 +19,7 @@ void eMonsterUnleashedEvent::trigger() {
     if(!board) return;
 
     bool validGod = false;
-    const auto godType = eMonster::sMonsterSender(type(), &validGod);
+    const auto godType = eMonster::sMonsterSender(mMonster, &validGod);
     if(!validGod) return;
 
     const auto monster = triggerBase();
@@ -28,13 +28,13 @@ void eMonsterUnleashedEvent::trigger() {
     ed.fChar = monster;
     ed.fTile = monster->tile();
     ed.fGod = godType;
-    ed.fMonster = type();
+    ed.fMonster = mMonster;
     board->event(eEvent::godMonsterUnleash, ed);
 
     const auto& inst = eMessages::instance;
     const auto gm = inst.godMessages(godType);
     const auto& m = gm->fMonster;
-    const auto heroType = eMonster::sSlayer(type());
+    const auto heroType = eMonster::sSlayer(mMonster);
     const auto cid = cityId();
     board->allowHero(cid, heroType, m.fReason);
 }

@@ -20,17 +20,17 @@ void eMonsterInCityEvent::trigger() {
 
     const auto monster = triggerBase();
 
-    eEventData ed(cityId());
+    const auto cid = cityId();
+    eEventData ed(cid);
     ed.fChar = monster;
     ed.fTile = monster->tile();
-    ed.fMonster = type();
+    ed.fMonster = mMonster;
     board->event(eEvent::monsterInCity, ed);
 
     const auto& inst = eMessages::instance;
-    const auto gm = inst.monsterMessages(type());
+    const auto gm = inst.monsterMessages(mMonster);
     const auto& m = gm->fInCityReason;
-    const auto heroType = eMonster::sSlayer(type());
-    const auto cid = cityId();
+    const auto heroType = eMonster::sSlayer(mMonster);
     board->allowHero(cid, heroType, m);
 }
 

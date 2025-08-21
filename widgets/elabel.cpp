@@ -11,6 +11,19 @@ eLabel::eLabel(const std::string& text,
     setText(text);
 }
 
+void eLabel::fitOptions(const std::vector<std::string> &options) {
+    int w = 0;
+    const auto tmp = text();
+    for(const auto& v : options) {
+        setText(v);
+        fitContent();
+        const int wv = width();
+        if(wv > w) w = wv;
+    }
+    setWidth(w);
+    setText(tmp);
+}
+
 void eLabel::renderTargetsReset() {
     eWidget::renderTargetsReset();
     updateTexture();

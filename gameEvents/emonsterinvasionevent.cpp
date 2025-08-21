@@ -13,21 +13,22 @@ eMonsterInvasionWarningEvent::eMonsterInvasionWarningEvent(
     eGameEvent(cid, eGameEventType::monsterInvasionWarning, branch, board) {}
 
 void eMonsterInvasionWarningEvent::initialize(
-        const eMonsterInvasionWarningType type,
-        const eMonsterType monster) {
+        const eMonsterInvasionWarningType type) {
     mType = type;
-    mMonster = monster;
-}
-
-void eMonsterInvasionWarningEvent::setMonster(const eMonsterType m) {
-    mMonster = m;
 }
 
 void eMonsterInvasionWarningEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(cityId());
-    ed.fMonster = mMonster;
+    const auto cid = cityId();
+    eEventData ed(cid);
+
+    const auto p = parent();
+    if(const auto i = dynamic_cast<eMonsterInvasionEventBase*>(p)) {
+        i->setWarned(true);
+        ed.fMonster = i->monsterType();
+    }
+
     switch(mType) {
     case eMonsterInvasionWarningType::warning36: {
         board->event(eEvent::monsterInvasion36, ed);
@@ -54,13 +55,11 @@ std::string eMonsterInvasionWarningEvent::longName() const {
 void eMonsterInvasionWarningEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     dst << mType;
-    dst << mMonster;
 }
 
 void eMonsterInvasionWarningEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     src >> mType;
-    src >> mMonster;
 }
 
 eMonsterInvasionEvent::eMonsterInvasionEvent(
@@ -78,6 +77,7 @@ void eMonsterInvasionEvent::pointerCreated() {
         eMonsterInvasionWarningType::warning6,
         eMonsterInvasionWarningType::warning1
     };
+    const auto cid = cityId();
     for(const auto w : warnTypes) {
         int months;
         switch(w) {
@@ -99,8 +99,8 @@ void eMonsterInvasionEvent::pointerCreated() {
         }
         const int daysBefore = 31*months;
         const auto e = e::make_shared<eMonsterInvasionWarningEvent>(
-                           cityId(), eGameEventBranch::child, *gameBoard());
-        e->initialize(w, type());
+                           cid, eGameEventBranch::child, *gameBoard());
+        e->initialize(w);
         addWarning(daysBefore, e);
     }
 }
@@ -111,17 +111,17 @@ void eMonsterInvasionEvent::trigger() {
 
     const auto monster = triggerBase();
 
-    eEventData ed(cityId());
+    const auto cid = cityId();
+    eEventData ed(cid);
     ed.fChar = monster;
     ed.fTile = monster->tile();
-    ed.fMonster = type();
+    ed.fMonster = mMonster;
     board->event(eEvent::monsterInvasion, ed);
 
     const auto& inst = eMessages::instance;
-    const auto gm = inst.monsterMessages(type());
+    const auto gm = inst.monsterMessages(mMonster);
     const auto& m = gm->fToSlainReason;
-    const auto heroType = eMonster::sSlayer(type());
-    const auto cid = cityId();
+    const auto heroType = eMonster::sSlayer(mMonster);
     board->allowHero(cid, heroType, m);
 }
 

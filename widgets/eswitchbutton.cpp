@@ -30,14 +30,5 @@ void eSwitchButton::setSwitchAction(const eSwitchAction& a) {
 }
 
 void eSwitchButton::fitValidContent() {
-    int w = 0;
-    const auto tmp = text();
-    for(const auto& v : mValues) {
-        setText(v);
-        fitContent();
-        const int wv = width();
-        if(wv > w) w = wv;
-    }
-    setWidth(w);
-    setText(tmp);
+    fitOptions(mValues);
 }

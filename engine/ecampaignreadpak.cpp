@@ -377,7 +377,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t value1 = file.readUShort();
         const uint16_t value2 = file.readUShort();
         const uint16_t value3 = file.readUShort();
-        const uint16_t value4 = file.readUShort();
+        file.skipBytes(2);
         const uint16_t value5 = file.readUShort();
         const uint16_t value6 = file.readUShort();
         const uint16_t value7 = file.readUShort();
@@ -563,7 +563,6 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 printf("No monster types to choose from\n");
                 continue;
             }
-            const int typeId = eRand::rand() % types.size();
             eMonsterAggressivness aggressivness{eMonsterAggressivness::passive};
             if(aggressivnessId > 3) {
                 printf("Invalid monster aggressivness id %i\n", aggressivnessId);
@@ -572,23 +571,22 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                     aggressivnessId);
             }
 
-            const auto type = types[typeId];
             if(subType == 0) { // monster in city
                 const auto ee = e::make_shared<eMonsterInCityEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setType(type);
+                ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 1) { // monster unleashed
                 const auto ee = e::make_shared<eMonsterUnleashedEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setType(type);
+                ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 2) { // monster invades
                 const auto ee = e::make_shared<eMonsterInvasionEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setType(type);
+                ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
             } else {

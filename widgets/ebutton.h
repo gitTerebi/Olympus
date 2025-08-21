@@ -3,7 +3,6 @@
 
 #include "ebuttonbase.h"
 
-#include "efonts.h"
 #include "etexturecollection.h"
 
 class eButton : public eButtonBase {

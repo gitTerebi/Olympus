@@ -19,10 +19,7 @@ public:
                                  const eGameEventBranch branch,
                                  eGameBoard& board);
 
-    void initialize(const eMonsterInvasionWarningType type,
-                    const eMonsterType monster);
-
-    void setMonster(const eMonsterType m);
+    void initialize(const eMonsterInvasionWarningType type);
 
     void trigger() override;
     std::string longName() const override;
@@ -31,7 +28,6 @@ public:
     void read(eReadStream& src) override;
 private:
     eMonsterInvasionWarningType mType;
-    eMonsterType mMonster;
 };
 
 class eMonsterInvasionEvent : public eMonsterInvasionEventBase {

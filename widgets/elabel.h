@@ -2,7 +2,6 @@
 #define ELABEL_H
 
 #include "ewidget.h"
-#include "efonts.h"
 #include "elabelbase.h"
 
 class eLabel : public eWidget, public eLabelBase {
@@ -11,6 +10,7 @@ public:
     eLabel(const std::string& text,
            eMainWindow* const window);
 
+    void fitOptions(const std::vector<std::string>& options);
     void renderTargetsReset() override;
 protected:
     void sizeHint(int& w, int& h) override;

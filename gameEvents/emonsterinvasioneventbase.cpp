@@ -3,7 +3,6 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "characters/actions/emonsteraction.h"
-#include "emonsterinvasionevent.h"
 #include "eiteratesquare.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
@@ -15,38 +14,36 @@ eMonsterInvasionEventBase::eMonsterInvasionEventBase(
     ePointEventValue(eBannerTypeS::monsterPoint,
                     cid, board) {}
 
-
-void eMonsterInvasionEventBase::setType(const eMonsterType type) {
-    mType = type;
-    const auto& ws = warnings();
-    for(const auto& w : ws) {
-        const auto& ws = w.second;
-        const auto iw = dynamic_cast<eMonsterInvasionWarningEvent*>(ws.get());
-        if(!iw) continue;
-        iw->setMonster(type);
-    }
+void eMonsterInvasionEventBase::setWarned(const bool w) {
+    if(mWarned == w) return;
+    mWarned = w;
+    if(mWarned) chooseMonster();
 }
 
 void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventValue::write(dst);
-    dst << mType;
+    eMonstersEventValue::write(dst);
+    dst << mWarned;
     dst << mAggressivness;
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventValue::read(src);
-    src >> mType;
+    eMonstersEventValue::read(src);
+    src >> mWarned;
     src >> mAggressivness;
 }
 
 eMonster* eMonsterInvasionEventBase::triggerBase() {
     const auto board = gameBoard();
     if(!board) return nullptr;
+    if(!mWarned) chooseMonster();
+    mWarned = false;
     choosePointId();
     const auto cid = cityId();
-    const auto monster = eMonster::sCreateMonster(mType, *board);
+    const auto monster = eMonster::sCreateMonster(mMonster, *board);
     board->registerMonster(cid, monster.get());
     monster->setOnCityId(cid);
     monster->setCityId(eCityId::neutralAggresive);

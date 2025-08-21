@@ -3,6 +3,8 @@
 #include "echoosebutton.h"
 #include "emainwindow.h"
 
+#include "characters/monsters/emonster.h"
+
 void eMonsterButton::initialize(const eMonsterAction& mact,
                                 const bool withGodsOnly,
                                 const bool showGodNames) {

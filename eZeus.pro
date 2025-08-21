@@ -464,6 +464,7 @@ SOURCES += \
         gameEvents/emonsterincityevent.cpp \
         gameEvents/emonsterinvasionevent.cpp \
         gameEvents/emonsterinvasioneventbase.cpp \
+        gameEvents/emonsterseventvalue.cpp \
         gameEvents/emonsterunleashedevent.cpp \
         gameEvents/epaytributeevent.cpp \
         gameEvents/eplayerconquestevent.cpp \
@@ -685,7 +686,6 @@ SOURCES += \
         widgets/eventwidgets/egoddisastereventwidget.cpp \
         widgets/eventwidgets/egodquesteventwidget.cpp \
         widgets/eventwidgets/einvasioneventwidget.cpp \
-        widgets/eventwidgets/emonsterattackeventwidget.cpp \
         widgets/eviewmode.cpp \
         widgets/ewatertradewidget.cpp \
         widgets/ewidget.cpp \
@@ -1145,6 +1145,7 @@ HEADERS += \
     gameEvents/emonsterincityevent.h \
     gameEvents/emonsterinvasionevent.h \
     gameEvents/emonsterinvasioneventbase.h \
+    gameEvents/emonsterseventvalue.h \
     gameEvents/emonsterunleashedevent.h \
     gameEvents/epaytributeevent.h \
     gameEvents/eplayerconquestevent.h \
@@ -2806,7 +2807,6 @@ HEADERS += \
     widgets/eventwidgets/egoddisastereventwidget.h \
     widgets/eventwidgets/egodquesteventwidget.h \
     widgets/eventwidgets/einvasioneventwidget.h \
-    widgets/eventwidgets/emonsterattackeventwidget.h \
     widgets/eviewmode.h \
     widgets/ewatertradewidget.h \
     widgets/ewidget.h \

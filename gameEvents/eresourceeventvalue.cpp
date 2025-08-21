@@ -12,7 +12,10 @@ void eResourceEventValue::chooseType() {
         if(r == eResourceType::none) continue;
         types.push_back(r);
     }
-    if(types.empty()) return;
+    if(types.empty()) {
+        printf("No resource types to choose from\n");
+        return;
+    }
     const int typeId = eRand::rand() % types.size();
     mResource = types[typeId];
 }

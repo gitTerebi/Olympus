@@ -25,9 +25,10 @@
 #include "gameEvents/eattackingcityeventvalue.h"
 #include "gameEvents/ereceiverequestevent.h"
 #include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/emonsterseventvalue.h"
+#include "gameEvents/emonsterinvasioneventbase.h"
 
 #include "egodattackeventwidget.h"
-#include "emonsterattackeventwidget.h"
 #include "einvasioneventwidget.h"
 #include "egodquesteventwidget.h"
 #include "egoddisastereventwidget.h"
@@ -237,6 +238,49 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(buttonsL);
     }
 
+    if(const auto ee = dynamic_cast<eMonstersEventValue*>(e.get())) {
+        const auto buttonsL = new eLabeledWidget(window());
+        const auto widget = new eWidget(window());
+        widget->setNoPadding();
+        const auto et = e->eGameEvent::type();
+        const bool withGodsOnly = et == eGameEventType::monsterUnleashed;
+        for(int i = 0; i < 3; i++) {
+            const auto monsterTypeButton = new eMonsterButton(window());
+            monsterTypeButton->initialize([i, ee](const eMonsterType m){
+                ee->setMonsterType(i, m);
+            }, withGodsOnly);
+            bool valid;
+            const auto mm = ee->monsterType(i, valid);
+            if(valid) monsterTypeButton->setType(mm);
+            else monsterTypeButton->setText("");
+            widget->addWidget(monsterTypeButton);
+        }
+        widget->stackVertically(p);
+        widget->fitContent();
+        buttonsL->setup(eLanguage::zeusText(44, 360), widget);
+        leftW->addWidget(buttonsL);
+    }
+
+    if(const auto ee = dynamic_cast<eMonsterInvasionEventBase*>(e.get())) {
+        const auto buttonL = new eLabeledWidget(window());
+        const auto aggressivnessButton = new eSwitchButton(window());
+        aggressivnessButton->setUnderline(false);
+        aggressivnessButton->addValue(eLanguage::zeusText(94, 0));
+        aggressivnessButton->addValue(eLanguage::zeusText(94, 1));
+        aggressivnessButton->addValue(eLanguage::zeusText(94, 2));
+        aggressivnessButton->addValue(eLanguage::zeusText(94, 3));
+        aggressivnessButton->fitValidContent();
+        const auto a = ee->aggressivness();
+        const int v = static_cast<int>(a);
+        aggressivnessButton->setValue(v);
+        aggressivnessButton->setSwitchAction([ee](const int v) {
+            const auto a = static_cast<eMonsterAggressivness>(v);
+            ee->setAggressivness(a);
+        });
+        buttonL->setup(eLanguage::zeusText(44, 177), aggressivnessButton);
+        leftW->addWidget(buttonL);
+    }
+
     if(const auto ee = dynamic_cast<eCityEventValue*>(e.get())) {
         const auto cityButtonL = new eLabeledWidget(window());
 
@@ -331,14 +375,6 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto eew = new eGodAttackEventWidget(window());
         const auto gaee = static_cast<eGodAttackEvent*>(e.get());
         eew->initialize(this, gaee);
-        leftW->addWidget(eew);
-    } break;
-    case eGameEventType::monsterUnleashed:
-    case eGameEventType::monsterInvasion:
-    case eGameEventType::monsterInCity: {
-        const auto eew = new eMonsterAttackEventWidget(window());
-        const auto maee = static_cast<eMonsterInvasionEventBase*>(e.get());
-        eew->initialize(maee);
         leftW->addWidget(eew);
     } break;
     case eGameEventType::invasion: {

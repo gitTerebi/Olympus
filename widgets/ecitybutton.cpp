@@ -34,18 +34,7 @@ void eCityButton::initialize(eWorldBoard* const board,
         const auto cname = showId ? c->nameWithId() : c->name();
         cityNames.push_back(cname);
     }
-    {
-        int w = 0;
-        const auto tmp = text();
-        for(const auto& v : cityNames) {
-            setText(v);
-            fitContent();
-            const int wv = width();
-            if(wv > w) w = wv;
-        }
-        setWidth(w);
-        setText(tmp);
-    }
+    fitOptions(cityNames);
 }
 
 void eCityButton::setValidator(const eCityValidator& v) {
