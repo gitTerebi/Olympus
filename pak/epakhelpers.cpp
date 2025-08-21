@@ -68,3 +68,21 @@ eResourceType ePakHelpers::pakResourceByteToType(const uint8_t byte, const bool 
     printf("Invalid resource byte %i\n", byte);
     return eResourceType::none;
 }
+
+int ePakHelpers::pakBitmapIdConvert(const int id) {
+    if(id == 1) return 0;
+    else if(id == 2) return 6;
+    else if(id == 3) return 1;
+    else if(id == 4) return 11;
+    else if(id == 5) return 9;
+    else if(id == 6) return 10;
+    else if(id == 7) return 3;
+    else if(id == 8) return 0;
+    else if(id == 9) return 12;
+    else if(id == 10) return 13;
+    else if(id == 11) return 14;
+    else if(id == 12) return 15;
+    else if(id == 13) return 16;
+    else if(id == 14) return 4;
+    return 0;
+}

@@ -145,8 +145,8 @@ bool eCampaign::writeStrings(const std::string& path) const {
     for(int i = 1; i < 11; i++) {
         const eParentCityEpisode* e = nullptr;
         const int iMax = mParentCityEpisodes.size();
-        if(i < iMax) {
-            e = mParentCityEpisodes[i].get();
+        if(i - 1 < iMax) {
+            e = mParentCityEpisodes[i - 1].get();
         }
         const auto titleStr = e ? e->fTitle : "";
         const auto introStr = e ? e->fIntroduction : "";
@@ -160,8 +160,8 @@ bool eCampaign::writeStrings(const std::string& path) const {
     for(int i = 1; i < 5; i++) {
         const eColonyEpisode* e = nullptr;
         const int iMax = mColonyEpisodes.size();
-        if(i < iMax) {
-            e = mColonyEpisodes[i].get();
+        if(i - 1 < iMax) {
+            e = mColonyEpisodes[i - 1].get();
         }
         const auto titleStr = e ? e->fTitle : "";
         const auto introStr = e ? e->fIntroduction : "";

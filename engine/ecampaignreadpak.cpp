@@ -864,7 +864,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             }
             e->setRepeat(99999);
         } else {
-            printf("Invalid occurance type %id\n", occuranceType);
+            printf("Invalid occurance type id %i\n", occuranceType);
             continue;
         }
 
@@ -1161,6 +1161,15 @@ void eCampaign::readPak(const std::string& name,
     const bool atlantean = file.isAtlantean();
     printf("v%i a%i\n", file.isNewVersion() ? 1 : 0, file.isAtlantean() ? 1 : 0);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
+
+    uint8_t bitmapId;
+    if(newVersion) {
+        file.seek(836249);
+    } else {
+        file.seek(835185);
+    }
+    bitmapId = file.readUByte();
+    mBitmap = ePakHelpers::pakBitmapIdConvert(bitmapId);
 
     file.seek(0);
     file.getNumMaps();

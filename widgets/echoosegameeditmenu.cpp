@@ -15,30 +15,12 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "egamedir.h"
-#include "evectorhelpers.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
 #include "pak/zeusfile.h"
-
-int pakBitmapIdConvert(const int id) {
-    if(id == 1) return 0;
-    else if(id == 2) return 6;
-    else if(id == 3) return 1;
-    else if(id == 4) return 11;
-    else if(id == 5) return 9;
-    else if(id == 6) return 10;
-    else if(id == 7) return 3;
-    else if(id == 8) return 0;
-    else if(id == 9) return 12;
-    else if(id == 10) return 13;
-    else if(id == 11) return 14;
-    else if(id == 12) return 15;
-    else if(id == 13) return 16;
-    else if(id == 14) return 4;
-    return 0;
-}
+#include "pak/epakhelpers.h"
 
 bool readPakGlossary(const std::string& filename,
                      eCampaignGlossary& glossary) {
@@ -61,7 +43,7 @@ bool readPakGlossary(const std::string& filename,
         in.seek(835185);
     }
     bitmapId = in.readUByte();
-    glossary.fBitmap = pakBitmapIdConvert(bitmapId);
+    glossary.fBitmap = ePakHelpers::pakBitmapIdConvert(bitmapId);
     if(file.good()) {
         std::map<std::string, std::string> map;
         const bool r = eCampaign::sLoadStrings(txtFile, map);
@@ -122,9 +104,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
                 const std::string pathStr = path.u8string();
                 const auto ext = pathStr.substr(pathStr.size() - 3);
                 if(ext != "pak") continue;
-                const auto name = eStringHelpers::pathToName(folder);
                 eCampaignGlossary glossary;
-                glossary.fFolderName = name;
                 const bool r = readPakGlossary(pathStr, glossary);
                 if(r) glossaries.push_back(glossary);
             }
@@ -321,7 +301,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto e = new eEditorMainMenu(window());
             e->resize(w->width(), w->height());
             const auto c = std::make_shared<eCampaign>();
-            if(mSelected.fIsPak) c->readPak(mSelected.fFolderName,
+            if(mSelected.fIsPak) c->readPak(mSelected.fTitle,
                                             mSelected.fPakPath);
             else c->load(mSelected.fFolderName);
             c->setEditorMode(true);
@@ -329,7 +309,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             w->setWidget(e);
         } else {
             const auto c = std::make_shared<eCampaign>();
-            if(mSelected.fIsPak) c->readPak(mSelected.fFolderName,
+            if(mSelected.fIsPak) c->readPak(mSelected.fTitle,
                                             mSelected.fPakPath);
             else c->load(mSelected.fFolderName);
             w->showEpisodeIntroduction(c);
