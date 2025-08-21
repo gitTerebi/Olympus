@@ -194,7 +194,8 @@ void eGameEvent::initializeDate(const eDate& startDate,
                                 const int nRuns) {
     mNextDate = startDate;
     updateWarningDates();
-    setPeriod(period);
+    setPeriodMin(period);
+    setPeriodMax(period);
     setRepeat(nRuns);
 }
 
@@ -254,8 +255,12 @@ void eGameEvent::setReason(const std::string& r) {
     mReason = r;
 }
 
-void eGameEvent::setPeriod(const int p) {
-    mPeriodDays = p;
+int eGameEvent::choosePeriod() const {
+    int periodDays = mPeriodDaysMin;
+    if(mPeriodDaysMax > mPeriodDaysMin) {
+        periodDays += eRand::rand() % (mPeriodDaysMax - mPeriodDaysMin);
+    }
+    return periodDays;
 }
 
 void eGameEvent::setRepeat(const int r) {
@@ -274,7 +279,8 @@ void eGameEvent::handleNewDate(const eDate& date) {
     if(date > mNextDate) {
         trigger();
         mRemNRuns--;
-        mNextDate += mPeriodDays;
+        const int periodDays = choosePeriod();
+        mNextDate += periodDays;
         updateWarningDates();
     }
 }
@@ -326,7 +332,8 @@ void eGameEvent::write(eWriteStream& dst) const {
     dst << mDatePlusMonths;
     dst << mDatePlusYears;
     mNextDate.write(dst);
-    dst << mPeriodDays;
+    dst << mPeriodDaysMin;
+    dst << mPeriodDaysMax;
     dst << mTotNRuns;
     dst << mRemNRuns;
     dst << mReason;
@@ -355,7 +362,8 @@ void eGameEvent::read(eReadStream& src) {
     src >> mDatePlusMonths;
     src >> mDatePlusYears;
     mNextDate.read(src);
-    src >> mPeriodDays;
+    src >> mPeriodDaysMin;
+    src >> mPeriodDaysMax;
     src >> mTotNRuns;
     src >> mRemNRuns;
     src >> mReason;

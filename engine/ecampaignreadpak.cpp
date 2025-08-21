@@ -856,13 +856,14 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         if(occuranceType == 0) { // one time event
             e->setRepeat(1);
         } else if(occuranceType == 2) { // recurring event
-            int period;
             if(years0 == 0xFFFF) {
-                period = 182*(years2 + years1);
+                e->setPeriodMin(365*years1);
+                e->setPeriodMax(365*years2);
             } else {
-                period = 365*years0;
+                const int period = 365*years0;
+                e->setPeriodMin(period);
+                e->setPeriodMax(period);
             }
-            e->setPeriod(period);
             e->setRepeat(99999);
         } else {
             printf("Invalid occurance type %id\n", occuranceType);

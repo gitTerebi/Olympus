@@ -14,13 +14,9 @@ void eEventTrigger::trigger(eGameEvent& parent,
                             const std::string& reason) {
     for(const auto& e : mEvents) {
         const auto c = e->makeCopy();
-        c->setReason(reason);
         if(!c) continue;
-        const int delay = e->period();
-        const auto d = date + delay;
-        const int period = e->period();
-        const int repeat = e->repeat();
-        c->initializeDate(d, period, repeat);
+        c->setReason(reason);
+        c->setupStartDate(date);
         parent.addConsequence(c);
     }
 }

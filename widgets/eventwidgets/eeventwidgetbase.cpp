@@ -440,13 +440,25 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     dateW->addWidget(daysButtonL);
 
     const auto periodButtonL = new eLabeledWidget(window());
-    const auto periodButton = new eValueButton(window());
-    periodButton->setValueChangeAction([e](const int p) {
-        e->setPeriod(p);
+    const auto periodW = new eWidget(window());
+    periodW->setNoPadding();
+    const auto periodMinButton = new eValueButton(window());
+    periodMinButton->setValueChangeAction([e](const int p) {
+        e->setPeriodMin(p);
     });
-    periodButton->initialize(31, 99999);
-    periodButton->setValue(e->period());
-    periodButtonL->setup(eLanguage::text("period:"), periodButton);
+    periodMinButton->initialize(31, 99999);
+    periodMinButton->setValue(e->periodMin());
+    periodW->addWidget(periodMinButton);
+    const auto periodMaxButton = new eValueButton(window());
+    periodMaxButton->setValueChangeAction([e](const int p) {
+        e->setPeriodMax(p);
+    });
+    periodMaxButton->initialize(31, 99999);
+    periodMaxButton->setValue(e->periodMax());
+    periodW->addWidget(periodMaxButton);
+    periodW->stackVertically(p);
+    periodW->fitContent();
+    periodButtonL->setup(eLanguage::text("period:"), periodW);
     dateW->addWidget(periodButtonL);
 
     const auto repeatButtonL = new eLabeledWidget(window());
