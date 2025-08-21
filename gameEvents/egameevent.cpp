@@ -181,7 +181,8 @@ bool eGameEvent::isPersonPlayer() const {
 
 void eGameEvent::setupStartDate(const eDate& currentDate) {
     mNextDate = currentDate;
-    mNextDate.nextYears(mDatePlusYears);
+    const int years = chooseYear();
+    mNextDate.nextYears(years);
     mNextDate.nextMonths(mDatePlusMonths);
     bool nextMonth;
     bool nextYear;
@@ -244,7 +245,8 @@ bool eGameEvent::hasActiveConsequences() const {
 }
 
 std::string eGameEvent::longDatedName() const {
-    auto dateStr = "+" + std::to_string(mDatePlusYears);
+    auto dateStr = "+" + std::to_string(mDatePlusYearsMin) +
+                   "-" + std::to_string(mDatePlusYearsMax);
     dateStr += "  +" + std::to_string(mDatePlusMonths);
     dateStr += "  +" + std::to_string(mDatePlusDays);
     const auto eventName = longName();
@@ -261,6 +263,14 @@ int eGameEvent::choosePeriod() const {
         periodDays += eRand::rand() % (mPeriodDaysMax - mPeriodDaysMin);
     }
     return periodDays;
+}
+
+int eGameEvent::chooseYear() const {
+    int years = mDatePlusYearsMin;
+    if(mDatePlusYearsMax > mDatePlusYearsMin) {
+        years += eRand::rand() % (mDatePlusYearsMax - mDatePlusYearsMin);
+    }
+    return years;
 }
 
 void eGameEvent::setRepeat(const int r) {
@@ -330,7 +340,8 @@ void eGameEvent::write(eWriteStream& dst) const {
     dst << mIOID;
     dst << mDatePlusDays;
     dst << mDatePlusMonths;
-    dst << mDatePlusYears;
+    dst << mDatePlusYearsMin;
+    dst << mDatePlusYearsMax;
     mNextDate.write(dst);
     dst << mPeriodDaysMin;
     dst << mPeriodDaysMax;
@@ -360,7 +371,8 @@ void eGameEvent::read(eReadStream& src) {
     src >> mIOID;
     src >> mDatePlusDays;
     src >> mDatePlusMonths;
-    src >> mDatePlusYears;
+    src >> mDatePlusYearsMin;
+    src >> mDatePlusYearsMax;
     mNextDate.read(src);
     src >> mPeriodDaysMin;
     src >> mPeriodDaysMax;

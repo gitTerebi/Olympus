@@ -404,15 +404,25 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     dateW->setNoPadding();
 
     const auto yearsButtonL = new eLabeledWidget(window());
-    const auto yearsButton = new eValueButton(window());
-    yearsButton->setValueChangeAction([e, yearsButton](const int y) {
-        e->setDatePlusYears(y);
+    const auto yearsWidget = new eWidget(window());
+    yearsWidget->setNoPadding();
+    for(int i = 0; i < 2; i++) {
+        const auto yearsButton = new eValueButton(window());
+        yearsButton->setValueChangeAction([e, yearsButton, i](const int y) {
+            if(i) e->setDatePlusYearsMax(y);
+            else e->setDatePlusYearsMin(y);
+            yearsButton->setText("+" + yearsButton->text());
+        });
+        yearsButton->initialize(0, 99999);
+        if(i) yearsButton->setValue(e->datePlusYearsMax());
+        else yearsButton->setValue(e->datePlusYearsMin());
         yearsButton->setText("+" + yearsButton->text());
-    });
-    yearsButton->initialize(0, 99999);
-    yearsButton->setValue(e->datePlusYears());
-    yearsButton->setText("+" + yearsButton->text());
-    yearsButtonL->setup(eLanguage::zeusText(8, 9), yearsButton);
+        yearsWidget->addWidget(yearsButton);
+    }
+
+    yearsWidget->stackVertically(p);
+    yearsWidget->fitContent();
+    yearsButtonL->setup(eLanguage::zeusText(8, 9), yearsWidget);
     dateW->addWidget(yearsButtonL);
 
     const auto monthssButtonL = new eLabeledWidget(window());

@@ -1,6 +1,5 @@
 #include "esanctuary.h"
 
-#include "characters/ecarttransporter.h"
 #include "engine/egameboard.h"
 #include "characters/gods/egod.h"
 #include "characters/actions/egodworshippedaction.h"
@@ -445,7 +444,8 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
     const int delay = 5;
     e->setDatePlusDays(delay);
     e->setDatePlusMonths(0);
-    e->setDatePlusYears(0);
+    e->setDatePlusYearsMin(0);
+    e->setDatePlusYearsMax(0);
     auto date = board.date();
     date += delay;
     e->initializeDate(date);

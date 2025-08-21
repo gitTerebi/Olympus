@@ -145,8 +145,12 @@ public:
     void setDatePlusDays(const int d) { mDatePlusDays = d; }
     int datePlusMonths() const { return mDatePlusMonths; }
     void setDatePlusMonths(const int m) { mDatePlusMonths = m; }
-    int datePlusYears() const { return mDatePlusYears; }
-    void setDatePlusYears(const int y) { mDatePlusYears = y; }
+
+    int datePlusYearsMin() const { return mDatePlusYearsMin; }
+    void setDatePlusYearsMin(const int y) { mDatePlusYearsMin = y; }
+
+    int datePlusYearsMax() const { return mDatePlusYearsMax; }
+    void setDatePlusYearsMax(const int y) { mDatePlusYearsMax = y; }
 
     int periodMin() const { return mPeriodDaysMin; }
     void setPeriodMin(const int p) { mPeriodDaysMin = p; }
@@ -155,6 +159,7 @@ public:
     void setPeriodMax(const int p) { mPeriodDaysMax = p; }
 
     int choosePeriod() const;
+    int chooseYear() const;
 
     int repeat() const { return mTotNRuns; }
     void setRepeat(const int r);
@@ -201,7 +206,8 @@ private:
 
     int mDatePlusDays = 15;
     int mDatePlusMonths = 2;
-    int mDatePlusYears = 3;
+    int mDatePlusYearsMin = 3;
+    int mDatePlusYearsMax = 3;
     int mPeriodDaysMin = 100;
     int mPeriodDaysMax = 100;
     int mTotNRuns = 1;

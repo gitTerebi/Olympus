@@ -843,15 +843,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         }
         e->setDatePlusDays(0);
         e->setDatePlusMonths(pMonths);
-        uint16_t year;
         if(years0 == 0xFFFF) {
-            const uint16_t yearsDiff = years2 - years1;
-            const uint16_t randDiff = yearsDiff == 0 ? 0 : (eRand::rand() % yearsDiff);
-            year = years1 + randDiff;
+            e->setDatePlusYearsMin(years1);
+            e->setDatePlusYearsMax(years2);
         } else {
-            year = years0;
+            e->setDatePlusYearsMin(years0);
+            e->setDatePlusYearsMax(years0);
         }
-        e->setDatePlusYears(year);
 
         if(occuranceType == 0) { // one time event
             e->setRepeat(1);
