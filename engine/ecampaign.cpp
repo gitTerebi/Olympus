@@ -298,10 +298,10 @@ void eCampaign::read(eReadStream& src) {
 
     if(mBriefId != 0 && mCompleteId != 0) {
         const auto& brief = eLanguage::zeusMM(mBriefId);
-        mTitle = brief.first;
-        mIntroduction = brief.second;
+        mTitle = brief.fTitle;
+        mIntroduction = brief.fContent;
         const auto complete = eLanguage::zeusMM(mCompleteId);
-        mComplete = complete.second;
+        mComplete = complete.fContent;
     }
 }
 

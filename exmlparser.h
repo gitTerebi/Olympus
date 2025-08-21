@@ -6,7 +6,13 @@
 
 using eTextGroup = std::map<int, std::string>;
 using eTextStrings = std::map<int, eTextGroup>;
-using eMM = std::pair<std::string, std::string>;
+
+struct eMM {
+    std::string fTitle;
+    std::string fContent;
+    std::string fSubtitle;
+};
+
 using eMMStrings = std::map<int, eMM>;
 
 namespace eXmlParser {

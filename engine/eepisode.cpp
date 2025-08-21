@@ -1,7 +1,6 @@
 #include "eepisode.h"
 
 #include "elanguage.h"
-#include "ecampaign.h"
 
 void eEpisode::read(eReadStream& src) {
     {
@@ -85,10 +84,13 @@ void eEpisode::read(eReadStream& src) {
 
     if(fIntroId != 0 && fCompleteId != 0) {
         const auto intro = eLanguage::zeusMM(fIntroId);
-        fTitle = intro.first;
-        fIntroduction = intro.second;
+        fTitle = intro.fTitle;
+        fIntroduction = intro.fContent;
+        if(const auto cep = dynamic_cast<eColonyEpisode*>(this)) {
+            cep->fSelection = intro.fSubtitle;
+        }
         const auto complete = eLanguage::zeusMM(fCompleteId);
-        fComplete = complete.second;
+        fComplete = complete.fContent;
     }
 }
 

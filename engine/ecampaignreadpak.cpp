@@ -1133,13 +1133,16 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
     if(introId != 0 && introId != 65535) {
         ep.fIntroId = introId;
         const auto intro = eLanguage::zeusMM(introId);
-        ep.fTitle = intro.first;
-        ep.fIntroduction = intro.second;
+        ep.fTitle = intro.fTitle;
+        ep.fIntroduction = intro.fContent;
+        if(const auto cep = dynamic_cast<eColonyEpisode*>(&ep)) {
+            cep->fSelection = intro.fSubtitle;
+        }
     }
     if(completeId != 0 && completeId != 65535) {
         ep.fCompleteId = completeId;
         const auto complete = eLanguage::zeusMM(completeId);
-        ep.fComplete = complete.second;
+        ep.fComplete = complete.fContent;
     }
 }
 
@@ -1174,15 +1177,15 @@ void eCampaign::readPak(const std::string& name,
     if(briefId != 0 && briefId != 65535) {
         mBriefId = briefId;
         const auto brief = eLanguage::zeusMM(briefId);
-        mTitle = brief.first;
-        mIntroduction = brief.second;
+        mTitle = brief.fTitle;
+        mIntroduction = brief.fContent;
     }
 
     file.seek(35652);
     const uint16_t completeId = file.readUShort();
     if(completeId != 0 && completeId != 65535) {
         mCompleteId = completeId;
-        mComplete = eLanguage::zeusMM(completeId).second;
+        mComplete = eLanguage::zeusMM(completeId).fContent;
     }
 
     std::vector<ePakGod> friendlyGods;

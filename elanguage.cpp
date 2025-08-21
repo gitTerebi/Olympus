@@ -15,7 +15,7 @@ const std::string& eLanguage::zeusText(const int g, const int s) {
     return instance.fZeusText[g][s];
 }
 
-const eLanguage::eMM& eLanguage::zeusMM(const int id) {
+const eMM& eLanguage::zeusMM(const int id) {
     return instance.fZeusMM[id];
 }
 

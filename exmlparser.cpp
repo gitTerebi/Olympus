@@ -162,7 +162,7 @@ bool eXmlParser::sParse(eMMStrings& strings,
                 index = newIndex + 1;
                 if(index >= ls) continue;
                 if(!group) continue;
-                auto& str = (*group).first;
+                auto& str = (*group).fTitle;
                 while(index < ls && line[index] != '<') {
                     str.push_back(line[index++]);
                 }
@@ -176,7 +176,24 @@ bool eXmlParser::sParse(eMMStrings& strings,
                 index = newIndex;
                 if(index >= ls) continue;
                 if(!group) continue;
-                auto& str = (*group).second;
+                auto& str = (*group).fContent;
+                while(index < ls && line[index] != '<') {
+                    str.push_back(line[index++]);
+                }
+                continue;
+            }
+        }
+        {
+            int newIndex;
+            const bool isSubtitle = match("<subtitle ", line, index, newIndex);
+            if(isSubtitle) {
+                index = newIndex;
+                if(index >= ls) continue;
+                skipTo(line, '>', newIndex);
+                index = newIndex + 1;
+                if(index >= ls) continue;
+                if(!group) continue;
+                auto& str = (*group).fSubtitle;
                 while(index < ls && line[index] != '<') {
                     str.push_back(line[index++]);
                 }

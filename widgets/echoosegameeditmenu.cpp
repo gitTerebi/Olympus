@@ -85,8 +85,8 @@ bool readPakGlossary(const std::string& filename,
         const auto briefId = in.readUShort();
 
         const auto brief = eLanguage::zeusMM(briefId);
-        glossary.fTitle = brief.first;
-        glossary.fIntroduction = brief.second;
+        glossary.fTitle = brief.fTitle;
+        glossary.fIntroduction = brief.fContent;
     }
     return true;
 }
