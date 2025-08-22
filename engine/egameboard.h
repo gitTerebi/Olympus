@@ -66,6 +66,7 @@ class ePlayerConquestEventBase;
 class eArmyEventBase;
 class eTroopsRequestEvent;
 enum class eMessageEventType;
+class eMonsterInvasionEventBase;
 
 struct eMessageType;
 struct eEventData;
@@ -483,6 +484,9 @@ public:
 
     eEnlistedForces getEnlistableForces(const ePlayerId pid) const;
 
+    void addMonsterEvent(const eMonsterType type, eMonsterInvasionEventBase* const e);
+    void removeMonsterEvent(eMonsterInvasionEventBase* const e);
+
     using eQuests = std::vector<eGodQuestEvent*>;
     eQuests godQuests(const ePlayerId pid) const;
     void addGodQuest(eGodQuestEvent* const q);
@@ -601,7 +605,7 @@ public:
     eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
 
     void addFulfilledQuest(const ePlayerId pid, const eGodQuest q);
-    void addSlayedMonster(const ePlayerId pid, const eMonsterType m);
+    void addSlayedMonster(const eCityId cid, const eMonsterType m);
 
     std::vector<eGodQuest> fulfilledQuests(const ePlayerId pid) const;
     std::vector<eMonsterType> slayedMonsters(const ePlayerId pid) const;

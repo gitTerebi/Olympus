@@ -4,7 +4,6 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
-#include "emessages.h"
 
 #include "buildings/eheroshall.h"
 

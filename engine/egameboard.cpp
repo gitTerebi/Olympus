@@ -981,7 +981,11 @@ void eGameBoard::addFulfilledQuest(const ePlayerId pid, const eGodQuest q) {
     p->addFulfilledQuest(q);
 }
 
-void eGameBoard::addSlayedMonster(const ePlayerId pid, const eMonsterType m) {
+void eGameBoard::addSlayedMonster(const eCityId cid, const eMonsterType m) {
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->monsterSlayed(m);
+    const auto pid = cityIdToPlayerId(cid);
     const auto p = boardPlayerWithId(pid);
     if(!p) return;
     p->addSlayedMonster(m);
@@ -1297,6 +1301,20 @@ eEnlistedForces eGameBoard::getEnlistableForces(const ePlayerId pid) const {
     }
 
     return result;
+}
+
+void eGameBoard::addMonsterEvent(const eMonsterType type, eMonsterInvasionEventBase * const e) {
+    const auto cid = e->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->addMonsterEvent(type, e);
+}
+
+void eGameBoard::removeMonsterEvent(eMonsterInvasionEventBase * const e) {
+    const auto cid = e->cityId();
+    const auto c = boardCityWithId(cid);
+    if(!c) return;
+    c->removeMonsterEvent(e);
 }
 
 eGameBoard::eQuests eGameBoard::godQuests(const ePlayerId pid) const {

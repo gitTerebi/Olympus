@@ -370,6 +370,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
     const bool newVersion = file.isNewVersion();
     auto& events = ep.fEvents[cid];
     printf("%i events\n", nEvents);
+    std::map<int, uint16_t> triggerMap;
     for(int i = 0; i < nEvents; i++) {
         const uint8_t eventTypeId = file.readUByte();
         if(eventTypeId == 0) continue;
@@ -397,7 +398,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t cityId0 = file.readUShort();
         const uint16_t cityId1 = file.readUShort();
         const uint16_t cityId2 = file.readUShort();
-        file.skipBytes(4);
+        const uint16_t triggeredEventId = file.readUShort();
+        file.skipBytes(2);
         const uint16_t occuranceType = file.readUShort();
         file.skipBytes(2);
         const uint16_t duration = file.readUShort(); // also warning
@@ -508,6 +510,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     type = eTroopsRequestEventType::greekCityTerrorized;
                 } else {
                     printf("Invalid troops request type id %i\n", subType);
+                    events.push_back(nullptr);
                     continue;
                 }
                 ee->setType(type);
@@ -569,6 +572,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             addType(value3);
             if(types.empty()) {
                 printf("No monster types to choose from\n");
+                events.push_back(nullptr);
                 continue;
             }
             eMonsterAggressivness aggressivness{eMonsterAggressivness::passive};
@@ -599,6 +603,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 e = ee;
             } else {
                 printf("Invalid monster invasion subtype %i\n", subType);
+                events.push_back(nullptr);
                 continue;
             }
         } break;
@@ -614,6 +619,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     hero = eMonster::sSlayer(monster);
                 } else {
                     printf("No hero with id %i\n", godMonsterHeroId);
+                    events.push_back(nullptr);
                     continue;
                 }
             } else if(godMonsterHeroId == 1) {
@@ -623,6 +629,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     hero = eMonster::sSlayer(monster);
                 } else {
                     printf("No hero with id %i\n", godMonsterHeroId);
+                    events.push_back(nullptr);
                     continue;
                 }
             } else if(godMonsterHeroId == 2) {
@@ -631,10 +638,12 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     hero = eMonster::sSlayer(monster);
                 } else {
                     printf("No hero with id %i\n", godMonsterHeroId);
+                    events.push_back(nullptr);
                     continue;
                 }
             } else {
                 printf("Hero id %i out of scope\n", godMonsterHeroId);
+                events.push_back(nullptr);
                 continue;
             }
             const auto ee = e::make_shared<eGodQuestEvent>(
@@ -658,6 +667,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             if(valid3) godTypes.push_back(god3);
             if(godTypes.empty()) {
                 printf("No gods to choose from\n");
+                events.push_back(nullptr);
                 continue;
             }
 
@@ -793,6 +803,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 e = ee;
             } else {
                 printf("Unhandled trade change event type %i\n", subType);
+                events.push_back(nullptr);
                 continue;
             }
         } break;
@@ -847,6 +858,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         } break;
         default:
             printf("Unhandled event type %i\n", eventTypeId);
+            events.push_back(nullptr);
             continue;
         }
         e->setDatePlusDays(0);
@@ -859,8 +871,18 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             e->setDatePlusYearsMax(years0);
         }
 
-        if(occuranceType == 0) { // one time event
+        if(occuranceType == 0 || occuranceType == 8192) { // one time event
             e->setRepeat(1);
+        } else if(occuranceType == 1) { // triggered event
+            if(years0 == 0xFFFF) {
+                e->setPeriodMin(31*years1);
+                e->setPeriodMax(31*years2);
+            } else {
+                const int period = 31*years0;
+                e->setPeriodMin(period);
+                e->setPeriodMax(period);
+            }
+            e->setRepeat(0);
         } else if(occuranceType == 2) { // recurring event
             if(years0 == 0xFFFF) {
                 e->setPeriodMin(365*years1);
@@ -873,14 +895,37 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             e->setRepeat(99999);
         } else {
             printf("Invalid occurance type id %i\n", occuranceType);
+            events.push_back(nullptr);
             continue;
         }
-
+        triggerMap[i] = triggeredEventId;
         events.push_back(e);
 
         printf("%s\n", e->longDatedName().c_str());
     }
     printf("\n");
+
+    for(const auto& m : triggerMap) {
+        const uint16_t toId = m.second;
+        if(toId >= (int)events.size()) continue;
+        const auto to = events[toId];
+        if(!to) continue;
+
+        const int fromId = m.first;
+        const auto from = events[fromId];
+        if(!from) continue;
+
+        eEventTrigger* trigger = nullptr;
+        if(const auto godQuest = dynamic_cast<eGodQuestEvent*>(from.get())) {
+            trigger = &godQuest->fulfilledTrigger();
+        } else if(const auto monsterEvent = dynamic_cast<eMonsterInvasionEventBase*>(from.get())) {
+            trigger = &monsterEvent->killedTrigger();
+        } else {
+            trigger = &from->baseTrigger();
+        }
+        if(!trigger) continue;
+        trigger->addEvent(from);
+    }
 }
 
 eBuildingType pakIdToPyramidType(const uint8_t id) {
@@ -1159,6 +1204,16 @@ uint16_t toUShort(const uint8_t b1, const uint8_t b2) {
     return (uint16_t)(b1 | ((b2) << 8));
 }
 
+void removeNullEvents(const eCityId cid, eEpisode& ep) {
+    auto& events = ep.fEvents[cid];
+    for(int i = 0; i < (int)events.size(); i++) {
+        const auto& e = events[i];
+        if(e) continue;
+        events.erase(events.begin() + i);
+        i--;
+    }
+}
+
 void eCampaign::readPak(const std::string& name,
                         const std::string& path) {
     mIsPak = true;
@@ -1311,6 +1366,7 @@ void eCampaign::readPak(const std::string& name,
             readEpisodeGoal(*ep, file, parentCid);
         }
         printf("\n");
+        removeNullEvents(parentCid, *ep);
     }
 
     file.seek(7140);
@@ -1395,6 +1451,7 @@ void eCampaign::readPak(const std::string& name,
             readEpisodeGoal(*ep, file, colonyCid);
         }
         printf("\n");
+        removeNullEvents(parentCid, *ep);
     }
 
     loadStrings();

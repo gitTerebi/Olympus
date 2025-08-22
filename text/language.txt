@@ -91,6 +91,8 @@ too_late "Too late"
 lost_battle "Lost battle"
 
 fulfilled_trigger "Fulfilled"
+killed_trigger "Killed"
+base_trigger "Base"
 
 period: "Period:"
 repeat: "Repeat:"

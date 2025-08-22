@@ -16,6 +16,7 @@ void eEventTrigger::trigger(eGameEvent& parent,
         const auto c = e->makeCopy();
         if(!c) continue;
         c->setReason(reason);
+        c->setRepeat(1);
         c->setupStartDate(date);
         parent.addConsequence(c);
     }

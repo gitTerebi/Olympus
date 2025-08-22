@@ -3,7 +3,7 @@
 #include "einvasionhandler.h"
 #include "engine/eplague.h"
 #include "engine/emilitaryaid.h"
-#include "characters/monsters/emonster.h"
+#include "gameEvents/emonsterinvasioneventbase.h"
 #include "gameEvents/egameevent.h"
 
 void eBoardCity::write(eWriteStream& dst) const {
@@ -125,4 +125,10 @@ void eBoardCity::write(eWriteStream& dst) const {
 
     dst << mNextAttackPlanned;
     mNextAttackDate.write(dst);
+
+    dst << mMonsterEvents.size();
+    for(const auto& m : mMonsterEvents) {
+        dst << m.first;
+        dst.writeGameEvent(m.second);
+    }
 }

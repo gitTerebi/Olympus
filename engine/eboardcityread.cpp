@@ -3,6 +3,7 @@
 #include "einvasionhandler.h"
 #include "engine/eplague.h"
 #include "characters/monsters/emonster.h"
+#include "gameEvents/emonsterinvasioneventbase.h"
 #include "engine/emilitaryaid.h"
 #include "gameEvents/egameevent.h"
 #include "engine/egameboard.h"
@@ -158,4 +159,17 @@ void eBoardCity::read(eReadStream& src) {
 
     src >> mNextAttackPlanned;
     mNextAttackDate.read(src);
+
+    {
+        int nq;
+        src >> nq;
+        for(int i = 0; i < nq; i++) {
+            eMonsterType type;
+            src >> type;
+            src.readGameEvent(&mBoard, [this, type](eGameEvent* const e) {
+                const auto me = static_cast<eMonsterInvasionEventBase*>(e);
+                mMonsterEvents[type] = me;
+            });
+        }
+    }
 }

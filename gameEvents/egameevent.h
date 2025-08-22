@@ -161,7 +161,7 @@ public:
     int choosePeriod() const;
     int chooseYear() const;
 
-    int repeat() const { return mTotNRuns; }
+    int repeat() const { return mRemNRuns; }
     void setRepeat(const int r);
 
     void handleNewDate(const eDate& date);
@@ -183,8 +183,11 @@ public:
 
     bool episodeEvent() const { return mEpisodeEvent; }
     void setIsEpisodeEvent(const bool e) { mEpisodeEvent = e; }
+
+    eEventTrigger& baseTrigger() { return *mBaseTrigger; }
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
+    void callBaseTrigger();
 private:
     void updateWarningDates();
 
@@ -201,16 +204,16 @@ private:
     std::vector<stdsptr<eGameEvent>> mConsequences;
     std::vector<stdsptr<eWarning>> mWarnings;
     std::vector<stdsptr<eEventTrigger>> mTriggers;
+    stdsptr<eEventTrigger> mBaseTrigger;
 
     std::string mReason;
 
-    int mDatePlusDays = 15;
-    int mDatePlusMonths = 2;
-    int mDatePlusYearsMin = 3;
-    int mDatePlusYearsMax = 3;
+    int mDatePlusDays = 0;
+    int mDatePlusMonths = 0;
+    int mDatePlusYearsMin = 0;
+    int mDatePlusYearsMax = 0;
     int mPeriodDaysMin = 100;
     int mPeriodDaysMax = 100;
-    int mTotNRuns = 1;
 
     int mRemNRuns = 0;
     eDate mNextDate{1, eMonth::january, 1};

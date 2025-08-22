@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "characters/actions/emonsteraction.h"
 #include "eiteratesquare.h"
+#include "emessages.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eCityId cid,
@@ -12,7 +13,16 @@ eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         eGameBoard& board) :
     eGameEvent(cid, type, branch, board),
     ePointEventValue(eBannerTypeS::monsterPoint,
-                    cid, board) {}
+                    cid, board) {
+    const auto e4 = eLanguage::text("killed_trigger");
+    mKilledTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
+    addTrigger(mKilledTrigger);
+}
+
+eMonsterInvasionEventBase::~eMonsterInvasionEventBase() {
+    const auto board = gameBoard();
+    if(board) board->removeMonsterEvent(this);
+}
 
 void eMonsterInvasionEventBase::setWarned(const bool w) {
     if(mWarned == w) return;
@@ -36,10 +46,21 @@ void eMonsterInvasionEventBase::read(eReadStream& src) {
     src >> mAggressivness;
 }
 
+void eMonsterInvasionEventBase::killed(const eMonsterType monster) {
+    const auto board = gameBoard();
+    if(!board) return;
+    const auto date = board->date();
+    const auto& msgs = eMessages::instance;
+    const auto monsterMsgs = msgs.monsterMessages(monster);
+    const auto rFull = monsterMsgs->fSlainReason;
+    mKilledTrigger->trigger(*this, date, rFull);
+}
+
 eMonster* eMonsterInvasionEventBase::triggerBase() {
     const auto board = gameBoard();
     if(!board) return nullptr;
     if(!mWarned) chooseMonster();
+    board->addMonsterEvent(mMonster, this);
     mWarned = false;
     choosePointId();
     const auto cid = cityId();

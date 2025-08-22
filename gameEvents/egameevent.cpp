@@ -44,6 +44,10 @@ eGameEvent::eGameEvent(const eCityId cid,
                        eGameBoard& board) :
     mCid(cid), mType(type), mBranch(branch), mBoard(board) {
     mBoard.addGameEvent(this);
+
+    const auto e4 = eLanguage::text("base_trigger");
+    mBaseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
+    addTrigger(mBaseTrigger);
 }
 
 eGameEvent::~eGameEvent() {
@@ -274,8 +278,7 @@ int eGameEvent::chooseYear() const {
 }
 
 void eGameEvent::setRepeat(const int r) {
-    mTotNRuns = r;
-    mRemNRuns = mTotNRuns;
+    mRemNRuns = r;
 }
 
 void eGameEvent::handleNewDate(const eDate& date) {
@@ -292,6 +295,7 @@ void eGameEvent::handleNewDate(const eDate& date) {
         const int periodDays = choosePeriod();
         mNextDate += periodDays;
         updateWarningDates();
+        callBaseTrigger();
     }
 }
 
@@ -325,6 +329,13 @@ void eGameEvent::addTrigger(const stdsptr<eEventTrigger>& et) {
     mTriggers.push_back(et);
 }
 
+void eGameEvent::callBaseTrigger() {
+    const auto board = gameBoard();
+    if(!board) return;
+    const auto date = board->date();
+    mBaseTrigger->trigger(*this, date, "");
+}
+
 void eGameEvent::updateWarningDates() {
     const auto& board = *gameBoard();
     const auto currentDate = board.date();
@@ -345,7 +356,6 @@ void eGameEvent::write(eWriteStream& dst) const {
     mNextDate.write(dst);
     dst << mPeriodDaysMin;
     dst << mPeriodDaysMax;
-    dst << mTotNRuns;
     dst << mRemNRuns;
     dst << mReason;
 
@@ -376,7 +386,6 @@ void eGameEvent::read(eReadStream& src) {
     mNextDate.read(src);
     src >> mPeriodDaysMin;
     src >> mPeriodDaysMax;
-    src >> mTotNRuns;
     src >> mRemNRuns;
     src >> mReason;
 

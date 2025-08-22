@@ -120,8 +120,7 @@ public:
         ed.fTile = mMptr->tile();
         board.event(eEvent::monsterSlain, ed);
         mMptr->killWithCorpse();
-        const auto pid = board.cityIdToPlayerId(cid);
-        board.addSlayedMonster(pid, mt);
+        board.addSlayedMonster(cid, mt);
     }
 
     void read(eReadStream& src) {

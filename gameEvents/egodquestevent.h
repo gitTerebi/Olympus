@@ -19,6 +19,8 @@ public:
 
     void fulfill();
     void fulfilled();
+
+    eEventTrigger& fulfilledTrigger() { return *mFulfilledTrigger; }
 private:
     stdsptr<eEventTrigger> mFulfilledTrigger;
     bool mFulfilled = false;

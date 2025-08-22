@@ -15,6 +15,7 @@ public:
                               const eGameEventType type,
                               const eGameEventBranch branch,
                               eGameBoard& board);
+    ~eMonsterInvasionEventBase();
 
     eMonsterAggressivness aggressivness() const
     { return mAggressivness; }
@@ -25,9 +26,14 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+
+    void killed(const eMonsterType monster);
+
+    eEventTrigger& killedTrigger() { return *mKilledTrigger; }
 protected:
     eMonster* triggerBase();
 private:
+    stdsptr<eEventTrigger> mKilledTrigger;
     bool mWarned = false;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;
 };

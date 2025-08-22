@@ -21,6 +21,7 @@
 
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/eplayerconquestevent.h"
+#include "gameEvents/emonsterinvasioneventbase.h"
 #include "engine/emilitaryaid.h"
 #include "spawners/ebanner.h"
 #include "einvasionhandler.h"
@@ -2038,6 +2039,17 @@ eEnlistedForces eBoardCity::getEnlistableForces() const {
     return result;
 }
 
+void eBoardCity::addMonsterEvent(const eMonsterType type, eMonsterInvasionEventBase * const e) {
+    mMonsterEvents[type] = e;
+}
+
+void eBoardCity::removeMonsterEvent(eMonsterInvasionEventBase * const e) {
+    for(const auto& m : mMonsterEvents) {
+        if(m.second != e) continue;
+        mMonsterEvents.erase(m.first);
+    }
+}
+
 void eBoardCity::addInvasionHandler(eInvasionHandler* const i) {
     mInvasionHandlers.push_back(i);
 }
@@ -2060,6 +2072,14 @@ void eBoardCity::registerMonster(eMonster* const m) {
 
 void eBoardCity::unregisterMonster(eMonster* const m) {
     eVectorHelpers::remove(mMonsters, m);
+}
+
+void eBoardCity::monsterSlayed(const eMonsterType m) {
+    const auto it = mMonsterEvents.find(m);
+    if(it == mMonsterEvents.end()) return;
+    const auto e = it->second;
+    e->killed(m);
+    mMonsterEvents.erase(m);
 }
 
 const eBoardCity::eChars& eBoardCity::attackingGods() const {

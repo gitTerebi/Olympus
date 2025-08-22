@@ -39,6 +39,7 @@ enum class eBuildingMode;
 enum struct eHeroType;
 enum class eBannerTypeS;
 enum class eMonsterType;
+class eMonsterInvasionEventBase;
 struct eEpisode;
 
 enum class eImmigrationLimitedBy {
@@ -305,6 +306,9 @@ public:
         return mInvasionHandlers;
     }
 
+    void addMonsterEvent(const eMonsterType type, eMonsterInvasionEventBase* const e);
+    void removeMonsterEvent(eMonsterInvasionEventBase* const e);
+
     void addInvasionHandler(eInvasionHandler* const i);
     void removeInvasionHandler(eInvasionHandler* const i);
     bool hasActiveInvasions() const;
@@ -325,6 +329,7 @@ public:
     const std::vector<eMonster*>& monsters() const;
     void registerMonster(eMonster* const m);
     void unregisterMonster(eMonster* const m);
+    void monsterSlayed(const eMonsterType m);
     using eChars = std::vector<eCharacter*>;
     const eChars& attackingGods() const;
     void registerAttackingGod(eCharacter* const c);
@@ -501,6 +506,7 @@ private:
     std::vector<eBuilding*> mSanctBuildings;
     std::vector<eTradePost*> mTradePosts;
     std::vector<eSpawner*> mSpawners;
+    std::map<eMonsterType, eMonsterInvasionEventBase*> mMonsterEvents;
     std::vector<eMonster*> mMonsters;
     std::vector<eBanner*> mBanners;
 
