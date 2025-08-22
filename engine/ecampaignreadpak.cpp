@@ -1060,8 +1060,25 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
         goal->fEnumInt1 = static_cast<int>(btype);
         goal->fRequiredCount = value2;
     } break;
-    case eEpisodeGoalType::quest:
-        break;
+    case eEpisodeGoalType::quest: {
+        const int eventId = value1;
+        const auto& events = ep.fEvents[cid];
+        eGodQuestEvent* event = nullptr;
+        for(int i = eventId; i >= 0; i--) {
+            if(i >= int(events.size())) continue;
+            const auto& e = events[i];
+            if(const auto ee = dynamic_cast<eGodQuestEvent*>(e.get())) {
+                event = ee;
+                break;
+            }
+        }
+        if(!event) return;
+        const auto god = event->god();
+        const auto questId = event->id();
+        goal->fEnumInt1 = static_cast<int>(god);
+        goal->fEnumInt2 = static_cast<int>(questId);
+        goal->fRequiredCount = 1;
+    } break;
     case eEpisodeGoalType::slay: {
         const int eventId = value1;
         const auto& events = ep.fEvents[cid];
@@ -1069,15 +1086,13 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
         for(int i = eventId; i >= 0; i--) {
             if(i >= int(events.size())) continue;
             const auto& e = events[i];
-            const auto type = e->type();
-            if(type == eGameEventType::monsterUnleashed ||
-               type == eGameEventType::monsterInvasion) {
-                event = static_cast<eMonsterInvasionEventBase*>(e.get());
+            if(const auto ee = dynamic_cast<eMonsterInvasionEventBase*>(e.get())) {
+                event = ee;
                 break;
             }
         }
         if(!event) return;
-        const auto type = event->type();
+        const auto type = event->monsterType();
         goal->fEnumInt1 = static_cast<int>(type);
         goal->fRequiredCount = 1;
     } break;

@@ -10,7 +10,9 @@
 #include "emainwindow.h"
 #include "ecitybutton.h"
 #include "edatebutton.h"
+#include "emonsterbutton.h"
 #include "eresourcebutton.h"
+#include "eswitchbutton.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "buildings/pyramids/epyramid.h"
@@ -150,14 +152,27 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::quest: {
-        const auto b = new eValueButton(window());
-        b->initialize(0, 9);
-        b->setValue(e->fRequiredCount);
-        b->setValueChangeAction([e, updateText](const int c) {
-            e->fRequiredCount = c;
+        const auto b = new eGodButton(window());
+        b->initialize([e, updateText](const eGodType g) {
+            e->fEnumInt1 = static_cast<int>(g);
             updateText();
         });
+        const auto g = static_cast<eGodType>(e->fEnumInt1);
+        b->setType(g);
         detailsW->addWidget(b);
+
+        const auto switchAct = [e](const int id) {
+            e->fEnumInt2 = id;
+        };
+        const auto idButton = new eSwitchButton(window());
+        idButton->setUnderline(false);
+        idButton->addValue("1");
+        idButton->addValue("2");
+        idButton->fitValidContent();
+        const auto iniId = e->fEnumInt2;
+        idButton->setValue(iniId);
+        idButton->setSwitchAction(switchAct);
+        detailsW->addWidget(idButton);
     } break;
     case eEpisodeGoalType::yearlyProduction: {
         const auto resButton = new eResourceButton(window());
@@ -184,13 +199,13 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::slay: {
-        const auto b = new eValueButton(window());
-        b->initialize(0, 9);
-        b->setValue(e->fRequiredCount);
-        b->setValueChangeAction([e, updateText](const int c) {
-            e->fRequiredCount = c;
+        const auto b = new eMonsterButton(window());
+        b->initialize([e, updateText](const eMonsterType m) {
+            e->fEnumInt1 = static_cast<int>(m);
             updateText();
-        });
+        }, false, false);
+        const auto m = static_cast<eMonsterType>(e->fEnumInt1);
+        b->setType(m);
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::yearlyProfit: {

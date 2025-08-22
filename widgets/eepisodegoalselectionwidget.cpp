@@ -71,6 +71,8 @@ void eEpisodeGoalSelectionWidget::initialize(
                 e->fEnumInt1 = -1;
                 break;
             case eEpisodeGoalType::rule:
+            case eEpisodeGoalType::quest:
+            case eEpisodeGoalType::slay:
                 e->fRequiredCount = 1;
                 break;
             }

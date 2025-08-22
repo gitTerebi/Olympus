@@ -446,7 +446,16 @@ void eEpisodeGoal::update(const eGameBoard& b) {
     } break;
     case eEpisodeGoalType::quest: {
         const bool wasMet = met();
-        fStatusCount = b.fulfilledQuests(pid).size();
+        const auto fulfilled = b.fulfilledQuests(pid);
+        const auto god = static_cast<eGodType>(fEnumInt1);
+        const auto questId = static_cast<eGodQuestId>(fEnumInt2);
+        fStatusCount = 0;
+        for(const auto& f : fulfilled) {
+            if(f.fGod != god) continue;
+            if(f.fId != questId) continue;
+            fStatusCount = 1;
+            break;
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
             b.showTip(pid, eLanguage::zeusText(194, 81));
