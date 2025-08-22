@@ -1002,20 +1002,6 @@ eBannerType pakIdToBannerType(const uint16_t id) {
     return eBannerType::rockThrower;
 }
 
-eWorldMap pakIdToWorldMap(const uint8_t id) {
-    if(id == 1) return eWorldMap::greece1;
-    if(id == 2) return eWorldMap::greece2;
-    if(id == 3) return eWorldMap::greece3;
-    if(id == 4) return eWorldMap::greece4;
-    if(id == 5) return eWorldMap::greece5;
-    if(id == 6) return eWorldMap::greece6;
-    if(id == 7) return eWorldMap::greece7;
-    if(id == 8 || id == 9 || id == 10) return eWorldMap::greece8;
-
-    printf("Invalid world map type id %i\n", id);
-    return eWorldMap::greece1;
-}
-
 void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
     const bool newVersion = file.isNewVersion();
     const uint16_t typeId = file.readUShort();
