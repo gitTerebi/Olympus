@@ -298,7 +298,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 
     const auto selectionText = new eTextScroller(window());
     selectionText->setWidth(ewww);
-    selectionText->setHeight(textH);
+    selectionText->setHeight(textH/2);
     selectionText->initialize();
     selectionText->setTinyTextFontSize();
     selectionText->setTinyTextPadding();
