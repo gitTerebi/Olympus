@@ -543,8 +543,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 const auto god = pakIdToGodType(godMonsterHeroId, valid);
                 ee->setRequestType(type);
                 ee->setGod(god);
-                ee->setMinCount(value6);
-                ee->setMaxCount(value7);
+                ee->setMinCount(amountMin);
+                ee->setMaxCount(amountMax);
                 ee->setMinCityId(cityMin);
                 ee->setMaxCityId(cityMax);
                 e = ee;
@@ -554,8 +554,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             const auto ee = e::make_shared<eGiftFromEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
             setResources(*ee);
-            ee->setMinCount(value6);
-            ee->setMaxCount(value7);
+            ee->setMinCount(amountMin);
+            ee->setMaxCount(amountMax);
             ee->setMinCityId(cityMin);
             ee->setMaxCityId(cityMax);
             e = ee;
