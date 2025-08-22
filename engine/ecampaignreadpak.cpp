@@ -346,7 +346,9 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
 eMonsterType pakIdToMonsterType(const uint8_t id, bool& valid) {
     valid = true;
     if(id == 0) return eMonsterType::hydra;
+    else if(id == 1) return eMonsterType::kraken;
     else if(id == 2) return eMonsterType::cerberus;
+    else if(id == 3) return eMonsterType::cyclops;
     else if(id == 4) return eMonsterType::minotaur;
     else if(id == 5) return eMonsterType::medusa;
     else if(id == 6) return eMonsterType::calydonianBoar;
