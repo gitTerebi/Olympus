@@ -260,7 +260,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             }
             const auto act = [e, updateText, type, nameGetter](const int val) {
                 e->fEnumInt1 = val > 6 ? 1 : 0;
-                e->fEnumInt2 = val > 6 ? (val - 6) : val;
+                e->fEnumInt2 = val > 6 ? (val - 7) : val;
                 {
                     const auto name = nameGetter();
                     type->setText(name);
