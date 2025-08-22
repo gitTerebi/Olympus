@@ -5,7 +5,6 @@
 #include <filesystem>
 
 #include "evectorhelpers.h"
-#include "estringhelpers.h"
 #include "egamedir.h"
 #include "elanguage.h"
 
@@ -47,12 +46,31 @@ void eCampaign::setInitialFunds(const ePlayerId pid, const int f) {
     mDrachmas[pid] = f;
 }
 
+int eCampaign::audioFilesId() const {
+    if(mBriefId == 493) { // hercules labors
+        return 1;
+    } else if(mBriefId == 494) { // the voyages of jason
+        return 2;
+    } else if(mBriefId == 495) { // perseus and medusa
+        return 3;
+    } else if(mBriefId == 496) { // the trojan war
+        return 4;
+    } else if(mBriefId == 497) { // athens through the ages
+        return 5;
+    } else if(mBriefId == 498) { // zeus and europa
+        return 6;
+    } else if(mBriefId == 499) { // the peloponnesian war
+        return 7;
+    }
+    return 0;
+}
+
 std::string eCampaign::audioFilesBasePath() const {
     {
         auto name = mPakFilename;
         if(name.size() > 4) {
-            name = name.substr(0, name.length() - 4);
             const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+            name = name.substr(0, name.length() - 4);
             const auto basePath = baseDir + name + "_";
             std::ifstream file(basePath + "A_v.mp3");
             if(file.good()) return basePath;
@@ -70,23 +88,47 @@ std::string eCampaign::audioFilesBasePath() const {
 }
 
 std::string eCampaign::currentEpisodeAudioFilePath(const bool intro) const {
-    auto path = audioFilesBasePath();
-    if(mCurrentEpisodeType == eEpisodeType::colony) {
-        path += "C";
+    const int id = audioFilesId();
+    if(id) {
+        const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+        int subId;
+        if(mCurrentEpisodeType == eEpisodeType::colony) {
+            subId = 11;
+        } else {
+            subId = 1;
+        }
+        subId += currentEpisodeId();
+        auto path = baseDir + "C" + std::to_string(id) +
+                    "_E" + std::to_string(subId);
+        if(intro) path += "_i.mp3";
+        else path += "_v.mp3";
+        return path;
     } else {
-        path += "P";
+        auto path = audioFilesBasePath();
+        if(mCurrentEpisodeType == eEpisodeType::colony) {
+            path += "C";
+        } else {
+            path += "P";
+        }
+        const int n = currentEpisodeId();
+        path += std::to_string(n + 1);
+        if(intro) path += "_i.mp3";
+        else path += "_v.mp3";
+        return path;
     }
-    const int n = currentEpisodeId();
-    path += std::to_string(n + 1);
-    if(intro) path += "_i.mp3";
-    else path += "_v.mp3";
-    return path;
 }
 
 std::string eCampaign::adventureVictoryAudioFilePath() const {
-    auto path = audioFilesBasePath();
-    path += "A_v.mp3";
-    return path;
+    const int id = audioFilesId();
+    if(id) {
+        const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+        const auto path = baseDir + "C" + std::to_string(id) + "_v.mp3";
+        return path;
+    } else {
+        auto path = audioFilesBasePath();
+        path += "A_v.mp3";
+        return path;
+    }
 }
 
 bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {

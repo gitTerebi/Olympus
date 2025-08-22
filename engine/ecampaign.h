@@ -52,7 +52,6 @@ public:
 
     void setBitmap(const int b) { mBitmap = b; }
 
-    std::string audioFilesBasePath() const;
     std::string currentEpisodeAudioFilePath(const bool intro) const;
     std::string adventureVictoryAudioFilePath() const;
 
@@ -124,6 +123,9 @@ public:
 
     bool colonyEpisodeFinished(const int id) const;
 private:
+    int audioFilesId() const;
+    std::string audioFilesBasePath() const;
+
     int mBitmap = 0;
     bool mIsPak = false;
     std::string mPakFilename;
