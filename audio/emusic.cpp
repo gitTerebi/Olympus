@@ -1,5 +1,7 @@
 ﻿#include "emusic.h"
 
+#include <fstream>
+
 #include "egamedir.h"
 
 eMusic* eMusic::sInstance = nullptr;
@@ -46,6 +48,10 @@ void eMusic::playMissionVictoryMusic() {
 
 void eMusic::playCampaignVictoryMusic() {
     sInstance->playCampaignVictoryMusicImpl();
+}
+
+bool eMusic::playCampaignVoice(const std::string &path) {
+    return sInstance->playCampaignVoiceImpl(path);
 }
 
 void eMusic::incTimeImpl() {
@@ -114,6 +120,22 @@ void eMusic::playMissionVictoryMusicImpl() {
 void eMusic::playCampaignVictoryMusicImpl() {
     Mix_HaltMusic();
     mCampaignVictory.playRandomSound();
+}
+
+bool eMusic::playCampaignVoiceImpl(const std::string &path) {
+    std::ifstream file(path);
+    if(!file.good()) return false;
+    Mix_HaltMusic();
+    const auto it = mCampaignVoice.find(path);
+    if(it == mCampaignVoice.end()) {
+        const auto voice = std::make_shared<eMusicVector>();
+        voice->addPath(path);
+        mCampaignVoice[path] = voice;
+        voice->playRandomSound();
+    } else {
+        it->second->playRandomSound();
+    }
+    return true;
 }
 
 void eMusic::loadImpl() {

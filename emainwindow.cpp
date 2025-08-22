@@ -143,7 +143,6 @@ void eMainWindow::startGameAction(const eAction& a) {
 void eMainWindow::showEpisodeIntroduction(
         const stdsptr<eCampaign>& c) {
     clearWidgets();
-    eMusic::playMissionIntroMusic();
     if(c) mCampaign = c;
     const auto e = new eEpisodeIntroductionWidget(this);
     const auto proceedA = [this]() {
@@ -158,6 +157,11 @@ void eMainWindow::showEpisodeIntroduction(
     };
     e->resize(width(), height());
     const auto ee = mCampaign->currentEpisode();
+
+    const auto path = mCampaign->currentEpisodeAudioFilePath(true);
+    const bool played = eMusic::playCampaignVoice(path);
+    if(!played) eMusic::playMissionIntroMusic();
+
     e->initialize(mCampaign,
                   mCampaign->titleText(),
                   ee->fIntroduction,
@@ -213,12 +217,16 @@ void eMainWindow::episodeFinished() {
 void eMainWindow::adventureComplete() {
     clearWidgets();
     if(!mCampaign) return;
-    eMusic::playCampaignVictoryMusic();
     const auto e = new eEpisodeIntroductionWidget(this);
     const auto proceedA = [this]() {
         showMainMenu();
     };
     e->resize(width(), height());
+
+    const auto path = mCampaign->adventureVictoryAudioFilePath();
+    const bool played = eMusic::playCampaignVoice(path);
+    if(!played) eMusic::playCampaignVictoryMusic();
+
     e->initialize(mCampaign,
                   eLanguage::zeusText(62, 0),
                   mCampaign->completeText(),

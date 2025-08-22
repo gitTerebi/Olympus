@@ -4,6 +4,7 @@
 #include "emusicvector.h"
 
 #include <memory>
+#include <map>
 
 enum class eMusicType {
     none, setup, music, battle
@@ -25,6 +26,8 @@ public:
     static void playMissionIntroMusic();
     static void playMissionVictoryMusic();
     static void playCampaignVictoryMusic();
+
+    static bool playCampaignVoice(const std::string& path);
 private:
     void incTimeImpl();
 
@@ -34,6 +37,7 @@ private:
     void playMissionIntroMusicImpl();
     void playMissionVictoryMusicImpl();
     void playCampaignVictoryMusicImpl();
+    bool playCampaignVoiceImpl(const std::string& path);
 
     void loadImpl();
     void loadMenuImpl();
@@ -42,6 +46,8 @@ private:
     bool mLoaded{false};
     bool mMenuLoaded{false};
     eMusicType mMusicType{eMusicType::none};
+
+    std::map<std::string, std::shared_ptr<eMusicVector>> mCampaignVoice;
 
     eMusicVector mSetupMusic;
     eMusicVector mMusic;

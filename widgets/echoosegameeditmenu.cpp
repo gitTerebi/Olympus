@@ -434,6 +434,8 @@ void eChooseGameEditMenu::setGlossary(const eCampaignGlossary& g) {
     mTitle->setText(g.fTitle);
     mTitle->fitContent();
     mTitle->align(eAlignment::hcenter);
-    mDesc->setText(g.fIntroduction);
+    auto textPrep = g.fIntroduction;
+    eStringHelpers::replaceSpecial(textPrep);
+    mDesc->setText(textPrep);
     mDesc->fitContent();
 }

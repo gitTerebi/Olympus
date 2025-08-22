@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #include "evectorhelpers.h"
+#include "estringhelpers.h"
 #include "egamedir.h"
 #include "elanguage.h"
 
@@ -44,6 +45,48 @@ int eCampaign::initialFunds(const ePlayerId pid) const {
 
 void eCampaign::setInitialFunds(const ePlayerId pid, const int f) {
     mDrachmas[pid] = f;
+}
+
+std::string eCampaign::audioFilesBasePath() const {
+    {
+        auto name = mPakFilename;
+        if(name.size() > 4) {
+            name = name.substr(0, name.length() - 4);
+            const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+            const auto basePath = baseDir + name + "_";
+            std::ifstream file(basePath + "A_v.mp3");
+            if(file.good()) return basePath;
+        }
+    }
+    {
+        const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
+                                      eGameDir::adventuresDir();
+        const auto aDir = baseDir + mName + "/";
+        const auto basePath = aDir + mName + "_";
+        std::ifstream file(basePath + "A_v.mp3");
+        if(file.good()) return basePath;
+    }
+    return "";
+}
+
+std::string eCampaign::currentEpisodeAudioFilePath(const bool intro) const {
+    auto path = audioFilesBasePath();
+    if(mCurrentEpisodeType == eEpisodeType::colony) {
+        path += "C";
+    } else {
+        path += "P";
+    }
+    const int n = currentEpisodeId();
+    path += std::to_string(n + 1);
+    if(intro) path += "_i.mp3";
+    else path += "_v.mp3";
+    return path;
+}
+
+std::string eCampaign::adventureVictoryAudioFilePath() const {
+    auto path = audioFilesBasePath();
+    path += "A_v.mp3";
+    return path;
 }
 
 bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
@@ -204,6 +247,9 @@ bool eCampaign::sReadGlossary(const std::string& name,
 void eCampaign::read(eReadStream& src) {
     src >> mBitmap;
     src >> mIsPak;
+    if(mIsPak) {
+        src >> mPakFilename;
+    }
     std::string name;
     src >> name;
     if(mName.empty()) mName = name;
@@ -308,6 +354,9 @@ void eCampaign::read(eReadStream& src) {
 void eCampaign::write(eWriteStream& dst) const {
     dst << mBitmap;
     dst << mIsPak;
+    if(mIsPak) {
+        dst << mPakFilename;
+    }
     dst << mName;
     dst << mCurrentParentEpisode;
     dst << mCurrentColonyEpisode;
@@ -491,6 +540,14 @@ void eCampaign::episodeFinished() {
     } else {
         mCurrentParentEpisode++;
         mCurrentEpisodeType = eEpisodeType::parentCity;
+    }
+}
+
+int eCampaign::currentEpisodeId() const {
+    if(mCurrentEpisodeType == eEpisodeType::colony) {
+        return mCurrentColonyEpisode;
+    } else {
+        return mCurrentParentEpisode;
     }
 }
 

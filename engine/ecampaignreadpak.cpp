@@ -3,6 +3,7 @@
 #include "elanguage.h"
 #include "pak/zeusfile.h"
 #include "pak/epakhelpers.h"
+#include "estringhelpers.h"
 
 #include "buildings/pyramids/epyramid.h"
 
@@ -1153,6 +1154,7 @@ uint16_t toUShort(const uint8_t b1, const uint8_t b2) {
 void eCampaign::readPak(const std::string& name,
                         const std::string& path) {
     mIsPak = true;
+    mPakFilename = eStringHelpers::pathToName(path);
     mName = name;
     ZeusFile file(path);
     file.readVersion();

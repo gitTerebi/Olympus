@@ -52,6 +52,10 @@ public:
 
     void setBitmap(const int b) { mBitmap = b; }
 
+    std::string audioFilesBasePath() const;
+    std::string currentEpisodeAudioFilePath(const bool intro) const;
+    std::string adventureVictoryAudioFilePath() const;
+
     using eMap = std::map<std::string, std::string>;
     static bool sLoadStrings(const std::string& path, eMap& map);
     bool loadStrings();
@@ -78,6 +82,7 @@ public:
     void setCurrentColonyEpisode(const int e);
     void startEpisode();
     void episodeFinished();
+    int currentEpisodeId() const;
     eEpisodeType currentEpisodeType() const
     { return mCurrentEpisodeType; }
     bool finished() const;
@@ -121,6 +126,7 @@ public:
 private:
     int mBitmap = 0;
     bool mIsPak = false;
+    std::string mPakFilename;
     std::string mName;
     std::string mTitle;
     std::string mIntroduction;

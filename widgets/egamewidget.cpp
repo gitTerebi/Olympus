@@ -109,7 +109,6 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         showTip(target, tip);
     });
     mBoard->setEpisodeFinishedHandler([this]() {
-        eMusic::playMissionVictoryMusic();
         mLocked = true;
         const auto w = window();
         const auto c = w->campaign();
@@ -120,6 +119,11 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         };
         e->resize(width(), height());
         const auto ee = c->currentEpisode();
+
+        const auto path = c->currentEpisodeAudioFilePath(false);
+        const bool played = eMusic::playCampaignVoice(path);
+        if(!played) eMusic::playMissionVictoryMusic();
+
         e->initialize(c,
                       eLanguage::zeusText(62, 0),
                       ee->fComplete,
