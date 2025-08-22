@@ -97,6 +97,27 @@ eTile* eTile::nearestRoad() const {
     return tiles[eRand::rand() % tiles.size()];
 }
 
+int eTile::roadLength(const int skipAfter) const {
+    std::vector<const eTile*> visited;
+    int result = 0;
+    std::function<void(const eTile* const)> process;
+    process = [&](const eTile* const tile) {
+        if(result >= skipAfter) return;
+        if(!tile) return;
+        if(!tile->hasRoad()) return;
+        const bool v = eVectorHelpers::contains(visited, tile);
+        if(v) return;
+        result++;
+        visited.push_back(tile);
+        process(topRight<eTile>());
+        process(bottomRight<eTile>());
+        process(bottomLeft<eTile>());
+        process(topLeft<eTile>());
+    };
+    process(this);
+    return result;
+}
+
 void eTile::surroundingTerrain(eTerrain& tlTerr,
                                eTerrain& trTerr,
                                eTerrain& brTerr,

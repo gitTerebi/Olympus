@@ -90,6 +90,7 @@ public:
 
     std::vector<eTile*> surroundingRoads() const;
     eTile* nearestRoad() const;
+    int roadLength(const int skipAfter = 100) const;
 
     void surroundingTerrain(eTerrain& tlTerr,
                             eTerrain& trTerr,

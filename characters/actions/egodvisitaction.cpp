@@ -33,7 +33,8 @@ bool eGodVisitAction::decide() {
     case eGodVisitStage::appear: {
         mStage = eGodVisitStage::patrol;
         const auto tile = c->tile();
-        if(tile->hasRoad()) patrol(nullptr, eNumbers::sGodVisitPatrolDistance);
+        const int len = tile->roadLength(5);
+        if(len > 5) patrol(nullptr, eNumbers::sGodVisitPatrolDistance);
         else moveAround(nullptr, eNumbers::sGodVisitMoveAroundTime);
     }   break;
     case eGodVisitStage::patrol:
