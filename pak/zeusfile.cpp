@@ -738,7 +738,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                 if(t_terrain & 8388608) {
                     halfSlopes.push_back(tile);
                 }
-                if(t_terrain & 1536) {
+                if((t_terrain & 1536) == 1536) {
                     tile->setWalkableElev(true);
                 }
                 if(t_terrain & 64) {
