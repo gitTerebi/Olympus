@@ -145,6 +145,7 @@ void readEpisodeAllowedBuildings(eEpisode& ep, ZeusFile& file,
 
 void readEpisodeResources(eEpisode& ep, ZeusFile& file,
                           const eCityId cid) {
+    const bool atlantean = file.isAtlantean();
     const bool newVersion = file.isNewVersion();
     auto& av = ep.fAvailableBuildings[cid];
     const int jMax = newVersion ? 12 : 10;
@@ -181,8 +182,10 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
             av.allow(eBuildingType::wheatFarm);
             break;
         case eResourceType::oranges:
-            av.allow(eBuildingType::orangeTendersLodge);
-            av.allow(eBuildingType::orangeTree);
+            if(atlantean) {
+                av.allow(eBuildingType::orangeTendersLodge);
+                av.allow(eBuildingType::orangeTree);
+            }
             break;
         case eResourceType::wood:
             av.allow(eBuildingType::timberMill);
@@ -205,10 +208,14 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
             av.allow(eBuildingType::cardingShed);
             break;
         case eResourceType::blackMarble:
-            av.allow(eBuildingType::blackMarbleWorkshop);
+            if(atlantean) {
+                av.allow(eBuildingType::blackMarbleWorkshop);
+            }
             break;
         case eResourceType::orichalc:
-            av.allow(eBuildingType::refinery);
+            if(atlantean) {
+                av.allow(eBuildingType::refinery);
+            }
             break;
         default:
             break;
