@@ -411,3 +411,12 @@ void eGameEvent::read(eReadStream& src) {
 
     src >> mEpisodeEvent;
 }
+
+void eGameEvent::loadResources() const {
+    for(const auto& e : mConsequences) {
+        e->loadResources();
+    }
+    for(const auto& et : mTriggers) {
+        et->loadResources();
+    }
+}

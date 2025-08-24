@@ -590,6 +590,53 @@ void eGod::sGodStrings(std::vector<eGodType>& gods,
     }
 }
 
+void eGod::sLoadTextures(const eGodType g) {
+    switch(g) {
+    case eGodType::aphrodite:
+        eGameTextures::loadAphrodite();
+        break;
+    case eGodType::apollo:
+        eGameTextures::loadApollo();
+        break;
+    case eGodType::ares:
+        eGameTextures::loadAres();
+        break;
+    case eGodType::artemis:
+        eGameTextures::loadArtemis();
+        break;
+    case eGodType::athena:
+        eGameTextures::loadAthena();
+        break;
+    case eGodType::atlas:
+        eGameTextures::loadAtlas();
+        break;
+    case eGodType::demeter:
+        eGameTextures::loadDemeter();
+        break;
+    case eGodType::dionysus:
+        eGameTextures::loadDionysus();
+        break;
+    case eGodType::hades:
+        eGameTextures::loadHades();
+        break;
+    case eGodType::hephaestus:
+        eGameTextures::loadHephaestus();
+        break;
+    case eGodType::hera:
+        eGameTextures::loadHera();
+        break;
+    case eGodType::hermes:
+        eGameTextures::loadHermes();
+        break;
+    case eGodType::poseidon:
+        eGameTextures::loadPoseidon();
+        break;
+    case eGodType::zeus:
+        eGameTextures::loadZeus();
+        break;
+    }
+}
+
 void eGod::read(eReadStream& src) {
     eCharacter::read(src);
     src >> mAttitude;

@@ -393,6 +393,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void setFriendlyGods(const std::vector<eGodType>& gods);
+
     void payPensions();
     bool replace3By3AestheticByCommemorative();
     void updateResourceTiles();

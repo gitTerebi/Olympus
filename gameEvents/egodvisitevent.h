@@ -15,6 +15,8 @@ public:
 
     void setRandom(const bool r);
 
+    void loadResources() const override;
+
     void trigger() override;
     std::string longName() const override;
 

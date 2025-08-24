@@ -86,6 +86,8 @@ public:
     virtual void write(eWriteStream& dst) const;
     virtual void read(eReadStream& src);
 
+    virtual void loadResources() const;
+
     static stdsptr<eGameEvent> sCreate(const eCityId cid,
                                        const eGameEventType type,
                                        const eGameEventBranch branch,

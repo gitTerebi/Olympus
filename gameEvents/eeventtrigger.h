@@ -3,7 +3,6 @@
 
 #include "pointers/eobject.h"
 
-#include <string.h>
 #include "engine/edate.h"
 
 class eGameEvent;
@@ -21,6 +20,8 @@ public:
     void trigger(eGameEvent& parent,
                  const eDate& date,
                  const std::string& reason);
+
+    void loadResources() const;
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);

@@ -20,6 +20,8 @@ public:
     void setRandom(const bool r);
     bool random() const { return mRandom; }
 
+    void loadResources() const override;
+
     void trigger() override;
     std::string longName() const override;
 

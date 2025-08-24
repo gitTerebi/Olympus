@@ -22,6 +22,12 @@ void eEventTrigger::trigger(eGameEvent& parent,
     }
 }
 
+void eEventTrigger::loadResources() const {
+    for(const auto& c : mEvents) {
+        c->loadResources();
+    }
+}
+
 void eEventTrigger::write(eWriteStream& dst) const {
     dst << mEvents.size();
     for(const auto& c : mEvents) {

@@ -59,7 +59,7 @@ std::string eGameDir::adventuresDir() {
 }
 
 std::string eGameDir::pakAdventuresDir() {
-//    return "/home/ailuropoda/.eZeus/Zeus/Adventures/"; // !!!
+    return "/home/ailuropoda/.eZeus/Zeus/Adventures/"; // !!!
     return eGameDir::path("Adventures/");
 }
 

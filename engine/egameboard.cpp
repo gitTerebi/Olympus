@@ -44,7 +44,6 @@
 #include "eevent.h"
 #include "emessageeventtype.h"
 
-#include "gameEvents/egodvisitevent.h"
 #include "gameEvents/egodattackevent.h"
 #include "gameEvents/emonsterunleashedevent.h"
 #include "gameEvents/einvasionevent.h"
@@ -579,73 +578,6 @@ void eGameBoard::updateBlackMarbleTiles() {
         auto& mt = mBlackMarbleTiles.emplace_back();
         mt.addWithNeighbours(t);
     });
-}
-
-void eGameBoard::setFriendlyGods(const eCityId cid,
-                                 const std::vector<eGodType>& gods) {
-    for(const auto g : gods) {
-        eBuildingType bt;
-        switch(g) {
-        case eGodType::aphrodite:
-            bt = eBuildingType::templeAphrodite;
-            break;
-        case eGodType::apollo:
-            bt = eBuildingType::templeApollo;
-            break;
-        case eGodType::ares:
-            bt = eBuildingType::templeAres;
-            break;
-        case eGodType::artemis:
-            bt = eBuildingType::templeArtemis;
-            break;
-        case eGodType::athena:
-            bt = eBuildingType::templeAthena;
-            break;
-        case eGodType::atlas:
-            bt = eBuildingType::templeAtlas;
-            break;
-        case eGodType::demeter:
-            bt = eBuildingType::templeDemeter;
-            break;
-        case eGodType::dionysus:
-            bt = eBuildingType::templeDionysus;
-            break;
-        case eGodType::hades:
-            bt = eBuildingType::templeHades;
-            break;
-        case eGodType::hephaestus:
-            bt = eBuildingType::templeHephaestus;
-            break;
-        case eGodType::hera:
-            bt = eBuildingType::templeHera;
-            break;
-        case eGodType::hermes:
-            bt = eBuildingType::templeHermes;
-            break;
-        case eGodType::poseidon:
-            bt = eBuildingType::templePoseidon;
-            break;
-        case eGodType::zeus:
-            bt = eBuildingType::templeZeus;
-            break;
-        default:
-            bt = eBuildingType::none;
-            break;
-        }
-
-        allow(cid, bt);
-    }
-
-    const auto e = e::make_shared<eGodVisitEvent>(
-                       cid, eGameEventBranch::root, *this);
-    e->setIsEpisodeEvent(true);
-    eDate date = mDate;
-    const int period = eNumbers::sFriendlyGodVisitPeriod;
-    date += period;
-    date += eRand::rand() % 60;
-    e->initializeDate(date, period, 10000);
-    e->setTypes(gods);
-    addRootGameEvent(e);
 }
 
 void eGameBoard::allowHero(const eCityId cid, const eHeroType heroType,
@@ -2792,8 +2724,6 @@ void eGameBoard::startEpisode(eEpisode* const e,
 
     for(const auto& c : mCitiesOnBoard) {
         c->startEpisode(e);
-        const auto cid = c->id();
-        setFriendlyGods(cid, e->fFriendlyGods[cid]);
     }
     const auto& gs = e->fGoals;
     for(const auto& g : gs) {

@@ -21,6 +21,13 @@ void eGodVisitEvent::setRandom(const bool r) {
     mRandom = r;
 }
 
+void eGodVisitEvent::loadResources() const {
+    eGameEvent::loadResources();
+    for(const auto g : mTypes) {
+        eGod::sLoadTextures(g);
+    }
+}
+
 void eGodVisitEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;

@@ -392,9 +392,6 @@ public:
     void restockBlackMarbleTiles();
     void updateBlackMarbleTiles();
 
-    void setFriendlyGods(const eCityId cid,
-                         const std::vector<eGodType>& gods);
-
     void allowHero(const eCityId cid, const eHeroType heroType,
                    const std::string& reason = "");
 
@@ -714,8 +711,6 @@ public:
                         const eCityId cid,
                         const ePlayerId pid,
                         const bool editorDisplay);
-
-    void setMaxSanctuaries();
 
     int bestYearlyProduction(const eResourceType type) const;
     void incProduced(const eResourceType type,

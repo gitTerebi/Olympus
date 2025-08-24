@@ -44,6 +44,8 @@ public:
     static void sGodStrings(std::vector<eGodType>& gods,
                             std::vector<std::string>& godNames);
 
+    static void sLoadTextures(const eGodType g);
+
     eGodType type() const { return mType; }
 
     eGodAttitude attitude() const { return mAttitude; }
