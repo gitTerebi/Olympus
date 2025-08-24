@@ -29,11 +29,18 @@ public:
 
     eDiagonalOrientation orientation() const { return mO; }
 
+    void triremeCameBack();
+    void triremeLeaving();
+    bool abroad() const { return mAbroad; }
     bool hasTrireme() const;
+
+    eTile* triremeTile() const;
 private:
     void spawnTrireme();
 
     const eDiagonalOrientation mO;
+
+    bool mAbroad = false;
 
     stdptr<eCartTransporter> mTakeCart;
     stdptr<eTrireme> mTrireme;

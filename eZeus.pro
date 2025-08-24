@@ -182,6 +182,7 @@ SOURCES += \
         characters/actions/edieaction.cpp \
         characters/actions/edionysusfollowaction.cpp \
         characters/actions/efightaction.cpp \
+        characters/actions/efightingaction.cpp \
         characters/actions/efirefighteraction.cpp \
         characters/actions/efollowaction.cpp \
         characters/actions/egodactcreator.cpp \
@@ -271,6 +272,7 @@ SOURCES += \
         characters/eelitecitizen.cpp \
         characters/eenemyboat.cpp \
         characters/eenlistedforces.cpp \
+        characters/efightingcharacter.cpp \
         characters/efightingpatroler.cpp \
         characters/efirefighter.cpp \
         characters/efishingboat.cpp \
@@ -855,6 +857,7 @@ HEADERS += \
     characters/actions/edieaction.h \
     characters/actions/edionysusfollowaction.h \
     characters/actions/efightaction.h \
+    characters/actions/efightingaction.h \
     characters/actions/efirefighteraction.h \
     characters/actions/efollowaction.h \
     characters/actions/egodaction.h \
@@ -942,6 +945,7 @@ HEADERS += \
     characters/eelitecitizen.h \
     characters/eenemyboat.h \
     characters/eenlistedforces.h \
+    characters/efightingcharacter.h \
     characters/efightingpatroler.h \
     characters/efirefighter.h \
     characters/efishingboat.h \

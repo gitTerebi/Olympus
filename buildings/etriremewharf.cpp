@@ -2,7 +2,6 @@
 
 #include "characters/etrireme.h"
 #include "characters/actions/etriremeaction.h"
-#include "characters/actions/ecarttransporteraction.h"
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
@@ -223,21 +222,27 @@ void eTriremeWharf::write(eWriteStream& dst) const {
     dst << mTriremeBuildingTime;
 }
 
-bool eTriremeWharf::hasTrireme() const {
-    return mTrireme;
+void eTriremeWharf::triremeCameBack() {
+    mAbroad = false;
+    spawnTrireme();
 }
 
-void eTriremeWharf::spawnTrireme() {
-    if(mTrireme) return;
-    const auto b = e::make_shared<eTrireme>(getBoard());
-    b->setBothCityIds(cityId());
-    mTrireme = b.get();
+void eTriremeWharf::triremeLeaving() {
+    mAbroad = true;
+    mTrireme.clear();
+}
+
+bool eTriremeWharf::hasTrireme() const {
+    return mTrireme || mAbroad;
+}
+
+eTile *eTriremeWharf::triremeTile() const {
     eTile* t;
     const auto ct = centerTile();
     switch(mO) {
     case eDiagonalOrientation::topRight: {
         const auto tr = ct->topRight<eTile>();
-        if(!tr) return;
+        if(!tr) return nullptr;
         t = tr->topRight<eTile>();
     } break;
     case eDiagonalOrientation::bottomLeft:
@@ -249,10 +254,19 @@ void eTriremeWharf::spawnTrireme() {
     default:
     case eDiagonalOrientation::bottomRight: {
         const auto r = ct->right<eTile>();
-        if(!r) return;
+        if(!r) return nullptr;
         t = r->bottomRight<eTile>();
     } break;
     }
+    return t;
+}
+
+void eTriremeWharf::spawnTrireme() {
+    if(mTrireme) return;
+    const auto b = e::make_shared<eTrireme>(getBoard());
+    b->setBothCityIds(cityId());
+    mTrireme = b.get();
+    const auto t = triremeTile();
     if(!t) return;
     b->changeTile(t);
 

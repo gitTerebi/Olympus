@@ -56,6 +56,7 @@ class eInvasionEvent;
 class eAgoraBase;
 class eHerosHall;
 class ePyramid;
+class eTrireme;
 
 class eThreadPool;
 
@@ -324,11 +325,18 @@ public:
     eWorldBoard& world() const { return mWorld; }
 
     void enlistForces(const eEnlistedForces& forces);
+
     void clearBannerSelection();
     void deselectBanner(eSoldierBanner* const c);
     void selectBanner(eSoldierBanner* const c);
     const std::vector<eSoldierBanner*>& selectedSoldiers() const
     { return mSelectedBanners; }
+
+    void clearTriremeSelection();
+    void deselectTrireme(eTrireme* const c);
+    void selectTrireme(eTrireme* const c);
+    const std::vector<eTrireme*>& selectedTriremes() const
+    { return mSelectedTriremes; }
 
     void bannersGoHome();
     void bannersBackFromHome();
@@ -794,6 +802,7 @@ private:
     std::vector<eMissile*> mMissiles;
 
     std::vector<eSoldierBanner*> mSelectedBanners;
+    std::vector<eTrireme*> mSelectedTriremes;
 
     std::vector<ePlannedAction*> mPlannedActions;
 

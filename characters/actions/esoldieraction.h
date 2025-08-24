@@ -1,9 +1,7 @@
 #ifndef ESOLDIERACTION_H
 #define ESOLDIERACTION_H
 
-#include "ecomplexaction.h"
-
-#include <map>
+#include "efightingaction.h"
 
 #include "characters/echaracter.h"
 #include "walkable/eobsticlehandler.h"
@@ -11,43 +9,7 @@
 
 class eSoldier;
 
-class eAttackTarget {
-public:
-    eAttackTarget();
-    eAttackTarget(eCharacter* const c);
-    eAttackTarget(eBuilding* const b);
-
-    eTile* tile() const;
-    bool valid() const;
-    bool defend(const double a);
-    bool dead() const;
-    void clear();
-
-    bool building() const;
-
-    double absX() const;
-    double absY() const;
-
-    void read(eGameBoard& board, eReadStream& src) {
-        src.readCharacter(&board, [this](eCharacter* const c) {
-            mC = c;
-        });
-        src.readBuilding(&board, [this](eBuilding* const b) {
-            mB = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mC);
-        dst.writeBuilding(mB);
-    }
-private:
-    stdptr<eCharacter> mC;
-    stdptr<eBuilding> mB;
-};
-
-class eSoldierAction : public eComplexAction {
-    friend class eSoldierObsticleHandler;
+class eSoldierAction : public eFightingAction {
 public:
     eSoldierAction(eCharacter* const c);
 
@@ -58,47 +20,20 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
-    void moveBy(const double dx, const double dy);
-
-    using eAction = std::function<void()>;
-    void goTo(const int fx, const int fy,
-              const int dist = 0,
-              const eAction& findFailAct = nullptr,
-              const eAction& findFinishAct = nullptr);
-    void waitAndGoHome(const int w);
-    void goHome();
-    void goAbroad();
+    void goHome() override;
+    void goAbroad() override;
     void goBackToBanner(const eAction& findFailAct = nullptr,
                         const eAction& findFinishAct = nullptr);
-
-    void beingAttacked(eCharacter* const ss);
-    void beingAttacked(const int ttx, const int tty);
 
     static eBuilding* sFindHome(const eCharacterType t,
                                 const eCityId cid,
                                 const eGameBoard& brd);
-    static void sSignalBeingAttack(eSoldier* const attacked,
-                                   eCharacter* const by,
-                                   eGameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
 private:
-    bool attackBuilding(eTile* const t, const bool range);
-    stdsptr<eObsticleHandler> obsticleHandler();
+    stdsptr<eObsticleHandler> obsticleHandler() override;
 
     int mGoToBannerCountdown = 0;
-    double mAngle{0.};
-
-    int mMissile = 0;
-
-    int mRangeAttack = 0;
-    int mBuildingAttack = 0;
-
-    int mLookForEnemy = 0;
-    int mAttackTime = 0;
-    eCharacterActionType mSavedAction = eCharacterActionType::stand;
-    bool mAttack = false;
-    eAttackTarget mAttackTarget;
     bool mSpreadPeriod = false; // for spreading invasion forces
 };
 
@@ -135,32 +70,6 @@ private:
     stdptr<eSoldierAction> mTptr;
 };
 
-class eSA_goToFinish : public eCharActFunc {
-public:
-    eSA_goToFinish(eGameBoard& board) :
-        eCharActFunc(board, eCharActFuncType::SA_goToFinish) {}
-    eSA_goToFinish(eGameBoard& board, eCharacter* const c) :
-        eCharActFunc(board, eCharActFuncType::SA_goToFinish),
-        mCptr(c) {}
-
-    void call() override {
-        if(!mCptr) return;
-        mCptr->setActionType(eCharacterActionType::stand);
-    }
-
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
-    }
-private:
-    stdptr<eCharacter> mCptr;
-};
-
 class eSA_goHomeFinish : public eCharActFunc {
 public:
     eSA_goHomeFinish(eGameBoard& board) :
@@ -185,32 +94,6 @@ public:
     }
 private:
     stdptr<eCharacter> mCptr;
-};
-
-class eSA_waitAndGoHomeFinish : public eCharActFunc {
-public:
-    eSA_waitAndGoHomeFinish(eGameBoard& board) :
-        eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish) {}
-    eSA_waitAndGoHomeFinish(eGameBoard& board, eSoldierAction* const a) :
-        eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish),
-        mAptr(a) {}
-
-    void call() override {
-        if(!mAptr) return;
-        mAptr->goHome();
-    }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
-            mAptr = static_cast<eSoldierAction*>(a);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mAptr);
-    }
-private:
-    stdptr<eSoldierAction> mAptr;
 };
 
 #endif // ESOLDIERACTION_H

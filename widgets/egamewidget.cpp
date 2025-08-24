@@ -59,6 +59,7 @@
 #include "spawners/ebanner.h"
 
 #include "ebuildablehelpers.h"
+#include "characters/etrireme.h"
 
 #include "edistrictconditionswidget.h"
 
@@ -1691,12 +1692,15 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
             mInfoWidget = nullptr;
             return true;
         }
-        const auto& solds = mBoard->selectedSoldiers();
         if(mGm->mode() != eBuildingMode::none) {
             mGm->clearMode();
             return true;
         }
+        const auto& solds = mBoard->selectedSoldiers();
         if(!solds.empty()) return true;
+        const auto& trims = mBoard->selectedTriremes();
+        if(!trims.empty()) return true;
+
         if(mPatrolBuilding) {
             setPatrolBuilding(nullptr);
             return true;
@@ -1826,6 +1830,13 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                     if(b && !b->selected()) {
                         mBoard->selectBanner(b);
                     }
+                    for(const auto& c : tile->characters()) {
+                        const auto type = c->type();
+                        if(type != eCharacterType::trireme) continue;
+                        const auto t = static_cast<eTrireme*>(c.get());
+                        if(!t->selectable()) continue;
+                        mBoard->selectTrireme(t);
+                    }
                 }
             } else {
                 const auto tile = mBoard->tile(mHoverTX, mHoverTY);
@@ -1848,6 +1859,14 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                             }
                         }
                     }
+                } if(tile) {
+                    for(const auto& c : tile->characters()) {
+                        const auto type = c->type();
+                        if(type != eCharacterType::trireme) continue;
+                        const auto t = static_cast<eTrireme*>(c.get());
+                        if(!t->selectable()) continue;
+                        mBoard->selectTrireme(t);
+                    }
                 }
             }
         }
@@ -1858,6 +1877,8 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
         if(static_cast<bool>(pressedButtons & eMouseButton::right)) {
             const auto& solds = mBoard->selectedSoldiers();
             eSoldierBanner::sPlace(solds, mHoverTX, mHoverTY, *mBoard, 3, 2);
+            const auto& trims = mBoard->selectedTriremes();
+            eTrireme::sPlace(trims, mHoverTX, mHoverTY, *mBoard, 3, 2);
         }
     } break;
     default: return false;

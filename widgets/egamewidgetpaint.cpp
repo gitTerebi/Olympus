@@ -336,7 +336,8 @@ void eGameWidget::paintEvent(ePainter& p) {
     }
     {
         const auto& ss = mBoard->selectedSoldiers();
-        const bool v = !ss.empty();
+        const auto& ts = mBoard->selectedTriremes();
+        const bool v = !ss.empty() || !ts.empty();
         setArmyMenuVisible(v);
     }
     {

@@ -1,19 +1,28 @@
 #ifndef ETRIREMEACTION_H
 #define ETRIREMEACTION_H
 
-#include "echaracteraction.h"
+#include "efightingaction.h"
 
-class eTriremeAction : public eCharacterAction {
+class eTriremeWharf;
+
+class eTriremeAction : public eFightingAction {
 public:
-    eTriremeAction(eBuilding* const home,
+    eTriremeAction(eTriremeWharf * const home,
                    eCharacter* const trireme);
+
+    bool decide() override;
 
     void increment(const int by) override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    void goHome() override;
+    void goAbroad() override;
+
+    eTriremeWharf* home() const;
 private:
-    stdptr<eBuilding> mHome;
+    stdptr<eTriremeWharf> mHome;
 };
 
 #endif // ETRIREMEACTION_H

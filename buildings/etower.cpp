@@ -5,8 +5,8 @@
 #include "characters/actions/earcheraction.h"
 #include "vec2.h"
 #include "missiles/earrowmissile.h"
-#include "characters/esoldier.h"
-#include "characters/actions/esoldieraction.h"
+#include "characters/efightingcharacter.h"
+#include "characters/actions/efightingaction.h"
 #include "audio/esounds.h"
 #include "enumbers.h"
 
@@ -143,7 +143,7 @@ void eTower::timeChanged(const int by) {
                     if(!t) continue;
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
-                        if(!cc->isSoldier()) continue;
+                        if(!cc->isFighter()) continue;
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
@@ -159,23 +159,7 @@ void eTower::timeChanged(const int by) {
                         const auto tt = cc->tile();
                         const int ttx = tt->x();
                         const int tty = tt->y();
-                        for(int ii = -2; ii <= 2; ii++) {
-                            for(int jj = -2; jj <= 2; jj++) {
-                                const auto tt = brd.tile(ttx + ii, tty + jj);
-                                if(!tt) continue;
-                                const auto& ccchars = tt->characters();
-                                for(const auto& ccc : ccchars) {
-                                    if(!ccc->isSoldier()) continue;
-                                    const auto ccctid = ccc->teamId();
-                                    if(!eTeamIdHelpers::isEnemy(ccctid, tid)) continue;
-                                    if(ccc->dead()) continue;
-
-                                    const auto sss = static_cast<eSoldier*>(ccc.get());
-                                    const auto aaa = sss->soldierAction();
-                                    if(aaa) aaa->beingAttacked(tx, ty);
-                                }
-                            }
-                        }
+                        eFightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
 
                         return;
                     }

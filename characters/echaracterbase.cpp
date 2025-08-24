@@ -38,6 +38,22 @@ bool eCharacterBase::isSoldier() const {
     return false;
 }
 
+bool eCharacterBase::isFighter() const {
+    const bool s = isSoldier();
+    if(s) return true;
+    const auto t = type();
+    return t == eCharacterType::enemyBoat ||
+           t == eCharacterType::trireme;
+}
+
+bool eCharacterBase::isBoat() const {
+    const auto t = type();
+    return t == eCharacterType::tradeBoat ||
+           t == eCharacterType::enemyBoat ||
+           t == eCharacterType::trireme ||
+           t == eCharacterType::fishingBoat;
+}
+
 bool eCharacterBase::isGod() const {
     bool result;
     eGod::sCharacterToGodType(type(), &result);

@@ -75,9 +75,7 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
         return true;
     }
     case eWalkableObjectType::deepWater: {
-        const bool r = t->terrain() == eTerrain::water;
-        if(!r) return false;
-        return !t->isShoreTile();
+        return t->hasDeepWater();
     }
     case eWalkableObjectType::ranch: {
         const auto tt = t->underBuildingType();

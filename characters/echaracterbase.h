@@ -206,6 +206,8 @@ public:
     eCharacterType type() const { return mType; }
 
     bool isSoldier() const;
+    bool isFighter() const;
+    bool isBoat() const;
     bool isGod() const;
     bool isHero() const;
     bool isMonster() const;

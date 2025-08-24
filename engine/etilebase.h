@@ -32,6 +32,7 @@ public:
     bool hasTerrain(const eTerrain terr) const;
     bool hasBridge() const;
     bool hasWater() const;
+    bool hasDeepWater() const;
     bool hasQuake() const;
 
     bool walkableTerrain() const;

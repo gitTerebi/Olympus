@@ -99,23 +99,7 @@ void eArcherAction::increment(const int by) {
                     const auto tt = cc->tile();
                     const int ttx = tt->x();
                     const int tty = tt->y();
-                    for(int ii = -2; ii <= 2; ii++) {
-                        for(int jj = -2; jj <= 2; jj++) {
-                            const auto tt = brd.tile(ttx + ii, tty + jj);
-                            if(!tt) continue;
-                            const auto& ccchars = tt->characters();
-                            for(const auto& ccc : ccchars) {
-                                if(!ccc->isSoldier()) continue;
-                                const auto ccctid = ccc->teamId();
-                                if(!eTeamIdHelpers::isEnemy(ccctid, tid)) continue;
-                                if(ccc->dead()) continue;
-
-                                const auto sss = static_cast<eSoldier*>(ccc.get());
-                                const auto aaa = sss->soldierAction();
-                                if(aaa) aaa->beingAttacked(tx, ty);
-                            }
-                        }
-                    }
+                    eFightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
 
                     return;
                 }

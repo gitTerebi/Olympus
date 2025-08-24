@@ -1,8 +1,6 @@
 ﻿
 #include "egameboard.h"
 
-#include <random>
-
 #include "buildings/eagorabase.h"
 #include "characters/echaracter.h"
 #include "buildings/ebuilding.h"
@@ -13,11 +11,9 @@
 #include "characters/esoldier.h"
 #include "characters/esoldierbanner.h"
 
-#include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/etradepost.h"
 
 #include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
 
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
@@ -95,6 +91,8 @@
 #include "buildings/sanctuaries/etemplemonumentbuilding.h"
 #include "buildings/sanctuaries/etemplealtarbuilding.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
+
+#include "characters/etrireme.h"
 
 #include "buildings/pyramids/epyramid.h"
 
@@ -318,7 +316,28 @@ void eGameBoard::selectBanner(eSoldierBanner* const c) {
     c->setSelected(true);
 }
 
+void eGameBoard::clearTriremeSelection() {
+    for(const auto s : mSelectedTriremes) {
+        s->setSelected(false);
+    }
+    mSelectedTriremes.clear();
+}
+
+void eGameBoard::deselectTrireme(eTrireme * const c) {
+    eVectorHelpers::remove(mSelectedTriremes, c);
+    c->setSelected(false);
+}
+
+void eGameBoard::selectTrireme(eTrireme * const c) {
+    if(!c->selectable()) return;
+    mSelectedTriremes.push_back(c);
+    c->setSelected(true);
+}
+
 void eGameBoard::bannersGoHome() {
+    for(const auto t : mSelectedTriremes) {
+        t->goHome();
+    }
     for(const auto b : mSelectedBanners) {
         b->goHome();
     }
@@ -1824,6 +1843,7 @@ bool eGameBoard::unregisterCharacter(eCharacter* const c) {
         const bool r = cc->unregisterAttackingGod(c);
         updateMusic = updateMusic || r;
     }
+    eVectorHelpers::remove(mSelectedTriremes, static_cast<eTrireme*>(c));
     if(updateMusic) this->updateMusic();
     return eVectorHelpers::remove(mCharacters, c);
 }
@@ -2093,6 +2113,7 @@ void eGameBoard::registerAllSoldierBanner(eSoldierBanner* const b) {
 
 void eGameBoard::unregisterAllSoldierBanner(eSoldierBanner* const b) {
     eVectorHelpers::remove(mAllSoldierBanners, b);
+    eVectorHelpers::remove(mSelectedBanners, b);
 }
 
 bool eGameBoard::manTowers(const eCityId cid) const {

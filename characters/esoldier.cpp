@@ -7,7 +7,8 @@
 eSoldier::eSoldier(eGameBoard& board,
                    const eCharTexs charTexs,
                    const eCharacterType type) :
-    eFightingPatroler(board, charTexs, type) {
+    eFightingPatroler(board, charTexs, type),
+    eFightingCharacter(this) {
     board.registerSoldier(this);
 }
 
@@ -16,11 +17,6 @@ eSoldier::~eSoldier() {
     brd.unregisterSoldier(this);
     setBanner(nullptr);
 }
-
-eSoldierAction* eSoldier::soldierAction() const {
-    return dynamic_cast<eSoldierAction*>(action());
-}
-
 eSoldierBanner* eSoldier::banner() const {
     return mBanner;
 }
@@ -60,7 +56,7 @@ void eSoldier::beingKilled() {
 
 void eSoldier::read(eReadStream& src) {
     eFightingPatroler::read(src);
-    src >> mRange;
+    eFightingCharacter::read(src);
     auto& board = getBoard();
     src.readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
         mBanner = b;
@@ -69,6 +65,11 @@ void eSoldier::read(eReadStream& src) {
 
 void eSoldier::write(eWriteStream& dst) const {
     eFightingPatroler::write(dst);
-    dst << mRange;
+    eFightingCharacter::write(dst);
     dst.writeSoldierBanner(mBanner);
+}
+
+eSoldierAction *eSoldier::soldierAction() const {
+    const auto a = action();
+    return dynamic_cast<eSoldierAction*>(a);
 }

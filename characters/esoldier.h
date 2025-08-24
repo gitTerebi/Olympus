@@ -2,11 +2,13 @@
 #define ESOLDIER_H
 
 #include "efightingpatroler.h"
+#include "efightingcharacter.h"
 
 class eSoldierAction;
 class eSoldierBanner;
 
-class eSoldier : public eFightingPatroler {
+class eSoldier : public eFightingPatroler,
+                 public eFightingCharacter {
 public:
     using eCharTexs = eFightingCharacterTextures eCharacterTextures::*;
     eSoldier(eGameBoard& board,
@@ -21,15 +23,10 @@ public:
 
     eSoldierAction* soldierAction() const;
 
-    int range() const { return mRange; }
-    void setRange(const int r) { mRange = r; }
-
     eSoldierBanner* banner() const;
     void setBanner(eSoldierBanner* const b);
 private:
     stdptr<eSoldierBanner> mBanner;
-
-    int mRange = 0;
 };
 
 #endif // ESOLDIER_H
