@@ -1862,6 +1862,17 @@ bool eGameWidget::buildMouseRelease() {
         case eBuildingMode::templeHermes:
         case eBuildingMode::templePoseidon:
         case eBuildingMode::templeZeus: {
+            const int maxSancts = mBoard->maxSanctuaries(cid);
+            const auto sancts = mBoard->sanctuaries(cid);
+            const int nBuilt = sancts.size();
+            if(!mEditorMode && nBuilt >= maxSancts) {
+                if(maxSancts < 2) showTip(cid, eLanguage::zeusText(19, 230));
+                if(maxSancts == 2) showTip(cid, eLanguage::zeusText(19, 231));
+                if(maxSancts == 3) showTip(cid, eLanguage::zeusText(19, 232));
+                if(maxSancts == 4) showTip(cid, eLanguage::zeusText(19, 233));
+                return false;
+            }
+
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
             const int m = eBuilding::sInitialMarbleCost(bt);
             const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);

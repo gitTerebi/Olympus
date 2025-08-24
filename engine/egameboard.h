@@ -215,6 +215,7 @@ public:
 
     int eliteHouses(const eCityId cid) const;
 
+    int maxSanctuaries(const eCityId cid) const;
     std::vector<eSanctuary*> sanctuaries(const eCityId cid) const;
     eSanctuary* sanctuary(const eCityId cid, const eGodType god) const;
 

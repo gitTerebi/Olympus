@@ -2634,6 +2634,12 @@ int eGameBoard::eliteHouses(const eCityId cid) const {
     return c->eliteHouses();
 }
 
+int eGameBoard::maxSanctuaries(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return 0;
+    return c->maxSanctuaries();
+}
+
 std::vector<eSanctuary*> eGameBoard::sanctuaries(const eCityId cid) const {
     const auto c = boardCityWithId(cid);
     if(!c) return {};
