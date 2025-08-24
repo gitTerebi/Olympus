@@ -598,6 +598,7 @@ public:
 
     void addTidalWave(eTile* const startTile,
                       const bool permanent);
+    bool duringTidalWave() const;
 
     void defeatedBy(const eCityId defeated,
                     const stdsptr<eWorldCity>& by);

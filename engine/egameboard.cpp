@@ -200,6 +200,7 @@ void eGameBoard::clear() {
     mPlayersOnBoard.clear();
     mDefeatedBy.clear();
     mEarthquakes.clear();
+    mTidalWaves.clear();
     mGoals.clear();
     emptyRubbish();
 }
@@ -3128,27 +3129,9 @@ void eGameBoard::progressTidalWaves() {
                     to = t;
                     t->setTerrain(eTerrain::water);
                 }
-                double heightFrom = 2.;
-                for(int j = 0; j < 2; j++) {
-                    const auto b = from->bottom<eTile>();
-                    if(b) {
-                        from = b;
-                    } else {
-                        heightFrom -= 1;
-                    }
-                }
-                double heightTo = 2.;
-                for(int j = 0; j < 2; j++) {
-                    const auto b = to->bottom<eTile>();
-                    if(b) {
-                        to = b;
-                    } else {
-                        heightTo -= 1;
-                    }
-                }
                 t->scheduleNeighboursTerrainUpdate(2);
-                path.push_back({(double)from->x(), (double)from->y(), heightFrom});
-                path.push_back({(double)to->x(), (double)to->y(), heightTo});
+                path.push_back({(double)from->x(), (double)from->y(), 0.});
+                path.push_back({(double)to->x(), (double)to->y(), 0.});
                 const auto m = e::make_shared<eWaveMissile>(*this, path);
                 m->incTime(0);
             }
@@ -3219,6 +3202,10 @@ void eGameBoard::addTidalWave(eTile* const startTile,
     if(w->fTiles.empty()) return;
     w->fPermanent = permanent;
     mTidalWaves.push_back(w);
+}
+
+bool eGameBoard::duringTidalWave() const {
+    return !mTidalWaves.empty();
 }
 
 void centerTile(const int minX, const int minY,

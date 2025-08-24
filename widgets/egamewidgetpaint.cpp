@@ -1354,6 +1354,45 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto drawMissiles = [&]() {
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
+                const auto type = m->type();
+                const bool isWave = type == eMissileType::wave;
+                if(isWave) continue;
+                const double h = m->height();
+                const double mx = m->x();
+                const double my = m->y();
+                double x;
+                double y;
+                if(dir == eWorldDirection::N) {
+                    x = rtx + mx + 0.25 - h;
+                    y = rty + my + 0.25 - h;
+                } else if(dir == eWorldDirection::E) {
+                    x = rtx + my + 0.25 - h;
+                    y = rty - mx + 1.25 - h;
+                } else if(dir == eWorldDirection::S) {
+                    x = rtx - mx + 1.25 - h;
+                    y = rty - my + 1.25 - h;
+                } else { // if(dir == eWorldDirection::W) {
+                    x = rtx - my + 1.25 - h;
+                    y = rty + mx + 0.25 - h;
+                }
+                const auto tex = m->getTexture(mTileSize);
+                tp.drawTexture(x, y, tex);
+            }
+        };
+
+        const auto drawWaves = [this, dir, boardw, boardh, &tp](eTile* const tile) {
+            const int tx = tile->x();
+            const int ty = tile->y();
+            int rtx;
+            int rty;
+            eTileHelper::tileIdToRotatedTileId(tx, ty,
+                                               rtx, rty, dir,
+                                               boardw, boardh);
+            const auto& mss = tile->missiles();
+            for(const auto& m : mss) {
+                const auto type = m->type();
+                const bool isWave = type == eMissileType::wave;
+                if(!isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
                 const double my = m->y();
@@ -1593,20 +1632,20 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
             return eCharRenderOrder::x1y1;
         };
+        bool lastTile = false;
+        if(dir == eWorldDirection::N) {
+            lastTile = dty >= mBoard->height() - 2;
+        } else if(dir == eWorldDirection::E) {
+            lastTile = dtx <= 1;
+        } else if(dir == eWorldDirection::S) {
+            lastTile = dty <= 1;
+        } else if(dir == eWorldDirection::W) {
+            lastTile = dtx >= mBoard->width() - 2;
+        }
         {
             const auto tt = tile->tileRelRotated<eTile>(-3, -3, dir);
             if(tt) {
                 drawCharacters(tt, true);
-            }
-            bool lastTile = false;
-            if(dir == eWorldDirection::N) {
-                lastTile = dty >= mBoard->height() - 2;
-            } else if(dir == eWorldDirection::E) {
-                lastTile = dtx <= 1;
-            } else if(dir == eWorldDirection::S) {
-                lastTile = dty <= 1;
-            } else if(dir == eWorldDirection::W) {
-                lastTile = dtx >= mBoard->width() - 2;
             }
             if(lastTile) {
                 for(int i = 0; i < 3; i++) {
@@ -1654,6 +1693,21 @@ void eGameWidget::paintEvent(ePainter& p) {
         buildingDrawer(tile);
 
         drawMissiles();
+
+        if(mBoard->duringTidalWave()) {
+            const auto tt = tile->tileRelRotated<eTile>(-2, -2, dir);
+            if(tt) {
+                drawWaves(tt);
+            }
+            if(lastTile) {
+                for(int i = 0; i < 2; i++) {
+                    const auto tt = tile->tileRelRotated<eTile>(-i, -i, dir);
+                    if(tt) {
+                        drawWaves(tt);
+                    }
+                }
+            }
+        }
 
         if(mLeftPressed && mMovedSincePress &&
            mGm->visible() && mGm->mode() == eBuildingMode::none) {
