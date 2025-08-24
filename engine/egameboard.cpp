@@ -2984,6 +2984,42 @@ eImmigrationLimitedBy eGameBoard::immigrationLimit(const eCityId cid) const {
     return c->immigrationLimit();
 }
 
+void eGameBoard::earthquakeWaveCollapse(eTile* const t) {
+    bool playSound = true;
+    if(const auto ub = t->underBuilding()) {
+        const auto type = ub->type();
+        const bool s = eBuilding::sSanctuaryBuilding(type);
+        if(s) {
+        } else if(type == eBuildingType::ruins) {
+            ub->erase();
+        } else {
+            if(const auto as = dynamic_cast<eAgoraSpace*>(ub)) {
+                const auto a = as->agora();
+                a->collapse();
+            } else if(const auto v = dynamic_cast<eVendor*>(ub)) {
+                const auto a = v->agora();
+                a->collapse();
+            } else if(const auto r = dynamic_cast<eRoad*>(ub)) {
+                const auto a = r->underAgora();
+                if(a) a->collapse();
+                const auto g = r->underGatehouse();
+                if(g) g->collapse();
+                r->eBuilding::erase();
+                playSound = a || g;
+            } else {
+                if(type == eBuildingType::park) {
+                    scheduleTerrainUpdate();
+                }
+                ub->collapse();
+            }
+            if(playSound) eSounds::playCollapseSound();
+        }
+    }
+    for(const auto& c : t->characters()) {
+        c->killWithCorpse();
+    }
+}
+
 void eGameBoard::progressEarthquakes() {
     if(mEarthquakes.empty()) return;
     eSounds::playEarthquakeSound();
@@ -3000,44 +3036,11 @@ void eGameBoard::progressEarthquakes() {
             const bool r = eVectorHelpers::contains(e->fTiles, t);
             if(!r) return false;
             t->setTerrain(eTerrain::quake);
-            for(int xx = -1; xx <= 1; xx++) {
-                for(int yy = -1; yy <= 1; yy++) {
-                    if(xx == 0 && yy == 0) continue;
-                    const auto tt = t->tileRel<eTile>(xx, yy);
-                    tt->scheduleTerrainUpdate();
-                }
-            }
+            t->scheduleNeighboursTerrainUpdate();
             const auto cid = t->cityId();
             const auto c = boardCityWithId(cid);
             if(c) c->incTerrainState();
-            if(const auto ub = t->underBuilding()) {
-                const auto type = ub->type();
-                const bool s = eBuilding::sSanctuaryBuilding(type);
-                if(s) {
-                } else if(type == eBuildingType::ruins) {
-                    ub->erase();
-                } else {
-                    if(const auto as = dynamic_cast<eAgoraSpace*>(ub)) {
-                        const auto a = as->agora();
-                        a->collapse();
-                    } else if(const auto v = dynamic_cast<eVendor*>(ub)) {
-                        const auto a = v->agora();
-                        a->collapse();
-                    } else if(const auto r = dynamic_cast<eRoad*>(ub)) {
-                        const auto a = r->underAgora();
-                        if(a) a->collapse();
-                        const auto g = r->underGatehouse();
-                        if(g) g->collapse();
-                        r->eBuilding::erase();
-                    } else {
-                        if(type == eBuildingType::park) {
-                            scheduleTerrainUpdate();
-                        }
-                        ub->collapse();
-                    }
-                    eSounds::playCollapseSound();
-                }
-            }
+            earthquakeWaveCollapse(t);
             eVectorHelpers::removeAll(e->fTiles, t);
             return false;
         };
@@ -3073,6 +3076,11 @@ void eGameBoard::progressTidalWaves() {
                     to = t;
                     t->setTerrain(eTerrain::water);
                 }
+                earthquakeWaveCollapse(t);
+                const auto cid = t->cityId();
+                const auto c = boardCityWithId(cid);
+                if(c) c->incTerrainState();
+
                 t->scheduleNeighboursTerrainUpdate(2);
                 path.push_back({(double)from->x(), (double)from->y(), 0.});
                 path.push_back({(double)to->x(), (double)to->y(), 0.});

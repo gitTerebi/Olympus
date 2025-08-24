@@ -730,6 +730,7 @@ private:
 
     void progressEarthquakes();
     void progressTidalWaves();
+    void earthquakeWaveCollapse(eTile * const t);
 
     bool mEditorMode = false;
     bool mFogOfWar = true;
