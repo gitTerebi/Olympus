@@ -67,3 +67,9 @@ void eGameEvents::read(eReadStream& src) {
         addEvent(e);
     }
 }
+
+void eGameEvents::loadResources() {
+    for(const auto& e : mGameEvents) {
+        e->loadResources();
+    }
+}

@@ -2742,6 +2742,14 @@ void eGameBoard::startEpisode(eEpisode* const e,
         const auto a = new eColonyMonumentAction(lastPlayedColony);
         planAction(a);
     }
+
+    loadResources();
+}
+
+void eGameBoard::loadResources() {
+    for(const auto& c : mCitiesOnBoard) {
+        c->loadResources();
+    }
 }
 
 bool eGameBoard::checkGoalsFulfilled() const {

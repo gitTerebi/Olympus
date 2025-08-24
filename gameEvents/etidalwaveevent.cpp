@@ -50,3 +50,7 @@ void eTidalWaveEvent::read(eReadStream& src) {
     eGodReasonEventValue::read(src);
     src >> mPermanent;
 }
+
+void eTidalWaveEvent::loadResources() const {
+    eGameTextures::loadWave();
+}

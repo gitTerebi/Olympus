@@ -2325,6 +2325,10 @@ void eBoardCity::startEpisode(eEpisode* const e) {
     setFriendlyGods(e->fFriendlyGods[mId]);
 }
 
+void eBoardCity::loadResources() {
+    mCityEvents.loadResources();
+}
+
 void eBoardCity::setFriendlyGods(const std::vector<eGodType>& gods) {
     for(const auto g : gods) {
         eBuildingType bt;

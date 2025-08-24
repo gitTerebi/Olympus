@@ -557,6 +557,7 @@ public:
     using eWC = stdsptr<eWorldCity>;
     void startEpisode(eEpisode* const e,
                       const eWC& lastPlayedColony);
+    void loadResources();
 
     bool checkGoalsFulfilled() const;
 

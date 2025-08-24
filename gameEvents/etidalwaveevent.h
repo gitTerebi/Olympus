@@ -21,6 +21,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 
+    void loadResources() const override;
+
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
 private:

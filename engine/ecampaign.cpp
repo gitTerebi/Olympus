@@ -391,6 +391,12 @@ void eCampaign::read(eReadStream& src) {
         const auto complete = eLanguage::zeusMM(mCompleteId);
         mComplete = complete.fContent;
     }
+
+    if(src.format() == "eZeus.ez") { // save file
+        const auto e = currentEpisode();
+        const auto board = e->fBoard;
+        board->loadResources();
+    }
 }
 
 void eCampaign::write(eWriteStream& dst) const {

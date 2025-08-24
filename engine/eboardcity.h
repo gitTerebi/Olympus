@@ -348,6 +348,7 @@ public:
 
     void clearAfterLastEpisode();
     void startEpisode(eEpisode* const e);
+    void loadResources();
 
     void addRootGameEvent(const stdsptr<eGameEvent>& e);
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);

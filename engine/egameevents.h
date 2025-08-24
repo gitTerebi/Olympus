@@ -15,6 +15,8 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
+
+    void loadResources();
 private:
     const eCityId mCid;
     eGameBoard& mBoard;
