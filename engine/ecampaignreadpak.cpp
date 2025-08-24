@@ -887,10 +887,12 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             e->setRepeat(0);
         } else if(occuranceType == 2) { // recurring event
             if(years0 == 0xFFFF) {
-                e->setPeriodMin(365*years1);
-                e->setPeriodMax(365*years2);
+                const int periodMin = years1 == 0 ? 365 : 365*years1;
+                const int periodMax = years2 == 0 ? 365 : 365*years2;
+                e->setPeriodMin(periodMin);
+                e->setPeriodMax(periodMax);
             } else {
-                const int period = 365*years0;
+                const int period = years0 == 0 ? 365 : 365*years0;
                 e->setPeriodMin(period);
                 e->setPeriodMax(period);
             }
