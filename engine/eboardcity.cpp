@@ -2226,6 +2226,7 @@ const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
             for(int i = x - range; i <= x + range; i++) {
                 for(int j = y - range; j <= y + range; j++) {
                     const auto tile = mBoard.tile(i, j);
+                    if(!tile) continue;
                     const auto cid = tile->cityId();
                     if(cid != mId) continue;
                     const bool r = eVectorHelpers::contains(
@@ -2254,6 +2255,7 @@ const std::vector<eTile*>& eBoardCity::huntingTiles() {
             for(int i = x - range; i <= x + range; i++) {
                 for(int j = y - range; j <= y + range; j++) {
                     const auto tile = mBoard.tile(i, j);
+                    if(!tile) continue;
                     const auto cid = tile->cityId();
                     if(cid != mId) continue;
                     const bool r = eVectorHelpers::contains(
