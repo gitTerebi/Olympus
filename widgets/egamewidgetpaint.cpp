@@ -1150,10 +1150,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                         }
                     }
                     const bool cbig = ct == eCharacterType::scylla ||
-                                      ct == eCharacterType::kraken;
+                                      ct == eCharacterType::kraken ||
+                                      ct == eCharacterType::enemyBoat ||
+                                      ct == eCharacterType::trireme ||
+                                      ct == eCharacterType::tradeBoat;
                     if(big != cbig) continue;
                     const bool v = eViewModeHelpers::characterVisible(
-                                       mViewMode, c->type());
+                                       mViewMode, ct);
                     if(!v) continue;
                     const double cx = c->x();
                     const double cy = c->y();
