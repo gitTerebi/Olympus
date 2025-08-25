@@ -297,7 +297,11 @@ std::vector<eCityId> eWorldBoard::playerCities(const ePlayerId pid) const {
     std::vector<eCityId> result;
     for(const auto it : mCityToPlayer) {
         if(it.second == pid) {
-            result.push_back(it.first);
+            const auto cid = it.first;
+            const auto c = cityWithId(cid);
+            if(!c->visible()) continue;
+            if(!c->active()) continue;
+            result.push_back(cid);
         }
     }
     return result;

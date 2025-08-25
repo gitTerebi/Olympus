@@ -797,10 +797,10 @@ void eGameBoard::request(const stdsptr<eWorldCity>& c,
     c->incAttitude(-10, pid);
 }
 
-void eGameBoard::requestAid(const stdsptr<eWorldCity>& c) {
+void eGameBoard::requestAid(const stdsptr<eWorldCity>& c,
+                            const eCityId cid) {
     const auto e = e::make_shared<eRequestAidEvent>(
-                       personPlayerCapital(),
-                       eGameEventBranch::root, *this);
+        cid, eGameEventBranch::root, *this);
     e->setCity(c);
     const auto date = mDate + 30;
     e->initializeDate(date);

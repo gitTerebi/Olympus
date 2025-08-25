@@ -9,10 +9,12 @@ class eRequestDialog : public eClosableDialog {
 public:
     using eClosableDialog::eClosableDialog;
 
-    using eRequestFunction = std::function<void(eResourceType)>;
+    using eRequestFunction = std::function<void(eCityId, eResourceType)>;
+    using eRequestDefenceFunc = std::function<void(eCityId)>;
     void initialize(const stdsptr<eWorldCity>& c,
+                    eWorldBoard& board,
                     const eRequestFunction& func,
-                    const eAction& requestDefensiveAid,
+                    const eRequestDefenceFunc& requestDefensiveAid,
                     const eAction& requestStrike,
                     const ePlayerId pid);
 };

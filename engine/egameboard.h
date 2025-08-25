@@ -461,7 +461,8 @@ public:
     void request(const stdsptr<eWorldCity>& c,
                  const eResourceType type,
                  const eCityId cid);
-    void requestAid(const stdsptr<eWorldCity>& c);
+    void requestAid(const stdsptr<eWorldCity>& c,
+                    const eCityId cid);
     void planGiftFrom(const stdsptr<eWorldCity>& c,
                       const eResourceType type,
                       const int count,

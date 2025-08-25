@@ -5,13 +5,17 @@
 #include "eframedbuttonwithicon.h"
 #include "estringhelpers.h"
 #include "textures/egametextures.h"
-#include "emessagewidget.h"
+#include "eboardcityswitchbutton.h"
+#include "engine/eworldboard.h"
 
 void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
+                                eWorldBoard &board,
                                 const eRequestFunction& func,
-                                const eAction& requestDefensiveAid,
+                                const eRequestDefenceFunc& requestDefensiveAid,
                                 const eAction& requestStrike,
                                 const ePlayerId pid) {
+    const auto pcids = board.personPlayerCities();
+
     const auto r = resolution();
     const double mult = r.multiplier();
 
@@ -23,6 +27,16 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     innerWid->setNoPadding();
     innerWid->move(p, p/2);
 
+    std::map<eCityId, std::string> cities;
+    for(const auto cid : pcids) {
+        const auto c = board.cityWithId(cid);
+        const auto cname = c->name();
+        cities[cid] = cname;
+    }
+
+    const auto iniCid = pcids[0];
+    const auto currentCid = std::make_shared<eCityId>(iniCid);
+
     const auto name = c->name();
     auto rof = eLanguage::zeusText(41, 1); // request of
     eStringHelpers::replace(rof, "[city_name]", name);
@@ -32,7 +46,22 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     rofLabel->setText(rof);
     rofLabel->fitContent();
 
-    innerWid->addWidget(rofLabel);
+    const auto topWidget = new eWidget(window());
+    topWidget->setNoPadding();
+    topWidget->addWidget(rofLabel);
+    if(pcids.size() > 1) {
+        const auto cityB = new eBoardCitySwitchButton(window());
+        cityB->setSmallFontSize();
+        const auto setCid = [currentCid](const eCityId cid) {
+            *currentCid = cid;
+        };
+        cityB->initialize(cities, setCid);
+        cityB->setCurrentCity(iniCid);
+        topWidget->addWidget(cityB);
+    }
+    topWidget->stackHorizontally(p);
+    topWidget->fitContent();
+    innerWid->addWidget(topWidget);
 
     const auto tradeSells = c->sells();
     std::vector<eResourceType> sells;
@@ -60,8 +89,8 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     } else {
         for(const auto s : sells) {
             const auto b = new eFramedButtonWithIcon(window());
-            b->setPressAction([s, func]() {
-                func(s);
+            b->setPressAction([s, func, currentCid]() {
+                func(*currentCid, s);
             });
             std::string request;
             if(c->isVassal() || c->isColony()) {
@@ -138,7 +167,9 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
 
             {
                 const auto b = new eFramedButtonWithIcon(window());
-                b->setPressAction(requestDefensiveAid);
+                b->setPressAction([requestDefensiveAid, currentCid]() {
+                    requestDefensiveAid(*currentCid);
+                });
                 const auto request = eLanguage::zeusText(41, 7); // request defensive aid
                 b->initialize(coll.fTroopsRequestIcon, request);
                 innerWid->addWidget(b);
@@ -158,5 +189,5 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     innerWid->fitContent();
 
     fitContent();
-    rofLabel->align(eAlignment::hcenter);
+    topWidget->align(eAlignment::hcenter);
 }
