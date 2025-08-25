@@ -249,6 +249,12 @@ void eMessageBox::initialize(eGameWidget* const gw,
                 if(a0) a0();
                 close();
             });
+            if(spaceLabel) {
+                const int space = ed.fCSpaceCount.at(iniCid);
+                const int c = std::min(space, count);
+                const auto cStr = std::to_string(c);
+                spaceLabel->setText(cStr);
+            }
         } else {
             const auto iniC = ed.fCityNames.begin();
             const auto iniCid = iniC->first;
