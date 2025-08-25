@@ -96,19 +96,6 @@ void eGameBoard::read(eReadStream& src) {
     }
 
     {
-        int nb;
-        src >> nb;
-
-        for(int i = 0; i < nb; i++) {
-            eBannerType type;
-            src >> type;
-            const auto b = e::make_shared<eSoldierBanner>(type, *this);
-            b->read(src);
-            registerSoldierBanner(b);
-        }
-    }
-
-    {
         int ncs;
         src >> ncs;
 

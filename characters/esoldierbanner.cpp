@@ -5,11 +5,6 @@
 #include "engine/etile.h"
 #include "engine/egameboard.h"
 #include "characters/esoldier.h"
-#include "characters/erockthrower.h"
-#include "characters/ehoplite.h"
-#include "characters/ehorseman.h"
-#include "characters/eamazon.h"
-#include "characters/eareswarrior.h"
 #include "characters/actions/esoldieraction.h"
 #include "eiteratesquare.h"
 
@@ -99,14 +94,12 @@ void eSoldierBanner::moveTo(const int x, const int y) {
     const auto t = mBoard.tile(x, y);
     if(!t || t == mTile) return;
 
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
+    const bool visible = visibleOnTile();
 
-    if(isPerson && mTile) {
+    if(visible && mTile) {
         mTile->setSoldierBanner(nullptr);
     }
-    if(isPerson && t) {
+    if(visible && t) {
         t->setSoldierBanner(this);
     }
     mTile = t;
@@ -325,10 +318,7 @@ void eSoldierBanner::read(eReadStream& src) {
     src >> mCityId;
     src >> mOnCityId;
 
-    const auto pid = playerId();
-    const auto ppid = mBoard.personPlayer();
-    const bool isPerson = pid == ppid;
-    if((isPerson) && mTile) {
+    if(visibleOnTile() && mTile) {
         mTile->setSoldierBanner(this);
     }
 
@@ -725,4 +715,14 @@ bool eSoldierBanner::nearestSoldier(const int fromX, const int fromY,
         minDist = dist;
     }
     return found;
+}
+
+bool eSoldierBanner::visibleOnTile() const {
+    const auto onCid = onCityId();
+    const auto onPid = mBoard.cityIdToPlayerId(onCid);
+    const auto ppid = mBoard.personPlayer();
+    if(onPid != ppid) return false;
+    const auto pid = playerId();
+    if(pid == ppid) return true;
+    return mMilitaryAid;
 }

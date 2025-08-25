@@ -122,15 +122,6 @@ void eGameBoard::write(eWriteStream& dst) const {
     }
 
     {
-        const int nb = mAllSoldierBanners.size();
-        dst << nb;
-        for(const auto& b : mAllSoldierBanners) {
-            dst << b->type();
-            b->write(dst);
-        }
-    }
-
-    {
         const int ncs = mMissiles.size();
         dst << ncs;
         for(const auto c : mMissiles) {

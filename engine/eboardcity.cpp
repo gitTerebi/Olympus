@@ -1773,21 +1773,20 @@ void eBoardCity::removeSoldier(const eCharacterType st,
 
 void eBoardCity::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
     if(b->militaryAid()) return;
-    b->setRegistered(true);
-    mSoldierBanners.push_back(b);
     switch(b->type()) {
+    case eBannerType::enemy:
+    case eBannerType::trireme:
+        return;
     case eBannerType::rockThrower:
     case eBannerType::hoplite:
     case eBannerType::horseman:
         mPalaceSoldierBanners.push_back(b);
-        break;
     default:
-        break;
+        mSoldierBanners.push_back(b);
     }
 }
 
 bool eBoardCity::unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b) {
-    b->setRegistered(false);
     eVectorHelpers::remove(mPalaceSoldierBanners, b);
     return eVectorHelpers::remove(mSoldierBanners, b);
 }

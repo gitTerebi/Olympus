@@ -286,7 +286,6 @@ void eMilitaryDataWidget::updateWidgets() {
         }
     }
     const auto act = [this](const eSB& s) {
-        if(!s->registered()) return;
         mBoard.clearBannerSelection();
         mBoard.selectBanner(s.get());
         const auto t = s->tile();

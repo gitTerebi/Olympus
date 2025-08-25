@@ -91,12 +91,10 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
-    void setRegistered(const bool r) { mRegistered = r; }
-    bool registered() const { return mRegistered; }
-
-
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX, int& toY) const;
+
+    bool visibleOnTile() const;
 
     static void sPlaceDefault(std::vector<eSoldierBanner*>& bs,
                               const int ctx, const int cty,
@@ -124,8 +122,6 @@ private:
     bool mMilitaryAid = false;
 
     int mIOID = -1;
-
-    bool mRegistered = false;
 
     bool mHome = true;
     bool mAbroad = false;

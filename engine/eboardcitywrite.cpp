@@ -131,4 +131,10 @@ void eBoardCity::write(eWriteStream& dst) const {
         dst << m.first;
         dst.writeGameEvent(m.second);
     }
+
+    dst << mSoldierBanners.size();
+    for(const auto& s : mSoldierBanners) {
+        dst << s->type();
+        s->write(dst);
+    }
 }

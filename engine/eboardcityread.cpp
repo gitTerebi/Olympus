@@ -172,4 +172,16 @@ void eBoardCity::read(eReadStream& src) {
             });
         }
     }
+
+    {
+        int nb;
+        src >> nb;
+        for(int i = 0; i < nb; i++) {
+            eBannerType type;
+            src >> type;
+            const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
+            b->read(src);
+            registerSoldierBanner(b);
+        }
+    }
 }
