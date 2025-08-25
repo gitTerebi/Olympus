@@ -537,7 +537,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             }
             const auto c = std::make_shared<eWorldCity>(
                                cityType, cid, name, cityXF, cityYF);
-            const bool visible = visibleId != 0;
+            const bool visible = visibleId != 4;
             const auto namePlace = pakIdToNamePlace(namePlaceId);
             c->setNamePlace(namePlace);
             c->setVisible(visible);
