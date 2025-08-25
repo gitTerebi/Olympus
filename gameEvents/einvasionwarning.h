@@ -4,7 +4,7 @@
 #include "ewarning.h"
 
 enum class eInvasionWarningType {
-    warning36,
+    warningInitial,
     warning24,
     warning12,
     warning6,

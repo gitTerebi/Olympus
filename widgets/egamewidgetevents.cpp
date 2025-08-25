@@ -238,8 +238,8 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         handleHeroArrivalEvent(ed);
         break;
 
-    case eEvent::invasion36: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion36, ed.fReason, 36));
+    case eEvent::invasionInitial: {
+        showMessage(ed, eMessages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime));
     } break;
     case eEvent::invasion24: {
         showMessage(ed, eMessages::invasionMessage(inst.fInvasion24, ed.fReason, 24));

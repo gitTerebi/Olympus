@@ -600,6 +600,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             } else if(subType == 2) { // monster invades
                 const auto ee = e::make_shared<eMonsterInvasionEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
+                ee->setWarningMonths(duration);
                 ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
@@ -839,6 +840,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::invasion: {
             const auto ee = e::make_shared<eInvasionEvent>(
                 cid, eGameEventBranch::root, *ep.fBoard);
+            ee->setWarningMonths(duration);
+
             ee->setMinCityId(invCityMin);
             ee->setMaxCityId(invCityMax);
 

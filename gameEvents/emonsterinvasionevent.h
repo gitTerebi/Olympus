@@ -4,7 +4,7 @@
 #include "emonsterinvasioneventbase.h"
 
 enum class eMonsterInvasionWarningType {
-    warning36,
+    warningInitial,
     warning24,
     warning12,
     warning6,
@@ -34,8 +34,12 @@ public:
 
     void pointerCreated() override;
 
+    void setWarningMonths(const int ms) override;
+
     void trigger() override;
     std::string longName() const override;
+private:
+    eMonsterInvasionWarning* mInitialWarning = nullptr;
 };
 
 #endif // EMONSTERINVASIONEVENT_H

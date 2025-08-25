@@ -588,10 +588,10 @@ bool eMessages::loadImpl() {
     fNemeanGames.fLost.fFull.fText = loadMessage("PHRASE_nemean_games_conclude_initial_announcement_lost");
     fNemeanGames.fLost.fCondensed.fText = loadMessage("PHRASE_CONDENSED_nemean_games_conclude_initial_announcement_lost");
 
-    fInvasion36.fFull.fTitle = loadMessage("PHRASE_invasion_title");
-    fInvasion36.fFull.fText = loadMessage("PHRASE_invasion_initial_announcement");
-    fInvasion36.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_invasion_title");
-    fInvasion36.fCondensed.fText = loadMessage("PHRASE_CONDENSED_invasion_initial_announcement");
+    fInvasionInitial.fFull.fTitle = loadMessage("PHRASE_invasion_title");
+    fInvasionInitial.fFull.fText = loadMessage("PHRASE_invasion_initial_announcement");
+    fInvasionInitial.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_invasion_title");
+    fInvasionInitial.fCondensed.fText = loadMessage("PHRASE_CONDENSED_invasion_initial_announcement");
 
     fInvasion24.fFull.fTitle = loadMessage("PHRASE_invasion_title");
     fInvasion24.fFull.fText = loadMessage("PHRASE_invasion_2year_reminder");

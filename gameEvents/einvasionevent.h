@@ -11,6 +11,7 @@
 
 class eInvasionHandler;
 class ePlayerConquestEvent;
+class eInvasionWarning;
 
 class eInvasionEvent : public eGameEvent,
                        public ePointEventValue,
@@ -38,6 +39,8 @@ public:
 
     bool finished() const override;
 
+    void setWarningMonths(const int ms) override;
+
     eTile* invasionTile() const;
     eTile* shoreTile() const { return mShoreTile; }
     eTile* landInvasionTile() const;
@@ -62,6 +65,8 @@ private:
                         int& archers) const;
     int bribeCost() const;
     void updateDisembarkAndShoreTile();
+
+    eInvasionWarning* mInitialWarning = nullptr;
 
     std::vector<eInvasionHandler*> mHandlers;
 

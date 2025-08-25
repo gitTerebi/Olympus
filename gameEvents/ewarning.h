@@ -9,14 +9,16 @@ enum class eCityId;
 
 class eWarning {
 public:
-    eWarning(const int warningDays,
+    eWarning(const int warningMonths,
              eGameEvent& parent,
              const eCityId cid,
              eGameBoard& board);
 
     virtual void trigger() = 0;
 
-    int warningDays() const { return mWarningDays; }
+    int warningMonths() const { return mWarningMonths; }
+    void setWarningMonths(const int ms) { mWarningMonths = ms; }
+
     const eDate& nextDate() const { return mNextDate; }
 
     void setNextDate(const eDate& date);
@@ -32,11 +34,11 @@ public:
     virtual void write(eWriteStream& dst) const;
     virtual void read(eReadStream& src);
 private:
-    const int mWarningDays;
     eGameEvent& mParent;
     const eCityId mCid;
     eGameBoard& mBoard;
 
+    int mWarningMonths = 2;
     eDate mNextDate;
     bool mFinished = true;
 };

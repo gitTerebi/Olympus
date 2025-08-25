@@ -1,13 +1,13 @@
 #include "ewarning.h"
 
-eWarning::eWarning(const int warningDays,
+eWarning::eWarning(const int warningMonths,
                    eGameEvent& parent,
                    const eCityId cid,
                    eGameBoard& board) :
-    mWarningDays(warningDays),
     mParent(parent),
     mCid(cid),
-    mBoard(board) {}
+    mBoard(board),
+    mWarningMonths(warningMonths) {}
 
 void eWarning::setNextDate(const eDate &date) {
     mNextDate = date;
@@ -25,9 +25,11 @@ void eWarning::handleNewDate(const eDate &date) {
 void eWarning::write(eWriteStream &dst) const {
     mNextDate.write(dst);
     dst << mFinished;
+    dst << mWarningMonths;
 }
 
 void eWarning::read(eReadStream &src) {
     mNextDate.read(src);
     src >> mFinished;
+    src >> mWarningMonths;
 }

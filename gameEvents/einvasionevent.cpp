@@ -36,7 +36,7 @@ eInvasionEvent::~eInvasionEvent() {
 
 void eInvasionEvent::pointerCreated() {
     const auto warnTypes = {
-        eInvasionWarningType::warning36,
+        eInvasionWarningType::warningInitial,
         eInvasionWarningType::warning24,
         eInvasionWarningType::warning12,
         eInvasionWarningType::warning6,
@@ -47,7 +47,7 @@ void eInvasionEvent::pointerCreated() {
     for(const auto w : warnTypes) {
         int months;
         switch(w) {
-        case eInvasionWarningType::warning36:
+        case eInvasionWarningType::warningInitial:
             months = 36;
             break;
         case eInvasionWarningType::warning24:
@@ -63,9 +63,11 @@ void eInvasionEvent::pointerCreated() {
             months = 1;
             break;
         }
-        const int daysBefore = 31*months;
         const auto e = std::make_shared<eInvasionWarning>(
-            daysBefore, *this, cid, board, w);
+            months, *this, cid, board, w);
+        if(w == eInvasionWarningType::warningInitial) {
+            mInitialWarning = e.get();
+        }
         addWarning(e);
     }
 }
@@ -137,6 +139,11 @@ eTile* nearestShoreTile(eTile* const tile) {
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
+    if(!mWarned) {
+        choosePointId();
+        chooseCity();
+        updateDisembarkAndShoreTile();
+    }
     chooseCount();
     const int c = count();
     const auto cid = cityId();
@@ -268,6 +275,11 @@ void eInvasionEvent::read(eReadStream& src) {
 
 bool eInvasionEvent::finished() const {
     return mHandlers.empty() && eGameEvent::finished();
+}
+
+void eInvasionEvent::setWarningMonths(const int ms) {
+    eGameEvent::setWarningMonths(ms);
+    mInitialWarning->setWarningMonths(ms);
 }
 
 eTile* eInvasionEvent::invasionTile() const {

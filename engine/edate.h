@@ -36,6 +36,7 @@ public:
     std::string shortString() const;
     void nextDays(const int d, bool& nextMonth, bool& nextYear);
     void prevDays(const int d, bool& prevMonth, bool& prevYear);
+    void prevMonths(const int m);
 
     int day() const { return mDay; }
     eMonth month() const { return mMonth; }

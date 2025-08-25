@@ -6,10 +6,10 @@
 #include "einvasionevent.h"
 
 eInvasionWarning::eInvasionWarning(const int warningDays,
-                                             eGameEvent &parent,
-                                             const eCityId cid,
-                                             eGameBoard &board,
-                                             const eInvasionWarningType type) :
+                                   eGameEvent &parent,
+                                   const eCityId cid,
+                                   eGameBoard &board,
+                                   const eInvasionWarningType type) :
     eWarning(warningDays, parent, cid, board),
     mType(type) {}
 
@@ -31,8 +31,9 @@ void eInvasionWarning::trigger() {
     }
 
     switch(mType) {
-    case eInvasionWarningType::warning36: {
-        board.event(eEvent::invasion36, ed);
+    case eInvasionWarningType::warningInitial: {
+        ed.fTime = warningMonths();
+        board.event(eEvent::invasionInitial, ed);
     } break;
     case eInvasionWarningType::warning24: {
         board.event(eEvent::invasion24, ed);

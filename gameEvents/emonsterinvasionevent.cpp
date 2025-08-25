@@ -26,7 +26,7 @@ void eMonsterInvasionWarning::trigger() {
     }
 
     switch(mType) {
-    case eMonsterInvasionWarningType::warning36: {
+    case eMonsterInvasionWarningType::warningInitial: {
         board.event(eEvent::monsterInvasion36, ed);
     } break;
     case eMonsterInvasionWarningType::warning24: {
@@ -53,7 +53,7 @@ eMonsterInvasionEvent::eMonsterInvasionEvent(
 
 void eMonsterInvasionEvent::pointerCreated() {
     const auto warnTypes = {
-        eMonsterInvasionWarningType::warning36,
+        eMonsterInvasionWarningType::warningInitial,
         eMonsterInvasionWarningType::warning24,
         eMonsterInvasionWarningType::warning12,
         eMonsterInvasionWarningType::warning6,
@@ -64,7 +64,7 @@ void eMonsterInvasionEvent::pointerCreated() {
     for(const auto w : warnTypes) {
         int months;
         switch(w) {
-        case eMonsterInvasionWarningType::warning36:
+        case eMonsterInvasionWarningType::warningInitial:
             months = 36;
             break;
         case eMonsterInvasionWarningType::warning24:
@@ -80,11 +80,18 @@ void eMonsterInvasionEvent::pointerCreated() {
             months = 1;
             break;
         }
-        const int daysBefore = 31*months;
         const auto e = std::make_shared<eMonsterInvasionWarning>(
-            daysBefore, *this, cid, board, w);
+            months, *this, cid, board, w);
+        if(w == eMonsterInvasionWarningType::warningInitial) {
+            mInitialWarning = e.get();
+        }
         addWarning(e);
     }
+}
+
+void eMonsterInvasionEvent::setWarningMonths(const int ms) {
+    eGameEvent::setWarningMonths(ms);
+    mInitialWarning->setWarningMonths(ms);
 }
 
 void eMonsterInvasionEvent::trigger() {

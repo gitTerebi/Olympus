@@ -160,6 +160,9 @@ public:
     int periodMax() const { return mPeriodDaysMax; }
     void setPeriodMax(const int p) { mPeriodDaysMax = p; }
 
+    virtual void setWarningMonths(const int ms);
+    int warningMonths() const { return mWarningMonths; }
+
     int choosePeriod() const;
     int chooseYear() const;
 
@@ -209,6 +212,8 @@ private:
     stdsptr<eEventTrigger> mBaseTrigger;
 
     std::string mReason;
+
+    int mWarningMonths = 2;
 
     int mDatePlusDays = 0;
     int mDatePlusMonths = 0;

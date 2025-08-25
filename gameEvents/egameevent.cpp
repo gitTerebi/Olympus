@@ -261,6 +261,10 @@ void eGameEvent::setReason(const std::string& r) {
     mReason = r;
 }
 
+void eGameEvent::setWarningMonths(const int ms) {
+    mWarningMonths = ms;
+}
+
 int eGameEvent::choosePeriod() const {
     int periodDays = mPeriodDaysMin;
     if(mPeriodDaysMax > mPeriodDaysMin) {
@@ -340,10 +344,17 @@ void eGameEvent::updateWarningDates() {
     const auto& board = *gameBoard();
     const auto currentDate = board.date();
     for(const auto& w : mWarnings) {
-        const int days = w->warningDays();
-        const auto wdate = mNextDate - days;
+        const int ms = w->warningMonths();
+        if(ms > mWarningMonths) {
+            w->setFinished(true);
+            continue;
+        }
+        auto wdate = mNextDate;
+        wdate.prevMonths(ms);
         w->setNextDate(wdate);
-        if(wdate < currentDate) w->setFinished(true);
+        if(wdate < currentDate) {
+            w->setFinished(true);
+        }
     }
 }
 
@@ -356,6 +367,7 @@ void eGameEvent::write(eWriteStream& dst) const {
     mNextDate.write(dst);
     dst << mPeriodDaysMin;
     dst << mPeriodDaysMax;
+    dst << mWarningMonths;
     dst << mRemNRuns;
     dst << mReason;
 
@@ -386,6 +398,7 @@ void eGameEvent::read(eReadStream& src) {
     mNextDate.read(src);
     src >> mPeriodDaysMin;
     src >> mPeriodDaysMax;
+    src >> mWarningMonths;
     src >> mRemNRuns;
     src >> mReason;
 

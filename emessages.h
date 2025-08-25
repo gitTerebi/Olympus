@@ -193,7 +193,7 @@ public:
     eGameMessages fPythianGames;
     eGameMessages fOlympianGames;
 
-    eMessageType fInvasion36;
+    eMessageType fInvasionInitial;
     eMessageType fInvasion24;
     eMessageType fInvasion12;
     eMessageType fInvasion6;

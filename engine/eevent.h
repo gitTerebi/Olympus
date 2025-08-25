@@ -26,7 +26,7 @@ enum class eEvent {
 
     monsterInCity,
 
-    invasion36,
+    invasionInitial,
     invasion24,
     invasion12,
     invasion6,
