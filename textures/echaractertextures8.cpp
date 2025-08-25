@@ -124,14 +124,21 @@ void eCharacterTextures::loadTriremeOverlay() {
                                  eTriremeOverlaySpriteData60);
     eSpriteLoader loader(fTileH, "triremeOverlay", sds,
                          &ePoseidonImpsOffset, fRenderer);
-    for(int j = 0; j < 8; j++) {
-        fTriremeDieOverlay.emplace_back(fRenderer);
-    }
-    loader.loadSkipFlipped(8300, 8300, 8428, fTriremeDieOverlay);
+
     for(int j = 0; j < 8; j++) {
         fTriremeOverlay.emplace_back(fRenderer);
     }
-    loader.loadSkipFlipped(8300, 8428, 8524, fTriremeOverlay);
+    loader.loadSkipFlipped(8300, 8300, 8332, fTriremeOverlay);
+
+    for(int j = 0; j < 8; j++) {
+        fTriremeDieOverlay.emplace_back(fRenderer);
+    }
+    loader.loadSkipFlipped(8300, 8332, 8428, fTriremeDieOverlay);
+
+    for(int j = 0; j < 8; j++) {
+        fTriremeFightOverlay.emplace_back(fRenderer);
+    }
+    loader.loadSkipFlipped(8300, 8428, 8524, fTriremeFightOverlay);
 }
 
 void eCharacterTextures::loadPoseidonTowerArcher() {

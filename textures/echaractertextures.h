@@ -611,6 +611,7 @@ public:
     eTradeBoatTextures fTradeBoat;
     eTradeBoatTextures fTrireme;
     std::vector<eTextureCollection> fTriremeOverlay;
+    std::vector<eTextureCollection> fTriremeFightOverlay;
     std::vector<eTextureCollection> fTriremeDieOverlay;
     eTradeBoatTextures fEnemyBoat;
 

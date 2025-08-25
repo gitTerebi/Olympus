@@ -105,10 +105,17 @@ eOverlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const auto& colls = texs[id];
     const auto a = actionType();
     const bool die = a == eCharacterActionType::die;
-    const auto& charTexs = die ? colls.fTriremeDieOverlay :
-                                 colls.fTriremeOverlay;
+    const std::vector<eTextureCollection>* charTexs;
+    if(a == eCharacterActionType::die) {
+        charTexs = &colls.fTriremeDieOverlay;
+    } else if(a == eCharacterActionType::fight ||
+              a == eCharacterActionType::fight2) {
+        charTexs = &colls.fTriremeFightOverlay;
+    } else {
+        charTexs = &colls.fTriremeOverlay;
+    }
     const int oid = static_cast<int>(rotatedOrientation());
-    const auto coll = &charTexs[oid];
+    const auto coll = &(*charTexs)[oid];
     const bool wrap = !die;
     const bool disappear = die;
     const auto tex = eCharacter::getTexture(coll, wrap, disappear);
