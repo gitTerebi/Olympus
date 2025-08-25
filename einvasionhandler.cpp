@@ -606,12 +606,12 @@ void eInvasionHandler::extractSSFromForces(
 const int boatSpawnPeriod = 825;
 
 void eInvasionHandler::incTime(const int by) {
+    const auto invadingCid = mCity->cityId();
+    const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
     const auto invasionDefeated = [&]() {
         eEventData ed(mTargetCity);
         ed.fCity = mCity;
 
-        const auto invadingCid = mCity->cityId();
-        const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
         const auto invadingC = mBoard.boardCityWithId(invadingCid);
 
         tellHeroesAndGodsToGoBack();
@@ -681,6 +681,20 @@ void eInvasionHandler::incTime(const int by) {
     }
     mWait -= wait;
 
+    const auto goBack = [&]() {
+        const int tx = mTile->x();
+        const int ty = mTile->y();
+        eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        tellHeroesAndGodsToGoBack();
+    };
+
+    const auto invadingTid = mBoard.playerIdToTeamId(invadingPid);
+    const auto invadedTid = mBoard.cityIdToTeamId(mTargetCity);
+    if(invadingTid == invadedTid) {
+        mStage = eInvasionStage::comeback;
+        goBack();
+    }
+
     switch(mStage) {
     case eInvasionStage::arrive:
         break;
@@ -715,10 +729,7 @@ void eInvasionHandler::incTime(const int by) {
         } else if(p) {
             mStage = eInvasionStage::spread;
         } else {
-            const int tx = mTile->x();
-            const int ty = mTile->y();
-            eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
-            tellHeroesAndGodsToGoBack();
+            goBack();
             if(mConquestEvent) {
                 const auto& forces = mConquestEvent->forces();
                 const int iniCount = forces.count();
