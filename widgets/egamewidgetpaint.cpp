@@ -339,6 +339,20 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto& ts = mBoard->selectedTriremes();
         const bool v = !ss.empty() || !ts.empty();
         setArmyMenuVisible(v);
+
+        bool home = false;
+        if(ss.empty()) {
+            home = false;
+        } else {
+            for(const auto& s : ss) {
+                const bool h = s->isHome();
+                if(h) {
+                    home = true;
+                    break;
+                }
+            }
+        }
+        mAm->setSoldiersHome(home);
     }
     {
         const auto pbv = eViewMode::patrolBuilding;
