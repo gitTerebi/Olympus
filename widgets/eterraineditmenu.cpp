@@ -174,7 +174,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i);
+            const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i + i);
             return b != nullptr;
         });
     }
@@ -188,7 +188,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::seaInvasion, i);
+            const auto b = board->banner(cid, eBannerTypeS::seaInvasion, i + 1);
             return b != nullptr;
         });
     }
@@ -198,7 +198,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::disembarkPoint, i);
+            const auto b = board->banner(cid, eBannerTypeS::disembarkPoint, i + 1);
             return b != nullptr;
         });
     }
@@ -212,7 +212,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::landInvasion, i);
+            const auto b = board->banner(cid, eBannerTypeS::landInvasion, i + 1);
             return b != nullptr;
         });
     }
@@ -222,7 +222,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::monsterPoint, i);
+            const auto b = board->banner(cid, eBannerTypeS::monsterPoint, i + 1);
             return b != nullptr;
         });
     }
@@ -263,22 +263,22 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
 
     const auto w13 = new eActionListWidget(window());
     for(int i = 0; i < 3; i++) {
-        w13->addAction("Boar spawn " + std::to_string(i + 1), [this, i]() {
+        w13->addAction(eLanguage::zeusText(48, 47 + i), [this, i]() {
             mMode = eTerrainEditMode::boar;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::boar, i);
+            const auto b = board->banner(cid, eBannerTypeS::boar, i + 1);
             return b != nullptr;
         });
     }
     for(int i = 0; i < 3; i++) {
-        w13->addAction("Deer spawn " + std::to_string(i + 1), [this, i]() {
+        w13->addAction(eLanguage::zeusText(48, 92 + i), [this, i]() {
             mMode = eTerrainEditMode::deer;
-            mModeId = i;
+            mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::deer, i);
+            const auto b = board->banner(cid, eBannerTypeS::deer, i + 1);
             return b != nullptr;
         });
     }
