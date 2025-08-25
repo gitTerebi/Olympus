@@ -38,7 +38,7 @@ void eVaryingSizeTex::get(eTile* const tile,
         for(int y = 0; y < 3; y++) {
             if(x == 0 && y == 0) continue;
             const auto t = tile->tileRelRotated<eTile>(x, y, dir);
-            if(!t || !checker(t) || hiddenByNeighbour(t, dir, dx, dy)) {
+            if(!t || t->isElevationTile() || !checker(t) || hiddenByNeighbour(t, dir, dx, dy)) {
                 allFit = false;
                 break;
             }
@@ -55,7 +55,7 @@ void eVaryingSizeTex::get(eTile* const tile,
         for(int y = 0; y < 2; y++) {
             if(x == 0 && y == 0) continue;
             const auto t = tile->tileRelRotated<eTile>(x, y, dir);
-            if(!t || !checker(t) || hiddenByNeighbour(t, dir, dx, dy)) {
+            if(!t || t->isElevationTile() || !checker(t) || hiddenByNeighbour(t, dir, dx, dy)) {
                 allFit = false;
                 break;
             }
