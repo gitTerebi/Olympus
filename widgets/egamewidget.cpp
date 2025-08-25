@@ -1820,6 +1820,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
     switch(e.button()) {
     case eMouseButton::left: {
         mBoard->clearBannerSelection();
+        mBoard->clearTriremeSelection();
         mLeftPressed = false;
         const bool r = buildMouseRelease();
         if(!r && mGm->mode() == eBuildingMode::none) {
@@ -1834,6 +1835,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                         const auto type = c->type();
                         if(type != eCharacterType::trireme) continue;
                         const auto t = static_cast<eTrireme*>(c.get());
+                        if(t->selected()) continue;
                         if(!t->selectable()) continue;
                         mBoard->selectTrireme(t);
                     }
@@ -1864,6 +1866,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                         const auto type = c->type();
                         if(type != eCharacterType::trireme) continue;
                         const auto t = static_cast<eTrireme*>(c.get());
+                        if(t->selected()) continue;
                         if(!t->selectable()) continue;
                         mBoard->selectTrireme(t);
                     }

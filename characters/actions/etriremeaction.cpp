@@ -12,7 +12,7 @@ eTriremeAction::eTriremeAction(eTriremeWharf* const home,
     eFightingAction(trireme, eCharActionType::triremeAction),
     mHome(home) {}
 
-bool eTriremeAction::decide(){
+bool eTriremeAction::decide() {
     return true;
 }
 
