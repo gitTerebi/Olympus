@@ -56,6 +56,7 @@ void eTriremeAction::goAbroad() {
     auto& board = eFightingAction::board();
     const auto trireme = static_cast<eTrireme*>(c);
     board.deselectTrireme(trireme);
+    mHome->triremeLeaving();
     const stdptr<eTrireme> cptr(trireme);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
         board, trireme);
