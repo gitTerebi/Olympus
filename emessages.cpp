@@ -1024,7 +1024,7 @@ eMessageType eMessages::favorMessage(const eMessageType& reason) {
     const auto& ifavor = instance.fIncreasedFavor;
     eMessageType msg = ifavor;
     auto& text = msg.fFull.fText;
-    eStringHelpers::replaceAll(text, "[reason_phrase)",
+    eStringHelpers::replaceAll(text, "[reason_phrase]",
                                reason.fFull.fText);
     return msg;
 }
@@ -1033,7 +1033,7 @@ eMessageType eMessages::dfavorMessage(const eMessageType& reason) {
     const auto& ifavor = instance.fDecreasedFavor;
     eMessageType msg = ifavor;
     auto& text = msg.fFull.fText;
-    eStringHelpers::replaceAll(text, "[reason_phrase)",
+    eStringHelpers::replaceAll(text, "[reason_phrase]",
                                reason.fFull.fText);
     return msg;
 }
@@ -1045,13 +1045,13 @@ eMessageType eMessages::invasionMessage(const eMessageType& baseMsg,
     auto& text = msg.fFull.fText;
     if(reason.empty()) {
         const auto& inst = eMessages::instance;
-        eStringHelpers::replaceAll(text, "[reason_phrase)",
+        eStringHelpers::replaceAll(text, "[reason_phrase]",
                                    inst.fInvasionNoReason);
     } else {
-        eStringHelpers::replaceAll(text, "[reason_phrase)",
+        eStringHelpers::replaceAll(text, "[reason_phrase]",
                                    reason);
     }
-    eStringHelpers::replaceAll(text, "[time_until_attack)",
+    eStringHelpers::replaceAll(text, "[time_until_attack]",
                                std::to_string(months));
     return msg;
 }
