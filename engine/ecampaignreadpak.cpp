@@ -933,25 +933,6 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         if(!trigger) continue;
         trigger->addEvent(from);
     }
-
-    for(const auto& m : triggerMap) {
-        const int fromId = m.first;
-        const auto from = events[fromId];
-        if(!from) continue;
-        const auto& triggers = from->triggers();
-        for(const auto& t : triggers) {
-            std::vector<stdsptr<eGameEvent>> copies;
-            const auto events = t->events();
-            for(const auto& e : events) {
-                const auto c = e->makeCopy();
-                copies.push_back(c);
-                t->removeEvent(e);
-            }
-            for(const auto& c : copies) {
-                t->addEvent(c);
-            }
-        }
-    }
 }
 
 eBuildingType pakIdToPyramidType(const uint8_t id) {
