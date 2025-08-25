@@ -109,10 +109,12 @@ eTile* nearestDisembarkTile(eTile* const tile, eGameBoard& board,
 
 
 eTile* nearestShoreTile(eTile* const tile) {
+    if(!tile) return nullptr;
     eTile* result = nullptr;
     const auto prcs = [&](const int dx, const int dy) {
         const auto t = tile->tileRel<eTile>(dx, dy);
-        if(!t->hasBridge() && t->walkable()) {
+        if(!t) return false;
+         if(!t->hasBridge() && t->walkable()) {
             result = t;
             return true;
         }
