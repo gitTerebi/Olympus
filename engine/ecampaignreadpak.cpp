@@ -931,7 +931,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             trigger = &from->baseTrigger();
         }
         if(!trigger) continue;
-        trigger->addEvent(from);
+        trigger->addEvent(to);
     }
 }
 
