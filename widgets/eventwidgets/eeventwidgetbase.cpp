@@ -74,7 +74,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
                                                  eLanguage::zeusText(35, 24)};
 
         const auto typeButton = new eTypeButton(window());
-        const auto type = e->type();
+        const auto type = ee->type();
         const int itype = static_cast<int>(type);
         typeButton->initialize(itype, typeNames, [ee, types](const int val) {
             const auto t = types[val];
@@ -480,6 +480,18 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     repeatButton->setValue(e->repeat());
     repeatButtonL->setup(eLanguage::text("repeat:"), repeatButton);
     dateW->addWidget(repeatButtonL);
+
+    if(!e->warnings().empty()) {
+        const auto warningButtonL = new eLabeledWidget(window());
+        const auto warningButton = new eValueButton(window());
+        warningButton->setValueChangeAction([e](const int ms) {
+            e->setWarningMonths(ms);
+        });
+        warningButton->initialize(0, 99999);
+        warningButton->setValue(e->warningMonths());
+        warningButtonL->setup(eLanguage::zeusText(44, 368), warningButton);
+        dateW->addWidget(warningButtonL);
+    }
 
     const auto& ts = e->triggers();
     if(!ts.empty()) {

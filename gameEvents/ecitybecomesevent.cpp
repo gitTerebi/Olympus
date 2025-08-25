@@ -14,10 +14,10 @@ eCityBecomesEvent::eCityBecomesEvent(
     eCityEventValue(board) {}
 
 void eCityBecomesEvent::trigger() {
-    if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
     chooseCity();
+    if(!mCity) return;
     auto& world = board->world();
     const auto cid = cityId();
     const auto tid = board->cityIdToTeamId(cid);
