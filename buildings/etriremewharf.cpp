@@ -2,6 +2,7 @@
 
 #include "characters/etrireme.h"
 #include "characters/actions/etriremeaction.h"
+#include "engine/epathfinder.h"
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
@@ -237,28 +238,31 @@ bool eTriremeWharf::hasTrireme() const {
 }
 
 eTile *eTriremeWharf::triremeTile() const {
-    eTile* t;
-    const auto ct = centerTile();
-    switch(mO) {
-    case eDiagonalOrientation::topRight: {
-        const auto tr = ct->topRight<eTile>();
-        if(!tr) return nullptr;
-        t = tr->topRight<eTile>();
-    } break;
-    case eDiagonalOrientation::bottomLeft:
-        t = ct->bottom<eTile>();
-        break;
-    case eDiagonalOrientation::topLeft:
-        t = ct->topLeft<eTile>();
-        break;
-    default:
-    case eDiagonalOrientation::bottomRight: {
-        const auto r = ct->right<eTile>();
-        if(!r) return nullptr;
-        t = r->bottomRight<eTile>();
-    } break;
+    const auto& under = tilesUnder();
+    eTile* startTile = nullptr;
+    for(const auto u : under) {
+        if(u->hasWater()) {
+            startTile = u;
+            break;
+        }
     }
-    return t;
+    if(!startTile) return nullptr;
+    eTile* final = nullptr;
+    ePathFinder p([&](eTileBase* const t) {
+        return t->hasWater();
+    }, [&](eTileBase* const t) {
+        if(!t->hasDeepWater()) return false;
+        final = static_cast<eTile*>(t);
+        return true;
+    });
+    const auto onCid = cityId();
+    auto& board = getBoard();
+    const auto rect = board.boardCityTileBRect(onCid);
+    const int w = board.width();
+    const int h = board.height();
+    const bool r = p.findPath(rect, startTile, 5, true, w, h);
+    if(!r) return nullptr;
+    return final;
 }
 
 void eTriremeWharf::spawnTrireme() {
