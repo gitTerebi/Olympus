@@ -20,7 +20,14 @@ eInvasionEvent::eInvasionEvent(
                branch, board),
     ePointEventValue(eBannerTypeS::landInvasion,
                     cid, board),
-    eCityEventValue(board) {}
+    eCityEventValue(board, [this, cid](eWorldCity& c) {
+        auto& board = *gameBoard();
+        const auto ccid = c.cityId();
+        const auto tid = board.cityIdToTeamId(cid);
+        const auto ctid = board.cityIdToTeamId(ccid);
+        const bool e = eTeamIdHelpers::isEnemy(tid, ctid);
+        return e;
+    }) {}
 
 eInvasionEvent::~eInvasionEvent() {
     const auto board = gameBoard();
@@ -281,6 +288,7 @@ void eInvasionEvent::setFirstWarning(const eDate& w) {
     if(!board) return;
     choosePointId();
     chooseCity();
+    if(!mCity) return;
     updateDisembarkAndShoreTile();
     board->addInvasion(this);
     mFirstWarning = w;

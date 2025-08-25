@@ -25,7 +25,9 @@ void eInvasionWarning::trigger() {
             const auto& date = board.date();
             i->setFirstWarning(date);
         }
-        ed.fCity = i->city();
+        const auto c = i->city();
+        if(!c) return;
+        ed.fCity = c;
     }
 
     switch(mType) {

@@ -5,7 +5,9 @@
 
 class eCityEventValue {
 public:
-    eCityEventValue(eGameBoard& board);
+    using eValidator = std::function<bool(eWorldCity&)>;
+    eCityEventValue(eGameBoard& board,
+                    const eValidator& v = nullptr);
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eGameBoard& board);
@@ -31,6 +33,7 @@ private:
     int chooseCityId() const;
 
     eGameBoard& mBoard;
+    const eValidator mValidator;
 };
 
 #endif // ECITYEVENTVALUE_H

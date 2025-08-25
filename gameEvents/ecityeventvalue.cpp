@@ -5,8 +5,9 @@
 #include "engine/eworldcity.h"
 #include "engine/egameboard.h"
 
-eCityEventValue::eCityEventValue(eGameBoard &board) :
-    mBoard(board) {}
+eCityEventValue::eCityEventValue(eGameBoard &board,
+                                 const eValidator& v) :
+    mBoard(board), mValidator(v) {}
 
 void eCityEventValue::write(eWriteStream& dst) const {
     dst.writeCity(mCity.get());
@@ -44,9 +45,6 @@ void eCityEventValue::chooseCity() {
 }
 
 int eCityEventValue::chooseCityId() const {
-    if(mMinCityId >= mMaxCityId) {
-        return mMinCityId;
-    }
     std::vector<int> options;
     for(int i = mMinCityId; i <= mMaxCityId; i++) {
         options.push_back(i);
@@ -56,9 +54,14 @@ int eCityEventValue::chooseCityId() const {
     for(const int i : options) {
         const auto cid = static_cast<eCityId>(i);
         const auto city = world.cityWithId(cid);
-        if(city) return i;
+        if(!city) continue;
+        if(mValidator) {
+            const bool r = mValidator(*city);
+            if(!r) continue;
+        }
+        return i;
     }
-    return mMinCityId;
+    return -1;
 }
 
 void eCityEventValue::longNameReplaceCity(
