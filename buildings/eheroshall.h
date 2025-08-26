@@ -9,14 +9,14 @@ enum class eHeroRequirementType {
     // achilles
     armor, // 32
     hoplite, // 3
-    sanctuaryAthena, // 1 // originally to Athena or Hephaestus
+    sanctuaryAthenaOrHephaestus, // 1
     noUnrest,
     wine, // 16
 
     // hercules
     hallCultureAccess,
-    panHellenicGameWin,
-    cityGymnasiumAccess,
+    panHellenicGameWinHippodrome,
+    cityGymnasiumObservatoryAccess,
     people, // 1500
     // wine, // 32
 
@@ -35,7 +35,8 @@ enum class eHeroRequirementType {
     // wine, 16
 
     // perseus
-    sanctuaryHades, // 2 // originally to Athena, Hermes, Zeus or Hades
+    sanctuaryAthenaHermesZeusHades1, // 1
+    sanctuaryAthenaHermesZeusHades2, // 1
     drachmas, // 3000
     fleece, // 16
     sculpture, // 6
@@ -49,7 +50,7 @@ enum class eHeroRequirementType {
 
     // atalanta
     sanctuaryArtemis,
-    stadium,
+    stadiumMuseum,
     meat, // 32
     wood, // 32
     soldiers, // 8
@@ -58,7 +59,7 @@ enum class eHeroRequirementType {
     // horses, // 15
     taxes,
     // drachmas, // 10000
-    bronze, // 24
+    bronzeOrichalc, // 24
     // wine, // 24
 };
 
@@ -78,6 +79,8 @@ enum class eHeroSummoningStage {
     arrived
 };
 
+class eBoardCity;
+
 class eHerosHall : public eBuilding {
 public:
     eHerosHall(const eHeroType type, eGameBoard& board,
@@ -95,8 +98,10 @@ public:
     static eHeroType sHallTypeToHeroType(const eBuildingType type,
                                          bool* const valid = nullptr);
 
-    static std::string sHeroRequirementText(const eHeroRequirement& hr);
-    static std::string sHeroRequirementStatusText(const eHeroRequirement& hr);
+    static std::string sHeroRequirementText(const eHeroRequirement& hr,
+                                            eBoardCity &c);
+    static std::string sHeroRequirementStatusText(const eHeroRequirement& hr,
+                                                  eBoardCity &c);
 
     const std::vector<eHeroRequirement>& requirements() const
     { return mRequirements; }

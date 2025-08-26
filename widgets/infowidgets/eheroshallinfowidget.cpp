@@ -4,6 +4,7 @@
 #include "widgets/elabel.h"
 #include "widgets/eframedbutton.h"
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
 #include "elanguage.h"
 
 void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
@@ -50,8 +51,11 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
             w->addWidget(checkBox);
         }
 
+        const auto cid = b->cityId();
+        auto& board = b->getBoard();
+        const auto c = board.boardCityWithId(cid);
         {
-            const auto reqStr = eHerosHall::sHeroRequirementText(r);
+            const auto reqStr = eHerosHall::sHeroRequirementText(r, *c);
             const auto reqLabel = new eLabel(window());
             reqLabel->setNoPadding();
             reqLabel->setSmallFontSize();
@@ -64,7 +68,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
         }
 
         {
-            const auto statusStr = eHerosHall::sHeroRequirementStatusText(r);
+            const auto statusStr = eHerosHall::sHeroRequirementStatusText(r, *c);
             const auto sttsLabel = new eLabel(window());
             sttsLabel->setNoPadding();
             sttsLabel->setSmallFontSize();

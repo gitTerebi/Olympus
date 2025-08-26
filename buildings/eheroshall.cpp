@@ -11,8 +11,6 @@
 #include "characters/actions/eheroaction.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "characters/actions/emovetoaction.h"
-#include "estringhelpers.h"
 #include "enumbers.h"
 
 eBuildingType eHerosHall::sHeroTypeToHallType(const eHeroType type) {
@@ -47,31 +45,80 @@ eHeroType eHerosHall::sHallTypeToHeroType(const eBuildingType type,
     return eHeroType::achilles;
 }
 
-std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr) {
+eGodType athenaHephaestus(eBoardCity& c) {
+    const bool athena = c.availableBuilding(eBuildingType::templeAthena);
+    if(athena) return eGodType::athena;
+    return eGodType::hephaestus;
+}
+
+std::pair<eGodType, eGodType> athenaHermesZeusHades(eBoardCity& c) {
+    std::vector<eGodType> allowed;
+    const bool athena = c.availableBuilding(eBuildingType::templeAthena);
+    if(athena) allowed.push_back(eGodType::athena);
+    const bool hermes = c.availableBuilding(eBuildingType::templeHermes);
+    if(hermes) allowed.push_back(eGodType::hermes);
+    const bool hades = c.availableBuilding(eBuildingType::templeHades);
+    if(hades) allowed.push_back(eGodType::hades);
+    const bool zeus = c.availableBuilding(eBuildingType::templeZeus);
+    if(zeus) allowed.push_back(eGodType::zeus);
+    if(allowed.size() >= 2) {
+        return {allowed[0], allowed[1]};
+    } else if(allowed.size() == 1) {
+        return {allowed[0], allowed[0]};
+    } else {
+        return {eGodType::athena, eGodType::hermes};
+    }
+}
+
+std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
+                                             eBoardCity& c) {
+    const bool atlantean = c.atlantean();
     const std::string cstr = std::to_string(hr.fRequiredCount);
     switch(hr.fType) {
     case eHeroRequirementType::armor:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::armor);
     case eHeroRequirementType::hoplite:
-        return cstr + " " + eLanguage::zeusText(64, 12) + " " + eLanguage::zeusText(185, 17);
-    case eHeroRequirementType::sanctuaryAthena:
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(eGodType::athena);
+        if(atlantean) {
+            return cstr + " " + eLanguage::zeusText(51, 87) + " " + eLanguage::zeusText(185, 17);
+        } else {
+            return cstr + " " + eLanguage::zeusText(64, 12) + " " + eLanguage::zeusText(185, 17);
+        }
+    case eHeroRequirementType::sanctuaryAthenaOrHephaestus: {
+        const auto god = athenaHephaestus(c);
+        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(god);
+    } break;
     case eHeroRequirementType::noUnrest:
         return eLanguage::zeusText(185, 48);;
     case eHeroRequirementType::wine:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::wine);
 
     case eHeroRequirementType::hallCultureAccess:
-        return eLanguage::zeusText(185, 49);
-    case eHeroRequirementType::panHellenicGameWin:
-        return eLanguage::zeusText(185, 50);;
-    case eHeroRequirementType::cityGymnasiumAccess:
-        return eLanguage::zeusText(185, 51);;
+        if(atlantean) {
+            return eLanguage::zeusText(185, 116);
+        } else {
+            return eLanguage::zeusText(185, 49);
+        }
+    case eHeroRequirementType::panHellenicGameWinHippodrome:
+        if(atlantean) {
+            return eLanguage::zeusText(185, 117);
+        } else {
+            return eLanguage::zeusText(185, 50);
+        }
+    case eHeroRequirementType::cityGymnasiumObservatoryAccess:
+        if(atlantean) {
+            return eLanguage::zeusText(185, 120);
+        } else {
+            return eLanguage::zeusText(185, 51);
+        }
     case eHeroRequirementType::people:
         return cstr + " " + eLanguage::zeusText(185, 52);;
 
     case eHeroRequirementType::horsemen:
-        return cstr + " " + eLanguage::zeusText(64, 13) + " " + eLanguage::zeusText(185, 17);
+        if(atlantean) {
+            return cstr + " " + eLanguage::zeusText(51, 86) + " " + eLanguage::zeusText(185, 17);
+        } else {
+            return cstr + " " + eLanguage::zeusText(64, 13) + " " + eLanguage::zeusText(185, 17);
+        }
     case eHeroRequirementType::horses:
         return cstr + " " + eResourceTypeHelpers::typeName(eResourceType::horse) + eLanguage::zeusText(185, 31);
     case eHeroRequirementType::food:
@@ -86,8 +133,14 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr) {
     case eHeroRequirementType::oil:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::oliveOil);
 
-    case eHeroRequirementType::sanctuaryHades:
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(eGodType::hades);
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1: {
+        const auto types = athenaHermesZeusHades(c);
+        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(types.first);
+    } break;
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2: {
+        const auto types = athenaHermesZeusHades(c);
+        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(types.second);
+    } break;
     case eHeroRequirementType::drachmas:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::drachmas);
     case eHeroRequirementType::fleece:
@@ -106,8 +159,12 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr) {
 
     case eHeroRequirementType::sanctuaryArtemis:
         return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(eGodType::artemis);
-    case eHeroRequirementType::stadium:
-        return eLanguage::zeusText(185, 126);
+    case eHeroRequirementType::stadiumMuseum:
+        if(atlantean) {
+            return eLanguage::zeusText(185, 129);
+        } else {
+            return eLanguage::zeusText(185, 126);
+        }
     case eHeroRequirementType::meat:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::meat);
     case eHeroRequirementType::wood:
@@ -117,13 +174,19 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr) {
 
     case eHeroRequirementType::taxes:
         return eLanguage::zeusText(185, 124);
-    case eHeroRequirementType::bronze:
-        return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::bronze);
+    case eHeroRequirementType::bronzeOrichalc:
+        if(atlantean) {
+            return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::orichalc);
+        } else {
+            return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::bronze);
+        }
     }
     return "";
 }
 
-std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr) {
+std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr,
+                                                   eBoardCity &c) {
+    const bool atlantean = c.atlantean();
     const int sc = hr.fStatusCount;
     const std::string cstr = std::to_string(sc);
     const int id = sc;
@@ -136,11 +199,11 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr) {
     case eHeroRequirementType::sculpture:
     case eHeroRequirementType::meat:
     case eHeroRequirementType::wood:
-    case eHeroRequirementType::bronze:
+    case eHeroRequirementType::bronzeOrichalc:
     case eHeroRequirementType::marble:
-        return cstr + " " + eLanguage::zeusText(185, 16);
+        return cstr + " " + eLanguage::zeusText(185, 16); // in storage
     case eHeroRequirementType::hoplite:
-        return cstr + " " + eLanguage::zeusText(185, 17);
+        return cstr + " " + eLanguage::zeusText(185, 17); // companies
     case eHeroRequirementType::noUnrest: {
         if(id == 0) {
             return eLanguage::zeusText(66, 46); // extremely high
@@ -157,7 +220,7 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr) {
         }
     } break;
 
-    case eHeroRequirementType::cityGymnasiumAccess:
+    case eHeroRequirementType::cityGymnasiumObservatoryAccess:
     case eHeroRequirementType::hallCultureAccess: {
         if(id == 0) {
             return eLanguage::zeusText(185, 19); // no access
@@ -171,11 +234,19 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr) {
             return eLanguage::zeusText(185, 23); // excellent access
         }
     } break;
-    case eHeroRequirementType::panHellenicGameWin: {
-        if(id == 0) {
-            return eLanguage::zeusText(185, 24); // no victories
-        } else { // 1
-            return eLanguage::zeusText(185, 25); // victorious
+    case eHeroRequirementType::panHellenicGameWinHippodrome: {
+        if(atlantean) {
+            if(id == 0) {
+                return eLanguage::zeusText(185, 118); // no hippodrome
+            } else { // 1
+                return eLanguage::zeusText(185, 119); // working hippodrome
+            }
+        } else {
+            if(id == 0) {
+                return eLanguage::zeusText(185, 24); // no victories
+            } else { // 1
+                return eLanguage::zeusText(185, 25); // victorious
+            }
         }
     } break;
     case eHeroRequirementType::people:
@@ -268,16 +339,25 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr) {
         }
     } break;
 
-    case eHeroRequirementType::sanctuaryAthena:
-    case eHeroRequirementType::sanctuaryHades:
+    case eHeroRequirementType::sanctuaryAthenaOrHephaestus:
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1:
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2:
     case eHeroRequirementType::sanctuaryArtemis: {
         return cstr + "% " + eLanguage::zeusText(185, 18);
     } break;
-    case eHeroRequirementType::stadium: {
-        if(id == 0) {
-            return eLanguage::zeusText(185, 127); // no stadium
+    case eHeroRequirementType::stadiumMuseum: {
+        if(atlantean) {
+            if(id == 0) {
+                return eLanguage::zeusText(185, 130); // no museum
+            } else {
+                return eLanguage::zeusText(185, 129); // working museum
+            }
         } else {
-            return eLanguage::zeusText(185, 128); // working stadium
+            if(id == 0) {
+                return eLanguage::zeusText(185, 127); // no stadium
+            } else {
+                return eLanguage::zeusText(185, 128); // working stadium
+            }
         }
     } break;
     case eHeroRequirementType::soldiers:
@@ -436,6 +516,8 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     const int ty = t->y();
     const auto& board = getBoard();
     const auto cid = cityId();
+    const auto c = board.boardCityWithId(cid);
+    const bool atlentean = c->atlantean();
     const auto pid = playerId();
     int& sc = hr.fStatusCount;
     switch(hr.fType) {
@@ -445,8 +527,9 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     case eHeroRequirementType::hoplite: {
         sc = board.countBanners(eBannerType::hoplite, cid);
     } break;
-    case eHeroRequirementType::sanctuaryAthena: {
-        const auto sts = board.sanctuary(cid, eGodType::athena);
+    case eHeroRequirementType::sanctuaryAthenaOrHephaestus: {
+        const auto god = athenaHephaestus(*c);
+        const auto sts = board.sanctuary(cid, god);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::noUnrest: {
@@ -475,12 +558,21 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc += mActors > 0 ? 1 : 0;
         sc += mAthletes > 0 ? 1 : 0;
         break;
-    case eHeroRequirementType::panHellenicGameWin:
-        sc = board.wonGames(cid) > 0 ? 1 : 0;
+    case eHeroRequirementType::panHellenicGameWinHippodrome:
+        if(atlentean) {
+            sc = c->workingHippodrome() ? 1 : 0;
+        } else {
+            sc = board.wonGames(cid) > 0 ? 1 : 0;
+        }
         break;
-    case eHeroRequirementType::cityGymnasiumAccess: {
-        const int ac = board.athleticsLearningCoverage(cid);
-        sc = ac/24;
+    case eHeroRequirementType::cityGymnasiumObservatoryAccess: {
+        if(atlentean) {
+            const int ac = board.dramaAstronomyCoverage(cid);
+            sc = ac/24;
+        } else {
+            const int ac = board.athleticsLearningCoverage(cid);
+            sc = ac/24;
+        }
     } break;
     case eHeroRequirementType::people:
         sc = board.population(pid);
@@ -510,8 +602,14 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.resourceCount(cid, eResourceType::oliveOil);
         break;
 
-    case eHeroRequirementType::sanctuaryHades: {
-        const auto sts = board.sanctuary(cid, eGodType::hades);
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1: {
+        const auto types = athenaHermesZeusHades(*c);
+        const auto sts = board.sanctuary(cid, types.first);
+        sc = sts ? sts->progress() : 0;
+    } break;
+    case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2: {
+        const auto types = athenaHermesZeusHades(*c);
+        const auto sts = board.sanctuary(cid, types.second);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::drachmas:
@@ -594,8 +692,12 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         const auto sts = board.sanctuary(cid, eGodType::artemis);
         sc = sts ? sts->progress() : 0;
     } break;
-    case eHeroRequirementType::stadium:
-        sc = board.hasStadium(cid) ? 1 : 0;
+    case eHeroRequirementType::stadiumMuseum:
+        if(atlentean) {
+            sc = board.hasMuseum(cid) ? 1 : 0;
+        } else {
+            sc = board.hasStadium(cid) ? 1 : 0;
+        }
         break;
     case eHeroRequirementType::meat:
         sc = board.resourceCount(cid, eResourceType::meat);
@@ -610,8 +712,12 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         const int tc = board.taxesCoverage(cid);
         sc = tc/22;
     } break;
-    case eHeroRequirementType::bronze:
-        sc = board.resourceCount(cid, eResourceType::bronze);
+    case eHeroRequirementType::bronzeOrichalc:
+        if(atlentean) {
+            sc = board.resourceCount(cid, eResourceType::orichalc);
+        } else {
+            sc = board.resourceCount(cid, eResourceType::bronze);
+        }
         break;
     }
 }
@@ -632,13 +738,13 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
     case eHeroType::achilles:
         addRequirement({eHeroRequirementType::armor, 32});
         addRequirement({eHeroRequirementType::hoplite, 3});
-        addRequirement({eHeroRequirementType::sanctuaryAthena, 100});
+        addRequirement({eHeroRequirementType::sanctuaryAthenaOrHephaestus, 100});
         addRequirement({eHeroRequirementType::noUnrest, 5});
         addRequirement({eHeroRequirementType::wine, 16});
         break;
     case eHeroType::atalanta:
         addRequirement({eHeroRequirementType::sanctuaryArtemis, 100});
-        addRequirement({eHeroRequirementType::stadium, 1});
+        addRequirement({eHeroRequirementType::stadiumMuseum, 1});
         addRequirement({eHeroRequirementType::meat, 32});
         addRequirement({eHeroRequirementType::wood, 32});
         addRequirement({eHeroRequirementType::soldiers, 8});
@@ -647,13 +753,13 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
         addRequirement({eHeroRequirementType::horses, 15});
         addRequirement({eHeroRequirementType::taxes, 5});
         addRequirement({eHeroRequirementType::drachmas, 10000});
-        addRequirement({eHeroRequirementType::bronze, 24});
+        addRequirement({eHeroRequirementType::bronzeOrichalc, 24});
         addRequirement({eHeroRequirementType::wine, 24});
         break;
     case eHeroType::hercules:
         addRequirement({eHeroRequirementType::hallCultureAccess, 3});
-        addRequirement({eHeroRequirementType::panHellenicGameWin, 1});
-        addRequirement({eHeroRequirementType::cityGymnasiumAccess, 3});
+        addRequirement({eHeroRequirementType::panHellenicGameWinHippodrome, 1});
+        addRequirement({eHeroRequirementType::cityGymnasiumObservatoryAccess, 3});
         addRequirement({eHeroRequirementType::people, 1500});
         addRequirement({eHeroRequirementType::wine, 32});
         break;
@@ -671,7 +777,8 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
         addRequirement({eHeroRequirementType::wine, 16});
         break;
     case eHeroType::perseus:
-        addRequirement({eHeroRequirementType::sanctuaryHades, 100});
+        addRequirement({eHeroRequirementType::sanctuaryAthenaHermesZeusHades1, 100});
+        addRequirement({eHeroRequirementType::sanctuaryAthenaHermesZeusHades2, 100});
         addRequirement({eHeroRequirementType::drachmas, 3000});
         addRequirement({eHeroRequirementType::fleece, 16});
         addRequirement({eHeroRequirementType::sculpture, 6});
