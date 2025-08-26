@@ -36,9 +36,8 @@ std::vector<eOverlay> eArtisansGuild::
 void eArtisansGuild::timeChanged(const int by) {
     if(enabled()) {
         if(!mArtisan) {
-            mSpawnTime += by;
-            const int wait = mWaitTime/effectiveness();
-            if(mSpawnTime > wait) {
+            mSpawnTime += by*effectiveness();
+            if(mSpawnTime > mWaitTime) {
                 mSpawnTime = 0;
                 spawnArtisan(&eArtisansGuild::mArtisan);
             }

@@ -3,8 +3,6 @@
 
 #include "eresourcecollectbuildingbase.h"
 
-#include "textures/ebuildingtextures.h"
-
 class eHunter;
 
 class eHuntingLodge : public eResourceCollectBuildingBase {
@@ -25,7 +23,7 @@ private:
     bool spawn();
 
     stdptr<eHunter> mHunter;
-    int mSpawnTime = 1000000;
+    double mSpawnTime = 1000000;
 };
 
 #endif // EHUNTINGLODGE_H

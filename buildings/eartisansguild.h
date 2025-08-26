@@ -24,7 +24,7 @@ private:
     stdptr<eArtisan> mArtisan;
 
     const int mWaitTime = eNumbers::sArtisanWaitTime;
-    int mSpawnTime = mWaitTime;
+    double mSpawnTime = mWaitTime;
 };
 
 #endif // EARTISANSGUILD_H

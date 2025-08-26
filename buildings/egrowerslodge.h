@@ -50,7 +50,7 @@ private:
 
     stdptr<eCartTransporter> mCart;
 
-    int mSpawnTime = 1000000;
+    double mSpawnTime = 1000000;
 
     stdptr<eGrower> mGrower;
 };

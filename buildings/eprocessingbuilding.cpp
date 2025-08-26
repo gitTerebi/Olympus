@@ -60,10 +60,9 @@ void eProcessingBuilding::timeChanged(const int by) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
             mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
         }
-        mProcessTime += by;
-        const int wait = mProcessWaitTime/effectiveness();
-        if(mProcessTime > wait) {
-            mProcessTime -= wait;
+        mProcessTime += by*effectiveness();
+        if(mProcessTime > mProcessWaitTime) {
+            mProcessTime -= mProcessWaitTime;
             if(mRawCount >= mRawUse) {
                 const auto type = resourceType();
                 const int c = addProduced(type, 1);

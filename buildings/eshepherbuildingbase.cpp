@@ -50,10 +50,9 @@ std::vector<eOverlay> eShepherBuildingBase::getOverlays(
 void eShepherBuildingBase::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
     if(!mShepherd) {
-        mSpawnTime += by;
+        mSpawnTime += by*effectiveness();
         const int period = eNumbers::sShepherdGoatherdWaitTime;
-        const int wait = period/effectiveness();
-        if(mSpawnTime > wait) {
+        if(mSpawnTime > period) {
             mSpawnTime = 0;
             spawn();
         }

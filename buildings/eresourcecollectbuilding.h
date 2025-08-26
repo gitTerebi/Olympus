@@ -81,10 +81,10 @@ private:
     int mRawCountCollect = 0;
     int mRawInc = 1;
     int mProcessDuration = 10000;
-    int mProcessTime = 0;
+    double mProcessTime = 0;
 
     int mWaitTime = 5000;
-    int mSpawnTime = mWaitTime;
+    double mSpawnTime = mWaitTime;
 };
 
 #endif // ERESOURCECOLLECTBUILDING_H

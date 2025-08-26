@@ -128,10 +128,9 @@ void eResourceCollectBuilding::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
     if(enabled()) {
         if(mRawCount > 0) {
-            mProcessTime += by;
-            const int wait = mProcessDuration/effectiveness();
-            if(mProcessTime > wait) {
-                mProcessTime -= wait;
+            mProcessTime += by*effectiveness();
+            if(mProcessTime > mProcessDuration) {
+                mProcessTime -= mProcessDuration;
                 const auto type = resourceType();
                 if(type == eResourceType::silver) {
                     auto& brd = getBoard();
@@ -147,10 +146,9 @@ void eResourceCollectBuilding::timeChanged(const int by) {
         }
 
         if(!mCollector && mSpawnEnabled) {
-            mSpawnTime += by;
-            const int wait = mWaitTime/effectiveness();
-            if(mSpawnTime > wait) {
-                mSpawnTime -= wait;
+            mSpawnTime += by*effectiveness();
+            if(mSpawnTime > mWaitTime) {
+                mSpawnTime -= mWaitTime;
                 spawn();
             }
         }

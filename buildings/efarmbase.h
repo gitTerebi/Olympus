@@ -22,7 +22,7 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     const std::vector<eBuildingTextures>& mTextures;
-    int mNextRipe = 0;
+    double mNextRipe = 0;
     int mRipe = 0; // 0 - 5
 };
 

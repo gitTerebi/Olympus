@@ -53,7 +53,7 @@ private:
 
     stdptr<eResourceCollectorBase> mShepherd;
 
-    int mSpawnTime = 1000000;
+    double mSpawnTime = 1000000;
 };
 
 #endif // ESHEPHERBUILDINGBASE_H

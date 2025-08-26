@@ -112,34 +112,30 @@ void eCorral::write(eWriteStream& dst) const {
 void eCorral::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
 
-    const int newP = std::max(0, mProcessing - by);
-    if(newP == 0 && mProcessing > 0) {
+    const double eff = effectiveness();
+    const double newP = std::max(0., mProcessing - by*eff);
+    if(newP == 0. && mProcessing > 0) {
         add(eResourceType::meat, 3);
     }
-
-    const double eff = effectiveness();
 
     mProcessing = newP;
 
     if(mNCattle < 3) {
-        const int takeWait = eNumbers::sCorralTakePeriod/eff;
-        mTakeWait += by;
-        if(mTakeWait > takeWait) {
+        mTakeWait += by*eff;
+        if(mTakeWait > eNumbers::sCorralTakePeriod) {
             mTakeWait = 0;
             takeCattle();
         }
     }
     if(mNCattle > 0) {
-        const int killWait = eNumbers::sCorralKillPeriod/eff;
-        mKillWait += by;
-        if(mKillWait > killWait) {
+        mKillWait += by*eff;
+        if(mKillWait > eNumbers::sCorralKillPeriod) {
             mKillWait = 0;
             killCattle();
         }
     }
-    const int replaceWait = eNumbers::sCorralReplacePeriod/eff;
-    mReplaceWait += by;
-    if(mReplaceWait > replaceWait) {
+    mReplaceWait += by*eff;
+    if(mReplaceWait > eNumbers::sCorralReplacePeriod) {
         mReplaceWait = 0;
         replaceCattle();
     }
@@ -160,8 +156,7 @@ bool eCorral::killCattle() {
     const int space = spaceLeft(eResourceType::meat);
     if(space < 3) return false;
     mNCattle--;
-    const double eff = effectiveness();
-    mProcessing = eNumbers::sCorralProcessingPeriod/eff;
+    mProcessing = eNumbers::sCorralProcessingPeriod;
     return true;
 }
 

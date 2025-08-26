@@ -47,7 +47,7 @@ private:
     stdptr<eTrireme> mTrireme;
 
     int mTriremeBuildingStage = 0;
-    int mTriremeBuildingTime = 0;
+    double mTriremeBuildingTime = 0;
 
     const int mMaxWood = 8;
     int mWoodCount{0};

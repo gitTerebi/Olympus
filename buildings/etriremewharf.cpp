@@ -119,20 +119,20 @@ std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
 
 void eTriremeWharf::timeChanged(const int by) {
     if(enabled()) {
+        const auto eff = effectiveness();
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
             mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
         }
         if(!mTrireme && mWoodCount > 1 && mArmorCount > 0) {
-            mTriremeBuildingTime += by;
+            mTriremeBuildingTime += by*eff;
             if(mTriremeBuildingTime > eNumbers::sTriremeWharfBuildTime) {
-                mTriremeBuildingStage++;
                 mTriremeBuildingTime = 0;
+                mTriremeBuildingStage++;
                 mWoodCount -= 2;
                 mArmorCount--;
                 if(mTriremeBuildingStage >= eNumbers::sTriremeWharfBuildStages) {
                     mTriremeBuildingStage = 0;
-                    mTriremeBuildingTime = 0;
                     spawnTrireme();
                 }
             }

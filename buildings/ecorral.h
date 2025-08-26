@@ -26,11 +26,11 @@ private:
     void replaceCattle();
 
     bool mNoCattle = true;
-    int mProcessing = 0;
+    double mProcessing = 0;
     int mNCattle = 0;
-    int mTakeWait = 0;
-    int mKillWait = 0;
-    int mReplaceWait = 0;
+    double mTakeWait = 0;
+    double mKillWait = 0;
+    double mReplaceWait = 0;
 };
 
 #endif // ECORRAL_H

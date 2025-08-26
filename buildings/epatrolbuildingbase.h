@@ -73,7 +73,7 @@ private:
     const int mMaxDistance = eNumbers::sPatrolerMaxDistance;
 
     const int mWaitTime = eNumbers::sPatrolerWaitTime;
-    int mSpawnTime = 1000000;
+    double mSpawnTime = 1000000;
     stdptr<eCharacter> mChar;
 
     ePatrolGuides mPatrolGuides;

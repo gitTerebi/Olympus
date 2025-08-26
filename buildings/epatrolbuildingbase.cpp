@@ -39,9 +39,8 @@ ePatrolBuildingBase::~ePatrolBuildingBase() {
 void ePatrolBuildingBase::timeChanged(const int by) {
     if(mSpawnPatrolers && enabled()) {
         if(!mChar) {
-            mSpawnTime += by;
-            const int wait = mWaitTime/effectiveness();
-            if(mSpawnTime > wait) {
+            mSpawnTime += by*effectiveness();
+            if(mSpawnTime > mWaitTime) {
                 mSpawnTime = 0;
                 spawn();
             }

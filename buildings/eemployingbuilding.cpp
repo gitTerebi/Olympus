@@ -29,7 +29,8 @@ double eEmployingBuilding::vacanciesFilledFraction() const {
 }
 
 double eEmployingBuilding::effectiveness() const {
-    const double ef = std::max(0.1, vacanciesFilledFraction());
+    if(mShutDown) return 0.;
+    const double ef = vacanciesFilledFraction();
     double blessed = 0.;
     if(eBuilding::blessed()) {
         blessed = 1.;

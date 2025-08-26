@@ -57,9 +57,8 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
 
 void eFarmBase::timeChanged(const int by) {
     if(enabled()) {
-        mNextRipe += by;
-        const int period = eNumbers::sFarmRipePeriod/effectiveness();
-        if(mNextRipe > period) {
+        mNextRipe += by*effectiveness();
+        if(mNextRipe > eNumbers::sFarmRipePeriod) {
             mNextRipe = 0;
             if(++mRipe == 5) {
                 add(resourceType(), 4);
