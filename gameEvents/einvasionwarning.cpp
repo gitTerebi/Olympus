@@ -28,6 +28,7 @@ void eInvasionWarning::trigger() {
         const auto c = i->city();
         if(!c) return;
         ed.fCity = c;
+        ed.fTile = i->invasionTile();
     }
 
     switch(mType) {
