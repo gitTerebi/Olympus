@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "characters/actions/emonsteraction.h"
 #include "eiteratesquare.h"
+#include "evectorhelpers.h"
 #include "emessages.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
@@ -27,7 +28,7 @@ eMonsterInvasionEventBase::~eMonsterInvasionEventBase() {
 void eMonsterInvasionEventBase::setWarned(const bool w) {
     if(mWarned == w) return;
     mWarned = w;
-    if(mWarned) chooseMonster();
+    if(mWarned) mValid = chooseMonster(mSpawned);
 }
 
 void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
@@ -36,6 +37,17 @@ void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eMonstersEventValue::write(dst);
     dst << mWarned;
     dst << mAggressivness;
+    dst << mValid;
+
+    dst << mSpawned.size();
+    for(const auto s : mSpawned) {
+        dst << s;
+    }
+
+    dst << mKilled.size();
+    for(const auto k : mKilled) {
+        dst << k;
+    }
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
@@ -44,11 +56,33 @@ void eMonsterInvasionEventBase::read(eReadStream& src) {
     eMonstersEventValue::read(src);
     src >> mWarned;
     src >> mAggressivness;
+    src >> mValid;
+
+    int ns;
+    src >> ns;
+    for(int i = 0; i < ns; i++) {
+        src >> mSpawned.emplace_back();
+    }
+
+    int nk;
+    src >> nk;
+    for(int i = 0; i < nk; i++) {
+        src >> mKilled.emplace_back();
+    }
+}
+
+bool eMonsterInvasionEventBase::finished() const {
+    for(const auto s : mSpawned) {
+        const bool c = eVectorHelpers::contains(mKilled, s);
+        if(!c) return false;
+    }
+    return eGameEvent::finished();
 }
 
 void eMonsterInvasionEventBase::killed(const eMonsterType monster) {
     const auto board = gameBoard();
     if(!board) return;
+    mKilled.push_back(monster);
     const auto date = board->date();
     const auto& msgs = eMessages::instance;
     const auto monsterMsgs = msgs.monsterMessages(monster);
@@ -59,7 +93,9 @@ void eMonsterInvasionEventBase::killed(const eMonsterType monster) {
 eMonster* eMonsterInvasionEventBase::triggerBase() {
     const auto board = gameBoard();
     if(!board) return nullptr;
-    if(!mWarned) chooseMonster();
+    if(!mWarned) mValid = chooseMonster(mSpawned);
+    if(!mValid) return nullptr;
+    mSpawned.push_back(mMonster);
     board->addMonsterEvent(mMonster, this);
     mWarned = false;
     choosePointId();
@@ -76,12 +112,14 @@ eMonster* eMonsterInvasionEventBase::triggerBase() {
     if(tile) {
         const int tx = tile->x();
         const int ty = tile->y();
-        const auto placeMonster = [board, monster, tx, ty](
+        const auto placeMonster = [board, monster, tx, ty, cid](
                                   const int dx, const int dy) {
             const int ttx = tx + dx;
             const int tty = ty + dy;
             const auto tile = board->tile(ttx, tty);
             if(!tile) return false;
+            const auto tcid = tile->cityId();
+            if(cid != tcid) return false;
             if(const auto ub = tile->underBuilding()) {
                 const auto type = ub->type();
                 const bool w = eBuilding::sWalkableBuilding(type);

@@ -5,6 +5,8 @@
 #include "fileIO/ewritestream.h"
 #include "fileIO/ereadstream.h"
 
+#include "evectorhelpers.h"
+
 eMonstersEventValue::eMonstersEventValue() {}
 
 eMonsterType eMonstersEventValue::monsterType(const int id, bool &valid) const {
@@ -45,16 +47,19 @@ void eMonstersEventValue::read(eReadStream &src) {
     }
 }
 
-void eMonstersEventValue::chooseMonster() {
+bool eMonstersEventValue::chooseMonster(const std::vector<eMonsterType> &skip) {
     std::vector<eMonsterType> types;
     for(const auto& v : mMonsters) {
         if(!v.fValid) continue;
+        const bool c = eVectorHelpers::contains(skip, v.fType);
+        if(c) continue;
         types.push_back(v.fType);
     }
     if(types.empty()) {
         printf("No monster types to choose from\n");
-        return;
+        return false;
     }
     const int typeId = eRand::rand() % types.size();
     mMonster = types[typeId];
+    return true;
 }

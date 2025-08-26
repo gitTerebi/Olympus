@@ -23,9 +23,12 @@ public:
     { mAggressivness = a; }
 
     void setWarned(const bool w);
+    bool valid() const { return mValid; }
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+
+    bool finished() const override;
 
     void killed(const eMonsterType monster);
 
@@ -36,6 +39,10 @@ private:
     stdsptr<eEventTrigger> mKilledTrigger;
     bool mWarned = false;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;
+
+    bool mValid = false;
+    std::vector<eMonsterType> mKilled;
+    std::vector<eMonsterType> mSpawned;
 };
 
 #endif // EMONSTERINVASIONEVENTBASE_H

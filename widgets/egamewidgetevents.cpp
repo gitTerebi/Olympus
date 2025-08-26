@@ -96,7 +96,7 @@ void eGameWidget::handleMonsterInCityEvent(eEventData& ed) {
     showMessage(ed, gm->fInCity, true);
 }
 
-void eGameWidget::handleMonsterInvasion36Event(eEventData& ed) {
+void eGameWidget::handleMonsterInvasionInitialEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
@@ -105,9 +105,10 @@ void eGameWidget::handleMonsterInvasion36Event(eEventData& ed) {
     if(reason.empty()) {
         reason = gm->fMonsterAttackReason;
     }
+    const auto timeStr = std::to_string(ed.fTime);
     eStringHelpers::replace(msg.fFull.fText, "[reason_phrase]", reason);
-    eStringHelpers::replace(msg.fFull.fText, "[time_until_attack]", "36");
-    eStringHelpers::replace(msg.fCondensed.fText, "[time_until_attack]", "36");
+    eStringHelpers::replace(msg.fFull.fText, "[time_until_attack]", timeStr);
+    eStringHelpers::replace(msg.fCondensed.fText, "[time_until_attack]", timeStr);
     showMessage(ed, msg);
 }
 
@@ -202,8 +203,8 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         handleMonsterInCityEvent(ed);
         break;
 
-    case eEvent::monsterInvasion36:
-        handleMonsterInvasion36Event(ed);
+    case eEvent::monsterInvasionInitial:
+        handleMonsterInvasionInitialEvent(ed);
         return;
     case eEvent::monsterInvasion24:
         handleMonsterInvasion24Event(ed);

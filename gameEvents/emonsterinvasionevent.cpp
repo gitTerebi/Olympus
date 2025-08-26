@@ -22,12 +22,14 @@ void eMonsterInvasionWarning::trigger() {
     auto& p = parent();
     if(const auto i = dynamic_cast<eMonsterInvasionEventBase*>(&p)) {
         i->setWarned(true);
+        if(!i->valid()) return;
         ed.fMonster = i->monsterType();
     }
 
     switch(mType) {
     case eMonsterInvasionWarningType::warningInitial: {
-        board.event(eEvent::monsterInvasion36, ed);
+        ed.fTime = warningMonths();
+        board.event(eEvent::monsterInvasionInitial, ed);
     } break;
     case eMonsterInvasionWarningType::warning24: {
         board.event(eEvent::monsterInvasion24, ed);

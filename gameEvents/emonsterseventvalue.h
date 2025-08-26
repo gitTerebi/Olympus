@@ -27,7 +27,7 @@ public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 protected:
-    void chooseMonster();
+    bool chooseMonster(const std::vector<eMonsterType>& skip);
 
     std::vector<eMonsterTypeValid> mMonsters = {{}, {}, {}};
 
