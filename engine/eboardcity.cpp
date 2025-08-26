@@ -1495,7 +1495,7 @@ void eBoardCity::walkerKilled() {
 }
 
 void eBoardCity::rockThrowerKilled() {
-    killCommonFolks(4);
+    killCommonFolks(2*eNumbers::sRabbleDivisor);
 }
 
 void eBoardCity::hopliteKilled() {
@@ -1599,7 +1599,7 @@ void eBoardCity::updateMaxSoldiers() {
             }
         }
     }
-    mMaxRabble /= 6;
+    mMaxRabble /= eNumbers::sRabbleDivisor;
 
     const int spb = eNumbers::sSoldiersPerBanner;
     const int nSpaces = maxPalaceBannerCount();

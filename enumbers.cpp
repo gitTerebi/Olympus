@@ -10,6 +10,7 @@ int eNumbers::sDayLength;
 
 int eNumbers::sArmyTravelTime;
 
+int eNumbers::sRabbleDivisor;
 int eNumbers::sSoldiersPerBanner;
 int eNumbers::sSoldiersPerAresArtemisBanner;
 
@@ -280,6 +281,7 @@ void eNumbers::sLoad() {
 
     loadI("army_travel_time_i", sArmyTravelTime, 200);
 
+    loadI("rabble_divisor_i", sRabbleDivisor, 6);
     loadI("soldiers_per_banner_i", sSoldiersPerBanner, 8);
     loadI("soldiers_per_ares_artemis_banner_i", sSoldiersPerAresArtemisBanner, 8);
 

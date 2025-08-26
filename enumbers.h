@@ -8,6 +8,7 @@ struct eNumbers {
 
     static int sArmyTravelTime;
 
+    static int sRabbleDivisor;
     static int sSoldiersPerBanner;
     static int sSoldiersPerAresArtemisBanner;
 
