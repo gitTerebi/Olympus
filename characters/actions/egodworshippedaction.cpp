@@ -71,7 +71,7 @@ bool eGodWorshippedAction::decide() {
         mStage = eGodWorshippedStage::patrol1;
         const auto tile = c->tile();
         const int len = tile->roadLength(5);
-        if(len > 5) patrol();
+        if(len >= 5) patrol();
         else moveAround();
     }   break;
     case eGodWorshippedStage::patrol1:
@@ -82,7 +82,7 @@ bool eGodWorshippedAction::decide() {
         mStage = eGodWorshippedStage::patrol2;
         const auto tile = c->tile();
         const int len = tile->roadLength(5);
-        if(len > 5) patrol();
+        if(len >= 5) patrol();
         else moveAround();
     }   break;
     case eGodWorshippedStage::patrol2:
