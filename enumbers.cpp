@@ -321,7 +321,7 @@ void eNumbers::sLoad() {
 
     loadI("hunting_lodge_wait_period_i", sHuntingLodgeWaitPeriod, 5000);
 
-    loadI("mint_drachmas_per_silver_i", sMintDrachmasPerSilver, 25);
+    loadI("mint_drachmas_per_silver_i", sMintDrachmasPerSilver, 50);
 
     loadI("spread_fire_period_i", sSpreadFirePeriod, 50000);
     loadI("fire_collapse_period_i", sFireCollapsePeriod, 50000);
