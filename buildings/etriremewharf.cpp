@@ -237,6 +237,16 @@ bool eTriremeWharf::hasTrireme() const {
     return mTrireme || mAbroad;
 }
 
+bool eTriremeWharf::isAtWharf() const {
+    if(!mTrireme || mAbroad) return false;
+    const auto home = triremeTile();
+    const auto spot = mTrireme->tile();
+    if(!home || !spot) return false;
+    const int dx = home->x() - spot->x();
+    const int dy = home->y() - spot->y();
+    return dx*dx + dy*dy < 8;
+}
+
 eTile *eTriremeWharf::triremeTile() const {
     const auto& under = tilesUnder();
     eTile* startTile = nullptr;

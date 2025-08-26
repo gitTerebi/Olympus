@@ -705,7 +705,8 @@ SOURCES += \
         widgets/infowidgets/einfowidget.cpp \
         widgets/infowidgets/esanctuaryinfowidget.cpp \
         widgets/infowidgets/estorageinfowidget.cpp \
-        widgets/infowidgets/etradepostinfowidget.cpp
+        widgets/infowidgets/etradepostinfowidget.cpp \
+        widgets/infowidgets/etriremewharfinfowidget.cpp
 
 HEADERS += \
     audio/egodsounds.h \
@@ -2829,7 +2830,8 @@ HEADERS += \
     widgets/infowidgets/einfowidget.h \
     widgets/infowidgets/esanctuaryinfowidget.h \
     widgets/infowidgets/estorageinfowidget.h \
-    widgets/infowidgets/etradepostinfowidget.h
+    widgets/infowidgets/etradepostinfowidget.h \
+    widgets/infowidgets/etriremewharfinfowidget.h
 
 DISTFILES += \
     Adventures/The Founding of Athens/The Founding of Athens.epak \

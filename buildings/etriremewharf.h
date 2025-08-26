@@ -33,6 +33,7 @@ public:
     void triremeLeaving();
     bool abroad() const { return mAbroad; }
     bool hasTrireme() const;
+    bool isAtWharf() const;
 
     eTile* triremeTile() const;
 private:

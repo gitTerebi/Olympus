@@ -8,6 +8,7 @@
 #include "infowidgets/eagorainfowidget.h"
 #include "infowidgets/eheroshallinfowidget.h"
 #include "infowidgets/esanctuaryinfowidget.h"
+#include "infowidgets/etriremewharfinfowidget.h"
 
 #include "engine/egameboard.h"
 
@@ -30,6 +31,10 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
         const auto hhWid = new eHerosHallInfoWidget(window(), this, false, false);
         hhWid->initialize(hh);
         wid = hhWid;
+    } else if(const auto tw = dynamic_cast<eTriremeWharf*>(b)) {
+        const auto twWid = new eTriremeWharfInfoWidget(window(), this, false, false);
+        twWid->initialize(tw);
+        wid = twWid;
     } else if(const auto encl = dynamic_cast<eHorseRanchEnclosure*>(b)) {
         return openInfoWidget(encl->ranch());
     } else {

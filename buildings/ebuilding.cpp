@@ -2091,6 +2091,36 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 6;
         }
     } break;
+    case eBuildingType::triremeWharf: {
+        const auto t = static_cast<eTriremeWharf*>(b);
+        const bool sd = t->shutDown();
+        group = 175;
+        if(sd) {
+            employmentInfoString = 4;
+        } else if(e == 0) {
+            employmentInfoString = 5;
+        } else if(e == maxE) {
+            employmentInfoString = 6;
+        } else if(e > 80) {
+            employmentInfoString = 7;
+        } else if(e > 60) {
+            employmentInfoString = 8;
+        } else if(e > 30) {
+            employmentInfoString = 9;
+        } else {
+            employmentInfoString = 10;
+        }
+        const bool has = t->hasTrireme();
+        const bool at = t->isAtWharf();
+        if(!has) {
+            infoString = 17;
+        } else if(at) {
+            infoString = 14;
+        } else {
+            infoString = 15;
+        }
+        additionalInfoString = 1;
+    } break;
     case eBuildingType::growersLodge: {
         const auto gl = static_cast<eGrowersLodge*>(b);
         const bool noTarget = gl->noTarget();
