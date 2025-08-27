@@ -9,6 +9,8 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
 
     case eBuildingMode::road:
         return eBuildingType::road;
+    case eBuildingMode::roadblock:
+        return eBuildingType::none;
 
     case eBuildingMode::commonHousing:
         return eBuildingType::commonHouse;
@@ -400,8 +402,8 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
     case eBuildingMode::museumAtlantika: // 8x8
         return eBuildingType::museumAtlantika;
 
-    default:
-        return eBuildingType::none;
+    case eBuildingMode::triremeWharf:
+        return eBuildingType::triremeWharf;
     }
 }
 
