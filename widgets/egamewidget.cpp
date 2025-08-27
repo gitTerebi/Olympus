@@ -2,6 +2,7 @@
 
 #include "engine/egameboard.h"
 
+#include "engine/eknownendpathfinder.h"
 #include "eterraineditmenu.h"
 
 #include "textures/egametextures.h"
@@ -774,6 +775,22 @@ bool tileBuildable(eTile* const t) {
     const auto& chars = t->characters();
     if(!chars.empty()) return false;
     return true;
+}
+
+bool eGameWidget::waterTileHasAccessToSea(const int tx, const int ty) const {
+    const auto t = mBoard->tile(tx, ty);
+    if(!t) return false;
+    if(!t->hasWater()) return false;
+    const auto cid = mViewedCityId;
+    const auto riverEntry = mBoard->riverEntryPoint(cid);
+    if(!riverEntry) return false;
+    eKnownEndPathFinder p([](eTileBase* const tile) {
+        return tile->hasWater();
+    }, riverEntry);
+    const int w = mBoard->width();
+    const int h = mBoard->height();
+    const bool r = p.findPath({0, 0, w, h}, t, 1000, true, w, h);
+    return r;
 }
 
 bool eGameWidget::canBuildFishery(const int tx, const int ty,

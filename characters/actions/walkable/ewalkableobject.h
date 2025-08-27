@@ -56,6 +56,7 @@ public:
     static stdsptr<eWalkableObject> sCreateFertile();
     static stdsptr<eWalkableObject> sCreateWall();
     static stdsptr<eWalkableObject> sCreateDeepWater();
+    static stdsptr<eWalkableObject> sCreateWater();
     static stdsptr<eWalkableObject> sCreateWaterAndDefault();
     static stdsptr<eWalkableObject> sCreateAll();
     static stdsptr<eWalkableObject> sCreateRanch();

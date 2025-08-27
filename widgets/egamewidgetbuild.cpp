@@ -1142,28 +1142,46 @@ bool eGameWidget::buildMouseRelease() {
             eDiagonalOrientation o;
             const bool c = canBuildTriremeWharf(mHoverTX, mHoverTY, o);
             if(c) {
-                const auto b = e::make_shared<eTriremeWharf>(*mBoard, o, mViewedCityId);
-                const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                b->setCenterTile(tile);
-
                 const int minX = mHoverTX - 1;
                 const int minY = mHoverTY - 1;
-                b->setTileRect({minX, minY, 3, 3});
+
+                bool accessToSea = false;
                 for(int x = minX; x < minX + 3; x++) {
                     for(int y = minY; y < minY + 3; y++) {
                         const auto t = mBoard->tile(x, y);
-                        if(t) {
-                            t->setUnderBuilding(b);
-                            b->addUnderBuilding(t);
+                        if(!t) continue;
+                        if(t->hasWater()) {
+                            accessToSea = waterTileHasAccessToSea(x, y);
+                            x += 3;
+                            break;
                         }
                     }
                 }
 
-                if(!mEditorMode) {
-                    const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
-                                         diff, eBuildingType::triremeWharf);
-                    mBoard->incDrachmas(ppid, -cost);
+                if(accessToSea) {
+                    const auto b = e::make_shared<eTriremeWharf>(*mBoard, o, mViewedCityId);
+                    const auto tile = mBoard->tile(mHoverTX, mHoverTY);
+                    b->setCenterTile(tile);
+
+                    b->setTileRect({minX, minY, 3, 3});
+                    for(int x = minX; x < minX + 3; x++) {
+                        for(int y = minY; y < minY + 3; y++) {
+                            const auto t = mBoard->tile(x, y);
+                            if(t) {
+                                t->setUnderBuilding(b);
+                                b->addUnderBuilding(t);
+                            }
+                        }
+                    }
+
+                    if(!mEditorMode) {
+                        const auto diff = mBoard->difficulty(ppid);
+                        const int cost = eDifficultyHelpers::buildingCost(
+                                             diff, eBuildingType::triremeWharf);
+                        mBoard->incDrachmas(ppid, -cost);
+                    }
+                } else {
+                    showTip(cid, eLanguage::zeusText(19, 25));
                 }
             }
         } break;
@@ -1173,50 +1191,69 @@ bool eGameWidget::buildMouseRelease() {
             eDiagonalOrientation o;
             const bool c = canBuildPier(mHoverTX, mHoverTY, o, cid, pid, mEditorMode);
             if(c) {
-                const auto b = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
-                const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                b->setCenterTile(tile);
-
+                const int minX = mHoverTX;
                 const int minY = mHoverTY - 1;
-                b->setTileRect({mHoverTX, minY, 2, 2});
-                for(int x = mHoverTX; x < mHoverTX + 2; x++) {
+
+                bool accessToSea = false;
+                for(int x = minX; x < minX + 2; x++) {
                     for(int y = minY; y < minY + 2; y++) {
                         const auto t = mBoard->tile(x, y);
-                        if(t) {
-                            t->setUnderBuilding(b);
-                            b->addUnderBuilding(t);
+                        if(!t) continue;
+                        if(t->hasWater()) {
+                            accessToSea = waterTileHasAccessToSea(x, y);
+                            x += 2;
+                            break;
                         }
                     }
                 }
-                int tx = mHoverTX;
-                int ty = mHoverTY;
 
-                switch(o) {
-                case eDiagonalOrientation::topRight: {
-                    ty += 3;
-                } break;
-                case eDiagonalOrientation::bottomRight: {
-                    tx -= 3;
-                } break;
-                case eDiagonalOrientation::bottomLeft: {
-                    ty -= 3;
-                } break;
-                default:
-                case eDiagonalOrientation::topLeft: {
-                    tx += 3;
-                } break;
+                if(accessToSea) {
+                    const auto b = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
+                    const auto tile = mBoard->tile(mHoverTX, mHoverTY);
+                    b->setCenterTile(tile);
+
+                    b->setTileRect({mHoverTX, minY, 2, 2});
+                    for(int x = minX; x < minX + 2; x++) {
+                        for(int y = minY; y < minY + 2; y++) {
+                            const auto t = mBoard->tile(x, y);
+                            if(t) {
+                                t->setUnderBuilding(b);
+                                b->addUnderBuilding(t);
+                            }
+                        }
+                    }
+                    int tx = mHoverTX;
+                    int ty = mHoverTY;
+
+                    switch(o) {
+                    case eDiagonalOrientation::topRight: {
+                        ty += 3;
+                    } break;
+                    case eDiagonalOrientation::bottomRight: {
+                        tx -= 3;
+                    } break;
+                    case eDiagonalOrientation::bottomLeft: {
+                        ty -= 3;
+                    } break;
+                    default:
+                    case eDiagonalOrientation::topLeft: {
+                        tx += 3;
+                    } break;
+                    }
+                    const int ctid = mGm->tradeCityId();
+                    const auto& cts = wrld.cities();
+                    const auto ct = cts[ctid];
+                    const auto tp = e::make_shared<eTradePost>(
+                                        *mBoard, *ct, mViewedCityId, eTradePostType::pier);
+                    tp->setOrientation(o);
+                    tp->setUnpackBuilding(b.get());
+                    mBoard->build(tx, ty, 4, 4, cid, pid, mEditorMode, [&]() { return tp; });
+                    b->setTradePost(tp.get());
+
+                    mGm->clearMode();
+                } else {
+                    showTip(cid, eLanguage::zeusText(19, 25));
                 }
-                const int ctid = mGm->tradeCityId();
-                const auto& cts = wrld.cities();
-                const auto ct = cts[ctid];
-                const auto tp = e::make_shared<eTradePost>(
-                                    *mBoard, *ct, mViewedCityId, eTradePostType::pier);
-                tp->setOrientation(o);
-                tp->setUnpackBuilding(b.get());
-                mBoard->build(tx, ty, 4, 4, cid, pid, mEditorMode, [&]() { return tp; });
-                b->setTradePost(tp.get());
-
-                mGm->clearMode();
             }
         } break;
 

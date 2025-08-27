@@ -77,6 +77,9 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
     case eWalkableObjectType::deepWater: {
         return t->hasDeepWater();
     }
+    case eWalkableObjectType::water: {
+        return t->hasWater();
+    }
     case eWalkableObjectType::ranch: {
         const auto tt = t->underBuildingType();
         if(tt != eBuildingType::horseRanchEnclosure) return false;
@@ -148,6 +151,10 @@ stdsptr<eWalkableObject> eWalkableObject::sCreateWall() {
 
 stdsptr<eWalkableObject> eWalkableObject::sCreateDeepWater() {
     return sCreate(eWalkableObjectType::deepWater);
+}
+
+stdsptr<eWalkableObject> eWalkableObject::sCreateWater() {
+    return sCreate(eWalkableObjectType::water);
 }
 
 stdsptr<eWalkableObject> eWalkableObject::sCreateWaterAndDefault() {
