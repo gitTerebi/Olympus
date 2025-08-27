@@ -26,6 +26,9 @@ public:
     void setFinishOnComeback(const bool b)
     { mFinishOnComeback = b; }
 
+    void setDiagonalOnly(const bool d)
+    { mDiagonalOnly = d; }
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
@@ -44,6 +47,7 @@ private:
 
     SDL_Rect mGoBackRect{0, 0, 0, 0};
 
+    bool mDiagonalOnly = false;
     bool mFinishOnComeback = false;
     bool mDefaultTry = false;
     bool mGoBackFail = false;

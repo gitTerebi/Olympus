@@ -13,6 +13,7 @@ ePatrolAction::ePatrolAction(eCharacter* const c,
     eActionWithComeback(c, b ? b->centerTile() : nullptr, at),
     mGuides(guides), mDirTimes(dirTimes), mBuilding(b) {
     setFinishOnComeback(true);
+    setDiagonalOnly(true);
 }
 
 ePatrolAction::ePatrolAction(eCharacter* const c,

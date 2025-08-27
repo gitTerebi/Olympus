@@ -32,6 +32,7 @@ void eActionWithComeback::read(eReadStream& src) {
     src >> mFinishOnComeback;
     src >> mDefaultTry;
     src >> mGoBackFail;
+    src >> mDiagonalOnly;
 }
 
 void eActionWithComeback::write(eWriteStream& dst) const {
@@ -41,6 +42,7 @@ void eActionWithComeback::write(eWriteStream& dst) const {
     dst << mFinishOnComeback;
     dst << mDefaultTry;
     dst << mGoBackFail;
+    dst << mDiagonalOnly;
 }
 
 void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {
@@ -108,6 +110,7 @@ void eActionWithComeback::goBackInternal(stdsptr<eWalkableObject> walkable) {
             mDefaultTry = true;
         }
     });
+    a->setDiagonalOnly(mDiagonalOnly);
     if(const auto ub = mStartTile->underBuilding()) {
         walkable = eWalkableObject::sCreateRect(ub, walkable);
     }
