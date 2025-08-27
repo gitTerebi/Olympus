@@ -111,10 +111,10 @@ int eTile::roadLength(const int skipAfter) const {
         if(v) return;
         result++;
         visited.push_back(tile);
-        process(topRight<eTile>());
-        process(bottomRight<eTile>());
-        process(bottomLeft<eTile>());
-        process(topLeft<eTile>());
+        process(tile->topRight<eTile>());
+        process(tile->bottomRight<eTile>());
+        process(tile->bottomLeft<eTile>());
+        process(tile->topLeft<eTile>());
     };
     process(this);
     return result;
