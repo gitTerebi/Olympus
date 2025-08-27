@@ -2,6 +2,16 @@
 
 #include "textures/egametextures.h"
 
+void eFlatButton::sizeHint(int &w, int &h) {
+    eButtonBase::sizeHint(w, h);
+    int iRes;
+    int mult;
+    iResAndMult(iRes, mult);
+    const int dim = 8*mult;
+    h = dim;
+    w += 4*dim;
+}
+
 void eFlatButton::paintEvent(ePainter& p) {
     int iRes;
     int mult;

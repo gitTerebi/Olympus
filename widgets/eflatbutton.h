@@ -7,7 +7,8 @@ class eFlatButton : public eButtonBase {
 public:
     using eButtonBase::eButtonBase;
 protected:
-    void paintEvent(ePainter& p);
+    void sizeHint(int& w, int& h) override;
+    void paintEvent(ePainter& p) override;
 };
 
 #endif // EFLATBUTTON_H

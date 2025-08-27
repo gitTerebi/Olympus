@@ -25,6 +25,7 @@
 
 #include "eframedbutton.h"
 #include "widgets/eboardsettingsmenu.h"
+#include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
 #include "emessagebox.h"
 
@@ -983,22 +984,24 @@ void eGameWidget::showTip(const ePlayerCityTarget& target,
         }
         text = tip;
     }
-    const auto msgb = new eFramedLabel(window());
-    msgb->setType(eFrameType::message);
-    msgb->setWrapWidth(width()/2);
-    msgb->setSmallFontSize();
+    const auto msgb = new eFlatButton(window());
+    msgb->setNoPadding();
+    msgb->setTinyFontSize();
     msgb->setText(text);
     msgb->fitContent();
     const int p = msgb->padding();
     addWidget(msgb);
     msgb->resize(msgb->width() + 2*p, msgb->height() + 2*p);
     msgb->setX((width() - mGm->width() - msgb->width())/2);
-    eTip etip;
+    eTip& etip = mTips.emplace_back();
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
     etip.fLastFrame = mFrame + 200;
-    mTips.push_back(etip);
+    const auto etipPtr = &etip;
+    msgb->setPressAction([etipPtr]() {
+        etipPtr->fLastFrame -= 200;
+    });
     updateTipPositions();
 }
 
@@ -1030,9 +1033,9 @@ void eGameWidget::updateTipPositions() {
     const int p = padding();
     int y;
     if(mPausedLabel) {
-        y = mPausedLabel->y() + mPausedLabel->height() + 3*p;
+        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
     } else {
-        y = 6*p;;
+        y = 5*p;;
     }
     for(const auto& tip : mTips) {
         const auto w = tip.fWid;
@@ -1586,6 +1589,7 @@ void eGameWidget::switchPause() {
         mPausedLabel->deleteLater();
         mPausedLabel = nullptr;
     }
+    updateTipPositions();
 }
 
 bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
