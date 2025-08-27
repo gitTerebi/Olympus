@@ -318,6 +318,8 @@ public:
     eBanner* banner(const eBannerTypeS type, const int id = 0) const;
     eTile* entryPoint() const;
     eTile* exitPoint() const;
+    eTile* riverEntryPoint() const;
+    eTile* riverExitPoint() const;
     void registerBanner(eBanner* const b);
     void unregisterBanner(eBanner* const b);
 

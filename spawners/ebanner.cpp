@@ -80,6 +80,12 @@ eBanner* eBanner::sCreate(const int id,
     case eBannerTypeS::exitPoint:
         b = std::make_shared<eExitPoint>(id, tile, board);
         break;
+    case eBannerTypeS::riverEntryPoint:
+        b = std::make_shared<eRiverEntryPoint>(id, tile, board);
+        break;
+    case eBannerTypeS::riverExitPoint:
+        b = std::make_shared<eRiverExitPoint>(id, tile, board);
+        break;
     case eBannerTypeS::disasterPoint:
         b = std::make_shared<eDisasterPoint>(id, tile, board);
         break;

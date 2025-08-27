@@ -69,7 +69,6 @@ void eTraderAction::goToTradePost() {
     const auto fail = std::make_shared<eTA_tradeFail>(
                           board(), this);
     stdptr<eCharacter> cptr(c);
-    const auto tp = mTradePost;
     const auto finish = std::make_shared<eTA_goToTradePostFinish>(
                             board(), this);
 
@@ -79,9 +78,7 @@ void eTraderAction::goToTradePost() {
     a->setFailAction(fail);
     a->setFinishAction(finish);
     a->setRemoveLastTurn(true);
-    a->setFindFailAction([tp, tptr, cptr, this]() {
-        if(!tp) return;
-        tp->updateRouteStart();
+    a->setFindFailAction([tptr, cptr, this]() {
         if(!tptr) return;
         mNotFound = true;
     });

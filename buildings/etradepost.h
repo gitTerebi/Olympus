@@ -32,9 +32,6 @@ public:
 
     eWorldCity& city() const { return mCity; }
 
-    eTile* routeStart() const { return mRouteStart; }
-    void updateRouteStart();
-
     void spawnTrader();
 
     bool playerTwoWay() const;
@@ -59,6 +56,8 @@ public:
 
     bool trades() const;
 private:
+    eTile* entryPoint() const;
+
     eWorldCity& mCity;
     const eTradePostType mType;
     eResourceType mImports = eResourceType::none;
@@ -68,8 +67,6 @@ private:
     eCharacterCreator mCharGen;
     stdsptr<eWalkableObject> mWalkable = eWalkableObject::sCreateDefault();
     eBuilding* mUnpackBuilding = this;
-
-    eTile* mRouteStart = nullptr;
 
     int mRouteTimer = 0;
 };

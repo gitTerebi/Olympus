@@ -1967,6 +1967,26 @@ eTile* eBoardCity::exitPoint() const {
     return nullptr;
 }
 
+eTile* eBoardCity::riverEntryPoint() const {
+    for(const auto b : mBanners) {
+        const auto type = b->type();
+        if(type == eBannerTypeS::riverEntryPoint) {
+            return b->tile();
+        }
+    }
+    return nullptr;
+}
+
+eTile* eBoardCity::riverExitPoint() const {
+    for(const auto b : mBanners) {
+        const auto type = b->type();
+        if(type == eBannerTypeS::riverExitPoint) {
+            return b->tile();
+        }
+    }
+    return nullptr;
+}
+
 void eBoardCity::registerBanner(eBanner* const b) {
     const int id = b->id();
     const auto type = b->type();

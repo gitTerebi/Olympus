@@ -226,14 +226,15 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     readUInt(); // indicating start of random block (or perhaps "uncompressed" indicator?)
     const auto random = readByteGrid();
     skipCompressed(); // byte grid: all zeroes
-    skipBytes(60);
-    const int mapsize = readUInt(); // Poseidon or not doesn't matter here
-    const int halfMapsize = mapsize/2;
 
     struct ePt {
         uint16_t fX;
         uint16_t fY;
     };
+
+    skipBytes(60);
+    const int mapsize = readUInt(); // Poseidon or not doesn't matter here
+    const int halfMapsize = mapsize/2;
 
     skipBytes(604);
 
@@ -304,7 +305,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     }
 
     skipBytes(80);
-
     const uint16_t entryPtX = readUShort();
     const uint16_t entryPtY = readUShort();
     const uint16_t exitPtX = readUShort();
@@ -320,7 +320,11 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         disasterPts[i].fY = readUShort();
     }
 
-    skipBytes(52);
+    const uint16_t riverEntryPtX = readUShort();
+    const uint16_t riverEntryPtY = readUShort();
+    const uint16_t riverExitPtX = readUShort();
+    const uint16_t riverExitPtY = readUShort();
+    skipBytes(44);
 
     const int maxBoarPts = 4;
     std::vector<ePt> boarPts;
@@ -819,6 +823,19 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto b = std::make_shared<eExitPoint>(
                            0, exitTile, board);
         exitTile->setBanner(b);
+    }
+
+    const auto riverEntryTile = tileMap[riverEntryPtY][riverEntryPtX].fTile;
+    if(riverEntryTile) {
+        const auto b = std::make_shared<eRiverEntryPoint>(
+            0, riverEntryTile, board);
+        riverEntryTile->setBanner(b);
+    }
+    const auto riverExitTile = tileMap[riverExitPtY][riverExitPtX].fTile;
+    if(riverExitTile) {
+        const auto b = std::make_shared<eRiverExitPoint>(
+            0, riverExitTile, board);
+        riverExitTile->setBanner(b);
     }
 
     for(int i = 0; i < maxDisasterPts; i++) {

@@ -10,4 +10,11 @@ public:
                eGameBoard& board);
 };
 
+class eRiverExitPoint : public eBanner {
+public:
+    eRiverExitPoint(const int id,
+                    eTile* const tile,
+                    eGameBoard& board);
+};
+
 #endif // EEXITPOINT_H

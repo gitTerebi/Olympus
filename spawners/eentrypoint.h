@@ -26,4 +26,11 @@ public:
     void write(eWriteStream&) const override {}
 };
 
+class eRiverEntryPoint : public eBanner {
+public:
+    eRiverEntryPoint(const int id,
+                     eTile* const tile,
+                     eGameBoard& board);
+};
+
 #endif // eentrypoint_H

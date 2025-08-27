@@ -22,6 +22,8 @@ public:
 
     eTriremeWharf* home() const;
 private:
+    eTile* exitPoint() const;
+
     stdptr<eTriremeWharf> mHome;
 };
 

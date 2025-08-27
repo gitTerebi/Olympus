@@ -230,7 +230,7 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w11->fitContent();
 
     mW12 = new eActionListWidget(window());
-    mW12->addAction("Entry Point", [this]() {
+    mW12->addAction(eLanguage::zeusText(48, 10), [this]() {
         mMode = eTerrainEditMode::entryPoint;
         mModeId = 0;
     }, [board, gw]() {
@@ -238,12 +238,29 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         const auto b = board->banner(cid, eBannerTypeS::entryPoint);
         return b != nullptr;
     });
-    mW12->addAction("Exit Point", [this]() {
+    mW12->addAction(eLanguage::zeusText(48, 11), [this]() {
         mMode = eTerrainEditMode::exitPoint;
         mModeId = 0;
     }, [board, gw]() {
         const auto cid = gw->viewedCity();
         const auto b = board->banner(cid, eBannerTypeS::exitPoint);
+        return b != nullptr;
+    });
+
+    mW12->addAction(eLanguage::zeusText(48, 27), [this]() {
+        mMode = eTerrainEditMode::riverEntryPoint;
+        mModeId = 0;
+    }, [board, gw]() {
+        const auto cid = gw->viewedCity();
+        const auto b = board->banner(cid, eBannerTypeS::riverEntryPoint);
+        return b != nullptr;
+    });
+    mW12->addAction(eLanguage::zeusText(48, 28), [this]() {
+        mMode = eTerrainEditMode::riverExitPoint;
+        mModeId = 0;
+    }, [board, gw]() {
+        const auto cid = gw->viewedCity();
+        const auto b = board->banner(cid, eBannerTypeS::riverExitPoint);
         return b != nullptr;
     });
     {

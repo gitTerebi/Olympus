@@ -1522,6 +1522,18 @@ eTile* eGameBoard::exitPoint(const eCityId cid) const {
     return c->exitPoint();
 }
 
+eTile *eGameBoard::riverEntryPoint(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->riverEntryPoint();
+}
+
+eTile *eGameBoard::riverExitPoint(const eCityId cid) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->riverExitPoint();
+}
+
 void eGameBoard::editorClearBuildings() {
     for(const auto& c : mCitiesOnBoard) {
         c->editorClearBuildings();

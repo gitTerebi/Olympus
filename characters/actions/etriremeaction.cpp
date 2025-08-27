@@ -51,6 +51,12 @@ void eTriremeAction::goHome() {
     setCurrentAction(a);
 }
 
+eTile* eTriremeAction::exitPoint() const {
+    auto& board = eTriremeAction::board();
+    const auto cid = cityId();
+    return board.riverExitPoint(cid);
+}
+
 void eTriremeAction::goAbroad() {
     const auto c = character();
     auto& board = eFightingAction::board();
@@ -73,10 +79,8 @@ void eTriremeAction::goAbroad() {
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
 
-    const auto edgeTile = [](eTileBase* const tile) {
-        return tile->isCityEdge();
-    };
-    a->start(edgeTile, eWalkableObject::sCreateDeepWater());
+    const auto exitPoint = eTriremeAction::exitPoint();
+    a->start(exitPoint, eWalkableObject::sCreateDeepWater());
 }
 
 eTriremeWharf *eTriremeAction::home() const {

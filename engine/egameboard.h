@@ -544,6 +544,8 @@ public:
 
     eTile* entryPoint(const eCityId cid) const;
     eTile* exitPoint(const eCityId cid) const;
+    eTile* riverEntryPoint(const eCityId cid) const;
+    eTile* riverExitPoint(const eCityId cid) const;
 
     bool editorMode() const { return mEditorMode; }
     void setEditorMode(const bool m) { mEditorMode = m; }

@@ -1349,8 +1349,14 @@ void eGameWidget::paintEvent(ePainter& p) {
                 case eBannerTypeS::entryPoint:
                     topTex = builTexs.fEntryPoint;
                     break;
+                case eBannerTypeS::riverEntryPoint:
+                    topTex = builTexs.fRiverEntryPoint;
+                    break;
                 case eBannerTypeS::exitPoint:
                     topTex = builTexs.fExitPoint;
+                    break;
+                case eBannerTypeS::riverExitPoint:
+                    topTex = builTexs.fRiverExitPoint;
                     break;
                 case eBannerTypeS::monsterPoint:
                     topTex = builTexs.fMonsterPoint;

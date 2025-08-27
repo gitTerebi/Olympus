@@ -52,6 +52,8 @@ enum class eTerrainEditMode {
 
     entryPoint,
     exitPoint,
+    riverEntryPoint,
+    riverExitPoint,
     landInvasion,
     seaInvasion,
     disembarkPoint,

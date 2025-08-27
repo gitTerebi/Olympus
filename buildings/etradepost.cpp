@@ -4,9 +4,6 @@
 
 #include "engine/egameboard.h"
 
-#include "epathfindtask.h"
-#include "ewalkablehelpers.h"
-
 #include "characters/etrader.h"
 #include "characters/actions/etraderaction.h"
 #include "characters/etradeboat.h"
@@ -135,63 +132,24 @@ void eTradePost::getOrders(eResourceType& imports,
     exports = mExports;
 }
 
-void eTradePost::updateRouteStart() {
-    auto& brd = getBoard();
-    auto& tp = brd.threadPool();
-
-    const auto walkable = eWalkableObject::sCreateRect(
-                              mUnpackBuilding, mWalkable);
-
-    const auto t = mUnpackBuilding->centerTile();
-    const int tx = t->x();
-    const int ty = t->y();
-
-    const auto startTile = [tx, ty](eThreadBoard& board) {
-        return board.tile(tx, ty);
-    };
-
-    const auto finalTile = std::make_shared<std::pair<int, int>>();
-
-    const auto final = [finalTile, walkable](eTileBase* const t) {
-        if(!walkable->walkable(t)) return false;
-        if(t->isCityEdge()) {
-            *finalTile = {t->x(), t->y()};
-            return true;
-        }
-        return false;
-    };
-
-    stdptr<eTradePost> tptr(this);
-
-    const auto finishFunc = [tptr, this, finalTile](
-                            std::vector<eOrientation>) {
-        if(!tptr) return;
-        const int tx = finalTile->first;
-        const int ty = finalTile->second;
-        mRouteStart = getBoard().tile(tx, ty);
-        if(trades()) spawnTrader();
-    };
-
-    const auto findFailFunc = [tptr, this]() {
-        if(!tptr) return;
-        mRouteStart = nullptr;
-    };
-
+eTile* eTradePost::entryPoint() const {
+    auto& board = getBoard();
     const auto cid = cityId();
-    const auto tileBRect = brd.boardCityTileBRect(cid);
-    const auto pft = new ePathFindTask(cid, tileBRect,
-                                       startTile, walkable,
-                                       final, finishFunc,
-                                       findFailFunc, true,
-                                       10000);
-    tp.queueTask(pft);
+    switch(mType) {
+    case eTradePostType::post:
+        return board.entryPoint(cid);
+    case eTradePostType::pier:
+        return board.riverEntryPoint(cid);
+    default:
+        return nullptr;
+    }
 }
 
 void eTradePost::spawnTrader() {
-    if(!mRouteStart) return updateRouteStart();
+    const auto entryPoint = eTradePost::entryPoint();
     auto& board = getBoard();
 
-    const auto r = mCharGen(mRouteStart, board);
+    const auto r = mCharGen(entryPoint, board);
     r->setBothCityIds(cityId());
 
     const auto ta = e::make_shared<eTraderAction>(r.get());

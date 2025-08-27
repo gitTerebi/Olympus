@@ -486,6 +486,26 @@ eGameWidget::eApply eGameWidget::editFunc() {
                                modeId, tile, *mBoard);
             tile->setBanner(b);
         };
+    } else if(mode == eTerrainEditMode::riverEntryPoint) {
+        return [this, modeId](eTile* const tile) {
+            if(const auto b = tile->banner()) {
+                tile->setBanner(nullptr);
+                return;
+            }
+            const auto b = std::make_shared<eRiverEntryPoint>(
+                modeId, tile, *mBoard);
+            tile->setBanner(b);
+        };
+    } else if(mode == eTerrainEditMode::riverExitPoint) {
+        return [this, modeId](eTile* const tile) {
+            if(const auto b = tile->banner()) {
+                tile->setBanner(nullptr);
+                return;
+            }
+            const auto b = std::make_shared<eRiverExitPoint>(
+                modeId, tile, *mBoard);
+            tile->setBanner(b);
+        };
     } else if(mode == eTerrainEditMode::landInvasion) {
         return [this, modeId](eTile* const tile) {
             if(const auto b = tile->banner()) {
