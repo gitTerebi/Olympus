@@ -2243,8 +2243,7 @@ void eGameBoard::incTime(const int by) {
             for(const auto& cc : defs) {
                 if(!cc->isRival()) continue;
                 const auto rr = e::make_shared<eReceiveRequestEvent>(
-                                    personPlayerCapital(),
-                                    eGameEventBranch::root, *this);
+                    cid, eGameEventBranch::root, *this);
                 const auto type = cc->recTributeType();
                 const int count = cc->recTributeCount();
                 rr->initialize(0, type, count, cc, false);
