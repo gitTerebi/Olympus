@@ -93,13 +93,6 @@ void eGameBoard::write(eWriteStream& dst) const {
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->write(dst);
-            const auto b = t->banner();
-            const bool has = b != nullptr;
-            dst << has;
-            if(!has) continue;
-            dst << b->type();
-            dst << b->id();
-            b->write(dst);
         }
     }
 

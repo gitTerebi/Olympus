@@ -763,18 +763,26 @@ bool eGameWidget::canBuildVendor(const int tx, const int ty,
     return ct->x() == tx && ct->y() == ty;
 }
 
+bool tileBuildable(eTile* const t) {
+    if(!t) return false;
+    if(t->underBuilding()) return false;
+    const auto& banners = t->banners();
+    for(const auto& b : banners) {
+        if(!b->buildable()) return false;
+    }
+    if(t->isElevationTile()) return false;
+    const auto& chars = t->characters();
+    if(!chars.empty()) return false;
+    return true;
+}
+
 bool eGameWidget::canBuildFishery(const int tx, const int ty,
                                   eDiagonalOrientation& o) const {
     for(int x = tx; x < tx + 2; x++) {
         for(int y = ty - 1; y < ty - 1 + 2; y++) {
             const auto t = mBoard->tile(x, y);
-            if(!t) return false;
-            if(t->underBuilding()) return false;
-            const auto banner = t->banner();
-            if(banner && !banner->buildable()) return false;
-            if(t->isElevationTile()) return false;
-            const auto& chars = t->characters();
-            if(!chars.empty()) return false;
+            const bool b = tileBuildable(t);
+            if(!b) return false;
         }
     }
     const auto t = mBoard->tile(tx, ty);
@@ -807,13 +815,8 @@ bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
     for(int x = tx - 1; x < tx - 1 + 3; x++) {
         for(int y = ty - 1; y < ty - 1 + 3; y++) {
             const auto t = mBoard->tile(x, y);
-            if(!t) return false;
-            if(t->underBuilding()) return false;
-            const auto banner = t->banner();
-            if(banner && !banner->buildable()) return false;
-            if(t->isElevationTile()) return false;
-            const auto& chars = t->characters();
-            if(!chars.empty()) return false;
+            const bool b = tileBuildable(t);
+            if(!b) return false;
         }
     }
     {

@@ -430,13 +430,9 @@ eGameWidget::eApply eGameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::boar) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eBoarSpawner>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::fish) {
         return [](eTile* const tile) {
@@ -448,13 +444,9 @@ eGameWidget::eApply eGameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::deer) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eDeerSpawner>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::fire) {
         return [](eTile* const tile) {
@@ -468,93 +460,57 @@ eGameWidget::eApply eGameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::entryPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eEntryPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::exitPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eExitPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::riverEntryPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eRiverEntryPoint>(
                 modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::riverExitPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eRiverExitPoint>(
                 modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::landInvasion) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eLandInvasionPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::seaInvasion) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eSeaInvasionPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::disembarkPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eDisembarkPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::monsterPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eMonsterPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::disasterPoint) {
         return [this, modeId](eTile* const tile) {
-            if(const auto b = tile->banner()) {
-                tile->setBanner(nullptr);
-                return;
-            }
             const auto b = std::make_shared<eDisasterPoint>(
                                modeId, tile, *mBoard);
-            tile->setBanner(b);
+            tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::cityTerritory) {
         return [modeId](eTile* const tile) {

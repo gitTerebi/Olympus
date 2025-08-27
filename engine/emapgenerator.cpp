@@ -213,7 +213,7 @@ void eMapGenerator::generateAnimals(const eMGS& settings) {
         } else {
             spawner = std::make_shared<eDeerSpawner>(0, tile, mBoard);
         }
-        tile->setBanner(spawner);
+        tile->addBanner(spawner);
     }
 }
 

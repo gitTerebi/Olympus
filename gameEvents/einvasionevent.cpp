@@ -100,11 +100,14 @@ eTile* nearestDisembarkTile(eTile* const tile, eGameBoard& board,
         return t->hasWater();
     }, [&](eTileBase* const t) {
         const auto tt = static_cast<eTile*>(t);
-        if(const auto b = tt->banner()) {
+        const auto& bs = tt->banners();
+        for(const auto& b : bs) {
             const auto type = b->type();
             const bool r = type == eBannerTypeS::disembarkPoint;
-            if(r) final = tt;
-            return r;
+            if(r) {
+                final = tt;
+                return true;
+            }
         }
         return false;
     });

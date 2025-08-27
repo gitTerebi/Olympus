@@ -1937,7 +1937,7 @@ stdsptr<ePlague> eBoardCity::nearestPlague(
 }
 
 eBanner* eBoardCity::banner(const eBannerTypeS type, const int id) const {
-    for(const auto b : mBanners) {
+    for(const auto& b : mBanners) {
         const int bid = b->id();
         if(bid != id) continue;
         const auto btype = b->type();
@@ -1992,7 +1992,7 @@ void eBoardCity::registerBanner(eBanner* const b) {
     const auto type = b->type();
     const auto bb = banner(type, id);
     const auto t = bb ? bb->tile() : nullptr;
-    if(t) t->setBanner(nullptr);
+    if(t) t->removeBanner(bb);
     mBanners.push_back(b);
 }
 

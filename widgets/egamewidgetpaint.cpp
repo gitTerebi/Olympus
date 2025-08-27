@@ -1319,58 +1319,60 @@ void eGameWidget::paintEvent(ePainter& p) {
         };
 
         const auto drawSpawner = [&]() {
-            const auto b = tile->banner();
-            if(mTem->visible() && b) {
-                const auto& coll = builTexs.fSpawner;
-                const int texId = mFrame % coll.size();
-                const auto& tex = coll.getTexture(texId);
-                tp.drawTexture(rx, ry - 1, tex,
-                               eAlignment::hcenter | eAlignment::top);
-                const int id = b->id();
-                drawNumber(id);
-
-                std::shared_ptr<eTexture> topTex;
-                switch(b->type()) {
-                case eBannerTypeS::none:
-                    break;
-                case eBannerTypeS::boar:
-                    topTex = builTexs.fBoarPoint;
-                    break;
-                case eBannerTypeS::deer:
-                    topTex = builTexs.fDeerPoint;
-                    break;
-                case eBannerTypeS::landInvasion:
-                case eBannerTypeS::seaInvasion:
-                    topTex = builTexs.fLandInvasionPoint;
-                    break;
-                case eBannerTypeS::disembarkPoint:
-                    topTex = builTexs.fDisembarkPoint;
-                    break;
-                case eBannerTypeS::entryPoint:
-                    topTex = builTexs.fEntryPoint;
-                    break;
-                case eBannerTypeS::riverEntryPoint:
-                    topTex = builTexs.fRiverEntryPoint;
-                    break;
-                case eBannerTypeS::exitPoint:
-                    topTex = builTexs.fExitPoint;
-                    break;
-                case eBannerTypeS::riverExitPoint:
-                    topTex = builTexs.fRiverExitPoint;
-                    break;
-                case eBannerTypeS::monsterPoint:
-                    topTex = builTexs.fMonsterPoint;
-                    break;
-                case eBannerTypeS::disasterPoint:
-                    topTex = builTexs.fDisasterPoint;
-                    break;
-                case eBannerTypeS::wolf:
-                    topTex = builTexs.fWolfPoint;
-                    break;
-                }
-                if(topTex) {
-                    tp.drawTexture(rx - 2.5, ry - 3.5, topTex,
+            if(mTem->visible()) {
+                const auto& banners = tile->banners();
+                for(const auto& b : banners) {
+                    const auto& coll = builTexs.fSpawner;
+                    const int texId = mFrame % coll.size();
+                    const auto& tex = coll.getTexture(texId);
+                    tp.drawTexture(rx, ry - 1, tex,
                                    eAlignment::hcenter | eAlignment::top);
+                    const int id = b->id();
+                    drawNumber(id);
+
+                    std::shared_ptr<eTexture> topTex;
+                    switch(b->type()) {
+                    case eBannerTypeS::none:
+                        break;
+                    case eBannerTypeS::boar:
+                        topTex = builTexs.fBoarPoint;
+                        break;
+                    case eBannerTypeS::deer:
+                        topTex = builTexs.fDeerPoint;
+                        break;
+                    case eBannerTypeS::landInvasion:
+                    case eBannerTypeS::seaInvasion:
+                        topTex = builTexs.fLandInvasionPoint;
+                        break;
+                    case eBannerTypeS::disembarkPoint:
+                        topTex = builTexs.fDisembarkPoint;
+                        break;
+                    case eBannerTypeS::entryPoint:
+                        topTex = builTexs.fEntryPoint;
+                        break;
+                    case eBannerTypeS::riverEntryPoint:
+                        topTex = builTexs.fRiverEntryPoint;
+                        break;
+                    case eBannerTypeS::exitPoint:
+                        topTex = builTexs.fExitPoint;
+                        break;
+                    case eBannerTypeS::riverExitPoint:
+                        topTex = builTexs.fRiverExitPoint;
+                        break;
+                    case eBannerTypeS::monsterPoint:
+                        topTex = builTexs.fMonsterPoint;
+                        break;
+                    case eBannerTypeS::disasterPoint:
+                        topTex = builTexs.fDisasterPoint;
+                        break;
+                    case eBannerTypeS::wolf:
+                        topTex = builTexs.fWolfPoint;
+                        break;
+                    }
+                    if(topTex) {
+                        tp.drawTexture(rx - 2.5, ry - 3.5, topTex,
+                                       eAlignment::hcenter | eAlignment::top);
+                    }
                 }
             }
         };

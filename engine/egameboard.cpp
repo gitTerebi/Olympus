@@ -123,7 +123,7 @@ void eGameBoard::initialize(const int w, const int h) {
             int tx;
             int ty;
             eTileHelper::dtileIdToTileId(x, y, tx, ty);
-            const auto tile = new eTile(tx, ty, x, y);
+            const auto tile = new eTile(tx, ty, x, y, *this);
             yArr.push_back(tile);
         }
     }
@@ -164,7 +164,7 @@ void eGameBoard::resize(const int w, const int h) {
             int tx;
             int ty;
             eTileHelper::dtileIdToTileId(x, y, tx, ty);
-            const auto tile = new eTile(tx, ty, x, y);
+            const auto tile = new eTile(tx, ty, x, y, *this);
             yArr.push_back(tile);
         }
     }
@@ -3284,8 +3284,10 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
             if(!t) return false;
             if(t->cityId() != cid) return false;
             if(t->underBuilding()) return false;
-            const auto banner = t->banner();
-            if(banner && !banner->buildable()) return false;
+            const auto& banners = t->banners();
+            for(const auto& b : banners) {
+                if(!b->buildable()) return false;
+            }
             const auto ttt = t->terrain();
             if(fertile && ttt == eTerrain::fertile) {
                 fertileFound = true;

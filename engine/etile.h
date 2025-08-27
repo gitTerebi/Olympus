@@ -40,7 +40,8 @@ struct eTerritoryBorder {
 class eTile : public eTileBase {
 public:
     eTile(const int x, const int y,
-          const int dx, const int dy);
+          const int dx, const int dy,
+          eGameBoard& board);
 
     int scrubId(const int nLevels) const;
     double scrub() const { return mScrub; }
@@ -74,12 +75,15 @@ public:
     bool hasRoad() const override;
     bool hasAvenue() const;
     void setUnderBuilding(const stdsptr<eBuilding>& b);
-    eBuilding* underBuilding() const { return mUnderBuilding.get(); }
+    eBuilding* underBuilding() const
+    { return mUnderBuilding.get(); }
     eBuildingType underBuildingType() const override;
 
-    void setBanner(const stdsptr<eBanner>& b);
-    eBanner* banner() const { return mBanner.get(); }
-    eBannerTypeS bannerType() const;
+    void addBanner(const stdsptr<eBanner>& b);
+    void removeBanner(const stdsptr<eBanner>& b);
+    void removeBanner(eBanner* const b);
+    const std::vector<stdsptr<eBanner>>& banners() const
+    { return mBanners; }
 
     void setSoldierBanner(eSoldierBanner* const b);
     eSoldierBanner* soldierBanner() const { return mSoldierBanner; }
@@ -156,6 +160,8 @@ public:
 private:
     void updateIsElevationTile();
 
+    eGameBoard& mBoard;
+
     eTileTerrainPainter mTerrainPainter;
     eTerritoryBorder mBorder;
     int mDistanceToBorder = 0;
@@ -174,7 +180,7 @@ private:
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;
     stdsptr<eBuilding> mUnderBuilding;
-    stdsptr<eBanner> mBanner;
+    std::vector<stdsptr<eBanner>> mBanners;
     stdptr<eSoldierBanner> mSoldierBanner;
 };
 

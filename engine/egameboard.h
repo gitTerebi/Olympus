@@ -195,7 +195,7 @@ public:
 
     eBanner* banner(const eCityId cid,
                     const eBannerTypeS type,
-                    const int id = 0) const;
+                    const int id = 1) const;
     void registerBanner(eBanner* const b);
     void unregisterBanner(eBanner* const b);
 

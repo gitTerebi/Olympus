@@ -60,15 +60,6 @@ void eGameBoard::read(eReadStream& src) {
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->read(src);
-            bool hasB;
-            src >> hasB;
-            if(!hasB) continue;
-            eBannerTypeS type;
-            src >> type;
-            int id;
-            src >> id;
-            const auto b = eBanner::sCreate(id, t, *this, type);
-            b->read(src);
         }
     }
 

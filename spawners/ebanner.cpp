@@ -93,6 +93,6 @@ eBanner* eBanner::sCreate(const int id,
         b = std::make_shared<eWolfSpawner>(id, tile, board);
         break;
     }
-    tile->setBanner(b);
+    tile->addBanner(b);
     return b.get();
 }

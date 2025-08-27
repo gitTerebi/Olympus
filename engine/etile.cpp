@@ -14,7 +14,9 @@
 #include "eiteratesquare.h"
 
 eTile::eTile(const int x, const int y,
-             const int dx, const int dy) {
+             const int dx, const int dy,
+             eGameBoard &board) :
+    mBoard(board) {
     setSeed(eRand::rand());
     setX(x);
     setY(y);
@@ -358,6 +360,17 @@ void eTile::read(eReadStream& src) {
     src >> mHalfSlope;
     src >> mTidalWaveZone;
     src >> mLavaZone;
+
+    int nb;
+    src >> nb;
+    for(int i = 0; i < nb; i++) {
+        eBannerTypeS type;
+        src >> type;
+        int id;
+        src >> id;
+        const auto b = eBanner::sCreate(id, this, mBoard, type);
+        b->read(src);
+    }
 }
 
 void eTile::write(eWriteStream& dst) const {
@@ -368,6 +381,13 @@ void eTile::write(eWriteStream& dst) const {
     dst << mHalfSlope;
     dst << mTidalWaveZone;
     dst << mLavaZone;
+
+    dst << mBanners.size();
+    for(const auto& b : mBanners) {
+        dst << b->type();
+        dst << b->id();
+        b->write(dst);
+    }
 }
 
 void eTile::addCharacter(const stdsptr<eCharacter>& c,
@@ -420,19 +440,34 @@ eBuildingType eTile::underBuildingType() const {
     else return mUnderBuilding->type();
 }
 
-void eTile::setBanner(const stdsptr<eBanner>& b) {
-    mBanner = b;
+void eTile::addBanner(const stdsptr<eBanner>& b) {
+    mBanners.push_back(b);
+}
+
+void eTile::removeBanner(const stdsptr<eBanner>& b) {
+    eVectorHelpers::remove(mBanners, b);
+}
+
+void eTile::removeBanner(eBanner * const b) {
+    const int iMax = mBanners.size();
+    for(int i = 0; i < iMax; i++) {
+        const auto& bb = mBanners[i];
+        if(bb.get() == b) {
+            mBanners.erase(mBanners.begin() + i);
+            break;
+        }
+    }
 }
 
 bool eTile::hasPrey() const {
-    const auto type = bannerType();
-    return type == eBannerTypeS::boar ||
-           type == eBannerTypeS::deer;
-}
-
-eBannerTypeS eTile::bannerType() const {
-    if(!mBanner) return eBannerTypeS::none;
-    return mBanner->type();
+    for(const auto& b : mBanners) {
+        const auto type = b->type();
+        if(type == eBannerTypeS::boar ||
+           type == eBannerTypeS::deer) {
+            return true;;
+        }
+    }
+    return false;
 }
 
 void eTile::setSoldierBanner(eSoldierBanner* const b) {

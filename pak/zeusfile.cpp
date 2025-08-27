@@ -816,26 +816,26 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     if(entryTile) {
         const auto b = std::make_shared<eEntryPoint>(
                            0, entryTile, board);
-        entryTile->setBanner(b);
+        entryTile->addBanner(b);
     }
     const auto exitTile = tileMap[exitPtY][exitPtX].fTile;
     if(exitTile) {
         const auto b = std::make_shared<eExitPoint>(
                            0, exitTile, board);
-        exitTile->setBanner(b);
+        exitTile->addBanner(b);
     }
 
     const auto riverEntryTile = tileMap[riverEntryPtY][riverEntryPtX].fTile;
     if(riverEntryTile) {
         const auto b = std::make_shared<eRiverEntryPoint>(
             0, riverEntryTile, board);
-        riverEntryTile->setBanner(b);
+        riverEntryTile->addBanner(b);
     }
     const auto riverExitTile = tileMap[riverExitPtY][riverExitPtX].fTile;
     if(riverExitTile) {
         const auto b = std::make_shared<eRiverExitPoint>(
             0, riverExitTile, board);
-        riverExitTile->setBanner(b);
+        riverExitTile->addBanner(b);
     }
 
     for(int i = 0; i < maxDisasterPts; i++) {
@@ -844,7 +844,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eDisasterPoint>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxLandInvPts; i++) {
@@ -853,7 +853,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eLandInvasionPoint>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxSeaInvPts; i++) {
@@ -862,7 +862,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eSeaInvasionPoint>(
                            i + 8, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxWolfPts; i++) {
@@ -871,7 +871,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eWolfSpawner>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxDeerPts; i++) {
@@ -880,7 +880,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eDeerSpawner>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxBoarPts; i++) {
@@ -889,7 +889,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eBoarSpawner>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxMonsterInvPts; i++) {
@@ -898,7 +898,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eMonsterPoint>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxDisembarkPts; i++) {
@@ -907,7 +907,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eDisembarkPoint>(
                            i, tile, board);
-        tile->setBanner(b);
+        tile->addBanner(b);
     }
 
     for(int i = 0; i < maxFishingPts; i++) {
