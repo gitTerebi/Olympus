@@ -89,6 +89,9 @@ void eBuildingsToErase::erase(eBuilding* const b) {
             auto& board = b->getBoard();
             const auto tile = b->centerTile();
             const auto h = e::make_shared<eHomeless>(board);
+            const auto cid = tile->cityId();
+            h->setOnCityId(cid);
+            h->setCityId(eCityId::neutralFriendly);
             h->changeTile(tile);
             const auto fa = std::make_shared<eKillCharacterFinishFail>(board);
             const auto a = e::make_shared<eSettlerAction>(h.get());
