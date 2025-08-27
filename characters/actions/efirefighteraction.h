@@ -10,7 +10,7 @@ class eFireFighterAction : public ePatrolAction {
 public:
     eFireFighterAction(eCharacter* const c,
                       ePatrolBuildingBase* const b,
-                      const std::vector<ePatrolGuide>& guides,
+                      const std::vector<eOrientation>& path,
                       const stdsptr<eDirectionTimes>& dirTimes = {});
     eFireFighterAction(eCharacter* const c);
 

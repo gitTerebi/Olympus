@@ -364,6 +364,9 @@ public:
     int exported(const eCityId cid, const eResourceType type);
     std::map<eResourceType, int> exported(const eCityId cid) const;
 
+    void incRoadState() { mRoadState++; }
+    int roadState() const { return mRoadState; }
+
     int allBuildingsState() const { return mAllBuildingsState; }
 
     int terrainState() const { return mTerrainState; }
@@ -583,6 +586,7 @@ private:
     int mUpdateResources = 999999;
     int mCoverageUpdate = 10000;
 
+    int mRoadState = 0;
     int mAllBuildingsState = 0;
     int mTerrainState = 0;
     int mForestsState = 0;

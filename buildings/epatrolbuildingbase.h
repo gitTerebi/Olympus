@@ -7,12 +7,13 @@
 #include "enumbers.h"
 
 class ePatrolBuildingBase : public eEmployingBuilding {
+    friend class eGuidedMovePathTask;
 public:
     using eCharGenerator =  std::function<stdsptr<eCharacter>()>;
     using eActGenerator =  std::function<stdsptr<eCharacterAction>(
                                 eCharacter* const c,
                                 ePatrolBuildingBase* const b,
-                                const std::vector<ePatrolGuide>& guides,
+                                const std::vector<eOrientation>& path,
                                 const stdsptr<eDirectionTimes>& dirTimes)>;
     ePatrolBuildingBase(eGameBoard& board,
                         const eCharGenerator& charGen,
@@ -30,10 +31,10 @@ public:
     ~ePatrolBuildingBase();
 
     static stdsptr<eCharacterAction> sDefaultActGenerator(
-            eCharacter* const c,
-            ePatrolBuildingBase* const b,
-            const std::vector<ePatrolGuide>& guides,
-            const stdsptr<eDirectionTimes>& dirTimes);
+        eCharacter* const c,
+        ePatrolBuildingBase* const b,
+        const std::vector<eOrientation> &path,
+        const stdsptr<eDirectionTimes>& dirTimes);
 
     void timeChanged(const int by) override;
 
@@ -43,8 +44,6 @@ public:
     void setPatrolGuides(const ePatrolGuides& g);
     bool bothDirections() const { return mBothDirections; }
     void setBothDirections(const bool both);
-
-    bool spawn();
 
     void setSpawnPatrolers(const bool s);
     bool spawnPatrolers() const { return mSpawnPatrolers; }
@@ -58,15 +57,31 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    bool updatePathIfNeeded();
+    bool updatePath(const eAction &finish = nullptr);
+
+    const std::vector<eOrientation>& path() const { return mPath; }
+    const std::vector<eOrientation>& reversePath() const { return mReversePath; }
 private:
+    bool spawn();
+
     const eCharGenerator mCharGenerator;
     const eActGenerator mActGenerator;
+
+    void setPath(const std::vector<eOrientation>& path,
+                 const std::vector<eOrientation>& reversePath);
 
     bool mBothDirections = false;
     bool mLastDirection = false;
     int mSpawnRoadId = 0;
     stdsptr<eDirectionTimes> mDirTimes =
             std::make_shared<eDirectionTimes>();
+
+    bool mSpawnOnPathSet = false;
+    int mPathState = 0;
+    std::vector<eOrientation> mPath;
+    std::vector<eOrientation> mReversePath;
 
     bool mSpawnPatrolers = true;
 

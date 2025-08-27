@@ -393,6 +393,7 @@ SOURCES += \
         engine/egameevents.cpp \
         engine/egifthelpers.cpp \
         engine/egodquest.cpp \
+        engine/eguidedmovepathtask.cpp \
         engine/eknownendpathfinder.cpp \
         engine/emapgenerator.cpp \
         engine/emilitaryaid.cpp \
@@ -1067,6 +1068,7 @@ HEADERS += \
     engine/egameevents.h \
     engine/egifthelpers.h \
     engine/egodquest.h \
+    engine/eguidedmovepathtask.h \
     engine/eknownendpathfinder.h \
     engine/emapgenerator.h \
     engine/emessageeventtype.h \

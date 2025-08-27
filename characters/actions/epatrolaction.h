@@ -16,7 +16,7 @@ class ePatrolAction : public eActionWithComeback {
 public:
     ePatrolAction(eCharacter* const c,
                   ePatrolBuildingBase* const b,
-                  const std::vector<ePatrolGuide>& guides,
+                  const std::vector<eOrientation> &path,
                   const stdsptr<eDirectionTimes>& dirTimes = {},
                   const eCharActionType at = eCharActionType::patrolAction);
     ePatrolAction(eCharacter* const c,
@@ -31,7 +31,7 @@ protected:
     void goBackDecision(const stdsptr<eWalkableObject>& w =
                             eWalkableObject::sCreateRoadAvenue());
 private:
-    std::vector<ePatrolGuide> mGuides;
+    std::vector<eOrientation> mPath;
     stdsptr<eDirectionTimes> mDirTimes;
     ePatrolBuildingBase* mBuilding = nullptr;
 

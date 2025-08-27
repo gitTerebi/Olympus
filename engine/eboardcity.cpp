@@ -766,6 +766,9 @@ void eBoardCity::registerBuilding(eBuilding* const b) {
         mTimedBuildings.push_back(b);
     }
     switch(type) {
+    case eBuildingType::road:
+        mRoadState++;
+        break;
     case eBuildingType::hedgeMaze:
     case eBuildingType::dolphinSculpture:
     case eBuildingType::orrery:
@@ -850,6 +853,10 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
             const auto bRect = b->tileRect();
             mCityPlan.addScheduledBuilding(did, bRect);
         }
+    }
+    const auto type = b->type();
+    if(type == eBuildingType::road) {
+        mRoadState++;
     }
     mAllBuildingsState++;
     eVectorHelpers::remove(mAllBuildings, b);

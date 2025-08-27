@@ -8,9 +8,9 @@
 eFireFighterAction::eFireFighterAction(
         eCharacter* const c,
         ePatrolBuildingBase* const b,
-        const std::vector<ePatrolGuide>& guides,
+        const std::vector<eOrientation>& path,
         const stdsptr<eDirectionTimes>& dirTimes) :
-    ePatrolAction(c, b, guides, dirTimes,
+    ePatrolAction(c, b, path, dirTimes,
                   eCharActionType::fireFighterAction) {}
 
 eFireFighterAction::eFireFighterAction(eCharacter* const c) :

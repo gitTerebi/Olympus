@@ -1270,15 +1270,33 @@ void eGameWidget::updatePatrolPath() {
     mPatrolPath1.clear();
     mExcessPatrolPath1.clear();
     if(!mPatrolBuilding) return;
-    const auto handlePatrolPath = [&](std::vector<eTile*>& patrolPath,
-                                      std::vector<eTile*>& excessPath,
+    mPatrolBuilding->updatePath([this]() {
+        if(!mPatrolBuilding) return;
+        const auto startTile = mPatrolBuilding->centerTile();
+        {
+            const auto& path = mPatrolBuilding->path();
+            auto lastTile = startTile;
+            mPatrolPath.push_back(lastTile);
+            for(const auto o : path) {
+                lastTile = lastTile->neighbour<eTile>(o);
+                mPatrolPath.push_back(lastTile);
+            }
+        }
+        {
+            const auto& path = mPatrolBuilding->reversePath();
+            auto lastTile = startTile;
+            mPatrolPath1.push_back(lastTile);
+            for(const auto o : path) {
+                lastTile = lastTile->neighbour<eTile>(o);
+                mPatrolPath1.push_back(lastTile);
+            }
+        }
+    });
+    const auto handlePatrolPath = [&](std::vector<eTile*>& excessPath,
                                       const ePatrolGuides& guides) {
-        const int maxDist = mPatrolBuilding->maxDistance();
         const auto startTile = mPatrolBuilding->centerTile();
         auto lastTile = startTile;
-        eTile* lastValid = nullptr;
-        const auto handlePath = [&](eTile* const from, eTile* const to,
-                                    const bool comeback) {
+        const auto handlePath = [&](eTile* const from, eTile* const to) {
             if(!from || !to) return false;
             const auto valid = [&](eTileBase* const t) {
                 const auto type = t->underBuildingType();
@@ -1300,15 +1318,8 @@ void eGameWidget::updatePatrolPath() {
             if(!r) return false;
             std::vector<eTile*> path;
             p.extractPath(path, *mBoard);
-            patrolPath.reserve(patrolPath.size() + path.size());
             for(const auto p : path) {
-                const int s = patrolPath.size();
-                if(s > maxDist && !comeback) {
-                    excessPath.emplace_back(p);
-                } else {
-                    lastValid = p;
-                    patrolPath.emplace_back(p);
-                }
+                excessPath.emplace_back(p);
             }
             return true;
         };
@@ -1316,21 +1327,18 @@ void eGameWidget::updatePatrolPath() {
             if(!lastTile) break;
             const auto guideTile = mBoard->tile(g.fX, g.fY);
             if(!guideTile) break;
-            const bool r = handlePath(lastTile, guideTile, false);
+            const bool r = handlePath(lastTile, guideTile);
             if(!r) break;
             lastTile = guideTile;
-        }
-        if(lastValid && startTile) {
-            handlePath(lastValid, startTile, true);
         }
     };
     {
         const auto& guides = mPatrolBuilding->patrolGuides();
-        handlePatrolPath(mPatrolPath, mExcessPatrolPath, guides);
+        handlePatrolPath(mExcessPatrolPath, guides);
     }
-    if(mPatrolBuilding->bothDirections()){
+    if(mPatrolBuilding->bothDirections()) {
         const auto guides = mPatrolBuilding->reversePatrolGuides();
-        handlePatrolPath(mPatrolPath1, mExcessPatrolPath1, guides);
+        handlePatrolPath(mExcessPatrolPath1, guides);
     }
 }
 

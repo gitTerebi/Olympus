@@ -1,5 +1,8 @@
 #include "epatrolbuildingbase.h"
 
+#include "engine/egameboard.h"
+#include "engine/eguidedmovepathtask.h"
+
 ePatrolBuildingBase::ePatrolBuildingBase(
         eGameBoard& board,
         const eCharGenerator& charGen,
@@ -18,9 +21,9 @@ stdsptr<eCharacterAction>
 ePatrolBuildingBase::sDefaultActGenerator(
            eCharacter* const c,
            ePatrolBuildingBase* const b,
-           const std::vector<ePatrolGuide>& guides,
+           const std::vector<eOrientation>& path,
            const stdsptr<eDirectionTimes>& dirTimes) {
-    return e::make_shared<ePatrolAction>(c, b, guides, dirTimes);
+    return e::make_shared<ePatrolAction>(c, b, path, dirTimes);
 }
 
 ePatrolBuildingBase::ePatrolBuildingBase(eGameBoard& board,
@@ -42,7 +45,9 @@ void ePatrolBuildingBase::timeChanged(const int by) {
             mSpawnTime += by*effectiveness();
             if(mSpawnTime > mWaitTime) {
                 mSpawnTime = 0;
-                spawn();
+                const bool r = updatePathIfNeeded();
+                if(r) mSpawnOnPathSet = true;
+                else spawn();
             }
         }
     }
@@ -89,15 +94,14 @@ bool ePatrolBuildingBase::spawn() {
     } else {
         chr->changeTile(centerTile());
     }
-    auto guides = mPatrolGuides;
+    bool reverse = false;
     if(mBothDirections) {
         mLastDirection = !mLastDirection;
-        if(mLastDirection) {
-            std::reverse(guides.begin(), guides.end());
-        }
+        if(mLastDirection) reverse = true;
     }
     const auto a = mActGenerator(chr.get(), this,
-                                 guides, mDirTimes);
+                                 reverse ? mReversePath : mPath,
+                                 mDirTimes);
     chr->setAction(a);
     return true;
 }
@@ -154,5 +158,43 @@ void ePatrolBuildingBase::write(eWriteStream& dst) const {
     for(const auto& pg : mPatrolGuides) {
         dst << pg.fX;
         dst << pg.fY;
+    }
+}
+
+bool ePatrolBuildingBase::updatePathIfNeeded() {
+    if(mPatrolGuides.empty()) {
+        mPath.clear();
+        mReversePath.clear();
+        return false;
+    }
+    auto& board = getBoard();
+    const auto cid = cityId();
+    const auto c = board.boardCityWithId(cid);
+    const int s = c->roadState();
+    if(s == mPathState) return false;
+    mPathState = s;
+    return updatePath();
+}
+
+bool ePatrolBuildingBase::updatePath(const eAction& finish) {
+    if(mPatrolGuides.empty()) {
+        mPath.clear();
+        mReversePath.clear();
+        return false;
+    }
+    auto& board = getBoard();
+    auto& tp = board.threadPool();
+    const auto task = new eGuidedMovePathTask(this, finish);
+    tp.queueTask(task);
+    return true;
+}
+
+void ePatrolBuildingBase::setPath(const std::vector<eOrientation> &path,
+                                  const std::vector<eOrientation> &reversePath) {
+    mPath = path;
+    mReversePath = reversePath;
+    if(mSpawnOnPathSet) {
+        mSpawnOnPathSet = false;
+        spawn();
     }
 }

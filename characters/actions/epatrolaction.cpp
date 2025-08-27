@@ -3,15 +3,15 @@
 #include "../echaracter.h"
 #include "engine/etile.h"
 #include "epatrolmoveaction.h"
-#include "buildings/epatrolbuilding.h"
+#include "buildings/epatrolbuildingbase.h"
 
 ePatrolAction::ePatrolAction(eCharacter* const c,
                              ePatrolBuildingBase* const b,
-                             const std::vector<ePatrolGuide>& guides,
+                             const std::vector<eOrientation>& path,
                              const stdsptr<eDirectionTimes>& dirTimes,
                              const eCharActionType at) :
     eActionWithComeback(c, b ? b->centerTile() : nullptr, at),
-    mGuides(guides), mDirTimes(dirTimes), mBuilding(b) {
+    mPath(path), mDirTimes(dirTimes), mBuilding(b) {
     setFinishOnComeback(true);
     setDiagonalOnly(true);
 }
@@ -36,9 +36,8 @@ void ePatrolAction::read(eReadStream& src) {
     int n;
     src >> n;
     for(int i = 0; i < n; i++) {
-        auto& g = mGuides.emplace_back();
-        src >> g.fX;
-        src >> g.fY;
+        auto& o = mPath.emplace_back();
+        src >> o;
     }
     src.readBuilding(&board(), [this](eBuilding* const b) {
         mBuilding = static_cast<ePatrolBuildingBase*>(b);
@@ -49,10 +48,9 @@ void ePatrolAction::read(eReadStream& src) {
 
 void ePatrolAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mGuides.size();
-    for(const auto& g : mGuides) {
-        dst << g.fX;
-        dst << g.fY;
+    dst << mPath.size();
+    for(const auto o : mPath) {
+        dst << o;
     }
     dst.writeBuilding(mBuilding);
     dst << mDone;
@@ -67,7 +65,7 @@ void ePatrolAction::patrol() {
     const auto finishFunc = std::make_shared<ePA_patrolFinish>(
                                 board(), this);
     const int dist = mBuilding->maxDistance();
-    if(mGuides.empty()) {
+    if(mPath.empty()) {
         const auto a = e::make_shared<ePatrolMoveAction>(
                            c, true,
                            eWalkableObject::sCreateRoadblock(),
@@ -77,11 +75,10 @@ void ePatrolAction::patrol() {
         a->setMaxWalkDistance(dist);
         setCurrentAction(a);
     } else {
-        const auto a = e::make_shared<ePatrolGuidedMoveAction>(
-                           c, mBuilding, mGuides);
+        const auto a = e::make_shared<eMovePathAction>(
+                           c, mPath, eWalkableObject::sCreateRoadAvenue());
         a->setFailAction(failFunc);
         a->setFinishAction(finishFunc);
-        a->setMaxWalkDistance(dist);
         setCurrentAction(a);
     }
 }
