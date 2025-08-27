@@ -1079,6 +1079,10 @@ void eBoardCity::distributeEmployees(const eSector s) {
     std::vector<eSectorReminder> reminders;
     for(const auto b : sb) {
         const auto type = b->type();
+        if(type == eBuildingType::triremeWharf) {
+            const bool sd = b->shutDown();
+            if(sd) continue;
+        }
         const bool sd = isShutDown(type);
         if(sd) {
             b->setShutDown(true);
