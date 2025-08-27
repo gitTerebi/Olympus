@@ -127,7 +127,7 @@ bool eTrireme::selectable() const {
     if(!ta) return false;
     const auto h = ta->home();
     if(!h) return false;
-    return !h->abroad();
+    return !h->abroad() && !h->shutDown();
 }
 
 void eTrireme::goHome() {

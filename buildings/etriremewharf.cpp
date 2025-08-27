@@ -118,6 +118,10 @@ std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
 }
 
 void eTriremeWharf::timeChanged(const int by) {
+    if(shutDown() && mTrireme && !isAtWharf()) {
+        const auto fa = mTrireme->fightingAction();
+        if(fa) fa->goHome();
+    }
     if(enabled()) {
         const auto eff = effectiveness();
         if(!mTakeCart) {
