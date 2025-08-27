@@ -32,6 +32,7 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
         return !t->hasRoadblock();
     }
     case eWalkableObjectType::terrain: {
+        if(!t->walkableElev() && t->isElevationTile()) return false;
         const auto terr = t->terrain() & eTerrain::walkable;
         return static_cast<bool>(terr);
     }
@@ -41,6 +42,8 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
            type == eBuildingType::templeAltar ||
            type == eBuildingType::templeStatue ||
            type == eBuildingType::templeMonument) return false;
+        if(type == eBuildingType::road) return true;
+        if(!t->walkableElev() && t->isElevationTile()) return false;
         const auto terr = t->terrain() & eTerrain::walkable;
         return static_cast<bool>(terr);
     }
