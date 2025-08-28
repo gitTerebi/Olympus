@@ -14,12 +14,12 @@ eColonyMonumentAction::eColonyMonumentAction() :
     eColonyMonumentAction(nullptr) {}
 
 void eColonyMonumentAction::trigger(eGameBoard& board) {
-    const auto pid = board.personPlayer();
-    const auto capital = board.playerCapital(pid);
-    eEventData ed(capital);
+    const auto capital = board.currentCity();
+    const auto cid = capital->cityId();
+    eEventData ed(cid);
     ed.fCity = mCity;
     board.event(eEvent::colonyMonument, ed);
-    board.allow(capital, eBuildingType::commemorative, 2);
+    board.allow(cid, eBuildingType::commemorative, 2);
 }
 
 void eColonyMonumentAction::read(eReadStream& src, eGameBoard& board) {

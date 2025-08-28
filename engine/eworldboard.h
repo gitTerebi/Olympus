@@ -81,6 +81,7 @@ public:
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCities() const;
+    eCityId currentCityId() const;
     void setPersonPlayer(const ePlayerId pid) { mPersonPlayer = pid; }
     ePlayerId personPlayer() const { return mPersonPlayer; }
 private:

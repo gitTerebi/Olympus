@@ -327,3 +327,9 @@ eCityId eWorldBoard::playerCapital(const ePlayerId pid) const {
 std::vector<eCityId> eWorldBoard::personPlayerCities() const {
     return playerCities(mPersonPlayer);
 }
+
+eCityId eWorldBoard::currentCityId() const {
+    const auto c = currentCity();
+    if(!c) return eCityId::neutralFriendly;
+    return c->cityId();
+}

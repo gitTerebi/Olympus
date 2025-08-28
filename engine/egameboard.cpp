@@ -770,7 +770,7 @@ void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,
                               const int count,
                               const int delay) {
     const auto e = e::make_shared<eGiftFromEvent>(
-                       personPlayerCapital(),
+                       currentCityId(),
                        eGameEventBranch::root, *this);
     e->initialize(true, type, count, c);
     const auto date = mDate + delay;
@@ -851,7 +851,7 @@ void eGameBoard::tributeFrom(const ePlayerId pid,
             event(eEvent::tributePostponed, ed);
 
             const auto e = e::make_shared<ePayTributeEvent>(
-                               personPlayerCapital(),
+                               currentCityId(),
                                eGameEventBranch::root, *this);
             e->initialize(c);
             const auto date = mDate + 31;
@@ -1032,6 +1032,14 @@ void eGameBoard::setPlayerTeam(const ePlayerId pid, const eTeamId tid) {
 
 std::vector<eCityId> eGameBoard::playerCities(const ePlayerId pid) const {
     return mWorld.playerCities(pid);
+}
+
+eCityId eGameBoard::currentCityId() const {
+    return mWorld.currentCityId();
+}
+
+stdsptr<eWorldCity> eGameBoard::currentCity() const {
+    return mWorld.currentCity();
 }
 
 eCityId eGameBoard::playerCapital(const ePlayerId pid) const {
@@ -3003,7 +3011,7 @@ void eGameBoard::defeatedBy(const eCityId defeated,
     auto& defs = mDefeatedBy[defeated];
     const bool r = eVectorHelpers::contains(defs, by);
     if(r) {
-        const auto ccid = personPlayerCapital();
+        const auto ccid = currentCityId();
         if(defeated == ccid) setEpisodeLost();
     } else {
         defs.push_back(by);

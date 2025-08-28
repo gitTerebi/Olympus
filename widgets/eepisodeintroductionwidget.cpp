@@ -85,7 +85,7 @@ void eEpisodeIntroductionWidget::initialize(
         const auto board = e->fBoard;
         const auto ppid = board->personPlayer();
         const auto cids = board->playerCitiesOnBoard(ppid);
-        const auto capitalCid = board->playerCapital(ppid);
+        const auto capitalCid = board->currentCityId();
         const auto capital = board->boardCityWithId(capitalCid);
         const bool atlantean = capital ? capital->atlantean() : false;
         for(const auto cid : cids) {

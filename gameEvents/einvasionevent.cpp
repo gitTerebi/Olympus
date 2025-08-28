@@ -410,7 +410,7 @@ void eInvasionEvent::defeated() {
         if(invadingPid == ppid) {
             targetWCity->setRelationship(eForeignCityRelationship::vassal);
         }
-        const auto ppc = board.personPlayerCapital();
+        const auto ppc = board.currentCityId();
         if(targetCity != ppc) {
             board.moveCityToPlayer(targetCity, invadingPid);
         }
