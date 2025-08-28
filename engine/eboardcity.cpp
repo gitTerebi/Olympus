@@ -980,7 +980,6 @@ bool eBoardCity::unregisterCommonHouse(eSmallHouse* const ch) {
 
 void eBoardCity::registerPalace(ePalace* const p) {
     mPalace = p;
-    soldierBannersUpdate();
 }
 
 void eBoardCity::unregisterPalace() {
