@@ -334,8 +334,9 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
             const int tla = tl ? tl->doubleAltitude() : da;
             const int ta = t ? t->doubleAltitude() : da;
 
-            const bool canBe2 = da % 2 == 1 && (tx + ty) % 2;
-            if(canBe2) {
+            const bool canBe2A = da % 2 == 1 && (tx + ty) % 2;
+            const bool canBe2B = da % 2 == 0 && (tx + ty) % 2;
+            if(canBe2A || canBe2B) {
 //                const bool trw = tr ? tr->walkableElev() : false;
 //                const bool rw = r ? r->walkableElev() : false;
                 const bool brw = br ? br->walkableElev() : false;
@@ -346,13 +347,13 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
 //                const bool tw = t ? t->walkableElev() : false;
 
                 int relId = 0;
-                if(bra == da && !brw && bla == da + 1 && !blw && ba == da + 1 && !bw) {
+                if(canBe2B && bra == da && !brw && bla == da + 1 && !blw && ba == da + 1 && !bw) {
                     relId = 1;
-                } else if(bra == da - 1 && !brw && bla == da && !blw && ba == da - 1 && !bw) {
+                } else if(canBe2A && bra == da - 1 && !brw && bla == da && !blw && ba == da - 1 && !bw) {
                     relId = 2;
-                } else if(bra == da && !brw && bla == da - 1 && !blw && ba == da - 1 && !bw) {
+                } else if(canBe2A && bra == da && !brw && bla == da - 1 && !blw && ba == da - 1 && !bw) {
                     relId = 3;
-                } else if(bra == da + 1 && !brw && bla == da && !blw && ba == da + 1 && !bw) {
+                } else if(canBe2B && bra == da + 1 && !brw && bla == da && !blw && ba == da + 1 && !bw) {
                     relId = 4;
                 }
                 const auto& elev = textures.fHalfElevation2;
