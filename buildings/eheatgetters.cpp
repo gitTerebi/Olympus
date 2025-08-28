@@ -1,6 +1,6 @@
 #include "eheatgetters.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/egodtype.h"
 
 eHeat eHeatGetters::appeal(const eBuildingType type) {
     switch(type) {
