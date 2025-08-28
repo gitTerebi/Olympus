@@ -815,26 +815,26 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     const auto entryTile = tileMap[entryPtY][entryPtX].fTile;
     if(entryTile) {
         const auto b = std::make_shared<eEntryPoint>(
-                           0, entryTile, board);
+                           1, entryTile, board);
         entryTile->addBanner(b);
     }
     const auto exitTile = tileMap[exitPtY][exitPtX].fTile;
     if(exitTile) {
         const auto b = std::make_shared<eExitPoint>(
-                           0, exitTile, board);
+                           1, exitTile, board);
         exitTile->addBanner(b);
     }
 
     const auto riverEntryTile = tileMap[riverEntryPtY][riverEntryPtX].fTile;
     if(riverEntryTile) {
         const auto b = std::make_shared<eRiverEntryPoint>(
-            0, riverEntryTile, board);
+            1, riverEntryTile, board);
         riverEntryTile->addBanner(b);
     }
     const auto riverExitTile = tileMap[riverExitPtY][riverExitPtX].fTile;
     if(riverExitTile) {
         const auto b = std::make_shared<eRiverExitPoint>(
-            0, riverExitTile, board);
+            1, riverExitTile, board);
         riverExitTile->addBanner(b);
     }
 
@@ -843,7 +843,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eDisasterPoint>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -852,7 +852,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eLandInvasionPoint>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -861,7 +861,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eSeaInvasionPoint>(
-                           i + 8, tile, board);
+                           i + 9, tile, board);
         tile->addBanner(b);
     }
 
@@ -870,7 +870,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eWolfSpawner>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -879,7 +879,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eDeerSpawner>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -888,7 +888,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eBoarSpawner>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -897,7 +897,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eMonsterPoint>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -906,7 +906,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
         const auto b = std::make_shared<eDisembarkPoint>(
-                           i, tile, board);
+                           i + 1, tile, board);
         tile->addBanner(b);
     }
 
@@ -929,6 +929,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto b = tile->bottom<eTile>();
         tile->setTerrain(b->terrain());
         tile->setScrub(b->scrub());
+        tile->setDoubleAltitude(b->doubleAltitude());
     }
 
     for(int y = 1; y < board.height(); y += 2) {
@@ -936,6 +937,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const auto b = tile->left<eTile>();
         tile->setTerrain(b->terrain());
         tile->setScrub(b->scrub());
+        tile->setDoubleAltitude(b->doubleAltitude());
     }
 
     // Fix for the Odyssey 1. colony
