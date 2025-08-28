@@ -44,8 +44,7 @@ bool eWalkableHelpers::sRoadRoadblockWalkable(eTileBase* const t) {
 }
 
 bool eWalkableHelpers::sBuildingsWalkable(eTileBase* const t) {
-    const auto terr = t->terrain() & eTerrain::walkable;
-    return static_cast<bool>(terr);
+    return t->walkableTerrain();
 }
 
 int eWalkableHelpers::sMonsterTileDistance(eTileBase* const tile) {
