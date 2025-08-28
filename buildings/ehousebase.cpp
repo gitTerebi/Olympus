@@ -105,11 +105,15 @@ int eHouseBase::vacancies() const {
 
 double eHouseBase::appeal() const {
     const auto& b = getBoard();
-    const auto t = centerTile();
-    if(!t) return 0;
-    const int dx = t->dx();
-    const int dy = t->dy();
-    return b.appeal(dx ,dy);
+    const auto& tiles = tilesUnder();
+    if(tiles.empty()) return 0;
+    double sum = 0;
+    for(const auto t : tiles) {
+        const int dx = t->dx();
+        const int dy = t->dy();
+        sum += b.appeal(dx ,dy);
+    }
+    return sum/tiles.size();
 }
 
 void eHouseBase::read(eReadStream& src) {
