@@ -64,6 +64,9 @@ public:
     virtual void goAbroad() = 0;
 protected:
     bool isAttacking() const { return mAttack; }
+
+    void setOverwrittableAction(const bool o)
+    { mOverwrittableAction = o; }
 private:
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     bool attackBuilding(eTile* const t, const bool range);
@@ -79,6 +82,7 @@ private:
     int mAttackTime = 0;
     eCharacterActionType mSavedAction = eCharacterActionType::stand;
     bool mAttack = false;
+    bool mOverwrittableAction = false;
     eAttackTarget mAttackTarget;
 };
 

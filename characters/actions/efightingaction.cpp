@@ -314,9 +314,8 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         if(mLookForEnemy > lookForEnemyCheck) {
             mLookForEnemy -= lookForEnemyCheck;
             const int erange = 3 + range;
-            bool found = false;
-            for(int i = -erange; i <= erange && !found; i++) {
-                for(int j = -erange; j <= erange && !found; j++) {
+            for(int i = -erange; i <= erange; i++) {
+                for(int j = -erange; j <= erange; j++) {
                     const int ttx = tx + i;
                     const int tty = ty + j;
                     const auto t = brd.tile(ttx, tty);
@@ -327,16 +326,16 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
-                        found = true;
+                        setOverwrittableAction(false);
                         goTo(ttx, tty, range);
-                        break;
+                        return eLookForEnemyState::attacking;
                     }
                 }
             }
         }
     }
 
-    return  eLookForEnemyState::none;
+    return eLookForEnemyState::none;
 }
 
 bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
@@ -434,7 +433,8 @@ void eFightingAction::beingAttacked(eCharacter* const ss) {
 
 void eFightingAction::beingAttacked(const int ttx, const int tty) {
     if(mAttack) return;
-    if(currentAction()) return;
+    if(!mOverwrittableAction && currentAction()) return;
+    setOverwrittableAction(false);
     goTo(ttx, tty);
 }
 
@@ -449,6 +449,7 @@ void eFightingAction::read(eReadStream& src) {
     src >> mAttack;
     mAttackTarget.read(board(), src);
     src >> mSavedAction;
+    src >> mOverwrittableAction;
 }
 
 void eFightingAction::write(eWriteStream& dst) const {
@@ -462,6 +463,7 @@ void eFightingAction::write(eWriteStream& dst) const {
     dst << mAttack;
     mAttackTarget.write(dst);
     dst << mSavedAction;
+    dst << mOverwrittableAction;
 }
 
 void eFightingAction::waitAndGoHome(const int w) {

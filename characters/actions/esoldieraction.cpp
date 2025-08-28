@@ -201,5 +201,8 @@ void eSoldierAction::goBackToBanner(const eAction& findFailAct,
 
     const int ttx = tt->x();
     const int tty = tt->y();
+
+    const auto type = b->type();
+    setOverwrittableAction(type == eBannerType::enemy);
     goTo(ttx, tty, 0, findFailAct, findFinishAct);
 }
