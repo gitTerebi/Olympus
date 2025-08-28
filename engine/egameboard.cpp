@@ -3352,6 +3352,7 @@ bool eGameBoard::buildBase(const int minX, const int minY,
     if(!bc) return false;
     const auto b = bc();
     if(!b) return false;
+    eSounds::playSoundForBuilding(b.get());
     const bool isRoad = b->type() == eBuildingType::road;
     if(!isRoad) {
         for(int x = minX; x <= maxX; x++) {
