@@ -66,17 +66,18 @@ void ePatrolAction::patrol() {
                                 board(), this);
     const int dist = mBuilding->maxDistance();
     if(mPath.empty()) {
+        const auto walkable = eWalkableObject::sCreateRoadblock();
         const auto a = e::make_shared<ePatrolMoveAction>(
-                           c, true,
-                           eWalkableObject::sCreateRoadblock(),
-                           mDirTimes);
+            c, true, walkable, mDirTimes);
         a->setFailAction(failFunc);
         a->setFinishAction(finishFunc);
         a->setMaxWalkDistance(dist);
         setCurrentAction(a);
     } else {
+        auto walkable = eWalkableObject::sCreateRoadAvenue();
+        walkable = eWalkableObject::sCreateRect(mBuilding, walkable);
         const auto a = e::make_shared<eMovePathAction>(
-                           c, mPath, eWalkableObject::sCreateRoadAvenue());
+            c, mPath, walkable);
         a->setFailAction(failFunc);
         a->setFinishAction(finishFunc);
         setCurrentAction(a);

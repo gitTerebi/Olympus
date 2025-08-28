@@ -2,7 +2,7 @@
 #define EPATROLBUILDINGBASE_H
 
 #include "eemployingbuilding.h"
-
+#include "engine/epatrolguide.h"
 #include "characters/actions/epatrolaction.h"
 #include "enumbers.h"
 
@@ -59,6 +59,7 @@ public:
     void write(eWriteStream& dst) const override;
 
     bool updatePathIfNeeded();
+    using eAction = std::function<void()>;
     bool updatePath(const eAction &finish = nullptr);
 
     const std::vector<eOrientation>& path() const { return mPath; }

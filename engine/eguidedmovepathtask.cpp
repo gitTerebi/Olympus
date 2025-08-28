@@ -86,11 +86,14 @@ bool eGuidedMovePathTask::runImpl(eThreadBoard& data,
         const bool r = pf0.extractPath(tpath);
         if(!r) return false;
         path.reserve(path.size() + tpath.size());
-        for(const auto o : tpath) {
-            path.push_back(o);
+        const int iMin = tpath.size() - 1;
+        for(int i = iMin; i >= 0; i--) {
+            const auto o = tpath[i];
+            path.insert(path.begin(), o);
+            const auto tile = data.tile(last.fX, last.fY);
+            const bool road = tile->hasRoad();
             last.moveInDirection(o);
-
-            distance++;
+            if(road) distance++;
             if(distance >= maxDistance) {
                 return false;
             }

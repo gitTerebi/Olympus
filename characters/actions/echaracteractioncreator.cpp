@@ -23,7 +23,6 @@
 #include "emovepathaction.h"
 #include "emovetoaction.h"
 #include "epatrolaction.h"
-#include "epatrolguidedmoveaction.h"
 #include "esettleraction.h"
 #include "eshepherdaction.h"
 #include "esoldieraction.h"
@@ -106,8 +105,6 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
         return e::make_shared<eMoveToAction>(c);
     case eCharActionType::patrolAction:
         return e::make_shared<ePatrolAction>(c);
-    case eCharActionType::patrolGuidedMoveAction:
-        return e::make_shared<ePatrolGuidedMoveAction>(c);
     case eCharActionType::patrolMoveAction:
         return e::make_shared<ePatrolMoveAction>(c);
     case eCharActionType::settlerAction:

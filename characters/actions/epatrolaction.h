@@ -2,11 +2,8 @@
 #define EPATROLACTION_H
 
 #include "eactionwithcomeback.h"
-#include "engine/emovedirection.h"
 #include "epatrolmoveaction.h"
-#include "epatrolguidedmoveaction.h"
 #include "buildings/ebuilding.h"
-#include "emovetoaction.h"
 
 class ePatrolBuildingBase;
 

@@ -4,6 +4,7 @@
 #include "epatrolaction.h"
 
 #include "engine/etile.h"
+#include "characters/echaracter.h"
 
 class eFireFighterAction : public ePatrolAction {
     friend class eFFA_lookForFireFail;

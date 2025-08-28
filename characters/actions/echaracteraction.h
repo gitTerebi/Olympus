@@ -60,7 +60,6 @@ enum class eCharActionType {
     movePathAction,
     moveToAction,
     patrolAction,
-    patrolGuidedMoveAction,
     patrolMoveAction,
     settlerAction,
     shepherdAction,
