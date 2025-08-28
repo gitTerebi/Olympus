@@ -465,7 +465,10 @@ private:
                              {eResourceType::marble, 0},
 
                              {eResourceType::armor, 0},
-                             {eResourceType::sculpture, 0}};
+                             {eResourceType::sculpture, 0},
+
+                             {eResourceType::orichalc, 0},
+                             {eResourceType::blackMarble, 0}};
 
     std::map<eResourceType, int> mWaiting = {{eResourceType::urchin, 0},
                                              {eResourceType::fish, 0},
@@ -487,7 +490,10 @@ private:
                                              {eResourceType::marble, 0},
 
                                              {eResourceType::armor, 0},
-                                             {eResourceType::sculpture, 0}};
+                                             {eResourceType::sculpture, 0},
+
+                                             {eResourceType::orichalc, 0},
+                                             {eResourceType::blackMarble, 0}};
 
     std::map<eCityId, std::map<eResourceType, int>> mExported;
 
