@@ -1,6 +1,7 @@
 #include "ecityid.h"
 
 bool eTeamIdHelpers::isEnemy(const eTeamId t1, const eTeamId t2) {
+    if(t1 == t2) return false;
     if(t1 == eTeamId::neutralAggresive ||
        t2 == eTeamId::neutralAggresive) return true;
     if(t1 == eTeamId::neutralFriendly ||
