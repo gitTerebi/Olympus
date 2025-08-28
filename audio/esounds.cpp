@@ -641,6 +641,9 @@ void eSounds::playAttackSound(const eCharacterType type) {
     case eCharacterType::deer:
         sInstance->mDeerAttack.playRandomSound();
         break;
+    case eCharacterType::wolf:
+        sInstance->mWolfAttack.playRandomSound();
+        break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
         sInstance->mHopliteAttack.playRandomSound();
@@ -809,6 +812,9 @@ void eSounds::playDieSound(eCharacter* const c) {
     case eCharacterType::deer:
         sInstance->mDeerDie.playRandomSound();
         break;
+    case eCharacterType::wolf:
+        sInstance->mWolfDie.playRandomSound();
+        break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
         sInstance->mHopliteDie.playRandomSound();
@@ -912,6 +918,9 @@ void eSounds::playHitSound(eCharacter* const c) {
         break;
     case eCharacterType::deer:
         sInstance->mDeerHit.playRandomSound();
+        break;
+    case eCharacterType::wolf:
+        sInstance->mWolfHit.playRandomSound();
         break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
@@ -1572,6 +1581,10 @@ void eSounds::loadImpl() {
     mDeerAttack.addPath(wavsDir + "deer_attack.wav");
     mDeerDie.addPath(wavsDir + "deer_die.wav");
     mDeerHit.addPath(wavsDir + "deer_hit.wav");
+
+    mWolfAttack.addPath(wavsDir + "wolf_attack.wav");
+    mWolfDie.addPath(wavsDir + "wolf_die.wav");
+    mWolfHit.addPath(wavsDir + "wolf_hit.wav");
 
     mOutlawAttack.addPath(wavsDir + "outlaw_attack.wav");
     mOutlawDie.addPath(wavsDir + "outlaw_die.wav");

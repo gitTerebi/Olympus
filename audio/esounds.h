@@ -250,6 +250,10 @@ private:
     eSoundVector mDeerDie;
     eSoundVector mDeerHit;
 
+    eSoundVector mWolfAttack;
+    eSoundVector mWolfDie;
+    eSoundVector mWolfHit;
+
     eSoundVector mHopliteDie;
     eSoundVector mHopliteAttack;
     eSoundVector mHopliteHit;
