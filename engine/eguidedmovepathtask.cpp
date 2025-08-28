@@ -78,7 +78,7 @@ bool eGuidedMovePathTask::runImpl(eThreadBoard& data,
 
     const bool onlyDiagonal = true;
     const bool r = pf0.findPath(mTileBRect,
-                                startT, maxDistance,
+                                startT, 2*maxDistance,
                                 onlyDiagonal, data.width(), data.height(),
                                 eWalkableHelpers::sRoadAvenueTileDistance);
     if(r) {
