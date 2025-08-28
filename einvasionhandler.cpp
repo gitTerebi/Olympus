@@ -665,11 +665,19 @@ void eInvasionHandler::incTime(const int by) {
         }
         return;
     }
+    int ss = 0;
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
         solds.push_back(b.get());
+        ss += b->count();
         const bool r = b->stationary();
         if(!r) return;
+    }
+
+    if(ss == 0) {
+        invasionDefeated();
+        delete this;
+        return;
     }
     const int wait = 10000;
     mWait += by;
