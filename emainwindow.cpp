@@ -177,6 +177,7 @@ std::string eMainWindow::leaderSaveDir() const {
 
 void eMainWindow::clearWidgets() {
     if(mGW && mWidget != mGW) {
+        mGW->setBoard(nullptr);
         mGW->deleteLater();
         mGW = nullptr;
     }
@@ -302,6 +303,7 @@ bool eMainWindow::loadGame(const std::string& path) {
 void eMainWindow::closeGame() {
     if(!mGW) return;
     if(mGW) {
+        mGW->setBoard(nullptr);
         mGW->deleteLater();
         mGW = nullptr;
     }
@@ -447,6 +449,7 @@ void eMainWindow::showGame(eGameBoard* b,
     }
 
     if(mGW) {
+        mGW->setBoard(nullptr);
         mGW->deleteLater();
         mGW = nullptr;
     }
