@@ -741,6 +741,8 @@ private:
     void handleGamesBegin(const eGames game);
     void handleGamesEnd(const eGames game);
 
+    bool handleEpisodeCompleteEvents();
+
     void progressEarthquakes();
     void progressTidalWaves();
     void earthquakeWaveCollapse(eTile * const t);

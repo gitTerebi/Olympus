@@ -398,6 +398,8 @@ public:
     void setInvasionHandlersIOIDs(int& id);
     eInvasionHandler* invasionHandlerWithIOID(const int id) const;
 
+    bool handleEpisodeCompleteEvents();
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:

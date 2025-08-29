@@ -308,7 +308,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             widget->addWidget(cityButton);
         }
 
-        widget->stackHorizontally(p);
+        widget->stackVertically(p);
         widget->fitContent();
 
         cityButtonL->setup(eLanguage::zeusText(44, 359), widget);
@@ -420,7 +420,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         yearsWidget->addWidget(yearsButton);
     }
 
-    yearsWidget->stackVertically(p);
+    yearsWidget->stackHorizontally(p);
     yearsWidget->fitContent();
     yearsButtonL->setup(eLanguage::zeusText(8, 9), yearsWidget);
     dateW->addWidget(yearsButtonL);
@@ -466,7 +466,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     periodMaxButton->initialize(31, 99999);
     periodMaxButton->setValue(e->periodMax());
     periodW->addWidget(periodMaxButton);
-    periodW->stackVertically(p);
+    periodW->stackHorizontally(p);
     periodW->fitContent();
     periodButtonL->setup(eLanguage::text("period:"), periodW);
     dateW->addWidget(periodButtonL);
@@ -480,6 +480,18 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     repeatButton->setValue(e->repeat());
     repeatButtonL->setup(eLanguage::text("repeat:"), repeatButton);
     dateW->addWidget(repeatButtonL);
+
+    const auto completeButton = new eSwitchButton(window());
+    completeButton->setSwitchAction([e](const int v) {
+        e->setEpisodeCompleteEvent(v == 3);
+    });
+    completeButton->addValue(eLanguage::zeusText(44, 157)); // one time
+    completeButton->addValue(eLanguage::zeusText(44, 158)); // recurring
+    completeButton->addValue(eLanguage::zeusText(44, 159)); // triggered
+    completeButton->addValue(eLanguage::zeusText(44, 160)); // episode complete
+    completeButton->fitValidContent();
+    completeButton->setValue(e->episodeCompleteEvent() ? 3 : 0);
+    dateW->addWidget(completeButton);
 
     if(!e->warnings().empty()) {
         const auto warningButtonL = new eLabeledWidget(window());

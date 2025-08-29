@@ -2330,6 +2330,10 @@ eInvasionHandler* eBoardCity::invasionHandlerWithIOID(const int id) const {
     return nullptr;
 }
 
+bool eBoardCity::handleEpisodeCompleteEvents() {
+    return mCityEvents.handleEpisodeCompleteEvents();
+}
+
 void eBoardCity::clearAfterLastEpisode() {
     mCityEvents.clearAfterLastEpisode();
 }

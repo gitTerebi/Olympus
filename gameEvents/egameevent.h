@@ -143,6 +143,9 @@ public:
 
     const eDate& nextDate() const { return mNextDate; }
 
+    void setEpisodeCompleteEvent(const bool c) { mEpisodeCompleteEvent = c; }
+    bool episodeCompleteEvent() const { return mEpisodeCompleteEvent; }
+
     int datePlusDays() const { return mDatePlusDays; }
     void setDatePlusDays(const int d) { mDatePlusDays = d; }
     int datePlusMonths() const { return mDatePlusMonths; }
@@ -212,6 +215,8 @@ private:
     stdsptr<eEventTrigger> mBaseTrigger;
 
     std::string mReason;
+
+    bool mEpisodeCompleteEvent = false;
 
     int mWarningMonths = 2;
 

@@ -286,6 +286,7 @@ void eGameEvent::setRepeat(const int r) {
 }
 
 void eGameEvent::handleNewDate(const eDate& date) {
+    if(mEpisodeCompleteEvent) return;
     for(const auto& w : mWarnings) {
         w->handleNewDate(date);
     }
@@ -370,6 +371,7 @@ void eGameEvent::write(eWriteStream& dst) const {
     dst << mWarningMonths;
     dst << mRemNRuns;
     dst << mReason;
+    dst << mEpisodeCompleteEvent;
 
     for(const auto& w : mWarnings) {
         w->write(dst);
@@ -401,6 +403,7 @@ void eGameEvent::read(eReadStream& src) {
     src >> mWarningMonths;
     src >> mRemNRuns;
     src >> mReason;
+    src >> mEpisodeCompleteEvent;
 
     for(const auto& w : mWarnings) {
         w->read(src);

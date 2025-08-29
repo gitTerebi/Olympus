@@ -47,6 +47,20 @@ void eGameEvents::clearAfterLastEpisode() {
     }
 }
 
+bool eGameEvents::handleEpisodeCompleteEvents() {
+    bool result = false;
+    for(const auto& e : mGameEvents) {
+        const bool r = e->episodeCompleteEvent();
+        if(!r) continue;
+        const int rr = e->repeat();
+        if(rr <= 0) continue;
+        e->trigger();
+        e->setRepeat(0);
+        result = true;
+    }
+    return result;
+}
+
 void eGameEvents::write(eWriteStream& dst) const {
     dst << mGameEvents.size();
     for(const auto& e : mGameEvents) {

@@ -12,6 +12,7 @@ public:
     void setupStartDate(const eDate& date);
     void handleNewDate(const eDate& date);
     void clearAfterLastEpisode();
+    bool handleEpisodeCompleteEvents();
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);

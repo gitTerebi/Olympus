@@ -1720,6 +1720,14 @@ void eGameBoard::handleGamesEnd(const eGames game) {
     }
 }
 
+bool eGameBoard::handleEpisodeCompleteEvents() {
+    bool r = false;
+    for(const auto& c : mCitiesOnBoard) {
+        r = c->handleEpisodeCompleteEvents() || r;
+    }
+    return r;
+}
+
 eTile* eGameBoard::tile(const int x, const int y) const {
     int dtx;
     int dty;
@@ -2352,8 +2360,11 @@ void eGameBoard::incTime(const int by) {
         mGoalsCheckTime -= goalsCheckWait;
         const bool f = checkGoalsFulfilled();
         if(f) {
-            if(mEpisodeFinishedHandler) {
+            const bool r = handleEpisodeCompleteEvents();
+            if(!r && mEpisodeFinishedHandler) {
                 mEpisodeFinishedHandler();
+            } else {
+                mGoalsCheckTime = goalsCheckWait;
             }
         }
     }

@@ -403,7 +403,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t triggeredEventId = file.readUShort();
         file.skipBytes(2);
         const uint16_t occuranceType = file.readUShort();
-        file.skipBytes(2);
+        const uint16_t episodeComplete = file.readUShort(); // 2 when episode complete event, 0 otherwise
         const uint16_t duration = file.readUShort(); // also warning
         file.skipBytes(8);
         const uint16_t godMonsterHeroId = file.readUShort(); // also warships
@@ -881,6 +881,9 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
 
         if(occuranceType == 0 || occuranceType == 8192) { // one time event
             e->setRepeat(1);
+            if(episodeComplete == 2) {
+                e->setEpisodeCompleteEvent(true);
+            }
         } else if(occuranceType == 1) { // triggered event
             if(years0 == 0xFFFF) {
                 e->setPeriodMin(31*years1);
