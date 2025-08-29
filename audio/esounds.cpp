@@ -49,7 +49,12 @@ void eSounds::playSoundForTile(eTile* const tile) {
 }
 
 bool eSounds::playSoundForBuilding(eBuilding* const b) {
+    if(!b) return false;
     const auto type = b->type();
+    return playSoundForBuilding(type);
+}
+
+bool eSounds::playSoundForBuilding(const eBuildingType type) {
     const bool a = eBuilding::sAestheticsBuilding(type);
     if(a) {
         eSounds::playBeautificationSound();
@@ -61,6 +66,15 @@ bool eSounds::playSoundForBuilding(eBuilding* const b) {
         return true;
     }
     switch(type) {
+    case eBuildingType::sheep:
+        eSounds::playSheepSound();
+        return true;
+    case eBuildingType::goat:
+        eSounds::playGoatSound();
+        return true;
+    case eBuildingType::cattle:
+        eSounds::playCattleSound();
+        return true;
     case eBuildingType::wheatFarm:
     case eBuildingType::onionsFarm:
     case eBuildingType::carrotsFarm:

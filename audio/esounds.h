@@ -22,6 +22,7 @@ public:
 
     static void playSoundForTile(eTile* const tile);
     static bool playSoundForBuilding(eBuilding* const b);
+    static bool playSoundForBuilding(const eBuildingType type);
     static bool playSoundForCharacter(eCharacter* const c);
     static bool playSoundForTerrain(const eTerrain terrain);
 
