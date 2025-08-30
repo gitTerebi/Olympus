@@ -1446,7 +1446,7 @@ void eCampaign::readPak(const std::string& name,
         } else {
             file.seek(224874 + i*18600);
         }
-        readEpisodeEvents(*ep, file, nEvents, parentCid,
+        readEpisodeEvents(*ep, file, nEvents, colonyCid,
                           opponentGods, independentMonster);
 
         if(newVersion) {
@@ -1464,7 +1464,7 @@ void eCampaign::readPak(const std::string& name,
             readEpisodeGoal(*ep, file, colonyCid);
         }
         printf("\n");
-        removeNullEvents(parentCid, *ep);
+        removeNullEvents(colonyCid, *ep);
     }
 
     loadStrings();
