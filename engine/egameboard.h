@@ -836,6 +836,7 @@ private:
     std::vector<eGameEvent*> mAllGameEvents;
     int mGoalsCheckTime = 0;
     std::vector<stdsptr<eEpisodeGoal>> mGoals;
+    bool mGoalsFulfilled = false;
 
     struct eEarthquake {
         eTile* fStartTile = nullptr;

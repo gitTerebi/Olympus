@@ -127,6 +127,7 @@ void eGameBoard::write(eWriteStream& dst) const {
     for(const auto& g : mGoals) {
         g->write(dst);
     }
+    dst << mGoalsFulfilled;
 
     dst << mProgressEarthquakes;
     dst << mEarthquakes.size();

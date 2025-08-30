@@ -105,6 +105,7 @@ void eGameBoard::read(eReadStream& src) {
         g->read(src);
         mGoals.push_back(g);
     }
+    src >> mGoalsFulfilled;
 
     src >> mProgressEarthquakes;
     int ne;

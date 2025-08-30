@@ -2359,9 +2359,11 @@ void eGameBoard::incTime(const int by) {
     if(mGoalsCheckTime > goalsCheckWait) {
         mGoalsCheckTime -= goalsCheckWait;
         const bool f = checkGoalsFulfilled();
-        if(f) {
+        if(f || mGoalsFulfilled) {
+            mGoalsFulfilled = true;
             const bool r = handleEpisodeCompleteEvents();
             if(!r && mEpisodeFinishedHandler) {
+                mGoalsFulfilled = false;
                 mEpisodeFinishedHandler();
             } else {
                 mGoalsCheckTime = goalsCheckWait;
