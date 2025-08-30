@@ -29,6 +29,11 @@ void eTidalWaveEvent::trigger() {
     const auto e = godReason() ? eEvent::tidalWaveGod :
                                  eEvent::tidalWave;
     board->event(e, ed);
+    if(mPermanent) {
+        const auto b = board->banner(cid, eBannerTypeS::disasterPoint, pt);
+        const auto t = b ? b->tile() : nullptr;
+        if(t) t->removeBanner(b);
+    }
 }
 
 std::string eTidalWaveEvent::longName() const {
