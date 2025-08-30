@@ -11,7 +11,62 @@ eCityBecomesEvent::eCityBecomesEvent(
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::cityBecomes,
                branch, board),
-    eCityEventValue(board) {}
+    eCityEventValue(board, [this](eWorldCity& city) {
+        switch(mType) {
+        case eCityBecomesType::ally: {
+            return !city.isAlly();
+        } break;
+        case eCityBecomesType::rival: {
+            return !city.isRival();
+        } break;
+        case eCityBecomesType::vassal: {
+            return !city.isVassal();
+        } break;
+        case eCityBecomesType::active: {
+            return !city.active();
+        } break;
+        case eCityBecomesType::inactive: {
+            return city.active();
+        } break;
+        case eCityBecomesType::visible: {
+            return !city.visible();
+        } break;
+        case eCityBecomesType::invisible: {
+            return city.visible();
+        } break;
+        case eCityBecomesType::conquered: {
+            const auto aCity = mAttackingCity;
+            if(!aCity) return false;
+            const auto pid = playerId();
+            if(aCity->playerId() == pid) {
+                if(city.isColony()) {
+                    return true;
+                } else if(!city.isVassal()) {
+                    return true;
+                }
+            } else if(aCity->isAlly()) {
+                if(city.isRival()) {
+                    return true;
+                }
+            } else if(aCity->isVassal()) {
+                if(city.isRival()) {
+                    return true;
+                }
+            } else if(aCity->isRival()) {
+                if(city.isAlly()) {
+                    return true;
+                } else if(city.isVassal()) {
+                    return true;
+                } else if(city.isColony()) {
+                    return true;
+                } else if(city.isParentCity()) {
+                    return true;
+                }
+            }
+        } break;
+        };
+        return false;
+    }) {}
 
 void eCityBecomesEvent::trigger() {
     const auto board = gameBoard();
@@ -60,6 +115,7 @@ void eCityBecomesEvent::trigger() {
         board->event(eEvent::cityBecomesInvisible, ed);
     } break;
     case eCityBecomesType::conquered: {
+        if(!mAttackingCity) return;
         ed.fRivalCity = mAttackingCity;
         const auto pid = playerId();
         const auto tid = board->playerIdToTeamId(pid);

@@ -13,7 +13,40 @@ eTroopsRequestEvent::eTroopsRequestEvent(
         const eGameEventBranch branch,
         eGameBoard& board) :
     eGameEvent(cid, eGameEventType::troopsRequest, branch, board),
-    eCityEventValue(board) {
+    eCityEventValue(board, [this](eWorldCity& city) {
+        switch(mType) {
+        case eTroopsRequestEventType::cityUnderAttack: {
+            if(city.isVassal()) {
+                return true;
+            } else if(city.isColony()) {
+                return true;
+            } else if(city.isParentCity()) {
+                return true;
+            } else if(city.isAlly()) { // ally
+                return true;
+            }
+        } break;
+        case eTroopsRequestEventType::cityAttacksRival: {
+            if(city.isVassal()) {
+                return true;
+            } else if(city.isAlly()) { // ally
+                return true;
+            }
+        } break;
+        case eTroopsRequestEventType::greekCityTerrorized: {
+            if(city.isVassal()) {
+                return true;
+            } else if(city.isColony()) {
+                return true;
+            } else if(city.isParentCity()) {
+                return true;
+            } else if(city.isAlly()) { // ally
+                return true;
+            }
+        } break;
+        }
+        return false;
+    }) {
     const auto e1 = eLanguage::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
     const auto e2 = eLanguage::text("comply");
@@ -348,6 +381,7 @@ void eTroopsRequestEvent::lost() {
             mCity->setVisible(false);
         } break;
         case eTroopsRequestEventEffect::conquered: {
+            if(!mAttackingCity) return;
             if(mCity->isColony()) {
                 mCity->setConqueredBy(mAttackingCity);
             } else {
