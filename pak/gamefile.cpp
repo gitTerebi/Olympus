@@ -177,7 +177,7 @@ std::vector<uint8_t> GameFile::readCompressed() {
     std::vector<uint8_t> result;
     const uint32_t length = readUInt();
     PKWareInputStream pk(&in, length, false);
-    for(int y = 0;; y++) {
+    while(true) {
         if(pk.hasError() || pk.atEnd()) break;
         result.push_back(pk.readByte());
     }

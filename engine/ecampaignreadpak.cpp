@@ -30,7 +30,7 @@
 #include "gameEvents/etroopsrequestevent.h"
 
 eResourceType pakCityResourceByteToType(
-        const uint8_t byte, const bool newVersion) {
+        const uint8_t byte, const bool poseidon) {
     if(byte == 0) {
         return eResourceType::none;
     } else if(byte == 1) {
@@ -47,23 +47,23 @@ eResourceType pakCityResourceByteToType(
         return eResourceType::onions;
     } else if(byte == 7) {
         return eResourceType::wheat;
-    } else if(newVersion && byte == 8) {
+    } else if(poseidon && byte == 8) {
         return eResourceType::oranges;
-    } else if(byte == 9 + (newVersion ? 0 : -1)) {
+    } else if(byte == 9 + (poseidon ? 0 : -1)) {
         return eResourceType::wood;
-    } else if(byte == 10 + (newVersion ? 0 : -1)) {
+    } else if(byte == 10 + (poseidon ? 0 : -1)) {
         return eResourceType::bronze;
-    } else if(byte == 11 + (newVersion ? 0 : -1)) {
+    } else if(byte == 11 + (poseidon ? 0 : -1)) {
         return eResourceType::marble;
-    } else if(byte == 12 + (newVersion ? 0 : -1)) {
+    } else if(byte == 12 + (poseidon ? 0 : -1)) {
         return eResourceType::grapes;
-    } else if(byte == 13 + (newVersion ? 0 : -1)) {
+    } else if(byte == 13 + (poseidon ? 0 : -1)) {
         return eResourceType::olives;
-    } else if(byte == 14 + (newVersion ? 0 : -1)) {
+    } else if(byte == 14 + (poseidon ? 0 : -1)) {
         return eResourceType::fleece;
-    } else if(newVersion && byte == 16) {
+    } else if(poseidon && byte == 16) {
         return eResourceType::blackMarble;
-    } else if(newVersion && byte == 17) {
+    } else if(poseidon && byte == 17) {
         return eResourceType::orichalc;
     }
 
@@ -146,13 +146,14 @@ void readEpisodeAllowedBuildings(eEpisode& ep, ZeusFile& file,
 void readEpisodeResources(eEpisode& ep, ZeusFile& file,
                           const eCityId cid) {
     const bool atlantean = file.isAtlantean();
-    const bool newVersion = file.isNewVersion();
+    const auto version = file.version();
+    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     auto& av = ep.fAvailableBuildings[cid];
-    const int jMax = newVersion ? 12 : 10;
+    const int jMax = poseidon ? 12 : 10;
     for(int j = 0; j < jMax; j++) {
         const auto resourceByte = file.readUByte();
         const auto type = pakCityResourceByteToType(
-                              resourceByte, newVersion);
+                              resourceByte, poseidon);
         if(type != eResourceType::none) {
             printf("%s\n", eResourceTypeHelpers::typeName(type).c_str());
         } else {
@@ -369,7 +370,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                        const uint8_t nEvents, const eCityId cid,
                        const std::vector<ePakGod>& opponentGods,
                        const ePakMonster& independentMonster) {
-    const bool newVersion = file.isNewVersion();
+    const auto version = file.version();
+    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     auto& events = ep.fEvents[cid];
     printf("%i events\n", nEvents);
     std::map<int, uint16_t> triggerMap;
@@ -459,17 +461,17 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             if(value1 == 0xFFFF) {
                 ee.setResourceType(0, eResourceType::none);
             } else {
-                ee.setResourceType(0, ePakHelpers::pakResourceByteToType(value1, newVersion));
+                ee.setResourceType(0, ePakHelpers::pakResourceByteToType(value1, poseidon));
             }
             if(value2 == 0xFFFF) {
                 ee.setResourceType(1, eResourceType::none);
             } else {
-                ee.setResourceType(1, ePakHelpers::pakResourceByteToType(value2, newVersion));
+                ee.setResourceType(1, ePakHelpers::pakResourceByteToType(value2, poseidon));
             }
             if(value3 == 0xFFFF) {
                 ee.setResourceType(2, eResourceType::none);
             } else {
-                ee.setResourceType(2, ePakHelpers::pakResourceByteToType(value3, newVersion));
+                ee.setResourceType(2, ePakHelpers::pakResourceByteToType(value3, poseidon));
             }
         };
 
@@ -1061,7 +1063,8 @@ eBannerType pakIdToBannerType(const uint16_t id) {
 }
 
 void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
-    const bool newVersion = file.isNewVersion();
+    const auto version = file.version();
+    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     const uint16_t typeId = file.readUShort();
     file.skipBytes(2);
     const uint16_t value1 = file.readUShort();
@@ -1156,7 +1159,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
     } break;
     case eEpisodeGoalType::yearlyProduction: {
         goal->fRequiredCount = value2;
-        const auto type = ePakHelpers::pakResourceByteToType(value1, newVersion);
+        const auto type = ePakHelpers::pakResourceByteToType(value1, poseidon);
         goal->fEnumInt1 = static_cast<int>(type);
     } break;
     case eEpisodeGoalType::rule:
@@ -1180,7 +1183,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
         goal->fRequiredCount = value1;
         break;
     case eEpisodeGoalType::setAsideGoods: {
-        const auto type = ePakHelpers::pakResourceByteToType(value1, newVersion);
+        const auto type = ePakHelpers::pakResourceByteToType(value1, poseidon);
         goal->fEnumInt1 = static_cast<int>(type);
         goal->fRequiredCount = value2;
     } break;
@@ -1234,14 +1237,27 @@ void eCampaign::readPak(const std::string& name,
     mName = name;
     ZeusFile file(path);
     file.readVersion();
-    const bool newVersion = file.isNewVersion();
-    file.readAtlantean();
+    const auto version = file.version();
+    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     const bool atlantean = file.isAtlantean();
-    printf("v%i a%i\n", file.isNewVersion() ? 1 : 0, file.isAtlantean() ? 1 : 0);
+
+    std::string versionStr;
+    switch(version) {
+    case eZeusFileVersion::zeus_1_0:
+        versionStr = "1.0";
+        break;
+    case eZeusFileVersion::poseidon_2_0:
+        versionStr = "2.0";
+        break;
+    }
+
+    const auto atlanteanStr = file.isAtlantean() ? "atlantean" : "greek";
+
+    printf("%s %s %s\n", name.c_str(), versionStr.c_str(), atlanteanStr);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
 
     uint8_t bitmapId;
-    if(newVersion) {
+    if(poseidon) {
         file.seek(836249);
     } else {
         file.seek(835185);
@@ -1298,7 +1314,7 @@ void eCampaign::readPak(const std::string& name,
         file.seek(9100 + i*2032);
         readEpisodeResources(*ep, file, parentCid);
 
-        const int epInc = newVersion ? 300 : 224;
+        const int epInc = poseidon ? 300 : 224;
 
         if(i == 0) {
             file.seek(35736 + i*epInc);
@@ -1350,13 +1366,13 @@ void eCampaign::readPak(const std::string& name,
             applyPyramidsToEpisode(pyramids, *ep, parentCid);
         }
 
-        if(newVersion) {
+        if(poseidon) {
             file.seek(800361 + i*4);
         } else {
             file.seek(799297 + i*4);
         }
         const uint8_t nEvents = file.readUByte();
-        if(newVersion) {
+        if(poseidon) {
             file.seek(39938 + i*18600);
         } else {
             file.seek(38874 + i*18600);
@@ -1364,13 +1380,13 @@ void eCampaign::readPak(const std::string& name,
         readEpisodeEvents(*ep, file, nEvents, parentCid,
                           opponentGods, independentMonster);
 
-        if(newVersion) {
+        if(poseidon) {
             file.seek(838331 + i*4);
         } else {
             file.seek(837263 + i*4);
         }
         const uint8_t nGoals = file.readUByte();
-        if(newVersion) {
+        if(poseidon) {
             file.seek(838371 + i*456);
         } else {
             file.seek(837303 + i*456);
@@ -1417,9 +1433,9 @@ void eCampaign::readPak(const std::string& name,
         file.seek(29420 + i*2032);
         readEpisodeResources(*ep, file, colonyCid);
 
-        const int epInc = newVersion ? 300 : 224;
+        const int epInc = poseidon ? 300 : 224;
 
-        if(newVersion) {
+        if(poseidon) {
             file.seek(38944 + i*epInc);
         } else {
             file.seek(38184 + i*epInc);
@@ -1435,13 +1451,13 @@ void eCampaign::readPak(const std::string& name,
             applyPyramidsToEpisode(pyramids, *ep, colonyCid);
         }
 
-        if(newVersion) {
+        if(poseidon) {
             file.seek(800401 + i*4);
         } else {
             file.seek(799337 + i*4);
         }
         const uint8_t nEvents = file.readUByte();
-        if(newVersion) {
+        if(poseidon) {
             file.seek(225938 + i*18600);
         } else {
             file.seek(224874 + i*18600);
@@ -1449,13 +1465,13 @@ void eCampaign::readPak(const std::string& name,
         readEpisodeEvents(*ep, file, nEvents, colonyCid,
                           opponentGods, independentMonster);
 
-        if(newVersion) {
+        if(poseidon) {
             file.seek(836491 + i*4);
         } else {
             file.seek(835423 + i*4);
         }
         const uint8_t nGoals = file.readUByte();
-        if(newVersion) {
+        if(poseidon) {
             file.seek(836507 + i*456);
         } else {
             file.seek(835439 + i*456);

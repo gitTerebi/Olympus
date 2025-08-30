@@ -46,21 +46,19 @@ ZeusFile::ZeusFile(const std::string &filename)
 }
 
 void ZeusFile::readVersion() {
-    in.seek(4);
-    mNewVersion = readUByte() == 0x1a;
-}
-
-bool ZeusFile::isNewVersion() const {
-    return mNewVersion;
-}
-
-void ZeusFile::readAtlantean() {
-    seek(7788);
-    mAtlantean = readUByte();
-}
-
-bool ZeusFile::isAtlantean() const {
-    return mAtlantean;
+    seek(39165);
+    const bool poseidon = readUByte() == 255;
+    if(poseidon) {
+        mVersion = eZeusFileVersion::poseidon_2_0;
+    } else {
+        mVersion = eZeusFileVersion::zeus_1_0;
+    }
+    if(mVersion == eZeusFileVersion::poseidon_2_0) {
+        seek(7788);
+        mAtlantean = readUByte();
+    } else {
+        mAtlantean = false;
+    }
 }
 
 int ZeusFile::getNumMaps() {
@@ -209,7 +207,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                          eCityId& cid) {
     if(retrievedMaps >= numMaps) {
         return false;
-	}	
+    }
 
     in.seek(positions[retrievedMaps]);
 
@@ -367,6 +365,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     skipBytes(736);
     const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
+    bool worldMapIsPoseidon;
     std::vector<uint8_t> cityBytes1;
     std::vector<uint8_t> cityBytes2;
     std::vector<uint8_t> cityBytes3;
@@ -378,6 +377,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         cityBytes2 = readCompressed(); // trade routes
         cityBytes3 = readCompressed();
         cityBytes4 = readCompressed();
+        worldMapIsPoseidon = cityBytes1.size() > 10000;
     } else {
         skipCompressed(); // not of proper length: 14400
         skipCompressed(); // not of proper length: 75168
@@ -388,17 +388,17 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
     int nTypes = 0;
     if(retrievedMaps == 1) {
         auto& prices = campaign.prices();
-        if(mNewVersion) {
+        if(worldMapIsPoseidon) {
             nTypes = 21;
         } else {
             nTypes = 18;
         }
         for(int i = 1; i < nTypes + 1; i++) {
             const uint32_t price = readUInt();
-            if(mNewVersion && i == 15) continue;
-            if(!mNewVersion && i == 14) continue;
+            if(worldMapIsPoseidon && i == 15) continue;
+            if(!worldMapIsPoseidon && i == 14) continue;
             const auto type = ePakHelpers::pakResourceByteToType(
-                                  i, mNewVersion);
+                                  i, worldMapIsPoseidon);
             prices[type] = price;
             const auto name = eResourceTypeHelpers::typeName(type);
             printf("%s: %i\n", name.c_str(), price);
@@ -416,7 +416,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         world.setMap(map);
         int cityId = 0;
         for(int i = 0; i < 99; i++) {
-            const int inc1 = mNewVersion ? 72 : 40;
+            const int inc1 = worldMapIsPoseidon ? 72 : 40;
             int id1 = i*inc1;
             const uint8_t enabled = cityBytes1[id1];
             if(enabled == 0) break;
@@ -445,7 +445,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             id1 = 19 + i*inc1;
             const uint8_t namePlaceId = cityBytes1[id1];
 
-            const int inc6 = mNewVersion ? 572 : 476;
+            const int inc6 = worldMapIsPoseidon ? 572 : 476;
             int id6 = 2 + i*inc6;
             const uint8_t cityTypeId = cityBytes6[id6++];
             const uint8_t cityNameId = cityBytes6[id6];
@@ -502,11 +502,11 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             const uint16_t payTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
             id6 = 236 + i*inc6;
             const uint8_t payTributeTypeId = cityBytes6[id6];
-            id6 = (mNewVersion ? 356 : 340) + i*inc6;
+            id6 = (worldMapIsPoseidon ? 356 : 340) + i*inc6;
             const uint8_t favour = cityBytes6[id6];
-            id6 = (mNewVersion ? 368 : 352) + i*inc6;
+            id6 = (worldMapIsPoseidon ? 368 : 352) + i*inc6;
             const uint8_t stateId = cityBytes6[id6];
-            id6 = (mNewVersion ? 372 : 356) + i*inc6;
+            id6 = (worldMapIsPoseidon ? 372 : 356) + i*inc6;
             const uint8_t visibleId = cityBytes6[id6];
 
             const auto cityType = pakIdToCityType(cityTypeId);
@@ -551,7 +551,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             c->setRecTributeType(eResourceType::drachmas);
             c->setRecTributeCount(recTribute);
             const auto payTributeType = ePakHelpers::pakResourceByteToType(
-                                            payTributeTypeId, mNewVersion);
+                                            payTributeTypeId, worldMapIsPoseidon);
             c->setTributeType(payTributeType);
             c->setTributeCount(payTribute);
 
@@ -578,7 +578,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                 const auto addBuyType = [&](const uint8_t typeId,
                                             const uint8_t count) {
                     const auto buyType = ePakHelpers::pakResourceByteToType(
-                                              typeId, mNewVersion);
+                                              typeId, worldMapIsPoseidon);
                     if(buyType != eResourceType::none) {
                         c->addBuys(eResourceTrade{buyType, {}, count});
                     }
@@ -590,7 +590,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
                 const auto addSellType = [&](const uint8_t typeId,
                                             const uint8_t count) {
                     const auto sellType = ePakHelpers::pakResourceByteToType(
-                                              typeId, mNewVersion);
+                                              typeId, worldMapIsPoseidon);
                     if(sellType != eResourceType::none) {
                         c->addSells(eResourceTrade{sellType, {}, count});
                     }
@@ -707,8 +707,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         const int end = (y < half) ? (half + y + 1 - border) : (3*half - y - border);
         for(int x = start; x < end; x++) {
             const uint32_t t_terrain = terrain->get(x, y);
-            const uint8_t t_random = random->get(x, y);
-            const uint8_t t_meadow = fertile->get(x, y);
+            // const uint8_t t_random = random->get(x, y);
+            // const uint8_t t_meadow = fertile->get(x, y);
             const uint8_t t_scrub = scrub->get(x, y);
             const uint8_t t_elevation = elevation->get(x, y);
 

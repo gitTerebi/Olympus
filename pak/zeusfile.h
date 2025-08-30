@@ -20,11 +20,15 @@
 #define ZEUSFILE_H
 
 #include "gamefile.h"
-#include "grid.h"
 
 #include "engine/egameboard.h"
 
 class eCampaign;
+
+enum class eZeusFileVersion {
+    zeus_1_0,
+    poseidon_2_0
+};
 
 class ZeusFile : public GameFile {
 	public:
@@ -33,10 +37,8 @@ class ZeusFile : public GameFile {
         ZeusFile(const std::string& filename);
 
         void readVersion();
-        bool isNewVersion() const;
-
-        void readAtlantean();
-        bool isAtlantean() const;
+        eZeusFileVersion version() const { return mVersion; }
+        bool isAtlantean() const { return mAtlantean; }
 
 
 		/**
@@ -56,7 +58,7 @@ class ZeusFile : public GameFile {
 	private:
 		int getMapsize();
 
-        bool mNewVersion;
+        eZeusFileVersion mVersion;
         bool mAtlantean;
 
 		int filetype;

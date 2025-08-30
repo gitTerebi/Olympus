@@ -7,7 +7,7 @@ enum class eResourceType;
 
 namespace ePakHelpers {
     eResourceType pakResourceByteToType(
-            const uint8_t byte, const bool newVersion);
+            const uint8_t byte, const bool poseidon);
 
     int pakBitmapIdConvert(const int id);
 };

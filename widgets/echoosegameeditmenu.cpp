@@ -35,9 +35,10 @@ bool readPakGlossary(const std::string& filename,
     std::ifstream file(txtFile);
     ZeusFile in(filename);
     in.readVersion();
-    const bool newVersion = in.isNewVersion();
+    const auto version = in.version();
+    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     uint8_t bitmapId;
-    if(newVersion) {
+    if(poseidon) {
         in.seek(836249);
     } else {
         in.seek(835185);
