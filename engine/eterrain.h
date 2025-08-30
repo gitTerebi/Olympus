@@ -21,6 +21,7 @@ enum class eTerrain {
     orichalc = 1 << 12,
     blackMarble = 1 << 13,
     marsh = 1 << 14,
+    lava = 1 << 15,
 
     dryBased = dry |
                fertile |
@@ -28,6 +29,7 @@ enum class eTerrain {
                choppedForest |
 
                marsh |
+               lava |
 
                flatStones |
                copper |

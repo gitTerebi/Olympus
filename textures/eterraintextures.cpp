@@ -72,6 +72,7 @@ eTerrainTextures::eTerrainTextures(const int tileW, const int tileH,
     fWaterTerrainTexs(renderer),
     fDeepMarsh(renderer),
     fMarsh(renderer),
+    fLava(renderer),
     fFertileTerrainTexs(renderer),
     fFertileToDryTerrainTexs(renderer),
     fScrubTerrainTexs(renderer),
@@ -361,6 +362,24 @@ void eTerrainTextures::load() {
             loader.load(1, i, fBeachRoad);
         }
 
+        for(int i = 99; i < 189;) {
+            for(int j = 0; j < 15; j++, i++) {
+                loader.load(1, i, fWaterTexs[j]);
+            }
+        }
+
+        for(int i = 189; i < 195; i++) {
+            loader.load(1, i, fBeachTerrainTexs);
+        }
+
+        for(int i = 195; i < 207; i++) {
+            loader.load(1, i, fBeachToDryTerrainTexs);
+        }
+
+        for(int i = 207; i < 231; i++) {
+            loader.load(1, i, fWaterToBeachToDryTerrainTexs);
+        }
+
         for(int i = 231; i < 235; i++) {
             loader.load(1, i, fToBeachRoad);
         }
@@ -383,23 +402,12 @@ void eTerrainTextures::load() {
 
         loadWaterToX(fRenderer, 318, fMarshToDry, loader);
 
-        for(int i = 99; i < 189;) {
-            for(int j = 0; j < 15; j++, i++) {
-                loader.load(1, i, fWaterTexs[j]);
-            }
+
+        for(int i = 439; i < 445; i++) {
+            loader.load(1, i, fLava);
         }
 
-        for(int i = 189; i < 195; i++) {
-            loader.load(1, i, fBeachTerrainTexs);
-        }
-
-        for(int i = 195; i < 207; i++) {
-            loader.load(1, i, fBeachToDryTerrainTexs);
-        }
-
-        for(int i = 207; i < 231; i++) {
-            loader.load(1, i, fWaterToBeachToDryTerrainTexs);
-        }
+        loadWaterToX(fRenderer, 445, fLavaToDry, loader);
     }
 
     {

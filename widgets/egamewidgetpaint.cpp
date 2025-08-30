@@ -529,6 +529,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
 
         if(tex) {
+            bool lavaCm = false;
             bool eraseCm = false;
             bool patrolCm = false;
             bool editorHover = false;
@@ -539,7 +540,12 @@ void eGameWidget::paintEvent(ePainter& p) {
                     tex->setColorMod(255, 175, 175);
                 }
             }
-            if(mPatrolBuilding && (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
+            const bool lavaFlows = mBoard->duringLavaFlow();
+            const bool hasLava = terr == eTerrain::lava;
+            if(lavaFlows && hasLava) {
+                lavaCm = true;
+                tex->setColorMod(255, 0, 0);
+            } else if(mPatrolBuilding && (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
                 patrolCm = eVectorHelpers::contains(mPatrolPath, tile) ||
                            eVectorHelpers::contains(mPatrolPath1, tile);
                 if(patrolCm) {
@@ -593,9 +599,19 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const int val = std::round((maxDist - dist)*255/maxDist);
                 tex->setColorMod(val, val, val);
             }
+            if(hasLava) {
+                const int seed = tile->seed();
+                const auto& coll = trrTexs.fDryTerrainTexs;
+                const int texId = seed % coll.size();
+                const auto tex = coll.getTexture(texId);
+                tp.drawTexture(rx, ry, tex, eAlignment::top);
+            }
             tp.drawTexture(rx, ry, tex, eAlignment::top);
             if(drawDim == 0) SDL_RenderSetClipRect(p.renderer(), nullptr);
-            if(eraseCm || patrolCm || editorHover || mEditorMode || tileFogOfWar) tex->clearColorMod();
+            if(eraseCm || patrolCm || editorHover ||
+               mEditorMode || tileFogOfWar || lavaCm) {
+                tex->clearColorMod();
+            }
         }
 
         {
@@ -1381,7 +1397,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
-                const bool isWave = type == eMissileType::wave;
+                const bool isWave = type == eMissileType::wave ||
+                                    type == eMissileType::lava;
                 if(isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1417,7 +1434,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
-                const bool isWave = type == eMissileType::wave;
+                const bool isWave = type == eMissileType::wave ||
+                                    type == eMissileType::lava;
                 if(!isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1720,7 +1738,7 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         drawMissiles();
 
-        if(mBoard->duringTidalWave()) {
+        if(mBoard->duringTidalWave() || mBoard->duringLavaFlow()) {
             const auto tt = tile->tileRelRotated<eTile>(-2, -2, dir);
             if(tt) {
                 drawWaves(tt);

@@ -103,7 +103,8 @@ enum class eMissileType {
     god,
     rock,
     spear,
-    wave
+    wave,
+    lava
 };
 
 class eMissile : public eStdSelfRef {

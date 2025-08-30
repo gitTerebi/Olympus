@@ -610,6 +610,9 @@ public:
                       const bool permanent);
     bool duringTidalWave() const;
 
+    void addLavaFlow(eTile* const startTile);
+    bool duringLavaFlow() const;
+
     void defeatedBy(const eCityId defeated,
                     const stdsptr<eWorldCity>& by);
 
@@ -745,6 +748,7 @@ private:
 
     void progressEarthquakes();
     void progressTidalWaves();
+    void progressLavaFlow();
     void earthquakeWaveCollapse(eTile * const t);
 
     bool mEditorMode = false;
@@ -916,8 +920,50 @@ private:
         }
     };
 
+    struct eLavaDirection {
+        eTile* fTile;
+        eOrientation fO;
+    };
+
+    struct eLavaFlow {
+        std::vector<std::vector<eLavaDirection>> fTiles;
+        int fLastId = 0;
+
+        void read(eReadStream& src, eGameBoard& board) {
+            int nv;
+            src >> nv;
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles.emplace_back();
+                int nt;
+                src >> nt;
+                for(int j = 0; j < nt; j++) {
+                    const auto t = src.readTile(board);
+                    eOrientation o;
+                    src >> o;
+                    v.push_back({t, o});
+                }
+            }
+            src >> fLastId;
+        }
+
+        void write(eWriteStream& dst) {
+            dst << fTiles.size();
+            for(const auto& v : fTiles) {
+                dst << v.size();
+                for(const auto t : v) {
+                    dst.writeTile(t.fTile);
+                    dst << t.fO;
+                }
+            }
+            dst << fLastId;
+        }
+    };
+
     int mProgressWaves = 0;
     std::vector<stdsptr<eTidalWave>> mTidalWaves;
+
+    int mProgressLavaFlows = 0;
+    std::vector<stdsptr<eLavaFlow>> mLavaFlows;
 
     std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
 

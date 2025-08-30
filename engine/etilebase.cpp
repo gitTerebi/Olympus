@@ -41,6 +41,10 @@ bool eTileBase::hasWater() const {
     return terrain() == eTerrain::water;
 }
 
+bool eTileBase::hasLava() const {
+    return terrain() == eTerrain::lava;
+}
+
 bool eTileBase::hasDeepWater() const {
     return hasWater() && !isShoreTile();
 }

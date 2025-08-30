@@ -15,6 +15,7 @@
 #include "ewatercorner.h"
 #include "estonestodry.h"
 #include "emarshtodry.h"
+#include "elavatodry.h"
 
 #include "buildings/ebuilding.h"
 #include "buildings/ebuildingrenderer.h"
@@ -487,6 +488,17 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
             return coll.getTexture(toDryId);
         }
         const auto& coll = textures.fBeachTerrainTexs;
+        const int texId = seed % coll.size();
+        return coll.getTexture(texId);
+    } break;
+    case eTerrain::lava: {
+        const int toDryId = eLavaToDry::get(tile, dir);
+        if(toDryId != -1) {
+            const auto& texs = textures.fLavaToDry[toDryId];
+            const int texId = seed % texs.size();
+            return texs.getTexture(texId);
+        }
+        const auto& coll = textures.fLava;
         const int texId = seed % coll.size();
         return coll.getTexture(texId);
     } break;

@@ -24,6 +24,7 @@
 #include "gameEvents/eeconomicchangeevent.h"
 #include "gameEvents/emilitarychangeevent.h"
 #include "gameEvents/egoddisasterevent.h"
+#include "gameEvents/elavaevent.h"
 #include "gameEvents/etidalwaveevent.h"
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/erivalarmyawayevent.h"
@@ -281,6 +282,7 @@ enum class ePakEventType {
     cityStatusChange,
     rivalArmyAway,
     giftFrom,
+    lavaFlow,
     tidalWave,
     monsterInvasion,
     godAttack
@@ -303,7 +305,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 21) return ePakEventType::supplyIncrease;
     else if(id == 22) return ePakEventType::supplyDecrease;
     else if(id == 23) return ePakEventType::giftFrom;
-    // 24 - lava
+    else if(id == 24) return ePakEventType::lavaFlow;
     else if(id == 25) return ePakEventType::tidalWave;
     else if(id == 26) return ePakEventType::monsterInvasion;
     else if(id == 27) return ePakEventType::godAttack;
@@ -836,6 +838,19 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setMaxPointId(cityId2);
             }
             ee->setPermanent(permanent);
+
+            e = ee;
+        } break;
+        case ePakEventType::lavaFlow: {
+            const auto ee = e::make_shared<eLavaEvent>(
+                cid, eGameEventBranch::root, *ep.fBoard);
+            if(cityId0 != 0xFFFF) {
+                ee->setMinPointId(cityId0);
+                ee->setMaxPointId(cityId0);
+            } else {
+                ee->setMinPointId(cityId1);
+                ee->setMaxPointId(cityId2);
+            }
 
             e = ee;
         } break;

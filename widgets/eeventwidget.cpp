@@ -62,6 +62,9 @@ eEventButton::eEventButton(const eEvent e,
     case eEvent::tidalWaveGod:
         coll = &texs.fFloodAlert;
         break;
+    case eEvent::lavaFlow:
+        coll = &texs.fLavaAltert;
+        break;
 
     case eEvent::godVisit:
     case eEvent::godHelp:

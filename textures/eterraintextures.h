@@ -32,6 +32,8 @@ public:
     eTextureCollection fDeepMarsh;
     eTextureCollection fMarsh;
     std::vector<eTextureCollection> fMarshToDry;
+    eTextureCollection fLava;
+    std::vector<eTextureCollection> fLavaToDry;
     eTextureCollection fFertileTerrainTexs;
     eTextureCollection fFertileToDryTerrainTexs;
     std::vector<eTextureCollection> fDryToScrubTerrainTexs;

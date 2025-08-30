@@ -1,4 +1,5 @@
 #include "etidalwaveevent.h"
+
 #include "elanguage.h"
 
 #include "engine/egameboard.h"
@@ -37,7 +38,7 @@ void eTidalWaveEvent::trigger() {
 }
 
 std::string eTidalWaveEvent::longName() const {
-    return eLanguage::text("tidal_wave_long_name");
+    return eLanguage::zeusText(48, 69);
 }
 
 void eTidalWaveEvent::write(eWriteStream& dst) const {

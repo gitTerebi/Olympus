@@ -114,6 +114,11 @@
 #include "spriteData/wave45.h"
 #include "spriteData/wave60.h"
 
+#include "spriteData/lava15.h"
+#include "spriteData/lava30.h"
+#include "spriteData/lava45.h"
+#include "spriteData/lava60.h"
+
 #include "textures/espriteloader.h"
 
 eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
@@ -132,7 +137,8 @@ eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
 
     fPlague(renderer),
 
-    fWave(renderer) {}
+    fWave(renderer),
+    fLava(renderer) {}
 
 void eDestructionTextures::loadAll() {
     loadFire();
@@ -520,5 +526,22 @@ void eDestructionTextures::loadWave() {
 
     for(int i = 1660; i < 1686; i++) {
         loader.load(1660, i, fWave);
+    }
+}
+
+void eDestructionTextures::loadLava() {
+    if(fLavaLoaded) return;
+    fLavaLoaded = true;
+
+    const auto& sds = spriteData(fTileH,
+                                 eLavaSpriteData15,
+                                 eLavaSpriteData30,
+                                 eLavaSpriteData45,
+                                 eLavaSpriteData60);
+    eSpriteLoader loader(fTileH, "lava", sds,
+                         &eDestructionOffset, fRenderer);
+
+    for(int i = 165; i < 329; i++) {
+        loader.load(165, i, fLava);
     }
 }

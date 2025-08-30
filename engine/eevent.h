@@ -339,6 +339,8 @@ enum class eEvent {
     earthquakeGod,
     tidalWave,
     tidalWaveGod,
+    lavaFlow,
+    lavaFlowGod,
 
     cityBecomesAlly,
     cityBecomesRival,

@@ -311,6 +311,8 @@ public:
     eMessageType fEarthqaukeGod;
     eMessageType fTidalWaveNoReason;
     eMessageType fTidalWaveGod;
+    eMessageType fLavaFlowNoReason;
+    eMessageType fLavaFlowGod;
 
     eMessageType fCityBecomesAlly;
     eMessageType fCityBecomesRival;

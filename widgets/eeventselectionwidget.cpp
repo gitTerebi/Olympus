@@ -63,6 +63,7 @@ void eEventSelectionWidget::initialize(
             eGameEventType::godDisaster,
             eGameEventType::rivalArmyAway,
             eGameEventType::earthquake,
+            eGameEventType::lavaFlow,
             eGameEventType::tidalWave,
             eGameEventType::cityBecomes,
             eGameEventType::tradeShutdowns,
@@ -87,6 +88,7 @@ void eEventSelectionWidget::initialize(
             eLanguage::zeusText(35, 13), // god disaster
             eLanguage::zeusText(156, 20), // rival army away
             eLanguage::zeusText(156, 3), // earthquake
+            eLanguage::zeusText(156, 24), // lava flow
             eLanguage::zeusText(156, 25), // tidal wave
             eLanguage::zeusText(290, 35), // city status change
             eLanguage::zeusText(35, 2), // trade shuts down

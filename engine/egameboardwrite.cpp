@@ -5,8 +5,6 @@
 #include "einvasionhandler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
-#include "gameEvents/ereceiverequestevent.h"
-#include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 
 void eGameBoard::write(eWriteStream& dst) const {
@@ -138,6 +136,12 @@ void eGameBoard::write(eWriteStream& dst) const {
     dst << mProgressWaves;
     dst << mTidalWaves.size();
     for(const auto& w : mTidalWaves) {
+        w->write(dst);
+    }
+
+    dst << mProgressLavaFlows;
+    dst << mLavaFlows.size();
+    for(const auto& w : mLavaFlows) {
         w->write(dst);
     }
 

@@ -63,6 +63,8 @@ public:
     void loadOrichalcMissile();
     bool fWaveLoaded = false;
     void loadWave();
+    bool fLavaLoaded = false;
+    void loadLava();
 
     std::vector<eTextureCollection> fFire;
 //    std::vector<eTextureCollection> fBigFire;
@@ -93,6 +95,7 @@ public:
     std::vector<eTextureCollection> fOrichalcMissile;
 
     eTextureCollection fWave;
+    eTextureCollection fLava;
 };
 
 #endif // EDESTRUCTIONTEXTURES_H

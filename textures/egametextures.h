@@ -186,6 +186,7 @@ public:
     static void loadGodPurpleMissile();
 
     static void loadWave();
+    static void loadLava();
 
     static void loadCommonHouse();
     static void loadPoseidonCommonHouse();

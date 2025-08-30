@@ -101,6 +101,7 @@ public:
     static void playFireballHitSound();
 
     static void playEarthquakeSound();
+    static void playLavaSound();
 
     static void playCopperMinerSound();
     static void playSilverMinerSound();
@@ -269,6 +270,7 @@ private:
     eSoundVector mFireballHit;
 
     eSoundVector mEarthquake;
+    eSoundVector mLava;
 
     eGodSounds mAphrodite{"Aph", "aphrodite"};
     eGodSounds mApollo{"Apo", "apollo"};

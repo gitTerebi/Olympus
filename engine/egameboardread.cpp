@@ -125,6 +125,15 @@ void eGameBoard::read(eReadStream& src) {
         mTidalWaves.push_back(w);
     }
 
+    src >> mProgressLavaFlows;
+    int nl;
+    src >> nl;
+    for(int i = 0; i < nl; i++) {
+        const auto w = std::make_shared<eLavaFlow>();
+        w->read(src, *this);
+        mLavaFlows.push_back(w);
+    }
+
     int nd;
     src >> nd;
     for(int i = 0; i < nd; i++) {

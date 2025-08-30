@@ -460,6 +460,7 @@ SOURCES += \
         gameEvents/egodvisitevent.cpp \
         gameEvents/einvasionevent.cpp \
         gameEvents/einvasionwarning.cpp \
+        gameEvents/elavaevent.cpp \
         gameEvents/emakerequestevent.cpp \
         gameEvents/emilitarychangeevent.cpp \
         gameEvents/emonstereventvalue.cpp \
@@ -494,6 +495,7 @@ SOURCES += \
         missiles/earrowmissile.cpp \
         missiles/earrowspearbase.cpp \
         missiles/egodmissile.cpp \
+        missiles/elavamissile.cpp \
         missiles/emissile.cpp \
         missiles/erockmissile.cpp \
         missiles/espearmissile.cpp \
@@ -537,6 +539,7 @@ SOURCES += \
         textures/egametextures.cpp \
         textures/egodtextures.cpp \
         textures/einterfacetextures.cpp \
+        textures/elavatodry.cpp \
         textures/emarbletile.cpp \
         textures/emarshtodry.cpp \
         textures/eparktexture.cpp \
@@ -1145,6 +1148,7 @@ HEADERS += \
     gameEvents/egodvisitevent.h \
     gameEvents/einvasionevent.h \
     gameEvents/einvasionwarning.h \
+    gameEvents/elavaevent.h \
     gameEvents/emakerequestevent.h \
     gameEvents/emilitarychangeevent.h \
     gameEvents/emonstereventvalue.h \
@@ -1178,6 +1182,7 @@ HEADERS += \
     missiles/earrowmissile.h \
     missiles/earrowspearbase.h \
     missiles/egodmissile.h \
+    missiles/elavamissile.h \
     missiles/emissile.h \
     missiles/erockmissile.h \
     missiles/espearmissile.h \
@@ -1988,6 +1993,10 @@ HEADERS += \
     spriteData/laboratory30.h \
     spriteData/laboratory45.h \
     spriteData/laboratory60.h \
+    spriteData/lava15.h \
+    spriteData/lava30.h \
+    spriteData/lava45.h \
+    spriteData/lava60.h \
     spriteData/lumberjack15.h \
     spriteData/lumberjack30.h \
     spriteData/lumberjack45.h \
@@ -2665,6 +2674,7 @@ HEADERS += \
     textures/egametextures.h \
     textures/egodtextures.h \
     textures/einterfacetextures.h \
+    textures/elavatodry.h \
     textures/emarbletile.h \
     textures/emarshtodry.h \
     textures/eparktexture.h \
@@ -3033,6 +3043,7 @@ DISTFILES += \
     textureTemplates/jason \
     textureTemplates/kraken \
     textureTemplates/laboratory \
+    textureTemplates/lava \
     textureTemplates/lumberjack \
     textureTemplates/maenads \
     textureTemplates/maintenanceOffice \

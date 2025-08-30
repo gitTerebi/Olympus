@@ -24,6 +24,7 @@
 
 #include "missiles/emissile.h"
 #include "missiles/ewavemissile.h"
+#include "missiles/elavamissile.h"
 
 #include "etilehelper.h"
 
@@ -2214,6 +2215,13 @@ void eGameBoard::incTime(const int by) {
         progressTidalWaves();
     }
 
+    mProgressLavaFlows += by;
+    const int lavaFlowWait = 250;
+    if(mProgressLavaFlows > lavaFlowWait) {
+        mProgressLavaFlows -= lavaFlowWait;
+        progressLavaFlow();
+    }
+
     mSoldiersUpdate += by;
     const int sup = 1000;
     if(mSoldiersUpdate > sup) {
@@ -3183,10 +3191,10 @@ void eGameBoard::addTidalWave(eTile* const startTile,
             const auto ns = t->neighbours(nullptr);
             for(const auto& n : ns) {
                 const auto tt = static_cast<eTile*>(n.second);
-                if(!tt->tidalWaveZone()) return;
-                if(tt->hasWater()) return;
+                if(!tt->tidalWaveZone()) continue;
+                if(tt->hasLava()) continue;
                 const bool c = eVectorHelpers::contains(used, tt);
-                if(c) return;
+                if(c) continue;
                 while((int)w->fTiles.size() < dist + 1) {
                     w->fTiles.emplace_back();
                 }
@@ -3211,6 +3219,79 @@ void eGameBoard::addTidalWave(eTile* const startTile,
 
 bool eGameBoard::duringTidalWave() const {
     return !mTidalWaves.empty();
+}
+
+void eGameBoard::progressLavaFlow() {
+    if(mLavaFlows.empty()) return;
+    eSounds::playLavaSound();
+    for(int i = 0; i < (int)mLavaFlows.size(); i++) {
+        const auto& w = mLavaFlows[i];
+
+        if(w->fLastId >= 0 && w->fLastId < (int)w->fTiles.size()) {
+            const std::vector<eLavaDirection>& tiles = w->fTiles[w->fLastId];
+            for(const auto& wd : tiles) {
+                const auto t = wd.fTile;
+                const auto o = wd.fO;
+                std::vector<ePathPoint> path;
+                eTile* from = nullptr;
+                eTile* to = nullptr;
+                from = t->neighbour<eTile>(!o);
+                to = t;
+                t->setTerrain(eTerrain::lava);
+                earthquakeWaveCollapse(t);
+                const auto cid = t->cityId();
+                const auto c = boardCityWithId(cid);
+                if(c) c->incTerrainState();
+
+                t->scheduleNeighboursTerrainUpdate(2);
+                path.push_back({(double)from->x(), (double)from->y(), 0.});
+                path.push_back({(double)to->x(), (double)to->y(), 0.});
+                const auto m = e::make_shared<eLavaMissile>(*this, path);
+                m->incTime(0);
+            }
+        }
+
+        w->fLastId++;
+        if(w->fLastId < 0 || w->fLastId >= (int)w->fTiles.size()) {
+            eVectorHelpers::remove(mLavaFlows, w);
+        }
+    }
+}
+
+void eGameBoard::addLavaFlow(eTile * const startTile) {
+    const auto w = std::make_shared<eLavaFlow>();
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const, const int)> addNeighs;
+        addNeighs = [&](eTile* const t, const int dist) {
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                const auto tt = static_cast<eTile*>(n.second);
+                if(!tt->lavaZone()) continue;
+                if(tt->hasLava()) continue;
+                const bool c = eVectorHelpers::contains(used, tt);
+                if(c) continue;
+                while((int)w->fTiles.size() < dist + 1) {
+                    w->fTiles.emplace_back();
+                }
+                used.push_back(tt);
+                w->fTiles[dist].push_back({tt, n.first});
+            }
+        };
+        addNeighs(startTile, 0);
+        for(int i = 0; i < (int)w->fTiles.size(); i++) {
+            for(const auto t : w->fTiles[i]) {
+                addNeighs(t.fTile, i + 1);
+            }
+        }
+    }
+
+    if(w->fTiles.empty()) return;
+    mLavaFlows.push_back(w);
+}
+
+bool eGameBoard::duringLavaFlow() const {
+    return !mLavaFlows.empty();
 }
 
 void centerTile(const int minX, const int minY,

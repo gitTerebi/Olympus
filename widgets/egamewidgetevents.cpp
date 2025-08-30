@@ -1497,6 +1497,12 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     case eEvent::tidalWaveGod: {
         showMessage(ed, inst.fTidalWaveGod);
     } break;
+    case eEvent::lavaFlow: {
+        showMessage(ed, inst.fLavaFlowNoReason);
+    } break;
+    case eEvent::lavaFlowGod: {
+        showMessage(ed, inst.fLavaFlowGod);
+    } break;
 
     case eEvent::cityBecomesAlly: {
         showMessage(ed, inst.fCityBecomesAlly);
