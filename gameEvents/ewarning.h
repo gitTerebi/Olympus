@@ -10,11 +10,14 @@ enum class eCityId;
 class eWarning {
 public:
     eWarning(const int warningMonths,
+             const bool initialWarning,
              eGameEvent& parent,
              const eCityId cid,
              eGameBoard& board);
 
     virtual void trigger() = 0;
+
+    bool isInitialWarning() const { return mInitialWarning; }
 
     int warningMonths() const { return mWarningMonths; }
     void setWarningMonths(const int ms) { mWarningMonths = ms; }
@@ -37,6 +40,7 @@ private:
     eGameEvent& mParent;
     const eCityId mCid;
     eGameBoard& mBoard;
+    const bool mInitialWarning;
 
     int mWarningMonths = 2;
     eDate mNextDate;

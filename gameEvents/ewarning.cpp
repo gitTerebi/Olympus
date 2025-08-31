@@ -1,12 +1,14 @@
 #include "ewarning.h"
 
 eWarning::eWarning(const int warningMonths,
+                   const bool initialWarning,
                    eGameEvent& parent,
                    const eCityId cid,
                    eGameBoard& board) :
     mParent(parent),
     mCid(cid),
     mBoard(board),
+    mInitialWarning(initialWarning),
     mWarningMonths(warningMonths) {}
 
 void eWarning::setNextDate(const eDate &date) {

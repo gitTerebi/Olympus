@@ -10,7 +10,8 @@ eInvasionWarning::eInvasionWarning(const int warningDays,
                                    const eCityId cid,
                                    eGameBoard &board,
                                    const eInvasionWarningType type) :
-    eWarning(warningDays, parent, cid, board),
+    eWarning(warningDays, type == eInvasionWarningType::warningInitial,
+             parent, cid, board),
     mType(type) {}
 
 void eInvasionWarning::trigger() {

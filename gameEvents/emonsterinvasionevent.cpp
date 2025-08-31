@@ -11,7 +11,8 @@ eMonsterInvasionWarning::eMonsterInvasionWarning(const int warningDays,
                                                            const eCityId cid,
                                                            eGameBoard &board,
                                                            const eMonsterInvasionWarningType type) :
-    eWarning(warningDays, parent, cid, board),
+    eWarning(warningDays, type == eMonsterInvasionWarningType::warningInitial,
+             parent, cid, board),
     mType(type) {}
 
 void eMonsterInvasionWarning::trigger() {

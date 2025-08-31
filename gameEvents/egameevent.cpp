@@ -349,7 +349,9 @@ void eGameEvent::updateWarningDates() {
     const auto currentDate = board.date();
     for(const auto& w : mWarnings) {
         const int ms = w->warningMonths();
-        if(ms > mWarningMonths) {
+        if(ms > mWarningMonths ||
+           (ms == mWarningMonths &&
+            !w->isInitialWarning())) {
             w->setFinished(true);
             continue;
         }
