@@ -912,6 +912,13 @@ bool eMessages::loadImpl() {
                 "lava_title",
                 "lava_phrase_by_god");
 
+    loadMessage(fSinkLandNoReason,
+                "sinkland_title",
+                "sinkland_phrase_no_reason");
+    loadMessage(fSinkLandGod,
+                "sinkland_title",
+                "sinkland_phrase_by_god");
+
     fCityBecomesAlly.fFull.fTitle = loadMessage("PHRASE_becomes_ally_title");
     fCityBecomesAlly.fFull.fText = loadMessage("PHRASE_becomes_ally_initial_announcement");
     fCityBecomesAlly.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_becomes_ally_title");

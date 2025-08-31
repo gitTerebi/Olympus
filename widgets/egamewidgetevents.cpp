@@ -1503,6 +1503,12 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     case eEvent::lavaFlowGod: {
         showMessage(ed, inst.fLavaFlowGod);
     } break;
+    case eEvent::sinkLand: {
+        showMessage(ed, inst.fSinkLandNoReason);
+    } break;
+    case eEvent::sinkLandGod: {
+        showMessage(ed, inst.fSinkLandGod);
+    } break;
 
     case eEvent::cityBecomesAlly: {
         showMessage(ed, inst.fCityBecomesAlly);

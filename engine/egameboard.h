@@ -610,6 +610,8 @@ public:
                       const bool permanent);
     bool duringTidalWave() const;
 
+    void sinkLand(const eCityId cid, const int amount);
+
     void addLavaFlow(eTile* const startTile);
     bool duringLavaFlow() const;
 

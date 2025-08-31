@@ -313,6 +313,8 @@ public:
     eMessageType fTidalWaveGod;
     eMessageType fLavaFlowNoReason;
     eMessageType fLavaFlowGod;
+    eMessageType fSinkLandNoReason;
+    eMessageType fSinkLandGod;
 
     eMessageType fCityBecomesAlly;
     eMessageType fCityBecomesRival;

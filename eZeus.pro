@@ -482,6 +482,7 @@ SOURCES += \
         gameEvents/eresourceeventvalue.cpp \
         gameEvents/eresourcegrantedeventbase.cpp \
         gameEvents/erivalarmyawayevent.cpp \
+        gameEvents/esinklandevent.cpp \
         gameEvents/esupplychangeevent.cpp \
         gameEvents/esupplydemandchangeevent.cpp \
         gameEvents/etidalwaveevent.cpp \
@@ -1170,6 +1171,7 @@ HEADERS += \
     gameEvents/eresourceeventvalue.h \
     gameEvents/eresourcegrantedeventbase.h \
     gameEvents/erivalarmyawayevent.h \
+    gameEvents/esinklandevent.h \
     gameEvents/esupplychangeevent.h \
     gameEvents/esupplydemandchangeevent.h \
     gameEvents/etidalwaveevent.h \

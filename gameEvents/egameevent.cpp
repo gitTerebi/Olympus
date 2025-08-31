@@ -31,6 +31,7 @@
 #include "eearthquakeevent.h"
 #include "elavaevent.h"
 #include "etidalwaveevent.h"
+#include "esinklandevent.h"
 #include "ecitybecomesevent.h"
 #include "etradeshutdownevent.h"
 #include "etradeopenupevent.h"
@@ -152,6 +153,8 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return e::make_shared<eLavaEvent>(cid, branch, board);
     case eGameEventType::tidalWave:
         return e::make_shared<eTidalWaveEvent>(cid, branch, board);
+    case eGameEventType::sinkLand:
+        return e::make_shared<eSinkLandEvent>(cid, branch, board);
 
     case eGameEventType::cityBecomes:
         return e::make_shared<eCityBecomesEvent>(cid, branch, board);

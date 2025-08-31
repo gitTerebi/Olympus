@@ -3164,6 +3164,60 @@ void eGameBoard::progressTidalWaves() {
     }
 }
 
+void eGameBoard::sinkLand(const eCityId cid, const int amount) {
+    std::vector<eTile*> shore;
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const)> addShore;
+        addShore = [&](eTile* const t) {
+            const bool c = eVectorHelpers::contains(used, t);
+            if(c) return;
+            used.push_back(t);
+            if(t->isShoreTile()) shore.push_back(t);
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                addShore(static_cast<eTile*>(n.second));
+            }
+        };
+        const auto c = boardCityWithId(cid);
+        if(!c) return;
+        const auto& tiles = c->tiles();
+        if(tiles.empty()) return;
+        addShore(tiles[tiles.size()/2]);
+    }
+    const auto w = std::make_shared<eTidalWave>();
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const, const int)> addNeighs;
+        addNeighs = [&](eTile* const t, const int dist) {
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                const auto tt = static_cast<eTile*>(n.second);
+                if(tt->hasWater()) continue;
+                const bool c = eVectorHelpers::contains(used, tt);
+                if(c) continue;
+                while((int)w->fTiles.size() < dist + 1) {
+                    w->fTiles.emplace_back();
+                }
+                used.push_back(tt);
+                w->fTiles[dist].push_back({tt, tt->terrain(), n.first});
+            }
+        };
+        for(const auto s : shore) {
+            addNeighs(s, 0);
+        }
+        for(int i = 0; i < (int)w->fTiles.size() && i < amount - 1; i++) {
+            for(const auto t : w->fTiles[i]) {
+                addNeighs(t.fTile, i + 1);
+            }
+        }
+    }
+
+    if(w->fTiles.empty()) return;
+    w->fPermanent = true;
+    mTidalWaves.push_back(w);
+}
+
 void eGameBoard::addTidalWave(eTile* const startTile,
                               const bool permanent) {
     std::vector<eTile*> shore;
@@ -3192,7 +3246,7 @@ void eGameBoard::addTidalWave(eTile* const startTile,
             for(const auto& n : ns) {
                 const auto tt = static_cast<eTile*>(n.second);
                 if(!tt->tidalWaveZone()) continue;
-                if(tt->hasLava()) continue;
+                if(tt->hasWater()) continue;
                 const bool c = eVectorHelpers::contains(used, tt);
                 if(c) continue;
                 while((int)w->fTiles.size() < dist + 1) {

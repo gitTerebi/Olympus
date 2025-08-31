@@ -331,6 +331,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     if(const auto ee = dynamic_cast<eGodReasonEventValue*>(e.get())) {
         const auto godButtonL = new eLabeledWidget(window());
         const auto godButton = new eSwitchButton(window());
+        godButton->setUnderline(false);
         godButton->setSwitchAction([ee](const int v) {
             ee->setGodReason(v);
         });
@@ -482,6 +483,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     dateW->addWidget(repeatButtonL);
 
     const auto completeButton = new eSwitchButton(window());
+    completeButton->setUnderline(false);
     completeButton->setSwitchAction([e](const int v) {
         e->setEpisodeCompleteEvent(v == 3);
     });

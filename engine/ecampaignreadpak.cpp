@@ -26,6 +26,7 @@
 #include "gameEvents/egoddisasterevent.h"
 #include "gameEvents/elavaevent.h"
 #include "gameEvents/etidalwaveevent.h"
+#include "gameEvents/esinklandevent.h"
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/erivalarmyawayevent.h"
 #include "gameEvents/etroopsrequestevent.h"
@@ -285,7 +286,8 @@ enum class ePakEventType {
     lavaFlow,
     tidalWave,
     monsterInvasion,
-    godAttack
+    godAttack,
+    sinkLand
 };
 
 ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
@@ -309,6 +311,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 25) return ePakEventType::tidalWave;
     else if(id == 26) return ePakEventType::monsterInvasion;
     else if(id == 27) return ePakEventType::godAttack;
+    else if(id == 28) return ePakEventType::sinkLand;
 
     valid = false;
     printf("Invalid event type id %i\n", id);
@@ -851,6 +854,14 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setMinPointId(cityId1);
                 ee->setMaxPointId(cityId2);
             }
+
+            e = ee;
+        } break;
+        case ePakEventType::sinkLand: {
+            const auto ee = e::make_shared<eSinkLandEvent>(
+                cid, eGameEventBranch::root, *ep.fBoard);
+            ee->setMinCount(amountMin);
+            ee->setMaxCount(amountMax);
 
             e = ee;
         } break;
