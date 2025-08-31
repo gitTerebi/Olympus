@@ -290,13 +290,13 @@ void eGameEvent::setRepeat(const int r) {
 
 void eGameEvent::handleNewDate(const eDate& date) {
     if(mEpisodeCompleteEvent) return;
-    for(const auto& w : mWarnings) {
-        w->handleNewDate(date);
-    }
     for(const auto& c : mConsequences) {
         c->handleNewDate(date);
     }
     if(mRemNRuns <= 0) return;
+    for(const auto& w : mWarnings) {
+        w->handleNewDate(date);
+    }
     if(date > mNextDate) {
         trigger();
         mRemNRuns--;
