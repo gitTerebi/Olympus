@@ -2452,7 +2452,7 @@ void eBuilding::collapse() {
         const auto cid = t->cityId();
         const auto ruins = e::make_shared<eRuins>(b, cid);
         ruins->setWasType(tp);
-        ruins->setOnFire(onFire);
+        ruins->setOnFire(eRand::rand() % 2 ? onFire : false);
         ruins->setCenterTile(t);
         t->setUnderBuilding(ruins);
         ruins->addUnderBuilding(t);
