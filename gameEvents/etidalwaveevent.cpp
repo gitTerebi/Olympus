@@ -6,6 +6,10 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
+bool validWaveEventTile(eTile* const tile) {
+    return tile->tidalWaveZone();
+}
+
 eTidalWaveEvent::eTidalWaveEvent(
         const eCityId cid,
         const eGameEventBranch branch,
@@ -13,7 +17,7 @@ eTidalWaveEvent::eTidalWaveEvent(
     eGameEvent(cid, eGameEventType::tidalWave,
                branch, board),
     ePointEventValue(eBannerTypeS::disasterPoint,
-                    cid, board) {}
+                    cid, board, validWaveEventTile) {}
 
 void eTidalWaveEvent::trigger() {
     const auto board = gameBoard();

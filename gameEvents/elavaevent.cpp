@@ -6,6 +6,10 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
+bool validLavaEventTile(eTile* const tile) {
+    return tile->lavaZone();
+}
+
 eLavaEvent::eLavaEvent(
     const eCityId cid,
     const eGameEventBranch branch,
@@ -13,7 +17,7 @@ eLavaEvent::eLavaEvent(
     eGameEvent(cid, eGameEventType::lavaFlow,
                branch, board),
     ePointEventValue(eBannerTypeS::disasterPoint,
-                     cid, board) {}
+                     cid, board, validLavaEventTile) {}
 
 void eLavaEvent::trigger() {
     const auto board = gameBoard();

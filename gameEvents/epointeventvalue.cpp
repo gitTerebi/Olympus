@@ -3,10 +3,12 @@
 #include "engine/egameboard.h"
 
 ePointEventValue::ePointEventValue(
-        const eBannerTypeS btype,
-        const eCityId cid,
-        eGameBoard& board) :
-    mBType(btype), mCid(cid), mBoard(board) {}
+    const eBannerTypeS btype,
+    const eCityId cid,
+    eGameBoard& board,
+    const eValidator &v) :
+    mBType(btype), mCid(cid),
+    mBoard(board), mValidator(v) {}
 
 void ePointEventValue::write(eWriteStream &dst) const {
     dst << mPointId;
@@ -21,10 +23,6 @@ void ePointEventValue::read(eReadStream &src) {
 }
 
 void ePointEventValue::choosePointId() {
-    if(mMinPointId >= mMaxPointId) {
-        mPointId = mMinPointId;
-        return;
-    }
     std::vector<int> options;
     for(int i = mMinPointId; i <= mMaxPointId; i++) {
         options.push_back(i);
@@ -34,14 +32,14 @@ void ePointEventValue::choosePointId() {
         switch(mBType) {
         case eBannerTypeS::monsterPoint: {
             const auto tile = mBoard.monsterTile(mCid, i);
-            if(tile) {
+            if(tile && (!mValidator || mValidator(tile))) {
                 mPointId = i;
                 return;
             }
         } break;
         case eBannerTypeS::disasterPoint: {
             const auto tile = mBoard.disasterTile(mCid, i);
-            if(tile) {
+            if(tile && (!mValidator || mValidator(tile))) {
                 mPointId = i;
                 return;
             }
@@ -49,7 +47,7 @@ void ePointEventValue::choosePointId() {
         case eBannerTypeS::landInvasion:
         case eBannerTypeS::seaInvasion: {
             const auto tile = mBoard.invasionTile(mCid, i);
-            if(tile) {
+            if(tile && (!mValidator || mValidator(tile))) {
                 mPointId = i;
                 return;
             }
@@ -58,5 +56,5 @@ void ePointEventValue::choosePointId() {
             assert(false);
         }
     }
-    mPointId = mMinPointId;
+    mPointId = 0;
 }
