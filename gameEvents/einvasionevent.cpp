@@ -165,7 +165,6 @@ void eInvasionEvent::trigger() {
     } else {
         city->troopsByType(infantry, cavalry, archers);
     }
-
     const auto startInvasion = [this, board, tile, cid, city,
                                 infantry, cavalry, archers]() {
         if(!tile) return;

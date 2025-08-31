@@ -55,6 +55,9 @@
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/eplayerconquestevent.h"
 
+#include "engine/eknownendpathfinder.h"
+#include "engine/boardData/eheatmaptask.h"
+
 #include "eiteratesquare.h"
 
 eInvasionHandler::eInvasionHandler(eGameBoard& board,
@@ -708,6 +711,28 @@ void eInvasionHandler::incTime(const int by) {
         break;
     case eInvasionStage::spread:
     case eInvasionStage::wait: {
+        mStage = eInvasionStage::march;
+        const auto p = mBoard.palace(mTargetCity);
+        if(p) {
+            const auto t = p->centerTile();
+            eKnownEndPathFinder p([](eTileBase* const t) {
+                return t->walkableTerrain();
+            }, t);
+            const int w = mBoard.width();
+            const int h = mBoard.height();
+            const bool r = p.findPath({0, 0, w, h}, mTile, 1000, false, w, h);
+            if(r) {
+                std::vector<eTile*> path;
+                p.extractPath(path, mBoard);
+                if(path.empty()) return;
+                const auto halfTile = path[path.size()/2];
+                const int tx = halfTile->x();
+                const int ty = halfTile->y();
+                eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+            }
+        }
+    } break;
+    case eInvasionStage::march: {
         mStage = eInvasionStage::invade;
         const auto p = mBoard.palace(mTargetCity);
         if(p) {
@@ -716,12 +741,43 @@ void eInvasionHandler::incTime(const int by) {
                 b->moveTo(t->x(), t->y());
             }
         } else {
-            const int dtx = mBoard.width()/2;
-            const int dty = mBoard.height()/2;
-            int tx;
-            int ty;
-            eTileHelper::dtileIdToTileId(dtx, dty, tx, ty);
-            eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+            eHeatMap map;
+            const auto bRect = mBoard.boardCityTileBRect(mTargetCity);
+            map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);
+            for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
+                for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
+                    const auto t = mBoard.dtile(tx, ty);
+                    if(t->cityId() != mTargetCity) map.setOutsideRange(tx, ty);
+                    const auto ub = t->underBuilding();
+                    if(!ub) continue;
+                    const auto ubt = ub->type();
+                    if(ubt == eBuildingType::none) continue;
+                    const auto rect = ub->tileRect();
+                    const int ttx = t->x();
+                    const int tty = t->y();
+                    if(ttx != rect.x || tty != rect.y) continue;
+                    const auto a = eHeatGetters::any(ubt);
+                    map.addHeat(a, rect);
+                }
+            }
+            double maxHeat = -10000;
+            eTile* targetTile = nullptr;
+            for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
+                for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
+                    const bool e = map.enabled(tx, ty);
+                    if(!e) continue;
+                    const double h = map.heat(tx, ty);
+                    if(h > maxHeat) {
+                        maxHeat = h;
+                        targetTile = mBoard.dtile(tx, ty);
+                    }
+                }
+            }
+            if(targetTile) {
+                const int tx = targetTile->x();
+                const int ty = targetTile->y();
+                eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+            }
         }
     } break;
     case eInvasionStage::invade: {

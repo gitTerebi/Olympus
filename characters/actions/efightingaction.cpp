@@ -309,7 +309,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         }
     }
 
-    if(!currentAction()) {
+    if(!currentAction() || mOverwrittableAction) {
         mLookForEnemy += by;
         if(mLookForEnemy > lookForEnemyCheck) {
             mLookForEnemy -= lookForEnemyCheck;

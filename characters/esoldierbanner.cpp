@@ -682,7 +682,10 @@ void eSoldierBanner::callSoldier(eSoldier* const s) {
     const int tty = tt->y();
 
     const auto a = s->soldierAction();
-    if(a) a->goTo(ttx, tty);
+    if(a) {
+        a->setOverwrittableAction(mType == eBannerType::enemy);
+        a->goTo(ttx, tty);
+    }
 }
 
 void eSoldierBanner::purgeDead() {

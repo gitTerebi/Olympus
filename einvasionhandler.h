@@ -21,7 +21,7 @@ enum class eCityId;
 enum class eNationality;
 
 enum class eInvasionStage {
-    arrive, spread, wait, invade, comeback
+    arrive, spread, wait, march, invade, comeback
 };
 
 enum class ePlayerSoldierType {

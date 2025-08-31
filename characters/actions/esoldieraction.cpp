@@ -44,6 +44,7 @@ void eSoldierAction::increment(const int by) {
                 if(!tptr) return;
                 tptr->mGoToBannerCountdown = 5000;
             };
+
             goBackToBanner(taskFindFailed, taskFinished);
         }
     }

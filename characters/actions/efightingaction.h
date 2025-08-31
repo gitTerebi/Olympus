@@ -62,11 +62,11 @@ public:
     void waitAndGoHome(const int w);
     virtual void goHome() = 0;
     virtual void goAbroad() = 0;
-protected:
-    bool isAttacking() const { return mAttack; }
 
     void setOverwrittableAction(const bool o)
     { mOverwrittableAction = o; }
+protected:
+    bool isAttacking() const { return mAttack; }
 private:
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     bool attackBuilding(eTile* const t, const bool range);
