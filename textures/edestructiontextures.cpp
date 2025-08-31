@@ -137,8 +137,7 @@ eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
 
     fPlague(renderer),
 
-    fWave(renderer),
-    fLava(renderer) {}
+    fWave(renderer) {}
 
 void eDestructionTextures::loadAll() {
     loadFire();
@@ -541,7 +540,73 @@ void eDestructionTextures::loadLava() {
     eSpriteLoader loader(fTileH, "lava", sds,
                          &eDestructionOffset, fRenderer);
 
-    for(int i = 165; i < 329; i++) {
-        loader.load(165, i, fLava);
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 165; i < 184; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 184; i < 202; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 202; i < 219; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 219; i < 237; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 237; i < 255; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 255; i < 274; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 274; i < 286; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 286; i < 299; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 299; i < 314; i++) {
+            loader.load(165, i, coll);
+        }
+    }
+
+    {
+        auto& coll = fLava.emplace_back(fRenderer);
+        for(int i = 314; i < 329; i++) {
+            loader.load(165, i, coll);
+        }
     }
 }

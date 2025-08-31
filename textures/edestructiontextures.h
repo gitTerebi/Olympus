@@ -95,7 +95,7 @@ public:
     std::vector<eTextureCollection> fOrichalcMissile;
 
     eTextureCollection fWave;
-    eTextureCollection fLava;
+    std::vector<eTextureCollection> fLava;
 };
 
 #endif // EDESTRUCTIONTEXTURES_H
