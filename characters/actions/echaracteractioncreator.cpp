@@ -1,6 +1,7 @@
 #include "echaracteraction.h"
 
 #include "eanimalaction.h"
+#include "ewolfaction.h"
 #include "earcheraction.h"
 #include "eartisanaction.h"
 #include "ebuildaction.h"
@@ -57,6 +58,8 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     switch(type) {
     case eCharActionType::animalAction:
         return e::make_shared<eAnimalAction>(c);
+    case eCharActionType::wolfAction:
+        return e::make_shared<eWolfAction>(c);
     case eCharActionType::archerAction:
         return e::make_shared<eArcherAction>(c);
     case eCharActionType::artisanAction:

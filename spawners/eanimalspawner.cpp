@@ -2,6 +2,8 @@
 
 #include "characters/ewildanimal.h"
 #include "characters/actions/eanimalaction.h"
+#include "characters/actions/ewolfaction.h"
+#include "erand.h"
 
 void eAnimalSpawner::spawn(eTile* const tile) {
     const auto b = create(board());
@@ -14,7 +16,13 @@ void eAnimalSpawner::spawn(eTile* const tile) {
     const auto t = this->tile();
     const int tx = t->x();
     const int ty = t->y();
-    const auto a = e::make_shared<eAnimalAction>(
-                       b.get(), tx, ty);
-    b->setAction(a);
+    if(b->type() == eCharacterType::wolf) {
+        const auto a = e::make_shared<eWolfAction>(
+            b.get(), tx, ty);
+        b->setAction(a);
+    } else {
+        const auto a = e::make_shared<eAnimalAction>(
+            b.get(), tx, ty);
+        b->setAction(a);
+    }
 }

@@ -72,7 +72,8 @@ enum class eCharActionType {
 
     dionysusFollowAction,
 
-    triremeAction
+    triremeAction,
+    wolfAction
 };
 
 class eCharacterAction : public eStdSelfRef {

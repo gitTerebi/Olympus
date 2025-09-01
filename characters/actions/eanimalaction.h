@@ -3,8 +3,6 @@
 
 #include "ecomplexaction.h"
 
-#include "emovearoundaction.h"
-
 #include "walkable/ewalkableobject.h"
 
 class eTileBase;
@@ -14,7 +12,9 @@ public:
     eAnimalAction(eCharacter* const c,
                   const int spawnerX, const int spawnerY,
                   const stdsptr<eWalkableObject>& tileWalkable =
-                        eWalkableObject::sCreateDefault());
+                        eWalkableObject::sCreateDefault(),
+                  const eCharActionType type =
+                        eCharActionType::animalAction);
     eAnimalAction(eCharacter* const c);
 
     bool decide();
@@ -24,10 +24,10 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
-private:
+protected:
     int mSpawnerX;
     int mSpawnerY;
-
+private:
     stdsptr<eWalkableObject> mTileWalkable;
 
     int mLayTime = 2000;

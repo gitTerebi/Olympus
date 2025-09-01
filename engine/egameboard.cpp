@@ -2783,7 +2783,8 @@ void eGameBoard::startEpisode(eEpisode* const e,
         for(const auto s : mSpawners) {
             const auto type = s->type();
             if(type == eBannerTypeS::boar ||
-               type == eBannerTypeS::deer) {
+               type == eBannerTypeS::deer ||
+               type == eBannerTypeS::wolf) {
                 s->spawnMax();
             }
         }

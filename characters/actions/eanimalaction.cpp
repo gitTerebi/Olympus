@@ -1,13 +1,15 @@
 #include "eanimalaction.h"
 
+#include "emovearoundaction.h"
 #include "characters/echaracter.h"
 #include "ewaitaction.h"
 #include "enumbers.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
                              const int spawnerX, const int spawnerY,
-                             const stdsptr<eWalkableObject>& tileWalkable) :
-    eComplexAction(c, eCharActionType::animalAction),
+                             const stdsptr<eWalkableObject>& tileWalkable,
+                             const eCharActionType type) :
+    eComplexAction(c, type),
     mSpawnerX(spawnerX), mSpawnerY(spawnerY),
     mTileWalkable(tileWalkable) {}
 

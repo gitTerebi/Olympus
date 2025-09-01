@@ -20,6 +20,8 @@ struct eNumbers {
     static int sDeerSpawnPeriod;
     static int sWolfMaxCount;
     static int sWolfSpawnPeriod;
+    static int sWolfHuntWait;
+    static int sWolfHuntDistance;
 
     static int sOlivePressProcessingPeriod;
     static int sWineryProcessingPeriod;
