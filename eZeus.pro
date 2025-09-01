@@ -460,6 +460,7 @@ SOURCES += \
         gameEvents/egodvisitevent.cpp \
         gameEvents/einvasionevent.cpp \
         gameEvents/einvasionwarning.cpp \
+        gameEvents/elandslideevent.cpp \
         gameEvents/elavaevent.cpp \
         gameEvents/emakerequestevent.cpp \
         gameEvents/emilitarychangeevent.cpp \
@@ -495,6 +496,7 @@ SOURCES += \
         main.cpp \
         missiles/earrowmissile.cpp \
         missiles/earrowspearbase.cpp \
+        missiles/edustmissile.cpp \
         missiles/egodmissile.cpp \
         missiles/elavamissile.cpp \
         missiles/emissile.cpp \
@@ -517,6 +519,7 @@ SOURCES += \
         spawners/eentrypoint.cpp \
         spawners/eexitpoint.cpp \
         spawners/elandinvasionpoint.cpp \
+        spawners/elandslidepoint.cpp \
         spawners/emonsterpoint.cpp \
         spawners/eseainvasionpoint.cpp \
         spawners/espawner.cpp \
@@ -1149,6 +1152,7 @@ HEADERS += \
     gameEvents/egodvisitevent.h \
     gameEvents/einvasionevent.h \
     gameEvents/einvasionwarning.h \
+    gameEvents/elandslideevent.h \
     gameEvents/elavaevent.h \
     gameEvents/emakerequestevent.h \
     gameEvents/emilitarychangeevent.h \
@@ -1183,6 +1187,7 @@ HEADERS += \
     gameEvents/ewarning.h \
     missiles/earrowmissile.h \
     missiles/earrowspearbase.h \
+    missiles/edustmissile.h \
     missiles/egodmissile.h \
     missiles/elavamissile.h \
     missiles/emissile.h \
@@ -1262,6 +1267,7 @@ HEADERS += \
     spawners/eentrypoint.h \
     spawners/eexitpoint.h \
     spawners/elandinvasionpoint.h \
+    spawners/elandslidepoint.h \
     spawners/emonsterpoint.h \
     spawners/eseainvasionpoint.h \
     spawners/espawner.h \
@@ -1650,6 +1656,10 @@ HEADERS += \
     spriteData/dramaSchool30.h \
     spriteData/dramaSchool45.h \
     spriteData/dramaSchool60.h \
+    spriteData/dust15.h \
+    spriteData/dust30.h \
+    spriteData/dust45.h \
+    spriteData/dust60.h \
     spriteData/echidna15.h \
     spriteData/echidna30.h \
     spriteData/echidna45.h \
@@ -2959,6 +2969,7 @@ DISTFILES += \
     textureTemplates/donkey \
     textureTemplates/dragon \
     textureTemplates/dramaSchool \
+    textureTemplates/dust \
     textureTemplates/echidna \
     textureTemplates/egyptianArcher \
     textureTemplates/egyptianChariot \

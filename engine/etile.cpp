@@ -356,14 +356,18 @@ void eTile::read(eReadStream& src) {
     eTileBase::read(src);
     src >> mDoubleAltitude;
     src >> mScrub;
-    src >> mRainforest;
-    src >> mHalfSlope;
-    src >> mTidalWaveZone;
-    src >> mLavaZone;
 
-    int nb;
+    unsigned char bools;
+    src >> bools;
+    mTidalWaveZone = bools & 1 << 0;
+    mLavaZone = bools & 1 << 1;
+    mLandSlideZone = bools & 1 << 2;
+    mRainforest = bools & 1 << 3;
+    mHalfSlope = bools & 1 << 4;
+
+    unsigned char nb;
     src >> nb;
-    for(int i = 0; i < nb; i++) {
+    for(unsigned char i = 0; i < nb; i++) {
         eBannerTypeS type;
         src >> type;
         int id;
@@ -377,12 +381,17 @@ void eTile::write(eWriteStream& dst) const {
     eTileBase::write(dst);
     dst << mDoubleAltitude;
     dst << mScrub;
-    dst << mRainforest;
-    dst << mHalfSlope;
-    dst << mTidalWaveZone;
-    dst << mLavaZone;
 
-    dst << mBanners.size();
+    unsigned char bools = 0;
+    if(mTidalWaveZone) bools |= 1 << 0;
+    if(mLavaZone) bools |= 1 << 1;
+    if(mLandSlideZone) bools |= 1 << 2;
+    if(mRainforest) bools |= 1 << 3;
+    if(mHalfSlope) bools |= 1 << 4;
+    dst << bools;
+
+    const unsigned char nb = mBanners.size();
+    dst << nb;
     for(const auto& b : mBanners) {
         dst << b->type();
         dst << b->id();

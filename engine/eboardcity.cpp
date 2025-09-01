@@ -2030,6 +2030,11 @@ eTile* eBoardCity::disasterTile(const int id) const {
     return b ? b->tile() : nullptr;
 }
 
+eTile* eBoardCity::landSlideTile(const int id) const {
+    const auto b = banner(eBannerTypeS::landSlidePoint, id);
+    return b ? b->tile() : nullptr;
+}
+
 void eBoardCity::musterAllSoldiers() {
     for(const auto& s : mSoldierBanners) {
         s->backFromHome();

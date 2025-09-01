@@ -19,6 +19,7 @@
 #include "spawners/eseainvasionpoint.h"
 #include "spawners/edisembarkpoint.h"
 #include "spawners/edisasterpoint.h"
+#include "spawners/elandslidepoint.h"
 
 #include "ebuildingstoerase.h"
 
@@ -386,6 +387,14 @@ eGameWidget::eApply eGameWidget::editFunc() {
         return [](eTile* const tile) {
             tile->setAltitude(tile->altitude() - 1);
         };
+    } else if(mode == eTerrainEditMode::raiseHigh) {
+        return [](eTile* const tile) {
+            tile->setAltitude(tile->altitude() + 2);
+        };
+    } else if(mode == eTerrainEditMode::lowerHigh) {
+        return [](eTile* const tile) {
+            tile->setAltitude(tile->altitude() - 2);
+        };
     } else if(mode == eTerrainEditMode::quake) {
         return [](eTile* const tile) {
             tile->setTerrain(eTerrain::quake);
@@ -397,6 +406,10 @@ eGameWidget::eApply eGameWidget::editFunc() {
     } else if(mode == eTerrainEditMode::tidalWave) {
         return [](eTile* const tile) {
             tile->setTidalWaveZone(!tile->tidalWaveZone());
+        };
+    } else if(mode == eTerrainEditMode::landSlide) {
+        return [](eTile* const tile) {
+            tile->setLandSlideZone(!tile->landSlideZone());
         };
     } else if(mode == eTerrainEditMode::levelOut) {
         const auto t = mBoard->tile(mPressedTX, mPressedTY);
@@ -510,6 +523,12 @@ eGameWidget::eApply eGameWidget::editFunc() {
         return [this, modeId](eTile* const tile) {
             const auto b = std::make_shared<eDisasterPoint>(
                                modeId, tile, *mBoard);
+            tile->addBanner(b);
+        };
+    } else if(mode == eTerrainEditMode::landSlidePoint) {
+        return [this, modeId](eTile* const tile) {
+            const auto b = std::make_shared<eLandSlidePoint>(
+                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::cityTerritory) {
@@ -2045,6 +2064,8 @@ bool eGameWidget::buildMouseRelease() {
         const auto mode = mTem->mode();
         if(mode == eTerrainEditMode::raise ||
            mode == eTerrainEditMode::lower ||
+           mode == eTerrainEditMode::raiseHigh ||
+           mode == eTerrainEditMode::lowerHigh ||
            mode == eTerrainEditMode::levelOut ||
            mode == eTerrainEditMode::resetElev) {
             updateTopBottomAltitude();

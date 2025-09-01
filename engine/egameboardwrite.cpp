@@ -145,6 +145,12 @@ void eGameBoard::write(eWriteStream& dst) const {
         w->write(dst);
     }
 
+    dst << mProgressLandSlides;
+    dst << mLandSlides.size();
+    for(const auto& w : mLandSlides) {
+        w->write(dst);
+    }
+
     dst << mDefeatedBy.size();
     for(const auto& c : mDefeatedBy) {
         dst << c.first;

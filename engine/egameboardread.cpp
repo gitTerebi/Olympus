@@ -134,6 +134,15 @@ void eGameBoard::read(eReadStream& src) {
         mLavaFlows.push_back(w);
     }
 
+    src >> mProgressLandSlides;
+    int ns;
+    src >> ns;
+    for(int i = 0; i < ns; i++) {
+        const auto w = std::make_shared<eLandSlide>();
+        w->read(src, *this);
+        mLandSlides.push_back(w);
+    }
+
     int nd;
     src >> nd;
     for(int i = 0; i < nd; i++) {

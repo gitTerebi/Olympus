@@ -25,6 +25,7 @@
 #include "missiles/emissile.h"
 #include "missiles/ewavemissile.h"
 #include "missiles/elavamissile.h"
+#include "missiles/edustmissile.h"
 
 #include "etilehelper.h"
 
@@ -703,6 +704,12 @@ eTile* eGameBoard::disasterTile(const eCityId cid, const int id) const {
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
     return c->disasterTile(id);
+}
+
+eTile *eGameBoard::landSlideTile(const eCityId cid, const int id) const {
+    const auto c = boardCityWithId(cid);
+    if(!c) return nullptr;
+    return c->landSlideTile(id);
 }
 
 std::vector<eInvasionHandler*> eGameBoard::invasionHandlers(
@@ -2222,6 +2229,13 @@ void eGameBoard::incTime(const int by) {
         progressLavaFlow();
     }
 
+    mProgressLandSlides += by;
+    const int landSlideWait = 250;
+    if(mProgressLandSlides > landSlideWait) {
+        mProgressLandSlides -= landSlideWait;
+        progressLandSlide();
+    }
+
     mSoldiersUpdate += by;
     const int sup = 1000;
     if(mSoldiersUpdate > sup) {
@@ -3190,8 +3204,7 @@ void eGameBoard::sinkLand(const eCityId cid, const int amount) {
     const auto w = std::make_shared<eTidalWave>();
     {
         std::vector<eTile*> used;
-        std::function<void(eTile* const, const int)> addNeighs;
-        addNeighs = [&](eTile* const t, const int dist) {
+        const auto addNeighs = [&](eTile* const t, const int dist) {
             const auto ns = t->neighbours(nullptr);
             for(const auto& n : ns) {
                 const auto tt = static_cast<eTile*>(n.second);
@@ -3242,8 +3255,7 @@ void eGameBoard::addTidalWave(eTile* const startTile,
     const auto w = std::make_shared<eTidalWave>();
     {
         std::vector<eTile*> used;
-        std::function<void(eTile* const, const int)> addNeighs;
-        addNeighs = [&](eTile* const t, const int dist) {
+        const auto addNeighs = [&](eTile* const t, const int dist) {
             const auto ns = t->neighbours(nullptr);
             for(const auto& n : ns) {
                 const auto tt = static_cast<eTile*>(n.second);
@@ -3275,6 +3287,160 @@ void eGameBoard::addTidalWave(eTile* const startTile,
 
 bool eGameBoard::duringTidalWave() const {
     return !mTidalWaves.empty();
+}
+
+void eGameBoard::addLandSlide(eTile * const startTile) {
+    if(!startTile) return;
+    const int baseAltitude = startTile->altitude();
+    const int newAltitude = baseAltitude + 1;
+
+    std::vector<eTile*> shore;
+    {
+        std::vector<eTile*> used;
+        std::function<void(eTile* const)> addShore;
+        addShore = [&](eTile* const t) {
+            const bool c = eVectorHelpers::contains(used, t);
+            if(c) return;
+            used.push_back(t);
+            if(t->isElevationTile()) shore.push_back(t);
+            if(!t->landSlideZone()) return;
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                addShore(static_cast<eTile*>(n.second));
+            }
+        };
+        addShore(startTile);
+    }
+    const auto w = std::make_shared<eLandSlide>();
+    {
+        std::vector<eTile*> used;
+        using eTiles = std::vector<std::vector<eLandSlideDirection>>;
+        const auto addNeighs = [&](eTile* const t, const int dist, eTiles& tiles,
+                                   const bool downTiles, int& maxTileDist,
+                                   int& minTileDist) {
+            const auto ns = t->neighbours(nullptr);
+            for(const auto& n : ns) {
+                const auto tt = static_cast<eTile*>(n.second);
+                const int a = tt->altitude();
+                if(downTiles && a != baseAltitude) continue;
+                if(!downTiles && a != baseAltitude + 2) continue;
+                if(downTiles && !tt->landSlideZone()) continue;
+                const bool c = eVectorHelpers::contains(used, tt);
+                if(c) continue;
+                while((int)tiles.size() < dist + 1) {
+                    tiles.emplace_back();
+                }
+                {
+                    const int dx = tt->x() - startTile->x();
+                    const int dy = tt->y() - startTile->y();
+                    const int tileDist = dx*dx + dy*dy;
+                    if(tileDist > maxTileDist) {
+                        if(downTiles) {
+                            maxTileDist = tileDist;
+                        } else {
+                            continue;
+                        }
+                    }
+                    if(downTiles && tileDist < minTileDist) {
+                        minTileDist = tileDist;
+                    }
+                }
+                used.push_back(tt);
+                tiles[dist].push_back({tt, newAltitude, n.first});
+            }
+        };
+        int dMaxTileDist = 0;
+        int dShoreMinTileDist = 0;
+        eTiles downTiles;
+        for(const auto s : shore) {
+            addNeighs(s, 0, downTiles, true, dMaxTileDist, dShoreMinTileDist);
+        }
+        for(uint i = 0; i < downTiles.size(); i++) {
+            for(const auto t : downTiles[i]) {
+                int minTileDist = 0;
+                addNeighs(t.fTile, i + 1, downTiles, true, dMaxTileDist, minTileDist);
+            }
+        }
+
+        dMaxTileDist += dShoreMinTileDist;
+
+        eTiles upTiles;
+        for(const auto s : shore) {
+            int minTileDist = 0;
+            addNeighs(s, 0, upTiles, false, dMaxTileDist, minTileDist);
+        }
+        for(uint i = 0; i < downTiles.size(); i++) {
+            if(i >= upTiles.size()) break;
+            for(const auto t : upTiles[i]) {
+                int minTileDist = 0;
+                addNeighs(t.fTile, i + 1, upTiles, false, dMaxTileDist, minTileDist);
+            }
+        }
+
+        const int dMax = downTiles.size();
+        const int uMax = upTiles.size();
+        const int iMax = std::max(dMax, uMax);
+        for(int i = 0; i < iMax; i++) {
+            auto& v = w->fTiles.emplace_back();
+            if(i < dMax) {
+                auto& dv = downTiles[i];
+                for(const auto& d : dv) {
+                    v.push_back(d);
+                }
+            }
+            if(i < uMax) {
+                auto& uv = upTiles[i];
+                for(const auto& u : uv) {
+                    v.push_back(u);
+                }
+            }
+        }
+    }
+
+    if(w->fTiles.empty()) return;
+    mLandSlides.push_back(w);
+}
+
+bool eGameBoard::duringLandSlide() const {
+    return !mLandSlides.empty();
+}
+
+void eGameBoard::progressLandSlide() {
+    if(mLandSlides.empty()) return;
+    eSounds::playEarthquakeSound();
+    for(int i = 0; i < (int)mLandSlides.size(); i++) {
+        const auto& w = mLandSlides[i];
+
+        if(w->fLastId >= 0 && w->fLastId < (int)w->fTiles.size()) {
+            const std::vector<eLandSlideDirection>& tiles = w->fTiles[w->fLastId];
+            for(const auto& wd : tiles) {
+                const auto t = wd.fTile;
+                const auto o = wd.fO;
+                std::vector<ePathPoint> path;
+                eTile* from = nullptr;
+                eTile* to = nullptr;
+                from = t->neighbour<eTile>(!o);
+                to = t;
+                to->setAltitude(wd.fNewAltitude);
+                t->setTerrain(eTerrain::dry);
+                earthquakeWaveCollapse(t);
+                const auto cid = t->cityId();
+                const auto c = boardCityWithId(cid);
+                if(c) c->incTerrainState();
+
+                t->scheduleNeighboursTerrainUpdate(2);
+                path.push_back({(double)from->x(), (double)from->y(), 0.});
+                path.push_back({(double)to->x(), (double)to->y(), 0.});
+                const auto m = e::make_shared<eDustMissile>(*this, path);
+                m->incTime(0);
+            }
+        }
+
+        w->fLastId++;
+        if(w->fLastId < 0 || w->fLastId >= (int)w->fTiles.size()) {
+            eVectorHelpers::remove(mLandSlides, w);
+        }
+    }
 }
 
 void eGameBoard::progressLavaFlow() {

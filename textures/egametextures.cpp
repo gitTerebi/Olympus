@@ -1045,6 +1045,13 @@ void eGameTextures::loadLava() {
     });
 }
 
+void eGameTextures::loadDust() {
+    loadTexture([](const int i) {
+        auto& c = sDestructionTextures[i];
+        c.loadDust();
+    });
+}
+
 void eGameTextures::loadCommonHouse() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

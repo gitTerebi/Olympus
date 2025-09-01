@@ -141,14 +141,14 @@ public:
     bool hasUrchin() const { return mHasUrchin; }
     void setHasUrchin(const bool f) { mHasUrchin = f; }
 
-    int resource() const { return mResource; }
+    char resource() const { return mResource; }
     void decResource(const int by);
     void setResource(const int r);
 
     bool busy() const { return mBusy; }
     void setBusy(const bool b);
 
-    int marbleLevel() const { return mMarbleLevel; };
+    char marbleLevel() const { return mMarbleLevel; };
     virtual void setMarbleLevel(const int l);
 
     eCityId cityId() const { return mCityId; }
@@ -157,7 +157,7 @@ public:
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
 private:
-    int mSeed;
+    unsigned char mSeed;
 
     int mDX;
     int mDY;
@@ -172,8 +172,8 @@ private:
     bool mWalkableElev{false};
 
     bool mBusy{false};
-    int mMarbleLevel = 0;
-    int mResource = 1;
+    char mMarbleLevel = 0;
+    char mResource = 1;
 
     eTileBase* mTopLeft = nullptr;
     eTileBase* mTopRight = nullptr;

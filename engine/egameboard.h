@@ -434,6 +434,8 @@ public:
                         const int id) const;
     eTile* disasterTile(const eCityId cid,
                         const int id) const;
+    eTile* landSlideTile(const eCityId cid,
+                         const int id) const;
 
     std::vector<eInvasionHandler*> invasionHandlers(
             const eCityId cid) const;
@@ -610,6 +612,9 @@ public:
                       const bool permanent);
     bool duringTidalWave() const;
 
+    void addLandSlide(eTile* const startTile);
+    bool duringLandSlide() const;
+
     void sinkLand(const eCityId cid, const int amount);
 
     void addLavaFlow(eTile* const startTile);
@@ -751,6 +756,7 @@ private:
     void progressEarthquakes();
     void progressTidalWaves();
     void progressLavaFlow();
+    void progressLandSlide();
     void earthquakeWaveCollapse(eTile * const t);
 
     bool mEditorMode = false;
@@ -961,11 +967,57 @@ private:
         }
     };
 
+    struct eLandSlideDirection {
+        eTile* fTile;
+        int fNewAltitude;
+        eOrientation fO;
+    };
+
+    struct eLandSlide {
+        std::vector<std::vector<eLandSlideDirection>> fTiles;
+        int fLastId = 0;
+
+        void read(eReadStream& src, eGameBoard& board) {
+            int nv;
+            src >> nv;
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles.emplace_back();
+                int nt;
+                src >> nt;
+                for(int j = 0; j < nt; j++) {
+                    const auto t = src.readTile(board);
+                    int newAltitude;
+                    src >> newAltitude;
+                    eOrientation o;
+                    src >> o;
+                    v.push_back({t, newAltitude, o});
+                }
+            }
+            src >> fLastId;
+        }
+
+        void write(eWriteStream& dst) {
+            dst << fTiles.size();
+            for(const auto& v : fTiles) {
+                dst << v.size();
+                for(const auto t : v) {
+                    dst.writeTile(t.fTile);
+                    dst << t.fNewAltitude;
+                    dst << t.fO;
+                }
+            }
+            dst << fLastId;
+        }
+    };
+
     int mProgressWaves = 0;
     std::vector<stdsptr<eTidalWave>> mTidalWaves;
 
     int mProgressLavaFlows = 0;
     std::vector<stdsptr<eLavaFlow>> mLavaFlows;
+
+    int mProgressLandSlides = 0;
+    std::vector<stdsptr<eLandSlide>> mLandSlides;
 
     std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
 

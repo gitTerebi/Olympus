@@ -69,6 +69,16 @@ public:
         return *this;
     }
 
+    inline eWriteStream& operator<<(const unsigned char val) {
+        write(&val, sizeof(unsigned char));
+        return *this;
+    }
+
+    inline eWriteStream& operator<<(const char val) {
+        write(&val, sizeof(char));
+        return *this;
+    }
+
     inline eWriteStream& operator<<(const float val) {
         write(&val, sizeof(float));
         return *this;

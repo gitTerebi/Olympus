@@ -119,6 +119,11 @@
 #include "spriteData/lava45.h"
 #include "spriteData/lava60.h"
 
+#include "spriteData/dust15.h"
+#include "spriteData/dust30.h"
+#include "spriteData/dust45.h"
+#include "spriteData/dust60.h"
+
 #include "textures/espriteloader.h"
 
 eDestructionTextures::eDestructionTextures(const int tileW, const int tileH,
@@ -607,6 +612,44 @@ void eDestructionTextures::loadLava() {
         auto& coll = fLava.emplace_back(fRenderer);
         for(int i = 314; i < 329; i++) {
             loader.load(165, i, coll);
+        }
+    }
+}
+
+void eDestructionTextures::loadDust() {
+    if(fDustLoaded) return;
+    fDustLoaded = true;
+
+    const auto& sds = spriteData(fTileH,
+                                 eDustSpriteData15,
+                                 eDustSpriteData30,
+                                 eDustSpriteData45,
+                                 eDustSpriteData60);
+    eSpriteLoader loader(fTileH, "dust", sds,
+                         &eDestructionOffset, fRenderer);
+
+    {
+        auto& coll = fDust.emplace_back(fRenderer);
+        for(int i = 1; i < 10; i++) {
+            loader.load(1, i, coll);
+        }
+    }
+    {
+        auto& coll = fDust.emplace_back(fRenderer);
+        for(int i = 10; i < 19; i++) {
+            loader.load(1, i, coll);
+        }
+    }
+    {
+        auto& coll = fDust.emplace_back(fRenderer);
+        for(int i = 19; i < 28; i++) {
+            loader.load(1, i, coll);
+        }
+    }
+    {
+        auto& coll = fDust.emplace_back(fRenderer);
+        for(int i = 28; i < 37; i++) {
+            loader.load(1, i, coll);
         }
     }
 }

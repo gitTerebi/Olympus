@@ -44,6 +44,13 @@ void ePointEventValue::choosePointId() {
                 return;
             }
         } break;
+        case eBannerTypeS::landSlidePoint: {
+            const auto tile = mBoard.landSlideTile(mCid, i);
+            if(tile && (!mValidator || mValidator(tile))) {
+                mPointId = i;
+                return;
+            }
+        } break;
         case eBannerTypeS::landInvasion:
         case eBannerTypeS::seaInvasion: {
             const auto tile = mBoard.invasionTile(mCid, i);

@@ -74,6 +74,16 @@ public:
         return *this;
     }
 
+    inline eReadStream& operator>>(unsigned char& val) {
+        read(&val, sizeof(unsigned char));
+        return *this;
+    }
+
+    inline eReadStream& operator>>(char& val) {
+        read(&val, sizeof(char));
+        return *this;
+    }
+
     inline eReadStream& operator>>(float& val) {
         read(&val, sizeof(float));
         return *this;

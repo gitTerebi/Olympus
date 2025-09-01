@@ -315,6 +315,7 @@ public:
     eMessageType fLavaFlowGod;
     eMessageType fSinkLandNoReason;
     eMessageType fSinkLandGod;
+    eMessageType fLandSlide;
 
     eMessageType fCityBecomesAlly;
     eMessageType fCityBecomesRival;

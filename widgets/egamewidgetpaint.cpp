@@ -589,6 +589,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                         tex->setColorMod(0, 0, 255);
                     } else if(tile->lavaZone()) {
                         tex->setColorMod(255, 0, 0);
+                    } else if(tile->landSlideZone()) {
+                        tex->setColorMod(255, 0, 255);
                     }
                 }
             }
@@ -1379,6 +1381,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         topTex = builTexs.fMonsterPoint;
                         break;
                     case eBannerTypeS::disasterPoint:
+                    case eBannerTypeS::landSlidePoint:
                         topTex = builTexs.fDisasterPoint;
                         break;
                     case eBannerTypeS::wolf:
@@ -1398,7 +1401,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             for(const auto& m : mss) {
                 const auto type = m->type();
                 const bool isWave = type == eMissileType::wave ||
-                                    type == eMissileType::lava;
+                                    type == eMissileType::lava ||
+                                    type == eMissileType::dust;
                 if(isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1435,7 +1439,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             for(const auto& m : mss) {
                 const auto type = m->type();
                 const bool isWave = type == eMissileType::wave ||
-                                    type == eMissileType::lava;
+                                    type == eMissileType::lava ||
+                                    type == eMissileType::dust;
                 if(!isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1738,7 +1743,9 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         drawMissiles();
 
-        if(mBoard->duringTidalWave() || mBoard->duringLavaFlow()) {
+        if(mBoard->duringTidalWave() ||
+           mBoard->duringLavaFlow() ||
+           mBoard->duringLandSlide()) {
             const auto tt = tile->tileRelRotated<eTile>(-2, -2, dir);
             if(tt) {
                 drawWaves(tt);

@@ -65,6 +65,8 @@ public:
     void loadWave();
     bool fLavaLoaded = false;
     void loadLava();
+    bool fDustLoaded = false;
+    void loadDust();
 
     std::vector<eTextureCollection> fFire;
 //    std::vector<eTextureCollection> fBigFire;
@@ -96,6 +98,7 @@ public:
 
     eTextureCollection fWave;
     std::vector<eTextureCollection> fLava;
+    std::vector<eTextureCollection> fDust;
 };
 
 #endif // EDESTRUCTIONTEXTURES_H

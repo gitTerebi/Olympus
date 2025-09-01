@@ -34,6 +34,7 @@
 #include "spawners/edeerspawner.h"
 #include "spawners/ewolfspawner.h"
 #include "spawners/edisasterpoint.h"
+#include "spawners/elandslidepoint.h"
 
 #include "engine/ecampaign.h"
 
@@ -362,7 +363,22 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         skipBytes(2);
     }
 
-    skipBytes(736);
+    skipBytes(276);
+
+    const int maxLandSlidePts = 3;
+    std::vector<ePt> landSlidePts;
+    landSlidePts.resize(maxLandSlidePts);
+    for(int i = 0; i < maxLandSlidePts; i++) {
+        landSlidePts[i].fX = readUShort();
+        skipBytes(2);
+    }
+    for(int i = 0; i < maxLandSlidePts; i++) {
+        landSlidePts[i].fY = readUShort();
+        skipBytes(2);
+    }
+
+    skipBytes(436);
+
     const auto fertile = readCompressedByteGrid(); // meadow, 0-99
     skipBytes(18628);
     bool worldMapIsPoseidon;
@@ -784,6 +800,9 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             } else { // empty land
                 tile->setScrub(0.01*t_scrub);
             }
+            if(t_terrain & 2147483648) { // land slide
+                tile->setLandSlideZone(true);
+            }
             if(t_terrain & 256) { // tidal wave
                 tile->setTidalWaveZone(true);
             }
@@ -907,6 +926,15 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         if(!tile) continue;
         const auto b = std::make_shared<eDisembarkPoint>(
                            i + 1, tile, board);
+        tile->addBanner(b);
+    }
+
+    for(int i = 0; i < maxLandSlidePts; i++) {
+        const auto& pt = landSlidePts[i];
+        const auto tile = tileMap[pt.fY][pt.fX].fTile;
+        if(!tile) continue;
+        const auto b = std::make_shared<eLandSlidePoint>(
+            i + 1, tile, board);
         tile->addBanner(b);
     }
 

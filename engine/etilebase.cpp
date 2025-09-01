@@ -26,7 +26,7 @@ void eTileBase::setBusy(const bool b) {
 }
 
 void eTileBase::setMarbleLevel(const int l) {
-    mMarbleLevel = l;
+    mMarbleLevel = std::clamp(l, -100, 100);
 }
 
 bool eTileBase::hasTerrain(const eTerrain terr) const {
@@ -186,11 +186,15 @@ void eTileBase::read(eReadStream& src) {
     src >> mTerr;
     src >> mMarbleLevel;
     src >> mResource;
-    src >> mElevation;
-    src >> mWalkableElev;
-    src >> mHasUrchin;
-    src >> mHasFish;
-    src >> mRoadblock;
+
+    unsigned char bools;
+    src >> bools;
+    mElevation = bools & 1 << 0;
+    mWalkableElev = bools & 1 << 1;
+    mHasUrchin = bools & 1 << 2;
+    mHasFish = bools & 1 << 3;
+    mRoadblock = bools & 1 << 4;
+
     src >> mCityId;
 }
 
@@ -199,11 +203,15 @@ void eTileBase::write(eWriteStream& dst) const {
     dst << mTerr;
     dst << mMarbleLevel;
     dst << mResource;
-    dst << mElevation;
-    dst << mWalkableElev;
-    dst << mHasUrchin;
-    dst << mHasFish;
-    dst << mRoadblock;
+
+    unsigned char bools = 0;
+    if(mElevation) bools |= 1 << 0;
+    if(mWalkableElev) bools |= 1 << 1;
+    if(mHasUrchin) bools |= 1 << 2;
+    if(mHasFish) bools |= 1 << 3;
+    if(mRoadblock) bools |= 1 << 4;
+    dst << bools;
+
     dst << mCityId;
 }
 

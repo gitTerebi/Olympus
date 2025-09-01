@@ -343,6 +343,7 @@ enum class eEvent {
     lavaFlowGod,
     sinkLand,
     sinkLandGod,
+    landSlide,
 
     cityBecomesAlly,
     cityBecomesRival,

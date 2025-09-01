@@ -11,6 +11,7 @@
 #include "eentrypoint.h"
 #include "eexitpoint.h"
 #include "edisasterpoint.h"
+#include "elandslidepoint.h"
 #include "ewolfspawner.h"
 
 eBanner::eBanner(const eBannerTypeS type,
@@ -33,6 +34,7 @@ eCityId eBanner::cityId() const {
 bool eBanner::sBuildable(const eBannerTypeS type) {
     return type == eBannerTypeS::none ||
            type == eBannerTypeS::disasterPoint ||
+           type == eBannerTypeS::landSlidePoint ||
            type == eBannerTypeS::monsterPoint;
 }
 
@@ -88,6 +90,9 @@ eBanner* eBanner::sCreate(const int id,
         break;
     case eBannerTypeS::disasterPoint:
         b = std::make_shared<eDisasterPoint>(id, tile, board);
+        break;
+    case eBannerTypeS::landSlidePoint:
+        b = std::make_shared<eLandSlidePoint>(id, tile, board);
         break;
     case eBannerTypeS::wolf:
         b = std::make_shared<eWolfSpawner>(id, tile, board);

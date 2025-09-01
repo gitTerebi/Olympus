@@ -187,6 +187,7 @@ public:
 
     static void loadWave();
     static void loadLava();
+    static void loadDust();
 
     static void loadCommonHouse();
     static void loadPoseidonCommonHouse();

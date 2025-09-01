@@ -37,6 +37,8 @@ enum class eTerrainEditMode {
 
     raise,
     lower,
+    raiseHigh,
+    lowerHigh,
     levelOut,
     resetElev,
     halfSlope,
@@ -62,7 +64,9 @@ enum class eTerrainEditMode {
     quake,
     lava,
     tidalWave,
+    landSlide,
     disasterPoint,
+    landSlidePoint,
 
     cityTerritory,
     assignAllCityTerritory

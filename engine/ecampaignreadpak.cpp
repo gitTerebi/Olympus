@@ -27,6 +27,7 @@
 #include "gameEvents/elavaevent.h"
 #include "gameEvents/etidalwaveevent.h"
 #include "gameEvents/esinklandevent.h"
+#include "gameEvents/elandslideevent.h"
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/erivalarmyawayevent.h"
 #include "gameEvents/etroopsrequestevent.h"
@@ -272,6 +273,7 @@ enum class ePakEventType {
     invasion,
     earthquake,
     godQuest,
+    landSlide,
     wageIncrease,
     wageDecrease,
     demandIncrease,
@@ -296,6 +298,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 2) return ePakEventType::invasion;
     else if(id == 3) return ePakEventType::earthquake;
     else if(id == 4) return ePakEventType::godQuest;
+    else if(id == 5) return ePakEventType::landSlide;
     else if(id == 8) return ePakEventType::wageIncrease;
     else if(id == 9) return ePakEventType::wageDecrease;
     else if(id == 13) return ePakEventType::demandIncrease;
@@ -862,6 +865,19 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 cid, eGameEventBranch::root, *ep.fBoard);
             ee->setMinCount(amountMin);
             ee->setMaxCount(amountMax);
+
+            e = ee;
+        } break;
+        case ePakEventType::landSlide: {
+            const auto ee = e::make_shared<eLandSlideEvent>(
+                cid, eGameEventBranch::root, *ep.fBoard);
+            if(cityId0 != 0xFFFF) {
+                ee->setMinPointId(cityId0);
+                ee->setMaxPointId(cityId0);
+            } else {
+                ee->setMinPointId(cityId1);
+                ee->setMaxPointId(cityId2);
+            }
 
             e = ee;
         } break;

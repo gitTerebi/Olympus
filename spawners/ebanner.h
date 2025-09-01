@@ -20,7 +20,8 @@ enum class eBannerTypeS {
     disembarkPoint,
     none,
     riverEntryPoint,
-    riverExitPoint
+    riverExitPoint,
+    landSlidePoint
 };
 
 class eBanner {

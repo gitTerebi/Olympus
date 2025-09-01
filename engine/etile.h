@@ -149,6 +149,9 @@ public:
     bool lavaZone() const { return mLavaZone; }
     void setLavaZone(const bool z) { mLavaZone = z; }
 
+    bool landSlideZone() const { return mLandSlideZone; }
+    void setLandSlideZone(const bool z) { mLandSlideZone = z; }
+
     bool onFire() const override;
     void setOnFire(const bool f) override;
 
@@ -170,12 +173,13 @@ private:
     int mUnderTileDX = 0;
     int mUnderTileDY = 0;
 
-    int mDoubleAltitude = 0;
+    char mDoubleAltitude = 0;
     bool mHalfSlope = false;
     bool mRainforest = false;
-    double mScrub = 0;
+    float mScrub = 0;
     bool mTidalWaveZone = false;
     bool mLavaZone = false;
+    bool mLandSlideZone = false;
 
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;

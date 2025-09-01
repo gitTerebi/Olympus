@@ -919,6 +919,10 @@ bool eMessages::loadImpl() {
                 "sinkland_title",
                 "sinkland_phrase_by_god");
 
+    loadMessage(fLandSlide,
+                "landslide_title",
+                "landslide_initial_announcement");
+
     fCityBecomesAlly.fFull.fTitle = loadMessage("PHRASE_becomes_ally_title");
     fCityBecomesAlly.fFull.fText = loadMessage("PHRASE_becomes_ally_initial_announcement");
     fCityBecomesAlly.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_becomes_ally_title");

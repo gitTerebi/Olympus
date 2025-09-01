@@ -131,11 +131,17 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w7->fitContent();
 
     const auto w8 = new eActionListWidget(window());
-    w8->addAction("Raise", [this]() {
+    w8->addAction(eLanguage::zeusText(48, 12), [this]() {
         mMode = eTerrainEditMode::raise;
     });
-    w8->addAction("Lower", [this]() {
+    w8->addAction(eLanguage::zeusText(48, 13), [this]() {
         mMode = eTerrainEditMode::lower;
+    });
+    w8->addAction(eLanguage::zeusText(48, 14), [this]() {
+        mMode = eTerrainEditMode::raiseHigh;
+    });
+    w8->addAction(eLanguage::zeusText(48, 15), [this]() {
+        mMode = eTerrainEditMode::lowerHigh;
     });
     w8->addAction("Level Out", [this]() {
         mMode = eTerrainEditMode::levelOut;
@@ -143,10 +149,10 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w8->addAction("Reset Elevation", [this]() {
         mMode = eTerrainEditMode::resetElev;
     });
-    w8->addAction("Half Slope", [this]() {
+    w8->addAction(eLanguage::zeusText(48, 18), [this]() {
         mMode = eTerrainEditMode::halfSlope;
     });
-    w8->addAction("Make Walkable", [this]() {
+    w8->addAction(eLanguage::zeusText(48, 16), [this]() {
         mMode = eTerrainEditMode::makeWalkable;
     });
     w8->stackVertically(mSpacing);
@@ -162,6 +168,9 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     w9->addAction(eLanguage::zeusText(48, 69), [this]() {
         mMode = eTerrainEditMode::tidalWave;
     });
+    w9->addAction(eLanguage::zeusText(156, 5), [this]() {
+        mMode = eTerrainEditMode::landSlide;
+    });
     for(int i = 0; i < 8; i++) {
         w9->addAction(eLanguage::zeusText(48, 70 + i), [this, i]() {
             mMode = eTerrainEditMode::disasterPoint;
@@ -169,6 +178,16 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
             const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i + 1);
+            return b != nullptr;
+        });
+    }
+    for(int i = 0; i < 3; i++) {
+        w9->addAction(eLanguage::zeusText(48, 89 + i), [this, i]() {
+            mMode = eTerrainEditMode::landSlidePoint;
+            mModeId = i + 1;
+        }, [board, i, gw]() {
+            const auto cid = gw->viewedCity();
+            const auto b = board->banner(cid, eBannerTypeS::landSlidePoint, i + 1);
             return b != nullptr;
         });
     }

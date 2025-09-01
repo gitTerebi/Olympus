@@ -1,11 +1,11 @@
-#ifndef ELAVAMISSILE_H
-#define ELAVAMISSILE_H
+#ifndef EDUSTMISSILE_H
+#define EDUSTMISSILE_H
 
 #include "emissile.h"
 
-class eLavaMissile : public eMissile {
+class eDustMissile : public eMissile {
 public:
-    eLavaMissile(eGameBoard& board,
+    eDustMissile(eGameBoard& board,
                  const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture>
@@ -15,4 +15,4 @@ private:
     mutable int mTexTimeShift = 0;
 };
 
-#endif // ELAVAMISSILE_H
+#endif // EDUSTMISSILE_H
