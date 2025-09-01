@@ -1103,8 +1103,6 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
     file.skipBytes(58);
 
     const auto goalType = pakIdToEpisodeGoalType(typeId);
-    printf("%s %i %i %i %i\n", eEpisodeGoal::sText(goalType).c_str(),
-           value1, value2, value3, value4);
     const auto goal = std::make_shared<eEpisodeGoal>();
     goal->fType = goalType;
     switch(goalType) {
