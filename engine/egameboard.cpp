@@ -3170,6 +3170,8 @@ void eGameBoard::sinkLand(const eCityId cid, const int amount) {
         std::vector<eTile*> used;
         std::function<void(eTile* const)> addShore;
         addShore = [&](eTile* const t) {
+            const auto tcid = t->cityId();
+            if(tcid != cid) return;
             const bool c = eVectorHelpers::contains(used, t);
             if(c) return;
             used.push_back(t);
