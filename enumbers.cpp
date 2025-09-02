@@ -242,6 +242,8 @@ void eNumbers::sLoad() {
                            int& val, const int def) {
         if(write) {
             file << name << " \"" << def << "\"\n";
+            val = def;
+            return;
         }
         const auto it = map.find(name);
         if(it == map.end()) {
@@ -263,6 +265,8 @@ void eNumbers::sLoad() {
                            double& val, const double def) {
         if(write) {
             file << name << " \"" << def << "\"\n";
+            val = def;
+            return;
         }
         const auto it = map.find(name);
         if(it == map.end()) {
