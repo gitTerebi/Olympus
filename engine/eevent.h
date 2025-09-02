@@ -14,6 +14,25 @@ enum class eEvent {
 
     sanctuaryComplete,
 
+    modestPyramidComplete1,
+    pyramidComplete2,
+    greatPyramidComplete3,
+    majesticPyramidComplete4,
+
+    smallMonumentToTheSkyComplete5,
+    monumentToTheSkyComplete6,
+    grandMonumentToTheSkyComplete7,
+
+    minorShrineComplete8,
+    shrineComplete9,
+    majorShrineComplete10,
+
+    pyramidOfThePantheonComplete11,
+    altarOfOlympusComplete12,
+    templeOfOlympusComplete13,
+    observatoryKosmikaComplete14,
+    museumAtlantikaComplete15,
+
     heroArrival,
 
     monsterInvasionInitial,

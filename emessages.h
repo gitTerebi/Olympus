@@ -317,6 +317,25 @@ public:
     eMessageType fSinkLandGod;
     eMessageType fLandSlide;
 
+    eMessageType fModestPyramidComplete1;
+    eMessageType fPyramidComplete2;
+    eMessageType fGreatPyramidComplete3;
+    eMessageType fMajesticPyramidComplete4;
+
+    eMessageType fSmallMonumentToTheSkyComplete5;
+    eMessageType fMonumentToTheSkyComplete6;
+    eMessageType fGrandMonumentToTheSkyComplete7;
+
+    eMessageType fMinorShrineComplete8;
+    eMessageType fShrineComplete9;
+    eMessageType fMajorShrineComplete10;
+
+    eMessageType fPyramidOfThePantheonComplete11;
+    eMessageType fAltarOfOlympusComplete12;
+    eMessageType fTempleOfOlympusComplete13;
+    eMessageType fObservatoryKosmikaComplete14;
+    eMessageType fMuseumAtlantikaComplete15;
+
     eMessageType fCityBecomesAlly;
     eMessageType fCityBecomesRival;
     eMessageType fCityBecomesVassal;

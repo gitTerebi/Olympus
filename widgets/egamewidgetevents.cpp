@@ -235,6 +235,55 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::modestPyramidComplete1:
+        showMessage(ed, inst.fModestPyramidComplete1);
+        return;
+    case eEvent::pyramidComplete2:
+        showMessage(ed, inst.fPyramidComplete2);
+        return;
+    case eEvent::greatPyramidComplete3:
+        showMessage(ed, inst.fGreatPyramidComplete3);
+        return;
+    case eEvent::majesticPyramidComplete4:
+        showMessage(ed, inst.fMajesticPyramidComplete4);
+        return;
+
+    case eEvent::smallMonumentToTheSkyComplete5:
+        showMessage(ed, inst.fSmallMonumentToTheSkyComplete5);
+        return;
+    case eEvent::monumentToTheSkyComplete6:
+        showMessage(ed, inst.fMonumentToTheSkyComplete6);
+        return;
+    case eEvent::grandMonumentToTheSkyComplete7:
+        showMessage(ed, inst.fGrandMonumentToTheSkyComplete7);
+        return;
+
+    case eEvent::minorShrineComplete8:
+        showMessage(ed, inst.fMinorShrineComplete8);
+        return;
+    case eEvent::shrineComplete9:
+        showMessage(ed, inst.fShrineComplete9);
+        return;
+    case eEvent::majorShrineComplete10:
+        showMessage(ed, inst.fMajorShrineComplete10);
+        return;
+
+    case eEvent::pyramidOfThePantheonComplete11:
+        showMessage(ed, inst.fPyramidOfThePantheonComplete11);
+        return;
+    case eEvent::altarOfOlympusComplete12:
+        showMessage(ed, inst.fAltarOfOlympusComplete12);
+        return;
+    case eEvent::templeOfOlympusComplete13:
+        showMessage(ed, inst.fTempleOfOlympusComplete13);
+        return;
+    case eEvent::observatoryKosmikaComplete14:
+        showMessage(ed, inst.fObservatoryKosmikaComplete14);
+        return;
+    case eEvent::museumAtlantikaComplete15:
+        showMessage(ed, inst.fMuseumAtlantikaComplete15);
+        return;
+
     case eEvent::heroArrival:
         handleHeroArrivalEvent(ed);
         break;

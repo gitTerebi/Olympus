@@ -923,6 +923,56 @@ bool eMessages::loadImpl() {
                 "landslide_title",
                 "landslide_initial_announcement");
 
+    loadMessage(fModestPyramidComplete1,
+                "pyramid1_complete_title",
+                "pyramid1_complete_initial_announcement");
+    loadMessage(fPyramidComplete2,
+                "pyramid2_complete_title",
+                "pyramid2_complete_initial_announcement");
+    loadMessage(fGreatPyramidComplete3,
+                "pyramid3_complete_title",
+                "pyramid3_complete_initial_announcement");
+    loadMessage(fMajesticPyramidComplete4,
+                "pyramid4_complete_title",
+                "pyramid4_complete_initial_announcement");
+
+    loadMessage(fSmallMonumentToTheSkyComplete5,
+                "pyramid5_complete_title",
+                "pyramid5_complete_initial_announcement");
+    loadMessage(fMonumentToTheSkyComplete6,
+                "pyramid6_complete_title",
+                "pyramid6_complete_initial_announcement");
+    loadMessage(fGrandMonumentToTheSkyComplete7,
+                "pyramid7_complete_title",
+                "pyramid7_complete_initial_announcement");
+
+    loadMessage(fMinorShrineComplete8,
+                "pyramid8_complete_title",
+                "pyramid8_complete_initial_announcement");
+    loadMessage(fShrineComplete9,
+                "pyramid9_complete_title",
+                "pyramid9_complete_initial_announcement");
+    loadMessage(fMajorShrineComplete10,
+                "pyramid10_complete_title",
+                "pyramid10_complete_initial_announcement");
+
+
+    loadMessage(fPyramidOfThePantheonComplete11,
+                "pyramid11_complete_title",
+                "pyramid11_complete_initial_announcement");
+    loadMessage(fAltarOfOlympusComplete12,
+                "pyramid12_complete_title",
+                "pyramid12_complete_initial_announcement");
+    loadMessage(fTempleOfOlympusComplete13,
+                "pyramid13_complete_title",
+                "pyramid13_complete_initial_announcement");
+    loadMessage(fObservatoryKosmikaComplete14,
+                "pyramid14_complete_title",
+                "pyramid14_complete_initial_announcement");
+    loadMessage(fMuseumAtlantikaComplete15,
+                "pyramid15_complete_title",
+                "pyramid15_complete_initial_announcement");
+
     fCityBecomesAlly.fFull.fTitle = loadMessage("PHRASE_becomes_ally_title");
     fCityBecomesAlly.fFull.fText = loadMessage("PHRASE_becomes_ally_initial_announcement");
     fCityBecomesAlly.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_becomes_ally_title");

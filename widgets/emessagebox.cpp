@@ -57,6 +57,10 @@ void eMessageBox::initialize(eGameWidget* const gw,
             eStringHelpers::replaceAll(msg.fTitle, "[itemshort]",
                                        nameShort);
         }
+
+        eStringHelpers::replaceAll(msg.fTitle, "[god]",
+                                   eGod::sGodName(ed.fGod));
+
         const auto title = new eLabel(msg.fTitle, window());
         title->setHugeFontSize();
         title->fitContent();

@@ -12,6 +12,8 @@
 #include "epyramidmuseum.h"
 
 #include "engine/egameboard.h"
+#include "engine/eeventdata.h"
+#include "engine/eevent.h"
 
 ePyramid::ePyramid(eGameBoard& board,
                    const eBuildingType type,
@@ -1068,6 +1070,111 @@ void ePyramid::buildingProgressed() {
         const auto pe = static_cast<ePyramidElement*>(e.get());
         const int level = pe->currentElevation();
         pe->setHalted(level > minLevel);
+    }
+    const bool f = finished();
+    if(f) {
+        const auto cid = cityId();
+        eEventData ed(cid);
+        const auto type = ePyramid::type();
+        const auto god = sGod(type);
+        ed.fGod = god;
+        auto& board = ePyramid::getBoard();
+        eEvent event;
+        switch(type) {
+        case eBuildingType::modestPyramid: // 3x3
+            event = eEvent::modestPyramidComplete1;
+            break;
+        case eBuildingType::pyramid: // 5x5
+            event = eEvent::pyramidComplete2;
+            break;
+        case eBuildingType::greatPyramid: // 7x7
+            event = eEvent::greatPyramidComplete3;
+            break;
+        case eBuildingType::majesticPyramid: // 9x9
+            event = eEvent::majesticPyramidComplete4;
+            break;
+
+        case eBuildingType::smallMonumentToTheSky: // 5x5
+            event = eEvent::smallMonumentToTheSkyComplete5;
+            break;
+        case eBuildingType::monumentToTheSky: // 6x6
+            event = eEvent::monumentToTheSkyComplete6;
+            break;
+        case eBuildingType::grandMonumentToTheSky: // 8x8
+            event = eEvent::grandMonumentToTheSkyComplete7;
+            break;
+
+        case eBuildingType::minorShrineAphrodite: // 3x3
+        case eBuildingType::minorShrineApollo:
+        case eBuildingType::minorShrineAres:
+        case eBuildingType::minorShrineArtemis:
+        case eBuildingType::minorShrineAthena:
+        case eBuildingType::minorShrineAtlas:
+        case eBuildingType::minorShrineDemeter:
+        case eBuildingType::minorShrineDionysus:
+        case eBuildingType::minorShrineHades:
+        case eBuildingType::minorShrineHephaestus:
+        case eBuildingType::minorShrineHera:
+        case eBuildingType::minorShrineHermes:
+        case eBuildingType::minorShrinePoseidon:
+        case eBuildingType::minorShrineZeus:
+            event = eEvent::minorShrineComplete8;
+            break;
+
+        case eBuildingType::shrineAphrodite: // 6x6
+        case eBuildingType::shrineApollo:
+        case eBuildingType::shrineAres:
+        case eBuildingType::shrineArtemis:
+        case eBuildingType::shrineAthena:
+        case eBuildingType::shrineAtlas:
+        case eBuildingType::shrineDemeter:
+        case eBuildingType::shrineDionysus:
+        case eBuildingType::shrineHades:
+        case eBuildingType::shrineHephaestus:
+        case eBuildingType::shrineHera:
+        case eBuildingType::shrineHermes:
+        case eBuildingType::shrinePoseidon:
+        case eBuildingType::shrineZeus:
+            event = eEvent::shrineComplete9;
+            break;
+
+        case eBuildingType::majorShrineAphrodite: // 8x8
+        case eBuildingType::majorShrineApollo:
+        case eBuildingType::majorShrineAres:
+        case eBuildingType::majorShrineArtemis:
+        case eBuildingType::majorShrineAthena:
+        case eBuildingType::majorShrineAtlas:
+        case eBuildingType::majorShrineDemeter:
+        case eBuildingType::majorShrineDionysus:
+        case eBuildingType::majorShrineHades:
+        case eBuildingType::majorShrineHephaestus:
+        case eBuildingType::majorShrineHera:
+        case eBuildingType::majorShrineHermes:
+        case eBuildingType::majorShrinePoseidon:
+        case eBuildingType::majorShrineZeus:
+            event = eEvent::majorShrineComplete10;
+            break;
+
+        case eBuildingType::pyramidOfThePantheon: // 11x9
+            event = eEvent::pyramidOfThePantheonComplete11;
+            break;
+        case eBuildingType::altarOfOlympus: // 8x8
+            event = eEvent::altarOfOlympusComplete12;
+            break;
+        case eBuildingType::templeOfOlympus: // 8x8
+            event = eEvent::templeOfOlympusComplete13;
+            break;
+        case eBuildingType::observatoryKosmika: // 9x9
+            event = eEvent::observatoryKosmikaComplete14;
+            break;
+        case eBuildingType::museumAtlantika: // 8x8
+            event = eEvent::museumAtlantikaComplete15;
+            break;
+        default:
+            return;
+        }
+
+        board.event(event, ed);
     }
 }
 
