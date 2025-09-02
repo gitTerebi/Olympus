@@ -740,6 +740,11 @@ public:
     int bestYearlyProduction(const eResourceType type) const;
     void incProduced(const eResourceType type,
                      const int by);
+
+    static void sBuildTiles(int& minX, int& minY,
+                            int& maxX, int& maxY,
+                            const int tx, const int ty,
+                            const int sw, const int sh);
 private:
     void updateNeighbours();
 

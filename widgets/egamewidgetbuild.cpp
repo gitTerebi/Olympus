@@ -1821,9 +1821,77 @@ bool eGameWidget::buildMouseRelease() {
         case eBuildingMode::waterPark: {
             r = mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode, [this]() {
                 const auto b = e::make_shared<eWaterPark>(*mBoard, mViewedCityId);
-                b->setId(waterParkId());
+                b->setId(rotationId());
                 return b;
             });
+        } break;
+
+        case eBuildingMode::hippodromePiece: {
+            const int hid = hippodromeId();
+            if(hid == -1) {
+                showTip(cid, eLanguage::zeusText(19, 257));
+            } else {
+                r = mBoard->build(mHoverTX, mHoverTY, 4, 4, cid, pid, mEditorMode, [this, hid]() {
+                    const auto b = e::make_shared<eHippodromePiece>(*mBoard, mViewedCityId);
+                    b->setId(hid);
+                    return b;
+                });
+            }
+        } break;
+
+        case eBuildingMode::crosswalk: {
+            const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
+            if(b && b->type() == eBuildingType::hippodromePiece) {
+                for(int dx = -1; dx <= 1; dx++) {
+                    for(int dy = -1; dy <= 1; dy++) {
+                        if(dx == 0 && dy == 0) continue;
+                        const auto bb = mBoard->buildingAt(mHoverTX + dx, mHoverTY + dy);
+                        if(bb && bb->type() == eBuildingType::road) {
+                            const auto r = static_cast<eRoad*>(bb);
+                            if(r->aboveHippodrome() == b) return true;
+                        }
+                    }
+                }
+                const auto h = static_cast<eHippodromePiece*>(b);
+                int id = h->id();
+                if(id == 0) {
+                    id = 4;
+                } else if(id == 6) {
+                    id = 2;
+                } else if(id != 2 && id != 4) {
+                    return true;
+                }
+                h->setId(id);
+                const auto& r = h->tileRect();
+                const auto buildCrosswalk = [&](eTile* const t) {
+                    const auto b = e::make_shared<eRoad>(*mBoard, mViewedCityId);
+                    b->setCenterTile(t);
+                    b->setTileRect({t->x(), t->y(), 1, 1});
+                    t->setUnderBuilding(b);
+                    b->addUnderBuilding(t);
+                    b->setAboveHippodrome(h);
+                };
+                if(id == 2) {
+                    for(int x = r.x; x < r.x + r.w; x++) {
+                        const auto t = mBoard->tile(x, mHoverTY);
+                        buildCrosswalk(t);
+                    }
+                } else if(id == 4) {
+                    for(int y = r.y; y < r.y + r.h; y++) {
+                        const auto t = mBoard->tile(mHoverTX, y);
+                        buildCrosswalk(t);
+                    }
+                } else {
+                    return true;
+                }
+
+                if(!mEditorMode) {
+                    const auto diff = mBoard->difficulty(ppid);
+                    const int cost = eDifficultyHelpers::buildingCost(
+                        diff, eBuildingType::crosswalk);
+                    mBoard->incDrachmas(ppid, -cost);
+                }
+            }
         } break;
 
         case eBuildingMode::birdBath: {

@@ -778,6 +778,13 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
         string = 119;
         break;
 
+    case eBuildingType::hippodromePiece:
+        string = 200;
+        break;
+    case eBuildingType::crosswalk:
+        string = 201;
+        break;
+
     case eBuildingType::erase:
     case eBuildingType::none:
     case eBuildingType::palaceTile:
@@ -2052,6 +2059,9 @@ void eBuilding::sInfoText(eBuilding* const b,
     case eBuildingType::wall:
         group = 166;
         break;
+    case eBuildingType::hippodromePiece: {
+        group = 167;
+    } break;
     case eBuildingType::gatehouse:
         group = 168;
         break;

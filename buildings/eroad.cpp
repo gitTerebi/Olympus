@@ -4,13 +4,16 @@
 
 #include "engine/egameboard.h"
 #include "egatehouse.h"
+#include "ehippodromepiece.h"
 #include "elanguage.h"
 
 eRoad::eRoad(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::road, 1, 1, cid) {}
 
 void eRoad::erase() {
-    if(isBridge()) {
+    if(mAboveHippodrome) {
+        mAboveHippodrome->erase();
+    } else if(isBridge()) {
         auto& board = getBoard();
         const auto cid = cityId();
         const bool a = board.hasActiveInvasions(cid);
@@ -39,6 +42,8 @@ void eRoad::erase() {
 }
 
 std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
+    if(mAboveHippodrome) return nullptr;
+
     auto& board = getBoard();
     const auto dir = board.direction();
 
@@ -57,8 +62,8 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     }
 
     if(mUnderGatehouse) {
-        const auto r = tileRect();
-        const auto rr = mUnderGatehouse->tileRect();
+        const auto& r = tileRect();
+        const auto& rr = mUnderGatehouse->tileRect();
         const int dx = r.x - rr.x;
         const int dy = r.y - rr.y;
         if(dy == 0) {
@@ -72,9 +77,6 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
         }
     }
 
-    const auto& tbcoll = trrTexs.fToBeachRoad;
-    const auto& bcoll = trrTexs.fBeachRoad;
-
     const auto ti = centerTile();
     const auto tr = ti->topRightRotated(dir);
     const auto br = ti->bottomRightRotated(dir);
@@ -85,6 +87,9 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     const bool brRoad = !br || br->hasRoad();
     const bool blRoad = !bl || bl->hasRoad();
     const bool tlRoad = !tl || tl->hasRoad();
+
+    const auto& tbcoll = trrTexs.fToBeachRoad;
+    const auto& bcoll = trrTexs.fBeachRoad;
 
     const bool bridge = ti->hasBridge();
     if(bridge) {
@@ -349,12 +354,64 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     return std::shared_ptr<eTexture>();
 }
 
+std::shared_ptr<eTexture> eRoad::getHippodromeTexture(const eTileSize size) const {
+    auto& board = getBoard();
+    const auto dir = board.direction();
+
+    const int sizeId = static_cast<int>(size);
+    const auto& builTexs = eGameTextures::buildings()[sizeId];
+
+    const auto ti = centerTile();
+    const auto tr = ti->topRightRotated(dir);
+    const auto br = ti->bottomRightRotated(dir);
+    const auto bl = ti->bottomLeftRotated(dir);
+    const auto tl = ti->topLeftRotated(dir);
+
+    const bool trRoad = !tr || tr->hasRoad();
+    const bool brRoad = !br || br->hasRoad();
+    const bool blRoad = !bl || bl->hasRoad();
+    const bool tlRoad = !tl || tl->hasRoad();
+
+    if(mAboveHippodrome) {
+        const auto& coll = builTexs.fHippodrome;
+        const auto& r = tileRect();
+        const auto& rr = mAboveHippodrome->tileRect();
+        if(r.y == rr.y + rr.h - 1) {
+            if(trRoad) {
+                return coll.getTexture(8);
+            }
+        }
+        if(r.y == rr.y) {
+            if(blRoad) {
+                return coll.getTexture(10);
+            }
+        }
+        if(r.x == rr.x + rr.w - 1) {
+            if(tlRoad) {
+                return coll.getTexture(13);
+            }
+        }
+        if(r.x == rr.x) {
+            if(brRoad) {
+                return coll.getTexture(11);
+            }
+        }
+        if(trRoad && blRoad) return coll.getTexture(9);
+        if(tlRoad && brRoad) return coll.getTexture(12);
+    }
+    return nullptr;
+}
+
 void eRoad::setUnderAgora(eAgoraBase* const a) {
     mUnderAgora = a;
 }
 
 void eRoad::setUnderGatehouse(eGatehouse* const g) {
     mUnderGatehouse = g;
+}
+
+void eRoad::setAboveHippodrome(eHippodromePiece * const h) {
+    mAboveHippodrome = h;
 }
 
 bool eRoad::isBridge() const {

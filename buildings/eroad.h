@@ -2,10 +2,10 @@
 #define EROAD_H
 
 #include "ebuilding.h"
-#include "textures/ebuildingtextures.h"
 
 class eGatehouse;
 class eAgoraBase;
+class eHippodromePiece;
 
 class eRoad : public eBuilding {
 public:
@@ -15,11 +15,16 @@ public:
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 
+    std::shared_ptr<eTexture> getHippodromeTexture(const eTileSize size) const;
+
     void setUnderAgora(eAgoraBase* const a);
     eAgoraBase* underAgora() const { return mUnderAgora; }
 
     void setUnderGatehouse(eGatehouse* const g);
     eGatehouse* underGatehouse() const { return mUnderGatehouse; }
+
+    void setAboveHippodrome(eHippodromePiece* const h);
+    eHippodromePiece* aboveHippodrome() const { return mAboveHippodrome; }
 
     bool isBridge() const;
     bool isRoadblock() const;
@@ -29,6 +34,7 @@ public:
 private:
     eGatehouse* mUnderGatehouse = nullptr;
     eAgoraBase* mUnderAgora = nullptr;
+    eHippodromePiece* mAboveHippodrome = nullptr;
     bool mRoadblock = false;
 };
 

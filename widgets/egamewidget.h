@@ -216,7 +216,9 @@ private:
 
     void updateMinimap();
 
-    int waterParkId() const;
+    int rotationId() const;
+    int hippodromeId() const;
+    void updateHippodromeIds();
 
     void showMessage(eEventData& ed, const eMessage& msg,
                      const bool prepend = false);
@@ -278,6 +280,8 @@ private:
     bool mPaused = false;
     bool mLocked = false;
     int mFrame{0};
+    int mRotateFrame{0};
+    std::vector<int> mValiableHippodromePieces;
     int mTime{0};
     int mSpeedId = 1;
     int mSpeed = sSpeeds[mSpeedId];

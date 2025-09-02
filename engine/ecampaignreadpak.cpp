@@ -119,7 +119,7 @@ void readEpisodeAllowedBuildings(eEpisode& ep, ZeusFile& file,
                            eBuildingType::armory,
                            eBuildingType::triremeWharf,
                            eBuildingType::eliteHousing,
-                           atlantean ? eBuildingType::none : eBuildingType::none, // hippodrome
+                           atlantean ? eBuildingType::hippodromePiece : eBuildingType::none, // hippodrome
                            atlantean ? eBuildingType::chariotFactory : eBuildingType::none,
                            eBuildingType::tallObelisk,
                            eBuildingType::sundial,

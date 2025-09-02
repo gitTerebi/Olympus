@@ -590,6 +590,11 @@ void eGameMenu::initialize(eGameBoard* const b,
                           diff, eBuildingType::taxOffice);
     const int cost12 = eDifficultyHelpers::buildingCost(
                           diff, eBuildingType::bridge);
+    const std::vector<eSPR> d5spr = {eSPR{eBuildingMode::hippodromePiece, eLanguage::zeusText(28, 200)},
+                                     eSPR{eBuildingMode::crosswalk, eLanguage::zeusText(28, 201)}};
+    const auto d5 = [this, cmx, cmy, d5spr]() {
+        openBuildWidget(cmx, cmy, d5spr);
+    };
     const auto buttonsVec5 = eButtonsDataVec{
                             {eBuildingMode::palace,
                              eLanguage::zeusText(28, 117),
@@ -601,7 +606,10 @@ void eGameMenu::initialize(eGameBoard* const b,
                              eLanguage::zeusText(28, 120),
                              bb5, cost12, 2,
                              &coll.fBridge,
-                             &coll.fPoseidonBridge}};
+                             &coll.fPoseidonBridge},
+                            {eBuildingMode::none,
+                             eLanguage::zeusText(28, 199),
+                             d5, 0, 3, &coll.fHipodrome, &coll.fHipodrome, d5spr}};
     const auto ww5 = createDataWidget(mAdminDataW, buttonsVec5,
                                       eLanguage::zeusText(88, 5));
 

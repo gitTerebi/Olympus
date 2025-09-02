@@ -688,9 +688,14 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         b = e::make_shared<ePlaceholder>(board, cid);
     } break;
 
+    case eBuildingType::hippodromePiece: {
+        b = e::make_shared<eHippodromePiece>(board, cid);
+    } break;
+
     case eBuildingType::none:
     case eBuildingType::erase:
     case eBuildingType::bridge:
+    case eBuildingType::crosswalk:
         return nullptr;
     }
     if(b) b->read(src);

@@ -351,6 +351,11 @@ int costBase(const eBuildingType type) {
     case eBuildingType::pyramidObservatory:
     case eBuildingType::pyramidMuseum:
         return 0;
+
+    case eBuildingType::hippodromePiece:
+        return 30;
+    case eBuildingType::crosswalk:
+        return 25;
     }
 }
 

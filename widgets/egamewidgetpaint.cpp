@@ -361,7 +361,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
     mFrame++;
-
+    mRotateFrame++;
     bool updateTips = false;
     for(int i = 0; i < int(mTips.size()); i++) {
         const auto& tip = mTips[i];
@@ -666,8 +666,14 @@ void eGameWidget::paintEvent(ePainter& p) {
         const int a = mDrawElevation ? tile->altitude() : 0;
         const int da = mDrawElevation ? tile->doubleAltitude() : 0;
 
-        const auto ub = tile->underBuilding();
-        const auto bt = tile->underBuildingType();
+        auto ub = tile->underBuilding();
+        if(ub && ub->type() == eBuildingType::road) {
+            const auto r = static_cast<eRoad*>(ub);
+            if(const auto h = r->aboveHippodrome()) {
+                ub = h;
+            }
+        }
+        const auto bt = ub ? ub->type() : eBuildingType::none;
 
         const bool bv = eViewModeHelpers::buildingVisible(mViewMode, ub);
         const bool v = ub && bv;
@@ -1612,6 +1618,75 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
         };
 
+        const auto drawCrosswalk = [&]() {
+            if(mode == eBuildingMode::crosswalk) {
+                const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
+                if(b && b->type() == eBuildingType::hippodromePiece) {
+                    for(int dx = -1; dx <= 1; dx++) {
+                        for(int dy = -1; dy <= 1; dy++) {
+                            if(dx == 0 && dy == 0) continue;
+                            const auto bb = mBoard->buildingAt(mHoverTX + dx, mHoverTY + dy);
+                            if(bb && bb->type() == eBuildingType::road) {
+                                const auto r = static_cast<eRoad*>(bb);
+                                if(r->aboveHippodrome() == b) return;
+                            }
+                        }
+                    }
+                    const auto h = static_cast<eHippodromePiece*>(b);
+                    int id = h->id();
+                    if(id == 0) {
+                        id = 4;
+                    } else if(id == 6) {
+                        id = 2;
+                    } else if(id != 2 && id != 4) {
+                        return;
+                    }
+                    const auto& r = h->tileRect();
+
+                    const int sizeId = static_cast<int>(mTileSize);
+                    const auto& builTexs = eGameTextures::buildings()[sizeId];
+                    const auto& coll = builTexs.fHippodrome;
+                    stdsptr<eTexture> tex;
+                    if(id == 2) {
+                        for(int x = r.x; x < r.x + r.w; x++) {
+                            if(x == tx && mHoverTY == ty) {
+                                if(x == r.x) {
+                                    tex = coll.getTexture(11);
+                                } else if(x == r.x + r.w - 1) {
+                                    tex = coll.getTexture(13);
+                                } else {
+                                    tex = coll.getTexture(12);
+                                }
+                                break;
+                            }
+                        }
+                    } else if(id == 4) {
+                        for(int y = r.y; y < r.y + r.h; y++) {
+                            if(mHoverTX == tx && y == ty) {
+                                if(y == r.y) {
+                                    tex = coll.getTexture(10);
+                                } else if(y == r.y + r.h - 1) {
+                                    tex = coll.getTexture(8);
+                                } else {
+                                    tex = coll.getTexture(9);
+                                }
+                                break;
+                            }
+                        }
+                    } else {
+                        return;
+                    }
+
+                    if(tex) {
+                        tex->setColorMod(0, 255, 0);
+                        tp.drawTexture(rx + 0.5, ry - 0.5, tex,
+                                       eAlignment::hcenter | eAlignment::top);
+                        tex->clearColorMod();
+                    }
+                }
+            }
+        };
+
         drawBridge();
         drawPatrolGuides();
         drawSpawner();
@@ -1740,6 +1815,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         drawBanners();
 
         buildingDrawer(tile);
+        drawCrosswalk();
 
         drawMissiles();
 
@@ -3448,8 +3524,19 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         case eBuildingMode::waterPark: {
             const auto b1 = e::make_shared<eWaterPark>(*mBoard, mViewedCityId);
-            b1->setId(waterParkId());
+            b1->setId(rotationId());
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
+        } break;
+
+        case eBuildingMode::hippodromePiece: {
+            updateHippodromeIds();
+            const int hid = hippodromeId();
+            const auto b1 = e::make_shared<eHippodromePiece>(*mBoard, mViewedCityId);
+            b1->setId(hid == -1 ? 0 : hid);
+            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+            if(hid == -1) {
+                canBuildFunc = [](int, int, int, int) { return false; };
+            }
         } break;
 
         case eBuildingMode::birdBath: {

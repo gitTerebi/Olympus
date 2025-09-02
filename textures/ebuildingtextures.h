@@ -171,6 +171,8 @@ public:
     void loadBench();
     bool fParkLoaded = false;
     void loadPark();
+    bool fHippodromeLoaded = false;
+    void loadHippodrome();
 
     bool fZeusMonumentsLoaded = false;
     void loadZeusMonuments();
@@ -694,6 +696,8 @@ public:
     std::shared_ptr<eTexture> fNHasWine;
     std::shared_ptr<eTexture> fNHasArms;
     std::shared_ptr<eTexture> fNHasHorses;
+
+    eTextureCollection fHippodrome;
 private:
     bool fFisheryOverlayLoaded = false;
     void loadFisheryOverlay();

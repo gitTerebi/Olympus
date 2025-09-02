@@ -1528,6 +1528,13 @@ void eGameTextures::loadPark() {
     });
 }
 
+void eGameTextures::loadHippodrome() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadHippodrome();
+    });
+}
+
 void eGameTextures::loadPyramid() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

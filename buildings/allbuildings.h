@@ -119,5 +119,6 @@
 #include "buildings/eplaceholder.h"
 
 #include "buildings/etriremewharf.h"
+#include "buildings/ehippodromepiece.h"
 
 #endif // ALLBUILDINGS_H

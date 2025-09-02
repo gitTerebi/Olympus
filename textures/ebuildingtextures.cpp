@@ -612,11 +612,14 @@
 #include "spriteData/supplies45.h"
 #include "spriteData/supplies60.h"
 
+#include "spriteData/hippodrome15.h"
+#include "spriteData/hippodrome30.h"
+#include "spriteData/hippodrome45.h"
+#include "spriteData/hippodrome60.h"
+
 #include "offsets/PoseidonImps.h"
 
 #include "textures/espriteloader.h"
-
-#include <algorithm>
 
 eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
                                      SDL_Renderer* const renderer) :
@@ -856,7 +859,9 @@ eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
     fColumn4(renderer),
     fColumn5(renderer),
 
-    fSpawner(renderer) {}
+    fSpawner(renderer),
+
+    fHippodrome(renderer) {}
 
 void eBuildingTextures::loadAll() {
     load();
@@ -2641,6 +2646,23 @@ void eBuildingTextures::loadPark() {
         loader.load(12, i, fLargePark);
     }
     loader.load(12, 19, fHugePark);
+}
+
+void eBuildingTextures::loadHippodrome() {
+    if(fHippodromeLoaded) return;
+    fHippodromeLoaded = true;
+
+    const auto& sds = spriteData(fTileH,
+                                 eHippodromeSpriteData15,
+                                 eHippodromeSpriteData30,
+                                 eHippodromeSpriteData45,
+                                 eHippodromeSpriteData60);
+    eSpriteLoader loader(fTileH, "hippodrome", sds,
+                         nullptr, fRenderer);
+
+    for(int i = 1; i < 15; i++) {
+        loader.load(1, i, fHippodrome);
+    }
 }
 
 void eBuildingTextures::loadBirdBath() {

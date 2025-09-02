@@ -404,6 +404,11 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
 
     case eBuildingMode::triremeWharf:
         return eBuildingType::triremeWharf;
+
+    case eBuildingMode::hippodromePiece:
+        return eBuildingType::hippodromePiece;
+    case eBuildingMode::crosswalk:
+        return eBuildingType::crosswalk;
     }
 }
 

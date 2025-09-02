@@ -232,7 +232,10 @@ enum class eBuildingMode {
     altarOfOlympus, // 8x8
     templeOfOlympus, // 8x8
     observatoryKosmika, // 9x9
-    museumAtlantika // 8x8
+    museumAtlantika, // 8x8
+
+    hippodromePiece,
+    crosswalk
 };
 
 namespace eBuildingModeHelpers {

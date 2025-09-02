@@ -81,6 +81,7 @@ SOURCES += \
         buildings/egymnasium.cpp \
         buildings/eheatgetters.cpp \
         buildings/eheroshall.cpp \
+        buildings/ehippodromepiece.cpp \
         buildings/ehorseranch.cpp \
         buildings/ehorseranchenclosure.cpp \
         buildings/ehorsevendor.cpp \
@@ -766,6 +767,7 @@ HEADERS += \
     buildings/egymnasium.h \
     buildings/eheatgetters.h \
     buildings/eheroshall.h \
+    buildings/ehippodromepiece.h \
     buildings/ehorseranch.h \
     buildings/ehorseranchenclosure.h \
     buildings/ehorsevendor.h \
@@ -1903,6 +1905,50 @@ HEADERS += \
     spriteData/hermesStatue30.h \
     spriteData/hermesStatue45.h \
     spriteData/hermesStatue60.h \
+    spriteData/hippodrome15.h \
+    spriteData/hippodrome30.h \
+    spriteData/hippodrome45.h \
+    spriteData/hippodrome60.h \
+    spriteData/hippodromeBeer15.h \
+    spriteData/hippodromeBeer30.h \
+    spriteData/hippodromeBeer45.h \
+    spriteData/hippodromeBeer60.h \
+    spriteData/hippodromeFeces15.h \
+    spriteData/hippodromeFeces30.h \
+    spriteData/hippodromeFeces45.h \
+    spriteData/hippodromeFeces60.h \
+    spriteData/hippodromeFinish15.h \
+    spriteData/hippodromeFinish30.h \
+    spriteData/hippodromeFinish45.h \
+    spriteData/hippodromeFinish60.h \
+    spriteData/hippodromeHorse115.h \
+    spriteData/hippodromeHorse130.h \
+    spriteData/hippodromeHorse145.h \
+    spriteData/hippodromeHorse160.h \
+    spriteData/hippodromeHorse215.h \
+    spriteData/hippodromeHorse230.h \
+    spriteData/hippodromeHorse245.h \
+    spriteData/hippodromeHorse260.h \
+    spriteData/hippodromeHorse315.h \
+    spriteData/hippodromeHorse330.h \
+    spriteData/hippodromeHorse345.h \
+    spriteData/hippodromeHorse360.h \
+    spriteData/hippodromeHorse415.h \
+    spriteData/hippodromeHorse430.h \
+    spriteData/hippodromeHorse445.h \
+    spriteData/hippodromeHorse460.h \
+    spriteData/hippodromeHotDogs15.h \
+    spriteData/hippodromeHotDogs30.h \
+    spriteData/hippodromeHotDogs45.h \
+    spriteData/hippodromeHotDogs60.h \
+    spriteData/hippodromeSpectators15.h \
+    spriteData/hippodromeSpectators30.h \
+    spriteData/hippodromeSpectators45.h \
+    spriteData/hippodromeSpectators60.h \
+    spriteData/hippodromeStand15.h \
+    spriteData/hippodromeStand30.h \
+    spriteData/hippodromeStand45.h \
+    spriteData/hippodromeStand60.h \
     spriteData/homeless15.h \
     spriteData/homeless30.h \
     spriteData/homeless45.h \
@@ -3032,6 +3078,17 @@ DISTFILES += \
     textureTemplates/heracles \
     textureTemplates/hermes \
     textureTemplates/hermesStatue \
+    textureTemplates/hippodrome \
+    textureTemplates/hippodromeBeer \
+    textureTemplates/hippodromeFeces \
+    textureTemplates/hippodromeFinish \
+    textureTemplates/hippodromeHorse1 \
+    textureTemplates/hippodromeHorse2 \
+    textureTemplates/hippodromeHorse3 \
+    textureTemplates/hippodromeHorse4 \
+    textureTemplates/hippodromeHotDogs \
+    textureTemplates/hippodromeSpectators \
+    textureTemplates/hippodromeStand \
     textureTemplates/homeless \
     textureTemplates/hoplite \
     textureTemplates/hoplitePoseidon \

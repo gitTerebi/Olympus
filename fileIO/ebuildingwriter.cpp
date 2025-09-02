@@ -414,9 +414,13 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::theseusHall:
         break;
 
+    case eBuildingType::hippodromePiece:
+        break;
+
     case eBuildingType::none:
     case eBuildingType::erase:
     case eBuildingType::bridge:
+    case eBuildingType::crosswalk:
         return;
     }
     b->write(dst);

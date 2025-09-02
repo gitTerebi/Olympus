@@ -64,6 +64,7 @@
 #include "characters/etrireme.h"
 
 #include "edistrictconditionswidget.h"
+#include "buildings/ehippodromepiece.h"
 
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eMainWidget(window) {}
@@ -949,8 +950,145 @@ void eGameWidget::updateMinimap() {
     mmt->viewFraction(fx, fy);
 }
 
-int eGameWidget::waterParkId() const {
-    return mTime/(mSpeed*150);
+const int gRotateFrames = 150;
+
+int eGameWidget::rotationId() const {
+    return mRotateFrame/gRotateFrames;
+}
+
+int eGameWidget::hippodromeId() const {
+    if(mValiableHippodromePieces.empty()) return -1;
+    const int id = rotationId() % mValiableHippodromePieces.size();
+    return mValiableHippodromePieces[id];
+}
+
+void eGameWidget::updateHippodromeIds() {
+    mValiableHippodromePieces.clear();
+
+    const auto hs = mBoard->buildings(mViewedCityId, eBuildingType::hippodromePiece);
+    if(hs.empty()) {
+        mValiableHippodromePieces = {0, 1, 2, 3, 4, 5, 6, 7};
+        return;
+    }
+
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+    eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+                            mHoverTX, mHoverTY, 4, 4);
+    maxY--;
+    maxX--;
+    bool topLeft = false;
+    bool topRight = false;
+    bool bottomRight = false;
+    bool bottomLeft = false;
+
+    bool topLeftBlocked = false;
+    bool topRightBlocked = false;
+    bool bottomRightBlocked = false;
+    bool bottomLeftBlocked = false;
+
+    {
+        const int x = minX - 1;
+        const auto b1 = mBoard->buildingAt(x, minY);
+        const auto b2 = mBoard->buildingAt(x, maxY);
+        if(b1 == b2 && b1 && b2) {
+            const auto type = b1->type();
+            if(type == eBuildingType::hippodromePiece) {
+                const auto h = static_cast<eHippodromePiece*>(b1);
+                const int id = h->id();
+                topLeftBlocked = true;
+                topLeft = id == 0 || id == 4 || id == 5 || id == 7;
+            }
+        }
+    }
+    {
+        const int y = minY - 1;
+        const auto b1 = mBoard->buildingAt(minX, y);
+        const auto b2 = mBoard->buildingAt(maxX, y);
+        if(b1 == b2 && b1 && b2) {
+            const auto type = b1->type();
+            if(type == eBuildingType::hippodromePiece) {
+                const auto h = static_cast<eHippodromePiece*>(b1);
+                const int id = h->id();
+                topRightBlocked = true;
+                topRight = id == 1 || id == 2 || id == 6 || id == 7;
+            }
+        }
+    }
+    {
+        const int x = maxX + 1;
+        const auto b1 = mBoard->buildingAt(x, minY);
+        const auto b2 = mBoard->buildingAt(x, maxY);
+        if(b1 == b2 && b1 && b2) {
+            const auto type = b1->type();
+            if(type == eBuildingType::hippodromePiece) {
+                const auto h = static_cast<eHippodromePiece*>(b1);
+                const int id = h->id();
+                bottomRightBlocked = true;
+                bottomRight = id == 0 || id == 1 || id == 3 || id == 4;
+            }
+        }
+    }
+    {
+        const int y = maxY + 1;
+        const auto b1 = mBoard->buildingAt(minX, y);
+        const auto b2 = mBoard->buildingAt(maxX, y);
+        if(b1 == b2 && b1 && b2) {
+            const auto type = b1->type();
+            if(type == eBuildingType::hippodromePiece) {
+                const auto h = static_cast<eHippodromePiece*>(b1);
+                const int id = h->id();
+                bottomLeftBlocked = true;
+                bottomLeft = id == 2 || id == 3 || id == 5 || id == 6;
+            }
+        }
+    }
+
+    if(topLeft && bottomRight) {
+        mValiableHippodromePieces = {0, 4};
+    } else if(topLeft && bottomLeft) {
+        mValiableHippodromePieces = {1};
+    } else if(topRight && bottomLeft) {
+        mValiableHippodromePieces = {2, 6};
+    } else if(topLeft && topRight) {
+        mValiableHippodromePieces = {3};
+    } else if(topRight && bottomRight) {
+        mValiableHippodromePieces = {5};
+    } else if(bottomLeft && bottomRight) {
+        mValiableHippodromePieces = {7};
+    } else if(topLeft) {
+        mValiableHippodromePieces = {0, 1, 3, 4};
+    } else if(topRight) {
+        mValiableHippodromePieces = {2, 3, 5, 6};
+    } else if(bottomRight) {
+        mValiableHippodromePieces = {0, 4, 5, 7};
+    } else if(bottomLeft) {
+        mValiableHippodromePieces = {1, 2, 6, 7};
+    }
+
+    if(!topLeft && topLeftBlocked) {
+        eVectorHelpers::remove(mValiableHippodromePieces, 0);
+        eVectorHelpers::remove(mValiableHippodromePieces, 1);
+        eVectorHelpers::remove(mValiableHippodromePieces, 3);
+        eVectorHelpers::remove(mValiableHippodromePieces, 4);
+    } else if(!topRight && topRightBlocked) {
+        eVectorHelpers::remove(mValiableHippodromePieces, 2);
+        eVectorHelpers::remove(mValiableHippodromePieces, 3);
+        eVectorHelpers::remove(mValiableHippodromePieces, 5);
+        eVectorHelpers::remove(mValiableHippodromePieces, 6);
+    } else if(!bottomRight && bottomRightBlocked) {
+        eVectorHelpers::remove(mValiableHippodromePieces, 0);
+        eVectorHelpers::remove(mValiableHippodromePieces, 4);
+        eVectorHelpers::remove(mValiableHippodromePieces, 5);
+        eVectorHelpers::remove(mValiableHippodromePieces, 7);
+    } else if(!bottomLeft && bottomLeftBlocked) {
+        eVectorHelpers::remove(mValiableHippodromePieces, 1);
+        eVectorHelpers::remove(mValiableHippodromePieces, 2);
+        eVectorHelpers::remove(mValiableHippodromePieces, 6);
+        eVectorHelpers::remove(mValiableHippodromePieces, 7);
+    }
 }
 
 void eGameWidget::showMessage(eEventData& ed,
@@ -1630,6 +1768,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         mSpeed = sSpeeds[mSpeedId];
     } else if(k == SDL_Scancode::SDL_SCANCODE_R) {
         mRotate = !mRotate;
+        mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
         mRotateId++;
         if(mRotateId > 3) mRotateId = 0;
     } else if(k == SDL_Scancode::SDL_SCANCODE_P) {

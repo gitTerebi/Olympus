@@ -3540,10 +3540,10 @@ void centerTile(const int minX, const int minY,
     }
 }
 
-void buildTiles(int& minX, int& minY,
-                int& maxX, int& maxY,
-                const int tx, const int ty,
-                const int sw, const int sh) {
+void eGameBoard::sBuildTiles(int& minX, int& minY,
+                             int& maxX, int& maxY,
+                             const int tx, const int ty,
+                             const int sw, const int sh) {
     minX = tx;
     minY = ty;
 
@@ -3645,7 +3645,7 @@ bool eGameBoard::canBuild(const int tx, const int ty,
     int minY;
     int maxX;
     int maxY;
-    buildTiles(minX, minY, maxX, maxY, tx, ty, sw, sh);
+    sBuildTiles(minX, minY, maxX, maxY, tx, ty, sw, sh);
     return canBuildBase(minX, maxX, minY, maxY,
                         forestAllowed, cid, pid,
                         fertile, flat);
@@ -3718,7 +3718,7 @@ bool eGameBoard::build(const int tx, const int ty,
     int minY;
     int maxX;
     int maxY;
-    buildTiles(minX, minY, maxX, maxY,
+    sBuildTiles(minX, minY, maxX, maxY,
                tx, ty, sw, sh);
     return buildBase(minX, minY, maxX - 1, maxY - 1,
                      bc, pid, cid, editorDisplay, fertile, flat);
