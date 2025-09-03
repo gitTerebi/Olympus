@@ -1827,6 +1827,7 @@ bool eGameWidget::buildMouseRelease() {
         } break;
 
         case eBuildingMode::hippodromePiece: {
+            updateHippodromeIds();
             const int hid = hippodromeId();
             if(hid == -1) {
                 showTip(cid, eLanguage::zeusText(19, 257));
@@ -1870,16 +1871,27 @@ bool eGameWidget::buildMouseRelease() {
                     t->setUnderBuilding(b);
                     b->addUnderBuilding(t);
                     b->setAboveHippodrome(h);
+                    return b.get();
                 };
                 if(id == 2) {
+                    int i = 0;
                     for(int x = r.x; x < r.x + r.w; x++) {
                         const auto t = mBoard->tile(x, mHoverTY);
-                        buildCrosswalk(t);
+                        const auto r = buildCrosswalk(t);
+                        if(i == 1 || i == 2) {
+                            r->setCharacterAltitude(2);
+                        }
+                        i++;
                     }
                 } else if(id == 4) {
+                    int i = 0;
                     for(int y = r.y; y < r.y + r.h; y++) {
                         const auto t = mBoard->tile(mHoverTX, y);
-                        buildCrosswalk(t);
+                        const auto r = buildCrosswalk(t);
+                        if(i == 1 || i == 2) {
+                            r->setCharacterAltitude(2);
+                        }
+                        i++;
                     }
                 } else {
                     return true;

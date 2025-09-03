@@ -11,11 +11,13 @@ class eRoad : public eBuilding {
 public:
     eRoad(eGameBoard& board, const eCityId cid);
 
-    void erase();
+    void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture>
+    getTexture(const eTileSize size) const override;
 
-    std::shared_ptr<eTexture> getHippodromeTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture>
+    getHippodromeTexture(const eTileSize size) const;
 
     void setUnderAgora(eAgoraBase* const a);
     eAgoraBase* underAgora() const { return mUnderAgora; }
@@ -30,12 +32,19 @@ public:
     bool isRoadblock() const;
     void setRoadblock(const bool rb);
 
+    void setCharacterAltitude(const char a) { mCharacterAltitude = a; }
+    char characterAltitude() const { return mCharacterAltitude; }
+
     void bridgeConnectedTiles(std::vector<eTile*>& tiles) const;
+
+    void write(eWriteStream& dst) const override;
+    void read(eReadStream& src) override;
 private:
     eGatehouse* mUnderGatehouse = nullptr;
     eAgoraBase* mUnderAgora = nullptr;
     eHippodromePiece* mAboveHippodrome = nullptr;
     bool mRoadblock = false;
+    char mCharacterAltitude = 0;
 };
 
 #endif // EROAD_H

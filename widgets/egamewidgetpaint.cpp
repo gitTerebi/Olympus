@@ -1161,7 +1161,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         };
 
         const auto drawCharacters = [&](eTile* const tile,
-                                        const bool big) {
+                                        const bool big,
+                                        const bool crosswalk) {
             if(!tile) return;
             const int tx = tile->x();
             const int ty = tile->y();
@@ -1170,11 +1171,25 @@ void eGameWidget::paintEvent(ePainter& p) {
             eTileHelper::tileIdToRotatedTileId(tx, ty,
                                                rtx, rty, dir,
                                                boardw, boardh);
-            const int da = tile->doubleAltitude();
+            const int da = tile->characterDoubleAltitude();
             const auto bttt = tile->underBuildingType();
             const bool flat = eBuilding::sFlatBuilding(bttt);
             const bool pyramid = eBuilding::sPyramidBuilding(bttt);
             if(flat || bttt == eBuildingType::wall || pyramid) {
+                if(crosswalk) {
+                    if(bttt != eBuildingType::road) return;
+                    const auto b = tile->underBuilding();
+                    const auto r = static_cast<eRoad*>(b);
+                    const auto h = r->aboveHippodrome();
+                    if(!h) return;
+                } else {
+                    if(bttt == eBuildingType::road) {
+                        const auto b = tile->underBuilding();
+                        const auto r = static_cast<eRoad*>(b);
+                        const auto h = r->aboveHippodrome();
+                        if(h) return;
+                    }
+                }
                 const auto r = p.renderer();
                 const auto& chars = tile->characters();
                 for(const auto& c : chars) {
@@ -1222,51 +1237,51 @@ void eGameWidget::paintEvent(ePainter& p) {
                         const auto tr = tile->topRightRotated<eTile>(dir);
                         const auto bl = tile->bottomLeftRotated<eTile>(dir);
                         const auto br = tile->bottomRightRotated<eTile>(dir);
-                        if(tl && tl->doubleAltitude() > da) {
+                        if(tl && tl->characterDoubleAltitude() > da) {
                             const double mult = 1 - cx;
-                            const int tla = tl->doubleAltitude();
+                            const int tla = tl->characterDoubleAltitude();
                             const double fa = mult*(tla - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(tr && tr->doubleAltitude() > da) {
+                        } else if(tr && tr->characterDoubleAltitude() > da) {
                             const double mult = 1 - cy;
-                            const int tra = tr->doubleAltitude();
+                            const int tra = tr->characterDoubleAltitude();
                             const double fa = mult*(tra - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(bl && bl->doubleAltitude() > da) {
+                        } else if(bl && bl->characterDoubleAltitude() > da) {
                             const double mult = cy;
-                            const int bla = bl->doubleAltitude();
+                            const int bla = bl->characterDoubleAltitude();
                             const double fa = mult*(bla - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(br && br->doubleAltitude() > da) {
+                        } else if(br && br->characterDoubleAltitude() > da) {
                             const double mult = cx;
-                            const int bra = br->doubleAltitude();
+                            const int bra = br->characterDoubleAltitude();
                             const double fa = mult*(bra - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(t && t->doubleAltitude() > da) {
+                        } else if(t && t->characterDoubleAltitude() > da) {
                             const double mult = (1 - cx)*(1 - cy);
-                            const int ta = t->doubleAltitude();
+                            const int ta = t->characterDoubleAltitude();
                             const double fa = mult*(ta - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(l && l->doubleAltitude() > da) {
+                        } else if(l && l->characterDoubleAltitude() > da) {
                             const double mult = (1 - cx)*cy;
-                            const int la = l->doubleAltitude();
+                            const int la = l->characterDoubleAltitude();
                             const double fa = mult*(la - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(r && r->doubleAltitude() > da) {
+                        } else if(r && r->characterDoubleAltitude() > da) {
                             const double mult = cx*(1 - cy);
-                            const int ra = r->doubleAltitude();
+                            const int ra = r->characterDoubleAltitude();
                             const double fa = mult*(ra - da)*0.5;
                             x -= fa;
                             y -= fa;
-                        } else if(b && b->doubleAltitude() > da) {
+                        } else if(b && b->characterDoubleAltitude() > da) {
                             const double mult = cx*cy;
-                            const int ba = b->doubleAltitude();
+                            const int ba = b->characterDoubleAltitude();
                             const double fa = mult*(ba - da)*0.5;
                             x -= fa;
                             y -= fa;
@@ -1622,13 +1637,17 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(mode == eBuildingMode::crosswalk) {
                 const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
                 if(b && b->type() == eBuildingType::hippodromePiece) {
+                    bool red = false;
                     for(int dx = -1; dx <= 1; dx++) {
                         for(int dy = -1; dy <= 1; dy++) {
                             if(dx == 0 && dy == 0) continue;
                             const auto bb = mBoard->buildingAt(mHoverTX + dx, mHoverTY + dy);
                             if(bb && bb->type() == eBuildingType::road) {
                                 const auto r = static_cast<eRoad*>(bb);
-                                if(r->aboveHippodrome() == b) return;
+                                if(r->aboveHippodrome() == b) {
+                                    red = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1642,47 +1661,171 @@ void eGameWidget::paintEvent(ePainter& p) {
                         return;
                     }
                     const auto& r = h->tileRect();
+                    const auto rr = eTileHelper::toRotatedRect(
+                        r, dir, boardw, boardh);
+                    const int fitX = rr.x + rr.w - 1;
+                    const int fitY = rr.y + rr.h - 1;
+                    if(rtx != fitX || rty != fitY) return;
 
                     const int sizeId = static_cast<int>(mTileSize);
                     const auto& builTexs = eGameTextures::buildings()[sizeId];
                     const auto& coll = builTexs.fHippodrome;
                     stdsptr<eTexture> tex;
+                    int hx;
+                    int hy;
+                    const auto draw = [&]() {
+                        if(tex) {
+                            double rx;
+                            double ry;
+                            drawXY(hx, hy, rx, ry, 1, 1, a);
+                            if(red) tex->setColorMod(255, 0, 0);
+                            else tex->setColorMod(0, 255, 0);
+                            tp.drawTexture(rx + 0.5, ry - 0.5, tex,
+                                           eAlignment::hcenter | eAlignment::top);
+                            tex->clearColorMod();
+                        }
+                    };
                     if(id == 2) {
-                        for(int x = r.x; x < r.x + r.w; x++) {
-                            if(x == tx && mHoverTY == ty) {
-                                if(x == r.x) {
-                                    tex = coll.getTexture(11);
-                                } else if(x == r.x + r.w - 1) {
-                                    tex = coll.getTexture(13);
-                                } else {
-                                    tex = coll.getTexture(12);
-                                }
-                                break;
+                        bool reverse = false;
+                        int texId1;
+                        int texId2;
+                        int texId3;
+                        switch(dir) {
+                        case eWorldDirection::N: {
+                            texId1 = 11;
+                            texId2 = 12;
+                            texId3 = 13;
+                        } break;
+                        case eWorldDirection::E: {
+                            texId1 = 8;
+                            texId2 = 9;
+                            texId3 = 10;
+                            reverse = true;
+                        } break;
+                        case eWorldDirection::S: {
+                            texId1 = 13;
+                            texId2 = 12;
+                            texId3 = 11;
+                            reverse = true;
+                        } break;
+                        case eWorldDirection::W: {
+                            texId1 = 10;
+                            texId2 = 9;
+                            texId3 = 8;
+                        } break;
+                        }
+
+                        for(int x = reverse ? r.x + r.w - 1 : r.x;
+                            reverse ? x >= r.x : x < r.x + r.w;
+                            reverse ? x-- : x++) {
+                            hx = x;
+                            hy = mHoverTY;
+                            if(x == r.x) {
+                                tex = coll.getTexture(texId1);
+                            } else if(x == r.x + r.w - 1) {
+                                tex = coll.getTexture(texId3);
+                            } else {
+                                tex = coll.getTexture(texId2);
                             }
+                            draw();
                         }
                     } else if(id == 4) {
-                        for(int y = r.y; y < r.y + r.h; y++) {
-                            if(mHoverTX == tx && y == ty) {
-                                if(y == r.y) {
-                                    tex = coll.getTexture(10);
-                                } else if(y == r.y + r.h - 1) {
-                                    tex = coll.getTexture(8);
-                                } else {
-                                    tex = coll.getTexture(9);
-                                }
-                                break;
+                        bool reverse = false;
+                        int texId1;
+                        int texId2;
+                        int texId3;
+                        switch(dir) {
+                        case eWorldDirection::N: {
+                            texId1 = 10;
+                            texId2 = 9;
+                            texId3 = 8;
+                        } break;
+                        case eWorldDirection::E: {
+                            texId1 = 11;
+                            texId2 = 12;
+                            texId3 = 13;
+                        } break;
+                        case eWorldDirection::S: {
+                            texId1 = 8;
+                            texId2 = 9;
+                            texId3 = 10;
+                            reverse = true;
+                        } break;
+                        case eWorldDirection::W: {
+                            texId1 = 13;
+                            texId2 = 12;
+                            texId3 = 11;
+                            reverse = true;
+                        } break;
+                        }
+
+                        for(int y = reverse ? r.y + r.h - 1 : r.y;
+                            reverse ? y >= r.y : y < r.y + r.h;
+                            reverse ? y-- : y++) {
+                            hx = mHoverTX;
+                            hy = y;
+                            if(y == r.y) {
+                                tex = coll.getTexture(texId1);
+                            } else if(y == r.y + r.h - 1) {
+                                tex = coll.getTexture(texId3);
+                            } else {
+                                tex = coll.getTexture(texId2);
                             }
+                            draw();
                         }
                     } else {
                         return;
                     }
+                }
+            }
+        };
+        const auto drawCrosswalkCharacters = [&]() {
+            auto b = ub;
+            if(bt == eBuildingType::road) {
+                const auto r = static_cast<eRoad*>(b);
+                b = r->aboveHippodrome();
+            }
+            if(b && b->type() == eBuildingType::hippodromePiece) {
+                const auto& r = b->tileRect();
+                const auto rr = eTileHelper::toRotatedRect(
+                    r, dir, boardw, boardh);
+                const int fitX = rr.x + rr.w - 1;
+                const int fitY = rr.y + rr.h - 1;
+                if(rtx != fitX || rty != fitY) return;
 
-                    if(tex) {
-                        tex->setColorMod(0, 255, 0);
-                        tp.drawTexture(rx + 0.5, ry - 0.5, tex,
-                                       eAlignment::hcenter | eAlignment::top);
-                        tex->clearColorMod();
+                switch(dir) {
+                case eWorldDirection::N: {
+                    for(int y = r.y; y < r.y + r.h; y++) {
+                        for(int x = r.x; x < r.x + r.w; x++) {
+                            const auto tile = mBoard->tile(x, y);
+                            drawCharacters(tile, false, true);
+                        }
                     }
+                } break;
+                case eWorldDirection::E: {
+                    for(int x = r.x + r.w - 1; x >= r.x; x--) {
+                        for(int y = r.y; y < r.y + r.h; y++) {
+                            const auto tile = mBoard->tile(x, y);
+                            drawCharacters(tile, false, true);
+                        }
+                    }
+                } break;
+                case eWorldDirection::S: {
+                    for(int y = r.y + r.h - 1; y >= r.y; y--) {
+                        for(int x = r.x + r.w - 1; x >= r.x; x--) {
+                            const auto tile = mBoard->tile(x, y);
+                            drawCharacters(tile, false, true);
+                        }
+                    }
+                } break;
+                case eWorldDirection::W: {
+                    for(int x = r.x; x < r.x + r.w; x++) {
+                        for(int y = r.y + r.h - 1; y >= r.y; y--) {
+                            const auto tile = mBoard->tile(x, y);
+                            drawCharacters(tile, false, true);
+                        }
+                    }
+                } break;
                 }
             }
         };
@@ -1769,13 +1912,13 @@ void eGameWidget::paintEvent(ePainter& p) {
         {
             const auto tt = tile->tileRelRotated<eTile>(-3, -3, dir);
             if(tt) {
-                drawCharacters(tt, true);
+                drawCharacters(tt, true, false);
             }
             if(lastTile) {
                 for(int i = 0; i < 3; i++) {
                     const auto tt = tile->tileRelRotated<eTile>(-i, -i, dir);
                     if(tt) {
-                        drawCharacters(tt, true);
+                        drawCharacters(tt, true, false);
                     }
                 }
             }
@@ -1785,7 +1928,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(t) {
                 const auto order = tileCharRenderOrder(t);
                 if(order == eCharRenderOrder::x1y1) {
-                    drawCharacters(t, false);
+                    drawCharacters(t, false, false);
                 }
             }
         }
@@ -1795,7 +1938,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto order = tileCharRenderOrder(tl);
                 if(order == eCharRenderOrder::x0y1x1y0) {
                     clipTileRect(eTileClipSide::left);
-                    drawCharacters(tl, false);
+                    drawCharacters(tl, false, false);
                     SDL_RenderSetClipRect(r, nullptr);
                 }
             }
@@ -1806,7 +1949,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto order = tileCharRenderOrder(tr);
                 if(order == eCharRenderOrder::x0y1x1y0) {
                     clipTileRect(eTileClipSide::right);
-                    drawCharacters(tr, false);
+                    drawCharacters(tr, false, false);
                     SDL_RenderSetClipRect(r, nullptr);
                 }
             }
@@ -1816,6 +1959,7 @@ void eGameWidget::paintEvent(ePainter& p) {
 
         buildingDrawer(tile);
         drawCrosswalk();
+        drawCrosswalkCharacters();
 
         drawMissiles();
 

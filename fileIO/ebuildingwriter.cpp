@@ -19,14 +19,8 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     dst << cid;
     const auto type = b->type();
     switch(type) {
-    case eBuildingType::road: {
-        const auto r = static_cast<const eRoad*>(b);
-        dst << r->isRoadblock();
-        const auto a = r->underAgora();
-        dst.writeBuilding(a);
-        const auto g = r->underGatehouse();
-        dst.writeBuilding(g);
-    } break;
+    case eBuildingType::road:
+        break;
     case eBuildingType::commonAgora: {
         const auto ca = static_cast<const eCommonAgora*>(b);
         dst << ca->orientation();

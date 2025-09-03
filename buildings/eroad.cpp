@@ -3,6 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "engine/egameboard.h"
+#include "eagorabase.h"
 #include "egatehouse.h"
 #include "ehippodromepiece.h"
 #include "elanguage.h"
@@ -362,10 +363,10 @@ std::shared_ptr<eTexture> eRoad::getHippodromeTexture(const eTileSize size) cons
     const auto& builTexs = eGameTextures::buildings()[sizeId];
 
     const auto ti = centerTile();
-    const auto tr = ti->topRightRotated(dir);
-    const auto br = ti->bottomRightRotated(dir);
-    const auto bl = ti->bottomLeftRotated(dir);
-    const auto tl = ti->topLeftRotated(dir);
+    const auto tr = ti->topRight();
+    const auto br = ti->bottomRight();
+    const auto bl = ti->bottomLeft();
+    const auto tl = ti->topLeft();
 
     const bool trRoad = !tr || tr->hasRoad();
     const bool brRoad = !br || br->hasRoad();
@@ -373,31 +374,71 @@ std::shared_ptr<eTexture> eRoad::getHippodromeTexture(const eTileSize size) cons
     const bool tlRoad = !tl || tl->hasRoad();
 
     if(mAboveHippodrome) {
+        int texId1;
+        int texId2;
+        int texId3;
+        int texId4;
+        int texId5;
+        int texId6;
+        switch(dir) {
+        case eWorldDirection::N: {
+            texId1 = 8;
+            texId2 = 10;
+            texId3 = 13;
+            texId4 = 11;
+            texId5 = 9;
+            texId6 = 12;
+        } break;
+        case eWorldDirection::E: {
+            texId1 = 13;
+            texId2 = 11;
+            texId3 = 10;
+            texId4 = 8;
+            texId5 = 12;
+            texId6 = 9;
+        } break;
+        case eWorldDirection::S: {
+            texId1 = 10;
+            texId2 = 8;
+            texId3 = 11;
+            texId4 = 13;
+            texId5 = 9;
+            texId6 = 12;
+        } break;
+        case eWorldDirection::W: {
+            texId1 = 11;
+            texId2 = 13;
+            texId3 = 8;
+            texId4 = 10;
+            texId5 = 12;
+            texId6 = 9;
+        } break;
+        }
         const auto& coll = builTexs.fHippodrome;
         const auto& r = tileRect();
         const auto& rr = mAboveHippodrome->tileRect();
         if(r.y == rr.y + rr.h - 1) {
             if(trRoad) {
-                return coll.getTexture(8);
+                return coll.getTexture(texId1);
             }
         }
         if(r.y == rr.y) {
             if(blRoad) {
-                return coll.getTexture(10);
+                return coll.getTexture(texId2);
             }
         }
         if(r.x == rr.x + rr.w - 1) {
             if(tlRoad) {
-                return coll.getTexture(13);
+                return coll.getTexture(texId3);
             }
         }
         if(r.x == rr.x) {
             if(brRoad) {
-                return coll.getTexture(11);
+                return coll.getTexture(texId4);
             }
         }
-        if(trRoad && blRoad) return coll.getTexture(9);
-        if(tlRoad && brRoad) return coll.getTexture(12);
+        if(trRoad && blRoad) return coll.getTexture(texId5);
+        if(tlRoad && brRoad) return coll.getTexture(texId6);
     }
     return nullptr;
 }
@@ -463,4 +504,29 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
         else break;
         bl = bl->bottomLeft<eTile>();
     }
+}
+
+void eRoad::write(eWriteStream &dst) const {
+    eBuilding::write(dst);
+    dst << mRoadblock;
+    dst.writeBuilding(mUnderAgora);
+    dst.writeBuilding(mUnderGatehouse);
+    dst.writeBuilding(mAboveHippodrome);
+    dst << mCharacterAltitude;
+}
+
+void eRoad::read(eReadStream &src) {
+    eBuilding::read(src);
+    auto& board = getBoard();
+    src >> mRoadblock;
+    src.readBuilding(&board, [this](eBuilding* const bb) {
+        setUnderAgora(static_cast<eAgoraBase*>(bb));
+    });
+    src.readBuilding(&board, [this](eBuilding* const bb) {
+        setUnderGatehouse(static_cast<eGatehouse*>(bb));
+    });
+    src.readBuilding(&board, [this](eBuilding* const bb) {
+        setAboveHippodrome(static_cast<eHippodromePiece*>(bb));
+    });
+    src >> mCharacterAltitude;
 }

@@ -55,6 +55,7 @@ public:
 
     void setAltitude(const int a, const bool update = true);
     void setDoubleAltitude(const int da, const bool update = true);
+    int characterDoubleAltitude() const;
     int doubleAltitude() const { return mDoubleAltitude; }
     int altitude() const { return mDoubleAltitude/2; }
 

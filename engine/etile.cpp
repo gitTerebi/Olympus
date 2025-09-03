@@ -1,10 +1,9 @@
 #include "etile.h"
 
-#include <random>
 #include <algorithm>
 
 #include "buildings/ebuilding.h"
-#include "buildings/ebuildingrenderer.h"
+#include "buildings/eroad.h"
 #include "characters/echaracter.h"
 #include "egameboard.h"
 
@@ -52,6 +51,14 @@ void eTile::setDoubleAltitude(const int da, const bool update) {
             t->updateIsElevationTile();
         }
     }
+}
+
+int eTile::characterDoubleAltitude() const {
+    if(!mUnderBuilding) return mDoubleAltitude;
+    const auto type = mUnderBuilding->type();
+    if(type != eBuildingType::road) return mDoubleAltitude;
+    const auto r = static_cast<eRoad*>(mUnderBuilding.get());
+    return mDoubleAltitude + r->characterAltitude();
 }
 
 void eTile::updateIsElevationTile() {

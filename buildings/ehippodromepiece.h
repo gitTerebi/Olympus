@@ -18,6 +18,12 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void handleTile(eTile* const t,
+                    std::vector<eOverlay>& result,
+                    const eWorldDirection dir,
+                    const eTileSize size,
+                    const SDL_Rect& rr) const;
+
     int mId = 0;
 };
 

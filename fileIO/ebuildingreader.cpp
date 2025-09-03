@@ -52,17 +52,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     stdsptr<eBuilding> b;
     switch(type) {
     case eBuildingType::road: {
-        const auto r = e::make_shared<eRoad>(board, cid);
-        b = r;
-        bool roadblock;
-        src >> roadblock;
-        r->setRoadblock(roadblock);
-        src.readBuilding(&board, [r](eBuilding* const bb) {
-            r->setUnderAgora(static_cast<eAgoraBase*>(bb));
-        });
-        src.readBuilding(&board, [r](eBuilding* const bb) {
-            r->setUnderGatehouse(static_cast<eGatehouse*>(bb));
-        });
+        b = e::make_shared<eRoad>(board, cid);
     } break;
     case eBuildingType::commonAgora: {
         eAgoraOrientation o;

@@ -36,7 +36,7 @@ eBuilding::~eBuilding() {
 eTextureSpace eBuilding::getTextureSpace(const int tx, const int ty,
                                          const eTileSize size) const {
     const SDL_Point p{tx, ty};
-    const auto r = tileRect();
+    const auto& r = tileRect();
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
     const auto tex = getTexture(size);
     return eTextureSpace{tex, true, r};
