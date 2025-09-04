@@ -32,6 +32,9 @@ public:
     void loadSkipFlipped(const int doff,
                          const int min, const int max,
                          std::vector<eTextureCollection>& colls);
+    void loadHorseSkipFlipped(const int doff,
+                              const int min, const int max,
+                              std::vector<eTextureCollection>& colls);
     void loadBoatSkipFlipped(const int doff,
                              const int min, const int max,
                              std::vector<eTextureCollection>& colls);

@@ -41,6 +41,7 @@ enum class eBannerTypeS;
 enum class eMonsterType;
 class eMonsterInvasionEventBase;
 struct eEpisode;
+class eHippodrome;
 
 enum class eImmigrationLimitedBy {
     none,
@@ -401,6 +402,8 @@ public:
 
     bool handleEpisodeCompleteEvents();
 
+    void updateHippodromes();
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
@@ -541,6 +544,8 @@ private:
     std::vector<eCharacter*> mAttackingGods;
 
     std::vector<stdsptr<ePlague>> mPlagues;
+
+    std::vector<stdsptr<eHippodrome>> mHippodromes;
 
     bool mManTowers = true;
 

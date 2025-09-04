@@ -168,6 +168,15 @@ struct eWaterMonsterTextures {
     std::vector<eTextureCollection> fFight2;
 };
 
+struct eRacingHorseTextures {
+    eRacingHorseTextures(SDL_Renderer* const renderer) :
+        fDie(renderer) {}
+
+    std::vector<eTextureCollection> fRace;
+    std::vector<eTextureCollection> fStand;
+    eTextureCollection fDie;
+};
+
 class eCharacterTextures {
 public:
     eCharacterTextures(const int tileW, const int tileH,
@@ -452,6 +461,9 @@ public:
     bool fEliteCitizenLoaded = false;
     void loadEliteCitizen();
 
+    bool fRacingHorsesLoaded = false;
+    void loadRacingHorses();
+
     const int fTileW;
     const int fTileH;
     SDL_Renderer* const fRenderer;
@@ -658,6 +670,11 @@ public:
     eBasicCharacterTextures fElephant;
 
     eFightingCharacterTextures fEliteCitizen;
+
+    eRacingHorseTextures fRacingHorse1;
+    eRacingHorseTextures fRacingHorse2;
+    eRacingHorseTextures fRacingHorse3;
+    eRacingHorseTextures fRacingHorse4;
 };
 
 #endif // ECHARACTERTEXTURES_H

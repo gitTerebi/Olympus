@@ -81,6 +81,7 @@ SOURCES += \
         buildings/egymnasium.cpp \
         buildings/eheatgetters.cpp \
         buildings/eheroshall.cpp \
+        buildings/ehippodrome.cpp \
         buildings/ehippodromepiece.cpp \
         buildings/ehorseranch.cpp \
         buildings/ehorseranchenclosure.cpp \
@@ -310,6 +311,7 @@ SOURCES += \
         characters/ephoenicianarcher.cpp \
         characters/ephoenicianhorseman.cpp \
         characters/eporter.cpp \
+        characters/eracinghorse.cpp \
         characters/erangesoldier.cpp \
         characters/eresourcecollector.cpp \
         characters/eresourcecollectorbase.cpp \
@@ -767,6 +769,7 @@ HEADERS += \
     buildings/egymnasium.h \
     buildings/eheatgetters.h \
     buildings/eheroshall.h \
+    buildings/ehippodrome.h \
     buildings/ehippodromepiece.h \
     buildings/ehorseranch.h \
     buildings/ehorseranchenclosure.h \
@@ -993,6 +996,7 @@ HEADERS += \
     characters/ephoenicianarcher.h \
     characters/ephoenicianhorseman.h \
     characters/eporter.h \
+    characters/eracinghorse.h \
     characters/erangesoldier.h \
     characters/eresourcecollector.h \
     characters/eresourcecollectorbase.h \

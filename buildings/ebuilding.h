@@ -382,7 +382,7 @@ public:
 private:
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;
-    SDL_Rect mTileRect;
+    SDL_Rect mTileRect{0, 0, 0, 0};
 
     int mIOID = -1;
     int mSeed;

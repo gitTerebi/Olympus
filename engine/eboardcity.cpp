@@ -40,6 +40,7 @@
 #include "etilehelper.h"
 
 #include "spawners/espawner.h"
+#include "buildings/ehippodrome.h"
 
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
@@ -2337,6 +2338,30 @@ eInvasionHandler* eBoardCity::invasionHandlerWithIOID(const int id) const {
 
 bool eBoardCity::handleEpisodeCompleteEvents() {
     return mCityEvents.handleEpisodeCompleteEvents();
+}
+
+void eBoardCity::updateHippodromes() {
+    for(int i = 0; i < (int)mHippodromes.size(); i++) {
+        const auto& h = mHippodromes[i];
+        if(!h->closed()) {
+            h->clear();
+            mHippodromes.erase(mHippodromes.begin() + i);
+            i--;
+        }
+    }
+
+    const auto hps = buildings(eBuildingType::hippodromePiece);
+    for(const auto b : hps) {
+        const auto hp = static_cast<eHippodromePiece*>(b);
+        {
+            const auto h = hp->hippodrome();
+            if(h) continue;
+        }
+        const auto h = std::make_shared<eHippodrome>(mBoard);
+        h->addPieces(hp);
+        mHippodromes.push_back(h);
+        if(h->closed()) h->spawnHorses();
+    }
 }
 
 void eBoardCity::clearAfterLastEpisode() {

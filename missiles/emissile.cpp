@@ -11,6 +11,7 @@
 #include "ewavemissile.h"
 #include "elavamissile.h"
 #include "edustmissile.h"
+#include "characters/eracinghorse.h"
 
 eMissile::eMissile(eGameBoard& board, const eMissileType type,
                    const std::vector<ePathPoint>& path) :
@@ -54,6 +55,14 @@ double eMissile::y() const {
     }
 }
 
+double eMissile::globalX() const {
+    return mPath.pos().fX;
+}
+
+double eMissile::globalY() const {
+    return mPath.pos().fY;
+}
+
 void eMissile::setFinishAction(const stdsptr<eGodAct>& act) {
     mFinish = act;
 }
@@ -92,6 +101,8 @@ stdsptr<eMissile> eMissile::sCreate(
         return e::make_shared<eLavaMissile>(brd);
     case eMissileType::dust:
         return e::make_shared<eDustMissile>(brd);
+    case eMissileType::racingHorse:
+        return e::make_shared<eRacingHorse>(brd);
     }
     return nullptr;
 }

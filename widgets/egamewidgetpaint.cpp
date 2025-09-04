@@ -1421,6 +1421,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
+                if(type == eMissileType::racingHorse) continue;
                 const bool isWave = type == eMissileType::wave ||
                                     type == eMissileType::lava ||
                                     type == eMissileType::dust;
@@ -1459,6 +1460,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
+                if(type == eMissileType::racingHorse) continue;
                 const bool isWave = type == eMissileType::wave ||
                                     type == eMissileType::lava ||
                                     type == eMissileType::dust;

@@ -431,7 +431,12 @@ eCharacterTextures::eCharacterTextures(const int tileW, const int tileH,
 
     fElephant(renderer),
 
-    fEliteCitizen(renderer) {
+    fEliteCitizen(renderer),
+
+    fRacingHorse1(renderer),
+    fRacingHorse2(renderer),
+    fRacingHorse3(renderer),
+    fRacingHorse4(renderer) {
 
 }
 

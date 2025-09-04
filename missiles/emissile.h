@@ -105,7 +105,8 @@ enum class eMissileType {
     spear,
     wave,
     lava,
-    dust
+    dust,
+    racingHorse
 };
 
 class eMissile : public eStdSelfRef {
@@ -126,6 +127,9 @@ public:
 
     double x() const;
     double y() const;
+
+    double globalX() const;
+    double globalY() const;
 
     void setFinishAction(const stdsptr<eGodAct>& act);
 

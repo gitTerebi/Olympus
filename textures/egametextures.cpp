@@ -610,6 +610,13 @@ void eGameTextures::loadSick() {
     });
 }
 
+void eGameTextures::loadRacingHorses() {
+    loadTexture([](const int i) {
+        auto& c = sCharacterTextures[i];
+        c.loadRacingHorses();
+    });
+}
+
 void eGameTextures::loadBanners() {
     loadTexture([](const int i) {
         auto& c = sCharacterTextures[i];

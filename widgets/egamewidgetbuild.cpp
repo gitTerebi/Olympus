@@ -1837,6 +1837,10 @@ bool eGameWidget::buildMouseRelease() {
                     b->setId(hid);
                     return b;
                 });
+                if(r) {
+                    const auto c = mBoard->boardCityWithId(cid);
+                    c->updateHippodromes();
+                }
             }
         } break;
 

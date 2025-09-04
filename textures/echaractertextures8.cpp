@@ -92,6 +92,26 @@
 #include "spriteData/orichalcMiner45.h"
 #include "spriteData/orichalcMiner60.h"
 
+#include "spriteData/hippodromeHorse115.h"
+#include "spriteData/hippodromeHorse130.h"
+#include "spriteData/hippodromeHorse145.h"
+#include "spriteData/hippodromeHorse160.h"
+
+#include "spriteData/hippodromeHorse215.h"
+#include "spriteData/hippodromeHorse230.h"
+#include "spriteData/hippodromeHorse245.h"
+#include "spriteData/hippodromeHorse260.h"
+
+#include "spriteData/hippodromeHorse315.h"
+#include "spriteData/hippodromeHorse330.h"
+#include "spriteData/hippodromeHorse345.h"
+#include "spriteData/hippodromeHorse360.h"
+
+#include "spriteData/hippodromeHorse415.h"
+#include "spriteData/hippodromeHorse430.h"
+#include "spriteData/hippodromeHorse445.h"
+#include "spriteData/hippodromeHorse460.h"
+
 #include "offsets/PoseidonImps.h"
 
 void eCharacterTextures::loadOrichalcMiner() {
@@ -422,5 +442,75 @@ void eCharacterTextures::loadHoplitePoseidon() {
 
     for(int i = 3838; i < 3846; i++) {
         loader.load(3742, i, fHoplitePoseidon.fDie);
+    }
+}
+
+void eCharacterTextures::loadRacingHorses() {
+    if(fRacingHorsesLoaded) return;
+    fRacingHorsesLoaded = true;
+
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eHippodromeHorse1SpriteData15,
+                                     eHippodromeHorse1SpriteData30,
+                                     eHippodromeHorse1SpriteData45,
+                                     eHippodromeHorse1SpriteData60);
+        eSpriteLoader loader(fTileH, "hippodromeHorse1", sds,
+                             &ePoseidonImpsOffset, fRenderer);
+
+        loader.loadHorseSkipFlipped(5558, 5558, 5766, fRacingHorse1.fRace);
+        loader.loadSkipFlipped(5558, 5766, 5870, fRacingHorse1.fStand);
+
+        for(int i = 5870; i < 5879; i++) {
+            loader.load(5558, i, fRacingHorse1.fDie);
+        }
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eHippodromeHorse2SpriteData15,
+                                     eHippodromeHorse2SpriteData30,
+                                     eHippodromeHorse2SpriteData45,
+                                     eHippodromeHorse2SpriteData60);
+        eSpriteLoader loader(fTileH, "hippodromeHorse2", sds,
+                             &ePoseidonImpsOffset, fRenderer);
+
+        loader.loadHorseSkipFlipped(5879, 5879, 6087, fRacingHorse2.fRace);
+        loader.loadSkipFlipped(5879, 6087, 6247, fRacingHorse2.fStand);
+
+        for(int i = 6247; i < 6256; i++) {
+            loader.load(5879, i, fRacingHorse2.fDie);
+        }
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eHippodromeHorse3SpriteData15,
+                                     eHippodromeHorse3SpriteData30,
+                                     eHippodromeHorse3SpriteData45,
+                                     eHippodromeHorse3SpriteData60);
+        eSpriteLoader loader(fTileH, "hippodromeHorse3", sds,
+                             &ePoseidonImpsOffset, fRenderer);
+
+        loader.loadHorseSkipFlipped(6256, 6256, 6464, fRacingHorse3.fRace);
+        loader.loadSkipFlipped(6256, 6464, 6568, fRacingHorse3.fStand);
+
+        for(int i = 6568; i < 6577; i++) {
+            loader.load(6256, i, fRacingHorse3.fDie);
+        }
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eHippodromeHorse4SpriteData15,
+                                     eHippodromeHorse4SpriteData30,
+                                     eHippodromeHorse4SpriteData45,
+                                     eHippodromeHorse4SpriteData60);
+        eSpriteLoader loader(fTileH, "hippodromeHorse4", sds,
+                             &ePoseidonImpsOffset, fRenderer);
+
+        loader.loadHorseSkipFlipped(6577, 6577, 6785, fRacingHorse4.fRace);
+        loader.loadSkipFlipped(6577, 6785, 6945, fRacingHorse4.fStand);
+
+        for(int i = 6945; i < 6954; i++) {
+            loader.load(6577, i, fRacingHorse4.fDie);
+        }
     }
 }

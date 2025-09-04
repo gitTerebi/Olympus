@@ -74,6 +74,32 @@ void eSpriteLoader::loadSkipFlipped(const int doff,
     }
 }
 
+void eSpriteLoader::loadHorseSkipFlipped(const int doff,
+                                         const int min, const int max,
+                                         std::vector<eTextureCollection> &colls) {
+    for(int j = 0; j < 16; j++) {
+        colls.emplace_back(mRenderer);
+    }
+    int k = 0;
+    for(int i = min; i < max;) {
+        for(int j = 0; j < 16; j++, i++) {
+            auto& coll = colls[j];
+            if(j > 7 && j < 15) {
+                const auto& flipTex = colls[14 - j].getTexture(k);
+                auto& tex = coll.addTexture();
+                tex->setFlipTex(flipTex);
+                if(mOffs) {
+                    const auto& offset = (*mOffs)[i - 1];
+                    tex->setOffset(offset.first, offset.second);
+                }
+            } else {
+                load(doff, i, coll);
+            }
+        }
+        k++;
+    }
+}
+
 void eSpriteLoader::loadBoatSkipFlipped(const int doff,
                                         const int min, const int max,
                                         std::vector<eTextureCollection>& colls) {

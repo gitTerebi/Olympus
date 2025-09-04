@@ -114,6 +114,7 @@ public:
     static void loadDonkey();
     static void loadDisgruntled();
     static void loadSick();
+    static void loadRacingHorses();
 
     static void loadBanners();
 
