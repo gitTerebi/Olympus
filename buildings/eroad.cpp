@@ -13,6 +13,7 @@ eRoad::eRoad(eGameBoard& board, const eCityId cid) :
 
 void eRoad::erase() {
     if(mAboveHippodrome) {
+        eBuilding::erase();
         mAboveHippodrome->erase();
     } else if(isBridge()) {
         auto& board = getBoard();

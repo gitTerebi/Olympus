@@ -12,6 +12,7 @@
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/sanctuaries/esanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/ehippodromepiece.h"
 #include "engine/etile.h"
 
 #include "characters/ehomeless.h"
@@ -54,6 +55,8 @@ void eBuildingsToErase::addBuilding(eBuilding* const b) {
         if(a) bb = a;
         const auto g = r->underGatehouse();
         if(g) bb = g;
+        const auto h = r->aboveHippodrome();
+        if(h) bb = h;
     } else if(t == eBuildingType::palaceTile) {
         const auto pt = static_cast<ePalaceTile*>(b);
         const auto p = pt->palace();
