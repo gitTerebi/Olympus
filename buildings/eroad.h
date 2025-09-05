@@ -16,8 +16,7 @@ public:
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;
 
-    std::shared_ptr<eTexture>
-    getHippodromeTexture(const eTileSize size) const;
+    int getHippodromeTextureId() const;
 
     void setUnderAgora(eAgoraBase* const a);
     eAgoraBase* underAgora() const { return mUnderAgora; }

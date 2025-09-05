@@ -24,6 +24,10 @@ public:
 
     void progressPath(std::vector<ePathPoint>& path) const;
 
+    eTextureSpace
+    getTextureSpace(const int tx, const int ty,
+                    const eTileSize size) const override;
+
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;
     std::vector<eOverlay>
@@ -35,11 +39,12 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
-    void handleTile(eTile* const t,
-                    std::vector<eOverlay>& result,
-                    const eWorldDirection dir,
-                    const eTileSize size,
-                    const SDL_Rect& rr) const;
+    void crossTile(eTile* const t,
+                   std::vector<eOverlay>& result,
+                   const eWorldDirection dir,
+                   const eTileSize size,
+                   const SDL_Rect& rr,
+                   const bool back) const;
     void horseTile(eTile* const t,
                    std::vector<eOverlay>& result,
                    const eWorldDirection dir,

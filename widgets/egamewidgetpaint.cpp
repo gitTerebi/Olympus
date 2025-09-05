@@ -1011,10 +1011,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                         if(!tex) continue;
                         if(colorMod) tex->setColorMod(cred, cgreen, cblue);
                         if(o.fAlignTop) {
-                            tp.drawTexture(drawX + o.fX, drawY + o.fY,
+                            tp.drawTexture(drawX + ts.fX + o.fX, drawY + ts.fY + o.fY,
                                            tex, eAlignment::top);
                         } else {
-                            tp.drawTexture(drawX + o.fX, drawY + o.fY, tex);
+                            tp.drawTexture(drawX + ts.fX + o.fX, drawY + ts.fY + o.fY, tex);
                         }
                         if(colorMod) tex->clearColorMod();
                     }

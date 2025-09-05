@@ -355,12 +355,9 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     return std::shared_ptr<eTexture>();
 }
 
-std::shared_ptr<eTexture> eRoad::getHippodromeTexture(const eTileSize size) const {
+int eRoad::getHippodromeTextureId() const {
     auto& board = getBoard();
     const auto dir = board.direction();
-
-    const int sizeId = static_cast<int>(size);
-    const auto& builTexs = eGameTextures::buildings()[sizeId];
 
     const auto ti = centerTile();
     const auto tr = ti->topRight();
@@ -414,33 +411,32 @@ std::shared_ptr<eTexture> eRoad::getHippodromeTexture(const eTileSize size) cons
             texId6 = 9;
         } break;
         }
-        const auto& coll = builTexs.fHippodrome;
         const auto& r = tileRect();
         const auto& rr = mAboveHippodrome->tileRect();
         if(r.y == rr.y + rr.h - 1) {
             if(trRoad) {
-                return coll.getTexture(texId1);
+                return texId1;
             }
         }
         if(r.y == rr.y) {
             if(blRoad) {
-                return coll.getTexture(texId2);
+                return texId2;
             }
         }
         if(r.x == rr.x + rr.w - 1) {
             if(tlRoad) {
-                return coll.getTexture(texId3);
+                return texId3;
             }
         }
         if(r.x == rr.x) {
             if(brRoad) {
-                return coll.getTexture(texId4);
+                return texId4;
             }
         }
-        if(trRoad && blRoad) return coll.getTexture(texId5);
-        if(tlRoad && brRoad) return coll.getTexture(texId6);
+        if(trRoad && blRoad) return texId5;
+        if(tlRoad && brRoad) return texId6;
     }
-    return nullptr;
+    return 0;
 }
 
 void eRoad::setUnderAgora(eAgoraBase* const a) {
