@@ -7,6 +7,7 @@
 #include "engine/emilitaryaid.h"
 #include "gameEvents/egameevent.h"
 #include "engine/egameboard.h"
+#include "buildings/ehippodrome.h"
 
 void eBoardCity::read(eReadStream& src) {
     src >> mId;
@@ -182,6 +183,16 @@ void eBoardCity::read(eReadStream& src) {
             const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
             b->read(src);
             registerSoldierBanner(b);
+        }
+    }
+
+    {
+        int nh;
+        src >> nh;
+        for(int i = 0; i < nh; i++) {
+            const auto h = std::make_shared<eHippodrome>(mId, mBoard);
+            h->read(src);
+            mHippodromes.push_back(h);
         }
     }
 }

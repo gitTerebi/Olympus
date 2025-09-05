@@ -5,6 +5,7 @@
 #include "engine/emilitaryaid.h"
 #include "gameEvents/emonsterinvasioneventbase.h"
 #include "gameEvents/egameevent.h"
+#include "buildings/ehippodrome.h"
 
 void eBoardCity::write(eWriteStream& dst) const {
     dst << mId;
@@ -136,5 +137,10 @@ void eBoardCity::write(eWriteStream& dst) const {
     for(const auto& s : mSoldierBanners) {
         dst << s->type();
         s->write(dst);
+    }
+
+    dst << mHippodromes.size();
+    for(const auto& h : mHippodromes) {
+        h->write(dst);
     }
 }

@@ -2,8 +2,17 @@
 
 #include "characters/eracinghorse.h"
 
-eHippodrome::eHippodrome(eGameBoard& board) :
-    mBoard(board) {}
+eHippodrome::eHippodrome(const eCityId cid, eGameBoard& board) :
+    mCid(cid), mBoard(board) {}
+
+void eHippodrome::nextMonth() {
+    const int d = drachmasPerMonth();
+    if(d <= 0) return;
+    const auto pid = mBoard.cityIdToPlayerId(mCid);
+    mBoard.incDrachmas(pid, d);
+    const bool r = racing();
+    if(!r) spawnHorses();
+}
 
 void eHippodrome::addPieces(eHippodromePiece * const start) {
     mPieces.clear();
@@ -50,6 +59,11 @@ void eHippodrome::clear() {
         p.fPtr->setHippodrome(nullptr);
     }
     mPieces.clear();
+    for(const auto& h : mHorses) {
+        if(!h) continue;
+        h->destroy();
+    }
+    mHorses.clear();
 }
 
 void eHippodrome::spawnHorses() {
@@ -58,8 +72,96 @@ void eHippodrome::spawnHorses() {
             const auto h = e::make_shared<eRacingHorse>(
                 mBoard, i, j == 0 ? mPath1 : mPath2);
             h->incTime((i/2)*50);
-            h->setSpeed(1 + i*0.1);
+            h->setSpeed(0.5 + i*0.05);
+            mHorses.push_back(h.get());
         }
+    }
+}
+
+void eHippodrome::addHorses(const int h) {
+    mNHorses += h;
+}
+
+int eHippodrome::neededHorses() const {
+    const bool c = closed();
+    if(!c) return 0;
+    const int l = mPieces.size();
+    if(l < 23) return 4;
+    else if(l < 59) return 8;
+    else if(l < 199) return 12;
+    else return 24;
+}
+
+int eHippodrome::drachmasPerMonth() const {
+    const bool w = working();
+    if(!w) return 0;
+    const int l = mPieces.size();
+    if(l < 11) return 10;
+    else if(l < 23) return 20;
+    else if(l < 35) return 40;
+    else if(l < 59) return 60;
+    else if(l < 99) return 100;
+    else if(l < 199) return 200;
+    else return 500;
+}
+
+bool eHippodrome::working() const {
+    const bool c = closed();
+    if(!c) return false;
+    const int needed = neededHorses();
+    return mNHorses >= needed;
+}
+
+bool eHippodrome::racing() const {
+    for(const auto& h : mHorses) {
+        if(h) return true;
+    }
+    return false;
+}
+
+void eHippodrome::setCart(eCartTransporter* const c) {
+    mCart = c;
+}
+
+void eHippodrome::write(eWriteStream& dst) const {
+    dst << mFinish;
+    dst << mNHorses;
+    dst.writeCharacter(mCart);
+    dst << mPieces.size();
+    for(const auto& p : mPieces) {
+        dst << p.fO;
+        dst.writeBuilding(p.fPtr);
+    }
+}
+
+void eHippodrome::read(eReadStream& src) {
+    src >> mFinish;
+    src >> mNHorses;
+    src.readCharacter(&mBoard, [this](eCharacter* const c) {
+        mCart = static_cast<eCartTransporter*>(c);
+    });
+    int n;
+    src >> n;
+    for(int i = 0; i < n; i++) {
+        auto& p = mPieces.emplace_back();
+        src >> p.fO;
+        src.readBuilding(&mBoard, [this, i](eBuilding* const b) {
+            const auto hp = static_cast<eHippodromePiece*>(b);
+            mPieces[i].fPtr = hp;
+            hp->setHippodrome(this);
+        });
+    }
+    src.addPostFunc([this]() {
+        updatePaths();
+    });
+}
+
+void eHippodrome::purgeHorses() {
+    for(int i = 0; i < (int)mHorses.size(); i++) {
+        const auto h = mHorses[i];
+        if(h) continue;
+        mHorses.erase(mHorses.begin() + i);
+        i--;
     }
 }
 

@@ -6,10 +6,20 @@
 
 class eHippodrome;
 
-class eHippodromePiece : public eBuilding {
+class eHippodromePiece : public eBuildingWithResource {
 public:
     eHippodromePiece(eGameBoard& board, const eCityId cid);
     ~eHippodromePiece();
+
+    void timeChanged(const int by) override;
+
+    int add(const eResourceType type, const int count) override;
+    int take(const eResourceType type, const int count) override;
+
+    int count(const eResourceType type) const override;
+    int spaceLeft(const eResourceType type) const override;
+
+    std::vector<eCartTask> cartTasks() const override;
 
     struct eNeighbour {
         eHippodromePiece* fPtr = nullptr;
@@ -20,7 +30,7 @@ public:
     std::vector<eN> neighbours() const;
 
     eHippodrome* hippodrome() const { return mHippodrome; }
-    void setHippodrome(eHippodrome* const h) { mHippodrome = h; }
+    void setHippodrome(eHippodrome* const h);
 
     void progressPath(std::vector<ePathPoint>& path) const;
 
@@ -53,6 +63,7 @@ private:
 
     int mId = 0;
     eHippodrome* mHippodrome = nullptr;
+    stdptr<eCartTransporter> mCart;
 };
 
 #endif // EHIPPODROMEPIECE_H

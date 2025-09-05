@@ -39,6 +39,10 @@ void eMissile::incTime(const int by) {
     }
 }
 
+void eMissile::destroy() {
+    changeTile(nullptr);
+}
+
 double eMissile::x() const {
     if(mTile) {
         return mPath.pos().fX - mTile->x();

@@ -466,6 +466,9 @@ void eBoardCity::nextMonth() {
     }
 
     mPopData.nextMonth();
+    for(const auto& h : mHippodromes) {
+        h->nextMonth();
+    }
 
     replace3By3AestheticByCommemorative();
 
@@ -2357,10 +2360,9 @@ void eBoardCity::updateHippodromes() {
             const auto h = hp->hippodrome();
             if(h) continue;
         }
-        const auto h = std::make_shared<eHippodrome>(mBoard);
+        const auto h = std::make_shared<eHippodrome>(mId, mBoard);
         h->addPieces(hp);
         mHippodromes.push_back(h);
-        if(h->closed()) h->spawnHorses();
     }
 }
 

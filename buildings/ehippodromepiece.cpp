@@ -7,13 +7,65 @@
 #include "ehippodrome.h"
 
 eHippodromePiece::eHippodromePiece(eGameBoard &board, const eCityId cid) :
-    eBuilding(board, eBuildingType::hippodromePiece, 4, 4, cid) {
+    eBuildingWithResource(board, eBuildingType::hippodromePiece, 4, 4, cid) {
     eGameTextures::loadHippodrome();
     setEnabled(true);
 }
 
 eHippodromePiece::~eHippodromePiece() {
     if(mHippodrome) mHippodrome->clear();
+    if(mCart) mCart->kill();
+}
+
+int eHippodromePiece::add(const eResourceType type, const int count) {
+    if(!mHippodrome) return 0;
+    if(!static_cast<bool>(type & eResourceType::horse)) return 0;
+    mHippodrome->addHorses(count);
+    return count;
+}
+
+int eHippodromePiece::take(const eResourceType type, const int count) {
+    (void)type;
+    (void)count;
+    return 0;
+}
+
+int eHippodromePiece::count(const eResourceType type) const {
+    (void)type;
+    return 0;
+}
+
+int eHippodromePiece::spaceLeft(const eResourceType type) const {
+    if(!mHippodrome) return 0;
+    if(type != eResourceType::horse) return 0;
+    const int needed = mHippodrome->neededHorses();
+    const int has = mHippodrome->hasHorses();
+    return needed - has;
+}
+
+std::vector<eCartTask> eHippodromePiece::cartTasks() const {
+    const int space = spaceLeft(eResourceType::horse);
+    if(space <= 0) return {};
+    return {{eCartActionType::take,
+             eResourceType::horse,
+             space}};
+}
+
+void eHippodromePiece::timeChanged(const int by) {
+    (void)by;
+    if(mCart) return;
+    if(!mHippodrome) return;
+    const bool c = mHippodrome->closed();
+    if(!c) return;
+    const bool h = mHippodrome->hasCart();
+    if(h) return;
+    const bool r = accessToRoad();
+    if(!r) return;
+    if(!mCart) {
+        mCart = spawnCart(eCartActionTypeSupport::take);
+        mCart->setType(eCartTransporterType::horse);
+        mHippodrome->setCart(mCart);
+    }
 }
 
 using eN = eHippodromePiece::eNeighbour;
@@ -61,6 +113,11 @@ std::vector<eN> eHippodromePiece::neighbours() const {
     }
 
     return result;
+}
+
+void eHippodromePiece::setHippodrome(eHippodrome * const h) {
+    mHippodrome = h;
+    if(mCart) mCart->kill();
 }
 
 struct eBezier1D {
@@ -434,9 +491,14 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
 void eHippodromePiece::write(eWriteStream& dst) const {
     eBuilding::write(dst);
     dst << mId;
+    dst.writeCharacter(mCart);
 }
 
 void eHippodromePiece::read(eReadStream& src) {
     eBuilding::read(src);
     src >> mId;
+    auto& board = getBoard();
+    src.readCharacter(&board, [this](eCharacter* const c) {
+        mCart = static_cast<eCartTransporter*>(c);
+    });
 }
