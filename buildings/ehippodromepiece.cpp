@@ -234,7 +234,9 @@ eTextureSpace eHippodromePiece::getTextureSpace(
             y = r.y;
         } break;
         }
-        if(!rotatedBL || !rotatedBR) {
+        if(!rotatedBL && !rotatedBR) {
+            return eTextureSpace{nullptr, true, r};
+        } else if(!rotatedBL || !rotatedBR) {
             if(rotatedBL) {
                 if(tx == x) {
                     const SDL_Rect rr{x, r.y, 1, r.h};

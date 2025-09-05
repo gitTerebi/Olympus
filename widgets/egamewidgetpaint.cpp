@@ -966,11 +966,22 @@ void eGameWidget::paintEvent(ePainter& p) {
                     clipRect.w = last ? mTileW : mTileW/2;
                     const int margin = 5*mTileW;
                     if(rtx == fitX && rty == rtsRect.y) {
-                        clipRect.w += margin;
+                        if(dir == eWorldDirection::N ||
+                           dir == eWorldDirection::S) {
+                            clipRect.w += margin;
+                        } else {
+                            clipRect.x -= margin;
+                            clipRect.w += margin;
+                        }
                     }
                     if(rty == fitY && rtx == rtsRect.x) {
-                        clipRect.x -= margin;
-                        clipRect.w += margin;
+                        if(dir == eWorldDirection::N ||
+                           dir == eWorldDirection::S) {
+                            clipRect.x -= margin;
+                            clipRect.w += margin;
+                        } else {
+                            clipRect.w += margin;
+                        }
                     }
                     SDL_RenderSetClipRect(p.renderer(), &clipRect);
                 }
