@@ -245,6 +245,9 @@ public:
     bool fAltarGoodsOverlayLoaded = false;
     void loadAltarGoodsOverlay();
 
+    bool fHippodromeSpectatorsLoaded = false;
+    void loadHippodromeSpectators();
+
     std::shared_ptr<eTexture> fHouseSpace;
     std::vector<eTextureCollection> fCommonHouse;
     std::vector<eTextureCollection> fPoseidonCommonHouse;
@@ -698,6 +701,7 @@ public:
     std::shared_ptr<eTexture> fNHasHorses;
 
     eTextureCollection fHippodrome;
+    std::vector<eTextureCollection> fHippodromeSpectators;
 private:
     bool fFisheryOverlayLoaded = false;
     void loadFisheryOverlay();

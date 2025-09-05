@@ -531,6 +531,7 @@ SOURCES += \
         textures/ebeachtodry.cpp \
         textures/ebuildingtextures.cpp \
         textures/ebuildingtextures1.cpp \
+        textures/ebuildingtextures2.cpp \
         textures/echaractertextures.cpp \
         textures/echaractertextures1.cpp \
         textures/echaractertextures2.cpp \
@@ -1203,6 +1204,7 @@ HEADERS += \
     missiles/espearmissile.h \
     missiles/ewavemissile.h \
     offsets/PoseidonImps.h \
+    offsets/PoseidonImps2.h \
     offsets/Poseidon_Atalanta.h \
     offsets/Poseidon_Atlantean.h \
     offsets/Poseidon_Atlas.h \

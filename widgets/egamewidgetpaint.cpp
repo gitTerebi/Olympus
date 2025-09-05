@@ -964,6 +964,14 @@ void eGameWidget::paintEvent(ePainter& p) {
                     const int d = fitYB ? 1 : 0;
                     clipRect.x = mDX + (rtx - rty - d)*mTileW/2;
                     clipRect.w = last ? mTileW : mTileW/2;
+                    const int margin = 5*mTileW;
+                    if(rtx == fitX && rty == rtsRect.y) {
+                        clipRect.w += margin;
+                    }
+                    if(rty == fitY && rtx == rtsRect.x) {
+                        clipRect.x -= margin;
+                        clipRect.w += margin;
+                    }
                     SDL_RenderSetClipRect(p.renderer(), &clipRect);
                 }
 

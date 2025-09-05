@@ -198,10 +198,22 @@ eTextureSpace eHippodromePiece::getTextureSpace(
         result.fX += 1.5;
         result.fY += 4.5;
         result.fRect = {x, y, 1, 1};
-        result.fClamp = false;
         result.fOvelays = false;
         return result;
     } else {
+        const auto& ns = neighbours();
+        bool rotatedBL = false;
+        bool rotatedBR = false;
+        for(const auto& n : ns) {
+            const auto o = n.fO;
+            const auto rotatedO = sRotated(o, dir);
+            if(rotatedO == eDiagonalOrientation::bottomLeft) {
+                rotatedBL = true;
+            } else if(rotatedO == eDiagonalOrientation::bottomRight) {
+                rotatedBR = true;
+            }
+        }
+
         int x;
         int y;
         switch(dir) {
@@ -222,9 +234,27 @@ eTextureSpace eHippodromePiece::getTextureSpace(
             y = r.y;
         } break;
         }
+        if(!rotatedBL || !rotatedBR) {
+            if(rotatedBL) {
+                if(tx == x) {
+                    const SDL_Rect rr{x, r.y, 1, r.h};
+                    return eTextureSpace{nullptr, true, rr, -2., 2.};
+                } else {
+                    return {nullptr};
+                }
+            }
+            if(rotatedBR) {
+                if(ty == y) {
+                    const SDL_Rect rr{r.x, y, r.w, 1};
+                    return eTextureSpace{nullptr, true, rr, -2., 2.};
+                } else {
+                    return {nullptr};
+                }
+            }
+        }
         if(tx != x || ty != y) return {nullptr};
-        const SDL_Rect r{x, y, 1, 1};
-        return eTextureSpace{nullptr, true, r, -1.5, 1.5, false};
+        const SDL_Rect rr{x, y, 1, 1};
+        return eTextureSpace{nullptr, true, rr, -1.5, 1.5, false};
     }
     return {nullptr};
 }
@@ -392,6 +422,8 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
         iterateRenderOrder(rr, board, dir, [&](eTile* const t) {
             crossTile(t, result, dir, size, rr, false);
         });
+    } else if(mId == 0 || mId == 6) {
+
     }
 
     return result;
