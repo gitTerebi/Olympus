@@ -71,12 +71,15 @@ void eHippodromePiece::timeChanged(const int by) {
         }
     }
 
-    if(mCart) return;
     const bool c = mHippodrome->closed();
+    const bool r = accessToRoad();
+    if(mCart && (!c || !r)) {
+        mCart->kill();
+        return;
+    }
     if(!c) return;
     const bool h = mHippodrome->hasCart();
     if(h) return;
-    const bool r = accessToRoad();
     if(!r) return;
     if(!mCart) {
         mCart = spawnCart(eCartActionTypeSupport::take);
