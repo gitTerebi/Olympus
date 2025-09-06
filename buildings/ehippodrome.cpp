@@ -10,6 +10,7 @@ void eHippodrome::nextMonth() {
     if(d <= 0) return;
     const auto pid = mBoard.cityIdToPlayerId(mCid);
     mBoard.incDrachmas(pid, d);
+    purgeHorses();
     const bool r = racing();
     if(!r) spawnHorses();
 }
