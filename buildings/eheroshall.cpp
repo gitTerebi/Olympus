@@ -560,7 +560,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         break;
     case eHeroRequirementType::panHellenicGameWinHippodrome:
         if(atlentean) {
-            sc = c->workingHippodrome() ? 1 : 0;
+            sc = c->workingHippodrome();
         } else {
             sc = board.wonGames(cid) > 0 ? 1 : 0;
         }

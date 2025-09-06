@@ -244,7 +244,13 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
-        return eLanguage::zeusText(194, 69);
+        if(fStatusCount == 0) {
+            eLanguage::zeusText(194, 69);
+        } else {
+            auto text = eLanguage::zeusText(194, 71);
+            const auto countStr = std::to_string(fStatusCount);
+            eStringHelpers::replace(text, "[amount]", countStr);
+        }
     } break;
     case eEpisodeGoalType::support: {
         auto text = eLanguage::zeusText(194, 50);
@@ -418,7 +424,14 @@ void eEpisodeGoal::update(const eGameBoard& b) {
     } break;
     case eEpisodeGoalType::hippodrome: {
         const bool wasMet = met();
-        fStatusCount = fRequiredCount;
+        const auto cids = b.personPlayerCitiesOnBoard();
+        int result = 0;
+        for(const auto cid : cids) {
+            const auto c = b.boardCityWithId(cid);
+            const int r = c->workingHippodrome();
+            if(r > result) result = r;
+        }
+        fStatusCount = result;
         const bool isMet = met();
         if(!wasMet && isMet) {
             b.showTip(pid, eLanguage::zeusText(194, 99));

@@ -2324,6 +2324,17 @@ const std::vector<eTile*>& eBoardCity::forestTiles() {
     return mForestTiles;
 }
 
+int eBoardCity::workingHippodrome() const {
+    int result = 0;
+    for(const auto& h : mHippodromes) {
+        const bool w = h->working();
+        if(!w) continue;
+        const int r = h->length();
+        if(r > result) result = r;
+    }
+    return result;
+}
+
 void eBoardCity::setInvasionHandlersIOIDs(int& id) {
     for(const auto i : mInvasionHandlers) {
         i->setIOID(id++);

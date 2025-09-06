@@ -85,7 +85,7 @@ void eHippodrome::addHorses(const int h) {
 int eHippodrome::neededHorses() const {
     const bool c = closed();
     if(!c) return 0;
-    const int l = mPieces.size();
+    const int l = length();
     if(l < 23) return 4;
     else if(l < 59) return 8;
     else if(l < 199) return 12;
@@ -95,7 +95,7 @@ int eHippodrome::neededHorses() const {
 int eHippodrome::drachmasPerMonth() const {
     const bool w = working();
     if(!w) return 0;
-    const int l = mPieces.size();
+    const int l = length();
     if(l < 11) return 10;
     else if(l < 23) return 20;
     else if(l < 35) return 40;
@@ -117,6 +117,10 @@ bool eHippodrome::racing() const {
         if(h) return true;
     }
     return false;
+}
+
+int eHippodrome::length() const {
+    return mPieces.size();
 }
 
 void eHippodrome::setCart(eCartTransporter* const c) {

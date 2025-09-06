@@ -24,6 +24,7 @@ public:
     int drachmasPerMonth() const;
     bool working() const;
     bool racing() const;
+    int length() const;
 
     void setCart(eCartTransporter* const c);
     bool hasCart() const { return mCart; }

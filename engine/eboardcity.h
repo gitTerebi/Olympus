@@ -395,7 +395,7 @@ public:
     void setMaxSanctuaries(const int n) { mMaxSanctuaries = n; }
     int maxSanctuaries() const { return mMaxSanctuaries; }
 
-    bool workingHippodrome() const { return true; }
+    int workingHippodrome() const;
 
     void setInvasionHandlersIOIDs(int& id);
     eInvasionHandler* invasionHandlerWithIOID(const int id) const;
