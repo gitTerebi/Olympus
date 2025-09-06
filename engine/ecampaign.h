@@ -71,7 +71,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
-    void readPak(const std::string& name,
+    void readPak(const std::string& title,
                  const std::string& path);
 
     bool load(const std::string& name);

@@ -1270,11 +1270,11 @@ void removeNullEvents(const eCityId cid, eEpisode& ep) {
     }
 }
 
-void eCampaign::readPak(const std::string& name,
+void eCampaign::readPak(const std::string& title,
                         const std::string& path) {
     mIsPak = true;
     mPakFilename = eStringHelpers::pathToName(path);
-    mName = name;
+    mName = mPakFilename.substr(0, mPakFilename.size() - 4);
     ZeusFile file(path);
     file.readVersion();
     const auto version = file.version();
@@ -1293,7 +1293,7 @@ void eCampaign::readPak(const std::string& name,
 
     const auto atlanteanStr = file.isAtlantean() ? "atlantean" : "greek";
 
-    printf("%s %s %s\n", name.c_str(), versionStr.c_str(), atlanteanStr);
+    printf("%s %s %s\n", title.c_str(), versionStr.c_str(), atlanteanStr);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
 
     uint8_t bitmapId;
