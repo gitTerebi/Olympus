@@ -9,6 +9,8 @@
 eHippodromePiece::eHippodromePiece(eGameBoard &board, const eCityId cid) :
     eBuildingWithResource(board, eBuildingType::hippodromePiece, 4, 4, cid) {
     eGameTextures::loadHippodrome();
+    eGameTextures::loadHippodromeSpectators();
+    eGameTextures::loadHippodromeFeces();
     setEnabled(true);
 }
 
@@ -53,8 +55,23 @@ std::vector<eCartTask> eHippodromePiece::cartTasks() const {
 
 void eHippodromePiece::timeChanged(const int by) {
     (void)by;
-    if(mCart) return;
     if(!mHippodrome) return;
+
+    if(mHippodrome->working() && !mHippodrome->racing() &&
+        mHippodrome->cleaningPartId() == mPartId) {
+        if(mCleaningTimeShift == 0) {
+            mCleaningTimeShift = -textureTime();
+        } else {
+            const int time = textureTime();
+            const int cleaningTime = mCleaningTimeShift + time;
+            if(cleaningTime > 200) {
+                mCleaningTimeShift = 0;
+                mHippodrome->nextCleaningPartId();
+            }
+        }
+    }
+
+    if(mCart) return;
     const bool c = mHippodrome->closed();
     if(!c) return;
     const bool h = mHippodrome->hasCart();
@@ -469,10 +486,64 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
     const auto dir = board.direction();
     const auto& rr = tileRect();
     std::vector<eOverlay> result;
+
+    const int sizeId = static_cast<int>(size);
+    const auto& builTexs = eGameTextures::buildings()[sizeId];
+    const auto& colls = builTexs.fHippodromeSpectators;
+    const bool switchDir = mId == 6;
+    const int time = textureTime();
+    bool ns = dir == eWorldDirection::N ||
+              dir == eWorldDirection::S;
+    if(switchDir) ns = !ns;
+
     if(mId == 2 || mId == 4) {
         iterateRenderOrder(rr, board, dir, [&](eTile* const t) {
             crossTile(t, result, dir, size, rr, true);
         });
+    } else if(mId == 0 || mId == 6) {
+        if(mHippodrome && mHippodrome->racing()) {
+            if(ns) {
+                const auto& coll = colls[1];
+                const int id = time % coll.size();
+                const auto& tex = coll.getTexture(id);
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = 0.0;
+                    o.fY = -5.5;
+                }
+            } else  {
+                const auto& coll = colls[0];
+                const int id = time % coll.size();
+                const auto& tex = coll.getTexture(id);
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = -1.25;
+                    o.fY = -4.00;
+                }
+            }
+        }
+    }
+    /*if(mId == 2 || mId == 4 || mId == 0 || mId == 6) */{
+        if(mHippodrome && mHippodrome->working() && !mHippodrome->racing() &&
+            mHippodrome->cleaningPartId() == mPartId) {
+            const auto& colls = builTexs.fHippodromeFeces;
+            const bool zero = mId == 0 || mId == 4;
+            const auto& coll = zero ? colls[0] : colls[1];
+            auto& o = result.emplace_back();
+            const int cleaningTime = time + mCleaningTimeShift;
+            if(cleaningTime < coll.size()) {
+                o.fTex = coll.getTexture(cleaningTime);
+            } else {
+                const auto& colls = builTexs.fHippodromeFecesStanding;
+                const bool zero = mId == 0 || mId == 4;
+                const auto& coll = zero ? colls[0] : colls[1];
+                o.fTex = coll.getTexture(cleaningTime % coll.size());
+            }
+            o.fX = -0.5;
+            o.fY = -4.5;
+        }
     }
     iterateRenderOrder(rr, board, dir, [&](eTile* const t) {
         horseTile(t, result, dir, size, rr);
@@ -482,7 +553,41 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
             crossTile(t, result, dir, size, rr, false);
         });
     } else if(mId == 0 || mId == 6) {
-
+        if(mHippodrome && mHippodrome->racing()) {
+            if(ns) {
+                const auto& coll = colls[2];
+                const int id = time % coll.size();
+                const auto& tex = coll.getTexture(id);
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = -0.5;
+                    o.fY = -2.5;
+                }
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = 1.5;
+                    o.fY = -2.5;
+                }
+            } else  {
+                const auto& coll = colls[3];
+                const int id = time % coll.size();
+                const auto& tex = coll.getTexture(id);
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = 1.75;
+                    o.fY = -5.0;
+                }
+                {
+                    auto& o = result.emplace_back();
+                    o.fTex = tex;
+                    o.fX = 1.75;
+                    o.fY = -2.5;
+                }
+            }
+        }
     }
 
     return result;

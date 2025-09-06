@@ -46,6 +46,8 @@ public:
     int id() const { return mId; }
     void setId(const int i) { mId = i % 8; }
 
+    void setPartId(const int i) { mPartId = i; }
+
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
@@ -60,6 +62,9 @@ private:
                    const eWorldDirection dir,
                    const eTileSize size,
                    const SDL_Rect& rr) const;
+
+    int mPartId = 0;
+    int mCleaningTimeShift = 0;
 
     int mId = 0;
     eHippodrome* mHippodrome = nullptr;

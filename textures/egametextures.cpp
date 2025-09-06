@@ -1542,6 +1542,20 @@ void eGameTextures::loadHippodrome() {
     });
 }
 
+void eGameTextures::loadHippodromeSpectators() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadHippodromeSpectators();
+    });
+}
+
+void eGameTextures::loadHippodromeFeces() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadHippodromeFeces();
+    });
+}
+
 void eGameTextures::loadPyramid() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];

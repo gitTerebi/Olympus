@@ -29,16 +29,22 @@ public:
     void setCart(eCartTransporter* const c);
     bool hasCart() const { return mCart; }
 
+    void nextCleaningPartId();
+    int cleaningPartId() const { return mCleaningPartId; }
+
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 private:
+    using eN = eHippodromePiece::eNeighbour;
+    eN* addPiece(const eN& n);
+
     void purgeHorses();
     void updatePaths();
 
     const eCityId mCid;
     eGameBoard& mBoard;
+    int mCleaningPartId = 0;
 
-    using eN = eHippodromePiece::eNeighbour;
     std::vector<eN> mPieces;
     int mFinish = -1;
     int mNHorses = 0;

@@ -259,6 +259,8 @@ public:
     static void loadBench();
     static void loadPark();
     static void loadHippodrome();
+    static void loadHippodromeSpectators();
+    static void loadHippodromeFeces();
 
     static void loadPyramid();
 

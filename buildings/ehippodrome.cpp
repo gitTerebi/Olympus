@@ -17,9 +17,8 @@ void eHippodrome::nextMonth() {
 void eHippodrome::addPieces(eHippodromePiece * const start) {
     mPieces.clear();
     mFinish = -1;
-    auto current = &mPieces.emplace_back(eN{start, eDiagonalOrientation::topRight});
-    start->setHippodrome(this);
-    eN* prev = nullptr;
+    auto current = addPiece(eN{start, eDiagonalOrientation::topRight});
+    eHippodromePiece* prev = nullptr;
     while(current) {
         if(mFinish == -1 && current->fPtr->id() == 5) {
             mFinish = mPieces.size() - 1;
@@ -28,15 +27,14 @@ void eHippodrome::addPieces(eHippodromePiece * const start) {
         if(ns.empty()) break;
         if(prev && ns.size() == 1) break;
         for(const auto& n : ns) {
-            if(prev && n.fPtr == prev->fPtr) continue;
+            if(n.fPtr == prev) continue;
             current->fO = n.fO;
             if(n.fPtr == start) {
                 current = nullptr;
                 break;
             }
-            prev = current;
-            current = &mPieces.emplace_back(n);
-            current->fPtr->setHippodrome(this);
+            prev = current->fPtr;
+            current = addPiece(n);
             break;
         }
     }
@@ -127,6 +125,12 @@ void eHippodrome::setCart(eCartTransporter* const c) {
     mCart = c;
 }
 
+void eHippodrome::nextCleaningPartId() {
+    const int l = length();
+    if(l == 0) return;
+    mCleaningPartId = (mCleaningPartId + 1) % l;
+}
+
 void eHippodrome::write(eWriteStream& dst) const {
     dst << mFinish;
     dst << mNHorses;
@@ -153,11 +157,20 @@ void eHippodrome::read(eReadStream& src) {
             const auto hp = static_cast<eHippodromePiece*>(b);
             mPieces[i].fPtr = hp;
             hp->setHippodrome(this);
+            hp->setPartId(i);
         });
     }
     src.addPostFunc([this]() {
         updatePaths();
     });
+}
+
+eHippodrome::eN* eHippodrome::addPiece(const eN& n) {
+    const auto current = &mPieces.emplace_back(n);
+    const auto ptr = current->fPtr;
+    ptr->setHippodrome(this);
+    ptr->setPartId(mPieces.size() - 1);
+    return current;
 }
 
 void eHippodrome::purgeHorses() {
