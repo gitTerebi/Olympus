@@ -404,6 +404,7 @@ public:
     bool handleEpisodeCompleteEvents();
 
     void updateHippodromes();
+    void clearHippodromes();
 
     void addReinforcements(const eCityId fromCid,
                            const eEnlistedForces& forces);

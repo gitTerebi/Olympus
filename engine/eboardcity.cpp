@@ -874,6 +874,9 @@ bool eBoardCity::unregisterBuilding(eBuilding* const b) {
     eVectorHelpers::remove(mSanctBuildings, b);
     const bool r = eVectorHelpers::remove(mAnimalBuildings, b);
     if(r) mAnimalBuildingsSurroundingUpdate = true;
+    if(type == eBuildingType::hippodromePiece) {
+        updateHippodromes();
+    }
     return true;
 }
 
@@ -2376,6 +2379,13 @@ void eBoardCity::updateHippodromes() {
         h->addPieces(hp);
         mHippodromes.push_back(h);
     }
+}
+
+void eBoardCity::clearHippodromes() {
+    for(const auto& h : mHippodromes) {
+        h->clear();
+    }
+    mHippodromes.clear();
 }
 
 void eBoardCity::addReinforcements(const eCityId fromCid,

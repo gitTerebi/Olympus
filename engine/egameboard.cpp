@@ -187,6 +187,9 @@ void eGameBoard::clear() {
         c->kill();
     }
     emptyRubbish();
+    for(const auto& c : mCitiesOnBoard) {
+        c->clearHippodromes();
+    }
     for(const auto& x : mTiles) {
         for(const auto y : x) {
             delete y;

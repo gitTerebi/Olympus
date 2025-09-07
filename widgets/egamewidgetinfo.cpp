@@ -9,6 +9,7 @@
 #include "infowidgets/eheroshallinfowidget.h"
 #include "infowidgets/esanctuaryinfowidget.h"
 #include "infowidgets/etriremewharfinfowidget.h"
+#include "infowidgets/ehippodromeinfowidget.h"
 
 #include "engine/egameboard.h"
 
@@ -27,6 +28,13 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
         const auto storWid = new eStorageInfoWidget(window(), this);
         storWid->initialize(stor);
         wid = storWid;
+    } else if(const auto hp = dynamic_cast<eHippodromePiece*>(b)) {
+        const auto h = hp->hippodrome();
+        if(h) {
+            const auto hWid = new eHippodromeInfoWidget(window(), this, true, true);
+            hWid->initialize(h);
+            wid = hWid;
+        }
     } else if(const auto hh = dynamic_cast<eHerosHall*>(b)) {
         const auto hhWid = new eHerosHallInfoWidget(window(), this, false, false);
         hhWid->initialize(hh);
