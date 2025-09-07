@@ -12,7 +12,6 @@ struct eEnlistedForces {
     bool fAres = false;
 
     void read(eGameBoard& board,
-              eWorldBoard& wboard,
               eReadStream& src);
     void write(eWriteStream& dst) const;
 

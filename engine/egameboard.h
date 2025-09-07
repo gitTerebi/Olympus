@@ -305,7 +305,8 @@ public:
     void setEnlistForcesRequest(const eEnlistRequest& req);
     void requestForces(const eEnlistAction& action,
                        const std::vector<eResourceType>& plunderResources = {},
-                       const std::vector<stdsptr<eWorldCity>>& exclude = {});
+                       const std::vector<stdsptr<eWorldCity>>& exclude = {},
+                       const bool onlySoldiers = false);
 
     using eAction = std::function<void()>;
     bool ifVisible(eTile* const tile, const eAction& func) const;

@@ -171,6 +171,8 @@ std::vector<eTile*> eGameWidget::selectedTiles() const {
         for(int y = yMin; y < yMax; y++) {
             const auto tile = mBoard->dtile(x, y);
             if(!tile) continue;
+            const auto cid = tile->cityId();
+            if(cid != mViewedCityId) continue;
             result.push_back(tile);
         }
     }
@@ -320,6 +322,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                                         eCityId::neutralFriendly;
         mViewedCityId = newC;
         if(oldC != newC) {
+            mBoard->clearBannerSelection();
+            mBoard->clearTriremeSelection();
             const auto c = mBoard->boardCityWithId(newC);
             if(!mEditorMode && c && c->owningPlayer() == nullptr) {
                 showBuyCity(newC);
@@ -1510,6 +1514,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto drawBanners = [&]() {
             const auto b = tile->soldierBanner();
             if(!b) return;
+            const bool aid = b->militaryAid();
             bool hover;
             if(mLeftPressed && mMovedSincePress) {
                 hover = false;
@@ -1529,9 +1534,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto& rods = charTexs.fBannerRod;
                 const auto& rod = rods.getTexture(0);
                 if(hover) rod->setColorMod(175, 255, 255);
+                else if(aid) rod->setColorMod(255, 125, 125);
                 tp.drawTexture(rx, ry - 1, rod,
                                eAlignment::hcenter | eAlignment::top);
-                if(hover) rod->clearColorMod();
+                if(hover || aid) rod->clearColorMod();
             }
             {
                 const int id = b->id();
@@ -1545,9 +1551,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                 }
                 const auto& tex = bnr.getTexture(texId);
                 if(hover) tex->setColorMod(175, 255, 255);
+                else if(aid) tex->setColorMod(255, 125, 125);
                 tp.drawTexture(rx - 1, ry - 2.6, tex,
                                eAlignment::hcenter | eAlignment::top);
-                if(hover) tex->clearColorMod();
+                if(hover || aid) tex->clearColorMod();
             }
             {
                 const auto type = b->type();
@@ -1568,9 +1575,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                     if(itype != -1) {
                         const auto& top = tps.getTexture(itype);
                         if(hover) top->setColorMod(175, 255, 255);
+                        else if(aid) top->setColorMod(255, 125, 125);
                         tp.drawTexture(rx - 2.5, ry -  3.5, top,
                                        eAlignment::hcenter | eAlignment::top);
-                        if(hover) top->clearColorMod();
+                        if(hover || aid) top->clearColorMod();
                     }
                 } else {
                     int itype = -1;
@@ -1584,9 +1592,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                     if(itype != -1) {
                         const auto& top = pTps.getTexture(itype);
                         if(hover) top->setColorMod(175, 255, 255);
+                        else if(aid) top->setColorMod(255, 125, 125);
                         tp.drawTexture(rx - 2.5, ry -  3.5, top,
                                        eAlignment::hcenter | eAlignment::top);
-                        if(hover) top->clearColorMod();
+                        if(hover || aid) top->clearColorMod();
                     }
                 }
             }

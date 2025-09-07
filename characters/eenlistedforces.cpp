@@ -6,8 +6,8 @@
 #include "enumbers.h"
 
 void eEnlistedForces::read(eGameBoard& board,
-                           eWorldBoard& wboard,
                            eReadStream& src) {
+    auto& wboard = board.world();
     {
         int ns;
         src >> ns;

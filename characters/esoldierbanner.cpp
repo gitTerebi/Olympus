@@ -150,6 +150,17 @@ void eSoldierBanner::moveToDefault() {
 }
 
 void eSoldierBanner::goHome() {
+    if(mAbroad && mMilitaryAid) {
+        const auto onCid = onCityId();
+        const auto c = mBoard.boardCityWithId(onCid);
+        if(c) {
+            const auto ptr = ref<eSoldierBanner>();
+            c->reinforcementsGoHome(ptr);
+        }
+        goAbroad();
+        mMilitaryAid = false;
+        return;
+    }
     if(mAbroad) return;
     if(mMilitaryAid) return;
     const auto onCid = onCityId();
@@ -165,7 +176,7 @@ void eSoldierBanner::goHome() {
 }
 
 void eSoldierBanner::goAbroad() {
-    if(mAbroad) return;
+    if(mAbroad && !mMilitaryAid) return;
     if(mSelected) mBoard.deselectBanner(this);
     if(mHome) backFromHome();
     mAbroad = true;
@@ -206,7 +217,7 @@ void eSoldierBanner::backFromAbroad(int& wait) {
 }
 
 void eSoldierBanner::backFromHome() {
-    if(mAbroad) return;
+    if(mAbroad && !mMilitaryAid) return;
     if(!mHome) return;
     mHome = false;
     for(const auto s : mSoldiers) {

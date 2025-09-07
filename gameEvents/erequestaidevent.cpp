@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "enumbers.h"
 
 eRequestAidEvent::eRequestAidEvent(
         const eCityId cid,
@@ -16,14 +17,13 @@ void eRequestAidEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(cityId());
+    const auto cid = cityId();
+    eEventData ed(cid);
     ed.fCity = mCity;
 
     const auto date = board->date();
-    const auto cid = mCity->cityId();
     const auto entryPoint = board->entryPoint(cid);
     if(!entryPoint) return;
-    const auto ocid = cityId();
 
     if(mEnd) {
         const auto ma = board->militaryAid(cid, mCity);
@@ -70,11 +70,11 @@ void eRequestAidEvent::trigger() {
         while(remRabble > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::rockThrower, *board);
-            b->setOnCityId(ocid);
+            b->setOnCityId(cid);
             b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < 8 && i < remRabble; i++) {
+            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remRabble; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }
@@ -86,11 +86,11 @@ void eRequestAidEvent::trigger() {
         while(remHoplites > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::hoplite, *board);
-            b->setOnCityId(ocid);
+            b->setOnCityId(cid);
             b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < 8 && i < remHoplites; i++) {
+            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remHoplites; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }
@@ -102,11 +102,11 @@ void eRequestAidEvent::trigger() {
         while(remHorsemen > 0) {
             const auto b = e::make_shared<eSoldierBanner>(
                                eBannerType::horseman, *board);
-            b->setOnCityId(ocid);
+            b->setOnCityId(cid);
             b->setCityId(cid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < 8 && i < remHorsemen; i++) {
+            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remHorsemen; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }

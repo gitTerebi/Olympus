@@ -63,6 +63,7 @@ void eArmyReturnEvent::trigger() {
     }
 
     for(const auto& s : mForces.fSoldiers) {
+        s->setBothCityIds(cid);
         s->backFromAbroad(wait);
     }
 

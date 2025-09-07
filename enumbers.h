@@ -6,6 +6,7 @@ struct eNumbers {
 
     static int sDayLength;
 
+    static int sReinforcementsTravelTime;
     static int sArmyTravelTime;
 
     static int sRabbleDivisor;

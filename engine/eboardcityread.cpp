@@ -195,4 +195,13 @@ void eBoardCity::read(eReadStream& src) {
             mHippodromes.push_back(h);
         }
     }
+
+    {
+        int nr;
+        src >> nr;
+        for(int i = 0; i < nr; i++) {
+            auto& r = mReinforcements.emplace_back();
+            r.read(mBoard, src);
+        }
+    }
 }

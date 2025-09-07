@@ -23,6 +23,7 @@
 #include "gameEvents/eplayerconquestevent.h"
 #include "gameEvents/emonsterinvasioneventbase.h"
 #include "gameEvents/egodvisitevent.h"
+#include "gameEvents/earmyreturnevent.h"
 #include "engine/emilitaryaid.h"
 #include "spawners/ebanner.h"
 #include "einvasionhandler.h"
@@ -2375,6 +2376,46 @@ void eBoardCity::updateHippodromes() {
         h->addPieces(hp);
         mHippodromes.push_back(h);
     }
+}
+
+void eBoardCity::addReinforcements(const eCityId fromCid,
+                                   const eEnlistedForces& forces) {
+    mReinforcements.emplace_back(eReinforcements{forces, fromCid});
+}
+
+void eBoardCity::reinforcementsGoHome(const stdsptr<eSoldierBanner>& b) {
+    int i = -1;
+    for(auto& r : mReinforcements) {
+        i++;
+        const bool result = r.remove(b);
+        if(!result) continue;
+        const bool e = r.checkEmpty();
+        if(e) {
+            mReinforcements.erase(mReinforcements.begin() + i);
+        }
+        break;
+    }
+}
+
+void eBoardCity::sendAllReinforcementsHome() {
+    const auto& world = mBoard.world();
+    for(const auto& r : mReinforcements) {
+        const auto fromCid = r.fromCid();
+        const auto c = mBoard.boardCityWithId(fromCid);
+        if(!c) continue;
+        const auto& forces = r.forces();
+        if(forces.fSoldiers.empty()) return;
+        const auto fromC = world.cityWithId(fromCid);
+        const auto e = e::make_shared<eArmyReturnEvent>(
+            fromCid, eGameEventBranch::root, mBoard);
+        const auto boardDate = mBoard.date();
+        const int period = eNumbers::sReinforcementsTravelTime;
+        const auto date = boardDate + period;
+        e->initializeDate(date, period, 1);
+        e->initialize(forces, fromC);
+        c->addRootGameEvent(e);
+    }
+    mReinforcements.clear();
 }
 
 void eBoardCity::clearAfterLastEpisode() {

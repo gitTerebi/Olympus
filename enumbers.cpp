@@ -8,6 +8,7 @@
 
 int eNumbers::sDayLength;
 
+int eNumbers::sReinforcementsTravelTime;
 int eNumbers::sArmyTravelTime;
 
 int eNumbers::sRabbleDivisor;
@@ -285,6 +286,7 @@ void eNumbers::sLoad() {
     };
     loadI("day_length_i", sDayLength, 350);
 
+    loadI("reinforcements_travel_time_i", sReinforcementsTravelTime, 50);
     loadI("army_travel_time_i", sArmyTravelTime, 200);
 
     loadI("rabble_divisor_i", sRabbleDivisor, 6);

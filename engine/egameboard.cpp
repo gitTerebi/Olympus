@@ -53,6 +53,7 @@
 #include "gameEvents/erequestaidevent.h"
 #include "gameEvents/eplayerconquesteventbase.h"
 #include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/earmyreturnevent.h"
 
 #include "eeventdata.h"
 
@@ -340,8 +341,30 @@ void eGameBoard::bannersGoHome() {
     for(const auto t : mSelectedTriremes) {
         t->goHome();
     }
+    std::map<eCityId, std::vector<stdsptr<eSoldierBanner>>> armyReturn;
     for(const auto b : mSelectedBanners) {
+        if(b->militaryAid() && b->isAbroad()) {
+            const auto cid = b->cityId();
+            armyReturn[cid].push_back(b->ref<eSoldierBanner>());
+        }
         b->goHome();
+    }
+    for(const auto& r : armyReturn) {
+        const auto c = boardCityWithId(r.first);
+        if(!c) continue;
+        if(r.second.empty()) return;
+        const auto fromCid = r.second[0]->onCityId();
+        const auto fromC = mWorld.cityWithId(fromCid);
+        const auto e = e::make_shared<eArmyReturnEvent>(
+            r.first, eGameEventBranch::root, *this);
+        const auto boardDate = date();
+        const int period = eNumbers::sReinforcementsTravelTime;
+        const auto date = boardDate + period;
+        e->initializeDate(date, period, 1);
+        eEnlistedForces forces;
+        forces.fSoldiers = r.second;
+        e->initialize(forces, fromC);
+        c->addRootGameEvent(e);
     }
 }
 
@@ -1025,11 +1048,14 @@ eTeamId eGameBoard::playerIdToTeamId(const ePlayerId pid) const {
 
 void eGameBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid) {
     const auto oldPid = cityIdToPlayerId(cid);
-    if(oldPid == ePlayerId::neutralAggresive ||
-       oldPid == ePlayerId::neutralFriendly) {
-        const auto c = boardCityWithId(cid);
-        mActiveCitiesOnBoard.push_back(c);
-        c->acquired();
+    const auto c = boardCityWithId(cid);
+    if(c) {
+        if(oldPid == ePlayerId::neutralAggresive ||
+           oldPid == ePlayerId::neutralFriendly) {
+            mActiveCitiesOnBoard.push_back(c);
+            c->acquired();
+        }
+        c->sendAllReinforcementsHome();
     }
     return mWorld.moveCityToPlayer(cid, pid);
 }
@@ -2596,16 +2622,35 @@ void eGameBoard::setEnlistForcesRequest(const eEnlistRequest& req) {
 
 void eGameBoard::requestForces(const eEnlistAction& action,
                                const std::vector<eResourceType>& plunderResources,
-                               const std::vector<stdsptr<eWorldCity>>& exclude) {
+                               const std::vector<stdsptr<eWorldCity>>& exclude,
+                               const bool onlySoldiers) {
     if(mEnlistRequester) {
         const auto ppid = personPlayer();
-        const auto cids = playerCitiesOnBoard(ppid);
+        const auto baseCids = playerCitiesOnBoard(ppid);
+        std::vector<eCityId> cids;
+        for(const auto cid : baseCids) {
+            bool e = false;
+            for(const auto& ee : exclude) {
+                const auto eCid = ee->cityId();
+                if(cid == eCid) {
+                    e = true;
+                    break;
+                }
+            }
+            if(e) continue;
+            cids.push_back(cid);
+        }
         std::vector<std::string> cnames;
         for(const auto cid : cids) {
             const auto n = cityName(cid);
             cnames.push_back(n);
         }
         auto f = getEnlistableForces(ppid);
+        if(onlySoldiers) {
+            f.fHeroes.clear();
+            f.fAllies.clear();
+            f.fAres = false;
+        }
         std::vector<eHeroType> heroesAbroad;
         std::map<eHeroType, eCityId> heroesCity;
         for(const auto h : f.fHeroes) {

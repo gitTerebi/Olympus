@@ -371,18 +371,35 @@ void eWorldMenu::updateButtonsEnabled() const {
         const bool distant = type == eCityType::distantCity;
         const bool onBoard = mCity->isOnBoard();
         const bool onBoardNeutral = mCity->isOnBoardNeutral();
-        const bool onBoardPlayerCity = mCity->isOnBoardColony();
+        const bool onBoardPlayerColony = mCity->isOnBoardColony();
 
         mRequestButton->setEnabled(!distant && !cc &&
-                                   !onBoardPlayerCity && !onBoardNeutral);
+                                   !onBoardPlayerColony && !onBoardNeutral);
         mFulfillButton->setEnabled(!distant && !cc &&
-                                   !onBoardPlayerCity && !onBoardNeutral);
+                                   !onBoardPlayerColony && !onBoardNeutral);
         mGiftButton->setEnabled(!distant && !cc &&
-                                !onBoardPlayerCity && !onBoardNeutral);
+                                !onBoardPlayerColony && !onBoardNeutral);
         mRaidButton->setEnabled(!vassalOrColony &&
                                 !distant && !cc && !onBoard);
-        mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival()) &&
-                                   !distant && !cc && !onBoardPlayerCity &&
-                                   !onBoardNeutral);
+
+        const auto cids = mBoard->personPlayerCities();
+        int nPlayerOnBoard = 0;
+        for(const auto cid : cids) {
+            const auto c = mBoard->cityWithId(cid);
+            if(!c) continue;
+            const bool ob = c->isOnBoard();
+            if(!ob) continue;
+            nPlayerOnBoard++;
+        }
+        const bool sendReinforcements = nPlayerOnBoard > 1 && (onBoardPlayerColony || cc);
+        if(sendReinforcements) {
+            mConquerButton->setEnabled(true);
+            mConquerButton->setTooltip(eLanguage::zeusText(41, 7));
+        } else {
+            mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival()) &&
+                                       !distant && !cc && !onBoardPlayerColony &&
+                                       !onBoardNeutral);
+            mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
+        }
     }
 }

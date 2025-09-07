@@ -14,6 +14,7 @@
 #include "characters/eenlistedforces.h"
 #include "ai/eaicityplan.h"
 #include "egameevents.h"
+#include "ereinforcements.h"
 
 class ePalace;
 class eSanctuary;
@@ -404,6 +405,11 @@ public:
 
     void updateHippodromes();
 
+    void addReinforcements(const eCityId fromCid,
+                           const eEnlistedForces& forces);
+    void reinforcementsGoHome(const stdsptr<eSoldierBanner>& b);
+    void sendAllReinforcementsHome();
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
@@ -610,6 +616,8 @@ private:
     eDate mNextAttackDate;
 
     int mLookForCityDefense = 0;
+
+    std::vector<eReinforcements> mReinforcements;
 };
 
 #endif // EBOARDCITY_H

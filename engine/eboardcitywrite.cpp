@@ -143,4 +143,9 @@ void eBoardCity::write(eWriteStream& dst) const {
     for(const auto& h : mHippodromes) {
         h->write(dst);
     }
+
+    dst << mReinforcements.size();
+    for(const auto& r : mReinforcements) {
+        r.write(dst);
+    }
 }

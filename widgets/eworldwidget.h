@@ -23,9 +23,10 @@ public:
 
     using eEnlistAction = eEnlistForcesDialog::eEnlistAction;
     void openEnlistForcesDialog(
-            const eEnlistAction& a,
-            const std::vector<stdsptr<eWorldCity>>& exclude,
-            const std::vector<eResourceType>& plunderResources = {});
+        const eEnlistAction& a,
+        const std::vector<stdsptr<eWorldCity>>& exclude,
+        const std::vector<eResourceType>& plunderResources = {},
+        const bool onlySoldiers = false);
     void openEnlistForcesDialog(const eEnlistedForces& enlistable,
             const std::vector<eCityId>& cids,
             const std::vector<std::string>& cnames,

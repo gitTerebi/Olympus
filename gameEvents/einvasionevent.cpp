@@ -264,8 +264,7 @@ void eInvasionEvent::read(eReadStream& src) {
     src.readGameEvent(board, [this](eGameEvent* const e) {
         mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
     });
-    auto& wboard = board->world();
-    mForces.read(*board, wboard, src);
+    mForces.read(*board, src);
 
     src >> mWarned;
     mFirstWarning.read(src);

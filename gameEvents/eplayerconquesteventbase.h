@@ -14,7 +14,6 @@ public:
     void addAres();
 protected:
     void removeConquestEvent();
-    void planArmyReturn();
 };
 
 #endif // EPLAYERCONQUESTEVENTBASE_H

@@ -18,6 +18,7 @@
 #include "gameEvents/eplayerraidevent.h"
 #include "gameEvents/erequestaidevent.h"
 #include "gameEvents/erequeststrikeevent.h"
+#include "gameEvents/ereinforcementsevent.h"
 
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
@@ -67,18 +68,32 @@ void eWorldWidget::initialize() {
                                          const eResourceType r) {
             (void)r;
             mBoard->enlistForces(forces);
-            const auto e = e::make_shared<ePlayerConquestEvent>(
-                               mBoard->currentCityId(),
-                               eGameEventBranch::root, *mBoard);
-            const auto boardDate = mBoard->date();
-            const int period = eNumbers::sArmyTravelTime;
-            const auto date = boardDate + period;
-            e->initializeDate(date, period, 1);
-            e->initialize(date, forces, mCity);
-            mBoard->addRootGameEvent(e);
-            update();
+            if(mCity->isOnBoardColony() || mCity->isCurrentCity()) {
+                const auto toCid = mCity->cityId();
+                const auto e = e::make_shared<eReinforcementsEvent>(
+                    toCid, eGameEventBranch::root, *mBoard);
+                const auto boardDate = mBoard->date();
+                const int period = eNumbers::sReinforcementsTravelTime;
+                const auto date = boardDate + period;
+                e->initializeDate(date, period, 1);
+                e->initialize(forces, mCity);
+                mBoard->addRootGameEvent(e);
+                update();
+            } else {
+                const auto e = e::make_shared<ePlayerConquestEvent>(
+                                   mBoard->currentCityId(),
+                                   eGameEventBranch::root, *mBoard);
+                const auto boardDate = mBoard->date();
+                const int period = eNumbers::sArmyTravelTime;
+                const auto date = boardDate + period;
+                e->initializeDate(date, period, 1);
+                e->initialize(date, forces, mCity);
+                mBoard->addRootGameEvent(e);
+                update();
+            }
         };
-        openEnlistForcesDialog(enlistAction, {mCity});
+        const bool onlySoldiers = mCity->isOnBoardColony() || mCity->isCurrentCity();
+        openEnlistForcesDialog(enlistAction, {mCity}, {eResourceType::none}, onlySoldiers);
     };
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);
@@ -189,8 +204,9 @@ void eWorldWidget::update() {
 void eWorldWidget::openEnlistForcesDialog(
         const eEnlistAction& a,
         const std::vector<stdsptr<eWorldCity>>& exclude,
-        const std::vector<eResourceType>& plunderResources) {
-    mBoard->requestForces(a, plunderResources, exclude);
+        const std::vector<eResourceType>& plunderResources,
+        const bool onlySoldiers) {
+    mBoard->requestForces(a, plunderResources, exclude, onlySoldiers);
 }
 
 void eWorldWidget::openRequestDialog() {

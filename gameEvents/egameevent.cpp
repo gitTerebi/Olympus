@@ -40,6 +40,7 @@
 #include "edemandchangeevent.h"
 #include "epricechangeevent.h"
 #include "ewagechangeevent.h"
+#include "ereinforcementsevent.h"
 
 eGameEvent::eGameEvent(const eCityId cid,
                        const eGameEventType type,
@@ -176,6 +177,9 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return e::make_shared<ePriceChangeEvent>(cid, branch, board);
     case eGameEventType::wageChange:
         return e::make_shared<eWageChangeEvent>(cid, branch, board);
+
+    case eGameEventType::reinforcementsEvent:
+        return e::make_shared<eReinforcementsEvent>(cid, branch, board);
     }
     return nullptr;
 }

@@ -63,7 +63,9 @@ enum class eGameEventType {
     tidalWave,
     lavaFlow,
     sinkLand,
-    landSlide
+    landSlide,
+
+    reinforcementsEvent
 };
 
 enum class eGameEventBranch {

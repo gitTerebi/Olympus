@@ -6,7 +6,6 @@
 #include "characters/eenlistedforces.h"
 #include "engine/eworldcity.h"
 
-
 class eArmyEventBase : public eGameEvent {
 public:
     eArmyEventBase(const eCityId cid,
@@ -21,6 +20,9 @@ public:
     const eEnlistedForces& forces() const { return mForces; }
     const stdsptr<eWorldCity>& city() const { return mCity; }
 protected:
+    void planArmyReturn();
+    void planArmyReturn(const eCityId cid, const int travelTime);
+
     void removeArmyEvent();
 
     eEnlistedForces mForces;

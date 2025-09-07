@@ -406,6 +406,7 @@ SOURCES += \
         engine/eplague.cpp \
         engine/eplannedaction.cpp \
         engine/eregrowforestaction.cpp \
+        engine/ereinforcements.cpp \
         engine/eresourcetype.cpp \
         engine/etask.cpp \
         engine/etaxrate.cpp \
@@ -482,6 +483,7 @@ SOURCES += \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
         gameEvents/ereceiverequestevent.cpp \
+        gameEvents/ereinforcementsevent.cpp \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
         gameEvents/eresourceeventvalue.cpp \
@@ -1097,6 +1099,7 @@ HEADERS += \
     engine/eplannedaction.h \
     engine/eprovide.h \
     engine/eregrowforestaction.h \
+    engine/ereinforcements.h \
     engine/eresourcetype.h \
     engine/estaterelevance.h \
     engine/etask.h \
@@ -1179,6 +1182,7 @@ HEADERS += \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
     gameEvents/ereceiverequestevent.h \
+    gameEvents/ereinforcementsevent.h \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \
     gameEvents/eresourceeventvalue.h \
