@@ -261,6 +261,7 @@ public:
     static void loadHippodrome();
     static void loadHippodromeSpectators();
     static void loadHippodromeFeces();
+    static void loadHippodromeFinish();
 
     static void loadPyramid();
 

@@ -77,3 +77,55 @@ void eBuildingTextures::loadHippodromeFeces() {
         }
     }
 }
+
+void eBuildingTextures::loadHippodromeFinish() {
+    if(fHippodromeFinishLoaded) return;
+    fHippodromeFinishLoaded = true;
+
+    const auto& sds = spriteData(fTileH,
+                                 eHippodromeFinishSpriteData15,
+                                 eHippodromeFinishSpriteData30,
+                                 eHippodromeFinishSpriteData45,
+                                 eHippodromeFinishSpriteData60);
+    eSpriteLoader loader(fTileH, "hippodromeFinish", sds,
+                         &ePoseidonImps2Offset, fRenderer);
+
+    {
+        fHippodromeFinishRacing.emplace_back(fRenderer);
+        fHippodromeFinishRacing.emplace_back(fRenderer);
+        fHippodromeFinishRacing.emplace_back(fRenderer);
+        fHippodromeFinishRacing.emplace_back(fRenderer);
+
+        auto& coll1 = fHippodromeFinishRacing[0];
+        auto& coll2 = fHippodromeFinishRacing[1];
+        auto& coll3 = fHippodromeFinishRacing[2];
+        auto& coll4 = fHippodromeFinishRacing[3];
+        for(int j = 1121; j < 1213;) {
+            for(int k = 0; k < 4; k++, j++) {
+                if(k == 2) continue;
+                loader.load(1121, j, k == 0 ? coll1 : (k == 1 ? coll2 : coll4));
+            }
+        }
+
+        generateFlipped(coll4, coll3);
+    }
+    {
+        fHippodromeFinishNotRacing.emplace_back(fRenderer);
+        fHippodromeFinishNotRacing.emplace_back(fRenderer);
+        fHippodromeFinishNotRacing.emplace_back(fRenderer);
+        fHippodromeFinishNotRacing.emplace_back(fRenderer);
+
+        auto& coll1 = fHippodromeFinishNotRacing[0];
+        auto& coll2 = fHippodromeFinishNotRacing[1];
+        auto& coll3 = fHippodromeFinishNotRacing[2];
+        auto& coll4 = fHippodromeFinishNotRacing[3];
+        for(int j = 1213; j < 1413;) {
+            for(int k = 0; k < 4; k++, j++) {
+                if(k == 2) continue;
+                loader.load(1121, j, k == 0 ? coll1 : (k == 1 ? coll2 : coll4));
+            }
+        }
+
+        generateFlipped(coll4, coll3);
+    }
+}

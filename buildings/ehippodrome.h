@@ -32,6 +32,8 @@ public:
     void nextCleaningPartId();
     int cleaningPartId() const { return mCleaningPartId; }
 
+    int finishPartId() const { return mFinish; }
+
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 private:

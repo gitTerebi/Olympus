@@ -170,6 +170,7 @@ SDL_Color colorForTile(eTile* const tile) {
         if(bi >= min && bi <= max) return {238, 65, 16, 255};
         switch(bt) {
         case eBuildingType::road:
+        case eBuildingType::hippodromePiece:
             return {225, 225, 225, 255};
         case eBuildingType::eliteHousing:
             return {238, 65, 16, 255};

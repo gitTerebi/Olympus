@@ -11,6 +11,7 @@ eHippodromePiece::eHippodromePiece(eGameBoard &board, const eCityId cid) :
     eGameTextures::loadHippodrome();
     eGameTextures::loadHippodromeSpectators();
     eGameTextures::loadHippodromeFeces();
+    eGameTextures::loadHippodromeFinish();
     setEnabled(true);
 }
 
@@ -498,6 +499,42 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
     bool ns = dir == eWorldDirection::N ||
               dir == eWorldDirection::S;
     if(switchDir) ns = !ns;
+
+    if(mHippodrome && mPartId == mHippodrome->finishPartId() && mHippodrome->working()) {
+        const auto& colls = mHippodrome->racing() ? builTexs.fHippodromeFinishRacing :
+                                                    builTexs.fHippodromeFinishNotRacing;
+        auto& o = result.emplace_back();
+        switch(dir) {
+        case eWorldDirection::N: {
+            const auto& coll = colls[0];
+            const int texId = time % coll.size();
+            o.fTex = coll.getTexture(texId);
+            o.fX = -1.0;
+            o.fY = -5.5;
+        } break;
+        case eWorldDirection::E: {
+            const auto& coll = colls[3];
+            const int texId = time % coll.size();
+            o.fTex = coll.getTexture(texId);
+            o.fX = -1.;
+            o.fY = -2.;
+        } break;
+        case eWorldDirection::S: {
+            const auto& coll = colls[2];
+            const int texId = time % coll.size();
+            o.fTex = coll.getTexture(texId);
+            o.fX = 2.0;
+            o.fY = -1.5;
+        } break;
+        case eWorldDirection::W: {
+            const auto& coll = colls[1];
+            const int texId = time % coll.size();
+            o.fTex = coll.getTexture(texId);
+            o.fX = 2.5;
+            o.fY = -5.0;
+        } break;
+        }
+    }
 
     if(mId == 2 || mId == 4) {
         iterateRenderOrder(rr, board, dir, [&](eTile* const t) {

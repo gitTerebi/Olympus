@@ -251,6 +251,9 @@ public:
     bool fHippodromeFecesLoaded = false;
     void loadHippodromeFeces();
 
+    bool fHippodromeFinishLoaded = false;
+    void loadHippodromeFinish();
+
     std::shared_ptr<eTexture> fHouseSpace;
     std::vector<eTextureCollection> fCommonHouse;
     std::vector<eTextureCollection> fPoseidonCommonHouse;
@@ -707,6 +710,8 @@ public:
     std::vector<eTextureCollection> fHippodromeSpectators;
     std::vector<eTextureCollection> fHippodromeFeces;
     std::vector<eTextureCollection> fHippodromeFecesStanding;
+    std::vector<eTextureCollection> fHippodromeFinishRacing;
+    std::vector<eTextureCollection> fHippodromeFinishNotRacing;
 private:
     bool fFisheryOverlayLoaded = false;
     void loadFisheryOverlay();
