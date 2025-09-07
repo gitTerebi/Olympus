@@ -178,6 +178,8 @@ void eGameBoard::read(eReadStream& src) {
         src >> y.fThisYear;
     }
 
+    src >> mSavedYear;
+
     updateMarbleTiles();
     updateTerritoryBorders();
 }

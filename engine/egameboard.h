@@ -1035,6 +1035,8 @@ private:
     };
 
     std::map<eResourceType, eYearlyProduction> mYearlyProduction;
+
+    int mSavedYear = -100000;
 };
 
 #endif // EGAMEBOARD_H

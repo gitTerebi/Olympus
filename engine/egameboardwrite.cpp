@@ -173,4 +173,6 @@ void eGameBoard::write(eWriteStream& dst) const {
         dst << p.second.fLastYear;
         dst << p.second.fThisYear;
     }
+
+    dst << mSavedYear;
 }
