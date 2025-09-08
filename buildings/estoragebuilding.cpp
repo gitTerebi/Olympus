@@ -218,7 +218,9 @@ int eStorageBuilding::sSpaceLeft(
 }
 
 void eStorageBuilding::setMaxCount(const std::map<eResourceType, int>& m) {
-    mMaxCount = m;
+    for(const auto& r : m) {
+        mMaxCount[r.first] = r.second;
+    }
 }
 
 void eStorageBuilding::setOrders(const eResourceType get,
