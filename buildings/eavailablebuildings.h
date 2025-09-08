@@ -85,6 +85,7 @@ public:
     bool fChariotFactory = false;
 
     bool fTriremeWharf = false;
+    bool fHippodrome = false;
 
     eAvailable fAphroditeSanctuary = eAvailable::notAvailable;
     eAvailable fApolloSanctuary = eAvailable::notAvailable;

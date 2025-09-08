@@ -351,7 +351,8 @@ void eEditorSettingsMenu::initialize(const bool first,
                     eBuildingType::horseRanch,
                     eBuildingType::chariotFactory,
 
-                    eBuildingType::triremeWharf
+                    eBuildingType::triremeWharf,
+                    eBuildingType::hippodromePiece
                 };
 
                 int w = 0;
