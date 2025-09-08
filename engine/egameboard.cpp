@@ -2379,7 +2379,7 @@ void eGameBoard::incTime(const int by) {
     if(nextYear) {
         mWorld.nextYear();
         const auto ppid = personPlayer();
-        const auto cs = mWorld.getTribute(ppid);
+        const auto cs = mWorld.getTribute();
         for(const auto& c : cs) {
             if(c->conqueredByRival()) continue;
             tributeFrom(ppid, c, true);
