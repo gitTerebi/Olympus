@@ -41,12 +41,15 @@ void eSoldier::beingKilled() {
     const auto ct = type();
     switch(ct) {
     case eCharacterType::rockThrower:
+    case eCharacterType::archerPoseidon:
         brd.rockThrowerKilled(cid);
         break;
     case eCharacterType::hoplite:
+    case eCharacterType::hoplitePoseidon:
         brd.hopliteKilled(cid);
         break;
     case eCharacterType::horseman:
+    case eCharacterType::chariotPoseidon:
         brd.horsemanKilled(cid);
         break;
     default:
