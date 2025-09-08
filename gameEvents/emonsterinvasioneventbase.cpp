@@ -106,6 +106,7 @@ eMonster* eMonsterInvasionEventBase::triggerBase() {
     monster->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eMonsterAction>(monster.get());
+    a->setAggressivness(mAggressivness);
     monster->setAction(a);
     const int ptId = pointId();
     const auto tile = board->monsterTile(cid, ptId);
