@@ -641,7 +641,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
                 return false;
             };
 
-            for(int k = 0; k < 5; k++) {
+            for(int k = 0; k < 10; k++) {
                 eIterateSquare::iterateSquare(k, prcsTile, 1);
                 if(found) break;
             }
@@ -671,11 +671,24 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     case eHeroRequirementType::walls: {
         ePathFinder p([](eTileBase* const t) {
             const auto bt = t->underBuildingType();
-            return bt != eBuildingType::road &&
-                   bt != eBuildingType::wall;
+            if(bt == eBuildingType::road) {
+                for(int dx = -1; dx <= 1; dx++) {
+                    for(int dy = -1; dy <= 1; dy++) {
+                        if(dx == 0 && dy == 0) continue;
+                        const auto tt = t->tileRel(dx, dy);
+                        if(!tt) continue;
+                        const auto btt = t->underBuildingType();
+                        if(btt == eBuildingType::gatehouse) return true;
+                    }
+                }
+                return false;
+            }
+
+            return bt != eBuildingType::wall &&
+                   bt != eBuildingType::gatehouse;
         }, [&](eTileBase* const t) {
             const int dx = t->x() - tx;
-            const int dy = t->y() == ty;
+            const int dy = t->y() - ty;
             return sqrt(dx*dx + dy*dy) > 10;
         });
         const auto startTile = board.tile(tx, ty);
