@@ -1,9 +1,9 @@
 #include "etradepostinfowidget.h"
 
 #include "textures/egametextures.h"
-#include "textures/einterfacetextures.h"
 #include "engine/egameboard.h"
 #include "elanguage.h"
+#include "enumbers.h"
 
 class eResourceStorageStack : public eWidget {
 public:
@@ -282,7 +282,8 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
                 const bool ex = static_cast<bool>(exports & r);
                 if(count < 1 && !ex) continue;
                 const int e = thisC->exported(dstCid, r);
-                const int max = r == eResourceType::sculpture ? 4 : 8;
+                const int max = r == eResourceType::sculpture ? eNumbers::sTwoWayTradeMax :
+                                                               4*eNumbers::sTwoWayTradeMax;
                 std::map<ePlayerId, int> em;
                 em[thisPid] = e;
                 cbuys.push_back(eResourceTrade{r, em, max});
