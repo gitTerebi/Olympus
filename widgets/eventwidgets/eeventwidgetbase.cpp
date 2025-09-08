@@ -27,6 +27,7 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "gameEvents/emonsterseventvalue.h"
 #include "gameEvents/emonsterinvasioneventbase.h"
+#include "gameEvents/etidalwaveevent.h"
 
 #include "egodattackeventwidget.h"
 #include "einvasioneventwidget.h"
@@ -278,6 +279,22 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             ee->setAggressivness(a);
         });
         buttonL->setup(eLanguage::zeusText(44, 177), aggressivnessButton);
+        leftW->addWidget(buttonL);
+    }
+
+    if(const auto ee = dynamic_cast<eTidalWaveEvent*>(e.get())) {
+        const auto buttonL = new eLabeledWidget(window());
+        const auto permanentButton = new eSwitchButton(window());
+        permanentButton->setUnderline(false);
+        permanentButton->addValue(eLanguage::zeusText(18, 0));
+        permanentButton->addValue(eLanguage::zeusText(18, 1));
+        permanentButton->fitValidContent();
+        const bool p = ee->permanent();
+        permanentButton->setValue(p ? 1 : 0);
+        permanentButton->setSwitchAction([ee](const int v) {
+            ee->setPermanent(v);
+        });
+        buttonL->setup(eLanguage::zeusText(44, 394), permanentButton);
         leftW->addWidget(buttonL);
     }
 
