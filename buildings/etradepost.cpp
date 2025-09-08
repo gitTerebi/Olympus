@@ -187,7 +187,8 @@ int eTradePost::buy(const int cash) {
             if(price > cash) continue;
             const int c = count(e);
             if(c <= 0) continue;
-            const int max = e == eResourceType::sculpture ? 4 : 16;
+            const int max = e == eResourceType::sculpture ? eNumbers::sTwoWayTradeMax :
+                                                            4*eNumbers::sTwoWayTradeMax;
             if(thisC->exported(targetCid, e) > max) continue;
             take(e, 1);
             thisC->addExported(targetCid, e, 1);

@@ -102,6 +102,7 @@ struct eNumbers {
     static int sTowerSpawnPeriod;
 
     static int sTraderSpawnPeriod;
+    static int sTwoWayTradeMax;
 
     static int sChariotBuildingTime;
 
