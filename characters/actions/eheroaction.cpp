@@ -280,14 +280,16 @@ void eHeroAction::huntMonster(eMonster* const m, const bool second) {
         return tile->x() == mtx && tile->y() == mty;
     };
 
-    const auto finish = std::make_shared<eHA_huntMonsterFinish>(
-                            board(), this);
-
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::buildings |
                          eStateRelevance::terrain);
-    a->setFailAction(finish);
-    a->setFinishAction(finish);
+
+    if(second) {
+        const auto finish = std::make_shared<eHA_huntMonsterFinish>(
+            board(), this);
+        a->setFailAction(finish);
+        a->setFinishAction(finish);
+    }
     const stdptr<eHeroAction> tptr(this);
     const stdptr<eMonster> mptr(m);
     a->setFoundAction([tptr, mptr, this, a, c, second]() {
