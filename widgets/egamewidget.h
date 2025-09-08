@@ -224,6 +224,8 @@ private:
                      const bool prepend = false);
     void showMessage(eEventData& ed, const eMessageType& msg,
                      const bool prepend = false);
+    void showMessage(eEventData& ed, const eEventMessageType& msg,
+                     const bool prepend = false);
 
     void updateTipPositions();
 

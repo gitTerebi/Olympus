@@ -65,6 +65,7 @@
 
 #include "edistrictconditionswidget.h"
 #include "buildings/ehippodromepiece.h"
+#include "estringhelpers.h"
 
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eMainWidget(window) {}
@@ -1096,6 +1097,18 @@ void eGameWidget::showMessage(eEventData& ed,
                               const eMessageType& msg,
                               const bool prepend) {
     showMessage(ed, msg.fFull, prepend);
+}
+
+void eGameWidget::showMessage(eEventData& ed,
+                              const eEventMessageType& msg,
+                              const bool prepend) {
+    eMessageType m = msg;
+    std::string reason = ed.fReason;
+    if(reason.empty()) {
+        reason = msg.fNoReason;
+    }
+    eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
+    showMessage(ed, m.fFull, prepend);
 }
 
 void eGameWidget::showTip(const ePlayerCityTarget& target,

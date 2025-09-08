@@ -18,11 +18,11 @@ void eMonsterUnleashedEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
 
+    const auto monster = triggerBase();
+
     bool validGod = false;
     const auto godType = eMonster::sMonsterSender(mMonster, &validGod);
     if(!validGod) return;
-
-    const auto monster = triggerBase();
 
     eEventData ed(cityId());
     ed.fChar = monster;
