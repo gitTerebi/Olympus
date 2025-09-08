@@ -483,7 +483,7 @@ bool eWorldCity::waterTrade(const eCityId cid) const {
 }
 
 bool eWorldCity::trades() const {
-    if(mBuys.empty() && mSells.empty()) return false;
+    // if(mBuys.empty() && mSells.empty()) return false;
     if(rebellion()) return false;
     if(isRival()) return false;
     if(tradeShutdown()) return false;
