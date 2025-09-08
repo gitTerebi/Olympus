@@ -182,4 +182,7 @@ void eGameBoard::read(eReadStream& src) {
 
     updateMarbleTiles();
     updateTerritoryBorders();
+    for(const auto& c : mCitiesOnBoard) {
+        c->updateResources();
+    }
 }
