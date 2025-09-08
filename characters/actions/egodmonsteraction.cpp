@@ -93,7 +93,6 @@ void eGodMonsterAction::playDisappearSound() {
 
 void eGodMonsterAction::hermesRun(const bool appear) {
     const auto c = character();
-    c->setActionType(eCharacterActionType::appear);
     c->setSpeed(2.0);
     const auto tile = c->tile();
     const stdptr<eGodMonsterAction> tptr(this);
@@ -105,6 +104,8 @@ void eGodMonsterAction::hermesRun(const bool appear) {
     } else {
         moveAround(finish, 1000);
     }
+    if(appear) c->setActionType(eCharacterActionType::appear);
+    else c->setActionType(eCharacterActionType::disappear);
     if(appear) playAppearSound();
 }
 

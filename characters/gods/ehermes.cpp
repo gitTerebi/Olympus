@@ -40,10 +40,6 @@ eHermes::getTexture(const eTileSize size) const {
     } break;
     case eCharacterActionType::disappear:
     case eCharacterActionType::die:
-        wrap = false;
-        disappear = true;
-        coll = &texs.fDisappear;
-        break;
     case eCharacterActionType::appear:
         coll = &texs.fRun[oid];
         break;
