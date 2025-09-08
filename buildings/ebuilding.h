@@ -379,6 +379,8 @@ public:
 
     void setDistrictId(const int id) { mDistrictId = id; }
     int districtId() const { return mDistrictId; }
+
+    double appeal() const;
 private:
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;

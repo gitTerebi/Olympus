@@ -103,19 +103,6 @@ int eHouseBase::vacancies() const {
     return mMaxPeople[mLevel] - mPeople;
 }
 
-double eHouseBase::appeal() const {
-    const auto& b = getBoard();
-    const auto& tiles = tilesUnder();
-    if(tiles.empty()) return 0;
-    double sum = 0;
-    for(const auto t : tiles) {
-        const int dx = t->dx();
-        const int dy = t->dy();
-        sum += b.appeal(dx ,dy);
-    }
-    return sum/tiles.size();
-}
-
 void eHouseBase::read(eReadStream& src) {
     eBuilding::read(src);
 

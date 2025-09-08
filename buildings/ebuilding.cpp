@@ -2684,3 +2684,16 @@ void eBuilding::setIOID(const int id) {
 void eBuilding::setHP(const int hp) {
     mHp = hp;
 }
+
+double eBuilding::appeal() const {
+    const auto& b = getBoard();
+    const auto& tiles = tilesUnder();
+    if(tiles.empty()) return 0;
+    double sum = 0;
+    for(const auto t : tiles) {
+        const int dx = t->dx();
+        const int dy = t->dy();
+        sum += b.appeal(dx ,dy);
+    }
+    return sum/tiles.size();
+}
