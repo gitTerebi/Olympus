@@ -133,7 +133,8 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
                                      const eCityId cid,
                                      const eGameBoard& brd) {
     eGameBoard::eBuildingValidator v;
-    if(t == eCharacterType::rockThrower) {
+    if(t == eCharacterType::rockThrower ||
+       t == eCharacterType::archerPoseidon) {
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::commonHouse) return false;
@@ -141,7 +142,8 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
             if(ch->level() < 2) return false;
             return true;
         };
-    } else if(t == eCharacterType::hoplite) {
+    } else if(t == eCharacterType::hoplite ||
+              t == eCharacterType::hoplitePoseidon) {
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
@@ -149,7 +151,8 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
             if(eh->level() < 2) return false;
             return true;
         };
-     } else if(t == eCharacterType::horseman) {
+     } else if(t == eCharacterType::horseman ||
+               t == eCharacterType::chariotPoseidon) {
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
