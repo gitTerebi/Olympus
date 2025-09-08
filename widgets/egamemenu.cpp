@@ -49,9 +49,10 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
     const auto& wrld = board.world();
     int i = -1;
     for(const auto& c : wrld.cities()) {
+        const auto cCid = c->cityId();
         i++;
         if(c->isRival()) continue;
-        if(c->isCurrentCity()) continue;
+        if(cid == cCid) continue;
         if(!c->active()) continue;
         if(!c->visible()) continue;
         if(!board.hasTradePost(cid, *c)) {
