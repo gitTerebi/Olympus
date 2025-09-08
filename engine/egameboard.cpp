@@ -199,7 +199,9 @@ void eGameBoard::clear() {
     mWidth = 0;
     mHeight = 0;
     emptyRubbish();
-    mCitiesOnBoard.clear();
+    std::vector<stdsptr<eBoardCity>> cities;
+    std::swap(mCitiesOnBoard, cities);
+    cities.clear();
     mPlayersOnBoard.clear();
     mDefeatedBy.clear();
     mEarthquakes.clear();

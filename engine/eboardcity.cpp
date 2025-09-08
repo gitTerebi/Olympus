@@ -52,6 +52,10 @@ eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mEmplData(mPopData, *this, board),
     mEmplDistributor(mEmplData) {}
 
+eBoardCity::~eBoardCity() {
+    mCityEvents.clear();
+}
+
 void eBoardCity::updateTiles() {
     mTiles.clear();
     bool first = true;
@@ -2090,6 +2094,7 @@ void eBoardCity::removeMonsterEvent(eMonsterInvasionEventBase * const e) {
     for(const auto& m : mMonsterEvents) {
         if(m.second != e) continue;
         mMonsterEvents.erase(m.first);
+        break;
     }
 }
 

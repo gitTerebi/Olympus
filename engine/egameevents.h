@@ -18,6 +18,8 @@ public:
     void read(eReadStream& src);
 
     void loadResources();
+
+    void clear();
 private:
     const eCityId mCid;
     eGameBoard& mBoard;

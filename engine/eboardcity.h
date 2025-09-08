@@ -66,6 +66,7 @@ class eBoardCity {
     friend class eGameBoard;
 public:
     eBoardCity(const eCityId cid, eGameBoard& board);
+    ~eBoardCity();
 
     eCityId id() const { return mId; }
 //    void setId(const eCityId id) { mId = id; }

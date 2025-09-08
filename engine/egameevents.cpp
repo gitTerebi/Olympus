@@ -87,3 +87,7 @@ void eGameEvents::loadResources() {
         e->loadResources();
     }
 }
+
+void eGameEvents::clear() {
+    mGameEvents.clear();
+}
