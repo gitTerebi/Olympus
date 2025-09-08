@@ -177,6 +177,7 @@ SDL_Color colorForTile(eTile* const tile) {
         case eBuildingType::commonHouse:
             return {164, 65, 49, 255};
         case eBuildingType::tradePost:
+        case eBuildingType::pier:
         case eBuildingType::warehouse:
         case eBuildingType::granary:
             return {115, 186, 247, 255};
