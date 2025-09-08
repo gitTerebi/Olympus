@@ -330,12 +330,7 @@ const eTextureCollection& eEliteHousing::getTextureCollection(
 }
 
 void eEliteHousing::updateLevel() {
-    const auto& b = getBoard();
-    const auto t = centerTile();
-    if(!t) return;
-    const int dx = t->dx();
-    const int dy = t->dy();
-    const double appeal = b.appeal(dx ,dy);
+    const double appeal = eHouseBase::appeal();
     int nVenues = 0;
     if(mPhilosophers > 0) nVenues++;
     if(mActors > 0) nVenues++;
