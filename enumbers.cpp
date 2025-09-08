@@ -383,7 +383,7 @@ void eNumbers::sLoad() {
     loadI("tower_spawn_period_i", sTowerSpawnPeriod, 5000);
 
     loadI("trader_spawn_period_i", sTraderSpawnPeriod, 30000);
-    loadI("two_way_trade_max_i", sTraderSpawnPeriod, 4);
+    loadI("two_way_trade_max_i", sTwoWayTradeMax, 4);
 
     loadI("chariot_building_time_i", sChariotBuildingTime, 20000);
 
