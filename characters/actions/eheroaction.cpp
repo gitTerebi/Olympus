@@ -270,15 +270,9 @@ bool eHeroAction::fightMonster(eMonster* const m) {
 void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     const auto mt = m->tile();
     if(!mt) return;
-    const int mtx = mt->x();
-    const int mty = mt->y();
     const auto mtype = m->type();
 
     const auto c = character();
-
-    const auto monsterTile = [mtx, mty](eTileBase* const tile) {
-        return tile->x() == mtx && tile->y() == mty;
-    };
 
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::buildings |
@@ -305,9 +299,9 @@ void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     a->setWait(false);
     if(mtype == eCharacterType::scylla ||
        mtype == eCharacterType::kraken) {
-        a->start(monsterTile, eWalkableObject::sCreateWaterAndDefault());
+        a->start(mt, eWalkableObject::sCreateWaterAndDefault());
     } else {
-        a->start(monsterTile, defaultWalkable());
+        a->start(mt, defaultWalkable());
     }
     if(second) {
         setCurrentAction(a);
