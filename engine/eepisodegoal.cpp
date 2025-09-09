@@ -216,6 +216,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
 }
 
 std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
+    const auto ppid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto text = eLanguage::zeusText(194, 43);
@@ -283,8 +284,13 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
         const auto& world = b.world();
         const auto cid = static_cast<eCityId>(fEnumInt1);
         const auto city = world.cityWithId(cid);
-        const auto rel = city ? city->relationship() :
-                                eForeignCityRelationship::ally;
+        auto rel = city ? city->relationship() :
+                          eForeignCityRelationship::ally;
+        if(city && city->isOnBoard()) {
+            const auto pid = city->playerId();
+            rel = pid == ppid ? eForeignCityRelationship::vassal :
+                                eForeignCityRelationship::rival;
+        }
         const auto relStr = eWorldCity::sRelationshipName(rel);
         eStringHelpers::replace(t, "[diplomatic_status]", relStr);
         return t;
@@ -347,26 +353,26 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
 }
 
 void eEpisodeGoal::update(const eGameBoard& b) {
-    const auto pid = b.personPlayer();
+    const auto ppid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
         const bool wasMet = met();
-        fStatusCount = b.population(pid);
+        fStatusCount = b.population(ppid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 73));
+            b.showTip(ppid, eLanguage::zeusText(194, 73));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 74));
+            b.showTip(ppid, eLanguage::zeusText(194, 74));
         }
     } break;
     case eEpisodeGoalType::treasury: {
         const bool wasMet = met();
-        fStatusCount = b.drachmas(pid);
+        fStatusCount = b.drachmas(ppid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 75));
+            b.showTip(ppid, eLanguage::zeusText(194, 75));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 76));
+            b.showTip(ppid, eLanguage::zeusText(194, 76));
         }
     } break;
     case eEpisodeGoalType::sanctuary: {
@@ -390,9 +396,9 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 77));
+            b.showTip(ppid, eLanguage::zeusText(194, 77));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 78));
+            b.showTip(ppid, eLanguage::zeusText(194, 78));
         }
     } break;
     case eEpisodeGoalType::pyramid: {
@@ -417,9 +423,9 @@ void eEpisodeGoal::update(const eGameBoard& b) {
 
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 97));
+            b.showTip(ppid, eLanguage::zeusText(194, 97));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 98));
+            b.showTip(ppid, eLanguage::zeusText(194, 98));
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
@@ -434,9 +440,9 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         fStatusCount = result;
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 99));
+            b.showTip(ppid, eLanguage::zeusText(194, 99));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 100));
+            b.showTip(ppid, eLanguage::zeusText(194, 100));
         }
     } break;
     case eEpisodeGoalType::support: {
@@ -459,7 +465,7 @@ void eEpisodeGoal::update(const eGameBoard& b) {
     } break;
     case eEpisodeGoalType::quest: {
         const bool wasMet = met();
-        const auto fulfilled = b.fulfilledQuests(pid);
+        const auto fulfilled = b.fulfilledQuests(ppid);
         const auto god = static_cast<eGodType>(fEnumInt1);
         const auto questId = static_cast<eGodQuestId>(fEnumInt2);
         fStatusCount = 0;
@@ -471,12 +477,12 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 81));
+            b.showTip(ppid, eLanguage::zeusText(194, 81));
         }
     } break;
     case eEpisodeGoalType::slay: {
         const bool wasMet = met();
-        const auto slayed = b.slayedMonsters(pid);
+        const auto slayed = b.slayedMonsters(ppid);
         if(fEnumInt1 == -1) {
             fStatusCount = slayed.size();
         } else {
@@ -486,7 +492,7 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 83));
+            b.showTip(ppid, eLanguage::zeusText(194, 83));
         }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
@@ -495,7 +501,7 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         fStatusCount = b.bestYearlyProduction(type);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 85));
+            b.showTip(ppid, eLanguage::zeusText(194, 85));
         }
     } break;
     case eEpisodeGoalType::rule: {
@@ -503,10 +509,16 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         const auto& world = b.world();
         const auto cid = static_cast<eCityId>(fEnumInt1);
         const auto city = world.cityWithId(cid);
-        fStatusCount = city ? (city->isVassal() ? 1 : 0) : 0;
+
+        if(city && city->isOnBoard()) {
+            const auto pid = city->playerId();
+            fStatusCount = pid == ppid ? 1 : 0;
+        } else {
+            fStatusCount = city ? (city->isVassal() ? 1 : 0) : 0;
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 87));
+            b.showTip(ppid, eLanguage::zeusText(194, 87));
         }
     } break;
     case eEpisodeGoalType::yearlyProfit: {
@@ -514,7 +526,7 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         fStatusCount = b.bestYearlyProduction(eResourceType::drachmas);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 89));
+            b.showTip(ppid, eLanguage::zeusText(194, 89));
         }
     } break;
     case eEpisodeGoalType::housing: {
@@ -537,9 +549,9 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 91));
+            b.showTip(ppid, eLanguage::zeusText(194, 91));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 92));
+            b.showTip(ppid, eLanguage::zeusText(194, 92));
         }
     } break;
     case eEpisodeGoalType::setAsideGoods: {
@@ -569,9 +581,9 @@ void eEpisodeGoal::update(const eGameBoard& b) {
         fStatusCount = b.tradingPartners();
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 93));
+            b.showTip(ppid, eLanguage::zeusText(194, 93));
         } else if(wasMet && !isMet) {
-            b.showTip(pid, eLanguage::zeusText(194, 94));
+            b.showTip(ppid, eLanguage::zeusText(194, 94));
         }
     } break;
     }
