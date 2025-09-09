@@ -29,6 +29,7 @@ enum class eTerrainEditMode {
 
     none,
     scrub,
+    scrubArea,
     removeScrub,
     softenScrub,
 

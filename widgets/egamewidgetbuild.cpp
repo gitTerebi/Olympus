@@ -1,5 +1,6 @@
 #include "egamewidget.h"
 
+#include "eiteratesquare.h"
 #include "engine/egameboard.h"
 
 #include "eterraineditmenu.h"
@@ -10,6 +11,7 @@
 #include "characters/egoat.h"
 #include "characters/ecattle.h"
 
+#include "evectorhelpers.h"
 #include "spawners/eboarspawner.h"
 #include "spawners/edeerspawner.h"
 #include "spawners/eentrypoint.h"
@@ -355,6 +357,23 @@ eGameWidget::eApply eGameWidget::editFunc() {
     } else if(mode == eTerrainEditMode::scrub) {
         return [](eTile* const tile) {
             tile->incScrub(0.1);
+        };
+    } else if(mode == eTerrainEditMode::scrubArea) {
+        return [this](eTile* const tile) {
+            int dist = 100;
+            for(int k = 1; k < 100; k++) {
+                eIterateSquare::iterateDistance(k, [&dist, k, this, tile](const int dx, const int dy) {
+                    const auto t = tile->tileRel<eTile>(dx, dy);
+                    const bool r = eVectorHelpers::contains(mInflTiles, t);
+                    if(!r) {
+                        dist = k;
+                        return true;
+                    }
+                    return false;
+                });
+                if(dist != 100) break;
+            }
+            tile->incScrub(dist*0.05);
         };
     } else if(mode == eTerrainEditMode::removeScrub) {
         return [](eTile* const tile) {
