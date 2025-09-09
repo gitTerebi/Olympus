@@ -1,8 +1,11 @@
 #ifndef ENUMBERS_H
 #define ENUMBERS_H
 
+#include <string>
+
 struct eNumbers {
     static void sLoad();
+    static void sLoad(const std::string& path);
 
     static int sDayLength;
 

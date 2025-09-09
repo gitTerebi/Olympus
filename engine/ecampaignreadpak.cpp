@@ -1524,4 +1524,5 @@ void eCampaign::readPak(const std::string& title,
     }
 
     loadStrings();
+    loadNumbers();
 }

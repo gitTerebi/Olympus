@@ -293,6 +293,7 @@ bool eMainWindow::loadGame(const std::string& path) {
     const auto c = std::make_shared<eCampaign>();
     c->read(src);
     c->loadStrings();
+    c->loadNumbers();
     src.handlePostFuncs();
     file.close();
 

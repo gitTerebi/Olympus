@@ -232,6 +232,10 @@ int eNumbers::sTriremeWharfBuildStages;
 
 void eNumbers::sLoad() {
     const auto path = eGameDir::numbersPath();
+    sLoad(path);
+}
+
+void eNumbers::sLoad(const std::string& path) {
     std::map<std::string, std::string> map;
     eLoadTextHelper::load(path, map);
 

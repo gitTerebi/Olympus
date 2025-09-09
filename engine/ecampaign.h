@@ -60,6 +60,8 @@ public:
     bool loadStrings();
     bool writeStrings(const std::string& path) const;
 
+    void loadNumbers();
+
     eWorldBoard& worldBoard() { return mWorldBoard; }
     eGameBoard& parentCityBoard()
     { return *mParentBoard; }

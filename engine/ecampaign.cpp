@@ -7,6 +7,7 @@
 #include "evectorhelpers.h"
 #include "egamedir.h"
 #include "elanguage.h"
+#include "enumbers.h"
 
 eCampaign::eCampaign() {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
@@ -261,6 +262,19 @@ bool eCampaign::writeStrings(const std::string& path) const {
     return true;
 }
 
+void eCampaign::loadNumbers() {
+    const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
+                                  eGameDir::adventuresDir();
+    const auto aDir = baseDir + mName + "/";
+    const auto numFile = aDir + "numbers.txt";
+    std::ifstream file(numFile);
+    if(file.good()) {
+        eNumbers::sLoad(numFile);
+    } else {
+        eNumbers::sLoad();
+    }
+}
+
 bool eCampaign::sReadGlossary(const std::string& name,
                               eCampaignGlossary& glossary) {
     glossary.fIsPak = false;
@@ -468,6 +482,7 @@ bool eCampaign::load(const std::string& name) {
     const auto pakFile = aDir + mName + ".epak";
     std::ifstream file(pakFile, std::ios::in | std::ios::binary);
     if(!file) return false;
+
     eReadSource source(&file);
     eReadStream src(source);
     src.readFormat();
@@ -487,6 +502,7 @@ bool eCampaign::load(const std::string& name) {
     file.close();
 
     loadStrings();
+    loadNumbers();
     return true;
 }
 
