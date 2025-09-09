@@ -33,6 +33,25 @@ void eThreadBoardHandler::updateAll(eGameBoard& board, const eBoardCity& c) {
     mTmpBoard.setState(board.state());
     updateFinishedMonuments(c);
 
+    const int bState = board.state();
+    const int cABState = c.allBuildingsState();
+    const int cTState = c.terrainState();
+    const int cSState = c.sanctuariesState();
+    const int cMState = c.monumentsState();
+
+    mTmpBoard.setTerrainState(cTState);
+    mTmpBoard.setForestsState(bState);
+    mTmpBoard.setAllBuildingsState(cABState);
+    mTmpBoard.setResourcesInBuildingsState(bState);
+    mTmpBoard.setHouseVacanciesState(bState);
+    mTmpBoard.setTreesAndVinesState(bState);
+    mTmpBoard.setDomesticatedAnimalsState(bState);
+    mTmpBoard.setSanctuariesState(cSState);
+    mTmpBoard.setResourcesState(bState);
+    mTmpBoard.setSanctBuildingsState(bState);
+    mTmpBoard.setHuntingGroundsState(bState);
+    mTmpBoard.setMonumentsState(cMState);
+
 //    const auto t2 = high_resolution_clock::now();
 
 //    const duration<double, std::milli> ms = t2 - t1;
