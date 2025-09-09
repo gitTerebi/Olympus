@@ -9,7 +9,7 @@ enum class eCityBecomesType {
     ally, rival, vassal,
     active, inactive,
     visible, invisible,
-    conquered
+    rebellionOver, conquered
 };
 
 class eCityBecomesEvent : public eGameEvent,

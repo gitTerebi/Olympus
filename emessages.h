@@ -346,6 +346,13 @@ public:
     eMessageType fCityBecomesVisible;
     eMessageType fCityBecomesInvisible;
 
+    eMessageType fTributeSuspended;
+    eMessageType fTributeResumed;
+
+    eMessageType fCityRebellion;
+    eMessageType fCityRebellionQuelled;
+    eMessageType fCityRebellionOver;
+
     eMessageType fRivalConqueredByAlly;
     eMessageType fRivalConqueredByVassal;
 

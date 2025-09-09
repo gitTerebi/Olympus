@@ -34,6 +34,9 @@ eCityBecomesEvent::eCityBecomesEvent(
         case eCityBecomesType::invisible: {
             return city.visible();
         } break;
+        case eCityBecomesType::rebellionOver: {
+            return city.rebellion();
+        } break;
         case eCityBecomesType::conquered: {
             const auto aCity = mAttackingCity;
             if(!aCity) return false;
@@ -114,6 +117,10 @@ void eCityBecomesEvent::trigger() {
         mCity->setVisible(false);
         board->event(eEvent::cityBecomesInvisible, ed);
     } break;
+    case eCityBecomesType::rebellionOver: {
+        mCity->setRebellion(false);
+        board->event(eEvent::cityRebellionOver, ed);
+    } break;
     case eCityBecomesType::conquered: {
         if(!mAttackingCity) return;
         ed.fRivalCity = mAttackingCity;
@@ -183,6 +190,8 @@ std::string eCityBecomesEvent::longName() const {
         return eLanguage::zeusText(290, 47);
     case eCityBecomesType::invisible:
         return eLanguage::zeusText(290, 48);
+    case eCityBecomesType::rebellionOver:
+        return eLanguage::zeusText(290, 49);
     case eCityBecomesType::conquered:
         return eLanguage::zeusText(290, 50);
     }

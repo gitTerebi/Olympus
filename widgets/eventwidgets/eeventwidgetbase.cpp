@@ -61,6 +61,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
                                                   eCityBecomesType::visible,
                                                   eCityBecomesType::invisible,
 
+                                                  eCityBecomesType::rebellionOver,
                                                   eCityBecomesType::conquered};
         const std::vector<std::string> typeNames{eLanguage::zeusText(253, 0),
                                                  eLanguage::zeusText(253, 1),
@@ -72,6 +73,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
                                                  eLanguage::zeusText(44, 307),
                                                  eLanguage::zeusText(44, 306),
 
+                                                 eLanguage::zeusText(35, 23),
                                                  eLanguage::zeusText(35, 24)};
 
         const auto typeButton = new eTypeButton(window());

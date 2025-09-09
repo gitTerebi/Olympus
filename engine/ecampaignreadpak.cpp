@@ -758,7 +758,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             } else if(subType == 9 || subType == 10 || subType == 11 ||
                       subType == 18 || subType == 19 ||
                       subType == 20 || subType == 21 ||
-                      subType == 24) {
+                      subType == 23 || subType == 24) {
                 const auto ee = e::make_shared<eCityBecomesEvent>(
                                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setMinCityId(cityMin);
@@ -778,6 +778,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     type = eCityBecomesType::visible;
                 } else if(subType == 21) {
                     type = eCityBecomesType::invisible;
+                } else if(subType == 23) {
+                    type = eCityBecomesType::rebellionOver;
                 } else { // if(subType == 24) {
                     type = eCityBecomesType::conquered;
                     ee->setAttackingCity(attackingCity);

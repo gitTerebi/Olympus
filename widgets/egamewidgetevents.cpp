@@ -1593,6 +1593,28 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
 
+    case eEvent::tributeSuspended: {
+        showMessage(ed, inst.fTributeSuspended);
+        return;
+    } break;
+    case eEvent::tributeResumed: {
+        showMessage(ed, inst.fTributeResumed);
+        return;
+    } break;
+
+    case eEvent::cityRebellion: {
+        showMessage(ed, inst.fCityRebellion);
+        return;
+    } break;
+    case eEvent::cityRebellionQuelled: {
+        showMessage(ed, inst.fCityRebellionQuelled);
+        return;
+    } break;
+    case eEvent::cityRebellionOver: {
+        showMessage(ed, inst.fCityRebellionOver);
+        return;
+    } break;
+
     case eEvent::rivalConqueredByAlly: {
         showMessage(ed, inst.fRivalConqueredByAlly);
         return;

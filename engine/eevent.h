@@ -374,6 +374,13 @@ enum class eEvent {
     cityBecomesVisible,
     cityBecomesInvisible,
 
+    tributeSuspended,
+    tributeResumed,
+
+    cityRebellion,
+    cityRebellionQuelled,
+    cityRebellionOver,
+
     rivalConqueredByAlly,
     rivalConqueredByVassal,
 

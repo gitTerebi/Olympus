@@ -1002,6 +1002,23 @@ bool eMessages::loadImpl() {
                 "city_disappears_title",
                 "city_disappears_initial_announcement");
 
+    loadMessage(fTributeSuspended,
+                "tribute_suspended_title",
+                "tribute_suspended_initial_announcement");
+    loadMessage(fTributeResumed,
+                "tribute_resumed_title",
+                "tribute_resumed_initial_announcement");
+
+    loadMessage(fCityRebellion,
+                "rebellion_tribute_suspended_title",
+                "rebellion_tribute_suspended_initial_announcement");
+    loadMessage(fCityRebellionQuelled,
+                "rebellion_quelled_tribute_resumed_title",
+                "rebellion_quelled_tribute_resumed_initial_announcement");
+    loadMessage(fCityRebellionOver,
+                "rebellion_over_tribute_resumed_title",
+                "rebellion_quelled_tribute_resumed_initial_announcement");
+
     loadMessage(fRivalConqueredByAlly,
                 "ally_conquers_rival_title",
                 "ally_conquers_rival_initial_announcement");
