@@ -1250,7 +1250,7 @@ void eGameWidget::showMessage(eEventData& ed,
         mSavedMsgs.pop_front();
     };
 
-    msgb->initialize(this, ed, a, close, msg);
+    msgb->initialize(*mBoard, ed, a, close, msg);
 
     window()->execDialog(msgb, msgb->closable(), close, this);
     msgb->align(eAlignment::bottom | eAlignment::hcenter);

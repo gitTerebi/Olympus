@@ -1,7 +1,6 @@
 #include "emessagebox.h"
 
 #include "elabel.h"
-#include "eframedlabel.h"
 #include "eframedwidget.h"
 #include "eokbutton.h"
 #include "eexclamationbutton.h"
@@ -16,7 +15,7 @@
 #include "engine/eworldcity.h"
 #include "widgets/egamewidget.h"
 
-#include "widgets/echoosebutton.h"
+#include "engine/egameboard.h"
 #include "emainwindow.h"
 #include "eboardcityswitchbutton.h"
 
@@ -30,7 +29,7 @@ std::string string_format(const std::string& format, Args... args) {
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-void eMessageBox::initialize(eGameWidget* const gw,
+void eMessageBox::initialize(eGameBoard& board,
                              const eEventData& ed,
                              const eAction& viewTile,
                              const eAction& closeFunc,
@@ -77,8 +76,14 @@ void eMessageBox::initialize(eGameWidget* const gw,
 
     {
         const auto to = eLanguage::zeusText(63, 5); // to
-        const auto str = ed.fDate.shortString() +
-                         "     " + to + " " + ed.fPlayerName;
+        const auto dateStr = ed.fDate.shortString();
+        auto str = dateStr + "     " + to + " " + ed.fPlayerName;
+        const auto& target = ed.fTarget;
+        if(target.isCityTarget()) {
+            const auto cid = target.cityTarget();
+            const auto cName = board.cityName(cid);
+            str += ",     " + cName;
+        }
         const auto d = new eLabel(str, window());
         d->setSmallFontSize();
         d->fitContent();

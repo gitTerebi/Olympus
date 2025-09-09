@@ -17,7 +17,7 @@ class eMessageBox : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(eGameWidget* const gw,
+    void initialize(eGameBoard &board,
                     const eEventData& ed,
                     const eAction& viewTile,
                     const eAction& closeFunc,
