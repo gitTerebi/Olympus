@@ -793,12 +793,12 @@ int eGameBoard::maxSingleSpaceForResource(
     return c->maxSingleSpaceForResource(type, b);
 }
 
-int eGameBoard::maxSanctuarySpaceForResource(
+int eGameBoard::maxMonumentSpaceForResource(
         const eCityId cid,
-        eSanctuary** b) const {
+        eMonument** b) const {
     const auto c = boardCityWithId(cid);
     if(!c) return 0;
-    return c->maxSanctuarySpaceForResource(b);
+    return c->maxMonumentSpaceForResource(b);
 }
 
 void eGameBoard::planGiftFrom(const stdsptr<eWorldCity>& c,

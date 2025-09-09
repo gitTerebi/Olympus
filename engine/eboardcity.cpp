@@ -1494,14 +1494,16 @@ void eBoardCity::incWaitingCount(const eResourceType type, const int by) {
     mWaiting[type] += by;
 }
 
-int eBoardCity::maxSanctuarySpaceForResource(
-        eSanctuary** b) const {
+int eBoardCity::maxMonumentSpaceForResource(
+        eMonument** b) const {
     *b = nullptr;
     int r = 0;
-    for(const auto s : mSanctuaries) {
+    for(const auto s : mMonuments) {
         int ss = s->spaceLeft(eResourceType::wood);
         ss += s->spaceLeft(eResourceType::marble);
         ss += s->spaceLeft(eResourceType::sculpture);
+        ss += s->spaceLeft(eResourceType::blackMarble);
+        ss += s->spaceLeft(eResourceType::orichalc);
         if(ss > r) {
             *b = s;
             r = ss;

@@ -454,8 +454,8 @@ public:
                     const int count);
     int spaceForResource(const eCityId cid,
                          const eResourceType type) const;
-    int maxSanctuarySpaceForResource(const eCityId cid,
-                                     eSanctuary** b) const;
+    int maxMonumentSpaceForResource(const eCityId cid,
+                                    eMonument **b) const;
     int maxSingleSpaceForResource(const eCityId cid,
                                   const eResourceType type,
                                   eStorageBuilding** b) const;

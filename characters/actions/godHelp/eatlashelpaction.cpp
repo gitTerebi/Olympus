@@ -48,8 +48,8 @@ void eAtlasHelpAction::write(eWriteStream& dst) const {
 
 bool eAtlasHelpAction::sHelpNeeded(const eCityId cid,
                                    const eGameBoard& board) {
-    eSanctuary* b = nullptr;
-    const int r = board.maxSanctuarySpaceForResource(cid, &b);
+    eMonument* b = nullptr;
+    const int r = board.maxMonumentSpaceForResource(cid, &b);
     return r > 0;
 }
 
@@ -57,9 +57,9 @@ void eAtlasHelpAction::goToTarget() {
     auto& board = this->board();
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board, this);
-    eSanctuary* target = nullptr;
+    eMonument* target = nullptr;
     const auto cid = cityId();
-    board.maxSanctuarySpaceForResource(cid, &target);
+    board.maxMonumentSpaceForResource(cid, &target);
     mTarget = target;
     if(mTarget) {
         const auto ct = mTarget->centerTile();

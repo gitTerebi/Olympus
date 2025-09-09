@@ -195,7 +195,7 @@ public:
     int takeResource(const eResourceType type, const int count);
     int addResource(const eResourceType type, const int count);
     int spaceForResource(const eResourceType type) const;
-    int maxSanctuarySpaceForResource(eSanctuary** b) const;
+    int maxMonumentSpaceForResource(eMonument** b) const;
     int maxSingleSpaceForResource(const eResourceType type,
                                   eStorageBuilding** b) const;
 
