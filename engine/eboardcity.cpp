@@ -972,6 +972,20 @@ bool eBoardCity::unregisterSanctuary(eSanctuary* const b) {
     return eVectorHelpers::remove(mSanctuaries, b);
 }
 
+void eBoardCity::registerMonument(eMonument* const b) {
+    mMonumentsState++;
+    mMonuments.push_back(b);
+}
+
+bool eBoardCity::unregisterMonument(eMonument* const b) {
+    mMonumentsState++;
+    return eVectorHelpers::remove(mMonuments, b);
+}
+
+void eBoardCity::monumentFinished() {
+    mMonumentsState++;
+}
+
 void eBoardCity::registerHeroHall(eHerosHall* const b) {
     mHeroHalls.push_back(b);
 }

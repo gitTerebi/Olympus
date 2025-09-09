@@ -51,6 +51,7 @@ eSanctuary::eSanctuary(eGameBoard& board,
 eSanctuary::~eSanctuary() {
     auto& board = getBoard();
     board.unregisterSanctuary(this);
+    board.destroyed(cityId(), type());
 }
 
 void eSanctuary::erase() {
@@ -132,7 +133,10 @@ void eSanctuary::spawnPatrolingGod() {
 void eSanctuary::buildingProgressed() {
     const bool f = finished();
     if(f) {
+        const auto cid = cityId();
         auto& board = getBoard();
+        const auto c = board.boardCityWithId(cid);
+        if(c) c->monumentFinished();
         const auto g = godType();
         for(const auto s : mSpecialTiles) {
             const auto ub = s->underBuilding();

@@ -176,6 +176,9 @@ public:
     void registerSanctuary(eSanctuary* const b);
     bool unregisterSanctuary(eSanctuary* const b);
 
+    void registerMonument(eMonument* const b);
+    bool unregisterMonument(eMonument* const b);
+
     void registerHeroHall(eHerosHall* const b);
     bool unregisterHeroHall(eHerosHall* const b);
 

@@ -102,7 +102,7 @@ void ePatrolSourceBuilding::spawn(const int id) {
         const auto ubt = ub.type();
         const bool found = ubt == targetType;
         if(found) {
-            const auto ubr = ub.tileRect();
+            const auto& ubr = ub.tileRect();
             const bool c = eVectorHelpers::contains(*targetRects, ubr);
             if(!c) targetRects->push_back(ubr);
         }

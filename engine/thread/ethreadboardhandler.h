@@ -3,11 +3,11 @@
 
 #include <atomic>
 #include <mutex>
-#include <condition_variable>
 
 #include "engine/thread/ethreadboard.h"
 
 enum class eStateRelevance;
+class eBoardCity;
 
 class eThreadBoardHandler {
 public:
@@ -24,7 +24,8 @@ public:
 private:
     void update(const std::vector<eTile*>& tiles);
     void updateSanctuary(const std::vector<eTile*>& tiles);
-    void updateAll(eGameBoard& board);
+    void updateAll(eGameBoard& board, const eBoardCity &c);
+    void updateFinishedMonuments(const eBoardCity& c);
 
     bool mInitialized = false;
     eThreadBoard mBoard;

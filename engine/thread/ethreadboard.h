@@ -14,6 +14,9 @@ public:
     eThreadTile* tile(const int x, const int y);
     eThreadTile* dtile(const int x, const int y);
 
+    std::vector<eThreadBuilding>& finishedMonuments()
+    { return mFinishedMonuments; }
+
     int state() const { return mState; }
     void setState(const int s) { mState = s; }
 
@@ -38,6 +41,9 @@ public:
     int sanctuariesState() const { return mSanctuariesState; }
     void setSanctuariesState(const int s) { mSanctuariesState = s; }
 
+    int monumentsState() const { return mMonumentsState; }
+    void setMonumentsState(const int s) { mMonumentsState = s; }
+
     int treesAndVinesState() const { return mTreesAndVinesState; }
     void setTreesAndVinesState(const int s) { mTreesAndVinesState = s; }
 
@@ -59,6 +65,7 @@ private:
     int mTerrainState = 0;
     int mForestsState = 0;
     int mSanctuariesState = 0;
+    int mMonumentsState = 0;
     int mTreesAndVinesState = 0;
     int mDomesticatedAnimalsState = 0;
     int mResourcesState = 0;
@@ -68,6 +75,7 @@ private:
     int mWidth = 0;
     int mHeight = 0;
     std::vector<std::vector<eThreadTile>> mTiles;
+    std::vector<eThreadBuilding> mFinishedMonuments;
 };
 
 #endif // ETHREADBOARD_H

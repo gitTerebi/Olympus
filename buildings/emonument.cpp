@@ -14,11 +14,13 @@ eMonument::eMonument(eGameBoard& board,
                  eResourceType::sculpture |
                  eResourceType::orichalc |
                  eResourceType::blackMarble);
+    board.registerMonument(this);
 }
 
 eMonument::~eMonument() {
     if(mCart) mCart->kill();
     auto& board = getBoard();
+    board.unregisterMonument(this);
     board.destroyed(cityId(), type());
 }
 

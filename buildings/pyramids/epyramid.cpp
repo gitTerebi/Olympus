@@ -1074,11 +1074,13 @@ void ePyramid::buildingProgressed() {
     const bool f = finished();
     if(f) {
         const auto cid = cityId();
+        auto& board = ePyramid::getBoard();
+        const auto c = board.boardCityWithId(cid);
+        if(c) c->monumentFinished();
         eEventData ed(cid);
         const auto type = ePyramid::type();
         const auto god = sGod(type);
         ed.fGod = god;
-        auto& board = ePyramid::getBoard();
         eEvent event;
         switch(type) {
         case eBuildingType::modestPyramid: // 3x3

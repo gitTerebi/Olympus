@@ -18,6 +18,7 @@
 
 class ePalace;
 class eSanctuary;
+class eMonument;
 class ePyramid;
 class eHerosHall;
 class eStorageBuilding;
@@ -255,6 +256,10 @@ public:
     void registerSanctuary(eSanctuary* const b);
     bool unregisterSanctuary(eSanctuary* const b);
 
+    void registerMonument(eMonument* const b);
+    bool unregisterMonument(eMonument* const b);
+    void monumentFinished();
+
     void registerHeroHall(eHerosHall* const b);
     bool unregisterHeroHall(eHerosHall* const b);
 
@@ -379,6 +384,7 @@ public:
     void incForestsState();
 
     int sanctuariesState() const { return mSanctuariesState; }
+    int monumentsState() const { return mMonumentsState; }
 
     const std::vector<eTile*>& animalBuildingsTiles();
     const std::vector<eTile*>& huntingTiles();
@@ -393,6 +399,8 @@ public:
     const std::vector<eTile*>& forestTiles();
     const std::vector<eBuilding*>& sanctBuildings() const
     { return mSanctBuildings; }
+    const std::vector<eMonument*> monuments() const
+    { return mMonuments; }
 
     void setMaxSanctuaries(const int n) { mMaxSanctuaries = n; }
     int maxSanctuaries() const { return mMaxSanctuaries; }
@@ -512,6 +520,7 @@ private:
     std::map<eCityId, std::map<eResourceType, int>> mExported;
 
     std::vector<eSanctuary*> mSanctuaries;
+    std::vector<eMonument*> mMonuments;
     std::vector<eHerosHall*> mHeroHalls;
     std::vector<eStorageBuilding*> mStorBuildings;
     std::vector<eCharacter*> mCharacters;
@@ -613,6 +622,7 @@ private:
     int mTerrainState = 0;
     int mForestsState = 0;
     int mSanctuariesState = 0;
+    int mMonumentsState = 0;
 
     bool mNextAttackPlanned = false;
     eDate mNextAttackDate;

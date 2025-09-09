@@ -2070,6 +2070,23 @@ bool eGameBoard::unregisterSanctuary(eSanctuary* const b) {
     return r;
 }
 
+void eGameBoard::registerMonument(eMonument* const b) {
+    if(!mRegisterBuildingsEnabled) return;
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    city->registerMonument(b);
+    if(mButtonVisUpdater) mButtonVisUpdater();
+}
+
+bool eGameBoard::unregisterMonument(eMonument* const b) {
+    if(!mRegisterBuildingsEnabled) return false;
+    const auto cid = b->cityId();
+    const auto city = boardCityWithId(cid);
+    const bool r = city->unregisterMonument(b);
+    if(r && mButtonVisUpdater) mButtonVisUpdater();
+    return r;
+}
+
 void eGameBoard::registerHeroHall(eHerosHall* const b) {
     if(!mRegisterBuildingsEnabled) return;
     const auto cid = b->cityId();

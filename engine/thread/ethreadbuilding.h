@@ -27,7 +27,7 @@ public:
     bool gets(const eResourceType res) const;
     bool empties(const eResourceType res) const;
 
-    SDL_Rect tileRect() const { return mTileRect; }
+    const SDL_Rect& tileRect() const { return mTileRect; }
 private:
     bool mCleared = false;
     SDL_Rect mTileRect;

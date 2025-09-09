@@ -10,7 +10,7 @@ void eThreadBoardHandler::initialize(const int w, const int h) {
     mTmpBoard.initialize(w, h);
 }
 
-void eThreadBoardHandler::updateAll(eGameBoard& board) {
+void eThreadBoardHandler::updateAll(eGameBoard& board, const eBoardCity& c) {
     //    using std::chrono::high_resolution_clock;
 //    using std::chrono::duration_cast;
 //    using std::chrono::duration;
@@ -31,6 +31,7 @@ void eThreadBoardHandler::updateAll(eGameBoard& board) {
         }
     }
     mTmpBoard.setState(board.state());
+    updateFinishedMonuments(c);
 
 //    const auto t2 = high_resolution_clock::now();
 
@@ -38,13 +39,27 @@ void eThreadBoardHandler::updateAll(eGameBoard& board) {
     //    printf("update board: %f ms\n", ms.count());
 }
 
+void eThreadBoardHandler::updateFinishedMonuments(const eBoardCity& c) {
+    auto& fms = mTmpBoard.finishedMonuments();
+    fms.clear();
+    const auto& ms = c.monuments();
+    for(const auto m : ms) {
+        const bool f = m->finished();
+        if(!f) continue;
+        auto& b = fms.emplace_back();
+        b.load(m);
+    }
+}
+
 void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
-                                         const eStateRelevance rel) {
+                                 const eStateRelevance rel) {
+    const auto c = board.boardCityWithId(cid);
+
 //    std::printf("Update tmp board %p to %d\n", this, board.state());
     if(!mInitialized) {
-        updateAll(board);
+        updateAll(board, *c);
         updateBoard();
-        updateAll(board);
+        updateAll(board, *c);
         mInitialized = true;
         return;
     }
@@ -52,18 +67,22 @@ void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
     const int bState = board.state();
     if(mTmpBoard.state() == bState) return;
 
-    const auto c = board.boardCityWithId(cid);
-
     std::lock_guard l(mTmpBoardMutex);
     mTmpChanged = true;
 
     const int cABState = c->allBuildingsState();
     const int cTState = c->terrainState();
     const int cSState = c->sanctuariesState();
+    const int cMState = c->monumentsState();
     const int tABState = mTmpBoard.allBuildingsState();
     const int tTState = mTmpBoard.terrainState();
     const int tSState = mTmpBoard.sanctuariesState();
+    const int tMState = mTmpBoard.monumentsState();
 
+    if(cMState != tMState) {
+        updateFinishedMonuments(*c);
+        mTmpBoard.setMonumentsState(cMState);
+    }
     if(rel == eStateRelevance::all ||
        (static_cast<bool>(rel & eStateRelevance::buildings) &&
         cABState != tABState) ||

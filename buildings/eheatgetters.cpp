@@ -109,6 +109,66 @@ eHeat eHeatGetters::appeal(const eBuildingType type) {
     case eBuildingType::templePoseidon:
     case eBuildingType::templeZeus: return {20, 6};
 
+    case eBuildingType::modestPyramid: return {15, 4};
+    case eBuildingType::pyramid: return {20, 4};
+    case eBuildingType::greatPyramid: return {25, 5};
+    case eBuildingType::majesticPyramid: return {30, 6};
+
+    case eBuildingType::smallMonumentToTheSky: return {16, 4};
+    case eBuildingType::monumentToTheSky: return {20, 5};
+    case eBuildingType::grandMonumentToTheSky: return {25, 6};
+
+    case eBuildingType::minorShrineAphrodite: // 3x3
+    case eBuildingType::minorShrineApollo:
+    case eBuildingType::minorShrineAres:
+    case eBuildingType::minorShrineArtemis:
+    case eBuildingType::minorShrineAthena:
+    case eBuildingType::minorShrineAtlas:
+    case eBuildingType::minorShrineDemeter:
+    case eBuildingType::minorShrineDionysus:
+    case eBuildingType::minorShrineHades:
+    case eBuildingType::minorShrineHephaestus:
+    case eBuildingType::minorShrineHera:
+    case eBuildingType::minorShrineHermes:
+    case eBuildingType::minorShrinePoseidon:
+    case eBuildingType::minorShrineZeus: return {20, 4};
+
+    case eBuildingType::shrineAphrodite: // 6x6
+    case eBuildingType::shrineApollo:
+    case eBuildingType::shrineAres:
+    case eBuildingType::shrineArtemis:
+    case eBuildingType::shrineAthena:
+    case eBuildingType::shrineAtlas:
+    case eBuildingType::shrineDemeter:
+    case eBuildingType::shrineDionysus:
+    case eBuildingType::shrineHades:
+    case eBuildingType::shrineHephaestus:
+    case eBuildingType::shrineHera:
+    case eBuildingType::shrineHermes:
+    case eBuildingType::shrinePoseidon:
+    case eBuildingType::shrineZeus: return {25, 5};
+
+    case eBuildingType::majorShrineAphrodite: // 8x8
+    case eBuildingType::majorShrineApollo:
+    case eBuildingType::majorShrineAres:
+    case eBuildingType::majorShrineArtemis:
+    case eBuildingType::majorShrineAthena:
+    case eBuildingType::majorShrineAtlas:
+    case eBuildingType::majorShrineDemeter:
+    case eBuildingType::majorShrineDionysus:
+    case eBuildingType::majorShrineHades:
+    case eBuildingType::majorShrineHephaestus:
+    case eBuildingType::majorShrineHera:
+    case eBuildingType::majorShrineHermes:
+    case eBuildingType::majorShrinePoseidon:
+    case eBuildingType::majorShrineZeus: return {35, 6};
+
+    case eBuildingType::pyramidOfThePantheon: return {30, 6};
+    case eBuildingType::altarOfOlympus:  return {25, 5};
+    case eBuildingType::templeOfOlympus:  return {30, 6};
+    case eBuildingType::observatoryKosmika:  return {25, 6};
+    case eBuildingType::museumAtlantika: return {25, 6};
+
     case eBuildingType::artisansGuild: return {-6, 3};
 
     case eBuildingType::achillesHall:
