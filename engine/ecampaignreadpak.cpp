@@ -595,21 +595,22 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                     aggressivnessId);
             }
 
+            stdsptr<eMonsterInvasionEventBase> ee;
             if(subType == 0) { // monster in city
-                const auto ee = e::make_shared<eMonsterInCityEvent>(
-                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee = e::make_shared<eMonsterInCityEvent>(
+                    cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 1) { // monster unleashed
-                const auto ee = e::make_shared<eMonsterUnleashedEvent>(
-                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee = e::make_shared<eMonsterUnleashedEvent>(
+                    cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
                 e = ee;
             } else if(subType == 2) { // monster invades
-                const auto ee = e::make_shared<eMonsterInvasionEvent>(
-                                    cid, eGameEventBranch::root, *ep.fBoard);
+                ee = e::make_shared<eMonsterInvasionEvent>(
+                    cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setWarningMonths(duration);
                 ee->setMonsterTypes(types);
                 ee->setAggressivness(aggressivness);
@@ -619,6 +620,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 events.push_back(nullptr);
                 continue;
             }
+            ee->setMinPointId(1);
+            ee->setMaxPointId(3);
         } break;
         case ePakEventType::godQuest: {
             bool valid = false;
@@ -825,26 +828,16 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::earthquake: {
             const auto ee = e::make_shared<eEarthquakeEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
-            if(cityId0 != 0xFFFF) {
-                ee->setMinPointId(cityId0);
-                ee->setMaxPointId(cityId0);
-            } else {
-                ee->setMinPointId(cityId1);
-                ee->setMaxPointId(cityId2);
-            }
+            ee->setMinPointId(cityMin);
+            ee->setMaxPointId(cityMax);
 
             e = ee;
         } break;
         case ePakEventType::tidalWave: {
             const auto ee = e::make_shared<eTidalWaveEvent>(
                                 cid, eGameEventBranch::root, *ep.fBoard);
-            if(cityId0 != 0xFFFF) {
-                ee->setMinPointId(cityId0);
-                ee->setMaxPointId(cityId0);
-            } else {
-                ee->setMinPointId(cityId1);
-                ee->setMaxPointId(cityId2);
-            }
+            ee->setMinPointId(cityMin);
+            ee->setMaxPointId(cityMax);
             ee->setPermanent(permanent);
 
             e = ee;
@@ -852,13 +845,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::lavaFlow: {
             const auto ee = e::make_shared<eLavaEvent>(
                 cid, eGameEventBranch::root, *ep.fBoard);
-            if(cityId0 != 0xFFFF) {
-                ee->setMinPointId(cityId0);
-                ee->setMaxPointId(cityId0);
-            } else {
-                ee->setMinPointId(cityId1);
-                ee->setMaxPointId(cityId2);
-            }
+            ee->setMinPointId(cityMin);
+            ee->setMaxPointId(cityMax);
 
             e = ee;
         } break;
@@ -873,13 +861,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         case ePakEventType::landSlide: {
             const auto ee = e::make_shared<eLandSlideEvent>(
                 cid, eGameEventBranch::root, *ep.fBoard);
-            if(cityId0 != 0xFFFF) {
-                ee->setMinPointId(cityId0);
-                ee->setMaxPointId(cityId0);
-            } else {
-                ee->setMinPointId(cityId1);
-                ee->setMaxPointId(cityId2);
-            }
+            ee->setMinPointId(cityMin);
+            ee->setMaxPointId(cityMax);
 
             e = ee;
         } break;
