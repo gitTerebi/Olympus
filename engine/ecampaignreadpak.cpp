@@ -982,6 +982,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const auto from = events[fromId];
         if(!from) continue;
 
+        if(from == to) continue;
+
         eEventTrigger* trigger = nullptr;
         if(const auto godQuest = dynamic_cast<eGodQuestEvent*>(from.get())) {
             trigger = &godQuest->fulfilledTrigger();
