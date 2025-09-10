@@ -57,6 +57,7 @@ struct eGameWidgetSettings {
     int fDY = 0;
     eTileSize fTileSize = eTileSize::s30;
     eWorldDirection fDir = eWorldDirection::N;
+    std::map<int, std::pair<int, int>> fBookmarks;
 
     void read(eReadStream& src) {
         src >> fPaused;
@@ -66,6 +67,16 @@ struct eGameWidgetSettings {
         src >> fDY;
         src >> fTileSize;
         src >> fDir;
+
+        int n;
+        src >> n;
+        for(int i = 0; i < n; i++) {
+            int id;
+            src >> id;
+            auto& b = fBookmarks[id];
+            src >> b.first;
+            src >> b.second;
+        }
     }
 
     void write(eWriteStream& dst) const {
@@ -76,6 +87,13 @@ struct eGameWidgetSettings {
         dst << fDY;
         dst << fTileSize;
         dst << fDir;
+
+        dst << fBookmarks.size();
+        for(const auto& b : fBookmarks) {
+            dst << b.first;
+            dst << b.second.first;
+            dst << b.second.second;
+        }
     }
 };
 
@@ -146,6 +164,9 @@ private:
     void setDX(const int dx);
     void setDY(const int dy);
     void clampViewBox();
+
+    void setBookmark(const int id);
+    void viewBookmark(const int id);
 
     using eApply = std::function<void(eTile* const)>;
     eApply editFunc();
@@ -287,6 +308,7 @@ private:
     int mTime{0};
     int mSpeedId = 1;
     int mSpeed = sSpeeds[mSpeedId];
+    std::map<int, std::pair<int, int>> mBookmarks;
 
     int mWheel = 0;
 

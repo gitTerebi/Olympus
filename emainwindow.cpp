@@ -572,6 +572,7 @@ int eMainWindow::exec() {
             int x, y;
             SDL_GetMouseState(&x, &y);
             const bool shift = mShiftPressed > 0;
+            const bool ctrl = mCtrlPressed > 0;
             if(e.type == SDL_QUIT) {
                 mQuit = true;
             } else if(e.type == SDL_WINDOWEVENT) {
@@ -590,7 +591,7 @@ int eMainWindow::exec() {
                       e.type == SDL_RENDER_DEVICE_RESET) {
                 resetRenderTargets = true;
             } else if(e.type == SDL_MOUSEMOTION) {
-                const eMouseEvent me(x, y, shift, buttons, button);
+                const eMouseEvent me(x, y, shift, ctrl, buttons, button);
                 if(mWidget) mWidget->mouseMove(me);
             } else if(e.type == SDL_MOUSEBUTTONDOWN) {
                 switch(e.button.button) {
@@ -607,7 +608,7 @@ int eMainWindow::exec() {
                 }
                 buttons = button | buttons;
 
-                const eMouseEvent me(x, y, shift, buttons, button);
+                const eMouseEvent me(x, y, shift, ctrl, buttons, button);
                 if(mWidget) mWidget->mousePress(me);
             } else if(e.type == SDL_MOUSEBUTTONUP) {
                 switch(e.button.button) {
@@ -623,24 +624,30 @@ int eMainWindow::exec() {
                 default: continue;
                 }
                 buttons = buttons & ~button;
-                const eMouseEvent me(x, y, shift, buttons, button);
+                const eMouseEvent me(x, y, shift, ctrl, buttons, button);
                 if(mWidget) mWidget->mouseRelease(me);
             } else if(e.type == SDL_MOUSEWHEEL) {
-                const eMouseWheelEvent me(x, y, shift, buttons, e.wheel.y);
+                const eMouseWheelEvent me(x, y, shift, ctrl, buttons, e.wheel.y);
                 if(mWidget) mWidget->mouseWheel(me);
             } else if(e.type == SDL_KEYDOWN) {
                 const auto k = e.key.keysym.scancode;
                 if(k == SDL_Scancode::SDL_SCANCODE_LSHIFT ||
                    k == SDL_Scancode::SDL_SCANCODE_RSHIFT) {
                     mShiftPressed++;
+                } else if(k == SDL_Scancode::SDL_SCANCODE_LCTRL ||
+                          k == SDL_Scancode::SDL_SCANCODE_RCTRL) {
+                    mCtrlPressed++;
                 }
-                const eKeyPressEvent ke(x, y, shift, buttons, k);
+                const eKeyPressEvent ke(x, y, shift, ctrl, buttons, k);
                 if(mWidget) mWidget->keyPress(ke);
             } else if(e.type == SDL_KEYUP) {
                 const auto k = e.key.keysym.scancode;
                 if(k == SDL_Scancode::SDL_SCANCODE_LSHIFT ||
                    k == SDL_Scancode::SDL_SCANCODE_RSHIFT) {
                     mShiftPressed--;
+                } else if(k == SDL_Scancode::SDL_SCANCODE_LCTRL ||
+                          k == SDL_Scancode::SDL_SCANCODE_RCTRL) {
+                    mCtrlPressed--;
                 }
             }
         }

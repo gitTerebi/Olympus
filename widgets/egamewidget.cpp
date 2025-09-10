@@ -182,6 +182,7 @@ eGameWidgetSettings eGameWidget::settings() const {
     r.fDX = mDX;
     r.fDY = mDY;
     r.fDir = mBoard ? mBoard->direction() : eWorldDirection::N;
+    r.fBookmarks = mBookmarks;
     return r;
 }
 
@@ -195,6 +196,7 @@ void eGameWidget::setSettings(const eGameWidgetSettings& s) {
     setDY(s.fDY);
     mGm->setWorldDirection(s.fDir);
     if(mTem) mTem->setWorldDirection(s.fDir);
+    mBookmarks = s.fBookmarks;
 }
 
 void eGameWidget::initializeNumbers() {
@@ -1795,6 +1797,30 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         setDY(mDY + 35);
     } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN) {
         setDY(mDY - 35);
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F1) {
+        if(e.ctrlPressed()) {
+            setBookmark(1);
+        } else {
+            viewBookmark(1);
+        }
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F2) {
+        if(e.ctrlPressed()) {
+            setBookmark(2);
+        } else {
+            viewBookmark(2);
+        }
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F3) {
+        if(e.ctrlPressed()) {
+            setBookmark(3);
+        } else {
+            viewBookmark(3);
+        }
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F4) {
+        if(e.ctrlPressed()) {
+            setBookmark(4);
+        } else {
+            viewBookmark(4);
+        }
     } else if(k == SDL_Scancode::SDL_SCANCODE_ESCAPE) {
         if(!mMsgBox && !mBoard->editorMode()) {
             mBoard->waitUntilFinished();
@@ -2210,6 +2236,29 @@ void eGameWidget::clampViewBox() {
     mDY = std::min(-mTileH/2 + 2*einc + dt*mTileH, mDY);
     const int db = mBottomMaxAltitude > 0 ? mBottomMaxAltitude : 0;
     mDY = std::max(-h*mTileH/2 + hh + einc + db*mTileH, mDY);
+}
+
+void eGameWidget::setBookmark(const int id) {
+    const auto tile = mViewedTile;
+    if(!tile) {
+        mBookmarks.erase(id);
+    } else {
+        const int tx = tile->x();
+        const int ty = tile->y();
+        mBookmarks[id] = {tx, ty};
+    }
+}
+
+void eGameWidget::viewBookmark(const int id) {
+    if(!mBoard) return;
+    const auto it = mBookmarks.find(id);
+    if(it == mBookmarks.end()) return;
+    const auto& c = it->second;
+    const int tx = c.first;
+    const int ty = c.second;
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return;
+    viewTile(tile);
 }
 
 void eGameWidget::updateTopBottomAltitude() {

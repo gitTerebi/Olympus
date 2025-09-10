@@ -97,6 +97,7 @@ private:
     std::vector<eSlot> mSlots;
 
     int mShiftPressed = 0;
+    int mCtrlPressed = 0;
 
     stdsptr<eCampaign> mCampaign;
     eGameBoard* mBoard = nullptr;
