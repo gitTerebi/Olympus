@@ -82,6 +82,7 @@ public:
 
     void addBanner(const stdsptr<eBanner>& b);
     void removeBanner(const stdsptr<eBanner>& b);
+    void removeAllBanners();
     void removeBanner(eBanner* const b);
     const std::vector<stdsptr<eBanner>>& banners() const
     { return mBanners; }

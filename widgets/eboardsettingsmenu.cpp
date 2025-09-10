@@ -278,6 +278,12 @@ void eBoardSettingsMenu::initialize(
                                         elevationE);
         col2->addWidget(elevationW);
 
+        eNumLineEdit* cityE;
+        const auto cityW = createW("city",
+                                   static_cast<int>(eMGS::sLastCid),
+                                   cityE);
+        col2->addWidget(cityW);
+
         col1->stackVertically();
         col1->fitContent();
         col2->stackVertically();
@@ -295,7 +301,7 @@ void eBoardSettingsMenu::initialize(
                                waterE, forestE, forestToFertileE,
                                fertileE, emptyDryE, scrubDryE,
                                flatStonesE, tallStonesE,
-                               elevationE]() {
+                               elevationE, cityE]() {
             eMapGenerator g(*boardPtr);
             eMapGeneratorSettings sett;
             sett.fWater = waterE->value();
@@ -307,6 +313,7 @@ void eBoardSettingsMenu::initialize(
             sett.fFlatStones = flatStonesE->value();
             sett.fTallStones = tallStonesE->value();
             sett.fElevation = elevationE->value();
+            sett.fCid = static_cast<eCityId>(cityE->value());
             g.generate(sett);
             gw->updateTopBottomAltitude();
             gw->updateMinMaxAltitude();

@@ -6,7 +6,11 @@
 enum class eTerrain;
 class eGameBoard;
 
+enum class eCityId;
+
 struct eMapGeneratorSettings {
+    eCityId fCid = static_cast<eCityId>(-1);
+
     int fWater = sLastWater;
     int fForest = sLastForest;
     int fForestToFertile = sLastForestToFertile;
@@ -26,6 +30,7 @@ struct eMapGeneratorSettings {
     static int sLastFlatStones;
     static int sLastTallStones;
     static int sLastElevation;
+    static eCityId sLastCid;
 
     bool fCoppper = true;
     bool fSilver = true;

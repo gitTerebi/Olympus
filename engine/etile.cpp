@@ -464,6 +464,10 @@ void eTile::removeBanner(const stdsptr<eBanner>& b) {
     eVectorHelpers::remove(mBanners, b);
 }
 
+void eTile::removeAllBanners() {
+    mBanners.clear();
+}
+
 void eTile::removeBanner(eBanner * const b) {
     const int iMax = mBanners.size();
     for(int i = 0; i < iMax; i++) {

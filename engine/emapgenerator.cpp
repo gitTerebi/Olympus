@@ -11,6 +11,8 @@ using namespace noise;
 
 #include "egameboard.h"
 
+#include "eiteratesquare.h"
+
 int eMapGeneratorSettings::sLastWater = 25;
 int eMapGeneratorSettings::sLastForest = 8;
 int eMapGeneratorSettings::sLastForestToFertile = 8;
@@ -20,6 +22,7 @@ int eMapGeneratorSettings::sLastScrubDry = 25;
 int eMapGeneratorSettings::sLastFlatStones = 5;
 int eMapGeneratorSettings::sLastTallStones = 5;
 int eMapGeneratorSettings::sLastElevation = 9;
+eCityId eMapGeneratorSettings::sLastCid = static_cast<eCityId>(-1);
 
 eMapGenerator::eMapGenerator(eGameBoard& board) :
     mBoard(board) {
@@ -49,6 +52,27 @@ void eMapGenerator::generateTerrain(const eMGS& settings) {
     for(int x = 0; x < w; x++) {
         for(int y = 0; y < h; y++) {
             const auto tile = mBoard.dtile(x, y);
+            if(settings.fCid != eCityId::neutralFriendly) {
+                const auto cid = tile->cityId();
+                const auto sCid = settings.fCid;
+                if(cid != sCid) {
+                    bool found = false;
+                    for(int k = 0; k < 10 && !found; k++) {
+                        eIterateSquare::iterateSquare(k, [&found, tile, sCid](const int dx, const int dy) {
+                            const auto t = tile->tileRel<eTile>(dx, dy);
+                            if(!t) return false;
+                            const auto tCid = t->cityId();
+                            found = tCid == sCid;
+                            return found;
+                        });
+                    }
+                    if(!found) continue;
+                }
+            }
+            tile->setScrub(0.);
+            tile->setAltitude(0);
+            tile->setHasFish(false);
+            tile->setHasUrchin(false);
             const double v = p.GetValue(x/div, y/div/2, 0.0);
             int w = std::round(0.5*(v + 1)*weightSum);
             eTerrain terr;
@@ -227,8 +251,11 @@ void eMapGenerator::generate(const eMGS& settings) {
     eMGS::sLastFlatStones = settings.fFlatStones;
     eMGS::sLastTallStones = settings.fTallStones;
     eMGS::sLastElevation = settings.fElevation;
+    eMGS::sLastCid = settings.fCid;
 
-    mBoard.initialize(mBoard.width(), mBoard.height());
+    if(settings.fCid == eCityId::neutralFriendly) {
+        mBoard.initialize(mBoard.width(), mBoard.height());
+    }
     generateTerrain(settings);
 //    generateSilverAndBronze(settings);
 //    generateAnimals(settings);

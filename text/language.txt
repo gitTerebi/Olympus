@@ -40,6 +40,7 @@ scrub_dry "Scrub dry"
 flat_stones "Flat stones"
 tall_stones "Tall stones"
 elevation "Elevation"
+city "City"
 
 clear "Clear"
 

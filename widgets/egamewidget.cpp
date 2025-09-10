@@ -2079,6 +2079,10 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
         mPressedTY = -1;
     } break;
     case eMouseButton::right: {
+        if(mEditorMode) {
+            const auto tile = mBoard->tile(mHoverTX, mHoverTY);
+            if(tile) tile->removeAllBanners();
+        }
         if(static_cast<bool>(pressedButtons & eMouseButton::right)) {
             const auto tile = mBoard->tile(mHoverTX, mHoverTY);
             if(tile && tile->cityId() == mViewedCityId) {
