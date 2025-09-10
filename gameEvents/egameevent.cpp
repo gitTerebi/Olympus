@@ -330,12 +330,7 @@ eWorldBoard* eGameEvent::worldBoard() const {
 }
 
 void eGameEvent::startingNewEpisode() {
-    const bool keepType = mType == eGameEventType::tradeOpensUp ||
-                          mType == eGameEventType::supplyChange ||
-                          mType == eGameEventType::demandChange ||
-                          mType == eGameEventType::priceChange ||
-                          mType == eGameEventType::wageChange;
-    if(mEpisodeEvent && !keepType) {
+    if(mEpisodeEvent) {
         setRepeat(0);
     }
     for(const auto& c : mConsequences) {
