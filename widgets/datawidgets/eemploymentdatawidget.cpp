@@ -225,7 +225,11 @@ void eEmploymentDataWidget::paintEvent(ePainter& p) {
     if(update) {
         const auto cid = viewedCity();
         const auto& emplData = mBoard.employmentData(cid);
+
         if(emplData) {
+            mWageRate = mBoard.wageRate(cid);
+            mWageLabel->setText(eWageRateHelpers::name(mWageRate));
+
             const bool vacsVisible = emplData->freeJobVacancies() > 0;
             mVacanciesWidget->setVisible(vacsVisible);
             mUnemployedWidget->setVisible(!vacsVisible);
