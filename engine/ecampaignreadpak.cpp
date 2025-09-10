@@ -374,6 +374,28 @@ eMonsterType pakIdToMonsterType(const uint8_t id, bool& valid) {
     return eMonsterType::calydonianBoar;
 }
 
+enum class eMonsterTarget {
+    food,
+    sea,
+    industry,
+    military,
+    money,
+    troops,
+    common,
+    aesthetic,
+    mythological,
+    best,
+    random
+};
+
+eMonsterTarget pakIdToMonsterTarget(const uint16_t id) {
+    if(id > 10) {
+        printf("Invalid monster target id %i\n", id);
+        return eMonsterTarget::food;
+    }
+    return static_cast<eMonsterTarget>(id);
+}
+
 void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                        const uint8_t nEvents, const eCityId cid,
                        const std::vector<ePakGod>& opponentGods,
@@ -417,7 +439,11 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         const uint16_t duration = file.readUShort(); // also warning
         file.skipBytes(8);
         const uint16_t godMonsterHeroId = file.readUShort(); // also warships
-        file.skipBytes(6);
+
+        const uint16_t target1 = file.readUShort();
+        const uint16_t target2 = file.readUShort();
+        const uint16_t target3 = file.readUShort();
+
         const uint16_t aggressivnessId = file.readUShort();
         file.skipBytes(22);
         const uint16_t effectOnCityId = file.readShort();
@@ -595,33 +621,32 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                     aggressivnessId);
             }
 
+            eMonsterTarget targets[3];
+            targets[0] = pakIdToMonsterTarget(target1);
+            targets[1] = pakIdToMonsterTarget(target2);
+            targets[2] = pakIdToMonsterTarget(target3);
+
             stdsptr<eMonsterInvasionEventBase> ee;
             if(subType == 0) { // monster in city
                 ee = e::make_shared<eMonsterInCityEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setMonsterTypes(types);
-                ee->setAggressivness(aggressivness);
-                e = ee;
             } else if(subType == 1) { // monster unleashed
                 ee = e::make_shared<eMonsterUnleashedEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-                ee->setMonsterTypes(types);
-                ee->setAggressivness(aggressivness);
-                e = ee;
             } else if(subType == 2) { // monster invades
                 ee = e::make_shared<eMonsterInvasionEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setWarningMonths(duration);
-                ee->setMonsterTypes(types);
-                ee->setAggressivness(aggressivness);
-                e = ee;
             } else {
                 printf("Invalid monster invasion subtype %i\n", subType);
                 events.push_back(nullptr);
                 continue;
             }
+            ee->setMonsterTypes(types);
+            ee->setAggressivness(aggressivness);
             ee->setMinPointId(1);
             ee->setMaxPointId(3);
+            e = ee;
         } break;
         case ePakEventType::godQuest: {
             bool valid = false;
