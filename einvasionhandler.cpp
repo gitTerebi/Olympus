@@ -635,7 +635,7 @@ void eInvasionHandler::incTime(const int by) {
             if(mConquestEvent) {
                 const auto& forces = mConquestEvent->forces();
                 forces.kill(1.);
-//                    mConquestEvent->planArmyReturn();
+                mConquestEvent->planArmyReturn();
             }
         }
     };
