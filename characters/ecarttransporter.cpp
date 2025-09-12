@@ -193,6 +193,7 @@ void eCartTransporter::setType(const eCartTransporterType t) {
         mTrailer->setFollow(this);
         mTrailer->setBig(mBigTrailer);
         const auto atr = e::make_shared<eFollowAction>(follow, mTrailer.get());
+        if(atlantean()) atr->setDistance(2);
         mTrailer->setAction(atr);
         mTrailer->changeTile(t);
     }

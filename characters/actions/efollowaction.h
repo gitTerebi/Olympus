@@ -7,8 +7,6 @@
 
 #include "engine/eorientation.h"
 
-#include "pointers/estdpointer.h"
-
 class eTile;
 class eMovePathAction;
 

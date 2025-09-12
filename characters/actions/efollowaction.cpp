@@ -2,7 +2,6 @@
 
 #include "../echaracter.h"
 
-#include "emovepathaction.h"
 #include "walkable/ewalkableobject.h"
 
 eFollowAction::eFollowAction(eCharacter* const f,
