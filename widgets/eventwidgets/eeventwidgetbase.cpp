@@ -200,7 +200,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             minCountB->setValueChangeAction([ee](const int p) {
                 ee->setMinCount(p);
             });
-            minCountB->initialize(1, 999);
+            minCountB->initialize(-999, 999);
             const int rc = ee->minCount();
             minCountB->setValue(rc);
             countW->addWidget(minCountB);
@@ -210,7 +210,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             maxCountB->setValueChangeAction([ee](const int p) {
                 ee->setMaxCount(p);
             });
-            maxCountB->initialize(1, 999);
+            maxCountB->initialize(-999, 999);
             const int rc = ee->maxCount();
             maxCountB->setValue(rc);
             countW->addWidget(maxCountB);
