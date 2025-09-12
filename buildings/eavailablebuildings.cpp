@@ -224,8 +224,11 @@ bool eAvailableBuildings::available(
     case eBuildingType::eliteHousing:
         return fEliteHousing;
 
-    case eBuildingType::wheatFarm:
+    case eBuildingType::wheatFarm: {
+        const bool s = fDemeterSanctuary == eAvailable::built;
+        if(s) return true;
         return fWheatFarm;
+    } break;
     case eBuildingType::carrotsFarm:
         return fCarrotsFarm;
     case eBuildingType::onionsFarm:
