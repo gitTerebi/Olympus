@@ -51,7 +51,6 @@ void eGodAttackEvent::trigger() {
     god->setCityId(eCityId::neutralAggresive);
 
     const auto a = e::make_shared<eGodAttackAction>(god.get());
-    if(mSanctuary) a->setSanctuary(mSanctuary);
     god->setAttitude(eGodAttitude::hostile);
     god->setAction(a);
     a->increment(1);
@@ -62,6 +61,18 @@ void eGodAttackEvent::trigger() {
     ed.fGod = t;
     board->registerAttackingGod(cid, god.get());
     board->event(eEvent::godInvasion, ed);
+    if(mSanctuary) {
+        a->setSanctuary(mSanctuary);
+        const auto sCid = mSanctuary->cityId();
+        const auto sPid = board->cityIdToPlayerId(sCid);
+        const auto ppid = board->personPlayer();
+        if(sPid == ppid) {
+            eEventData ed(sCid);
+            ed.fChar = god.get();
+            ed.fTile = god->tile();
+            board->event(eEvent::playerGodAttack, ed);
+        }
+    }
     if(t == eGodType::zeus) {
         board->setLandTradeShutdown(cid, true);
         board->setSeaTradeShutdown(cid, true);

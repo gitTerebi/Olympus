@@ -1654,6 +1654,11 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     case eEvent::colonyMonument: {
         showMessage(ed, inst.fColonyMonument);
         return;
+
+    case eEvent::playerInvasion:
+    case eEvent::playerGodAttack:
+        viewTile(ed.fTile);
+        break;
     } break;
     }
     mGm->pushEvent(e, ed);

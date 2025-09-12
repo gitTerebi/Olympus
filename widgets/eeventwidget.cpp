@@ -72,6 +72,7 @@ eEventButton::eEventButton(const eEvent e,
         break;
 
     case eEvent::godInvasion:
+    case eEvent::playerGodAttack:
         coll = &texs.fGodAttackAlert;
         break;
     case eEvent::monsterInvasion:
@@ -83,6 +84,7 @@ eEventButton::eEventButton(const eEvent e,
         coll = &texs.fHeroArrivalAlert;
         break;
     case eEvent::invasion:
+    case eEvent::playerInvasion:
         coll = &texs.fInvasionAlert;
         break;
     case eEvent::plague:

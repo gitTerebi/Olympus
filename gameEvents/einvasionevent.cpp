@@ -170,9 +170,11 @@ void eInvasionEvent::trigger() {
         if(!tile) return;
         const auto invadingCid = mCity->cityId();
         const auto invadingC = board->boardCityWithId(invadingCid);
+
+        eInvasionHandler* eh = nullptr;
         if(tile->hasWater()) {
             if(!mDisembarkTile || !mShoreTile) return;
-            const auto eh = new eInvasionHandler(*board, cid, mCity, this);
+            eh = new eInvasionHandler(*board, cid, mCity, this);
             if(invadingC) {
                 eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile,
                                           mForces, mConquestEvent);
@@ -180,13 +182,21 @@ void eInvasionEvent::trigger() {
                 eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile,
                                           infantry, cavalry, archers);
             }
-        } else {
-            const auto eh = new eInvasionHandler(*board, cid, mCity, this);
+            } else {
+            eh = new eInvasionHandler(*board, cid, mCity, this);
             if(invadingC) {
                 eh->initializeLandInvasion(tile, mForces, mConquestEvent);
             } else {
                 eh->initializeLandInvasion(tile, infantry, cavalry, archers);
             }
+        }
+
+        const auto invadingPid = board->cityIdToPlayerId(invadingCid);
+        const auto ppid = board->personPlayer();
+        if(invadingPid == ppid && eh) {
+            eEventData ed(invadingCid);
+            ed.fTile = eh->currentTile();
+            board->event(eEvent::playerInvasion, ed);
         }
     };
 

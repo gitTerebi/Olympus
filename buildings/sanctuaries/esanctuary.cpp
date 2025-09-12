@@ -445,14 +445,8 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
     const auto e = ee->ref<eGodAttackEvent>();
     e->setSanctuary(this);
     e->setTypes({godType()});
-    const int delay = 5;
-    e->setDatePlusDays(delay);
-    e->setDatePlusMonths(0);
-    e->setDatePlusYearsMin(0);
-    e->setDatePlusYearsMax(0);
-    auto date = board.date();
-    date += delay;
-    e->initializeDate(date);
+    e->setRepeat(0);
+    e->trigger();
     const auto c = board.boardCityWithId(cid);
     c->addRootGameEvent(e);
     mGodAbroad = true;
