@@ -431,16 +431,19 @@ void eBoardCity::updateCityDefense() {
         std::vector<eSoldierBanner*> bs;
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
+            b->backFromHome();
             b->callSoldiers();
             bs.push_back(b.get());
         }
         eSoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
+        mDefending = true;
     } else if(mInvasionHandlers.empty()) {
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
             b->moveToDefault();
             b->goHome();
         }
+        mDefending = false;
     }
 }
 
@@ -479,7 +482,7 @@ void eBoardCity::nextMonth() {
 
     const auto date = mBoard.date();
     const bool pp = personPlayerOwner();
-    if(!pp) {
+    if(!pp && !mDefending) {
         const int space = maxPalaceBannerCount();
         if(space == sPalaceTiles) {
             if(mNextAttackPlanned) {

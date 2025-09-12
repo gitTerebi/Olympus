@@ -438,6 +438,7 @@ private:
     std::vector<eTile*> mTiles;
     SDL_Rect mTileBRect{0, 0, 0, 0};
     bool mAtlantean = false;
+    bool mDefending = false;
 
     eGameEvents mCityEvents;
 

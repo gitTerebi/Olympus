@@ -204,4 +204,6 @@ void eBoardCity::read(eReadStream& src) {
             r.read(mBoard, src);
         }
     }
+
+    src >> mDefending;
 }

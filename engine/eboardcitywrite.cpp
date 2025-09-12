@@ -148,4 +148,6 @@ void eBoardCity::write(eWriteStream& dst) const {
     for(const auto& r : mReinforcements) {
         r.write(dst);
     }
+
+    dst << mDefending;
 }
