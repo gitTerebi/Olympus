@@ -48,6 +48,7 @@ private:
 
     int attackPeriod() const;
     int invadePeriod() const;
+    int moveAroundPeriod() const;
 
     eTile* mHomeTile = nullptr;
     eMonsterAggressivness mAggressivness{eMonsterAggressivness::passive};

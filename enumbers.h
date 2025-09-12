@@ -149,6 +149,16 @@ struct eNumbers {
     static int sVeryActiveWaterMonsterInvadePeriod;
     static int sAggressiveWaterMonsterInvadePeriod;
 
+    static int sPassiveLandMonsterMoveAroundPeriod;
+    static int sActiveLandMonsterMoveAroundPeriod;
+    static int sVeryActiveLandMonsterMoveAroundPeriod;
+    static int sAggressiveLandMonsterMoveAroundPeriod;
+
+    static int sPassiveWaterMonsterMoveAroundPeriod;
+    static int sActiveWaterMonsterMoveAroundPeriod;
+    static int sVeryActiveWaterMonsterMoveAroundPeriod;
+    static int sAggressiveWaterMonsterMoveAroundPeriod;
+
     static int sFriendlyGodVisitPeriod;
     static int sGodHelpPeriod;
     static int sGodHelpAttackPeriod;

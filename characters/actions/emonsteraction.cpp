@@ -213,7 +213,7 @@ void eMonsterAction::goBack() {
 void eMonsterAction::monsterPatrol() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
-        moveAround(nullptr, 5000, eWalkableObject::sCreateDeepWater());
+        moveAround(nullptr, moveAroundPeriod(), eWalkableObject::sCreateDeepWater());
     } else {
         goToNearestRoad();
     }
@@ -336,5 +336,34 @@ int eMonsterAction::invadePeriod() const {
             return eNumbers::sAggressiveLandMonsterInvadePeriod;
         }
         return eNumbers::sPassiveLandMonsterInvadePeriod;
+    }
+}
+
+int eMonsterAction::moveAroundPeriod() const {
+    if(mType == eMonsterType::scylla ||
+        mType == eMonsterType::kraken) {
+        switch(mAggressivness) {
+        case eMonsterAggressivness::passive:
+            return eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::active:
+            return eNumbers::sActiveWaterMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::veryActive:
+            return eNumbers::sVeryActiveWaterMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::aggressive:
+            return eNumbers::sAggressiveWaterMonsterMoveAroundPeriod;
+        }
+        return eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
+    } else {
+        switch(mAggressivness) {
+        case eMonsterAggressivness::passive:
+            return eNumbers::sPassiveLandMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::active:
+            return eNumbers::sActiveLandMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::veryActive:
+            return eNumbers::sVeryActiveLandMonsterMoveAroundPeriod;
+        case eMonsterAggressivness::aggressive:
+            return eNumbers::sAggressiveLandMonsterMoveAroundPeriod;
+        }
+        return eNumbers::sPassiveLandMonsterMoveAroundPeriod;
     }
 }

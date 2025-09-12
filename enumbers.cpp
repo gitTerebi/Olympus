@@ -132,18 +132,31 @@ int eNumbers::sGrowerWorkTime;
 int eNumbers::sGrowerSpawnWaitTime;
 
 int eNumbers::sMonsterAttackRange;
+
 int eNumbers::sPassiveMonsterAttackPeriod;
 int eNumbers::sActiveMonsterAttackPeriod;
 int eNumbers::sVeryActiveMonsterAttackPeriod;
 int eNumbers::sAggressiveMonsterAttackPeriod;
+
 int eNumbers::sPassiveLandMonsterInvadePeriod;
 int eNumbers::sActiveLandMonsterInvadePeriod;
 int eNumbers::sVeryActiveLandMonsterInvadePeriod;
 int eNumbers::sAggressiveLandMonsterInvadePeriod;
+
 int eNumbers::sPassiveWaterMonsterInvadePeriod;
 int eNumbers::sActiveWaterMonsterInvadePeriod;
 int eNumbers::sVeryActiveWaterMonsterInvadePeriod;
 int eNumbers::sAggressiveWaterMonsterInvadePeriod;
+
+int eNumbers::sPassiveLandMonsterMoveAroundPeriod;
+int eNumbers::sActiveLandMonsterMoveAroundPeriod;
+int eNumbers::sVeryActiveLandMonsterMoveAroundPeriod;
+int eNumbers::sAggressiveLandMonsterMoveAroundPeriod;
+
+int eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
+int eNumbers::sActiveWaterMonsterMoveAroundPeriod;
+int eNumbers::sVeryActiveWaterMonsterMoveAroundPeriod;
+int eNumbers::sAggressiveWaterMonsterMoveAroundPeriod;
 
 int eNumbers::sFriendlyGodVisitPeriod;
 int eNumbers::sGodHelpPeriod;
@@ -429,6 +442,16 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("active_water_monster_invade_period_i", sActiveWaterMonsterInvadePeriod, 400000);
     loadI("very_active_water_monster_invade_period_i", sVeryActiveWaterMonsterInvadePeriod, 200000);
     loadI("aggressive_water_monster_invade_period_i", sAggressiveWaterMonsterInvadePeriod, 100000);
+
+    loadI("passive_land_monster_move_around_period_i", sPassiveLandMonsterMoveAroundPeriod, 20000);
+    loadI("active_land_monster_move_around_period_i", sActiveLandMonsterMoveAroundPeriod, 30000);
+    loadI("very_active_land_monster_move_around_period_i", sVeryActiveLandMonsterMoveAroundPeriod, 40000);
+    loadI("aggressive_land_monster_move_around_period_i", sAggressiveLandMonsterMoveAroundPeriod, 50000);
+
+    loadI("passive_water_monster_move_around_period_i", sPassiveWaterMonsterMoveAroundPeriod, 20000);
+    loadI("active_water_monster_move_around_period_i", sActiveWaterMonsterMoveAroundPeriod, 30000);
+    loadI("very_active_water_monster_move_around_period_i", sVeryActiveWaterMonsterMoveAroundPeriod, 40000);
+    loadI("aggressive_water_monster_move_around_period_i", sAggressiveWaterMonsterMoveAroundPeriod, 50000);
 
     loadI("friendly_god_visit_period_i", sFriendlyGodVisitPeriod, 450);
     loadI("god_help_period_i", sGodHelpPeriod, 250000);

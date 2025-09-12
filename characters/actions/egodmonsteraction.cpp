@@ -458,7 +458,7 @@ void eGodMonsterAction::goToNearestRoad(
         a->start(cr);
         setCurrentAction(a);
     } else {
-        moveAround(finishAct, 15000);
+        moveAround(finishAct, 25000);
     }
 }
 
