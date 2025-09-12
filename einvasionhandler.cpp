@@ -175,6 +175,7 @@ void eInvasionHandler::disembark() {
     const int tx = mTile->x();
     const int ty = mTile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    mCurrentTile = mTile;
 }
 
 void eInvasionHandler::initializeSeaInvasion(
@@ -186,6 +187,7 @@ void eInvasionHandler::initializeSeaInvasion(
         const int archers) {
     mDisembarkTile = disembarkTile;
     mTile = shoreTile;
+    mCurrentTile = mTile;
 
     mInfantryLeft = infantry;
     mCavalryLeft = cavalry;
@@ -426,6 +428,7 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    mCurrentTile = tile;
 }
 
 void eInvasionHandler::initializeLandInvasion(
@@ -462,6 +465,7 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    mCurrentTile = tile;
 }
 
 void
@@ -696,6 +700,7 @@ void eInvasionHandler::incTime(const int by) {
         const int tx = mTile->x();
         const int ty = mTile->y();
         eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        mCurrentTile = mTile;
         tellHeroesAndGodsToGoBack();
     };
 
@@ -729,6 +734,7 @@ void eInvasionHandler::incTime(const int by) {
                 const int tx = halfTile->x();
                 const int ty = halfTile->y();
                 eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+                mCurrentTile = halfTile;
             }
         }
     } break;
@@ -740,6 +746,7 @@ void eInvasionHandler::incTime(const int by) {
             for(const auto& b : mBanners) {
                 b->moveTo(t->x(), t->y());
             }
+            mCurrentTile = t;
         } else {
             eHeatMap map;
             const auto bRect = mBoard.boardCityTileBRect(mTargetCity);
@@ -777,6 +784,7 @@ void eInvasionHandler::incTime(const int by) {
                 const int tx = targetTile->x();
                 const int ty = targetTile->y();
                 eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+                mCurrentTile = targetTile;
             }
         }
     } break;
@@ -822,6 +830,7 @@ void eInvasionHandler::read(eReadStream& src) {
         mCity = c;
     });
     mTile = src.readTile(mBoard);
+    mCurrentTile = src.readTile(mBoard);
     src >> mStage;
 
     {
@@ -895,6 +904,7 @@ void eInvasionHandler::write(eWriteStream& dst) const {
     dst << mIOID;
     dst.writeCity(mCity.get());
     dst.writeTile(mTile);
+    dst.writeTile(mCurrentTile);
     dst << mStage;
 
     {

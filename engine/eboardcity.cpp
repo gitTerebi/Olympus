@@ -422,22 +422,26 @@ void eBoardCity::updateForestTiles() {
 }
 
 void eBoardCity::updateCityDefense() {
-    const auto i = mBoard.invasionToDefend(mId);
-    if(i) {
-        const auto tile = i->landInvasionTile();
-        if(!tile) return;
-        const int tx = tile->x();
-        const int ty = tile->y();
+    eTile* defendTile = nullptr;
+    if(!mInvasionHandlers.empty()) {
+        const auto& inv = mInvasionHandlers[0];
+        defendTile = inv->currentTile();
+    } else {
+        const auto i = mBoard.invasionToDefend(mId);
+        if(i) defendTile = i->landInvasionTile();
+    }
+    if(defendTile) {
+        const int tx = defendTile->x();
+        const int ty = defendTile->y();
         std::vector<eSoldierBanner*> bs;
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
             b->backFromHome();
-            b->callSoldiers();
             bs.push_back(b.get());
         }
         eSoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
         mDefending = true;
-    } else if(mInvasionHandlers.empty()) {
+    } else {
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
             b->moveToDefault();

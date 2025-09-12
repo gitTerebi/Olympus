@@ -76,6 +76,8 @@ public:
 
     void killAllWithCorpse();
 
+    eTile* currentTile() const { return mCurrentTile; }
+
     eInvasionStage stage() const { return mStage; }
     eTile* tile() const { return mTile; }
 
@@ -117,6 +119,7 @@ private:
     stdptr<eInvasionEvent> mEvent;
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
+    eTile* mCurrentTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
     std::vector<stdsptr<eSoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;
