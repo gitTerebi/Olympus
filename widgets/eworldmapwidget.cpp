@@ -575,6 +575,7 @@ void eWorldMapWidget::updateWidgets() {
             const int totDays = sDate - wDate;
             const double frac = std::clamp(1. - (1.*days)/totDays, 0., 1.);
             const auto& cc = i->city();
+            const auto cid = i->cityId();
             int cx;
             int cy;
             armyDrawXY(*cc, *hc, frac, cx, cy);
@@ -582,11 +583,26 @@ void eWorldMapWidget::updateWidgets() {
             const int x = cx - w2/2;
             const int y = cy - h2/2;
             const auto ww = new eTransparentWidget(window());
-            ww->setPressAction([this, cc]() {
+            ww->setPressAction([this, cc, cid]() {
                 if(mSetTextAction) {
-                    const int group = 47;
-                    const int string = 25;
-                    const auto text = eLanguage::zeusText(group, string);
+                    auto& world = mGameBoard->world();
+                    const auto targetC = world.cityWithId(cid);
+                    const auto targetName = targetC->name();
+                    int group = 47;
+                    int string = 25;
+                    if(cc->isAlly()) {
+                        group = 47;
+                        string = 17;
+                    } else if(cc->isRival()) {
+                        group = 47;
+                        string = 25;
+                    } else {
+                        group = 47;
+                        string = 11;
+                    }
+                    auto text = eLanguage::zeusText(group, string);
+                    eStringHelpers::replace(text, "[city_name]", targetName);
+                    eStringHelpers::replace(text, "[rival_city_name]", targetName);
                     mSetTextAction(text);
                 }
             });
