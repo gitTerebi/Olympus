@@ -337,6 +337,7 @@ eEnlistedForces extractCity(const eCityId cid,
             result.fHeroes.push_back(h);
         }
     }
+    result.fAllies = from.fAllies;
     return result;
 }
 
@@ -750,7 +751,7 @@ void eEnlistForcesDialog::initialize(
             allies->resize(www, hhhh);
             eEnlistedForces efa;
             efa.fAllies = enlistable.fAllies;
-            allies->initialize(efa, cids, {}, {}, selectionChanged,
+            allies->initialize(efa, {cids[0]}, {}, {}, selectionChanged,
                                eLanguage::zeusText(283, 24), false);
             col2->addWidget(allies);
 
