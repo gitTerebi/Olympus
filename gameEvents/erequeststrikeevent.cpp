@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "einvasionevent.h"
 
 eRequestStrikeEvent::eRequestStrikeEvent(
         const eCityId cid,
@@ -18,14 +19,15 @@ void eRequestStrikeEvent::trigger() {
     if(!mCity || !mRivalCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    eEventData ed(playerId());
+    const auto pid = playerId();
+    eEventData ed(pid);
     ed.fCity = mCity;
     ed.fRivalCity = mRivalCity;
 
    const auto date = board->date();
 
+    const int str = gStrikeFrac*mCity->troops();
     if(mEnd) {
-        const int str = gStrikeFrac*mCity->troops();
         const int rstr = mRivalCity->troops();
 
         if(str > 1.5*rstr) {
@@ -46,13 +48,22 @@ void eRequestStrikeEvent::trigger() {
             mCity->setTroops((1 - gStrikeFrac*killFrac)*troops);
         }
     } else {
-        const auto e = e::make_shared<eRequestStrikeEvent>(
-                           cityId(), eGameEventBranch::child, *board);
-        e->setCity(mCity);
-        e->setRivalCity(mRivalCity);
-        e->setEnd(true);
-        e->initializeDate(date + 100);
-        addConsequence(e);
+        if(mRivalCity->isOnBoard()) {
+            const auto rCid = mRivalCity->cityId();
+            const auto e = e::make_shared<eInvasionEvent>(
+                rCid, eGameEventBranch::root, *board);
+            e->initialize(mCity, str, pid);
+            e->initializeDate(date + 100);
+            board->addRootGameEvent(e);
+        } else {
+            const auto e = e::make_shared<eRequestStrikeEvent>(
+                               cityId(), eGameEventBranch::child, *board);
+            e->setCity(mCity);
+            e->setRivalCity(mRivalCity);
+            e->setEnd(true);
+            e->initializeDate(date + 100);
+            addConsequence(e);
+        }
         board->event(eEvent::strikeDeparture, ed);
     }
 }

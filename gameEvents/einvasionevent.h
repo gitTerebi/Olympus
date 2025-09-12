@@ -26,7 +26,8 @@ public:
     void pointerCreated() override;
 
     void initialize(const stdsptr<eWorldCity>& city,
-                    const int count);
+                    const int count, const ePlayerId sentBy =
+                        ePlayerId::neutralFriendly);
     void initialize(const stdsptr<eWorldCity>& city,
                     const eEnlistedForces& forces,
                     ePlayerConquestEvent* const conquestEvent);
@@ -58,7 +59,9 @@ public:
 
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
-    void defeated();
+
+    void invadersWon();
+    void invadersDefeated();
 private:
     void soldiersByType(int& infantry,
                         int& cavalry,
@@ -80,6 +83,8 @@ private:
 
     bool mWarned = false;
     eDate mFirstWarning;
+
+    ePlayerId mSentByPlayer = ePlayerId::neutralFriendly;
 };
 
 #endif // EINVASIONEVENT_H

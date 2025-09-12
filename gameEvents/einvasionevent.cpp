@@ -73,10 +73,11 @@ void eInvasionEvent::pointerCreated() {
 }
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
-                                const int count) {
+                                const int count, const ePlayerId sentBy) {
     setSingleCity(city);
     setMinCount(count);
     setMaxCount(count);
+    mSentByPlayer = sentBy;
 }
 
 void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
@@ -230,7 +231,7 @@ void eInvasionEvent::trigger() {
             ed.fCity = city;
             board->event(eEvent::invasionDefeat, ed);
             board->updateMusic();
-            defeated();
+            invadersWon();
         };
         if(drachmas >= bribe) { // bribe
             ed.fA1 = bribeFunc;
@@ -254,6 +255,7 @@ void eInvasionEvent::write(eWriteStream& dst) const {
     eCountEventValue::write(dst);
 
     dst << mHardcoded;
+    dst << mSentByPlayer;
 
     dst.writeGameEvent(mConquestEvent);
     mForces.write(dst);
@@ -270,6 +272,7 @@ void eInvasionEvent::read(eReadStream& src) {
     eCountEventValue::read(src);
 
     src >> mHardcoded;
+    src >> mSentByPlayer;
 
     src.readGameEvent(board, [this](eGameEvent* const e) {
         mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
@@ -398,30 +401,85 @@ void eInvasionEvent::soldiersByType(int& infantry,
     }
 }
 
-void eInvasionEvent::defeated() {
+void eInvasionEvent::invadersWon() {
     auto& board = *gameBoard();
     const auto targetCity = cityId();
     board.defeatedBy(targetCity, mCity);
     eEventData ed(targetCity);
     ed.fCity = mCity;
     board.event(eEvent::invasionDefeat, ed);
-    const auto invadingCid = mCity->cityId();
-    const auto invadingPid = board.cityIdToPlayerId(invadingCid);
-    const auto invadingC = board.boardCityWithId(invadingCid);
-    const auto ppid = board.personPlayer();
-    const auto& wboard = board.world();
-    const auto targetWCity = wboard.cityWithId(targetCity);
-    if(invadingC) {
-        eEventData ied(invadingPid);
-        board.event(eEvent::cityConquered, ied);
-        board.allow(invadingCid, eBuildingType::commemorative, 4);
-        if(invadingPid == ppid) {
+    if(mSentByPlayer != ePlayerId::neutralFriendly) {
+        const auto ppid = board.personPlayer();
+        const auto& wboard = board.world();
+        const auto targetWCity = wboard.cityWithId(targetCity);
+        eEventData ed(mSentByPlayer);
+        ed.fCity = mCity;
+        ed.fRivalCity = targetWCity;
+        board.event(eEvent::strikeSuccessful, ed);
+        if(mSentByPlayer == ppid) {
             targetWCity->setRelationship(eForeignCityRelationship::vassal);
         }
         const auto ppc = board.currentCityId();
         if(targetCity != ppc) {
-            board.moveCityToPlayer(targetCity, invadingPid);
+            board.moveCityToPlayer(targetCity, mSentByPlayer);
         }
-        if(mConquestEvent) mConquestEvent->planArmyReturn();
+    } else {
+        const auto invadingCid = mCity->cityId();
+        const auto invadingPid = board.cityIdToPlayerId(invadingCid);
+        const auto invadingC = board.boardCityWithId(invadingCid);
+        const auto ppid = board.personPlayer();
+        const auto& wboard = board.world();
+        const auto targetWCity = wboard.cityWithId(targetCity);
+        if(invadingC) {
+            eEventData ed(invadingPid);
+            board.event(eEvent::cityConquered, ed);
+            board.allow(invadingCid, eBuildingType::commemorative, 4);
+            if(invadingPid == ppid) {
+                targetWCity->setRelationship(eForeignCityRelationship::vassal);
+            }
+            const auto ppc = board.currentCityId();
+            if(targetCity != ppc) {
+                board.moveCityToPlayer(targetCity, invadingPid);
+            }
+            if(mConquestEvent) mConquestEvent->planArmyReturn();
+        }
+    }
+}
+
+void eInvasionEvent::invadersDefeated() {
+    auto& board = *gameBoard();
+    const auto targetCity = cityId();
+    eEventData ed(targetCity);
+    ed.fCity = mCity;
+
+    const bool monn = eRand::rand() % 2;
+    if(monn) {
+        board.allow(targetCity, eBuildingType::commemorative, 1);
+        board.event(eEvent::invasionVictoryMonn, ed);
+    } else {
+        board.event(eEvent::invasionVictory, ed);
+    }
+
+    const auto& wboard = board.world();
+    const auto targetWCity = wboard.cityWithId(targetCity);
+    if(mSentByPlayer != ePlayerId::neutralFriendly) {
+        eEventData ed(mSentByPlayer);
+        ed.fCity = mCity;
+        ed.fRivalCity = targetWCity;
+        board.event(eEvent::strikeUnsuccessful, ed);
+    } else {
+        const auto invadingCid = mCity->cityId();
+        const auto invadingC = board.boardCityWithId(invadingCid);
+        if(invadingC) {
+            eEventData ied(invadingCid);
+            ied.fCity = targetWCity;
+
+            board.event(eEvent::cityConquerFailed, ied);
+            if(mConquestEvent) {
+                const auto& forces = mConquestEvent->forces();
+                forces.kill(1.);
+                mConquestEvent->planArmyReturn();
+            }
+        }
     }
 }

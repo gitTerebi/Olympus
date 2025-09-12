@@ -616,32 +616,8 @@ void eInvasionHandler::incTime(const int by) {
     const auto invadingCid = mCity->cityId();
     const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
     const auto invasionDefeated = [&]() {
-        eEventData ed(mTargetCity);
-        ed.fCity = mCity;
-
-        const auto invadingC = mBoard.boardCityWithId(invadingCid);
-
         tellHeroesAndGodsToGoBack();
-        const bool monn = eRand::rand() % 2;
-        if(monn) {
-            mBoard.allow(mTargetCity, eBuildingType::commemorative, 1);
-            mBoard.event(eEvent::invasionVictoryMonn, ed);
-        } else {
-            mBoard.event(eEvent::invasionVictory, ed);
-        }
-        if(invadingC) {
-            const auto& wboard = mBoard.world();
-            eEventData ied(invadingPid);
-            const auto targetWCity = wboard.cityWithId(mTargetCity);
-            ied.fCity = targetWCity;
-
-            mBoard.event(eEvent::cityConquerFailed, ied);
-            if(mConquestEvent) {
-                const auto& forces = mConquestEvent->forces();
-                forces.kill(1.);
-                mConquestEvent->planArmyReturn();
-            }
-        }
+        if(mEvent) mEvent->invadersDefeated();
     };
     if(mStage == eInvasionStage::arrive) {
         if(mBoatsLeft > 0) {
@@ -816,7 +792,7 @@ void eInvasionHandler::incTime(const int by) {
                 forces.kill(1 - double(count)/iniCount);
             }
             assert(mEvent);
-            mEvent->defeated();
+            mEvent->invadersWon();
         }
     } break;
     case eInvasionStage::comeback: {
