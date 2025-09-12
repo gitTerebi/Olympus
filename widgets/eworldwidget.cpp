@@ -93,7 +93,7 @@ void eWorldWidget::initialize() {
             }
         };
         const bool onlySoldiers = mCity->isOnBoardColony() || mCity->isCurrentCity();
-        openEnlistForcesDialog(enlistAction, {mCity}, {eResourceType::none}, onlySoldiers);
+        openEnlistForcesDialog(enlistAction, {mCity}, {}, onlySoldiers);
     };
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);
