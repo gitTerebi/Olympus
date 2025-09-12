@@ -360,6 +360,7 @@ void eWorldWidget::openGiftDialog() {
                           const int count,
                           const eCityId cid) {
             mBoard->giftTo(mCity, type, count, cid);
+            mBoard->updateResources(cid);
             d->deleteLater();
             dd->deleteLater();
         };

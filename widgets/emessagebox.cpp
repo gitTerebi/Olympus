@@ -19,6 +19,8 @@
 #include "emainwindow.h"
 #include "eboardcityswitchbutton.h"
 
+#include "engine/egifthelpers.h"
+
 template<typename ... Args>
 std::string string_format(const std::string& format, Args... args) {
     const int size_s = std::snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
@@ -131,6 +133,18 @@ void eMessageBox::initialize(eGameBoard& board,
                                item);
     eStringHelpers::replaceAll(msg.fText, "[itemshort]",
                                itemshort);
+
+    const int giftSize = eGiftHelpers::giftCount(type);
+    if(giftSize > 0) {
+        const int size = count/giftSize;
+        std::string giftSize;
+        if(size < 2) giftSize = eLanguage::zeusText(162, 0);
+        else if(size < 3) giftSize = eLanguage::zeusText(162, 1);
+        else giftSize = eLanguage::zeusText(162, 2);
+        eStringHelpers::replaceAll(msg.fText, "[gift_size]",
+                                   giftSize);
+    }
+
     if(const auto c = ed.fCity) {
         const auto nat = c->nationality();
         const auto natName = eWorldCity::sNationalityName(nat);
