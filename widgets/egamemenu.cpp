@@ -55,21 +55,23 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
         if(cid == cCid) continue;
         if(!c->active()) continue;
         if(!c->visible()) continue;
-        if(!board.hasTradePost(cid, *c)) {
-            const auto tradeCid = c->cityId();
-            const auto tradePid = board.cityIdToPlayerId(tradeCid);
-            const auto tradeC = board.boardCityWithId(tradeCid);
-            if(!c->buys().empty() || !c->sells().empty() ||
-               (tradeC && pid == tradePid)) {
-                if(c->waterTrade(cid)) {
-                    const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
-                    const eSPR s{eBuildingMode::pier, name, 0, i};
-                    cs.push_back(s);
-                } else {
-                    const auto name = eLanguage::zeusText(28, 62) + " " + c->name();
-                    const eSPR s{eBuildingMode::tradePost, name, 0, i};
-                    cs.push_back(s);
-                }
+        if(board.hasTradePost(cid, *c)) continue;
+        const auto tradeCid = c->cityId();
+        const auto tradePid = board.cityIdToPlayerId(tradeCid);
+        const auto tradeC = board.boardCityWithId(tradeCid);
+        const auto tradeTid = board.playerIdToTeamId(tradePid);
+        const auto tid = board.playerIdToTeamId(ppid);
+        if(eTeamIdHelpers::isEnemy(tradeTid, tid)) continue;
+        if(!c->buys().empty() || !c->sells().empty() ||
+           (tradeC && pid == tradePid)) {
+            if(c->waterTrade(cid)) {
+                const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
+                const eSPR s{eBuildingMode::pier, name, 0, i};
+                cs.push_back(s);
+            } else {
+                const auto name = eLanguage::zeusText(28, 62) + " " + c->name();
+                const eSPR s{eBuildingMode::tradePost, name, 0, i};
+                cs.push_back(s);
             }
         }
     }
