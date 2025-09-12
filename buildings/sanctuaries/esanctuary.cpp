@@ -143,7 +143,7 @@ void eSanctuary::buildingProgressed() {
             if(ub) ub->erase();
             const auto build = [&](const eResourceBuildingType type) {
                 const auto b = e::make_shared<eResourceBuilding>(
-                            board, type, cityId());
+                            board, type, cid);
                 b->setSanctuary(true);
                 b->setCenterTile(s);
                 b->setTileRect({s->x(), s->y(), 1, 1});
@@ -166,42 +166,42 @@ void eSanctuary::buildingProgressed() {
             case eGodType::hera:
                 build(eResourceBuildingType::orangeTree);
                 break;
-            case eGodType::demeter: {
-                const auto& sanctRect = tileRect();
-                const int xMin = sanctRect.x - 3;
-                const int yMin = sanctRect.y - 3;
-                const int xMax = sanctRect.x + sanctRect.w + 3;
-                const int yMax = sanctRect.y + sanctRect.h + 3;
-                for(int x = xMin; x < xMax; x++) {
-                    for(int y = yMin; y < yMax; y++) {
-                        const SDL_Point pt{x, y};
-                        const bool in = SDL_PointInRect(&pt, &sanctRect);
-                        if(in) continue;
-                        const auto tile = board.tile(x, y);
-                        if(!tile) continue;
-                        const auto terr = tile->terrain();
-                        if(terr == eTerrain::dry ||
-                           terr == eTerrain::forest ||
-                           terr == eTerrain::choppedForest) {
-                            tile->setTerrain(eTerrain::fertile);
-                        }
-                    }
-                }
-            } break;
             default:
                 break;
+            }
+        }
+
+        if(g == eGodType::demeter) {
+            const auto& sanctRect = tileRect();
+            const int xMin = sanctRect.x - 3;
+            const int yMin = sanctRect.y - 3;
+            const int xMax = sanctRect.x + sanctRect.w + 3;
+            const int yMax = sanctRect.y + sanctRect.h + 3;
+            for(int x = xMin; x < xMax; x++) {
+                for(int y = yMin; y < yMax; y++) {
+                    const SDL_Point pt{x, y};
+                    const bool in = SDL_PointInRect(&pt, &sanctRect);
+                    if(in) continue;
+                    const auto tile = board.tile(x, y);
+                    if(!tile) continue;
+                    const auto terr = tile->terrain();
+                    if(terr == eTerrain::dry ||
+                        terr == eTerrain::forest ||
+                        terr == eTerrain::choppedForest) {
+                        tile->setTerrain(eTerrain::fertile);
+                    }
+                }
             }
         }
 
         if(g == eGodType::hephaestus ||
            g == eGodType::hades ||
            g == eGodType::demeter) {
-            const auto cid = cityId();
             const auto c = board.boardCityWithId(cid);
             if(c) c->incTerrainState();
         }
 
-        eEventData ed(cityId());
+        eEventData ed(cid);
         ed.fGod = g;
         board.event(eEvent::sanctuaryComplete, ed);
     }
