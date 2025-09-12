@@ -93,6 +93,8 @@ private:
     void
     generateImmortals(eTile* const tile, const eCityId cid,
                       const bool ares, const std::vector<eHeroType>& heroes);
+    bool immortalsFighting() const;
+
     void
     generateSoldiersForCity(eTile* const tile,
                             const int infantry,

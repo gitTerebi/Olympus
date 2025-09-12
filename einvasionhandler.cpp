@@ -661,7 +661,7 @@ void eInvasionHandler::incTime(const int by) {
             }
         }
         if(!found) {
-            if(mBanners.empty()) {
+            if(mBanners.empty() && !mAresLeft && mHeroesLeft.empty()) {
                 invasionDefeated();
                 mStage = eInvasionStage::comeback;
             } else {
@@ -682,8 +682,10 @@ void eInvasionHandler::incTime(const int by) {
     }
 
     if(ss == 0) {
-        invasionDefeated();
-        delete this;
+        if(!immortalsFighting()) {
+            invasionDefeated();
+            delete this;
+        }
         return;
     }
     const int wait = 10000;
@@ -797,7 +799,9 @@ void eInvasionHandler::incTime(const int by) {
         }
 
         if(ss == 0) {
-            invasionDefeated();
+            if(!immortalsFighting()) {
+                invasionDefeated();
+            }
         } else if(p) {
             mStage = eInvasionStage::spread;
         } else {
@@ -1071,4 +1075,11 @@ void eInvasionHandler::generateImmortals(
         const auto hero = eHero::sCreateHero(h, mBoard);
         prcsAttack(hero);
     }
+}
+
+bool eInvasionHandler::immortalsFighting() const {
+    for(const auto& i : mHeroesAndGods) {
+        if(i) return true;
+    }
+    return false;
 }
