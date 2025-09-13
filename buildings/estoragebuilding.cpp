@@ -43,7 +43,7 @@ int eStorageBuilding::addNotAccept(const eResourceType type, const int count) {
     const bool sculpt = type == eResourceType::sculpture;
     const int sspace = sculpt ? 1 : 4;
     const int max = mMaxCount[type];
-    const int ccount = this->count(type);
+    const int ccount = sCount(type, mResourceCount, mResource, mSpaceCount);
     int added = 0;
     const int maxRem = std::max(0, max - ccount);
     int rem = std::min(maxRem, count);
