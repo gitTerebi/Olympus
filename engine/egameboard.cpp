@@ -2681,6 +2681,16 @@ void eGameBoard::requestForces(const eEnlistAction& action,
             f.fAllies.clear();
             f.fAres = false;
         }
+
+        const auto ss = f.fSoldiers;
+        for(const auto& c : exclude) {
+            const auto cid = c->cityId();
+            for(const auto& s : ss) {
+                const auto sCid = s->cityId();
+                if(cid != sCid) continue;
+                eVectorHelpers::remove(f.fSoldiers, s);
+            }
+        }
         std::vector<eHeroType> heroesAbroad;
         std::map<eHeroType, eCityId> heroesCity;
         for(const auto h : f.fHeroes) {
