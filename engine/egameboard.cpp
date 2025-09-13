@@ -343,11 +343,13 @@ void eGameBoard::selectTrireme(eTrireme * const c) {
 }
 
 void eGameBoard::bannersGoHome() {
-    for(const auto t : mSelectedTriremes) {
+    const auto triremes = mSelectedTriremes;
+    for(const auto t : triremes) {
         t->goHome();
     }
     std::map<eCityId, std::vector<stdsptr<eSoldierBanner>>> armyReturn;
-    for(const auto b : mSelectedBanners) {
+    const auto banners = mSelectedBanners;
+    for(const auto b : banners) {
         if(b->militaryAid() && b->isAbroad()) {
             const auto cid = b->cityId();
             armyReturn[cid].push_back(b->ref<eSoldierBanner>());

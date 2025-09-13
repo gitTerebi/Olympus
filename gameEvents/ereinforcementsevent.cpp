@@ -34,11 +34,13 @@ void eReinforcementsEvent::trigger() {
     if(!entryPoint) return;
 
     eEventData ed(cid);
-    board->event(eEvent::aidArrives, ed);
     ed.fCity = mCity;
     ed.fTile = entryPoint;
+    board->event(eEvent::aidArrives, ed);
 
+    std::vector<eSoldierBanner*> solds;
     for(const auto& b : mForces.fSoldiers) {
+        solds.push_back(b.get());
         b->setOnCityId(cid);
         b->setMilitaryAid(true);
         b->backFromHome();
@@ -46,6 +48,10 @@ void eReinforcementsEvent::trigger() {
             b->createSoldier(entryPoint);
         }
     }
+
+    const int tx = entryPoint->x();
+    const int ty = entryPoint->y();
+    eSoldierBanner::sPlace(solds, tx, ty, *board, 3, 3);
 
     c->addReinforcements(fromCid, mForces);
 }

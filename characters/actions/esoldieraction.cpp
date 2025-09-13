@@ -99,7 +99,7 @@ void eSoldierAction::goHome() {
 void eSoldierAction::goAbroad() {
     const auto c = character();
     auto& board = eSoldierAction::board();
-    const auto cid = cityId();
+    const auto cid = onCityId();
     const auto hero = static_cast<eCharacter*>(c);
     const stdptr<eCharacter> cptr(hero);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
