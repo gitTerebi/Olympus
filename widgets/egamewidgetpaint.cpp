@@ -1251,7 +1251,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         x = rtx - da*0.5 - cy + 1.25;
                         y = rty - da*0.5 + cx + 0.25;
                     }
-                    {
+                    if(!pyramid) {
                         const auto t = tile->topRotated<eTile>(dir);
                         const auto l = tile->leftRotated<eTile>(dir);
                         const auto r = tile->rightRotated<eTile>(dir);
