@@ -96,6 +96,8 @@ public:
 
     bool visibleOnTile() const;
 
+    void teleportSoldiersToPlaces();
+
     static void sPlaceDefault(std::vector<eSoldierBanner*>& bs,
                               const int ctx, const int cty,
                               eGameBoard& board);

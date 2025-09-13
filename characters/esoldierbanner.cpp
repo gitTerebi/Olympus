@@ -740,3 +740,13 @@ bool eSoldierBanner::visibleOnTile() const {
     if(pid == ppid) return true;
     return mMilitaryAid;
 }
+
+void eSoldierBanner::teleportSoldiersToPlaces() {
+    for(const auto s : mSoldiers) {
+        const auto tile = place(s);
+        if(!tile) continue;
+        s->changeTile(tile);
+        const auto a = s->soldierAction();
+        if(a) a->setCurrentAction(nullptr);
+    }
+}

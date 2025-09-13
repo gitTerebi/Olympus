@@ -175,6 +175,9 @@ void eInvasionHandler::disembark() {
     const int tx = mTile->x();
     const int ty = mTile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    for(const auto b : solds) {
+        b->teleportSoldiersToPlaces();
+    }
     mCurrentTile = mTile;
 }
 
@@ -428,6 +431,9 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    for(const auto b : solds) {
+        b->teleportSoldiersToPlaces();
+    }
     mCurrentTile = tile;
 }
 
@@ -465,6 +471,9 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    for(const auto b : solds) {
+        b->teleportSoldiersToPlaces();
+    }
     mCurrentTile = tile;
 }
 
