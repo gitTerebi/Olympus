@@ -181,6 +181,8 @@ void eCartTransporter::setType(const eCartTransporterType t) {
 
         if(!atlantean()) {
             const auto ox = e::make_shared<eOx>(board);
+            ox->setAtlantean(atlantean());
+            ox->setBothCityIds(cityId());
             mOx = ox;
             const auto aox = e::make_shared<eFollowAction>(follow, mOx.get());
             mOx->setAction(aox);
@@ -189,6 +191,8 @@ void eCartTransporter::setType(const eCartTransporterType t) {
         }
 
         const auto trailer = e::make_shared<eTrailer>(board);
+        trailer->setAtlantean(atlantean());
+        trailer->setBothCityIds(cityId());
         mTrailer = trailer;
         mTrailer->setFollow(this);
         mTrailer->setBig(mBigTrailer);
@@ -294,6 +298,8 @@ void eCartTransporter::setResource(const eResourceType type,
                                follow, follower.get());
             follower->setAction(aox);
             follower->changeTile(t);
+            follower->setBothCityIds(cityId());
+            follower->setAtlantean(atlantean());
             mFollowers.push_back(follower);
         }
     } break;

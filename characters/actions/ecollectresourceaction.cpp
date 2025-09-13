@@ -109,15 +109,17 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
         marbleType = eResourceType::blackMarble;
         [[fallthrough]];
     case eTileActionType::masonry: {
-        const auto r = e::make_shared<eCartTransporter>(board());
+        auto& board = eCollectResourceAction::board();
+        const auto r = e::make_shared<eCartTransporter>(board);
         const auto cid = tile->cityId();
+        r->setAtlantean(board.atlantean(cid));
         r->setBothCityIds(cid);
         r->changeTile(tile);
         r->setBigTrailer(true);
         r->setResource(marbleType, 1);
 
         const auto finish = std::make_shared<eCRA_callCollectedActionFinish>(
-                                board(), mBuilding);
+                                board, mBuilding);
         const auto a = e::make_shared<eMoveToAction>(r.get());
         a->setStateRelevance(eStateRelevance::terrain |
                              eStateRelevance::buildings);
