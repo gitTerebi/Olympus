@@ -392,35 +392,6 @@ void eWorldWidget::openEnlistForcesDialog(
         const std::map<eHeroType, eCityId>& heroesCity,
         const eEnlistAction& action,
         const std::vector<eResourceType>& plunderResources) {
-
-//    {
-//        f.fHeroes.push_back(eHeroType::achilles);
-//        f.fHeroes.push_back(eHeroType::hercules);
-//        f.fHeroes.push_back(eHeroType::bellerophon);
-
-//        for(int i = 0; i < 20; i ++) {
-//            const auto b = e::make_shared<eSoldierBanner>(eBannerType::hoplite, *mBoard);
-//            b->incCount();
-//            const auto n = new stdsptr<eSoldierBanner>(b);
-//            f.fSoldiers.push_back(b);
-//        }
-
-//        for(int i = 0; i < 4; i ++) {
-//            const auto b = e::make_shared<eSoldierBanner>(eBannerType::horseman, *mBoard);
-//            b->incCount();
-//            const auto n = new stdsptr<eSoldierBanner>(b);
-//            f.fSoldiers.push_back(b);
-//        }
-
-
-//        for(int i = 0; i < 2; i ++) {
-//            const auto b = e::make_shared<eSoldierBanner>(eBannerType::amazon, *mBoard);
-//            b->incCount();
-//            const auto n = new stdsptr<eSoldierBanner>(b);
-//            f.fSoldiers.push_back(b);
-//        }
-//    }
-
     const auto d = new eEnlistForcesDialog(window());
     d->initialize(enlistable, cids, cnames,
                   heroesAbroad, heroesCity,
