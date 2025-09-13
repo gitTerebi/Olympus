@@ -81,6 +81,13 @@ void eWarehouseBase::getSpaceOverlays(const eTileSize size,
         case eResourceType::armor:
             o.fTex = texs.fWarehouseArmor.getTexture(texId);
             break;
+
+        case eResourceType::blackMarble:
+            o.fTex = texs.fWarehouseBlackMarble.getTexture(texId);
+            break;
+        case eResourceType::orichalc:
+            o.fTex = texs.fWarehouseOrichalc.getTexture(texId);
+            break;
         default: continue;
         }
     }
