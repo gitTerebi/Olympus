@@ -349,6 +349,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         const auto god = ePyramid::sGod(type);
         const auto name = eGod::sGodName(god);
         eStringHelpers::replace(text, "[god]", name);
+        eStringHelpers::replace(text, "[god]", name);
         addText(text);
     } else {
         const auto name = eBuilding::sNameForBuilding(m);
