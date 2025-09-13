@@ -629,7 +629,10 @@ public:
         if(!mTptr || !mCptr) return;
         const auto t = mTptr.get();
         mCptr->setSpeed(1.);
-        if(!mAppear) t->playDisappearSound();
+        if(!mAppear) {
+            t->playDisappearSound();
+            mCptr->kill();
+        }
     }
 
     void read(eReadStream& src) override {
