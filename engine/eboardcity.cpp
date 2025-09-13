@@ -1818,7 +1818,7 @@ void eBoardCity::removeSoldier(const eCharacterType st,
 }
 
 void eBoardCity::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
-    if(b->militaryAid()) return;
+    if(b->cityId() != mId) return;
     switch(b->type()) {
     case eBannerType::enemy:
     case eBannerType::trireme:
