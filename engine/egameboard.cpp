@@ -1738,9 +1738,14 @@ void eGameBoard::handleGamesEnd(const eGames game) {
             case eGames::pythian:
                 id = 8;
                 break;
-            case eGames::olympian:
+            case eGames::olympian: {
+                const auto pid = cityIdToPlayerId(cid);
+                const auto& cs = mWorld.cities();
+                for(const auto& c : cs) {
+                    c->incAttitude(10., pid);
+                }
                 id = 8;
-                break;
+            } break;
             }
             allow(c.first, eBuildingType::commemorative, id);
         }
