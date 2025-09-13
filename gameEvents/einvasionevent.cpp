@@ -370,7 +370,7 @@ int eInvasionEvent::bribeCost() const {
     int infantry = 0;
     int cavalry = 0;
     int archers = 0;
-    soldiersByType(infantry, archers, cavalry);
+    soldiersByType(infantry, cavalry, archers);
 
     const int bribe = rt*archers + ht*infantry + hm*cavalry;
     return bribe;

@@ -1164,7 +1164,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto ae = am.enabled(dtx, dty);
                 const bool ch = bt == eBuildingType::commonHouse ||
                                 bt == eBuildingType::eliteHousing;
-                if(ae || ch || tile->underBuilding()) {
+                if(ae || ch || ub) {
+                    const bool pyramid = eBuilding::sPyramidBuilding(bt);
+                    int da = 0;
+                    if(pyramid) {
+                        const auto p = static_cast<ePyramidElement*>(ub);
+                        da = 2*p->currentElevation();
+                    }
                     const eTextureCollection* coll;
                     if(ch) {
                         coll = &trrTexs.fHouseAppeal;
@@ -1177,7 +1183,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     int appId = (int)std::round(appS + 2.);
                     appId = std::clamp(appId, 0, 9);
                     const auto tex = coll->getTexture(appId);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(rx + da, ry + da, tex, eAlignment::top);
                     bd = true;
                 }
             }
