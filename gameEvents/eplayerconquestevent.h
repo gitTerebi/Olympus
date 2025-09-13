@@ -23,6 +23,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 
+    bool warned() const;
+
     using ePlayerConquestEventBase::planArmyReturn;
 private:
     stdptr<eInvasionEvent> mInvasionEvent;

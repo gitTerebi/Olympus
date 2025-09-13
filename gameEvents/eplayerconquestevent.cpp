@@ -127,3 +127,8 @@ void ePlayerConquestEvent::read(eReadStream& src) {
         mInvasionEvent = static_cast<eInvasionEvent*>(e);
     });
 }
+
+bool ePlayerConquestEvent::warned() const {
+    if(!mInvasionEvent) return false;
+    return mInvasionEvent->warned();
+}

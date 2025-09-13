@@ -7,6 +7,7 @@
 #include "gameEvents/earmyreturnevent.h"
 #include "gameEvents/einvasionevent.h"
 #include "gameEvents/etroopsrequestfulfilledevent.h"
+#include "gameEvents/eplayerconquestevent.h"
 #include "elanguage.h"
 #include "audio/esounds.h"
 #include "estringhelpers.h"
@@ -301,6 +302,10 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         const auto date = mGameBoard->date();
         const auto& cs = mGameBoard->armyEvents();
         for(const auto c : cs) {
+            if(const auto conquest = dynamic_cast<ePlayerConquestEvent*>(c)) {
+                const bool w = conquest->warned();
+                if(w) continue;
+            }
             const auto fromCid = c->cityId();
             const auto fromC = mWorldBoard->cityWithId(fromCid);
             const auto cDate = c->nextDate();
