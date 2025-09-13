@@ -496,7 +496,7 @@ void eBoardCity::nextMonth() {
             } else {
                 mNextAttackPlanned = true;
                 mNextAttackDate = date;
-                mNextAttackDate.nextYears(4);
+                mNextAttackDate.nextMonths(eNumbers::sAIInvasionMonthsBreak);
                 return;
             }
             const int soldiers = mMaxHoplites + mMaxHorsemen;
@@ -530,6 +530,7 @@ void eBoardCity::nextMonth() {
                     const auto boardDate = mBoard.date();
                     const int period = eNumbers::sArmyTravelTime;
                     const auto date = boardDate + period;
+                    e->setWarningMonths(period/31);
                     e->initializeDate(date, period, 1);
                     e->initialize(date, forces, wc);
                     mBoard.addRootGameEvent(e);

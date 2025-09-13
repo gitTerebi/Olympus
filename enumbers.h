@@ -11,6 +11,7 @@ struct eNumbers {
 
     static int sReinforcementsTravelTime;
     static int sArmyTravelTime;
+    static int sAIInvasionMonthsBreak;
 
     static int sRabbleDivisor;
     static int sSoldiersPerBanner;

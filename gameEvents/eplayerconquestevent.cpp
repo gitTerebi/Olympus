@@ -33,6 +33,7 @@ void ePlayerConquestEvent::initialize(
         const auto& wBoard = board->world();
         const auto pcid = cityId();
         const auto playerCity = wBoard.cityWithId(pcid);
+        e->setWarningMonths(warningMonths());
         e->initializeDate(date, 0, 1);
         e->initialize(playerCity, mForces, this);
         c->addRootGameEvent(e);
