@@ -422,8 +422,17 @@ public:
         mArea->selectAll();
     }
 
-    const eEnlistedForces& selected() const {
+    const eEnlistedForces& currentSelected() const {
         return mArea->selected();
+    }
+
+    eEnlistedForces allSelected() const {
+        eEnlistedForces result;
+        for(const auto& a : mAreas) {
+            const auto& s = a.second->selected();
+            result.add(s);
+        }
+        return result;
     }
 
     void setCurrentCity(const eCityId cid) {
@@ -562,6 +571,22 @@ void eEnlistForcesDialog::initialize(
     const auto mythical = new eEnlistWidget(window());
     const auto allies = new eEnlistWidget(window());
 
+    const auto selectionChanged = [this,
+                                   horsemen,
+                                   hoplite,
+                                   navy,
+                                   heroes,
+                                   mythical,
+                                   allies]() {
+        mSelected.clear();
+        mSelected.add(horsemen->allSelected());
+        mSelected.add(hoplite->allSelected());
+        mSelected.add(navy->allSelected());
+        mSelected.add(heroes->allSelected());
+        mSelected.add(mythical->allSelected());
+        mSelected.add(allies->allSelected());
+    };
+
     if(cButton) cButton->setSwitchAction([cids, horsemen, hoplite, navy,
                                           heroes, mythical](const int id) {
         const auto cid = cids[id];
@@ -590,22 +615,21 @@ void eEnlistForcesDialog::initialize(
         enlistAllButt->setUnderline(false);
         enlistAllButt->setText(eLanguage::zeusText(283, 19));
         enlistAllButt->fitContent();
-        const auto enlistAllAct = [this, enlistable,
-                                  horsemen,
-                                  hoplite,
-                                  navy,
-                                  heroes,
-                                  mythical,
-                                  allies]() {
-            mSelected = enlistable;
+        const auto enlistAllAct = [enlistable,
+                                   horsemen,
+                                   hoplite,
+                                   navy,
+                                   heroes,
+                                   mythical,
+                                   allies,
+                                   selectionChanged]() {
             horsemen->selectAll();
             hoplite->selectAll();
             navy->selectAll();
             heroes->selectAll();
             mythical->selectAll();
             allies->selectAll();
-            const auto& as = allies->selected();
-            mSelected.fAllies = as.fAllies;
+            selectionChanged();
         };
         enlistAllButt->setPressAction(enlistAllAct);
         buttonsWid->addWidget(enlistAllButt);
@@ -615,20 +639,20 @@ void eEnlistForcesDialog::initialize(
         clearAllButt->setUnderline(false);
         clearAllButt->setText(eLanguage::zeusText(283, 20));
         clearAllButt->fitContent();
-        const auto clearAllAct = [this,
-                                 horsemen,
-                                 hoplite,
-                                 navy,
-                                 heroes,
-                                 mythical,
-                                 allies]() {
-            mSelected.clear();
+        const auto clearAllAct = [horsemen,
+                                  hoplite,
+                                  navy,
+                                  heroes,
+                                  mythical,
+                                  allies,
+                                  selectionChanged]() {
             horsemen->clearAll();
             hoplite->clearAll();
             navy->clearAll();
             heroes->clearAll();
             mythical->clearAll();
             allies->clearAll();
+            selectionChanged();
         };
         clearAllButt->setPressAction(clearAllAct);
         buttonsWid->addWidget(clearAllButt);
@@ -676,22 +700,6 @@ void eEnlistForcesDialog::initialize(
         const auto selWid = new eWidget(window());
         innerWid->addWidget(selWid);
         selWid->resize(ww, hhh);
-
-        const auto selectionChanged = [this,
-                                      horsemen,
-                                      hoplite,
-                                      navy,
-                                      heroes,
-                                      mythical,
-                                      allies]() {
-            mSelected.clear();
-            mSelected.add(horsemen->selected());
-            mSelected.add(hoplite->selected());
-            mSelected.add(navy->selected());
-            mSelected.add(heroes->selected());
-            mSelected.add(mythical->selected());
-            mSelected.add(allies->selected());
-        };
 
         {
             const auto col1 = new eWidget(window());
