@@ -313,23 +313,6 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
     citizenArmy->align(eAlignment::hcenter);
 
     const auto& banners = board.banners(cid);
-//    std::vector<stdsptr<eSoldierBanner>> banners;
-//    for(int i = 0; i < 3; i++) {
-//        banners.push_back(e::make_shared<eSoldierBanner>(
-//                              eBannerType::horseman, board));
-//    }
-//    for(int i = 0; i < 4; i++) {
-//        banners.push_back(e::make_shared<eSoldierBanner>(
-//                              eBannerType::hoplite, board));
-//    }
-//    for(int i = 0; i < 13; i++) {
-//        banners.push_back(e::make_shared<eSoldierBanner>(
-//                              eBannerType::rockThrower, board));
-//    }
-//    for(int i = 0; i < 2; i++) {
-//        banners.push_back(e::make_shared<eSoldierBanner>(
-//                              eBannerType::amazon, board));
-//    }
 
     std::vector<stdsptr<eSoldierBanner>> horsemenBanners;
     for(const auto& b : banners) {
