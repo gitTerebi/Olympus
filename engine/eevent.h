@@ -408,7 +408,9 @@ enum class eEvent {
     priceIncrease,
     priceDecrease,
     wageIncrease,
-    wageDecrease
+    wageDecrease,
+
+    areaCutOff
 };
 
 #endif // EEVENT_H

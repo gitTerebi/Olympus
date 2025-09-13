@@ -631,6 +631,8 @@ private:
     int mLookForCityDefense = 0;
 
     std::vector<eReinforcements> mReinforcements;
+
+    int mCutOffCheckBuildingsState = 0;
 };
 
 #endif // EBOARDCITY_H

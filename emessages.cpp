@@ -1090,6 +1090,10 @@ bool eMessages::loadImpl() {
                 "wage_change_title_D",
                 "wage_change_initial_announcement_D");
 
+    loadMessage(fAreaCutOff,
+                "road_rome_blocked_title",
+                "road_rome_blocked_initial_announcement");
+
     return true;
 }
 

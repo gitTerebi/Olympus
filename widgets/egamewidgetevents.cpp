@@ -1659,6 +1659,11 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     case eEvent::playerGodAttack:
         viewTile(ed.fTile);
         break;
+
+    case eEvent::areaCutOff: {
+        showMessage(ed, inst.fAreaCutOff, true);
+        return;
+    } break;
     } break;
     }
     mGm->pushEvent(e, ed);

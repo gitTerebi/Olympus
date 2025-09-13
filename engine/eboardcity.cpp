@@ -42,6 +42,8 @@
 
 #include "spawners/espawner.h"
 #include "buildings/ehippodrome.h"
+#include "epathfinder.h"
+#include "eevent.h"
 
 eBoardCity::eBoardCity(const eCityId cid, eGameBoard& board) :
     mBoard(board),
@@ -221,6 +223,45 @@ void eBoardCity::incTime(const int by) {
         if(mLookForCityDefense > lookForCityDefenseCheck) {
             mLookForCityDefense -= lookForCityDefenseCheck;
             updateCityDefense();
+        }
+    }
+
+    if(mCutOffCheckBuildingsState != mAllBuildingsState) {
+        mCutOffCheckBuildingsState = mAllBuildingsState;
+        const auto entry = entryPoint();
+        const auto exit = exitPoint();
+        if(entry && exit) {
+            const int eX = exit->x();
+            const int eY = exit->y();
+            ePathFinder p([](eTileBase* const t) {
+                return t->walkableTerrain();
+            }, [&](eTileBase* const t) {
+                return t->x() == eX && t->y() == eY;
+            });
+            const auto distance = [](eTileBase* const t) {
+                const auto type = t->underBuildingType();
+                const bool w = eBuilding::sWalkableBuilding(type);
+                if(!w) return 200;
+                return 1;
+            };
+            const int w = mBoard.width();
+            const int h = mBoard.height();
+            const bool r = p.findPath({0, 0, w, h}, entry, 1000, true, w, h, distance);
+            if(r) {
+                std::vector<eTile*> path;
+                p.extractPath(path, mBoard);
+                for(const auto t : path) {
+                    const auto type = t->underBuildingType();
+                    const bool w = eBuilding::sWalkableBuilding(type);
+                    if(w) continue;
+                    const auto ub = t->underBuilding();
+                    ub->collapse();
+
+                    eEventData ed;
+                    ed.fTile = t;
+                    mBoard.event(eEvent::areaCutOff, ed);
+                }
+            }
         }
     }
 }

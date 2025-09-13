@@ -381,6 +381,8 @@ public:
 
     eMessageType fWageIncrease;
     eMessageType fWageDecrease;
+
+    eMessageType fAreaCutOff;
 private:
     bool loadImpl();
 
