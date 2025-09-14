@@ -2,7 +2,7 @@
 
 eZeus is an open-source implementation of Zeus: Master of Olympus game
 
-<h1 align="center">[Watch trailers](https://www.youtube.com/@eZeus-e)</h1>
+[Watch trailers](https://www.youtube.com/@eZeus-e)
 
 ## How To Play
 
@@ -12,7 +12,7 @@ Currently only English and Polish versions are supported due to font glyphs limi
 
 Only windows binaries are provided. If you want to play on Linux you have to build eZeus yourself.
 
-<h1 align="center">[You can download eZeus from GitHub](https://github.com/MaurycyLiebner/eZeus/releases)</h1>
+[You can download eZeus from GitHub](https://github.com/MaurycyLiebner/eZeus/releases)
 
 ## How To Build on Linux
 
