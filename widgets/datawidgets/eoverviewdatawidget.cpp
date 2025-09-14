@@ -411,10 +411,17 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
             mUnrest->setText(eLanguage::zeusText(61, string));
         }
         {
-            int string = -1;
-            string = 153; // up
-            string = 154; // ok
-            string = 155; // down
+            const auto finances = mBoard.finances(cid);
+            const auto& year = finances.thisYear();
+            int string;
+            if(year.netInOutFlow() > 250) {
+                string = 153; // up
+            } else if(year.netInOutFlow() < -100) {
+                string = 155; // down
+            } else {
+                string = 154; // ok
+            }
+
             mFinances->setText(eLanguage::zeusText(61, string));
         }
     }

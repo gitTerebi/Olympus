@@ -1889,6 +1889,13 @@ int eGameBoard::health(const eCityId cid) const {
     return city->health();
 }
 
+eCityFinances eGameBoard::finances(const eCityId cid) const {
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if(!p) return eCityFinances();
+    return p->finances();
+}
+
 int eGameBoard::drachmas(const ePlayerId pid) const {
     const auto player = boardPlayerWithId(pid);
     if(!player) return 0;

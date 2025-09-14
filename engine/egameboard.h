@@ -133,6 +133,7 @@ public:
     int unrest(const eCityId cid) const;
     int popularity(const eCityId cid) const;
     int health(const eCityId cid) const;
+    eCityFinances finances(const eCityId cid) const;
 
     int drachmas(const ePlayerId pid) const;
     void incDrachmas(const ePlayerId pid, const int by,
