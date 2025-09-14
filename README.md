@@ -2,17 +2,17 @@
 
 eZeus is an open-source implementation of Zeus: Master of Olympus game
 
-[Watch trailer](https://www.youtube.com/watch?v=3eGON6Krr44)
+<h1 align="center">[Watch trailers](https://www.youtube.com/@eZeus-e)</h1>
 
 ## How To Play
 
 To play eZeus you will need original game files (Zeus: Master of Olympus base game and Poseidon expansion).
 
-Currently only Enlish and Polish versions are supported due to font glyphs limitations.
+Currently only English and Polish versions are supported due to font glyphs limitations.
 
 Only windows binaries are provided. If you want to play on Linux you have to build eZeus yourself.
 
-First download eZeus-0.8.0.zip and extract it in original game's directory (e.g. (...)/Zeus and Poseidon/eZeus-0.8.0). Install VC_redist.x64.exe from eZeus directory. Use engconverter-0.5.exe to convert original game's Zeus_Text.eng file to Zeus_Text.xml and put it in eZeus-0.8.0 directory. You can run the game using eZeus.exe from eZeus-0.8.0/Bin directory.
+<h1 align="center">[You can download eZeus from GitHub](https://github.com/MaurycyLiebner/eZeus/releases)</h1>
 
 ## How To Build on Linux
 
@@ -33,8 +33,8 @@ You will need Qt Creator (qt.io).
 
 Open eZeus.pro in Qt Creator and use it to build eZeus.
 
-Before running eZeus binary make sure to setup all files as specified in **How To Play** section. Put eZeus binary in (...)/Zeus and Poseidon/eZeus-0.8.0/Bin directory and run it.
+Before running eZeus binary make sure to setup all files as specified in **How To Play** section and the release description. Put eZeus binary in (...)/Zeus and Poseidon/eZeus/Bin directory and run it.
 
 ## Authors
 
-**Maurycy Liebner** - 2021 - 2024 - [MaurycyLiebner](https://github.com/MaurycyLiebner)
+**Maurycy Liebner** - 2021 - 2025 - [MaurycyLiebner](https://github.com/MaurycyLiebner)
