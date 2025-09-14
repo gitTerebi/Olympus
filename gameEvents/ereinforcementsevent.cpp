@@ -41,6 +41,7 @@ void eReinforcementsEvent::trigger() {
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mForces.fSoldiers) {
         solds.push_back(b.get());
+        b->killAll();
         b->setOnCityId(cid);
         b->setMilitaryAid(true);
         b->backFromHome();
