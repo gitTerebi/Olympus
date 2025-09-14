@@ -343,7 +343,7 @@ void eBoardCity::nextYear() {
 void eBoardCity::payPensions() {
     const auto p = owningPlayer();
     const int d = std::ceil(mEmplData.pensions()/12.);
-    if(p) p->incDrachmas(-d);
+    if(p) p->incDrachmas(-d, eFinanceTarget::wages);
 }
 
 bool eBoardCity::replace3By3AestheticByCommemorative() {
@@ -1442,7 +1442,7 @@ int eBoardCity::resourceCount(const eResourceType type) const {
 int eBoardCity::takeResource(const eResourceType type, const int count) {
     if(type == eResourceType::drachmas) {
         const auto p = owningPlayer();
-        if(p) p->incDrachmas(-count);
+        if(p) p->incDrachmas(-count, eFinanceTarget::giftsAndAidGiven);
         return count;
     }
     int r = 0;
@@ -1474,7 +1474,7 @@ int eBoardCity::takeResource(const eResourceType type, const int count) {
 int eBoardCity::addResource(const eResourceType type, const int count) {
     if(type == eResourceType::drachmas) {
         const auto p = owningPlayer();
-        if(p) p->incDrachmas(count);
+        if(p) p->incDrachmas(count, eFinanceTarget::giftsReceived);
         return count;
     }
     int rem = count;

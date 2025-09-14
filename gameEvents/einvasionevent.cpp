@@ -206,8 +206,8 @@ void eInvasionEvent::trigger() {
     const int bribe = bribeCost();
     const auto bribeFunc = [this, board, pid, bribe, city, cid]() {
         const auto invadingPid = mCity->playerId();
-        board->incDrachmas(invadingPid, bribe);
-        board->incDrachmas(pid, -bribe);
+        board->incDrachmas(invadingPid, bribe, eFinanceTarget::tributeReceived);
+        board->incDrachmas(pid, -bribe, eFinanceTarget::bribesTributePaid);
         eEventData ed(cid);
         ed.fCity = city;
         board->event(eEvent::invasionBribed, ed);

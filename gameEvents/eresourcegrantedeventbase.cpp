@@ -79,7 +79,7 @@ void eResourceGrantedEventBase::trigger() {
 
     const auto acceptDrachmas = [this, board, pid]() { // accept
         const auto p = board->boardPlayerWithId(pid);
-        if(p) p->incDrachmas(mCount);
+        if(p) p->incDrachmas(mCount, eFinanceTarget::giftsReceived);
         return mCount;
     };
 

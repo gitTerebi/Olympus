@@ -135,7 +135,8 @@ public:
     int health(const eCityId cid) const;
 
     int drachmas(const ePlayerId pid) const;
-    void incDrachmas(const ePlayerId pid, const int by);
+    void incDrachmas(const ePlayerId pid, const int by,
+                     const eFinanceTarget t);
     void setDrachmas(const ePlayerId pid, const int to);
 
     void registerCharacter(eCharacter* const c);

@@ -10,8 +10,8 @@
 #include "eviewmodebutton.h"
 
 #include "elanguage.h"
-#include "estringhelpers.h"
 #include "widgets/emultilinelabel.h"
+#include "widgets/moreinfo/ecityfinanceswidget.h"
 
 void eAdminDataWidget::initialize() {
     {
@@ -95,6 +95,8 @@ void eAdminDataWidget::initialize() {
     }
 
     inner->stackVertically();
+
+    showMoreInfoButton();
 }
 
 void eAdminDataWidget::setTaxRate(const eTaxRate tr) {
@@ -132,4 +134,15 @@ void eAdminDataWidget::paintEvent(ePainter& p) {
         inner->stackVertically();
     }
     eWidget::paintEvent(p);
+}
+
+void eAdminDataWidget::openMoreInfoWiget() {
+    const auto cid = viewedCity();
+    if(cid == eCityId::neutralFriendly ||
+        cid == eCityId::neutralAggresive) return;
+    const auto gw = gameWidget();
+    const auto w = new eCityFinancesWidget(
+        window(), gw);
+    w->initialize(mBoard, cid);
+    gw->openDialog(w);
 }

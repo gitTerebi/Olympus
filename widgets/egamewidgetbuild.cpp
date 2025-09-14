@@ -345,7 +345,7 @@ bool buildVendor(eGameBoard& brd, const int tx, const int ty,
     const auto ppid = brd.personPlayer();
     const auto diff = brd.difficulty(ppid);
     const int cost = eDifficultyHelpers::buildingCost(diff, fv->type());
-    brd.incDrachmas(ppid, -cost);
+    brd.incDrachmas(ppid, -cost, eFinanceTarget::construction);
     return true;
 }
 
@@ -627,7 +627,7 @@ bool eGameWidget::buildMouseRelease() {
 
             const int nErased = eraser.erase(false);
             totalCost += cost*nErased;
-            if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost);
+            if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost, eFinanceTarget::construction);
             mBoard->scheduleTerrainUpdate();
 
             std::string title;
@@ -645,7 +645,7 @@ bool eGameWidget::buildMouseRelease() {
                 auto e = eraser;
                 const int nErased = e.erase(true);
                 const int totalCost = cost*nErased;
-                if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost);
+                if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost, eFinanceTarget::construction);
             };
             showQuestion(title, text, acceptA);
         } break;
@@ -696,7 +696,7 @@ bool eGameWidget::buildMouseRelease() {
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
                 const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-                mBoard->incDrachmas(ppid, -cost);
+                mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
 
             showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
@@ -748,7 +748,7 @@ bool eGameWidget::buildMouseRelease() {
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
                 const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-                mBoard->incDrachmas(ppid, -cost);
+                mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
             showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
         } break;
@@ -806,7 +806,7 @@ bool eGameWidget::buildMouseRelease() {
                     const auto diff = mBoard->difficulty(ppid);
                     const int cost = eDifficultyHelpers::buildingCost(
                                          diff, eBuildingType::bridge);
-                    mBoard->incDrachmas(ppid, -path.size()*cost);
+                    mBoard->incDrachmas(ppid, -path.size()*cost, eFinanceTarget::construction);
                 }
             }
         } break;
@@ -1148,7 +1148,7 @@ bool eGameWidget::buildMouseRelease() {
                     const auto diff = mBoard->difficulty(ppid);
                     const int cost = eDifficultyHelpers::buildingCost(
                                          diff, eBuildingType::urchinQuay);
-                    mBoard->incDrachmas(ppid, -cost);
+                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }
             }
         } break;
@@ -1177,7 +1177,7 @@ bool eGameWidget::buildMouseRelease() {
                     const auto diff = mBoard->difficulty(ppid);
                     const int cost = eDifficultyHelpers::buildingCost(
                                          diff, eBuildingType::fishery);
-                    mBoard->incDrachmas(ppid, -cost);
+                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }
             }
         } break;
@@ -1222,7 +1222,7 @@ bool eGameWidget::buildMouseRelease() {
                         const auto diff = mBoard->difficulty(ppid);
                         const int cost = eDifficultyHelpers::buildingCost(
                                              diff, eBuildingType::triremeWharf);
-                        mBoard->incDrachmas(ppid, -cost);
+                        mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                     }
                 } else {
                     showTip(cid, eLanguage::zeusText(19, 25));
@@ -1534,7 +1534,7 @@ bool eGameWidget::buildMouseRelease() {
                 const auto diff = mBoard->difficulty(ppid);
                 const int cost = eDifficultyHelpers::buildingCost(
                                      diff, eBuildingType::gatehouse);
-                mBoard->incDrachmas(ppid, -cost);
+                mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
         } break;
 
@@ -1924,7 +1924,7 @@ bool eGameWidget::buildMouseRelease() {
                     const auto diff = mBoard->difficulty(ppid);
                     const int cost = eDifficultyHelpers::buildingCost(
                         diff, eBuildingType::crosswalk);
-                    mBoard->incDrachmas(ppid, -cost);
+                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }
             }
         } break;

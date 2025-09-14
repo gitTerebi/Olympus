@@ -9,7 +9,7 @@ void eHippodrome::nextMonth() {
     const int d = drachmasPerMonth();
     if(d <= 0) return;
     const auto pid = mBoard.cityIdToPlayerId(mCid);
-    mBoard.incDrachmas(pid, d);
+    mBoard.incDrachmas(pid, d, eFinanceTarget::hippodrome);
     purgeHorses();
     const bool r = racing();
     if(!r) spawnHorses();

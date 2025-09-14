@@ -6,6 +6,7 @@
 #include "edate.h"
 #include "edifficulty.h"
 #include "egodquest.h"
+#include "engine/boardData/ecityfinances.h"
 
 class eGameBoard;
 enum class eMonsterType;
@@ -31,7 +32,9 @@ public:
 
     int drachmas() const { return mDrachmas; }
     void setDrachmas(const int d) { mDrachmas = d; }
-    void incDrachmas(const int by);
+    void incDrachmas(const int by, const eFinanceTarget t);
+
+    const eCityFinances& finances() const { return mFinances; }
 
     eDifficulty difficulty() const { return mDifficulty; }
     void setDifficulty(const eDifficulty d);
@@ -96,6 +99,8 @@ private:
     int mStuckFinanciallyMonths = -1;
 
     int mGodAttackTimer = 10000000;
+
+    eCityFinances mFinances;
 };
 
 #endif // EBOARDPLAYER_H

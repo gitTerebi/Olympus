@@ -857,7 +857,7 @@ void eGameBoard::tributeFrom(const ePlayerId pid,
     if(type == eResourceType::drachmas) {
         ed.fA0 = [this, c, count, pid]() { // accept
             const auto p = boardPlayerWithId(pid);
-            if(p) p->incDrachmas(count);
+            if(p) p->incDrachmas(count, eFinanceTarget::tributeReceived);
             return count;
         };
     } else {
@@ -1895,10 +1895,11 @@ int eGameBoard::drachmas(const ePlayerId pid) const {
     return player->drachmas();
 }
 
-void eGameBoard::incDrachmas(const ePlayerId pid, const int by) {
+void eGameBoard::incDrachmas(const ePlayerId pid, const int by,
+                             const eFinanceTarget t) {
     const auto player = boardPlayerWithId(pid);
     if(!player) return;
-    return player->incDrachmas(by);
+    return player->incDrachmas(by, t);
 }
 
 void eGameBoard::setDrachmas(const ePlayerId pid, const int to) {
@@ -2543,7 +2544,7 @@ void eGameBoard::payTaxes(const eCityId cid, const int d, const int people) {
     const auto pid = cityIdToPlayerId(cid);
     const auto p = boardPlayerWithId(pid);
     if(!p) return;
-    p->incDrachmas(d);
+    p->incDrachmas(d, eFinanceTarget::taxesIn);
 }
 
 void eGameBoard::setDifficulty(const eDifficulty d) {
@@ -3785,7 +3786,7 @@ bool eGameBoard::buildBase(const int minX, const int minY,
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-        incDrachmas(pid, -cost);
+        incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
     return true;
 }
@@ -3872,7 +3873,7 @@ bool eGameBoard::buildPyramid(const int minX, const int maxX,
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, type);
-        incDrachmas(pid, -cost);
+        incDrachmas(pid, -cost, eFinanceTarget::construction);
         const int m = eBuilding::sInitialMarbleCost(type);
         takeResource(cid, eResourceType::marble, m);
     }
@@ -3905,7 +3906,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, type);
-        incDrachmas(pid, -cost);
+        incDrachmas(pid, -cost, eFinanceTarget::construction);
         const int m = eBuilding::sInitialMarbleCost(type);
         takeResource(cid, eResourceType::marble, m);
     }

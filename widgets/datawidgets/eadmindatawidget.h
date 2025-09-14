@@ -17,6 +17,7 @@ public:
     void initialize();
 protected:
     void paintEvent(ePainter& p);
+    void openMoreInfoWiget();
 private:
     void setTaxRate(const eTaxRate tr);
 

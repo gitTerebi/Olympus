@@ -368,6 +368,7 @@ SOURCES += \
         engine/ai/eaibuilding.cpp \
         engine/ai/eaicityplan.cpp \
         engine/ai/eaidistrict.cpp \
+        engine/boardData/ecityfinances.cpp \
         engine/boardData/eemploymentdata.cpp \
         engine/boardData/eheatmap.cpp \
         engine/boardData/eheatmapdivisor.cpp \
@@ -706,7 +707,6 @@ SOURCES += \
         widgets/eviewmode.cpp \
         widgets/ewatertradewidget.cpp \
         widgets/ewidget.cpp \
-        widgets/eworkforceallocationwidget.cpp \
         widgets/eworldgoodswidget.cpp \
         widgets/eworldmapwidget.cpp \
         widgets/eworldmenu.cpp \
@@ -721,7 +721,9 @@ SOURCES += \
         widgets/infowidgets/esanctuaryinfowidget.cpp \
         widgets/infowidgets/estorageinfowidget.cpp \
         widgets/infowidgets/etradepostinfowidget.cpp \
-        widgets/infowidgets/etriremewharfinfowidget.cpp
+        widgets/infowidgets/etriremewharfinfowidget.cpp \
+        widgets/moreinfo/ecityfinanceswidget.cpp \
+        widgets/moreinfo/eworkforceallocationwidget.cpp
 
 HEADERS += \
     audio/egodsounds.h \
@@ -1060,6 +1062,7 @@ HEADERS += \
     engine/ai/eaibuilding.h \
     engine/ai/eaicityplan.h \
     engine/ai/eaidistrict.h \
+    engine/boardData/ecityfinances.h \
     engine/boardData/eemploymentdata.h \
     engine/boardData/eheatmap.h \
     engine/boardData/eheatmapdivisor.h \
@@ -2898,7 +2901,6 @@ HEADERS += \
     widgets/eviewmode.h \
     widgets/ewatertradewidget.h \
     widgets/ewidget.h \
-    widgets/eworkforceallocationwidget.h \
     widgets/eworldgoodswidget.h \
     widgets/eworldmapwidget.h \
     widgets/eworldmenu.h \
@@ -2913,7 +2915,9 @@ HEADERS += \
     widgets/infowidgets/esanctuaryinfowidget.h \
     widgets/infowidgets/estorageinfowidget.h \
     widgets/infowidgets/etradepostinfowidget.h \
-    widgets/infowidgets/etriremewharfinfowidget.h
+    widgets/infowidgets/etriremewharfinfowidget.h \
+    widgets/moreinfo/ecityfinanceswidget.h \
+    widgets/moreinfo/eworkforceallocationwidget.h
 
 DISTFILES += \
     Adventures/The Founding of Athens/The Founding of Athens.epak \

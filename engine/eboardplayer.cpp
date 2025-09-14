@@ -14,8 +14,12 @@ eTeamId eBoardPlayer::teamId() const {
 }
 
 void eBoardPlayer::nextMonth() {
+    const auto& date = mBoard.date();
+    const bool nextYear = date.month() == eMonth::january;
+    if(nextYear) {
+        mFinances.nextYear();
+    }
     if(mDrachmas < 0) {
-        const auto date = mBoard.date();
         const bool sameMonth = date.month() == mInDebtSince.month();
         const bool oneYear = date.year() - mInDebtSince.year() == 1;
         if(sameMonth && oneYear) {
@@ -58,7 +62,8 @@ void eBoardPlayer::nextMonth() {
     }
 }
 
-void eBoardPlayer::incDrachmas(const int by) {
+void eBoardPlayer::incDrachmas(const int by, const eFinanceTarget t) {
+    mFinances.add(by, t);
     const bool wasInDebt = mDrachmas < 0;
     mDrachmas += by;
     const bool isInDebt = mDrachmas < 0;
@@ -161,6 +166,8 @@ void eBoardPlayer::read(eReadStream& src) {
     mInDebtSince.read(src);
 
     src >> mGodAttackTimer;
+
+    mFinances.read(src);
 }
 
 void eBoardPlayer::write(eWriteStream& dst) const {
@@ -195,6 +202,8 @@ void eBoardPlayer::write(eWriteStream& dst) const {
     mInDebtSince.write(dst);
 
     dst << mGodAttackTimer;
+
+    mFinances.write(dst);
 }
 
 void eBoardPlayer::giftAllies() {

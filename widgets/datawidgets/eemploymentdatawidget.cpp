@@ -8,9 +8,7 @@
 #include "widgets/edownbutton.h"
 #include "widgets/emultilinelabel.h"
 #include "widgets/elinewidget.h"
-#include "widgets/eworkforceallocationwidget.h"
-
-#include "widgets/eframedwidget.h"
+#include "widgets/moreinfo/eworkforceallocationwidget.h"
 
 #include "eviewmodebutton.h"
 

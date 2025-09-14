@@ -105,7 +105,7 @@ bool gBuildVendor(eGameBoard& brd,
     if(!editorDisplay) {
         const auto diff = brd.difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, fv->type());
-        brd.incDrachmas(pid, -cost);
+        brd.incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
     return true;
 }
@@ -566,7 +566,7 @@ bool gBuild(const eAIBuilding& b,
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);
             const int cost = eDifficultyHelpers::buildingCost(diff, a->type());
-            board.incDrachmas(pid, -cost);
+            board.incDrachmas(pid, -cost, eFinanceTarget::construction);
         }
 
         gBuildVendor<eFoodVendor>(board, a.get(), 0, pid, cid, editorDisplay);
@@ -605,7 +605,7 @@ bool gBuild(const eAIBuilding& b,
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);
             const int cost = eDifficultyHelpers::buildingCost(diff, a->type());
-            board.incDrachmas(pid, -cost);
+            board.incDrachmas(pid, -cost, eFinanceTarget::construction);
         }
 
         gBuildVendor<eFoodVendor>(board, a.get(), 0, pid, cid, editorDisplay);

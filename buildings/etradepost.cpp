@@ -209,7 +209,7 @@ int eTradePost::buy(const int cash) {
             spent += price;
         }
         const auto pid = playerId();
-        brd.incDrachmas(pid, spent);
+        brd.incDrachmas(pid, spent, eFinanceTarget::exports);
     }
     return spent;
 }
@@ -251,7 +251,7 @@ int eTradePost::sell(const int items) {
             earned += price;
         }
         const auto pid = playerId();
-        brd.incDrachmas(pid, -earned);
+        brd.incDrachmas(pid, -earned, eFinanceTarget::importCosts);
     }
     return earned;
 }

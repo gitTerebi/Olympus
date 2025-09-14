@@ -1,7 +1,7 @@
 #ifndef EWORKFORCEALLOCATIONWIDGET_H
 #define EWORKFORCEALLOCATIONWIDGET_H
 
-#include "infowidgets/einfowidget.h"
+#include "../infowidgets/einfowidget.h"
 
 class eGameBoard;
 enum class eSector;

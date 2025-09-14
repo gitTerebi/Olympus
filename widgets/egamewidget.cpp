@@ -706,7 +706,7 @@ void eGameWidget::showBuyCity(const eCityId cid) {
             const auto wc = wboard.cityWithId(cid);
             wc->setState(eCityState::active);
             mBoard->moveCityToPlayer(cid, ppid);
-            mBoard->incDrachmas(ppid, -price);
+            mBoard->incDrachmas(ppid, -price, eFinanceTarget::bribesTributePaid);
             hideBuyCity();
             mGm->viewedCityChanged();
         } else {
