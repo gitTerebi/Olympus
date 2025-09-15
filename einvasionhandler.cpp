@@ -456,7 +456,6 @@ void eInvasionHandler::initializeLandInvasion(
     for(const auto& f : forces.fAllies) {
         const auto cid = f->cityId();
         const auto nat = f->nationality();
-        std::vector<eSoldierBanner*> solds;
         int infantry;
         int cavalry;
         int archers;
@@ -501,7 +500,6 @@ eInvasionHandler::generateSoldiersForCity(
             b->setCityId(cid);
             mBanners.push_back(b);
             solds.push_back(b.get());
-            b->setCityId(cid);
             b->backFromHome();
             b->moveTo(tx, ty);
         }
