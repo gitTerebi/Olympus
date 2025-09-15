@@ -203,6 +203,7 @@ void eSanctuary::buildingProgressed() {
 
         eEventData ed(cid);
         ed.fGod = g;
+        ed.fTile = centerTile();
         board.event(eEvent::sanctuaryComplete, ed);
     }
 }

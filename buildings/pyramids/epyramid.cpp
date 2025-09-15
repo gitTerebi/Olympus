@@ -1081,6 +1081,7 @@ void ePyramid::buildingProgressed() {
         const auto type = ePyramid::type();
         const auto god = sGod(type);
         ed.fGod = god;
+        ed.fTile = centerTile();
         eEvent event;
         switch(type) {
         case eBuildingType::modestPyramid: // 3x3
