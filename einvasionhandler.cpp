@@ -565,53 +565,71 @@ void eInvasionHandler::tellHeroesAndGodsToGoBack() const {
 
 void eInvasionHandler::extractSSFromForces(
         const eEnlistedForces& forces, eSs& ss) const {
-    const auto nat = mCity->nationality();
-    int infantry = 0;
-    int cavalry = 0;
-    int archers = 0;
+    auto& world = mBoard.world();
+    int greekInfantry = 0;
+    int greekCavalry = 0;
+    int greekArchers = 0;
+    int atlanteanInfantry = 0;
+    int atlanteanCavalry = 0;
+    int atlanteanArchers = 0;
     int aresWarriors = 0;
     int amazons = 0;
     for(const auto& s : forces.fSoldiers) {
+        const auto cid = s->cityId();
+        const auto c = world.cityWithId(cid);
+        const auto nat = c->nationality();
+        const bool atlantean = nat == eNationality::atlantean;
         const auto type = s->type();
-        if(type == eBannerType::hoplite) {
-            infantry += s->count();
-        } else if(type == eBannerType::horseman) {
-            cavalry += s->count();
-        } else if(type == eBannerType::rockThrower) {
-            archers += s->count();
-        } else if(type == eBannerType::aresWarrior) {
-            aresWarriors += s->count();
-        } else if(type == eBannerType::amazon) {
-            amazons += s->count();
+        if(atlantean) {
+            if(type == eBannerType::hoplite) {
+                atlanteanInfantry += s->count();
+            } else if(type == eBannerType::horseman) {
+                atlanteanCavalry += s->count();
+            } else if(type == eBannerType::rockThrower) {
+                atlanteanArchers += s->count();
+            } else if(type == eBannerType::aresWarrior) {
+                aresWarriors += s->count();
+            } else if(type == eBannerType::amazon) {
+                amazons += s->count();
+            }
+        } else {
+            if(type == eBannerType::hoplite) {
+                greekInfantry += s->count();
+            } else if(type == eBannerType::horseman) {
+                greekCavalry += s->count();
+            } else if(type == eBannerType::rockThrower) {
+                greekArchers += s->count();
+            } else if(type == eBannerType::aresWarrior) {
+                aresWarriors += s->count();
+            } else if(type == eBannerType::amazon) {
+                amazons += s->count();
+            }
         }
     }
 
-    if(infantry > 0) {
-        if(nat == eNationality::greek) {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::greekHoplite, infantry));
-        } else {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::atlanteanHoplite, infantry));
-        }
+    if(greekInfantry > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::greekHoplite, greekInfantry));
     }
-    if(cavalry > 0) {
-        if(nat == eNationality::greek) {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::greekHorseman, cavalry));
-        } else {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::atlanteanChariot, cavalry));
-        }
+    if(atlanteanInfantry > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::atlanteanHoplite, greekInfantry));
     }
-    if(archers > 0) {
-        if(nat == eNationality::greek) {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::greekRockthrower, archers));
-        } else {
-            ss.push_back(std::pair<ePlayerSoldierType, int>(
-                                ePlayerSoldierType::atlanteanArcher, archers));
-        }
+    if(greekCavalry > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::greekHorseman, greekCavalry));
+    }
+    if(atlanteanCavalry > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::atlanteanChariot, greekCavalry));
+    }
+    if(greekArchers > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::greekRockthrower, greekArchers));
+    }
+    if(atlanteanArchers > 0) {
+        ss.push_back(std::pair<ePlayerSoldierType, int>(
+            ePlayerSoldierType::atlanteanArcher, greekArchers));
     }
     if(amazons > 0) {
         ss.push_back(std::pair<ePlayerSoldierType, int>(
