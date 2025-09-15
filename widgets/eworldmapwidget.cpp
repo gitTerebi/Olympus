@@ -347,9 +347,9 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                 if(tex) p.drawTexture(x, y, tex, eAlignment::center);
             }
 
-            for(const auto h : forces.fHeroes) {
+            for(const auto& h : forces.fHeroes) {
                 stdsptr<eTexture> tex;
-                switch(h) {
+                switch(h.second) {
                 case eHeroType::achilles:
                     tex = texs.fZeusAchilles;
                     break;

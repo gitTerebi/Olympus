@@ -22,9 +22,11 @@ void eEnlistedForces::read(eGameBoard& board,
         int nh;
         src >> nh;
         for(int i = 0; i < nh; i++) {
+            eCityId cid;
+            src >> cid;
             eHeroType h;
             src >> h;
-            fHeroes.push_back(h);
+            fHeroes.push_back({cid, h});
         }
     }
     {
@@ -39,6 +41,7 @@ void eEnlistedForces::read(eGameBoard& board,
     }
 
     src >> fAres;
+    src >> fAresCity;
 }
 
 void eEnlistedForces::write(eWriteStream& dst) const {
@@ -48,8 +51,9 @@ void eEnlistedForces::write(eWriteStream& dst) const {
     }
 
     dst << fHeroes.size();
-    for(const auto h : fHeroes) {
-        dst << h;
+    for(const auto& h : fHeroes) {
+        dst << h.first;
+        dst << h.second;
     }
 
     dst << fAllies.size();
@@ -58,6 +62,7 @@ void eEnlistedForces::write(eWriteStream& dst) const {
     }
 
     dst << fAres;
+    dst << fAresCity;
 }
 
 void eEnlistedForces::clear() {
@@ -77,6 +82,7 @@ void eEnlistedForces::add(const eEnlistedForces& o) {
     for(const auto& a : o.fAllies) {
         fAllies.push_back(a);
     }
+    if(o.fAres && !fAres) fAresCity = o.fAresCity;
     fAres = fAres || o.fAres;
 }
 

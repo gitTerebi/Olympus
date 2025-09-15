@@ -151,14 +151,13 @@ void eGameWidget::setBoard(eGameBoard* const board) {
                                    const std::vector<eCityId>& cids,
                                    const std::vector<std::string>& cnames,
                                    const std::vector<eHeroType>& heroesAbroad,
-                                   const std::map<eHeroType, eCityId>& heroesCity,
                                    const eEnlistAction& action,
                                    const std::vector<eResourceType>& plunderResources) {
         const auto w = window();
         const auto cw = w->currentWidget();
         const auto ww = w->worldWidget();
         const auto d = new eEnlistForcesDialog(window());
-        d->initialize(enlistable, cids, cnames, heroesAbroad, heroesCity,
+        d->initialize(enlistable, cids, cnames, heroesAbroad,
                       action, plunderResources);
         if(cw == ww) {
             ww->openDialog(d);

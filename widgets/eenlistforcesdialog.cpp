@@ -217,10 +217,10 @@ public:
         for(int i = 0; i < iMax; i++) {
             const auto h = e.fHeroes[i];
             auto& d = data.emplace_back();
-            d.fAbroad = eVectorHelpers::contains(heroesAbroad, h);
+            d.fAbroad = eVectorHelpers::contains(heroesAbroad, h.second);
             d.fType = eEnlistType::hero;
-            d.fTitle = eHero::sHeroName(h);
-            d.fId = static_cast<int>(h);
+            d.fTitle = eHero::sHeroName(h.second);
+            d.fId = static_cast<int>(h.second);
             d.fTroops = -1;
             d.fAction = [this, h, selectionChanged]() {
                 const bool selected = eVectorHelpers::contains(
@@ -322,8 +322,7 @@ private:
 };
 
 eEnlistedForces extractCity(const eCityId cid,
-                            const eEnlistedForces& from,
-                            const std::map<eHeroType, eCityId>& heroesCity) {
+                            const eEnlistedForces& from) {
     eEnlistedForces result;
     for(const auto& s : from.fSoldiers) {
         const auto t = s->cityId();
@@ -332,12 +331,15 @@ eEnlistedForces extractCity(const eCityId cid,
         }
     }
     for(const auto& h : from.fHeroes) {
-        const auto hcid = heroesCity.at(h);
-        if(hcid == cid) {
+        if(h.first == cid) {
             result.fHeroes.push_back(h);
         }
     }
     result.fAllies = from.fAllies;
+    if(from.fAres && from.fAresCity == cid) {
+        result.fAres = true;
+        result.fAresCity = cid;
+    }
     return result;
 }
 
@@ -360,7 +362,6 @@ public:
     void initialize(const eEnlistedForces& e,
                     const std::vector<eCityId>& cids,
                     const std::vector<eHeroType>& heroesAbroad,
-                    const std::map<eHeroType, eCityId>& heroesCity,
                     const eAction& selectionChanged,
                     const std::string& title,
                     const bool troops) {
@@ -401,7 +402,7 @@ public:
             const int ww = innerWid->width();
             const int hh = innerWid->height() - titleLabel->height();
             area->resize(ww, hh);
-            const auto ce = extractCity(cid, e, heroesCity);
+            const auto ce = extractCity(cid, e);
             area->initialize(ce, heroesAbroad, selectionChanged);
             area->fitHeight();
             if(!mScrollW) {
@@ -451,7 +452,6 @@ void eEnlistForcesDialog::initialize(
         const std::vector<eCityId>& cids,
         const std::vector<std::string>& cnames,
         const std::vector<eHeroType>& heroesAbroad,
-        const std::map<eHeroType, eCityId>& heroesCity,
         const eEnlistAction& action,
         const std::vector<eResourceType>& plunderResources) {
     const auto r = resolution();
@@ -711,13 +711,13 @@ void eEnlistForcesDialog::initialize(
 
             horsemen->resize(www, hhhh);
             const auto hef = extractType(eBannerType::horseman, enlistable);
-            horsemen->initialize(hef, cids, {}, {}, selectionChanged,
+            horsemen->initialize(hef, cids, {}, selectionChanged,
                                  eLanguage::zeusText(283, 7), true);
             col1->addWidget(horsemen);
 
             hoplite->resize(www, hhhh);
             const auto hhef = extractType(eBannerType::hoplite, enlistable);
-            hoplite->initialize(hhef, cids, {}, {}, selectionChanged,
+            hoplite->initialize(hhef, cids, {}, selectionChanged,
                                 eLanguage::zeusText(283, 14), true);
             col1->addWidget(hoplite);
 
@@ -732,14 +732,14 @@ void eEnlistForcesDialog::initialize(
             const int hhhh = hhh/4 - pp;
 
             navy->resize(www, hhhh);
-            navy->initialize(eEnlistedForces(), cids, {}, {}, selectionChanged,
+            navy->initialize(eEnlistedForces(), cids, {}, selectionChanged,
                              eLanguage::zeusText(283, 6), false);
             col2->addWidget(navy);
 
             heroes->resize(www, hhhh);
             eEnlistedForces efh;
             efh.fHeroes = enlistable.fHeroes;
-            heroes->initialize(efh, cids, heroesAbroad, heroesCity, selectionChanged,
+            heroes->initialize(efh, cids, heroesAbroad, selectionChanged,
                                eLanguage::zeusText(283, 9), false);
             col2->addWidget(heroes);
 
@@ -752,14 +752,14 @@ void eEnlistForcesDialog::initialize(
                     hhef.fSoldiers.push_back(s);
                 }
             }
-            mythical->initialize(hhef, cids, {}, {}, selectionChanged,
+            mythical->initialize(hhef, cids, {}, selectionChanged,
                                  eLanguage::zeusText(283, 10), true);
             col2->addWidget(mythical);
 
             allies->resize(www, hhhh);
             eEnlistedForces efa;
             efa.fAllies = enlistable.fAllies;
-            allies->initialize(efa, {cids[0]}, {}, {}, selectionChanged,
+            allies->initialize(efa, {cids[0]}, {}, selectionChanged,
                                eLanguage::zeusText(283, 24), false);
             col2->addWidget(allies);
 

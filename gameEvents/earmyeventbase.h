@@ -21,7 +21,7 @@ public:
     const stdsptr<eWorldCity>& city() const { return mCity; }
 protected:
     void planArmyReturn();
-    void planArmyReturn(const eCityId cid, const int travelTime);
+    void planArmyReturn(const int travelTime);
 
     void removeArmyEvent();
 

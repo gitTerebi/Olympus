@@ -27,7 +27,7 @@ void eReinforcementsEvent::trigger() {
     const auto fromPid = board->cityIdToPlayerId(fromCid);
     const auto c = board->boardCityWithId(cid);
     if(!c || pid != fromPid) {
-        planArmyReturn(fromCid, eNumbers::sReinforcementsTravelTime);
+        planArmyReturn(eNumbers::sReinforcementsTravelTime);
         return;
     }
     const auto entryPoint = board->entryPoint(cid);

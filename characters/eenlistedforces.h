@@ -7,9 +7,10 @@
 
 struct eEnlistedForces {
     std::vector<stdsptr<eSoldierBanner>> fSoldiers;
-    std::vector<eHeroType> fHeroes;
+    std::vector<std::pair<eCityId, eHeroType>> fHeroes;
     std::vector<stdsptr<eWorldCity>> fAllies;
     bool fAres = false;
+    eCityId fAresCity;
 
     void read(eGameBoard& board,
               eReadStream& src);

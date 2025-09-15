@@ -563,7 +563,7 @@ void eBoardCity::nextMonth() {
                         const bool abroad = hh->heroOnQuest();
                         if(abroad) continue;
                         const auto type = hh->heroType();
-                        forces.fHeroes.push_back(type);
+                        forces.fHeroes.push_back({mId, type});
                     }
                     mBoard.enlistForces(forces);
                     const auto e = e::make_shared<ePlayerConquestEvent>(
@@ -2145,7 +2145,7 @@ eEnlistedForces eBoardCity::getEnlistableForces() const {
         const auto s = h->stage();
         if(s != eHeroSummoningStage::arrived) continue;
         const auto ht = h->heroType();
-        result.fHeroes.push_back(ht);
+        result.fHeroes.push_back({mId, ht});
     }
 
     return result;

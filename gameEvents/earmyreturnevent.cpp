@@ -49,7 +49,7 @@ void eArmyReturnEvent::trigger() {
     }
 
     for(const auto h : mForces.fHeroes) {
-        const auto hh = board->heroHall(cid, h);
+        const auto hh = board->heroHall(h.first, h.second);
         if(!hh) continue;
         hh->setHeroOnQuest(false);
         if(!entryPoint) continue;

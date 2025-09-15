@@ -294,11 +294,7 @@ void eGameBoard::enlistForces(const eEnlistedForces& forces) {
     }
     const auto cids = citiesOnBoard();
     for(const auto h : forces.fHeroes) {
-        eHerosHall* hh = nullptr;
-        for(const auto cid : cids) {
-            hh = heroHall(cid, h);
-            if(hh) break;
-        }
+        const auto hh = heroHall(h.first, h.second);
         if(!hh) continue;
         hh->sendHeroOnQuest();
     }
@@ -2700,25 +2696,15 @@ void eGameBoard::requestForces(const eEnlistAction& action,
             }
         }
         std::vector<eHeroType> heroesAbroad;
-        std::map<eHeroType, eCityId> heroesCity;
         for(const auto h : f.fHeroes) {
-            eCityId hcid = eCityId::neutralFriendly;
-            eHerosHall* hh = nullptr;
-            for(const auto cid : cids) {
-                hh = heroHall(cid, h);
-                if(hh) {
-                    hcid = cid;
-                    break;
-                }
-            }
-            heroesCity[h] = hcid;
+            const auto hh = heroHall(h.first, h.second);
             const bool abroad = !hh ? true : hh->heroOnQuest();
-            if(abroad) heroesAbroad.push_back(h);
+            if(abroad) heroesAbroad.push_back(h.second);
         }
         for(const auto& e : exclude) {
             eVectorHelpers::remove(f.fAllies, e);
         }
-        mEnlistRequester(f, cids, cnames, heroesAbroad, heroesCity, action, plunderResources);
+        mEnlistRequester(f, cids, cnames, heroesAbroad, action, plunderResources);
     }
 }
 

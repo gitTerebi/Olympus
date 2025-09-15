@@ -47,8 +47,6 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 
-#include "engine/eevent.h"
-
 #include "etilehelper.h"
 #include "buildings/epalace.h"
 
@@ -216,7 +214,9 @@ void eInvasionHandler::initializeSeaInvasion(
         troops += f.second;
     }
     mAresLeft = forces.fAres;
-    mHeroesLeft = forces.fHeroes;
+    for(const auto& h : forces.fHeroes) {
+        mHeroesLeft.push_back(h.second);
+    }
 
     for(const auto& f : forces.fAllies) {
         const auto cid = f->cityId();
@@ -466,7 +466,11 @@ void eInvasionHandler::initializeLandInvasion(
                                 cid, nat, solds);
     }
 
-    generateImmortals(tile, cid, forces.fAres, forces.fHeroes);
+    std::vector<eHeroType> heroes;
+    for(const auto& h : forces.fHeroes) {
+        heroes.push_back(h.second);
+    }
+    generateImmortals(tile, cid, forces.fAres, heroes);
 
     const int tx = tile->x();
     const int ty = tile->y();
