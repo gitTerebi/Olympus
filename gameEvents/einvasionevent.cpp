@@ -373,7 +373,39 @@ int eInvasionEvent::bribeCost() const {
     int infantry = 0;
     int cavalry = 0;
     int archers = 0;
-    soldiersByType(infantry, cavalry, archers);
+
+    if(mConquestEvent) {
+        for(const auto& b : mForces.fSoldiers) {
+            const auto type = b->type();
+            switch(type) {
+            case eBannerType::hoplite:
+            case eBannerType::aresWarrior:
+            case eBannerType::amazon:
+                infantry += b->count();
+                break;
+            case eBannerType::horseman:
+                cavalry += b->count();
+                break;
+            case eBannerType::rockThrower:
+                archers += b->count();
+                break;
+            case eBannerType::enemy:
+            case eBannerType::trireme:
+                break;
+            }
+        }
+        for(const auto& a : mForces.fAllies) {
+            int aInfantry;
+            int aCavalry;
+            int aArchers;
+            a->troopsByType(aInfantry, aCavalry, aArchers);
+            infantry += aInfantry;
+            cavalry += aCavalry;
+            archers += aArchers;
+        }
+    } else {
+        soldiersByType(infantry, cavalry, archers);
+    }
 
     const int bribe = rt*archers + ht*infantry + hm*cavalry;
     return bribe;
