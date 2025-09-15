@@ -45,26 +45,7 @@ void eArmyEventBase::planArmyReturn() {
 void eArmyEventBase::planArmyReturn(const int travelTime) {
     const auto board = gameBoard();
     if(!board) return;
-    std::map<eCityId, eEnlistedForces> forces;
-    for(const auto& s : mForces.fSoldiers) {
-        const auto cid = s->cityId();
-        forces[cid].fSoldiers.push_back(s);
-    }
-    for(const auto& s : mForces.fHeroes) {
-        forces[s.first].fHeroes.push_back(s);
-    }
-    if(mForces.fAres) {
-        const auto cid = mForces.fAresCity;
-        forces[cid].fAres = true;
-        forces[cid].fAresCity = cid;
-    }
-    if(forces.empty() && !mForces.fAllies.empty()) {
-        const auto cid = cityId();
-        forces[cid].fAllies = mForces.fAllies;
-    } else {
-        const auto cid = forces.begin()->first;
-        forces[cid].fAllies = mForces.fAllies;
-    }
+    const auto forces = mForces.splitIntoCities();
     for(const auto& f : forces) {
         const auto e = e::make_shared<eArmyReturnEvent>(
             f.first, eGameEventBranch::root, *board);

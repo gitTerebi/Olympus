@@ -12,6 +12,8 @@ struct eEnlistedForces {
     bool fAres = false;
     eCityId fAresCity;
 
+    std::map<eCityId, eEnlistedForces> splitIntoCities() const;
+
     void read(eGameBoard& board,
               eReadStream& src);
     void write(eWriteStream& dst) const;

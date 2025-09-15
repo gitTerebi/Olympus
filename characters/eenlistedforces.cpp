@@ -5,6 +5,29 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
+std::map<eCityId, eEnlistedForces>
+eEnlistedForces::splitIntoCities() const {
+    std::map<eCityId, eEnlistedForces> forces;
+    for(const auto& s : fSoldiers) {
+        const auto cid = s->cityId();
+        forces[cid].fSoldiers.push_back(s);
+    }
+    for(const auto& s : fHeroes) {
+        forces[s.first].fHeroes.push_back(s);
+    }
+    if(fAres) {
+        const auto cid = fAresCity;
+        forces[cid].fAres = true;
+        forces[cid].fAresCity = cid;
+    }
+    if(!forces.empty()) {
+        const auto cid = forces.begin()->first;
+        forces[cid].fAllies = fAllies;
+    }
+
+    return forces;
+}
+
 void eEnlistedForces::read(eGameBoard& board,
                            eReadStream& src) {
     auto& wboard = board.world();

@@ -354,6 +354,9 @@ bool eInvasionEvent::nearestSoldier(const int fromX, const int fromY,
     return found;
 }
 
+ePlayerConquestEvent* eInvasionEvent::conquestEvent() const
+{ return mConquestEvent; }
+
 int eInvasionEvent::bribeCost() const {
     const auto board = gameBoard();
     if(!board) return 0;

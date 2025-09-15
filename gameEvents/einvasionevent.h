@@ -60,6 +60,11 @@ public:
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
 
+    ePlayerConquestEvent* conquestEvent() const;
+
+    const eEnlistedForces& forces() const
+    { return mForces; }
+
     void invadersWon();
     void invadersDefeated();
 private:
