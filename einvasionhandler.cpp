@@ -642,6 +642,22 @@ void eInvasionHandler::extractSSFromForces(
 const int boatSpawnPeriod = 825;
 
 void eInvasionHandler::incTime(const int by) {
+    if(mCurrentTile) {
+        mReplaceCounter += by;
+        const int wait = 1000;
+        if(mReplaceCounter >= wait) {
+            mReplaceCounter -= wait;
+            const int tx = mCurrentTile->x();
+            const int ty = mCurrentTile->y();
+            std::vector<eSoldierBanner*> solds;
+            for(const auto& b : mBanners) {
+                if(b->count() <= 0) continue;
+                solds.push_back(b.get());
+            }
+            eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        }
+    }
+
     const auto invadingCid = mCity->cityId();
     const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
     const auto invasionDefeated = [&]() {
@@ -680,6 +696,7 @@ void eInvasionHandler::incTime(const int by) {
     int ss = 0;
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
+        if(b->count() <= 0) continue;
         solds.push_back(b.get());
         ss += b->count();
         const bool r = b->stationary();

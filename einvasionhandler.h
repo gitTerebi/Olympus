@@ -154,6 +154,8 @@ private:
 
     const int mSoldiersPerBoat = 4*8;
 
+    int mReplaceCounter = 0;
+
     int mIOID = -1;
 };
 
