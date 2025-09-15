@@ -694,14 +694,18 @@ void eInvasionHandler::incTime(const int by) {
         return;
     }
     int ss = 0;
+    int stationary = 0;
     std::vector<eSoldierBanner*> solds;
     for(const auto& b : mBanners) {
-        if(b->count() <= 0) continue;
+        const int c = b->count();
+        if(c <= 0) continue;
         solds.push_back(b.get());
-        ss += b->count();
+        ss += c;
         const bool r = b->stationary();
-        if(!r) return;
+        if(r) stationary += c;
     }
+
+    if(0.8*ss < stationary) return;
 
     if(ss == 0) {
         if(!immortalsFighting()) {
@@ -710,7 +714,7 @@ void eInvasionHandler::incTime(const int by) {
         }
         return;
     }
-    const int wait = 10000;
+    const int wait = 40000;
     mWait += by;
     if(mWait < wait) {
         if(mStage == eInvasionStage::spread) {

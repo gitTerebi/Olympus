@@ -435,6 +435,7 @@ void eInvasionEvent::invadersWon() {
         const auto targetWCity = wboard.cityWithId(targetCity);
         if(invadingC) {
             eEventData ed(invadingPid);
+            ed.fCity = targetWCity;
             board.event(eEvent::cityConquered, ed);
             board.allow(invadingCid, eBuildingType::commemorative, 4);
             if(invadingPid == ppid) {

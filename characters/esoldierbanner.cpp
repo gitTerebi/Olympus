@@ -34,6 +34,7 @@ eSoldierBanner::eSoldierBanner(const eBannerType type,
 }
 
 eSoldierBanner::~eSoldierBanner() {
+    killAll();
     mBoard.unregisterAllSoldierBanner(this);
 }
 
