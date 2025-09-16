@@ -485,5 +485,64 @@ void eEditorSettingsMenu::initialize(const bool first,
     addWidget(pyramidsButt);
     pyramidsButt->align(eAlignment::hcenter);
 
+
+    const auto maxSanctAct = [this, ep]() {
+        const auto buildMenu = new eFramedWidget(window());
+        buildMenu->setType(eFrameType::message);
+        buildMenu->resize(width(), height());
+
+        const auto board = ep->fBoard;
+        const auto cids = board->citiesOnBoard();
+        for(const auto cid : cids) {
+            const auto c = board->boardCityWithId(cid);
+            if(!c) continue;
+
+            const auto cbuildingsAct = [this, cid, ep]() {
+                const auto maxMenu = new eFramedWidget(window());
+                maxMenu->setType(eFrameType::message);
+                maxMenu->resize(width(), height());
+
+                const auto bb = new eValueButton(window());
+                bb->setSmallFontSize();
+                bb->setSmallPadding();
+                bb->initialize(0, 16);
+                bb->fitContent();
+                bb->setValueChangeAction([cid, ep](const int v) {
+                    int& val = ep->fMaxSanctuaries[cid];
+                    val = v;
+                });
+                const auto it = ep->fMaxSanctuaries.find(cid);
+                if(it == ep->fMaxSanctuaries.end()) {
+                    bb->setValue(16);
+                } else {
+                    bb->setValue(it->second);
+                }
+                maxMenu->addWidget(bb);
+                bb->align(eAlignment::center);
+
+                window()->execDialog(maxMenu);
+                maxMenu->align(eAlignment::center);
+            };
+            const auto cButt = new eFramedButton(window());
+            cButt->setUnderline(false);
+            cButt->setText(board->cityName(cid));
+            cButt->fitContent();
+            cButt->setPressAction(cbuildingsAct);
+            buildMenu->addWidget(cButt);
+            cButt->align(eAlignment::hcenter);
+        }
+        window()->execDialog(buildMenu);
+        buildMenu->align(eAlignment::center);
+        buildMenu->layoutVertically();
+    };
+
+    const auto maxSanctButt = new eFramedButton(window());
+    maxSanctButt->setUnderline(false);
+    maxSanctButt->setText(eLanguage::zeusText(44, 291));
+    maxSanctButt->fitContent();
+    maxSanctButt->setPressAction(maxSanctAct);
+    addWidget(maxSanctButt);
+    maxSanctButt->align(eAlignment::hcenter);
+
     layoutVertically();
 }
