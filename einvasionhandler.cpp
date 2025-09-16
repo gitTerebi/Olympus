@@ -705,7 +705,7 @@ void eInvasionHandler::incTime(const int by) {
         if(r) stationary += c;
     }
 
-    if(0.8*ss < stationary) return;
+    if(stationary < 0.8*ss) return;
 
     if(ss == 0) {
         if(!immortalsFighting()) {
@@ -714,7 +714,7 @@ void eInvasionHandler::incTime(const int by) {
         }
         return;
     }
-    const int wait = 40000;
+    const int wait = 10000;
     mWait += by;
     if(mWait < wait) {
         if(mStage == eInvasionStage::spread) {
