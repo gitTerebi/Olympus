@@ -11,6 +11,8 @@ int eNumbers::sDayLength;
 int eNumbers::sReinforcementsTravelTime;
 int eNumbers::sArmyTravelTime;
 int eNumbers::sAIInvasionMonthsBreak;
+int eNumbers::sInvasionAppearAtPlaces;
+double eNumbers::sArmyStrengthHorsemanMult;
 
 int eNumbers::sRabbleDivisor;
 int eNumbers::sSoldiersPerBanner;
@@ -308,6 +310,8 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("reinforcements_travel_time_i", sReinforcementsTravelTime, 50);
     loadI("army_travel_time_i", sArmyTravelTime, 200);
     loadI("ai_invasion_months_break_i", sAIInvasionMonthsBreak, 30);
+    loadI("invasion_appear_at_places_b", sInvasionAppearAtPlaces, 0);
+    loadD("army_strength_horseman_mult_d", sArmyStrengthHorsemanMult, 1.5);
 
     loadI("rabble_divisor_i", sRabbleDivisor, 6);
     loadI("soldiers_per_banner_i", sSoldiersPerBanner, 8);

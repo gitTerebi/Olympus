@@ -112,25 +112,25 @@ void eEnlistedForces::add(const eEnlistedForces& o) {
 const double gHelpFrac = 0.33;
 
 int eEnlistedForces::strength() const {
-    int str = 0;
+    double str = 0;
     for(const auto& s : fSoldiers) {
         double mult = 1.;
         switch(s->type()) {
         case eBannerType::horseman:
-            mult = 1.5;
+            mult = eNumbers::sArmyStrengthHorsemanMult;
             break;
         default:
             break;
         }
 
-        str += std::floor(mult*s->count());
+        str += mult*s->count();
     }
     for(const auto& c : fAllies) {
         str += gHelpFrac*c->troops();
     }
     str += 8*fHeroes.size();
     if(fAres) str += 8;
-    return str;
+    return std::round(str);
 }
 
 void eEnlistedForces::kill(const double killFrac) const {

@@ -47,6 +47,7 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 
+#include "enumbers.h"
 #include "etilehelper.h"
 #include "buildings/epalace.h"
 
@@ -173,8 +174,10 @@ void eInvasionHandler::disembark() {
     const int tx = mTile->x();
     const int ty = mTile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
-    for(const auto b : solds) {
-        b->teleportSoldiersToPlaces();
+    if(eNumbers::sInvasionAppearAtPlaces) {
+        for(const auto b : solds) {
+            b->teleportSoldiersToPlaces();
+        }
     }
     mCurrentTile = mTile;
 }
@@ -431,8 +434,10 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
-    for(const auto b : solds) {
-        b->teleportSoldiersToPlaces();
+    if(eNumbers::sInvasionAppearAtPlaces) {
+        for(const auto b : solds) {
+            b->teleportSoldiersToPlaces();
+        }
     }
     mCurrentTile = tile;
 }
@@ -474,8 +479,10 @@ void eInvasionHandler::initializeLandInvasion(
     const int tx = tile->x();
     const int ty = tile->y();
     eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
-    for(const auto b : solds) {
-        b->teleportSoldiersToPlaces();
+    if(eNumbers::sInvasionAppearAtPlaces) {
+        for(const auto b : solds) {
+            b->teleportSoldiersToPlaces();
+        }
     }
     mCurrentTile = tile;
 }
