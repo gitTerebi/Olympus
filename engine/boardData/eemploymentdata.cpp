@@ -3,6 +3,7 @@
 #include "epopulationdata.h"
 #include "engine/edifficulty.h"
 #include "engine/egameboard.h"
+#include "enumbers.h"
 
 #include <math.h>
 
@@ -35,7 +36,7 @@ int eEmploymentData::pensions() const {
     const auto wageRate = mCity.wageRate();
     const auto wageMult = mBoard.wageMultiplier();
     const double frac = eWageRateHelpers::wageMultiplier(wageRate);
-    return wageMult*frac*employed();
+    return eNumbers::sWageMultiplier*wageMult*frac*employed();
 }
 
 int eEmploymentData::unemployed() const {

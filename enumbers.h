@@ -9,6 +9,10 @@ struct eNumbers {
 
     static int sDayLength;
 
+    static double sEliteHousingTaxMultiplier;
+    static double sCommonHousingTaxMulitplier;
+    static double sWageMultiplier;
+
     static int sReinforcementsTravelTime;
     static int sArmyTravelTime;
     static int sAIInvasionMonthsBreak;

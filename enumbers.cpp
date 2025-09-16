@@ -8,6 +8,11 @@
 
 int eNumbers::sDayLength;
 
+double eNumbers::sEliteHousingTaxMultiplier;
+double eNumbers::sCommonHousingTaxMulitplier;
+
+double eNumbers::sWageMultiplier;
+
 int eNumbers::sReinforcementsTravelTime;
 int eNumbers::sArmyTravelTime;
 int eNumbers::sAIInvasionMonthsBreak;
@@ -322,6 +327,10 @@ void eNumbers::sLoad(const std::string& path) {
         }
     };
     loadI("day_length_i", sDayLength, 350, 1, 10000);
+
+    loadD("elite_housing_tax_mult_d", sEliteHousingTaxMultiplier, 1, 0.1, 10);
+    loadD("common_housing_tax_mult_d", sCommonHousingTaxMulitplier, 1, 0.1, 10);
+    loadD("wage_mult_d", sWageMultiplier, 1, 0.1, 10);
 
     loadI("reinforcements_travel_time_i", sReinforcementsTravelTime, 50, 1, 1000);
     loadI("army_travel_time_i", sArmyTravelTime, 200, 1, 1000);
