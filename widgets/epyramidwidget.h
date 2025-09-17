@@ -3,7 +3,7 @@
 
 #include "eframedwidget.h"
 
-class ePyramidSettings;
+struct ePyramidSettings;
 
 class ePyramidWidget : public eFramedWidget {
 public:

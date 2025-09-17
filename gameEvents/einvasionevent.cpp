@@ -21,10 +21,10 @@ eInvasionEvent::eInvasionEvent(
     ePointEventValue(eBannerTypeS::landInvasion,
                     cid, board),
     eCityEventValue(board, [this, cid](eWorldCity& c) {
-        auto& board = *gameBoard();
+        auto& board2 = *gameBoard();
         const auto ccid = c.cityId();
-        const auto tid = board.cityIdToTeamId(cid);
-        const auto ctid = board.cityIdToTeamId(ccid);
+        const auto tid = board2.cityIdToTeamId(cid);
+        const auto ctid = board2.cityIdToTeamId(ccid);
         const bool e = eTeamIdHelpers::isEnemy(tid, ctid);
         return e;
     }) {}

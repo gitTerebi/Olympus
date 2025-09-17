@@ -1511,7 +1511,7 @@ stdsptr<ePlague> eGameBoard::nearestPlague(
         const eCityId cid,
         const int tx, const int ty,
         int& dist) const {
-    dist = __INT_MAX__/2;
+    dist = 100000;
     const auto c = boardCityWithId(cid);
     if(!c) return nullptr;
     return c->nearestPlague(tx, ty, dist);

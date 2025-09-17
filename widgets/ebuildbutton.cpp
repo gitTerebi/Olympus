@@ -1,5 +1,7 @@
 #include "ebuildbutton.h"
 
+#include <algorithm>
+
 #include "textures/egametextures.h"
 
 void eBuildButton::initialize(const std::string& name,

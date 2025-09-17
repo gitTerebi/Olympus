@@ -454,7 +454,7 @@ void eGameWidget::initialize() {
             }
             for(int i = 0; i < iMax; i++) {
                 const auto iButton = iButtons[i];
-                iButton->setPressAction([this, i, iButton, iButtons]() {
+                iButton->setPressAction([this, i, iMax, iButton, iButtons]() {
                     iButton->setText("*" + std::to_string(i) + "*");
                     mBoard->setCurrentDistrictId(i);
                     for(int j = 0; j < iMax; j++) {

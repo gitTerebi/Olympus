@@ -1,5 +1,7 @@
 #include "qfile.h"
 
+#include <algorithm>
+
 QFile::QFile(const std::string& filename) :
     std::ifstream(filename, std::ios::in | std::ios::binary) {
     mSize = 0;

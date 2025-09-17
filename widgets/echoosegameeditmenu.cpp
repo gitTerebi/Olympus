@@ -98,11 +98,11 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             for(const auto& entry : fs::directory_iterator(folder)) {
                 const bool dir = entry.is_directory();
                 const auto path = entry.path();
+                const std::string pathStr = path.u8string();
                 if(dir) {
-                    procesFolder(path);
+                    procesFolder(pathStr);
                     continue;
                 }
-                const std::string pathStr = path.u8string();
                 const auto ext = pathStr.substr(pathStr.size() - 3);
                 if(ext != "pak") continue;
                 eCampaignGlossary glossary;

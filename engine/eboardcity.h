@@ -594,7 +594,7 @@ private:
     eHusbandryData mHusbData;
     eEmploymentData mEmplData;
 
-    int mEmploymentUpdateWait = __INT_MAX__/10;
+    int mEmploymentUpdateWait = 100000;
     bool mEmploymentUpdateScheduled = true;
 
     eEmploymentDistributor mEmplDistributor;
