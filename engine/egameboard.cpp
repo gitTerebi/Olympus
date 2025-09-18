@@ -99,6 +99,10 @@
 
 #include "buildings/pyramids/epyramid.h"
 
+#ifndef uint
+#define uint unsigned int
+#endif
+
 eGameBoard::eGameBoard(eWorldBoard& world) :
     mWorld(world), mThreadPool(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
