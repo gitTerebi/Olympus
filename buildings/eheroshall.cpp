@@ -654,13 +654,13 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     } break;
     case eHeroRequirementType::appeal: {
         const double a = eBuilding::appeal();
-        if(a < 1.) {
+        if(a < 12.) {
             sc = 0;
-        } else if(a < 2.) {
+        } else if(a < 14.5) {
             sc = 1;
-        } else if(a < 3.) {
+        } else if(a < 15.5) {
             sc = 2;
-        } else if(a < 4.) {
+        } else if(a < 17.) {
             sc = 3;
         } else {
             sc = 4;
