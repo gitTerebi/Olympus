@@ -200,7 +200,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             minCountB->setValueChangeAction([ee](const int p) {
                 ee->setMinCount(p);
             });
-            minCountB->initialize(-999, 999);
+            minCountB->initialize(-99999, 99999);
             const int rc = ee->minCount();
             minCountB->setValue(rc);
             countW->addWidget(minCountB);
@@ -210,7 +210,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             maxCountB->setValueChangeAction([ee](const int p) {
                 ee->setMaxCount(p);
             });
-            maxCountB->initialize(-999, 999);
+            maxCountB->initialize(-99999, 99999);
             const int rc = ee->maxCount();
             maxCountB->setValue(rc);
             countW->addWidget(maxCountB);
@@ -230,7 +230,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             const auto resourceTypeButton = new eResourceButton(window());
             resourceTypeButton->initialize([i, ee](const eResourceType r){
                 ee->setResourceType(i, r);
-            }, eResourceType::allBasic, true, true);
+            }, eResourceType::allBasic | eResourceType::drachmas, true, true);
             const auto rr = ee->resourceType(i);
             resourceTypeButton->setResource(rr);
             widget->addWidget(resourceTypeButton);
