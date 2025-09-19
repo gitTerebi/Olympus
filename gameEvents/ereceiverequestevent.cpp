@@ -37,16 +37,17 @@ eReceiveRequestEvent::~eReceiveRequestEvent() {
 const int gPostponeDays = 6*31;
 
 void eReceiveRequestEvent::trigger() {
-    chooseCity();
-    if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
 
     if(isMainEvent() && mPostpone == 0) { // initial
+        chooseCity();
+        if(!mCity) return;
         chooseType();
         chooseCount();
         board->addCityRequest(mainEvent<eReceiveRequestEvent>());
     }
+    if(!mCity) return;
 
     const auto pid = playerId();
     eEventData ed(pid);
@@ -641,8 +642,11 @@ void eReceiveRequestEvent::dispatch(const eCityId cid) {
 void eReceiveRequestEvent::fulfillWithoutCost() {
     const auto board = gameBoard();
     if(!board) return;
+    clearConsequences();
     board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
-    const auto e = e::make_shared<eReceiveRequestEvent>(*this);
+    const auto cid = cityId();
+    const auto e = e::make_shared<eReceiveRequestEvent>(
+        cid, eGameEventBranch::child, *board);
     int postpone = mPostpone - 1;
     auto date = nextDate();
     const auto currentDate = board->date();
@@ -653,7 +657,6 @@ void eReceiveRequestEvent::fulfillWithoutCost() {
     e->set(*this, postpone, true);
     const auto edate = currentDate + 3*31;
     e->initializeDate(edate);
-    clearConsequences();
     addConsequence(e);
 }
 
