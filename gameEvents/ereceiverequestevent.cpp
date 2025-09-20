@@ -34,13 +34,12 @@ eReceiveRequestEvent::~eReceiveRequestEvent() {
     if(board) board->removeCityRequest(this);
 }
 
-const int gPostponeDays = 6*31;
-
 void eReceiveRequestEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
 
-    if(isMainEvent() && mPostpone == 0) { // initial
+    if(isMainEvent()) { // initial
+        mPostpone = 0;
         chooseCity();
         if(!mCity) return;
         chooseType();
@@ -54,7 +53,7 @@ void eReceiveRequestEvent::trigger() {
     ed.fCity = mCity;
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
-    ed.fTime = 6;
+    ed.fTime = warningMonths();
     ed.fGod = mGod;
 
     if(mFinish) {
@@ -351,10 +350,13 @@ void eReceiveRequestEvent::trigger() {
 
     if(mPostpone < 3) {
         ed.fA1 = [this, board]() { // postpone
+            const auto me = mainEvent<eReceiveRequestEvent>();
+            me->mPostpone = mPostpone + 1;
+
             const auto e = e::make_shared<eReceiveRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
             e->set(*this, mPostpone + 1);
-            const auto date = board->date() + gPostponeDays;
+            const auto date = board->date() + 31*warningMonths();
             e->initializeDate(date);
             addConsequence(e);
         };
@@ -647,14 +649,8 @@ void eReceiveRequestEvent::fulfillWithoutCost() {
     const auto cid = cityId();
     const auto e = e::make_shared<eReceiveRequestEvent>(
         cid, eGameEventBranch::child, *board);
-    int postpone = mPostpone - 1;
-    auto date = nextDate();
     const auto currentDate = board->date();
-    while(date <= currentDate) {
-        date += gPostponeDays;
-        postpone++;
-    }
-    e->set(*this, postpone, true);
+    e->set(*this, mPostpone, true);
     const auto edate = currentDate + 3*31;
     e->initializeDate(edate);
     addConsequence(e);
@@ -676,6 +672,7 @@ void eReceiveRequestEvent::initialize(
 void eReceiveRequestEvent::set(eReceiveRequestEvent &src,
                                const int postpone,
                                const bool finish) {
+    setWarningMonths(src.warningMonths());
     mResource = src.mResource;
     mCount = src.mCount;
     mCity = src.mCity;

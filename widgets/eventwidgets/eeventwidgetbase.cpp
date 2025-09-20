@@ -514,7 +514,9 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     completeButton->setValue(e->episodeCompleteEvent() ? 3 : 0);
     dateW->addWidget(completeButton);
 
-    if(!e->warnings().empty()) {
+    if(!e->warnings().empty() ||
+       et == eGameEventType::receiveRequest ||
+       et == eGameEventType::troopsRequest) {
         const auto warningButtonL = new eLabeledWidget(window());
         const auto warningButton = new eValueButton(window());
         warningButton->setValueChangeAction([e](const int ms) {

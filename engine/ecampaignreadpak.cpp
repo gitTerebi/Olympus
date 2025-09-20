@@ -555,6 +555,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setAttackingCity(attackingCity);
                 ee->setMinCityId(cityMin);
                 ee->setMaxCityId(cityMax);
+                ee->setWarningMonths(duration);
                 eTroopsRequestEventEffect effect;
                 if(effectOnCityId == 0) {
                     effect = eTroopsRequestEventEffect::unaffected;
@@ -585,6 +586,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setMaxCount(amountMax);
                 ee->setMinCityId(cityMin);
                 ee->setMaxCityId(cityMax);
+                ee->setWarningMonths(duration);
                 e = ee;
             }
         } break;

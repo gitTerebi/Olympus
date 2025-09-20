@@ -109,8 +109,6 @@ void eTroopsRequestEvent::read(eReadStream& src) {
     src >> mPostpone;
 }
 
-const int gPostponeDays = 6*31;
-
 void eTroopsRequestEvent::trigger() {
     chooseCity();
     if(!mCity) return;
@@ -120,7 +118,7 @@ void eTroopsRequestEvent::trigger() {
     eEventData ed(pid);
     ed.fCity = mCity;
     ed.fRivalCity = mAttackingCity;
-    ed.fTime = 6;
+    ed.fTime = warningMonths();
 
     if(mFinish) {
         if(mPostpone > 2) {
@@ -140,7 +138,7 @@ void eTroopsRequestEvent::trigger() {
             const auto e = e::make_shared<eTroopsRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
             e->set(*this, mPostpone + 1);
-            const auto date = board->date() + gPostponeDays;
+            const auto date = board->date() + 30*warningMonths();
             e->initializeDate(date);
             addConsequence(e);
         };
