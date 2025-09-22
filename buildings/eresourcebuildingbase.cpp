@@ -36,16 +36,6 @@ void eResourceBuildingBase::timeChanged(const int by) {
     eEmployingBuilding::timeChanged(by);
 }
 
-int eResourceBuildingBase::addProduced(const eResourceType type, const int count) {
-    const int c = add(type, count);
-    const bool isPp = isPersonPlayer();
-    if(isPp) {
-        auto& board = getBoard();
-        board.incProduced(type, c);
-    }
-    return c;
-}
-
 int eResourceBuildingBase::add(const eResourceType type,
                                const int count) {
     if(type != mResType) return 0;

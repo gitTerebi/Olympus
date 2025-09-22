@@ -2,6 +2,17 @@
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
+#include "engine/egameboard.h"
+
+int eBuildingWithResource::addProduced(const eResourceType type, const int count) {
+    const int c = add(type, count);
+    const bool isPp = isPersonPlayer();
+    if(isPp) {
+        auto& board = getBoard();
+        board.incProduced(type, c);
+    }
+    return c;
+}
 
 int eBuildingWithResource::stash(const eResourceType type, const int count) {
     const bool a = static_cast<bool>(type & mStashable);

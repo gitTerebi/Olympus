@@ -61,7 +61,7 @@ void eFarmBase::timeChanged(const int by) {
         if(mNextRipe > eNumbers::sFarmRipePeriod) {
             mNextRipe = 0;
             if(++mRipe == 5) {
-                add(resourceType(), 4);
+                addProduced(resourceType(), 4);
                 mRipe = 0;
             }
         }

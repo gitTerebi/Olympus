@@ -50,6 +50,8 @@ public:
         return {};
     }
 
+    int addProduced(const eResourceType type, const int count);
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 

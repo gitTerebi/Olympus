@@ -115,7 +115,7 @@ void eCorral::timeChanged(const int by) {
     const double eff = effectiveness();
     const double newP = std::max(0., mProcessing - by*eff);
     if(newP == 0. && mProcessing > 0) {
-        add(eResourceType::meat, 3);
+        addProduced(eResourceType::meat, 3);
     }
 
     mProcessing = newP;
