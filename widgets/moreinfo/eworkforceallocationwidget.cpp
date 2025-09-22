@@ -15,6 +15,7 @@ eWorkforceAllocationWidget::eWorkforceAllocationWidget(
 void eWorkforceAllocationWidget::initialize(
         eGameBoard& board, const eCityId cid) {
     mBoard = &board;
+    mCityId = cid;
 
     const auto title = eLanguage::zeusText(50, 0);
     eInfoWidget::initialize(title);
