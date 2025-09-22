@@ -426,7 +426,7 @@ std::vector<eBuilding*> eGameBoard::buildings(
 int eGameBoard::countBuildings(
         const eCityId cid, const eBuildingValidator& v) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return {};
+    if(!c) return 0;
     return c->countBuildings(v);
 }
 
@@ -437,24 +437,24 @@ int eGameBoard::countBuildings(
     return c->countBuildings(t);
 }
 
-int eGameBoard::hasBuilding(
+bool eGameBoard::hasBuilding(
         const eCityId cid, const eBuildingType t) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return {};
+    if(!c) return false;
     return c->hasBuilding(t);
 }
 
 int eGameBoard::countAllowed(
         const eCityId cid, const eBuildingType t) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return {};
+    if(!c) return 0;
     return c->countAllowed(t);
 }
 
 eBuilding* eGameBoard::randomBuilding(
         const eCityId cid, const eBuildingValidator& v) const {
     const auto c = boardCityWithId(cid);
-    if(!c) return {};
+    if(!c) return nullptr;
     return c->randomBuilding(v);
 }
 

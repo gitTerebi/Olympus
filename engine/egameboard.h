@@ -361,8 +361,8 @@ public:
                        const eBuildingValidator& v) const;
     int countBuildings(const eCityId cid,
                        const eBuildingType t) const;
-    int hasBuilding(const eCityId cid,
-                    const eBuildingType t) const;
+    bool hasBuilding(const eCityId cid,
+                     const eBuildingType t) const;
     int countAllowed(const eCityId cid,
                      const eBuildingType t) const;
     eBuilding* randomBuilding(const eCityId cid,

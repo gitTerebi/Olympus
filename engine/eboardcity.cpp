@@ -1329,7 +1329,7 @@ int eBoardCity::countBuildings(const eBuildingType t) const {
     });
 }
 
-int eBoardCity::hasBuilding(const eBuildingType t) const {
+bool eBoardCity::hasBuilding(const eBuildingType t) const {
     for(const auto b : mTimedBuildings) {
         const bool r = t == b->type();
         if(r) return true;

@@ -165,7 +165,7 @@ public:
     std::vector<eBuilding*> buildings(const eBuildingType type) const;
     int countBuildings(const eBuildingValidator& v) const;
     int countBuildings(const eBuildingType t) const;
-    int hasBuilding(const eBuildingType t) const;
+    bool hasBuilding(const eBuildingType t) const;
     int countAllowed(const eBuildingType t) const;
     eBuilding* randomBuilding(const eBuildingValidator& v) const;
     eTile* randomTile() const;
