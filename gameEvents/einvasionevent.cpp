@@ -149,11 +149,17 @@ void eInvasionEvent::trigger() {
         updateDisembarkAndShoreTile();
     }
     chooseCount();
+    board->removeInvasion(this);
+    const auto tile = invasionTile();
+    if(!mCity || !tile) {
+        if(mConquestEvent) {
+            mConquestEvent->planArmyReturn();
+        }
+        return;
+    }
     const int c = count();
     const auto cid = cityId();
-    board->removeInvasion(this);
     mWarned = false;
-    const auto tile = invasionTile();
 
     int infantry = 0;
     int cavalry = 0;
