@@ -498,7 +498,7 @@ bool eGod::sTarget(const eGodType gt, const eBuildingType bt) {
                bt == eBuildingType::observatory ||
                bt == eBuildingType::museum;
     case eGodType::ares:
-        return true;
+        return false;
     case eGodType::artemis:
         return bt == eBuildingType::huntingLodge ||
                bt == eBuildingType::granary;
