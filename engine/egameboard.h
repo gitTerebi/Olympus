@@ -688,7 +688,8 @@ public:
                       const eCityId cid,
                       const ePlayerId pid,
                       const bool fertile = false,
-                      const bool flat = false) const;
+                      const bool flat = false,
+                      const int allowedWater = 0) const;
     bool canBuild(const int tx, const int ty,
                   const int sw, const int sh,
                   const bool forestAllowed,
@@ -705,7 +706,8 @@ public:
                    const eCityId cid,
                    const bool editorDisplay,
                    const bool fertile = false,
-                   const bool flat = false);
+                   const bool flat = false,
+                   const int allowWater = 0);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
                const eCityId cid,

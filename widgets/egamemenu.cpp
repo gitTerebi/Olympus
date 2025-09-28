@@ -51,16 +51,16 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
     for(const auto& c : wrld.cities()) {
         const auto cCid = c->cityId();
         i++;
-        if(c->isRival()) continue;
+        if(c->isRival() && !showAllPossibleBuildings) continue;
         if(cid == cCid) continue;
-        if(!c->active()) continue;
-        if(!c->visible()) continue;
+        if(!c->active() && !showAllPossibleBuildings) continue;
+        if(!c->visible() && !showAllPossibleBuildings) continue;
         if(board.hasTradePost(cid, *c)) continue;
         const auto tradeCid = c->cityId();
         const auto tradePid = board.cityIdToPlayerId(tradeCid);
         const auto tradeC = board.boardCityWithId(tradeCid);
         const auto tradeTid = board.playerIdToTeamId(tradePid);
-        const auto tid = board.playerIdToTeamId(ppid);
+        const auto tid = board.playerIdToTeamId(pid);
         if(eTeamIdHelpers::isEnemy(tradeTid, tid)) continue;
         if(!c->buys().empty() || !c->sells().empty() ||
            (tradeC && pid == tradePid)) {

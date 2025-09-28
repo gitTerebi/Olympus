@@ -3683,8 +3683,10 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
                               const eCityId cid,
                               const ePlayerId pid,
                               const bool fertile,
-                              const bool flat) const {
+                              const bool flat,
+                              const int allowedWater) const {
     if(pid != cityIdToPlayerId(cid) && !mEditorMode) return false;
+    int waterCount = 0;
     bool fertileFound = false;
     for(int x = minX; x < maxX; x++) {
         for(int y = minY; y < maxY; y++) {
@@ -3701,10 +3703,15 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
                 fertileFound = true;
             }
 
-            const auto ttta = forestAllowed ?
-                                  ttt & eTerrain::buildableAfterClear :
-                                  ttt & eTerrain::buildable;
-            if(!static_cast<bool>(ttta)) return false;
+            if(ttt == eTerrain::water) {
+                waterCount++;
+                if(waterCount > allowedWater) return false;
+            } else {
+                const auto ttta = forestAllowed ?
+                                      ttt & eTerrain::buildableAfterClear :
+                                      ttt & eTerrain::buildable;
+                if(!static_cast<bool>(ttta)) return false;
+            }
 
             if(!t->walkableElev() && t->isElevationTile()) return false;
 
@@ -3743,12 +3750,14 @@ bool eGameBoard::buildBase(const int minX, const int minY,
                            const eCityId cid,
                            const bool editorDisplay,
                            const bool fertile,
-                           const bool flat) {
+                           const bool flat,
+                           const int allowWater) {
     const int sw = maxX - minX + 1;
     const int sh = maxY - minY + 1;
     const bool cb = canBuildBase(minX, maxX + 1, minY, maxY + 1,
                                  editorDisplay,
-                                 cid, pid, fertile, flat);
+                                 cid, pid, fertile, flat,
+                                 allowWater);
     if(!cb) return false;
     if(!bc) return false;
     const auto b = bc();

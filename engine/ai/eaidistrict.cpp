@@ -126,7 +126,8 @@ bool gBuild(const eAIBuilding& b,
         const auto bc = [boardPtr, cid, b]() {
             return  e::make_shared<eRoad>(*boardPtr, cid);
         };
-        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay,
+                               false, false, 1);
     } break;
     case eBuildingType::avenue: {
         const auto bc = [boardPtr, cid, b]() {
@@ -444,13 +445,15 @@ bool gBuild(const eAIBuilding& b,
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eFishery>(*boardPtr, b.fO, cid);
         };
-        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay,
+                               false, false, 2);
     } break;
     case eBuildingType::urchinQuay: {
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eUrchinQuay>(*boardPtr, b.fO, cid);
         };
-        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay,
+                               false, false, 2);
     } break;
 
     case eBuildingType::cardingShed: {
@@ -680,9 +683,9 @@ bool gBuild(const eAIBuilding& b,
     case eBuildingType::tradePost: {
         const auto& oR = b.fOtherRect;
         if(b.fTradePostType == eTradePostType::pier) {
-            const bool cb = board.canBuild(oR.x, oR.y,
-                                           oR.w, oR.h,
-                                           true, cid, pid);
+            const bool cb = board.canBuildBase(oR.x, oR.y,
+                                               oR.x + oR.w - 1, oR.y + oR.h - 1,
+                                               true, cid, pid, false, false, 2);
             if(!cb) return false;
         }
         eTradePost* tpPtr = nullptr;
@@ -709,7 +712,7 @@ bool gBuild(const eAIBuilding& b,
             return p;
         };
         return board.buildBase(oR.x, oR.y, oR.x + oR.w - 1, oR.y + oR.h - 1,
-                               bcp, pid, cid, editorDisplay);
+                               bcp, pid, cid, editorDisplay, false, false, 2);
     } break;
 
 
