@@ -664,6 +664,9 @@ void eBoardCity::saveEditorCityPlan() {
         } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
             ab.fGuides = pb->patrolGuides();
             ab.fGuidesBothDirections = pb->bothDirections();
+            if(const auto f = dynamic_cast<eAgoraBase*>(b)) {
+                ab.fO = f->diagonalOrientation();
+            }
         } else if(const auto s = dynamic_cast<eSanctuary*>(b)) {
             const bool r = s->rotated();
             ab.fO = r ? eDiagonalOrientation::topLeft :

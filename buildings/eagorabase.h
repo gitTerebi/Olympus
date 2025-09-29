@@ -18,6 +18,7 @@ public:
     eAgoraBase(eGameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
+               const eAgoraOrientation o,
                const eCityId cid,
                const int nPts);
 
@@ -50,8 +51,14 @@ public:
     void agoraProvide(eBuilding* const b);
     int agoraCount(const eResourceType r) const;
     eVendor* vendor(const eResourceType r) const;
+
+    eAgoraOrientation orientation() const { return mO; }
+    eDiagonalOrientation diagonalOrientation() const;
 private:
     const int mNPts;
+protected:
+    const eAgoraOrientation mO;
+private:
     std::vector<stdsptr<eBuilding>> mBs;
 };
 

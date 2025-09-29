@@ -12,6 +12,7 @@
 eAgoraBase::eAgoraBase(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
+                       const eAgoraOrientation o,
                        const eCityId cid,
                        const int nPts) :
     ePatrolBuildingBase(board,
@@ -21,7 +22,7 @@ eAgoraBase::eAgoraBase(eGameBoard& board,
                             return p;
                         },
                         type, sw, sh, 0, cid),
-    mNPts(nPts) {
+    mNPts(nPts), mO(o) {
     eGameTextures::loadAgora();
     for(int i = 0; i < mNPts; i++) {
         mBs.push_back(nullptr);
@@ -249,4 +250,18 @@ eVendor* eAgoraBase::vendor(const eResourceType r) const {
         if(re) return v;
     }
     return nullptr;
+}
+
+eDiagonalOrientation eAgoraBase::diagonalOrientation() const {
+    switch(mO) {
+    case eAgoraOrientation::topRight:
+        return eDiagonalOrientation::topRight;
+    case eAgoraOrientation::bottomRight:
+        return eDiagonalOrientation::bottomRight;
+    case eAgoraOrientation::bottomLeft:
+        return eDiagonalOrientation::bottomLeft;
+    case eAgoraOrientation::topLeft:
+        return eDiagonalOrientation::topLeft;
+    }
+    return eDiagonalOrientation::topRight;
 }

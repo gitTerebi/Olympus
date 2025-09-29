@@ -9,10 +9,6 @@ public:
                 const eCityId cid);
 
     SDL_Point pt(const int id) const;
-
-    eAgoraOrientation orientation() const { return mO; }
-private:
-    const eAgoraOrientation mO;
 };
 
 #endif // EGRANDAGORA_H
