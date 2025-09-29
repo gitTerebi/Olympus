@@ -372,6 +372,9 @@ void eWorldMenu::updateButtonsEnabled() const {
         const bool onBoard = mCity->isOnBoard();
         const bool onBoardNeutral = mCity->isOnBoardNeutral();
         const bool onBoardPlayerColony = mCity->isOnBoardColony();
+        const auto ppid = mBoard->personPlayer();
+        const bool ownedOnBoardColony = onBoardPlayerColony && mCity->playerId() == ppid;
+        const bool onBoardEnemyColony = onBoardPlayerColony && !ownedOnBoardColony;
 
         mRequestButton->setEnabled(!distant && !cc &&
                                    !onBoardPlayerColony && !onBoardNeutral);
@@ -391,13 +394,13 @@ void eWorldMenu::updateButtonsEnabled() const {
             if(!ob) continue;
             nPlayerOnBoard++;
         }
-        const bool sendReinforcements = nPlayerOnBoard > 1 && (onBoardPlayerColony || cc);
+        const bool sendReinforcements = nPlayerOnBoard > 1 && (ownedOnBoardColony || cc);
         if(sendReinforcements) {
             mConquerButton->setEnabled(true);
             mConquerButton->setTooltip(eLanguage::zeusText(41, 7));
         } else {
-            mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival()) &&
-                                       !distant && !cc && !onBoardPlayerColony &&
+            mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival() || onBoardEnemyColony) &&
+                                       !distant && !cc && !ownedOnBoardColony &&
                                        !onBoardNeutral);
             mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
         }

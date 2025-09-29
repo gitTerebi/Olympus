@@ -64,11 +64,15 @@ void eWorldWidget::initialize() {
         openEnlistForcesDialog(enlistAction, {mCity}, resources);
     };
     const auto conquerFunc = [this]() {
-        const auto enlistAction = [this](const eEnlistedForces& forces,
-                                         const eResourceType r) {
+        const auto ppid = mBoard->personPlayer();
+        const bool ownedOnBoardColony = mCity->isOnBoardColony() && mCity->playerId() == ppid;
+        const bool reinforcements = mCity->isCurrentCity() || ownedOnBoardColony;
+        const auto enlistAction = [this, reinforcements](
+                                      const eEnlistedForces& forces,
+                                      const eResourceType r) {
             (void)r;
             mBoard->enlistForces(forces);
-            if(mCity->isOnBoardColony() || mCity->isCurrentCity()) {
+            if(reinforcements) {
                 const auto toCid = mCity->cityId();
                 const auto e = e::make_shared<eReinforcementsEvent>(
                     toCid, eGameEventBranch::root, *mBoard);
@@ -92,8 +96,7 @@ void eWorldWidget::initialize() {
                 update();
             }
         };
-        const bool onlySoldiers = mCity->isOnBoardColony() || mCity->isCurrentCity();
-        openEnlistForcesDialog(enlistAction, {mCity}, {}, onlySoldiers);
+        openEnlistForcesDialog(enlistAction, {mCity}, {}, reinforcements);
     };
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);
