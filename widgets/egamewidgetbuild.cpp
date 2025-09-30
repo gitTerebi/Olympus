@@ -1465,21 +1465,38 @@ bool eGameWidget::buildMouseRelease() {
             const bool cb1 = mBoard->canBuildBase(ttx, ttx + 2, tty, tty + 2,
                                                   mEditorMode, cid, pid);
             if(!cb1) return true;
-            ttx = tx + dx/2;
-            tty = ty + dy/2;
+            std::vector<eTile*> roadTiles;
+
+            if(sw == 2) {
+                const auto t2 = mBoard->tile(tx, ty + 2);
+                if(!t2) return true;
+                roadTiles.push_back(t2);
+                const auto t3 = t2->tileRel<eTile>(1, 0);
+                if(!t3) return true;
+                roadTiles.push_back(t3);
+            } else {
+                const auto t2 = mBoard->tile(tx + 2, ty);
+                if(!t2) return true;
+                roadTiles.push_back(t2);
+                const auto t3 = t2->tileRel<eTile>(0, 1);
+                if(!t3) return true;
+                roadTiles.push_back(t3);
+            }
+
+            for(const auto t : roadTiles) {
+                if(!t) return true;
+                if(t->hasRoad()) continue;
+                const bool cb = mBoard->canBuildBase(t->x(), t->x() + 1, t->y(), t->y() + 1,
+                                                     mEditorMode, cid, pid);
+                if(!cb) return true;
+            }
+
+            ttx = tx + dx;
+            tty = ty + dy;
             const bool cb2 = mBoard->canBuildBase(ttx, ttx + 2, tty, tty + 2,
                                                   mEditorMode, cid, pid);
             if(!cb2) return true;
-            ttx = tx + dx;
-            tty = ty + dy;
-            const bool cb3 = mBoard->canBuildBase(ttx, ttx + 2, tty, tty + 2,
-                                                  mEditorMode, cid, pid);
-            if(!cb3) return true;
             const auto b1 = e::make_shared<eGatehouse>(*mBoard, mRotate, mViewedCityId);
-            const auto t1 = mBoard->tile(tx, ty + 1);
-            if(!t1) return true;
-            const auto t2 = t1->tileRel<eTile>(dx, dy);
-            if(!t2) return true;
 
             b1->setTileRect({tx, ty, sw, sh});
             const int minX = tx;
@@ -1496,38 +1513,14 @@ bool eGameWidget::buildMouseRelease() {
                     }
                 }
             }
-            if(sw == 2) {
-                const auto t2 = t1->tileRel<eTile>(0, 1);
-                const auto r1 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                r1->setTileRect({t2->x(), t2->y(), 1, 1});
-                r1->setUnderGatehouse(b1.get());
-                r1->addUnderBuilding(t2);
-                t2->setUnderBuilding(r1);
-                r1->setCenterTile(t2);
 
-                const auto t3 = t2->tileRel<eTile>(1, 0);
+            for(const auto r : roadTiles) {
                 const auto r2 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                r2->setTileRect({t3->x(), t3->y(), 1, 1});
+                r2->setTileRect({r->x(), r->y(), 1, 1});
                 r2->setUnderGatehouse(b1.get());
-                r2->addUnderBuilding(t3);
-                t3->setUnderBuilding(r2);
-                r2->setCenterTile(t3);
-            } else {
-                const auto t2 = t1->tileRel<eTile>(2, -1);
-                const auto r1 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                r1->setTileRect({t2->x(), t2->y(), 1, 1});
-                r1->setUnderGatehouse(b1.get());
-                r1->addUnderBuilding(t2);
-                t2->setUnderBuilding(r1);
-                r1->setCenterTile(t2);
-
-                const auto t3 = t2->tileRel<eTile>(0, 1);
-                const auto r2 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                r2->setTileRect({t3->x(), t3->y(), 1, 1});
-                r2->setUnderGatehouse(b1.get());
-                r2->addUnderBuilding(t3);
-                t3->setUnderBuilding(r2);
-                r2->setCenterTile(t3);
+                r2->addUnderBuilding(r);
+                r->setUnderBuilding(r2);
+                r2->setCenterTile(r);
             }
             r = true;
             if(!mEditorMode) {
