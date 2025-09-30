@@ -5,6 +5,7 @@
 #include "elanguage.h"
 #include "engine/egameboard.h"
 #include "buildings/epalace.h"
+#include "buildings/eroad.h"
 #include "eiteratesquare.h"
 #include "engine/epathfinder.h"
 #include "etilehelper.h"
@@ -670,16 +671,10 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         ePathFinder p([](eTileBase* const t) {
             const auto bt = t->underBuildingType();
             if(bt == eBuildingType::road) {
-                for(int dx = -1; dx <= 1; dx++) {
-                    for(int dy = -1; dy <= 1; dy++) {
-                        if(dx == 0 && dy == 0) continue;
-                        const auto tt = t->tileRel(dx, dy);
-                        if(!tt) continue;
-                        const auto btt = t->underBuildingType();
-                        if(btt == eBuildingType::gatehouse) return true;
-                    }
-                }
-                return false;
+                const auto tt = static_cast<eTile*>(t);
+                const auto ub = static_cast<eRoad*>(tt->underBuilding());
+                if(ub->underGatehouse()) return false;
+                return true;
             }
 
             return bt != eBuildingType::wall &&
@@ -687,12 +682,12 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         }, [&](eTileBase* const t) {
             const int dx = t->x() - tx;
             const int dy = t->y() - ty;
-            return sqrt(dx*dx + dy*dy) > 10;
+            return sqrt(dx*dx + dy*dy) > 30;
         });
         const auto startTile = board.tile(tx, ty);
         const int w = board.width();
         const int h = board.height();
-        const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
+        const bool r = p.findPath({0, 0, w, h}, startTile, 200, true, w, h);
         sc = r ? 0 : 1;
     } break;
     case eHeroRequirementType::marble:
