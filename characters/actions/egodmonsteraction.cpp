@@ -440,12 +440,12 @@ void eGodMonsterAction::goToNearestRoad(
         const int dist) {
     const auto c = character();
     const auto t = c->tile();
-    if(t->hasRoad()) {
+    if(t->roadLength(5) >= 5) {
         patrol(finishAct, dist);
         return;
     }
-    const auto cr = eTileHelper::closestRoad(t->x(), t->y(), board());
-    if(cr && cr->hasRoad()) {
+    const auto cr = eTileHelper::closestRoad(t->x(), t->y(), board(), 5);
+    if(cr && cr->roadLength(5) >= 5) {
         const auto fail = std::make_shared<eGMA_patrolFailFail>(
                               board(), this, finishAct);
         const auto finish = std::make_shared<eGMA_patrolFailFinish>(

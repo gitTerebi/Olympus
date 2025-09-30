@@ -29,7 +29,7 @@ namespace eTileHelper {
                                const int width, const int height);
 
     eTile* closestRoad(const int rdx, const int rdy,
-                       eGameBoard& board);
+                       eGameBoard& board, const int minLen = 1);
 
     SDL_Rect toRotatedRect(const SDL_Rect& r,
                            const eWorldDirection dir,
