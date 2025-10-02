@@ -1207,6 +1207,7 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
             }
         }
         if(!event) return;
+        event->chooseMonster();
         const auto type = event->monsterType();
         goal->fEnumInt1 = static_cast<int>(type);
         goal->fRequiredCount = 1;

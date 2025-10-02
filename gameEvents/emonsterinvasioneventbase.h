@@ -22,7 +22,7 @@ public:
     void setAggressivness(const eMonsterAggressivness a)
     { mAggressivness = a; }
 
-    void setWarned(const bool w);
+    void chooseMonster();
     bool valid() const { return mValid; }
 
     void write(eWriteStream& dst) const override;
@@ -37,7 +37,7 @@ protected:
     eMonster* triggerBase();
 private:
     stdsptr<eEventTrigger> mKilledTrigger;
-    bool mWarned = false;
+    bool mChooseMonster = false;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;
 
     bool mValid = false;

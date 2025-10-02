@@ -22,7 +22,7 @@ void eMonsterInvasionWarning::trigger() {
 
     auto& p = parent();
     if(const auto i = dynamic_cast<eMonsterInvasionEventBase*>(&p)) {
-        i->setWarned(true);
+        i->chooseMonster();
         if(!i->valid()) return;
         ed.fMonster = i->monsterType();
     }

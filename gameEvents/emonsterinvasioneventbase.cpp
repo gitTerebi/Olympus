@@ -25,17 +25,17 @@ eMonsterInvasionEventBase::~eMonsterInvasionEventBase() {
     if(board) board->removeMonsterEvent(this);
 }
 
-void eMonsterInvasionEventBase::setWarned(const bool w) {
-    if(mWarned == w) return;
-    mWarned = w;
-    if(mWarned) mValid = chooseMonster(mSpawned);
+void eMonsterInvasionEventBase::chooseMonster() {
+    if(mChooseMonster) return;
+    mChooseMonster = true;
+    mValid = eMonstersEventValue::chooseMonster(mSpawned);
 }
 
 void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventValue::write(dst);
     eMonstersEventValue::write(dst);
-    dst << mWarned;
+    dst << mChooseMonster;
     dst << mAggressivness;
     dst << mValid;
 
@@ -54,7 +54,7 @@ void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventValue::read(src);
     eMonstersEventValue::read(src);
-    src >> mWarned;
+    src >> mChooseMonster;
     src >> mAggressivness;
     src >> mValid;
 
@@ -93,11 +93,11 @@ void eMonsterInvasionEventBase::killed(const eMonsterType monster) {
 eMonster* eMonsterInvasionEventBase::triggerBase() {
     const auto board = gameBoard();
     if(!board) return nullptr;
-    if(!mWarned) mValid = chooseMonster(mSpawned);
+    if(!mChooseMonster) chooseMonster();
     if(!mValid) return nullptr;
     mSpawned.push_back(mMonster);
     board->addMonsterEvent(mMonster, this);
-    mWarned = false;
+    mChooseMonster = false;
     choosePointId();
     const auto cid = cityId();
     const auto monster = eMonster::sCreateMonster(mMonster, *board);
