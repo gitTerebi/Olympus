@@ -36,7 +36,7 @@ void eEnlistedForces::read(eGameBoard& board,
         src >> ns;
         for(int i = 0; i < ns; i++) {
             const auto func = [this](const stdsptr<eSoldierBanner>& b) {
-                fSoldiers.push_back(b);
+                if(b) fSoldiers.push_back(b);
             };
             src.readSoldierBanner(&board, func);
         }
