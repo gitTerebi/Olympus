@@ -35,7 +35,7 @@ private:
     int mHorses = 0;
     int mChariots = 0;
 
-    stdptr<eCartTransporter> mWheatCart;
+    stdptr<eCartTransporter> mWoodCart;
     stdptr<eCartTransporter> mHorseCart;
 };
 

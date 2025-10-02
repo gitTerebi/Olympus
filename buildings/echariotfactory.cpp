@@ -10,7 +10,7 @@ eChariotFactory::eChariotFactory(
 }
 
 eChariotFactory::~eChariotFactory() {
-    if(mWheatCart) mWheatCart->kill();
+    if(mWoodCart) mWoodCart->kill();
     if(mHorseCart) mHorseCart->kill();
 }
 
@@ -82,9 +82,9 @@ eChariotFactory::getOverlays(const eTileSize size) const {
 
 void eChariotFactory::timeChanged(const int by) {
     if(enabled()) {
-        if(!mWheatCart) {
-            mWheatCart = spawnCart(eCartActionTypeSupport::take);
-            mWheatCart->setSupportResource(eResourceType::wheat);
+        if(!mWoodCart) {
+            mWoodCart = spawnCart(eCartActionTypeSupport::take);
+            mWoodCart->setSupportResource(eResourceType::wood);
         }
         if(!mHorseCart) {
             mHorseCart = spawnCart(eCartActionTypeSupport::take);
@@ -134,7 +134,7 @@ int eChariotFactory::take(const eResourceType type, const int count) {
 }
 
 int eChariotFactory::spaceLeft(const eResourceType type) const {
-    if(type == eResourceType::wheat) return std::max(0, 8 - mWood);
+    if(type == eResourceType::wood) return std::max(0, 8 - mWood);
     if(type == eResourceType::horse) return std::max(0, 4 - mHorses);
     return eEmployingBuilding::spaceLeft(type);
 }
@@ -168,7 +168,7 @@ void eChariotFactory::read(eReadStream& src) {
     src >> mChariots;
     auto& board = getBoard();
     src.readCharacter(&board, [this](eCharacter* const c) {
-        mWheatCart = static_cast<eCartTransporter*>(c);
+        mWoodCart = static_cast<eCartTransporter*>(c);
     });
     src.readCharacter(&board, [this](eCharacter* const c) {
         mHorseCart = static_cast<eCartTransporter*>(c);
@@ -181,6 +181,6 @@ void eChariotFactory::write(eWriteStream& dst) const {
     dst << mWood;
     dst << mHorses;
     dst << mChariots;
-    dst.writeCharacter(mWheatCart);
+    dst.writeCharacter(mWoodCart);
     dst.writeCharacter(mHorseCart);
 }
