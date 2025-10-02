@@ -160,8 +160,8 @@ private:
     std::vector<stdsptr<eColonyEpisode>> mColonyEpisodes;
     std::vector<int> mPlayedColonyEpisodes;
 
-    std::vector<eSetAside> mForColony;
-    std::vector<eSetAside> mForParent;
+    std::vector<stdsptr<eSetAside>> mForColony;
+    std::vector<stdsptr<eSetAside>> mForParent;
 };
 
 #endif // ECAMPAIGN_H

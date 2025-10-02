@@ -380,8 +380,8 @@ void eCampaign::read(eReadStream& src) {
         int ne;
         src >> ne;
         for(int i = 0; i < ne; i++) {
-            eSetAside set;
-            set.read(src, &mWorldBoard);
+            const auto set = std::make_shared<eSetAside>();
+            set->read(src, &mWorldBoard);
             mForColony.push_back(set);
         }
     }
@@ -389,8 +389,8 @@ void eCampaign::read(eReadStream& src) {
         int ne;
         src >> ne;
         for(int i = 0; i < ne; i++) {
-            eSetAside set;
-            set.read(src, &mWorldBoard);
+            const auto set = std::make_shared<eSetAside>();
+            set->read(src, &mWorldBoard);
             mForParent.push_back(set);
         }
     }
@@ -461,12 +461,12 @@ void eCampaign::write(eWriteStream& dst) const {
 
     dst << mForColony.size();
     for(const auto& e : mForColony) {
-        e.write(dst);
+        e->write(dst);
     }
 
     dst << mForParent.size();
     for(const auto& e : mForParent) {
-        e.write(dst);
+        e->write(dst);
     }
 
     dst << mBriefId;
@@ -558,12 +558,12 @@ void eCampaign::startEpisode() {
     board->startEpisode(e, col);
     if(mCurrentEpisodeType == eEpisodeType::colony) {
         for(const auto& g : mForColony) {
-            board->planGiftFrom(g.fFrom, g.fRes, g.fCount, 180);
+            board->planGiftFrom(g->fFrom, g->fRes, g->fCount, 180);
         }
         mForColony.clear();
     } else {
         for(const auto& g : mForParent) {
-            board->planGiftFrom(g.fFrom, g.fRes, g.fCount, 180);
+            board->planGiftFrom(g->fFrom, g->fRes, g->fCount, 180);
         }
         mForParent.clear();
     }
@@ -714,10 +714,10 @@ void eCampaign::setEditorMode(const bool e) {
 
 void eCampaign::setAside(const eResourceType res, const int count,
                          const stdsptr<eWorldCity>& from) {
-    eSetAside set;
-    set.fRes = res;
-    set.fCount = count;
-    set.fFrom = from;
+    const auto set = std::make_shared<eSetAside>();
+    set->fRes = res;
+    set->fCount = count;
+    set->fFrom = from;
     if(mCurrentEpisodeType == eEpisodeType::colony) {
         mForParent.push_back(set);
     } else {
