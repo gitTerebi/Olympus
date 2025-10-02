@@ -996,6 +996,8 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
         tile->setTerrain(eTerrain::beach);
     }
 
+    board.updateMarbleTiles();
+
     return true;
 }
 
