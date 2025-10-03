@@ -131,52 +131,41 @@ mv "$TMP_FILE" "$PRO_FILE"
 
 }
 
-function brew
-{
-	# Patch files for macOS
-	macos_patch
-	
-	rm -rf build_*
-	mkdir -p build_arm/libs build_x86/libs
-	
-	cd build_arm
-	
-	# Set environment paths for arm64 architecture
-	export CPATH=/opt/homebrew/include:$CPATH
-	export LIBRARY_PATH=/opt/homebrew/lib:$LIBRARY_PATH
-	
-	# Build arm64
-	echo "Building for ARM64..."
-	qmake QMAKE_APPLE_DEVICE_ARCHS=arm64 ..
-	make
-	make clean
-	rm Makefile
+function build_arch {
+    ARCH=$1
+    BUILDDIR="build_${ARCH}"
 
-	dylibbundler -of -cd -b -x "eZeus" -d "libs" -p "@executable_path/libs/"
-	
-	curl -L -O https://github.com/MacThings/eZeus/releases/download/Zeus/Zeus_MM.xml
+    echo "[*] Building for $ARCH..."
+    rm -rf "$BUILDDIR"
+    mkdir -p "$BUILDDIR/libs"
+    pushd "$BUILDDIR" >/dev/null
+
+    if [ "$ARCH" = "arm64" ]; then
+        export CPATH=/opt/homebrew/include:$CPATH
+        export LIBRARY_PATH=/opt/homebrew/lib:$LIBRARY_PATH
+    else
+        export CPATH=/usr/local/include:$CPATH
+        export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
+    fi
+
+    qmake QMAKE_APPLE_DEVICE_ARCHS=$ARCH ..
+    make -j$(sysctl -n hw.ncpu)
+
+    dylibbundler -of -cd -b -x "eZeus" -d "libs" -p "@executable_path/libs/"
+    
+    curl -L -O https://github.com/MacThings/eZeus/releases/download/Zeus/Zeus_MM.xml
 	curl -L -O https://github.com/MacThings/eZeus/releases/download/Zeus/Zeus_Text.xml
-	
-	cd ../build_x86
-
-	# Set environment paths for x86 architecture
-	export CPATH=/usr/local/include:$CPATH
-	export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
-	
-	# Build x86
-	echo "Building for x86_64..."
-	qmake QMAKE_APPLE_DEVICE_ARCHS=x86_64 ..
-	make
-	make clean
-	rm Makefile
-	
-	dylibbundler -of -cd -b -x "eZeus" -d "libs" -p "@executable_path/libs/"
-	
-	cp ../build_arm/Zeus_*.xml .
-
-	echo $'\n\n\nBuild completed!\nPlease Download the Windows Package:\nhttps://github.com/MaurycyLiebner/eZeus/releases/download/0.8.1-beta/eZeus-0.8.1-beta.zip, decompress it\nand put the eZeus Binary and the libs folder beside the Windows Exe in the Bin Folder. The 2 XML Files place beside interface.e file. Follow the instructions for windows than.\n\n\n'
+        
+    make clean
+    rm Makefile
+    
+    popd >/dev/null
 }
 
-brew
+macos_patch
+build_arch arm64
+build_arch x86_64
+
+echo -e "\n\nBuild completed!\nDownload Windows package:\nhttps://github.com/MaurycyLiebner/eZeus/releases/download/0.8.1-beta/eZeus-0.8.1-beta.zip\n"
 
 
