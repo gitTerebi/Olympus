@@ -14,6 +14,17 @@ Only windows binaries are provided. If you want to play on Linux you have to bui
 
 [You can download eZeus from GitHub](https://github.com/MaurycyLiebner/eZeus/releases)
 
+## How To Build on macOS
+
+Make sure you have **git** installed on your system.
+
+Clone the eZeus repository:
+```
+git clone --recurse-submodules https://github.com/MaurycyLiebner/eZeus
+```
+Take a look in the head of compile_apple.sh for the needed dependencies. When you are ready simply execute the script. All is done fully automatic.
+At the end you have 2 folders. build_arm and build_x86. Follow the instructions at the end of my script.
+
 ## How To Build on Linux
 
 Make sure you have **git** installed on your system.
