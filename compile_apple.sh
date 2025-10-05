@@ -1,4 +1,4 @@
-## Script for compiling as Universal Binary:
+## Script for compiling eZeus on Apple Silicon as Universal Binary.
 # softwareupdate --install-rosetta
 # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 # arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -9,40 +9,40 @@ function macos_patch
 {
 	find . -type f -name "*.cpp" | while read -r file; do
 
-		if grep -E -q '^[^/[:space:]]*.*std::random_shuffle' "$file"; then
-			perl -0777 -pi.bak -e '
-				s{
-					^ ([ \t]* )
-					(?! // | /\* )
-					(.*?)
-					std::random_shuffle\(\s*
-					([^;]+?)\.begin\(\)\s*,\s*
-					\3\.end\(\)\s*
-					\s*\);
-				}
-				{
-					my $indent=$1;
-					my $before=$2;
-					my $container=$3;
-					"${indent}std::random_device rd;\n${indent}std::mt19937 g(rd());\n${indent}std::shuffle(${container}.begin(), ${container}.end(), g);"
-				}gexm;
-			' "$file"
-	
-			if ! grep -q "#include <random>" "$file"; then
-				sed -i '' '1i\
-	#include <random>
-	' "$file"
-			fi
-	
-			if ! grep -q "#include <algorithm>" "$file"; then
-				sed -i '' '1i\
-	#include <algorithm>
-	' "$file"
-			fi
-	
-			echo "    Conversion of $file done."
-		fi
-	done
+    if grep -E -q '^[^/[:space:]]*.*std::random_shuffle' "$file"; then
+        perl -0777 -pi.bak -e '
+            s{
+                ^ ([ \t]* )
+                (?! // | /\* )
+                (.*?)
+                std::random_shuffle\(\s*
+                ([^;]+?)\.begin\(\)\s*,\s*
+                \3\.end\(\)\s*
+                \s*\);
+            }
+            {
+                my $indent=$1;
+                my $container=$3;
+                "${indent}std::shuffle(${container}.begin(), ${container}.end(), std::default_random_engine(std::random_device{}()));"
+            }gexm;
+        ' "$file"
+
+        if ! grep -q "#include <random>" "$file"; then
+            sed -i '' '1i\
+#include <random>
+' "$file"
+        fi
+
+        if ! grep -q "#include <algorithm>" "$file"; then
+            sed -i '' '1i\
+#include <algorithm>
+' "$file"
+        fi
+
+        echo "    Conversion of $file done."
+    fi
+done
+
 
     perl -i -pe 's/\x{EF}\x{BB}\x{BF}//g' engine/egameboard.cpp
     
@@ -131,7 +131,8 @@ mv "$TMP_FILE" "$PRO_FILE"
 
 }
 
-function build_arch {
+function build_arch
+{
     ARCH=$1
     BUILDDIR="build_${ARCH}"
 
@@ -167,5 +168,4 @@ build_arch arm64
 build_arch x86_64
 
 echo -e "\n\nBuild completed!\nDownload Windows package:\nhttps://github.com/MaurycyLiebner/eZeus/releases/download/0.8.1-beta/eZeus-0.8.1-beta.zip\n"
-
 
