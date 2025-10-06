@@ -78,6 +78,7 @@ void eTroopsRequestEvent::set(
     mEffect = src.mEffect;
     setSingleCity(src.mCity);
     mAttackingCity = src.mAttackingCity;
+    mMonster = src.mMonster;
 
     mPostpone = postpone;
     mFinish = finish;
@@ -256,6 +257,10 @@ void eTroopsRequestEvent::trigger() {
 void eTroopsRequestEvent::dispatch(const eAction& close) {
     const auto board = gameBoard();
     if(!board) return;
+    std::vector<stdsptr<eWorldCity>> exclude = {mCity};
+    if(mType != eTroopsRequestEventType::greekCityTerrorized) {
+        exclude.push_back(mAttackingCity);
+    }
     board->requestForces([this, board, close](
                          const eEnlistedForces& f,
                          const eResourceType) {
@@ -270,7 +275,7 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
         clearConsequences();
         addConsequence(e);
         if(close) close();
-    }, {}, {mCity, mAttackingCity});
+    }, {}, exclude);
 }
 
 void eTroopsRequestEvent::won() {

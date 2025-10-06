@@ -62,6 +62,9 @@ void eMessageBox::initialize(eGameBoard& board,
         eStringHelpers::replaceAll(msg.fTitle, "[god]",
                                    eGod::sGodName(ed.fGod));
 
+        eStringHelpers::replaceAll(msg.fTitle, "[monster]",
+                                   eMonster::sMonsterName(ed.fMonster));
+
         const auto title = new eLabel(msg.fTitle, window());
         title->setHugeFontSize();
         title->fitContent();
@@ -120,6 +123,8 @@ void eMessageBox::initialize(eGameBoard& board,
                                ed.fPlayerName);
     eStringHelpers::replaceAll(msg.fText, "[god]",
                                eGod::sGodName(ed.fGod));
+    eStringHelpers::replaceAll(msg.fText, "[monster]",
+                               eMonster::sMonsterName(ed.fMonster));
 
     const auto type = ed.fResourceType;
     const auto item = eResourceTypeHelpers::typeLongName(type);
