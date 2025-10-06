@@ -818,7 +818,6 @@ private:
 
     // begin moved to eBoardCity
     std::vector<eCharacterAction*> mCharacterActions;
-    std::vector<eTradePost*> mTradePosts;
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eBuilding*> mAllBuildings;
     std::vector<eSpawner*> mSpawners;

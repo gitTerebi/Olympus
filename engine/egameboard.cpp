@@ -3051,9 +3051,18 @@ void eGameBoard::setEpisodeLost() const {
 
 int eGameBoard::tradingPartners() const {
     int n = 0;
-    for(const auto t : mTradePosts) {
-        const bool trades = t->trades();
-        if(!trades) continue;
+    const auto ppid = personPlayer();
+    const auto& wrld = world();
+    for(const auto& c : wrld.cities()) {
+        if(c->isRival()) continue;
+        if(c->isCurrentCity()) continue;
+        if(!c->active()) continue;
+        if(!c->visible()) continue;
+        const auto tradeCid = c->cityId();
+        const auto tradePid = cityIdToPlayerId(tradeCid);
+        const auto tradeTid = playerIdToTeamId(tradePid);
+        const auto tid = playerIdToTeamId(ppid);
+        if(eTeamIdHelpers::isEnemy(tradeTid, tid)) continue;
         n++;
     }
     return n;
