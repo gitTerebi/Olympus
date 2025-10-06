@@ -47,20 +47,25 @@ eHeroType eHerosHall::sHallTypeToHeroType(const eBuildingType type,
 }
 
 eGodType athenaHephaestus(eBoardCity& c) {
-    const bool athena = c.availableBuilding(eBuildingType::templeAthena);
+    const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
+                        c.hasBuilding(eBuildingType::templeAthena);
     if(athena) return eGodType::athena;
     return eGodType::hephaestus;
 }
 
 std::pair<eGodType, eGodType> athenaHermesZeusHades(eBoardCity& c) {
     std::vector<eGodType> allowed;
-    const bool athena = c.availableBuilding(eBuildingType::templeAthena);
+    const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
+                        c.hasBuilding(eBuildingType::templeAthena);
     if(athena) allowed.push_back(eGodType::athena);
-    const bool hermes = c.availableBuilding(eBuildingType::templeHermes);
+    const bool hermes = c.availableBuilding(eBuildingType::templeHermes) ||
+                        c.hasBuilding(eBuildingType::templeHermes);
     if(hermes) allowed.push_back(eGodType::hermes);
-    const bool hades = c.availableBuilding(eBuildingType::templeHades);
+    const bool hades = c.availableBuilding(eBuildingType::templeHades) ||
+                       c.hasBuilding(eBuildingType::templeHades);
     if(hades) allowed.push_back(eGodType::hades);
-    const bool zeus = c.availableBuilding(eBuildingType::templeZeus);
+    const bool zeus = c.availableBuilding(eBuildingType::templeZeus) ||
+                      c.hasBuilding(eBuildingType::templeZeus);
     if(zeus) allowed.push_back(eGodType::zeus);
     if(allowed.size() >= 2) {
         return {allowed[0], allowed[1]};
