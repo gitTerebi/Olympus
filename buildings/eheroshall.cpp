@@ -531,7 +531,8 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         sc = board.resourceCount(cid, eResourceType::armor);
         return;
     case eHeroRequirementType::hoplite: {
-        sc = board.countBanners(eBannerType::hoplite, cid);
+        sc = board.countBanners(eBannerType::hoplite, cid) +
+             board.countBanners(eBannerType::horseman, cid);
     } break;
     case eHeroRequirementType::sanctuaryAthenaOrHephaestus: {
         const auto god = athenaHephaestus(*c);
