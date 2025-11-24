@@ -168,4 +168,4 @@ build_arch arm64
 build_arch x86_64
 
 echo -e "\n\nBuild completed!\nDownload Windows package:\nhttps://github.com/MaurycyLiebner/eZeus/releases/download/0.8.1-beta/eZeus-0.8.1-beta.zip\n"
-
+echo -e "Copy the two .xml files in the buildfolder to your eZeus root folder (not to the Bin folder within eZeus) and you are done."
