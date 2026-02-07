@@ -2061,10 +2061,25 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
 
+    const auto drawBuildText = [&](const std::string& text) {
+        p.drawText(mHoverX - mDX + padding(), mHoverY - mDY + padding(), text, eFontColor::light);
+    };
+
+    const auto drawBuildDims = [&](const int buildW, const int buildH) {
+        const auto text = std::to_string(buildW) + " x " + std::to_string(buildH);
+        drawBuildText(text);
+    };
+
+    const auto drawBuildCount = [&](const int buildCount) {
+        drawBuildText(std::to_string(buildCount));
+    };
+
     if((mode == eBuildingMode::road ||
         mode == eBuildingMode::doricColumn ||
         mode == eBuildingMode::ionicColumn ||
         mode == eBuildingMode::corinthianColumn) && mLeftPressed) {
+        int buildW = 0;
+        int buildH = 0;
         const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
         std::vector<eOrientation> path;
         const bool r = mode == eBuildingMode::road ? roadPath(path) :
@@ -2076,6 +2091,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                 double ry;
                 drawXY(t->x(), t->y(), rx, ry, 1, 1, t->altitude());
                 tp.drawTexture(rx, ry, tex, eAlignment::top);
+
+                buildW = std::max(buildW, 1 + std::abs(mHoverTX - t->x()));
+                buildH = std::max(buildH, 1 + std::abs(mHoverTY - t->y()));
             };
             eTile* t = startTile;
             for(int i = path.size() - 1; i >= 0; i--) {
@@ -2084,6 +2102,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                 t = t->neighbour<eTile>(path[i]);
             }
             if(t) drawBase(t);
+
+            drawBuildDims(buildW, buildH);
             return;
         }
     }
@@ -2111,6 +2131,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(mode == eBuildingMode::vine ||
            mode == eBuildingMode::oliveTree ||
            mode == eBuildingMode::orangeTree) {
+            int buildCount = 0;
             std::shared_ptr<eTexture> tex;
             if(mode == eBuildingMode::vine) {
                 tex = builTexs.fVine.getTexture(0);
@@ -2135,15 +2156,19 @@ void eGameWidget::paintEvent(ePainter& p) {
                     const int a = t->altitude();
                     drawXY(x, y, rx, ry, 1, 1, a);
                     tp.drawTexture(rx, ry, tex, eAlignment::top);
+
+                    buildCount++;
                 }
             }
             tex->clearColorMod();
+            drawBuildCount(buildCount);
             return;
         }
 
         if(mode == eBuildingMode::sheep ||
            mode == eBuildingMode::goat ||
            mode == eBuildingMode::cattle) {
+            int buildCount = 0;
             const auto tex = trrTexs.fBuildingBase;
             tex->setColorMod(0, 255, 0);
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
@@ -2171,14 +2196,21 @@ void eGameWidget::paintEvent(ePainter& p) {
                     tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
                     y++;
                     n++;
+
+                    buildCount++;
                 }
             }
             tex->clearColorMod();
+
+            drawBuildCount(buildCount);
         }
 
         if(mode == eBuildingMode::park ||
            mode == eBuildingMode::avenue ||
            mode == eBuildingMode::wall) {
+            int buildW = 0;
+            int buildH = 0;
+
             const auto& tex = trrTexs.fBuildingBase;
             for(int x = sMinX; x <= sMaxX; x++) {
                 for(int y = sMinY; y <= sMaxY; y++) {
@@ -2198,14 +2230,20 @@ void eGameWidget::paintEvent(ePainter& p) {
                     const int a = t->altitude();
                     drawXY(x, y, rx, ry, 1, 1, a);
                     tp.drawTexture(rx, ry, tex, eAlignment::top);
+
+                    buildW = 1 + std::max(buildW, std::abs(mHoverTX - t->x()));
+                    buildH = 1 + std::max(buildH, std::abs(mHoverTY - t->y()));
                 }
             }
+            drawBuildDims(buildW, buildH);
             return;
         }
 
         if(mode == eBuildingMode::commonHousing) {
             std::vector<SDL_Rect> rects;
             const auto& tex = trrTexs.fBuildingBase;
+            std::set<int> xs;
+            std::set<int> ys;
             for(int x = sMinX; x <= sMaxX; x++) {
                 for(int y = sMinY - 1; y <= sMaxY; y++) {
                     const SDL_Rect rect{x, y, 2, 2};
@@ -2233,8 +2271,15 @@ void eGameWidget::paintEvent(ePainter& p) {
                     tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
                     tp.drawTexture(rx + 1, ry + 1, tex, eAlignment::top);
                     rects.emplace_back(rect);
+
+                    xs.insert(x);
+                    xs.insert(x + 1);
+                    ys.insert(y);
+                    ys.insert(y + 1);
                 }
             }
+
+            drawBuildDims(xs.size()/2, ys.size()/2);
             return;
         }
     }
