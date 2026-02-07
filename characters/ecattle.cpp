@@ -1,7 +1,11 @@
 #include "ecattle.h"
 
+#include "eiteratesquare.h"
+#include "engine/egameboard.h"
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include "buildings/eanimalbuilding.h"
+#include "actions/eanimalaction.h"
 
 int eCattle::sId = 0;
 
@@ -104,16 +108,47 @@ void eCattle::write(eWriteStream& dst) const {
     dst << sId;
 }
 
+bool eCattle::shouldBecomeBull() const {
+    const auto t = getSpawnerTile();
+    if(!t) return false;
+    int nCattle = 0;
+    bool hasBull = false;
+    for(int k = 0; k < 10; k++) {
+        eIterateSquare::iterateSquare(k, [&](const int dx, const int dy) {
+            const auto tt = t->tileRel<eTile>(dx, dy);
+            if(tt && tt->underBuildingType() == eBuildingType::cattle) {
+                nCattle++;
+                const auto ub = tt->underBuilding();
+                const auto ab = static_cast<eAnimalBuilding*>(ub);
+                const auto a = ab->animal();
+                hasBull = a && a->type() == eCharacterType::bull;
+            }
+            if(hasBull) return true;
+            return false;
+        });
+        if(hasBull) break;
+    }
+    return !hasBull && nCattle > 1;
+}
+
+eTile* eCattle::getSpawnerTile() const {
+    const auto a = action();
+    if(const auto aa = dynamic_cast<eAnimalAction*>(a)) {
+        const int x = aa->spawnerX();
+        const int y = aa->spawnerY();
+        return getBoard().tile(x, y);
+    }
+    return tile();
+}
+
 bool eCattle::mature() {
     const auto t = type();
     if(t == eCharacterType::cattle3) {
         return false;
     } else if(t == eCharacterType::cattle2) {
-        if(mId != 0 && mId % 7 == 0) {
-            setType(eCharacterType::bull);
-        } else {
-            setType(eCharacterType::cattle3);
-        }
+        const bool r = shouldBecomeBull();
+        if(r) setType(eCharacterType::bull);
+        else setType(eCharacterType::cattle3);
     } else if(t == eCharacterType::cattle1) {
         setType(eCharacterType::cattle2);
     }

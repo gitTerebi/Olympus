@@ -16,6 +16,8 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     bool mature();
+    bool shouldBecomeBull() const;
+    eTile* getSpawnerTile() const;
 
     int mId;
     int mMatureWait = 0;

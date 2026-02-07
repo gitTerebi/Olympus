@@ -22,6 +22,9 @@ public:
     void setLayTime(const int l) { mLayTime = l; }
     void setWalkTime(const int w) { mWalkTime = w; }
 
+    int spawnerX() const { return mSpawnerX; }
+    int spawnerY() const { return mSpawnerY; }
+
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 protected:
