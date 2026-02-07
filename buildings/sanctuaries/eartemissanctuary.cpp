@@ -68,6 +68,7 @@ void eSanctuaryWithWarriors::read(eReadStream& src) {
     src >> nb;
     for(int i = 0; i < nb; i++) {
         src.readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
+            if(!b) return;
             const auto gt = godType();
             int string = -1;
             if(gt == eGodType::artemis) {
