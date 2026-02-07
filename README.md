@@ -4,6 +4,8 @@ eZeus is an open-source implementation of Zeus: Master of Olympus game
 
 [Watch trailers](https://www.youtube.com/@eZeus-e)
 
+Please note that eZeus is not an exact copy of the original game. There are some minor differences, most of which are accidental, as well as optional additional features (such as a new walker implementation and the ability to build two cities at once). eZeus supports the original game’s adventures, and the overall experience should be similar to the original.
+
 ## How To Play
 
 To play eZeus you will need original game files (Zeus: Master of Olympus base game and Poseidon expansion).
