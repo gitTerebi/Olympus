@@ -3,14 +3,14 @@
 #include "espritedata.h"
 
 const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
-   eSpriteData{0, 0, 0, 55, 86}, // 6569
-   eSpriteData{0, 55, 0, 91, 83}, // 6570
-   eSpriteData{0, 146, 0, 102, 69}, // 6571
-   eSpriteData{0, 248, 0, 106, 56}, // 6572
-   eSpriteData{0, 354, 0, 102, 54}, // 6573
-   eSpriteData{0, 456, 0, 87, 65}, // 6574
-   eSpriteData{0, 543, 0, 56, 75}, // 6575
-   eSpriteData{0, 599, 0, 41, 78}, // 6576
+   eSpriteData{0, 0, 0, 52, 81}, // 6569
+   eSpriteData{0, 52, 0, 86, 79}, // 6570
+   eSpriteData{0, 138, 0, 96, 65}, // 6571
+   eSpriteData{0, 234, 0, 100, 53}, // 6572
+   eSpriteData{0, 334, 0, 96, 51}, // 6573
+   eSpriteData{0, 430, 0, 82, 61}, // 6574
+   eSpriteData{0, 512, 0, 53, 71}, // 6575
+   eSpriteData{0, 565, 0, 39, 74}, // 6576
    eSpriteData{-1, 0, 0, 0, 0}, // 6577
    eSpriteData{-1, 0, 0, 0, 0}, // 6578
    eSpriteData{-1, 0, 0, 0, 0}, // 6579
@@ -18,15 +18,15 @@ const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
    eSpriteData{-1, 0, 0, 0, 0}, // 6581
    eSpriteData{-1, 0, 0, 0, 0}, // 6582
    eSpriteData{-1, 0, 0, 0, 0}, // 6583
-   eSpriteData{0, 640, 0, 41, 90}, // 6584
-   eSpriteData{0, 681, 0, 54, 86}, // 6585
-   eSpriteData{0, 735, 0, 88, 84}, // 6586
-   eSpriteData{0, 823, 0, 102, 68}, // 6587
-   eSpriteData{0, 925, 0, 106, 56}, // 6588
-   eSpriteData{0, 1031, 0, 102, 54}, // 6589
-   eSpriteData{0, 1133, 0, 88, 65}, // 6590
-   eSpriteData{0, 1221, 0, 59, 75}, // 6591
-   eSpriteData{0, 1280, 0, 34, 78}, // 6592
+   eSpriteData{0, 604, 0, 39, 85}, // 6584
+   eSpriteData{0, 643, 0, 51, 81}, // 6585
+   eSpriteData{0, 694, 0, 83, 79}, // 6586
+   eSpriteData{0, 777, 0, 96, 65}, // 6587
+   eSpriteData{0, 873, 0, 100, 53}, // 6588
+   eSpriteData{0, 973, 0, 96, 51}, // 6589
+   eSpriteData{0, 1069, 0, 83, 61}, // 6590
+   eSpriteData{0, 1152, 0, 56, 71}, // 6591
+   eSpriteData{0, 1208, 0, 33, 74}, // 6592
    eSpriteData{-1, 0, 0, 0, 0}, // 6593
    eSpriteData{-1, 0, 0, 0, 0}, // 6594
    eSpriteData{-1, 0, 0, 0, 0}, // 6595
@@ -34,15 +34,15 @@ const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
    eSpriteData{-1, 0, 0, 0, 0}, // 6597
    eSpriteData{-1, 0, 0, 0, 0}, // 6598
    eSpriteData{-1, 0, 0, 0, 0}, // 6599
-   eSpriteData{0, 1314, 0, 35, 88}, // 6600
-   eSpriteData{0, 1349, 0, 56, 89}, // 6601
-   eSpriteData{0, 1405, 0, 91, 85}, // 6602
-   eSpriteData{0, 1496, 0, 102, 69}, // 6603
-   eSpriteData{0, 1598, 0, 106, 57}, // 6604
-   eSpriteData{0, 1704, 0, 102, 54}, // 6605
-   eSpriteData{0, 1806, 0, 85, 65}, // 6606
-   eSpriteData{0, 1891, 0, 60, 75}, // 6607
-   eSpriteData{0, 1951, 0, 40, 78}, // 6608
+   eSpriteData{0, 1241, 0, 33, 83}, // 6600
+   eSpriteData{0, 1274, 0, 53, 84}, // 6601
+   eSpriteData{0, 1327, 0, 86, 80}, // 6602
+   eSpriteData{0, 1413, 0, 96, 65}, // 6603
+   eSpriteData{0, 1509, 0, 100, 54}, // 6604
+   eSpriteData{0, 1609, 0, 96, 51}, // 6605
+   eSpriteData{0, 1705, 0, 80, 61}, // 6606
+   eSpriteData{0, 1785, 0, 57, 71}, // 6607
+   eSpriteData{0, 1842, 0, 38, 74}, // 6608
    eSpriteData{-1, 0, 0, 0, 0}, // 6609
    eSpriteData{-1, 0, 0, 0, 0}, // 6610
    eSpriteData{-1, 0, 0, 0, 0}, // 6611
@@ -50,15 +50,15 @@ const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
    eSpriteData{-1, 0, 0, 0, 0}, // 6613
    eSpriteData{-1, 0, 0, 0, 0}, // 6614
    eSpriteData{-1, 0, 0, 0, 0}, // 6615
-   eSpriteData{0, 1991, 0, 40, 88}, // 6616
-   eSpriteData{0, 354, 54, 51, 90}, // 6617
-   eSpriteData{0, 1031, 54, 88, 85}, // 6618
-   eSpriteData{0, 1704, 54, 102, 69}, // 6619
-   eSpriteData{0, 248, 56, 106, 55}, // 6620
-   eSpriteData{0, 925, 56, 102, 54}, // 6621
-   eSpriteData{0, 1598, 57, 91, 65}, // 6622
-   eSpriteData{0, 405, 65, 57, 75}, // 6623
-   eSpriteData{0, 462, 65, 31, 78}, // 6624
+   eSpriteData{0, 1880, 0, 38, 83}, // 6616
+   eSpriteData{0, 1918, 0, 48, 85}, // 6617
+   eSpriteData{0, 334, 51, 83, 81}, // 6618
+   eSpriteData{0, 973, 51, 96, 65}, // 6619
+   eSpriteData{0, 234, 53, 100, 52}, // 6620
+   eSpriteData{0, 1609, 51, 96, 51}, // 6621
+   eSpriteData{0, 873, 53, 86, 61}, // 6622
+   eSpriteData{0, 1966, 0, 54, 71}, // 6623
+   eSpriteData{0, 1509, 54, 30, 74}, // 6624
    eSpriteData{-1, 0, 0, 0, 0}, // 6625
    eSpriteData{-1, 0, 0, 0, 0}, // 6626
    eSpriteData{-1, 0, 0, 0, 0}, // 6627
@@ -66,95 +66,95 @@ const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
    eSpriteData{-1, 0, 0, 0, 0}, // 6629
    eSpriteData{-1, 0, 0, 0, 0}, // 6630
    eSpriteData{-1, 0, 0, 0, 0}, // 6631
-   eSpriteData{0, 493, 65, 31, 88}, // 6632
-   eSpriteData{0, 1119, 65, 90, 82}, // 6633
-   eSpriteData{0, 1806, 75, 106, 55}, // 6634
-   eSpriteData{0, 823, 68, 90, 66}, // 6635
-   eSpriteData{0, 146, 69, 41, 80}, // 6636
+   eSpriteData{0, 1539, 54, 29, 83}, // 6632
+   eSpriteData{0, 417, 61, 85, 77}, // 6633
+   eSpriteData{0, 1069, 71, 100, 52}, // 6634
+   eSpriteData{0, 138, 65, 85, 62}, // 6635
+   eSpriteData{0, 1568, 54, 39, 76}, // 6636
    eSpriteData{-1, 0, 0, 0, 0}, // 6637
    eSpriteData{-1, 0, 0, 0, 0}, // 6638
    eSpriteData{-1, 0, 0, 0, 0}, // 6639
-   eSpriteData{0, 187, 69, 41, 90}, // 6640
-   eSpriteData{0, 1496, 69, 92, 83}, // 6641
-   eSpriteData{0, 524, 78, 106, 54}, // 6642
-   eSpriteData{0, 1209, 78, 90, 64}, // 6643
-   eSpriteData{0, 1912, 78, 40, 77}, // 6644
+   eSpriteData{0, 1705, 61, 39, 85}, // 6640
+   eSpriteData{0, 777, 65, 87, 78}, // 6641
+   eSpriteData{0, 502, 74, 100, 51}, // 6642
+   eSpriteData{0, 1413, 65, 85, 60}, // 6643
+   eSpriteData{0, 1744, 61, 38, 73}, // 6644
    eSpriteData{-1, 0, 0, 0, 0}, // 6645
    eSpriteData{-1, 0, 0, 0, 0}, // 6646
    eSpriteData{-1, 0, 0, 0, 0}, // 6647
-   eSpriteData{0, 55, 83, 41, 90}, // 6648
-   eSpriteData{0, 1405, 85, 90, 79}, // 6649
-   eSpriteData{0, 681, 86, 106, 48}, // 6650
-   eSpriteData{0, 1952, 88, 90, 60}, // 6651
-   eSpriteData{0, 96, 83, 36, 74}, // 6652
+   eSpriteData{0, 1169, 71, 39, 85}, // 6648
+   eSpriteData{0, 1782, 74, 85, 75}, // 6649
+   eSpriteData{0, 0, 81, 100, 45}, // 6650
+   eSpriteData{0, 1327, 80, 85, 57}, // 6651
+   eSpriteData{0, 1966, 71, 34, 70}, // 6652
    eSpriteData{-1, 0, 0, 0, 0}, // 6653
    eSpriteData{-1, 0, 0, 0, 0}, // 6654
    eSpriteData{-1, 0, 0, 0, 0}, // 6655
-   eSpriteData{0, 787, 84, 35, 90}, // 6656
-   eSpriteData{0, 1299, 89, 86, 75}, // 6657
-   eSpriteData{0, 913, 110, 106, 45}, // 6658
-   eSpriteData{0, 228, 111, 89, 58}, // 6659
-   eSpriteData{0, 0, 86, 38, 69}, // 6660
+   eSpriteData{0, 2000, 71, 33, 85}, // 6656
+   eSpriteData{0, 694, 79, 82, 71}, // 6657
+   eSpriteData{0, 1208, 84, 100, 42}, // 6658
+   eSpriteData{0, 602, 85, 84, 55}, // 6659
+   eSpriteData{0, 100, 79, 36, 66}, // 6660
    eSpriteData{-1, 0, 0, 0, 0}, // 6661
    eSpriteData{-1, 0, 0, 0, 0}, // 6662
    eSpriteData{-1, 0, 0, 0, 0}, // 6663
-   eSpriteData{0, 630, 90, 38, 87}, // 6664
-   eSpriteData{0, 1588, 122, 83, 69}, // 6665
-   eSpriteData{0, 1671, 123, 106, 43}, // 6666
-   eSpriteData{0, 1777, 130, 89, 56}, // 6667
-   eSpriteData{0, 1866, 130, 45, 64}, // 6668
+   eSpriteData{0, 1867, 83, 36, 83}, // 6664
+   eSpriteData{0, 1607, 102, 79, 66}, // 6665
+   eSpriteData{0, 223, 105, 100, 41}, // 6666
+   eSpriteData{0, 864, 114, 84, 53}, // 6667
+   eSpriteData{0, 1903, 85, 43, 61}, // 6668
    eSpriteData{-1, 0, 0, 0, 0}, // 6669
    eSpriteData{-1, 0, 0, 0, 0}, // 6670
    eSpriteData{-1, 0, 0, 0, 0}, // 6671
-   eSpriteData{0, 524, 132, 45, 84}, // 6672
-   eSpriteData{0, 668, 134, 75, 60}, // 6673
-   eSpriteData{0, 317, 144, 101, 45}, // 6674
-   eSpriteData{0, 822, 134, 89, 53}, // 6675
-   eSpriteData{0, 569, 132, 57, 57}, // 6676
+   eSpriteData{0, 948, 116, 43, 80}, // 6672
+   eSpriteData{0, 991, 116, 71, 57}, // 6673
+   eSpriteData{0, 1062, 123, 95, 43}, // 6674
+   eSpriteData{0, 502, 125, 84, 50}, // 6675
+   eSpriteData{0, 1412, 125, 54, 54}, // 6676
    eSpriteData{-1, 0, 0, 0, 0}, // 6677
    eSpriteData{-1, 0, 0, 0, 0}, // 6678
    eSpriteData{-1, 0, 0, 0, 0}, // 6679
-   eSpriteData{0, 1019, 139, 56, 75}, // 6680
-   eSpriteData{0, 1209, 142, 69, 35}, // 6681
-   eSpriteData{0, 418, 143, 64, 41}, // 6682
-   eSpriteData{0, 1075, 147, 58, 46}, // 6683
-   eSpriteData{0, 1133, 147, 65, 54}, // 6684
+   eSpriteData{0, 0, 126, 53, 71}, // 6680
+   eSpriteData{0, 1208, 126, 66, 33}, // 6681
+   eSpriteData{0, 136, 127, 60, 39}, // 6682
+   eSpriteData{0, 1466, 128, 55, 43}, // 6683
+   eSpriteData{0, 323, 132, 61, 51}, // 6684
    eSpriteData{-1, 0, 0, 0, 0}, // 6685
    eSpriteData{-1, 0, 0, 0, 0}, // 6686
    eSpriteData{-1, 0, 0, 0, 0}, // 6687
-   eSpriteData{0, 1952, 148, 64, 49}, // 6688
-   eSpriteData{0, 1495, 152, 66, 36}, // 6689
-   eSpriteData{0, 911, 155, 62, 43}, // 6690
-   eSpriteData{0, 96, 157, 64, 41}, // 6691
-   eSpriteData{0, 160, 159, 67, 48}, // 6692
+   eSpriteData{0, 1274, 137, 61, 47}, // 6688
+   eSpriteData{0, 1335, 137, 63, 34}, // 6689
+   eSpriteData{0, 1521, 137, 59, 41}, // 6690
+   eSpriteData{0, 384, 138, 60, 39}, // 6691
+   eSpriteData{0, 586, 140, 63, 45}, // 6692
    eSpriteData{-1, 0, 0, 0, 0}, // 6693
    eSpriteData{-1, 0, 0, 0, 0}, // 6694
    eSpriteData{-1, 0, 0, 0, 0}, // 6695
-   eSpriteData{0, 1278, 164, 64, 41}, // 6696
-   eSpriteData{0, 1342, 164, 59, 38}, // 6697
-   eSpriteData{0, 1401, 164, 56, 41}, // 6698
-   eSpriteData{0, 1671, 166, 65, 35}, // 6699
-   eSpriteData{0, 227, 169, 66, 37}, // 6700
+   eSpriteData{0, 776, 143, 60, 39}, // 6696
+   eSpriteData{0, 444, 138, 56, 36}, // 6697
+   eSpriteData{0, 1946, 141, 53, 39}, // 6698
+   eSpriteData{0, 53, 145, 61, 33}, // 6699
+   eSpriteData{0, 196, 146, 62, 35}, // 6700
    eSpriteData{-1, 0, 0, 0, 0}, // 6701
    eSpriteData{-1, 0, 0, 0, 0}, // 6702
    eSpriteData{-1, 0, 0, 0, 0}, // 6703
-   eSpriteData{0, 0, 173, 63, 37}, // 6704
-   eSpriteData{0, 743, 174, 54, 40}, // 6705
-   eSpriteData{0, 1198, 177, 50, 37}, // 6706
-   eSpriteData{0, 418, 184, 63, 29}, // 6707
-   eSpriteData{0, 1736, 186, 66, 25}, // 6708
+   eSpriteData{0, 258, 146, 59, 35}, // 6704
+   eSpriteData{0, 1686, 146, 51, 38}, // 6705
+   eSpriteData{0, 1737, 149, 47, 35}, // 6706
+   eSpriteData{0, 1784, 149, 59, 27}, // 6707
+   eSpriteData{0, 649, 150, 62, 24}, // 6708
    eSpriteData{-1, 0, 0, 0, 0}, // 6709
    eSpriteData{-1, 0, 0, 0, 0}, // 6710
    eSpriteData{-1, 0, 0, 0, 0}, // 6711
-   eSpriteData{0, 1802, 186, 61, 32}, // 6712
-   eSpriteData{0, 2031, 0, 10, 9}, // 6713
-   eSpriteData{0, 2031, 9, 10, 7}, // 6714
-   eSpriteData{0, 2031, 16, 8, 7}, // 6715
-   eSpriteData{0, 2041, 0, 6, 8}, // 6716
+   eSpriteData{0, 711, 150, 58, 30}, // 6712
+   eSpriteData{0, 2020, 0, 10, 9}, // 6713
+   eSpriteData{0, 2030, 0, 10, 7}, // 6714
+   eSpriteData{0, 2040, 0, 8, 7}, // 6715
+   eSpriteData{0, 2030, 7, 6, 8}, // 6716
    eSpriteData{-1, 0, 0, 0, 0}, // 6717
    eSpriteData{-1, 0, 0, 0, 0}, // 6718
    eSpriteData{-1, 0, 0, 0, 0}, // 6719
-   eSpriteData{0, 2041, 8, 5, 9}, // 6720
+   eSpriteData{0, 2036, 7, 5, 9}, // 6720
    eSpriteData{-1, 0, 0, 0, 0}, // 6721
    eSpriteData{-1, 0, 0, 0, 0}, // 6722
    eSpriteData{-1, 0, 0, 0, 0}, // 6723
@@ -163,12 +163,12 @@ const auto eTriremeSpriteData15 = std::vector<eSpriteData> {
    eSpriteData{-1, 0, 0, 0, 0}, // 6726
    eSpriteData{-1, 0, 0, 0, 0}, // 6727
    eSpriteData{-1, 0, 0, 0, 0}, // 6728
-   eSpriteData{0, 797, 187, 92, 82}, // 6729
-   eSpriteData{0, 1457, 188, 106, 55}, // 6730
-   eSpriteData{0, 293, 189, 92, 66}, // 6731
-   eSpriteData{0, 2016, 148, 29, 81}, // 6732
+   eSpriteData{0, 1157, 159, 87, 78}, // 6729
+   eSpriteData{0, 1843, 166, 100, 52}, // 6730
+   eSpriteData{0, 1062, 166, 87, 63}, // 6731
+   eSpriteData{0, 836, 143, 28, 77}, // 6732
    eSpriteData{-1, 0, 0, 0, 0}, // 6733
    eSpriteData{-1, 0, 0, 0, 0}, // 6734
    eSpriteData{-1, 0, 0, 0, 0}, // 6735
-   eSpriteData{0, 482, 153, 30, 91}, // 6736
+   eSpriteData{0, 1999, 156, 28, 86}, // 6736
 };

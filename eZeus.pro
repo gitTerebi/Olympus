@@ -2339,6 +2339,10 @@ HEADERS += \
     spriteData/poseidonInterface30.h \
     spriteData/poseidonInterface45.h \
     spriteData/poseidonInterface60.h \
+    spriteData/poseidonPortraits15.h \
+    spriteData/poseidonPortraits30.h \
+    spriteData/poseidonPortraits45.h \
+    spriteData/poseidonPortraits60.h \
     spriteData/poseidonPyramid15.h \
     spriteData/poseidonPyramid215.h \
     spriteData/poseidonPyramid230.h \
@@ -2691,6 +2695,10 @@ HEADERS += \
     spriteData/zeusElevationTiles30.h \
     spriteData/zeusElevationTiles45.h \
     spriteData/zeusElevationTiles60.h \
+    spriteData/zeusGodPortraits15.h \
+    spriteData/zeusGodPortraits30.h \
+    spriteData/zeusGodPortraits45.h \
+    spriteData/zeusGodPortraits60.h \
     spriteData/zeusHerosHall15.h \
     spriteData/zeusHerosHall30.h \
     spriteData/zeusHerosHall45.h \
@@ -2707,6 +2715,10 @@ HEADERS += \
     spriteData/zeusOverlay30.h \
     spriteData/zeusOverlay45.h \
     spriteData/zeusOverlay60.h \
+    spriteData/zeusPortraits15.h \
+    spriteData/zeusPortraits30.h \
+    spriteData/zeusPortraits45.h \
+    spriteData/zeusPortraits60.h \
     spriteData/zeusQuarryTileSet15.h \
     spriteData/zeusQuarryTileSet30.h \
     spriteData/zeusQuarryTileSet45.h \
@@ -3199,6 +3211,7 @@ DISTFILES += \
     textureTemplates/poseidonHerosHall \
     textureTemplates/poseidonHerosHall2 \
     textureTemplates/poseidonInterface \
+    textureTemplates/poseidonPortraits \
     textureTemplates/poseidonPyramid \
     textureTemplates/poseidonPyramid2 \
     textureTemplates/poseidonQuestButtons \
@@ -3286,10 +3299,12 @@ DISTFILES += \
     textureTemplates/zeusElevationTiles \
     textureTemplates/zeusElevationTiles2 \
     textureTemplates/zeusElevationTiles2A \
+    textureTemplates/zeusGodPortraits \
     textureTemplates/zeusHerosHall \
     textureTemplates/zeusLand1 \
     textureTemplates/zeusLand3 \
     textureTemplates/zeusOverlay \
+    textureTemplates/zeusPortraits \
     textureTemplates/zeusQuarryTileSet \
     textureTemplates/zeusSanctuary1 \
     textureTemplates/zeusSanctuary2 \

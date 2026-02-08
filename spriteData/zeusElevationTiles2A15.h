@@ -3,16 +3,16 @@
 #include "espritedata.h"
 
 const auto eZeusElevationTiles2ASpriteData15 = std::vector<eSpriteData> {
-   eSpriteData{0, 0, 0, 63, 36}, // 1
-   eSpriteData{0, 63, 0, 63, 48}, // 2
-   eSpriteData{0, 126, 0, 63, 48}, // 3
-   eSpriteData{0, 189, 0, 63, 34}, // 4
-   eSpriteData{0, 252, 0, 63, 35}, // 5
-   eSpriteData{0, 315, 0, 63, 48}, // 6
-   eSpriteData{0, 378, 0, 63, 48}, // 7
-   eSpriteData{0, 441, 0, 63, 33}, // 8
-   eSpriteData{0, 504, 0, 63, 38}, // 9
-   eSpriteData{0, 567, 0, 63, 48}, // 10
-   eSpriteData{0, 630, 0, 63, 48}, // 11
-   eSpriteData{0, 693, 0, 63, 36}, // 12
+   eSpriteData{0, 0, 0, 59, 34}, // 1
+   eSpriteData{0, 59, 0, 59, 45}, // 2
+   eSpriteData{0, 118, 0, 59, 45}, // 3
+   eSpriteData{0, 177, 0, 59, 33}, // 4
+   eSpriteData{0, 236, 0, 59, 33}, // 5
+   eSpriteData{0, 295, 0, 59, 45}, // 6
+   eSpriteData{0, 354, 0, 59, 45}, // 7
+   eSpriteData{0, 413, 0, 59, 32}, // 8
+   eSpriteData{0, 472, 0, 59, 36}, // 9
+   eSpriteData{0, 531, 0, 59, 45}, // 10
+   eSpriteData{0, 590, 0, 59, 45}, // 11
+   eSpriteData{0, 649, 0, 59, 34}, // 12
 };

@@ -3,13 +3,13 @@
 #include "espritedata.h"
 
 const auto eBlackMarbleWorkshopSpriteData15 = std::vector<eSpriteData> {
-   eSpriteData{0, 0, 0, 63, 45}, // 36
-   eSpriteData{0, 63, 0, 30, 23}, // 37
-   eSpriteData{0, 93, 0, 28, 22}, // 38
-   eSpriteData{0, 121, 0, 27, 23}, // 39
-   eSpriteData{0, 148, 0, 25, 23}, // 40
-   eSpriteData{0, 173, 0, 25, 18}, // 41
-   eSpriteData{0, 198, 0, 25, 16}, // 42
-   eSpriteData{0, 223, 0, 20, 16}, // 43
-   eSpriteData{0, 243, 0, 14, 13}, // 44
+   eSpriteData{0, 0, 0, 59, 43}, // 36
+   eSpriteData{0, 59, 0, 28, 22}, // 37
+   eSpriteData{0, 87, 0, 27, 21}, // 38
+   eSpriteData{0, 114, 0, 26, 22}, // 39
+   eSpriteData{0, 140, 0, 24, 22}, // 40
+   eSpriteData{0, 164, 0, 24, 17}, // 41
+   eSpriteData{0, 188, 0, 24, 16}, // 42
+   eSpriteData{0, 212, 0, 19, 16}, // 43
+   eSpriteData{0, 231, 0, 13, 12}, // 44
 };
