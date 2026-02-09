@@ -14,7 +14,8 @@
 
 eCharacter::eCharacter(eGameBoard& board,
                        const eCharacterType type) :
-    eObject(board), eCharacterBase(type) {
+    eObject(board), eCharacterBase(type),
+    mSeedId(eRand::rand()) {
     getBoard().registerCharacter(this);
 }
 

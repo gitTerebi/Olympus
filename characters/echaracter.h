@@ -95,6 +95,7 @@ public:
 
     ePlayerId playerId() const;
     eTeamId teamId() const;
+    int seedId() const { return mSeedId; }
 protected:
     std::shared_ptr<eTexture> getTexture(
             const eTextureCollection* const coll,
@@ -104,6 +105,8 @@ private:
     std::vector<ePausedAction> mPausedActions;
 
     int mIOID = -1;
+
+    int mSeedId;
 
     bool mVisible = true;
 

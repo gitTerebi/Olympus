@@ -1337,7 +1337,7 @@ void eInterfaceTextures::load() {
                              nullptr, fRenderer);
 
         for(int i = 1; i < 122; i++) {
-            loader.load(0, i, fZeusPortraits);
+            loader.load(1, i, fZeusPortraits);
         }
     }
     {
@@ -1350,7 +1350,7 @@ void eInterfaceTextures::load() {
                              nullptr, fRenderer);
 
         for(int i = 1; i < 33; i++) {
-            loader.load(0, i, fZeusGodPortraits);
+            loader.load(1, i, fZeusGodPortraits);
         }
     }
     {
@@ -1363,7 +1363,7 @@ void eInterfaceTextures::load() {
                              nullptr, fRenderer);
 
         for(int i = 1; i < 46; i++) {
-            loader.load(0, i, fPoseidonPortraits);
+            loader.load(1, i, fPoseidonPortraits);
         }
     }
 }

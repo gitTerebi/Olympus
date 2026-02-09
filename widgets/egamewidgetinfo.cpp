@@ -10,6 +10,7 @@
 #include "infowidgets/esanctuaryinfowidget.h"
 #include "infowidgets/etriremewharfinfowidget.h"
 #include "infowidgets/ehippodromeinfowidget.h"
+#include "infowidgets/echaracterinfowidget.h"
 
 #include "engine/egameboard.h"
 
@@ -131,6 +132,22 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
         wid->align(eAlignment::vcenter);
         wid->setCloseAction([this, wid, closeAct]() {
             if(closeAct) closeAct();
+            mInfoWidget = nullptr;
+            removeWidget(wid);
+            wid->deleteLater();
+        });
+    }
+    return wid;
+}
+
+eInfoWidget *eGameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
+    const auto wid = new eCharacterInfoWidget(window(), this);
+    wid->initialize(chars);
+    if(wid) {
+        addWidget(wid);
+        wid->setX((width() - mGm->width() - wid->width())/2);
+        wid->align(eAlignment::vcenter);
+        wid->setCloseAction([this, wid]() {
             mInfoWidget = nullptr;
             removeWidget(wid);
             wid->deleteLater();

@@ -278,6 +278,7 @@ private:
     void setPatrolBuilding(ePatrolBuildingBase* const pb);
 
     eInfoWidget* openInfoWidget(eBuilding* const b);
+    eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
 
     void switchPause();
 

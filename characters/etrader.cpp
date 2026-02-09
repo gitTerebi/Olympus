@@ -21,6 +21,8 @@ void eTrader::createFollowers() {
         const auto aox = e::make_shared<eFollowAction>(follow, d.get());
         d->setAction(aox);
         d->changeTile(t);
+        d->setOnCityId(onCityId());
+        d->setCityId(cityId());
         mFollowers.push_back(d);
     }
 }

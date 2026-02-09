@@ -1938,13 +1938,21 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         const auto tile = mBoard->tile(tx, ty);
         if(!tile) return true;
         const auto b = tile->underBuilding();
-        if(!b) return true;
-        eSounds::playSoundForBuilding(b);
-        const auto cid = tile->cityId();
-        const auto pid = mBoard->cityIdToPlayerId(cid);
-        const auto ppid = mBoard->personPlayer();
-        if(pid != ppid && !mBoard->editorMode()) return true;
-        mInfoWidget = openInfoWidget(b);
+        const auto chars = tile->characters();
+        if(!chars.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
+            std::vector<eCharacter*> chars2;
+            for(const auto& c : chars) {
+                chars2.push_back(c.get());
+            }
+            mInfoWidget = openInfoWidget(chars2);
+        } else if(b) {
+            eSounds::playSoundForBuilding(b);
+            const auto cid = tile->cityId();
+            const auto pid = mBoard->cityIdToPlayerId(cid);
+            const auto ppid = mBoard->personPlayer();
+            if(pid != ppid && !mBoard->editorMode()) return true;
+            mInfoWidget = openInfoWidget(b);
+        }
     } break;
     default: return true;
     }

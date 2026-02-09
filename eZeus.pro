@@ -713,6 +713,7 @@ SOURCES += \
         widgets/eworldtributewidget.cpp \
         widgets/eworldwidget.cpp \
         widgets/infowidgets/eagorainfowidget.cpp \
+        widgets/infowidgets/echaracterinfowidget.cpp \
         widgets/infowidgets/ecommonhouseinfowidget.cpp \
         widgets/infowidgets/eemployingbuildinginfowidget.cpp \
         widgets/infowidgets/eheroshallinfowidget.cpp \
@@ -2919,6 +2920,7 @@ HEADERS += \
     widgets/eworldtributewidget.h \
     widgets/eworldwidget.h \
     widgets/infowidgets/eagorainfowidget.h \
+    widgets/infowidgets/echaracterinfowidget.h \
     widgets/infowidgets/ecommonhouseinfowidget.h \
     widgets/infowidgets/eemployingbuildinginfowidget.h \
     widgets/infowidgets/eheroshallinfowidget.h \

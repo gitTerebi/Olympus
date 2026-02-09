@@ -17,6 +17,7 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 
     void setGrowerType(const eGrowerType t) { mType = t; }
+    eGrowerType growerType() const { return mType; }
 
     int olives() const { return mOlives; }
     int grapes() const { return mGrapes; }
