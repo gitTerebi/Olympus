@@ -435,6 +435,10 @@ public:
     eTextureCollection fInterfaceBanners;
     eTextureCollection fInterfaceBannerTops;
     eTextureCollection fPoseidonInterfaceBannerTops;
+
+    eTextureCollection fZeusPortraits;
+    eTextureCollection fZeusGodPortraits;
+    eTextureCollection fPoseidonPortraits;
 };
 
 #endif // EINTERFACETEXTURES_H

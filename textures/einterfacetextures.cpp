@@ -100,6 +100,21 @@
 #include "spriteData/poseidonCampaign645.h"
 #include "spriteData/poseidonCampaign660.h"
 
+#include "spriteData/zeusPortraits15.h"
+#include "spriteData/zeusPortraits30.h"
+#include "spriteData/zeusPortraits45.h"
+#include "spriteData/zeusPortraits60.h"
+
+#include "spriteData/zeusGodPortraits15.h"
+#include "spriteData/zeusGodPortraits30.h"
+#include "spriteData/zeusGodPortraits45.h"
+#include "spriteData/zeusGodPortraits60.h"
+
+#include "spriteData/poseidonPortraits15.h"
+#include "spriteData/poseidonPortraits30.h"
+#include "spriteData/poseidonPortraits45.h"
+#include "spriteData/poseidonPortraits60.h"
+
 #include "espriteloader.h"
 
 #include "egamedir.h"
@@ -306,7 +321,11 @@ eInterfaceTextures::eInterfaceTextures(const int tileW, const int tileH,
 
     fInterfaceBanners(renderer),
     fInterfaceBannerTops(renderer),
-    fPoseidonInterfaceBannerTops(renderer) {}
+    fPoseidonInterfaceBannerTops(renderer),
+
+    fZeusPortraits(renderer),
+    fZeusGodPortraits(renderer),
+    fPoseidonPortraits(renderer) {}
 
 void eInterfaceTextures::loadAll() {
     loadMapOfGreece1();
@@ -1307,6 +1326,45 @@ void eInterfaceTextures::load() {
         fDrachmasUnit = loader.load(117, 184);
         fDrachmasTopMenu = loader.load(117, 185);
         fPopulationTopMenu = loader.load(117, 186);
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eZeusPortraitsSpriteData15,
+                                     eZeusPortraitsSpriteData30,
+                                     eZeusPortraitsSpriteData45,
+                                     eZeusPortraitsSpriteData60);
+        eSpriteLoader loader(fTileH, "zeusPortraits", sds,
+                             nullptr, fRenderer);
+
+        for(int i = 1; i < 122; i++) {
+            loader.load(0, i, fZeusPortraits);
+        }
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     eZeusGodPortraitsSpriteData15,
+                                     eZeusGodPortraitsSpriteData30,
+                                     eZeusGodPortraitsSpriteData45,
+                                     eZeusGodPortraitsSpriteData60);
+        eSpriteLoader loader(fTileH, "zeusGodPortraits", sds,
+                             nullptr, fRenderer);
+
+        for(int i = 1; i < 33; i++) {
+            loader.load(0, i, fZeusGodPortraits);
+        }
+    }
+    {
+        const auto& sds = spriteData(fTileH,
+                                     ePoseidonPortraitsSpriteData15,
+                                     ePoseidonPortraitsSpriteData30,
+                                     ePoseidonPortraitsSpriteData45,
+                                     ePoseidonPortraitsSpriteData60);
+        eSpriteLoader loader(fTileH, "poseidonPortraits", sds,
+                             nullptr, fRenderer);
+
+        for(int i = 1; i < 46; i++) {
+            loader.load(0, i, fPoseidonPortraits);
+        }
     }
 }
 
