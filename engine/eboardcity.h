@@ -181,6 +181,7 @@ public:
     int unrest() const { return mUnrest; }
     int popularity() const { return mPopularity; }
     int health() const { return mHealth; }
+    int maintanance() const { return mMaintanance; }
 
     int wonGames() const { return mWonGames; }
     void incWonGames() { mWonGames++; }
@@ -581,6 +582,7 @@ private:
     int mUnrest = 0; // percent
     int mPopularity = 0;
     int mHealth = 0;
+    int mMaintanance = 0;
     int mExcessiveMilitaryServiceCount = 0;
     int mMonthsOfMilitaryService = 0;
 

@@ -134,6 +134,7 @@ public:
     int popularity(const eCityId cid) const;
     int health(const eCityId cid) const;
     eCityFinances finances(const eCityId cid) const;
+    int maintanance(const eCityId cid) const;
 
     int drachmas(const ePlayerId pid) const;
     void incDrachmas(const ePlayerId pid, const int by,
@@ -627,6 +628,8 @@ public:
 
     void defeatedBy(const eCityId defeated,
                     const stdsptr<eWorldCity>& by);
+    using eCities = std::vector<stdsptr<eWorldCity>>;
+    eCities defeatedBy(const eCityId cid);
 
     eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
 

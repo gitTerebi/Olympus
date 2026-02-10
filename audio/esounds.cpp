@@ -1,10 +1,14 @@
 ﻿#include "esounds.h"
 
+#include "characters/egrower.h"
+#include "characters/ehunter.h"
 #include "engine/etile.h"
 #include "buildings/ebuilding.h"
 #include "characters/echaracter.h"
+#include "characters/ecarttransporter.h"
 
 #include "egamedir.h"
+#include <filesystem>
 
 eSounds* eSounds::sInstance = nullptr;
 
@@ -1068,13 +1072,214 @@ void eSounds::playHitSound(eCharacter* const c) {
     }
 }
 
-eSoundVector* eSounds::getCharacterVoices(const eCharacterType type) {
+eSoundVector* eSounds::getCharacterVoices(eCharacter* const c) {
+    const eCharacterType type =  c->type();
     switch(type) {
     case eCharacterType::settler:
         return &sInstance->mSettlerVoices;
+    case eCharacterType::homeless:
+        return &sInstance->mHomelessVoices;
+    case eCharacterType::disgruntled:
+        return &sInstance->mDisgruntledVoices;
+    case eCharacterType::sick:
+        return &sInstance->mSickVoices;
+
+    case eCharacterType::aphrodite:
+        return &sInstance->mAphroditeVoices;
+    case eCharacterType::apollo:
+        return &sInstance->mApolloVoices;
+    case eCharacterType::ares:
+        return &sInstance->mAresVoices;
+    case eCharacterType::artemis:
+        return &sInstance->mArtemisVoices;
+    case eCharacterType::athena:
+        return &sInstance->mAthenaVoices;
+    case eCharacterType::atlas:
+        return &sInstance->mAtlasVoices;
+    case eCharacterType::demeter:
+        return &sInstance->mDemeterVoices;
+    case eCharacterType::dionysus:
+        return &sInstance->mDionysusVoices;
+    case eCharacterType::hades:
+        return &sInstance->mHadesVoices;
+    case eCharacterType::hephaestus:
+        return &sInstance->mHephaestusVoices;
+    case eCharacterType::hera:
+        return &sInstance->mHeraVoices;
+    case eCharacterType::hermes:
+        return &sInstance->mHermesVoices;
+    case eCharacterType::poseidon:
+        return &sInstance->mPoseidonVoices;
+    case eCharacterType::zeus:
+        return &sInstance->mZeusVoices;
+
+    case eCharacterType::achilles:
+        return &sInstance->mAchillesVoices;
+    case eCharacterType::atalanta:
+        return &sInstance->mAtalantaVoices;
+    case eCharacterType::bellerophon:
+        return &sInstance->mBellerophonVoices;
+    case eCharacterType::hercules:
+        return &sInstance->mHerculesVoices;
+    case eCharacterType::jason:
+        return &sInstance->mJasonVoices;
+    case eCharacterType::odysseus:
+        return &sInstance->mOdysseusVoices;
+    case eCharacterType::perseus:
+        return &sInstance->mPerseusVoices;
+    case eCharacterType::theseus:
+        return &sInstance->mTheseusVoices;
+
+    case eCharacterType::calydonianBoar:
+        return &sInstance->mCalydonianBoarVoices;
+    case eCharacterType::cerberus:
+        return &sInstance->mCerberusVoices;
+    case eCharacterType::chimera:
+        return &sInstance->mChimeraVoices;
+    case eCharacterType::cyclops:
+        return &sInstance->mCyclopsVoices;
+    case eCharacterType::dragon:
+        return &sInstance->mDragonVoices;
+    case eCharacterType::echidna:
+        return &sInstance->mEchidnaVoices;
+    case eCharacterType::harpies:
+        return &sInstance->mHarpiesVoices;
+    case eCharacterType::hector:
+        return &sInstance->mHectorVoices;
+    case eCharacterType::hydra:
+        return &sInstance->mHydraVoices;
+    case eCharacterType::kraken:
+        return &sInstance->mKrakenVoices;
+    case eCharacterType::maenads:
+        return &sInstance->mMaenadsVoices;
+    case eCharacterType::medusa:
+        return &sInstance->mMedusaVoices;
+    case eCharacterType::minotaur:
+        return &sInstance->mMinotaurVoices;
+    case eCharacterType::scylla:
+        return &sInstance->mScyllaVoices;
+    case eCharacterType::sphinx:
+        return &sInstance->mSphinxVoices;
+    case eCharacterType::talos:
+        return &sInstance->mTalosVoices;
+    case eCharacterType::satyr:
+        return &sInstance->mSatyrVoices;
+
+    case eCharacterType::marbleMiner:
+        return &sInstance->mStoneMinerVoices;
+    case eCharacterType::bronzeMiner:
+        return &sInstance->mBronzeMinerVoices;
+    case eCharacterType::silverMiner:
+        return &sInstance->mSilverMinerVoices;
+    case eCharacterType::fireFighter:
+        return &sInstance->mFireFighterVoices;
+    case eCharacterType::actor:
+        return &sInstance->mActorVoices;
+    case eCharacterType::philosopher:
+        return &sInstance->mPhilosopherVoices;
+    case eCharacterType::artisan:
+        return &sInstance->mArtisanVoices;
+    case eCharacterType::astronomer:
+        return &sInstance->mAstronomerVoices;
+    case eCharacterType::inventor:
+        return &sInstance->mInventorVoices;
+    case eCharacterType::curator:
+        return &sInstance->mCuratorVoices;
+    case eCharacterType::competitor:
+        return &sInstance->mCompetitorVoices;
+    case eCharacterType::gymnast:
+        return &sInstance->mAthleteVoices;
+    case eCharacterType::taxCollector:
+        return &sInstance->mClerkVoices;
+    case eCharacterType::waterDistributor:
+        return &sInstance->mWaterDistributorVoices;
+    case eCharacterType::hunter: {
+        const auto h = static_cast<eHunter*>(c);
+        const bool deer = h->deerHunter();
+        if(deer) {
+            return &sInstance->mDeerHunterVoices;
+        } else {
+            return &sInstance->mBoarHunterVoices;
+        }
+    } break;
+    case eCharacterType::fishingBoat:
+        return &sInstance->mFishingBoatVoices;
+    case eCharacterType::grower: {
+        const auto g = static_cast<eGrower*>(c);
+        const auto type = g->growerType();
+        switch(type) {
+        case eGrowerType::grapesAndOlives:
+            return &sInstance->mGrowerVoices;
+        case eGrowerType::oranges:
+            return &sInstance->mOrangeTenderVoices;
+        }
+    } break;
+    case eCharacterType::goatherd:
+        return &sInstance->mGoatherdVoices;
+    case eCharacterType::shepherd:
+        return &sInstance->mShepherdVoices;
+    case eCharacterType::urchinGatherer:
+        return &sInstance->mUrchinGathererVoices;
+    case eCharacterType::healer:
+        return &sInstance->mHealerVoices;
+    case eCharacterType::lumberjack:
+        return &sInstance->mLumberjackVoices;
+    case eCharacterType::eliteCitizen:
+        return &sInstance->mEliteVoices;
+    case eCharacterType::peddler:
+        return &sInstance->mPeddlerVoices;
+    case eCharacterType::butcher:
+        return &sInstance->mButcherVoices;
+    case eCharacterType::scholar:
+        return &sInstance->mScholarVoices;
+    case eCharacterType::trader:
+        return &sInstance->mTraderVoices;
+    case eCharacterType::tradeBoat:
+        return &sInstance->mTradeBoatVoices;
+    case eCharacterType::trireme:
+        return &sInstance->mTriremeVoices;
+    case eCharacterType::watchman:
+        return &sInstance->mWatchmanVoices;
+
+    case eCharacterType::cartTransporter: {
+        const auto ct = static_cast<eCartTransporter*>(c);
+        const auto type = ct->cartType();
+        switch(type) {
+        case eCartTransporterType::food:
+            return &sInstance->mFoodVendorVoices;
+        case eCartTransporterType::fleece:
+            return &sInstance->mFleeceVendorVoices;
+        case eCartTransporterType::oil:
+            return &sInstance->mOilVendorVoices;
+        case eCartTransporterType::wine:
+            return &sInstance->mWineVendorVoices;
+        case eCartTransporterType::arms:
+            return &sInstance->mArmorVendorVoices;
+        case eCartTransporterType::horse:
+            return &sInstance->mHorseVendorVoices;
+        case eCartTransporterType::chariot:
+            return &sInstance->mChariotVendorVoices;
+        case eCartTransporterType::basic:
+            return &sInstance->mCartTransporterVoices;
+        default:
+            return nullptr;
+        }
+    } break;
+    case eCharacterType::chariotPoseidon:
+        return &sInstance->mChariotVoices;
+    case eCharacterType::hoplite:
+    case eCharacterType::hoplitePoseidon:
+        return &sInstance->mHopliteVoices;
+    case eCharacterType::horseman:
+        return &sInstance->mHorsemanVoices;
+    case eCharacterType::rockThrower:
+        return &sInstance->mRockthrowerVoices;
+    case eCharacterType::amazon:
+        return &sInstance->mAmazonVoices;
     default:
         return nullptr;
     }
+    return nullptr;
 }
 
 void eSounds::loadImpl() {
@@ -1680,10 +1885,276 @@ void eSounds::loadImpl() {
 
 
     const std::string walkerDir{eGameDir::path("Audio/Voice/Walker/")};
-    for(const auto& s : {"imm_e_1.mp3",
-                         "imm_e_2.mp3",
-                         "imm_e_3.mp3",
-                         "imm_i_1.mp3"}) {
-        mSettlerVoices.addPath(walkerDir + s);
-    }
+
+    const auto loadGodVoices = [&](const std::string& pref,
+                                   eSoundVector& vec) {
+        for(const auto& s : {pref + "_e_1.mp3",
+                             pref + "_e_2.mp3",
+                             pref + "_e_3.mp3"}) {
+            vec.addPath(walkerDir + s);
+        }
+        const auto e4Path = pref + "_e_4.mp3";
+        const bool e4 = std::filesystem::exists(e4Path);
+        if(e4) vec.addPath(e4Path);
+    };
+
+    loadGodVoices("Aph", mAphroditeVoices);
+    loadGodVoices("Apo", mApolloVoices);
+    loadGodVoices("Are", mAresVoices);
+    loadGodVoices("Atm", mArtemisVoices);
+    loadGodVoices("Atn", mAthenaVoices);
+    loadGodVoices("Ats", mAtlasVoices);
+    loadGodVoices("Dem", mDemeterVoices);
+    loadGodVoices("Dio", mDionysusVoices);
+    loadGodVoices("Had", mHadesVoices);
+    loadGodVoices("Hep", mHephaestusVoices);
+    loadGodVoices("Hra", mHeraVoices);
+    loadGodVoices("Her", mHermesVoices);
+    loadGodVoices("Pos", mPoseidonVoices);
+    loadGodVoices("Zeu", mZeusVoices);
+
+    const auto loadVoices = [&](const std::string& pref,
+                                eSoundVector& vec,
+                                const int iMin,
+                                const int iMax) {
+        for(int i = iMin; i <= iMax; i++) {
+            const auto iStr = std::to_string(i);
+            vec.addPath(walkerDir + pref + iStr + ".mp3");
+        }
+    };
+
+    const auto loadEVoices = [&](const std::string& pref,
+                                 eSoundVector& vec,
+                                 const int iMin,
+                                 const int iMax) {
+        loadVoices(pref + "_e_", vec, iMin, iMax);
+    };
+
+    const auto loadGVoices = [&](const std::string& pref,
+                                eSoundVector& vec) {
+        loadVoices(pref + "_g_", vec, 1, 7);
+    };
+
+    const auto loadIVoice = [&](const std::string& pref,
+                                eSoundVector& vec) {
+        loadVoices(pref + "_i_", vec, 1, 1);
+    };
+
+    const auto loadHeroVoices = [&](const std::string& pref,
+                                    eSoundVector& vec) {
+        loadGVoices(pref, vec);
+        vec.addPath(walkerDir + pref + "_e_1.mp3");
+        vec.addPath(walkerDir + pref + "_i_1.mp3");
+    };
+
+    loadHeroVoices("Ach", mAchillesVoices);
+    loadHeroVoices("Ata", mAtalantaVoices);
+    loadHeroVoices("Bel", mBellerophonVoices);
+    loadHeroVoices("Hec", mHerculesVoices);
+    loadHeroVoices("Jas", mJasonVoices);
+    loadHeroVoices("Ody", mOdysseusVoices);
+    loadHeroVoices("Per", mPerseusVoices);
+    loadHeroVoices("The", mTheseusVoices);
+
+    const auto loadMonsterVoices = [&](const std::string& pref,
+                                       eSoundVector& vec) {
+        vec.addPath(walkerDir + pref + ".mp3");
+    };
+
+    loadMonsterVoices("M_cal", mCalydonianBoarVoices);
+    loadMonsterVoices("M_cer", mCerberusVoices);
+    loadMonsterVoices("M_chi", mChimeraVoices);
+    loadMonsterVoices("M_cyc", mCyclopsVoices);
+    loadMonsterVoices("M_dra", mDragonVoices);
+    loadMonsterVoices("M_ech", mEchidnaVoices);
+    loadMonsterVoices("M_har", mHarpiesVoices);
+    loadMonsterVoices("M_hec", mHectorVoices);
+    loadMonsterVoices("M_hyd", mHydraVoices);
+    loadMonsterVoices("M_kra", mKrakenVoices);
+    loadMonsterVoices("M_mae", mMaenadsVoices);
+    loadMonsterVoices("M_med", mMedusaVoices);
+    loadMonsterVoices("M_min", mMinotaurVoices);
+    loadMonsterVoices("M_scy", mScyllaVoices);
+    loadMonsterVoices("M_sph", mSphinxVoices);
+    loadMonsterVoices("M_tal", mTalosVoices);
+    loadMonsterVoices("sat_e_1", mSatyrVoices);
+
+    loadIVoice("imm", mSettlerVoices);
+    loadEVoices("imm", mSettlerVoices, 1, 3);
+
+    loadIVoice("emi", mHomelessVoices);
+    loadEVoices("emi", mHomelessVoices, 1, 7);
+
+    // loadIVoice("ovn", mDisgruntledVoices); // 206
+    // loadEVoices("ovn", mDisgruntledVoices, 1, 7);
+
+    // loadIVoice("oth", mDisgruntledVoices); // 207
+    // loadEVoices("oth", mDisgruntledVoices, 1, 7);
+
+    loadIVoice("omg", mDisgruntledVoices); // 208
+    loadEVoices("omg", mDisgruntledVoices, 1, 7);
+
+    // loadIVoice("ods", mDisgruntledVoices); // 209
+    // loadEVoices("ods", mDisgruntledVoices, 1, 7);
+
+    loadIVoice("pla", mSickVoices);
+    loadEVoices("pla", mSickVoices, 1, 1);
+
+    loadGVoices("stn", mStoneMinerVoices);
+    loadIVoice("stn", mStoneMinerVoices);
+    loadEVoices("stn", mStoneMinerVoices, 1, 3);
+
+    loadGVoices("act", mActorVoices);
+    loadIVoice("act", mActorVoices);
+    loadEVoices("act", mActorVoices, 1, 4);
+
+    loadGVoices("phl", mPhilosopherVoices);
+    loadIVoice("phl", mPhilosopherVoices);
+    loadEVoices("phl", mPhilosopherVoices, 1, 4);
+
+    loadGVoices("ast", mAstronomerVoices);
+    loadIVoice("ast", mAstronomerVoices);
+
+    loadGVoices("inv", mInventorVoices);
+    loadIVoice("inv", mInventorVoices);
+
+    loadGVoices("ath", mAthleteVoices);
+    loadIVoice("ath", mAthleteVoices);
+    loadEVoices("ath", mAthleteVoices, 1, 4);
+
+    loadGVoices("cmp", mCompetitorVoices);
+    loadIVoice("cmp", mCompetitorVoices);
+    loadEVoices("cmp", mCompetitorVoices, 1, 4);
+
+    loadGVoices("cop", mBronzeMinerVoices);
+    loadIVoice("cop", mBronzeMinerVoices);
+    loadEVoices("cop", mBronzeMinerVoices, 1, 2);
+
+    loadGVoices("slv", mSilverMinerVoices);
+    loadIVoice("slv", mSilverMinerVoices);
+    loadEVoices("slv", mSilverMinerVoices, 1, 2);
+
+    loadGVoices("sup", mFireFighterVoices);
+    loadIVoice("sup", mFireFighterVoices);
+    loadEVoices("sup", mFireFighterVoices, 1, 5);
+
+    loadGVoices("art", mArtisanVoices);
+    loadIVoice("art", mArtisanVoices);
+    loadEVoices("art", mArtisanVoices, 1, 4);
+
+    loadGVoices("bht", mBoarHunterVoices);
+    loadIVoice("bht", mBoarHunterVoices);
+    loadEVoices("bht", mBoarHunterVoices, 1, 2);
+
+    loadGVoices("dht", mDeerHunterVoices);
+    loadIVoice("dht", mDeerHunterVoices);
+    loadEVoices("dht", mDeerHunterVoices, 1, 2);
+
+    loadGVoices("fsh", mFishingBoatVoices);
+    loadIVoice("fsh", mFishingBoatVoices);
+    loadEVoices("fsh", mFishingBoatVoices, 1, 4);
+
+    loadGVoices("gro", mGrowerVoices);
+    loadIVoice("gro", mGrowerVoices);
+    loadEVoices("gro", mGrowerVoices, 1, 4);
+
+    loadGVoices("tdr", mOrangeTenderVoices);
+    loadIVoice("tdr", mOrangeTenderVoices);
+    loadEVoices("tdr", mOrangeTenderVoices, 1, 2);
+
+    loadGVoices("lmb", mLumberjackVoices);
+    loadIVoice("lmb", mLumberjackVoices);
+    loadEVoices("lmb", mLumberjackVoices, 1, 2);
+
+    loadGVoices("gth", mGoatherdVoices);
+    loadIVoice("gth", mGoatherdVoices);
+    loadEVoices("gth", mGoatherdVoices, 1, 4);
+
+    loadGVoices("urc", mUrchinGathererVoices);
+    loadIVoice("urc", mUrchinGathererVoices);
+    loadEVoices("urc", mUrchinGathererVoices, 1, 4);
+
+    loadGVoices("shp", mShepherdVoices);
+    loadIVoice("shp", mShepherdVoices);
+    loadEVoices("shp", mShepherdVoices, 1, 4);
+
+    loadGVoices("rch", mButcherVoices);
+    loadIVoice("rch", mButcherVoices);
+    loadEVoices("rch", mButcherVoices, 1, 3);
+
+    loadGVoices("hlr", mHealerVoices);
+    loadIVoice("hlr", mHealerVoices);
+    loadEVoices("hlr", mHealerVoices, 1, 1);
+
+    loadGVoices("nob", mEliteVoices);
+    loadIVoice("nob", mEliteVoices);
+    loadEVoices("nob", mEliteVoices, 1, 1);
+
+    loadIVoice("arv", mArmorVendorVoices);
+    loadEVoices("arv", mArmorVendorVoices, 1, 2);
+
+    loadIVoice("fdv", mFoodVendorVoices);
+    loadEVoices("fdv", mFoodVendorVoices, 1, 2);
+
+    loadIVoice("flv", mFleeceVendorVoices);
+    loadEVoices("flv", mFleeceVendorVoices, 1, 2);
+
+    loadIVoice("oiv", mOilVendorVoices);
+    loadEVoices("oiv", mOilVendorVoices, 1, 2);
+
+    loadIVoice("wiv", mWineVendorVoices);
+    loadEVoices("wiv", mWineVendorVoices, 1, 2);
+
+    loadIVoice("chv", mChariotVendorVoices);
+    loadEVoices("chv", mChariotVendorVoices, 1, 2);
+
+    loadIVoice("htr", mHorseVendorVoices);
+    loadEVoices("htr", mHorseVendorVoices, 1, 2);
+
+    loadIVoice("crt", mCartTransporterVoices);
+    loadEVoices("crt", mCartTransporterVoices, 1, 4);
+
+    loadIVoice("trd", mTraderVoices);
+    loadVoices("trd_w_", mTraderVoices, 1, 5);
+    loadEVoices("trd", mTraderVoices, 1, 2);
+
+    loadIVoice("trs", mTradeBoatVoices);
+    loadVoices("trs_w_", mTradeBoatVoices, 1, 5);
+    loadEVoices("trs", mTradeBoatVoices, 1, 2);
+
+    loadIVoice("trd", mTriremeVoices);
+    loadEVoices("trd", mTriremeVoices, 1, 4);
+
+    loadIVoice("cht", mChariotVoices);
+    loadEVoices("cht", mChariotVoices, 1, 4);
+
+    loadIVoice("hpl", mHopliteVoices);
+    loadEVoices("hpl", mHopliteVoices, 1, 4);
+
+    loadIVoice("hsm", mHorsemanVoices);
+    loadEVoices("hsm", mHorsemanVoices, 1, 4);
+
+    loadIVoice("rbl", mRockthrowerVoices);
+    loadEVoices("rbl", mRockthrowerVoices, 1, 4);
+
+    loadIVoice("acf", mAmazonVoices);
+    loadEVoices("acf", mAmazonVoices, 1, 4);
+
+    loadGVoices("clk", mClerkVoices);
+    loadIVoice("clk", mClerkVoices);
+
+    loadGVoices("cur", mCuratorVoices);
+    loadIVoice("cur", mCuratorVoices);
+
+    loadGVoices("wtb", mWaterDistributorVoices);
+    loadIVoice("wtb", mWaterDistributorVoices);
+
+    loadGVoices("sch", mScholarVoices);
+    loadIVoice("sch", mScholarVoices);
+
+    loadIVoice("pre", mPriestVoices);
+    loadEVoices("pre", mPriestVoices, 1, 6);
+
+    loadIVoice("wtc", mWatchmanVoices);
+    loadEVoices("wtc", mWatchmanVoices, 1, 5);
 }

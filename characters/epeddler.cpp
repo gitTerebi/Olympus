@@ -19,3 +19,7 @@ void ePeddler::provideToBuilding(eBuilding* const b) {
 void ePeddler::setAgora(eAgoraBase* const a) {
     mAgora = a;
 }
+
+eAgoraBase *ePeddler::agora() const {
+    return mAgora.get();
+}

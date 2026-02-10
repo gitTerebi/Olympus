@@ -124,7 +124,7 @@ public:
     static void playDieSound(eCharacter* const c);
     static void playHitSound(eCharacter* const c);
 
-    static eSoundVector* getCharacterVoices(const eCharacterType type);
+    static eSoundVector* getCharacterVoices(eCharacter * const c);
 private:
     void loadImpl();
 
@@ -317,6 +317,100 @@ private:
     eSatyrSounds mSatyr;
 
     eSoundVector mSettlerVoices;
+    eSoundVector mHomelessVoices;
+    eSoundVector mDisgruntledVoices;
+    eSoundVector mSickVoices;
+
+    eSoundVector mAphroditeVoices;
+    eSoundVector mApolloVoices;
+    eSoundVector mAresVoices;
+    eSoundVector mArtemisVoices;
+    eSoundVector mAthenaVoices;
+    eSoundVector mAtlasVoices;
+    eSoundVector mDemeterVoices;
+    eSoundVector mDionysusVoices;
+    eSoundVector mHadesVoices;
+    eSoundVector mHephaestusVoices;
+    eSoundVector mHeraVoices;
+    eSoundVector mHermesVoices;
+    eSoundVector mPoseidonVoices;
+    eSoundVector mZeusVoices;
+
+    eSoundVector mCalydonianBoarVoices;
+    eSoundVector mCerberusVoices;
+    eSoundVector mChimeraVoices;
+    eSoundVector mCyclopsVoices;
+    eSoundVector mDragonVoices;
+    eSoundVector mEchidnaVoices;
+    eSoundVector mHarpiesVoices;
+    eSoundVector mHectorVoices;
+    eSoundVector mHydraVoices;
+    eSoundVector mKrakenVoices;
+    eSoundVector mMaenadsVoices;
+    eSoundVector mMedusaVoices;
+    eSoundVector mMinotaurVoices;
+    eSoundVector mScyllaVoices;
+    eSoundVector mSphinxVoices;
+    eSoundVector mTalosVoices;
+    eSoundVector mSatyrVoices;
+
+    eSoundVector mAchillesVoices;
+    eSoundVector mAtalantaVoices;
+    eSoundVector mBellerophonVoices;
+    eSoundVector mHerculesVoices;
+    eSoundVector mJasonVoices;
+    eSoundVector mOdysseusVoices;
+    eSoundVector mPerseusVoices;
+    eSoundVector mTheseusVoices;
+
+    eSoundVector mStoneMinerVoices;
+    eSoundVector mActorVoices;
+    eSoundVector mPhilosopherVoices;
+    eSoundVector mArtisanVoices;
+    eSoundVector mAstronomerVoices;
+    eSoundVector mInventorVoices;
+    eSoundVector mAthleteVoices;
+    eSoundVector mCompetitorVoices;
+    eSoundVector mBronzeMinerVoices;
+    eSoundVector mSilverMinerVoices;
+    eSoundVector mFireFighterVoices;
+    eSoundVector mBoarHunterVoices;
+    eSoundVector mDeerHunterVoices;
+    eSoundVector mClerkVoices;
+    eSoundVector mCuratorVoices;
+    eSoundVector mFishingBoatVoices;
+    eSoundVector mGrowerVoices;
+    eSoundVector mOrangeTenderVoices;
+    eSoundVector mGoatherdVoices;
+    eSoundVector mUrchinGathererVoices;
+    eSoundVector mShepherdVoices;
+    eSoundVector mHealerVoices;
+    eSoundVector mLumberjackVoices;
+    eSoundVector mEliteVoices;
+    eSoundVector mPeddlerVoices;
+    eSoundVector mPriestVoices;
+    eSoundVector mButcherVoices;
+    eSoundVector mScholarVoices;
+    eSoundVector mTraderVoices;
+    eSoundVector mTradeBoatVoices;
+    eSoundVector mTriremeVoices;
+    eSoundVector mWatchmanVoices;
+    eSoundVector mWaterDistributorVoices;
+
+    eSoundVector mFoodVendorVoices;
+    eSoundVector mFleeceVendorVoices;
+    eSoundVector mOilVendorVoices;
+    eSoundVector mWineVendorVoices;
+    eSoundVector mArmorVendorVoices;
+    eSoundVector mHorseVendorVoices;
+    eSoundVector mChariotVendorVoices;
+    eSoundVector mCartTransporterVoices;
+
+    eSoundVector mChariotVoices;
+    eSoundVector mHopliteVoices;
+    eSoundVector mHorsemanVoices;
+    eSoundVector mRockthrowerVoices;
+    eSoundVector mAmazonVoices;
 };
 
 #endif // ESOUNDS_H

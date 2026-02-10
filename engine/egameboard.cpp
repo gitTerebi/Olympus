@@ -1896,6 +1896,12 @@ eCityFinances eGameBoard::finances(const eCityId cid) const {
     return p->finances();
 }
 
+int eGameBoard::maintanance(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return 0;
+    return city->maintanance();
+}
+
 int eGameBoard::drachmas(const ePlayerId pid) const {
     const auto player = boardPlayerWithId(pid);
     if(!player) return 0;
@@ -3145,6 +3151,11 @@ void eGameBoard::defeatedBy(const eCityId defeated,
     } else {
         defs.push_back(by);
     }
+}
+
+using eCities = std::vector<stdsptr<eWorldCity>>;
+eCities eGameBoard::defeatedBy(const eCityId cid) {
+    return mDefeatedBy[cid];
 }
 
 eImmigrationLimitedBy eGameBoard::immigrationLimit(const eCityId cid) const {

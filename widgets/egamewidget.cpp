@@ -1939,11 +1939,14 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         if(!tile) return true;
         const auto b = tile->underBuilding();
         const auto chars = tile->characters();
-        if(!chars.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
-            std::vector<eCharacter*> chars2;
-            for(const auto& c : chars) {
-                chars2.push_back(c.get());
-            }
+        std::vector<eCharacter*> chars2;
+        for(const auto& c : chars) {
+            const auto type = c->type();
+            if(type == eCharacterType::trailer) continue;
+            if(c->dead()) continue;
+            chars2.push_back(c.get());
+        }
+        if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
             mInfoWidget = openInfoWidget(chars2);
         } else if(b) {
             eSounds::playSoundForBuilding(b);

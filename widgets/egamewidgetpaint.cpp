@@ -1203,6 +1203,10 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int da = tile->characterDoubleAltitude();
             const auto bttt = tile->underBuildingType();
             const bool flat = eBuilding::sFlatBuilding(bttt);
+            const bool hover = tx == mHoverTX && ty == mHoverTY;
+            const int hr = 200;
+            const int hg = 200;
+            const int hb = 255;
             const bool pyramid = eBuilding::sPyramidBuilding(bttt);
             if(flat || bttt == eBuildingType::wall || pyramid) {
                 if(crosswalk) {
@@ -1326,8 +1330,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                         const int ddstYf = mDY + dstYf;
                         const int ddstX = std::round(ddstXf);
                         const int ddstY = std::round(ddstYf);
-
+                        if(hover) {
+                            tex->setColorMod(hr, hg, hb);
+                        }
                         tex->render(r, ddstX, ddstY, false);
+                        if(hover) {
+                            tex->clearColorMod();
+                        }
                     }
                     if(c->hasSecondaryTexture()) {
                         const auto stex = c->getSecondaryTexture(mTileSize);
@@ -1341,7 +1350,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                             const double sddstYf = mDY + sdstYf;
                             const int sddstX = std::round(sddstXf);
                             const int sddstY = std::round(sddstYf);
+                            if(hover) {
+                                stexTex->setColorMod(hr, hg, hb);
+                            }
                             stexTex->render(r, sddstX, sddstY, false);
+                            if(hover) {
+                                stexTex->clearColorMod();
+                            }
                         }
                     }
 //                        tex->clearColorMod();

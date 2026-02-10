@@ -12,7 +12,7 @@ public:
 
     int soundCount() const { return mPaths.size(); }
     void addPath(const std::string& path);
-    void play(const int id);
+    void play(const int id, const int chn = -1);
     void playRandomSound();
 private:
     std::vector<std::pair<Mix_Chunk*, std::string>> mPaths;

@@ -272,6 +272,7 @@ void eBoardCity::acquired() {
 
 void eBoardCity::updateCoverage() {
     int totalPeople = 0;
+    int totalBuildings = 0;
     int commonPeople = 0;
     int sport = 0;
     int phil = 0;
@@ -280,6 +281,7 @@ void eBoardCity::updateCoverage() {
     double totalUnrest = 0;
     int totalSatisfaction = 0;
     int totalHygiene = 0;
+    int totalMaintanance = 0;
     for(const auto b : mTimedBuildings) {
         if(const auto h = dynamic_cast<eHouseBase*>(b)) {
             const int p = h->people();
@@ -303,6 +305,8 @@ void eBoardCity::updateCoverage() {
             }
             totalPeople += p;
         }
+        totalBuildings++;
+        totalMaintanance += b->maintenance();
     }
     if(totalPeople <= 0) {
         mAthleticsCoverage = 0;
@@ -321,10 +325,12 @@ void eBoardCity::updateCoverage() {
         mUnrest = 0;
         mPopularity = 100;
         mHealth = 100;
+        mMaintanance = 100;
     } else {
         mUnrest = std::round(100.*totalUnrest/commonPeople);
         mPopularity = std::round(1.*totalSatisfaction/commonPeople);
         mHealth = std::round(1.*totalHygiene/commonPeople);
+        mMaintanance = std::round(1.*totalMaintanance/totalBuildings);
     }
 }
 

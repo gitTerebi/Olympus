@@ -12,6 +12,7 @@ public:
     void provideToBuilding(eBuilding* const b);
 
     void setAgora(eAgoraBase* const a);
+    eAgoraBase* agora() const;
 private:
     stdptr<eAgoraBase> mAgora;
 };
