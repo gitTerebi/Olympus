@@ -14,11 +14,14 @@ public:
 private:
     void setCharacter(eCharacter* const c);
 
+    eWidget* mContent = nullptr;
     eLabel* mPortraitLabel = nullptr;
     eWidget* mTextWidget = nullptr;
     eLabel* mNameLabel = nullptr;
     eLabel* mOccupationLabel = nullptr;
     eLabel* mMsgLabel = nullptr;
+
+    eAction mSpeakAction;
 };
 
 #endif // ECHARACTERINFOWIDGET_H

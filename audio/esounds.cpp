@@ -1068,6 +1068,15 @@ void eSounds::playHitSound(eCharacter* const c) {
     }
 }
 
+eSoundVector* eSounds::getCharacterVoices(const eCharacterType type) {
+    switch(type) {
+    case eCharacterType::settler:
+        return &sInstance->mSettlerVoices;
+    default:
+        return nullptr;
+    }
+}
+
 void eSounds::loadImpl() {
     if(mLoaded) return;
     mLoaded = true;
@@ -1667,5 +1676,14 @@ void eSounds::loadImpl() {
                          "gen_hit7.wav",
                          "gen_hit8.wav"}) {
         mGenHit.addPath(wavsDir + s);
+    }
+
+
+    const std::string walkerDir{eGameDir::path("Audio/Voice/Walker/")};
+    for(const auto& s : {"imm_e_1.mp3",
+                         "imm_e_2.mp3",
+                         "imm_e_3.mp3",
+                         "imm_i_1.mp3"}) {
+        mSettlerVoices.addPath(walkerDir + s);
     }
 }

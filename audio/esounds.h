@@ -123,6 +123,8 @@ public:
     static void playAttackSound(const eCharacterType type);
     static void playDieSound(eCharacter* const c);
     static void playHitSound(eCharacter* const c);
+
+    static eSoundVector* getCharacterVoices(const eCharacterType type);
 private:
     void loadImpl();
 
@@ -313,6 +315,8 @@ private:
     eMonsterSounds mSphinx{"sph", "sphinx"};
     eMonsterSounds mTalos{"tal", "talos"};
     eSatyrSounds mSatyr;
+
+    eSoundVector mSettlerVoices;
 };
 
 #endif // ESOUNDS_H

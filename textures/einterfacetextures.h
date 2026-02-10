@@ -334,6 +334,9 @@ public:
     eTextureCollection fSmallUpButton;
     eTextureCollection fSmallDownButton;
 
+    // normal, hover, pressed
+    eTextureCollection fSpeakButton;
+
     // normal, hover, pressed, disabled
     eTextureCollection fUpButton;
     eTextureCollection fDownButton;

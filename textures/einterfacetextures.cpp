@@ -280,6 +280,8 @@ eInterfaceTextures::eInterfaceTextures(const int tileW, const int tileH,
     fSmallUpButton(renderer),
     fSmallDownButton(renderer),
 
+    fSpeakButton(renderer),
+
     fUpButton(renderer),
     fDownButton(renderer),
 
@@ -706,6 +708,10 @@ void eInterfaceTextures::load() {
 
         for(int i = 252; i < 256; i++) {
             loader.load(1, i, fMilitaryControlAutomatic);
+        }
+
+        for(int i = 256; i < 259; i++) {
+            loader.load(1, i, fSpeakButton);
         }
 
         for(int i = 263; i < 267; i++) {

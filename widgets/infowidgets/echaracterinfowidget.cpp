@@ -10,8 +10,11 @@
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
 #include "widgets/ebuttonbase.h"
+#include "widgets/ebasicbutton.h"
 #include "engine/eworldcity.h"
 #include "engine/egameboard.h"
+#include "audio/esounds.h"
+#include "audio/esoundvector.h"
 
 eCharacterInfoWidget::eCharacterInfoWidget(
     eMainWindow* const window,
@@ -548,9 +551,31 @@ std::string gCharOccupation(
     }
 }
 
-std::string gCharMessage(eCharacter * const c) {
-    if(!c) return "";
-    return "";
+struct eCharMessage {
+    std::string fText;
+    eSoundVector* fSounds = nullptr;
+    int fSoundId = -1;
+
+    bool playSound() const {
+        if(!fSounds) return false;
+        fSounds->play(fSoundId);
+        return true;
+    }
+};
+
+eCharMessage gCharMessage(eCharacter * const c) {
+    eCharMessage result;
+    if(!c) return result;
+    const auto type = c->type();
+    result.fSounds = eSounds::getCharacterVoices(type);
+    switch(type) {
+    case eCharacterType::settler:
+        result.fSoundId = 0;
+        result.fText = eLanguage::zeusText(202, 1);
+        break;
+    }
+
+    return result;
 }
 
 void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
@@ -581,8 +606,8 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     const auto type = c->type();
     const auto portrait = gCharPortrait(res, c);
 
-    const auto w = new eWidget(window());
-    w->setWidth(widgetWidth());
+    mContent = new eWidget(window());
+    mContent->setWidth(widgetWidth());
 
     mPortraitLabel = new eLabel(window());
     mPortraitLabel->setTexture(portrait);
@@ -592,6 +617,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     const int remW = widgetWidth() - mPortraitLabel->width() - 2*p;
 
     mTextWidget = new eWidget(window());
+    mTextWidget->setWidth(remW);
 
     const int seedId = c->seedId();
     const auto name = gCharName(type, seedId);
@@ -615,16 +641,25 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     mMsgLabel->setTinyPadding();
     mMsgLabel->setSmallFontSize();
     mMsgLabel->setWrapWidth(remW);
-    mMsgLabel->setText(msg);
+    mMsgLabel->setText(msg.fText);
     mMsgLabel->fitContent();
     mTextWidget->addWidget(mMsgLabel);
 
+    const auto speakButton = new eBasicButton(
+        &eInterfaceTextures::fSpeakButton, window());
+    speakButton->setPressAction([this]() {
+        if(mSpeakAction) mSpeakAction();
+    });
+    mTextWidget->addWidget(speakButton);
+    speakButton->align(eAlignment::right);
+
     mTextWidget->stackVertically(p);
-    w->addWidget(mPortraitLabel);
-    w->addWidget(mTextWidget);
-    w->stackHorizontally(p);
-    w->fitContent();
-    addInfoWidget(w);
+
+    mContent->addWidget(mPortraitLabel);
+    mContent->addWidget(mTextWidget);
+    mContent->stackHorizontally(p);
+    mContent->fitContent();
+    addInfoWidget(mContent);
 
     setCharacter(c);
 }
@@ -647,10 +682,15 @@ void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
     mOccupationLabel->fitContent();
 
     const auto msg = gCharMessage(c);
-    mMsgLabel->setWrapWidth(widgetWidth());
-    mMsgLabel->setText(msg);
+    mMsgLabel->setText(msg.fText);
+    msg.playSound();
+    mSpeakAction = [msg]() {
+        msg.playSound();
+    };
     mMsgLabel->fitContent();
 
     const int p = res.smallPadding();
     mTextWidget->stackVertically(p);
+    mTextWidget->fitHeight();
+    mContent->fitHeight();
 }
