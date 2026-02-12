@@ -6,7 +6,7 @@
 eGymnasium::eGymnasium(eGameBoard& board, const eCityId cid) :
     ePatrolSourceBuilding(board,
                     &eBuildingTextures::fGymnasium,
-                    -2.57, -4.57,
+                    -2.63, -4.55,
                     &eBuildingTextures::fGymnasiumOverlay,
                     {{eCharacterType::competitor, eBuildingType::stadium}},
                     eBuildingType::gymnasium, 3, 3, 7, cid,
