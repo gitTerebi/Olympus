@@ -1276,6 +1276,21 @@ eSoundVector* eSounds::getCharacterVoices(eCharacter* const c) {
         return &sInstance->mRockthrowerVoices;
     case eCharacterType::amazon:
         return &sInstance->mAmazonVoices;
+
+    case eCharacterType::sheep:
+        return &sInstance->mSheep;
+    case eCharacterType::goat:
+        return &sInstance->mGoat;
+    case eCharacterType::wolf:
+        return &sInstance->mWolf;
+    case eCharacterType::deer:
+        return &sInstance->mDeer;
+    case eCharacterType::boar:
+        return &sInstance->mBoar;
+    case eCharacterType::cattle1:
+    case eCharacterType::cattle2:
+    case eCharacterType::cattle3:
+        return &sInstance->mCattle;
     default:
         return nullptr;
     }
@@ -2122,8 +2137,8 @@ void eSounds::loadImpl() {
     loadVoices("trs_w_", mTradeBoatVoices, 1, 5);
     loadEVoices("trs", mTradeBoatVoices, 1, 2);
 
-    loadIVoice("trd", mTriremeVoices);
-    loadEVoices("trd", mTriremeVoices, 1, 4);
+    loadIVoice("tri", mTriremeVoices);
+    loadEVoices("tri", mTriremeVoices, 1, 4);
 
     loadIVoice("cht", mChariotVoices);
     loadEVoices("cht", mChariotVoices, 1, 4);

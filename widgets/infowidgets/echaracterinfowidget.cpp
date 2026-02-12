@@ -736,15 +736,29 @@ eCharMessage gCharMessage(eCharacter * const c) {
     int groupId = -1;
     int stringId = -1;
     switch(type) {
+    case eCharacterType::sheep:
+    case eCharacterType::goat:
+    case eCharacterType::wolf:
+    case eCharacterType::deer:
+    case eCharacterType::boar:
+    case eCharacterType::cattle1:
+    case eCharacterType::cattle2:
+    case eCharacterType::cattle3:
+        stringId = eRand::rand() % 4;
+        break;
     case eCharacterType::settler: {
         const auto ed = board.employmentData(cid);
         const auto hd = board.husbandryData(cid);
-        if(enemyImmortal) {
-            stringId = 0;
-        } else if(ed && ed->vacanciesFilledFraction() < 0.95) {
-            stringId = 2;
-        } else if(hd && hd->storedFood() > 6) {
-            stringId = 3;
+        if(eRand::rand() % 2) {
+            if(enemyImmortal) {
+                stringId = 0;
+            } else if(ed && ed->vacanciesFilledFraction() < 0.95) {
+                stringId = 2;
+            } else if(hd && hd->storedFood() > 6) {
+                stringId = 3;
+            } else {
+                stringId = 1;
+            }
         } else {
             stringId = 1;
         }

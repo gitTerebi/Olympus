@@ -24,7 +24,7 @@ const bool sLoadOnAdd = false;
 
 void eSoundVector::addPath(const std::string& path) {
     const bool e = std::filesystem::exists(path);
-    if(!e) printf("Missing audio file %s", path.c_str());
+    if(!e) printf("Missing audio file %s\n", path.c_str());
     const auto sound = sLoadOnAdd ? loadSound(path) : nullptr;
     mPaths.push_back({sound, path});
 }
