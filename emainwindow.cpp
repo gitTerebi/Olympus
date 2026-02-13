@@ -561,6 +561,7 @@ int eMainWindow::exec() {
     eTooltip tooltip(*this);
 
     const bool showFPS = false;
+    const double fpsClamp = 20;
 
     int c = 0;
     int fpsVal = 0;
@@ -703,7 +704,7 @@ int eMainWindow::exec() {
 
         const auto fpsEnd = high_resolution_clock::now();
         const duration<double, std::milli> fpsElapsed = fpsEnd - fpsStart;
-        const duration<double, std::milli> fpsDuration(1000./20);
+        const duration<double, std::milli> fpsDuration(1000./fpsClamp);
         const duration<double, std::milli> fpsSleep(fpsDuration - fpsElapsed);
         std::this_thread::sleep_for(fpsSleep);
 
