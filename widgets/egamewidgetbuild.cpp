@@ -2174,7 +2174,10 @@ bool eGameWidget::buildMouseRelease() {
     }
     if(r) {
         const auto type = eBuildingModeHelpers::toBuildingType(mode);
-        eSounds::playSoundForBuilding(type);
+        if(type != eBuildingType::road) {
+            eSounds::playPlaceBuildingSound();
+        }
+        // eSounds::playSoundForBuilding(type);
     }
     return true;
 }

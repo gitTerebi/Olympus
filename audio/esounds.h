@@ -20,6 +20,8 @@ public:
 
     static void playButtonSound();
 
+    static void playPlaceBuildingSound();
+
     static void playSoundForTile(eTile* const tile);
     static bool playSoundForBuilding(eBuilding* const b);
     static bool playSoundForBuilding(const eBuildingType type);
@@ -133,6 +135,7 @@ private:
     bool mLoaded{false};
 
     eSoundVector mButton;
+    eSoundVector mPlaceBuilding;
 
     eSoundVector mEnvironment;
 

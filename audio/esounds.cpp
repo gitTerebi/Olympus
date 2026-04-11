@@ -33,6 +33,10 @@ void eSounds::playButtonSound() {
     sInstance->mButton.playRandomSound();
 }
 
+void eSounds::playPlaceBuildingSound() {
+    sInstance->mPlaceBuilding.playRandomSound();
+}
+
 void eSounds::playSoundForTile(eTile* const tile) {
     if(tile->onFire()) return eSounds::playFireSound();
     if(const auto b = tile->underBuilding()) {
@@ -1813,6 +1817,9 @@ void eSounds::loadImpl() {
     }
 
     const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+
+    mPlaceBuilding.addPath(wavsDir + "place_building.wav");
+
     mFire.addPath(wavsDir + "Fire.wav");
     mCollapse.addPath(wavsDir + "collapse.wav");
 
