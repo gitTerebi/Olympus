@@ -2142,6 +2142,9 @@ void eSounds::loadImpl() {
     loadIVoice("hlr", mHealerVoices);
     loadEVoices("hlr", mHealerVoices, 1, 1);
 
+    loadIVoice("pdl", mPeddlerVoices);
+    loadEVoices("pdl", mPeddlerVoices, 1, 6);
+
     loadGVoices("nob", mEliteVoices);
     loadIVoice("nob", mEliteVoices);
     loadEVoices("nob", mEliteVoices, 1, 1);
