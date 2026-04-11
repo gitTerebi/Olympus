@@ -153,6 +153,7 @@ void eVendor::timeChanged(const int by) {
 }
 
 std::vector<eCartTask> eVendor::cartTasks() const {
+    if(!mVendorEnabled) return {};
     const int space = spaceLeft(mResType);
 
     if(space > 0) {
