@@ -20,6 +20,9 @@ public:
     eCartActionTypeSupport support() const;
     eResourceType supportsResource() const;
 
+    eBuilding* src() const { return mBuilding; }
+    eBuilding* target() const { return mTarget; }
+
     bool waiting();
 protected:
     void findTarget();
@@ -49,6 +52,7 @@ private:
     void disappear();
 
     eBuildingWithResource* mBuilding = nullptr;
+    eBuilding* mTarget = nullptr;
 
     eCartTask mTask;
 

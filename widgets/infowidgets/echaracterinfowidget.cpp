@@ -1,6 +1,7 @@
 #include "echaracterinfowidget.h"
 
 #include "characters/ecarttransporter.h"
+#include "characters/actions/ecarttransporteraction.h"
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
 #include "widgets/elabel.h"
@@ -1649,6 +1650,12 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     mContent->fitContent();
     addInfoWidget(mContent);
 
+    mAdditionalInfo = new eLabel(window());
+    mAdditionalInfo->setNoPadding();
+    mAdditionalInfo->setSmallFontSize();
+    mAdditionalInfo->fitContent();
+    addWidget(mAdditionalInfo);
+
     setCharacter(c);
 }
 
@@ -1681,4 +1688,27 @@ void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
     mTextWidget->stackVertically(p);
     mTextWidget->fitHeight();
     mContent->fitHeight();
+
+    std::string additionalTxt;
+    if(const auto cta = dynamic_cast<eCartTransporterAction*>(c->action())) {
+        const auto from = cta->src();
+        const auto to = cta->target();
+        if(from == to) {
+            if(from) {
+                const auto returningTo = eLanguage::zeusText(129, 16);
+                const auto name = eBuilding::sNameForBuilding(from);
+                additionalTxt = returningTo + " " + name;
+            }
+        } else if(from && to) {
+            const auto goingTo = eLanguage::zeusText(129, 15);
+            const auto fromStr = eLanguage::zeusText(129, 14);
+            const auto fromName = eBuilding::sNameForBuilding(from);
+            const auto toName = eBuilding::sNameForBuilding(to);
+            additionalTxt = goingTo + " " + toName + " " + fromStr + " " + fromName;
+        }
+    }
+    mAdditionalInfo->setText(additionalTxt);
+    mAdditionalInfo->fitContent();
+    const int hp = res.hugePadding();
+    mAdditionalInfo->move(hp, height() - hp - mAdditionalInfo->height());
 }

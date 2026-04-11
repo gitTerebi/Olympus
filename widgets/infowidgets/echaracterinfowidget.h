@@ -20,6 +20,7 @@ private:
     eLabel* mNameLabel = nullptr;
     eLabel* mOccupationLabel = nullptr;
     eLabel* mMsgLabel = nullptr;
+    eLabel* mAdditionalInfo = nullptr;
 
     eAction mSpeakAction;
 };

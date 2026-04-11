@@ -5,6 +5,7 @@ namespace eFileFormat {
     enum {
         initial,
         settlerEmigrant,
+        cartTarget,
 
         nextVersion
     };

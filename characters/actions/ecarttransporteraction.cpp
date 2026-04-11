@@ -48,6 +48,7 @@ bool eCartTransporterAction::decide() {
             const bool hr = c->hasResource();
             if(!hr || mWaitOutside) wait(1000);
             else if(hr) waitOutside();
+            mTarget = nullptr;
         } else {
             int cc = c->resCount();
             if(cc > 0) {
@@ -186,6 +187,9 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
     a->setFoundAction([tptr, this, c, ttask, bx, by, finishAction]() {
         finishAction->setXY(*bx, *by);
         if(!tptr) return;
+        const auto& board = this->board();
+        const auto b = board.buildingAt(*bx, *by);
+        mTarget = b;
         mWaitOutside = false;
         mTask = *ttask;
         startResourceAction(mTask);
@@ -208,6 +212,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
 void eCartTransporterAction::goBack() {
     const auto w = getWalkable();
     eActionWithComeback::goBack(w);
+    mTarget = mBuilding;
 }
 
 void eCartTransporterAction::targetResourceAction(const int bx, const int by) {
@@ -318,6 +323,13 @@ void eCartTransporterAction::read(eReadStream& src) {
     src >> mUpdateWaiting;
     src >> mNoTarget;
     src >> mWaitOutside;
+
+    const auto v = src.formatVersion();
+    if(v >= eFileFormat::cartTarget) {
+        src.readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = b;
+        });
+    }
 }
 
 void eCartTransporterAction::write(eWriteStream& dst) const {
@@ -331,6 +343,8 @@ void eCartTransporterAction::write(eWriteStream& dst) const {
     dst << mUpdateWaiting;
     dst << mNoTarget;
     dst << mWaitOutside;
+
+    dst.writeBuilding(mTarget);
 }
 
 stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
@@ -416,6 +430,7 @@ void eCartTransporterAction::spread() {
 void eCartTransporterAction::clearTask() {
     mTask.fMaxCount = 0;
     setCurrentAction(nullptr);
+    mTarget = nullptr;
 }
 
 void eCartTransporterAction::disappear() {
