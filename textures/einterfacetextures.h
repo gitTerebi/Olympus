@@ -340,6 +340,8 @@ public:
     // normal, hover, pressed, disabled
     eTextureCollection fUpButton;
     eTextureCollection fDownButton;
+    eTextureCollection fLeftButton;
+    eTextureCollection fRightButton;
 
     eTextureCollection fBigUpButton;
     eTextureCollection fBigDownButton;

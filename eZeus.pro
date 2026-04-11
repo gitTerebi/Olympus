@@ -646,6 +646,7 @@ SOURCES += \
         widgets/elabel.cpp \
         widgets/elabelbase.cpp \
         widgets/elabeledwidget.cpp \
+        widgets/eleftbutton.cpp \
         widgets/elineedit.cpp \
         widgets/elinewidget.cpp \
         widgets/eloadingwidget.cpp \
@@ -677,6 +678,7 @@ SOURCES += \
         widgets/erequestdialog.cpp \
         widgets/eresolution.cpp \
         widgets/eresourcebutton.cpp \
+        widgets/erightbutton.cpp \
         widgets/erosterofleaders.cpp \
         widgets/erotatebutton.cpp \
         widgets/escrollbar.cpp \
@@ -2853,6 +2855,7 @@ HEADERS += \
     widgets/elabel.h \
     widgets/elabelbase.h \
     widgets/elabeledwidget.h \
+    widgets/eleftbutton.h \
     widgets/elineedit.h \
     widgets/elinewidget.h \
     widgets/eloadingwidget.h \
@@ -2884,6 +2887,7 @@ HEADERS += \
     widgets/erequestdialog.h \
     widgets/eresolution.h \
     widgets/eresourcebutton.h \
+    widgets/erightbutton.h \
     widgets/erosterofleaders.h \
     widgets/erotatebutton.h \
     widgets/escrollbar.h \

@@ -232,6 +232,7 @@ public:
 
     std::vector<eAgoraBase*> agoras() const;
 
+    const std::vector<eTradePost*>& tradePosts() const { return mTradePosts; }
     void registerTradePost(eTradePost* const b);
     bool unregisterTradePost(eTradePost* const b);
     bool hasTradePost(const eWorldCity& city);

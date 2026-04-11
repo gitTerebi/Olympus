@@ -2,15 +2,16 @@
 
 #include "buildings/allbuildings.h"
 
-#include "infowidgets/ecommonhouseinfowidget.h"
-#include "infowidgets/etradepostinfowidget.h"
-#include "infowidgets/estorageinfowidget.h"
+#include "evectorhelpers.h"
 #include "infowidgets/eagorainfowidget.h"
-#include "infowidgets/eheroshallinfowidget.h"
-#include "infowidgets/esanctuaryinfowidget.h"
-#include "infowidgets/etriremewharfinfowidget.h"
-#include "infowidgets/ehippodromeinfowidget.h"
 #include "infowidgets/echaracterinfowidget.h"
+#include "infowidgets/ecommonhouseinfowidget.h"
+#include "infowidgets/eheroshallinfowidget.h"
+#include "infowidgets/ehippodromeinfowidget.h"
+#include "infowidgets/esanctuaryinfowidget.h"
+#include "infowidgets/estorageinfowidget.h"
+#include "infowidgets/etradepostinfowidget.h"
+#include "infowidgets/etriremewharfinfowidget.h"
 
 #include "engine/egameboard.h"
 
@@ -23,7 +24,39 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
         wid = w;
     } else if(const auto stor = dynamic_cast<eTradePost*>(b)) {
         const auto storWid = new eTradePostInfoWidget(window(), this);
-        storWid->initialize(stor);
+        const auto prevNext = [this, storWid, stor, closeAct](const bool next) {
+            const auto pid = stor->playerId();
+            const auto& board = stor->getBoard();
+            std::vector<eTradePost*> posts;
+            const auto cities = board.playerCitiesOnBoard(pid);
+            for(const auto cid : cities) {
+                const auto cboard = board.boardCityWithId(cid);
+                const auto& cposts = cboard->tradePosts();
+                for(const auto p : cposts) {
+                    posts.emplace_back(p);
+                }
+            }
+            if(posts.size() <= 1) return;
+            int id = eVectorHelpers::index(posts, stor);
+            if(next) {
+                id++;
+            } else {
+                id--;
+            }
+            if(id < 0) id = posts.size() - 1;
+            else if(id >= int(posts.size())) id = 0;
+            {
+                if(closeAct) closeAct();
+                mInfoWidget = nullptr;
+                removeWidget(storWid);
+                storWid->deleteLater();
+            }
+            const auto post = posts[id];
+            mInfoWidget = openInfoWidget(post);
+            const auto tile = post->centerTile();
+            viewTile(tile);
+        };
+        storWid->initialize(stor, prevNext);
         wid = storWid;
     } else if(const auto stor = dynamic_cast<eStorageBuilding*>(b)) {
         const auto storWid = new eStorageInfoWidget(window(), this);

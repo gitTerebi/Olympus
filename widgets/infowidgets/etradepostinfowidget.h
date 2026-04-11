@@ -15,7 +15,9 @@ public:
     eTradePostInfoWidget(eMainWindow* const window,
                          eMainWidget* const mw);
 
-    void initialize(eTradePost* const stor);
+    using ePrevNextAction = std::function<void(bool)>;
+    void initialize(eTradePost *const stor,
+                    const ePrevNextAction& prevNext);
     void get(eResourceType& imports,
              eResourceType& exports,
              std::map<eResourceType, int>& count) const;

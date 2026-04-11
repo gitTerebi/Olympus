@@ -4,6 +4,8 @@
 #include "engine/egameboard.h"
 #include "elanguage.h"
 #include "enumbers.h"
+#include "../eleftbutton.h"
+#include "../erightbutton.h"
 
 class eResourceStorageStack : public eWidget {
 public:
@@ -213,7 +215,8 @@ eTradePostInfoWidget::eTradePostInfoWidget(
         eMainWindow* const window, eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, false, false) {}
 
-void eTradePostInfoWidget::initialize(eTradePost* const stor) {
+void eTradePostInfoWidget::initialize(eTradePost* const stor,
+                                      const ePrevNextAction& prevNext) {
     const auto& city = stor->city();
     const auto title = eLanguage::zeusText(28, 62) + ": " + city.name();
 
@@ -309,6 +312,28 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor) {
     }
 
     stWid->layoutVertically();
+
+    if(prevNext) {
+        const auto w = new eWidget(window());
+        w->setNoPadding();
+        const auto prevButton = new eLeftButton(window());
+        prevButton->setPressAction([prevNext]() {
+            prevNext(false);
+        });
+        const auto nextButton = new eRightButton(window());
+        nextButton->setPressAction([prevNext]() {
+            prevNext(true);
+        });
+        w->addWidget(prevButton);
+        w->addWidget(nextButton);
+        w->stackHorizontally();
+        w->fitContent();
+
+        addWidget(w);
+        const auto res = resolution();
+        const int p = res.largePadding();
+        w->move(width() - p - w->width(), p);
+    }
 }
 
 void eTradePostInfoWidget::get(eResourceType& imports,

@@ -284,6 +284,8 @@ eInterfaceTextures::eInterfaceTextures(const int tileW, const int tileH,
 
     fUpButton(renderer),
     fDownButton(renderer),
+    fLeftButton(renderer),
+    fRightButton(renderer),
 
     fBigUpButton(renderer),
     fBigDownButton(renderer),
@@ -1142,6 +1144,12 @@ void eInterfaceTextures::load() {
         }
         for(int i = 392; i < 396; i++) {
             loader.load(1, i, fDownButton);
+        }
+        for(int i = 396; i < 400; i++) {
+            loader.load(1, i, fLeftButton);
+        }
+        for(int i = 400; i < 404; i++) {
+            loader.load(1, i, fRightButton);
         }
 
         for(int i = 407; i < 411; i++) {
