@@ -61,29 +61,30 @@ bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {
 }
 
 void eDionysusFollowAction::increment(const int by) {
-    eFollowAction::increment(by);
-    if(mFollower) return;
-    auto& board = this->board();
-    const auto c = character();
-    const auto tile = c->tile();
-    const auto& chars = tile->characters();
-    for(const auto& cc : chars) {
-        if(cc.get() == c) continue;
-        const auto cType = cc->type();
-        const bool r = sShouldFollow(cType);
-        if(!r) continue;
-        const auto ccaa = cc->actionType();
-        if(ccaa == eCharacterActionType::die) continue;
-        const auto cca = cc->action();
-        const auto eDFA = eCharActionType::dionysusFollowAction;
-        if(cca && cca->type() == eDFA) continue;
-        const auto fa = e::make_shared<eDionysusFollowAction>(c, cc.get());
-        cc->setAction(fa);
-        const auto killA = std::make_shared<eChar_killWithCorpseFinish>(
-                               board, cc.get(), true);
-        fa->setFinishAction(killA);
-        fa->setFailAction(killA);
-        mFollower = cc.get();
-        break;
+    if(!mFollower) {
+        auto& board = this->board();
+        const auto c = character();
+        const auto tile = c->tile();
+        const auto& chars = tile->characters();
+        for(const auto& cc : chars) {
+            if(cc.get() == c) continue;
+            const auto cType = cc->type();
+            const bool r = sShouldFollow(cType);
+            if(!r) continue;
+            const auto ccaa = cc->actionType();
+            if(ccaa == eCharacterActionType::die) continue;
+            const auto cca = cc->action();
+            const auto eDFA = eCharActionType::dionysusFollowAction;
+            if(cca && cca->type() == eDFA) continue;
+            const auto fa = e::make_shared<eDionysusFollowAction>(c, cc.get());
+            cc->setAction(fa);
+            const auto killA = std::make_shared<eChar_killWithCorpseFinish>(
+                board, cc.get(), true);
+            fa->setFinishAction(killA);
+            fa->setFailAction(killA);
+            mFollower = cc.get();
+            break;
+        }
     }
+    eFollowAction::increment(by);
 }

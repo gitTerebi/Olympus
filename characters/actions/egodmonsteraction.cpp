@@ -538,9 +538,11 @@ void eGMA_spawnMissileFinish::call() {
     const int ty = ct->y();
     const int ttx = mTarget->x();
     const int tty = mTarget->y();
+    const auto finishAttackA = mFinishAttackA;
     if(tx == ttx && ty == tty) {
-        if(mFinishAttackA) mFinishAttackA->call();
-        if(mHitAct) mHitAct->act();
+        const auto hitAct = mHitAct;
+        if(finishAttackA) finishAttackA->call();
+        if(hitAct) hitAct->act();
     } else {
         auto& brd = c->getBoard();
         double h;
@@ -571,16 +573,19 @@ void eGMA_spawnMissileFinish::call() {
             m->setFinishAction(mHitAct);
         }
 
-        if(mFinishAttackA) mFinishAttackA->call();
+        if(finishAttackA) finishAttackA->call();
     }
 }
 
 void eGAA_fightFinish::call() {
     auto& board = this->board();
     ePlayerCityTarget target;
-    if(mWinnerPtr) mWinnerPtr->resumeAction();
-    if(mLoserPtr) {
-        const auto loser = mLoserPtr->character();
+    const auto winnerPtr = mWinnerPtr;
+    const auto loserPtr = mLoserPtr;
+    const auto tip = eGod::sFightResultString(mWt, mLt);
+    if(winnerPtr) winnerPtr->resumeAction();
+    if(loserPtr) {
+        const auto loser = loserPtr->character();
         target = ePlayerCityTarget(loser->onCityId());
         const auto loserGod = static_cast<eGod*>(loser);
         const auto att = loserGod->attitude();
@@ -591,9 +596,8 @@ void eGAA_fightFinish::call() {
             if(s) s->setSpawnWait(40000);
         }
         const auto finish = std::make_shared<eGAA_loserDisappearFinish>(
-                                board, mLoserPtr);
-        mLoserPtr->disappear(true, finish);
+                                board, loserPtr);
+        loserPtr->disappear(true, finish);
     }
-    const auto tip = eGod::sFightResultString(mWt, mLt);
     board.showTip(target, tip);
 }
