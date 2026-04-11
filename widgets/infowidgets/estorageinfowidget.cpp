@@ -1,8 +1,5 @@
 #include "estorageinfowidget.h"
 
-#include "textures/egametextures.h"
-#include "textures/einterfacetextures.h"
-
 #include "engine/egameboard.h"
 
 #include "elanguage.h"
@@ -135,6 +132,30 @@ public:
             }
         }
 
+        {
+            const auto b = new eFramedButton(window());
+            b->setUnderline(false);
+            b->setSmallFontSize();
+            b->setText(eLanguage::zeusText(130, 1));
+            b->setDarkFontColor();
+            buttonsW->addWidget(b);
+            const auto it = buttons.begin();
+            const auto b0 = it->second;
+            const int w = b0->width();
+            const int h = b0->height();
+            b->resize(w, h);
+            b->align(eAlignment::hcenter);
+
+            b->setPressAction([changed, buttons]() {
+                for(const auto it : buttons) {
+                    const auto b = it.second;
+                    b->setValue(0);
+                    b->setDarkFontColor();
+                }
+                changed();
+            });
+        }
+
         countW->stackVertically();
         iconsW->stackVertically();
         namesW->stackVertically();
@@ -145,7 +166,8 @@ public:
         countW->setHeight(h);
         iconsW->setHeight(h);
         namesW->setHeight(h);
-        buttonsW->setHeight(h);
+        const int bh = h + rowHeight;
+        buttonsW->setHeight(bh);
         spinsW->setHeight(h);
 
         countW->setWidth(countWidth);
