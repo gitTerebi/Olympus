@@ -10,6 +10,7 @@
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
 #include "characters/epeddler.h"
+#include "characters/esettler.h"
 #include "buildings/eagorabase.h"
 #include "widgets/ebuttonbase.h"
 #include "widgets/ebasicbutton.h"
@@ -424,8 +425,15 @@ std::string gCharOccupation(
     case eCharacterType::satyr:
         return eLanguage::zeusText(44, 163);
 
-    case eCharacterType::settler:
-        return eLanguage::zeusText(64, 1);
+    case eCharacterType::settler: {
+        const auto s = static_cast<const eSettler*>(c);
+        const bool emi = s->emigrant();
+        if(emi) {
+            return eLanguage::zeusText(64, 2);
+        } else {
+            return eLanguage::zeusText(64, 1);
+        }
+    } break;
 
     case eCharacterType::homeless:
         return eLanguage::zeusText(64, 3);
@@ -747,22 +755,48 @@ eCharMessage gCharMessage(eCharacter * const c) {
         stringId = eRand::rand() % 4;
         break;
     case eCharacterType::settler: {
-        const auto ed = board.employmentData(cid);
-        const auto hd = board.husbandryData(cid);
-        if(eRand::rand() % 2) {
+        const auto s = static_cast<eSettler*>(c);
+        const bool emi = s->emigrant();
+        if(emi) {
+            const auto limit = board.immigrationLimit(cid);
             if(enemyImmortal) {
                 stringId = 0;
-            } else if(ed && ed->vacanciesFilledFraction() < 0.95) {
+            } else if(limit == eImmigrationLimitedBy::unemployment) {
+                stringId = 1;
+            } else if(limit == eImmigrationLimitedBy::lackOfFood) {
                 stringId = 2;
-            } else if(hd && hd->storedFood() > 6) {
+            } else if(limit == eImmigrationLimitedBy::highTaxes) {
                 stringId = 3;
+            } else if(limit == eImmigrationLimitedBy::lowWages) {
+                stringId = 4;
+            } else if(limit == eImmigrationLimitedBy::lackOfVacancies) {
+                stringId = 5;
+            } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
+                stringId = 6;
+            } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
+                stringId = 7;
+            } else {
+                stringId = 5;
+            }
+            groupId = 203;
+        } else {
+            const auto ed = board.employmentData(cid);
+            const auto hd = board.husbandryData(cid);
+            if(eRand::rand() % 2) {
+                if(enemyImmortal) {
+                    stringId = 0;
+                } else if(ed && ed->vacanciesFilledFraction() < 0.95) {
+                    stringId = 2;
+                } else if(hd && hd->storedFood() > 6) {
+                    stringId = 3;
+                } else {
+                    stringId = 1;
+                }
             } else {
                 stringId = 1;
             }
-        } else {
-            stringId = 1;
+            groupId = 202;
         }
-        groupId = 202;
     } break;
     case eCharacterType::homeless: {
         const auto limit = board.immigrationLimit(cid);

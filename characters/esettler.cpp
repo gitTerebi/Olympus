@@ -12,3 +12,20 @@ eSettler::eSettler(eGameBoard& board) :
 
     eGameTextures::loadSettlers();
 }
+
+void eSettler::setEmigrant(const bool e) {
+    mEmigrant = e;
+}
+
+void eSettler::read(eReadStream& src) {
+    eBasicPatroler::read(src);
+    const auto ver = src.formatVersion();
+    if(ver >= eFileFormat::settlerEmigrant) {
+        src >> mEmigrant;
+    }
+}
+
+void eSettler::write(eWriteStream& dst) const {
+    eBasicPatroler::write(dst);
+    dst << mEmigrant;
+}

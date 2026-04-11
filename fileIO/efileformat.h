@@ -4,6 +4,7 @@
 namespace eFileFormat {
     enum {
         initial,
+        settlerEmigrant,
 
         nextVersion
     };

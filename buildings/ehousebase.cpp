@@ -75,6 +75,7 @@ void eHouseBase::leave() {
     setPeople(0);
 
     const auto c = e::make_shared<eSettler>(getBoard());
+    c->setEmigrant(true);
     c->setBothCityIds(cityId());
     c->changeTile(centerTile());
     const stdptr<eSettler> cptr(c.get());

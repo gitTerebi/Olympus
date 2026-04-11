@@ -6,6 +6,7 @@
 #include "buildings/ebuilding.h"
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
+#include "characters/esettler.h"
 
 #include "egamedir.h"
 #include <filesystem>
@@ -1109,8 +1110,15 @@ void eSounds::playHitSound(eCharacter* const c) {
 eSoundVector* eSounds::getCharacterVoices(eCharacter* const c) {
     const eCharacterType type =  c->type();
     switch(type) {
-    case eCharacterType::settler:
-        return &sInstance->mSettlerVoices;
+    case eCharacterType::settler: {
+        const auto s = static_cast<eSettler*>(c);
+        const bool emi = s->emigrant();
+        if(emi) {
+            return &sInstance->mHomelessVoices;
+        } else {
+            return &sInstance->mSettlerVoices;
+        }
+    } break;
     case eCharacterType::homeless:
         return &sInstance->mHomelessVoices;
     case eCharacterType::disgruntled:
