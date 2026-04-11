@@ -666,6 +666,14 @@ void eSounds::playAttackSound(const eCharacterType type) {
     case eCharacterType::wolf:
         sInstance->mWolfAttack.playRandomSound();
         break;
+    case eCharacterType::cattle1:
+    case eCharacterType::cattle2:
+    case eCharacterType::cattle3:
+        sInstance->mCattleAttack.playRandomSound();
+        break;
+    case eCharacterType::goat:
+        sInstance->mGoatAttack.playRandomSound();
+        break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
         sInstance->mHopliteAttack.playRandomSound();
@@ -837,6 +845,17 @@ void eSounds::playDieSound(eCharacter* const c) {
     case eCharacterType::wolf:
         sInstance->mWolfDie.playRandomSound();
         break;
+    case eCharacterType::sheep:
+        sInstance->mSheepDie.playRandomSound();
+        break;
+    case eCharacterType::cattle1:
+    case eCharacterType::cattle2:
+    case eCharacterType::cattle3:
+        sInstance->mCattleDie.playRandomSound();
+        break;
+    case eCharacterType::goat:
+        sInstance->mGoatDie.playRandomSound();
+        break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
         sInstance->mHopliteDie.playRandomSound();
@@ -943,6 +962,17 @@ void eSounds::playHitSound(eCharacter* const c) {
         break;
     case eCharacterType::wolf:
         sInstance->mWolfHit.playRandomSound();
+        break;
+    case eCharacterType::sheep:
+        sInstance->mSheepHit.playRandomSound();
+        break;
+    case eCharacterType::cattle1:
+    case eCharacterType::cattle2:
+    case eCharacterType::cattle3:
+        sInstance->mCattleHit.playRandomSound();
+        break;
+    case eCharacterType::goat:
+        sInstance->mGoatHit.playRandomSound();
         break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
@@ -1838,6 +1868,17 @@ void eSounds::loadImpl() {
     mWolfAttack.addPath(wavsDir + "wolf_attack.wav");
     mWolfDie.addPath(wavsDir + "wolf_die.wav");
     mWolfHit.addPath(wavsDir + "wolf_hit.wav");
+
+    mSheepDie.addPath(wavsDir + "sheep_die.wav");
+    mSheepHit.addPath(wavsDir + "sheep_hit.wav");
+
+    mCattleAttack.addPath(wavsDir + "cattle_attack.wav");
+    mCattleDie.addPath(wavsDir + "cattle_die.wav");
+    mCattleHit.addPath(wavsDir + "cattle_hit.wav");
+
+    mGoatAttack.addPath(wavsDir + "goat_attack.wav");
+    mGoatDie.addPath(wavsDir + "goat_die.wav");
+    mGoatHit.addPath(wavsDir + "goat_hit.wav");
 
     mOutlawAttack.addPath(wavsDir + "outlaw_attack.wav");
     mOutlawDie.addPath(wavsDir + "outlaw_die.wav");

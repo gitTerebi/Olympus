@@ -258,6 +258,17 @@ private:
     eSoundVector mWolfDie;
     eSoundVector mWolfHit;
 
+    eSoundVector mSheepDie;
+    eSoundVector mSheepHit;
+
+    eSoundVector mCattleAttack;
+    eSoundVector mCattleDie;
+    eSoundVector mCattleHit;
+
+    eSoundVector mGoatAttack;
+    eSoundVector mGoatDie;
+    eSoundVector mGoatHit;
+
     eSoundVector mHopliteDie;
     eSoundVector mHopliteAttack;
     eSoundVector mHopliteHit;
