@@ -52,7 +52,7 @@ private:
     void disappear();
 
     eBuildingWithResource* mBuilding = nullptr;
-    eBuilding* mTarget = nullptr;
+    stdptr<eBuilding> mTarget;
 
     eCartTask mTask;
 
