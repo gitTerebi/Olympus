@@ -124,6 +124,16 @@ void eMainWindow::setKeyScrollSpeed(const int speed) {
     mSettings.write();
 }
 
+void eMainWindow::setGameSpeed(const int speed) {
+    mSettings.fGameSpeed = eSettings::clampGameSpeed(speed);
+    mSettings.write();
+}
+
+void eMainWindow::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
+    mSettings.setHotkey(id, key);
+    mSettings.write();
+}
+
 void eMainWindow::setMusicVolume(const int volume) {
     mSettings.fMusicVolume = eSettings::clampVolume(volume);
     eMusic::setVolume(mSettings.fMusicVolume);

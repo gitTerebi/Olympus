@@ -42,6 +42,8 @@ public:
     void setResolution(const eResolution& res);
     void setFullscreen(const bool f);
     void setKeyScrollSpeed(const int speed);
+    void setGameSpeed(const int speed);
+    void setHotkey(const eHotkeyId id, const SDL_Scancode key);
     void setMusicVolume(const int volume);
     void setSoundsVolume(const int volume);
 

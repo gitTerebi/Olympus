@@ -35,6 +35,7 @@
 
 #include "buildings/eagoraspace.h"
 #include "buildings/eagorabase.h"
+#include "buildings/eaestheticsbuilding.h"
 #include "buildings/evendor.h"
 #include "buildings/eanimalbuilding.h"
 #include "buildings/eroad.h"
@@ -194,8 +195,7 @@ eGameWidgetSettings eGameWidget::settings() const {
 
 void eGameWidget::setSettings(const eGameWidgetSettings& s) {
     if(mPaused != s.fPaused) switchPause();
-    mSpeedId = s.fSpeedId;
-    mSpeed = s.fSpeed;
+    setSpeedId(s.fSpeedId);
     setTileSize(s.fTileSize);
     if(mBoard) mBoard->setWorldDirection(s.fDir);
     setDX(s.fDX);
@@ -1778,24 +1778,61 @@ void eGameWidget::switchPause() {
     updateTipPositions();
 }
 
+void eGameWidget::setSpeedId(const int id) {
+    mSpeedId = std::clamp(id, 0, sMaxSpeedId);
+    mSpeed = sSpeeds[mSpeedId];
+}
+
+void eGameWidget::showSpeedLabel() {
+    const auto text = "Game speed: " + std::to_string(mSpeed);
+    if(!mSpeedLabel) {
+        mSpeedLabel = new eFramedLabel(text, window());
+        mSpeedLabel->setType(eFrameType::message);
+        mSpeedLabel->setSmallFontSize();
+        mSpeedLabel->setHugePadding();
+        addWidget(mSpeedLabel);
+    } else {
+        mSpeedLabel->setText(text);
+    }
+    mSpeedLabel->fitContent();
+    const int vw = width() - mGm->width();
+    mSpeedLabel->setX((vw - mSpeedLabel->width())/2);
+    const int p = mSpeedLabel->padding();
+    mSpeedLabel->setY(mTopBar->height() + 2*p);
+    mSpeedLabelHideFrame = mFrame + 120;
+}
+
 bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
     if(mLocked) return true;
     const auto k = e.key();
+    const auto& hotkeys = window()->settings();
     if(updateSmoothScrollKey(k, true)) return true;
-    if(k == SDL_Scancode::SDL_SCANCODE_KP_PLUS ||
-       k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET) {
-        mSpeedId = std::clamp(mSpeedId + 1, 0, sMaxSpeedId);
-        mSpeed = sSpeeds[mSpeedId];
-    } else if(k == SDL_Scancode::SDL_SCANCODE_KP_MINUS ||
-              k == SDL_Scancode::SDL_SCANCODE_LEFTBRACKET) {
-        mSpeedId = std::clamp(mSpeedId - 1, 0, sMaxSpeedId);
-        mSpeed = sSpeeds[mSpeedId];
-    } else if(k == SDL_Scancode::SDL_SCANCODE_R) {
+    if(k == hotkeys.fHotkeySpeedUp ||
+       k == SDL_Scancode::SDL_SCANCODE_KP_PLUS) {
+        const int oldSpeedId = mSpeedId;
+        setSpeedId(mSpeedId + 1);
+        if(mSpeedId != oldSpeedId) showSpeedLabel();
+    } else if(k == hotkeys.fHotkeySpeedDown ||
+              k == SDL_Scancode::SDL_SCANCODE_KP_MINUS) {
+        const int oldSpeedId = mSpeedId;
+        setSpeedId(mSpeedId - 1);
+        if(mSpeedId != oldSpeedId) showSpeedLabel();
+    } else if(k == hotkeys.fHotkeyRotatePreview) {
         mRotate = !mRotate;
         mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
         mRotateId++;
         if(mRotateId > 3) mRotateId = 0;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_P) {
+    } else if(k == hotkeys.fHotkeyCopyBuilding) {
+        selectHoveredBuildingMode();
+    } else if(k == hotkeys.fHotkeyDeleteTool) {
+        mGm->setMode(eBuildingMode::erase);
+    } else if(k == hotkeys.fHotkeyBuildRoad) {
+        mGm->setMode(eBuildingMode::road);
+    } else if(k == hotkeys.fHotkeyBuildRoadblock) {
+        mGm->setMode(eBuildingMode::roadblock);
+    } else if(k == hotkeys.fHotkeyBuildMaintenanceOffice) {
+        mGm->setMode(eBuildingMode::maintenanceOffice);
+    } else if(k == hotkeys.fHotkeyPause) {
         switchPause();
     } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT) {
         setDX(mDX + 35);
@@ -1805,31 +1842,31 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         setDY(mDY + 35);
     } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN) {
         setDY(mDY - 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_F1) {
+    } else if(k == hotkeys.fHotkeyBookmark1) {
         if(e.ctrlPressed()) {
             setBookmark(1);
         } else {
             viewBookmark(1);
         }
-    } else if(k == SDL_Scancode::SDL_SCANCODE_F2) {
+    } else if(k == hotkeys.fHotkeyBookmark2) {
         if(e.ctrlPressed()) {
             setBookmark(2);
         } else {
             viewBookmark(2);
         }
-    } else if(k == SDL_Scancode::SDL_SCANCODE_F3) {
+    } else if(k == hotkeys.fHotkeyBookmark3) {
         if(e.ctrlPressed()) {
             setBookmark(3);
         } else {
             viewBookmark(3);
         }
-    } else if(k == SDL_Scancode::SDL_SCANCODE_F4) {
+    } else if(k == hotkeys.fHotkeyBookmark4) {
         if(e.ctrlPressed()) {
             setBookmark(4);
         } else {
             viewBookmark(4);
         }
-    } else if(k == SDL_Scancode::SDL_SCANCODE_ESCAPE) {
+    } else if(k == hotkeys.fHotkeyGameMenu) {
         if(!mMsgBox && !mBoard->editorMode()) {
             mBoard->waitUntilFinished();
             const auto menu = new eGameMainMenu(window());
@@ -1893,16 +1930,17 @@ bool eGameWidget::keyReleaseEvent(const eKeyPressEvent& e) {
 
 bool eGameWidget::updateSmoothScrollKey(const SDL_Scancode k,
                                         const bool pressed) {
-    if(k == SDL_Scancode::SDL_SCANCODE_A) {
+    const auto& hotkeys = window()->settings();
+    if(k == hotkeys.fHotkeyScrollLeft) {
         mScrollLeft = pressed;
         return true;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_D) {
+    } else if(k == hotkeys.fHotkeyScrollRight) {
         mScrollRight = pressed;
         return true;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_W) {
+    } else if(k == hotkeys.fHotkeyScrollUp) {
         mScrollUp = pressed;
         return true;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_S) {
+    } else if(k == hotkeys.fHotkeyScrollDown) {
         mScrollDown = pressed;
         return true;
     }
@@ -2320,6 +2358,7 @@ void eGameWidget::showOptionsMenu() {
                     }
                 }
             },
+            {},
             {}
         },
         {
@@ -2327,7 +2366,85 @@ void eGameWidget::showOptionsMenu() {
             "Hotkeys",
             {},
             {
-                "W/A/S/D: smooth scroll map"
+                {"Game menu", eHotkeyId::gameMenu, settings.fHotkeyGameMenu,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Increase game speed", eHotkeyId::speedUp, settings.fHotkeySpeedUp,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Decrease game speed", eHotkeyId::speedDown, settings.fHotkeySpeedDown,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Pause game", eHotkeyId::pause, settings.fHotkeyPause,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Rotate building preview", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Copy hovered building mode", eHotkeyId::copyBuilding, settings.fHotkeyCopyBuilding,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Delete tool", eHotkeyId::deleteTool, settings.fHotkeyDeleteTool,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Build road", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Roadblock", eHotkeyId::buildRoadblock, settings.fHotkeyBuildRoadblock,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Maintenance office", eHotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Smooth scroll left", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Smooth scroll right", eHotkeyId::scrollRight, settings.fHotkeyScrollRight,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Smooth scroll up", eHotkeyId::scrollUp, settings.fHotkeyScrollUp,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Smooth scroll down", eHotkeyId::scrollDown, settings.fHotkeyScrollDown,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Bookmark 1", eHotkeyId::bookmark1, settings.fHotkeyBookmark1,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Bookmark 2", eHotkeyId::bookmark2, settings.fHotkeyBookmark2,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Bookmark 3", eHotkeyId::bookmark3, settings.fHotkeyBookmark3,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Bookmark 4", eHotkeyId::bookmark4, settings.fHotkeyBookmark4,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }}
+            },
+            {
+                "Numpad +: increase game speed",
+                "Numpad -: decrease game speed",
+                "Arrow keys: scroll map",
+                "Bookmark key: view bookmark",
+                "Ctrl+bookmark key: set bookmark"
             }
         },
         {
@@ -2361,6 +2478,7 @@ void eGameWidget::showOptionsMenu() {
                     }
                 }
             },
+            {},
             {}
         }
     };
@@ -2369,6 +2487,40 @@ void eGameWidget::showOptionsMenu() {
     addWidget(d);
     d->align(eAlignment::center);
     window()->execDialog(d);
+}
+
+void eGameWidget::selectHoveredBuildingMode() {
+    if(mInfoWidget || mPatrolBuilding) return;
+    const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
+    if(!b) return;
+
+    auto mode = eBuildingModeHelpers::fromBuildingType(b->type());
+    if(mode == eBuildingMode::none) {
+        if(const auto c = dynamic_cast<eCommemorative*>(b)) {
+            mode = static_cast<eBuildingMode>(
+                static_cast<int>(eBuildingMode::populationMonument) + c->id());
+        } else if(const auto g = dynamic_cast<eGodMonument*>(b)) {
+            mode = static_cast<eBuildingMode>(
+                static_cast<int>(eBuildingMode::aphroditeMonument) +
+                static_cast<int>(g->god()));
+        } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
+            const auto agora = s->agora();
+            if(agora) {
+                mode = eBuildingModeHelpers::fromBuildingType(agora->type());
+            }
+        } else if(const auto gt = dynamic_cast<eGodMonumentTile*>(b)) {
+            const auto monument = gt->monument();
+            if(monument) {
+                mode = static_cast<eBuildingMode>(
+                    static_cast<int>(eBuildingMode::aphroditeMonument) +
+                    static_cast<int>(monument->god()));
+            }
+        }
+    }
+
+    if(mode == eBuildingMode::none) return;
+    if(!mBoard->supportsBuilding(mViewedCityId, mode)) return;
+    mGm->setMode(mode);
 }
 
 void eGameWidget::setDX(const int dx) {

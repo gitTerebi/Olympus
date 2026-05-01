@@ -53,6 +53,7 @@ public:
     int tradeCityId() const { return mTradeCityId; }
     eBuildingMode mode() const { return mMode; }
     void clearMode() { mMode = eBuildingMode::none; }
+    void setMode(const eBuildingMode mode);
 
     void setGameWidget(eGameWidget* const gw);
 
@@ -83,7 +84,6 @@ public:
 protected:
     bool mousePressEvent(const eMouseEvent& e);
 private:
-    void setMode(const eBuildingMode mode);
     using eButtonsDataVec = std::vector<eSubButtonData>;
     eWidget* createSubButtons(const int resoltuionMult,
                               const eButtonsDataVec& buttons);

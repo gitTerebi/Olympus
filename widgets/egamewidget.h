@@ -52,7 +52,7 @@ struct eSavedMessage {
 struct eGameWidgetSettings {
     bool fPaused = false;
     int fSpeedId = 1;
-    int fSpeed = 10;
+    int fSpeed = 200;
     int fDX = 0;
     int fDY = 0;
     eTileSize fTileSize = eTileSize::s30;
@@ -162,6 +162,7 @@ private:
 
     void showGoals();
     void showOptionsMenu();
+    void selectHoveredBuildingMode();
 
     void setDX(const int dx);
     void setDY(const int dy);
@@ -284,10 +285,13 @@ private:
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
 
     void switchPause();
+    void setSpeedId(const int id);
+    void showSpeedLabel();
     bool updateSmoothScrollKey(const SDL_Scancode k, const bool pressed);
     void smoothScroll();
     void stopSmoothScroll();
     void setKeyScrollSpeed(const int speed);
+    void setGameSpeed(const int speed);
 
     stdsptr<eTexture> getBasementTexture(
             const int tx, const int ty, eBuilding* const d,
@@ -305,7 +309,7 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[6] = {2, 10, 25, 50, 100, 100};
+    const int sSpeeds[5] = {25, 50, 100, 150, 200};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
@@ -314,7 +318,7 @@ private:
     int mRotateFrame{0};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
-    int mSpeedId = 1;
+    int mSpeedId = 4;
     int mSpeed = sSpeeds[mSpeedId];
     std::map<int, std::pair<int, int>> mBookmarks;
 
@@ -370,6 +374,8 @@ private:
     std::vector<ePatrolGuide> mSavedGuides;
 
     eFramedLabel* mPausedLabel = nullptr;
+    eFramedLabel* mSpeedLabel = nullptr;
+    int mSpeedLabelHideFrame = 0;
 
     eTopBarWidget* mTopBar = nullptr;
     eInfoWidget* mInfoWidget = nullptr;
