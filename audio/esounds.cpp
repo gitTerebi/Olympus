@@ -10,6 +10,7 @@
 
 #include "egamedir.h"
 #include <filesystem>
+#include <algorithm>
 
 eSounds* eSounds::sInstance = nullptr;
 
@@ -28,6 +29,11 @@ void eSounds::load() {
 
 bool eSounds::loaded() {
     return sInstance->mLoaded;
+}
+
+void eSounds::setVolume(const int volume) {
+    const int v = std::clamp(volume, 0, 100);
+    Mix_Volume(-1, MIX_MAX_VOLUME*v/100);
 }
 
 void eSounds::playButtonSound() {

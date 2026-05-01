@@ -22,6 +22,7 @@
 #include "engine/epathfinder.h"
 
 #include "emainwindow.h"
+#include "esettings.h"
 
 #include "eframedbutton.h"
 #include "eframedwidget.h"
@@ -2299,10 +2300,71 @@ void eGameWidget::showGoals() {
 }
 
 void eGameWidget::showOptionsMenu() {
-    const auto d = new eOptionsMenu(
-        [this]() { return mKeyScrollSpeed; },
-        [this](const int speed) { setKeyScrollSpeed(speed); },
-        window());
+    const auto& settings = window()->settings();
+    const std::vector<eOptionsMenu::ePage> pages{
+        {
+            "Display",
+            "Display Options",
+            {
+                {
+                    "Key scroll speed",
+                    eSettings::sMinKeyScrollSpeed,
+                    eSettings::sMaxKeyScrollSpeed,
+                    mKeyScrollSpeed,
+                    "",
+                    [](const int v) {
+                        return eSettings::clampKeyScrollSpeed(v);
+                    },
+                    [this](const int speed) {
+                        setKeyScrollSpeed(speed);
+                    }
+                }
+            },
+            {}
+        },
+        {
+            "Hotkeys",
+            "Hotkeys",
+            {},
+            {
+                "W/A/S/D: smooth scroll map"
+            }
+        },
+        {
+            "Sound",
+            "Sound Options",
+            {
+                {
+                    "Music volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fMusicVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        window()->setMusicVolume(v);
+                    }
+                },
+                {
+                    "Sounds volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fSoundsVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        window()->setSoundsVolume(v);
+                    }
+                }
+            },
+            {}
+        }
+    };
+    const auto d = new eOptionsMenu(pages, window());
     d->initialize();
     addWidget(d);
     d->align(eAlignment::center);

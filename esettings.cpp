@@ -28,6 +28,10 @@ int eSettings::clampKeyScrollSpeed(const int speed) {
     return std::clamp(speed, sMinKeyScrollSpeed, sMaxKeyScrollSpeed);
 }
 
+int eSettings::clampVolume(const int volume) {
+    return std::clamp(volume, sMinVolume, sMaxVolume);
+}
+
 void eSettings::write() const {
     const auto path = eGameDir::settingsPath();
     std::ofstream file;
@@ -44,6 +48,10 @@ void eSettings::write() const {
             (fFullscreen ? "\"true\"" : "\"false\"") << "\n";
     file << "key_scroll_speed" << " " << "\"" <<
             std::to_string(fKeyScrollSpeed) << "\"" << "\n";
+    file << "music_volume" << " " << "\"" <<
+            std::to_string(fMusicVolume) << "\"" << "\n";
+    file << "sounds_volume" << " " << "\"" <<
+            std::to_string(fSoundsVolume) << "\"" << "\n";
     const auto wStr = std::to_string(fRes.width());
     file << "width" << " " << "\"" << wStr << "\"" << "\n";
     const auto hStr = std::to_string(fRes.height());
@@ -64,6 +72,14 @@ void eSettings::read() {
     const auto keyScrollSpeedStr = settings["key_scroll_speed"];
     if(!keyScrollSpeedStr.empty()) {
         fKeyScrollSpeed = clampKeyScrollSpeed(std::stoi(keyScrollSpeedStr));
+    }
+    const auto musicVolumeStr = settings["music_volume"];
+    if(!musicVolumeStr.empty()) {
+        fMusicVolume = clampVolume(std::stoi(musicVolumeStr));
+    }
+    const auto soundsVolumeStr = settings["sounds_volume"];
+    if(!soundsVolumeStr.empty()) {
+        fSoundsVolume = clampVolume(std::stoi(soundsVolumeStr));
     }
     const auto widthStr = settings["width"];
     const auto heightStr = settings["height"];

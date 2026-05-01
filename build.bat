@@ -8,7 +8,7 @@ set "NINJA=%ROOT%\deps\ninja\ninja.exe"
 set "BUILD_DIR=%ROOT%\build-ninja"
 set "DEPLOY_DIR=G:\games\eZeus\eZeus-0.8.2-beta\Bin"
 set "JOBS=%NUMBER_OF_PROCESSORS%"
-if "%JOBS%"=="" set "JOBS=4"
+if "%JOBS%"=="" set "JOBS=8"
 
 if not exist "%MINGW%\mingw32-make.exe" (
     echo Missing "%MINGW%\mingw32-make.exe"

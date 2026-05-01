@@ -3,24 +3,42 @@
 
 #include "eframedwidget.h"
 
+#include <functional>
+#include <string>
+#include <vector>
+
 class eOptionsMenu : public eFramedWidget {
 public:
-    using eGetInt = std::function<int()>;
     using eSetInt = std::function<void(const int)>;
+    using eClampInt = std::function<int(const int)>;
 
-    eOptionsMenu(const eGetInt& getKeyScrollSpeed,
-                 const eSetInt& setKeyScrollSpeed,
+    struct eSliderItem {
+        std::string fLabel;
+        int fMin;
+        int fMax;
+        int fValue;
+        std::string fSuffix;
+        eClampInt fClamp;
+        eSetInt fSet;
+    };
+
+    struct ePage {
+        std::string fButtonLabel;
+        std::string fTitle;
+        std::vector<eSliderItem> fSliders;
+        std::vector<std::string> fLines;
+    };
+
+    eOptionsMenu(const std::vector<ePage>& pages,
                  eMainWindow* const window);
 
     void initialize();
 
 private:
-    void showDisplay();
-    void showHotkeys();
+    void showPage(const int id);
     void clearPage();
 
-    eGetInt mGetKeyScrollSpeed;
-    eSetInt mSetKeyScrollSpeed;
+    std::vector<ePage> mPages;
     eWidget* mPage = nullptr;
 };
 

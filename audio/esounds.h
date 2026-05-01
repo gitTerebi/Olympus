@@ -17,6 +17,7 @@ public:
 
     static void load();
     static bool loaded();
+    static void setVolume(const int volume);
 
     static void playButtonSound();
 

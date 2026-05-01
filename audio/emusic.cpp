@@ -1,6 +1,7 @@
 ﻿#include "emusic.h"
 
 #include <fstream>
+#include <algorithm>
 
 #include "egamedir.h"
 
@@ -52,6 +53,11 @@ void eMusic::playCampaignVictoryMusic() {
 
 bool eMusic::playCampaignVoice(const std::string &path) {
     return sInstance->playCampaignVoiceImpl(path);
+}
+
+void eMusic::setVolume(const int volume) {
+    const int v = std::clamp(volume, 0, 100);
+    Mix_VolumeMusic(MIX_MAX_VOLUME*v/100);
 }
 
 void eMusic::incTimeImpl() {

@@ -11,6 +11,7 @@
 #include "widgets/eselectcolonywidget.h"
 
 #include "audio/emusic.h"
+#include "audio/esounds.h"
 
 #include "engine/ethreadpool.h"
 
@@ -78,6 +79,8 @@ bool eMainWindow::initialize(const eSettings& settings) {
     const auto icon = IMG_Load(icoPath.c_str());
     SDL_SetWindowIcon(window, icon);
     eGameTextures::setSettings(mSettings);
+    eMusic::setVolume(mSettings.fMusicVolume);
+    eSounds::setVolume(mSettings.fSoundsVolume);
     return true;
 }
 
@@ -118,6 +121,18 @@ void eMainWindow::setFullscreen(const bool f) {
 
 void eMainWindow::setKeyScrollSpeed(const int speed) {
     mSettings.fKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
+    mSettings.write();
+}
+
+void eMainWindow::setMusicVolume(const int volume) {
+    mSettings.fMusicVolume = eSettings::clampVolume(volume);
+    eMusic::setVolume(mSettings.fMusicVolume);
+    mSettings.write();
+}
+
+void eMainWindow::setSoundsVolume(const int volume) {
+    mSettings.fSoundsVolume = eSettings::clampVolume(volume);
+    eSounds::setVolume(mSettings.fSoundsVolume);
     mSettings.write();
 }
 
