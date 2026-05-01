@@ -5,16 +5,20 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 win32 {
-    RC_ICONS += C:\Users\maury\Documents\eZeusBuild\zeus.ico
-    QMAKE_CFLAGS_RELEASE += /O2 -O2 /GL
-    QMAKE_CXXFLAGS_RELEASE += /O2 -O2 /GL
+    QMAKE_CFLAGS_RELEASE += -O2
+    QMAKE_CXXFLAGS_RELEASE += -O2
 
-    INCLUDEPATH += C:\Users\maury\Documents\eZeusLibs\SDL2-2.30.5\include
+    SDL_DEPS = $$PWD/deps/SDL2
 
-    LIBS += -LC:\Users\maury\Documents\eZeusLibs\SDL2-2.30.5\lib\x64
-    LIBS += -LC:\Users\maury\Documents\eZeusLibs\SDL2_ttf-2.22.0\lib\x64
-    LIBS += -LC:\Users\maury\Documents\eZeusLibs\SDL2_mixer-2.8.0\lib\x64
-    LIBS += -LC:\Users\maury\Documents\eZeusLibs\SDL2_image-2.8.2\lib\x64
+    INCLUDEPATH += $$SDL_DEPS/SDL2-2.30.8/x86_64-w64-mingw32/include/SDL2
+    INCLUDEPATH += $$SDL_DEPS/SDL2_image-2.8.2/x86_64-w64-mingw32/include/SDL2
+    INCLUDEPATH += $$SDL_DEPS/SDL2_ttf-2.22.0/x86_64-w64-mingw32/include/SDL2
+    INCLUDEPATH += $$SDL_DEPS/SDL2_mixer-2.8.0/x86_64-w64-mingw32/include/SDL2
+
+    LIBS += -L$$SDL_DEPS/SDL2-2.30.8/x86_64-w64-mingw32/lib
+    LIBS += -L$$SDL_DEPS/SDL2_ttf-2.22.0/x86_64-w64-mingw32/lib
+    LIBS += -L$$SDL_DEPS/SDL2_mixer-2.8.0/x86_64-w64-mingw32/lib
+    LIBS += -L$$SDL_DEPS/SDL2_image-2.8.2/x86_64-w64-mingw32/lib
 } unix {
     QMAKE_CFLAGS_RELEASE -= -O2
     QMAKE_CFLAGS_RELEASE -= -O1
