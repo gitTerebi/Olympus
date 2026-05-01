@@ -171,6 +171,7 @@ private:
     using eApply = std::function<void(eTile* const)>;
     eApply editFunc();
     bool buildMouseRelease();
+    bool rightClickRelease(const eMouseEvent& e);
 
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverVisibleTiles(const eTileAction& a);
@@ -323,6 +324,8 @@ private:
     int mDY = 0;
 
     bool mLeftPressed = false;
+    bool mRightPressed = false;
+    bool mRightPanning = false;
     bool mMovedSincePress = false;
 
     int mHoverX = -1;

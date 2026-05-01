@@ -1914,50 +1914,61 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         }
     } return true;
     case eMouseButton::right: {
-        if(mInfoWidget) {
-            mInfoWidget->deleteLater();
-            mInfoWidget = nullptr;
-            return true;
-        }
-        if(mGm->mode() != eBuildingMode::none) {
-            mGm->clearMode();
-            return true;
-        }
-        const auto& solds = mBoard->selectedSoldiers();
-        if(!solds.empty()) return true;
-        const auto& trims = mBoard->selectedTriremes();
-        if(!trims.empty()) return true;
-
-        if(mPatrolBuilding) {
-            setPatrolBuilding(nullptr);
-            return true;
-        }
-        int tx;
-        int ty;
-        pixToId(e.x(), e.y(), tx, ty);
-        const auto tile = mBoard->tile(tx, ty);
-        if(!tile) return true;
-        const auto b = tile->underBuilding();
-        const auto chars = tile->characters();
-        std::vector<eCharacter*> chars2;
-        for(const auto& c : chars) {
-            const auto type = c->type();
-            if(type == eCharacterType::trailer) continue;
-            if(c->dead()) continue;
-            chars2.push_back(c.get());
-        }
-        if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
-            mInfoWidget = openInfoWidget(chars2);
-        } else if(b) {
-            eSounds::playSoundForBuilding(b);
-            const auto cid = tile->cityId();
-            const auto pid = mBoard->cityIdToPlayerId(cid);
-            const auto ppid = mBoard->personPlayer();
-            if(pid != ppid && !mBoard->editorMode()) return true;
-            mInfoWidget = openInfoWidget(b);
-        }
+        mRightPressed = true;
+        mRightPanning = false;
+        mLastX = e.x();
+        mLastY = e.y();
+        mPressedX = e.x();
+        mPressedY = e.y();
+        return true;
     } break;
     default: return true;
+    }
+    return true;
+}
+
+bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
+    if(mInfoWidget) {
+        mInfoWidget->deleteLater();
+        mInfoWidget = nullptr;
+        return true;
+    }
+    if(mGm->mode() != eBuildingMode::none) {
+        mGm->clearMode();
+        return true;
+    }
+    const auto& solds = mBoard->selectedSoldiers();
+    if(!solds.empty()) return false;
+    const auto& trims = mBoard->selectedTriremes();
+    if(!trims.empty()) return false;
+
+    if(mPatrolBuilding) {
+        setPatrolBuilding(nullptr);
+        return true;
+    }
+    int tx;
+    int ty;
+    pixToId(e.x(), e.y(), tx, ty);
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return true;
+    const auto b = tile->underBuilding();
+    const auto chars = tile->characters();
+    std::vector<eCharacter*> chars2;
+    for(const auto& c : chars) {
+        const auto type = c->type();
+        if(type == eCharacterType::trailer) continue;
+        if(c->dead()) continue;
+        chars2.push_back(c.get());
+    }
+    if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
+        mInfoWidget = openInfoWidget(chars2);
+    } else if(b) {
+        eSounds::playSoundForBuilding(b);
+        const auto cid = tile->cityId();
+        const auto pid = mBoard->cityIdToPlayerId(cid);
+        const auto ppid = mBoard->personPlayer();
+        if(pid != ppid && !mBoard->editorMode()) return true;
+        mInfoWidget = openInfoWidget(b);
     }
     return true;
 }
@@ -2019,7 +2030,14 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
     }
     if(mLocked) return true;
     mMovedSincePress = true;
-    if(static_cast<bool>(e.buttons() & eMouseButton::middle)) {
+    const bool middle = static_cast<bool>(e.buttons() & eMouseButton::middle);
+    const bool right = static_cast<bool>(e.buttons() & eMouseButton::right);
+    if(right && mRightPressed && !mRightPanning) {
+        const int dx = e.x() - mPressedX;
+        const int dy = e.y() - mPressedY;
+        mRightPanning = std::abs(dx) > 3 || std::abs(dy) > 3;
+    }
+    if(middle || (right && mRightPanning)) {
         const int dx = e.x() - mLastX;
         const int dy = e.y() - mLastY;
         setDX(mDX + dx);
@@ -2115,10 +2133,19 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
         mPressedTY = -1;
     } break;
     case eMouseButton::right: {
+        const bool wasPanning = mRightPanning;
+        mRightPressed = false;
+        mRightPanning = false;
+        pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
+        mHoverX = e.x();
+        mHoverY = e.y();
+        if(wasPanning) return true;
         if(mEditorMode) {
             const auto tile = mBoard->tile(mHoverTX, mHoverTY);
             if(tile) tile->removeAllBanners();
         }
+        const bool handled = rightClickRelease(e);
+        if(handled) return true;
         if(static_cast<bool>(pressedButtons & eMouseButton::right)) {
             const auto tile = mBoard->tile(mHoverTX, mHoverTY);
             if(tile && tile->cityId() == mViewedCityId) {
