@@ -7,8 +7,6 @@
     #include <limits.h>
     #include <algorithm>
 
-    #define __INT_MAX__ INT_MAX
-
     namespace std {
         template<class RandomIt>
         void random_shuffle(RandomIt first, RandomIt last)
