@@ -123,6 +123,7 @@ protected:
     virtual void sizeHint(int& w, int& h);
 
     virtual void paintEvent(ePainter& p);
+    virtual void postPaintEvent(ePainter& p);
 
     virtual bool keyPressEvent(const eKeyPressEvent& e) {
         (void)e;

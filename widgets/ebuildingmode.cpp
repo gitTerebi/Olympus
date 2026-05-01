@@ -412,6 +412,22 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
     }
 }
 
+eBuildingMode eBuildingModeHelpers::fromBuildingType(const eBuildingType type) {
+    if(type == eBuildingType::none ||
+       type == eBuildingType::commemorative ||
+       type == eBuildingType::godMonument) {
+        return eBuildingMode::none;
+    }
+
+    const int first = static_cast<int>(eBuildingMode::erase);
+    const int last = static_cast<int>(eBuildingMode::crosswalk);
+    for(int i = first; i <= last; i++) {
+        const auto mode = static_cast<eBuildingMode>(i);
+        if(toBuildingType(mode) == type) return mode;
+    }
+    return eBuildingMode::none;
+}
+
 int eBuildingModeHelpers::toCommemorativeId(const eBuildingMode mode) {
     switch(mode) {
     case eBuildingMode::populationMonument:

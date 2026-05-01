@@ -2,6 +2,7 @@
 #define EOPTIONSMENU_H
 
 #include "eframedwidget.h"
+#include "esettings.h"
 
 #include <functional>
 #include <string>
@@ -22,10 +23,18 @@ public:
         eSetInt fSet;
     };
 
+    struct eHotkeyItem {
+        std::string fLabel;
+        eHotkeyId fId;
+        SDL_Scancode fValue;
+        std::function<void(const eHotkeyId, const SDL_Scancode)> fSet;
+    };
+
     struct ePage {
         std::string fButtonLabel;
         std::string fTitle;
         std::vector<eSliderItem> fSliders;
+        std::vector<eHotkeyItem> fHotkeys;
         std::vector<std::string> fLines;
     };
 
@@ -39,6 +48,7 @@ private:
     void clearPage();
 
     std::vector<ePage> mPages;
+    class eOptionsPageViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
 };
 

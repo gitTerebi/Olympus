@@ -377,6 +377,10 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
     if(updateTips) updateTipPositions();
+    if(mSpeedLabel && mFrame > mSpeedLabelHideFrame) {
+        mSpeedLabel->deleteLater();
+        mSpeedLabel = nullptr;
+    }
     mBoard->incFrame();
 
     const bool iterate = mSpeedId == sMaxSpeedId;
@@ -385,7 +389,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         mBoard->scheduleDataUpdate();
         mBoard->updateAppealMapIfNeeded();
         mBoard->handleFinishedTasks();
-        const int nc = children().size() - mTips.size();
+        const int speedLabel = mSpeedLabel ? 1 : 0;
+        const int nc = children().size() - mTips.size() - speedLabel;
         const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 6;
         if(incTime) {
             const bool lost = mBoard->episodeLost();

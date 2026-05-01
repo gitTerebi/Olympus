@@ -3,6 +3,8 @@
 #include "eframedbutton.h"
 #include "elabel.h"
 
+#include <SDL2/SDL.h>
+
 #include <algorithm>
 #include <cmath>
 
@@ -76,6 +78,96 @@ private:
     eChangeAction mAction;
 };
 
+class eOptionsHotkeyButton : public eFramedButton {
+public:
+    using eChangeAction = std::function<void(const SDL_Scancode)>;
+
+    eOptionsHotkeyButton(const SDL_Scancode value,
+                         const eChangeAction& action,
+                         eMainWindow* const window) :
+        eFramedButton(window),
+        mValue(value),
+        mAction(action) {
+        setUnderline(false);
+        updateText();
+        setPressAction([this]() {
+            mListening = true;
+            setText("Press key");
+            fitContent();
+            grabKeyboard();
+        });
+    }
+
+protected:
+    bool keyPressEvent(const eKeyPressEvent& e) override {
+        if(!mListening) return false;
+        mListening = false;
+        releaseKeyboard();
+        mValue = e.key();
+        updateText();
+        if(mAction) mAction(mValue);
+        return true;
+    }
+
+private:
+    void updateText() {
+        const char* const name = SDL_GetScancodeName(mValue);
+        if(name && name[0]) {
+            setText(name);
+        } else {
+            setText("None");
+        }
+        fitContent();
+    }
+
+    SDL_Scancode mValue;
+    eChangeAction mAction;
+    bool mListening = false;
+};
+
+class eOptionsPageViewport : public eWidget {
+public:
+    using eWidget::eWidget;
+
+    void setPage(eWidget* const page) {
+        mPage = page;
+        addWidget(mPage);
+        clampDY();
+    }
+
+    void scrollToTop() {
+        mDy = 0;
+        clampDY();
+    }
+
+    void clampDY() {
+        if(!mPage) return;
+        const int maxDy = std::max(0, mPage->height() - height());
+        mDy = std::clamp(mDy, 0, maxDy);
+        mPage->setY(-mDy);
+    }
+
+protected:
+    void paintEvent(ePainter& p) override {
+        const auto r = rect();
+        p.setClipRect(&r);
+    }
+
+    void postPaintEvent(ePainter& p) override {
+        p.setClipRect(nullptr);
+    }
+
+    bool mouseWheelEvent(const eMouseWheelEvent& e) override {
+        mDy -= 35*e.dy();
+        clampDY();
+        return true;
+    }
+
+private:
+    int mDy = 0;
+    eWidget* mPage = nullptr;
+};
+
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            eMainWindow* const window) :
     eFramedWidget(window),
@@ -84,7 +176,11 @@ eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
 void eOptionsMenu::initialize() {
     setType(eFrameType::message);
     const int p = padding();
-    resize(520*resolution().multiplier(), 300*resolution().multiplier());
+    const int mult = resolution().multiplier();
+    const int w = std::max(520*mult, 4*resolution().width()/5);
+    const int h = std::max(300*mult, 4*resolution().height()/5);
+    resize(std::min(w, resolution().width() - 2*p),
+           std::min(h, resolution().height() - 2*p));
 
     const auto title = new eLabel("Options", window());
     title->setHugeFontSize();
@@ -93,12 +189,25 @@ void eOptionsMenu::initialize() {
     title->align(eAlignment::hcenter);
     title->setY(p);
 
+    const auto ok = new eFramedButton(window());
+    ok->setUnderline(false);
+    ok->setText("OK");
+    ok->fitContent();
+    ok->setPressAction([this]() {
+        deleteLater();
+    });
+    addWidget(ok);
+    ok->align(eAlignment::bottom | eAlignment::hcenter);
+    ok->setY(ok->y() - p);
+
+    const int contentY = title->y() + title->height() + p;
+    const int contentH = ok->y() - contentY - p;
+
     const auto categories = new eWidget(window());
     categories->setNoPadding();
-    categories->resize(140*resolution().multiplier(),
-                       height() - 4*p - title->height());
+    categories->resize(140*mult, contentH);
     addWidget(categories);
-    categories->move(2*p, title->y() + title->height() + p);
+    categories->move(2*p, contentY);
 
     for(int i = 0; i < static_cast<int>(mPages.size()); i++) {
         const auto button = new eFramedButton(window());
@@ -112,24 +221,18 @@ void eOptionsMenu::initialize() {
     }
     categories->stackVertically(p);
 
+    mPageViewport = new eOptionsPageViewport(window());
+    mPageViewport->setNoPadding();
+    mPageViewport->resize(
+        width() - categories->x() - categories->width() - 4*p, contentH);
+    addWidget(mPageViewport);
+    mPageViewport->move(categories->x() + categories->width() + 2*p,
+                        categories->y());
+
     mPage = new eWidget(window());
     mPage->setNoPadding();
-    mPage->resize(width() - categories->x() - categories->width() - 4*p,
-                  categories->height());
-    addWidget(mPage);
-    mPage->move(categories->x() + categories->width() + 2*p,
-                categories->y());
-
-    const auto ok = new eFramedButton(window());
-    ok->setUnderline(false);
-    ok->setText("OK");
-    ok->fitContent();
-    ok->setPressAction([this]() {
-        deleteLater();
-    });
-    addWidget(ok);
-    ok->align(eAlignment::bottom | eAlignment::hcenter);
-    ok->setY(ok->y() - p);
+    mPage->setWidth(mPageViewport->width());
+    mPageViewport->setPage(mPage);
 
     showPage(0);
 }
@@ -187,6 +290,32 @@ void eOptionsMenu::showPage(const int id) {
         return w;
     };
 
+    const auto makeHotkey = [this](const eOptionsMenu::eHotkeyItem& hotkey) {
+        const auto w = new eWidget(window());
+        w->setNoPadding();
+        w->setWidth(mPage->width());
+
+        const auto label = new eLabel(hotkey.fLabel, window());
+        label->setSmallFontSize();
+        label->fitContent();
+        w->addWidget(label);
+
+        const auto button = new eOptionsHotkeyButton(
+            hotkey.fValue,
+            [hotkey](const SDL_Scancode key) {
+                if(hotkey.fSet) hotkey.fSet(hotkey.fId, key);
+            },
+            window());
+        w->addWidget(button);
+
+        w->layoutHorizontally();
+        w->fitHeight();
+        w->setWidth(mPage->width());
+        label->setX(mPage->width()/2 - label->width() - padding());
+        button->setX(mPage->width()/2 + padding());
+        return w;
+    };
+
     for(const auto& slider : page.fSliders) {
         mPage->addWidget(makeSlider(slider.fLabel,
                                     slider.fSuffix,
@@ -197,6 +326,10 @@ void eOptionsMenu::showPage(const int id) {
                                     slider.fSet));
     }
 
+    for(const auto& hotkey : page.fHotkeys) {
+        mPage->addWidget(makeHotkey(hotkey));
+    }
+
     for(const auto& text : page.fLines) {
         const auto line = new eLabel(text, window());
         line->setSmallFontSize();
@@ -205,10 +338,12 @@ void eOptionsMenu::showPage(const int id) {
     }
 
     mPage->stackVertically(p);
+    mPage->fitHeight();
     title->align(eAlignment::hcenter);
     for(const auto child : mPage->children()) {
         child->align(eAlignment::hcenter);
     }
+    mPageViewport->scrollToTop();
 }
 
 void eOptionsMenu::clearPage() {

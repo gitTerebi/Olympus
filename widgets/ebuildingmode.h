@@ -240,6 +240,7 @@ enum class eBuildingMode {
 
 namespace eBuildingModeHelpers {
     eBuildingType toBuildingType(const eBuildingMode mode);
+    eBuildingMode fromBuildingType(const eBuildingType type);
     int toCommemorativeId(const eBuildingMode mode);
     eGodType toGodType(const eBuildingMode mode);
 }
