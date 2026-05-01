@@ -41,6 +41,7 @@ public:
 
     void setResolution(const eResolution& res);
     void setFullscreen(const bool f);
+    void setKeyScrollSpeed(const int speed);
 
     void startGameAction(eGameBoard* const board,
                          const eGameWidgetSettings& settings);
