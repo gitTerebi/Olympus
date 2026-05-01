@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include "egamedir.h"
 #include "eloadtexthelper.h"
@@ -23,6 +24,10 @@ std::vector<eTileSize> eSettings::availableSizes() const {
     return sizes;
 }
 
+int eSettings::clampKeyScrollSpeed(const int speed) {
+    return std::clamp(speed, sMinKeyScrollSpeed, sMaxKeyScrollSpeed);
+}
+
 void eSettings::write() const {
     const auto path = eGameDir::settingsPath();
     std::ofstream file;
@@ -37,6 +42,8 @@ void eSettings::write() const {
             (fLargeTextures ? "\"true\"" : "\"false\"") << "\n";
     file << "fullscreen" << " " <<
             (fFullscreen ? "\"true\"" : "\"false\"") << "\n";
+    file << "key_scroll_speed" << " " << "\"" <<
+            std::to_string(fKeyScrollSpeed) << "\"" << "\n";
     const auto wStr = std::to_string(fRes.width());
     file << "width" << " " << "\"" << wStr << "\"" << "\n";
     const auto hStr = std::to_string(fRes.height());
@@ -54,6 +61,10 @@ void eSettings::read() {
     fMediumTextures = settings["medium_textures"] == "true";
     fLargeTextures = settings["large_textures"] == "true";
     fFullscreen = settings["fullscreen"] == "true";
+    const auto keyScrollSpeedStr = settings["key_scroll_speed"];
+    if(!keyScrollSpeedStr.empty()) {
+        fKeyScrollSpeed = clampKeyScrollSpeed(std::stoi(keyScrollSpeedStr));
+    }
     const auto widthStr = settings["width"];
     const auto heightStr = settings["height"];
     if(!widthStr.empty() && !heightStr.empty()) {

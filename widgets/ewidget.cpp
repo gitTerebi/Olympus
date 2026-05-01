@@ -243,6 +243,22 @@ bool eWidget::keyPress(const eKeyPressEvent& e) {
     return handler;
 }
 
+bool eWidget::keyRelease(const eKeyPressEvent& e) {
+    eWidget* override = nullptr;
+    if(sKeyboardGrabber) override = sKeyboardGrabber;
+    else override = sLastPressed;
+    if(override) {
+        int ex = e.x();
+        int ey = e.y();
+        mapTo(override, ex, ey);
+        const auto ee = e.withPosition(ex, ey);
+        override->keyReleaseEvent(ee);
+        return true;
+    }
+    const auto handler = mouseEvent(e, &eWidget::keyReleaseEvent);
+    return handler;
+}
+
 bool eWidget::mousePress(const eMouseEvent& e) {
     eWidget* override = nullptr;
     if(sMouseGrabber) override = sMouseGrabber;

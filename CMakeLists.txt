@@ -660,6 +660,7 @@ set(SOURCES
     widgets/enumlineedit.cpp
     widgets/enumlineeditwidget.cpp
     widgets/eokbutton.cpp
+    widgets/eoptionsmenu.cpp
     widgets/epainter.cpp
     widgets/eproceedbutton.cpp
     widgets/eprogressbar.cpp

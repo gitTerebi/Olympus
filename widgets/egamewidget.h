@@ -146,6 +146,7 @@ protected:
     void paintEvent(ePainter& p) override;
 
     bool keyPressEvent(const eKeyPressEvent& e) override;
+    bool keyReleaseEvent(const eKeyPressEvent& e) override;
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;
@@ -160,6 +161,7 @@ private:
                 const int a);
 
     void showGoals();
+    void showOptionsMenu();
 
     void setDX(const int dx);
     void setDY(const int dy);
@@ -282,6 +284,10 @@ private:
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
 
     void switchPause();
+    bool updateSmoothScrollKey(const SDL_Scancode k, const bool pressed);
+    void smoothScroll();
+    void stopSmoothScroll();
+    void setKeyScrollSpeed(const int speed);
 
     stdsptr<eTexture> getBasementTexture(
             const int tx, const int ty, eBuilding* const d,
@@ -327,6 +333,11 @@ private:
     bool mRightPressed = false;
     bool mRightPanning = false;
     bool mMovedSincePress = false;
+    bool mScrollLeft = false;
+    bool mScrollRight = false;
+    bool mScrollUp = false;
+    bool mScrollDown = false;
+    int mKeyScrollSpeed = 18;
 
     int mHoverX = -1;
     int mHoverY = -1;

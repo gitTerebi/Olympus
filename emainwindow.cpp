@@ -21,6 +21,7 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
 
 #include "widgets/efilewidget.h"
 #include "elanguage.h"
@@ -113,6 +114,11 @@ void eMainWindow::setFullscreen(const bool f) {
     mFirstFullscrenSetting = false;
     mSettings.fFullscreen = f;
     SDL_SetWindowFullscreen(mSdlWindow, f ? SDL_WINDOW_FULLSCREEN : 0);
+}
+
+void eMainWindow::setKeyScrollSpeed(const int speed) {
+    mSettings.fKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
+    mSettings.write();
 }
 
 void eMainWindow::startGameAction(eGameBoard* const board,
@@ -650,6 +656,8 @@ int eMainWindow::exec() {
                           k == SDL_Scancode::SDL_SCANCODE_RCTRL) {
                     mCtrlPressed--;
                 }
+                const eKeyPressEvent ke(x, y, shift, ctrl, buttons, k);
+                if(mWidget) mWidget->keyRelease(ke);
             }
         }
 

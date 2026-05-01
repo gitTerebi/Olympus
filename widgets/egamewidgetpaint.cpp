@@ -413,6 +413,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     } else if(mHoverY == height() - 1) {
         setDY(mDY - 35);
     }
+    smoothScroll();
     eGameBoardRegisterLock lock(*mBoard);
 
     p.setFont(eFonts::defaultFont(resolution()));

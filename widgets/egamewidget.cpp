@@ -24,6 +24,9 @@
 #include "emainwindow.h"
 
 #include "eframedbutton.h"
+#include "eframedwidget.h"
+#include "elabel.h"
+#include "eoptionsmenu.h"
 #include "widgets/eboardsettingsmenu.h"
 #include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
@@ -66,6 +69,9 @@
 #include "edistrictconditionswidget.h"
 #include "buildings/ehippodromepiece.h"
 #include "estringhelpers.h"
+
+#include <algorithm>
+#include <cmath>
 
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eMainWidget(window) {}
@@ -230,6 +236,7 @@ void eGameWidget::initializeNumbers() {
 
 void eGameWidget::initialize() {
     mEditorMode = mBoard->editorMode();
+    mKeyScrollSpeed = window()->settings().fKeyScrollSpeed;
     initializeNumbers();
     mGm = new eGameMenu(window());
     const auto viewGoals = [this]() {
@@ -1773,6 +1780,7 @@ void eGameWidget::switchPause() {
 bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
     if(mLocked) return true;
     const auto k = e.key();
+    if(updateSmoothScrollKey(k, true)) return true;
     if(k == SDL_Scancode::SDL_SCANCODE_KP_PLUS ||
        k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET) {
         mSpeedId = std::clamp(mSpeedId + 1, 0, sMaxSpeedId);
@@ -1864,13 +1872,64 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
             const auto exitAct = [w]() {
                 w->closeGame();
             };
-            menu->initialize(resumeAct, saveAct, loadAct, exitAct);
+            const auto optionsAct = [this]() {
+                showOptionsMenu();
+            };
+            stopSmoothScroll();
+            menu->initialize(resumeAct, saveAct, loadAct, optionsAct, exitAct);
             addWidget(menu);
             menu->align(eAlignment::center);
             w->execDialog(menu);
         }
     }
     return true;
+}
+
+bool eGameWidget::keyReleaseEvent(const eKeyPressEvent& e) {
+    updateSmoothScrollKey(e.key(), false);
+    return true;
+}
+
+bool eGameWidget::updateSmoothScrollKey(const SDL_Scancode k,
+                                        const bool pressed) {
+    if(k == SDL_Scancode::SDL_SCANCODE_A) {
+        mScrollLeft = pressed;
+        return true;
+    } else if(k == SDL_Scancode::SDL_SCANCODE_D) {
+        mScrollRight = pressed;
+        return true;
+    } else if(k == SDL_Scancode::SDL_SCANCODE_W) {
+        mScrollUp = pressed;
+        return true;
+    } else if(k == SDL_Scancode::SDL_SCANCODE_S) {
+        mScrollDown = pressed;
+        return true;
+    }
+    return false;
+}
+
+void eGameWidget::smoothScroll() {
+    int dx = 0;
+    int dy = 0;
+    const int d = mKeyScrollSpeed;
+    if(mScrollLeft) dx += d;
+    if(mScrollRight) dx -= d;
+    if(mScrollUp) dy += d;
+    if(mScrollDown) dy -= d;
+    if(dx) setDX(mDX + dx);
+    if(dy) setDY(mDY + dy);
+}
+
+void eGameWidget::setKeyScrollSpeed(const int speed) {
+    mKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
+    window()->setKeyScrollSpeed(mKeyScrollSpeed);
+}
+
+void eGameWidget::stopSmoothScroll() {
+    mScrollLeft = false;
+    mScrollRight = false;
+    mScrollUp = false;
+    mScrollDown = false;
 }
 
 bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
@@ -2237,6 +2296,17 @@ void eGameWidget::showGoals() {
     e->align(eAlignment::vcenter);
     e->setX(x() + (width() - e->width() - mGm->width())/2);
     window()->execDialog(e);
+}
+
+void eGameWidget::showOptionsMenu() {
+    const auto d = new eOptionsMenu(
+        [this]() { return mKeyScrollSpeed; },
+        [this](const int speed) { setKeyScrollSpeed(speed); },
+        window());
+    d->initialize();
+    addWidget(d);
+    d->align(eAlignment::center);
+    window()->execDialog(d);
 }
 
 void eGameWidget::setDX(const int dx) {
