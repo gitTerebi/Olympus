@@ -26,6 +26,7 @@ public:
     void setCity(const stdsptr<eWorldCity>& c);
     void setWorldBoard(eWorldBoard* const b);
     void setText(const std::string& text);
+    void setArrowActions(const eAction& left, const eAction& right);
     void updateLabels() const;
     void updateButtonsEnabled() const;
 private:
@@ -47,6 +48,9 @@ private:
     eButton* mGiftButton = nullptr;
     eButton* mRaidButton = nullptr;
     eButton* mConquerButton = nullptr;
+
+    eButton* mLeftArrowButton = nullptr;
+    eButton* mRightArrowButton = nullptr;
 
     stdsptr<eWorldCity> mCity;
 

@@ -101,14 +101,77 @@ void eWorldWidget::initialize() {
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);
 
+    const auto selectCity = [this](const stdsptr<eWorldCity>& ct) {
+        mCity = ct;
+        const bool editor = mWorldBoard && mWorldBoard->editorMode();
+        mWM->setCity(ct);
+    };
+    const auto leftArrowFunc = [this, selectCity]() {
+        if(!mWorldBoard) return;
+        const auto& cities = mWorldBoard->cities();
+        std::vector<stdsptr<eWorldCity>> visibleCities;
+        const bool editor = mWorldBoard->editorMode();
+        for(const auto& c : cities) {
+            bool visible = editor;
+            if(!editor) {
+                visible = c->visible() && (c->active() || c->isOnBoard());
+            }
+            if(visible) visibleCities.push_back(c);
+        }
+        if(visibleCities.empty()) return;
+        if(!mCity) {
+            selectCity(visibleCities[0]);
+            return;
+        }
+        auto it = std::find(visibleCities.begin(), visibleCities.end(), mCity);
+        if(it == visibleCities.end()) {
+            selectCity(visibleCities[0]);
+            return;
+        }
+        if(it == visibleCities.begin()) {
+            selectCity(visibleCities.back());
+        } else {
+            selectCity(*(--it));
+        }
+    };
+    const auto rightArrowFunc = [this, selectCity]() {
+        if(!mWorldBoard) return;
+        const auto& cities = mWorldBoard->cities();
+        std::vector<stdsptr<eWorldCity>> visibleCities;
+        const bool editor = mWorldBoard->editorMode();
+        for(const auto& c : cities) {
+            bool visible = editor;
+            if(!editor) {
+                visible = c->visible() && (c->active() || c->isOnBoard());
+            }
+            if(visible) visibleCities.push_back(c);
+        }
+        if(visibleCities.empty()) return;
+        if(!mCity) {
+            selectCity(visibleCities[0]);
+            return;
+        }
+        auto it = std::find(visibleCities.begin(), visibleCities.end(), mCity);
+        if(it == visibleCities.end()) {
+            selectCity(visibleCities[0]);
+            return;
+        }
+        ++it;
+        if(it == visibleCities.end()) {
+            selectCity(visibleCities[0]);
+        } else {
+            selectCity(*it);
+        }
+    };
+    mWM->setArrowActions(leftArrowFunc, rightArrowFunc);
+
     mWMW = new eWorldMapWidget(window());
     addWidget(mWMW);
 
-    mWMW->setSelectCityAction([this](const stdsptr<eWorldCity>& ct) {
-        mCity = ct;
+    mWMW->setSelectCityAction([this, selectCity](const stdsptr<eWorldCity>& ct) {
+        selectCity(ct);
         const bool editor = mWorldBoard && mWorldBoard->editorMode();
         mSettingsButton->setVisible(mCity && editor);
-        mWM->setCity(ct);
     });
     mWMW->setSetTextAction([this](const std::string& text) {
         mWM->setText(text);
