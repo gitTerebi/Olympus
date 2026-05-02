@@ -12,6 +12,7 @@
 #include "buildings/sanctuaries/esanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidelement.h"
+#include "buildings/eprocessingbuilding.h"
 
 void eThreadBuilding::load(eBuilding* const src) {
     if(!mCleared) {
@@ -27,6 +28,7 @@ void eThreadBuilding::load(eBuilding* const src) {
         mGet = eResourceType::none;
         mEmpty = eResourceType::none;
         mAccepts = eResourceType::none;
+        mRawSpaceLeft = 0;
         mCleared = true;
     }
 
@@ -114,6 +116,10 @@ void eThreadBuilding::load(eBuilding* const src) {
             mResource[0] = b->resourceType();
             mResourceCount[0] = b->resource();
             mSpaceCount = 1;
+            if(const auto pb = dynamic_cast<eProcessingBuilding*>(src)) {
+                mAccepts = pb->rawMaterial();
+                mRawSpaceLeft = pb->spaceLeft(pb->rawMaterial());
+            }
         } break;
         case eBuildingType::horseRanch: {
             const auto b = static_cast<eHorseRanch*>(src);
@@ -201,7 +207,7 @@ int eThreadBuilding::resourceSpaceLeft(const eResourceType type) const {
         return eStorageBuilding::sSpaceLeft(type, mResourceCount, mResource,
                                             mAccepts, mMaxCount, mSpaceCount);
     } else {
-        return 0;
+        return mRawSpaceLeft;
     }
 }
 

@@ -60,6 +60,7 @@ private:
     eResourceType mGet = eResourceType::none;
     eResourceType mEmpty = eResourceType::none;
     eResourceType mAccepts = eResourceType::none; // includes get
+    int mRawSpaceLeft{0};
 };
 
 #endif // ETHREADBUILDING_H
