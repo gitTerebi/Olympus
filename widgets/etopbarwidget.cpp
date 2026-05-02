@@ -1,6 +1,7 @@
 #include "etopbarwidget.h"
 
 #include "engine/egameboard.h"
+#include "engine/boardData/eemploymentdata.h"
 #include "engine/boardData/epopulationdata.h"
 #include "textures/egametextures.h"
 #include "ebutton.h"
@@ -8,6 +9,31 @@
 #include "egamewidget.h"
 
 #include "emainwindow.h"
+
+#include <string>
+
+namespace {
+
+std::string populationText(const int pop, const eEmploymentData& emplData) {
+    auto result = std::to_string(pop);
+
+    const int unemployed = emplData.unemployed();
+    if(unemployed > 0) {
+        const int employable = emplData.employable();
+        const int percent = employable ? 100*unemployed/employable : 0;
+        result += " (" + std::to_string(unemployed) + ", " +
+                  std::to_string(percent) + "%)";
+    }
+
+    const int vacancies = emplData.freeJobVacancies();
+    if(vacancies > 0) {
+        result += " (-" + std::to_string(vacancies) + ")";
+    }
+
+    return result;
+}
+
+}
 
 void eTopBarWidget::initialize() {
     const auto& intrfc = eGameTextures::interface();
@@ -105,7 +131,12 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         const auto popData = mBoard->populationData(cid);
         if(popData) {
             const int pop = popData->population();
-            mPopulationWidget->setText(std::to_string(pop));
+            const auto emplData = mBoard->employmentData(cid);
+            if(emplData) {
+                mPopulationWidget->setText(populationText(pop, *emplData));
+            } else {
+                mPopulationWidget->setText(std::to_string(pop));
+            }
         } else {
             mPopulationWidget->setText("-");
         }

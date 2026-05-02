@@ -684,7 +684,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         return tile->hasRoad() || tile->underBuildingType() == eBuildingType::avenue;
     };
     const auto canWalkRoadPreview = [](eTile* const tile) {
-        return tile && tile->hasRoad() && !tile->hasRoadblock();
+        return tile && (tile->hasRoad() || tile->hasAvenue()) &&
+               !tile->hasRoadblock();
     };
     const auto addRoamerPreview = [&](eTile* const start,
                                       eRoadPreviewPath& path) {
@@ -734,25 +735,6 @@ void eGameWidget::paintEvent(ePainter& p) {
                 tile = next;
             }
         }
-    };
-    const auto roadAccessTiles = [&](const int tx, const int ty,
-                                     const int sw, const int sh) {
-        std::vector<eTile*> result;
-        const auto add = [&](eTile* const tile) {
-            if(!tile) return;
-            if(!tile->hasRoad()) return;
-            if(eVectorHelpers::contains(result, tile)) return;
-            result.push_back(tile);
-        };
-        for(int x = tx; x < tx + sw; x++) {
-            add(mBoard->tile(x, ty - 1));
-            add(mBoard->tile(x, ty + sh));
-        }
-        for(int y = ty; y < ty + sh; y++) {
-            add(mBoard->tile(tx - 1, y));
-            add(mBoard->tile(tx + sw, y));
-        }
-        return result;
     };
     const auto addPathBands = [&](const std::vector<eTile*>& tiles,
                                   eRoadPreviewPath& path) {
@@ -2533,6 +2515,15 @@ void eGameWidget::paintEvent(ePainter& p) {
     const int tx = mHoverTX;
     const int ty = mHoverTY;
     const int a = t ? t->altitude() : 0;
+    const auto drawAgoraRoadAccessPreview = [&](const std::vector<eTile*>& p) {
+        int ri = 0;
+        for(const auto t : p) {
+            if(!t || !t->hasRoad()) continue;
+            if(ri++ != 3) continue;
+            drawRoadBands({t});
+            return;
+        }
+    };
 
     switch(mode) {
     case eBuildingMode::commonAgora: {
@@ -2566,6 +2557,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
             road->clearColorMod();
         } else {
+            drawAgoraRoadAccessPreview(p);
             if(bt == eAgoraOrientation::bottomRight) {
                 const int iMax = p.size();
                 for(int i = 0; i < iMax; i++) {
@@ -2753,6 +2745,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
             road->clearColorMod();
         } else {
+            drawAgoraRoadAccessPreview(p);
             if(bt == eAgoraOrientation::bottomRight) {
                 const int iMax = p.size();
                 for(int i = 0; i < iMax; i++) {
@@ -2978,16 +2971,33 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto drawRoadAccessPreview = [&](const std::vector<eB>& ebs,
                                                const bool canBuild) {
             if(!canBuild) return;
+            const auto patrolBuilding = [](eBuilding* const b) {
+                if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
+                    return pb;
+                } else if(const auto v = dynamic_cast<eVendor*>(b)) {
+                    return static_cast<ePatrolBuildingBase*>(v->agora());
+                } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
+                    return static_cast<ePatrolBuildingBase*>(s->agora());
+                }
+                return static_cast<ePatrolBuildingBase*>(nullptr);
+            };
             std::set<eBuilding*> done;
             for(const auto& eb : ebs) {
-                const auto b = eb.fB.get();
-                if(!b) continue;
-                if(done.count(b)) continue;
-                done.insert(b);
-                if(!dynamic_cast<ePatrolBuildingBase*>(b)) continue;
+                const auto pb = patrolBuilding(eb.fB.get());
+                if(!pb) continue;
+                if(done.count(pb)) continue;
+                done.insert(pb);
                 if(!eb.fBR) continue;
-                const auto roads = roadAccessTiles(
-                    eb.fTx, eb.fTy, eb.fBR->spanW(), eb.fBR->spanH());
+                const int sw = eb.fBR->spanW();
+                const int sh = eb.fBR->spanH();
+                int minX;
+                int minY;
+                int maxX;
+                int maxY;
+                eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+                                        eb.fTx, eb.fTy, sw, sh);
+                pb->setTileRect({minX, minY, sw, sh});
+                const auto roads = pb->surroundingRoad(false, true);
                 drawRoadBands(roads);
             }
         };
