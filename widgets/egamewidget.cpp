@@ -177,7 +177,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         std::string yearStr;
         if(year < 0) yearStr = std::to_string(-(year  + 1)) + " BC";
         else yearStr = std::to_string(year);
-        const auto filename = "AUTOSAVE YEAR " + yearStr + ".ez";
+        const auto filename = "autosave year " + yearStr + ".ez";
         w->saveGame(dir + filename);
         // Clean up old autosaves, keep only 5 most recent
         std::vector<std::pair<std::filesystem::file_time_type, std::filesystem::path>> autosaves;
@@ -185,7 +185,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
             const auto path = entry.path();
             if(path.extension() != ".ez") continue;
             const auto name = path.stem().string();
-            if(name.find("AUTOSAVE YEAR ") == 0) {
+            if(name.find("autosave year ") == 0) {
                 autosaves.emplace_back(entry.last_write_time(), path);
             }
         }
@@ -1951,7 +1951,7 @@ void eGameWidget::setSpeedId(const int id) {
 }
 
 void eGameWidget::showSpeedLabel() {
-    const auto text = "Game speed: " + std::to_string(mSpeed);
+    const auto text = std::string("Game speed: ") + sSpeedLabels[mSpeedId];
     if(!mSpeedLabel) {
         mSpeedLabel = new eFramedLabel(text, window());
         mSpeedLabel->setType(eFrameType::message);
