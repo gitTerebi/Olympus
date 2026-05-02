@@ -85,8 +85,6 @@ public:
 
     const eSettings& settings() const { return mSettings; }
 
-    std::vector<eOptionsMenu::ePage> optionsPages();
-
     void execDialog(eWidget* const d,
                     const bool closable = true,
                     const eAction& closeFunc = nullptr,

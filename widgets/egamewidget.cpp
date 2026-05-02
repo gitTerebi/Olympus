@@ -1,5 +1,6 @@
 #include "egamewidget.h"
 
+#include "eoptionsdata.h"
 #include "engine/egameboard.h"
 
 #include "eflatbutton.h"
@@ -2551,7 +2552,7 @@ void eGameWidget::showGoals() {
 }
 
 void eGameWidget::showOptionsMenu() {
-    const auto d = new eOptionsMenu(window()->optionsPages(), window());
+    const auto d = new eOptionsMenu(getOptionsPages(window()), window());
     d->initialize();
     addWidget(d);
     d->align(eAlignment::center);
