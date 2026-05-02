@@ -449,20 +449,18 @@ void eMainWindow::showMainMenu() {
         loadGame(path);
     };
 
-    const auto loadGameAction = [this, mm]() {
+    const auto loadGameAction = [this]() {
         const auto fw = new eFileWidget(this);
         const auto func = [this](const std::string& path) {
             return loadGame(path);
         };
-        const auto closeAct = [mm, fw]() {
-            mm->removeWidget(fw);
+        const auto closeAct = [fw]() {
             fw->deleteLater();
         };
         const auto dir = leaderSaveDir();
         fw->intialize(eLanguage::zeusText(1, 3),
                       dir, func, closeAct);
-        mm->addWidget(fw);
-        fw->align(eAlignment::center);
+        execDialog(fw, true, closeAct);
     };
 
     const auto editGameAction = [this]() {

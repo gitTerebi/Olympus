@@ -23,9 +23,10 @@ void eQuestionWidget::initialize(const std::string& title,
 
     const auto textLabel = new eLabel(window());
     textLabel->setSmallFontSize();
-    textLabel->setWrapWidth(width);
     textLabel->setText(text);
+    textLabel->setTextAlignment(eAlignment::center);
     textLabel->fitContent();
+    textLabel->setX((width - textLabel->width()) / 4);
     cw->addWidget(textLabel);
     const int tly = titleLabel->y() + titleLabel->height();
     textLabel->setY(tly);
