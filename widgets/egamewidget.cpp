@@ -1304,6 +1304,12 @@ void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
         eStringHelpers::replaceAll(title, "[city_name]", c->name());
     if(const auto& c = ed.fRivalCity)
         eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
+    eStringHelpers::replaceAll(title, "[item]",
+                               eResourceTypeHelpers::typeLongName(ed.fResourceType));
+    eStringHelpers::replaceAll(title, "[itemshort]",
+                               eResourceTypeHelpers::typeName(ed.fResourceType));
+    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(ed.fGod));
+    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
     if(title.length() > 40) {
         title = title.substr(0, 37) + "...";
     }
