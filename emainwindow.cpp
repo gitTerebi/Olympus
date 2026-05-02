@@ -555,6 +555,11 @@ void eMainWindow::showOptionsMenu() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
+                {"Pause game", eHotkeyId::pause, settings.fHotkeyPause,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"--- Speed Control ---", eHotkeyId::speedUp, settings.fHotkeySpeedUp, nullptr},
                 {"Increase game speed", eHotkeyId::speedUp, settings.fHotkeySpeedUp,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
@@ -563,10 +568,7 @@ void eMainWindow::showOptionsMenu() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
-                {"Pause game", eHotkeyId::pause, settings.fHotkeyPause,
-                 [this](const eHotkeyId id, const SDL_Scancode key) {
-                     setHotkey(id, key);
-                 }},
+                {"--- Building Tools ---", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview, nullptr},
                 {"Rotate building preview", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
@@ -579,10 +581,7 @@ void eMainWindow::showOptionsMenu() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
-                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
-                 [this](const eHotkeyId id, const SDL_Scancode key) {
-                     setHotkey(id, key);
-                 }},
+                {"--- Construction ---", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad, nullptr},
                 {"Build road", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
@@ -595,6 +594,11 @@ void eMainWindow::showOptionsMenu() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
+                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"--- Camera ---", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft, nullptr},
                 {"Smooth scroll left", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
@@ -611,6 +615,7 @@ void eMainWindow::showOptionsMenu() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
+                {"--- Bookmarks ---", eHotkeyId::bookmark1, settings.fHotkeyBookmark1, nullptr},
                 {"Bookmark 1", eHotkeyId::bookmark1, settings.fHotkeyBookmark1,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);

@@ -91,6 +91,7 @@ public:
         mValue(value),
         mAction(action) {
         setUnderline(false);
+        setTinyFontSize();
         updateText();
         setPressAction([this]() {
             mListening = true;
@@ -297,23 +298,31 @@ void eOptionsMenu::showPage(const int id) {
         w->setWidth(mPage->width());
 
         const auto label = new eLabel(hotkey.fLabel, window());
-        label->setSmallFontSize();
+        label->setVerySmallFontSize();
         label->fitContent();
         w->addWidget(label);
 
-        const auto button = new eOptionsHotkeyButton(
-            hotkey.fValue,
-            [hotkey](const SDL_Scancode key) {
-                if(hotkey.fSet) hotkey.fSet(hotkey.fId, key);
-            },
-            window());
-        w->addWidget(button);
-
-        w->layoutHorizontally();
-        w->fitHeight();
-        w->setWidth(mPage->width());
-        label->setX(mPage->width()/2 - label->width() - padding());
-        button->setX(mPage->width()/2 + padding());
+        if(hotkey.fSet) {
+            const auto button = new eOptionsHotkeyButton(
+                hotkey.fValue,
+                [hotkey](const SDL_Scancode key) {
+                    if(hotkey.fSet) hotkey.fSet(hotkey.fId, key);
+                },
+                window());
+            w->addWidget(button);
+            w->layoutHorizontally();
+            w->fitHeight();
+            const int rowH = std::max(button->height(), label->height()) + resolution().tinyPadding();
+            w->setHeight(rowH);
+            label->setX(mPage->width()/2 - label->width() - resolution().tinyPadding());
+            button->setX(mPage->width()/2 + resolution().tinyPadding());
+            label->setY((rowH - label->height()) / 2);
+            button->setY((rowH - button->height()) / 2);
+        } else {
+            label->setYellowFontColor();
+            label->align(eAlignment::hcenter);
+            w->setHeight(label->height() + resolution().tinyPadding());
+        }
         return w;
     };
 
@@ -371,7 +380,7 @@ void eOptionsMenu::showPage(const int id) {
         mPage->addWidget(line);
     }
 
-    mPage->stackVertically(p);
+    mPage->stackVertically(resolution().tinyPadding());
     mPage->fitHeight();
     title->align(eAlignment::hcenter);
     for(const auto child : mPage->children()) {
