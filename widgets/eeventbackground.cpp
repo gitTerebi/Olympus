@@ -28,6 +28,10 @@ bool eEventBackground::keyPressEvent(const eKeyPressEvent& e) {
 }
 
 bool eEventBackground::mousePressEvent(const eMouseEvent& e) {
+    return true;
+}
+
+bool eEventBackground::mouseReleaseEvent(const eMouseEvent& e) {
     if(!mClosable) return true;
     const auto b = e.button();
     if(b == eMouseButton::right) {

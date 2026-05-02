@@ -662,6 +662,10 @@ bool eMessageBox::keyPressEvent(const eKeyPressEvent& e) {
 }
 
 bool eMessageBox::mousePressEvent(const eMouseEvent& e) {
+    return true;
+}
+
+bool eMessageBox::mouseReleaseEvent(const eMouseEvent& e) {
     if(!mClosable) return true;
     const auto b = e.button();
     if(b == eMouseButton::right) {

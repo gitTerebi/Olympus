@@ -9,6 +9,10 @@ bool eClosableDialog::keyPressEvent(const eKeyPressEvent& e) {
 }
 
 bool eClosableDialog::mousePressEvent(const eMouseEvent& e) {
+    return true;
+}
+
+bool eClosableDialog::mouseReleaseEvent(const eMouseEvent& e) {
     const auto b = e.button();
     if(b == eMouseButton::right) {
         deleteLater();
