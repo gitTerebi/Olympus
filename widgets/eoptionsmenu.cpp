@@ -4,6 +4,8 @@
 #include "eframedbutton.h"
 #include "elabel.h"
 #include "echeckbox.h"
+#include "ebasicbutton.h"
+#include "textures/egametextures.h"
 
 #include <SDL2/SDL.h>
 
@@ -90,9 +92,11 @@ public:
         eFramedButton(window),
         mValue(value),
         mAction(action) {
+        setPadding(2 * resolution().multiplier());
         setUnderline(false);
-        setTinyFontSize();
+        setVerySmallFontSize();
         updateText();
+        setWidth(60 * resolution().multiplier());
         setPressAction([this]() {
             mListening = true;
             setText("Press key");
@@ -128,8 +132,70 @@ private:
     bool mListening = false;
 };
 
+class eOptionsScrollThumb : public eWidget {
+public:
+    using eScrollAction = std::function<void(int dy)>;
+
+    eOptionsScrollThumb(eMainWindow* const window) : eWidget(window) {}
+
+    void setScrollAction(const eScrollAction& a) { mScrollAction = a; }
+
+protected:
+    void paintEvent(ePainter& p) override {
+        int iRes, mult;
+        iResAndMult(iRes, mult);
+        const int dim = 8 * mult;
+        const auto& intrfc = eGameTextures::interface()[iRes];
+        if(!intrfc.fLoaded) return;
+        const auto& coll = mDragging ? intrfc.fButtonFrameHover : intrfc.fButtonFrame;
+        const int iMax = width() / dim + 1;
+        const int jMax = height() / dim + 1;
+        const int lastX = width() - dim;
+        const int lastY = height() - dim;
+        for(int i = 0; i < iMax; i++) {
+            const int x = i == iMax - 1 ? lastX : dim * i;
+            for(int j = 0; j < jMax; j++) {
+                int texId;
+                if(i == 0) texId = (j == 0) ? 0 : (j == jMax-1) ? 6 : 7;
+                else if(i == iMax-1) texId = (j == 0) ? 2 : (j == jMax-1) ? 4 : 3;
+                else if(j == 0) texId = 1;
+                else if(j == jMax-1) texId = 5;
+                else continue;
+                const int y = j == jMax - 1 ? lastY : dim * j;
+                p.drawTexture(x, y, coll.getTexture(texId));
+            }
+        }
+    }
+
+    bool mousePressEvent(const eMouseEvent& e) override {
+        mDragY = e.y();
+        mDragging = true;
+        return true;
+    }
+
+    bool mouseReleaseEvent(const eMouseEvent&) override {
+        mDragging = false;
+        return true;
+    }
+
+    bool mouseMoveEvent(const eMouseEvent& e) override {
+        if(!mDragging) return false;
+        const int delta = e.y() - mDragY;
+        mDragY = e.y();
+        if(mScrollAction) mScrollAction(delta);
+        return true;
+    }
+
+private:
+    bool mDragging = false;
+    int mDragY = 0;
+    eScrollAction mScrollAction;
+};
+
 class eOptionsPageViewport : public eWidget {
 public:
+    using eScrollCallback = std::function<void(int dy, int maxDy)>;
+
     using eWidget::eWidget;
 
     void setPage(eWidget* const page) {
@@ -138,8 +204,29 @@ public:
         clampDY();
     }
 
+    void setScrollCallback(const eScrollCallback& cb) { mScrollCb = cb; }
+
     void scrollToTop() {
         mDy = 0;
+        clampDY();
+    }
+
+    void scrollUp() {
+        mDy -= 35 * resolution().multiplier();
+        clampDY();
+    }
+
+    void scrollDown() {
+        mDy += 35 * resolution().multiplier();
+        clampDY();
+    }
+
+    void scrollByPixels(const int delta, const int trackH, const int thumbH) {
+        if(!mPage) return;
+        const int maxDy = std::max(0, mPage->height() - height());
+        if(thumbH >= trackH || maxDy <= 0) return;
+        const float ratio = static_cast<float>(maxDy) / (trackH - thumbH);
+        mDy += static_cast<int>(delta * ratio);
         clampDY();
     }
 
@@ -148,6 +235,7 @@ public:
         const int maxDy = std::max(0, mPage->height() - height());
         mDy = std::clamp(mDy, 0, maxDy);
         mPage->setY(-mDy);
+        if(mScrollCb) mScrollCb(mDy, maxDy);
     }
 
 protected:
@@ -161,7 +249,7 @@ protected:
     }
 
     bool mouseWheelEvent(const eMouseWheelEvent& e) override {
-        mDy -= 35*e.dy();
+        mDy -= 35 * resolution().multiplier() * e.dy();
         clampDY();
         return true;
     }
@@ -169,6 +257,7 @@ protected:
 private:
     int mDy = 0;
     eWidget* mPage = nullptr;
+    eScrollCallback mScrollCb;
 };
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
@@ -180,17 +269,18 @@ void eOptionsMenu::initialize() {
     setType(eFrameType::message);
     const int p = padding();
     const int mult = resolution().multiplier();
+    const int pad = 100 * mult;
     const int w = std::max(520*mult, 4*resolution().width()/5);
     const int h = std::max(300*mult, 4*resolution().height()/5);
     resize(std::min(w, resolution().width() - 2*p),
            std::min(h, resolution().height() - 2*p));
 
-const auto title = new eLabel("Options", window());
-     title->setHugeFontSize();
-     title->fitContent();
-     addWidget(title);
-     title->align(eAlignment::hcenter);
-     title->setY(p);
+ mMainTitle = new eLabel("General Options", window());
+     mMainTitle->setHugeFontSize();
+     mMainTitle->fitContent();
+     addWidget(mMainTitle);
+     mMainTitle->align(eAlignment::hcenter);
+     mMainTitle->setY(p);
 
      const auto ok = new eOkButton(window());
      ok->fitContent();
@@ -202,7 +292,7 @@ const auto title = new eLabel("Options", window());
      ok->setX(ok->x() - p);
      ok->setY(ok->y() - p);
 
-     const int contentY = title->y() + title->height() + p;
+      const int contentY = mMainTitle->y() + mMainTitle->height() + p;
      const int contentH = ok->y() - contentY - p;
 
     const auto categories = new eWidget(window());
@@ -223,13 +313,54 @@ const auto title = new eLabel("Options", window());
     }
     categories->stackVertically(p);
 
+    const auto upBtn = new eBasicButton(&eInterfaceTextures::fBigUpButton, window());
+    const auto downBtn = new eBasicButton(&eInterfaceTextures::fBigDownButton, window());
+    const int sbW = upBtn->width() / 2;
+    upBtn->resize(sbW, upBtn->height() / 2);
+    downBtn->resize(sbW, downBtn->height() / 2);
+
+    const int vpLeft = categories->x() + categories->width() + 2*p;
+    const int vpRight = width() - p - sbW - p - pad;
+
     mPageViewport = new eOptionsPageViewport(window());
     mPageViewport->setNoPadding();
-    mPageViewport->resize(
-        width() - categories->x() - categories->width() - 4*p, contentH);
+    mPageViewport->resize(vpRight - p - vpLeft, contentH);
     addWidget(mPageViewport);
-    mPageViewport->move(categories->x() + categories->width() + 2*p,
-                        categories->y());
+    mPageViewport->move(vpLeft, categories->y());
+
+    const int trackTop = mPageViewport->y() + upBtn->height();
+    const int trackH = contentH - upBtn->height() - downBtn->height();
+
+    const auto thumb = new eOptionsScrollThumb(window());
+    thumb->setNoPadding();
+    thumb->setWidth(sbW);
+    thumb->setHeight(trackH);
+    thumb->move(vpRight + p, trackTop);
+    addWidget(thumb);
+
+    addWidget(upBtn);
+    addWidget(downBtn);
+    upBtn->move(vpRight + p, mPageViewport->y());
+    downBtn->move(vpRight + p, mPageViewport->y() + contentH - downBtn->height());
+    upBtn->setPressAction([this]() { mPageViewport->scrollUp(); });
+    downBtn->setPressAction([this]() { mPageViewport->scrollDown(); });
+
+    thumb->setScrollAction([this, thumb, trackH](const int delta) {
+        const int thumbH = thumb->height();
+        mPageViewport->scrollByPixels(delta, trackH, thumbH);
+    });
+
+    mPageViewport->setScrollCallback([thumb, trackH, trackTop](const int dy, const int maxDy) {
+        if(maxDy <= 0) {
+            thumb->setHeight(trackH);
+            thumb->setY(trackTop);
+            return;
+        }
+        const int thumbH = std::max(20, trackH * trackH / (trackH + maxDy));
+        const int thumbY = static_cast<int>(static_cast<float>(dy) / maxDy * (trackH - thumbH));
+        thumb->setHeight(thumbH);
+        thumb->setY(trackTop + thumbY);
+    });
 
     mPage = new eWidget(window());
     mPage->setNoPadding();
@@ -246,10 +377,9 @@ void eOptionsMenu::showPage(const int id) {
     const int p = padding();
     const auto& page = mPages[id];
 
-    const auto title = new eLabel(page.fTitle, window());
-    title->setHugeFontSize();
-    title->fitContent();
-    mPage->addWidget(title);
+    mMainTitle->setText(page.fTitle);
+    mMainTitle->fitContent();
+    mMainTitle->align(eAlignment::hcenter);
 
     const auto makeSlider = [this](const std::string& label,
                                    const std::string& suffix,
@@ -284,8 +414,8 @@ void eOptionsMenu::showPage(const int id) {
                        24*resolution().multiplier());
         w->addWidget(slider);
 
-        w->stackVertically(padding());
-        w->fitContent();
+        slider->setY(valueLabel->height());
+        w->setHeight(valueLabel->height() + slider->height());
         w->setWidth(mPage->width());
         valueLabel->align(eAlignment::hcenter);
         slider->align(eAlignment::hcenter);
@@ -298,6 +428,7 @@ void eOptionsMenu::showPage(const int id) {
         w->setWidth(mPage->width());
 
         const auto label = new eLabel(hotkey.fLabel, window());
+        label->setNoPadding();
         label->setVerySmallFontSize();
         label->fitContent();
         w->addWidget(label);
@@ -310,18 +441,18 @@ void eOptionsMenu::showPage(const int id) {
                 },
                 window());
             w->addWidget(button);
-            w->layoutHorizontally();
             w->fitHeight();
-            const int rowH = std::max(button->height(), label->height()) + resolution().tinyPadding();
+            const int rowH = std::max(button->height(), label->height());
             w->setHeight(rowH);
-            label->setX(mPage->width()/2 - label->width() - resolution().tinyPadding());
-            button->setX(mPage->width()/2 + resolution().tinyPadding());
+            const int gap = 4 * resolution().multiplier();
+            label->setX(mPage->width()/2 - label->width() - gap);
+            button->setX(mPage->width()/2 + gap);
             label->setY((rowH - label->height()) / 2);
             button->setY((rowH - button->height()) / 2);
         } else {
             label->setYellowFontColor();
             label->align(eAlignment::hcenter);
-            w->setHeight(label->height() + resolution().tinyPadding());
+            w->setHeight(label->height());
         }
         return w;
     };
@@ -359,11 +490,10 @@ void eOptionsMenu::showPage(const int id) {
         cb->fitContent();
         w->addWidget(cb);
 
-        w->layoutHorizontally();
         w->fitHeight();
         w->setWidth(mPage->width());
-        label->setX(mPage->width()/2 - label->width() - padding());
-        cb->setX(mPage->width()/2 + padding());
+        label->setX(mPage->width()/2 - label->width());
+        cb->setX(mPage->width()/2);
         label->setY((w->height() - label->height()) / 2);
         cb->setY((w->height() - cb->height()) / 2);
         return w;
@@ -380,9 +510,13 @@ void eOptionsMenu::showPage(const int id) {
         mPage->addWidget(line);
     }
 
-    mPage->stackVertically(resolution().tinyPadding());
-    mPage->fitHeight();
-    title->align(eAlignment::hcenter);
+    const int rowSpacing = 2 * resolution().multiplier();
+    int y = 0;
+    for(const auto child : mPage->children()) {
+        child->setY(y);
+        y += child->height() + rowSpacing;
+    }
+    mPage->setHeight(y);
     for(const auto child : mPage->children()) {
         child->align(eAlignment::hcenter);
     }
