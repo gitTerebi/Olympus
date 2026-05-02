@@ -586,6 +586,10 @@ void eGameWidget::setViewMode(const eViewMode m) {
     mViewMode = m;
 }
 
+void eGameWidget::toggleViewMode(const eViewMode m) {
+    setViewMode(mViewMode == m ? eViewMode::defaultView : m);
+}
+
 void eGameWidget::mapDimensions(int& mdx, int& mdy) const {
     const int w = mBoard->rotatedWidth();
     const int h = mBoard->rotatedHeight();
@@ -1527,12 +1531,23 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
         const auto fw = new eFramedWidget(window());
         fw->setType(eFrameType::message);
         const int p = fw->padding();
-        fw->resize(60*p, 8*p);
+        fw->resize(60*p, 11*p);
         addWidget(fw);
         fw->align(eAlignment::bottom);
         fw->move((width() - mGm->width() - fw->width())/2, fw->y() - 2*p);
 
-        const auto clearb = new eButton(eLanguage::text("clear"), window());
+        const auto title = new eLabel("Waypoints", window());
+        title->fitContent();
+        fw->addWidget(title);
+        title->align(eAlignment::hcenter);
+        title->setY(p);
+
+        const auto buttons = new eWidget(window());
+        buttons->resize(fw->width() - 2*p, 5*p);
+        fw->addWidget(buttons);
+        buttons->move(p, fw->height() - buttons->height() - p);
+
+        const auto clearb = new eButton("clear", window());
         clearb->fitContent();
         clearb->setPressAction([this]() {
             if(!mPatrolBuilding) return;
@@ -1540,33 +1555,31 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
             pgs.clear();
             updatePatrolPath();
         });
-        fw->addWidget(clearb);
+        buttons->addWidget(clearb);
         clearb->align(eAlignment::vcenter);
 
-        const auto resetb = new eButton(eLanguage::text("restore"), window());
+        const auto resetb = new eButton("restore", window());
         resetb->fitContent();
         resetb->setPressAction([this]() {
             auto& pgs = mPatrolBuilding->patrolGuides();
             pgs = mSavedGuides;
             updatePatrolPath();
         });
-        fw->addWidget(resetb);
+        buttons->addWidget(resetb);
         resetb->align(eAlignment::vcenter);
 
         const bool bd = pb->bothDirections();
-        const auto bothTxt = bd ? eLanguage::text("both_directions") :
-                                  eLanguage::text("one_direction");
+        const auto bothTxt = bd ? "both ways" : "one way";
         const auto bothb = new eButton(bothTxt, window());
         bothb->fitContent();
         bothb->setPressAction([this, bothb]() {
             const bool bd = mPatrolBuilding->bothDirections();
             mPatrolBuilding->setBothDirections(!bd);
-            const auto bothTxt = bd ? eLanguage::text("one_direction") :
-                                      eLanguage::text("both_directions");
+            const auto bothTxt = bd ? "one way" : "both ways";
             bothb->setText(bothTxt);
             updatePatrolPath();
         });
-        fw->addWidget(bothb);
+        buttons->addWidget(bothb);
         bothb->align(eAlignment::vcenter);
 
         const auto closeb = new eButton(eLanguage::text("close"), window());
@@ -1574,10 +1587,10 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
         closeb->setPressAction([this]() {
             setPatrolBuilding(nullptr);
         });
-        fw->addWidget(closeb);
+        buttons->addWidget(closeb);
         closeb->align(eAlignment::vcenter);
 
-        fw->layoutHorizontally();
+        buttons->layoutHorizontally();
 
         mPatrolPathWid = fw;
 
@@ -1826,6 +1839,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         selectHoveredBuildingMode();
     } else if(k == hotkeys.fHotkeyDeleteTool) {
         mGm->setMode(eBuildingMode::erase);
+    } else if(k == hotkeys.fHotkeyShowRoadsOverlay) {
+        toggleViewMode(eViewMode::roads);
     } else if(k == hotkeys.fHotkeyBuildRoad) {
         mGm->setMode(eBuildingMode::road);
     } else if(k == hotkeys.fHotkeyBuildRoadblock) {
@@ -2391,6 +2406,10 @@ void eGameWidget::showOptionsMenu() {
                      window()->setHotkey(id, key);
                  }},
                 {"Delete tool", eHotkeyId::deleteTool, settings.fHotkeyDeleteTool,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     window()->setHotkey(id, key);
+                 }},
+                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      window()->setHotkey(id, key);
                  }},

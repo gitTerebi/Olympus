@@ -7,7 +7,9 @@ class eMainMenu : public eMainMenuBase {
 public:
     using eMainMenuBase::eMainMenuBase;
 
-    void initialize(const eAction& newGameA,
+    void initialize(const eAction& continueGameA,
+                    const bool continueGameEnabled,
+                    const eAction& newGameA,
                     const eAction& loadGameA,
                     const eAction& editGameA,
                     const eAction& settingsA,

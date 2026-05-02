@@ -163,6 +163,7 @@ private:
     void showGoals();
     void showOptionsMenu();
     void selectHoveredBuildingMode();
+    void toggleViewMode(const eViewMode m);
 
     void setDX(const int dx);
     void setDY(const int dy);

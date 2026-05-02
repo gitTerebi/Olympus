@@ -90,6 +90,7 @@ public:
     std::string leaderSaveDir() const;
 private:
     void clearWidgets();
+    std::string mostRecentSavePath() const;
 
     eSettings mSettings;
 
