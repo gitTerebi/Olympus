@@ -29,9 +29,9 @@ void eWorldMenu::initialize(const eAction& openRequest,
     fitContent();
 
     {
-        const auto wlab = eButton::sCreate(coll.fWorldLeftArrowButton, window(), this);
+        mLeftArrowButton = eButton::sCreate(coll.fWorldLeftArrowButton, window(), this);
         const auto whb = eButton::sCreate(coll.fWorldHistoryButton, window(), this);
-        const auto wrab = eButton::sCreate(coll.fWorldRightArrowButton, window(), this);
+        mRightArrowButton = eButton::sCreate(coll.fWorldRightArrowButton, window(), this);
 
         const int xwlab = std::round(5.5*mult);
         const int xwhb = std::round(34.5*mult);
@@ -41,14 +41,14 @@ void eWorldMenu::initialize(const eAction& openRequest,
         const int ywhb = std::round(44.5*mult);
         const int ywrab = ywlab;
 
-        wlab->setX(xwlab);
-        wlab->setY(ywlab);
+        mLeftArrowButton->setX(xwlab);
+        mLeftArrowButton->setY(ywlab);
 
         whb->setX(xwhb);
         whb->setY(ywhb);
 
-        wrab->setX(xwrab);
-        wrab->setY(ywrab);
+        mRightArrowButton->setX(xwrab);
+        mRightArrowButton->setY(ywrab);
     }
 
     {
@@ -254,6 +254,11 @@ void eWorldMenu::setCity(const stdsptr<eWorldCity>& c) {
 
 void eWorldMenu::setWorldBoard(eWorldBoard* const b) {
     mBoard = b;
+}
+
+void eWorldMenu::setArrowActions(const eAction& left, const eAction& right) {
+    if(mLeftArrowButton) mLeftArrowButton->setPressAction(left);
+    if(mRightArrowButton) mRightArrowButton->setPressAction(right);
 }
 
 void eWorldMenu::setText(const std::string& text) {
