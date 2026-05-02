@@ -2,6 +2,9 @@
 
 #include "engine/egameboard.h"
 
+#include "eflatbutton.h"
+#include "eframedlabel.h"
+
 #include <filesystem>
 #include <algorithm>
 
@@ -1290,9 +1293,67 @@ void eGameWidget::updateTipPositions() {
     }
 }
 
+void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
+    eEventData edCopy = ed; // Make a copy since we need to modify it later
+    const auto tw = new eFlatButton(window());
+    tw->setNoPadding();
+    tw->setTinyFontSize();
+    // Truncate title if too long for toast
+    auto title = msg.fTitle;
+    if(title.length() > 40) {
+        title = title.substr(0, 37) + "...";
+    }
+    tw->setText(title);
+    tw->fitContent();
+    const auto onClick = [this, edCopy, msg, tw]() mutable {
+        for(int i = 0; i < int(mToasts.size()); i++) {
+            if(mToasts[i].fWid == tw) {
+                mToasts.erase(mToasts.begin() + i);
+                break;
+            }
+        }
+        tw->deleteLater();
+        updateToastPositions();
+        showMessage(edCopy, msg, false, true);
+    };
+    tw->setPressAction(onClick);
+    addWidget(tw);
+    const int p = tw->padding();
+    tw->resize(tw->width() + 2*p, tw->height() + 2*p);
+    const int vw = width() - mGm->width();
+    tw->setX((vw - tw->width()) / 2);
+    
+    eToast& toast = mToasts.emplace_back();
+    toast.fEd = ed;
+    toast.fMsg = msg;
+    toast.fWid = tw;
+    // 5 seconds at ~60fps = 300 frames
+    toast.fExpireFrame = mFrame + 300;
+    updateToastPositions();
+}
+
+void eGameWidget::updateToastPositions() {
+    const int p = padding();
+    int y;
+    if(mPausedLabel) {
+        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
+    } else {
+        y = 5*p;
+    }
+    for(const auto& tip : mTips) {
+        y += tip.fWid->height() + 2*p;
+    }
+    for(const auto& toast : mToasts) {
+        const auto w = toast.fWid;
+        w->setY(y);
+        y += w->height() + 2*p;
+    }
+}
+
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessage& msg,
-                              const bool prepend) {
+                              const bool prepend,
+                              const bool forcePopup) {
     const auto& target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
     if(target.isPlayerTarget()) {
@@ -1303,15 +1364,27 @@ void eGameWidget::showMessage(eEventData& ed,
         const auto pid = mBoard->cityIdToPlayerId(cid);
         if(pid != ppid) return;
     }
+
+    const bool requiresAction = ed.fCA0 || !ed.fCCA0.empty() || ed.fA0 || ed.fA1 || ed.fA2;
+
+    if(!requiresAction && !forcePopup) {
+        if(mToasts.size() >= 3) return;
+        showToast(ed, msg);
+        return;
+    }
+    
     if(mMsgBox) {
         auto& smsg = prepend ? mSavedMsgs.emplace_front() :
                                mSavedMsgs.emplace_back();
         smsg.fEd = ed;
         smsg.fMsg = msg;
+        smsg.fForcePopup = forcePopup;
         return;
     }
     const auto msgb = new eMessageBox(window());
     mMsgBox = msgb;
+    const bool wasPaused = mPaused;
+    if(!wasPaused) switchPause();
     msgb->setHeight(height()/3);
     msgb->setWidth(width()/2);
     eAction a;
@@ -1335,11 +1408,12 @@ void eGameWidget::showMessage(eEventData& ed,
     ed.fDate = mBoard->date();
     ed.fPlayerName = window()->leader();
 
-    const auto close = [this]() {
+    const auto close = [this, wasPaused]() {
         mMsgBox = nullptr;
+        if(!wasPaused) switchPause();
         if(mSavedMsgs.empty()) return;
         auto& msg = mSavedMsgs.front();
-        showMessage(msg.fEd, msg.fMsg);
+        showMessage(msg.fEd, msg.fMsg, false, msg.fForcePopup);
         mSavedMsgs.pop_front();
     };
 

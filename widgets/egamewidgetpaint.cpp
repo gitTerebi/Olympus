@@ -382,6 +382,19 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
     if(updateTips) updateTipPositions();
+    
+    // Update toasts - remove expired ones
+    bool updateToasts = false;
+    for(int i = 0; i < int(mToasts.size()); i++) {
+        const auto& toast = mToasts[i];
+        if(mFrame > toast.fExpireFrame) {
+            toast.fWid->deleteLater();
+            mToasts.erase(mToasts.begin() + i);
+            updateToasts = true;
+            i--;
+        }
+    }
+    if(updateToasts) updateToastPositions();
     if(mSpeedLabel && mFrame > mSpeedLabelHideFrame) {
         mSpeedLabel->deleteLater();
         mSpeedLabel = nullptr;
