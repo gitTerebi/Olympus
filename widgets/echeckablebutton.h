@@ -14,6 +14,7 @@ public:
     void setCheckAction(const eCheckAction& a);
 
     void setChecked(const bool c);
+    void check();
     void setCheckedTexture(const std::shared_ptr<eTexture>& tex);
     void setCheckedHoverTexture(const std::shared_ptr<eTexture>& tex);
 
@@ -29,6 +30,7 @@ private:
     std::shared_ptr<eTexture> mCheckedTexture;
     std::shared_ptr<eTexture> mCheckedHoverTexture;
     bool mChecked = false;
+    eCheckAction mCheckAction;
 };
 
 #endif // ECHECKABLEBUTTON_H

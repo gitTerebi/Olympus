@@ -2044,6 +2044,28 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         } else {
             viewBookmark(4);
         }
+    } else if(k == hotkeys.fHotkeyMenuTab1) {
+        mGm->selectTab(0);
+    } else if(k == hotkeys.fHotkeyMenuTab2) {
+        mGm->selectTab(1);
+    } else if(k == hotkeys.fHotkeyMenuTab3) {
+        mGm->selectTab(2);
+    } else if(k == hotkeys.fHotkeyMenuTab4) {
+        mGm->selectTab(3);
+    } else if(k == hotkeys.fHotkeyMenuTab5) {
+        mGm->selectTab(4);
+    } else if(k == hotkeys.fHotkeyMenuTab6) {
+        mGm->selectTab(5);
+    } else if(k == hotkeys.fHotkeyMenuTab7) {
+        mGm->selectTab(6);
+    } else if(k == hotkeys.fHotkeyMenuTab8) {
+        mGm->selectTab(7);
+    } else if(k == hotkeys.fHotkeyMenuTab9) {
+        mGm->selectTab(8);
+    } else if(k == hotkeys.fHotkeyMenuTab10) {
+        mGm->selectTab(9);
+    } else if(k == hotkeys.fHotkeyMenuTab11) {
+        mGm->selectTab(10);
     } else if(k == hotkeys.fHotkeyGameMenu) {
         if(!mMsgBox && !mBoard->editorMode()) {
             mBoard->waitUntilFinished();

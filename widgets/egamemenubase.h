@@ -28,6 +28,7 @@ public:
     void connectAndLayoutButtons();
     void layoutButtons();
     void connectButtons();
+    void selectTab(int i);
 protected:
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;

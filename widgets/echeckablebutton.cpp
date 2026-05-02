@@ -8,14 +8,21 @@ eCheckableButton::eCheckableButton(eMainWindow* const window) :
 }
 
 void eCheckableButton::setCheckAction(const eCheckAction& a) {
-    setPressAction([this, a]() {
+    mCheckAction = a;
+    setPressAction([this]() {
         mChecked = !mChecked;
-        a(mChecked);
+        if(mCheckAction) mCheckAction(mChecked);
     });
 }
 
 void eCheckableButton::setChecked(const bool c) {
     mChecked = c;
+}
+
+void eCheckableButton::check() {
+    if(mChecked) return;
+    mChecked = true;
+    if(mCheckAction) mCheckAction(true);
 }
 
 void eCheckableButton::setCheckedTexture(const std::shared_ptr<eTexture>& tex) {

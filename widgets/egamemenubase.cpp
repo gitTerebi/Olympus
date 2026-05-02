@@ -95,6 +95,11 @@ void eGameMenuBase::connectButtons() {
     }
 }
 
+void eGameMenuBase::selectTab(const int i) {
+    if(i < 0 || i >= (int)mButtons.size()) return;
+    mButtons[i]->check();
+}
+
 bool eGameMenuBase::mousePressEvent(const eMouseEvent& e) {
     (void)e;
     return true;
