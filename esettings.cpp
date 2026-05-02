@@ -105,10 +105,16 @@ void eSettings::write() const {
             std::to_string(fKeyScrollSpeed) << "\"" << "\n";
     file << "game_speed" << " " << "\"" <<
             std::to_string(fGameSpeed) << "\"" << "\n";
+    file << "general_volume" << " " << "\"" <<
+            std::to_string(fGeneralVolume) << "\"" << "\n";
     file << "music_volume" << " " << "\"" <<
             std::to_string(fMusicVolume) << "\"" << "\n";
-    file << "sounds_volume" << " " << "\"" <<
-            std::to_string(fSoundsVolume) << "\"" << "\n";
+    file << "voice_volume" << " " << "\"" <<
+            std::to_string(fVoiceVolume) << "\"" << "\n";
+    file << "event_volume" << " " << "\"" <<
+            std::to_string(fEventVolume) << "\"" << "\n";
+    file << "ambient_volume" << " " << "\"" <<
+            std::to_string(fAmbientVolume) << "\"" << "\n";
     file << "hotkey_game_menu" << " " << "\"" <<
             std::to_string(fHotkeyGameMenu) << "\"" << "\n";
     file << "hotkey_speed_up" << " " << "\"" <<
@@ -172,13 +178,32 @@ void eSettings::read() {
     if(!gameSpeedStr.empty()) {
         fGameSpeed = clampGameSpeed(std::stoi(gameSpeedStr));
     }
+    const auto generalVolumeStr = settings["general_volume"];
+    if(!generalVolumeStr.empty()) {
+        fGeneralVolume = clampVolume(std::stoi(generalVolumeStr));
+    }
     const auto musicVolumeStr = settings["music_volume"];
     if(!musicVolumeStr.empty()) {
         fMusicVolume = clampVolume(std::stoi(musicVolumeStr));
     }
     const auto soundsVolumeStr = settings["sounds_volume"];
     if(!soundsVolumeStr.empty()) {
-        fSoundsVolume = clampVolume(std::stoi(soundsVolumeStr));
+        const int soundsVolume = clampVolume(std::stoi(soundsVolumeStr));
+        fVoiceVolume = soundsVolume;
+        fEventVolume = soundsVolume;
+        fAmbientVolume = soundsVolume;
+    }
+    const auto voiceVolumeStr = settings["voice_volume"];
+    if(!voiceVolumeStr.empty()) {
+        fVoiceVolume = clampVolume(std::stoi(voiceVolumeStr));
+    }
+    const auto eventVolumeStr = settings["event_volume"];
+    if(!eventVolumeStr.empty()) {
+        fEventVolume = clampVolume(std::stoi(eventVolumeStr));
+    }
+    const auto ambientVolumeStr = settings["ambient_volume"];
+    if(!ambientVolumeStr.empty()) {
+        fAmbientVolume = clampVolume(std::stoi(ambientVolumeStr));
     }
     const auto readHotkey = [&settings](const std::string& key,
                                         SDL_Scancode& value) {

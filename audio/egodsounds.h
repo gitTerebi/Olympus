@@ -31,35 +31,35 @@ struct eGodSounds {
     void play(const eGodSound s);
 
     void playWooing0() {
-        fWooing0->playRandomSound();
+        fWooing0->playRandomSound(eSoundType::voice);
     }
 
     void playJealousy1() {
-        fJealousy1->playRandomSound();
+        fJealousy1->playRandomSound(eSoundType::voice);
     }
 
     void playJealousy2() {
-        fJealousy2->playRandomSound();
+        fJealousy2->playRandomSound(eSoundType::voice);
     }
 
     void playInvade() {
-        fInvade->playRandomSound();
+        fInvade->playRandomSound(eSoundType::voice);
     }
 
     void playMonster() {
-        fMonster->playRandomSound();
+        fMonster->playRandomSound(eSoundType::voice);
     }
 
     void playQuest() {
-        fQuest->playRandomSound();
+        fQuest->playRandomSound(eSoundType::voice);
     }
 
     void playQuestFinished() {
-        fQuestFinished->playRandomSound();
+        fQuestFinished->playRandomSound(eSoundType::voice);
     }
 
     void playHelp() {
-        fHelp->playRandomSound();
+        fHelp->playRandomSound(eSoundType::voice);
     }
 
     void playAppear() {

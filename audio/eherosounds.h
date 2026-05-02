@@ -22,7 +22,7 @@ public:
     void play(const eHeroSound s);
 
     void playArrival() {
-        fArrival->playRandomSound();
+        fArrival->playRandomSound(eSoundType::voice);
     }
 
     void playAttack() {

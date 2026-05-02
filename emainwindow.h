@@ -44,8 +44,11 @@ public:
     void setKeyScrollSpeed(const int speed);
     void setGameSpeed(const int speed);
     void setHotkey(const eHotkeyId id, const SDL_Scancode key);
+    void setGeneralVolume(const int volume);
     void setMusicVolume(const int volume);
-    void setSoundsVolume(const int volume);
+    void setVoiceVolume(const int volume);
+    void setEventVolume(const int volume);
+    void setAmbientVolume(const int volume);
 
     void startGameAction(eGameBoard* const board,
                          const eGameWidgetSettings& settings);

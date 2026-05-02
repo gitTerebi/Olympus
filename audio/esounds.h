@@ -17,7 +17,11 @@ public:
 
     static void load();
     static bool loaded();
+    static void setGeneralVolume(const int volume);
     static void setVolume(const int volume);
+    static void setVoiceVolume(const int volume);
+    static void setEventVolume(const int volume);
+    static void setAmbientVolume(const int volume);
 
     static void playButtonSound();
 

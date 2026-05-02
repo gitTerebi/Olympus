@@ -6,6 +6,21 @@
 #include "egamedir.h"
 
 eMusic* eMusic::sInstance = nullptr;
+int sGeneralVolume = 100;
+int sMusicVolume = 100;
+int sVoiceVolume = 100;
+
+int clampPercent(const int volume) {
+    return std::clamp(volume, 0, 100);
+}
+
+int toMixerVolume(const int volume) {
+    return MIX_MAX_VOLUME*clampPercent(volume)/100;
+}
+
+int applyGeneralVolume(const int volume) {
+    return toMixerVolume(sGeneralVolume*clampPercent(volume)/100);
+}
 
 eMusic::eMusic() {
     sInstance = this;
@@ -55,9 +70,18 @@ bool eMusic::playCampaignVoice(const std::string &path) {
     return sInstance->playCampaignVoiceImpl(path);
 }
 
+void eMusic::setGeneralVolume(const int volume) {
+    sGeneralVolume = clampPercent(volume);
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
+}
+
 void eMusic::setVolume(const int volume) {
-    const int v = std::clamp(volume, 0, 100);
-    Mix_VolumeMusic(MIX_MAX_VOLUME*v/100);
+    sMusicVolume = clampPercent(volume);
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
+}
+
+void eMusic::setVoiceVolume(const int volume) {
+    sVoiceVolume = clampPercent(volume);
 }
 
 void eMusic::incTimeImpl() {
@@ -86,6 +110,7 @@ void eMusic::playMenuMusicImpl() {
         return;
     }
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mSetupMusic.playRandomSound(true);
 }
 
@@ -98,6 +123,7 @@ void eMusic::playRandomMusicImpl() {
         return;
     }
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mMusic.playRandomSound();
 }
 
@@ -110,21 +136,25 @@ void eMusic::playRandomBattleMusicImpl() {
         return;
     }
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mBattleMusic.playRandomSound();
 }
 
 void eMusic::playMissionIntroMusicImpl() {
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mMissionIntro.playRandomSound();
 }
 
 void eMusic::playMissionVictoryMusicImpl() {
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mMissionVictory.playRandomSound();
 }
 
 void eMusic::playCampaignVictoryMusicImpl() {
     Mix_HaltMusic();
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
     mCampaignVictory.playRandomSound();
 }
 
@@ -137,8 +167,10 @@ bool eMusic::playCampaignVoiceImpl(const std::string &path) {
         const auto voice = std::make_shared<eMusicVector>();
         voice->addPath(path);
         mCampaignVoice[path] = voice;
+        Mix_VolumeMusic(applyGeneralVolume(sVoiceVolume));
         voice->playRandomSound();
     } else {
+        Mix_VolumeMusic(applyGeneralVolume(sVoiceVolume));
         it->second->playRandomSound();
     }
     return true;

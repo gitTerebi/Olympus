@@ -44,8 +44,11 @@ struct eSettings {
     bool fFullscreen = false;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;
+    int fGeneralVolume = 100;
     int fMusicVolume = 100;
-    int fSoundsVolume = 100;
+    int fVoiceVolume = 100;
+    int fEventVolume = 100;
+    int fAmbientVolume = 100;
     eResolution fRes = eResolution(1280, 720);
 
     SDL_Scancode fHotkeyGameMenu = SDL_SCANCODE_ESCAPE;

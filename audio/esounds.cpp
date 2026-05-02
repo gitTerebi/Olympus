@@ -31,9 +31,26 @@ bool eSounds::loaded() {
     return sInstance->mLoaded;
 }
 
+void eSounds::setGeneralVolume(const int volume) {
+    eSoundVector::setGeneralVolume(volume);
+}
+
 void eSounds::setVolume(const int volume) {
-    const int v = std::clamp(volume, 0, 100);
-    Mix_Volume(-1, MIX_MAX_VOLUME*v/100);
+    setVoiceVolume(volume);
+    setEventVolume(volume);
+    setAmbientVolume(volume);
+}
+
+void eSounds::setVoiceVolume(const int volume) {
+    eSoundVector::setVolume(eSoundType::voice, volume);
+}
+
+void eSounds::setEventVolume(const int volume) {
+    eSoundVector::setVolume(eSoundType::event, volume);
+}
+
+void eSounds::setAmbientVolume(const int volume) {
+    eSoundVector::setVolume(eSoundType::ambient, volume);
 }
 
 void eSounds::playButtonSound() {
@@ -297,215 +314,215 @@ bool eSounds::playSoundForTerrain(const eTerrain terrain) {
 }
 
 void eSounds::playEnvironmentSound() {
-    sInstance->mEnvironment.playRandomSound();
+    sInstance->mEnvironment.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playBeachSound() {
-    sInstance->mBeach.playRandomSound();
+    sInstance->mBeach.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playWaterSound() {
-    sInstance->mWater.playRandomSound();
+    sInstance->mWater.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playRockySound() {
-    sInstance->mRocky.playRandomSound();
+    sInstance->mRocky.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playBeautificationSound() {
-    sInstance->mBeautification.playRandomSound();
+    sInstance->mBeautification.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playSanctuarySound() {
-    sInstance->mSanctuary.playRandomSound();
+    sInstance->mSanctuary.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFarmingSound() {
-    sInstance->mFarming.playRandomSound();
+    sInstance->mFarming.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playCommonHousingSound() {
-    sInstance->mCommonHousing.playRandomSound();
+    sInstance->mCommonHousing.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playEliteHousingSound() {
-    sInstance->mEliteHousing.playRandomSound();
+    sInstance->mEliteHousing.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playTheatreSound() {
-    sInstance->mTheatre.playRandomSound();
+    sInstance->mTheatre.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playDramaSound() {
-    sInstance->mDrama.playRandomSound();
+    sInstance->mDrama.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playPhilosophySound() {
-    sInstance->mPhilosophy.playRandomSound();
+    sInstance->mPhilosophy.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playGymnasiumSound() {
-    sInstance->mGymnasium.playRandomSound();
+    sInstance->mGymnasium.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playStadiumSound() {
-    sInstance->mStadium.playRandomSound();
+    sInstance->mStadium.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playBibliothekeSound() {
-    sInstance->mBibliotheke.playRandomSound();
+    sInstance->mBibliotheke.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playUniversitySound() {
-    sInstance->mUniversity.playRandomSound();
+    sInstance->mUniversity.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playObservatorySound() {
-    sInstance->mObservatory.playRandomSound();
+    sInstance->mObservatory.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playInventorsWorkshopSound() {
-    sInstance->mInventorsWorkshop.playRandomSound();
+    sInstance->mInventorsWorkshop.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playLaboratorySound() {
-    sInstance->mLaboratory.playRandomSound();
+    sInstance->mLaboratory.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playMuseumSound() {
-    sInstance->mMuseum.playRandomSound();
+    sInstance->mMuseum.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playArtisansGuildSound() {
-    sInstance->mArtisansGuild.playRandomSound();
+    sInstance->mArtisansGuild.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFountainSound() {
-    sInstance->mFountain.playRandomSound();
+    sInstance->mFountain.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playInfirmarySound() {
-    sInstance->mInfirmary.playRandomSound();
+    sInstance->mInfirmary.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playTaxesSound() {
-    sInstance->mTaxes.playRandomSound();
+    sInstance->mTaxes.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playPalaceSound() {
-    sInstance->mPalace.playRandomSound();
+    sInstance->mPalace.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playMaintananceSound() {
-    sInstance->mMaintenance.playRandomSound();
+    sInstance->mMaintenance.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFoundrySound() {
-    sInstance->mFoundry.playRandomSound();
+    sInstance->mFoundry.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playMarbleSound() {
-    sInstance->mMarble.playRandomSound();
+    sInstance->mMarble.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playMintSound() {
-    sInstance->mMint.playRandomSound();
+    sInstance->mMint.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playTimberMillSound() {
-    sInstance->mTimberMill.playRandomSound();
+    sInstance->mTimberMill.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playArmorySound() {
-    sInstance->mArmory.playRandomSound();
+    sInstance->mArmory.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playHorseRanchSound() {
-    sInstance->mHorseRanch.playRandomSound();
+    sInstance->mHorseRanch.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playChariotFactorySound() {
-    sInstance->mChariotFactory.playRandomSound();
+    sInstance->mChariotFactory.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playHuntingSound() {
-    sInstance->mHunting.playRandomSound();
+    sInstance->mHunting.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playBoarSound() {
-    sInstance->mBoar.playRandomSound();
+    sInstance->mBoar.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playDeerSound(){
-    sInstance->mDeer.playRandomSound();
+    sInstance->mDeer.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playWolfSound() {
-    sInstance->mWolf.playRandomSound();
+    sInstance->mWolf.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playSheepSound() {
-    sInstance->mSheep.playRandomSound();
+    sInstance->mSheep.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playGoatSound() {
-    sInstance->mGoat.playRandomSound();
+    sInstance->mGoat.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playCattleSound() {
-    sInstance->mCattle.playRandomSound();
+    sInstance->mCattle.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playCorralSound() {
-    sInstance->mCorral.playRandomSound();
+    sInstance->mCorral.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFruitLodgeSound() {
-    sInstance->mFruitLodge.playRandomSound();
+    sInstance->mFruitLodge.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playGoatherdSound() {
-    sInstance->mGoatFarm.playRandomSound();
+    sInstance->mGoatFarm.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playShearingSound() {
-    sInstance->mSheepFarm.playRandomSound();
+    sInstance->mSheepFarm.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playStorageSound() {
-    sInstance->mStorage.playRandomSound();
+    sInstance->mStorage.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFoodVendorSound() {
-    sInstance->mAgoraFood.playRandomSound();
+    sInstance->mAgoraFood.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFleeceVendorSound() {
-    sInstance->mAgoraFleece.playRandomSound();
+    sInstance->mAgoraFleece.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playOilVendorSound() {
-    sInstance->mAgoraOil.playRandomSound();
+    sInstance->mAgoraOil.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playWineVendorSound() {
-    sInstance->mAgoraWine.playRandomSound();
+    sInstance->mAgoraWine.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playArmsVendorSound() {
-    sInstance->mAgoraArms.playRandomSound();
+    sInstance->mAgoraArms.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playHorseTrainerSound() {
-    sInstance->mAgoraHorse.playRandomSound();
+    sInstance->mAgoraHorse.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playChariotVendorSound() {
-    sInstance->mAgoraChariot.playRandomSound();
+    sInstance->mAgoraChariot.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playTradeSound() {
-    sInstance->mTrade.playRandomSound();
+    sInstance->mTrade.playRandomSound(eSoundType::ambient);
 }
 
 void eSounds::playFireSound() {
