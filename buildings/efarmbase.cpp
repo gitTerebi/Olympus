@@ -37,7 +37,11 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
         o.fX = xxyy.first;
         o.fY = xxyy.second;
         o.fAlignTop = true;
-        const int texId = i >= usedFields ? 0 : std::clamp(mRipe, 0, 5);
+        int texId;
+        if(i >= usedFields) texId = 0;
+        else if(i < mCurrentTile) texId = 4;
+        else if(i == mCurrentTile) texId = mCurrentStage;
+        else texId = 0;
         const auto type = resourceType();
         switch(type) {
         case eResourceType::onions:
@@ -58,11 +62,14 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
 void eFarmBase::timeChanged(const int by) {
     if(enabled()) {
         mNextRipe += by*effectiveness();
-        if(mNextRipe > eNumbers::sFarmRipePeriod) {
+        if(mNextRipe > eNumbers::sFarmRipePeriod / 5.0) {
             mNextRipe = 0;
-            if(++mRipe == 5) {
-                addProduced(resourceType(), 4);
-                mRipe = 0;
+            if(++mCurrentStage >= 5) {
+                mCurrentStage = 0;
+                if(++mCurrentTile >= 5) {
+                    addProduced(resourceType(), 4);
+                    mCurrentTile = 0;
+                }
             }
         }
     }
@@ -73,12 +80,15 @@ void eFarmBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
 
     src >> mNextRipe;
-    src >> mRipe;
+    int combined;
+    src >> combined;
+    mCurrentTile  = std::clamp(combined / 5, 0, 4);
+    mCurrentStage = std::clamp(combined % 5, 0, 4);
 }
 
 void eFarmBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
 
     dst << mNextRipe;
-    dst << mRipe;
+    dst << (mCurrentTile * 5 + mCurrentStage);
 }

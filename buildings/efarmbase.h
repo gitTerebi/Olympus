@@ -23,7 +23,8 @@ public:
 private:
     const std::vector<eBuildingTextures>& mTextures;
     double mNextRipe = 0;
-    int mRipe = 0; // 0 - 5
+    int mCurrentTile = 0;  // 0 - 4
+    int mCurrentStage = 0; // 0 - 4
 };
 
 #endif // EFARMBASE_H
