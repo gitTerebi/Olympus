@@ -1967,7 +1967,10 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
             const auto menu = new eGameMainMenu(window());
             menu->resize(width()/4, height()/2);
             const auto w = window();
-            const auto resumeAct = [menu]() {
+            const bool wasPaused = mPaused;
+            switchPause();
+            const auto resumeAct = [this, wasPaused, menu]() {
+                if(!wasPaused) switchPause();
                 menu->deleteLater();
             };
             const auto saveAct = [this, w]() {
@@ -2009,10 +2012,14 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
                 showOptionsMenu();
             };
             stopSmoothScroll();
+            const auto closeMenu = [this, wasPaused, menu]() {
+                if(!wasPaused) switchPause();
+                menu->deleteLater();
+            };
             menu->initialize(resumeAct, saveAct, loadAct, optionsAct, exitAct);
             addWidget(menu);
             menu->align(eAlignment::center);
-            w->execDialog(menu);
+            w->execDialog(menu, true, closeMenu);
         }
     }
     return true;
