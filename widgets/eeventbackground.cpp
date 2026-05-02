@@ -1,13 +1,14 @@
 #include "eeventbackground.h"
 
 void eEventBackground::initialize(eWidget* const parent,
-                                  eWidget* const child,
-                                  const bool closable,
-                                  const eAction &closeFunc) {
+                                   eWidget* const child,
+                                   const bool closable,
+                                   const eAction &closeFunc) {
     parent->removeWidget(child);
     addWidget(child);
     parent->addWidget(this);
     resize(parent->width(), parent->height());
+    child->align(eAlignment::center);
     mClosable = closable;
     mCloseFunc = closeFunc;
 }

@@ -2,6 +2,7 @@
 
 #include "widgets/emainmenu.h"
 #include "widgets/esettingsmenu.h"
+#include "widgets/eoptionsmenu.h"
 #include "widgets/egamewidget.h"
 #include "widgets/egameloadingwidget.h"
 #include "widgets/egamemenu.h"
@@ -466,6 +467,10 @@ void eMainWindow::showMainMenu() {
         showSettingsMenu();
     };
 
+    const auto optionsAction = [this]() {
+        showOptionsMenu();
+    };
+
     const auto quitAction = [this]() {
         mQuit = true;
     };
@@ -480,6 +485,7 @@ void eMainWindow::showMainMenu() {
                    loadGameAction,
                    editGameAction,
                    settingsAction,
+                   optionsAction,
                    quitAction,
                    leaderAction);
 }
@@ -514,6 +520,215 @@ void eMainWindow::showSettingsMenu() {
     };
     esm->initialize(applyA, fullscrennA);
     setWidget(esm);
+}
+
+void eMainWindow::showOptionsMenu() {
+    const auto& settings = mSettings;
+    const std::vector<eOptionsMenu::ePage> pages{
+        {
+            "General",
+            "General Options",
+            {
+                {
+                    "Key scroll speed",
+                    eSettings::sMinKeyScrollSpeed,
+                    eSettings::sMaxKeyScrollSpeed,
+                    settings.fKeyScrollSpeed,
+                    "",
+                    [](const int v) {
+                        return eSettings::clampKeyScrollSpeed(v);
+                    },
+                    [this](const int speed) {
+                        setKeyScrollSpeed(speed);
+                    }
+                }
+            },
+            {},
+            {}
+        },
+        {
+            "Hotkeys",
+            "Hotkeys",
+            {},
+            {
+                {"Game menu", eHotkeyId::gameMenu, settings.fHotkeyGameMenu,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Increase game speed", eHotkeyId::speedUp, settings.fHotkeySpeedUp,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Decrease game speed", eHotkeyId::speedDown, settings.fHotkeySpeedDown,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Pause game", eHotkeyId::pause, settings.fHotkeyPause,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Rotate building preview", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Copy hovered building mode", eHotkeyId::copyBuilding, settings.fHotkeyCopyBuilding,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Delete tool", eHotkeyId::deleteTool, settings.fHotkeyDeleteTool,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Build road", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Roadblock", eHotkeyId::buildRoadblock, settings.fHotkeyBuildRoadblock,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Maintenance office", eHotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Smooth scroll left", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Smooth scroll right", eHotkeyId::scrollRight, settings.fHotkeyScrollRight,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Smooth scroll up", eHotkeyId::scrollUp, settings.fHotkeyScrollUp,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Smooth scroll down", eHotkeyId::scrollDown, settings.fHotkeyScrollDown,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Bookmark 1", eHotkeyId::bookmark1, settings.fHotkeyBookmark1,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Bookmark 2", eHotkeyId::bookmark2, settings.fHotkeyBookmark2,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Bookmark 3", eHotkeyId::bookmark3, settings.fHotkeyBookmark3,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Bookmark 4", eHotkeyId::bookmark4, settings.fHotkeyBookmark4,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }}
+            },
+            {
+                "Numpad +: increase game speed",
+                "Numpad -: decrease game speed",
+                "Arrow keys: scroll map",
+                "Bookmark key: view bookmark",
+                "Ctrl+bookmark key: set bookmark"
+            }
+        },
+        {
+            "Gameplay",
+            "Gameplay Options",
+            {},
+            {},
+            {},
+            {
+                {
+                    "Warehouse Default Accept None",
+                    settings.fWarehouseDefaultAcceptNone,
+                    [this](const bool b) {
+                        setWarehouseDefaultAcceptNone(b);
+                    }
+                }
+            }
+        },
+        {
+            "Sound",
+            "Sound Options",
+            {
+                {
+                    "General volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fGeneralVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        setGeneralVolume(v);
+                    }
+                },
+                {
+                    "Music volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fMusicVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        setMusicVolume(v);
+                    }
+                },
+                {
+                    "Voice volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fVoiceVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        setVoiceVolume(v);
+                    }
+                },
+                {
+                    "Event volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fEventVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        setEventVolume(v);
+                    }
+                },
+                {
+                    "Ambient volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fAmbientVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        setAmbientVolume(v);
+                    }
+                }
+            },
+            {},
+            {}
+        }
+    };
+    const auto d = new eOptionsMenu(pages, this);
+    d->initialize();
+    execDialog(d, false, [this]() { showMainMenu(); });
 }
 
 void eMainWindow::showChooseGameMenu() {

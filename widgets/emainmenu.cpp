@@ -25,13 +25,14 @@ eFramedButton* addButton(const std::string& text,
 }
 
 void eMainMenu::initialize(const eAction& continueGameA,
-                           const bool continueGameEnabled,
-                           const eAction& newGameA,
-                           const eAction& loadGameA,
-                           const eAction& editGameA,
-                           const eAction& settingsA,
-                           const eAction& quitA,
-                           const eAction& leaderA) {
+                            const bool continueGameEnabled,
+                            const eAction& newGameA,
+                            const eAction& loadGameA,
+                            const eAction& editGameA,
+                            const eAction& settingsA,
+                            const eAction& optionsA,
+                            const eAction& quitA,
+                            const eAction& leaderA) {
     eMainMenuBase::initialize();
 
     const auto w = window();
@@ -53,6 +54,7 @@ void eMainMenu::initialize(const eAction& continueGameA,
     addButton(eLanguage::zeusText(1, 3), loadGameA, buttons, w);
     addButton(eLanguage::zeusText(287, 3), editGameA, buttons, w);
     addButton("Graphics", settingsA, buttons, w);
+    addButton("Options", optionsA, buttons, w);
     addButton(eLanguage::zeusText(1, 5), quitA, buttons, w);
 
     buttons->layoutVertically();
