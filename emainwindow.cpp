@@ -9,6 +9,7 @@
 #include "widgets/emenuloadingwidget.h"
 #include "widgets/eworldwidget.h"
 #include "widgets/echoosegameeditmenu.h"
+#include "widgets/eoptionsdata.h"
 #include "widgets/eselectcolonywidget.h"
 
 #include "audio/emusic.h"
@@ -604,11 +605,19 @@ std::vector<eOptionsMenu::ePage> eMainWindow::optionsPages() {
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
-                {"Maintenance office", eHotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
-                 [this](const eHotkeyId id, const SDL_Scancode key) {
-                     setHotkey(id, key);
-                 }},
-                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
+                 {"Maintenance office", eHotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
+                  [this](const eHotkeyId id, const SDL_Scancode key) {
+                      setHotkey(id, key);
+                  }},
+                 {"Common housing", eHotkeyId::buildCommonHousing, settings.fHotkeyBuildCommonHousing,
+                  [this](const eHotkeyId id, const SDL_Scancode key) {
+                      setHotkey(id, key);
+                  }},
+                 {"Watchpost", eHotkeyId::buildWatchpost, settings.fHotkeyBuildWatchpost,
+                  [this](const eHotkeyId id, const SDL_Scancode key) {
+                      setHotkey(id, key);
+                  }},
+                 {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
                  }},
@@ -793,7 +802,7 @@ std::vector<eOptionsMenu::ePage> eMainWindow::optionsPages() {
 }
 
 void eMainWindow::showOptionsMenu() {
-    const auto d = new eOptionsMenu(optionsPages(), this);
+    const auto d = new eOptionsMenu(getOptionsPages(this), this);
     d->initialize();
     execDialog(d, false, [this]() { showMainMenu(); });
 }

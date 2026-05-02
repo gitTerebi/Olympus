@@ -100,6 +100,7 @@ public:
         setPressAction([this]() {
             mListening = true;
             setText("Press key");
+            setTooltip("Press key or DEL to clear");
             fitContent();
             const int minW = 60 * resolution().multiplier();
             if(width() < minW) setWidth(minW);
@@ -112,7 +113,11 @@ protected:
         if(!mListening) return false;
         mListening = false;
         releaseKeyboard();
-        mValue = e.key();
+        if(e.key() == SDL_SCANCODE_DELETE) {
+            mValue = SDL_SCANCODE_UNKNOWN;
+        } else {
+            mValue = e.key();
+        }
         updateText();
         if(mAction) mAction(mValue);
         return true;
