@@ -481,8 +481,11 @@ std::string gCharOccupation(
         return eLanguage::zeusText(64, 17);
     case eCharacterType::actor:
         return eLanguage::zeusText(64, 18);
-    case eCharacterType::trader:
-        return eLanguage::zeusText(64, 19) + " " + cname;
+    case eCharacterType::trader: {
+        const auto onCid = c->onCityId();
+        const auto cid = onCid != static_cast<eCityId>(-1) ? onCid : c->cityId();
+        return eLanguage::zeusText(64, 19) + " " + board.cityName(cid);
+    }
     case eCharacterType::tradeBoat:
         return eLanguage::zeusText(64, 20) + " " + cname;
     case eCharacterType::donkey:

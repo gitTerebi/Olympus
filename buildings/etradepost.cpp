@@ -33,7 +33,6 @@ eTradePost::eTradePost(eGameBoard& board, eWorldCity& city,
         setCharacterCreator([](eTile* const tile, eGameBoard& board) {
             const auto r = e::make_shared<eTrader>(board);
             r->changeTile(tile);
-            r->createFollowers();
             return r;
         });
     } break;
@@ -151,7 +150,11 @@ void eTradePost::spawnTrader() {
 
     const auto r = mCharGen(entryPoint, board);
     r->setOnCityId(cityId());
-    r->setCityId(mCity.cityId());
+    r->setCityId(cityId());
+
+    if(const auto trader = dynamic_cast<eTrader*>(r.get())) {
+        trader->createFollowers();
+    }
 
     const auto ta = e::make_shared<eTraderAction>(r.get());
     ta->setFinishOnComeback(true);
