@@ -557,13 +557,16 @@ void eGameWidget::paintEvent(ePainter& p) {
                 lavaCm = true;
                 tex->setColorMod(255, 0, 0);
             } else if(mPatrolBuilding && (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
+                const bool bothDirections = mPatrolBuilding->bothDirections();
                 patrolCm = eVectorHelpers::contains(mPatrolPath, tile) ||
-                           eVectorHelpers::contains(mPatrolPath1, tile);
+                           (bothDirections &&
+                            eVectorHelpers::contains(mPatrolPath1, tile));
                 if(patrolCm) {
                     tex->setColorMod(175, 255, 175);
                 } else {
                     patrolCm = eVectorHelpers::contains(mExcessPatrolPath, tile) ||
-                               eVectorHelpers::contains(mExcessPatrolPath1, tile);
+                               (bothDirections &&
+                                eVectorHelpers::contains(mExcessPatrolPath1, tile));
                     if(patrolCm) {
                         tex->setColorMod(255, 175, 175);
                     }
@@ -670,6 +673,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         tex->clearAlphaMod();
         tex->clearColorMod();
     };
+    constexpr SDL_Color selectedPatrolerColor{24, 255, 24, 255};
 
     using eRoadPreviewPath = std::map<eTile*, int>;
     eRoadPreviewPath patrolRoadPreview;
@@ -833,6 +837,10 @@ void eGameWidget::paintEvent(ePainter& p) {
                 patrolRoadStart = roads.front();
                 patrolRoadReturn = roads.back();
                 addRoamerPreview(patrolRoadStart, patrolRoadPreview);
+                if(mPatrolBuilding->bothDirections() &&
+                   patrolRoadReturn != patrolRoadStart) {
+                    addRoamerPreview(patrolRoadReturn, patrolRoadPreview);
+                }
             }
         }
     }
@@ -1512,7 +1520,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                         const int ddstX = std::round(ddstXf);
                         const int ddstY = std::round(ddstYf);
                         if(patrolerSelected) {
-                            tex->setColorMod(80, 255, 80);
+                            tex->setColorMod(selectedPatrolerColor.r,
+                                             selectedPatrolerColor.g,
+                                             selectedPatrolerColor.b);
                         } else if(hover) {
                             tex->setColorMod(hr, hg, hb);
                         }
@@ -1534,7 +1544,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                             const int sddstX = std::round(sddstXf);
                             const int sddstY = std::round(sddstYf);
                             if(patrolerSelected) {
-                                stexTex->setColorMod(80, 255, 80);
+                                stexTex->setColorMod(selectedPatrolerColor.r,
+                                                     selectedPatrolerColor.g,
+                                                     selectedPatrolerColor.b);
                             } else if(hover) {
                                 stexTex->setColorMod(hr, hg, hb);
                             }
@@ -1563,8 +1575,11 @@ void eGameWidget::paintEvent(ePainter& p) {
                     int i = 0;
                     for(const auto& pg : pgs) {
                         if(pg.fX == tx && pg.fY == ty) {
+                            const bool bothDirections =
+                                    mPatrolBuilding->bothDirections();
                             const bool invalid = !eVectorHelpers::contains(mPatrolPath, tile) &&
-                                                 !eVectorHelpers::contains(mPatrolPath1, tile);
+                                                 (!bothDirections ||
+                                                  !eVectorHelpers::contains(mPatrolPath1, tile));
                             const auto& coll = builTexs.fSpawner;
                             const int texId = mFrame % coll.size();
                             const auto& tex = coll.getTexture(texId);

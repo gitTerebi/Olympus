@@ -2484,16 +2484,42 @@ void eGameWidget::showOptionsMenu() {
                     }
                 },
                 {
-                    "Sounds volume",
+                    "Voice volume",
                     eSettings::sMinVolume,
                     eSettings::sMaxVolume,
-                    settings.fSoundsVolume,
+                    settings.fVoiceVolume,
                     "%",
                     [](const int v) {
                         return eSettings::clampVolume(v);
                     },
                     [this](const int v) {
-                        window()->setSoundsVolume(v);
+                        window()->setVoiceVolume(v);
+                    }
+                },
+                {
+                    "Event volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fEventVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        window()->setEventVolume(v);
+                    }
+                },
+                {
+                    "Ambient volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fAmbientVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        window()->setAmbientVolume(v);
                     }
                 }
             },
