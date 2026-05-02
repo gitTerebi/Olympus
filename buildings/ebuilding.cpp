@@ -2319,18 +2319,18 @@ std::vector<eTile*> eBuilding::surroundingRoad(
     const int xMax = tr.x + tr.w + (diagonal ? 1 : 0);
     for(int x = xMin; x < xMax; x++) {
         const auto t = board.tile(x, tr.y - 1);
-        if(t && t->hasRoad()) r.push_back(t);
+        if(t && t->hasRoad() && !t->hasRoadblock()) r.push_back(t);
         else if(jumpAvenue && t && t->hasAvenue()) addAvenue(t);
         const auto tt = board.tile(x, tr.y + tr.h);
-        if(tt && tt->hasRoad()) r.push_back(tt);
+        if(tt && tt->hasRoad() && !tt->hasRoadblock()) r.push_back(tt);
         else if(jumpAvenue && tt && tt->hasAvenue()) addAvenue(tt);
     }
     for(int y = tr.y; y < tr.y + tr.h; y++) {
         const auto t = board.tile(tr.x - 1, y);
-        if(t && t->hasRoad()) r.push_back(t);
+        if(t && t->hasRoad() && !t->hasRoadblock()) r.push_back(t);
         else if(jumpAvenue && t && t->hasAvenue()) addAvenue(t);
         const auto tt = board.tile(tr.x + tr.w, y);
-        if(tt && tt->hasRoad()) r.push_back(tt);
+        if(tt && tt->hasRoad() && !tt->hasRoadblock()) r.push_back(tt);
         else if(jumpAvenue && tt && tt->hasAvenue()) addAvenue(tt);
     }
     return r;
