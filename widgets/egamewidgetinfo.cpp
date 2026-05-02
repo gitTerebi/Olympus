@@ -155,6 +155,66 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             ebWid->addText(harvestStr);
             ebWid->addText(info);
             wid = ebWid;
+        } else if(const auto pb = dynamic_cast<eProcessingBuilding*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(pb, title, info,
+                                 employmentInfo,
+                                 additionalInfo);
+            ebWid->initialize(title);
+            const int p = pb->productionPercent();
+            int group = 122; // default winery
+            const auto type = pb->type();
+            switch(type) {
+            case eBuildingType::winery:
+                group = 122;
+                break;
+            case eBuildingType::armory:
+                group = 124;
+                break;
+            case eBuildingType::olivePress:
+                group = 125;
+                break;
+            case eBuildingType::sculptureStudio:
+                group = 126;
+                break;
+            case eBuildingType::corral:
+                group = 141;
+                break;
+            case eBuildingType::huntingLodge:
+                group = 154;
+                break;
+
+            case eBuildingType::chariotFactory:
+                group = 281;
+                break;
+            default:
+                group = 122;
+                break;
+            }
+            std::string prodStr = eLanguage::zeusText(group, 2) + " " + std::to_string(p) + "% " + eLanguage::zeusText(group, 3);
+            ebWid->addText(prodStr);
+            // add employment widget
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = pb->employed();
+            const int me = pb->maxEmployees();
+            const auto estr = std::to_string(e);
+            const auto mestr = std::to_string(me);
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = estr + " " + emplstr + "  (" + mestr + " " + memplstr + ")";
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            ebWid->addText(info);
+            wid = ebWid;
         } else if(const auto eb = dynamic_cast<eEmployingBuilding*>(b)) {
             const auto ebWid = new eEmployingBuildingInfoWidget(
                                     window(), this, true, true);
