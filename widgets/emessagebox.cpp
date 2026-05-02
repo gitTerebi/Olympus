@@ -529,6 +529,14 @@ void eMessageBox::initialize(eGameBoard& board,
         ok->align(eAlignment::right | eAlignment::bottom);
         ok->setX(ok->x() - 1.5*p);
         ok->setY(ok->y() - 1.5*p);
+    } else if(ed.fType == eMessageEventType::invasion ||
+               ed.fType == eMessageEventType::requestTributeGranted ||
+               ed.fType == eMessageEventType::resourceGranted ||
+               ed.fType == eMessageEventType::generalRequestGranted ||
+               ed.fType == eMessageEventType::troopsRequest) {
+        mClosable = true;
+    } else if(!ed.fCA0 && ed.fCCA0.empty() && !ed.fA0 && !ed.fA1 && !ed.fA2 && !wid) {
+        mClosable = true;
     }
 //    if(ed.fA2) {
 //        mDone = [this, ed]() {

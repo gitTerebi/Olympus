@@ -47,6 +47,7 @@ using eBuildingCreator = std::function<stdsptr<eBuilding>()>;
 struct eSavedMessage {
     eEventData fEd;
     eMessage fMsg;
+    bool fForcePopup = false;
 };
 
 struct eGameWidgetSettings {
@@ -250,13 +251,16 @@ private:
     void updateHippodromeIds();
 
     void showMessage(eEventData& ed, const eMessage& msg,
-                     const bool prepend = false);
+                     const bool prepend = false,
+                     const bool forcePopup = false);
     void showMessage(eEventData& ed, const eMessageType& msg,
                      const bool prepend = false);
     void showMessage(eEventData& ed, const eEventMessageType& msg,
                      const bool prepend = false);
 
     void updateTipPositions();
+    void updateToastPositions();
+    void showToast(eEventData& ed, const eMessage& msg);
 
     bool roadPath(std::vector<eOrientation>& path);
     bool columnPath(std::vector<eOrientation>& path);
@@ -401,6 +405,15 @@ private:
     };
 
     std::deque<eTip> mTips;
+
+    struct eToast {
+        eEventData fEd;
+        eMessage fMsg;
+        eWidget* fWid = nullptr;
+        int fExpireFrame = 0;
+    };
+
+    std::deque<eToast> mToasts;
 
     std::map<eTileSize, std::vector<stdsptr<eTexture>>> mNumbers;
     std::vector<eTile*> mInflTiles;
