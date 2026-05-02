@@ -2042,7 +2042,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
             menu->resize(width()/4, height()/2);
             const auto w = window();
             const bool wasPaused = mPaused;
-            switchPause();
+            if(!mPaused) switchPause();
             const auto resumeAct = [this, wasPaused, menu]() {
                 if(!wasPaused) switchPause();
                 menu->deleteLater();
