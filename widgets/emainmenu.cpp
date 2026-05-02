@@ -9,10 +9,10 @@
 #include "emainwindow.h"
 #include "engine/eworldcity.h"
 
-void addButton(const std::string& text,
-               const eAction& a,
-               eWidget* const buttons,
-               eMainWindow* const window) {
+eFramedButton* addButton(const std::string& text,
+                         const eAction& a,
+                         eWidget* const buttons,
+                         eMainWindow* const window) {
     const auto b1 = new eFramedButton(window);
     b1->setRenderBg(true);
     b1->setUnderline(false);
@@ -21,9 +21,12 @@ void addButton(const std::string& text,
     b1->setText(text);
     b1->fitContent();
     b1->align(eAlignment::hcenter);
+    return b1;
 }
 
-void eMainMenu::initialize(const eAction& newGameA,
+void eMainMenu::initialize(const eAction& continueGameA,
+                           const bool continueGameEnabled,
+                           const eAction& newGameA,
                            const eAction& loadGameA,
                            const eAction& editGameA,
                            const eAction& settingsA,
@@ -43,6 +46,9 @@ void eMainMenu::initialize(const eAction& newGameA,
 
     buttons->align(eAlignment::center);
 
+    const auto continueGame = addButton("Continue Adventure",
+                                        continueGameA, buttons, w);
+    continueGame->setEnabled(continueGameEnabled);
     addButton(eLanguage::zeusText(1, 1), newGameA, buttons, w);
     addButton(eLanguage::zeusText(1, 3), loadGameA, buttons, w);
     addButton(eLanguage::zeusText(287, 3), editGameA, buttons, w);

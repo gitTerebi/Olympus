@@ -206,6 +206,27 @@ std::string eMainWindow::leaderSaveDir() const {
     return eGameDir::saveDir() + mLeader + "/";
 }
 
+std::string eMainWindow::mostRecentSavePath() const {
+    const auto folder = leaderSaveDir();
+    if(!std::filesystem::exists(folder)) return "";
+
+    bool found = false;
+    std::filesystem::file_time_type bestTime;
+    std::filesystem::path bestPath;
+    for(const auto& entry : std::filesystem::directory_iterator(folder)) {
+        const auto path = entry.path();
+        if(path.extension() != ".ez") continue;
+        const auto time = std::filesystem::last_write_time(path);
+        if(!found || time > bestTime) {
+            found = true;
+            bestTime = time;
+            bestPath = path;
+        }
+    }
+    if(!found) return "";
+    return bestPath.string();
+}
+
 void eMainWindow::clearWidgets() {
     if(mGW && mWidget != mGW) {
         mGW->setBoard(nullptr);
@@ -384,6 +405,13 @@ void eMainWindow::showMainMenu() {
         showChooseGameMenu();
     };
 
+    const auto recentSave = mostRecentSavePath();
+    const auto continueGameAction = [this]() {
+        const auto path = mostRecentSavePath();
+        if(path.empty()) return;
+        loadGame(path);
+    };
+
     const auto loadGameAction = [this, mm]() {
         const auto fw = new eFileWidget(this);
         const auto func = [this](const std::string& path) {
@@ -416,7 +444,9 @@ void eMainWindow::showMainMenu() {
         showRosterOfLeaders();
     };
 
-    mm->initialize(newGameAction,
+    mm->initialize(continueGameAction,
+                   !recentSave.empty(),
+                   newGameAction,
                    loadGameAction,
                    editGameAction,
                    settingsAction,
