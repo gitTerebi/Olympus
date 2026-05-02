@@ -1,5 +1,6 @@
 #include "eoptionsmenu.h"
 
+#include "eokbutton.h"
 #include "eframedbutton.h"
 #include "elabel.h"
 #include "echeckbox.h"
@@ -183,26 +184,25 @@ void eOptionsMenu::initialize() {
     resize(std::min(w, resolution().width() - 2*p),
            std::min(h, resolution().height() - 2*p));
 
-    const auto title = new eLabel("Options", window());
-    title->setHugeFontSize();
-    title->fitContent();
-    addWidget(title);
-    title->align(eAlignment::hcenter);
-    title->setY(p);
+const auto title = new eLabel("Options", window());
+     title->setHugeFontSize();
+     title->fitContent();
+     addWidget(title);
+     title->align(eAlignment::hcenter);
+     title->setY(p);
 
-    const auto ok = new eFramedButton(window());
-    ok->setUnderline(false);
-    ok->setText("OK");
-    ok->fitContent();
-    ok->setPressAction([this]() {
-        deleteLater();
-    });
-    addWidget(ok);
-    ok->align(eAlignment::bottom | eAlignment::hcenter);
-    ok->setY(ok->y() - p);
+     const auto ok = new eOkButton(window());
+     ok->fitContent();
+     ok->setPressAction([this]() {
+         deleteLater();
+     });
+     addWidget(ok);
+     ok->align(eAlignment::bottom | eAlignment::right);
+     ok->setX(ok->x() - p);
+     ok->setY(ok->y() - p);
 
-    const int contentY = title->y() + title->height() + p;
-    const int contentH = ok->y() - contentY - p;
+     const int contentY = title->y() + title->height() + p;
+     const int contentH = ok->y() - contentY - p;
 
     const auto categories = new eWidget(window());
     categories->setNoPadding();
