@@ -39,7 +39,7 @@ void eEntryPoint::spawn(eTile* const tile) {
     b->setVisible(false);
     b->changeTile(tile);
     const auto a = e::make_shared<eSettlerAction>(b.get());
-    a->setNumberPeople(std::min(8, v - s));
+    a->setNumberPeople(std::min(4, v - s));
     b->setAction(a);
 }
 
