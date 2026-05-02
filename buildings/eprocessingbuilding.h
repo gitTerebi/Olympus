@@ -42,6 +42,8 @@ public:
 
     int rawCount() const { return mRawCount; }
     eResourceType rawMaterial() const { return mRawMaterial; }
+
+    int productionPercent() const;
 private:
     const std::vector<eBuildingTextures>& mTextures;
 

@@ -6,6 +6,7 @@
 #include "enumbers.h"
 
 #include <algorithm>
+#include <cmath>
 
 eProcessingBuilding::eProcessingBuilding(
         eGameBoard& board,
@@ -125,4 +126,8 @@ void eProcessingBuilding::write(eWriteStream& dst) const {
 
     dst << mRawCount;
     dst << mProcessTime;
+}
+
+int eProcessingBuilding::productionPercent() const {
+    return std::min(100, (int)std::round(mProcessTime / mProcessWaitTime * 100.0));
 }
