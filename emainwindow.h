@@ -49,6 +49,7 @@ public:
     void setVoiceVolume(const int volume);
     void setEventVolume(const int volume);
     void setAmbientVolume(const int volume);
+    void setWarehouseDefaultAcceptNone(const bool b);
 
     void startGameAction(eGameBoard* const board,
                          const eGameWidgetSettings& settings);

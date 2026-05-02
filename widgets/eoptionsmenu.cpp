@@ -2,6 +2,7 @@
 
 #include "eframedbutton.h"
 #include "elabel.h"
+#include "echeckbox.h"
 
 #include <SDL2/SDL.h>
 
@@ -328,6 +329,39 @@ void eOptionsMenu::showPage(const int id) {
 
     for(const auto& hotkey : page.fHotkeys) {
         mPage->addWidget(makeHotkey(hotkey));
+    }
+
+    const auto makeCheckbox = [this](const eOptionsMenu::eCheckboxItem& item) {
+        const auto w = new eWidget(window());
+        w->setNoPadding();
+        w->setWidth(mPage->width());
+
+        const auto label = new eLabel(item.fLabel, window());
+        label->setSmallFontSize();
+        label->fitContent();
+        w->addWidget(label);
+
+        const auto cb = new eCheckBox(window());
+        cb->setNoPadding();
+        cb->setChecked(item.fValue);
+        cb->setCheckAction([item](const bool b) {
+            if(item.fSet) item.fSet(b);
+        });
+        cb->fitContent();
+        w->addWidget(cb);
+
+        w->layoutHorizontally();
+        w->fitHeight();
+        w->setWidth(mPage->width());
+        label->setX(mPage->width()/2 - label->width() - padding());
+        cb->setX(mPage->width()/2 + padding());
+        label->setY((w->height() - label->height()) / 2);
+        cb->setY((w->height() - cb->height()) / 2);
+        return w;
+    };
+
+    for(const auto& checkbox : page.fCheckboxes) {
+        mPage->addWidget(makeCheckbox(checkbox));
     }
 
     for(const auto& text : page.fLines) {
