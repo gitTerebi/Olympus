@@ -75,6 +75,21 @@
 #include <algorithm>
 #include <cmath>
 
+namespace {
+int ambientCooldownKey(eTile* const tile) {
+    if(!tile) return -1;
+    if(tile->onFire()) return 1;
+    if(const auto b = tile->underBuilding()) {
+        return 1000 + static_cast<int>(b->type());
+    }
+    const auto& chars = tile->characters();
+    for(const auto& c : chars) {
+        return 2000 + static_cast<int>(c->type());
+    }
+    return 3000 + static_cast<int>(tile->terrain());
+}
+}
+
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eMainWidget(window) {}
 
@@ -741,13 +756,7 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
     const int minY = std::clamp(-2*mDY/mTileH, 0, rh);
     const int maxY = std::clamp(minY + 2*height()/mTileH, 0, rh);
 
-    const bool play = Mix_Playing(-1) == 0 && (eRand::rand() % 250) == 0;
-    if(play) {
-        const int x = (minX + maxX)/2 + (eRand::rand() % 7 - 3);
-        const int y = (minY + maxY)/2 + (eRand::rand() % 7 - 3);
-        const auto t = mBoard->dtile(x, y);
-        if(t) eSounds::playSoundForTile(t);
-    }
+    playVisibleAmbientSound(minX, maxX, minY, maxY);
 
     const int eminX = std::clamp(minX - 5, 0, rw);
     const int emaxX = std::clamp(maxX + 10, 0, rw);
@@ -762,6 +771,53 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
             a(t);
         }
     }
+}
+
+void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
+                                          const int minY, const int maxY) {
+    const int now = SDL_GetTicks();
+    const int interval = 5000;
+    const int cooldown = 30000;
+    if(now - mLastAmbientSoundTime < interval) return;
+    if(eRand::rand() % 3 != 0) return;
+
+    std::vector<eTile*> buildingTiles;
+    std::vector<eTile*> fallbackTiles;
+    for(int y = minY; y < maxY; y++) {
+        for(int x = minX; x < maxX; x++) {
+            const auto t = mBoard->rotateddtile(x, y);
+            if(!t) continue;
+            if(t->underBuilding()) {
+                buildingTiles.push_back(t);
+            } else {
+                fallbackTiles.push_back(t);
+            }
+        }
+    }
+
+    const auto playFromTiles = [&](const std::vector<eTile*>& tiles) {
+        if(tiles.empty()) return false;
+        const int size = tiles.size();
+        const int startId = eRand::rand() % size;
+        for(int i = 0; i < size; i++) {
+            const int id = (startId + i) % size;
+            const auto tile = tiles[id];
+            const int key = ambientCooldownKey(tile);
+            const auto it = mAmbientSoundCooldowns.find(key);
+            if(it != mAmbientSoundCooldowns.end() &&
+               now - it->second < cooldown) {
+                continue;
+            }
+            eSounds::playSoundForTile(tile);
+            mAmbientSoundCooldowns[key] = now;
+            mLastAmbientSoundTime = now;
+            return true;
+        }
+        return false;
+    };
+
+    if(playFromTiles(buildingTiles)) return;
+    playFromTiles(fallbackTiles);
 }
 
 bool eGameWidget::canBuildVendor(const int tx, const int ty,
@@ -2076,6 +2132,7 @@ bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
     if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
         mInfoWidget = openInfoWidget(chars2);
     } else if(b) {
+        if(b->type() == eBuildingType::road) return true;
         eSounds::playSoundForBuilding(b);
         const auto cid = tile->cityId();
         const auto pid = mBoard->cityIdToPlayerId(cid);
