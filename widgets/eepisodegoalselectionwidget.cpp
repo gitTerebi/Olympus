@@ -63,17 +63,28 @@ void eEpisodeGoalSelectionWidget::initialize(
             const auto e = std::make_shared<eEpisodeGoal>();
             e->fType = type;
             switch(type) {
+            case eEpisodeGoalType::population:
+            case eEpisodeGoalType::treasury:
+            case eEpisodeGoalType::support:
+            case eEpisodeGoalType::housing:
+            case eEpisodeGoalType::setAsideGoods:
+            case eEpisodeGoalType::surviveUntil:
+            case eEpisodeGoalType::completeBefore:
+            case eEpisodeGoalType::tradingPartners:
+            case eEpisodeGoalType::yearlyProduction:
+            case eEpisodeGoalType::yearlyProfit:
+            case eEpisodeGoalType::hippodrome:
+            case eEpisodeGoalType::rule:
+            case eEpisodeGoalType::quest:
+            case eEpisodeGoalType::slay:
+                e->fRequiredCount = 1;
+                break;
             case eEpisodeGoalType::sanctuary:
                 e->fRequiredCount = 100;
                 break;
             case eEpisodeGoalType::pyramid:
                 e->fRequiredCount = 1;
                 e->fEnumInt1 = -1;
-                break;
-            case eEpisodeGoalType::rule:
-            case eEpisodeGoalType::quest:
-            case eEpisodeGoalType::slay:
-                e->fRequiredCount = 1;
                 break;
             }
 
