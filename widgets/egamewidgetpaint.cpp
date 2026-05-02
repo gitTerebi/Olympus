@@ -392,9 +392,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         mBoard->scheduleDataUpdate();
         mBoard->updateAppealMapIfNeeded();
         mBoard->handleFinishedTasks();
-        const int speedLabel = mSpeedLabel ? 1 : 0;
-        const int nc = children().size() - mTips.size() - speedLabel;
-        const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget && nc < 6;
+        const bool incTime = !mPaused && !mLocked && !mMsgBox && !mInfoWidget;
         if(incTime) {
             const bool lost = mBoard->episodeLost();
             if(lost) {
@@ -656,16 +654,192 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(!bridgeValid) bridgeValid = bridgeTiles(startTile, eTerrain::quake, bridgetTs, bridgeRot);
     }
 
-    const auto isPatrolSelected = [&](eBuilding* const ub) {
-        bool selected = false;
-        if(const auto v = dynamic_cast<eVendor*>(ub)) {
-            selected = v->agora() == mPatrolBuilding;
-        } else if(const auto s = dynamic_cast<eAgoraSpace*>(ub)) {
-            selected = s->agora() == mPatrolBuilding;
-        } else {
-            selected = ub == mPatrolBuilding;
+    const auto drawRoadFootprint = [&](eTile* const tile,
+                                       const SDL_Color color) {
+        if(!tile) return;
+        const int tx = tile->x();
+        const int ty = tile->y();
+        const int a = mDrawElevation ? tile->altitude() : 0;
+        double rx;
+        double ry;
+        drawXY(tx, ty, rx, ry, 1, 1, a);
+        const auto& tex = trrTexs.fBuildingBase;
+        tex->setColorMod(color.r, color.g, color.b);
+        tex->setAlpha(color.a);
+        tp.drawTexture(rx, ry, tex, eAlignment::top);
+        tex->clearAlphaMod();
+        tex->clearColorMod();
+    };
+
+    using eRoadPreviewPath = std::map<eTile*, int>;
+    eRoadPreviewPath patrolRoadPreview;
+    eTile* patrolRoadStart = nullptr;
+    eTile* patrolRoadReturn = nullptr;
+    const auto isRoadBandTile = [](eTile* const tile) {
+        if(!tile) return false;
+        return tile->hasRoad() || tile->underBuildingType() == eBuildingType::avenue;
+    };
+    const auto canWalkRoadPreview = [](eTile* const tile) {
+        return tile && tile->hasRoad() && !tile->hasRoadblock();
+    };
+    const auto addRoamerPreview = [&](eTile* const start,
+                                      eRoadPreviewPath& path) {
+        using eUseTimes = std::map<eTile*, std::array<int, 8>>;
+        for(int i = 0; i < 4; i++) {
+            eUseTimes useTimes;
+            auto tile = start;
+            auto prev = static_cast<eTile*>(nullptr);
+            auto o = static_cast<eOrientation>(2*i);
+            for(int time = 1;
+                time < eNumbers::sPatrolerMaxDistance && tile;
+                time++) {
+                auto& freq = path[tile];
+                freq = std::min(freq + 1, 8);
+                const auto valid = [&](eTileBase* const t) {
+                    const auto tt = static_cast<eTile*>(t);
+                    return canWalkRoadPreview(tt) &&
+                           tt->neighbour<eTile>(o) != prev;
+                };
+                auto options = tile->diagonalNeighbours(valid);
+                if(options.empty()) {
+                    o = !o;
+                } else {
+                    int minUse = __INT_MAX__;
+                    std::vector<eOrientation> best;
+                    auto& uses = useTimes[tile];
+                    for(const auto& opt : options) {
+                        const auto oo = opt.first;
+                        const int used = uses[static_cast<int>(oo)];
+                        if(used < minUse) {
+                            minUse = used;
+                            best.clear();
+                            best.push_back(oo);
+                        } else if(used == minUse) {
+                            best.push_back(oo);
+                        }
+                    }
+                    if(!eVectorHelpers::contains(best, o) && !best.empty()) {
+                        o = best.front();
+                    }
+                }
+                const auto next = tile->neighbour<eTile>(o);
+                if(!canWalkRoadPreview(next)) break;
+                useTimes[tile][static_cast<int>(o)] = time;
+                useTimes[next][static_cast<int>(!o)] = time;
+                prev = tile;
+                tile = next;
+            }
         }
-        return selected;
+    };
+    const auto roadAccessTiles = [&](const int tx, const int ty,
+                                     const int sw, const int sh) {
+        std::vector<eTile*> result;
+        const auto add = [&](eTile* const tile) {
+            if(!tile) return;
+            if(!tile->hasRoad()) return;
+            if(eVectorHelpers::contains(result, tile)) return;
+            result.push_back(tile);
+        };
+        for(int x = tx; x < tx + sw; x++) {
+            add(mBoard->tile(x, ty - 1));
+            add(mBoard->tile(x, ty + sh));
+        }
+        for(int y = ty; y < ty + sh; y++) {
+            add(mBoard->tile(tx - 1, y));
+            add(mBoard->tile(tx + sw, y));
+        }
+        return result;
+    };
+    const auto addPathBands = [&](const std::vector<eTile*>& tiles,
+                                  eRoadPreviewPath& path) {
+        for(const auto tile : tiles) {
+            if(!isRoadBandTile(tile)) continue;
+            auto& freq = path[tile];
+            freq = std::min(freq + 1, 8);
+        }
+    };
+    const auto firstPathRoad = [&](const std::vector<eTile*>& tiles) {
+        for(const auto tile : tiles) {
+            if(isRoadBandTile(tile)) return tile;
+        }
+        return static_cast<eTile*>(nullptr);
+    };
+    const auto lastPathRoad = [&](const std::vector<eTile*>& tiles) {
+        for(auto it = tiles.rbegin(); it != tiles.rend(); ++it) {
+            if(isRoadBandTile(*it)) return *it;
+        }
+        return static_cast<eTile*>(nullptr);
+    };
+    const auto roadBandColor = [](const int freq) {
+        return freq > 1 ? SDL_Color{0x00, 0x00, 0x88, 0x88} :
+                          SDL_Color{0x33, 0x77, 0xff, 0x66};
+    };
+    const auto drawRoadBandTile = [&](eTile* const tile,
+                                      eTile* const start,
+                                      eTile* const ret,
+                                      const eRoadPreviewPath& path) {
+        if(!tile || !start) return;
+        if(tile == start && tile == ret) {
+            drawRoadFootprint(tile, SDL_Color{255, 80, 255, 220});
+            return;
+        }
+        if(tile == start) {
+            drawRoadFootprint(tile, SDL_Color{80, 255, 80, 220});
+            return;
+        }
+        if(tile == ret) {
+            drawRoadFootprint(tile, SDL_Color{255, 80, 80, 220});
+            return;
+        }
+        const auto it = path.find(tile);
+        if(it == path.end()) return;
+        drawRoadFootprint(tile, roadBandColor(it->second));
+    };
+    const auto drawRoadBands = [&](const std::vector<eTile*>& roads) {
+        if(roads.empty()) return;
+        const auto start = roads.front();
+        const auto ret = roads.back();
+        eRoadPreviewPath path;
+        addRoamerPreview(start, path);
+        for(const auto& p : path) {
+            drawRoadBandTile(p.first, start, ret, path);
+        }
+        if(!path.count(start)) drawRoadBandTile(start, start, ret, path);
+        if(ret != start && !path.count(ret)) {
+            drawRoadBandTile(ret, start, ret, path);
+        }
+    };
+    if(mPatrolBuilding) {
+        if(!mPatrolBuilding->patrolGuides().empty()) {
+            addPathBands(mExcessPatrolPath, patrolRoadPreview);
+            addPathBands(mPatrolPath, patrolRoadPreview);
+            patrolRoadStart = firstPathRoad(mExcessPatrolPath);
+            if(!patrolRoadStart) patrolRoadStart = firstPathRoad(mPatrolPath);
+            patrolRoadReturn = lastPathRoad(mPatrolPath);
+            if(!patrolRoadReturn) patrolRoadReturn = lastPathRoad(mExcessPatrolPath);
+            if(mPatrolBuilding->bothDirections()) {
+                addPathBands(mExcessPatrolPath1, patrolRoadPreview);
+                addPathBands(mPatrolPath1, patrolRoadPreview);
+                if(!patrolRoadReturn) {
+                    patrolRoadReturn = lastPathRoad(mPatrolPath1);
+                    if(!patrolRoadReturn) {
+                        patrolRoadReturn = lastPathRoad(mExcessPatrolPath1);
+                    }
+                }
+            }
+        } else {
+            const auto roads = mPatrolBuilding->surroundingRoad(false, true);
+            if(!roads.empty()) {
+                patrolRoadStart = roads.front();
+                patrolRoadReturn = roads.back();
+                addRoamerPreview(patrolRoadStart, patrolRoadPreview);
+            }
+        }
+    }
+    const auto drawSelectedRoadPreview = [&](eTile* const tile) {
+        if(!mPatrolBuilding || !tile) return;
+        drawRoadBandTile(tile, patrolRoadStart, patrolRoadReturn,
+                         patrolRoadPreview);
     };
 
     const auto buildingDrawer = [&](eTile* const tile) {
@@ -922,7 +1096,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         };
 
         if(ub && !v) {
-            if(!isPatrolSelected(ub) && mViewMode != eViewMode::appeal) {
+            if(mViewMode != eViewMode::appeal) {
                 const auto tex = getBasementTexture(rtx, rty, ub, trrTexs,
                                                     dir, boardw, boardh);
                 tp.drawTexture(rx, ry, tex, eAlignment::top);
@@ -1152,13 +1326,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                 if(!ub || !mPatrolBuilding) return;
                 const auto ubt = ub->type();
                 if(eBuilding::sFlatBuilding(ubt)) return;
-                std::shared_ptr<eTexture> tex;
-                if(isPatrolSelected(ub)) {
-                    tex = trrTexs.fSelectedBuildingBase;
-                } else {
-                    tex = getBasementTexture(rtx, rty, ub, trrTexs,
-                                             dir, boardw, boardh);
-                }
+                const auto tex = getBasementTexture(rtx, rty, ub, trrTexs,
+                                                    dir, boardw, boardh);
                 tp.drawTexture(rx, ry, tex, eAlignment::top);
                 bd = true;
             }
@@ -1330,6 +1499,9 @@ void eGameWidget::paintEvent(ePainter& p) {
                         }
                     }
                     const auto tex = c->getTexture(mTileSize);
+                    const bool patrolerSelected =
+                            mPatrolBuilding &&
+                            c.get() == mPatrolBuilding->patroler();
                     if(tex) {
                         const double offX = mTileH*tex->offsetX()/30.;
                         const double offY = mTileH*tex->offsetY()/30.;
@@ -1339,11 +1511,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                         const int ddstYf = mDY + dstYf;
                         const int ddstX = std::round(ddstXf);
                         const int ddstY = std::round(ddstYf);
-                        if(hover) {
+                        if(patrolerSelected) {
+                            tex->setColorMod(80, 255, 80);
+                        } else if(hover) {
                             tex->setColorMod(hr, hg, hb);
                         }
                         tex->render(r, ddstX, ddstY, false);
-                        if(hover) {
+                        if(patrolerSelected || hover) {
                             tex->clearColorMod();
                         }
                     }
@@ -1359,11 +1533,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                             const double sddstYf = mDY + sdstYf;
                             const int sddstX = std::round(sddstXf);
                             const int sddstY = std::round(sddstYf);
-                            if(hover) {
+                            if(patrolerSelected) {
+                                stexTex->setColorMod(80, 255, 80);
+                            } else if(hover) {
                                 stexTex->setColorMod(hr, hg, hb);
                             }
                             stexTex->render(r, sddstX, sddstY, false);
-                            if(hover) {
+                            if(patrolerSelected || hover) {
                                 stexTex->clearColorMod();
                             }
                         }
@@ -1657,6 +1833,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
         }
         //drawTerrain(tile);
+
+        drawSelectedRoadPreview(tile);
 
         drawSheepGoat();
         drawPatrol();
@@ -2782,100 +2960,9 @@ void eGameWidget::paintEvent(ePainter& p) {
             stdsptr<eBuildingRenderer> fBR;
         };
 
-        const auto drawRoadFootprint = [&](eTile* const tile,
-                                           const SDL_Color color) {
-            if(!tile) return;
-            const int tx = tile->x();
-            const int ty = tile->y();
-            const int a = mDrawElevation ? tile->altitude() : 0;
-            double rx;
-            double ry;
-            drawXY(tx, ty, rx, ry, 1, 1, a);
-            const auto& tex = trrTexs.fBuildingBase;
-            tex->setColorMod(color.r, color.g, color.b);
-            tex->setAlpha(color.a);
-            tp.drawTexture(rx, ry, tex, eAlignment::top);
-            tex->clearAlphaMod();
-            tex->clearColorMod();
-        };
-
-        const auto roadAccessTiles = [&](const int tx, const int ty,
-                                         const int sw, const int sh) {
-            std::vector<eTile*> result;
-            const auto add = [&](eTile* const tile) {
-                if(!tile) return;
-                if(!tile->hasRoad()) return;
-                if(eVectorHelpers::contains(result, tile)) return;
-                result.push_back(tile);
-            };
-            for(int x = tx; x < tx + sw; x++) {
-                add(mBoard->tile(x, ty - 1));
-                add(mBoard->tile(x, ty + sh));
-            }
-            for(int y = ty; y < ty + sh; y++) {
-                add(mBoard->tile(tx - 1, y));
-                add(mBoard->tile(tx + sw, y));
-            }
-            return result;
-        };
-
         const auto drawRoadAccessPreview = [&](const std::vector<eB>& ebs,
                                                const bool canBuild) {
             if(!canBuild) return;
-            const auto canWalkPreview = [](eTile* const tile) {
-                return tile && tile->hasRoad() && !tile->hasRoadblock();
-            };
-            using eUseTimes = std::map<eTile*, std::array<int, 8>>;
-            const auto drawRoamerPreview = [&](eTile* const start,
-                                               std::map<eTile*, int>& path) {
-                for(int i = 0; i < 4; i++) {
-                    eUseTimes useTimes;
-                    auto tile = start;
-                    auto prev = static_cast<eTile*>(nullptr);
-                    auto o = static_cast<eOrientation>(2*i);
-                    for(int time = 1;
-                        time < eNumbers::sPatrolerMaxDistance && tile;
-                        time++) {
-                        auto& freq = path[tile];
-                        freq = std::min(freq + 1, 8);
-                        const auto valid = [&](eTileBase* const t) {
-                            const auto tt = static_cast<eTile*>(t);
-                            return canWalkPreview(tt) &&
-                                   tt->neighbour<eTile>(o) != prev;
-                        };
-                        auto options = tile->diagonalNeighbours(valid);
-                        if(options.empty()) {
-                            o = !o;
-                        } else {
-                            int minUse = __INT_MAX__;
-                            std::vector<eOrientation> best;
-                            auto& uses = useTimes[tile];
-                            for(const auto& opt : options) {
-                                const auto oo = opt.first;
-                                const int used = uses[static_cast<int>(oo)];
-                                if(used < minUse) {
-                                    minUse = used;
-                                    best.clear();
-                                    best.push_back(oo);
-                                } else if(used == minUse) {
-                                    best.push_back(oo);
-                                }
-                            }
-                            if(eVectorHelpers::contains(best, o)) {
-                                // keep direction when still least-used
-                            } else if(!best.empty()) {
-                                o = best.front();
-                            }
-                        }
-                        const auto next = tile->neighbour<eTile>(o);
-                        if(!canWalkPreview(next)) break;
-                        useTimes[tile][static_cast<int>(o)] = time;
-                        useTimes[next][static_cast<int>(!o)] = time;
-                        prev = tile;
-                        tile = next;
-                    }
-                }
-            };
             std::set<eBuilding*> done;
             for(const auto& eb : ebs) {
                 const auto b = eb.fB.get();
@@ -2886,26 +2973,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 if(!eb.fBR) continue;
                 const auto roads = roadAccessTiles(
                     eb.fTx, eb.fTy, eb.fBR->spanW(), eb.fBR->spanH());
-                if(roads.empty()) continue;
-                const auto start = roads.front();
-                const auto ret = roads.back();
-                std::map<eTile*, int> path;
-                drawRoamerPreview(start, path);
-                for(const auto& p : path) {
-                    const auto tile = p.first;
-                    if(tile == start || tile == ret) continue;
-                    const bool repeated = p.second > 1;
-                    const auto color = repeated ?
-                        SDL_Color{0x00, 0x00, 0x88, 0x88} :
-                        SDL_Color{0x33, 0x77, 0xff, 0x66};
-                    drawRoadFootprint(tile, color);
-                }
-                if(start == ret) {
-                    drawRoadFootprint(start, SDL_Color{255, 80, 255, 220});
-                } else {
-                    drawRoadFootprint(start, SDL_Color{80, 255, 80, 220});
-                    drawRoadFootprint(ret, SDL_Color{255, 80, 80, 220});
-                }
+                drawRoadBands(roads);
             }
         };
 

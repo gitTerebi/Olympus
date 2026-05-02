@@ -51,6 +51,7 @@ public:
     int maxDistance() const { return mMaxDistance; }
 
     bool spawnsPatrolers() const;
+    eCharacter* patroler() const { return mChar; }
 
     const stdsptr<eDirectionTimes>& dirTimes() const
     { return mDirTimes; }
