@@ -1,6 +1,11 @@
 #include "egamewidget.h"
 
+#include "elanguage.h"
+
 #include "buildings/allbuildings.h"
+#include "buildings/efarmbase.h"
+
+#include "engine/edate.h"
 
 #include "evectorhelpers.h"
 #include "infowidgets/eagorainfowidget.h"
@@ -100,6 +105,56 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             wid = sWid;
         } else if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
             return openInfoWidget(sb->monument());
+        } else if(const auto fb = dynamic_cast<eFarmBase*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(fb, title, info,
+                                 employmentInfo,
+                                 additionalInfo);
+            ebWid->initialize(title);
+            const int p = fb->productionPercent();
+            int group = 112; // default wheat
+            const auto rt = fb->resourceType();
+            switch(rt) {
+            case eResourceType::wheat:
+                group = 112;
+                break;
+            case eResourceType::onions:
+                group = 113;
+                break;
+            case eResourceType::carrots:
+                group = 114;
+                break;
+            default:
+                group = 112;
+                break;
+            }
+            std::string prodStr = eLanguage::zeusText(group, 2) + " " + std::to_string(p) + "% " + eLanguage::zeusText(group, 3);
+            ebWid->addText(prodStr);
+            // add employment widget
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = fb->employed();
+            const int me = fb->maxEmployees();
+            const auto estr = std::to_string(e);
+            const auto mestr = std::to_string(me);
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = estr + " " + emplstr + "  (" + mestr + " " + memplstr + ")";
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            const eMonth hm = fb->nextHarvestMonth();
+            std::string harvestStr = eLanguage::zeusText(group, 14) + " " + eMonthHelper::name(hm) + ".";
+            ebWid->addText(harvestStr);
+            ebWid->addText(info);
+            wid = ebWid;
         } else if(const auto eb = dynamic_cast<eEmployingBuilding*>(b)) {
             const auto ebWid = new eEmployingBuildingInfoWidget(
                                     window(), this, true, true);

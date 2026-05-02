@@ -24,6 +24,8 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 ## Codebase Navigation
 
+**Text strings:** `zeus-text strings/Zeus_Text.xml` reference strings provided by the game at runtime, re-use for messages.
+
 **Terrain rendering:** `textures/etiletotexture.cpp` `eTileToTexture::get` — every `eTerrain` enum value needs a case in the switch or it returns `fInvalidTex`.
 
 **Texture loading:** `textures/eterraintextures.cpp` — terrain textures loaded lazily. Check `fBlackMarbleLoaded` pattern for new terrain types.
