@@ -9,6 +9,9 @@
 #include "characters/edisgruntled.h"
 #include "characters/actions/esickdisgruntledaction.h"
 
+#include "characters/ehomeless.h"
+#include "characters/actions/esettleraction.h"
+
 #include "buildings/epalace.h"
 
 #include "elanguage.h"
@@ -125,6 +128,12 @@ int eSmallHouse::provide(const eProvide p, const int n) {
 }
 
 void eSmallHouse::timeChanged(const int by) {
+    mUpdateLevel += by;
+    const int lupdate = 800;
+    if(mUpdateLevel > lupdate) {
+        mUpdateLevel -= lupdate;
+        updateLevel();
+    }
     if(mPeople <= 0) {
         mHygiene = 100;
         if(mPlague) {
@@ -229,20 +238,13 @@ void eSmallHouse::timeChanged(const int by) {
             const auto pid = playerId();
             const auto diff = b.difficulty(pid);
             const int leaveRisk = eDifficultyHelpers::crimeRisk(diff);
-        if(leaveRisk && by && vacancies() > 0) {
+        if(leaveRisk && by) {
             const int leavePeriod = m4/(by*leaveRisk);
             if(leavePeriod && eRand::rand() % leavePeriod == 0) {
                 leave();
             }
         }
         }
-    }
-
-    mUpdateLevel += by;
-    const int lupdate = 1000;
-    if(mUpdateLevel > lupdate) {
-        mUpdateLevel -= lupdate;
-        updateLevel();
     }
     mUpdateSatisfaction += by;
     const int supdate = eNumbers::sHouseSatisfactionUpdatePeriod;
@@ -308,11 +310,11 @@ eHouseMissing eSmallHouse::missing() const {
     if(mCompetitors > 0) nVenues++;
     if(mFood > 0) {
         if(mWater > 0) {
-            if(nVenues > 0) {
-                if(mFleece > 0) {
-                    if(appeal > 2.0) {
-                        if(nVenues > 1) {
-                            if(mOil > 0) {
+            if(mFleece > 0) {
+                if(nVenues > 0) {
+                    if(mOil > 0) {
+                        if(appeal > 2.0) {
+                            if(nVenues > 1) {
                                 if(appeal > 5.0) {
                                     if(nVenues > 2) {
                                         if(appeal > 8.0) {
@@ -324,15 +326,15 @@ eHouseMissing eSmallHouse::missing() const {
                                 }
                                 return eHouseMissing::appeal;
                             }
-                            return eHouseMissing::oil;
+                            return eHouseMissing::venues;
                         }
-                        return eHouseMissing::venues;
+                        return eHouseMissing::appeal;
                     }
-                    return eHouseMissing::appeal;
+                    return eHouseMissing::oil;
                 }
-                return eHouseMissing::fleece;
+                return eHouseMissing::venues;
             }
-            return eHouseMissing::venues;
+            return eHouseMissing::fleece;
         }
         return eHouseMissing::water;
     }
@@ -367,6 +369,7 @@ void eSmallHouse::read(eReadStream& src) {
     src.readCharacter(&getBoard(), [this](eCharacter* const c) {
         mDisg = static_cast<eDisgruntled*>(c);
     });
+    // mDevolveDelay not saved for compatibility
 }
 
 void eSmallHouse::write(eWriteStream& dst) const {
@@ -393,38 +396,74 @@ void eSmallHouse::write(eWriteStream& dst) const {
     dst.writeCharacter(mSick.get());
     dst << mSpawnDisg;
     dst.writeCharacter(mDisg.get());
+    // mDevolveDelay not saved for compatibility
 }
 
 std::string eSmallHouse::sName(const int level) {
     return eLanguage::zeusText(28, 2 + level);
 }
 
-void eSmallHouse::updateLevel() {
+bool eSmallHouse::hasRequiredForLevel(const int level) const {
     const double appeal = eHouseBase::appeal();
     int nVenues = 0;
     if(mPhilosophers > 0) nVenues++;
     if(mActors > 0) nVenues++;
     if(mAthletes > 0) nVenues++;
     if(mCompetitors > 0) nVenues++;
-    if(mFood > 0) {
-        if(mWater > 0 && nVenues > 0) {
-            if(mFleece > 0 && appeal > 2.0) {
-                if(nVenues > 1) {
-                    if(mOil > 0 && appeal > 5.0) {
-                        if(nVenues > 2 && appeal > 8.0) {
-                            return setLevel(6);
-                        }
-                        return setLevel(5);
-                    }
-                    return setLevel(4);
-                }
-                return setLevel(3);
-            }
-            return setLevel(2);
-        }
-        return setLevel(1);
+    switch(level) {
+    case 0:
+        return true;
+    case 1:
+        return mFood > 0;
+    case 2:
+        return mFood > 0 && mWater > 0 && nVenues > 0;
+    case 3:
+        return mFood > 0 && mWater > 0 && nVenues > 0 &&
+               mFleece > 0 && appeal > 2.0;
+    case 4:
+        return mFood > 0 && mWater > 0 && nVenues > 0 &&
+               mFleece > 0 && appeal > 2.0 && nVenues > 1;
+    case 5:
+        return mFood > 0 && mWater > 0 && nVenues > 0 &&
+               mFleece > 0 && appeal > 2.0 && nVenues > 1 &&
+               mOil > 0 && appeal > 5.0;
+    case 6:
+        return mFood > 0 && mWater > 0 && nVenues > 0 &&
+               mFleece > 0 && appeal > 2.0 && nVenues > 1 &&
+               mOil > 0 && appeal > 5.0 && nVenues > 2 && appeal > 8.0;
+    default:
+        return false;
     }
-    setLevel(0);
+}
+
+void eSmallHouse::updateLevel() {
+    if(hasRequiredForLevel(mLevel + 1)) {
+        setLevel(mLevel + 1);
+        mDevolveDelay = 0;
+    } else if(!hasRequiredForLevel(mLevel)) {
+        if(mDevolveDelay < 10) {
+            ++mDevolveDelay;
+        } else {
+            setLevel(mLevel - 1);
+            mDevolveDelay = 0;
+        }
+    } else {
+        mDevolveDelay = 0;
+        // spawn homeless once reached required level
+        if(mEvictDelay > 0) --mEvictDelay;
+        if(mEvictDelay == 0 && mPendingEvict > 0) {
+            const auto board = &getBoard();
+            const auto cid = cityId();
+            const auto c = e::make_shared<eHomeless>(*board);
+            c->setBothCityIds(cid);
+            c->changeTile(centerTile());
+            const auto a = e::make_shared<eSettlerAction>(c.get());
+            a->setNumberPeople(mPendingEvict);
+            c->setAction(a);
+            c->setActionType(eCharacterActionType::walk);
+            mPendingEvict = 0;
+        }
+    }
 }
 
 void eSmallHouse::updateSatisfaction() {

@@ -2,6 +2,7 @@
 
 #include "engine/etile.h"
 #include "characters/echaracter.h"
+#include "characters/esettler.h"
 #include "engine/ethreadpool.h"
 #include "emovetoaction.h"
 #include "buildings/esmallhouse.h"
@@ -19,9 +20,16 @@ eSettlerAction::~eSettlerAction() {
 }
 
 bool eSettlerAction::decide() {
+    const auto c = character();
+    const auto ct = c->type();
+    if(ct == eCharacterType::settler) {
+        const auto s = static_cast<eSettler*>(c);
+        if(s->emigrant()) {
+            leave();
+            return true;
+        }
+    }
     if(mNoHouses) {
-        const auto c = character();
-        const auto ct = c->type();
         if(ct == eCharacterType::settler) {
             goBack2();
         } else {

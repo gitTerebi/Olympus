@@ -79,6 +79,9 @@ protected:
     int mActors = 0;
     int mAthletes = 0;
     int mCompetitors = 0;
+
+    int mPendingEvict = 0;
+    int mEvictDelay = 0;
 private:
     ePopulationData& popData();
 

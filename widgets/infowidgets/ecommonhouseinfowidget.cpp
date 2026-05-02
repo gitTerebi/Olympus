@@ -98,7 +98,45 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         needString = 46;
         break;
     }
-    const auto msg = eLanguage::zeusText(127, needString);
+    std::string msg;
+    const auto sh = dynamic_cast<eSmallHouse*>(house);
+    if(sh && (sh->devolveDelay() > 0 || sh->evictDelay() > 0 || sh->pendingEvict() > 0)) {
+        msg = "This house is devolving. It needs ";
+        switch(miss) {
+        case eHouseMissing::food:
+            msg += "food.";
+            break;
+        case eHouseMissing::water:
+            msg += "water.";
+            break;
+        case eHouseMissing::fleece:
+            msg += "fleece.";
+            break;
+        case eHouseMissing::oil:
+            msg += "olive oil.";
+            break;
+        case eHouseMissing::venues:
+            msg += "venues.";
+            break;
+        case eHouseMissing::appeal:
+            msg += "appeal.";
+            break;
+        case eHouseMissing::wine:
+            msg += "wine.";
+            break;
+        case eHouseMissing::arms:
+            msg += "armor.";
+            break;
+        case eHouseMissing::horse:
+            msg += "horses.";
+            break;
+        case eHouseMissing::nothing:
+            msg += "nothing.";
+            break;
+        }
+    } else {
+        msg = eLanguage::zeusText(127, needString);
+    }
 
     const auto cw = centralWidget();
     const auto msgLabel = new eLabel(window());
