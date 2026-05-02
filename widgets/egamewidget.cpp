@@ -1999,6 +1999,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
         mRotateId++;
         if(mRotateId > 3) mRotateId = 0;
+    } else if(k == hotkeys.fHotkeyPause) {
+        if(!mMsgBox) switchPause();
     } else if(k == hotkeys.fHotkeyCopyBuilding) {
         selectHoveredBuildingMode();
     } else if(k == hotkeys.fHotkeyDeleteTool) {
@@ -2011,8 +2013,10 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         mGm->setMode(eBuildingMode::roadblock);
     } else if(k == hotkeys.fHotkeyBuildMaintenanceOffice) {
         mGm->setMode(eBuildingMode::maintenanceOffice);
-    } else if(k == hotkeys.fHotkeyPause) {
-        switchPause();
+    } else if(k == hotkeys.fHotkeyBuildCommonHousing) {
+        mGm->setMode(eBuildingMode::commonHousing);
+    } else if(k == hotkeys.fHotkeyBuildWatchpost) {
+        mGm->setMode(eBuildingMode::watchpost);
     } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT) {
         setDX(mDX + 35);
     } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHT) {

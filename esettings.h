@@ -18,6 +18,8 @@ enum class eHotkeyId {
     buildRoad,
     buildRoadblock,
     buildMaintenanceOffice,
+    buildCommonHousing,
+    buildWatchpost,
     scrollLeft,
     scrollRight,
     scrollUp,
@@ -74,7 +76,9 @@ struct eSettings {
     SDL_Scancode fHotkeyShowRoadsOverlay = SDL_SCANCODE_V;
     SDL_Scancode fHotkeyBuildRoad = SDL_SCANCODE_R;
     SDL_Scancode fHotkeyBuildRoadblock = SDL_SCANCODE_F;
-    SDL_Scancode fHotkeyBuildMaintenanceOffice = SDL_SCANCODE_Q;
+    SDL_Scancode fHotkeyBuildMaintenanceOffice = SDL_SCANCODE_E;
+    SDL_Scancode fHotkeyBuildCommonHousing = SDL_SCANCODE_Q;
+    SDL_Scancode fHotkeyBuildWatchpost = SDL_SCANCODE_UNKNOWN;
     SDL_Scancode fHotkeyScrollLeft = SDL_SCANCODE_A;
     SDL_Scancode fHotkeyScrollRight = SDL_SCANCODE_D;
     SDL_Scancode fHotkeyScrollUp = SDL_SCANCODE_W;

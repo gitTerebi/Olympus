@@ -32,4 +32,4 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 **Render flow:** paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch.
 
-**Options menu hotkeys:** defined in `emainwindow.cpp` as inline struct list (label, id, default, callback). Enum+storage in `esettings.h/cpp`, handling in `egamewidget.cpp keyPressEvent`.
+**Options menu hotkeys:** `eoptionsdata.cpp getOptionsPages()` builds `eHotkeyItem` list; called from `eMainWindow::showOptionsMenu(). Enum `eHotkeyId` + `SDL_Scancode fHotkey*` in `esettings.h`, read/write `esettings.cpp`, handled in `egamewidget.cpp keyPressEvent`. To add: enum val, scancode+default in `eSettings`, read/write, `keyPressEvent` case, `getOptionsPages()` entry.

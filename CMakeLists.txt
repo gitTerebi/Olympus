@@ -571,6 +571,7 @@ set(SOURCES
     widgets/datawidgets/esciencedatawidget.cpp
     widgets/datawidgets/estoragedatawidget.cpp
     widgets/datawidgets/eviewmodebutton.cpp
+    widgets/eoptionsdata.cpp
     widgets/eacceptbutton.cpp
     widgets/eactionlistwidget.cpp
     widgets/earmymenu.cpp
