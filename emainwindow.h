@@ -69,6 +69,7 @@ public:
     void showMainMenu();
     void applyGraphicsSettings(const eSettings& settings);
     void showSettingsMenu();
+    void showOptionsMenu();
     void showChooseGameMenu();
     void showChooseGameEditMenu();
     void showGame(const stdsptr<eCampaign>& c,
