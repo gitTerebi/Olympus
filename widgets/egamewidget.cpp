@@ -2356,8 +2356,8 @@ void eGameWidget::showOptionsMenu() {
     const auto& settings = window()->settings();
     const std::vector<eOptionsMenu::ePage> pages{
         {
-            "Display",
-            "Display Options",
+            "General",
+            "General Options",
             {
                 {
                     "Key scroll speed",
