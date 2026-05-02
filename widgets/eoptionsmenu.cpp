@@ -101,6 +101,8 @@ public:
             mListening = true;
             setText("Press key");
             fitContent();
+            const int minW = 60 * resolution().multiplier();
+            if(width() < minW) setWidth(minW);
             grabKeyboard();
         });
     }
@@ -125,6 +127,8 @@ private:
             setText("None");
         }
         fitContent();
+        const int minW = 60 * resolution().multiplier();
+        if(width() < minW) setWidth(minW);
     }
 
     SDL_Scancode mValue;
