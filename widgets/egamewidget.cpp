@@ -2,6 +2,9 @@
 
 #include "engine/egameboard.h"
 
+#include <filesystem>
+#include <algorithm>
+
 #include "engine/eknownendpathfinder.h"
 #include "eterraineditmenu.h"
 
@@ -167,7 +170,27 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         mBoard->waitUntilFinished();
         const auto w = window();
         const auto dir = w->leaderSaveDir();
-        w->saveGame(dir + "autosave history.ez");
+        const int year = mBoard->date().year();
+        std::string yearStr;
+        if(year < 0) yearStr = std::to_string(-(year  + 1)) + " BC";
+        else yearStr = std::to_string(year);
+        const auto filename = "AUTOSAVE YEAR " + yearStr + ".ez";
+        w->saveGame(dir + filename);
+        // Clean up old autosaves, keep only 5 most recent
+        std::vector<std::pair<std::filesystem::file_time_type, std::filesystem::path>> autosaves;
+        for(const auto& entry : std::filesystem::directory_iterator(dir)) {
+            const auto path = entry.path();
+            if(path.extension() != ".ez") continue;
+            const auto name = path.stem().string();
+            if(name.find("AUTOSAVE YEAR ") == 0) {
+                autosaves.emplace_back(entry.last_write_time(), path);
+            }
+        }
+        std::sort(autosaves.begin(), autosaves.end(),
+                  [](const auto& a, const auto& b) { return a.first > b.first; });
+        for(size_t i = 5; i < autosaves.size(); ++i) {
+            std::filesystem::remove(autosaves[i].second);
+        }
     });
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     mBoard->setEnlistForcesRequest([this](
