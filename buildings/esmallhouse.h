@@ -38,6 +38,10 @@ public:
     int taxSatisfaction() const { return mTaxSatisfaction; }
     int satisfaction() const { return mSatisfaction; }
 
+    int devolveDelay() const { return mDevolveDelay; }
+    int evictDelay() const { return mEvictDelay; }
+    int pendingEvict() const { return mPendingEvict; }
+
     eHouseMissing missing() const override;
 
     void read(eReadStream& src) override;
@@ -45,6 +49,7 @@ public:
 
     static std::string sName(const int level);
 private:
+    bool hasRequiredForLevel(const int level) const;
     void updateLevel();
     void updateSatisfaction();
 
@@ -74,6 +79,8 @@ private:
     stdptr<eSick> mSick;
     int mSpawnDisg = 0;
     stdptr<eDisgruntled> mDisg;
+
+    int mDevolveDelay = 0;
 };
 
 #endif // ESMALLHOUSE_H

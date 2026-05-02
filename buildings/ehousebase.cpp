@@ -3,7 +3,9 @@
 #include "engine/egameboard.h"
 
 #include "characters/esettler.h"
+#include "characters/ehomeless.h"
 #include "characters/actions/emovetoaction.h"
+#include "characters/actions/esettleraction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "enumbers.h"
 
@@ -69,35 +71,21 @@ int eHouseBase::moveIn(int c) {
 
 void eHouseBase::leave() {
     if(mPeople <= 0) return;
+    const int leaveCount = std::min(4, mPeople);
     auto& board = getBoard();
     auto& popData = eHouseBase::popData();
-    popData.incLeft(mPeople);
-    setPeople(0);
+    popData.incLeft(leaveCount);
+    setPeople(mPeople - leaveCount);
 
     const auto c = e::make_shared<eSettler>(getBoard());
     c->setEmigrant(true);
     c->setBothCityIds(cityId());
     c->changeTile(centerTile());
     const stdptr<eSettler> cptr(c.get());
-    const auto fail = std::make_shared<eKillCharacterFinishFail>(
-                          board, c.get());
-    const auto finish = std::make_shared<eKillCharacterFinishFail>(
-                            board, c.get());
-
-    const auto a = e::make_shared<eMoveToAction>(c.get());
-    a->setStateRelevance(eStateRelevance::buildings |
-                         eStateRelevance::terrain);
-    a->setFailAction(fail);
-    a->setFinishAction(finish);
-    a->setFindFailAction([cptr]() {
-        if(cptr) cptr->kill();
-    });
+    const auto a = e::make_shared<eSettlerAction>(c.get());
+    a->setNumberPeople(leaveCount);
     c->setAction(a);
     c->setActionType(eCharacterActionType::walk);
-    const auto edgeTile = [](eTileBase* const tile) {
-        return tile->isCityEdge();
-    };
-    a->start(edgeTile);
 }
 
 int eHouseBase::vacancies() const {
@@ -127,6 +115,8 @@ void eHouseBase::read(eReadStream& src) {
     src >> mCompetitors;
 
     src >> mUpdateCulture;
+
+    // mPendingEvict and mEvictDelay not saved
 }
 
 void eHouseBase::write(eWriteStream& dst) const {
@@ -148,6 +138,8 @@ void eHouseBase::write(eWriteStream& dst) const {
     dst << mCompetitors;
 
     dst << mUpdateCulture;
+
+    // mPendingEvict and mEvictDelay not saved
 }
 
 void eHouseBase::setLevel(const int l) {
@@ -189,6 +181,11 @@ void eHouseBase::setPeople(const int p) {
     if(popData) {
         const int vc = va - vb;
         popData->incVacancies(vc);
+    }
+
+    if(pc < 0) {
+        mPendingEvict += -pc;
+        mEvictDelay = 10;
     }
 }
 
