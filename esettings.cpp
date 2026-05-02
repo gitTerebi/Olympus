@@ -59,6 +59,17 @@ SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
     case eHotkeyId::bookmark2: return fHotkeyBookmark2;
     case eHotkeyId::bookmark3: return fHotkeyBookmark3;
     case eHotkeyId::bookmark4: return fHotkeyBookmark4;
+    case eHotkeyId::menuTab1: return fHotkeyMenuTab1;
+    case eHotkeyId::menuTab2: return fHotkeyMenuTab2;
+    case eHotkeyId::menuTab3: return fHotkeyMenuTab3;
+    case eHotkeyId::menuTab4: return fHotkeyMenuTab4;
+    case eHotkeyId::menuTab5: return fHotkeyMenuTab5;
+    case eHotkeyId::menuTab6: return fHotkeyMenuTab6;
+    case eHotkeyId::menuTab7: return fHotkeyMenuTab7;
+    case eHotkeyId::menuTab8: return fHotkeyMenuTab8;
+    case eHotkeyId::menuTab9: return fHotkeyMenuTab9;
+    case eHotkeyId::menuTab10: return fHotkeyMenuTab10;
+    case eHotkeyId::menuTab11: return fHotkeyMenuTab11;
     }
     return SDL_SCANCODE_UNKNOWN;
 }
@@ -84,6 +95,17 @@ void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     case eHotkeyId::bookmark2: fHotkeyBookmark2 = key; break;
     case eHotkeyId::bookmark3: fHotkeyBookmark3 = key; break;
     case eHotkeyId::bookmark4: fHotkeyBookmark4 = key; break;
+    case eHotkeyId::menuTab1: fHotkeyMenuTab1 = key; break;
+    case eHotkeyId::menuTab2: fHotkeyMenuTab2 = key; break;
+    case eHotkeyId::menuTab3: fHotkeyMenuTab3 = key; break;
+    case eHotkeyId::menuTab4: fHotkeyMenuTab4 = key; break;
+    case eHotkeyId::menuTab5: fHotkeyMenuTab5 = key; break;
+    case eHotkeyId::menuTab6: fHotkeyMenuTab6 = key; break;
+    case eHotkeyId::menuTab7: fHotkeyMenuTab7 = key; break;
+    case eHotkeyId::menuTab8: fHotkeyMenuTab8 = key; break;
+    case eHotkeyId::menuTab9: fHotkeyMenuTab9 = key; break;
+    case eHotkeyId::menuTab10: fHotkeyMenuTab10 = key; break;
+    case eHotkeyId::menuTab11: fHotkeyMenuTab11 = key; break;
     }
 }
 
@@ -157,6 +179,28 @@ void eSettings::write() const {
             std::to_string(fHotkeyBookmark3) << "\"" << "\n";
     file << "hotkey_bookmark_4" << " " << "\"" <<
             std::to_string(fHotkeyBookmark4) << "\"" << "\n";
+    file << "hotkey_menu_tab_1" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab1) << "\"" << "\n";
+    file << "hotkey_menu_tab_2" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab2) << "\"" << "\n";
+    file << "hotkey_menu_tab_3" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab3) << "\"" << "\n";
+    file << "hotkey_menu_tab_4" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab4) << "\"" << "\n";
+    file << "hotkey_menu_tab_5" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab5) << "\"" << "\n";
+    file << "hotkey_menu_tab_6" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab6) << "\"" << "\n";
+    file << "hotkey_menu_tab_7" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab7) << "\"" << "\n";
+    file << "hotkey_menu_tab_8" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab8) << "\"" << "\n";
+    file << "hotkey_menu_tab_9" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab9) << "\"" << "\n";
+    file << "hotkey_menu_tab_10" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab10) << "\"" << "\n";
+    file << "hotkey_menu_tab_11" << " " << "\"" <<
+            std::to_string(fHotkeyMenuTab11) << "\"" << "\n";
     const auto wStr = std::to_string(fRes.width());
     file << "width" << " " << "\"" << wStr << "\"" << "\n";
     const auto hStr = std::to_string(fRes.height());
@@ -239,6 +283,17 @@ void eSettings::read() {
     readHotkey("hotkey_bookmark_2", fHotkeyBookmark2);
     readHotkey("hotkey_bookmark_3", fHotkeyBookmark3);
     readHotkey("hotkey_bookmark_4", fHotkeyBookmark4);
+    readHotkey("hotkey_menu_tab_1", fHotkeyMenuTab1);
+    readHotkey("hotkey_menu_tab_2", fHotkeyMenuTab2);
+    readHotkey("hotkey_menu_tab_3", fHotkeyMenuTab3);
+    readHotkey("hotkey_menu_tab_4", fHotkeyMenuTab4);
+    readHotkey("hotkey_menu_tab_5", fHotkeyMenuTab5);
+    readHotkey("hotkey_menu_tab_6", fHotkeyMenuTab6);
+    readHotkey("hotkey_menu_tab_7", fHotkeyMenuTab7);
+    readHotkey("hotkey_menu_tab_8", fHotkeyMenuTab8);
+    readHotkey("hotkey_menu_tab_9", fHotkeyMenuTab9);
+    readHotkey("hotkey_menu_tab_10", fHotkeyMenuTab10);
+    readHotkey("hotkey_menu_tab_11", fHotkeyMenuTab11);
     if(fHotkeyRotatePreview == SDL_SCANCODE_R &&
        settings["hotkey_build_road"].empty()) {
         fHotkeyRotatePreview = SDL_SCANCODE_TAB;

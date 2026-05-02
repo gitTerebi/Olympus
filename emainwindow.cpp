@@ -645,6 +645,51 @@ std::vector<eOptionsMenu::ePage> eMainWindow::optionsPages() {
                 {"Bookmark 4", eHotkeyId::bookmark4, settings.fHotkeyBookmark4,
                  [this](const eHotkeyId id, const SDL_Scancode key) {
                      setHotkey(id, key);
+                 }},
+                {"--- Menu Tabs ---", eHotkeyId::menuTab1, settings.fHotkeyMenuTab1, nullptr},
+                {"Population tab", eHotkeyId::menuTab1, settings.fHotkeyMenuTab1,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Husbandry tab", eHotkeyId::menuTab2, settings.fHotkeyMenuTab2,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Industry tab", eHotkeyId::menuTab3, settings.fHotkeyMenuTab3,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Distribution tab", eHotkeyId::menuTab4, settings.fHotkeyMenuTab4,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Hygiene & safety tab", eHotkeyId::menuTab5, settings.fHotkeyMenuTab5,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Administration tab", eHotkeyId::menuTab6, settings.fHotkeyMenuTab6,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Culture tab", eHotkeyId::menuTab7, settings.fHotkeyMenuTab7,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Mythology tab", eHotkeyId::menuTab8, settings.fHotkeyMenuTab8,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Military tab", eHotkeyId::menuTab9, settings.fHotkeyMenuTab9,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Aesthetics tab", eHotkeyId::menuTab10, settings.fHotkeyMenuTab10,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
+                 }},
+                {"Overview tab", eHotkeyId::menuTab11, settings.fHotkeyMenuTab11,
+                 [this](const eHotkeyId id, const SDL_Scancode key) {
+                     setHotkey(id, key);
                  }}
             },
             {

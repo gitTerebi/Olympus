@@ -25,7 +25,18 @@ enum class eHotkeyId {
     bookmark1,
     bookmark2,
     bookmark3,
-    bookmark4
+    bookmark4,
+    menuTab1,
+    menuTab2,
+    menuTab3,
+    menuTab4,
+    menuTab5,
+    menuTab6,
+    menuTab7,
+    menuTab8,
+    menuTab9,
+    menuTab10,
+    menuTab11
 };
 
 struct eSettings {
@@ -72,6 +83,17 @@ struct eSettings {
     SDL_Scancode fHotkeyBookmark2 = SDL_SCANCODE_F2;
     SDL_Scancode fHotkeyBookmark3 = SDL_SCANCODE_F3;
     SDL_Scancode fHotkeyBookmark4 = SDL_SCANCODE_F4;
+    SDL_Scancode fHotkeyMenuTab1 = SDL_SCANCODE_1;
+    SDL_Scancode fHotkeyMenuTab2 = SDL_SCANCODE_2;
+    SDL_Scancode fHotkeyMenuTab3 = SDL_SCANCODE_3;
+    SDL_Scancode fHotkeyMenuTab4 = SDL_SCANCODE_4;
+    SDL_Scancode fHotkeyMenuTab5 = SDL_SCANCODE_5;
+    SDL_Scancode fHotkeyMenuTab6 = SDL_SCANCODE_6;
+    SDL_Scancode fHotkeyMenuTab7 = SDL_SCANCODE_7;
+    SDL_Scancode fHotkeyMenuTab8 = SDL_SCANCODE_8;
+    SDL_Scancode fHotkeyMenuTab9 = SDL_SCANCODE_9;
+    SDL_Scancode fHotkeyMenuTab10 = SDL_SCANCODE_0;
+    SDL_Scancode fHotkeyMenuTab11 = SDL_SCANCODE_MINUS;
 
     std::vector<eTileSize> availableSizes() const;
     static int clampKeyScrollSpeed(const int speed);

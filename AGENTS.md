@@ -21,3 +21,13 @@ cmake --build build-ninja --config Release -j 8
 ```
 
 Do not use `cmake --build build` or `cmake --build build-cmake` for normal verification.
+
+## Codebase Navigation
+
+**Terrain rendering:** `textures/etiletotexture.cpp` `eTileToTexture::get` — every `eTerrain` enum value needs a case in the switch or it returns `fInvalidTex`.
+
+**Texture loading:** `textures/eterraintextures.cpp` — terrain textures loaded lazily. Check `fBlackMarbleLoaded` pattern for new terrain types.
+
+**Tile color mods:** `egamewidgetpaint.cpp` paintEvent — patrol/editor tints via `setColorMod`, not terrain.
+
+**Render flow:** paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch.

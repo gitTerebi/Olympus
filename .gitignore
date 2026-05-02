@@ -74,3 +74,4 @@ Thumbs.db
 *.dll
 *.exe
 
+.claude/settings.json
