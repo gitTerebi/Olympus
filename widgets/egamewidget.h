@@ -179,6 +179,8 @@ private:
 
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverVisibleTiles(const eTileAction& a);
+    void playVisibleAmbientSound(const int minX, const int maxX,
+                                 const int minY, const int maxY);
 
     void setTileSize(const eTileSize size);
 
@@ -319,6 +321,8 @@ private:
     int mRotateFrame{0};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
+    int mLastAmbientSoundTime{0};
+    std::map<int, int> mAmbientSoundCooldowns;
     int mSpeedId = 4;
     int mSpeed = sSpeeds[mSpeedId];
     std::map<int, std::pair<int, int>> mBookmarks;
