@@ -1933,7 +1933,8 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
 void eGameWidget::switchPause() {
     mPaused = !mPaused;
     if(mPaused && !mPausedLabel) {
-        const auto str = eLanguage::zeusText(13, 2);
+        const auto hotkeyName = SDL_GetScancodeName(window()->settings().fHotkeyPause);
+        const auto str = std::string("Game Paused '") + hotkeyName + "' continues";
         const auto space = "     ";
         mPausedLabel = new eFramedLabel(space + str + space, window());
         mPausedLabel->setType(eFrameType::message);

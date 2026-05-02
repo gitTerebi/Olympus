@@ -7,24 +7,15 @@ class eMainMenu : public eMainMenuBase {
 public:
     using eMainMenuBase::eMainMenuBase;
 
-void initialize(const eAction& continueGameA,
-                     const bool continueGameEnabled,
-                     const eAction& newGameA,
-                     const eAction& loadGameA,
-                     const eAction& editGameA,
-                     const eAction& settingsA,
-                     const eAction& optionsA,
-                     const eAction& quitA,
-                     const eAction& leaderA);
-private:
-    bool mousePressEvent(const eMouseEvent& e);
-    bool mouseReleaseEvent(const eMouseEvent& e);
-    bool mouseMoveEvent(const eMouseEvent& e);
-    bool mouseEnterEvent(const eMouseEvent& e);
-    bool mouseLeaveEvent(const eMouseEvent& e);
-
-    bool mPressed = false;
-    bool mHover = false;
+    void initialize(const eAction& continueGameA,
+                    const bool continueGameEnabled,
+                    const eAction& newGameA,
+                    const eAction& loadGameA,
+                    const eAction& editGameA,
+                    const eAction& settingsA,
+                    const eAction& optionsA,
+                    const eAction& quitA,
+                    const eAction& leaderA);
 };
 
 #endif // EMAINMENU_H

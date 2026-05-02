@@ -31,3 +31,5 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 **Tile color mods:** `egamewidgetpaint.cpp` paintEvent — patrol/editor tints via `setColorMod`, not terrain.
 
 **Render flow:** paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch.
+
+**Options menu hotkeys:** defined in `emainwindow.cpp` as inline struct list (label, id, default, callback). Enum+storage in `esettings.h/cpp`, handling in `egamewidget.cpp keyPressEvent`.

@@ -73,32 +73,3 @@ void eMainMenu::initialize(const eAction& continueGameA,
     leader->setX((width() - tw)/2 + 2*p);
     leader->setY(2*p);
 }
-
-bool eMainMenu::mousePressEvent(const eMouseEvent& e) {
-    (void)e;
-    mPressed = true;
-    return true;
-}
-
-bool eMainMenu::mouseReleaseEvent(const eMouseEvent& e) {
-    (void)e;
-    mPressed = false;
-    return true;
-}
-
-bool eMainMenu::mouseMoveEvent(const eMouseEvent& e) {
-    (void)e;
-    return true;
-}
-
-bool eMainMenu::mouseEnterEvent(const eMouseEvent& e) {
-    (void)e;
-    mHover = true;
-    return true;
-}
-
-bool eMainMenu::mouseLeaveEvent(const eMouseEvent& e) {
-    (void)e;
-    mHover = false;
-    return true;
-}

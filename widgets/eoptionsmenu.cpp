@@ -1,6 +1,6 @@
 #include "eoptionsmenu.h"
 
-#include "eokbutton.h"
+#include "ecancelbutton.h"
 #include "eframedbutton.h"
 #include "elabel.h"
 #include "echeckbox.h"
@@ -275,22 +275,21 @@ void eOptionsMenu::initialize() {
     resize(std::min(w, resolution().width() - 2*p),
            std::min(h, resolution().height() - 2*p));
 
- mMainTitle = new eLabel("General Options", window());
-     mMainTitle->setHugeFontSize();
-     mMainTitle->fitContent();
-     addWidget(mMainTitle);
-     mMainTitle->align(eAlignment::hcenter);
-     mMainTitle->setY(p);
+      mMainTitle = new eLabel("General Options", window());
+      mMainTitle->setHugeFontSize();
+      mMainTitle->fitContent();
+      addWidget(mMainTitle);
+      mMainTitle->align(eAlignment::hcenter);
+      mMainTitle->setY(p);
 
-     const auto ok = new eOkButton(window());
-     ok->fitContent();
-     ok->setPressAction([this]() {
-         deleteLater();
-     });
-     addWidget(ok);
-     ok->align(eAlignment::bottom | eAlignment::right);
-     ok->setX(ok->x() - p);
-     ok->setY(ok->y() - p);
+      const auto ok = new eCancelButton(window());
+      ok->fitContent();
+      ok->setPressAction([this]() {
+          deleteLater();
+      });
+      addWidget(ok);
+      ok->setX(width() - ok->width() - (p + 20));
+      ok->setY(height() - ok->height() - (p + 20));
 
       const int contentY = mMainTitle->y() + mMainTitle->height() + p;
      const int contentH = ok->y() - contentY - p;
@@ -382,12 +381,12 @@ void eOptionsMenu::showPage(const int id) {
     mMainTitle->align(eAlignment::hcenter);
 
     const auto makeSlider = [this](const std::string& label,
-                                   const std::string& suffix,
-                                   const int min,
-                                   const int max,
-                                   const int value,
-                                   const eClampInt& clamp,
-                                   const std::function<void(int)>& action) {
+                                    const std::string& suffix,
+                                    const int min,
+                                    const int max,
+                                    const int value,
+                                    const eClampInt& clamp,
+                                    const std::function<void(int)>& action) {
         const auto w = new eWidget(window());
         w->setNoPadding();
         w->setWidth(mPage->width());
@@ -526,4 +525,12 @@ void eOptionsMenu::showPage(const int id) {
 void eOptionsMenu::clearPage() {
     if(!mPage) return;
     mPage->removeChildren();
+}
+
+bool eOptionsMenu::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        deleteLater();
+        return true;
+    }
+    return false;
 }

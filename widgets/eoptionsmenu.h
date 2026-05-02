@@ -53,6 +53,9 @@ public:
 
     void initialize();
 
+protected:
+    bool keyPressEvent(const eKeyPressEvent& e) override;
+
 private:
     void showPage(const int id);
     void clearPage();
