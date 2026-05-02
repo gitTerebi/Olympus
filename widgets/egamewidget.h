@@ -23,7 +23,6 @@ constexpr int kFpsClamp = 60;
 
 #include "eviewmode.h"
 #include "emessage.h"
-#include "echeckbox.h"
 
 #include "engine/eeventdata.h"
 

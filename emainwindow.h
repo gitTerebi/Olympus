@@ -8,6 +8,7 @@
 #include "textures/ebuildingtextures.h"
 #include "textures/echaractertextures.h"
 #include "widgets/esettingsmenu.h"
+#include "widgets/eoptionsmenu.h"
 
 using eSlot = std::function<void()>;
 
@@ -42,6 +43,7 @@ public:
     void setResolution(const eResolution& res);
     void setFullscreen(const bool f);
     void setKeyScrollSpeed(const int speed);
+    void setDisableEdgeScroll(const bool b);
     void setGameSpeed(const int speed);
     void setHotkey(const eHotkeyId id, const SDL_Scancode key);
     void setGeneralVolume(const int volume);
@@ -82,6 +84,8 @@ public:
     eWorldWidget* worldWidget() const { return mWW; }
 
     const eSettings& settings() const { return mSettings; }
+
+    std::vector<eOptionsMenu::ePage> optionsPages();
 
     void execDialog(eWidget* const d,
                     const bool closable = true,

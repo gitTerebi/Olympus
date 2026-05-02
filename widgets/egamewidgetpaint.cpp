@@ -426,15 +426,17 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(!incTime) break;
     }
 
-    if(mHoverX == 0) {
-        setDX(mDX + 35);
-    } else if(mHoverX == width() - 1) {
-        setDX(mDX - 35);
-    }
-    if(mHoverY == 0) {
-        setDY(mDY + 35);
-    } else if(mHoverY == height() - 1) {
-        setDY(mDY - 35);
+    if(!window()->settings().fDisableEdgeScroll) {
+        if(mHoverX == 0) {
+            setDX(mDX + 35);
+        } else if(mHoverX == width() - 1) {
+            setDX(mDX - 35);
+        }
+        if(mHoverY == 0) {
+            setDY(mDY + 35);
+        } else if(mHoverY == height() - 1) {
+            setDY(mDY - 35);
+        }
     }
     smoothScroll();
     eGameBoardRegisterLock lock(*mBoard);

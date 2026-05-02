@@ -8,6 +8,7 @@ inline bool operator==(const eSettings& s0, const eSettings& s1) {
     if(s0.fRes != s1.fRes) return false;
     if(s0.fFullscreen != s1.fFullscreen) return false;
     if(s0.fKeyScrollSpeed != s1.fKeyScrollSpeed) return false;
+    if(s0.fDisableEdgeScroll != s1.fDisableEdgeScroll) return false;
     return true;
 }
 

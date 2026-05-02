@@ -103,6 +103,8 @@ void eSettings::write() const {
             (fFullscreen ? "\"true\"" : "\"false\"") << "\n";
     file << "warehouse_default_accept_none" << " " <<
             (fWarehouseDefaultAcceptNone ? "\"true\"" : "\"false\"") << "\n";
+    file << "disable_edge_scroll" << " " <<
+            (fDisableEdgeScroll ? "\"true\"" : "\"false\"") << "\n";
     file << "key_scroll_speed" << " " << "\"" <<
             std::to_string(fKeyScrollSpeed) << "\"" << "\n";
     file << "game_speed" << " " << "\"" <<
@@ -173,6 +175,7 @@ void eSettings::read() {
     fLargeTextures = settings["large_textures"] == "true";
     fFullscreen = settings["fullscreen"] == "true";
     fWarehouseDefaultAcceptNone = settings["warehouse_default_accept_none"] == "true";
+    fDisableEdgeScroll = settings["disable_edge_scroll"] == "true";
     const auto keyScrollSpeedStr = settings["key_scroll_speed"];
     if(!keyScrollSpeedStr.empty()) {
         fKeyScrollSpeed = clampKeyScrollSpeed(std::stoi(keyScrollSpeedStr));

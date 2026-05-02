@@ -130,6 +130,11 @@ void eMainWindow::setKeyScrollSpeed(const int speed) {
     mSettings.write();
 }
 
+void eMainWindow::setDisableEdgeScroll(const bool b) {
+    mSettings.fDisableEdgeScroll = b;
+    mSettings.write();
+}
+
 void eMainWindow::setGameSpeed(const int speed) {
     mSettings.fGameSpeed = eSettings::clampGameSpeed(speed);
     mSettings.write();
@@ -522,9 +527,9 @@ void eMainWindow::showSettingsMenu() {
     setWidget(esm);
 }
 
-void eMainWindow::showOptionsMenu() {
+std::vector<eOptionsMenu::ePage> eMainWindow::optionsPages() {
     const auto& settings = mSettings;
-    const std::vector<eOptionsMenu::ePage> pages{
+    return {
         {
             "General",
             "General Options",
@@ -544,7 +549,16 @@ void eMainWindow::showOptionsMenu() {
                 }
             },
             {},
-            {}
+            {},
+            {
+                {
+                    "Disable edge scroll",
+                    settings.fDisableEdgeScroll,
+                    [this](const bool b) {
+                        setDisableEdgeScroll(b);
+                    }
+                }
+            }
         },
         {
             "Hotkeys",
@@ -731,7 +745,10 @@ void eMainWindow::showOptionsMenu() {
             {}
         }
     };
-    const auto d = new eOptionsMenu(pages, this);
+}
+
+void eMainWindow::showOptionsMenu() {
+    const auto d = new eOptionsMenu(optionsPages(), this);
     d->initialize();
     execDialog(d, false, [this]() { showMainMenu(); });
 }
