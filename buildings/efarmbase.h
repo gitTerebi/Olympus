@@ -2,6 +2,7 @@
 #define EFARMBASE_H
 
 #include "eresourcebuildingbase.h"
+#include "engine/edate.h"
 
 #include "textures/ebuildingtextures.h"
 
@@ -17,6 +18,9 @@ public:
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
+
+    int productionPercent() const;
+    eMonth nextHarvestMonth() const;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

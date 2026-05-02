@@ -2,8 +2,11 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include "engine/edate.h"
+#include "engine/egameboard.h"
 
 #include <algorithm>
+#include <cmath>
 
 eFarmBase::eFarmBase(eGameBoard& board,
                      const eBuildingType type,
@@ -74,6 +77,23 @@ void eFarmBase::timeChanged(const int by) {
         }
     }
     eResourceBuildingBase::timeChanged(by);
+}
+
+int eFarmBase::productionPercent() const {
+    const int currentStep = mCurrentTile * 5 + mCurrentStage;
+    return currentStep * 100 / 25;
+}
+
+eMonth eFarmBase::nextHarvestMonth() const {
+    const int currentStep = mCurrentTile * 5 + mCurrentStage;
+    const int remainingSteps = 25 - currentStep;
+    const double fullStepTime = eNumbers::sFarmRipePeriod / 5.0 / effectiveness();
+    const double partialStepTime = (eNumbers::sFarmRipePeriod / 5.0 - mNextRipe) / effectiveness();
+    const double remainingTimeMs = partialStepTime + (remainingSteps - 1) * fullStepTime;
+    const int remainingDays = std::round(remainingTimeMs / eNumbers::sDayLength);
+    const eDate currentDate = getBoard().date();
+    eDate harvestDate = currentDate + remainingDays;
+    return harvestDate.month();
 }
 
 void eFarmBase::read(eReadStream& src) {
