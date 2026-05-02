@@ -9,6 +9,9 @@
 
 #include "elineedit.h"
 
+#include "eframedbutton.h"
+#include "equestionwidget.h"
+
 #include <string>
 #include <iostream>
 #include <filesystem>
@@ -26,6 +29,7 @@ void eFileWidget::intialize(const std::string& title,
                             const eFileFunc& func,
                             const eAction& closeAction) {
     mFolder = folder;
+    mCloseAction = closeAction;
 
     setType(eFrameType::message);
 
@@ -74,15 +78,15 @@ void eFileWidget::intialize(const std::string& title,
     lineW->setX(2*p);
     addWidget(lineW);
 
-    const auto scrollCont = new eScrollWidgetComplete(window());
-    addWidget(scrollCont);
-    scrollCont->resize(ww - 4*p, hh - lineY - mLineEdit->height() - 10*p);
-    scrollCont->setY(lineY + mLineEdit->height() + 2*p);
-    scrollCont->setX(2*p);
-    scrollCont->initialize();
-    const int swwidth = scrollCont->listWidth();
+    mScrollCont = new eScrollWidgetComplete(window());
+    addWidget(mScrollCont);
+    mScrollCont->resize(ww - 4*p, hh - lineY - mLineEdit->height() - 10*p);
+    mScrollCont->setY(lineY + mLineEdit->height() + 2*p);
+    mScrollCont->setX(2*p);
+    mScrollCont->initialize();
+    const int swwidth = mScrollCont->listWidth();
 
-    const auto filesWidget = new eWidget(window());
+    mFilesWidget = new eWidget(window());
 
     std::map<time_t, fs::path> sorted;
     if(std::filesystem::exists(folder)) {
@@ -113,22 +117,48 @@ void eFileWidget::intialize(const std::string& title,
         b->setNoPadding();
         b->fitContent();
         b->setWidth(swwidth);
-        filesWidget->addWidget(b);
+        mFilesWidget->addWidget(b);
         b->setY(y);
         y += b->height();
         b->setPressAction([this, name]() {
             setFileName(name);
         });
     }
-    filesWidget->setNoPadding();
-    filesWidget->fitContent();
+    mFilesWidget->setNoPadding();
+    mFilesWidget->fitContent();
 
-    scrollCont->setScrollArea(filesWidget);
+    mScrollCont->setScrollArea(mFilesWidget);
 
     mLineEdit->resize(swwidth - 2*p, mLineEdit->height());
     lineW->resize(swwidth, mLineEdit->height());
 
-    mLineEdit->grabKeyboard();
+    const auto deleteB = new eFramedButton(window());
+    deleteB->setUnderline(false);
+    deleteB->setVerySmallFontSize();
+    deleteB->setLightFontColor();
+    deleteB->setText("Delete");
+    deleteB->setTextAlignment(eAlignment::center);
+    deleteB->fitContent();
+    deleteB->setWidth(90);
+    addWidget(deleteB);
+    deleteB->setY(lineY + mLineEdit->height() + mScrollCont->height() + 2*p);
+    deleteB->setX((ww - deleteB->width()) / 2);
+    deleteB->setPressAction([this]() {
+        const auto name = mLineEdit->text();
+        if(name.empty()) return;
+        const auto path = mFolder + name + ".ez";
+        if(!std::filesystem::exists(path)) return;
+        const auto q = new eQuestionWidget(window());
+        const auto acceptA = [this, path]() {
+            std::filesystem::remove(path);
+            mLineEdit->setText("");
+            rebuildFileList();
+        };
+        std::string msg = "Delete '" + name + "'?";
+        q->initialize("Confirm Delete", msg, acceptA, nullptr);
+        window()->execDialog(q);
+        q->align(eAlignment::center);
+    });
 }
 
 void eFileWidget::setFileName(const std::string& path) {
@@ -137,4 +167,70 @@ void eFileWidget::setFileName(const std::string& path) {
 
 std::string eFileWidget::filePath() const {
     return mFolder + mLineEdit->text() + ".ez";
+}
+
+void eFileWidget::rebuildFileList() {
+    // Clear existing file buttons
+    while (!mFilesWidget->children().empty()) {
+        auto w = mFilesWidget->children().back();
+        mFilesWidget->removeWidget(w);
+        w->deleteLater();
+    }
+    mFilesWidget->setNoPadding();
+
+    const int p = padding();
+    const auto res = window()->resolution();
+    const int ww = res.centralWidgetSmallWidth();
+
+    const int swwidth = mScrollCont->listWidth();
+
+    std::map<time_t, fs::path> sorted;
+    if(std::filesystem::exists(mFolder)) {
+        for(const auto& entry : fs::directory_iterator(mFolder)) {
+            const auto path = entry.path();
+            const auto ext = path.extension();
+            if(ext != ".ez") continue;
+            const auto lwt = fs::last_write_time(path);
+            const auto time = to_time_t(lwt);
+            sorted[-time] = path;
+        }
+    }
+
+    int y = 0;
+    for(const auto& entry : sorted) {
+        const auto path = entry.second;
+        const auto name = path.filename().stem().u8string();
+
+        const auto b = new eButton(name, window());
+        b->setUnderline(false);
+        b->setDarkFontColor();
+        b->setMouseEnterAction([b]() {
+            b->setLightFontColor();
+        });
+        b->setMouseLeaveAction([b]() {
+            b->setDarkFontColor();
+        });
+        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+        b->setNoPadding();
+        b->fitContent();
+        b->setWidth(swwidth);
+        mFilesWidget->addWidget(b);
+        b->setY(y);
+        b->setX(0);
+        b->setPressAction([this, name]() {
+            setFileName(name);
+        });
+
+        y += b->height();
+    }
+    mFilesWidget->fitContent();
+    mScrollCont->setScrollArea(mFilesWidget);
+}
+
+bool eFileWidget::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        if(mCloseAction) mCloseAction();
+        return true;
+    }
+    return false;
 }
