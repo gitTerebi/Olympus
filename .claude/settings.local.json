@@ -9,7 +9,7 @@
       "Bash(cmake --build build-ninja)",
       "Bash(.\\\\build.bat)",
       "Bash(Get-ChildItem -Recurse -Filter \"*menu*.cpp\")",
-      "Bash(Select-Object FullName)"
+      "Bash(sed -n *)"
     ]
   }
 }

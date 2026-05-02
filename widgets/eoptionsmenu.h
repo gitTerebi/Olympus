@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+class eLabel;
+
 class eOptionsMenu : public eFramedWidget {
 public:
     using eSetInt = std::function<void(const int)>;
@@ -58,6 +60,7 @@ private:
     std::vector<ePage> mPages;
     class eOptionsPageViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
+    eLabel* mMainTitle = nullptr;
 };
 
 #endif // EOPTIONSMENU_H
