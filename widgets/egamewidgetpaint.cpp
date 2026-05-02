@@ -1,5 +1,7 @@
 ﻿#include "egamewidget.h"
 
+#include "characters/actions/walkable/ewalkableobject.h"
+
 #include "eterraineditmenu.h"
 
 #include "textures/etiletotexture.h"
@@ -683,12 +685,9 @@ void eGameWidget::paintEvent(ePainter& p) {
         if(!tile) return false;
         return tile->hasRoad() || tile->underBuildingType() == eBuildingType::avenue;
     };
-    const auto canWalkRoadPreview = [](eTile* const tile) {
-        return tile && (tile->hasRoad() || tile->hasAvenue()) &&
-               !tile->hasRoadblock();
-    };
     const auto addRoamerPreview = [&](eTile* const start,
-                                      eRoadPreviewPath& path) {
+                                      eRoadPreviewPath& path,
+                                      const stdsptr<eWalkableObject>& walkable) {
         using eUseTimes = std::map<eTile*, std::array<int, 8>>;
         for(int i = 0; i < 4; i++) {
             eUseTimes useTimes;
@@ -702,7 +701,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 freq = std::min(freq + 1, 8);
                 const auto valid = [&](eTileBase* const t) {
                     const auto tt = static_cast<eTile*>(t);
-                    return canWalkRoadPreview(tt) &&
+                    return walkable->walkable(tt) &&
                            tt->neighbour<eTile>(o) != prev;
                 };
                 auto options = tile->diagonalNeighbours(valid);
@@ -728,7 +727,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                     }
                 }
                 const auto next = tile->neighbour<eTile>(o);
-                if(!canWalkRoadPreview(next)) break;
+                if(!walkable->walkable(next)) break;
                 useTimes[tile][static_cast<int>(o)] = time;
                 useTimes[next][static_cast<int>(!o)] = time;
                 prev = tile;
@@ -786,7 +785,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         const auto start = roads.front();
         const auto ret = roads.back();
         eRoadPreviewPath path;
-        addRoamerPreview(start, path);
+        const auto walkable = eWalkableObject::sCreateRoadblock();
+        addRoamerPreview(start, path, walkable);
         for(const auto& p : path) {
             drawRoadBandTile(p.first, start, ret, path);
         }
@@ -818,10 +818,11 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(!roads.empty()) {
                 patrolRoadStart = roads.front();
                 patrolRoadReturn = roads.back();
-                addRoamerPreview(patrolRoadStart, patrolRoadPreview);
+                const auto walkable = eWalkableObject::sCreateRoadblock();
+                addRoamerPreview(patrolRoadStart, patrolRoadPreview, walkable);
                 if(mPatrolBuilding->bothDirections() &&
                    patrolRoadReturn != patrolRoadStart) {
-                    addRoamerPreview(patrolRoadReturn, patrolRoadPreview);
+                    addRoamerPreview(patrolRoadReturn, patrolRoadPreview, walkable);
                 }
             }
         }

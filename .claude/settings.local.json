@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\somtam\\\\Downloads\\\\_repo\\\\eZeus\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)"
+    ]
+  }
+}
