@@ -9,6 +9,7 @@ public:
 protected:
     bool keyPressEvent(const eKeyPressEvent& e);
     bool mousePressEvent(const eMouseEvent& e);
+    bool mouseReleaseEvent(const eMouseEvent& e);
 };
 
 #endif // ECLOSABLEDIALOG_H
