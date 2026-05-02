@@ -370,6 +370,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         }
     }
     mFrame++;
+    const int prevAnimFrame = mAnimFrame;
+    mAnimFrame = mFrame * kBaseFPS / kFpsClamp;
     mRotateFrame++;
     bool updateTips = false;
     for(int i = 0; i < int(mTips.size()); i++) {
@@ -399,7 +401,7 @@ void eGameWidget::paintEvent(ePainter& p) {
         mSpeedLabel->deleteLater();
         mSpeedLabel = nullptr;
     }
-    mBoard->incFrame();
+    if(mAnimFrame != prevAnimFrame) mBoard->incFrame();
 
     const bool iterate = mSpeedId == sMaxSpeedId;
     const int iMax = iterate ? 5 : 1;
@@ -538,7 +540,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 if(fitX || fitY) {
                     rx += 0.5*(uDrawDim - 1) - dx;
                     ry += 1.5*(uDrawDim - 1) - dy;
-                    tex = upainter.getTexture(mFrame);
+                    tex = upainter.getTexture(mAnimFrame);
                     if(tex && !isPark) {
                         SDL_Rect clipRect;
                         clipRect.y = -10000;
@@ -551,7 +553,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 }
             }
         } else if(drawDim == 1) {
-            tex = painter.getTexture(mFrame);
+            tex = painter.getTexture(mAnimFrame);
         }
 
         if(tex) {
@@ -1577,7 +1579,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                                                  (!bothDirections ||
                                                   !eVectorHelpers::contains(mPatrolPath1, tile));
                             const auto& coll = builTexs.fSpawner;
-                            const int texId = mFrame % coll.size();
+                            const int texId = mAnimFrame % coll.size();
                             const auto& tex = coll.getTexture(texId);
                             if(invalid) tex->setColorMod(255, 125, 125);
                             //const auto& coll = builTexs.fPatrolGuides;
@@ -1602,7 +1604,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto& banners = tile->banners();
                 for(const auto& b : banners) {
                     const auto& coll = builTexs.fSpawner;
-                    const int texId = mFrame % coll.size();
+                    const int texId = mAnimFrame % coll.size();
                     const auto& tex = coll.getTexture(texId);
                     tp.drawTexture(rx, ry - 1, tex,
                                    eAlignment::hcenter | eAlignment::top);
@@ -1762,7 +1764,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto& bnr = bnrs[id % bnrs.size()];
                 int texId;
                 if(b->selected()) {
-                    texId = (mFrame/5) % 6;
+                    texId = (mAnimFrame/5) % 6;
                 } else {
                     texId = 6;
                 }
@@ -2091,7 +2093,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const int f = s && s->finished();
                 if(f) {
                     const auto& coll = builTexs.fSanctuaryFire;
-                    const int textureTime = mFrame/4;
+                    const int textureTime = mAnimFrame/4;
                     const int texId = textureTime % coll.size();
                     const auto& tex = coll.getTexture(texId);
                     tp.drawTexture(rx + 0.5, ry - 0.5, tex, eAlignment::bottom);

@@ -877,7 +877,7 @@ int eMainWindow::exec() {
     eTooltip tooltip(*this);
 
     const bool showFPS = false;
-    const double fpsClamp = 20;
+    const double fpsClamp = kFpsClamp;
 
     int c = 0;
     int fpsVal = 0;
