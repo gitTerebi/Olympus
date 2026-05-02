@@ -229,12 +229,12 @@ void eSmallHouse::timeChanged(const int by) {
             const auto pid = playerId();
             const auto diff = b.difficulty(pid);
             const int leaveRisk = eDifficultyHelpers::crimeRisk(diff);
-            if(leaveRisk && by) {
-                const int leavePeriod = m4/(by*leaveRisk);
-                if(leavePeriod && eRand::rand() % leavePeriod == 0) {
-                    leave();
-                }
+        if(leaveRisk && by && vacancies() > 0) {
+            const int leavePeriod = m4/(by*leaveRisk);
+            if(leavePeriod && eRand::rand() % leavePeriod == 0) {
+                leave();
             }
+        }
         }
     }
 
