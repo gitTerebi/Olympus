@@ -1,4 +1,5 @@
 #include "egamewidget.h"
+#include "emainwindow.h"
 
 #include "eiteratesquare.h"
 #include "engine/egameboard.h"
@@ -1415,8 +1416,16 @@ bool eGameWidget::buildMouseRelease() {
                   [this]() { return e::make_shared<eGranary>(*mBoard, mViewedCityId); });
         } break;
         case eBuildingMode::warehouse: {
+            stdsptr<eWarehouse> wh;
             r = mBoard->build(mHoverTX, mHoverTY, 3, 3, cid, pid, mEditorMode,
-                  [this]() { return e::make_shared<eWarehouse>(*mBoard, mViewedCityId); });
+                  [this, &wh]() {
+                      auto w = e::make_shared<eWarehouse>(*mBoard, mViewedCityId);
+                      wh = w;
+                      return w;
+                  });
+            if(r && wh && window()->settings().fWarehouseDefaultAcceptNone) {
+                wh->setOrders(eResourceType::none, eResourceType::none, eResourceType::none);
+            }
         } break;
 
         case eBuildingMode::tradePost: {

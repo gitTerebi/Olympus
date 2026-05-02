@@ -171,6 +171,11 @@ void eMainWindow::setAmbientVolume(const int volume) {
     mSettings.write();
 }
 
+void eMainWindow::setWarehouseDefaultAcceptNone(const bool b) {
+    mSettings.fWarehouseDefaultAcceptNone = b;
+    mSettings.write();
+}
+
 void eMainWindow::startGameAction(eGameBoard* const board,
                                   const eGameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {

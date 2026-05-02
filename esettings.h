@@ -42,6 +42,7 @@ struct eSettings {
     bool fMediumTextures = true;
     bool fLargeTextures = true;
     bool fFullscreen = false;
+    bool fWarehouseDefaultAcceptNone = false;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;
     int fGeneralVolume = 100;

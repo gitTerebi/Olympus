@@ -2524,6 +2524,22 @@ void eGameWidget::showOptionsMenu() {
             }
         },
         {
+            "Gameplay",
+            "Gameplay Options",
+            {},
+            {},
+            {},
+            {
+                {
+                    "Warehouse Default Accept None",
+                    settings.fWarehouseDefaultAcceptNone,
+                    [this](const bool b) {
+                        window()->setWarehouseDefaultAcceptNone(b);
+                    }
+                }
+            }
+        },
+        {
             "Sound",
             "Sound Options",
             {

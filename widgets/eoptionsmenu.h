@@ -12,6 +12,7 @@ class eOptionsMenu : public eFramedWidget {
 public:
     using eSetInt = std::function<void(const int)>;
     using eClampInt = std::function<int(const int)>;
+    using eSetBool = std::function<void(const bool)>;
 
     struct eSliderItem {
         std::string fLabel;
@@ -30,12 +31,19 @@ public:
         std::function<void(const eHotkeyId, const SDL_Scancode)> fSet;
     };
 
+    struct eCheckboxItem {
+        std::string fLabel;
+        bool fValue;
+        eSetBool fSet;
+    };
+
     struct ePage {
         std::string fButtonLabel;
         std::string fTitle;
         std::vector<eSliderItem> fSliders;
         std::vector<eHotkeyItem> fHotkeys;
         std::vector<std::string> fLines;
+        std::vector<eCheckboxItem> fCheckboxes;
     };
 
     eOptionsMenu(const std::vector<ePage>& pages,
