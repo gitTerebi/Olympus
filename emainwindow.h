@@ -67,6 +67,7 @@ public:
     void showRosterOfLeaders();
     void showMenuLoading();
     void showMainMenu();
+    void applyGraphicsSettings(const eSettings& settings);
     void showSettingsMenu();
     void showChooseGameMenu();
     void showChooseGameEditMenu();

@@ -28,6 +28,7 @@
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "eoptionsmenu.h"
+#include "esettingsmenu.h"
 #include "widgets/eboardsettingsmenu.h"
 #include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
@@ -2618,6 +2619,27 @@ void eGameWidget::showOptionsMenu() {
     addWidget(d);
     d->align(eAlignment::center);
     window()->execDialog(d);
+}
+
+void eGameWidget::showGraphicsMenu() {
+    const auto w = window();
+    const auto esm = new eSettingsMenu(w->settings(), w);
+    esm->resize(width(), height());
+    const auto applyA = [this, esm, w](const eSettings& settings) {
+        const bool loadNeeded = settings.fRes != w->settings().fRes;
+        w->applyGraphicsSettings(settings);
+        if(!loadNeeded) {
+            removeWidget(esm);
+            esm->deleteLater();
+        }
+    };
+    const auto fullscreenA = [w](const bool f) {
+        w->setFullscreen(f);
+    };
+    esm->initialize(applyA, fullscreenA);
+    addWidget(esm);
+    esm->align(eAlignment::center);
+    w->execDialog(esm);
 }
 
 void eGameWidget::selectHoveredBuildingMode() {

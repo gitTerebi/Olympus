@@ -484,25 +484,30 @@ void eMainWindow::showMainMenu() {
                    leaderAction);
 }
 
+void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
+    const bool loadNeeded = settings.fRes != mSettings.fRes;
+    setResolution(settings.fRes);
+    setFullscreen(settings.fFullscreen);
+    mSettings = settings;
+    mSettings.write();
+    if(!mSettings.fTinyTextures &&
+       !mSettings.fSmallTextures &&
+       !mSettings.fMediumTextures &&
+       !mSettings.fLargeTextures) {
+        mSettings.fSmallTextures = true;
+    }
+    eGameTextures::setSettings(mSettings);
+    if(loadNeeded) showMenuLoading();
+}
+
 void eMainWindow::showSettingsMenu() {
     const auto esm = new eSettingsMenu(mSettings, this);
     esm->resize(width(), height());
 
     const auto applyA = [this](const eSettings& settings) {
         const bool loadNeeded = settings.fRes != mSettings.fRes;
-        setResolution(settings.fRes);
-        setFullscreen(settings.fFullscreen);
-        mSettings = settings;
-        mSettings.write();
-        if(!mSettings.fTinyTextures &&
-           !mSettings.fSmallTextures &&
-           !mSettings.fMediumTextures &&
-           !mSettings.fLargeTextures) {
-            mSettings.fSmallTextures = true;
-        }
-        eGameTextures::setSettings(mSettings);
-        if(loadNeeded) showMenuLoading();
-        else showMainMenu();
+        applyGraphicsSettings(settings);
+        if(!loadNeeded) showMainMenu();
     };
     const auto fullscrennA = [this](const bool f) {
         setFullscreen(f);

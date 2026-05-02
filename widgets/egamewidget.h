@@ -162,6 +162,7 @@ private:
 
     void showGoals();
     void showOptionsMenu();
+    void showGraphicsMenu();
     void selectHoveredBuildingMode();
     void toggleViewMode(const eViewMode m);
 

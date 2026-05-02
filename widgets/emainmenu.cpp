@@ -52,7 +52,7 @@ void eMainMenu::initialize(const eAction& continueGameA,
     addButton(eLanguage::zeusText(1, 1), newGameA, buttons, w);
     addButton(eLanguage::zeusText(1, 3), loadGameA, buttons, w);
     addButton(eLanguage::zeusText(287, 3), editGameA, buttons, w);
-    addButton(eLanguage::zeusText(2, 0), settingsA, buttons, w);
+    addButton("Graphics", settingsA, buttons, w);
     addButton(eLanguage::zeusText(1, 5), quitA, buttons, w);
 
     buttons->layoutVertically();
