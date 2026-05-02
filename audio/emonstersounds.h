@@ -22,7 +22,7 @@ public:
     void play(const eMonsterSound s);
 
     void playVoice() {
-        fVoice->playRandomSound();
+        fVoice->playRandomSound(eSoundType::voice);
     }
 
     void playAttack() {

@@ -2471,6 +2471,19 @@ void eGameWidget::showOptionsMenu() {
             "Sound Options",
             {
                 {
+                    "General volume",
+                    eSettings::sMinVolume,
+                    eSettings::sMaxVolume,
+                    settings.fGeneralVolume,
+                    "%",
+                    [](const int v) {
+                        return eSettings::clampVolume(v);
+                    },
+                    [this](const int v) {
+                        window()->setGeneralVolume(v);
+                    }
+                },
+                {
                     "Music volume",
                     eSettings::sMinVolume,
                     eSettings::sMaxVolume,

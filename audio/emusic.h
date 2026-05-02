@@ -28,7 +28,9 @@ public:
     static void playCampaignVictoryMusic();
 
     static bool playCampaignVoice(const std::string& path);
+    static void setGeneralVolume(const int volume);
     static void setVolume(const int volume);
+    static void setVoiceVolume(const int volume);
 private:
     void incTimeImpl();
 

@@ -604,7 +604,7 @@ struct eCharMessage {
 
     bool playSound() const {
         if(!fSounds) return false;
-        fSounds->play(fSoundId, 1);
+        fSounds->play(fSoundId, eSoundType::voice, 1);
         return true;
     }
 };

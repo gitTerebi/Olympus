@@ -79,8 +79,13 @@ bool eMainWindow::initialize(const eSettings& settings) {
     const auto icon = IMG_Load(icoPath.c_str());
     SDL_SetWindowIcon(window, icon);
     eGameTextures::setSettings(mSettings);
+    eMusic::setGeneralVolume(mSettings.fGeneralVolume);
+    eSounds::setGeneralVolume(mSettings.fGeneralVolume);
     eMusic::setVolume(mSettings.fMusicVolume);
-    eSounds::setVolume(mSettings.fSoundsVolume);
+    eMusic::setVoiceVolume(mSettings.fVoiceVolume);
+    eSounds::setVoiceVolume(mSettings.fVoiceVolume);
+    eSounds::setEventVolume(mSettings.fEventVolume);
+    eSounds::setAmbientVolume(mSettings.fAmbientVolume);
     return true;
 }
 
@@ -134,15 +139,35 @@ void eMainWindow::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     mSettings.write();
 }
 
+void eMainWindow::setGeneralVolume(const int volume) {
+    mSettings.fGeneralVolume = eSettings::clampVolume(volume);
+    eMusic::setGeneralVolume(mSettings.fGeneralVolume);
+    eSounds::setGeneralVolume(mSettings.fGeneralVolume);
+    mSettings.write();
+}
+
 void eMainWindow::setMusicVolume(const int volume) {
     mSettings.fMusicVolume = eSettings::clampVolume(volume);
     eMusic::setVolume(mSettings.fMusicVolume);
     mSettings.write();
 }
 
-void eMainWindow::setSoundsVolume(const int volume) {
-    mSettings.fSoundsVolume = eSettings::clampVolume(volume);
-    eSounds::setVolume(mSettings.fSoundsVolume);
+void eMainWindow::setVoiceVolume(const int volume) {
+    mSettings.fVoiceVolume = eSettings::clampVolume(volume);
+    eMusic::setVoiceVolume(mSettings.fVoiceVolume);
+    eSounds::setVoiceVolume(mSettings.fVoiceVolume);
+    mSettings.write();
+}
+
+void eMainWindow::setEventVolume(const int volume) {
+    mSettings.fEventVolume = eSettings::clampVolume(volume);
+    eSounds::setEventVolume(mSettings.fEventVolume);
+    mSettings.write();
+}
+
+void eMainWindow::setAmbientVolume(const int volume) {
+    mSettings.fAmbientVolume = eSettings::clampVolume(volume);
+    eSounds::setAmbientVolume(mSettings.fAmbientVolume);
     mSettings.write();
 }
 
