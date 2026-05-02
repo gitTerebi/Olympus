@@ -8,6 +8,7 @@ Pattern: [thing] [action] [reason]. [next step].
 ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift.
 Code/commits/PRs: normal.
 Use AntD v6 api spec.
+Where possible, refactor repeated functions into shared local helpers.
 
 ## Build
 
