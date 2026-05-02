@@ -1947,6 +1947,7 @@ void eGameWidget::switchPause() {
         mPausedLabel = nullptr;
     }
     updateTipPositions();
+    updateToastPositions();
 }
 
 void eGameWidget::setSpeedId(const int id) {

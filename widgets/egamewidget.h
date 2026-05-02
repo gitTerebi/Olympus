@@ -320,8 +320,8 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[5] = {8, 12, 16, 24, 40};
-    const char* const sSpeedLabels[5] = {"1x", "1.5x", "2x", "3x", "5x"};
+    const int sSpeeds[5] = {16, 32, 48, 64, 80};
+    const char* const sSpeedLabels[5] = {"1x", "2x", "3x", "4x", "TURBO"};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
@@ -333,7 +333,7 @@ private:
     int mTime{0};
     int mLastAmbientSoundTime{0};
     std::map<int, int> mAmbientSoundCooldowns;
-    int mSpeedId = 4;
+    int mSpeedId = 0;
     int mSpeed = sSpeeds[mSpeedId];
     std::map<int, std::pair<int, int>> mBookmarks;
 
