@@ -1,6 +1,9 @@
 #ifndef EGAMEWIDGET_H
 #define EGAMEWIDGET_H
 
+constexpr int kBaseFPS = 10;
+constexpr int kFpsClamp = 60;
+
 #include <deque>
 
 #include "emainwidget.h"
@@ -317,12 +320,14 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[5] = {25, 50, 100, 150, 200};
+    const int sSpeeds[5] = {8, 12, 16, 24, 40};
+    const char* const sSpeedLabels[5] = {"1x", "1.5x", "2x", "3x", "5x"};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
     bool mLocked = false;
     int mFrame{0};
+    int mAnimFrame{0};
     int mRotateFrame{0};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
