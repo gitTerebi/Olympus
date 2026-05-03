@@ -30,7 +30,7 @@ public:
         const int rowHeight = mult*23;
         const int countWidth = mult*25;
         const int iconsWidth = mult*40;
-        const int namesWidth = mult*120;
+        const int namesWidth = mult*140;
         const int buttonsWidth = mult*160;
         const int spinsWidth = mult*90;
 
@@ -50,7 +50,7 @@ public:
             icon->setTexture(tex);
             icon->fitContent();
             icon->setHeight(rowHeight);
-            icon->setVisible(c > 0);
+            icon->setVisible(true);
 
             const auto nameStr = eResourceTypeHelpers::typeName(type);
             eLabel* n = nullptr;

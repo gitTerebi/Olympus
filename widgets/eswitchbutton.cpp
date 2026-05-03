@@ -6,6 +6,10 @@ eSwitchButton::eSwitchButton(eMainWindow* const window) :
         switchValue();
         if(mSwitchAction) mSwitchAction(mCurrentValue);
     });
+    setRightPressAction([this]() {
+        switchValueBack();
+        if(mSwitchAction) mSwitchAction(mCurrentValue);
+    });
 }
 
 int eSwitchButton::addValue(const std::string& v) {
@@ -17,6 +21,11 @@ int eSwitchButton::addValue(const std::string& v) {
 
 void eSwitchButton::switchValue() {
     setValue(mCurrentValue + 1);
+}
+
+void eSwitchButton::switchValueBack() {
+    const int maxVal = mValues.size();
+    setValue((mCurrentValue + maxVal - 1) % maxVal);
 }
 
 void eSwitchButton::setValue(const int v) {

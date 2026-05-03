@@ -11,6 +11,7 @@ public:
     int currentValue() const { return mCurrentValue; }
 
     void switchValue();
+    void switchValueBack();
     void setValue(const int v);
 
     using eSwitchAction = std::function<void(int)>;
