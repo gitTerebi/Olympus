@@ -33,6 +33,7 @@ class eWorldWidget;
 struct eGodMessages;
 struct eHeroMessages;
 class eMessageBox;
+class eMessageListWidget;
 class eGameBoard;
 class eAgoraBase;
 class eInfoWidget;
@@ -145,6 +146,14 @@ public:
 
     void centerDialog(eWidget* const d);
     void openDialog(eWidget* const d) override;
+
+    void showMessage(eEventData& ed, const eMessage& msg,
+                     const bool prepend = false,
+                     const bool forcePopup = false,
+                     const bool addToList = true);
+    void pauseGame() { switchPause(); }
+    bool gamePaused() const { return mPaused; }
+    void setMessageListWidget(eMessageListWidget* const w) { mMsgListWidget = w; }
 protected:
     void paintEvent(ePainter& p) override;
 
@@ -252,9 +261,6 @@ private:
     int hippodromeId() const;
     void updateHippodromeIds();
 
-    void showMessage(eEventData& ed, const eMessage& msg,
-                     const bool prepend = false,
-                     const bool forcePopup = false);
     void showMessage(eEventData& ed, const eMessageType& msg,
                      const bool prepend = false);
     void showMessage(eEventData& ed, const eEventMessageType& msg,
@@ -396,6 +402,7 @@ private:
     eInfoWidget* mInfoWidget = nullptr;
     eMessageBox* mMsgBox = nullptr;
     std::deque<eSavedMessage> mSavedMsgs;
+    eMessageListWidget* mMsgListWidget = nullptr;
     eTerrainEditMenu* mTem = nullptr;
     eGameMenu* mGm = nullptr;
     eArmyMenu* mAm = nullptr;

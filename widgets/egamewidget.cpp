@@ -1,5 +1,6 @@
 #include "egamewidget.h"
 
+#include "emessagelistwidget.h"
 #include "eoptionsdata.h"
 #include "engine/egameboard.h"
 
@@ -1191,7 +1192,7 @@ void eGameWidget::updateHippodromeIds() {
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessageType& msg,
                               const bool prepend) {
-    showMessage(ed, msg.fFull, prepend);
+    showMessage(ed, msg.fFull, prepend, false, true);
 }
 
 void eGameWidget::showMessage(eEventData& ed,
@@ -1203,7 +1204,7 @@ void eGameWidget::showMessage(eEventData& ed,
         reason = msg.fNoReason;
     }
     eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
-    showMessage(ed, m.fFull, prepend);
+    showMessage(ed, m.fFull, prepend, false, true);
 }
 
 void eGameWidget::showTip(const ePlayerCityTarget& target,
@@ -1323,7 +1324,7 @@ void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
         }
         tw->deleteLater();
         updateToastPositions();
-        showMessage(edCopy, msg, false, true);
+        showMessage(edCopy, msg, false, true, true);
     };
     tw->setPressAction(onClick);
     addWidget(tw);
@@ -1339,6 +1340,7 @@ void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
     // 5 seconds at ~60fps = 300 frames
     toast.fExpireFrame = mFrame + 300;
     updateToastPositions();
+    if(mMsgListWidget) mMsgListWidget->addMessage(ed, msg, mBoard->date());
 }
 
 void eGameWidget::updateToastPositions() {
@@ -1362,7 +1364,8 @@ void eGameWidget::updateToastPositions() {
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessage& msg,
                               const bool prepend,
-                              const bool forcePopup) {
+                              const bool forcePopup,
+                              const bool addToList) {
     const auto& target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
     if(target.isPlayerTarget()) {
@@ -1381,7 +1384,9 @@ void eGameWidget::showMessage(eEventData& ed,
         showToast(ed, msg);
         return;
     }
-    
+
+    if(addToList && mMsgListWidget) mMsgListWidget->addMessage(ed, msg, mBoard->date());
+
     if(mMsgBox) {
         auto& smsg = prepend ? mSavedMsgs.emplace_front() :
                                mSavedMsgs.emplace_back();
@@ -1422,7 +1427,7 @@ void eGameWidget::showMessage(eEventData& ed,
         if(!wasPaused) switchPause();
         if(mSavedMsgs.empty()) return;
         auto& msg = mSavedMsgs.front();
-        showMessage(msg.fEd, msg.fMsg, false, msg.fForcePopup);
+        showMessage(msg.fEd, msg.fMsg, false, msg.fForcePopup, true);
         mSavedMsgs.pop_front();
     };
 

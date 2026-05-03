@@ -31,6 +31,7 @@ enum class eEvent;
 struct eEventData;
 class eRotateButton;
 class eDataWidget;
+class eMessageListWidget;
 
 struct eSubButtonData;
 
@@ -111,6 +112,9 @@ private:
     eCheckableButton* mMilitaryButton = nullptr;
     eCheckableButton* mAesthethicsButton = nullptr;
     eCheckableButton* mOverviewButton = nullptr;
+    eButton* mMessagesButton = nullptr;
+    eMessageListWidget* mMsgListW = nullptr;
+    eLabel* mMsgBadge = nullptr;
 
     ePopulationDataWidget* mPopDataW = nullptr;
     eEmploymentDataWidget* mEmplDataW = nullptr;
@@ -146,6 +150,7 @@ private:
     eAction mModeChangeAct;
 
     bool mShowAllPossibleBuildings = false;
+    bool mMsgListWasPaused = false;
 };
 
 #endif // EGAMEMENU_H
