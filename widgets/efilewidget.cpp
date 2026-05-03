@@ -141,8 +141,8 @@ void eFileWidget::intialize(const std::string& title,
     deleteB->fitContent();
     deleteB->setWidth(90);
     addWidget(deleteB);
-    deleteB->setY(lineY + mLineEdit->height() + mScrollCont->height() + 2*p);
-    deleteB->setX((ww - deleteB->width()) / 2);
+    deleteB->align(eAlignment::bottom | eAlignment::hcenter);
+    deleteB->setY(deleteB->y() - 2*p);
     deleteB->setPressAction([this]() {
         const auto name = mLineEdit->text();
         if(name.empty()) return;
