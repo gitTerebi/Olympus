@@ -23,6 +23,7 @@
 #include "eeventwidget.h"
 
 #include "egamewidget.h"
+#include "emessagelistwidget.h"
 
 #include "elanguage.h"
 
@@ -1061,8 +1062,32 @@ void eGameMenu::initialize(eGameBoard* const b,
     }
 
     {
-        const auto m = eCheckableButton::sCreate(coll.fMessages, window(), this);
-        m->move(mult*73, mult*239);
+        mMessagesButton = eButton::sCreate(coll.fMessages, window(), this);
+        mMessagesButton->setPressAction([this]() {
+            if(mMsgListW) {
+                if(mMsgListW->visible()) {
+                    mMsgListW->hide();
+                    if(!mMsgListWasPaused) mGW->pauseGame();
+                } else {
+                    mMsgListWasPaused = mGW->gamePaused();
+                    if(!mMsgListWasPaused) mGW->pauseGame();
+                    // position to the left of game menu, vertically centered
+                    const int gmx = x();
+                    const int gmy = y();
+                    const int mlwW = mMsgListW->width();
+                    const int mlwH = mMsgListW->height();
+                    mMsgListW->move(gmx - mlwW, gmy + (height() - mlwH) / 2);
+                    mMsgListW->show();
+                }
+            }
+        });
+        mMessagesButton->move(mult*73, mult*239);
+
+        mMsgBadge = new eLabel(window());
+        mMsgBadge->setSmallFontSize();
+        mMsgBadge->setTinyPadding();
+        mMsgBadge->setVisible(false);
+        addWidget(mMsgBadge);
     }
     {
         const auto butts = new eWidget(window());
@@ -1112,6 +1137,35 @@ void eGameMenu::setGameWidget(eGameWidget* const gw) {
     if(mCultureDataW) mCultureDataW->setGameWidget(gw);
     if(mScienceDataW) mScienceDataW->setGameWidget(gw);
     mOverDataW->setGameWidget(gw);
+
+    {
+        const auto mlw = new eMessageListWidget(window());
+        const int mlwW = gw->width() / 3;
+        const int mlwH = gw->height() / 2;
+        mlw->resize(mlwW, mlwH);
+        mlw->initialize([gw](eEventData ed, const eMessage& msg) {
+            gw->showMessage(ed, msg, false, true, false);
+        }, [this]() {
+            if(!mMsgListWasPaused) mGW->pauseGame();
+        });
+        mlw->setVisible(false);
+        mlw->setUnreadChangedAction([this](const int n) {
+            if(!mMsgBadge) return;
+            if(n <= 0) {
+                mMsgBadge->setVisible(false);
+                return;
+            }
+            mMsgBadge->setText(std::to_string(n));
+            mMsgBadge->fitContent();
+            const int bx = mMessagesButton->x() + (mMessagesButton->width() - mMsgBadge->width()) / 2;
+            const int by = mMessagesButton->y() + (mMessagesButton->height() - mMsgBadge->height()) / 2;
+            mMsgBadge->move(bx, by - 2);
+            mMsgBadge->setVisible(true);
+        });
+        gw->addWidget(mlw);
+        gw->setMessageListWidget(mlw);
+        mMsgListW = mlw;
+    }
 
     mWorldButton->setPressAction([this]() {
         window()->showWorld();

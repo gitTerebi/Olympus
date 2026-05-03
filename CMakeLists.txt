@@ -649,6 +649,7 @@ set(SOURCES
     widgets/emainwidget.cpp
     widgets/emenuloadingwidget.cpp
     widgets/emessagebox.cpp
+    widgets/emessagelistwidget.cpp
     widgets/emessagewidget.cpp
     widgets/emicrobutton.cpp
     widgets/emilitarymoreinfowidget.cpp
