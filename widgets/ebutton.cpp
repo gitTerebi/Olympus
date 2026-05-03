@@ -35,8 +35,16 @@ void eButton::sizeHint(int& w, int& h) {
 }
 
 void eButton::paintEvent(ePainter& p) {
-    if(!enabled() && mDisabledTexture) {
-        p.drawTexture(rect(), mDisabledTexture, textAlignment());
+    if(!enabled()) {
+        if(mDisabledTexture) {
+            p.drawTexture(rect(), mDisabledTexture, textAlignment());
+        } else {
+            const auto& t = texture();
+            if(t) t->setAlpha(10);
+            eLabel::paintEvent(p);
+            if(t) t->clearAlphaMod();
+        }
+        return;
     } else if(pressed() && mPressedTexture) {
         p.drawTexture(rect(), mPressedTexture, textAlignment());
     } else if(hovered()) {

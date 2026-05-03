@@ -253,7 +253,9 @@ void eGameMenu::setWorldDirection(const eWorldDirection dir) {
 }
 
 void eGameMenu::update() {
-
+    if(mUndoButton && mBoard) {
+        mUndoButton->setEnabled(mBoard->undoValid());
+    }
 }
 
 void eGameMenu::setShowAllPossibleBuildings(const bool b) {
@@ -1025,9 +1027,10 @@ void eGameMenu::initialize(eGameBoard* const b,
         e->setPressAction([this]() {
             setMode(eBuildingMode::erase);
         });
-        const auto ub = eButton::sCreate(coll.fUndo, window(), btmButtons);
-        ub->setPressAction([this]() {
+        mUndoButton = eButton::sCreate(coll.fUndo, window(), btmButtons);
+        mUndoButton->setPressAction([this]() {
             mBoard->undoLastAction();
+            update();
         });
 
         const int x = mult*24;
@@ -1092,6 +1095,7 @@ void eGameMenu::initialize(eGameBoard* const b,
     mMiniMap->setBoard(b);
 
     updateButtonsVisibility();
+    update();
 }
 
 void eGameMenu::setGameWidget(eGameWidget* const gw) {

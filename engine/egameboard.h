@@ -160,6 +160,7 @@ public:
     void game_undo_start_build(eBuildingType type);
     void game_undo_finish_build();
     void undoLastAction();
+    bool undoValid() const { return mUndo.valid(); }
 
     bool unregisterCommonHouse(eSmallHouse* const ch);
 
