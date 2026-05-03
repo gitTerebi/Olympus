@@ -32,6 +32,8 @@ public:
 
     void setViewBoxSize(const double fx, const double fy);
 
+    void setTDim(const int dim) { mTDim = dim; }
+
     void scheduleUpdate();
     void scheduleTotalUpdate();
     void scheduleTilesUpdate(const std::vector<eTile*>& tiles);

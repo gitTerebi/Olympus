@@ -929,8 +929,9 @@ void eGameMenu::initialize(eGameBoard* const b,
 
     mOverDataW = new eOverviewDataWidget(*b, window());
     mMiniMap = new eMiniMap(window());
+    mMiniMap->setTDim(1.25*mult);
     mOverDataW->setMap(mMiniMap);
-    mMiniMap->resize(dataWidWidth, 4*dataWidWidth/5);
+    mMiniMap->resize(dataWidWidth, dataWidWidth * 0.85);
 
     const auto ww11 = createDataWidgetBase(mOverDataW, mMiniMap,
                                            eLanguage::zeusText(88, 10));
@@ -1118,7 +1119,7 @@ void eGameMenu::initialize(eGameBoard* const b,
     }
 
     mMiniMap->setBoard(b);
-
+   
     updateButtonsVisibility();
     update();
 }
