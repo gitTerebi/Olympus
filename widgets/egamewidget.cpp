@@ -2039,6 +2039,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         selectHoveredBuildingMode();
     } else if(k == hotkeys.fHotkeyDeleteTool) {
         mGm->setMode(eBuildingMode::erase);
+    } else if(k == hotkeys.fHotkeyUndo) {
+        mBoard->undoLastAction();
     } else if(k == hotkeys.fHotkeyShowRoadsOverlay) {
         toggleViewMode(eViewMode::roads);
     } else if(k == hotkeys.fHotkeyBuildRoad) {

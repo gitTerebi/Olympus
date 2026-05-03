@@ -47,6 +47,7 @@ SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
     case eHotkeyId::rotatePreview: return fHotkeyRotatePreview;
     case eHotkeyId::copyBuilding: return fHotkeyCopyBuilding;
     case eHotkeyId::deleteTool: return fHotkeyDeleteTool;
+    case eHotkeyId::undo: return fHotkeyUndo;
     case eHotkeyId::showRoadsOverlay: return fHotkeyShowRoadsOverlay;
     case eHotkeyId::buildRoad: return fHotkeyBuildRoad;
     case eHotkeyId::buildRoadblock: return fHotkeyBuildRoadblock;
@@ -85,6 +86,7 @@ void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     case eHotkeyId::rotatePreview: fHotkeyRotatePreview = key; break;
     case eHotkeyId::copyBuilding: fHotkeyCopyBuilding = key; break;
     case eHotkeyId::deleteTool: fHotkeyDeleteTool = key; break;
+    case eHotkeyId::undo: fHotkeyUndo = key; break;
     case eHotkeyId::showRoadsOverlay: fHotkeyShowRoadsOverlay = key; break;
     case eHotkeyId::buildRoad: fHotkeyBuildRoad = key; break;
     case eHotkeyId::buildRoadblock: fHotkeyBuildRoadblock = key; break;
@@ -159,6 +161,8 @@ void eSettings::write() const {
             std::to_string(fHotkeyCopyBuilding) << "\"" << "\n";
     file << "hotkey_delete_tool" << " " << "\"" <<
             std::to_string(fHotkeyDeleteTool) << "\"" << "\n";
+    file << "hotkey_undo" << " " << "\"" <<
+            std::to_string(fHotkeyUndo) << "\"" << "\n";
     file << "hotkey_show_roads_overlay" << " " << "\"" <<
             std::to_string(fHotkeyShowRoadsOverlay) << "\"" << "\n";
     file << "hotkey_build_road" << " " << "\"" <<
@@ -279,6 +283,7 @@ void eSettings::read() {
     readHotkey("hotkey_rotate_preview", fHotkeyRotatePreview);
     readHotkey("hotkey_copy_building", fHotkeyCopyBuilding);
     readHotkey("hotkey_delete_tool", fHotkeyDeleteTool);
+    readHotkey("hotkey_undo", fHotkeyUndo);
     readHotkey("hotkey_show_roads_overlay", fHotkeyShowRoadsOverlay);
     readHotkey("hotkey_build_road", fHotkeyBuildRoad);
     readHotkey("hotkey_build_roadblock", fHotkeyBuildRoadblock);

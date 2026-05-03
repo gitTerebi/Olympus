@@ -14,6 +14,7 @@ enum class eHotkeyId {
     rotatePreview,
     copyBuilding,
     deleteTool,
+    undo,
     showRoadsOverlay,
     buildRoad,
     buildRoadblock,
@@ -73,6 +74,7 @@ struct eSettings {
     SDL_Scancode fHotkeyRotatePreview = SDL_SCANCODE_TAB;
     SDL_Scancode fHotkeyCopyBuilding = SDL_SCANCODE_C;
     SDL_Scancode fHotkeyDeleteTool = SDL_SCANCODE_Z;
+    SDL_Scancode fHotkeyUndo = SDL_SCANCODE_U;
     SDL_Scancode fHotkeyShowRoadsOverlay = SDL_SCANCODE_V;
     SDL_Scancode fHotkeyBuildRoad = SDL_SCANCODE_R;
     SDL_Scancode fHotkeyBuildRoadblock = SDL_SCANCODE_F;
