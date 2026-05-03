@@ -53,7 +53,7 @@ public:
 
     int tradeCityId() const { return mTradeCityId; }
     eBuildingMode mode() const { return mMode; }
-    void clearMode() { mMode = eBuildingMode::none; }
+    void clearMode() { setMode(eBuildingMode::none); }
     void setMode(const eBuildingMode mode);
 
     void setGameWidget(eGameWidget* const gw);

@@ -15,6 +15,7 @@
 
 #include "audio/emusic.h"
 #include "audio/esounds.h"
+#include "ecursors.h"
 
 bool init() {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -179,8 +180,10 @@ int main() {
         const bool i = w.initialize(settings);
         if(!i) return 1;
         const bool e = eGameTextures::initialize(w.renderer());
+        eCursors::initialize();
 
         if(e) r = w.exec();
+        eCursors::destroy();
     }
 
     close();
