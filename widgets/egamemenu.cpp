@@ -1091,7 +1091,14 @@ void eGameMenu::initialize(eGameBoard* const b,
         addWidget(mMsgBadge);
     }
     {
-        const auto butts = new eWidget(window());
+        class eBlueWidget : public eWidget {
+        public:
+            eBlueWidget(eMainWindow* const w) : eWidget(w) {}
+            void paintEvent(ePainter& p) override {
+                p.fillRect({0, 0, width(), height()}, {11, 75, 110, 255});
+            }
+        };
+        const auto butts = new eBlueWidget(window());
         butts->setPadding(0);
         const auto goals = new eBasicButton(&eInterfaceTextures::fGoals, window());
         goals->setTooltip(eLanguage::zeusText(68, 9));
@@ -1101,7 +1108,7 @@ void eGameMenu::initialize(eGameBoard* const b,
         butts->addWidget(mRotateButton);
         mWorldButton = eButton::sCreate(coll.fWorld, window(), butts);
         mWorldButton->setTooltip(eLanguage::zeusText(68, 17));
-        const int w = goals->width() + mRotateButton->width() + mWorldButton->width() + 5;
+        const int w = goals->width() + mRotateButton->width() + mWorldButton->width() + 10;
         butts->resize(w, mWorldButton->height());
         butts->layoutHorizontally();
         butts->setX(mult*5);
