@@ -18,6 +18,8 @@ public:
     bool pressed() const;
     bool hovered() const;
 
+    void setRepeat(const bool r) { mRepeat = r; }
+
     void trigger() const;
 protected:
     bool mousePressEvent(const eMouseEvent& e);
@@ -26,6 +28,8 @@ protected:
     bool mouseEnterEvent(const eMouseEvent& e);
     bool mouseLeaveEvent(const eMouseEvent& e);
 private:
+    void scheduleRepeat(const eAction& action);
+
     eAction mPressAction;
     eAction mRightPressAction;
     eAction mEnterAction;
@@ -34,6 +38,9 @@ private:
     bool mEnabled = true;
     bool mPressed = false;
     bool mHover = false;
+    bool mRepeat = false;
+    int mPressTime = 0;
+    int mLastRepeatTime = 0;
 };
 
 #endif // EBUTTONBASE_H

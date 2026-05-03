@@ -1,6 +1,9 @@
 #include "ebuttonbase.h"
 
+#include "emainwindow.h"
 #include "audio/esounds.h"
+
+#include <SDL2/SDL.h>
 
 void eButtonBase::setPressAction(const eAction& a) {
     mPressAction = a;
@@ -38,10 +41,38 @@ void eButtonBase::trigger() const {
     if(mPressAction) mPressAction();
 }
 
+void eButtonBase::scheduleRepeat(const eAction& action) {
+    if(!mPressed || !mRepeat) return;
+    const int now = SDL_GetTicks();
+    const int elapsed = now - mPressTime;
+    const int sinceLastRepeat = now - mLastRepeatTime;
+    const int initialDelay = 500;
+    const int repeatInterval = 80;
+    if(elapsed >= initialDelay && sinceLastRepeat >= repeatInterval) {
+        mLastRepeatTime = now;
+        if(action) action();
+    }
+    window()->addSlot([this, action]() {
+        scheduleRepeat(action);
+    });
+}
+
 bool eButtonBase::mousePressEvent(const eMouseEvent& e) {
     if(!mEnabled) return false;
     const auto b = e.button();
-    if(b == eMouseButton::left || b == eMouseButton::right) {
+    if(b == eMouseButton::left) {
+        mPressed = true;
+        if(mRepeat) {
+            if(mPressAction) mPressAction();
+            eSounds::playButtonSound();
+            mPressTime = SDL_GetTicks();
+            mLastRepeatTime = mPressTime;
+            window()->addSlot([this]() {
+                scheduleRepeat(mPressAction);
+            });
+        }
+        return true;
+    } else if(b == eMouseButton::right) {
         mPressed = true;
         return true;
     } else {
@@ -54,8 +85,10 @@ bool eButtonBase::mouseReleaseEvent(const eMouseEvent& e) {
     const auto b = e.button();
     if(b == eMouseButton::left) {
         mPressed = false;
-        if(mPressAction) mPressAction();
-        eSounds::playButtonSound();
+        if(!mRepeat) {
+            if(mPressAction) mPressAction();
+            eSounds::playButtonSound();
+        }
         return true;
     } else if(b == eMouseButton::right) {
         mPressed = false;

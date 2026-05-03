@@ -1,61 +1,53 @@
-<h1 align="center">eZeus</h1>
+# Olympus
 
-eZeus is an open-source implementation of Zeus: Master of Olympus game
+Olympus is a fork of eZeus, an open-source implementation of Zeus: Master of Olympus game. We thank the eZeus developers for their excellent work on the engine, which forms the foundation of this project. 
 
-[Watch trailers](https://www.youtube.com/@eZeus-e)
+Visit to read install directions:
+https://github.com/MaurycyLiebner/eZeus
 
-Please note that eZeus is not an exact copy of the original game. There are some minor differences, most of which are accidental, as well as optional additional features (such as a new walker implementation and the ability to build two cities at once). eZeus supports the original game’s adventures, and the overall experience should be similar to the original.
+Based on their work I have been using AI tools to code many personal UI improvements I wanted to see happen.
+
+Hotkeys, smooth map scroll, 60FPS mode etc.
+
+## Changes
+
+- **Storage Management Enhancements**: Added an extra button to warehouses for quickly emptying contents or resetting item counts, streamlining inventory management and resource redistribution in your city.
+- **Reversible Storage Switches**: Right-clicking on storage switches now reverses their direction, allowing players to quickly adjust resource flow without rebuilding connections, improving efficiency in complex supply chains.
+- **Options Menu Improvements**: Refactored the options menu for better organization and usability, now including new settings such as adjustable game speed, option to disable mouse edge scrolling, and a scrollbar for improved navigation.
+- **Production Statistics**: Added detailed production statistics for processing buildings (winery, armory, olive press, sculpture studio, corral, hunting lodge, chariot factory), helping players monitor and optimize their industrial output for better economic management.
+- **Farm Productivity Tracking**: Introduced production statistics for farms, allowing players to track crop yields and make informed decisions about agriculture in their city.
+- **Hotkey for Watchhouses**: Added a keyboard shortcut for constructing watchhouses, speeding up city defense setup and reducing repetitive mouse clicks.
+- **Settler Spawning**: Settlers now arrive in groups of 4, matching the original game's behavior, which affects population growth pacing and city expansion strategies.
+- **Population Tab Hotkeys**: Added number keys 1-8 as hotkeys for population tabs, allowing faster navigation between different citizen groups for quicker social management.
+- **Enhanced Hotkey System**: Comprehensive keyboard shortcuts now available for various functions, including watchhouses, population tabs, and pause controls, improving overall game efficiency and accessibility.
+- **Housing Dynamics**: Houses now devolve in gradual steps when services decline, and evicted residents become homeless walkers, creating more realistic and challenging population management scenarios.
+- **Housing Stability**: Fixed an issue where fully occupied houses would randomly lose residents, stabilizing population retention and city growth.
+- **Toast Notifications**: Made most message popups non-blocking, allowing gameplay to continue uninterrupted while viewing notifications.
 
 ## How To Play
 
-To play eZeus you will need original game files (Zeus: Master of Olympus base game and Poseidon expansion).
+To play Olympus you will need original game files (Zeus: Master of Olympus base game and Poseidon expansion).
 
 Currently only English and Polish versions are supported due to font glyphs limitations.
 
-Only windows binaries are provided. If you want to play on Linux you have to build eZeus yourself.
+Binaries are not provided; you need to build Olympus yourself.
 
-[You can download eZeus from GitHub](https://github.com/MaurycyLiebner/eZeus/releases)
+## How To Build on Windows
 
-## How To Build on macOS
-
-You need these dependencies for x86 and ARM Builds: 
-```
-softwareupdate --install-rosetta
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install sdl2 sdl2_mixer sdl2_image sdl2_ttf git qt make dylibbundler fluid-synth
-arch -x86_64 /usr/local/bin/brew install sdl2 sdl2_mixer sdl2_image sdl2_ttf git qt make dylibbundler fluid-synth
-```
-Clone the eZeus repository:
-```
-git clone --recurse-submodules https://github.com/MaurycyLiebner/eZeus
-```
-Than simply execute compile_apple.sh script. All is done automatic. At the End you should have 2 new folders. build_arm and build_x86. Follow the instructions at the end of the script.
-
-Or you could DL ready to go Binaries straight forward here:
-https://github.com/MacThings/eZeus/releases/tag/Zeus-Binaries
-
-## How To Build on Linux
-
-Make sure you have **git** installed on your system.
-
-Clone the eZeus repository:
-```
-git clone --recurse-submodules https://github.com/MaurycyLiebner/eZeus
-```
-
-You will need to install following packages:
+Use the provided `build.bat` script for the default build:
 
 ```
-sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev libnoise-dev g++
+.\build.bat
 ```
 
-You will need Qt Creator (qt.io).
+Alternatively, if calling CMake directly, use Ninja build directory with 8 jobs:
 
-Open eZeus.pro in Qt Creator and use it to build eZeus.
+```
+cmake --build build-ninja --config Release -j 8
+```
 
-Before running eZeus binary make sure to setup all files as specified in **How To Play** section and the release description. Put eZeus binary in (...)/Zeus and Poseidon/eZeus/Bin directory and run it.
+## Attribution
 
-## Authors
+Olympus is based on eZeus by Maurycy Liebner. We acknowledge and thank the original developers for their foundational work.
 
-**Maurycy Liebner** - 2021 - 2025 - [MaurycyLiebner](https://github.com/MaurycyLiebner)
+https://github.com/MaurycyLiebner/eZeus
