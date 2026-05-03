@@ -42,6 +42,20 @@
 
 class eGameEvent;
 
+struct eUndoTile {
+    int tx, ty;
+    eBuilding* prev; // nullptr if was empty
+    eUndoTile(int ttx, int tty, eBuilding* p) :
+        tx(ttx), ty(tty), prev(p) {}
+};
+
+struct eUndoState {
+    bool valid = false;
+    int cost = 0;
+    std::vector<eBuilding*> placed;
+    std::vector<eUndoTile> tiles;
+};
+
 class eSpawner;
 enum class eBannerTypeS;
 class eCharacter;
@@ -154,6 +168,11 @@ public:
 
     void registerBuilding(eBuilding* const b);
     bool unregisterBuilding(eBuilding* const b);
+
+    void snapshotTiles(int ttx, int tty, int ssw, int ssh);
+    void game_undo_start_build(eBuildingType type);
+    void game_undo_finish_build();
+    void undoLastAction();
 
     bool unregisterCommonHouse(eSmallHouse* const ch);
 
@@ -1045,6 +1064,8 @@ private:
     std::map<eResourceType, eYearlyProduction> mYearlyProduction;
 
     int mSavedYear = -100000;
+
+    eUndoState mUndo;
 };
 
 #endif // EGAMEBOARD_H

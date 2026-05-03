@@ -14,6 +14,7 @@
 
 #include "evectorhelpers.h"
 #include "spawners/eboarspawner.h"
+
 #include "spawners/edeerspawner.h"
 #include "spawners/eentrypoint.h"
 #include "spawners/eexitpoint.h"
@@ -754,28 +755,34 @@ bool eGameWidget::buildMouseRelease() {
             showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
         } break;
         case eBuildingMode::road: {
-            const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-            if(!startTile) return false;
-            std::vector<eOrientation> path;
-            const bool r = roadPath(path);
-            if(r) {
-                eTile* t = startTile;
-                for(int i = path.size() - 1; i >= 0; i--) {
-                    if(!t) break;
-                    mBoard->build(t->x(), t->y(), 1, 1, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); },
-                          false, true);
-                    t = t->neighbour<eTile>(path[i]);
+            const auto path = roadPath();
+            if(path.empty()) break;
+            int minX = 2147483647, minY = 2147483647, maxX = -2147483648, maxY = -2147483648;
+            int totalCost = 0;
+            const auto pid = mBoard->personPlayer();
+            const auto diff = mBoard->difficulty(pid);
+            const int costPerTile = eDifficultyHelpers::buildingCost(diff, eBuildingType::road);
+            for(const auto& t : path) {
+                if(!t) continue;
+                const auto ub = t->underBuilding();
+                if(ub) continue;
+                if(t->x() < minX) minX = t->x();
+                if(t->y() < minY) minY = t->y();
+                if(t->x() > maxX) maxX = t->x();
+                if(t->y() > maxY) maxY = t->y();
+                totalCost += costPerTile;
+            }
+            if(minX <= maxX && minY <= maxY && totalCost > 0) {
+                mBoard->game_undo_start_build(eBuildingType::road);
+                mBoard->snapshotTiles(minX, minY, maxX - minX + 1, maxY - minY + 1);
+                for(const auto& t : path) {
+                    if(!t) continue;
+                    const auto ub = t->underBuilding();
+                    if(ub) continue;
+                    r = mBoard->build(t->x(), t->y(), 1, 1, cid, pid, mEditorMode,
+                          [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); }) || r;
                 }
-                if(t) {
-                    mBoard->build(t->x(), t->y(), 1, 1, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); },
-                          false, true);
-                }
-            } else {
-                mBoard->build(startTile->x(), startTile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); },
-                      false, true);
+                mBoard->game_undo_finish_build();
             }
         } break;
         case eBuildingMode::roadblock: {
@@ -816,16 +823,34 @@ bool eGameWidget::buildMouseRelease() {
             const int sMinY = std::min(mPressedTY, mHoverTY);
             const int sMaxX = std::max(mPressedTX, mHoverTX);
             const int sMaxY = std::max(mPressedTY, mHoverTY);
-
+            const int minX = sMinX;
+            const int minY = sMinY - 1;
+            const int maxX = sMaxX;
+            const int maxY = sMaxY;
+            int totalCost = 0;
+            const auto diff = mBoard->difficulty(pid);
+            const int costPerHouse = eDifficultyHelpers::buildingCost(diff, eBuildingType::commonHouse);
             for(int x = sMinX; x <= sMaxX; x++) {
                 for(int y = sMinY - 1; y <= sMaxY; y++) {
                     const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2, mEditorMode, cid, pid);
                     if(!cb) continue;
-                    const auto t = mBoard->tile(x, y);
-                    if(!t) continue;
-                    r = mBoard->build(t->x(), t->y() + 1, 2, 2, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eSmallHouse>(*mBoard, mViewedCityId); }) || r;
+                    totalCost += costPerHouse;
                 }
+            }
+            if(totalCost > 0) {
+                mBoard->game_undo_start_build(eBuildingType::commonHouse);
+                mBoard->snapshotTiles(minX, minY, maxX - minX + 1, maxY - minY + 1);
+                for(int x = sMinX; x <= sMaxX; x++) {
+                    for(int y = sMinY - 1; y <= sMaxY; y++) {
+                        const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2, mEditorMode, cid, pid);
+                        if(!cb) continue;
+                        const auto t = mBoard->tile(x, y);
+                        if(!t) continue;
+                        r = mBoard->build(t->x(), t->y() + 1, 2, 2, cid, pid, mEditorMode,
+                              [this]() { return e::make_shared<eSmallHouse>(*mBoard, mViewedCityId); }) || r;
+                    }
+                }
+                mBoard->game_undo_finish_build();
             }
         } break;
         case eBuildingMode::gymnasium: {

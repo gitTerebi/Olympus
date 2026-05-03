@@ -1025,7 +1025,10 @@ void eGameMenu::initialize(eGameBoard* const b,
         e->setPressAction([this]() {
             setMode(eBuildingMode::erase);
         });
-        eButton::sCreate(coll.fUndo, window(), btmButtons);
+        const auto ub = eButton::sCreate(coll.fUndo, window(), btmButtons);
+        ub->setPressAction([this]() {
+            mBoard->undoLastAction();
+        });
 
         const int x = mult*24;
         const int y = std::round(mult*217.5);
