@@ -419,6 +419,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             } else {
                 mTime += mSpeed;
                 mBoard->incTime(mSpeed);
+                mGm->update();
             }
         }
         mBoard->emptyRubbish();

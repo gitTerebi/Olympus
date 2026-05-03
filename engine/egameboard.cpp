@@ -2241,6 +2241,7 @@ std::vector<eAgoraBase*> eGameBoard::agoras(const eCityId cid) const {
 
 void eGameBoard::incTime(const int by) {
     if(mEpisodeLost) return;
+    mUndo.incTime(by);
     const int dayLen = eNumbers::sDayLength;
     { // autosave
         const int time = mTime + by;
@@ -3809,6 +3810,10 @@ bool eGameBoard::buildBase(const int minX, const int minY,
         }
     }
 
+    if(!isRoad) {
+        mUndo.placed().clear();
+        mUndo.cost() = 0;
+    }
     mUndo.placed().push_back(b.get());
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
@@ -3817,6 +3822,7 @@ bool eGameBoard::buildBase(const int minX, const int minY,
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
     mUndo.valid() = true;
+    mUndo.timeoutTicks() = 20 * eNumbers::sDayLength;
     return true;
 }
 

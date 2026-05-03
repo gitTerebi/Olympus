@@ -2041,6 +2041,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         mGm->setMode(eBuildingMode::erase);
     } else if(k == hotkeys.fHotkeyUndo) {
         mBoard->undoLastAction();
+        mGm->update();
     } else if(k == hotkeys.fHotkeyShowRoadsOverlay) {
         toggleViewMode(eViewMode::roads);
     } else if(k == hotkeys.fHotkeyBuildRoad) {
@@ -2426,6 +2427,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
         mBoard->clearTriremeSelection();
         mLeftPressed = false;
         const bool r = buildMouseRelease();
+        mGm->update();
         if(!r && mGm->mode() == eBuildingMode::none) {
             if(mMovedSincePress) {
                 const auto selected = selectedTiles();

@@ -17,6 +17,7 @@ struct eUndoTile {
 struct eUndoState {
     bool valid = false;
     int cost = 0;
+    int timeoutTicks = 0;
     std::vector<eBuilding*> placed;
     std::vector<eUndoTile> tiles;
 };
@@ -28,11 +29,14 @@ public:
     void startBuild(eBuildingType type);
     void finishBuild();
     void undoLastAction();
+    void incTime(const int by);
 
     std::vector<eBuilding*>& placed() { return mState.placed; }
     int& cost() { return mState.cost; }
     std::vector<eUndoTile>& tiles() { return mState.tiles; }
     bool& valid() { return mState.valid; }
+    bool valid() const { return mState.valid; }
+    int& timeoutTicks() { return mState.timeoutTicks; }
 
 private:
     eGameBoard& mBoard;

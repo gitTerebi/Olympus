@@ -127,6 +127,7 @@ private:
 
     eRotateButton* mRotateButton = nullptr;
     eButton* mWorldButton = nullptr;
+    eButton* mUndoButton = nullptr;
 
     eMiniMap* mMiniMap = nullptr;
 
