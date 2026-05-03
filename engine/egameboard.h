@@ -39,22 +39,9 @@
 
 #include "eboardcity.h"
 #include "eboardplayer.h"
+#include "egameundo.h"
 
 class eGameEvent;
-
-struct eUndoTile {
-    int tx, ty;
-    eBuilding* prev; // nullptr if was empty
-    eUndoTile(int ttx, int tty, eBuilding* p) :
-        tx(ttx), ty(tty), prev(p) {}
-};
-
-struct eUndoState {
-    bool valid = false;
-    int cost = 0;
-    std::vector<eBuilding*> placed;
-    std::vector<eUndoTile> tiles;
-};
 
 class eSpawner;
 enum class eBannerTypeS;
@@ -1065,7 +1052,7 @@ private:
 
     int mSavedYear = -100000;
 
-    eUndoState mUndo;
+    eGameUndo mUndo;
 };
 
 #endif // EGAMEBOARD_H

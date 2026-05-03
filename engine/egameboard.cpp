@@ -104,7 +104,7 @@
 #endif
 
 eGameBoard::eGameBoard(eWorldBoard& world) :
-    mWorld(world), mThreadPool(*this) {
+    mWorld(world), mThreadPool(*this), mUndo(*this) {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
     for(const auto type : types) {
@@ -3809,14 +3809,14 @@ bool eGameBoard::buildBase(const int minX, const int minY,
         }
     }
 
-    mUndo.placed.push_back(b.get());
+    mUndo.placed().push_back(b.get());
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-        mUndo.cost += cost;
+        mUndo.cost() += cost;
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
-    mUndo.valid = true;
+    mUndo.valid() = true;
     return true;
 }
 
@@ -4112,42 +4112,31 @@ void eGameBoard::incProduced(const eResourceType type,
 }
 
 void eGameBoard::snapshotTiles(int ttx, int tty, int ssw, int ssh) {
-    mUndo.tiles.clear();
-    mUndo.placed.clear();
-    mUndo.cost = 0;
+    mUndo.tiles().clear();
+    mUndo.placed().clear();
+    mUndo.cost() = 0;
     int minX, minY, maxX, maxY;
     sBuildTiles(minX, minY, maxX, maxY, ttx, tty, ssw, ssh);
     for(int x = minX; x <= maxX; x++) {
         for(int y = minY; y <= maxY; y++) {
             const auto t = tile(x, y);
             if(t) {
-                mUndo.tiles.emplace_back(x, y, t->underBuilding());
+                mUndo.tiles().emplace_back(x, y, t->underBuilding());
             }
         }
     }
 }
 
 void eGameBoard::game_undo_start_build(eBuildingType type) {
-    mUndo.valid = false;
-    mUndo.tiles.clear();
-    mUndo.placed.clear();
-    mUndo.cost = 0;
+    mUndo.startBuild(type);
 }
 
 void eGameBoard::game_undo_finish_build() {
-    mUndo.valid = mUndo.placed.size() > 0;
+    mUndo.finishBuild();
 }
 
 void eGameBoard::undoLastAction() {
-    if(!mUndo.valid) return;
-    mUndo.valid = false;
-    for(const auto b : mUndo.placed) {
-        b->erase();
-    }
-    mUndo.placed.clear();
-    mUndo.tiles.clear();
-    incDrachmas(personPlayer(), mUndo.cost, eFinanceTarget::construction);
-    mUndo.cost = 0;
+    mUndo.undoLastAction();
 }
 
 eDistrictIdTmp::eDistrictIdTmp(eGameBoard& board) :
