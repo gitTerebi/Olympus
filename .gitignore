@@ -75,3 +75,4 @@ Thumbs.db
 *.exe
 
 .claude/settings.json
+.claude/settings.local.json
