@@ -811,10 +811,11 @@ int eMainWindow::exec() {
 
         SDL_RenderPresent(mSdlRenderer);
 
-        for(const auto& s : mSlots) {
+        std::vector<eSlot> slots;
+        std::swap(slots, mSlots);
+        for(const auto& s : slots) {
             s();
         }
-        mSlots.clear();
 
         const auto fpsEnd = high_resolution_clock::now();
         const duration<double, std::milli> fpsElapsed = fpsEnd - fpsStart;
