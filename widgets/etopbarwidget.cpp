@@ -15,21 +15,22 @@
 namespace {
 
 std::string populationText(const int pop, const eEmploymentData& emplData) {
-    auto result = std::to_string(pop);
+    return std::to_string(pop);
+}
 
+std::string unemployedText(const eEmploymentData& emplData) {
     const int unemployed = emplData.unemployed();
+    const int vacancies = emplData.freeJobVacancies();
+    std::string result;
     if(unemployed > 0) {
         const int employable = emplData.employable();
         const int percent = employable ? 100*unemployed/employable : 0;
-        result += " (" + std::to_string(unemployed) + ", " +
-                  std::to_string(percent) + "%)";
+        result += std::to_string(unemployed) + " (" + std::to_string(percent) + "%)";
     }
-
-    const int vacancies = emplData.freeJobVacancies();
     if(vacancies > 0) {
-        result += " (-" + std::to_string(vacancies) + ")";
+        if(!result.empty()) result += " ";
+        result += "(-" + std::to_string(vacancies) + ")";
     }
-
     return result;
 }
 
@@ -66,6 +67,9 @@ void eTopBarWidget::initialize() {
     const auto s3 = new eWidget(window());
     s3->setWidth(mult*20);
 
+    mUnemployedWidget = new eTopWidget(window());
+    mUnemployedWidget->initialize(coll.fPopulationTopMenu, "-");
+
     mDateLabel = new eButton(window());
     mDateLabel->setPressAction([this]() {
         if(!mBoard) return;
@@ -85,7 +89,10 @@ void eTopBarWidget::initialize() {
     mDateLabel->setEnabled(false);
 
     const auto s4 = new eWidget(window());
-    s4->setWidth(mult*15);
+    s4->setWidth(mult*20);
+
+    const auto s5 = new eWidget(window());
+    s5->setWidth(mult*20);
 
     addWidget(s0);
     addWidget(mCityLabel);
@@ -94,14 +101,17 @@ void eTopBarWidget::initialize() {
     addWidget(s2);
     addWidget(mPopulationWidget);
     addWidget(s3);
-    addWidget(mDateLabel);
+    addWidget(mUnemployedWidget);
     addWidget(s4);
+    addWidget(mDateLabel);
+    addWidget(s5);
 
     setHeight(12*mult);
 
     mCityLabel->align(eAlignment::vcenter);
     mDrachmasWidget->align(eAlignment::vcenter);
     mPopulationWidget->align(eAlignment::vcenter);
+    mUnemployedWidget->align(eAlignment::vcenter);
     mDateLabel->align(eAlignment::vcenter);
 
     layoutHorizontally();
@@ -134,11 +144,22 @@ void eTopBarWidget::paintEvent(ePainter& p) {
             const auto emplData = mBoard->employmentData(cid);
             if(emplData) {
                 mPopulationWidget->setText(populationText(pop, *emplData));
+                const std::string uText = unemployedText(*emplData);
+                mUnemployedWidget->setText(uText);
+                if(emplData->unemployed() > 0) {
+                    mUnemployedWidget->setIconColor(0, 255, 0); // green
+                } else if(emplData->freeJobVacancies() > 0) {
+                    mUnemployedWidget->setIconColor(255, 0, 0); // red
+                } else {
+                    mUnemployedWidget->setIconColor(255, 255, 255); // white
+                }
             } else {
                 mPopulationWidget->setText(std::to_string(pop));
+                mUnemployedWidget->setText("");
             }
         } else {
             mPopulationWidget->setText("-");
+            mUnemployedWidget->setText("");
         }
 
         const int d = mBoard->drachmas(pid);
