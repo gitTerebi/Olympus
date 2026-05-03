@@ -38,6 +38,11 @@ public:
         mText->fitContent();
         fitContent();
     }
+
+    void setIconColor(const Uint8 r, const Uint8 g, const Uint8 b) {
+        if(mIcon) mIcon->setTextureColorMod(r, g, b);
+    }
+
 private:
     eLabel* mIcon = nullptr;
     eLabel* mText = nullptr;
@@ -58,6 +63,7 @@ private:
     eLabel* mCityLabel = nullptr;
     eTopWidget* mDrachmasWidget = nullptr;
     eTopWidget* mPopulationWidget = nullptr;
+    eTopWidget* mUnemployedWidget = nullptr;
     eButton* mDateLabel = nullptr;
     int mTime = 0;
 };

@@ -81,6 +81,12 @@ void eLabelBase::setYellowFontColor() {
     setFontColor(eFontColor::yellow);
 }
 
+void eLabelBase::setTextureColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
+    mR = r;
+    mG = g;
+    mB = b;
+}
+
 int eLabelBase::fontSize() const {
     if(!mFont) return 0;
     return TTF_FontHeight(mFont);

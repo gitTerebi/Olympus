@@ -19,6 +19,7 @@ public:
     bool setText(const std::string& text);
     bool setTexture(const std::shared_ptr<eTexture>& tex);
     bool setFontColor(const eFontColor color);
+    void setTextureColorMod(const Uint8 r, const Uint8 g, const Uint8 b);
 
     eFontColor fontColor() const
     { return mFontColor; }
@@ -55,6 +56,10 @@ private:
     eFontColor mFontColor = eFontColor::light;
     eAlignment mTextAlign = eAlignment::center;
     eAlignment mWrapAlign = eAlignment::left;
+protected:
+    Uint8 mR = 255;
+    Uint8 mG = 255;
+    Uint8 mB = 255;
 };
 
 #endif // ELABELBASE_H

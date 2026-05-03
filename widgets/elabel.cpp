@@ -42,7 +42,13 @@ void eLabel::sizeHint(int& w, int& h) {
 void eLabel::paintEvent(ePainter& p) {
     const auto& tex = texture();
     if(tex) {
+        if(mR != 255 || mG != 255 || mB != 255) {
+            tex->setColorMod(mR, mG, mB);
+        }
         p.drawTexture(rect(), tex, textAlignment());
+        if(mR != 255 || mG != 255 || mB != 255) {
+            tex->clearColorMod();
+        }
         //p.drawRect(rect(), {0, 0, 0, 255}, 1);
     }
 }
