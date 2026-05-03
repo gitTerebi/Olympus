@@ -132,20 +132,19 @@ public:
             }
         }
 
+        eFramedButton* resetBtn = nullptr;
         {
+            const auto it = buttons.begin();
+            const auto b0 = it->second;
+            const int w = b0->width();
+            const int h = b0->height();
+
             const auto b = new eFramedButton(window());
             b->setUnderline(false);
             b->setSmallFontSize();
             b->setText(eLanguage::zeusText(130, 1));
             b->setDarkFontColor();
-            buttonsW->addWidget(b);
-            const auto it = buttons.begin();
-            const auto b0 = it->second;
-            const int w = b0->width();
-            const int h = b0->height();
             b->resize(w, h);
-            b->align(eAlignment::hcenter);
-
             b->setPressAction([changed, buttons]() {
                 for(const auto it : buttons) {
                     const auto b = it.second;
@@ -154,6 +153,49 @@ public:
                 }
                 changed();
             });
+            const auto spacerB = new eWidget(window());
+            spacerB->resize(1, mult*8);
+            buttonsW->addWidget(spacerB);
+            buttonsW->addWidget(b);
+            b->align(eAlignment::hcenter);
+
+            const auto spacerS = new eWidget(window());
+            spacerS->resize(1, mult*8);
+            spinsW->addWidget(spacerS);
+
+            const auto be = new eFramedButton(window());
+            be->setUnderline(false);
+            be->setSmallFontSize();
+            be->setText("Reset");
+            be->setWidth(spinsWidth);
+            be->setHeight(h);
+            be->setPressAction([changed, spinBoxes]() {
+                for(const auto& it : spinBoxes) {
+                    it.second->setValue(it.second->max());
+                }
+                changed();
+            });
+            spinsW->addWidget(be);
+            resetBtn = be;
+
+            const auto spacerN = new eWidget(window());
+            spacerN->resize(1, mult*8);
+            namesW->addWidget(spacerN);
+
+            const auto emptyBtn = new eFramedButton(window());
+            emptyBtn->setUnderline(false);
+            emptyBtn->setSmallFontSize();
+            emptyBtn->setText("Empty");
+            emptyBtn->resize(w, h);
+            emptyBtn->setPressAction([changed, buttons]() {
+                for(const auto it : buttons) {
+                    const auto b = it.second;
+                    b->setValue(3);
+                    b->setDarkFontColor();
+                }
+                changed();
+            });
+            namesW->addWidget(emptyBtn);
         }
 
         countW->stackVertically();
@@ -165,16 +207,17 @@ public:
         const int h = types.size()*rowHeight;
         countW->setHeight(h);
         iconsW->setHeight(h);
-        namesW->setHeight(h);
-        const int bh = h + rowHeight;
-        buttonsW->setHeight(bh);
-        spinsW->setHeight(h);
+        const int extraH = mult*8 + rowHeight;
+        namesW->setHeight(h + extraH);
+        buttonsW->setHeight(h + extraH);
+        spinsW->setHeight(h + extraH);
 
         countW->setWidth(countWidth);
         iconsW->setWidth(iconsWidth);
         namesW->setWidth(namesWidth);
         buttonsW->setWidth(buttonsWidth);
         spinsW->setWidth(spinsWidth);
+        if(resetBtn) resetBtn->setX(spinsWidth - resetBtn->width());
 
         addWidget(countW);
         addWidget(iconsW);

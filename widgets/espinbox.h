@@ -14,6 +14,7 @@ public:
 
     void setValue(const int v);
     int value() const { return mValue; }
+    int max() const { return mMaxValue; }
 
     eLabel* label() const { return mValueLabel; }
 private:
