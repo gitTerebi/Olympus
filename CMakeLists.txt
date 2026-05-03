@@ -351,6 +351,7 @@ set(SOURCES
     ebuildablehelpers.cpp
     efontcolor.cpp
     egamedir.cpp
+    ecursors.cpp
     einvasionhandler.cpp
     eiteratesquare.cpp
     elanguage.cpp

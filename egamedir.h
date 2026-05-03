@@ -19,6 +19,7 @@ public:
     static std::string pakAdventuresDir();
     static std::string saveDir();
     static std::string texturesDir();
+    static std::string cursorsDir();
 private:
     static std::string sPath;
 };

@@ -1,4 +1,5 @@
 #include "egamewidget.h"
+#include "ecursors.h"
 
 #include "emessagelistwidget.h"
 #include "eoptionsdata.h"
@@ -297,6 +298,11 @@ void eGameWidget::initialize() {
 
     mGm->setModeChangedAction([this]() {
         setPatrolBuilding(nullptr);
+        if(mGm->mode() == eBuildingMode::erase) {
+            eCursors::set(eCursorType::shovel);
+        } else {
+            eCursors::set(eCursorType::defaultCursor);
+        }
     });
 
     const auto mm = mGm->miniMap();

@@ -70,3 +70,7 @@ std::string eGameDir::saveDir() {
 std::string eGameDir::texturesDir() {
     return exeDir() + "../Textures/";
 }
+
+std::string eGameDir::cursorsDir() {
+    return exeDir() + "../cursors/";
+}
