@@ -385,6 +385,7 @@ set(SOURCES
     engine/eeventtime.cpp
     engine/efunctask.cpp
     engine/egameboard.cpp
+    engine/egameundo.cpp
     engine/egameboardread.cpp
     engine/egameboardwrite.cpp
     engine/egameevents.cpp
