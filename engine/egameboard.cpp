@@ -3809,22 +3809,25 @@ bool eGameBoard::buildBase(const int minX, const int minY,
         }
     }
 
+    mUndo.placed.push_back(b.get());
     if(!editorDisplay) {
         const auto diff = difficulty(pid);
         const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+        mUndo.cost += cost;
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
+    mUndo.valid = true;
     return true;
 }
 
 bool eGameBoard::build(const int tx, const int ty,
-                       const int sw, const int sh,
-                       const eCityId cid,
-                       const ePlayerId pid,
-                       const bool editorDisplay,
-                       const eBuildingCreator& bc,
-                       const bool fertile,
-                       const bool flat) {
+                        const int sw, const int sh,
+                        const eCityId cid,
+                        const ePlayerId pid,
+                        const bool editorDisplay,
+                        const eBuildingCreator& bc,
+                        const bool fertile,
+                        const bool flat) {
     const auto tile = this->tile(tx, ty);
     if(!tile) return false;
     int minX;
@@ -3832,9 +3835,9 @@ bool eGameBoard::build(const int tx, const int ty,
     int maxX;
     int maxY;
     sBuildTiles(minX, minY, maxX, maxY,
-               tx, ty, sw, sh);
+                tx, ty, sw, sh);
     return buildBase(minX, minY, maxX - 1, maxY - 1,
-                     bc, pid, cid, editorDisplay, fertile, flat);
+                      bc, pid, cid, editorDisplay, fertile, flat);
 }
 
 bool eGameBoard::buildAnimal(eTile* const tile,
@@ -4106,6 +4109,45 @@ int eGameBoard::bestYearlyProduction(const eResourceType type) const {
 void eGameBoard::incProduced(const eResourceType type,
                              const int by) {
     mYearlyProduction[type].fThisYear += by;
+}
+
+void eGameBoard::snapshotTiles(int ttx, int tty, int ssw, int ssh) {
+    mUndo.tiles.clear();
+    mUndo.placed.clear();
+    mUndo.cost = 0;
+    int minX, minY, maxX, maxY;
+    sBuildTiles(minX, minY, maxX, maxY, ttx, tty, ssw, ssh);
+    for(int x = minX; x <= maxX; x++) {
+        for(int y = minY; y <= maxY; y++) {
+            const auto t = tile(x, y);
+            if(t) {
+                mUndo.tiles.emplace_back(x, y, t->underBuilding());
+            }
+        }
+    }
+}
+
+void eGameBoard::game_undo_start_build(eBuildingType type) {
+    mUndo.valid = false;
+    mUndo.tiles.clear();
+    mUndo.placed.clear();
+    mUndo.cost = 0;
+}
+
+void eGameBoard::game_undo_finish_build() {
+    mUndo.valid = mUndo.placed.size() > 0;
+}
+
+void eGameBoard::undoLastAction() {
+    if(!mUndo.valid) return;
+    mUndo.valid = false;
+    for(const auto b : mUndo.placed) {
+        b->erase();
+    }
+    mUndo.placed.clear();
+    mUndo.tiles.clear();
+    incDrachmas(personPlayer(), mUndo.cost, eFinanceTarget::construction);
+    mUndo.cost = 0;
 }
 
 eDistrictIdTmp::eDistrictIdTmp(eGameBoard& board) :

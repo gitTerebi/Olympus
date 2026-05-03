@@ -265,6 +265,7 @@ private:
     void showToast(eEventData& ed, const eMessage& msg);
 
     bool roadPath(std::vector<eOrientation>& path);
+    std::vector<eTile*> roadPath() const;
     bool columnPath(std::vector<eOrientation>& path);
     bool bridgeTiles(eTile* const t, const eTerrain terr,
                      std::vector<eTile*>& tiles,

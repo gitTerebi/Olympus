@@ -1458,6 +1458,39 @@ bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
     return p.extractPath(path);
 }
 
+std::vector<eTile*> eGameWidget::roadPath() const {
+    std::vector<eOrientation> orients;
+    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear :
+                                       eTerrain::buildable;
+    ePathFinder p([allowed](eTileBase* const t) {
+        const auto terr = t->terrain();
+        const bool tr = static_cast<bool>(allowed & terr);
+        if(!tr) return false;
+        const auto bt = t->underBuildingType();
+        const bool r = bt == eBuildingType::road ||
+                       bt == eBuildingType::none;
+        if(!r) return false;
+        if(!t->walkableElev() && t->isElevationTile()) return false;
+        return true;
+    }, [&](eTileBase* const t) {
+        return t->x() == mPressedTX && t->y() == mPressedTY;
+    });
+    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
+    const int w = mBoard->width();
+    const int h = mBoard->height();
+    if(!p.findPath({0, 0, w, h}, startTile, 100, true, w, h)) return {};
+    if(!p.extractPath(orients)) return {};
+    std::vector<eTile*> tiles;
+    eTile* t = startTile;
+    for(int i = orients.size() - 1; i >= 0; i--) {
+        if(!t) break;
+        tiles.push_back(t);
+        t = t->neighbour<eTile>(orients[i]);
+    }
+    if(t) tiles.push_back(t);
+    return tiles;
+}
+
 bool eGameWidget::columnPath(std::vector<eOrientation>& path) {
     ePathFinder p([](eTileBase* const t) {
         const auto terr = t->terrain();
