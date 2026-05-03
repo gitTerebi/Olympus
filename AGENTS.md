@@ -35,3 +35,7 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 **Render flow:** paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch.
 
 **Options menu hotkeys:** `eoptionsdata.cpp getOptionsPages()` builds `eHotkeyItem` list; called from `eMainWindow::showOptionsMenu(). Enum `eHotkeyId` + `SDL_Scancode fHotkey*` in `esettings.h`, read/write `esettings.cpp`, handled in `egamewidget.cpp keyPressEvent`. To add: enum val, scancode+default in `eSettings`, read/write, `keyPressEvent` case, `getOptionsPages()` entry.
+
+**Message list widget:** `widgets/emessagelistwidget.h/cpp` - Displays up to 50 recent game messages with formatted titles, dates, and read/unread status. Supports clicking to open messages and mark as read.
+
+**efilewidget:** `widgets/efilewidget.cpp` - loads adventure save games, deletes them with confirmation.
