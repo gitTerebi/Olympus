@@ -11,6 +11,7 @@
 #include "widgets/echoosegameeditmenu.h"
 #include "widgets/eoptionsdata.h"
 #include "widgets/eselectcolonywidget.h"
+#include "widgets/etooltip.h"
 
 #include "audio/emusic.h"
 #include "audio/esounds.h"
@@ -621,58 +622,6 @@ void eMainWindow::execDialog(
         bg->initialize(parent ? parent : mWidget, d, closable, closeFunc);
     }
 }
-
-class eTooltip {
-public:
-    eTooltip(eMainWindow& w) : mWindow(w) {}
-
-    void update() {
-        const auto txt = eWidget::sTooltip();
-        const bool updateTxt = mText != txt;
-        if(updateTxt) {
-            mText = txt;
-        }
-
-        const auto& res = mWindow.resolution();
-        const int fontSize = res.verySmallFontSize();
-        const bool updateFont = mFontSize != fontSize;
-        if(updateFont) {
-            mFontSize = fontSize;
-            mFont = eFonts::defaultFont(mFontSize);
-        }
-
-        const bool updateTexture = updateTxt || updateFont;
-        if(updateTexture) {
-            const auto r = mWindow.renderer();
-            if(mText.empty()) {
-                mTexture->reset();
-            } else {
-                mTexture->loadText(r, mText, eFontColor::light, *mFont, 50*fontSize);
-            }
-        }
-    }
-
-    void paint(const int x, const int y, ePainter& p) {
-        const int pp = padding();
-        SDL_Rect rect{x, y, width(), height()};
-        p.fillRect(rect, SDL_Color{16, 108, 144, 255});
-        p.drawRect(rect, SDL_Color{0, 32, 32, 255}, 1);
-        p.drawTexture(x + pp, y + pp, mTexture);
-    }
-
-    int width() const { return mTexture->width() + 2*padding(); }
-    int height() const { return mTexture->height() + 2*padding(); }
-
-    bool empty() const { return mText.empty(); }
-private:
-    int padding() const { return mFontSize/2; }
-
-    eMainWindow& mWindow;
-    int mFontSize = -1;
-    TTF_Font* mFont = nullptr;
-    std::string mText;
-    stdsptr<eTexture> mTexture = std::make_shared<eTexture>();
-};
 
 int eMainWindow::exec() {
     using namespace std::chrono;
