@@ -42,3 +42,7 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 **Message list widget:** `widgets/emessagelistwidget.h/cpp` - Displays up to 50 recent game messages with formatted titles, dates, and read/unread status. Supports clicking to open messages and mark as read.
 
 **efilewidget:** `widgets/efilewidget.cpp` - loads adventure save games, deletes them with confirmation.
+
+**Walker/cart rendering + tinting:** `widgets/egamewidgetpaint.cpp` `drawCharacters` lambda — iterates tile characters, applies `setColorMod` for hover (blue), patrol selected (green), walker-building selected (red). Color constants defined just above the lambda.
+
+**Building click → walker highlight:** `widgets/egamewidget.cpp` `rightClickRelease` sets `mWalkerBuilding`; paint loop checks `eCartTransporterAction::src()` against it. Cart action source building stored in `characters/actions/ecarttransporteraction.h`.

@@ -1736,6 +1736,7 @@ void eGameWidget::updatePatrolPath() {
 }
 
 void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
+    mWalkerBuilding = nullptr;
     if(pb) {
         setViewMode(eViewMode::patrolBuilding);
 
@@ -2506,6 +2507,8 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
                                 setPatrolBuilding(v->agora());
                             } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
                                 setPatrolBuilding(s->agora());
+                            } else if(b->spawnsCartWalkers()) {
+                                mWalkerBuilding = b;
                             }
                         }
                     }

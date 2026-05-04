@@ -15,6 +15,8 @@ public:
                           const eCityId cid);
     ~eResourceBuildingBase();
 
+    bool spawnsCartWalkers() const override { return true; }
+
     void timeChanged(const int by) override;
 
     int add(const eResourceType type, const int count) override;
