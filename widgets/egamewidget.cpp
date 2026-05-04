@@ -1738,6 +1738,7 @@ void eGameWidget::updatePatrolPath() {
 void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
     mWalkerBuilding = nullptr;
     if(pb) {
+        mSavedViewMode = mViewMode;
         setViewMode(eViewMode::patrolBuilding);
 
         const auto fw = new eFramedWidget(window());
@@ -1808,7 +1809,7 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
 
         mSavedGuides = pb->patrolGuides();
     } else if(mViewMode == eViewMode::patrolBuilding) {
-        setViewMode(eViewMode::defaultView);
+        setViewMode(mSavedViewMode);
     }
 
     if(mPatrolPathWid && !pb) {
