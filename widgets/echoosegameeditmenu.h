@@ -13,6 +13,9 @@ public:
     void initialize(const bool editor);
 
     void setGlossary(const eCampaignGlossary& g);
+
+    bool keyPressEvent(const eKeyPressEvent& e) override;
+    bool mouseReleaseEvent(const eMouseEvent& e) override;
 private:
     eCampaignGlossary mSelected;
     eBitmapWidget* mBitmap = nullptr;

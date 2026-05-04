@@ -429,6 +429,22 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     }
 }
 
+bool eChooseGameEditMenu::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        window()->showMainMenu();
+        return true;
+    }
+    return eMainMenuBase::keyPressEvent(e);
+}
+
+bool eChooseGameEditMenu::mouseReleaseEvent(const eMouseEvent& e) {
+    if(e.button() == eMouseButton::right) {
+        window()->showMainMenu();
+        return true;
+    }
+    return eMainMenuBase::mouseReleaseEvent(e);
+}
+
 void eChooseGameEditMenu::setGlossary(const eCampaignGlossary& g) {
     mSelected = g;
     mBitmap->setBitmap(g.fBitmap);

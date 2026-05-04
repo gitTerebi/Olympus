@@ -70,6 +70,11 @@ bool eMusic::playCampaignVoice(const std::string &path) {
     return sInstance->playCampaignVoiceImpl(path);
 }
 
+void eMusic::stopMusic() {
+    sInstance->mMusicType = eMusicType::none;
+    Mix_HaltMusic();
+}
+
 void eMusic::setGeneralVolume(const int volume) {
     sGeneralVolume = clampPercent(volume);
     Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));

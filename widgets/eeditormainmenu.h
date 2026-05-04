@@ -9,6 +9,9 @@ class eEditorMainMenu : public eMainMenuBase {
 public:
     using eMainMenuBase::eMainMenuBase;
     void initialize(const stdsptr<eCampaign>& campaign);
+
+    bool keyPressEvent(const eKeyPressEvent& e) override;
+    bool mouseReleaseEvent(const eMouseEvent& e) override;
 private:
     void addGoBackButton(eWidget* const to);
 

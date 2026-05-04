@@ -32,7 +32,8 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                     settings.fDisableEdgeScroll,
                     [window](const bool b) {
                         window->setDisableEdgeScroll(b);
-                    }
+                    },
+                    "Mouse at screen edge won't auto-scroll the map."
                 }
             }
         },
@@ -204,14 +205,16 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                     settings.fWarehouseDefaultAcceptNone,
                     [window](const bool b) {
                         window->setWarehouseDefaultAcceptNone(b);
-                    }
+                    },
+                    "New warehouses accept no goods by default."
                 },
                 {
                     "Double cart capacity",
                     settings.fDoubleCartCapacity,
                     [window](const bool b) {
                         window->setDoubleCartCapacity(b);
-                    }
+                    },
+                    "Carts carry 8 items instead of 4."
                 }
             }
         },

@@ -12,17 +12,17 @@
 void eSpinBox::initialize(const eAction& changed) {
     mValueLabel = new eLabel(window());
 
-    const auto up = new eUpButton(window());
-    up->setRepeat(true);
-    up->setPressAction([this, changed]() {
-        setValue(mValue + mIncrement);
-        if(changed) changed();
-    });
-
     const auto down = new eDownButton(window());
     down->setRepeat(true);
     down->setPressAction([this, changed]() {
         setValue(mValue - mIncrement);
+        if(changed) changed();
+    });
+
+    const auto up = new eUpButton(window());
+    up->setRepeat(true);
+    up->setPressAction([this, changed]() {
+        setValue(mValue + mIncrement);
         if(changed) changed();
     });
 

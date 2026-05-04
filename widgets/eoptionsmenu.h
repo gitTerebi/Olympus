@@ -37,6 +37,7 @@ public:
         std::string fLabel;
         bool fValue;
         eSetBool fSet;
+        std::string fTooltip;
     };
 
     struct ePage {
