@@ -7,6 +7,20 @@
 
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
+    {
+        const auto slash = path.find('/');
+        const std::string rel = (slash != std::string::npos) ? path.substr(slash + 1) : path;
+        const std::string loosePath = eGameDir::exeDir() + "../textures/" + rel;
+        std::ifstream loose(loosePath, std::ios::in | std::ios::binary);
+        if(loose) {
+            loose.close();
+            printf("Loading loose texture: '%s'\n", loosePath.c_str());
+            const auto tex = std::make_shared<eTexture>();
+            tex->load(r, loosePath);
+            return tex;
+        }
+    }
+
     const auto it = eBinaryDataMap.find(path);
     if(it == eBinaryDataMap.end()) {
         printf("Could not find '%s' image\n", path.c_str());
