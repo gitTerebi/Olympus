@@ -53,6 +53,7 @@ public:
     void setAmbientVolume(const int volume);
     void setWarehouseDefaultAcceptNone(const bool b);
     void setDoubleCartCapacity(const bool b);
+    void setAgorasTakeFromTradingPosts(const bool b);
 
     void startGameAction(eGameBoard* const board,
                          const eGameWidgetSettings& settings);

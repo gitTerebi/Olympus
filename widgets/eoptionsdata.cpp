@@ -215,6 +215,14 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                         window->setDoubleCartCapacity(b);
                     },
                     "Carts carry 8 items instead of 4."
+                },
+                {
+                    "Agoras take from trading posts",
+                    settings.fAgorasTakeFromTradingPosts,
+                    [window](const bool b) {
+                        window->setAgorasTakeFromTradingPosts(b);
+                    },
+                    "Allow agora vendors to take goods from trading posts. When disabled (default), they only use warehouses and granaries."
                 }
             }
         },

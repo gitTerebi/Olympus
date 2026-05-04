@@ -189,6 +189,12 @@ void eMainWindow::setDoubleCartCapacity(const bool b) {
     mSettings.write();
 }
 
+void eMainWindow::setAgorasTakeFromTradingPosts(const bool b) {
+    mSettings.fAgorasTakeFromTradingPosts = b;
+    mSettings.write();
+    if (mBoard) mBoard->setAgorasTakeFromTradingPosts(b);
+}
+
 void eMainWindow::startGameAction(eGameBoard* const board,
                                   const eGameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {
@@ -575,6 +581,7 @@ void eMainWindow::showGame(eGameBoard* b,
 
     mBoard = b;
     if(mBoard) mBoard->setDoubleCartCapacity(mSettings.fDoubleCartCapacity);
+    if(mBoard) mBoard->setAgorasTakeFromTradingPosts(mSettings.fAgorasTakeFromTradingPosts);
 
     eMusic::playRandomMusic();
     mGW = new eGameWidget(this);

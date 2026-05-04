@@ -4,6 +4,7 @@
 #include "buildings/ebuildingwithresource.h"
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/ehorseranch.h"
+#include "buildings/evendor.h"
 #include "engine/egameboard.h"
 #include "emovetoaction.h"
 
@@ -126,46 +127,59 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
 
     const auto buildingRect = mBuilding->tileRect();
 
+    // 1. Store target coordinates and task
     const auto bx = std::make_shared<int>(0);
     const auto by = std::make_shared<int>(0);
-
     const auto ttask = std::make_shared<eCartTask>();
 
     const auto bType = mBuilding->type();
-    const auto finalTile = [buildingRect, bType, ttask, tasks, bx, by]
+
+    // 2. Check each tile for valid target buildings
+    const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by]
                            (eThreadTile* const t) {
+        // 2.1 Skip tiles without buildings
         if(!t->isUnderBuilding()) return false;
+
+        // 2.2 Skip tiles part of cart's home building
         const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
         if(r) return false;
+
         bool found = false;
         const auto& ub = t->underBuilding();
+
+        // 2.3 Skip trading posts for agora vendors when setting disabled
+        if(ub.type() == eBuildingType::tradePost) {
+            if(!board().agorasTakeFromTradingPosts()) {
+                const auto v = dynamic_cast<eVendor*>(mBuilding);
+                if(v && v->agora()) return false;
+            }
+        }
+
+        // 2.4 Check if building can fulfill any cart tasks
         for(const auto& task : tasks) {
             const auto res = task.fResource;
+
             if(task.fType == eCartActionType::take) {
+                // Skip storage buildings that accept/buy this resource
                 if(bType == eBuildingType::warehouse ||
                    bType == eBuildingType::granary ||
                    bType == eBuildingType::tradePost) {
-                    const bool g = ub.gets(res);
-                    if(g) continue;
+                    if(ub.gets(res)) continue;
                 }
-                const bool has = ub.resourceHas(res);
-                if(has) found = true;
+                if(ub.resourceHas(res)) found = true;
             } else { // give
-                const bool e = ub.empties(res);
-                if(e) continue;
-                const bool has = ub.resourceHasSpace(res);
-                if(has) found = true;
+                if(ub.empties(res)) continue;
+                if(ub.resourceHasSpace(res)) found = true;
             }
+
             if(found) {
-                int mc;
-                if(task.fType == eCartActionType::take) {
-                    const int c = ub.resourceCount(res);
-                    mc = std::min(c, task.fMaxCount);
-                } else { // give
-                    const int c = ub.resourceSpaceLeft(res);
-                    mc = std::min(c, task.fMaxCount);
-                }
+                // 2.5 Calculate transferable amount
+                int mc = (task.fType == eCartActionType::take) ?
+                    std::min(ub.resourceCount(res), task.fMaxCount) :
+                    std::min(ub.resourceSpaceLeft(res), task.fMaxCount);
                 if(mc <= 0) continue;
+
+                // 2.6 Valid target found
                 *ttask = task;
                 *bx = t->x();
                 *by = t->y();

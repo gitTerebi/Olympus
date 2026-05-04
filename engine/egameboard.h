@@ -101,6 +101,8 @@ public:
 
     void setDoubleCartCapacity(const bool b) { mDoubleCartCapacity = b; }
     bool doubleCartCapacity() const { return mDoubleCartCapacity; }
+    void setAgorasTakeFromTradingPosts(const bool b) { mAgorasTakeFromTradingPosts = b; }
+    bool agorasTakeFromTradingPosts() const { return mAgorasTakeFromTradingPosts; }
 
     void setWorldDirection(const eWorldDirection dir);
 
@@ -787,6 +789,7 @@ private:
     bool mEditorMode = false;
     bool mFogOfWar = true;
     bool mDoubleCartCapacity = false;
+    bool mAgorasTakeFromTradingPosts = true;
     int mCurrentDistrictId = -1;
     mutable bool mEpisodeLost = false;
     eWorldBoard& mWorld;
