@@ -5,8 +5,7 @@
 
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
-
-#include "escrollwidgetcomplete.h"
+#include "escrollbar.h"
 
 #include "elineedit.h"
 
@@ -106,13 +105,25 @@ void eLoadGame::intialize(const std::string& title,
     lineW->setX(2*p);
     f->addWidget(lineW);
 
-    mScrollCont = new eScrollWidgetComplete(window());
-    f->addWidget(mScrollCont);
-    mScrollCont->resize(ww - 4*p, hh - lineY - mLineEdit->height() - 10*p);
-    mScrollCont->setY(lineY + mLineEdit->height() + 2*p);
-    mScrollCont->setX(2*p);
-    mScrollCont->initialize();
-    const int swwidth = mScrollCont->listWidth();
+    const int vpY = lineY + mLineEdit->height() + 2*p;
+    const int vpH = f->height() - vpY - mOk->height() - 4*p;
+
+    const auto sidebar = new eScrollBar(window());
+    sidebar->initialize(vpH);
+    const int vpW = ww - 4*p - sidebar->width() - p;
+
+    mViewport = new eScrollViewport(window());
+    mViewport->setNoPadding();
+    mViewport->resize(vpW, vpH);
+    mViewport->move(2*p, vpY);
+    f->addWidget(mViewport);
+
+    sidebar->move(2*p + vpW + p, vpY);
+    f->addWidget(sidebar);
+    sidebar->setViewport(mViewport);
+
+    mSwWidth = vpW;
+    const int swwidth = mSwWidth;
 
     mFilesWidget = new eWidget(window());
 
@@ -155,7 +166,8 @@ void eLoadGame::intialize(const std::string& title,
     mFilesWidget->setNoPadding();
     mFilesWidget->fitContent();
 
-    mScrollCont->setScrollArea(mFilesWidget);
+    mFilesWidget->setWidth(mSwWidth);
+    mViewport->setPage(mFilesWidget);
 
     mLineEdit->resize(swwidth - 2*p, mLineEdit->height());
     lineW->resize(swwidth, mLineEdit->height());
@@ -177,7 +189,7 @@ void eLoadGame::rebuildFileList() {
     }
     mFilesWidget->setNoPadding();
 
-    const int swwidth = mScrollCont->listWidth();
+    const int swwidth = mSwWidth;
 
     std::map<time_t, fs::path> sorted;
     if(std::filesystem::exists(mFolder)) {
@@ -219,7 +231,8 @@ void eLoadGame::rebuildFileList() {
         y += b->height();
     }
     mFilesWidget->fitContent();
-    mScrollCont->setScrollArea(mFilesWidget);
+    mFilesWidget->setWidth(mSwWidth);
+    mViewport->setPage(mFilesWidget);
 }
 
 void eLoadGame::closePopup() {

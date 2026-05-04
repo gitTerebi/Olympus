@@ -111,6 +111,7 @@ public:
                          const bool skipHidden = false);
     void layoutVertically(const bool skipHidden = false);
     void layoutVerticallyWithoutSpaces();
+    void layoutVertically(const int gap, const eAlignment align);
     void stackHorizontally(const int p = 0);
     void layoutHorizontally();
     void layoutHorizontallyWithoutSpaces();

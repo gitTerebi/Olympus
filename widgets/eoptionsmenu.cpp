@@ -8,6 +8,8 @@
 #include "ebasicbutton.h"
 #include "ecancelbutton.h"
 #include "textures/egametextures.h"
+#include "escrollbar.h"
+
 
 #include <SDL2/SDL.h>
 
@@ -143,133 +145,7 @@ private:
     bool mListening = false;
 };
 
-class eOptionsScrollThumb : public eWidget {
-public:
-    using eScrollAction = std::function<void(int dy)>;
-
-    eOptionsScrollThumb(eMainWindow* const window) : eWidget(window) {}
-
-    void setScrollAction(const eScrollAction& a) { mScrollAction = a; }
-
-protected:
-    void paintEvent(ePainter& p) override {
-        int iRes, mult;
-        iResAndMult(iRes, mult);
-        const int dim = 8 * mult;
-        const auto& intrfc = eGameTextures::interface()[iRes];
-        if(!intrfc.fLoaded) return;
-        const auto& coll = mDragging ? intrfc.fButtonFrameHover : intrfc.fButtonFrame;
-        const int iMax = width() / dim + 1;
-        const int jMax = height() / dim + 1;
-        const int lastX = width() - dim;
-        const int lastY = height() - dim;
-        for(int i = 0; i < iMax; i++) {
-            const int x = i == iMax - 1 ? lastX : dim * i;
-            for(int j = 0; j < jMax; j++) {
-                int texId;
-                if(i == 0) texId = (j == 0) ? 0 : (j == jMax-1) ? 6 : 7;
-                else if(i == iMax-1) texId = (j == 0) ? 2 : (j == jMax-1) ? 4 : 3;
-                else if(j == 0) texId = 1;
-                else if(j == jMax-1) texId = 5;
-                else continue;
-                const int y = j == jMax - 1 ? lastY : dim * j;
-                p.drawTexture(x, y, coll.getTexture(texId));
-            }
-        }
-    }
-
-    bool mousePressEvent(const eMouseEvent& e) override {
-        mDragY = e.y();
-        mDragging = true;
-        return true;
-    }
-
-    bool mouseReleaseEvent(const eMouseEvent&) override {
-        mDragging = false;
-        return true;
-    }
-
-    bool mouseMoveEvent(const eMouseEvent& e) override {
-        if(!mDragging) return false;
-        const int delta = e.y() - mDragY;
-        mDragY = e.y();
-        if(mScrollAction) mScrollAction(delta);
-        return true;
-    }
-
-private:
-    bool mDragging = false;
-    int mDragY = 0;
-    eScrollAction mScrollAction;
-};
-
-class eOptionsPageViewport : public eWidget {
-public:
-    using eScrollCallback = std::function<void(int dy, int maxDy)>;
-
-    using eWidget::eWidget;
-
-    void setPage(eWidget* const page) {
-        mPage = page;
-        addWidget(mPage);
-        clampDY();
-    }
-
-    void setScrollCallback(const eScrollCallback& cb) { mScrollCb = cb; }
-
-    void scrollToTop() {
-        mDy = 0;
-        clampDY();
-    }
-
-    void scrollUp() {
-        mDy -= 35 * resolution().multiplier();
-        clampDY();
-    }
-
-    void scrollDown() {
-        mDy += 35 * resolution().multiplier();
-        clampDY();
-    }
-
-    void scrollByPixels(const int delta, const int trackH, const int thumbH) {
-        if(!mPage) return;
-        const int maxDy = std::max(0, mPage->height() - height());
-        if(thumbH >= trackH || maxDy <= 0) return;
-        const float ratio = static_cast<float>(maxDy) / (trackH - thumbH);
-        mDy += static_cast<int>(delta * ratio);
-        clampDY();
-    }
-
-    void clampDY() {
-        if(!mPage) return;
-        const int maxDy = std::max(0, mPage->height() - height());
-        mDy = std::clamp(mDy, 0, maxDy);
-        mPage->setY(-mDy);
-        if(mScrollCb) mScrollCb(mDy, maxDy);
-    }
-
-protected:
-    void paintEvent(ePainter& p) override {
-        const auto r = rect();
-        p.setClipRect(&r);
-    }
-
-    void postPaintEvent(ePainter& p) override {
-        p.setClipRect(nullptr);
-    }
-
-    bool mouseWheelEvent(const eMouseWheelEvent& e) override {
-        mDy -= 35 * resolution().multiplier() * e.dy();
-        clampDY();
-        return true;
-    }
-
-private:
-    int mDy = 0;
-    eWidget* mPage = nullptr;
-    eScrollCallback mScrollCb;
-};
+using eOptionsPageViewport = eScrollViewport;
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            eMainWindow* const window) :
@@ -323,14 +199,11 @@ void eOptionsMenu::initialize() {
     }
     categories->stackVertically(p);
 
-    const auto upBtn = new eBasicButton(&eInterfaceTextures::fBigUpButton, window());
-    const auto downBtn = new eBasicButton(&eInterfaceTextures::fBigDownButton, window());
-    const int sbW = upBtn->width() / 2;
-    upBtn->resize(sbW, upBtn->height() / 2);
-    downBtn->resize(sbW, downBtn->height() / 2);
+    const auto sidebar = new eScrollBar(window());
+    sidebar->initialize(contentH);
 
     const int vpLeft = categories->x() + categories->width() + 2*p;
-    const int vpRight = f->width() - p - sbW - p - pad;
+    const int vpRight = f->width() - p - sidebar->width() - p - pad;
 
     mPageViewport = new eOptionsPageViewport(window());
     mPageViewport->setNoPadding();
@@ -338,39 +211,9 @@ void eOptionsMenu::initialize() {
     f->addWidget(mPageViewport);
     mPageViewport->move(vpLeft, categories->y());
 
-    const int trackTop = mPageViewport->y() + upBtn->height();
-    const int trackH = contentH - upBtn->height() - downBtn->height();
-
-    const auto thumb = new eOptionsScrollThumb(window());
-    thumb->setNoPadding();
-    thumb->setWidth(sbW);
-    thumb->setHeight(trackH);
-    thumb->move(vpRight + p, trackTop);
-    f->addWidget(thumb);
-
-    f->addWidget(upBtn);
-    f->addWidget(downBtn);
-    upBtn->move(vpRight + p, mPageViewport->y());
-    downBtn->move(vpRight + p, mPageViewport->y() + contentH - downBtn->height());
-    upBtn->setPressAction([this]() { mPageViewport->scrollUp(); });
-    downBtn->setPressAction([this]() { mPageViewport->scrollDown(); });
-
-    thumb->setScrollAction([this, thumb, trackH](const int delta) {
-        const int thumbH = thumb->height();
-        mPageViewport->scrollByPixels(delta, trackH, thumbH);
-    });
-
-    mPageViewport->setScrollCallback([thumb, trackH, trackTop](const int dy, const int maxDy) {
-        if(maxDy <= 0) {
-            thumb->setHeight(trackH);
-            thumb->setY(trackTop);
-            return;
-        }
-        const int thumbH = std::max(20, trackH * trackH / (trackH + maxDy));
-        const int thumbY = static_cast<int>(static_cast<float>(dy) / maxDy * (trackH - thumbH));
-        thumb->setHeight(thumbH);
-        thumb->setY(trackTop + thumbY);
-    });
+    sidebar->move(vpRight + p, mPageViewport->y());
+    f->addWidget(sidebar);
+    sidebar->setViewport(mPageViewport);
 
     mPage = new eWidget(window());
     mPage->setNoPadding();

@@ -2,7 +2,7 @@
 
 #include "eframedwidget.h"
 #include "eframedbutton.h"
-#include "escrollwidgetcomplete.h"
+#include "escrollbar.h"
 #include "ebuttonbase.h"
 #include "ecancelbutton.h"
 #include "emainwindow.h"
@@ -135,17 +135,48 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     const auto title = new eLabel(window());
     title->setHugeFontSize();
-    title->setSmallPadding();
-    title->setText(editor ? eLanguage::zeusText(287, 3) :
+    title->setNoPadding();
+    title->setText(editor ? eLanguage::zeusText(287, 3) : // "Adventure Editor" : "Adventures"
                             eLanguage::zeusText(293, 9));
     title->fitContent();
     iw->addWidget(title);
     title->align(eAlignment::hcenter);
 
-    const auto scrollCont = new eScrollWidgetComplete(window());
+    const auto chooseLabel = new eLabel(window());
+    chooseLabel->setSmallFontSize();
+    chooseLabel->setNoPadding();
+    chooseLabel->setText(eLanguage::zeusText(287, 5)); // "Choose an Adventure"
+    chooseLabel->fitContent();
+    iw->addWidget(chooseLabel);
+    chooseLabel->align(eAlignment::hcenter);
+
+    const int scrollW = cw - 4*p;
+
+    const auto scrollCont = new eWidget(window());
+    scrollCont->setNoPadding();
     iw->addWidget(scrollCont);
-    scrollCont->resize(cw - 4*p, ch/2);
-    scrollCont->initialize();
+
+    const auto scrollbar = new eScrollBar(window());
+    {
+        const auto probe = new eBasicButton(&eInterfaceTextures::fBigUpButton, window());
+        const int sbW = probe->width() / 2;
+        probe->deleteLater();
+        scrollbar->resize(sbW, 1);
+    }
+    const int vpW = scrollW - scrollbar->width();
+
+    const auto innerFrame = new eFramedWidget(window());
+    innerFrame->setNoPadding();
+    innerFrame->setType(eFrameType::inner);
+    scrollCont->addWidget(innerFrame);
+
+    const auto viewport = new eScrollViewport(window());
+    viewport->setNoPadding();
+    const int tp = resolution().tinyPadding();
+    innerFrame->addWidget(viewport);
+
+    scrollCont->addWidget(scrollbar);
+    scrollbar->setViewport(viewport);
 
     if(editor) {
         const auto buttonsW = new eWidget(window());
@@ -155,7 +186,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         newB->setUnderline(false);
         newB->setSmallFontSize();
         newB->setSmallPadding();
-        newB->setText(eLanguage::zeusText(287, 0));
+        newB->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
         newB->fitContent();
         buttonsW->addWidget(newB);
         newB->setPressAction([cw, p, this]() {
@@ -170,14 +201,14 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto title = new eLabel(window());
             title->setHugeFontSize();
             title->setSmallPadding();
-            title->setText(eLanguage::zeusText(287, 0));
+            title->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
             title->fitContent();
             iw->addWidget(title);
             title->align(eAlignment::hcenter);
 
             const auto edit = new eLineEdit(window());
             edit->setRenderBg(true);
-            edit->setText(eLanguage::zeusText(287, 0));
+            edit->setText(eLanguage::zeusText(287, 0)); // "New Adventure" (placeholder)
             edit->fitContent();
             edit->setText("");
             edit->setWidth(cw - 6*p);
@@ -200,7 +231,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto proceedLabel = new eLabel(window());
             proceedLabel->setSmallFontSize();
             proceedLabel->setSmallPadding();
-            proceedLabel->setText(eLanguage::zeusText(287, 2));
+            proceedLabel->setText(eLanguage::zeusText(287, 2)); // "Proceed"
             proceedLabel->fitContent();
             proceedW->addWidget(proceedLabel);
 
@@ -249,7 +280,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         deleteB->setUnderline(false);
         deleteB->setSmallFontSize();
         deleteB->setSmallPadding();
-        deleteB->setText(eLanguage::zeusText(287, 1));
+        deleteB->setText(eLanguage::zeusText(287, 1)); // "Delete Adventure"
         deleteB->fitContent();
         buttonsW->addWidget(deleteB);
         deleteB->setPressAction([this]() {
@@ -259,8 +290,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
                std::filesystem::remove_all(dir);
                window()->showChooseGameEditMenu();
            };
-           q->initialize(eLanguage::zeusText(5, 179),
-                         eLanguage::zeusText(5, 180),
+           q->initialize(eLanguage::zeusText(5, 179), // "Delete Adventure?"
+                         eLanguage::zeusText(5, 180), // "This deletes the selected Adventure..."
                          acceptA, nullptr);
            window()->execDialog(q);
            q->align(eAlignment::center);
@@ -287,8 +318,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     const auto proceedLabel = new eLabel(window());
     proceedLabel->setSmallFontSize();
     proceedLabel->setSmallPadding();
-    proceedLabel->setText(editor ? eLanguage::zeusText(287, 2) :
-                                   eLanguage::zeusText(287, 6));
+    proceedLabel->setText(editor ? eLanguage::zeusText(287, 2) : // "Proceed"
+                                   eLanguage::zeusText(287, 6)); // "Begin Adventure"
     proceedLabel->fitContent();
     proceedW->addWidget(proceedLabel);
 
@@ -329,7 +360,21 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     buttons2W->fitHeight();
     iw->addWidget(buttons2W);
 
-    iw->layoutVerticallyWithoutSpaces();
+    const int layoutGap = 16;
+    {
+        int fixedH = 0;
+        for(const auto w : iw->children()) {
+            if(w != scrollCont) fixedH += w->height() + layoutGap;
+        }
+        const int scrollH = iw->height() - fixedH;
+        scrollCont->resize(scrollW, scrollH);
+        scrollbar->initialize(scrollH);
+        scrollbar->move(vpW, 0);
+        innerFrame->resize(vpW, scrollH);
+        viewport->resize(vpW - 2*tp, scrollH - 2*tp);
+        viewport->move(tp, tp);
+    }
+    iw->layoutVertically(layoutGap, eAlignment::top);
 
     const auto sideW = new eWidget(window());
     sideW->setNoPadding();
@@ -425,7 +470,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         scrollArea->stackVertically();
         scrollArea->setNoPadding();
         scrollArea->fitContent();
-        scrollCont->setScrollArea(scrollArea);
+        scrollArea->setWidth(viewport->width());
+        viewport->setPage(scrollArea);
     }
 }
 

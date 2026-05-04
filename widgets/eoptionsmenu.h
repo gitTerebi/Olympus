@@ -3,6 +3,7 @@
 
 #include "epopupwidget.h"
 #include "esettings.h"
+#include "escrollbar.h"
 
 #include <functional>
 #include <string>
@@ -59,7 +60,7 @@ private:
     void clearPage();
 
     std::vector<ePage> mPages;
-    class eOptionsPageViewport* mPageViewport = nullptr;
+    eScrollViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
     eLabel* mMainTitle = nullptr;
 };

@@ -513,6 +513,22 @@ void eWidget::stackHorizontally(const int p) {
     }
 }
 
+void eWidget::layoutVertically(const int gap, const eAlignment align) {
+    int totalH = 0;
+    for(const auto w : mChildren) totalH += w->height();
+    totalH += gap * (static_cast<int>(mChildren.size()) - 1);
+
+    int startY = 0;
+    if(align == eAlignment::vcenter) startY = (height() - totalH) / 2;
+    else if(align == eAlignment::bottom) startY = height() - totalH;
+
+    int y = startY;
+    for(const auto w : mChildren) {
+        w->setY(y);
+        y += w->height() + gap;
+    }
+}
+
 void eWidget::layoutHorizontally() {
     const int spaces = mChildren.size() + 1;
     int wsWidth = 0;
