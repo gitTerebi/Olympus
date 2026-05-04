@@ -12,6 +12,7 @@ public:
     void setRenderBg(const bool r);
 protected:
     bool mouseMoveEvent(const eMouseEvent& e);
+    bool mousePressEvent(const eMouseEvent& e);
     bool mouseEnterEvent(const eMouseEvent& e);
     bool mouseLeaveEvent(const eMouseEvent& e);
     bool keyPressEvent(const eKeyPressEvent& e);

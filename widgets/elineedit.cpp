@@ -6,6 +6,7 @@ eLineEdit::eLineEdit(eMainWindow* const window) :
     eFramedLabel(window) {
     setType(eFrameType::inner);
     setTextAlignment(eAlignment::left | eAlignment::vcenter);
+    grabKeyboard();
 }
 
 void eLineEdit::setChangeAction(const eAction a) {
@@ -14,6 +15,12 @@ void eLineEdit::setChangeAction(const eAction a) {
 
 void eLineEdit::setRenderBg(const bool r) {
     mRenderBg = r;
+}
+
+bool eLineEdit::mousePressEvent(const eMouseEvent& e) {
+    (void)e;
+    grabKeyboard();
+    return true;
 }
 
 bool eLineEdit::mouseMoveEvent(const eMouseEvent& e) {
