@@ -6,6 +6,8 @@ namespace eFileFormat {
         initial,
         settlerEmigrant,
         cartTarget,
+        ruinsOrigin,
+        ruinsSavedBuilding,
 
         nextVersion
     };

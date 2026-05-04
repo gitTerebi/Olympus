@@ -8,6 +8,7 @@
 enum class eBuildingMode {
     none,
     erase,
+    repair,
 
     road,
     roadblock,

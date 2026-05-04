@@ -6,6 +6,8 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
         return eBuildingType::none;
     case eBuildingMode::erase:
         return eBuildingType::erase;
+    case eBuildingMode::repair:
+        return eBuildingType::ruins;
 
     case eBuildingMode::road:
         return eBuildingType::road;

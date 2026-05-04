@@ -285,6 +285,8 @@ private:
     bool inErase(eAgoraBase* const a);
     bool inErase(eBuilding* const b);
 
+    bool inRepair(const int tx, const int ty);
+
     bool inPatrolBuildingHover(eBuilding* const b);
 
     void setArmyMenuVisible(const bool v);

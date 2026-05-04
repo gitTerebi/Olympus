@@ -47,6 +47,7 @@
 #include "buildings/evendor.h"
 #include "buildings/eanimalbuilding.h"
 #include "buildings/eroad.h"
+#include "buildings/eruins.h"
 #include "buildings/ebuildingrenderer.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/sanctuaries/esanctuary.h"
@@ -300,7 +301,10 @@ void eGameWidget::initialize() {
         setPatrolBuilding(nullptr);
         if(mGm->mode() == eBuildingMode::erase) {
             eCursors::set(eCursorType::shovel);
-        } else {
+        } else if(mGm->mode() == eBuildingMode::repair) {
+            eCursors::set(eCursorType::repairMallet);
+        }        
+        else {
             eCursors::set(eCursorType::defaultCursor);
         }
     });
@@ -1952,6 +1956,27 @@ bool eGameWidget::inErase(eBuilding* const b) {
     return inErase(rect);
 }
 
+bool eGameWidget::inRepair(const int tx, const int ty) {
+    const auto mode = mGm->mode();
+    const bool r = mode == eBuildingMode::repair;
+    if(!r) return false;
+
+    const int sMinX = std::min(mPressedTX, mHoverTX);
+    const int sMinY = std::min(mPressedTY, mHoverTY);
+    const int sMaxX = std::max(mPressedTX, mHoverTX);
+    const int sMaxY = std::max(mPressedTY, mHoverTY);
+
+    bool s = false;
+    if(mLeftPressed &&
+       tx >= sMinX && tx <= sMaxX &&
+       ty >= sMinY && ty <= sMaxY) {
+        s = true;
+    }
+    const bool h = tx == mHoverTX && ty == mHoverTY;
+    return h || s;
+}
+
+
 bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
     const auto mode = mGm->mode();
     const bool e = mode == eBuildingMode::none;
@@ -2050,7 +2075,10 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         selectHoveredBuildingMode();
     } else if(k == hotkeys.fHotkeyDeleteTool) {
         mGm->setMode(eBuildingMode::erase);
-    } else if(k == hotkeys.fHotkeyUndo) {
+    } else if(k == hotkeys.fHotkeyRepairTool) {
+        mGm->setMode(eBuildingMode::repair);
+    }
+    else if(k == hotkeys.fHotkeyUndo) {
         mBoard->undoLastAction();
         mGm->update();
     } else if(k == hotkeys.fHotkeyShowRoadsOverlay) {

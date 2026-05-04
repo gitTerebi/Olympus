@@ -22,6 +22,12 @@ public:
     int productionPercent() const;
     eMonth nextHarvestMonth() const;
 
+    void prepareForCollapse() override {
+        mNextRipe = 0;
+        mCurrentTile = 0;
+        mCurrentStage = 0;
+    }
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:

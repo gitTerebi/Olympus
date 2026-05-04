@@ -76,6 +76,15 @@ public:
 
     int spaceCount() const { return mSpaceCount; }
 
+    void clearStorage() {
+        for(int i = 0; i < 15; i++) {
+            mResourceCount[i] = 0;
+            mResource[i] = eResourceType::none;
+        }
+    }
+
+    void prepareForCollapse() override { clearStorage(); }
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:

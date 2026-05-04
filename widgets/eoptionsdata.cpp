@@ -71,6 +71,10 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                  [window](const eHotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
+                {"Repair tool", eHotkeyId::repairTool, settings.fHotkeyRepairTool,
+                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                     window->setHotkey(id, key);
+                 }},
                 {"Undo last action", eHotkeyId::undo, settings.fHotkeyUndo,
                  [window](const eHotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);

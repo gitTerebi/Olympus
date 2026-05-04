@@ -48,6 +48,8 @@ public:
         }
         return 0;
     }
+
+    size_t memPos() const { return fMemPos; }
 private:
     std::ofstream* fFile = nullptr;
     void* fMem = nullptr;
@@ -140,6 +142,8 @@ public:
     void writeSoldierBanner(eSoldierBanner* const b);
     void writeGameEvent(eGameEvent* const e);
     void writeInvasionHandler(eInvasionHandler* const i);
+
+    size_t memPos() const { return mDst.memPos(); }
 private:
     eWriteTarget mDst;
 };

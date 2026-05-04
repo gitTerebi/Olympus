@@ -90,6 +90,11 @@ public:
                     const eAction& closeFunc = nullptr,
                     eWidget* const parent = nullptr);
 
+    void showQuestion(const std::string& title,
+                      const std::string& text,
+                      const eAction& accept,
+                      const eAction& decline = nullptr);
+
     void showEpisodeIntroduction(const stdsptr<eCampaign>& c = nullptr);
     const stdsptr<eCampaign>& campaign() const { return mCampaign; }
 
