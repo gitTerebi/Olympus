@@ -2,12 +2,12 @@
 #define ELOADGAME_H
 
 #include "epopupwidget.h"
+#include "escrollbar.h"
 
 class eLabel;
 class eAcceptButton;
 class eCancelButton;
 class eLineEdit;
-class eScrollWidgetComplete;
 
 class eLoadGame : public ePopupWidget {
 public:
@@ -31,7 +31,8 @@ private:
     eCancelButton* mCancel = nullptr;
     eLineEdit* mLineEdit = nullptr;
 
-    eScrollWidgetComplete* mScrollCont = nullptr;
+    eScrollViewport* mViewport = nullptr;
+    int mSwWidth = 0;
     eWidget* mFilesWidget = nullptr;
 
     std::string mFolder;

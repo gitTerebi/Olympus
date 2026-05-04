@@ -16,17 +16,11 @@ Where possible, refactor repeated functions into shared local helpers.
 
 Use `.\build.bat` for default build.
 
-If calling CMake directly, use Ninja build dir and 8 jobs:
-
-```powershell
-cmake --build build-ninja --config Release -j 8
-```
-
 Do not use `cmake --build build` or `cmake --build build-cmake` for normal verification.
 
 ## Codebase Navigation
 
-**Text strings:** `zeus-text strings/Zeus_Text.xml` reference strings provided by the game at runtime, re-use for messages.
+**Text strings:** `zeus-text strings/Zeus_Text.xml` READ ONLY reference strings provided by the game at runtime, re-use for messages. READ ONLY.
 
 **Terrain and Texture System:**
 - **Terrain rendering:** `textures/etiletotexture.cpp` `eTileToTexture::get` — every `eTerrain` enum value needs a case in the switch or it returns `fInvalidTex`.
