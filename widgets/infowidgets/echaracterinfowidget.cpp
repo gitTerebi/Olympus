@@ -2,6 +2,7 @@
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
+#include "engine/eresourcetype.h"
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
 #include "widgets/elabel.h"
@@ -22,21 +23,23 @@
 #include "eiteratesquare.h"
 
 eCharacterInfoWidget::eCharacterInfoWidget(
-    eMainWindow* const window,
-    eMainWidget* const mw) :
-    eInfoWidget(window, mw, true, true) {}
+    eMainWindow *const window,
+    eMainWidget *const mw) : eInfoWidget(window, mw, true, true) {}
 
 std::shared_ptr<eTexture> gCharPortrait(
-    const eResolution res, const eCharacter* const c) {
-    if(!c) return nullptr;
+    const eResolution res, const eCharacter *const c)
+{
+    if (!c)
+        return nullptr;
     const auto type = c->type();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);
-    const auto& intrfc = eGameTextures::interface()[iRes];
-    const auto& zp = intrfc.fZeusPortraits;
-    const auto& zgp = intrfc.fZeusGodPortraits;
-    const auto& pp = intrfc.fPoseidonPortraits;
-    switch(type) {
+    const auto &intrfc = eGameTextures::interface()[iRes];
+    const auto &zp = intrfc.fZeusPortraits;
+    const auto &zgp = intrfc.fZeusGodPortraits;
+    const auto &pp = intrfc.fPoseidonPortraits;
+    switch (type)
+    {
     case eCharacterType::zeus:
         return zgp.getTexture(1);
     case eCharacterType::poseidon:
@@ -108,25 +111,30 @@ std::shared_ptr<eTexture> gCharPortrait(
     case eCharacterType::homeless:
         return zp.getTexture(3);
 
-    case eCharacterType::grower: {
-        const auto g = static_cast<const eGrower*>(c);
+    case eCharacterType::grower:
+    {
+        const auto g = static_cast<const eGrower *>(c);
         const auto type = g->growerType();
-        switch(type) {
+        switch (type)
+        {
         case eGrowerType::grapesAndOlives:
             return zp.getTexture(5);
         case eGrowerType::oranges:
             return pp.getTexture(2);
         }
-    } break;
+    }
+    break;
 
     case eCharacterType::taxCollector:
         return zp.getTexture(7);
     case eCharacterType::fireFighter:
         return zp.getTexture(8);
-    case eCharacterType::cartTransporter: {
-        const auto ct = static_cast<const eCartTransporter*>(c);
+    case eCharacterType::cartTransporter:
+    {
+        const auto ct = static_cast<const eCartTransporter *>(c);
         const auto type = ct->cartType();
-        switch(type) {
+        switch (type)
+        {
         case eCartTransporterType::basic:
             return zp.getTexture(9);
         case eCartTransporterType::food:
@@ -142,9 +150,12 @@ std::shared_ptr<eTexture> gCharPortrait(
         case eCartTransporterType::horse:
             return zp.getTexture(78);
         case eCartTransporterType::ox:
-            if(c->atlantean()) {
+            if (c->atlantean())
+            {
                 return pp.getTexture(8);
-            } else {
+            }
+            else
+            {
                 return zp.getTexture(80);
             }
         case eCartTransporterType::chariot:
@@ -152,7 +163,8 @@ std::shared_ptr<eTexture> gCharPortrait(
         default:
             return zp.getTexture(0);
         }
-    } break;
+    }
+    break;
 
     case eCharacterType::rockThrower:
         return zp.getTexture(11);
@@ -208,15 +220,20 @@ std::shared_ptr<eTexture> gCharPortrait(
     case eCharacterType::boar:
         return zp.getTexture(51);
 
-    case eCharacterType::hunter: {
-        const auto h = static_cast<const eHunter*>(c);
+    case eCharacterType::hunter:
+    {
+        const auto h = static_cast<const eHunter *>(c);
         const bool d = h->deerHunter();
-        if(d) {
+        if (d)
+        {
             return pp.getTexture(4);
-        } else {
+        }
+        else
+        {
             return zp.getTexture(53);
         }
-    } break;
+    }
+    break;
 
     case eCharacterType::lumberjack:
         return zp.getTexture(55);
@@ -291,8 +308,10 @@ std::shared_ptr<eTexture> gCharPortrait(
     }
 }
 
-std::string gCharName(const eCharacterType c, const int seedId) {
-    switch(c) {
+std::string gCharName(const eCharacterType c, const int seedId)
+{
+    switch (c)
+    {
     case eCharacterType::settler:
     case eCharacterType::homeless:
     case eCharacterType::sick:
@@ -336,10 +355,12 @@ std::string gCharName(const eCharacterType c, const int seedId) {
     case eCharacterType::hera:
     case eCharacterType::hermes:
     case eCharacterType::poseidon:
-    case eCharacterType::zeus: {
+    case eCharacterType::zeus:
+    {
         const auto g = eGod::sCharacterToGodType(c);
         return eGod::sGodName(g);
-    } break;
+    }
+    break;
     case eCharacterType::achilles:
     case eCharacterType::atalanta:
     case eCharacterType::bellerophon:
@@ -347,10 +368,12 @@ std::string gCharName(const eCharacterType c, const int seedId) {
     case eCharacterType::jason:
     case eCharacterType::odysseus:
     case eCharacterType::perseus:
-    case eCharacterType::theseus: {
+    case eCharacterType::theseus:
+    {
         const auto h = eHero::sCharacterToHeroType(c);
         return eHero::sHeroName(h);
-    } break;
+    }
+    break;
     case eCharacterType::calydonianBoar:
     case eCharacterType::cerberus:
     case eCharacterType::chimera:
@@ -367,23 +390,28 @@ std::string gCharName(const eCharacterType c, const int seedId) {
     case eCharacterType::scylla:
     case eCharacterType::sphinx:
     case eCharacterType::talos:
-    case eCharacterType::satyr: {
+    case eCharacterType::satyr:
+    {
         const auto m = eMonster::sCharacterToMonsterType(c);
         return eMonster::sMonsterName(m);
-    } break;
+    }
+    break;
     default:
         return "";
     }
 }
 
 std::string gCharOccupation(
-    const eCharacter* const c) {
-    if(!c) return nullptr;
-    auto& board = c->getBoard();
+    const eCharacter *const c)
+{
+    if (!c)
+        return "";
+    auto &board = c->getBoard();
     const auto cid = c->cityId();
     const auto cname = board.cityName(cid);
     const auto type = c->type();
-    switch(type) {
+    switch (type)
+    {
     case eCharacterType::aphrodite:
     case eCharacterType::apollo:
     case eCharacterType::ares:
@@ -427,15 +455,20 @@ std::string gCharOccupation(
     case eCharacterType::satyr:
         return eLanguage::zeusText(44, 163);
 
-    case eCharacterType::settler: {
-        const auto s = static_cast<const eSettler*>(c);
+    case eCharacterType::settler:
+    {
+        const auto s = static_cast<const eSettler *>(c);
         const bool emi = s->emigrant();
-        if(emi) {
+        if (emi)
+        {
             return eLanguage::zeusText(64, 2);
-        } else {
+        }
+        else
+        {
             return eLanguage::zeusText(64, 1);
         }
-    } break;
+    }
+    break;
 
     case eCharacterType::homeless:
         return eLanguage::zeusText(64, 3);
@@ -447,10 +480,12 @@ std::string gCharOccupation(
         return eLanguage::zeusText(64, 7);
     case eCharacterType::fireFighter:
         return eLanguage::zeusText(64, 8);
-    case eCharacterType::cartTransporter: {
-        const auto ct = static_cast<const eCartTransporter*>(c);
+    case eCharacterType::cartTransporter:
+    {
+        const auto ct = static_cast<const eCartTransporter *>(c);
         const auto type = ct->cartType();
-        switch(type) {
+        switch (type)
+        {
         case eCartTransporterType::basic:
         case eCartTransporterType::ox:
             return eLanguage::zeusText(64, 9);
@@ -465,7 +500,8 @@ std::string gCharOccupation(
         default:
             return eLanguage::zeusText(64, 9);
         }
-    } break;
+    }
+    break;
 
     case eCharacterType::rockThrower:
         return eLanguage::zeusText(64, 11);
@@ -482,7 +518,8 @@ std::string gCharOccupation(
         return eLanguage::zeusText(64, 17);
     case eCharacterType::actor:
         return eLanguage::zeusText(64, 18);
-    case eCharacterType::trader: {
+    case eCharacterType::trader:
+    {
         const auto onCid = c->onCityId();
         const auto cid = onCid != static_cast<eCityId>(-1) ? onCid : c->cityId();
         return eLanguage::zeusText(64, 19) + " " + board.cityName(cid);
@@ -601,28 +638,34 @@ std::string gCharOccupation(
     }
 }
 
-struct eCharMessage {
+struct eCharMessage
+{
     std::string fText;
-    eSoundVector* fSounds = nullptr;
+    eSoundVector *fSounds = nullptr;
     int fSoundId = -1;
 
-    bool playSound() const {
-        if(!fSounds) return false;
+    bool playSound() const
+    {
+        if (!fSounds)
+            return false;
         fSounds->play(fSoundId, eSoundType::voice, 1);
         return true;
     }
 };
 
-enum class eMinerState {
+enum class eMinerState
+{
     goingTo,
     collecting,
     goingBack,
     other
 };
 
-eMinerState gGetMinerState(eCharacter * const c) {
+eMinerState gGetMinerState(eCharacter *const c)
+{
     const auto a = c->actionType();
-    switch(a) {
+    switch (a)
+    {
     case eCharacterActionType::walk:
         return eMinerState::goingTo;
     case eCharacterActionType::collect:
@@ -634,15 +677,18 @@ eMinerState gGetMinerState(eCharacter * const c) {
     }
 }
 
-enum class eHunterState {
+enum class eHunterState
+{
     goingTo,
     goingBack,
     other
 };
 
-eHunterState gGetHunterState(eCharacter * const c) {
+eHunterState gGetHunterState(eCharacter *const c)
+{
     const auto a = c->actionType();
-    switch(a) {
+    switch (a)
+    {
     case eCharacterActionType::walk:
         return eHunterState::goingTo;
     case eCharacterActionType::carry:
@@ -652,7 +698,8 @@ eHunterState gGetHunterState(eCharacter * const c) {
     }
 }
 
-enum class eGrowerState {
+enum class eGrowerState
+{
     carryingOlives,
     carryingGrapes,
     carryingOranges,
@@ -662,23 +709,34 @@ enum class eGrowerState {
     other
 };
 
-eGrowerState gGetGrowerState(eCharacter * const c) {
-    const auto grow = static_cast<eGrower*>(c);
+eGrowerState gGetGrowerState(eCharacter *const c)
+{
+    const auto grow = static_cast<eGrower *>(c);
     const auto a = c->actionType();
-    switch(a) {
-    case eCharacterActionType::carry: {
-        if(grow->olives()) {
+    switch (a)
+    {
+    case eCharacterActionType::carry:
+    {
+        if (grow->olives())
+        {
             return eGrowerState::carryingOlives;
-        } else if(grow->grapes()) {
+        }
+        else if (grow->grapes())
+        {
             return eGrowerState::carryingGrapes;
-        } else {
+        }
+        else
+        {
             return eGrowerState::carryingOranges;
         }
-    } break;
-    case eCharacterActionType::collect: {
+    }
+    break;
+    case eCharacterActionType::collect:
+    {
         const auto tile = c->tile();
         const auto ub = tile->underBuildingType();
-        switch(ub) {
+        switch (ub)
+        {
         case eBuildingType::oliveTree:
             return eGrowerState::collectingOlives;
         case eBuildingType::vine:
@@ -688,23 +746,28 @@ eGrowerState gGetGrowerState(eCharacter * const c) {
         default:
             return eGrowerState::other;
         }
-    } break;
+    }
+    break;
     default:
         return eGrowerState::other;
     }
 }
 
-eCharMessage gCharMessage(eCharacter * const c) {
+eCharMessage gCharMessage(eCharacter *const c)
+{
     eCharMessage result;
-    if(!c) return result;
+    if (!c)
+        return result;
     const auto cid = c->onCityId();
-    auto& board = c->getBoard();
+    auto &board = c->getBoard();
     const bool activeInv = board.hasActiveInvasions(cid);
     const auto tile = c->tile();
     bool enemyNearby = false;
     bool enemyImmortal = false;
-    for(int k = 0; k < 10; k++) {
-        eIterateSquare::iterateSquare(k, [&](const int dx, const int dy) {
+    for (int k = 0; k < 10; k++)
+    {
+        eIterateSquare::iterateSquare(k, [&](const int dx, const int dy)
+                                      {
             const auto t = tile->tileRel<eTile>(dx, dy);
             if(!t) return false;
             const auto& chars = t->characters();
@@ -719,36 +782,44 @@ eCharMessage gCharMessage(eCharacter * const c) {
                     enemyNearby = true;
                 }
             }
-            return false;
-        });
+            return false; });
     }
     const auto type = c->type();
     result.fSounds = eSounds::getCharacterVoices(c);
-    const auto gMsgId = [&]() {
+    const auto gMsgId = [&]()
+    {
         const int health = board.health(cid);
-        if(health < 70) return 0;
+        if (health < 70)
+            return 0;
         const int pop = board.population(cid);
         const auto husbData = board.husbandryData(cid);
-        if(husbData) {
+        if (husbData)
+        {
             const int a = husbData->canSupport();
-            if(a < pop) return 1;
+            if (a < pop)
+                return 1;
         }
         const auto emplData = board.employmentData(cid);
-        if(emplData) {
+        if (emplData)
+        {
             const int u = emplData->unemployed();
-            if(0.1*pop < u) return 2;
+            if (0.1 * pop < u)
+                return 2;
         }
         const bool vasal = !board.defeatedBy(cid).empty();
-        if(vasal) return 3;
+        if (vasal)
+            return 3;
         // rebelling city 4
         const int popularity = board.popularity(cid);
-        if(popularity < 80) return 5;
+        if (popularity < 80)
+            return 5;
         return 6;
     };
     const int g = gMsgId();
     int groupId = -1;
     int stringId = -1;
-    switch(type) {
+    switch (type)
+    {
     case eCharacterType::sheep:
     case eCharacterType::goat:
     case eCharacterType::wolf:
@@ -759,119 +830,201 @@ eCharMessage gCharMessage(eCharacter * const c) {
     case eCharacterType::cattle3:
         stringId = eRand::rand() % 4;
         break;
-    case eCharacterType::settler: {
-        const auto s = static_cast<eSettler*>(c);
+    case eCharacterType::settler:
+    {
+        const auto s = static_cast<eSettler *>(c);
         const bool emi = s->emigrant();
-        if(emi) {
+        if (emi)
+        {
             const auto limit = board.immigrationLimit(cid);
-            if(enemyImmortal) {
+            if (enemyImmortal)
+            {
                 stringId = 0;
-            } else if(limit == eImmigrationLimitedBy::unemployment) {
+            }
+            else if (limit == eImmigrationLimitedBy::unemployment)
+            {
                 stringId = 1;
-            } else if(limit == eImmigrationLimitedBy::lackOfFood) {
+            }
+            else if (limit == eImmigrationLimitedBy::lackOfFood)
+            {
                 stringId = 2;
-            } else if(limit == eImmigrationLimitedBy::highTaxes) {
+            }
+            else if (limit == eImmigrationLimitedBy::highTaxes)
+            {
                 stringId = 3;
-            } else if(limit == eImmigrationLimitedBy::lowWages) {
+            }
+            else if (limit == eImmigrationLimitedBy::lowWages)
+            {
                 stringId = 4;
-            } else if(limit == eImmigrationLimitedBy::lackOfVacancies) {
+            }
+            else if (limit == eImmigrationLimitedBy::lackOfVacancies)
+            {
                 stringId = 5;
-            } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
+            }
+            else if (limit == eImmigrationLimitedBy::excessiveMilitaryService)
+            {
                 stringId = 6;
-            } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
+            }
+            else if (limit == eImmigrationLimitedBy::prolongedDebt)
+            {
                 stringId = 7;
-            } else {
+            }
+            else
+            {
                 stringId = 5;
             }
             groupId = 203;
-        } else {
+        }
+        else
+        {
             const auto ed = board.employmentData(cid);
             const auto hd = board.husbandryData(cid);
-            if(eRand::rand() % 2) {
-                if(enemyImmortal) {
+            if (eRand::rand() % 2)
+            {
+                if (enemyImmortal)
+                {
                     stringId = 0;
-                } else if(ed && ed->vacanciesFilledFraction() < 0.95) {
+                }
+                else if (ed && ed->vacanciesFilledFraction() < 0.95)
+                {
                     stringId = 2;
-                } else if(hd && hd->storedFood() > 6) {
+                }
+                else if (hd && hd->storedFood() > 6)
+                {
                     stringId = 3;
-                } else {
+                }
+                else
+                {
                     stringId = 1;
                 }
-            } else {
+            }
+            else
+            {
                 stringId = 1;
             }
             groupId = 202;
         }
-    } break;
-    case eCharacterType::homeless: {
+    }
+    break;
+    case eCharacterType::homeless:
+    {
         const auto limit = board.immigrationLimit(cid);
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(limit == eImmigrationLimitedBy::unemployment) {
+        }
+        else if (limit == eImmigrationLimitedBy::unemployment)
+        {
             stringId = 1;
-        } else if(limit == eImmigrationLimitedBy::lackOfFood) {
+        }
+        else if (limit == eImmigrationLimitedBy::lackOfFood)
+        {
             stringId = 2;
-        } else if(limit == eImmigrationLimitedBy::highTaxes) {
+        }
+        else if (limit == eImmigrationLimitedBy::highTaxes)
+        {
             stringId = 3;
-        } else if(limit == eImmigrationLimitedBy::lowWages) {
+        }
+        else if (limit == eImmigrationLimitedBy::lowWages)
+        {
             stringId = 4;
-        } else if(limit == eImmigrationLimitedBy::lackOfVacancies) {
+        }
+        else if (limit == eImmigrationLimitedBy::lackOfVacancies)
+        {
             stringId = 5;
-        } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
+        }
+        else if (limit == eImmigrationLimitedBy::excessiveMilitaryService)
+        {
             stringId = 6;
-        } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
+        }
+        else if (limit == eImmigrationLimitedBy::prolongedDebt)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = 5;
         }
         groupId = 203;
-    } break;
-    case eCharacterType::disgruntled: {
+    }
+    break;
+    case eCharacterType::disgruntled:
+    {
         // groupId = 206;
         // groupId = 207;
         const auto limit = board.immigrationLimit(cid);
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(limit == eImmigrationLimitedBy::unemployment) {
+        }
+        else if (limit == eImmigrationLimitedBy::unemployment)
+        {
             stringId = 1;
-        } else if(limit == eImmigrationLimitedBy::lackOfFood) {
+        }
+        else if (limit == eImmigrationLimitedBy::lackOfFood)
+        {
             stringId = 2;
-        } else if(limit == eImmigrationLimitedBy::highTaxes) {
+        }
+        else if (limit == eImmigrationLimitedBy::highTaxes)
+        {
             stringId = 3;
-        } else if(limit == eImmigrationLimitedBy::lowWages) {
+        }
+        else if (limit == eImmigrationLimitedBy::lowWages)
+        {
             stringId = 4;
-        } else if(limit == eImmigrationLimitedBy::lackOfVacancies) {
+        }
+        else if (limit == eImmigrationLimitedBy::lackOfVacancies)
+        {
             stringId = 1;
-        } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
+        }
+        else if (limit == eImmigrationLimitedBy::excessiveMilitaryService)
+        {
             stringId = 6;
-        } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
+        }
+        else if (limit == eImmigrationLimitedBy::prolongedDebt)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 208;
         // groupId = 209;
-    } break;
-    case eCharacterType::peddler: {
+    }
+    break;
+    case eCharacterType::peddler:
+    {
         groupId = 229;
-        const auto p = static_cast<ePeddler*>(c);
+        const auto p = static_cast<ePeddler *>(c);
         const auto a = p->agora();
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(!a || a->count(eResourceType::food) < 100) {
+        }
+        else if (!a || a->count(eResourceType::food) < 100)
+        {
             stringId = 1 + eRand::rand() % 3;
-        } else {
+        }
+        else
+        {
             stringId = 4 + eRand::rand() % 3;
         }
-    } break;
-    case eCharacterType::waterDistributor: {
+    }
+    break;
+    case eCharacterType::waterDistributor:
+    {
         groupId = 238;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
-    } break;
+    }
+    break;
     case eCharacterType::aphrodite:
     case eCharacterType::apollo:
     case eCharacterType::ares:
@@ -885,8 +1038,10 @@ eCharMessage gCharMessage(eCharacter * const c) {
     case eCharacterType::hera:
     case eCharacterType::hermes:
     case eCharacterType::poseidon:
-    case eCharacterType::zeus: {
-        switch(type) {
+    case eCharacterType::zeus:
+    {
+        switch (type)
+        {
         case eCharacterType::aphrodite:
             groupId = 309;
             break;
@@ -933,9 +1088,10 @@ eCharMessage gCharMessage(eCharacter * const c) {
             break;
         }
 
-        const auto g = static_cast<eGod*>(c);
+        const auto g = static_cast<eGod *>(c);
         const auto a = g->attitude();
-        switch(a) {
+        switch (a)
+        {
         case eGodAttitude::friendly:
             stringId = 0;
             break;
@@ -945,8 +1101,10 @@ eCharMessage gCharMessage(eCharacter * const c) {
         case eGodAttitude::worshipped:
             bool provide = false;
             const auto a = g->action();
-            if(a) {
-                switch(a->type()) {
+            if (a)
+            {
+                switch (a->type())
+                {
                 case eCharActionType::aphroditeHelpAction:
                 case eCharActionType::apolloHelpAction:
                 case eCharActionType::aresHelpAction:
@@ -971,7 +1129,8 @@ eCharMessage gCharMessage(eCharacter * const c) {
             stringId = provide ? 2 : 0;
             break;
         }
-    } break;
+    }
+    break;
     case eCharacterType::achilles:
     case eCharacterType::atalanta:
     case eCharacterType::bellerophon:
@@ -979,9 +1138,11 @@ eCharMessage gCharMessage(eCharacter * const c) {
     case eCharacterType::jason:
     case eCharacterType::odysseus:
     case eCharacterType::perseus:
-    case eCharacterType::theseus: {
+    case eCharacterType::theseus:
+    {
         stringId = g;
-        switch(type) {
+        switch (type)
+        {
         case eCharacterType::achilles:
             groupId = 312;
             break;
@@ -1009,7 +1170,8 @@ eCharMessage gCharMessage(eCharacter * const c) {
         default:
             break;
         }
-    } break;
+    }
+    break;
     case eCharacterType::calydonianBoar:
         groupId = 319;
         stringId = 0;
@@ -1081,19 +1243,27 @@ eCharMessage gCharMessage(eCharacter * const c) {
 
     case eCharacterType::eliteCitizen:
         groupId = 210;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(c->fighting()) {
+        }
+        else if (c->fighting())
+        {
             stringId = 8;
         }
         break;
-    case eCharacterType::marbleMiner: {
+    case eCharacterType::marbleMiner:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const auto state = gGetMinerState(c);
-            switch(state) {
+            switch (state)
+            {
             case eMinerState::goingTo:
                 stringId = 8;
                 break;
@@ -1108,14 +1278,20 @@ eCharMessage gCharMessage(eCharacter * const c) {
             }
         }
         groupId = 220;
-    } break;
-    case eCharacterType::bronzeMiner: {
+    }
+    break;
+    case eCharacterType::bronzeMiner:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const auto state = gGetMinerState(c);
-            switch(state) {
+            switch (state)
+            {
             case eMinerState::goingTo:
                 stringId = 8;
                 break;
@@ -1128,14 +1304,20 @@ eCharMessage gCharMessage(eCharacter * const c) {
             }
         }
         groupId = 218;
-    } break;
-    case eCharacterType::silverMiner: {
+    }
+    break;
+    case eCharacterType::silverMiner:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const auto state = gGetMinerState(c);
-            switch(state) {
+            switch (state)
+            {
             case eMinerState::goingTo:
                 stringId = 8;
                 break;
@@ -1148,159 +1330,252 @@ eCharMessage gCharMessage(eCharacter * const c) {
             }
         }
         groupId = 219;
-    } break;
-    case eCharacterType::actor: {
+    }
+    break;
+    case eCharacterType::actor:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
         }
         groupId = 233;
-    } break;
-    case eCharacterType::fireFighter: {
+    }
+    break;
+    case eCharacterType::fireFighter:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2 || c->fighting()) {
+        }
+        else if (eRand::rand() % 2 || c->fighting())
+        {
             const int m = board.maintanance(cid);
-            if(c->fighting()) {
+            if (c->fighting())
+            {
                 stringId = 8 + eRand::rand() % 3;
-            } else if(m < 75) {
+            }
+            else if (m < 75)
+            {
                 stringId = 11;
-            } else {
+            }
+            else
+            {
                 stringId = 12;
             }
         }
         groupId = 240;
-    } break;
-    case eCharacterType::sick: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::sick:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 205;
-    } break;
-    case eCharacterType::philosopher: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::philosopher:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 236;
-    } break;
-    case eCharacterType::lumberjack: {
+    }
+    break;
+    case eCharacterType::lumberjack:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const auto a = c->actionType();
-            if(a == eCharacterActionType::carry) {
+            if (a == eCharacterActionType::carry)
+            {
                 stringId = 8 + eRand::rand() % 2;
-            } else if(a == eCharacterActionType::collect) {
+            }
+            else if (a == eCharacterActionType::collect)
+            {
                 stringId = 8;
             }
         }
         groupId = 217;
-    } break;
-    case eCharacterType::artisan: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::artisan:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 221;
-    } break;
-    case eCharacterType::astronomer: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::astronomer:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 346;
-    } break;
-    case eCharacterType::inventor: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::inventor:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 347;
-    } break;
-    case eCharacterType::curator: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::curator:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 348;
-    } break;
-    case eCharacterType::scholar: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::scholar:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 345;
-    } break;
-    case eCharacterType::competitor: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::competitor:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 235;
-    } break;
-    case eCharacterType::gymnast: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::gymnast:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 234;
-    } break;
-    case eCharacterType::taxCollector: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::taxCollector:
+    {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else {
+        }
+        else
+        {
             stringId = g;
         }
         groupId = 242;
-    } break;
-    case eCharacterType::watchman: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::watchman:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(c->fighting()) {
+        }
+        else if (c->fighting())
+        {
             stringId = 4 + eRand::rand() % 2;
-        } else {
+        }
+        else
+        {
             const int unrest = board.unrest(cid);
-            if(unrest == 0) {
+            if (unrest == 0)
+            {
                 stringId = 1;
-            } else if(unrest < 5) {
+            }
+            else if (unrest < 5)
+            {
                 stringId = 2;
-            } else {
+            }
+            else
+            {
                 stringId = 3;
             }
         }
         groupId = 241;
-    } break;
-    case eCharacterType::fishingBoat: {
+    }
+    break;
+    case eCharacterType::fishingBoat:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             stringId = 8 + eRand::rand() % 4;
         }
         groupId = 214;
-    } break;
-    case eCharacterType::grower: {
-        const auto gro = static_cast<eGrower*>(c);
+    }
+    break;
+    case eCharacterType::grower:
+    {
+        const auto gro = static_cast<eGrower *>(c);
         stringId = g;
         const auto type = gro->growerType();
         const auto state = gGetGrowerState(c);
-        switch(type) {
-        case eGrowerType::grapesAndOlives: {
+        switch (type)
+        {
+        case eGrowerType::grapesAndOlives:
+        {
             groupId = 216;
-            switch(state) {
+            switch (state)
+            {
             case eGrowerState::collectingOlives:
                 stringId = 8;
                 break;
@@ -1316,10 +1591,13 @@ eCharMessage gCharMessage(eCharacter * const c) {
             default:
                 break;
             }
-        } break;
-        case eGrowerType::oranges: {
+        }
+        break;
+        case eGrowerType::oranges:
+        {
             groupId = 340;
-            switch(state) {
+            switch (state)
+            {
             case eGrowerState::collectingOranges:
                 stringId = 8;
                 break;
@@ -1329,95 +1607,148 @@ eCharMessage gCharMessage(eCharacter * const c) {
             default:
                 break;
             }
-        } break;
         }
-        if(enemyImmortal) {
+        break;
+        }
+        if (enemyImmortal)
+        {
             stringId = 7;
         }
-    } break;
-    case eCharacterType::shepherd: {
+    }
+    break;
+    case eCharacterType::shepherd:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             stringId = 8 + eRand::rand() % 4;
         }
         groupId = 212;
-    } break;
-    case eCharacterType::goatherd: {
+    }
+    break;
+    case eCharacterType::goatherd:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             stringId = 8 + eRand::rand() % 4;
         }
         groupId = 213;
-    } break;
-    case eCharacterType::urchinGatherer: {
+    }
+    break;
+    case eCharacterType::urchinGatherer:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             stringId = 8 + eRand::rand() % 4;
         }
         groupId = 215;
-    } break;
-    case eCharacterType::butcher: {
+    }
+    break;
+    case eCharacterType::butcher:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             stringId = 8 + eRand::rand() % 3;
         }
         groupId = 342;
-    } break;
-    case eCharacterType::tradeBoat: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::tradeBoat:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else {
+        }
+        else
+        {
             stringId = 6 + eRand::rand() % 2;
         }
         groupId = 231;
-    } break;
-    case eCharacterType::trader: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::trader:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else {
+        }
+        else
+        {
             stringId = 6 + eRand::rand() % 2;
         }
         groupId = 232;
-    } break;
-    case eCharacterType::trireme: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::trireme:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 247;
-    } break;
-    case eCharacterType::healer: {
+    }
+    break;
+    case eCharacterType::healer:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const int health = board.health(cid);
-            if(health < 70) {
+            if (health < 70)
+            {
                 stringId = 8;
             }
         }
         groupId = 239;
-    } break;
-    case eCharacterType::hunter: {
+    }
+    break;
+    case eCharacterType::hunter:
+    {
         stringId = g;
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 7;
-        } else if(eRand::rand() % 2) {
+        }
+        else if (eRand::rand() % 2)
+        {
             const auto state = gGetHunterState(c);
-            switch(state) {
+            switch (state)
+            {
             case eHunterState::goingTo:
                 stringId = 8;
                 break;
@@ -1428,49 +1759,68 @@ eCharMessage gCharMessage(eCharacter * const c) {
                 break;
             }
         }
-        const auto h = static_cast<eHunter*>(c);
+        const auto h = static_cast<eHunter *>(c);
         const bool deer = h->deerHunter();
-        if(deer) {
+        if (deer)
+        {
             groupId = 341;
-        } else {
+        }
+        else
+        {
             groupId = 211;
         }
-    } break;
-    case eCharacterType::cartTransporter: {
-        const auto ct = static_cast<eCartTransporter*>(c);
+    }
+    break;
+    case eCharacterType::cartTransporter:
+    {
+        const auto ct = static_cast<eCartTransporter *>(c);
         const auto type = ct->cartType();
         const int count = ct->resCount();
         const bool empty = count == 0;
-        switch(type) {
+        switch (type)
+        {
         case eCartTransporterType::food:
         case eCartTransporterType::fleece:
         case eCartTransporterType::oil:
         case eCartTransporterType::wine:
         case eCartTransporterType::arms:
         case eCartTransporterType::horse:
-        case eCartTransporterType::chariot: {
-            if(empty) {
+        case eCartTransporterType::chariot:
+        {
+            if (empty)
+            {
                 stringId = 1;
-            } else {
+            }
+            else
+            {
                 stringId = 2;
             }
-        } break;
-        case eCartTransporterType::basic: {
+        }
+        break;
+        case eCartTransporterType::basic:
+        {
             const auto a = c->actionType();
-            if(empty) {
-
-            } else {
-                if(a == eCharacterActionType::stand) {
+            if (empty)
+            {
+            }
+            else
+            {
+                if (a == eCharacterActionType::stand)
+                {
                     stringId = 2;
-                } else {
+                }
+                else
+                {
                     stringId = 3;
                 }
             }
-        } break;
+        }
+        break;
         default:
             break;
         }
-        switch(type) {
+        switch (type)
+        {
         case eCartTransporterType::food:
             groupId = 222;
             break;
@@ -1498,78 +1848,129 @@ eCharMessage gCharMessage(eCharacter * const c) {
         default:
             break;
         }
-        if(enemyImmortal) {
+        if (enemyImmortal)
+        {
             stringId = 0;
         }
-    } break;
-    case eCharacterType::chariotPoseidon: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::chariotPoseidon:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 351;
-    } break;
+    }
+    break;
     case eCharacterType::hoplite:
-    case eCharacterType::hoplitePoseidon: {
-        if(enemyImmortal) {
+    case eCharacterType::hoplitePoseidon:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 245;
-    } break;
-    case eCharacterType::horseman: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::horseman:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 244;
-    } break;
-    case eCharacterType::rockThrower: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::rockThrower:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 246;
-    } break;
-    case eCharacterType::amazon: {
-        if(enemyImmortal) {
+    }
+    break;
+    case eCharacterType::amazon:
+    {
+        if (enemyImmortal)
+        {
             stringId = 0;
-        } else if(enemyNearby) {
+        }
+        else if (enemyNearby)
+        {
             stringId = 3 + eRand::rand() % 2;
-        } else if(activeInv) {
+        }
+        else if (activeInv)
+        {
             stringId = 2;
-        } else {
+        }
+        else
+        {
             stringId = 1;
         }
         groupId = 349;
-    } break;
+    }
+    break;
+    default:
+        break;
     }
 
     result.fText = eLanguage::zeusText(groupId, stringId);
     result.fSoundId = stringId;
 
-    if(type == eCharacterType::homeless || type == eCharacterType::settler) {
-        if(const auto sa = dynamic_cast<eSettlerAction*>(c->action())) {
+    if (type == eCharacterType::homeless || type == eCharacterType::settler)
+    {
+        if (const auto sa = dynamic_cast<eSettlerAction *>(c->action()))
+        {
             const int n = sa->nPeople();
             result.fText += "\n\nGroup size: " + std::to_string(n);
         }
@@ -1578,21 +1979,24 @@ eCharMessage gCharMessage(eCharacter * const c) {
     return result;
 }
 
-void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
+void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
+{
     eInfoWidget::initialize("");
-    if(chars.empty()) return;
+    if (chars.empty())
+        return;
 
     const auto res = resolution();
-    if(chars.size() > 1) {
+    if (chars.size() > 1)
+    {
         const auto w = new eWidget(window());
 
-        for(eCharacter* const c : chars) {
+        for (eCharacter *const c : chars)
+        {
             const auto portrait = gCharPortrait(res, c);
             const auto b = new eButtonBase(window());
             b->setTexture(portrait);
-            b->setPressAction([this, c]() {
-                setCharacter(c);
-            });
+            b->setPressAction([this, c]()
+                              { setCharacter(c); });
             b->fitContent();
             w->addWidget(b);
         }
@@ -1602,7 +2006,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
         addInfoWidget(w);
     }
 
-    eCharacter * const c = chars[0];
+    eCharacter *const c = chars[0];
     const auto type = c->type();
     const auto portrait = gCharPortrait(res, c);
 
@@ -1614,7 +2018,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     mPortraitLabel->fitContent();
 
     const int p = res.smallPadding();
-    const int remW = widgetWidth() - mPortraitLabel->width() - 2*p;
+    const int remW = widgetWidth() - mPortraitLabel->width() - 2 * p;
 
     mTextWidget = new eWidget(window());
     mTextWidget->setWidth(remW);
@@ -1625,31 +2029,65 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     mNameLabel = new eLabel(name, window());
     mNameLabel->setWrapWidth(remW);
     mNameLabel->setHugeFontSize();
-    mNameLabel->setTinyPadding();
+    mNameLabel->setNoPadding();
     mNameLabel->fitContent();
     mTextWidget->addWidget(mNameLabel);
 
     const auto occupation = gCharOccupation(c);
     mOccupationLabel = new eLabel(occupation, window());
     mOccupationLabel->setWrapWidth(remW);
-    mOccupationLabel->setTinyPadding();
+    mOccupationLabel->setNoPadding();
+    mOccupationLabel->setDarkFontColor();
     mOccupationLabel->fitContent();
     mTextWidget->addWidget(mOccupationLabel);
+
+    if (type == eCharacterType::cartTransporter)
+    {
+        const auto ct = static_cast<const eCartTransporter *>(c);
+        const auto resType = ct->resType();
+        const auto resCount = ct->resCount();
+        if (resCount > 0)
+        {
+            if (!mLoadsWidget)
+            {
+                mLoadsWidget = new eWidget(window());
+                mTextWidget->addWidget(mLoadsWidget);
+            }
+            mLoadsWidget->removeAllWidgets();
+            const auto icon = eResourceTypeHelpers::icon(res.uiScale(), resType);
+            const auto iconLabel = new eLabel(window());
+            iconLabel->setTexture(icon);
+            iconLabel->fitContent();
+            mLoadsWidget->addWidget(iconLabel);
+            const auto loadsText = std::to_string(resCount) + " " +
+                                   eLanguage::zeusText(129, 20) + " " +
+                                   eResourceTypeHelpers::typeName(resType);
+            const auto loadsLabel = new eLabel(loadsText, window());
+            loadsLabel->setSmallFontSize();
+            loadsLabel->setDarkFontColor();
+            loadsLabel->setTinyPadding();
+            loadsLabel->fitContent();
+            mLoadsWidget->addWidget(loadsLabel);
+            mLoadsWidget->stackHorizontally();
+            mLoadsWidget->fitContent();
+        }
+    }
 
     const auto msg = gCharMessage(c);
     mMsgLabel = new eLabel(window());
     mMsgLabel->setTinyPadding();
-    mMsgLabel->setSmallFontSize();
+    mMsgLabel->setVerySmallFontSize();
     mMsgLabel->setWrapWidth(remW);
+    mMsgLabel->setDarkFontColor();
     mMsgLabel->setText(msg.fText);
     mMsgLabel->fitContent();
     mTextWidget->addWidget(mMsgLabel);
 
     const auto speakButton = new eBasicButton(
         &eInterfaceTextures::fSpeakButton, window());
-    speakButton->setPressAction([this]() {
-        if(mSpeakAction) mSpeakAction();
-    });
+    speakButton->setPressAction([this]()
+                                {
+        if(mSpeakAction) mSpeakAction(); });
     mTextWidget->addWidget(speakButton);
     speakButton->align(eAlignment::left);
 
@@ -1670,7 +2108,8 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
     setCharacter(c);
 }
 
-void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
+void eCharacterInfoWidget::setCharacter(eCharacter *const c)
+{
     const auto type = c->type();
     const auto res = resolution();
     const auto portrait = gCharPortrait(res, c);
@@ -1690,7 +2129,8 @@ void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
     const auto msg = gCharMessage(c);
     mMsgLabel->setText(msg.fText);
     msg.playSound();
-    mSpeakAction = [msg]() {
+    mSpeakAction = [msg]()
+    {
         msg.playSound();
     };
     mMsgLabel->fitContent();
@@ -1701,16 +2141,21 @@ void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
     mContent->fitHeight();
 
     std::string additionalTxt;
-    if(const auto cta = dynamic_cast<eCartTransporterAction*>(c->action())) {
+    if (const auto cta = dynamic_cast<eCartTransporterAction *>(c->action()))
+    {
         const auto from = cta->src();
         const auto to = cta->target();
-        if(from == to) {
-            if(from) {
+        if (from == to)
+        {
+            if (from)
+            {
                 const auto returningTo = eLanguage::zeusText(129, 16);
                 const auto name = eBuilding::sNameForBuilding(from);
                 additionalTxt = returningTo + " " + name;
             }
-        } else if(from && to) {
+        }
+        else if (from && to)
+        {
             const auto goingTo = eLanguage::zeusText(129, 15);
             const auto fromStr = eLanguage::zeusText(129, 14);
             const auto fromName = eBuilding::sNameForBuilding(from);
