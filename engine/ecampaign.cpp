@@ -154,7 +154,7 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
             key = line.substr(0, keyEnd);
         }
 
-        unsigned long valueStart = 0;
+        size_t valueStart = 0;
         if(value.empty()) {
             valueStart = line.find('"');
             if(valueStart == std::string::npos) continue;
