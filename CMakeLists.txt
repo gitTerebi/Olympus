@@ -578,18 +578,19 @@ set(SOURCES
     widgets/eactionlistwidget.cpp
     widgets/earmymenu.cpp
     widgets/ebasicbutton.cpp
-    widgets/ebitmapwidget.cpp
-    widgets/eboardcityswitchbutton.cpp
-    widgets/eboardsettingsmenu.cpp
-    widgets/ebuildbutton.cpp
-    widgets/ebuildingmode.cpp
-    widgets/ebuildingstoerase.cpp
-    widgets/ebuildwidget.cpp
-    widgets/ebutton.cpp
-    widgets/ebuttonbase.cpp
-    widgets/ebuttonslistwidget.cpp
-    widgets/ecancelbutton.cpp
-    widgets/echeckablebutton.cpp
+     widgets/ebitmapwidget.cpp
+     widgets/eboardcityswitchbutton.cpp
+     widgets/eboardsettingsmenu.cpp
+     widgets/ebuildbutton.cpp
+     widgets/ebuildingmode.cpp
+     widgets/ebuildingstoerase.cpp
+     widgets/ebuildwidget.cpp
+     widgets/ebutton.cpp
+     widgets/ebuttonbase.cpp
+     widgets/ebuttonutils.cpp
+     widgets/ebuttonslistwidget.cpp
+     widgets/ecancelbutton.cpp
+     widgets/echeckablebutton.cpp
     widgets/echeckbox.cpp
     widgets/echoosebutton.cpp
     widgets/echoosecitydialog.cpp
@@ -621,6 +622,7 @@ set(SOURCES
     widgets/eframedbutton.cpp
     widgets/eframedbuttonwithicon.cpp
     widgets/eframedlabel.cpp
+    widgets/ebuttonutils.cpp
     widgets/eframedwidget.cpp
     widgets/epopupwidget.cpp
     widgets/efulfilldialog.cpp
