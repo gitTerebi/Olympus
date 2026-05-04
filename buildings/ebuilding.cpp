@@ -2470,7 +2470,8 @@ void eBuilding::collapse() {
                          tp == eBuildingType::sheep ||
                          tp == eBuildingType::goat ||
                          tp == eBuildingType::cattle ||
-                         tp == eBuildingType::road;
+                         tp == eBuildingType::road ||
+                         tp == eBuildingType::pier;
 
     // snapshot building state before erase (clear storage first so it restores empty)
     std::vector<uint8_t> snapshot;

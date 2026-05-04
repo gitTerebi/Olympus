@@ -21,6 +21,7 @@ static const std::set<eBuildingType> sRepairableTypes = {
     eBuildingType::maintenanceOffice,
     eBuildingType::wheatFarm,
     eBuildingType::carrotsFarm,
+    eBuildingType::growersLodge,
     eBuildingType::onionsFarm,
     eBuildingType::dairy,
     eBuildingType::cardingShed,
@@ -57,6 +58,7 @@ static const std::set<eBuildingType> sRepairableTypes = {
     eBuildingType::granary,
     eBuildingType::warehouse,
     eBuildingType::tradePost,
+    eBuildingType::pier,
     eBuildingType::fishery,
     eBuildingType::urchinQuay,
     eBuildingType::triremeWharf,
@@ -109,6 +111,7 @@ static stdsptr<eBuilding> restoreFromSnapshot(
     src >> type;
     const auto b = eBuildingReader::sRead(board, type, src);
     src.handlePostFuncs();
+
     return b;
 }
 
@@ -180,6 +183,7 @@ void handleRepair(eGameBoard& board, eGameWidget* const widget,
     auto groups = collectRepairGroups(board, ppid, minX, minY, maxX, maxY);
     int totalCost = 0;
     for(const auto& g : groups) totalCost += g.cost;
+    
 
     if(totalCost > 0) {
         const auto title = "Repair buildings";
@@ -194,6 +198,12 @@ void handleRepair(eGameBoard& board, eGameWidget* const widget,
                     }
                 if(hasUnit) continue;
 
+                //for(auto rr : g.tiles) rr->erase(); causes pier restore to die
+
+                printf("Repairing %p %d\n",
+                    (void*)g.originRuins,
+                    g.originRuins ? g.originRuins->hasSavedBuilding() : 0);
+                
                 if(g.wasType == eBuildingType::commonHouse) {
                     for(auto rr : g.tiles) rr->erase();
                     const auto cid2 = board.tile(g.ox, g.oy) ? board.tile(g.ox, g.oy)->cityId() : cid;
@@ -201,51 +211,52 @@ void handleRepair(eGameBoard& board, eGameWidget* const widget,
                         [&board, cid2]() { return e::make_shared<eSmallHouse>(board, cid2); },
                         ppid, cid2, true, false, true);
                 } else if(g.originRuins && g.originRuins->hasSavedBuilding()) {
+                    stdsptr<eBuilding> pierRestored;
+                    if(g.originRuins->hasSavedPier()) {
+                        pierRestored = restoreFromSnapshot(g.originRuins->savedPier(), board);
+                        if(!pierRestored) continue;
+                    }
+
                     const auto restored = restoreFromSnapshot(g.originRuins->savedBuilding(), board);
-                    if(!restored) continue;
-                    for(auto rr : g.tiles) rr->erase();
+
+                    if(!restored) {continue;}
+
+                    if(pierRestored) {
+                        const auto& pierRect = g.originRuins->savedPierRect();
+                        pierRestored->setTileRect(pierRect);
+                        eTile* ct = nullptr;
+                        for(int px = pierRect.x; px < pierRect.x + pierRect.w; px++) {
+                            for(int py = pierRect.y; py < pierRect.y + pierRect.h; py++) {
+                                const auto pt = board.tile(px, py);
+                                if(!pt) continue;
+                                if(!ct) ct = pt;
+                                pt->setUnderBuilding(pierRestored);
+                                pierRestored->addUnderBuilding(pt);
+                            }
+                        }
+                        if(ct) pierRestored->setCenterTile(ct);
+                        if(const auto tp = dynamic_cast<eTradePost*>(restored.get()))
+                            tp->setUnpackBuilding(pierRestored.get());
+                        if(const auto pier = dynamic_cast<ePier*>(pierRestored.get()))
+                            pier->setTradePost(restored.get());
+                    }
 
                     // wire restored building to its land tiles
-                    {
-                        const int maxX = g.ox + g.ow - 1;
-                        const int maxY = g.oy + g.oh - 1;
-                        const int cx = (g.ox + maxX) / 2;
-                        const int cy = (g.oy + maxY) / 2;
-                        const auto ct = board.tile(cx, cy);
-                        if(ct) restored->setCenterTile(ct);
-                        restored->setTileRect({g.ox, g.oy, g.ow, g.oh});
-                        for(int rx = g.ox; rx <= maxX; rx++) {
-                            for(int ry = g.oy; ry <= maxY; ry++) {
-                                const auto rt = board.tile(rx, ry);
-                                if(!rt) continue;
-                                rt->setUnderBuilding(restored);
-                                restored->addUnderBuilding(rt);
-                            }
-                        }
-                    }
-
-                    if(g.originRuins->hasSavedPier()) {
-                        const auto pierRestored = restoreFromSnapshot(g.originRuins->savedPier(), board);
-                        if(pierRestored) {
-                            const auto& pierRect = g.originRuins->savedPierRect();
-                            pierRestored->setTileRect(pierRect);
-                            eTile* ct = nullptr;
-                            for(int px = pierRect.x; px < pierRect.x + pierRect.w; px++) {
-                                for(int py = pierRect.y; py < pierRect.y + pierRect.h; py++) {
-                                    const auto pt = board.tile(px, py);
-                                    if(!pt) continue;
-                                    if(!ct) ct = pt;
-                                    pt->setUnderBuilding(pierRestored);
-                                    pierRestored->addUnderBuilding(pt);
-                                }
-                            }
-                            if(ct) pierRestored->setCenterTile(ct);
-                            if(const auto tp = dynamic_cast<eTradePost*>(restored.get()))
-                                tp->setUnpackBuilding(pierRestored.get());
-                            if(const auto pier = dynamic_cast<ePier*>(pierRestored.get()))
-                                pier->setTradePost(restored.get());
-                        }
-                    }
+                    // const int maxX = g.ox + g.ow - 1;
+                    // const int maxY = g.oy + g.oh - 1;
+                    // const int cx = (g.ox + maxX) / 2;
+                    // const int cy = (g.oy + maxY) / 2;
+                    // const auto ct = board.tile(cx, cy);
+                    // if(ct) restored->setCenterTile(ct);
+                    // restored->setTileRect({g.ox, g.oy, g.ow, g.oh});
+                    // for(int rx = g.ox; rx <= maxX; rx++) {
+                    //     for(int ry = g.oy; ry <= maxY; ry++) {
+                    //         const auto rt = board.tile(rx, ry);
+                    //         if(!rt) continue;
+                    //         rt->setUnderBuilding(restored);
+                    //         restored->addUnderBuilding(rt);
+                    //     }
+                    // }
                 }
             }
 

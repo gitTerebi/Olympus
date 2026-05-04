@@ -41,7 +41,7 @@ std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const {
 
 void ePier::erase() {
     if(mTradePost) {
-        mTradePost->eBuilding::erase();
+        mTradePost->collapse();
     }
     eBuilding::erase();
 }

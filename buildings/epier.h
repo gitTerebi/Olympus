@@ -7,9 +7,9 @@ class ePier : public eBuilding {
 public:
     ePier(eGameBoard& board, const eDiagonalOrientation o, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
-    void erase();
+    void erase() override;
 
     void setTradePost(eBuilding* const b);
     eBuilding* tradePost() const { return mTradePost; }
