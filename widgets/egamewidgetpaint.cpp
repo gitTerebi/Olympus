@@ -635,6 +635,13 @@ void eGameWidget::paintEvent(ePainter& p) {
                 if(repairCm) tex->setColorMod(175, 175, 255);
             }
 
+            bool defaultHover = false;
+            if(mode == eBuildingMode::none && !terrainEditing &&
+               tx == mHoverTX && ty == mHoverTY) {
+                defaultHover = true;
+                tex->setColorMod(200, 200, 200);
+            }
+
             if(tileFogOfWar) {
                 const int maxDist = eTile::sMaxDistanceToBorder;
                 const double dist = tile->distanceToBorder();
@@ -651,7 +658,7 @@ void eGameWidget::paintEvent(ePainter& p) {
             tp.drawTexture(rx, ry, tex, eAlignment::top);
             if(drawDim == 0) SDL_RenderSetClipRect(p.renderer(), nullptr);
             if(eraseCm || repairCm || patrolCm || editorHover ||
-               mEditorMode || tileFogOfWar || lavaCm) {
+               mEditorMode || tileFogOfWar || lavaCm || defaultHover) {
                 tex->clearColorMod();
             }
         }
