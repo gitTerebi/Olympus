@@ -56,11 +56,39 @@ void eFileWidget::intialize(const std::string& title,
         if(r) closeAction();
     });
 
-    mCancel = new eCancelButton(window());
-    addWidget(mCancel);
-    mCancel->align(eAlignment::bottom | eAlignment::left);
-    mCancel->move(mCancel->x() + 2*p, mCancel->y() - 2*p);
-    mCancel->setPressAction(closeAction);
+    const auto deleteB = new eFramedButton(window());
+    deleteB->setUnderline(false);
+    deleteB->setVerySmallFontSize();
+    deleteB->setLightFontColor();
+    deleteB->setText("Delete");
+    deleteB->setTextAlignment(eAlignment::center);
+    deleteB->fitContent();
+    deleteB->setWidth(90);
+    addWidget(deleteB);
+    deleteB->align(eAlignment::bottom | eAlignment::left);
+    deleteB->move(deleteB->x() + 2*p, deleteB->y() - 2*p);
+    deleteB->setPressAction([this]() {
+        const auto name = mLineEdit->text();
+        if(name.empty()) return;
+        const auto path = mFolder + name + ".ez";
+        if(!std::filesystem::exists(path)) return;
+        const auto q = new eQuestionWidget(window());
+        const auto acceptA = [this, path]() {
+            std::filesystem::remove(path);
+            mLineEdit->setText("");
+            rebuildFileList();
+        };
+        std::string msg = "Delete '" + name + "'?";
+        q->initialize("Confirm Delete", msg, acceptA, nullptr);
+        window()->execDialog(q);
+        q->align(eAlignment::center);
+    });
+
+    // mCancel = new eCancelButton(window());
+    // addWidget(mCancel);
+    // mCancel->align(eAlignment::bottom | eAlignment::left);
+    // mCancel->move(mCancel->x() + 2*p, mCancel->y() - 2*p);
+    // mCancel->setPressAction(closeAction);
 
     const auto lineW = new eFramedWidget(window());
     lineW->setType(eFrameType::inner);
@@ -132,33 +160,7 @@ void eFileWidget::intialize(const std::string& title,
     mLineEdit->resize(swwidth - 2*p, mLineEdit->height());
     lineW->resize(swwidth, mLineEdit->height());
 
-    const auto deleteB = new eFramedButton(window());
-    deleteB->setUnderline(false);
-    deleteB->setVerySmallFontSize();
-    deleteB->setLightFontColor();
-    deleteB->setText("Delete");
-    deleteB->setTextAlignment(eAlignment::center);
-    deleteB->fitContent();
-    deleteB->setWidth(90);
-    addWidget(deleteB);
-    deleteB->align(eAlignment::bottom | eAlignment::hcenter);
-    deleteB->setY(deleteB->y() - 2*p);
-    deleteB->setPressAction([this]() {
-        const auto name = mLineEdit->text();
-        if(name.empty()) return;
-        const auto path = mFolder + name + ".ez";
-        if(!std::filesystem::exists(path)) return;
-        const auto q = new eQuestionWidget(window());
-        const auto acceptA = [this, path]() {
-            std::filesystem::remove(path);
-            mLineEdit->setText("");
-            rebuildFileList();
-        };
-        std::string msg = "Delete '" + name + "'?";
-        q->initialize("Confirm Delete", msg, acceptA, nullptr);
-        window()->execDialog(q);
-        q->align(eAlignment::center);
-    });
+
 }
 
 void eFileWidget::setFileName(const std::string& path) {
