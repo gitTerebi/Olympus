@@ -25,9 +25,6 @@ public:
                     const eGoals& goals,
                     const eAction& proceedA,
                     const eEpisodeIntroType type);
-
-    bool keyPressEvent(const eKeyPressEvent& e) override;
-    bool mouseReleaseEvent(const eMouseEvent& e) override;
 };
 
 #endif // EEPISODEINTRODUCTIONWIDGET_H

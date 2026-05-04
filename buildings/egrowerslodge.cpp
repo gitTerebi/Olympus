@@ -4,6 +4,7 @@
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/egroweraction.h"
 #include "enumbers.h"
+#include "fileIO/efileformat.h"
 
 #include <algorithm>
 
@@ -223,6 +224,19 @@ std::vector<eCartTask> eGrowersLodge::cartTasks() const {
     return tasks;
 }
 
+void eGrowersLodge::nextMonth() {
+    mRingIdx = (mRingIdx + 1) % 12;
+    mProducedThisYear -= mMonthlyProduced[mRingIdx];
+    mMonthlyProduced[mRingIdx] = 0;
+    if(mProducedThisYear < 0) mProducedThisYear = 0;
+}
+
+void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
+    const int c = addProduced(type, count);
+    mProducedThisYear += c;
+    mMonthlyProduced[mRingIdx] += c;
+}
+
 void eGrowersLodge::read(eReadStream& src) {
     eEmployingBuilding::read(src);
     src >> mNoTarget;
@@ -237,6 +251,11 @@ void eGrowersLodge::read(eReadStream& src) {
     src.readCharacter(&getBoard(), [this](eCharacter* const c) {
         mGrower = static_cast<eGrower*>(c);
     });
+    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+        src >> mProducedThisYear;
+        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
+        src >> mRingIdx;
+    }
 }
 
 void eGrowersLodge::write(eWriteStream& dst) const {
@@ -249,6 +268,9 @@ void eGrowersLodge::write(eWriteStream& dst) const {
     dst.writeCharacter(mCart);
     dst << mSpawnTime;
     dst.writeCharacter(mGrower);
+    dst << mProducedThisYear;
+    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
+    dst << mRingIdx;
 }
 
 bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {

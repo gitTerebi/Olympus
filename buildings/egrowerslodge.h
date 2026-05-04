@@ -32,6 +32,11 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
+    void nextMonth() override;
+
+    int producedThisYear() const { return mProducedThisYear; }
+    void growerDelivered(const eResourceType type, const int count);
+
     using eGrowerPtr = stdptr<eGrower> eGrowersLodge::*;
     bool spawnGrower(const eGrowerPtr grower);
 
@@ -55,6 +60,10 @@ private:
     double mSpawnTime = 1000000;
 
     stdptr<eGrower> mGrower;
+
+    int mProducedThisYear = 0;
+    std::array<int,12> mMonthlyProduced{};
+    int mRingIdx = 0;
 };
 
 #endif // EGROWERSLODGE_H

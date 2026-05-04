@@ -19,6 +19,7 @@ public:
     void write(eWriteStream& dst) const override;
 
     void addRaw() override {}
+    void hunterDelivered(const eResourceType type, const int count);
 private:
     bool spawn();
 

@@ -88,9 +88,9 @@ bool eGrowerAction::decide() {
 
     if(grapes > 0 || olives > 0 || oranges > 0) {
         if(inLodge) {
-            mLodge->addProduced(eResourceType::grapes, grapes);
-            mLodge->addProduced(eResourceType::olives, olives);
-            mLodge->addProduced(eResourceType::oranges, oranges);
+            mLodge->growerDelivered(eResourceType::grapes, grapes);
+            mLodge->growerDelivered(eResourceType::olives, olives);
+            mLodge->growerDelivered(eResourceType::oranges, oranges);
 
             mGrower->incGrapes(-grapes);
             mGrower->incOlives(-olives);

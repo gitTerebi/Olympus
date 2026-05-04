@@ -4,6 +4,7 @@
 #include "enumbers.h"
 #include "engine/edate.h"
 #include "engine/egameboard.h"
+#include "fileIO/efileformat.h"
 
 #include <algorithm>
 #include <cmath>
@@ -113,6 +114,11 @@ void eFarmBase::read(eReadStream& src) {
     src >> combined;
     mCurrentTile  = std::clamp(combined / 5, 0, 4);
     mCurrentStage = std::clamp(combined % 5, 0, 4);
+    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+        src >> mProducedThisYear;
+        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
+        src >> mRingIdx;
+    }
 }
 
 void eFarmBase::write(eWriteStream& dst) const {

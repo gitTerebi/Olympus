@@ -8,6 +8,7 @@ namespace eFileFormat {
         cartTarget,
         ruinsOrigin,
         ruinsSavedBuilding,
+        yearlyProduction,
 
         nextVersion
     };

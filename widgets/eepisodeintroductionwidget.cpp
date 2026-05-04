@@ -318,21 +318,3 @@ void eEpisodeIntroductionWidget::initialize(
     addWidget(frame);
     frame->align(eAlignment::center);
 }
-
-bool eEpisodeIntroductionWidget::keyPressEvent(const eKeyPressEvent& e) {
-    if(e.key() == SDL_SCANCODE_ESCAPE) {
-        eMusic::stopMusic();
-        window()->showChooseGameMenu();
-        return true;
-    }
-    return eLabel::keyPressEvent(e);
-}
-
-bool eEpisodeIntroductionWidget::mouseReleaseEvent(const eMouseEvent& e) {
-    if(e.button() == eMouseButton::right) {
-        eMusic::stopMusic();
-        window()->showChooseGameMenu();
-        return true;
-    }
-    return eLabel::mouseReleaseEvent(e);
-}

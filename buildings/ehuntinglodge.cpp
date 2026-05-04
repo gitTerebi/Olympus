@@ -71,6 +71,11 @@ void eHuntingLodge::write(eWriteStream& dst) const {
     dst.writeCharacter(mHunter);
 }
 
+void eHuntingLodge::hunterDelivered(const eResourceType type, const int count) {
+    const int c = addProduced(type, count);
+    trackProduced(c);
+}
+
 bool eHuntingLodge::spawn() {
     const auto t = centerTile();
     const auto h = e::make_shared<eHunter>(getBoard());
