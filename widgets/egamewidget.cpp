@@ -62,7 +62,7 @@
 
 #include "elanguage.h"
 
-#include "widgets/efilewidget.h"
+#include "widgets/eloadgame.h"
 #include "evectorhelpers.h"
 #include "etilehelper.h"
 #include "widgets/equestionwidget.h"
@@ -2162,7 +2162,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
                 menu->deleteLater();
             };
             const auto saveAct = [this, w]() {
-                const auto fw = new eFileWidget(w);
+                const auto fw = new eLoadGame(w);
                 const auto func = [w](const std::string& path) {
                     return w->saveGame(path);
                 };
@@ -2178,7 +2178,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
                 w->execDialog(fw);
             };
             const auto loadAct = [this, w]() {
-                const auto fw = new eFileWidget(w);
+                const auto fw = new eLoadGame(w);
                 const auto func = [w](const std::string& path) {
                     return w->loadGame(path);
                 };
@@ -2638,9 +2638,7 @@ void eGameWidget::showGoals() {
 void eGameWidget::showOptionsMenu() {
     const auto d = new eOptionsMenu(getOptionsPages(window()), window());
     d->initialize();
-    addWidget(d);
-    d->align(eAlignment::center);
-    window()->execDialog(d);
+    window()->execDialog(d, true, [this]() { window()->setWidget(this); });
 }
 
 void eGameWidget::showGraphicsMenu() {

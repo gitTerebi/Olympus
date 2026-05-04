@@ -1,11 +1,12 @@
 #include "eoptionsmenu.h"
 
+#include "eframedwidget.h"
 #include "emainwindow.h"
-#include "ecancelbutton.h"
 #include "eframedbutton.h"
 #include "elabel.h"
 #include "echeckbox.h"
 #include "ebasicbutton.h"
+#include "ecancelbutton.h"
 #include "textures/egametextures.h"
 
 #include <SDL2/SDL.h>
@@ -272,42 +273,42 @@ private:
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            eMainWindow* const window) :
-    eFramedWidget(window),
+    ePopupWidget(window),
     mPages(pages) {}
 
 void eOptionsMenu::initialize() {
-    setType(eFrameType::message);
-    const int p = padding();
     const int mult = resolution().multiplier();
     const int pad = 100 * mult;
-    const int w = std::max(520*mult, 4*resolution().width()/5);
-    const int h = std::max(300*mult, 4*resolution().height()/5);
-    resize(std::min(w, resolution().width() - 2*p),
-           std::min(h, resolution().height() - 2*p));
+    const int sw = std::max(520*mult, 3*resolution().width()/5);
+    const int sh = std::max(300*mult, 4*resolution().height()/5);
+    const int p0 = padding();
+    const int fw = std::min(sw, resolution().width() - 2*p0);
+    const int fh = std::min(sh, resolution().height() - 2*p0);
+    ePopupWidget::initialize(fw, fh);
 
-      mMainTitle = new eLabel("General Options", window());
-      mMainTitle->setHugeFontSize();
-      mMainTitle->fitContent();
-      addWidget(mMainTitle);
-      mMainTitle->align(eAlignment::hcenter);
-      mMainTitle->setY(p);
+    const auto f = frame();
+    const int p = f->padding();
 
-      const auto ok = new eCancelButton(window());
-      ok->fitContent();
-      ok->setPressAction([this]() {
-          deleteLater();
-      });
-      addWidget(ok);
-      ok->setX(width() - ok->width() - (p + 20));
-      ok->setY(height() - ok->height() - (p + 20));
+    const auto cancel = new eCancelButton(window());
+    f->addWidget(cancel);
+    cancel->align(eAlignment::bottom | eAlignment::right);
+    cancel->move(cancel->x() - 2*p, cancel->y() - 2*p);
+    cancel->setPressAction([this]() { closePopup(); });
 
-      const int contentY = mMainTitle->y() + mMainTitle->height() + p;
-     const int contentH = ok->y() - contentY - p;
+    mMainTitle = new eLabel("General Options", window());
+    mMainTitle->setHugeFontSize();
+    mMainTitle->fitContent();
+    f->addWidget(mMainTitle);
+    mMainTitle->align(eAlignment::hcenter);
+    mMainTitle->setY(p);
+
+    const int contentY = mMainTitle->y() + mMainTitle->height() + p;
+    const int contentH = f->height() - contentY - 2*p;
 
     const auto categories = new eWidget(window());
     categories->setNoPadding();
     categories->resize(140*mult, contentH);
-    addWidget(categories);
+    f->addWidget(categories);
     categories->move(2*p, contentY);
 
     for(int i = 0; i < static_cast<int>(mPages.size()); i++) {
@@ -329,12 +330,12 @@ void eOptionsMenu::initialize() {
     downBtn->resize(sbW, downBtn->height() / 2);
 
     const int vpLeft = categories->x() + categories->width() + 2*p;
-    const int vpRight = width() - p - sbW - p - pad;
+    const int vpRight = f->width() - p - sbW - p - pad;
 
     mPageViewport = new eOptionsPageViewport(window());
     mPageViewport->setNoPadding();
     mPageViewport->resize(vpRight - p - vpLeft, contentH);
-    addWidget(mPageViewport);
+    f->addWidget(mPageViewport);
     mPageViewport->move(vpLeft, categories->y());
 
     const int trackTop = mPageViewport->y() + upBtn->height();
@@ -345,10 +346,10 @@ void eOptionsMenu::initialize() {
     thumb->setWidth(sbW);
     thumb->setHeight(trackH);
     thumb->move(vpRight + p, trackTop);
-    addWidget(thumb);
+    f->addWidget(thumb);
 
-    addWidget(upBtn);
-    addWidget(downBtn);
+    f->addWidget(upBtn);
+    f->addWidget(downBtn);
     upBtn->move(vpRight + p, mPageViewport->y());
     downBtn->move(vpRight + p, mPageViewport->y() + contentH - downBtn->height());
     upBtn->setPressAction([this]() { mPageViewport->scrollUp(); });
@@ -383,7 +384,7 @@ void eOptionsMenu::showPage(const int id) {
     clearPage();
     if(id < 0 || id >= static_cast<int>(mPages.size())) return;
 
-    const int p = padding();
+    const int p = frame()->padding();
     auto& page = mPages[id];
     const auto& settings = window()->settings();
 
@@ -588,10 +589,4 @@ void eOptionsMenu::clearPage() {
     mPage->removeChildren();
 }
 
-bool eOptionsMenu::keyPressEvent(const eKeyPressEvent& e) {
-    if(e.key() == SDL_SCANCODE_ESCAPE) {
-        deleteLater();
-        return true;
-    }
-    return false;
-}
+

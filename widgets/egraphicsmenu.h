@@ -1,7 +1,7 @@
 #ifndef EGRAPHICSMENU_H
 #define EGRAPHICSMENU_H
 
-#include "emainmenubase.h"
+#include "epopupwidget.h"
 #include "esettings.h"
 
 inline bool operator==(const eSettings& s0, const eSettings& s1) {
@@ -12,7 +12,7 @@ inline bool operator==(const eSettings& s0, const eSettings& s1) {
     return true;
 }
 
-class eGraphicsMenu : public eMainMenuBase {
+class eGraphicsMenu : public ePopupWidget {
 public:
     eGraphicsMenu(const eSettings& iniSettings,
                   eMainWindow* const window);
@@ -23,7 +23,7 @@ public:
                     const eFullscreenA& fullscreenA);
 
 protected:
-    bool keyPressEvent(const eKeyPressEvent& e);
+    void closePopup() override;
 
 private:
     const eSettings mIniSettings;

@@ -1,7 +1,7 @@
-#ifndef EFILEWIDGET_H
-#define EFILEWIDGET_H
+#ifndef ELOADGAME_H
+#define ELOADGAME_H
 
-#include "eframedwidget.h"
+#include "epopupwidget.h"
 
 class eLabel;
 class eAcceptButton;
@@ -9,9 +9,9 @@ class eCancelButton;
 class eLineEdit;
 class eScrollWidgetComplete;
 
-class eFileWidget : public eFramedWidget {
+class eLoadGame : public ePopupWidget {
 public:
-    using eFramedWidget::eFramedWidget;
+    using ePopupWidget::ePopupWidget;
 
     using eFileFunc = std::function<bool(const std::string&)>;
     void intialize(const std::string& title,
@@ -22,8 +22,9 @@ public:
     void setFileName(const std::string& path);
     std::string filePath() const;
     void rebuildFileList();
+protected:
+    void closePopup() override;
 private:
-    bool keyPressEvent(const eKeyPressEvent& e) override;
 
     eLabel* mTitleLabel = nullptr;
     eAcceptButton* mOk = nullptr;
@@ -37,4 +38,4 @@ private:
     eAction mCloseAction;
 };
 
-#endif // EFILEWIDGET_H
+#endif // ELOADGAME_H

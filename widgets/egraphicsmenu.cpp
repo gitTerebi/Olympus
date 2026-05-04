@@ -1,11 +1,11 @@
 #include "egraphicsmenu.h"
 
+#include "eframedwidget.h"
 #include "echeckbox.h"
 #include "elabeledwidget.h"
-#include "eframedwidget.h"
 #include "eframedbutton.h"
-#include "eokbutton.h"
-#include "eeventbackground.h"
+#include "ecancelbutton.h"
+#include "eacceptbutton.h"
 #include "emainwindow.h"
 
 #include "elanguage.h"
@@ -15,7 +15,7 @@
 
 eGraphicsMenu::eGraphicsMenu(const eSettings& iniSettings,
                              eMainWindow* const window) :
-    eMainMenuBase(window),
+    ePopupWidget(window),
     mIniSettings(iniSettings),
     mSettings(iniSettings) {
 
@@ -54,26 +54,18 @@ eWidget* createTextureBox(eMainWindow* const window,
 
 void eGraphicsMenu::initialize(const eApplyAction& settingsA,
                                const eFullscreenA& fullscreenA) {
-    eMainMenuBase::initialize();
-
-    const auto frame = new eFramedWidget(window());
-    frame->setType(eFrameType::message);
-    addWidget(frame);
-
     const auto res = resolution();
 
     const int p = res.largePadding();
     const int cww = res.centralWidgetLargeWidth();
     const int cwh = res.centralWidgetLargeHeight();
-    frame->resize(cww, cwh);
-
-    frame->align(eAlignment::center);
+    ePopupWidget::initialize(cww, cwh);
 
     const auto inner = new eWidget(window());
     inner->setNoPadding();
-    frame->addWidget(inner);
+    frame()->addWidget(inner);
     inner->move(2*p, 2*p);
-    inner->resize(frame->width() - 4*p, frame->height() - 4*p);
+    inner->resize(frame()->width() - 4*p, frame()->height() - 4*p);
 
     const int colm = 2*p;
     const int colw = (inner->width() - 2*colm)/3;
@@ -221,25 +213,20 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
     col1->layoutVertically();
 
     {
-        const auto b = new eOkButton(window());
-        frame->addWidget(b);
-        b->setPressAction([this, settingsA]() {
-            settingsA(mSettings);
-        });
-        b->align(eAlignment::bottom | eAlignment::right);
-        b->move(b->x() - 2*p, b->y() - 2*p);
+        const auto ok = new eAcceptButton(window());
+        frame()->addWidget(ok);
+        ok->setPressAction([this, settingsA]() { settingsA(mSettings); });
+        ok->align(eAlignment::bottom | eAlignment::right);
+        ok->move(ok->x() - 2*p, ok->y() - 2*p);
+
+        const auto cancel = new eCancelButton(window());
+        frame()->addWidget(cancel);
+        cancel->align(eAlignment::bottom | eAlignment::right);
+        cancel->move(cancel->x() - 2*p - ok->width() - p, cancel->y() - 2*p);
+        cancel->setPressAction([this]() { closePopup(); });
     }
 }
 
-bool eGraphicsMenu::keyPressEvent(const eKeyPressEvent& e) {
-    if(e.key() == SDL_SCANCODE_ESCAPE) {
-        if(dynamic_cast<eEventBackground*>(parent())) {
-            return false; // let eEventBackground handle it
-        } else {
-            // it's the main widget, go back to main menu
-            static_cast<eMainWindow*>(window())->showMainMenu();
-            return true;
-        }
-    }
-    return false;
+void eGraphicsMenu::closePopup() {
+    static_cast<eMainWindow*>(window())->showMainMenu();
 }

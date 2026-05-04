@@ -26,7 +26,7 @@
 #include <fstream>
 #include <algorithm>
 
-#include "widgets/efilewidget.h"
+#include "widgets/eloadgame.h"
 #include "elanguage.h"
 
 #include "evectorhelpers.h"
@@ -456,7 +456,7 @@ void eMainWindow::showMainMenu() {
     };
 
     const auto loadGameAction = [this]() {
-        const auto fw = new eFileWidget(this);
+        const auto fw = new eLoadGame(this);
         const auto func = [this](const std::string& path) {
             return loadGame(path);
         };
@@ -529,13 +529,13 @@ void eMainWindow::showSettingsMenu() {
         setFullscreen(f);
     };
     esm->initialize(applyA, fullscrennA);
-    setWidget(esm);
+    execDialog(esm, true, [this]() { showMainMenu(); });
 }
 
 void eMainWindow::showOptionsMenu() {
     const auto d = new eOptionsMenu(getOptionsPages(this), this);
     d->initialize();
-    execDialog(d, false, [this]() { showMainMenu(); });
+    execDialog(d, true, [this]() { showMainMenu(); });
 }
 
 void eMainWindow::showChooseGameMenu() {

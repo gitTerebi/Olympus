@@ -1,7 +1,7 @@
 #ifndef EOPTIONSMENU_H
 #define EOPTIONSMENU_H
 
-#include "eframedwidget.h"
+#include "epopupwidget.h"
 #include "esettings.h"
 
 #include <functional>
@@ -10,7 +10,7 @@
 
 class eLabel;
 
-class eOptionsMenu : public eFramedWidget {
+class eOptionsMenu : public ePopupWidget {
 public:
     using eSetInt = std::function<void(const int)>;
     using eClampInt = std::function<int(const int)>;
@@ -52,9 +52,6 @@ public:
                  eMainWindow* const window);
 
     void initialize();
-
-protected:
-    bool keyPressEvent(const eKeyPressEvent& e) override;
 
 private:
     void showPage(const int id);

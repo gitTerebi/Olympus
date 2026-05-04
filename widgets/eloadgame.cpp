@@ -1,5 +1,6 @@
-#include "efilewidget.h"
+#include "eloadgame.h"
 
+#include "eframedwidget.h"
 #include "emainwindow.h"
 
 #include "eacceptbutton.h"
@@ -24,32 +25,37 @@ time_t to_time_t(TP tp) {
     return system_clock::to_time_t(sctp);
 }
 
-void eFileWidget::intialize(const std::string& title,
+void eLoadGame::intialize(const std::string& title,
                             const std::string& folder,
                             const eFileFunc& func,
                             const eAction& closeAction) {
     mFolder = folder;
     mCloseAction = closeAction;
 
-    setType(eFrameType::message);
-
-    const int p = padding();
     const auto res = window()->resolution();
     const int ww = res.centralWidgetSmallWidth();
     const int hh = res.centralWidgetSmallHeight();
+    ePopupWidget::initialize(ww, hh);
 
-    resize(ww, hh);
+    const auto f = frame();
+    const int p = f->padding();
 
     mTitleLabel = new eLabel(title, window());
     mTitleLabel->fitContent();
-    addWidget(mTitleLabel);
+    f->addWidget(mTitleLabel);
     mTitleLabel->align(eAlignment::top | eAlignment::hcenter);
     mTitleLabel->setY(mTitleLabel->y() + p);
 
     mOk = new eAcceptButton(window());
-    addWidget(mOk);
+    f->addWidget(mOk);
     mOk->align(eAlignment::bottom | eAlignment::right);
     mOk->move(mOk->x() - 2*p, mOk->y() - 2*p);
+
+    mCancel = new eCancelButton(window());
+    f->addWidget(mCancel);
+    mCancel->align(eAlignment::bottom | eAlignment::right);
+    mCancel->move(mCancel->x() - 2*p - mOk->width() - p, mCancel->y() - 2*p);
+    mCancel->setPressAction([this]() { closePopup(); });
     mOk->setPressAction([this, func, closeAction] {
         const auto path = filePath();
         const bool r = func(path);
@@ -64,7 +70,7 @@ void eFileWidget::intialize(const std::string& title,
     deleteB->setTextAlignment(eAlignment::center);
     deleteB->fitContent();
     deleteB->setWidth(90);
-    addWidget(deleteB);
+    f->addWidget(deleteB);
     deleteB->align(eAlignment::bottom | eAlignment::left);
     deleteB->move(deleteB->x() + 2*p, deleteB->y() - 2*p);
     deleteB->setPressAction([this]() {
@@ -84,12 +90,6 @@ void eFileWidget::intialize(const std::string& title,
         q->align(eAlignment::center);
     });
 
-    // mCancel = new eCancelButton(window());
-    // addWidget(mCancel);
-    // mCancel->align(eAlignment::bottom | eAlignment::left);
-    // mCancel->move(mCancel->x() + 2*p, mCancel->y() - 2*p);
-    // mCancel->setPressAction(closeAction);
-
     const auto lineW = new eFramedWidget(window());
     lineW->setType(eFrameType::inner);
     lineW->setNoPadding();
@@ -104,10 +104,10 @@ void eFileWidget::intialize(const std::string& title,
     const int lineY = mTitleLabel->y() + mTitleLabel->height() + p;
     lineW->setY(lineY);
     lineW->setX(2*p);
-    addWidget(lineW);
+    f->addWidget(lineW);
 
     mScrollCont = new eScrollWidgetComplete(window());
-    addWidget(mScrollCont);
+    f->addWidget(mScrollCont);
     mScrollCont->resize(ww - 4*p, hh - lineY - mLineEdit->height() - 10*p);
     mScrollCont->setY(lineY + mLineEdit->height() + 2*p);
     mScrollCont->setX(2*p);
@@ -159,30 +159,23 @@ void eFileWidget::intialize(const std::string& title,
 
     mLineEdit->resize(swwidth - 2*p, mLineEdit->height());
     lineW->resize(swwidth, mLineEdit->height());
-
-
 }
 
-void eFileWidget::setFileName(const std::string& path) {
+void eLoadGame::setFileName(const std::string& path) {
     mLineEdit->setText(path);
 }
 
-std::string eFileWidget::filePath() const {
+std::string eLoadGame::filePath() const {
     return mFolder + mLineEdit->text() + ".ez";
 }
 
-void eFileWidget::rebuildFileList() {
-    // Clear existing file buttons
+void eLoadGame::rebuildFileList() {
     while (!mFilesWidget->children().empty()) {
         auto w = mFilesWidget->children().back();
         mFilesWidget->removeWidget(w);
         w->deleteLater();
     }
     mFilesWidget->setNoPadding();
-
-    const int p = padding();
-    const auto res = window()->resolution();
-    const int ww = res.centralWidgetSmallWidth();
 
     const int swwidth = mScrollCont->listWidth();
 
@@ -229,10 +222,7 @@ void eFileWidget::rebuildFileList() {
     mScrollCont->setScrollArea(mFilesWidget);
 }
 
-bool eFileWidget::keyPressEvent(const eKeyPressEvent& e) {
-    if(e.key() == SDL_SCANCODE_ESCAPE) {
-        if(mCloseAction) mCloseAction();
-        return true;
-    }
-    return false;
+void eLoadGame::closePopup() {
+    if(mCloseAction) mCloseAction();
+    else deleteLater();
 }
