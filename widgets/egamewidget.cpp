@@ -2560,7 +2560,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
 
 bool eGameWidget::mouseWheelEvent(const eMouseWheelEvent& e) {
     if(mLocked) return true;
-    const bool wheel = std::abs(mWheel) > 3;
+    const bool wheel = std::abs(mWheel) > 0.5;
     if(!wheel) {
         mWheel += e.dy();
         return true;
