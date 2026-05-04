@@ -183,6 +183,11 @@ void eMainWindow::setWarehouseDefaultAcceptNone(const bool b) {
     mSettings.write();
 }
 
+void eMainWindow::setDoubleCartCapacity(const bool b) {
+    mSettings.fDoubleCartCapacity = b;
+    mSettings.write();
+}
+
 void eMainWindow::startGameAction(eGameBoard* const board,
                                   const eGameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {
@@ -568,6 +573,7 @@ void eMainWindow::showGame(eGameBoard* b,
     }
 
     mBoard = b;
+    if(mBoard) mBoard->setDoubleCartCapacity(mSettings.fDoubleCartCapacity);
 
     eMusic::playRandomMusic();
     mGW = new eGameWidget(this);

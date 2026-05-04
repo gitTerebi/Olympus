@@ -312,7 +312,7 @@ int eCartTransporter::add(const eResourceType type, const int count) {
     const bool comp = mResourceType == type ||
                       mResourceCount <= 0;
     if(!comp) return 0;
-    const int maxResource = eResourceTypeHelpers::transportSize(type);
+    const int maxResource = eResourceTypeHelpers::transportSize(type, getBoard().doubleCartCapacity());
     const int r = std::clamp(mResourceCount + count, 0, maxResource);
     const int result = r - mResourceCount;
     setResource(type, r);

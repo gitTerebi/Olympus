@@ -284,7 +284,7 @@ void eCartTransporterAction::startResourceAction(const eCartTask& task) {
         if(c->resCount() == 0) c->setResource(task.fResource, 0);
         return;
     } else { //give
-        const int max = eResourceTypeHelpers::transportSize(task.fResource);
+        const int max = eResourceTypeHelpers::transportSize(task.fResource, board().doubleCartCapacity());
         const int mmax = std::min(max, task.fMaxCount);
         const int t = mBuilding->take(task.fResource, mmax);
         if(t <= 0) {

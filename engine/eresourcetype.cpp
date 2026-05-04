@@ -284,7 +284,8 @@ std::shared_ptr<eTexture> eResourceTypeHelpers::icon(
     }
 }
 
-int eResourceTypeHelpers::transportSize(const eResourceType type) {
+int eResourceTypeHelpers::transportSize(const eResourceType type, const bool doubleCapacity) {
+    int base = 0;
     switch(type) {
     case eResourceType::urchin:
     case eResourceType::fish:
@@ -310,12 +311,14 @@ int eResourceTypeHelpers::transportSize(const eResourceType type) {
     case eResourceType::blackMarble:
 
     case eResourceType::armor:
-        return 4;
+        base = 4;
+        break;
     case eResourceType::sculpture:
-        return 1;
+        base = 1;
+        break;
     default: break;
     }
-    return 0;
+    return doubleCapacity ? base * 2 : base;
 }
 
 int eResourceTypeHelpers::defaultPrice(const eResourceType type) {
