@@ -1,5 +1,7 @@
 #include "emainmenu.h"
 
+#include <algorithm>
+
 #include "ebutton.h"
 #include "eframedbutton.h"
 
@@ -70,6 +72,15 @@ void eMainMenu::initialize(const eAction& continueGameA,
     int tw;
     int th;
     textureSize(tw, th);
-    leader->setX((width() - tw)/2 + 2*p);
+    const int ww = width();
+    const int wh = height();
+    int imgX = 0;
+    if(tw > 0 && th > 0) {
+        const float scale = std::min((float)ww/tw, (float)wh/th);
+        const int dw = (int)(tw * scale);
+        const int dh = (int)(th * scale);
+        imgX = (ww - dw) / 2;
+    }
+    leader->setX(imgX + 2*p);
     leader->setY(2*p);
 }

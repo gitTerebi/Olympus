@@ -624,13 +624,14 @@ SOURCES += \
         widgets/eeventselectionwidget.cpp \
         widgets/eeventwidget.cpp \
         widgets/eexclamationbutton.cpp \
-        widgets/efilewidget.cpp \
+        widgets/eloadgame.cpp \
         widgets/eflatbutton.cpp \
         widgets/efonts.cpp \
         widgets/eframedbutton.cpp \
         widgets/eframedbuttonwithicon.cpp \
         widgets/eframedlabel.cpp \
         widgets/eframedwidget.cpp \
+        widgets/epopupwidget.cpp \
         widgets/efulfilldialog.cpp \
         widgets/egameloadingwidget.cpp \
         widgets/egamemainmenu.cpp \
@@ -2837,13 +2838,14 @@ HEADERS += \
     widgets/eeventselectionwidget.h \
     widgets/eeventwidget.h \
     widgets/eexclamationbutton.h \
-    widgets/efilewidget.h \
+    widgets/eloadgame.h \
     widgets/eflatbutton.h \
     widgets/efonts.h \
     widgets/eframedbutton.h \
     widgets/eframedbuttonwithicon.h \
     widgets/eframedlabel.h \
     widgets/eframedwidget.h \
+    widgets/epopupwidget.h \
     widgets/efulfilldialog.h \
     widgets/egameloadingwidget.h \
     widgets/egamemainmenu.h \

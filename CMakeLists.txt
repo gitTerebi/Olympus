@@ -615,13 +615,14 @@ set(SOURCES
     widgets/eeventselectionwidget.cpp
     widgets/eeventwidget.cpp
     widgets/eexclamationbutton.cpp
-    widgets/efilewidget.cpp
+    widgets/eloadgame.cpp
     widgets/eflatbutton.cpp
     widgets/efonts.cpp
     widgets/eframedbutton.cpp
     widgets/eframedbuttonwithicon.cpp
     widgets/eframedlabel.cpp
     widgets/eframedwidget.cpp
+    widgets/epopupwidget.cpp
     widgets/efulfilldialog.cpp
     widgets/egameloadingwidget.cpp
     widgets/egamemainmenu.cpp

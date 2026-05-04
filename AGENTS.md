@@ -43,6 +43,8 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 **efilewidget:** `widgets/efilewidget.cpp` - loads adventure save games, deletes them with confirmation.
 
+**Popup buttons:** `eAcceptButton` (green checkmark, uses `fAcceptButton` texture), `eCancelButton` (red X, uses `fCancelButton` texture), `eOkButton` (uses `fOkButton` texture) — all extend `eBasicButton`. Prefer `eAcceptButton`/`eCancelButton` pair for confirm/dismiss dialogs; `eOkButton` is smaller/older style.
+
 **Walker/cart rendering + tinting:** `widgets/egamewidgetpaint.cpp` `drawCharacters` lambda — iterates tile characters, applies `setColorMod` for hover (blue), patrol selected (green), walker-building selected (red). Color constants defined just above the lambda.
 
 **Building click → walker highlight:** `widgets/egamewidget.cpp` `rightClickRelease` sets `mWalkerBuilding`; paint loop checks `eCartTransporterAction::src()` against it. Cart action source building stored in `characters/actions/ecarttransporteraction.h`.
