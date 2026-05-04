@@ -281,7 +281,7 @@ void eGameWidget::initializeNumbers() {
 
 void eGameWidget::initialize() {
     mEditorMode = mBoard->editorMode();
-    mKeyScrollSpeed = window()->settings().fKeyScrollSpeed;
+    mKeyScrollSpeed = window()->settings().fKeyScrollSpeed * 5;
     initializeNumbers();
     mGm = new eGameMenu(window());
     const auto viewGoals = [this]() {
@@ -2249,7 +2249,11 @@ void eGameWidget::smoothScroll() {
 
 void eGameWidget::setKeyScrollSpeed(const int speed) {
     mKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
-    window()->setKeyScrollSpeed(mKeyScrollSpeed);
+    window()->setKeyScrollSpeed(mKeyScrollSpeed * 10);
+}
+
+void eGameWidget::updateKeyScrollSpeed(const int speed) {
+    mKeyScrollSpeed = speed * 5;
 }
 
 void eGameWidget::stopSmoothScroll() {

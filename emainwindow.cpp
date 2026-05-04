@@ -129,6 +129,7 @@ void eMainWindow::setFullscreen(const bool f) {
 void eMainWindow::setKeyScrollSpeed(const int speed) {
     mSettings.fKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
     mSettings.write();
+    if(mGW) mGW->updateKeyScrollSpeed(mSettings.fKeyScrollSpeed);
 }
 
 void eMainWindow::setDisableEdgeScroll(const bool b) {

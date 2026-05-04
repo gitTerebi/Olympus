@@ -136,6 +136,7 @@ public:
                       const eAction& action);
 
     void updateViewBoxSize();
+    void updateKeyScrollSpeed(const int speed);
     void updateTopBottomAltitude();
     void updateMinMaxAltitude();
     void updateMaps(const bool totalUpdate);
