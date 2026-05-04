@@ -23,7 +23,8 @@ namespace fs = std::filesystem;
 #include "pak/epakhelpers.h"
 
 bool readPakGlossary(const std::string& filename,
-                     eCampaignGlossary& glossary) {
+                     eCampaignGlossary& glossary,
+                     bool& isPoseidon) {
     glossary.fIsPak = true;
     const auto name = eStringHelpers::pathToName(filename);
 //    const bool test = name.find("Test") != name.npos;
@@ -37,6 +38,7 @@ bool readPakGlossary(const std::string& filename,
     in.readVersion();
     const auto version = in.version();
     const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
+    isPoseidon = poseidon;
     uint8_t bitmapId;
     if(poseidon) {
         in.seek(836249);
@@ -77,7 +79,9 @@ bool readPakGlossary(const std::string& filename,
 void eChooseGameEditMenu::initialize(const bool editor) {
     eMainMenuBase::initialize();
 
-    std::vector<eCampaignGlossary> glossaries;
+    std::vector<eCampaignGlossary> zeusGlossaries;
+    std::vector<eCampaignGlossary> poseidonGlossaries;
+    std::vector<eCampaignGlossary> otherGlossaries;
     {
         const auto folder = eGameDir::adventuresDir();
         std::filesystem::create_directories(folder);
@@ -89,7 +93,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto name = eStringHelpers::pathToName(pathStr);
             eCampaignGlossary glossary;
             const bool r = eCampaign::sReadGlossary(name, glossary);
-            if(r) glossaries.push_back(glossary);
+            if(r) otherGlossaries.push_back(glossary);
         }
     }
     {
@@ -106,8 +110,11 @@ void eChooseGameEditMenu::initialize(const bool editor) {
                 const auto ext = pathStr.substr(pathStr.size() - 3);
                 if(ext != "pak") continue;
                 eCampaignGlossary glossary;
-                const bool r = readPakGlossary(pathStr, glossary);
-                if(r) glossaries.push_back(glossary);
+                bool poseidon = false;
+                const bool r = readPakGlossary(pathStr, glossary, poseidon);
+                if(!r) continue;
+                if(poseidon) poseidonGlossaries.push_back(glossary);
+                else zeusGlossaries.push_back(glossary);
             }
         };
         const auto folder = eGameDir::pakAdventuresDir();
@@ -438,33 +445,59 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
         const auto selected = std::make_shared<eButtonBase*>(nullptr);
         bool first = true;
-        for(const auto& g : glossaries) {
-            const auto w = new eButtonBase(window());
-            w->setTinyFontSize();
-            w->setNoPadding();
-            w->setText(g.fTitle);
-            w->fitContent();
-            w->setMouseEnterAction([w]() {
-                w->setYellowFontColor();
-            });
-            w->setMouseLeaveAction([w, selected]() {
-                const auto s = *selected;
-                if(s != w) w->setLightFontColor();
-            });
-            w->setPressAction([selected, w, g, this]() {
-                const auto s = *selected;
-                if(s) s->setLightFontColor();
-                setGlossary(g);
-                w->setYellowFontColor();
-                *selected = w;
-            });
-            if(first) {
-                setGlossary(g);
-                w->setYellowFontColor();
-                *selected = w;
-                first = false;
+
+        const auto addSectionLabel = [&](const std::string& text) {
+            const auto lbl = new eLabel(window());
+            lbl->setTinyFontSize();
+            lbl->setDarkFontColor();
+            lbl->setNoPadding();
+            lbl->setText(text);
+            lbl->fitContent();
+            scrollArea->addWidget(lbl);
+        };
+
+        const auto addEntries = [&](const std::vector<eCampaignGlossary>& list) {
+            for(const auto& g : list) {
+                const auto w = new eButtonBase(window());
+                w->setTinyFontSize();
+                w->setNoPadding();
+                w->setText(g.fTitle);
+                w->fitContent();
+                w->setMouseEnterAction([w]() {
+                    w->setYellowFontColor();
+                });
+                w->setMouseLeaveAction([w, selected]() {
+                    const auto s = *selected;
+                    if(s != w) w->setLightFontColor();
+                });
+                w->setPressAction([selected, w, g, this]() {
+                    const auto s = *selected;
+                    if(s) s->setLightFontColor();
+                    setGlossary(g);
+                    w->setYellowFontColor();
+                    *selected = w;
+                });
+                if(first) {
+                    setGlossary(g);
+                    w->setYellowFontColor();
+                    *selected = w;
+                    first = false;
+                }
+                scrollArea->addWidget(w);
             }
-            scrollArea->addWidget(w);
+        };
+
+        if(!zeusGlossaries.empty()) {
+            addSectionLabel("--- zeus ---");
+            addEntries(zeusGlossaries);
+        }
+        if(!poseidonGlossaries.empty()) {
+            addSectionLabel("--- poseidon ---");
+            addEntries(poseidonGlossaries);
+        }
+        if(!otherGlossaries.empty()) {
+            addSectionLabel("--- other ---");
+            addEntries(otherGlossaries);
         }
 
         scrollArea->stackVertically();

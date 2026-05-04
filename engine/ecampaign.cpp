@@ -291,12 +291,13 @@ bool eCampaign::sReadGlossary(const std::string& name,
 
     const auto pakFile = aDir + name + ".epak";
     std::ifstream file(pakFile, std::ios::in | std::ios::binary);
-    if(!file) return false;
-    eReadSource source(&file);
-    eReadStream src(source);
-    src.readFormat();
-    src >> glossary.fBitmap;
-    file.close();
+    if(file) {
+        eReadSource source(&file);
+        eReadStream src(source);
+        src.readFormat();
+        src >> glossary.fBitmap;
+        file.close();
+    }
     return true;
 }
 
@@ -481,7 +482,12 @@ bool eCampaign::load(const std::string& name) {
 
     const auto pakFile = aDir + mName + ".epak";
     std::ifstream file(pakFile, std::ios::in | std::ios::binary);
-    if(!file) return false;
+    if(!file) {
+        initialize(name);
+        loadStrings();
+        loadNumbers();
+        return true;
+    }
 
     eReadSource source(&file);
     eReadStream src(source);

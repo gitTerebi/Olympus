@@ -11,6 +11,7 @@
 
 #include "eframedbutton.h"
 #include "equestionwidget.h"
+#include "ebuttonbase.h"
 
 #include <string>
 #include <iostream>
@@ -112,11 +113,19 @@ void eLoadGame::intialize(const std::string& title,
     sidebar->initialize(vpH);
     const int vpW = ww - 4*p - sidebar->width() - p;
 
+    const auto innerFrame = new eFramedWidget(window());
+    innerFrame->setNoPadding();
+    innerFrame->setType(eFrameType::inner);
+    innerFrame->resize(vpW, vpH);
+    innerFrame->move(2*p, vpY);
+    f->addWidget(innerFrame);
+
+    const int tp = res.tinyPadding();
     mViewport = new eScrollViewport(window());
     mViewport->setNoPadding();
-    mViewport->resize(vpW, vpH);
-    mViewport->move(2*p, vpY);
-    f->addWidget(mViewport);
+    mViewport->resize(vpW - 2*tp, vpH - 2*tp);
+    mViewport->move(tp, tp);
+    innerFrame->addWidget(mViewport);
 
     sidebar->move(2*p + vpW + p, vpY);
     f->addWidget(sidebar);
@@ -143,14 +152,14 @@ void eLoadGame::intialize(const std::string& title,
     for(const auto& entry : sorted) {
         const auto path = entry.second;
         const auto name = path.filename().stem().u8string();
-        const auto b = new eButton(name, window());
-        b->setUnderline(false);
-        b->setDarkFontColor();
+        const auto b = new eButtonBase(name, window());
+        b->setTinyFontSize();
+        b->setLightFontColor();
         b->setMouseEnterAction([b]() {
-            b->setLightFontColor();
+            b->setYellowFontColor();
         });
         b->setMouseLeaveAction([b]() {
-            b->setDarkFontColor();
+            b->setLightFontColor();
         });
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setNoPadding();
@@ -208,14 +217,14 @@ void eLoadGame::rebuildFileList() {
         const auto path = entry.second;
         const auto name = path.filename().stem().u8string();
 
-        const auto b = new eButton(name, window());
-        b->setUnderline(false);
-        b->setDarkFontColor();
+        const auto b = new eButtonBase(name, window());
+        b->setTinyFontSize();
+        b->setLightFontColor();
         b->setMouseEnterAction([b]() {
-            b->setLightFontColor();
+            b->setYellowFontColor();
         });
         b->setMouseLeaveAction([b]() {
-            b->setDarkFontColor();
+            b->setLightFontColor();
         });
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setNoPadding();
