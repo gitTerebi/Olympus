@@ -35,7 +35,7 @@
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "eoptionsmenu.h"
-#include "esettingsmenu.h"
+#include "egraphicsmenu.h"
 #include "widgets/eboardsettingsmenu.h"
 #include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
@@ -2645,7 +2645,7 @@ void eGameWidget::showOptionsMenu() {
 
 void eGameWidget::showGraphicsMenu() {
     const auto w = window();
-    const auto esm = new eSettingsMenu(w->settings(), w);
+    const auto esm = new eGraphicsMenu(w->settings(), w);
     esm->resize(width(), height());
     const auto applyA = [this, esm, w](const eSettings& settings) {
         const bool loadNeeded = settings.fRes != w->settings().fRes;

@@ -1,7 +1,7 @@
 #include "emainwindow.h"
 
 #include "widgets/emainmenu.h"
-#include "widgets/esettingsmenu.h"
+#include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
 #include "widgets/egamewidget.h"
 #include "widgets/egameloadingwidget.h"
@@ -517,7 +517,7 @@ void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
 }
 
 void eMainWindow::showSettingsMenu() {
-    const auto esm = new eSettingsMenu(mSettings, this);
+    const auto esm = new eGraphicsMenu(mSettings, this);
     esm->resize(width(), height());
 
     const auto applyA = [this](const eSettings& settings) {

@@ -1,5 +1,5 @@
-#ifndef ESETTINGSMENU_H
-#define ESETTINGSMENU_H
+#ifndef EGRAPHICSMENU_H
+#define EGRAPHICSMENU_H
 
 #include "emainmenubase.h"
 #include "esettings.h"
@@ -12,9 +12,9 @@ inline bool operator==(const eSettings& s0, const eSettings& s1) {
     return true;
 }
 
-class eSettingsMenu : public eMainMenuBase {
+class eGraphicsMenu : public eMainMenuBase {
 public:
-    eSettingsMenu(const eSettings& iniSettings,
+    eGraphicsMenu(const eSettings& iniSettings,
                   eMainWindow* const window);
 
     using eApplyAction = std::function<void(const eSettings&)>;
@@ -22,9 +22,12 @@ public:
     void initialize(const eApplyAction& settingsA,
                     const eFullscreenA& fullscreenA);
 
+protected:
+    bool keyPressEvent(const eKeyPressEvent& e);
+
 private:
     const eSettings mIniSettings;
     eSettings mSettings;
 };
 
-#endif // ESETTINGSMENU_H
+#endif // EGRAPHICSMENU_H

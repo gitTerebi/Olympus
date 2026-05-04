@@ -690,7 +690,7 @@ SOURCES += \
         widgets/escrollwidget.cpp \
         widgets/escrollwidgetcomplete.cpp \
         widgets/eselectcolonywidget.cpp \
-        widgets/esettingsmenu.cpp \
+        widgets/egraphicsmenu.cpp \
         widgets/esmalldownbutton.cpp \
         widgets/esmallupbutton.cpp \
         widgets/espinbox.cpp \
@@ -2899,7 +2899,7 @@ HEADERS += \
     widgets/escrollwidget.h \
     widgets/escrollwidgetcomplete.h \
     widgets/eselectcolonywidget.h \
-    widgets/esettingsmenu.h \
+    widgets/egraphicsmenu.h \
     widgets/esmalldownbutton.h \
     widgets/esmallupbutton.h \
     widgets/espinbox.h \

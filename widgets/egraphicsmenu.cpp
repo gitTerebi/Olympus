@@ -1,17 +1,19 @@
-#include "esettingsmenu.h"
+#include "egraphicsmenu.h"
 
 #include "echeckbox.h"
 #include "elabeledwidget.h"
 #include "eframedwidget.h"
 #include "eframedbutton.h"
 #include "eokbutton.h"
+#include "eeventbackground.h"
+#include "emainwindow.h"
 
 #include "elanguage.h"
 #include "egamedir.h"
 
 #include <filesystem>
 
-eSettingsMenu::eSettingsMenu(const eSettings& iniSettings,
+eGraphicsMenu::eGraphicsMenu(const eSettings& iniSettings,
                              eMainWindow* const window) :
     eMainMenuBase(window),
     mIniSettings(iniSettings),
@@ -50,7 +52,7 @@ eWidget* createTextureBox(eMainWindow* const window,
     return w;
 }
 
-void eSettingsMenu::initialize(const eApplyAction& settingsA,
+void eGraphicsMenu::initialize(const eApplyAction& settingsA,
                                const eFullscreenA& fullscreenA) {
     eMainMenuBase::initialize();
 
@@ -227,4 +229,17 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
         b->align(eAlignment::bottom | eAlignment::right);
         b->move(b->x() - 2*p, b->y() - 2*p);
     }
+}
+
+bool eGraphicsMenu::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        if(dynamic_cast<eEventBackground*>(parent())) {
+            return false; // let eEventBackground handle it
+        } else {
+            // it's the main widget, go back to main menu
+            static_cast<eMainWindow*>(window())->showMainMenu();
+            return true;
+        }
+    }
+    return false;
 }

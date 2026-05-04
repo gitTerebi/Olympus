@@ -684,7 +684,7 @@ set(SOURCES
     widgets/escrollwidget.cpp
     widgets/escrollwidgetcomplete.cpp
     widgets/eselectcolonywidget.cpp
-    widgets/esettingsmenu.cpp
+    widgets/egraphicsmenu.cpp
     widgets/esmalldownbutton.cpp
     widgets/esmallupbutton.cpp
     widgets/espinbox.cpp
