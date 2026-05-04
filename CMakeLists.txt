@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EZEUS_DEPLOY_DIR "G:/games/eZeus" CACHE PATH "Directory to copy built eZeus runtime files into after build")
 
 # Find SDL2
-set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
+set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-deps")
 set(SDL2_DIR "${DEPS_DIR}/SDL2")
 set(SDL2_INCLUDE_DIR "${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/include")
 set(SDL2_LIBRARY "${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/lib/libSDL2.dll.a")

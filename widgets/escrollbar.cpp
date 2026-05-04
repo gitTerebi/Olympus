@@ -7,12 +7,14 @@
 void eScrollBar::initialize(const int height) {
     const auto upTex = &eInterfaceTextures::fBigUpButton;
     const auto up = new eBasicButton(upTex, window());
+    up->setRepeat(true);
     up->setPressAction([this]() {
         scrollUp();
     });
 
     const auto downTex = &eInterfaceTextures::fBigDownButton;
     const auto down = new eBasicButton(downTex, window());
+    down->setRepeat(true);
     down->setPressAction([this]() {
         scrollDown();
     });
