@@ -444,6 +444,46 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     pressE();
 }
 
+bool eEditorMainMenu::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        const auto q = new eQuestionWidget(window());
+        const auto saveA = [this]() {
+            mCampaign->save();
+            window()->showMainMenu();
+        };
+        const auto closeA = [this]() {
+            window()->showMainMenu();
+        };
+        q->initialize(eLanguage::zeusText(195, 23),
+                      eLanguage::zeusText(195, 25),
+                      saveA, closeA);
+        window()->execDialog(q);
+        q->align(eAlignment::center);
+        return true;
+    }
+    return eMainMenuBase::keyPressEvent(e);
+}
+
+bool eEditorMainMenu::mouseReleaseEvent(const eMouseEvent& e) {
+    if(e.button() == eMouseButton::right) {
+        const auto q = new eQuestionWidget(window());
+        const auto saveA = [this]() {
+            mCampaign->save();
+            window()->showMainMenu();
+        };
+        const auto closeA = [this]() {
+            window()->showMainMenu();
+        };
+        q->initialize(eLanguage::zeusText(195, 23),
+                      eLanguage::zeusText(195, 25),
+                      saveA, closeA);
+        window()->execDialog(q);
+        q->align(eAlignment::center);
+        return true;
+    }
+    return eMainMenuBase::mouseReleaseEvent(e);
+}
+
 void eEditorMainMenu::addGoBackButton(eWidget* const to) {
     const auto b = new eFramedButton(window());
     b->setUnderline(false);

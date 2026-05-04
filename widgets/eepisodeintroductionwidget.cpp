@@ -18,6 +18,28 @@
 
 #include "audio/emusic.h"
 
+static std::string difficultyTooltip(const eDifficulty diff) {
+    switch(diff) {
+    case eDifficulty::beginner:
+        return "Cost x0.44, Disaster x0.53, Workers +17%, Bribe x0.25";
+    case eDifficulty::mortal:
+        return "Cost x0.80, Disaster x0.80, Workers +7%, Bribe x0.75";
+    case eDifficulty::hero:
+        return "Cost x1.0, Disaster x1.0, Workers 0%, Bribe x1";
+    case eDifficulty::titan:
+        return "Cost x1.22, Disaster x1.20, Workers -5%, Bribe x1.25";
+    case eDifficulty::olympian:
+        return "Cost x1.44, Disaster x1.33, Workers -8%, Bribe x1.75";
+    }
+}
+
+class eTooltipWidget : public eWidget {
+public:
+    eTooltipWidget(eMainWindow* const window) :
+        eWidget(window) {}
+    bool mouseMoveEvent(const eMouseEvent&) override { return true; }
+};
+
 void eEpisodeIntroductionWidget::initialize(
         const stdsptr<eCampaign>& c,
         const std::string& title,
@@ -184,7 +206,7 @@ void eEpisodeIntroductionWidget::initialize(
     lowerButtons->setWidth(iw);
 
     if(type == eEpisodeIntroType::intro) {
-        const auto diffW = new eWidget(window());
+        const auto diffW = new eTooltipWidget(window());
         diffW->setNoPadding();
 
         const auto diffLabel = new eLabel(window());
@@ -197,28 +219,31 @@ void eEpisodeIntroductionWidget::initialize(
         const auto hdiff = eDifficultyHelpers::name(*diff);
         diffLabel->setText("  " + diffText + "  " + hdiff);
         diffLabel->fitContent();
-
-        const auto up = new eUpButton(window());
-        diffW->addWidget(up);
-        up->setPressAction([diff, diffLabel, diffText, c]() {
-            if(*diff == eDifficulty::olympian) return;
-            const int diffi = static_cast<int>(*diff);
-            *diff = static_cast<eDifficulty>(diffi + 1);
-            const auto hdiff = eDifficultyHelpers::name(*diff);
-            diffLabel->setText("  " + diffText + "  " + hdiff);
-            diffLabel->fitContent();
-            c->setDifficulty(*diff);
-        });
+        diffW->setTooltip(difficultyTooltip(*diff));
 
         const auto down = new eDownButton(window());
         diffW->addWidget(down);
-        down->setPressAction([diff, diffLabel, diffText, c]() {
+        down->setPressAction([diff, diffLabel, diffText, c, diffW]() {
             if(*diff == eDifficulty::beginner) return;
             const int diffi = static_cast<int>(*diff);
             *diff = static_cast<eDifficulty>(diffi - 1);
             const auto hdiff = eDifficultyHelpers::name(*diff);
             diffLabel->setText("  " + diffText + " " + hdiff);
             diffLabel->fitContent();
+            diffW->setTooltip(difficultyTooltip(*diff));
+            c->setDifficulty(*diff);
+        });
+
+        const auto up = new eUpButton(window());
+        diffW->addWidget(up);
+        up->setPressAction([diff, diffLabel, diffText, c, diffW]() {
+            if(*diff == eDifficulty::olympian) return;
+            const int diffi = static_cast<int>(*diff);
+            *diff = static_cast<eDifficulty>(diffi + 1);
+            const auto hdiff = eDifficultyHelpers::name(*diff);
+            diffLabel->setText("  " + diffText + "  " + hdiff);
+            diffLabel->fitContent();
+            diffW->setTooltip(difficultyTooltip(*diff));
             c->setDifficulty(*diff);
         });
 
@@ -292,4 +317,22 @@ void eEpisodeIntroductionWidget::initialize(
 
     addWidget(frame);
     frame->align(eAlignment::center);
+}
+
+bool eEpisodeIntroductionWidget::keyPressEvent(const eKeyPressEvent& e) {
+    if(e.key() == SDL_SCANCODE_ESCAPE) {
+        eMusic::stopMusic();
+        window()->showChooseGameMenu();
+        return true;
+    }
+    return eLabel::keyPressEvent(e);
+}
+
+bool eEpisodeIntroductionWidget::mouseReleaseEvent(const eMouseEvent& e) {
+    if(e.button() == eMouseButton::right) {
+        eMusic::stopMusic();
+        window()->showChooseGameMenu();
+        return true;
+    }
+    return eLabel::mouseReleaseEvent(e);
 }

@@ -549,12 +549,16 @@ void eOptionsMenu::showPage(const int id) {
             if(item.fSet) item.fSet(b);
         });
         cb->fitContent();
+        if(!item.fTooltip.empty()) {
+            cb->setTooltip(item.fTooltip);
+        }
         w->addWidget(cb);
 
         w->fitHeight();
         w->setWidth(mPage->width());
-        label->setX(mPage->width()/2 - label->width());
-        cb->setX(mPage->width()/2);
+        const double center = mPage->width() * 0.65;
+        label->setX(center - label->width());
+        cb->setX(center);
         label->setY((w->height() - label->height()) / 2);
         cb->setY((w->height() - cb->height()) / 2);
         return w;

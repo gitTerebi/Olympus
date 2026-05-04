@@ -48,3 +48,5 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 **Walker/cart rendering + tinting:** `widgets/egamewidgetpaint.cpp` `drawCharacters` lambda — iterates tile characters, applies `setColorMod` for hover (blue), patrol selected (green), walker-building selected (red). Color constants defined just above the lambda.
 
 **Building click → walker highlight:** `widgets/egamewidget.cpp` `rightClickRelease` sets `mWalkerBuilding`; paint loop checks `eCartTransporterAction::src()` against it. Cart action source building stored in `characters/actions/ecarttransporteraction.h`.
+
+**Back navigation (ESC + right-click):** `echoosegameeditmenu.cpp` (new adventure / editor select → main menu), `eeditormainmenu.cpp` (editor → save/quit dialog), `eepisodeintroductionwidget.cpp` (mission intro → choose game menu).
