@@ -148,7 +148,6 @@ void eSettlerAction::leave() {
 
 bool eSettlerAction::enterHouse() {
     const auto c = character();
-    printf("enterHouse called for %s with mNPeople %d\n", c && c->type() == eCharacterType::homeless ? "homeless" : "settler", mNPeople);
     const auto t = c->tile();
     if(!t) {
         setState(eCharacterActionState::failed);
