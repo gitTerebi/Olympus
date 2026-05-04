@@ -145,6 +145,8 @@ void eSettings::write() const {
             (fWarehouseDefaultAcceptNone ? "\"true\"" : "\"false\"") << "\n";
     file << "double_cart_capacity" << " " <<
             (fDoubleCartCapacity ? "\"true\"" : "\"false\"") << "\n";
+    file << "agoras_take_from_trading_posts" << " " <<
+            (fAgorasTakeFromTradingPosts ? "\"true\"" : "\"false\"") << "\n";
     file << "disable_edge_scroll" << " " <<
             (fDisableEdgeScroll ? "\"true\"" : "\"false\"") << "\n";
     file << "key_scroll_speed" << " " << "\"" <<
@@ -248,6 +250,7 @@ void eSettings::read() {
     fFullscreen = settings["fullscreen"] == "true";
     fWarehouseDefaultAcceptNone = settings["warehouse_default_accept_none"] == "true";
     fDoubleCartCapacity = settings["double_cart_capacity"] == "true";
+    fAgorasTakeFromTradingPosts = settings["agoras_take_from_trading_posts"] == "true";
     fDisableEdgeScroll = settings["disable_edge_scroll"] == "true";
     const auto keyScrollSpeedStr = settings["key_scroll_speed"];
     if(!keyScrollSpeedStr.empty()) {
