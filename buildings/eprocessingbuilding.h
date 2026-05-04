@@ -29,6 +29,7 @@ public:
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
+    void nextMonth() override;
 
     int add(const eResourceType type, const int count) override;
 
@@ -42,6 +43,8 @@ public:
 
     int rawCount() const { return mRawCount; }
     eResourceType rawMaterial() const { return mRawMaterial; }
+    int processWaitTime() const { return mProcessWaitTime; }
+    int producedThisYear() const { return mProducedThisYear; }
 
     int productionPercent() const;
 private:
@@ -62,6 +65,11 @@ private:
 
     const int mProcessWaitTime;
     double mProcessTime = 0;
+
+    int mProducedThisYear = 0;
+    int mLastMonth = -1;
+    std::array<int,12> mMonthlyProduced{};
+    int mRingIdx = 0;
 };
 
 #endif // EPROCESSINGBUILDING_H

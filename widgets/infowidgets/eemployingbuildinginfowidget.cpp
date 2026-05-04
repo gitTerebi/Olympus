@@ -38,7 +38,7 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(eEmployingBuilding* const
     const auto emplstr = eLanguage::zeusText(8, 13);
     const auto memplstr = eLanguage::zeusText(69, 0);
     const auto str = estr + " " + emplstr +
-                     "  (" + mestr + " " + memplstr;
+                      "  (" + mestr + " " + memplstr;
     const auto empl = new eLabel(str, window());
     empl->setSmallFontSize();
     empl->setSmallPadding();
