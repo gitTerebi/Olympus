@@ -70,13 +70,22 @@ void eFarmBase::timeChanged(const int by) {
             if(++mCurrentStage >= 5) {
                 mCurrentStage = 0;
                 if(++mCurrentTile >= 5) {
-                    addProduced(resourceType(), 4);
+                    const int c = addProduced(resourceType(), 4);
+                    mProducedThisYear += c;
+                    mMonthlyProduced[mRingIdx] += c;
                     mCurrentTile = 0;
                 }
             }
         }
     }
     eResourceBuildingBase::timeChanged(by);
+}
+
+void eFarmBase::nextMonth() {
+    mRingIdx = (mRingIdx + 1) % 12;
+    mProducedThisYear -= mMonthlyProduced[mRingIdx];
+    mMonthlyProduced[mRingIdx] = 0;
+    if(mProducedThisYear < 0) mProducedThisYear = 0;
 }
 
 int eFarmBase::productionPercent() const {
@@ -111,4 +120,7 @@ void eFarmBase::write(eWriteStream& dst) const {
 
     dst << mNextRipe;
     dst << (mCurrentTile * 5 + mCurrentStage);
+    dst << mProducedThisYear;
+    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
+    dst << mRingIdx;
 }

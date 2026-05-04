@@ -68,10 +68,21 @@ void eProcessingBuilding::timeChanged(const int by) {
                 const auto type = resourceType();
                 const int c = addProduced(type, 1);
                 mRawCount -= c*mRawUse;
+                mProducedThisYear += c;
+                mMonthlyProduced[mRingIdx] += c;
             }
         }
     }
     eResourceBuildingBase::timeChanged(by);
+}
+
+void eProcessingBuilding::nextMonth() {
+    // rolling 12-month window: each month we shift the ring buffer
+    // and subtract the month that falls out of the 12-month window
+    mRingIdx = (mRingIdx + 1) % 12;
+    mProducedThisYear -= mMonthlyProduced[mRingIdx];
+    mMonthlyProduced[mRingIdx] = 0;
+    if(mProducedThisYear < 0) mProducedThisYear = 0;
 }
 
 int eProcessingBuilding::count(const eResourceType type) const {
@@ -117,6 +128,9 @@ void eProcessingBuilding::read(eReadStream& src) {
 
     src >> mRawCount;
     src >> mProcessTime;
+    mProducedThisYear = 0;
+    mLastMonth = 0;
+    mMonthlyProduced.fill(0);
 }
 
 void eProcessingBuilding::write(eWriteStream& dst) const {
@@ -126,6 +140,9 @@ void eProcessingBuilding::write(eWriteStream& dst) const {
 
     dst << mRawCount;
     dst << mProcessTime;
+    dst << mProducedThisYear;
+    dst << mLastMonth;
+    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
 }
 
 int eProcessingBuilding::productionPercent() const {

@@ -21,6 +21,9 @@ public:
 
     int productionPercent() const;
     eMonth nextHarvestMonth() const;
+    int producedThisYear() const { return mProducedThisYear; }
+
+    void nextMonth() override;
 
     void prepareForCollapse() override {
         mNextRipe = 0;
@@ -35,6 +38,10 @@ private:
     double mNextRipe = 0;
     int mCurrentTile = 0;  // 0 - 4
     int mCurrentStage = 0; // 0 - 4
+
+    int mProducedThisYear = 0;
+    std::array<int,12> mMonthlyProduced{};
+    int mRingIdx = 0;
 };
 
 #endif // EFARMBASE_H
