@@ -577,8 +577,9 @@ set(SOURCES
     widgets/eacceptbutton.cpp
     widgets/eactionlistwidget.cpp
     widgets/earmymenu.cpp
-    widgets/ebasicbutton.cpp
+     widgets/ebasicbutton.cpp
      widgets/ebitmapwidget.cpp
+     widgets/etooltip.cpp
      widgets/eboardcityswitchbutton.cpp
      widgets/eboardsettingsmenu.cpp
      widgets/ebuildbutton.cpp
