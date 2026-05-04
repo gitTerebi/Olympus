@@ -397,6 +397,7 @@ private:
     std::vector<eTile*> mExcessPatrolPath1;
     eWidget* mPatrolPathWid = nullptr;
     std::vector<ePatrolGuide> mSavedGuides;
+    eViewMode mSavedViewMode = eViewMode::defaultView;
 
     eFramedLabel* mPausedLabel = nullptr;
     eFramedLabel* mSpeedLabel = nullptr;
