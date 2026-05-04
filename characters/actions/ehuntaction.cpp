@@ -82,7 +82,7 @@ bool eHuntAction::decide() {
 
     if(coll > 0) {
         if(inLodge) {
-            mLodge->addProduced(eResourceType::meat, coll);
+            mLodge->hunterDelivered(eResourceType::meat, coll);
             mHunter->incCollected(-coll);
             setState(eCharacterActionState::finished);
         } else {

@@ -4,6 +4,8 @@
 
 #include "buildings/allbuildings.h"
 #include "buildings/efarmbase.h"
+#include "buildings/eshepherbuildingbase.h"
+#include "enumbers.h"
 
 #include "engine/edate.h"
 
@@ -217,6 +219,118 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto emplstr = eLanguage::zeusText(8, 13);
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = estr + " " + emplstr + "  (" + mestr + " " + memplstr;
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            ebWid->addText(info);
+            wid = ebWid;
+        } else if(const auto sb = dynamic_cast<eShepherBuildingBase*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(sb, title, info, employmentInfo, additionalInfo);
+            ebWid->initialize(title);
+            constexpr int maxYearly = 8;
+            const double eff = (double)sb->producedThisYear() / maxYearly;
+            const int effPercent = static_cast<int>(eff * 100 + 0.5);
+            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(sb->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
+            ebWid->addText(effStr);
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = sb->employed();
+            const int me = sb->maxEmployees();
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            ebWid->addText(info);
+            wid = ebWid;
+        } else if(const auto gl = dynamic_cast<eGrowersLodge*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(gl, title, info, employmentInfo, additionalInfo);
+            ebWid->initialize(title);
+            constexpr int maxYearly = 20;
+            const double eff = (double)gl->producedThisYear() / maxYearly;
+            const int effPercent = static_cast<int>(eff * 100 + 0.5);
+            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(gl->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
+            ebWid->addText(effStr);
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = gl->employed();
+            const int me = gl->maxEmployees();
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            ebWid->addText(info);
+            wid = ebWid;
+        } else if(const auto hl = dynamic_cast<eHuntingLodge*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(hl, title, info, employmentInfo, additionalInfo);
+            ebWid->initialize(title);
+            constexpr int maxYearly = 12;
+            const double eff = (double)hl->producedThisYear() / maxYearly;
+            const int effPercent = static_cast<int>(eff * 100 + 0.5);
+            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(hl->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
+            ebWid->addText(effStr);
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = hl->employed();
+            const int me = hl->maxEmployees();
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
+            const auto empl = new eLabel(str, window());
+            empl->setSmallFontSize();
+            empl->setSmallPadding();
+            empl->fitContent();
+            empWid->addWidget(empl);
+            empl->align(eAlignment::hcenter);
+            ebWid->addText(info);
+            wid = ebWid;
+        } else if(const auto fy = dynamic_cast<eFishery*>(b)) {
+            const auto ebWid = new eInfoWidget(window(), this, true, true);
+            std::string title;
+            std::string info;
+            std::string employmentInfo;
+            std::string additionalInfo;
+            eBuilding::sInfoText(fy, title, info, employmentInfo, additionalInfo);
+            ebWid->initialize(title);
+            constexpr int maxYearly = 13;
+            const double eff = (double)fy->producedThisYear() / maxYearly;
+            const int effPercent = static_cast<int>(eff * 100 + 0.5);
+            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(fy->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
+            ebWid->addText(effStr);
+            const int pp = ebWid->padding();
+            const auto empWid = ebWid->addFramedWidget(8*pp);
+            const int e = fy->employed();
+            const int me = fy->maxEmployees();
+            const auto emplstr = eLanguage::zeusText(8, 13);
+            const auto memplstr = eLanguage::zeusText(69, 0);
+            const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
             const auto empl = new eLabel(str, window());
             empl->setSmallFontSize();
             empl->setSmallPadding();

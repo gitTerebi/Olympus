@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
+#include "fileIO/efileformat.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
         eGameBoard& board,
@@ -59,18 +60,39 @@ void eShepherBuildingBase::timeChanged(const int by) {
     }
 }
 
+void eShepherBuildingBase::nextMonth() {
+    mRingIdx = (mRingIdx + 1) % 12;
+    mProducedThisYear -= mMonthlyProduced[mRingIdx];
+    mMonthlyProduced[mRingIdx] = 0;
+    if(mProducedThisYear < 0) mProducedThisYear = 0;
+}
+
+void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int count) {
+    const int c = addProduced(type, count);
+    mProducedThisYear += c;
+    mMonthlyProduced[mRingIdx] += c;
+}
+
 void eShepherBuildingBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
     src.readCharacter(&getBoard(), [this](eCharacter* const c) {
         mShepherd = static_cast<eResourceCollectorBase*>(c);
     });
     src >> mSpawnTime;
+    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+        src >> mProducedThisYear;
+        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
+        src >> mRingIdx;
+    }
 }
 
 void eShepherBuildingBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
     dst.writeCharacter(mShepherd.get());
     dst << mSpawnTime;
+    dst << mProducedThisYear;
+    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
+    dst << mRingIdx;
 }
 
 bool eShepherBuildingBase::spawn() {

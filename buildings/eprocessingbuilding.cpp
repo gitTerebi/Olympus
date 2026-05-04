@@ -4,6 +4,7 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/efileformat.h"
 
 #include <algorithm>
 #include <cmath>
@@ -128,9 +129,11 @@ void eProcessingBuilding::read(eReadStream& src) {
 
     src >> mRawCount;
     src >> mProcessTime;
-    mProducedThisYear = 0;
-    mLastMonth = 0;
-    mMonthlyProduced.fill(0);
+    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+        src >> mProducedThisYear;
+        src >> mLastMonth;
+        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
+    }
 }
 
 void eProcessingBuilding::write(eWriteStream& dst) const {

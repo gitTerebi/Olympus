@@ -34,9 +34,14 @@ public:
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
+    void nextMonth() override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    int producedThisYear() const { return mProducedThisYear; }
+
+    void shepherdDelivered(const eResourceType type, const int count);
 
     bool spawn();
 private:
@@ -54,6 +59,10 @@ private:
     stdptr<eResourceCollectorBase> mShepherd;
 
     double mSpawnTime = 1000000;
+
+    int mProducedThisYear = 0;
+    std::array<int,12> mMonthlyProduced{};
+    int mRingIdx = 0;
 };
 
 #endif // ESHEPHERBUILDINGBASE_H
