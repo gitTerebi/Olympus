@@ -44,8 +44,8 @@ enum class eHotkeyId {
 };
 
 struct eSettings {
-    static constexpr int sMinKeyScrollSpeed = 10;
-    static constexpr int sMaxKeyScrollSpeed = 200;
+    static constexpr int sMinKeyScrollSpeed = 1;
+    static constexpr int sMaxKeyScrollSpeed = 20;
     static constexpr int sMinVolume = 0;
     static constexpr int sMaxVolume = 100;
     static constexpr int sMinGameSpeed = 100;

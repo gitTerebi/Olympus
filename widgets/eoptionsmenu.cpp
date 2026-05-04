@@ -1,5 +1,6 @@
 #include "eoptionsmenu.h"
 
+#include "emainwindow.h"
 #include "ecancelbutton.h"
 #include "eframedbutton.h"
 #include "elabel.h"
@@ -383,7 +384,58 @@ void eOptionsMenu::showPage(const int id) {
     if(id < 0 || id >= static_cast<int>(mPages.size())) return;
 
     const int p = padding();
-    const auto& page = mPages[id];
+    auto& page = mPages[id];
+    const auto& settings = window()->settings();
+
+    // Update page values with current settings
+    if(id == 0) { // General
+        if(!page.fSliders.empty()) page.fSliders[0].fValue = settings.fKeyScrollSpeed;
+        if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fDisableEdgeScroll;
+    } else if(id == 1) { // Hotkeys
+        page.fHotkeys[0].fValue = settings.fHotkeyGameMenu;
+        page.fHotkeys[1].fValue = settings.fHotkeyPause;
+        page.fHotkeys[3].fValue = settings.fHotkeySpeedUp;
+        page.fHotkeys[4].fValue = settings.fHotkeySpeedDown;
+        page.fHotkeys[6].fValue = settings.fHotkeyRotatePreview;
+        page.fHotkeys[7].fValue = settings.fHotkeyCopyBuilding;
+        page.fHotkeys[8].fValue = settings.fHotkeyDeleteTool;
+        page.fHotkeys[9].fValue = settings.fHotkeyRepairTool;
+        page.fHotkeys[10].fValue = settings.fHotkeyUndo;
+        page.fHotkeys[12].fValue = settings.fHotkeyBuildRoad;
+        page.fHotkeys[13].fValue = settings.fHotkeyBuildRoadblock;
+        page.fHotkeys[14].fValue = settings.fHotkeyBuildMaintenanceOffice;
+        page.fHotkeys[15].fValue = settings.fHotkeyBuildCommonHousing;
+        page.fHotkeys[16].fValue = settings.fHotkeyBuildWatchpost;
+        page.fHotkeys[17].fValue = settings.fHotkeyShowRoadsOverlay;
+        page.fHotkeys[19].fValue = settings.fHotkeyScrollLeft;
+        page.fHotkeys[20].fValue = settings.fHotkeyScrollRight;
+        page.fHotkeys[21].fValue = settings.fHotkeyScrollUp;
+        page.fHotkeys[22].fValue = settings.fHotkeyScrollDown;
+        page.fHotkeys[24].fValue = settings.fHotkeyBookmark1;
+        page.fHotkeys[25].fValue = settings.fHotkeyBookmark2;
+        page.fHotkeys[26].fValue = settings.fHotkeyBookmark3;
+        page.fHotkeys[27].fValue = settings.fHotkeyBookmark4;
+        page.fHotkeys[29].fValue = settings.fHotkeyMenuTab1;
+        page.fHotkeys[30].fValue = settings.fHotkeyMenuTab2;
+        page.fHotkeys[31].fValue = settings.fHotkeyMenuTab3;
+        page.fHotkeys[32].fValue = settings.fHotkeyMenuTab4;
+        page.fHotkeys[33].fValue = settings.fHotkeyMenuTab5;
+        page.fHotkeys[34].fValue = settings.fHotkeyMenuTab6;
+        page.fHotkeys[35].fValue = settings.fHotkeyMenuTab7;
+        page.fHotkeys[36].fValue = settings.fHotkeyMenuTab8;
+        page.fHotkeys[37].fValue = settings.fHotkeyMenuTab9;
+        page.fHotkeys[38].fValue = settings.fHotkeyMenuTab10;
+        page.fHotkeys[39].fValue = settings.fHotkeyMenuTab11;
+    } else if(id == 2) { // Gameplay
+        if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fWarehouseDefaultAcceptNone;
+        if(page.fCheckboxes.size() >= 2) page.fCheckboxes[1].fValue = settings.fDoubleCartCapacity;
+    } else if(id == 3) { // Sound
+        if(page.fSliders.size() >= 1) page.fSliders[0].fValue = settings.fGeneralVolume;
+        if(page.fSliders.size() >= 2) page.fSliders[1].fValue = settings.fMusicVolume;
+        if(page.fSliders.size() >= 3) page.fSliders[2].fValue = settings.fVoiceVolume;
+        if(page.fSliders.size() >= 4) page.fSliders[3].fValue = settings.fEventVolume;
+        if(page.fSliders.size() >= 5) page.fSliders[4].fValue = settings.fAmbientVolume;
+    }
 
     mMainTitle->setText(page.fTitle);
     mMainTitle->fitContent();
