@@ -7,6 +7,9 @@
 #include "enumbers.h"
 #include "buildings/epalace.h"
 
+#include "characters/ehomeless.h"
+#include "characters/actions/esettleraction.h"
+
 eEliteHousing::eEliteHousing(eGameBoard& board,
                              const eCityId cid) :
     eHouseBase(board, eBuildingType::eliteHousing,
@@ -341,13 +344,33 @@ void eEliteHousing::updateLevel() {
         if(mArms > 0 && appeal > 7.0) {
             if(mWine > 0 && appeal > 9.0) {
                 if(mHorses > 0 && nVenues > 3 && appeal > 10.0) {
-                    return setLevel(4);
+                    setLevel(4);
+                } else {
+                    setLevel(3);
                 }
-                return setLevel(3);
+            } else {
+                setLevel(2);
             }
-            return setLevel(2);
+        } else {
+            setLevel(1);
         }
-        return setLevel(1);
+    } else {
+        setLevel(0);
     }
-    setLevel(0);
+    // spawn homeless immediately
+    if(mPendingEvict > 0) {
+        const auto board = &getBoard();
+        const auto cid = cityId();
+        while(mPendingEvict > 0) {
+            const int spawnCount = std::min(8, mPendingEvict);
+            const auto c = e::make_shared<eHomeless>(*board);
+            c->setBothCityIds(cid);
+            c->changeTile(centerTile());
+            const auto a = e::make_shared<eSettlerAction>(c.get());
+            a->setNumberPeople(spawnCount);
+            c->setAction(a);
+            c->setActionType(eCharacterActionType::walk);
+            mPendingEvict -= spawnCount;
+        }
+    }
 }

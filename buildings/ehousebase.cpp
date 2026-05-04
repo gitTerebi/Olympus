@@ -185,7 +185,6 @@ void eHouseBase::setPeople(const int p) {
 
     if(pc < 0) {
         mPendingEvict += -pc;
-        mEvictDelay = 10;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿#include "esmallhouse.h"
 
 #include <algorithm>
+#include "erand.h"
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "engine/eplague.h"
@@ -445,24 +446,28 @@ void eSmallHouse::updateLevel() {
             ++mDevolveDelay;
         } else {
             setLevel(mLevel - 1);
+
+            // spawn homeless immediately
+            if(mPendingEvict > 0) {
+                const auto board = &getBoard();
+                const auto cid = cityId();
+                while(mPendingEvict > 0) {
+                    const int spawnCount = std::min(8, mPendingEvict);
+                    const auto c = e::make_shared<eHomeless>(*board);
+                    c->setBothCityIds(cid);
+                    c->changeTile(centerTile());
+                    const auto a = e::make_shared<eSettlerAction>(c.get());
+                    a->setNumberPeople(spawnCount);
+                    c->setAction(a);
+                    c->setActionType(eCharacterActionType::walk);
+                    mPendingEvict -= spawnCount;
+                }
+            }
+        
             mDevolveDelay = 0;
         }
     } else {
         mDevolveDelay = 0;
-        // spawn homeless once reached required level
-        if(mEvictDelay > 0) --mEvictDelay;
-        if(mEvictDelay == 0 && mPendingEvict > 0) {
-            const auto board = &getBoard();
-            const auto cid = cityId();
-            const auto c = e::make_shared<eHomeless>(*board);
-            c->setBothCityIds(cid);
-            c->changeTile(centerTile());
-            const auto a = e::make_shared<eSettlerAction>(c.get());
-            a->setNumberPeople(mPendingEvict);
-            c->setAction(a);
-            c->setActionType(eCharacterActionType::walk);
-            mPendingEvict = 0;
-        }
     }
 }
 

@@ -22,6 +22,7 @@
 
 #include <algorithm>
 
+#include "erand.h"
 #include "evectorhelpers.h"
 
 bool isImportant(eBuilding* const b) {
@@ -87,22 +88,30 @@ void eBuildingsToErase::erase(eBuilding* const b) {
     case eBuildingType::eliteHousing:
     case eBuildingType::commonHouse: {
         const auto hb = static_cast<eHouseBase*>(b);
-        const int people = hb->people();
-        if(people > 0) {
+        const int totalPeople = hb->people();
+        if(totalPeople > 0) {
             auto& board = b->getBoard();
             const auto tile = b->centerTile();
-            const auto h = e::make_shared<eHomeless>(board);
-            const auto cid = tile->cityId();
-            h->setOnCityId(cid);
-            h->setCityId(eCityId::neutralFriendly);
-            h->changeTile(tile);
-            const auto fa = std::make_shared<eKillCharacterFinishFail>(board);
-            const auto a = e::make_shared<eSettlerAction>(h.get());
-            a->setNumberPeople(people);
-            a->setFailAction(fa);
-            a->setFinishAction(fa);
-            a->setDeleteFailAction(fa);
-            h->setAction(a);
+            int remainingPeople = totalPeople;
+            int waitTime = 0;
+            while(remainingPeople > 0) {
+                const int spawnCount = std::min(8, remainingPeople);
+                const auto h = e::make_shared<eHomeless>(board);
+                const auto cid = tile->cityId();
+                h->setOnCityId(cid);
+                h->setCityId(eCityId::neutralFriendly);
+                h->changeTile(tile);
+                const auto fa = std::make_shared<eKillCharacterFinishFail>(board);
+                const auto a = e::make_shared<eSettlerAction>(h.get());
+                a->setNumberPeople(spawnCount);
+                a->setInitialWait(waitTime);
+                a->setFailAction(fa);
+                a->setFinishAction(fa);
+                a->setDeleteFailAction(fa);
+                h->setAction(a);
+                remainingPeople -= spawnCount;
+                waitTime += 10 + eRand::rand() % 25;
+            }
         }
         b->erase();
     } break;
