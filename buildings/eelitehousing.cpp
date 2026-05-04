@@ -364,7 +364,7 @@ void eEliteHousing::updateLevel() {
         const auto cid = cityId();
         int waitTime = 0;
         while(mPendingEvict > 0) {
-            const int spawnCount = std::min(8, mPendingEvict);
+            const int spawnCount = std::min(20, mPendingEvict);
             eHomeless::spawn(*board, centerTile(), cid, spawnCount, waitTime);
             mPendingEvict -= spawnCount;
             waitTime += 10 + eRand::rand() % 25;

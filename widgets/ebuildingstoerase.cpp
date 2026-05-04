@@ -95,7 +95,7 @@ void eBuildingsToErase::erase(eBuilding* const b) {
             int remainingPeople = totalPeople;
             int waitTime = 0;
             while(remainingPeople > 0) {
-                const int spawnCount = std::min(8, remainingPeople);
+                const int spawnCount = std::min(30, remainingPeople);
                 eHomeless::spawn(board, tile, tile->cityId(), spawnCount, waitTime);
                 remainingPeople -= spawnCount;
                 waitTime += 10 + eRand::rand() % 25;
