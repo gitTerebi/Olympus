@@ -357,7 +357,11 @@ void eMessageBox::initialize(eGameBoard& board,
         if(!c) return;
         const int time = ed.fTime;
         const auto timeStr = std::to_string(time);
-        const auto tributeWid = createTributeWidget(type, count, 0, time);
+        eLabel* stockLabel = nullptr;
+        const auto iniC = ed.fCityNames.begin();
+        const auto iniCid = iniC->first;
+        const auto tributeWid = createTributeWidget(type, count, 0, time,
+                                                    nullptr, &board, iniCid, &stockLabel);
 
         eStringHelpers::replaceAll(msg.fText, "[time_allotted]",
                                    timeStr);
@@ -565,81 +569,64 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
                                           const int count,
                                           const int space,
                                           const int months,
-                                          eLabel** spaceLabelPtr) {
+                                          eLabel** spaceLabelPtr,
+                                          eGameBoard* board,
+                                          const eCityId cid,
+                                          eLabel** stockLabelPtr) {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const auto tributeWid = new eWidget(window());
     tributeWid->setNoPadding();
-    const auto countStr = std::to_string(count);
 
-    const auto typeIcon = new eLabel(window());
-    const auto icon = eResourceTypeHelpers::icon(uiScale, type);
-    typeIcon->setTexture(icon);
-    typeIcon->setNoPadding();
-    typeIcon->fitContent();
-    tributeWid->addWidget(typeIcon);
-
-    const auto countLabel = new eLabel(window());
-    countLabel->setSmallFontSize();
-    countLabel->setNoPadding();
-    countLabel->setText("9999");
-    countLabel->fitContent();
-    countLabel->setText(countStr);
-    tributeWid->addWidget(countLabel);
-
-    const auto name = eResourceTypeHelpers::typeLongName(type);
-    const auto nameLabel = new eLabel(window());
-    nameLabel->setSmallFontSize();
-    nameLabel->setNoPadding();
-    nameLabel->setText(" " + name);
-    nameLabel->fitContent();
-    tributeWid->addWidget(nameLabel);
-
-    if(months != -1) {
-        const auto monthsStr = std::to_string(months);
-
-        const auto textLabel = new eLabel(window());
-        textLabel->setSmallFontSize();
-        textLabel->setNoPadding();
-        const auto m = eLanguage::zeusText(8, 5);
-        const auto c = eLanguage::zeusText(12, 2);
-        const auto mtc = m + " " + c; // months to comply
-        textLabel->setText("        " + mtc + " " + monthsStr);
-        textLabel->fitContent();
-        tributeWid->addWidget(textLabel);
-    } else if(space != -1 && type != eResourceType::drachmas) {
-        const auto countStr = std::to_string(std::min(count, space));
-
-        const auto textLabel = new eLabel(window());
-        textLabel->setSmallFontSize();
-        textLabel->setNoPadding();
-        textLabel->setText(" / " + eLanguage::zeusText(130, 6) + " ");
-        textLabel->fitContent();
-        tributeWid->addWidget(textLabel);
-
+    auto addIcon = [this, uiScale, tributeWid](const eResourceType t) {
+        const auto icon = eResourceTypeHelpers::icon(uiScale, t);
         const auto typeIcon = new eLabel(window());
-        const auto icon = eResourceTypeHelpers::icon(uiScale, type);
         typeIcon->setTexture(icon);
         typeIcon->setNoPadding();
         typeIcon->fitContent();
         tributeWid->addWidget(typeIcon);
+    };
 
-        const auto countLabel = new eLabel(window());
-        countLabel->setSmallFontSize();
-        countLabel->setNoPadding();
-        if(spaceLabelPtr) *spaceLabelPtr = countLabel;
-        countLabel->setText("9999");
-        countLabel->fitContent();
-        countLabel->setText(countStr);
-        tributeWid->addWidget(countLabel);
+    auto addLabel = [this, tributeWid](const std::string& text) {
+        const auto label = new eLabel(window());
+        label->setSmallFontSize();
+        label->setNoPadding();
+        label->setText(text);
+        label->fitContent();
+        tributeWid->addWidget(label);
+        return label;
+    };
 
-        const auto name = eResourceTypeHelpers::typeLongName(type);
-        const auto nameLabel = new eLabel(window());
-        nameLabel->setSmallFontSize();
-        nameLabel->setNoPadding();
-        nameLabel->setText(" " + name);
-        nameLabel->fitContent();
-        tributeWid->addWidget(nameLabel);
+    addIcon(type);
+    const auto countStr = std::to_string(count);
+    const auto countLabel = addLabel("9999");
+    countLabel->setText(countStr);
+
+    if(stockLabelPtr && board) {
+        const int stock = board->resourceCount(cid, type);
+        const auto stockLabel = addLabel("(9999 in stock)");
+        stockLabel->setText("(" + std::to_string(stock) + " in stock)");
+        *stockLabelPtr = stockLabel;
+    }
+
+    const auto name = eResourceTypeHelpers::typeLongName(type);
+    addLabel(" " + name);
+
+    if(months != -1) {
+        const auto monthsStr = std::to_string(months);
+        const auto m = eLanguage::zeusText(8, 5);
+        const auto c = eLanguage::zeusText(12, 2);
+        const auto mtc = m + " " + c;
+        addLabel("        " + mtc + " " + monthsStr);
+    } else if(space != -1 && type != eResourceType::drachmas) {
+        const auto spaceStr = std::to_string(std::min(count, space));
+        addLabel(" / " + eLanguage::zeusText(130, 6) + " ");
+        addIcon(type);
+        const auto spaceLabel = addLabel("9999");
+        if(spaceLabelPtr) *spaceLabelPtr = spaceLabel;
+        spaceLabel->setText(spaceStr);
+        const auto spaceName = eResourceTypeHelpers::typeLongName(type);
+        addLabel(" " + spaceName);
     }
 
     tributeWid->stackHorizontally();

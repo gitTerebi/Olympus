@@ -5,11 +5,11 @@
 
 #include "emessage.h"
 #include "engine/edate.h"
+#include "engine/ecityid.h"
 
 class eWorldCity;
 struct eEventData;
 enum class eResourceType;
-enum class eCityId;
 class eLabel;
 class eGameWidget;
 
@@ -29,7 +29,10 @@ public:
     eWidget* createTributeWidget(const eResourceType type,
                                  const int count, const int space,
                                  const int months = -1,
-                                 eLabel** spaceLabelPtr = nullptr);
+                                 eLabel** spaceLabelPtr = nullptr,
+                                 eGameBoard* board = nullptr,
+                                 const eCityId cid = eCityId::neutralAggresive,
+                                 eLabel** stockLabelPtr = nullptr);
 protected:
 //    void paintEvent(ePainter& p);
     bool keyPressEvent(const eKeyPressEvent& e);
