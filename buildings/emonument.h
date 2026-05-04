@@ -20,6 +20,8 @@ public:
     getTexture(const eTileSize) const override
     { return nullptr; }
 
+    bool spawnsCartWalkers() const override { return true; }
+
     void timeChanged(const int by) override;
 
     int spaceLeft(const eResourceType type) const override;

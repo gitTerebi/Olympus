@@ -14,6 +14,8 @@ public:
                      const int spaceCount = 8);
     ~eStorageBuilding();
 
+    bool spawnsCartWalkers() const override { return true; }
+
     void timeChanged(const int by) override;
 
     int addNotAccept(const eResourceType type, const int count);

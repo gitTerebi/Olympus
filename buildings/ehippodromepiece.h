@@ -11,6 +11,8 @@ public:
     eHippodromePiece(eGameBoard& board, const eCityId cid);
     ~eHippodromePiece();
 
+    bool spawnsCartWalkers() const override { return true; }
+
     void timeChanged(const int by) override;
 
     int add(const eResourceType type, const int count) override;

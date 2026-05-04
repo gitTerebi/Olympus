@@ -20,6 +20,7 @@
 
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
+#include "characters/actions/ecarttransporteraction.h"
 
 #include "evectorhelpers.h"
 #include "etilehelper.h"
@@ -706,7 +707,8 @@ void eGameWidget::paintEvent(ePainter& p) {
         tex->clearAlphaMod();
         tex->clearColorMod();
     };
-    constexpr SDL_Color selectedPatrolerColor{24, 255, 24, 255};
+    constexpr SDL_Color selectedWalkerColor{24, 255, 24, 255};
+    const auto& selectedPatrolerColor = selectedWalkerColor;
 
     using eRoadPreviewPath = std::map<eTile*, int>;
     eRoadPreviewPath patrolRoadPreview;
@@ -1197,6 +1199,13 @@ void eGameWidget::paintEvent(ePainter& p) {
 
                 const bool erase = inErase(ub);
                 const bool hover = inPatrolBuildingHover(ub);
+                const bool walkerBuildingSelected = mWalkerBuilding && ub == mWalkerBuilding.get();
+                const bool buildingHovered = [&]() {
+                    if(mode != eBuildingMode::none) return false;
+                    const SDL_Point hp{mHoverTX, mHoverTY};
+                    const auto r = ub->tileRect();
+                    return static_cast<bool>(SDL_PointInRect(&hp, &r));
+                }();
                 bool colorMod = false;
                 int cred = 255;
                 int cgreen = 255;
@@ -1206,11 +1215,16 @@ void eGameWidget::paintEvent(ePainter& p) {
                     cred = 255;
                     cgreen = 175;
                     cblue = 175;
-                } else if(hover) {
+                } else if(hover || walkerBuildingSelected) {
                     colorMod = true;
                     cred = 175;
                     cgreen = 255;
                     cblue = 255;
+                } else if(buildingHovered) {
+                    colorMod = true;
+                    cred = 200;
+                    cgreen = 200;
+                    cblue = 200;
                 } else if(mEditorMode) {
                     colorMod = true;
                     const int eid = ub->districtId();
@@ -1524,51 +1538,45 @@ void eGameWidget::paintEvent(ePainter& p) {
                     const bool patrolerSelected =
                             mPatrolBuilding &&
                             c.get() == mPatrolBuilding->patroler();
-                    if(tex) {
-                        const double offX = mTileH*tex->offsetX()/30.;
-                        const double offY = mTileH*tex->offsetY()/30.;
-                        const double dstXf = 0.5*(x - y)*mTileW - offX;
-                        const double dstYf = 0.5*(x + y)*mTileH - offY;
-                        const int ddstXf = mDX + dstXf;
-                        const int ddstYf = mDY + dstYf;
-                        const int ddstX = std::round(ddstXf);
-                        const int ddstY = std::round(ddstYf);
-                        if(patrolerSelected) {
-                            tex->setColorMod(selectedPatrolerColor.r,
-                                             selectedPatrolerColor.g,
-                                             selectedPatrolerColor.b);
+                    const bool walkerSelected = [&]() {
+                        if(!mWalkerBuilding) return false;
+                        const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
+                        return ca && ca->src() == mWalkerBuilding.get();
+                    }();
+                    const bool charHighlighted = walkerSelected || patrolerSelected;
+                    const auto drawCharTex = [&](const std::shared_ptr<eTexture>& t,
+                                                 const double cx, const double cy,
+                                                 const bool drawDot) {
+                        if(!t) return;
+                        const double offX = mTileH*t->offsetX()/30.;
+                        const double offY = mTileH*t->offsetY()/30.;
+                        const int dx = std::round(mDX + 0.5*(cx - cy)*mTileW - offX);
+                        const int dy = std::round(mDY + 0.5*(cx + cy)*mTileH - offY);
+                        if(charHighlighted) {
+                            t->setColorMod(selectedWalkerColor.r,
+                                           selectedWalkerColor.g,
+                                           selectedWalkerColor.b);
                         } else if(hover) {
-                            tex->setColorMod(hr, hg, hb);
+                            t->setColorMod(hr, hg, hb);
                         }
-                        tex->render(r, ddstX, ddstY, false);
-                        if(patrolerSelected || hover) {
-                            tex->clearColorMod();
+                        t->render(r, dx, dy, false);
+                        if(charHighlighted || hover) t->clearColorMod();
+                        if(charHighlighted && drawDot) {
+                            constexpr int ds = 18;
+                            const SDL_Rect dot{dx - ds/2, dy - ds, ds, ds};
+                            SDL_SetRenderDrawColor(r, selectedWalkerColor.r,
+                                                   selectedWalkerColor.g,
+                                                   selectedWalkerColor.b, 255);
+                            SDL_RenderFillRect(r, &dot);
+                            SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+                            SDL_RenderDrawRect(r, &dot);
                         }
-                    }
+                    };
+                    if(tex) drawCharTex(tex, x, y, true);
                     if(c->hasSecondaryTexture()) {
                         const auto stex = c->getSecondaryTexture(mTileSize);
-                        const auto stexTex = stex.fTex;
-                        if(stexTex) {
-                            const double offX = mTileH*stexTex->offsetX()/30.;
-                            const double offY = mTileH*stexTex->offsetY()/30.;
-                            const double sdstXf = 0.5*(x + stex.fX - y - stex.fY)*mTileW - offX;
-                            const double sdstYf = 0.5*(x + stex.fX + y + stex.fY)*mTileH - offY;
-                            const double sddstXf = mDX + sdstXf;
-                            const double sddstYf = mDY + sdstYf;
-                            const int sddstX = std::round(sddstXf);
-                            const int sddstY = std::round(sddstYf);
-                            if(patrolerSelected) {
-                                stexTex->setColorMod(selectedPatrolerColor.r,
-                                                     selectedPatrolerColor.g,
-                                                     selectedPatrolerColor.b);
-                            } else if(hover) {
-                                stexTex->setColorMod(hr, hg, hb);
-                            }
-                            stexTex->render(r, sddstX, sddstY, false);
-                            if(patrolerSelected || hover) {
-                                stexTex->clearColorMod();
-                            }
-                        }
+                        if(stex.fTex)
+                            drawCharTex(stex.fTex, x + stex.fX, y + stex.fY, false);
                     }
 //                        tex->clearColorMod();
 //                      tp.drawTexture(x, y, tex);

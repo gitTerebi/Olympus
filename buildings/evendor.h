@@ -29,6 +29,8 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
+    bool spawnsCartWalkers() const override { return true; }
+
     void erase() override;
 
     void timeChanged(const int by) override;

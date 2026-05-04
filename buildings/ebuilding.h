@@ -283,6 +283,8 @@ public:
     virtual void nextMonth() {}
     virtual void prepareForCollapse() {}
 
+    virtual bool spawnsCartWalkers() const { return false; }
+
     virtual int provide(const eProvide p, const int n);
 
     static bool sWalkableBuilding(const eBuildingType t);

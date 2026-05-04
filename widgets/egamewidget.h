@@ -389,6 +389,7 @@ private:
     stdptr<eGameBoard> mBoard;
 
     bool mDrawElevation = true;
+    stdptr<eBuilding> mWalkerBuilding;
     stdptr<ePatrolBuildingBase> mPatrolBuilding;
     std::vector<eTile*> mPatrolPath;
     std::vector<eTile*> mExcessPatrolPath;
