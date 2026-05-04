@@ -205,6 +205,13 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                     [window](const bool b) {
                         window->setWarehouseDefaultAcceptNone(b);
                     }
+                },
+                {
+                    "Double cart capacity",
+                    settings.fDoubleCartCapacity,
+                    [window](const bool b) {
+                        window->setDoubleCartCapacity(b);
+                    }
                 }
             }
         },

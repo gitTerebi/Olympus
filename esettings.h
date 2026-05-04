@@ -58,6 +58,7 @@ struct eSettings {
     bool fLargeTextures = true;
     bool fFullscreen = false;
     bool fWarehouseDefaultAcceptNone = false;
+    bool fDoubleCartCapacity = false;
     bool fDisableEdgeScroll = false;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;

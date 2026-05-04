@@ -107,6 +107,8 @@ public:
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
+
+    eGameBoard& board() { return mBoard; }
 private:
     eGameBoard& mBoard;
     eCharacter* const mCharacter;

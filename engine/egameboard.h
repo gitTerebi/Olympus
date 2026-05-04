@@ -99,6 +99,9 @@ public:
     void resize(const int w, const int h);
     void clear();
 
+    void setDoubleCartCapacity(const bool b) { mDoubleCartCapacity = b; }
+    bool doubleCartCapacity() const { return mDoubleCartCapacity; }
+
     void setWorldDirection(const eWorldDirection dir);
 
     eTile* rotateddtile(const int x, const int y) const;
@@ -783,6 +786,7 @@ private:
 
     bool mEditorMode = false;
     bool mFogOfWar = true;
+    bool mDoubleCartCapacity = false;
     int mCurrentDistrictId = -1;
     mutable bool mEpisodeLost = false;
     eWorldBoard& mWorld;
