@@ -1,5 +1,6 @@
 #include "egameevents.h"
 
+#include <algorithm>
 #include "evectorhelpers.h"
 #include "egameboard.h"
 
@@ -20,31 +21,35 @@ void eGameEvents::setupStartDate(const eDate& date) {
     }
 }
 
-void eGameEvents::handleNewDate(const eDate& date) {
-    for(int i = 0; i < (int)mGameEvents.size(); i++) {
-        const auto& e = mGameEvents[i];
-        if(e->finished() && !e->hasActiveConsequences()) {
-            eVectorHelpers::remove(mGameEvents, e);
-            i--;
-        } else {
-            e->handleNewDate(date);
-        }
+void eGameEvents::fastForward(const eDate& date) {
+    for(const auto& e : mGameEvents) {
+        e->fastForward(date);
     }
 }
 
-void eGameEvents::clearAfterLastEpisode() {
-    for(int i = 0; i < static_cast<int>(mGameEvents.size()); i++) {
-        const auto& e = mGameEvents[i];
-        const auto type = e->type();
-        if(type == eGameEventType::godQuest) continue;
-        e->startingNewEpisode();
-        if(e->finished()) {
-            if(!e->hasActiveConsequences()) {
-                mGameEvents.erase(mGameEvents.begin() + i);
-                i--;
-            }
+void eGameEvents::handleNewDate(const eDate& date) {
+    for(const auto& e : mGameEvents) {
+        if(!e->finished() || e->hasActiveConsequences()) {
+            e->handleNewDate(date);
         }
     }
+    const auto end = std::remove_if(mGameEvents.begin(), mGameEvents.end(),
+        [](const stdsptr<eGameEvent>& e) {
+            return e->finished() && !e->hasActiveConsequences();
+        });
+    mGameEvents.erase(end, mGameEvents.end());
+}
+
+void eGameEvents::clearAfterLastEpisode() {
+    for(const auto& e : mGameEvents) {
+        if(e->type() == eGameEventType::godQuest) continue;
+        e->startingNewEpisode();
+    }
+    const auto end = std::remove_if(mGameEvents.begin(), mGameEvents.end(),
+        [](const stdsptr<eGameEvent>& e) {
+            return e->finished() && !e->hasActiveConsequences();
+        });
+    mGameEvents.erase(end, mGameEvents.end());
 }
 
 bool eGameEvents::handleEpisodeCompleteEvents() {

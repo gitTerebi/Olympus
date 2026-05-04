@@ -109,6 +109,7 @@ public:
     bool isPersonPlayer() const;
 
     void setupStartDate(const eDate& currentDate);
+    void fastForward(const eDate& date);
 
     void initializeDate(const eDate& startDate,
                         const int period = 0,

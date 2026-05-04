@@ -207,6 +207,17 @@ void eGameEvent::setupStartDate(const eDate& currentDate) {
     updateWarningDates();
 }
 
+void eGameEvent::fastForward(const eDate& date) {
+    for(const auto& c : mConsequences) {
+        c->fastForward(date);
+    }
+    while(mRemNRuns > 0 && date > mNextDate) {
+        mRemNRuns--;
+        mNextDate += choosePeriod();
+    }
+    updateWarningDates();
+}
+
 void eGameEvent::initializeDate(const eDate& startDate,
                                 const int period,
                                 const int nRuns) {

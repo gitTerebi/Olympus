@@ -2514,6 +2514,7 @@ void eBoardCity::clearAfterLastEpisode() {
 void eBoardCity::startEpisode(eEpisode* const e) {
     const auto& es = e->fEvents[mId];
     const auto date = mBoard.date();
+    mCityEvents.fastForward(date);
     for(const auto& ee : es) {
         const auto eee = ee->makeCopy();
         eee->setupStartDate(date);
