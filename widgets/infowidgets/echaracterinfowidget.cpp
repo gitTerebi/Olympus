@@ -1651,7 +1651,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter*> chars) {
         if(mSpeakAction) mSpeakAction();
     });
     mTextWidget->addWidget(speakButton);
-    speakButton->align(eAlignment::right);
+    speakButton->align(eAlignment::left);
 
     mTextWidget->stackVertically(p);
 

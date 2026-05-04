@@ -96,19 +96,7 @@ void eBuildingsToErase::erase(eBuilding* const b) {
             int waitTime = 0;
             while(remainingPeople > 0) {
                 const int spawnCount = std::min(8, remainingPeople);
-                const auto h = e::make_shared<eHomeless>(board);
-                const auto cid = tile->cityId();
-                h->setOnCityId(cid);
-                h->setCityId(eCityId::neutralFriendly);
-                h->changeTile(tile);
-                const auto fa = std::make_shared<eKillCharacterFinishFail>(board);
-                const auto a = e::make_shared<eSettlerAction>(h.get());
-                a->setNumberPeople(spawnCount);
-                a->setInitialWait(waitTime);
-                a->setFailAction(fa);
-                a->setFinishAction(fa);
-                a->setDeleteFailAction(fa);
-                h->setAction(a);
+                eHomeless::spawn(board, tile, tile->cityId(), spawnCount, waitTime);
                 remainingPeople -= spawnCount;
                 waitTime += 10 + eRand::rand() % 25;
             }

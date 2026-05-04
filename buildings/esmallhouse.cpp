@@ -451,16 +451,12 @@ void eSmallHouse::updateLevel() {
             if(mPendingEvict > 0) {
                 const auto board = &getBoard();
                 const auto cid = cityId();
+                int waitTime = 0;
                 while(mPendingEvict > 0) {
                     const int spawnCount = std::min(8, mPendingEvict);
-                    const auto c = e::make_shared<eHomeless>(*board);
-                    c->setBothCityIds(cid);
-                    c->changeTile(centerTile());
-                    const auto a = e::make_shared<eSettlerAction>(c.get());
-                    a->setNumberPeople(spawnCount);
-                    c->setAction(a);
-                    c->setActionType(eCharacterActionType::walk);
+                    eHomeless::spawn(*board, centerTile(), cid, spawnCount, waitTime);
                     mPendingEvict -= spawnCount;
+                    waitTime += 10 + eRand::rand() % 25;
                 }
             }
         
