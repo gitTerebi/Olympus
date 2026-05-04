@@ -281,6 +281,7 @@ public:
 
     virtual void timeChanged(const int by) { (void)by; }
     virtual void nextMonth() {}
+    virtual void prepareForCollapse() {}
 
     virtual int provide(const eProvide p, const int n);
 
@@ -325,7 +326,7 @@ public:
     void addUnderBuilding(eTile* const t);
 
     virtual void erase();
-    void collapse();
+    virtual void collapse();
 
     bool isEmptyHome() const;
     bool isOnFire();

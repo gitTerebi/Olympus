@@ -14,6 +14,7 @@ enum class eHotkeyId {
     rotatePreview,
     copyBuilding,
     deleteTool,
+    repairTool,
     undo,
     showRoadsOverlay,
     buildRoad,
@@ -74,7 +75,8 @@ struct eSettings {
     SDL_Scancode fHotkeyRotatePreview = SDL_SCANCODE_TAB;
     SDL_Scancode fHotkeyCopyBuilding = SDL_SCANCODE_C;
     SDL_Scancode fHotkeyDeleteTool = SDL_SCANCODE_Z;
-    SDL_Scancode fHotkeyUndo = SDL_SCANCODE_U;
+    SDL_Scancode fHotkeyRepairTool = SDL_SCANCODE_U;
+    SDL_Scancode fHotkeyUndo = SDL_SCANCODE_Y;
     SDL_Scancode fHotkeyShowRoadsOverlay = SDL_SCANCODE_V;
     SDL_Scancode fHotkeyBuildRoad = SDL_SCANCODE_R;
     SDL_Scancode fHotkeyBuildRoadblock = SDL_SCANCODE_F;
@@ -107,6 +109,7 @@ struct eSettings {
     static int clampGameSpeed(const int speed);
     SDL_Scancode hotkey(const eHotkeyId id) const;
     void setHotkey(const eHotkeyId id, const SDL_Scancode key);
+    eHotkeyId hotkeyIdForScancode(const SDL_Scancode scancode) const;
 
     void write() const;
     void read();

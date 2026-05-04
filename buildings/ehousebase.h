@@ -47,6 +47,8 @@ public:
     void levelUp();
     void levelDown();
 
+    void prepareForCollapse() override { setLevel(0); }
+
     int level() const { return mLevel; }
     int people() const { return mPeople; }
 

@@ -632,6 +632,7 @@ set(SOURCES
     widgets/egamewidgetevents.cpp
     widgets/egamewidgetinfo.cpp
     widgets/egamewidgetpaint.cpp
+    widgets/erepair.cpp
     widgets/egiftdialog.cpp
     widgets/egiftsizedialog.cpp
     widgets/egodbutton.cpp

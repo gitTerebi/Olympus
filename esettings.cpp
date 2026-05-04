@@ -47,6 +47,7 @@ SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
     case eHotkeyId::rotatePreview: return fHotkeyRotatePreview;
     case eHotkeyId::copyBuilding: return fHotkeyCopyBuilding;
     case eHotkeyId::deleteTool: return fHotkeyDeleteTool;
+    case eHotkeyId::repairTool: return fHotkeyRepairTool;
     case eHotkeyId::undo: return fHotkeyUndo;
     case eHotkeyId::showRoadsOverlay: return fHotkeyShowRoadsOverlay;
     case eHotkeyId::buildRoad: return fHotkeyBuildRoad;
@@ -77,6 +78,16 @@ SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
     return SDL_SCANCODE_UNKNOWN;
 }
 
+eHotkeyId eSettings::hotkeyIdForScancode(const SDL_Scancode scancode) const {
+    if(scancode == SDL_SCANCODE_UNKNOWN) return eHotkeyId::gameMenu; // invalid
+    for(int i = static_cast<int>(eHotkeyId::gameMenu);
+        i <= static_cast<int>(eHotkeyId::menuTab11); i++) {
+        const auto id = static_cast<eHotkeyId>(i);
+        if(hotkey(id) == scancode) return id;
+    }
+    return eHotkeyId::gameMenu; // not found, return invalid
+}
+
 void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     switch(id) {
     case eHotkeyId::gameMenu: fHotkeyGameMenu = key; break;
@@ -86,6 +97,7 @@ void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     case eHotkeyId::rotatePreview: fHotkeyRotatePreview = key; break;
     case eHotkeyId::copyBuilding: fHotkeyCopyBuilding = key; break;
     case eHotkeyId::deleteTool: fHotkeyDeleteTool = key; break;
+    case eHotkeyId::repairTool: fHotkeyRepairTool = key; break;
     case eHotkeyId::undo: fHotkeyUndo = key; break;
     case eHotkeyId::showRoadsOverlay: fHotkeyShowRoadsOverlay = key; break;
     case eHotkeyId::buildRoad: fHotkeyBuildRoad = key; break;
@@ -161,6 +173,8 @@ void eSettings::write() const {
             std::to_string(fHotkeyCopyBuilding) << "\"" << "\n";
     file << "hotkey_delete_tool" << " " << "\"" <<
             std::to_string(fHotkeyDeleteTool) << "\"" << "\n";
+    file << "hotkey_repair_tool" << " " << "\"" <<
+            std::to_string(fHotkeyRepairTool) << "\"" << "\n";
     file << "hotkey_undo" << " " << "\"" <<
             std::to_string(fHotkeyUndo) << "\"" << "\n";
     file << "hotkey_show_roads_overlay" << " " << "\"" <<
@@ -290,6 +304,7 @@ void eSettings::read() {
     readHotkey("hotkey_build_maintenance_office", fHotkeyBuildMaintenanceOffice);
     readHotkey("hotkey_build_common_housing", fHotkeyBuildCommonHousing);
     readHotkey("hotkey_build_watchpost", fHotkeyBuildWatchpost);
+    readHotkey("hotkey_build_repair", fHotkeyRepairTool);
     readHotkey("hotkey_scroll_left", fHotkeyScrollLeft);
     readHotkey("hotkey_scroll_right", fHotkeyScrollRight);
     readHotkey("hotkey_scroll_up", fHotkeyScrollUp);

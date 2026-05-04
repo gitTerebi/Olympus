@@ -7,6 +7,7 @@
 #include "eterraineditmenu.h"
 
 #include "buildings/allbuildings.h"
+#include "buildings/eruins.h"
 
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -30,6 +31,9 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "audio/esounds.h"
+
+#include "erepair.h"
+
 
 bool agoraRoadTile(eTile* const t) {
     if(!t) return false;
@@ -650,6 +654,14 @@ bool eGameWidget::buildMouseRelease() {
                 if(!mEditorMode) mBoard->incDrachmas(ppid, -totalCost, eFinanceTarget::construction);
             };
             showQuestion(title, text, acceptA);
+        } break;
+        case eBuildingMode::repair: {
+            const int minX = std::min(mPressedTX, mHoverTX);
+            const int minY = std::min(mPressedTY, mHoverTY);
+            const int maxX = std::max(mPressedTX, mHoverTX);
+            const int maxY = std::max(mPressedTY, mHoverTY);
+            handleRepair(*mBoard, this, minX, minY, maxX, maxY, cid, mEditorMode);
+            return false;
         } break;
         case eBuildingMode::commonAgora: {
             const auto t = mBoard->tile(mHoverTX, mHoverTY);

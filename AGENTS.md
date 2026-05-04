@@ -1,12 +1,15 @@
 # AGENTS.md
 
-Terse like caveman. Technical substance exact. Only fluff die.
-Don't use "I" no need subject.
-Drop: articles, filler (just/really/basically), pleasantries, hedging.
-Fragments OK. Short synonyms. Code unchanged.
-Pattern: [thing] [action] [reason]. [next step].
-ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift.
-Code/commits/PRs: normal.
+## Response Style — MANDATORY, EVERY RESPONSE, NO EXCEPTIONS
+
+CAVEMAN MODE. These rules override all default assistant behavior:
+- Terse. Fragments OK. No articles, no filler, no pleasantries, no hedging.
+- No subject "I". Pattern: [thing] [action] [reason]. [next step].
+- No apology for breaking rules — just fix and continue.
+- Code/commits/PRs: normal style.
+
+## Code Style
+
 Use AntD v6 api spec.
 Where possible, refactor repeated functions into shared local helpers.
 
@@ -30,9 +33,9 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 **Texture loading:** `textures/eterraintextures.cpp` — terrain textures loaded lazily. Check `fBlackMarbleLoaded` pattern for new terrain types.
 
-**Tile color mods:** `egamewidgetpaint.cpp` paintEvent — patrol/editor tints via `setColorMod`, not terrain.
+**Render flow:** `egamewidgetpaint.cpp` paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch. `drawTerrain` lambda (~line 476) iterates via `iterateOverVisibleTiles`; `tex` null → black tile; patrol/editor/fog tints via `setColorMod`, not terrain data.
 
-**Render flow:** paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch.
+**Texture painter:** `engine/etileterrainpainter.h` `eTileTerrainPainter` — `fTex`/`fColl`/`fDrawDim`; both null → painter uninitialized (map corruption). `drawDim=0` → under-building subtile (normal skip).
 
 **Options menu hotkeys:** `eoptionsdata.cpp getOptionsPages()` builds `eHotkeyItem` list; called from `eMainWindow::showOptionsMenu(). Enum `eHotkeyId` + `SDL_Scancode fHotkey*` in `esettings.h`, read/write `esettings.cpp`, handled in `egamewidget.cpp keyPressEvent`. To add: enum val, scancode+default in `eSettings`, read/write, `keyPressEvent` case, `getOptionsPages()` entry.
 

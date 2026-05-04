@@ -17,6 +17,9 @@
 #include "elanguage.h"
 #include "audio/esounds.h"
 
+#include "fileIO/ebuildingwriter.h"
+#include "fileIO/ewritestream.h"
+
 eBuilding::eBuilding(eGameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
@@ -2423,6 +2426,23 @@ void eBuilding::erase() {
     mUnderBuilding.clear();
 }
 
+static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
+    const size_t kBufSize = 524288;
+    void* mem = malloc(kBufSize);
+    eWriteTarget target(mem);
+    eWriteStream dst(target);
+    dst.writeFormat("eZeus");
+    const auto btype = b->type();
+    dst << btype;
+    eBuildingWriter::sWrite(b, dst);
+    b->write(dst);
+    const size_t written = dst.memPos();
+    std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
+                                static_cast<const uint8_t*>(mem) + written);
+    free(mem);
+    return result;
+}
+
 void eBuilding::collapse() {
     auto tiles = mUnderBuilding;
     if(const auto r = dynamic_cast<eHorseRanch*>(this)) {
@@ -2451,10 +2471,32 @@ void eBuilding::collapse() {
                          tp == eBuildingType::goat ||
                          tp == eBuildingType::cattle ||
                          tp == eBuildingType::road;
+
+    // snapshot building state before erase (clear storage first so it restores empty)
+    std::vector<uint8_t> snapshot;
+    std::vector<uint8_t> pierSnapshot;
+    SDL_Rect pierRect = {-1, -1, 0, 0};
+    const bool snapshotBuilding = !noRuins && tp != eBuildingType::commonHouse;
+    if(snapshotBuilding) {
+        prepareForCollapse();
+        b.world().setIOIDs();
+        if(const auto tpb = dynamic_cast<eTradePost*>(this)) {
+            if(tpb->tpType() == eTradePostType::pier) {
+                if(const auto pier = dynamic_cast<ePier*>(tpb->unpackBuilding())) {
+                    pierRect = pier->tileRect();
+                    pierSnapshot = sBuildingSnapshot(pier);
+                }
+            }
+        }
+        snapshot = sBuildingSnapshot(this);
+    }
+
     const bool onFire = mOnFire;
     setOnFire(false);
     erase();
     if(noRuins) return;
+    const int ox = mTileRect.x, oy = mTileRect.y, ow = mTileRect.w, oh = mTileRect.h;
+    bool snapshotSet = false;
     for(const auto t : tiles) {
         const auto terrain = t->terrain();
         const bool r = static_cast<bool>(eTerrain::buildable & terrain);
@@ -2462,11 +2504,34 @@ void eBuilding::collapse() {
         const auto cid = t->cityId();
         const auto ruins = e::make_shared<eRuins>(b, cid);
         ruins->setWasType(tp);
+        ruins->setOrigin(ox, oy, ow, oh);
         ruins->setOnFire(eRand::rand() % 2 ? onFire : false);
         ruins->setCenterTile(t);
         t->setUnderBuilding(ruins);
         ruins->addUnderBuilding(t);
         ruins->setTileRect({t->x(), t->y(), 1, 1});
+        // store snapshot on the origin tile only
+        if(!snapshotSet && t->x() == ox && t->y() == oy) {
+            ruins->setSavedBuilding(snapshot);
+            if(!pierSnapshot.empty()) {
+                ruins->setSavedPier(pierSnapshot, pierRect);
+            }
+            snapshotSet = true;
+        }
+    }
+    // fallback: if origin tile was water/non-buildable, store on first ruins tile
+    if(!snapshotSet && !snapshot.empty()) {
+        for(const auto t : tiles) {
+            const auto terrain = t->terrain();
+            const bool r = static_cast<bool>(eTerrain::buildable & terrain);
+            if(!r) continue;
+            const auto rb = t->underBuilding();
+            if(!rb || rb->type() != eBuildingType::ruins) continue;
+            const auto ruins = static_cast<eRuins*>(rb);
+            ruins->setSavedBuilding(snapshot);
+            if(!pierSnapshot.empty()) ruins->setSavedPier(pierSnapshot, pierRect);
+            break;
+        }
     }
 }
 
