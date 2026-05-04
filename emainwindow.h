@@ -7,7 +7,7 @@
 #include "textures/egodtextures.h"
 #include "textures/ebuildingtextures.h"
 #include "textures/echaractertextures.h"
-#include "widgets/esettingsmenu.h"
+#include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
 
 using eSlot = std::function<void()>;
