@@ -9,8 +9,7 @@ public:
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 
-    void erase() override;
-    void collapse() override;
+    void erase();
 
     void setTradePost(eBuilding* const b);
     eBuilding* tradePost() const { return mTradePost; }

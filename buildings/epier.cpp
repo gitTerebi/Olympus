@@ -1,5 +1,4 @@
 #include "epier.h"
-#include "etradepost.h"
 
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
@@ -45,19 +44,6 @@ void ePier::erase() {
         mTradePost->eBuilding::erase();
     }
     eBuilding::erase();
-}
-
-void ePier::collapse() {
-    if(mTradePost) {
-        // null cross-links before collapsing tradePost so its erase() won't
-        // try to erase the pier a second time, and our erase() won't loop
-        const auto tp = mTradePost;
-        mTradePost = nullptr;
-        if(const auto tpb = dynamic_cast<eTradePost*>(tp))
-            tpb->setUnpackBuilding(nullptr);
-        tp->collapse();
-    }
-    eBuilding::collapse();
 }
 
 void ePier::setTradePost(eBuilding* const b) {
