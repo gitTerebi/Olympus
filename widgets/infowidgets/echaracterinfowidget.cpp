@@ -12,6 +12,7 @@
 #include "characters/monsters/emonster.h"
 #include "characters/epeddler.h"
 #include "characters/esettler.h"
+#include "characters/actions/esettleraction.h"
 #include "buildings/eagorabase.h"
 #include "widgets/ebuttonbase.h"
 #include "widgets/ebasicbutton.h"
@@ -1567,6 +1568,13 @@ eCharMessage gCharMessage(eCharacter * const c) {
     result.fText = eLanguage::zeusText(groupId, stringId);
     result.fSoundId = stringId;
 
+    if(type == eCharacterType::homeless || type == eCharacterType::settler) {
+        if(const auto sa = dynamic_cast<eSettlerAction*>(c->action())) {
+            const int n = sa->nPeople();
+            result.fText += "\n\nGroup size: " + std::to_string(n);
+        }
+    }
+
     return result;
 }
 
@@ -1710,6 +1718,7 @@ void eCharacterInfoWidget::setCharacter(eCharacter * const c) {
             additionalTxt = goingTo + " " + toName + " " + fromStr + " " + fromName;
         }
     }
+
     mAdditionalInfo->setText(additionalTxt);
     mAdditionalInfo->fitContent();
     const int hp = res.hugePadding();

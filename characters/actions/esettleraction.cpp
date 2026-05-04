@@ -16,10 +16,14 @@ eSettlerAction::eSettlerAction(eCharacter* const c) :
 }
 
 eSettlerAction::~eSettlerAction() {
-    setNumberPeople(0);
+    //setNumberPeople(0);
 }
 
 bool eSettlerAction::decide() {
+    if(mInitialWait > 0) {
+        --mInitialWait;
+        return true;
+    }
     const auto c = character();
     const auto ct = c->type();
     if(ct == eCharacterType::settler) {
@@ -47,20 +51,31 @@ void eSettlerAction::read(eReadStream& src) {
     src >> nPeople;
     setNumberPeople(nPeople);
     src >> mNoHouses;
+    mInitialWait = 0; // reset on load
 }
 
 void eSettlerAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
     dst << mNPeople;
     dst << mNoHouses;
+    // mInitialWait not saved
 }
 
 void eSettlerAction::setNumberPeople(const int p) {
-    auto& board = this->board();
-    const auto popData = board.populationData(cityId());
-    if(!popData) return;
-    popData->incSettlers(p - mNPeople);
+    const auto c = character();
+    const bool homeless = c && c->type() == eCharacterType::homeless;
+    if(!homeless) {
+        auto& board = this->board();
+        const auto popData = board.populationData(cityId());
+        if(popData) {
+            popData->incSettlers(p - mNPeople);
+        }
+    }
     mNPeople = p;
+}
+
+void eSettlerAction::setInitialWait(const int w) {
+    mInitialWait = w;
 }
 
 void eSettlerAction::findHouse() {
@@ -133,6 +148,7 @@ void eSettlerAction::leave() {
 
 bool eSettlerAction::enterHouse() {
     const auto c = character();
+    printf("enterHouse called for %s with mNPeople %d\n", c && c->type() == eCharacterType::homeless ? "homeless" : "settler", mNPeople);
     const auto t = c->tile();
     if(!t) {
         setState(eCharacterActionState::failed);

@@ -16,6 +16,7 @@ public:
     void write(eWriteStream& dst) const override;
 
     void setNumberPeople(const int p);
+    void setInitialWait(const int w);
     int nPeople() const { return mNPeople; }
 protected:
     void findHouse();
@@ -24,6 +25,7 @@ protected:
     bool enterHouse();
 private:
     int mNPeople = 0;
+    int mInitialWait = 0;
     bool mNoHouses = false;
 };
 
