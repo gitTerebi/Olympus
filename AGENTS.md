@@ -31,16 +31,13 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 **Options menu hotkeys:** `eoptionsdata.cpp getOptionsPages()` builds `eHotkeyItem` list; called from `eMainWindow::showOptionsMenu(). Enum `eHotkeyId` + `SDL_Scancode fHotkey*` in `esettings.h`, read/write `esettings.cpp`, handled in `egamewidget.cpp keyPressEvent`. To add: enum val, scancode+default in `eSettings`, read/write, `keyPressEvent` case, `getOptionsPages()` entry.
 
-**Message list widget:** `widgets/emessagelistwidget.h/cpp` - Displays up to 50 recent game messages with formatted titles, dates, and read/unread status. Supports clicking to open messages and mark as read.
-
 **eloadgame:** `widgets/eloadgame.h/cpp` - loads adventure save games, deletes them with confirmation.
 
 **Popup buttons:** `eAcceptButton` (green checkmark, uses `fAcceptButton` texture), `eCancelButton` (red X, uses `fCancelButton` texture), `eOkButton` (uses `fOkButton` texture) — all extend `eBasicButton`. Prefer `eAcceptButton`/`eCancelButton` pair for confirm/dismiss dialogs; `eOkButton` is smaller/older style.
 
-**Walker/cart rendering + tinting:** `widgets/egamewidgetpaint.cpp` `drawCharacters` lambda — iterates tile characters, applies `setColorMod` for hover (blue), patrol selected (green), walker-building selected (red). Color constants defined just above the lambda.
-
-**Building click → walker highlight:** `widgets/egamewidget.cpp` `rightClickRelease` sets `mWalkerBuilding`; paint loop checks `eCartTransporterAction::src()` against it. Cart action source building stored in `characters/actions/ecarttransporteraction.h`.
-
-**Back navigation (ESC + right-click):** `echoosegameeditmenu.cpp` (new adventure / editor select → main menu), `eeditormainmenu.cpp` (editor → save/quit dialog), `eepisodeintroductionwidget.cpp` (mission intro → choose game menu).
-
 **Tooltip system:** Widgets set tooltips via `setTooltip()` method. `eWidget::sTooltip()` returns tooltip text of widget under mouse. `eTooltip` class in `widgets/etooltip.h` renders tooltips in main window render loop.
+
+**Toast Notification Systems:**
+- **mTips:** Deque of eTip structs for temp tips. Managed by updateTipPositions().
+- **mToasts:** Deque of eToast structs for event toasts. Managed by updateToastPositions().
+- Stack order: Paused, Speed, Tips, Toasts.
