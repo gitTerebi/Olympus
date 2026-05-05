@@ -1,13 +1,13 @@
 #ifndef EREQUESTDIALOG_H
 #define EREQUESTDIALOG_H
 
-#include "eclosabledialog.h"
+#include "emodal.h"
 
 #include "engine/eworldcity.h"
 
-class eRequestDialog : public eClosableDialog {
+class eRequestDialog : public eModal {
 public:
-    using eClosableDialog::eClosableDialog;
+    using eModal::eModal;
 
     using eRequestFunction = std::function<void(eCityId, eResourceType)>;
     using eRequestDefenceFunc = std::function<void(eCityId)>;

@@ -149,7 +149,7 @@ using eOptionsPageViewport = eScrollViewport;
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            eMainWindow* const window) :
-    ePopupWidget(window),
+    eModal(window),
     mPages(pages) {}
 
 void eOptionsMenu::initialize() {
@@ -160,7 +160,7 @@ void eOptionsMenu::initialize() {
     const int p0 = padding();
     const int fw = std::min(sw, resolution().width() - 2*p0);
     const int fh = std::min(sh, resolution().height() - 2*p0);
-    ePopupWidget::initialize(fw, fh);
+    initializeMask(fw, fh);
 
     const auto f = frame();
     const int p = f->padding();
@@ -169,7 +169,7 @@ void eOptionsMenu::initialize() {
     f->addWidget(cancel);
     cancel->align(eAlignment::bottom | eAlignment::right);
     cancel->move(cancel->x() - 2*p, cancel->y() - 2*p);
-    cancel->setPressAction([this]() { closePopup(); });
+    cancel->setPressAction([this]() { close(); });
 
     mMainTitle = new eLabel("General Options", window());
     mMainTitle->setHugeFontSize();

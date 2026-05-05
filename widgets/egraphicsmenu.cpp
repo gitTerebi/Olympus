@@ -15,7 +15,7 @@
 
 eGraphicsMenu::eGraphicsMenu(const eSettings& iniSettings,
                              eMainWindow* const window) :
-    ePopupWidget(window),
+    eModal(window),
     mIniSettings(iniSettings),
     mSettings(iniSettings) {
 
@@ -59,7 +59,7 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
     const int p = res.largePadding();
     const int cww = res.centralWidgetLargeWidth();
     const int cwh = res.centralWidgetLargeHeight();
-    ePopupWidget::initialize(cww, cwh);
+    initializeMask(cww, cwh);
 
     const auto inner = new eWidget(window());
     inner->setNoPadding();
@@ -223,10 +223,10 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
         frame()->addWidget(cancel);
         cancel->align(eAlignment::bottom | eAlignment::right);
         cancel->move(cancel->x() - 2*p - ok->width() - p, cancel->y() - 2*p);
-        cancel->setPressAction([this]() { closePopup(); });
+        cancel->setPressAction([this]() { close(); });
     }
 }
 
-void eGraphicsMenu::closePopup() {
+void eGraphicsMenu::close() {
     static_cast<eMainWindow*>(window())->showMainMenu();
 }

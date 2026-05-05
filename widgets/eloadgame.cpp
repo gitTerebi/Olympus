@@ -35,7 +35,7 @@ void eLoadGame::intialize(const std::string& title,
     const auto res = window()->resolution();
     const int ww = res.centralWidgetSmallWidth();
     const int hh = res.centralWidgetSmallHeight();
-    ePopupWidget::initialize(ww, hh);
+    initializeMask(ww, hh);
 
     const auto f = frame();
     const int p = f->padding();
@@ -55,7 +55,7 @@ void eLoadGame::intialize(const std::string& title,
     f->addWidget(mCancel);
     mCancel->align(eAlignment::bottom | eAlignment::right);
     mCancel->move(mCancel->x() - 2*p - mOk->width() - p, mCancel->y() - 2*p);
-    mCancel->setPressAction([this]() { closePopup(); });
+    mCancel->setPressAction([this]() { close(); });
     mOk->setPressAction([this, func, closeAction] {
         const auto path = filePath();
         const bool r = func(path);
@@ -244,7 +244,7 @@ void eLoadGame::rebuildFileList() {
     mViewport->setPage(mFilesWidget);
 }
 
-void eLoadGame::closePopup() {
+void eLoadGame::close() {
     if(mCloseAction) mCloseAction();
     else deleteLater();
 }

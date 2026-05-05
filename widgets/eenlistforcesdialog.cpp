@@ -786,7 +786,7 @@ void eEnlistForcesDialog::paintEvent(ePainter& p) {
         }
     }
     if(updateTips) updateTipPositions();
-    eClosableDialog::paintEvent(p);
+    eModal::paintEvent(p);
 }
 
 void eEnlistForcesDialog::updateTipPositions() {

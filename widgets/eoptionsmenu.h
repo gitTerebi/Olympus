@@ -1,7 +1,7 @@
 #ifndef EOPTIONSMENU_H
 #define EOPTIONSMENU_H
 
-#include "epopupwidget.h"
+#include "emodal.h"
 #include "esettings.h"
 #include "escrollbar.h"
 
@@ -11,7 +11,7 @@
 
 class eLabel;
 
-class eOptionsMenu : public ePopupWidget {
+class eOptionsMenu : public eModal {
 public:
     using eSetInt = std::function<void(const int)>;
     using eClampInt = std::function<int(const int)>;

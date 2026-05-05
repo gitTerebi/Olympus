@@ -8,6 +8,8 @@ public:
     using eLabel::eLabel;
 
     void initialize();
+protected:
+    void paintEvent(ePainter& p) override;
 };
 
 #endif // EMAINMENUBASE_H
