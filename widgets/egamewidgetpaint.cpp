@@ -11,6 +11,7 @@
 #include "textures/evaryingsizetex.h"
 
 #include "buildings/allbuildings.h"
+#include "buildings/eheatgetters.h"
 #include "buildings/pyramids/epyramid.h"
 
 #include "missiles/emissile.h"
@@ -30,6 +31,7 @@
 #include "eiteratesquare.h"
 
 #include <array>
+#include <cmath>
 #include <map>
 #include <set>
 #include <string>
@@ -62,6 +64,21 @@ void drawColumn(eTilePainter& tp, const int n,
     }
     tp.drawTexture(rx + 1 - y, ry - y, top,
                    eAlignment::hcenter | eAlignment::top);
+}
+
+bool sAppealRangeContainsTile(const int x, const int y,
+                              const int ax, const int ay,
+                              const int sw, const int sh,
+                              const int r,
+                              double& mult) {
+    const double cx = ax + 0.5*sw;
+    const double cy = ay + 0.5*sh;
+    const double dx = std::max(std::abs(x - cx) - 0.5*sw, 0.);
+    const double dy = std::max(std::abs(y - cy) - 0.5*sh, 0.);
+    const double dist = std::sqrt(dx*dx + dy*dy);
+    if(dist > r) return false;
+    mult = (r - dist)/r;
+    return true;
 }
 
 void eGameWidget::drawXY(int tx, int ty,
@@ -4095,6 +4112,47 @@ void eGameWidget::paintEvent(ePainter& p) {
         } break;
         default: break;
         }
+        const auto drawAppealRangePreview = [&](const eB& eb) {
+            if(!eb.fB || !eb.fBR) return;
+            const auto heat = eHeatGetters::appeal(eb.fB->type());
+            if(heat.fRange <= 0 || heat.fValue == 0) return;
+            const int sw = eb.fBR->spanW();
+            const int sh = eb.fBR->spanH();
+            const int r = heat.fRange;
+            int minX;
+            int minY;
+            int maxX;
+            int maxY;
+            eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+                                    eb.fTx, eb.fTy, sw, sh);
+            for(int x = minX - r; x <= minX + sw + r; x++) {
+                for(int y = minY - r; y <= minY + sh + r; y++) {
+                    double mult;
+                    if(!sAppealRangeContainsTile(x, y, minX, minY, sw, sh, r, mult)) {
+                        continue;
+                    }
+                    const auto tile = mBoard->tile(x, y);
+                    if(!tile) continue;
+                    if(sDontDrawAppeal(tile->terrain())) continue;
+                    if(tile->isElevationTile()) continue;
+                    const double app = 0.5*heat.fValue*mult;
+                    const double appSign = app > 0 ? 1 : -1;
+                    const double appS = appSign*pow(abs(app), 0.75);
+                    int appId = static_cast<int>(std::round(appS + 2.));
+                    appId = std::clamp(appId, 0, 9);
+                    const auto tex = trrTexs.fAppeal.getTexture(appId);
+                    tex->setColorMod(80, 255, 80);
+                    tex->setAlpha(64);
+                    double rx;
+                    double ry;
+                    const int ta = mDrawElevation ? tile->altitude() : 0;
+                    drawXY(x, y, rx, ry, 1, 1, ta);
+                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tex->clearAlphaMod();
+                    tex->clearColorMod();
+                }
+            }
+        };
         bool cbg = true;
         const int a = t->altitude();
         for(auto& eb : ebs) {
@@ -4104,6 +4162,9 @@ void eGameWidget::paintEvent(ePainter& p) {
             const int sh = b->spanH();
             const bool cb = canBuildFunc(eb.fTx, eb.fTy, sw, sh);
             if(!cb) cbg = false;
+        }
+        for(const auto& eb : ebs) {
+            drawAppealRangePreview(eb);
         }
         for(auto& eb : ebs) {
             if(!eb.fB) continue;
