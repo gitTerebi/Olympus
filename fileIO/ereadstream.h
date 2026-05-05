@@ -59,6 +59,10 @@ private:
     size_t fMemPos = 0;
 };
 
+#define EREAD_TAG(name) (name "@" __FILE__ ":" EREAD_STRINGIFY(__LINE__))
+#define EREAD_STRINGIFY(x) EREAD_STRINGIFY2(x)
+#define EREAD_STRINGIFY2(x) #x
+
 class eReadStream {
 public:
     eReadStream(const eReadSource& src);
@@ -141,13 +145,16 @@ public:
     eTile* readTile(eGameBoard& board);
     using eBuildingFunc = std::function<void(eBuilding*)>;
     void readBuilding(eGameBoard* board,
-                      const eBuildingFunc& func);
+                      const eBuildingFunc& func,
+                      const char* tag = "building");
     using eCharFunc = std::function<void(eCharacter*)>;
     void readCharacter(eGameBoard* board,
-                       const eCharFunc& func);
+                       const eCharFunc& func,
+                       const char* tag = "character");
     using eCharActFunc = std::function<void(eCharacterAction*)>;
     void readCharacterAction(eGameBoard* board,
-                             const eCharActFunc& func);
+                             const eCharActFunc& func,
+                             const char* tag = "characterAction");
     stdsptr<eWalkableObject> readWalkable();
     stdsptr<eHasResourceObject> readHasResource();
     stdsptr<eCharacterActionFunction> readCharActFunc(
@@ -170,13 +177,13 @@ public:
     void readInvasionHandler(eGameBoard* board, const eeInvasionHandlerFunc& func);
 
     using eFunc = std::function<void()>;
-    void addPostFunc(const eFunc& func);
+    void addPostFunc(const eFunc& func, const char* tag = "?");
     void handlePostFuncs();
 
     const std::string& format() const { return mFormat; }
     int formatVersion() const { return mFormatVersion; }
 private:
-    std::vector<eFunc> mPostFuncs;
+    std::vector<std::pair<eFunc, const char*>> mPostFuncs;
 
     eReadSource mSrc;
 

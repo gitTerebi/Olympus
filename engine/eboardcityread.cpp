@@ -111,6 +111,7 @@ void eBoardCity::read(eReadStream& src) {
         src >> nms;
         for(int i = 0; i < nms; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
+                if(!c) return;
                 mMonsters.push_back(static_cast<eMonster*>(c));
             });
         }
@@ -168,6 +169,7 @@ void eBoardCity::read(eReadStream& src) {
             eMonsterType type;
             src >> type;
             src.readGameEvent(&mBoard, [this, type](eGameEvent* const e) {
+                if(!e) return;
                 const auto me = static_cast<eMonsterInvasionEventBase*>(e);
                 mMonsterEvents[type] = me;
             });

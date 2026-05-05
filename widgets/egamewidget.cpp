@@ -2179,22 +2179,24 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
             };
             const auto loadAct = [this, w]() {
                 const auto fw = new eLoadGame(w);
-                const auto func = [w](const std::string& path) {
-                    return w->loadGame(path);
+                const auto func = [w, fw](const std::string& path) {
+                    fw->deleteLater();
+                    w->addSlot([w, path]() {
+                        w->closeGame();
+                        w->loadGame(path);
+                    });
+                    return true;
                 };
-                const auto closeAct = [this, fw]() {
-                    removeWidget(fw);
+                const auto closeAct = [fw]() {
                     fw->deleteLater();
                 };
                 const auto dir = w->leaderSaveDir();
                 fw->intialize(eLanguage::zeusText(1, 3),
                               dir, func, closeAct);
-                addWidget(fw);
-                fw->align(eAlignment::center);
-                w->execDialog(fw);
+                w->execDialog(fw, true, closeAct);
             };
-            const auto exitAct = [w]() {
-                w->closeGame();
+            const auto exitAct = [w]() { // "Exit game" button in in-game options popup
+                w->addSlot([w]() { w->closeGame(); });
             };
             const auto optionsAct = [this]() {
                 showOptionsMenu();

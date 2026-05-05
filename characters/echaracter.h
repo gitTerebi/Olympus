@@ -148,6 +148,7 @@ public:
 
     void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const c) {
+            if(!c) return;
             mTptr = c;
         });
     }
@@ -178,6 +179,7 @@ public:
     void read(eReadStream& src) override {
         src >> mWithCorpse;
         src.readCharacter(&board(), [this](eCharacter* const c) {
+            if(!c) return;
             mTptr = c;
         });
     }
