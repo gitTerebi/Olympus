@@ -31,33 +31,36 @@ eTile* eReadStream::readTile(eGameBoard& board) {
 }
 
 void eReadStream::readBuilding(eGameBoard* board,
-                               const eBuildingFunc& func) {
+                               const eBuildingFunc& func,
+                               const char* tag) {
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
         const auto b = board->buildingWithIOID(bid);
         func(b);
-    });
+    }, tag);
 }
 
 void eReadStream::readCharacter(eGameBoard* board,
-                                const eCharFunc& func) {
+                                const eCharFunc& func,
+                                const char* tag) {
     int cid;
     *this >> cid;
     addPostFunc([board, func, cid]() {
         const auto b = board->characterWithIOID(cid);
         func(b);
-    });
+    }, tag);
 }
 
 void eReadStream::readCharacterAction(eGameBoard* board,
-                                      const eCharActFunc& func) {
+                                      const eCharActFunc& func,
+                                      const char* tag) {
     int caid;
     *this >> caid;
     addPostFunc([board, func, caid]() {
         const auto b = board->characterActionWithIOID(caid);
         func(b);
-    });
+    }, tag);
 }
 
 stdsptr<eWalkableObject> eReadStream::readWalkable() {
@@ -154,7 +157,7 @@ void eReadStream::readCity(eWorldBoard* board, const eCityFunc& func) {
     addPostFunc([board, func, cid]() {
         const auto c = board->cityWithIOID(cid);
         func(c);
-    });
+    }, "city");
 }
 
 void eReadStream::readBanner(eGameBoard* board, const eBannerFunc& func) {
@@ -163,7 +166,7 @@ void eReadStream::readBanner(eGameBoard* board, const eBannerFunc& func) {
     addPostFunc([board, func, bid]() {
         const auto b = board->bannerWithIOID(bid);
         func(b);
-    });
+    }, "banner");
 }
 
 void eReadStream::readSoldierBanner(eGameBoard* board, const eSoldierBannerFunc& func) {
@@ -172,7 +175,7 @@ void eReadStream::readSoldierBanner(eGameBoard* board, const eSoldierBannerFunc&
     addPostFunc([board, func, bid]() {
         const auto b = board->soldierBannerWithIOID(bid);
         func(b ? b->ref<eSoldierBanner>() : nullptr);
-    });
+    }, "soldierBanner");
 }
 
 void eReadStream::readGameEvent(eGameBoard* board, const eEventFunc& func) {
@@ -181,7 +184,7 @@ void eReadStream::readGameEvent(eGameBoard* board, const eEventFunc& func) {
     addPostFunc([board, func, eid]() {
         const auto b = board->eventWithIOID(eid);
         func(b);
-    });
+    }, "gameEvent");
 }
 
 void eReadStream::readInvasionHandler(eGameBoard* board, const eeInvasionHandlerFunc& func) {
@@ -190,16 +193,17 @@ void eReadStream::readInvasionHandler(eGameBoard* board, const eeInvasionHandler
     addPostFunc([board, func, iid]() {
         const auto b = board->invasionHandlerWithIOID(iid);
         func(b);
-    });
+    }, "invasionHandler");
 }
 
-void eReadStream::addPostFunc(const eFunc& func) {
-    mPostFuncs.push_back(func);
+void eReadStream::addPostFunc(const eFunc& func, const char* tag) {
+    mPostFuncs.push_back({func, tag});
 }
 
 void eReadStream::handlePostFuncs() {
-    for(const auto& func : mPostFuncs) {
-        func();
+    const int n = (int)mPostFuncs.size();
+    for(int i = 0; i < n; i++) {
+        mPostFuncs[i].first();
     }
     mPostFuncs.clear();
 }
