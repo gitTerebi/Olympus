@@ -94,6 +94,7 @@ public:
     using eWidget::eWidget;
 
     void setPage(eWidget* const page) {
+        if(mPage) removeWidget(mPage);
         mPage = page;
         addWidget(mPage);
         clampDY();
