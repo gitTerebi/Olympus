@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include "eclosabledialog.h"
+#include "emodal.h"
 #include "elabel.h"
 #include "emessage.h"
 #include "engine/eeventdata.h"
@@ -12,9 +12,9 @@ class eScrollViewport;
 class eScrollBar;
 class eWidget;
 
-class eMessageListWidget : public eClosableDialog {
+class eMessageListWidget : public eModal {
 public:
-    using eClosableDialog::eClosableDialog;
+    using eModal::eModal;
 
     using eOpenMessage = std::function<void(eEventData, eMessage)>;
     void initialize(const eOpenMessage& openMsg, const eAction& closeAction = nullptr);
@@ -27,8 +27,8 @@ public:
     using eUnreadChangedAction = std::function<void(int)>;
     void setUnreadChangedAction(const eUnreadChangedAction& a) { mUnreadChanged = a; }
 protected:
+    void close() override { hide(); if(mOnClose) mOnClose(); }
     bool keyPressEvent(const eKeyPressEvent& e) override;
-    bool mouseReleaseEvent(const eMouseEvent& e) override;
 private:
     void rebuildList();
     void notifyUnread();

@@ -1,13 +1,13 @@
 #ifndef EINFOWIDGET_H
 #define EINFOWIDGET_H
 
-#include "../eframedwidget.h"
+#include "../emodal.h"
 
 class eLabel;
 class eOkButton;
 class eMainWidget;
 
-class eInfoWidget : public eFramedWidget {
+class eInfoWidget : public eModal {
 public:
     eInfoWidget(eMainWindow* const window,
                 eMainWidget* const mw,
@@ -15,6 +15,7 @@ public:
 
     void initialize(const std::string& title);
 
+    void close() override;
     void setCloseAction(const eAction& closeAction);
 
     eWidget* addCentralWidget();
@@ -32,9 +33,8 @@ public:
     eMainWidget* mainWidget() const { return mMW; }
 
     int remainingHeight() const;
-protected:
-    bool mousePressEvent(const eMouseEvent& e);
 private:
+    eAction mCloseAction;
     const bool mNarrow;
     const bool mShort;
     eMainWidget* const mMW;

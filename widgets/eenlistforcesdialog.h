@@ -1,15 +1,15 @@
 #ifndef EENLISTFORCESDIALOG_H
 #define EENLISTFORCESDIALOG_H
 
-#include "eclosabledialog.h"
+#include "emodal.h"
 
 #include "characters/eenlistedforces.h"
 
 #include <deque>
 
-class eEnlistForcesDialog : public eClosableDialog {
+class eEnlistForcesDialog : public eModal {
 public:
-    using eClosableDialog::eClosableDialog;
+    using eModal::eModal;
 
     using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
     void initialize(const eEnlistedForces& enlistable,

@@ -201,22 +201,9 @@ bool eMessageListWidget::keyPressEvent(const eKeyPressEvent &e)
     const auto k = e.key();
     if (k == SDL_SCANCODE_ESCAPE)
     {
-        hide();
-        if (mOnClose)
-            mOnClose();
+        close();
         return true;
     }
-    return eClosableDialog::keyPressEvent(e);
+    return eModal::keyPressEvent(e);
 }
 
-bool eMessageListWidget::mouseReleaseEvent(const eMouseEvent &e)
-{
-    if (e.button() == eMouseButton::right)
-    {
-        hide();
-        if (mOnClose)
-            mOnClose();
-        return true;
-    }
-    return eClosableDialog::mouseReleaseEvent(e);
-}

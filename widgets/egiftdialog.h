@@ -1,13 +1,13 @@
 #ifndef EGIFTDIALOG_H
 #define EGIFTDIALOG_H
 
-#include "eclosabledialog.h"
+#include "emodal.h"
 
 #include "engine/eworldcity.h"
 
-class eGiftDialog : public eClosableDialog {
+class eGiftDialog : public eModal {
 public:
-    using eClosableDialog::eClosableDialog;
+    using eModal::eModal;
 
     using eRequestFunction = std::function<void(eResourceType, eCityId)>;
     void initialize(const stdsptr<eWorldCity>& c,

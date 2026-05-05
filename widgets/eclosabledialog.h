@@ -1,15 +1,8 @@
 #ifndef ECLOSABLEDIALOG_H
 #define ECLOSABLEDIALOG_H
 
-#include "eframedwidget.h"
+#include "emodal.h"
 
-class eClosableDialog : public eFramedWidget {
-public:
-    using eFramedWidget::eFramedWidget;
-protected:
-    bool keyPressEvent(const eKeyPressEvent& e);
-    bool mousePressEvent(const eMouseEvent& e);
-    bool mouseReleaseEvent(const eMouseEvent& e);
-};
+using eClosableDialog = eModal;
 
 #endif // ECLOSABLEDIALOG_H

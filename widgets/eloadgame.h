@@ -1,7 +1,7 @@
 #ifndef ELOADGAME_H
 #define ELOADGAME_H
 
-#include "epopupwidget.h"
+#include "emodal.h"
 #include "escrollbar.h"
 
 class eLabel;
@@ -9,9 +9,9 @@ class eAcceptButton;
 class eCancelButton;
 class eLineEdit;
 
-class eLoadGame : public ePopupWidget {
+class eLoadGame : public eModal {
 public:
-    using ePopupWidget::ePopupWidget;
+    using eModal::eModal;
 
     using eFileFunc = std::function<bool(const std::string&)>;
     void intialize(const std::string& title,
@@ -23,7 +23,7 @@ public:
     std::string filePath() const;
     void rebuildFileList();
 protected:
-    void closePopup() override;
+    void close() override;
 private:
 
     eLabel* mTitleLabel = nullptr;

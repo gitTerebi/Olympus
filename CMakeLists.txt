@@ -599,7 +599,7 @@ set(SOURCES
     widgets/ecitybutton.cpp
     widgets/ecityonboardselectionwidget.cpp
     widgets/ecitysettingswidget.cpp
-    widgets/eclosabledialog.cpp
+    widgets/emodal.cpp
     widgets/econditionsettingswidget.cpp
     widgets/edatebutton.cpp
     widgets/edatewidget.cpp
@@ -625,7 +625,6 @@ set(SOURCES
     widgets/eframedlabel.cpp
     widgets/ebuttonutils.cpp
     widgets/eframedwidget.cpp
-    widgets/epopupwidget.cpp
     widgets/efulfilldialog.cpp
     widgets/egameloadingwidget.cpp
     widgets/egamemainmenu.cpp

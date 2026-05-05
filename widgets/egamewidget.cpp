@@ -1,6 +1,7 @@
 #include "egamewidget.h"
 #include "ecursors.h"
 
+#include "emodal.h"
 #include "emessagelistwidget.h"
 #include "eoptionsdata.h"
 #include "engine/egameboard.h"
@@ -2281,7 +2282,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         mLastY = e.y();
         return true;
     case eMouseButton::left: {
-        if(mInfoWidget) return true;
+        if(hasInfoWidget()) return true;
         mLeftPressed = true;
         int tx;
         int ty;
@@ -2322,10 +2323,12 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
 }
 
 bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
-    if(mInfoWidget) {
-        mInfoWidget->deleteLater();
-        mInfoWidget = nullptr;
-        return true;
+    for(const auto w : children()) {
+        const auto d = dynamic_cast<eModal*>(w);
+        if(d && d->visible()) {
+            d->close();
+            return true;
+        }
     }
     if(mGm->mode() != eBuildingMode::none) {
         mGm->clearMode();
@@ -2355,7 +2358,7 @@ bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
         chars2.push_back(c.get());
     }
     if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
-        mInfoWidget = openInfoWidget(chars2);
+        openInfoWidget(chars2);
     } else if(b) {
         if(b->type() == eBuildingType::road) return true;
         eSounds::playSoundForBuilding(b);
@@ -2363,7 +2366,7 @@ bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
         const auto pid = mBoard->cityIdToPlayerId(cid);
         const auto ppid = mBoard->personPlayer();
         if(pid != ppid && !mBoard->editorMode()) return true;
-        mInfoWidget = openInfoWidget(b);
+        openInfoWidget(b);
     }
     return true;
 }
@@ -2665,7 +2668,7 @@ void eGameWidget::showGraphicsMenu() {
 }
 
 void eGameWidget::selectHoveredBuildingMode() {
-    if(mInfoWidget || mPatrolBuilding) return;
+    if(hasInfoWidget() || mPatrolBuilding) return;
     const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
     if(!b) return;
 

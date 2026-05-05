@@ -7,7 +7,7 @@
 eInfoWidget::eInfoWidget(eMainWindow* const window,
                          eMainWidget* const mw,
                          const bool narrow, const bool shrt) :
-    eFramedWidget(window),
+    eModal(window),
     mNarrow(narrow), mShort(shrt),
     mMW(mw) {
     setType(eFrameType::message);
@@ -106,8 +106,14 @@ int eInfoWidget::widgetWidth() const {
     return width() - 4*p;
 }
 
+void eInfoWidget::close() {
+    if(mCloseAction) mCloseAction();
+    deleteLater();
+}
+
 void eInfoWidget::setCloseAction(const eAction& closeAction) {
-    mOk->setPressAction(closeAction);
+    mCloseAction = closeAction;
+    mOk->setPressAction([this]() { close(); });
 }
 
 eWidget* eInfoWidget::centralWidget() const {
@@ -123,6 +129,3 @@ int eInfoWidget::remainingHeight() const {
     return h;
 }
 
-bool eInfoWidget::mousePressEvent(const eMouseEvent& e) {
-    return e.button() == eMouseButton::left;
-}

@@ -431,6 +431,8 @@ void eWorldWidget::openGiftDialog() {
             dd->deleteLater();
         };
         dd->initialize(type, mCity, func, *mBoard, cid);
+        dd->setCloseAction([d, dd]() { d->show(); dd->deleteLater(); });
+        d->hide();
         openDialog(dd);
     };
     d->initialize(mCity, func, *mBoard);

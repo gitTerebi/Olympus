@@ -1,4 +1,5 @@
 #include "egamewidget.h"
+#include "infowidgets/einfowidget.h"
 
 #include "elanguage.h"
 
@@ -52,14 +53,9 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             }
             if(id < 0) id = posts.size() - 1;
             else if(id >= int(posts.size())) id = 0;
-            {
-                if(closeAct) closeAct();
-                mInfoWidget = nullptr;
-                removeWidget(storWid);
-                storWid->deleteLater();
-            }
+            storWid->close();
             const auto post = posts[id];
-            mInfoWidget = openInfoWidget(post);
+            openInfoWidget(post);
             const auto tile = post->centerTile();
             viewTile(tile);
         };
@@ -404,9 +400,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
         wid->align(eAlignment::vcenter);
         wid->setCloseAction([this, wid, closeAct]() {
             if(closeAct) closeAct();
-            mInfoWidget = nullptr;
             removeWidget(wid);
-            wid->deleteLater();
         });
     }
     return wid;
@@ -420,10 +414,15 @@ eInfoWidget *eGameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
         wid->setX((width() - mGm->width() - wid->width())/2);
         wid->align(eAlignment::vcenter);
         wid->setCloseAction([this, wid]() {
-            mInfoWidget = nullptr;
             removeWidget(wid);
-            wid->deleteLater();
         });
     }
     return wid;
+}
+
+bool eGameWidget::hasInfoWidget() const {
+    for(const auto w : children()) {
+        if(dynamic_cast<eInfoWidget*>(w) && w->visible()) return true;
+    }
+    return false;
 }

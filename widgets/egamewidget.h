@@ -303,6 +303,7 @@ private:
 
     eInfoWidget* openInfoWidget(eBuilding* const b);
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
+    bool hasInfoWidget() const;
 
     void switchPause();
     void setSpeedId(const int id);
@@ -404,7 +405,6 @@ private:
     int mSpeedLabelHideFrame = 0;
 
     eTopBarWidget* mTopBar = nullptr;
-    eInfoWidget* mInfoWidget = nullptr;
     eMessageBox* mMsgBox = nullptr;
     std::deque<eSavedMessage> mSavedMsgs;
     eMessageListWidget* mMsgListWidget = nullptr;
