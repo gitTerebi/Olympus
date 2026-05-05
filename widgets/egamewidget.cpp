@@ -85,32 +85,42 @@
 #include <algorithm>
 #include <cmath>
 
-namespace {
-int ambientCooldownKey(eTile* const tile) {
-    if(!tile) return -1;
-    if(tile->onFire()) return 1;
-    if(const auto b = tile->underBuilding()) {
-        return 1000 + static_cast<int>(b->type());
+namespace
+{
+    int ambientCooldownKey(eTile *const tile)
+    {
+        if (!tile)
+            return -1;
+        if (tile->onFire())
+            return 1;
+        if (const auto b = tile->underBuilding())
+        {
+            return 1000 + static_cast<int>(b->type());
+        }
+        const auto &chars = tile->characters();
+        for (const auto &c : chars)
+        {
+            return 2000 + static_cast<int>(c->type());
+        }
+        return 3000 + static_cast<int>(tile->terrain());
     }
-    const auto& chars = tile->characters();
-    for(const auto& c : chars) {
-        return 2000 + static_cast<int>(c->type());
-    }
-    return 3000 + static_cast<int>(tile->terrain());
-}
 }
 
-eGameWidget::eGameWidget(eMainWindow* const window) :
-    eMainWidget(window) {}
+eGameWidget::eGameWidget(eMainWindow *const window) : eMainWidget(window) {}
 
-eGameWidget::~eGameWidget() {
+eGameWidget::~eGameWidget()
+{
     setBoard(nullptr);
 }
 
-void eGameWidget::setBoard(eGameBoard* const board) {
-    if(mBoard == board) return;
-    if(mBoard) {
-        if(mEditorShowBuildings) {
+void eGameWidget::setBoard(eGameBoard *const board)
+{
+    if (mBoard == board)
+        return;
+    if (mBoard)
+    {
+        if (mEditorShowBuildings)
+        {
             mBoard->saveEditorCityPlan();
             mBoard->editorClearBuildings();
             mBoard->emptyRubbish();
@@ -126,27 +136,23 @@ void eGameWidget::setBoard(eGameBoard* const board) {
         mBoard->setEnlistForcesRequest(nullptr);
     }
     mBoard = board;
-    if(!mBoard) return;
-    mBoard->setEventHandler([this](const eEvent e, eEventData& ed) {
-        handleEvent(e, ed);
-    });
-    mBoard->setRequestUpdateHandler([this]() {
-        updateRequestButtons();
-    });
-    mBoard->setVisibilityChecker([this](eTile* const tile) {
-        return tileVisible(tile);
-    });
-    mBoard->setButtonsVisUpdater([this]() {
-        mGm->updateButtonsVisibility();
-    });
-    mBoard->setMessageShower([this](eEventData& ed, const eMessageType& msg) {
-        showMessage(ed, msg);
-    });
-    mBoard->setTipShower([this](const ePlayerCityTarget& target,
-                                const std::string& tip) {
-        showTip(target, tip);
-    });
-    mBoard->setEpisodeFinishedHandler([this]() {
+    if (!mBoard)
+        return;
+    mBoard->setEventHandler([this](const eEvent e, eEventData &ed)
+                            { handleEvent(e, ed); });
+    mBoard->setRequestUpdateHandler([this]()
+                                    { updateRequestButtons(); });
+    mBoard->setVisibilityChecker([this](eTile *const tile)
+                                 { return tileVisible(tile); });
+    mBoard->setButtonsVisUpdater([this]()
+                                 { mGm->updateButtonsVisibility(); });
+    mBoard->setMessageShower([this](eEventData &ed, const eMessageType &msg)
+                             { showMessage(ed, msg); });
+    mBoard->setTipShower([this](const ePlayerCityTarget &target,
+                                const std::string &tip)
+                         { showTip(target, tip); });
+    mBoard->setEpisodeFinishedHandler([this]()
+                                      {
         mLocked = true;
         const auto w = window();
         const auto c = w->campaign();
@@ -170,9 +176,9 @@ void eGameWidget::setBoard(eGameBoard* const board) {
                       eEpisodeIntroType::victory);
         addWidget(e);
         e->align(eAlignment::vcenter);
-        e->setX(x() + (width() - e->width() - mGm->width())/2);
-    });
-    mBoard->setAutosaver([this]() {
+        e->setX(x() + (width() - e->width() - mGm->width())/2); });
+    mBoard->setAutosaver([this]()
+                         {
         mBoard->waitUntilFinished();
         const auto w = window();
         const auto dir = w->leaderSaveDir();
@@ -196,16 +202,16 @@ void eGameWidget::setBoard(eGameBoard* const board) {
                   [](const auto& a, const auto& b) { return a.first > b.first; });
         for(size_t i = 5; i < autosaves.size(); ++i) {
             std::filesystem::remove(autosaves[i].second);
-        }
-    });
-    using eEnlistAction = std::function<void(const eEnlistedForces&, eResourceType)>;
+        } });
+    using eEnlistAction = std::function<void(const eEnlistedForces &, eResourceType)>;
     mBoard->setEnlistForcesRequest([this](
-                                   const eEnlistedForces& enlistable,
-                                   const std::vector<eCityId>& cids,
-                                   const std::vector<std::string>& cnames,
-                                   const std::vector<eHeroType>& heroesAbroad,
-                                   const eEnlistAction& action,
-                                   const std::vector<eResourceType>& plunderResources) {
+                                       const eEnlistedForces &enlistable,
+                                       const std::vector<eCityId> &cids,
+                                       const std::vector<std::string> &cnames,
+                                       const std::vector<eHeroType> &heroesAbroad,
+                                       const eEnlistAction &action,
+                                       const std::vector<eResourceType> &plunderResources)
+                                   {
         const auto w = window();
         const auto cw = w->currentWidget();
         const auto ww = w->worldWidget();
@@ -216,8 +222,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
             ww->openDialog(d);
         } else {
             openDialog(d);
-        }
-    });
+        } });
 
     mBoard->updateMusic();
     updateViewBoxSize();
@@ -225,7 +230,8 @@ void eGameWidget::setBoard(eGameBoard* const board) {
     updateMinMaxAltitude();
 }
 
-eGameWidgetSettings eGameWidget::settings() const {
+eGameWidgetSettings eGameWidget::settings() const
+{
     eGameWidgetSettings r;
     r.fPaused = mPaused;
     r.fSpeedId = mSpeedId;
@@ -238,25 +244,32 @@ eGameWidgetSettings eGameWidget::settings() const {
     return r;
 }
 
-void eGameWidget::setSettings(const eGameWidgetSettings& s) {
-    if(mPaused != s.fPaused) switchPause();
+void eGameWidget::setSettings(const eGameWidgetSettings &s)
+{
+    if (mPaused != s.fPaused)
+        switchPause();
     setSpeedId(s.fSpeedId);
     setTileSize(s.fTileSize);
-    if(mBoard) mBoard->setWorldDirection(s.fDir);
+    if (mBoard)
+        mBoard->setWorldDirection(s.fDir);
     setDX(s.fDX);
     setDY(s.fDY);
     mGm->setWorldDirection(s.fDir);
-    if(mTem) mTem->setWorldDirection(s.fDir);
+    if (mTem)
+        mTem->setWorldDirection(s.fDir);
     mBookmarks = s.fBookmarks;
 }
 
-void eGameWidget::initializeNumbers() {
+void eGameWidget::initializeNumbers()
+{
     mNumbers.clear();
-    for(const auto size : {eTileSize::s15, eTileSize::s30,
-                           eTileSize::s45, eTileSize::s60}) {
-        auto& numbers = mNumbers[size];
+    for (const auto size : {eTileSize::s15, eTileSize::s30,
+                            eTileSize::s45, eTileSize::s60})
+    {
+        auto &numbers = mNumbers[size];
         int fs;
-        switch(size) {
+        switch (size)
+        {
         case eTileSize::s15:
             fs = 10;
             break;
@@ -272,7 +285,8 @@ void eGameWidget::initializeNumbers() {
         }
         const auto font = eFonts::defaultFont(fs);
         const auto r = window()->renderer();
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             const auto tex = std::make_shared<eTexture>();
             tex->loadText(r, std::to_string(i), eFontColor::light, *font);
             numbers.push_back(tex);
@@ -280,12 +294,14 @@ void eGameWidget::initializeNumbers() {
     }
 }
 
-void eGameWidget::initialize() {
+void eGameWidget::initialize()
+{
     mEditorMode = mBoard->editorMode();
     mKeyScrollSpeed = window()->settings().fKeyScrollSpeed * 5;
     initializeNumbers();
     mGm = new eGameMenu(window());
-    const auto viewGoals = [this]() {
+    const auto viewGoals = [this]()
+    {
         showGoals();
     };
     mGm->initialize(mBoard, viewGoals);
@@ -293,12 +309,13 @@ void eGameWidget::initialize() {
     mGm->align(eAlignment::right | eAlignment::top);
     mGm->setGameWidget(this);
 
-    mGm->setViewTileHandler([this](eTile* const tile) {
+    mGm->setViewTileHandler([this](eTile *const tile)
+                            {
         if(!tile) return;
-        viewTile(tile);
-    });
+        viewTile(tile); });
 
-    mGm->setModeChangedAction([this]() {
+    mGm->setModeChangedAction([this]()
+                              {
         setPatrolBuilding(nullptr);
         if(mGm->mode() == eBuildingMode::erase) {
             eCursors::set(eCursorType::shovel);
@@ -307,16 +324,15 @@ void eGameWidget::initialize() {
         }        
         else {
             eCursors::set(eCursorType::defaultCursor);
-        }
-    });
+        } });
 
     const auto mm = mGm->miniMap();
-    mm->setChangeAction([this, mm]() {
+    mm->setChangeAction([this, mm]()
+                        {
         double fx;
         double fy;
         mm->viewedFraction(fx, fy);
-        viewFraction(fx, fy);
-    });
+        viewFraction(fx, fy); });
 
     mAm = new eArmyMenu(window());
     mAm->initialize(*mBoard);
@@ -325,12 +341,12 @@ void eGameWidget::initialize() {
     mAm->hide();
 
     const auto mma = mAm->miniMap();
-    mma->setChangeAction([this, mma]() {
+    mma->setChangeAction([this, mma]()
+                         {
         double fx;
         double fy;
         mma->viewedFraction(fx, fy);
-        viewFraction(fx, fy);
-    });
+        viewFraction(fx, fy); });
 
     mTopBar = new eTopBarWidget(window());
     const int gw = width() - mGm->width();
@@ -348,16 +364,17 @@ void eGameWidget::initialize() {
     mTem->hide();
 
     const auto mm2 = mTem->miniMap();
-    mm2->setChangeAction([this, mm2]() {
+    mm2->setChangeAction([this, mm2]()
+                         {
         double fx;
         double fy;
         mm2->viewedFraction(fx, fy);
-        viewFraction(fx, fy);
-    });
+        viewFraction(fx, fy); });
 
     const int p = padding();
 
-    if(mEditorMode) {
+    if (mEditorMode)
+    {
         const auto str = eLanguage::text("settings");
         const auto settingsButt = new eFramedButton(str, window());
         settingsButt->fitContent();
@@ -367,14 +384,14 @@ void eGameWidget::initialize() {
         settingsButt->hide();
         settingsButt->setUnderline(false);
         settingsButt->setRenderBg(true);
-        settingsButt->setPressAction([this]() {
+        settingsButt->setPressAction([this]()
+                                     {
             const auto settingsMenu = new eBoardSettingsMenu(window());
             settingsMenu->resize(width()/2, 2*height()/3);
             settingsMenu->initialize(this, *mBoard);
 
             window()->execDialog(settingsMenu);
-            settingsMenu->align(eAlignment::center);
-        });
+            settingsMenu->align(eAlignment::center); });
 
         {
             const auto editorSwitch = new eFramedButton(window());
@@ -386,12 +403,12 @@ void eGameWidget::initialize() {
                                mTopBar->height() + p);
             settingsButt->move(mGm->x() - settingsButt->width() - p,
                                editorSwitch->y() + editorSwitch->height() + p);
-            editorSwitch->setPressAction([this, settingsButt]() {
+            editorSwitch->setPressAction([this, settingsButt]()
+                                         {
                 mTerrainEditMode = !mTerrainEditMode;
                 mTem->setVisible(mTerrainEditMode);
                 mGm->setVisible(!mTerrainEditMode);
-                settingsButt->setVisible(mTerrainEditMode);
-            });
+                settingsButt->setVisible(mTerrainEditMode); });
             addWidget(editorSwitch);
             editorSwitch->setVisible(mEditorMode);
         }
@@ -404,7 +421,8 @@ void eGameWidget::initialize() {
         condButton->setText(eLanguage::text("conditions"));
         condButton->fitContent();
         cityEditorWidget->addWidget(condButton);
-        condButton->setPressAction([this]() {
+        condButton->setPressAction([this]()
+                                   {
             const auto condsMenu = new eDistrictConditionsWidget(window());
             condsMenu->resize(width()/2, 2*height()/3);
 
@@ -435,8 +453,7 @@ void eGameWidget::initialize() {
             condsMenu->initialize(get, add, set, remove);
 
             window()->execDialog(condsMenu);
-            condsMenu->align(eAlignment::center);
-        });
+            condsMenu->align(eAlignment::center); });
 
         const auto saveButton = new eFramedButton(window());
         saveButton->setRenderBg(true);
@@ -444,9 +461,8 @@ void eGameWidget::initialize() {
         saveButton->setText(eLanguage::zeusText(44, 74));
         saveButton->fitContent();
         cityEditorWidget->addWidget(saveButton);
-        saveButton->setPressAction([this]() {
-            mBoard->saveEditorCityPlan();
-        });
+        saveButton->setPressAction([this]()
+                                   { mBoard->saveEditorCityPlan(); });
 
         const auto restoreButton = new eFramedButton(window());
         restoreButton->setRenderBg(true);
@@ -454,10 +470,10 @@ void eGameWidget::initialize() {
         restoreButton->setText(eLanguage::text("restore"));
         restoreButton->fitContent();
         cityEditorWidget->addWidget(restoreButton);
-        restoreButton->setPressAction([this]() {
+        restoreButton->setPressAction([this]()
+                                      {
             mBoard->editorClearBuildings();
-            mBoard->editorDisplayBuildings();
-        });
+            mBoard->editorDisplayBuildings(); });
 
         cityEditorWidget->stackVertically(p);
         addWidget(cityEditorWidget);
@@ -468,7 +484,8 @@ void eGameWidget::initialize() {
         cityEditorSwitch->setText(eLanguage::text("city_editor"));
         cityEditorSwitch->fitContent();
         cityEditorSwitch->move(p, mTopBar->height() + p);
-        cityEditorSwitch->setPressAction([this, cityEditorWidget]() {
+        cityEditorSwitch->setPressAction([this, cityEditorWidget]()
+                                         {
             mEditorShowBuildings = !mEditorShowBuildings;
             mGm->setShowAllPossibleBuildings(mEditorShowBuildings);
             if(mEditorShowBuildings) {
@@ -480,8 +497,7 @@ void eGameWidget::initialize() {
                 mBoard->saveEditorCityPlan();
                 mBoard->editorClearBuildings();
             }
-            cityEditorWidget->setVisible(mEditorShowBuildings);
-        });
+            cityEditorWidget->setVisible(mEditorShowBuildings); });
         addWidget(cityEditorSwitch);
         cityEditorSwitch->setVisible(mEditorMode);
         const int y = cityEditorSwitch->y() + cityEditorSwitch->height() + p;
@@ -492,8 +508,9 @@ void eGameWidget::initialize() {
             const int y0 = restoreButton->y() + restoreButton->height() + p;
             int y = y0;
             const int iMax = 21;
-            std::vector<eFramedButton*> iButtons;
-            for(int i = 0; i < iMax; i++) {
+            std::vector<eFramedButton *> iButtons;
+            for (int i = 0; i < iMax; i++)
+            {
                 const auto iButton = new eFramedButton(window());
                 iButton->setUnderline(false);
                 iButton->setRenderBg(true);
@@ -508,23 +525,26 @@ void eGameWidget::initialize() {
                 int gx = 0;
                 int gy = nextBottom;
                 cityEditorWidget->mapToParent(gx, gy);
-                if(gy > height() - h - 2*p) {
+                if (gy > height() - h - 2 * p)
+                {
                     y = y0;
                     x += iButton->width() + p;
                 }
             }
-            for(int i = 0; i < iMax; i++) {
+            for (int i = 0; i < iMax; i++)
+            {
                 const auto iButton = iButtons[i];
-                iButton->setPressAction([this, i, iMax, iButton, iButtons]() {
+                iButton->setPressAction([this, i, iMax, iButton, iButtons]()
+                                        {
                     iButton->setText("*" + std::to_string(i) + "*");
                     mBoard->setCurrentDistrictId(i);
                     for(int j = 0; j < iMax; j++) {
                         if(j == i) continue;
                         const auto jButton = iButtons[j];
                         jButton->setText(std::to_string(j));
-                    }
-                });
-                if(i == 0) iButton->trigger();
+                    } });
+                if (i == 0)
+                    iButton->trigger();
             }
         }
         cityEditorWidget->fitContent();
@@ -549,10 +569,10 @@ void eGameWidget::initialize() {
 
         const auto iconLabel = new eLabel(window());
         iconLabel->setNoPadding();
-        const auto& intrfc = eGameTextures::interface();
+        const auto &intrfc = eGameTextures::interface();
         const auto uiScale = resolution().uiScale();
         const int icoll = static_cast<int>(uiScale);
-        const auto& coll = intrfc[icoll];
+        const auto &coll = intrfc[icoll];
         iconLabel->setTexture(coll.fDrachmasTopMenu);
         iconLabel->fitContent();
         priceWidget->addWidget(iconLabel);
@@ -580,24 +600,25 @@ void eGameWidget::initialize() {
         cityLabel->align(eAlignment::hcenter);
         priceWidget->align(eAlignment::hcenter);
         button->align(eAlignment::hcenter);
-        buyCityWidget->resize(innerWidget->width() + 2*p,
-                              innerWidget->height() + 2*p);
+        buyCityWidget->resize(innerWidget->width() + 2 * p,
+                              innerWidget->height() + 2 * p);
         addWidget(buyCityWidget);
         centerDialog(buyCityWidget);
         buyCityWidget->hide();
     }
 
-    const auto& setts = window()->settings();
+    const auto &setts = window()->settings();
     const auto sizes = setts.availableSizes();
     setTileSize(sizes.front());
 }
 
 void eGameWidget::pixToId(const int pixX, const int pixY,
-                          int& idX, int& idY) const {
+                          int &idX, int &idY) const
+{
     const double w = mTileW;
     const double h = mTileH;
-    idX = std::round((pixX - mDX)/w + (pixY - mDY)/h - 0.5);
-    idY = std::round(-(pixX - mDX)/w + (pixY - mDY)/h - 0.5);
+    idX = std::round((pixX - mDX) / w + (pixY - mDY) / h - 0.5);
+    idY = std::round(-(pixX - mDX) / w + (pixY - mDY) / h - 0.5);
 
     const auto dir = mBoard->direction();
     const int width = mBoard->width();
@@ -605,28 +626,33 @@ void eGameWidget::pixToId(const int pixX, const int pixY,
 
     bool found = false;
 
-    for(int x = idX + 2*mMaxAltitude; x >= idX + 2*mMinAltitude; x--) {
-        for(int y = idY + 2*mMaxAltitude; y >= idY + 2*mMinAltitude; y--) {
+    for (int x = idX + 2 * mMaxAltitude; x >= idX + 2 * mMinAltitude; x--)
+    {
+        for (int y = idY + 2 * mMaxAltitude; y >= idY + 2 * mMinAltitude; y--)
+        {
             int rx;
             int ry;
             eTileHelper::rotatedTileIdToTileId(x, y, rx, ry, dir, width, height);
             const auto t = mBoard->tile(rx, ry);
-            if(!t) continue;
+            if (!t)
+                continue;
             const int a = t->altitude();
             const int dx = 0;
-            const int dy = -a*2 + 2;
+            const int dy = -a * 2 + 2;
             const int tpx = std::round(0.5 * (x - y + dx) * mTileW) + mDX;
             const int tpy = std::round(0.5 * (x + y + dy) * mTileH) + mDY;
-            const int dist = std::sqrt((tpx - pixX)*(tpx - pixX) +
-                                       (tpy - pixY)*(tpy - pixY));
-            if(dist < mTileH) {
+            const int dist = std::sqrt((tpx - pixX) * (tpx - pixX) +
+                                       (tpy - pixY) * (tpy - pixY));
+            if (dist < mTileH)
+            {
                 idX = x;
                 idY = y;
                 found = true;
                 break;
             }
         }
-        if(found) break;
+        if (found)
+            break;
     }
 
     const int idXT = idX;
@@ -635,63 +661,72 @@ void eGameWidget::pixToId(const int pixX, const int pixY,
                                        dir, width, height);
 }
 
-void eGameWidget::setViewMode(const eViewMode m) {
+void eGameWidget::setViewMode(const eViewMode m)
+{
     mViewMode = m;
 }
 
-void eGameWidget::toggleViewMode(const eViewMode m) {
+void eGameWidget::toggleViewMode(const eViewMode m)
+{
     setViewMode(mViewMode == m ? eViewMode::defaultView : m);
 }
 
-void eGameWidget::mapDimensions(int& mdx, int& mdy) const {
+void eGameWidget::mapDimensions(int &mdx, int &mdy) const
+{
     const int w = mBoard->rotatedWidth();
     const int h = mBoard->rotatedHeight();
-    mdx = mTileW*w;
-    mdy = mTileH*h/2;
+    mdx = mTileW * w;
+    mdy = mTileH * h / 2;
 }
 
-void eGameWidget::viewBoxSize(double& fx, double& fy) const {
+void eGameWidget::viewBoxSize(double &fx, double &fy) const
+{
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    fx = (width() - mGm->width())/double(mdx);
-    fy = height()/double(mdy);
+    fx = (width() - mGm->width()) / double(mdx);
+    fy = height() / double(mdy);
 }
 
-void eGameWidget::viewedFraction(double& fx, double& fy) const {
+void eGameWidget::viewedFraction(double &fx, double &fy) const
+{
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
     const int w = width() - mGm->width();
-    fx = (0.5*w - mDX)/mdx;
-    fy = (0.5*height() - mDY)/mdy;
+    fx = (0.5 * w - mDX) / mdx;
+    fy = (0.5 * height() - mDY) / mdy;
 }
 
-void eGameWidget::tileViewFraction(eTile* const tile,
-                                   double& xf, double& yf) const {
+void eGameWidget::tileViewFraction(eTile *const tile,
+                                   double &xf, double &yf) const
+{
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    const double tx = tile->dx()*mTileW;
-    const double ty = 0.5*tile->dy()*mTileH;
-    xf = tx/mdx;
-    yf = ty/mdy;
+    const double tx = tile->dx() * mTileW;
+    const double ty = 0.5 * tile->dy() * mTileH;
+    xf = tx / mdx;
+    yf = ty / mdy;
 }
 
-void eGameWidget::viewFraction(const double fx, const double fy) {
+void eGameWidget::viewFraction(const double fx, const double fy)
+{
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
 
     const int w = width() - mGm->width();
-    const int dx = -fx*mdx + w/2;
-    const int dy = -fy*mdy + height()/2;
+    const int dx = -fx * mdx + w / 2;
+    const int dy = -fy * mdy + height() / 2;
     setDX(dx);
     setDY(dy);
 }
 
-void eGameWidget::viewTile(eTile* const tile) {
-    if(!tile) return;
+void eGameWidget::viewTile(eTile *const tile)
+{
+    if (!tile)
+        return;
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
@@ -704,28 +739,31 @@ void eGameWidget::viewTile(eTile* const tile) {
     int rdty;
     eTileHelper::dTileIdToRotatedDTileId(dtx, dty, rdtx, rdty,
                                          dir, width, height);
-    const int tx = rdtx*mTileW;
-    const int ty = rdty*mTileH/2;
-    const double x = double(tx)/mdx;
-    const double y = double(ty)/mdy;
+    const int tx = rdtx * mTileW;
+    const int ty = rdty * mTileH / 2;
+    const double x = double(tx) / mdx;
+    const double y = double(ty) / mdy;
     viewFraction(x, y);
 }
 
-eTile* eGameWidget::viewedTile() const {
+eTile *eGameWidget::viewedTile() const
+{
     double fx;
     double fy;
     viewedFraction(fx, fy);
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    const int vx = fx*mdx/mTileW;
-    const int vy = fy*mdy*2/mTileH;
+    const int vx = fx * mdx / mTileW;
+    const int vy = fy * mdy * 2 / mTileH;
     const auto tile = mBoard->rotateddtile(vx, vy);
     return tile;
 }
 
-bool eGameWidget::tileVisible(eTile* const tile) const {
-    if(!tile) return false;
+bool eGameWidget::tileVisible(eTile *const tile) const
+{
+    if (!tile)
+        return false;
 
     double fx;
     double fy;
@@ -739,23 +777,29 @@ bool eGameWidget::tileVisible(eTile* const tile) const {
     double tyf;
     tileViewFraction(tile, txf, tyf);
 
-    const double top = ffy - fy/2;
-    const double left = ffx - fx/2;
+    const double top = ffy - fy / 2;
+    const double left = ffx - fx / 2;
     const double bottom = top + fy;
     const double right = left + fx;
 
-    if(txf > right) return false;
-    if(txf < left) return false;
-    if(tyf > bottom) return false;
-    if(tyf < top) return false;
+    if (txf > right)
+        return false;
+    if (txf < left)
+        return false;
+    if (tyf > bottom)
+        return false;
+    if (tyf < top)
+        return false;
     return true;
 }
 
-eCityId eGameWidget::viewedCity() const {
+eCityId eGameWidget::viewedCity() const
+{
     return mViewedCityId;
 }
 
-void eGameWidget::showBuyCity(const eCityId cid) {
+void eGameWidget::showBuyCity(const eCityId cid)
+{
     const auto c = mBoard->boardCityWithId(cid);
     const int price = c->basePrice();
     mBuyCityName->setText(mBoard->cityName(cid));
@@ -763,7 +807,8 @@ void eGameWidget::showBuyCity(const eCityId cid) {
     mBuyCityPrice->setText(std::to_string(price));
     mBuyCityWidget->show();
     const auto ppid = mBoard->personPlayer();
-    mBuyCityButton->setPressAction([this, cid, price, ppid]() {
+    mBuyCityButton->setPressAction([this, cid, price, ppid]()
+                                   {
         const int d = mBoard->drachmas(ppid);
         if(d >= price) {
             const auto& wboard = mBoard->world();
@@ -775,24 +820,25 @@ void eGameWidget::showBuyCity(const eCityId cid) {
             mGm->viewedCityChanged();
         } else {
             showTip(ppid, eLanguage::zeusText(19, 19));
-        }
-    });
+        } });
 }
 
-void eGameWidget::hideBuyCity() {
+void eGameWidget::hideBuyCity()
+{
     mBuyCityWidget->hide();
 }
 
-void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
+void eGameWidget::iterateOverVisibleTiles(const eTileAction &a)
+{
     const int rw = mBoard->rotatedWidth();
     const int rh = mBoard->rotatedHeight();
 
-    const int minX = std::clamp(-mDX/mTileW, 0, rw);
+    const int minX = std::clamp(-mDX / mTileW, 0, rw);
     const int visWidth = width() - mGm->width();
-    const int maxX = std::clamp(minX + visWidth/mTileW, 0, rw);
+    const int maxX = std::clamp(minX + visWidth / mTileW, 0, rw);
 
-    const int minY = std::clamp(-2*mDY/mTileH, 0, rh);
-    const int maxY = std::clamp(minY + 2*height()/mTileH, 0, rh);
+    const int minY = std::clamp(-2 * mDY / mTileH, 0, rh);
+    const int maxY = std::clamp(minY + 2 * height() / mTileH, 0, rh);
 
     playVisibleAmbientSound(minX, maxX, minY, maxY);
 
@@ -802,48 +848,64 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
     const int eminY = std::clamp(minY - 10, 0, rh);
     const int emaxY = std::clamp(maxY + 35, 0, rh);
 
-    for(int y = eminY; y < emaxY; y++) {
-        for(int x = eminX; x < emaxX; x++) {
+    for (int y = eminY; y < emaxY; y++)
+    {
+        for (int x = eminX; x < emaxX; x++)
+        {
             const auto t = mBoard->rotateddtile(x, y);
-            if(!t) continue;
+            if (!t)
+                continue;
             a(t);
         }
     }
 }
 
 void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
-                                          const int minY, const int maxY) {
+                                          const int minY, const int maxY)
+{
     const int now = SDL_GetTicks();
     const int interval = 5000;
     const int cooldown = 30000;
-    if(now - mLastAmbientSoundTime < interval) return;
-    if(eRand::rand() % 3 != 0) return;
+    if (now - mLastAmbientSoundTime < interval)
+        return;
+    if (eRand::rand() % 3 != 0)
+        return;
 
-    std::vector<eTile*> buildingTiles;
-    std::vector<eTile*> fallbackTiles;
-    for(int y = minY; y < maxY; y++) {
-        for(int x = minX; x < maxX; x++) {
+    std::vector<eTile *> buildingTiles;
+    std::vector<eTile *> fallbackTiles;
+    for (int y = minY; y < maxY; y++)
+    {
+        for (int x = minX; x < maxX; x++)
+        {
             const auto t = mBoard->rotateddtile(x, y);
-            if(!t) continue;
-            if(t->underBuilding()) {
+            if (!t)
+                continue;
+            if (t->underBuilding())
+            {
                 buildingTiles.push_back(t);
-            } else {
+            }
+            else
+            {
                 fallbackTiles.push_back(t);
             }
         }
     }
 
-    const auto playFromTiles = [&](const std::vector<eTile*>& tiles) {
-        if(tiles.empty()) return false;
+    const auto playFromTiles = [&](const std::vector<eTile *> &tiles)
+    {
+        if (tiles.empty())
+            return false;
         const int size = tiles.size();
         const int startId = eRand::rand() % size;
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
+        {
             const int id = (startId + i) % size;
             const auto tile = tiles[id];
             const int key = ambientCooldownKey(tile);
             const auto it = mAmbientSoundCooldowns.find(key);
-            if(it != mAmbientSoundCooldowns.end() &&
-               now - it->second < cooldown) {
+            if (it != mAmbientSoundCooldowns.end() &&
+                now - it->second < cooldown)
+            {
                 continue;
             }
             eSounds::playSoundForTile(tile);
@@ -854,49 +916,66 @@ void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
         return false;
     };
 
-    if(playFromTiles(buildingTiles)) return;
+    if (playFromTiles(buildingTiles))
+        return;
     playFromTiles(fallbackTiles);
 }
 
 bool eGameWidget::canBuildVendor(const int tx, const int ty,
-                                 const eResourceType resType) const {
+                                 const eResourceType resType) const
+{
     const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
+    if (!t)
+        return false;
     const auto b = t->underBuilding();
-    if(!b) return false;
+    if (!b)
+        return false;
     const auto bt = b->type();
-    if(bt != eBuildingType::agoraSpace) return false;
-    const auto space = static_cast<eAgoraSpace*>(b);
+    if (bt != eBuildingType::agoraSpace)
+        return false;
+    const auto space = static_cast<eAgoraSpace *>(b);
     const auto agora = space->agora();
-    if(agora->vendor(resType)) return false;
+    if (agora->vendor(resType))
+        return false;
     const auto ct = b->centerTile();
-    if(!ct) return false;
+    if (!ct)
+        return false;
     return ct->x() == tx && ct->y() == ty;
 }
 
-bool tileBuildable(eTile* const t) {
-    if(!t) return false;
-    if(t->underBuilding()) return false;
-    const auto& banners = t->banners();
-    for(const auto& b : banners) {
-        if(!b->buildable()) return false;
+bool tileBuildable(eTile *const t)
+{
+    if (!t)
+        return false;
+    if (t->underBuilding())
+        return false;
+    const auto &banners = t->banners();
+    for (const auto &b : banners)
+    {
+        if (!b->buildable())
+            return false;
     }
-    if(t->isElevationTile()) return false;
-    const auto& chars = t->characters();
-    if(!chars.empty()) return false;
+    if (t->isElevationTile())
+        return false;
+    const auto &chars = t->characters();
+    if (!chars.empty())
+        return false;
     return true;
 }
 
-bool eGameWidget::waterTileHasAccessToSea(const int tx, const int ty) const {
+bool eGameWidget::waterTileHasAccessToSea(const int tx, const int ty) const
+{
     const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
-    if(!t->hasWater()) return false;
+    if (!t)
+        return false;
+    if (!t->hasWater())
+        return false;
     const auto cid = mViewedCityId;
     const auto riverEntry = mBoard->riverEntryPoint(cid);
-    if(!riverEntry) return false;
-    eKnownEndPathFinder p([](eTileBase* const tile) {
-        return tile->hasWater();
-    }, riverEntry);
+    if (!riverEntry)
+        return false;
+    eKnownEndPathFinder p([](eTileBase *const tile)
+                          { return tile->hasWater(); }, riverEntry);
     const int w = mBoard->width();
     const int h = mBoard->height();
     const bool r = p.findPath({0, 0, w, h}, t, 1000, true, w, h);
@@ -904,33 +983,42 @@ bool eGameWidget::waterTileHasAccessToSea(const int tx, const int ty) const {
 }
 
 bool eGameWidget::canBuildFishery(const int tx, const int ty,
-                                  eDiagonalOrientation& o) const {
-    for(int x = tx; x < tx + 2; x++) {
-        for(int y = ty - 1; y < ty - 1 + 2; y++) {
+                                  eDiagonalOrientation &o) const
+{
+    for (int x = tx; x < tx + 2; x++)
+    {
+        for (int y = ty - 1; y < ty - 1 + 2; y++)
+        {
             const auto t = mBoard->tile(x, y);
             const bool b = tileBuildable(t);
-            if(!b) return false;
+            if (!b)
+                return false;
         }
     }
     const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
+    if (!t)
+        return false;
     const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-    if(tr) {
+    if (tr)
+    {
         o = eDiagonalOrientation::topRight;
         return true;
     }
     const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-    if(br) {
+    if (br)
+    {
         o = eDiagonalOrientation::bottomRight;
         return true;
     }
     const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-    if(bl) {
+    if (bl)
+    {
         o = eDiagonalOrientation::bottomLeft;
         return true;
     }
     const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-    if(tl) {
+    if (tl)
+    {
         o = eDiagonalOrientation::topLeft;
         return true;
     }
@@ -938,22 +1026,29 @@ bool eGameWidget::canBuildFishery(const int tx, const int ty,
 }
 
 bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
-                                       eDiagonalOrientation& o) const {
-    for(int x = tx - 1; x < tx - 1 + 3; x++) {
-        for(int y = ty - 1; y < ty - 1 + 3; y++) {
+                                       eDiagonalOrientation &o) const
+{
+    for (int x = tx - 1; x < tx - 1 + 3; x++)
+    {
+        for (int y = ty - 1; y < ty - 1 + 3; y++)
+        {
             const auto t = mBoard->tile(x, y);
             const bool b = tileBuildable(t);
-            if(!b) return false;
+            if (!b)
+                return false;
         }
     }
     {
         const auto t = mBoard->tile(tx - 1, ty);
-        if(!t) return false;
+        if (!t)
+            return false;
         const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-        if(tr) {
+        if (tr)
+        {
             const auto br = t->bottomRight<eTile>();
             const bool tr = eBuildableHelpers::canBuildFisheryTR(br);
-            if(tr) {
+            if (tr)
+            {
                 o = eDiagonalOrientation::topRight;
                 return true;
             }
@@ -961,12 +1056,15 @@ bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
     }
     {
         const auto t = mBoard->tile(tx, ty);
-        if(!t) return false;
+        if (!t)
+            return false;
         const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-        if(br) {
+        if (br)
+        {
             const auto bl = t->bottomLeft<eTile>();
             const bool br = eBuildableHelpers::canBuildFisheryBR(bl);
-            if(br) {
+            if (br)
+            {
                 o = eDiagonalOrientation::bottomRight;
                 return true;
             }
@@ -974,12 +1072,15 @@ bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
     }
     {
         const auto t = mBoard->tile(tx - 1, ty + 1);
-        if(!t) return false;
+        if (!t)
+            return false;
         const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-        if(bl) {
+        if (bl)
+        {
             const auto br = t->bottomRight<eTile>();
             const bool bl = eBuildableHelpers::canBuildFisheryBL(br);
-            if(bl) {
+            if (bl)
+            {
                 o = eDiagonalOrientation::bottomLeft;
                 return true;
             }
@@ -987,12 +1088,15 @@ bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
     }
     {
         const auto t = mBoard->tile(tx - 1, ty + 1);
-        if(!t) return false;
+        if (!t)
+            return false;
         const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-        if(tl) {
+        if (tl)
+        {
             const auto tr = t->topRight<eTile>();
             const bool tl = eBuildableHelpers::canBuildFisheryTL(tr);
-            if(tl) {
+            if (tl)
+            {
                 o = eDiagonalOrientation::topLeft;
                 return true;
             }
@@ -1002,51 +1106,66 @@ bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
 }
 
 bool eGameWidget::canBuildPier(const int tx, const int ty,
-                               eDiagonalOrientation& o,
+                               eDiagonalOrientation &o,
                                const eCityId cid,
                                const ePlayerId pid,
-                               const bool forestAllowed) const {
+                               const bool forestAllowed) const
+{
     const bool r = canBuildFishery(tx, ty, o);
-    if(!r) return false;
+    if (!r)
+        return false;
     int minX;
     int minY;
-    switch(o) {
-    case eDiagonalOrientation::topRight: {
+    switch (o)
+    {
+    case eDiagonalOrientation::topRight:
+    {
         minX = tx - 1;
         minY = ty + 1;
-    } break;
-    case eDiagonalOrientation::bottomRight: {
+    }
+    break;
+    case eDiagonalOrientation::bottomRight:
+    {
         minX = tx - 4;
         minY = ty - 2;
-    } break;
-    case eDiagonalOrientation::bottomLeft: {
+    }
+    break;
+    case eDiagonalOrientation::bottomLeft:
+    {
         minX = tx - 1;
         minY = ty - 5;
-    } break;
+    }
+    break;
     default:
-    case eDiagonalOrientation::topLeft: {
+    case eDiagonalOrientation::topLeft:
+    {
         minX = tx + 2;
         minY = ty - 2;
-    } break;
+    }
+    break;
     }
     return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4,
                                 forestAllowed, cid, pid);
 }
 
 std::vector<ePatrolGuide>::iterator
-    eGameWidget::findGuide(const int tx, const int ty) {
-    auto& pgs = mPatrolBuilding->patrolGuides();
+eGameWidget::findGuide(const int tx, const int ty)
+{
+    auto &pgs = mPatrolBuilding->patrolGuides();
     const int iMax = pgs.size();
-    for(int i = 0; i < iMax; i++) {
-        auto& pg = pgs[i];
-        if(pg.fX == tx && pg.fY == ty) {
+    for (int i = 0; i < iMax; i++)
+    {
+        auto &pg = pgs[i];
+        if (pg.fX == tx && pg.fY == ty)
+        {
             return pgs.begin() + i;
         }
     }
     return pgs.end();
 }
 
-void eGameWidget::updateMinimap() {
+void eGameWidget::updateMinimap()
+{
     double fx;
     double fy;
     viewedFraction(fx, fy);
@@ -1060,21 +1179,26 @@ void eGameWidget::updateMinimap() {
 
 const int gRotateFrames = 150;
 
-int eGameWidget::rotationId() const {
-    return mRotateFrame/gRotateFrames;
+int eGameWidget::rotationId() const
+{
+    return mRotateFrame / gRotateFrames;
 }
 
-int eGameWidget::hippodromeId() const {
-    if(mValiableHippodromePieces.empty()) return -1;
+int eGameWidget::hippodromeId() const
+{
+    if (mValiableHippodromePieces.empty())
+        return -1;
     const int id = rotationId() % mValiableHippodromePieces.size();
     return mValiableHippodromePieces[id];
 }
 
-void eGameWidget::updateHippodromeIds() {
+void eGameWidget::updateHippodromeIds()
+{
     mValiableHippodromePieces.clear();
 
     const auto hs = mBoard->buildings(mViewedCityId, eBuildingType::hippodromePiece);
-    if(hs.empty()) {
+    if (hs.empty())
+    {
         mValiableHippodromePieces = {0, 1, 2, 3, 4, 5, 6, 7};
         return;
     }
@@ -1097,25 +1221,31 @@ void eGameWidget::updateHippodromeIds() {
     bool bottomRightBlocked = false;
     bool bottomLeftBlocked = false;
 
-    const auto hippodromeAt = [&](const int x, const int y) {
+    const auto hippodromeAt = [&](const int x, const int y)
+    {
         const auto b = mBoard->buildingAt(x, y);
-        if(!b) return static_cast<eHippodromePiece*>(nullptr);
+        if (!b)
+            return static_cast<eHippodromePiece *>(nullptr);
         const auto type = b->type();
-        if(type == eBuildingType::hippodromePiece) {
-            const auto h = static_cast<eHippodromePiece*>(b);
+        if (type == eBuildingType::hippodromePiece)
+        {
+            const auto h = static_cast<eHippodromePiece *>(b);
             return h;
-        } else if(type == eBuildingType::road) {
-            const auto r = static_cast<eRoad*>(b);
+        }
+        else if (type == eBuildingType::road)
+        {
+            const auto r = static_cast<eRoad *>(b);
             return r->aboveHippodrome();
         }
-        return static_cast<eHippodromePiece*>(nullptr);
+        return static_cast<eHippodromePiece *>(nullptr);
     };
 
     {
         const int x = minX - 1;
         const auto b1 = hippodromeAt(x, minY);
         const auto b2 = hippodromeAt(x, maxY);
-        if(b1 == b2 && b1 && b2) {
+        if (b1 == b2 && b1 && b2)
+        {
             const int id = b1->id();
             topLeftBlocked = true;
             topLeft = id == 0 || id == 4 || id == 5 || id == 7;
@@ -1125,7 +1255,8 @@ void eGameWidget::updateHippodromeIds() {
         const int y = minY - 1;
         const auto b1 = hippodromeAt(minX, y);
         const auto b2 = hippodromeAt(maxX, y);
-        if(b1 == b2 && b1 && b2) {
+        if (b1 == b2 && b1 && b2)
+        {
             const int id = b1->id();
             topRightBlocked = true;
             topRight = id == 1 || id == 2 || id == 6 || id == 7;
@@ -1135,7 +1266,8 @@ void eGameWidget::updateHippodromeIds() {
         const int x = maxX + 1;
         const auto b1 = hippodromeAt(x, minY);
         const auto b2 = hippodromeAt(x, maxY);
-        if(b1 == b2 && b1 && b2) {
+        if (b1 == b2 && b1 && b2)
+        {
             const int id = b1->id();
             bottomRightBlocked = true;
             bottomRight = id == 0 || id == 1 || id == 3 || id == 4;
@@ -1145,54 +1277,78 @@ void eGameWidget::updateHippodromeIds() {
         const int y = maxY + 1;
         const auto b1 = hippodromeAt(minX, y);
         const auto b2 = hippodromeAt(maxX, y);
-        if(b1 == b2 && b1 && b2) {
+        if (b1 == b2 && b1 && b2)
+        {
             const int id = b1->id();
             bottomLeftBlocked = true;
             bottomLeft = id == 2 || id == 3 || id == 5 || id == 6;
         }
     }
 
-    if(topLeft && bottomRight) {
+    if (topLeft && bottomRight)
+    {
         mValiableHippodromePieces = {0, 4};
-    } else if(topLeft && bottomLeft) {
+    }
+    else if (topLeft && bottomLeft)
+    {
         mValiableHippodromePieces = {1};
-    } else if(topRight && bottomLeft) {
+    }
+    else if (topRight && bottomLeft)
+    {
         mValiableHippodromePieces = {2, 6};
-    } else if(topLeft && topRight) {
+    }
+    else if (topLeft && topRight)
+    {
         mValiableHippodromePieces = {3};
-    } else if(topRight && bottomRight) {
+    }
+    else if (topRight && bottomRight)
+    {
         mValiableHippodromePieces = {5};
-    } else if(bottomLeft && bottomRight) {
+    }
+    else if (bottomLeft && bottomRight)
+    {
         mValiableHippodromePieces = {7};
-    } else if(topLeft) {
+    }
+    else if (topLeft)
+    {
         mValiableHippodromePieces = {0, 1, 3, 4};
-    } else if(topRight) {
+    }
+    else if (topRight)
+    {
         mValiableHippodromePieces = {2, 3, 5, 6};
-    } else if(bottomRight) {
+    }
+    else if (bottomRight)
+    {
         mValiableHippodromePieces = {0, 4, 5, 7};
-    } else if(bottomLeft) {
+    }
+    else if (bottomLeft)
+    {
         mValiableHippodromePieces = {1, 2, 6, 7};
     }
 
-    if(!topLeft && topLeftBlocked) {
+    if (!topLeft && topLeftBlocked)
+    {
         eVectorHelpers::remove(mValiableHippodromePieces, 0);
         eVectorHelpers::remove(mValiableHippodromePieces, 1);
         eVectorHelpers::remove(mValiableHippodromePieces, 3);
         eVectorHelpers::remove(mValiableHippodromePieces, 4);
     }
-    if(!topRight && topRightBlocked) {
+    if (!topRight && topRightBlocked)
+    {
         eVectorHelpers::remove(mValiableHippodromePieces, 2);
         eVectorHelpers::remove(mValiableHippodromePieces, 3);
         eVectorHelpers::remove(mValiableHippodromePieces, 5);
         eVectorHelpers::remove(mValiableHippodromePieces, 6);
     }
-    if(!bottomRight && bottomRightBlocked) {
+    if (!bottomRight && bottomRightBlocked)
+    {
         eVectorHelpers::remove(mValiableHippodromePieces, 0);
         eVectorHelpers::remove(mValiableHippodromePieces, 4);
         eVectorHelpers::remove(mValiableHippodromePieces, 5);
         eVectorHelpers::remove(mValiableHippodromePieces, 7);
     }
-    if(!bottomLeft && bottomLeftBlocked) {
+    if (!bottomLeft && bottomLeftBlocked)
+    {
         eVectorHelpers::remove(mValiableHippodromePieces, 1);
         eVectorHelpers::remove(mValiableHippodromePieces, 2);
         eVectorHelpers::remove(mValiableHippodromePieces, 6);
@@ -1200,46 +1356,61 @@ void eGameWidget::updateHippodromeIds() {
     }
 }
 
-void eGameWidget::showMessage(eEventData& ed,
-                              const eMessageType& msg,
-                              const bool prepend) {
+void eGameWidget::showMessage(eEventData &ed,
+                              const eMessageType &msg,
+                              const bool prepend)
+{
     showMessage(ed, msg.fFull, prepend, false, true);
 }
 
-void eGameWidget::showMessage(eEventData& ed,
-                              const eEventMessageType& msg,
-                              const bool prepend) {
+void eGameWidget::showMessage(eEventData &ed,
+                              const eEventMessageType &msg,
+                              const bool prepend)
+{
     eMessageType m = msg;
     std::string reason = ed.fReason;
-    if(reason.empty()) {
+    if (reason.empty())
+    {
         reason = msg.fNoReason;
     }
     eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
     showMessage(ed, m.fFull, prepend, false, true);
 }
 
-void eGameWidget::showTip(const ePlayerCityTarget& target,
-                          const std::string& tip) {
-    for(const auto& t : mTips) {
-        if(t.fText == tip && t.fTarget == target) return;
+void eGameWidget::showTip(const ePlayerCityTarget &target,
+                          const std::string &tip)
+{
+    for (const auto &t : mTips)
+    {
+        if (t.fText == tip && t.fTarget == target)
+            return;
     }
     std::string text;
     const auto ppid = mBoard->personPlayer();
-    if(target.isCityTarget()) {
+    if (target.isCityTarget())
+    {
         const auto cid = target.cityTarget();
         const auto pid = mBoard->cityIdToPlayerId(cid);
-        if(pid != ppid) return;
+        if (pid != ppid)
+            return;
         const auto cts = mBoard->personPlayerCitiesOnBoard();
-        if(cts.size() > 1) {
+        if (cts.size() > 1)
+        {
             const auto name = mBoard->cityName(cid);
             text = name + ": " + tip;
-        } else {
+        }
+        else
+        {
             text = tip;
         }
-    } else {
-        if(target.isPlayerTarget()) {
+    }
+    else
+    {
+        if (target.isPlayerTarget())
+        {
             const auto pid = target.playerTarget();
-            if(pid != ppid) return;
+            if (pid != ppid)
+                return;
         }
         text = tip;
     }
@@ -1250,30 +1421,32 @@ void eGameWidget::showTip(const ePlayerCityTarget& target,
     msgb->fitContent();
     const int p = msgb->padding();
     addWidget(msgb);
-    msgb->resize(msgb->width() + 2*p, msgb->height() + 2*p);
-    msgb->setX((width() - mGm->width() - msgb->width())/2);
-    eTip& etip = mTips.emplace_back();
+    msgb->resize(msgb->width() + 2 * p, msgb->height() + 2 * p);
+    msgb->setX((width() - mGm->width() - msgb->width()) / 2);
+    eTip &etip = mTips.emplace_back();
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
     etip.fLastFrame = mFrame + 200;
     const auto etipPtr = &etip;
-    msgb->setPressAction([etipPtr]() {
-        etipPtr->fLastFrame -= 200;
-    });
+    msgb->setPressAction([etipPtr]()
+                         { etipPtr->fLastFrame -= 200; });
     updateTipPositions();
 }
 
 void eGameWidget::showQuestion(
-        const std::string& title,
-        const std::string& q,
-        const eAction& action) {
+    const std::string &title,
+    const std::string &q,
+    const eAction &action)
+{
 
-    const auto cancelA = [this]() {
+    const auto cancelA = [this]()
+    {
         mLocked = false;
     };
 
-    const auto acceptA = [this, action]() {
+    const auto acceptA = [this, action]()
+    {
         action();
         mLocked = false;
     };
@@ -1284,40 +1457,48 @@ void eGameWidget::showQuestion(
     qw->align(eAlignment::vcenter);
     const int vw = width() - mGm->width();
     const int w = qw->width();
-    qw->setX((vw - w)/2);
+    qw->setX((vw - w) / 2);
     mLocked = true;
 }
 
-void eGameWidget::updateTipPositions() {
+void eGameWidget::updateTipPositions()
+{
     const int p = padding();
     int y;
-    if(mPausedLabel) {
-        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
-    } else {
-        y = 5*p;;
+    if (mPausedLabel)
+    {
+        y = mPausedLabel->y() + mPausedLabel->height() + 2 * p;
     }
-    if(mSpeedLabel && mSpeedLabel->visible()) {
+    else
+    {
+        y = 5 * p;
+        ;
+    }
+    if (mSpeedLabel && mSpeedLabel->visible())
+    {
         mSpeedLabel->setY(y);
-        y += mSpeedLabel->height() + 2*p;
+        y += mSpeedLabel->height() + 2 * p;
     }
-    for(const auto& tip : mTips) {
+    for (const auto &tip : mTips)
+    {
         const auto w = tip.fWid;
         w->setY(y);
         const int wh = w->height();
-        y += wh + 2*p;
+        y += wh + 2 * p;
     }
 }
 
-void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
+void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
+{
     eEventData edCopy = ed; // Make a copy since we need to modify it later
     const auto tw = new eFlatButton(window());
     tw->setNoPadding();
     tw->setTinyFontSize();
     // Truncate title if too long for toast
     auto title = msg.fTitle;
-    if(const auto& c = ed.fCity)
+    if (const auto &c = ed.fCity)
         eStringHelpers::replaceAll(title, "[city_name]", c->name());
-    if(const auto& c = ed.fRivalCity)
+    if (const auto &c = ed.fRivalCity)
         eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
     eStringHelpers::replaceAll(title, "[item]",
                                eResourceTypeHelpers::typeLongName(ed.fResourceType));
@@ -1325,14 +1506,18 @@ void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
                                eResourceTypeHelpers::typeName(ed.fResourceType));
     eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(ed.fGod));
     eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
-    if(title.length() > 40) {
+    if (title.length() > 40)
+    {
         title = title.substr(0, 37) + "...";
     }
     tw->setText(title);
     tw->fitContent();
-    const auto onClick = [this, edCopy, msg, tw]() mutable {
-        for(int i = 0; i < int(mToasts.size()); i++) {
-            if(mToasts[i].fWid == tw) {
+    const auto onClick = [this, edCopy, msg, tw]() mutable
+    {
+        for (int i = 0; i < int(mToasts.size()); i++)
+        {
+            if (mToasts[i].fWid == tw)
+            {
                 mToasts.erase(mToasts.begin() + i);
                 break;
             }
@@ -1344,70 +1529,87 @@ void eGameWidget::showToast(eEventData& ed, const eMessage& msg) {
     tw->setPressAction(onClick);
     addWidget(tw);
     const int p = tw->padding();
-    tw->resize(tw->width() + 2*p, tw->height() + 2*p);
+    tw->resize(tw->width() + 2 * p, tw->height() + 2 * p);
     const int vw = width() - mGm->width();
     tw->setX((vw - tw->width()) / 2);
-    
-    eToast& toast = mToasts.emplace_back();
+
+    eToast &toast = mToasts.emplace_back();
     toast.fEd = ed;
     toast.fMsg = msg;
     toast.fWid = tw;
     // 5 seconds at ~60fps = 300 frames
     toast.fExpireFrame = mFrame + 300;
     updateToastPositions();
-    if(mMsgListWidget) mMsgListWidget->addMessage(ed, msg, mBoard->date());
+    if (mMsgListWidget)
+        mMsgListWidget->addMessage(ed, msg, mBoard->date());
 }
 
-void eGameWidget::updateToastPositions() {
+void eGameWidget::updateToastPositions()
+{
     const int p = padding();
     int y;
-    if(mPausedLabel) {
-        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
-    } else {
-        y = 5*p;
+    if (mPausedLabel)
+    {
+        y = mPausedLabel->y() + mPausedLabel->height() + 2 * p;
     }
-    if(mSpeedLabel && mSpeedLabel->visible()) {
-        y += mSpeedLabel->height() + 2*p;
+    else
+    {
+        y = 5 * p;
     }
-    for(const auto& tip : mTips) {
-        y += tip.fWid->height() + 2*p;
+    if (mSpeedLabel && mSpeedLabel->visible())
+    {
+        y += mSpeedLabel->height() + 2 * p;
     }
-    for(const auto& toast : mToasts) {
+    for (const auto &tip : mTips)
+    {
+        y += tip.fWid->height() + 2 * p;
+    }
+    for (const auto &toast : mToasts)
+    {
         const auto w = toast.fWid;
         w->setY(y);
-        y += w->height() + 2*p;
+        y += w->height() + 2 * p;
     }
 }
 
-void eGameWidget::showMessage(eEventData& ed,
-                              const eMessage& msg,
+void eGameWidget::showMessage(eEventData &ed,
+                              const eMessage &msg,
                               const bool prepend,
                               const bool forcePopup,
-                              const bool addToList) {
-    const auto& target = ed.fTarget;
+                              const bool addToList)
+{
+    const auto &target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
-    if(target.isPlayerTarget()) {
+    if (target.isPlayerTarget())
+    {
         const auto pid = target.playerTarget();
-        if(pid != ppid) return;
-    } else if(target.isCityTarget()) {
+        if (pid != ppid)
+            return;
+    }
+    else if (target.isCityTarget())
+    {
         const auto cid = target.cityTarget();
         const auto pid = mBoard->cityIdToPlayerId(cid);
-        if(pid != ppid) return;
+        if (pid != ppid)
+            return;
     }
 
     const bool requiresAction = ed.fCA0 || !ed.fCCA0.empty() || ed.fA0 || ed.fA1 || ed.fA2;
 
-    if(!requiresAction && !forcePopup) {
-        if(mToasts.size() >= 3) return;
+    if (!requiresAction && !forcePopup)
+    {
+        if (mToasts.size() >= 3)
+            return;
         showToast(ed, msg);
         return;
     }
 
-    if(addToList && mMsgListWidget) mMsgListWidget->addMessage(ed, msg, mBoard->date());
+    if (addToList && mMsgListWidget)
+        mMsgListWidget->addMessage(ed, msg, mBoard->date());
 
-    if(mMsgBox) {
-        auto& smsg = prepend ? mSavedMsgs.emplace_front() :
-                               mSavedMsgs.emplace_back();
+    if (mMsgBox)
+    {
+        auto &smsg = prepend ? mSavedMsgs.emplace_front() : mSavedMsgs.emplace_back();
         smsg.fEd = ed;
         smsg.fMsg = msg;
         smsg.fForcePopup = forcePopup;
@@ -1416,35 +1618,47 @@ void eGameWidget::showMessage(eEventData& ed,
     const auto msgb = new eMessageBox(window());
     mMsgBox = msgb;
     const bool wasPaused = mPaused;
-    if(!wasPaused) switchPause();
-    msgb->setHeight(height()/3);
-    msgb->setWidth(width()/2);
+    if (!wasPaused)
+        switchPause();
+    msgb->setHeight(height() / 3);
+    msgb->setWidth(width() / 2);
     eAction a;
-    if(ed.fChar) {
+    if (ed.fChar)
+    {
         const auto ch = ed.fChar;
         const auto tile = ed.fTile;
-        a = [this, ch, tile]() {
-            if(ch) {
+        a = [this, ch, tile]()
+        {
+            if (ch)
+            {
                 const auto t = ch->tile();
                 viewTile(t);
-            } else {
+            }
+            else
+            {
                 viewTile(tile);
             }
         };
-    } else if(ed.fTile) {
+    }
+    else if (ed.fTile)
+    {
         const auto tile = ed.fTile;
-        a = [this, tile]() {
+        a = [this, tile]()
+        {
             viewTile(tile);
         };
     }
     ed.fDate = mBoard->date();
     ed.fPlayerName = window()->leader();
 
-    const auto close = [this, wasPaused]() {
+    const auto close = [this, wasPaused]()
+    {
         mMsgBox = nullptr;
-        if(!wasPaused) switchPause();
-        if(mSavedMsgs.empty()) return;
-        auto& msg = mSavedMsgs.front();
+        if (!wasPaused)
+            switchPause();
+        if (mSavedMsgs.empty())
+            return;
+        auto &msg = mSavedMsgs.front();
         showMessage(msg.fEd, msg.fMsg, false, msg.fForcePopup, true);
         mSavedMsgs.pop_front();
     };
@@ -1453,14 +1667,15 @@ void eGameWidget::showMessage(eEventData& ed,
 
     window()->execDialog(msgb, msgb->closable(), close, this);
     msgb->align(eAlignment::bottom | eAlignment::hcenter);
-    msgb->setY(msgb->y() - mGm->width()/10);
-    msgb->setX(msgb->x() - mGm->width()/2);
+    msgb->setY(msgb->y() - mGm->width() / 10);
+    msgb->setX(msgb->x() - mGm->width() / 2);
 }
 
-bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
-    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear :
-                                       eTerrain::buildable;
-    ePathFinder p([allowed](eTileBase* const t) {
+bool eGameWidget::roadPath(std::vector<eOrientation> &path)
+{
+    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear : eTerrain::buildable;
+    ePathFinder p([allowed](eTileBase *const t)
+                  {
         const auto terr = t->terrain();
         const bool tr = static_cast<bool>(allowed & terr);
         if(!tr) return false;
@@ -1469,23 +1684,23 @@ bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
                        bt == eBuildingType::none;
         if(!r) return false;
         if(!t->walkableElev() && t->isElevationTile()) return false;
-        return true;
-    }, [&](eTileBase* const t) {
-        return t->x() == mPressedTX && t->y() == mPressedTY;
-    });
+        return true; }, [&](eTileBase *const t)
+                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
     const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
     const int w = mBoard->width();
     const int h = mBoard->height();
     const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if(!r) return false;
+    if (!r)
+        return false;
     return p.extractPath(path);
 }
 
-std::vector<eTile*> eGameWidget::roadPath() const {
+std::vector<eTile *> eGameWidget::roadPath() const
+{
     std::vector<eOrientation> orients;
-    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear :
-                                       eTerrain::buildable;
-    ePathFinder p([allowed](eTileBase* const t) {
+    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear : eTerrain::buildable;
+    ePathFinder p([allowed](eTileBase *const t)
+                  {
         const auto terr = t->terrain();
         const bool tr = static_cast<bool>(allowed & terr);
         if(!tr) return false;
@@ -1494,28 +1709,33 @@ std::vector<eTile*> eGameWidget::roadPath() const {
                        bt == eBuildingType::none;
         if(!r) return false;
         if(!t->walkableElev() && t->isElevationTile()) return false;
-        return true;
-    }, [&](eTileBase* const t) {
-        return t->x() == mPressedTX && t->y() == mPressedTY;
-    });
+        return true; }, [&](eTileBase *const t)
+                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
     const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
     const int w = mBoard->width();
     const int h = mBoard->height();
-    if(!p.findPath({0, 0, w, h}, startTile, 100, true, w, h)) return {};
-    if(!p.extractPath(orients)) return {};
-    std::vector<eTile*> tiles;
-    eTile* t = startTile;
-    for(int i = orients.size() - 1; i >= 0; i--) {
-        if(!t) break;
+    if (!p.findPath({0, 0, w, h}, startTile, 100, true, w, h))
+        return {};
+    if (!p.extractPath(orients))
+        return {};
+    std::vector<eTile *> tiles;
+    eTile *t = startTile;
+    for (int i = orients.size() - 1; i >= 0; i--)
+    {
+        if (!t)
+            break;
         tiles.push_back(t);
         t = t->neighbour<eTile>(orients[i]);
     }
-    if(t) tiles.push_back(t);
+    if (t)
+        tiles.push_back(t);
     return tiles;
 }
 
-bool eGameWidget::columnPath(std::vector<eOrientation>& path) {
-    ePathFinder p([](eTileBase* const t) {
+bool eGameWidget::columnPath(std::vector<eOrientation> &path)
+{
+    ePathFinder p([](eTileBase *const t)
+                  {
         const auto terr = t->terrain();
         const bool tr = static_cast<bool>(eTerrain::buildable & terr);
         if(!tr) return false;
@@ -1526,114 +1746,156 @@ bool eGameWidget::columnPath(std::vector<eOrientation>& path) {
                        bt == eBuildingType::corinthianColumn ||
                        bt == eBuildingType::none;
         if(!r) return false;
-        return true;
-    }, [&](eTileBase* const t) {
-        return t->x() == mPressedTX && t->y() == mPressedTY;
-    });
+        return true; }, [&](eTileBase *const t)
+                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
     const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
     const int w = mBoard->width();
     const int h = mBoard->height();
     const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if(!r) return false;
+    if (!r)
+        return false;
     return p.extractPath(path);
 }
 
-bool eGameWidget::bridgeTiles(eTile* const t, const eTerrain terr,
-                              std::vector<eTile*>& tiles,
-                              bool& rotated) {
+bool eGameWidget::bridgeTiles(eTile *const t, const eTerrain terr,
+                              std::vector<eTile *> &tiles,
+                              bool &rotated)
+{
     tiles.clear();
     rotated = false;
-    if(!t) return false;
-    if(!t->isShoreTile(terr)) return false;
-    if(t->underBuilding()) return false;
+    if (!t)
+        return false;
+    if (!t->isShoreTile(terr))
+        return false;
+    if (t->underBuilding())
+        return false;
     const auto tl = t->topLeft<eTile>();
-    if(!tl) return false;
+    if (!tl)
+        return false;
     const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
+    if (!tr)
+        return false;
     const auto bl = t->bottomLeft<eTile>();
-    if(!bl) return false;
+    if (!bl)
+        return false;
     const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
+    if (!br)
+        return false;
 
-    if(tr->isShoreTile(terr) && bl->isShoreTile(terr)) {
-        if(br->hasTerrain(terr)) {
-            if(tl->hasTerrain(terr)) return false;
+    if (tr->isShoreTile(terr) && bl->isShoreTile(terr))
+    {
+        if (br->hasTerrain(terr))
+        {
+            if (tl->hasTerrain(terr))
+                return false;
             auto tt = t;
             tiles.push_back(tt);
-            while(true) {
+            while (true)
+            {
                 const auto ttt = tt->bottomRight<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
+                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
+                    break;
                 tt = ttt;
                 tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
+                if (tt->isShoreTile(terr))
+                    break;
             }
-            if(!tt) return false;
+            if (!tt)
+                return false;
             const auto tt_tr = tt->topRight<eTile>();
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
+            if (!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr))
+            {
                 return false;
             }
             const auto tt_tl = tt->bottomRight<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
-        } else {
+            if (tt_tl->hasTerrain(terr))
+                return false;
+        }
+        else
+        {
             auto tt = t;
             tiles.push_back(tt);
-            while(true) {
+            while (true)
+            {
                 const auto ttt = tt->topLeft<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
+                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
+                    break;
                 tt = ttt;
                 tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
+                if (tt->isShoreTile(terr))
+                    break;
             }
-            if(!tt) return false;
+            if (!tt)
+                return false;
             const auto tt_tr = tt->topRight<eTile>();
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
+            if (!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr))
+            {
                 return false;
             }
             const auto tt_tl = tt->topLeft<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
+            if (tt_tl->hasTerrain(terr))
+                return false;
         }
         return !tr->underBuilding() && !bl->underBuilding();
-    } else if(tl->isShoreTile(terr) && br->isShoreTile(terr)) {
+    }
+    else if (tl->isShoreTile(terr) && br->isShoreTile(terr))
+    {
         rotated = true;
-        if(bl->hasTerrain(terr)) {
-            if(tr->hasTerrain(terr)) return false;
+        if (bl->hasTerrain(terr))
+        {
+            if (tr->hasTerrain(terr))
+                return false;
             auto tt = t;
             tiles.push_back(tt);
-            while(true) {
+            while (true)
+            {
                 const auto ttt = tt->bottomLeft<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
+                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
+                    break;
                 tt = ttt;
                 tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
+                if (tt->isShoreTile(terr))
+                    break;
             }
-            if(!tt) return false;
+            if (!tt)
+                return false;
             const auto tt_tl = tt->topLeft<eTile>();
             const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
+            if (!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr))
+            {
                 return false;
             }
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(tt_bl->hasTerrain(terr)) return false;
-        } else {
+            if (tt_bl->hasTerrain(terr))
+                return false;
+        }
+        else
+        {
             auto tt = t;
             tiles.push_back(tt);
-            while(true) {
+            while (true)
+            {
                 const auto ttt = tt->topRight<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
+                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
+                    break;
                 tt = ttt;
                 tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
+                if (tt->isShoreTile(terr))
+                    break;
             }
-            if(!tt) return false;
+            if (!tt)
+                return false;
             const auto tt_tl = tt->topLeft<eTile>();
             const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
+            if (!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr))
+            {
                 return false;
             }
             const auto tt_tr = tt->topRight<eTile>();
-            if(tt_tr->hasTerrain(terr)) return false;
+            if (tt_tr->hasTerrain(terr))
+                return false;
         }
         return !tl->underBuilding() && !br->underBuilding();
     }
@@ -1641,22 +1903,26 @@ bool eGameWidget::bridgeTiles(eTile* const t, const eTerrain terr,
     return false;
 }
 
-bool eGameWidget::canBuildAvenue(eTile* const t, const eCityId cid,
+bool eGameWidget::canBuildAvenue(eTile *const t, const eCityId cid,
                                  const ePlayerId pid,
-                                 const bool forestAllowed) const {
+                                 const bool forestAllowed) const
+{
     return mBoard->canBuildAvenue(t, cid, pid, forestAllowed);
 }
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
-void eGameWidget::updatePatrolPath() {
-    if(!mPatrolBuilding) {
+void eGameWidget::updatePatrolPath()
+{
+    if (!mPatrolBuilding)
+    {
         mPatrolPath.clear();
         mExcessPatrolPath.clear();
         mPatrolPath1.clear();
         mExcessPatrolPath1.clear();
         return;
     }
-    const bool r = mPatrolBuilding->updatePath([this]() {
+    const bool r = mPatrolBuilding->updatePath([this]()
+                                               {
         mPatrolPath.clear();
         mExcessPatrolPath.clear();
         mPatrolPath1.clear();
@@ -1733,9 +1999,9 @@ void eGameWidget::updatePatrolPath() {
         if(mPatrolBuilding->bothDirections()) {
             const auto guides = mPatrolBuilding->reversePatrolGuides();
             handlePatrolPath(mExcessPatrolPath1, guides);
-        }
-    });
-    if(!r) {
+        } });
+    if (!r)
+    {
         mPatrolPath.clear();
         mExcessPatrolPath.clear();
         mPatrolPath1.clear();
@@ -1743,18 +2009,20 @@ void eGameWidget::updatePatrolPath() {
     }
 }
 
-void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
+void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
+{
     mWalkerBuilding = nullptr;
-    if(pb) {
+    if (pb)
+    {
         mSavedViewMode = mViewMode;
 
         const auto fw = new eFramedWidget(window());
         fw->setType(eFrameType::message);
         const int p = fw->padding();
-        fw->resize(60*p, 11*p);
+        fw->resize(60 * p, 11 * p);
         addWidget(fw);
         fw->align(eAlignment::bottom);
-        fw->move((width() - mGm->width() - fw->width())/2, fw->y() - 2*p);
+        fw->move((width() - mGm->width() - fw->width()) / 2, fw->y() - 2 * p);
 
         const auto title = new eLabel("Waypoints", window());
         title->fitContent();
@@ -1763,28 +2031,29 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
         title->setY(p);
 
         const auto buttons = new eWidget(window());
-        buttons->resize(fw->width() - 2*p, 5*p);
+        buttons->resize(fw->width() - 2 * p, 5 * p);
         fw->addWidget(buttons);
         buttons->move(p, fw->height() - buttons->height() - p);
 
         const auto clearb = new eButton("clear", window());
         clearb->fitContent();
-        clearb->setPressAction([this]() {
+        clearb->setPressAction([this]()
+                               {
             if(!mPatrolBuilding) return;
             auto& pgs = mPatrolBuilding->patrolGuides();
             pgs.clear();
-            updatePatrolPath();
-        });
+            updatePatrolPath(); 
+            setViewMode(mSavedViewMode); });
         buttons->addWidget(clearb);
         clearb->align(eAlignment::vcenter);
 
         const auto resetb = new eButton("restore", window());
         resetb->fitContent();
-        resetb->setPressAction([this]() {
+        resetb->setPressAction([this]()
+                               {
             auto& pgs = mPatrolBuilding->patrolGuides();
             pgs = mSavedGuides;
-            updatePatrolPath();
-        });
+            updatePatrolPath(); });
         buttons->addWidget(resetb);
         resetb->align(eAlignment::vcenter);
 
@@ -1792,21 +2061,20 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
         const auto bothTxt = bd ? "both ways" : "one way";
         const auto bothb = new eButton(bothTxt, window());
         bothb->fitContent();
-        bothb->setPressAction([this, bothb]() {
+        bothb->setPressAction([this, bothb]()
+                              {
             const bool bd = mPatrolBuilding->bothDirections();
             mPatrolBuilding->setBothDirections(!bd);
             const auto bothTxt = bd ? "one way" : "both ways";
             bothb->setText(bothTxt);
-            updatePatrolPath();
-        });
+            updatePatrolPath(); });
         buttons->addWidget(bothb);
         bothb->align(eAlignment::vcenter);
 
         const auto closeb = new eButton(eLanguage::text("close"), window());
         closeb->fitContent();
-        closeb->setPressAction([this]() {
-            setPatrolBuilding(nullptr);
-        });
+        closeb->setPressAction([this]()
+                               { setPatrolBuilding(nullptr); });
         buttons->addWidget(closeb);
         closeb->align(eAlignment::vcenter);
 
@@ -1815,11 +2083,14 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
         mPatrolPathWid = fw;
 
         mSavedGuides = pb->patrolGuides();
-    } else if(mViewMode == eViewMode::patrolBuilding) {
+    }
+    else if (mViewMode == eViewMode::patrolBuilding)
+    {
         setViewMode(mSavedViewMode);
     }
 
-    if(mPatrolPathWid && !pb) {
+    if (mPatrolPathWid && !pb)
+    {
         mPatrolPathWid->deleteLater();
         mPatrolPathWid = nullptr;
     }
@@ -1828,11 +2099,13 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
     updatePatrolPath();
 }
 
-bool eGameWidget::inErase(const int tx, const int ty) {
+bool eGameWidget::inErase(const int tx, const int ty)
+{
     const auto mode = mGm->mode();
     const bool e = mode == eBuildingMode::erase;
     const bool high = mTem->visible() || e;
-    if(!high) return false;
+    if (!high)
+        return false;
 
     const int sMinX = std::min(mPressedTX, mHoverTX);
     const int sMinY = std::min(mPressedTY, mHoverTY);
@@ -1840,135 +2113,201 @@ bool eGameWidget::inErase(const int tx, const int ty) {
     const int sMaxY = std::max(mPressedTY, mHoverTY);
 
     bool s = false;
-    if(mLeftPressed &&
-       tx >= sMinX && tx <= sMaxX &&
-       ty >= sMinY && ty <= sMaxY) {
+    if (mLeftPressed &&
+        tx >= sMinX && tx <= sMaxX &&
+        ty >= sMinY && ty <= sMaxY)
+    {
         s = true;
     }
     const bool h = tx == mHoverTX && ty == mHoverTY;
     return h || s;
 }
 
-bool eGameWidget::inErase(const SDL_Rect& rect) {
-    for(int x = rect.x; x < rect.x + rect.w; x++) {
-        for(int y = rect.y; y < rect.y + rect.h; y++) {
+bool eGameWidget::inErase(const SDL_Rect &rect)
+{
+    for (int x = rect.x; x < rect.x + rect.w; x++)
+    {
+        for (int y = rect.y; y < rect.y + rect.h; y++)
+        {
             const bool r = inErase(x, y);
-            if(r) return true;
+            if (r)
+                return true;
         }
     }
     return false;
 }
 
-bool eGameWidget::inErase(eAgoraBase* const a) {
+bool eGameWidget::inErase(eAgoraBase *const a)
+{
     const auto rr = a->tileRect();
-    for(int x = rr.x; x < rr.x + rr.w; x++) {
-        for(int y = rr.y; y < rr.y + rr.h; y++) {
-            if(!inErase(x, y)) continue;
+    for (int x = rr.x; x < rr.x + rr.w; x++)
+    {
+        for (int y = rr.y; y < rr.y + rr.h; y++)
+        {
+            if (!inErase(x, y))
+                continue;
             const auto t = mBoard->tile(x, y);
-            if(!t) continue;
+            if (!t)
+                continue;
             const auto ub = t->underBuilding();
-            if(!ub) continue;
-            const auto v = dynamic_cast<eVendor*>(ub);
-            if(!v) return true;
+            if (!ub)
+                continue;
+            const auto v = dynamic_cast<eVendor *>(ub);
+            if (!v)
+                return true;
         }
     }
     return false;
 }
 
-bool eGameWidget::inErase(eBuilding* const b) {
-    if(!b) return false;
+bool eGameWidget::inErase(eBuilding *const b)
+{
+    if (!b)
+        return false;
     const auto mode = mGm->mode();
     const bool e = mode == eBuildingMode::erase;
     const bool high = mTem->visible() || e;
-    if(!high) return false;
+    if (!high)
+        return false;
 
     SDL_Rect rect;
-    if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
+    if (const auto sb = dynamic_cast<eSanctBuilding *>(b))
+    {
         const auto s = sb->monument();
         rect = s->tileRect();
-    } else if(const auto v = dynamic_cast<eVendor*>(b)) {
-        if(inErase(b->tileRect())) return true;
+    }
+    else if (const auto v = dynamic_cast<eVendor *>(b))
+    {
+        if (inErase(b->tileRect()))
+            return true;
         const auto a = v->agora();
         return inErase(a);
-    } else if(const auto as = dynamic_cast<eAgoraSpace*>(b)) {
+    }
+    else if (const auto as = dynamic_cast<eAgoraSpace *>(b))
+    {
         const auto a = as->agora();
         return inErase(a);
-    } else if(const auto r = dynamic_cast<eRoad*>(b)) {
-        if(r->isBridge()) {
+    }
+    else if (const auto r = dynamic_cast<eRoad *>(b))
+    {
+        if (r->isBridge())
+        {
             const auto t = r->centerTile();
-            if(t) {
-                std::vector<eTile*> tiles;
+            if (t)
+            {
+                std::vector<eTile *> tiles;
                 r->bridgeConnectedTiles(tiles);
-                for(const auto t : tiles) {
+                for (const auto t : tiles)
+                {
                     const bool r = inErase(t->x(), t->y());
-                    if(r) return true;
+                    if (r)
+                        return true;
                 }
                 return false;
             }
             return false;
-        } else {
-            if(const auto a = r->underAgora()) {
+        }
+        else
+        {
+            if (const auto a = r->underAgora())
+            {
                 return inErase(a);
-            } else if(const auto g = r->underGatehouse()) {
+            }
+            else if (const auto g = r->underGatehouse())
+            {
                 return inErase(g);
-            } else rect = b->tileRect();
+            }
+            else
+                rect = b->tileRect();
         }
-    } else if(const auto a = dynamic_cast<eAgoraBase*>(b)) {
+    }
+    else if (const auto a = dynamic_cast<eAgoraBase *>(b))
+    {
         return inErase(a);
-    } else if(const auto p = dynamic_cast<ePalace*>(b)) {
-        const auto& ts = p->tiles();
-        for(const auto& t : ts) {
+    }
+    else if (const auto p = dynamic_cast<ePalace *>(b))
+    {
+        const auto &ts = p->tiles();
+        for (const auto &t : ts)
+        {
             const auto tt = t->centerTile();
             const int tx = tt->x();
             const int ty = tt->y();
-            if(inErase(tx, ty)) return true;
+            if (inErase(tx, ty))
+                return true;
         }
         rect = p->tileRect();
-    } else if(const auto p = dynamic_cast<ePalaceTile*>(b)) {
+    }
+    else if (const auto p = dynamic_cast<ePalaceTile *>(b))
+    {
         return inErase(p->palace());
-    } else if(const auto p = dynamic_cast<eGodMonument*>(b)) {
-        const auto& ts = p->tiles();
-        for(const auto& t : ts) {
+    }
+    else if (const auto p = dynamic_cast<eGodMonument *>(b))
+    {
+        const auto &ts = p->tiles();
+        for (const auto &t : ts)
+        {
             const auto tt = t->centerTile();
             const int tx = tt->x();
             const int ty = tt->y();
-            if(inErase(tx, ty)) return true;
+            if (inErase(tx, ty))
+                return true;
         }
         rect = p->tileRect();
-    } else if(const auto t = dynamic_cast<eGodMonumentTile*>(b)) {
+    }
+    else if (const auto t = dynamic_cast<eGodMonumentTile *>(b))
+    {
         return inErase(t->monument());
-    } else if(const auto hr = dynamic_cast<eHorseRanch*>(b)) {
+    }
+    else if (const auto hr = dynamic_cast<eHorseRanch *>(b))
+    {
         const bool e1 = inErase(hr->tileRect());
-        if(e1) return true;
+        if (e1)
+            return true;
         const auto hre = hr->enclosure();
         rect = hre->tileRect();
-    } else if(const auto hr = dynamic_cast<eHorseRanchEnclosure*>(b)) {
+    }
+    else if (const auto hr = dynamic_cast<eHorseRanchEnclosure *>(b))
+    {
         const bool e1 = inErase(hr->tileRect());
-        if(e1) return true;
+        if (e1)
+            return true;
         const auto hre = hr->ranch();
         rect = hre->tileRect();
-    } else if(const auto tp = dynamic_cast<eTradePost*>(b)) {
+    }
+    else if (const auto tp = dynamic_cast<eTradePost *>(b))
+    {
         const bool e1 = inErase(tp->tileRect());
-        if(e1) return true;
+        if (e1)
+            return true;
         const auto ub = tp->unpackBuilding();
-        if(!ub) return false;
+        if (!ub)
+            return false;
         rect = ub->tileRect();
-    } else if(const auto p = dynamic_cast<ePier*>(b)) {
+    }
+    else if (const auto p = dynamic_cast<ePier *>(b))
+    {
         const bool e1 = inErase(p->tileRect());
-        if(e1) return true;
+        if (e1)
+            return true;
         const auto tp = p->tradePost();
-        if(!tp) return false;
+        if (!tp)
+            return false;
         rect = tp->tileRect();
-    } else {
+    }
+    else
+    {
         rect = b->tileRect();
     }
     return inErase(rect);
 }
 
-bool eGameWidget::inRepair(const int tx, const int ty) {
+bool eGameWidget::inRepair(const int tx, const int ty)
+{
     const auto mode = mGm->mode();
     const bool r = mode == eBuildingMode::repair;
-    if(!r) return false;
+    if (!r)
+        return false;
 
     const int sMinX = std::min(mPressedTX, mHoverTX);
     const int sMinY = std::min(mPressedTY, mHoverTY);
@@ -1976,42 +2315,54 @@ bool eGameWidget::inRepair(const int tx, const int ty) {
     const int sMaxY = std::max(mPressedTY, mHoverTY);
 
     bool s = false;
-    if(mLeftPressed &&
-       tx >= sMinX && tx <= sMaxX &&
-       ty >= sMinY && ty <= sMaxY) {
+    if (mLeftPressed &&
+        tx >= sMinX && tx <= sMaxX &&
+        ty >= sMinY && ty <= sMaxY)
+    {
         s = true;
     }
     const bool h = tx == mHoverTX && ty == mHoverTY;
     return h || s;
 }
 
-
-bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
+bool eGameWidget::inPatrolBuildingHover(eBuilding *const b)
+{
     const auto mode = mGm->mode();
     const bool e = mode == eBuildingMode::none;
-    if(!e) return false;
-    if(!b) return false;
+    if (!e)
+        return false;
+    if (!b)
+        return false;
     const auto cid = b->cityId();
     const auto pid = mBoard->cityIdToPlayerId(cid);
     const auto ppid = mBoard->personPlayer();
-    if(pid != ppid) return false;
-    if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
-        if(!pb->spawnsPatrolers()) return false;
+    if (pid != ppid)
+        return false;
+    if (const auto pb = dynamic_cast<ePatrolBuildingBase *>(b))
+    {
+        if (!pb->spawnsPatrolers())
+            return false;
         const auto r = pb->tileRect();
         const SDL_Point hover{mHoverTX, mHoverTY};
         const bool hovered = SDL_PointInRect(&hover, &r);
         return hovered;
-    } else if(const auto as = dynamic_cast<eAgoraSpace*>(b)) {
+    }
+    else if (const auto as = dynamic_cast<eAgoraSpace *>(b))
+    {
         return inPatrolBuildingHover(as->agora());
-    } else if(const auto v = dynamic_cast<eVendor*>(b)) {
+    }
+    else if (const auto v = dynamic_cast<eVendor *>(b))
+    {
         return inPatrolBuildingHover(v->agora());
     }
     return false;
 }
 
-void eGameWidget::switchPause() {
+void eGameWidget::switchPause()
+{
     mPaused = !mPaused;
-    if(mPaused && !mPausedLabel) {
+    if (mPaused && !mPausedLabel)
+    {
         const auto hotkeyName = SDL_GetScancodeName(window()->settings().fHotkeyPause);
         const auto str = std::string("Game Paused '") + hotkeyName + "' continues";
         const auto space = "     ";
@@ -2023,12 +2374,14 @@ void eGameWidget::switchPause() {
         addWidget(mPausedLabel);
         const int vw = width() - mGm->width();
         const int w = mPausedLabel->width();
-        mPausedLabel->setX((vw - w)/2);
+        mPausedLabel->setX((vw - w) / 2);
         const int p = mPausedLabel->padding();
-        mPausedLabel->setY(mTopBar->height() + 2*p);
+        mPausedLabel->setY(mTopBar->height() + 2 * p);
         updateTipPositions();
         updateToastPositions();
-    } else if(mPausedLabel) {
+    }
+    else if (mPausedLabel)
+    {
         mPausedLabel->deleteLater();
         mPausedLabel = nullptr;
         updateTipPositions();
@@ -2037,29 +2390,35 @@ void eGameWidget::switchPause() {
     updateToastPositions();
 }
 
-void eGameWidget::setSpeedId(const int id) {
+void eGameWidget::setSpeedId(const int id)
+{
     mSpeedId = std::clamp(id, 0, sMaxSpeedId);
     mSpeed = sSpeeds[mSpeedId];
 }
 
-void eGameWidget::showSpeedLabel() {
+void eGameWidget::showSpeedLabel()
+{
     const auto text = std::string("Game speed: ") + sSpeedLabels[mSpeedId];
-    if(!mSpeedLabel) {
+    if (!mSpeedLabel)
+    {
         mSpeedLabel = new eFramedLabel(text, window());
         mSpeedLabel->setType(eFrameType::message);
         mSpeedLabel->setSmallFontSize();
         mSpeedLabel->setHugePadding();
         addWidget(mSpeedLabel);
-    } else {
+    }
+    else
+    {
         mSpeedLabel->setText(text);
     }
     mSpeedLabel->fitContent();
     const int vw = width() - mGm->width();
-    mSpeedLabel->setX((vw - mSpeedLabel->width())/2);
+    mSpeedLabel->setX((vw - mSpeedLabel->width()) / 2);
     const int p = mSpeedLabel->padding();
-    int y = mTopBar->height() + 2*p;
-    if(mPausedLabel) {
-        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
+    int y = mTopBar->height() + 2 * p;
+    if (mPausedLabel)
+    {
+        y = mPausedLabel->y() + mPausedLabel->height() + 2 * p;
     }
     mSpeedLabel->setY(y);
     updateTipPositions();
@@ -2067,122 +2426,214 @@ void eGameWidget::showSpeedLabel() {
     mSpeedLabelHideFrame = mFrame + 120;
 }
 
-bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
-    if(mLocked) return true;
+bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
+{
+    if (mLocked)
+        return true;
     const auto k = e.key();
-    const auto& hotkeys = window()->settings();
-    if(updateSmoothScrollKey(k, true)) return true;
-    if(k == hotkeys.fHotkeySpeedUp ||
-       k == SDL_Scancode::SDL_SCANCODE_KP_PLUS) {
+    const auto &hotkeys = window()->settings();
+    if (updateSmoothScrollKey(k, true))
+        return true;
+    if (k == hotkeys.fHotkeySpeedUp ||
+        k == SDL_Scancode::SDL_SCANCODE_KP_PLUS)
+    {
         const int oldSpeedId = mSpeedId;
         setSpeedId(mSpeedId + 1);
-        if(mSpeedId != oldSpeedId) showSpeedLabel();
-    } else if(k == hotkeys.fHotkeySpeedDown ||
-              k == SDL_Scancode::SDL_SCANCODE_KP_MINUS) {
+        if (mSpeedId != oldSpeedId)
+            showSpeedLabel();
+    }
+    else if (k == hotkeys.fHotkeySpeedDown ||
+             k == SDL_Scancode::SDL_SCANCODE_KP_MINUS)
+    {
         const int oldSpeedId = mSpeedId;
         setSpeedId(mSpeedId - 1);
-        if(mSpeedId != oldSpeedId) showSpeedLabel();
-    } else if(k == hotkeys.fHotkeyRotatePreview) {
+        if (mSpeedId != oldSpeedId)
+            showSpeedLabel();
+    }
+    else if (k == hotkeys.fHotkeyRotatePreview)
+    {
         mRotate = !mRotate;
-        mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
+        mRotateFrame = (mRotateFrame / gRotateFrames + 1) * gRotateFrames;
         mRotateId++;
-        if(mRotateId > 3) mRotateId = 0;
-    } else if(k == hotkeys.fHotkeyPause) {
-        if(!mMsgBox) switchPause();
-    } else if(k == hotkeys.fHotkeyCopyBuilding) {
+        if (mRotateId > 3)
+            mRotateId = 0;
+    }
+    else if (k == hotkeys.fHotkeyPause)
+    {
+        if (!mMsgBox)
+            switchPause();
+    }
+    else if (k == hotkeys.fHotkeyCopyBuilding)
+    {
         selectHoveredBuildingMode();
-    } else if(k == hotkeys.fHotkeyDeleteTool) {
+    }
+    else if (k == hotkeys.fHotkeyDeleteTool)
+    {
         mGm->setMode(eBuildingMode::erase);
-    } else if(k == hotkeys.fHotkeyRepairTool) {
+    }
+    else if (k == hotkeys.fHotkeyRepairTool)
+    {
         mGm->setMode(eBuildingMode::repair);
     }
-    else if(k == hotkeys.fHotkeyUndo) {
+    else if (k == hotkeys.fHotkeyUndo)
+    {
         mBoard->undoLastAction();
         mGm->update();
-    } else if(k == hotkeys.fHotkeyShowRoadsOverlay) {
+    }
+    else if (k == hotkeys.fHotkeyShowRoadsOverlay)
+    {
         toggleViewMode(eViewMode::roads);
-    } else if(k == hotkeys.fHotkeyBuildRoad) {
+    }
+    else if (k == hotkeys.fHotkeyBuildRoad)
+    {
         mGm->setMode(eBuildingMode::road);
-    } else if(k == hotkeys.fHotkeyBuildRoadblock) {
+    }
+    else if (k == hotkeys.fHotkeyBuildRoadblock)
+    {
         mGm->setMode(eBuildingMode::roadblock);
-    } else if(k == hotkeys.fHotkeyBuildMaintenanceOffice) {
+    }
+    else if (k == hotkeys.fHotkeyBuildMaintenanceOffice)
+    {
         mGm->setMode(eBuildingMode::maintenanceOffice);
-    } else if(k == hotkeys.fHotkeyBuildCommonHousing) {
+    }
+    else if (k == hotkeys.fHotkeyBuildCommonHousing)
+    {
         mGm->setMode(eBuildingMode::commonHousing);
-    } else if(k == hotkeys.fHotkeyBuildWatchpost) {
+    }
+    else if (k == hotkeys.fHotkeyBuildWatchpost)
+    {
         mGm->setMode(eBuildingMode::watchpost);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT) {
+    }
+    else if (k == SDL_Scancode::SDL_SCANCODE_LEFT)
+    {
         setDX(mDX + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHT) {
+    }
+    else if (k == SDL_Scancode::SDL_SCANCODE_RIGHT)
+    {
         setDX(mDX - 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_UP) {
+    }
+    else if (k == SDL_Scancode::SDL_SCANCODE_UP)
+    {
         setDY(mDY + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN) {
+    }
+    else if (k == SDL_Scancode::SDL_SCANCODE_DOWN)
+    {
         setDY(mDY - 35);
-    } else if(k == hotkeys.fHotkeyBookmark1) {
-        if(e.ctrlPressed()) {
+    }
+    else if (k == hotkeys.fHotkeyBookmark1)
+    {
+        if (e.ctrlPressed())
+        {
             setBookmark(1);
-        } else {
+        }
+        else
+        {
             viewBookmark(1);
         }
-    } else if(k == hotkeys.fHotkeyBookmark2) {
-        if(e.ctrlPressed()) {
+    }
+    else if (k == hotkeys.fHotkeyBookmark2)
+    {
+        if (e.ctrlPressed())
+        {
             setBookmark(2);
-        } else {
+        }
+        else
+        {
             viewBookmark(2);
         }
-    } else if(k == hotkeys.fHotkeyBookmark3) {
-        if(e.ctrlPressed()) {
+    }
+    else if (k == hotkeys.fHotkeyBookmark3)
+    {
+        if (e.ctrlPressed())
+        {
             setBookmark(3);
-        } else {
+        }
+        else
+        {
             viewBookmark(3);
         }
-    } else if(k == hotkeys.fHotkeyBookmark4) {
-        if(e.ctrlPressed()) {
+    }
+    else if (k == hotkeys.fHotkeyBookmark4)
+    {
+        if (e.ctrlPressed())
+        {
             setBookmark(4);
-        } else {
+        }
+        else
+        {
             viewBookmark(4);
         }
-    } else if(k == hotkeys.fHotkeyMenuTab1) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab1)
+    {
         mGm->selectTab(0);
-    } else if(k == hotkeys.fHotkeyMenuTab2) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab2)
+    {
         mGm->selectTab(1);
-    } else if(k == hotkeys.fHotkeyMenuTab3) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab3)
+    {
         mGm->selectTab(2);
-    } else if(k == hotkeys.fHotkeyMenuTab4) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab4)
+    {
         mGm->selectTab(3);
-    } else if(k == hotkeys.fHotkeyMenuTab5) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab5)
+    {
         mGm->selectTab(4);
-    } else if(k == hotkeys.fHotkeyMenuTab6) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab6)
+    {
         mGm->selectTab(5);
-    } else if(k == hotkeys.fHotkeyMenuTab7) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab7)
+    {
         mGm->selectTab(6);
-    } else if(k == hotkeys.fHotkeyMenuTab8) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab8)
+    {
         mGm->selectTab(7);
-    } else if(k == hotkeys.fHotkeyMenuTab9) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab9)
+    {
         mGm->selectTab(8);
-    } else if(k == hotkeys.fHotkeyMenuTab10) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab10)
+    {
         mGm->selectTab(9);
-    } else if(k == hotkeys.fHotkeyMenuTab11) {
+    }
+    else if (k == hotkeys.fHotkeyMenuTab11)
+    {
         mGm->selectTab(10);
-    } else if(k == hotkeys.fHotkeyGameMenu) {
-        if(!mMsgBox && !mBoard->editorMode()) {
+    }
+    else if (k == hotkeys.fHotkeyGameMenu)
+    {
+        if (!mMsgBox && !mBoard->editorMode())
+        {
             mBoard->waitUntilFinished();
             const auto menu = new eGameMainMenu(window());
-            menu->resize(width()/4, height()/2);
+            menu->resize(width() / 4, height() / 2);
             const auto w = window();
             const bool wasPaused = mPaused;
-            if(!mPaused) switchPause();
-            const auto resumeAct = [this, wasPaused, menu]() {
-                if(!wasPaused) switchPause();
+            if (!mPaused)
+                switchPause();
+            const auto resumeAct = [this, wasPaused, menu]()
+            {
+                if (!wasPaused)
+                    switchPause();
                 menu->deleteLater();
             };
-            const auto saveAct = [this, w]() {
+            const auto saveAct = [this, w]()
+            {
                 const auto fw = new eLoadGame(w);
-                const auto func = [w](const std::string& path) {
+                const auto func = [w](const std::string &path)
+                {
                     return w->saveGame(path);
                 };
-                const auto closeAct = [this, fw]() {
+                const auto closeAct = [this, fw]()
+                {
                     removeWidget(fw);
                     fw->deleteLater();
                 };
@@ -2193,17 +2644,20 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
                 fw->align(eAlignment::center);
                 w->execDialog(fw);
             };
-            const auto loadAct = [this, w]() {
+            const auto loadAct = [this, w]()
+            {
                 const auto fw = new eLoadGame(w);
-                const auto func = [w, fw](const std::string& path) {
+                const auto func = [w, fw](const std::string &path)
+                {
                     fw->deleteLater();
-                    w->addSlot([w, path]() {
+                    w->addSlot([w, path]()
+                               {
                         w->closeGame();
-                        w->loadGame(path);
-                    });
+                        w->loadGame(path); });
                     return true;
                 };
-                const auto closeAct = [fw]() {
+                const auto closeAct = [fw]()
+                {
                     fw->deleteLater();
                 };
                 const auto dir = w->leaderSaveDir();
@@ -2212,14 +2666,18 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
                 w->execDialog(fw, true, closeAct);
             };
             const auto exitAct = [w]() { // "Exit game" button in in-game options popup
-                w->addSlot([w]() { w->closeGame(); });
+                w->addSlot([w]()
+                           { w->closeGame(); });
             };
-            const auto optionsAct = [this]() {
+            const auto optionsAct = [this]()
+            {
                 showOptionsMenu();
             };
             stopSmoothScroll();
-            const auto closeMenu = [this, wasPaused, menu]() {
-                if(!wasPaused) switchPause();
+            const auto closeMenu = [this, wasPaused, menu]()
+            {
+                if (!wasPaused)
+                    switchPause();
                 menu->deleteLater();
             };
             menu->initialize(resumeAct, saveAct, loadAct, optionsAct, exitAct);
@@ -2231,74 +2689,99 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
     return true;
 }
 
-bool eGameWidget::keyReleaseEvent(const eKeyPressEvent& e) {
+bool eGameWidget::keyReleaseEvent(const eKeyPressEvent &e)
+{
     updateSmoothScrollKey(e.key(), false);
     return true;
 }
 
 bool eGameWidget::updateSmoothScrollKey(const SDL_Scancode k,
-                                        const bool pressed) {
-    const auto& hotkeys = window()->settings();
-    if(k == hotkeys.fHotkeyScrollLeft) {
+                                        const bool pressed)
+{
+    const auto &hotkeys = window()->settings();
+    if (k == hotkeys.fHotkeyScrollLeft)
+    {
         mScrollLeft = pressed;
         return true;
-    } else if(k == hotkeys.fHotkeyScrollRight) {
+    }
+    else if (k == hotkeys.fHotkeyScrollRight)
+    {
         mScrollRight = pressed;
         return true;
-    } else if(k == hotkeys.fHotkeyScrollUp) {
+    }
+    else if (k == hotkeys.fHotkeyScrollUp)
+    {
         mScrollUp = pressed;
         return true;
-    } else if(k == hotkeys.fHotkeyScrollDown) {
+    }
+    else if (k == hotkeys.fHotkeyScrollDown)
+    {
         mScrollDown = pressed;
         return true;
     }
     return false;
 }
 
-void eGameWidget::smoothScroll() {
+void eGameWidget::smoothScroll()
+{
     int dx = 0;
     int dy = 0;
     const int d = mKeyScrollSpeed;
-    if(mScrollLeft) dx += d;
-    if(mScrollRight) dx -= d;
-    if(mScrollUp) dy += d;
-    if(mScrollDown) dy -= d;
-    if(dx) setDX(mDX + dx);
-    if(dy) setDY(mDY + dy);
+    if (mScrollLeft)
+        dx += d;
+    if (mScrollRight)
+        dx -= d;
+    if (mScrollUp)
+        dy += d;
+    if (mScrollDown)
+        dy -= d;
+    if (dx)
+        setDX(mDX + dx);
+    if (dy)
+        setDY(mDY + dy);
 }
 
-void eGameWidget::setKeyScrollSpeed(const int speed) {
+void eGameWidget::setKeyScrollSpeed(const int speed)
+{
     mKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
     window()->setKeyScrollSpeed(mKeyScrollSpeed * 10);
 }
 
-void eGameWidget::updateKeyScrollSpeed(const int speed) {
+void eGameWidget::updateKeyScrollSpeed(const int speed)
+{
     mKeyScrollSpeed = speed * 5;
 }
 
-void eGameWidget::stopSmoothScroll() {
+void eGameWidget::stopSmoothScroll()
+{
     mScrollLeft = false;
     mScrollRight = false;
     mScrollUp = false;
     mScrollDown = false;
 }
 
-bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
+bool eGameWidget::mousePressEvent(const eMouseEvent &e)
+{
     mPressedButtons = mPressedButtons | e.button();
-    if(mLocked) return true;
+    if (mLocked)
+        return true;
     mGm->closeBuildWidget();
     mMovedSincePress = false;
     const auto b = e.button();
-    if(b != eMouseButton::middle) {
+    if (b != eMouseButton::middle)
+    {
         eSounds::playButtonSound();
     }
-    switch(b) {
+    switch (b)
+    {
     case eMouseButton::middle:
         mLastX = e.x();
         mLastY = e.y();
         return true;
-    case eMouseButton::left: {
-        if(hasInfoWidget()) return true;
+    case eMouseButton::left:
+    {
+        if (hasInfoWidget())
+            return true;
         mLeftPressed = true;
         int tx;
         int ty;
@@ -2308,23 +2791,35 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         mPressedX = e.x();
         mPressedY = e.y();
         const auto tile = mBoard->tile(tx, ty);
-        if(mTem->visible()) {
+        if (mTem->visible())
+        {
             mInflTiles = mHoverTiles;
         }
-        if(mPatrolBuilding) {
-            if(!tile) return true;
-            setViewMode(eViewMode::patrolBuilding);
-            auto& pgs = mPatrolBuilding->patrolGuides();
+        if (mPatrolBuilding)
+        {
+            if (!tile)
+                return true;
+            auto &pgs = mPatrolBuilding->patrolGuides();
             const auto it = findGuide(tx, ty);
-            if(it != pgs.end()) {
+            if (it != pgs.end())
+            {
                 pgs.erase(it);
-            } else {
-                if(tile->hasRoad()) pgs.push_back({tx, ty});
+            }
+            else
+            {
+                if (tile->hasRoad())
+                {
+                    if (mViewMode != eViewMode::patrolBuilding)
+                        setViewMode(eViewMode::patrolBuilding);
+                    pgs.push_back({tx, ty});
+                }
             }
             updatePatrolPath();
         }
-    } return true;
-    case eMouseButton::right: {
+    }
+        return true;
+    case eMouseButton::right:
+    {
         mRightPressed = true;
         mRightPanning = false;
         mLastX = e.x();
@@ -2332,30 +2827,39 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         mPressedX = e.x();
         mPressedY = e.y();
         return true;
-    } break;
-    default: return true;
+    }
+    break;
+    default:
+        return true;
     }
     return true;
 }
 
-bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
-    for(const auto w : children()) {
-        const auto d = dynamic_cast<eModal*>(w);
-        if(d && d->visible()) {
+bool eGameWidget::rightClickRelease(const eMouseEvent &e)
+{
+    for (const auto w : children())
+    {
+        const auto d = dynamic_cast<eModal *>(w);
+        if (d && d->visible())
+        {
             d->close();
             return true;
         }
     }
-    if(mGm->mode() != eBuildingMode::none) {
+    if (mGm->mode() != eBuildingMode::none)
+    {
         mGm->clearMode();
         return true;
     }
-    const auto& solds = mBoard->selectedSoldiers();
-    if(!solds.empty()) return false;
-    const auto& trims = mBoard->selectedTriremes();
-    if(!trims.empty()) return false;
+    const auto &solds = mBoard->selectedSoldiers();
+    if (!solds.empty())
+        return false;
+    const auto &trims = mBoard->selectedTriremes();
+    if (!trims.empty())
+        return false;
 
-    if(mPatrolBuilding) {
+    if (mPatrolBuilding)
+    {
         setPatrolBuilding(nullptr);
         return true;
     }
@@ -2363,33 +2867,43 @@ bool eGameWidget::rightClickRelease(const eMouseEvent& e) {
     int ty;
     pixToId(e.x(), e.y(), tx, ty);
     const auto tile = mBoard->tile(tx, ty);
-    if(!tile) return true;
+    if (!tile)
+        return true;
     const auto b = tile->underBuilding();
     const auto chars = tile->characters();
-    std::vector<eCharacter*> chars2;
-    for(const auto& c : chars) {
+    std::vector<eCharacter *> chars2;
+    for (const auto &c : chars)
+    {
         const auto type = c->type();
-        if(type == eCharacterType::trailer) continue;
-        if(c->dead()) continue;
+        if (type == eCharacterType::trailer)
+            continue;
+        if (c->dead())
+            continue;
         chars2.push_back(c.get());
     }
-    if(!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type()))) {
+    if (!chars2.empty() && (!b || eBuilding::sFlatBuilding(b->type())))
+    {
         openInfoWidget(chars2);
-    } else if(b) {
-        if(b->type() == eBuildingType::road) return true;
+    }
+    else if (b)
+    {
+        if (b->type() == eBuildingType::road)
+            return true;
         eSounds::playSoundForBuilding(b);
         const auto cid = tile->cityId();
         const auto pid = mBoard->cityIdToPlayerId(cid);
         const auto ppid = mBoard->personPlayer();
-        if(pid != ppid && !mBoard->editorMode()) return true;
+        if (pid != ppid && !mBoard->editorMode())
+            return true;
         openInfoWidget(b);
     }
     return true;
 }
 
-void brushTiles(eGameBoard* const board, const int bSize,
+void brushTiles(eGameBoard *const board, const int bSize,
                 const int cx, const int cy,
-                std::vector<eTile*>& result) {
+                std::vector<eTile *> &result)
+{
     int cdx0;
     int cdy0;
     eTileHelper::tileIdToDTileId(cx, cy, cdx0, cdy0);
@@ -2398,60 +2912,77 @@ void brushTiles(eGameBoard* const board, const int bSize,
     int dx0;
     int dy0;
     eTileHelper::tileIdToDTileId(x0, y0, dx0, dy0);
-    for(int ddy = 0; ddy < 2*bSize - 1; ddy++) {
+    for (int ddy = 0; ddy < 2 * bSize - 1; ddy++)
+    {
         const int dy = dy0 + ddy;
         const int w = (ddy % 2) ? bSize - 1 : bSize;
         int dx = dx0;
-        if(ddy % 2) {
-            if(cdy0 % 2 == bSize % 2) {
+        if (ddy % 2)
+        {
+            if (cdy0 % 2 == bSize % 2)
+            {
                 dx += 1;
             }
         }
-        for(int ddx = 0; ddx < w; ddx++) {
+        for (int ddx = 0; ddx < w; ddx++)
+        {
             const auto t = board->dtile(dx + ddx, dy);
-            if(!t) continue;
+            if (!t)
+                continue;
             result.push_back(t);
         }
     }
 }
 
-void squareTiles(eGameBoard* const board, const int bSize,
+void squareTiles(eGameBoard *const board, const int bSize,
                  const int cx, const int cy,
-                 std::vector<eTile*>& result) {
-    const int x0 = cx - bSize/2;
-    const int y0 = cy - bSize/2;
-    for(int dx = 0; dx < bSize; dx++) {
-        for(int dy = 0; dy < bSize; dy++) {
+                 std::vector<eTile *> &result)
+{
+    const int x0 = cx - bSize / 2;
+    const int y0 = cy - bSize / 2;
+    for (int dx = 0; dx < bSize; dx++)
+    {
+        for (int dy = 0; dy < bSize; dy++)
+        {
             const int x = x0 + dx;
             const int y = y0 + dy;
             const auto t = board->tile(x, y);
-            if(!t) continue;
+            if (!t)
+                continue;
             result.push_back(t);
         }
     }
 }
 
-bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
+bool eGameWidget::mouseMoveEvent(const eMouseEvent &e)
+{
     mHoverTiles.clear();
-    if(mTem->visible()) {
+    if (mTem->visible())
+    {
         const auto btype = mTem->brushType();
         const int bsize = mTem->brushSize();
-        if(btype == eBrushType::brush) {
+        if (btype == eBrushType::brush)
+        {
             brushTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
-        } else if(btype == eBrushType::square) {
+        }
+        else if (btype == eBrushType::square)
+        {
             squareTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
         }
     }
-    if(mLocked) return true;
+    if (mLocked)
+        return true;
     mMovedSincePress = true;
     const bool middle = static_cast<bool>(e.buttons() & eMouseButton::middle);
     const bool right = static_cast<bool>(e.buttons() & eMouseButton::right);
-    if(right && mRightPressed && !mRightPanning) {
+    if (right && mRightPressed && !mRightPanning)
+    {
         const int dx = e.x() - mPressedX;
         const int dy = e.y() - mPressedY;
         mRightPanning = std::abs(dx) > 3 || std::abs(dy) > 3;
     }
-    if(middle || (right && mRightPanning)) {
+    if (middle || (right && mRightPanning))
+    {
         const int dx = e.x() - mLastX;
         const int dy = e.y() - mLastY;
         setDX(mDX + dx);
@@ -2459,88 +2990,127 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
         updateMinimap();
         mLastX = e.x();
         mLastY = e.y();
-    } else {
+    }
+    else
+    {
         mHoverX = e.x();
         mHoverY = e.y();
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
 
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
-        if(left && mTem->visible()) {
-//            const auto btype = mTem->brushType();
-//            if(btype == eBrushType::apply) return true;
-//            const auto apply = editFunc();
-//            if(!apply) return true;
-            for(const auto t : mHoverTiles) {
+        if (left && mTem->visible())
+        {
+            //            const auto btype = mTem->brushType();
+            //            if(btype == eBrushType::apply) return true;
+            //            const auto apply = editFunc();
+            //            if(!apply) return true;
+            for (const auto t : mHoverTiles)
+            {
                 const bool r = eVectorHelpers::contains(mInflTiles, t);
-                if(r) continue;
-//                apply(t);
+                if (r)
+                    continue;
+                //                apply(t);
                 mInflTiles.push_back(t);
             }
-//            mBoard->updateMarbleTiles();
-//            mBoard->scheduleTerrainUpdate();
+            //            mBoard->updateMarbleTiles();
+            //            mBoard->scheduleTerrainUpdate();
         }
     }
     return true;
 }
 
-bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
+bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
+{
     const auto pressedButtons = mPressedButtons;
     mPressedButtons = e.buttons();
-    if(mLocked) return true;
-    switch(e.button()) {
-    case eMouseButton::left: {
+    if (mLocked)
+        return true;
+    switch (e.button())
+    {
+    case eMouseButton::left:
+    {
         mBoard->clearBannerSelection();
         mBoard->clearTriremeSelection();
         mLeftPressed = false;
         const bool r = buildMouseRelease();
         mGm->update();
-        if(!r && mGm->mode() == eBuildingMode::none) {
-            if(mMovedSincePress) {
+        if (!r && mGm->mode() == eBuildingMode::none)
+        {
+            if (mMovedSincePress)
+            {
                 const auto selected = selectedTiles();
-                for(const auto tile : selected) {
+                for (const auto tile : selected)
+                {
                     const auto b = tile->soldierBanner();
-                    if(b && !b->selected()) {
+                    if (b && !b->selected())
+                    {
                         mBoard->selectBanner(b);
                     }
-                    for(const auto& c : tile->characters()) {
+                    for (const auto &c : tile->characters())
+                    {
                         const auto type = c->type();
-                        if(type != eCharacterType::trireme) continue;
-                        const auto t = static_cast<eTrireme*>(c.get());
-                        if(t->selected()) continue;
-                        if(!t->selectable()) continue;
+                        if (type != eCharacterType::trireme)
+                            continue;
+                        const auto t = static_cast<eTrireme *>(c.get());
+                        if (t->selected())
+                            continue;
+                        if (!t->selectable())
+                            continue;
                         mBoard->selectTrireme(t);
                     }
                 }
-            } else {
+            }
+            else
+            {
                 const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                if(tile && tile->soldierBanner()) {
+                if (tile && tile->soldierBanner())
+                {
                     const auto sb = tile->soldierBanner();
-                    if(!sb->selected()) mBoard->selectBanner(sb);
-                } else if(!mPatrolBuilding && tile) {
-                    if(const auto b = tile->underBuilding()) {
+                    if (!sb->selected())
+                        mBoard->selectBanner(sb);
+                }
+                else if (!mPatrolBuilding && tile)
+                {
+                    if (const auto b = tile->underBuilding())
+                    {
                         eSounds::playSoundForBuilding(b);
                         const auto cid = tile->cityId();
                         const auto pid = mBoard->cityIdToPlayerId(cid);
                         const auto ppid = mBoard->personPlayer();
-                        if(pid == ppid || mBoard->editorMode()) {
-                            if(const auto pb = dynamic_cast<ePatrolBuilding*>(b)) {
-                                if(pb->spawnsPatrolers()) setPatrolBuilding(pb);
-                            } else if(const auto v = dynamic_cast<eVendor*>(b)) {
+                        if (pid == ppid || mBoard->editorMode())
+                        {
+                            if (const auto pb = dynamic_cast<ePatrolBuilding *>(b))
+                            {
+                                if (pb->spawnsPatrolers())
+                                    setPatrolBuilding(pb);
+                            }
+                            else if (const auto v = dynamic_cast<eVendor *>(b))
+                            {
                                 setPatrolBuilding(v->agora());
-                            } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
+                            }
+                            else if (const auto s = dynamic_cast<eAgoraSpace *>(b))
+                            {
                                 setPatrolBuilding(s->agora());
-                            } else if(b->spawnsCartWalkers()) {
+                            }
+                            else if (b->spawnsCartWalkers())
+                            {
                                 mWalkerBuilding = b;
                             }
                         }
                     }
-                } if(tile) {
-                    for(const auto& c : tile->characters()) {
+                }
+                if (tile)
+                {
+                    for (const auto &c : tile->characters())
+                    {
                         const auto type = c->type();
-                        if(type != eCharacterType::trireme) continue;
-                        const auto t = static_cast<eTrireme*>(c.get());
-                        if(t->selected()) continue;
-                        if(!t->selectable()) continue;
+                        if (type != eCharacterType::trireme)
+                            continue;
+                        const auto t = static_cast<eTrireme *>(c.get());
+                        if (t->selected())
+                            continue;
+                        if (!t->selectable())
+                            continue;
                         mBoard->selectTrireme(t);
                     }
                 }
@@ -2548,98 +3118,127 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
         }
         mPressedTX = -1;
         mPressedTY = -1;
-    } break;
-    case eMouseButton::right: {
+    }
+    break;
+    case eMouseButton::right:
+    {
         const bool wasPanning = mRightPanning;
         mRightPressed = false;
         mRightPanning = false;
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
         mHoverX = e.x();
         mHoverY = e.y();
-        if(wasPanning) return true;
-        if(mEditorMode) {
+        if (wasPanning)
+            return true;
+        if (mEditorMode)
+        {
             const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-            if(tile) tile->removeAllBanners();
+            if (tile)
+                tile->removeAllBanners();
         }
         const bool handled = rightClickRelease(e);
-        if(handled) return true;
-        if(static_cast<bool>(pressedButtons & eMouseButton::right)) {
+        if (handled)
+            return true;
+        if (static_cast<bool>(pressedButtons & eMouseButton::right))
+        {
             const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-            if(tile && tile->cityId() == mViewedCityId) {
-                const auto& solds = mBoard->selectedSoldiers();
+            if (tile && tile->cityId() == mViewedCityId)
+            {
+                const auto &solds = mBoard->selectedSoldiers();
                 eSoldierBanner::sPlace(solds, mHoverTX, mHoverTY, *mBoard, 3, 2);
-                const auto& trims = mBoard->selectedTriremes();
+                const auto &trims = mBoard->selectedTriremes();
                 eTrireme::sPlace(trims, mHoverTX, mHoverTY, *mBoard, 3, 2);
             }
         }
-    } break;
-    default: return false;
+    }
+    break;
+    default:
+        return false;
     }
 
     return true;
 }
 
-bool eGameWidget::mouseWheelEvent(const eMouseWheelEvent& e) {
-    if(mLocked) return true;
+bool eGameWidget::mouseWheelEvent(const eMouseWheelEvent &e)
+{
+    if (mLocked)
+        return true;
     const bool wheel = std::abs(mWheel) > 0.5;
-    if(!wheel) {
+    if (!wheel)
+    {
         mWheel += e.dy();
         return true;
     }
     mWheel = 0;
-    const auto& sett = window()->settings();
+    const auto &sett = window()->settings();
     std::vector<eTileSize> sizes;
     int currSize = 0;
-    if(sett.fTinyTextures) {
+    if (sett.fTinyTextures)
+    {
         sizes.push_back(eTileSize::s15);
-        if(mTileSize == eTileSize::s15) {
+        if (mTileSize == eTileSize::s15)
+        {
             currSize = sizes.size() - 1;
         }
     }
-    if(sett.fSmallTextures) {
+    if (sett.fSmallTextures)
+    {
         sizes.push_back(eTileSize::s30);
-        if(mTileSize == eTileSize::s30) {
+        if (mTileSize == eTileSize::s30)
+        {
             currSize = sizes.size() - 1;
         }
     }
-    if(sett.fMediumTextures) {
+    if (sett.fMediumTextures)
+    {
         sizes.push_back(eTileSize::s45);
-        if(mTileSize == eTileSize::s45) {
+        if (mTileSize == eTileSize::s45)
+        {
             currSize = sizes.size() - 1;
         }
     }
-    if(sett.fLargeTextures) {
+    if (sett.fLargeTextures)
+    {
         sizes.push_back(eTileSize::s60);
-        if(mTileSize == eTileSize::s60) {
+        if (mTileSize == eTileSize::s60)
+        {
             currSize = sizes.size() - 1;
         }
     }
     const int sizesC = sizes.size();
-    if(e.dy() > 0) {
+    if (e.dy() > 0)
+    {
         const int newSize = currSize + 1;
-        if(newSize < sizesC) {
+        if (newSize < sizesC)
+        {
             setTileSize(sizes[newSize]);
         }
-    } else {
+    }
+    else
+    {
         const int newSize = currSize - 1;
-        if(newSize >= 0) {
+        if (newSize >= 0)
+        {
             setTileSize(sizes[newSize]);
         }
     }
     return true;
 }
 
-void eGameWidget::renderTargetsReset() {
+void eGameWidget::renderTargetsReset()
+{
     eWidget::renderTargetsReset();
     initializeNumbers();
 }
 
-void eGameWidget::showGoals() {
+void eGameWidget::showGoals()
+{
     const auto w = window();
     const auto c = w->campaign();
 
     const auto e = new eEpisodeIntroductionWidget(w);
-    const auto proceedA = [e]() {
+    const auto proceedA = [e]()
+    {
         e->deleteLater();
     };
     e->resize(width(), height());
@@ -2652,29 +3251,35 @@ void eGameWidget::showGoals() {
                   eEpisodeIntroType::goals);
     addWidget(e);
     e->align(eAlignment::vcenter);
-    e->setX(x() + (width() - e->width() - mGm->width())/2);
+    e->setX(x() + (width() - e->width() - mGm->width()) / 2);
     window()->execDialog(e);
 }
 
-void eGameWidget::showOptionsMenu() {
+void eGameWidget::showOptionsMenu()
+{
     const auto d = new eOptionsMenu(getOptionsPages(window()), window());
     d->initialize();
-    window()->execDialog(d, true, [this]() { window()->setWidget(this); });
+    window()->execDialog(d, true, [this]()
+                         { window()->setWidget(this); });
 }
 
-void eGameWidget::showGraphicsMenu() {
+void eGameWidget::showGraphicsMenu()
+{
     const auto w = window();
     const auto esm = new eGraphicsMenu(w->settings(), w);
     esm->resize(width(), height());
-    const auto applyA = [this, esm, w](const eSettings& settings) {
+    const auto applyA = [this, esm, w](const eSettings &settings)
+    {
         const bool loadNeeded = settings.fRes != w->settings().fRes;
         w->applyGraphicsSettings(settings);
-        if(!loadNeeded) {
+        if (!loadNeeded)
+        {
             removeWidget(esm);
             esm->deleteLater();
         }
     };
-    const auto fullscreenA = [w](const bool f) {
+    const auto fullscreenA = [w](const bool f)
+    {
         w->setFullscreen(f);
     };
     esm->initialize(applyA, fullscreenA);
@@ -2683,28 +3288,41 @@ void eGameWidget::showGraphicsMenu() {
     w->execDialog(esm);
 }
 
-void eGameWidget::selectHoveredBuildingMode() {
-    if(hasInfoWidget() || mPatrolBuilding) return;
+void eGameWidget::selectHoveredBuildingMode()
+{
+    if (hasInfoWidget() || mPatrolBuilding)
+        return;
     const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
-    if(!b) return;
+    if (!b)
+        return;
 
     auto mode = eBuildingModeHelpers::fromBuildingType(b->type());
-    if(mode == eBuildingMode::none) {
-        if(const auto c = dynamic_cast<eCommemorative*>(b)) {
+    if (mode == eBuildingMode::none)
+    {
+        if (const auto c = dynamic_cast<eCommemorative *>(b))
+        {
             mode = static_cast<eBuildingMode>(
                 static_cast<int>(eBuildingMode::populationMonument) + c->id());
-        } else if(const auto g = dynamic_cast<eGodMonument*>(b)) {
+        }
+        else if (const auto g = dynamic_cast<eGodMonument *>(b))
+        {
             mode = static_cast<eBuildingMode>(
                 static_cast<int>(eBuildingMode::aphroditeMonument) +
                 static_cast<int>(g->god()));
-        } else if(const auto s = dynamic_cast<eAgoraSpace*>(b)) {
+        }
+        else if (const auto s = dynamic_cast<eAgoraSpace *>(b))
+        {
             const auto agora = s->agora();
-            if(agora) {
+            if (agora)
+            {
                 mode = eBuildingModeHelpers::fromBuildingType(agora->type());
             }
-        } else if(const auto gt = dynamic_cast<eGodMonumentTile*>(b)) {
+        }
+        else if (const auto gt = dynamic_cast<eGodMonumentTile *>(b))
+        {
             const auto monument = gt->monument();
-            if(monument) {
+            if (monument)
+            {
                 mode = static_cast<eBuildingMode>(
                     static_cast<int>(eBuildingMode::aphroditeMonument) +
                     static_cast<int>(monument->god()));
@@ -2712,12 +3330,15 @@ void eGameWidget::selectHoveredBuildingMode() {
         }
     }
 
-    if(mode == eBuildingMode::none) return;
-    if(!mBoard->supportsBuilding(mViewedCityId, mode)) return;
+    if (mode == eBuildingMode::none)
+        return;
+    if (!mBoard->supportsBuilding(mViewedCityId, mode))
+        return;
     mGm->setMode(mode);
 }
 
-void eGameWidget::setDX(const int dx) {
+void eGameWidget::setDX(const int dx)
+{
     const int oldDX = mDX;
     mDX = dx;
     clampViewBox();
@@ -2726,7 +3347,8 @@ void eGameWidget::setDX(const int dx) {
     mUpdateViewedTileScheduled = true;
 }
 
-void eGameWidget::setDY(const int dy) {
+void eGameWidget::setDY(const int dy)
+{
     const int oldDY = mDY;
     mDY = dy;
     clampViewBox();
@@ -2735,71 +3357,92 @@ void eGameWidget::setDY(const int dy) {
     mUpdateViewedTileScheduled = true;
 }
 
-void eGameWidget::clampViewBox() {
-    if(mTem->visible()) return;
+void eGameWidget::clampViewBox()
+{
+    if (mTem->visible())
+        return;
     const auto dir = mBoard->direction();
     const int w = mBoard->rotatedWidth();
     const int ww = width() - mGm->width();
     mDX = std::min(0, mDX);
-    const int winc = dir == eWorldDirection::W ? mTileW/2 : 0;
-    mDX = std::max(-w*mTileW + ww + mTileW/2 + winc, mDX);
+    const int winc = dir == eWorldDirection::W ? mTileW / 2 : 0;
+    mDX = std::max(-w * mTileW + ww + mTileW / 2 + winc, mDX);
 
     const int h = mBoard->rotatedHeight();
     const int hh = height();
-    const int einc = dir == eWorldDirection::E ? mTileH/2 : 0;
+    const int einc = dir == eWorldDirection::E ? mTileH / 2 : 0;
     const int dt = mTopMinAltitude < 0 ? mTopMinAltitude : 0;
-    mDY = std::min(-mTileH/2 + 2*einc + dt*mTileH, mDY);
+    mDY = std::min(-mTileH / 2 + 2 * einc + dt * mTileH, mDY);
     const int db = mBottomMaxAltitude > 0 ? mBottomMaxAltitude : 0;
-    mDY = std::max(-h*mTileH/2 + hh + einc + db*mTileH, mDY);
+    mDY = std::max(-h * mTileH / 2 + hh + einc + db * mTileH, mDY);
 }
 
-void eGameWidget::setBookmark(const int id) {
+void eGameWidget::setBookmark(const int id)
+{
     const auto tile = mViewedTile;
-    if(!tile) {
+    if (!tile)
+    {
         mBookmarks.erase(id);
-    } else {
+    }
+    else
+    {
         const int tx = tile->x();
         const int ty = tile->y();
         mBookmarks[id] = {tx, ty};
     }
 }
 
-void eGameWidget::viewBookmark(const int id) {
-    if(!mBoard) return;
+void eGameWidget::viewBookmark(const int id)
+{
+    if (!mBoard)
+        return;
     const auto it = mBookmarks.find(id);
-    if(it == mBookmarks.end()) return;
-    const auto& c = it->second;
+    if (it == mBookmarks.end())
+        return;
+    const auto &c = it->second;
     const int tx = c.first;
     const int ty = c.second;
     const auto tile = mBoard->tile(tx, ty);
-    if(!tile) return;
+    if (!tile)
+        return;
     viewTile(tile);
 }
 
-void eGameWidget::updateTopBottomAltitude() {
-    if(!mBoard) return;
+void eGameWidget::updateTopBottomAltitude()
+{
+    if (!mBoard)
+        return;
     const auto dir = mBoard->direction();
     int i;
-    if(dir == eWorldDirection::N) {
+    if (dir == eWorldDirection::N)
+    {
         mBoard->topElevationExtremas(mTopMinAltitude, i);
         mBoard->bottomElevationExtremas(i, mBottomMaxAltitude);
-    } else if(dir == eWorldDirection::E) {
+    }
+    else if (dir == eWorldDirection::E)
+    {
         mBoard->rightElevationExtremas(mTopMinAltitude, i);
         mBoard->leftElevationExtremas(i, mBottomMaxAltitude);
-    } else if(dir == eWorldDirection::S) {
+    }
+    else if (dir == eWorldDirection::S)
+    {
         mBoard->bottomElevationExtremas(mTopMinAltitude, i);
         mBoard->topElevationExtremas(i, mBottomMaxAltitude);
-    } else { // if(dir == eWorldDirection::W) {
+    }
+    else
+    { // if(dir == eWorldDirection::W) {
         mBoard->leftElevationExtremas(mTopMinAltitude, i);
         mBoard->rightElevationExtremas(i, mBottomMaxAltitude);
     }
 }
 
-void eGameWidget::updateMinMaxAltitude() {
+void eGameWidget::updateMinMaxAltitude()
+{
     mBoard->minMaxAltitude(mMinAltitude, mMaxAltitude);
 }
 
-void eGameWidget::updateMaps(const bool totalUpdate) {
+void eGameWidget::updateMaps(const bool totalUpdate)
+{
     const auto mm = mGm->miniMap();
     const auto mma = mAm->miniMap();
     const auto mmt = mTem->miniMap();
@@ -2807,14 +3450,14 @@ void eGameWidget::updateMaps(const bool totalUpdate) {
     mm->setDirection(dir);
     mma->setDirection(dir);
     mmt->setDirection(dir);
-    const auto func = totalUpdate ? &eMiniMap::scheduleTotalUpdate :
-                                    &eMiniMap::scheduleUpdate;
+    const auto func = totalUpdate ? &eMiniMap::scheduleTotalUpdate : &eMiniMap::scheduleUpdate;
     (mm->*func)();
     (mma->*func)();
     (mmt->*func)();
 }
 
-void eGameWidget::updateMaps(const std::vector<eTile*>& tiles) {
+void eGameWidget::updateMaps(const std::vector<eTile *> &tiles)
+{
     const auto mm = mGm->miniMap();
     const auto mma = mAm->miniMap();
     const auto mmt = mTem->miniMap();
@@ -2823,28 +3466,33 @@ void eGameWidget::updateMaps(const std::vector<eTile*>& tiles) {
     mmt->scheduleTilesUpdate(tiles);
 }
 
-void eGameWidget::updateCitiesOnBoard() {
+void eGameWidget::updateCitiesOnBoard()
+{
     mTem->updateCitiesOnBoard(*mBoard);
 }
 
-void eGameWidget::setTileSize(const eTileSize size) {
-    const auto& setts = window()->settings();
+void eGameWidget::setTileSize(const eTileSize size)
+{
+    const auto &setts = window()->settings();
     const auto sizes = setts.availableSizes();
-    if(eVectorHelpers::contains(sizes, size)) {
+    if (eVectorHelpers::contains(sizes, size))
+    {
         mTileSize = size;
-    } else {
+    }
+    else
+    {
         mTileSize = sizes[0];
     }
     const int tid = static_cast<int>(mTileSize);
-    const auto& trrTexs = eGameTextures::terrain().at(tid);
+    const auto &trrTexs = eGameTextures::terrain().at(tid);
     const int newW = trrTexs.fTileW;
     const int newH = trrTexs.fTileH;
 
     const double dnewW = newW;
     const double dnewH = newH;
 
-    const int dx = std::round((mDX - width()/2) * dnewW/mTileW + width()/2);
-    const int dy = std::round((mDY - height()/2) * dnewH/mTileH + height()/2);
+    const int dx = std::round((mDX - width() / 2) * dnewW / mTileW + width() / 2);
+    const int dy = std::round((mDY - height() / 2) * dnewH / mTileH + height() / 2);
 
     mTileW = newW;
     mTileH = newH;
@@ -2859,8 +3507,10 @@ void eGameWidget::setTileSize(const eTileSize size) {
     updateTerrainTextures();
 }
 
-void eGameWidget::updateViewBoxSize() {
-    if(!mBoard || !mGm) return;
+void eGameWidget::updateViewBoxSize()
+{
+    if (!mBoard || !mGm)
+        return;
     double fx;
     double fy;
     viewBoxSize(fx, fy);
@@ -2872,8 +3522,10 @@ void eGameWidget::updateViewBoxSize() {
     mmt->setViewBoxSize(fx, fy);
 }
 
-void eGameWidget::setWorldDirection(const eWorldDirection dir) {
-    if(!mBoard) return;
+void eGameWidget::setWorldDirection(const eWorldDirection dir)
+{
+    if (!mBoard)
+        return;
     const auto tile = viewedTile();
     mBoard->setWorldDirection(dir);
     updateTopBottomAltitude();
@@ -2882,20 +3534,24 @@ void eGameWidget::setWorldDirection(const eWorldDirection dir) {
     updateMaps(true);
     updateViewBoxSize();
     mGm->setWorldDirection(dir);
-    if(mTem) mTem->setWorldDirection(dir);
+    if (mTem)
+        mTem->setWorldDirection(dir);
 }
 
-void eGameWidget::centerDialog(eWidget* const d) {
-    d->setY((height() - d->height() - mTopBar->height())/2);
-    d->setX((width() - d->width() - mGm->width())/2);
+void eGameWidget::centerDialog(eWidget *const d)
+{
+    d->setY((height() - d->height() - mTopBar->height()) / 2);
+    d->setX((width() - d->width() - mGm->width()) / 2);
 }
 
-void eGameWidget::openDialog(eWidget* const d) {
+void eGameWidget::openDialog(eWidget *const d)
+{
     addWidget(d);
     centerDialog(d);
     window()->execDialog(d);
 }
 
-void eGameWidget::updateRequestButtons() {
+void eGameWidget::updateRequestButtons()
+{
     mGm->updateRequestButtons();
 }
