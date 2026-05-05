@@ -602,10 +602,6 @@ void eGameWidget::paintEvent(ePainter& p) {
                 const auto ub = tile->underBuilding();
                 if(ub) {
                     eraseCm = inErase(ub);
-                    const auto type = ub->type();
-                    if(type == eBuildingType::park) {
-                        eraseCm = eraseCm && drawDim == 1;
-                    }
                 } else {
                     eraseCm = inErase(tx, ty);
                 }
@@ -639,10 +635,17 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
 
             bool defaultHover = false;
-            if(mode == eBuildingMode::none && !terrainEditing &&
-               tx == mHoverTX && ty == mHoverTY) {
-                defaultHover = true;
-                tex->setColorMod(200, 200, 200);
+            if(mode == eBuildingMode::none && !terrainEditing) {
+                defaultHover = tx == mHoverTX && ty == mHoverTY;
+                const auto ub = tile->underBuilding();
+                if(ub && ub->type() == eBuildingType::park) {
+                    const auto parent = eraseParkParentTileAt(mHoverTX, mHoverTY);
+                    const auto center = ub->centerTile();
+                    defaultHover = parent && center &&
+                                   (center == parent ||
+                                    center->underTile() == parent);
+                }
+                if(defaultHover) tex->setColorMod(200, 200, 200);
             }
 
             if(tileFogOfWar) {
@@ -1125,7 +1128,10 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(mViewMode != eViewMode::appeal) {
                 const auto tex = getBasementTexture(rtx, rty, ub, trrTexs,
                                                     dir, boardw, boardh);
+                const bool erase = inErase(ub);
+                if(erase) tex->setColorMod(255, 175, 175);
                 tp.drawTexture(rx, ry, tex, eAlignment::top);
+                if(erase) tex->clearColorMod();
             }
         } else if(ub && !eBuilding::sFlatBuilding(bt)) {
             const auto getDisplacement =

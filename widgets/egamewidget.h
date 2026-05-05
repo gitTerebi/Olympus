@@ -285,6 +285,8 @@ private:
     bool inErase(const SDL_Rect& rect);
     bool inErase(eAgoraBase* const a);
     bool inErase(eBuilding* const b);
+    eBuilding* eraseBuildingAt(const int tx, const int ty) const;
+    eTile* eraseParkParentTileAt(const int tx, const int ty) const;
 
     bool inRepair(const int tx, const int ty);
 

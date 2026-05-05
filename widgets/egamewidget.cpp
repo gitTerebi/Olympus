@@ -2138,6 +2138,23 @@ bool eGameWidget::inErase(const SDL_Rect &rect)
     return false;
 }
 
+eBuilding* eGameWidget::eraseBuildingAt(const int tx, const int ty) const
+{
+    if(const auto b = mBoard->buildingAt(tx, ty)) return b;
+    return nullptr;
+}
+
+eTile* eGameWidget::eraseParkParentTileAt(const int tx, const int ty) const
+{
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return nullptr;
+    if(tile->underBuildingType() != eBuildingType::park) return nullptr;
+    if(const auto parent = tile->underTile()) {
+        if(parent->underBuildingType() == eBuildingType::park) return parent;
+    }
+    return tile;
+}
+
 bool eGameWidget::inErase(eAgoraBase *const a)
 {
     const auto rr = a->tileRect();
@@ -2170,6 +2187,19 @@ bool eGameWidget::inErase(eBuilding *const b)
     const bool high = mTem->visible() || e;
     if (!high)
         return false;
+
+    if(b->type() == eBuildingType::park) {
+        if(mLeftPressed) {
+            const auto tile = b->centerTile();
+            if(!tile) return false;
+            return inErase(tile->x(), tile->y());
+        }
+        const auto parent = eraseParkParentTileAt(mHoverTX, mHoverTY);
+        if(!parent) return false;
+        const auto tile = b->centerTile();
+        if(!tile) return false;
+        return tile == parent || tile->underTile() == parent;
+    }
 
     SDL_Rect rect;
     if (const auto sb = dynamic_cast<eSanctBuilding *>(b))
