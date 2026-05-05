@@ -69,7 +69,7 @@ void eLoadGame::intialize(const std::string& title,
     deleteB->setText("Delete");
     deleteB->setTextAlignment(eAlignment::center);
     deleteB->fitContent();
-    deleteB->setWidth(90);
+    deleteB->setWidth(8*p);
     f->addWidget(deleteB);
     deleteB->align(eAlignment::bottom | eAlignment::left);
     deleteB->move(deleteB->x() + 2*p, deleteB->y() - 2*p);
