@@ -2,6 +2,7 @@
 #define ESCROLLWIDGET_H
 
 #include "ewidget.h"
+#include "ebuttonbase.h"
 
 class eScrollWidget : public eWidget {
 public:
@@ -27,8 +28,8 @@ private:
     int mDy = 0;
 
     eWidget* mScrollArea = nullptr;
-    eWidget* mUpButton = nullptr;
-    eWidget* mDownButton = nullptr;
+    eButtonBase* mUpButton = nullptr;
+    eButtonBase* mDownButton = nullptr;
 };
 
 #endif // ESCROLLWIDGET_H

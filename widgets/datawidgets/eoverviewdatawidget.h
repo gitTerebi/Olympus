@@ -7,6 +7,7 @@ class eGameWidget;
 class eViewModeButton;
 class eOverviewEntry;
 class eMiniMap;
+class eScrollWidget;
 
 class eOverviewDataWidget : public eDataWidget {
 public:
@@ -21,13 +22,13 @@ public:
 protected:
     void paintEvent(ePainter& p) override;
 private:
-    void addGodQuests();
-    void addCityRequests();
+    void addGodQuests(eWidget* const w);
+    void addCityRequests(eWidget* const w);
 
     eViewModeButton* mSeeProblems = nullptr;
     eViewModeButton* mSeeRoads = nullptr;
 
-    eWidget* mQuestButtons = nullptr;
+    eScrollWidget* mQuestButtons = nullptr;
 
     eOverviewEntry* mPopularity = nullptr;
     eOverviewEntry* mFoodLevel = nullptr;

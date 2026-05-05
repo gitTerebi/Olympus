@@ -12,12 +12,14 @@ void eScrollWidget::initializeButtons() {
     up->setPressAction([this]() {
         scrollUp();
     });
+    up->setRepeat(true);
     const auto down = new eSmallDownButton(window());
     addWidget(down);
     down->align(eAlignment::bottom | eAlignment::right);
     down->setPressAction([this]() {
         scrollDown();
     });
+    down->setRepeat(true);
     mUpButton = up;
     mDownButton = down;
     clampDY();
