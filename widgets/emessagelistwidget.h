@@ -8,16 +8,8 @@
 #include "emessage.h"
 #include "engine/eeventdata.h"
 
-struct eLoggedMessage {
-    eEventData fEd;
-    eMessage fMsg;
-    bool fRead = false;
-    eDate fDate;
-    std::string fFormattedTitle;
-    std::string fDateStr;
-};
-
-class eScrollWidgetComplete;
+class eScrollViewport;
+class eScrollBar;
 class eWidget;
 
 class eMessageListWidget : public eClosableDialog {
@@ -40,6 +32,15 @@ protected:
 private:
     void rebuildList();
     void notifyUnread();
+
+    struct eLoggedMessage {
+        eEventData fEd;
+        eMessage fMsg;
+        bool fRead = false;
+        eDate fDate;
+        std::string fFormattedTitle;
+        std::string fDateStr;
+    };
 
     eUnreadChangedAction mUnreadChanged;
     eOpenMessage mOpenMsg;
@@ -64,7 +65,11 @@ private:
     };
 
     eAction mOnClose;
-    eWidget* mListArea = nullptr;
+    eScrollViewport* mViewport = nullptr;
+    eScrollBar* mSidebar = nullptr;
+    eWidget* mContentArea = nullptr;
+    int mVpWidth = 0;
+    int mTp = 0;
     std::vector<eLoggedMessage> mMessages;
     int mUnreadCount = 0;
 };
