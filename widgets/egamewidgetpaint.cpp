@@ -447,6 +447,7 @@ void eGameWidget::paintEvent(ePainter& p) {
     p.translate(mDX, mDY);
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto& numbers = mNumbers[mTileSize];
+    std::vector<std::pair<int,int>> trackingBoxes;
 
     const auto ppid = mBoard->personPlayer();
 
@@ -1562,14 +1563,7 @@ void eGameWidget::paintEvent(ePainter& p) {
                         t->render(r, dx, dy, false);
                         if(charHighlighted || hover) t->clearColorMod();
                         if(charHighlighted && drawDot) {
-                            constexpr int ds = 18;
-                            const SDL_Rect dot{dx - ds/2, dy - ds, ds, ds};
-                            SDL_SetRenderDrawColor(r, selectedWalkerColor.r,
-                                                   selectedWalkerColor.g,
-                                                   selectedWalkerColor.b, 255);
-                            SDL_RenderFillRect(r, &dot);
-                            SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
-                            SDL_RenderDrawRect(r, &dot);
+                            trackingBoxes.push_back({dx, dy});
                         }
                     };
                     if(tex) drawCharTex(tex, x, y, true);
@@ -4158,5 +4152,18 @@ void eGameWidget::paintEvent(ePainter& p) {
             }
         }
         drawRoadAccessPreview(ebs, cbg);
+    }
+    for(const auto& pos : trackingBoxes) {
+        const int dx = pos.first;
+        const int dy = pos.second;
+        constexpr int ds = 18;
+        const SDL_Rect dot{dx - ds/2, dy - ds, ds, ds};
+        auto r = p.renderer();
+        SDL_SetRenderDrawColor(r, selectedWalkerColor.r,
+                               selectedWalkerColor.g,
+                               selectedWalkerColor.b, 255);
+        SDL_RenderFillRect(r, &dot);
+        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+        SDL_RenderDrawRect(r, &dot);
     }
 }
