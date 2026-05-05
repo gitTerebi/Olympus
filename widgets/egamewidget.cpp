@@ -1739,7 +1739,6 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase* const pb) {
     mWalkerBuilding = nullptr;
     if(pb) {
         mSavedViewMode = mViewMode;
-        setViewMode(eViewMode::patrolBuilding);
 
         const auto fw = new eFramedWidget(window());
         fw->setType(eFrameType::message);
@@ -2297,6 +2296,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
         }
         if(mPatrolBuilding) {
             if(!tile) return true;
+            setViewMode(eViewMode::patrolBuilding);
             auto& pgs = mPatrolBuilding->patrolGuides();
             const auto it = findGuide(tx, ty);
             if(it != pgs.end()) {
