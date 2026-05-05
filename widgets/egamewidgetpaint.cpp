@@ -579,7 +579,8 @@ void eGameWidget::paintEvent(ePainter& p) {
             if(lavaFlows && hasLava) {
                 lavaCm = true;
                 tex->setColorMod(255, 0, 0);
-            } else if(mPatrolBuilding && (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
+            } else if(mPatrolBuilding &&
+                      (!mPatrolPath.empty() || !mPatrolPath1.empty())) {
                 const bool bothDirections = mPatrolBuilding->bothDirections();
                 patrolCm = eVectorHelpers::contains(mPatrolPath, tile) ||
                            (bothDirections &&
@@ -1537,8 +1538,8 @@ void eGameWidget::paintEvent(ePainter& p) {
                     }
                     const auto tex = c->getTexture(mTileSize);
                     const bool patrolerSelected =
-                            mPatrolBuilding &&
-                            c.get() == mPatrolBuilding->patroler();
+                            mPatrolHighlightBuilding &&
+                            c.get() == mPatrolHighlightBuilding->patroler();
                     const bool walkerSelected = [&]() {
                         if(!mWalkerBuilding) return false;
                         const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
