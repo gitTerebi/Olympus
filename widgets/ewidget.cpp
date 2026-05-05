@@ -3,6 +3,7 @@
 #include "emainwindow.h"
 
 #include <algorithm>
+#include <cstdio>
 
 #include "evectorhelpers.h"
 
