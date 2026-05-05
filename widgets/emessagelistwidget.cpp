@@ -1,6 +1,6 @@
 #include "emessagelistwidget.h"
 
-#include "escrollwidgetcomplete.h"
+#include "escrollbar.h"
 #include "eflatbutton.h"
 #include "elabel.h"
 #include "eframedlabel.h"
@@ -10,8 +10,10 @@
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
 #include "eokbutton.h"
+#include "emainwindow.h"
 
-void eMessageListWidget::initialize(const eOpenMessage& openMsg, const eAction& closeAction) {
+void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &closeAction)
+{
     mOpenMsg = openMsg;
     mOnClose = closeAction;
     setType(eFrameType::message);
@@ -31,37 +33,50 @@ void eMessageListWidget::initialize(const eOpenMessage& openMsg, const eAction& 
     const auto cancel = new eOkButton(window());
     cancel->fitContent();
     cancel->setTinyPadding();
-    cancel->setPressAction([this]() {
+    cancel->setPressAction([this]()
+                           {
         hide();
-        if(mOnClose) mOnClose();
-    });
+        if(mOnClose) mOnClose(); });
     addWidget(cancel);
     cancel->setX(width() - cancel->width() - padding() - 20);
     cancel->setY(height() - cancel->height() - padding());
 
-    const int cw = width() - 4*p;
-    const int ch = cancel->y() - 2*p - (title->y() + title->height()) - p;
+    const int cw = width() - 4 * p;
+    const int ch = cancel->y() - 2 * p - (title->y() + title->height()) - p;
+
+    const auto sidebar = new eScrollBar(window());
+    sidebar->initialize(ch);
+    mSidebar = sidebar;
+    const int vpW = cw - sidebar->width() - p;
+    mVpWidth = vpW;
 
     // Blue panel background (same as building info)
     const auto bg = new eFramedWidget(window());
     bg->setType(eFrameType::inner);
-    bg->resize(cw, ch);
-    bg->move(2*p, title->y() + title->height() + p);
+    bg->resize(cw - sidebar->width() - p, ch);
+    bg->move(2 * p, title->y() + title->height() + p);
     addWidget(bg);
 
-    mListArea = new eWidget(window());
-    mListArea->setNoPadding();
-    mListArea->resize(cw, ch);
-    mListArea->setY(title->y() + title->height() + p);
-    mListArea->setX(2*p);
-    addWidget(mListArea);
+    const auto tp = mTp;
+    mViewport = new eScrollViewport(window());
+    mViewport->setNoPadding();
+    mViewport->resize(vpW - 2 * tp, ch - 2 * tp);
+    mViewport->move(tp, tp);
+    bg->addWidget(mViewport);
 
+    sidebar->move(2 * p + vpW + p, title->y() + title->height() + p);
+    addWidget(sidebar);
+    sidebar->setViewport(mViewport);
+
+    mContentArea = new eWidget(window());
+    mContentArea->setNoPadding();
+    mViewport->setPage(mContentArea);
 }
 
-
-
-void eMessageListWidget::markAllRead() {
-    for(auto& lm : mMessages) {
+void eMessageListWidget::markAllRead()
+{
+    for (auto &lm : mMessages)
+    {
         lm.fRead = true;
     }
     mUnreadCount = 0;
@@ -69,11 +84,14 @@ void eMessageListWidget::markAllRead() {
     rebuildList();
 }
 
-void eMessageListWidget::notifyUnread() {
-    if(mUnreadChanged) mUnreadChanged(unreadCount());
+void eMessageListWidget::notifyUnread()
+{
+    if (mUnreadChanged)
+        mUnreadChanged(unreadCount());
 }
 
-void eMessageListWidget::addMessage(const eEventData& ed, const eMessage& msg, const eDate& date) {
+void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, const eDate &date)
+{
     eLoggedMessage lm;
     lm.fEd = ed;
     lm.fMsg = msg;
@@ -82,9 +100,9 @@ void eMessageListWidget::addMessage(const eEventData& ed, const eMessage& msg, c
 
     // Format title
     std::string title = msg.fTitle;
-    if(const auto& c = ed.fCity)
+    if (const auto &c = ed.fCity)
         eStringHelpers::replaceAll(title, "[city_name]", c->name());
-    if(const auto& c = ed.fRivalCity)
+    if (const auto &c = ed.fRivalCity)
         eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
     eStringHelpers::replaceAll(title, "[item]",
                                eResourceTypeHelpers::typeLongName(ed.fResourceType));
@@ -100,8 +118,10 @@ void eMessageListWidget::addMessage(const eEventData& ed, const eMessage& msg, c
     lm.fDateStr = eMonthHelper::shortName(date.month()) + " " + yearStr;
 
     mMessages.push_back(lm);
-    if(mMessages.size() > 50) {
-        if(mMessages.front().fRead == false) mUnreadCount--;
+    if (mMessages.size() > 50)
+    {
+        if (mMessages.front().fRead == false)
+            mUnreadCount--;
         mMessages.erase(mMessages.begin());
     }
     mUnreadCount++;
@@ -109,20 +129,24 @@ void eMessageListWidget::addMessage(const eEventData& ed, const eMessage& msg, c
     rebuildList();
 }
 
-void eMessageListWidget::rebuildList() {
-    if(!mListArea) return;
+void eMessageListWidget::rebuildList()
+{
+    if (!mViewport)
+        return;
 
-    const auto children = mListArea->children();
-    for(const auto c : children) {
+    const auto children = mContentArea->children();
+    for (const auto c : children)
+    {
         c->deleteLater();
     }
 
-    const int w = mListArea->width();
-    const int p = mListArea->padding();
+    const int w = mVpWidth - 2 * mTp;
+    const int pp = 0; // no padding
     int y = 8;
 
-    for(int i = (int)mMessages.size() - 1; i >= 0; i--) {
-        auto& lm = mMessages[i];
+    for (int i = (int)mMessages.size() - 1; i >= 0; i--)
+    {
+        auto &lm = mMessages[i];
 
         auto title = lm.fFormattedTitle;
 
@@ -133,11 +157,11 @@ void eMessageListWidget::rebuildList() {
         const auto dateLabel = new eLabel(dateStr, window());
         dateLabel->setVerySmallFontSize();
         dateLabel->setNoPadding();
-        if(lm.fRead) 
+        if (lm.fRead)
             dateLabel->setFontColor(eFontColor::dark);
         else
             dateLabel->setFontColor(eFontColor::light);
-        dateLabel->setWidth(w * 0.1 - 2*p);
+        dateLabel->setWidth(w * 0.1 - 2 * pp);
         dateLabel->setHeight(20);
         dateLabel->setX(50);
         dateLabel->setY(0);
@@ -147,46 +171,52 @@ void eMessageListWidget::rebuildList() {
         titleLabel->setVerySmallFontSize();
         titleLabel->setTextAlignment(eAlignment::left);
         titleLabel->setNoPadding();
-        if(lm.fRead) 
+        if (lm.fRead)
             titleLabel->setFontColor(eFontColor::dark);
         else
             titleLabel->setFontColor(eFontColor::light);
-        titleLabel->setWidth(w * 0.9 - 2*p);
+        titleLabel->setWidth(w * 0.9 - 2 * pp);
         titleLabel->setHeight(20);
         titleLabel->setX(dateLabel->width() * 3);
         titleLabel->setY(0);
 
         // Row widget
-        const auto row = new eMessageListRow(window(), dateLabel, titleLabel, [this, &lm]() { mOpenMsg(lm.fEd, lm.fMsg); if(!lm.fRead) { lm.fRead = true; mUnreadCount--; } notifyUnread(); rebuildList(); });
-        row->resize(w - 2*p, 20);
-        row->setX(p);
+        const auto row = new eMessageListRow(window(), dateLabel, titleLabel, [this, &lm]()
+                                             { mOpenMsg(lm.fEd, lm.fMsg); if(!lm.fRead) { lm.fRead = true; mUnreadCount--; } notifyUnread(); rebuildList(); });
+        row->resize(w - 2 * pp, 20);
+        row->setX(pp);
         row->setY(y);
 
-        mListArea->addWidget(row);
+        mContentArea->addWidget(row);
 
         y += 28;
-}
+    }
+    mContentArea->fitContent();
+    mContentArea->setWidth(w);
+    mViewport->setPage(mContentArea);
 }
 
-bool eMessageListWidget::keyPressEvent(const eKeyPressEvent& e) {
+bool eMessageListWidget::keyPressEvent(const eKeyPressEvent &e)
+{
     const auto k = e.key();
-    if(k == SDL_SCANCODE_ESCAPE) {
+    if (k == SDL_SCANCODE_ESCAPE)
+    {
         hide();
-        if(mOnClose) mOnClose();
+        if (mOnClose)
+            mOnClose();
         return true;
     }
     return eClosableDialog::keyPressEvent(e);
 }
 
-bool eMessageListWidget::mouseReleaseEvent(const eMouseEvent& e) {
-    if(e.button() == eMouseButton::right) {
+bool eMessageListWidget::mouseReleaseEvent(const eMouseEvent &e)
+{
+    if (e.button() == eMouseButton::right)
+    {
         hide();
-        if(mOnClose) mOnClose();
+        if (mOnClose)
+            mOnClose();
         return true;
     }
     return eClosableDialog::mouseReleaseEvent(e);
 }
-
-
-
-

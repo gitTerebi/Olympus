@@ -1072,12 +1072,7 @@ void eGameMenu::initialize(eGameBoard* const b,
                 } else {
                     mMsgListWasPaused = mGW->gamePaused();
                     if(!mMsgListWasPaused) mGW->pauseGame();
-                    // position to the left of game menu, vertically centered
-                    const int gmx = x();
-                    const int gmy = y();
-                    const int mlwW = mMsgListW->width();
-                    const int mlwH = mMsgListW->height();
-                    mMsgListW->move(gmx - mlwW, gmy + (height() - mlwH) / 2);
+                    mMsgListW->align(eAlignment::center);
                     mMsgListW->show();
                 }
             }
