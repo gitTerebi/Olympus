@@ -19,7 +19,7 @@ eHorseRanch::~eHorseRanch() {
 }
 
 void eHorseRanch::erase() {
-    mEnclosure->eBuilding::erase();
+    if(mEnclosure) mEnclosure->eBuilding::erase();
     eBuilding::erase();
 }
 
@@ -69,7 +69,7 @@ void eHorseRanch::timeChanged(const int by) {
             mHorseTime += by;
             if(mHorseTime > eNumbers::sHorseRanchHorseSpawnPeriod) {
                 mHorseTime = 0;
-                mEnclosure->spawnHorse();
+                if(mEnclosure) mEnclosure->spawnHorse();
 
                 const bool isPp = isPersonPlayer();
                 if(isPp) {
@@ -98,7 +98,7 @@ int eHorseRanch::add(const eResourceType type, const int count) {
 
 int eHorseRanch::take(const eResourceType type, const int count) {
     if(type == eResourceType::horse) {
-        return mEnclosure->take(type, count);
+        return mEnclosure ? mEnclosure->take(type, count) : 0;
     }
     return eEmployingBuilding::take(type, count);
 }
@@ -123,7 +123,7 @@ std::vector<eCartTask> eHorseRanch::cartTasks() const {
 }
 
 int eHorseRanch::provide(const eProvide p, const int n) {
-    mEnclosure->eBuildingWithResource::provide(p, n);
+    if(mEnclosure) mEnclosure->eBuildingWithResource::provide(p, n);
     return eEmployingBuilding::provide(p, n);
 }
 
@@ -132,11 +132,11 @@ void eHorseRanch::setEnclosure(eHorseRanchEnclosure* const e) {
 }
 
 int eHorseRanch::horseCount() const {
-    return mEnclosure->horseCount();
+    return mEnclosure ? mEnclosure->horseCount() : 0;
 }
 
 bool eHorseRanch::takeHorse() {
-    return mEnclosure->takeHorse();
+    return mEnclosure ? mEnclosure->takeHorse() : false;
 }
 
 void eHorseRanch::read(eReadStream& src) {

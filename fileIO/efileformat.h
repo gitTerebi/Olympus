@@ -9,6 +9,7 @@ namespace eFileFormat {
         ruinsOrigin,
         ruinsSavedBuilding,
         yearlyProduction,
+        ruinsRestoreBundle,
 
         nextVersion
     };

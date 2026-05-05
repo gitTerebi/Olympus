@@ -41,6 +41,9 @@ void eRuins::read(eReadStream& src) {
         readByteVec(src, mSavedPier);
         src >> mSavedPierRect;
     }
+    if(src.formatVersion() >= eFileFormat::ruinsRestoreBundle) {
+        readByteVec(src, mRestoreBundle);
+    }
 }
 
 void eRuins::write(eWriteStream& dst) const {
@@ -50,4 +53,5 @@ void eRuins::write(eWriteStream& dst) const {
     writeByteVec(dst, mSavedBuilding);
     writeByteVec(dst, mSavedPier);
     dst << mSavedPierRect;
+    writeByteVec(dst, mRestoreBundle);
 }

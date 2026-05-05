@@ -160,6 +160,8 @@ public:
 
     void registerBuilding(eBuilding* const b);
     bool unregisterBuilding(eBuilding* const b);
+    const std::vector<eBuilding*>& buildings() const
+    { return mAllBuildings; }
 
     void snapshotTiles(int ttx, int tty, int ssw, int ssh);
     void game_undo_start_build(eBuildingType type);
