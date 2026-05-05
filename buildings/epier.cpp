@@ -39,11 +39,12 @@ std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const {
     return coll.getTexture(id);
 }
 
-void ePier::erase() {
+void ePier::collapse() {
     if(mTradePost) {
         mTradePost->collapse();
+    } else {
+        eBuilding::collapse();
     }
-    eBuilding::erase();
 }
 
 void ePier::setTradePost(eBuilding* const b) {

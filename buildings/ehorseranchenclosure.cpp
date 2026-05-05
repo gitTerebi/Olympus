@@ -21,12 +21,12 @@ eHorseRanchEnclosure::~eHorseRanchEnclosure() {
 }
 
 void eHorseRanchEnclosure::erase() {
-    mRanch->eBuilding::erase();
+    if(mRanch) mRanch->eBuilding::erase();
     eBuilding::erase();
 }
 
 int eHorseRanchEnclosure::provide(const eProvide p, const int n) {
-    mRanch->eEmployingBuilding::provide(p, n);
+    if(mRanch) mRanch->eEmployingBuilding::provide(p, n);
     return eBuildingWithResource::provide(p, n);
 }
 

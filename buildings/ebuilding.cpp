@@ -2443,16 +2443,70 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     return result;
 }
 
+static std::vector<uint8_t> sBuildingRestoreBundle(
+        const std::vector<eBuilding*>& buildings,
+        eGameBoard& board) {
+    const size_t kBufSize = 1048576;
+    void* mem = malloc(kBufSize);
+    eWriteTarget target(mem);
+    eWriteStream dst(target);
+
+    std::vector<std::pair<eBuilding*, int>> oldBuildingIds;
+    int id = 0;
+    for(const auto b : buildings) {
+        if(!b) continue;
+        oldBuildingIds.push_back({b, b->ioID()});
+        b->setIOID(id++);
+    }
+    std::vector<std::pair<eCharacter*, int>> oldCharacterIds;
+    for(const auto c : board.characters()) {
+        if(!c) continue;
+        oldCharacterIds.push_back({c, c->ioID()});
+        c->setIOID(-1);
+    }
+
+    dst.writeFormat("eZeus");
+    dst << -1;
+    dst << id;
+    for(const auto b : buildings) {
+        if(!b) continue;
+        const auto snapshot = sBuildingSnapshot(b);
+        dst << snapshot.size();
+        for(const auto byte : snapshot) dst << byte;
+    }
+
+    for(const auto& p : oldBuildingIds) {
+        p.first->setIOID(p.second);
+    }
+    for(const auto& p : oldCharacterIds) {
+        p.first->setIOID(p.second);
+    }
+
+    const size_t written = dst.memPos();
+    std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
+                                static_cast<const uint8_t*>(mem) + written);
+    free(mem);
+    return result;
+}
+
 void eBuilding::collapse() {
     auto tiles = mUnderBuilding;
+    std::vector<eBuilding*> restoreBuildings;
+    restoreBuildings.push_back(this);
     if(const auto r = dynamic_cast<eHorseRanch*>(this)) {
         const auto e = r->enclosure();
-        const auto etiles = e->mUnderBuilding;
-        tiles.insert(tiles.end(), etiles.begin(), etiles.end());
+        if(e) {
+            const auto etiles = e->mUnderBuilding;
+            tiles.insert(tiles.end(), etiles.begin(), etiles.end());
+            restoreBuildings.push_back(e);
+        }
     } else if(const auto e = dynamic_cast<eHorseRanchEnclosure*>(this)) {
         const auto r = e->ranch();
-        const auto rtiles = r->mUnderBuilding;
-        tiles.insert(tiles.end(), rtiles.begin(), rtiles.end());
+        if(r) {
+            const auto rtiles = r->mUnderBuilding;
+            tiles.insert(tiles.end(), rtiles.begin(), rtiles.end());
+            restoreBuildings.push_back(r);
+        }
     }
     auto& b = getBoard();
     const auto tp = type();
@@ -2470,26 +2524,25 @@ void eBuilding::collapse() {
                          tp == eBuildingType::sheep ||
                          tp == eBuildingType::goat ||
                          tp == eBuildingType::cattle ||
-                         tp == eBuildingType::road ||
-                         tp == eBuildingType::pier;
+                         tp == eBuildingType::road;
 
-    // snapshot building state before erase (clear storage first so it restores empty)
-    std::vector<uint8_t> snapshot;
-    std::vector<uint8_t> pierSnapshot;
-    SDL_Rect pierRect = {-1, -1, 0, 0};
+    std::vector<uint8_t> restoreBundle;
     const bool snapshotBuilding = !noRuins && tp != eBuildingType::commonHouse;
     if(snapshotBuilding) {
         prepareForCollapse();
-        b.world().setIOIDs();
+        for(const auto bld : restoreBuildings) {
+            if(bld != this) bld->prepareForCollapse();
+        }
         if(const auto tpb = dynamic_cast<eTradePost*>(this)) {
             if(tpb->tpType() == eTradePostType::pier) {
                 if(const auto pier = dynamic_cast<ePier*>(tpb->unpackBuilding())) {
-                    pierRect = pier->tileRect();
-                    pierSnapshot = sBuildingSnapshot(pier);
+                    restoreBuildings.push_back(pier);
+                    const auto pierTiles = pier->mUnderBuilding;
+                    tiles.insert(tiles.end(), pierTiles.begin(), pierTiles.end());
                 }
             }
         }
-        snapshot = sBuildingSnapshot(this);
+        restoreBundle = sBuildingRestoreBundle(restoreBuildings, b);
     }
 
     const bool onFire = mOnFire;
@@ -2497,7 +2550,6 @@ void eBuilding::collapse() {
     erase();
     if(noRuins) return;
     const int ox = mTileRect.x, oy = mTileRect.y, ow = mTileRect.w, oh = mTileRect.h;
-    bool snapshotSet = false;
     for(const auto t : tiles) {
         const auto terrain = t->terrain();
         const bool r = static_cast<bool>(eTerrain::buildable & terrain);
@@ -2511,28 +2563,7 @@ void eBuilding::collapse() {
         t->setUnderBuilding(ruins);
         ruins->addUnderBuilding(t);
         ruins->setTileRect({t->x(), t->y(), 1, 1});
-        // store snapshot on the origin tile only
-        if(!snapshotSet && t->x() == ox && t->y() == oy) {
-            ruins->setSavedBuilding(snapshot);
-            if(!pierSnapshot.empty()) {
-                ruins->setSavedPier(pierSnapshot, pierRect);
-            }
-            snapshotSet = true;
-        }
-    }
-    // fallback: if origin tile was water/non-buildable, store on first ruins tile
-    if(!snapshotSet && !snapshot.empty()) {
-        for(const auto t : tiles) {
-            const auto terrain = t->terrain();
-            const bool r = static_cast<bool>(eTerrain::buildable & terrain);
-            if(!r) continue;
-            const auto rb = t->underBuilding();
-            if(!rb || rb->type() != eBuildingType::ruins) continue;
-            const auto ruins = static_cast<eRuins*>(rb);
-            ruins->setSavedBuilding(snapshot);
-            if(!pierSnapshot.empty()) ruins->setSavedPier(pierSnapshot, pierRect);
-            break;
-        }
+        if(!restoreBundle.empty()) ruins->setRestoreBundle(restoreBundle);
     }
 }
 

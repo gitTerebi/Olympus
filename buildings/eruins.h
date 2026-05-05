@@ -27,6 +27,10 @@ public:
     const std::vector<uint8_t>& savedBuilding() const { return mSavedBuilding; }
     bool hasSavedBuilding() const { return !mSavedBuilding.empty(); }
 
+    void setRestoreBundle(std::vector<uint8_t> data) { mRestoreBundle = std::move(data); }
+    const std::vector<uint8_t>& restoreBundle() const { return mRestoreBundle; }
+    bool hasRestoreBundle() const { return !mRestoreBundle.empty(); }
+
     void setSavedPier(std::vector<uint8_t> data, const SDL_Rect& rect) {
         mSavedPier = std::move(data);
         mSavedPierRect = rect;
@@ -43,6 +47,7 @@ private:
     int mOriginH = 1;
 
     std::vector<uint8_t> mSavedBuilding;
+    std::vector<uint8_t> mRestoreBundle;
     std::vector<uint8_t> mSavedPier;
     SDL_Rect mSavedPierRect = {-1, -1, 0, 0};
 };

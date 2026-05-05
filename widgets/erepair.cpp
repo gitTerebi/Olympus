@@ -16,6 +16,8 @@
 #include "fileIO/ebuildingreader.h"
 #include "fileIO/ereadstream.h"
 
+#include <algorithm>
+
 static const std::set<eBuildingType> sRepairableTypes = {
     eBuildingType::commonHouse,
     eBuildingType::maintenanceOffice,
@@ -98,24 +100,145 @@ struct sRepairGroup
     eBuildingType wasType;
     int ox, oy, ow, oh;
     std::vector<eRuins *> tiles;
-    eRuins *originRuins = nullptr; // the one with snapshot
+    eRuins *originRuins = nullptr;
     int cost = 0;
 };
 
-static stdsptr<eBuilding> restoreFromSnapshot(
+static std::vector<stdsptr<eBuilding>> restoreFromBundle(
     const std::vector<uint8_t> &data, eGameBoard &board)
 {
+    std::vector<stdsptr<eBuilding>> buildings;
     if (data.empty())
-        return nullptr;
+        return buildings;
+
     eReadSource source(const_cast<void *>(static_cast<const void *>(data.data())));
     eReadStream src(source);
     src.readFormat();
-    eBuildingType type;
-    src >> type;
-    const auto b = eBuildingReader::sRead(board, type, src);
-    src.handlePostFuncs();
+    std::vector<std::pair<eBuilding *, int>> oldBuildingIds;
+    for (const auto b : board.buildings())
+    {
+        if (!b)
+            continue;
+        oldBuildingIds.push_back({b, b->ioID()});
+        b->setIOID(-1);
+    }
+    std::vector<std::pair<eCharacter *, int>> oldCharacterIds;
+    for (const auto c : board.characters())
+    {
+        if (!c)
+            continue;
+        oldCharacterIds.push_back({c, c->ioID()});
+        c->setIOID(-1);
+    }
+    int marker;
+    src >> marker;
+    if (marker == -1)
+    {
+        int n;
+        src >> n;
+        for (int i = 0; i < n; i++)
+        {
+            size_t size;
+            src >> size;
+            if (size == 0 || size > data.size())
+                continue;
+            std::vector<uint8_t> snapshot;
+            snapshot.reserve(size);
+            for (size_t j = 0; j < size; j++)
+            {
+                uint8_t byte;
+                src >> byte;
+                snapshot.push_back(byte);
+            }
+            eReadSource bs(const_cast<void *>(
+                static_cast<const void *>(snapshot.data())));
+            eReadStream bsrc(bs);
+            bsrc.readFormat();
+            eBuildingType type;
+            bsrc >> type;
+            const auto b = eBuildingReader::sRead(board, type, bsrc);
+            if (!b)
+                continue;
+            buildings.push_back(b);
+        }
+        src.handlePostFuncs();
+    }
+    for (const auto &b : buildings)
+        b->setIOID(-1);
+    for (const auto &p : oldBuildingIds)
+        p.first->setIOID(p.second);
+    for (const auto &p : oldCharacterIds)
+        p.first->setIOID(p.second);
+    for (const auto &b : buildings)
+    {
+        if (const auto r = dynamic_cast<eHorseRanch *>(b.get()))
+        {
+            if (!r->enclosure())
+            {
+                for (const auto &bb : buildings)
+                {
+                    const auto e = dynamic_cast<eHorseRanchEnclosure *>(bb.get());
+                    if (e)
+                    {
+                        r->setEnclosure(e);
+                        if (!e->ranch()) e->setRanch(r);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (const auto e = dynamic_cast<eHorseRanchEnclosure *>(b.get()))
+        {
+            if (!e->ranch())
+            {
+                for (const auto &bb : buildings)
+                {
+                    const auto r = dynamic_cast<eHorseRanch *>(bb.get());
+                    if (r)
+                    {
+                        e->setRanch(r);
+                        if (!r->enclosure()) r->setEnclosure(e);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return buildings;
+}
 
-    return b;
+static bool containsRuins(const std::vector<eRuins *> &tiles,
+                          const eRuins *const ruins)
+{
+    return std::find(tiles.begin(), tiles.end(), ruins) != tiles.end();
+}
+
+static bool addBundleRuins(eGameBoard &board, sRepairGroup &g)
+{
+    if (!g.originRuins || !g.originRuins->hasRestoreBundle())
+        return true;
+    const auto &bundle = g.originRuins->restoreBundle();
+    for (int x = 0; x < board.width(); x++)
+    {
+        for (int y = 0; y < board.height(); y++)
+        {
+            const auto tile = board.tile(x, y);
+            if (!tile)
+                continue;
+            const auto b = tile->underBuilding();
+            if (!b || b->type() != eBuildingType::ruins)
+                continue;
+            const auto ruins = static_cast<eRuins *>(b);
+            if (!ruins->hasRestoreBundle() ||
+                ruins->restoreBundle() != bundle ||
+                containsRuins(g.tiles, ruins))
+                continue;
+            if (ruins->isOnFire() || !tile->characters().empty())
+                return false;
+            g.tiles.push_back(ruins);
+        }
+    }
+    return true;
 }
 
 static std::vector<sRepairGroup> collectRepairGroups(
@@ -176,34 +299,42 @@ static std::vector<sRepairGroup> collectRepairGroups(
                         break;
                     }
                     const auto rb = rt->underBuilding();
-                    if (!rb || rb->type() != eBuildingType::ruins)
+                    if (!rb)
                     {
                         const auto terrain = rt->terrain();
                         const bool buildable = static_cast<bool>(eTerrain::buildable & terrain);
-                        if (buildable)
-                        {
+                        if (!buildable)
                             canRepair = false;
-                            break;
-                        }
                         continue;
                     }
-                    const auto rr = static_cast<eRuins *>(rb);
-                    if (rr->isOnFire())
+                    if (rb->type() != eBuildingType::ruins)
                     {
                         canRepair = false;
                         break;
                     }
+                    const auto rr = static_cast<eRuins *>(rb);
                     if (rr->originX() != ox || rr->originY() != oy)
                     {
                         canRepair = false;
                         break;
                     }
+                    if (rr->isOnFire())
+                    {
+                        canRepair = false;
+                        break;
+                    }
                     g.tiles.push_back(rr);
-                    if (rr->hasSavedBuilding())
+                    if (rr->hasRestoreBundle())
                         g.originRuins = rr;
                 }
             }
             if (!canRepair || g.tiles.empty())
+                continue;
+            if (wasType != eBuildingType::commonHouse &&
+                (!g.originRuins || !g.originRuins->hasRestoreBundle()))
+                continue;
+            canRepair = addBundleRuins(board, g);
+            if (!canRepair)
                 continue;
             g.cost = eDifficultyHelpers::buildingCost(diff, wasType) * 1.10;
             groups.push_back(std::move(g));
@@ -228,7 +359,7 @@ void handleRepair(eGameBoard &board, eGameWidget *const widget,
     if (totalCost > 0)
     {
         const auto title = "Repair buildings";
-        const auto text = "Repair will cost " + std::to_string(totalCost) + " drachmas (10% fee). Proceed?";
+        const auto text = "Repair cost " + std::to_string(totalCost) + " drachmas (10% fee). Proceed?";
         const auto acceptA = [groups, totalCost, ppid, cid, &board, editorMode]()
         {
             for (const auto &g : groups)
@@ -241,6 +372,7 @@ void handleRepair(eGameBoard &board, eGameWidget *const widget,
                         if (rt && !rt->characters().empty())
                             hasUnit = true;
                     }
+                    
                 if (hasUnit)
                     continue;
 
@@ -252,48 +384,15 @@ void handleRepair(eGameBoard &board, eGameWidget *const widget,
                     board.buildBase(g.ox, g.oy, g.ox + g.ow - 1, g.oy + g.oh - 1, [&board, cid2]()
                                     { return e::make_shared<eSmallHouse>(board, cid2); }, ppid, cid2, true, false, true);
                 }
-                else if (g.originRuins && g.originRuins->hasSavedBuilding())
+                else if (g.originRuins && g.originRuins->hasRestoreBundle())
                 {
-                    stdsptr<eBuilding> pierRestored;
-                    if (g.originRuins->hasSavedPier())
-                    {
-                        pierRestored = restoreFromSnapshot(g.originRuins->savedPier(), board);
-                        if (!pierRestored)
-                            continue;
-                    }
-
-                    const auto restored = restoreFromSnapshot(g.originRuins->savedBuilding(), board);
-
-                    if (!restored)
-                    {
-                        continue;
-                    }
-
-                    if (pierRestored)
-                    {
-                        const auto &pierRect = g.originRuins->savedPierRect();
-                        pierRestored->setTileRect(pierRect);
-                        eTile *ct = nullptr;
-                        for (int px = pierRect.x; px < pierRect.x + pierRect.w; px++)
-                        {
-                            for (int py = pierRect.y; py < pierRect.y + pierRect.h; py++)
-                            {
-                                const auto pt = board.tile(px, py);
-                                if (!pt)
-                                    continue;
-                                if (!ct)
-                                    ct = pt;
-                                pt->setUnderBuilding(pierRestored);
-                                pierRestored->addUnderBuilding(pt);
-                            }
-                        }
-                        if (ct)
-                            pierRestored->setCenterTile(ct);
-                        if (const auto tp = dynamic_cast<eTradePost *>(restored.get()))
-                            tp->setUnpackBuilding(pierRestored.get());
-                        if (const auto pier = dynamic_cast<ePier *>(pierRestored.get()))
-                            pier->setTradePost(restored.get());
-                    }
+                    const auto bundle = g.originRuins->restoreBundle();
+                    for (auto rr : g.tiles)
+                        rr->erase();
+                    const auto restored = restoreFromBundle(
+                        bundle, board);
+                    (void)restored;
+                    continue;
                 }
             }
 
