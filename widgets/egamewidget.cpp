@@ -1296,6 +1296,10 @@ void eGameWidget::updateTipPositions() {
     } else {
         y = 5*p;;
     }
+    if(mSpeedLabel && mSpeedLabel->visible()) {
+        mSpeedLabel->setY(y);
+        y += mSpeedLabel->height() + 2*p;
+    }
     for(const auto& tip : mTips) {
         const auto w = tip.fWid;
         w->setY(y);
@@ -1361,6 +1365,9 @@ void eGameWidget::updateToastPositions() {
         y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
     } else {
         y = 5*p;
+    }
+    if(mSpeedLabel && mSpeedLabel->visible()) {
+        y += mSpeedLabel->height() + 2*p;
     }
     for(const auto& tip : mTips) {
         y += tip.fWid->height() + 2*p;
@@ -2019,9 +2026,12 @@ void eGameWidget::switchPause() {
         mPausedLabel->setX((vw - w)/2);
         const int p = mPausedLabel->padding();
         mPausedLabel->setY(mTopBar->height() + 2*p);
+        updateTipPositions();
+        updateToastPositions();
     } else if(mPausedLabel) {
         mPausedLabel->deleteLater();
         mPausedLabel = nullptr;
+        updateTipPositions();
     }
     updateTipPositions();
     updateToastPositions();
@@ -2047,7 +2057,13 @@ void eGameWidget::showSpeedLabel() {
     const int vw = width() - mGm->width();
     mSpeedLabel->setX((vw - mSpeedLabel->width())/2);
     const int p = mSpeedLabel->padding();
-    mSpeedLabel->setY(mTopBar->height() + 2*p);
+    int y = mTopBar->height() + 2*p;
+    if(mPausedLabel) {
+        y = mPausedLabel->y() + mPausedLabel->height() + 2*p;
+    }
+    mSpeedLabel->setY(y);
+    updateTipPositions();
+    updateToastPositions();
     mSpeedLabelHideFrame = mFrame + 120;
 }
 
