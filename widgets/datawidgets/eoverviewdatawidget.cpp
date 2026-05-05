@@ -4,6 +4,7 @@
 
 #include "widgets/egamewidget.h"
 #include "widgets/eframedbutton.h"
+#include "widgets/escrollwidget.h"
 
 #include "elanguage.h"
 #include "engine/egameboard.h"
@@ -121,9 +122,10 @@ void eOverviewDataWidget::initialize() {
     inner->addWidget(requestsLabel);
     requestsLabel->align(eAlignment::hcenter);
 
-    mQuestButtons = new eWidget(window());
-    mQuestButtons->setNoPadding();
+    mQuestButtons = new eScrollWidget(window());
     mQuestButtons->setWidth(innerW);
+    mQuestButtons->setHeight(140); // fixed height for scrolling
+    mQuestButtons->initializeButtons();
     inner->addWidget(mQuestButtons);
 
     inner->stackVertically();
@@ -293,11 +295,14 @@ public:
 };
 
 void eOverviewDataWidget::updateRequestButtons() {
-    mQuestButtons->removeChildren();
-    addGodQuests();
-    addCityRequests();
-    mQuestButtons->stackVertically();
-    mQuestButtons->fitHeight();
+    const auto sa = new eWidget(window());
+    sa->setNoPadding();
+    sa->setWidth(mQuestButtons->width());
+    mQuestButtons->setScrollArea(sa);
+    addGodQuests(sa);
+    addCityRequests(sa);
+    sa->stackVertically();
+    sa->fitHeight();
 }
 
 void eOverviewDataWidget::setMap(eMiniMap* const map) {
@@ -440,14 +445,14 @@ bool sHeroReady(eGameBoard& board, const eHeroType hero) {
     return s == eHeroSummoningStage::arrived;
 }
 
-void eOverviewDataWidget::addGodQuests() {
+void eOverviewDataWidget::addGodQuests(eWidget* const w) {
     const auto pid = mBoard.personPlayer();
     const auto& qs = mBoard.godQuests(pid);
     for(const auto qq : qs) {
         const auto q = qq->godQuest();
         const auto god = q.fGod;
         const auto b = new eGodQuestButton(window());
-        b->setWidth(mQuestButtons->width());
+        b->setWidth(w->width());
         b->initialize(god, [this, q]() {
             return sHeroReady(mBoard, q.fHero);
         });
@@ -481,17 +486,17 @@ void eOverviewDataWidget::addGodQuests() {
                 gw->showTip(pid, heroNeededTmpl);
             }
         });
-        mQuestButtons->addWidget(b);
+        w->addWidget(b);
     }
 }
 
-void eOverviewDataWidget::addCityRequests() {
+void eOverviewDataWidget::addCityRequests(eWidget* const w) {
     const auto pid = mBoard.personPlayer();
     const auto& qs = mBoard.cityRequests(pid);
     for(const auto& qq : qs) {
         const auto q = qq->cityRequest();
         const auto b = new eResourceRequestButton(window());
-        b->setWidth(mQuestButtons->width());
+        b->setWidth(w->width());
         b->initialize(q.fType, q.fCity, [this, q]() {
             const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
@@ -518,12 +523,12 @@ void eOverviewDataWidget::addCityRequests() {
                 }
             }
         });
-        mQuestButtons->addWidget(b);
+        w->addWidget(b);
     }
     const auto& qqs = mBoard.cityTroopsRequests(pid);
     for(const auto& qq : qqs) {
         const auto b = new eTroopsRequestButton(window());
-        b->setWidth(mQuestButtons->width());
+        b->setWidth(w->width());
         b->initialize(qq->city(), [this]() {
             const auto cids = mBoard.personPlayerCitiesOnBoard();
             for(const auto cid : cids) {
@@ -543,6 +548,6 @@ void eOverviewDataWidget::addCityRequests() {
         b->setPressAction([qq]() {
             qq->dispatch();
         });
-        mQuestButtons->addWidget(b);
+        w->addWidget(b);
     }
 }
