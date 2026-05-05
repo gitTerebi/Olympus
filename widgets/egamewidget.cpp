@@ -2012,6 +2012,7 @@ void eGameWidget::updatePatrolPath()
 void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
 {
     mWalkerBuilding = nullptr;
+    mPatrolHighlightBuilding = pb;
     if (pb)
     {
         mSavedViewMode = mViewMode;
@@ -2353,7 +2354,9 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding *const b)
     }
     else if (const auto v = dynamic_cast<eVendor *>(b))
     {
-        return inPatrolBuildingHover(v->agora());
+        const auto r = v->tileRect();
+        const SDL_Point hover{mHoverTX, mHoverTY};
+        return SDL_PointInRect(&hover, &r);
     }
     return false;
 }
@@ -2813,8 +2816,13 @@ bool eGameWidget::mousePressEvent(const eMouseEvent &e)
                         setViewMode(eViewMode::patrolBuilding);
                     pgs.push_back({tx, ty});
                 }
+                else
+                {
+                    setPatrolBuilding(nullptr);
+                }
             }
-            updatePatrolPath();
+            if (mPatrolBuilding)
+                updatePatrolPath();
         }
     }
         return true;
@@ -3063,6 +3071,8 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
             else
             {
                 const auto tile = mBoard->tile(mHoverTX, mHoverTY);
+                mWalkerBuilding = nullptr;
+                mPatrolHighlightBuilding = nullptr;
                 if (tile && tile->soldierBanner())
                 {
                     const auto sb = tile->soldierBanner();
@@ -3079,14 +3089,24 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
                         const auto ppid = mBoard->personPlayer();
                         if (pid == ppid || mBoard->editorMode())
                         {
-                            if (const auto pb = dynamic_cast<ePatrolBuilding *>(b))
+                            if (const auto a = dynamic_cast<eAgoraBase *>(b))
+                            {
+                                setPatrolBuilding(a);
+                            }
+                            else if (const auto r = dynamic_cast<eRoad *>(b))
+                            {
+                                if (const auto a = r->underAgora())
+                                    setPatrolBuilding(a);
+                            }
+                            else if (const auto pb = dynamic_cast<ePatrolBuilding *>(b))
                             {
                                 if (pb->spawnsPatrolers())
                                     setPatrolBuilding(pb);
                             }
                             else if (const auto v = dynamic_cast<eVendor *>(b))
                             {
-                                setPatrolBuilding(v->agora());
+                                mPatrolHighlightBuilding = v->agora();
+                                mWalkerBuilding = v;
                             }
                             else if (const auto s = dynamic_cast<eAgoraSpace *>(b))
                             {

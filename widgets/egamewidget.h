@@ -392,6 +392,7 @@ private:
     bool mDrawElevation = true;
     stdptr<eBuilding> mWalkerBuilding;
     stdptr<ePatrolBuildingBase> mPatrolBuilding;
+    stdptr<ePatrolBuildingBase> mPatrolHighlightBuilding;
     std::vector<eTile*> mPatrolPath;
     std::vector<eTile*> mExcessPatrolPath;
     std::vector<eTile*> mPatrolPath1;
