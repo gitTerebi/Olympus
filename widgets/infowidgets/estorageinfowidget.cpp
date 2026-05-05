@@ -4,6 +4,12 @@
 
 #include "elanguage.h"
 
+#include "../ebutton.h"
+
+#include "../equestionwidget.h"
+
+#include "emainwindow.h"
+
 class eResourceStorageStack : public eWidget {
 public:
     using eWidget::eWidget;
@@ -24,15 +30,24 @@ public:
         const auto namesW = new eWidget(window());
         const auto buttonsW = new eWidget(window());
         const auto spinsW = new eWidget(window());
+        const auto deleteW = new eWidget(window());
+
+        countW->setNoPadding();
+        iconsW->setNoPadding();
+        namesW->setNoPadding();
+        buttonsW->setNoPadding();
+        spinsW->setNoPadding();
+        deleteW->setNoPadding();
 
         const auto res = resolution();
         const double mult = res.multiplier();
         const int rowHeight = mult*23;
         const int countWidth = mult*25;
-        const int iconsWidth = mult*40;
-        const int namesWidth = mult*140;
-        const int buttonsWidth = mult*160;
-        const int spinsWidth = mult*90;
+        const int iconsWidth = mult*30;
+        const int namesWidth = mult*131;
+        const int buttonsWidth = mult*133;
+        const int spinsWidth = mult*80;
+        const int deleteWidth = mult*20;
 
         buttonsW->setWidth(namesWidth);
 
@@ -108,6 +123,31 @@ public:
             s->setValue(maxCount.at(type));
 
             spinBoxes[type] = s;
+
+            const auto del = new eButton(window());
+            del->setText("x");
+            del->setSmallFontSize();
+            del->setWidth(deleteWidth);
+            del->setHeight(rowHeight);
+            del->setPressAction([this, stor, type, count, icon, changed]() {
+                const int current = stor->count(type);
+                if(current == 0) return;
+                const auto q = new eQuestionWidget(window());
+                const auto acceptA = [stor, type, count, icon, changed]() {
+                    const int current = stor->count(type);
+                    stor->take(type, current);
+                    count->setText("0");
+                    icon->setVisible(false);
+                    if(changed) changed();
+                };
+                const std::string typeName = eResourceTypeHelpers::typeName(type);
+                std::string msg = "Delete all " + typeName + "?";
+                q->initialize("Confirm Delete", msg, acceptA, nullptr);
+                window()->execDialog(q);
+                q->align(eAlignment::center);
+            });
+            deleteW->addWidget(del);
+            del->align(eAlignment::left);
 
             countW->addWidget(count);
             iconsW->addWidget(icon);
@@ -196,6 +236,10 @@ public:
                 changed();
             });
             namesW->addWidget(emptyBtn);
+
+            const auto spacerD = new eWidget(window());
+            spacerD->resize(1, mult*8);
+            deleteW->addWidget(spacerD);
         }
 
         countW->stackVertically();
@@ -203,6 +247,7 @@ public:
         namesW->stackVertically();
         buttonsW->stackVertically();
         spinsW->stackVertically();
+        deleteW->stackVertically();
 
         const int h = types.size()*rowHeight;
         countW->setHeight(h);
@@ -211,12 +256,14 @@ public:
         namesW->setHeight(h + extraH);
         buttonsW->setHeight(h + extraH);
         spinsW->setHeight(h + extraH);
+        deleteW->setHeight(h + extraH);
 
         countW->setWidth(countWidth);
         iconsW->setWidth(iconsWidth);
         namesW->setWidth(namesWidth);
         buttonsW->setWidth(buttonsWidth);
         spinsW->setWidth(spinsWidth);
+        deleteW->setWidth(deleteWidth);
         if(resetBtn) resetBtn->setX(spinsWidth - resetBtn->width());
 
         addWidget(countW);
@@ -224,6 +271,7 @@ public:
         addWidget(namesW);
         addWidget(buttonsW);
         addWidget(spinsW);
+        addWidget(deleteW);
 
         stackHorizontally();
         setNoPadding();
