@@ -41,7 +41,6 @@ public:
     void setPaddingXL();
     void setPaddingL();
     void setPaddingM();
-    void setPaddingMed();
     void setPaddingS();
     void setPaddingXS();
     void setPaddingXXS();

@@ -42,11 +42,6 @@ void eMultiLineLabel::setFontSizeM() {
     return setFontSize(s);
 }
 
-void eMultiLineLabel::setFontSizeMed() {
-    const int s = res().fontSizeMed();
-    return setFontSize(s);
-}
-
 void eMultiLineLabel::setFontSizeL() {
     const int s = res().fontSizeL();
     return setFontSize(s);

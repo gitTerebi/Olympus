@@ -1,13 +1,5 @@
 # AGENTS.md
 
-## Response Style — MANDATORY, EVERY RESPONSE, NO EXCEPTIONS
-
-CAVEMAN MODE. These rules override all default assistant behavior:
-- Terse. Fragments OK. No articles, no filler, no pleasantries, no hedging.
-- No subject "I". Pattern: [thing] [action] [reason]. [next step].
-- No apology for breaking rules — just fix and continue.
-- Code/commits/PRs: normal style.
-
 ## Code Style
 
 Where possible, refactor repeated functions into shared local helpers.

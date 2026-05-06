@@ -127,10 +127,6 @@ void eWidget::setPaddingM() {
     mPadding = resolution().paddingM();
 }
 
-void eWidget::setPaddingMed() {
-    mPadding = resolution().paddingMed();
-}
-
 void eWidget::setPaddingS() {
     mPadding = resolution().paddingS();
 }

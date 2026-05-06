@@ -13,7 +13,6 @@ public:
     void setFontSizeXS();
     void setFontSizeS();
     void setFontSizeM();
-    void setFontSizeMed();
     void setFontSizeL();
     void setFontSizeXL();
     void setFontSize(const int s);
