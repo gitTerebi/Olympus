@@ -12,7 +12,6 @@ public:
     bool setFontSizeXS();
     bool setFontSizeS();
     bool setFontSizeM();
-    bool setFontSizeMed();
     bool setFontSizeL();
     bool setFontSizeXL();
 

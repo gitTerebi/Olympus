@@ -44,10 +44,6 @@ int eResolution::paddingM() const {
     return 3*paddingL()/4;
 }
 
-int eResolution::paddingMed() const {
-    return 9*multiplier();
-}
-
 int eResolution::paddingS() const {
     return paddingL()/2;
 }
@@ -87,10 +83,6 @@ int eResolution::fontSizeL() const {
 
 int eResolution::fontSizeM() const {
     return 3*fontSizeL()/4;
-}
-
-int eResolution::fontSizeMed() const {
-    return 18*multiplier();
 }
 
 int eResolution::fontSizeS() const {

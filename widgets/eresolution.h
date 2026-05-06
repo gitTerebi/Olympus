@@ -21,7 +21,6 @@ public:
     int paddingXL() const;
     int paddingL() const;
     int paddingM() const;
-    int paddingMed() const;
     int paddingS() const;
     int paddingXS() const;
     int paddingXXS() const;
@@ -31,7 +30,6 @@ public:
     int fontSizeXL() const;
     int fontSizeL() const;
     int fontSizeM() const;
-    int fontSizeMed() const;
     int fontSizeS() const;
     int fontSizeXS() const;
     int fontSizeXXS() const;
