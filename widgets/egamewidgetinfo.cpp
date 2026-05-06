@@ -148,8 +148,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0); // needed )
             const auto str = estr + " " + emplstr + "  (" + mestr + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);
@@ -216,8 +216,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = estr + " " + emplstr + "  (" + mestr + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);
@@ -244,8 +244,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);
@@ -272,8 +272,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);
@@ -300,8 +300,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);
@@ -328,8 +328,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto memplstr = eLanguage::zeusText(69, 0);
             const auto str = std::to_string(e) + " " + emplstr + "  (" + std::to_string(me) + " " + memplstr;
             const auto empl = new eLabel(str, window());
-            empl->setSmallFontSize();
-            empl->setSmallPadding();
+            empl->setFontSizeS();
+            empl->setPaddingS();
             empl->fitContent();
             empWid->addWidget(empl);
             empl->align(eAlignment::hcenter);

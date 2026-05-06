@@ -26,7 +26,7 @@ void eBuildButton::initialize(const std::string& name,
         nameWidget->align(eAlignment::vcenter);
 
         const auto nameLabel = new eLabel(name, window());
-        nameLabel->setSmallFontSize();
+        nameLabel->setFontSizeS();
         nameLabel->setNoPadding();
         nameLabel->fitContent();
 
@@ -45,7 +45,7 @@ void eBuildButton::initialize(const std::string& name,
 
         const auto cstr = std::to_string(marbleCost);
         const auto marbleText = new eLabel(cstr, window());
-        marbleText->setSmallFontSize();
+        marbleText->setFontSizeS();
         marbleText->setNoPadding();
         marbleText->fitContent();
 
@@ -66,7 +66,7 @@ void eBuildButton::initialize(const std::string& name,
 
         const auto cstr = std::to_string(cost);
         const auto drachmaText = new eLabel(cstr, window());
-        drachmaText->setSmallFontSize();
+        drachmaText->setFontSizeS();
         drachmaText->setNoPadding();
         drachmaText->fitContent();
 

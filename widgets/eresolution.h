@@ -18,20 +18,23 @@ public:
 
     double multiplier() const;
 
-    int hugePadding() const;
-    int largePadding() const;
-    int smallPadding() const;
-    int tinyPadding() const;
-    int veryTinyPadding() const;
-    int veryVeryTinyPadding() const;
+    int paddingXL() const;
+    int paddingL() const;
+    int paddingM() const;
+    int paddingMed() const;
+    int paddingS() const;
+    int paddingXS() const;
+    int paddingXXS() const;
 
     int margin() const;
 
-    int hugeFontSize() const;
-    int largeFontSize() const;
-    int smallFontSize() const;
-    int verySmallFontSize() const;
-    int tinyFontSize() const;
+    int fontSizeXL() const;
+    int fontSizeL() const;
+    int fontSizeM() const;
+    int fontSizeMed() const;
+    int fontSizeS() const;
+    int fontSizeXS() const;
+    int fontSizeXXS() const;
 
     int centralWidgetLargeWidth() const;
     int centralWidgetSmallWidth() const;

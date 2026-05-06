@@ -57,8 +57,8 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     cw->setNoPadding();
 
     const auto nameLabel = new eLabel(window());
-    nameLabel->setSmallFontSize();
-    nameLabel->setTinyPadding();
+    nameLabel->setFontSizeS();
+    nameLabel->setPaddingXS();
     nameLabel->setText(name);
     nameLabel->fitContent();
     cw->addWidget(nameLabel);
@@ -67,14 +67,14 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     iw->setNoPadding();
 
     const auto iconLabel = new eLabel(window());
-    iconLabel->setTinyPadding();
+    iconLabel->setPaddingXS();
     iconLabel->setTexture(icon);
     iconLabel->fitContent();
     iw->addWidget(iconLabel);
 
     const auto countLabel = new eLabel(window());
-    countLabel->setTinyPadding();
-    countLabel->setSmallFontSize();
+    countLabel->setPaddingXS();
+    countLabel->setFontSizeS();
     countLabel->setText(std::to_string(c));
     countLabel->fitContent();
     iw->addWidget(countLabel);
@@ -85,8 +85,8 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     iw->setY(nameLabel->height());
 
     const auto stateLabel = new eLabel(window());
-    stateLabel->setTinyPadding();
-    stateLabel->setSmallFontSize();
+    stateLabel->setPaddingXS();
+    stateLabel->setFontSizeS();
     mStateLabel = stateLabel;
     updateStateLabel(a, res);
     stateLabel->fitContent();

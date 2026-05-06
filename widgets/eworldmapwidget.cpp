@@ -1,4 +1,4 @@
-﻿#include "eworldmapwidget.h"
+#include "eworldmapwidget.h"
 
 #include "textures/egametextures.h"
 #include "textures/einterfacetextures.h"
@@ -187,7 +187,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         if(nameFind == mNames.end()) {
             nameTex = std::make_shared<eTexture>();
             const auto res = resolution();
-            const int fontSize = res.smallFontSize();
+            const int fontSize = res.fontSizeS();
             const auto font = eFonts::defaultFont(fontSize);
             nameTex->loadText(renderer(), name, eFontColor::region, *font);
             mNames[name] = nameTex;
@@ -331,8 +331,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                                    ct->shields();
             const int a = std::clamp(s, 1, 5);
             const int w = std::clamp(ct->wealth(), 1, 5);
-            const int lp = res.largePadding();
-            const int hp = res.hugePadding();
+            const int lp = res.paddingL();
+            const int hp = res.paddingXL();
             int xx = x - hp;
             const int yy = y - hp;
             const auto& aTex = aColl.getTexture(a - 1);
@@ -356,7 +356,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             if(nameFind == mNames.end()) {
                 nameTex = std::make_shared<eTexture>();
                 const auto res = resolution();
-                const int fontSize = res.smallFontSize();
+                const int fontSize = res.fontSizeS();
                 const auto font = eFonts::defaultFont(fontSize);
                 nameTex->loadText(renderer(), name, eFontColor::light, *font);
                 mNames[name] = nameTex;
@@ -430,7 +430,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             int x;
             int y;
             armyDrawXY(*army.fTravelFrom, *army.fTravelTo, army.fTravelFrac, x, y);
-            const int dx = res.largePadding();
+            const int dx = res.paddingL();
             if(army.fArmySize != 0) {
                 const int n = std::clamp(army.fArmySize - 1, 0, 2);
                 const eTextureCollection* coll = nullptr;

@@ -54,7 +54,7 @@ void eTopBarWidget::initialize() {
     s1->setWidth(mult*20);
 
     mCityLabel = new eLabel("-", window());
-    mCityLabel->setSmallFontSize();
+    mCityLabel->setFontSizeS();
     mCityLabel->setNoPadding();
     mCityLabel->fitContent();
 
@@ -83,7 +83,7 @@ void eTopBarWidget::initialize() {
         dw->align(eAlignment::center);
     });
     const eDate date(30, eMonth::january, -1500);
-    mDateLabel->setSmallFontSize();
+    mDateLabel->setFontSizeS();
     mDateLabel->setText(date.shortString());
     mDateLabel->fitContent();
     mDateLabel->setEnabled(false);

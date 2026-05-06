@@ -1,4 +1,4 @@
-﻿#include "eminimap.h"
+#include "eminimap.h"
 
 #include "textures/egametextures.h"
 

@@ -13,8 +13,8 @@ void eListButton::initialize(const std::string& text, const int id,
 
     mIdLabel = new eLabel(std::to_string(id + 1), window());
     if(small) {
-        mIdLabel->setTinyFontSize();
-        mIdLabel->setTinyPadding();
+        mIdLabel->setFontSizeXS();
+        mIdLabel->setPaddingXS();
     }
     mIdLabel->fitContent();
     mIdLabel->setWidth(mIdLabel->height());
@@ -24,8 +24,8 @@ void eListButton::initialize(const std::string& text, const int id,
 
     mButton = new eFramedButton(text, window());
     if(small) {
-        mButton->setTinyFontSize();
-        mButton->setTinyPadding();
+        mButton->setFontSizeXS();
+        mButton->setPaddingXS();
     }
     mButton->setUnderline(false);
     mButton->setRenderBg(renderBg);
@@ -77,8 +77,8 @@ void eButtonsListWidget::initialize(const bool newButton,
         const auto addStr = eLanguage::text("add");
         mNewButton = new eFramedButton(addStr, window());
         if(mSmallSize) {
-            mNewButton->setSmallFontSize();
-            mNewButton->setSmallPadding();
+            mNewButton->setFontSizeS();
+            mNewButton->setPaddingS();
         }
         mNewButton->fitContent();
         mNewButton->setUnderline(false);

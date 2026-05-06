@@ -13,9 +13,9 @@ TTF_Font* eFonts::requestFont(const eFont& font) {
 }
 
 TTF_Font* eFonts::defaultFont(const eResolution res) {
-    const int fs = res.largeFontSize();
+    const int fs = res.fontSizeL();
     return defaultFont(fs);
-;}
+}
 
 TTF_Font* eFonts::defaultFont(const int fs) {
     return requestFont({eGameDir::exeDir() + "../Fonts/Zeus.ttf", fs});

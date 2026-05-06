@@ -14,23 +14,38 @@ bool eLabelBase::setFont(const eFont& font) {
     return setFont(ttf);
 }
 
-bool eLabelBase::setTinyFontSize() {
-    const int s = res().tinyFontSize();
+bool eLabelBase::setFontSizeXXS() {
+    const int s = res().fontSizeXXS();
     return setFontSize(s);
 }
 
-bool eLabelBase::setVerySmallFontSize() {
-    const int s = res().verySmallFontSize();
+bool eLabelBase::setFontSizeXS() {
+    const int s = res().fontSizeXS();
     return setFontSize(s);
 }
 
-bool eLabelBase::setSmallFontSize() {
-    const int s = res().smallFontSize();
+bool eLabelBase::setFontSizeS() {
+    const int s = res().fontSizeS();
     return setFontSize(s);
 }
 
-bool eLabelBase::setHugeFontSize() {
-    const int s = res().hugeFontSize();
+bool eLabelBase::setFontSizeM() {
+    const int s = res().fontSizeM();
+    return setFontSize(s);
+}
+
+bool eLabelBase::setFontSizeMed() {
+    const int s = res().fontSizeMed();
+    return setFontSize(s);
+}
+
+bool eLabelBase::setFontSizeL() {
+    const int s = res().fontSizeL();
+    return setFontSize(s);
+}
+
+bool eLabelBase::setFontSizeXL() {
+    const int s = res().fontSizeXL();
     return setFontSize(s);
 }
 

@@ -66,7 +66,7 @@ void eMessageBox::initialize(eGameBoard& board,
                                    eMonster::sMonsterName(ed.fMonster));
 
         const auto title = new eLabel(msg.fTitle, window());
-        title->setHugeFontSize();
+        title->setFontSizeXL();
         title->fitContent();
         w0->addWidget(title);
         w0->fitContent();
@@ -77,7 +77,7 @@ void eMessageBox::initialize(eGameBoard& board,
 
     const auto ww = new eFramedWidget(window());
     ww->setType(eFrameType::inner);
-    ww->setSmallPadding();
+    ww->setPaddingS();
 
     {
         const auto to = eLanguage::zeusText(63, 5); // to
@@ -90,7 +90,7 @@ void eMessageBox::initialize(eGameBoard& board,
             str += ",     " + cName;
         }
         const auto d = new eLabel(str, window());
-        d->setSmallFontSize();
+        d->setFontSizeS();
         d->fitContent();
         ww->addWidget(d);
         d->setX(p);
@@ -104,7 +104,7 @@ void eMessageBox::initialize(eGameBoard& board,
         www->addWidget(butt);
         const auto go = eLanguage::zeusText(12, 1); // got to site of event
         const auto l = new eLabel(go, window());
-        l->setSmallFontSize();
+        l->setFontSizeS();
         l->fitContent();
         www->addWidget(l);
         www->stackHorizontally();
@@ -115,7 +115,7 @@ void eMessageBox::initialize(eGameBoard& board,
     }
 
     const auto text = new eLabel(window());
-    text->setSmallFontSize();
+    text->setFontSizeS();
     text->setWrapWidth(width() - 8*p);
     eStringHelpers::replaceAll(msg.fText, "[greeting]",
                                eLanguage::text("greetings"));
@@ -196,7 +196,7 @@ void eMessageBox::initialize(eGameBoard& board,
         wid->setNoPadding();
 
         const auto surrenderB = new eFramedButton(window());
-        surrenderB->setSmallFontSize();
+        surrenderB->setFontSizeS();
         surrenderB->setUnderline(false);
         surrenderB->setText(eLanguage::zeusText(44, 282));
         surrenderB->fitContent();
@@ -208,7 +208,7 @@ void eMessageBox::initialize(eGameBoard& board,
         surrenderB->setVisible(bool(ed.fA0));
 
         const auto bribeB = new eFramedButton(window());
-        bribeB->setSmallFontSize();
+        bribeB->setFontSizeS();
         bribeB->setUnderline(false);
         auto bribeStr = eLanguage::zeusText(44, 281);
         eStringHelpers::replace(bribeStr, "[bribe_amount]",
@@ -223,7 +223,7 @@ void eMessageBox::initialize(eGameBoard& board,
         bribeB->setVisible(bool(ed.fA1));
 
         const auto fightToDefend = new eFramedButton(window());
-        fightToDefend->setSmallFontSize();
+        fightToDefend->setFontSizeS();
         fightToDefend->setUnderline(false);
         fightToDefend->setText(eLanguage::zeusText(44, 283));
         fightToDefend->fitContent();
@@ -258,7 +258,7 @@ void eMessageBox::initialize(eGameBoard& board,
         wid->setNoPadding();
 
         const auto acceptB = new eFramedButton(window());
-        acceptB->setSmallFontSize();
+        acceptB->setFontSizeS();
         acceptB->setUnderline(false);
         acceptB->setText(eLanguage::zeusText(44, 209));
         acceptB->fitContent();
@@ -289,7 +289,7 @@ void eMessageBox::initialize(eGameBoard& board,
             const auto iniName = iniC->second;
 
             const auto cityB = new eBoardCitySwitchButton(window());
-            cityB->setSmallFontSize();
+            cityB->setFontSizeS();
             const auto setCid = [this, ed, acceptB, spaceLabel, count](const eCityId cid) {
                 const int space = ed.fCSpaceCount.at(cid);
                 if(spaceLabel) {
@@ -313,7 +313,7 @@ void eMessageBox::initialize(eGameBoard& board,
         }
 
         const auto postponeB = new eFramedButton(window());
-        postponeB->setSmallFontSize();
+        postponeB->setFontSizeS();
         postponeB->setUnderline(false);
         postponeB->setText(eLanguage::zeusText(44, 211));
         postponeB->fitContent();
@@ -325,7 +325,7 @@ void eMessageBox::initialize(eGameBoard& board,
         postponeB->setVisible(ed.fA1 && type != eResourceType::drachmas);
 
         const auto declineB = new eFramedButton(window());
-        declineB->setSmallFontSize();
+        declineB->setFontSizeS();
         declineB->setUnderline(false);
         declineB->setText(eLanguage::zeusText(44, 210));
         declineB->fitContent();
@@ -373,7 +373,7 @@ void eMessageBox::initialize(eGameBoard& board,
         wid->setNoPadding();
 
         const auto a0B = new eFramedButton(window());
-        a0B->setSmallFontSize();
+        a0B->setFontSizeS();
         a0B->setUnderline(false);
         a0B->setText(eLanguage::zeusText(44, 275));
         a0B->fitContent();
@@ -401,7 +401,7 @@ void eMessageBox::initialize(eGameBoard& board,
             const auto iniName = iniC->second;
 
             const auto cityB = new eBoardCitySwitchButton(window());
-            cityB->setSmallFontSize();
+            cityB->setFontSizeS();
             const auto setCid = [this, ed, a0B](const eCityId cid) {
                 const int count = ed.fCSpaceCount.at(cid);
                 a0B->setVisible(count >= ed.fResourceCount);
@@ -420,7 +420,7 @@ void eMessageBox::initialize(eGameBoard& board,
         }
 
         const auto a1B = new eFramedButton(window());
-        a1B->setSmallFontSize();
+        a1B->setFontSizeS();
         a1B->setUnderline(false);
         a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
@@ -432,7 +432,7 @@ void eMessageBox::initialize(eGameBoard& board,
         a1B->setVisible(ed.fA1 != nullptr);
 
         const auto a2B = new eFramedButton(window());
-        a2B->setSmallFontSize();
+        a2B->setFontSizeS();
         a2B->setUnderline(false);
         a2B->setText(eLanguage::zeusText(44, 212));
         a2B->fitContent();
@@ -465,7 +465,7 @@ void eMessageBox::initialize(eGameBoard& board,
         wid->setNoPadding();
 
         const auto a0B = new eFramedButton(window());
-        a0B->setSmallFontSize();
+        a0B->setFontSizeS();
         a0B->setUnderline(false);
         a0B->setText(eLanguage::zeusText(44, 275));
         a0B->fitContent();
@@ -483,7 +483,7 @@ void eMessageBox::initialize(eGameBoard& board,
         a0B->setVisible(ed.fA0 != nullptr || ed.fCA0 != nullptr);
 
         const auto a1B = new eFramedButton(window());
-        a1B->setSmallFontSize();
+        a1B->setFontSizeS();
         a1B->setUnderline(false);
         a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
@@ -495,7 +495,7 @@ void eMessageBox::initialize(eGameBoard& board,
         a1B->setVisible(ed.fA1 != nullptr);
 
         const auto a2B = new eFramedButton(window());
-        a2B->setSmallFontSize();
+        a2B->setFontSizeS();
         a2B->setUnderline(false);
         a2B->setText(eLanguage::zeusText(44, 212));
         a2B->fitContent();
@@ -589,7 +589,7 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
 
     auto addLabel = [this, tributeWid](const std::string& text) {
         const auto label = new eLabel(window());
-        label->setSmallFontSize();
+        label->setFontSizeS();
         label->setNoPadding();
         label->setText(text);
         label->fitContent();

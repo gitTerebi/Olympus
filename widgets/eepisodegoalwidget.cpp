@@ -28,8 +28,8 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     const int p = padding();
 
     const auto textL = new eLabel(window());
-    textL->setSmallFontSize();
-    textL->setSmallPadding();
+    textL->setFontSizeS();
+    textL->setPaddingS();
     cont->addWidget(textL);
 
     const auto updateText = [textL, e, board]() {

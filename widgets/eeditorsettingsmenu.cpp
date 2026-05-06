@@ -359,8 +359,8 @@ void eEditorSettingsMenu::initialize(const bool first,
                 std::vector<eCheckableButton*> buttons;
                 for(const auto& type : bv) {
                     const auto bb = new eCheckableButton(window());
-                    bb->setSmallFontSize();
-                    bb->setSmallPadding();
+                    bb->setFontSizeS();
+                    bb->setPaddingS();
                     bb->setText(eBuilding::sNameForBuilding(type));
                     bb->fitContent();
                     w = std::max(w, bb->width());
@@ -503,8 +503,8 @@ void eEditorSettingsMenu::initialize(const bool first,
                 maxMenu->resize(width(), height());
 
                 const auto bb = new eValueButton(window());
-                bb->setSmallFontSize();
-                bb->setSmallPadding();
+                bb->setFontSizeS();
+                bb->setPaddingS();
                 bb->initialize(0, 16);
                 bb->fitContent();
                 bb->setValueChangeAction([cid, ep](const int v) {

@@ -21,7 +21,7 @@ void eNameWidget::initialize(const std::string& ini,
 
     if(!title.empty()) {
         const auto titleL = new eLabel(window());
-        titleL->setHugeFontSize();
+        titleL->setFontSizeXL();
         titleL->setText(title);
         titleL->fitContent();
         innerWidget->addWidget(titleL);
@@ -47,8 +47,8 @@ void eNameWidget::initialize(const std::string& ini,
 
     const auto chooseButton = new eFramedButton(window());
     chooseButton->setUnderline(false);
-    chooseButton->setSmallFontSize();
-    chooseButton->setSmallPadding();
+    chooseButton->setFontSizeS();
+    chooseButton->setPaddingS();
     chooseButton->setText(eLanguage::zeusText(13, 8)); // choose name:
     chooseButton->fitContent();
     buttonsW->addWidget(chooseButton);
@@ -68,8 +68,8 @@ void eNameWidget::initialize(const std::string& ini,
         const auto pW = new eWidget(window());
         pW->setNoPadding();
         const auto continueL = new eLabel(window());
-        continueL->setSmallFontSize();
-        continueL->setSmallPadding();
+        continueL->setFontSizeS();
+        continueL->setPaddingS();
         continueL->setText(eLanguage::zeusText(13, 5));
         continueL->fitContent();
         pW->addWidget(continueL);

@@ -42,7 +42,7 @@ void eHygieneSafetyDataWidget::initialize() {
     const int iw = inner->width();
 
     const auto chtitle = new eLabel(window());
-    chtitle->setVerySmallFontSize();
+    chtitle->setFontSizeXS();
     chtitle->setNoPadding();
     chtitle->setText(eLanguage::zeusText(56, 1)); // city hygiene
     chtitle->fitContent();
@@ -52,7 +52,7 @@ void eHygieneSafetyDataWidget::initialize() {
     mHygieneLabel = new eLabel(window());
     mHygieneLabel->setNoPadding();
     mHygieneLabel->setYellowFontColor();
-    mHygieneLabel->setVerySmallFontSize();
+    mHygieneLabel->setFontSizeXS();
     mHygieneLabel->setText(eLanguage::zeusText(56, 10)); // excellent
     mHygieneLabel->fitContent();
     inner->addWidget(mHygieneLabel);
@@ -74,7 +74,7 @@ void eHygieneSafetyDataWidget::initialize() {
 
     {
         const auto unrestTitle = new eLabel(window());
-        unrestTitle->setTinyFontSize();
+        unrestTitle->setFontSizeXS();
         unrestTitle->setNoPadding();
         unrestTitle->setText(eLanguage::zeusText(56, 17)); // unrest
         unrestTitle->fitContent();
@@ -86,7 +86,7 @@ void eHygieneSafetyDataWidget::initialize() {
         mUnrestLabel->setWrapWidth(iw);
         mUnrestLabel->setWrapAlignment(eAlignment::hcenter);
         mUnrestLabel->setNoPadding();
-        mUnrestLabel->setVerySmallFontSize();
+        mUnrestLabel->setFontSizeXS();
         mUnrestLabel->setYellowFontColor();
         mUnrestLabel->setText(eLanguage::zeusText(56, 23)); // no unrest
         mUnrestLabel->fitContent();

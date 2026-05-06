@@ -25,7 +25,7 @@ void eAppealDataWidget::initialize() {
 
     const auto title = new eLabel(window());
     title->setNoPadding();
-    title->setVerySmallFontSize();
+    title->setFontSizeXS();
     title->setWrapWidth(iw);
     title->setWrapAlignment(eAlignment::hcenter);
     title->setText(eLanguage::zeusText(133, 1)); // commemorative monuments
@@ -46,7 +46,7 @@ void eAppealDataWidget::initialize() {
     mNoMonumentsWidget->setWrapAlignment(eAlignment::hcenter);
     mNoMonumentsWidget->setYellowFontColor();
     mNoMonumentsWidget->setNoPadding();
-    mNoMonumentsWidget->setTinyFontSize();
+    mNoMonumentsWidget->setFontSizeXS();
     const auto text = eLanguage::zeusText(133, 2); // no commemorative monuments
     mNoMonumentsWidget->setText(text);
     mNoMonumentsWidget->fitContent();
@@ -66,7 +66,7 @@ public:
 
         setYellowFontColor();
         setNoPadding();
-        setTinyFontSize();
+        setFontSizeXS();
         setText(txt);
         fitContent();
 

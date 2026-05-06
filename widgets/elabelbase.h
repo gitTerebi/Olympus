@@ -8,10 +8,13 @@ class eLabelBase {
 public:
     eLabelBase(eMainWindow* const window);
 
-    bool setTinyFontSize();
-    bool setVerySmallFontSize();
-    bool setSmallFontSize();
-    bool setHugeFontSize();
+    bool setFontSizeXXS();
+    bool setFontSizeXS();
+    bool setFontSizeS();
+    bool setFontSizeM();
+    bool setFontSizeMed();
+    bool setFontSizeL();
+    bool setFontSizeXL();
 
     bool setFont(const eFont& font);
     bool setFontSize(const int s);

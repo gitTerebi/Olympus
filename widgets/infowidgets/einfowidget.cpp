@@ -70,7 +70,7 @@ eWidget* eInfoWidget::addRegularWidget(const int height) {
 
 void eInfoWidget::addText(const std::string& text) {
     const auto wid = new eLabel(window());
-    wid->setSmallFontSize();
+    wid->setFontSizeS();
     wid->setWrapWidth(widgetWidth());
     wid->setText(text);
     wid->fitContent();

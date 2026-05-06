@@ -128,7 +128,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     const double mult = res.multiplier();
     const auto chooseW = new eFramedWidget(window());
     chooseW->setType(eFrameType::message);
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     const int cw = 400*mult;
     const int ch = 400*mult;
     chooseW->resize(cw, ch);
@@ -141,7 +141,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     iw->move(2*p, 2*p);
 
     const auto title = new eLabel(window());
-    title->setHugeFontSize();
+    title->setFontSizeXL();
     title->setNoPadding();
     title->setText(editor ? eLanguage::zeusText(287, 3) : // "Adventure Editor" : "Adventures"
                             eLanguage::zeusText(293, 9));
@@ -150,7 +150,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     title->align(eAlignment::hcenter);
 
     const auto chooseLabel = new eLabel(window());
-    chooseLabel->setSmallFontSize();
+    chooseLabel->setFontSizeS();
     chooseLabel->setNoPadding();
     chooseLabel->setText(eLanguage::zeusText(287, 5)); // "Choose an Adventure"
     chooseLabel->fitContent();
@@ -179,7 +179,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     const auto viewport = new eScrollViewport(window());
     viewport->setNoPadding();
-    const int tp = resolution().tinyPadding();
+    const int tp = resolution().paddingS();
     innerFrame->addWidget(viewport);
 
     scrollCont->addWidget(scrollbar);
@@ -191,8 +191,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
         const auto newB = new eFramedButton(window());
         newB->setUnderline(false);
-        newB->setSmallFontSize();
-        newB->setSmallPadding();
+        newB->setFontSizeS();
+        newB->setPaddingS();
         newB->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
         newB->fitContent();
         buttonsW->addWidget(newB);
@@ -206,8 +206,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             iw->setWidth(cw - 4*p);
 
             const auto title = new eLabel(window());
-            title->setHugeFontSize();
-            title->setSmallPadding();
+            title->setFontSizeXL();
+            title->setPaddingS();
             title->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
             title->fitContent();
             iw->addWidget(title);
@@ -236,8 +236,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             proceedW->setNoPadding();
 
             const auto proceedLabel = new eLabel(window());
-            proceedLabel->setSmallFontSize();
-            proceedLabel->setSmallPadding();
+            proceedLabel->setFontSizeS();
+            proceedLabel->setPaddingS();
             proceedLabel->setText(eLanguage::zeusText(287, 2)); // "Proceed"
             proceedLabel->fitContent();
             proceedW->addWidget(proceedLabel);
@@ -285,8 +285,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
         const auto deleteB = new eFramedButton(window());
         deleteB->setUnderline(false);
-        deleteB->setSmallFontSize();
-        deleteB->setSmallPadding();
+        deleteB->setFontSizeS();
+        deleteB->setPaddingS();
         deleteB->setText(eLanguage::zeusText(287, 1)); // "Delete Adventure"
         deleteB->fitContent();
         buttonsW->addWidget(deleteB);
@@ -323,8 +323,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     proceedW->setNoPadding();
 
     const auto proceedLabel = new eLabel(window());
-    proceedLabel->setSmallFontSize();
-    proceedLabel->setSmallPadding();
+    proceedLabel->setFontSizeS();
+    proceedLabel->setPaddingS();
     proceedLabel->setText(editor ? eLanguage::zeusText(287, 2) : // "Proceed"
                                    eLanguage::zeusText(287, 6)); // "Begin Adventure"
     proceedLabel->fitContent();
@@ -412,7 +412,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     descIW->move(p, p);
 
     mTitle = new eLabel(window());
-    mTitle->setSmallFontSize();
+    mTitle->setFontSizeS();
     mTitle->setNoPadding();
     mTitle->setText("Height");
     mTitle->fitContent();
@@ -422,7 +422,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     mDesc = new eLabel(window());
     mDesc->setWrapWidth(descIW->width());
-    mDesc->setSmallFontSize();
+    mDesc->setFontSizeS();
     mDesc->setNoPadding();
 
     descIW->addWidget(mTitle);
@@ -448,7 +448,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
         const auto addSectionLabel = [&](const std::string& text) {
             const auto lbl = new eLabel(window());
-            lbl->setTinyFontSize();
+            lbl->setFontSizeXS();
             lbl->setDarkFontColor();
             lbl->setNoPadding();
             lbl->setText(text);
@@ -459,7 +459,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         const auto addEntries = [&](const std::vector<eCampaignGlossary>& list) {
             for(const auto& g : list) {
                 const auto w = new eButtonBase(window());
-                w->setTinyFontSize();
+                w->setFontSizeXS();
                 w->setNoPadding();
                 w->setText(g.fTitle);
                 w->fitContent();

@@ -9,7 +9,7 @@ void eChooseButton::initialize(
         const bool small) {
     setType(eFrameType::message);
 
-    if(small) setSmallPadding();
+    if(small) setPaddingS();
 
     std::vector<eFramedButton*> buttons;
 
@@ -18,8 +18,8 @@ void eChooseButton::initialize(
         const auto b = new eFramedButton(window());
         b->setUnderline(false);
         if(small) {
-            b->setSmallFontSize();
-            b->setSmallPadding();
+            b->setFontSizeS();
+            b->setPaddingS();
         }
         b->setText(l);
         b->fitContent();

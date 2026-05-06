@@ -38,12 +38,13 @@ public:
     void clearWidgetPointers();
     void setTooltip(const std::string& tt);
 
-    void setHugePadding();
-    void setLargePadding();
-    void setSmallPadding();
-    void setTinyPadding();
-    void setVeryTinyPadding();
-    void setVeryVeryTinyPadding();
+    void setPaddingXL();
+    void setPaddingL();
+    void setPaddingM();
+    void setPaddingMed();
+    void setPaddingS();
+    void setPaddingXS();
+    void setPaddingXXS();
     void setNoPadding();
 
     void align(const eAlignment a);

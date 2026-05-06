@@ -27,8 +27,8 @@ void eEpisodesWidget::intialize(const bool colony,
     labelsW->setNoPadding();
 
     const auto idC = new eLabel(window());
-    idC->setTinyFontSize();
-    idC->setTinyPadding();
+    idC->setFontSizeXS();
+    idC->setPaddingXS();
     idC->setText(colony ? eLanguage::zeusText(195, 12) :
                           eLanguage::zeusText(195, 9));
     idC->fitContent();
@@ -36,8 +36,8 @@ void eEpisodesWidget::intialize(const bool colony,
     labelsW->addWidget(idC);
 
     const auto nextEpisodeC = new eLabel(window());
-    nextEpisodeC->setTinyFontSize();
-    nextEpisodeC->setTinyPadding();
+    nextEpisodeC->setFontSizeXS();
+    nextEpisodeC->setPaddingXS();
     nextEpisodeC->setText(eLanguage::zeusText(195, 2));
     nextEpisodeC->fitContent();
     nextEpisodeC->setWidth(colW);
@@ -45,8 +45,8 @@ void eEpisodesWidget::intialize(const bool colony,
     nextEpisodeC->setVisible(!colony);
 
     const auto episodeSettingsC = new eLabel(window());
-    episodeSettingsC->setTinyFontSize();
-    episodeSettingsC->setTinyPadding();
+    episodeSettingsC->setFontSizeXS();
+    episodeSettingsC->setPaddingXS();
     episodeSettingsC->setText(colony ? eLanguage::zeusText(195, 49) :
                                        eLanguage::zeusText(195, 10));
     episodeSettingsC->fitContent();
@@ -54,8 +54,8 @@ void eEpisodesWidget::intialize(const bool colony,
     labelsW->addWidget(episodeSettingsC);
 
     const auto episodeTextC = new eLabel(window());
-    episodeTextC->setTinyFontSize();
-    episodeTextC->setTinyPadding();
+    episodeTextC->setFontSizeXS();
+    episodeTextC->setPaddingXS();
     episodeTextC->setText(colony ? eLanguage::zeusText(195, 48) :
                                    eLanguage::zeusText(195, 21));
     episodeTextC->fitContent();
@@ -117,7 +117,7 @@ public:
         setNoPadding();
 
         const auto idL = new eLabel(window());
-        idL->setTinyFontSize();
+        idL->setFontSizeXS();
         idL->setNoPadding();
         const auto idStr = std::to_string(id + 1) + ".";
         idL->setText(idStr);
@@ -135,8 +135,8 @@ public:
             editW->setWidth(colW - idL->width());
             const auto editB = new eFramedButton(window());
             editB->setUnderline(false);
-            editB->setTinyFontSize();
-            editB->setTinyPadding();
+            editB->setFontSizeXS();
+            editB->setPaddingXS();
             editB->setText(eLanguage::zeusText(195, 20));
             editB->setTooltip(eLanguage::zeusText(278, 14));
             editB->fitContent();
@@ -155,8 +155,8 @@ public:
             cityB->setValidator([](const stdsptr<eWorldCity>& c) {
                 return c->isColony();
             });
-            cityB->setTinyFontSize();
-            cityB->setTinyPadding();
+            cityB->setFontSizeXS();
+            cityB->setPaddingXS();
             const auto ee = static_cast<eColonyEpisode*>(e.get());
             cityB->initialize(&c->worldBoard(), [ee](const stdsptr<eWorldCity>& c) {
                 ee->fCity = c;
@@ -175,8 +175,8 @@ public:
             nextEpisodeW->setWidth(colW);
             const auto nextEpisodeB = new eFramedButton(window());
             nextEpisodeB->setUnderline(false);
-            nextEpisodeB->setTinyFontSize();
-            nextEpisodeB->setTinyPadding();
+            nextEpisodeB->setFontSizeXS();
+            nextEpisodeB->setPaddingXS();
             if(last) {
                 nextEpisodeB->setText(eLanguage::zeusText(195, 50));
                 nextEpisodeB->setTooltip(eLanguage::zeusText(278, 13));
@@ -237,8 +237,8 @@ public:
         settingsW->setWidth(colW);
         const auto settingsB = new eFramedButton(window());
         settingsB->setUnderline(false);
-        settingsB->setTinyFontSize();
-        settingsB->setTinyPadding();
+        settingsB->setFontSizeXS();
+        settingsB->setPaddingXS();
         settingsB->setText(eLanguage::zeusText(195, 13));
         settingsB->setTooltip(eLanguage::zeusText(278, 15));
         settingsB->fitContent();
@@ -316,8 +316,8 @@ public:
         textW->setWidth(colW);
         mTextB = new eFramedButton(window());
         mTextB->setUnderline(false);
-        mTextB->setTinyFontSize();
-        mTextB->setTinyPadding();
+        mTextB->setFontSizeXS();
+        mTextB->setPaddingXS();
         mTextB->setText("x");
         mTextB->setTooltip(colony ? eLanguage::zeusText(278, 17) :
                                     eLanguage::zeusText(278, 16));
@@ -390,7 +390,7 @@ void eEpisodesWidget::add(eCampaign* const c,
 
     mEpisodesW->addWidget(w);
     const auto res = resolution();
-    const int p = res.tinyPadding();
+    const int p = res.paddingS();
     mEpisodesW->stackVertically(p);
     mEpisodesW->fitHeight();
 }

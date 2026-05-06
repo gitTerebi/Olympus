@@ -20,7 +20,7 @@ public:
         setHeight(10*mult);
 
         setNoPadding();
-        setTinyFontSize();
+        setFontSizeXS();
         setText(text);
         setPressAction(a);
 

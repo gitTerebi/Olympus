@@ -98,7 +98,7 @@ public:
         mAction(action) {
         setPadding(2 * resolution().multiplier());
         setUnderline(false);
-        setVerySmallFontSize();
+        setFontSizeXS();
         updateText();
         setWidth(60 * resolution().multiplier());
         setPressAction([this]() {
@@ -172,7 +172,7 @@ void eOptionsMenu::initialize() {
     cancel->setPressAction([this]() { close(); });
 
     mMainTitle = new eLabel("General Options", window());
-    mMainTitle->setHugeFontSize();
+    mMainTitle->setFontSizeXL();
     mMainTitle->fitContent();
     f->addWidget(mMainTitle);
     mMainTitle->align(eAlignment::hcenter);
@@ -299,7 +299,7 @@ void eOptionsMenu::showPage(const int id) {
         w->setWidth(mPage->width());
 
         const auto valueLabel = new eLabel(window());
-        valueLabel->setSmallFontSize();
+        valueLabel->setFontSizeS();
         valueLabel->setText(label + ": " + std::to_string(value) + suffix);
         valueLabel->fitContent();
         w->addWidget(valueLabel);
@@ -335,7 +335,7 @@ void eOptionsMenu::showPage(const int id) {
 
         const auto label = new eLabel(hotkey.fLabel, window());
         label->setNoPadding();
-        label->setVerySmallFontSize();
+        label->setFontSizeXS();
         label->fitContent();
         w->addWidget(label);
 
@@ -383,7 +383,7 @@ void eOptionsMenu::showPage(const int id) {
         w->setWidth(mPage->width());
 
         const auto label = new eLabel(item.fLabel, window());
-        label->setSmallFontSize();
+        label->setFontSizeS();
         label->fitContent();
         w->addWidget(label);
 
@@ -415,7 +415,7 @@ void eOptionsMenu::showPage(const int id) {
 
     for(const auto& text : page.fLines) {
         const auto line = new eLabel(text, window());
-        line->setSmallFontSize();
+        line->setFontSizeS();
         line->fitContent();
         mPage->addWidget(line);
     }

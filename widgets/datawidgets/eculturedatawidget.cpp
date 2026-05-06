@@ -18,7 +18,7 @@ eWidget* eCultureDataWidget::createCoverageWidget(
 
     const auto gamesLabel = new eLabel(window());
     gamesLabel->setNoPadding();
-    gamesLabel->setTinyFontSize();
+    gamesLabel->setFontSizeXS();
     gamesLabel->setText(gamesNameStr);
     gamesLabel->fitContent();
     cw->addWidget(gamesLabel);
@@ -28,7 +28,7 @@ eWidget* eCultureDataWidget::createCoverageWidget(
 
     const auto disciplineLabel = new eLabel(window());
     disciplineLabel->setNoPadding();
-    disciplineLabel->setTinyFontSize();
+    disciplineLabel->setFontSizeXS();
     disciplineLabel->setText(disciplineNameStr);
     disciplineLabel->fitContent();
     ccw->addWidget(disciplineLabel);
@@ -36,7 +36,7 @@ eWidget* eCultureDataWidget::createCoverageWidget(
     const auto covLabel = new eLabel(window());
     const int p = covLabel->padding()/2;
     covLabel->setNoPadding();
-    covLabel->setTinyFontSize();
+    covLabel->setFontSizeXS();
     covLabel->setText(eLanguage::zeusText(58, 14)); // terrible
     covLabel->fitContent();
     ccw->addWidget(covLabel);
@@ -92,7 +92,7 @@ void eCultureDataWidget::initialize() {
     cw->setNoPadding();
 
     const auto title = new eLabel(window());
-    title->setTinyFontSize();
+    title->setFontSizeXS();
     title->setNoPadding();
     title->setWrapWidth(iw->width());
     title->setText(eLanguage::zeusText(58, 1)); // Likely standing in Panhellenic Games
@@ -125,7 +125,7 @@ void eCultureDataWidget::initialize() {
                                              &mAllCoverage);
     cw->addWidget(allwid);
 
-    const int p = resolution().veryTinyPadding();
+    const int p = resolution().paddingXS();
     cw->stackVertically(-p);
     cw->fitContent();
     iw->addWidget(cw);

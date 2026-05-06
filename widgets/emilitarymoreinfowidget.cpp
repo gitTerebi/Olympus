@@ -106,14 +106,14 @@ public:
 
             const auto nameL = new eLabel(window());
             nameL->setNoPadding();
-            nameL->setTinyFontSize();
+            nameL->setFontSizeXS();
             nameL->setText(name);
             nameL->fitContent();
             rowW->addWidget(nameL);
 
             const auto troopsL = new eLabel(window());
             troopsL->setNoPadding();
-            troopsL->setTinyFontSize();
+            troopsL->setFontSizeXS();
             troopsL->setText(eLanguage::zeusText(51, 17));
             troopsL->fitContent();
             rowW->addWidget(troopsL);
@@ -127,7 +127,7 @@ public:
         if(banners.empty()) {
             const auto noneL = new eLabel(window());
             noneL->setNoPadding();
-            noneL->setTinyFontSize();
+            noneL->setFontSizeXS();
             noneL->setText(eLanguage::zeusText(283, 12));
             noneL->fitContent();
             inner->addWidget(noneL);
@@ -222,7 +222,7 @@ public:
 
             {
                 const auto titlel = new eLabel(window());
-                titlel->setTinyFontSize();
+                titlel->setFontSizeXS();
                 titlel->setNoPadding();
                 titlel->setText(b->name());
                 titlel->fitContent();
@@ -235,7 +235,7 @@ public:
 
             const auto cLabel = new eLabel(window());
             cLabel->setNoPadding();
-            cLabel->setTinyFontSize();
+            cLabel->setFontSizeXS();
             cLabel->setText(std::to_string(b->count()));
             cLabel->fitContent();
             ww->addWidget(cLabel);
@@ -246,7 +246,7 @@ public:
 
             const auto mb = new eMicroButton(window());
             mb->setNoPadding();
-            mb->setTinyFontSize();
+            mb->setFontSizeXS();
             sArmySectionButtonUpdate(b, mb);
             mb->setWidth(microW);
             mb->fitHeight();
@@ -295,7 +295,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
     const bool atlantean = board.atlantean(cid);
 
     const auto res = resolution();
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     const auto cw = addCentralWidget();
 
     const int ww = (cw->width() - p)/2;
@@ -306,7 +306,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
 
     const auto citizenArmy = new eLabel(window());
     citizenArmy->setNoPadding();
-    citizenArmy->setSmallFontSize();
+    citizenArmy->setFontSizeS();
     citizenArmy->setText(eLanguage::zeusText(51, 13));
     citizenArmy->fitContent();
     leftW->addWidget(citizenArmy);
@@ -380,7 +380,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
 
     const auto navyL = new eLabel(window());
     navyL->setNoPadding();
-    navyL->setSmallFontSize();
+    navyL->setFontSizeS();
     navyL->setText(eLanguage::zeusText(51, 32));
     navyL->fitContent();
     rightW->addWidget(navyL);
@@ -393,7 +393,7 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
 
     const auto otherForesL = new eLabel(window());
     otherForesL->setNoPadding();
-    otherForesL->setSmallFontSize();
+    otherForesL->setFontSizeS();
     otherForesL->setText(eLanguage::zeusText(51, 54));
     otherForesL->fitContent();
     rightW->addWidget(otherForesL);

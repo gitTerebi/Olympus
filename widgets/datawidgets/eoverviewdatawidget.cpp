@@ -23,7 +23,7 @@ public:
         setNoPadding();
         mTitleLabel = new eLabel(window());
         mTitleLabel->setNoPadding();
-        mTitleLabel->setTinyFontSize();
+        mTitleLabel->setFontSizeXS();
         mTitleLabel->setText(title);
         mTitleLabel->fitContent();
         addWidget(mTitleLabel);
@@ -31,7 +31,7 @@ public:
         mValueLabel = new eLabel(window());
         mValueLabel->setYellowFontColor();
         mValueLabel->setNoPadding();
-        mValueLabel->setTinyFontSize();
+        mValueLabel->setFontSizeXS();
         addWidget(mValueLabel);
 
         fitHeight();
@@ -115,7 +115,7 @@ void eOverviewDataWidget::initialize() {
     inner->addWidget(spacer2);
 
     const auto requestsLabel = new eLabel(window());
-    requestsLabel->setTinyFontSize();
+    requestsLabel->setFontSizeXS();
     requestsLabel->setNoPadding();
     requestsLabel->setText(eLanguage::zeusText(61, 195)); // requests
     requestsLabel->fitContent();
@@ -202,7 +202,7 @@ protected:
         addWidget(iconLabel);
 
         const auto textLabel = new eLabel(window());
-        textLabel->setTinyFontSize();
+        textLabel->setFontSizeXS();
         textLabel->setNoPadding();
         textLabel->setText(txt);
         textLabel->fitContent();

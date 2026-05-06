@@ -27,8 +27,8 @@ void eGiftSizeDialog::initialize(const eResourceType type,
     auto rof = eLanguage::zeusText(41, 0); // give to
     eStringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
-    rofLabel->setTinyFontSize();
-    rofLabel->setSmallPadding();
+    rofLabel->setFontSizeXS();
+    rofLabel->setPaddingS();
     rofLabel->setText(rof);
     rofLabel->fitContent();
 

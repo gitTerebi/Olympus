@@ -89,7 +89,7 @@ public:
             bnrl->setVisible(valid);
         }
         const auto titlel = new eLabel(window());
-        titlel->setTinyFontSize();
+        titlel->setFontSizeXS();
         titlel->setNoPadding();
         titlel->setText(title);
         titlel->fitContent();
@@ -101,7 +101,7 @@ public:
 
         if(troops != -1) {
             const auto troopsl = new eLabel(window());
-            troopsl->setTinyFontSize();
+            troopsl->setFontSizeXS();
             troopsl->setNoPadding();
             const auto troopsStr = std::to_string(troops);
             troopsl->setText(troopsStr);
@@ -116,7 +116,7 @@ public:
         mEnlistedLabel = new eLabel(window());
         mEnlistedLabel->setYellowFontColor();
         mEnlistedLabel->setNoPadding();
-        mEnlistedLabel->setTinyFontSize();
+        mEnlistedLabel->setFontSizeXS();
         if(abroad) {
             const auto etxt = eLanguage::zeusText(283, 16);
             mEnlistedLabel->setText(etxt);
@@ -373,13 +373,13 @@ public:
 
         const auto innerWid = new eWidget(window());
         addWidget(innerWid);
-        const int p = r.tinyPadding();
+        const int p = r.paddingS();
         innerWid->setNoPadding();
         innerWid->move(p, p);
         innerWid->resize(w - 2*p, h - 2*p);
 
         const auto titleLabel = new eLabel(title, window());
-        titleLabel->setTinyFontSize();
+        titleLabel->setFontSizeXS();
         titleLabel->setNoPadding();
         titleLabel->fitContent();
         innerWid->addWidget(titleLabel);
@@ -388,7 +388,7 @@ public:
         if(troops) {
             const auto text = eLanguage::zeusText(283, 11);
             const auto troopsLabel = new eLabel(text, window());
-            troopsLabel->setTinyFontSize();
+            troopsLabel->setFontSizeXS();
             troopsLabel->setNoPadding();
             troopsLabel->fitContent();
             innerWid->addWidget(troopsLabel);
@@ -464,14 +464,14 @@ void eEnlistForcesDialog::initialize(
 
     const auto innerWid = new eWidget(window());
     addWidget(innerWid);
-    const int p = r.hugePadding();
+    const int p = r.paddingXL();
     innerWid->setNoPadding();
     innerWid->move(p, p);
     const int ww = w - 2*p;
     const int hh = h - 2*p;
     innerWid->resize(ww, hh);
 
-    const int pp = r.tinyPadding();
+    const int pp = r.paddingS();
 
     int hhh = hh;
 
@@ -498,7 +498,7 @@ void eEnlistForcesDialog::initialize(
         {
             const auto text = eLanguage::zeusText(283, 0);
             const auto titleLabel = new eLabel(window());
-            titleLabel->setTinyPadding();
+            titleLabel->setPaddingXS();
             titleLabel->setText(text);
             titleLabel->fitContent();
             titleW->addWidget(titleLabel);
@@ -517,16 +517,16 @@ void eEnlistForcesDialog::initialize(
 
             const auto text = eLanguage::zeusText(283, 22);
             const auto titleLabel = new eLabel(window());
-            titleLabel->setSmallFontSize();
-            titleLabel->setSmallPadding();
+            titleLabel->setFontSizeS();
+            titleLabel->setPaddingS();
             titleLabel->setText(text);
             titleLabel->fitContent();
             plunderW->addWidget(titleLabel);
 
             const auto button = new eFramedButton(window());
             button->setUnderline(false);
-            button->setSmallPadding();
-            button->setSmallFontSize();
+            button->setPaddingS();
+            button->setFontSizeS();
             button->setText(eLanguage::zeusText(283, 23));
             button->fitContent();
             button->setWidth(titleLabel->width());
@@ -600,7 +600,7 @@ void eEnlistForcesDialog::initialize(
     const auto buttonsWid = new eWidget(window());
     {
         const auto cancelButt = new eFramedButton(window());
-        cancelButt->setTinyFontSize();
+        cancelButt->setFontSizeXS();
         cancelButt->setUnderline(false);
         cancelButt->setText(eLanguage::zeusText(283, 18));
         cancelButt->fitContent();
@@ -611,7 +611,7 @@ void eEnlistForcesDialog::initialize(
         buttonsWid->addWidget(cancelButt);
 
         const auto enlistAllButt = new eFramedButton(window());
-        enlistAllButt->setTinyFontSize();
+        enlistAllButt->setFontSizeXS();
         enlistAllButt->setUnderline(false);
         enlistAllButt->setText(eLanguage::zeusText(283, 19));
         enlistAllButt->fitContent();
@@ -635,7 +635,7 @@ void eEnlistForcesDialog::initialize(
         buttonsWid->addWidget(enlistAllButt);
 
         const auto clearAllButt = new eFramedButton(window());
-        clearAllButt->setTinyFontSize();
+        clearAllButt->setFontSizeXS();
         clearAllButt->setUnderline(false);
         clearAllButt->setText(eLanguage::zeusText(283, 20));
         clearAllButt->fitContent();
@@ -658,7 +658,7 @@ void eEnlistForcesDialog::initialize(
         buttonsWid->addWidget(clearAllButt);
 
         const auto dispatchButt = new eFramedButton(window());
-        dispatchButt->setTinyFontSize();
+        dispatchButt->setFontSizeXS();
         dispatchButt->setUnderline(false);
         dispatchButt->setText(eLanguage::zeusText(283, 21));
         dispatchButt->fitContent();
@@ -667,7 +667,7 @@ void eEnlistForcesDialog::initialize(
                 const auto msgb = new eFramedLabel(window());
                 msgb->setType(eFrameType::message);
                 msgb->setWrapWidth(width()/2);
-                msgb->setSmallFontSize();
+                msgb->setFontSizeS();
                 msgb->setText(eLanguage::zeusText(5, 13));
                 msgb->fitContent();
                 const int p = msgb->padding();

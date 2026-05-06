@@ -62,7 +62,7 @@ void eEpisodeIntroductionWidget::initialize(
     const int w = 3*h/2;
     frame->resize(w, h);
 
-    const int p = res.hugePadding();
+    const int p = res.paddingXL();
 
     const auto inner = new eWidget(window());
     inner->setNoPadding();
@@ -74,7 +74,7 @@ void eEpisodeIntroductionWidget::initialize(
 
     const auto mainTitle = new eLabel(window());
     mainTitle->setNoPadding();
-    mainTitle->setHugeFontSize();
+    mainTitle->setFontSizeXL();
     mainTitle->setText(title);
     mainTitle->fitContent();
     inner->addWidget(mainTitle);
@@ -133,8 +133,8 @@ void eEpisodeIntroductionWidget::initialize(
             const bool col = et == eEpisodeType::colony;
             const auto t = g->text(col, atlantean, *board);
             const auto l = new eLabel(window());
-            l->setSmallFontSize();
-            l->setTinyPadding();
+            l->setFontSizeS();
+            l->setPaddingXS();
             l->setText(t);
             l->fitContent();
             w->addWidget(l);
@@ -157,8 +157,8 @@ void eEpisodeIntroductionWidget::initialize(
                         const auto setAside = new eFramedButton(window());
                         setAside->setUnderline(false);
                         setAside->setRenderBg(true);
-                        setAside->setTinyPadding();
-                        setAside->setSmallFontSize();
+                        setAside->setPaddingXS();
+                        setAside->setFontSizeS();
                         setAside->setText(eLanguage::zeusText(194, 61));
                         setAside->fitContent();
                         setAside->setWidth(2*setAside->width());
@@ -182,8 +182,8 @@ void eEpisodeIntroductionWidget::initialize(
                     const auto st = g->statusText(*board);
                     if(!st.empty()) {
                         const auto stl = new eLabel(window());
-                        stl->setSmallFontSize();
-                        stl->setTinyPadding();
+                        stl->setFontSizeS();
+                        stl->setPaddingXS();
                         stl->setText(st);
                         stl->fitContent();
                         w->addWidget(stl);
@@ -211,7 +211,7 @@ void eEpisodeIntroductionWidget::initialize(
 
         const auto diffLabel = new eLabel(window());
         diffLabel->setNoPadding();
-        diffLabel->setSmallFontSize();
+        diffLabel->setFontSizeS();
         const auto diffText = eLanguage::zeusText(44, 219);
         const auto defDiff = eDifficulty::hero;
         const auto diff = std::make_shared<eDifficulty>(defDiff);
@@ -257,8 +257,8 @@ void eEpisodeIntroductionWidget::initialize(
         proceedW->setNoPadding();
 
         const auto proceedLabel = new eLabel(window());
-        proceedLabel->setSmallFontSize();
-        proceedLabel->setSmallPadding();
+        proceedLabel->setFontSizeS();
+        proceedLabel->setPaddingS();
         proceedLabel->setText(eLanguage::zeusText(62, 5));
         proceedLabel->fitContent();
         proceedW->addWidget(proceedLabel);
@@ -277,7 +277,7 @@ void eEpisodeIntroductionWidget::initialize(
     } else if(type == eEpisodeIntroType::goals) {
         const auto rpc = new eLabel(window());
         rpc->setNoPadding();
-        rpc->setSmallFontSize();
+        rpc->setFontSizeS();
         rpc->setText(eLanguage::zeusText(13, 1));
         rpc->fitContent();
         lowerButtons->addWidget(rpc);

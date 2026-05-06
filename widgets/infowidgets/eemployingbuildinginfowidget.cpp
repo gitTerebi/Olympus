@@ -40,8 +40,8 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(eEmployingBuilding* const
     const auto str = estr + " " + emplstr +
                       "  (" + mestr + " " + memplstr;
     const auto empl = new eLabel(str, window());
-    empl->setSmallFontSize();
-    empl->setSmallPadding();
+    empl->setFontSizeS();
+    empl->setPaddingS();
     empl->fitContent();
     wid->addWidget(empl);
     empl->align(eAlignment::hcenter);

@@ -140,7 +140,7 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
 
     const auto cw = centralWidget();
     const auto msgLabel = new eLabel(window());
-    msgLabel->setSmallFontSize();
+    msgLabel->setFontSizeS();
     msgLabel->setWidth(cw->width() - 2*p);
     msgLabel->setWrapWidth(msgLabel->width());
     msgLabel->setText(msg);
@@ -162,7 +162,7 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         w->addWidget(iconLabel);
 
         const auto countLabel = new eLabel(window());
-        countLabel->setSmallFontSize();
+        countLabel->setFontSizeS();
         const auto cStr = std::to_string(count);
         countLabel->setText(cStr);
         countLabel->fitContent();
@@ -212,8 +212,8 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
     }
 
     const auto occ = new eLabel(window());
-    occ->setSmallFontSize();
-    occ->setSmallPadding();
+    occ->setFontSizeS();
+    occ->setPaddingS();
     auto occstr = std::to_string(house->people()) + " " +
                   eLanguage::zeusText(127, 15);
     const int vacs = house->vacancies();
@@ -229,8 +229,8 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
     const auto taxLabel = new eLabel(window());
     {
         const int paid = house->paidTaxes();
-        taxLabel->setSmallFontSize();
-        taxLabel->setTinyPadding();
+        taxLabel->setFontSizeS();
+        taxLabel->setPaddingXS();
         taxLabel->setWidth(fw->width());
         taxLabel->setWrapWidth(taxLabel->width());
         std::string taxStr;
@@ -250,8 +250,8 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
 
     const auto satLabel = new eLabel(window());
     {
-        satLabel->setSmallFontSize();
-        satLabel->setTinyPadding();
+        satLabel->setFontSizeS();
+        satLabel->setPaddingXS();
         satLabel->setWidth(fw->width());
         satLabel->setWrapWidth(satLabel->width());
         std::string satstr;
@@ -272,8 +272,8 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
 
     if(!house->food()) {
         const auto foodLabel = new eLabel(window());
-        foodLabel->setSmallFontSize();
-        foodLabel->setTinyPadding();
+        foodLabel->setFontSizeS();
+        foodLabel->setPaddingXS();
         foodLabel->setWidth(fw->width());
         foodLabel->setWrapWidth(foodLabel->width());
         foodLabel->setText(eLanguage::zeusText(127, 28));

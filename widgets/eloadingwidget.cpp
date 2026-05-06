@@ -1,4 +1,4 @@
-﻿#include "eloadingwidget.h"
+#include "eloadingwidget.h"
 
 #include "emainwindow.h"
 #include "textures/egametextures.h"

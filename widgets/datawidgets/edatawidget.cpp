@@ -26,7 +26,7 @@ void eDataWidget::initialize() {
     frame->setType(eFrameType::inner);
     frame->setHeight(height() - h + pp);
     frame->setWidth(width());
-    frame->setTinyPadding();
+    frame->setPaddingS();
     addWidget(frame);
 
     mInnerWidget = new eWidget(window());

@@ -13,8 +13,8 @@ void eScrollButtonsList::initialize() {
     const auto addStr = eLanguage::text("add");
     mNewButton = new eFramedButton(addStr, window());
     if(mSmallSize) {
-        mNewButton->setSmallFontSize();
-        mNewButton->setSmallPadding();
+        mNewButton->setFontSizeS();
+        mNewButton->setPaddingS();
     }
     mNewButton->fitContent();
     mNewButton->setY(height() - 2*p - mNewButton->height());

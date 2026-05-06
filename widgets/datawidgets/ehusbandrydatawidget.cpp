@@ -25,7 +25,7 @@ void eHusbandryDataWidget::initialize() {
     const auto canSupport1 = new eLabel(window());
     canSupport1->setWrapWidth(iww);
     canSupport1->setWrapAlignment(eAlignment::hcenter);
-    canSupport1->setTinyFontSize();
+    canSupport1->setFontSizeXS();
     canSupport1->setNoPadding();
     canSupport1->setText(eLanguage::zeusText(57, 1)); // current food productioin can support
     canSupport1->fitContent();
@@ -42,7 +42,7 @@ void eHusbandryDataWidget::initialize() {
     const auto canSupport2 = new eLabel(window());
     canSupport2->setWrapWidth(iww);
     canSupport2->setWrapAlignment(eAlignment::hcenter);
-    canSupport2->setTinyFontSize();
+    canSupport2->setFontSizeXS();
     canSupport2->setNoPadding();
     canSupport2->setText(eLanguage::zeusText(57, 2)); // people
     canSupport2->fitContent();
@@ -52,7 +52,7 @@ void eHusbandryDataWidget::initialize() {
     mOpinionLabel = new eLabel(window());
     mOpinionLabel->setNoPadding();
     mOpinionLabel->setYellowFontColor();
-    mOpinionLabel->setTinyFontSize();
+    mOpinionLabel->setFontSizeXS();
     mOpinionLabel->setText(eLanguage::zeusText(57, 3)); // far too little
     mOpinionLabel->fitContent();
     iw->addWidget(mOpinionLabel);
@@ -75,7 +75,7 @@ void eHusbandryDataWidget::initialize() {
     const auto storedFood1 = new eLabel(window());
     storedFood1->setWrapWidth(iww);
     storedFood1->setWrapAlignment(eAlignment::hcenter);
-    storedFood1->setTinyFontSize();
+    storedFood1->setFontSizeXS();
     storedFood1->setNoPadding();
     storedFood1->setText(eLanguage::zeusText(57, 27)); // stored food for
     storedFood1->fitContent();
@@ -92,7 +92,7 @@ void eHusbandryDataWidget::initialize() {
     const auto storedFood2 = new eLabel(window());
     storedFood2->setWrapWidth(iww);
     storedFood2->setWrapAlignment(eAlignment::hcenter);
-    storedFood2->setTinyFontSize();
+    storedFood2->setFontSizeXS();
     storedFood2->setNoPadding();
     storedFood2->setText(eLanguage::zeusText(57, 28)); // months
     storedFood2->fitContent();

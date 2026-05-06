@@ -16,7 +16,7 @@ eWidget* eWidget::sKeyboardGrabber = nullptr;
 
 eWidget::eWidget(eMainWindow* const window) :
     mWindow(window) {
-    mPadding = resolution().largePadding();
+    mPadding = resolution().paddingL();
 }
 
 void eWidget::renderTargetsReset() {
@@ -115,28 +115,32 @@ void eWidget::setTooltip(const std::string& tt) {
     mTooltip = tt;
 }
 
-void eWidget::setHugePadding() {
-    mPadding = resolution().hugePadding();
+void eWidget::setPaddingXL() {
+    mPadding = resolution().paddingXL();
 }
 
-void eWidget::setLargePadding() {
-    mPadding = resolution().largePadding();
+void eWidget::setPaddingL() {
+    mPadding = resolution().paddingL();
 }
 
-void eWidget::setSmallPadding() {
-    mPadding = resolution().smallPadding();
+void eWidget::setPaddingM() {
+    mPadding = resolution().paddingM();
 }
 
-void eWidget::setTinyPadding() {
-    mPadding = resolution().tinyPadding();
+void eWidget::setPaddingMed() {
+    mPadding = resolution().paddingMed();
 }
 
-void eWidget::setVeryTinyPadding() {
-    mPadding = resolution().veryTinyPadding();
+void eWidget::setPaddingS() {
+    mPadding = resolution().paddingS();
 }
 
-void eWidget::setVeryVeryTinyPadding() {
-    mPadding = resolution().veryVeryTinyPadding();
+void eWidget::setPaddingXS() {
+    mPadding = resolution().paddingXS();
+}
+
+void eWidget::setPaddingXXS() {
+    mPadding = resolution().paddingXXS();
 }
 
 void eWidget::setNoPadding() {
