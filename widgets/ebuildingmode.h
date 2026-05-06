@@ -236,7 +236,9 @@ enum class eBuildingMode {
     museumAtlantika, // 8x8
 
     hippodromePiece,
-    crosswalk
+    crosswalk,
+
+    stamp
 };
 
 namespace eBuildingModeHelpers {

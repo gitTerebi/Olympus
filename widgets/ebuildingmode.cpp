@@ -12,7 +12,7 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
     case eBuildingMode::road:
         return eBuildingType::road;
     case eBuildingMode::roadblock:
-        return eBuildingType::none;
+        return eBuildingType::roadblock;
 
     case eBuildingMode::commonHousing:
         return eBuildingType::commonHouse;
@@ -411,6 +411,8 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
         return eBuildingType::hippodromePiece;
     case eBuildingMode::crosswalk:
         return eBuildingType::crosswalk;
+    case eBuildingMode::stamp:
+        return eBuildingType::none;
     }
 }
 

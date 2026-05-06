@@ -163,6 +163,8 @@ SOURCES += \
         buildings/sanctuaries/esanctuary.cpp \
         buildings/sanctuaries/esanctuaryblueprint.cpp \
         buildings/sanctuaries/estairsrenderer.cpp \
+        engine/stamps/estampblueprint.cpp \
+        engine/stamps/estamptool.cpp \
         buildings/sanctuaries/etemplealtarbuilding.cpp \
         buildings/sanctuaries/etemplebuilding.cpp \
         buildings/sanctuaries/etemplemonumentbuilding.cpp \
@@ -861,6 +863,8 @@ HEADERS += \
     buildings/sanctuaries/esanctuary.h \
     buildings/sanctuaries/esanctuaryblueprint.h \
     buildings/sanctuaries/estairsrenderer.h \
+    engine/stamps/estampblueprint.h \
+    engine/stamps/estamptool.h \
     buildings/sanctuaries/etemplealtarbuilding.h \
     buildings/sanctuaries/etemplebuilding.h \
     buildings/sanctuaries/etemplemonumentbuilding.h \

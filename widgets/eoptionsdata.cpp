@@ -101,6 +101,10 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                  [window](const eHotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
+                {"Stamp tool", eHotkeyId::buildStamp, settings.fHotkeyBuildStamp,
+                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                     window->setHotkey(id, key);
+                 }},
                 {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
                  [window](const eHotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
