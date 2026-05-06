@@ -184,6 +184,7 @@ private:
     void showGoals();
     void showOptionsMenu();
     void showGraphicsMenu();
+    void showStampManager();
     void selectHoveredBuildingMode();
     void toggleViewMode(const eViewMode m);
 
@@ -197,6 +198,9 @@ private:
     using eApply = std::function<void(eTile* const)>;
     eApply editFunc();
     bool buildMouseRelease();
+    bool buildModeAt(eBuildingMode mode,
+                     int hoverTX, int hoverTY,
+                     int pressedTX, int pressedTY);
     bool rightClickRelease(const eMouseEvent& e);
 
     using eTileAction = std::function<void(eTile* const)>;
@@ -235,6 +239,14 @@ private:
             eAgoraOrientation& bt,
             const eCityId cid,
             const ePlayerId pid) const;
+    std::vector<eTile*> stampAgoraBuildPlace(
+            const eStampBuildCommand& cmd,
+            int pressedTX, int pressedTY,
+            eAgoraOrientation& bt) const;
+    bool buildStampAgora(const std::vector<eTile*>& tiles,
+                         eAgoraOrientation orientation,
+                         eCityId cid,
+                         ePlayerId ppid);
 
     std::vector<ePatrolGuide>::iterator
         findGuide(const int tx, const int ty);

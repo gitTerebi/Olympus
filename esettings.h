@@ -23,6 +23,7 @@ enum class eHotkeyId {
     buildCommonHousing,
     buildWatchpost,
     buildStamp,
+    stampManager,
     scrollLeft,
     scrollRight,
     scrollUp,
@@ -87,6 +88,7 @@ struct eSettings {
     SDL_Scancode fHotkeyBuildCommonHousing = SDL_SCANCODE_Q;
     SDL_Scancode fHotkeyBuildWatchpost = SDL_SCANCODE_UNKNOWN;
     SDL_Scancode fHotkeyBuildStamp = SDL_SCANCODE_B;
+    SDL_Scancode fHotkeyStampManager = SDL_SCANCODE_M;
     SDL_Scancode fHotkeyScrollLeft = SDL_SCANCODE_A;
     SDL_Scancode fHotkeyScrollRight = SDL_SCANCODE_D;
     SDL_Scancode fHotkeyScrollUp = SDL_SCANCODE_W;

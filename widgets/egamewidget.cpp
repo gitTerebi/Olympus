@@ -65,6 +65,7 @@
 #include "elanguage.h"
 
 #include "widgets/eloadgame.h"
+#include "widgets/estampmanager.h"
 #include "evectorhelpers.h"
 #include "etilehelper.h"
 #include "widgets/equestionwidget.h"
@@ -2554,6 +2555,10 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
     {
         mGm->setMode(eBuildingMode::stamp);
     }
+    else if (k == hotkeys.fHotkeyStampManager)
+    {
+        showStampManager();
+    }
     else if (k == SDL_Scancode::SDL_SCANCODE_LEFT)
     {
         setDX(mDX + 35);
@@ -3363,6 +3368,18 @@ void eGameWidget::showGraphicsMenu()
     addWidget(esm);
     esm->align(eAlignment::center);
     w->execDialog(esm);
+}
+
+void eGameWidget::showStampManager()
+{
+    mGm->setMode(eBuildingMode::none);
+    const auto d = new eStampManager(window());
+    d->initialize(mStampTool.get());
+    d->setTemplateSelectedAction([this]() {
+        mGm->setMode(eBuildingMode::stamp);
+    });
+    window()->execDialog(d);
+    d->align(eAlignment::center);
 }
 
 void eGameWidget::selectHoveredBuildingMode()

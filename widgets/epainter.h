@@ -44,9 +44,21 @@ public:
                   const eFontColor color,
                   const eAlignment align = eAlignment::bottom |
                                            eAlignment::right) const;
+    void drawText(const int x, const int y,
+                  const std::string& text,
+                  const eFontColor color,
+                  const int fontSize,
+                  const eAlignment align = eAlignment::bottom |
+                                           eAlignment::right) const;
     void drawText(const SDL_Rect& rect,
                   const std::string& text,
                   const eFontColor color,
+                  const eAlignment align = eAlignment::bottom |
+                                           eAlignment::right) const;
+    void drawText(const SDL_Rect& rect,
+                  const std::string& text,
+                  const eFontColor color,
+                  const int fontSize,
                   const eAlignment align = eAlignment::bottom |
                                            eAlignment::right) const;
     void drawPolygon(std::vector<SDL_Point> pts,

@@ -3,8 +3,10 @@
 
 #include "estamptool.h"
 
+#include <string>
 #include <vector>
 
-std::vector<eStampElement> eDefaultStampBlueprint();
+bool eReadStampBlueprint(const std::string& path,
+                         std::vector<eStampElement>& blueprint);
 
 #endif // ESTAMPBLUEPRINT_H

@@ -620,6 +620,7 @@ set(SOURCES
     widgets/eeventwidget.cpp
     widgets/eexclamationbutton.cpp
     widgets/eloadgame.cpp
+    widgets/estampmanager.cpp
     widgets/eflatbutton.cpp
     widgets/efonts.cpp
     widgets/eframedbutton.cpp

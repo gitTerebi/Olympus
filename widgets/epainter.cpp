@@ -1,5 +1,7 @@
 #include "epainter.h"
 
+#include "efonts.h"
+
 ePainter::ePainter(SDL_Renderer* const renderer) :
     mRenderer(renderer) {
 
@@ -124,6 +126,20 @@ void ePainter::drawText(const int x, const int y,
     drawTexture(x, y, tex, align);
 }
 
+void ePainter::drawText(const int x, const int y,
+                        const std::string& text,
+                        const eFontColor color,
+                        const int fontSize,
+                        const eAlignment align) const {
+    const auto font = eFonts::defaultFont(fontSize);
+    if(!font) return;
+
+    const auto tex = std::make_shared<eTexture>();
+    tex->loadText(mRenderer, text, color, *font);
+
+    drawTexture(x, y, tex, align);
+}
+
 void ePainter::drawText(const SDL_Rect& rect,
                         const std::string& text,
                         const eFontColor color,
@@ -132,6 +148,20 @@ void ePainter::drawText(const SDL_Rect& rect,
 
     const auto tex = std::make_shared<eTexture>();
     tex->loadText(mRenderer, text, color, *mFont);
+
+    drawTexture(rect, tex, align);
+}
+
+void ePainter::drawText(const SDL_Rect& rect,
+                        const std::string& text,
+                        const eFontColor color,
+                        const int fontSize,
+                        const eAlignment align) const {
+    const auto font = eFonts::defaultFont(fontSize);
+    if(!font) return;
+
+    const auto tex = std::make_shared<eTexture>();
+    tex->loadText(mRenderer, text, color, *font);
 
     drawTexture(rect, tex, align);
 }
