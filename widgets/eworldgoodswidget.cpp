@@ -50,7 +50,7 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
 
         const auto name = eResourceTypeHelpers::typeName(t.fType);
         const auto nameLabel = new eLabel(name, window());
-        nameLabel->setTinyFontSize();
+        nameLabel->setFontSizeXS();
         nameLabel->fitContent();
         w->addWidget(nameLabel);
         nameLabel->align(eAlignment::vcenter | eAlignment::left);
@@ -60,7 +60,7 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
         const auto max = std::to_string(t.fMax);
         const auto str = used + "/" + max;
         const auto usedLabel = new eLabel(str, window());
-        usedLabel->setTinyFontSize();
+        usedLabel->setFontSizeXS();
         usedLabel->fitContent();
         w->addWidget(usedLabel);
         usedLabel->align(eAlignment::vcenter | eAlignment::right);
@@ -79,8 +79,8 @@ void eWorldTradeWidget::initialize(const std::string& name) {
     setWidth(mult*75);
 
     mNameLabel = new eLabel(window());
-    mNameLabel->setTinyPadding();
-    mNameLabel->setSmallFontSize();
+    mNameLabel->setPaddingXS();
+    mNameLabel->setFontSizeS();
     mNameLabel->setText(name);
     mNameLabel->fitContent();
     addWidget(mNameLabel);
@@ -120,8 +120,8 @@ void eWorldGoodsWidget::initialize() {
     const auto& coll = intrfc[iRes];
 
     mGoodsLabel = new eLabel(window());
-    mGoodsLabel->setSmallFontSize();
-    mGoodsLabel->setTinyPadding();
+    mGoodsLabel->setFontSizeS();
+    mGoodsLabel->setPaddingXS();
     const auto goodsStr = eLanguage::zeusText(47, 6);
     mGoodsLabel->setText(goodsStr);
     mGoodsLabel->fitContent();
@@ -132,7 +132,7 @@ void eWorldGoodsWidget::initialize() {
 
     const auto ordersStr = eLanguage::zeusText(47, 7);
     const auto ordersTxt = new eLabel(ordersStr, window());
-    ordersTxt->setSmallFontSize();
+    ordersTxt->setFontSizeS();
     ordersTxt->fitContent();
     mOrdersButton->addWidget(ordersTxt);
     ordersTxt->align(eAlignment::center);

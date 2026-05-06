@@ -2017,7 +2017,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
     mPortraitLabel->setTexture(portrait);
     mPortraitLabel->fitContent();
 
-    const int p = res.smallPadding();
+    const int p = res.paddingM();
     const int remW = widgetWidth() - mPortraitLabel->width() - 2 * p;
 
     mTextWidget = new eWidget(window());
@@ -2028,7 +2028,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
 
     mNameLabel = new eLabel(name, window());
     mNameLabel->setWrapWidth(remW);
-    mNameLabel->setHugeFontSize();
+    mNameLabel->setFontSizeXL();
     mNameLabel->setNoPadding();
     mNameLabel->fitContent();
     mTextWidget->addWidget(mNameLabel);
@@ -2063,9 +2063,9 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
                                    eLanguage::zeusText(129, 20) + " " +
                                    eResourceTypeHelpers::typeName(resType);
             const auto loadsLabel = new eLabel(loadsText, window());
-            loadsLabel->setSmallFontSize();
+            loadsLabel->setFontSizeS();
             loadsLabel->setDarkFontColor();
-            loadsLabel->setTinyPadding();
+            loadsLabel->setPaddingXS();
             loadsLabel->fitContent();
             mLoadsWidget->addWidget(loadsLabel);
             mLoadsWidget->stackHorizontally();
@@ -2075,8 +2075,8 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
 
     const auto msg = gCharMessage(c);
     mMsgLabel = new eLabel(window());
-    mMsgLabel->setTinyPadding();
-    mMsgLabel->setVerySmallFontSize();
+    mMsgLabel->setPaddingXS();
+    mMsgLabel->setFontSizeXS();
     mMsgLabel->setWrapWidth(remW);
     mMsgLabel->setDarkFontColor();
     mMsgLabel->setText(msg.fText);
@@ -2101,7 +2101,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
 
     mAdditionalInfo = new eLabel(window());
     mAdditionalInfo->setNoPadding();
-    mAdditionalInfo->setSmallFontSize();
+    mAdditionalInfo->setFontSizeS();
     mAdditionalInfo->fitContent();
     addWidget(mAdditionalInfo);
 
@@ -2135,7 +2135,7 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
     };
     mMsgLabel->fitContent();
 
-    const int p = res.smallPadding();
+    const int p = res.paddingM();
     mTextWidget->stackVertically(p);
     mTextWidget->fitHeight();
     mContent->fitHeight();
@@ -2166,6 +2166,6 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
 
     mAdditionalInfo->setText(additionalTxt);
     mAdditionalInfo->fitContent();
-    const int hp = res.hugePadding();
+    const int hp = res.paddingXL();
     mAdditionalInfo->move(hp, height() - hp - mAdditionalInfo->height());
 }

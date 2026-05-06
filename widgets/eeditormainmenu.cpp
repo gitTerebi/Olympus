@@ -18,7 +18,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     mCampaign = campaign;
 
     const auto res = resolution();
-    const int p = res.largePadding();
+    const int p = res.paddingL();
 
     const auto frame = new eFramedWidget(window());
     frame->setType(eFrameType::message);
@@ -36,8 +36,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     topButtons->setNoPadding();
 
     const auto editParentMap = new eFramedButton(window());
-    editParentMap->setSmallFontSize();
-    editParentMap->setSmallPadding();
+    editParentMap->setFontSizeS();
+    editParentMap->setPaddingS();
     editParentMap->setText(eLanguage::zeusText(195, 3));
     editParentMap->setTooltip(eLanguage::zeusText(278, 4));
     editParentMap->setUnderline(false);
@@ -61,8 +61,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     topButtons->addWidget(editParentMap);
 
     const auto editWorldMap = new eFramedButton(window());
-    editWorldMap->setSmallFontSize();
-    editWorldMap->setSmallPadding();
+    editWorldMap->setFontSizeS();
+    editWorldMap->setPaddingS();
     editWorldMap->setText(eLanguage::zeusText(195, 4));
     editWorldMap->setTooltip(eLanguage::zeusText(278, 5));
     editWorldMap->setUnderline(false);
@@ -80,8 +80,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     topButtons->addWidget(editWorldMap);
 
 //    const auto nationality = new eFramedButton(window());
-//    nationality->setSmallFontSize();
-//    nationality->setSmallPadding();
+//    nationality->setFontSizeS();
+//    nationality->setPaddingS();
 //    nationality->setUnderline(false);
 //    const bool a = campaign->atlantean();
 //    nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
@@ -97,8 +97,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 //    topButtons->addWidget(nationality);
 
     const auto bitmap = new eFramedButton(window());
-    bitmap->setSmallFontSize();
-    bitmap->setSmallPadding();
+    bitmap->setFontSizeS();
+    bitmap->setPaddingS();
     bitmap->setUnderline(false);
     bitmap->setText(eLanguage::zeusText(195, 47));
     bitmap->fitContent();
@@ -109,17 +109,17 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         const auto d = new eFramedWidget(window());
         d->setType(eFrameType::message);
 
-        if(small) setSmallPadding();
+        if(small) setPaddingS();
 
         std::vector<eFramedButton*> buttons;
 
         for(int i = 0; i < 18; i++) {
             const auto b = new eFramedButton(window());
-            b->setSmallPadding();
+            b->setPaddingS();
             b->setUnderline(false);
             if(small) {
-                b->setSmallFontSize();
-                b->setSmallPadding();
+                b->setFontSizeS();
+                b->setPaddingS();
             }
             const auto bitmap = new eBitmapWidget(window());
             bitmap->setNoPadding();
@@ -170,8 +170,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 
     const auto advTextB = new eFramedButton(window());
     advTextB->setUnderline(false);
-    advTextB->setSmallPadding();
-    advTextB->setSmallFontSize();
+    advTextB->setPaddingS();
+    advTextB->setFontSizeS();
     advTextB->setText("x");
     advTextB->setTooltip(eLanguage::zeusText(278, 6));
     advTextB->fitContent();
@@ -179,15 +179,15 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 
     const auto advTextL = new eLabel(window());
     advTextL->setNoPadding();
-    advTextL->setTinyFontSize();
+    advTextL->setFontSizeXS();
     advTextL->setText(eLanguage::zeusText(195, 5));
     advTextL->fitContent();
     topButtons->addWidget(advTextL);
 
     const auto saveButton = new eFramedButton(window());
     saveButton->setUnderline(false);
-    saveButton->setSmallFontSize();
-    saveButton->setSmallPadding();
+    saveButton->setFontSizeS();
+    saveButton->setPaddingS();
     saveButton->setText(eLanguage::zeusText(44, 74));
     saveButton->fitContent();
     topButtons->addWidget(saveButton);
@@ -197,8 +197,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 
     const auto quitButton = new eFramedButton(window());
     quitButton->setUnderline(false);
-    quitButton->setSmallFontSize();
-    quitButton->setSmallPadding();
+    quitButton->setFontSizeS();
+    quitButton->setPaddingS();
     quitButton->setText(eLanguage::zeusText(5, 0));
     quitButton->fitContent();
     topButtons->addWidget(quitButton);
@@ -236,7 +236,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     textW->setHeight(iw->height() - topButtons->height());
 
     const auto titleTitle = new eLabel(window());
-    titleTitle->setTinyFontSize();
+    titleTitle->setFontSizeXS();
     titleTitle->setNoPadding();
     titleTitle->setText(eLanguage::zeusText(195, 6));
     titleTitle->fitContent();
@@ -244,8 +244,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     titleTitle->align(eAlignment::hcenter);
 
     const auto titleText = new eFramedLabel(window());
-    titleText->setTinyFontSize();
-    titleText->setTinyPadding();
+    titleText->setFontSizeXS();
+    titleText->setPaddingXS();
     titleText->setType(eFrameType::inner);
     titleText->setWidth(ewww);
     titleText->setText("Height");
@@ -257,7 +257,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
                       titleText->height())/3;
 
     const auto introTitle = new eLabel(window());
-    introTitle->setTinyFontSize();
+    introTitle->setFontSizeXS();
     introTitle->setNoPadding();
     introTitle->setText(eLanguage::zeusText(195, 7));
     introTitle->fitContent();
@@ -273,7 +273,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     textW->addWidget(introText);
 
     const auto completeTitle = new eLabel(window());
-    completeTitle->setTinyFontSize();
+    completeTitle->setFontSizeXS();
     completeTitle->setNoPadding();
     completeTitle->setText(eLanguage::zeusText(195, 8));
     completeTitle->fitContent();
@@ -289,7 +289,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     textW->addWidget(completeText);
 
     const auto selectionTitle = new eLabel(window());
-    selectionTitle->setTinyFontSize();
+    selectionTitle->setFontSizeXS();
     selectionTitle->setNoPadding();
     selectionTitle->setText(eLanguage::zeusText(195, 58));
     selectionTitle->fitContent();
@@ -491,7 +491,7 @@ void eEditorMainMenu::addGoBackButton(eWidget* const to) {
     b->fitContent();
     b->setRenderBg(true);
     const auto res = resolution();
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     to->addWidget(b);
     b->move(2*p, to->height() - b->height() - 2*p);
     b->setPressAction([this]() {

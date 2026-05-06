@@ -85,7 +85,7 @@ void eBoardSettingsMenu::initialize(
         resizeMenu->resize(width(), height());
 
         const auto res = resolution();
-        const int p = res.largePadding();
+        const int p = res.paddingL();
 
         const auto iw = new eWidget(window());
         iw->setNoPadding();
@@ -179,7 +179,7 @@ void eBoardSettingsMenu::initialize(
         generateMenu->resize(width(), height());
 
         const auto res = resolution();
-        const int p = res.largePadding();
+        const int p = res.paddingL();
 
         const auto iw = new eWidget(window());
         iw->setNoPadding();

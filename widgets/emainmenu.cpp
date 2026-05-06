@@ -51,7 +51,7 @@ void eMainMenu::initialize(const eAction& continueGameA,
     leader->setText(w->leader());
     leader->fitContent();
     addWidget(leader);
-    const int p = res.hugePadding();
+    const int p = res.paddingXL();
     int tw;
     int th;
     textureSize(tw, th);

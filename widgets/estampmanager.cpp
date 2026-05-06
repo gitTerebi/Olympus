@@ -14,14 +14,20 @@
 #include <algorithm>
 #include <filesystem>
 
-int calculateMaxPop(const std::string& path) {
+int calculateMaxPop(const std::string &path)
+{
     std::vector<eStampElement> bp;
-    if(!eReadStampBlueprint(path, bp)) return 0;
+    if (!eReadStampBlueprint(path, bp))
+        return 0;
     int pop = 0;
-    for(const auto& elem : bp) {
-        if(elem.type == eBuildingType::commonHouse) {
+    for (const auto &elem : bp)
+    {
+        if (elem.type == eBuildingType::commonHouse)
+        {
             pop += 60;
-        } else if(elem.type == eBuildingType::eliteHousing) {
+        }
+        else if (elem.type == eBuildingType::eliteHousing)
+        {
             pop += 20;
         }
     }
@@ -30,7 +36,8 @@ int calculateMaxPop(const std::string& path) {
 
 namespace fs = std::filesystem;
 
-void eStampManager::initialize(eStampTool* const stampTool) {
+void eStampManager::initialize(eStampTool *const stampTool)
+{
     mStampTool = stampTool;
 
     const auto res = window()->resolution();
@@ -50,33 +57,32 @@ void eStampManager::initialize(eStampTool* const stampTool) {
     const auto closeB = new eCancelButton(window());
     f->addWidget(closeB);
     closeB->align(eAlignment::bottom | eAlignment::right);
-    closeB->move(closeB->x() - 2*p, closeB->y() - 2*p);
-    closeB->setPressAction([this]() {
-        close();
-    });
+    closeB->move(closeB->x() - 2 * p, closeB->y() - 2 * p);
+    closeB->setPressAction([this]()
+                           { close(); });
 
-    const int vpY = title->y() + title->height() + 2*p;
-    const int vpH = f->height() - vpY - closeB->height() - 4*p;
+    const int vpY = title->y() + title->height() + 2 * p;
+    const int vpH = f->height() - vpY - closeB->height() - 4 * p;
 
     const auto sidebar = new eScrollBar(window());
     sidebar->initialize(vpH);
-    const int vpW = ww - 4*p - sidebar->width() - p;
+    const int vpW = ww - 4 * p - sidebar->width() - p;
 
     const auto innerFrame = new eFramedWidget(window());
     innerFrame->setNoPadding();
     innerFrame->setType(eFrameType::inner);
     innerFrame->resize(vpW, vpH);
-    innerFrame->move(2*p, vpY);
+    innerFrame->move(2 * p, vpY);
     f->addWidget(innerFrame);
 
-    const int tp = res.tinyPadding();
+    const int tp = res.paddingS();
     mViewport = new eScrollViewport(window());
     mViewport->setNoPadding();
-    mViewport->resize(vpW - 2*tp, vpH - 2*tp);
+    mViewport->resize(vpW - 2 * tp, vpH - 2 * tp);
     mViewport->move(tp, tp);
     innerFrame->addWidget(mViewport);
 
-    sidebar->move(2*p + vpW + p, vpY);
+    sidebar->move(2 * p + vpW + p, vpY);
     f->addWidget(sidebar);
     sidebar->setViewport(mViewport);
 
@@ -86,51 +92,53 @@ void eStampManager::initialize(eStampTool* const stampTool) {
     rebuildList();
 }
 
-void eStampManager::rebuildList() {
+void eStampManager::rebuildList()
+{
     mButtons.clear();
 
     std::vector<fs::path> paths;
     const auto folder = eGameDir::stampsDir();
-    if(fs::exists(folder)) {
-        for(const auto& entry : fs::directory_iterator(folder)) {
+    if (fs::exists(folder))
+    {
+        for (const auto &entry : fs::directory_iterator(folder))
+        {
             const auto path = entry.path();
-            if(path.extension() != ".txt") continue;
+            if (path.extension() != ".txt")
+                continue;
             paths.push_back(path);
         }
     }
     std::sort(paths.begin(), paths.end());
 
     int y = 0;
-    for(const auto& path : paths) {
+    for (const auto &path : paths)
+    {
         const auto name = path.stem().u8string();
         const auto pathString = path.u8string();
         const int pop = calculateMaxPop(pathString);
         const auto buttonText = name + " (" + std::to_string(pop) + ")";
         const auto b = new eButtonBase(buttonText, window());
-        b->setSmallFontSize();
+        b->setFontSizeS();
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
-        b->setNoPadding();
+        b->setPaddingXXS();
         b->fitContent();
-        b->setWidth(mListWidth);
         mFilesWidget->addWidget(b);
         b->setY(y);
         y += b->height();
 
         mButtons.push_back({name, pathString, pop, b});
-        b->setPressAction([this, name, pathString]() {
-            selectTemplate(name, pathString);
-        });
-        b->setMouseEnterAction([b]() {
-            b->setYellowFontColor();
-        });
-        b->setMouseLeaveAction([this]() {
-            updateButtonColors();
-        });
+        b->setPressAction([this, name, pathString]()
+                          { selectTemplate(name, pathString); });
+        b->setMouseEnterAction([b]()
+                               { b->setYellowFontColor(); });
+        b->setMouseLeaveAction([this]()
+                               { updateButtonColors(); });
     }
 
-    if(paths.empty()) {
+    if (paths.empty())
+    {
         const auto b = new eButtonBase("No stamp templates found", window());
-        b->setSmallFontSize();
+        b->setFontSizeS();
         b->setLightFontColor();
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setNoPadding();
@@ -146,24 +154,33 @@ void eStampManager::rebuildList() {
     updateButtonColors();
 }
 
-void eStampManager::selectTemplate(const std::string& name,
-                                   const std::string& path) {
-    if(!mStampTool) return;
-    if(mStampTool->setTemplate(name, path)) {
+void eStampManager::selectTemplate(const std::string &name,
+                                   const std::string &path)
+{
+    if (!mStampTool)
+        return;
+    if (mStampTool->setTemplate(name, path))
+    {
         updateButtonColors();
         close();
-        if(mTemplateSelectedAction) mTemplateSelectedAction();
+        if (mTemplateSelectedAction)
+            mTemplateSelectedAction();
     }
 }
 
-void eStampManager::updateButtonColors() {
+void eStampManager::updateButtonColors()
+{
     const std::string active = mStampTool ? mStampTool->templateName() : "";
-    for(auto& entry : mButtons) {
+    for (auto &entry : mButtons)
+    {
         const auto buttonText = entry.fName + " (" + std::to_string(entry.fPop) + ")";
-        if(entry.fName == active) {
+        if (entry.fName == active)
+        {
             entry.fButton->setText("> " + buttonText + " <");
             entry.fButton->setYellowFontColor();
-        } else {
+        }
+        else
+        {
             entry.fButton->setText(buttonText);
             entry.fButton->setLightFontColor();
         }

@@ -15,7 +15,7 @@ public:
     void initialize(const std::string& title) {
         setNoPadding();
         const auto titleLabel = new eLabel(window());
-        titleLabel->setTinyFontSize();
+        titleLabel->setFontSizeXS();
         titleLabel->setNoPadding();
         titleLabel->setText(title);
         titleLabel->fitContent();
@@ -44,7 +44,7 @@ public:
     void initialize(const std::string& txt) {
         setYellowFontColor();
         setNoPadding();
-        setTinyFontSize();
+        setFontSizeXS();
         setText(txt);
         fitContent();
 

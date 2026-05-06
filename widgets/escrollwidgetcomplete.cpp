@@ -10,7 +10,7 @@ void eScrollWidgetComplete::initialize() {
     addWidget(mSB);
 
     const auto res = resolution();
-    const int p = res.tinyPadding();
+    const int p = res.paddingS();
 
     const int swwidth = listWidth();
 

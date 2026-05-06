@@ -30,7 +30,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
     const int iRes = static_cast<int>(uiScale);
     const auto& intrfc = eGameTextures::interface();
     const auto& texs = intrfc[iRes];
-    const int p = res.largePadding();
+    const int p = res.paddingL();
 
     const auto iw = addFramedWidget(remainingHeight());
     const int bw = iw->width() - 2*p;
@@ -127,7 +127,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
         const auto resName = eResourceTypeHelpers::typeLongName(
                                  resource);
         const auto textLabel = new eLabel(window());
-        textLabel->setSmallFontSize();
+        textLabel->setFontSizeS();
         textLabel->setNoPadding();
         textLabel->setText(countStr + "  " + resName);
         textLabel->fitContent();
@@ -204,7 +204,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
 
         const auto resName = eLanguage::zeusText(61, 187); // troops requested
         const auto textLabel = new eLabel(window());
-        textLabel->setSmallFontSize();
+        textLabel->setFontSizeS();
         textLabel->setNoPadding();
         textLabel->setText(resName);
         textLabel->fitContent();

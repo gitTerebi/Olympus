@@ -53,7 +53,7 @@ public:
 
         for(const auto type : types) {
             const auto count = new eLabel(window());
-            count->setSmallFontSize();
+            count->setFontSizeS();
             const int c = stor->count(type);
             count->setText(std::to_string(c));
             count->fitContent();
@@ -81,7 +81,7 @@ public:
             } else {
                 n = new eLabel(window());
             }
-            n->setSmallFontSize();
+            n->setFontSizeS();
             n->setText(nameStr);
             n->fitContent();
             n->setHeight(rowHeight);
@@ -98,7 +98,7 @@ public:
                 changed();
             });
 
-            b->setSmallFontSize();
+            b->setFontSizeS();
             b->addValue(eLanguage::zeusText(130, 1)); // don't accept
             b->addValue(eLanguage::zeusText(130, 0)); // accept
             b->addValue(eLanguage::zeusText(130, 2)); // get
@@ -112,7 +112,7 @@ public:
             s->setHeight(rowHeight);
             s->setWidth(spinsWidth);
             s->initialize(changed);
-            s->label()->setSmallFontSize();
+            s->label()->setFontSizeS();
             const int space = stor->spaceCount();
             if(type == eResourceType::sculpture) {
                 s->setRange(0, space);
@@ -126,7 +126,7 @@ public:
 
             const auto del = new eButton(window());
             del->setText("x");
-            del->setSmallFontSize();
+            del->setFontSizeS();
             del->setWidth(deleteWidth);
             del->setHeight(rowHeight);
             del->setPressAction([this, stor, type, count, icon, changed]() {
@@ -181,7 +181,7 @@ public:
 
             const auto b = new eFramedButton(window());
             b->setUnderline(false);
-            b->setSmallFontSize();
+            b->setFontSizeS();
             b->setText(eLanguage::zeusText(130, 1));
             b->setDarkFontColor();
             b->resize(w, h);
@@ -205,7 +205,7 @@ public:
 
             const auto be = new eFramedButton(window());
             be->setUnderline(false);
-            be->setSmallFontSize();
+            be->setFontSizeS();
             be->setText("Reset");
             be->setWidth(spinsWidth);
             be->setHeight(h);
@@ -224,7 +224,7 @@ public:
 
             const auto emptyBtn = new eFramedButton(window());
             emptyBtn->setUnderline(false);
-            emptyBtn->setSmallFontSize();
+            emptyBtn->setFontSizeS();
             emptyBtn->setText("Empty");
             emptyBtn->resize(w, h);
             emptyBtn->setPressAction([changed, buttons]() {

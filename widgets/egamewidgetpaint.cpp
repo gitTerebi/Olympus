@@ -1,4 +1,4 @@
-﻿#include "egamewidget.h"
+#include "egamewidget.h"
 
 #include "characters/actions/walkable/ewalkableobject.h"
 
@@ -3139,7 +3139,7 @@ void eGameWidget::paintEvent(ePainter &p)
                    mHoverY - mDY + padding(),
                    std::to_string(mStampTool->estimatedCost(diff)),
                    eFontColor::red,
-                   resolution().verySmallFontSize());
+                    resolution().fontSizeXS());
     };
 
     const auto drawBuildDims = [&](const int buildW, const int buildH)

@@ -28,7 +28,7 @@ eWidget* eStorageDataWidget::sdwColumn(
         const auto lw = new eWidget(window());
         lw->setNoPadding();
         const auto l = new eLabel("-", window());
-        l->setTinyFontSize();
+        l->setFontSizeXS();
         l->setNoPadding();
         l->fitContent();
         lbls.push_back(l);

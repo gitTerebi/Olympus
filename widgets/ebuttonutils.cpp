@@ -33,7 +33,7 @@ eFramedButton* addFramedButton(const std::string& text,
 
     const auto frame = new eFramedWidget(window);
     frame->setType(eFrameType::message);
-    const int p = window->resolution().hugePadding();
+    const int p = window->resolution().paddingXL();
     frame->resize(b->width() + 2*p, b->height() + 2*p);
     b->move(p, p);
     frame->addWidget(b);

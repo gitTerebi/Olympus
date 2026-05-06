@@ -58,7 +58,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
             const auto reqStr = eHerosHall::sHeroRequirementText(r, *c);
             const auto reqLabel = new eLabel(window());
             reqLabel->setNoPadding();
-            reqLabel->setSmallFontSize();
+            reqLabel->setFontSizeS();
             if(!finished) reqLabel->setYellowFontColor();
             reqLabel->setText(reqStr);
             reqLabel->fitContent();
@@ -71,7 +71,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
             const auto statusStr = eHerosHall::sHeroRequirementStatusText(r, *c);
             const auto sttsLabel = new eLabel(window());
             sttsLabel->setNoPadding();
-            sttsLabel->setSmallFontSize();
+            sttsLabel->setFontSizeS();
             if(!finished) sttsLabel->setYellowFontColor();
             sttsLabel->setText(statusStr);
             sttsLabel->fitContent();
@@ -96,7 +96,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
         const auto summonButton = new eFramedButton(window());
         const auto txt = eLanguage::zeusText(185, 62) + " " + eHero::sHeroName(ht);
         summonButton->setText(txt);
-        summonButton->setSmallFontSize();
+        summonButton->setFontSizeS();
         summonButton->fitContent();
         summonButton->setUnderline(false);
         const stdptr<eHerosHall> bptr(b);

@@ -17,7 +17,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
 
     const auto tw = new eLabel(window());
     tw->setNoPadding();
-    tw->setSmallFontSize();
+    tw->setFontSizeS();
     menu->addWidget(tw);
     tw->move(18*mult, 31*mult);
     tw->resize(155*mult, 58*mult);
@@ -30,7 +30,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
 
     const auto cityLabel = new eLabel(window());
     cityLabel->setNoPadding();
-    cityLabel->setSmallFontSize();
+    cityLabel->setFontSizeS();
     cityLabel->setWrapWidth(w->width());
     w->addWidget(cityLabel);
 
@@ -39,7 +39,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
 
     const auto proceedL = new eLabel(window());
     proceedL->setNoPadding();
-    proceedL->setTinyFontSize();
+    proceedL->setFontSizeXS();
     proceedL->setText(eLanguage::zeusText(62, 38));
     proceedL->fitContent();
     buttonW->addWidget(proceedL);

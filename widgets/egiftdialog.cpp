@@ -27,8 +27,8 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
     auto rof = eLanguage::zeusText(41, 0); // give to
     eStringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
-    rofLabel->setTinyFontSize();
-    rofLabel->setSmallPadding();
+    rofLabel->setFontSizeXS();
+    rofLabel->setPaddingS();
     rofLabel->setText(rof);
     rofLabel->fitContent();
 
@@ -53,8 +53,8 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
         if(gifts.empty()) {
             const auto rof = eLanguage::zeusText(41, 20); // no gifts possible
             const auto label = new eLabel(window());
-            label->setTinyFontSize();
-            label->setSmallPadding();
+            label->setFontSizeXS();
+            label->setPaddingS();
             label->setText(rof);
             label->fitContent();
             ng = label;

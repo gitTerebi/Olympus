@@ -32,32 +32,36 @@ eResolution::eResolution(const int width, const int height) :
     mName = std::to_string(mWidth) + "x" + std::to_string(mHeight);
 }
 
-int eResolution::hugePadding() const {
-    return 3*largePadding()/2;
+int eResolution::paddingXL() const {
+    return 3*paddingL()/2;
 }
 
-int eResolution::largePadding() const {
+int eResolution::paddingL() const {
     return 10*multiplier();
 }
 
-int eResolution::smallPadding() const {
-    return 3*largePadding()/4;
+int eResolution::paddingM() const {
+    return 3*paddingL()/4;
 }
 
-int eResolution::tinyPadding() const {
-    return largePadding()/2;
+int eResolution::paddingMed() const {
+    return 9*multiplier();
 }
 
-int eResolution::veryTinyPadding() const {
-    return largePadding()/4;
+int eResolution::paddingS() const {
+    return paddingL()/2;
 }
 
-int eResolution::veryVeryTinyPadding() const {
-    return largePadding()/6;
+int eResolution::paddingXS() const {
+    return paddingL()/4;
+}
+
+int eResolution::paddingXXS() const {
+    return paddingL()/6;
 }
 
 int eResolution::margin() const {
-    return largePadding();
+    return paddingL();
 }
 
 double eResolution::multiplier() const {
@@ -73,24 +77,32 @@ double eResolution::multiplier() const {
     }
 }
 
-int eResolution::hugeFontSize() const {
-    return 3*largeFontSize()/2;
+int eResolution::fontSizeXL() const {
+    return 3*fontSizeL()/2;
 }
 
-int eResolution::largeFontSize() const {
+int eResolution::fontSizeL() const {
     return 20*multiplier();
 }
 
-int eResolution::smallFontSize() const {
-    return 3*largeFontSize()/4;
+int eResolution::fontSizeM() const {
+    return 3*fontSizeL()/4;
 }
 
-int eResolution::verySmallFontSize() const {
-    return 3*largeFontSize()/5;
+int eResolution::fontSizeMed() const {
+    return 18*multiplier();
 }
 
-int eResolution::tinyFontSize() const {
-    return 17*largeFontSize()/30;
+int eResolution::fontSizeS() const {
+    return 3*fontSizeL()/5;
+}
+
+int eResolution::fontSizeXS() const {
+    return 17*fontSizeL()/30;
+}
+
+int eResolution::fontSizeXXS() const {
+    return 10*multiplier();
 }
 
 int eResolution::centralWidgetLargeWidth() const {

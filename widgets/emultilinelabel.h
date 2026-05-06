@@ -9,10 +9,13 @@ class eMultiLineLabel : public eWidget {
 public:
     using eWidget::eWidget;
 
-    void setTinyFontSize();
-    void setVerySmallFontSize();
-    void setSmallFontSize();
-    void setHugeFontSize();
+    void setFontSizeXXS();
+    void setFontSizeXS();
+    void setFontSizeS();
+    void setFontSizeM();
+    void setFontSizeMed();
+    void setFontSizeL();
+    void setFontSizeXL();
     void setFontSize(const int s);
 
     void setLightFontColor();

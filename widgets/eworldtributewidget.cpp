@@ -5,7 +5,7 @@
 void eWorldTributeWidget::initialize() {
     const auto titleStr = eLanguage::zeusText(44, 320);
     mTitleLabel = new eLabel(titleStr, window());
-    mTitleLabel->setTinyFontSize();
+    mTitleLabel->setFontSizeXS();
     mTitleLabel->setNoPadding();
     mTitleLabel->fitContent();
     addWidget(mTitleLabel);
@@ -17,13 +17,13 @@ void eWorldTributeWidget::initialize() {
     mTypeIcon->setY(mTitleLabel->height());
 
     mTextLabel = new eLabel(window());
-    mTextLabel->setTinyFontSize();
+    mTextLabel->setFontSizeXS();
     mTextLabel->setNoPadding();
     addWidget(mTextLabel);
     mTextLabel->setY(mTitleLabel->height());
 
     mAlliesLabel = new eLabel(window());
-    mAlliesLabel->setTinyFontSize();
+    mAlliesLabel->setFontSizeXS();
     mAlliesLabel->setNoPadding();
     addWidget(mAlliesLabel);
     const auto alliesText = eLanguage::zeusText(44, 323);

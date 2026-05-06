@@ -14,14 +14,14 @@ public:
         setNoPadding();
         const auto titleLabel = new eLabel(window());
         titleLabel->setNoPadding();
-        titleLabel->setTinyFontSize();
+        titleLabel->setFontSizeXS();
         titleLabel->setText(title);
         titleLabel->fitContent();
         addWidget(titleLabel);
 
         mLabel = new eLabel(window());
         mLabel->setNoPadding();
-        mLabel->setTinyFontSize();
+        mLabel->setFontSizeXS();
         mLabel->setYellowFontColor();
         mLabel->setText(title);
         mLabel->fitContent();
@@ -77,7 +77,7 @@ void eScienceDataWidget::initialize() {
     cw->setNoPadding();
 
     const auto title = new eLabel(window());
-    title->setTinyFontSize();
+    title->setFontSizeXS();
     title->setNoPadding();
     title->setWrapWidth(0.8*iw->width());
     title->setWrapAlignment(eAlignment::hcenter);

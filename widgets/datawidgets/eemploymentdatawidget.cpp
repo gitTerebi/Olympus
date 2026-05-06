@@ -35,7 +35,7 @@ void eEmploymentDataWidget::initialize() {
 
         const auto l = new eLabel(window());
         l->setNoPadding();
-        l->setVerySmallFontSize();
+        l->setFontSizeXS();
         l->setText(eLanguage::zeusText(131, 1)); // wage rate
         l->fitContent();
         cw1->addWidget(l);
@@ -43,7 +43,7 @@ void eEmploymentDataWidget::initialize() {
         mWageLabel = new eLabel(window());
         mWageLabel->setYellowFontColor();
         mWageLabel->setNoPadding();
-        mWageLabel->setVerySmallFontSize();
+        mWageLabel->setFontSizeXS();
         const auto wrn = eWageRateHelpers::name(eWageRate::normal);
         mWageLabel->setText(wrn);
         mWageLabel->fitContent();
@@ -86,7 +86,7 @@ void eEmploymentDataWidget::initialize() {
         const auto ll = new eLabel(window());
         ll->setWrapWidth(iw);
         ll->setWrapAlignment(eAlignment::hcenter);
-        ll->setVerySmallFontSize();
+        ll->setFontSizeXS();
         ll->setNoPadding();
         ll->setText(eLanguage::zeusText(50, 16)); // projected payroll this year
         ll->fitContent();
@@ -94,7 +94,7 @@ void eEmploymentDataWidget::initialize() {
 
         mPensionsLabel = new eLabel(window());
         mPensionsLabel->setNoPadding();
-        mPensionsLabel->setSmallFontSize();
+        mPensionsLabel->setFontSizeS();
         mPensionsLabel->setYellowFontColor();
         mPensionsLabel->setText("0 dr");
         mPensionsLabel->fitContent();
@@ -125,7 +125,7 @@ void eEmploymentDataWidget::initialize() {
         const auto ll = new eLabel(window());
         ll->setWrapWidth(iw);
         ll->setWrapAlignment(eAlignment::hcenter);
-        ll->setVerySmallFontSize();
+        ll->setFontSizeXS();
         ll->setNoPadding();
         ll->setText(eLanguage::zeusText(50, 12)); // employed workforce
         ll->fitContent();
@@ -133,7 +133,7 @@ void eEmploymentDataWidget::initialize() {
 
         mWorkforceLabel = new eLabel(window());
         mWorkforceLabel->setNoPadding();
-        mWorkforceLabel->setSmallFontSize();
+        mWorkforceLabel->setFontSizeS();
         mWorkforceLabel->setYellowFontColor();
         mWorkforceLabel->setText("0");
         mWorkforceLabel->fitContent();
@@ -154,7 +154,7 @@ void eEmploymentDataWidget::initialize() {
         cw4->setNoPadding();
 
         const auto ll = new eLabel(window());
-        ll->setVerySmallFontSize();
+        ll->setFontSizeXS();
         ll->setNoPadding();
         ll->setText(eLanguage::zeusText(50, 13)); // unemployed
         ll->fitContent();
@@ -162,7 +162,7 @@ void eEmploymentDataWidget::initialize() {
 
         mUnemployedNLabel = new eLabel(window());
         mUnemployedNLabel->setNoPadding();
-        mUnemployedNLabel->setSmallFontSize();
+        mUnemployedNLabel->setFontSizeS();
         mUnemployedNLabel->setYellowFontColor();
         mUnemployedNLabel->setText("0");
         mUnemployedNLabel->fitContent();
@@ -189,7 +189,7 @@ void eEmploymentDataWidget::initialize() {
         const auto ll = new eLabel(window());
         ll->setWrapWidth(iw);
         ll->setWrapAlignment(eAlignment::hcenter);
-        ll->setVerySmallFontSize();
+        ll->setFontSizeXS();
         ll->setNoPadding();
         ll->setText(eLanguage::zeusText(61, 13)); // workers needed
         ll->fitContent();
@@ -197,7 +197,7 @@ void eEmploymentDataWidget::initialize() {
 
         mVacanciesNLabel = new eLabel(window());
         mVacanciesNLabel->setNoPadding();
-        mVacanciesNLabel->setSmallFontSize();
+        mVacanciesNLabel->setFontSizeS();
         mVacanciesNLabel->setYellowFontColor();
         mVacanciesNLabel->setText("0");
         mVacanciesNLabel->fitContent();

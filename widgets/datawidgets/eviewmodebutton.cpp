@@ -24,11 +24,11 @@ eViewModeButton::eViewModeButton(const std::string& text,
     setTexture(texs.getTexture(0));
     setHoverTexture(texs.getTexture(1));
     setCheckedTexture(texs.getTexture(2));
-    setVeryVeryTinyPadding();
+    setPaddingXXS();
     fitContent();
 
     const auto label = new eLabel(text, window);
-    label->setVerySmallFontSize();
+    label->setFontSizeXS();
     label->setNoPadding();
     label->fitContent();
     addWidget(label);

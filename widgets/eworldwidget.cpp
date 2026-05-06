@@ -324,7 +324,7 @@ void eWorldWidget::openRequestDialog() {
             cw->setWidth(width);
 
             const auto titleLabel = new eLabel(window());
-            titleLabel->setHugeFontSize();
+            titleLabel->setFontSizeXL();
             titleLabel->setText(eLanguage::zeusText(5, 74)); // Military strike
             titleLabel->fitContent();
             cw->addWidget(titleLabel);
@@ -336,7 +336,7 @@ void eWorldWidget::openRequestDialog() {
             eStringHelpers::replace(text, "[city_nameB]", rival->name());
 
             const auto textLabel = new eLabel(window());
-            textLabel->setSmallFontSize();
+            textLabel->setFontSizeS();
             textLabel->setWrapWidth(width);
             textLabel->setText(text);
             textLabel->fitContent();

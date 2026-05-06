@@ -41,8 +41,8 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     auto rof = eLanguage::zeusText(41, 1); // request of
     eStringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
-    rofLabel->setTinyFontSize();
-    rofLabel->setSmallPadding();
+    rofLabel->setFontSizeXS();
+    rofLabel->setPaddingS();
     rofLabel->setText(rof);
     rofLabel->fitContent();
 
@@ -51,7 +51,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
     topWidget->addWidget(rofLabel);
     if(pcids.size() > 1) {
         const auto cityB = new eBoardCitySwitchButton(window());
-        cityB->setSmallFontSize();
+        cityB->setFontSizeS();
         const auto setCid = [currentCid](const eCityId cid) {
             *currentCid = cid;
         };
@@ -79,7 +79,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             auto text = notReg;
             eStringHelpers::replace(text, "[item]", typeName);
             const auto l = new eLabel(window());
-            l->setTinyFontSize();
+            l->setFontSizeXS();
             l->setText(text);
             l->fitContent();
             l->setHeight(h);
@@ -115,7 +115,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             {
                 const auto text = eLanguage::zeusText(41, 9); // not regarded defensive aid
                 const auto l = new eLabel(window());
-                l->setTinyFontSize();
+                l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
@@ -126,7 +126,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             {
                 const auto text = eLanguage::zeusText(41, 10); // not regarded strike
                 const auto l = new eLabel(window());
-                l->setTinyFontSize();
+                l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
@@ -140,7 +140,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             {
                 const auto text = eLanguage::zeusText(41, 17); // can't spare defensive aid
                 const auto l = new eLabel(window());
-                l->setTinyFontSize();
+                l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
@@ -151,7 +151,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             {
                 const auto text = eLanguage::zeusText(41, 18); // can't spare strike
                 const auto l = new eLabel(window());
-                l->setTinyFontSize();
+                l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);

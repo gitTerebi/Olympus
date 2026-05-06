@@ -24,7 +24,7 @@ void eRosterOfLeaders::initialize() {
 
     const auto res = resolution();
 
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     const int cww = res.centralWidgetSmallWidth();
     const int cwh = res.centralWidgetSmallHeight();
     frame->resize(cww, cwh);
@@ -38,7 +38,7 @@ void eRosterOfLeaders::initialize() {
     inner->resize(frame->width() - 4*p, frame->height() - 4*p);
 
     const auto title = new eLabel(window());
-    title->setHugeFontSize();
+    title->setFontSizeXL();
     title->setText(eLanguage::zeusText(292, 3)); // roster of leaders
     title->fitContent();
     inner->addWidget(title);
@@ -54,8 +54,8 @@ void eRosterOfLeaders::initialize() {
     const int bw = (inner->width() - 2*p)/3;
 
     const auto createB = new eFramedButton(window());
-    createB->setSmallFontSize();
-    createB->setSmallPadding();
+    createB->setFontSizeS();
+    createB->setPaddingS();
     createB->setUnderline(false);
     createB->setText(eLanguage::zeusText(292, 0)); // create leader
     createB->fitContent();
@@ -81,8 +81,8 @@ void eRosterOfLeaders::initialize() {
     const auto selected = std::make_shared<std::string>();
 
     const auto deleteB = new eFramedButton(window());
-    deleteB->setSmallFontSize();
-    deleteB->setSmallPadding();
+    deleteB->setFontSizeS();
+    deleteB->setPaddingS();
     deleteB->setUnderline(false);
     deleteB->setText(eLanguage::zeusText(292, 1)); // delete leader
     deleteB->fitContent();
@@ -100,8 +100,8 @@ void eRosterOfLeaders::initialize() {
     });
 
     const auto proceedB = new eFramedButton(window());
-    proceedB->setSmallFontSize();
-    proceedB->setSmallPadding();
+    proceedB->setFontSizeS();
+    proceedB->setPaddingS();
     proceedB->setUnderline(false);
     proceedB->setText(eLanguage::zeusText(292, 2)); // proceed
     proceedB->fitContent();
@@ -122,8 +122,8 @@ void eRosterOfLeaders::initialize() {
     const auto leader = w->leader();
     if(!leader.empty()) {
         const auto returnB = new eFramedButton(window());
-        returnB->setSmallFontSize();
-        returnB->setSmallPadding();
+        returnB->setFontSizeS();
+        returnB->setPaddingS();
         returnB->setUnderline(false);
         returnB->setText(eLanguage::zeusText(292, 4)); // return
         returnB->fitContent();

@@ -21,8 +21,8 @@ void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &
     const int p = padding();
 
     const auto title = new eLabel(window());
-    title->setSmallFontSize();
-    title->setTinyPadding();
+    title->setFontSizeS();
+    title->setPaddingXS();
     title->setText("Messages");
     title->setDarkFontColor();
     title->fitContent();
@@ -32,7 +32,7 @@ void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &
 
     const auto cancel = new eOkButton(window());
     cancel->fitContent();
-    cancel->setTinyPadding();
+    cancel->setPaddingXS();
     cancel->setPressAction([this]()
                            {
         hide();
@@ -155,7 +155,7 @@ void eMessageListWidget::rebuildList()
         const std::string yearStr = year < 0 ? std::to_string(-year) + " BC" : std::to_string(year);
         auto dateStr = lm.fDateStr;
         const auto dateLabel = new eLabel(dateStr, window());
-        dateLabel->setVerySmallFontSize();
+        dateLabel->setFontSizeXS();
         dateLabel->setNoPadding();
         if (lm.fRead)
             dateLabel->setFontColor(eFontColor::dark);
@@ -168,7 +168,7 @@ void eMessageListWidget::rebuildList()
 
         // Title label
         const auto titleLabel = new eLabel(title, window());
-        titleLabel->setVerySmallFontSize();
+        titleLabel->setFontSizeXS();
         titleLabel->setTextAlignment(eAlignment::left);
         titleLabel->setNoPadding();
         if (lm.fRead)

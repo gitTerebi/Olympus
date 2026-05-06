@@ -76,3 +76,5 @@ Thumbs.db
 
 .claude/settings.json
 .claude/settings.local.json
+/out/build/x64-Debug
+/.vs

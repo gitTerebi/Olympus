@@ -135,7 +135,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
             const auto backToCityStr = eLanguage::zeusText(47, 8);
             const auto wgwtxt = new eLabel(backToCityStr, window());
-            wgwtxt->setSmallFontSize();
+            wgwtxt->setFontSizeS();
             wgwtxt->fitContent();
             wgw->addWidget(wgwtxt);
             wgwtxt->align(eAlignment::center);
@@ -148,7 +148,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
         mAttitudeLabel = new eLabel("unknown", window());
         mAttitudeLabel->setTooltip(eLanguage::zeusText(44, 333));
-        mAttitudeLabel->setSmallFontSize();
+        mAttitudeLabel->setFontSizeS();
         mAttitudeLabel->fitContent();
         wat->addWidget(mAttitudeLabel);
         mAttitudeLabel->align(eAlignment::center);
@@ -163,7 +163,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
     {
         mRelationshipLabel = new eLabel("a", window());
         mRelationshipLabel->setNoPadding();
-        mRelationshipLabel->setSmallFontSize();
+        mRelationshipLabel->setFontSizeS();
         mRelationshipLabel->fitContent();
         addWidget(mRelationshipLabel);
         mRelationshipLabel->align(eAlignment::hcenter);
@@ -172,7 +172,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
         mNameLabel = new eLabel("a", window());
         mNameLabel->setNoPadding();
-        mNameLabel->setSmallFontSize();
+        mNameLabel->setFontSizeS();
         mNameLabel->fitContent();
         addWidget(mNameLabel);
         mNameLabel->align(eAlignment::hcenter);
@@ -180,7 +180,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
         mLeaderLabel = new eLabel("a", window());
         mLeaderLabel->setNoPadding();
-        mLeaderLabel->setTinyFontSize();
+        mLeaderLabel->setFontSizeXS();
         mLeaderLabel->fitContent();
         addWidget(mLeaderLabel);
         mLeaderLabel->align(eAlignment::hcenter);

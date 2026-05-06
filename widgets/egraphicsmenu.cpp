@@ -40,7 +40,7 @@ eWidget* createTextureBox(eMainWindow* const window,
 
     const auto l = new eLabel(window);
     l->setNoPadding();
-    l->setSmallFontSize();
+    l->setFontSizeS();
     l->setText(text);
     l->fitContent();
 
@@ -56,7 +56,7 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
                                const eFullscreenA& fullscreenA) {
     const auto res = resolution();
 
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     const int cww = res.centralWidgetLargeWidth();
     const int cwh = res.centralWidgetLargeHeight();
     initializeMask(cww, cwh);
@@ -101,7 +101,7 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
         for(int i = 0; i < iMax; i++) {
             const auto& r = ress[i];
             const auto b = new eFramedButton(window());
-            b->setSmallPadding();
+            b->setPaddingS();
             b->setUnderline(false);
             b->setText(r.name());
             b->fitContent();

@@ -31,7 +31,7 @@ void eCityFinancesWidget::initialize(
         row->setNoPadding();
 
         const auto l = new eLabel(window());
-        l->setSmallFontSize();
+        l->setFontSizeS();
         l->setText(text);
         l->setNoPadding();
         l->fitContent();
@@ -39,7 +39,7 @@ void eCityFinancesWidget::initialize(
 
         {
             const auto l = new eLabel(window());
-            l->setSmallFontSize();
+            l->setFontSizeS();
             l->setText(eLanguage::zeusText(60, 6)); // last year
             l->setNoPadding();
             l->fitContent();
@@ -49,7 +49,7 @@ void eCityFinancesWidget::initialize(
 
         {
             const auto l = new eLabel(window());
-            l->setSmallFontSize();
+            l->setFontSizeS();
             l->setText(eLanguage::zeusText(60, 7)); // so far this year
             l->setNoPadding();
             l->fitContent();
@@ -68,7 +68,7 @@ void eCityFinancesWidget::initialize(
         row->setNoPadding();
 
         const auto l = new eLabel(window());
-        l->setSmallFontSize();
+        l->setFontSizeS();
         l->setText(text);
         l->setNoPadding();
         l->fitContent();
@@ -77,7 +77,7 @@ void eCityFinancesWidget::initialize(
 
         {
             const auto l = new eLabel(window());
-            l->setSmallFontSize();
+            l->setFontSizeS();
             l->setText(std::to_string(lastYear));
             l->setNoPadding();
             l->fitContent();
@@ -87,7 +87,7 @@ void eCityFinancesWidget::initialize(
 
         {
             const auto l = new eLabel(window());
-            l->setSmallFontSize();
+            l->setFontSizeS();
             l->setText(std::to_string(soFar));
             l->setNoPadding();
             l->fitContent();

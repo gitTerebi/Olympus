@@ -27,7 +27,7 @@ void ePopulationDataWidget::initialize() {
         cw1->setNoPadding();
 
         const auto hfor1 = new eLabel(window());
-        hfor1->setVerySmallFontSize();
+        hfor1->setFontSizeXS();
         hfor1->setNoPadding();
         hfor1->setText(eLanguage::zeusText(55, 8)); // housing for
         hfor1->fitContent();
@@ -40,7 +40,7 @@ void ePopulationDataWidget::initialize() {
         cw1->addWidget(mVacLabel);
 
         const auto hfor2 = new eLabel(window());
-        hfor2->setVerySmallFontSize();
+        hfor2->setFontSizeXS();
         hfor2->setNoPadding();
         hfor2->setText(eLanguage::zeusText(55, 9)); // more people
         hfor2->fitContent();
@@ -69,7 +69,7 @@ void ePopulationDataWidget::initialize() {
         mPeopleDirection->setWrapWidth(iw);
         mPeopleDirection->setWrapAlignment(eAlignment::hcenter);
         mPeopleDirection->setNoPadding();
-        mPeopleDirection->setVerySmallFontSize();
+        mPeopleDirection->setFontSizeXS();
         mPeopleDirection->setText(eLanguage::zeusText(55, 20)); // people wish to come
 
         inner->addWidget(mPeopleDirection);
@@ -92,7 +92,7 @@ void ePopulationDataWidget::initialize() {
         const auto il1 = new eLabel(window());
         il1->setWrapWidth(iw);
         il1->setWrapAlignment(eAlignment::hcenter);
-        il1->setVerySmallFontSize();
+        il1->setFontSizeXS();
         il1->setNoPadding();
         il1->setText(eLanguage::zeusText(55, 12)); // immigration limited by
         il1->fitContent();
@@ -102,7 +102,7 @@ void ePopulationDataWidget::initialize() {
         mImiLimitedReason->setWrapWidth(iw);
         mImiLimitedReason->setWrapAlignment(eAlignment::hcenter);
         mImiLimitedReason->setYellowFontColor();
-        mImiLimitedReason->setVerySmallFontSize();
+        mImiLimitedReason->setFontSizeXS();
         mImiLimitedReason->setNoPadding();
         mImiLimitedReason->setText(eLanguage::zeusText(55, 13)); // lack of housing vacancies
         mImiLimitedReason->fitContent();
@@ -134,7 +134,7 @@ void ePopulationDataWidget::initialize() {
         const auto il1 = new eLabel(window());
         il1->setWrapWidth(iw);
         il1->setWrapAlignment(eAlignment::hcenter);
-        il1->setVerySmallFontSize();
+        il1->setFontSizeXS();
         il1->setNoPadding();
         il1->setText(eLanguage::zeusText(55, 10)); // newcomers arrived this month
         il1->fitContent();

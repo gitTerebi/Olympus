@@ -1,4 +1,4 @@
-﻿#include "egamemenu.h"
+#include "egamemenu.h"
 
 #include "textures/egametextures.h"
 #include "emainwindow.h"
@@ -140,12 +140,12 @@ eWidget* eGameMenu::createPriceWidget(const eInterfaceTextures& coll) {
     const auto r = new eWidget(window());
     r->setNoPadding();
     const auto plabel = new eLabel("0", window());
-    plabel->setTinyFontSize();
-    plabel->setTinyPadding();
+    plabel->setFontSizeXS();
+    plabel->setPaddingXS();
     plabel->fitContent();
     const auto ilabel = new eLabel(window());
     ilabel->setTexture(coll.fDrachmasUnit);
-    ilabel->setTinyPadding();
+    ilabel->setPaddingXS();
     ilabel->fitContent();
     r->addWidget(ilabel);
     r->addWidget(plabel);
@@ -313,8 +313,8 @@ void eGameMenu::initialize(eGameBoard* const b,
             const std::string& name) {
         const auto ww9 = new eWidget(window());
         const auto alabel = new eLabel(window());
-        alabel->setSmallFontSize();
-        alabel->setTinyPadding();
+        alabel->setFontSizeS();
+        alabel->setPaddingXS();
         alabel->setText(name);
         alabel->fitContent();
         ww9->addWidget(alabel);
@@ -342,9 +342,9 @@ void eGameMenu::initialize(eGameBoard* const b,
 
     mNameLabel = new eFramedLabel(window());
     mNameLabel->setType(eFrameType::inner);
-    mNameLabel->setVerySmallFontSize();
+    mNameLabel->setFontSizeXS();
     mNameLabel->setText("Recreational Areas");
-    mNameLabel->setVeryTinyPadding();
+    mNameLabel->setPaddingS();
     mNameLabel->fitContent();
     mNameLabel->setText("");
     mNameLabel->setWidth(dataWidWidth);
@@ -1080,8 +1080,8 @@ void eGameMenu::initialize(eGameBoard* const b,
         mMessagesButton->move(mult*73, mult*239);
 
         mMsgBadge = new eLabel(window());
-        mMsgBadge->setSmallFontSize();
-        mMsgBadge->setTinyPadding();
+        mMsgBadge->setFontSizeS();
+        mMsgBadge->setPaddingXS();
         mMsgBadge->setVisible(false);
         addWidget(mMsgBadge);
     }

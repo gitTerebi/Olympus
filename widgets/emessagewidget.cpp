@@ -7,7 +7,7 @@ void eMessageWidget::initialize(const std::string& title,
                                 const std::string& text) {
     setType(eFrameType::message);
     const auto res = resolution();
-    const int p = 2*res.largePadding();
+    const int p = 2*res.paddingL();
     const int width = 40*p;
     const auto cw = new eWidget(window());
     cw->setNoPadding();
@@ -15,14 +15,14 @@ void eMessageWidget::initialize(const std::string& title,
 
     const auto titleLabel = new eLabel(window());
     titleLabel->setNoPadding();
-    titleLabel->setHugeFontSize();
+    titleLabel->setFontSizeXL();
     titleLabel->setText(title);
     titleLabel->fitContent();
     cw->addWidget(titleLabel);
 
     const auto textLabel = new eLabel(window());
     textLabel->setNoPadding();
-    textLabel->setSmallFontSize();
+    textLabel->setFontSizeS();
     textLabel->setWrapWidth(width);
     textLabel->setText(text);
     textLabel->fitContent();
@@ -30,7 +30,7 @@ void eMessageWidget::initialize(const std::string& title,
 
     const auto rightClickL = new eLabel(window());
     rightClickL->setNoPadding();
-    rightClickL->setSmallFontSize();
+    rightClickL->setFontSizeS();
     rightClickL->setText(eLanguage::zeusText(13, 1));
     rightClickL->fitContent();
     cw->addWidget(rightClickL);

@@ -22,23 +22,38 @@ const eResolution& eMultiLineLabel::res() const {
     return window()->resolution();
 }
 
-void eMultiLineLabel::setTinyFontSize() {
-    const int s = res().tinyFontSize();
+void eMultiLineLabel::setFontSizeXXS() {
+    const int s = res().fontSizeXXS();
     return setFontSize(s);
 }
 
-void eMultiLineLabel::setVerySmallFontSize() {
-    const int s = res().verySmallFontSize();
+void eMultiLineLabel::setFontSizeXS() {
+    const int s = res().fontSizeXS();
     return setFontSize(s);
 }
 
-void eMultiLineLabel::setSmallFontSize() {
-    const int s = res().smallFontSize();
+void eMultiLineLabel::setFontSizeS() {
+    const int s = res().fontSizeS();
     return setFontSize(s);
 }
 
-void eMultiLineLabel::setHugeFontSize() {
-    const int s = res().hugeFontSize();
+void eMultiLineLabel::setFontSizeM() {
+    const int s = res().fontSizeM();
+    return setFontSize(s);
+}
+
+void eMultiLineLabel::setFontSizeMed() {
+    const int s = res().fontSizeMed();
+    return setFontSize(s);
+}
+
+void eMultiLineLabel::setFontSizeL() {
+    const int s = res().fontSizeL();
+    return setFontSize(s);
+}
+
+void eMultiLineLabel::setFontSizeXL() {
+    const int s = res().fontSizeXL();
     return setFontSize(s);
 }
 

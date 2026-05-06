@@ -1422,7 +1422,7 @@ void eGameWidget::showTip(const ePlayerCityTarget &target,
     }
     const auto msgb = new eFlatButton(window());
     msgb->setNoPadding();
-    msgb->setTinyFontSize();
+    msgb->setFontSizeXS();
     msgb->setText(text);
     msgb->fitContent();
     const int p = msgb->padding();
@@ -1499,7 +1499,7 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     eEventData edCopy = ed; // Make a copy since we need to modify it later
     const auto tw = new eFlatButton(window());
     tw->setNoPadding();
-    tw->setTinyFontSize();
+    tw->setFontSizeXS();
     // Truncate title if too long for toast
     auto title = msg.fTitle;
     if (const auto &c = ed.fCity)
@@ -2408,8 +2408,8 @@ void eGameWidget::switchPause()
         const auto space = "     ";
         mPausedLabel = new eFramedLabel(space + str + space, window());
         mPausedLabel->setType(eFrameType::message);
-        mPausedLabel->setSmallFontSize();
-        mPausedLabel->setHugePadding();
+        mPausedLabel->setFontSizeS();
+        mPausedLabel->setPaddingXL();
         mPausedLabel->fitContent();
         addWidget(mPausedLabel);
         const int vw = width() - mGm->width();
@@ -2443,8 +2443,8 @@ void eGameWidget::showSpeedLabel()
     {
         mSpeedLabel = new eFramedLabel(text, window());
         mSpeedLabel->setType(eFrameType::message);
-        mSpeedLabel->setSmallFontSize();
-        mSpeedLabel->setHugePadding();
+        mSpeedLabel->setFontSizeS();
+        mSpeedLabel->setPaddingXL();
         addWidget(mSpeedLabel);
     }
     else

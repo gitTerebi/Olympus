@@ -21,7 +21,7 @@ void eFramedButtonWithIcon::initialize(const std::shared_ptr<eTexture>& icon,
 
     const auto textLabel = new eLabel(window());
     textLabel->setNoPadding();
-    textLabel->setTinyFontSize();
+    textLabel->setFontSizeXS();
     textLabel->setText(text);
     textLabel->fitContent();
     addWidget(textLabel);

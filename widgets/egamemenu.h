@@ -1,4 +1,4 @@
-﻿#ifndef EGAMEMENU_H
+#ifndef EGAMEMENU_H
 #define EGAMEMENU_H
 
 #include "egamemenubase.h"

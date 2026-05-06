@@ -15,7 +15,7 @@ void eTooltip::update() {
     }
 
     const auto& res = mWindow.resolution();
-    const int fontSize = res.verySmallFontSize();
+    const int fontSize = res.fontSizeXS();
     const bool updateFont = mFontSize != fontSize;
     if(updateFont) {
         mFontSize = fontSize;

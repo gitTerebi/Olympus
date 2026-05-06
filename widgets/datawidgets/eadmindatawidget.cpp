@@ -30,7 +30,7 @@ void eAdminDataWidget::initialize() {
     {
         const auto l = new eLabel(window());
         l->setNoPadding();
-        l->setVerySmallFontSize();
+        l->setFontSizeXS();
         l->setText(eLanguage::zeusText(131, 0)); // tax rate
         l->fitContent();
         inner->addWidget(l);
@@ -39,7 +39,7 @@ void eAdminDataWidget::initialize() {
         mTaxLabel = new eLabel(window());
         mTaxLabel->setNoPadding();
         mTaxLabel->setYellowFontColor();
-        mTaxLabel->setVerySmallFontSize();
+        mTaxLabel->setFontSizeXS();
         mTaxLabel->setText(eTaxRateHelpers::name(eTaxRate::normal));
         mTaxLabel->fitContent();
         inner->addWidget(mTaxLabel);
@@ -72,7 +72,7 @@ void eAdminDataWidget::initialize() {
         mYields->setWrapWidth(iw);
         mYields->setWrapAlignment(eAlignment::hcenter);
         mYields->setNoPadding();
-        mYields->setTinyFontSize();
+        mYields->setFontSizeXS();
         const auto yt = eLanguage::zeusText(60, 4); // yields an estimated
         const auto dr = eLanguage::zeusText(8, 1);
         mYields->setText(yt + " 0 " + dr);
@@ -86,7 +86,7 @@ void eAdminDataWidget::initialize() {
         mPerPop->setWrapWidth(iw);
         mPerPop->setWrapAlignment(eAlignment::hcenter);
         mPerPop->setNoPadding();
-        mPerPop->setTinyFontSize();
+        mPerPop->setFontSizeXS();
         const auto pt = eLanguage::zeusText(60, 5); // of population visited by clerk
         mPerPop->setText("0% " + pt);
         mPerPop->fitContent();

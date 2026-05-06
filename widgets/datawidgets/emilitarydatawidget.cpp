@@ -13,7 +13,7 @@
 void eForcesWidget::initialize(const std::string& title) {
     setNoPadding();
     const auto titleLabel = new eLabel(window());
-    titleLabel->setTinyFontSize();
+    titleLabel->setFontSizeXS();
     titleLabel->setNoPadding();
     titleLabel->setText(title);
     titleLabel->fitContent();
@@ -185,7 +185,7 @@ void eMilitaryDataWidget::initialize() {
     microButtonsW->setWidth(microW);
     mAtPalace = new eMicroButton(window());
     mAtPalace->setNoPadding();
-    mAtPalace->setTinyFontSize();
+    mAtPalace->setFontSizeXS();
     mAtPalace->setText(eLanguage::zeusText(51, 82));
     mAtPalace->setTooltip(eLanguage::zeusText(68, 37));
     mAtPalace->setWidth(microW);
@@ -202,7 +202,7 @@ void eMilitaryDataWidget::initialize() {
 
     mNoShips = new eMicroButton(window());
     mNoShips->setNoPadding();
-    mNoShips->setTinyFontSize();
+    mNoShips->setFontSizeXS();
     mNoShips->setText(eLanguage::zeusText(51, 83));
     mNoShips->setTooltip(eLanguage::zeusText(68, 38));
     mNoShips->setWidth(microW);
@@ -218,7 +218,7 @@ void eMilitaryDataWidget::initialize() {
 
     mNoTowers = new eMicroButton(window());
     mNoTowers->setNoPadding();
-    mNoTowers->setTinyFontSize();
+    mNoTowers->setFontSizeXS();
     mNoTowers->setText(eLanguage::zeusText(51, 84));
     mNoTowers->setTooltip(eLanguage::zeusText(68, 39));
     mNoTowers->setWidth(microW);

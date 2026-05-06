@@ -47,7 +47,7 @@ public:
             const auto type = trade.fType;
 
             const auto count = new eLabel(window());
-            count->setSmallFontSize();
+            count->setFontSizeS();
             const int c = stor->count(type);
             count->setText(std::to_string(c));
             count->fitContent();
@@ -68,7 +68,7 @@ public:
 //                const int c = stor->count(type);
 //                count->setText(std::to_string(c));
 //            });
-            n->setSmallFontSize();
+            n->setFontSizeS();
             n->setText(nameStr);
             n->fitContent();
             n->setHeight(rowHeight);
@@ -92,7 +92,7 @@ public:
             const auto p = new eLabel(window());
             auto& board = stor->getBoard();
             p->setText(std::to_string(board.price(trade.fType)));
-            p->setSmallFontSize();
+            p->setFontSizeS();
             p->setNoPadding();
             p->fitContent();
 
@@ -119,7 +119,7 @@ public:
                 changed();
             });
 
-            b->setSmallFontSize();
+            b->setFontSizeS();
             b->addValue(notBuyingTxt);
             b->addValue(buyingTxt);
             b->fitContent();
@@ -131,7 +131,7 @@ public:
             s->setHeight(rowHeight);
             s->setWidth(spinsWidth);
             s->initialize(changed);
-            s->label()->setSmallFontSize();
+            s->label()->setFontSizeS();
             const int space = stor->spaceCount();
             if(type == eResourceType::sculpture) {
                 s->setRange(0, space);
@@ -144,7 +144,7 @@ public:
             spinBoxes[type] = s;
 
             const auto t = new eLabel(window());
-            t->setSmallFontSize();
+            t->setFontSizeS();
             const auto pid = stor->playerId();
             const int cc = trade.used(pid);
             const int ccc = trade.fMax;
@@ -331,7 +331,7 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
 
         addWidget(w);
         const auto res = resolution();
-        const int p = res.largePadding();
+        const int p = res.paddingL();
         w->move(width() - p - w->width(), p);
     }
 }

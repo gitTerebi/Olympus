@@ -64,7 +64,7 @@ void eLoadGame::intialize(const std::string& title,
 
     const auto deleteB = new eFramedButton(window());
     deleteB->setUnderline(false);
-    deleteB->setVerySmallFontSize();
+    deleteB->setFontSizeXS();
     deleteB->setLightFontColor();
     deleteB->setText("Delete");
     deleteB->setTextAlignment(eAlignment::center);
@@ -94,10 +94,10 @@ void eLoadGame::intialize(const std::string& title,
     lineW->setType(eFrameType::inner);
     lineW->setNoPadding();
     mLineEdit = new eLineEdit(window());
-    mLineEdit->setTinyPadding();
+    mLineEdit->setPaddingXS();
     mLineEdit->setText("A");
     mLineEdit->fitContent();
-    mLineEdit->setSmallFontSize();
+    mLineEdit->setFontSizeS();
     mLineEdit->setText("");
     lineW->addWidget(mLineEdit);
     mLineEdit->setX(p);
@@ -120,7 +120,7 @@ void eLoadGame::intialize(const std::string& title,
     innerFrame->move(2*p, vpY);
     f->addWidget(innerFrame);
 
-    const int tp = res.tinyPadding();
+    const int tp = res.paddingS();
     mViewport = new eScrollViewport(window());
     mViewport->setNoPadding();
     mViewport->resize(vpW - 2*tp, vpH - 2*tp);
@@ -153,7 +153,7 @@ void eLoadGame::intialize(const std::string& title,
         const auto path = entry.second;
         const auto name = path.filename().stem().u8string();
         const auto b = new eButtonBase(name, window());
-        b->setTinyFontSize();
+        b->setFontSizeXS();
         b->setLightFontColor();
         b->setMouseEnterAction([b]() {
             b->setYellowFontColor();
@@ -218,7 +218,7 @@ void eLoadGame::rebuildFileList() {
         const auto name = path.filename().stem().u8string();
 
         const auto b = new eButtonBase(name, window());
-        b->setTinyFontSize();
+        b->setFontSizeXS();
         b->setLightFontColor();
         b->setMouseEnterAction([b]() {
             b->setYellowFontColor();

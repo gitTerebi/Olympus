@@ -21,7 +21,7 @@ void eTextScroller::initialize() {
     mSW->hide();
 
     const auto res = resolution();
-    const int p = res.smallPadding();
+    const int p = res.paddingM();
 
     mBg = new eFramedWidget(window());
     mBg->setNoPadding();
@@ -41,7 +41,7 @@ void eTextScroller::setText(const std::string& text) {
     mTextLabel->setText(text);
     mTextLabel->fitContent();
     const auto res = resolution();
-    const int p = res.smallPadding();
+    const int p = res.paddingM();
     const bool s = mTextLabel->height() > mBg->height() - 2*p;
     mBg->setVisible(!s);
     mScrollTextLabel->setText(text);
@@ -52,15 +52,15 @@ void eTextScroller::setText(const std::string& text) {
 }
 
 void eTextScroller::setTinyTextFontSize() {
-    mTextLabel->setTinyFontSize();
-    mScrollTextLabel->setTinyFontSize();
+    mTextLabel->setFontSizeXS();
+    mScrollTextLabel->setFontSizeXS();
 }
 
 void eTextScroller::setSmallTextFontSize() {
-    mTextLabel->setSmallFontSize();
-    mScrollTextLabel->setSmallFontSize();
+    mTextLabel->setFontSizeS();
+    mScrollTextLabel->setFontSizeS();
 }
 
 void eTextScroller::setTinyTextPadding() {
-    mTextLabel->setTinyPadding();
+    mTextLabel->setPaddingXS();
 }

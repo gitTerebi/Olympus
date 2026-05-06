@@ -53,7 +53,7 @@ int sTextGodId(const eGodType god) {
 
 void eSanctuaryInfoWidget::initialize(eMonument* const m) {
     assert(m);
-    const int p = resolution().largePadding();
+    const int p = resolution().paddingL();
     eSanctuary* const s = dynamic_cast<eSanctuary*>(m);
     if(s && s->finished()) {
         const auto title = eBuilding::sNameForBuilding(m);
@@ -75,7 +75,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         const int cww = cw->width();
         const auto descLabel = new eLabel(window());
         descLabel->setNoPadding();
-        descLabel->setSmallFontSize();
+        descLabel->setFontSizeS();
         descLabel->setWrapWidth(cww);
         const int godId = sTextGodId(gt);
         std::string desc;
@@ -105,7 +105,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
 
         const auto reasonLabel = new eLabel(window());
         reasonLabel->setNoPadding();
-        reasonLabel->setSmallFontSize();
+        reasonLabel->setFontSizeS();
         reasonLabel->setWrapWidth(cww);
         buttonReasonW->addWidget(reasonLabel);
 

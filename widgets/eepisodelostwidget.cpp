@@ -16,7 +16,7 @@ void eEpisodeLostWidget::initialize(const eAction& proceedA) {
     const auto defeatLabel = new eFramedLabel(window());
     defeatLabel->setType(eFrameType::message);
     defeatLabel->setText(eLanguage::zeusText(62, 1));
-    defeatLabel->setHugeFontSize();
+    defeatLabel->setFontSizeXL();
     defeatLabel->fitContent();
     addWidget(defeatLabel);
     defeatLabel->align(eAlignment::center);

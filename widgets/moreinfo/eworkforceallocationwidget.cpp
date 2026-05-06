@@ -78,7 +78,7 @@ void eWorkforceAllocationWidget::initialize(
         });
 
         pL->setNoPadding();
-        pL->setSmallFontSize();
+        pL->setFontSizeS();
         const auto prio = distributor.priority(s);
         pL->setText(ePriorityHelpers::sName(prio));
         pL->fitContent();
@@ -97,7 +97,7 @@ void eWorkforceAllocationWidget::initialize(
 
         const auto w1L = new eLabel(window());
         w1L->setNoPadding();
-        w1L->setSmallFontSize();
+        w1L->setFontSizeS();
         w1L->setText(name);
         w1L->fitContent();
         w1->addWidget(w1L);
@@ -114,7 +114,7 @@ void eWorkforceAllocationWidget::initialize(
 
         const auto w2L = new eLabel(window());
         w2L->setNoPadding();
-        w2L->setSmallFontSize();
+        w2L->setFontSizeS();
         const int maxE = distributor.maxEmployees(s);
         w2L->setText(std::to_string(maxE));
         w2L->fitContent();
@@ -133,7 +133,7 @@ void eWorkforceAllocationWidget::initialize(
 
         const auto w3L = new eLabel(window());
         w3L->setNoPadding();
-        w3L->setSmallFontSize();
+        w3L->setFontSizeS();
         const int e = distributor.employees(s);
         w3L->setText(std::to_string(e));
         if(e == maxE) {
@@ -160,7 +160,7 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto priorityL = new eLabel(window());
     priorityL->setNoPadding();
-    priorityL->setTinyFontSize();
+    priorityL->setFontSizeXS();
     priorityL->setText(eLanguage::zeusText(50, 18));
     priorityL->fitContent();
     priorityL->setWidth(c0w);
@@ -168,7 +168,7 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto sectorL = new eLabel(window());
     sectorL->setNoPadding();
-    sectorL->setTinyFontSize();
+    sectorL->setFontSizeXS();
     sectorL->setText(eLanguage::zeusText(50, 19));
     sectorL->fitContent();
     sectorL->setWidth(c1w);
@@ -176,7 +176,7 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto needL = new eLabel(window());
     needL->setNoPadding();
-    needL->setTinyFontSize();
+    needL->setFontSizeXS();
     needL->setText(eLanguage::zeusText(50, 10));
     needL->fitContent();
     needL->setWidth(c2w);
@@ -184,13 +184,13 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto haveL = new eLabel(window());
     haveL->setNoPadding();
-    haveL->setTinyFontSize();
+    haveL->setFontSizeXS();
     haveL->setText(eLanguage::zeusText(50, 11));
     haveL->fitContent();
     haveL->setWidth(c3w);
     colLabels->addWidget(haveL);
 
-    const int p = res.largePadding();
+    const int p = res.paddingL();
     colLabels->stackHorizontally();
     colLabels->fitHeight();
 
@@ -215,7 +215,7 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto subtitle = new eLabel(window());
     subtitle->setNoPadding();
-    subtitle->setTinyFontSize();
+    subtitle->setFontSizeXS();
     subtitle->setText(eLanguage::zeusText(50, 23)); // click on industry ...
     subtitle->fitContent();
 
@@ -267,7 +267,7 @@ void eWorkforceAllocationWidget::initialize(
 
         const auto nameL = new eButton(window());
         nameL->setNoPadding();
-        nameL->setSmallFontSize();
+        nameL->setFontSizeS();
         const bool s = mBoard->isShutDown(cid, rr);
         const auto name = eResourceTypeHelpers::typeName(rr);
         if(s) {
@@ -304,7 +304,7 @@ void eWorkforceAllocationWidget::initialize(
 //        const auto button = new eButtonBase(window());
 //        button->setText(eLanguage::zeusText(50, 30));
 //        button->setNoPadding();
-//        button->setSmallFontSize();
+//        button->setFontSizeS();
 //        button->fitContent();
 //        buttonW->addWidget(button);
 //        buttonW->fitHeight();

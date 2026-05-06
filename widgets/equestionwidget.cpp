@@ -31,7 +31,7 @@ void eQuestionWidget::initialize(const std::string& title,
     cw->addWidget(titleLabel);
 
     const auto textLabel = new eLabel(window());
-    textLabel->setSmallFontSize();
+    textLabel->setFontSizeS();
     textLabel->setWrapWidth(width - 2*hpad);
     textLabel->setWrapAlignment(eAlignment::hcenter);
     textLabel->setText(text);
