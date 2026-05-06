@@ -67,6 +67,10 @@ std::string eGameDir::saveDir() {
     return exeDir() + "../Save/";
 }
 
+std::string eGameDir::stampsDir() {
+    return exeDir() + "../stamps/";
+}
+
 std::string eGameDir::texturesDir() {
     return exeDir() + "../Textures/";
 }

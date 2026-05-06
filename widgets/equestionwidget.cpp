@@ -4,6 +4,14 @@
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
 
+namespace {
+    void centerLabel(eLabel* const label,
+                     const int width) {
+        label->setWidth(width);
+        label->align(eAlignment::hcenter);
+    }
+}
+
 void eQuestionWidget::initialize(const std::string& title,
                                  const std::string& text,
                                  const eAction& acceptA,
@@ -11,20 +19,22 @@ void eQuestionWidget::initialize(const std::string& title,
     setType(eFrameType::message);
     const int p = padding();
     const int width = 40*p;
+    const int hpad = 2*p;
     const auto cw = new eWidget(window());
     cw->setNoPadding();
     cw->setWidth(width);
 
     const auto titleLabel = new eLabel(window());
-    titleLabel->setHugeFontSize();
     titleLabel->setText(title);
     titleLabel->fitContent();
+    titleLabel->setWidth(width);
     cw->addWidget(titleLabel);
 
     const auto textLabel = new eLabel(window());
     textLabel->setSmallFontSize();
+    textLabel->setWrapWidth(width - 2*hpad);
+    textLabel->setWrapAlignment(eAlignment::hcenter);
     textLabel->setText(text);
-    textLabel->setTextAlignment(eAlignment::center);
     textLabel->fitContent();
     textLabel->setWidth(width);
     cw->addWidget(textLabel);
@@ -55,10 +65,12 @@ void eQuestionWidget::initialize(const std::string& title,
     buttons->setY(by);
 
     cw->fitContent();
+    cw->setWidth(width);
     cw->setHeight(cw->height() + p);
     addWidget(cw);
     cw->move(p, p);
     resize(cw->width() + 2*p, cw->height() + 2*p);
-    titleLabel->align(eAlignment::hcenter);
+    centerLabel(titleLabel, cw->width());
+    centerLabel(textLabel, cw->width());
     buttons->align(eAlignment::hcenter);
 }

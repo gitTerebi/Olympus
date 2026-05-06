@@ -18,6 +18,7 @@ public:
     static std::string adventuresDir();
     static std::string pakAdventuresDir();
     static std::string saveDir();
+    static std::string stampsDir();
     static std::string texturesDir();
     static std::string cursorsDir();
 private:
