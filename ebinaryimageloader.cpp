@@ -63,6 +63,16 @@ std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                path.c_str(), IMG_GetError());
         return nullptr;
     }
+    if(surf->format->BytesPerPixel == 4) {
+        SDL_LockSurface(surf);
+        Uint32* pixels = (Uint32*)surf->pixels;
+        const Uint32 green = SDL_MapRGBA(surf->format, 0, 251, 0, 255);
+        const Uint32 transparent = SDL_MapRGBA(surf->format, 0, 251, 0, 0);
+        for(int i = 0; i < surf->w * surf->h; i++) {
+            if(pixels[i] == green) pixels[i] = transparent;
+        }
+        SDL_UnlockSurface(surf);
+    }
     delete[] data;
 
     const auto tex = std::make_shared<eTexture>();
