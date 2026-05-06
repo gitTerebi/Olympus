@@ -16,7 +16,9 @@ constexpr int kFpsClamp = 60;
 
 #include "buildings/epatrolbuilding.h"
 
+#include "widgets/ebuildingmode.h"
 #include "widgets/egamemenu.h"
+#include "engine/stamps/estamptool.h"
 #include "widgets/earmymenu.h"
 #include "egamemainmenu.h"
 #include "etopbarwidget.h"
@@ -172,6 +174,12 @@ private:
                 double& rx, double& ry,
                 const int wSpan, const int hSpan,
                 const int a);
+
+    void paintStampPreview(eTilePainter& tp,
+                           const eTerrainTextures& trrTexs,
+                           const eBuildingTextures& builTexs,
+                           int tx, int ty,
+                           ePlayerId ppid);
 
     void showGoals();
     void showOptionsMenu();
@@ -414,6 +422,7 @@ private:
     eTerrainEditMenu* mTem = nullptr;
     eGameMenu* mGm = nullptr;
     eArmyMenu* mAm = nullptr;
+    stdsptr<eStampTool> mStampTool;
 
     eWorldWidget* mWW = nullptr;
 

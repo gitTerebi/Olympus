@@ -6,7 +6,8 @@ struct SDL_Cursor;
 enum class eCursorType {
     defaultCursor,
     shovel,
-    repairMallet
+    repairMallet,
+    stamp
 };
 
 class eCursors {
@@ -21,6 +22,7 @@ private:
     static SDL_Cursor* sDefault;
     static SDL_Cursor* sShovel;
     static SDL_Cursor* sRepairMallet;
+    static SDL_Cursor* sStamp;
 };
 
 #endif // ECURSORS_H

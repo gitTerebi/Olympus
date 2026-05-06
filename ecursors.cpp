@@ -8,6 +8,7 @@
 SDL_Cursor* eCursors::sDefault = nullptr;
 SDL_Cursor* eCursors::sShovel  = nullptr;
 SDL_Cursor* eCursors::sRepairMallet = nullptr;
+SDL_Cursor* eCursors::sStamp = nullptr;
 
 SDL_Cursor* eCursors::load(const char* filename, int hotX, int hotY) {
     const auto path = eGameDir::cursorsDir() + filename;
@@ -26,15 +27,18 @@ bool eCursors::initialize() {
     sDefault = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     sShovel  = load("shovel_5_26.png", 5, 26);
     sRepairMallet = load("repair_5_26.png", 5, 26);
-    return sShovel != nullptr && sRepairMallet != nullptr;
+    sStamp = load("stamp.png", 5, 26);
+    return sShovel != nullptr && sRepairMallet != nullptr && sStamp != nullptr;
 }
 
 void eCursors::destroy() {
     SDL_FreeCursor(sDefault);
     SDL_FreeCursor(sShovel);
     SDL_FreeCursor(sRepairMallet);
+    SDL_FreeCursor(sStamp);
     sShovel  = nullptr;
     sRepairMallet = nullptr;
+    sStamp = nullptr;
     sDefault = nullptr;
 }
 
@@ -48,6 +52,9 @@ void eCursors::set(const eCursorType type) {
         break;
     case eCursorType::repairMallet:
         if(sRepairMallet) SDL_SetCursor(sRepairMallet);
+        break;
+    case eCursorType::stamp:
+        if(sStamp) SDL_SetCursor(sStamp);
         break;
     }
 }

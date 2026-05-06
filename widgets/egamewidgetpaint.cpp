@@ -118,6 +118,58 @@ void eGameWidget::drawXY(int tx, int ty,
     ry -= a;
 }
 
+void eGameWidget::paintStampPreview(eTilePainter& tp,
+                                    const eTerrainTextures& trrTexs,
+                                    const eBuildingTextures& builTexs,
+                                    int tx, int ty,
+                                    ePlayerId ppid) {
+    eGameTextures::loadCommonHouse();
+    eGameTextures::loadFoodVendor();
+    eGameTextures::loadFleeceVendor();
+    eGameTextures::loadOilVendor();
+    eGameTextures::loadGranary();
+    eGameTextures::loadMaintenanceOffice();
+    eGameTextures::loadPark();
+
+    const auto doDrawXY = [&](int bx, int by, double& rx, double& ry,
+                               int sw, int sh, int alt) {
+        drawXY(bx, by, rx, ry, sw, sh, alt);
+    };
+
+    const auto doDrawTex = [&](double rx, double ry,
+                                eBuildingType type, int sw, bool can) {
+        stdsptr<eTexture> tex;
+        switch(type) {
+        case eBuildingType::road:
+            tex = trrTexs.fRoad.getTexture(12);
+            break;
+        case eBuildingType::roadblock:
+            eGameTextures::loadRoadblock();
+            tex = builTexs.fRoadblock;
+            break;
+        case eBuildingType::commonHouse:
+            if(builTexs.fCommonHouse.empty() || builTexs.fCommonHouse[0].size() == 0) return;
+            tex = builTexs.fCommonHouse[0].getTexture(0);
+            break;
+        case eBuildingType::foodVendor:      tex = builTexs.fFoodVendor;      break;
+        case eBuildingType::fleeceVendor:    tex = builTexs.fFleeceVendor;    break;
+        case eBuildingType::oilVendor:       tex = builTexs.fOilVendor;       break;
+        case eBuildingType::maintenanceOffice: tex = builTexs.fMaintenanceOffice; break;
+        case eBuildingType::park:            tex = builTexs.fPark.getTexture(0); break;
+        case eBuildingType::granary:         tex = builTexs.fGranary;         break;
+        case eBuildingType::warehouse:       tex = builTexs.fWarehouse;       break;
+        default: return;
+        }
+        if(!tex) return;
+        if(!can) tex->setColorMod(255, 0, 0);
+        tp.drawTexture(rx, ry, tex, eAlignment::top);
+        if(!can) tex->clearColorMod();
+    };
+
+    mStampTool->paintPreview(tx, ty, mBoard, mEditorMode, mViewedCityId, ppid,
+                             doDrawXY, doDrawTex);
+}
+
 stdsptr<eTexture> eGameWidget::getBasementTexture(
         const int rtx, const int rty,
         eBuilding* const d,
@@ -2582,6 +2634,11 @@ void eGameWidget::paintEvent(ePainter& p) {
             return;
         }
     };
+
+    if(mode == eBuildingMode::stamp) {
+        paintStampPreview(tp, trrTexs, builTexs, tx, ty, ppid);
+        return;
+    }
 
     switch(mode) {
     case eBuildingMode::commonAgora: {

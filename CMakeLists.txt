@@ -152,6 +152,8 @@ set(SOURCES
     buildings/sanctuaries/esanctuary.cpp
     buildings/sanctuaries/esanctuaryblueprint.cpp
     buildings/sanctuaries/estairsrenderer.cpp
+    engine/stamps/estampblueprint.cpp
+    engine/stamps/estamptool.cpp
     buildings/sanctuaries/etemplealtarbuilding.cpp
     buildings/sanctuaries/etemplebuilding.cpp
     buildings/sanctuaries/etemplemonumentbuilding.cpp

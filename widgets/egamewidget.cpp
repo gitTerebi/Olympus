@@ -1,4 +1,5 @@
 #include "egamewidget.h"
+#include "engine/stamps/estamptool.h"
 #include "ecursors.h"
 
 #include "emodal.h"
@@ -106,7 +107,9 @@ namespace
     }
 }
 
-eGameWidget::eGameWidget(eMainWindow *const window) : eMainWidget(window) {}
+eGameWidget::eGameWidget(eMainWindow *const window) : eMainWidget(window) {
+    mStampTool = std::make_shared<eStampTool>();
+}
 
 eGameWidget::~eGameWidget()
 {
@@ -321,7 +324,9 @@ void eGameWidget::initialize()
             eCursors::set(eCursorType::shovel);
         } else if(mGm->mode() == eBuildingMode::repair) {
             eCursors::set(eCursorType::repairMallet);
-        }        
+        } else if(mGm->mode() == eBuildingMode::stamp) {
+            eCursors::set(eCursorType::stamp);
+        }
         else {
             eCursors::set(eCursorType::defaultCursor);
         } });
@@ -2157,6 +2162,7 @@ eTile* eGameWidget::eraseParkParentTileAt(const int tx, const int ty) const
 
 bool eGameWidget::inErase(eAgoraBase *const a)
 {
+    if(!a) return false;
     const auto rr = a->tileRect();
     for (int x = rr.x; x < rr.x + rr.w; x++)
     {
@@ -2212,7 +2218,7 @@ bool eGameWidget::inErase(eBuilding *const b)
         if (inErase(b->tileRect()))
             return true;
         const auto a = v->agora();
-        return inErase(a);
+        return a && inErase(a);
     }
     else if (const auto as = dynamic_cast<eAgoraSpace *>(b))
     {
@@ -2490,6 +2496,13 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         mRotateId++;
         if (mRotateId > 3)
             mRotateId = 0;
+        if (mGm->mode() == eBuildingMode::stamp)
+            mStampTool->setRotation(mRotateId);
+    }
+    else if (k == SDL_Scancode::SDL_SCANCODE_R && e.shiftPressed())
+    {
+        if (mGm->mode() == eBuildingMode::stamp)
+            mStampTool->setMirror(1 - mStampTool->mirror());
     }
     else if (k == hotkeys.fHotkeyPause)
     {
@@ -2536,6 +2549,10 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
     else if (k == hotkeys.fHotkeyBuildWatchpost)
     {
         mGm->setMode(eBuildingMode::watchpost);
+    }
+    else if (k == hotkeys.fHotkeyBuildStamp)
+    {
+        mGm->setMode(eBuildingMode::stamp);
     }
     else if (k == SDL_Scancode::SDL_SCANCODE_LEFT)
     {
@@ -3034,6 +3051,16 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent &e)
         mHoverX = e.x();
         mHoverY = e.y();
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
+
+        if (mGm->mode() == eBuildingMode::stamp) {
+            mHoverTiles.clear();
+            for (const auto& elem : mStampTool->transformedBlueprint()) {
+                const int tx = mHoverTX + elem.dx;
+                const int ty = mHoverTY + elem.dy;
+                const auto tile = mBoard->tile(tx, ty);
+                if (tile) mHoverTiles.push_back(tile);
+            }
+        }
 
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
         if (left && mTem->visible())

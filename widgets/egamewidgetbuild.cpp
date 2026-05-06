@@ -1973,6 +1973,13 @@ bool eGameWidget::buildMouseRelease() {
             }
         } break;
 
+        case eBuildingMode::stamp: {
+            if (mStampTool->canBuildAt(mPressedTX, mPressedTY, mBoard.get(), mEditorMode, mViewedCityId, ppid)) {
+                mStampTool->buildAt(mPressedTX, mPressedTY, mBoard.get(), mViewedCityId, ppid, mEditorMode);
+                r = true;
+            }
+        } break;
+
         case eBuildingMode::birdBath: {
             r = mBoard->build(mHoverTX, mHoverTY, 1, 1, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eBirdBath>(*mBoard, mViewedCityId); });

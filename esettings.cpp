@@ -55,6 +55,7 @@ SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
     case eHotkeyId::buildMaintenanceOffice: return fHotkeyBuildMaintenanceOffice;
     case eHotkeyId::buildCommonHousing: return fHotkeyBuildCommonHousing;
     case eHotkeyId::buildWatchpost: return fHotkeyBuildWatchpost;
+    case eHotkeyId::buildStamp: return fHotkeyBuildStamp;
     case eHotkeyId::scrollLeft: return fHotkeyScrollLeft;
     case eHotkeyId::scrollRight: return fHotkeyScrollRight;
     case eHotkeyId::scrollUp: return fHotkeyScrollUp;
@@ -105,6 +106,7 @@ void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
     case eHotkeyId::buildMaintenanceOffice: fHotkeyBuildMaintenanceOffice = key; break;
     case eHotkeyId::buildCommonHousing: fHotkeyBuildCommonHousing = key; break;
     case eHotkeyId::buildWatchpost: fHotkeyBuildWatchpost = key; break;
+    case eHotkeyId::buildStamp: fHotkeyBuildStamp = key; break;
     case eHotkeyId::scrollLeft: fHotkeyScrollLeft = key; break;
     case eHotkeyId::scrollRight: fHotkeyScrollRight = key; break;
     case eHotkeyId::scrollUp: fHotkeyScrollUp = key; break;
@@ -193,6 +195,8 @@ void eSettings::write() const {
             std::to_string(fHotkeyBuildCommonHousing) << "\"" << "\n";
     file << "hotkey_build_watchpost" << " " << "\"" <<
             std::to_string(fHotkeyBuildWatchpost) << "\"" << "\n";
+    file << "hotkey_build_stamp" << " " << "\"" <<
+            std::to_string(fHotkeyBuildStamp) << "\"" << "\n";
     file << "hotkey_scroll_left" << " " << "\"" <<
             std::to_string(fHotkeyScrollLeft) << "\"" << "\n";
     file << "hotkey_scroll_right" << " " << "\"" <<
@@ -310,6 +314,7 @@ void eSettings::read() {
     readHotkey("hotkey_build_maintenance_office", fHotkeyBuildMaintenanceOffice);
     readHotkey("hotkey_build_common_housing", fHotkeyBuildCommonHousing);
     readHotkey("hotkey_build_watchpost", fHotkeyBuildWatchpost);
+    readHotkey("hotkey_build_stamp", fHotkeyBuildStamp);
     readHotkey("hotkey_build_repair", fHotkeyRepairTool);
     readHotkey("hotkey_scroll_left", fHotkeyScrollLeft);
     readHotkey("hotkey_scroll_right", fHotkeyScrollRight);

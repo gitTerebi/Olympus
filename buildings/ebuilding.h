@@ -19,6 +19,7 @@ enum class eBuildingType {
     erase,
 
     road,
+    roadblock,
 
     commonHouse,
     eliteHousing,
