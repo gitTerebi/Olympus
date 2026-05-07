@@ -299,7 +299,7 @@ std::string eMainWindow::mostRecentSavePath() const {
     std::filesystem::path bestPath;
     for(const auto& entry : std::filesystem::directory_iterator(folder)) {
         const auto path = entry.path();
-        if(path.extension() != ".ez") continue;
+        if(path.extension() != ".ez" && path.extension() != ".ez2") continue;
         const auto time = std::filesystem::last_write_time(path);
         if(!found || time > bestTime) {
             found = true;
@@ -385,13 +385,9 @@ void eMainWindow::episodeLost() {
 }
 
 bool eMainWindow::saveGame(const std::string& path) {
-    const bool wroteEz = writeGameSaveFile(path, "eZeus.ez", mGW, mCampaign);
-    if(!wroteEz) return false;
-
     auto ez2Path = std::filesystem::path(path);
     ez2Path.replace_extension(".ez2");
-    writeGameSaveFile(ez2Path.string(), "eZeus.ez2", mGW, mCampaign);
-    return true;
+    return writeGameSaveFile(ez2Path.string(), "eZeus.ez2", mGW, mCampaign);
 }
 
 bool eMainWindow::loadGame(const std::string& path) {

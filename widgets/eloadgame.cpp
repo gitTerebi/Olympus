@@ -76,7 +76,8 @@ void eLoadGame::intialize(const std::string& title,
     deleteB->setPressAction([this]() {
         const auto name = mLineEdit->text();
         if(name.empty()) return;
-        const auto path = mFolder + name + ".ez";
+        auto path = mFolder + name + ".ez2";
+        if(!std::filesystem::exists(path)) path = mFolder + name + ".ez";
         if(!std::filesystem::exists(path)) return;
         const auto q = new eQuestionWidget(window());
         const auto acceptA = [this, path]() {
@@ -141,7 +142,7 @@ void eLoadGame::intialize(const std::string& title,
         for(const auto& entry : fs::directory_iterator(folder)) {
             const auto path = entry.path();
             const auto ext = path.extension();
-            if(ext != ".ez") continue;
+            if(ext != ".ez" && ext != ".ez2") continue;
             const auto lwt = fs::last_write_time(path);
             const auto time = to_time_t(lwt);
             sorted[-time] = path;
@@ -187,7 +188,11 @@ void eLoadGame::setFileName(const std::string& path) {
 }
 
 std::string eLoadGame::filePath() const {
-    return mFolder + mLineEdit->text() + ".ez";
+    const auto ez2 = mFolder + mLineEdit->text() + ".ez2";
+    if(std::filesystem::exists(ez2)) return ez2;
+    const auto ez = mFolder + mLineEdit->text() + ".ez";
+    if(std::filesystem::exists(ez)) return ez;
+    return ez2;
 }
 
 void eLoadGame::rebuildFileList() {
@@ -205,7 +210,7 @@ void eLoadGame::rebuildFileList() {
         for(const auto& entry : fs::directory_iterator(mFolder)) {
             const auto path = entry.path();
             const auto ext = path.extension();
-            if(ext != ".ez") continue;
+            if(ext != ".ez" && ext != ".ez2") continue;
             const auto lwt = fs::last_write_time(path);
             const auto time = to_time_t(lwt);
             sorted[-time] = path;
