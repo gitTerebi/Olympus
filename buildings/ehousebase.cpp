@@ -110,10 +110,10 @@ void eHouseBase::serialize(eSaveArchive& ar) {
     ar.field("mPaidTaxesLastMonth", mPaidTaxesLastMonth);
     if(ar.reading()) {
         int level;
-        ar.field("level", level);
+        ar.field("mLevel", level);
         setLevel(level);
         int people;
-        ar.field("people", people);
+        ar.field("mPeople", people);
         setPeople(people);
     } else {
         ar.field("mLevel", mLevel);
