@@ -1006,7 +1006,7 @@ void eAIDistrict::write(eWriteStream& dst) const {
 void eAIDistrict::serialize(eSaveArchive& ar) {
     int nb;
     if(ar.writing()) nb = fBuildings.size();
-    ar.value(nb);
+    ar.field("nb", nb);
     if(ar.reading()) fBuildings.clear();
     for(int i = 0; i < nb; i++) {
         eAIBuilding b;
@@ -1017,7 +1017,7 @@ void eAIDistrict::serialize(eSaveArchive& ar) {
 
     int nc;
     if(ar.writing()) nc = fReadyConditions.size();
-    ar.value(nc);
+    ar.field("nc", nc);
     if(ar.reading()) fReadyConditions.clear();
     for(int i = 0; i < nc; i++) {
         eDistrictReadyCondition c;
@@ -1096,8 +1096,8 @@ void eDistrictReadyCondition::write(eWriteStream& dst) const {
 }
 
 void eDistrictReadyCondition::serialize(eSaveArchive& ar) {
-    ar.value(fType);
-    ar.value(fResource);
-    ar.value(fSanctuary);
-    ar.value(fValue);
+    ar.field("fType", fType);
+    ar.field("fResource", fResource);
+    ar.field("fSanctuary", fSanctuary);
+    ar.field("fValue", fValue);
 }

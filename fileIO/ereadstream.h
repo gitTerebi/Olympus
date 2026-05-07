@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstring>
 #include <cassert>
+#include <vector>
 
 #include "pointers/estdpointer.h"
 #include "efileformat.h"
@@ -71,6 +72,11 @@ public:
 
     inline size_t read(void* const data, const size_t len) {
         return mSrc.read(data, len);
+    }
+
+    void skip(const size_t len) {
+        std::vector<char> buffer(len);
+        if(len > 0) read(buffer.data(), len);
     }
 
     inline eReadStream& operator>>(bool& val) {

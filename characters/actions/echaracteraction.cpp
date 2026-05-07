@@ -52,9 +52,9 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
 }
 
 void eCharacterAction::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
+    ar.field("mIOID", mIOID);
 
-    ar.value(mState);
+    ar.field("mState", mState);
 
     if(ar.reading()) {
         mFinishAction = ar.readStream().readCharActFunc(board());

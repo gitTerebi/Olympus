@@ -56,7 +56,7 @@ void eProvideResourceHelpAction::write(eWriteStream& dst) const {
 }
 
 void eProvideResourceHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eStorageBuilding*>(b);
@@ -64,8 +64,8 @@ void eProvideResourceHelpAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mTarget);
     }
-    ar.value(mResource);
-    ar.value(mCount);
+    ar.field("mResource", mResource);
+    ar.field("mCount", mCount);
 }
 
 void eProvideResourceHelpAction::decCount(const int by) {

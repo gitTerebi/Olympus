@@ -59,7 +59,7 @@ void eTakeCattleAction::write(eWriteStream& dst) const {
 }
 
 void eTakeCattleAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     if(ar.reading()) {
         auto& board = this->board();
         ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
@@ -68,7 +68,7 @@ void eTakeCattleAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mCorral);
     }
-    ar.value(mNoCattle);
+    ar.field("mNoCattle", mNoCattle);
 }
 
 bool hasCattle(eTileBase* const tile, const eCharacterType t) {

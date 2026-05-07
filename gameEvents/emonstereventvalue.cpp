@@ -10,7 +10,7 @@ void eMonsterEventValue::write(eWriteStream& dst) const {
 }
 
 void eMonsterEventValue::serialize(eSaveArchive& ar) {
-    ar.value(mMonster);
+    ar.field("mMonster", mMonster);
 }
 
 void eMonsterEventValue::read(eReadStream& src) {

@@ -173,18 +173,18 @@ void eCollectResourceAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeHasResource(mHasResource.get());
         ar.writeStream().writeBuilding(mBuilding);
     }
-    ar.value(mCollectedAction);
+    ar.field("mCollectedAction", mCollectedAction);
     if(ar.reading()) {
         mWalkable = ar.readStream().readWalkable();
     } else {
         ar.writeStream().writeWalkable(mWalkable.get());
     }
-    ar.value(mDisabled);
-    ar.value(mWaitTime);
-    ar.value(mFinishOnce);
-    ar.value(mAddResource);
-    ar.value(mGetAtTile);
-    ar.value(mNoTarget);
+    ar.field("mDisabled", mDisabled);
+    ar.field("mWaitTime", mWaitTime);
+    ar.field("mFinishOnce", mFinishOnce);
+    ar.field("mAddResource", mAddResource);
+    ar.field("mGetAtTile", mGetAtTile);
+    ar.field("mNoTarget", mNoTarget);
 }
 
 bool eCollectResourceAction::findResourceDecision() {

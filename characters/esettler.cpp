@@ -1,7 +1,6 @@
 #include "esettler.h"
 
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 #include "textures/egametextures.h"
 
 #include "erand.h"
@@ -20,7 +19,7 @@ void eSettler::setEmigrant(const bool e) {
 }
 
 void eSettler::serialize(eSaveArchive& ar) {
-    ar.valueSince(eFileFormat::settlerEmigrant, mEmigrant, false);
+    ar.field("mEmigrant", mEmigrant);
 }
 
 void eSettler::read(eReadStream& src) {

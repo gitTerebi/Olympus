@@ -69,9 +69,9 @@ void ePlague::write(eWriteStream& dst) const {
 }
 
 void ePlague::serialize(eSaveArchive& ar) {
-    ar.value(mCityId);
+    ar.field("mCityId", mCityId);
     int n = mHouses.size();
-    ar.value(n);
+    ar.field("n", n);
     if(ar.reading()) mHouses.clear();
     for(int i = 0 ; i < n; i++) {
         if(ar.reading()) {

@@ -10,7 +10,6 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 #include <fstream>
 
@@ -21,35 +20,33 @@ static void loadDebugLogBoard(const std::string& msg) {
 }
 
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
-    if(!ar.versionAtLeast(eFileFormat::cartTarget)) return;
-
     if(ar.reading()) {
         int np;
-        ar.value(np);
+        ar.field("np", np);
         loadDebugLogBoard("eGameBoard::read yearlyProduction count=" +
                           std::to_string(np));
         for(int i = 0; i < np; i++) {
             eResourceType type;
-            ar.value(type);
+            ar.field("type", type);
             auto& y = mYearlyProduction[type];
-            ar.value(y.fBest);
-            ar.value(y.fLastYear);
-            ar.value(y.fThisYear);
+            ar.field("y.fBest", y.fBest);
+            ar.field("y.fLastYear", y.fLastYear);
+            ar.field("y.fThisYear", y.fThisYear);
         }
-        ar.value(mSavedYear);
+        ar.field("mSavedYear", mSavedYear);
         loadDebugLogBoard("eGameBoard::read savedYear=" +
                           std::to_string(mSavedYear));
     } else {
         int np = static_cast<int>(mYearlyProduction.size());
-        ar.value(np);
+        ar.field("np", np);
         for(auto& p : mYearlyProduction) {
             eResourceType type = p.first;
-            ar.value(type);
-            ar.value(p.second.fBest);
-            ar.value(p.second.fLastYear);
-            ar.value(p.second.fThisYear);
+            ar.field("type", type);
+            ar.field("p.second.fBest", p.second.fBest);
+            ar.field("p.second.fLastYear", p.second.fLastYear);
+            ar.field("p.second.fThisYear", p.second.fThisYear);
         }
-        ar.value(mSavedYear);
+        ar.field("mSavedYear", mSavedYear);
     }
 }
 

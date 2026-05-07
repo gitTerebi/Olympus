@@ -175,9 +175,9 @@ void eDate::write(eWriteStream& dst) const {
 }
 
 void eDate::serialize(eSaveArchive& ar) {
-    ar.value(mDay);
-    ar.value(mMonth);
-    ar.value(mYear);
+    ar.field("mDay", mDay);
+    ar.field("mMonth", mMonth);
+    ar.field("mYear", mYear);
 }
 
 void eDate::read(eReadStream& src) {

@@ -106,27 +106,27 @@ void eHouseBase::write(eWriteStream& dst) const {
 }
 
 void eHouseBase::serialize(eSaveArchive& ar) {
-    ar.value(mPaidTaxes);
-    ar.value(mPaidTaxesLastMonth);
+    ar.field("mPaidTaxes", mPaidTaxes);
+    ar.field("mPaidTaxesLastMonth", mPaidTaxesLastMonth);
     if(ar.reading()) {
         int level;
-        ar.value(level);
+        ar.field("level", level);
         setLevel(level);
         int people;
-        ar.value(people);
+        ar.field("people", people);
         setPeople(people);
     } else {
-        ar.value(mLevel);
-        ar.value(mPeople);
+        ar.field("mLevel", mLevel);
+        ar.field("mPeople", mPeople);
     }
-    ar.value(mFood);
-    ar.value(mFleece);
-    ar.value(mOil);
-    ar.value(mPhilosophers);
-    ar.value(mActors);
-    ar.value(mAthletes);
-    ar.value(mCompetitors);
-    ar.value(mUpdateCulture);
+    ar.field("mFood", mFood);
+    ar.field("mFleece", mFleece);
+    ar.field("mOil", mOil);
+    ar.field("mPhilosophers", mPhilosophers);
+    ar.field("mActors", mActors);
+    ar.field("mAthletes", mAthletes);
+    ar.field("mCompetitors", mCompetitors);
+    ar.field("mUpdateCulture", mUpdateCulture);
     // mPendingEvict and mEvictDelay not saved
 }
 

@@ -41,8 +41,8 @@ void eTraderAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeWalkable(mWalkable.get());
     }
-    ar.value(mCash);
-    ar.value(mItems);
+    ar.field("mCash", mCash);
+    ar.field("mItems", mItems);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTradePost = static_cast<eTradePost*>(b);
@@ -54,9 +54,9 @@ void eTraderAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeBuilding(mTradePost);
         ar.writeStream().writeBuilding(mUnpackBuilding);
     }
-    ar.value(mAtTradePost);
-    ar.value(mFinishedTrade);
-    ar.value(mNotFound);
+    ar.field("mAtTradePost", mAtTradePost);
+    ar.field("mFinishedTrade", mFinishedTrade);
+    ar.field("mNotFound", mNotFound);
 }
 
 void eTraderAction::setTradePost(eTradePost* const tp) {

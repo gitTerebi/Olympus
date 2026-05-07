@@ -5,7 +5,6 @@
 #include "characters/actions/egroweraction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 #include <algorithm>
 
@@ -239,11 +238,11 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
 }
 
 void eGrowersLodge::serialize(eSaveArchive& ar) {
-    ar.value(mNoTarget);
-    ar.value(mSpawnEnabled);
-    ar.value(mGrapes);
-    ar.value(mOlives);
-    ar.value(mOranges);
+    ar.field("mNoTarget", mNoTarget);
+    ar.field("mSpawnEnabled", mSpawnEnabled);
+    ar.field("mGrapes", mGrapes);
+    ar.field("mOlives", mOlives);
+    ar.field("mOranges", mOranges);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mCart = static_cast<eCartTransporter*>(c);
@@ -251,7 +250,7 @@ void eGrowersLodge::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mCart);
     }
-    ar.value(mSpawnTime);
+    ar.field("mSpawnTime", mSpawnTime);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mGrower = static_cast<eGrower*>(c);
@@ -259,11 +258,9 @@ void eGrowersLodge::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mGrower);
     }
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        ar.value(mProducedThisYear);
-        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
-        ar.value(mRingIdx);
-    }
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
 }
 
 void eGrowersLodge::read(eReadStream& src) {

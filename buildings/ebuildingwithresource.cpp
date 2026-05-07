@@ -100,9 +100,9 @@ void eBuildingWithResource::write(eWriteStream& dst) const {
 }
 
 void eBuildingWithResource::serialize(eSaveArchive& ar) {
-    ar.value(mStashable);
+    ar.field("mStashable", mStashable);
     int ns = mStash.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) {
         mStash.clear();
     }
@@ -111,8 +111,8 @@ void eBuildingWithResource::serialize(eSaveArchive& ar) {
         if(ar.writing()) {
             s = mStash[i];
         }
-        ar.value(s.fType);
-        ar.value(s.fCount);
+        ar.field("s.fType", s.fType);
+        ar.field("s.fCount", s.fCount);
         if(ar.reading()) {
             mStash.push_back(s);
         }

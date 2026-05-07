@@ -61,12 +61,12 @@ void eSettlerAction::write(eWriteStream& dst) const {
 void eSettlerAction::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         int nPeople;
-        ar.value(nPeople);
+        ar.field("nPeople", nPeople);
         setNumberPeople(nPeople);
     } else {
-        ar.value(mNPeople);
+        ar.field("mNPeople", mNPeople);
     }
-    ar.value(mNoHouses);
+    ar.field("mNoHouses", mNoHouses);
     if(ar.reading()) mInitialWait = 0; // reset on load
 }
 

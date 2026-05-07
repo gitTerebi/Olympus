@@ -71,7 +71,7 @@ void eArtisansGuild::write(eWriteStream& dst) const {
 }
 
 void eArtisansGuild::serialize(eSaveArchive& ar) {
-    ar.value(mSpawnTime);
+    ar.field("mSpawnTime", mSpawnTime);
     if(ar.reading()) {
         auto& board = getBoard();
         ar.readStream().readCharacter(&board, [this](eCharacter* const c) {

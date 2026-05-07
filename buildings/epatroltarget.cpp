@@ -52,5 +52,5 @@ void ePatrolTarget::write(eWriteStream& dst) const {
 }
 
 void ePatrolTarget::serialize(eSaveArchive& ar) {
-    ar.value(mAvailable);
+    ar.field("mAvailable", mAvailable);
 }

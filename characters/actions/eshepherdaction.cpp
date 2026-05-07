@@ -1,4 +1,4 @@
-﻿#include "eshepherdaction.h"
+#include "eshepherdaction.h"
 
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -145,7 +145,7 @@ void eShepherdAction::write(eWriteStream& dst) const {
 
 void eShepherdAction::serialize(eSaveArchive& ar) {
     eActionWithComeback::serialize(ar);
-    ar.value(mAnimalType);
+    ar.field("mAnimalType", mAnimalType);
     if(ar.reading()) {
         ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
             mCharacter = static_cast<eResourceCollectorBase*>(c);
@@ -157,9 +157,9 @@ void eShepherdAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mCharacter);
         ar.writeStream().writeBuilding(mShed);
     }
-    ar.value(mFinishOnce);
-    ar.value(mGroomed);
-    ar.value(mNoResource);
+    ar.field("mFinishOnce", mFinishOnce);
+    ar.field("mGroomed", mGroomed);
+    ar.field("mNoResource", mNoResource);
 }
 
 bool eShepherdAction::findResourceDecision() {

@@ -3,7 +3,6 @@
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
         eGameBoard& board,
@@ -82,12 +81,10 @@ void eShepherBuildingBase::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mShepherd.get());
     }
-    ar.value(mSpawnTime);
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        ar.value(mProducedThisYear);
-        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
-        ar.value(mRingIdx);
-    }
+    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
 }
 
 void eShepherBuildingBase::read(eReadStream& src) {

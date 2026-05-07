@@ -452,20 +452,20 @@ void eFightingAction::write(eWriteStream& dst) const {
 }
 
 void eFightingAction::serialize(eSaveArchive& ar) {
-    ar.value(mAngle);
-    ar.value(mMissile);
-    ar.value(mRangeAttack);
-    ar.value(mBuildingAttack);
-    ar.value(mLookForEnemy);
-    ar.value(mAttackTime);
-    ar.value(mAttack);
+    ar.field("mAngle", mAngle);
+    ar.field("mMissile", mMissile);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mBuildingAttack", mBuildingAttack);
+    ar.field("mLookForEnemy", mLookForEnemy);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mAttack", mAttack);
     if(ar.reading()) {
         mAttackTarget.read(board(), ar.readStream());
     } else {
         mAttackTarget.write(ar.writeStream());
     }
-    ar.value(mSavedAction);
-    ar.value(mOverwrittableAction);
+    ar.field("mSavedAction", mSavedAction);
+    ar.field("mOverwrittableAction", mOverwrittableAction);
 }
 
 void eFightingAction::waitAndGoHome(const int w) {

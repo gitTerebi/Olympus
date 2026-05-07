@@ -71,5 +71,5 @@ void ePyramidBuildingPart::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mPaint);
     }
-    ar.value(mPaintDir);
+    ar.field("mPaintDir", mPaintDir);
 }

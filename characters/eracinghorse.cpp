@@ -61,5 +61,5 @@ void eRacingHorse::write(eWriteStream& dst) const {
 }
 
 void eRacingHorse::serialize(eSaveArchive& ar) {
-    ar.value(mId);
+    ar.field("mId", mId);
 }

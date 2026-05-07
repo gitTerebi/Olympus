@@ -2,7 +2,6 @@
 
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 eRuins::eRuins(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::ruins, 1, 1, cid) {
@@ -40,21 +39,15 @@ static void byteVec(eSaveArchive& ar, std::vector<uint8_t>& v) {
 }
 
 void eRuins::serialize(eSaveArchive& ar) {
-    ar.value(mWasType);
-    if(ar.versionAtLeast(eFileFormat::ruinsOrigin)) {
-        ar.value(mOriginX);
-        ar.value(mOriginY);
-        ar.value(mOriginW);
-        ar.value(mOriginH);
-    }
-    if(ar.versionAtLeast(eFileFormat::ruinsSavedBuilding)) {
-        byteVec(ar, mSavedBuilding);
-        byteVec(ar, mSavedPier);
-        ar.value(mSavedPierRect);
-    }
-    if(ar.versionAtLeast(eFileFormat::ruinsRestoreBundle)) {
-        byteVec(ar, mRestoreBundle);
-    }
+    ar.field("mWasType", mWasType);
+    ar.field("mOriginX", mOriginX);
+    ar.field("mOriginY", mOriginY);
+    ar.field("mOriginW", mOriginW);
+    ar.field("mOriginH", mOriginH);
+    byteVec(ar, mSavedBuilding);
+    byteVec(ar, mSavedPier);
+    ar.field("mSavedPierRect", mSavedPierRect);
+    byteVec(ar, mRestoreBundle);
 }
 
 void eRuins::read(eReadStream& src) {

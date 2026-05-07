@@ -163,5 +163,5 @@ void eRequestAidEvent::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCity(mCity.get());
         mArrivalDate.write(ar.writeStream());
     }
-    ar.value(mEnd);
+    ar.field("mEnd", mEnd);
 }

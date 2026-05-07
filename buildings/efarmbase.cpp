@@ -5,7 +5,6 @@
 #include "engine/edate.h"
 #include "engine/egameboard.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 #include <algorithm>
 #include <cmath>
@@ -108,19 +107,17 @@ eMonth eFarmBase::nextHarvestMonth() const {
 }
 
 void eFarmBase::serialize(eSaveArchive& ar) {
-    ar.value(mNextRipe);
+    ar.field("mNextRipe", mNextRipe);
     int combined;
     if(ar.writing()) combined = mCurrentTile * 5 + mCurrentStage;
-    ar.value(combined);
+    ar.field("combined", combined);
     if(ar.reading()) {
         mCurrentTile  = std::clamp(combined / 5, 0, 4);
         mCurrentStage = std::clamp(combined % 5, 0, 4);
     }
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        ar.value(mProducedThisYear);
-        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
-        ar.value(mRingIdx);
-    }
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
 }
 
 void eFarmBase::read(eReadStream& src) {

@@ -651,5 +651,5 @@ void eGod::write(eWriteStream& dst) const {
 }
 
 void eGod::serialize(eSaveArchive& ar) {
-    ar.value(mAttitude);
+    ar.field("mAttitude", mAttitude);
 }

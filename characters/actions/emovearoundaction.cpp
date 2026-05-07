@@ -40,10 +40,10 @@ void eMoveAroundAction::write(eWriteStream& dst) const {
 }
 
 void eMoveAroundAction::serialize(eSaveArchive& ar) {
-    ar.value(mStartTX);
-    ar.value(mStartTY);
-    ar.value(mMaxDist);
-    ar.value(mRemTime);
+    ar.field("mStartTX", mStartTX);
+    ar.field("mStartTY", mStartTY);
+    ar.field("mMaxDist", mMaxDist);
+    ar.field("mRemTime", mRemTime);
 }
 
 eCharacterActionState eMoveAroundAction::nextTurn(eOrientation& turn) {

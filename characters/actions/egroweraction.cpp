@@ -159,7 +159,7 @@ void eGrowerAction::write(eWriteStream& dst) const {
 }
 
 void eGrowerAction::serialize(eSaveArchive& ar) {
-    ar.value(mType);
+    ar.field("mType", mType);
     if(ar.reading()) {
         ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
             mGrower = static_cast<eGrower*>(c);
@@ -171,9 +171,9 @@ void eGrowerAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mGrower);
         ar.writeStream().writeBuilding(mLodge);
     }
-    ar.value(mFinishOnce);
-    ar.value(mGroomed);
-    ar.value(mNoResource);
+    ar.field("mFinishOnce", mFinishOnce);
+    ar.field("mGroomed", mGroomed);
+    ar.field("mNoResource", mNoResource);
 }
 
 bool eGrowerAction::findResourceDecision() {

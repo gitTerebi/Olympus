@@ -69,7 +69,7 @@ void eEmploymentDistributor::write(eWriteStream& dst) const {
 
 void eEmploymentDistributor::serialize(eSaveArchive& ar) {
     for(auto& e : mPriorities) {
-        ar.value(e.second);
+        ar.field("e.second", e.second);
     }
 }
 

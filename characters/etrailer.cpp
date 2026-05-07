@@ -91,7 +91,7 @@ void eTrailer::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mFollow);
     }
-    ar.value(mIsBig);
-    ar.value(mResCount);
-    ar.value(mResType);
+    ar.field("mIsBig", mIsBig);
+    ar.field("mResCount", mResCount);
+    ar.field("mResType", mResType);
 }

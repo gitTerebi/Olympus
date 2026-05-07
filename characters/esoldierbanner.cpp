@@ -7,7 +7,6 @@
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 #include "eiteratesquare.h"
 
 #include "evectorhelpers.h"
@@ -323,19 +322,19 @@ bool eSoldierBanner::fighting() const {
 }
 
 void eSoldierBanner::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
-    ar.value(mMilitaryAid);
-    ar.value(mHome);
-    ar.value(mAbroad);
+    ar.field("mIOID", mIOID);
+    ar.field("mMilitaryAid", mMilitaryAid);
+    ar.field("mHome", mHome);
+    ar.field("mAbroad", mAbroad);
     ar.tile(mTile, mBoard);
-    ar.value(mCount);
-    ar.value(mCityId);
-    ar.value(mOnCityId);
-    ar.valueSince(eFileFormat::soldierBannerFacing, mFacing, 0);
+    ar.field("mCount", mCount);
+    ar.field("mCityId", mCityId);
+    ar.field("mOnCityId", mOnCityId);
+    ar.field("mFacing", mFacing);
 
     if(ar.reading()) {
         int np;
-        ar.value(np);
+        ar.field("np", np);
         for(int i = 0; i < np; i++) {
             eTile* t = nullptr;
             ar.tile(t, mBoard);
@@ -347,7 +346,7 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         }
 
         int ns;
-        ar.value(ns);
+        ar.field("ns", ns);
         for(int i = 0; i < ns; i++) {
             ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
                 if(!c) return;
@@ -357,7 +356,7 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         }
     } else {
         int np = static_cast<int>(mPlaces.size());
-        ar.value(np);
+        ar.field("np", np);
         for(const auto& p : mPlaces) {
             eTile* t = p.second;
             ar.tile(t, mBoard);
@@ -365,7 +364,7 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         }
 
         int ns = static_cast<int>(mSoldiers.size());
-        ar.value(ns);
+        ar.field("ns", ns);
         for(const auto s : mSoldiers) {
             ar.writeStream().writeCharacter(s);
         }

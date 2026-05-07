@@ -373,8 +373,8 @@ void eTile::write(eWriteStream& dst) const {
 }
 
 void eTile::serialize(eSaveArchive& ar) {
-    ar.value(mDoubleAltitude);
-    ar.value(mScrub);
+    ar.field("mDoubleAltitude", mDoubleAltitude);
+    ar.field("mScrub", mScrub);
 
     unsigned char bools;
     if(ar.writing()) {
@@ -385,7 +385,7 @@ void eTile::serialize(eSaveArchive& ar) {
         if(mRainforest) bools |= 1 << 3;
         if(mHalfSlope) bools |= 1 << 4;
     }
-    ar.value(bools);
+    ar.field("bools", bools);
     mTidalWaveZone = bools & 1 << 0;
     mLavaZone = bools & 1 << 1;
     mLandSlideZone = bools & 1 << 2;
@@ -394,7 +394,7 @@ void eTile::serialize(eSaveArchive& ar) {
 
     unsigned char nb;
     if(ar.writing()) nb = mBanners.size();
-    ar.value(nb);
+    ar.field("nb", nb);
     for(unsigned char i = 0; i < nb; i++) {
         eBannerTypeS type;
         int id;
@@ -403,8 +403,8 @@ void eTile::serialize(eSaveArchive& ar) {
             type = b->type();
             id = b->id();
         }
-        ar.value(type);
-        ar.value(id);
+        ar.field("type", type);
+        ar.field("id", id);
         if(ar.reading()) {
             const auto b = eBanner::sCreate(id, this, mBoard, type);
             b->read(ar.readStream());

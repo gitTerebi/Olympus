@@ -30,7 +30,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int nc;
         if(ar.writing()) nc = fDrachmas.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) fDrachmas.clear();
         for(int i = 0; i < nc; i++) {
             ePlayerId pid;
@@ -41,8 +41,8 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 pid = it->first;
                 d = it->second;
             }
-            ar.value(pid);
-            ar.value(d);
+            ar.field("pid", pid);
+            ar.field("d", d);
             if(ar.reading()) fDrachmas[pid] = d;
         }
     }
@@ -51,7 +51,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int nc;
         if(ar.writing()) nc = fFriendlyGods.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) fFriendlyGods.clear();
         for(int j = 0; j < nc; j++) {
             eCityId cid;
@@ -62,14 +62,14 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 cid = it->first;
                 fgs = it->second;
             }
-            ar.value(cid);
+            ar.field("cid", cid);
             int nfg;
             if(ar.writing()) nfg = fgs.size();
-            ar.value(nfg);
+            ar.field("nfg", nfg);
             for(int i = 0; i < nfg; i++) {
                 eGodType g;
                 if(ar.writing()) g = fgs[i];
-                ar.value(g);
+                ar.field("g", g);
                 if(ar.reading()) fgs.push_back(g);
             }
             if(ar.reading()) fFriendlyGods[cid] = fgs;
@@ -78,7 +78,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int ncs;
         if(ar.writing()) ncs = fEvents.size();
-        ar.value(ncs);
+        ar.field("ncs", ncs);
         if(ar.reading()) fEvents.clear();
         for(int i = 0; i < ncs; i++) {
             eCityId cid;
@@ -89,14 +89,14 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 cid = it->first;
                 events = it->second;
             }
-            ar.value(cid);
+            ar.field("cid", cid);
             int ne;
             if(ar.writing()) ne = events.size();
-            ar.value(ne);
+            ar.field("ne", ne);
             for(int j = 0; j < ne; j++) {
                 eGameEventType type;
                 if(ar.writing()) type = events[j]->type();
-                ar.value(type);
+                ar.field("type", type);
                 if(ar.reading()) {
                     const auto branch = eGameEventBranch::root;
                     const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
@@ -111,7 +111,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int ng;
         if(ar.writing()) ng = fGoals.size();
-        ar.value(ng);
+        ar.field("ng", ng);
         if(ar.reading()) fGoals.clear();
         for(int i = 0; i < ng; i++) {
             if(ar.reading()) {
@@ -127,7 +127,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int nc;
         if(ar.writing()) nc = fAvailableBuildings.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) fAvailableBuildings.clear();
         for(int i = 0; i < nc; i++) {
             eCityId cid;
@@ -138,7 +138,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 cid = it->first;
                 ab = it->second;
             }
-            ar.value(cid);
+            ar.field("cid", cid);
             if(ar.reading()) ab.read(ar.readStream());
             else ab.write(ar.writeStream());
             if(ar.reading()) fAvailableBuildings[cid] = ab;
@@ -148,7 +148,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
     {
         int nc;
         if(ar.writing()) nc = fMaxSanctuaries.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) fMaxSanctuaries.clear();
         for(int i = 0; i < nc; i++) {
             eCityId cid;
@@ -159,14 +159,14 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 cid = it->first;
                 m = it->second;
             }
-            ar.value(cid);
-            ar.value(m);
+            ar.field("cid", cid);
+            ar.field("m", m);
             if(ar.reading()) fMaxSanctuaries[cid] = m;
         }
     }
 
-    ar.value(fIntroId);
-    ar.value(fCompleteId);
+    ar.field("fIntroId", fIntroId);
+    ar.field("fCompleteId", fCompleteId);
 }
 
 void eEpisode::clear() {

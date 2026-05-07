@@ -281,8 +281,8 @@ void eInvasionEvent::read(eReadStream& src) {
 }
 
 void eInvasionEvent::serialize(eSaveArchive& ar) {
-    ar.value(mHardcoded);
-    ar.value(mSentByPlayer);
+    ar.field("mHardcoded", mHardcoded);
+    ar.field("mSentByPlayer", mSentByPlayer);
 
     const auto board = gameBoard();
     if(ar.reading()) {
@@ -294,7 +294,7 @@ void eInvasionEvent::serialize(eSaveArchive& ar) {
     }
     mForces.serialize(ar, board);
 
-    ar.value(mWarned);
+    ar.field("mWarned", mWarned);
     if(ar.reading()) {
         mFirstWarning.read(ar.readStream());
     } else {

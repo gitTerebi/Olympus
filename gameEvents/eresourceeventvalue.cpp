@@ -49,8 +49,8 @@ void eResourceEventValue::read(eReadStream& src) {
 }
 
 void eResourceEventValue::serialize(eSaveArchive& ar) {
-    ar.value(mResource);
+    ar.field("mResource", mResource);
     for(int i = 0; i < 3; i++) {
-        ar.value(mResources[i]);
+        ar.field("mResources[i]", mResources[i]);
     }
 }

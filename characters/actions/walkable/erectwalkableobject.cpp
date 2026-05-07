@@ -40,7 +40,7 @@ void eRectWalkableObject::write(eWriteStream& dst) const {
 }
 
 void eRectWalkableObject::serialize(eSaveArchive& ar) {
-    ar.value(mRect);
+    ar.field("mRect", mRect);
     if(ar.reading()) {
         mOther = ar.readStream().readWalkable();
     } else {

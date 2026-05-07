@@ -7,7 +7,6 @@
 #include "buildings/evendor.h"
 #include "engine/egameboard.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 #include "emovetoaction.h"
 
 eCartTransporterAction::eCartTransporterAction(
@@ -335,22 +334,20 @@ void eCartTransporterAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeBuilding(mBuilding);
     }
 
-    ar.value(mTask.fMaxCount);
-    ar.value(mTask.fResource);
-    ar.value(mTask.fType);
+    ar.field("mTask.fMaxCount", mTask.fMaxCount);
+    ar.field("mTask.fResource", mTask.fResource);
+    ar.field("mTask.fType", mTask.fType);
 
-    ar.value(mUpdateWaiting);
-    ar.value(mNoTarget);
-    ar.value(mWaitOutside);
+    ar.field("mUpdateWaiting", mUpdateWaiting);
+    ar.field("mNoTarget", mNoTarget);
+    ar.field("mWaitOutside", mWaitOutside);
 
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        if(ar.reading()) {
-            ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-                mTarget = b;
-            });
-        } else {
-            ar.writeStream().writeBuilding(mTarget);
-        }
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = b;
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTarget);
     }
 }
 

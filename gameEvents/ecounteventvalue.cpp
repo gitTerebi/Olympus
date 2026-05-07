@@ -28,9 +28,9 @@ void eCountEventValue::write(eWriteStream& dst) const {
 }
 
 void eCountEventValue::serialize(eSaveArchive& ar) {
-    ar.value(mCount);
-    ar.value(mMinCount);
-    ar.value(mMaxCount);
+    ar.field("mCount", mCount);
+    ar.field("mMinCount", mMinCount);
+    ar.field("mMaxCount", mMaxCount);
 }
 
 void eCountEventValue::read(eReadStream& src) {

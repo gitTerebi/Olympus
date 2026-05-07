@@ -93,7 +93,7 @@ void eResourceBuildingBase::write(eWriteStream& dst) const {
 }
 
 void eResourceBuildingBase::serialize(eSaveArchive& ar) {
-    ar.value(mResource);
+    ar.field("mResource", mResource);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mCart = static_cast<eCartTransporter*>(c);

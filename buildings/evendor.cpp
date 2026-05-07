@@ -1,4 +1,4 @@
-﻿#include "evendor.h"
+#include "evendor.h"
 
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
@@ -201,8 +201,8 @@ void eVendor::write(eWriteStream& dst) const {
 }
 
 void eVendor::serialize(eSaveArchive& ar) {
-    ar.value(mResource);
-    ar.value(mVendorEnabled);
+    ar.field("mResource", mResource);
+    ar.field("mVendorEnabled", mVendorEnabled);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mCart = static_cast<eCartTransporter*>(c);

@@ -5,7 +5,6 @@
 #include "engine/egameboard.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 #include <algorithm>
 #include <cmath>
@@ -130,13 +129,11 @@ void eProcessingBuilding::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mTakeCart);
     }
 
-    ar.value(mRawCount);
-    ar.value(mProcessTime);
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        ar.value(mProducedThisYear);
-        ar.value(mLastMonth);
-        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
-    }
+    ar.field("mRawCount", mRawCount);
+    ar.field("mProcessTime", mProcessTime);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    ar.field("mLastMonth", mLastMonth);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
 }
 
 void eProcessingBuilding::read(eReadStream& src) {

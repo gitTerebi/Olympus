@@ -21,7 +21,7 @@ void eDefendAttackCityAction::write(eWriteStream& dst) const {
 }
 
 void eDefendAttackCityAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     ar.tile(mStartTile, eGodMonsterAction::board());
     if(ar.reading()) {
         ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
@@ -30,13 +30,13 @@ void eDefendAttackCityAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mAttackTarget);
     }
-    ar.value(mAttack);
-    ar.value(mLookForEnemy);
-    ar.value(mAttackTime);
-    ar.value(mRangeAttack);
-    ar.value(mAngle);
-    ar.value(mMissile);
-    ar.value(mKilled);
+    ar.field("mAttack", mAttack);
+    ar.field("mLookForEnemy", mLookForEnemy);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mAngle", mAngle);
+    ar.field("mMissile", mMissile);
+    ar.field("mKilled", mKilled);
 }
 
 bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {

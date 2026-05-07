@@ -1,4 +1,4 @@
-﻿#include "egameevent.h"
+#include "egameevent.h"
 
 #include "engine/egameboard.h"
 #include "fileIO/esavearchive.h"
@@ -392,19 +392,19 @@ void eGameEvent::read(eReadStream& src) {
 }
 
 void eGameEvent::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
-    ar.value(mDatePlusDays);
-    ar.value(mDatePlusMonths);
-    ar.value(mDatePlusYearsMin);
-    ar.value(mDatePlusYearsMax);
+    ar.field("mIOID", mIOID);
+    ar.field("mDatePlusDays", mDatePlusDays);
+    ar.field("mDatePlusMonths", mDatePlusMonths);
+    ar.field("mDatePlusYearsMin", mDatePlusYearsMin);
+    ar.field("mDatePlusYearsMax", mDatePlusYearsMax);
     if(ar.reading()) mNextDate.read(ar.readStream());
     else mNextDate.write(ar.writeStream());
-    ar.value(mPeriodDaysMin);
-    ar.value(mPeriodDaysMax);
-    ar.value(mWarningMonths);
-    ar.value(mRemNRuns);
-    ar.value(mReason);
-    ar.value(mEpisodeCompleteEvent);
+    ar.field("mPeriodDaysMin", mPeriodDaysMin);
+    ar.field("mPeriodDaysMax", mPeriodDaysMax);
+    ar.field("mWarningMonths", mWarningMonths);
+    ar.field("mRemNRuns", mRemNRuns);
+    ar.field("mReason", mReason);
+    ar.field("mEpisodeCompleteEvent", mEpisodeCompleteEvent);
 
     for(const auto& w : mWarnings) {
         if(ar.reading()) w->read(ar.readStream());
@@ -412,7 +412,7 @@ void eGameEvent::serialize(eSaveArchive& ar) {
     }
 
     int ncs = mConsequences.size();
-    ar.value(ncs);
+    ar.field("ncs", ncs);
     if(ar.reading()) mConsequences.clear();
     for(int i = 0; i < ncs; i++) {
         eGameEventType type;
@@ -421,8 +421,8 @@ void eGameEvent::serialize(eSaveArchive& ar) {
             type = mConsequences[i]->type();
             branch = mConsequences[i]->branch();
         }
-        ar.value(type);
-        ar.value(branch);
+        ar.field("type", type);
+        ar.field("branch", branch);
         if(ar.writing()) {
             mConsequences[i]->write(ar.writeStream());
             continue;
@@ -437,7 +437,7 @@ void eGameEvent::serialize(eSaveArchive& ar) {
         else et->write(ar.writeStream());
     }
 
-    ar.value(mEpisodeEvent);
+    ar.field("mEpisodeEvent", mEpisodeEvent);
 }
 
 void eGameEvent::loadResources() const {

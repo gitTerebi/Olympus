@@ -148,8 +148,8 @@ void eMonument::write(eWriteStream& dst) const {
 }
 
 void eMonument::serialize(eSaveArchive& ar) {
-    ar.value(mRotated);
-    ar.value(mHaltConstruction);
+    ar.field("mRotated", mRotated);
+    ar.field("mHaltConstruction", mHaltConstruction);
     if(ar.reading()) {
         mStored.read(ar.readStream());
         mUsed.read(ar.readStream());
@@ -157,7 +157,7 @@ void eMonument::serialize(eSaveArchive& ar) {
         mStored.write(ar.writeStream());
         mUsed.write(ar.writeStream());
     }
-    ar.value(mAltitude);
+    ar.field("mAltitude", mAltitude);
     if(ar.reading()) {
         auto& board = getBoard();
         ar.readStream().readCharacter(&board, [this](eCharacter* const c) {

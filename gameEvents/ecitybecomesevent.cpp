@@ -219,5 +219,5 @@ void eCityBecomesEvent::serialize(eSaveArchive& ar) {
         eCityEventValue::write(ar.writeStream());
         eAttackingCityEventValue::write(ar.writeStream());
     }
-    ar.value(mType);
+    ar.field("mType", mType);
 }

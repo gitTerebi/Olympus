@@ -128,11 +128,11 @@ void ePatrolBuildingBase::write(eWriteStream& dst) const {
 }
 
 void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
-    ar.value(mBothDirections);
-    ar.value(mLastDirection);
-    ar.value(mSpawnPatrolers);
-    ar.value(mSpawnTime);
-    ar.value(mSpawnRoadId);
+    ar.field("mBothDirections", mBothDirections);
+    ar.field("mLastDirection", mLastDirection);
+    ar.field("mSpawnPatrolers", mSpawnPatrolers);
+    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("mSpawnRoadId", mSpawnRoadId);
 
     if(ar.reading()) {
         mDirTimes = ar.readStream().readDirectionTimes(getBoard());
@@ -145,13 +145,13 @@ void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
     }
 
     int n = mPatrolGuides.size();
-    ar.value(n);
+    ar.field("n", n);
     if(ar.reading()) mPatrolGuides.clear();
     for(int i = 0; i < n; i++) {
         ePatrolGuide pg;
         if(ar.writing()) pg = mPatrolGuides[i];
-        ar.value(pg.fX);
-        ar.value(pg.fY);
+        ar.field("pg.fX", pg.fX);
+        ar.field("pg.fY", pg.fY);
         if(ar.reading()) mPatrolGuides.push_back(pg);
     }
 }

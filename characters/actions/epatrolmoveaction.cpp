@@ -31,7 +31,7 @@ void ePatrolMoveAction::write(eWriteStream& dst) const {
 }
 
 void ePatrolMoveAction::serialize(eSaveArchive& ar) {
-    ar.value(mDiagonalOnly);
+    ar.field("mDiagonalOnly", mDiagonalOnly);
     if(ar.reading()) {
         mWalkable = ar.readStream().readWalkable();
         mOs = ar.readStream().readDirectionTimes(board());
@@ -39,9 +39,9 @@ void ePatrolMoveAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeWalkable(mWalkable.get());
         ar.writeStream().writeDirectionTimes(mOs.get());
     }
-    ar.value(mO);
-    ar.value(mMaxWalkDistance);
-    ar.value(mWalkedDistance);
+    ar.field("mO", mO);
+    ar.field("mMaxWalkDistance", mMaxWalkDistance);
+    ar.field("mWalkedDistance", mWalkedDistance);
 }
 
 eCharacterActionState ePatrolMoveAction::nextTurn(eOrientation& t) {

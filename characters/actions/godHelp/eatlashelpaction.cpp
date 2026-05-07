@@ -46,7 +46,7 @@ void eAtlasHelpAction::write(eWriteStream& dst) const {
 }
 
 void eAtlasHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eSanctuary*>(b);

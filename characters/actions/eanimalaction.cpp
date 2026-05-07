@@ -49,13 +49,13 @@ void eAnimalAction::write(eWriteStream& dst) const {
 }
 
 void eAnimalAction::serialize(eSaveArchive& ar) {
-    ar.value(mSpawnerX);
-    ar.value(mSpawnerY);
+    ar.field("mSpawnerX", mSpawnerX);
+    ar.field("mSpawnerY", mSpawnerY);
     if(ar.reading()) {
         mTileWalkable = ar.readStream().readWalkable();
     } else {
         ar.writeStream().writeWalkable(mTileWalkable.get());
     }
-    ar.value(mLayTime);
-    ar.value(mWalkTime);
+    ar.field("mLayTime", mLayTime);
+    ar.field("mWalkTime", mWalkTime);
 }

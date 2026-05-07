@@ -153,9 +153,9 @@ void eHorseRanch::write(eWriteStream& dst) const {
 }
 
 void eHorseRanch::serialize(eSaveArchive& ar) {
-    ar.value(mWheat);
-    ar.value(mWheatTime);
-    ar.value(mHorseTime);
+    ar.field("mWheat", mWheat);
+    ar.field("mWheatTime", mWheatTime);
+    ar.field("mHorseTime", mHorseTime);
     if(ar.reading()) {
         auto& board = getBoard();
         ar.readStream().readCharacter(&board, [this](eCharacter* const c) {

@@ -30,8 +30,8 @@ void eSpawner::write(eWriteStream& dst) const {
 }
 
 void eSpawner::serialize(eSaveArchive& ar) {
-    ar.value(mCount);
-    ar.value(mTime);
+    ar.field("mCount", mCount);
+    ar.field("mTime", mTime);
 }
 
 void eSpawner::incTime(const int by) {

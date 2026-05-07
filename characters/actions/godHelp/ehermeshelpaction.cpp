@@ -43,7 +43,7 @@ void eHermesHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHermesHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,

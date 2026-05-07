@@ -144,8 +144,8 @@ void eHippodrome::read(eReadStream& src) {
 }
 
 void eHippodrome::serialize(eSaveArchive& ar) {
-    ar.value(mFinish);
-    ar.value(mNHorses);
+    ar.field("mFinish", mFinish);
+    ar.field("mNHorses", mNHorses);
     if(ar.reading()) {
         ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
             mCart = static_cast<eCartTransporter*>(c);
@@ -154,12 +154,12 @@ void eHippodrome::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mCart);
     }
     int n = mPieces.size();
-    ar.value(n);
+    ar.field("n", n);
     if(ar.reading()) mPieces.clear();
     for(int i = 0; i < n; i++) {
         eN p;
         if(ar.writing()) p = mPieces[i];
-        ar.value(p.fO);
+        ar.field("p.fO", p.fO);
         if(ar.reading()) {
             mPieces.push_back(p);
             ar.readStream().readBuilding(&mBoard, [this, i](eBuilding* const b) {

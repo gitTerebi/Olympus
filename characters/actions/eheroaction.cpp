@@ -81,10 +81,10 @@ void eHeroAction::write(eWriteStream& dst) const {
 }
 
 void eHeroAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
-    ar.value(mLookForMonster);
-    ar.value(mLookForCityDefense);
-    ar.value(mQuestWaiting);
+    ar.field("mStage", mStage);
+    ar.field("mLookForMonster", mLookForMonster);
+    ar.field("mLookForCityDefense", mLookForCityDefense);
+    ar.field("mQuestWaiting", mQuestWaiting);
 }
 
 void eHeroAction::lookForMonster() {

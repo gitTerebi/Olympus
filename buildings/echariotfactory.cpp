@@ -174,9 +174,9 @@ void eChariotFactory::write(eWriteStream& dst) const {
 }
 
 void eChariotFactory::serialize(eSaveArchive& ar) {
-    ar.value(mWood);
-    ar.value(mHorses);
-    ar.value(mChariots);
+    ar.field("mWood", mWood);
+    ar.field("mHorses", mHorses);
+    ar.field("mChariots", mChariots);
     if(ar.reading()) {
         auto& board = getBoard();
         ar.readStream().readCharacter(&board, [this](eCharacter* const c) {

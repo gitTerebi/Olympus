@@ -647,7 +647,7 @@ void eHippodromePiece::read(eReadStream& src) {
 }
 
 void eHippodromePiece::serialize(eSaveArchive& ar) {
-    ar.value(mId);
+    ar.field("mId", mId);
     if(ar.reading()) {
         auto& board = getBoard();
         ar.readStream().readCharacter(&board, [this](eCharacter* const c) {

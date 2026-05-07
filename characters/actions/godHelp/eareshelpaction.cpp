@@ -44,7 +44,7 @@ void eAresHelpAction::write(eWriteStream& dst) const {
 }
 
 void eAresHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 void eAresHelpAction::goToTarget() {

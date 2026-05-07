@@ -170,7 +170,7 @@ void eResourceCollectBuilding::write(eWriteStream& dst) const {
 }
 
 void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mCollectedAction);
+    ar.field("mCollectedAction", mCollectedAction);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mCollector = static_cast<eResourceCollectorBase*>(c);
@@ -178,15 +178,15 @@ void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mCollector);
     }
-    ar.value(mSpawnEnabled);
-    ar.value(mAddResource);
-    ar.value(mRawCount);
-    ar.value(mRawCountCollect);
-    ar.value(mRawInc);
-    ar.value(mProcessDuration);
-    ar.value(mProcessTime);
-    ar.value(mWaitTime);
-    ar.value(mSpawnTime);
+    ar.field("mSpawnEnabled", mSpawnEnabled);
+    ar.field("mAddResource", mAddResource);
+    ar.field("mRawCount", mRawCount);
+    ar.field("mRawCountCollect", mRawCountCollect);
+    ar.field("mRawInc", mRawInc);
+    ar.field("mProcessDuration", mProcessDuration);
+    ar.field("mProcessTime", mProcessTime);
+    ar.field("mWaitTime", mWaitTime);
+    ar.field("mSpawnTime", mSpawnTime);
 }
 
 bool eResourceCollectBuilding::spawn() {

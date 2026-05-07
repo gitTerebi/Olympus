@@ -77,7 +77,7 @@ void eSanctuaryWithWarriors::serialize(eSaveArchive& ar) {
     auto& board = getBoard();
     int nb;
     if(ar.writing()) nb = mSoldierBanners.size();
-    ar.value(nb);
+    ar.field("nb", nb);
     if(ar.reading()) mSoldierBanners.clear();
     for(int i = 0; i < nb; i++) {
         if(ar.reading()) {

@@ -1,4 +1,4 @@
-﻿#include "eactionwithcomeback.h"
+#include "eactionwithcomeback.h"
 
 #include "characters/echaracter.h"
 #include "emovetoaction.h"
@@ -40,11 +40,11 @@ void eActionWithComeback::write(eWriteStream& dst) const {
 
 void eActionWithComeback::serialize(eSaveArchive& ar) {
     ar.tile(mStartTile, board());
-    ar.value(mGoBackRect);
-    ar.value(mFinishOnComeback);
-    ar.value(mDefaultTry);
-    ar.value(mGoBackFail);
-    ar.value(mDiagonalOnly);
+    ar.field("mGoBackRect", mGoBackRect);
+    ar.field("mFinishOnComeback", mFinishOnComeback);
+    ar.field("mDefaultTry", mDefaultTry);
+    ar.field("mGoBackFail", mGoBackFail);
+    ar.field("mDiagonalOnly", mDiagonalOnly);
 }
 
 void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {

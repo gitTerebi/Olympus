@@ -90,7 +90,7 @@ void eArtisanAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mGuild);
     }
-    ar.value(mNoTarget);
+    ar.field("mNoTarget", mNoTarget);
 }
 
 bool eArtisanAction::findTargetDecision() {

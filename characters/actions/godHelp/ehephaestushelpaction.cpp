@@ -45,7 +45,7 @@ void eHephaestusHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHephaestusHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,

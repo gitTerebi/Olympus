@@ -271,9 +271,9 @@ void eFishery::write(eWriteStream& dst) const {
 }
 
 void eFishery::serialize(eSaveArchive& ar) {
-    ar.value(mDisabled);
-    ar.value(mStateCount);
-    ar.value(mState);
+    ar.field("mDisabled", mDisabled);
+    ar.field("mStateCount", mStateCount);
+    ar.field("mState", mState);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mBoat = static_cast<eFishingBoat*>(c);

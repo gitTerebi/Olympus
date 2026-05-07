@@ -191,7 +191,7 @@ void eGameWidget::setBoard(eGameBoard *const board)
         std::string yearStr;
         if(year < 0) yearStr = std::to_string(-(year  + 1)) + " BC";
         else yearStr = std::to_string(year);
-        const auto filename = "autosave year " + yearStr + ".ez";
+        const auto filename = "autosave year " + yearStr + ".ez2";
         w->saveGame(dir + filename);
         // Clean up old autosaves, keep only 5 most recent
         std::vector<std::pair<std::filesystem::file_time_type, std::filesystem::path>> autosaves;

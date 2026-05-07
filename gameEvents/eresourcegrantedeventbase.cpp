@@ -197,5 +197,5 @@ void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
         eResourceEventValue::write(ar.writeStream());
         eCountEventValue::write(ar.writeStream());
     }
-    ar.value(mPostpone);
+    ar.field("mPostpone", mPostpone);
 }

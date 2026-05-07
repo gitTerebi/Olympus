@@ -14,7 +14,7 @@ void eGodEventValue::write(eWriteStream& dst) const {
 }
 
 void eGodEventValue::serialize(eSaveArchive& ar) {
-    ar.value(mGod);
+    ar.field("mGod", mGod);
 }
 
 void eGodEventValue::read(eReadStream& src) {

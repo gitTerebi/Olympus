@@ -227,13 +227,13 @@ void eGodAttackAction::write(eWriteStream& dst) const {
 }
 
 void eGodAttackAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
-    ar.value(mLookForCurse);
-    ar.value(mLookForTargetedCurse);
-    ar.value(mLookForAttack);
-    ar.value(mLookForTargetedAttack);
-    ar.value(mLookForGod);
-    ar.value(mLookForSpecial);
+    ar.field("mStage", mStage);
+    ar.field("mLookForCurse", mLookForCurse);
+    ar.field("mLookForTargetedCurse", mLookForTargetedCurse);
+    ar.field("mLookForAttack", mLookForAttack);
+    ar.field("mLookForTargetedAttack", mLookForTargetedAttack);
+    ar.field("mLookForGod", mLookForGod);
+    ar.field("mLookForSpecial", mLookForSpecial);
     if(ar.reading()) {
         auto& board = this->board();
         ar.readStream().readBuilding(&board, [this](eBuilding* const b) {

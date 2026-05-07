@@ -46,7 +46,7 @@ void eApolloHelpAction::write(eWriteStream& dst) const {
 }
 
 void eApolloHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 bool eApolloHelpAction::sHelpNeeded(const eCityId cid,

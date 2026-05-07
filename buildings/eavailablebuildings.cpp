@@ -20,86 +20,86 @@ void eAvailableBuildings::write(eWriteStream& dst) const {
 }
 
 void eAvailableBuildings::serialize(eSaveArchive& ar) {
-    ar.value(fEliteHousing);
+    ar.field("fEliteHousing", fEliteHousing);
 
-    ar.value(fWheatFarm);
-    ar.value(fCarrotsFarm);
-    ar.value(fOnionFarm);
+    ar.field("fWheatFarm", fWheatFarm);
+    ar.field("fCarrotsFarm", fCarrotsFarm);
+    ar.field("fOnionFarm", fOnionFarm);
 
-    ar.value(fVine);
-    ar.value(fOliveTree);
-    ar.value(fOrangeTree);
+    ar.field("fVine", fVine);
+    ar.field("fOliveTree", fOliveTree);
+    ar.field("fOrangeTree", fOrangeTree);
 
-    ar.value(fDairy);
-    ar.value(fCardingShed);
+    ar.field("fDairy", fDairy);
+    ar.field("fCardingShed", fCardingShed);
 
-    ar.value(fFishery);
-    ar.value(fUrchinQuay);
-    ar.value(fHuntingLodge);
+    ar.field("fFishery", fFishery);
+    ar.field("fUrchinQuay", fUrchinQuay);
+    ar.field("fHuntingLodge", fHuntingLodge);
 
-    ar.value(fMint);
-    ar.value(fFoundry);
-    ar.value(fTimberMill);
-    ar.value(fMasonryShop);
+    ar.field("fMint", fMint);
+    ar.field("fFoundry", fFoundry);
+    ar.field("fTimberMill", fTimberMill);
+    ar.field("fMasonryShop", fMasonryShop);
 
-    ar.value(fRefinery);
-    ar.value(fBlackMarbleWorkshop);
+    ar.field("fRefinery", fRefinery);
+    ar.field("fBlackMarbleWorkshop", fBlackMarbleWorkshop);
 
-    ar.value(fWinery);
-    ar.value(fOlivePress);
-    ar.value(fSculptureStudio);
+    ar.field("fWinery", fWinery);
+    ar.field("fOlivePress", fOlivePress);
+    ar.field("fSculptureStudio", fSculptureStudio);
 
-    ar.value(fArmory);
+    ar.field("fArmory", fArmory);
 
-    ar.value(fHorseRanch);
-    ar.value(fChariotFactory);
+    ar.field("fHorseRanch", fHorseRanch);
+    ar.field("fChariotFactory", fChariotFactory);
 
-    ar.value(fTriremeWharf);
-    ar.value(fHippodrome);
+    ar.field("fTriremeWharf", fTriremeWharf);
+    ar.field("fHippodrome", fHippodrome);
 
-    ar.value(fAphroditeSanctuary);
-    ar.value(fApolloSanctuary);
-    ar.value(fAresSanctuary);
-    ar.value(fArtemisSanctuary);
-    ar.value(fAthenaSanctuary);
-    ar.value(fAtlasSanctuary);
-    ar.value(fDemeterSanctuary);
-    ar.value(fDionysusSanctuary);
-    ar.value(fHadesSanctuary);
-    ar.value(fHephaestusSanctuary);
-    ar.value(fHeraSanctuary);
-    ar.value(fHermesSanctuary);
-    ar.value(fPoseidonSanctuary);
-    ar.value(fZeusSanctuary);
+    ar.field("fAphroditeSanctuary", fAphroditeSanctuary);
+    ar.field("fApolloSanctuary", fApolloSanctuary);
+    ar.field("fAresSanctuary", fAresSanctuary);
+    ar.field("fArtemisSanctuary", fArtemisSanctuary);
+    ar.field("fAthenaSanctuary", fAthenaSanctuary);
+    ar.field("fAtlasSanctuary", fAtlasSanctuary);
+    ar.field("fDemeterSanctuary", fDemeterSanctuary);
+    ar.field("fDionysusSanctuary", fDionysusSanctuary);
+    ar.field("fHadesSanctuary", fHadesSanctuary);
+    ar.field("fHephaestusSanctuary", fHephaestusSanctuary);
+    ar.field("fHeraSanctuary", fHeraSanctuary);
+    ar.field("fHermesSanctuary", fHermesSanctuary);
+    ar.field("fPoseidonSanctuary", fPoseidonSanctuary);
+    ar.field("fZeusSanctuary", fZeusSanctuary);
 
-    ar.value(fAchillesHall);
-    ar.value(fAtalantaHall);
-    ar.value(fBellerophonHall);
-    ar.value(fHerculesHall);
-    ar.value(fJasonHall);
-    ar.value(fOdysseusHall);
-    ar.value(fPerseusHall);
-    ar.value(fTheseusHall);
+    ar.field("fAchillesHall", fAchillesHall);
+    ar.field("fAtalantaHall", fAtalantaHall);
+    ar.field("fBellerophonHall", fBellerophonHall);
+    ar.field("fHerculesHall", fHerculesHall);
+    ar.field("fJasonHall", fJasonHall);
+    ar.field("fOdysseusHall", fOdysseusHall);
+    ar.field("fPerseusHall", fPerseusHall);
+    ar.field("fTheseusHall", fTheseusHall);
 
-    ar.value(fPopulationMonument);
-    ar.value(fVictoryMonument);
-    ar.value(fColonyMonument);
-    ar.value(fAthleteMonument);
-    ar.value(fConquestMonument);
-    ar.value(fHappinessMonument);
-    ar.value(fHeroicMonument);
-    ar.value(fDiplomacyMonument);
-    ar.value(fScholarMonument);
+    ar.field("fPopulationMonument", fPopulationMonument);
+    ar.field("fVictoryMonument", fVictoryMonument);
+    ar.field("fColonyMonument", fColonyMonument);
+    ar.field("fAthleteMonument", fAthleteMonument);
+    ar.field("fConquestMonument", fConquestMonument);
+    ar.field("fHappinessMonument", fHappinessMonument);
+    ar.field("fHeroicMonument", fHeroicMonument);
+    ar.field("fDiplomacyMonument", fDiplomacyMonument);
+    ar.field("fScholarMonument", fScholarMonument);
 
     const int iMax = static_cast<int>(eGodType::zeus) + 1;
     for(int i = 0; i < iMax; i++) {
         const auto t = static_cast<eGodType>(i);
-        ar.value(mGodMonuments[t]);
+        ar.field("mGodMonuments[t]", mGodMonuments[t]);
     }
 
     int np;
     if(ar.writing()) np = fPyramids.size();
-    ar.value(np);
+    ar.field("np", np);
     if(ar.reading()) fPyramids.clear();
     for(int i = 0; i < np; i++) {
         eBuildingType type;
@@ -110,16 +110,16 @@ void eAvailableBuildings::serialize(eSaveArchive& ar) {
             type = it->first;
             a = it->second;
         }
-        ar.value(type);
-        ar.value(a.fA);
+        ar.field("type", type);
+        ar.field("a.fA", a.fA);
         int nl;
         if(ar.writing()) nl = a.fLevels.size();
-        ar.value(nl);
+        ar.field("nl", nl);
         if(ar.reading()) a.fLevels.clear();
         for(int j = 0; j < nl; j++) {
             bool l;
             if(ar.writing()) l = a.fLevels[j];
-            ar.value(l);
+            ar.field("l", l);
             if(ar.reading()) a.fLevels.push_back(l);
         }
         if(ar.reading()) fPyramids[type] = a;

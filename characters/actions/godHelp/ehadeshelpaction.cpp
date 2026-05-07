@@ -46,7 +46,7 @@ void eHadesHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHadesHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = b;

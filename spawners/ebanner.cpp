@@ -54,7 +54,7 @@ void eBanner::write(eWriteStream& dst) const {
 }
 
 void eBanner::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
+    ar.field("mIOID", mIOID);
 }
 
 eBanner* eBanner::sCreate(const int id,
