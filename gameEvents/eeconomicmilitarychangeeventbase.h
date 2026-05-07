@@ -5,6 +5,8 @@
 #include "ecounteventvalue.h"
 #include "ecityeventvalue.h"
 
+class eSaveArchive;
+
 class eEconomicMilitaryChangeEventBase : public eGameEvent,
                                          public eCountEventValue,
                                          public eCityEventValue {
@@ -17,6 +19,8 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // EECONOMICMILITARYCHANGEEVENTBASE_H

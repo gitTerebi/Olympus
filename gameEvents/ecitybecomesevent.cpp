@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "fileIO/esavearchive.h"
 
 eCityBecomesEvent::eCityBecomesEvent(
         const eCityId cid,
@@ -200,14 +201,23 @@ std::string eCityBecomesEvent::longName() const {
 
 void eCityBecomesEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEventValue::write(dst);
-    eAttackingCityEventValue::write(dst);
-    dst << mType;
+    eSaveArchive ar(dst);
+    const_cast<eCityBecomesEvent*>(this)->serialize(ar);
 }
 
 void eCityBecomesEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
-    eAttackingCityEventValue::read(src, *gameBoard());
-    src >> mType;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eCityBecomesEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+        eAttackingCityEventValue::read(ar.readStream(), *gameBoard());
+    } else {
+        eCityEventValue::write(ar.writeStream());
+        eAttackingCityEventValue::write(ar.writeStream());
+    }
+    ar.value(mType);
 }

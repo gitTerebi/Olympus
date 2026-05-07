@@ -6,6 +6,8 @@
 #include "characters/eenlistedforces.h"
 #include "engine/eworldcity.h"
 
+class eSaveArchive;
+
 class eArmyEventBase : public eGameEvent {
 public:
     eArmyEventBase(const eCityId cid,
@@ -24,6 +26,9 @@ protected:
     void planArmyReturn(const int travelTime);
 
     void removeArmyEvent();
+private:
+    void serialize(eSaveArchive& ar);
+protected:
 
     eEnlistedForces mForces;
     stdsptr<eWorldCity> mCity;

@@ -1,6 +1,7 @@
 #include "eatlashelpaction.h"
 
 #include "etilehelper.h"
+#include "fileIO/esavearchive.h"
 
 eAtlasHelpAction::eAtlasHelpAction(
         eCharacter* const c) :
@@ -34,16 +35,25 @@ bool eAtlasHelpAction::decide() {
 
 void eAtlasHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mTarget = static_cast<eSanctuary*>(b);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAtlasHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst.writeBuilding(mTarget);
+    eSaveArchive ar(dst);
+    const_cast<eAtlasHelpAction*>(this)->serialize(ar);
+}
+
+void eAtlasHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = static_cast<eSanctuary*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTarget);
+    }
 }
 
 bool eAtlasHelpAction::sHelpNeeded(const eCityId cid,

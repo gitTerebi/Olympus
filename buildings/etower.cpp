@@ -9,6 +9,7 @@
 #include "characters/actions/efightingaction.h"
 #include "audio/esounds.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eTower::eTower(eGameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid) {
@@ -198,6 +199,30 @@ void eTower::write(eWriteStream& dst) const {
     dst.writeCharacter(mAttackTarget);
     dst << mSpawnTime;
     dst.writeCharacter(mArcher);
+}
+
+void eTower::serialize(eSaveArchive& ar) {
+    eEmployingBuilding::serialize(ar);
+    ar.value(mMissile);
+    ar.value(mRangeAttack);
+    ar.value(mAttackTime);
+    ar.value(mAttack);
+    ar.value(mAttackOrientation);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mAttackTarget = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mAttackTarget);
+    }
+    ar.value(mSpawnTime);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mArcher = static_cast<eArcher*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mArcher);
+    }
 }
 
 bool eTower::spawn() {

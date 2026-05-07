@@ -3,6 +3,8 @@
 
 #include "ewalkableobject.h"
 
+class eSaveArchive;
+
 class eHasResourceWalkableObject : public eWalkableObject {
 public:
     eHasResourceWalkableObject(const stdsptr<eHasResourceObject>& hr,
@@ -14,6 +16,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eHasResourceObject> mHr;
     stdsptr<eWalkableObject> mW;
 };

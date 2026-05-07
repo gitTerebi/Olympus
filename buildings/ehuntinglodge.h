@@ -4,6 +4,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eHunter;
+class eSaveArchive;
 
 class eHuntingLodge : public eResourceCollectBuildingBase {
 public:
@@ -21,6 +22,8 @@ public:
     void addRaw() override {}
     void hunterDelivered(const eResourceType type, const int count);
 private:
+    void serialize(eSaveArchive& ar);
+
     bool spawn();
 
     stdptr<eHunter> mHunter;

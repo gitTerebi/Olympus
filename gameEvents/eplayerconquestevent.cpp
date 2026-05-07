@@ -6,6 +6,7 @@
 #include "elanguage.h"
 
 #include "einvasionevent.h"
+#include "fileIO/esavearchive.h"
 
 ePlayerConquestEvent::ePlayerConquestEvent(
         const eCityId cid,
@@ -116,16 +117,24 @@ bool ePlayerConquestEvent::finished() const {
 
 void ePlayerConquestEvent::write(eWriteStream& dst) const {
     ePlayerConquestEventBase::write(dst);
-
-    dst.writeGameEvent(mInvasionEvent);
+    eSaveArchive ar(dst);
+    const_cast<ePlayerConquestEvent*>(this)->serialize(ar);
 }
 
 void ePlayerConquestEvent::read(eReadStream& src) {
     ePlayerConquestEventBase::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
 
-    src.readGameEvent(gameBoard(), [this](eGameEvent* const e) {
-        mInvasionEvent = static_cast<eInvasionEvent*>(e);
-    });
+void ePlayerConquestEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readGameEvent(gameBoard(), [this](eGameEvent* const e) {
+            mInvasionEvent = static_cast<eInvasionEvent*>(e);
+        });
+    } else {
+        ar.writeStream().writeGameEvent(mInvasionEvent);
+    }
 }
 
 bool ePlayerConquestEvent::warned() const {

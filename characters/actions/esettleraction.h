@@ -3,6 +3,8 @@
 
 #include "eactionwithcomeback.h"
 
+class eSaveArchive;
+
 class eSettlerAction : public eActionWithComeback {
     friend class eSA_findHouseFail;
     friend class eSA_findHouseFinish;
@@ -24,6 +26,8 @@ protected:
     void leave();
     bool enterHouse();
 private:
+    void serialize(eSaveArchive& ar);
+
     int mNPeople = 0;
     int mInitialWait = 0;
     bool mNoHouses = false;

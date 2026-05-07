@@ -7,6 +7,8 @@ enum class eProvideResourceHelpStage {
     none, appear, goTo, give, disappear
 };
 
+class eSaveArchive;
+
 class eProvideResourceHelpAction : public eGodAction {
 public:
     eProvideResourceHelpAction(eCharacter* const c,
@@ -26,6 +28,8 @@ public:
                             const eResourceType res,
                             const int minSpace);
 private:
+    void serialize(eSaveArchive& ar);
+
     void goToTarget();
     void give();
 

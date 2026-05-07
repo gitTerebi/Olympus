@@ -4,6 +4,7 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
+#include "fileIO/esavearchive.h"
 #include "elanguage.h"
 #include "enumbers.h"
 
@@ -142,16 +143,25 @@ std::string eRequestAidEvent::longName() const {
 
 void eRequestAidEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst.writeCity(mCity.get());
-    mArrivalDate.write(dst);
-    dst << mEnd;
+    eSaveArchive ar(dst);
+    const_cast<eRequestAidEvent*>(this)->serialize(ar);
 }
 
 void eRequestAidEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-    mArrivalDate.read(src);
-    src >> mEnd;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eRequestAidEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
+            mCity = c;
+        });
+        mArrivalDate.read(ar.readStream());
+    } else {
+        ar.writeStream().writeCity(mCity.get());
+        mArrivalDate.write(ar.writeStream());
+    }
+    ar.value(mEnd);
 }

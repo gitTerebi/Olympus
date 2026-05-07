@@ -5,6 +5,8 @@
 
 #include "characters/earcher.h"
 
+class eSaveArchive;
+
 class eTower : public eEmployingBuilding {
 public:
     eTower(eGameBoard& board, const eCityId cid);
@@ -24,6 +26,8 @@ public:
 
     void setDeleteArchers(const bool d) { mDeleteArchers = d; }
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mDeleteArchers = true;
 
     int mMissile = 0;

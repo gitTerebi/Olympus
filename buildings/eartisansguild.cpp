@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "characters/actions/eartisanaction.h"
+#include "fileIO/esavearchive.h"
 
 eArtisansGuild::eArtisansGuild(eGameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25, cid) {
@@ -59,15 +60,24 @@ bool eArtisansGuild::spawnArtisan(const eArtisanPtr artisan) {
 
 void eArtisansGuild::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    src >> mSpawnTime;
-    auto& board = getBoard();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mArtisan = static_cast<eArtisan*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eArtisansGuild::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    dst << mSpawnTime;
-    dst.writeCharacter(mArtisan);
+    eSaveArchive ar(dst);
+    const_cast<eArtisansGuild*>(this)->serialize(ar);
+}
+
+void eArtisansGuild::serialize(eSaveArchive& ar) {
+    ar.value(mSpawnTime);
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mArtisan = static_cast<eArtisan*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mArtisan);
+    }
 }

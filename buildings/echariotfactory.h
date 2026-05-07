@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+class eSaveArchive;
+
 class eChariotFactory : public eEmployingBuilding {
 public:
     eChariotFactory(eGameBoard& board, const eCityId cid);
@@ -30,6 +32,8 @@ public:
     int horses() const { return mHorses; }
     int chariotCount() const { return std::min(mHorses, mChariots); }
 private:
+    void serialize(eSaveArchive& ar);
+
     int mWood = 0;
     int mChariotBuildingTime = 0;
     int mHorses = 0;

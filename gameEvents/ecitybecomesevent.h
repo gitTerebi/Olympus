@@ -12,6 +12,8 @@ enum class eCityBecomesType {
     rebellionOver, conquered
 };
 
+class eSaveArchive;
+
 class eCityBecomesEvent : public eGameEvent,
                           public eCityEventValue,
                           public eAttackingCityEventValue {
@@ -29,6 +31,8 @@ public:
     void setType(const eCityBecomesType t) { mType = t; }
     eCityBecomesType type() const { return mType; }
 private:
+    void serialize(eSaveArchive& ar);
+
     eCityBecomesType mType = eCityBecomesType::ally;
 };
 

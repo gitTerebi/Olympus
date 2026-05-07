@@ -1,6 +1,7 @@
 #include "eemployingbuilding.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eEmployingBuilding::eEmployingBuilding(
         eGameBoard& board,
@@ -47,15 +48,19 @@ void eEmployingBuilding::setShutDown(const bool sd) {
 
 void eEmployingBuilding::read(eReadStream& src) {
     eBuildingWithResource::read(src);
-    src >> mShutDown;
-    src >> mMaxEmployees;
-    src >> mEmployed;
+    eSaveArchive ar(src);
+    serialize(ar);
     setEnabled(mEmployed > 0);
 }
 
 void eEmployingBuilding::write(eWriteStream& dst) const {
     eBuildingWithResource::write(dst);
-    dst << mShutDown;
-    dst << mMaxEmployees;
-    dst << mEmployed;
+    eSaveArchive ar(dst);
+    const_cast<eEmployingBuilding*>(this)->serialize(ar);
+}
+
+void eEmployingBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mShutDown);
+    ar.value(mMaxEmployees);
+    ar.value(mEmployed);
 }

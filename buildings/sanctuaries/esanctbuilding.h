@@ -57,6 +57,7 @@ struct eSanctCost {
 };
 
 class eMonument;
+class eSaveArchive;
 
 class eSanctBuilding : public eBuilding {
 public:
@@ -93,6 +94,8 @@ public:
 
     const std::vector<eSanctCost>& costs() const { return mCost; }
 private:
+    void serialize(eSaveArchive& ar);
+
     void scheduleTerrainUpdate();
     void updateNextCost();
 

@@ -5,6 +5,7 @@
 #include "missiles/emissile.h"
 
 class eHippodrome;
+class eSaveArchive;
 
 class eHippodromePiece : public eBuildingWithResource {
 public:
@@ -53,6 +54,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void crossTile(eTile* const t,
                    std::vector<eOverlay>& result,
                    const eWorldDirection dir,

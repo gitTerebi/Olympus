@@ -5,6 +5,8 @@
 
 #include "characters/echaracter.h"
 
+class eSaveArchive;
+
 class eAttackTarget {
 public:
     eAttackTarget();
@@ -68,6 +70,8 @@ public:
 protected:
     bool isAttacking() const { return mAttack; }
 private:
+    void serialize(eSaveArchive& ar);
+
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     bool attackBuilding(eTile* const t, const bool range);
 

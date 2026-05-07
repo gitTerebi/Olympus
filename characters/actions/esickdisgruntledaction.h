@@ -4,6 +4,7 @@
 #include "eactionwithcomeback.h"
 
 class eSmallHouse;
+class eSaveArchive;
 
 class eSickDisgruntledAction : public eActionWithComeback {
 public:
@@ -19,6 +20,8 @@ protected:
     void goBackDecision(const stdsptr<eWalkableObject>& w =
                             eWalkableObject::sCreateRoadAvenue());
 private:
+    void serialize(eSaveArchive& ar);
+
     eSmallHouse* mBuilding = nullptr;
 
     bool mGoBackNext = false;

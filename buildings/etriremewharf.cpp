@@ -6,6 +6,7 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eTriremeWharf::eTriremeWharf(eGameBoard& board,
                              const eDiagonalOrientation o,
@@ -225,6 +226,25 @@ void eTriremeWharf::write(eWriteStream& dst) const {
     dst << mArmorCount;
     dst << mTriremeBuildingStage;
     dst << mTriremeBuildingTime;
+}
+
+void eTriremeWharf::serialize(eSaveArchive& ar) {
+    eEmployingBuilding::serialize(ar);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        });
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mTrireme = static_cast<eTrireme*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mTakeCart);
+        ar.writeStream().writeCharacter(mTrireme);
+    }
+    ar.value(mWoodCount);
+    ar.value(mArmorCount);
+    ar.value(mTriremeBuildingStage);
+    ar.value(mTriremeBuildingTime);
 }
 
 void eTriremeWharf::triremeCameBack() {

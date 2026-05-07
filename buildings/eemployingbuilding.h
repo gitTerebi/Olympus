@@ -3,6 +3,8 @@
 
 #include "ebuildingwithresource.h"
 
+class eSaveArchive;
+
 class eEmployingBuilding : public eBuildingWithResource {
 public:
     eEmployingBuilding(eGameBoard& board,
@@ -23,6 +25,9 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+protected:
+    void serialize(eSaveArchive& ar);
+
 private:
     bool mShutDown = false;
     int mMaxEmployees;

@@ -7,6 +7,7 @@
 #include "emovetoaction.h"
 #include "buildings/ebuilding.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 #include "vec2.h"
 
 #include "missiles/erockmissile.h"
@@ -440,30 +441,31 @@ void eFightingAction::beingAttacked(const int ttx, const int tty) {
 
 void eFightingAction::read(eReadStream& src) {
     eComplexAction::read(src);
-    src >> mAngle;
-    src >> mMissile;
-    src >> mRangeAttack;
-    src >> mBuildingAttack;
-    src >> mLookForEnemy;
-    src >> mAttackTime;
-    src >> mAttack;
-    mAttackTarget.read(board(), src);
-    src >> mSavedAction;
-    src >> mOverwrittableAction;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFightingAction::write(eWriteStream& dst) const {
     eComplexAction::write(dst);
-    dst << mAngle;
-    dst << mMissile;
-    dst << mRangeAttack;
-    dst << mBuildingAttack;
-    dst << mLookForEnemy;
-    dst << mAttackTime;
-    dst << mAttack;
-    mAttackTarget.write(dst);
-    dst << mSavedAction;
-    dst << mOverwrittableAction;
+    eSaveArchive ar(dst);
+    const_cast<eFightingAction*>(this)->serialize(ar);
+}
+
+void eFightingAction::serialize(eSaveArchive& ar) {
+    ar.value(mAngle);
+    ar.value(mMissile);
+    ar.value(mRangeAttack);
+    ar.value(mBuildingAttack);
+    ar.value(mLookForEnemy);
+    ar.value(mAttackTime);
+    ar.value(mAttack);
+    if(ar.reading()) {
+        mAttackTarget.read(board(), ar.readStream());
+    } else {
+        mAttackTarget.write(ar.writeStream());
+    }
+    ar.value(mSavedAction);
+    ar.value(mOverwrittableAction);
 }
 
 void eFightingAction::waitAndGoHome(const int w) {

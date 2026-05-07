@@ -7,6 +7,8 @@ enum class eAtlasHelpStage {
     none, appear, goTo, give, disappear
 };
 
+class eSaveArchive;
+
 class eAtlasHelpAction : public eGodAction {
 public:
     eAtlasHelpAction(eCharacter* const c);
@@ -19,6 +21,8 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
 private:
+    void serialize(eSaveArchive& ar);
+
     void goToTarget();
     void give();
 

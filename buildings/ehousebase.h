@@ -4,6 +4,7 @@
 #include "ebuilding.h"
 
 class ePopulationData;
+class eSaveArchive;
 
 enum class eHouseMissing {
     water,
@@ -85,6 +86,8 @@ protected:
     int mPendingEvict = 0;
     int mEvictDelay = 0;
 private:
+    void serialize(eSaveArchive& ar);
+
     ePopulationData& popData();
 
     const std::vector<int> mMaxPeople;

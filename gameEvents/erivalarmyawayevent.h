@@ -4,6 +4,8 @@
 #include "egameevent.h"
 #include "ecityeventvalue.h"
 
+class eSaveArchive;
+
 class eRivalArmyAwayEvent : public eGameEvent,
                             public eCityEventValue {
 public:
@@ -16,6 +18,8 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // ERIVALARMYAWAYEVENT_H

@@ -3,6 +3,7 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
+#include "fileIO/esavearchive.h"
 
 eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eCityId cid,
@@ -176,16 +177,25 @@ void eResourceGrantedEventBase::trigger() {
 
 void eResourceGrantedEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEventValue::write(dst);
-    eResourceEventValue::write(dst);
-    eCountEventValue::write(dst);
-    dst << mPostpone;
+    eSaveArchive ar(dst);
+    const_cast<eResourceGrantedEventBase*>(this)->serialize(ar);
 }
 
 void eResourceGrantedEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
-    eResourceEventValue::read(src);
-    eCountEventValue::read(src);
-    src >> mPostpone;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+        eResourceEventValue::read(ar.readStream());
+        eCountEventValue::read(ar.readStream());
+    } else {
+        eCityEventValue::write(ar.writeStream());
+        eResourceEventValue::write(ar.writeStream());
+        eCountEventValue::write(ar.writeStream());
+    }
+    ar.value(mPostpone);
 }

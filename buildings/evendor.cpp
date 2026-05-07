@@ -3,6 +3,7 @@
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 #include "buildings/eagorabase.h"
 #include "enumbers.h"
 
@@ -189,16 +190,24 @@ int eVendor::takeForPeddler(const int t) {
 
 void eVendor::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    src >> mResource;
-    src >> mVendorEnabled;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eVendor::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    dst << mResource;
-    dst << mVendorEnabled;
-    dst.writeCharacter(mCart);
+    eSaveArchive ar(dst);
+    const_cast<eVendor*>(this)->serialize(ar);
+}
+
+void eVendor::serialize(eSaveArchive& ar) {
+    ar.value(mResource);
+    ar.value(mVendorEnabled);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
 }

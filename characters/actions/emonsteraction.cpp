@@ -11,6 +11,7 @@
 #include "egodaction.h"
 
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eMonsterAction::eMonsterAction(eCharacter* const c) :
     eGodMonsterAction(c, eCharActionType::monsterAction),
@@ -72,18 +73,21 @@ bool eMonsterAction::decide() {
 
 void eMonsterAction::read(eReadStream& src) {
     eGodMonsterAction::read(src);
-    mHomeTile = src.readTile(board());
-    src >> mAggressivness;
-    src >> mStage;
-    src >> mLookForAttack;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMonsterAction::write(eWriteStream& dst) const {
     eGodMonsterAction::write(dst);
-    dst.writeTile(mHomeTile);
-    dst << mAggressivness;
-    dst << mStage;
-    dst << mLookForAttack;
+    eSaveArchive ar(dst);
+    const_cast<eMonsterAction*>(this)->serialize(ar);
+}
+
+void eMonsterAction::serialize(eSaveArchive& ar) {
+    ar.tile(mHomeTile, board());
+    ar.value(mAggressivness);
+    ar.value(mStage);
+    ar.value(mLookForAttack);
 }
 
 eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {

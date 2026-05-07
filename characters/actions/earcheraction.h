@@ -4,6 +4,8 @@
 #include "ecomplexaction.h"
 #include "pointers/estdpointer.h"
 
+class eSaveArchive;
+
 class eArcherAction : public eComplexAction {
 public:
     eArcherAction(eCharacter* const c);
@@ -14,6 +16,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mMissile = 0;
     int mRangeAttack = 0;
     int mAttackTime = 0;

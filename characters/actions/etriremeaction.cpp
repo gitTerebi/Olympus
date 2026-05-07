@@ -6,6 +6,7 @@
 #include "buildings/etriremewharf.h"
 #include "characters/etrireme.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eTriremeAction::eTriremeAction(eTriremeWharf* const home,
                                eCharacter* const trireme) :
@@ -24,15 +25,25 @@ void eTriremeAction::increment(const int by) {
 
 void eTriremeAction::read(eReadStream& src) {
     eFightingAction::read(src);
-    auto& board = eTriremeAction::board();
-    src.readBuilding(&board, [this](eBuilding* const b) {
-        mHome = static_cast<eTriremeWharf*>(b);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTriremeAction::write(eWriteStream& dst) const {
     eFightingAction::write(dst);
-    dst.writeBuilding(mHome);
+    eSaveArchive ar(dst);
+    const_cast<eTriremeAction*>(this)->serialize(ar);
+}
+
+void eTriremeAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = eTriremeAction::board();
+        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
+            mHome = static_cast<eTriremeWharf*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mHome);
+    }
 }
 
 void eTriremeAction::goHome() {

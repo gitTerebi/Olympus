@@ -12,6 +12,7 @@
 #include "epatroltarget.h"
 #include "estadium.h"
 #include "emuseum.h"
+#include "fileIO/esavearchive.h"
 
 ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
                                              const eBaseTex baseTex,
@@ -50,17 +51,21 @@ void ePatrolSourceBuilding::timeChanged(const int by) {
 
 void ePatrolSourceBuilding::read(eReadStream& src) {
     ePatrolBuilding::read(src);
-    for(auto& t : mTargetData) {
-        src >> t.fSpawnTime;
-        src >> t.fLastId;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePatrolSourceBuilding::write(eWriteStream& dst) const {
     ePatrolBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<ePatrolSourceBuilding*>(this)->serialize(ar);
+}
+
+void ePatrolSourceBuilding::serialize(eSaveArchive& ar) {
     for(const auto& t : mTargetData) {
-        dst << t.fSpawnTime;
-        dst << t.fLastId;
+        auto& tt = const_cast<eTargetData&>(t);
+        ar.value(tt.fSpawnTime);
+        ar.value(tt.fLastId);
     }
 }
 

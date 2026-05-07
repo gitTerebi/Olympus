@@ -1,6 +1,7 @@
 #include "erectwalkableobject.h"
 
 #include "engine/etilebase.h"
+#include "fileIO/esavearchive.h"
 
 eRectWalkableObject::eRectWalkableObject(
         const stdsptr<eWalkableObject>& other,
@@ -29,11 +30,20 @@ eWalkableObjectType eRectWalkableObject::rootType() const {
 }
 
 void eRectWalkableObject::read(eReadStream& src) {
-    src >> mRect;
-    mOther = src.readWalkable();
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eRectWalkableObject::write(eWriteStream& dst) const {
-    dst << mRect;
-    dst.writeWalkable(mOther.get());
+    eSaveArchive ar(dst);
+    const_cast<eRectWalkableObject*>(this)->serialize(ar);
+}
+
+void eRectWalkableObject::serialize(eSaveArchive& ar) {
+    ar.value(mRect);
+    if(ar.reading()) {
+        mOther = ar.readStream().readWalkable();
+    } else {
+        ar.writeStream().writeWalkable(mOther.get());
+    }
 }

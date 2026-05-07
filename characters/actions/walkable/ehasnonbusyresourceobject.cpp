@@ -1,6 +1,7 @@
 #include "ehasnonbusyresourceobject.h"
 
 #include "engine/etilebase.h"
+#include "fileIO/esavearchive.h"
 
 eHasNonBusyResourceObject::eHasNonBusyResourceObject(
         const stdsptr<eHasResourceObject>& other) :
@@ -15,9 +16,19 @@ bool eHasNonBusyResourceObject::has(eTileBase* const t) const {
 }
 
 void eHasNonBusyResourceObject::read(eReadStream& src) {
-    mOther = src.readHasResource();
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHasNonBusyResourceObject::write(eWriteStream& dst) const {
-    dst.writeHasResource(mOther.get());
+    eSaveArchive ar(dst);
+    const_cast<eHasNonBusyResourceObject*>(this)->serialize(ar);
+}
+
+void eHasNonBusyResourceObject::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mOther = ar.readStream().readHasResource();
+    } else {
+        ar.writeStream().writeHasResource(mOther.get());
+    }
 }

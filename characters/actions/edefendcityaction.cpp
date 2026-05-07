@@ -3,6 +3,7 @@
 #include "gameEvents/einvasionevent.h"
 #include "egodaction.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eDefendCityAction::eDefendCityAction(eCharacter* const c) :
     eDefendAttackCityAction(c, eCharActionType::defendCityAction) {
@@ -67,16 +68,26 @@ bool eDefendCityAction::decide() {
 }
 
 void eDefendCityAction::read(eReadStream& src) {
-    auto& board = eDefendCityAction::board();
     eDefendAttackCityAction::read(src);
-    src.readGameEvent(&board, [this](eGameEvent* const e) {
-        mEvent = static_cast<eInvasionEvent*>(e);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eDefendCityAction::write(eWriteStream& dst) const {
     eDefendAttackCityAction::write(dst);
-    dst.writeGameEvent(mEvent);
+    eSaveArchive ar(dst);
+    const_cast<eDefendCityAction*>(this)->serialize(ar);
+}
+
+void eDefendCityAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = eDefendCityAction::board();
+        ar.readStream().readGameEvent(&board, [this](eGameEvent* const e) {
+            mEvent = static_cast<eInvasionEvent*>(e);
+        });
+    } else {
+        ar.writeStream().writeGameEvent(mEvent);
+    }
 }
 
 void eDefendCityAction::goToTarget() {

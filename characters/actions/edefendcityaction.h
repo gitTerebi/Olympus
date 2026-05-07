@@ -4,6 +4,7 @@
 #include "edefendattackcityaction.h"
 
 class eInvasionEvent;
+class eSaveArchive;
 
 class eDefendCityAction : public eDefendAttackCityAction {
 public:
@@ -14,6 +15,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void goToTarget();
     bool goToNearestSoldier();
 

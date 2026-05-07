@@ -8,6 +8,7 @@
 #include "characters/edomesticatedanimal.h"
 
 class eDomesticatedAnimal;
+class eSaveArchive;
 
 class eShepherdAction : public eActionWithComeback {
     friend class eSA_collectDecisionFinish;
@@ -28,6 +29,7 @@ private:
     void groomDecision(eDomesticatedAnimal* const a);
     void goBackDecision();
     void waitDecision();
+    void serialize(eSaveArchive& ar);
 
     eCharacterType mAnimalType;
 

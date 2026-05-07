@@ -1,5 +1,7 @@
 #include "egodquesteventbase.h"
 
+#include "fileIO/esavearchive.h"
+
 void eGodQuestEventBase::setGod(const eGodType g) {
     mQuest.fGod = g;
 }
@@ -14,10 +16,20 @@ void eGodQuestEventBase::setHero(const eHeroType h) {
 
 void eGodQuestEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    mQuest.write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eGodQuestEventBase*>(this)->serialize(ar);
 }
 
 void eGodQuestEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    mQuest.read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGodQuestEventBase::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mQuest.read(ar.readStream());
+    } else {
+        mQuest.write(ar.writeStream());
+    }
 }

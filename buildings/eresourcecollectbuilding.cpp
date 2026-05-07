@@ -5,6 +5,7 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eResourceCollectBuilding::eResourceCollectBuilding(
         eGameBoard& board,
@@ -186,6 +187,27 @@ void eResourceCollectBuilding::write(eWriteStream& dst) const {
     dst << mProcessTime;
     dst << mWaitTime;
     dst << mSpawnTime;
+}
+
+void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
+    eResourceCollectBuildingBase::serialize(ar);
+    ar.value(mCollectedAction);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCollector = static_cast<eResourceCollectorBase*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCollector);
+    }
+    ar.value(mSpawnEnabled);
+    ar.value(mAddResource);
+    ar.value(mRawCount);
+    ar.value(mRawCountCollect);
+    ar.value(mRawInc);
+    ar.value(mProcessDuration);
+    ar.value(mProcessTime);
+    ar.value(mWaitTime);
+    ar.value(mSpawnTime);
 }
 
 bool eResourceCollectBuilding::spawn() {

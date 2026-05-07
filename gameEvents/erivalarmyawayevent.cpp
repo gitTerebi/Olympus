@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "fileIO/esavearchive.h"
 
 eRivalArmyAwayEvent::eRivalArmyAwayEvent(
         const eCityId cid,
@@ -31,10 +32,20 @@ std::string eRivalArmyAwayEvent::longName() const {
 
 void eRivalArmyAwayEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eRivalArmyAwayEvent*>(this)->serialize(ar);
 }
 
 void eRivalArmyAwayEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eRivalArmyAwayEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+    } else {
+        eCityEventValue::write(ar.writeStream());
+    }
 }

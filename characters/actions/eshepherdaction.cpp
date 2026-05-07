@@ -7,6 +7,7 @@
 #include "emovetoaction.h"
 
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eShepherdAction::eShepherdAction(
         eShepherBuildingBase* const shed,
@@ -140,6 +141,25 @@ void eShepherdAction::write(eWriteStream& dst) const {
     dst << mFinishOnce;
     dst << mGroomed;
     dst << mNoResource;
+}
+
+void eShepherdAction::serialize(eSaveArchive& ar) {
+    eActionWithComeback::serialize(ar);
+    ar.value(mAnimalType);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mCharacter = static_cast<eResourceCollectorBase*>(c);
+        });
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mShed = static_cast<eShepherBuildingBase*>(b);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCharacter);
+        ar.writeStream().writeBuilding(mShed);
+    }
+    ar.value(mFinishOnce);
+    ar.value(mGroomed);
+    ar.value(mNoResource);
 }
 
 bool eShepherdAction::findResourceDecision() {

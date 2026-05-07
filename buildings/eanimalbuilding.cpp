@@ -1,5 +1,7 @@
 #include "eanimalbuilding.h"
 
+#include "fileIO/esavearchive.h"
+
 eAnimalBuilding::eAnimalBuilding(
          eGameBoard& board,
          eCharacter* const a,
@@ -21,15 +23,25 @@ void eAnimalBuilding::nextMonth() {
 
 void eAnimalBuilding::read(eReadStream& src) {
     eBuilding::read(src);
-    auto& board = getBoard();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mA = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAnimalBuilding::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst.writeCharacter(mA);
+    eSaveArchive ar(dst);
+    const_cast<eAnimalBuilding*>(this)->serialize(ar);
+}
+
+void eAnimalBuilding::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mA = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mA);
+    }
 }
 
 void eAnimalBuilding::setAnimal(eCharacter* const a) {

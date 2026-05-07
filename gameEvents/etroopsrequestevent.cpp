@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "emessages.h"
+#include "fileIO/esavearchive.h"
 
 #include "etroopsrequestfulfilledevent.h"
 
@@ -90,24 +91,30 @@ std::string eTroopsRequestEvent::longName() const {
 
 void eTroopsRequestEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eCityEventValue::write(dst);
-    eMonsterEventValue::write(dst);
-    eAttackingCityEventValue::write(dst);
-    dst << mType;
-    dst << mEffect;
-    dst << mFinish;
-    dst << mPostpone;
+    eSaveArchive ar(dst);
+    const_cast<eTroopsRequestEvent*>(this)->serialize(ar);
 }
 
 void eTroopsRequestEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
-    eMonsterEventValue::read(src);
-    eAttackingCityEventValue::read(src, *gameBoard());
-    src >> mType;
-    src >> mEffect;
-    src >> mFinish;
-    src >> mPostpone;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eTroopsRequestEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+        eMonsterEventValue::read(ar.readStream());
+        eAttackingCityEventValue::read(ar.readStream(), *gameBoard());
+    } else {
+        eCityEventValue::write(ar.writeStream());
+        eMonsterEventValue::write(ar.writeStream());
+        eAttackingCityEventValue::write(ar.writeStream());
+    }
+    ar.value(mType);
+    ar.value(mEffect);
+    ar.value(mFinish);
+    ar.value(mPostpone);
 }
 
 void eTroopsRequestEvent::trigger() {

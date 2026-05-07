@@ -5,6 +5,7 @@
 
 #include "fileIO/ewritestream.h"
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 
 void eResourceEventValue::chooseType() {
     std::vector<eResourceType> types;
@@ -38,17 +39,18 @@ void eResourceEventValue::longNameReplaceResource(
 }
 
 void eResourceEventValue::write(eWriteStream& dst) const {
-    dst << mResource;
-
-    for(const auto r : mResources) {
-        dst << r;
-    }
+    eSaveArchive ar(dst);
+    const_cast<eResourceEventValue*>(this)->serialize(ar);
 }
 
 void eResourceEventValue::read(eReadStream& src) {
-    src >> mResource;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
 
+void eResourceEventValue::serialize(eSaveArchive& ar) {
+    ar.value(mResource);
     for(int i = 0; i < 3; i++) {
-        src >> mResources[i];
+        ar.value(mResources[i]);
     }
 }

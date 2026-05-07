@@ -7,6 +7,8 @@
 #include "characters/actions/eanimalaction.h"
 #include "buildings/eanimalbuilding.h"
 
+class eSaveArchive;
+
 class eReplaceCattleAction : public eActionWithComeback {
 public:
     eReplaceCattleAction(eCharacter* const c,
@@ -17,6 +19,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void goCattle();
 
     stdptr<eCharacter> mCattle;

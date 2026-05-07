@@ -3,6 +3,8 @@
 
 #include "epyramidelement.h"
 
+class eSaveArchive;
+
 class ePyramidBuildingPart : public ePyramidElement {
 public:
     ePyramidBuildingPart(const std::vector<eSanctCost>& cost,
@@ -28,6 +30,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     ePyramidElement* mPaint = nullptr;
     eWorldDirection mPaintDir;
 };

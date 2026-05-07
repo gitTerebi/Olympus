@@ -7,6 +7,7 @@
 #include "engine/eevent.h"
 #include "emessages.h"
 #include "engine/ecityrequest.h"
+#include "fileIO/esavearchive.h"
 
 eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
@@ -606,24 +607,31 @@ std::string eReceiveRequestEvent::longName() const {
 
 void eReceiveRequestEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eResourceEventValue::write(dst);
-    eCountEventValue::write(dst);
-    eCityEventValue::write(dst);
-    eGodEventValue::write(dst);
-    dst << mRequestType;
-    dst << mFinish;
-    dst << mPostpone;
+    eSaveArchive ar(dst);
+    const_cast<eReceiveRequestEvent*>(this)->serialize(ar);
 }
 
 void eReceiveRequestEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eResourceEventValue::read(src);
-    eCountEventValue::read(src);
-    eCityEventValue::read(src, *gameBoard());
-    eGodEventValue::read(src);
-    src >> mRequestType;
-    src >> mFinish;
-    src >> mPostpone;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eReceiveRequestEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eResourceEventValue::read(ar.readStream());
+        eCountEventValue::read(ar.readStream());
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+        eGodEventValue::read(ar.readStream());
+    } else {
+        eResourceEventValue::write(ar.writeStream());
+        eCountEventValue::write(ar.writeStream());
+        eCityEventValue::write(ar.writeStream());
+        eGodEventValue::write(ar.writeStream());
+    }
+    ar.value(mRequestType);
+    ar.value(mFinish);
+    ar.value(mPostpone);
 }
 
 eCityRequest eReceiveRequestEvent::cityRequest() const {

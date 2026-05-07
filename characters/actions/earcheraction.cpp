@@ -16,6 +16,7 @@
 #include "edieaction.h"
 #include "audio/esounds.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eArcherAction::eArcherAction(eCharacter* const c) :
     eComplexAction(c, eCharActionType::archerAction) {}
@@ -140,4 +141,19 @@ void eArcherAction::write(eWriteStream& dst) const {
     dst << mAttackTime;
     dst << mAttack;
     dst.writeCharacter(mAttackTarget.get());
+}
+
+void eArcherAction::serialize(eSaveArchive& ar) {
+    eComplexAction::serialize(ar);
+    ar.value(mMissile);
+    ar.value(mRangeAttack);
+    ar.value(mAttackTime);
+    ar.value(mAttack);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mAttackTarget = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mAttackTarget.get());
+    }
 }

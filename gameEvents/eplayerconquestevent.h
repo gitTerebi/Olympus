@@ -4,6 +4,7 @@
 #include "eplayerconquesteventbase.h"
 
 class eInvasionEvent;
+class eSaveArchive;
 
 class ePlayerConquestEvent : public ePlayerConquestEventBase {
 public:
@@ -27,6 +28,8 @@ public:
 
     using ePlayerConquestEventBase::planArmyReturn;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eInvasionEvent> mInvasionEvent;
 };
 

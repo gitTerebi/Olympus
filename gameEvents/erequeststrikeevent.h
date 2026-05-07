@@ -3,6 +3,8 @@
 
 #include "egameevent.h"
 
+class eSaveArchive;
+
 class eRequestStrikeEvent : public eGameEvent {
 public:
     eRequestStrikeEvent(const eCityId cid,
@@ -24,6 +26,8 @@ public:
     void setRivalCity(const stdsptr<eWorldCity>& c) { mRivalCity = c; }
     const stdsptr<eWorldCity>& rivalCity() const { return mRivalCity; }
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mEnd = false;
     stdsptr<eWorldCity> mCity;
     stdsptr<eWorldCity> mRivalCity;

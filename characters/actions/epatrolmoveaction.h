@@ -10,6 +10,7 @@
 class eMovePathAction;
 
 class eBuilding;
+class eSaveArchive;
 
 class eDirectionLastUseTime {
 public:
@@ -52,6 +53,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     eCharacterActionState nextTurn(eOrientation& t) override;
 
     bool mDiagonalOnly;

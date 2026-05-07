@@ -388,9 +388,10 @@ public:
     int districtId() const { return mDistrictId; }
 
     double appeal() const;
-private:
+protected:
     void serialize(eSaveArchive& ar);
 
+private:
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;
     SDL_Rect mTileRect{0, 0, 0, 0};
