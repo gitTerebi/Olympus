@@ -3,6 +3,7 @@
 #include "engine/egameboard.h"
 #include "elanguage.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eArtemisSanctuary::eArtemisSanctuary(
         const int sw, const int sh, eGameBoard& board,
@@ -62,34 +63,41 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
 
 void eSanctuaryWithWarriors::read(eReadStream& src) {
     eSanctuary::read(src);
-
-    auto& board = getBoard();
-    int nb;
-    src >> nb;
-    for(int i = 0; i < nb; i++) {
-        src.readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
-            if(!b) return;
-            const auto gt = godType();
-            int string = -1;
-            if(gt == eGodType::artemis) {
-                string = 30 + i;
-            } else if(gt == eGodType::ares) {
-                string = 32 + i;
-            } else {
-                return;
-            }
-            const auto name = eLanguage::zeusText(138, string);
-            b->setName(name);
-            mSoldierBanners.push_back(b);
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSanctuaryWithWarriors::write(eWriteStream& dst) const {
     eSanctuary::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSanctuaryWithWarriors*>(this)->serialize(ar);
+}
 
-    dst << mSoldierBanners.size();
-    for(const auto& b: mSoldierBanners) {
-        dst.writeSoldierBanner(b.get());
+void eSanctuaryWithWarriors::serialize(eSaveArchive& ar) {
+    auto& board = getBoard();
+    int nb;
+    if(ar.writing()) nb = mSoldierBanners.size();
+    ar.value(nb);
+    if(ar.reading()) mSoldierBanners.clear();
+    for(int i = 0; i < nb; i++) {
+        if(ar.reading()) {
+            ar.readStream().readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
+                if(!b) return;
+                const auto gt = godType();
+                int string = -1;
+                if(gt == eGodType::artemis) {
+                    string = 30 + i;
+                } else if(gt == eGodType::ares) {
+                    string = 32 + i;
+                } else {
+                    return;
+                }
+                const auto name = eLanguage::zeusText(138, string);
+                b->setName(name);
+                mSoldierBanners.push_back(b);
+            });
+        } else {
+            ar.writeStream().writeSoldierBanner(mSoldierBanners[i].get());
+        }
     }
 }

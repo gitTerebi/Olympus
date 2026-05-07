@@ -9,6 +9,9 @@
 #include "fileIO/estreams.h"
 #include "engine/ecityid.h"
 
+class eSaveArchive;
+class eWorldBoard;
+
 enum class eNationality {
     greek,
     trojan,
@@ -310,6 +313,8 @@ public:
     void setCapitalOf(const ePlayerId pid);
     bool isCapitalOf(const ePlayerId pid) const;
 private:
+    void serialize(eSaveArchive& ar, eWorldBoard* board);
+
     int mIOID = -1;
 
     stdsptr<eWorldCity> mConqueredBy;

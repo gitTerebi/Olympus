@@ -12,6 +12,7 @@
 #include "engine/ecityid.h"
 
 class eCharacterBase;
+class eSaveArchive;
 
 enum class eBuildingType;
 enum class eBannerTypeS;
@@ -157,6 +158,8 @@ public:
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     unsigned char mSeed;
 
     int mDX;

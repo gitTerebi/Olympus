@@ -16,6 +16,7 @@ class ePlayerConquestEventBase;
 class eReceiveRequestEvent;
 class eTroopsRequestEvent;
 enum class eResourceType;
+class eSaveArchive;
 
 class eBoardPlayer {
 public:
@@ -76,6 +77,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     void giftAllies();
     bool askForDrachmas();
 

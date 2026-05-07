@@ -4,6 +4,9 @@
 #include "egifthelpers.h"
 #include "evectorhelpers.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
+
+#include <iterator>
 
 eWorldCity::eWorldCity(const eCityType type,
                        const eCityId id,
@@ -538,58 +541,8 @@ void swrite(eWriteStream& dst,
 }
 
 void eWorldCity::write(eWriteStream& dst) const {
-    dst << mIOID;
-    dst << mCityId;
-    dst.writeCity(mConqueredBy.get());
-    dst << mPlayerId;
-    dst << mCapitalOf;
-    dst << mIsCurrentCity;
-    dst << mIsOnBoard;
-    dst << mType;
-    dst << mNationality;
-    dst << mDirection;
-    dst << mState;
-    dst << mNamePlace;
-    dst << mName;
-    dst << mNameString;
-    dst << mLeader;
-    dst << mLeaderString;
-    dst << mX;
-    dst << mY;
-    dst << mTradeShutdown;
-    dst << mRebellion;
-    dst << mRel;
-
-    dst << mReceived.size();
-    for(const auto& r : mReceived) {
-        dst << r.first;
-        dst << r.second;
-    }
-
-    dst << mAtt.size();
-    for(const auto& att : mAtt) {
-        dst << att.first;
-        dst << att.second;
-    }
-
-    dst << mAbroad;
-    dst << mMilitaryStrength;
-    dst << mTroops;
-    dst << mYearsElapsed;
-    dst << mWealth;
-
-    dst << mWaterTrade.size();
-    for(const auto c : mWaterTrade) {
-        dst << c;
-    }
-
-    dst << mVisible;
-    swrite(dst, mBuys);
-    swrite(dst, mSells);
-    dst << mTributeType;
-    dst << mTributeCount;
-    dst << mRecTributeType;
-    dst << mRecTributeCount;
+    eSaveArchive ar(dst);
+    const_cast<eWorldCity*>(this)->serialize(ar, nullptr);
 }
 
 void sread(eReadStream& src,
@@ -603,76 +556,116 @@ void sread(eReadStream& src,
 }
 
 void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
-    src >> mIOID;
-    src >> mCityId;
-    src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-        mConqueredBy = c;
-    });
-    src >> mPlayerId;
-    src >> mCapitalOf;
-    src >> mIsCurrentCity;
-    src >> mIsOnBoard;
-    src >> mType;
-    src >> mNationality;
-    src >> mDirection;
-    src >> mState;
-    src >> mNamePlace;
-    src >> mName;
-    src >> mNameString;
+    eSaveArchive ar(src);
+    serialize(ar, board);
     if(mNameString > -1 && mNameString < 82) {
         mName = eLanguage::zeusText(21, mNameString);
     }
-    src >> mLeader;
-    src >> mLeaderString;
     if(mLeaderString > -1 && mLeaderString < 84) {
         mLeader = eLanguage::zeusText(139, mLeaderString);
     }
-    src >> mX;
-    src >> mY;
-    src >> mTradeShutdown;
-    src >> mRebellion;
-    src >> mRel;
+}
+
+void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
+    ar.value(mIOID);
+    ar.value(mCityId);
+    if(ar.reading()) {
+        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
+            mConqueredBy = c;
+        });
+    } else {
+        ar.writeStream().writeCity(mConqueredBy.get());
+    }
+    ar.value(mPlayerId);
+    ar.value(mCapitalOf);
+    ar.value(mIsCurrentCity);
+    ar.value(mIsOnBoard);
+    ar.value(mType);
+    ar.value(mNationality);
+    ar.value(mDirection);
+    ar.value(mState);
+    ar.value(mNamePlace);
+    ar.value(mName);
+    ar.value(mNameString);
+    ar.value(mLeader);
+    ar.value(mLeaderString);
+    ar.value(mX);
+    ar.value(mY);
+    ar.value(mTradeShutdown);
+    ar.value(mRebellion);
+    ar.value(mRel);
 
     int nrec;
-    src >> nrec;
+    if(ar.writing()) nrec = mReceived.size();
+    ar.value(nrec);
+    if(ar.reading()) mReceived.clear();
     for(int i = 0; i < nrec; i++) {
         eResourceType type;
-        src >> type;
         int count;
-        src >> count;
-        mReceived[type] = count;
+        if(ar.writing()) {
+            auto it = mReceived.begin();
+            std::advance(it, i);
+            type = it->first;
+            count = it->second;
+        }
+        ar.value(type);
+        ar.value(count);
+        if(ar.reading()) mReceived[type] = count;
     }
 
     int natt;
-    src >> natt;
+    if(ar.writing()) natt = mAtt.size();
+    ar.value(natt);
+    if(ar.reading()) mAtt.clear();
     for(int i = 0; i < natt; i++) {
         ePlayerId pid;
-        src >> pid;
-        double& att = mAtt[pid];
-        src >> att;
+        double att;
+        if(ar.writing()) {
+            auto it = mAtt.begin();
+            std::advance(it, i);
+            pid = it->first;
+            att = it->second;
+        }
+        ar.value(pid);
+        ar.value(att);
+        if(ar.reading()) mAtt[pid] = att;
     }
 
-    src >> mAbroad;
-    src >> mMilitaryStrength;
-    src >> mTroops;
-    src >> mYearsElapsed;
-    src >> mWealth;
+    ar.value(mAbroad);
+    ar.value(mMilitaryStrength);
+    ar.value(mTroops);
+    ar.value(mYearsElapsed);
+    ar.value(mWealth);
 
     int nc;
-    src >> nc;
+    if(ar.writing()) nc = mWaterTrade.size();
+    ar.value(nc);
+    if(ar.reading()) mWaterTrade.clear();
     for(int i = 0; i < nc; i++) {
         eCityId cid;
-        src >> cid;
-        mWaterTrade.insert(cid);
+        if(ar.writing()) {
+            auto it = mWaterTrade.begin();
+            std::advance(it, i);
+            cid = *it;
+        }
+        ar.value(cid);
+        if(ar.reading()) mWaterTrade.insert(cid);
     }
 
-    src >> mVisible;
-    sread(src, mBuys);
-    sread(src, mSells);
-    src >> mTributeType;
-    src >> mTributeCount;
-    src >> mRecTributeType;
-    src >> mRecTributeCount;
+    ar.value(mVisible);
+    if(ar.reading()) {
+        mBuys.clear();
+        mSells.clear();
+        sread(ar.readStream(), mBuys);
+        sread(ar.readStream(), mSells);
+    } else {
+        swrite(ar.writeStream(), mBuys);
+        swrite(ar.writeStream(), mSells);
+    }
+    ar.value(mTributeType);
+    ar.value(mTributeCount);
+    ar.value(mRecTributeType);
+    ar.value(mRecTributeCount);
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count) {

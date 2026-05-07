@@ -3,6 +3,8 @@
 
 #include "egameboard.h"
 
+class eSaveArchive;
+
 enum class eEpisodeType {
     parentCity,
     colony
@@ -11,6 +13,7 @@ enum class eEpisodeType {
 struct eEpisode {
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     bool availableBuilding(const eBuildingType type,
                            const int id = -1) const;

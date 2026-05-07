@@ -8,6 +8,7 @@
 #include "egamedir.h"
 #include "elanguage.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eCampaign::eCampaign() {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
@@ -302,6 +303,32 @@ bool eCampaign::sReadGlossary(const std::string& name,
 }
 
 void eCampaign::read(eReadStream& src) {
+    eSaveArchive ar(src);
+    serialize(ar);
+
+    if(mBriefId != 0 && mCompleteId != 0) {
+        const auto& brief = eLanguage::zeusMM(mBriefId);
+        mTitle = brief.fTitle;
+        mIntroduction = brief.fContent;
+        const auto complete = eLanguage::zeusMM(mCompleteId);
+        mComplete = complete.fContent;
+    }
+
+    if(src.format() == "eZeus.ez" || src.format() == "eZeus.ez2") { // save file
+        const auto e = currentEpisode();
+        const auto board = e->fBoard;
+        board->loadResources();
+    }
+}
+
+void eCampaign::write(eWriteStream& dst) const {
+    eSaveArchive ar(dst);
+    const_cast<eCampaign*>(this)->serialize(ar);
+}
+
+void eCampaign::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+    auto& src = ar.readStream();
     src >> mBitmap;
     src >> mIsPak;
     if(mIsPak) {
@@ -399,22 +426,8 @@ void eCampaign::read(eReadStream& src) {
     src >> mBriefId;
     src >> mCompleteId;
 
-    if(mBriefId != 0 && mCompleteId != 0) {
-        const auto& brief = eLanguage::zeusMM(mBriefId);
-        mTitle = brief.fTitle;
-        mIntroduction = brief.fContent;
-        const auto complete = eLanguage::zeusMM(mCompleteId);
-        mComplete = complete.fContent;
-    }
-
-    if(src.format() == "eZeus.ez") { // save file
-        const auto e = currentEpisode();
-        const auto board = e->fBoard;
-        board->loadResources();
-    }
-}
-
-void eCampaign::write(eWriteStream& dst) const {
+    } else {
+    auto& dst = ar.writeStream();
     dst << mBitmap;
     dst << mIsPak;
     if(mIsPak) {
@@ -472,6 +485,7 @@ void eCampaign::write(eWriteStream& dst) const {
 
     dst << mBriefId;
     dst << mCompleteId;
+    }
 }
 
 

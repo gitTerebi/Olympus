@@ -7,6 +7,7 @@
 
 class eReadStream;
 class eWriteStream;
+class eSaveArchive;
 
 enum class eBuildingType;
 
@@ -42,6 +43,8 @@ struct eAvailableBuildings {
 
     void startEpisode(const eAvailableBuildings& o);
 private:    
+    void serialize(eSaveArchive& ar);
+
     void startEpisode(const eAvailableBuildings& o,
                       bool eAvailableBuildings::* ptr);
     void startEpisode(const eAvailableBuildings& o,

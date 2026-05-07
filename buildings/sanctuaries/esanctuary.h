@@ -9,6 +9,7 @@
 #include "engine/edate.h"
 
 class eBuildingTextures;
+class eSaveArchive;
 
 enum class eHelpDenialReason {
     tooSoon,
@@ -66,6 +67,8 @@ public:
 
     bool sacrificing() const;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eGod> mGod;
     bool mGodAbroad = false;
     int mSpawnWait = 0;

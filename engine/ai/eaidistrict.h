@@ -53,6 +53,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     std::vector<eAIBuilding> fBuildings;
     std::vector<eDistrictReadyCondition> fReadyConditions;

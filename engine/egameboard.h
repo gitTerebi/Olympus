@@ -437,6 +437,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     eBuilding* buildingWithIOID(const int id) const;
     eCharacter* characterWithIOID(const int id) const;

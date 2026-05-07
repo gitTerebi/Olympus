@@ -12,6 +12,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mSoldierSpawn = 0;
     std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
 };

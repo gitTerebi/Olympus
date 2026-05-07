@@ -5,6 +5,7 @@
 #include "eeventdata.h"
 #include "evectorhelpers.h"
 #include "egifthelpers.h"
+#include "fileIO/esavearchive.h"
 
 eBoardPlayer::eBoardPlayer(const ePlayerId pid, eGameBoard& board) :
     mBoard(board), mId(pid) {}
@@ -130,80 +131,71 @@ void eBoardPlayer::removeConquest(ePlayerConquestEventBase* const q) {
 }
 
 void eBoardPlayer::read(eReadStream& src) {
-    src >> mId;
-    src >> mDifficulty;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eBoardPlayer::write(eWriteStream& dst) const {
+    eSaveArchive ar(dst);
+    const_cast<eBoardPlayer*>(this)->serialize(ar);
+}
+
+void eBoardPlayer::serialize(eSaveArchive& ar) {
+    ar.value(mId);
+    ar.value(mDifficulty);
 
     {
         int nq;
-        src >> nq;
+        if(ar.writing()) nq = mFulfilledQuests.size();
+        ar.value(nq);
+        if(ar.reading()) mFulfilledQuests.clear();
         for(int i = 0; i < nq; i++) {
-            auto& q = mFulfilledQuests.emplace_back();
-            q.read(src);
+            eGodQuest q;
+            if(ar.writing()) q = mFulfilledQuests[i];
+            if(ar.reading()) q.read(ar.readStream());
+            else q.write(ar.writeStream());
+            if(ar.reading()) mFulfilledQuests.push_back(q);
         }
     }
 
     {
         int nm;
-        src >> nm;
+        if(ar.writing()) nm = mSlayedMonsters.size();
+        ar.value(nm);
+        if(ar.reading()) mSlayedMonsters.clear();
         for(int i = 0; i < nm; i++) {
-            auto& m = mSlayedMonsters.emplace_back();
-            src >> m;
+            eMonsterType m;
+            if(ar.writing()) m = mSlayedMonsters[i];
+            ar.value(m);
+            if(ar.reading()) mSlayedMonsters.push_back(m);
         }
     }
 
     {
         int nq;
-        src >> nq;
+        if(ar.writing()) nq = mGodQuests.size();
+        ar.value(nq);
+        if(ar.reading()) mGodQuests.clear();
         for(int i = 0; i < nq; i++) {
-            src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
-                const auto ge = static_cast<eGodQuestEvent*>(e);
-                mGodQuests.push_back(ge);
-            });
+            if(ar.reading()) {
+                ar.readStream().readGameEvent(&mBoard, [this](eGameEvent* const e) {
+                    const auto ge = static_cast<eGodQuestEvent*>(e);
+                    mGodQuests.push_back(ge);
+                });
+            } else {
+                ar.writeStream().writeGameEvent(mGodQuests[i]);
+            }
         }
     }
 
-    src >> mDrachmas;
-    mInDebtSince.read(src);
+    ar.value(mDrachmas);
+    if(ar.reading()) mInDebtSince.read(ar.readStream());
+    else mInDebtSince.write(ar.writeStream());
 
-    src >> mGodAttackTimer;
+    ar.value(mGodAttackTimer);
 
-    mFinances.read(src);
-}
-
-void eBoardPlayer::write(eWriteStream& dst) const {
-    dst << mId;
-    dst << mDifficulty;
-
-    {
-        const int nq = mFulfilledQuests.size();
-        dst << nq;
-        for(const auto& q : mFulfilledQuests) {
-            q.write(dst);
-        }
-    }
-
-    {
-        const int nm = mSlayedMonsters.size();
-        dst << nm;
-        for(const auto m : mSlayedMonsters) {
-            dst << m;
-        }
-    }
-
-    {
-        const int nq = mGodQuests.size();
-        dst << nq;
-        for(const auto& q : mGodQuests) {
-            dst.writeGameEvent(q);
-        }
-    }
-
-    dst << mDrachmas;
-    mInDebtSince.write(dst);
-
-    dst << mGodAttackTimer;
-
-    mFinances.write(dst);
+    if(ar.reading()) mFinances.read(ar.readStream());
+    else mFinances.write(ar.writeStream());
 }
 
 void eBoardPlayer::giftAllies() {
