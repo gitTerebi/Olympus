@@ -31,45 +31,59 @@
 #include "ebasicbutton.h"
 #include "erotatebutton.h"
 
-struct eSubButtonData {
+struct eSubButtonData
+{
     eBuildingMode fMode;
     std::string fName;
     std::function<void()> fPressedFunc;
     int fPrice;
     int fPriceSpace;
-    const eTextureCollection* fColl;
-    const eTextureCollection* fAColl;
+    const eTextureCollection *fColl;
+    const eTextureCollection *fAColl;
     std::vector<eSPR> fSpr = {};
 };
 
-void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
-                eGameBoard& board, const bool showAllPossibleBuildings) {
+void tradePosts(const eCityId cid, std::vector<eSPR> &cs,
+                eGameBoard &board, const bool showAllPossibleBuildings)
+{
     const auto pid = board.cityIdToPlayerId(cid);
     const auto ppid = board.personPlayer();
-    if(pid != ppid && !showAllPossibleBuildings) return;
-    const auto& wrld = board.world();
+    if (pid != ppid && !showAllPossibleBuildings)
+        return;
+    const auto &wrld = board.world();
     int i = -1;
-    for(const auto& c : wrld.cities()) {
+    for (const auto &c : wrld.cities())
+    {
         const auto cCid = c->cityId();
         i++;
-        if(c->isRival() && !showAllPossibleBuildings) continue;
-        if(cid == cCid) continue;
-        if(!c->active() && !showAllPossibleBuildings) continue;
-        if(!c->visible() && !showAllPossibleBuildings) continue;
-        if(board.hasTradePost(cid, *c)) continue;
+        if (c->isRival() && !showAllPossibleBuildings)
+            continue;
+        if (cid == cCid)
+            continue;
+        if (!c->active() && !showAllPossibleBuildings)
+            continue;
+        if (!c->visible() && !showAllPossibleBuildings)
+            continue;
+        if (board.hasTradePost(cid, *c))
+            continue;
         const auto tradeCid = c->cityId();
         const auto tradePid = board.cityIdToPlayerId(tradeCid);
         const auto tradeC = board.boardCityWithId(tradeCid);
         const auto tradeTid = board.playerIdToTeamId(tradePid);
         const auto tid = board.playerIdToTeamId(pid);
-        if(eTeamIdHelpers::isEnemy(tradeTid, tid)) continue;
-        if(!c->buys().empty() || !c->sells().empty() ||
-           (tradeC && pid == tradePid)) {
-            if(c->waterTrade(cid)) {
+        if (eTeamIdHelpers::isEnemy(tradeTid, tid))
+            continue;
+        if (!c->buys().empty() || !c->sells().empty() ||
+            (tradeC && pid == tradePid))
+        {
+            if (c->waterTrade(cid))
+            {
                 const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
                 const eSPR s{eBuildingMode::pier, name, 0, i};
                 cs.push_back(s);
-            } else {
+            }
+            else
+            {
                 const auto name = eLanguage::zeusText(28, 62) + " " + c->name();
                 const eSPR s{eBuildingMode::tradePost, name, 0, i};
                 cs.push_back(s);
@@ -78,65 +92,85 @@ void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
     }
 }
 
-class eSubButton {
+class eSubButton
+{
 public:
     eSubButton(const eBuildingMode mode,
-               eButton* const button,
-               eButton* const abutton,
-               const std::vector<eSPR>& children,
-               eGameBoard& board) :
-        mMode(mode),
-        mButton(button),
-        mAButton(abutton),
-        mChildren(children),
-        mBoard(board) {}
+               eButton *const button,
+               eButton *const abutton,
+               const std::vector<eSPR> &children,
+               eGameBoard &board) : mMode(mode),
+                                    mButton(button),
+                                    mAButton(abutton),
+                                    mChildren(children),
+                                    mBoard(board) {}
 
-    void updateVisible(const eCityId cid, const bool showAllPossibleBuildings) {
+    void updateVisible(const eCityId cid, const bool showAllPossibleBuildings)
+    {
         bool vis = false;
         const auto pid = mBoard.cityIdToPlayerId(cid);
         const auto ppid = mBoard.personPlayer();
         const bool a = mBoard.atlantean(cid);
-        if(pid != ppid) {
+        if (pid != ppid)
+        {
             vis = showAllPossibleBuildings;
-        } else if(mMode == eBuildingMode::tradePost) {
+        }
+        else if (mMode == eBuildingMode::tradePost)
+        {
             std::vector<eSPR> cs;
             tradePosts(cid, cs, mBoard, showAllPossibleBuildings);
             vis = !cs.empty();
-        } else if(mMode == eBuildingMode::palace) {
+        }
+        else if (mMode == eBuildingMode::palace)
+        {
             vis = !mBoard.hasPalace(cid);
-        } else if(mMode == eBuildingMode::stadium) {
+        }
+        else if (mMode == eBuildingMode::stadium)
+        {
             vis = !mBoard.atlantean(cid) && !mBoard.hasStadium(cid);
-        } else if(mMode == eBuildingMode::museum) {
+        }
+        else if (mMode == eBuildingMode::museum)
+        {
             vis = mBoard.atlantean(cid) && !mBoard.hasMuseum(cid);
-        } else if(mMode == eBuildingMode::none) {
-            for(const auto& c : mChildren) {
+        }
+        else if (mMode == eBuildingMode::none)
+        {
+            for (const auto &c : mChildren)
+            {
                 const bool s = showAllPossibleBuildings ||
                                mBoard.supportsBuilding(cid, c.fMode);
-                if(s) {
+                if (s)
+                {
                     vis = true;
                     break;
                 }
             }
-        } else {
+        }
+        else
+        {
             vis = showAllPossibleBuildings ||
                   mBoard.supportsBuilding(cid, mMode);
         }
-        if(mButton) {
+        if (mButton)
+        {
             mButton->setVisible(vis && (!a || !mAButton));
         }
-        if(mAButton) {
+        if (mAButton)
+        {
             mAButton->setVisible(vis && (a || !mButton));
         }
     }
+
 private:
     const eBuildingMode mMode;
-    eButton* const mButton;
-    eButton* const mAButton;
+    eButton *const mButton;
+    eButton *const mAButton;
     const std::vector<eSPR> mChildren;
-    eGameBoard& mBoard;
+    eGameBoard &mBoard;
 };
 
-eWidget* eGameMenu::createPriceWidget(const eInterfaceTextures& coll) {
+eWidget *eGameMenu::createPriceWidget(const eInterfaceTextures &coll)
+{
     const auto r = new eWidget(window());
     r->setNoPadding();
     const auto plabel = new eLabel("0", window());
@@ -158,32 +192,35 @@ eWidget* eGameMenu::createPriceWidget(const eInterfaceTextures& coll) {
     return r;
 }
 
-eWidget* eGameMenu::createSubButtons(
-        const int resoltuionMult,
-        const eButtonsDataVec& buttons) {
+eWidget *eGameMenu::createSubButtons(
+    const int resoltuionMult,
+    const eButtonsDataVec &buttons)
+{
     const auto result = new eWidget(window());
 
-    const int x = resoltuionMult*35;
-    const int y = resoltuionMult*28;
+    const int x = resoltuionMult * 35;
+    const int y = resoltuionMult * 28;
     const std::vector<std::pair<int, int>> poses =
         {{0, 0}, {x, 0}, {0, y}, {x, y}};
 
     const int iMax = buttons.size();
-    for(int i = 0; i < iMax; i++) {
-        const auto& c = buttons[i];
+    for (int i = 0; i < iMax; i++)
+    {
+        const auto &c = buttons[i];
 
-        const auto createButton = [&](const eTextureCollection& texs) {
+        const auto createButton = [&](const eTextureCollection &texs)
+        {
             const auto b = eButton::sCreate(texs, window(), result);
             b->setPressAction(c.fPressedFunc);
-            b->setMouseEnterAction([c, this]() {
+            b->setMouseEnterAction([c, this]()
+                                   {
                 mNameLabel->setText(c.fName);
-                displayPrice(c.fPrice, c.fPriceSpace);
-            });
-            b->setMouseLeaveAction([c, this]() {
+                displayPrice(c.fPrice, c.fPriceSpace); });
+            b->setMouseLeaveAction([c, this]()
+                                   {
                 mNameLabel->setText("");
-                displayPrice(0, c.fPriceSpace);
-            });
-            const auto& pos = poses[i];
+                displayPrice(0, c.fPriceSpace); });
+            const auto &pos = poses[i];
             b->setX(pos.first);
             b->setY(pos.second);
 
@@ -205,7 +242,8 @@ eWidget* eGameMenu::createSubButtons(
     return result;
 }
 
-eBuildButton* eGameMenu::createBuildButton(const eSPR& c) {
+eBuildButton *eGameMenu::createBuildButton(const eSPR &c)
+{
     const auto bb = new eBuildButton(window());
     const auto pid = mBoard->personPlayer();
     const auto diff = mBoard->difficulty(pid);
@@ -213,76 +251,94 @@ eBuildButton* eGameMenu::createBuildButton(const eSPR& c) {
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
     const int cost = eDifficultyHelpers::buildingCost(diff, t);
     bb->initialize(c.fName, c.fMarbleCost, cost);
-    bb->setPressAction([this, c]() {
+    bb->setPressAction([this, c]()
+                       {
         setMode(c.fMode);
         mTradeCityId = c.fCity;
-        closeBuildWidget();
-    });
+        closeBuildWidget(); });
     return bb;
 }
 
 void eGameMenu::openBuildWidget(const int cmx, const int cmy,
-                                const std::vector<eSPR>& cs) {
+                                const std::vector<eSPR> &cs)
+{
     const auto cid = mGW->viewedCity();
     const auto pid = mBoard->cityIdToPlayerId(cid);
     const auto ppid = mBoard->personPlayer();
-    if(pid != ppid && !mShowAllPossibleBuildings) return;
-    std::vector<eBuildButton*> ws;
-    for(const auto& c : cs) {
-        if(!mBoard->supportsBuilding(cid, c.fMode) &&
-           !mShowAllPossibleBuildings) continue;
+    if (pid != ppid && !mShowAllPossibleBuildings)
+        return;
+    std::vector<eBuildButton *> ws;
+    for (const auto &c : cs)
+    {
+        if (!mBoard->supportsBuilding(cid, c.fMode) &&
+            !mShowAllPossibleBuildings)
+            continue;
         const auto bb = createBuildButton(c);
         ws.push_back(bb);
     }
-    if(ws.empty()) return;
+    if (ws.empty())
+        return;
     const auto bw = new eBuildWidget(window());
     bw->initialize(ws);
     bw->exec(cmx - bw->width(), cmy - bw->height(), this);
     setBuildWidget(bw);
 }
 
-void eGameMenu::setModeChangedAction(const eAction& func) {
+void eGameMenu::setModeChangedAction(const eAction &func)
+{
     mModeChangeAct = func;
 }
 
-void eGameMenu::updateRequestButtons() {
+void eGameMenu::updateRequestButtons()
+{
     mOverDataW->updateRequestButtons();
 }
 
-void eGameMenu::setWorldDirection(const eWorldDirection dir) {
+void eGameMenu::setWorldDirection(const eWorldDirection dir)
+{
     mRotateButton->setDirection(dir);
 }
 
-void eGameMenu::update() {
-    if(mUndoButton && mBoard) {
+void eGameMenu::update()
+{
+    if (mUndoButton && mBoard)
+    {
         mUndoButton->setEnabled(mBoard->undoValid());
     }
 }
 
-void eGameMenu::setShowAllPossibleBuildings(const bool b) {
+void eGameMenu::setShowAllPossibleBuildings(const bool b)
+{
     mShowAllPossibleBuildings = b;
     updateButtonsVisibility();
 }
 
-void eGameMenu::displayPrice(const int price, const int loc) {
+void eGameMenu::displayPrice(const int price, const int loc)
+{
     const auto w = mPriceWidgets[loc];
     const auto l = mPriceLabels[loc];
-    if(price <= 0) {
+    if (price <= 0)
+    {
         w->hide();
-    } else {
+    }
+    else
+    {
         l->setText(std::to_string(price));
         w->show();
     }
 }
 
-eGameMenu::~eGameMenu() {
-    for(const auto s : mSubButtons) {
+eGameMenu::~eGameMenu()
+{
+    for (const auto s : mSubButtons)
+    {
         delete s;
     }
 }
 
-void eGameMenu::initialize(eGameBoard* const b,
-                           const eAction& goalsView) {
+void eGameMenu::initialize(eGameBoard *const b,
+                           const eAction &goalsView)
+{
     mBoard = b;
     eGameMenuBase::initialize();
 
@@ -290,27 +346,28 @@ void eGameMenu::initialize(eGameBoard* const b,
     int mult;
     iResAndMult(iRes, mult);
 
-    const auto& intrfc = eGameTextures::interface();
-    const auto& coll = intrfc[iRes];
+    const auto &intrfc = eGameTextures::interface();
+    const auto &coll = intrfc[iRes];
     const auto tex = coll.fGameMenuBackground;
     setTexture(tex);
     setPadding(0);
     fitContent();
 
     const int cmx = -padding();
-    const int cmy = 5*height()/8;
+    const int cmy = 5 * height() / 8;
 
-    const int dataWidWidth = 65*mult;
-    const int dataWidHeight = 119*mult;
+    const int dataWidWidth = 65 * mult;
+    const int dataWidHeight = 119 * mult;
 
-    const int wwHeight = 190*mult;
-    const int wy = dataWidHeight + 31*mult;
-    const int wx = 24*mult;
+    const int wwHeight = 190 * mult;
+    const int wy = dataWidHeight + 31 * mult;
+    const int wx = 24 * mult;
 
     const auto createDataWidgetBase =
-        [&](eDataWidget* const dataW,
-            eWidget* const w9,
-            const std::string& name) {
+        [&](eDataWidget *const dataW,
+            eWidget *const w9,
+            const std::string &name)
+    {
         const auto ww9 = new eWidget(window());
         const auto alabel = new eLabel(window());
         alabel->setFontSizeS();
@@ -333,9 +390,10 @@ void eGameMenu::initialize(eGameBoard* const b,
     };
 
     const auto createDataWidget =
-        [&](eDataWidget* const dataW,
-            const eButtonsDataVec& buttonsVec,
-            const std::string& name) {
+        [&](eDataWidget *const dataW,
+            const eButtonsDataVec &buttonsVec,
+            const std::string &name)
+    {
         const auto w9 = createSubButtons(mult, buttonsVec);
         return createDataWidgetBase(dataW, w9, name);
     };
@@ -355,11 +413,12 @@ void eGameMenu::initialize(eGameBoard* const b,
     {
         const auto ww = new eWidget(window());
         ww->setNoPadding();
-        const int x = mult*35;
-        const int y = mult*28;
+        const int x = mult * 35;
+        const int y = mult * 28;
         const std::vector<std::pair<int, int>> poses =
             {{0, 0}, {x, 0}, {0, y}, {x, y}};
-        for(const auto& p : poses) {
+        for (const auto &p : poses)
+        {
             const auto w = createPriceWidget(coll);
             ww->addWidget(w);
             w->setX(p.first);
@@ -368,7 +427,7 @@ void eGameMenu::initialize(eGameBoard* const b,
         ww->fitContent();
         addWidget(ww);
         ww->setX(wx);
-        ww->setY(wy + 29*mult);
+        ww->setY(wy + 29 * mult);
     }
 
     mPopDataW = new ePopulationDataWidget(*b, window());
@@ -376,28 +435,30 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto pid = mBoard->personPlayer();
     const auto diff = mBoard->difficulty(pid);
     const int cost1 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::commonHouse);
+        diff, eBuildingType::commonHouse);
     const int cost2 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::eliteHousing);
+        diff, eBuildingType::eliteHousing);
 
-    const auto cha0 = [this]() {
+    const auto cha0 = [this]()
+    {
         setMode(eBuildingMode::commonHousing);
     };
-    const auto eha0 = [this]() {
+    const auto eha0 = [this]()
+    {
         setMode(eBuildingMode::eliteHousing);
     };
 
     const auto buttonsVec0 = eButtonsDataVec{
-                    {eBuildingMode::commonHousing,
-                     eLanguage::zeusText(28, 2),
-                     cha0, cost1, 0,
-                     &coll.fCommonHousing,
-                     &coll.fPoseidonCommonHousing},
-                    {eBuildingMode::eliteHousing,
-                     eLanguage::zeusText(28, 9),
-                     eha0, cost2, 1,
-                     &coll.fEliteHousing,
-                     &coll.fPoseidonEliteHousing}};
+        {eBuildingMode::commonHousing,
+         eLanguage::zeusText(28, 2),
+         cha0, cost1, 0,
+         &coll.fCommonHousing,
+         &coll.fPoseidonCommonHousing},
+        {eBuildingMode::eliteHousing,
+         eLanguage::zeusText(28, 9),
+         eha0, cost2, 1,
+         &coll.fEliteHousing,
+         &coll.fPoseidonEliteHousing}};
     const auto ww0 = createDataWidget(mPopDataW, buttonsVec0,
                                       eLanguage::zeusText(88, 0));
 
@@ -405,7 +466,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::carrotFarm, eLanguage::zeusText(28, 33)},
                                       eSPR{eBuildingMode::onionFarm, eLanguage::zeusText(28, 32)}};
 
-    const auto ff1 = [this, cmx, cmy, ff1spr]() {
+    const auto ff1 = [this, cmx, cmy, ff1spr]()
+    {
         openBuildWidget(cmx, cmy, ff1spr);
     };
 
@@ -415,7 +477,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::orangeTendersLodge, eLanguage::zeusText(28, 214)},
                                       eSPR{eBuildingMode::growersLodge, eLanguage::zeusText(28, 37)}};
 
-    const auto of1 = [this, cmx, cmy, of1spr]() {
+    const auto of1 = [this, cmx, cmy, of1spr]()
+    {
         openBuildWidget(cmx, cmy, of1spr);
     };
 
@@ -423,7 +486,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::goat, eLanguage::zeusText(28, 39)},
                                       eSPR{eBuildingMode::cardingShed, eLanguage::zeusText(28, 41)},
                                       eSPR{eBuildingMode::sheep, eLanguage::zeusText(28, 40)}};
-    const auto af1 = [this, cmx, cmy, af1spr]() {
+    const auto af1 = [this, cmx, cmy, af1spr]()
+    {
         openBuildWidget(cmx, cmy, af1spr);
     };
 
@@ -433,26 +497,25 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::corral, eLanguage::zeusText(28, 216)},
                                       eSPR{eBuildingMode::cattle, eLanguage::zeusText(28, 220)}};
 
-    const auto ah1 = [this, cmx, cmy, ah1spr]() {
+    const auto ah1 = [this, cmx, cmy, ah1spr]()
+    {
         openBuildWidget(cmx, cmy, ah1spr);
     };
 
-
-
     mHusbDataW = new eHusbandryDataWidget(*b, window());
     const auto buttonsVec1 = eButtonsDataVec{
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 30),
-                             ff1, 0, 0, &coll.fFoodFarming, nullptr, ff1spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 34),
-                             of1, 0, 1, &coll.fOtherFarming, nullptr, of1spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 38),
-                             af1, 0, 2, &coll.fAnimalFarming, nullptr, af1spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 43),
-                             ah1, 0, 3, &coll.fAnimalHunting, nullptr, ah1spr}};
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 30),
+         ff1, 0, 0, &coll.fFoodFarming, nullptr, ff1spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 34),
+         of1, 0, 1, &coll.fOtherFarming, nullptr, of1spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 38),
+         af1, 0, 2, &coll.fAnimalFarming, nullptr, af1spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 43),
+         ah1, 0, 3, &coll.fAnimalHunting, nullptr, ah1spr}};
     const auto ww1 = createDataWidget(mHusbDataW, buttonsVec1,
                                       eLanguage::zeusText(88, 1));
 
@@ -462,40 +525,44 @@ void eGameMenu::initialize(eGameBoard* const b,
                                      eSPR{eBuildingMode::masonryShop, eLanguage::zeusText(28, 49)},
                                      eSPR{eBuildingMode::refinery, eLanguage::zeusText(28, 211)},
                                      eSPR{eBuildingMode::blackMarbleWorkshop, eLanguage::zeusText(28, 218)}};
-    const auto r2 = [this, cmx, cmy, r2spr]() {
+    const auto r2 = [this, cmx, cmy, r2spr]()
+    {
         openBuildWidget(cmx, cmy, r2spr);
     };
     const std::vector<eSPR> p2spr = {eSPR{eBuildingMode::winery, eLanguage::zeusText(28, 53)},
                                      eSPR{eBuildingMode::olivePress, eLanguage::zeusText(28, 54)},
                                      eSPR{eBuildingMode::sculptureStudio, eLanguage::zeusText(28, 55)}};
-    const auto p2 = [this, cmx, cmy, p2spr]() {
+    const auto p2 = [this, cmx, cmy, p2spr]()
+    {
         openBuildWidget(cmx, cmy, p2spr);
     };
-    const auto bg2 = [this]() {
+    const auto bg2 = [this]()
+    {
         setMode(eBuildingMode::artisansGuild);
     };
 
     mEmplDataW = new eEmploymentDataWidget(*b, window());
     const int cost3 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::artisansGuild);
+        diff, eBuildingType::artisansGuild);
     const auto buttonsVec2 = eButtonsDataVec{
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 47),
-                             r2, 0, 0, &coll.fResources, nullptr, r2spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 52),
-                             p2, 0, 1, &coll.fProcessing, nullptr, p2spr},
-                            {eBuildingMode::artisansGuild,
-                             eLanguage::zeusText(28, 56),
-                             bg2, cost3, 2, &coll.fArtisansGuild, nullptr}};
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 47),
+         r2, 0, 0, &coll.fResources, nullptr, r2spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 52),
+         p2, 0, 1, &coll.fProcessing, nullptr, p2spr},
+        {eBuildingMode::artisansGuild,
+         eLanguage::zeusText(28, 56),
+         bg2, cost3, 2, &coll.fArtisansGuild, nullptr}};
     const auto ww2 = createDataWidget(mEmplDataW, buttonsVec2,
                                       eLanguage::zeusText(88, 2));
 
-
-    const auto g3 = [this]() {
+    const auto g3 = [this]()
+    {
         setMode(eBuildingMode::granary);
     };
-    const auto ww3 = [this]() {
+    const auto ww3 = [this]()
+    {
         setMode(eBuildingMode::warehouse);
     };
     const std::vector<eSPR> a3spr = {eSPR{eBuildingMode::commonAgora, eLanguage::zeusText(28, 63)},
@@ -507,201 +574,213 @@ void eGameMenu::initialize(eGameBoard* const b,
                                      eSPR{eBuildingMode::armsVendor, eLanguage::zeusText(28, 72)},
                                      eSPR{eBuildingMode::horseTrainer, eLanguage::zeusText(28, 73)},
                                      eSPR{eBuildingMode::chariotVendor, eLanguage::zeusText(28, 215)}};
-    const auto a3 = [this, cmx, cmy, a3spr]() {
+    const auto a3 = [this, cmx, cmy, a3spr]()
+    {
         openBuildWidget(cmx, cmy, a3spr);
     };
-    const auto t3 = [this, cmx, cmy]() {
+    const auto t3 = [this, cmx, cmy]()
+    {
         std::vector<eSPR> cs;
         const auto cid = mGW->viewedCity();
         tradePosts(cid, cs, *mBoard, mShowAllPossibleBuildings);
         openBuildWidget(cmx, cmy, cs);
     };
 
-
     mStrgDataW = new eStorageDataWidget(*b, window());
 
     const int cost4 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::granary);
+        diff, eBuildingType::granary);
     const int cost5 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::warehouse);
+        diff, eBuildingType::warehouse);
     const auto buttonsVec3 = eButtonsDataVec{
-                            {eBuildingMode::granary,
-                             eLanguage::zeusText(28, 57),
-                             g3, cost4, 0, &coll.fGranary, nullptr},
-                            {eBuildingMode::warehouse,
-                             eLanguage::zeusText(28, 58),
-                             ww3, cost5, 1, &coll.fWarehouse, nullptr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 67),
-                             a3, 0, 2, &coll.fAgoras, nullptr, a3spr},
-                            {eBuildingMode::tradePost,
-                             eLanguage::zeusText(28, 26),
-                             t3, 0, 3, &coll.fTrade, nullptr}};
+        {eBuildingMode::granary,
+         eLanguage::zeusText(28, 57),
+         g3, cost4, 0, &coll.fGranary, nullptr},
+        {eBuildingMode::warehouse,
+         eLanguage::zeusText(28, 58),
+         ww3, cost5, 1, &coll.fWarehouse, nullptr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 67),
+         a3, 0, 2, &coll.fAgoras, nullptr, a3spr},
+        {eBuildingMode::tradePost,
+         eLanguage::zeusText(28, 26),
+         t3, 0, 3, &coll.fTrade, nullptr}};
     const auto www3 = createDataWidget(mStrgDataW, buttonsVec3,
                                        eLanguage::zeusText(88, 3));
 
-
-    const auto ff4 = [this]() {
+    const auto ff4 = [this]()
+    {
         setMode(eBuildingMode::maintenanceOffice);
     };
-    const auto f4 = [this]() {
+    const auto f4 = [this]()
+    {
         setMode(eBuildingMode::fountain);
     };
-    const auto p4 = [this]() {
+    const auto p4 = [this]()
+    {
         setMode(eBuildingMode::watchpost);
     };
-    const auto h4 = [this]() {
+    const auto h4 = [this]()
+    {
         setMode(eBuildingMode::hospital);
     };
 
     mHySaDataW = new eHygieneSafetyDataWidget(*b, window());
     const int cost6 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::fountain);
+        diff, eBuildingType::fountain);
     const int cost7 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::hospital);
+        diff, eBuildingType::hospital);
     const int cost8 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::maintenanceOffice);
+        diff, eBuildingType::maintenanceOffice);
     const int cost9 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::watchPost);
+        diff, eBuildingType::watchPost);
     const auto buttonsVec4 = eButtonsDataVec{
-                            {eBuildingMode::fountain,
-                             eLanguage::zeusText(28, 74),
-                             f4, cost6, 0, &coll.fFountain, nullptr},
-                            {eBuildingMode::hospital,
-                             eLanguage::zeusText(28, 76),
-                             h4, cost7, 1, &coll.fHospital, nullptr},
-                            {eBuildingMode::maintenanceOffice,
-                             eLanguage::zeusText(28, 121),
-                             ff4, cost8, 2, &coll.fFireFighter, nullptr},
-                            {eBuildingMode::watchpost,
-                             eLanguage::zeusText(28, 124),
-                             p4, cost9, 3, &coll.fPolice, nullptr}};
+        {eBuildingMode::fountain,
+         eLanguage::zeusText(28, 74),
+         f4, cost6, 0, &coll.fFountain, nullptr},
+        {eBuildingMode::hospital,
+         eLanguage::zeusText(28, 76),
+         h4, cost7, 1, &coll.fHospital, nullptr},
+        {eBuildingMode::maintenanceOffice,
+         eLanguage::zeusText(28, 121),
+         ff4, cost8, 2, &coll.fFireFighter, nullptr},
+        {eBuildingMode::watchpost,
+         eLanguage::zeusText(28, 124),
+         p4, cost9, 3, &coll.fPolice, nullptr}};
     const auto ww4 = createDataWidget(mHySaDataW, buttonsVec4,
                                       eLanguage::zeusText(88, 4));
 
-    const auto p5 = [this]() {
+    const auto p5 = [this]()
+    {
         setMode(eBuildingMode::palace);
     };
-    const auto tc5 = [this]() {
+    const auto tc5 = [this]()
+    {
         setMode(eBuildingMode::taxOffice);
     };
-    const auto bb5 = [this]() {
+    const auto bb5 = [this]()
+    {
         setMode(eBuildingMode::bridge);
     };
 
     mAdminDataW = new eAdminDataWidget(*b, window());
     const int cost10 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::palace);
+        diff, eBuildingType::palace);
     const int cost11 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::taxOffice);
+        diff, eBuildingType::taxOffice);
     const int cost12 = eDifficultyHelpers::buildingCost(
-                          diff, eBuildingType::bridge);
+        diff, eBuildingType::bridge);
     const std::vector<eSPR> d5spr = {eSPR{eBuildingMode::hippodromePiece, eLanguage::zeusText(28, 200)},
                                      eSPR{eBuildingMode::crosswalk, eLanguage::zeusText(28, 201)}};
-    const auto d5 = [this, cmx, cmy, d5spr]() {
+    const auto d5 = [this, cmx, cmy, d5spr]()
+    {
         openBuildWidget(cmx, cmy, d5spr);
     };
     const auto buttonsVec5 = eButtonsDataVec{
-                            {eBuildingMode::palace,
-                             eLanguage::zeusText(28, 117),
-                             p5, cost10, 0, &coll.fPalace, nullptr},
-                            {eBuildingMode::taxOffice,
-                             eLanguage::zeusText(28, 122),
-                             tc5, cost11, 1, &coll.fTaxCollector, nullptr},
-                            {eBuildingMode::bridge,
-                             eLanguage::zeusText(28, 120),
-                             bb5, cost12, 2,
-                             &coll.fBridge,
-                             &coll.fPoseidonBridge},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 199),
-                             d5, 0, 3, &coll.fHipodrome, &coll.fHipodrome, d5spr}};
+        {eBuildingMode::palace,
+         eLanguage::zeusText(28, 117),
+         p5, cost10, 0, &coll.fPalace, nullptr},
+        {eBuildingMode::taxOffice,
+         eLanguage::zeusText(28, 122),
+         tc5, cost11, 1, &coll.fTaxCollector, nullptr},
+        {eBuildingMode::bridge,
+         eLanguage::zeusText(28, 120),
+         bb5, cost12, 2,
+         &coll.fBridge,
+         &coll.fPoseidonBridge},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 199),
+         d5, 0, 3, &coll.fHipodrome, &coll.fHipodrome, d5spr}};
     const auto ww5 = createDataWidget(mAdminDataW, buttonsVec5,
                                       eLanguage::zeusText(88, 5));
 
-
-
-    eWidget* ww6 = nullptr;
-    eWidget* ww7 = nullptr;
+    eWidget *ww6 = nullptr;
+    eWidget *ww7 = nullptr;
     {
-         const std::vector<eSPR> p6spr = {eSPR{eBuildingMode::observatory, eLanguage::zeusText(28, 203)},
-                                          eSPR{eBuildingMode::university, eLanguage::zeusText(28, 204)}};
-         const auto p6 = [this, cmx, cmy, p6spr]() {
-             openBuildWidget(cmx, cmy, p6spr);
-         };
-         const auto g6 = [this]() {
-             setMode(eBuildingMode::bibliotheke);
-         };
-         const std::vector<eSPR> d6spr = {eSPR{eBuildingMode::laboratory, eLanguage::zeusText(28, 205)},
-                                          eSPR{eBuildingMode::inventorsWorkshop, eLanguage::zeusText(28, 206)}};
-         const auto d6 = [this, cmx, cmy, d6spr]() {
-             openBuildWidget(cmx, cmy, d6spr);
-         };
-         const auto s6 = [this]() {
-             setMode(eBuildingMode::museum);
-         };
-         mScienceDataW = new eScienceDataWidget(*mBoard, window());
-         const int cost13 = eDifficultyHelpers::buildingCost(
-                               diff, eBuildingType::bibliotheke);
-         const int cost14 = eDifficultyHelpers::buildingCost(
-                               diff, eBuildingType::museum);
-         const auto buttonsVec6 = eButtonsDataVec{
-                                 {eBuildingMode::bibliotheke,
-                                  eLanguage::zeusText(28, 202),
-                                  g6, cost13, 0, nullptr, &coll.fBibliotheke},
-                                 {eBuildingMode::none,
-                                  eLanguage::zeusText(28, 208),
-                                  p6, 0, 1, nullptr, &coll.fAstronomy, p6spr},
-                                 {eBuildingMode::none,
-                                  eLanguage::zeusText(28, 209),
-                                  d6, 0, 2, nullptr, &coll.fTechnology, d6spr},
-                                 {eBuildingMode::museum,
-                                  eLanguage::zeusText(28, 207),
-                                  s6, cost14, 3, nullptr, &coll.fMuseum}};
-         ww7 = createDataWidget(mScienceDataW, buttonsVec6,
-                                eLanguage::zeusText(88, 24));
+        const std::vector<eSPR> p6spr = {eSPR{eBuildingMode::observatory, eLanguage::zeusText(28, 203)},
+                                         eSPR{eBuildingMode::university, eLanguage::zeusText(28, 204)}};
+        const auto p6 = [this, cmx, cmy, p6spr]()
+        {
+            openBuildWidget(cmx, cmy, p6spr);
+        };
+        const auto g6 = [this]()
+        {
+            setMode(eBuildingMode::bibliotheke);
+        };
+        const std::vector<eSPR> d6spr = {eSPR{eBuildingMode::laboratory, eLanguage::zeusText(28, 205)},
+                                         eSPR{eBuildingMode::inventorsWorkshop, eLanguage::zeusText(28, 206)}};
+        const auto d6 = [this, cmx, cmy, d6spr]()
+        {
+            openBuildWidget(cmx, cmy, d6spr);
+        };
+        const auto s6 = [this]()
+        {
+            setMode(eBuildingMode::museum);
+        };
+        mScienceDataW = new eScienceDataWidget(*mBoard, window());
+        const int cost13 = eDifficultyHelpers::buildingCost(
+            diff, eBuildingType::bibliotheke);
+        const int cost14 = eDifficultyHelpers::buildingCost(
+            diff, eBuildingType::museum);
+        const auto buttonsVec6 = eButtonsDataVec{
+            {eBuildingMode::bibliotheke,
+             eLanguage::zeusText(28, 202),
+             g6, cost13, 0, nullptr, &coll.fBibliotheke},
+            {eBuildingMode::none,
+             eLanguage::zeusText(28, 208),
+             p6, 0, 1, nullptr, &coll.fAstronomy, p6spr},
+            {eBuildingMode::none,
+             eLanguage::zeusText(28, 209),
+             d6, 0, 2, nullptr, &coll.fTechnology, d6spr},
+            {eBuildingMode::museum,
+             eLanguage::zeusText(28, 207),
+             s6, cost14, 3, nullptr, &coll.fMuseum}};
+        ww7 = createDataWidget(mScienceDataW, buttonsVec6,
+                               eLanguage::zeusText(88, 24));
     }
     {
         const std::vector<eSPR> p6spr = {eSPR{eBuildingMode::podium, eLanguage::zeusText(28, 81)},
                                          eSPR{eBuildingMode::college, eLanguage::zeusText(28, 77)}};
-        const auto p6 = [this, cmx, cmy, p6spr]() {
+        const auto p6 = [this, cmx, cmy, p6spr]()
+        {
             openBuildWidget(cmx, cmy, p6spr);
         };
-        const auto g6 = [this]() {
+        const auto g6 = [this]()
+        {
             setMode(eBuildingMode::gymnasium);
         };
         const std::vector<eSPR> d6spr = {eSPR{eBuildingMode::theater, eLanguage::zeusText(28, 82)},
                                          eSPR{eBuildingMode::dramaSchool, eLanguage::zeusText(28, 78)}};
-        const auto d6 = [this, cmx, cmy, d6spr]() {
+        const auto d6 = [this, cmx, cmy, d6spr]()
+        {
             openBuildWidget(cmx, cmy, d6spr);
         };
-        const auto s6 = [this]() {
+        const auto s6 = [this]()
+        {
             setMode(eBuildingMode::stadium);
         };
 
         mCultureDataW = new eCultureDataWidget(*mBoard, window());
         const int cost13 = eDifficultyHelpers::buildingCost(
-                              diff, eBuildingType::gymnasium);
+            diff, eBuildingType::gymnasium);
         const int cost14 = eDifficultyHelpers::buildingCost(
-                              diff, eBuildingType::stadium);
+            diff, eBuildingType::stadium);
         const auto buttonsVec6 = eButtonsDataVec{
-                                {eBuildingMode::none,
-                                 eLanguage::zeusText(28, 137),
-                                 p6, 0, 0, &coll.fPhilosophy, nullptr, p6spr},
-                                {eBuildingMode::gymnasium,
-                                 eLanguage::zeusText(28, 79),
-                                 g6, cost13, 1, &coll.fGymnasium, nullptr},
-                                {eBuildingMode::none,
-                                 eLanguage::zeusText(28, 27),
-                                 d6, 0, 2, &coll.fDrama, nullptr, d6spr},
-                                {eBuildingMode::stadium,
-                                 eLanguage::zeusText(28, 80),
-                                 s6, cost14, 3, &coll.fStadium, nullptr}};
+            {eBuildingMode::none,
+             eLanguage::zeusText(28, 137),
+             p6, 0, 0, &coll.fPhilosophy, nullptr, p6spr},
+            {eBuildingMode::gymnasium,
+             eLanguage::zeusText(28, 79),
+             g6, cost13, 1, &coll.fGymnasium, nullptr},
+            {eBuildingMode::none,
+             eLanguage::zeusText(28, 27),
+             d6, 0, 2, &coll.fDrama, nullptr, d6spr},
+            {eBuildingMode::stadium,
+             eLanguage::zeusText(28, 80),
+             s6, cost14, 3, &coll.fStadium, nullptr}};
         ww6 = createDataWidget(mCultureDataW, buttonsVec6,
                                eLanguage::zeusText(88, 6));
     }
-
-
 
     const std::vector<eSPR> t7spr = {eSPR{eBuildingMode::templeZeus, eLanguage::zeusText(28, 84),
                                           eBuilding::sInitialMarbleCost(eBuildingType::templeZeus)},
@@ -731,7 +810,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                           eBuilding::sInitialMarbleCost(eBuildingType::templeHermes)},
                                      eSPR{eBuildingMode::templeDionysus, eLanguage::zeusText(28, 94),
                                           eBuilding::sInitialMarbleCost(eBuildingType::templeDionysus)}};
-    const auto t7 = [this, cmx, cmy, t7spr]() {
+    const auto t7 = [this, cmx, cmy, t7spr]()
+    {
         openBuildWidget(cmx, cmy, t7spr);
     };
 
@@ -743,49 +823,50 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::odysseusHall, eLanguage::zeusText(185, 11)},
                                       eSPR{eBuildingMode::perseusHall, eLanguage::zeusText(185, 12)},
                                       eSPR{eBuildingMode::theseusHall, eLanguage::zeusText(185, 13)}};
-    const auto hs7 = [this, cmx, cmy, hs7spr]() {
+    const auto hs7 = [this, cmx, cmy, hs7spr]()
+    {
         openBuildWidget(cmx, cmy, hs7spr);
     };
 
-
     mMythDataW = new eMythologyDataWidget(*b, window());
     const auto buttonsVec7 = eButtonsDataVec{
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 83),
-                             t7, 0, 0, &coll.fTemples,
-                             &coll.fPoseidonTemples,
-                             t7spr},
-                            {eBuildingMode::none,
-                             eLanguage::zeusText(28, 125),
-                             hs7, 0, 1, &coll.fHeroShrines,
-                             &coll.fPoseidonHeroShrines,
-                             hs7spr}};
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 83),
+         t7, 0, 0, &coll.fTemples,
+         &coll.fPoseidonTemples,
+         t7spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 125),
+         hs7, 0, 1, &coll.fHeroShrines,
+         &coll.fPoseidonHeroShrines,
+         hs7spr}};
     const auto ww8 = createDataWidget(mMythDataW, buttonsVec7,
                                       eLanguage::zeusText(88, 7));
-
 
     const std::vector<eSPR> f8spr = {eSPR{eBuildingMode::wall, eLanguage::zeusText(28, 130)},
                                      eSPR{eBuildingMode::tower, eLanguage::zeusText(28, 132)},
                                      eSPR{eBuildingMode::gatehouse, eLanguage::zeusText(28, 131)}};
-    const auto f8 = [this, cmx, cmy, f8spr]() {
+    const auto f8 = [this, cmx, cmy, f8spr]()
+    {
         openBuildWidget(cmx, cmy, f8spr);
     };
     const std::vector<eSPR> mp8spr = {eSPR{eBuildingMode::armory, eLanguage::zeusText(28, 135)},
                                       eSPR{eBuildingMode::horseRanch, eLanguage::zeusText(28, 133)},
                                       eSPR{eBuildingMode::chariotFactory, eLanguage::zeusText(28, 212)},
                                       eSPR{eBuildingMode::triremeWharf, eLanguage::zeusText(28, 136)}};
-    const auto mp8 = [this, cmx, cmy, mp8spr]() {
+    const auto mp8 = [this, cmx, cmy, mp8spr]()
+    {
         openBuildWidget(cmx, cmy, mp8spr);
     };
 
     mMiltDataW = new eMilitaryDataWidget(*b, window());
     const auto buttonsVec8 = eButtonsDataVec{
-                        {eBuildingMode::none,
-                         eLanguage::zeusText(28, 139),
-                         f8, 0, 0, &coll.fFortifications, nullptr, f8spr},
-                        {eBuildingMode::none,
-                         eLanguage::zeusText(28, 140),
-                         mp8, 0, 1, &coll.fMilitaryProduction, nullptr, mp8spr}};
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 139),
+         f8, 0, 0, &coll.fFortifications, nullptr, f8spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 140),
+         mp8, 0, 1, &coll.fMilitaryProduction, nullptr, mp8spr}};
     const auto ww9 = createDataWidget(mMiltDataW, buttonsVec8,
                                       eLanguage::zeusText(88, 8));
 
@@ -795,7 +876,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::ionicColumn, eLanguage::zeusText(28, 145)},
                                       eSPR{eBuildingMode::corinthianColumn, eLanguage::zeusText(28, 146)},
                                       eSPR{eBuildingMode::avenue, eLanguage::zeusText(28, 118)}};
-    const auto bb9 = [this, cmx, cmy, bb9spr]() {
+    const auto bb9 = [this, cmx, cmy, bb9spr]()
+    {
         openBuildWidget(cmx, cmy, bb9spr);
     };
     const std::vector<eSPR> r9spr = {eSPR{eBuildingMode::bench, eLanguage::zeusText(28, 127)},
@@ -814,7 +896,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                      eSPR{eBuildingMode::fishPond, eLanguage::zeusText(28, 18)},
                                      eSPR{eBuildingMode::baths, eLanguage::zeusText(28, 151)},
                                      eSPR{eBuildingMode::stoneCircle, eLanguage::zeusText(28, 23)}};
-    const auto r9 = [this, cmx, cmy, r9spr]() {
+    const auto r9 = [this, cmx, cmy, r9spr]()
+    {
         openBuildWidget(cmx, cmy, r9spr);
     };
     const std::vector<eSPR> m9spr = {eSPR{eBuildingMode::populationMonument, eLanguage::zeusText(198, 1)},
@@ -841,7 +924,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                      eSPR{eBuildingMode::hermesMonument, eLanguage::zeusText(198, 17)},
                                      eSPR{eBuildingMode::poseidonMonument, eLanguage::zeusText(198, 11)},
                                      eSPR{eBuildingMode::zeusMonument, eLanguage::zeusText(198, 10)}};
-    const auto m9 = [this, cmx, cmy, m9spr]() {
+    const auto m9 = [this, cmx, cmy, m9spr]()
+    {
         openBuildWidget(cmx, cmy, m9spr);
     };
 
@@ -904,32 +988,33 @@ void eGameMenu::initialize(eGameBoard* const b,
                                      eSPR{eBuildingMode::templeOfOlympus, eLanguage::zeusText(28, 112)},
                                      eSPR{eBuildingMode::observatoryKosmika, eLanguage::zeusText(28, 113)},
                                      eSPR{eBuildingMode::museumAtlantika, eLanguage::zeusText(28, 114)}};
-    const auto p9 = [this, cmx, cmy, p9spr]() {
+    const auto p9 = [this, cmx, cmy, p9spr]()
+    {
         openBuildWidget(cmx, cmy, p9spr);
     };
 
     mApplDataW = new eAppealDataWidget(*b, window());
     const auto buttonsVec = eButtonsDataVec{
-                    {eBuildingMode::none,
-                     eLanguage::zeusText(28, 142),
-                     bb9, 0, 0, &coll.fBeautification, nullptr, bb9spr},
-                    {eBuildingMode::none,
-                     eLanguage::zeusText(28, 141),
-                     r9, 0, 1, &coll.fRecreation, nullptr, r9spr},
-                    {eBuildingMode::none,
-                     eLanguage::zeusText(28, 157),
-                     m9, 0, 2, &coll.fMonuments, nullptr, m9spr},
-                    {eBuildingMode::none,
-                     eLanguage::zeusText(28, 157),
-                     p9, 0, 3, &coll.fPiramids,
-                     nullptr,
-                     p9spr}};
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 142),
+         bb9, 0, 0, &coll.fBeautification, nullptr, bb9spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 141),
+         r9, 0, 1, &coll.fRecreation, nullptr, r9spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 157),
+         m9, 0, 2, &coll.fMonuments, nullptr, m9spr},
+        {eBuildingMode::none,
+         eLanguage::zeusText(28, 157),
+         p9, 0, 3, &coll.fPiramids,
+         nullptr,
+         p9spr}};
     const auto ww10 = createDataWidget(mApplDataW, buttonsVec,
-                                      eLanguage::zeusText(88, 9));
+                                       eLanguage::zeusText(88, 9));
 
     mOverDataW = new eOverviewDataWidget(*b, window());
     mMiniMap = new eMiniMap(window());
-    mMiniMap->setTDim(1.25*mult);
+    mMiniMap->setTDim(1.25 * mult);
     mOverDataW->setMap(mMiniMap);
     mMiniMap->resize(dataWidWidth, dataWidWidth * 0.85);
 
@@ -941,17 +1026,18 @@ void eGameMenu::initialize(eGameBoard* const b,
     mWidgets.push_back({www3, mStrgDataW});
     mWidgets.push_back({ww4, mHySaDataW});
     mWidgets.push_back({ww5, mAdminDataW});
-    mWidgets.push_back({ww6, static_cast<eDataWidget*>(mCultureDataW)});
-    mWidgets.push_back({ww7, static_cast<eDataWidget*>(mScienceDataW)});
+    mWidgets.push_back({ww6, static_cast<eDataWidget *>(mCultureDataW)});
+    mWidgets.push_back({ww7, static_cast<eDataWidget *>(mScienceDataW)});
     mWidgets.push_back({ww8, mMythDataW});
     mWidgets.push_back({ww9, mMiltDataW});
     mWidgets.push_back({ww10, mApplDataW});
     mWidgets.push_back({ww11, mOverDataW});
 
-    for(const auto& ww : mWidgets) {
+    for (const auto &ww : mWidgets)
+    {
         const auto w = ww.fW;
         addWidget(w);
-        w->move(wx, 12*mult);
+        w->move(wx, 12 * mult);
         w->hide();
     }
 
@@ -979,13 +1065,12 @@ void eGameMenu::initialize(eGameBoard* const b,
     mOverviewButton = b10;
 
     const auto setupButtonHover =
-        [this](eCheckableButton* b0, const std::string& txt) {
-        b0->setMouseEnterAction([this, txt]() {
-            mNameLabel->setText(txt);
-        });
-        b0->setMouseLeaveAction([this]() {
-            mNameLabel->setText("");
-        });
+        [this](eCheckableButton *b0, const std::string &txt)
+    {
+        b0->setMouseEnterAction([this, txt]()
+                                { mNameLabel->setText(txt); });
+        b0->setMouseLeaveAction([this]()
+                                { mNameLabel->setText(""); });
     };
 
     setupButtonHover(b0, eLanguage::zeusText(88, 0));
@@ -1018,26 +1103,23 @@ void eGameMenu::initialize(eGameBoard* const b,
         btmButtons->setPadding(0);
 
         const auto b = eButton::sCreate(coll.fBuildRoad, window(), btmButtons);
-        b->setPressAction([this]() {
-            setMode(eBuildingMode::road);
-        });
+        b->setPressAction([this]()
+                          { setMode(eBuildingMode::road); });
         const auto rb = eButton::sCreate(coll.fRoadBlock, window(), btmButtons);
-        rb->setPressAction([this]() {
-            setMode(eBuildingMode::roadblock);
-        });
+        rb->setPressAction([this]()
+                           { setMode(eBuildingMode::roadblock); });
         const auto e = eButton::sCreate(coll.fClear, window(), btmButtons);
-        e->setPressAction([this]() {
-            setMode(eBuildingMode::erase);
-        });
+        e->setPressAction([this]()
+                          { setMode(eBuildingMode::erase); });
         mUndoButton = eButton::sCreate(coll.fUndo, window(), btmButtons);
-        mUndoButton->setPressAction([this]() {
+        mUndoButton->setPressAction([this]()
+                                    {
             mBoard->undoLastAction();
-            update();
-        });
+            update(); });
 
-        const int x = mult*24;
-        const int y = std::round(mult*217.5);
-        btmButtons->resize(4*b->width(), b->height());
+        const int x = mult * 24;
+        const int y = std::round(mult * 217.5);
+        btmButtons->resize(4 * b->width(), b->height());
         btmButtons->move(x, y);
         btmButtons->layoutHorizontally();
         addWidget(btmButtons);
@@ -1048,23 +1130,24 @@ void eGameMenu::initialize(eGameBoard* const b,
         const auto info = eCheckableButton::sCreate(coll.fShowInfo, window(), butts);
         const auto map = eCheckableButton::sCreate(coll.fShowMap, window(), butts);
         info->setChecked(true);
-        info->setCheckAction([info, map](const bool c) {
+        info->setCheckAction([info, map](const bool c)
+                             {
             if(!c) return info->setChecked(true);
-            map->setChecked(false);
-        });
-        map->setCheckAction([info, map](const bool c) {
+            map->setChecked(false); });
+        map->setCheckAction([info, map](const bool c)
+                            {
             if(!c) return map->setChecked(true);
-            info->setChecked(false);
-        });
+            info->setChecked(false); });
         butts->resize(info->width() + map->width(), info->height());
         butts->layoutHorizontally();
-        butts->setX(mult*26);
+        butts->setX(mult * 26);
         addWidget(butts);
     }
 
     {
         mMessagesButton = eButton::sCreate(coll.fMessages, window(), this);
-        mMessagesButton->setPressAction([this]() {
+        mMessagesButton->setPressAction([this]()
+                                        {
             if(mMsgListW) {
                 if(mMsgListW->visible()) {
                     mMsgListW->hide();
@@ -1075,9 +1158,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                     mMsgListW->align(eAlignment::center);
                     mMsgListW->show();
                 }
-            }
-        });
-        mMessagesButton->move(mult*73, mult*239);
+            } });
+        mMessagesButton->move(mult * 73, mult * 239);
 
         mMsgBadge = new eLabel(window());
         mMsgBadge->setFontSizeS();
@@ -1086,47 +1168,54 @@ void eGameMenu::initialize(eGameBoard* const b,
         addWidget(mMsgBadge);
     }
     {
-        class eBlueWidget : public eWidget {
+        class eBlueWidget : public eWidget
+        {
         public:
-            eBlueWidget(eMainWindow* const w) : eWidget(w) {}
-            void paintEvent(ePainter& p) override {
+            eBlueWidget(eMainWindow *const w) : eWidget(w) {}
+            void paintEvent(ePainter &p) override
+            {
                 p.fillRect({0, 0, width(), height()}, {11, 75, 110, 255});
             }
         };
         const auto butts = new eBlueWidget(window());
         butts->setPadding(0);
+        
         const auto goals = new eBasicButton(&eInterfaceTextures::fGoals, window());
         goals->setTooltip(eLanguage::zeusText(68, 9));
         butts->addWidget(goals);
         goals->setPressAction(goalsView);
+
         mRotateButton = new eRotateButton(window());
         butts->addWidget(mRotateButton);
+
         mWorldButton = eButton::sCreate(coll.fWorld, window(), butts);
         mWorldButton->setTooltip(eLanguage::zeusText(68, 17));
-        const int w = goals->width() + mRotateButton->width() + mWorldButton->width() + 10;
+
+        const int w = goals->width() + mRotateButton->width() + mWorldButton->width();
         butts->resize(w, mWorldButton->height());
-        butts->layoutHorizontally();
-        butts->setX(mult*5);
-        butts->setY(std::round(mult*282.5));
+        butts->layoutHorizontallyWithoutSpaces();
+        butts->setX(mult * 5.5);
+        butts->setY(std::round(mult * 282.5));
         addWidget(butts);
     }
 
     {
         mEventW = new eEventWidget(window());
         mEventW->setNoPadding();
-        mEventW->setX(mult*5);
-        mEventW->setY(mult*240);
+        mEventW->setX(mult * 5);
+        mEventW->setY(mult * 240);
         mEventW->setWidth(dataWidWidth);
         addWidget(mEventW);
     }
 
     mMiniMap->setBoard(b);
-   
+
     updateButtonsVisibility();
     update();
 }
 
-void eGameMenu::setGameWidget(eGameWidget* const gw) {
+void eGameMenu::setGameWidget(eGameWidget *const gw)
+{
     mGW = gw;
     mPopDataW->setGameWidget(gw);
     mHusbDataW->setGameWidget(gw);
@@ -1137,8 +1226,10 @@ void eGameMenu::setGameWidget(eGameWidget* const gw) {
     mMiltDataW->setGameWidget(gw);
     mMythDataW->setGameWidget(gw);
     mAdminDataW->setGameWidget(gw);
-    if(mCultureDataW) mCultureDataW->setGameWidget(gw);
-    if(mScienceDataW) mScienceDataW->setGameWidget(gw);
+    if (mCultureDataW)
+        mCultureDataW->setGameWidget(gw);
+    if (mScienceDataW)
+        mScienceDataW->setGameWidget(gw);
     mOverDataW->setGameWidget(gw);
 
     {
@@ -1146,13 +1237,13 @@ void eGameMenu::setGameWidget(eGameWidget* const gw) {
         const int mlwW = gw->width() / 3;
         const int mlwH = gw->height() / 2;
         mlw->resize(mlwW, mlwH);
-        mlw->initialize([gw](eEventData ed, const eMessage& msg) {
-            gw->showMessage(ed, msg, false, true, false);
-        }, [this]() {
-            if(!mMsgListWasPaused) mGW->pauseGame();
-        });
+        mlw->initialize([gw](eEventData ed, const eMessage &msg)
+                        { gw->showMessage(ed, msg, false, true, false); }, [this]()
+                        {
+            if(!mMsgListWasPaused) mGW->pauseGame(); });
         mlw->setVisible(false);
-        mlw->setUnreadChangedAction([this](const int n) {
+        mlw->setUnreadChangedAction([this](const int n)
+                                    {
             if(!mMsgBadge) return;
             if(n <= 0) {
                 mMsgBadge->setVisible(false);
@@ -1163,50 +1254,54 @@ void eGameMenu::setGameWidget(eGameWidget* const gw) {
             const int bx = mMessagesButton->x() + (mMessagesButton->width() - mMsgBadge->width()) / 2;
             const int by = mMessagesButton->y() + (mMessagesButton->height() - mMsgBadge->height()) / 2;
             mMsgBadge->move(bx, by - 2);
-            mMsgBadge->setVisible(true);
-        });
+            mMsgBadge->setVisible(true); });
         gw->addWidget(mlw);
         gw->setMessageListWidget(mlw);
         mMsgListW = mlw;
     }
 
-    mWorldButton->setPressAction([this]() {
-        window()->showWorld();
-    });
+    mWorldButton->setPressAction([this]()
+                                 { window()->showWorld(); });
 
-    mRotateButton->setDirectionSetter([gw](const eWorldDirection dir) {
-        gw->setWorldDirection(dir);
-    });
+    mRotateButton->setDirectionSetter([gw](const eWorldDirection dir)
+                                      { gw->setWorldDirection(dir); });
     updateButtonsVisibility();
 }
 
-eMiniMap* eGameMenu::miniMap() const {
+eMiniMap *eGameMenu::miniMap() const
+{
     return mMiniMap;
 }
 
-void eGameMenu::pushEvent(const eEvent e, const eEventData& ed) {
+void eGameMenu::pushEvent(const eEvent e, const eEventData &ed)
+{
     mEventW->pushEvent(e, ed);
 }
 
-void eGameMenu::setViewTileHandler(const eViewTileHandler& h) {
+void eGameMenu::setViewTileHandler(const eViewTileHandler &h)
+{
     mEventW->setViewTileHandler(h);
 }
 
-void eGameMenu::closeBuildWidget() {
-    if(!mBuildWidget) return;
+void eGameMenu::closeBuildWidget()
+{
+    if (!mBuildWidget)
+        return;
     mBuildWidget->deleteLater();
     mBuildWidget = nullptr;
 }
 
-void eGameMenu::setBuildWidget(eBuildWidget* const bw) {
+void eGameMenu::setBuildWidget(eBuildWidget *const bw)
+{
     closeBuildWidget();
     mBuildWidget = bw;
 }
 
-void eGameMenu::updateButtonsVisibility() {
-    const auto cid = mGW ? mGW->viewedCity() :
-                           eCityId::neutralFriendly;
-    for(const auto s : mSubButtons) {
+void eGameMenu::updateButtonsVisibility()
+{
+    const auto cid = mGW ? mGW->viewedCity() : eCityId::neutralFriendly;
+    for (const auto s : mSubButtons)
+    {
         s->updateVisible(cid, mShowAllPossibleBuildings);
     }
     const auto c = mBoard->boardCityWithId(cid);
@@ -1231,14 +1326,18 @@ void eGameMenu::updateButtonsVisibility() {
 
     mScienceButton->setVisible(science);
     mCultureButton->setVisible(!science);
-    if(science && mCultureButton->checked()) {
+    if (science && mCultureButton->checked())
+    {
         mScienceButton->trigger();
-    } else if(!science && mScienceButton->checked()) {
+    }
+    else if (!science && mScienceButton->checked())
+    {
         mCultureButton->trigger();
     }
 }
 
-void eGameMenu::viewedCityChanged() {
+void eGameMenu::viewedCityChanged()
+{
     mPopDataW->update();
     mHusbDataW->update();
     mEmplDataW->update();
@@ -1248,20 +1347,25 @@ void eGameMenu::viewedCityChanged() {
     mMiltDataW->update();
     mMythDataW->update();
     mAdminDataW->update();
-    if(mCultureDataW) mCultureDataW->update();
-    if(mScienceDataW) mScienceDataW->update();
+    if (mCultureDataW)
+        mCultureDataW->update();
+    if (mScienceDataW)
+        mScienceDataW->update();
     mOverDataW->update();
     updateButtonsVisibility();
     setMode(eBuildingMode::none);
 }
 
-void eGameMenu::setMode(const eBuildingMode mode) {
+void eGameMenu::setMode(const eBuildingMode mode)
+{
     closeBuildWidget();
     mMode = mode;
-    if(mModeChangeAct) mModeChangeAct();
+    if (mModeChangeAct)
+        mModeChangeAct();
 }
 
-bool eGameMenu::mousePressEvent(const eMouseEvent& e) {
+bool eGameMenu::mousePressEvent(const eMouseEvent &e)
+{
     closeBuildWidget();
     return eGameMenuBase::mouseEnterEvent(e);
 }
