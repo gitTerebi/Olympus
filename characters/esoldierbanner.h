@@ -11,6 +11,7 @@
 class eSoldier;
 class eGameBoard;
 class eTile;
+class eSaveArchive;
 enum class eCharacterType;
 
 enum class eBannerType {
@@ -82,6 +83,9 @@ public:
     void incCount();
     void decCount();
 
+    int facing() const { return mFacing; }
+    void setFacing(int facing) { mFacing = facing; }
+
     bool stationary() const;
     bool fighting() const;
 
@@ -116,6 +120,7 @@ private:
     void updateCount();
     void callSoldier(eSoldier* const s);
     void purgeDead();
+    void serialize(eSaveArchive& ar);
 
     const eBannerType mType;
     const int mId;
@@ -135,6 +140,7 @@ private:
     eTile* mTile = nullptr;
 
     int mCount = 0;
+    int mFacing = 0; // degrees, 0 = north, 90 = east, etc.
 
     eCityId mCityId = eCityId::neutralFriendly;
     eCityId mOnCityId = eCityId::neutralFriendly;

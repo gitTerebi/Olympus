@@ -5,6 +5,8 @@
 
 #include "elimits.h"
 
+class eSaveArchive;
+
 class eWaitAction : public eCharacterAction {
 public:
     eWaitAction(eCharacter* const c);
@@ -16,6 +18,7 @@ public:
 
     void setTime(const int t);
 private:
+    void serialize(eSaveArchive& ar);
     int mRemTime{__INT_MAX__};
 };
 

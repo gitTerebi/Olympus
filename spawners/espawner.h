@@ -3,6 +3,8 @@
 
 #include "ebanner.h"
 
+class eSaveArchive;
+
 class eSpawner : public eBanner {
 public:
     eSpawner(const eBannerTypeS type,
@@ -28,6 +30,7 @@ public:
 
     void setSpawnPeriod(const int p);
 private:
+    void serialize(eSaveArchive& ar);
     const int mMaxCount;
     int mSpawnPeriod = 100;
 

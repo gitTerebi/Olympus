@@ -3,6 +3,8 @@
 
 #include "missiles/emissile.h"
 
+class eSaveArchive;
+
 class eRacingHorse : public eMissile {
 public:
     eRacingHorse(eGameBoard& board, const int id,
@@ -15,6 +17,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mId;
 };
 

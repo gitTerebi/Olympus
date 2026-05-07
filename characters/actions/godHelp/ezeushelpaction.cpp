@@ -1,4 +1,5 @@
 #include "ezeushelpaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "../ewaitaction.h"
 #include "einvasionhandler.h"
@@ -31,12 +32,18 @@ bool eZeusHelpAction::decide() {
 
 void eZeusHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eZeusHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
+    eSaveArchive ar(dst);
+    const_cast<eZeusHelpAction*>(this)->serialize(ar);
+}
+
+void eZeusHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
 }
 
 bool eZeusHelpAction::sHelpNeeded(const eCityId cid,

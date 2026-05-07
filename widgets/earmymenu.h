@@ -7,6 +7,7 @@ class eMiniMap;
 class eGameBoard;
 class eBasicButton;
 class eGameWidget;
+class eSoldierBanner;
 
 class eArmyMenu : public eLabel {
 public:
@@ -18,6 +19,8 @@ public:
     eMiniMap* miniMap() const { return mMiniMap; }
     void setSoldiersHome(const bool h);
 private:
+    std::vector<eSoldierBanner*> selectedPlayerBanners() const;
+
     eGameBoard* mBoard = nullptr;
     eMiniMap* mMiniMap = nullptr;
     eBasicButton* mGoToBanner = nullptr;

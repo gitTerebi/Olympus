@@ -1,4 +1,5 @@
 #include "egodtraderesumesevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
@@ -34,10 +35,16 @@ std::string eGodTradeResumesEvent::longName() const {
 
 void eGodTradeResumesEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst << mGod;
+    eSaveArchive ar(dst);
+    const_cast<eGodTradeResumesEvent*>(this)->serialize(ar);
+}
+
+void eGodTradeResumesEvent::serialize(eSaveArchive& ar) {
+    ar.value(mGod);
 }
 
 void eGodTradeResumesEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    src >> mGod;
+    eSaveArchive ar(src);
+    serialize(ar);
 }

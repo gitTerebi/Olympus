@@ -6,6 +6,8 @@
 #include "engine/eworldcity.h"
 #include "ewalkablehelpers.h"
 
+class eSaveArchive;
+
 enum class eTradePostType {
     post, pier
 };
@@ -56,6 +58,7 @@ public:
 
     bool trades() const;
 private:
+    void serialize(eSaveArchive& ar);
     eTile* entryPoint() const;
 
     eWorldCity& mCity;

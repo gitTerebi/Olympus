@@ -1,4 +1,5 @@
 #include "espawner.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 
@@ -18,14 +19,19 @@ eSpawner::~eSpawner() {
 
 void eSpawner::read(eReadStream& src) {
     eBanner::read(src);
-    src >> mCount;
-    src >> mTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSpawner::write(eWriteStream& dst) const {
     eBanner::write(dst);
-    dst << mCount;
-    dst << mTime;
+    eSaveArchive ar(dst);
+    const_cast<eSpawner*>(this)->serialize(ar);
+}
+
+void eSpawner::serialize(eSaveArchive& ar) {
+    ar.value(mCount);
+    ar.value(mTime);
 }
 
 void eSpawner::incTime(const int by) {

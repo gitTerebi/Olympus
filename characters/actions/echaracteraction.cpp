@@ -2,6 +2,7 @@
 
 #include "engine/egameboard.h"
 #include "characters/echaracter.h"
+#include "fileIO/esavearchive.h"
 
 eCharacterAction::eCharacterAction(
         eCharacter* const c, const eCharActionType type) :
@@ -50,22 +51,28 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
     mDeleteFailAction = d;
 }
 
+void eCharacterAction::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
+
+    ar.value(mState);
+
+    if(ar.reading()) {
+        mFinishAction = ar.readStream().readCharActFunc(board());
+        mFailAction = ar.readStream().readCharActFunc(board());
+        mDeleteFailAction = ar.readStream().readCharActFunc(board());
+    } else {
+        ar.writeStream().writeCharActFunc(mFinishAction.get());
+        ar.writeStream().writeCharActFunc(mFailAction.get());
+        ar.writeStream().writeCharActFunc(mDeleteFailAction.get());
+    }
+}
+
 void eCharacterAction::read(eReadStream& src) {
-    src >> mIOID;
-
-    src >> mState;
-
-    mFinishAction = src.readCharActFunc(board());
-    mFailAction = src.readCharActFunc(board());
-    mDeleteFailAction = src.readCharActFunc(board());
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCharacterAction::write(eWriteStream& dst) const {
-    dst << mIOID;
-
-    dst << mState;
-
-    dst.writeCharActFunc(mFinishAction.get());
-    dst.writeCharActFunc(mFailAction.get());
-    dst.writeCharActFunc(mDeleteFailAction.get());
+    eSaveArchive ar(dst);
+    const_cast<eCharacterAction*>(this)->serialize(ar);
 }

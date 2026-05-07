@@ -8,9 +8,11 @@
 class eWriteStream;
 class eReadStream;
 
+class eSaveArchive;
 class eGodEventValue {
 public:
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
 
     void setGod(const eGodType god) { mGod = god; }

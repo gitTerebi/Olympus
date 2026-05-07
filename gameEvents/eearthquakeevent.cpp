@@ -1,4 +1,5 @@
 #include "eearthquakeevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
@@ -42,6 +43,12 @@ void eEarthquakeEvent::write(eWriteStream& dst) const {
     eCountEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eEarthquakeEvent*>(this)->serialize(ar);
+}
+
+void eEarthquakeEvent::serialize(eSaveArchive& ar) {
+
 }
 
 void eEarthquakeEvent::read(eReadStream& src) {
@@ -50,4 +57,6 @@ void eEarthquakeEvent::read(eReadStream& src) {
     eCountEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }

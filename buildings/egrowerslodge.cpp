@@ -4,6 +4,7 @@
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/egroweraction.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 #include <algorithm>
@@ -237,40 +238,44 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
+void eGrowersLodge::serialize(eSaveArchive& ar) {
+    ar.value(mNoTarget);
+    ar.value(mSpawnEnabled);
+    ar.value(mGrapes);
+    ar.value(mOlives);
+    ar.value(mOranges);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
+    ar.value(mSpawnTime);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mGrower = static_cast<eGrower*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mGrower);
+    }
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        ar.value(mProducedThisYear);
+        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
+        ar.value(mRingIdx);
+    }
+}
+
 void eGrowersLodge::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    src >> mNoTarget;
-    src >> mSpawnEnabled;
-    src >> mGrapes;
-    src >> mOlives;
-    src >> mOranges;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
-    src >> mSpawnTime;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mGrower = static_cast<eGrower*>(c);
-    });
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mProducedThisYear;
-        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
-        src >> mRingIdx;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGrowersLodge::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    dst << mNoTarget;
-    dst << mSpawnEnabled;
-    dst << mGrapes;
-    dst << mOlives;
-    dst << mOranges;
-    dst.writeCharacter(mCart);
-    dst << mSpawnTime;
-    dst.writeCharacter(mGrower);
-    dst << mProducedThisYear;
-    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
-    dst << mRingIdx;
+    eSaveArchive ar(dst);
+    const_cast<eGrowersLodge*>(this)->serialize(ar);
 }
 
 bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {

@@ -1,4 +1,5 @@
 #include "eheroaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/monsters/emonster.h"
 #include "characters/heroes/ehero.h"
@@ -69,18 +70,21 @@ void eHeroAction::increment(const int by) {
 
 void eHeroAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src >> mStage;
-    src >> mLookForMonster;
-    src >> mLookForCityDefense;
-    src >> mQuestWaiting;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHeroAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mStage;
-    dst << mLookForMonster;
-    dst << mLookForCityDefense;
-    dst << mQuestWaiting;
+    eSaveArchive ar(dst);
+    const_cast<eHeroAction*>(this)->serialize(ar);
+}
+
+void eHeroAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.value(mLookForMonster);
+    ar.value(mLookForCityDefense);
+    ar.value(mQuestWaiting);
 }
 
 void eHeroAction::lookForMonster() {

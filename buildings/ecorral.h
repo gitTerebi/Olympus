@@ -3,6 +3,8 @@
 
 #include "eresourcebuildingbase.h"
 
+class eSaveArchive;
+
 class eCorral : public eResourceBuildingBase {
 public:
     eCorral(eGameBoard& board, const eCityId cid);
@@ -20,6 +22,7 @@ public:
     bool noCattle() const { return mNoCattle; }
     void setNoCattle(const bool c);
 private:
+    void serialize(eSaveArchive& ar);
     bool killCattle();
 
     bool takeCattle();

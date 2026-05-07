@@ -3,6 +3,8 @@
 
 #include "egodquesteventbase.h"
 
+class eSaveArchive;
+
 class eGodQuestEvent : public eGodQuestEventBase {
 public:
     eGodQuestEvent(const eCityId cid,
@@ -22,6 +24,7 @@ public:
 
     eEventTrigger& fulfilledTrigger() { return *mFulfilledTrigger; }
 private:
+    void serialize(eSaveArchive& ar);
     stdsptr<eEventTrigger> mFulfilledTrigger;
     bool mFulfilled = false;
 };

@@ -1,4 +1,5 @@
 #include "elavaevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -48,6 +49,12 @@ void eLavaEvent::write(eWriteStream& dst) const {
     ePointEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eLavaEvent*>(this)->serialize(ar);
+}
+
+void eLavaEvent::serialize(eSaveArchive& ar) {
+
 }
 
 void eLavaEvent::read(eReadStream& src) {
@@ -55,6 +62,8 @@ void eLavaEvent::read(eReadStream& src) {
     ePointEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eLavaEvent::loadResources() const {

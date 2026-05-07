@@ -1,6 +1,7 @@
 #include "eruins.h"
 
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 eRuins::eRuins(eGameBoard& board, const eCityId cid) :
@@ -30,28 +31,40 @@ static void readByteVec(eReadStream& src, std::vector<uint8_t>& v) {
     }
 }
 
+static void byteVec(eSaveArchive& ar, std::vector<uint8_t>& v) {
+    if(ar.reading()) {
+        readByteVec(ar.readStream(), v);
+    } else {
+        writeByteVec(ar.writeStream(), v);
+    }
+}
+
+void eRuins::serialize(eSaveArchive& ar) {
+    ar.value(mWasType);
+    if(ar.versionAtLeast(eFileFormat::ruinsOrigin)) {
+        ar.value(mOriginX);
+        ar.value(mOriginY);
+        ar.value(mOriginW);
+        ar.value(mOriginH);
+    }
+    if(ar.versionAtLeast(eFileFormat::ruinsSavedBuilding)) {
+        byteVec(ar, mSavedBuilding);
+        byteVec(ar, mSavedPier);
+        ar.value(mSavedPierRect);
+    }
+    if(ar.versionAtLeast(eFileFormat::ruinsRestoreBundle)) {
+        byteVec(ar, mRestoreBundle);
+    }
+}
+
 void eRuins::read(eReadStream& src) {
     eBuilding::read(src);
-    src >> mWasType;
-    if(src.formatVersion() >= eFileFormat::ruinsOrigin) {
-        src >> mOriginX >> mOriginY >> mOriginW >> mOriginH;
-    }
-    if(src.formatVersion() >= eFileFormat::ruinsSavedBuilding) {
-        readByteVec(src, mSavedBuilding);
-        readByteVec(src, mSavedPier);
-        src >> mSavedPierRect;
-    }
-    if(src.formatVersion() >= eFileFormat::ruinsRestoreBundle) {
-        readByteVec(src, mRestoreBundle);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eRuins::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst << mWasType;
-    dst << mOriginX << mOriginY << mOriginW << mOriginH;
-    writeByteVec(dst, mSavedBuilding);
-    writeByteVec(dst, mSavedPier);
-    dst << mSavedPierRect;
-    writeByteVec(dst, mRestoreBundle);
+    eSaveArchive ar(dst);
+    const_cast<eRuins*>(this)->serialize(ar);
 }

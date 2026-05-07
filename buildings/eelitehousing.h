@@ -3,6 +3,8 @@
 
 #include "ehousebase.h"
 
+class eSaveArchive;
+
 class eEliteHousing : public eHouseBase {
 public:
     eEliteHousing(eGameBoard& board, const eCityId cid);
@@ -56,6 +58,7 @@ public:
 
     static std::string sName(const int level);
 private:
+    void serialize(eSaveArchive& ar);
     const eTextureCollection& getTextureCollection(
             const eTileSize size) const;
 

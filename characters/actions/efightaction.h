@@ -4,6 +4,8 @@
 #include "echaracteraction.h"
 #include "characters/echaracter.h"
 
+class eSaveArchive;
+
 class eFightAction : public eCharacterAction {
 public:
     eFightAction(eCharacter* const c,
@@ -14,6 +16,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eCharacter> mOpponent;
 
     int mTime = 0;

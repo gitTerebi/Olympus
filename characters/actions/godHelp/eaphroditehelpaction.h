@@ -5,6 +5,8 @@
 
 #include "buildings/ehousebase.h"
 
+class eSaveArchive;
+
 enum class eAphroditeHelpStage {
     none, appear, goTo, populate, disappear
 };
@@ -21,6 +23,7 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
 private:
+    void serialize(eSaveArchive& ar);
     eHouseBase* nearestHouseWithVacancies();
 
     void goToTarget();

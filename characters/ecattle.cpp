@@ -6,6 +6,7 @@
 #include "enumbers.h"
 #include "buildings/eanimalbuilding.h"
 #include "actions/eanimalaction.h"
+#include "fileIO/esavearchive.h"
 
 int eCattle::sId = 0;
 
@@ -96,16 +97,20 @@ void eCattle::incTime(const int by) {
 
 void eCattle::read(eReadStream& src) {
     eCharacter::read(src);
-    src >> mId;
-    src >> mMatureWait;
-    src >> sId;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCattle::write(eWriteStream& dst) const {
     eCharacter::write(dst);
-    dst << mId;
-    dst << mMatureWait;
-    dst << sId;
+    eSaveArchive ar(dst);
+    const_cast<eCattle*>(this)->serialize(ar);
+}
+
+void eCattle::serialize(eSaveArchive& ar) {
+    ar.value(mId);
+    ar.value(mMatureWait);
+    ar.value(sId);
 }
 
 bool eCattle::shouldBecomeBull() const {

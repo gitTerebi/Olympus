@@ -4,6 +4,8 @@
 #include "echaracter.h"
 #include "ecarttransporter.h"
 
+class eSaveArchive;
+
 class eTrailer : public eCharacter {
 public:
     eTrailer(eGameBoard& board);
@@ -18,6 +20,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eCartTransporter> mFollow;
 
     bool mIsBig = false;

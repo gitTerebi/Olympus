@@ -1,4 +1,5 @@
 #include "eplayerraidevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
@@ -84,10 +85,16 @@ std::string ePlayerRaidEvent::longName() const {
 
 void ePlayerRaidEvent::write(eWriteStream& dst) const {
     ePlayerConquestEventBase::write(dst);
-    dst << mResource;
+    eSaveArchive ar(dst);
+    const_cast<ePlayerRaidEvent*>(this)->serialize(ar);
+}
+
+void ePlayerRaidEvent::serialize(eSaveArchive& ar) {
+    ar.value(mResource);
 }
 
 void ePlayerRaidEvent::read(eReadStream& src) {
     ePlayerConquestEventBase::read(src);
-    src >> mResource;
+    eSaveArchive ar(src);
+    serialize(ar);
 }

@@ -3,6 +3,8 @@
 
 #include "eplayerconquesteventbase.h"
 
+class eSaveArchive;
+
 class ePlayerRaidEvent : public ePlayerConquestEventBase {
 public:
     ePlayerRaidEvent(const eCityId cid,
@@ -19,6 +21,7 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
     eResourceType mResource;
 };
 

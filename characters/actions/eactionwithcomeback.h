@@ -9,6 +9,7 @@
 #include <SDL2/SDL_rect.h>
 
 class eBuilding;
+class eSaveArchive;
 
 using eWalkable = std::function<bool(eTileBase*)>;
 
@@ -40,6 +41,8 @@ public:
 
     eTile* startTile() const { return mStartTile; }
 private:
+    void serialize(eSaveArchive& ar);
+
     void goBackInternal(stdsptr<eWalkableObject> walkable);
     void teleportDecision();
 

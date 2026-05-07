@@ -1,4 +1,5 @@
 #include "edate.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -169,15 +170,19 @@ int eDate::operator-(const eDate& d) const {
 }
 
 void eDate::write(eWriteStream& dst) const {
-    dst << mDay;
-    dst << mMonth;
-    dst << mYear;
+    eSaveArchive ar(dst);
+    const_cast<eDate*>(this)->serialize(ar);
+}
+
+void eDate::serialize(eSaveArchive& ar) {
+    ar.value(mDay);
+    ar.value(mMonth);
+    ar.value(mYear);
 }
 
 void eDate::read(eReadStream& src) {
-    src >> mDay;
-    src >> mMonth;
-    src >> mYear;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 std::string eMonthHelper::name(const eMonth m) {

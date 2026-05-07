@@ -7,6 +7,7 @@
 #include "characters/egrower.h"
 
 class eCartTransporter;
+class eSaveArchive;
 
 class eGrowersLodge : public eEmployingBuilding {
 public:
@@ -43,6 +44,8 @@ public:
     void setNoTarget(const bool t);
     bool noTarget() const { return mNoTarget; }
 private:
+    void serialize(eSaveArchive& ar);
+
     const int mMaxResource = 8;
 
     const eGrowerType mType;

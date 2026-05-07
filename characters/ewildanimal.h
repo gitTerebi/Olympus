@@ -6,6 +6,7 @@
 #include "textures/echaractertextures.h"
 
 class eSpawner;
+class eSaveArchive;
 
 class eWildAnimal : public eAnimal {
 public:
@@ -20,6 +21,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eSpawner* mSpawner = nullptr;
 };
 

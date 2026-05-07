@@ -3,6 +3,8 @@
 
 #include "echaracter.h"
 
+class eSaveArchive;
+
 class eCattle : public eCharacter {
 public:
     eCattle(eGameBoard& board, const eCharacterType type);
@@ -15,6 +17,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mature();
     bool shouldBecomeBull() const;
     eTile* getSpawnerTile() const;

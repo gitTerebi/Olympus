@@ -1,4 +1,5 @@
 #include "ewagechangeevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
@@ -15,11 +16,19 @@ eWageChangeEvent::eWageChangeEvent(
 void eWageChangeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     eCountEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eWageChangeEvent*>(this)->serialize(ar);
+}
+
+void eWageChangeEvent::serialize(eSaveArchive& ar) {
+
 }
 
 void eWageChangeEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     eCountEventValue::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eWageChangeEvent::trigger() {

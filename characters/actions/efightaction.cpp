@@ -6,6 +6,7 @@
 #include "characters/efightingpatroler.h"
 #include "characters/eresourcecollector.h"
 #include "characters/eanimal.h"
+#include "fileIO/esavearchive.h"
 
 eFightAction::eFightAction(eCharacter* const c, eCharacter* const o) :
     eCharacterAction(c, eCharActionType::fightAction),
@@ -24,14 +25,23 @@ void eFightAction::increment(const int by) {
 
 void eFightAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mOpponent = c;
-    });
-    src >> mTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFightAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst.writeCharacter(mOpponent);
-    dst << mTime;
+    eSaveArchive ar(dst);
+    const_cast<eFightAction*>(this)->serialize(ar);
+}
+
+void eFightAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mOpponent = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mOpponent);
+    }
+    ar.value(mTime);
 }

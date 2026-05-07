@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
@@ -73,26 +74,32 @@ void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int
     mMonthlyProduced[mRingIdx] += c;
 }
 
+void eShepherBuildingBase::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mShepherd = static_cast<eResourceCollectorBase*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mShepherd.get());
+    }
+    ar.value(mSpawnTime);
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        ar.value(mProducedThisYear);
+        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
+        ar.value(mRingIdx);
+    }
+}
+
 void eShepherBuildingBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mShepherd = static_cast<eResourceCollectorBase*>(c);
-    });
-    src >> mSpawnTime;
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mProducedThisYear;
-        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
-        src >> mRingIdx;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eShepherBuildingBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-    dst.writeCharacter(mShepherd.get());
-    dst << mSpawnTime;
-    dst << mProducedThisYear;
-    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
-    dst << mRingIdx;
+    eSaveArchive ar(dst);
+    const_cast<eShepherBuildingBase*>(this)->serialize(ar);
 }
 
 bool eShepherBuildingBase::spawn() {

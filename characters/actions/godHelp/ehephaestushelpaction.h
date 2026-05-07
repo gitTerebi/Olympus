@@ -3,6 +3,8 @@
 
 #include "characters/actions/egodaction.h"
 
+class eSaveArchive;
+
 enum class eHephaestusHelpStage {
     none, appear, provide, disappear
 };
@@ -19,6 +21,7 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
 private:
+    void serialize(eSaveArchive& ar);
     void provide();
 
     eHephaestusHelpStage mStage{eHephaestusHelpStage::none};

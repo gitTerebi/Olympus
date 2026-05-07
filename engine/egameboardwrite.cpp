@@ -2,6 +2,7 @@
 
 #include "spawners/ebanner.h"
 #include "fileIO/ebuildingwriter.h"
+#include "fileIO/esavearchive.h"
 #include "einvasionhandler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
@@ -166,13 +167,6 @@ void eGameBoard::write(eWriteStream& dst) const {
         a->write(dst);
     }
 
-    dst << mYearlyProduction.size();
-    for(const auto& p : mYearlyProduction) {
-        dst << p.first;
-        dst << p.second.fBest;
-        dst << p.second.fLastYear;
-        dst << p.second.fThisYear;
-    }
-
-    dst << mSavedYear;
+    eSaveArchive ar(dst);
+    const_cast<eGameBoard*>(this)->serializeYearlyProduction(ar);
 }

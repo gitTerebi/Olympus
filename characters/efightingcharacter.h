@@ -3,6 +3,7 @@
 
 class eReadStream;
 class eWriteStream;
+class eSaveArchive;
 
 class eCharacter;
 class eFightingAction;
@@ -19,6 +20,8 @@ public:
     int range() const { return mRange; }
     void setRange(const int r) { mRange = r; }
 private:
+    void serialize(eSaveArchive& ar);
+
     eCharacter* const mChar;
 
     int mRange = 0;

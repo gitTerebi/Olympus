@@ -33,6 +33,8 @@
 
 #include "engine/egodquest.h"
 #include "ecityrequest.h"
+
+class eSaveArchive;
 #include "gameEvents/egodquestevent.h"
 #include "eepisodegoal.h"
 #include "eemploymentdistributor.h"
@@ -770,6 +772,8 @@ public:
                             const int tx, const int ty,
                             const int sw, const int sh);
 private:
+    void serializeYearlyProduction(eSaveArchive& ar);
+
     void updateNeighbours();
 
     void addSoldier(const eCharacterType st, const eCityId cid);

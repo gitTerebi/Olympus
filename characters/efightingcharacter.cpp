@@ -1,6 +1,7 @@
 #include "efightingcharacter.h"
 
 #include "actions/efightingaction.h"
+#include "fileIO/esavearchive.h"
 
 eFightingCharacter::eFightingCharacter(eCharacter * const c) :
     mChar(c) {}
@@ -11,9 +12,15 @@ eFightingAction* eFightingCharacter::fightingAction() const {
 }
 
 void eFightingCharacter::read(eReadStream& src) {
-    src >> mRange;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFightingCharacter::write(eWriteStream& dst) const {
-    dst << mRange;
+    eSaveArchive ar(dst);
+    const_cast<eFightingCharacter*>(this)->serialize(ar);
+}
+
+void eFightingCharacter::serialize(eSaveArchive& ar) {
+    ar.value(mRange);
 }

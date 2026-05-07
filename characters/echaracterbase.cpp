@@ -1,5 +1,7 @@
 #include "echaracterbase.h"
 
+#include "fileIO/esavearchive.h"
+
 #include "actions/edieaction.h"
 
 #include "gods/egod.h"
@@ -80,24 +82,23 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
     mActionType = t;
 }
 
+void eCharacterBase::serialize(eSaveArchive& ar) {
+    ar.value(mActionType);
+    ar.value(mCityId);
+    ar.value(mOnCityId);
+    ar.value(mBusy);
+    ar.value(mHP);
+    ar.value(mAttack);
+    ar.value(mSpeed);
+    ar.value(mAtlantean);
+}
+
 void eCharacterBase::read(eReadStream& src) {
-    src >> mActionType;
-    src >> mCityId;
-    src >> mOnCityId;
-    src >> mBusy;
-    src >> mHP;
-    src >> mAttack;
-    src >> mSpeed;
-    src >> mAtlantean;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCharacterBase::write(eWriteStream& dst) const {
-    dst << mActionType;
-    dst << mCityId;
-    dst << mOnCityId;
-    dst << mBusy;
-    dst << mHP;
-    dst << mAttack;
-    dst << mSpeed;
-    dst << mAtlantean;
+    eSaveArchive ar(dst);
+    const_cast<eCharacterBase*>(this)->serialize(ar);
 }

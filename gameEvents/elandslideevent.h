@@ -4,6 +4,8 @@
 #include "egameevent.h"
 #include "epointeventvalue.h"
 
+class eSaveArchive;
+
 class eLandSlideEvent : public eGameEvent,
                         public ePointEventValue {
 public:
@@ -18,6 +20,8 @@ public:
     void read(eReadStream& src) override;
 
     void loadResources() const override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // ELANDSLIDEEVENT_H

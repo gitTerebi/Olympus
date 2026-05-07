@@ -5,6 +5,7 @@ class eGameBoard;
 class eReadStream;
 class eWriteStream;
 class eTile;
+class eSaveArchive;
 enum class eCityId;
 
 enum class eBannerTypeS {
@@ -53,6 +54,7 @@ public:
                             eGameBoard& board,
                             const eBannerTypeS type);
 private:
+    void serialize(eSaveArchive& ar);
     const eBannerTypeS mType;
     const int mId;
     eTile* const mTile;

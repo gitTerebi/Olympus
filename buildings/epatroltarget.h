@@ -3,6 +3,8 @@
 
 #include "epatrolbuilding.h"
 
+class eSaveArchive;
+
 class ePatrolTarget : public ePatrolBuilding {
 public:
     ePatrolTarget(eGameBoard& board,
@@ -25,6 +27,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     const eCharGenerator mCharGen;
 
     int mAvailable = -1;

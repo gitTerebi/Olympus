@@ -3,6 +3,8 @@
 
 #include "edefendattackcityaction.h"
 
+class eSaveArchive;
+
 class eAttackCityAction : public eDefendAttackCityAction {
 public:
     eAttackCityAction(eCharacter* const c);
@@ -15,6 +17,7 @@ public:
 
     void invasionFinished();
 private:
+    void serialize(eSaveArchive& ar);
     bool goToNearestSoldier();
 
     int mLookForGod = eRand::rand() % 2000;

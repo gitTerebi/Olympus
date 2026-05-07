@@ -8,6 +8,7 @@
 #include "gameEvents/ereceiverequestevent.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 #include <fstream>
@@ -16,6 +17,39 @@ static void loadDebugLogBoard(const std::string& msg) {
     std::ofstream log("load-debug.log", std::ios::app);
     log << msg << '\n';
     log.flush();
+}
+
+void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
+    if(!ar.versionAtLeast(eFileFormat::cartTarget)) return;
+
+    if(ar.reading()) {
+        int np;
+        ar.value(np);
+        loadDebugLogBoard("eGameBoard::read yearlyProduction count=" +
+                          std::to_string(np));
+        for(int i = 0; i < np; i++) {
+            eResourceType type;
+            ar.value(type);
+            auto& y = mYearlyProduction[type];
+            ar.value(y.fBest);
+            ar.value(y.fLastYear);
+            ar.value(y.fThisYear);
+        }
+        ar.value(mSavedYear);
+        loadDebugLogBoard("eGameBoard::read savedYear=" +
+                          std::to_string(mSavedYear));
+    } else {
+        int np = static_cast<int>(mYearlyProduction.size());
+        ar.value(np);
+        for(auto& p : mYearlyProduction) {
+            eResourceType type = p.first;
+            ar.value(type);
+            ar.value(p.second.fBest);
+            ar.value(p.second.fLastYear);
+            ar.value(p.second.fThisYear);
+        }
+        ar.value(mSavedYear);
+    }
 }
 
 void eGameBoard::read(eReadStream& src) {
@@ -212,26 +246,8 @@ void eGameBoard::read(eReadStream& src) {
         mPlannedActions.push_back(a);
     }
 
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        int np;
-        src >> np;
-        loadDebugLogBoard("eGameBoard::read yearlyProduction count=" +
-                          std::to_string(np));
-        for(int i = 0; i < np; i++) {
-            eResourceType type;
-            src >> type;
-            auto& y = mYearlyProduction[type];
-            src >> y.fBest;
-            src >> y.fLastYear;
-            src >> y.fThisYear;
-        }
-    }
-
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mSavedYear;
-        loadDebugLogBoard("eGameBoard::read savedYear=" +
-                          std::to_string(mSavedYear));
-    }
+    eSaveArchive ar(src);
+    serializeYearlyProduction(ar);
 
     loadDebugLogBoard("eGameBoard::read post updates begin");
     updateMarbleTiles();

@@ -6,6 +6,8 @@
 #include "characters/ecarttransporter.h"
 #include "buildings/ebuildingwithresource.h"
 
+class eSaveArchive;
+
 class eCartTransporterAction : public eActionWithComeback {
     friend class eCTA_findTargetFinish;
     friend class eCTA_waitOutsideFinish;
@@ -41,6 +43,8 @@ protected:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eWalkableObject> getWalkable() const;
 
     void updateWaiting();

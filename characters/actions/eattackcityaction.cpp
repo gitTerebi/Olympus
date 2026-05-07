@@ -1,4 +1,5 @@
 #include "eattackcityaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "enumbers.h"
@@ -74,12 +75,18 @@ bool eAttackCityAction::decide() {
 
 void eAttackCityAction::read(eReadStream& src) {
     eDefendAttackCityAction::read(src);
-    src >> mLookForGod;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAttackCityAction::write(eWriteStream& dst) const {
     eDefendAttackCityAction::write(dst);
-    dst << mLookForGod;
+    eSaveArchive ar(dst);
+    const_cast<eAttackCityAction*>(this)->serialize(ar);
+}
+
+void eAttackCityAction::serialize(eSaveArchive& ar) {
+    ar.value(mLookForGod);
 }
 
 void eAttackCityAction::invasionFinished() {

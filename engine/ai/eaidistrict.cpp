@@ -1,4 +1,5 @@
 #include "eaidistrict.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 
@@ -1079,15 +1080,18 @@ std::string eDistrictReadyCondition::name() const {
 }
 
 void eDistrictReadyCondition::read(eReadStream& src) {
-    src >> fType;
-    src >> fResource;
-    src >> fSanctuary;
-    src >> fValue;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eDistrictReadyCondition::write(eWriteStream& dst) const {
-    dst << fType;
-    dst << fResource;
-    dst << fSanctuary;
-    dst << fValue;
+    eSaveArchive ar(dst);
+    const_cast<eDistrictReadyCondition*>(this)->serialize(ar);
+}
+
+void eDistrictReadyCondition::serialize(eSaveArchive& ar) {
+    ar.value(fType);
+    ar.value(fResource);
+    ar.value(fSanctuary);
+    ar.value(fValue);
 }

@@ -5,6 +5,7 @@
 #include "textures/ebuildingtextures.h"
 
 class eCartTransporter;
+class eSaveArchive;
 
 class eProcessingBuilding : public eResourceBuildingBase {
 public:
@@ -48,6 +49,8 @@ public:
 
     int productionPercent() const;
 private:
+    void serialize(eSaveArchive& ar);
+
     const std::vector<eBuildingTextures>& mTextures;
 
     const eBaseTex mBaseTex;

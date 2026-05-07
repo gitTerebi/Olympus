@@ -6,6 +6,8 @@
 
 #include "edate.h"
 
+class eSaveArchive;
+
 enum class eEpisodeGoalType {
     population,
     treasury,
@@ -38,6 +40,7 @@ struct eEpisodeGoal {
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
+    void serialize(eSaveArchive& ar);
     bool met() const;
 
     static std::string sText(const eEpisodeGoalType type);

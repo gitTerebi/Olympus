@@ -1,4 +1,5 @@
 #include "eelitehousing.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "erand.h"
@@ -301,18 +302,21 @@ eHouseMissing eEliteHousing::missing() const {
 
 void eEliteHousing::read(eReadStream& src) {
     eHouseBase::read(src);
-    src >> mUpdateLevel;
-    src >> mWine;
-    src >> mArms;
-    src >> mHorses;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eEliteHousing::write(eWriteStream& dst) const {
     eHouseBase::write(dst);
-    dst << mUpdateLevel;
-    dst << mWine;
-    dst << mArms;
-    dst << mHorses;
+    eSaveArchive ar(dst);
+    const_cast<eEliteHousing*>(this)->serialize(ar);
+}
+
+void eEliteHousing::serialize(eSaveArchive& ar) {
+    ar.value(mUpdateLevel);
+    ar.value(mWine);
+    ar.value(mArms);
+    ar.value(mHorses);
 }
 
 std::string eEliteHousing::sName(const int level) {

@@ -5,6 +5,8 @@
 
 #include "characters/eartisan.h"
 
+class eSaveArchive;
+
 class eBuildAction : public eCharacterAction {
 public:
     eBuildAction(eCharacter* const c);
@@ -13,6 +15,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 private:
     int mSoundTime = 0;
     int mTime = 0;

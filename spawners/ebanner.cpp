@@ -1,4 +1,5 @@
 #include "ebanner.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 
@@ -43,11 +44,17 @@ bool eBanner::buildable() const {
 }
 
 void eBanner::read(eReadStream& src) {
-    src >> mIOID;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eBanner::write(eWriteStream& dst) const {
-    dst << mIOID;
+    eSaveArchive ar(dst);
+    const_cast<eBanner*>(this)->serialize(ar);
+}
+
+void eBanner::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
 }
 
 eBanner* eBanner::sCreate(const int id,

@@ -4,6 +4,8 @@
 #include "eresourcebuildingbase.h"
 #include <array>
 
+class eSaveArchive;
+
 class eResourceCollectBuildingBase : public eResourceBuildingBase {
 public:
     using eResourceBuildingBase::eResourceBuildingBase;
@@ -22,6 +24,8 @@ public:
 protected:
     void trackProduced(const int c);
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mNoTarget = true;
 
     int mProducedThisYear = 0;

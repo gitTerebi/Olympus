@@ -9,6 +9,7 @@
 #include "echaracteractionfunction.h"
 
 class eCharacter;
+class eSaveArchive;
 
 enum class eCityId;
 
@@ -110,6 +111,8 @@ public:
 
     eGameBoard& board() { return mBoard; }
 private:
+    void serialize(eSaveArchive& ar);
+
     eGameBoard& mBoard;
     eCharacter* const mCharacter;
     int mIOID = -1;

@@ -3,6 +3,8 @@
 
 #include "ebasicpatroler.h"
 
+class eSaveArchive;
+
 class eSettler : public eBasicPatroler {
 public:
     eSettler(eGameBoard& board);
@@ -13,6 +15,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mEmigrant = false;
 };
 

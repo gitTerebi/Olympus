@@ -1,4 +1,5 @@
 #include "etemplebuilding.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
@@ -64,14 +65,18 @@ std::vector<eOverlay> eTempleBuilding::getOverlays(const eTileSize size) const {
 
 void eTempleBuilding::read(eReadStream& src) {
     eSanctBuilding::read(src);
-
-    src >> mId;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTempleBuilding::write(eWriteStream& dst) const {
     eSanctBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eTempleBuilding*>(this)->serialize(ar);
+}
 
-    dst << mId;
+void eTempleBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mId);
 }
 
 bool eTempleBuilding::hasNeighbour() const {

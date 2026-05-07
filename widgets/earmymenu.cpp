@@ -9,6 +9,19 @@
 
 #include "egamewidget.h"
 
+std::vector<eSoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
+    std::vector<eSoldierBanner*> result;
+    if (!mBoard) return result;
+    const auto& selectedBanners = mBoard->selectedSoldiers();
+    const auto ppid = mBoard->personPlayer();
+    for (const auto* b : selectedBanners) {
+        if (b && b->playerId() == ppid) {
+            result.push_back(const_cast<eSoldierBanner*>(b));
+        }
+    }
+    return result;
+}
+
 void eArmyMenu::initialize(eGameBoard &b)
 {
     mBoard = &b;
@@ -54,40 +67,17 @@ void eArmyMenu::initialize(eGameBoard &b)
     cou->setY(y);
     cou->setTooltip(eLanguage::zeusText(51, 70)); // Go To Company
     cou->setPressAction([this]()
-                        {
-        if (!mBoard || !mGW) return;
-        const auto cid = mBoard->currentCityId();
-        const auto banners = mBoard->banners(cid);
-        const auto ppid = mBoard->personPlayer();
-        const auto& selectedBanners = mBoard->selectedSoldiers();
-        
-        // First try to find a selected banner belonging to the player
-        const eSoldierBanner* selectedBanner = nullptr;
-        for (const auto* b : selectedBanners) {
-            if (b && b->playerId() == ppid) {
-                selectedBanner = b;
-                break;
-            }
-        }
-        
-        // If no selected banner, find the first banner belonging to the player
-        const eSoldierBanner* companyBanner = selectedBanner;
-        if (!companyBanner) {
-            for (const auto& b : banners) {
-                if (b && b->playerId() == ppid) {
-                    companyBanner = b.get();
-                    break;
-                }
-            }
-        }
-        
-        // If we found a company banner, center on it
-        if (companyBanner) {
-            const auto t = companyBanner->tile();
-            if (t) {
-                mGW->viewTile(t);
-            }
-        } });
+                       {
+    if (!mBoard || !mGW) return;
+    const auto selectedPlayerBanners = this->selectedPlayerBanners();
+    if (selectedPlayerBanners.empty()) return;
+    
+    // Use the first selected banner
+    const auto companyBanner = selectedPlayerBanners[0];
+    const auto t = companyBanner->tile();
+    if (t) {
+        mGW->viewTile(t);
+    } });
 
     const auto t2 = &eInterfaceTextures::fDefensiveTactics;
     const auto dt = new eBasicButton(t2, window());
@@ -102,7 +92,18 @@ void eArmyMenu::initialize(eGameBoard &b)
     const auto rc = new eBasicButton(t3, window());
     wid->addWidget(rc);
     rc->setY(y + ddy);
-    rc->setTooltip(eLanguage::zeusText(68, 141)); // Rotate Company
+    rc->setTooltip(eLanguage::zeusText(51, 76)); // Rotate Company
+    rc->setPressAction([this]()
+                       {
+        if (!mBoard || !mGW) return;
+        const auto selectedPlayerBanners = this->selectedPlayerBanners();
+        if (selectedPlayerBanners.empty()) return;
+        
+        for (auto* bannerPtr : selectedPlayerBanners) {
+            int currentFacing = bannerPtr->facing();
+            int newFacing = (currentFacing + 90) % 360;
+            bannerPtr->setFacing(newFacing);
+        } });
 
     const auto t4 = &eInterfaceTextures::fOffensiveTactics;
     const auto ot = new eBasicButton(t4, window());

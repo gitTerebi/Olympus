@@ -1,4 +1,5 @@
 #include "edieaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
 
@@ -17,10 +18,16 @@ void eDieAction::increment(const int by) {
 
 void eDieAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    src >> mTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eDieAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst << mTime;
+    eSaveArchive ar(dst);
+    const_cast<eDieAction*>(this)->serialize(ar);
+}
+
+void eDieAction::serialize(eSaveArchive& ar) {
+    ar.value(mTime);
 }

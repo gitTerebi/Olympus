@@ -4,6 +4,7 @@
 #include "engine/etile.h"
 #include "epatrolmoveaction.h"
 #include "buildings/epatrolbuildingbase.h"
+#include "fileIO/esavearchive.h"
 
 ePatrolAction::ePatrolAction(eCharacter* const c,
                              ePatrolBuildingBase* const b,
@@ -33,28 +34,45 @@ bool ePatrolAction::decide() {
 
 void ePatrolAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    int n;
-    src >> n;
-    for(int i = 0; i < n; i++) {
-        auto& o = mPath.emplace_back();
-        src >> o;
-    }
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mBuilding = static_cast<ePatrolBuildingBase*>(b);
-    });
-    src >> mDone;
-    mDirTimes = src.readDirectionTimes(board());
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePatrolAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mPath.size();
-    for(const auto o : mPath) {
-        dst << o;
+    eSaveArchive ar(dst);
+    const_cast<ePatrolAction*>(this)->serialize(ar);
+}
+
+void ePatrolAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        int n;
+        ar.value(n);
+        mPath.clear();
+        for(int i = 0; i < n; i++) {
+            auto& o = mPath.emplace_back();
+            ar.value(o);
+        }
+    } else {
+        int n = static_cast<int>(mPath.size());
+        ar.value(n);
+        for(auto o : mPath) {
+            ar.value(o);
+        }
     }
-    dst.writeBuilding(mBuilding);
-    dst << mDone;
-    dst.writeDirectionTimes(mDirTimes.get());
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mBuilding = static_cast<ePatrolBuildingBase*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mBuilding);
+    }
+    ar.value(mDone);
+    if(ar.reading()) {
+        mDirTimes = ar.readStream().readDirectionTimes(board());
+    } else {
+        ar.writeStream().writeDirectionTimes(mDirTimes.get());
+    }
 }
 
 void ePatrolAction::patrol() {

@@ -9,6 +9,7 @@
 #include "gods/egod.h"
 #include "heroes/ehero.h"
 #include "audio/esounds.h"
+#include "fileIO/esavearchive.h"
 
 #include "esoldier.h"
 
@@ -333,80 +334,60 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
     return coll->getTexture(texId);
 }
 
-void eCharacter::read(eReadStream& src) {
-    eCharacterBase::read(src);
-    src >> mIOID;
-    src >> mVisible;
-    src >> mProvide;
-    src >> mProvideCount;
-    mTile = src.readTile(getBoard());
-    if(mTile) {
+void eCharacter::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
+    ar.value(mVisible);
+    ar.value(mProvide);
+    ar.value(mProvideCount);
+    ar.tile(mTile, getBoard());
+    if(ar.reading() && mTile) {
         const auto sptr = ref<eCharacter>();
         mTile->addCharacter(sptr, false);
     }
-    src >> mOrientation;
-    src >> mX;
-    src >> mY;
-    src >> mPlayFightSound;
-    src >> mSoundPlayTime;
-    src >> mTime;
-    src >> mHasSecondaryTexture;
-    bool hasAction;
-    src >> hasAction;
-    if(hasAction) {
-        eCharActionType type;
-        src >> type;
-        mAction = eCharacterAction::sCreate(this, type);
-        mAction->read(src);
-    }
-    src >> mActionStartTime;
+    ar.value(mOrientation);
+    ar.value(mX);
+    ar.value(mY);
+    ar.value(mPlayFightSound);
+    ar.value(mSoundPlayTime);
+    ar.value(mTime);
+    ar.value(mHasSecondaryTexture);
+    ar.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
+        return eCharacterAction::sCreate(this, type);
+    });
+    ar.value(mActionStartTime);
 
-    int s;
-    src >> s;
-    for(int i = 0; i < s; i++) {
-        auto& a = mPausedActions.emplace_back();
-        src >> a.fAt;
-        bool hasAction;
-        src >> hasAction;
-        if(hasAction) {
-            eCharActionType type;
-            src >> type;
-            a.fA = eCharacterAction::sCreate(this, type);
-            a.fA->read(src);
+    if(ar.reading()) {
+        int s;
+        ar.value(s);
+        for(int i = 0; i < s; i++) {
+            auto& a = mPausedActions.emplace_back();
+            ar.value(a.fAt);
+            ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
+                return eCharacterAction::sCreate(this, type);
+            });
+            ar.value(a.fO);
         }
-        src >> a.fO;
+    } else {
+        int s = static_cast<int>(mPausedActions.size());
+        ar.value(s);
+        for(auto& a : mPausedActions) {
+            ar.value(a.fAt);
+            ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
+                return eCharacterAction::sCreate(this, type);
+            });
+            ar.value(a.fO);
+        }
     }
+}
+
+void eCharacter::read(eReadStream& src) {
+    eCharacterBase::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCharacter::write(eWriteStream& dst) const {
     eCharacterBase::write(dst);
-    dst << mIOID;
-    dst << mVisible;
-    dst << mProvide;
-    dst << mProvideCount;
-    dst.writeTile(mTile);
-    dst << mOrientation;
-    dst << mX;
-    dst << mY;
-    dst << mPlayFightSound;
-    dst << mSoundPlayTime;
-    dst << mTime;
-    dst << mHasSecondaryTexture;
-    dst << (mAction != nullptr);
-    if(mAction) {
-        dst << mAction->type();
-        mAction->write(dst);
-    }
-    dst << mActionStartTime;
-
-    dst << mPausedActions.size();
-    for(const auto& a : mPausedActions) {
-        dst << a.fAt;
-        dst << (a.fA != nullptr);
-        if(a.fA) {
-            dst << a.fA->type();
-            a.fA->write(dst);
-        }
-        dst << a.fO;
-    }
+    eSaveArchive ar(dst);
+    const_cast<eCharacter*>(this)->serialize(ar);
 }

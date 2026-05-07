@@ -3,6 +3,8 @@
 
 #include "eanimal.h"
 
+class eSaveArchive;
+
 class eDomesticatedAnimal : public eAnimal {
 public:
     using eCharTexs = eAnimalTextures eCharacterTextures::*;
@@ -18,6 +20,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     virtual void setNakedTexture() {}
     virtual void setFleecedTexture() {}
 

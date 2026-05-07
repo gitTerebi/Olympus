@@ -1,4 +1,5 @@
 #include "etidalwaveevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -50,7 +51,12 @@ void eTidalWaveEvent::write(eWriteStream& dst) const {
     ePointEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
-    dst << mPermanent;
+    eSaveArchive ar(dst);
+    const_cast<eTidalWaveEvent*>(this)->serialize(ar);
+}
+
+void eTidalWaveEvent::serialize(eSaveArchive& ar) {
+    ar.value(mPermanent);
 }
 
 void eTidalWaveEvent::read(eReadStream& src) {
@@ -58,7 +64,8 @@ void eTidalWaveEvent::read(eReadStream& src) {
     ePointEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
-    src >> mPermanent;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTidalWaveEvent::loadResources() const {

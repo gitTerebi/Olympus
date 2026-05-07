@@ -6,6 +6,8 @@
 #include "engine/etile.h"
 #include "characters/echaracter.h"
 
+class eSaveArchive;
+
 class eFireFighterAction : public ePatrolAction {
     friend class eFFA_lookForFireFail;
 public:
@@ -21,6 +23,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     bool lookForFire(const bool second);
     void putOutFire(eTile* const tile);
 

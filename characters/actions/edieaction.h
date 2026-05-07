@@ -3,6 +3,8 @@
 
 #include "echaracteraction.h"
 
+class eSaveArchive;
+
 class eDieAction : public eCharacterAction {
 public:
     eDieAction(eCharacter* const c);
@@ -12,6 +14,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     int mTime = 0;
 };
 

@@ -1,4 +1,5 @@
 #include "emovearoundaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
 
@@ -28,18 +29,21 @@ void eMoveAroundAction::setMaxDistance(const int md) {
 
 void eMoveAroundAction::read(eReadStream& src) {
     eMoveAction::read(src);
-    src >> mStartTX;
-    src >> mStartTY;
-    src >> mMaxDist;
-    src >> mRemTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMoveAroundAction::write(eWriteStream& dst) const {
     eMoveAction::write(dst);
-    dst << mStartTX;
-    dst << mStartTY;
-    dst << mMaxDist;
-    dst << mRemTime;
+    eSaveArchive ar(dst);
+    const_cast<eMoveAroundAction*>(this)->serialize(ar);
+}
+
+void eMoveAroundAction::serialize(eSaveArchive& ar) {
+    ar.value(mStartTX);
+    ar.value(mStartTY);
+    ar.value(mMaxDist);
+    ar.value(mRemTime);
 }
 
 eCharacterActionState eMoveAroundAction::nextTurn(eOrientation& turn) {
