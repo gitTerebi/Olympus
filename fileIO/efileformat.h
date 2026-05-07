@@ -10,7 +10,6 @@ namespace eFileFormat {
         ruinsSavedBuilding,
         yearlyProduction,
         ruinsRestoreBundle,
-        soldierBannerFacing,
 
         nextVersion
     };
@@ -49,9 +48,6 @@ namespace eFileFormat {
         return version >= ruinsRestoreBundle;
     }
 
-    inline bool hasSoldierBannerFacing(const int version) {
-        return version >= soldierBannerFacing;
-    }
 }
 
 #endif // EFILEFORMAT_H

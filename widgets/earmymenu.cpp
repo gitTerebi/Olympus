@@ -8,6 +8,7 @@
 #include "eframedwidget.h"
 
 #include "egamewidget.h"
+#include "characters/esoldierbanner.h"
 
 std::vector<eSoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
     std::vector<eSoldierBanner*> result;
@@ -96,14 +97,8 @@ void eArmyMenu::initialize(eGameBoard &b)
     rc->setPressAction([this]()
                        {
         if (!mBoard || !mGW) return;
-        const auto selectedPlayerBanners = this->selectedPlayerBanners();
-        if (selectedPlayerBanners.empty()) return;
-        
-        for (auto* bannerPtr : selectedPlayerBanners) {
-            int currentFacing = bannerPtr->facing();
-            int newFacing = (currentFacing + 90) % 360;
-            bannerPtr->setFacing(newFacing);
-        } });
+        eSoldierBanner::sRotatePlayerBanners(
+            mBoard->selectedSoldiers(), mBoard->personPlayer()); });
 
     const auto t4 = &eInterfaceTextures::fOffensiveTactics;
     const auto ot = new eBasicButton(t4, window());

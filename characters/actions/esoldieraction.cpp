@@ -46,7 +46,13 @@ void eSoldierAction::increment(const int by) {
                 tptr->mGoToBannerCountdown = 5000;
             };
 
-            goBackToBanner(taskFindFailed, taskFinished);
+            const auto c = character();
+            const auto s = static_cast<eSoldier*>(c);
+            const auto b = s->banner();
+            if(b) {
+                goBackToBanner(b->soldierOrientation(),
+                               taskFindFailed, taskFinished);
+            }
         }
     }
 
@@ -194,7 +200,8 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
     return b;
 }
 
-void eSoldierAction::goBackToBanner(const eAction& findFailAct,
+void eSoldierAction::goBackToBanner(const eOrientation facing,
+                                    const eAction& findFailAct,
                                     const eAction& findFinishAct) {
     const auto c = character();
     const auto s = static_cast<eSoldier*>(c);
@@ -206,6 +213,7 @@ void eSoldierAction::goBackToBanner(const eAction& findFailAct,
     if(!tt) return;
     if(ct == tt) {
         setCurrentAction(nullptr);
+        c->setOrientation(facing);
         c->setActionType(eCharacterActionType::stand);
         return;
     }

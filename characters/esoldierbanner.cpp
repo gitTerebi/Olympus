@@ -1,9 +1,11 @@
 #include "esoldierbanner.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "engine/etile.h"
 #include "engine/egameboard.h"
+#include "engine/eorientation.h"
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "fileIO/esavearchive.h"
@@ -37,6 +39,82 @@ eSoldierBanner::eSoldierBanner(const eBannerType type,
 eSoldierBanner::~eSoldierBanner() {
     killAll();
     mBoard.unregisterAllSoldierBanner(this);
+}
+
+void eSoldierBanner::setFacing(const int facing) {
+    mFacing = facing;
+    updatePlaces();
+    if(!mHome) callSoldiers();
+}
+
+void eSoldierBanner::setFacingOnLoad(const int facing) {
+    mFacing = facing;
+}
+
+eOrientation eSoldierBanner::soldierOrientation() const {
+    const int facing = ((mFacing % 360) + 360) % 360;
+    if(facing == 45) return eOrientation::topRight;
+    if(facing == 90) return eOrientation::right;
+    if(facing == 135) return eOrientation::bottomRight;
+    if(facing == 180) return eOrientation::bottom;
+    if(facing == 225) return eOrientation::bottomLeft;
+    if(facing == 270) return eOrientation::left;
+    if(facing == 315) return eOrientation::topLeft;
+    return eOrientation::top;
+}
+
+void eSoldierBanner::commandFormation(const int facing,
+                                      const int lineDX,
+                                      const int lineDY) {
+    if(!mTile) return;
+    purgeDead();
+    if(mSoldiers.empty()) return;
+
+    mFacing = facing;
+    const int sideDX = lineDX == 0 ? 0 : (lineDX > 0 ? 1 : -1);
+    const int sideDY = lineDY == 0 ? 0 : (lineDY > 0 ? 1 : -1);
+    if(sideDX == 0 && sideDY == 0) {
+        updatePlaces();
+        if(!mHome) callSoldiers();
+        return;
+    }
+
+    const auto onCid = onCityId();
+    const auto cid = cityId();
+    const auto onTid = mBoard.cityIdToTeamId(onCid);
+    const auto tid = mBoard.cityIdToTeamId(cid);
+    const auto walkable = [&](eTile* const tt) {
+        if(!tt) return false;
+        if(tt->cityId() != onCid) return false;
+        if(onTid == tid) {
+            return eWalkableHelpers::sDefaultWalkable(tt);
+        } else {
+            return eWalkableHelpers::sBuildingsWalkable(tt);
+        }
+    };
+
+    const int depthDX = -sideDY;
+    const int depthDY = sideDX;
+    const int slds = mSoldiers.size();
+    const int ranks = slds > 1 ? 2 : 1;
+    const int files = (slds + ranks - 1)/ranks;
+    std::map<eSoldier*, eTile*> places;
+    int isld = 0;
+    for(int rank = 0; rank < ranks; rank++) {
+        for(int file = 0; file < files; file++) {
+            if(isld >= slds) break;
+            const int side = file - files/2;
+            const int dx = side*sideDX + rank*depthDX;
+            const int dy = side*sideDY + rank*depthDY;
+            const auto tt = mBoard.tile(mTile->x() + dx, mTile->y() + dy);
+            if(!walkable(tt)) continue;
+            places[mSoldiers[isld++]] = tt;
+        }
+    }
+    if(!places.empty()) {
+        mPlaces = places;
+    }
+    if(!mHome) callSoldiers();
 }
 
 eCharacterType eSoldierBanner::characterType() const {
@@ -88,7 +166,7 @@ stdsptr<eSoldier> eSoldierBanner::createSoldier(eTile* const t) {
     c->changeTile(t);
     c->setActionType(eCharacterActionType::stand);
     if(mHome) a->goHome();
-    else a->goBackToBanner();
+    else a->goBackToBanner(soldierOrientation());
     return s;
 }
 
@@ -225,7 +303,7 @@ void eSoldierBanner::backFromHome() {
     for(const auto s : mSoldiers) {
         if(s->dead()) continue;
         const auto a = s->soldierAction();
-        if(a) a->goBackToBanner();
+        if(a) a->goBackToBanner(soldierOrientation());
     }
     updateCount();
 }
@@ -330,7 +408,13 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
     ar.field("mCount", mCount);
     ar.field("mCityId", mCityId);
     ar.field("mOnCityId", mOnCityId);
-    ar.field("mFacing", mFacing);
+    if(ar.reading()) {
+        int facing = 0;
+        ar.field("mFacing", facing);
+        setFacingOnLoad(facing);
+    } else {
+        ar.field("mFacing", mFacing);
+    }
 
     if(ar.reading()) {
         int np;
@@ -436,6 +520,7 @@ void eSoldierBanner::sPlaceNoPathTrace(std::vector<eSoldierBanner*> bs,
                                        const int minDistFromEdge) {
     sPlaceDefault(bs, ctx, cty, board);
     if(bs.empty()) return;
+    const int bannerDist = bs.size() > 1 ? dist + 1 : dist;
 
     const auto bsFirst = bs[0];
     const auto onCid = bsFirst->onCityId();
@@ -473,10 +558,10 @@ void eSoldierBanner::sPlaceNoPathTrace(std::vector<eSoldierBanner*> bs,
         return false;
     };
 
-    const int kinc = slds == 1 ? 1 : dist;
+    const int kinc = slds == 1 ? 1 : bannerDist;
     for(int k = 0; isld < slds; k += kinc) {
         (void)isld;
-        eIterateSquare::iterateSquare(k, prcsTile, dist);
+        eIterateSquare::iterateSquare(k, prcsTile, bannerDist);
     }
 }
 
@@ -486,6 +571,7 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
                             const int minDistFromEdge) {
     sPlaceDefault(bs, ctx, cty, board);
     if(bs.empty()) return;
+    const int bannerDist = bs.size() > 1 ? dist + 1 : dist;
 
     eTile* startTile = nullptr;
 
@@ -520,7 +606,7 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
     };
 
     for(int k = 0; k < 9; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, dist);
+        eIterateSquare::iterateSquare(k, prcsTile, bannerDist);
         if(startTile) break;
     }
 
@@ -544,7 +630,7 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
             for(const auto& p : placed) {
                 const double d = std::sqrt((tx - p.x)*(tx - p.x) +
                                            (ty - p.y)*(ty - p.y));
-                if(d < dist) return false;
+                if(d < bannerDist) return false;
             }
             final = tt;
             return true;
@@ -558,6 +644,92 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
         placed.push_back({tx, ty});
         b->moveTo(tx, ty);
     }
+}
+
+void eSoldierBanner::sPlaceFacing(std::vector<eSoldierBanner*> bs,
+                                  const int ctx, const int cty,
+                                  eGameBoard& board,
+                                  const int facing,
+                                  const int lineDX,
+                                  const int lineDY,
+                                  const int dist,
+                                  const int minDistFromEdge) {
+    if(bs.empty()) return;
+
+    if(bs.size() == 1) {
+        sPlace(bs, ctx, cty, board, dist, minDistFromEdge);
+    } else {
+        const int bannerDist = dist + 1;
+        const int start = -static_cast<int>(bs.size() - 1)/2;
+        std::vector<eSoldierBanner*> fallback;
+        for(int i = 0; i < static_cast<int>(bs.size()); i++) {
+            const int side = start + i;
+            const int bx = ctx + side*bannerDist*lineDX;
+            const int by = cty + side*bannerDist*lineDY;
+            const auto tile = board.tile(bx, by);
+            if(tile && tile->cityId() == bs[i]->onCityId() &&
+               tile->walkable() && !tile->soldierBanner()) {
+                bs[i]->moveTo(bx, by);
+            } else {
+                fallback.push_back(bs[i]);
+            }
+        }
+        if(!fallback.empty()) {
+            sPlace(fallback, ctx, cty, board, dist, minDistFromEdge);
+        }
+    }
+
+    for(const auto b : bs) {
+        b->commandFormation(facing, lineDX, lineDY);
+    }
+}
+
+std::vector<eSoldierBanner*> eSoldierBanner::sPlayerBanners(
+        const std::vector<eSoldierBanner*>& bs,
+        const ePlayerId playerId) {
+    std::vector<eSoldierBanner*> result;
+    for(const auto b : bs) {
+        if(!b) continue;
+        if(b->playerId() != playerId) continue;
+        result.push_back(b);
+    }
+    return result;
+}
+
+void eSoldierBanner::sRotatePlayerBanners(
+        const std::vector<eSoldierBanner*>& bs,
+        const ePlayerId playerId) {
+    const auto banners = sPlayerBanners(bs, playerId);
+    for(const auto b : banners) {
+        const int newFacing = (b->facing() + 90) % 360;
+        b->setFacing(newFacing);
+    }
+}
+
+void eSoldierBanner::sSetPlayerBannersFacing(
+        const std::vector<eSoldierBanner*>& bs,
+        const ePlayerId playerId,
+        const int facing) {
+    const auto banners = sPlayerBanners(bs, playerId);
+    for(const auto b : banners) {
+        b->setFacing(facing);
+    }
+}
+
+void eSoldierBanner::sPlacePlayerBannersFacing(
+        const std::vector<eSoldierBanner*>& bs,
+        const ePlayerId playerId,
+        const int ctx, const int cty,
+        eGameBoard& board,
+        const int facing,
+        const int lineDX,
+        const int lineDY,
+        const int dist,
+        const int minDistFromEdge) {
+    const auto banners = sPlayerBanners(bs, playerId);
+    if(banners.empty()) return;
+    sPlaceFacing(banners, ctx, cty, board,
+                 facing, lineDX, lineDY, dist, minDistFromEdge);
 }
 
 std::string eSoldierBanner::sName(
@@ -598,7 +770,6 @@ void eSoldierBanner::updatePlaces() {
     purgeDead();
     if(mSoldiers.empty()) return;
 
-    int isld = 0;
     const int slds = mSoldiers.size();
 
     const auto onCid = onCityId();
@@ -606,29 +777,65 @@ void eSoldierBanner::updatePlaces() {
     const auto onTid = mBoard.cityIdToTeamId(onCid);
     const auto tid = mBoard.cityIdToTeamId(cid);
 
-    const auto prcsTile = [&](const int i, const int j) {
-        if(isld >= slds) return false;
-        if(!mTile) return false;
-        const int tx = mTile->x();
-        const int ty = mTile->y();
-        const auto tt = mBoard.tile(tx + i, ty + j);
+    const auto walkable = [&](eTile* const tt) {
         if(!tt) return false;
         const auto cid = tt->cityId();
         if(cid != onCid) return false;
         if(onTid == tid) {
-            if(!eWalkableHelpers::sDefaultWalkable(tt)) return false;
+            return eWalkableHelpers::sDefaultWalkable(tt);
         } else {
-            if(!eWalkableHelpers::sBuildingsWalkable(tt)) return false;
+            return eWalkableHelpers::sBuildingsWalkable(tt);
         }
-
-        const auto s = mSoldiers[isld++];
-        mPlaces[s] = tt;
-        return false;
     };
 
-    for(int k = 0; isld < slds; k++) {
-        (void)isld;
-        eIterateSquare::iterateSquare(k, prcsTile);
+    const auto rotateOffset = [this](const int side, const int depth,
+                                     int& i, int& j) {
+        const int facing = ((mFacing % 360) + 360) % 360;
+        if(facing == 90) {
+            i = depth;
+            j = side;
+        } else if(facing == 180) {
+            i = -side;
+            j = depth;
+        } else if(facing == 270) {
+            i = -depth;
+            j = -side;
+        } else {
+            i = side;
+            j = -depth;
+        }
+    };
+
+    const int ranks = slds > 1 ? 2 : 1;
+    const int files = (slds + ranks - 1)/ranks;
+    std::vector<SDL_Point> offsets;
+    offsets.reserve(slds);
+    for(int rank = 0; rank < ranks; rank++) {
+        for(int file = 0; file < files; file++) {
+            if((int)offsets.size() >= slds) break;
+            const int side = file - files/2;
+            const int depth = rank;
+            int i = 0;
+            int j = 0;
+            rotateOffset(side, depth, i, j);
+            offsets.push_back({i, j});
+        }
+    }
+
+    int isld = 0;
+    std::map<eSoldier*, eTile*> places;
+    for(const auto& offset : offsets) {
+        if(isld >= slds) break;
+        const int tx = mTile->x();
+        const int ty = mTile->y();
+        const auto tt = mBoard.tile(tx + offset.x, ty + offset.y);
+        if(!walkable(tt)) continue;
+
+        const auto s = mSoldiers[isld++];
+        places[s] = tt;
+    }
+    if(!places.empty()) {
+        mPlaces = places;
     }
 }
 
@@ -699,13 +906,9 @@ void eSoldierBanner::callSoldier(eSoldier* const s) {
     const auto tt = place(s);
     if(!tt) return;
 
-    const int ttx = tt->x();
-    const int tty = tt->y();
-
     const auto a = s->soldierAction();
     if(a) {
-        a->setOverwrittableAction(mType == eBannerType::enemy);
-        a->goTo(ttx, tty);
+        a->goBackToBanner(soldierOrientation());
     }
 }
 
@@ -756,6 +959,7 @@ void eSoldierBanner::teleportSoldiersToPlaces() {
         const auto tile = place(s);
         if(!tile) continue;
         s->changeTile(tile);
+        s->setOrientation(soldierOrientation());
         const auto a = s->soldierAction();
         if(a) a->setCurrentAction(nullptr);
     }

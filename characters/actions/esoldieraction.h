@@ -23,7 +23,8 @@ public:
 
     void goHome() override;
     void goAbroad() override;
-    void goBackToBanner(const eAction& findFailAct = nullptr,
+    void goBackToBanner(eOrientation facing,
+                        const eAction& findFailAct = nullptr,
                         const eAction& findFinishAct = nullptr);
 
     static eBuilding* sFindHome(const eCharacterType t,
