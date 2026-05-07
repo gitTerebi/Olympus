@@ -6,13 +6,14 @@
 
 void eBuildButton::initialize(const std::string& name,
                               const int marbleCost,
-                              const int cost) {
+                              const int cost,
+                              const int customWidth) {
     const auto& intrfc = eGameTextures::interface();
     int iRes;
     int mult;
     iResAndMult(iRes, mult);
 
-    const int width = 190*mult;
+    const int width = customWidth > 0 ? customWidth : 190*mult;
 
     setWidth(width);
     setHeight(10*mult);
@@ -55,7 +56,7 @@ void eBuildButton::initialize(const std::string& name,
         marbleIcon->align(eAlignment::vcenter);
         marbleText->align(eAlignment::vcenter);
 
-        marbleIcon->setX(width/2 + 30*mult);
+        marbleIcon->setX(width - 65*mult);
         marbleText->setX(marbleIcon->x() + marbleIcon->width());
     }
     if(cost > 0) {
@@ -76,7 +77,7 @@ void eBuildButton::initialize(const std::string& name,
         drachmaIcon->align(eAlignment::vcenter);
         drachmaText->align(eAlignment::vcenter);
 
-        drachmaIcon->setX(width/2 + 60*mult);
+        drachmaIcon->setX(width - 35*mult);
         drachmaText->setX(drachmaIcon->x() + drachmaIcon->width());
     }
 }
