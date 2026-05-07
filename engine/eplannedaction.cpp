@@ -2,6 +2,7 @@
 
 #include "fileIO/ereadstream.h"
 #include "fileIO/ewritestream.h"
+#include "fileIO/esavearchive.h"
 
 #include "eregrowforestaction.h"
 #include "ecolonymonumentaction.h"
@@ -19,17 +20,20 @@ ePlannedAction::~ePlannedAction() {}
 
 void ePlannedAction::read(eReadStream& src, eGameBoard& board) {
     (void)board;
-    src >> mRecurring;
-    src >> mActionTime;
-    src >> mFinished;
-    src >> mTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePlannedAction::write(eWriteStream& dst) const {
-    dst << mRecurring;
-    dst << mActionTime;
-    dst << mFinished;
-    dst << mTime;
+    eSaveArchive ar(dst);
+    const_cast<ePlannedAction*>(this)->serialize(ar);
+}
+
+void ePlannedAction::serialize(eSaveArchive& ar) {
+    ar.value(mRecurring);
+    ar.value(mActionTime);
+    ar.value(mFinished);
+    ar.value(mTime);
 }
 
 ePlannedAction* ePlannedAction::sCreate(const ePlannedActionType type) {

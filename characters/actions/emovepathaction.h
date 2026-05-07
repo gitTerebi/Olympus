@@ -3,6 +3,8 @@
 
 #include "emoveaction.h"
 
+class eSaveArchive;
+
 class eMovePathAction : public eMoveAction {
 public:
     eMovePathAction(eCharacter* const c,
@@ -16,6 +18,7 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
+    void serialize(eSaveArchive& ar);
 
     std::vector<eOrientation> mTurns;
 

@@ -175,34 +175,17 @@ void eTower::timeChanged(const int by) {
 
 void eTower::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    src >> mMissile;
-    src >> mRangeAttack;
-    src >> mAttackTime;
-    src >> mAttack;
-    src >> mAttackOrientation;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mAttackTarget = c;
-    });
-    src >> mSpawnTime;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mArcher = static_cast<eArcher*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTower::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    dst << mMissile;
-    dst << mRangeAttack;
-    dst << mAttackTime;
-    dst << mAttack;
-    dst << mAttackOrientation;
-    dst.writeCharacter(mAttackTarget);
-    dst << mSpawnTime;
-    dst.writeCharacter(mArcher);
+    eSaveArchive ar(dst);
+    const_cast<eTower*>(this)->serialize(ar);
 }
 
 void eTower::serialize(eSaveArchive& ar) {
-    eEmployingBuilding::serialize(ar);
     ar.value(mMissile);
     ar.value(mRangeAttack);
     ar.value(mAttackTime);

@@ -3,6 +3,7 @@
 #include "egameevent.h"
 #include "evectorhelpers.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
@@ -29,22 +30,31 @@ void eEventTrigger::loadResources() const {
 }
 
 void eEventTrigger::write(eWriteStream& dst) const {
-    dst << mEvents.size();
-    for(const auto& c : mEvents) {
-        dst << c->type();
-        c->write(dst);
-    }
+    eSaveArchive ar(dst);
+    const_cast<eEventTrigger*>(this)->serialize(ar);
 }
 
 void eEventTrigger::read(eReadStream& src) {
-    int ncs;
-    src >> ncs;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eEventTrigger::serialize(eSaveArchive& ar) {
+    int ncs = mEvents.size();
+    ar.value(ncs);
     for(int i = 0; i < ncs; i++) {
         eGameEventType type;
-        src >> type;
+        if(ar.writing()) {
+            type = mEvents[i]->type();
+        }
+        ar.value(type);
+        if(ar.writing()) {
+            mEvents[i]->write(ar.writeStream());
+            continue;
+        }
         const auto branch = eGameEventBranch::trigger;
         const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(src);
+        e->read(ar.readStream());
         mEvents.emplace_back(e);
     }
 }

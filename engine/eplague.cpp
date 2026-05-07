@@ -3,6 +3,7 @@
 #include "buildings/esmallhouse.h"
 #include "egameboard.h"
 #include "evectorhelpers.h"
+#include "fileIO/esavearchive.h"
 
 ePlague::ePlague(const eCityId cid, eGameBoard& board) :
     mBoard(board), mCityId(cid) {}
@@ -58,21 +59,28 @@ void ePlague::removeHouse(eSmallHouse* const h) {
 }
 
 void ePlague::read(eReadStream& src) {
-    src >> mCityId;
-    int n;
-    src >> n;
-    for(int i = 0 ; i < n; i++) {
-        src.readBuilding(&mBoard, [this](eBuilding* const b) {
-            const auto ch = static_cast<eSmallHouse*>(b);
-            mHouses.push_back(ch);
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePlague::write(eWriteStream& dst) const {
-    dst << mCityId;
-    dst << mHouses.size();
-    for(const auto& ch : mHouses) {
-        dst.writeBuilding(ch);
+    eSaveArchive ar(dst);
+    const_cast<ePlague*>(this)->serialize(ar);
+}
+
+void ePlague::serialize(eSaveArchive& ar) {
+    ar.value(mCityId);
+    int n = mHouses.size();
+    ar.value(n);
+    if(ar.reading()) mHouses.clear();
+    for(int i = 0 ; i < n; i++) {
+        if(ar.reading()) {
+            ar.readStream().readBuilding(&mBoard, [this](eBuilding* const b) {
+                const auto ch = static_cast<eSmallHouse*>(b);
+                mHouses.push_back(ch);
+            });
+        } else {
+            ar.writeStream().writeBuilding(mHouses[i]);
+        }
     }
 }

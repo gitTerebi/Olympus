@@ -8,6 +8,7 @@
 #include "eroad.h"
 
 #include "characters/epeddler.h"
+#include "fileIO/esavearchive.h"
 
 eAgoraBase::eAgoraBase(eGameBoard& board,
                        const eBuildingType type,
@@ -56,6 +57,12 @@ void eAgoraBase::erase() {
 
 void eAgoraBase::read(eReadStream& src) {
     ePatrolBuildingBase::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eAgoraBase::serialize(eSaveArchive& ar) {
+    (void)ar;
     setMaxEmployees(0);
     fillSpaces();
 }

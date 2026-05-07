@@ -4,6 +4,7 @@
 
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 std::map<eCityId, eEnlistedForces>
 eEnlistedForces::splitIntoCities() const {
@@ -30,62 +31,62 @@ eEnlistedForces::splitIntoCities() const {
 
 void eEnlistedForces::read(eGameBoard& board,
                            eReadStream& src) {
-    auto& wboard = board.world();
-    {
-        int ns;
-        src >> ns;
-        for(int i = 0; i < ns; i++) {
-            const auto func = [this](const stdsptr<eSoldierBanner>& b) {
-                if(b) fSoldiers.push_back(b);
-            };
-            src.readSoldierBanner(&board, func);
-        }
-    }
-    {
-        int nh;
-        src >> nh;
-        for(int i = 0; i < nh; i++) {
-            eCityId cid;
-            src >> cid;
-            eHeroType h;
-            src >> h;
-            fHeroes.push_back({cid, h});
-        }
-    }
-    {
-        int nc;
-        src >> nc;
-        for(int i = 0; i < nc; i++) {
-            const auto func = [this](const stdsptr<eWorldCity>& c) {
-                fAllies.push_back(c);
-            };
-            src.readCity(&wboard, func);
-        }
-    }
-
-    src >> fAres;
-    src >> fAresCity;
+    eSaveArchive ar(src);
+    serialize(ar, &board);
 }
 
 void eEnlistedForces::write(eWriteStream& dst) const {
-    dst << fSoldiers.size();
-    for(const auto& s : fSoldiers) {
-        dst.writeSoldierBanner(s.get());
+    eSaveArchive ar(dst);
+    const_cast<eEnlistedForces*>(this)->serialize(ar, nullptr);
+}
+
+void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
+    eWorldBoard* wboard = board ? &board->world() : nullptr;
+    {
+        int ns = fSoldiers.size();
+        ar.value(ns);
+        if(ar.reading()) fSoldiers.clear();
+        for(int i = 0; i < ns; i++) {
+            if(ar.reading()) {
+                const auto func = [this](const stdsptr<eSoldierBanner>& b) {
+                    if(b) fSoldiers.push_back(b);
+                };
+                ar.readStream().readSoldierBanner(board, func);
+            } else {
+                ar.writeStream().writeSoldierBanner(fSoldiers[i].get());
+            }
+        }
+    }
+    {
+        int nh = fHeroes.size();
+        ar.value(nh);
+        if(ar.reading()) fHeroes.clear();
+        for(int i = 0; i < nh; i++) {
+            std::pair<eCityId, eHeroType> h;
+            if(ar.writing()) h = fHeroes[i];
+            ar.value(h.first);
+            ar.value(h.second);
+            if(ar.reading()) fHeroes.push_back(h);
+        }
+    }
+    {
+        int nc = fAllies.size();
+        ar.value(nc);
+        if(ar.reading()) fAllies.clear();
+        for(int i = 0; i < nc; i++) {
+            if(ar.reading()) {
+                const auto func = [this](const stdsptr<eWorldCity>& c) {
+                    fAllies.push_back(c);
+                };
+                ar.readStream().readCity(wboard, func);
+            } else {
+                ar.writeStream().writeCity(fAllies[i].get());
+            }
+        }
     }
 
-    dst << fHeroes.size();
-    for(const auto& h : fHeroes) {
-        dst << h.first;
-        dst << h.second;
-    }
-
-    dst << fAllies.size();
-    for(const auto& c : fAllies) {
-        dst.writeCity(c.get());
-    }
-
-    dst << fAres;
-    dst << fAresCity;
+    ar.value(fAres);
+    ar.value(fAresCity);
 }
 
 void eEnlistedForces::clear() {

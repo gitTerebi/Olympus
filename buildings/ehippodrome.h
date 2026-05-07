@@ -4,6 +4,8 @@
 #include "ehippodromepiece.h"
 #include "missiles/emissile.h"
 
+class eSaveArchive;
+
 class eHippodrome {
 public:
     eHippodrome(const eCityId cid, eGameBoard& board);
@@ -37,6 +39,8 @@ public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 private:
+    void serialize(eSaveArchive& ar);
+
     using eN = eHippodromePiece::eNeighbour;
     eN* addPiece(const eN& n);
 

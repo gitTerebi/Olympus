@@ -6,6 +6,8 @@
 #include "walkable/eobsticlehandler.h"
 #include "etilehelper.h"
 
+class eSaveArchive;
+
 enum class eGodAttackStage {
     none, appear, goTo1, patrol1, goTo2, patrol2, disappear
 };
@@ -24,6 +26,7 @@ public:
 
     void setSanctuary(const stdptr<eSanctuary>& s);
 private:
+    void serialize(eSaveArchive& ar);
     void initialize();
 
     bool lookForAttack(const int dtime, int& time,

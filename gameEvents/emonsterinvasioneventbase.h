@@ -7,6 +7,8 @@
 
 #include "characters/monsters/emonster.h"
 
+class eSaveArchive;
+
 class eMonsterInvasionEventBase : public eGameEvent,
                                   public ePointEventValue,
                                   public eMonstersEventValue {
@@ -36,6 +38,8 @@ public:
 protected:
     eMonster* triggerBase();
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eEventTrigger> mKilledTrigger;
     bool mChooseMonster = false;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;

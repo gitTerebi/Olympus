@@ -6,36 +6,37 @@
 #include "characters/actions/esoldieraction.h"
 #include "characters/actions/egodaction.h"
 #include "vec2.h"
+#include "fileIO/esavearchive.h"
 
 void eDefendAttackCityAction::read(eReadStream& src) {
-    auto& board = eGodMonsterAction::board();
     eGodMonsterAction::read(src);
-    src >> mStage;
-    mStartTile = src.readTile(board);
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mAttackTarget = c;
-    });
-    src >> mAttack;
-    src >> mLookForEnemy;
-    src >> mAttackTime;
-    src >> mRangeAttack;
-    src >> mAngle;
-    src >> mMissile;
-    src >> mKilled;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eDefendAttackCityAction::write(eWriteStream& dst) const {
     eGodMonsterAction::write(dst);
-    dst << mStage;
-    dst.writeTile(mStartTile);
-    dst.writeCharacter(mAttackTarget);
-    dst << mAttack;
-    dst << mLookForEnemy;
-    dst << mAttackTime;
-    dst << mRangeAttack;
-    dst << mAngle;
-    dst << mMissile;
-    dst << mKilled;
+    eSaveArchive ar(dst);
+    const_cast<eDefendAttackCityAction*>(this)->serialize(ar);
+}
+
+void eDefendAttackCityAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.tile(mStartTile, eGodMonsterAction::board());
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mAttackTarget = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mAttackTarget);
+    }
+    ar.value(mAttack);
+    ar.value(mLookForEnemy);
+    ar.value(mAttackTime);
+    ar.value(mRangeAttack);
+    ar.value(mAngle);
+    ar.value(mMissile);
+    ar.value(mKilled);
 }
 
 bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {

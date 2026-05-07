@@ -6,6 +6,7 @@
 #include "eiteratesquare.h"
 #include "evectorhelpers.h"
 #include "emessages.h"
+#include "fileIO/esavearchive.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eCityId cid,
@@ -35,39 +36,41 @@ void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventValue::write(dst);
     eMonstersEventValue::write(dst);
-    dst << mChooseMonster;
-    dst << mAggressivness;
-    dst << mValid;
-
-    dst << mSpawned.size();
-    for(const auto s : mSpawned) {
-        dst << s;
-    }
-
-    dst << mKilled.size();
-    for(const auto k : mKilled) {
-        dst << k;
-    }
+    eSaveArchive ar(dst);
+    const_cast<eMonsterInvasionEventBase*>(this)->serialize(ar);
 }
 
 void eMonsterInvasionEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventValue::read(src);
     eMonstersEventValue::read(src);
-    src >> mChooseMonster;
-    src >> mAggressivness;
-    src >> mValid;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
 
-    int ns;
-    src >> ns;
+void eMonsterInvasionEventBase::serialize(eSaveArchive& ar) {
+    ar.value(mChooseMonster);
+    ar.value(mAggressivness);
+    ar.value(mValid);
+
+    int ns = mSpawned.size();
+    ar.value(ns);
+    if(ar.reading()) mSpawned.clear();
     for(int i = 0; i < ns; i++) {
-        src >> mSpawned.emplace_back();
+        eMonsterType s;
+        if(ar.writing()) s = mSpawned[i];
+        ar.value(s);
+        if(ar.reading()) mSpawned.push_back(s);
     }
 
-    int nk;
-    src >> nk;
+    int nk = mKilled.size();
+    ar.value(nk);
+    if(ar.reading()) mKilled.clear();
     for(int i = 0; i < nk; i++) {
-        src >> mKilled.emplace_back();
+        eMonsterType k;
+        if(ar.writing()) k = mKilled[i];
+        ar.value(k);
+        if(ar.reading()) mKilled.push_back(k);
     }
 }
 

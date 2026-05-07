@@ -3,6 +3,8 @@
 
 #include "eemployingbuilding.h"
 
+class eSaveArchive;
+
 class eStorageBuilding : public eEmployingBuilding {
 public:
     eStorageBuilding(eGameBoard& board,
@@ -90,6 +92,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     const eResourceType mCanAccept;
 
     const int mSpaceCount;

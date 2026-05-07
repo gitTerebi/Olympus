@@ -1,6 +1,7 @@
 #include "emonument.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eMonument::eMonument(eGameBoard& board,
                        const eBuildingType type,
@@ -136,36 +137,35 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
 void eMonument::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mRotated;
-
-    src >> mHaltConstruction;
-
-    mStored.read(src);
-    mUsed.read(src);
-
-    src >> mAltitude;
-
-    auto& board = getBoard();
-
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMonument::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eMonument*>(this)->serialize(ar);
+}
 
-    dst << mRotated;
-
-    dst << mHaltConstruction;
-
-    mStored.write(dst);
-    mUsed.write(dst);
-
-    dst << mAltitude;
-
-    dst.writeCharacter(mCart);
+void eMonument::serialize(eSaveArchive& ar) {
+    ar.value(mRotated);
+    ar.value(mHaltConstruction);
+    if(ar.reading()) {
+        mStored.read(ar.readStream());
+        mUsed.read(ar.readStream());
+    } else {
+        mStored.write(ar.writeStream());
+        mUsed.write(ar.writeStream());
+    }
+    ar.value(mAltitude);
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
 }
 
 eSanctCost eMonument::cost() const {

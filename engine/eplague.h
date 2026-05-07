@@ -10,6 +10,7 @@ class eSmallHouse;
 
 class eReadStream;
 class eWriteStream;
+class eSaveArchive;
 
 enum class eCityId;
 
@@ -32,6 +33,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eGameBoard& mBoard;
     eCityId mCityId;
     eHouses mHouses;

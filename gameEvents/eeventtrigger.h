@@ -7,6 +7,7 @@
 
 class eGameEvent;
 class eWorldBoard;
+class eSaveArchive;
 enum class eCityId;
 
 class eEventTrigger : public eStdSelfRef {
@@ -38,6 +39,8 @@ public:
     void setGameBoard(eGameBoard* const b);
     void setWorldBoard(eWorldBoard* const b);
 private:
+    void serialize(eSaveArchive& ar);
+
     const eCityId mCid;
     eGameBoard& mBoard;
 

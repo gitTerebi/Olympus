@@ -1,4 +1,5 @@
 #include "estoragebuilding.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "characters/ecarttransporter.h"
@@ -241,57 +242,54 @@ void eStorageBuilding::getOrders(eResourceType& get,
 
 void eStorageBuilding::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mGet;
-    src >> mEmpty;
-    src >> mAccept;
-
-    for(int i = 0; i < 15; i++) {
-        src >> mResourceCount[i];
-    }
-
-    for(int i = 0; i < 15; i++) {
-        src >> mResource[i];
-    }
-
-    int nc;
-    src >> nc;
-    for(int i = 0; i < nc; i++) {
-        eResourceType rt;
-        src >> rt;
-        int c;
-        src >> c;
-        mMaxCount[rt] = c;
-    }
-
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mCart1 = static_cast<eCartTransporter*>(c);
-    });
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mCart2 = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eStorageBuilding::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eStorageBuilding*>(this)->serialize(ar);
+}
 
-    dst << mGet;
-    dst << mEmpty;
-    dst << mAccept;
-
+void eStorageBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mGet);
+    ar.value(mEmpty);
+    ar.value(mAccept);
     for(int i = 0; i < 15; i++) {
-        dst << mResourceCount[i];
+        ar.value(mResourceCount[i]);
     }
-
     for(int i = 0; i < 15; i++) {
-        dst << mResource[i];
+        ar.value(mResource[i]);
     }
 
-    dst << mMaxCount.size();
-    for(const auto& trc : mMaxCount) {
-        dst << trc.first;
-        dst << trc.second;
+    int nc = mMaxCount.size();
+    ar.value(nc);
+    if(ar.reading()) mMaxCount.clear();
+    for(int i = 0; i < nc; i++) {
+        eResourceType rt;
+        int c;
+        if(ar.writing()) {
+            auto it = mMaxCount.begin();
+            std::advance(it, i);
+            rt = it->first;
+            c = it->second;
+        }
+        ar.value(rt);
+        ar.value(c);
+        if(ar.reading()) {
+            mMaxCount[rt] = c;
+        }
     }
-    dst.writeCharacter(mCart1);
-    dst.writeCharacter(mCart2);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart1 = static_cast<eCartTransporter*>(c);
+        });
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart2 = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart1);
+        ar.writeStream().writeCharacter(mCart2);
+    }
 }

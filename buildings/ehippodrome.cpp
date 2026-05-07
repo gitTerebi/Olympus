@@ -1,4 +1,5 @@
 #include "ehippodrome.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/eracinghorse.h"
 
@@ -133,37 +134,49 @@ void eHippodrome::nextCleaningPartId() {
 }
 
 void eHippodrome::write(eWriteStream& dst) const {
-    dst << mFinish;
-    dst << mNHorses;
-    dst.writeCharacter(mCart);
-    dst << mPieces.size();
-    for(const auto& p : mPieces) {
-        dst << p.fO;
-        dst.writeBuilding(p.fPtr);
-    }
+    eSaveArchive ar(dst);
+    const_cast<eHippodrome*>(this)->serialize(ar);
 }
 
 void eHippodrome::read(eReadStream& src) {
-    src >> mFinish;
-    src >> mNHorses;
-    src.readCharacter(&mBoard, [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
-    int n;
-    src >> n;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eHippodrome::serialize(eSaveArchive& ar) {
+    ar.value(mFinish);
+    ar.value(mNHorses);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
+    int n = mPieces.size();
+    ar.value(n);
+    if(ar.reading()) mPieces.clear();
     for(int i = 0; i < n; i++) {
-        auto& p = mPieces.emplace_back();
-        src >> p.fO;
-        src.readBuilding(&mBoard, [this, i](eBuilding* const b) {
-            const auto hp = static_cast<eHippodromePiece*>(b);
-            mPieces[i].fPtr = hp;
-            hp->setHippodrome(this);
-            hp->setPartId(i);
+        eN p;
+        if(ar.writing()) p = mPieces[i];
+        ar.value(p.fO);
+        if(ar.reading()) {
+            mPieces.push_back(p);
+            ar.readStream().readBuilding(&mBoard, [this, i](eBuilding* const b) {
+                const auto hp = static_cast<eHippodromePiece*>(b);
+                mPieces[i].fPtr = hp;
+                hp->setHippodrome(this);
+                hp->setPartId(i);
+            });
+        } else {
+            ar.writeStream().writeBuilding(p.fPtr);
+        }
+    }
+    if(ar.reading()) {
+        ar.readStream().addPostFunc([this]() {
+            updatePaths();
         });
     }
-    src.addPostFunc([this]() {
-        updatePaths();
-    });
 }
 
 eHippodrome::eN* eHippodrome::addPiece(const eN& n) {

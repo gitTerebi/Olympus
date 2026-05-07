@@ -5,6 +5,8 @@
 #include "buildings/etradepost.h"
 #include "ewalkablehelpers.h"
 
+class eSaveArchive;
+
 class eTraderAction : public eActionWithComeback {
     friend class eTA_tradeFail;
     friend class eTA_tradeFinish;
@@ -25,6 +27,7 @@ private:
     void goToTradePost();
     void trade();
     void tradeIncrement();
+    void serialize(eSaveArchive& ar);
 
     stdsptr<eWalkableObject> mWalkable =
             eWalkableObject::sCreateDefault();

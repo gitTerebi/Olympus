@@ -7,6 +7,7 @@
 #include "characters/actions/ewaitaction.h"
 #include "buildings/epalace.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eGodAttackAction::eGodAttackAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godAttackAction) {}
@@ -215,29 +216,32 @@ bool eGodAttackAction::decide() {
 
 void eGodAttackAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src >> mLookForCurse;
-    src >> mLookForTargetedCurse;
-    src >> mLookForAttack;
-    src >> mLookForTargetedAttack;
-    src >> mLookForGod;
-    src >> mLookForSpecial;
-    auto& board = this->board();
-    src.readBuilding(&board, [this](eBuilding* const b) {
-        mSanctuary = static_cast<eSanctuary*>(b);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodAttackAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst << mLookForCurse;
-    dst << mLookForTargetedCurse;
-    dst << mLookForAttack;
-    dst << mLookForTargetedAttack;
-    dst << mLookForGod;
-    dst << mLookForSpecial;
-    dst.writeBuilding(mSanctuary);
+    eSaveArchive ar(dst);
+    const_cast<eGodAttackAction*>(this)->serialize(ar);
+}
+
+void eGodAttackAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.value(mLookForCurse);
+    ar.value(mLookForTargetedCurse);
+    ar.value(mLookForAttack);
+    ar.value(mLookForTargetedAttack);
+    ar.value(mLookForGod);
+    ar.value(mLookForSpecial);
+    if(ar.reading()) {
+        auto& board = this->board();
+        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
+            mSanctuary = static_cast<eSanctuary*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mSanctuary);
+    }
 }
 
 void eGodAttackAction::setSanctuary(const stdptr<eSanctuary>& s) {

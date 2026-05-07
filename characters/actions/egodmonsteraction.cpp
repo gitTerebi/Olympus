@@ -1,5 +1,7 @@
 #include "egodmonsteraction.h"
 
+#include "fileIO/esavearchive.h"
+
 #include "ewaitaction.h"
 #include "emovearoundaction.h"
 #include "emovetoaction.h"
@@ -483,35 +485,39 @@ void eGodMonsterAction::resumeAction() {
 
 void eGodMonsterAction::read(eReadStream& src) {
     eComplexAction::read(src);
-    int s;
-    src >> s;
-    for(int i = 0; i < s; i++) {
-        auto& a = mPausedActions.emplace_back();
-        src >> a.fAt;
-        bool hasAction;
-        src >> hasAction;
-        if(hasAction) {
-            eCharActionType type;
-            src >> type;
-            a.fA = eCharacterAction::sCreate(character(),
-                                             type);
-            a.fA->read(src);
-        }
-        src >> a.fO;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodMonsterAction::write(eWriteStream& dst) const {
     eComplexAction::write(dst);
-    dst << mPausedActions.size();
-    for(const auto& a : mPausedActions) {
-        dst << a.fAt;
-        dst << (a.fA != nullptr);
-        if(a.fA) {
-            dst << a.fA->type();
-            a.fA->write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eGodMonsterAction*>(this)->serialize(ar);
+}
+
+void eGodMonsterAction::serialize(eSaveArchive& ar) {
+    int s = mPausedActions.size();
+    ar.value(s);
+    if(ar.reading()) mPausedActions.clear();
+    for(int i = 0; i < s; i++) {
+        ePausedAction a;
+        if(ar.writing()) a = mPausedActions[i];
+        ar.value(a.fAt);
+        bool hasAction = a.fA != nullptr;
+        ar.value(hasAction);
+        if(hasAction) {
+            eCharActionType type;
+            if(ar.writing()) type = a.fA->type();
+            ar.value(type);
+            if(ar.reading()) {
+                a.fA = eCharacterAction::sCreate(character(), type);
+                a.fA->read(ar.readStream());
+            } else {
+                a.fA->write(ar.writeStream());
+            }
         }
-        dst << a.fO;
+        ar.value(a.fO);
+        if(ar.reading()) mPausedActions.push_back(a);
     }
 }
 

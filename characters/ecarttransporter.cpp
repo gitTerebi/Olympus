@@ -4,6 +4,7 @@
 
 #include "characters/actions/efollowaction.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 #include "etrailer.h"
 #include "eox.h"
 #include "eporter.h"
@@ -349,51 +350,54 @@ void eCartTransporter::catchUp() {
 
 void eCartTransporter::read(eReadStream& src) {
     eBasicPatroler::read(src);
-    int count;
-    src >> count;
-    src >> mType;
-    eResourceType type;
-    src >> type;
-    setResourceValue(type, count);
-    src >> mSupports;
-    src >> mSupport;
-    src >> mWaiting;
-    src >> mIsOx;
-    src >> mBigTrailer;
-    src >> mMaxDistance;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mOx = static_cast<eOx*>(c);
-    });
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mTrailer = static_cast<eTrailer*>(c);
-    });
-    int nf;
-    src >> nf;
-    for(int i = 0; i < nf; i++) {
-        src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mFollowers.push_back(c);
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
     updateTextures();
 }
 
 void eCartTransporter::write(eWriteStream& dst) const {
     eBasicPatroler::write(dst);
-    dst << mResourceCount;
-    dst << mType;
-    dst << mResourceType;
-    dst << mSupports;
-    dst << mSupport;
-    dst << mWaiting;
-    dst << mIsOx;
-    dst << mBigTrailer;
-    dst << mMaxDistance;
-    dst.writeCharacter(mOx);
-    dst.writeCharacter(mTrailer);
+    eSaveArchive ar(dst);
+    const_cast<eCartTransporter*>(this)->serialize(ar);
+}
 
-    dst << mFollowers.size();
-    for(const auto& f : mFollowers) {
-        dst.writeCharacter(f);
+void eCartTransporter::serialize(eSaveArchive& ar) {
+    int count = mResourceCount;
+    ar.value(count);
+    ar.value(mType);
+    eResourceType type = mResourceType;
+    ar.value(type);
+    if(ar.reading()) {
+        setResourceValue(type, count);
+    }
+    ar.value(mSupports);
+    ar.value(mSupport);
+    ar.value(mWaiting);
+    ar.value(mIsOx);
+    ar.value(mBigTrailer);
+    ar.value(mMaxDistance);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mOx = static_cast<eOx*>(c);
+        });
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mTrailer = static_cast<eTrailer*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mOx);
+        ar.writeStream().writeCharacter(mTrailer);
+    }
+    int nf = mFollowers.size();
+    ar.value(nf);
+    if(ar.reading()) mFollowers.clear();
+    for(int i = 0; i < nf; i++) {
+        if(ar.reading()) {
+            ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mFollowers.push_back(c);
+            });
+        } else {
+            ar.writeStream().writeCharacter(mFollowers[i]);
+        }
     }
 }
 

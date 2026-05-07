@@ -13,6 +13,7 @@
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eBuildingType eHerosHall::sHeroTypeToHallType(const eHeroType type) {
     switch(type) {
@@ -441,30 +442,32 @@ void eHerosHall::sendHeroOnQuest() {
 
 void eHerosHall::read(eReadStream& src) {
     eBuilding::read(src);
-    src >> mStage;
-    src >> mArrivalCountdown;
-    src >> mPhilosophers;
-    src >> mActors;
-    src >> mAthletes;
-    src >> mUpdateCulture;
-    src >> mHeroOnQuest;
-    src >> mSpawnWait;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mHero = static_cast<eHero*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHerosHall::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst << mStage;
-    dst << mArrivalCountdown;
-    dst << mPhilosophers;
-    dst << mActors;
-    dst << mAthletes;
-    dst << mUpdateCulture;
-    dst << mHeroOnQuest;
-    dst << mSpawnWait;
-    dst.writeCharacter(mHero);
+    eSaveArchive ar(dst);
+    const_cast<eHerosHall*>(this)->serialize(ar);
+}
+
+void eHerosHall::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.value(mArrivalCountdown);
+    ar.value(mPhilosophers);
+    ar.value(mActors);
+    ar.value(mAthletes);
+    ar.value(mUpdateCulture);
+    ar.value(mHeroOnQuest);
+    ar.value(mSpawnWait);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mHero = static_cast<eHero*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mHero);
+    }
 }
 
 void eHerosHall::addRequirement(const eHeroRequirement& hr) {

@@ -1,6 +1,7 @@
 #include "emovepathaction.h"
 
 #include "characters/echaracter.h"
+#include "fileIO/esavearchive.h"
 
 eMovePathAction::eMovePathAction(eCharacter* const c,
                                  const std::vector<eOrientation>& path,
@@ -29,22 +30,32 @@ eCharacterActionState eMovePathAction::nextTurn(eOrientation& turn) {
 
 void eMovePathAction::read(eReadStream& src) {
     eMoveAction::read(src);
-    int n;
-    src >> n;
-    for(int i = 0; i < n; i++) {
-        auto& o = mTurns.emplace_back();
-        src >> o;
-    }
-    src >> mMaxDistance;
-    src >> mWalkedDistance;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMovePathAction::write(eWriteStream& dst) const {
     eMoveAction::write(dst);
-    dst << mTurns.size();
-    for(const auto t : mTurns) {
-        dst << t;
+    eSaveArchive ar(dst);
+    const_cast<eMovePathAction*>(this)->serialize(ar);
+}
+
+void eMovePathAction::serialize(eSaveArchive& ar) {
+    int n = mTurns.size();
+    ar.value(n);
+    if(ar.reading()) {
+        mTurns.clear();
     }
-    dst << mMaxDistance;
-    dst << mWalkedDistance;
+    for(int i = 0; i < n; i++) {
+        eOrientation o;
+        if(ar.writing()) {
+            o = mTurns[i];
+        }
+        ar.value(o);
+        if(ar.reading()) {
+            mTurns.push_back(o);
+        }
+    }
+    ar.value(mMaxDistance);
+    ar.value(mWalkedDistance);
 }

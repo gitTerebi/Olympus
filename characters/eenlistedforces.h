@@ -5,6 +5,8 @@
 #include "characters/heroes/ehero.h"
 #include "engine/eworldcity.h"
 
+class eSaveArchive;
+
 struct eEnlistedForces {
     std::vector<stdsptr<eSoldierBanner>> fSoldiers;
     std::vector<std::pair<eCityId, eHeroType>> fHeroes;
@@ -17,6 +19,7 @@ struct eEnlistedForces {
     void read(eGameBoard& board,
               eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar, eGameBoard* board);
 
     void clear();
 

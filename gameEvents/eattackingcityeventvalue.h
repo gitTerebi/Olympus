@@ -3,6 +3,8 @@
 
 #include "engine/eworldcity.h"
 
+class eSaveArchive;
+
 class eAttackingCityEventValue {
 public:
     void write(eWriteStream& dst) const;
@@ -11,6 +13,8 @@ public:
     void setAttackingCity(const stdsptr<eWorldCity>& c) { mAttackingCity = c; }
     const stdsptr<eWorldCity>& attackingCity() const { return mAttackingCity; }
 protected:
+    void serialize(eSaveArchive& ar, eGameBoard* board);
+
     stdsptr<eWorldCity> mAttackingCity;
 };
 

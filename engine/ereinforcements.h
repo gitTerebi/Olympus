@@ -3,6 +3,8 @@
 
 #include "characters/eenlistedforces.h"
 
+class eSaveArchive;
+
 class eReinforcements {
 public:
     eReinforcements();
@@ -18,6 +20,8 @@ public:
     void write(eWriteStream& dst) const;
     void read(eGameBoard& board, eReadStream& src);
 private:
+    void serialize(eSaveArchive& ar, eGameBoard* board);
+
     eEnlistedForces mForces;
     eCityId mFromCid;
 };

@@ -6,6 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class eWorldCity;
+class eSaveArchive;
 
 class eColonyMonumentAction : public ePlannedAction {
 public:
@@ -17,6 +18,8 @@ public:
     void read(eReadStream& src, eGameBoard& board) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar, eGameBoard* board);
+
     stdsptr<eWorldCity> mCity;
 };
 

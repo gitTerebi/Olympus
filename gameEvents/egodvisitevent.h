@@ -4,6 +4,8 @@
 #include "egameevent.h"
 #include "characters/gods/egod.h"
 
+class eSaveArchive;
+
 class eGodVisitEvent : public eGameEvent {
 public:
     eGodVisitEvent(const eCityId cid,
@@ -23,6 +25,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
+
     std::vector<eGodType> mTypes;
     int mNextId = 0;
     bool mRandom = false;

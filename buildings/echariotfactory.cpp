@@ -163,31 +163,17 @@ std::vector<eCartTask> eChariotFactory::cartTasks() const {
 
 void eChariotFactory::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mWood;
-    src >> mHorses;
-    src >> mChariots;
-    auto& board = getBoard();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mWoodCart = static_cast<eCartTransporter*>(c);
-    });
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mHorseCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eChariotFactory::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-
-    dst << mWood;
-    dst << mHorses;
-    dst << mChariots;
-    dst.writeCharacter(mWoodCart);
-    dst.writeCharacter(mHorseCart);
+    eSaveArchive ar(dst);
+    const_cast<eChariotFactory*>(this)->serialize(ar);
 }
 
 void eChariotFactory::serialize(eSaveArchive& ar) {
-    eEmployingBuilding::serialize(ar);
     ar.value(mWood);
     ar.value(mHorses);
     ar.value(mChariots);

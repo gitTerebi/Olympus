@@ -2,6 +2,7 @@
 
 #include "engine/egameboard.h"
 #include "engine/eguidedmovepathtask.h"
+#include "fileIO/esavearchive.h"
 
 ePatrolBuildingBase::ePatrolBuildingBase(
         eGameBoard& board,
@@ -116,48 +117,42 @@ bool ePatrolBuildingBase::spawnsPatrolers() const {
 
 void ePatrolBuildingBase::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mBothDirections;
-    src >> mLastDirection;
-
-    src >> mSpawnPatrolers;
-    src >> mSpawnTime;
-    src >> mSpawnRoadId;
-
-    mDirTimes = src.readDirectionTimes(getBoard());
-
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mChar = c;
-    });
-
-    int n;
-    src >> n;
-    for(int i = 0; i < n; i++) {
-        ePatrolGuide pg;
-        src >> pg.fX;
-        src >> pg.fY;
-        mPatrolGuides.push_back(pg);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePatrolBuildingBase::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<ePatrolBuildingBase*>(this)->serialize(ar);
+}
 
-    dst << mBothDirections;
-    dst << mLastDirection;
+void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
+    ar.value(mBothDirections);
+    ar.value(mLastDirection);
+    ar.value(mSpawnPatrolers);
+    ar.value(mSpawnTime);
+    ar.value(mSpawnRoadId);
 
-    dst << mSpawnPatrolers;
-    dst << mSpawnTime;
-    dst << mSpawnRoadId;
+    if(ar.reading()) {
+        mDirTimes = ar.readStream().readDirectionTimes(getBoard());
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mChar = c;
+        });
+    } else {
+        ar.writeStream().writeDirectionTimes(mDirTimes.get());
+        ar.writeStream().writeCharacter(mChar);
+    }
 
-    dst.writeDirectionTimes(mDirTimes.get());
-
-    dst.writeCharacter(mChar);
-
-    dst << mPatrolGuides.size();
-    for(const auto& pg : mPatrolGuides) {
-        dst << pg.fX;
-        dst << pg.fY;
+    int n = mPatrolGuides.size();
+    ar.value(n);
+    if(ar.reading()) mPatrolGuides.clear();
+    for(int i = 0; i < n; i++) {
+        ePatrolGuide pg;
+        if(ar.writing()) pg = mPatrolGuides[i];
+        ar.value(pg.fX);
+        ar.value(pg.fY);
+        if(ar.reading()) mPatrolGuides.push_back(pg);
     }
 }
 

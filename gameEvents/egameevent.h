@@ -10,6 +10,7 @@
 
 class eWriteStream;
 class eReadStream;
+class eSaveArchive;
 class eWorldBoard;
 
 enum class eGameEventType {
@@ -202,6 +203,7 @@ public:
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
     void callBaseTrigger();
+    void serialize(eSaveArchive& ar);
 private:
     void updateWarningDates();
 

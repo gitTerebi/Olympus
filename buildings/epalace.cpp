@@ -3,6 +3,7 @@
 #include "engine/egameboard.h"
 #include "textures/egametextures.h"
 #include "epalacetile.h"
+#include "fileIO/esavearchive.h"
 
 ePalace::ePalace(eGameBoard& board, const bool r,
                  const eCityId cid) :
@@ -122,22 +123,30 @@ void ePalace::addTile(ePalaceTile* const tile) {
 
 void ePalace::read(eReadStream& src) {
     eBuilding::read(src);
-
-    int tiles;
-    src >> tiles;
-    for(int i = 0; i < tiles; i++) {
-        src.readBuilding(&getBoard(), [this](eBuilding* const b) {
-            const auto pt = static_cast<ePalaceTile*>(b);
-            addTile(pt);
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePalace::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<ePalace*>(this)->serialize(ar);
+}
 
-    dst << mTiles.size();
-    for(const auto t : mTiles) {
-        dst.writeBuilding(t);
+void ePalace::serialize(eSaveArchive& ar) {
+    int tiles = mTiles.size();
+    ar.value(tiles);
+    if(ar.reading()) {
+        mTiles.clear();
+    }
+    for(int i = 0; i < tiles; i++) {
+        if(ar.reading()) {
+            ar.readStream().readBuilding(&getBoard(), [this](eBuilding* const b) {
+                const auto pt = static_cast<ePalaceTile*>(b);
+                addTile(pt);
+            });
+        } else {
+            ar.writeStream().writeBuilding(mTiles[i]);
+        }
     }
 }

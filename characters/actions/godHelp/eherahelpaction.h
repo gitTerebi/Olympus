@@ -5,6 +5,8 @@
 
 #include "buildings/eagorabase.h"
 
+class eSaveArchive;
+
 enum class eHeraHelpStage {
     none, appear, goTo, give, disappear
 };
@@ -21,6 +23,8 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
 private:
+    void serialize(eSaveArchive& ar);
+
     void goToTarget();
     void give();
 

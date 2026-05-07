@@ -12,6 +12,7 @@ enum class eAgoraOrientation {
 };
 
 class eVendor;
+class eSaveArchive;
 
 class eAgoraBase : public ePatrolBuildingBase {
 public:
@@ -55,6 +56,8 @@ public:
     eAgoraOrientation orientation() const { return mO; }
     eDiagonalOrientation diagonalOrientation() const;
 private:
+    void serialize(eSaveArchive& ar);
+
     const int mNPts;
 protected:
     const eAgoraOrientation mO;

@@ -5,6 +5,7 @@
 
 class eHorse;
 class eHorseRanch;
+class eSaveArchive;
 
 class eHorseRanchEnclosure : public eBuildingWithResource {
 public:
@@ -32,6 +33,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     std::vector<stdsptr<eHorse>> mHorses;
 
     eHorseRanch* mRanch = nullptr;

@@ -4,6 +4,7 @@
 #include "egameevent.h"
 
 class eSanctuary;
+class eSaveArchive;
 enum class eGodType;
 
 class eGodAttackEvent : public eGameEvent {
@@ -28,6 +29,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eSanctuary> mSanctuary;
     std::vector<eGodType> mTypes;
     int mNextId = 0;

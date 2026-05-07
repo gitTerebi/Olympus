@@ -3,6 +3,8 @@
 
 #include "engine/eworldcity.h"
 
+class eSaveArchive;
+
 class eCityEventValue {
 public:
     using eValidator = std::function<bool(eWorldCity&)>;
@@ -21,6 +23,8 @@ public:
     int maxCityId() const { return mMaxCityId; }
     void setMaxCityId(const int max) { mMaxCityId = max; }
 protected:
+    void serialize(eSaveArchive& ar, eGameBoard& board);
+
     void chooseCity();
 
     void longNameReplaceCity(const std::string& id,
