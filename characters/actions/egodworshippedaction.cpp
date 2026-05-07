@@ -1,4 +1,5 @@
 #include "egodworshippedaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/actions/edefendcityaction.h"
 #include "characters/actions/emovetoaction.h"
@@ -107,20 +108,22 @@ void eGodWorshippedAction::lookForMonster() {
 
 void eGodWorshippedAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src >> mLookForBless;
-    src >> mLookForSoldierAttack;
-    src >> mLookForCityDefense;
-    src >> mLookForMonster;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodWorshippedAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst << mLookForBless;
-    dst << mLookForSoldierAttack;
-    dst << mLookForCityDefense;
-    dst << mLookForMonster;
+    eSaveArchive ar(dst);
+    const_cast<eGodWorshippedAction*>(this)->serialize(ar);
+}
+
+void eGodWorshippedAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.value(mLookForBless);
+    ar.value(mLookForSoldierAttack);
+    ar.value(mLookForCityDefense);
+    ar.value(mLookForMonster);
 }
 
 void eGodWorshippedAction::defendCity() {

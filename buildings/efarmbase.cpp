@@ -4,6 +4,7 @@
 #include "enumbers.h"
 #include "engine/edate.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 #include <algorithm>
@@ -106,27 +107,30 @@ eMonth eFarmBase::nextHarvestMonth() const {
     return harvestDate.month();
 }
 
+void eFarmBase::serialize(eSaveArchive& ar) {
+    ar.value(mNextRipe);
+    int combined;
+    if(ar.writing()) combined = mCurrentTile * 5 + mCurrentStage;
+    ar.value(combined);
+    if(ar.reading()) {
+        mCurrentTile  = std::clamp(combined / 5, 0, 4);
+        mCurrentStage = std::clamp(combined % 5, 0, 4);
+    }
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        ar.value(mProducedThisYear);
+        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
+        ar.value(mRingIdx);
+    }
+}
+
 void eFarmBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-
-    src >> mNextRipe;
-    int combined;
-    src >> combined;
-    mCurrentTile  = std::clamp(combined / 5, 0, 4);
-    mCurrentStage = std::clamp(combined % 5, 0, 4);
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mProducedThisYear;
-        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
-        src >> mRingIdx;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFarmBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-
-    dst << mNextRipe;
-    dst << (mCurrentTile * 5 + mCurrentStage);
-    dst << mProducedThisYear;
-    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
-    dst << mRingIdx;
+    eSaveArchive ar(dst);
+    const_cast<eFarmBase*>(this)->serialize(ar);
 }

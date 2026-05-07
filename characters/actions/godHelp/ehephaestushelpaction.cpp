@@ -1,4 +1,5 @@
 #include "ehephaestushelpaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
@@ -33,12 +34,18 @@ bool eHephaestusHelpAction::decide() {
 
 void eHephaestusHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHephaestusHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
+    eSaveArchive ar(dst);
+    const_cast<eHephaestusHelpAction*>(this)->serialize(ar);
+}
+
+void eHephaestusHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
 }
 
 bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,

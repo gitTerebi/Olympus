@@ -1,4 +1,5 @@
 #include "efirefighteraction.h"
+#include "fileIO/esavearchive.h"
 
 #include "../echaracter.h"
 #include "engine/egameboard.h"
@@ -95,16 +96,20 @@ bool eFireFighterAction::decide() {
 
 void eFireFighterAction::read(eReadStream& src) {
     ePatrolAction::read(src);
-    src >> mFireFighting;
-    src >> mFireCheck;
-    src >> mUsedWater;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFireFighterAction::write(eWriteStream& dst) const {
     ePatrolAction::write(dst);
-    dst << mFireFighting;
-    dst << mFireCheck;
-    dst << mUsedWater;
+    eSaveArchive ar(dst);
+    const_cast<eFireFighterAction*>(this)->serialize(ar);
+}
+
+void eFireFighterAction::serialize(eSaveArchive& ar) {
+    ar.value(mFireFighting);
+    ar.value(mFireCheck);
+    ar.value(mUsedWater);
 }
 
 bool eFireFighterAction::lookForFire(const bool second) {

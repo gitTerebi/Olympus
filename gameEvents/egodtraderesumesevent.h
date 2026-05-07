@@ -5,6 +5,8 @@
 
 #include "characters/gods/egod.h"
 
+class eSaveArchive;
+
 class eGodTradeResumesEvent : public eGameEvent {
 public:
     eGodTradeResumesEvent(const eCityId cid,
@@ -20,6 +22,7 @@ public:
     void setGod(const eGodType god) { mGod = god; }
     eGodType god() const { return mGod; }
 private:
+    void serialize(eSaveArchive& ar);
     eGodType mGod = eGodType::zeus;
 };
 

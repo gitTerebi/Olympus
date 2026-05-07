@@ -1,4 +1,5 @@
 #include "etemplealtarbuilding.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
 
@@ -74,14 +75,19 @@ void eTempleAltarBuilding::timeChanged(const int by) {
 
 void eTempleAltarBuilding::read(eReadStream& src) {
     eSanctBuilding::read(src);
-    src >> mSacrifice;
-    src >> mSacrificeTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTempleAltarBuilding::write(eWriteStream& dst) const {
     eSanctBuilding::write(dst);
-    dst << mSacrifice;
-    dst << mSacrificeTime;
+    eSaveArchive ar(dst);
+    const_cast<eTempleAltarBuilding*>(this)->serialize(ar);
+}
+
+void eTempleAltarBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mSacrifice);
+    ar.value(mSacrificeTime);
 }
 
 void eTempleAltarBuilding::startSacrifice(const eSacrifice s) {

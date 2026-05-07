@@ -3,6 +3,8 @@
 
 #include "esanctbuilding.h"
 
+class eSaveArchive;
+
 enum class eSacrifice {
     none,
     sheep,
@@ -28,6 +30,7 @@ public:
     void startSacrifice(const eSacrifice s);
     bool sacrificing() const { return mSacrifice != eSacrifice::none; }
 private:
+    void serialize(eSaveArchive& ar);
     eSacrifice mSacrifice = eSacrifice::none;
     int mSacrificeTime = 600000;
 };

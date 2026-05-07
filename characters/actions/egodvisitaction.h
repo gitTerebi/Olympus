@@ -3,6 +3,8 @@
 
 #include "egodaction.h"
 
+class eSaveArchive;
+
 enum class eGodVisitStage {
     none, appear, patrol, disappear
 };
@@ -17,6 +19,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     eGodVisitStage mStage{eGodVisitStage::none};
 
     int mLookForBless = 0;

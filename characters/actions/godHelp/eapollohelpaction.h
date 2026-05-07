@@ -5,6 +5,8 @@
 
 #include "buildings/esmallhouse.h"
 
+class eSaveArchive;
+
 enum class eApolloHelpStage {
     none, appear, goTo, heal, disappear
 };
@@ -21,6 +23,7 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
 private:
+    void serialize(eSaveArchive& ar);
     void goToTarget();
     void heal();
 

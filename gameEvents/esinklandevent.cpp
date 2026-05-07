@@ -1,4 +1,5 @@
 #include "esinklandevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -35,6 +36,12 @@ void eSinkLandEvent::write(eWriteStream& dst) const {
     eCountEventValue::write(dst);
     eGodEventValue::write(dst);
     eGodReasonEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSinkLandEvent*>(this)->serialize(ar);
+}
+
+void eSinkLandEvent::serialize(eSaveArchive& ar) {
+
 }
 
 void eSinkLandEvent::read(eReadStream& src) {
@@ -42,6 +49,8 @@ void eSinkLandEvent::read(eReadStream& src) {
     eCountEventValue::read(src);
     eGodEventValue::read(src);
     eGodReasonEventValue::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSinkLandEvent::loadResources() const {

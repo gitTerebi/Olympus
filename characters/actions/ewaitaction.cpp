@@ -1,4 +1,5 @@
 #include "ewaitaction.h"
+#include "fileIO/esavearchive.h"
 
 eWaitAction::eWaitAction(eCharacter* const c) :
     eCharacterAction(c, eCharActionType::waitAction) {}
@@ -16,10 +17,16 @@ void eWaitAction::increment(const int by) {
 
 void eWaitAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    src >> mRemTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eWaitAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst << mRemTime;
+    eSaveArchive ar(dst);
+    const_cast<eWaitAction*>(this)->serialize(ar);
+}
+
+void eWaitAction::serialize(eSaveArchive& ar) {
+    ar.value(mRemTime);
 }

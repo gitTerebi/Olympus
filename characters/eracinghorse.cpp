@@ -1,5 +1,7 @@
 #include "eracinghorse.h"
 
+#include "fileIO/esavearchive.h"
+
 eRacingHorse::eRacingHorse(eGameBoard& board, const int id,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::racingHorse, path),
@@ -48,10 +50,16 @@ eRacingHorse::getTexture(const eTileSize size) const {
 
 void eRacingHorse::read(eReadStream& src) {
     eMissile::read(src);
-    src >> mId;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eRacingHorse::write(eWriteStream& dst) const {
     eMissile::write(dst);
-    dst << mId;
+    eSaveArchive ar(dst);
+    const_cast<eRacingHorse*>(this)->serialize(ar);
+}
+
+void eRacingHorse::serialize(eSaveArchive& ar) {
+    ar.value(mId);
 }

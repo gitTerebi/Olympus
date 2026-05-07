@@ -1,5 +1,7 @@
 #include "edomesticatedanimal.h"
 
+#include "fileIO/esavearchive.h"
+
 eDomesticatedAnimal::eDomesticatedAnimal(
         eGameBoard& board,
         const eCharTexs charTexs,
@@ -28,8 +30,8 @@ int eDomesticatedAnimal::collect() {
 
 void eDomesticatedAnimal::read(eReadStream& src) {
     eAnimal::read(src);
-    src >> mGroomed;
-    src >> mResource;
+    eSaveArchive ar(src);
+    serialize(ar);
     if(mResource == 0) {
         setNakedTexture();
     } else {
@@ -39,6 +41,11 @@ void eDomesticatedAnimal::read(eReadStream& src) {
 
 void eDomesticatedAnimal::write(eWriteStream& dst) const {
     eAnimal::write(dst);
-    dst << mGroomed;
-    dst << mResource;
+    eSaveArchive ar(dst);
+    const_cast<eDomesticatedAnimal*>(this)->serialize(ar);
+}
+
+void eDomesticatedAnimal::serialize(eSaveArchive& ar) {
+    ar.value(mGroomed);
+    ar.value(mResource);
 }

@@ -7,6 +7,7 @@
 #include "enumbers.h"
 
 class eResourceCollectorBase;
+class eSaveArchive;
 
 enum class eCharacterType;
 
@@ -45,6 +46,8 @@ public:
 
     bool spawn();
 private:
+    void serialize(eSaveArchive& ar);
+
     const eCharGenerator mCharGenerator;
     const std::vector<eBuildingTextures>& mTextures;
 

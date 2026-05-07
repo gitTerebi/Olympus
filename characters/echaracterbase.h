@@ -7,6 +7,8 @@
 
 #include "engine/ecityid.h"
 
+class eSaveArchive;
+
 enum class eCharacterType {
     none,
 
@@ -216,6 +218,8 @@ public:
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eCharacterType mType;
     eCharacterActionType mActionType{eCharacterActionType::none};
 

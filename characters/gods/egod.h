@@ -7,6 +7,8 @@
 
 #include "textures/edestructiontextures.h"
 
+class eSaveArchive;
+
 enum class eGodQuestId {
     godQuest1,
     godQuest2
@@ -54,6 +56,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     const eGodType mType;
     eGodAttitude mAttitude = eGodAttitude::friendly;
 };

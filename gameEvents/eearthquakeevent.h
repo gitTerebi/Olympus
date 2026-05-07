@@ -7,6 +7,8 @@
 #include "egodeventvalue.h"
 #include "egodreasoneventvalue.h"
 
+class eSaveArchive;
+
 class eEarthquakeEvent : public eGameEvent,
                          public ePointEventValue,
                          public eCountEventValue,
@@ -22,6 +24,8 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // EEARTHQUAKEEVENT_H

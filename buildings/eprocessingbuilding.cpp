@@ -4,6 +4,7 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 #include <algorithm>
@@ -120,32 +121,34 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
     return tasks;
 }
 
+void eProcessingBuilding::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mTakeCart);
+    }
+
+    ar.value(mRawCount);
+    ar.value(mProcessTime);
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        ar.value(mProducedThisYear);
+        ar.value(mLastMonth);
+        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
+    }
+}
+
 void eProcessingBuilding::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mTakeCart = static_cast<eCartTransporter*>(c);
-    });
-
-    src >> mRawCount;
-    src >> mProcessTime;
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mProducedThisYear;
-        src >> mLastMonth;
-        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eProcessingBuilding::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-
-    dst.writeCharacter(mTakeCart);
-
-    dst << mRawCount;
-    dst << mProcessTime;
-    dst << mProducedThisYear;
-    dst << mLastMonth;
-    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
+    eSaveArchive ar(dst);
+    const_cast<eProcessingBuilding*>(this)->serialize(ar);
 }
 
 int eProcessingBuilding::productionPercent() const {

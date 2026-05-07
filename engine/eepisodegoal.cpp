@@ -1,4 +1,5 @@
 #include "eepisodegoal.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
@@ -18,19 +19,21 @@ stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
 }
 
 void eEpisodeGoal::read(eReadStream& src) {
-    src >> fType;
-    src >> fEnumInt1;
-    src >> fEnumInt2;
-    src >> fRequiredCount;
-    src >> fStatusCount;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eEpisodeGoal::write(eWriteStream& dst) const {
-    dst << fType;
-    dst << fEnumInt1;
-    dst << fEnumInt2;
-    dst << fRequiredCount;
-    dst << fStatusCount;
+    eSaveArchive ar(dst);
+    const_cast<eEpisodeGoal*>(this)->serialize(ar);
+}
+
+void eEpisodeGoal::serialize(eSaveArchive& ar) {
+    ar.value(fType);
+    ar.value(fEnumInt1);
+    ar.value(fEnumInt2);
+    ar.value(fRequiredCount);
+    ar.value(fStatusCount);
 }
 
 bool eEpisodeGoal::met() const {

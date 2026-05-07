@@ -1,6 +1,7 @@
 #include "etrailer.h"
 
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 
 eTrailer::eTrailer(eGameBoard& board) :
     eCharacter(board, eCharacterType::trailer) {
@@ -72,18 +73,25 @@ eTrailer::getTexture(const eTileSize size) const {
 
 void eTrailer::read(eReadStream& src) {
     eCharacter::read(src);
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mFollow = static_cast<eCartTransporter*>(c);
-    });
-    src >> mIsBig;
-    src >> mResCount;
-    src >> mResType;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTrailer::write(eWriteStream& dst) const {
     eCharacter::write(dst);
-    dst.writeCharacter(mFollow);
-    dst << mIsBig;
-    dst << mResCount;
-    dst << mResType;
+    eSaveArchive ar(dst);
+    const_cast<eTrailer*>(this)->serialize(ar);
+}
+
+void eTrailer::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mFollow = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mFollow);
+    }
+    ar.value(mIsBig);
+    ar.value(mResCount);
+    ar.value(mResType);
 }

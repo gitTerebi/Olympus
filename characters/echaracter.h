@@ -17,6 +17,7 @@
 
 class eGameBoard;
 class eCharacterAction;
+class eSaveArchive;
 
 struct ePausedAction {
     eCharacterActionType fAt;
@@ -102,6 +103,8 @@ protected:
             const bool wrap, const bool reverse,
             const bool disappear = false) const;
 private:    
+    void serialize(eSaveArchive& ar);
+
     std::vector<ePausedAction> mPausedActions;
 
     int mIOID = -1;

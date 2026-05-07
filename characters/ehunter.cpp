@@ -1,6 +1,7 @@
 #include "ehunter.h"
 
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 
 eHunter::eHunter(eGameBoard& board) :
     eResourceCollector(board, &eCharacterTextures::fHunter,
@@ -20,13 +21,19 @@ void eHunter::setDeerHunter(const bool h) {
 
 void eHunter::read(eReadStream& src) {
     eResourceCollector::read(src);
-    bool deerHunter;
-    src >> deerHunter;
-    setDeerHunter(deerHunter);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHunter::write(eWriteStream& dst) const {
     eResourceCollector::write(dst);
-    dst << mDeerHunter;
+    eSaveArchive ar(dst);
+    const_cast<eHunter*>(this)->serialize(ar);
+}
+
+void eHunter::serialize(eSaveArchive& ar) {
+    bool deerHunter = mDeerHunter;
+    ar.value(deerHunter);
+    if(ar.reading()) setDeerHunter(deerHunter);
 }
 

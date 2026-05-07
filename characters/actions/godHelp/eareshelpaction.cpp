@@ -1,4 +1,5 @@
 #include "eareshelpaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
@@ -32,12 +33,18 @@ bool eAresHelpAction::sHelpNeeded(const ePlayerId pid,
 
 void eAresHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAresHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
+    eSaveArchive ar(dst);
+    const_cast<eAresHelpAction*>(this)->serialize(ar);
+}
+
+void eAresHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
 }
 
 void eAresHelpAction::goToTarget() {

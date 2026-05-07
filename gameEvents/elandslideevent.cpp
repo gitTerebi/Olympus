@@ -1,4 +1,5 @@
 #include "elandslideevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -44,11 +45,19 @@ std::string eLandSlideEvent::longName() const {
 void eLandSlideEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
     ePointEventValue::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eLandSlideEvent*>(this)->serialize(ar);
+}
+
+void eLandSlideEvent::serialize(eSaveArchive& ar) {
+
 }
 
 void eLandSlideEvent::read(eReadStream& src) {
     eGameEvent::read(src);
     ePointEventValue::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eLandSlideEvent::loadResources() const {

@@ -6,6 +6,8 @@
 #include "buildings/ehorseranch.h"
 #include "buildings/evendor.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
+#include "fileIO/efileformat.h"
 #include "emovetoaction.h"
 
 eCartTransporterAction::eCartTransporterAction(
@@ -324,41 +326,44 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
     }
 }
 
+void eCartTransporterAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mBuilding = static_cast<eBuildingWithResource*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mBuilding);
+    }
+
+    ar.value(mTask.fMaxCount);
+    ar.value(mTask.fResource);
+    ar.value(mTask.fType);
+
+    ar.value(mUpdateWaiting);
+    ar.value(mNoTarget);
+    ar.value(mWaitOutside);
+
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        if(ar.reading()) {
+            ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+                mTarget = b;
+            });
+        } else {
+            ar.writeStream().writeBuilding(mTarget);
+        }
+    }
+}
+
 void eCartTransporterAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mBuilding = static_cast<eBuildingWithResource*>(b);
-    });
-
-    src >> mTask.fMaxCount;
-    src >> mTask.fResource;
-    src >> mTask.fType;
-
-    src >> mUpdateWaiting;
-    src >> mNoTarget;
-    src >> mWaitOutside;
-
-    const auto v = src.formatVersion();
-    if(v >= eFileFormat::cartTarget) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = b;
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCartTransporterAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst.writeBuilding(mBuilding);
-
-    dst << mTask.fMaxCount;
-    dst << mTask.fResource;
-    dst << mTask.fType;
-
-    dst << mUpdateWaiting;
-    dst << mNoTarget;
-    dst << mWaitOutside;
-
-    dst.writeBuilding(mTarget);
+    eSaveArchive ar(dst);
+    const_cast<eCartTransporterAction*>(this)->serialize(ar);
 }
 
 stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {

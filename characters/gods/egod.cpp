@@ -1,4 +1,5 @@
 #include "egod.h"
+#include "fileIO/esavearchive.h"
 
 #include "eathena.h"
 #include "edemeter.h"
@@ -639,10 +640,16 @@ void eGod::sLoadTextures(const eGodType g) {
 
 void eGod::read(eReadStream& src) {
     eCharacter::read(src);
-    src >> mAttitude;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGod::write(eWriteStream& dst) const {
     eCharacter::write(dst);
-    dst << mAttitude;
+    eSaveArchive ar(dst);
+    const_cast<eGod*>(this)->serialize(ar);
+}
+
+void eGod::serialize(eSaveArchive& ar) {
+    ar.value(mAttitude);
 }

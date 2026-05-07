@@ -1,4 +1,5 @@
 #include "egodmissile.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
 #include "characters/heroes/ehero.h"
@@ -68,12 +69,17 @@ void eGodMissile::setTexture(const eCharacterType ct,
 
 void eGodMissile::read(eReadStream& src) {
     eMissile::read(src);
-    src >> mCharType;
-    src >> mActionType;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodMissile::write(eWriteStream& dst) const {
     eMissile::write(dst);
-    dst << mCharType;
-    dst << mActionType;
+    eSaveArchive ar(dst);
+    const_cast<eGodMissile*>(this)->serialize(ar);
+}
+
+void eGodMissile::serialize(eSaveArchive& ar) {
+    ar.value(mCharType);
+    ar.value(mActionType);
 }

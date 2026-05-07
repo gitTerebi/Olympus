@@ -1,6 +1,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/efileformat.h"
 
 void eResourceCollectBuildingBase::nextMonth() {
@@ -15,22 +16,25 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
+void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
+    ar.value(mNoTarget);
+    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
+        ar.value(mProducedThisYear);
+        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
+        ar.value(mRingIdx);
+    }
+}
+
 void eResourceCollectBuildingBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-    src >> mNoTarget;
-    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
-        src >> mProducedThisYear;
-        for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
-        src >> mRingIdx;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eResourceCollectBuildingBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-    dst << mNoTarget;
-    dst << mProducedThisYear;
-    for(int i = 0; i < 12; i++) dst << mMonthlyProduced[i];
-    dst << mRingIdx;
+    eSaveArchive ar(dst);
+    const_cast<eResourceCollectBuildingBase*>(this)->serialize(ar);
 }
 
 void eResourceCollectBuildingBase::setNoTarget(const bool t) {

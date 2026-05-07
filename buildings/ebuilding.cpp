@@ -18,6 +18,7 @@
 #include "audio/esounds.h"
 
 #include "fileIO/ebuildingwriter.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
 eBuilding::eBuilding(eGameBoard& board,
@@ -2718,60 +2719,58 @@ eTeamId eBuilding::teamId() const {
     return board.playerIdToTeamId(pid);
 }
 
-void eBuilding::read(eReadStream& src) {
-    src >> mIOID;
-    src >> mTileRect;
+void eBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
+    ar.value(mTileRect);
 
-    src >> mDistrictId;
+    ar.value(mDistrictId);
 
     auto& board = getBoard();
 
-    int ntiles;
-    src >> ntiles;
-    for(int i = 0; i < ntiles; i++) {
-        const auto tile = src.readTile(board);
-        mUnderBuilding.push_back(tile);
-        bool setUnder;
-        src >> setUnder;
-        if(setUnder) {
-            tile->setUnderBuilding(ref<eBuilding>());
+    if(ar.reading()) {
+        int ntiles;
+        ar.value(ntiles);
+        for(int i = 0; i < ntiles; i++) {
+            eTile* tile = nullptr;
+            ar.tile(tile, board);
+            mUnderBuilding.push_back(tile);
+            bool setUnder;
+            ar.value(setUnder);
+            if(setUnder) {
+                tile->setUnderBuilding(ref<eBuilding>());
+            }
+        }
+    } else {
+        int ntiles = static_cast<int>(mUnderBuilding.size());
+        ar.value(ntiles);
+        for(const auto t : mUnderBuilding) {
+            eTile* tile = t;
+            ar.tile(tile, board);
+            bool setUnder = t->underBuilding() == this;
+            ar.value(setUnder);
         }
     }
 
-    mCenterTile = src.readTile(board);
+    ar.tile(mCenterTile, board);
 
-    src >> mSeed;
-    src >> mCityId;
-    src >> mHp;
-    src >> mMaintance;
-    src >> mEnabled;
-    src >> mBlessed;
-    src >> mBlessTime;
-    src >> mOnFire;
+    ar.value(mSeed);
+    ar.value(mCityId);
+    ar.value(mHp);
+    ar.value(mMaintance);
+    ar.value(mEnabled);
+    ar.value(mBlessed);
+    ar.value(mBlessTime);
+    ar.value(mOnFire);
+}
+
+void eBuilding::read(eReadStream& src) {
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eBuilding::write(eWriteStream& dst) const {
-    dst << mIOID;
-    dst << mTileRect;
-
-    dst << mDistrictId;
-
-    dst << mUnderBuilding.size();
-    for(const auto t : mUnderBuilding) {
-        dst.writeTile(t);
-        dst << (t->underBuilding() == this);
-    }
-
-    dst.writeTile(mCenterTile);
-
-    dst << mSeed;
-    dst << mCityId;
-    dst << mHp;
-    dst << mMaintance;
-    dst << mEnabled;
-    dst << mBlessed;
-    dst << mBlessTime;
-    dst << mOnFire;
+    eSaveArchive ar(dst);
+    const_cast<eBuilding*>(this)->serialize(ar);
 }
 
 void eBuilding::setIOID(const int id) {

@@ -3,6 +3,8 @@
 
 #include "emissile.h"
 
+class eSaveArchive;
+
 class eGodMissile : public eMissile {
 public:
     eGodMissile(eGameBoard& board,
@@ -15,6 +17,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 private:
     eCharacterType mCharType;
     eCharacterActionType mActionType;

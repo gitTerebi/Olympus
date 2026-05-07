@@ -7,6 +7,8 @@
 #include "elimits.h"
 #include <vector>
 
+class eSaveArchive;
+
 class eMoveAroundAction : public eMoveAction {
 public:
     eMoveAroundAction(eCharacter* const c,
@@ -24,6 +26,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     eCharacterActionState nextTurn(eOrientation& turn) override;
 
     int mStartTX;

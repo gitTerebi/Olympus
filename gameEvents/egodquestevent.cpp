@@ -1,4 +1,5 @@
 #include "egodquestevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
@@ -60,12 +61,18 @@ bool eGodQuestEvent::finished() const {
 
 void eGodQuestEvent::read(eReadStream& src) {
     eGodQuestEventBase::read(src);
-    src >> mFulfilled;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodQuestEvent::write(eWriteStream& dst) const {
     eGodQuestEventBase::write(dst);
-    dst << mFulfilled;
+    eSaveArchive ar(dst);
+    const_cast<eGodQuestEvent*>(this)->serialize(ar);
+}
+
+void eGodQuestEvent::serialize(eSaveArchive& ar) {
+    ar.value(mFulfilled);
 }
 
 void eGodQuestEvent::fulfill() {

@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eAmazon::eAmazon(eGameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::amazon) {
@@ -27,13 +28,19 @@ void eAmazon::setIsArcher(const bool a) {
 
 void eAmazon::read(eReadStream& src) {
     eSoldier::read(src);
-    bool archer;
-    src >> archer;
-    setIsArcher(archer);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAmazon::write(eWriteStream& dst) const {
     eSoldier::write(dst);
-    dst << mIsArcher;
+    eSaveArchive ar(dst);
+    const_cast<eAmazon*>(this)->serialize(ar);
+}
+
+void eAmazon::serialize(eSaveArchive& ar) {
+    bool archer = mIsArcher;
+    ar.value(archer);
+    if(ar.reading()) setIsArcher(archer);
 }
 

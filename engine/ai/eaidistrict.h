@@ -6,6 +6,8 @@
 #include "engine/eresourcetype.h"
 #include "characters/gods/egod.h"
 
+class eSaveArchive;
+
 struct eDistrictReadyCondition {
     enum class eType {
         districtResourceCount,
@@ -23,6 +25,7 @@ struct eDistrictReadyCondition {
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 
+    void serialize(eSaveArchive& ar);
     eType fType;
     eResourceType fResource = eResourceType::drachmas;
     eGodType fSanctuary = eGodType::zeus;

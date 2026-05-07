@@ -1,4 +1,5 @@
 #include "egodvisitaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
 #include "enumbers.h"
@@ -50,14 +51,18 @@ bool eGodVisitAction::decide() {
 
 void eGodVisitAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src >> mLookForBless;
-    src >> mLookForSoldierAttack;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGodVisitAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst << mLookForBless;
-    dst << mLookForSoldierAttack;
+    eSaveArchive ar(dst);
+    const_cast<eGodVisitAction*>(this)->serialize(ar);
+}
+
+void eGodVisitAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    ar.value(mLookForBless);
+    ar.value(mLookForSoldierAttack);
 }

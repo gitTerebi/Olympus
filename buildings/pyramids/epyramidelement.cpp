@@ -1,4 +1,5 @@
 #include "epyramidelement.h"
+#include "fileIO/esavearchive.h"
 
 #include "epyramid.h"
 #include "textures/egametextures.h"
@@ -152,14 +153,18 @@ bool ePyramidElement::renderBuilding() const {
 
 void ePyramidElement::read(eReadStream& src) {
     eSanctBuilding::read(src);
-
-    src >> mCurrentElevation;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePyramidElement::write(eWriteStream& dst) const {
     eSanctBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<ePyramidElement*>(this)->serialize(ar);
+}
 
-    dst << mCurrentElevation;
+void ePyramidElement::serialize(eSaveArchive& ar) {
+    ar.value(mCurrentElevation);
 }
 
 eTextureSpace ePyramidElement::getBuildingTextureSpace(

@@ -5,6 +5,7 @@
 
 class ePyramid;
 
+class eSaveArchive;
 class ePyramidElement : public eSanctBuilding {
 public:
     ePyramidElement(const std::vector<eSanctCost>& cost,
@@ -38,6 +39,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     const int mElevation = 0;
     const int mDim = 1;
     int mCurrentElevation = 0;

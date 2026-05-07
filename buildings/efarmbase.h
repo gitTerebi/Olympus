@@ -6,6 +6,8 @@
 
 #include "textures/ebuildingtextures.h"
 
+class eSaveArchive;
+
 class eFarmBase : public eResourceBuildingBase {
 public:
     eFarmBase(eGameBoard& board,
@@ -34,6 +36,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     const std::vector<eBuildingTextures>& mTextures;
     double mNextRipe = 0;
     int mCurrentTile = 0;  // 0 - 4

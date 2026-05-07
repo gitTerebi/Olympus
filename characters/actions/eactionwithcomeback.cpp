@@ -4,6 +4,7 @@
 #include "emovetoaction.h"
 
 #include "engine/etask.h"
+#include "fileIO/esavearchive.h"
 
 eActionWithComeback::eActionWithComeback(
         eCharacter* const c,
@@ -27,22 +28,23 @@ bool eActionWithComeback::decide() {
 
 void eActionWithComeback::read(eReadStream& src) {
     eComplexAction::read(src);
-    mStartTile = src.readTile(board());
-    src >> mGoBackRect;
-    src >> mFinishOnComeback;
-    src >> mDefaultTry;
-    src >> mGoBackFail;
-    src >> mDiagonalOnly;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eActionWithComeback::write(eWriteStream& dst) const {
     eComplexAction::write(dst);
-    dst.writeTile(mStartTile);
-    dst << mGoBackRect;
-    dst << mFinishOnComeback;
-    dst << mDefaultTry;
-    dst << mGoBackFail;
-    dst << mDiagonalOnly;
+    eSaveArchive ar(dst);
+    const_cast<eActionWithComeback*>(this)->serialize(ar);
+}
+
+void eActionWithComeback::serialize(eSaveArchive& ar) {
+    ar.tile(mStartTile, board());
+    ar.value(mGoBackRect);
+    ar.value(mFinishOnComeback);
+    ar.value(mDefaultTry);
+    ar.value(mGoBackFail);
+    ar.value(mDiagonalOnly);
 }
 
 void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {

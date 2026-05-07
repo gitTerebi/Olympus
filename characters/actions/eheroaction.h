@@ -10,6 +10,8 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
+class eSaveArchive;
+
 enum class eHeroActionStage {
     none, patrol, hunt, fight, goBack, defend
 };
@@ -29,6 +31,7 @@ public:
     void goBackToHall();
     void waitAndGoBackToHall(const int w);
 private:
+    void serialize(eSaveArchive& ar);
     void defendCity();
     void lookForMonsterFight();
     bool fightMonster(eMonster* const m);

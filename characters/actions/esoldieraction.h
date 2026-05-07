@@ -9,6 +9,7 @@
 
 class eSoldier;
 
+class eSaveArchive;
 class eSoldierAction : public eFightingAction {
 public:
     eSoldierAction(eCharacter* const c);
@@ -31,6 +32,7 @@ public:
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
 private:
+    void serialize(eSaveArchive& ar);
     stdsptr<eObsticleHandler> obsticleHandler() override;
 
     int mGoToBannerCountdown = 0;

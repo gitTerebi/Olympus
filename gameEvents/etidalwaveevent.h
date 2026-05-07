@@ -6,6 +6,8 @@
 #include "egodeventvalue.h"
 #include "egodreasoneventvalue.h"
 
+class eSaveArchive;
+
 class eTidalWaveEvent : public eGameEvent,
                         public ePointEventValue,
                         public eGodEventValue,
@@ -26,6 +28,7 @@ public:
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
 private:
+    void serialize(eSaveArchive& ar);
     bool mPermanent = false;
 };
 

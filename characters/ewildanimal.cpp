@@ -1,6 +1,7 @@
 #include "ewildanimal.h"
 
 #include "spawners/espawner.h"
+#include "fileIO/esavearchive.h"
 
 eWildAnimal::eWildAnimal(eGameBoard& board,
                          const eCharTexs charTexs,
@@ -13,12 +14,22 @@ eWildAnimal::~eWildAnimal() {
 
 void eWildAnimal::read(eReadStream& src) {
     eAnimal::read(src);
-    src.readBanner(&getBoard(), [this](eBanner* const b) {
-        mSpawner = static_cast<eSpawner*>(b);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eWildAnimal::write(eWriteStream& dst) const {
     eAnimal::write(dst);
-    dst.writeBanner(mSpawner);
+    eSaveArchive ar(dst);
+    const_cast<eWildAnimal*>(this)->serialize(ar);
+}
+
+void eWildAnimal::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readBanner(&getBoard(), [this](eBanner* const b) {
+            mSpawner = static_cast<eSpawner*>(b);
+        });
+    } else {
+        ar.writeStream().writeBanner(mSpawner);
+    }
 }

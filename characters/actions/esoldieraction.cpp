@@ -1,4 +1,5 @@
 #include "esoldieraction.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/esoldier.h"
 #include "engine/egameboard.h"
@@ -54,12 +55,18 @@ void eSoldierAction::increment(const int by) {
 
 void eSoldierAction::read(eReadStream& src) {
     eFightingAction::read(src);
-    src >> mSpreadPeriod;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSoldierAction::write(eWriteStream& dst) const {
     eFightingAction::write(dst);
-    dst << mSpreadPeriod;
+    eSaveArchive ar(dst);
+    const_cast<eSoldierAction*>(this)->serialize(ar);
+}
+
+void eSoldierAction::serialize(eSaveArchive& ar) {
+    ar.value(mSpreadPeriod);
 }
 
 stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {

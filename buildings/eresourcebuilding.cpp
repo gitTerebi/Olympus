@@ -1,4 +1,5 @@
 #include "eresourcebuilding.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
 #include "textures/ebuildingtextures.h"
@@ -134,18 +135,20 @@ void eResourceBuilding::timeChanged(const int by) {
 
 void eResourceBuilding::read(eReadStream& src) {
     eBuilding::read(src);
-    src >> mSanctuary;
-    src >> mWorkedOn;
-    src >> mNextRipe;
-    src >> mRipe;
-    src >> mResource;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eResourceBuilding::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst << mSanctuary;
-    dst << mWorkedOn;
-    dst << mNextRipe;
-    dst << mRipe;
-    dst << mResource;
+    eSaveArchive ar(dst);
+    const_cast<eResourceBuilding*>(this)->serialize(ar);
+}
+
+void eResourceBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mSanctuary);
+    ar.value(mWorkedOn);
+    ar.value(mNextRipe);
+    ar.value(mRipe);
+    ar.value(mResource);
 }

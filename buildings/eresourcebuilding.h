@@ -3,6 +3,8 @@
 
 #include "ebuilding.h"
 
+class eSaveArchive;
+
 enum class eResourceBuildingType {
     oliveTree,
     vine,
@@ -37,6 +39,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     const eResourceBuildingType mType;
     const int mRipePeriod;
     bool mSanctuary = false;

@@ -1,4 +1,5 @@
 #include "ehermeshelpaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
@@ -31,12 +32,18 @@ bool eHermesHelpAction::decide() {
 
 void eHermesHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHermesHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
+    eSaveArchive ar(dst);
+    const_cast<eHermesHelpAction*>(this)->serialize(ar);
+}
+
+void eHermesHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
 }
 
 bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,

@@ -4,6 +4,7 @@
 #include "walkable/ewalkableobject.h"
 
 #include "vec2.h"
+#include "fileIO/esavearchive.h"
 
 eMoveAction::eMoveAction(eCharacter* const c,
                          const stdsptr<eWalkableObject>& tileWalkable,
@@ -92,28 +93,34 @@ void eMoveAction::increment(const int by) {
 
 void eMoveAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    mTileWalkable = src.readWalkable();
-    src >> mOrientation;
-    mTargetTile = src.readTile(board());
-    src >> mWait;
-    src >> mStartX;
-    src >> mStartY;
-    src >> mTargetX;
-    src >> mTargetY;
-    mObstHandler = src.readObsticleHandler(board());
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMoveAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst.writeWalkable(mTileWalkable.get());
-    dst << mOrientation;
-    dst.writeTile(mTargetTile);
-    dst << mWait;
-    dst << mStartX;
-    dst << mStartY;
-    dst << mTargetX;
-    dst << mTargetY;
-    dst.writeObsticleHandler(mObstHandler.get());
+    eSaveArchive ar(dst);
+    const_cast<eMoveAction*>(this)->serialize(ar);
+}
+
+void eMoveAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mTileWalkable = ar.readStream().readWalkable();
+    } else {
+        ar.writeStream().writeWalkable(mTileWalkable.get());
+    }
+    ar.value(mOrientation);
+    ar.tile(mTargetTile, board());
+    ar.value(mWait);
+    ar.value(mStartX);
+    ar.value(mStartY);
+    ar.value(mTargetX);
+    ar.value(mTargetY);
+    if(ar.reading()) {
+        mObstHandler = ar.readStream().readObsticleHandler(board());
+    } else {
+        ar.writeStream().writeObsticleHandler(mObstHandler.get());
+    }
 }
 
 void eMoveAction::moveBy(const double inc) {

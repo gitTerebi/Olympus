@@ -3,6 +3,8 @@
 
 #include "esanctbuilding.h"
 
+class eSaveArchive;
+
 class eTempleBuilding : public eSanctBuilding {
 public:
     eTempleBuilding(eGameBoard& board, const eCityId cid);
@@ -18,6 +20,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     bool hasNeighbour() const;
 
     int rotatedId() const;

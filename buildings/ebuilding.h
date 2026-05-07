@@ -12,6 +12,7 @@
 #include "erand.h"
 
 class eGameBoard;
+class eSaveArchive;
 class eTile;
 
 // Serialized as raw integers in save files. Append new values only; do not
@@ -388,6 +389,8 @@ public:
 
     double appeal() const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eTile* mCenterTile = nullptr;
     std::vector<eTile*> mUnderBuilding;
     SDL_Rect mTileRect{0, 0, 0, 0};

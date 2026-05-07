@@ -6,6 +6,7 @@
 
 class eSoldierAction;
 class eSoldierBanner;
+class eSaveArchive;
 
 class eSoldier : public eFightingPatroler,
                  public eFightingCharacter {
@@ -26,6 +27,8 @@ public:
     eSoldierBanner* banner() const;
     void setBanner(eSoldierBanner* const b);
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eSoldierBanner> mBanner;
 };
 

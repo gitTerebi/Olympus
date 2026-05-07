@@ -6,6 +6,7 @@
 #include "buildings/ebuilding.h"
 
 class ePatrolBuildingBase;
+class eSaveArchive;
 
 class ePatrolAction : public eActionWithComeback {
     friend class ePA_patrolFail;
@@ -28,6 +29,8 @@ protected:
     void goBackDecision(const stdsptr<eWalkableObject>& w =
                             eWalkableObject::sCreateRoadAvenue());
 private:
+    void serialize(eSaveArchive& ar);
+
     std::vector<eOrientation> mPath;
     stdsptr<eDirectionTimes> mDirTimes;
     ePatrolBuildingBase* mBuilding = nullptr;

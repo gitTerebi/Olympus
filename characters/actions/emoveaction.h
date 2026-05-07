@@ -7,6 +7,7 @@
 
 class eTileBase;
 class eTile;
+class eSaveArchive;
 
 class eMoveAction : public eCharacterAction {
 public:
@@ -27,6 +28,8 @@ protected:
     bool nextTurn();
     void setWait(const bool w) { mWait = w; }
 private:
+    void serialize(eSaveArchive& ar);
+
     virtual eCharacterActionState nextTurn(eOrientation& turn) = 0;
     void moveBy(const double inc);
     void moveToTargetTile();

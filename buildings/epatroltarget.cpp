@@ -1,4 +1,5 @@
 #include "epatroltarget.h"
+#include "fileIO/esavearchive.h"
 
 #include "characters/actions/epatrolaction.h"
 #include "textures/egametextures.h"
@@ -40,10 +41,16 @@ void ePatrolTarget::timeChanged(const int by) {
 
 void ePatrolTarget::read(eReadStream& src) {
     ePatrolBuilding::read(src);
-    src >> mAvailable;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePatrolTarget::write(eWriteStream& dst) const {
     ePatrolBuilding::write(dst);
-    dst << mAvailable;
+    eSaveArchive ar(dst);
+    const_cast<ePatrolTarget*>(this)->serialize(ar);
+}
+
+void ePatrolTarget::serialize(eSaveArchive& ar) {
+    ar.value(mAvailable);
 }

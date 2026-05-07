@@ -3,6 +3,8 @@
 
 #include "egodaction.h"
 
+class eSaveArchive;
+
 enum class eGodWorshippedStage {
     none, appear, goTo1, patrol1, goTo2, patrol2, disappear, defend,
     huntMonster, fightMonster
@@ -20,6 +22,7 @@ public:
 
     void lookForMonster();
 private:
+    void serialize(eSaveArchive& ar);
     void defendCity();
     void lookForMonsterFight();
     bool fightMonster(eMonster* const m);

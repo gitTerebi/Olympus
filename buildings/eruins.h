@@ -5,6 +5,8 @@
 #include <vector>
 #include <cstdint>
 
+class eSaveArchive;
+
 class eRuins : public eBuilding {
 public:
     eRuins(eGameBoard& board, const eCityId cid);
@@ -40,6 +42,8 @@ public:
     bool hasSavedPier() const { return !mSavedPier.empty(); }
 
 private:
+    void serialize(eSaveArchive& ar);
+
     eBuildingType mWasType = eBuildingType::none;
     int mOriginX = -1;
     int mOriginY = -1;

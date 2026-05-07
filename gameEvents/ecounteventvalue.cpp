@@ -1,4 +1,5 @@
 #include "ecounteventvalue.h"
+#include "fileIO/esavearchive.h"
 
 #include "erand.h"
 #include "estringhelpers.h"
@@ -22,13 +23,17 @@ void eCountEventValue::longNameReplaceCount(
 }
 
 void eCountEventValue::write(eWriteStream& dst) const {
-    dst << mCount;
-    dst << mMinCount;
-    dst << mMaxCount;
+    eSaveArchive ar(dst);
+    const_cast<eCountEventValue*>(this)->serialize(ar);
+}
+
+void eCountEventValue::serialize(eSaveArchive& ar) {
+    ar.value(mCount);
+    ar.value(mMinCount);
+    ar.value(mMaxCount);
 }
 
 void eCountEventValue::read(eReadStream& src) {
-    src >> mCount;
-    src >> mMinCount;
-    src >> mMaxCount;
+    eSaveArchive ar(src);
+    serialize(ar);
 }

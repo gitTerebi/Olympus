@@ -4,6 +4,8 @@
 #include "egameevent.h"
 #include "ecounteventvalue.h"
 
+class eSaveArchive;
+
 class eWageChangeEvent : public eGameEvent,
                          public eCountEventValue {
 public:
@@ -16,6 +18,8 @@ public:
 
     void trigger() override;
     std::string longName() const override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // EWAGECHANGEEVENT_H

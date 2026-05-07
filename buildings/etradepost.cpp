@@ -1,4 +1,5 @@
 #include "etradepost.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
 
@@ -282,18 +283,20 @@ void eTradePost::setCharacterCreator(const eCharacterCreator& c) {
 
 void eTradePost::read(eReadStream& src) {
     eStorageBuilding::read(src);
-
-    src >> mImports;
-    src >> mExports;
-    src >> mRouteTimer;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTradePost::write(eWriteStream& dst) const {
     eStorageBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eTradePost*>(this)->serialize(ar);
+}
 
-    dst << mImports;
-    dst << mExports;
-    dst << mRouteTimer;
+void eTradePost::serialize(eSaveArchive& ar) {
+    ar.value(mImports);
+    ar.value(mExports);
+    ar.value(mRouteTimer);
 }
 
 bool eTradePost::trades() const {

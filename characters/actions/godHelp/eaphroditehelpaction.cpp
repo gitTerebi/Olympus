@@ -1,4 +1,5 @@
 #include "eaphroditehelpaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "etilehelper.h"
 #include "engine/eplague.h"
@@ -34,12 +35,18 @@ bool eAphroditeHelpAction::decide() {
 
 void eAphroditeHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAphroditeHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
+    eSaveArchive ar(dst);
+    const_cast<eAphroditeHelpAction*>(this)->serialize(ar);
+}
+
+void eAphroditeHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
 }
 
 bool eAphroditeHelpAction::sHelpNeeded(const eCityId cid,

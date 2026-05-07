@@ -1,4 +1,5 @@
 #include "ebuildaction.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/egameboard.h"
 #include "audio/esounds.h"
@@ -26,12 +27,17 @@ void eBuildAction::increment(const int by) {
 
 void eBuildAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    src >> mSoundTime;
-    src >> mTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eBuildAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst << mSoundTime;
-    dst << mTime;
+    eSaveArchive ar(dst);
+    const_cast<eBuildAction*>(this)->serialize(ar);
+}
+
+void eBuildAction::serialize(eSaveArchive& ar) {
+    ar.value(mSoundTime);
+    ar.value(mTime);
 }

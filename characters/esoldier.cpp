@@ -3,6 +3,7 @@
 #include "engine/egameboard.h"
 #include "esoldierbanner.h"
 #include "actions/esoldieraction.h"
+#include "fileIO/esavearchive.h"
 
 eSoldier::eSoldier(eGameBoard& board,
                    const eCharTexs charTexs,
@@ -60,16 +61,26 @@ void eSoldier::beingKilled() {
 void eSoldier::read(eReadStream& src) {
     eFightingPatroler::read(src);
     eFightingCharacter::read(src);
-    auto& board = getBoard();
-    src.readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
-        mBanner = b;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSoldier::write(eWriteStream& dst) const {
     eFightingPatroler::write(dst);
     eFightingCharacter::write(dst);
-    dst.writeSoldierBanner(mBanner);
+    eSaveArchive ar(dst);
+    const_cast<eSoldier*>(this)->serialize(ar);
+}
+
+void eSoldier::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
+            mBanner = b;
+        });
+    } else {
+        ar.writeStream().writeSoldierBanner(mBanner);
+    }
 }
 
 eSoldierAction *eSoldier::soldierAction() const {

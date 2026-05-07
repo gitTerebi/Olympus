@@ -6,6 +6,8 @@
 #include "engine/egameboard.h"
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
+#include "fileIO/esavearchive.h"
+#include "fileIO/efileformat.h"
 #include "eiteratesquare.h"
 
 #include "evectorhelpers.h"
@@ -23,9 +25,9 @@
 int gNextId = 0;
 
 eSoldierBanner::eSoldierBanner(const eBannerType type,
-                               eGameBoard& board) :
+                                eGameBoard& board) :
     eObject(board),
-    mType(type), mId(gNextId++), mBoard(board) {
+    mType(type), mId(gNextId++), mBoard(board), mFacing(0) {
     mBoard.registerAllSoldierBanner(this);
     const int nameId = mId % 30;
     auto name = eLanguage::zeusText(138, nameId);
@@ -320,62 +322,68 @@ bool eSoldierBanner::fighting() const {
     return false;
 }
 
+void eSoldierBanner::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
+    ar.value(mMilitaryAid);
+    ar.value(mHome);
+    ar.value(mAbroad);
+    ar.tile(mTile, mBoard);
+    ar.value(mCount);
+    ar.value(mCityId);
+    ar.value(mOnCityId);
+    ar.valueSince(eFileFormat::soldierBannerFacing, mFacing, 0);
+
+    if(ar.reading()) {
+        int np;
+        ar.value(np);
+        for(int i = 0; i < np; i++) {
+            eTile* t = nullptr;
+            ar.tile(t, mBoard);
+            ar.readStream().readCharacter(&mBoard, [this, t](eCharacter* const c) {
+                if(!c) return;
+                const auto s = static_cast<eSoldier*>(c);
+                mPlaces[s] = t;
+            });
+        }
+
+        int ns;
+        ar.value(ns);
+        for(int i = 0; i < ns; i++) {
+            ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
+                if(!c) return;
+                const auto s = static_cast<eSoldier*>(c);
+                mSoldiers.push_back(s);
+            });
+        }
+    } else {
+        int np = static_cast<int>(mPlaces.size());
+        ar.value(np);
+        for(const auto& p : mPlaces) {
+            eTile* t = p.second;
+            ar.tile(t, mBoard);
+            ar.writeStream().writeCharacter(p.first);
+        }
+
+        int ns = static_cast<int>(mSoldiers.size());
+        ar.value(ns);
+        for(const auto s : mSoldiers) {
+            ar.writeStream().writeCharacter(s);
+        }
+    }
+}
+
 void eSoldierBanner::read(eReadStream& src) {
-    src >> mIOID;
-    src >> mMilitaryAid;
-    src >> mHome;
-    src >> mAbroad;
-    mTile = src.readTile(mBoard);
-    src >> mCount;
-    src >> mCityId;
-    src >> mOnCityId;
+    eSaveArchive ar(src);
+    serialize(ar);
 
     if(visibleOnTile() && mTile) {
         mTile->setSoldierBanner(this);
     }
-
-    int np;
-    src >> np;
-    for(int i = 0; i < np; i++) {
-        const auto t = src.readTile(mBoard);
-        src.readCharacter(&mBoard, [this, t](eCharacter* const c) {
-            if(!c) return;
-            const auto s = static_cast<eSoldier*>(c);
-            mPlaces[s] = t;
-        });
-    }
-
-    int ns;
-    src >> ns;
-    for(int i = 0; i < ns; i++) {
-        src.readCharacter(&mBoard, [this](eCharacter* const c) {
-            if(!c) return;
-            const auto s = static_cast<eSoldier*>(c);
-            mSoldiers.push_back(s);
-        });
-    }
 }
 
 void eSoldierBanner::write(eWriteStream& dst) const {
-    dst << mIOID;
-    dst << mMilitaryAid;
-    dst << mHome;
-    dst << mAbroad;
-    dst.writeTile(mTile);
-    dst << mCount;
-    dst << mCityId;
-    dst << mOnCityId;
-
-    dst << mPlaces.size();
-    for(const auto& p : mPlaces) {
-        dst.writeTile(p.second);
-        dst.writeCharacter(p.first);
-    }
-
-    dst << mSoldiers.size();
-    for(const auto s : mSoldiers) {
-        dst.writeCharacter(s);
-    }
+    eSaveArchive ar(dst);
+    const_cast<eSoldierBanner*>(this)->serialize(ar);
 }
 
 void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,
