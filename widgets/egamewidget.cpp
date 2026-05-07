@@ -831,7 +831,7 @@ void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
 {
     const int now = SDL_GetTicks();
     const int interval = 5000;
-    const int cooldown = 30000;
+    const int cooldown = 60000;
     if (now - mLastAmbientSoundTime < interval)
         return;
     if (eRand::rand() % 3 != 0)
