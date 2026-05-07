@@ -79,7 +79,7 @@ void eShepherBuildingBase::read(eReadStream& src) {
         mShepherd = static_cast<eResourceCollectorBase*>(c);
     });
     src >> mSpawnTime;
-    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
         src >> mProducedThisYear;
         for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
         src >> mRingIdx;

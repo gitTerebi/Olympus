@@ -51,6 +51,12 @@ void eSpinBox::setIncrement(const int i) {
 }
 
 void eSpinBox::setValue(const int v) {
-    mValue = std::clamp(v, mMinValue, mMaxValue);
+    if(v > mMaxValue) {
+        mValue = mMinValue;
+    } else if(v < mMinValue) {
+        mValue = mMaxValue;
+    } else {
+        mValue = v;
+    }
     mValueLabel->setText(std::to_string(mValue));
 }

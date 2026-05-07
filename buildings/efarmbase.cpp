@@ -114,7 +114,7 @@ void eFarmBase::read(eReadStream& src) {
     src >> combined;
     mCurrentTile  = std::clamp(combined / 5, 0, 4);
     mCurrentStage = std::clamp(combined % 5, 0, 4);
-    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
         src >> mProducedThisYear;
         for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
         src >> mRingIdx;

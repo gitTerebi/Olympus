@@ -251,7 +251,7 @@ void eGrowersLodge::read(eReadStream& src) {
     src.readCharacter(&getBoard(), [this](eCharacter* const c) {
         mGrower = static_cast<eGrower*>(c);
     });
-    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
         src >> mProducedThisYear;
         for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
         src >> mRingIdx;

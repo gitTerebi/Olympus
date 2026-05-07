@@ -14,12 +14,13 @@
 class eGameBoard;
 class eTile;
 
+// Serialized as raw integers in save files. Append new values only; do not
+// insert, reorder, or remove values without explicit save-version remapping.
 enum class eBuildingType {
     none = -1,
     erase,
 
     road,
-    roadblock,
 
     commonHouse,
     eliteHousing,
@@ -248,7 +249,8 @@ enum class eBuildingType {
     pyramidMuseum,
 
     hippodromePiece,
-    crosswalk
+    crosswalk,
+    roadblock
 };
 
 struct eTextureSpace {

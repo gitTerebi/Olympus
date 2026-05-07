@@ -18,7 +18,7 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
 void eResourceCollectBuildingBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
     src >> mNoTarget;
-    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
         src >> mProducedThisYear;
         for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
         src >> mRingIdx;

@@ -115,10 +115,10 @@ public:
             s->label()->setFontSizeS();
             const int space = stor->spaceCount();
             if(type == eResourceType::sculpture) {
-                s->setRange(0, space);
+                s->setRange(1, space);
             } else {
-                s->setRange(0, 4*space);
-                s->setIncrement(4);
+                s->setRange(8, 4*space);
+                s->setIncrement(8);
             }
             s->setValue(maxCount.at(type));
 

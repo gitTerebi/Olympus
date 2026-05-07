@@ -12,24 +12,22 @@ Do not use `cmake --build build` or `cmake --build build-cmake` for normal verif
 
 ## Codebase Navigation
 
+**Game build actions:** `widgets/gamebuild/` owns extracted build/preview placement logic; keep shared placement rules there when build and ghost preview must match.
+
+**Game world/state:** `engine/egameboard.*` owns tile/building state changes, money, undo snapshots, city/player checks, and terrain update scheduling.
+
 **Text strings:** `zeus-text strings/Zeus_Text.xml` READ ONLY reference strings provided by the game at runtime, re-use for messages. READ ONLY.
 
-**Terrain and Texture System:**
-- **Terrain rendering:** `textures/etiletotexture.cpp` `eTileToTexture::get` — every `eTerrain` enum value needs a case in the switch or it returns `fInvalidTex`.
-- **Texture loading:** `textures/eterraintextures.cpp` — terrain textures loaded lazily. Check `fBlackMarbleLoaded` pattern for new terrain types.
-- **Texture painter:** `engine/etileterrainpainter.h` `eTileTerrainPainter` — `fTex`/`fColl`/`fDrawDim`; both null → painter uninitialized (map corruption). `drawDim=0` → under-building subtile (normal skip).
+**Terrain rendering:** `textures/etiletotexture.cpp` maps `eTerrain` to textures; missing terrain cases return `fInvalidTex`.
 
-**Render flow:** `egamewidgetpaint.cpp` paint → `updateTerrainTextures` → `eTileToTexture::get` → terrain switch. `drawTerrain` lambda (~line 476) iterates via `iterateOverVisibleTiles`; `tex` null → black tile; patrol/editor/fog tints via `setColorMod`, not terrain data.
+**Terrain textures:** `textures/eterraintextures.cpp` loads terrain textures lazily; follow existing loaded-flag patterns for new terrain.
 
-**Options menu hotkeys:** `eoptionsdata.cpp getOptionsPages()` builds `eHotkeyItem` list; called from `eMainWindow::showOptionsMenu(). Enum `eHotkeyId` + `SDL_Scancode fHotkey*` in `esettings.h`, read/write `esettings.cpp`, handled in `egamewidget.cpp keyPressEvent`. To add: enum val, scancode+default in `eSettings`, read/write, `keyPressEvent` case, `getOptionsPages()` entry.
+**Render flow:** `egamewidgetpaint.cpp` paint → `updateTerrainTextures` → `eTileToTexture::get`; `tex` null draws black tile.
 
-**eloadgame:** `widgets/eloadgame.h/cpp` - loads adventure save games, deletes them with confirmation.
+**Options menu hotkeys:** Add `eHotkeyId` + setting in `esettings.h/cpp`, handler in `egamewidget.cpp keyPressEvent`, menu entry in `eoptionsdata.cpp getOptionsPages()`.
 
-**Popup buttons:** `eAcceptButton` (green checkmark, uses `fAcceptButton` texture), `eCancelButton` (red X, uses `fCancelButton` texture), `eOkButton` (uses `fOkButton` texture) — all extend `eBasicButton`. Prefer `eAcceptButton`/`eCancelButton` pair for confirm/dismiss dialogs; `eOkButton` is smaller/older style.
+**Popup buttons:** Prefer `eAcceptButton`/`eCancelButton` for confirm/dismiss dialogs; `eOkButton` is smaller/older style.
 
-**Tooltip system:** Widgets set tooltips via `setTooltip()` method. `eWidget::sTooltip()` returns tooltip text of widget under mouse. `eTooltip` class in `widgets/etooltip.h` renders tooltips in main window render loop.
+**Tooltip system:** Widgets use `setTooltip()`; `eTooltip` renders tooltip text from `eWidget::sTooltip()`.
 
-**Toast Notification Systems:**
-- **mTips:** Deque of eTip structs for temp tips. Managed by updateTipPositions().
-- **mToasts:** Deque of eToast structs for event toasts. Managed by updateToastPositions().
-- Stack order: Paused, Speed, Tips, Toasts.
+**Toast notifications:** `mTips` and `mToasts` stack after paused/speed notices; position updates live in `updateTipPositions()` and `updateToastPositions()`.
