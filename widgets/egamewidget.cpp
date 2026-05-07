@@ -82,6 +82,7 @@
 
 #include "edistrictconditionswidget.h"
 #include "buildings/ehippodromepiece.h"
+#include "gameworld/ehitdetection.h"
 #include "estringhelpers.h"
 
 #include <algorithm>
@@ -621,50 +622,7 @@ void eGameWidget::initialize()
 void eGameWidget::pixToId(const int pixX, const int pixY,
                           int &idX, int &idY) const
 {
-    const double w = mTileW;
-    const double h = mTileH;
-    idX = std::round((pixX - mDX) / w + (pixY - mDY) / h - 0.5);
-    idY = std::round(-(pixX - mDX) / w + (pixY - mDY) / h - 0.5);
-
-    const auto dir = mBoard->direction();
-    const int width = mBoard->width();
-    const int height = mBoard->height();
-
-    bool found = false;
-
-    for (int x = idX + 2 * mMaxAltitude; x >= idX + 2 * mMinAltitude; x--)
-    {
-        for (int y = idY + 2 * mMaxAltitude; y >= idY + 2 * mMinAltitude; y--)
-        {
-            int rx;
-            int ry;
-            eTileHelper::rotatedTileIdToTileId(x, y, rx, ry, dir, width, height);
-            const auto t = mBoard->tile(rx, ry);
-            if (!t)
-                continue;
-            const int a = t->altitude();
-            const int dx = 0;
-            const int dy = -a * 2 + 2;
-            const int tpx = std::round(0.5 * (x - y + dx) * mTileW) + mDX;
-            const int tpy = std::round(0.5 * (x + y + dy) * mTileH) + mDY;
-            const int dist = std::sqrt((tpx - pixX) * (tpx - pixX) +
-                                       (tpy - pixY) * (tpy - pixY));
-            if (dist < mTileH)
-            {
-                idX = x;
-                idY = y;
-                found = true;
-                break;
-            }
-        }
-        if (found)
-            break;
-    }
-
-    const int idXT = idX;
-    const int idYT = idY;
-    eTileHelper::rotatedTileIdToTileId(idXT, idYT, idX, idY,
-                                       dir, width, height);
+    ::pixToId(pixX, pixY, idX, idY, mScale, mTileW, mTileH, mDX, mDY, mMaxAltitude, mMinAltitude, mBoard);
 }
 
 void eGameWidget::setViewMode(const eViewMode m)

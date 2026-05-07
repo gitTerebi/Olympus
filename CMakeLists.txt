@@ -634,6 +634,7 @@ set(SOURCES
     widgets/egamemenu.cpp
     widgets/egamemenubase.cpp
     widgets/egamewidget.cpp
+    widgets/gameworld/ehitdetection.cpp
     widgets/egamewidgetbuild.cpp
     widgets/egamewidgetevents.cpp
     widgets/egamewidgetinfo.cpp

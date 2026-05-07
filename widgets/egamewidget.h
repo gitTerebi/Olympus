@@ -406,6 +406,7 @@ private:
     eTileSize mTileSize = eTileSize::s30;
     int mTileW = 60;
     int mTileH = 30;
+    int mScale = 100;
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
