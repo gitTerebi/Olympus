@@ -7,6 +7,8 @@
 #include "ebasicbutton.h"
 #include "eframedwidget.h"
 
+#include "egamewidget.h"
+
 void eArmyMenu::initialize(eGameBoard &b)
 {
     mBoard = &b;
@@ -51,6 +53,41 @@ void eArmyMenu::initialize(eGameBoard &b)
     wid->addWidget(cou);
     cou->setY(y);
     cou->setTooltip(eLanguage::zeusText(51, 70)); // Go To Company
+    cou->setPressAction([this]()
+                        {
+        if (!mBoard || !mGW) return;
+        const auto cid = mBoard->currentCityId();
+        const auto banners = mBoard->banners(cid);
+        const auto ppid = mBoard->personPlayer();
+        const auto& selectedBanners = mBoard->selectedSoldiers();
+        
+        // First try to find a selected banner belonging to the player
+        const eSoldierBanner* selectedBanner = nullptr;
+        for (const auto* b : selectedBanners) {
+            if (b && b->playerId() == ppid) {
+                selectedBanner = b;
+                break;
+            }
+        }
+        
+        // If no selected banner, find the first banner belonging to the player
+        const eSoldierBanner* companyBanner = selectedBanner;
+        if (!companyBanner) {
+            for (const auto& b : banners) {
+                if (b && b->playerId() == ppid) {
+                    companyBanner = b.get();
+                    break;
+                }
+            }
+        }
+        
+        // If we found a company banner, center on it
+        if (companyBanner) {
+            const auto t = companyBanner->tile();
+            if (t) {
+                mGW->viewTile(t);
+            }
+        } });
 
     const auto t2 = &eInterfaceTextures::fDefensiveTactics;
     const auto dt = new eBasicButton(t2, window());

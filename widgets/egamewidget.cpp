@@ -343,6 +343,7 @@ void eGameWidget::initialize()
 
     mAm = new eArmyMenu(window());
     mAm->initialize(*mBoard);
+    mAm->setGameWidget(this);
     addWidget(mAm);
     mAm->align(eAlignment::right | eAlignment::top);
     mAm->hide();
