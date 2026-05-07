@@ -2736,8 +2736,28 @@ bool eGameWidget::updateSmoothScrollKey(const SDL_Scancode k,
     return false;
 }
 
+bool eGameWidget::smoothScrollKeyPressed(const SDL_Scancode k) const
+{
+    if (k == SDL_Scancode::SDL_SCANCODE_UNKNOWN)
+        return false;
+    int keyCount = 0;
+    const auto keys = SDL_GetKeyboardState(&keyCount);
+    const int keyId = static_cast<int>(k);
+    return keyId >= 0 && keyId < keyCount && keys[keyId];
+}
+
+void eGameWidget::updateSmoothScrollKeysPressed()
+{
+    const auto &hotkeys = window()->settings();
+    mScrollLeft = smoothScrollKeyPressed(hotkeys.fHotkeyScrollLeft);
+    mScrollRight = smoothScrollKeyPressed(hotkeys.fHotkeyScrollRight);
+    mScrollUp = smoothScrollKeyPressed(hotkeys.fHotkeyScrollUp);
+    mScrollDown = smoothScrollKeyPressed(hotkeys.fHotkeyScrollDown);
+}
+
 void eGameWidget::smoothScroll()
 {
+    updateSmoothScrollKeysPressed();
     int dx = 0;
     int dy = 0;
     const int d = mKeyScrollSpeed;

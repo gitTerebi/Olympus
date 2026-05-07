@@ -331,6 +331,8 @@ private:
     void setSpeedId(const int id);
     void showSpeedLabel();
     bool updateSmoothScrollKey(const SDL_Scancode k, const bool pressed);
+    bool smoothScrollKeyPressed(const SDL_Scancode k) const;
+    void updateSmoothScrollKeysPressed();
     void smoothScroll();
     void stopSmoothScroll();
     void setKeyScrollSpeed(const int speed);
