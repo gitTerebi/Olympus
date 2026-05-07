@@ -6,12 +6,14 @@
 class eMiniMap;
 class eGameBoard;
 class eBasicButton;
+class eGameWidget;
 
 class eArmyMenu : public eLabel {
 public:
     using eLabel::eLabel;
 
     void initialize(eGameBoard& b);
+    void setGameWidget(eGameWidget* const gw) { mGW = gw; }
 
     eMiniMap* miniMap() const { return mMiniMap; }
     void setSoldiersHome(const bool h);
@@ -20,6 +22,7 @@ private:
     eMiniMap* mMiniMap = nullptr;
     eBasicButton* mGoToBanner = nullptr;
     eBasicButton* mGoHome = nullptr;
+    eGameWidget* mGW = nullptr;
 };
 
 #endif // EARMYMENU_H
