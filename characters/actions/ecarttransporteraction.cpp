@@ -163,8 +163,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
             if(task.fType == eCartActionType::take) {
                 // Skip storage buildings that accept/buy this resource
                 if(bType == eBuildingType::warehouse ||
-                   bType == eBuildingType::granary ||
-                   bType == eBuildingType::tradePost) {
+                   bType == eBuildingType::granary) {
                     if(ub.gets(res)) continue;
                 }
                 if(ub.resourceHas(res)) found = true;

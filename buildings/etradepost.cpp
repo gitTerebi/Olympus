@@ -123,7 +123,7 @@ void eTradePost::setOrders(const eResourceType imports,
     mImports = imports;
     mExports = exports;
 
-    eStorageBuilding::setOrders(mExports, mImports, eResourceType::none);
+    eStorageBuilding::setOrders(mExports | mImports, eResourceType::none, eResourceType::none);
 }
 
 void eTradePost::getOrders(eResourceType& imports,
