@@ -197,7 +197,7 @@ void eGameWidget::setBoard(eGameBoard *const board)
         std::vector<std::pair<std::filesystem::file_time_type, std::filesystem::path>> autosaves;
         for(const auto& entry : std::filesystem::directory_iterator(dir)) {
             const auto path = entry.path();
-            if(path.extension() != ".ez") continue;
+            if(path.extension() != ".ez2") continue;
             const auto name = path.stem().string();
             if(name.find("autosave year ") == 0) {
                 autosaves.emplace_back(entry.last_write_time(), path);
