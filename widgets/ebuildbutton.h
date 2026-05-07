@@ -9,7 +9,8 @@ public:
 
     void initialize(const std::string& name,
                     const int marbleCost,
-                    const int cost);
+                    const int cost,
+                    const int width = 0);
 };
 
 #endif // EBUILDBUTTON_H

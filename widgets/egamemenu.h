@@ -89,6 +89,8 @@ private:
     eWidget* createSubButtons(const int resoltuionMult,
                               const eButtonsDataVec& buttons);
     eBuildButton* createBuildButton(const eSPR& c);
+    eBuildButton* createTradeBuildButton(const eSPR& c,
+                                         const int tradeIconWidth);
 
     void displayPrice(const int price, const int loc);
     eWidget* createPriceWidget(const eInterfaceTextures& coll);
