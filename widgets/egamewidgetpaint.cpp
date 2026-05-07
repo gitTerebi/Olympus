@@ -3093,6 +3093,154 @@ void eGameWidget::paintEvent(ePainter &p)
 
     tp.handleScheduledDraw();
 
+    if (mRightFormationFacing)
+    {
+        const auto banners = eSoldierBanner::sPlayerBanners(
+            mBoard->selectedSoldiers(), mBoard->personPlayer());
+        if (!banners.empty())
+        {
+            int lineDX;
+            int lineDY;
+            rightDragFormationLine(lineDX, lineDY);
+            const int bannerDist = banners.size() > 1 ? 4 : 3;
+            const int start = -static_cast<int>(banners.size() - 1)/2;
+
+            eGameTextures::loadBanners();
+            const auto drawGhostTile = [&](eTile* const tile,
+                                           const bool valid)
+            {
+                if (!tile) return;
+                int rtx;
+                int rty;
+                eTileHelper::tileIdToRotatedTileId(tile->x(), tile->y(),
+                                                   rtx, rty, dir,
+                                                   boardw, boardh);
+                const int ta = mDrawElevation ? tile->altitude() : 0;
+                const int sx = mDX + (rtx - rty)*mTileW/2;
+                const int sy = mDY + (rtx + rty - 2*ta)*mTileH/2;
+                const SDL_Color color = valid ?
+                    SDL_Color{220, 255, 80, 200} :
+                    SDL_Color{255, 80, 80, 220};
+                std::vector<SDL_Point> pts{
+                    {sx, sy},
+                    {sx + mTileW/2, sy + mTileH/2},
+                    {sx, sy + mTileH},
+                    {sx - mTileW/2, sy + mTileH/2},
+                    {sx, sy}
+                };
+                p.drawPolygon(pts, color);
+            };
+            const auto drawGhostBanner = [&](eSoldierBanner* const b,
+                                             eTile* const tile,
+                                             const bool valid)
+            {
+                if (!b || !tile) return;
+                double rx;
+                double ry;
+                const int ta = mDrawElevation ? tile->altitude() : 0;
+                drawXY(tile->x(), tile->y(), rx, ry, 1, 1, ta);
+                const auto tint = valid ?
+                    SDL_Color{220, 255, 80, 140} :
+                    SDL_Color{255, 80, 80, 150};
+
+                const auto& rods = charTexs.fBannerRod;
+                const auto& rod = rods.getTexture(0);
+                rod->setColorMod(tint.r, tint.g, tint.b);
+                rod->setAlpha(tint.a);
+                tp.drawTexture(rx, ry - 1, rod,
+                               eAlignment::hcenter | eAlignment::top);
+                rod->clearAlphaMod();
+                rod->clearColorMod();
+
+                const auto& bnrs = charTexs.fBanners;
+                const auto& bnr = bnrs[b->id() % bnrs.size()];
+                const auto& tex = bnr.getTexture(6);
+                tex->setColorMod(tint.r, tint.g, tint.b);
+                tex->setAlpha(tint.a);
+                tp.drawTexture(rx - 1, ry - 2.6, tex,
+                               eAlignment::hcenter | eAlignment::top);
+                tex->clearAlphaMod();
+                tex->clearColorMod();
+
+                const auto type = b->type();
+                const bool poseidon = b->atlantean();
+                int itype = -1;
+                const eTextureCollection* tops = nullptr;
+                if(!poseidon ||
+                   type == eBannerType::aresWarrior ||
+                   type == eBannerType::amazon) {
+                    tops = &charTexs.fBannerTops;
+                    if(type == eBannerType::aresWarrior) {
+                        itype = 0;
+                    } else if(type != eBannerType::amazon &&
+                              type != eBannerType::enemy) {
+                        itype = static_cast<int>(type);
+                    }
+                } else {
+                    tops = &charTexs.fPoseidonBannerTops;
+                    if(type == eBannerType::horseman) {
+                        itype = 0;
+                    } else if(type == eBannerType::rockThrower) {
+                        itype = 1;
+                    } else if(type == eBannerType::hoplite) {
+                        itype = 2;
+                    }
+                }
+                if(tops && itype != -1) {
+                    const auto& top = tops->getTexture(itype);
+                    top->setColorMod(tint.r, tint.g, tint.b);
+                    top->setAlpha(tint.a);
+                    tp.drawTexture(rx - 2.5, ry -  3.5, top,
+                                   eAlignment::hcenter | eAlignment::top);
+                    top->clearAlphaMod();
+                    top->clearColorMod();
+                }
+            };
+
+            for (int i = 0; i < static_cast<int>(banners.size()); i++)
+            {
+                const int side = start + i;
+                const int bx = mPressedTX + side*bannerDist*lineDX;
+                const int by = mPressedTY + side*bannerDist*lineDY;
+                const auto tile = mBoard->tile(bx, by);
+                const bool valid = tile &&
+                    tile->cityId() == banners[i]->onCityId() &&
+                    tile->walkable() &&
+                    (!tile->soldierBanner() ||
+                     tile->soldierBanner() == banners[i]);
+                drawGhostTile(tile, valid);
+                drawGhostBanner(banners[i], tile, valid);
+            }
+        }
+
+        const int sx = mPressedX - mDX;
+        const int sy = mPressedY - mDY;
+        const int ex = mHoverX - mDX;
+        const int ey = mHoverY - mDY;
+        const double dx = ex - sx;
+        const double dy = ey - sy;
+        const double len = std::sqrt(dx*dx + dy*dy);
+        if (len > 0)
+        {
+            const double ux = dx/len;
+            const double uy = dy/len;
+            const int head = 12;
+            const SDL_Color color{255, 240, 64, 255};
+            std::vector<SDL_Point> shaft{{sx, sy}, {ex, ey}};
+            p.drawPolygon(shaft, color);
+            std::vector<SDL_Point> leftHead{
+                {ex, ey},
+                {int(ex - ux*head - uy*head/2), int(ey - uy*head + ux*head/2)}
+            };
+            std::vector<SDL_Point> rightHead{
+                {ex, ey},
+                {int(ex - ux*head + uy*head/2), int(ey - uy*head - ux*head/2)}
+            };
+            p.drawPolygon(leftHead, color);
+            p.drawPolygon(rightHead, color);
+        }
+    }
+
     if (mPatrolBuilding)
     {
         const auto &pgs = mPatrolBuilding->patrolGuides();

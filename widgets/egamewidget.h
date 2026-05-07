@@ -202,6 +202,9 @@ private:
                      int hoverTX, int hoverTY,
                      int pressedTX, int pressedTY);
     bool rightClickRelease(const eMouseEvent& e);
+    bool selectedPlayerBanners() const;
+    int rightDragFacing() const;
+    void rightDragFormationLine(int& dx, int& dy) const;
 
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverVisibleTiles(const eTileAction& a);
@@ -385,6 +388,7 @@ private:
     bool mLeftPressed = false;
     bool mRightPressed = false;
     bool mRightPanning = false;
+    bool mRightFormationFacing = false;
     bool mMovedSincePress = false;
     bool mScrollLeft = false;
     bool mScrollRight = false;

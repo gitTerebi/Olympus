@@ -13,6 +13,7 @@ class eGameBoard;
 class eTile;
 class eSaveArchive;
 enum class eCharacterType;
+enum class eOrientation;
 
 enum class eBannerType {
     hoplite,
@@ -84,7 +85,10 @@ public:
     void decCount();
 
     int facing() const { return mFacing; }
-    void setFacing(int facing) { mFacing = facing; }
+    eOrientation soldierOrientation() const;
+    void setFacing(int facing);
+    void setFacingOnLoad(int facing);
+    void commandFormation(int facing, int lineDX, int lineDY);
 
     bool stationary() const;
     bool fighting() const;
@@ -113,6 +117,34 @@ public:
                        const int ctx, const int cty,
                        eGameBoard& board, const int dist,
                        const int minDistFromEdge);
+    static void sPlaceFacing(std::vector<eSoldierBanner*> bs,
+                             const int ctx, const int cty,
+                             eGameBoard& board,
+                             const int facing,
+                             const int lineDX,
+                             const int lineDY,
+                             const int dist,
+                             const int minDistFromEdge);
+    static std::vector<eSoldierBanner*> sPlayerBanners(
+            const std::vector<eSoldierBanner*>& bs,
+            const ePlayerId playerId);
+    static void sRotatePlayerBanners(
+            const std::vector<eSoldierBanner*>& bs,
+            const ePlayerId playerId);
+    static void sSetPlayerBannersFacing(
+            const std::vector<eSoldierBanner*>& bs,
+            const ePlayerId playerId,
+            const int facing);
+    static void sPlacePlayerBannersFacing(
+            const std::vector<eSoldierBanner*>& bs,
+            const ePlayerId playerId,
+            const int ctx, const int cty,
+            eGameBoard& board,
+            const int facing,
+            const int lineDX,
+            const int lineDY,
+            const int dist,
+            const int minDistFromEdge);
     static std::string sName(const eBannerType type,
                              const bool atlantean);
 private:
@@ -132,7 +164,6 @@ private:
 
     bool mHome = true;
     bool mAbroad = false;
-
     bool mSelected = false;
 
     eGameBoard& mBoard;

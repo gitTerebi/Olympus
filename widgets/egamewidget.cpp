@@ -12,6 +12,7 @@
 
 #include <filesystem>
 #include <algorithm>
+#include <cmath>
 
 #include "engine/eknownendpathfinder.h"
 #include "eterraineditmenu.h"
@@ -2865,6 +2866,7 @@ bool eGameWidget::mousePressEvent(const eMouseEvent &e)
         mLastY = e.y();
         mPressedX = e.x();
         mPressedY = e.y();
+        pixToId(e.x(), e.y(), mPressedTX, mPressedTY);
         return true;
     }
     break;
@@ -2937,6 +2939,86 @@ bool eGameWidget::rightClickRelease(const eMouseEvent &e)
         openInfoWidget(b);
     }
     return true;
+}
+
+bool eGameWidget::selectedPlayerBanners() const
+{
+    if (!mBoard) return false;
+    const auto ppid = mBoard->personPlayer();
+    for (const auto b : mBoard->selectedSoldiers())
+    {
+        if (b && b->playerId() == ppid)
+            return true;
+    }
+    return false;
+}
+
+namespace {
+void snapBiased8Way(const int rawDX, const int rawDY,
+                    int& dx, int& dy)
+{
+    const int ax = std::abs(rawDX);
+    const int ay = std::abs(rawDY);
+    dx = rawDX == 0 ? 0 : (rawDX > 0 ? 1 : -1);
+    dy = rawDY == 0 ? 0 : (rawDY > 0 ? 1 : -1);
+
+    if(ax == 0 || ay == 0) return;
+
+    const bool xDominant = ax > ay;
+    const int major = xDominant ? ax : ay;
+    const int minor = xDominant ? ay : ax;
+
+    // Iso tile drags hit diagonals very easily; require a near-even drag
+    // before snapping to a diagonal formation axis.
+    if(minor*3 < major*2) {
+        if(xDominant) {
+            dy = 0;
+        } else {
+            dx = 0;
+        }
+    }
+}
+
+int snappedDragFacing(const int dx, const int dy)
+{
+    if(dx < 0 && dy < 0) return 0;
+    if(dx == 0 && dy < 0) return 45;
+    if(dx > 0 && dy < 0) return 90;
+    if(dx > 0 && dy == 0) return 135;
+    if(dx > 0 && dy > 0) return 180;
+    if(dx == 0 && dy > 0) return 225;
+    if(dx < 0 && dy > 0) return 270;
+    if(dx < 0 && dy == 0) return 315;
+    return 0;
+}
+}
+
+int eGameWidget::rightDragFacing() const
+{
+    int lineDX;
+    int lineDY;
+    rightDragFormationLine(lineDX, lineDY);
+    return snappedDragFacing(-lineDY, lineDX);
+}
+
+void eGameWidget::rightDragFormationLine(int& dx, int& dy) const
+{
+    const int dragDX = mHoverTX - mPressedTX;
+    const int dragDY = mHoverTY - mPressedTY;
+    const int perpDX = dragDY;
+    const int perpDY = -dragDX;
+    snapBiased8Way(perpDX, perpDY, dx, dy);
+    if(dx == 0 && dy == 0)
+    {
+        const int pixDX = mHoverX - mPressedX;
+        const int pixDY = mHoverY - mPressedY;
+        snapBiased8Way(pixDY, -pixDX, dx, dy);
+    }
+    if(dx == 0 && dy == 0)
+    {
+        dx = 1;
+        dy = 0;
+    }
 }
 
 void brushTiles(eGameBoard *const board, const int bSize,
@@ -3018,7 +3100,14 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent &e)
     {
         const int dx = e.x() - mPressedX;
         const int dy = e.y() - mPressedY;
-        mRightPanning = std::abs(dx) > 3 || std::abs(dy) > 3;
+        if (selectedPlayerBanners())
+        {
+            mRightFormationFacing = std::abs(dx) > 12 || std::abs(dy) > 12;
+        }
+        else
+        {
+            mRightPanning = std::abs(dx) > 3 || std::abs(dy) > 3;
+        }
     }
     if (middle || (right && mRightPanning))
     {
@@ -3184,11 +3273,28 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
     case eMouseButton::right:
     {
         const bool wasPanning = mRightPanning;
+        const bool wasFormationFacing = mRightFormationFacing;
         mRightPressed = false;
         mRightPanning = false;
+        mRightFormationFacing = false;
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
         mHoverX = e.x();
         mHoverY = e.y();
+        if (wasFormationFacing)
+        {
+            const auto tile = mBoard->tile(mPressedTX, mPressedTY);
+            if (tile && tile->cityId() == mViewedCityId)
+            {
+                int lineDX;
+                int lineDY;
+                rightDragFormationLine(lineDX, lineDY);
+                eSoldierBanner::sPlacePlayerBannersFacing(
+                    mBoard->selectedSoldiers(), mBoard->personPlayer(),
+                    mPressedTX, mPressedTY, *mBoard, rightDragFacing(),
+                    lineDX, lineDY, 3, 2);
+            }
+            return true;
+        }
         if (wasPanning)
             return true;
         if (mEditorMode)
