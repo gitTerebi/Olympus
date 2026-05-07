@@ -27,6 +27,7 @@
 #include "etilehelper.h"
 #include "emainwindow.h"
 #include "eminimap.h"
+#include "widgets/gamebuild/ecommonhousingbuild.h"
 
 #include "eiteratesquare.h"
 
@@ -3360,53 +3361,27 @@ void eGameWidget::paintEvent(ePainter &p)
 
         if (mode == eBuildingMode::commonHousing)
         {
-            std::vector<SDL_Rect> rects;
             const auto &tex = trrTexs.fBuildingBase;
-            std::set<int> xs;
-            std::set<int> ys;
-            for (int x = sMinX; x <= sMaxX; x++)
+            const auto rects = commonHousingBuildRects(
+                        mBoard, mViewedCityId, ppid, mEditorMode,
+                        mPressedTX, mPressedTY, mHoverTX, mHoverTY);
+            for (const auto &rect : rects)
             {
-                for (int y = sMinY - 1; y <= sMaxY; y++)
-                {
-                    const SDL_Rect rect{x, y, 2, 2};
-                    bool cbr = true;
-                    for (const auto &r : rects)
-                    {
-                        const bool i = SDL_HasIntersection(&r, &rect);
-                        if (i)
-                        {
-                            cbr = false;
-                            break;
-                        }
-                    }
-                    if (!cbr)
-                        continue;
-                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2,
-                                                         mEditorMode,
-                                                         mViewedCityId, ppid);
-                    if (!cb)
-                        continue;
-                    double rx;
-                    double ry;
-                    const auto t = mBoard->tile(x, y);
-                    if (!t)
-                        continue;
-                    const int a = t->altitude();
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
-                    tp.drawTexture(rx + 1, ry, tex, eAlignment::top);
-                    tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-                    tp.drawTexture(rx + 1, ry + 1, tex, eAlignment::top);
-                    rects.emplace_back(rect);
-
-                    xs.insert(x);
-                    xs.insert(x + 1);
-                    ys.insert(y);
-                    ys.insert(y + 1);
-                }
+                double rx;
+                double ry;
+                const auto t = mBoard->tile(rect.fX, rect.fY);
+                if (!t)
+                    continue;
+                const int a = t->altitude();
+                drawXY(rect.fX, rect.fY, rx, ry, 1, 1, a);
+                tp.drawTexture(rx, ry, tex, eAlignment::top);
+                tp.drawTexture(rx + 1, ry, tex, eAlignment::top);
+                tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
+                tp.drawTexture(rx + 1, ry + 1, tex, eAlignment::top);
             }
 
-            drawBuildDims(xs.size() / 2, ys.size() / 2);
+            const auto bounds = commonHousingBuildBounds(rects);
+            drawBuildDims(bounds.fW / 2, bounds.fH / 2);
             return;
         }
     }

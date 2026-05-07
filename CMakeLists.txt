@@ -634,9 +634,10 @@ set(SOURCES
     widgets/egamemenu.cpp
     widgets/egamemenubase.cpp
     widgets/egamewidget.cpp
-    widgets/gameworld/ehitdetection.cpp
-    widgets/egamewidgetbuild.cpp
-    widgets/egamewidgetevents.cpp
+     widgets/gameworld/ehitdetection.cpp
+     widgets/egamewidgetbuild.cpp
+     widgets/gamebuild/ecommonhousingbuild.cpp
+     widgets/egamewidgetevents.cpp
     widgets/egamewidgetinfo.cpp
     widgets/egamewidgetpaint.cpp
     widgets/erepair.cpp
