@@ -1,194 +1,128 @@
 #include "eavailablebuildings.h"
 
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
 #include "buildings/ebuilding.h"
 
 #include <algorithm>
+#include <iterator>
 
 void eAvailableBuildings::read(eReadStream& src) {
-    src >> fEliteHousing;
-
-    src >> fWheatFarm;
-    src >> fCarrotsFarm;
-    src >> fOnionFarm;
-
-    src >> fVine;
-    src >> fOliveTree;
-    src >> fOrangeTree;
-
-    src >> fDairy;
-    src >> fCardingShed;
-
-    src >> fFishery;
-    src >> fUrchinQuay;
-    src >> fHuntingLodge;
-
-    src >> fMint;
-    src >> fFoundry;
-    src >> fTimberMill;
-    src >> fMasonryShop;
-
-    src >> fRefinery;
-    src >> fBlackMarbleWorkshop;
-
-    src >> fWinery;
-    src >> fOlivePress;
-    src >> fSculptureStudio;
-
-    src >> fArmory;
-
-    src >> fHorseRanch;
-    src >> fChariotFactory;
-
-    src >> fTriremeWharf;
-    src >> fHippodrome;
-
-    src >> fAphroditeSanctuary;
-    src >> fApolloSanctuary;
-    src >> fAresSanctuary;
-    src >> fArtemisSanctuary;
-    src >> fAthenaSanctuary;
-    src >> fAtlasSanctuary;
-    src >> fDemeterSanctuary;
-    src >> fDionysusSanctuary;
-    src >> fHadesSanctuary;
-    src >> fHephaestusSanctuary;
-    src >> fHeraSanctuary;
-    src >> fHermesSanctuary;
-    src >> fPoseidonSanctuary;
-    src >> fZeusSanctuary;
-
-    src >> fAchillesHall;
-    src >> fAtalantaHall;
-    src >> fBellerophonHall;
-    src >> fHerculesHall;
-    src >> fJasonHall;
-    src >> fOdysseusHall;
-    src >> fPerseusHall;
-    src >> fTheseusHall;
-
-    src >> fPopulationMonument;
-    src >> fVictoryMonument;
-    src >> fColonyMonument;
-    src >> fAthleteMonument;
-    src >> fConquestMonument;
-    src >> fHappinessMonument;
-    src >> fHeroicMonument;
-    src >> fDiplomacyMonument;
-    src >> fScholarMonument;
-
-    const int iMax = static_cast<int>(eGodType::zeus) + 1;
-    for(int i = 0; i < iMax; i++) {
-        const auto t = static_cast<eGodType>(i);
-        src >> mGodMonuments[t];
-    }
-
-    int np;
-    src >> np;
-    for(int i = 0; i < np; i++) {
-        eBuildingType type;
-        src >> type;
-        auto& a = fPyramids[type];
-        src >> a.fA;
-        int nl;
-        src >> nl;
-        for(int i = 0; i < nl; i++) {
-            bool l;
-            src >> l;
-            a.fLevels.push_back(l);
-        }
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAvailableBuildings::write(eWriteStream& dst) const {
-    dst << fEliteHousing;
+    eSaveArchive ar(dst);
+    const_cast<eAvailableBuildings*>(this)->serialize(ar);
+}
 
-    dst << fWheatFarm;
-    dst << fCarrotsFarm;
-    dst << fOnionFarm;
+void eAvailableBuildings::serialize(eSaveArchive& ar) {
+    ar.value(fEliteHousing);
 
-    dst << fVine;
-    dst << fOliveTree;
-    dst << fOrangeTree;
+    ar.value(fWheatFarm);
+    ar.value(fCarrotsFarm);
+    ar.value(fOnionFarm);
 
-    dst << fDairy;
-    dst << fCardingShed;
+    ar.value(fVine);
+    ar.value(fOliveTree);
+    ar.value(fOrangeTree);
 
-    dst << fFishery;
-    dst << fUrchinQuay;
-    dst << fHuntingLodge;
+    ar.value(fDairy);
+    ar.value(fCardingShed);
 
-    dst << fMint;
-    dst << fFoundry;
-    dst << fTimberMill;
-    dst << fMasonryShop;
+    ar.value(fFishery);
+    ar.value(fUrchinQuay);
+    ar.value(fHuntingLodge);
 
-    dst << fRefinery;
-    dst << fBlackMarbleWorkshop;
+    ar.value(fMint);
+    ar.value(fFoundry);
+    ar.value(fTimberMill);
+    ar.value(fMasonryShop);
 
-    dst << fWinery;
-    dst << fOlivePress;
-    dst << fSculptureStudio;
+    ar.value(fRefinery);
+    ar.value(fBlackMarbleWorkshop);
 
-    dst << fArmory;
+    ar.value(fWinery);
+    ar.value(fOlivePress);
+    ar.value(fSculptureStudio);
 
-    dst << fHorseRanch;
-    dst << fChariotFactory;
+    ar.value(fArmory);
 
-    dst << fTriremeWharf;
-    dst << fHippodrome;
+    ar.value(fHorseRanch);
+    ar.value(fChariotFactory);
 
-    dst << fAphroditeSanctuary;
-    dst << fApolloSanctuary;
-    dst << fAresSanctuary;
-    dst << fArtemisSanctuary;
-    dst << fAthenaSanctuary;
-    dst << fAtlasSanctuary;
-    dst << fDemeterSanctuary;
-    dst << fDionysusSanctuary;
-    dst << fHadesSanctuary;
-    dst << fHephaestusSanctuary;
-    dst << fHeraSanctuary;
-    dst << fHermesSanctuary;
-    dst << fPoseidonSanctuary;
-    dst << fZeusSanctuary;
+    ar.value(fTriremeWharf);
+    ar.value(fHippodrome);
 
-    dst << fAchillesHall;
-    dst << fAtalantaHall;
-    dst << fBellerophonHall;
-    dst << fHerculesHall;
-    dst << fJasonHall;
-    dst << fOdysseusHall;
-    dst << fPerseusHall;
-    dst << fTheseusHall;
+    ar.value(fAphroditeSanctuary);
+    ar.value(fApolloSanctuary);
+    ar.value(fAresSanctuary);
+    ar.value(fArtemisSanctuary);
+    ar.value(fAthenaSanctuary);
+    ar.value(fAtlasSanctuary);
+    ar.value(fDemeterSanctuary);
+    ar.value(fDionysusSanctuary);
+    ar.value(fHadesSanctuary);
+    ar.value(fHephaestusSanctuary);
+    ar.value(fHeraSanctuary);
+    ar.value(fHermesSanctuary);
+    ar.value(fPoseidonSanctuary);
+    ar.value(fZeusSanctuary);
 
-    dst << fPopulationMonument;
-    dst << fVictoryMonument;
-    dst << fColonyMonument;
-    dst << fAthleteMonument;
-    dst << fConquestMonument;
-    dst << fHappinessMonument;
-    dst << fHeroicMonument;
-    dst << fDiplomacyMonument;
-    dst << fScholarMonument;
+    ar.value(fAchillesHall);
+    ar.value(fAtalantaHall);
+    ar.value(fBellerophonHall);
+    ar.value(fHerculesHall);
+    ar.value(fJasonHall);
+    ar.value(fOdysseusHall);
+    ar.value(fPerseusHall);
+    ar.value(fTheseusHall);
+
+    ar.value(fPopulationMonument);
+    ar.value(fVictoryMonument);
+    ar.value(fColonyMonument);
+    ar.value(fAthleteMonument);
+    ar.value(fConquestMonument);
+    ar.value(fHappinessMonument);
+    ar.value(fHeroicMonument);
+    ar.value(fDiplomacyMonument);
+    ar.value(fScholarMonument);
 
     const int iMax = static_cast<int>(eGodType::zeus) + 1;
     for(int i = 0; i < iMax; i++) {
         const auto t = static_cast<eGodType>(i);
-        dst << mGodMonuments.at(t);
+        ar.value(mGodMonuments[t]);
     }
 
-    dst << fPyramids.size();
-    for(const auto& p : fPyramids) {
-        dst << p.first;
-        auto& a = p.second;
-        dst << a.fA;
-        dst << a.fLevels.size();
-        for(const bool d : a.fLevels) {
-            dst << d;
+    int np;
+    if(ar.writing()) np = fPyramids.size();
+    ar.value(np);
+    if(ar.reading()) fPyramids.clear();
+    for(int i = 0; i < np; i++) {
+        eBuildingType type;
+        ePyramidAvailable a;
+        if(ar.writing()) {
+            auto it = fPyramids.begin();
+            std::advance(it, i);
+            type = it->first;
+            a = it->second;
         }
+        ar.value(type);
+        ar.value(a.fA);
+        int nl;
+        if(ar.writing()) nl = a.fLevels.size();
+        ar.value(nl);
+        if(ar.reading()) a.fLevels.clear();
+        for(int j = 0; j < nl; j++) {
+            bool l;
+            if(ar.writing()) l = a.fLevels[j];
+            ar.value(l);
+            if(ar.reading()) a.fLevels.push_back(l);
+        }
+        if(ar.reading()) fPyramids[type] = a;
     }
 }
 

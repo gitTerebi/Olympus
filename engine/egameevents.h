@@ -24,6 +24,8 @@ public:
 
     void clear();
 private:
+    void serialize(eSaveArchive& ar);
+
     const eCityId mCid;
     eGameBoard& mBoard;
     std::vector<stdsptr<eGameEvent>> mGameEvents;

@@ -32,6 +32,7 @@
 #include "eartemissanctuary.h"
 #include "ehephaestussanctuary.h"
 #include "ezeussanctuary.h"
+#include "fileIO/esavearchive.h"
 
 #include "etemplealtarbuilding.h"
 #include "enumbers.h"
@@ -364,53 +365,52 @@ void eSanctuary::nextMonth() {
 
 void eSanctuary::read(eReadStream& src) {
     eMonument::read(src);
-
-    auto& board = getBoard();
-
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mGod = static_cast<eGod*>(c);
-    });
-    src >> mSpawnWait;
-    src >> mGodAbroad;
-
-    src >> mAskedForHelp;
-    src >> mCheckHelpNeeded;
-    src >> mHelpTimer;
-
-    int nw;
-    src >> nw;
-    for(int i = 0; i < nw; i++) {
-        const auto t = src.readTile(board);
-        mWarriorTiles.push_back(t);
-    }
-
-    int ns;
-    src >> ns;
-    for(int i = 0; i < ns; i++) {
-        const auto t = src.readTile(board);
-        mSpecialTiles.push_back(t);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSanctuary::write(eWriteStream& dst) const {
     eMonument::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSanctuary*>(this)->serialize(ar);
+}
 
-    dst.writeCharacter(mGod);
-    dst << mSpawnWait;
-    dst << mGodAbroad;
+void eSanctuary::serialize(eSaveArchive& ar) {
+    auto& board = getBoard();
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mGod = static_cast<eGod*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mGod);
+    }
+    ar.value(mSpawnWait);
+    ar.value(mGodAbroad);
 
-    dst << mAskedForHelp;
-    dst << mCheckHelpNeeded;
-    dst << mHelpTimer;
+    ar.value(mAskedForHelp);
+    ar.value(mCheckHelpNeeded);
+    ar.value(mHelpTimer);
 
-    dst << mWarriorTiles.size();
-    for(const auto t : mWarriorTiles) {
-        dst.writeTile(t);
+    int nw;
+    if(ar.writing()) nw = mWarriorTiles.size();
+    ar.value(nw);
+    if(ar.reading()) mWarriorTiles.clear();
+    for(int i = 0; i < nw; i++) {
+        eTile* t = nullptr;
+        if(ar.writing()) t = mWarriorTiles[i];
+        ar.tile(t, board);
+        if(ar.reading()) mWarriorTiles.push_back(t);
     }
 
-    dst << mSpecialTiles.size();
-    for(const auto t : mSpecialTiles) {
-        dst.writeTile(t);
+    int ns;
+    if(ar.writing()) ns = mSpecialTiles.size();
+    ar.value(ns);
+    if(ar.reading()) mSpecialTiles.clear();
+    for(int i = 0; i < ns; i++) {
+        eTile* t = nullptr;
+        if(ar.writing()) t = mSpecialTiles[i];
+        ar.tile(t, board);
+        if(ar.reading()) mSpecialTiles.push_back(t);
     }
 }
 

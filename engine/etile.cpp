@@ -9,6 +9,7 @@
 
 #include "evectorhelpers.h"
 #include "spawners/ebanner.h"
+#include "fileIO/esavearchive.h"
 
 #include "eiteratesquare.h"
 
@@ -361,11 +362,30 @@ void eTile::setMarbleLevel(const int l) {
 
 void eTile::read(eReadStream& src) {
     eTileBase::read(src);
-    src >> mDoubleAltitude;
-    src >> mScrub;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eTile::write(eWriteStream& dst) const {
+    eTileBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eTile*>(this)->serialize(ar);
+}
+
+void eTile::serialize(eSaveArchive& ar) {
+    ar.value(mDoubleAltitude);
+    ar.value(mScrub);
 
     unsigned char bools;
-    src >> bools;
+    if(ar.writing()) {
+        bools = 0;
+        if(mTidalWaveZone) bools |= 1 << 0;
+        if(mLavaZone) bools |= 1 << 1;
+        if(mLandSlideZone) bools |= 1 << 2;
+        if(mRainforest) bools |= 1 << 3;
+        if(mHalfSlope) bools |= 1 << 4;
+    }
+    ar.value(bools);
     mTidalWaveZone = bools & 1 << 0;
     mLavaZone = bools & 1 << 1;
     mLandSlideZone = bools & 1 << 2;
@@ -373,36 +393,24 @@ void eTile::read(eReadStream& src) {
     mHalfSlope = bools & 1 << 4;
 
     unsigned char nb;
-    src >> nb;
+    if(ar.writing()) nb = mBanners.size();
+    ar.value(nb);
     for(unsigned char i = 0; i < nb; i++) {
         eBannerTypeS type;
-        src >> type;
         int id;
-        src >> id;
-        const auto b = eBanner::sCreate(id, this, mBoard, type);
-        b->read(src);
-    }
-}
-
-void eTile::write(eWriteStream& dst) const {
-    eTileBase::write(dst);
-    dst << mDoubleAltitude;
-    dst << mScrub;
-
-    unsigned char bools = 0;
-    if(mTidalWaveZone) bools |= 1 << 0;
-    if(mLavaZone) bools |= 1 << 1;
-    if(mLandSlideZone) bools |= 1 << 2;
-    if(mRainforest) bools |= 1 << 3;
-    if(mHalfSlope) bools |= 1 << 4;
-    dst << bools;
-
-    const unsigned char nb = mBanners.size();
-    dst << nb;
-    for(const auto& b : mBanners) {
-        dst << b->type();
-        dst << b->id();
-        b->write(dst);
+        if(ar.writing()) {
+            const auto& b = mBanners[i];
+            type = b->type();
+            id = b->id();
+        }
+        ar.value(type);
+        ar.value(id);
+        if(ar.reading()) {
+            const auto b = eBanner::sCreate(id, this, mBoard, type);
+            b->read(ar.readStream());
+        } else {
+            mBanners[i]->write(ar.writeStream());
+        }
     }
 }
 

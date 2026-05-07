@@ -33,6 +33,34 @@
 #include "evectorhelpers.h"
 
 #include "widgets/eeventbackground.h"
+
+namespace {
+bool writeGameSaveFile(const std::string& path,
+                       const std::string& format,
+                       eGameWidget* const gameWidget,
+                       const stdsptr<eCampaign>& campaign) {
+    const auto fsp = std::filesystem::path(path);
+    const auto fspd = fsp.parent_path();
+    std::filesystem::create_directories(fspd);
+    std::ofstream file(path, std::ios::out | std::ios::binary |
+                       std::ios::trunc);
+    if(!file) return false;
+    eWriteTarget target(&file);
+    eWriteStream dst(target);
+    dst.writeFormat(format);
+    if(gameWidget) {
+        const auto s = gameWidget->settings();
+        s.write(dst);
+    } else {
+        eGameWidgetSettings s;
+        s.fPaused = true;
+        s.write(dst);
+    }
+    campaign->write(dst);
+    file.close();
+    return true;
+}
+}
 #include "widgets/eepisodeintroductionwidget.h"
 #include "widgets/eepisodelostwidget.h"
 #include "widgets/erosterofleaders.h"
@@ -357,25 +385,12 @@ void eMainWindow::episodeLost() {
 }
 
 bool eMainWindow::saveGame(const std::string& path) {
-    const auto fsp = std::filesystem::path(path);
-    const auto fspd = fsp.parent_path();
-    std::filesystem::create_directories(fspd);
-    std::ofstream file(path, std::ios::out | std::ios::binary |
-                       std::ios::trunc);
-    if(!file) return false;
-    eWriteTarget target(&file);
-    eWriteStream dst(target);
-    dst.writeFormat("eZeus.ez");
-    if(mGW) {
-        const auto s = mGW->settings();
-        s.write(dst);
-    } else {
-        eGameWidgetSettings s;
-        s.fPaused = true;
-        s.write(dst);
-    }
-    mCampaign->write(dst);
-    file.close();
+    const bool wroteEz = writeGameSaveFile(path, "eZeus.ez", mGW, mCampaign);
+    if(!wroteEz) return false;
+
+    auto ez2Path = std::filesystem::path(path);
+    ez2Path.replace_extension(".ez2");
+    writeGameSaveFile(ez2Path.string(), "eZeus.ez2", mGW, mCampaign);
     return true;
 }
 
@@ -392,8 +407,8 @@ bool eMainWindow::loadGame(const std::string& path) {
     src.readFormat();
     const auto& format = src.format();
     const int version = src.formatVersion();
-    if(format != "eZeus.ez") {
-        printf("Invalid file '%s' format '%s', expected 'eZeus.ez'.\n",
+    if(format != "eZeus.ez" && format != "eZeus.ez2") {
+        printf("Invalid file '%s' format '%s', expected 'eZeus.ez' or 'eZeus.ez2'.\n",
                path.c_str(), format.c_str());
         return false;
     }

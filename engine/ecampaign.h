@@ -5,6 +5,8 @@
 
 #include "eepisodegoal.h"
 
+class eSaveArchive;
+
 struct eSetAside {
     eResourceType fRes;
     int fCount;
@@ -72,6 +74,7 @@ public:
                               eCampaignGlossary& glossary);
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     void readPak(const std::string& title,
                  const std::string& path);

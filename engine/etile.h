@@ -25,6 +25,7 @@ class eBuildingRenderer;
 class eBanner;
 class eSoldierBanner;
 enum class eWorldDirection;
+class eSaveArchive;
 
 struct eTerritoryBorder {
     bool fTR = false;
@@ -163,6 +164,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void updateIsElevationTile();
 
     eGameBoard& mBoard;

@@ -11,6 +11,7 @@
 #include "eplayerconquestevent.h"
 #include "engine/epathfinder.h"
 #include "eiteratesquare.h"
+#include "fileIO/esavearchive.h"
 
 eInvasionEvent::eInvasionEvent(
         const eCityId cid,
@@ -260,14 +261,8 @@ void eInvasionEvent::write(eWriteStream& dst) const {
     eCityEventValue::write(dst);
     eCountEventValue::write(dst);
 
-    dst << mHardcoded;
-    dst << mSentByPlayer;
-
-    dst.writeGameEvent(mConquestEvent);
-    mForces.write(dst);
-
-    dst << mWarned;
-    mFirstWarning.write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eInvasionEvent*>(this)->serialize(ar);
 }
 
 void eInvasionEvent::read(eReadStream& src) {
@@ -277,19 +272,33 @@ void eInvasionEvent::read(eReadStream& src) {
     eCityEventValue::read(src, *board);
     eCountEventValue::read(src);
 
-    src >> mHardcoded;
-    src >> mSentByPlayer;
-
-    src.readGameEvent(board, [this](eGameEvent* const e) {
-        mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
-    });
-    mForces.read(*board, src);
-
-    src >> mWarned;
-    mFirstWarning.read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
     if(mWarned) {
         board->addInvasion(this);
         updateDisembarkAndShoreTile();
+    }
+}
+
+void eInvasionEvent::serialize(eSaveArchive& ar) {
+    ar.value(mHardcoded);
+    ar.value(mSentByPlayer);
+
+    const auto board = gameBoard();
+    if(ar.reading()) {
+        ar.readStream().readGameEvent(board, [this](eGameEvent* const e) {
+            mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
+        });
+    } else {
+        ar.writeStream().writeGameEvent(mConquestEvent);
+    }
+    mForces.serialize(ar, board);
+
+    ar.value(mWarned);
+    if(ar.reading()) {
+        mFirstWarning.read(ar.readStream());
+    } else {
+        mFirstWarning.write(ar.writeStream());
     }
 }
 

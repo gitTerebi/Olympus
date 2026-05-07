@@ -12,6 +12,7 @@
 class eInvasionHandler;
 class ePlayerConquestEvent;
 class eInvasionWarning;
+class eSaveArchive;
 
 class eInvasionEvent : public eGameEvent,
                        public ePointEventValue,
@@ -68,6 +69,8 @@ public:
     void invadersWon();
     void invadersDefeated();
 private:
+    void serialize(eSaveArchive& ar);
+
     void soldiersByType(int& infantry,
                         int& cavalry,
                         int& archers) const;

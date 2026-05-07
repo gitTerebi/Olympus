@@ -994,30 +994,36 @@ void eAIDistrict::addBuilding(const eAIBuilding& a) {
 }
 
 void eAIDistrict::read(eReadStream& src) {
-    int nb;
-    src >> nb;
-    for(int i = 0; i < nb; i++) {
-        auto& b = fBuildings.emplace_back();
-        b.read(src);
-    }
-
-    int nc;
-    src >> nc;
-    for(int i = 0; i < nc; i++) {
-        auto& c = fReadyConditions.emplace_back();
-        c.read(src);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAIDistrict::write(eWriteStream& dst) const {
-    dst << fBuildings.size();
-    for(const auto& b : fBuildings) {
-        b.write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eAIDistrict*>(this)->serialize(ar);
+}
+
+void eAIDistrict::serialize(eSaveArchive& ar) {
+    int nb;
+    if(ar.writing()) nb = fBuildings.size();
+    ar.value(nb);
+    if(ar.reading()) fBuildings.clear();
+    for(int i = 0; i < nb; i++) {
+        eAIBuilding b;
+        if(ar.writing()) b = fBuildings[i];
+        b.serialize(ar);
+        if(ar.reading()) fBuildings.push_back(b);
     }
 
-    dst << fReadyConditions.size();
-    for(const auto& c : fReadyConditions) {
-        c.write(dst);
+    int nc;
+    if(ar.writing()) nc = fReadyConditions.size();
+    ar.value(nc);
+    if(ar.reading()) fReadyConditions.clear();
+    for(int i = 0; i < nc; i++) {
+        eDistrictReadyCondition c;
+        if(ar.writing()) c = fReadyConditions[i];
+        c.serialize(ar);
+        if(ar.reading()) fReadyConditions.push_back(c);
     }
 }
 

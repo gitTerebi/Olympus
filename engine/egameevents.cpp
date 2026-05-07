@@ -68,23 +68,31 @@ bool eGameEvents::handleEpisodeCompleteEvents() {
 }
 
 void eGameEvents::write(eWriteStream& dst) const {
-    dst << mGameEvents.size();
-    for(const auto& e : mGameEvents) {
-        dst << e->type();
-        e->write(dst);
-    }
+    eSaveArchive ar(dst);
+    const_cast<eGameEvents*>(this)->serialize(ar);
 }
 
 void eGameEvents::read(eReadStream& src) {
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGameEvents::serialize(eSaveArchive& ar) {
     int nevs;
-    src >> nevs;
+    if(ar.writing()) nevs = mGameEvents.size();
+    ar.value(nevs);
     for(int i = 0; i < nevs; i++) {
         eGameEventType type;
-        src >> type;
-        const auto branch = eGameEventBranch::root;
-        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(src);
-        addEvent(e);
+        if(ar.writing()) type = mGameEvents[i]->type();
+        ar.value(type);
+        if(ar.reading()) {
+            const auto branch = eGameEventBranch::root;
+            const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
+            e->read(ar.readStream());
+            addEvent(e);
+        } else {
+            mGameEvents[i]->write(ar.writeStream());
+        }
     }
 }
 

@@ -14,6 +14,7 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
+#include "fileIO/esavearchive.h"
 
 ePyramid::ePyramid(eGameBoard& board,
                    const eBuildingType type,
@@ -1184,20 +1185,26 @@ void ePyramid::buildingProgressed() {
 void ePyramid::read(eReadStream& src) {
     eMonument::read(src);
     mSelf = ref<ePyramid>();
-    int ds;
-    src >> ds;
-    for(int i = 0; i < ds; i++) {
-        bool d;
-        src >> d;
-        mDark.push_back(d);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePyramid::write(eWriteStream& dst) const {
     eMonument::write(dst);
-    dst << mDark.size();
-    for(const bool d : mDark) {
-        dst << d;
+    eSaveArchive ar(dst);
+    const_cast<ePyramid*>(this)->serialize(ar);
+}
+
+void ePyramid::serialize(eSaveArchive& ar) {
+    int ds;
+    if(ar.writing()) ds = mDark.size();
+    ar.value(ds);
+    if(ar.reading()) mDark.clear();
+    for(int i = 0; i < ds; i++) {
+        bool d;
+        if(ar.writing()) d = mDark[i];
+        ar.value(d);
+        if(ar.reading()) mDark.push_back(d);
     }
 }
 

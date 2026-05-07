@@ -44,6 +44,7 @@ enum class eMonsterType;
 class eMonsterInvasionEventBase;
 struct eEpisode;
 class eHippodrome;
+class eSaveArchive;
 
 enum class eImmigrationLimitedBy {
     none,
@@ -425,6 +426,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     void setFriendlyGods(const std::vector<eGodType>& gods);
 
     void payPensions();

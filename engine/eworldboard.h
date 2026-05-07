@@ -7,6 +7,8 @@
 #include "pointers/estdselfref.h"
 #include "eworldregion.h"
 
+class eSaveArchive;
+
 enum class eWorldMap {
     greece1,
     greece2,
@@ -84,6 +86,8 @@ public:
     void setPersonPlayer(const ePlayerId pid) { mPersonPlayer = pid; }
     ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
+    void serialize(eSaveArchive& ar);
+
     bool mEditorMode = false;
     eWorldMap mMap{eWorldMap::greece8};
     std::vector<stdsptr<eWorldCity>> mCities;

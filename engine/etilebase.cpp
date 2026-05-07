@@ -2,6 +2,7 @@
 
 #include "buildings/ebuilding.h"
 #include "spawners/ebanner.h"
+#include "fileIO/esavearchive.h"
 
 #include <algorithm>
 
@@ -182,36 +183,37 @@ void eTileBase::setBottomLeft(eTileBase* const bl) {
 }
 
 void eTileBase::read(eReadStream& src) {
-    src >> mSeed;
-    src >> mTerr;
-    src >> mMarbleLevel;
-    src >> mResource;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eTileBase::write(eWriteStream& dst) const {
+    eSaveArchive ar(dst);
+    const_cast<eTileBase*>(this)->serialize(ar);
+}
+
+void eTileBase::serialize(eSaveArchive& ar) {
+    ar.value(mSeed);
+    ar.value(mTerr);
+    ar.value(mMarbleLevel);
+    ar.value(mResource);
 
     unsigned char bools;
-    src >> bools;
+    if(ar.writing()) {
+        bools = 0;
+        if(mElevation) bools |= 1 << 0;
+        if(mWalkableElev) bools |= 1 << 1;
+        if(mHasUrchin) bools |= 1 << 2;
+        if(mHasFish) bools |= 1 << 3;
+        if(mRoadblock) bools |= 1 << 4;
+    }
+    ar.value(bools);
     mElevation = bools & 1 << 0;
     mWalkableElev = bools & 1 << 1;
     mHasUrchin = bools & 1 << 2;
     mHasFish = bools & 1 << 3;
     mRoadblock = bools & 1 << 4;
 
-    src >> mCityId;
-}
-
-void eTileBase::write(eWriteStream& dst) const {
-    dst << mSeed;
-    dst << mTerr;
-    dst << mMarbleLevel;
-    dst << mResource;
-
-    unsigned char bools = 0;
-    if(mElevation) bools |= 1 << 0;
-    if(mWalkableElev) bools |= 1 << 1;
-    if(mHasUrchin) bools |= 1 << 2;
-    if(mHasFish) bools |= 1 << 3;
-    if(mRoadblock) bools |= 1 << 4;
-    dst << bools;
-
-    dst << mCityId;
+    ar.value(mCityId);
 }
 

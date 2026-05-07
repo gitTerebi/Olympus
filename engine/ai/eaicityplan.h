@@ -14,6 +14,7 @@ enum class eResourceType;
 enum class ePlayerId;
 enum class eCityId;
 class eGameBoard;
+class eSaveArchive;
 
 class eAICityPlan {
 public:
@@ -41,6 +42,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eCityId mCid;
 
     int mLastBuildDistrict = -1;

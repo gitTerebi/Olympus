@@ -7,6 +7,7 @@
 #include "engine/epathfinder.h"
 
 #include "etilehelper.h"
+#include "fileIO/esavearchive.h"
 
 eAICityPlan::eAICityPlan(const eCityId cid) :
     mCid(cid) {}
@@ -114,41 +115,45 @@ void eAICityPlan::editorDisplayBuildings(eGameBoard& board) {
 }
 
 void eAICityPlan::read(eReadStream& src) {
-    src >> mCid;
-
-    src >> mLastBuildDistrict;
-
-    int ds;
-    src >> ds;
-    for(int i = 0; i < ds; i++) {
-        auto& d = mDistricts.emplace_back();
-        d.read(src);
-    }
-
-    int ns;
-    src >> ns;
-    for(int i = 0; i < ns; i++) {
-        int did;
-        src >> did;
-        eAIBuilding b;
-        b.read(src);
-        mScheduledBuildings.push_back({did, b});
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eAICityPlan::write(eWriteStream& dst) const {
-    dst << mCid;
+    eSaveArchive ar(dst);
+    const_cast<eAICityPlan*>(this)->serialize(ar);
+}
 
-    dst << mLastBuildDistrict;
+void eAICityPlan::serialize(eSaveArchive& ar) {
+    ar.value(mCid);
 
-    dst << mDistricts.size();
-    for(const auto& d : mDistricts) {
-        d.write(dst);
+    ar.value(mLastBuildDistrict);
+
+    int ds;
+    if(ar.writing()) ds = mDistricts.size();
+    ar.value(ds);
+    if(ar.reading()) mDistricts.clear();
+    for(int i = 0; i < ds; i++) {
+        eAIDistrict d;
+        if(ar.writing()) d = mDistricts[i];
+        d.serialize(ar);
+        if(ar.reading()) mDistricts.push_back(d);
     }
 
-    dst << mScheduledBuildings.size();
-    for(const auto& bp : mScheduledBuildings) {
-        dst << bp.first;
-        bp.second.write(dst);
+    int ns;
+    if(ar.writing()) ns = mScheduledBuildings.size();
+    ar.value(ns);
+    if(ar.reading()) mScheduledBuildings.clear();
+    for(int i = 0; i < ns; i++) {
+        int did;
+        eAIBuilding b;
+        if(ar.writing()) {
+            const auto& bp = mScheduledBuildings[i];
+            did = bp.first;
+            b = bp.second;
+        }
+        ar.value(did);
+        b.serialize(ar);
+        if(ar.reading()) mScheduledBuildings.push_back({did, b});
     }
 }

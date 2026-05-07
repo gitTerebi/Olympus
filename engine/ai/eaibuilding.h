@@ -6,6 +6,7 @@
 
 enum class eResourceType;
 enum class eTradePostType;
+class eSaveArchive;
 
 struct eAIBuilding {
     eBuildingType fType;
@@ -23,6 +24,7 @@ struct eAIBuilding {
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // EAIBUILDING_H
