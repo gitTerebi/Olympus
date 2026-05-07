@@ -57,6 +57,11 @@ void eLoadGame::intialize(const std::string& title,
     mCancel->move(mCancel->x() - 2*p - mOk->width() - p, mCancel->y() - 2*p);
     mCancel->setPressAction([this]() { close(); });
     mOk->setPressAction([this, func, closeAction] {
+        const auto name = mLineEdit->text();
+        if(name.empty()) {
+            closeAction();
+            return;
+        }
         const auto path = filePath();
         const bool r = func(path);
         if(r) closeAction();
