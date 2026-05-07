@@ -3,6 +3,8 @@
 
 #include "egodmonsteraction.h"
 
+class eSaveArchive;
+
 enum class eDefendAttackCityStage {
     none, appear, goTo, wait, fight, comeback, disappear
 };
@@ -28,6 +30,7 @@ protected:
     eDefendAttackCityStage mStage{eDefendAttackCityStage::none};
     eTile* mStartTile = nullptr;
 private:
+    void serialize(eSaveArchive& ar);
 
     stdptr<eCharacter> mAttackTarget;
     bool mAttack = false;

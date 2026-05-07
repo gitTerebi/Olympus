@@ -10,6 +10,7 @@ class eReadStream;
 class eGameBoard;
 class eWorldCity;
 class eSoldierBanner;
+class eSaveArchive;
 
 struct eMilitaryAid {
     bool count() const;
@@ -22,6 +23,7 @@ struct eMilitaryAid {
 
     void write(eWriteStream& dst);
     void read(eReadStream& src, eGameBoard* const board);
+    void serialize(eSaveArchive& ar, eGameBoard* board);
 
     stdsptr<eWorldCity> fCity;
     std::vector<stdsptr<eSoldierBanner>> fSoldiers;

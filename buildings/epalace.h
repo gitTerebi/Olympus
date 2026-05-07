@@ -4,6 +4,7 @@
 #include "ebuilding.h"
 
 class ePalaceTile;
+class eSaveArchive;
 
 class ePalace : public eBuilding {
 public:
@@ -32,6 +33,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     const bool mRotated;
     std::vector<ePalaceTile*> mTiles;
 };

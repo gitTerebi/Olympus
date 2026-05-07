@@ -11,6 +11,7 @@
 
 class eGod;
 class eGodAct;
+class eSaveArchive;
 enum class eGodSound;
 
 enum class eFindFailFuncType {
@@ -165,6 +166,8 @@ public:
     void playAppearSound();
     void playDisappearSound();
 private:
+    void serialize(eSaveArchive& ar);
+
     void hermesRun(const bool appear);
 
     std::vector<ePausedAction> mPausedActions;

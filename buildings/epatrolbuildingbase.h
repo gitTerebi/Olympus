@@ -6,6 +6,8 @@
 #include "characters/actions/epatrolaction.h"
 #include "enumbers.h"
 
+class eSaveArchive;
+
 class ePatrolBuildingBase : public eEmployingBuilding {
     friend class eGuidedMovePathTask;
 public:
@@ -66,6 +68,8 @@ public:
     const std::vector<eOrientation>& path() const { return mPath; }
     const std::vector<eOrientation>& reversePath() const { return mReversePath; }
 private:
+    void serialize(eSaveArchive& ar);
+
     bool spawn();
 
     const eCharGenerator mCharGenerator;

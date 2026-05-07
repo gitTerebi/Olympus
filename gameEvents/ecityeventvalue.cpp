@@ -4,23 +4,33 @@
 #include "elanguage.h"
 #include "engine/eworldcity.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eCityEventValue::eCityEventValue(eGameBoard &board,
                                  const eValidator& v) :
     mBoard(board), mValidator(v) {}
 
 void eCityEventValue::write(eWriteStream& dst) const {
-    dst.writeCity(mCity.get());
-    dst << mMinCityId;
-    dst << mMaxCityId;
+    eSaveArchive ar(dst);
+    auto& self = const_cast<eCityEventValue&>(*this);
+    self.serialize(ar, mBoard);
 }
 
 void eCityEventValue::read(eReadStream& src, eGameBoard& board) {
-    src.readCity(&board, [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-    src >> mMinCityId;
-    src >> mMaxCityId;
+    eSaveArchive ar(src);
+    serialize(ar, board);
+}
+
+void eCityEventValue::serialize(eSaveArchive& ar, eGameBoard& board) {
+    if(ar.reading()) {
+        ar.readStream().readCity(&board, [this](const stdsptr<eWorldCity>& c) {
+            mCity = c;
+        });
+    } else {
+        ar.writeStream().writeCity(mCity.get());
+    }
+    ar.value(mMinCityId);
+    ar.value(mMaxCityId);
 }
 
 void eCityEventValue::setSingleCity(const stdsptr<eWorldCity> &c) {

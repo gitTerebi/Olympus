@@ -5,6 +5,7 @@ class eReadStream;
 class eWriteStream;
 
 class eGameBoard;
+class eSaveArchive;
 
 enum class ePlannedActionType {
     regrowForest,
@@ -30,6 +31,8 @@ public:
 
     void incTime(const int by, eGameBoard& board);
     bool finished() const { return mFinished; }
+protected:
+    void serialize(eSaveArchive& ar);
 private:
     const ePlannedActionType mType;
     bool mRecurring;

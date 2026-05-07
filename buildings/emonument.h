@@ -5,6 +5,8 @@
 
 #include "sanctuaries/esanctbuilding.h"
 
+class eSaveArchive;
+
 class eMonument : public eEmployingBuilding {
 public:
     eMonument(eGameBoard& board,
@@ -54,6 +56,8 @@ public:
     void setConstructionHalted(const bool h);
     bool constructionHalted() const { return mHaltConstruction; }
 protected:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eCartTransporter> mCart;
 
     bool mHaltConstruction = false;

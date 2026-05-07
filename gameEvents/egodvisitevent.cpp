@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "characters/actions/egodvisitaction.h"
 #include "elanguage.h"
+#include "fileIO/esavearchive.h"
 
 eGodVisitEvent::eGodVisitEvent(const eCityId cid,
                                const eGameEventBranch branch,
@@ -76,23 +77,26 @@ std::string eGodVisitEvent::longName() const {
 
 void eGodVisitEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst << mTypes.size();
-    for(const auto t : mTypes) {
-        dst << t;
-    }
-    dst << mRandom;
-    dst << mNextId;
+    eSaveArchive ar(dst);
+    const_cast<eGodVisitEvent*>(this)->serialize(ar);
 }
 
 void eGodVisitEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    int n;
-    src >> n;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGodVisitEvent::serialize(eSaveArchive& ar) {
+    int n = mTypes.size();
+    ar.value(n);
+    if(ar.reading()) mTypes.clear();
     for(int i = 0; i < n; i++) {
         eGodType t;
-        src >> t;
-        mTypes.push_back(t);
+        if(ar.writing()) t = mTypes[i];
+        ar.value(t);
+        if(ar.reading()) mTypes.push_back(t);
     }
-    src >> mRandom;
-    src >> mNextId;
+    ar.value(mRandom);
+    ar.value(mNextId);
 }

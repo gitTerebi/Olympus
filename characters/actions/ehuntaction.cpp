@@ -115,24 +115,17 @@ bool eHuntAction::decide() {
 
 void eHuntAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mLodge = static_cast<eHuntingLodge*>(b);
-    });
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mHunter = static_cast<eHunter*>(c);
-    });
-    src >> mNoResource;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHuntAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst.writeBuilding(mLodge);
-    dst.writeCharacter(mHunter);
-    dst << mNoResource;
+    eSaveArchive ar(dst);
+    const_cast<eHuntAction*>(this)->serialize(ar);
 }
 
 void eHuntAction::serialize(eSaveArchive& ar) {
-    eActionWithComeback::serialize(ar);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mLodge = static_cast<eHuntingLodge*>(b);

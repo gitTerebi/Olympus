@@ -6,6 +6,7 @@
 #include "characters/actions/eanimalaction.h"
 
 #include "ehorseranch.h"
+#include "fileIO/esavearchive.h"
 
 eHorseRanchEnclosure::eHorseRanchEnclosure(eGameBoard& board,
                                            const eCityId cid) :
@@ -105,22 +106,30 @@ void eHorseRanchEnclosure::setRanch(eHorseRanch* const ranch) {
 
 void eHorseRanchEnclosure::read(eReadStream& src) {
     eBuilding::read(src);
-
-    int nh;
-    src >> nh;
-    for(int i = 0; i < nh; i++) {
-        src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-            if(!c) return;
-            mHorses.push_back(c->ref<eHorse>());
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHorseRanchEnclosure::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eHorseRanchEnclosure*>(this)->serialize(ar);
+}
 
-    dst << mHorses.size();
-    for(const auto& h : mHorses) {
-        dst.writeCharacter(h.get());
+void eHorseRanchEnclosure::serialize(eSaveArchive& ar) {
+    int nh = mHorses.size();
+    ar.value(nh);
+    if(ar.reading()) {
+        mHorses.clear();
+    }
+    for(int i = 0; i < nh; i++) {
+        if(ar.reading()) {
+            ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+                if(!c) return;
+                mHorses.push_back(c->ref<eHorse>());
+            });
+        } else {
+            ar.writeStream().writeCharacter(mHorses[i].get());
+        }
     }
 }

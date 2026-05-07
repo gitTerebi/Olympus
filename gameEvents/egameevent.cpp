@@ -1,6 +1,7 @@
 ﻿#include "egameevent.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 #include "egodvisitevent.h"
 #include "egodattackevent.h"
@@ -381,72 +382,62 @@ void eGameEvent::updateWarningDates() {
 }
 
 void eGameEvent::write(eWriteStream& dst) const {
-    dst << mIOID;
-    dst << mDatePlusDays;
-    dst << mDatePlusMonths;
-    dst << mDatePlusYearsMin;
-    dst << mDatePlusYearsMax;
-    mNextDate.write(dst);
-    dst << mPeriodDaysMin;
-    dst << mPeriodDaysMax;
-    dst << mWarningMonths;
-    dst << mRemNRuns;
-    dst << mReason;
-    dst << mEpisodeCompleteEvent;
-
-    for(const auto& w : mWarnings) {
-        w->write(dst);
-    }
-
-    dst << mConsequences.size();
-    for(const auto& c : mConsequences) {
-        dst << c->type();
-        dst << c->branch();
-        c->write(dst);
-    }
-
-    for(const auto& et : mTriggers) {
-        et->write(dst);
-    }
-
-    dst << mEpisodeEvent;
+    eSaveArchive ar(dst);
+    const_cast<eGameEvent*>(this)->serialize(ar);
 }
 
 void eGameEvent::read(eReadStream& src) {
-    src >> mIOID;
-    src >> mDatePlusDays;
-    src >> mDatePlusMonths;
-    src >> mDatePlusYearsMin;
-    src >> mDatePlusYearsMax;
-    mNextDate.read(src);
-    src >> mPeriodDaysMin;
-    src >> mPeriodDaysMax;
-    src >> mWarningMonths;
-    src >> mRemNRuns;
-    src >> mReason;
-    src >> mEpisodeCompleteEvent;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGameEvent::serialize(eSaveArchive& ar) {
+    ar.value(mIOID);
+    ar.value(mDatePlusDays);
+    ar.value(mDatePlusMonths);
+    ar.value(mDatePlusYearsMin);
+    ar.value(mDatePlusYearsMax);
+    if(ar.reading()) mNextDate.read(ar.readStream());
+    else mNextDate.write(ar.writeStream());
+    ar.value(mPeriodDaysMin);
+    ar.value(mPeriodDaysMax);
+    ar.value(mWarningMonths);
+    ar.value(mRemNRuns);
+    ar.value(mReason);
+    ar.value(mEpisodeCompleteEvent);
 
     for(const auto& w : mWarnings) {
-        w->read(src);
+        if(ar.reading()) w->read(ar.readStream());
+        else w->write(ar.writeStream());
     }
 
-    int ncs;
-    src >> ncs;
+    int ncs = mConsequences.size();
+    ar.value(ncs);
+    if(ar.reading()) mConsequences.clear();
     for(int i = 0; i < ncs; i++) {
         eGameEventType type;
-        src >> type;
         eGameEventBranch branch;
-        src >> branch;
+        if(ar.writing()) {
+            type = mConsequences[i]->type();
+            branch = mConsequences[i]->branch();
+        }
+        ar.value(type);
+        ar.value(branch);
+        if(ar.writing()) {
+            mConsequences[i]->write(ar.writeStream());
+            continue;
+        }
         const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(src);
+        e->read(ar.readStream());
         addConsequence(e);
     }
 
     for(const auto& et : mTriggers) {
-        et->read(src);
+        if(ar.reading()) et->read(ar.readStream());
+        else et->write(ar.writeStream());
     }
 
-    src >> mEpisodeEvent;
+    ar.value(mEpisodeEvent);
 }
 
 void eGameEvent::loadResources() const {

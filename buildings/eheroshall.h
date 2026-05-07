@@ -80,6 +80,7 @@ enum class eHeroSummoningStage {
 };
 
 class eBoardCity;
+class eSaveArchive;
 
 class eHerosHall : public eBuilding {
 public:
@@ -124,6 +125,8 @@ public:
 
     void updateRequirementsStatus();
 private:
+    void serialize(eSaveArchive& ar);
+
     void addRequirement(const eHeroRequirement& hr);
     void updateRequirementStatus(eHeroRequirement& hr);
 

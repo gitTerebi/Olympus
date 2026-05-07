@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "characters/actions/egodattackaction.h"
 #include "egodtraderesumesevent.h"
+#include "fileIO/esavearchive.h"
 
 eGodAttackEvent::eGodAttackEvent(
         const eCityId cid,
@@ -98,28 +99,34 @@ std::string eGodAttackEvent::longName() const {
 
 void eGodAttackEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst << mTypes.size();
-    for(const auto t : mTypes) {
-        dst << t;
-    }
-    dst << mRandom;
-    dst << mNextId;
-    dst.writeBuilding(mSanctuary);
+    eSaveArchive ar(dst);
+    const_cast<eGodAttackEvent*>(this)->serialize(ar);
 }
 
 void eGodAttackEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    int n;
-    src >> n;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGodAttackEvent::serialize(eSaveArchive& ar) {
+    int n = mTypes.size();
+    ar.value(n);
+    if(ar.reading()) mTypes.clear();
     for(int i = 0; i < n; i++) {
         eGodType t;
-        src >> t;
-        mTypes.push_back(t);
+        if(ar.writing()) t = mTypes[i];
+        ar.value(t);
+        if(ar.reading()) mTypes.push_back(t);
     }
-    src >> mRandom;
-    src >> mNextId;
-    const auto board = gameBoard();
-    src.readBuilding(board, [this](eBuilding* const b) {
-        mSanctuary = static_cast<eSanctuary*>(b);
-    });
+    ar.value(mRandom);
+    ar.value(mNextId);
+    if(ar.reading()) {
+        const auto board = gameBoard();
+        ar.readStream().readBuilding(board, [this](eBuilding* const b) {
+            mSanctuary = static_cast<eSanctuary*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mSanctuary);
+    }
 }

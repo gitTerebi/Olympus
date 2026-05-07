@@ -2,6 +2,7 @@
 
 #include "emovetoaction.h"
 #include "ewaitaction.h"
+#include "fileIO/esavearchive.h"
 
 eTraderAction::eTraderAction(eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::traderAction) {}
@@ -24,30 +25,38 @@ bool eTraderAction::decide() {
 
 void eTraderAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    mWalkable = src.readWalkable();
-    src >> mCash;
-    src >> mItems;
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mTradePost = static_cast<eTradePost*>(b);
-    });
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mUnpackBuilding = b;
-    });
-    src >> mAtTradePost;
-    src >> mFinishedTrade;
-    src >> mNotFound;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTraderAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst.writeWalkable(mWalkable.get());
-    dst << mCash;
-    dst << mItems;
-    dst.writeBuilding(mTradePost);
-    dst.writeBuilding(mUnpackBuilding);
-    dst << mAtTradePost;
-    dst << mFinishedTrade;
-    dst << mNotFound;
+    eSaveArchive ar(dst);
+    const_cast<eTraderAction*>(this)->serialize(ar);
+}
+
+void eTraderAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mWalkable = ar.readStream().readWalkable();
+    } else {
+        ar.writeStream().writeWalkable(mWalkable.get());
+    }
+    ar.value(mCash);
+    ar.value(mItems);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTradePost = static_cast<eTradePost*>(b);
+        });
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mUnpackBuilding = b;
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTradePost);
+        ar.writeStream().writeBuilding(mUnpackBuilding);
+    }
+    ar.value(mAtTradePost);
+    ar.value(mFinishedTrade);
+    ar.value(mNotFound);
 }
 
 void eTraderAction::setTradePost(eTradePost* const tp) {

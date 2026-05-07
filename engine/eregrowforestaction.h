@@ -4,6 +4,7 @@
 #include "eplannedaction.h"
 
 class eTile;
+class eSaveArchive;
 
 class eRegrowForestAction : public ePlannedAction {
 public:
@@ -15,6 +16,8 @@ public:
     void read(eReadStream& src, eGameBoard& board) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar, eGameBoard* board);
+
     eTile* mTile = nullptr;
 };
 

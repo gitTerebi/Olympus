@@ -3,6 +3,7 @@
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 int eBuildingWithResource::addProduced(const eResourceType type, const int count) {
     const int c = add(type, count);
@@ -88,22 +89,32 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
 
 void eBuildingWithResource::read(eReadStream& src) {
     eBuilding::read(src);
-    src >> mStashable;
-    int ns;
-    src >> ns;
-    for(int i = 0; i < ns; i++) {
-        auto& s = mStash.emplace_back();
-        src >> s.fType;
-        src >> s.fCount;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eBuildingWithResource::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst << mStashable;
-    dst << mStash.size();
-    for(const auto& s : mStash) {
-        dst << s.fType;
-        dst << s.fCount;
+    eSaveArchive ar(dst);
+    const_cast<eBuildingWithResource*>(this)->serialize(ar);
+}
+
+void eBuildingWithResource::serialize(eSaveArchive& ar) {
+    ar.value(mStashable);
+    int ns = mStash.size();
+    ar.value(ns);
+    if(ar.reading()) {
+        mStash.clear();
+    }
+    for(int i = 0; i < ns; i++) {
+        eStash s;
+        if(ar.writing()) {
+            s = mStash[i];
+        }
+        ar.value(s.fType);
+        ar.value(s.fCount);
+        if(ar.reading()) {
+            mStash.push_back(s);
+        }
     }
 }

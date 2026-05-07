@@ -1,4 +1,5 @@
 #include "eherahelpaction.h"
+#include "fileIO/esavearchive.h"
 
 eHeraHelpAction::eHeraHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::heraHelpAction) {}
@@ -35,27 +36,37 @@ bool eHeraHelpAction::decide() {
 
 void eHeraHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mTarget = static_cast<eAgoraBase*>(b);
-    });
-    int nt;
-    src >> nt;
-    for(int i = 0; i < nt; i++) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            const auto a = static_cast<eAgoraBase*>(b);
-            mFutureTargets.push_back(a);
-        });
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHeraHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst.writeBuilding(mTarget);
-    dst << mFutureTargets.size();
-    for(const auto& a : mFutureTargets) {
-        dst.writeBuilding(a.get());
+    eSaveArchive ar(dst);
+    const_cast<eHeraHelpAction*>(this)->serialize(ar);
+}
+
+void eHeraHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = static_cast<eAgoraBase*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTarget);
+    }
+    int nt = mFutureTargets.size();
+    ar.value(nt);
+    if(ar.reading()) mFutureTargets.clear();
+    for(int i = 0; i < nt; i++) {
+        if(ar.reading()) {
+            ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+                const auto a = static_cast<eAgoraBase*>(b);
+                mFutureTargets.push_back(a);
+            });
+        } else {
+            ar.writeStream().writeBuilding(mFutureTargets[i].get());
+        }
     }
 }
 

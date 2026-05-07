@@ -7,6 +7,7 @@
 
 class eOx;
 class eTrailer;
+class eSaveArchive;
 
 enum eCartActionTypeSupport {
     take = 1 << 0,
@@ -71,6 +72,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
     void updateTextures();
     void cleanupFollowers();
 

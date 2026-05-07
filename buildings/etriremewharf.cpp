@@ -204,32 +204,17 @@ std::vector<eCartTask> eTriremeWharf::cartTasks() const {
 
 void eTriremeWharf::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mTakeCart = static_cast<eCartTransporter*>(c);
-    });
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mTrireme = static_cast<eTrireme*>(c);
-    });
-    src >> mWoodCount;
-    src >> mArmorCount;
-    src >> mTriremeBuildingStage;
-    src >> mTriremeBuildingTime;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTriremeWharf::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-
-    dst.writeCharacter(mTakeCart);
-    dst.writeCharacter(mTrireme);
-    dst << mWoodCount;
-    dst << mArmorCount;
-    dst << mTriremeBuildingStage;
-    dst << mTriremeBuildingTime;
+    eSaveArchive ar(dst);
+    const_cast<eTriremeWharf*>(this)->serialize(ar);
 }
 
 void eTriremeWharf::serialize(eSaveArchive& ar) {
-    eEmployingBuilding::serialize(ar);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mTakeCart = static_cast<eCartTransporter*>(c);

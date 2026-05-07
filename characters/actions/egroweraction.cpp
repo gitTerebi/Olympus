@@ -148,30 +148,17 @@ bool eGrowerAction::decide() {
 
 void eGrowerAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src >> mType;
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mGrower = static_cast<eGrower*>(c);
-    });
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mLodge = static_cast<eGrowersLodge*>(b);
-    });
-    src >> mFinishOnce;
-    src >> mGroomed;
-    src >> mNoResource;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGrowerAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mType;
-    dst.writeCharacter(mGrower);
-    dst.writeBuilding(mLodge);
-    dst << mFinishOnce;
-    dst << mGroomed;
-    dst << mNoResource;
+    eSaveArchive ar(dst);
+    const_cast<eGrowerAction*>(this)->serialize(ar);
 }
 
 void eGrowerAction::serialize(eSaveArchive& ar) {
-    eActionWithComeback::serialize(ar);
     ar.value(mType);
     if(ar.reading()) {
         ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {

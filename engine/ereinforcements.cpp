@@ -1,6 +1,7 @@
 #include "ereinforcements.h"
 
 #include "evectorhelpers.h"
+#include "fileIO/esavearchive.h"
 
 eReinforcements::eReinforcements() {}
 
@@ -18,11 +19,20 @@ bool eReinforcements::checkEmpty() const {
 }
 
 void eReinforcements::write(eWriteStream& dst) const {
-    dst << mFromCid;
-    mForces.write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eReinforcements*>(this)->serialize(ar, nullptr);
 }
 
 void eReinforcements::read(eGameBoard& board, eReadStream& src) {
-    src >> mFromCid;
-    mForces.read(board, src);
+    eSaveArchive ar(src);
+    serialize(ar, &board);
+}
+
+void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {
+    ar.value(mFromCid);
+    if(ar.reading()) {
+        mForces.serialize(ar, board);
+    } else {
+        mForces.serialize(ar, nullptr);
+    }
 }
