@@ -7,6 +7,7 @@
 #include "characters/actions/ecollectresourceaction.h"
 
 class eResourceCollectorBase;
+class eSaveArchive;
 
 class eResourceCollectBuilding : public eResourceCollectBuildingBase {
 public:
@@ -54,6 +55,8 @@ protected:
 
     void setRawCountCollect(const int r) { mRawCountCollect = r; }
 private:
+    void serialize(eSaveArchive& ar);
+
     const eCharGenerator mCharGenerator;
     const std::vector<eBuildingTextures>& mTextures;
 

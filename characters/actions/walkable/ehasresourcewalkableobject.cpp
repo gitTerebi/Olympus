@@ -1,6 +1,7 @@
 #include "ehasresourcewalkableobject.h"
 
 #include "ehasresourceobject.h"
+#include "fileIO/esavearchive.h"
 
 eHasResourceWalkableObject::eHasResourceWalkableObject(
         const stdsptr<eHasResourceObject>& hr,
@@ -16,11 +17,21 @@ bool eHasResourceWalkableObject::walkable(eTileBase* const t) const {
 }
 
 void eHasResourceWalkableObject::read(eReadStream& src) {
-    mHr = src.readHasResource();
-    mW = src.readWalkable();
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHasResourceWalkableObject::write(eWriteStream& dst) const {
-    dst.writeHasResource(mHr.get());
-    dst.writeWalkable(mW.get());
+    eSaveArchive ar(dst);
+    const_cast<eHasResourceWalkableObject*>(this)->serialize(ar);
+}
+
+void eHasResourceWalkableObject::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mHr = ar.readStream().readHasResource();
+        mW = ar.readStream().readWalkable();
+    } else {
+        ar.writeStream().writeHasResource(mHr.get());
+        ar.writeStream().writeWalkable(mW.get());
+    }
 }

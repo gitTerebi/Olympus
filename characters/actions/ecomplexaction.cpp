@@ -1,6 +1,7 @@
 #include "ecomplexaction.h"
 
 #include "ewaitaction.h"
+#include "fileIO/esavearchive.h"
 
 void eComplexAction::increment(const int by) {
     if(mCurrentAction) {
@@ -36,6 +37,13 @@ void eComplexAction::write(eWriteStream& dst) const {
         dst << mCurrentAction->type();
         mCurrentAction->write(dst);
     }
+}
+
+void eComplexAction::serialize(eSaveArchive& ar) {
+    eCharacterAction::serialize(ar);
+    ar.characterAction<eCharacterAction>(mCurrentAction, [this](const eCharActionType type) {
+        return eCharacterAction::sCreate(character(), type);
+    });
 }
 
 void eComplexAction::setCurrentAction(const stdsptr<eCharacterAction>& a) {

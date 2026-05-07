@@ -9,6 +9,7 @@
 #include "characters/edeer.h"
 
 #include "buildings/ehuntinglodge.h"
+#include "fileIO/esavearchive.h"
 
 eHuntAction::eHuntAction(eHuntingLodge* const b, eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::huntAction),
@@ -128,6 +129,22 @@ void eHuntAction::write(eWriteStream& dst) const {
     dst.writeBuilding(mLodge);
     dst.writeCharacter(mHunter);
     dst << mNoResource;
+}
+
+void eHuntAction::serialize(eSaveArchive& ar) {
+    eActionWithComeback::serialize(ar);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mLodge = static_cast<eHuntingLodge*>(b);
+        });
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mHunter = static_cast<eHunter*>(c);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mLodge);
+        ar.writeStream().writeCharacter(mHunter);
+    }
+    ar.value(mNoResource);
 }
 
 void eHuntAction::findResourceDecision() {

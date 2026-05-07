@@ -4,6 +4,7 @@
 #include "eemployingbuilding.h"
 
 class eHorseRanchEnclosure;
+class eSaveArchive;
 
 class eHorseRanch : public eEmployingBuilding {
 public:
@@ -38,6 +39,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mWheat = 0;
     int mWheatTime = 0;
     int mHorseTime = 0;

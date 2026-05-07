@@ -4,6 +4,7 @@
 
 #include "earmyreturnevent.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eArmyEventBase::eArmyEventBase(const eCityId cid,
                                const eGameEventType type,
@@ -25,17 +26,27 @@ void eArmyEventBase::removeArmyEvent() {
 
 void eArmyEventBase::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    mForces.write(dst);
-    dst.writeCity(mCity.get());
+    eSaveArchive ar(dst);
+    const_cast<eArmyEventBase*>(this)->serialize(ar);
 }
 
 void eArmyEventBase::read(eReadStream& src) {
     eGameEvent::read(src);
-    const auto board = gameBoard();
-    mForces.read(*board, src);
-    src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eArmyEventBase::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        const auto board = gameBoard();
+        mForces.read(*board, ar.readStream());
+        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
+            mCity = c;
+        });
+    } else {
+        mForces.write(ar.writeStream());
+        ar.writeStream().writeCity(mCity.get());
+    }
 }
 
 void eArmyEventBase::planArmyReturn() {

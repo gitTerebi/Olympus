@@ -3,6 +3,8 @@
 
 #include "gameEvents/egameevent.h"
 
+class eSaveArchive;
+
 class eGameEvents {
 public:
     eGameEvents(const eCityId cid, eGameBoard& board);

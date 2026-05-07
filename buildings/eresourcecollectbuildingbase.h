@@ -23,9 +23,9 @@ public:
     bool noTarget() const { return mNoTarget; }
 protected:
     void trackProduced(const int c);
-private:
     void serialize(eSaveArchive& ar);
 
+private:
     bool mNoTarget = true;
 
     int mProducedThisYear = 0;

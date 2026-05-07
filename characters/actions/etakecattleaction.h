@@ -4,6 +4,7 @@
 #include "eactionwithcomeback.h"
 
 class eCorral;
+class eSaveArchive;
 
 enum class eTakeCattleActionStage {
     none, get, goBack
@@ -20,6 +21,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void goGetCattle();
 
     eTakeCattleActionStage mStage = eTakeCattleActionStage::none;

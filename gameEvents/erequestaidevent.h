@@ -3,6 +3,8 @@
 
 #include "egameevent.h"
 
+class eSaveArchive;
+
 class eRequestAidEvent : public eGameEvent {
 public:
     eRequestAidEvent(const eCityId cid,
@@ -24,6 +26,8 @@ public:
     void setArrivalDate(const eDate& d) { mArrivalDate = d; }
     const eDate& arrivalDate() const { return mArrivalDate; }
 private:
+    void serialize(eSaveArchive& ar);
+
     eDate mArrivalDate;
     bool mEnd = false;
     stdsptr<eWorldCity> mCity;

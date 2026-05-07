@@ -3,6 +3,8 @@
 
 #include "echaracteraction.h"
 
+class eSaveArchive;
+
 class eComplexAction : public eCharacterAction {
 public:
     using eCharacterAction::eCharacterAction;
@@ -19,6 +21,8 @@ public:
 protected:
     void wait(const int t);
     void wait();
+    void serialize(eSaveArchive& ar);
+
 private:
     stdsptr<eCharacterAction> mCurrentAction;
 };

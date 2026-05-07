@@ -6,6 +6,7 @@
 #include "characters/ecattle.h"
 #include "efollowaction.h"
 #include "emovetoaction.h"
+#include "fileIO/esavearchive.h"
 
 eTakeCattleAction::eTakeCattleAction(
         eCharacter* const c, eCorral* const cc) :
@@ -47,19 +48,27 @@ void eTakeCattleAction::increment(const int by) {
 
 void eTakeCattleAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src >> mStage;
-    auto& board = this->board();
-    src.readBuilding(&board, [this](eBuilding* const b) {
-        mCorral = static_cast<eCorral*>(b);
-    });
-    src >> mNoCattle;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eTakeCattleAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mStage;
-    dst.writeBuilding(mCorral);
-    dst << mNoCattle;
+    eSaveArchive ar(dst);
+    const_cast<eTakeCattleAction*>(this)->serialize(ar);
+}
+
+void eTakeCattleAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    if(ar.reading()) {
+        auto& board = this->board();
+        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
+            mCorral = static_cast<eCorral*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mCorral);
+    }
+    ar.value(mNoCattle);
 }
 
 bool hasCattle(eTileBase* const tile, const eCharacterType t) {

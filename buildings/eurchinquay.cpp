@@ -3,6 +3,7 @@
 #include "characters/eurchingatherer.h"
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
@@ -218,20 +219,25 @@ void eUrchinQuay::updateDisabled() {
 
 void eUrchinQuay::read(eReadStream& src) {
     eResourceCollectBuildingBase::read(src);
-
-    src >> mDisabled;
-    src >> mStateCount;
-    src >> mState;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mGatherer = static_cast<eUrchinGatherer*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eUrchinQuay::write(eWriteStream& dst) const {
     eResourceCollectBuildingBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eUrchinQuay*>(this)->serialize(ar);
+}
 
-    dst << mDisabled;
-    dst << mStateCount;
-    dst << mState;
-    dst.writeCharacter(mGatherer);
+void eUrchinQuay::serialize(eSaveArchive& ar) {
+    ar.value(mDisabled);
+    ar.value(mStateCount);
+    ar.value(mState);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mGatherer = static_cast<eUrchinGatherer*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mGatherer);
+    }
 }

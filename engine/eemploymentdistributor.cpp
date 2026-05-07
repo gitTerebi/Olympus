@@ -11,6 +11,7 @@
 #include "elanguage.h"
 #include "boardData/eemploymentdata.h"
 #include "eresourcetype.h"
+#include "fileIO/esavearchive.h"
 
 eEmploymentDistributor::eEmploymentDistributor(eEmploymentData& empl) :
     mEmplData(empl) {
@@ -57,14 +58,18 @@ int eEmploymentDistributor::employees(const eSector s) {
 }
 
 void eEmploymentDistributor::read(eReadStream& src) {
-    for(auto& e : mPriorities) {
-        src >> e.second;
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eEmploymentDistributor::write(eWriteStream& dst) const {
+    eSaveArchive ar(dst);
+    const_cast<eEmploymentDistributor*>(this)->serialize(ar);
+}
+
+void eEmploymentDistributor::serialize(eSaveArchive& ar) {
     for(auto& e : mPriorities) {
-        dst << e.second;
+        ar.value(e.second);
     }
 }
 

@@ -7,6 +7,7 @@
 
 #include "engine/eregrowforestaction.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eCollectAction::eCollectAction(eCharacter* const c,
                                const eTranformFunc tf) :
@@ -99,16 +100,19 @@ void eCollectAction::increment(const int by) {
 
 void eCollectAction::read(eReadStream& src) {
     eCharacterAction::read(src);
-    src >> mSoundTime;
-    src >> mTime;
-    mTile = src.readTile(board());
-    src >> mTransFunc;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCollectAction::write(eWriteStream& dst) const {
     eCharacterAction::write(dst);
-    dst << mSoundTime;
-    dst << mTime;
-    dst.writeTile(mTile);
-    dst << mTransFunc;
+    eSaveArchive ar(dst);
+    const_cast<eCollectAction*>(this)->serialize(ar);
+}
+
+void eCollectAction::serialize(eSaveArchive& ar) {
+    ar.value(mSoundTime);
+    ar.value(mTime);
+    ar.tile(mTile, board());
+    ar.value(mTransFunc);
 }

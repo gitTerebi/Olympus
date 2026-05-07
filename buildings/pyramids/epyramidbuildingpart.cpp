@@ -1,6 +1,7 @@
 #include "epyramidbuildingpart.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 ePyramidBuildingPart::ePyramidBuildingPart(
         const std::vector<eSanctCost>& cost,
@@ -51,15 +52,24 @@ void ePyramidBuildingPart::setPaint(ePyramidElement* const paint,
 
 void ePyramidBuildingPart::read(eReadStream& src) {
     ePyramidElement::read(src);
-    auto& board = getBoard();
-    src.readBuilding(&board, [this](eBuilding* const b) {
-        mPaint = static_cast<ePyramidElement*>(b);
-    });
-    src >> mPaintDir;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePyramidBuildingPart::write(eWriteStream& dst) const {
     ePyramidElement::write(dst);
-    dst.writeBuilding(mPaint);
-    dst << mPaintDir;
+    eSaveArchive ar(dst);
+    const_cast<ePyramidBuildingPart*>(this)->serialize(ar);
+}
+
+void ePyramidBuildingPart::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
+            mPaint = static_cast<ePyramidElement*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mPaint);
+    }
+    ar.value(mPaintDir);
 }

@@ -12,6 +12,8 @@ enum class eTranformFunc {
     blackMarble
 };
 
+class eSaveArchive;
+
 class eCollectAction : public eCharacterAction {
 public:
     eCollectAction(eCharacter* const c,
@@ -23,6 +25,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mSoundTime = 0;
     int mTime = 0;
     eTile* mTile = nullptr;

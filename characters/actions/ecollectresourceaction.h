@@ -14,6 +14,7 @@ class eMovePathAction;
 
 class eResourceCollectorBase;
 class eResourceCollectBuildingBase;
+class eSaveArchive;
 
 enum class eTileActionType {
     none,
@@ -49,6 +50,7 @@ private:
     bool collect(eTile* const tile);
     void goBackDecision();
     void waitDecision();
+    void serialize(eSaveArchive& ar);
 
     stdsptr<eHasResourceObject> mHasResource;
     eResourceCollectBuildingBase* mBuilding = nullptr;

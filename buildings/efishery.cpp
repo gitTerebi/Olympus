@@ -3,6 +3,7 @@
 #include "characters/efishingboat.h"
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
 
@@ -259,20 +260,25 @@ void eFishery::updateDisabled() {
 
 void eFishery::read(eReadStream& src) {
     eResourceCollectBuildingBase::read(src);
-
-    src >> mDisabled;
-    src >> mStateCount;
-    src >> mState;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mBoat = static_cast<eFishingBoat*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFishery::write(eWriteStream& dst) const {
     eResourceCollectBuildingBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eFishery*>(this)->serialize(ar);
+}
 
-    dst << mDisabled;
-    dst << mStateCount;
-    dst << mState;
-    dst.writeCharacter(mBoat);
+void eFishery::serialize(eSaveArchive& ar) {
+    ar.value(mDisabled);
+    ar.value(mStateCount);
+    ar.value(mState);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mBoat = static_cast<eFishingBoat*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mBoat);
+    }
 }

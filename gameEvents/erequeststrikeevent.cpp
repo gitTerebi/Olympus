@@ -4,6 +4,7 @@
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
+#include "fileIO/esavearchive.h"
 #include "elanguage.h"
 #include "einvasionevent.h"
 
@@ -74,18 +75,27 @@ std::string eRequestStrikeEvent::longName() const {
 
 void eRequestStrikeEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst.writeCity(mCity.get());
-    dst.writeCity(mRivalCity.get());
-    dst << mEnd;
+    eSaveArchive ar(dst);
+    const_cast<eRequestStrikeEvent*>(this)->serialize(ar);
 }
 
 void eRequestStrikeEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mRivalCity = c;
-    });
-    src >> mEnd;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eRequestStrikeEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
+            mCity = c;
+        });
+        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
+            mRivalCity = c;
+        });
+    } else {
+        ar.writeStream().writeCity(mCity.get());
+        ar.writeStream().writeCity(mRivalCity.get());
+    }
+    ar.value(mEnd);
 }

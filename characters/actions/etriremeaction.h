@@ -4,6 +4,7 @@
 #include "efightingaction.h"
 
 class eTriremeWharf;
+class eSaveArchive;
 
 class eTriremeAction : public eFightingAction {
 public:
@@ -22,6 +23,8 @@ public:
 
     eTriremeWharf* home() const;
 private:
+    void serialize(eSaveArchive& ar);
+
     eTile* exitPoint() const;
 
     stdptr<eTriremeWharf> mHome;

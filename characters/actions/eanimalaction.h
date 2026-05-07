@@ -6,6 +6,7 @@
 #include "walkable/ewalkableobject.h"
 
 class eTileBase;
+class eSaveArchive;
 
 class eAnimalAction : public eComplexAction {
 public:
@@ -31,6 +32,8 @@ protected:
     int mSpawnerX;
     int mSpawnerY;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eWalkableObject> mTileWalkable;
 
     int mLayTime = 2000;

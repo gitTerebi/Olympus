@@ -5,6 +5,8 @@
 #include "characters/eartisan.h"
 #include "enumbers.h"
 
+class eSaveArchive;
+
 class eArtisansGuild : public eEmployingBuilding {
 public:
     eArtisansGuild(eGameBoard& board, const eCityId cid);
@@ -21,6 +23,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdptr<eArtisan> mArtisan;
 
     const int mWaitTime = eNumbers::sArtisanWaitTime;

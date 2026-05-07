@@ -6,6 +6,8 @@
 #include "egodeventvalue.h"
 #include "ecityeventvalue.h"
 
+class eSaveArchive;
+
 class eGodDisasterEvent : public eGameEvent,
                           public eGodEventValue,
                           public eCityEventValue {
@@ -26,6 +28,8 @@ public:
     void setDuration(const int d) { mDuration = d; }
     int duration() const { return mDuration; }
 private:
+    void serialize(eSaveArchive& ar);
+
     int mDuration = 180;
     bool mEnd = false;
 };

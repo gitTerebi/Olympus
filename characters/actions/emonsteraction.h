@@ -11,6 +11,8 @@ enum class eMonsterAttackStage {
     none, wait, goTo, patrol, goBack
 };
 
+class eSaveArchive;
+
 class eMonsterAction : public eGodMonsterAction {
     friend class eMonsterObsticleHandler;
 public:
@@ -33,6 +35,8 @@ public:
     void goBack();
     void monsterPatrol();
 private:
+    void serialize(eSaveArchive& ar);
+
     void destroyBuilding(eBuilding* const b);
     eTile* closestEmptySpace(const int rdx, const int rdy) const;
     void randomPlaceOnBoard();

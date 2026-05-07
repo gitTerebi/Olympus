@@ -9,6 +9,7 @@
 #include "buildings/eelitehousing.h"
 #include "engine/egameboard.h"
 #include "ekillcharacterfinishfail.h"
+#include "fileIO/esavearchive.h"
 
 eSettlerAction::eSettlerAction(eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::settlerAction) {
@@ -47,18 +48,26 @@ bool eSettlerAction::decide() {
 
 void eSettlerAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    int nPeople;
-    src >> nPeople;
-    setNumberPeople(nPeople);
-    src >> mNoHouses;
-    mInitialWait = 0; // reset on load
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSettlerAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst << mNPeople;
-    dst << mNoHouses;
-    // mInitialWait not saved
+    eSaveArchive ar(dst);
+    const_cast<eSettlerAction*>(this)->serialize(ar);
+}
+
+void eSettlerAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        int nPeople;
+        ar.value(nPeople);
+        setNumberPeople(nPeople);
+    } else {
+        ar.value(mNPeople);
+    }
+    ar.value(mNoHouses);
+    if(ar.reading()) mInitialWait = 0; // reset on load
 }
 
 void eSettlerAction::setNumberPeople(const int p) {

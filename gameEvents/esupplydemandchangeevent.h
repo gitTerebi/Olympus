@@ -6,6 +6,8 @@
 #include "ecounteventvalue.h"
 #include "ecityeventvalue.h"
 
+class eSaveArchive;
+
 class eSupplyDemandChangeEvent : public eGameEvent,
                                  public eResourceEventValue,
                                  public eCountEventValue,
@@ -19,6 +21,8 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+private:
+    void serialize(eSaveArchive& ar);
 };
 
 #endif // ESUPPLYDEMANDCHANGEEVENT_H

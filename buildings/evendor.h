@@ -4,6 +4,7 @@
 #include "epatrolbuilding.h"
 
 class eAgoraBase;
+class eSaveArchive;
 
 class eVendor : public eEmployingBuilding {
 public:
@@ -63,6 +64,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     int mResMult = 100;
     stdsptr<eAgoraBase> mAgora;
     int mMaxResource = 10*mResMult;

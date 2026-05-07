@@ -5,6 +5,8 @@
 
 #include "engine/eworldcity.h"
 
+class eSaveArchive;
+
 class ePayTributeEvent : public eGameEvent {
 public:
     ePayTributeEvent(const eCityId cid,
@@ -19,6 +21,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eWorldCity> mCity;
 };
 

@@ -9,6 +9,8 @@ struct eTargetData {
     int fLastId;
 };
 
+class eSaveArchive;
+
 class ePatrolSourceBuilding : public ePatrolBuilding {
 public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
@@ -32,6 +34,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     void spawn(const int id);
     void spawn(const int id, eBuilding* const targetBuilding);
 

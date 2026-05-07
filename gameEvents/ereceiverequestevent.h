@@ -9,6 +9,7 @@
 
 struct eReason;
 struct eCityRequest;
+class eSaveArchive;
 
 enum class eReceiveRequestType {
     tribute,
@@ -51,6 +52,8 @@ public:
                     const stdsptr<eWorldCity> &c,
                     const bool finish);
 private:
+    void serialize(eSaveArchive& ar);
+
     void set(eReceiveRequestEvent& src,
              const int postpone,
              const bool finish = false);

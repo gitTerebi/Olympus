@@ -5,6 +5,7 @@
 
 class eWriteStream;
 class eReadStream;
+class eSaveArchive;
 
 class eResourceEventValue {
 public:
@@ -20,6 +21,8 @@ public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 protected:
+    void serialize(eSaveArchive& ar);
+
     void chooseType();
 
     virtual void longNameReplaceResource(

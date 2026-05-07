@@ -1,6 +1,7 @@
 #include "eprovideresourcehelpaction.h"
 
 #include "etilehelper.h"
+#include "fileIO/esavearchive.h"
 
 eProvideResourceHelpAction::eProvideResourceHelpAction(
         eCharacter* const c,
@@ -44,20 +45,27 @@ bool eProvideResourceHelpAction::decide() {
 
 void eProvideResourceHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mTarget = static_cast<eStorageBuilding*>(b);
-    });
-    src >> mResource;
-    src >> mCount;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eProvideResourceHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst.writeBuilding(mTarget);
-    dst << mResource;
-    dst << mCount;
+    eSaveArchive ar(dst);
+    const_cast<eProvideResourceHelpAction*>(this)->serialize(ar);
+}
+
+void eProvideResourceHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = static_cast<eStorageBuilding*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTarget);
+    }
+    ar.value(mResource);
+    ar.value(mCount);
 }
 
 void eProvideResourceHelpAction::decCount(const int by) {

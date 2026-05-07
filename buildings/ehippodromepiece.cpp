@@ -2,6 +2,7 @@
 
 #include "etilehelper.h"
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 #include "engine/egameboard.h"
 #include "buildings/eroad.h"
 #include "ehippodrome.h"
@@ -635,15 +636,24 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
 
 void eHippodromePiece::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    dst << mId;
-    dst.writeCharacter(mCart);
+    eSaveArchive ar(dst);
+    const_cast<eHippodromePiece*>(this)->serialize(ar);
 }
 
 void eHippodromePiece::read(eReadStream& src) {
     eBuilding::read(src);
-    src >> mId;
-    auto& board = getBoard();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eHippodromePiece::serialize(eSaveArchive& ar) {
+    ar.value(mId);
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
 }

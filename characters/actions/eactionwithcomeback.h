@@ -40,9 +40,10 @@ public:
                 const stdsptr<eWalkableObject>& walkable);
 
     eTile* startTile() const { return mStartTile; }
-private:
+protected:
     void serialize(eSaveArchive& ar);
 
+private:
     void goBackInternal(stdsptr<eWalkableObject> walkable);
     void teleportDecision();
 

@@ -4,6 +4,7 @@
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/ebuildaction.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eArtisanAction::eArtisanAction(eCharacter* const c,
                                eArtisansGuild* const guild) :
@@ -71,16 +72,25 @@ bool eArtisanAction::decide() {
 
 void eArtisanAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mGuild = static_cast<eArtisansGuild*>(b);
-    });
-    src >> mNoTarget;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eArtisanAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst.writeBuilding(mGuild);
-    dst << mNoTarget;
+    eSaveArchive ar(dst);
+    const_cast<eArtisanAction*>(this)->serialize(ar);
+}
+
+void eArtisanAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mGuild = static_cast<eArtisansGuild*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mGuild);
+    }
+    ar.value(mNoTarget);
 }
 
 bool eArtisanAction::findTargetDecision() {

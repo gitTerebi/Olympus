@@ -4,6 +4,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eFishingBoat;
+class eSaveArchive;
 
 enum class eFisheryState {
     none,
@@ -35,6 +36,8 @@ public:
 
     eFisheryState state() const { return mState; }
 private:
+    void serialize(eSaveArchive& ar);
+
     void spawnBoat();
     void updateDisabled();
 

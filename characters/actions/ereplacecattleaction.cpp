@@ -1,6 +1,7 @@
 #include "ereplacecattleaction.h"
 
 #include "emovetoaction.h"
+#include "fileIO/esavearchive.h"
 
 eReplaceCattleAction::eReplaceCattleAction(
         eCharacter* const c, eCharacter* const cc) :
@@ -16,15 +17,25 @@ bool eReplaceCattleAction::decide() {
 
 void eReplaceCattleAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-    auto& board = this->board();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mCattle = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eReplaceCattleAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
-    dst.writeCharacter(mCattle);
+    eSaveArchive ar(dst);
+    const_cast<eReplaceCattleAction*>(this)->serialize(ar);
+}
+
+void eReplaceCattleAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        auto& board = this->board();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mCattle = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCattle);
+    }
 }
 
 void eReplaceCattleAction::goCattle() {

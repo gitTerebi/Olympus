@@ -4,6 +4,7 @@
 #include "eemployingbuilding.h"
 
 class eCartTransporter;
+class eSaveArchive;
 
 class eResourceBuildingBase : public eEmployingBuilding {
 public:
@@ -33,6 +34,9 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+protected:
+    void serialize(eSaveArchive& ar);
+
 private:
     const int mMaxResource = 8;
 

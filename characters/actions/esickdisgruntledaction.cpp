@@ -4,6 +4,7 @@
 #include "buildings/esmallhouse.h"
 #include "epatrolmoveaction.h"
 #include "emovearoundaction.h"
+#include "fileIO/esavearchive.h"
 
 eSickDisgruntledAction::eSickDisgruntledAction(eCharacter* const c,
                                                eSmallHouse* const ch) :
@@ -27,18 +28,25 @@ bool eSickDisgruntledAction::decide() {
 
 void eSickDisgruntledAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
-
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mBuilding = static_cast<eSmallHouse*>(b);
-    });
-    src >> mGoBackNext;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eSickDisgruntledAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSickDisgruntledAction*>(this)->serialize(ar);
+}
 
-    dst.writeBuilding(mBuilding);
-    dst << mGoBackNext;
+void eSickDisgruntledAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mBuilding = static_cast<eSmallHouse*>(b);
+        });
+    } else {
+        ar.writeStream().writeBuilding(mBuilding);
+    }
+    ar.value(mGoBackNext);
 }
 
 void eSickDisgruntledAction::patrol() {

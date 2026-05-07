@@ -6,6 +6,7 @@
 #include "characters/ehunter.h"
 
 class eHuntingLodge;
+class eSaveArchive;
 
 class eHuntAction : public eActionWithComeback {
 public:
@@ -22,6 +23,7 @@ private:
     void findResourceDecision();
     void goBackDecision();
     void waitDecision();
+    void serialize(eSaveArchive& ar);
 
     eHuntingLodge* mLodge = nullptr;
     eHunter* mHunter = nullptr;

@@ -4,6 +4,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eUrchinGatherer;
+class eSaveArchive;
 
 enum class eUrchinQuayState {
     waiting,
@@ -33,6 +34,8 @@ public:
 
     eUrchinQuayState state() const { return mState; }
 private:
+    void serialize(eSaveArchive& ar);
+
     void spawnGatherer();
     void updateDisabled();
 

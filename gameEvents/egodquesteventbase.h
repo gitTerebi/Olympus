@@ -5,6 +5,8 @@
 
 #include "engine/egodquest.h"
 
+class eSaveArchive;
+
 class eGodQuestEventBase : public eGameEvent {
 public:
     using eGameEvent::eGameEvent;
@@ -23,6 +25,8 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 private:
+    void serialize(eSaveArchive& ar);
+
     eGodQuest mQuest;
 };
 

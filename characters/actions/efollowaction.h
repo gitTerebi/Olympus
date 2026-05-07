@@ -9,6 +9,7 @@
 
 class eTile;
 class eMovePathAction;
+class eSaveArchive;
 
 class eFollowAction : public eMoveAction {
 protected:
@@ -29,6 +30,7 @@ protected:
     void increment(const int by) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
+    void serialize(eSaveArchive& ar);
 
     stdptr<eCharacter> mFollow;
 

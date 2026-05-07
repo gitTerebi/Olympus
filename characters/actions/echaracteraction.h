@@ -110,9 +110,10 @@ public:
     int ioID() const { return mIOID; }
 
     eGameBoard& board() { return mBoard; }
-private:
+protected:
     void serialize(eSaveArchive& ar);
 
+private:
     eGameBoard& mBoard;
     eCharacter* const mCharacter;
     int mIOID = -1;

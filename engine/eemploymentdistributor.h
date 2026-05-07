@@ -10,6 +10,7 @@
 enum class eBuildingType;
 class eEmploymentData;
 enum class eResourceType;
+class eSaveArchive;
 
 enum class eSector {
     husbandry,
@@ -62,6 +63,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     void distribute();
 
     bool mChanged = true;

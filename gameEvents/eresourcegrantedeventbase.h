@@ -8,6 +8,8 @@
 
 #include "engine/eevent.h"
 
+class eSaveArchive;
+
 class eResourceGrantedEventBase : public eGameEvent,
                                   public eCityEventValue,
                                   public eResourceEventValue,
@@ -39,6 +41,8 @@ public:
 protected:
     bool mPostpone = true;
 private:
+    void serialize(eSaveArchive& ar);
+
     eEvent mGiftCashAccepted;
     eEvent mGiftAccepted;
     eEvent mGiftPostponed;

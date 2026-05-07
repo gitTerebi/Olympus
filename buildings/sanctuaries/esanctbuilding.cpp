@@ -1,6 +1,7 @@
 #include "esanctbuilding.h"
 
 #include "esanctuary.h"
+#include "fileIO/esavearchive.h"
 
 eSanctCost totalCost(const std::vector<eSanctCost>& cost) {
     eSanctCost result{0, 0, 0};
@@ -65,19 +66,21 @@ void eSanctBuilding::setMonument(eMonument* const s) {
 
 void eSanctBuilding::read(eReadStream& src) {
     eBuilding::read(src);
-
-    src >> mWorkedOn;
-    src >> mProgress;
-    src >> mHalted;
+    eSaveArchive ar(src);
+    serialize(ar);
     updateNextCost();
 }
 
 void eSanctBuilding::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSanctBuilding*>(this)->serialize(ar);
+}
 
-    dst << mWorkedOn;
-    dst << mProgress;
-    dst << mHalted;
+void eSanctBuilding::serialize(eSaveArchive& ar) {
+    ar.value(mWorkedOn);
+    ar.value(mProgress);
+    ar.value(mHalted);
 }
 
 void eSanctBuilding::scheduleTerrainUpdate() {

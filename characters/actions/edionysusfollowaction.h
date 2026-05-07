@@ -4,6 +4,7 @@
 #include "efollowaction.h"
 
 enum class eCharacterType;
+class eSaveArchive;
 
 class eDionysusFollowAction : public eFollowAction {
 public:
@@ -18,6 +19,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
 
     void increment(const int by) override;
 

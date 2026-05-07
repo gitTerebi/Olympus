@@ -7,6 +7,8 @@
 #include "buildings/eartisansguild.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 
+class eSaveArchive;
+
 class eArtisanAction : public eActionWithComeback {
 public:
     eArtisanAction(eCharacter* const c, eArtisansGuild* const guild);
@@ -17,6 +19,8 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:
+    void serialize(eSaveArchive& ar);
+
     bool findTargetDecision();
     void workOnDecision(eTile* const tile);
     void goBackDecision();

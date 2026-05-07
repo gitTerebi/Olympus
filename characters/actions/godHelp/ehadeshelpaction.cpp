@@ -2,6 +2,7 @@
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
+#include "fileIO/esavearchive.h"
 
 eHadesHelpAction::eHadesHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::hadesHelpAction) {}
@@ -34,16 +35,25 @@ bool eHadesHelpAction::decide() {
 
 void eHadesHelpAction::read(eReadStream& src) {
     eGodAction::read(src);
-    src >> mStage;
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mTarget = b;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHadesHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
-    dst << mStage;
-    dst.writeBuilding(mTarget);
+    eSaveArchive ar(dst);
+    const_cast<eHadesHelpAction*>(this)->serialize(ar);
+}
+
+void eHadesHelpAction::serialize(eSaveArchive& ar) {
+    ar.value(mStage);
+    if(ar.reading()) {
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mTarget = b;
+        });
+    } else {
+        ar.writeStream().writeBuilding(mTarget);
+    }
 }
 
 bool eHadesHelpAction::sHelpNeeded(const eCityId cid,

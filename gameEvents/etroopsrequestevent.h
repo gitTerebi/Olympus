@@ -7,6 +7,7 @@
 #include "eattackingcityeventvalue.h"
 
 struct eReason;
+class eSaveArchive;
 
 enum class eTroopsRequestEventType {
     cityUnderAttack,
@@ -48,6 +49,8 @@ public:
     void won();
     void lost();
 private:
+    void serialize(eSaveArchive& ar);
+
     void finished(eEventTrigger& t, const eReason& r);
 
     void set(eTroopsRequestEvent& src,

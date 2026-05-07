@@ -7,6 +7,8 @@
 #include "buildings/egrowerslodge.h"
 #include "buildings/eresourcebuilding.h"
 
+class eSaveArchive;
+
 class eGrowerAction : public eActionWithComeback {
     friend class eGRA_workOnDecisionFinish;
 public:
@@ -24,6 +26,7 @@ private:
     void workOnDecision(eTile* const tile);
     void goBackDecision();
     void waitDecision();
+    void serialize(eSaveArchive& ar);
 
     eGrowerType mType;
     eGrower* mGrower = nullptr;

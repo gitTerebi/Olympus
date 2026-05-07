@@ -4,6 +4,7 @@
 #include "textures/egametextures.h"
 #include "characters/actions/ehuntaction.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 #include <algorithm>
 
@@ -59,16 +60,25 @@ void eHuntingLodge::timeChanged(const int by) {
 
 void eHuntingLodge::read(eReadStream& src) {
     eResourceCollectBuildingBase::read(src);
-    src >> mSpawnTime;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mHunter = static_cast<eHunter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHuntingLodge::write(eWriteStream& dst) const {
     eResourceCollectBuildingBase::write(dst);
-    dst << mSpawnTime;
-    dst.writeCharacter(mHunter);
+    eSaveArchive ar(dst);
+    const_cast<eHuntingLodge*>(this)->serialize(ar);
+}
+
+void eHuntingLodge::serialize(eSaveArchive& ar) {
+    ar.value(mSpawnTime);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mHunter = static_cast<eHunter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mHunter);
+    }
 }
 
 void eHuntingLodge::hunterDelivered(const eResourceType type, const int count) {

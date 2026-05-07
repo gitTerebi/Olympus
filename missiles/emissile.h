@@ -8,6 +8,7 @@
 #include "engine/egameboard.h"
 
 class eTile;
+class eSaveArchive;
 enum class eTileSize : int;
 
 struct ePathPoint {
@@ -159,6 +160,8 @@ public:
     static stdsptr<eMissile> sCreate(eGameBoard& brd,
                                      const eMissileType type);
 private:
+    void serialize(eSaveArchive& ar);
+
     void changeTile(eTile* const t);
 
     const eMissileType mType;

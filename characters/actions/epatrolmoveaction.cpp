@@ -5,6 +5,7 @@
 #include "emovepathaction.h"
 #include "engine/epathfinder.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
                                      const bool diagonalOnly,
@@ -19,22 +20,28 @@ ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
 
 void ePatrolMoveAction::read(eReadStream& src) {
     eMoveAction::read(src);
-    src >> mDiagonalOnly;
-    mWalkable = src.readWalkable();
-    mOs = src.readDirectionTimes(board());
-    src >> mO;
-    src >> mMaxWalkDistance;
-    src >> mWalkedDistance;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void ePatrolMoveAction::write(eWriteStream& dst) const {
     eMoveAction::write(dst);
-    dst << mDiagonalOnly;
-    dst.writeWalkable(mWalkable.get());
-    dst.writeDirectionTimes(mOs.get());
-    dst << mO;
-    dst << mMaxWalkDistance;
-    dst << mWalkedDistance;
+    eSaveArchive ar(dst);
+    const_cast<ePatrolMoveAction*>(this)->serialize(ar);
+}
+
+void ePatrolMoveAction::serialize(eSaveArchive& ar) {
+    ar.value(mDiagonalOnly);
+    if(ar.reading()) {
+        mWalkable = ar.readStream().readWalkable();
+        mOs = ar.readStream().readDirectionTimes(board());
+    } else {
+        ar.writeStream().writeWalkable(mWalkable.get());
+        ar.writeStream().writeDirectionTimes(mOs.get());
+    }
+    ar.value(mO);
+    ar.value(mMaxWalkDistance);
+    ar.value(mWalkedDistance);
 }
 
 eCharacterActionState ePatrolMoveAction::nextTurn(eOrientation& t) {

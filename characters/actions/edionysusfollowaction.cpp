@@ -1,6 +1,7 @@
 #include "edionysusfollowaction.h"
 
 #include "characters/echaracter.h"
+#include "fileIO/esavearchive.h"
 
 eDionysusFollowAction::eDionysusFollowAction(
         eCharacter* const f, eCharacter* const c) :
@@ -16,14 +17,24 @@ void eDionysusFollowAction::setFollower(eCharacter* const f) {
 
 void eDionysusFollowAction::read(eReadStream& src) {
     eFollowAction::read(src);
-    src.readCharacter(&board(), [this](eCharacter * const c) {
-        mFollower = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eDionysusFollowAction::write(eWriteStream& dst) const {
     eFollowAction::write(dst);
-    dst.writeCharacter(mFollower);
+    eSaveArchive ar(dst);
+    const_cast<eDionysusFollowAction*>(this)->serialize(ar);
+}
+
+void eDionysusFollowAction::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter * const c) {
+            mFollower = c;
+        });
+    } else {
+        ar.writeStream().writeCharacter(mFollower);
+    }
 }
 
 bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {

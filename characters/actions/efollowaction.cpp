@@ -3,6 +3,7 @@
 #include "../echaracter.h"
 
 #include "walkable/ewalkableobject.h"
+#include "fileIO/esavearchive.h"
 
 eFollowAction::eFollowAction(eCharacter* const f,
                              eCharacter* const c,
@@ -58,6 +59,39 @@ void eFollowAction::write(eWriteStream& dst) const {
     for(const auto& t : mTiles) {
         dst.writeTile(t.fTile);
         dst << t.fO;
+    }
+}
+
+void eFollowAction::serialize(eSaveArchive& ar) {
+    eMoveAction::serialize(ar);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mFollow = c;
+            if(c) {
+                const auto cc = character();
+                cc->setSpeed(c->speed());
+            }
+        });
+    } else {
+        ar.writeStream().writeCharacter(mFollow);
+    }
+    ar.value(mCatchUp);
+    ar.value(mDistance);
+    int s = mTiles.size();
+    ar.value(s);
+    if(ar.reading()) {
+        mTiles.clear();
+    }
+    for(int i = 0; i < s; i++) {
+        ePathNode n;
+        if(ar.writing()) {
+            n = mTiles[i];
+        }
+        ar.tile(n.fTile, board());
+        ar.value(n.fO);
+        if(ar.reading()) {
+            mTiles.push_back(n);
+        }
     }
 }
 

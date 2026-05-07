@@ -4,6 +4,7 @@
 #include "buildings/eresourcecollectbuilding.h"
 #include "emovetoaction.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eCollectResourceAction::eCollectResourceAction(
         eResourceCollectBuildingBase* const b,
@@ -159,6 +160,31 @@ void eCollectResourceAction::write(eWriteStream& dst) const {
     dst << mAddResource;
     dst << mGetAtTile;
     dst << mNoTarget;
+}
+
+void eCollectResourceAction::serialize(eSaveArchive& ar) {
+    eActionWithComeback::serialize(ar);
+    if(ar.reading()) {
+        mHasResource = ar.readStream().readHasResource();
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mBuilding = static_cast<eResourceCollectBuildingBase*>(b);
+        });
+    } else {
+        ar.writeStream().writeHasResource(mHasResource.get());
+        ar.writeStream().writeBuilding(mBuilding);
+    }
+    ar.value(mCollectedAction);
+    if(ar.reading()) {
+        mWalkable = ar.readStream().readWalkable();
+    } else {
+        ar.writeStream().writeWalkable(mWalkable.get());
+    }
+    ar.value(mDisabled);
+    ar.value(mWaitTime);
+    ar.value(mFinishOnce);
+    ar.value(mAddResource);
+    ar.value(mGetAtTile);
+    ar.value(mNoTarget);
 }
 
 bool eCollectResourceAction::findResourceDecision() {

@@ -3,6 +3,7 @@
 #include "characters/actions/ecarttransporteraction.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 #include <algorithm>
 
@@ -81,16 +82,23 @@ std::vector<eCartTask> eResourceBuildingBase::cartTasks() const {
 
 void eResourceBuildingBase::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mResource;
-    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-        mCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eResourceBuildingBase::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eResourceBuildingBase*>(this)->serialize(ar);
+}
 
-    dst << mResource;
-    dst.writeCharacter(mCart);
+void eResourceBuildingBase::serialize(eSaveArchive& ar) {
+    ar.value(mResource);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart);
+    }
 }

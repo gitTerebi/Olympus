@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "fileIO/esavearchive.h"
 
 eGodDisasterEvent::eGodDisasterEvent(
         const eCityId cid,
@@ -45,16 +46,24 @@ std::string eGodDisasterEvent::longName() const {
 
 void eGodDisasterEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    eGodEventValue::write(dst);
-    eCityEventValue::write(dst);
-    dst << mDuration;
-    dst << mEnd;
+    eSaveArchive ar(dst);
+    const_cast<eGodDisasterEvent*>(this)->serialize(ar);
 }
 
 void eGodDisasterEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    eGodEventValue::read(src);
-    eCityEventValue::read(src, *gameBoard());
-    src >> mDuration;
-    src >> mEnd;
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGodDisasterEvent::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        eGodEventValue::read(ar.readStream());
+        eCityEventValue::read(ar.readStream(), *gameBoard());
+    } else {
+        eGodEventValue::write(ar.writeStream());
+        eCityEventValue::write(ar.writeStream());
+    }
+    ar.value(mDuration);
+    ar.value(mEnd);
 }

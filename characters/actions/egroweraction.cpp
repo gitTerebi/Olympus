@@ -5,6 +5,7 @@
 #include "buildings/eresourcebuilding.h"
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eGrowerAction::eGrowerAction(const eGrowerType type,
                              eGrowersLodge* const lodge,
@@ -167,6 +168,25 @@ void eGrowerAction::write(eWriteStream& dst) const {
     dst << mFinishOnce;
     dst << mGroomed;
     dst << mNoResource;
+}
+
+void eGrowerAction::serialize(eSaveArchive& ar) {
+    eActionWithComeback::serialize(ar);
+    ar.value(mType);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+            mGrower = static_cast<eGrower*>(c);
+        });
+        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+            mLodge = static_cast<eGrowersLodge*>(b);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mGrower);
+        ar.writeStream().writeBuilding(mLodge);
+    }
+    ar.value(mFinishOnce);
+    ar.value(mGroomed);
+    ar.value(mNoResource);
 }
 
 bool eGrowerAction::findResourceDecision() {

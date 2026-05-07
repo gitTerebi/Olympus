@@ -1,6 +1,7 @@
 #include "ehorseranch.h"
 
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
 
 #include "ehorseranchenclosure.h"
 #include "engine/egameboard.h"
@@ -141,21 +142,26 @@ bool eHorseRanch::takeHorse() {
 
 void eHorseRanch::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-
-    src >> mWheat;
-    src >> mWheatTime;
-    src >> mHorseTime;
-    auto& board = getBoard();
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mTakeCart = static_cast<eCartTransporter*>(c);
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHorseRanch::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eHorseRanch*>(this)->serialize(ar);
+}
 
-    dst << mWheat;
-    dst << mWheatTime;
-    dst << mHorseTime;
-    dst.writeCharacter(mTakeCart);
+void eHorseRanch::serialize(eSaveArchive& ar) {
+    ar.value(mWheat);
+    ar.value(mWheatTime);
+    ar.value(mHorseTime);
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mTakeCart);
+    }
 }

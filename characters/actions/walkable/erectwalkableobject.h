@@ -3,6 +3,8 @@
 
 #include "ewalkableobject.h"
 
+class eSaveArchive;
+
 class eRectWalkableObject : public eWalkableObject {
 public:
     eRectWalkableObject(const stdsptr<eWalkableObject>& other,
@@ -15,6 +17,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eWalkableObject> mOther;
     SDL_Rect mRect;
 };

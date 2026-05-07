@@ -3,6 +3,7 @@
 #include "engine/egameboard.h"
 #include "elanguage.h"
 #include "estringhelpers.h"
+#include "fileIO/esavearchive.h"
 
 eGiftToEvent::eGiftToEvent(
         const eCityId cid,
@@ -38,16 +39,24 @@ std::string eGiftToEvent::longName() const {
 
 void eGiftToEvent::write(eWriteStream& dst) const {
     eGameEvent::write(dst);
-    dst << mCount;
-    dst << mResource;
-    dst.writeCity(mCity.get());
+    eSaveArchive ar(dst);
+    const_cast<eGiftToEvent*>(this)->serialize(ar);
 }
 
 void eGiftToEvent::read(eReadStream& src) {
     eGameEvent::read(src);
-    src >> mCount;
-    src >> mResource;
-    src.readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGiftToEvent::serialize(eSaveArchive& ar) {
+    ar.value(mCount);
+    ar.value(mResource);
+    if(ar.reading()) {
+        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
+            mCity = c;
+        });
+    } else {
+        ar.writeStream().writeCity(mCity.get());
+    }
 }

@@ -8,6 +8,7 @@
 #include "characters/actions/esettleraction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eHouseBase::eHouseBase(eGameBoard& board,
                        const eBuildingType type,
@@ -94,51 +95,38 @@ int eHouseBase::vacancies() const {
 
 void eHouseBase::read(eReadStream& src) {
     eBuilding::read(src);
-
-    src >> mPaidTaxes;
-    src >> mPaidTaxesLastMonth;
-
-    int level;
-    src >> level;
-    setLevel(level);
-    int people;
-    src >> people;
-    setPeople(people);
-
-    src >> mFood;
-    src >> mFleece;
-    src >> mOil;
-
-    src >> mPhilosophers;
-    src >> mActors;
-    src >> mAthletes;
-    src >> mCompetitors;
-
-    src >> mUpdateCulture;
-
-    // mPendingEvict and mEvictDelay not saved
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHouseBase::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eHouseBase*>(this)->serialize(ar);
+}
 
-    dst << mPaidTaxes;
-    dst << mPaidTaxesLastMonth;
-
-    dst << mLevel;
-    dst << mPeople;
-
-    dst << mFood;
-    dst << mFleece;
-    dst << mOil;
-
-    dst << mPhilosophers;
-    dst << mActors;
-    dst << mAthletes;
-    dst << mCompetitors;
-
-    dst << mUpdateCulture;
-
+void eHouseBase::serialize(eSaveArchive& ar) {
+    ar.value(mPaidTaxes);
+    ar.value(mPaidTaxesLastMonth);
+    if(ar.reading()) {
+        int level;
+        ar.value(level);
+        setLevel(level);
+        int people;
+        ar.value(people);
+        setPeople(people);
+    } else {
+        ar.value(mLevel);
+        ar.value(mPeople);
+    }
+    ar.value(mFood);
+    ar.value(mFleece);
+    ar.value(mOil);
+    ar.value(mPhilosophers);
+    ar.value(mActors);
+    ar.value(mAthletes);
+    ar.value(mCompetitors);
+    ar.value(mUpdateCulture);
     // mPendingEvict and mEvictDelay not saved
 }
 

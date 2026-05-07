@@ -27,9 +27,9 @@ public:
 protected:
     bool nextTurn();
     void setWait(const bool w) { mWait = w; }
-private:
     void serialize(eSaveArchive& ar);
 
+private:
     virtual eCharacterActionState nextTurn(eOrientation& turn) = 0;
     void moveBy(const double inc);
     void moveToTargetTile();

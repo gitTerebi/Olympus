@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eChariotFactory::eChariotFactory(
         eGameBoard& board, const eCityId cid) :
@@ -183,4 +184,23 @@ void eChariotFactory::write(eWriteStream& dst) const {
     dst << mChariots;
     dst.writeCharacter(mWoodCart);
     dst.writeCharacter(mHorseCart);
+}
+
+void eChariotFactory::serialize(eSaveArchive& ar) {
+    eEmployingBuilding::serialize(ar);
+    ar.value(mWood);
+    ar.value(mHorses);
+    ar.value(mChariots);
+    if(ar.reading()) {
+        auto& board = getBoard();
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mWoodCart = static_cast<eCartTransporter*>(c);
+        });
+        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
+            mHorseCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mWoodCart);
+        ar.writeStream().writeCharacter(mHorseCart);
+    }
 }

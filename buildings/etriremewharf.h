@@ -4,6 +4,7 @@
 #include "eresourcebuildingbase.h"
 
 class eTrireme;
+class eSaveArchive;
 
 class eTriremeWharf : public eEmployingBuilding {
 public:
@@ -37,6 +38,7 @@ public:
 
     eTile* triremeTile() const;
 private:
+    void serialize(eSaveArchive& ar);
     void spawnTrireme();
 
     const eDiagonalOrientation mO;

@@ -3,6 +3,8 @@
 
 #include "ehasresourceobject.h"
 
+class eSaveArchive;
+
 class eHasNonBusyResourceObject : public eHasResourceObject {
 public:
     eHasNonBusyResourceObject(const stdsptr<eHasResourceObject>& other);
@@ -13,6 +15,8 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    void serialize(eSaveArchive& ar);
+
     stdsptr<eHasResourceObject> mOther;
 };
 

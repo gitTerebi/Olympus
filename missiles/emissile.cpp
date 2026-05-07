@@ -11,6 +11,7 @@
 #include "ewavemissile.h"
 #include "elavamissile.h"
 #include "edustmissile.h"
+#include "fileIO/esavearchive.h"
 #include "characters/eracinghorse.h"
 
 eMissile::eMissile(eGameBoard& board, const eMissileType type,
@@ -72,20 +73,31 @@ void eMissile::setFinishAction(const stdsptr<eGodAct>& act) {
 }
 
 void eMissile::read(eReadStream& src) {
-    mPath.read(src);
-    src >> mTime;
-    src >> mSpeed;
-    mFinish = src.readGodAct(mBoard);
-    const auto t = src.readTile(mBoard);
-    changeTile(t);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eMissile::write(eWriteStream& dst) const {
-    mPath.write(dst);
-    dst << mTime;
-    dst << mSpeed;
-    dst.writeGodAct(mFinish.get());
-    dst.writeTile(mTile);
+    eSaveArchive ar(dst);
+    const_cast<eMissile*>(this)->serialize(ar);
+}
+
+void eMissile::serialize(eSaveArchive& ar) {
+    if(ar.reading()) {
+        mPath.read(ar.readStream());
+    } else {
+        mPath.write(ar.writeStream());
+    }
+    ar.value(mTime);
+    ar.value(mSpeed);
+    if(ar.reading()) {
+        mFinish = ar.readStream().readGodAct(mBoard);
+        const auto t = ar.readStream().readTile(mBoard);
+        changeTile(t);
+    } else {
+        ar.writeStream().writeGodAct(mFinish.get());
+        ar.writeStream().writeTile(mTile);
+    }
 }
 
 stdsptr<eMissile> eMissile::sCreate(
