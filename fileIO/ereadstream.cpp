@@ -8,12 +8,22 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolaction.h"
 
+#include <fstream>
+
+static void loadDebugLog(const std::string& msg) {
+    std::ofstream log("load-debug.log", std::ios::app);
+    log << msg << '\n';
+    log.flush();
+}
+
 eReadStream::eReadStream(const eReadSource& src) :
     mSrc(src) {}
 
 void eReadStream::readFormat() {
     *this >> mFormat;
     *this >> mFormatVersion;
+    loadDebugLog("readFormat format=" + mFormat +
+                 " version=" + std::to_string(mFormatVersion));
 }
 
 eTile* eReadStream::readTile(eGameBoard& board) {
@@ -36,7 +46,9 @@ void eReadStream::readBuilding(eGameBoard* board,
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
+        if(bid < 0) return;
         const auto b = board->buildingWithIOID(bid);
+        if(!b) return;
         func(b);
     }, tag);
 }
@@ -47,7 +59,9 @@ void eReadStream::readCharacter(eGameBoard* board,
     int cid;
     *this >> cid;
     addPostFunc([board, func, cid]() {
+        if(cid < 0) return;
         const auto b = board->characterWithIOID(cid);
+        if(!b) return;
         func(b);
     }, tag);
 }
@@ -58,7 +72,9 @@ void eReadStream::readCharacterAction(eGameBoard* board,
     int caid;
     *this >> caid;
     addPostFunc([board, func, caid]() {
+        if(caid < 0) return;
         const auto b = board->characterActionWithIOID(caid);
+        if(!b) return;
         func(b);
     }, tag);
 }
@@ -155,7 +171,9 @@ void eReadStream::readCity(eWorldBoard* board, const eCityFunc& func) {
     int cid;
     *this >> cid;
     addPostFunc([board, func, cid]() {
+        if(cid < 0) return;
         const auto c = board->cityWithIOID(cid);
+        if(!c) return;
         func(c);
     }, "city");
 }
@@ -164,7 +182,9 @@ void eReadStream::readBanner(eGameBoard* board, const eBannerFunc& func) {
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
+        if(bid < 0) return;
         const auto b = board->bannerWithIOID(bid);
+        if(!b) return;
         func(b);
     }, "banner");
 }
@@ -173,7 +193,9 @@ void eReadStream::readSoldierBanner(eGameBoard* board, const eSoldierBannerFunc&
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
+        if(bid < 0) return;
         const auto b = board->soldierBannerWithIOID(bid);
+        if(!b) return;
         func(b ? b->ref<eSoldierBanner>() : nullptr);
     }, "soldierBanner");
 }
@@ -182,7 +204,9 @@ void eReadStream::readGameEvent(eGameBoard* board, const eEventFunc& func) {
     int eid;
     *this >> eid;
     addPostFunc([board, func, eid]() {
+        if(eid < 0) return;
         const auto b = board->eventWithIOID(eid);
+        if(!b) return;
         func(b);
     }, "gameEvent");
 }
@@ -191,7 +215,9 @@ void eReadStream::readInvasionHandler(eGameBoard* board, const eeInvasionHandler
     int iid;
     *this >> iid;
     addPostFunc([board, func, iid]() {
+        if(iid < 0) return;
         const auto b = board->invasionHandlerWithIOID(iid);
+        if(!b) return;
         func(b);
     }, "invasionHandler");
 }
@@ -202,8 +228,15 @@ void eReadStream::addPostFunc(const eFunc& func, const char* tag) {
 
 void eReadStream::handlePostFuncs() {
     const int n = (int)mPostFuncs.size();
+    loadDebugLog("handlePostFuncs begin count=" + std::to_string(n));
     for(int i = 0; i < n; i++) {
+        const auto tag = mPostFuncs[i].second ? mPostFuncs[i].second : "?";
+        loadDebugLog("handlePostFuncs before " + std::to_string(i) +
+                     "/" + std::to_string(n) + " tag=" + tag);
         mPostFuncs[i].first();
+        loadDebugLog("handlePostFuncs after " + std::to_string(i) +
+                     "/" + std::to_string(n) + " tag=" + tag);
     }
     mPostFuncs.clear();
+    loadDebugLog("handlePostFuncs done");
 }

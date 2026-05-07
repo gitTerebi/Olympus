@@ -129,7 +129,7 @@ void eProcessingBuilding::read(eReadStream& src) {
 
     src >> mRawCount;
     src >> mProcessTime;
-    if(src.formatVersion() >= eFileFormat::yearlyProduction) {
+    if(eFileFormat::hasYearlyProductionData(src.formatVersion())) {
         src >> mProducedThisYear;
         src >> mLastMonth;
         for(int i = 0; i < 12; i++) src >> mMonthlyProduced[i];
