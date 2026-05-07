@@ -34,6 +34,8 @@
 
 #include "erepair.h"
 
+#include "widgets/gamebuild/ecommonhousingbuild.h"
+
 
 bool agoraRoadTile(eTile* const t) {
     if(!t) return false;
@@ -993,39 +995,7 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             }
         } break;
         case eBuildingMode::commonHousing: {
-            const int sMinX = std::min(pressedTX, hoverTX);
-            const int sMinY = std::min(pressedTY, hoverTY);
-            const int sMaxX = std::max(pressedTX, hoverTX);
-            const int sMaxY = std::max(pressedTY, hoverTY);
-            const int minX = sMinX;
-            const int minY = sMinY - 1;
-            const int maxX = sMaxX;
-            const int maxY = sMaxY;
-            int totalCost = 0;
-            const auto diff = mBoard->difficulty(pid);
-            const int costPerHouse = eDifficultyHelpers::buildingCost(diff, eBuildingType::commonHouse);
-            for(int x = sMinX; x <= sMaxX; x++) {
-                for(int y = sMinY - 1; y <= sMaxY; y++) {
-                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2, mEditorMode, cid, pid);
-                    if(!cb) continue;
-                    totalCost += costPerHouse;
-                }
-            }
-            if(totalCost > 0) {
-                mBoard->game_undo_start_build(eBuildingType::commonHouse);
-                mBoard->snapshotTiles(minX, minY, maxX - minX + 1, maxY - minY + 1);
-                for(int x = sMinX; x <= sMaxX; x++) {
-                    for(int y = sMinY - 1; y <= sMaxY; y++) {
-                        const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2, mEditorMode, cid, pid);
-                        if(!cb) continue;
-                        const auto t = mBoard->tile(x, y);
-                        if(!t) continue;
-                        r = mBoard->build(t->x(), t->y() + 1, 2, 2, cid, pid, mEditorMode,
-                              [this]() { return e::make_shared<eSmallHouse>(*mBoard, mViewedCityId); }) || r;
-                    }
-                }
-                mBoard->game_undo_finish_build();
-            }
+            r = buildCommonHousing(mBoard, cid, pid, mEditorMode, pressedTX, pressedTY, hoverTX, hoverTY, mViewedCityId);
         } break;
         case eBuildingMode::gymnasium: {
             r = mBoard->build(hoverTX, hoverTY, 3, 3, cid, pid, mEditorMode,
