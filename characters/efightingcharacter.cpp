@@ -22,5 +22,5 @@ void eFightingCharacter::write(eWriteStream& dst) const {
 }
 
 void eFightingCharacter::serialize(eSaveArchive& ar) {
-    ar.value(mRange);
+    ar.field("mRange", mRange);
 }

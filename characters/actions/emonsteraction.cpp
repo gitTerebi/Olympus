@@ -85,9 +85,9 @@ void eMonsterAction::write(eWriteStream& dst) const {
 
 void eMonsterAction::serialize(eSaveArchive& ar) {
     ar.tile(mHomeTile, board());
-    ar.value(mAggressivness);
-    ar.value(mStage);
-    ar.value(mLookForAttack);
+    ar.field("mAggressivness", mAggressivness);
+    ar.field("mStage", mStage);
+    ar.field("mLookForAttack", mLookForAttack);
 }
 
 eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {

@@ -66,7 +66,7 @@ void eSoldierAction::write(eWriteStream& dst) const {
 }
 
 void eSoldierAction::serialize(eSaveArchive& ar) {
-    ar.value(mSpreadPeriod);
+    ar.field("mSpreadPeriod", mSpreadPeriod);
 }
 
 stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {

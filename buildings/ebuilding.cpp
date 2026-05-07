@@ -2720,47 +2720,47 @@ eTeamId eBuilding::teamId() const {
 }
 
 void eBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
-    ar.value(mTileRect);
+    ar.field("mIOID", mIOID);
+    ar.field("mTileRect", mTileRect);
 
-    ar.value(mDistrictId);
+    ar.field("mDistrictId", mDistrictId);
 
     auto& board = getBoard();
 
     if(ar.reading()) {
         int ntiles;
-        ar.value(ntiles);
+        ar.field("ntiles", ntiles);
         for(int i = 0; i < ntiles; i++) {
             eTile* tile = nullptr;
             ar.tile(tile, board);
             mUnderBuilding.push_back(tile);
             bool setUnder;
-            ar.value(setUnder);
+            ar.field("setUnder", setUnder);
             if(setUnder) {
                 tile->setUnderBuilding(ref<eBuilding>());
             }
         }
     } else {
         int ntiles = static_cast<int>(mUnderBuilding.size());
-        ar.value(ntiles);
+        ar.field("ntiles", ntiles);
         for(const auto t : mUnderBuilding) {
             eTile* tile = t;
             ar.tile(tile, board);
             bool setUnder = t->underBuilding() == this;
-            ar.value(setUnder);
+            ar.field("setUnder", setUnder);
         }
     }
 
     ar.tile(mCenterTile, board);
 
-    ar.value(mSeed);
-    ar.value(mCityId);
-    ar.value(mHp);
-    ar.value(mMaintance);
-    ar.value(mEnabled);
-    ar.value(mBlessed);
-    ar.value(mBlessTime);
-    ar.value(mOnFire);
+    ar.field("mSeed", mSeed);
+    ar.field("mCityId", mCityId);
+    ar.field("mHp", mHp);
+    ar.field("mMaintance", mMaintance);
+    ar.field("mEnabled", mEnabled);
+    ar.field("mBlessed", mBlessed);
+    ar.field("mBlessTime", mBlessTime);
+    ar.field("mOnFire", mOnFire);
 }
 
 void eBuilding::read(eReadStream& src) {

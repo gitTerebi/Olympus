@@ -137,7 +137,7 @@ void eHuntAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeBuilding(mLodge);
         ar.writeStream().writeCharacter(mHunter);
     }
-    ar.value(mNoResource);
+    ar.field("mNoResource", mNoResource);
 }
 
 void eHuntAction::findResourceDecision() {

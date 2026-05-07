@@ -335,47 +335,47 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
 }
 
 void eCharacter::serialize(eSaveArchive& ar) {
-    ar.value(mIOID);
-    ar.value(mVisible);
-    ar.value(mProvide);
-    ar.value(mProvideCount);
+    ar.field("mIOID", mIOID);
+    ar.field("mVisible", mVisible);
+    ar.field("mProvide", mProvide);
+    ar.field("mProvideCount", mProvideCount);
     ar.tile(mTile, getBoard());
     if(ar.reading() && mTile) {
         const auto sptr = ref<eCharacter>();
         mTile->addCharacter(sptr, false);
     }
-    ar.value(mOrientation);
-    ar.value(mX);
-    ar.value(mY);
-    ar.value(mPlayFightSound);
-    ar.value(mSoundPlayTime);
-    ar.value(mTime);
-    ar.value(mHasSecondaryTexture);
+    ar.field("mOrientation", mOrientation);
+    ar.field("mX", mX);
+    ar.field("mY", mY);
+    ar.field("mPlayFightSound", mPlayFightSound);
+    ar.field("mSoundPlayTime", mSoundPlayTime);
+    ar.field("mTime", mTime);
+    ar.field("mHasSecondaryTexture", mHasSecondaryTexture);
     ar.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
         return eCharacterAction::sCreate(this, type);
     });
-    ar.value(mActionStartTime);
+    ar.field("mActionStartTime", mActionStartTime);
 
     if(ar.reading()) {
         int s;
-        ar.value(s);
+        ar.field("s", s);
         for(int i = 0; i < s; i++) {
             auto& a = mPausedActions.emplace_back();
-            ar.value(a.fAt);
+            ar.field("a.fAt", a.fAt);
             ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
                 return eCharacterAction::sCreate(this, type);
             });
-            ar.value(a.fO);
+            ar.field("a.fO", a.fO);
         }
     } else {
         int s = static_cast<int>(mPausedActions.size());
-        ar.value(s);
+        ar.field("s", s);
         for(auto& a : mPausedActions) {
-            ar.value(a.fAt);
+            ar.field("a.fAt", a.fAt);
             ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
                 return eCharacterAction::sCreate(this, type);
             });
-            ar.value(a.fO);
+            ar.field("a.fO", a.fO);
         }
     }
 }

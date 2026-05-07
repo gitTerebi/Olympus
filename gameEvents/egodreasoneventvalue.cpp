@@ -10,7 +10,7 @@ void eGodReasonEventValue::write(eWriteStream& dst) const {
 }
 
 void eGodReasonEventValue::serialize(eSaveArchive& ar) {
-    ar.value(mGodReason);
+    ar.field("mGodReason", mGodReason);
 }
 
 void eGodReasonEventValue::read(eReadStream& src) {

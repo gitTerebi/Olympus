@@ -497,18 +497,18 @@ void eGodMonsterAction::write(eWriteStream& dst) const {
 
 void eGodMonsterAction::serialize(eSaveArchive& ar) {
     int s = mPausedActions.size();
-    ar.value(s);
+    ar.field("s", s);
     if(ar.reading()) mPausedActions.clear();
     for(int i = 0; i < s; i++) {
         ePausedAction a;
         if(ar.writing()) a = mPausedActions[i];
-        ar.value(a.fAt);
+        ar.field("a.fAt", a.fAt);
         bool hasAction = a.fA != nullptr;
-        ar.value(hasAction);
+        ar.field("hasAction", hasAction);
         if(hasAction) {
             eCharActionType type;
             if(ar.writing()) type = a.fA->type();
-            ar.value(type);
+            ar.field("type", type);
             if(ar.reading()) {
                 a.fA = eCharacterAction::sCreate(character(), type);
                 a.fA->read(ar.readStream());
@@ -516,7 +516,7 @@ void eGodMonsterAction::serialize(eSaveArchive& ar) {
                 a.fA->write(ar.writeStream());
             }
         }
-        ar.value(a.fO);
+        ar.field("a.fO", a.fO);
         if(ar.reading()) mPausedActions.push_back(a);
     }
 }

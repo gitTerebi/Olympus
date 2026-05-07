@@ -49,27 +49,27 @@ void eMonsterInvasionEventBase::read(eReadStream& src) {
 }
 
 void eMonsterInvasionEventBase::serialize(eSaveArchive& ar) {
-    ar.value(mChooseMonster);
-    ar.value(mAggressivness);
-    ar.value(mValid);
+    ar.field("mChooseMonster", mChooseMonster);
+    ar.field("mAggressivness", mAggressivness);
+    ar.field("mValid", mValid);
 
     int ns = mSpawned.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) mSpawned.clear();
     for(int i = 0; i < ns; i++) {
         eMonsterType s;
         if(ar.writing()) s = mSpawned[i];
-        ar.value(s);
+        ar.field("s", s);
         if(ar.reading()) mSpawned.push_back(s);
     }
 
     int nk = mKilled.size();
-    ar.value(nk);
+    ar.field("nk", nk);
     if(ar.reading()) mKilled.clear();
     for(int i = 0; i < nk; i++) {
         eMonsterType k;
         if(ar.writing()) k = mKilled[i];
-        ar.value(k);
+        ar.field("k", k);
         if(ar.reading()) mKilled.push_back(k);
     }
 }

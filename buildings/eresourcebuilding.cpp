@@ -146,9 +146,9 @@ void eResourceBuilding::write(eWriteStream& dst) const {
 }
 
 void eResourceBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mSanctuary);
-    ar.value(mWorkedOn);
-    ar.value(mNextRipe);
-    ar.value(mRipe);
-    ar.value(mResource);
+    ar.field("mSanctuary", mSanctuary);
+    ar.field("mWorkedOn", mWorkedOn);
+    ar.field("mNextRipe", mNextRipe);
+    ar.field("mRipe", mRipe);
+    ar.field("mResource", mResource);
 }

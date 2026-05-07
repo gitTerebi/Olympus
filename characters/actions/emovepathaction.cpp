@@ -42,7 +42,7 @@ void eMovePathAction::write(eWriteStream& dst) const {
 
 void eMovePathAction::serialize(eSaveArchive& ar) {
     int n = mTurns.size();
-    ar.value(n);
+    ar.field("n", n);
     if(ar.reading()) {
         mTurns.clear();
     }
@@ -51,11 +51,11 @@ void eMovePathAction::serialize(eSaveArchive& ar) {
         if(ar.writing()) {
             o = mTurns[i];
         }
-        ar.value(o);
+        ar.field("o", o);
         if(ar.reading()) {
             mTurns.push_back(o);
         }
     }
-    ar.value(mMaxDistance);
-    ar.value(mWalkedDistance);
+    ar.field("mMaxDistance", mMaxDistance);
+    ar.field("mWalkedDistance", mWalkedDistance);
 }

@@ -83,14 +83,14 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
 }
 
 void eCharacterBase::serialize(eSaveArchive& ar) {
-    ar.value(mActionType);
-    ar.value(mCityId);
-    ar.value(mOnCityId);
-    ar.value(mBusy);
-    ar.value(mHP);
-    ar.value(mAttack);
-    ar.value(mSpeed);
-    ar.value(mAtlantean);
+    ar.field("mActionType", mActionType);
+    ar.field("mCityId", mCityId);
+    ar.field("mOnCityId", mOnCityId);
+    ar.field("mBusy", mBusy);
+    ar.field("mHP", mHP);
+    ar.field("mAttack", mAttack);
+    ar.field("mSpeed", mSpeed);
+    ar.field("mAtlantean", mAtlantean);
 }
 
 void eCharacterBase::read(eReadStream& src) {

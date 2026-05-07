@@ -43,5 +43,5 @@ void eFightAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mOpponent);
     }
-    ar.value(mTime);
+    ar.field("mTime", mTime);
 }

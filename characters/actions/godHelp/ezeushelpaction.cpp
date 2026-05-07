@@ -43,7 +43,7 @@ void eZeusHelpAction::write(eWriteStream& dst) const {
 }
 
 void eZeusHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 bool eZeusHelpAction::sHelpNeeded(const eCityId cid,

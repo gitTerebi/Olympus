@@ -40,7 +40,7 @@ void eGodTradeResumesEvent::write(eWriteStream& dst) const {
 }
 
 void eGodTradeResumesEvent::serialize(eSaveArchive& ar) {
-    ar.value(mGod);
+    ar.field("mGod", mGod);
 }
 
 void eGodTradeResumesEvent::read(eReadStream& src) {

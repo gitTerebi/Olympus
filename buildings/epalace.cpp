@@ -135,7 +135,7 @@ void ePalace::write(eWriteStream& dst) const {
 
 void ePalace::serialize(eSaveArchive& ar) {
     int tiles = mTiles.size();
-    ar.value(tiles);
+    ar.field("tiles", tiles);
     if(ar.reading()) {
         mTiles.clear();
     }

@@ -46,7 +46,7 @@ void eSickDisgruntledAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mBuilding);
     }
-    ar.value(mGoBackNext);
+    ar.field("mGoBackNext", mGoBackNext);
 }
 
 void eSickDisgruntledAction::patrol() {

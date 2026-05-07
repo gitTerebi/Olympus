@@ -35,14 +35,22 @@ public:
         fFile(file) {}
     eWriteTarget(void* mem) :
         fMem(mem) {}
+    eWriteTarget(std::vector<char>* const vec) :
+        fVec(vec) {}
 
     inline size_t write(const void* const data, const size_t len) {
-        assert(fFile || fMem);
+        assert(fFile || fMem || fVec);
         if(fFile) {
             fFile->write(static_cast<const char*>(data), len);
             return len;
         } else if(fMem) {
             std::memcpy(static_cast<char*>(fMem) + fMemPos, data, len);
+            fMemPos += len;
+            return len;
+        } else if(fVec) {
+            const auto oldSize = fVec->size();
+            fVec->resize(oldSize + len);
+            std::memcpy(fVec->data() + oldSize, data, len);
             fMemPos += len;
             return len;
         }
@@ -53,6 +61,7 @@ public:
 private:
     std::ofstream* fFile = nullptr;
     void* fMem = nullptr;
+    std::vector<char>* fVec = nullptr;
     size_t fMemPos = 0;
 };
 
@@ -61,6 +70,7 @@ public:
     eWriteStream(const eWriteTarget& dst);
 
     void writeFormat(const std::string& format);
+    const std::string& format() const { return mFormat; }
 
     inline size_t write(const void* const data, const size_t len) {
         return mDst.write(data, len);
@@ -146,6 +156,7 @@ public:
     size_t memPos() const { return mDst.memPos(); }
 private:
     eWriteTarget mDst;
+    std::string mFormat;
 };
 
 #endif // EWRITESTREAM_H

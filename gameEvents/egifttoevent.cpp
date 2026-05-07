@@ -50,8 +50,8 @@ void eGiftToEvent::read(eReadStream& src) {
 }
 
 void eGiftToEvent::serialize(eSaveArchive& ar) {
-    ar.value(mCount);
-    ar.value(mResource);
+    ar.field("mCount", mCount);
+    ar.field("mResource", mResource);
     if(ar.reading()) {
         ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
             mCity = c;

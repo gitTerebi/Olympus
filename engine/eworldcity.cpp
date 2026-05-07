@@ -567,8 +567,8 @@ void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
 }
 
 void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
-    ar.value(mIOID);
-    ar.value(mCityId);
+    ar.field("mIOID", mIOID);
+    ar.field("mCityId", mCityId);
     if(ar.reading()) {
         ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
             mConqueredBy = c;
@@ -576,28 +576,28 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
     } else {
         ar.writeStream().writeCity(mConqueredBy.get());
     }
-    ar.value(mPlayerId);
-    ar.value(mCapitalOf);
-    ar.value(mIsCurrentCity);
-    ar.value(mIsOnBoard);
-    ar.value(mType);
-    ar.value(mNationality);
-    ar.value(mDirection);
-    ar.value(mState);
-    ar.value(mNamePlace);
-    ar.value(mName);
-    ar.value(mNameString);
-    ar.value(mLeader);
-    ar.value(mLeaderString);
-    ar.value(mX);
-    ar.value(mY);
-    ar.value(mTradeShutdown);
-    ar.value(mRebellion);
-    ar.value(mRel);
+    ar.field("mPlayerId", mPlayerId);
+    ar.field("mCapitalOf", mCapitalOf);
+    ar.field("mIsCurrentCity", mIsCurrentCity);
+    ar.field("mIsOnBoard", mIsOnBoard);
+    ar.field("mType", mType);
+    ar.field("mNationality", mNationality);
+    ar.field("mDirection", mDirection);
+    ar.field("mState", mState);
+    ar.field("mNamePlace", mNamePlace);
+    ar.field("mName", mName);
+    ar.field("mNameString", mNameString);
+    ar.field("mLeader", mLeader);
+    ar.field("mLeaderString", mLeaderString);
+    ar.field("mX", mX);
+    ar.field("mY", mY);
+    ar.field("mTradeShutdown", mTradeShutdown);
+    ar.field("mRebellion", mRebellion);
+    ar.field("mRel", mRel);
 
     int nrec;
     if(ar.writing()) nrec = mReceived.size();
-    ar.value(nrec);
+    ar.field("nrec", nrec);
     if(ar.reading()) mReceived.clear();
     for(int i = 0; i < nrec; i++) {
         eResourceType type;
@@ -608,14 +608,14 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
             type = it->first;
             count = it->second;
         }
-        ar.value(type);
-        ar.value(count);
+        ar.field("type", type);
+        ar.field("count", count);
         if(ar.reading()) mReceived[type] = count;
     }
 
     int natt;
     if(ar.writing()) natt = mAtt.size();
-    ar.value(natt);
+    ar.field("natt", natt);
     if(ar.reading()) mAtt.clear();
     for(int i = 0; i < natt; i++) {
         ePlayerId pid;
@@ -626,20 +626,20 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
             pid = it->first;
             att = it->second;
         }
-        ar.value(pid);
-        ar.value(att);
+        ar.field("pid", pid);
+        ar.field("att", att);
         if(ar.reading()) mAtt[pid] = att;
     }
 
-    ar.value(mAbroad);
-    ar.value(mMilitaryStrength);
-    ar.value(mTroops);
-    ar.value(mYearsElapsed);
-    ar.value(mWealth);
+    ar.field("mAbroad", mAbroad);
+    ar.field("mMilitaryStrength", mMilitaryStrength);
+    ar.field("mTroops", mTroops);
+    ar.field("mYearsElapsed", mYearsElapsed);
+    ar.field("mWealth", mWealth);
 
     int nc;
     if(ar.writing()) nc = mWaterTrade.size();
-    ar.value(nc);
+    ar.field("nc", nc);
     if(ar.reading()) mWaterTrade.clear();
     for(int i = 0; i < nc; i++) {
         eCityId cid;
@@ -648,11 +648,11 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
             std::advance(it, i);
             cid = *it;
         }
-        ar.value(cid);
+        ar.field("cid", cid);
         if(ar.reading()) mWaterTrade.insert(cid);
     }
 
-    ar.value(mVisible);
+    ar.field("mVisible", mVisible);
     if(ar.reading()) {
         mBuys.clear();
         mSells.clear();
@@ -662,10 +662,10 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
         swrite(ar.writeStream(), mBuys);
         swrite(ar.writeStream(), mSells);
     }
-    ar.value(mTributeType);
-    ar.value(mTributeCount);
-    ar.value(mRecTributeType);
-    ar.value(mRecTributeCount);
+    ar.field("mTributeType", mTributeType);
+    ar.field("mTributeCount", mTributeCount);
+    ar.field("mRecTributeType", mRecTributeType);
+    ar.field("mRecTributeCount", mRecTributeCount);
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count) {

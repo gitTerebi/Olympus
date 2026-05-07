@@ -28,5 +28,5 @@ void eWaitAction::write(eWriteStream& dst) const {
 }
 
 void eWaitAction::serialize(eSaveArchive& ar) {
-    ar.value(mRemTime);
+    ar.field("mRemTime", mRemTime);
 }

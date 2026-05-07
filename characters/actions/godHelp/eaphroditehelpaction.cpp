@@ -46,7 +46,7 @@ void eAphroditeHelpAction::write(eWriteStream& dst) const {
 }
 
 void eAphroditeHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
 }
 
 bool eAphroditeHelpAction::sHelpNeeded(const eCityId cid,

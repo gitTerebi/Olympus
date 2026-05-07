@@ -47,7 +47,7 @@ void eHeraHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHeraHelpAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
+    ar.field("mStage", mStage);
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eAgoraBase*>(b);
@@ -56,7 +56,7 @@ void eHeraHelpAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeBuilding(mTarget);
     }
     int nt = mFutureTargets.size();
-    ar.value(nt);
+    ar.field("nt", nt);
     if(ar.reading()) mFutureTargets.clear();
     for(int i = 0; i < nt; i++) {
         if(ar.reading()) {

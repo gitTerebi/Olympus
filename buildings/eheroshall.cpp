@@ -453,14 +453,14 @@ void eHerosHall::write(eWriteStream& dst) const {
 }
 
 void eHerosHall::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
-    ar.value(mArrivalCountdown);
-    ar.value(mPhilosophers);
-    ar.value(mActors);
-    ar.value(mAthletes);
-    ar.value(mUpdateCulture);
-    ar.value(mHeroOnQuest);
-    ar.value(mSpawnWait);
+    ar.field("mStage", mStage);
+    ar.field("mArrivalCountdown", mArrivalCountdown);
+    ar.field("mPhilosophers", mPhilosophers);
+    ar.field("mActors", mActors);
+    ar.field("mAthletes", mAthletes);
+    ar.field("mUpdateCulture", mUpdateCulture);
+    ar.field("mHeroOnQuest", mHeroOnQuest);
+    ar.field("mSpawnWait", mSpawnWait);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mHero = static_cast<eHero*>(c);

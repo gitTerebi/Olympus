@@ -44,7 +44,7 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     eWorldBoard* wboard = board ? &board->world() : nullptr;
     {
         int ns = fSoldiers.size();
-        ar.value(ns);
+        ar.field("ns", ns);
         if(ar.reading()) fSoldiers.clear();
         for(int i = 0; i < ns; i++) {
             if(ar.reading()) {
@@ -59,19 +59,19 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     }
     {
         int nh = fHeroes.size();
-        ar.value(nh);
+        ar.field("nh", nh);
         if(ar.reading()) fHeroes.clear();
         for(int i = 0; i < nh; i++) {
             std::pair<eCityId, eHeroType> h;
             if(ar.writing()) h = fHeroes[i];
-            ar.value(h.first);
-            ar.value(h.second);
+            ar.field("h.first", h.first);
+            ar.field("h.second", h.second);
             if(ar.reading()) fHeroes.push_back(h);
         }
     }
     {
         int nc = fAllies.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) fAllies.clear();
         for(int i = 0; i < nc; i++) {
             if(ar.reading()) {
@@ -85,8 +85,8 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
         }
     }
 
-    ar.value(fAres);
-    ar.value(fAresCity);
+    ar.field("fAres", fAres);
+    ar.field("fAresCity", fAresCity);
 }
 
 void eEnlistedForces::clear() {

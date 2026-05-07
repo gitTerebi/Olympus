@@ -629,9 +629,9 @@ void eReceiveRequestEvent::serialize(eSaveArchive& ar) {
         eCityEventValue::write(ar.writeStream());
         eGodEventValue::write(ar.writeStream());
     }
-    ar.value(mRequestType);
-    ar.value(mFinish);
-    ar.value(mPostpone);
+    ar.field("mRequestType", mRequestType);
+    ar.field("mFinish", mFinish);
+    ar.field("mPostpone", mPostpone);
 }
 
 eCityRequest eReceiveRequestEvent::cityRequest() const {

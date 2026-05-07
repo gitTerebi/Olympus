@@ -38,6 +38,6 @@ void eBuildAction::write(eWriteStream& dst) const {
 }
 
 void eBuildAction::serialize(eSaveArchive& ar) {
-    ar.value(mSoundTime);
-    ar.value(mTime);
+    ar.field("mSoundTime", mSoundTime);
+    ar.field("mTime", mTime);
 }

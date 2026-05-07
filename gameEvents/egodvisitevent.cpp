@@ -89,14 +89,14 @@ void eGodVisitEvent::read(eReadStream& src) {
 
 void eGodVisitEvent::serialize(eSaveArchive& ar) {
     int n = mTypes.size();
-    ar.value(n);
+    ar.field("n", n);
     if(ar.reading()) mTypes.clear();
     for(int i = 0; i < n; i++) {
         eGodType t;
         if(ar.writing()) t = mTypes[i];
-        ar.value(t);
+        ar.field("t", t);
         if(ar.reading()) mTypes.push_back(t);
     }
-    ar.value(mRandom);
-    ar.value(mNextId);
+    ar.field("mRandom", mRandom);
+    ar.field("mNextId", mNextId);
 }

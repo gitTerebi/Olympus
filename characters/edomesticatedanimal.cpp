@@ -46,6 +46,6 @@ void eDomesticatedAnimal::write(eWriteStream& dst) const {
 }
 
 void eDomesticatedAnimal::serialize(eSaveArchive& ar) {
-    ar.value(mGroomed);
-    ar.value(mResource);
+    ar.field("mGroomed", mGroomed);
+    ar.field("mResource", mResource);
 }

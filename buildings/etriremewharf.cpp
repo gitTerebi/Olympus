@@ -226,10 +226,10 @@ void eTriremeWharf::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mTakeCart);
         ar.writeStream().writeCharacter(mTrireme);
     }
-    ar.value(mWoodCount);
-    ar.value(mArmorCount);
-    ar.value(mTriremeBuildingStage);
-    ar.value(mTriremeBuildingTime);
+    ar.field("mWoodCount", mWoodCount);
+    ar.field("mArmorCount", mArmorCount);
+    ar.field("mTriremeBuildingStage", mTriremeBuildingStage);
+    ar.field("mTriremeBuildingTime", mTriremeBuildingTime);
 }
 
 void eTriremeWharf::triremeCameBack() {

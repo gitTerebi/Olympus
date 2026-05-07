@@ -40,7 +40,7 @@ void eAmazon::write(eWriteStream& dst) const {
 
 void eAmazon::serialize(eSaveArchive& ar) {
     bool archer = mIsArcher;
-    ar.value(archer);
+    ar.field("archer", archer);
     if(ar.reading()) setIsArcher(archer);
 }
 

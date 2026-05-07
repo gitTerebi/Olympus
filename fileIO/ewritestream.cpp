@@ -14,6 +14,7 @@ eWriteStream::eWriteStream(const eWriteTarget& dst) :
     mDst(dst) {}
 
 void eWriteStream::writeFormat(const std::string& format) {
+    mFormat = format;
     *this << std::string(format);
     *this << eFileFormat::version;
 }

@@ -263,7 +263,7 @@ void eMainWindow::showEpisodeIntroduction(
     const auto proceedA = [this]() {
         mCampaign->startEpisode();
         const auto dir = leaderSaveDir();
-        saveGame(dir + "autosave replay.ez");
+        saveGame(dir + "autosave replay.ez2");
         startGameAction([this]() {
             eGameWidgetSettings settings;
             settings.fPaused = true;
@@ -299,7 +299,7 @@ std::string eMainWindow::mostRecentSavePath() const {
     std::filesystem::path bestPath;
     for(const auto& entry : std::filesystem::directory_iterator(folder)) {
         const auto path = entry.path();
-        if(path.extension() != ".ez" && path.extension() != ".ez2") continue;
+        if(path.extension() != ".ez2") continue;
         const auto time = std::filesystem::last_write_time(path);
         if(!found || time > bestTime) {
             found = true;
@@ -403,8 +403,8 @@ bool eMainWindow::loadGame(const std::string& path) {
     src.readFormat();
     const auto& format = src.format();
     const int version = src.formatVersion();
-    if(format != "eZeus.ez" && format != "eZeus.ez2") {
-        printf("Invalid file '%s' format '%s', expected 'eZeus.ez' or 'eZeus.ez2'.\n",
+    if(format != "eZeus.ez2") {
+        printf("Invalid file '%s' format '%s', expected 'eZeus.ez2'.\n",
                path.c_str(), format.c_str());
         return false;
     }

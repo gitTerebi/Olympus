@@ -56,7 +56,7 @@ void eTidalWaveEvent::write(eWriteStream& dst) const {
 }
 
 void eTidalWaveEvent::serialize(eSaveArchive& ar) {
-    ar.value(mPermanent);
+    ar.field("mPermanent", mPermanent);
 }
 
 void eTidalWaveEvent::read(eReadStream& src) {

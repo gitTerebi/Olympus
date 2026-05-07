@@ -141,13 +141,13 @@ void eBoardPlayer::write(eWriteStream& dst) const {
 }
 
 void eBoardPlayer::serialize(eSaveArchive& ar) {
-    ar.value(mId);
-    ar.value(mDifficulty);
+    ar.field("mId", mId);
+    ar.field("mDifficulty", mDifficulty);
 
     {
         int nq;
         if(ar.writing()) nq = mFulfilledQuests.size();
-        ar.value(nq);
+        ar.field("nq", nq);
         if(ar.reading()) mFulfilledQuests.clear();
         for(int i = 0; i < nq; i++) {
             eGodQuest q;
@@ -161,12 +161,12 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
     {
         int nm;
         if(ar.writing()) nm = mSlayedMonsters.size();
-        ar.value(nm);
+        ar.field("nm", nm);
         if(ar.reading()) mSlayedMonsters.clear();
         for(int i = 0; i < nm; i++) {
             eMonsterType m;
             if(ar.writing()) m = mSlayedMonsters[i];
-            ar.value(m);
+            ar.field("m", m);
             if(ar.reading()) mSlayedMonsters.push_back(m);
         }
     }
@@ -174,7 +174,7 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
     {
         int nq;
         if(ar.writing()) nq = mGodQuests.size();
-        ar.value(nq);
+        ar.field("nq", nq);
         if(ar.reading()) mGodQuests.clear();
         for(int i = 0; i < nq; i++) {
             if(ar.reading()) {
@@ -188,11 +188,11 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
         }
     }
 
-    ar.value(mDrachmas);
+    ar.field("mDrachmas", mDrachmas);
     if(ar.reading()) mInDebtSince.read(ar.readStream());
     else mInDebtSince.write(ar.writeStream());
 
-    ar.value(mGodAttackTimer);
+    ar.field("mGodAttackTimer", mGodAttackTimer);
 
     if(ar.reading()) mFinances.read(ar.readStream());
     else mFinances.write(ar.writeStream());

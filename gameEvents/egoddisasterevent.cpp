@@ -64,6 +64,6 @@ void eGodDisasterEvent::serialize(eSaveArchive& ar) {
         eGodEventValue::write(ar.writeStream());
         eCityEventValue::write(ar.writeStream());
     }
-    ar.value(mDuration);
-    ar.value(mEnd);
+    ar.field("mDuration", mDuration);
+    ar.field("mEnd", mEnd);
 }

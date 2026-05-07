@@ -62,7 +62,7 @@ void eGodVisitAction::write(eWriteStream& dst) const {
 }
 
 void eGodVisitAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
-    ar.value(mLookForBless);
-    ar.value(mLookForSoldierAttack);
+    ar.field("mStage", mStage);
+    ar.field("mLookForBless", mLookForBless);
+    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
 }

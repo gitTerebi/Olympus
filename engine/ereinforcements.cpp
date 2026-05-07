@@ -29,7 +29,7 @@ void eReinforcements::read(eGameBoard& board, eReadStream& src) {
 }
 
 void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {
-    ar.value(mFromCid);
+    ar.field("mFromCid", mFromCid);
     if(ar.reading()) {
         mForces.serialize(ar, board);
     } else {

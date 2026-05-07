@@ -1,4 +1,4 @@
-﻿#include "eurchinquay.h"
+#include "eurchinquay.h"
 
 #include "characters/eurchingatherer.h"
 #include "characters/actions/ecollectresourceaction.h"
@@ -230,9 +230,9 @@ void eUrchinQuay::write(eWriteStream& dst) const {
 }
 
 void eUrchinQuay::serialize(eSaveArchive& ar) {
-    ar.value(mDisabled);
-    ar.value(mStateCount);
-    ar.value(mState);
+    ar.field("mDisabled", mDisabled);
+    ar.field("mStateCount", mStateCount);
+    ar.field("mState", mState);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mGatherer = static_cast<eUrchinGatherer*>(c);

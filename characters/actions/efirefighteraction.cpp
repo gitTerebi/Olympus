@@ -107,9 +107,9 @@ void eFireFighterAction::write(eWriteStream& dst) const {
 }
 
 void eFireFighterAction::serialize(eSaveArchive& ar) {
-    ar.value(mFireFighting);
-    ar.value(mFireCheck);
-    ar.value(mUsedWater);
+    ar.field("mFireFighting", mFireFighting);
+    ar.field("mFireCheck", mFireCheck);
+    ar.field("mUsedWater", mUsedWater);
 }
 
 bool eFireFighterAction::lookForFire(const bool second) {

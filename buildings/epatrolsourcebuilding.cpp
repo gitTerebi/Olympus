@@ -64,8 +64,8 @@ void ePatrolSourceBuilding::write(eWriteStream& dst) const {
 void ePatrolSourceBuilding::serialize(eSaveArchive& ar) {
     for(const auto& t : mTargetData) {
         auto& tt = const_cast<eTargetData&>(t);
-        ar.value(tt.fSpawnTime);
-        ar.value(tt.fLastId);
+        ar.field("tt.fSpawnTime", tt.fSpawnTime);
+        ar.field("tt.fLastId", tt.fLastId);
     }
 }
 

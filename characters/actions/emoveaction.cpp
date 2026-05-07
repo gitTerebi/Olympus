@@ -109,13 +109,13 @@ void eMoveAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeWalkable(mTileWalkable.get());
     }
-    ar.value(mOrientation);
+    ar.field("mOrientation", mOrientation);
     ar.tile(mTargetTile, board());
-    ar.value(mWait);
-    ar.value(mStartX);
-    ar.value(mStartY);
-    ar.value(mTargetX);
-    ar.value(mTargetY);
+    ar.field("mWait", mWait);
+    ar.field("mStartX", mStartX);
+    ar.field("mStartY", mStartY);
+    ar.field("mTargetX", mTargetX);
+    ar.field("mTargetY", mTargetY);
     if(ar.reading()) {
         mObstHandler = ar.readStream().readObsticleHandler(board());
     } else {

@@ -118,7 +118,7 @@ void eHorseRanchEnclosure::write(eWriteStream& dst) const {
 
 void eHorseRanchEnclosure::serialize(eSaveArchive& ar) {
     int nh = mHorses.size();
-    ar.value(nh);
+    ar.field("nh", nh);
     if(ar.reading()) {
         mHorses.clear();
     }

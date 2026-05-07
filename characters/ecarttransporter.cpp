@@ -1,4 +1,4 @@
-﻿#include "ecarttransporter.h"
+#include "ecarttransporter.h"
 
 #include "textures/egametextures.h"
 
@@ -363,19 +363,19 @@ void eCartTransporter::write(eWriteStream& dst) const {
 
 void eCartTransporter::serialize(eSaveArchive& ar) {
     int count = mResourceCount;
-    ar.value(count);
-    ar.value(mType);
+    ar.field("count", count);
+    ar.field("mType", mType);
     eResourceType type = mResourceType;
-    ar.value(type);
+    ar.field("type", type);
     if(ar.reading()) {
         setResourceValue(type, count);
     }
-    ar.value(mSupports);
-    ar.value(mSupport);
-    ar.value(mWaiting);
-    ar.value(mIsOx);
-    ar.value(mBigTrailer);
-    ar.value(mMaxDistance);
+    ar.field("mSupports", mSupports);
+    ar.field("mSupport", mSupport);
+    ar.field("mWaiting", mWaiting);
+    ar.field("mIsOx", mIsOx);
+    ar.field("mBigTrailer", mBigTrailer);
+    ar.field("mMaxDistance", mMaxDistance);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mOx = static_cast<eOx*>(c);
@@ -388,7 +388,7 @@ void eCartTransporter::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mTrailer);
     }
     int nf = mFollowers.size();
-    ar.value(nf);
+    ar.field("nf", nf);
     if(ar.reading()) mFollowers.clear();
     for(int i = 0; i < nf; i++) {
         if(ar.reading()) {

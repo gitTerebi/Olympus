@@ -29,8 +29,8 @@ void eCityEventValue::serialize(eSaveArchive& ar, eGameBoard& board) {
     } else {
         ar.writeStream().writeCity(mCity.get());
     }
-    ar.value(mMinCityId);
-    ar.value(mMaxCityId);
+    ar.field("mMinCityId", mMinCityId);
+    ar.field("mMaxCityId", mMaxCityId);
 }
 
 void eCityEventValue::setSingleCity(const stdsptr<eWorldCity> &c) {

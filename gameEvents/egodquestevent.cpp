@@ -72,7 +72,7 @@ void eGodQuestEvent::write(eWriteStream& dst) const {
 }
 
 void eGodQuestEvent::serialize(eSaveArchive& ar) {
-    ar.value(mFulfilled);
+    ar.field("mFulfilled", mFulfilled);
 }
 
 void eGodQuestEvent::fulfill() {

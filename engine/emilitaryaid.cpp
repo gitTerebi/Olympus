@@ -37,7 +37,7 @@ void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
         ar.writeStream().writeCity(fCity.get());
     }
     int ns = fSoldiers.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) fSoldiers.clear();
     for(int i = 0; i < ns; i++) {
         if(ar.reading()) {

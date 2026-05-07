@@ -108,9 +108,9 @@ void eCattle::write(eWriteStream& dst) const {
 }
 
 void eCattle::serialize(eSaveArchive& ar) {
-    ar.value(mId);
-    ar.value(mMatureWait);
-    ar.value(sId);
+    ar.field("mId", mId);
+    ar.field("mMatureWait", mMatureWait);
+    ar.field("sId", sId);
 }
 
 bool eCattle::shouldBecomeBull() const {

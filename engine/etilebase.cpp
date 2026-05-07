@@ -193,10 +193,10 @@ void eTileBase::write(eWriteStream& dst) const {
 }
 
 void eTileBase::serialize(eSaveArchive& ar) {
-    ar.value(mSeed);
-    ar.value(mTerr);
-    ar.value(mMarbleLevel);
-    ar.value(mResource);
+    ar.field("mSeed", mSeed);
+    ar.field("mTerr", mTerr);
+    ar.field("mMarbleLevel", mMarbleLevel);
+    ar.field("mResource", mResource);
 
     unsigned char bools;
     if(ar.writing()) {
@@ -207,13 +207,13 @@ void eTileBase::serialize(eSaveArchive& ar) {
         if(mHasFish) bools |= 1 << 3;
         if(mRoadblock) bools |= 1 << 4;
     }
-    ar.value(bools);
+    ar.field("bools", bools);
     mElevation = bools & 1 << 0;
     mWalkableElev = bools & 1 << 1;
     mHasUrchin = bools & 1 << 2;
     mHasFish = bools & 1 << 3;
     mRoadblock = bools & 1 << 4;
 
-    ar.value(mCityId);
+    ar.field("mCityId", mCityId);
 }
 

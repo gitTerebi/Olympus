@@ -384,16 +384,16 @@ void eSanctuary::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mGod);
     }
-    ar.value(mSpawnWait);
-    ar.value(mGodAbroad);
+    ar.field("mSpawnWait", mSpawnWait);
+    ar.field("mGodAbroad", mGodAbroad);
 
-    ar.value(mAskedForHelp);
-    ar.value(mCheckHelpNeeded);
-    ar.value(mHelpTimer);
+    ar.field("mAskedForHelp", mAskedForHelp);
+    ar.field("mCheckHelpNeeded", mCheckHelpNeeded);
+    ar.field("mHelpTimer", mHelpTimer);
 
     int nw;
     if(ar.writing()) nw = mWarriorTiles.size();
-    ar.value(nw);
+    ar.field("nw", nw);
     if(ar.reading()) mWarriorTiles.clear();
     for(int i = 0; i < nw; i++) {
         eTile* t = nullptr;
@@ -404,7 +404,7 @@ void eSanctuary::serialize(eSaveArchive& ar) {
 
     int ns;
     if(ar.writing()) ns = mSpecialTiles.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) mSpecialTiles.clear();
     for(int i = 0; i < ns; i++) {
         eTile* t = nullptr;

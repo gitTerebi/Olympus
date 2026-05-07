@@ -1198,12 +1198,12 @@ void ePyramid::write(eWriteStream& dst) const {
 void ePyramid::serialize(eSaveArchive& ar) {
     int ds;
     if(ar.writing()) ds = mDark.size();
-    ar.value(ds);
+    ar.field("ds", ds);
     if(ar.reading()) mDark.clear();
     for(int i = 0; i < ds; i++) {
         bool d;
         if(ar.writing()) d = mDark[i];
-        ar.value(d);
+        ar.field("d", d);
         if(ar.reading()) mDark.push_back(d);
     }
 }

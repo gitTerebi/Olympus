@@ -2,7 +2,6 @@
 
 #include "engine/egameboard.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 void eResourceCollectBuildingBase::nextMonth() {
     mRingIdx = (mRingIdx + 1) % 12;
@@ -17,12 +16,10 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
 }
 
 void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
-    ar.value(mNoTarget);
-    if(ar.versionAtLeast(eFileFormat::cartTarget)) {
-        ar.value(mProducedThisYear);
-        for(int i = 0; i < 12; i++) ar.value(mMonthlyProduced[i]);
-        ar.value(mRingIdx);
-    }
+    ar.field("mNoTarget", mNoTarget);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
 }
 
 void eResourceCollectBuildingBase::read(eReadStream& src) {

@@ -33,7 +33,7 @@ void eHunter::write(eWriteStream& dst) const {
 
 void eHunter::serialize(eSaveArchive& ar) {
     bool deerHunter = mDeerHunter;
-    ar.value(deerHunter);
+    ar.field("deerHunter", deerHunter);
     if(ar.reading()) setDeerHunter(deerHunter);
 }
 

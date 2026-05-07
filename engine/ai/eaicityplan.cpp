@@ -125,13 +125,13 @@ void eAICityPlan::write(eWriteStream& dst) const {
 }
 
 void eAICityPlan::serialize(eSaveArchive& ar) {
-    ar.value(mCid);
+    ar.field("mCid", mCid);
 
-    ar.value(mLastBuildDistrict);
+    ar.field("mLastBuildDistrict", mLastBuildDistrict);
 
     int ds;
     if(ar.writing()) ds = mDistricts.size();
-    ar.value(ds);
+    ar.field("ds", ds);
     if(ar.reading()) mDistricts.clear();
     for(int i = 0; i < ds; i++) {
         eAIDistrict d;
@@ -142,7 +142,7 @@ void eAICityPlan::serialize(eSaveArchive& ar) {
 
     int ns;
     if(ar.writing()) ns = mScheduledBuildings.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) mScheduledBuildings.clear();
     for(int i = 0; i < ns; i++) {
         int did;
@@ -152,7 +152,7 @@ void eAICityPlan::serialize(eSaveArchive& ar) {
             did = bp.first;
             b = bp.second;
         }
-        ar.value(did);
+        ar.field("did", did);
         b.serialize(ar);
         if(ar.reading()) mScheduledBuildings.push_back({did, b});
     }

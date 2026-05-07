@@ -88,8 +88,8 @@ void eMissile::serialize(eSaveArchive& ar) {
     } else {
         mPath.write(ar.writeStream());
     }
-    ar.value(mTime);
-    ar.value(mSpeed);
+    ar.field("mTime", mTime);
+    ar.field("mSpeed", mSpeed);
     if(ar.reading()) {
         mFinish = ar.readStream().readGodAct(mBoard);
         const auto t = ar.readStream().readTile(mBoard);

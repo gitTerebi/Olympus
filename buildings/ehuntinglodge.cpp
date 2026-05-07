@@ -71,7 +71,7 @@ void eHuntingLodge::write(eWriteStream& dst) const {
 }
 
 void eHuntingLodge::serialize(eSaveArchive& ar) {
-    ar.value(mSpawnTime);
+    ar.field("mSpawnTime", mSpawnTime);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
             mHunter = static_cast<eHunter*>(c);

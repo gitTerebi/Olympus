@@ -86,8 +86,8 @@ void eTempleAltarBuilding::write(eWriteStream& dst) const {
 }
 
 void eTempleAltarBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mSacrifice);
-    ar.value(mSacrificeTime);
+    ar.field("mSacrifice", mSacrifice);
+    ar.field("mSacrificeTime", mSacrificeTime);
 }
 
 void eTempleAltarBuilding::startSacrifice(const eSacrifice s) {

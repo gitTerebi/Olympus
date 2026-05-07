@@ -97,5 +97,5 @@ void eRequestStrikeEvent::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCity(mCity.get());
         ar.writeStream().writeCity(mRivalCity.get());
     }
-    ar.value(mEnd);
+    ar.field("mEnd", mEnd);
 }

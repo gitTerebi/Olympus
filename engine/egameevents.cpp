@@ -80,11 +80,11 @@ void eGameEvents::read(eReadStream& src) {
 void eGameEvents::serialize(eSaveArchive& ar) {
     int nevs;
     if(ar.writing()) nevs = mGameEvents.size();
-    ar.value(nevs);
+    ar.field("nevs", nevs);
     for(int i = 0; i < nevs; i++) {
         eGameEventType type;
         if(ar.writing()) type = mGameEvents[i]->type();
-        ar.value(type);
+        ar.field("type", type);
         if(ar.reading()) {
             const auto branch = eGameEventBranch::root;
             const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);

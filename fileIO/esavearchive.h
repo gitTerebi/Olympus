@@ -2,7 +2,9 @@
 #define ESAVEARCHIVE_H
 
 #include <functional>
+#include <map>
 #include <memory>
+#include <vector>
 
 #include "estreams.h"
 
@@ -15,13 +17,17 @@ class eSaveArchive {
 public:
     explicit eSaveArchive(eReadStream& src) : mSrc(&src) {}
     explicit eSaveArchive(eWriteStream& dst) : mDst(&dst) {}
+    ~eSaveArchive() {
+        if(mTaggedTouched && writing()) {
+            *mDst << std::string();
+            *mDst << int32_t(-1);
+        } else if(mTaggedTouched && reading() && !mTaggedEnded) {
+            skipRemainingFields();
+        }
+    }
 
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
-    bool versionAtLeast(const int version) const {
-        return writing() || mSrc->formatVersion() >= version;
-    }
-
     eReadStream& readStream() const { return *mSrc; }
     eWriteStream& writeStream() const { return *mDst; }
 
@@ -35,11 +41,33 @@ public:
     }
 
     template <typename T>
-    void valueSince(const int version, T& value, const T& defaultValue) {
-        if(versionAtLeast(version)) {
+    void field(const char* const name, T& value) {
+        this->field(std::string(name), value);
+    }
+
+    template <typename T>
+    void field(const std::string& name, T& value) {
+        if(!tagged()) {
             this->value(value);
+            return;
+        }
+
+        mTaggedTouched = true;
+        if(writing()) {
+            mFieldBuffer.clear();
+            eWriteTarget target(&mFieldBuffer);
+            eWriteStream tmp(target);
+            tmp << value;
+
+            *mDst << name;
+            *mDst << static_cast<int32_t>(mFieldBuffer.size());
+            mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
         } else {
-            value = defaultValue;
+            auto data = takeField(name);
+            if(data.empty()) return;
+            eReadSource source(const_cast<char*>(data.data()));
+            eReadStream src(source);
+            src >> value;
         }
     }
 
@@ -73,8 +101,60 @@ public:
     }
 
 private:
+    bool tagged() const {
+        if(writing()) return mDst->format() == "eZeus.ez2";
+        return mSrc->format() == "eZeus.ez2";
+    }
+
+    std::vector<char> takeField(const std::string& wanted) {
+        mTaggedTouched = true;
+        auto cached = mFields.find(wanted);
+        if(cached != mFields.end() && !cached->second.empty()) {
+            auto data = cached->second.front();
+            cached->second.erase(cached->second.begin());
+            return data;
+        }
+
+        while(true) {
+            if(mTaggedEnded) return {};
+            std::string name;
+            *mSrc >> name;
+            int32_t size;
+            *mSrc >> size;
+            if(size < 0) {
+                mTaggedEnded = true;
+                return {};
+            }
+            std::vector<char> data;
+            data.resize(size);
+            if(size > 0) {
+                mSrc->read(data.data(), size);
+            }
+            if(name == wanted) return data;
+            mFields[name].push_back(data);
+        }
+    }
+
+    void skipRemainingFields() {
+        while(!mTaggedEnded) {
+            std::string name;
+            *mSrc >> name;
+            int32_t size;
+            *mSrc >> size;
+            if(size < 0) {
+                mTaggedEnded = true;
+                return;
+            }
+            mSrc->skip(size);
+        }
+    }
+
     eReadStream* mSrc = nullptr;
     eWriteStream* mDst = nullptr;
+    bool mTaggedTouched = false;
+    bool mTaggedEnded = false;
+    std::map<std::string, std::vector<std::vector<char>>> mFields;
+    std::vector<char> mFieldBuffer;
 };
 
 #endif // ESAVEARCHIVE_H

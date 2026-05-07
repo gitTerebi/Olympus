@@ -30,10 +30,10 @@ void ePlannedAction::write(eWriteStream& dst) const {
 }
 
 void ePlannedAction::serialize(eSaveArchive& ar) {
-    ar.value(mRecurring);
-    ar.value(mActionTime);
-    ar.value(mFinished);
-    ar.value(mTime);
+    ar.field("mRecurring", mRecurring);
+    ar.field("mActionTime", mActionTime);
+    ar.field("mFinished", mFinished);
+    ar.field("mTime", mTime);
 }
 
 ePlannedAction* ePlannedAction::sCreate(const ePlannedActionType type) {

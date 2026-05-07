@@ -294,9 +294,9 @@ void eTradePost::write(eWriteStream& dst) const {
 }
 
 void eTradePost::serialize(eSaveArchive& ar) {
-    ar.value(mImports);
-    ar.value(mExports);
-    ar.value(mRouteTimer);
+    ar.field("mImports", mImports);
+    ar.field("mExports", mExports);
+    ar.field("mRouteTimer", mRouteTimer);
 }
 
 bool eTradePost::trades() const {

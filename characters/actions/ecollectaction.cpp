@@ -111,8 +111,8 @@ void eCollectAction::write(eWriteStream& dst) const {
 }
 
 void eCollectAction::serialize(eSaveArchive& ar) {
-    ar.value(mSoundTime);
-    ar.value(mTime);
+    ar.field("mSoundTime", mSoundTime);
+    ar.field("mTime", mTime);
     ar.tile(mTile, board());
-    ar.value(mTransFunc);
+    ar.field("mTransFunc", mTransFunc);
 }

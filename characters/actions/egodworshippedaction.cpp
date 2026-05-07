@@ -119,11 +119,11 @@ void eGodWorshippedAction::write(eWriteStream& dst) const {
 }
 
 void eGodWorshippedAction::serialize(eSaveArchive& ar) {
-    ar.value(mStage);
-    ar.value(mLookForBless);
-    ar.value(mLookForSoldierAttack);
-    ar.value(mLookForCityDefense);
-    ar.value(mLookForMonster);
+    ar.field("mStage", mStage);
+    ar.field("mLookForBless", mLookForBless);
+    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
+    ar.field("mLookForCityDefense", mLookForCityDefense);
+    ar.field("mLookForMonster", mLookForMonster);
 }
 
 void eGodWorshippedAction::defendCity() {

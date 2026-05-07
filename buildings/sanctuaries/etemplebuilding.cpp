@@ -76,7 +76,7 @@ void eTempleBuilding::write(eWriteStream& dst) const {
 }
 
 void eTempleBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mId);
+    ar.field("mId", mId);
 }
 
 bool eTempleBuilding::hasNeighbour() const {

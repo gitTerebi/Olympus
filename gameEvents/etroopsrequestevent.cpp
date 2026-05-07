@@ -111,10 +111,10 @@ void eTroopsRequestEvent::serialize(eSaveArchive& ar) {
         eMonsterEventValue::write(ar.writeStream());
         eAttackingCityEventValue::write(ar.writeStream());
     }
-    ar.value(mType);
-    ar.value(mEffect);
-    ar.value(mFinish);
-    ar.value(mPostpone);
+    ar.field("mType", mType);
+    ar.field("mEffect", mEffect);
+    ar.field("mFinish", mFinish);
+    ar.field("mPostpone", mPostpone);
 }
 
 void eTroopsRequestEvent::trigger() {

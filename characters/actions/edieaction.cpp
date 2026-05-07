@@ -29,5 +29,5 @@ void eDieAction::write(eWriteStream& dst) const {
 }
 
 void eDieAction::serialize(eSaveArchive& ar) {
-    ar.value(mTime);
+    ar.field("mTime", mTime);
 }

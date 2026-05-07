@@ -80,6 +80,6 @@ void eGodMissile::write(eWriteStream& dst) const {
 }
 
 void eGodMissile::serialize(eSaveArchive& ar) {
-    ar.value(mCharType);
-    ar.value(mActionType);
+    ar.field("mCharType", mCharType);
+    ar.field("mActionType", mActionType);
 }

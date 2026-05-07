@@ -75,10 +75,10 @@ void eFollowAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mFollow);
     }
-    ar.value(mCatchUp);
-    ar.value(mDistance);
+    ar.field("mCatchUp", mCatchUp);
+    ar.field("mDistance", mDistance);
     int s = mTiles.size();
-    ar.value(s);
+    ar.field("s", s);
     if(ar.reading()) {
         mTiles.clear();
     }
@@ -88,7 +88,7 @@ void eFollowAction::serialize(eSaveArchive& ar) {
             n = mTiles[i];
         }
         ar.tile(n.fTile, board());
-        ar.value(n.fO);
+        ar.field("n.fO", n.fO);
         if(ar.reading()) {
             mTiles.push_back(n);
         }

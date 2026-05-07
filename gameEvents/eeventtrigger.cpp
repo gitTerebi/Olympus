@@ -41,13 +41,13 @@ void eEventTrigger::read(eReadStream& src) {
 
 void eEventTrigger::serialize(eSaveArchive& ar) {
     int ncs = mEvents.size();
-    ar.value(ncs);
+    ar.field("ncs", ncs);
     for(int i = 0; i < ncs; i++) {
         eGameEventType type;
         if(ar.writing()) {
             type = mEvents[i]->type();
         }
-        ar.value(type);
+        ar.field("type", type);
         if(ar.writing()) {
             mEvents[i]->write(ar.writeStream());
             continue;

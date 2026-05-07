@@ -86,7 +86,7 @@ void eAttackCityAction::write(eWriteStream& dst) const {
 }
 
 void eAttackCityAction::serialize(eSaveArchive& ar) {
-    ar.value(mLookForGod);
+    ar.field("mLookForGod", mLookForGod);
 }
 
 void eAttackCityAction::invasionFinished() {

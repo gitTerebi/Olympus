@@ -15,15 +15,15 @@ void eAIBuilding::write(eWriteStream& dst) const {
 }
 
 void eAIBuilding::serialize(eSaveArchive& ar) {
-    ar.value(fType);
-    ar.value(fRect);
-    ar.value(fGet);
-    ar.value(fEmpty);
-    ar.value(fAccept);
+    ar.field("fType", fType);
+    ar.field("fRect", fRect);
+    ar.field("fGet", fGet);
+    ar.field("fEmpty", fEmpty);
+    ar.field("fAccept", fAccept);
 
     int ns;
     if(ar.writing()) ns = fSpace.size();
-    ar.value(ns);
+    ar.field("ns", ns);
     if(ar.reading()) fSpace.clear();
     for(int i = 0; i < ns; i++) {
         eResourceType r;
@@ -34,27 +34,27 @@ void eAIBuilding::serialize(eSaveArchive& ar) {
             r = it->first;
             s = it->second;
         }
-        ar.value(r);
-        ar.value(s);
+        ar.field("r", r);
+        ar.field("s", s);
         if(ar.reading()) fSpace[r] = s;
     }
 
     int ng;
     if(ar.writing()) ng = fGuides.size();
-    ar.value(ng);
+    ar.field("ng", ng);
     if(ar.reading()) fGuides.clear();
     for(int i = 0; i < ng; i++) {
         ePatrolGuide pg;
         if(ar.writing()) pg = fGuides[i];
-        ar.value(pg.fX);
-        ar.value(pg.fY);
+        ar.field("pg.fX", pg.fX);
+        ar.field("pg.fY", pg.fY);
         if(ar.reading()) fGuides.push_back(pg);
     }
-    ar.value(fGuidesBothDirections);
+    ar.field("fGuidesBothDirections", fGuidesBothDirections);
 
-    ar.value(fO);
+    ar.field("fO", fO);
 
-    ar.value(fTradingPartner);
-    ar.value(fTradePostType);
-    ar.value(fOtherRect);
+    ar.field("fTradingPartner", fTradingPartner);
+    ar.field("fTradePostType", fTradePostType);
+    ar.field("fOtherRect", fOtherRect);
 }

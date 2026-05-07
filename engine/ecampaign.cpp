@@ -314,7 +314,7 @@ void eCampaign::read(eReadStream& src) {
         mComplete = complete.fContent;
     }
 
-    if(src.format() == "eZeus.ez" || src.format() == "eZeus.ez2") { // save file
+    if(src.format() == "eZeus.ez2") { // save file
         const auto e = currentEpisode();
         const auto board = e->fBoard;
         board->loadResources();

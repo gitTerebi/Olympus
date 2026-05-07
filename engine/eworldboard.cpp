@@ -121,11 +121,11 @@ void eWorldBoard::read(eReadStream& src) {
 }
 
 void eWorldBoard::serialize(eSaveArchive& ar) {
-    ar.value(mMap);
+    ar.field("mMap", mMap);
 
     int nr;
     if(ar.writing()) nr = mRegions.size();
-    ar.value(nr);
+    ar.field("nr", nr);
     if(ar.reading()) mRegions.clear();
     for(int i = 0; i < nr; i++) {
         eWorldRegion r;
@@ -137,7 +137,7 @@ void eWorldBoard::serialize(eSaveArchive& ar) {
 
     int nc;
     if(ar.writing()) nc = mCities.size();
-    ar.value(nc);
+    ar.field("nc", nc);
     if(ar.reading()) mCities.clear();
     for(int i = 0; i < nc; i++) {
         if(ar.reading()) {
@@ -152,7 +152,7 @@ void eWorldBoard::serialize(eSaveArchive& ar) {
     {
         int nc;
         if(ar.writing()) nc = mCityToPlayer.size();
-        ar.value(nc);
+        ar.field("nc", nc);
         if(ar.reading()) mCityToPlayer.clear();
         for(int i = 0; i < nc; i++) {
             eCityId cid;
@@ -163,18 +163,18 @@ void eWorldBoard::serialize(eSaveArchive& ar) {
                 cid = it->first;
                 pid = it->second;
             }
-            ar.value(cid);
-            ar.value(pid);
+            ar.field("cid", cid);
+            ar.field("pid", pid);
             if(ar.reading()) mCityToPlayer[cid] = pid;
         }
     }
 
-    ar.value(mPersonPlayer);
+    ar.field("mPersonPlayer", mPersonPlayer);
 
     {
         int np;
         if(ar.writing()) np = mPlayerToTeam.size();
-        ar.value(np);
+        ar.field("np", np);
         if(ar.reading()) mPlayerToTeam.clear();
         for(int i = 0; i < np; i++) {
             ePlayerId pid;
@@ -185,8 +185,8 @@ void eWorldBoard::serialize(eSaveArchive& ar) {
                 pid = it->first;
                 tid = it->second;
             }
-            ar.value(pid);
-            ar.value(tid);
+            ar.field("pid", pid);
+            ar.field("tid", tid);
             if(ar.reading()) mPlayerToTeam[pid] = tid;
         }
     }

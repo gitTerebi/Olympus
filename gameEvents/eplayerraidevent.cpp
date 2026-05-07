@@ -90,7 +90,7 @@ void ePlayerRaidEvent::write(eWriteStream& dst) const {
 }
 
 void ePlayerRaidEvent::serialize(eSaveArchive& ar) {
-    ar.value(mResource);
+    ar.field("mResource", mResource);
 }
 
 void ePlayerRaidEvent::read(eReadStream& src) {

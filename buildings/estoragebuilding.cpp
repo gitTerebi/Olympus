@@ -253,18 +253,18 @@ void eStorageBuilding::write(eWriteStream& dst) const {
 }
 
 void eStorageBuilding::serialize(eSaveArchive& ar) {
-    ar.value(mGet);
-    ar.value(mEmpty);
-    ar.value(mAccept);
+    ar.field("mGet", mGet);
+    ar.field("mEmpty", mEmpty);
+    ar.field("mAccept", mAccept);
     for(int i = 0; i < 15; i++) {
-        ar.value(mResourceCount[i]);
+        ar.field("mResourceCount[i]", mResourceCount[i]);
     }
     for(int i = 0; i < 15; i++) {
-        ar.value(mResource[i]);
+        ar.field("mResource[i]", mResource[i]);
     }
 
     int nc = mMaxCount.size();
-    ar.value(nc);
+    ar.field("nc", nc);
     if(ar.reading()) mMaxCount.clear();
     for(int i = 0; i < nc; i++) {
         eResourceType rt;
@@ -275,8 +275,8 @@ void eStorageBuilding::serialize(eSaveArchive& ar) {
             rt = it->first;
             c = it->second;
         }
-        ar.value(rt);
-        ar.value(c);
+        ar.field("rt", rt);
+        ar.field("c", c);
         if(ar.reading()) {
             mMaxCount[rt] = c;
         }

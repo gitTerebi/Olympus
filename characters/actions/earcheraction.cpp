@@ -145,10 +145,10 @@ void eArcherAction::write(eWriteStream& dst) const {
 
 void eArcherAction::serialize(eSaveArchive& ar) {
     eComplexAction::serialize(ar);
-    ar.value(mMissile);
-    ar.value(mRangeAttack);
-    ar.value(mAttackTime);
-    ar.value(mAttack);
+    ar.field("mMissile", mMissile);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mAttack", mAttack);
     if(ar.reading()) {
         ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
             mAttackTarget = c;
