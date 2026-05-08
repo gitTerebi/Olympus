@@ -103,6 +103,8 @@ bool eLineEdit::keyPressEvent(const eKeyPressEvent& e) {
         add = "o";
     } else if(k == SDL_Scancode::SDL_SCANCODE_P) {
         add = "p";
+    } else if(k == SDL_Scancode::SDL_SCANCODE_Q) {
+        add = "q";
     } else if(k == SDL_Scancode::SDL_SCANCODE_R) {
         add = "r";
     } else if(k == SDL_Scancode::SDL_SCANCODE_S) {
