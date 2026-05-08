@@ -274,7 +274,10 @@ int16_t GameFile::readShort() {
         ok = false;
         return 0;
     }
-    return (int16_t)((int8_t)data[0] | (((int8_t)data[1]) << 8));
+    const uint16_t raw = static_cast<uint8_t>(data[0]) |
+                         (static_cast<uint16_t>(
+                              static_cast<uint8_t>(data[1])) << 8);
+    return static_cast<int16_t>(raw);
 }
 
 /**
