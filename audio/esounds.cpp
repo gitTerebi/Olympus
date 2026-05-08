@@ -680,50 +680,117 @@ void eSounds::playAttackSound(const eCharacterType type) {
     switch(type) {
     case eCharacterType::greekRockThrower:
     case eCharacterType::rockThrower:
-        sInstance->mRockthrowerAttack.playRandomSound();
+        sInstance->mRockthrowerAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::boar:
-        sInstance->mBoarAttack.playRandomSound();
+        sInstance->mBoarAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::hunter:
-        sInstance->mBoarHunterAttack.playRandomSound();
+        sInstance->mBoarHunterAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::deer:
-        sInstance->mDeerAttack.playRandomSound();
+        sInstance->mDeerAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::wolf:
-        sInstance->mWolfAttack.playRandomSound();
+        sInstance->mWolfAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::cattle1:
     case eCharacterType::cattle2:
     case eCharacterType::cattle3:
-        sInstance->mCattleAttack.playRandomSound();
+    case eCharacterType::bull:
+    case eCharacterType::horse:
+        sInstance->mCattleAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::goat:
-        sInstance->mGoatAttack.playRandomSound();
+        sInstance->mGoatAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
-        sInstance->mHopliteAttack.playRandomSound();
+    case eCharacterType::hoplitePoseidon:
+        sInstance->mHopliteAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::persianHoplite:
+        sInstance->mPersianHopliteAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::oceanidHoplite:
+        sInstance->mMerchantInfantryAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianHoplite:
+        sInstance->mEgyptianHopliteAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanHoplite:
+        sInstance->mAtlanteanHopliteAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::mayanHoplite:
+        sInstance->mMayanHopliteAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::archer:
-        sInstance->mArcherAttack.playRandomSound();
+    case eCharacterType::archerPoseidon:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::centaurArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::persianArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::phoenicianArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::mayanArcher:
+        sInstance->mArcherAttack.playRandomSound(eSoundType::event);
         break;
 
+    case eCharacterType::horseman:
+    case eCharacterType::greekHorseman:
+    case eCharacterType::trojanHorseman:
+    case eCharacterType::centaurHorseman:
+    case eCharacterType::chariotPoseidon:
+        sInstance->mTrojanHorseAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::persianHorseman:
+        sInstance->mPersianCavalryAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::phoenicianHorseman:
+        sInstance->mPhoenicianCavalryAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianChariot:
+        sInstance->mEgyptianChariotAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanChariot:
+        sInstance->mAtlanteanChariotAttack.playRandomSound(eSoundType::event);
+        break;
     case eCharacterType::disgruntled:
-        sInstance->mOutlawAttack.playRandomSound();
+        sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aresWarrior:
-        sInstance->mAresWarriorAttack.playRandomSound();
+        sInstance->mAresWarriorAttack.playRandomSound(eSoundType::event);
+        break;
+
+    case eCharacterType::amazon:
+        sInstance->mAmazonWarriorAttack.playRandomSound(eSoundType::event);
+        break;
+
+    case eCharacterType::eliteCitizen:
+        sInstance->mNoblemanAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::trojanSpearthrower:
-        sInstance->mTrojanSpearthrowerAttack.playRandomSound();
+        sInstance->mTrojanSpearthrowerAttack.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::oceanidSpearthrower:
+        sInstance->mMerchantSpearAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::trojanHoplite:
-        sInstance->mTrojanSwordAttack.playRandomSound();
+        sInstance->mTrojanSwordAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aphrodite:
@@ -855,62 +922,103 @@ void eSounds::playDieSound(eCharacter* const c) {
     const auto ct = c->type();
     switch(ct) {
     case eCharacterType::actor:
-        sInstance->mActorDie.playRandomSound();
+        sInstance->mActorDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::greekRockThrower:
     case eCharacterType::rockThrower:
-        sInstance->mRockthrowerDie.playRandomSound();
+        sInstance->mRockthrowerDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::boar:
-        sInstance->mBoarDie.playRandomSound();
+        sInstance->mBoarDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::hunter:
-        sInstance->mBoarHunterDie.playRandomSound();
+        sInstance->mBoarHunterDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::deer:
-        sInstance->mDeerDie.playRandomSound();
+        sInstance->mDeerDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::wolf:
-        sInstance->mWolfDie.playRandomSound();
+        sInstance->mWolfDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::sheep:
-        sInstance->mSheepDie.playRandomSound();
+        sInstance->mSheepDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::cattle1:
     case eCharacterType::cattle2:
     case eCharacterType::cattle3:
-        sInstance->mCattleDie.playRandomSound();
+        sInstance->mCattleDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::goat:
-        sInstance->mGoatDie.playRandomSound();
+        sInstance->mGoatDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
-        sInstance->mHopliteDie.playRandomSound();
+    case eCharacterType::hoplitePoseidon:
+        sInstance->mHopliteDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::persianHoplite:
+        sInstance->mPersianHopliteDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::oceanidHoplite:
+        sInstance->mMerchantInfantryDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::egyptianHoplite:
+        sInstance->mEgyptianHopliteDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::atlanteanHoplite:
+        sInstance->mAtlanteanHopliteDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::mayanHoplite:
+        sInstance->mMayanHopliteDie.playRandomSound(eSoundType::voice);
         break;
 
     case eCharacterType::archer:
-        sInstance->mArcherDie.playRandomSound();
+    case eCharacterType::archerPoseidon:
+        sInstance->mArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::centaurArcher:
+        sInstance->mCentaurArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::persianArcher:
+        sInstance->mPersianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianArcher:
+        sInstance->mEgyptianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanArcher:
+        sInstance->mAtlanteanArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::phoenicianArcher:
+        sInstance->mPhoenicianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::mayanArcher:
+        sInstance->mMayanArcherHit.playRandomSound(eSoundType::event);
+        break;
+    
+    case eCharacterType::eliteCitizen:
+        sInstance->mNoblemanDie.playRandomSound(eSoundType::voice);
         break;
 
     case eCharacterType::disgruntled:
-        sInstance->mOutlawDie.playRandomSound();
+        sInstance->mOutlawDie.playRandomSound(eSoundType::voice);
         break;
 
     case eCharacterType::aresWarrior:
-        sInstance->mAresWarriorDie.playRandomSound();
+        sInstance->mAresWarriorDie.playRandomSound(eSoundType::voice);
         break;
 
     case eCharacterType::trojanHorseman:
-        sInstance->mTrojanHorseDie.playRandomSound();
+        sInstance->mTrojanHorseDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::trojanSpearthrower:
-        sInstance->mTrojanSpearthrowerDie.playRandomSound();
+        sInstance->mTrojanSpearthrowerDie.playRandomSound(eSoundType::voice);
+        break;
+    case eCharacterType::oceanidSpearthrower:
+        sInstance->mMerchantSpearDie.playRandomSound(eSoundType::voice);
         break;
     case eCharacterType::trojanHoplite:
-        sInstance->mTrojanSwordDie.playRandomSound();
+        sInstance->mTrojanSwordDie.playRandomSound(eSoundType::voice);
         break;
-
     case eCharacterType::calydonianBoar:
         sInstance->mCalydonianBoar.playDie();
         break;
@@ -959,12 +1067,11 @@ void eSounds::playDieSound(eCharacter* const c) {
     case eCharacterType::talos:
         sInstance->mTalos.playDie();
         break;
-
     case eCharacterType::satyr:
         sInstance->mSatyr.playDie();
         break;
     default:
-        sInstance->mGenDie.playRandomSound();
+        sInstance->mGenDie.playRandomSound(eSoundType::voice);
         break;
     }
 }
@@ -973,62 +1080,100 @@ void eSounds::playHitSound(eCharacter* const c) {
     const auto ct = c->type();
     switch(ct) {
     case eCharacterType::actor:
-        sInstance->mActorHit.playRandomSound();
+        sInstance->mActorHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::greekRockThrower:
     case eCharacterType::rockThrower:
-        sInstance->mRockthrowerHit.playRandomSound();
+        sInstance->mRockthrowerHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::boar:
-        sInstance->mBoarHit.playRandomSound();
+        sInstance->mBoarHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::hunter:
-        sInstance->mBoarHunterHit.playRandomSound();
+        sInstance->mBoarHunterHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::deer:
-        sInstance->mDeerHit.playRandomSound();
+        sInstance->mDeerHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::wolf:
-        sInstance->mWolfHit.playRandomSound();
+        sInstance->mWolfHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::sheep:
-        sInstance->mSheepHit.playRandomSound();
+        sInstance->mSheepHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::cattle1:
     case eCharacterType::cattle2:
     case eCharacterType::cattle3:
-        sInstance->mCattleHit.playRandomSound();
+        sInstance->mCattleHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::goat:
-        sInstance->mGoatHit.playRandomSound();
+        sInstance->mGoatHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
-        sInstance->mHopliteHit.playRandomSound();
+    case eCharacterType::hoplitePoseidon:
+        sInstance->mHopliteHit.playRandomSound(eSoundType::event);
         break;
-
+    case eCharacterType::persianHoplite:
+        sInstance->mPersianHopliteHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::oceanidHoplite:
+        sInstance->mMerchantInfantryHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianHoplite:
+        sInstance->mEgyptianHopliteHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanHoplite:
+        sInstance->mAtlanteanHopliteHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::mayanHoplite:
+        sInstance->mMayanHopliteHit.playRandomSound(eSoundType::event);
+        break;
     case eCharacterType::archer:
-        sInstance->mArcherHit.playRandomSound();
+    case eCharacterType::archerPoseidon:
+        sInstance->mArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::centaurArcher:
+        sInstance->mCentaurArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::persianArcher:
+        sInstance->mPersianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::egyptianArcher:
+        sInstance->mEgyptianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::atlanteanArcher:
+        sInstance->mAtlanteanArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::phoenicianArcher:
+        sInstance->mPhoenicianArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::mayanArcher:
+        sInstance->mMayanArcherHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::eliteCitizen:
+        sInstance->mNoblemanHit.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::disgruntled:
-        sInstance->mOutlawHit.playRandomSound();
+        sInstance->mOutlawHit.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aresWarrior:
-        sInstance->mAresWarriorHit.playRandomSound();
+        sInstance->mAresWarriorHit.playRandomSound(eSoundType::event);
         break;
-
     case eCharacterType::trojanHorseman:
-        sInstance->mTrojanHorseHit.playRandomSound();
+        sInstance->mTrojanHorseHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::trojanSpearthrower:
-        sInstance->mTrojanSpearthrowerHit.playRandomSound();
+        sInstance->mTrojanSpearthrowerHit.playRandomSound(eSoundType::event);
+        break;
+    case eCharacterType::oceanidSpearthrower:
+        sInstance->mMerchantSpearHit.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::trojanHoplite:
-        sInstance->mTrojanSwordHit.playRandomSound();
+        sInstance->mTrojanSwordHit.playRandomSound(eSoundType::event);
         break;
-
     case eCharacterType::aphrodite:
         sInstance->mAphrodite.playHit();
         break;
@@ -1071,7 +1216,6 @@ void eSounds::playHitSound(eCharacter* const c) {
     case eCharacterType::zeus:
         sInstance->mZeus.playHit();
         break;
-
     case eCharacterType::calydonianBoar:
         sInstance->mCalydonianBoar.playHit();
         break;
@@ -1120,12 +1264,11 @@ void eSounds::playHitSound(eCharacter* const c) {
     case eCharacterType::talos:
         sInstance->mTalos.playHit();
         break;
-
     case eCharacterType::satyr:
         sInstance->mSatyr.playHit();
         break;
     default:
-        sInstance->mGenHit.playRandomSound();
+        sInstance->mGenHit.playRandomSound(eSoundType::event);
         break;
     }
 }
@@ -1885,15 +2028,13 @@ void eSounds::loadImpl() {
     mActorDie.addPath(wavsDir + "actor_die.wav");
     mActorHit.addPath(wavsDir + "actor_hit.wav");
 
-    for(const auto& s : {"am_warr_atk1.wav",
-                         "am_warr_atk2.wav"}) {
+    // Rock thrower sounds (using rabble sounds as generic)
+    for(const auto& s : {"rabble_rock1.wav",
+                         "rabble_rock2.wav"}) {
         mRockthrowerAttack.addPath(wavsDir + s);
     }
-    for(const auto& s : {"am_arch_die.wav",
-                         "am_warr_die.wav"}) {
-        mRockthrowerDie.addPath(wavsDir + s);
-    }
-    mRockthrowerHit.addPath(wavsDir + "am_warr_hit.wav");
+    mRockthrowerDie.addPath(wavsDir + "rabble_die.wav");
+    mRockthrowerHit.addPath(wavsDir + "rabble_hit.wav");
 
     mBoarAttack.addPath(wavsDir + "boar_attack.wav");
     mBoarDie.addPath(wavsDir + "boar_die.wav");
@@ -1922,10 +2063,44 @@ void eSounds::loadImpl() {
     mOutlawDie.addPath(wavsDir + "outlaw_die.wav");
     mOutlawHit.addPath(wavsDir + "outlaw_hit.wav");
 
+    for(const auto& s : {"hop_spear1.wav",
+                         "hop_spear2.wav",
+                        }) {
+        mHopliteAttack.addPath(wavsDir + s);
+    }
+    mHopliteDie.addPath(wavsDir + "hop_die.wav");
+    mHopliteHit.addPath(wavsDir + "hop_spear_hit.wav");
+    for(const auto& s : {"horse_sword1.wav",
+                         "horse_sword2.wav"}) {
+        mTrojanHorseAttack.addPath(wavsDir + s);
+    }
+
+    // Civilization-specific cavalry sounds
+    for(const auto& s : {"pers_cav_atk1.wav",
+                         "pers_cav_atk2.wav"}) {
+        mPersianCavalryAttack.addPath(wavsDir + s);
+    }
+
+    for(const auto& s : {"Phoe_cav_atk1.wav",
+                         "Phoe_cav_atk2.wav"}) {
+        mPhoenicianCavalryAttack.addPath(wavsDir + s);
+    }
+
+    for(const auto& s : {"Eg_char_atk1.wav",
+                         "Eg_char_atk2.wav"}) {
+        mEgyptianChariotAttack.addPath(wavsDir + s);
+    }
+
+    for(const auto& s : {"At_char_atk1.wav",
+                         "At_char_atk2.wav"}) {
+        mAtlanteanChariotAttack.addPath(wavsDir + s);
+    }
+
     mArcherDie.addPath(wavsDir + "archer_die.wav");
     mArcherHit.addPath(wavsDir + "archer_hit.wav");
     for(const auto& s : {"archer_volley1.wav",
-                         "archer_volley2.wav"}) {
+                         "archer_volley2.wav"
+                         }) {
         mArcherAttack.addPath(wavsDir + s);
     }
 
@@ -1976,6 +2151,108 @@ void eSounds::loadImpl() {
                          "gen_hit8.wav"}) {
         mGenHit.addPath(wavsDir + s);
     }
+
+    // Amazon sounds
+    for(const auto& s : {"am_warr_atk1.wav",
+                         "am_warr_atk2.wav"}) {
+        mAmazonWarriorAttack.addPath(wavsDir + s);
+    }
+    mAmazonWarriorDie.addPath(wavsDir + "am_warr_die.wav");
+    mAmazonWarriorHit.addPath(wavsDir + "am_warr_hit.wav");
+
+    mAmazonArcherDie.addPath(wavsDir + "am_arch_die.wav");
+    mAmazonArcherHit.addPath(wavsDir + "am_arch_hit.wav");
+
+    // Centaur sounds
+    mCentaurArcherDie.addPath(wavsDir + "cent_arch_die.wav");
+    mCentaurArcherHit.addPath(wavsDir + "cent_arch_hit.wav");
+    mCentaurHorsemanDie.addPath(wavsDir + "cent_sword_die.wav");
+    mCentaurHorsemanHit.addPath(wavsDir + "cent_sword_hit.wav");
+    mCentaurSwordDie.addPath(wavsDir + "cent_sword_die.wav");
+    mCentaurSwordHit.addPath(wavsDir + "cent_sword_hit.wav");
+
+    // Egyptian sounds
+    mEgyptianArcherDie.addPath(wavsDir + "Eg_arch_die.wav");
+    mEgyptianArcherHit.addPath(wavsDir + "Eg_arch_hit.wav");
+    mEgyptianChariotDie.addPath(wavsDir + "Eg_char_die.wav");
+    mEgyptianChariotHit.addPath(wavsDir + "Eg_char_hit.wav");
+    for(const auto& s : {"Eg_inf_atk1.wav",
+                         "Eg_inf_atk2.wav"}) {
+        mEgyptianHopliteAttack.addPath(wavsDir + s);
+    }
+    mEgyptianHopliteDie.addPath(wavsDir + "Eg_inf_die.wav");
+    mEgyptianHopliteHit.addPath(wavsDir + "Eg_inf_hit.wav");
+
+    // Atlantean sounds
+    mAtlanteanArcherDie.addPath(wavsDir + "At_arch_die.wav");
+    mAtlanteanArcherHit.addPath(wavsDir + "At_arch_hit.wav");
+    mAtlanteanChariotDie.addPath(wavsDir + "At_char_die.wav");
+    mAtlanteanChariotHit.addPath(wavsDir + "At_char_hit.wav");
+    for(const auto& s : {"At_inf_atk1.wav",
+                         "At_inf_atk2.wav"}) {
+        mAtlanteanHopliteAttack.addPath(wavsDir + s);
+    }
+    mAtlanteanHopliteDie.addPath(wavsDir + "At_inf_die.wav");
+    mAtlanteanHopliteHit.addPath(wavsDir + "At_inf_hit.wav");
+    for(const auto& s : {"At_marines_atk1.wav",
+                         "At_marines_atk2.wav"}) {
+        mAtlanteanMarinesAttack.addPath(wavsDir + s);
+    }
+    mAtlanteanMarinesDie.addPath(wavsDir + "At_marines_die.wav");
+    mAtlanteanMarinesHit.addPath(wavsDir + "At_marines_hit.wav");
+    mAtlanteanSentryDie.addPath(wavsDir + "At_sentry_die.wav");
+    mAtlanteanSentryHit.addPath(wavsDir + "At_sentry_hit.wav");
+
+    // Mayan sounds
+    mMayanArcherDie.addPath(wavsDir + "May_arch_die.wav");
+    mMayanArcherHit.addPath(wavsDir + "May_arch_hit.wav");
+    for(const auto& s : {"May_inf_atk1.wav",
+                         "May_inf_atk2.wav"}) {
+        mMayanHopliteAttack.addPath(wavsDir + s);
+    }
+    mMayanHopliteDie.addPath(wavsDir + "May_inf_die.wav");
+    mMayanHopliteHit.addPath(wavsDir + "May_inf_hit.wav");
+
+    // Phoenician sounds
+    mPhoenicianArcherDie.addPath(wavsDir + "Phoe_arch_die.wav");
+    mPhoenicianArcherHit.addPath(wavsDir + "Phoe_arch_hit.wav");
+    mPhoenicianHorsemanDie.addPath(wavsDir + "Phoe_cav_die.wav");
+    mPhoenicianHorsemanHit.addPath(wavsDir + "Phoe_cav_hit.wav");
+
+    // Persian sounds
+    mPersianArcherDie.addPath(wavsDir + "pers_inf_die.wav");
+    mPersianArcherHit.addPath(wavsDir + "pers_inf_hit.wav");
+    mPersianHorsemanDie.addPath(wavsDir + "pers_cav_die.wav");
+    mPersianHorsemanHit.addPath(wavsDir + "pers_cav_hit.wav");
+    for(const auto& s : {"pers_inf_atk1.wav",
+                         "pers_inf_atk2.wav"}) {
+        mPersianHopliteAttack.addPath(wavsDir + s);
+    }
+    mPersianHopliteDie.addPath(wavsDir + "pers_inf_die.wav");
+    mPersianHopliteHit.addPath(wavsDir + "pers_inf_hit.wav");
+
+    // Merchant/Marine sounds
+    for(const auto& s : {"Mer_inf_atk1.wav",
+                         "Mer_inf_atk2.wav"}) {
+        mMerchantInfantryAttack.addPath(wavsDir + s);
+    }
+    mMerchantInfantryDie.addPath(wavsDir + "Mer_inf_die.wav");
+    mMerchantInfantryHit.addPath(wavsDir + "Mer_inf_hit.wav");
+    for(const auto& s : {"Mer_spear_atk1.wav",
+                         "Mer_spear_atk2.wav"}) {
+        mMerchantSpearAttack.addPath(wavsDir + s);
+    }
+    mMerchantSpearDie.addPath(wavsDir + "Mer_spear_die.wav");
+    mMerchantSpearHit.addPath(wavsDir + "Mer_spear_hit.wav");
+
+    // Missing sound assignments
+    mElephantDie.addPath(wavsDir + "elephant_die.wav");
+    mElephantHit.addPath(wavsDir + "elephant hit.wav");
+    mNoblemanAttack.addPath(wavsDir + "nobleman_attack.wav");
+    mNoblemanDie.addPath(wavsDir + "nobleman_die.wav");
+    mNoblemanHit.addPath(wavsDir + "nobleman_hit.wav");
+    mPersianMissileDie.addPath(wavsDir + "pers_missile_die.wav");
+    mPersianMissileHit.addPath(wavsDir + "pers_missile_hit.wav");
 
 
     const std::string walkerDir{eGameDir::path("Audio/Voice/Walker/")};

@@ -377,7 +377,8 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
         }
         const auto targetCity = board->world().cityWithId(targetCid);
         const bool canInvade = targetCity &&
-                               !board->hasActiveInvasions(targetCid);
+                               !board->hasActiveInvasions(targetCid) &&
+                               board->date().year() > mNextInvasionYear;
         if(canInvade && (eRand::rand() % 12 == 0)) {
             const auto e = e::make_shared<eInvasionEvent>(
                 targetCid, eGameEventBranch::root, *board);
@@ -392,6 +393,7 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
             e->setWarningMonths(4);
             e->initializeDate(board->date());
             board->addRootGameEvent(e);
+            mNextInvasionYear = board->date().year() + 1 + eRand::rand() % 3;
         }
     }
 
@@ -564,26 +566,20 @@ void eWorldCity::addSells(const eResourceTrade& s) {
     mSells.push_back(s);
 }
 
-void swrite(eWriteStream& dst,
-            const std::vector<eResourceTrade>& v) {
-    dst << v.size();
-    for(const auto& vv : v) {
-        vv.write(dst);
-    }
-}
-
 void eWorldCity::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
     const_cast<eWorldCity*>(this)->serialize(ar, nullptr);
 }
 
-void sread(eReadStream& src,
-           std::vector<eResourceTrade>& v) {
-    int n;
-    src >> n;
+void serializeResourceTrades(eSaveArchive& ar,
+                             const char* const name,
+                             std::vector<eResourceTrade>& v) {
+    int n = ar.writing() ? static_cast<int>(v.size()) : 0;
+    ar.field(std::string(name) + ".count", n);
+    if(ar.reading()) v.clear();
     for(int i = 0; i < n; i++) {
-        auto& vv = v.emplace_back();
-        vv.read(src);
+        auto& vv = ar.reading() ? v.emplace_back() : v[i];
+        vv.serialize(ar);
     }
 }
 
@@ -685,19 +681,13 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
     }
 
     ar.field("mVisible", mVisible);
-    if(ar.reading()) {
-        mBuys.clear();
-        mSells.clear();
-        sread(ar.readStream(), mBuys);
-        sread(ar.readStream(), mSells);
-    } else {
-        swrite(ar.writeStream(), mBuys);
-        swrite(ar.writeStream(), mSells);
-    }
+    serializeResourceTrades(ar, "mBuys", mBuys);
+    serializeResourceTrades(ar, "mSells", mSells);
     ar.field("mTributeType", mTributeType);
     ar.field("mTributeCount", mTributeCount);
     ar.field("mRecTributeType", mRecTributeType);
     ar.field("mRecTributeCount", mRecTributeCount);
+    ar.field("mNextInvasionYear", mNextInvasionYear);
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count) {

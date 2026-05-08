@@ -7,9 +7,9 @@
 #include "eresourcetype.h"
 #include "pointers/estdselfref.h"
 #include "fileIO/estreams.h"
+#include "fileIO/esavearchive.h"
 #include "engine/ecityid.h"
 
-class eSaveArchive;
 class eWorldBoard;
 
 enum class eNationality {
@@ -125,31 +125,36 @@ struct eResourceTrade {
     }
 
     void write(eWriteStream& dst) const {
-        dst << fType;
-
-        dst << fUsed.size();
-        for(const auto& u : fUsed) {
-            dst << u.first;
-            dst << u.second;
-        }
-
-        dst << fMax;
+        eSaveArchive ar(dst);
+        const_cast<eResourceTrade*>(this)->serialize(ar);
     }
 
     void read(eReadStream& src) {
-        src >> fType;
+        eSaveArchive ar(src);
+        serialize(ar);
+    }
 
-        int nu;
-        src >> nu;
+    void serialize(eSaveArchive& ar) {
+        ar.field("fType", fType);
+
+        int nu = ar.writing() ? static_cast<int>(fUsed.size()) : 0;
+        ar.field("fUsed.count", nu);
+        if(ar.reading()) fUsed.clear();
         for(int i = 0; i < nu; i++) {
             ePlayerId pid;
-            src >> pid;
             int c;
-            src >> c;
-            fUsed[pid] = c;
+            if(ar.writing()) {
+                auto it = fUsed.begin();
+                std::advance(it, i);
+                pid = it->first;
+                c = it->second;
+            }
+            ar.field("fUsed.pid", pid);
+            ar.field("fUsed.count", c);
+            if(ar.reading()) fUsed[pid] = c;
         }
 
-        src >> fMax;
+        ar.field("fMax", fMax);
     }
 };
 
@@ -369,6 +374,8 @@ private:
 
     eResourceType mRecTributeType = eResourceType::drachmas;
     int mRecTributeCount = 100;
+
+    int mNextInvasionYear = -1000000;
 };
 
 #endif // EWORLDCITY_H
