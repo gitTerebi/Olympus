@@ -390,8 +390,9 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
             e->setMaxPointId(16);
             e->setMinCount(8*strength);
             e->setMaxCount(12*strength);
-            e->setWarningMonths(4);
-            e->initializeDate(board->date());
+            e->setWarningMonths(1);
+            auto date = board->date() + 31;
+            e->initializeDate(date);
             board->addRootGameEvent(e);
             mNextInvasionYear = board->date().year() + 1 + eRand::rand() % 3;
         }

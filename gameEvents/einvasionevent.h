@@ -14,6 +14,11 @@ class ePlayerConquestEvent;
 class eInvasionWarning;
 class eSaveArchive;
 
+enum class eInvasionResult {
+    invaderWonOrPlayerSurrendered,
+    invaderDefeated
+};
+
 class eInvasionEvent : public eGameEvent,
                        public ePointEventValue,
                        public eCityEventValue,
@@ -74,6 +79,7 @@ private:
     void soldiersByType(int& infantry,
                         int& cavalry,
                         int& archers) const;
+    void restoreAttitudeAfterInvasion(const eInvasionResult result);
     int bribeCost() const;
     void updateDisembarkAndShoreTile();
 
