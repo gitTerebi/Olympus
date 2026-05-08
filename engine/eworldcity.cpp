@@ -4,7 +4,9 @@
 #include "egifthelpers.h"
 #include "evectorhelpers.h"
 #include "engine/egameboard.h"
+#include "gameEvents/einvasionevent.h"
 #include "fileIO/esavearchive.h"
+#include "erand.h"
 
 #include <iterator>
 
@@ -222,7 +224,8 @@ eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const {
         else if(iat < 80) at = eCityAttitude::dedicated;
         else at = eCityAttitude::devoted;
     } else { // rival
-        if(iat < 20) at = eCityAttitude::furious;
+        if(iat < 10) at = eCityAttitude::hostile;
+        else if(iat < 20) at = eCityAttitude::furious;
         else if(iat < 40) at = eCityAttitude::displeased;
         else if(iat < 60) at = eCityAttitude::apatheticR;
         else if(iat < 80) at = eCityAttitude::respectful;
@@ -363,6 +366,27 @@ std::string eWorldCity::anArmy() const {
 }
 
 void eWorldCity::nextMonth(eGameBoard* const board) {
+    const auto ppid = board->personPlayer();
+    if(isRival() && active() && visible() &&
+       attitudeClass(ppid) == eCityAttitude::hostile) {
+        const auto targetCid = board->personPlayerCapital();
+        const auto targetCity = board->world().cityWithId(targetCid);
+        const bool canInvade = targetCity &&
+                               !board->hasActiveInvasions(targetCid);
+        if(canInvade && eRand::rand() % 3 == 0) {
+            const auto e = e::make_shared<eInvasionEvent>(
+                targetCid, eGameEventBranch::root, *board);
+            e->setSingleCity(board->world().cityWithId(mCityId));
+            e->setMinPointId(1);
+            e->setMaxPointId(8);
+            e->setMinCount(8*mMilitaryStrength);
+            e->setMaxCount(12*mMilitaryStrength);
+            e->setWarningMonths(4);
+            e->initializeDate(board->date());
+            board->addRootGameEvent(e);
+        }
+    }
+
     const auto diff = board->personPlayerDifficulty();
     double mult;
     switch(diff) {

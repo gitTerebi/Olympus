@@ -224,7 +224,13 @@ void eEditorSettingsMenu::initialize(const bool first,
         mythMenu->setType(eFrameType::message);
         mythMenu->resize(width(), height());
 
-        const auto cids = ep->fBoard->citiesOnBoard();
+        auto cids = ep->fBoard->citiesOnBoard();
+        for(const auto& e : ep->fEvents) {
+            const auto cid = e.first;
+            if(!eVectorHelpers::contains(cids, cid)) {
+                cids.push_back(cid);
+            }
+        }
         for(const auto cid : cids) {
             const auto eventsAct = [this, ep, cid]() {
                 const auto choose = new eEventSelectionWidget(

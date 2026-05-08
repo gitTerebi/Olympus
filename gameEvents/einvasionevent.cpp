@@ -146,7 +146,7 @@ void eInvasionEvent::trigger() {
     if(!board) return;
     if(!mWarned) {
         choosePointId();
-        chooseCity();
+        if(!mCity) chooseCity();
         updateDisembarkAndShoreTile();
     }
     chooseCount();
@@ -328,7 +328,7 @@ void eInvasionEvent::setFirstWarning(const eDate& w) {
     const auto board = gameBoard();
     if(!board) return;
     choosePointId();
-    chooseCity();
+    if(!mCity) chooseCity();
     if(!mCity) return;
     updateDisembarkAndShoreTile();
     board->addInvasion(this);

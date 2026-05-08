@@ -15,6 +15,7 @@
 #include "eswitchbutton.h"
 
 #include <algorithm>
+#include <cmath>
 
 class eTributeSettingsWidget : public eFramedWidget {
 public:
@@ -56,6 +57,14 @@ public:
                innerWidget->y() + innerWidget->height() + p);
     }
 };
+
+std::string attitudeTextToPlayer(const stdsptr<eWorldCity>& c,
+                                 const ePlayerId ppid) {
+    const auto attitude = c->attitudeClass(ppid);
+    const int iat = std::ceil(c->attitude(ppid));
+    return eWorldCity::sAttitudeName(attitude) +
+           " (" + std::to_string(iat) + ")";
+}
 
 void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                                      eGameBoard* const board,
@@ -236,8 +245,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             directionButton->setVisible(type == eCityType::distantCity);
             buttonsW1->stackVertically(p, true);
 
-            const auto attitude = c->attitudeClass(ppid);
-            attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
+            attitudeButton->setText(attitudeTextToPlayer(c, ppid));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
         };
@@ -276,8 +284,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
             relationshipButton->fitContent();
             relationshipButton->align(eAlignment::hcenter);
 
-            const auto attitude = c->attitudeClass(ppid);
-            attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
+            attitudeButton->setText(attitudeTextToPlayer(c, ppid));
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
         };
@@ -314,8 +321,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
     visibleButton->align(eAlignment::hcenter);
 
     attitudeButton->setUnderline(false);
-    const auto attitude = c->attitudeClass(ppid);
-    attitudeButton->setText(eWorldCity::sAttitudeName(attitude));
+    attitudeButton->setText(attitudeTextToPlayer(c, ppid));
     attitudeButton->fitContent();
     attitudeButton->setPressAction([this, attitudeButton, c, ppid]() {
         const auto d = new eChooseButton(window());
@@ -348,7 +354,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity>& c,
                           c, attitudeButton](const int val) {
             c->setAttitude(10 + val*20, ppid);
             const auto name = attitudeNames[val];
-            attitudeButton->setText(name);
+            attitudeButton->setText(name + " (" +
+                                    std::to_string(c->attitude(ppid)) + ")");
             attitudeButton->fitContent();
             attitudeButton->align(eAlignment::hcenter);
         };
