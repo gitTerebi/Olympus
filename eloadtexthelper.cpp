@@ -6,7 +6,6 @@
 bool eLoadTextHelper::load(const std::string& path, eMap& map) {
     std::ifstream file(path);
     if(!file.good()) {
-        printf("File missing %s\n", path.c_str());
         return false;
     }
     std::string str;

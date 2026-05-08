@@ -724,7 +724,8 @@ public:
                       const ePlayerId pid,
                       const bool fertile = false,
                       const bool flat = false,
-                      const int allowedWater = 0) const;
+                      const int allowedWater = 0,
+                      const bool allowOnWall = false) const;
     bool canBuild(const int tx, const int ty,
                   const int sw, const int sh,
                   const bool forestAllowed,
@@ -742,7 +743,8 @@ public:
                    const bool editorDisplay,
                    const bool fertile = false,
                    const bool flat = false,
-                   const int allowWater = 0);
+                   const int allowWater = 0,
+                   const bool allowOnWall = false);
     bool build(const int tx, const int ty,
                const int sw, const int sh,
                const eCityId cid,
@@ -750,7 +752,9 @@ public:
                const bool editorDisplay,
                const eBuildingCreator& bc,
                const bool fertile = false,
-               const bool flat = false);
+               const bool flat = false,
+               const int allowWater = 0,
+               const bool allowOnWall = false);
 
     using eDA = eCharacter;
     using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;

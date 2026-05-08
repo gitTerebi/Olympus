@@ -8,22 +8,12 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolaction.h"
 
-#include <fstream>
-
-static void loadDebugLog(const std::string& msg) {
-    std::ofstream log("load-debug.log", std::ios::app);
-    log << msg << '\n';
-    log.flush();
-}
-
 eReadStream::eReadStream(const eReadSource& src) :
     mSrc(src) {}
 
 void eReadStream::readFormat() {
     *this >> mFormat;
     *this >> mFormatVersion;
-    loadDebugLog("readFormat format=" + mFormat +
-                 " version=" + std::to_string(mFormatVersion));
 }
 
 eTile* eReadStream::readTile(eGameBoard& board) {
@@ -228,15 +218,8 @@ void eReadStream::addPostFunc(const eFunc& func, const char* tag) {
 
 void eReadStream::handlePostFuncs() {
     const int n = (int)mPostFuncs.size();
-    loadDebugLog("handlePostFuncs begin count=" + std::to_string(n));
     for(int i = 0; i < n; i++) {
-        const auto tag = mPostFuncs[i].second ? mPostFuncs[i].second : "?";
-        loadDebugLog("handlePostFuncs before " + std::to_string(i) +
-                     "/" + std::to_string(n) + " tag=" + tag);
         mPostFuncs[i].first();
-        loadDebugLog("handlePostFuncs after " + std::to_string(i) +
-                     "/" + std::to_string(n) + " tag=" + tag);
     }
     mPostFuncs.clear();
-    loadDebugLog("handlePostFuncs done");
 }

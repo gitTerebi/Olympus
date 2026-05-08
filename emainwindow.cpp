@@ -65,12 +65,6 @@ bool writeGameSaveFile(const std::string& path,
 #include "widgets/eepisodelostwidget.h"
 #include "widgets/erosterofleaders.h"
 
-static void loadDebugLogMain(const std::string& msg) {
-    std::ofstream log("load-debug.log", std::ios::app);
-    log << msg << '\n';
-    log.flush();
-}
-
 eMainWindow::eMainWindow() {}
 
 eMainWindow::~eMainWindow() {
@@ -396,11 +390,6 @@ bool eMainWindow::saveGame(const std::string& path) {
 }
 
 bool eMainWindow::loadGame(const std::string& path) {
-    {
-        std::ofstream log("load-debug.log", std::ios::trunc);
-        log << "loadGame path=" << path << '\n';
-        log.flush();
-    }
     std::ifstream file(path, std::ios::in | std::ios::binary);
     if(!file) return false;
     eReadSource source(&file);
@@ -417,26 +406,16 @@ bool eMainWindow::loadGame(const std::string& path) {
         printf("Attempting to read '%s' format '%s' version '%i' newer than the executable.\n",
                path.c_str(), format.c_str(), version);
     }
-    loadDebugLogMain("loadGame settings begin");
     eGameWidgetSettings s;
     s.read(src);
-    loadDebugLogMain("loadGame settings done");
-    loadDebugLogMain("loadGame campaign begin");
     const auto c = std::make_shared<eCampaign>();
     c->read(src);
-    loadDebugLogMain("loadGame campaign read done");
-    loadDebugLogMain("loadGame strings begin");
     c->loadStrings();
-    loadDebugLogMain("loadGame numbers begin");
     c->loadNumbers();
-    loadDebugLogMain("loadGame post funcs begin");
     src.handlePostFuncs();
-    loadDebugLogMain("loadGame post funcs done");
     file.close();
 
-    loadDebugLogMain("loadGame startGameAction begin");
     startGameAction(c, s);
-    loadDebugLogMain("loadGame done");
     return true;
 }
 

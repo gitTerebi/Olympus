@@ -136,14 +136,10 @@ void readEpisodeAllowedBuildings(eEpisode& ep, ZeusFile& file,
         const auto allowedByte = file.readUByte();
         file.skipBytes(1);
         if(type == eBuildingType::grandAgora) file.skipBytes(2);
-        if(allowedByte != 1) {
-            printf("%s %i\n", eBuilding::sNameForBuilding(type).c_str(), allowedByte);
-        }
         const bool allowed = allowedByte == 1;
         if(allowed) av.allow(type);
         else av.disallow(type);
     }
-    printf("\n");
 }
 
 void readEpisodeResources(eEpisode& ep, ZeusFile& file,
@@ -157,11 +153,6 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
         const auto resourceByte = file.readUByte();
         const auto type = pakCityResourceByteToType(
                               resourceByte, poseidon);
-        if(type != eResourceType::none) {
-            printf("%s\n", eResourceTypeHelpers::typeName(type).c_str());
-        } else {
-            printf("none\n");
-        }
         switch(type) {
         case eResourceType::urchin:
             av.allow(eBuildingType::urchinQuay);
@@ -225,7 +216,6 @@ void readEpisodeResources(eEpisode& ep, ZeusFile& file,
             break;
         }
     }
-    printf("\n");
 }
 
 struct ePakMonster {
@@ -255,17 +245,13 @@ void readEpisodeAllowedSanctuaries(eEpisode& ep, ZeusFile& file,
             ep.fFriendlyGods[cid].push_back(v.fType);
         }
         if(v.fValid) {
-            printf("%s %i\n", eGod::sGodName(v.fType).c_str(),
-                   sanctuaryByte);
+            // removed printf
         }
     }
-    printf("\n");
     file.skipBytes(6);
 
     const uint8_t maxSanct = file.readUByte();
     ep.fMaxSanctuaries[cid] = maxSanct;
-    printf("max sanctuaries %i\n", maxSanct);
-    printf("\n");
 }
 
 enum class ePakEventType {
@@ -403,7 +389,6 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
     const auto version = file.version();
     const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
     auto& events = ep.fEvents[cid];
-    printf("%i events\n", nEvents);
     std::map<int, uint16_t> triggerMap;
     for(int i = 0; i < nEvents; i++) {
         const uint8_t eventTypeId = file.readUByte();
@@ -970,9 +955,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         triggerMap[i] = triggeredEventId;
         events.push_back(e);
 
-        printf("%s\n", e->longDatedName().c_str());
+        // removed printf
     }
-    printf("\n");
 
     for(const auto& m : triggerMap) {
         const uint16_t toId = m.second;
@@ -1069,16 +1053,7 @@ void readEpisodeEnabledPyramids(
         }
         p.fAllowed = p.fAllowed || enabled;
         file.skipBytes(11);
-        if(p.fAllowed) {
-            const auto name = eBuilding::sNameForBuilding(p.fType);
-            printf("%s", name.c_str());
-            for(const bool l : p.fLevels) {
-                printf(l ? " b" : " w");
-            }
-            printf("\n");
-        }
     }
-    printf("\n");
 }
 
 void applyPyramidsToEpisode(const std::vector<ePakPyramid>& pyramids,
@@ -1247,7 +1222,6 @@ void readEpisodeGoal(eEpisode& ep, ZeusFile& file, const eCityId cid) {
         break;
     }
 
-    printf("%s\n", goal->text(false, false, *ep.fBoard).c_str());
     ep.fGoals.push_back(goal);
 }
 
@@ -1308,7 +1282,6 @@ void eCampaign::readPak(const std::string& title,
 
     const auto atlanteanStr = file.isAtlantean() ? "atlantean" : "greek";
 
-    printf("%s %s %s\n", title.c_str(), versionStr.c_str(), atlanteanStr);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
 
     uint8_t bitmapId;
@@ -1379,12 +1352,11 @@ void eCampaign::readPak(const std::string& title,
                 v.fType = pakIdToGodType(godId, v.fValid);
                 file.skipBytes(3);
                 if(v.fValid) {
-                    printf("Opponent % i %s\n", i, eGod::sGodName(v.fType).c_str());
+                    // removed printf
                 } else {
                     printf("No opponent god %i\n", i);
                 }
             }
-            printf("\n");
             file.seek(35784 + i*epInc);
             for(int i = 0; i < 6; i++) {
                 auto& v = friendlyGods[i];
@@ -1392,17 +1364,16 @@ void eCampaign::readPak(const std::string& title,
                 v.fType = pakIdToGodType(godId, v.fValid);
                 file.skipBytes(3);
                 if(v.fValid) {
-                    printf("Friendly % i %s\n", i, eGod::sGodName(v.fType).c_str());
+                    // removed printf
                 } else {
                     printf("No friendly god %i\n", i);
                 }
             }
-            printf("\n");
             file.seek(35832 + i*epInc);
             const uint8_t monsterId = file.readUByte();
             independentMonster.fType = pakIdToMonsterType(monsterId, independentMonster.fValid);
             if(independentMonster.fValid) {
-                printf("%s\n\n", eMonster::sMonsterName(independentMonster.fType).c_str());
+                // removed printf
             } else {
                 printf("No independent monster\n\n");
             }
@@ -1449,7 +1420,6 @@ void eCampaign::readPak(const std::string& title,
         for(int j = 0; j < nGoals; j++) {
             readEpisodeGoal(*ep, file, parentCid);
         }
-        printf("\n");
         removeNullEvents(parentCid, *ep);
     }
 
@@ -1463,7 +1433,6 @@ void eCampaign::readPak(const std::string& title,
     setDate(eDate{1, eMonth::january, startDate});
 
     for(int i = 0; i < 4; i++) {
-        printf("colony episode %i:\n\n", i);
         auto& board = mColonyBoards.emplace_back();
         board = e::make_shared<eGameBoard>(mWorldBoard);
 
@@ -1534,7 +1503,6 @@ void eCampaign::readPak(const std::string& title,
         for(int j = 0; j < nGoals; j++) {
             readEpisodeGoal(*ep, file, colonyCid);
         }
-        printf("\n");
         removeNullEvents(colonyCid, *ep);
     }
 

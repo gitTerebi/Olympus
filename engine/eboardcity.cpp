@@ -422,9 +422,9 @@ bool eBoardCity::replace3By3AestheticByCommemorative() {
 
     const auto pid = mBoard.cityIdToPlayerId(mId);
     const bool r = mBoard.buildBase(rect.x, rect.y,
-                                    rect.x + rect.w - 1,
-                                    rect.y + rect.h - 1,
-                                    bc, pid, mId, true);
+                                     rect.x + rect.w - 1,
+                                     rect.y + rect.h - 1,
+                                     bc, pid, mId, true, false, false, 0, false);
     if(r) mAvailableBuildings.built(eBuildingType::commemorative, id);
     return r;
 }
