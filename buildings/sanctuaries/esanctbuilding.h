@@ -2,6 +2,7 @@
 #define ESANCTBUILDING_H
 
 #include "../ebuilding.h"
+#include "fileIO/esavearchive.h"
 
 struct eSanctCost {
     int fWood;
@@ -40,19 +41,21 @@ struct eSanctCost {
     }
 
     void read(eReadStream& src) {
-        src >> fWood;
-        src >> fMarble;
-        src >> fSculpture;
-        src >> fOrichalc;
-        src >> fBlackMarble;
+        eSaveArchive ar(src);
+        ar.field("wood", fWood);
+        ar.field("marble", fMarble);
+        ar.field("sculpture", fSculpture);
+        ar.field("orichalc", fOrichalc);
+        ar.field("blackMarble", fBlackMarble);
     }
 
     void write(eWriteStream& dst) const {
-        dst << fWood;
-        dst << fMarble;
-        dst << fSculpture;
-        dst << fOrichalc;
-        dst << fBlackMarble;
+        eSaveArchive ar(dst);
+        ar.field("wood", const_cast<int&>(fWood));
+        ar.field("marble", const_cast<int&>(fMarble));
+        ar.field("sculpture", const_cast<int&>(fSculpture));
+        ar.field("orichalc", const_cast<int&>(fOrichalc));
+        ar.field("blackMarble", const_cast<int&>(fBlackMarble));
     }
 };
 

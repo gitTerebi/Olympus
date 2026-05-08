@@ -7,6 +7,7 @@
 #include "egatehouse.h"
 #include "ehippodromepiece.h"
 #include "elanguage.h"
+#include "fileIO/esavearchive.h"
 
 eRoad::eRoad(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::road, 1, 1, cid) {}
@@ -505,17 +506,19 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
 
 void eRoad::write(eWriteStream &dst) const {
     eBuilding::write(dst);
-    dst << mRoadblock;
+    eSaveArchive ar(dst);
+    ar.field("roadblock", const_cast<bool&>(mRoadblock));
     dst.writeBuilding(mUnderAgora);
     dst.writeBuilding(mUnderGatehouse);
     dst.writeBuilding(mAboveHippodrome);
-    dst << mCharacterAltitude;
+    ar.field("characterAltitude", const_cast<char&>(mCharacterAltitude));
 }
 
 void eRoad::read(eReadStream &src) {
     eBuilding::read(src);
     auto& board = getBoard();
-    src >> mRoadblock;
+    eSaveArchive ar(src);
+    ar.field("roadblock", mRoadblock);
     src.readBuilding(&board, [this](eBuilding* const bb) {
         setUnderAgora(static_cast<eAgoraBase*>(bb));
     });
@@ -525,5 +528,5 @@ void eRoad::read(eReadStream &src) {
     src.readBuilding(&board, [this](eBuilding* const bb) {
         setAboveHippodrome(static_cast<eHippodromePiece*>(bb));
     });
-    src >> mCharacterAltitude;
+    ar.field("characterAltitude", mCharacterAltitude);
 }

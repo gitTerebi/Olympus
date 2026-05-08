@@ -4,6 +4,7 @@
 
 #include "fileIO/ewritestream.h"
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 
 #include "evectorhelpers.h"
 
@@ -29,21 +30,36 @@ void eMonstersEventValue::setMonsterTypes(const std::vector<eMonsterType> &types
 }
 
 void eMonstersEventValue::write(eWriteStream &dst) const {
-    dst << mMonster;
+    eSaveArchive ar(dst);
+    ar.field("mMonster", const_cast<eMonsterType&>(mMonster));
 
-    for(const auto& v : mMonsters) {
-        dst << v.fType;
-        dst << v.fValid;
+    const char* const typeNames[] = {
+        "mMonster0Type", "mMonster1Type", "mMonster2Type"
+    };
+    const char* const validNames[] = {
+        "mMonster0Valid", "mMonster1Valid", "mMonster2Valid"
+    };
+    for(int i = 0; i < 3; i++) {
+        auto& v = const_cast<eMonsterTypeValid&>(mMonsters[i]);
+        ar.field(typeNames[i], v.fType);
+        ar.field(validNames[i], v.fValid);
     }
 }
 
 void eMonstersEventValue::read(eReadStream &src) {
-    src >> mMonster;
+    eSaveArchive ar(src);
+    ar.field("mMonster", mMonster);
 
+    const char* const typeNames[] = {
+        "mMonster0Type", "mMonster1Type", "mMonster2Type"
+    };
+    const char* const validNames[] = {
+        "mMonster0Valid", "mMonster1Valid", "mMonster2Valid"
+    };
     for(int i = 0; i < 3; i++) {
         auto& v = mMonsters[i];
-        src >> v.fType;
-        src >> v.fValid;
+        ar.field(typeNames[i], v.fType);
+        ar.field(validNames[i], v.fValid);
     }
 }
 

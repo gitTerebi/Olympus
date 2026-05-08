@@ -17,9 +17,9 @@ void eBoardCity::read(eReadStream& src) {
 void eBoardCity::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
-    src >> mId;
+    ar.field("id", mId);
 
-    src >> mAtlantean;
+    ar.field("atlantean", mAtlantean);
 
     mAvailableBuildings.read(src);
 
@@ -31,32 +31,32 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         mEditorDistrictConditions[i] = d.fReadyConditions;
     }
 
-    src >> mWageRate;
-    src >> mTaxRate;
-    src >> mTaxesPaidLastYear;
-    src >> mTaxesPaidThisYear;
-    src >> mPeoplePaidTaxesLastYear;
-    src >> mPeoplePaidTaxesThisYear;
+    ar.field("wageRate", mWageRate);
+    ar.field("taxRate", mTaxRate);
+    ar.field("taxesPaidLastYear", mTaxesPaidLastYear);
+    ar.field("taxesPaidThisYear", mTaxesPaidThisYear);
+    ar.field("peoplePaidTaxesLastYear", mPeoplePaidTaxesLastYear);
+    ar.field("peoplePaidTaxesThisYear", mPeoplePaidTaxesThisYear);
 
-    src >> mMaxSanctuaries;
+    ar.field("maxSanctuaries", mMaxSanctuaries);
 
-    src >> mImmigrationLimit;
-    src >> mNoFood;
+    ar.field("immigrationLimit", mImmigrationLimit);
+    ar.field("noFood", mNoFood);
     mNoFoodSince.read(src);
 
     int ne;
-    src >> ne;
+    ar.field("exportedCityCount", ne);
     for(int i = 0; i < ne; i++) {
         eCityId cid;
-        src >> cid;
+        ar.field("exportedCityId", cid);
         auto& e = mExported[cid];
         int nr;
-        src >> nr;
+        ar.field("exportedResourceCount", nr);
         for(int j = 0; j < nr; j++) {
             eResourceType r;
-            src >> r;
+            ar.field("exportedResource", r);
             int n;
-            src >> n;
+            ar.field("exportedAmount", n);
             e[r] = n;
         }
     }
@@ -64,38 +64,38 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     mEmplDistributor.read(src);
 
     int ns;
-    src >> ns;
+    ar.field("shutdownResourceCount", ns);
     for(int i = 0; i < ns; i++) {
         eResourceType type;
-        src >> type;
+        ar.field("shutdownResource", type);
         mShutDown.push_back(type);
     }
 
-    src >> mManTowers;
+    ar.field("manTowers", mManTowers);
 
-    src >> mShutdownLandTrade;
-    src >> mShutdownSeaTrade;
+    ar.field("shutdownLandTrade", mShutdownLandTrade);
+    ar.field("shutdownSeaTrade", mShutdownSeaTrade);
 
-    src >> mMaxRabble;
-    src >> mMaxHoplites;
-    src >> mMaxHorsemen;
+    ar.field("maxRabble", mMaxRabble);
+    ar.field("maxHoplites", mMaxHoplites);
+    ar.field("maxHorsemen", mMaxHorsemen);
 
-    src >> mAthleticsCoverage;
-    src >> mPhilosophyCoverage;
-    src >> mDramaCoverage;
-    src >> mAllDiscCoverage;
-    src >> mTaxesCoverage;
-    src >> mUnrest;
-    src >> mPopularity;
-    src >> mHealth;
-    src >> mExcessiveMilitaryServiceCount;
-    src >> mMonthsOfMilitaryService;
+    ar.field("athleticsCoverage", mAthleticsCoverage);
+    ar.field("philosophyCoverage", mPhilosophyCoverage);
+    ar.field("dramaCoverage", mDramaCoverage);
+    ar.field("allDiscCoverage", mAllDiscCoverage);
+    ar.field("taxesCoverage", mTaxesCoverage);
+    ar.field("unrest", mUnrest);
+    ar.field("popularity", mPopularity);
+    ar.field("health", mHealth);
+    ar.field("excessiveMilitaryServiceCount", mExcessiveMilitaryServiceCount);
+    ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
 
-    src >> mWonGames;
+    ar.field("wonGames", mWonGames);
 
     {
         int ni;
-        src >> ni;
+        ar.field("invasionHandlerCount", ni);
 
         for(int i = 0; i < ni; i++) {
             const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
@@ -105,7 +105,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int ngs;
-        src >> ngs;
+        ar.field("attackingGodCount", ngs);
         for(int i = 0; i < ngs; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
                 mAttackingGods.push_back(c);
@@ -115,7 +115,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int nms;
-        src >> nms;
+        ar.field("monsterCount", nms);
         for(int i = 0; i < nms; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
                 if(!c) return;
@@ -126,7 +126,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int n;
-        src >> n;
+        ar.field("plagueCount", n);
 
         for(int i = 0; i < n; i++) {
             const auto p = std::make_shared<ePlague>(mId, mBoard);
@@ -135,20 +135,20 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         }
     }
 
-    src >> mPop100;
-    src >> mPop500;
-    src >> mPop1000;
-    src >> mPop2000;
-    src >> mPop3000;
-    src >> mPop5000;
-    src >> mPop10000;
-    src >> mPop15000;
-    src >> mPop20000;
-    src >> mPop25000;
+    ar.field("pop100", mPop100);
+    ar.field("pop500", mPop500);
+    ar.field("pop1000", mPop1000);
+    ar.field("pop2000", mPop2000);
+    ar.field("pop3000", mPop3000);
+    ar.field("pop5000", mPop5000);
+    ar.field("pop10000", mPop10000);
+    ar.field("pop15000", mPop15000);
+    ar.field("pop20000", mPop20000);
+    ar.field("pop25000", mPop25000);
 
     {
         int na;
-        src >> na;
+        ar.field("militaryAidCount", na);
         for(int i = 0; i < na; i++) {
             const auto ma = std::make_shared<eMilitaryAid>();
             ma->read(src, &mBoard);
@@ -158,23 +158,23 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int nh;
-        src >> nh;
+        ar.field("summonedHeroCount", nh);
         for(int i = 0; i < nh; i++) {
             eHeroType h;
-            src >> h;
+            ar.field("summonedHero", h);
             mSummonedHeroes.push_back(h);
         }
     }
 
-    src >> mNextAttackPlanned;
+    ar.field("nextAttackPlanned", mNextAttackPlanned);
     mNextAttackDate.read(src);
 
     {
         int nq;
-        src >> nq;
+        ar.field("monsterEventCount", nq);
         for(int i = 0; i < nq; i++) {
             eMonsterType type;
-            src >> type;
+            ar.field("monsterEventType", type);
             src.readGameEvent(&mBoard, [this, type](eGameEvent* const e) {
                 if(!e) return;
                 const auto me = static_cast<eMonsterInvasionEventBase*>(e);
@@ -185,10 +185,10 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int nb;
-        src >> nb;
+        ar.field("soldierBannerCount", nb);
         for(int i = 0; i < nb; i++) {
             eBannerType type;
-            src >> type;
+            ar.field("soldierBannerType", type);
             const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
             b->read(src);
             registerSoldierBanner(b);
@@ -197,7 +197,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int nh;
-        src >> nh;
+        ar.field("hippodromeCount", nh);
         for(int i = 0; i < nh; i++) {
             const auto h = std::make_shared<eHippodrome>(mId, mBoard);
             h->read(src);
@@ -207,19 +207,19 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         int nr;
-        src >> nr;
+        ar.field("reinforcementCount", nr);
         for(int i = 0; i < nr; i++) {
             auto& r = mReinforcements.emplace_back();
             r.read(mBoard, src);
         }
     }
 
-    src >> mDefending;
+    ar.field("defending", mDefending);
     } else {
         auto& dst = ar.writeStream();
-    dst << mId;
+    ar.field("id", mId);
 
-    dst << mAtlantean;
+    ar.field("atlantean", mAtlantean);
 
     mAvailableBuildings.write(dst);
 
@@ -227,62 +227,70 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     mCityPlan.write(dst);
 
-    dst << mWageRate;
-    dst << mTaxRate;
-    dst << mTaxesPaidLastYear;
-    dst << mTaxesPaidThisYear;
-    dst << mPeoplePaidTaxesLastYear;
-    dst << mPeoplePaidTaxesThisYear;
+    ar.field("wageRate", mWageRate);
+    ar.field("taxRate", mTaxRate);
+    ar.field("taxesPaidLastYear", mTaxesPaidLastYear);
+    ar.field("taxesPaidThisYear", mTaxesPaidThisYear);
+    ar.field("peoplePaidTaxesLastYear", mPeoplePaidTaxesLastYear);
+    ar.field("peoplePaidTaxesThisYear", mPeoplePaidTaxesThisYear);
 
-    dst << mMaxSanctuaries;
+    ar.field("maxSanctuaries", mMaxSanctuaries);
 
-    dst << mImmigrationLimit;
-    dst << mNoFood;
+    ar.field("immigrationLimit", mImmigrationLimit);
+    ar.field("noFood", mNoFood);
     mNoFoodSince.write(dst);
 
-    dst << mExported.size();
+    int exportedCityCount = mExported.size();
+    ar.field("exportedCityCount", exportedCityCount);
     for(const auto& e : mExported) {
-        dst << e.first;
+        auto cityId = e.first;
+        ar.field("exportedCityId", cityId);
         const auto& map = e.second;
-        dst << map.size();
+        int exportedResourceCount = map.size();
+        ar.field("exportedResourceCount", exportedResourceCount);
         for(const auto& r : map) {
-            dst << r.first;
-            dst << r.second;
+            auto resource = r.first;
+            auto amount = r.second;
+            ar.field("exportedResource", resource);
+            ar.field("exportedAmount", amount);
         }
     }
 
     mEmplDistributor.write(dst);
 
-    dst << mShutDown.size();
+    int shutdownResourceCount = mShutDown.size();
+    ar.field("shutdownResourceCount", shutdownResourceCount);
     for(const auto i : mShutDown) {
-        dst << i;
+        auto resource = i;
+        ar.field("shutdownResource", resource);
     }
 
-    dst << mManTowers;
+    ar.field("manTowers", mManTowers);
 
-    dst << mShutdownLandTrade;
-    dst << mShutdownSeaTrade;
+    ar.field("shutdownLandTrade", mShutdownLandTrade);
+    ar.field("shutdownSeaTrade", mShutdownSeaTrade);
 
-    dst << mMaxRabble;
-    dst << mMaxHoplites;
-    dst << mMaxHorsemen;
+    ar.field("maxRabble", mMaxRabble);
+    ar.field("maxHoplites", mMaxHoplites);
+    ar.field("maxHorsemen", mMaxHorsemen);
 
-    dst << mAthleticsCoverage;
-    dst << mPhilosophyCoverage;
-    dst << mDramaCoverage;
-    dst << mAllDiscCoverage;
-    dst << mTaxesCoverage;
-    dst << mUnrest;
-    dst << mPopularity;
-    dst << mHealth;
-    dst << mExcessiveMilitaryServiceCount;
-    dst << mMonthsOfMilitaryService;
+    ar.field("athleticsCoverage", mAthleticsCoverage);
+    ar.field("philosophyCoverage", mPhilosophyCoverage);
+    ar.field("dramaCoverage", mDramaCoverage);
+    ar.field("allDiscCoverage", mAllDiscCoverage);
+    ar.field("taxesCoverage", mTaxesCoverage);
+    ar.field("unrest", mUnrest);
+    ar.field("popularity", mPopularity);
+    ar.field("health", mHealth);
+    ar.field("excessiveMilitaryServiceCount", mExcessiveMilitaryServiceCount);
+    ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
 
-    dst << mWonGames;
+    ar.field("wonGames", mWonGames);
 
     {
         const int ni = mInvasionHandlers.size();
-        dst << ni;
+        auto invasionHandlerCount = ni;
+        ar.field("invasionHandlerCount", invasionHandlerCount);
         for(const auto i : mInvasionHandlers) {
             i->write(dst);
         }
@@ -290,7 +298,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         const int ngs = mAttackingGods.size();
-        dst << ngs;
+        auto attackingGodCount = ngs;
+        ar.field("attackingGodCount", attackingGodCount);
         for(const auto g : mAttackingGods) {
             dst.writeCharacter(g);
         }
@@ -298,66 +307,77 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     {
         const int nms = mMonsters.size();
-        dst << nms;
+        auto monsterCount = nms;
+        ar.field("monsterCount", monsterCount);
         for(const auto g : mMonsters) {
             dst.writeCharacter(g);
         }
     }
 
     {
-        dst << mPlagues.size();
+        int plagueCount = mPlagues.size();
+        ar.field("plagueCount", plagueCount);
 
         for(const auto& p : mPlagues) {
             p->write(dst);
         }
     }
 
-    dst << mPop100;
-    dst << mPop500;
-    dst << mPop1000;
-    dst << mPop2000;
-    dst << mPop3000;
-    dst << mPop5000;
-    dst << mPop10000;
-    dst << mPop15000;
-    dst << mPop20000;
-    dst << mPop25000;
+    ar.field("pop100", mPop100);
+    ar.field("pop500", mPop500);
+    ar.field("pop1000", mPop1000);
+    ar.field("pop2000", mPop2000);
+    ar.field("pop3000", mPop3000);
+    ar.field("pop5000", mPop5000);
+    ar.field("pop10000", mPop10000);
+    ar.field("pop15000", mPop15000);
+    ar.field("pop20000", mPop20000);
+    ar.field("pop25000", mPop25000);
 
-    dst << mMilitaryAid.size();
+    int militaryAidCount = mMilitaryAid.size();
+    ar.field("militaryAidCount", militaryAidCount);
     for(const auto& a : mMilitaryAid) {
         a->write(dst);
     }
 
-    dst << mSummonedHeroes.size();
+    int summonedHeroCount = mSummonedHeroes.size();
+    ar.field("summonedHeroCount", summonedHeroCount);
     for(const auto h : mSummonedHeroes) {
-        dst << h;
+        auto hero = h;
+        ar.field("summonedHero", hero);
     }
 
-    dst << mNextAttackPlanned;
+    ar.field("nextAttackPlanned", mNextAttackPlanned);
     mNextAttackDate.write(dst);
 
-    dst << mMonsterEvents.size();
+    int monsterEventCount = mMonsterEvents.size();
+    ar.field("monsterEventCount", monsterEventCount);
     for(const auto& m : mMonsterEvents) {
-        dst << m.first;
+        auto monsterType = m.first;
+        ar.field("monsterEventType", monsterType);
         dst.writeGameEvent(m.second);
     }
 
-    dst << mSoldierBanners.size();
+    int soldierBannerCount = mSoldierBanners.size();
+    ar.field("soldierBannerCount", soldierBannerCount);
     for(const auto& s : mSoldierBanners) {
-        dst << s->type();
+        auto bannerType = s->type();
+        ar.field("soldierBannerType", bannerType);
         s->write(dst);
     }
 
-    dst << mHippodromes.size();
+    int hippodromeCount = mHippodromes.size();
+    ar.field("hippodromeCount", hippodromeCount);
     for(const auto& h : mHippodromes) {
         h->write(dst);
     }
 
-    dst << mReinforcements.size();
+    int reinforcementCount = mReinforcements.size();
+    ar.field("reinforcementCount", reinforcementCount);
     for(const auto& r : mReinforcements) {
         r.write(dst);
     }
 
-    dst << mDefending;
+    ar.field("defending", mDefending);
     }
 }

@@ -15,6 +15,7 @@
 
 #include "fileIO/ebuildingreader.h"
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 
 #include <algorithm>
 
@@ -130,32 +131,34 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
         oldCharacterIds.push_back({c, c->ioID()});
         c->setIOID(-1);
     }
+    eSaveArchive ar(src);
     int marker;
-    src >> marker;
+    ar.field("bundleMarker", marker);
     if (marker == -1)
     {
         int n;
-        src >> n;
+        ar.field("buildingCount", n);
         for (int i = 0; i < n; i++)
         {
-            size_t size;
-            src >> size;
+            int size;
+            ar.field("snapshotSize", size);
             if (size == 0 || size > data.size())
                 continue;
             std::vector<uint8_t> snapshot;
             snapshot.reserve(size);
             for (size_t j = 0; j < size; j++)
             {
-                uint8_t byte;
-                src >> byte;
-                snapshot.push_back(byte);
+                int byte;
+                ar.field("snapshotByte", byte);
+                snapshot.push_back(static_cast<uint8_t>(byte));
             }
             eReadSource bs(const_cast<void *>(
                 static_cast<const void *>(snapshot.data())));
             eReadStream bsrc(bs);
             bsrc.readFormat();
             eBuildingType type;
-            bsrc >> type;
+            eSaveArchive bar(bsrc);
+            bar.field("buildingType", type);
             const auto b = eBuildingReader::sRead(board, type, bsrc);
             if (!b)
                 continue;

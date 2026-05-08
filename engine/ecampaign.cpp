@@ -294,7 +294,8 @@ bool eCampaign::sReadGlossary(const std::string& name,
         eReadSource source(&file);
         eReadStream src(source);
         src.readFormat();
-        src >> glossary.fBitmap;
+        eSaveArchive ar(src);
+        ar.field("bitmap", glossary.fBitmap);
         file.close();
     }
     return true;
@@ -327,48 +328,48 @@ void eCampaign::write(eWriteStream& dst) const {
 void eCampaign::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
     auto& src = ar.readStream();
-    src >> mBitmap;
-    src >> mIsPak;
+    ar.field("bitmap", mBitmap);
+    ar.field("isPak", mIsPak);
     if(mIsPak) {
-        src >> mPakFilename;
+        ar.field("pakFilename", mPakFilename);
     }
     std::string name;
-    src >> name;
+    ar.field("name", name);
     if(mName.empty()) mName = name;
-    src >> mCurrentParentEpisode;
-    src >> mCurrentColonyEpisode;
-    src >> mCurrentEpisodeType;
+    ar.field("currentParentEpisode", mCurrentParentEpisode);
+    ar.field("currentColonyEpisode", mCurrentColonyEpisode);
+    ar.field("currentEpisodeType", mCurrentEpisodeType);
     {
         int nc;
-        src >> nc;
+        ar.field("drachmasCount", nc);
         for(int i = 0; i < nc; i++) {
             ePlayerId pid;
-            src >> pid;
-            src >> mDrachmas[pid];
+            ar.field("drachmasPlayerId", pid);
+            ar.field("drachmas", mDrachmas[pid]);
         }
     }
     mDate.read(src);
     for(auto& p : mPrices) {
-        src >> p.second;
+        ar.field("price", p.second);
     }
-    src >> mDifficulty;
+    ar.field("difficulty", mDifficulty);
     mWorldBoard.read(src);
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
     mParentBoard->read(src);
 
     {
         int ne;
-        src >> ne;
+        ar.field("playedColonyEpisodeCount", ne);
         for(int i = 0; i < ne; i++) {
             int e;
-            src >> e;
+            ar.field("playedColonyEpisode", e);
             mPlayedColonyEpisodes.push_back(e);
         }
     }
 
     {
         int nc;
-        src >> nc;
+        ar.field("colonyBoardCount", nc);
         for(int i = 0; i < nc; i++) {
             auto& b = mColonyBoards.emplace_back();
             const bool finished = colonyEpisodeFinished(i);
@@ -380,7 +381,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int ne;
-        src >> ne;
+        ar.field("parentCityEpisodeCount", ne);
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eParentCityEpisode>();
             e->fBoard = mParentBoard.get();
@@ -392,7 +393,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int ne;
-        src >> ne;
+        ar.field("colonyEpisodeCount", ne);
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eColonyEpisode>();
             e->fBoard = mColonyBoards[i].get();
@@ -404,7 +405,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int ne;
-        src >> ne;
+        ar.field("forColonyCount", ne);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
             set->read(src, &mWorldBoard);
@@ -413,7 +414,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
     }
     {
         int ne;
-        src >> ne;
+        ar.field("forParentCount", ne);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
             set->read(src, &mWorldBoard);
@@ -421,39 +422,46 @@ void eCampaign::serialize(eSaveArchive& ar) {
         }
     }
 
-    src >> mBriefId;
-    src >> mCompleteId;
+    ar.field("briefId", mBriefId);
+    ar.field("completeId", mCompleteId);
 
     } else {
     auto& dst = ar.writeStream();
-    dst << mBitmap;
-    dst << mIsPak;
+    ar.field("bitmap", mBitmap);
+    ar.field("isPak", mIsPak);
     if(mIsPak) {
-        dst << mPakFilename;
+        ar.field("pakFilename", mPakFilename);
     }
-    dst << mName;
-    dst << mCurrentParentEpisode;
-    dst << mCurrentColonyEpisode;
-    dst << mCurrentEpisodeType;
-    dst << mDrachmas.size();
+    ar.field("name", mName);
+    ar.field("currentParentEpisode", mCurrentParentEpisode);
+    ar.field("currentColonyEpisode", mCurrentColonyEpisode);
+    ar.field("currentEpisodeType", mCurrentEpisodeType);
+    int nc = mDrachmas.size();
+    ar.field("drachmasCount", nc);
     for(const auto& d : mDrachmas) {
-        dst << d.first;
-        dst << d.second;
+        auto playerId = d.first;
+        auto drachmas = d.second;
+        ar.field("drachmasPlayerId", playerId);
+        ar.field("drachmas", drachmas);
     }
     mDate.write(dst);
     for(const auto& p : mPrices) {
-        dst << p.second;
+        auto price = p.second;
+        ar.field("price", price);
     }
-    dst << mDifficulty;
+    ar.field("difficulty", mDifficulty);
     mWorldBoard.write(dst);
     mParentBoard->write(dst);
 
-    dst << mPlayedColonyEpisodes.size();
+    int playedColonyEpisodeCount = mPlayedColonyEpisodes.size();
+    ar.field("playedColonyEpisodeCount", playedColonyEpisodeCount);
     for(const int e : mPlayedColonyEpisodes) {
-        dst << e;
+        auto episode = e;
+        ar.field("playedColonyEpisode", episode);
     }
 
-    dst << mColonyBoards.size();
+    int colonyBoardCount = mColonyBoards.size();
+    ar.field("colonyBoardCount", colonyBoardCount);
     int cid = 0;
     for(const auto& b : mColonyBoards) {
         const bool finished = colonyEpisodeFinished(cid++);
@@ -461,28 +469,32 @@ void eCampaign::serialize(eSaveArchive& ar) {
         b->write(dst);
     }
 
-    dst << mParentCityEpisodes.size();
+    int parentCityEpisodeCount = mParentCityEpisodes.size();
+    ar.field("parentCityEpisodeCount", parentCityEpisodeCount);
     for(const auto& e : mParentCityEpisodes) {
         e->write(dst);
     }
 
-    dst << mColonyEpisodes.size();
+    int colonyEpisodeCount = mColonyEpisodes.size();
+    ar.field("colonyEpisodeCount", colonyEpisodeCount);
     for(const auto& e : mColonyEpisodes) {
         e->write(dst);
     }
 
-    dst << mForColony.size();
+    int forColonyCount = mForColony.size();
+    ar.field("forColonyCount", forColonyCount);
     for(const auto& e : mForColony) {
         e->write(dst);
     }
 
-    dst << mForParent.size();
+    int forParentCount = mForParent.size();
+    ar.field("forParentCount", forParentCount);
     for(const auto& e : mForParent) {
         e->write(dst);
     }
 
-    dst << mBriefId;
-    dst << mCompleteId;
+    ar.field("briefId", mBriefId);
+    ar.field("completeId", mCompleteId);
     }
 }
 

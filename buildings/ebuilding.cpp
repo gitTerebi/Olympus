@@ -2433,8 +2433,9 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     eWriteTarget target(mem);
     eWriteStream dst(target);
     dst.writeFormat("eZeus");
-    const auto btype = b->type();
-    dst << btype;
+    eSaveArchive ar(dst);
+    auto btype = b->type();
+    ar.field("buildingType", btype);
     eBuildingWriter::sWrite(b, dst);
     b->write(dst);
     const size_t written = dst.memPos();
@@ -2467,13 +2468,19 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
     }
 
     dst.writeFormat("eZeus");
-    dst << -1;
-    dst << id;
+    eSaveArchive ar(dst);
+    int marker = -1;
+    ar.field("bundleMarker", marker);
+    ar.field("buildingCount", id);
     for(const auto b : buildings) {
         if(!b) continue;
         const auto snapshot = sBuildingSnapshot(b);
-        dst << snapshot.size();
-        for(const auto byte : snapshot) dst << byte;
+        int snapshotSize = snapshot.size();
+        ar.field("snapshotSize", snapshotSize);
+        for(const auto byte : snapshot) {
+            int snapshotByte = byte;
+            ar.field("snapshotByte", snapshotByte);
+        }
     }
 
     for(const auto& p : oldBuildingIds) {

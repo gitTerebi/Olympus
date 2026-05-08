@@ -2,6 +2,7 @@
 #define EPROVIDERESOURCEHELPACTION_H
 
 #include "characters/actions/egodaction.h"
+#include "fileIO/esavearchive.h"
 
 enum class eProvideResourceHelpStage {
     none, appear, goTo, give, disappear
@@ -75,8 +76,9 @@ public:
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eStorageBuilding*>(b);
         });
-        src >> mResource;
-        src >> mCount;
+        eSaveArchive ar(src);
+        ar.field("resource", mResource);
+        ar.field("count", mCount);
         src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
             mAction = static_cast<eProvideResourceHelpAction*>(a);
         });
@@ -84,8 +86,9 @@ public:
 
     void write(eWriteStream& dst) const {
         dst.writeBuilding(mTarget);
-        dst << mResource;
-        dst << mCount;
+        eSaveArchive ar(dst);
+        ar.field("resource", const_cast<eResourceType&>(mResource));
+        ar.field("count", const_cast<int&>(mCount));
         dst.writeCharacterAction(mAction);
     }
 private:

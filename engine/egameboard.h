@@ -35,6 +35,7 @@
 #include "ecityrequest.h"
 #include "emessage.h"
 #include "eeventdata.h"
+#include "fileIO/esavearchive.h"
 
 class eSaveArchive;
 #include "gameEvents/egodquestevent.h"
@@ -911,23 +912,26 @@ private:
         int fLastDim = 0;
 
         void read(eReadStream& src, eGameBoard& board) {
+            eSaveArchive ar(src);
             fStartTile = src.readTile(board);
             int nt;
-            src >> nt;
+            ar.field("tileCount", nt);
             for(int i = 0; i < nt; i++) {
                 const auto t = src.readTile(board);
                 fTiles.push_back(t);
             }
-            src >> fLastDim;
+            ar.field("lastDim", fLastDim);
         }
 
         void write(eWriteStream& dst) {
+            eSaveArchive ar(dst);
             dst.writeTile(fStartTile);
-            dst << fTiles.size();
+            int tileCount = fTiles.size();
+            ar.field("tileCount", tileCount);
             for(const auto t : fTiles) {
                 dst.writeTile(t);
             }
-            dst << fLastDim;
+            ar.field("lastDim", fLastDim);
         }
     };
 
@@ -947,39 +951,43 @@ private:
         bool fRegres = false;
 
         void read(eReadStream& src, eGameBoard& board) {
+            eSaveArchive ar(src);
             int nv;
-            src >> nv;
+            ar.field("tileGroupCount", nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles.emplace_back();
                 int nt;
-                src >> nt;
+                ar.field("tileCount", nt);
                 for(int j = 0; j < nt; j++) {
                     const auto t = src.readTile(board);
                     eTerrain terr;
-                    src >> terr;
+                    ar.field("savedTerrain", terr);
                     eOrientation o;
-                    src >> o;
+                    ar.field("orientation", o);
                     v.push_back({t, terr, o});
                 }
             }
-            src >> fLastId;
-            src >> fPermanent;
-            src >> fRegres;
+            ar.field("lastId", fLastId);
+            ar.field("permanent", fPermanent);
+            ar.field("regres", fRegres);
         }
 
         void write(eWriteStream& dst) {
-            dst << fTiles.size();
+            eSaveArchive ar(dst);
+            int tileGroupCount = fTiles.size();
+            ar.field("tileGroupCount", tileGroupCount);
             for(const auto& v : fTiles) {
-                dst << v.size();
+                int tileCount = v.size();
+                ar.field("tileCount", tileCount);
                 for(const auto t : v) {
                     dst.writeTile(t.fTile);
-                    dst << t.fSaved;
-                    dst << t.fO;
+                    ar.field("savedTerrain", const_cast<eTerrain&>(t.fSaved));
+                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
                 }
             }
-            dst << fLastId;
-            dst << fPermanent;
-            dst << fRegres;
+            ar.field("lastId", fLastId);
+            ar.field("permanent", fPermanent);
+            ar.field("regres", fRegres);
         }
     };
 
@@ -993,32 +1001,36 @@ private:
         int fLastId = 0;
 
         void read(eReadStream& src, eGameBoard& board) {
+            eSaveArchive ar(src);
             int nv;
-            src >> nv;
+            ar.field("tileGroupCount", nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles.emplace_back();
                 int nt;
-                src >> nt;
+                ar.field("tileCount", nt);
                 for(int j = 0; j < nt; j++) {
                     const auto t = src.readTile(board);
                     eOrientation o;
-                    src >> o;
+                    ar.field("orientation", o);
                     v.push_back({t, o});
                 }
             }
-            src >> fLastId;
+            ar.field("lastId", fLastId);
         }
 
         void write(eWriteStream& dst) {
-            dst << fTiles.size();
+            eSaveArchive ar(dst);
+            int tileGroupCount = fTiles.size();
+            ar.field("tileGroupCount", tileGroupCount);
             for(const auto& v : fTiles) {
-                dst << v.size();
+                int tileCount = v.size();
+                ar.field("tileCount", tileCount);
                 for(const auto t : v) {
                     dst.writeTile(t.fTile);
-                    dst << t.fO;
+                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
                 }
             }
-            dst << fLastId;
+            ar.field("lastId", fLastId);
         }
     };
 
@@ -1033,35 +1045,39 @@ private:
         int fLastId = 0;
 
         void read(eReadStream& src, eGameBoard& board) {
+            eSaveArchive ar(src);
             int nv;
-            src >> nv;
+            ar.field("tileGroupCount", nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles.emplace_back();
                 int nt;
-                src >> nt;
+                ar.field("tileCount", nt);
                 for(int j = 0; j < nt; j++) {
                     const auto t = src.readTile(board);
                     int newAltitude;
-                    src >> newAltitude;
+                    ar.field("newAltitude", newAltitude);
                     eOrientation o;
-                    src >> o;
+                    ar.field("orientation", o);
                     v.push_back({t, newAltitude, o});
                 }
             }
-            src >> fLastId;
+            ar.field("lastId", fLastId);
         }
 
         void write(eWriteStream& dst) {
-            dst << fTiles.size();
+            eSaveArchive ar(dst);
+            int tileGroupCount = fTiles.size();
+            ar.field("tileGroupCount", tileGroupCount);
             for(const auto& v : fTiles) {
-                dst << v.size();
+                int tileCount = v.size();
+                ar.field("tileCount", tileCount);
                 for(const auto t : v) {
                     dst.writeTile(t.fTile);
-                    dst << t.fNewAltitude;
-                    dst << t.fO;
+                    ar.field("newAltitude", const_cast<int&>(t.fNewAltitude));
+                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
                 }
             }
-            dst << fLastId;
+            ar.field("lastId", fLastId);
         }
     };
 

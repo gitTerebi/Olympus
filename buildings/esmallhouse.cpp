@@ -17,6 +17,7 @@
 
 #include "elanguage.h"
 #include "enumbers.h"
+#include "fileIO/esavearchive.h"
 
 eSmallHouse::eSmallHouse(eGameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
                                                                             {8, 16, 24, 32, 40, 48, 60}, cid)
@@ -419,27 +420,28 @@ void eSmallHouse::read(eReadStream &src)
 {
     eHouseBase::read(src);
 
-    src >> mSatisfactionProvidedThisMonth;
-    src >> mUpdateSatisfaction;
-    src >> mSatisfaction;
-    src >> mFoodSatisfaction;
-    src >> mWaterSatisfaction;
-    src >> mWorkSatisfaction;
-    src >> mTaxSatisfaction;
+    eSaveArchive ar(src);
+    ar.field("satisfactionProvidedThisMonth", mSatisfactionProvidedThisMonth);
+    ar.field("updateSatisfaction", mUpdateSatisfaction);
+    ar.field("satisfaction", mSatisfaction);
+    ar.field("foodSatisfaction", mFoodSatisfaction);
+    ar.field("waterSatisfaction", mWaterSatisfaction);
+    ar.field("workSatisfaction", mWorkSatisfaction);
+    ar.field("taxSatisfaction", mTaxSatisfaction);
 
-    src >> mUpdateWater;
-    src >> mUpdateHygiene;
-    src >> mUpdateLevel;
+    ar.field("updateWater", mUpdateWater);
+    ar.field("updateHygiene", mUpdateHygiene);
+    ar.field("updateLevel", mUpdateLevel);
 
-    src >> mWater;
-    src >> mHygiene;
-    src >> mPlague;
-    src >> mDisgruntled;
+    ar.field("water", mWater);
+    ar.field("hygiene", mHygiene);
+    ar.field("plague", mPlague);
+    ar.field("disgruntled", mDisgruntled);
 
-    src >> mSpawnSick;
+    ar.field("spawnSick", mSpawnSick);
     src.readCharacter(&getBoard(), [this](eCharacter *const c)
                       { mSick = static_cast<eSick *>(c); });
-    src >> mSpawnDisg;
+    ar.field("spawnDisgruntled", mSpawnDisg);
     src.readCharacter(&getBoard(), [this](eCharacter *const c)
                       { mDisg = static_cast<eDisgruntled *>(c); });
     // mDevolveDelay not saved for compatibility
@@ -449,26 +451,27 @@ void eSmallHouse::write(eWriteStream &dst) const
 {
     eHouseBase::write(dst);
 
-    dst << mSatisfactionProvidedThisMonth;
-    dst << mUpdateSatisfaction;
-    dst << mSatisfaction;
-    dst << mFoodSatisfaction;
-    dst << mWaterSatisfaction;
-    dst << mWorkSatisfaction;
-    dst << mTaxSatisfaction;
+    eSaveArchive ar(dst);
+    ar.field("satisfactionProvidedThisMonth", const_cast<bool&>(mSatisfactionProvidedThisMonth));
+    ar.field("updateSatisfaction", const_cast<int&>(mUpdateSatisfaction));
+    ar.field("satisfaction", const_cast<int&>(mSatisfaction));
+    ar.field("foodSatisfaction", const_cast<int&>(mFoodSatisfaction));
+    ar.field("waterSatisfaction", const_cast<int&>(mWaterSatisfaction));
+    ar.field("workSatisfaction", const_cast<int&>(mWorkSatisfaction));
+    ar.field("taxSatisfaction", const_cast<int&>(mTaxSatisfaction));
 
-    dst << mUpdateWater;
-    dst << mUpdateHygiene;
-    dst << mUpdateLevel;
+    ar.field("updateWater", const_cast<int&>(mUpdateWater));
+    ar.field("updateHygiene", const_cast<int&>(mUpdateHygiene));
+    ar.field("updateLevel", const_cast<int&>(mUpdateLevel));
 
-    dst << mWater;
-    dst << mHygiene;
-    dst << mPlague;
-    dst << mDisgruntled;
+    ar.field("water", const_cast<int&>(mWater));
+    ar.field("hygiene", const_cast<int&>(mHygiene));
+    ar.field("plague", const_cast<bool&>(mPlague));
+    ar.field("disgruntled", const_cast<bool&>(mDisgruntled));
 
-    dst << mSpawnSick;
+    ar.field("spawnSick", const_cast<int&>(mSpawnSick));
     dst.writeCharacter(mSick.get());
-    dst << mSpawnDisg;
+    ar.field("spawnDisgruntled", const_cast<int&>(mSpawnDisg));
     dst.writeCharacter(mDisg.get());
     // mDevolveDelay not saved for compatibility
 }

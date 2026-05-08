@@ -5,6 +5,7 @@
 
 #include "characters/ecarttransporter.h"
 #include "buildings/ebuildingwithresource.h"
+#include "fileIO/esavearchive.h"
 
 class eSaveArchive;
 
@@ -85,14 +86,16 @@ public:
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eCartTransporterAction*>(ca);
         });
-        src >> mBx;
-        src >> mBy;
+        eSaveArchive ar(src);
+        ar.field("buildingX", mBx);
+        ar.field("buildingY", mBy);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
-        dst << mBx;
-        dst << mBy;
+        eSaveArchive ar(dst);
+        ar.field("buildingX", const_cast<int&>(mBx));
+        ar.field("buildingY", const_cast<int&>(mBy));
     }
 
     void setXY(const int x, const int y) {

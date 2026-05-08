@@ -120,27 +120,13 @@ bool eShepherdAction::decide() {
 }
 
 void eShepherdAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    src >> mAnimalType;
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mCharacter = static_cast<eResourceCollectorBase*>(c);
-    });
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mShed = static_cast<eShepherBuildingBase*>(b);
-    });
-    src >> mFinishOnce;
-    src >> mGroomed;
-    src >> mNoResource;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eShepherdAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    dst << mAnimalType;
-    dst.writeCharacter(mCharacter);
-    dst.writeBuilding(mShed);
-    dst << mFinishOnce;
-    dst << mGroomed;
-    dst << mNoResource;
+    eSaveArchive ar(dst);
+    const_cast<eShepherdAction*>(this)->serialize(ar);
 }
 
 void eShepherdAction::serialize(eSaveArchive& ar) {
