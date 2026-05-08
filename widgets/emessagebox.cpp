@@ -207,7 +207,10 @@ void eMessageBox::initialize(eGameBoard& board,
         });
         surrenderB->setVisible(bool(ed.fA0));
 
-        const auto bribeB = new eFramedButton(window());
+        const bool canBribe = bool(ed.fA1);
+        const auto bribeB = canBribe ?
+            static_cast<eButton*>(new eFramedButton(window())) :
+            new eButton(window());
         bribeB->setFontSizeS();
         bribeB->setUnderline(false);
         auto bribeStr = eLanguage::zeusText(44, 281);
@@ -217,10 +220,14 @@ void eMessageBox::initialize(eGameBoard& board,
         bribeB->fitContent();
         wid->addWidget(bribeB);
         bribeB->setPressAction([this, ed]() {
-            if(ed.fA1) ed.fA1();
+            if(!ed.fA1) return;
+            ed.fA1();
             close();
         });
-        bribeB->setVisible(bool(ed.fA1));
+        bribeB->setVisible(true);
+        const auto bribeAmount = std::to_string(ed.fBribe) + " drachmas";
+        bribeB->setTooltip(ed.fA1 ? "Bribe demanded: " + bribeAmount :
+                           "Need " + bribeAmount + " to bribe");
 
         const auto fightToDefend = new eFramedButton(window());
         fightToDefend->setFontSizeS();
@@ -257,94 +264,94 @@ void eMessageBox::initialize(eGameBoard& board,
         wid = new eWidget(window());
         wid->setNoPadding();
 
-        const auto acceptB = new eFramedButton(window());
-        acceptB->setFontSizeS();
-        acceptB->setUnderline(false);
-        acceptB->setText(eLanguage::zeusText(44, 209));
-        acceptB->fitContent();
-        if(type == eResourceType::drachmas) {
-            wid->addWidget(acceptB);
-            acceptB->setPressAction([this, ed]() {
-                if(ed.fA0) ed.fA0();
-                close();
-            });
-        } else if(ed.fCityNames.size() == 1) {
-            const auto iniC = ed.fCityNames.begin();
-            const auto iniCid = iniC->first;
-            wid->addWidget(acceptB);
-            acceptB->setPressAction([this, ed, iniCid]() {
-                const auto a0 = ed.fCCA0.at(iniCid);
-                if(a0) a0();
-                close();
-            });
-            if(spaceLabel) {
-                const int space = ed.fCSpaceCount.at(iniCid);
-                const int c = std::min(space, count);
-                const auto cStr = std::to_string(c);
-                spaceLabel->setText(cStr);
-            }
-        } else {
-            const auto iniC = ed.fCityNames.begin();
-            const auto iniCid = iniC->first;
-            const auto iniName = iniC->second;
-
-            const auto cityB = new eBoardCitySwitchButton(window());
-            cityB->setFontSizeS();
-            const auto setCid = [this, ed, acceptB, spaceLabel, count](const eCityId cid) {
-                const int space = ed.fCSpaceCount.at(cid);
+            const auto acceptB = new eFramedButton(window());
+            acceptB->setFontSizeS();
+            acceptB->setUnderline(false);
+            acceptB->setText(eLanguage::zeusText(44, 209));
+            acceptB->fitContent();
+            if(type == eResourceType::drachmas) {
+                wid->addWidget(acceptB);
+                acceptB->setPressAction([this, ed]() {
+                    if(ed.fA0) ed.fA0();
+                    close();
+                });
+            } else if(ed.fCityNames.size() == 1) {
+                const auto iniC = ed.fCityNames.begin();
+                const auto iniCid = iniC->first;
+                wid->addWidget(acceptB);
+                acceptB->setPressAction([this, ed, iniCid]() {
+                    const auto a0 = ed.fCCA0.at(iniCid);
+                    if(a0) a0();
+                    close();
+                });
                 if(spaceLabel) {
+                    const int space = ed.fCSpaceCount.at(iniCid);
                     const int c = std::min(space, count);
                     const auto cStr = std::to_string(c);
                     spaceLabel->setText(cStr);
                 }
-                acceptB->setVisible(space > 0);
-                acceptB->setPressAction([this, ed, cid]() {
-                    const auto a0 = ed.fCCA0.at(cid);
-                    if(a0) a0();
-                    close();
-                });
-            };
-            cityB->initialize(ed.fCityNames, setCid);
-            setCid(iniCid);
-            cityB->setCurrentCity(iniCid);
+            } else {
+                const auto iniC = ed.fCityNames.begin();
+                const auto iniCid = iniC->first;
+                const auto iniName = iniC->second;
 
-            wid->addWidget(cityB);
-            wid->addWidget(acceptB);
-        }
+                const auto cityB = new eBoardCitySwitchButton(window());
+                cityB->setFontSizeS();
+                const auto setCid = [this, ed, acceptB, spaceLabel, count](const eCityId cid) {
+                    const int space = ed.fCSpaceCount.at(cid);
+                    if(spaceLabel) {
+                        const int c = std::min(space, count);
+                        const auto cStr = std::to_string(c);
+                        spaceLabel->setText(cStr);
+                    }
+                    acceptB->setVisible(space > 0);
+                    acceptB->setPressAction([this, ed, cid]() {
+                        const auto a0 = ed.fCCA0.at(cid);
+                        if(a0) a0();
+                        close();
+                    });
+                };
+                cityB->initialize(ed.fCityNames, setCid);
+                setCid(iniCid);
+                cityB->setCurrentCity(iniCid);
 
-        const auto postponeB = new eFramedButton(window());
-        postponeB->setFontSizeS();
-        postponeB->setUnderline(false);
-        postponeB->setText(eLanguage::zeusText(44, 211));
-        postponeB->fitContent();
-        wid->addWidget(postponeB);
-        postponeB->setPressAction([this, ed]() {
-            if(ed.fA1) ed.fA1();
-            close();
-        });
-        postponeB->setVisible(ed.fA1 && type != eResourceType::drachmas);
+                wid->addWidget(cityB);
+                wid->addWidget(acceptB);
+            }
 
-        const auto declineB = new eFramedButton(window());
-        declineB->setFontSizeS();
-        declineB->setUnderline(false);
-        declineB->setText(eLanguage::zeusText(44, 210));
-        declineB->fitContent();
-        wid->addWidget(declineB);
-        declineB->setPressAction([this, ed]() {
-            if(ed.fA2) ed.fA2();
-            close();
-        });
+            const auto postponeB = new eFramedButton(window());
+            postponeB->setFontSizeS();
+            postponeB->setUnderline(false);
+            postponeB->setText(eLanguage::zeusText(44, 211));
+            postponeB->fitContent();
+            wid->addWidget(postponeB);
+            postponeB->setPressAction([this, ed]() {
+                if(ed.fA1) ed.fA1();
+                close();
+            });
+            postponeB->setVisible(ed.fA1 && type != eResourceType::drachmas);
 
-        const int w = width() - 4*p;
-        wid->setWidth(w);
-        wid->layoutHorizontallyWithoutSpaces();
-        wid->fitContent();
-        wid->setWidth(w);
+            const auto declineB = new eFramedButton(window());
+            declineB->setFontSizeS();
+            declineB->setUnderline(false);
+            declineB->setText(eLanguage::zeusText(44, 210));
+            declineB->fitContent();
+            wid->addWidget(declineB);
+            declineB->setPressAction([this, ed]() {
+                if(ed.fA2) ed.fA2();
+                close();
+            });
 
-        const auto cs = wid->children();
-        for(const auto c : cs) {
-            c->align(eAlignment::vcenter);
-        }
+            const int w = width() - 4*p;
+            wid->setWidth(w);
+            wid->layoutHorizontallyWithoutSpaces();
+            wid->fitContent();
+            wid->setWidth(w);
+
+            const auto cs = wid->children();
+            for(const auto c : cs) {
+                c->align(eAlignment::vcenter);
+            }
 
         addWidget(wid);
     } else if(ed.fType == eMessageEventType::resourceGranted) {
@@ -358,8 +365,9 @@ void eMessageBox::initialize(eGameBoard& board,
         const int time = ed.fTime;
         const auto timeStr = std::to_string(time);
         eLabel* stockLabel = nullptr;
-        const auto iniC = ed.fCityNames.begin();
-        const auto iniCid = iniC->first;
+        const auto iniCid = ed.fCityNames.empty() ?
+                            static_cast<eCityId>(0) :
+                            ed.fCityNames.begin()->first;
         const auto tributeWid = createTributeWidget(type, count, 0, time,
                                                     nullptr, &board, iniCid, &stockLabel);
 
@@ -533,14 +541,6 @@ void eMessageBox::initialize(eGameBoard& board,
         ok->align(eAlignment::right | eAlignment::bottom);
         ok->setX(ok->x() - 1.5*p);
         ok->setY(ok->y() - 1.5*p);
-    } else if(ed.fType == eMessageEventType::invasion ||
-               ed.fType == eMessageEventType::requestTributeGranted ||
-               ed.fType == eMessageEventType::resourceGranted ||
-               ed.fType == eMessageEventType::generalRequestGranted ||
-               ed.fType == eMessageEventType::troopsRequest) {
-        mClosable = true;
-    } else if(!ed.fCA0 && ed.fCCA0.empty() && !ed.fA0 && !ed.fA1 && !ed.fA2 && !wid) {
-        mClosable = true;
     }
 //    if(ed.fA2) {
 //        mDone = [this, ed]() {

@@ -367,20 +367,28 @@ std::string eWorldCity::anArmy() const {
 
 void eWorldCity::nextMonth(eGameBoard* const board) {
     const auto ppid = board->personPlayer();
+    const auto attitude = attitudeClass(ppid);
     if(isRival() && active() && visible() &&
-       attitudeClass(ppid) == eCityAttitude::hostile) {
-        const auto targetCid = board->personPlayerCapital();
+       attitude == eCityAttitude::hostile) {
+        auto targetCid = board->personPlayerCapital();
+        if(targetCid == eCityId::neutralFriendly ||
+           targetCid == eCityId::neutralAggresive) {
+            targetCid = board->world().currentCityId();
+        }
         const auto targetCity = board->world().cityWithId(targetCid);
         const bool canInvade = targetCity &&
                                !board->hasActiveInvasions(targetCid);
-        if(canInvade && eRand::rand() % 3 == 0) {
+        if(canInvade && (eRand::rand() % 12 == 0)) {
             const auto e = e::make_shared<eInvasionEvent>(
                 targetCid, eGameEventBranch::root, *board);
-            e->setSingleCity(board->world().cityWithId(mCityId));
+            const auto attacker = board->world().cityWithId(mCityId);
+            const int strength = std::min(targetCity->militaryStrength(),
+                                          mMilitaryStrength);
+            e->setSingleCity(attacker);
             e->setMinPointId(1);
-            e->setMaxPointId(8);
-            e->setMinCount(8*mMilitaryStrength);
-            e->setMaxCount(12*mMilitaryStrength);
+            e->setMaxPointId(16);
+            e->setMinCount(8*strength);
+            e->setMaxCount(12*strength);
             e->setWarningMonths(4);
             e->initializeDate(board->date());
             board->addRootGameEvent(e);

@@ -156,7 +156,7 @@ public:
                      const bool addToList = true);
     void pauseGame() { switchPause(); }
     bool gamePaused() const { return mPaused; }
-    void setMessageListWidget(eMessageListWidget* const w) { mMsgListWidget = w; }
+    void setMessageListWidget(eMessageListWidget* const w);
 protected:
     void paintEvent(ePainter& p) override;
 

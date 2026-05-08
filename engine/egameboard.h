@@ -33,6 +33,8 @@
 
 #include "engine/egodquest.h"
 #include "ecityrequest.h"
+#include "emessage.h"
+#include "eeventdata.h"
 
 class eSaveArchive;
 #include "gameEvents/egodquestevent.h"
@@ -338,6 +340,18 @@ public:
 
     void showMessage(eEventData& ed, const eMessageType& msg);
 
+    struct eLoggedMessage {
+        eEventData fEd;
+        eMessage fMsg;
+        eDate fDate;
+        bool fRead = true;
+    };
+    const std::vector<eLoggedMessage>& messageLog() const
+    { return mMessageLog; }
+    void addMessageLog(const eEventData& ed, const eMessage& msg,
+                       const eDate& date);
+    void setMessageLogRead(const int index);
+
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverAllTiles(const eTileAction& a);
 
@@ -438,6 +452,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    void serializeMessageLog(eSaveArchive& ar);
 
     eBuilding* buildingWithIOID(const int id) const;
     eCharacter* characterWithIOID(const int id) const;
@@ -879,6 +894,7 @@ private:
 
     eAction mButtonVisUpdater;
     eMessageShower mMsgShower;
+    std::vector<eLoggedMessage> mMessageLog;
 
     std::vector<eGameEvent*> mAllGameEvents;
     int mGoalsCheckTime = 0;

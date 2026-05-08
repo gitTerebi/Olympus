@@ -1,6 +1,8 @@
 #include "eworldtributewidget.h"
 
 #include "elanguage.h"
+#include "engine/egameboard.h"
+#include "evectorhelpers.h"
 
 void eWorldTributeWidget::initialize() {
     const auto titleStr = eLanguage::zeusText(44, 320);
@@ -34,6 +36,17 @@ void eWorldTributeWidget::initialize() {
     mAlliesLabel->hide();
 }
 
+bool eWorldTributeWidget::hasClaimToTribute(
+        const stdsptr<eWorldCity>& c) const {
+    if(!mBoard || !c) return false;
+    const auto cids = mBoard->personPlayerCitiesOnBoard();
+    for(const auto cid : cids) {
+        const auto defs = mBoard->defeatedBy(cid);
+        if(eVectorHelpers::contains(defs, c)) return true;
+    }
+    return false;
+}
+
 void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
     mAlliesLabel->hide();
     mTitleLabel->hide();
@@ -47,8 +60,10 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
             mAlliesLabel->show();
             return;
         }
-        const bool vassOrCol = c->isVassal() || c->isColony();
-        if(!vassOrCol) {
+        const bool claimsTribute = hasClaimToTribute(c);
+        const bool tributeCity = c->isVassal() || c->isColony() ||
+                                 claimsTribute;
+        if(!tributeCity) {
             if(c->isAlly()) {
                 mAlliesLabel->setText(eLanguage::zeusText(44, 323));
                 mAlliesLabel->show();
@@ -61,8 +76,10 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
         mTitleLabel->show();
         mTypeIcon->show();
         mTextLabel->show();
-        const auto ttype = c->tributeType();
-        const int count = c->tributeCount();
+        const auto ttype = claimsTribute ? c->recTributeType() :
+                           c->tributeType();
+        const int count = claimsTribute ? c->recTributeCount() :
+                          c->tributeCount();
         const auto uiScale = resolution().uiScale();
         const auto icon = eResourceTypeHelpers::icon(uiScale, ttype);
         mTypeIcon->setTexture(icon);

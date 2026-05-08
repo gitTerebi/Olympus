@@ -20,6 +20,10 @@ public:
     void initialize(const eOpenMessage& openMsg, const eAction& closeAction = nullptr);
 
     void addMessage(const eEventData& ed, const eMessage& msg, const eDate& date);
+    void addSavedMessage(const eEventData& ed, const eMessage& msg,
+                         const eDate& date, const bool read);
+    using eReadChangedAction = std::function<void(int)>;
+    void setReadChangedAction(const eReadChangedAction& a) { mReadChanged = a; }
 
     int unreadCount() const { return mUnreadCount; }
     void markAllRead();
@@ -43,6 +47,7 @@ private:
     };
 
     eUnreadChangedAction mUnreadChanged;
+    eReadChangedAction mReadChanged;
     eOpenMessage mOpenMsg;
     class eMessageListRow : public eWidget {
     public:

@@ -90,6 +90,7 @@ private:
     eTile* mShoreTile = nullptr;
 
     bool mWarned = false;
+    bool mWaitingForResponse = false;
     eDate mFirstWarning;
 
     ePlayerId mSentByPlayer = ePlayerId::neutralFriendly;

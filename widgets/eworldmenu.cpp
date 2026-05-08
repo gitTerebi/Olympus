@@ -256,6 +256,10 @@ void eWorldMenu::setWorldBoard(eWorldBoard* const b) {
     mBoard = b;
 }
 
+void eWorldMenu::setGameBoard(eGameBoard* const b) {
+    if(mTributeWidget) mTributeWidget->setBoard(b);
+}
+
 void eWorldMenu::setArrowActions(const eAction& left, const eAction& right) {
     if(mLeftArrowButton) mLeftArrowButton->setPressAction(left);
     if(mRightArrowButton) mRightArrowButton->setPressAction(right);
