@@ -239,8 +239,87 @@ private:
     eSoundVector mAresWarriorHit;
     eSoundVector mAresWarriorDie;
 
+    eSoundVector mTrojanHorseAttack;
     eSoundVector mTrojanHorseDie;
     eSoundVector mTrojanHorseHit;
+
+    // Civilization-specific cavalry sounds
+    eSoundVector mPersianCavalryAttack;
+    eSoundVector mPhoenicianCavalryAttack;
+    eSoundVector mEgyptianChariotAttack;
+    eSoundVector mAtlanteanChariotAttack;
+
+    // Civilization-specific infantry/archer sounds
+    eSoundVector mAmazonWarriorAttack;
+    eSoundVector mAmazonWarriorDie;
+    eSoundVector mAmazonWarriorHit;
+
+    eSoundVector mAmazonArcherDie;
+    eSoundVector mAmazonArcherHit;
+
+    eSoundVector mCentaurArcherDie;
+    eSoundVector mCentaurArcherHit;
+    eSoundVector mCentaurHorsemanDie;
+    eSoundVector mCentaurHorsemanHit;
+    eSoundVector mCentaurSwordDie;
+    eSoundVector mCentaurSwordHit;
+
+    eSoundVector mEgyptianArcherDie;
+    eSoundVector mEgyptianArcherHit;
+    eSoundVector mEgyptianChariotDie;
+    eSoundVector mEgyptianChariotHit;
+    eSoundVector mEgyptianHopliteAttack;
+    eSoundVector mEgyptianHopliteDie;
+    eSoundVector mEgyptianHopliteHit;
+
+    eSoundVector mAtlanteanArcherDie;
+    eSoundVector mAtlanteanArcherHit;
+    eSoundVector mAtlanteanChariotDie;
+    eSoundVector mAtlanteanChariotHit;
+    eSoundVector mAtlanteanHopliteAttack;
+    eSoundVector mAtlanteanHopliteDie;
+    eSoundVector mAtlanteanHopliteHit;
+
+    eSoundVector mAtlanteanMarinesAttack;
+    eSoundVector mAtlanteanMarinesDie;
+    eSoundVector mAtlanteanMarinesHit;
+    eSoundVector mAtlanteanSentryDie;
+    eSoundVector mAtlanteanSentryHit;
+
+    eSoundVector mMayanArcherDie;
+    eSoundVector mMayanArcherHit;
+    eSoundVector mMayanHopliteAttack;
+    eSoundVector mMayanHopliteDie;
+    eSoundVector mMayanHopliteHit;
+
+    eSoundVector mPhoenicianArcherDie;
+    eSoundVector mPhoenicianArcherHit;
+    eSoundVector mPhoenicianHorsemanDie;
+    eSoundVector mPhoenicianHorsemanHit;
+
+    eSoundVector mPersianArcherDie;
+    eSoundVector mPersianArcherHit;
+    eSoundVector mPersianHorsemanDie;
+    eSoundVector mPersianHorsemanHit;
+    eSoundVector mPersianHopliteAttack;
+    eSoundVector mPersianHopliteDie;
+    eSoundVector mPersianHopliteHit;
+
+    // Missing sound vectors
+    eSoundVector mElephantDie;
+    eSoundVector mElephantHit;
+    eSoundVector mNoblemanAttack;
+    eSoundVector mNoblemanDie;
+    eSoundVector mNoblemanHit;
+    eSoundVector mPersianMissileDie;
+    eSoundVector mPersianMissileHit;
+
+    eSoundVector mMerchantInfantryAttack;
+    eSoundVector mMerchantInfantryDie;
+    eSoundVector mMerchantInfantryHit;
+    eSoundVector mMerchantSpearAttack;
+    eSoundVector mMerchantSpearDie;
+    eSoundVector mMerchantSpearHit;
 
     eSoundVector mTrojanSpearthrowerDie;
     eSoundVector mTrojanSpearthrowerHit;

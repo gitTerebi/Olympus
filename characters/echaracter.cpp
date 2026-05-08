@@ -105,10 +105,8 @@ void eCharacter::killWithCorpse() {
     const stdptr<eCharacter> c(this);
     const auto finish = std::make_shared<eChar_killWithCorpseFinish>(
                             getBoard(), this);
-    auto& board = getBoard();
-    board.ifVisible(tile(), [&]() {
-        eSounds::playDieSound(this);
-    });
+    // Play die sound regardless of visibility
+    eSounds::playDieSound(this);
     const auto a = e::make_shared<eDieAction>(this);
     a->setFailAction(finish);
     a->setFinishAction(finish);
@@ -220,14 +218,12 @@ void eCharacter::incTime(const int by) {
         const int soundPlayTime = 500;
         if(mSoundPlayTime > soundPlayTime) {
             mSoundPlayTime -= soundPlayTime;
-            auto& board = getBoard();
-            board.ifVisible(tile(), [&]() {
-                if(eRand::rand() % 2) {
-                    eSounds::playHitSound(this);
-                } else {
-                    eSounds::playAttackSound(this);
-                }
-            });
+            // Play hit/attack sounds regardless of visibility
+            if(eRand::rand() % 2) {
+                eSounds::playHitSound(this);
+            } else {
+                eSounds::playAttackSound(this);
+            }
         }
     }
     if(mAction) {

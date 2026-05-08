@@ -14,25 +14,25 @@
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     if(ar.reading()) {
         int np;
-        ar.field("np", np);
+        ar.field("mYearlyProduction.count", np);
         for(int i = 0; i < np; i++) {
             eResourceType type;
-            ar.field("type", type);
+            ar.field("mYearlyProduction.type", type);
             auto& y = mYearlyProduction[type];
-            ar.field("y.fBest", y.fBest);
-            ar.field("y.fLastYear", y.fLastYear);
-            ar.field("y.fThisYear", y.fThisYear);
+            ar.field("mYearlyProduction.fBest", y.fBest);
+            ar.field("mYearlyProduction.fLastYear", y.fLastYear);
+            ar.field("mYearlyProduction.fThisYear", y.fThisYear);
         }
         ar.field("mSavedYear", mSavedYear);
     } else {
         int np = static_cast<int>(mYearlyProduction.size());
-        ar.field("np", np);
+        ar.field("mYearlyProduction.count", np);
         for(auto& p : mYearlyProduction) {
             eResourceType type = p.first;
-            ar.field("type", type);
-            ar.field("p.second.fBest", p.second.fBest);
-            ar.field("p.second.fLastYear", p.second.fLastYear);
-            ar.field("p.second.fThisYear", p.second.fThisYear);
+            ar.field("mYearlyProduction.type", type);
+            ar.field("mYearlyProduction.fBest", p.second.fBest);
+            ar.field("mYearlyProduction.fLastYear", p.second.fLastYear);
+            ar.field("mYearlyProduction.fThisYear", p.second.fThisYear);
         }
         ar.field("mSavedYear", mSavedYear);
     }
@@ -74,34 +74,34 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
     int w;
-    src >> w;
+    ar.field("mWidth", w);
     int h;
-    src >> h;
+    ar.field("mHeight", h);
     initialize(w, h);
 
-    src >> mFogOfWar;
+    ar.field("mFogOfWar", mFogOfWar);
 
-    src >> mEpisodeLost;
+    ar.field("mEpisodeLost", mEpisodeLost);
 
-    src >> mWageMultiplier;
+    ar.field("mWageMultiplier", mWageMultiplier);
 
     for(auto& p : mPrices) {
-        src >> p.second;
+        ar.field("mPrices.value", p.second);
     }
 
-    mDate.read(src);
-    src >> mFrame;
-    src >> mTime;
-    src >> mTotalTime;
+    mDate.serialize(ar);
+    ar.field("mFrame", mFrame);
+    ar.field("mTime", mTime);
+    ar.field("mTotalTime", mTotalTime);
 
-    src >> mSoldiersUpdate;
+    ar.field("mSoldiersUpdate", mSoldiersUpdate);
 
     {
         int nc;
-        src >> nc;
+        ar.field("mCitiesOnBoard.count", nc);
         for(int i = 0; i < nc; i++) {
             eCityId cid;
-            src >> cid;
+            ar.field("mCitiesOnBoard.id", cid);
             const auto c = addCityToBoard(cid);
             c->read(src);
             scheduleAppealMapUpdate(cid);
@@ -110,10 +110,10 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     {
         int np;
-        src >> np;
+        ar.field("mPlayersOnBoard.count", np);
         for(int i = 0; i < np; i++) {
             ePlayerId pid;
-            src >> pid;
+            ar.field("mPlayersOnBoard.id", pid);
             const auto p = std::make_shared<eBoardPlayer>(pid, *this);
             p->read(src);
             mPlayersOnBoard.push_back(p);
@@ -128,10 +128,10 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     {
         int nbs;
-        src >> nbs;
+        ar.field("mAllBuildings.count", nbs);
         for(int i = 0; i < nbs; i++) {
             eBuildingType type;
-            src >> type;
+            ar.field("mAllBuildings.type", type);
             eBuildingReader::sRead(*this, type, src);
         }
     }
@@ -139,11 +139,11 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     {
         int ncs;
-        src >> ncs;
+        ar.field("mCharacters.count", ncs);
 
         for(int i = 0; i < ncs; i++) {
             eCharacterType type;
-            src >> type;
+            ar.field("mCharacters.type", type);
             const auto c = eCharacter::sCreate(type, *this);
             c->read(src);
         }
@@ -151,55 +151,55 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     {
         int ncs;
-        src >> ncs;
+        ar.field("mMissiles.count", ncs);
 
         for(int i = 0; i < ncs; i++) {
             eMissileType type;
-            src >> type;
+            ar.field("mMissiles.type", type);
             const auto c = eMissile::sCreate(*this, type);
             c->read(src);
         }
     }
 
     int ng;
-    src >> ng;
+    ar.field("mGoals.count", ng);
     for(int i = 0; i < ng; i++) {
         const auto g = std::make_shared<eEpisodeGoal>();
         g->read(src);
         mGoals.push_back(g);
     }
-    src >> mGoalsFulfilled;
+    ar.field("mGoalsFulfilled", mGoalsFulfilled);
 
-    src >> mProgressEarthquakes;
+    ar.field("mProgressEarthquakes", mProgressEarthquakes);
     int ne;
-    src >> ne;
+    ar.field("mEarthquakes.count", ne);
     for(int i = 0; i < ne; i++) {
         const auto e = std::make_shared<eEarthquake>();
         e->read(src, *this);
         mEarthquakes.push_back(e);
     }
 
-    src >> mProgressWaves;
+    ar.field("mProgressWaves", mProgressWaves);
     int nw;
-    src >> nw;
+    ar.field("mTidalWaves.count", nw);
     for(int i = 0; i < nw; i++) {
         const auto w = std::make_shared<eTidalWave>();
         w->read(src, *this);
         mTidalWaves.push_back(w);
     }
 
-    src >> mProgressLavaFlows;
+    ar.field("mProgressLavaFlows", mProgressLavaFlows);
     int nl;
-    src >> nl;
+    ar.field("mLavaFlows.count", nl);
     for(int i = 0; i < nl; i++) {
         const auto w = std::make_shared<eLavaFlow>();
         w->read(src, *this);
         mLavaFlows.push_back(w);
     }
 
-    src >> mProgressLandSlides;
+    ar.field("mProgressLandSlides", mProgressLandSlides);
     int ns;
-    src >> ns;
+    ar.field("mLandSlides.count", ns);
     for(int i = 0; i < ns; i++) {
         const auto w = std::make_shared<eLandSlide>();
         w->read(src, *this);
@@ -207,12 +207,12 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     int nd;
-    src >> nd;
+    ar.field("mDefeatedBy.count", nd);
     for(int i = 0; i < nd; i++) {
         eCityId cid;
-        src >> cid;
+        ar.field("mDefeatedBy.id", cid);
         int nc;
-        src >> nc;
+        ar.field("mDefeatedBy.cities.count", nc);
         for(int j = 0; j < nc; j++) {
             src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
                 mDefeatedBy[cid].push_back(c);
@@ -221,16 +221,15 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     int npa;
-    src >> npa;
+    ar.field("mPlannedActions.count", npa);
     for(int i = 0; i < npa; i++) {
         ePlannedActionType type;
-        src >> type;
+        ar.field("mPlannedActions.type", type);
         const auto a = ePlannedAction::sCreate(type);
         a->read(src, *this);
         mPlannedActions.push_back(a);
     }
 
-    eSaveArchive ar(src);
     serializeYearlyProduction(ar);
     serializeMessageLog(ar);
 
@@ -249,25 +248,26 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }, "cityRequests");
     } else {
         auto& dst = ar.writeStream();
-    dst << mWidth;
-    dst << mHeight;
+    ar.field("mWidth", mWidth);
+    ar.field("mHeight", mHeight);
 
-    dst << mFogOfWar;
+    ar.field("mFogOfWar", mFogOfWar);
 
-    dst << mEpisodeLost;
+    ar.field("mEpisodeLost", mEpisodeLost);
 
-    dst << mWageMultiplier;
+    ar.field("mWageMultiplier", mWageMultiplier);
 
     for(const auto& p : mPrices) {
-        dst << p.second;
+        int price = p.second;
+        ar.field("mPrices.value", price);
     }
 
-    mDate.write(dst);
-    dst << mFrame;
-    dst << mTime;
-    dst << mTotalTime;
+    mDate.serialize(ar);
+    ar.field("mFrame", mFrame);
+    ar.field("mTime", mTime);
+    ar.field("mTotalTime", mTotalTime);
 
-    dst << mSoldiersUpdate;
+    ar.field("mSoldiersUpdate", mSoldiersUpdate);
 
     {
         int id = 0;
@@ -314,17 +314,21 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
 
     {
-        dst << mCitiesOnBoard.size();
+        int count = static_cast<int>(mCitiesOnBoard.size());
+        ar.field("mCitiesOnBoard.count", count);
         for(const auto& c : mCitiesOnBoard) {
-            dst << c->id();
+            eCityId id = c->id();
+            ar.field("mCitiesOnBoard.id", id);
             c->write(dst);
         }
     }
 
     {
-        dst << mPlayersOnBoard.size();
+        int count = static_cast<int>(mPlayersOnBoard.size());
+        ar.field("mPlayersOnBoard.count", count);
         for(const auto& p : mPlayersOnBoard) {
-            dst << p->id();
+            ePlayerId id = p->id();
+            ar.field("mPlayersOnBoard.id", id);
             p->write(dst);
         }
     }
@@ -336,79 +340,91 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     {
-        const int nbs = mAllBuildings.size();
-        dst << nbs;
+        int nbs = static_cast<int>(mAllBuildings.size());
+        ar.field("mAllBuildings.count", nbs);
         for(const auto b : mAllBuildings) {
-            dst << b->type();
+            eBuildingType type = b->type();
+            ar.field("mAllBuildings.type", type);
             eBuildingWriter::sWrite(b, dst);
         }
     }
 
     {
-        const int ncs = mCharacters.size();
-        dst << ncs;
+        int ncs = static_cast<int>(mCharacters.size());
+        ar.field("mCharacters.count", ncs);
         for(const auto c : mCharacters) {
-            dst << c->type();
+            eCharacterType type = c->type();
+            ar.field("mCharacters.type", type);
             c->write(dst);
         }
     }
 
     {
-        const int ncs = mMissiles.size();
-        dst << ncs;
+        int ncs = static_cast<int>(mMissiles.size());
+        ar.field("mMissiles.count", ncs);
         for(const auto c : mMissiles) {
-            dst << c->type();
+            eMissileType type = c->type();
+            ar.field("mMissiles.type", type);
             c->write(dst);
         }
     }
 
-    dst << mGoals.size();
+    int goalsCount = static_cast<int>(mGoals.size());
+    ar.field("mGoals.count", goalsCount);
     for(const auto& g : mGoals) {
         g->write(dst);
     }
-    dst << mGoalsFulfilled;
+    ar.field("mGoalsFulfilled", mGoalsFulfilled);
 
-    dst << mProgressEarthquakes;
-    dst << mEarthquakes.size();
+    ar.field("mProgressEarthquakes", mProgressEarthquakes);
+    int earthquakesCount = static_cast<int>(mEarthquakes.size());
+    ar.field("mEarthquakes.count", earthquakesCount);
     for(const auto& e : mEarthquakes) {
         e->write(dst);
     }
 
-    dst << mProgressWaves;
-    dst << mTidalWaves.size();
+    ar.field("mProgressWaves", mProgressWaves);
+    int tidalWavesCount = static_cast<int>(mTidalWaves.size());
+    ar.field("mTidalWaves.count", tidalWavesCount);
     for(const auto& w : mTidalWaves) {
         w->write(dst);
     }
 
-    dst << mProgressLavaFlows;
-    dst << mLavaFlows.size();
+    ar.field("mProgressLavaFlows", mProgressLavaFlows);
+    int lavaFlowsCount = static_cast<int>(mLavaFlows.size());
+    ar.field("mLavaFlows.count", lavaFlowsCount);
     for(const auto& w : mLavaFlows) {
         w->write(dst);
     }
 
-    dst << mProgressLandSlides;
-    dst << mLandSlides.size();
+    ar.field("mProgressLandSlides", mProgressLandSlides);
+    int landSlidesCount = static_cast<int>(mLandSlides.size());
+    ar.field("mLandSlides.count", landSlidesCount);
     for(const auto& w : mLandSlides) {
         w->write(dst);
     }
 
-    dst << mDefeatedBy.size();
+    int defeatedByCount = static_cast<int>(mDefeatedBy.size());
+    ar.field("mDefeatedBy.count", defeatedByCount);
     for(const auto& c : mDefeatedBy) {
-        dst << c.first;
-        dst << c.second.size();
+        eCityId id = c.first;
+        ar.field("mDefeatedBy.id", id);
+        int cityCount = static_cast<int>(c.second.size());
+        ar.field("mDefeatedBy.cities.count", cityCount);
         for(const auto& cc : c.second) {
             dst.writeCity(cc.get());
         }
     }
 
-    dst << mPlannedActions.size();
+    int plannedActionsCount = static_cast<int>(mPlannedActions.size());
+    ar.field("mPlannedActions.count", plannedActionsCount);
     for(const auto a : mPlannedActions) {
-        dst << a->type();
+        ePlannedActionType type = a->type();
+        ar.field("mPlannedActions.type", type);
         a->write(dst);
     }
 
-    eSaveArchive ar(dst);
-    const_cast<eGameBoard*>(this)->serializeYearlyProduction(ar);
-    const_cast<eGameBoard*>(this)->serializeMessageLog(ar);
+    serializeYearlyProduction(ar);
+    serializeMessageLog(ar);
     }
 }

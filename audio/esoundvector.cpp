@@ -140,12 +140,13 @@ void eSoundVector::play(const int id, const eSoundType type, const int chn) {
 
     configureChannels();
     int channel = chn;
+    const int tag = tagForType(type);
     if(channel < 0) {
-        const int tag = tagForType(type);
         channel = Mix_GroupAvailable(tag);
         if(channel < 0) channel = Mix_GroupOldest(tag);
     }
     if(channel < 0) return;
+
     Mix_Volume(channel, applyGeneralVolume(volumeForType(type)));
     Mix_PlayChannel(channel, p.first, 0);
 }
