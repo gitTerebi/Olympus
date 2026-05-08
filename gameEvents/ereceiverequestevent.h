@@ -49,6 +49,7 @@ public:
     std::string requestInfo(int stock, const eDate& currentDate) const;
     std::string dispatchText(int stock, const eDate& currentDate) const;
     std::string overdueStatusText(const eDate& currentDate) const;
+    bool finished() const override;
     bool isOverdue(const eDate& currentDate) const;
     bool isPostponed() const;
     bool isActiveCityRequest() const;

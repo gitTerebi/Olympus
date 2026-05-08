@@ -9,6 +9,8 @@
 #include "engine/ecityrequest.h"
 #include "fileIO/esavearchive.h"
 
+#include <cstdio>
+
 eReceiveRequestEvent::eReceiveRequestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
@@ -326,6 +328,7 @@ void eReceiveRequestEvent::trigger() {
         const auto me = mainEvent<eReceiveRequestEvent>();
         me->finished(*me->mRefuseTrigger, reason);
         board->removeCityRequest(me);
+        me->mFinish = true;
         return;
     }
 
@@ -352,30 +355,38 @@ void eReceiveRequestEvent::trigger() {
         }
     }
 
+    const auto request = mainEvent<eReceiveRequestEvent>();
+    if(request && request->isActiveCityRequest()) {
+        board->addCityRequest(request);
+    }
+
     if(mPostpone < 3) {
-        ed.fA1 = [this, board]() { // postpone
-            const auto me = mainEvent<eReceiveRequestEvent>();
-            me->mPostpone = mPostpone + 1;
+        ed.fA1 = [request, board]() { // postpone
+            if(!request) return;
+            const int postpone = request->mPostpone + 1;
+            request->mPostpone = postpone;
 
             const auto e = e::make_shared<eReceiveRequestEvent>(
-                               cityId(), eGameEventBranch::child, *board);
-            e->set(*this, mPostpone + 1);
+                               request->cityId(), eGameEventBranch::child, *board);
+            e->set(*request, postpone);
             auto date = board->date();
-            date.nextMonths(warningMonths());
-            me->mRequestDeadline = date;
+            date.nextMonths(request->warningMonths());
+            request->mRequestDeadline = date;
             e->initializeDate(date);
-            addConsequence(e);
+            request->addConsequence(e);
         };
     }
 
-    ed.fA2 = [this, board]() { // refuse
-        board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
+    ed.fA2 = [request, board]() { // refuse
+        if(!request) return;
+        board->removeCityRequest(request);
         const auto e = e::make_shared<eReceiveRequestEvent>(
-                           cityId(), eGameEventBranch::child, *board);
-        e->set(*this, 5);
+                           request->cityId(), eGameEventBranch::child, *board);
+        e->set(*request, 5);
         const auto date = board->date() + 31;
         e->initializeDate(date);
-        addConsequence(e);
+        request->addConsequence(e);
+        request->mFinish = true;
     };
 
 
@@ -677,6 +688,7 @@ void eReceiveRequestEvent::fulfillWithoutCost() {
     if(!board) return;
     clearConsequences();
     board->removeCityRequest(mainEvent<eReceiveRequestEvent>());
+    mainEvent<eReceiveRequestEvent>()->mFinish = true;
     const auto cid = cityId();
     const auto e = e::make_shared<eReceiveRequestEvent>(
         cid, eGameEventBranch::child, *board);
@@ -750,6 +762,10 @@ bool eReceiveRequestEvent::isOverdue(const eDate& currentDate) const {
 
 bool eReceiveRequestEvent::isPostponed() const {
     return mPostpone > 1;
+}
+
+bool eReceiveRequestEvent::finished() const {
+    return eGameEvent::finished() && !isActiveCityRequest();
 }
 
 bool eReceiveRequestEvent::isActiveCityRequest() const {
