@@ -2736,6 +2736,30 @@ void eGameBoard::showMessage(eEventData& ed,
     mMsgShower(ed, msg);
 }
 
+void eGameBoard::addMessageLog(const eEventData& ed,
+                               const eMessage& msg,
+                               const eDate& date) {
+    auto& lm = mMessageLog.emplace_back();
+    lm.fEd = ed;
+    lm.fEd.fCA0 = nullptr;
+    lm.fEd.fA0 = nullptr;
+    lm.fEd.fCCA0.clear();
+    lm.fEd.fA1 = nullptr;
+    lm.fEd.fA2 = nullptr;
+    lm.fEd.fType = eMessageEventType::common;
+    lm.fMsg = msg;
+    lm.fDate = date;
+    lm.fRead = false;
+    if(mMessageLog.size() > 50) {
+        mMessageLog.erase(mMessageLog.begin());
+    }
+}
+
+void eGameBoard::setMessageLogRead(const int index) {
+    if(index < 0 || index >= static_cast<int>(mMessageLog.size())) return;
+    mMessageLog[index].fRead = true;
+}
+
 void eGameBoard::updateNeighbours() {
     for(int x = 0; x < mWidth; x++) {
         for(int y = 0; y < mHeight; y++) {

@@ -75,8 +75,10 @@ void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &
 
 void eMessageListWidget::markAllRead()
 {
-    for (auto &lm : mMessages)
+    for (int i = 0; i < static_cast<int>(mMessages.size()); i++)
     {
+        auto &lm = mMessages[i];
+        if(!lm.fRead && mReadChanged) mReadChanged(i);
         lm.fRead = true;
     }
     mUnreadCount = 0;
@@ -94,6 +96,12 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
 {
     eLoggedMessage lm;
     lm.fEd = ed;
+    lm.fEd.fCA0 = nullptr;
+    lm.fEd.fA0 = nullptr;
+    lm.fEd.fCCA0.clear();
+    lm.fEd.fA1 = nullptr;
+    lm.fEd.fA2 = nullptr;
+    lm.fEd.fType = eMessageEventType::common;
     lm.fMsg = msg;
     lm.fRead = false;
     lm.fDate = date;
@@ -125,6 +133,33 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
         mMessages.erase(mMessages.begin());
     }
     mUnreadCount++;
+    notifyUnread();
+    rebuildList();
+}
+
+void eMessageListWidget::addSavedMessage(const eEventData &ed,
+                                         const eMessage &msg,
+                                         const eDate &date,
+                                         const bool read)
+{
+    eLoggedMessage lm;
+    lm.fEd = ed;
+    lm.fMsg = msg;
+    lm.fRead = read;
+    lm.fDate = date;
+
+    lm.fFormattedTitle = msg.fTitle;
+
+    const int year = date.year();
+    const std::string yearStr = year < 0 ? std::to_string(-year) + " BC" : std::to_string(year);
+    lm.fDateStr = eMonthHelper::shortName(date.month()) + " " + yearStr;
+
+    mMessages.push_back(lm);
+    if (mMessages.size() > 50)
+    {
+        mMessages.erase(mMessages.begin());
+    }
+    if(!read) mUnreadCount++;
     notifyUnread();
     rebuildList();
 }
@@ -181,8 +216,19 @@ void eMessageListWidget::rebuildList()
         titleLabel->setY(0);
 
         // Row widget
-        const auto row = new eMessageListRow(window(), dateLabel, titleLabel, [this, &lm]()
-                                             { mOpenMsg(lm.fEd, lm.fMsg); if(!lm.fRead) { lm.fRead = true; mUnreadCount--; } notifyUnread(); rebuildList(); });
+        const int index = i;
+        const auto row = new eMessageListRow(window(), dateLabel, titleLabel, [this, index]()
+                                             {
+            auto& lm = mMessages[index];
+            mOpenMsg(lm.fEd, lm.fMsg);
+            if(!lm.fRead) {
+                lm.fRead = true;
+                mUnreadCount--;
+                if(mReadChanged) mReadChanged(index);
+            }
+            notifyUnread();
+            rebuildList();
+        });
         row->resize(w - 2 * pp, 20);
         row->setX(pp);
         row->setY(y);

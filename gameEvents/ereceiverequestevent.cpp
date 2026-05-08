@@ -706,6 +706,7 @@ void eReceiveRequestEvent::set(eReceiveRequestEvent &src,
     setWarningMonths(src.warningMonths());
     mRequestDate = src.mRequestDate;
     mRequestDeadline = src.mRequestDeadline;
+    mRequestType = src.mRequestType;
     mResource = src.mResource;
     mCount = src.mCount;
     mCity = src.mCity;

@@ -43,6 +43,33 @@ void eGameBoard::read(eReadStream& src) {
     serialize(ar);
 }
 
+void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
+    int n = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
+    ar.field("messageLog.count", n);
+    if(ar.reading()) {
+        mMessageLog.clear();
+        for(int i = 0; i < n; i++) {
+            eLoggedMessage lm;
+            ar.field("messageLog.title", lm.fMsg.fTitle);
+            ar.field("messageLog.text", lm.fMsg.fText);
+            lm.fDate.serialize(ar);
+            ar.field("messageLog.player", lm.fEd.fPlayerName);
+            ar.field("messageLog.read", lm.fRead);
+            lm.fEd.fDate = lm.fDate;
+            lm.fEd.fType = eMessageEventType::common;
+            mMessageLog.push_back(lm);
+        }
+    } else {
+        for(auto& lm : mMessageLog) {
+            ar.field("messageLog.title", lm.fMsg.fTitle);
+            ar.field("messageLog.text", lm.fMsg.fText);
+            lm.fDate.serialize(ar);
+            ar.field("messageLog.player", lm.fEd.fPlayerName);
+            ar.field("messageLog.read", lm.fRead);
+        }
+    }
+}
+
 void eGameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
@@ -205,6 +232,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     eSaveArchive ar(src);
     serializeYearlyProduction(ar);
+    serializeMessageLog(ar);
 
     updateMarbleTiles();
     updateTerritoryBorders();
@@ -381,5 +409,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     eSaveArchive ar(dst);
     const_cast<eGameBoard*>(this)->serializeYearlyProduction(ar);
+    const_cast<eGameBoard*>(this)->serializeMessageLog(ar);
     }
 }

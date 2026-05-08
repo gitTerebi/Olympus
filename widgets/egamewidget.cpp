@@ -6,6 +6,12 @@
 #include "emessagelistwidget.h"
 #include "eoptionsdata.h"
 #include "engine/egameboard.h"
+#include "engine/egifthelpers.h"
+#include "engine/eworldcity.h"
+#include "characters/gods/egod.h"
+#include "characters/monsters/emonster.h"
+#include "elanguage.h"
+#include "estringhelpers.h"
 
 #include "eflatbutton.h"
 #include "eframedlabel.h"
@@ -13,6 +19,58 @@
 #include <filesystem>
 #include <algorithm>
 #include <cmath>
+
+namespace {
+void formatStoredMessage(eMessage& msg,
+                         const eEventData& ed,
+                         const std::string& playerName) {
+    auto formatText = [&](std::string& text) {
+        eStringHelpers::replaceAll(text, "[greeting]",
+                                   eLanguage::text("greetings"));
+        eStringHelpers::replaceAll(text, "[player_name]", playerName);
+        eStringHelpers::replaceAll(text, "[god]", eGod::sGodName(ed.fGod));
+        eStringHelpers::replaceAll(text, "[monster]",
+                                   eMonster::sMonsterName(ed.fMonster));
+        eStringHelpers::replaceAll(text, "[amount]",
+                                   std::to_string(ed.fResourceCount));
+        eStringHelpers::replaceAll(text, "[item]",
+                                   eResourceTypeHelpers::typeLongName(ed.fResourceType));
+        eStringHelpers::replaceAll(text, "[itemshort]",
+                                   eResourceTypeHelpers::typeName(ed.fResourceType));
+        if(ed.fTime > 0) {
+            const auto time = std::to_string(ed.fTime);
+            eStringHelpers::replaceAll(text, "[time_until_attack]", time);
+            eStringHelpers::replaceAll(text, "[time_allotted]", time);
+            eStringHelpers::replaceAll(text, "[travel_time]", time);
+        }
+        const int giftSize = eGiftHelpers::giftCount(ed.fResourceType);
+        if(giftSize > 0) {
+            const int size = ed.fResourceCount/giftSize;
+            std::string giftSizeText;
+            if(size < 2) giftSizeText = eLanguage::zeusText(162, 0);
+            else if(size < 3) giftSizeText = eLanguage::zeusText(162, 1);
+            else giftSizeText = eLanguage::zeusText(162, 2);
+            eStringHelpers::replaceAll(text, "[gift_size]", giftSizeText);
+        }
+        if(const auto c = ed.fCity) {
+            const auto nat = eWorldCity::sNationalityName(c->nationality());
+            eStringHelpers::replaceAll(text, "[nationality]", nat);
+            eStringHelpers::replaceAll(text, "[city_name]", c->name());
+            eStringHelpers::replaceAll(text, "[last_colony]", c->name());
+            eStringHelpers::replaceAll(text, "[leader_name]", c->leader());
+            eStringHelpers::replaceAll(text, "[a_foreign_army]", c->anArmy());
+        }
+        const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
+        if(c) {
+            const auto nat = eWorldCity::sNationalityName(c->nationality());
+            eStringHelpers::replaceAll(text, "[rival_nationality]", nat);
+            eStringHelpers::replaceAll(text, "[rival_city_name]", c->name());
+        }
+    };
+    formatText(msg.fTitle);
+    formatText(msg.fText);
+}
+}
 
 #include "engine/eknownendpathfinder.h"
 #include "eterraineditmenu.h"
@@ -185,6 +243,7 @@ void eGameWidget::setBoard(eGameBoard *const board)
         e->setX(x() + (width() - e->width() - mGm->width())/2); });
     mBoard->setAutosaver([this]()
                          {
+        if(!window()->settings().fEnableYearlyAutosaves) return;
         mBoard->waitUntilFinished();
         const auto w = window();
         const auto dir = w->leaderSaveDir();
@@ -1506,8 +1565,23 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     // 5 seconds at ~60fps = 300 frames
     toast.fExpireFrame = mFrame + 300;
     updateToastPositions();
-    if (mMsgListWidget)
-        mMsgListWidget->addMessage(ed, msg, mBoard->date());
+    if (mMsgListWidget) {
+        auto storedMsg = msg;
+        formatStoredMessage(storedMsg, ed, window()->leader());
+        mMsgListWidget->addMessage(ed, storedMsg, mBoard->date());
+        mBoard->addMessageLog(ed, storedMsg, mBoard->date());
+    }
+}
+
+void eGameWidget::setMessageListWidget(eMessageListWidget* const w) {
+    mMsgListWidget = w;
+    if(!mMsgListWidget || !mBoard) return;
+    mMsgListWidget->setReadChangedAction([this](const int index) {
+        mBoard->setMessageLogRead(index);
+    });
+    for(const auto& lm : mBoard->messageLog()) {
+        mMsgListWidget->addSavedMessage(lm.fEd, lm.fMsg, lm.fDate, lm.fRead);
+    }
 }
 
 void eGameWidget::updateToastPositions()
@@ -1570,8 +1644,12 @@ void eGameWidget::showMessage(eEventData &ed,
         return;
     }
 
-    if (addToList && mMsgListWidget)
-        mMsgListWidget->addMessage(ed, msg, mBoard->date());
+    if (addToList && mMsgListWidget) {
+        auto storedMsg = msg;
+        formatStoredMessage(storedMsg, ed, window()->leader());
+        mMsgListWidget->addMessage(ed, storedMsg, mBoard->date());
+        mBoard->addMessageLog(ed, storedMsg, mBoard->date());
+    }
 
     if (mMsgBox)
     {
@@ -1635,9 +1713,10 @@ void eGameWidget::showMessage(eEventData &ed,
         }
     }
 
-    const auto close = [this, wasPaused, ed, requestActionTaken]()
+    const auto close = [this, wasPaused, ed, requestActionTaken, msgb]()
     {
         if(ed.fType == eMessageEventType::generalRequestGranted &&
+           msgb->closable() &&
            !*requestActionTaken) {
             if(ed.fA1) ed.fA1();
             else if(ed.fA2) ed.fA2();
