@@ -4,6 +4,7 @@
 #include "enumbers.h"
 #include "emovetoaction.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 eWolfAction::eWolfAction(eCharacter* const c,
                          const int spawnerX, const int spawnerY) :
@@ -58,12 +59,14 @@ bool eWolfAction::decide() {
 
 void eWolfAction::write(eWriteStream &dst) const {
     eAnimalAction::write(dst);
-    dst << mHunting;
+    eSaveArchive ar(dst);
+    ar.field("hunting", const_cast<bool&>(mHunting));
 }
 
 void eWolfAction::read(eReadStream &src) {
     eAnimalAction::read(src);
-    src >> mHunting;
+    eSaveArchive ar(src);
+    ar.field("hunting", mHunting);
 }
 
 void eWolfAction::goBack() {

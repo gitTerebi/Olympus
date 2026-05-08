@@ -6,6 +6,7 @@
 #include "pointers/estdselfref.h"
 #include "vec2.h"
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 class eTile;
 class eSaveArchive;
@@ -17,15 +18,17 @@ struct ePathPoint {
     double fHeight;
 
     void read(eReadStream& src) {
-        src >> fX;
-        src >> fY;
-        src >> fHeight;
+        eSaveArchive ar(src);
+        ar.field("x", fX);
+        ar.field("y", fY);
+        ar.field("height", fHeight);
     }
 
     void write(eWriteStream& dst) const {
-        dst << fX;
-        dst << fY;
-        dst << fHeight;
+        eSaveArchive ar(dst);
+        ar.field("x", const_cast<double&>(fX));
+        ar.field("y", const_cast<double&>(fY));
+        ar.field("height", const_cast<double&>(fHeight));
     }
 };
 
@@ -70,11 +73,12 @@ public:
     double height() const { return mPos.fHeight; }
 
     void read(eReadStream& src) {
-        src >> mAngle;
+        eSaveArchive ar(src);
+        ar.field("angle", mAngle);
         mPos.read(src);
-        src >> mPtId;
+        ar.field("pointId", mPtId);
         int n;
-        src >> n;
+        ar.field("pointCount", n);
         for(int i = 0; i < n; i++) {
             auto& pt = mPts.emplace_back();
             pt.read(src);
@@ -82,10 +86,12 @@ public:
     }
 
     void write(eWriteStream& dst) const {
-        dst << mAngle;
+        eSaveArchive ar(dst);
+        ar.field("angle", const_cast<double&>(mAngle));
         mPos.write(dst);
-        dst << mPtId;
-        dst << mPts.size();
+        ar.field("pointId", const_cast<int&>(mPtId));
+        int pointCount = mPts.size();
+        ar.field("pointCount", pointCount);
         for(const auto& pt : mPts) {
             pt.write(dst);
         }

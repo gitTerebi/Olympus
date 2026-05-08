@@ -2,6 +2,7 @@
 #define EHADESHELPACTION_H
 
 #include "characters/actions/egodaction.h"
+#include "fileIO/esavearchive.h"
 
 enum class eHadesHelpStage {
     none, appear, goTo, give, disappear
@@ -49,11 +50,13 @@ public:
     }
 
     void read(eReadStream& src) {
-        src >> mCityId;
+        eSaveArchive ar(src);
+        ar.field("cityId", mCityId);
     }
 
     void write(eWriteStream& dst) const {
-        dst << mCityId;
+        eSaveArchive ar(dst);
+        ar.field("cityId", const_cast<eCityId&>(mCityId));
     }
 private:
     eCityId mCityId;

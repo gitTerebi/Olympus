@@ -3,20 +3,23 @@
 
 #include "eworldcity.h"
 #include "eresourcetype.h"
+#include "fileIO/esavearchive.h"
 
 struct eCityRequest {
     void write(eWriteStream& dst) const {
         dst.writeCity(fCity.get());
-        dst << fType;
-        dst << fCount;
+        eSaveArchive ar(dst);
+        ar.field("type", const_cast<eResourceType&>(fType));
+        ar.field("count", const_cast<int&>(fCount));
     }
 
     void read(eGameBoard& board, eReadStream& src) {
         src.readCity(&board, [this](const stdsptr<eWorldCity>& city) {
             fCity = city;
         });
-        src >> fType;
-        src >> fCount;
+        eSaveArchive ar(src);
+        ar.field("type", fType);
+        ar.field("count", fCount);
     }
 
     bool operator==(const eCityRequest& o) const {

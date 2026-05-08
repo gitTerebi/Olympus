@@ -133,33 +133,13 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
 }
 
 void eCollectResourceAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    mHasResource = src.readHasResource();
-    src.readBuilding(&board(), [this](eBuilding* const b) {
-        mBuilding = static_cast<eResourceCollectBuildingBase*>(b);
-    });
-    src >> mCollectedAction;
-    mWalkable = src.readWalkable();
-    src >> mDisabled;
-    src >> mWaitTime;
-    src >> mFinishOnce;
-    src >> mAddResource;
-    src >> mGetAtTile;
-    src >> mNoTarget;
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCollectResourceAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    dst.writeHasResource(mHasResource.get());
-    dst.writeBuilding(mBuilding);
-    dst << mCollectedAction;
-    dst.writeWalkable(mWalkable.get());
-    dst << mDisabled;
-    dst << mWaitTime;
-    dst << mFinishOnce;
-    dst << mAddResource;
-    dst << mGetAtTile;
-    dst << mNoTarget;
+    eSaveArchive ar(dst);
+    const_cast<eCollectResourceAction*>(this)->serialize(ar);
 }
 
 void eCollectResourceAction::serialize(eSaveArchive& ar) {

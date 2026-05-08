@@ -2,6 +2,7 @@
 #define EZEUSHELPACTION_H
 
 #include "characters/actions/egodaction.h"
+#include "fileIO/esavearchive.h"
 
 class eSaveArchive;
 
@@ -38,11 +39,13 @@ public:
     void call() override;
 
     void read(eReadStream& src) override {
-        src >> mCid;
+        eSaveArchive ar(src);
+        ar.field("cityId", mCid);
     }
 
     void write(eWriteStream& dst) const override {
-        dst << mCid;
+        eSaveArchive ar(dst);
+        ar.field("cityId", const_cast<eCityId&>(mCid));
     }
 private:
     eCityId mCid;

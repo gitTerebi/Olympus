@@ -19,24 +19,13 @@ void eComplexAction::increment(const int by) {
 }
 
 void eComplexAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    bool hasAction;
-    src >> hasAction;
-    if(hasAction) {
-        eCharActionType type;
-        src >> type;
-        mCurrentAction = eCharacterAction::sCreate(character(), type);
-        mCurrentAction->read(src);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eComplexAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    dst << (mCurrentAction != nullptr);
-    if(mCurrentAction) {
-        dst << mCurrentAction->type();
-        mCurrentAction->write(dst);
-    }
+    eSaveArchive ar(dst);
+    const_cast<eComplexAction*>(this)->serialize(ar);
 }
 
 void eComplexAction::serialize(eSaveArchive& ar) {

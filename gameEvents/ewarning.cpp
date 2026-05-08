@@ -1,5 +1,7 @@
 #include "ewarning.h"
 
+#include "fileIO/esavearchive.h"
+
 eWarning::eWarning(const int warningMonths,
                    const bool initialWarning,
                    eGameEvent& parent,
@@ -25,13 +27,15 @@ void eWarning::handleNewDate(const eDate &date) {
 }
 
 void eWarning::write(eWriteStream &dst) const {
-    mNextDate.write(dst);
-    dst << mFinished;
-    dst << mWarningMonths;
+    eSaveArchive ar(dst);
+    if(ar.writing()) const_cast<eDate&>(mNextDate).write(ar.writeStream());
+    ar.field("mFinished", const_cast<bool&>(mFinished));
+    ar.field("mWarningMonths", const_cast<int&>(mWarningMonths));
 }
 
 void eWarning::read(eReadStream &src) {
-    mNextDate.read(src);
-    src >> mFinished;
-    src >> mWarningMonths;
+    eSaveArchive ar(src);
+    if(ar.reading()) mNextDate.read(ar.readStream());
+    ar.field("mFinished", mFinished);
+    ar.field("mWarningMonths", mWarningMonths);
 }

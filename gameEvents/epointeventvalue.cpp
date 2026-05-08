@@ -1,6 +1,7 @@
 #include "epointeventvalue.h"
 
 #include "engine/egameboard.h"
+#include "fileIO/esavearchive.h"
 
 ePointEventValue::ePointEventValue(
     const eBannerTypeS btype,
@@ -11,15 +12,17 @@ ePointEventValue::ePointEventValue(
     mBoard(board), mValidator(v) {}
 
 void ePointEventValue::write(eWriteStream &dst) const {
-    dst << mPointId;
-    dst << mMinPointId;
-    dst << mMaxPointId;
+    eSaveArchive ar(dst);
+    ar.field("mPointId", const_cast<int&>(mPointId));
+    ar.field("mMinPointId", const_cast<int&>(mMinPointId));
+    ar.field("mMaxPointId", const_cast<int&>(mMaxPointId));
 }
 
 void ePointEventValue::read(eReadStream &src) {
-    src >> mPointId;
-    src >> mMinPointId;
-    src >> mMaxPointId;
+    eSaveArchive ar(src);
+    ar.field("mPointId", mPointId);
+    ar.field("mMinPointId", mMinPointId);
+    ar.field("mMaxPointId", mMaxPointId);
 }
 
 void ePointEventValue::choosePointId() {

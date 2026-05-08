@@ -10,6 +10,7 @@ constexpr int kFpsClamp = 60;
 #include "eframedlabel.h"
 
 #include "engine/etile.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/eterraintextures.h"
 #include "textures/ebuildingtextures.h"
@@ -66,39 +67,45 @@ struct eGameWidgetSettings {
     std::map<int, std::pair<int, int>> fBookmarks;
 
     void read(eReadStream& src) {
-        src >> fPaused;
-        src >> fSpeedId;
-        src >> fSpeed;
-        src >> fDX;
-        src >> fDY;
-        src >> fTileSize;
-        src >> fDir;
+        eSaveArchive ar(src);
+        ar.field("paused", fPaused);
+        ar.field("speedId", fSpeedId);
+        ar.field("speed", fSpeed);
+        ar.field("dx", fDX);
+        ar.field("dy", fDY);
+        ar.field("tileSize", fTileSize);
+        ar.field("direction", fDir);
 
         int n;
-        src >> n;
+        ar.field("bookmarkCount", n);
         for(int i = 0; i < n; i++) {
             int id;
-            src >> id;
+            ar.field("bookmarkId", id);
             auto& b = fBookmarks[id];
-            src >> b.first;
-            src >> b.second;
+            ar.field("bookmarkX", b.first);
+            ar.field("bookmarkY", b.second);
         }
     }
 
     void write(eWriteStream& dst) const {
-        dst << fPaused;
-        dst << fSpeedId;
-        dst << fSpeed;
-        dst << fDX;
-        dst << fDY;
-        dst << fTileSize;
-        dst << fDir;
+        eSaveArchive ar(dst);
+        ar.field("paused", const_cast<bool&>(fPaused));
+        ar.field("speedId", const_cast<int&>(fSpeedId));
+        ar.field("speed", const_cast<int&>(fSpeed));
+        ar.field("dx", const_cast<int&>(fDX));
+        ar.field("dy", const_cast<int&>(fDY));
+        ar.field("tileSize", const_cast<eTileSize&>(fTileSize));
+        ar.field("direction", const_cast<eWorldDirection&>(fDir));
 
-        dst << fBookmarks.size();
+        int bookmarkCount = fBookmarks.size();
+        ar.field("bookmarkCount", bookmarkCount);
         for(const auto& b : fBookmarks) {
-            dst << b.first;
-            dst << b.second.first;
-            dst << b.second.second;
+            auto id = b.first;
+            auto x = b.second.first;
+            auto y = b.second.second;
+            ar.field("bookmarkId", id);
+            ar.field("bookmarkX", x);
+            ar.field("bookmarkY", y);
         }
     }
 };

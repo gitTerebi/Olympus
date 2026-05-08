@@ -124,23 +124,13 @@ bool eArcherAction::decide() {
 }
 
 void eArcherAction::read(eReadStream& src) {
-    eComplexAction::read(src);
-    src >> mMissile;
-    src >> mRangeAttack;
-    src >> mAttackTime;
-    src >> mAttack;
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mAttackTarget = c;
-    });
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eArcherAction::write(eWriteStream& dst) const {
-    eComplexAction::write(dst);
-    dst << mMissile;
-    dst << mRangeAttack;
-    dst << mAttackTime;
-    dst << mAttack;
-    dst.writeCharacter(mAttackTarget.get());
+    eSaveArchive ar(dst);
+    const_cast<eArcherAction*>(this)->serialize(ar);
 }
 
 void eArcherAction::serialize(eSaveArchive& ar) {

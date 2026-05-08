@@ -243,12 +243,14 @@ public:
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = b;
         });
-        src >> mBless;
+        eSaveArchive ar(src);
+        ar.field("bless", mBless);
     }
 
     void write(eWriteStream& dst) const {
         dst.writeBuilding(mTarget);
-        dst << mBless;
+        eSaveArchive ar(dst);
+        ar.field("bless", const_cast<double&>(mBless));
     }
 protected:
     stdptr<eBuilding> mTarget;
@@ -291,12 +293,14 @@ public:
 
     void read(eReadStream& src) {
         eLookForBlessGodActBase::read(src);
-        src >> mType;
+        eSaveArchive ar(src);
+        ar.field("godType", mType);
     }
 
     void write(eWriteStream& dst) const {
         eLookForBlessGodActBase::write(dst);
-        dst << mType;
+        eSaveArchive ar(dst);
+        ar.field("godType", const_cast<eGodType&>(mType));
     }
 private:
     eGodType mType;
@@ -353,14 +357,16 @@ public:
     }
 
     void read(eReadStream& src) {
-        src >> mGodTeam;
+        eSaveArchive ar(src);
+        ar.field("godTeam", mGodTeam);
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mTarget = c;
         });
     }
 
     void write(eWriteStream& dst) const {
-        dst << mGodTeam;
+        eSaveArchive ar(dst);
+        ar.field("godTeam", const_cast<eTeamId&>(mGodTeam));
         dst.writeCharacter(mTarget);
     }
 private:
@@ -396,14 +402,16 @@ public:
     }
 
     void read(eReadStream& src) {
-        src >> mType;
+        eSaveArchive ar(src);
+        ar.field("godType", mType);
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mBTarget = b;
         });
     }
 
     void write(eWriteStream& dst) const {
-        dst << mType;
+        eSaveArchive ar(dst);
+        ar.field("godType", const_cast<eGodType&>(mType));
         dst.writeBuilding(mBTarget);
     }
 private:
@@ -643,14 +651,16 @@ public:
             mCptr = c;
         });
 
-        src >> mAppear;
+        eSaveArchive ar(src);
+        ar.field("appear", mAppear);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeCharacter(mCptr);
 
-        dst << mAppear;
+        eSaveArchive ar(dst);
+        ar.field("appear", const_cast<bool&>(mAppear));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -682,13 +692,15 @@ public:
             mCptr = c;
         });
 
-        src >> mSound;
+        eSaveArchive ar(src);
+        ar.field("sound", mSound);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
 
-        dst << mSound;
+        eSaveArchive ar(dst);
+        ar.field("sound", const_cast<eGodSound&>(mSound));
     }
 private:
     stdptr<eCharacter> mCptr;

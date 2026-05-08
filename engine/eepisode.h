@@ -2,6 +2,7 @@
 #define EEPISODE_H
 
 #include "egameboard.h"
+#include "fileIO/esavearchive.h"
 
 class eSaveArchive;
 
@@ -49,12 +50,14 @@ struct eEpisode {
 struct eParentCityEpisode : public eEpisode {
     void read(eReadStream& src) override {
         eEpisode::read(src);
-        src >> fNextEpisode;
+        eSaveArchive ar(src);
+        ar.field("nextEpisode", fNextEpisode);
     }
 
     void write(eWriteStream& dst) const override {
         eEpisode::write(dst);
-        dst << fNextEpisode;
+        eSaveArchive ar(dst);
+        ar.field("nextEpisode", const_cast<eEpisodeType&>(fNextEpisode));
     }
 
     eEpisodeType fNextEpisode{eEpisodeType::parentCity};

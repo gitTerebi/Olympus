@@ -13,16 +13,18 @@ struct eSetAside {
     stdsptr<eWorldCity> fFrom;
 
     void read(eReadStream& src, eWorldBoard* const board) {
-        src >> fRes;
-        src >> fCount;
+        eSaveArchive ar(src);
+        ar.field("resource", fRes);
+        ar.field("count", fCount);
         src.readCity(board, [this](const stdsptr<eWorldCity>& city) {
             fFrom = city;
         });
     }
 
     void write(eWriteStream& dst) const {
-        dst << fRes;
-        dst << fCount;
+        eSaveArchive ar(dst);
+        ar.field("resource", const_cast<eResourceType&>(fRes));
+        ar.field("count", const_cast<int&>(fCount));
         dst.writeCity(fFrom.get());
     }
 };

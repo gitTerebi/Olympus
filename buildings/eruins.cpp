@@ -15,27 +15,32 @@ stdsptr<eTexture> eRuins::getTexture(const eTileSize size) const {
     return coll.getTexture(seed() % coll.size());
 }
 
-static void writeByteVec(eWriteStream& dst, const std::vector<uint8_t>& v) {
-    const int32_t sz = static_cast<int32_t>(v.size());
-    dst << sz;
-    if(sz > 0) dst.write(v.data(), sz);
+struct eByteVecRef {
+    std::vector<uint8_t>& fVec;
+};
+
+static eWriteStream& operator<<(eWriteStream& dst, const eByteVecRef& ref) {
+    const int32_t sz = static_cast<int32_t>(ref.fVec.size());
+    dst.write(&sz, sizeof(sz));
+    if(sz > 0) dst.write(ref.fVec.data(), sz);
+    return dst;
 }
 
-static void readByteVec(eReadStream& src, std::vector<uint8_t>& v) {
+static eReadStream& operator>>(eReadStream& src, eByteVecRef& ref) {
     int32_t sz;
-    src >> sz;
+    src.read(&sz, sizeof(sz));
+    ref.fVec.clear();
     if(sz > 0) {
-        v.resize(sz);
-        src.read(v.data(), sz);
+        ref.fVec.resize(sz);
+        src.read(ref.fVec.data(), sz);
     }
+    return src;
 }
 
-static void byteVec(eSaveArchive& ar, std::vector<uint8_t>& v) {
-    if(ar.reading()) {
-        readByteVec(ar.readStream(), v);
-    } else {
-        writeByteVec(ar.writeStream(), v);
-    }
+static void byteVecField(eSaveArchive& ar, const char* const name,
+                         std::vector<uint8_t>& v) {
+    eByteVecRef ref{v};
+    ar.field(name, ref);
 }
 
 void eRuins::serialize(eSaveArchive& ar) {
@@ -44,10 +49,10 @@ void eRuins::serialize(eSaveArchive& ar) {
     ar.field("mOriginY", mOriginY);
     ar.field("mOriginW", mOriginW);
     ar.field("mOriginH", mOriginH);
-    byteVec(ar, mSavedBuilding);
-    byteVec(ar, mSavedPier);
+    byteVecField(ar, "mSavedBuilding", mSavedBuilding);
+    byteVecField(ar, "mSavedPier", mSavedPier);
     ar.field("mSavedPierRect", mSavedPierRect);
-    byteVec(ar, mRestoreBundle);
+    byteVecField(ar, "mRestoreBundle", mRestoreBundle);
 }
 
 void eRuins::read(eReadStream& src) {

@@ -2,6 +2,7 @@
 #define ECITYFINANCES_H
 
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
 enum class eFinanceTarget {
@@ -81,37 +82,39 @@ struct eFinanceYear {
     }
 
     void read(eReadStream& src) {
+        eSaveArchive ar(src);
         // income
-        src >> fTaxesIn;
-        src >> fExports;
-        src >> fGiftsReceived;
-        src >> fMinedSilver;
-        src >> fTributeReceived;
-        src >> fHippodrome;
+        ar.field("taxesIn", fTaxesIn);
+        ar.field("exports", fExports);
+        ar.field("giftsReceived", fGiftsReceived);
+        ar.field("minedSilver", fMinedSilver);
+        ar.field("tributeReceived", fTributeReceived);
+        ar.field("hippodrome", fHippodrome);
 
         // expenses
-        src >> fImportCosts;
-        src >> fWages;
-        src >> fConstruction;
-        src >> fBribesTributePaid;
-        src >> fGiftsAndAidGiven;
+        ar.field("importCosts", fImportCosts);
+        ar.field("wages", fWages);
+        ar.field("construction", fConstruction);
+        ar.field("bribesTributePaid", fBribesTributePaid);
+        ar.field("giftsAndAidGiven", fGiftsAndAidGiven);
     }
 
     void write(eWriteStream& dst) const {
+        eSaveArchive ar(dst);
         // income
-        dst << fTaxesIn;
-        dst << fExports;
-        dst << fGiftsReceived;
-        dst << fMinedSilver;
-        dst << fTributeReceived;
-        dst << fHippodrome;
+        ar.field("taxesIn", const_cast<int&>(fTaxesIn));
+        ar.field("exports", const_cast<int&>(fExports));
+        ar.field("giftsReceived", const_cast<int&>(fGiftsReceived));
+        ar.field("minedSilver", const_cast<int&>(fMinedSilver));
+        ar.field("tributeReceived", const_cast<int&>(fTributeReceived));
+        ar.field("hippodrome", const_cast<int&>(fHippodrome));
 
         // expenses
-        dst << fImportCosts;
-        dst << fWages;
-        dst << fConstruction;
-        dst << fBribesTributePaid;
-        dst << fGiftsAndAidGiven;
+        ar.field("importCosts", const_cast<int&>(fImportCosts));
+        ar.field("wages", const_cast<int&>(fWages));
+        ar.field("construction", const_cast<int&>(fConstruction));
+        ar.field("bribesTributePaid", const_cast<int&>(fBribesTributePaid));
+        ar.field("giftsAndAidGiven", const_cast<int&>(fGiftsAndAidGiven));
     }
 
     int totalIncome() const {

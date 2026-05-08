@@ -6,6 +6,7 @@
 #include "characters/egrower.h"
 #include "buildings/egrowerslodge.h"
 #include "buildings/eresourcebuilding.h"
+#include "fileIO/esavearchive.h"
 
 class eSaveArchive;
 
@@ -75,13 +76,15 @@ public:
             mTptr = static_cast<eGrowerAction*>(ca);
         });
         mTile = src.readTile(board());
-        src >> mType;
+        eSaveArchive ar(src);
+        ar.field("buildingType", mType);
     }
 
     void write(eWriteStream& dst) const {
         dst.writeCharacterAction(mTptr);
         dst.writeTile(mTile);
-        dst << mType;
+        eSaveArchive ar(dst);
+        ar.field("buildingType", const_cast<eBuildingType&>(mType));
     }
 private:
     stdptr<eGrowerAction> mTptr;

@@ -4,6 +4,7 @@
 #include "emoveaction.h"
 #include "engine/emovedirection.h"
 #include "ewalkablehelpers.h"
+#include "fileIO/esavearchive.h"
 
 #include <SDL2/SDL_rect.h>
 
@@ -26,11 +27,13 @@ public:
     }
 
     void read(eReadStream& src) {
-        src >> mTime;
+        eSaveArchive ar(src);
+        ar.field("time", mTime);
     }
 
     void write(eWriteStream& dst) const {
-        dst << mTime;
+        eSaveArchive ar(dst);
+        ar.field("time", const_cast<std::vector<int>&>(mTime));
     }
 private:
     std::vector<int> mTime;

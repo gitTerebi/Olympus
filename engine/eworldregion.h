@@ -4,6 +4,7 @@
 #include <string>
 
 #include "fileIO/estreams.h"
+#include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 
@@ -19,17 +20,19 @@ struct eWorldRegion {
     }
 
     void read(eReadStream& src) {
-        src >> fName;
-        src >> fNameId;
-        src >> fX;
-        src >> fY;
+        eSaveArchive ar(src);
+        ar.field("name", fName);
+        ar.field("nameId", fNameId);
+        ar.field("x", fX);
+        ar.field("y", fY);
     }
 
     void write(eWriteStream& dst) const {
-        dst << fName;
-        dst << fNameId;
-        dst << fX;
-        dst << fY;
+        eSaveArchive ar(dst);
+        ar.field("name", const_cast<std::string&>(fName));
+        ar.field("nameId", const_cast<int&>(fNameId));
+        ar.field("x", const_cast<double&>(fX));
+        ar.field("y", const_cast<double&>(fY));
     }
 };
 

@@ -3,21 +3,24 @@
 
 #include "characters/gods/egod.h"
 #include "characters/heroes/ehero.h"
+#include "fileIO/esavearchive.h"
 
 struct eGodQuest {
     static eHeroType sDefaultHero(
             const eGodType gt, const eGodQuestId gqi);
 
     void write(eWriteStream& dst) const {
-        dst << fGod;
-        dst << fId;
-        dst << fHero;
+        eSaveArchive ar(dst);
+        ar.field("god", const_cast<eGodType&>(fGod));
+        ar.field("id", const_cast<eGodQuestId&>(fId));
+        ar.field("hero", const_cast<eHeroType&>(fHero));
     }
 
     void read(eReadStream& src) {
-        src >> fGod;
-        src >> fId;
-        src >> fHero;
+        eSaveArchive ar(src);
+        ar.field("god", fGod);
+        ar.field("id", fId);
+        ar.field("hero", fHero);
     }
 
     bool operator==(const eGodQuest& o) const {

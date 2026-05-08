@@ -193,15 +193,17 @@ public:
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mLoserPtr = static_cast<eGodMonsterAction*>(ca);
         });
-        src >> mWt;
-        src >> mLt;
+        eSaveArchive ar(src);
+        ar.field("winnerGodType", mWt);
+        ar.field("loserGodType", mLt);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mWinnerPtr);
         dst.writeCharacterAction(mLoserPtr);
-        dst << mWt;
-        dst << mLt;
+        eSaveArchive ar(dst);
+        ar.field("winnerGodType", const_cast<eGodType&>(mWt));
+        ar.field("loserGodType", const_cast<eGodType&>(mLt));
     }
 private:
     stdptr<eGodMonsterAction> mWinnerPtr;
@@ -262,13 +264,15 @@ public:
             mTptr = static_cast<eGodMonsterAction*>(ca);
         });
         mFinishAct = src.readCharActFunc(board());
-        src >> mDist;
+        eSaveArchive ar(src);
+        ar.field("distance", mDist);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeCharActFunc(mFinishAct.get());
-        dst << mDist;
+        eSaveArchive ar(dst);
+        ar.field("distance", const_cast<int&>(mDist));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -297,13 +301,15 @@ public:
             mTptr = static_cast<eGodMonsterAction*>(ca);
         });
         mFinishAct = src.readCharActFunc(board());
-        src >> mDist;
+        eSaveArchive ar(src);
+        ar.field("distance", mDist);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeCharActFunc(mFinishAct.get());
-        dst << mDist;
+        eSaveArchive ar(dst);
+        ar.field("distance", const_cast<int&>(mDist));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -334,8 +340,9 @@ public:
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mCptr = c;
         });
-        src >> mAt;
-        src >> mChart;
+        eSaveArchive ar(src);
+        ar.field("actionType", mAt);
+        ar.field("characterType", mChart);
         mTarget = src.readTile(board());
 
         mHitAct = src.readGodAct(board());
@@ -344,8 +351,9 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
-        dst << mAt;
-        dst << mChart;
+        eSaveArchive ar(dst);
+        ar.field("actionType", const_cast<eCharacterActionType&>(mAt));
+        ar.field("characterType", const_cast<eCharacterType&>(mChart));
         dst.writeTile(mTarget);
 
         dst.writeGodAct(mHitAct.get());
@@ -391,26 +399,28 @@ public:
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eGodMonsterAction*>(ca);
         });
-        src >> mAt;
-        src >> mChart;
-        src >> mAttackTime;
+        eSaveArchive ar(src);
+        ar.field("actionType", mAt);
+        ar.field("characterType", mChart);
+        ar.field("attackTime", mAttackTime);
         mTarget.read(src, board());
         mPlaySound = src.readCharActFunc(board());
         mPlayHitSound = src.readGodAct(board());
         mFinishA = src.readCharActFunc(board());
-        src >> mNMissiles;
+        ar.field("missileCount", mNMissiles);
     }
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
-        dst << mAt;
-        dst << mChart;
-        dst << mAttackTime;
+        eSaveArchive ar(dst);
+        ar.field("actionType", const_cast<eCharacterActionType&>(mAt));
+        ar.field("characterType", const_cast<eCharacterType&>(mChart));
+        ar.field("attackTime", const_cast<int&>(mAttackTime));
         mTarget.write(dst);
         dst.writeCharActFunc(mPlaySound.get());
         dst.writeGodAct(mPlayHitSound.get());
         dst.writeCharActFunc(mFinishA.get());
-        dst << mNMissiles;
+        ar.field("missileCount", const_cast<int&>(mNMissiles));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -440,10 +450,11 @@ public:
     void read(eReadStream& src) override {
         mTile = src.readTile(board());
         bool hasFunc;
-        src >> hasFunc;
+        eSaveArchive ar(src);
+        ar.field("hasFindFailFunc", hasFunc);
         if(hasFunc) {
             eFindFailFuncType type;
-            src >> type;
+            ar.field("findFailFuncType", type);
             mFunc = eFindFailFunc::sCreate(board(), type);
             mFunc->read(src);
         }
@@ -452,9 +463,11 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeTile(mTile);
         const bool hasFunc = mFunc != nullptr;
-        dst << hasFunc;
+        eSaveArchive ar(dst);
+        ar.field("hasFindFailFunc", const_cast<bool&>(hasFunc));
         if(hasFunc) {
-            dst << mFunc->type();
+            auto type = mFunc->type();
+            ar.field("findFailFuncType", type);
             mFunc->write(dst);
         }
     }

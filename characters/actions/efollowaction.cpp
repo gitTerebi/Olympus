@@ -30,36 +30,13 @@ void eFollowAction::setDistance(const int d) {
 }
 
 void eFollowAction::read(eReadStream& src) {
-    eMoveAction::read(src);
-    src.readCharacter(&board(), [this](eCharacter* const c) {
-        mFollow = c;
-        if(c) {
-            const auto cc = character();
-            cc->setSpeed(c->speed());
-        }
-    });
-    src >> mCatchUp;
-    src >> mDistance;
-    int s;
-    src >> s;
-    for(int i = 0; i < s; i++) {
-        ePathNode n;
-        n.fTile = src.readTile(board());
-        src >> n.fO;
-        mTiles.push_back(n);
-    }
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFollowAction::write(eWriteStream& dst) const {
-    eMoveAction::write(dst);
-    dst.writeCharacter(mFollow);
-    dst << mCatchUp;
-    dst << mDistance;
-    dst << mTiles.size();
-    for(const auto& t : mTiles) {
-        dst.writeTile(t.fTile);
-        dst << t.fO;
-    }
+    eSaveArchive ar(dst);
+    const_cast<eFollowAction*>(this)->serialize(ar);
 }
 
 void eFollowAction::serialize(eSaveArchive& ar) {

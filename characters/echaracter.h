@@ -14,6 +14,7 @@
 
 #include "actions/earcheraction.h"
 #include "actions/edieaction.h"
+#include "fileIO/esavearchive.h"
 
 class eGameBoard;
 class eCharacterAction;
@@ -180,7 +181,8 @@ public:
     }
 
     void read(eReadStream& src) override {
-        src >> mWithCorpse;
+        eSaveArchive ar(src);
+        ar.field("withCorpse", mWithCorpse);
         src.readCharacter(&board(), [this](eCharacter* const c) {
             if(!c) return;
             mTptr = c;
@@ -188,7 +190,8 @@ public:
     }
 
     void write(eWriteStream& dst) const override {
-        dst << mWithCorpse;
+        eSaveArchive ar(dst);
+        ar.field("withCorpse", const_cast<bool&>(mWithCorpse));
         dst.writeCharacter(mTptr);
     }
 private:
