@@ -231,6 +231,14 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                         window->setAgorasTakeFromTradingPosts(b);
                     },
                     "Allow agora vendors to take goods from trading posts. When disabled (default), they only use warehouses and granaries."
+                },
+                {
+                    "Enable yearly autosaves",
+                    settings.fEnableYearlyAutosaves,
+                    [window](const bool b) {
+                        window->setEnableYearlyAutosaves(b);
+                    },
+                    "Save automatically at the start of each year."
                 }
             }
         },
