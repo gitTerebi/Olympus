@@ -1617,8 +1617,24 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             };
             break;
         case eBuildingMode::tower: {
+            // check if any tile is on wall
+            bool hasWall = false;
+            for(int dx = 0; dx < 2; dx++) {
+                for(int dy = 0; dy < 2; dy++) {
+                    const auto t = mBoard->tile(hoverTX + dx, hoverTY + dy);
+                    if(t) {
+                        const auto ub = t->underBuilding();
+                        if(ub && ub->type() == eBuildingType::wall) {
+                            hasWall = true;
+                            break;
+                        }
+                    }
+                }
+                if(hasWall) break;
+            }
+            if(!hasWall) return false;
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
-                  [this]() { return e::make_shared<eTower>(*mBoard, mViewedCityId); });
+                  [this]() { return e::make_shared<eTower>(*mBoard, mViewedCityId); }, false, false, 0, true);
         } break;
         case eBuildingMode::gatehouse: {
             int dx;

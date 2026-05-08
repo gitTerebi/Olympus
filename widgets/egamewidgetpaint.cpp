@@ -4932,7 +4932,47 @@ void eGameWidget::paintEvent(ePainter &p)
         {
             const auto b1 = e::make_shared<eTower>(*mBoard, mViewedCityId);
             b1->setDeleteArchers(false);
-            ebs.emplace_back(mHoverTX, mHoverTY, b1);
+            // check if any tile is on wall
+            bool onWall = false;
+            for(int dx = 0; dx < 2; dx++) {
+                for(int dy = 0; dy < 2; dy++) {
+                    const auto t = mBoard->tile(mHoverTX + dx, mHoverTY + dy);
+                    if(t) {
+                        const auto ub = t->underBuilding();
+                        if(ub && ub->type() == eBuildingType::wall) {
+                            onWall = true;
+                            break;
+                        }
+                    }
+                }
+                if(onWall) break;
+            }
+            if(onWall) {
+                const auto tex = b1->getTexture(mTileSize);
+                tex->setColorMod(0, 255, 0);
+                double rx, ry;
+                const auto centerTile = mBoard->tile(mHoverTX, mHoverTY);
+                if(centerTile) {
+                    const int a = centerTile->altitude();
+                    drawXY(mHoverTX, mHoverTY, rx, ry, 2, 2, a);
+                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                }
+                tex->clearColorMod();
+            } else {
+                for(int dx = 0; dx < 2; dx++) {
+                    for(int dy = 0; dy < 2; dy++) {
+                        const auto t = mBoard->tile(mHoverTX + dx, mHoverTY + dy);
+                        if(!t) continue;
+                        double rx, ry;
+                        drawXY(mHoverTX + dx, mHoverTY + dy, rx, ry, 1, 1, t->altitude());
+                        int dd;
+                        auto tex = eTileToTexture::get(t, trrTexs, builTexs, mTileSize, false, dd, nullptr, eWorldDirection::N);
+                        tex->setColorMod(255, 0, 0);
+                        tp.drawTexture(rx, ry, tex, eAlignment::top);
+                        tex->clearColorMod();
+                    }
+                }
+            }
         }
         break;
         case eBuildingMode::gatehouse:

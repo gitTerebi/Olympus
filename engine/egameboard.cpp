@@ -3729,7 +3729,8 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
                               const ePlayerId pid,
                               const bool fertile,
                               const bool flat,
-                              const int allowedWater) const {
+                              const int allowedWater,
+                              const bool allowOnWall) const {
     if(pid != cityIdToPlayerId(cid) && !mEditorMode) return false;
     int waterCount = 0;
     bool fertileFound = false;
@@ -3738,7 +3739,10 @@ bool eGameBoard::canBuildBase(const int minX, const int maxX,
             const auto t = tile(x, y);
             if(!t) return false;
             if(t->cityId() != cid) return false;
-            if(t->underBuilding()) return false;
+            if(t->underBuilding()) {
+                const auto ub = t->underBuilding();
+                if(!(allowOnWall && ub->type() == eBuildingType::wall)) return false;
+            }
             const auto& banners = t->banners();
             for(const auto& b : banners) {
                 if(!b->buildable()) return false;
@@ -3796,13 +3800,14 @@ bool eGameBoard::buildBase(const int minX, const int minY,
                            const bool editorDisplay,
                            const bool fertile,
                            const bool flat,
-                           const int allowWater) {
+                           const int allowWater,
+                           const bool allowOnWall) {
     const int sw = maxX - minX + 1;
     const int sh = maxY - minY + 1;
     const bool cb = canBuildBase(minX, maxX + 1, minY, maxY + 1,
                                  editorDisplay,
                                  cid, pid, fertile, flat,
-                                 allowWater);
+                                 allowWater, allowOnWall);
     if(!cb) return false;
     if(!bc) return false;
     const auto b = bc();
@@ -3857,7 +3862,9 @@ bool eGameBoard::build(const int tx, const int ty,
                         const bool editorDisplay,
                         const eBuildingCreator& bc,
                         const bool fertile,
-                        const bool flat) {
+                        const bool flat,
+                        const int allowWater,
+                        const bool allowOnWall) {
     const auto tile = this->tile(tx, ty);
     if(!tile) return false;
     int minX;
@@ -3867,7 +3874,7 @@ bool eGameBoard::build(const int tx, const int ty,
     sBuildTiles(minX, minY, maxX, maxY,
                 tx, ty, sw, sh);
     return buildBase(minX, minY, maxX - 1, maxY - 1,
-                      bc, pid, cid, editorDisplay, fertile, flat);
+                      bc, pid, cid, editorDisplay, fertile, flat, allowWater, allowOnWall);
 }
 
 bool eGameBoard::buildAnimal(eTile* const tile,
@@ -3888,10 +3895,10 @@ bool eGameBoard::buildAnimal(eTile* const tile,
     const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
     sh->setAction(a);
 
-    return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]() {
-        return e::make_shared<eAnimalBuilding>(
-                    *this, sh.get(), type, cid);
-    }, true, true);
+     return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]() {
+         return e::make_shared<eAnimalBuilding>(
+                     *this, sh.get(), type, cid);
+     }, true, true, 0, false);
 }
 
 void eGameBoard::removeAllBuildings() {
@@ -4041,7 +4048,7 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::vine:
             case eSanctEleType::orangeTree: {
                 build(tile->x(), tile->y(), 1, 1, cid, pid, editorDisplay,
-                      [this, cid]() { return e::make_shared<ePlaceholder>(*this, cid); });
+                      [this, cid]() { return e::make_shared<ePlaceholder>(*this, cid); }, false, false, 0, false);
                 b->addSpecialTile(tile);
             } break;
             case eSanctEleType::defaultStatue:
@@ -4055,16 +4062,16 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
             case eSanctEleType::dionysusStatue:
             case eSanctEleType::hadesStatue:
             case eSanctEleType::hephaestusStatue:
-            case eSanctEleType::heraStatue:
-            case eSanctEleType::hermesStatue:
-            case eSanctEleType::poseidonStatue:
-            case eSanctEleType::zeusStatue: {
-                const auto tt = e::make_shared<eTempleStatueBuilding>(
-                                   statueType, t.fId, *this, cid);
-                tt->setMonument(b.get());
-                this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; });
-                b->registerElement(tt);
-            } break;
+                case eSanctEleType::heraStatue:
+                case eSanctEleType::hermesStatue:
+                case eSanctEleType::poseidonStatue:
+                case eSanctEleType::zeusStatue: {
+                    const auto tt = e::make_shared<eTempleStatueBuilding>(
+                                       statueType, t.fId, *this, cid);
+                    tt->setMonument(b.get());
+                    this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; }, false, false, 0, false);
+                    b->registerElement(tt);
+                } break;
             case eSanctEleType::monument: {
                 const auto tt = e::make_shared<eTempleMonumentBuilding>(
                                     god, t.fId, *this, cid);
@@ -4073,30 +4080,30 @@ bool eGameBoard::buildSanctuary(const int minX, const int maxX,
                 this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]() { return tt; });
                 b->registerElement(tt);
             } break;
-            case eSanctEleType::altar: {
-                const auto tt = e::make_shared<eTempleAltarBuilding>(
-                                    *this, cid);
-                tt->setMonument(b.get());
-                const int d = rotate ? 1 : 0;
-                this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]() { return tt; });
-                b->registerElement(tt);
-            } break;
+                case eSanctEleType::altar: {
+                    const auto tt = e::make_shared<eTempleAltarBuilding>(
+                                            *this, cid);
+                    tt->setMonument(b.get());
+                    const int d = rotate ? 1 : 0;
+                    this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]() { return tt; }, false, false, 0, false);
+                    b->registerElement(tt);
+                } break;
             case eSanctEleType::sanctuary: {
                 const auto tb = e::make_shared<eTempleBuilding>(
                             t.fId, *this, cid);
                 tb->setMonument(b.get());
                 b->registerElement(tb);
                 if(rotate) {
-                    this->build(tx - 2, ty + 2, 4, 4, cid, pid, editorDisplay, [tb]() { return tb; });
+                    this->build(tx - 2, ty + 2, 4, 4, cid, pid, editorDisplay, [tb]() { return tb; }, false, false, 0, false);
                 } else {
-                    this->build(tx + 1, ty - 1, 4, 4, cid, pid, editorDisplay, [tb]() { return tb; });
+                    this->build(tx + 1, ty - 1, 4, 4, cid, pid, editorDisplay, [tb]() { return tb; }, false, false, 0, false);
                 }
             } break;
             case eSanctEleType::tile: {
                 const auto tt = e::make_shared<eTempleTileBuilding>(
                                     t.fId, *this, cid);
                 tt->setMonument(b.get());
-                this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; });
+                this->build(tx, ty, 1, 1, cid, pid, editorDisplay, [tt]() { return tt; }, false, false, 0, false);
                 b->registerElement(tt);
                 if(t.fWarrior) b->addWarriorTile(tile);
             } break;

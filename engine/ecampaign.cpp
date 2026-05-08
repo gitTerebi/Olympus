@@ -136,7 +136,6 @@ std::string eCampaign::adventureVictoryAudioFilePath() const {
 bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
     std::ifstream file(path);
     if(!file.good()) {
-        printf("File missing %s\n", path.c_str());
         return false;
     }
     std::string line;
@@ -220,7 +219,6 @@ bool eCampaign::loadStrings() {
 bool eCampaign::writeStrings(const std::string& path) const {
     std::ofstream file(path);
     if(!file.good()) {
-        printf("File missing %s\n", path.c_str());
         return false;
     }
 

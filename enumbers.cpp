@@ -3,7 +3,6 @@
 #include "egamedir.h"
 #include "eloadtexthelper.h"
 
-#include <fstream>
 #include <iostream>
 
 int eNumbers::sDayLength;
@@ -260,22 +259,17 @@ void eNumbers::sLoad(const std::string& path) {
     std::map<std::string, std::string> map;
     eLoadTextHelper::load(path, map);
 
-    const bool write = map.empty();
-
-    std::ofstream file;
-    if(write) file.open(path);
+    const bool missing = map.empty();
 
     const auto loadI = [&](const std::string& name,
                            int& val, const int def,
                            const int min, const int max) {
-        if(write) {
-            file << name << " \"" << def << "\"\n";
+        if(missing) {
             val = def;
             return;
         }
         const auto it = map.find(name);
         if(it == map.end()) {
-            printf("Could not find '%s' in numbers.txt. Using default value %d\n", name.c_str(), def);
             val = def;
             return;
         }
@@ -283,14 +277,11 @@ void eNumbers::sLoad(const std::string& path) {
         try {
             val = std::stoi(iStr);
             if(val > max) {
-                printf("Value of '%s' in numbers.txt is too big. Using max value %d\n", name.c_str(), max);
                 val = max;
             } else if(val < min) {
-                printf("Value of '%s' in numbers.txt is too small. Using min value %d\n", name.c_str(), min);
                 val = min;
             }
         } catch(...) {
-            printf("Invalid '%s' value '%s' in numbers.txt. Using default value %d\n", name.c_str(), iStr.c_str(), def);
             val = def;
             return;
         }
@@ -299,14 +290,12 @@ void eNumbers::sLoad(const std::string& path) {
     const auto loadD = [&](const std::string& name,
                            double& val, const double def,
                            const double min, const double max) {
-        if(write) {
-            file << name << " \"" << def << "\"\n";
+        if(missing) {
             val = def;
             return;
         }
         const auto it = map.find(name);
         if(it == map.end()) {
-            printf("Could not find '%s' in numbers.txt. Using default value %f\n", name.c_str(), def);
             val = def;
             return;
         }
@@ -314,14 +303,11 @@ void eNumbers::sLoad(const std::string& path) {
         try {
             val = std::stod(iStr);
             if(val > max) {
-                printf("Value of '%s' in numbers.txt is too big. Using max value %f\n", name.c_str(), max);
                 val = max;
             } else if(val < min) {
-                printf("Value of '%s' in numbers.txt is too small. Using min value %f\n", name.c_str(), min);
                 val = min;
             }
         } catch(...) {
-            printf("Invalid '%s' value '%s' in numbers.txt. Using default value %f\n", name.c_str(), iStr.c_str(), def);
             val = def;
             return;
         }
@@ -520,12 +506,12 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("tower_hp_i", sTowerHP, 5000, 1, 1000000);
     loadI("tower_range_i", sTowerRange, 8, 2, 100);
-    loadD("tower_attack_d", sTowerAttack, 0.5, 0.1, 10.);
+    loadD("tower_attack_d", sTowerAttack, 0.075, 0.1, 10.);
 
     loadI("wall_hp_i", sWallHP, 2000, 1, 1000000);
 
     loadI("wall_archer_range_i", sWallArcherRange, 8, 2, 200);
-    loadD("wall_archer_attack_d", sWallArcherAttack, 0.5, 0.1, 10.);
+    loadD("wall_archer_attack_d", sWallArcherAttack, 0.075, 0.1, 10.);
 
     loadI("rabble_hp_i", sRabbleHP, 300, 1, 1000000);
     loadI("rabble_range_i", sRabbleRange, 4, 1, 20);
