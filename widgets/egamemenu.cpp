@@ -359,6 +359,17 @@ eBuildButton *eGameMenu::createTradeBuildButton(
             const int sellLabelX = buyIconsX + tradeSlots * (iconWidth + gap);
             const int sellIconsX = sellLabelX + sellsLabel->width() + gap;
             const int costX = maxTradeWidth - 35 * mult;
+            const int iconDrawHeight = std::max(1, 10 * mult);
+            const auto createTradeIcon = [&](const eResourceType type)
+            {
+                const auto icon = new eScaledTextureLabel(window());
+                icon->setTexture(eResourceTypeHelpers::icon(scale, type));
+                icon->setNoPadding();
+                icon->fitContent();
+                icon->setMaxDrawHeight(iconDrawHeight);
+                icon->resize(iconWidth, bb->height());
+                return icon;
+            };
 
             bb->addWidget(buysLabel);
             buysLabel->align(eAlignment::vcenter);
@@ -367,11 +378,7 @@ eBuildButton *eGameMenu::createTradeBuildButton(
             // Buy icons
             for (const auto &buy : city->buys())
             {
-                const auto icon = new eLabel(window());
-                icon->setTexture(eResourceTypeHelpers::icon(scale, buy.fType));
-                icon->setNoPadding();
-                icon->fitContent();
-                icon->setWidth(iconWidth);
+                const auto icon = createTradeIcon(buy.fType);
                 bb->addWidget(icon);
                 icon->align(eAlignment::vcenter);
                 icon->setX(x);
@@ -384,11 +391,7 @@ eBuildButton *eGameMenu::createTradeBuildButton(
             // Sell icons
             for (const auto &sell : city->sells())
             {
-                const auto icon = new eLabel(window());
-                icon->setTexture(eResourceTypeHelpers::icon(scale, sell.fType));
-                icon->setNoPadding();
-                icon->fitContent();
-                icon->setWidth(iconWidth);
+                const auto icon = createTradeIcon(sell.fType);
                 bb->addWidget(icon);
                 icon->align(eAlignment::vcenter);
                 icon->setX(x);
@@ -493,8 +496,7 @@ void eGameMenu::openBuildWidget(const int cmx, const int cmy,
         const auto mode = c.fMode;
         const bool isTrade = mode == eBuildingMode::tradePost ||
                              mode == eBuildingMode::pier;
-        const auto bb = isTrade ? createTradeBuildButton(c, tradeIconWidth) :
-                                  createBuildButton(c);
+        const auto bb = isTrade ? createTradeBuildButton(c, tradeIconWidth) : createBuildButton(c);
         ws.push_back(bb);
     }
     if (ws.empty())
