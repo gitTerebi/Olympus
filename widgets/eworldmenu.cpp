@@ -303,7 +303,9 @@ void eWorldMenu::updateLabels() const {
     } else {
         const auto ppid = mBoard->personPlayer();
         const auto at = mCity->attitudeClass(ppid);
-        const auto atStr = eWorldCity::sAttitudeName(at);
+        auto atStr = eWorldCity::sAttitudeName(at);
+        const auto att = mCity->attitude(ppid);
+        atStr += " (" + std::to_string((int)att) + ")";
         mAttitudeLabel->setText(atStr);
         mAttitudeLabel->fitContent();
         mAttitudeLabel->align(eAlignment::center);
@@ -357,7 +359,11 @@ void eWorldMenu::updateLabels() const {
             }
         }
         const auto relStr = eLanguage::zeusText(group, string);
-        mRelationshipLabel->setText(relStr);
+        if(cc || onBoardNeutral || onBoardColony) {
+            mRelationshipLabel->setText("");
+        } else {
+            mRelationshipLabel->setText(relStr);
+        }
         mRelationshipLabel->fitContent();
         mRelationshipLabel->align(eAlignment::hcenter);
     }

@@ -15,6 +15,11 @@
 
 #include <cstdio>
 
+namespace {
+constexpr int kInvaderDefeatedAttitudeRestore = 15;
+constexpr int kInvaderWonAttitudeRestore = 35;
+}
+
 eInvasionEvent::eInvasionEvent(
         const eCityId cid,
         const eGameEventBranch branch,
@@ -146,10 +151,10 @@ eTile* nearestShoreTile(eTile* const tile) {
 void eInvasionEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    printf("invasion trigger: target=%i warned=%i attacker=%s point=%i next_date_year=%i\n",
+    printf("invasion trigger: target=%i warned=%i attacker=%s point=%i next_date=%s\n",
            static_cast<int>(cityId()), mWarned,
            mCity ? mCity->name().c_str() : "null",
-           pointId(), nextDate().year());
+           pointId(), nextDate().shortString().c_str());
     if(!mWarned) {
         choosePointId();
         if(!mCity) chooseCity();
@@ -480,6 +485,18 @@ void eInvasionEvent::soldiersByType(int& infantry,
     }
 }
 
+void eInvasionEvent::restoreAttitudeAfterInvasion(
+        const eInvasionResult result) {
+    if(!mCity) return;
+    if(mSentByPlayer != ePlayerId::neutralFriendly) return;
+
+    auto& board = *gameBoard();
+    const int amount = result == eInvasionResult::invaderWonOrPlayerSurrendered ?
+                       kInvaderWonAttitudeRestore :
+                       kInvaderDefeatedAttitudeRestore;
+    mCity->incAttitude(amount, board.personPlayer());
+}
+
 void eInvasionEvent::invadersWon() {
     auto& board = *gameBoard();
     const auto targetCity = cityId();
@@ -504,6 +521,7 @@ void eInvasionEvent::invadersWon() {
         }
     } else {
         const auto invadingCid = mCity->cityId();
+        restoreAttitudeAfterInvasion(eInvasionResult::invaderWonOrPlayerSurrendered);
         const auto invadingPid = board.cityIdToPlayerId(invadingCid);
         const auto invadingC = board.boardCityWithId(invadingCid);
         const auto ppid = board.personPlayer();
@@ -549,6 +567,7 @@ void eInvasionEvent::invadersDefeated() {
         board.event(eEvent::strikeUnsuccessful, ed);
     } else {
         const auto invadingCid = mCity->cityId();
+        restoreAttitudeAfterInvasion(eInvasionResult::invaderDefeated);
         const auto invadingC = board.boardCityWithId(invadingCid);
         if(invadingC) {
             eEventData ied(invadingCid);
