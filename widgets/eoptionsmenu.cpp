@@ -275,6 +275,8 @@ void eOptionsMenu::showPage(const int id) {
     } else if(id == 2) { // Gameplay
         if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fWarehouseDefaultAcceptNone;
         if(page.fCheckboxes.size() >= 2) page.fCheckboxes[1].fValue = settings.fDoubleCartCapacity;
+        if(page.fCheckboxes.size() >= 3) page.fCheckboxes[2].fValue = settings.fAgorasTakeFromTradingPosts;
+        if(page.fCheckboxes.size() >= 4) page.fCheckboxes[3].fValue = settings.fEnableYearlyAutosaves;
     } else if(id == 3) { // Sound
         if(page.fSliders.size() >= 1) page.fSliders[0].fValue = settings.fGeneralVolume;
         if(page.fSliders.size() >= 2) page.fSliders[1].fValue = settings.fMusicVolume;

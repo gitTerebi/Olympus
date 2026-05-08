@@ -230,6 +230,11 @@ void eMainWindow::setAgorasTakeFromTradingPosts(const bool b) {
     if (mBoard) mBoard->setAgorasTakeFromTradingPosts(b);
 }
 
+void eMainWindow::setEnableYearlyAutosaves(const bool b) {
+    mSettings.fEnableYearlyAutosaves = b;
+    mSettings.write();
+}
+
 void eMainWindow::startGameAction(eGameBoard* const board,
                                   const eGameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {

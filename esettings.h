@@ -62,6 +62,7 @@ struct eSettings {
     bool fWarehouseDefaultAcceptNone = false;
     bool fDoubleCartCapacity = false;
     bool fAgorasTakeFromTradingPosts = false;
+    bool fEnableYearlyAutosaves = true;
     bool fDisableEdgeScroll = false;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;
