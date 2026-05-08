@@ -2744,6 +2744,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
             };
             const auto saveAct = [this, w]()
             {
+                mLocked = true;
                 const auto fw = new eLoadGame(w);
                 const auto func = [w](const std::string &path)
                 {
@@ -2751,6 +2752,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
                 };
                 const auto closeAct = [this, fw]()
                 {
+                    mLocked = false;
                     removeWidget(fw);
                     fw->deleteLater();
                 };
@@ -2763,6 +2765,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
             };
             const auto loadAct = [this, w]()
             {
+                mLocked = true;
                 const auto fw = new eLoadGame(w);
                 const auto func = [w, fw](const std::string &path)
                 {
@@ -2773,8 +2776,9 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
                         w->loadGame(path); });
                     return true;
                 };
-                const auto closeAct = [fw]()
+                const auto closeAct = [this, fw]()
                 {
+                    mLocked = false;
                     fw->deleteLater();
                 };
                 const auto dir = w->leaderSaveDir();
@@ -2851,6 +2855,7 @@ bool eGameWidget::smoothScrollKeyPressed(const SDL_Scancode k) const
 
 void eGameWidget::updateSmoothScrollKeysPressed()
 {
+    if(mLocked) return;
     const auto &hotkeys = window()->settings();
     mScrollLeft = smoothScrollKeyPressed(hotkeys.fHotkeyScrollLeft);
     mScrollRight = smoothScrollKeyPressed(hotkeys.fHotkeyScrollRight);
