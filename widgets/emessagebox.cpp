@@ -604,8 +604,10 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
 
     if(stockLabelPtr && board) {
         const int stock = board->resourceCount(cid, type);
-        const auto stockLabel = addLabel("(9999 in stock)");
-        stockLabel->setText("(" + std::to_string(stock) + " in stock)");
+        const auto stockText = eLanguage::zeusText(44, 278); // in stock
+        const auto stockLabel = addLabel("(9999 " + stockText + ")");
+        stockLabel->setText("(" + std::to_string(stock) + " " +
+                            stockText + ")");
         *stockLabelPtr = stockLabel;
     }
 

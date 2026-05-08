@@ -182,12 +182,18 @@ protected:
     using eButtonBase::eButtonBase;
 
     using eViableChecker = std::function<bool()>;
+    using eStatusProvider = std::function<std::string()>;
+    using eStatusWarningProvider = std::function<bool()>;
     void initialize(const stdsptr<eTexture>& icon,
                     const std::string& txt,
-                    const eViableChecker& checker) {
+                    const eViableChecker& checker,
+                    const eStatusProvider& statusProvider = nullptr,
+                    const eStatusWarningProvider& statusWarningProvider = nullptr) {
         setNoPadding();
 
         mViableChecker = checker;
+        mStatusProvider = statusProvider;
+        mStatusWarningProvider = statusWarningProvider;
 
         mStateLabel = new eLabel(window());
         mStateLabel->setNoPadding();
@@ -207,6 +213,15 @@ protected:
         textLabel->setText(txt);
         textLabel->fitContent();
         addWidget(textLabel);
+        mTextLabel = textLabel;
+
+        if(mStatusProvider) {
+            mStatusLabel = new eLabel(window());
+            mStatusLabel->setFontSizeXS();
+            mStatusLabel->setNoPadding();
+            addWidget(mStatusLabel);
+            updateStatus();
+        }
 
         setMouseEnterAction([textLabel]() {
             textLabel->setYellowFontColor();
@@ -220,6 +235,7 @@ protected:
         mStateLabel->align(eAlignment::vcenter);
         iconLabel->align(eAlignment::vcenter);
         textLabel->align(eAlignment::vcenter);
+        layoutStatus();
     }
 protected:
     void paintEvent(ePainter& p) override {
@@ -227,6 +243,7 @@ protected:
             const bool v = mViableChecker();
             setViable(v);
         }
+        updateStatus();
         eButtonBase::paintEvent(p);
     }
 private:
@@ -242,8 +259,36 @@ private:
         mStateLabel->setTexture(tex);
     }
 
+    void updateStatus() {
+        if(!mStatusLabel || !mStatusProvider) return;
+        const auto text = mStatusProvider();
+        if(mStatusLabel->text() != text) {
+            mStatusLabel->setText(text);
+            mStatusLabel->fitContent();
+        }
+        const bool warning = mStatusWarningProvider && mStatusWarningProvider();
+        if(warning) mStatusLabel->setYellowFontColor();
+        else mStatusLabel->setLightFontColor();
+        layoutStatus();
+    }
+
+    void layoutStatus() {
+        if(!mStatusLabel) return;
+        mStatusLabel->align(eAlignment::right | eAlignment::vcenter);
+        if(mTextLabel) {
+            const int maxW = mStatusLabel->x() - mTextLabel->x();
+            if(maxW > 0 && mTextLabel->width() > maxW) {
+                mTextLabel->setWidth(maxW);
+            }
+        }
+    }
+
     eViableChecker mViableChecker;
+    eStatusProvider mStatusProvider;
+    eStatusWarningProvider mStatusWarningProvider;
     eLabel* mStateLabel = nullptr;
+    eLabel* mTextLabel = nullptr;
+    eLabel* mStatusLabel = nullptr;
 };
 
 class eResourceRequestButton : public eRequestButton {
@@ -252,13 +297,16 @@ public:
 
     void initialize(const eResourceType resource,
                     const stdsptr<eWorldCity>& city,
-                    const eViableChecker& checker) {
+                    const eViableChecker& checker,
+                    const eStatusProvider& statusProvider,
+                    const eStatusWarningProvider& statusWarningProvider) {
         const auto cityName = city->name();
         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const auto resIcon = eResourceTypeHelpers::icon(uiScale, resource);
 
-        eRequestButton::initialize(resIcon, cityName, checker);
+        eRequestButton::initialize(resIcon, cityName, checker,
+                                   statusProvider, statusWarningProvider);
     }
 };
 
@@ -504,6 +552,10 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
                 if(count >= q.fCount) return true;
             }
             return false;
+        }, [this, qq]() {
+            return qq->overdueStatusText(mBoard.date());
+        }, [this, qq]() {
+            return qq->isPostponed();
         });
         b->setPressAction([this, q, qq, pid]() {
             const auto gw = gameWidget();
@@ -515,7 +567,7 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
                         qq->dispatch(cid);
                     };
                     const auto title = eLanguage::zeusText(5, 6); // Request
-                    const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
+                    const auto text = qq->dispatchText(count, mBoard.date());
                     gw->showQuestion(title, text, acceptA);
                 } else {
                     const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request

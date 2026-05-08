@@ -46,6 +46,13 @@ public:
     eReceiveRequestType requestType() const
     { return mRequestType; }
 
+    std::string requestInfo(int stock, const eDate& currentDate) const;
+    std::string dispatchText(int stock, const eDate& currentDate) const;
+    std::string overdueStatusText(const eDate& currentDate) const;
+    bool isOverdue(const eDate& currentDate) const;
+    bool isPostponed() const;
+    bool isActiveCityRequest() const;
+
     void initialize(const int postpone,
                     const eResourceType res,
                     const int count,
@@ -59,11 +66,14 @@ private:
              const bool finish = false);
 
     void finished(eEventTrigger& t, const eReason& r);
+    eDate complyDate() const;
 
     eReceiveRequestType mRequestType = eReceiveRequestType::general;
 
     bool mFinish = false;
     int mPostpone = 0;
+    eDate mRequestDate{1, eMonth::january, 1};
+    eDate mRequestDeadline{1, eMonth::january, 1};
 
     stdsptr<eEventTrigger> mEarlyTrigger;
     stdsptr<eEventTrigger> mComplyTrigger;

@@ -4,6 +4,10 @@
 
 Where possible, refactor repeated functions into shared local helpers.
 
+## Save Serialization
+
+When adding saved fields, use `eSaveArchive::field(...)` with stable names. Do not append raw `readStream()`/`writeStream()` data to an existing `serialize(eSaveArchive&)`; older tagged saves omit new fields and must remain readable without stream desync.
+
 ## Build
 
 Use `.\build.bat` for default build.

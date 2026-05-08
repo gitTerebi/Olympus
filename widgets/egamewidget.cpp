@@ -1617,8 +1617,31 @@ void eGameWidget::showMessage(eEventData &ed,
     ed.fDate = mBoard->date();
     ed.fPlayerName = window()->leader();
 
-    const auto close = [this, wasPaused]()
+    const auto requestActionTaken = std::make_shared<bool>(false);
+    if(ed.fType == eMessageEventType::generalRequestGranted) {
+        const auto wrapAction = [requestActionTaken](eAction& action) {
+            if(!action) return;
+            const auto oldAction = action;
+            action = [requestActionTaken, oldAction]() {
+                *requestActionTaken = true;
+                oldAction();
+            };
+        };
+        wrapAction(ed.fA0);
+        wrapAction(ed.fA1);
+        wrapAction(ed.fA2);
+        for(auto& a : ed.fCCA0) {
+            wrapAction(a.second);
+        }
+    }
+
+    const auto close = [this, wasPaused, ed, requestActionTaken]()
     {
+        if(ed.fType == eMessageEventType::generalRequestGranted &&
+           !*requestActionTaken) {
+            if(ed.fA1) ed.fA1();
+            else if(ed.fA2) ed.fA2();
+        }
         mMsgBox = nullptr;
         if (!wasPaused)
             switchPause();
