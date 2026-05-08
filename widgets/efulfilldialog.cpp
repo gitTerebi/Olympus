@@ -74,7 +74,7 @@ void eFulfillDialog::initialize(eGameBoard* const board,
                         q->dispatch(cid);
                     };
                     const auto title = eLanguage::zeusText(5, 6); // Request
-                    const auto text = eLanguage::zeusText(5, 7); // Dispatch goods?
+                    const auto text = q->dispatchText(bcount, board->date());
 
                     const auto qw = new eQuestionWidget(window());
                     qw->initialize(title, text, acceptA, nullptr);

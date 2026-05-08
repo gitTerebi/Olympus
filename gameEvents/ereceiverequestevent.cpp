@@ -41,6 +41,9 @@ void eReceiveRequestEvent::trigger() {
 
     if(isMainEvent()) { // initial
         mPostpone = 0;
+        mRequestDate = board->date();
+        mRequestDeadline = mRequestDate;
+        mRequestDeadline.nextMonths(warningMonths());
         chooseCity();
         if(!mCity) return;
         chooseType();
@@ -357,7 +360,9 @@ void eReceiveRequestEvent::trigger() {
             const auto e = e::make_shared<eReceiveRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
             e->set(*this, mPostpone + 1);
-            const auto date = board->date() + 31*warningMonths();
+            auto date = board->date();
+            date.nextMonths(warningMonths());
+            me->mRequestDeadline = date;
             e->initializeDate(date);
             addConsequence(e);
         };
@@ -632,6 +637,24 @@ void eReceiveRequestEvent::serialize(eSaveArchive& ar) {
     ar.field("mRequestType", mRequestType);
     ar.field("mFinish", mFinish);
     ar.field("mPostpone", mPostpone);
+    int requestDay = mRequestDate.day();
+    auto requestMonth = mRequestDate.month();
+    int requestYear = mRequestDate.year();
+    ar.field("mRequestDate.day", requestDay);
+    ar.field("mRequestDate.month", requestMonth);
+    ar.field("mRequestDate.year", requestYear);
+    if(ar.reading()) {
+        mRequestDate = eDate(requestDay, requestMonth, requestYear);
+    }
+    int deadlineDay = mRequestDeadline.day();
+    auto deadlineMonth = mRequestDeadline.month();
+    int deadlineYear = mRequestDeadline.year();
+    ar.field("mRequestDeadline.day", deadlineDay);
+    ar.field("mRequestDeadline.month", deadlineMonth);
+    ar.field("mRequestDeadline.year", deadlineYear);
+    if(ar.reading()) {
+        mRequestDeadline = eDate(deadlineDay, deadlineMonth, deadlineYear);
+    }
 }
 
 eCityRequest eReceiveRequestEvent::cityRequest() const {
@@ -681,6 +704,8 @@ void eReceiveRequestEvent::set(eReceiveRequestEvent &src,
                                const int postpone,
                                const bool finish) {
     setWarningMonths(src.warningMonths());
+    mRequestDate = src.mRequestDate;
+    mRequestDeadline = src.mRequestDeadline;
     mResource = src.mResource;
     mCount = src.mCount;
     mCity = src.mCity;
@@ -706,4 +731,64 @@ void eReceiveRequestEvent::finished(eEventTrigger& t, const eReason& r) {
     const auto item = eResourceTypeHelpers::typeLongName(mResource);
     eStringHelpers::replaceAll(rFull, "[item]", item);
     t.trigger(*this, date, rFull);
+}
+
+eDate eReceiveRequestEvent::complyDate() const {
+    auto date = mRequestDate;
+    if(date == eDate(1, eMonth::january, 1)) {
+        const auto board = gameBoard();
+        if(board) date = board->date();
+    }
+    date.nextMonths(warningMonths());
+    return date;
+}
+
+bool eReceiveRequestEvent::isOverdue(const eDate& currentDate) const {
+    return currentDate > complyDate();
+}
+
+bool eReceiveRequestEvent::isPostponed() const {
+    return mPostpone > 1;
+}
+
+bool eReceiveRequestEvent::isActiveCityRequest() const {
+    return isMainEvent() && !mFinish && mCity;
+}
+
+std::string eReceiveRequestEvent::overdueStatusText(const eDate& currentDate) const {
+    auto date = mRequestDeadline;
+    if(date == eDate(1, eMonth::january, 1)) {
+        date = mPostpone <= 1 ? complyDate() : nextDate();
+    }
+    if(currentDate > date) return eLanguage::zeusText(5, 205); // overdue
+    const int daysDiff = date - currentDate;
+    const int months = (daysDiff + 30) / 31;
+    return std::to_string(months);
+}
+
+std::string eReceiveRequestEvent::requestInfo(int stock, const eDate& currentDate) const {
+    const auto resName = eResourceTypeHelpers::typeLongName(mResource);
+    const int requested = mCount;
+    const bool overdue = isOverdue(currentDate);
+    const int daysDiff = overdue ? currentDate - complyDate() :
+                                   complyDate() - currentDate;
+    const int remainingMonths = daysDiff / 31;
+    std::string status;
+    if(!overdue) {
+        status = eLanguage::zeusText(212, 63); // [months_remaining] months remain
+        eStringHelpers::replaceAll(status, "[months_remaining]",
+                                   std::to_string(remainingMonths));
+    } else {
+        status = std::to_string(remainingMonths) + " " +
+                 eLanguage::zeusText(5, 150) + " " +
+                 eLanguage::zeusText(5, 205);
+    }
+    auto stockText = eLanguage::zeusText(44, 278); // in stock
+    return std::to_string(requested) + " " + resName +
+           " (" + std::to_string(stock) + " " + stockText + "), " + status;
+}
+
+std::string eReceiveRequestEvent::dispatchText(int stock, const eDate& currentDate) const {
+    return eLanguage::zeusText(5, 12) + " " +
+           requestInfo(stock, currentDate) + "?";
 }
