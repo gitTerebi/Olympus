@@ -7,6 +7,7 @@
 #include "emovetoaction.h"
 #include "buildings/ebuilding.h"
 #include "enumbers.h"
+#include "audio/esounds.h"
 #include "fileIO/esavearchive.h"
 #include "vec2.h"
 
@@ -202,7 +203,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
     const vec2d cpos{c->absX(), c->absY()};
 
     const auto setAttackTarget = [&](const stdsptr<eCharacter>& cc,
-                                     const bool range) {
+                                      const bool range) {
         const vec2d ccpos{cc->absX(), cc->absY()};
         const vec2d posdif = ccpos - cpos;
         mAttackTarget = eAttackTarget(cc.get());
@@ -211,7 +212,9 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         mAttackTime = 0;
         mSavedAction = c->actionType();
         c->setActionType(range ? eCharacterActionType::fight2 :
-                             eCharacterActionType::fight);
+                              eCharacterActionType::fight);
+        // Remove visibility check for attack sounds - players should hear combat
+        eSounds::playAttackSound(c);
         mAngle = posdif.angle();
         const auto o = sAngleOrientation(mAngle);
         c->setOrientation(o);
@@ -247,8 +250,8 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                     }
                     continue;
                 }
-                setAttackTarget(cc, false);
-                return eLookForEnemyState::attacking;
+        setAttackTarget(cc, false);
+        return eLookForEnemyState::attacking;
             }
             if(buildingAttack) {
                 const bool r = attackBuilding(t, false);
@@ -288,9 +291,9 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                             }
                             continue;
                         }
-                        setAttackTarget(cc, true);
-                        sSignalBeingAttack(cc.get(), c, brd);
-                        return eLookForEnemyState::attacking;
+                         setAttackTarget(cc, true);
+                         sSignalBeingAttack(cc.get(), c, brd);
+                         return eLookForEnemyState::attacking;
                     }
                     if(buildingAttack) {
                         const bool r = attackBuilding(t, true);
@@ -354,7 +357,9 @@ bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
     mAttackTime = 0;
     mSavedAction = c->actionType();
     c->setActionType(range ? eCharacterActionType::fight2 :
-                         eCharacterActionType::fight);
+                     eCharacterActionType::fight);
+    // Remove visibility check for attack sounds - players should hear combat
+    eSounds::playAttackSound(c);
     const vec2d ccpos{1.*t->x(), 1.*t->y()};
     const vec2d posdif = ccpos - cpos;
     mAngle = posdif.angle();

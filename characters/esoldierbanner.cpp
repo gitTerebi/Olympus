@@ -462,6 +462,8 @@ void eSoldierBanner::read(eReadStream& src) {
     if(visibleOnTile() && mTile) {
         mTile->setSoldierBanner(this);
     }
+    updatePlaces();
+    if(!mHome) callSoldiers();
 }
 
 void eSoldierBanner::write(eWriteStream& dst) const {
@@ -824,6 +826,12 @@ void eSoldierBanner::updatePlaces() {
 
     int isld = 0;
     std::map<eSoldier*, eTile*> places;
+    const auto alreadyUsed = [&places](eTile* const tile) {
+        for(const auto& p : places) {
+            if(p.second == tile) return true;
+        }
+        return false;
+    };
     for(const auto& offset : offsets) {
         if(isld >= slds) break;
         const int tx = mTile->x();
@@ -833,6 +841,22 @@ void eSoldierBanner::updatePlaces() {
 
         const auto s = mSoldiers[isld++];
         places[s] = tt;
+    }
+    const int maxDist = std::max(mBoard.width(), mBoard.height());
+    for(int k = 1; isld < slds && k <= maxDist; k++) {
+        const auto prcsTile = [&](const int i, const int j) {
+            if(isld >= slds) return true;
+            const int tx = mTile->x();
+            const int ty = mTile->y();
+            const auto tt = mBoard.tile(tx + i, ty + j);
+            if(!walkable(tt)) return false;
+            if(alreadyUsed(tt)) return false;
+
+            const auto s = mSoldiers[isld++];
+            places[s] = tt;
+            return false;
+        };
+        eIterateSquare::iterateSquare(k, prcsTile);
     }
     if(!places.empty()) {
         mPlaces = places;

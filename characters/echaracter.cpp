@@ -214,9 +214,8 @@ void eCharacter::incTime(const int by) {
     if(deleteScheduled()) return;
     mTime += by;
     const auto at = actionType();
-    if(mPlayFightSound &&
-       (at == eCharacterActionType::fight ||
-        at == eCharacterActionType::fight2)) {
+    if(at == eCharacterActionType::fight ||
+       at == eCharacterActionType::fight2) {
         mSoundPlayTime += by;
         const int soundPlayTime = 500;
         if(mSoundPlayTime > soundPlayTime) {
@@ -354,6 +353,11 @@ void eCharacter::serialize(eSaveArchive& ar) {
     ar.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
         return eCharacterAction::sCreate(this, type);
     });
+    if(ar.reading() &&
+       (actionType() == eCharacterActionType::fight ||
+        actionType() == eCharacterActionType::fight2)) {
+        mPlayFightSound = true;
+    }
     ar.field("mActionStartTime", mActionStartTime);
 
     if(ar.reading()) {

@@ -208,13 +208,20 @@ void eSoldierAction::goBackToBanner(const eOrientation facing,
     const auto b = s->banner();
     if(!b) return;
 
-    const auto ct = c->tile();
-    const auto tt = b->place(s);
-    if(!tt) return;
-    if(ct == tt) {
+    const auto standAtBanner = [&]() {
         setCurrentAction(nullptr);
         c->setOrientation(facing);
         c->setActionType(eCharacterActionType::stand);
+    };
+
+    const auto ct = c->tile();
+    const auto tt = b->place(s);
+    if(!tt) {
+        standAtBanner();
+        return;
+    }
+    if(ct == tt) {
+        standAtBanner();
         return;
     }
 

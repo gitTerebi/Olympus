@@ -49,6 +49,5 @@ void eLabel::paintEvent(ePainter& p) {
         if(mR != 255 || mG != 255 || mB != 255) {
             tex->clearColorMod();
         }
-        //p.drawRect(rect(), {0, 0, 0, 255}, 1);
     }
 }
