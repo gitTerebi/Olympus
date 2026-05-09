@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "characters/echaracter.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 
 eWall::eWall(eGameBoard& board, const eCityId cid) :

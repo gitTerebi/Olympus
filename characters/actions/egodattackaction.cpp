@@ -1,7 +1,7 @@
 #include "egodattackaction.h"
 
 #include "buildings/ebuilding.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "edionysusfollowaction.h"
 #include "characters/monsters/ecalydonianboar.h"
 #include "characters/actions/ewaitaction.h"

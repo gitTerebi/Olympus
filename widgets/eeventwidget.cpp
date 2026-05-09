@@ -1,6 +1,6 @@
 #include "eeventwidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eevent.h"
 #include "textures/egametextures.h"
 #include "engine/eeventdata.h"

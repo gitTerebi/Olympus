@@ -9,7 +9,7 @@
 #include "ecancelbutton.h"
 #include "enumlineedit.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "emainwindow.h"
 #include "egamewidget.h"
 #include "eswitchbutton.h"

@@ -17,7 +17,7 @@
 #include "buildings/eagorabase.h"
 #include "widgets/ebuttonbase.h"
 #include "widgets/ebasicbutton.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "audio/esounds.h"
 #include "audio/esoundvector.h"
 #include "eiteratesquare.h"
@@ -806,7 +806,7 @@ eCharMessage gCharMessage(eCharacter *const c)
             if (0.1 * pop < u)
                 return 2;
         }
-        const bool vasal = !board.defeatedBy(cid).empty();
+        const bool vasal = !board.conqueredBy(cid).empty();
         if (vasal)
             return 3;
         // rebelling city 4

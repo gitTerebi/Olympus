@@ -5,7 +5,7 @@
 #include "buildings/etriremewharf.h"
 #include "actions/efightingaction.h"
 #include "actions/etriremeaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "eiteratesquare.h"
 #include "engine/epathfinder.h"
 

@@ -1,8 +1,9 @@
-#include "eboardplayer.h"
+#include "e-board-player.h"
 
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
+#include "gameEvents/e-pay-tribute-event.h"
 
-#include "egameboard.h"
+#include "e-game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
 #include "evectorhelpers.h"
@@ -110,8 +111,8 @@ void eBoardPlayer::removeGodQuest(eGodQuestEvent* const q) {
     eVectorHelpers::remove(mGodQuests, q);
 }
 
-void eBoardPlayer::addCityRequest(eReceiveRequestEvent* const q) {
-    const auto sameRequest = [q](const eReceiveRequestEvent* r) {
+void eBoardPlayer::addCityRequest(eFulfillRequestEvent* const q) {
+    const auto sameRequest = [q](const eFulfillRequestEvent* r) {
         return r->requestId() == q->requestId();
     };
     if(std::find_if(mCityRequests.begin(), mCityRequests.end(),
@@ -120,14 +121,24 @@ void eBoardPlayer::addCityRequest(eReceiveRequestEvent* const q) {
     }
 }
 
-void eBoardPlayer::removeCityRequest(eReceiveRequestEvent* const q) {
-    const auto sameRequest = [q](const eReceiveRequestEvent* r) {
+void eBoardPlayer::removeCityRequest(eFulfillRequestEvent* const q) {
+    const auto sameRequest = [q](const eFulfillRequestEvent* r) {
         return r->requestId() == q->requestId();
     };
     mCityRequests.erase(std::remove_if(mCityRequests.begin(),
                                        mCityRequests.end(),
                                        sameRequest),
                         mCityRequests.end());
+}
+
+void eBoardPlayer::addTributeRequest(ePayTributeEvent* const q) {
+    if(!eVectorHelpers::contains(mTributeRequests, q)) {
+        mTributeRequests.push_back(q);
+    }
+}
+
+void eBoardPlayer::removeTributeRequest(ePayTributeEvent* const q) {
+    eVectorHelpers::remove(mTributeRequests, q);
 }
 
 void eBoardPlayer::addCityTroopsRequest(eTroopsRequestEvent* const q) {

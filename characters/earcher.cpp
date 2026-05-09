@@ -1,7 +1,7 @@
 #include "earcher.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 
 eArcher::eArcher(eGameBoard& board) :

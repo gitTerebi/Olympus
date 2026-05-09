@@ -1,7 +1,7 @@
 #ifndef EEPISODE_H
 #define EEPISODE_H
 
-#include "egameboard.h"
+#include "e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 class eSaveArchive;

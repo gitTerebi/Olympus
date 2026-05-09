@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "characters/esoldier.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include <math.h>
 

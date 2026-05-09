@@ -5,7 +5,7 @@
 #include "textures/egametextures.h"
 #include "emainwindow.h"
 #include "echeckablebutton.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/edifficulty.h"
 
 #include "widgets/datawidgets/epopulationdatawidget.h"
@@ -19,7 +19,7 @@
 #include "widgets/datawidgets/ehusbandrydatawidget.h"
 #include "widgets/datawidgets/emythologydatawidget.h"
 #include "widgets/datawidgets/emilitarydatawidget.h"
-#include "widgets/datawidgets/eoverviewdatawidget.h"
+#include "widgets/datawidgets/e-overview-data-widget.h"
 #include "eminimap.h"
 
 #include "eeventwidget.h"

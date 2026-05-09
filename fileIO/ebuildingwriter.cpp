@@ -1,7 +1,7 @@
 #include "ebuildingwriter.h"
 
 #include "buildings/allbuildings.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 void writePyramidElementCost(
         const ePyramidElement* const e,

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

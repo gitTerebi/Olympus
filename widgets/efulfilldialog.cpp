@@ -1,10 +1,10 @@
 #include "efulfilldialog.h"
 
 #include "engine/e-worldcity.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "buildings/eheroshall.h"
 #include "widgets/eframedbutton.h"
@@ -37,8 +37,8 @@ void eFulfillDialog::initialize(eGameBoard* const board,
     int y = p;
     const auto pid = board->personPlayer();
     const auto& qs = board->cityRequests(pid);
-//    std::vector<stdsptr<eReceiveRequestEvent>> qs;
-//    const auto q = e::make_shared<eReceiveRequestEvent>(eGameEventBranch::root);
+//    std::vector<stdsptr<eFulfillRequestEvent>> qs;
+//    const auto q = e::make_shared<eFulfillRequestEvent>(eGameEventBranch::root);
 //    q->initialize(0, eResourceType::fleece, 10, city);
 //    qs.push_back(q);
     for(const auto q : qs) {

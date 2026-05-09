@@ -1,12 +1,12 @@
 #include "eboardcity.h"
 
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "engine/eplague.h"
 #include "characters/monsters/emonster.h"
 #include "gameEvents/emonsterinvasioneventbase.h"
 #include "engine/emilitaryaid.h"
 #include "gameEvents/egameevent.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
 

@@ -1,6 +1,6 @@
 #include "egodaction.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "audio/esounds.h"
 #include "etilehelper.h"
 

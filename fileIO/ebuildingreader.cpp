@@ -1,7 +1,7 @@
 #include "ebuildingreader.h"
 
 #include "buildings/allbuildings.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 template <typename T>
 stdsptr<eBuilding> createVendor(eGameBoard& board,

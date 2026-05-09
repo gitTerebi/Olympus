@@ -1,7 +1,7 @@
 #include "eagorabase.h"
 
 #include "eagoraspace.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "evendor.h"
 

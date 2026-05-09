@@ -17,9 +17,12 @@ namespace eTributeHelpers {
     eTributePayment payTribute(const eWorldCity& city,
                                const eDifficulty diff);
     void receiveTributeFromCity(eGameBoard& board,
-                                const ePlayerId pid,
-                                const stdsptr<eWorldCity>& city,
-                                const bool postpone);
+                                 const ePlayerId pid,
+                                 const stdsptr<eWorldCity>& city,
+                                 const bool postpone);
+    void payTributeToCity(eGameBoard& board,
+                          const eCityId playerCityId,
+                          const stdsptr<eWorldCity>& parentCity);
 }
 
 #endif // ETRIBUTE_H

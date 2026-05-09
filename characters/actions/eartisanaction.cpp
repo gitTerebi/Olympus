@@ -3,7 +3,7 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/ebuildaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eArtisanAction::eArtisanAction(eCharacter* const c,

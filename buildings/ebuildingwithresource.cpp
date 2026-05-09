@@ -2,7 +2,7 @@
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 int eBuildingWithResource::addProduced(const eResourceType type, const int count) {

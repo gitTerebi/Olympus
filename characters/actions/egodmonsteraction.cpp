@@ -5,7 +5,7 @@
 #include "ewaitaction.h"
 #include "emovearoundaction.h"
 #include "emovetoaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/boardData/eheatmap.h"
 #include "engine/boardData/eheatmapdivisor.h"
 #include "engine/boardData/eheatmaptask.h"

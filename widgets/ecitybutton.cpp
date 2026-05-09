@@ -2,7 +2,7 @@
 
 #include "echoosecitydialog.h"
 #include "emainwindow.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "elanguage.h"
 
 void eCityButton::initialize(eWorldBoard* const board,

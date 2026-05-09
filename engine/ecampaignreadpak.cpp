@@ -1,4 +1,4 @@
-﻿#include "ecampaign.h"
+#include "ecampaign.h"
 
 #include "elanguage.h"
 #include "pak/zeusfile.h"
@@ -7,7 +7,7 @@
 
 #include "buildings/pyramids/epyramid.h"
 
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/emonsterincityevent.h"
 #include "gameEvents/emonsterinvasionevent.h"
@@ -560,7 +560,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 e = ee;
             } else {
                 const auto type = pakIdToReceiveRequestType(subType);
-                const auto ee = e::make_shared<eReceiveRequestEvent>(
+                const auto ee = e::make_shared<eFulfillRequestEvent>(
                         cid, eGameEventBranch::root, *ep.fBoard);
                 setResources(*ee);
                 bool valid = false;

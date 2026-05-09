@@ -3,7 +3,7 @@
 #include "emovepathaction.h"
 
 #include "characters/echaracter.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/thread/ethreadboard.h"
 #include "engine/ethreadpool.h"
 #include "epathfindtask.h"

@@ -1,6 +1,6 @@
 #include "ehousebase.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "characters/esettler.h"
 #include "characters/ehomeless.h"

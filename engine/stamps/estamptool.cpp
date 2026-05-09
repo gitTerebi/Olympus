@@ -2,7 +2,7 @@
 
 #include "estampblueprint.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/edifficulty.h"
 #include "buildings/ebuilding.h"
 #include "buildings/eagorabase.h"

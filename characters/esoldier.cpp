@@ -1,6 +1,6 @@
 #include "esoldier.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "esoldierbanner.h"
 #include "actions/esoldieraction.h"
 #include "fileIO/esavearchive.h"

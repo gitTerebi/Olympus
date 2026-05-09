@@ -1,7 +1,7 @@
 #include "etimbermill.h"
 
 #include "characters/elumberjack.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eTimberMill::eTimberMill(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,

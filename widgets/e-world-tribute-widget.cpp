@@ -1,7 +1,7 @@
 #include "eworldtributewidget.h"
 
 #include "elanguage.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/e-tribute.h"
 #include "evectorhelpers.h"
 
@@ -41,9 +41,10 @@ bool eWorldTributeWidget::hasClaimToTribute(
         const stdsptr<eWorldCity>& c) const {
     if(!mBoard || !c) return false;
     const auto cids = mBoard->personPlayerCitiesOnBoard();
+    const auto defs = mBoard->conqueredBy(c->cityId());
     for(const auto cid : cids) {
-        const auto defs = mBoard->defeatedBy(cid);
-        if(eVectorHelpers::contains(defs, c)) return true;
+        const auto playerCity = mBoard->world().cityWithId(cid);
+        if(eVectorHelpers::contains(defs, playerCity)) return true;
     }
     return false;
 }

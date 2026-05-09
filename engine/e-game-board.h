@@ -43,7 +43,7 @@ class eSaveArchive;
 #include "eemploymentdistributor.h"
 
 #include "eboardcity.h"
-#include "eboardplayer.h"
+#include "e-board-player.h"
 #include "egameundo.h"
 
 class eGameEvent;
@@ -57,7 +57,8 @@ class eStorageBuilding;
 class eSoldierBanner;
 class ePalace;
 class eLandInvasionPoint;
-class eReceiveRequestEvent;
+class eFulfillRequestEvent;
+class ePayTributeEvent;
 class eInvasionEvent;
 class eAgoraBase;
 class eHerosHall;
@@ -94,6 +95,8 @@ private:
     eGameBoard& mBoard;
     const int mTmpId;
 };
+
+using eCities = std::vector<stdsptr<eWorldCity>>;
 
 class eGameBoard : public eStdSelfRef {
 public:
@@ -508,9 +511,8 @@ public:
                       const eResourceType type,
                       const int count,
                       const int delay);
-    void tributeFrom(const ePlayerId pid,
-                     const stdsptr<eWorldCity>& c,
-                     const bool postpone);
+
+
     bool giftTo(const stdsptr<eWorldCity>& c,
                 const eResourceType type,
                 const int count, const eCityId cid);
@@ -540,10 +542,15 @@ public:
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
-    using eRequests = std::vector<eReceiveRequestEvent*>;
+    using eRequests = std::vector<eFulfillRequestEvent*>;
     eRequests cityRequests(const ePlayerId pid) const;
-    void addCityRequest(eReceiveRequestEvent* const q);
-    void removeCityRequest(eReceiveRequestEvent* const q);
+    void addCityRequest(eFulfillRequestEvent* const q);
+    void removeCityRequest(eFulfillRequestEvent* const q);
+
+    using eTributeRequests = std::vector<ePayTributeEvent*>;
+    eTributeRequests tributeRequests(const ePlayerId pid) const;
+    void addTributeRequest(ePayTributeEvent* const q);
+    void removeTributeRequest(ePayTributeEvent* const q);
 
     using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
     eTroopsRequests cityTroopsRequests(const ePlayerId pid) const;
@@ -659,10 +666,9 @@ public:
     void addLavaFlow(eTile* const startTile);
     bool duringLavaFlow() const;
 
-    void defeatedBy(const eCityId defeated,
-                    const stdsptr<eWorldCity>& by);
-    using eCities = std::vector<stdsptr<eWorldCity>>;
-    eCities defeatedBy(const eCityId cid);
+    void conqueredBy(const eCityId conquered,
+                      const stdsptr<eWorldCity>& by);
+    eCities conqueredBy(const eCityId cid);
 
     eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
 
@@ -1090,7 +1096,7 @@ private:
     int mProgressLandSlides = 0;
     std::vector<stdsptr<eLandSlide>> mLandSlides;
 
-    std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mDefeatedBy;
+    std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mConqueredBy;
 
     // for person player
     struct eYearlyProduction {

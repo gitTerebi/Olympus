@@ -26,7 +26,7 @@
 #include "gameEvents/earmyreturnevent.h"
 #include "engine/emilitaryaid.h"
 #include "spawners/ebanner.h"
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 
 #include "elanguage.h"
 #include "emessages.h"
@@ -35,7 +35,7 @@
 #include "eplague.h"
 
 #include "engine/eepisode.h"
-#include "egameboard.h"
+#include "e-game-board.h"
 
 #include "eiteratesquare.h"
 #include "etilehelper.h"

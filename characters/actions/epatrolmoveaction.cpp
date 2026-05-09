@@ -4,7 +4,7 @@
 #include "engine/etile.h"
 #include "emovepathaction.h"
 #include "engine/epathfinder.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,

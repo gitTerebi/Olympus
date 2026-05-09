@@ -4,7 +4,7 @@
 #include "emessages.h"
 #include "engine/eevent.h"
 #include "estringhelpers.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 void eGameWidget::handleGodQuestEvent(eEventData& ed,
                                       const bool fulfilled) {

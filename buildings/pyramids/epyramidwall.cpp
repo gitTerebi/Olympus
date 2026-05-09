@@ -1,6 +1,6 @@
 #include "epyramidwall.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "epyramid.h"
 
 ePyramidWall::ePyramidWall(const std::vector<eSanctCost>& cost,

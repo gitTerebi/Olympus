@@ -3,7 +3,8 @@
 #include "elanguage.h"
 #include "egifthelpers.h"
 #include "evectorhelpers.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
+#include "engine/edifficulty.h"
 #include "gameEvents/einvasionevent.h"
 #include "fileIO/esavearchive.h"
 #include "erand.h"
@@ -449,7 +450,11 @@ void eWorldCity::nextMonth(eGameBoard *const board)
         {
             const auto e = e::make_shared<eInvasionEvent>(targetCid, eGameEventBranch::root, *board);
             const auto attacker = board->world().cityWithId(mCityId);
-            const int unitCount = static_cast<int>(mMilitaryStrength) * 3 * 8; // max banners in city 20
+
+            // max banners in city 20
+            const int unitCount =
+                static_cast<int>(mMilitaryStrength * eDifficultyHelpers::costMultiplier(board->difficulty(attacker->playerId()))) * 6;
+
             e->setSingleCity(attacker);
             e->setMinPointId(1);
             e->setMaxPointId(16);

@@ -1,7 +1,7 @@
 #include "eelitehousing.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "erand.h"
 
 #include "textures/egametextures.h"

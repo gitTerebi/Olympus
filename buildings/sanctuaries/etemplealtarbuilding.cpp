@@ -4,7 +4,7 @@
 #include "textures/egametextures.h"
 
 #include "esanctuary.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eTempleAltarBuilding::eTempleAltarBuilding(eGameBoard& board,
                                            const eCityId cid) :

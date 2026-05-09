@@ -1,6 +1,6 @@
 #include "emonsterinvasioneventbase.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
 #include "characters/actions/emonsteraction.h"
 #include "eiteratesquare.h"

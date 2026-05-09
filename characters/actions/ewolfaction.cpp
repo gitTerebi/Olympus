@@ -3,7 +3,7 @@
 #include "erand.h"
 #include "enumbers.h"
 #include "emovetoaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eWolfAction::eWolfAction(eCharacter* const c,

@@ -11,7 +11,7 @@
 #include "characters/actions/emovetoaction.h"
 
 #include "eiteratesquare.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eMasonryShop::eMasonryShop(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,

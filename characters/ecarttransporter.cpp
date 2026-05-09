@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "characters/actions/efollowaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 #include "etrailer.h"
 #include "eox.h"

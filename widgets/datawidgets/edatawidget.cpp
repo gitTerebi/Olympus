@@ -3,7 +3,7 @@
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
 #include "elanguage.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eDataWidget::eDataWidget(eGameBoard& b, eMainWindow* const w) :
     eWidget(w), mBoard(b) {}

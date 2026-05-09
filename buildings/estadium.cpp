@@ -2,7 +2,7 @@
 
 #include "characters/ecompetitor.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "textures/egametextures.h"
 

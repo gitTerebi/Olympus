@@ -3,7 +3,7 @@
 
 #include "elabel.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 class eRotateButton : public eLabel {
     enum class eButtonHoverPortion {

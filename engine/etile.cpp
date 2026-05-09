@@ -5,7 +5,7 @@
 #include "buildings/ebuilding.h"
 #include "buildings/eroad.h"
 #include "characters/echaracter.h"
-#include "egameboard.h"
+#include "e-game-board.h"
 
 #include "evectorhelpers.h"
 #include "spawners/ebanner.h"

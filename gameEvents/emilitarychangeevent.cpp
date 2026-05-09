@@ -1,6 +1,6 @@
 #include "emilitarychangeevent.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"

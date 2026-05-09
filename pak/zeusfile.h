@@ -21,7 +21,7 @@
 
 #include "gamefile.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 class eCampaign;
 

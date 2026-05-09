@@ -16,7 +16,7 @@
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "buildings/pyramids/epyramid.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
                                     eGameBoard* const board) {

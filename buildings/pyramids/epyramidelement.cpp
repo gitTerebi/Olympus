@@ -3,7 +3,7 @@
 
 #include "epyramid.h"
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 std::vector<eSanctCost> addElevationCost(ePyramid* const pyramid,
                                          std::vector<eSanctCost> result,

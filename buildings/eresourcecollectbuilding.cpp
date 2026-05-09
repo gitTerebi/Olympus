@@ -3,7 +3,7 @@
 #include "characters/eresourcecollector.h"
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

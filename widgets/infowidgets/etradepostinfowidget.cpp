@@ -1,7 +1,7 @@
 #include "etradepostinfowidget.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "elanguage.h"
 #include "enumbers.h"
 #include "../eleftbutton.h"

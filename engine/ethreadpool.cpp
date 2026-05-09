@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "evectorhelpers.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eThreadPool::eThreadPool(eGameBoard &board) : mBoard(board) {}
 

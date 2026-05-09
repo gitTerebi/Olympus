@@ -1,7 +1,7 @@
 #ifndef EREPAIR_H
 #define EREPAIR_H
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "buildings/ebuilding.h"
 
 class eGameWidget;

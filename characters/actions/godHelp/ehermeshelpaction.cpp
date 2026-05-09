@@ -3,7 +3,7 @@
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 
 eHermesHelpAction::eHermesHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::hermesHelpAction) {}

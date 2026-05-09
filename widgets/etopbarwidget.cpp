@@ -1,6 +1,6 @@
 #include "etopbarwidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/boardData/eemploymentdata.h"
 #include "engine/boardData/epopulationdata.h"
 #include "textures/egametextures.h"

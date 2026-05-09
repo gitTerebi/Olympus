@@ -6,7 +6,7 @@
 #include "engine/epathfinder.h"
 #include "epathfindtask.h"
 #include "engine/ethreadpool.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "evectorhelpers.h"
 #include "epatroltarget.h"

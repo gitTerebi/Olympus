@@ -416,6 +416,7 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             const auto type = ePakHelpers::pakResourceByteToType(
                                   i, worldMapIsPoseidon);
             prices[type] = price;
+        }
     }
     skipBytes(140 - nTypes*4);
     const auto scrub = readCompressedByteGrid();
@@ -1001,7 +1002,6 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
 * Gets the map size from the saved game, which is
 * buried deep into the game file
 */
-}
 int ZeusFile::getMapsize() {
 	// Assume walkers have been read already
 	// Three compressed blocks

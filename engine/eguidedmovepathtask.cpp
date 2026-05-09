@@ -1,7 +1,7 @@
 #include "eguidedmovepathtask.h"
 
 #include "thread/ethreadboard.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "buildings/epatrolbuildingbase.h"
 

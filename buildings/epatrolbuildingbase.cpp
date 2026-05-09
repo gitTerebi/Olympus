@@ -1,6 +1,6 @@
 #include "epatrolbuildingbase.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eguidedmovepathtask.h"
 #include "fileIO/esavearchive.h"
 

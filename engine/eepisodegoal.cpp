@@ -8,7 +8,7 @@
 #include "engine/e-worldcity.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "buildings/pyramids/epyramid.h"
 #include "evectorhelpers.h"
 

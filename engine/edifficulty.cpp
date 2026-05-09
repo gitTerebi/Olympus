@@ -868,16 +868,16 @@ int eDifficultyHelpers::soliderBribe(const eDifficulty diff,
     switch (type)
     {
     case eCharacterType::rockThrower:
-        base = 15;
+        base = 25;
         break;
     case eCharacterType::hoplite:
-        base = 15;
+        base = 25;
         break;
     case eCharacterType::horseman:
-        base = 30;
+        base = 50;
         break;
     default:
-        return 15;
+        return 25;
     }
     return static_cast<int>(mult * base);
 }
