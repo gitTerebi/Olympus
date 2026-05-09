@@ -3,7 +3,7 @@
 
 #include "ewidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 struct eDirectionTexture {
     bool fTotalUpdateScheduled = true;

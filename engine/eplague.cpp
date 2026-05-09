@@ -1,7 +1,7 @@
 #include "eplague.h"
 
 #include "buildings/esmallhouse.h"
-#include "egameboard.h"
+#include "e-game-board.h"
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
 

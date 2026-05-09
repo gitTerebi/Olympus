@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "elanguage.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "buildings/epalace.h"
 #include "buildings/eroad.h"
 #include "eiteratesquare.h"

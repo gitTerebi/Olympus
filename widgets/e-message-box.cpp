@@ -1,4 +1,4 @@
-#include "emessagebox.h"
+#include "e-message-box.h"
 
 #include "elabel.h"
 #include "eframedwidget.h"
@@ -15,7 +15,7 @@
 #include "engine/e-worldcity.h"
 #include "widgets/egamewidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "emainwindow.h"
 #include "eboardcityswitchbutton.h"
 
@@ -442,11 +442,16 @@ void eMessageBox::initialize(eGameBoard& board,
         });
         a1B->setVisible(ed.fSecondaryAction != nullptr);
 
-        const auto a2B = new eFramedButton(window());
-        a2B->setFontSizeS();
-        a2B->setUnderline(false);
-        a2B->setText(eLanguage::zeusText(44, 212));
-        a2B->fitContent();
+        eButton* a2B;
+        if(ed.fType == eMessageEventType::generalRequestGranted && ed.fTime == 0) {
+            a2B = new eOkButton(window());
+        } else {
+            a2B = new eFramedButton(window());
+            a2B->setFontSizeS();
+            a2B->setUnderline(false);
+            a2B->setText(eLanguage::zeusText(44, 212));
+            a2B->fitContent();
+        }
         wid->addWidget(a2B);
         a2B->setPressAction([this, ed]() {
             if(ed.fTertiaryAction) ed.fTertiaryAction();
@@ -608,10 +613,12 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
     if(stockLabelPtr && board) {
         const int stock = board->resourceCount(cid, type);
         const auto stockText = eLanguage::zeusText(44, 278); // in stock
-        const auto stockLabel = addLabel("(9999 " + stockText + ")");
+        const auto stockLabel = addLabel("");
         stockLabel->setText("(" + std::to_string(stock) + " " +
-                            stockText + ")");
+                            stockText + ") ");
         *stockLabelPtr = stockLabel;
+        stockLabel->align(eAlignment::hcenter);
+        stockLabel->fitContent();
     }
 
     const auto name = eResourceTypeHelpers::typeLongName(type);

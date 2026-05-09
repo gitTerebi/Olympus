@@ -13,7 +13,8 @@ enum class eMonsterType;
 
 class eGodQuestEvent;
 class ePlayerConquestEventBase;
-class eReceiveRequestEvent;
+class eFulfillRequestEvent;
+class ePayTributeEvent;
 class eTroopsRequestEvent;
 enum class eResourceType;
 class eSaveArchive;
@@ -47,10 +48,15 @@ public:
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
-    using eRequests = std::vector<eReceiveRequestEvent*>;
+    using eRequests = std::vector<eFulfillRequestEvent*>;
     const eRequests& cityRequests() const { return mCityRequests; }
-    void addCityRequest(eReceiveRequestEvent* const q);
-    void removeCityRequest(eReceiveRequestEvent* const q);
+    void addCityRequest(eFulfillRequestEvent* const q);
+    void removeCityRequest(eFulfillRequestEvent* const q);
+
+    using eTributeRequests = std::vector<ePayTributeEvent*>;
+    const eTributeRequests& tributeRequests() const { return mTributeRequests; }
+    void addTributeRequest(ePayTributeEvent* const q);
+    void removeTributeRequest(ePayTributeEvent* const q);
 
     using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
     const eTroopsRequests& cityTroopsRequests() const { return mCityTroopsRequests; }
@@ -93,7 +99,8 @@ private:
 
     std::vector<eGodQuestEvent*> mGodQuests;
     std::vector<ePlayerConquestEventBase*> mConquests;
-    std::vector<eReceiveRequestEvent*> mCityRequests;
+    std::vector<eFulfillRequestEvent*> mCityRequests;
+    std::vector<ePayTributeEvent*> mTributeRequests;
     std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
 
     int mDrachmas = 2500;

@@ -1,5 +1,5 @@
-﻿
-#include "egameboard.h"
+
+#include "e-game-board.h"
 
 #include "buildings/eagorabase.h"
 #include "e-tribute.h"
@@ -46,11 +46,12 @@
 #include "gameEvents/egodattackevent.h"
 #include "gameEvents/emonsterunleashedevent.h"
 #include "gameEvents/einvasionevent.h"
-#include "gameEvents/epaytributeevent.h"
+#include "gameEvents/ereceivetributeevent.h"
+#include "gameEvents/e-pay-tribute-event.h"
 #include "gameEvents/emakerequestevent.h"
 #include "gameEvents/egifttoevent.h"
 #include "gameEvents/egiftfromevent.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/erequestaidevent.h"
 #include "gameEvents/eplayerconquesteventbase.h"
 #include "gameEvents/etroopsrequestevent.h"
@@ -58,7 +59,7 @@
 
 #include "eeventdata.h"
 
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "characters/actions/emonsteraction.h"
 
 #include "evectorhelpers.h"
@@ -226,7 +227,7 @@ void eGameBoard::clear()
     std::swap(mCitiesOnBoard, cities);
     cities.clear();
     mPlayersOnBoard.clear();
-    mDefeatedBy.clear();
+    mConqueredBy.clear();
     mEarthquakes.clear();
     mTidalWaves.clear();
     mGoals.clear();
@@ -1050,13 +1051,6 @@ void eGameBoard::requestAid(const stdsptr<eWorldCity> &c,
     addRootGameEvent(e);
 }
 
-void eGameBoard::tributeFrom(const ePlayerId pid,
-                             const stdsptr<eWorldCity> &c,
-                             const bool postpone)
-{
-    eTributeHelpers::receiveTributeFromCity(*this, pid, c, postpone);
-}
-
 bool eGameBoard::giftTo(const stdsptr<eWorldCity> &c,
                         const eResourceType type,
                         const int count,
@@ -1620,8 +1614,10 @@ eGameBoard::eRequests eGameBoard::cityRequests(const ePlayerId pid) const
     return p->cityRequests();
 }
 
-void eGameBoard::addCityRequest(eReceiveRequestEvent *const q)
+void eGameBoard::addCityRequest(eFulfillRequestEvent *const q)
 {
+    if (!q)
+        return;
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
     const auto p = boardPlayerWithId(pid);
@@ -1632,14 +1628,52 @@ void eGameBoard::addCityRequest(eReceiveRequestEvent *const q)
         mRequestUpdateHandler();
 }
 
-void eGameBoard::removeCityRequest(eReceiveRequestEvent *const q)
+void eGameBoard::removeCityRequest(eFulfillRequestEvent *const q)
 {
+    if (!q)
+        return;
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
     const auto p = boardPlayerWithId(pid);
     if (!p)
         return;
     p->removeCityRequest(q);
+    if (mRequestUpdateHandler)
+        mRequestUpdateHandler();
+}
+
+eGameBoard::eTributeRequests eGameBoard::tributeRequests(const ePlayerId pid) const
+{
+    const auto p = boardPlayerWithId(pid);
+    if (!p)
+        return {};
+    return p->tributeRequests();
+}
+
+void eGameBoard::addTributeRequest(ePayTributeEvent *const q)
+{
+    if (!q)
+        return;
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if (!p)
+        return;
+    p->addTributeRequest(q);
+    if (mRequestUpdateHandler)
+        mRequestUpdateHandler();
+}
+
+void eGameBoard::removeTributeRequest(ePayTributeEvent *const q)
+{
+    if (!q)
+        return;
+    const auto cid = q->cityId();
+    const auto pid = cityIdToPlayerId(cid);
+    const auto p = boardPlayerWithId(pid);
+    if (!p)
+        return;
+    p->removeTributeRequest(q);
     if (mRequestUpdateHandler)
         mRequestUpdateHandler();
 }
@@ -2003,15 +2037,23 @@ bool eGameBoard::unregisterSoldierBanner(const stdsptr<eSoldierBanner> &b)
 
 void eGameBoard::addRootGameEvent(const stdsptr<eGameEvent> &e)
 {
+    if (!e)
+        return;
     const auto cid = e->cityId();
     const auto c = boardCityWithId(cid);
+    if (!c)
+        return;
     c->addRootGameEvent(e);
 }
 
 void eGameBoard::removeRootGameEvent(const stdsptr<eGameEvent> &e)
 {
+    if (!e)
+        return;
     const auto cid = e->cityId();
     const auto c = boardCityWithId(cid);
+    if (!c)
+        return;
     c->removeRootGameEvent(e);
 }
 
@@ -2908,34 +2950,27 @@ void eGameBoard::incTime(const int by)
             c->nextYear();
         }
 
-        // Tributes owed to the player
+        // pay tributes
         const auto playerCities = personPlayerCitiesOnBoard();
-        for (const auto cid : playerCities)
+        for (const auto playerCityId : playerCities)
         {
-            const auto city = world().cityWithId(cid);
-            printf("Processing cid: %s\n", city ? city->name().c_str() : "unknown");
-            auto &defeatedCities = mDefeatedBy[cid];
-            printf("  Number of defeated cities: %zu\n", defeatedCities.size());
-            for (const auto &cc : defeatedCities)
+            const auto playerCity = world().cityWithId(playerCityId);
+            if (!playerCity)
+                continue;
+
+            for (const auto &p : mConqueredBy)
             {
-                printf("  Checking defeated city: %s, isRival: %d\n", cc->name().c_str(), cc->isRival());
-                if (!cc->isRival())
+                const auto parentCity = world().cityWithId(p.first);
+                if (!parentCity || !parentCity->isRival())
                     continue;
-                const auto diff = difficulty(personPlayer());
-                printf("diff: %s\n", eDifficultyHelpers::name(diff).c_str());
-                const auto tribute = eTributeHelpers::payTribute(*cc, diff);
-                printf("tribute.fType: %s, fCount: %d\n", eResourceTypeHelpers::typeName(tribute.fType).c_str(), tribute.fCount);
-                const auto type = tribute.fType;
-                const int count = tribute.fCount;
-                printf("type: %s, count: %d\n", eResourceTypeHelpers::typeName(type).c_str(), count);
-                // Direct tribute payment from defeated rival
-                const auto receiverPid = personPlayer();
-                incDrachmas(receiverPid, count, eFinanceTarget::tributeReceived);
-                eEventData ed(cid);
-                ed.fCity = cc;
-                ed.fResourceType = type;
-                ed.fResourceCount = count;
-                event(eEvent::tributePaid, ed);
+                if (!eVectorHelpers::contains(p.second, playerCity))
+                    continue;
+
+                const auto e = e::make_shared<ePayTributeEvent>(
+                    playerCityId, eGameEventBranch::root, *this);
+                e->initialize(parentCity);
+                e->initializeDate(date());
+                addRootGameEvent(e);
             }
         }
     }
@@ -3019,7 +3054,7 @@ void eGameBoard::incTime(const int by)
         {
             if (c->conqueredByRival())
                 continue;
-            tributeFrom(ppid, c, true);
+            eTributeHelpers::receiveTributeFromCity(*this, ppid, c, true);
         }
     }
     const auto chars = mCharacters;
@@ -3638,7 +3673,7 @@ void eGameBoard::startEpisode(eEpisode *const e,
             }
         }
     }
-    mDefeatedBy.clear();
+    mConqueredBy.clear();
 
     for (const auto &c : mCitiesOnBoard)
     {
@@ -3963,27 +3998,27 @@ bool eGameBoard::duringEarthquake() const
     return !mEarthquakes.empty();
 }
 
-void eGameBoard::defeatedBy(const eCityId defeated,
-                            const stdsptr<eWorldCity> &by)
+void eGameBoard::conqueredBy(const eCityId conquered,
+                             const stdsptr<eWorldCity> &by)
 {
-    auto &defs = mDefeatedBy[defeated];
-    const bool r = eVectorHelpers::contains(defs, by);
+    auto &defs = mConqueredBy[by->cityId()];
+    const auto conqueredCity = world().cityWithId(conquered);
+    const bool r = eVectorHelpers::contains(defs, conqueredCity);
     if (r)
     {
         const auto ccid = currentCityId();
-        if (defeated == ccid)
+        if (conquered == ccid)
             setEpisodeLost();
     }
     else
     {
-        defs.push_back(by);
+        defs.push_back(conqueredCity);
     }
 }
 
-using eCities = std::vector<stdsptr<eWorldCity>>;
-eCities eGameBoard::defeatedBy(const eCityId cid)
+eCities eGameBoard::conqueredBy(const eCityId cid)
 {
-    return mDefeatedBy[cid];
+    return mConqueredBy[cid];
 }
 
 eImmigrationLimitedBy eGameBoard::immigrationLimit(const eCityId cid) const

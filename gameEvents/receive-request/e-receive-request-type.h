@@ -1,7 +1,7 @@
 #ifndef E_RECEIVE_REQUEST_TYPE_H
 #define E_RECEIVE_REQUEST_TYPE_H
 
-#include "e-receive-request-event.h"
+#include "e-fulfill-request-event.h"
 #include "engine/eevent.h"
 #include "emessages.h"
 #include "engine/e-worldcity.h"

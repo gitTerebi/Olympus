@@ -1,6 +1,6 @@
 #include "estoragedatawidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "widgets/elabel.h"
 
 #include "eviewmodebutton.h"

@@ -1,6 +1,6 @@
 #include "emonument.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eMonument::eMonument(eGameBoard& board,

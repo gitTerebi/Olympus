@@ -3,7 +3,7 @@
 
 #include "textures/egametextures.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "characters/etrader.h"
 #include "characters/actions/etraderaction.h"

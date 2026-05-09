@@ -4,7 +4,7 @@
 
 #include "widgets/egamewidget.h"
 #include "widgets/emultilinelabel.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "evectorhelpers.h"
 #include "buildings/eaestheticsbuilding.h"
 

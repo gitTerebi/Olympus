@@ -5,7 +5,7 @@
 #include "emodal.h"
 #include "emessagelistwidget.h"
 #include "eoptionsdata.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/e-worldcity.h"
 #include "characters/gods/egod.h"
@@ -100,7 +100,7 @@ void formatStoredMessage(eMessage& msg,
 #include "widgets/eboardsettingsmenu.h"
 #include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
-#include "emessagebox.h"
+#include "e-message-box.h"
 
 #include "buildings/eagoraspace.h"
 #include "buildings/eagorabase.h"

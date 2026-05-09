@@ -5,7 +5,7 @@
 #include "characters/echaracter.h"
 #include "buildings/ebuilding.h"
 #include "engine/etile.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "vec2.h"
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"

@@ -1,6 +1,6 @@
 #include "egameevent.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include "egodvisitevent.h"
@@ -9,9 +9,10 @@
 #include "emonsterinvasionevent.h"
 #include "emonsterincityevent.h"
 #include "einvasionevent.h"
-#include "epaytributeevent.h"
+#include "ereceivetributeevent.h"
+#include "e-pay-tribute-event.h"
 #include "emakerequestevent.h"
-#include "receive-request/e-receive-request-event.h"
+#include "receive-request/e-fulfill-request-event.h"
 #include "egifttoevent.h"
 #include "egiftfromevent.h"
 #include "egodquestevent.h"
@@ -105,12 +106,14 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return e::make_shared<eInvasionEvent>(cid, branch, board);
     case eGameEventType::invasionWarning:
         return nullptr;
+    case eGameEventType::receiveTribute:
+        return e::make_shared<eReceiveTributeEvent>(cid, branch, board);
     case eGameEventType::payTribute:
         return e::make_shared<ePayTributeEvent>(cid, branch, board);
     case eGameEventType::makeRequest:
         return e::make_shared<eMakeRequestEvent>(cid, branch, board);
     case eGameEventType::receiveRequest:
-        return e::make_shared<eReceiveRequestEvent>(cid, branch, board);
+        return e::make_shared<eFulfillRequestEvent>(cid, branch, board);
     case eGameEventType::giftTo:
         return e::make_shared<eGiftToEvent>(cid, branch, board);
     case eGameEventType::giftFrom:

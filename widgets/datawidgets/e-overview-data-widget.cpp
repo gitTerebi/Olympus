@@ -1,4 +1,4 @@
-#include "eoverviewdatawidget.h"
+#include "e-overview-data-widget.h"
 
 #include "eviewmodebutton.h"
 
@@ -7,10 +7,11 @@
 #include "widgets/escrollwidget.h"
 
 #include "elanguage.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/e-pay-tribute-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "widgets/elinewidget.h"
 #include "widgets/eminimap.h"
@@ -567,6 +568,62 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
         b->setPressAction([this, q, qq, pid]() {
             const auto gw = gameWidget();
             const auto cids = mBoard.personPlayerCitiesOnBoard();
+            for(const auto cid : cids) {
+                const auto count = mBoard.resourceCount(cid, q.fType);
+                if(count >= q.fCount) {
+                    const auto acceptA = [qq, cid]() {
+                        qq->dispatch(cid);
+                    };
+                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto text = qq->dispatchText(count, mBoard.date());
+                    gw->showQuestion(title, text, acceptA);
+                } else {
+                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    gw->showTip(pid, tip);
+                }
+            }
+        });
+        w->addWidget(b);
+    }
+    const auto& tqs = mBoard.tributeRequests(pid);
+    for(const auto& qq : tqs) {
+        const auto q = qq->cityRequest();
+        const auto b = new eResourceRequestButton(window());
+        b->setWidth(w->width());
+        b->initialize(q.fType, q.fCity, [this, q]() {
+            if(q.fType == eResourceType::drachmas) {
+                return mBoard.drachmas(mBoard.personPlayer()) >= q.fCount;
+            }
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
+            for(const auto cid : cids) {
+                const auto count = mBoard.resourceCount(cid, q.fType);
+                if(count >= q.fCount) return true;
+            }
+            return false;
+        }, [this, qq]() {
+            return qq->overdueStatusText(mBoard.date());
+        }, [qq]() {
+            return qq->isPostponed();
+        });
+        b->setPressAction([this, q, qq, pid]() {
+            const auto gw = gameWidget();
+            const auto cids = mBoard.personPlayerCitiesOnBoard();
+            if(q.fType == eResourceType::drachmas) {
+                const auto count = mBoard.drachmas(mBoard.personPlayer());
+                if(count >= q.fCount && !cids.empty()) {
+                    const auto cid = cids[0];
+                    const auto acceptA = [qq, cid]() {
+                        qq->dispatch(cid);
+                    };
+                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto text = qq->dispatchText(count, mBoard.date());
+                    gw->showQuestion(title, text, acceptA);
+                } else {
+                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    gw->showTip(pid, tip);
+                }
+                return;
+            }
             for(const auto cid : cids) {
                 const auto count = mBoard.resourceCount(cid, q.fType);
                 if(count >= q.fCount) {

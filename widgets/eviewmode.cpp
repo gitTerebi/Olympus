@@ -1,6 +1,6 @@
 #include "eviewmode.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/edifficulty.h"
 
 bool eViewModeHelpers::buildingVisible(

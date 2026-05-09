@@ -1,9 +1,9 @@
-﻿#include "esmallhouse.h"
+#include "esmallhouse.h"
 
 #include <algorithm>
 #include "erand.h"
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eplague.h"
 
 #include "characters/esick.h"

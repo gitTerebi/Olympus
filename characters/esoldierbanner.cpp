@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "engine/etile.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eorientation.h"
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"

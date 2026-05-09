@@ -1,9 +1,9 @@
 #include "einvasionevent.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "elanguage.h"
 #include "einvasionwarning.h"
 #include "audio/emusic.h"
@@ -494,7 +494,7 @@ void eInvasionEvent::restoreAttitudeAfterInvasion(
 void eInvasionEvent::invadersWon() {
     auto& board = *gameBoard();
     const auto targetCity = cityId();
-    board.defeatedBy(targetCity, mCity);
+    board.conqueredBy(targetCity, mCity);
     eEventData ed(targetCity);
     ed.fCity = mCity;
     board.event(eEvent::invasionDefeat, ed);

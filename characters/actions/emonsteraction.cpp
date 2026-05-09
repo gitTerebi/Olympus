@@ -1,6 +1,6 @@
 #include "emonsteraction.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "engine/boardData/eheatmaptask.h"
 #include "buildings/eheatgetters.h"

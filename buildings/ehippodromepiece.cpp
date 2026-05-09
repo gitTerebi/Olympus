@@ -3,7 +3,7 @@
 #include "etilehelper.h"
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "buildings/eroad.h"
 #include "ehippodrome.h"
 

@@ -1,7 +1,7 @@
 #include "ebasicpatroler.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eBasicPatroler::eBasicPatroler(eGameBoard& board,
                                const eCharTexs charTexs,

@@ -1,7 +1,7 @@
 #include "ebanner.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "eboarspawner.h"
 #include "edeerspawner.h"

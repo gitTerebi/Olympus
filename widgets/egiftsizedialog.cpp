@@ -4,7 +4,7 @@
 #include "estringhelpers.h"
 #include "elabel.h"
 #include "eframedbuttonwithicon.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/egifthelpers.h"
 
 void eGiftSizeDialog::initialize(const eResourceType type,

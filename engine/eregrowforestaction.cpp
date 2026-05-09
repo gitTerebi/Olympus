@@ -1,7 +1,7 @@
 #include "eregrowforestaction.h"
 
 #include "engine/etile.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eRegrowForestAction::eRegrowForestAction(eTile* const tile) :

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "eagorabase.h"
 #include "egatehouse.h"
 #include "ehippodromepiece.h"

@@ -364,7 +364,7 @@ SOURCES += \
         ebuildablehelpers.cpp \
         efontcolor.cpp \
         egamedir.cpp \
-        einvasionhandler.cpp \
+        e-invasion-handler.cpp \
         eiteratesquare.cpp \
         elanguage.cpp \
         eloadtexthelper.cpp \
@@ -384,7 +384,7 @@ SOURCES += \
         engine/eboardcity.cpp \
         engine/eboardcityread.cpp \
         engine/eboardcitywrite.cpp \
-        engine/eboardplayer.cpp \
+        engine/e-board-player.cpp \
         engine/ecampaign.cpp \
         engine/ecampaignreadpak.cpp \
         engine/ecityid.cpp \
@@ -397,8 +397,8 @@ SOURCES += \
         engine/eepisodegoal.cpp \
         engine/eeventtime.cpp \
         engine/efunctask.cpp \
-        engine/e-gameboard.cpp \
-        engine/egameboardread.cpp \
+        engine/e-game-board.cpp \
+        engine/e-game-board-read.cpp \
         engine/egameboardwrite.cpp \
         engine/egameevents.cpp \
         engine/egifthelpers.cpp \
@@ -483,14 +483,15 @@ SOURCES += \
         gameEvents/emonsterseventvalue.cpp \
         gameEvents/emonsterunleashedevent.cpp \
         engine/e-tribute.cpp \
-        gameEvents/epaytributeevent.cpp \
+        gameEvents/ereceivetributeevent.cpp \
+        gameEvents/e-pay-tribute-event.cpp \
         gameEvents/eplayerconquestevent.cpp \
         gameEvents/eplayerconquesteventbase.cpp \
         gameEvents/eplayerraidevent.cpp \
         gameEvents/epointeventvalue.cpp \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
-        gameEvents/receive-request/e-receive-request-event.cpp \
+        gameEvents/receive-request/e-fulfill-request-event.cpp \
         gameEvents/receive-request/e-receive-request-type.cpp \
         gameEvents/receive-request/e-receive-request-postpone.cpp \
         gameEvents/ereinforcementsevent.cpp \
@@ -583,7 +584,7 @@ SOURCES += \
         widgets/datawidgets/ehygienesafetydatawidget.cpp \
         widgets/datawidgets/emilitarydatawidget.cpp \
         widgets/datawidgets/emythologydatawidget.cpp \
-        widgets/datawidgets/eoverviewdatawidget.cpp \
+        widgets/datawidgets/e-overview-data-widget.cpp \
         widgets/datawidgets/epopulationdatawidget.cpp \
         widgets/datawidgets/esciencedatawidget.cpp \
         widgets/datawidgets/estoragedatawidget.cpp \
@@ -664,7 +665,7 @@ SOURCES += \
         widgets/emainmenubase.cpp \
         widgets/emainwidget.cpp \
         widgets/emenuloadingwidget.cpp \
-        widgets/emessagebox.cpp \
+        widgets/e-message-box.cpp \
         widgets/emessagewidget.cpp \
         widgets/emicrobutton.cpp \
         widgets/emilitarymoreinfowidget.cpp \
@@ -1066,7 +1067,7 @@ HEADERS += \
     ebuildablehelpers.h \
     efontcolor.h \
     egamedir.h \
-    einvasionhandler.h \
+    e-invasion-handler.h \
     eiteratesquare.h \
     elanguage.h \
     elimits.h \
@@ -1085,7 +1086,7 @@ HEADERS += \
     engine/boardData/ehusbandrydata.h \
     engine/boardData/epopulationdata.h \
     engine/eboardcity.h \
-    engine/eboardplayer.h \
+    engine/e-board-player.h \
     engine/ecampaign.h \
     engine/ecityid.h \
     engine/ecityrequest.h \
@@ -1100,7 +1101,7 @@ HEADERS += \
     engine/eeventdata.h \
     engine/eeventtime.h \
     engine/efunctask.h \
-    engine/egameboard.h \
+    engine/e-game-board.h \
     engine/egameevents.h \
     engine/egifthelpers.h \
     engine/egodquest.h \
@@ -1194,14 +1195,15 @@ HEADERS += \
     gameEvents/emonsterinvasioneventbase.h \
     gameEvents/emonsterseventvalue.h \
     gameEvents/emonsterunleashedevent.h \
-    gameEvents/epaytributeevent.h \
+    gameEvents/ereceivetributeevent.h \
+    gameEvents/e-pay-tribute-event.h \
     gameEvents/eplayerconquestevent.h \
     gameEvents/eplayerconquesteventbase.h \
     gameEvents/eplayerraidevent.h \
     gameEvents/epointeventvalue.h \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
-    gameEvents/receive-request/e-receive-request-event.h \
+    gameEvents/receive-request/e-fulfill-request-event.h \
     gameEvents/receive-request/e-receive-request-type.h \
     gameEvents/receive-request/e-receive-request-postpone.h \
     gameEvents/ereinforcementsevent.h \
@@ -2802,7 +2804,7 @@ HEADERS += \
     widgets/datawidgets/ehygienesafetydatawidget.h \
     widgets/datawidgets/emilitarydatawidget.h \
     widgets/datawidgets/emythologydatawidget.h \
-    widgets/datawidgets/eoverviewdatawidget.h \
+    widgets/datawidgets/e-overview-data-widget.h \
     widgets/datawidgets/epopulationdatawidget.h \
     widgets/datawidgets/esciencedatawidget.h \
     widgets/datawidgets/estoragedatawidget.h \
@@ -2879,7 +2881,7 @@ HEADERS += \
     widgets/emainmenubase.h \
     widgets/emainwidget.h \
     widgets/emenuloadingwidget.h \
-    widgets/emessagebox.h \
+    widgets/e-message-box.h \
     widgets/emessagewidget.h \
     widgets/emicrobutton.h \
     widgets/emilitarymoreinfowidget.h \

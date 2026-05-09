@@ -245,8 +245,8 @@ enum class eEvent {
     generalRequestTributeReminder,
     generalRequestTributeOverdue,
     generalRequestTributeWarning,
-    generalRequestTributeComply,
     generalRequestTributeTooLate,
+    generalRequestTributeComply,
     generalRequestTributeRefuse,
 
     giftGranted,

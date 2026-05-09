@@ -1,6 +1,6 @@
 #include "ewritestream.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "characters/actions/echaracteraction.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
@@ -8,7 +8,7 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "spawners/ebanner.h"
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 
 eWriteStream::eWriteStream(const eWriteTarget& dst) :
     mDst(dst) {}

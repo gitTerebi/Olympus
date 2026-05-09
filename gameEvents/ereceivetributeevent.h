@@ -1,5 +1,5 @@
-#ifndef EPAYTRIBUTEEVENT_H
-#define EPAYTRIBUTEEVENT_H
+#ifndef ERECEIVETRIBUTEEVENT_H
+#define ERECEIVETRIBUTEEVENT_H
 
 #include "egameevent.h"
 
@@ -7,11 +7,11 @@
 
 class eSaveArchive;
 
-class ePayTributeEvent : public eGameEvent {
+class eReceiveTributeEvent : public eGameEvent {
 public:
-    ePayTributeEvent(const eCityId cid,
-                     const eGameEventBranch branch,
-                     eGameBoard& board);
+    eReceiveTributeEvent(const eCityId cid,
+                         const eGameEventBranch branch,
+                         eGameBoard& board);
 
     void initialize(const stdsptr<eWorldCity>& c);
 
@@ -26,4 +26,4 @@ private:
     stdsptr<eWorldCity> mCity;
 };
 
-#endif // EPAYTRIBUTEEVENT_H
+#endif // ERECEIVETRIBUTEEVENT_H

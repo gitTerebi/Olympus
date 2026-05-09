@@ -1,6 +1,6 @@
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/eeventdata.h"
@@ -851,7 +851,7 @@ void eInvasionHandler::incTime(const int by) {
             }
             // Defenders won, so invader is defeated
             const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
-            mBoard.defeatedBy(mCity->cityId(), targetWCity);
+            mBoard.conqueredBy(mCity->cityId(), targetWCity);
             assert(mEvent);
             mEvent->invadersWon();
         }

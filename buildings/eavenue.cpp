@@ -1,7 +1,7 @@
 #include "eavenue.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eAvenue::eAvenue(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::avenue, 1, 1, cid) {

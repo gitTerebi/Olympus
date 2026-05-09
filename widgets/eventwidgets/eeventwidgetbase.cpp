@@ -4,7 +4,7 @@
 
 #include "widgets/evaluebutton.h"
 #include "widgets/etypebutton.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "widgets/elabeledwidget.h"
 #include "elanguage.h"
 #include "emainwindow.h"
@@ -23,7 +23,7 @@
 #include "gameEvents/egodeventvalue.h"
 #include "gameEvents/egodreasoneventvalue.h"
 #include "gameEvents/eattackingcityeventvalue.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "gameEvents/emonsterseventvalue.h"
 #include "gameEvents/emonsterinvasioneventbase.h"
@@ -88,7 +88,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(typeButtonL);
     }
 
-    if(const auto ee = dynamic_cast<eReceiveRequestEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<eFulfillRequestEvent*>(e.get())) {
         const auto typeButtonL = new eLabeledWidget(window());
         const std::vector<eReceiveRequestType> types {
             eReceiveRequestType::general,

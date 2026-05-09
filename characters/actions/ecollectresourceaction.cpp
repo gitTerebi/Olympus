@@ -3,7 +3,7 @@
 #include "characters/eresourcecollector.h"
 #include "buildings/eresourcecollectbuilding.h"
 #include "emovetoaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eCollectResourceAction::eCollectResourceAction(

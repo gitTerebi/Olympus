@@ -1,5 +1,5 @@
-#ifndef E_RECEIVE_REQUEST_EVENT_H
-#define E_RECEIVE_REQUEST_EVENT_H
+#ifndef E_FULFILL_REQUEST_EVENT_H
+#define E_FULFILL_REQUEST_EVENT_H
 
 #include "../egameevent.h"
 #include "../ecounteventvalue.h"
@@ -27,16 +27,16 @@ enum class eReceiveRequestResult {
     refuse
 };
 
-class eReceiveRequestEvent : public eGameEvent,
+class eFulfillRequestEvent : public eGameEvent,
                              public eResourceEventValue,
                              public eCountEventValue,
                              public eCityEventValue,
                              public eGodEventValue {
 public:
-    eReceiveRequestEvent(const eCityId cid,
+    eFulfillRequestEvent(const eCityId cid,
                          const eGameEventBranch branch,
                          eGameBoard& board);
-    ~eReceiveRequestEvent();
+    ~eFulfillRequestEvent();
 
     void trigger() override;
     std::string longName() const override;
@@ -71,7 +71,7 @@ public:
 private:
     void serialize(eSaveArchive& ar);
 
-    void set(eReceiveRequestEvent& src,
+    void set(eFulfillRequestEvent& src,
              const int requestStep,
              const bool showResultMessage = false);
 
@@ -93,9 +93,9 @@ private:
     eDate complyDate() const;
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 
-    friend void advanceRequestStep(eReceiveRequestEvent*, eGameBoard&);
-    friend void scheduleRequestEvent(eReceiveRequestEvent*, eGameBoard&, const int, const eDate&);
-    friend bool canPostponeRequestStep(const eReceiveRequestEvent*);
+    friend void advanceRequestStep(eFulfillRequestEvent*, eGameBoard&);
+    friend void scheduleRequestEvent(eFulfillRequestEvent*, eGameBoard&, const int, const eDate&);
+    friend bool canPostponeRequestStep(const eFulfillRequestEvent*);
 
     eReceiveRequestType mRequestType = eReceiveRequestType::general;
     eReceiveRequestResult mRequestResult = eReceiveRequestResult::comply;
@@ -112,4 +112,4 @@ private:
     stdsptr<eEventTrigger> mRefuseTrigger;
 };
 
-#endif // E_RECEIVE_REQUEST_EVENT_H
+#endif // E_FULFILL_REQUEST_EVENT_H

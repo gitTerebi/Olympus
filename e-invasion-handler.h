@@ -1,5 +1,5 @@
-#ifndef EINVASIONHANDLER_H
-#define EINVASIONHANDLER_H
+#ifndef E_INVASION_HANDLER_H
+#define E_INVASION_HANDLER_H
 
 #include <vector>
 

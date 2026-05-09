@@ -9,7 +9,7 @@
 #include "engine/ethreadpool.h"
 #include "characters/actions/ewaitaction.h"
 #include "characters/echaracter.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 ePatrolTarget::ePatrolTarget(eGameBoard& board,
                              const eBaseTex baseTex,

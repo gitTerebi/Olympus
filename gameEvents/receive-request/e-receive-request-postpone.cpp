@@ -1,6 +1,6 @@
 #include "e-receive-request-postpone.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 namespace
 {
@@ -12,10 +12,10 @@ namespace
 
 }
 
-void scheduleRequestEvent(eReceiveRequestEvent *request, eGameBoard &board,
+void scheduleRequestEvent(eFulfillRequestEvent *request, eGameBoard &board,
                           const int step, const eDate &date)
 {
-    const auto e = e::make_shared<eReceiveRequestEvent>(
+    const auto e = e::make_shared<eFulfillRequestEvent>(
         request->cityId(), eGameEventBranch::child, board);
     e->set(*request, step);
     e->initializeDate(date);
@@ -27,7 +27,7 @@ bool canPostponeRequestStep(const int requestStep)
     return requestStep <= kFinalDeadline;
 }
 
-bool canPostponeRequestStep(const eReceiveRequestEvent *request)
+bool canPostponeRequestStep(const eFulfillRequestEvent *request)
 {
     if (!request)
         return false;
@@ -40,7 +40,7 @@ bool isPostponedRequestStep(const int requestStep)
 }
 
 int displayMonthsForRequestStep(
-    const eReceiveRequestEvent *request,
+    const eFulfillRequestEvent *request,
     const int requestStep)
 {
     if (requestStep == kInitialRequest || requestStep == kDeadline)
@@ -50,7 +50,7 @@ int displayMonthsForRequestStep(
     return 6;
 }
 
-void advanceRequestStep(eReceiveRequestEvent *request, eGameBoard &board)
+void advanceRequestStep(eFulfillRequestEvent *request, eGameBoard &board)
 {
     if (!request)
         return;

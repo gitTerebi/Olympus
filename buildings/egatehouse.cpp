@@ -1,6 +1,6 @@
 #include "egatehouse.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "eroad.h"
 
 #include "textures/egametextures.h"

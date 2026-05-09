@@ -1,7 +1,7 @@
 #include "epier.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 ePier::ePier(eGameBoard& board, const eDiagonalOrientation o,
              const eCityId cid) :

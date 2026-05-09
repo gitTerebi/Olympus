@@ -354,7 +354,7 @@ set(SOURCES
     efontcolor.cpp
     egamedir.cpp
     ecursors.cpp
-    einvasionhandler.cpp
+    e-invasion-handler.cpp
     eiteratesquare.cpp
     elanguage.cpp
     eloadtexthelper.cpp
@@ -374,7 +374,7 @@ set(SOURCES
     engine/eboardcity.cpp
     engine/eboardcityread.cpp
     engine/eboardcitywrite.cpp
-    engine/eboardplayer.cpp
+    engine/e-board-player.cpp
     engine/ecampaign.cpp
     engine/ecampaignreadpak.cpp
     engine/ecityid.cpp
@@ -387,9 +387,9 @@ set(SOURCES
     engine/eepisodegoal.cpp
     engine/eeventtime.cpp
     engine/efunctask.cpp
-    engine/e-gameboard.cpp
+    engine/e-game-board.cpp
     engine/egameundo.cpp
-    engine/egameboardread.cpp
+    engine/e-game-board-read.cpp
     engine/egameboardwrite.cpp
     engine/egameevents.cpp
     engine/egifthelpers.cpp
@@ -474,14 +474,15 @@ set(SOURCES
     gameEvents/emonsterseventvalue.cpp
     gameEvents/emonsterunleashedevent.cpp
     engine/e-tribute.cpp
-    gameEvents/epaytributeevent.cpp
+    gameEvents/ereceivetributeevent.cpp
+    gameEvents/e-pay-tribute-event.cpp
     gameEvents/eplayerconquestevent.cpp
     gameEvents/eplayerconquesteventbase.cpp
     gameEvents/eplayerraidevent.cpp
     gameEvents/epointeventvalue.cpp
     gameEvents/epricechangeevent.cpp
     gameEvents/eraidresourceevent.cpp
-    gameEvents/receive-request/e-receive-request-event.cpp
+    gameEvents/receive-request/e-fulfill-request-event.cpp
     gameEvents/receive-request/e-receive-request-type.cpp
     gameEvents/receive-request/e-receive-request-postpone.cpp
     gameEvents/ereinforcementsevent.cpp
@@ -573,7 +574,7 @@ set(SOURCES
     widgets/datawidgets/ehygienesafetydatawidget.cpp
     widgets/datawidgets/emilitarydatawidget.cpp
     widgets/datawidgets/emythologydatawidget.cpp
-    widgets/datawidgets/eoverviewdatawidget.cpp
+    widgets/datawidgets/e-overview-data-widget.cpp
     widgets/datawidgets/epopulationdatawidget.cpp
     widgets/datawidgets/esciencedatawidget.cpp
     widgets/datawidgets/estoragedatawidget.cpp
@@ -661,7 +662,7 @@ set(SOURCES
     widgets/emainmenubase.cpp
     widgets/emainwidget.cpp
     widgets/emenuloadingwidget.cpp
-    widgets/emessagebox.cpp
+    widgets/e-message-box.cpp
     widgets/emessagelistwidget.cpp
     widgets/emessagewidget.cpp
     widgets/emicrobutton.cpp

@@ -4,7 +4,7 @@
 #include "emainwindow.h"
 #include "engine/eepisodegoal.h"
 #include "eepisodegoalwidget.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 void eEpisodeGoalSelectionWidget::initialize(
         const eEventsGetter& get,

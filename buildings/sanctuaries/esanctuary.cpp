@@ -1,6 +1,6 @@
 #include "esanctuary.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "characters/gods/egod.h"
 #include "characters/actions/egodworshippedaction.h"
 #include "etilehelper.h"

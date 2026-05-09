@@ -10,7 +10,7 @@
 #include "characters/actions/edefendcityaction.h"
 #include "ekillcharacterfinishfail.h"
 #include "ewaitaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "vec2.h"
 #include "buildings/eheroshall.h"
 

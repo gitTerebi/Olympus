@@ -1,7 +1,7 @@
 #include "edefendattackcityaction.h"
 
 #include "emovetoaction.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "characters/actions/egodaction.h"

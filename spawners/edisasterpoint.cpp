@@ -1,6 +1,6 @@
 #include "edisasterpoint.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eDisasterPoint::eDisasterPoint(const int id,
                               eTile* const tile,

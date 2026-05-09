@@ -1,7 +1,7 @@
 #include "etemplestatuebuilding.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eTempleStatueBuilding::eTempleStatueBuilding(
         const eGodType god,

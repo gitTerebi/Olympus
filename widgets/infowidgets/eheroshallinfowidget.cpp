@@ -4,7 +4,7 @@
 #include "widgets/elabel.h"
 #include "widgets/eframedbutton.h"
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "elanguage.h"
 
 void eHerosHallInfoWidget::initialize(eHerosHall* const b) {

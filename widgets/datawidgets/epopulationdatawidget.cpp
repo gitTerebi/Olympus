@@ -1,6 +1,6 @@
 #include "epopulationdatawidget.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "eviewmodebutton.h"
 #include "widgets/elinewidget.h"

@@ -1,6 +1,6 @@
 #include "egodvisitevent.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "characters/actions/egodvisitaction.h"

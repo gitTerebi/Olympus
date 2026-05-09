@@ -1,7 +1,7 @@
 #include "efirefighter.h"
 
 #include "textures/egametextures.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eFireFighter::eFireFighter(eGameBoard& board) :
     eCharacter(board, eCharacterType::fireFighter),

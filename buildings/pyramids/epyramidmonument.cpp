@@ -4,7 +4,7 @@
 #include "epyramid.h"
 
 #include "characters/gods/egod.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 #include "../sanctuaries/etemplemonumentbuilding.h"
 

@@ -8,7 +8,7 @@
 
 #include "widgets/echoosebutton.h"
 
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 
 eEventSelectionWidget::eEventSelectionWidget(
         const eGameEventBranch branch,

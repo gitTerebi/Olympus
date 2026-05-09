@@ -1,12 +1,13 @@
-#include "egameboard.h"
+#include "e-game-board.h"
 
 #include "spawners/ebanner.h"
 #include "fileIO/ebuildingreader.h"
 #include "fileIO/ebuildingwriter.h"
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
-#include "gameEvents/receive-request/e-receive-request-event.h"
+#include "gameEvents/e-pay-tribute-event.h"
+#include "gameEvents/receive-request/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
@@ -207,15 +208,15 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     int nd;
-    ar.field("mDefeatedBy.count", nd);
+    ar.field("mConqueredBy.count", nd);
     for(int i = 0; i < nd; i++) {
         eCityId cid;
-        ar.field("mDefeatedBy.id", cid);
+        ar.field("mConqueredBy.id", cid);
         int nc;
-        ar.field("mDefeatedBy.cities.count", nc);
+        ar.field("mConqueredBy.cities.count", nc);
         for(int j = 0; j < nc; j++) {
             src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
-                mDefeatedBy[cid].push_back(c);
+                mConqueredBy[cid].push_back(c);
             });
         }
     }
@@ -240,13 +241,18 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
     src.addPostFunc([this]() {
         for(const auto e : mAllGameEvents) {
-            const auto request = dynamic_cast<eReceiveRequestEvent*>(e);
+            const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
             if(request && request->isMainEvent() &&
                request->isActiveCityRequest()) {
                 addCityRequest(request);
             }
+            const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
+            if(tribute && tribute->isMainEvent() &&
+               !tribute->finished()) {
+                addTributeRequest(tribute);
+            }
         }
-    }, "cityRequests");
+    }, "requests");
     } else {
         auto& dst = ar.writeStream();
     ar.field("mWidth", mWidth);
@@ -405,15 +411,15 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         w->write(dst);
     }
 
-    int defeatedByCount = static_cast<int>(mDefeatedBy.size());
-    ar.field("mDefeatedBy.count", defeatedByCount);
-    for(const auto& c : mDefeatedBy) {
-        eCityId id = c.first;
-        ar.field("mDefeatedBy.id", id);
-        int cityCount = static_cast<int>(c.second.size());
-        ar.field("mDefeatedBy.cities.count", cityCount);
-        for(const auto& cc : c.second) {
-            dst.writeCity(cc.get());
+    int conqueredByCount = static_cast<int>(mConqueredBy.size());
+    ar.field("mConqueredBy.count", conqueredByCount);
+    for(const auto& p : mConqueredBy) {
+        eCityId cid = p.first;
+        ar.field("mConqueredBy.id", cid);
+        int nc = static_cast<int>(p.second.size());
+        ar.field("mConqueredBy.cities.count", nc);
+        for(const auto& c : p.second) {
+            dst.writeCity(c.get());
         }
     }
 

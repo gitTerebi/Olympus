@@ -6,7 +6,7 @@
 #include "estringhelpers.h"
 #include "buildings/sanctuaries/esanctuary.h"
 #include "buildings/pyramids/epyramid.h"
-#include "engine/egameboard.h"
+#include "engine/e-game-board.h"
 #include "widgets/echoosecitydialog.h"
 #include "evectorhelpers.h"
 #include "widgets/egamewidget.h"

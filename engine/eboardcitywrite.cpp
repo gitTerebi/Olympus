@@ -1,6 +1,6 @@
 #include "eboardcity.h"
 
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "engine/eplague.h"
 #include "engine/emilitaryaid.h"
 #include "gameEvents/emonsterinvasioneventbase.h"

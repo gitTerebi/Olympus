@@ -1,9 +1,9 @@
-#include "egameboard.h"
+#include "e-game-board.h"
 
 #include "spawners/ebanner.h"
 #include "fileIO/ebuildingwriter.h"
 #include "fileIO/esavearchive.h"
-#include "einvasionhandler.h"
+#include "e-invasion-handler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
 #include "eplague.h"
