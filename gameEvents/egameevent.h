@@ -204,6 +204,16 @@ protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
     void callBaseTrigger();
     void serialize(eSaveArchive& ar);
+
+    int mDatePlusDays = 0;
+    int mDatePlusMonths = 0;
+    int mDatePlusYearsMin = 0;
+    int mDatePlusYearsMax = 0;
+    int mPeriodDaysMin = 100;
+    int mPeriodDaysMax = 100;
+
+    int mRemNRuns = 0;
+    eDate mNextDate{1, eMonth::january, 1};
 private:
     void updateWarningDates();
 
@@ -227,16 +237,6 @@ private:
     bool mEpisodeCompleteEvent = false;
 
     int mWarningMonths = 2;
-
-    int mDatePlusDays = 0;
-    int mDatePlusMonths = 0;
-    int mDatePlusYearsMin = 0;
-    int mDatePlusYearsMax = 0;
-    int mPeriodDaysMin = 100;
-    int mPeriodDaysMax = 100;
-
-    int mRemNRuns = 0;
-    eDate mNextDate{1, eMonth::january, 1};
 
     int mIOID = -1;
 };

@@ -125,10 +125,10 @@ void eResourceGrantedEventBase::trigger() {
             ed.fType = eMessageEventType::requestTributeGranted;
             if(maxSpace != 0) {
                 if(mResource == eResourceType::drachmas) {
-                    ed.fA0 = acceptDrachmas;
+                    ed.fPrimaryAction = acceptDrachmas;
                 } else {
                     for(const auto cid : cids) {
-                        ed.fCCA0[cid] = [acceptResource, cid]() { // accept
+                        ed.fCityConditionalActions[cid] = [acceptResource, cid]() { // accept
                             acceptResource(cid);
                         };
                     }
@@ -136,7 +136,7 @@ void eResourceGrantedEventBase::trigger() {
             }
 
             if(mPostpone) {
-                ed.fA1 = [this, board, postpone]() { // postpone
+                ed.fSecondaryAction = [this, board, postpone]() { // postpone
                     eEventData ed(playerId());
                     ed.fType = eMessageEventType::resourceGranted;
                     ed.fCity = mCity;
@@ -148,7 +148,7 @@ void eResourceGrantedEventBase::trigger() {
                 };
             }
 
-            ed.fA2 = [this, board]() { // decline
+            ed.fTertiaryAction = [this, board]() { // decline
                 eEventData ed(playerId());
                 ed.fType = eMessageEventType::resourceGranted;
                 ed.fCity = mCity;

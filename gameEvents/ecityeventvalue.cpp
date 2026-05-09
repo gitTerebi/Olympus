@@ -2,7 +2,7 @@
 
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "engine/egameboard.h"
 #include "fileIO/esavearchive.h"
 

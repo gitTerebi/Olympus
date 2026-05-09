@@ -1,9 +1,9 @@
-﻿#ifndef EWORLDBOARD_H
+#ifndef EWORLDBOARD_H
 #define EWORLDBOARD_H
 
 #include <vector>
 
-#include "eworldcity.h"
+#include "e-worldcity.h"
 #include "pointers/estdselfref.h"
 #include "eworldregion.h"
 

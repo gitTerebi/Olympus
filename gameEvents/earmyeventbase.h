@@ -4,7 +4,7 @@
 #include "egameevent.h"
 
 #include "characters/eenlistedforces.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eSaveArchive;
 

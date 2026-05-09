@@ -137,12 +137,12 @@ void eTroopsRequestEvent::trigger() {
         return;
     }
 
-    ed.fCA0 = [this](const eAction& close) { // dispatch now
+    ed.fCloseOnAction = [this](const eAction& close) { // dispatch now
         dispatch(close);
     };
 
     if(mPostpone < 2) {
-        ed.fA1 = [this, board]() { // postpone
+        ed.fSecondaryAction = [this, board]() { // postpone
             const auto e = e::make_shared<eTroopsRequestEvent>(
                                cityId(), eGameEventBranch::child, *board);
             e->set(*this, mPostpone + 1);
@@ -152,7 +152,7 @@ void eTroopsRequestEvent::trigger() {
         };
     }
 
-    ed.fA2 = [this, board]() { // refuse
+    ed.fTertiaryAction = [this, board]() { // refuse
         board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
         const auto e = e::make_shared<eTroopsRequestEvent>(
                            cityId(), eGameEventBranch::child, *board);

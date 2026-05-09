@@ -33,6 +33,20 @@ void eArcherAction::increment(const int by) {
     const vec2d cpos{c->absX(), c->absY()};
     const auto tid = c->teamId();
     auto& brd = c->getBoard();
+    
+    // Check if wall archer is still on a valid wall position.
+    // When the 2x2 wall block is broken, the archer falls to ground.
+    const auto checker = [](eTileBase* const t) {
+        if(!t) return false;
+        const auto ubt = t->underBuildingType();
+        return ubt == eBuildingType::wall ||
+               ubt == eBuildingType::tower;
+    };
+    if(!checker(ct) || !checker(ct->tileRel(0, 1)) ||
+       !checker(ct->tileRel(1, 0)) || !checker(ct->tileRel(1, 1))) {
+        c->kill();
+        return;
+    }
 
     if(mAttack) {
         if(range > 0 && mAttackTarget) {

@@ -5,7 +5,7 @@
 #include "elabel.h"
 #include "eframedlabel.h"
 #include "estringhelpers.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
@@ -96,11 +96,11 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
 {
     eLoggedMessage lm;
     lm.fEd = ed;
-    lm.fEd.fCA0 = nullptr;
-    lm.fEd.fA0 = nullptr;
-    lm.fEd.fCCA0.clear();
-    lm.fEd.fA1 = nullptr;
-    lm.fEd.fA2 = nullptr;
+    lm.fEd.fCloseOnAction = nullptr;
+    lm.fEd.fPrimaryAction = nullptr;
+    lm.fEd.fCityConditionalActions.clear();
+    lm.fEd.fSecondaryAction = nullptr;
+    lm.fEd.fTertiaryAction = nullptr;
     lm.fEd.fType = eMessageEventType::common;
     lm.fMsg = msg;
     lm.fRead = false;

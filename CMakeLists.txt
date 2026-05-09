@@ -387,7 +387,7 @@ set(SOURCES
     engine/eepisodegoal.cpp
     engine/eeventtime.cpp
     engine/efunctask.cpp
-    engine/egameboard.cpp
+    engine/e-gameboard.cpp
     engine/egameundo.cpp
     engine/egameboardread.cpp
     engine/egameboardwrite.cpp
@@ -473,6 +473,7 @@ set(SOURCES
     gameEvents/emonsterinvasioneventbase.cpp
     gameEvents/emonsterseventvalue.cpp
     gameEvents/emonsterunleashedevent.cpp
+    engine/e-tribute.cpp
     gameEvents/epaytributeevent.cpp
     gameEvents/eplayerconquestevent.cpp
     gameEvents/eplayerconquesteventbase.cpp
@@ -480,7 +481,9 @@ set(SOURCES
     gameEvents/epointeventvalue.cpp
     gameEvents/epricechangeevent.cpp
     gameEvents/eraidresourceevent.cpp
-    gameEvents/ereceiverequestevent.cpp
+    gameEvents/receive-request/e-receive-request-event.cpp
+    gameEvents/receive-request/e-receive-request-type.cpp
+    gameEvents/receive-request/e-receive-request-postpone.cpp
     gameEvents/ereinforcementsevent.cpp
     gameEvents/erequestaidevent.cpp
     gameEvents/erequeststrikeevent.cpp
@@ -510,7 +513,7 @@ set(SOURCES
     pak/gamefile.cpp
     pak/pkwareinputstream.cpp
     pak/qfile.cpp
-    pak/zeusfile.cpp
+    pak/zeus-file.cpp
     pointers/eobject.cpp
     pointers/estdselfref.cpp
     spawners/eanimalspawner.cpp
@@ -600,7 +603,7 @@ set(SOURCES
     widgets/echoosegameeditmenu.cpp
     widgets/ecitybutton.cpp
     widgets/ecityonboardselectionwidget.cpp
-    widgets/ecitysettingswidget.cpp
+    widgets/e-city-settings-widget.cpp
     widgets/emodal.cpp
     widgets/econditionsettingswidget.cpp
     widgets/edatebutton.cpp
@@ -718,7 +721,7 @@ set(SOURCES
     widgets/eworldgoodswidget.cpp
     widgets/eworldmapwidget.cpp
     widgets/eworldmenu.cpp
-    widgets/eworldtributewidget.cpp
+    widgets/e-world-tribute-widget.cpp
     widgets/eworldwidget.cpp
     widgets/infowidgets/eagorainfowidget.cpp
     widgets/infowidgets/echaracterinfowidget.cpp

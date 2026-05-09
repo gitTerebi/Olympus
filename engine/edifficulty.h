@@ -41,6 +41,8 @@ namespace eDifficultyHelpers {
 
     double workerFrac(const eDifficulty diff,
                       const eWageRate wageRate);
+
+    double costMultiplier(const eDifficulty diff);
 }
 
 #endif // EDIFFICULTY_H

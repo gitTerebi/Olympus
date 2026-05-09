@@ -6,7 +6,7 @@
 #include "enamewidget.h"
 #include "elanguage.h"
 #include "emainwindow.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 
 void eMainMenu::initialize(const eAction& continueGameA,

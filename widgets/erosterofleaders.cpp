@@ -7,7 +7,7 @@
 #include "estringhelpers.h"
 #include "emainwindow.h"
 #include "enamewidget.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "egamedir.h"
 
 #include <string>

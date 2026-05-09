@@ -4,7 +4,7 @@
 #include "elabel.h"
 
 #include "ebutton.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "pointers/estdselfref.h"
 
 class eWorldGoodsWidget;

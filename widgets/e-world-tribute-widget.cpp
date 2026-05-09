@@ -2,6 +2,7 @@
 
 #include "elanguage.h"
 #include "engine/egameboard.h"
+#include "engine/e-tribute.h"
 #include "evectorhelpers.h"
 
 void eWorldTributeWidget::initialize() {
@@ -60,9 +61,9 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
             mAlliesLabel->show();
             return;
         }
-        const bool claimsTribute = hasClaimToTribute(c);
-        const bool tributeCity = c->isVassal() || c->isColony() ||
-                                 claimsTribute;
+        const bool cityOwesTribute = c->isVassal() || c->isColony();
+        const bool playerPaysTribute = hasClaimToTribute(c);
+        const bool tributeCity = cityOwesTribute || playerPaysTribute;
         if(!tributeCity) {
             if(c->isAlly()) {
                 mAlliesLabel->setText(eLanguage::zeusText(44, 323));
@@ -76,10 +77,18 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
         mTitleLabel->show();
         mTypeIcon->show();
         mTextLabel->show();
-        const auto ttype = claimsTribute ? c->recTributeType() :
-                           c->tributeType();
-        const int count = claimsTribute ? c->recTributeCount() :
-                          c->tributeCount();
+        eResourceType ttype;
+        int count;
+        if(playerPaysTribute) {
+            const auto diff = mBoard->personPlayerDifficulty();
+            const auto tribute = eTributeHelpers::payTribute(*c, diff);
+            ttype = tribute.fType;
+            count = tribute.fCount;
+        } else {
+            const auto tribute = eTributeHelpers::receiveTribute(*c);
+            ttype = tribute.fType;
+            count = tribute.fCount;
+        }
         const auto uiScale = resolution().uiScale();
         const auto icon = eResourceTypeHelpers::icon(uiScale, ttype);
         mTypeIcon->setTexture(icon);

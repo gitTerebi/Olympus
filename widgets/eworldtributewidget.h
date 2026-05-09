@@ -4,7 +4,7 @@
 #include "ewidget.h"
 
 #include "elabel.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eGameBoard;
 

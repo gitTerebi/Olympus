@@ -5,7 +5,7 @@
 #include "estringhelpers.h"
 #include "characters/gods/egod.h"
 #include "characters/esoldierbanner.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "engine/egameboard.h"

@@ -6,7 +6,7 @@
 #include "ecityeventvalue.h"
 #include "ecounteventvalue.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "characters/eenlistedforces.h"
 
 class eInvasionHandler;

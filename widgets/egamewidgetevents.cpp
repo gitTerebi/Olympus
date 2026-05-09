@@ -289,7 +289,10 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         break;
 
     case eEvent::invasionInitial: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime));
+        // Configurable: true for popup, false for toast
+        const bool forcePopup = true;
+        const auto msg = eMessages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime);
+        showMessage(ed, msg.fFull, false, forcePopup, true);
     } break;
     case eEvent::invasion24: {
         showMessage(ed, eMessages::invasionMessage(inst.fInvasion24, ed.fReason, 24));

@@ -11,7 +11,7 @@
 #include "einvasionevent.h"
 #include "epaytributeevent.h"
 #include "emakerequestevent.h"
-#include "ereceiverequestevent.h"
+#include "receive-request/e-receive-request-event.h"
 #include "egifttoevent.h"
 #include "egiftfromevent.h"
 #include "egodquestevent.h"
@@ -375,7 +375,10 @@ void eGameEvent::updateWarningDates() {
         auto wdate = mNextDate;
         wdate.prevMonths(ms);
         w->setNextDate(wdate);
-        if(wdate < currentDate) {
+        if(wdate <= currentDate) {
+            if(wdate == currentDate) {
+                w->trigger();
+            }
             w->setFinished(true);
         }
     }

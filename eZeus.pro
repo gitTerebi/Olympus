@@ -397,7 +397,7 @@ SOURCES += \
         engine/eepisodegoal.cpp \
         engine/eeventtime.cpp \
         engine/efunctask.cpp \
-        engine/egameboard.cpp \
+        engine/e-gameboard.cpp \
         engine/egameboardread.cpp \
         engine/egameboardwrite.cpp \
         engine/egameevents.cpp \
@@ -482,6 +482,7 @@ SOURCES += \
         gameEvents/emonsterinvasioneventbase.cpp \
         gameEvents/emonsterseventvalue.cpp \
         gameEvents/emonsterunleashedevent.cpp \
+        engine/e-tribute.cpp \
         gameEvents/epaytributeevent.cpp \
         gameEvents/eplayerconquestevent.cpp \
         gameEvents/eplayerconquesteventbase.cpp \
@@ -489,7 +490,9 @@ SOURCES += \
         gameEvents/epointeventvalue.cpp \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
-        gameEvents/ereceiverequestevent.cpp \
+        gameEvents/receive-request/e-receive-request-event.cpp \
+        gameEvents/receive-request/e-receive-request-type.cpp \
+        gameEvents/receive-request/e-receive-request-postpone.cpp \
         gameEvents/ereinforcementsevent.cpp \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
@@ -520,7 +523,7 @@ SOURCES += \
         pak/gamefile.cpp \
         pak/pkwareinputstream.cpp \
         pak/qfile.cpp \
-        pak/zeusfile.cpp \
+        pak/zeus-file.cpp \
         pointers/eobject.cpp \
         pointers/estdselfref.cpp \
         spawners/eanimalspawner.cpp \
@@ -607,7 +610,7 @@ SOURCES += \
         widgets/echoosegameeditmenu.cpp \
         widgets/ecitybutton.cpp \
         widgets/ecityonboardselectionwidget.cpp \
-        widgets/ecitysettingswidget.cpp \
+        widgets/e-city-settings-widget.cpp \
         widgets/eclosabledialog.cpp \
         widgets/econditionsettingswidget.cpp \
         widgets/edatebutton.cpp \
@@ -719,7 +722,7 @@ SOURCES += \
         widgets/eworldgoodswidget.cpp \
         widgets/eworldmapwidget.cpp \
         widgets/eworldmenu.cpp \
-        widgets/eworldtributewidget.cpp \
+        widgets/e-world-tribute-widget.cpp \
         widgets/eworldwidget.cpp \
         widgets/infowidgets/eagorainfowidget.cpp \
         widgets/infowidgets/echaracterinfowidget.cpp \
@@ -1089,6 +1092,7 @@ HEADERS += \
     engine/ecolonymonumentaction.h \
     engine/edate.h \
     engine/edifficulty.h \
+    engine/e-tribute.h \
     engine/eemploymentdistributor.h \
     engine/eepisode.h \
     engine/eepisodegoal.h \
@@ -1127,7 +1131,7 @@ HEADERS += \
     engine/etileterrainpainter.h \
     engine/ewagerate.h \
     engine/eworldboard.h \
-    engine/eworldcity.h \
+    engine/e-worldcity.h \
     engine/eworlddirection.h \
     engine/eworldregion.h \
     engine/thread/ethreadboard.h \
@@ -1197,7 +1201,9 @@ HEADERS += \
     gameEvents/epointeventvalue.h \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
-    gameEvents/ereceiverequestevent.h \
+    gameEvents/receive-request/e-receive-request-event.h \
+    gameEvents/receive-request/e-receive-request-type.h \
+    gameEvents/receive-request/e-receive-request-postpone.h \
     gameEvents/ereinforcementsevent.h \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \

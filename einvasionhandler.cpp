@@ -849,6 +849,9 @@ void eInvasionHandler::incTime(const int by) {
                 }
                 forces.kill(1 - double(count)/iniCount);
             }
+            // Defenders won, so invader is defeated
+            const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
+            mBoard.defeatedBy(mCity->cityId(), targetWCity);
             assert(mEvent);
             mEvent->invadersWon();
         }
