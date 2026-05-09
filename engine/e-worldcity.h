@@ -291,17 +291,17 @@ public:
     bool sells(const eResourceType type) const;
     void addSells(const eResourceTrade& s);
 
-    void setTributeType(const eResourceType r) { mTributeType = r; }
-    void setTributeCount(const int c) { mTributeCount = c; }
+    void setReceiveTributeType(const eResourceType r) { mReceiveTributeType = r; }
+    void setReceiveTributeCount(const int c) { mReceiveTributeCount = c; }
 
-    eResourceType tributeType() const { return mTributeType; }
-    int tributeCount() const { return mTributeCount; }
+    eResourceType receiveTributeType() const { return mReceiveTributeType; }
+    int receiveTributeCount() const { return mReceiveTributeCount; }
 
-    void setRecTributeType(const eResourceType r) { mRecTributeType = r; }
-    void setRecTributeCount(const int c) { mRecTributeCount = c; }
+    void setPayTributeType(const eResourceType r) { mPayTributeType = r; }
+    void setPayTributeCount(const int c) { mPayTributeCount = c; }
 
-    eResourceType recTributeType() const { return mRecTributeType; }
-    int recTributeCount() const { return mRecTributeCount; }
+    eResourceType payTributeType() const { return mPayTributeType; }
+    int payTributeCount() const { return mPayTributeCount; }
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eWorldBoard* const board);
@@ -369,11 +369,11 @@ private:
 
     std::map<eResourceType, int> mReceived;
 
-    eResourceType mTributeType = eResourceType::drachmas;
-    int mTributeCount = 500;
+    eResourceType mReceiveTributeType = eResourceType::drachmas;
+    int mReceiveTributeCount = 500;
 
-    eResourceType mRecTributeType = eResourceType::drachmas;
-    int mRecTributeCount = 100;
+    eResourceType mPayTributeType = eResourceType::drachmas;
+    int mPayTributeCount = 100;
 
     int mNextInvasionYear = -1000000;
 };

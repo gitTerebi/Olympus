@@ -27,12 +27,12 @@ struct eEventData {
     eTile* fTile = nullptr;
     stdptr<eCharacter> fChar;
     int fBribe = 0;
-    eCloseOnAction fCA0 = nullptr;
-    eAction fA0 = nullptr;
+    eCloseOnAction fCloseOnAction = nullptr;
+    eAction fPrimaryAction = nullptr;
     std::map<eCityId, std::string> fCityNames;
-    std::map<eCityId, eAction> fCCA0;
-    eAction fA1 = nullptr;
-    eAction fA2 = nullptr;
+    std::map<eCityId, eAction> fCityConditionalActions;
+    eAction fSecondaryAction = nullptr;
+    eAction fTertiaryAction = nullptr;
     stdsptr<eWorldCity> fCity;
     stdsptr<eWorldCity> fRivalCity;
     eResourceType fResourceType = eResourceType::drachmas;

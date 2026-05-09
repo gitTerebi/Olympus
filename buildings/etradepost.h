@@ -3,7 +3,7 @@
 
 #include "ewarehousebase.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "ewalkablehelpers.h"
 
 class eSaveArchive;

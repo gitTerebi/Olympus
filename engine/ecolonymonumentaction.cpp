@@ -1,6 +1,6 @@
 #include "ecolonymonumentaction.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "engine/egameboard.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"

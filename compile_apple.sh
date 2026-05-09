@@ -44,7 +44,7 @@ function macos_patch
 done
 
 
-    perl -i -pe 's/\x{EF}\x{BB}\x{BF}//g' engine/egameboard.cpp
+    perl -i -pe 's/\x{EF}\x{BB}\x{BF}//g' engine/e-gameboard.cpp
     
 PRO_FILE="eZeus.pro"
 TMP_FILE="${PRO_FILE}.tmp"

@@ -1,7 +1,7 @@
 #ifndef ECITYREQUEST_H
 #define ECITYREQUEST_H
 
-#include "eworldcity.h"
+#include "e-worldcity.h"
 #include "eresourcetype.h"
 #include "fileIO/esavearchive.h"
 

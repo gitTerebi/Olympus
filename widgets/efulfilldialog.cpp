@@ -1,10 +1,10 @@
 #include "efulfilldialog.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "engine/egameboard.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/receive-request/e-receive-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "buildings/eheroshall.h"
 #include "widgets/eframedbutton.h"

@@ -1,11 +1,15 @@
 #include "eboardplayer.h"
 
+#include "gameEvents/receive-request/e-receive-request-event.h"
+
 #include "egameboard.h"
 #include "eevent.h"
 #include "eeventdata.h"
 #include "evectorhelpers.h"
 #include "egifthelpers.h"
 #include "fileIO/esavearchive.h"
+
+#include <algorithm>
 
 eBoardPlayer::eBoardPlayer(const ePlayerId pid, eGameBoard& board) :
     mBoard(board), mId(pid) {}
@@ -107,11 +111,23 @@ void eBoardPlayer::removeGodQuest(eGodQuestEvent* const q) {
 }
 
 void eBoardPlayer::addCityRequest(eReceiveRequestEvent* const q) {
-    mCityRequests.push_back(q);
+    const auto sameRequest = [q](const eReceiveRequestEvent* r) {
+        return r->requestId() == q->requestId();
+    };
+    if(std::find_if(mCityRequests.begin(), mCityRequests.end(),
+                    sameRequest) == mCityRequests.end()) {
+        mCityRequests.push_back(q);
+    }
 }
 
 void eBoardPlayer::removeCityRequest(eReceiveRequestEvent* const q) {
-    eVectorHelpers::remove(mCityRequests, q);
+    const auto sameRequest = [q](const eReceiveRequestEvent* r) {
+        return r->requestId() == q->requestId();
+    };
+    mCityRequests.erase(std::remove_if(mCityRequests.begin(),
+                                       mCityRequests.end(),
+                                       sameRequest),
+                        mCityRequests.end());
 }
 
 void eBoardPlayer::addCityTroopsRequest(eTroopsRequestEvent* const q) {

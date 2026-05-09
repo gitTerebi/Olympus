@@ -1,4 +1,4 @@
-#include "eworldcity.h"
+#include "e-worldcity.h"
 
 #include "elanguage.h"
 #include "egifthelpers.h"
@@ -12,14 +12,15 @@
 
 eWorldCity::eWorldCity(const eCityType type,
                        const eCityId id,
-                       const std::string& name,
-                       const double x, const double y) :
-    mType(type), mCityId(id), mName(name), mX(x), mY(y) {}
+                       const std::string &name,
+                       const double x, const double y) : mType(type), mCityId(id), mName(name), mX(x), mY(y) {}
 
-std::string eWorldCity::sTypeName(const eCityType type) {
+std::string eWorldCity::sTypeName(const eCityType type)
+{
     const int group = 39;
     int string = -1;
-    switch(type) {
+    switch (type)
+    {
     case eCityType::parentCity:
         string = 0;
         break;
@@ -42,70 +43,93 @@ std::string eWorldCity::sTypeName(const eCityType type) {
     return eLanguage::zeusText(group, string);
 }
 
-bool eWorldCity::isDistant() const {
+bool eWorldCity::isDistant() const
+{
     return mType == eCityType::distantCity;
 }
 
-bool eWorldCity::isVassal() const {
+bool eWorldCity::isVassal() const
+{
     return mType == eCityType::foreignCity &&
            mRel == eForeignCityRelationship::vassal;
 }
 
-bool eWorldCity::isColony() const {
+bool eWorldCity::isColony() const
+{
     return mType == eCityType::colony;
 }
 
-bool eWorldCity::isParentCity() const {
+bool eWorldCity::isParentCity() const
+{
     return mType == eCityType::parentCity;
 }
 
-bool eWorldCity::isRival() const {
+bool eWorldCity::isRival() const
+{
     return mType == eCityType::foreignCity &&
            mRel == eForeignCityRelationship::rival;
 }
 
-bool eWorldCity::isAlly() const {
+bool eWorldCity::isAlly() const
+{
     return mType == eCityType::foreignCity &&
-            mRel == eForeignCityRelationship::ally;
+           mRel == eForeignCityRelationship::ally;
 }
 
-bool eWorldCity::isOnBoardColony() const {
+bool eWorldCity::isOnBoardColony() const
+{
     return mIsOnBoard && isColony();
 }
 
-bool eWorldCity::isOnBoardNeutral() const {
+bool eWorldCity::isOnBoardNeutral() const
+{
     return mIsOnBoard && (mPlayerId == ePlayerId::neutralFriendly ||
-            mPlayerId == ePlayerId::neutralAggresive);
+                          mPlayerId == ePlayerId::neutralAggresive);
 }
 
-bool eWorldCity::isOnBoardEnemy() const {
+bool eWorldCity::isOnBoardEnemy() const
+{
     return mIsOnBoard && mRel == eForeignCityRelationship::rival;
 }
 
-std::string eWorldCity::sDirectionName(const eDistantDirection d) {
-    switch(d) {
-    case eDistantDirection::none: return "none";
-    case eDistantDirection::N: return "N";
-    case eDistantDirection::NE: return "NE";
-    case eDistantDirection::E: return "E";
-    case eDistantDirection::SE: return "SE";
-    case eDistantDirection::S: return "S";
-    case eDistantDirection::SW: return "SW";
-    case eDistantDirection::W: return "W";
-    case eDistantDirection::NW: return "NW";
+std::string eWorldCity::sDirectionName(const eDistantDirection d)
+{
+    switch (d)
+    {
+    case eDistantDirection::none:
+        return "none";
+    case eDistantDirection::N:
+        return "N";
+    case eDistantDirection::NE:
+        return "NE";
+    case eDistantDirection::E:
+        return "E";
+    case eDistantDirection::SE:
+        return "SE";
+    case eDistantDirection::S:
+        return "S";
+    case eDistantDirection::SW:
+        return "SW";
+    case eDistantDirection::W:
+        return "W";
+    case eDistantDirection::NW:
+        return "NW";
     }
     return "none";
 }
 
-void eWorldCity::move(const double x, const double y) {
+void eWorldCity::move(const double x, const double y)
+{
     mX = x;
     mY = y;
 }
 
-std::string eWorldCity::sRelationshipName(const eForeignCityRelationship r) {
+std::string eWorldCity::sRelationshipName(const eForeignCityRelationship r)
+{
     int group = 253;
     int string = -1;
-    switch(r) {
+    switch (r)
+    {
     case eForeignCityRelationship::vassal:
         string = 2;
         break;
@@ -119,9 +143,11 @@ std::string eWorldCity::sRelationshipName(const eForeignCityRelationship r) {
     return eLanguage::zeusText(group, string);
 }
 
-std::string eWorldCity::sStateName(const eCityState s) {
+std::string eWorldCity::sStateName(const eCityState s)
+{
     int string = -1;
-    switch(s) {
+    switch (s)
+    {
     case eCityState::active:
         string = 248;
         break;
@@ -132,11 +158,13 @@ std::string eWorldCity::sStateName(const eCityState s) {
     return eLanguage::zeusText(44, string);
 }
 
-std::string eWorldCity::sAttitudeName(const eCityAttitude at) {
+std::string eWorldCity::sAttitudeName(const eCityAttitude at)
+{
 
     const int group = 65;
     int string = -1;
-    switch(at) {
+    switch (at)
+    {
     case eCityAttitude::philanthropic:
         string = 15;
         break;
@@ -160,7 +188,6 @@ std::string eWorldCity::sAttitudeName(const eCityAttitude at) {
         string = 4;
         break;
 
-
     case eCityAttitude::devoted:
         string = 10;
         break;
@@ -176,7 +203,6 @@ std::string eWorldCity::sAttitudeName(const eCityAttitude at) {
     case eCityAttitude::angry:
         string = 14;
         break;
-
 
     case eCityAttitude::docile:
         string = 17;
@@ -208,85 +234,120 @@ std::string eWorldCity::sAttitudeName(const eCityAttitude at) {
     return eLanguage::zeusText(group, string);
 }
 
-eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const {
+eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const
+{
     eCityAttitude at;
     const int iat = attitude(pid);
-    if(isAlly()) {
-        if(iat < 20) at = eCityAttitude::annoyed;
-        else if(iat < 40) at = eCityAttitude::apatheticA;
-        else if(iat < 60) at = eCityAttitude::sympathetic;
-        else if(iat < 80) at = eCityAttitude::congenial;
-        else at = eCityAttitude::helpful;
-    } else if(isVassal() || isColony()) {
-        if(iat < 20) at = eCityAttitude::angry;
-        else if(iat < 40) at = eCityAttitude::bitter;
-        else if(iat < 60) at = eCityAttitude::loyal;
-        else if(iat < 80) at = eCityAttitude::dedicated;
-        else at = eCityAttitude::devoted;
-    } else { // rival
-        if(iat < 10) at = eCityAttitude::hostile;
-        else if(iat < 20) at = eCityAttitude::furious;
-        else if(iat < 40) at = eCityAttitude::displeased;
-        else if(iat < 60) at = eCityAttitude::apatheticR;
-        else if(iat < 80) at = eCityAttitude::respectful;
-        else at = eCityAttitude::admiring;
+    if (isAlly())
+    {
+        if (iat < 20)
+            at = eCityAttitude::annoyed;
+        else if (iat < 40)
+            at = eCityAttitude::apatheticA;
+        else if (iat < 60)
+            at = eCityAttitude::sympathetic;
+        else if (iat < 80)
+            at = eCityAttitude::congenial;
+        else
+            at = eCityAttitude::helpful;
+    }
+    else if (isVassal() || isColony())
+    {
+        if (iat < 20)
+            at = eCityAttitude::angry;
+        else if (iat < 40)
+            at = eCityAttitude::bitter;
+        else if (iat < 60)
+            at = eCityAttitude::loyal;
+        else if (iat < 80)
+            at = eCityAttitude::dedicated;
+        else
+            at = eCityAttitude::devoted;
+    }
+    else
+    { // rival
+        if (iat < 10)
+            at = eCityAttitude::hostile;
+        else if (iat < 20)
+            at = eCityAttitude::furious;
+        else if (iat < 40)
+            at = eCityAttitude::displeased;
+        else if (iat < 60)
+            at = eCityAttitude::apatheticR;
+        else if (iat < 80)
+            at = eCityAttitude::respectful;
+        else
+            at = eCityAttitude::admiring;
     }
     return at;
 }
 
-double eWorldCity::attitude(const ePlayerId pid) const {
+double eWorldCity::attitude(const ePlayerId pid) const
+{
     const auto it = mAtt.find(pid);
-    if(it == mAtt.end()) return 60;
+    if (it == mAtt.end())
+        return 60;
     return it->second;
 }
 
-void eWorldCity::setAttitude(const double a, const ePlayerId pid) {
+void eWorldCity::setAttitude(const double a, const ePlayerId pid)
+{
     mAtt[pid] = std::clamp(a, 0., 100.);
 }
 
-void eWorldCity::incAttitude(const double a, const ePlayerId pid) {
+void eWorldCity::incAttitude(const double a, const ePlayerId pid)
+{
     setAttitude(attitude(pid) + a, pid);
 }
 
-std::vector<std::string> eWorldCity::sNames() {
+std::vector<std::string> eWorldCity::sNames()
+{
     std::vector<std::string> cityNames;
-    for(int i = 0; i < 82; i++) {
+    for (int i = 0; i < 82; i++)
+    {
         cityNames.push_back(eLanguage::zeusText(21, i));
     }
     return cityNames;
 }
 
-void eWorldCity::setName(const std::string& name) {
+void eWorldCity::setName(const std::string &name)
+{
     mName = name;
     const auto names = sNames();
     mNameString = eVectorHelpers::index(names, name);
 }
 
-std::string eWorldCity::nameWithId() const {
+std::string eWorldCity::nameWithId() const
+{
     std::string result = mName;
     const int iid = static_cast<int>(mCityId);
     result += " [" + std::to_string(iid) + "]";
     return result;
 }
 
-std::vector<std::string> eWorldCity::sLeaders() {
+std::vector<std::string> eWorldCity::sLeaders()
+{
     std::vector<std::string> leaders;
-    for(int i = 0; i < 84; i++) {
+    for (int i = 0; i < 84; i++)
+    {
         leaders.push_back(eLanguage::zeusText(139, i));
     }
     return leaders;
 }
 
-void eWorldCity::setLeader(const std::string& name) {
+void eWorldCity::setLeader(const std::string &name)
+{
     mLeader = name;
     const auto names = sLeaders();
     mLeaderString = eVectorHelpers::index(names, name);
 }
 
-std::string eWorldCity::sNationalityName(const eNationality type) {
+std::string eWorldCity::sNationalityName(const eNationality type)
+{
     const int group = 37;
     int string = -1;
-    switch(type) {
+    switch (type)
+    {
     case eNationality::greek:
         string = 0;
         break;
@@ -324,10 +385,12 @@ std::string eWorldCity::sNationalityName(const eNationality type) {
     return eLanguage::zeusText(group, string);
 }
 
-std::string eWorldCity::anArmy() const {
-    const int group  = 37;
+std::string eWorldCity::anArmy() const
+{
+    const int group = 37;
     int string = -1;
-    switch(mNationality) {
+    switch (mNationality)
+    {
     case eNationality::greek:
         string = 0;
         break;
@@ -365,31 +428,33 @@ std::string eWorldCity::anArmy() const {
     return eLanguage::zeusText(group, 22 + string);
 }
 
-void eWorldCity::nextMonth(eGameBoard* const board) {
+void eWorldCity::nextMonth(eGameBoard *const board)
+{
     const auto ppid = board->personPlayer();
     const auto attitude = attitudeClass(ppid);
-    if(isRival() && active() && visible() &&
-       attitude == eCityAttitude::hostile) {
+    if (isRival() && active() && visible() &&
+        attitude == eCityAttitude::hostile)
+    {
         auto targetCid = board->personPlayerCapital();
-        if(targetCid == eCityId::neutralFriendly ||
-           targetCid == eCityId::neutralAggresive) {
+        if (targetCid == eCityId::neutralFriendly ||
+            targetCid == eCityId::neutralAggresive)
+        {
             targetCid = board->world().currentCityId();
         }
         const auto targetCity = board->world().cityWithId(targetCid);
         const bool canInvade = targetCity &&
                                !board->hasActiveInvasions(targetCid) &&
                                board->date().year() > mNextInvasionYear;
-        if(canInvade && (eRand::rand() % 12 == 0)) {
-            const auto e = e::make_shared<eInvasionEvent>(
-                targetCid, eGameEventBranch::root, *board);
+        if (canInvade && (eRand::rand() % 12 == 0))
+        {
+            const auto e = e::make_shared<eInvasionEvent>(targetCid, eGameEventBranch::root, *board);
             const auto attacker = board->world().cityWithId(mCityId);
-            const int strength = std::min(targetCity->militaryStrength(),
-                                          mMilitaryStrength);
+            const int unitCount = static_cast<int>(mMilitaryStrength) * 3 * 8; // max banners in city 20
             e->setSingleCity(attacker);
             e->setMinPointId(1);
             e->setMaxPointId(16);
-            e->setMinCount(8*strength);
-            e->setMaxCount(12*strength);
+            e->setMinCount(static_cast<int>(unitCount / 2));
+            e->setMaxCount(unitCount);
             e->setWarningMonths(1);
             auto date = board->date() + 31;
             e->initializeDate(date);
@@ -400,7 +465,8 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
 
     const auto diff = board->personPlayerDifficulty();
     double mult;
-    switch(diff) {
+    switch (diff)
+    {
     case eDifficulty::beginner:
         mult = 3;
         break;
@@ -418,17 +484,21 @@ void eWorldCity::nextMonth(eGameBoard* const board) {
         mult = 6;
         break;
     }
-    const int targetTroops = std::round(mMilitaryStrength*mult*sqrt(mYearsElapsed + 1));
-    if(mTroops < targetTroops) {
+    const int targetTroops = std::round(mMilitaryStrength * mult * sqrt(mYearsElapsed + 1));
+    if (mTroops < targetTroops)
+    {
         mTroops++;
     }
 }
 
-void eWorldCity::nextYear() {
-    for(auto& b : mBuys) {
+void eWorldCity::nextYear()
+{
+    for (auto &b : mBuys)
+    {
         b.zeroUsed();
     }
-    for(auto& s : mSells) {
+    for (auto &s : mSells)
+    {
         s.zeroUsed();
     }
     mReceived.clear();
@@ -438,171 +508,231 @@ void eWorldCity::nextYear() {
 void eWorldCity::troopsByType(const int troops,
                               int &infantry,
                               int &cavalry,
-                              int &archers) const {
+                              int &archers) const
+{
     const auto n = nationality();
-    switch(n) {
-    case eNationality::greek: {
-        infantry = std::ceil(0.6*troops);
-        cavalry = std::ceil(0.2*troops);
-        archers = std::ceil(0.2*troops);
-    } break;
-    case eNationality::trojan: {
-        infantry = std::ceil(0.5*troops);
-        cavalry = std::ceil(0.3*troops);
-        archers = std::ceil(0.2*troops);
-    } break;
-    case eNationality::persian: {
-        infantry = std::ceil(0.3*troops);
-        cavalry = std::ceil(0.3*troops);
-        archers = std::ceil(0.4*troops);
-    } break;
-    case eNationality::centaur: {
+    switch (n)
+    {
+    case eNationality::greek:
+    {
+        infantry = std::ceil(0.6 * troops);
+        cavalry = std::ceil(0.2 * troops);
+        archers = std::ceil(0.2 * troops);
+    }
+    break;
+    case eNationality::trojan:
+    {
+        infantry = std::ceil(0.5 * troops);
+        cavalry = std::ceil(0.3 * troops);
+        archers = std::ceil(0.2 * troops);
+    }
+    break;
+    case eNationality::persian:
+    {
+        infantry = std::ceil(0.3 * troops);
+        cavalry = std::ceil(0.3 * troops);
+        archers = std::ceil(0.4 * troops);
+    }
+    break;
+    case eNationality::centaur:
+    {
         infantry = 0;
-        cavalry = std::ceil(0.5*troops);
-        archers = std::ceil(0.5*troops);
-    } break;
-    case eNationality::amazon: {
-        infantry = std::ceil(0.75*troops);
+        cavalry = std::ceil(0.5 * troops);
+        archers = std::ceil(0.5 * troops);
+    }
+    break;
+    case eNationality::amazon:
+    {
+        infantry = std::ceil(0.75 * troops);
         cavalry = 0;
-        archers = std::ceil(0.25*troops);
-    } break;
+        archers = std::ceil(0.25 * troops);
+    }
+    break;
 
-    case eNationality::egyptian: {
-        infantry = std::ceil(0.5*troops);
-        cavalry = std::ceil(0.2*troops);
-        archers = std::ceil(0.3*troops);
-    } break;
-    case eNationality::mayan: {
-        infantry = std::ceil(0.25*troops);
+    case eNationality::egyptian:
+    {
+        infantry = std::ceil(0.5 * troops);
+        cavalry = std::ceil(0.2 * troops);
+        archers = std::ceil(0.3 * troops);
+    }
+    break;
+    case eNationality::mayan:
+    {
+        infantry = std::ceil(0.25 * troops);
         cavalry = 0;
-        archers = std::ceil(0.75*troops);
-    } break;
-    case eNationality::phoenician: {
+        archers = std::ceil(0.75 * troops);
+    }
+    break;
+    case eNationality::phoenician:
+    {
         infantry = 0;
-        cavalry = std::ceil(0.3*troops);
-        archers = std::ceil(0.7*troops);
-    } break;
-    case eNationality::oceanid: {
-        infantry = std::ceil(0.5*troops);
+        cavalry = std::ceil(0.3 * troops);
+        archers = std::ceil(0.7 * troops);
+    }
+    break;
+    case eNationality::oceanid:
+    {
+        infantry = std::ceil(0.5 * troops);
         cavalry = 0;
-        archers = std::ceil(0.5*troops);
-    } break;
-    case eNationality::atlantean: {
-        infantry = std::ceil(0.4*troops);
-        cavalry = std::ceil(0.3*troops);
-        archers = std::ceil(0.3*troops);
-    } break;
+        archers = std::ceil(0.5 * troops);
+    }
+    break;
+    case eNationality::atlantean:
+    {
+        infantry = std::ceil(0.4 * troops);
+        cavalry = std::ceil(0.3 * troops);
+        archers = std::ceil(0.3 * troops);
+    }
+    break;
     }
 }
 
-void eWorldCity::troopsByType(int& infantry,
-                              int& cavalry,
-                              int& archers) const {
-    const int troops = std::max(12, 2*this->troops()/3);
+void eWorldCity::troopsByType(int &infantry,
+                              int &cavalry,
+                              int &archers) const
+{
+    const int troops = std::max(12, 2 * this->troops() / 3);
     troopsByType(troops, infantry, cavalry, archers);
 }
 
-int eWorldCity::shields() const {
-    return std::clamp(1 + mTroops/20, 1, 5);
+int eWorldCity::shields() const
+{
+    return std::clamp(1 + mTroops / 20, 1, 5);
 }
 
-void eWorldCity::setMilitaryStrength(const int s) {
+void eWorldCity::setMilitaryStrength(const int s)
+{
     mMilitaryStrength = std::clamp(s, 1, 6);
 }
 
-void eWorldCity::setWaterTrade(const bool w, const eCityId cid) {
-    if(w) mWaterTrade.insert(cid);
-    else mWaterTrade.erase(cid);
+void eWorldCity::setWaterTrade(const bool w, const eCityId cid)
+{
+    if (w)
+        mWaterTrade.insert(cid);
+    else
+        mWaterTrade.erase(cid);
 }
 
-bool eWorldCity::waterTrade(const eCityId cid) const {
+bool eWorldCity::waterTrade(const eCityId cid) const
+{
     const auto it = mWaterTrade.find(cid);
     return it != mWaterTrade.end();
 }
 
-bool eWorldCity::trades() const {
+bool eWorldCity::trades() const
+{
     // if(mBuys.empty() && mSells.empty()) return false;
-    if(rebellion()) return false;
-    if(isRival()) return false;
-    if(tradeShutdown()) return false;
-    if(mConqueredBy) return false;
-    if(!visible()) return false;
-    if(!active()) return false;
+    if (rebellion())
+        return false;
+    if (isRival())
+        return false;
+    if (tradeShutdown())
+        return false;
+    if (mConqueredBy)
+        return false;
+    if (!visible())
+        return false;
+    if (!active())
+        return false;
     return true;
 }
 
-bool eWorldCity::buys(const eResourceType type) const {
-    for(const auto& rt : mBuys) {
-        if(static_cast<bool>(rt.fType & type)) return true;
+bool eWorldCity::buys(const eResourceType type) const
+{
+    for (const auto &rt : mBuys)
+    {
+        if (static_cast<bool>(rt.fType & type))
+            return true;
     }
     return false;
 }
 
-void eWorldCity::addBuys(const eResourceTrade& b) {
+void eWorldCity::addBuys(const eResourceTrade &b)
+{
     mBuys.push_back(b);
 }
 
-void eWorldCity::changeDemand(const eResourceType res, const int by) {
-    for(auto& b : mBuys) {
-        if(b.fType != res) continue;
+void eWorldCity::changeDemand(const eResourceType res, const int by)
+{
+    for (auto &b : mBuys)
+    {
+        if (b.fType != res)
+            continue;
         b.fMax = std::clamp(b.fMax + by, 0, 100);
     }
 }
 
-void eWorldCity::changeSupply(const eResourceType res, const int by) {
-    for(auto& s : mSells) {
-        if(s.fType != res) continue;
+void eWorldCity::changeSupply(const eResourceType res, const int by)
+{
+    for (auto &s : mSells)
+    {
+        if (s.fType != res)
+            continue;
         s.fMax = std::clamp(s.fMax + by, 0, 100);
     }
 }
 
-bool eWorldCity::sells(const eResourceType type) const {
-    for(const auto& rt : mSells) {
-        if(static_cast<bool>(rt.fType & type)) return true;
+bool eWorldCity::sells(const eResourceType type) const
+{
+    for (const auto &rt : mSells)
+    {
+        if (static_cast<bool>(rt.fType & type))
+            return true;
     }
     return false;
 }
 
-void eWorldCity::addSells(const eResourceTrade& s) {
+void eWorldCity::addSells(const eResourceTrade &s)
+{
     mSells.push_back(s);
 }
 
-void eWorldCity::write(eWriteStream& dst) const {
+void eWorldCity::write(eWriteStream &dst) const
+{
     eSaveArchive ar(dst);
-    const_cast<eWorldCity*>(this)->serialize(ar, nullptr);
+    const_cast<eWorldCity *>(this)->serialize(ar, nullptr);
 }
 
-void serializeResourceTrades(eSaveArchive& ar,
-                             const char* const name,
-                             std::vector<eResourceTrade>& v) {
+void serializeResourceTrades(eSaveArchive &ar,
+                             const char *const name,
+                             std::vector<eResourceTrade> &v)
+{
     int n = ar.writing() ? static_cast<int>(v.size()) : 0;
     ar.field(std::string(name) + ".count", n);
-    if(ar.reading()) v.clear();
-    for(int i = 0; i < n; i++) {
-        auto& vv = ar.reading() ? v.emplace_back() : v[i];
+    if (ar.reading())
+        v.clear();
+    for (int i = 0; i < n; i++)
+    {
+        auto &vv = ar.reading() ? v.emplace_back() : v[i];
         vv.serialize(ar);
     }
 }
 
-void eWorldCity::read(eReadStream& src, eWorldBoard* const board) {
+void eWorldCity::read(eReadStream &src, eWorldBoard *const board)
+{
     eSaveArchive ar(src);
     serialize(ar, board);
-    if(mNameString > -1 && mNameString < 82) {
+    if (mNameString > -1 && mNameString < 82)
+    {
         mName = eLanguage::zeusText(21, mNameString);
     }
-    if(mLeaderString > -1 && mLeaderString < 84) {
+    if (mLeaderString > -1 && mLeaderString < 84)
+    {
         mLeader = eLanguage::zeusText(139, mLeaderString);
     }
 }
 
-void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
+void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
+{
     ar.field("mIOID", mIOID);
     ar.field("mCityId", mCityId);
-    if(ar.reading()) {
-        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
-            mConqueredBy = c;
-        });
-    } else {
+    if (ar.reading())
+    {
+        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity> &c)
+                                 { mConqueredBy = c; });
+    }
+    else
+    {
         ar.writeStream().writeCity(mConqueredBy.get());
     }
     ar.field("mPlayerId", mPlayerId);
@@ -625,13 +755,17 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
     ar.field("mRel", mRel);
 
     int nrec;
-    if(ar.writing()) nrec = mReceived.size();
+    if (ar.writing())
+        nrec = mReceived.size();
     ar.field("nrec", nrec);
-    if(ar.reading()) mReceived.clear();
-    for(int i = 0; i < nrec; i++) {
+    if (ar.reading())
+        mReceived.clear();
+    for (int i = 0; i < nrec; i++)
+    {
         eResourceType type;
         int count;
-        if(ar.writing()) {
+        if (ar.writing())
+        {
             auto it = mReceived.begin();
             std::advance(it, i);
             type = it->first;
@@ -639,17 +773,22 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
         }
         ar.field("type", type);
         ar.field("count", count);
-        if(ar.reading()) mReceived[type] = count;
+        if (ar.reading())
+            mReceived[type] = count;
     }
 
     int natt;
-    if(ar.writing()) natt = mAtt.size();
+    if (ar.writing())
+        natt = mAtt.size();
     ar.field("natt", natt);
-    if(ar.reading()) mAtt.clear();
-    for(int i = 0; i < natt; i++) {
+    if (ar.reading())
+        mAtt.clear();
+    for (int i = 0; i < natt; i++)
+    {
         ePlayerId pid;
         double att;
-        if(ar.writing()) {
+        if (ar.writing())
+        {
             auto it = mAtt.begin();
             std::advance(it, i);
             pid = it->first;
@@ -657,7 +796,8 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
         }
         ar.field("pid", pid);
         ar.field("att", att);
-        if(ar.reading()) mAtt[pid] = att;
+        if (ar.reading())
+            mAtt[pid] = att;
     }
 
     ar.field("mAbroad", mAbroad);
@@ -667,66 +807,85 @@ void eWorldCity::serialize(eSaveArchive& ar, eWorldBoard* board) {
     ar.field("mWealth", mWealth);
 
     int nc;
-    if(ar.writing()) nc = mWaterTrade.size();
+    if (ar.writing())
+        nc = mWaterTrade.size();
     ar.field("nc", nc);
-    if(ar.reading()) mWaterTrade.clear();
-    for(int i = 0; i < nc; i++) {
+    if (ar.reading())
+        mWaterTrade.clear();
+    for (int i = 0; i < nc; i++)
+    {
         eCityId cid;
-        if(ar.writing()) {
+        if (ar.writing())
+        {
             auto it = mWaterTrade.begin();
             std::advance(it, i);
             cid = *it;
         }
         ar.field("cid", cid);
-        if(ar.reading()) mWaterTrade.insert(cid);
+        if (ar.reading())
+            mWaterTrade.insert(cid);
     }
 
     ar.field("mVisible", mVisible);
     serializeResourceTrades(ar, "mBuys", mBuys);
     serializeResourceTrades(ar, "mSells", mSells);
-    ar.field("mTributeType", mTributeType);
-    ar.field("mTributeCount", mTributeCount);
-    ar.field("mRecTributeType", mRecTributeType);
-    ar.field("mRecTributeCount", mRecTributeCount);
+    ar.field("receiveTributeType", mReceiveTributeType);
+    ar.field("receiveTributeCount", mReceiveTributeCount);
+    ar.field("payTributeType", mPayTributeType);
+    ar.field("payTributeCount", mPayTributeCount);
     ar.field("mNextInvasionYear", mNextInvasionYear);
 }
 
-void eWorldCity::gifted(const eResourceType type, const int count) {
-    const auto comp = [type](const std::pair<eResourceType, int>& r) {
+void eWorldCity::gifted(const eResourceType type, const int count)
+{
+    const auto comp = [type](const std::pair<eResourceType, int> &r)
+    {
         return r.first == type;
     };
     const auto it = std::find_if(mReceived.begin(), mReceived.end(), comp);
-    if(it == mReceived.end()) {
+    if (it == mReceived.end())
+    {
         mReceived[type] = count;
-    } else {
+    }
+    else
+    {
         mReceived[type] += count;
     }
 }
 
 bool eWorldCity::acceptsGift(const eResourceType type,
-                             const int count) const {
-    if(type == eResourceType::drachmas) return true;
+                             const int count) const
+{
+    if (type == eResourceType::drachmas)
+        return true;
     (void)count;
-    const auto comp = [type](const std::pair<eResourceType, int>& r) {
+    const auto comp = [type](const std::pair<eResourceType, int> &r)
+    {
         return r.first == type;
     };
     const auto it = std::find_if(mReceived.begin(), mReceived.end(), comp);
-    if(it == mReceived.end()) {
+    if (it == mReceived.end())
+    {
         return true;
-    } else {
+    }
+    else
+    {
         const int max = 3 * eGiftHelpers::giftCount(type);
         return it->second < max;
     }
 }
 
-void eWorldCity::setPlayerId(const ePlayerId pid) {
+void eWorldCity::setPlayerId(const ePlayerId pid)
+{
     mPlayerId = pid;
 }
 
-void eWorldCity::setCapitalOf(const ePlayerId pid) {
+void eWorldCity::setCapitalOf(const ePlayerId pid)
+{
     mCapitalOf = pid;
 }
 
-bool eWorldCity::isCapitalOf(const ePlayerId pid) const {
+bool eWorldCity::isCapitalOf(const ePlayerId pid) const
+{
     return mCapitalOf == pid;
 }

@@ -23,7 +23,7 @@
 #include "gameEvents/egodeventvalue.h"
 #include "gameEvents/egodreasoneventvalue.h"
 #include "gameEvents/eattackingcityeventvalue.h"
-#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/receive-request/e-receive-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "gameEvents/emonsterseventvalue.h"
 #include "gameEvents/emonsterinvasioneventbase.h"

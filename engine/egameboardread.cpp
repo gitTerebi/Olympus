@@ -6,7 +6,7 @@
 #include "einvasionhandler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
-#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/receive-request/e-receive-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
@@ -241,7 +241,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     src.addPostFunc([this]() {
         for(const auto e : mAllGameEvents) {
             const auto request = dynamic_cast<eReceiveRequestEvent*>(e);
-            if(request && request->isActiveCityRequest()) {
+            if(request && request->isMainEvent() &&
+               request->isActiveCityRequest()) {
                 addCityRequest(request);
             }
         }

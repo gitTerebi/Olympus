@@ -16,6 +16,14 @@
 #include <cstdio>
 
 namespace {
+// Configurable settings for invasion events
+// Delay in months before the invasion actually starts after planning
+constexpr int invasionDelayMonths = 1;
+
+// Warning months before invasion for each warning type (initial, 24, 12, 6, 1 months)
+// Order must match warnTypes in pointerCreated()
+const std::array<int, 5> invasionWarningMonths = {1, 24, 12, 6, 1};
+
 constexpr int kInvaderDefeatedAttitudeRestore = 15;
 constexpr int kInvaderWonAttitudeRestore = 35;
 }
@@ -35,7 +43,9 @@ eInvasionEvent::eInvasionEvent(
         const auto ctid = board2.cityIdToTeamId(ccid);
         const bool e = eTeamIdHelpers::isEnemy(tid, ctid);
         return e;
-    }) {}
+    }) {
+    mDatePlusMonths = invasionDelayMonths;
+}
 
 eInvasionEvent::~eInvasionEvent() {
     const auto board = gameBoard();
@@ -43,7 +53,7 @@ eInvasionEvent::~eInvasionEvent() {
 }
 
 void eInvasionEvent::pointerCreated() {
-    const auto warnTypes = {
+    const std::array<eInvasionWarningType, 5> warnTypes = {
         eInvasionWarningType::warningInitial,
         eInvasionWarningType::warning24,
         eInvasionWarningType::warning12,
@@ -52,25 +62,9 @@ void eInvasionEvent::pointerCreated() {
     };
     const auto cid = cityId();
     auto& board = *gameBoard();
-    for(const auto w : warnTypes) {
-        int months;
-        switch(w) {
-        case eInvasionWarningType::warningInitial:
-            months = 36;
-            break;
-        case eInvasionWarningType::warning24:
-            months = 24;
-            break;
-        case eInvasionWarningType::warning12:
-            months = 12;
-            break;
-        case eInvasionWarningType::warning6:
-            months = 6;
-            break;
-        case eInvasionWarningType::warning1:
-            months = 1;
-            break;
-        }
+    for(size_t i = 0; i < warnTypes.size(); i++) {
+        const auto w = warnTypes[i];
+        const int months = invasionWarningMonths[i];
         const auto e = std::make_shared<eInvasionWarning>(
             months, *this, cid, board, w);
         if(w == eInvasionWarningType::warningInitial) {
@@ -259,17 +253,17 @@ void eInvasionEvent::trigger() {
         ed.fBribe = bribe;
         ed.fReason = reason();
 
-        ed.fA0 = [self, board]() { // surrender
+        ed.fPrimaryAction = [self, board]() { // surrender
             self->mWaitingForResponse = false;
             board->updateMusic();
             self->invadersWon();
         };
         if(drachmas >= bribe) { // bribe
-            ed.fA1 = bribeFunc;
+            ed.fSecondaryAction = bribeFunc;
         }
 
         ed.fTile = tile;
-        ed.fA2 = startInvasion; // fight
+        ed.fTertiaryAction = startInvasion; // fight
         mWaitingForResponse = true;
         board->event(eEvent::invasion, ed);
         eMusic::playRandomBattleMusic();

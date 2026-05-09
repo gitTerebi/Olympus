@@ -461,11 +461,13 @@ private:
 
     std::deque<eTip> mTips;
 
+    // Toast notification - temporary UI element, history already logged when showMessage was called
     struct eToast {
         eEventData fEd;
         eMessage fMsg;
         eWidget* fWid = nullptr;
         int fExpireFrame = 0;
+        eDate fDate; // Date when toast was created (for potential debugging/analytics)
     };
 
     std::deque<eToast> mToasts;

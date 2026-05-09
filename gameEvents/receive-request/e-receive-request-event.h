@@ -1,14 +1,15 @@
-#ifndef ERECEIVEREQUESTEVENT_H
-#define ERECEIVEREQUESTEVENT_H
+#ifndef E_RECEIVE_REQUEST_EVENT_H
+#define E_RECEIVE_REQUEST_EVENT_H
 
-#include "egameevent.h"
-#include "ecounteventvalue.h"
-#include "eresourceeventvalue.h"
-#include "ecityeventvalue.h"
-#include "egodeventvalue.h"
+#include "../egameevent.h"
+#include "../ecounteventvalue.h"
+#include "../eresourceeventvalue.h"
+#include "../ecityeventvalue.h"
+#include "../egodeventvalue.h"
 
 struct eReason;
 struct eCityRequest;
+struct eEventData;
 class eSaveArchive;
 
 enum class eReceiveRequestType {
@@ -18,6 +19,12 @@ enum class eReceiveRequestType {
     project,
     festival,
     financialWoes
+};
+
+enum class eReceiveRequestResult {
+    comply,
+    tooLate,
+    refuse
 };
 
 class eReceiveRequestEvent : public eGameEvent,
@@ -53,26 +60,49 @@ public:
     bool isOverdue(const eDate& currentDate) const;
     bool isPostponed() const;
     bool isActiveCityRequest() const;
+    int requestId() const { return mRequestId; }
 
-    void initialize(const int postpone,
+    void initialize(const int requestStep,
                     const eResourceType res,
                     const int count,
                     const stdsptr<eWorldCity> &c,
-                    const bool finish);
+                    const int warningMonths,
+                    const bool showResultMessage);
 private:
     void serialize(eSaveArchive& ar);
 
     void set(eReceiveRequestEvent& src,
-             const int postpone,
-             const bool finish = false);
+             const int requestStep,
+             const bool showResultMessage = false);
+
+    bool startRequest(eGameBoard& board);
+    bool startQueuedRequest(eGameBoard& board);
+    bool initializeRequest(eGameBoard& board);
+    eEventData createEventData(eGameBoard& board) const;
+    void showRequestFinished(eGameBoard& board, eEventData& ed);
+    void showRequestPopup(eGameBoard& board, eEventData& ed);
+    void addFulfillButton(eGameBoard& board, eEventData& ed);
+    void addDrachmasFulfillButton(eGameBoard& board, eEventData& ed);
+    void addResourceFulfillButtons(eGameBoard& board, eEventData& ed);
+    void addPostponeButton(eGameBoard& board, eEventData& ed);
+    void addRefuseButton(eGameBoard& board, eEventData& ed);
+    void addRequestToSidePanel(eGameBoard& board);
+    void refuseRequest(eGameBoard& board);
 
     void finished(eEventTrigger& t, const eReason& r);
     eDate complyDate() const;
+    int remainingMonths(const eDate& deadline, const eDate& current) const;
+
+    friend void advanceRequestStep(eReceiveRequestEvent*, eGameBoard&);
+    friend void scheduleRequestEvent(eReceiveRequestEvent*, eGameBoard&, const int, const eDate&);
+    friend bool canPostponeRequestStep(const eReceiveRequestEvent*);
 
     eReceiveRequestType mRequestType = eReceiveRequestType::general;
+    eReceiveRequestResult mRequestResult = eReceiveRequestResult::comply;
 
-    bool mFinish = false;
-    int mPostpone = 0;
+    bool mRequestFinished = false;
+    int mRequestStep = 0;
+    int mRequestId = 0;
     eDate mRequestDate{1, eMonth::january, 1};
     eDate mRequestDeadline{1, eMonth::january, 1};
 
@@ -82,4 +112,4 @@ private:
     stdsptr<eEventTrigger> mRefuseTrigger;
 };
 
-#endif // ERECEIVEREQUESTEVENT_H
+#endif // E_RECEIVE_REQUEST_EVENT_H

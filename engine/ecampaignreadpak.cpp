@@ -7,7 +7,7 @@
 
 #include "buildings/pyramids/epyramid.h"
 
-#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/receive-request/e-receive-request-event.h"
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/emonsterincityevent.h"
 #include "gameEvents/emonsterinvasionevent.h"

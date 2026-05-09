@@ -1,7 +1,7 @@
 #ifndef EATTACKINGCITYEVENTVALUE_H
 #define EATTACKINGCITYEVENTVALUE_H
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eSaveArchive;
 

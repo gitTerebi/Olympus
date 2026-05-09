@@ -10,10 +10,17 @@
 #include "engine/egameboard.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
-#include "gameEvents/ereceiverequestevent.h"
+#include "gameEvents/receive-request/e-receive-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "widgets/elinewidget.h"
 #include "widgets/eminimap.h"
+
+namespace {
+std::string trimmedString(const std::string& str, const size_t maxLen = 10) {
+    if (str.length() <= maxLen) return str;
+    return str.substr(0, maxLen) + ".";
+}
+}
 
 class eOverviewEntry : public eWidget {
 public:
@@ -295,13 +302,13 @@ class eResourceRequestButton : public eRequestButton {
 public:
     using eRequestButton::eRequestButton;
 
-    void initialize(const eResourceType resource,
-                    const stdsptr<eWorldCity>& city,
-                    const eViableChecker& checker,
-                    const eStatusProvider& statusProvider,
-                    const eStatusWarningProvider& statusWarningProvider) {
-        const auto cityName = city->name();
-        const auto res = resolution();
+void initialize(const eResourceType resource,
+                     const stdsptr<eWorldCity>& city,
+                     const eViableChecker& checker,
+                     const eStatusProvider& statusProvider,
+                     const eStatusWarningProvider& statusWarningProvider) {
+         const auto cityName = trimmedString(city->name());
+         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const auto resIcon = eResourceTypeHelpers::icon(uiScale, resource);
 
@@ -314,10 +321,10 @@ class eTroopsRequestButton : public eRequestButton {
 public:
     using eRequestButton::eRequestButton;
 
-    void initialize(const stdsptr<eWorldCity>& city,
-                    const eViableChecker& checker) {
-        const auto cityName = city->name();
-        const auto res = resolution();
+void initialize(const stdsptr<eWorldCity>& city,
+                     const eViableChecker& checker) {
+         const auto cityName = trimmedString(city->name());
+         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const int iRes = static_cast<int>(uiScale);
         const auto& intrfc = eGameTextures::interface();

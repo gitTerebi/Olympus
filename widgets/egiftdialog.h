@@ -3,7 +3,7 @@
 
 #include "emodal.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eGiftDialog : public eModal {
 public:

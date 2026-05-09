@@ -3,7 +3,7 @@
 
 #include "characters/esoldierbanner.h"
 #include "characters/heroes/ehero.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eSaveArchive;
 

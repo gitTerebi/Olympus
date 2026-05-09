@@ -2,8 +2,10 @@
 
 #include "characters/echaracterbase.h"
 
-std::string eDifficultyHelpers::name(const eDifficulty diff) {
-    switch(diff) {
+std::string eDifficultyHelpers::name(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return "beginner";
     case eDifficulty::mortal:
@@ -17,8 +19,10 @@ std::string eDifficultyHelpers::name(const eDifficulty diff) {
     }
 }
 
-int costBase(const eBuildingType type) {
-    switch(type) {
+int costBase(const eBuildingType type)
+{
+    switch (type)
+    {
     case eBuildingType::none:
         return 0;
     case eBuildingType::erase:
@@ -90,7 +94,6 @@ int costBase(const eBuildingType type) {
     case eBuildingType::tower:
         return 50;
 
-
     case eBuildingType::granary:
         return 50;
     case eBuildingType::warehouse:
@@ -100,7 +103,6 @@ int costBase(const eBuildingType type) {
         return 100;
     case eBuildingType::pier:
         return 100;
-
 
     case eBuildingType::commonAgora:
         return 25;
@@ -359,36 +361,42 @@ int costBase(const eBuildingType type) {
     }
 }
 
-double costMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double eDifficultyHelpers::costMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return 1.0;
     case eDifficulty::mortal:
-        return 1.8;
+        return 1.5;
     case eDifficulty::hero:
-        return 2.25;
+        return 2.0;
     case eDifficulty::titan:
-        return 2.75;
+        return 2.5;
     case eDifficulty::olympian:
-        return 3.25;
+        return 3.0;
     }
     return 1;
 }
 
 int eDifficultyHelpers::buildingCost(
-        const eDifficulty diff,
-        const eBuildingType type) {
+    const eDifficulty diff,
+    const eBuildingType type)
+{
     const int base = costBase(type);
     const int min = static_cast<int>(eBuildingType::templeAphrodite);
     const int max = static_cast<int>(eBuildingType::templeZeus);
     const int bi = static_cast<int>(type);
-    if(bi >= min && bi <= max) return base;
-    const double mult = costMultiplier(diff);
-    return std::round(mult*base);
+    if (bi >= min && bi <= max)
+        return base;
+    const double mult = eDifficultyHelpers::costMultiplier(diff);
+    return std::round(mult * base);
 }
 
-int fireRiskBase(const eBuildingType type) {
-    switch(type) {
+int fireRiskBase(const eBuildingType type)
+{
+    switch (type)
+    {
     case eBuildingType::commonHouse:
         return 8;
     case eBuildingType::eliteHousing:
@@ -469,8 +477,10 @@ int fireRiskBase(const eBuildingType type) {
     }
 }
 
-double fireRiskMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double fireRiskMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return 1.0;
     case eDifficulty::mortal:
@@ -486,15 +496,18 @@ double fireRiskMultiplier(const eDifficulty diff) {
 }
 
 int eDifficultyHelpers::fireRisk(
-        const eDifficulty diff,
-        const eBuildingType type) {
+    const eDifficulty diff,
+    const eBuildingType type)
+{
     const double mult = fireRiskMultiplier(diff);
     const int base = fireRiskBase(type);
-    return std::round(mult*base);
+    return std::round(mult * base);
 }
 
-double plagueRiskMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double plagueRiskMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return 1.0;
     case eDifficulty::mortal:
@@ -509,12 +522,15 @@ double plagueRiskMultiplier(const eDifficulty diff) {
     return 1;
 }
 
-int eDifficultyHelpers::plagueRisk(const eDifficulty diff) {
+int eDifficultyHelpers::plagueRisk(const eDifficulty diff)
+{
     return plagueRiskMultiplier(diff);
 }
 
-double crimeRiskMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double crimeRiskMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return 1.0;
     case eDifficulty::mortal:
@@ -529,12 +545,15 @@ double crimeRiskMultiplier(const eDifficulty diff) {
     return 1;
 }
 
-int eDifficultyHelpers::crimeRisk(const eDifficulty diff) {
+int eDifficultyHelpers::crimeRisk(const eDifficulty diff)
+{
     return crimeRiskMultiplier(diff);
 }
 
-int damageRiskBase(const eBuildingType type) {
-    switch(type) {
+int damageRiskBase(const eBuildingType type)
+{
+    switch (type)
+    {
     case eBuildingType::carrotsFarm:
     case eBuildingType::onionsFarm:
     case eBuildingType::wheatFarm:
@@ -609,8 +628,10 @@ int damageRiskBase(const eBuildingType type) {
     }
 }
 
-double damageRiskMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double damageRiskMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
         return 1.0;
     case eDifficulty::mortal:
@@ -626,32 +647,46 @@ double damageRiskMultiplier(const eDifficulty diff) {
 }
 
 int eDifficultyHelpers::damageRisk(
-        const eDifficulty diff,
-        const eBuildingType type) {
+    const eDifficulty diff,
+    const eBuildingType type)
+{
     const double mult = damageRiskMultiplier(diff);
     const int base = damageRiskBase(type);
-    return std::round(mult*base);
+    return std::round(mult * base);
 }
 
 int eDifficultyHelpers::taxMultiplier(
-        const eDifficulty diff,
-        const eBuildingType type,
-        const int level) {
-    if(type == eBuildingType::commonHouse) {
-        if(level < 3) {
+    const eDifficulty diff,
+    const eBuildingType type,
+    const int level)
+{
+    if (type == eBuildingType::commonHouse)
+    {
+        if (level < 3)
+        {
             return 1;
-        } else if(level == 3) {
-            if(diff == eDifficulty::titan ||
-               diff == eDifficulty::olympian) {
+        }
+        else if (level == 3)
+        {
+            if (diff == eDifficulty::titan ||
+                diff == eDifficulty::olympian)
+            {
                 return 1;
-            } else {
+            }
+            else
+            {
                 return 2;
             }
-        } else {
+        }
+        else
+        {
             return 2;
         }
-    } else if(type == eBuildingType::eliteHousing) {
-        switch(diff) {
+    }
+    else if (type == eBuildingType::eliteHousing)
+    {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 22;
         case eDifficulty::mortal:
@@ -668,27 +703,34 @@ int eDifficultyHelpers::taxMultiplier(
 }
 
 int eDifficultyHelpers::taxSentiment(
-        const eDifficulty diff,
-        const eTaxRate taxRate) {
+    const eDifficulty diff,
+    const eTaxRate taxRate)
+{
     const int id = static_cast<int>(taxRate);
-    switch(diff) {
-    case eDifficulty::beginner: {
+    switch (diff)
+    {
+    case eDifficulty::beginner:
+    {
         const int vals[]{7, 5, 3, 2, 0, -1, -2};
         return vals[id];
     }
-    case eDifficulty::mortal: {
+    case eDifficulty::mortal:
+    {
         const int vals[]{4, 3, 1, 0, 0, -2, -4};
         return vals[id];
     }
-    case eDifficulty::hero: {
+    case eDifficulty::hero:
+    {
         const int vals[]{3, 2, 1, 0, -1, -3, -5};
         return vals[id];
     }
-    case eDifficulty::titan: {
+    case eDifficulty::titan:
+    {
         const int vals[]{2, 1, 0, 0, -2, -4, -6};
         return vals[id];
     }
-    case eDifficulty::olympian: {
+    case eDifficulty::olympian:
+    {
         const int vals[]{1, 1, 0, 0, -3, -5, -7};
         return vals[id];
     }
@@ -696,11 +738,14 @@ int eDifficultyHelpers::taxSentiment(
 }
 
 double eDifficultyHelpers::workerFrac(
-        const eDifficulty diff, const eWageRate wageRate) {
-    switch(wageRate) {
+    const eDifficulty diff, const eWageRate wageRate)
+{
+    switch (wageRate)
+    {
     case eWageRate::none:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.42;
         case eDifficulty::mortal:
@@ -715,7 +760,8 @@ double eDifficultyHelpers::workerFrac(
     }
     case eWageRate::veryLow:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.46;
         case eDifficulty::mortal:
@@ -730,7 +776,8 @@ double eDifficultyHelpers::workerFrac(
     }
     case eWageRate::low:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.49;
         case eDifficulty::mortal:
@@ -745,7 +792,8 @@ double eDifficultyHelpers::workerFrac(
     }
     case eWageRate::normal:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.52;
         case eDifficulty::mortal:
@@ -760,7 +808,8 @@ double eDifficultyHelpers::workerFrac(
     }
     case eWageRate::high:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.55;
         case eDifficulty::mortal:
@@ -775,7 +824,8 @@ double eDifficultyHelpers::workerFrac(
     }
     case eWageRate::veryHigh:
     {
-        switch(diff) {
+        switch (diff)
+        {
         case eDifficulty::beginner:
             return 0.57;
         case eDifficulty::mortal:
@@ -792,39 +842,42 @@ double eDifficultyHelpers::workerFrac(
     return 0;
 }
 
-
-int soliderBribeMultiplier(const eDifficulty diff) {
-    switch(diff) {
+double soliderBribeMultiplier(const eDifficulty diff)
+{
+    switch (diff)
+    {
     case eDifficulty::beginner:
-        return 1;
+        return 0.25;
     case eDifficulty::mortal:
-        return 3;
+        return 0.5;
     case eDifficulty::hero:
-        return 4;
+        return 1;
     case eDifficulty::titan:
-        return 5;
+        return 1.25;
     case eDifficulty::olympian:
-        return 7;
+        return 1.5;
     }
     return 1;
 }
 
 int eDifficultyHelpers::soliderBribe(const eDifficulty diff,
-                                     const eCharacterType type) {
-    const int mult = soliderBribeMultiplier(diff);
+                                     const eCharacterType type)
+{
+    const double mult = soliderBribeMultiplier(diff);
     int base = 0;
-    switch(type) {
+    switch (type)
+    {
     case eCharacterType::rockThrower:
-        base = 25;
+        base = 15;
         break;
     case eCharacterType::hoplite:
-        base = 25;
+        base = 15;
         break;
     case eCharacterType::horseman:
-        base = 50;
+        base = 30;
         break;
     default:
-        return 0;
+        return 15;
     }
-    return mult*base;
+    return static_cast<int>(mult * base);
 }

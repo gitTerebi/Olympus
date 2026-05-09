@@ -3,7 +3,7 @@
 
 #include "echoosebutton.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 
 class eChooseCityDialog : public eChooseButton {
 public:

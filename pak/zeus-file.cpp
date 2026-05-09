@@ -509,11 +509,11 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             id6 = 220 + i*inc6;
             const uint8_t milStr = cityBytes6[id6];
             id6 = 228 + i*inc6;
-            const uint16_t recTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
-            id6 = 232 + i*inc6;
             const uint16_t payTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
+            id6 = 232 + i*inc6;
+            const uint16_t receiveTribute = toUShort(cityBytes6[id6], cityBytes6[id6 + 1]);
             id6 = 236 + i*inc6;
-            const uint8_t payTributeTypeId = cityBytes6[id6];
+            const uint8_t receiveTributeTypeId = cityBytes6[id6];
             id6 = (worldMapIsPoseidon ? 356 : 340) + i*inc6;
             const uint8_t favour = cityBytes6[id6];
             id6 = (worldMapIsPoseidon ? 368 : 352) + i*inc6;
@@ -560,12 +560,12 @@ bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
             c->setMilitaryStrength(milStr);
             c->setWealth(ecoStr);
             c->setAttitude(favour, ePlayerId::player0);
-            c->setRecTributeType(eResourceType::drachmas);
-            c->setRecTributeCount(recTribute);
-            const auto payTributeType = ePakHelpers::pakResourceByteToType(
-                                            payTributeTypeId, worldMapIsPoseidon);
-            c->setTributeType(payTributeType);
-            c->setTributeCount(payTribute);
+            c->setPayTributeType(eResourceType::drachmas);
+            c->setPayTributeCount(payTribute);
+            const auto receiveTributeType = ePakHelpers::pakResourceByteToType(
+                                            receiveTributeTypeId, worldMapIsPoseidon);
+            c->setReceiveTributeType(receiveTributeType);
+            c->setReceiveTributeCount(receiveTribute);
 
             c->setState(stateId ? eCityState::active : eCityState::inactive);
             c->setLeader(leaderName);

@@ -1,6 +1,6 @@
 #include "eattackingcityeventvalue.h"
 
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "fileIO/esavearchive.h"
 
 void eAttackingCityEventValue::write(eWriteStream& dst) const {

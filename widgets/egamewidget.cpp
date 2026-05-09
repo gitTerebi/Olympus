@@ -7,7 +7,7 @@
 #include "eoptionsdata.h"
 #include "engine/egameboard.h"
 #include "engine/egifthelpers.h"
-#include "engine/eworldcity.h"
+#include "engine/e-worldcity.h"
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "elanguage.h"
@@ -1515,7 +1515,9 @@ void eGameWidget::updateTipPositions()
 
 void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
 {
-    eEventData edCopy = ed; // Make a copy since we need to modify it later
+    // Toast: temporary on-screen notification (5 seconds)
+    // History was already logged when showMessage was called - toast is just UI notification
+    eEventData edCopy = ed;
     const auto tw = new eFlatButton(window());
     tw->setNoPadding();
     tw->setFontSizeXS();
@@ -1537,8 +1539,9 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     }
     tw->setText(title);
     tw->fitContent();
-    const auto onClick = [this, edCopy, msg, tw]() mutable
+    tw->setPressAction([this, edCopy, msg, tw]() mutable
     {
+        // User clicked toast - show the message as popup dialog
         for (int i = 0; i < int(mToasts.size()); i++)
         {
             if (mToasts[i].fWid == tw)
@@ -1549,9 +1552,8 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
         }
         tw->deleteLater();
         updateToastPositions();
-        showMessage(edCopy, msg, false, true, true);
-    };
-    tw->setPressAction(onClick);
+        showMessage(edCopy, msg, false, true, false); // Don't log again - already logged
+    });
     addWidget(tw);
     const int p = tw->padding();
     tw->resize(tw->width() + 2 * p, tw->height() + 2 * p);
@@ -1562,15 +1564,10 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     toast.fEd = ed;
     toast.fMsg = msg;
     toast.fWid = tw;
+    toast.fDate = mBoard->date();
     // 5 seconds at ~60fps = 300 frames
     toast.fExpireFrame = mFrame + 300;
     updateToastPositions();
-    if (mMsgListWidget) {
-        auto storedMsg = msg;
-        formatStoredMessage(storedMsg, ed, window()->leader());
-        mMsgListWidget->addMessage(ed, storedMsg, mBoard->date());
-        mBoard->addMessageLog(ed, storedMsg, mBoard->date());
-    }
 }
 
 void eGameWidget::setMessageListWidget(eMessageListWidget* const w) {
@@ -1613,11 +1610,21 @@ void eGameWidget::updateToastPositions()
 }
 
 void eGameWidget::showMessage(eEventData &ed,
-                              const eMessage &msg,
-                              const bool prepend,
-                              const bool forcePopup,
-                              const bool addToList)
+                                const eMessage &msg,
+                                const bool prepend,
+                                const bool forcePopup,
+                                const bool logToHistory)
 {
+    // ALL messages are logged at origin time (when showMessage is called)
+    // Toast vs popup is just a display decision - history already recorded above
+    if (logToHistory && mMsgListWidget) {
+        auto storedMsg = msg;
+        formatStoredMessage(storedMsg, ed, window()->leader());
+        const eDate messageDate = mBoard->date();
+        mMsgListWidget->addMessage(ed, storedMsg, messageDate);
+        mBoard->addMessageLog(ed, storedMsg, messageDate);
+    }
+
     const auto &target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
     if (target.isPlayerTarget())
@@ -1634,8 +1641,9 @@ void eGameWidget::showMessage(eEventData &ed,
             return;
     }
 
-    const bool requiresAction = ed.fCA0 || !ed.fCCA0.empty() || ed.fA0 || ed.fA1 || ed.fA2;
+    const bool requiresAction = ed.fCloseOnAction || !ed.fCityConditionalActions.empty() || ed.fPrimaryAction || ed.fSecondaryAction || ed.fTertiaryAction;
 
+    // Non-actionable messages: show toast notification (history already logged)
     if (!requiresAction && !forcePopup)
     {
         if (mToasts.size() >= 3)
@@ -1644,12 +1652,8 @@ void eGameWidget::showMessage(eEventData &ed,
         return;
     }
 
-    if (addToList && mMsgListWidget) {
-        auto storedMsg = msg;
-        formatStoredMessage(storedMsg, ed, window()->leader());
-        mMsgListWidget->addMessage(ed, storedMsg, mBoard->date());
-        mBoard->addMessageLog(ed, storedMsg, mBoard->date());
-    }
+    // Actionable messages: show popup dialog
+    // ... rest of popup handling
 
     if (mMsgBox)
     {
@@ -1705,10 +1709,10 @@ void eGameWidget::showMessage(eEventData &ed,
                 oldAction();
             };
         };
-        wrapAction(ed.fA0);
-        wrapAction(ed.fA1);
-        wrapAction(ed.fA2);
-        for(auto& a : ed.fCCA0) {
+        wrapAction(ed.fPrimaryAction);
+        wrapAction(ed.fSecondaryAction);
+        wrapAction(ed.fTertiaryAction);
+        for(auto& a : ed.fCityConditionalActions) {
             wrapAction(a.second);
         }
     }
@@ -1718,8 +1722,8 @@ void eGameWidget::showMessage(eEventData &ed,
         if(ed.fType == eMessageEventType::generalRequestGranted &&
            msgb->closable() &&
            !*requestActionTaken) {
-            if(ed.fA1) ed.fA1();
-            else if(ed.fA2) ed.fA2();
+            if(ed.fSecondaryAction) ed.fSecondaryAction();
+            else if(ed.fTertiaryAction) ed.fTertiaryAction();
         }
         mMsgBox = nullptr;
         if (!wasPaused)
