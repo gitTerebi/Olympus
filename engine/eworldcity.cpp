@@ -453,7 +453,7 @@ void eWorldCity::nextMonth(eGameBoard *const board)
 
             // max banners in city 20
             const int unitCount =
-                static_cast<int>(mMilitaryStrength * eDifficultyHelpers::costMultiplier(board->difficulty(attacker->playerId()))) * 6;
+                static_cast<int>(mMilitaryStrength * eDifficultyHelpers::costMultiplier(board->difficulty(attacker->playerId()))) * 8;
 
             e->setSingleCity(attacker);
             e->setMinPointId(1);

@@ -9,6 +9,7 @@
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "buildings/eaestheticsbuilding.h"
+#include "buildings/etower.h"
 
 #include "buildings/allbuildings.h"
 
@@ -840,6 +841,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     int employmentInfoString = -1;
     int additionalInfoString = -1;
     int employmentInfoGroup = -1;
+    int additionalInfoGroup = -1;
     switch(type) {
     case eBuildingType::park: {
         group = 75;
@@ -2082,6 +2084,22 @@ void eBuilding::sInfoText(eBuilding* const b,
         } else {
             employmentInfoString = 3;
         }
+        // Check tower requirements using employmentState FSM
+        const auto cid = b->cityId();
+        const bool militaryDisabled = board.isShutDown(cid, eBuildingType::tower);
+        const bool hasPalace = board.hasPalace(cid);
+        auto* t = static_cast<eTower*>(b);
+        const auto state = t->employmentState(!militaryDisabled, hasPalace);
+        // Show additional info strings when blocked
+        if(state != eTowerEmploymentState::available) {
+            if(state == eTowerEmploymentState::shutdown) {
+                additionalInfoString = 10;
+            } else if(state == eTowerEmploymentState::noPalace) {
+                additionalInfoString = 8;
+            } else if(state == eTowerEmploymentState::noRoad) {
+                additionalInfoString = 9;
+            }
+        }
     } break;
     case eBuildingType::artisansGuild: {
         group = 171;
@@ -2276,7 +2294,8 @@ void eBuilding::sInfoText(eBuilding* const b,
     info = eLanguage::zeusText(group, infoString);
     const int g = employmentInfoGroup == -1 ? group : employmentInfoGroup;
     employmentInfo = eLanguage::zeusText(g, employmentInfoString);
-    additionalInfo = eLanguage::zeusText(group, additionalInfoString);
+    const int ag = additionalInfoGroup == -1 ? group : additionalInfoGroup;
+    additionalInfo = eLanguage::zeusText(ag, additionalInfoString);
 }
 
 eTile* eBuilding::tileNeighbour(const eMoveDirection o,

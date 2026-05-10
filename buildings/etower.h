@@ -7,6 +7,13 @@
 
 class eSaveArchive;
 
+enum class eTowerEmploymentState {
+    shutdown,
+    noPalace,
+    noRoad,
+    available
+};
+
 class eTower : public eEmployingBuilding {
 public:
     eTower(eGameBoard& board, const eCityId cid);
@@ -19,12 +26,17 @@ public:
 
     void timeChanged(const int by) override;
 
+    bool enabled() const override;
+    void setEmployed(const int e) override;
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
     bool spawn();
 
     void setDeleteArchers(const bool d) { mDeleteArchers = d; }
+
+    eTowerEmploymentState employmentState(const bool mManTowers, const bool hasPalace) const;
 private:
     void serialize(eSaveArchive& ar);
 

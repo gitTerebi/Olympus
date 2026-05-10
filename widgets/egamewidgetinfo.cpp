@@ -345,7 +345,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             eBuilding::sInfoText(eb, title, info,
                                  employmentInfo,
                                  additionalInfo);
-            ebWid->initialize(title, info, employmentInfo, eb, "");
+            ebWid->initialize(title, info, employmentInfo, eb, additionalInfo);
             wid = ebWid;
         } else if(const auto p = dynamic_cast<ePalace*>(b)) {
             const auto pWid = new eInfoWidget(window(), this, true, true);
