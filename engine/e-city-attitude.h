@@ -23,8 +23,4 @@ eCityAttitudeMessage eCityAttitudeMessageForChange(
         const eCityAttitude oldAttitude,
         const eCityAttitude newAttitude);
 
-eCityAttitudeMessage eCityAttitudeMessageForInitialStatus(
-        const eWorldCity& city,
-        const ePlayerId pid);
-
 #endif // ECITYATTITUDE_H

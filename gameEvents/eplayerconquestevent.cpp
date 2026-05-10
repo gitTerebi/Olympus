@@ -83,7 +83,7 @@ void ePlayerConquestEvent::trigger() {
         if(mCity->isColony()) {
             if(conquered) {
                 board->event(eEvent::colonyRestored, ed);
-                board->incCityAttitude(mCity, 50, pid);
+                board->changeCityAttitude(mCity, 50, pid);
             } else {
                 board->event(eEvent::cityConquerFailed, ed);
             }
@@ -98,7 +98,7 @@ void ePlayerConquestEvent::trigger() {
             } else {
                 board->event(eEvent::cityConquerFailed, ed);
             }
-            board->incCityAttitude(mCity, -50, pid);
+            board->changeCityAttitude(mCity, -50, pid);
         }
 
         planArmyReturn();

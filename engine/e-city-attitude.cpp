@@ -1,5 +1,9 @@
 #include "e-city-attitude.h"
 
+#include "e-game-board.h"
+#include "eevent.h"
+#include "eeventdata.h"
+
 namespace {
 eCityAttitudeMessage attitudeMessageForStatus(
         const eWorldCity& city,
@@ -59,6 +63,12 @@ eCityAttitudeMessage attitudeMessageForStatus(
 
     return eCityAttitudeMessage::none;
 }
+
+eCityAttitudeMessage attitudeMessageForInitialStatus(
+        const eWorldCity& city,
+        const ePlayerId pid) {
+    return attitudeMessageForStatus(city, pid, city.attitudeClass(pid));
+}
 }
 
 eCityAttitudeMessage eCityAttitudeMessageForChange(
@@ -71,8 +81,32 @@ eCityAttitudeMessage eCityAttitudeMessageForChange(
     return attitudeMessageForStatus(city, pid, newAttitude);
 }
 
-eCityAttitudeMessage eCityAttitudeMessageForInitialStatus(
-        const eWorldCity& city,
-        const ePlayerId pid) {
-    return attitudeMessageForStatus(city, pid, city.attitudeClass(pid));
+void eGameBoard::changeCityAttitude(const stdsptr<eWorldCity>& c,
+                                 const double amount,
+                                 const ePlayerId pid) {
+    if(!c) return;
+    const auto oldAttitude = c->attitudeClass(pid);
+    c->incAttitude(amount, pid);
+    const auto newAttitude = c->attitudeClass(pid);
+    const auto msg = eCityAttitudeMessageForChange(
+        *c, pid, oldAttitude, newAttitude);
+    if(msg == eCityAttitudeMessage::none) return;
+
+    eEventData ed(pid);
+    ed.fCity = c;
+    ed.fCityAttitudeMessage = msg;
+    event(eEvent::cityAttitudeChanged, ed);
+}
+
+void eGameBoard::sendInitialCityAttitudeMessages() {
+    const auto pid = personPlayer();
+    for(const auto& c : mWorld.cities()) {
+        const auto msg = attitudeMessageForInitialStatus(*c, pid);
+        if(msg == eCityAttitudeMessage::none) continue;
+
+        eEventData ed(pid);
+        ed.fCity = c;
+        ed.fCityAttitudeMessage = msg;
+        event(eEvent::cityAttitudeChanged, ed);
+    }
 }

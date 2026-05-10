@@ -501,11 +501,11 @@ void eFulfillRequestEvent::finish(const eReceiveRequestResult result)
     mRequestResult = result;
 
     if (mCity && result == eReceiveRequestResult::refuse)
-        board->incCityAttitude(mCity, -10, playerId());
+        board->changeCityAttitude(mCity, -10, playerId());
     else if (mCity && result == eReceiveRequestResult::tooLate)
-        board->incCityAttitude(mCity, 5, playerId());
+        board->changeCityAttitude(mCity, 5, playerId());
     else if (mCity)
-        board->incCityAttitude(mCity, 10, playerId());
+        board->changeCityAttitude(mCity, 10, playerId());
 
     if (request)
     {

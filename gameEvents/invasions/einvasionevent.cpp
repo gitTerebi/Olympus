@@ -562,7 +562,7 @@ void eInvasionEvent::restoreAttitudeAfterInvasion(
     const int amount = result == eInvasionResult::invaderWonOrPlayerSurrendered ?
                        kInvaderWonAttitudeRestore :
                        kInvaderDefeatedAttitudeRestore;
-    board.incCityAttitude(mCity, amount, board.personPlayer());
+    board.changeCityAttitude(mCity, amount, board.personPlayer());
 }
 
 void eInvasionEvent::invadersWon() {
