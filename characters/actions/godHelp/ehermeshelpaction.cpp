@@ -72,5 +72,5 @@ void eHermesHelpAction::provide() {
     const auto pid = board.cityIdToPlayerId(cid);
     const auto& crs = board.cityRequests(pid);
     if(crs.empty()) return;
-    crs[0]->fulfillWithoutCost();
+    crs[0]->finish(eReceiveRequestResult::comply);
 }

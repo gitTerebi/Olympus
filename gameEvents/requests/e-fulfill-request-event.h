@@ -46,7 +46,7 @@ public:
 
     eCityRequest cityRequest() const;
     void dispatch(const eCityId cid);
-    void fulfillWithoutCost();
+    void finish(eReceiveRequestResult result);
 
     void setRequestType(const eReceiveRequestType t)
     { mRequestType = t; }
@@ -77,8 +77,6 @@ private:
     void addPostponeButton(eGameBoard& board, eEventData& ed);
     void addRefuseButton(eGameBoard& board, eEventData& ed);
     void addRequestToSidePanel(eGameBoard& board);
-    void refuseRequest(eGameBoard& board, bool showResult = true);
-
     void finished(eEventTrigger& t, const eReason& r);
     eDate complyDate() const;
     int remainingMonths(const eDate& deadline, const eDate& current) const;
