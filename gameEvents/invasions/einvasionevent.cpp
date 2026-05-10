@@ -535,6 +535,7 @@ void eInvasionEvent::invadersWon() {
             }
             if(mConquestEvent) mConquestEvent->planArmyReturn();
         }
+        mCity->setAttitude(60., ppid);
     }
 }
 

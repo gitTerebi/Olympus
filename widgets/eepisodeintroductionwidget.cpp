@@ -18,20 +18,6 @@
 
 #include "audio/emusic.h"
 
-static std::string difficultyTooltip(const eDifficulty diff) {
-    switch(diff) {
-    case eDifficulty::beginner:
-        return "Cost x0.44, Disaster x0.53, Workers +17%, Bribe x0.25";
-    case eDifficulty::mortal:
-        return "Cost x0.80, Disaster x0.80, Workers +7%, Bribe x0.75";
-    case eDifficulty::hero:
-        return "Cost x1.0, Disaster x1.0, Workers 0%, Bribe x1";
-    case eDifficulty::titan:
-        return "Cost x1.22, Disaster x1.20, Workers -5%, Bribe x1.25";
-    case eDifficulty::olympian:
-        return "Cost x1.44, Disaster x1.33, Workers -8%, Bribe x1.75";
-    }
-}
 
 class eTooltipWidget : public eWidget {
 public:
@@ -219,7 +205,6 @@ void eEpisodeIntroductionWidget::initialize(
         const auto hdiff = eDifficultyHelpers::name(*diff);
         diffLabel->setText("  " + diffText + "  " + hdiff);
         diffLabel->fitContent();
-        diffW->setTooltip(difficultyTooltip(*diff));
 
         const auto down = new eDownButton(window());
         diffW->addWidget(down);
@@ -230,7 +215,6 @@ void eEpisodeIntroductionWidget::initialize(
             const auto hdiff = eDifficultyHelpers::name(*diff);
             diffLabel->setText("  " + diffText + " " + hdiff);
             diffLabel->fitContent();
-            diffW->setTooltip(difficultyTooltip(*diff));
             c->setDifficulty(*diff);
         });
 
@@ -243,7 +227,6 @@ void eEpisodeIntroductionWidget::initialize(
             const auto hdiff = eDifficultyHelpers::name(*diff);
             diffLabel->setText("  " + diffText + "  " + hdiff);
             diffLabel->fitContent();
-            diffW->setTooltip(difficultyTooltip(*diff));
             c->setDifficulty(*diff);
         });
 

@@ -144,6 +144,21 @@ std::string eWorldCity::sRelationshipName(const eForeignCityRelationship r)
     return eLanguage::zeusText(group, string);
 }
 
+eForeignCityRelationship eWorldCity::relationshipToPlayer(
+        const ePlayerId pid) const
+{
+    if (isOnBoard())
+    {
+        return playerId() == pid ? eForeignCityRelationship::vassal :
+                                   eForeignCityRelationship::rival;
+    }
+    if (isColony())
+    {
+        return eForeignCityRelationship::vassal;
+    }
+    return relationship();
+}
+
 std::string eWorldCity::sStateName(const eCityState s)
 {
     int string = -1;
@@ -239,43 +254,44 @@ eCityAttitude eWorldCity::attitudeClass(const ePlayerId pid) const
 {
     eCityAttitude at;
     const int iat = attitude(pid);
-    if (isAlly())
+    const auto rel = relationshipToPlayer(pid);
+    if (rel == eForeignCityRelationship::ally)
     {
-        if (iat < 20)
+        if (iat <= 20)
             at = eCityAttitude::annoyed;
-        else if (iat < 40)
+        else if (iat <= 40)
             at = eCityAttitude::apatheticA;
-        else if (iat < 60)
+        else if (iat <= 60)
             at = eCityAttitude::sympathetic;
-        else if (iat < 80)
+        else if (iat <= 80)
             at = eCityAttitude::congenial;
         else
             at = eCityAttitude::helpful;
     }
-    else if (isVassal() || isColony())
+    else if (rel == eForeignCityRelationship::vassal)
     {
-        if (iat < 20)
+        if (iat <= 20)
             at = eCityAttitude::angry;
-        else if (iat < 40)
+        else if (iat <= 40)
             at = eCityAttitude::bitter;
-        else if (iat < 60)
+        else if (iat <= 60)
             at = eCityAttitude::loyal;
-        else if (iat < 80)
+        else if (iat <= 80)
             at = eCityAttitude::dedicated;
         else
             at = eCityAttitude::devoted;
     }
     else
     { // rival
-        if (iat < 10)
+        if (iat <= 10)
             at = eCityAttitude::hostile;
-        else if (iat < 20)
+        else if (iat <= 20)
             at = eCityAttitude::furious;
-        else if (iat < 40)
+        else if (iat <= 40)
             at = eCityAttitude::displeased;
-        else if (iat < 60)
+        else if (iat <= 60)
             at = eCityAttitude::apatheticR;
-        else if (iat < 80)
+        else if (iat <= 80)
             at = eCityAttitude::respectful;
         else
             at = eCityAttitude::admiring;

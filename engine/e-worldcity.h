@@ -211,6 +211,7 @@ public:
     static std::string sRelationshipName(
             const eForeignCityRelationship r);
     eForeignCityRelationship relationship() const { return mRel; }
+    eForeignCityRelationship relationshipToPlayer(const ePlayerId pid) const;
     void setRelationship(const eForeignCityRelationship r) { mRel = r; }
 
     static std::string sStateName(const eCityState s);
