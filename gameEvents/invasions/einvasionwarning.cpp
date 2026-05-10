@@ -30,6 +30,7 @@ void eInvasionWarning::trigger() {
         if(!c) return;
         ed.fCity = c;
         ed.fTile = i->invasionTile();
+        ed.fReason = i->reason();
     }
 
     switch(mType) {

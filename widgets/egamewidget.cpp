@@ -313,7 +313,15 @@ void eGameWidget::setSettings(const eGameWidgetSettings &s)
 {
     if (mPaused != s.fPaused)
         switchPause();
-    setSpeedId(s.fSpeedId);
+    const auto speedIt = std::find(std::begin(sSpeeds), std::end(sSpeeds), s.fSpeed);
+    if (speedIt != std::end(sSpeeds))
+    {
+        setSpeedId(std::distance(std::begin(sSpeeds), speedIt));
+    }
+    else
+    {
+        setSpeedId(s.fSpeedId);
+    }
     setTileSize(s.fTileSize);
     if (mBoard)
         mBoard->setWorldDirection(s.fDir);
