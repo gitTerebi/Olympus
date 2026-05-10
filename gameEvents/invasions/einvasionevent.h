@@ -37,6 +37,8 @@ public:
     void initialize(const stdsptr<eWorldCity>& city,
                     const eEnlistedForces& forces,
                     ePlayerConquestEvent* const conquestEvent);
+    static bool tryCreateCityInvasion(eWorldCity& attacker,
+                                      eGameBoard& board);
 
     void trigger() override;
     std::string longName() const override;
@@ -74,6 +76,8 @@ public:
     void invadersWon();
     void invadersDefeated();
 private:
+    void useGeneratedCityWarnings();
+    void sendInitialAnnouncement();
     void serialize(eSaveArchive& ar);
 
     void soldiersByType(int& infantry,

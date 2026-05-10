@@ -447,42 +447,7 @@ std::string eWorldCity::anArmy() const
 
 void eWorldCity::nextMonth(eGameBoard *const board)
 {
-    const auto ppid = board->personPlayer();
-    const auto attitude = attitudeClass(ppid);
-    if (isRival() && active() && visible() &&
-        attitude == eCityAttitude::hostile)
-    {
-        auto targetCid = board->personPlayerCapital();
-        if (targetCid == eCityId::neutralFriendly ||
-            targetCid == eCityId::neutralAggresive)
-        {
-            targetCid = board->world().currentCityId();
-        }
-        const auto targetCity = board->world().cityWithId(targetCid);
-        const bool canInvade = targetCity &&
-                               !board->hasActiveInvasions(targetCid) &&
-                               board->date().year() > mNextInvasionYear;
-        if (canInvade && (eRand::rand() % 12 == 0))
-        {
-            const auto e = e::make_shared<eInvasionEvent>(targetCid, eGameEventBranch::root, *board);
-            const auto attacker = board->world().cityWithId(mCityId);
-
-            // max banners in city 20
-            const int unitCount =
-                static_cast<int>(mMilitaryStrength * eDifficultyHelpers::costMultiplier(board->difficulty(attacker->playerId()))) * 8;
-
-            e->setSingleCity(attacker);
-            e->setMinPointId(1);
-            e->setMaxPointId(16);
-            e->setMinCount(static_cast<int>(unitCount / 2));
-            e->setMaxCount(unitCount);
-            e->setWarningMonths(1);
-            auto date = board->date() + 31;
-            e->initializeDate(date);
-            board->addRootGameEvent(e);
-            mNextInvasionYear = board->date().year() + 1 + eRand::rand() % 3;
-        }
-    }
+    eInvasionEvent::tryCreateCityInvasion(*this, *board);
 
     const auto diff = board->personPlayerDifficulty();
     double mult;

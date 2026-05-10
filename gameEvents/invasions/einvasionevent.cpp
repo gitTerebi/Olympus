@@ -9,6 +9,7 @@
 #include "audio/emusic.h"
 #include "evectorhelpers.h"
 #include "gameEvents/eplayerconquestevent.h"
+#include "engine/edifficulty.h"
 #include "engine/epathfinder.h"
 #include "eiteratesquare.h"
 #include "fileIO/esavearchive.h"
@@ -18,11 +19,12 @@
 namespace {
 // Configurable settings for invasion events
 // Delay in months before the invasion actually starts after planning
-constexpr int invasionDelayMonths = 1;
+constexpr int invasionDelayMonths = 2;
+constexpr int invasionDelayDays = 62;
 
 // Warning months before invasion for each warning type (initial, 24, 12, 6, 1 months)
 // Order must match warnTypes in pointerCreated()
-const std::array<int, 5> invasionWarningMonths = {1, 24, 12, 6, 1};
+const std::array<int, 5> invasionWarningMonths = {2, 24, 12, 6, 1};
 
 constexpr int kInvaderDefeatedAttitudeRestore = 15;
 constexpr int kInvaderWonAttitudeRestore = 35;
@@ -94,6 +96,52 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity>& city,
     }
     mForces = forces;
     mConquestEvent = conquestEvent;
+}
+
+bool eInvasionEvent::tryCreateCityInvasion(eWorldCity& attacker,
+                                           eGameBoard& board) {
+    const auto ppid = board.personPlayer();
+    const auto attitude = attacker.attitudeClass(ppid);
+    if(!attacker.isRival() || !attacker.active() || !attacker.visible() ||
+       attitude != eCityAttitude::hostile) {
+        return false;
+    }
+
+    auto targetCid = board.personPlayerCapital();
+    if(targetCid == eCityId::neutralFriendly ||
+       targetCid == eCityId::neutralAggresive) {
+        targetCid = board.world().currentCityId();
+    }
+    const auto targetCity = board.world().cityWithId(targetCid);
+    const bool canInvade = targetCity &&
+                           !board.hasActiveInvasions(targetCid) &&
+                           board.date().year() > attacker.nextInvasionYear();
+    if(!canInvade || eRand::rand() % 12 != 0) {
+        return false;
+    }
+
+    const auto e = e::make_shared<eInvasionEvent>(
+        targetCid, eGameEventBranch::root, board);
+    const auto attackingCity = board.world().cityWithId(attacker.cityId());
+    if(!attackingCity) return false;
+
+    const int unitCount =
+        static_cast<int>(attacker.militaryStrength() *
+                         eDifficultyHelpers::costMultiplier(
+                             board.difficulty(attackingCity->playerId()))) * 8;
+
+    e->setSingleCity(attackingCity);
+    e->setMinPointId(1);
+    e->setMaxPointId(16);
+    e->setMinCount(static_cast<int>(unitCount / 2));
+    e->setMaxCount(unitCount);
+    e->useGeneratedCityWarnings();
+    auto date = board.date() + invasionDelayDays;
+    e->initializeDate(date);
+    board.addRootGameEvent(e);
+    e->sendInitialAnnouncement();
+    attacker.setNextInvasionYear(board.date().year() + 1 + eRand::rand() % 3);
+    return true;
 }
 
 eTile* nearestDisembarkTile(eTile* const tile, eGameBoard& board,
@@ -268,6 +316,31 @@ void eInvasionEvent::trigger() {
         board->event(eEvent::invasion, ed);
         eMusic::playRandomBattleMusic();
     }
+}
+
+void eInvasionEvent::useGeneratedCityWarnings() {
+    clearWarnings();
+    mInitialWarning = nullptr;
+    const auto cid = cityId();
+    auto& board = *gameBoard();
+    addWarning(std::make_shared<eInvasionWarning>(
+        1, *this, cid, board, eInvasionWarningType::warning1));
+}
+
+void eInvasionEvent::sendInitialAnnouncement() {
+    const auto board = gameBoard();
+    if(!board) return;
+    choosePointId();
+    if(!mCity) chooseCity();
+    if(!mCity) return;
+    updateDisembarkAndShoreTile();
+
+    eEventData ed(cityId());
+    ed.fCity = mCity;
+    ed.fTile = invasionTile();
+    ed.fReason = reason();
+    ed.fTime = invasionDelayMonths;
+    board->event(eEvent::invasionInitial, ed);
 }
 
 std::string eInvasionEvent::longName() const {

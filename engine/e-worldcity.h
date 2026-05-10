@@ -261,6 +261,8 @@ public:
     int shields() const;
     int militaryStrength() const { return mMilitaryStrength; }
     void setMilitaryStrength(const int s);
+    void setNextInvasionYear(const int y) { mNextInvasionYear = y; }
+    int nextInvasionYear() const { return mNextInvasionYear; }
 
     int wealth() const { return mWealth; }
     void setWealth(const int w) { mWealth = w; }

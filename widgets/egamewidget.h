@@ -58,8 +58,8 @@ struct eSavedMessage {
 
 struct eGameWidgetSettings {
     bool fPaused = false;
-    int fSpeedId = 1;
-    int fSpeed = 200;
+    int fSpeedId = 2;
+    int fSpeed = 16;
     int fDX = 0;
     int fDY = 0;
     eTileSize fTileSize = eTileSize::s30;
@@ -364,8 +364,8 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[5] = {16, 32, 48, 64, 80};
-    const char* const sSpeedLabels[5] = {"1x", "2x", "3x", "4x", "TURBO"};
+    const int sSpeeds[7] = {8, 12, 16, 32, 48, 64, 80};
+    const char* const sSpeedLabels[7] = {"0.5x", "0.75x", "1x", "2x", "3x", "4x", "TURBO"};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
@@ -377,7 +377,7 @@ private:
     int mTime{0};
     int mLastAmbientSoundTime{0};
     std::map<int, int> mAmbientSoundCooldowns;
-    int mSpeedId = 0;
+    int mSpeedId = 2;
     int mSpeed = sSpeeds[mSpeedId];
     std::map<int, std::pair<int, int>> mBookmarks;
 
