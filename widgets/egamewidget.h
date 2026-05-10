@@ -174,6 +174,18 @@ protected:
     bool mouseReleaseEvent(const eMouseEvent& e) override;
     bool mouseWheelEvent(const eMouseWheelEvent& e) override;
 private:
+    // Toast notification - temporary UI element, history already logged when showMessage was called
+    struct eToast {
+        eEventData fEd;
+        eMessage fMsg;
+        eWidget* fWid = nullptr;
+        int fExpireFrame = 0;
+        eDate fDate; // Date when toast was created (for potential debugging/analytics)
+    };
+
+    std::deque<eToast> mToasts;
+    std::deque<eToast> mPendingToasts;
+
     void renderTargetsReset() override;
     void initializeNumbers();
 
@@ -300,6 +312,7 @@ private:
     void updateTipPositions();
     void updateToastPositions();
     void showToast(eEventData& ed, const eMessage& msg);
+    void createToastWidget(eToast& toast);
 
     bool roadPath(std::vector<eOrientation>& path);
     std::vector<eTile*> roadPath() const;
@@ -462,17 +475,6 @@ private:
     };
 
     std::deque<eTip> mTips;
-
-    // Toast notification - temporary UI element, history already logged when showMessage was called
-    struct eToast {
-        eEventData fEd;
-        eMessage fMsg;
-        eWidget* fWid = nullptr;
-        int fExpireFrame = 0;
-        eDate fDate; // Date when toast was created (for potential debugging/analytics)
-    };
-
-    std::deque<eToast> mToasts;
 
     std::map<eTileSize, std::vector<stdsptr<eTexture>>> mNumbers;
     std::vector<eTile*> mInflTiles;

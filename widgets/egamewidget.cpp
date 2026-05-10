@@ -1521,26 +1521,26 @@ void eGameWidget::updateTipPositions()
     }
 }
 
-void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
+void eGameWidget::createToastWidget(eToast &toast)
 {
-    // Toast: temporary on-screen notification (5 seconds)
-    // History was already logged when showMessage was called - toast is just UI notification
-    eEventData edCopy = ed;
+    // Create the widget for a toast
+    eEventData edCopy = toast.fEd;
+    const auto msg = toast.fMsg;
     const auto tw = new eFlatButton(window());
     tw->setNoPadding();
     tw->setFontSizeXS();
     // Truncate title if too long for toast
     auto title = msg.fTitle;
-    if (const auto &c = ed.fCity)
+    if (const auto &c = toast.fEd.fCity)
         eStringHelpers::replaceAll(title, "[city_name]", c->name());
-    if (const auto &c = ed.fRivalCity)
+    if (const auto &c = toast.fEd.fRivalCity)
         eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
     eStringHelpers::replaceAll(title, "[item]",
-                               eResourceTypeHelpers::typeLongName(ed.fResourceType));
+                               eResourceTypeHelpers::typeLongName(toast.fEd.fResourceType));
     eStringHelpers::replaceAll(title, "[itemshort]",
-                               eResourceTypeHelpers::typeName(ed.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(ed.fGod));
-    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
+                               eResourceTypeHelpers::typeName(toast.fEd.fResourceType));
+    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(toast.fEd.fGod));
+    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(toast.fEd.fMonster));
     if (title.length() > 40)
     {
         title = title.substr(0, 37) + "...";
@@ -1567,14 +1567,20 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     tw->resize(tw->width() + 2 * p, tw->height() + 2 * p);
     const int vw = width() - mGm->width();
     tw->setX((vw - tw->width()) / 2);
+    toast.fWid = tw;
+}
 
+void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
+{
+    // Toast: temporary on-screen notification (5 seconds)
+    // History was already logged when showMessage was called - toast is just UI notification
     eToast &toast = mToasts.emplace_back();
     toast.fEd = ed;
     toast.fMsg = msg;
-    toast.fWid = tw;
     toast.fDate = mBoard->date();
     // 5 seconds at ~60fps = 300 frames
     toast.fExpireFrame = mFrame + 300;
+    createToastWidget(toast);
     updateToastPositions();
 }
 
@@ -1654,8 +1660,16 @@ void eGameWidget::showMessage(eEventData &ed,
     // Non-actionable messages: show toast notification (history already logged)
     if (!requiresAction && !forcePopup)
     {
-        if (mToasts.size() >= 3)
+        if (mToasts.size() >= 3) {
+            eToast pendingToast;
+            pendingToast.fEd = ed;
+            pendingToast.fMsg = msg;
+            pendingToast.fWid = nullptr;
+            pendingToast.fDate = mBoard->date();
+            pendingToast.fExpireFrame = 0; // Set when promoted
+            mPendingToasts.push_back(pendingToast);
             return;
+        }
         showToast(ed, msg);
         return;
     }
