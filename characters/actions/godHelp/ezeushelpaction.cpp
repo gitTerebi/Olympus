@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "../ewaitaction.h"
-#include "e-invasion-handler.h"
+#include "gameEvents/invasions/e-invasion-handler.h"
 
 eZeusHelpAction::eZeusHelpAction(
         eCharacter* const c) :

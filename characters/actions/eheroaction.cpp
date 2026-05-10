@@ -4,7 +4,7 @@
 #include "characters/monsters/emonster.h"
 #include "characters/heroes/ehero.h"
 
-#include "characters/actions/egodmonsteraction.h"
+#include "characters/gods/actions/egodmonsteraction.h"
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "characters/actions/edefendcityaction.h"

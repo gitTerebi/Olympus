@@ -2,18 +2,15 @@
 #define ESTAMPMANAGER_H
 
 #include "emodal.h"
+#include "buildings/ebuilding.h"
+#include "engine/stamps/estamptool.h"
 
 #include <string>
 #include <vector>
 
 class eButtonBase;
-class eStampTool;
 class eWidget;
 class eScrollViewport;
-
-struct eStampElement {
-    eBuildingType type;
-};
 
 bool eReadStampBlueprint(const std::string& path, std::vector<eStampElement>& elements);
 

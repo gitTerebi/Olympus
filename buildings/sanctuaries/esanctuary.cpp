@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "characters/gods/egod.h"
-#include "characters/actions/egodworshippedaction.h"
+#include "characters/gods/actions/egodworshippedaction.h"
 #include "etilehelper.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
@@ -23,7 +23,7 @@
 #include "characters/actions/godHelp/eposeidonhelpaction.h"
 #include "characters/actions/godHelp/ezeushelpaction.h"
 
-#include "gameEvents/egodattackevent.h"
+#include "gameEvents/gods/egodattackevent.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 
 #include "buildings/eresourcebuilding.h"

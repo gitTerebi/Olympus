@@ -3,7 +3,7 @@
 #include "widgets/eswitchbutton.h"
 #include "elanguage.h"
 
-#include "widgets/egodselectionwidget.h"
+#include "widgets/gods/egodselectionwidget.h"
 
 #include "emainwindow.h"
 

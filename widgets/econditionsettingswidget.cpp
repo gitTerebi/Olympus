@@ -1,7 +1,7 @@
 #include "econditionsettingswidget.h"
 
 #include "eresourcebutton.h"
-#include "egodbutton.h"
+#include "widgets/gods/egodbutton.h"
 #include "evaluebutton.h"
 
 #include "echoosebutton.h"

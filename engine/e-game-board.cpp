@@ -43,15 +43,15 @@
 #include "eevent.h"
 #include "emessageeventtype.h"
 
-#include "gameEvents/egodattackevent.h"
-#include "gameEvents/emonsterunleashedevent.h"
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/gods/egodattackevent.h"
+#include "gameEvents/invasions/emonsterunleashedevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "gameEvents/ereceivetributeevent.h"
-#include "gameEvents/e-pay-tribute-event.h"
+#include "gameEvents/requests/e-pay-tribute-event.h"
 #include "gameEvents/emakerequestevent.h"
 #include "gameEvents/egifttoevent.h"
 #include "gameEvents/egiftfromevent.h"
-#include "gameEvents/receive-request/e-fulfill-request-event.h"
+#include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/erequestaidevent.h"
 #include "gameEvents/eplayerconquesteventbase.h"
 #include "gameEvents/etroopsrequestevent.h"
@@ -59,7 +59,7 @@
 
 #include "eeventdata.h"
 
-#include "e-invasion-handler.h"
+#include "gameEvents/invasions/e-invasion-handler.h"
 #include "characters/actions/emonsteraction.h"
 
 #include "evectorhelpers.h"

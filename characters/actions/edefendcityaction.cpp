@@ -1,7 +1,7 @@
 #include "edefendcityaction.h"
 
-#include "gameEvents/einvasionevent.h"
-#include "egodaction.h"
+#include "gameEvents/invasions/einvasionevent.h"
+#include "characters/gods/actions/egodaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

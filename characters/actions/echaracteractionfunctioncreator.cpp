@@ -6,9 +6,9 @@
 #include "ecarttransporteraction.h"
 #include "ecollectresourceaction.h"
 #include "efirefighteraction.h"
-#include "egodaction.h"
-#include "egodattackaction.h"
-#include "egodmonsteraction.h"
+#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/egodattackaction.h"
+#include "characters/gods/actions/egodmonsteraction.h"
 #include "egroweraction.h"
 #include "eheroaction.h"
 #include "emonsteraction.h"
@@ -18,7 +18,7 @@
 #include "etraderaction.h"
 #include "ekillcharacterfinishfail.h"
 #include "ereplacecattleaction.h"
-#include "egodworshippedaction.h"
+#include "characters/gods/actions/egodworshippedaction.h"
 
 #include "godHelp/ezeushelpaction.h"
 
@@ -27,7 +27,7 @@
 #include "characters/echaracter.h"
 
 #include "spawners/eentrypoint.h"
-#include "e-invasion-handler.h"
+#include "gameEvents/invasions/e-invasion-handler.h"
 
 stdsptr<eCharActFunc> eCharActFunc::sCreate(
         eGameBoard& board,

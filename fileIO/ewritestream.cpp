@@ -4,11 +4,11 @@
 #include "characters/actions/echaracteraction.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "spawners/ebanner.h"
-#include "e-invasion-handler.h"
+#include "gameEvents/invasions/e-invasion-handler.h"
 
 eWriteStream::eWriteStream(const eWriteTarget& dst) :
     mDst(dst) {}

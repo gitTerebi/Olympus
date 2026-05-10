@@ -155,7 +155,7 @@ void eStampManager::rebuildList()
 }
 
 void eStampManager::selectTemplate(const std::string &name,
-                                   const std::string &path)
+                                    const std::string &path)
 {
     if (!mStampTool)
         return;

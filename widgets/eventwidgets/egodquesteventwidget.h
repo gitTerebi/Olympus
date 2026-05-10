@@ -3,7 +3,7 @@
 
 #include "../ewidget.h"
 
-#include "gameEvents/egodquestevent.h"
+#include "gameEvents/gods/egodquestevent.h"
 
 class eHeroButton;
 

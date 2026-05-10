@@ -4,7 +4,7 @@
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 #include "characters/actions/echaracteraction.h"
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolaction.h"
 

@@ -4,7 +4,7 @@
 #include "elanguage.h"
 
 #include "characters/gods/egod.h"
-#include "egodselectionwidget.h"
+#include "widgets/gods/egodselectionwidget.h"
 #include "emonsterselectionwidget.h"
 #include "buildings/pyramids/epyramid.h"
 

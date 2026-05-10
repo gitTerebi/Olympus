@@ -1,7 +1,7 @@
 #ifndef EHADESHELPACTION_H
 #define EHADESHELPACTION_H
 
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 #include "fileIO/esavearchive.h"
 
 enum class eHadesHelpStage {

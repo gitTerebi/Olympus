@@ -5,7 +5,7 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 
-#include "einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "fileIO/esavearchive.h"
 
 ePlayerConquestEvent::ePlayerConquestEvent(

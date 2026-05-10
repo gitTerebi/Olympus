@@ -5,7 +5,7 @@
 
 #include "engine/e-game-board.h"
 #include "gameEvents/earmyreturnevent.h"
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "gameEvents/etroopsrequestfulfilledevent.h"
 #include "gameEvents/eplayerconquestevent.h"
 #include "gameEvents/ereinforcementsevent.h"

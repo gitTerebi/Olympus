@@ -1,7 +1,7 @@
 #ifndef EATLASHELPACTION_H
 #define EATLASHELPACTION_H
 
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 
 enum class eAtlasHelpStage {
     none, appear, goTo, give, disappear

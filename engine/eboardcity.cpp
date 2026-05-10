@@ -19,14 +19,14 @@
 
 #include "evectorhelpers.h"
 
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "gameEvents/eplayerconquestevent.h"
-#include "gameEvents/emonsterinvasioneventbase.h"
-#include "gameEvents/egodvisitevent.h"
+#include "gameEvents/invasions/emonsterinvasioneventbase.h"
+#include "gameEvents/gods/egodvisitevent.h"
 #include "gameEvents/earmyreturnevent.h"
 #include "engine/emilitaryaid.h"
 #include "spawners/ebanner.h"
-#include "e-invasion-handler.h"
+#include "gameEvents/invasions/e-invasion-handler.h"
 
 #include "elanguage.h"
 #include "emessages.h"

@@ -4,7 +4,7 @@
 #include "engine/e-game-board.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "gameEvents/receive-request/e-fulfill-request-event.h"
+#include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "buildings/eheroshall.h"
 #include "widgets/eframedbutton.h"

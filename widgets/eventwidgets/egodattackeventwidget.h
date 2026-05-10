@@ -3,7 +3,7 @@
 
 #include "../ewidget.h"
 
-#include "gameEvents/egodattackevent.h"
+#include "gameEvents/gods/egodattackevent.h"
 
 class eSwitchButton;
 

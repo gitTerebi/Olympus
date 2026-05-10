@@ -6,7 +6,7 @@
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
 #include "elanguage.h"
-#include "einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 
 eRequestStrikeEvent::eRequestStrikeEvent(
         const eCityId cid,

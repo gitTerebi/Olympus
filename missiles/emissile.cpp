@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "engine/etile.h"
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 
 #include "erockmissile.h"
 #include "egodmissile.h"

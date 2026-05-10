@@ -5,7 +5,7 @@
 #include "evectorhelpers.h"
 #include "engine/e-game-board.h"
 #include "engine/edifficulty.h"
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "fileIO/esavearchive.h"
 #include "erand.h"
 

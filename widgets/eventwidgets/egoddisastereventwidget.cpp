@@ -4,7 +4,7 @@
 #include "widgets/evaluebutton.h"
 #include "elanguage.h"
 
-#include "gameEvents/egoddisasterevent.h"
+#include "gameEvents/gods/egoddisasterevent.h"
 
 void eGodDisasterEventWidget::initialize(eGodDisasterEvent* const e) {
     const auto durButtonL = new eLabeledWidget(window());

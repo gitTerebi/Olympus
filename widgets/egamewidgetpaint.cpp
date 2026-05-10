@@ -521,6 +521,7 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
         const bool fallback = !tex;
         if (fallback)
             tex = trrTexs.fBuildingBase;
+        if (!tex) return;
         if (fallback)
             tex->setColorMod(140, 140, 140);
         else if (!can)

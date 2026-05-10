@@ -1,7 +1,7 @@
 #ifndef EMONSTERACTION_H
 #define EMONSTERACTION_H
 
-#include "egodmonsteraction.h"
+#include "characters/gods/actions/egodmonsteraction.h"
 
 #include "characters/monsters/emonster.h"
 #include "audio/esounds.h"

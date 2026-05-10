@@ -216,7 +216,7 @@ bool typeFromString(const std::string& name, eBuildingType& type) {
 }
 
 bool eReadStampBlueprint(const std::string& path,
-                         std::vector<eStampElement>& blueprint) {
+                          std::vector<eStampElement>& blueprint) {
     std::ifstream file(path);
     if(!file.good()) return false;
     blueprint.clear();
@@ -237,6 +237,10 @@ bool eReadStampBlueprint(const std::string& path,
         const int dx = std::stoi(match[2].str());
         const int dy = std::stoi(match[3].str());
         const int id = match[4].matched ? std::stoi(match[4].str()) : -1;
+        if(type == eBuildingType::commonAgora && (id < 0 || id > 3)) {
+            printf("Invalid agora orientation id %d\n", id);
+            return false;
+        }
         blueprint.push_back({type, dx, dy, id});
     }
     return true;
