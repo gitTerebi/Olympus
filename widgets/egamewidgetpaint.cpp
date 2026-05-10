@@ -966,6 +966,16 @@ void eGameWidget::paintEvent(ePainter &p)
             i--;
         }
     }
+    // Promote pending toasts if space available
+    while (mToasts.size() < 3 && !mPendingToasts.empty())
+    {
+        eToast toast = mPendingToasts.front();
+        mPendingToasts.pop_front();
+        toast.fExpireFrame = mFrame + 300; // 5 seconds
+        createToastWidget(toast);
+        mToasts.push_back(toast);
+        updateToasts = true;
+    }
     if (updateToasts)
         updateToastPositions();
     if (mSpeedLabel && mFrame > mSpeedLabelHideFrame)
