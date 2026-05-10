@@ -311,10 +311,9 @@ public:
     using eEventHandler = std::function<void(eEvent, eEventData&)>;
     void setEventHandler(const eEventHandler& eh);
     void event(const eEvent e, eEventData& ed);
-    void incCityAttitude(const stdsptr<eWorldCity>& c,
-                         const double amount,
-                         const ePlayerId pid);
-    void sendInitialCityAttitudeMessages();
+    void changeCityAttitude(const stdsptr<eWorldCity>& c,
+                          const double amount,
+                          const ePlayerId pid);
     void attackedAllyAttitude(const ePlayerId pid);
     void setEpisodeFinishedHandler(const eAction& a);
     void setAutosaver(const eAction& a);
@@ -818,6 +817,7 @@ private:
 
     void handleGamesBegin(const eGames game);
     void handleGamesEnd(const eGames game);
+    void sendInitialCityAttitudeMessages();
 
     bool handleEpisodeCompleteEvents();
 
