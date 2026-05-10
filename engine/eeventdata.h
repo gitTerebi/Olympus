@@ -5,6 +5,7 @@
 #include "eresourcetype.h"
 #include "emessageeventtype.h"
 #include "ecityid.h"
+#include "e-city-attitude.h"
 
 using eAction = std::function<void()>;
 using eCloseOnAction = std::function<void(const eAction&)>;
@@ -44,6 +45,7 @@ struct eEventData {
     eGodQuestId fQuestId = static_cast<eGodQuestId>(0);
     eHeroType fHero = static_cast<eHeroType>(0);
     eMonsterType fMonster = static_cast<eMonsterType>(0);
+    eCityAttitudeMessage fCityAttitudeMessage = eCityAttitudeMessage::none;
 };
 
 #endif // EEVENTDATA_H

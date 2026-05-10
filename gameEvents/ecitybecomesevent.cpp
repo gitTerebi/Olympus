@@ -169,7 +169,7 @@ void eCityBecomesEvent::trigger() {
                 board->event(eEvent::parentConqueredByRival, ed);
                 board->setEpisodeLost();
             }
-            mCity->incAttitude(-50, pid);
+            board->incCityAttitude(mCity, -50, pid);
         }
     } break;
     }

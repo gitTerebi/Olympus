@@ -348,7 +348,7 @@ void eTroopsRequestEvent::won() {
         board->event(eEvent::troopsMonsterRequestAttackAverted, ed);
     } break;
     }
-    mCity->incAttitude(10, pid);
+    board->incCityAttitude(mCity, 10, pid);
 
     const auto& reason = rrmsgs->fComplyReason;
     const auto me = mainEvent<eTroopsRequestEvent>();
@@ -434,7 +434,7 @@ void eTroopsRequestEvent::lost() {
     } break;
     }
     board->event(event, ed);
-    mCity->incAttitude(-25, pid);
+    board->incCityAttitude(mCity, -25, pid);
 
     const auto& reason = rrmsgs->fLostBattleReason;
     const auto me = mainEvent<eTroopsRequestEvent>();

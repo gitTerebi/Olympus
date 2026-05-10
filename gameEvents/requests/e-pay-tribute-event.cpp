@@ -458,19 +458,19 @@ void ePayTributeEvent::finish(const ePayTributeResult result)
     {
         board->event(eEvent::generalRequestTributeRefuse, ed);
         if (mCity)
-            mCity->incAttitude(-10, board->personPlayer());
+            board->incCityAttitude(mCity, -10, board->personPlayer());
     }
     else if (result == ePayTributeResult::tooLate)
     {
         board->event(eEvent::generalRequestTributeTooLate, ed);
         if (mCity)
-            mCity->incAttitude(5, board->personPlayer());
+            board->incCityAttitude(mCity, 5, board->personPlayer());
     }
     else
     {
         board->event(eEvent::generalRequestTributeComply, ed);
         if (mCity)
-            mCity->incAttitude(10, board->personPlayer());
+            board->incCityAttitude(mCity, 10, board->personPlayer());
     }
 }
 

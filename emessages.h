@@ -352,6 +352,16 @@ public:
     eMessageType fCityRebellion;
     eMessageType fCityRebellionQuelled;
     eMessageType fCityRebellionOver;
+    eMessageType fAllyResentful;
+    eMessageType fRivalHostile;
+    eMessageType fVassalRebellious;
+    eMessageType fColonyRebellious;
+    eMessageType fParentResentful;
+    eMessageType fAllyLovesYou;
+    eMessageType fRivalPleased;
+    eMessageType fVassalLovesYou;
+    eMessageType fColonyLovesYou;
+    eMessageType fParentLovesYou;
 
     eMessageType fRivalConqueredByAlly;
     eMessageType fRivalConqueredByVassal;

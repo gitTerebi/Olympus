@@ -383,6 +383,7 @@ enum class eEvent {
     cityRebellion,
     cityRebellionQuelled,
     cityRebellionOver,
+    cityAttitudeChanged,
 
     rivalConqueredByAlly,
     rivalConqueredByVassal,

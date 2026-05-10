@@ -1617,6 +1617,45 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         showMessage(ed, inst.fCityRebellionOver);
         return;
     } break;
+    case eEvent::cityAttitudeChanged: {
+        const eMessageType* msg = nullptr;
+        switch(ed.fCityAttitudeMessage) {
+        case eCityAttitudeMessage::allyResentful:
+            msg = &inst.fAllyResentful;
+            break;
+        case eCityAttitudeMessage::rivalHostile:
+            msg = &inst.fRivalHostile;
+            break;
+        case eCityAttitudeMessage::vassalRebellious:
+            msg = &inst.fVassalRebellious;
+            break;
+        case eCityAttitudeMessage::colonyRebellious:
+            msg = &inst.fColonyRebellious;
+            break;
+        case eCityAttitudeMessage::parentResentful:
+            msg = &inst.fParentResentful;
+            break;
+        case eCityAttitudeMessage::allyLovesYou:
+            msg = &inst.fAllyLovesYou;
+            break;
+        case eCityAttitudeMessage::rivalPleased:
+            msg = &inst.fRivalPleased;
+            break;
+        case eCityAttitudeMessage::vassalLovesYou:
+            msg = &inst.fVassalLovesYou;
+            break;
+        case eCityAttitudeMessage::colonyLovesYou:
+            msg = &inst.fColonyLovesYou;
+            break;
+        case eCityAttitudeMessage::parentLovesYou:
+            msg = &inst.fParentLovesYou;
+            break;
+        case eCityAttitudeMessage::none:
+            return;
+        }
+        if(msg) showMessage(ed, *msg);
+        return;
+    } break;
 
     case eEvent::rivalConqueredByAlly: {
         showMessage(ed, inst.fRivalConqueredByAlly);

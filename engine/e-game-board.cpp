@@ -1,6 +1,8 @@
 
 #include "e-game-board.h"
 
+#include "e-city-attitude.h"
+
 #include <cstdio>
 #include <queue>
 #include <unordered_set>
@@ -1039,9 +1041,9 @@ void eGameBoard::request(const stdsptr<eWorldCity> &c,
     {
         if (ct->isCurrentCity())
             continue;
-        ct->incAttitude(-10, pid);
+        incCityAttitude(ct, -10, pid);
     }
-    c->incAttitude(-10, pid);
+    incCityAttitude(c, -10, pid);
 }
 
 void eGameBoard::requestAid(const stdsptr<eWorldCity> &c,
@@ -1093,22 +1095,22 @@ void eGameBoard::giftToReceived(const stdsptr<eWorldCity> &c,
         if (type == eResourceType::drachmas)
         {
             event(eEvent::giftReceivedDrachmas, ed);
-            c->incAttitude(3 * mult, pid);
+            incCityAttitude(c, 3 * mult, pid);
         }
         else if (b)
         {
             event(eEvent::giftReceivedNeeded, ed);
-            c->incAttitude(3 * mult, pid);
+            incCityAttitude(c, 3 * mult, pid);
         }
         else if (s)
         {
             event(eEvent::giftReceivedSells, ed);
-            c->incAttitude(1.5 * mult, pid);
+            incCityAttitude(c, 1.5 * mult, pid);
         }
         else
         {
             event(eEvent::giftReceivedNotNeeded, ed);
-            c->incAttitude(1.5 * mult, pid);
+            incCityAttitude(c, 1.5 * mult, pid);
         }
         c->gifted(type, count);
     }
@@ -2174,7 +2176,7 @@ void eGameBoard::handleGamesEnd(const eGames game)
                 const auto &cs = mWorld.cities();
                 for (const auto &c : cs)
                 {
-                    c->incAttitude(10., pid);
+                    incCityAttitude(c, 10., pid);
                 }
                 id = 8;
             }
@@ -2930,6 +2932,7 @@ void eGameBoard::incTime(const int by)
             p->nextMonth();
         }
     }
+    const int prevTotalTime = mTotalTime;
     mTime += by;
     mTotalTime += by;
     bool nextMonth = false;
@@ -2987,6 +2990,13 @@ void eGameBoard::incTime(const int by)
         for (const auto &p : mPlayersOnBoard)
         {
             p->nextMonth();
+        }
+
+        const int initialAttitudeWait = 180 * eNumbers::sDayLength;
+        if(prevTotalTime < initialAttitudeWait &&
+           mTotalTime >= initialAttitudeWait) {
+            printf("initial city attitude check fired\n");
+            sendInitialCityAttitudeMessages();
         }
 
         const auto m = mDate.month();
@@ -3338,6 +3348,50 @@ void eGameBoard::event(const eEvent e, eEventData &ed)
 {
     if (mEventHandler)
         mEventHandler(e, ed);
+}
+
+void eGameBoard::incCityAttitude(const stdsptr<eWorldCity>& c,
+                                 const double amount,
+                                 const ePlayerId pid) {
+    if(!c) return;
+    const auto oldAttitude = c->attitudeClass(pid);
+    c->incAttitude(amount, pid);
+    const auto newAttitude = c->attitudeClass(pid);
+    const auto msg = eCityAttitudeMessageForChange(
+        *c, pid, oldAttitude, newAttitude);
+    if(msg == eCityAttitudeMessage::none) return;
+
+    eEventData ed(pid);
+    ed.fCity = c;
+    ed.fCityAttitudeMessage = msg;
+    event(eEvent::cityAttitudeChanged, ed);
+}
+
+void eGameBoard::sendInitialCityAttitudeMessages() {
+    const auto pid = personPlayer();
+    for(const auto& c : mWorld.cities()) {
+        const auto msg = eCityAttitudeMessageForInitialStatus(*c, pid);
+        if(msg == eCityAttitudeMessage::none) continue;
+
+        eEventData ed(pid);
+        ed.fCity = c;
+        ed.fCityAttitudeMessage = msg;
+        printf("initial city attitude message city=%d message=%d\n",
+               static_cast<int>(c->cityId()), static_cast<int>(msg));
+        event(eEvent::cityAttitudeChanged, ed);
+    }
+}
+
+void eGameBoard::attackedAllyAttitude(const ePlayerId pid) {
+    const auto& cts = mWorld.cities();
+    for(const auto& c : cts) {
+        const auto type = c->type();
+        const auto rel = c->relationship();
+        if(type == eCityType::foreignCity &&
+           rel == eForeignCityRelationship::ally) {
+            incCityAttitude(c, -25, pid);
+        }
+    }
 }
 
 void eGameBoard::setEpisodeFinishedHandler(const eAction &a)
