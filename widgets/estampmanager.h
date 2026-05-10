@@ -11,6 +11,12 @@ class eStampTool;
 class eWidget;
 class eScrollViewport;
 
+struct eStampElement {
+    eBuildingType type;
+};
+
+bool eReadStampBlueprint(const std::string& path, std::vector<eStampElement>& elements);
+
 class eStampManager : public eModal {
 public:
     using eModal::eModal;
