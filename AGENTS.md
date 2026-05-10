@@ -3,6 +3,7 @@
 ## Code Style
 
 Where possible, refactor repeated functions into shared local helpers.
+Debug log using printf, not std out
 
 ## Save Serialization
 

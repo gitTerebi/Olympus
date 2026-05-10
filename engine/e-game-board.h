@@ -241,6 +241,8 @@ public:
 
     ePalace* palace(const eCityId cid) const;
     bool hasPalace(const eCityId cid) const;
+    bool hasRoadToPalace(const eTile* const tile) const;
+    void printRoadsNextToPalace() const;
 
     int eliteHouses(const eCityId cid) const;
 

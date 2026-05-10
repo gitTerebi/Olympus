@@ -350,7 +350,7 @@ public:
     void setCenterTile(eTile* const ct);
     eTile* centerTile() const;
 
-    bool enabled() const { return mEnabled; }
+    virtual bool enabled() const { return mEnabled; }
     void setEnabled(const bool e);
 
     void setOverlayEnabledFunc(const std::function<bool()>& e);

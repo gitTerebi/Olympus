@@ -1,6 +1,10 @@
 
 #include "e-game-board.h"
 
+#include <cstdio>
+#include <queue>
+#include <unordered_set>
+
 #include "buildings/eagorabase.h"
 #include "e-tribute.h"
 #include "characters/echaracter.h"
@@ -3532,12 +3536,183 @@ ePalace *eGameBoard::palace(const eCityId cid) const
     return c->palace();
 }
 
+bool eGameBoard::hasRoadToPalace(const eTile* const tile) const
+{
+    if (!tile) {
+        printf("hasRoadToPalace: tile is null\n");
+        return false;
+    }
+    const auto cid = tile->cityId();
+    const auto p = palace(cid);
+    if (!p) {
+        printf("hasRoadToPalace: no palace for city %d\n", static_cast<int>(cid));
+        return false;
+    }
+    const auto palaceTiles = p->tilesUnder();
+    printf("hasRoadToPalace: palace has %zu tiles:\n", palaceTiles.size());
+    for (const auto pt : palaceTiles) {
+        printf("  palace tile (%d,%d)\n", pt->x(), pt->y());
+    }
+
+    // Include 1-tile buffer around palace
+    std::unordered_set<const eTile*> palaceArea(palaceTiles.begin(), palaceTiles.end());
+    for (const auto pt : palaceTiles) {
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+                const auto nt = this->tile(pt->x() + dx, pt->y() + dy);
+                if (nt) palaceArea.insert(nt);
+            }
+        }
+    }
+
+    // Helper to check if a tile has road or avenue
+    auto hasRoadOrAvenue = [](const eTile* t) {
+        return t && (t->hasRoad() || t->hasAvenue());
+    };
+
+    // Collect all roads connected to palace area
+    std::unordered_set<const eTile*> palaceConnectedRoads;
+    std::queue<const eTile*> q;
+    std::unordered_set<const eTile*> visited;
+
+    // Start from roads adjacent to palace area
+    for (const auto pt : palaceArea) {
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+                const auto nt = this->tile(pt->x() + dx, pt->y() + dy);
+                if (hasRoadOrAvenue(nt) && visited.find(nt) == visited.end()) {
+                    q.push(nt);
+                    visited.insert(nt);
+                    palaceConnectedRoads.insert(nt);
+                }
+            }
+        }
+    }
+
+    // Explore all connected roads (orthogonal only)
+    while (!q.empty()) {
+        const auto curr = q.front();
+        q.pop();
+        const int x = curr->x();
+        const int y = curr->y();
+        // Only orthogonal neighbors: N, S, E, W
+        const std::vector<std::pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        for (const auto& d : dirs) {
+            const auto nt = this->tile(x + d.first, y + d.second);
+            if (hasRoadOrAvenue(nt) && visited.find(nt) == visited.end()) {
+                visited.insert(nt);
+                q.push(nt);
+                palaceConnectedRoads.insert(nt);
+            }
+        }
+    }
+
+    printf("All roads/avenues adjacent to palace area:\n");
+    if (palaceConnectedRoads.empty()) {
+        printf("  no roads/avenues adjacent to palace area\n");
+    } else {
+        for (const auto r : palaceConnectedRoads) {
+            printf("  road/avenue at (%d,%d)\n", r->x(), r->y());
+        }
+    }
+
+    // Get building tiles to check
+    std::vector<const eTile*> buildingTiles = {tile};
+    const auto b = tile->underBuilding();
+    if (b) {
+        const auto bt = b->tilesUnder();
+        buildingTiles.assign(bt.begin(), bt.end());
+    }
+
+    // Check if any building tile is connected to palace roads
+    if (palaceConnectedRoads.empty()) {
+        printf("hasRoadToPalace: no roads connected to palace\n");
+        return false;
+    }
+
+    for (const auto btile : buildingTiles) {
+        q = std::queue<const eTile*>();
+        visited.clear();
+        q.push(btile);
+        visited.insert(btile);
+        bool connected = false;
+
+        while (!q.empty() && !connected) {
+            const auto curr = q.front();
+            q.pop();
+            if (palaceConnectedRoads.count(curr)) {
+                connected = true;
+                break;
+            }
+            const int x = curr->x();
+            const int y = curr->y();
+            // Only orthogonal neighbors
+            const std::vector<std::pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+            for (const auto& d : dirs) {
+                const auto nt = this->tile(x + d.first, y + d.second);
+                if (hasRoadOrAvenue(nt) && visited.find(nt) == visited.end()) {
+                    visited.insert(nt);
+                    q.push(nt);
+                }
+            }
+        }
+
+        if (connected) {
+            printf("hasRoadToPalace: building tile (%d,%d) is connected to palace roads\n", btile->x(), btile->y());
+            return true;
+        }
+    }
+
+    printf("hasRoadToPalace: no building tile is connected to palace roads\n");
+    return false;
+}
+
 bool eGameBoard::hasPalace(const eCityId cid) const
 {
     const auto c = boardCityWithId(cid);
     if (!c)
         return false;
     return c->hasPalace();
+}
+
+void eGameBoard::printRoadsNextToPalace() const
+{
+    printf("Tiles next to palace tiles:\n");
+    std::unordered_set<const eTile*> roads;
+    std::unordered_set<const eTile*> printed;
+    for (const auto &c : mCitiesOnBoard) {
+        const auto p = c->palace();
+        if (!p) continue;
+        const auto palaceTiles = p->tilesUnder();
+        std::unordered_set<const eTile*> palaceSet(palaceTiles.begin(), palaceTiles.end());
+        for (const auto pt : palaceTiles) {
+            for (int dx = -1; dx <= 1; ++dx) {
+                for (int dy = -1; dy <= 1; ++dy) {
+                    if (dx == 0 && dy == 0) continue;
+                    const auto nt = this->tile(pt->x() + dx, pt->y() + dy);
+                    if (!nt || palaceSet.count(nt)) continue; // skip palace tiles
+                    if (printed.count(nt)) continue; // already printed
+                    printed.insert(nt);
+                    const auto b = nt->underBuilding();
+                    const auto bt = b ? b->type() : eBuildingType::none;
+                    printf("  tile (%d,%d): %s\n", nt->x(), nt->y(), eBuilding::sNameForBuilding(bt).c_str());
+                    if (nt && (nt->hasRoad() || nt->hasAvenue())) {
+                        roads.insert(nt);
+                    }
+                }
+            }
+        }
+    }
+    printf("Roads/avenues next to palace tiles:\n");
+    if (roads.empty()) {
+        printf("  no roads/avenues next to palace tiles\n");
+    } else {
+        for (const auto r : roads) {
+            printf("  road/avenue at (%d,%d)\n", r->x(), r->y());
+        }
+    }
 }
 
 int eGameBoard::resourceCount(const eCityId cid,

@@ -15,7 +15,7 @@ public:
     ~eEmployingBuilding();
 
     int employed() const { return mEmployed; }
-    void setEmployed(const int e);
+    virtual void setEmployed(const int e);
     void setMaxEmployees(const int m) { mMaxEmployees = m; }
     int maxEmployees() const { return mMaxEmployees; }
     double vacanciesFilledFraction() const;

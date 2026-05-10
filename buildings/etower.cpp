@@ -46,6 +46,17 @@ eTower::~eTower()
     }
 }
 
+eTowerEmploymentState eTower::employmentState(const bool mManTowers, const bool hasPalace) const
+{
+    if (!hasPalace)
+        return eTowerEmploymentState::noPalace;
+    if (!getBoard().hasRoadToPalace(centerTile()))
+        return eTowerEmploymentState::noRoad;
+    if (!mManTowers)
+        return eTowerEmploymentState::shutdown;
+    return eTowerEmploymentState::available;
+}
+
 std::shared_ptr<eTexture>
 eTower::getTexture(const eTileSize size) const
 {
@@ -100,14 +111,23 @@ void eTower::timeChanged(const int by)
 {
     if (enabled())
     {
-        if (!mArcher)
+        // Only spawn archers when fully employed (15/15)
+        if (employed() >= maxEmployees())
         {
-            mSpawnTime += by;
-            if (mSpawnTime > eNumbers::sTowerSpawnPeriod)
+            if (!mArcher)
             {
-                spawn();
-                mSpawnTime = 0;
+                mSpawnTime += by;
+                if (mSpawnTime > eNumbers::sTowerSpawnPeriod)
+                {
+                    spawn();
+                    mSpawnTime = 0;
+                }
             }
+        }
+        else if (mArcher)
+        {
+            // Kill archer if not fully staffed
+            mArcher->kill();
         }
 
         const int rangeAttackCheck = 500;
@@ -211,6 +231,31 @@ void eTower::timeChanged(const int by)
             mArcher->kill();
     }
     eEmployingBuilding::timeChanged(by);
+}
+
+bool eTower::enabled() const
+{
+    if (!eEmployingBuilding::enabled())
+        return false;
+    // Towers need adjacent road and road connecting to palace to function
+    return accessToRoad() && getBoard().hasRoadToPalace(centerTile());
+}
+
+void eTower::setEmployed(const int e)
+{
+    const auto cid = cityId();
+    const auto &board = getBoard();
+    const bool militaryDisabled = board.isShutDown(cid, eBuildingType::tower);
+    const bool hasPalace = board.hasPalace(cid);
+    const auto state = employmentState(!militaryDisabled, hasPalace);
+    if (state == eTowerEmploymentState::available)
+    {
+        eEmployingBuilding::setEmployed(e);
+    }
+    else
+    {
+        eEmployingBuilding::setEmployed(0);
+    }
 }
 
 void eTower::read(eReadStream &src)

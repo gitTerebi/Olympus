@@ -15,6 +15,7 @@
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/etriremewharf.h"
+#include "buildings/etower.h"
 #include "buildings/pyramids/epyramid.h"
 
 #include "evectorhelpers.h"
@@ -1153,13 +1154,22 @@ void eBoardCity::disallow(const eBuildingType type,
 }
 
 void eBoardCity::setManTowers(const bool m) {
+    if(mManTowers == m) return;
+    int towerEmployees = 0;
+    for(const auto b : mEmployingBuildings) {
+        if(b->type() != eBuildingType::tower) continue;
+        towerEmployees += b->maxEmployees();
+    }
+    const int by = m ? towerEmployees : -towerEmployees;
+    mEmplData.incTotalJobVacancies(by);
+    mEmplDistributor.incMaxEmployees(eSector::military, by);
     mManTowers = m;
+    distributeEmployees();
 }
 
 void eBoardCity::distributeEmployees(const eSector s) {
     int e = mEmplDistributor.employees(s);
     const int maxE = mEmplDistributor.maxEmployees(s);
-    const double frac = e/static_cast<double>(maxE);
     const auto& sb = mSectorBuildings[s];
     struct eSectorReminder {
         double fRem;
@@ -1167,11 +1177,54 @@ void eBoardCity::distributeEmployees(const eSector s) {
     };
 
     std::vector<eSectorReminder> reminders;
+    std::vector<eTower*> towers;
+
     for(const auto b : sb) {
         const auto type = b->type();
         if(type == eBuildingType::triremeWharf) {
-            const bool sd = b->shutDown();
-            if(sd) continue;
+            if(b->shutDown()) continue;
+        }
+        if(type == eBuildingType::tower) {
+            auto* t = static_cast<eTower*>(b);
+            const auto state = t->employmentState(mManTowers, mBoard.hasPalace(b->cityId()));
+            if(state == eTowerEmploymentState::shutdown) {
+                b->setShutDown(true);
+                b->setEmployed(0);
+                continue;
+            }
+            b->setShutDown(false);
+            if(state != eTowerEmploymentState::available) {
+                b->setEmployed(0);
+                continue;
+            }
+            towers.push_back(t);
+            continue;
+        }
+    }
+
+    if(s == eSector::military) {
+        for(auto* t : towers) {
+            const int me = t->maxEmployees();
+            const int ee = std::min(me, e);
+            t->setEmployed(ee);
+            e -= ee;
+        }
+    }
+
+    int nonTowerMaxE = maxE;
+    for(const auto* t : towers) {
+        nonTowerMaxE -= t->maxEmployees();
+    }
+    const double frac = nonTowerMaxE > 0 ?
+                            std::min(1.0, e/static_cast<double>(nonTowerMaxE)) :
+                            1.0;
+    int totalAllocated = 0;
+
+    for(const auto b : sb) {
+        const auto type = b->type();
+        if(type == eBuildingType::tower) continue;
+        if(type == eBuildingType::triremeWharf) {
+            if(b->shutDown()) continue;
         }
         const bool sd = isShutDown(type);
         if(sd) {
@@ -1181,11 +1234,21 @@ void eBoardCity::distributeEmployees(const eSector s) {
             b->setShutDown(false);
         }
         const int me = b->maxEmployees();
-        const double eeF = frac*me;
-        const int ee = std::floor(eeF);
+        int ee = std::min(me, static_cast<int>(std::floor(frac*me)));
         b->setEmployed(ee);
-        e -= ee;
-        reminders.push_back({(eeF - ee)/me, b});
+        totalAllocated += ee;
+        reminders.push_back({(frac*me - ee)/static_cast<double>(me), b});
+    }
+
+    int remainingEmployees = e - totalAllocated;
+
+    if(s != eSector::military) {
+        for(auto* t : towers) {
+            const int me = t->maxEmployees();
+            const int ee = std::min(me, remainingEmployees);
+            t->setEmployed(ee);
+            remainingEmployees -= ee;
+        }
     }
 
     const auto comp = [](const eSectorReminder& r1, const eSectorReminder& r2) {
@@ -1193,16 +1256,16 @@ void eBoardCity::distributeEmployees(const eSector s) {
     };
     std::sort(reminders.begin(), reminders.end(), comp);
 
-    while(e > 0) {
+    while(remainingEmployees > 0) {
         bool changed = false;
         for(auto& r : reminders) {
-            if(e <= 0) break;
+            if(remainingEmployees <= 0) break;
             const auto b = r.fB;
             const int me = b->maxEmployees();
             const int ee = b->employed();
             if(ee >= me) continue;
             b->setEmployed(ee + 1);
-            e--;
+            remainingEmployees--;
             changed = true;
         }
         if(!changed) break;
