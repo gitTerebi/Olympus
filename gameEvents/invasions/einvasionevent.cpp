@@ -115,7 +115,8 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity& attacker,
     const auto targetCity = board.world().cityWithId(targetCid);
     const bool canInvade = targetCity &&
                            !board.hasActiveInvasions(targetCid) &&
-                           board.date().year() > attacker.nextInvasionYear();
+                           board.date().year() > attacker.nextInvasionYear() &&
+                           board.date().year() >= board.savedYear() + 2;
     if(!canInvade || eRand::rand() % 12 != 0) {
         return false;
     }
