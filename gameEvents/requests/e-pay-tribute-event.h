@@ -46,7 +46,7 @@ private:
     eEvent stepEvent() const;
     int complyMonths() const;
     int popupComplyMonths() const;
-    void finish(ePayTributeResult result, bool showResult = true);
+    void finish(ePayTributeResult result);
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 
     stdsptr<eWorldCity> mCity;

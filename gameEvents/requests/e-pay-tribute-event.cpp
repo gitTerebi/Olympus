@@ -133,35 +133,33 @@ void ePayTributeEvent::trigger()
     ed.fResourceCount = mCount;
     ed.fTime = popupComplyMonths();
 
-    if (!payTributeTerminalState(mEvent))
+    const bool canDispatch = !payTributeTerminalState(mEvent);
+    if (canDispatch && mResource == eResourceType::drachmas)
     {
-        if (mResource == eResourceType::drachmas)
+        const auto cids = board->personPlayerCitiesOnBoard();
+        if (!cids.empty() && board->drachmas(board->personPlayer()) >= mCount)
         {
-            const auto cids = board->personPlayerCitiesOnBoard();
-            if (!cids.empty() && board->drachmas(board->personPlayer()) >= mCount)
+            const auto cid = cids[0];
+            ed.fPrimaryAction = [this, cid]()
             {
-                const auto cid = cids[0];
-                ed.fPrimaryAction = [this, cid]()
+                dispatch(cid);
+            };
+        }
+    }
+    else if (canDispatch)
+    {
+        const auto cids = board->personPlayerCitiesOnBoard();
+        for (const auto cid : cids)
+        {
+            const int avCount = board->resourceCount(cid, mResource);
+            ed.fCityNames[cid] = board->cityName(cid);
+            ed.fCSpaceCount[cid] = avCount;
+            if (avCount >= mCount)
+            {
+                ed.fCityConditionalActions[cid] = [this, cid]()
                 {
                     dispatch(cid);
                 };
-            }
-        }
-        else
-        {
-            const auto cids = board->personPlayerCitiesOnBoard();
-            for (const auto cid : cids)
-            {
-                const int avCount = board->resourceCount(cid, mResource);
-                ed.fCityNames[cid] = board->cityName(cid);
-                ed.fCSpaceCount[cid] = avCount;
-                if (avCount >= mCount)
-                {
-                    ed.fCityConditionalActions[cid] = [this, cid]()
-                    {
-                        dispatch(cid);
-                    };
-                }
             }
         }
     }
@@ -172,23 +170,16 @@ void ePayTributeEvent::trigger()
         {
             postpone();
         };
-
-        ed.fTertiaryAction = [this]()
-        {
-            const auto request = mainEvent<ePayTributeEvent>();
-            if (request)
-                request->finish(ePayTributeResult::refuse);
-        };
     }
 
-    board->event(stepEvent(), ed);
-
-    if (payTributeTerminalState(mEvent))
+    ed.fTertiaryAction = [this]()
     {
         const auto request = mainEvent<ePayTributeEvent>();
         if (request)
-            request->finish(ePayTributeResult::refuse, false);
-    }
+            request->finish(ePayTributeResult::refuse);
+    };
+
+    board->event(stepEvent(), ed);
 }
 
 std::string ePayTributeEvent::longName() const
@@ -219,16 +210,20 @@ void ePayTributeEvent::dispatch(const eCityId cid)
     const auto board = gameBoard();
     if (!board)
         return;
-    board->takeResource(cid, mResource, mCount);
     const auto request = mainEvent<ePayTributeEvent>();
+    const auto state = request ? request->mComplyEvent : mEvent;
+    if (payTributeTerminalState(state))
+        return;
+
+    board->takeResource(cid, mResource, mCount);
     if (request)
     {
-        const int overdueStep = payTributeStateIndex(
-            eEvent::generalRequestTributeOverdue);
+        const int lateStep = payTributeStateIndex(
+            eEvent::generalRequestTributeWarning);
         const int currentStep = payTributeStateIndex(
             request->mComplyEvent);
-        const bool overdue = overdueStep >= 0 &&
-                             currentStep >= overdueStep;
+        const bool overdue = lateStep >= 0 &&
+                             currentStep >= lateStep;
         request->finish(overdue ? ePayTributeResult::tooLate : ePayTributeResult::comply);
     }
 }
@@ -443,8 +438,7 @@ int ePayTributeEvent::popupComplyMonths() const
     return payTributeState(mEvent).fComplyMonths;
 }
 
-void ePayTributeEvent::finish(
-    const ePayTributeResult result, const bool showResult)
+void ePayTributeEvent::finish(const ePayTributeResult result)
 {
     const auto board = gameBoard();
     if (!board)
@@ -462,22 +456,19 @@ void ePayTributeEvent::finish(
 
     if (result == ePayTributeResult::refuse)
     {
-        if (showResult)
-            board->event(eEvent::generalRequestTributeRefuse, ed);
+        board->event(eEvent::generalRequestTributeRefuse, ed);
         if (mCity)
-            mCity->incAttitude(-15, board->personPlayer());
+            mCity->incAttitude(-10, board->personPlayer());
     }
     else if (result == ePayTributeResult::tooLate)
     {
-        if (showResult)
-            board->event(eEvent::generalRequestTributeTooLate, ed);
+        board->event(eEvent::generalRequestTributeTooLate, ed);
         if (mCity)
-            mCity->incAttitude(-15, board->personPlayer());
+            mCity->incAttitude(5, board->personPlayer());
     }
     else
     {
-        if (showResult)
-            board->event(eEvent::generalRequestTributeComply, ed);
+        board->event(eEvent::generalRequestTributeComply, ed);
         if (mCity)
             mCity->incAttitude(10, board->personPlayer());
     }
