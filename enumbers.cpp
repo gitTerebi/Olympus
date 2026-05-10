@@ -337,7 +337,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("wolf_max_count_i", sWolfMaxCount, 8, 2, 100);
     loadI("wolf_spawn_period_i", sWolfSpawnPeriod, 4000, 1, 100000);
     loadI("wolf_hunt_wait_i", sWolfHuntWait, 20, 1, 1000);
-    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 60, 1, 1000);
+    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 15, 1, 1000);
 
     loadI("olive_press_processing_period_i", sOlivePressProcessingPeriod, 20000, 1, 1000000);
     loadI("winery_processing_period_i", sWineryProcessingPeriod, 20000, 1, 1000000);
@@ -506,12 +506,12 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("tower_hp_i", sTowerHP, 5000, 1, 1000000);
     loadI("tower_range_i", sTowerRange, 8, 2, 100);
-    loadD("tower_attack_d", sTowerAttack, 0.075, 0.1, 10.);
+    loadD("tower_attack_d", sTowerAttack, 0.25, 0.1, 10.);
 
     loadI("wall_hp_i", sWallHP, 2000, 1, 1000000);
 
     loadI("wall_archer_range_i", sWallArcherRange, 8, 2, 200);
-    loadD("wall_archer_attack_d", sWallArcherAttack, 0.075, 0.1, 10.);
+    loadD("wall_archer_attack_d", sWallArcherAttack, 0.25, 0.1, 10.);
 
     loadI("rabble_hp_i", sRabbleHP, 300, 1, 1000000);
     loadI("rabble_range_i", sRabbleRange, 4, 1, 20);

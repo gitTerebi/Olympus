@@ -401,6 +401,8 @@ private:
     bool mScrollRight = false;
     bool mScrollUp = false;
     bool mScrollDown = false;
+    int mSmoothScrollX = 0;
+    int mSmoothScrollY = 0;
     int mKeyScrollSpeed = 18;
 
     int mHoverX = -1;

@@ -1,6 +1,7 @@
 #include "edomesticatedanimal.h"
 
 #include "fileIO/esavearchive.h"
+#include "audio/esounds.h"
 
 eDomesticatedAnimal::eDomesticatedAnimal(
         eGameBoard& board,
@@ -25,6 +26,9 @@ int eDomesticatedAnimal::collect() {
     const int r = mResource;
     mResource = 0;
     setNakedTexture();
+    if(type() == eCharacterType::sheep) {
+        eSounds::playShearingSound();
+    }
     return r;
 }
 

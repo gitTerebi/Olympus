@@ -287,13 +287,8 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
         const auto& world = b.world();
         const auto cid = static_cast<eCityId>(fEnumInt1);
         const auto city = world.cityWithId(cid);
-        auto rel = city ? city->relationship() :
-                          eForeignCityRelationship::ally;
-        if(city && city->isOnBoard()) {
-            const auto pid = city->playerId();
-            rel = pid == ppid ? eForeignCityRelationship::vassal :
-                                eForeignCityRelationship::rival;
-        }
+        const auto rel = city ? city->relationshipToPlayer(ppid) :
+                                eForeignCityRelationship::ally;
         const auto relStr = eWorldCity::sRelationshipName(rel);
         eStringHelpers::replace(t, "[diplomatic_status]", relStr);
         return t;

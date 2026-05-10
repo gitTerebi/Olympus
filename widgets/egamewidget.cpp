@@ -2827,21 +2827,37 @@ bool eGameWidget::updateSmoothScrollKey(const SDL_Scancode k,
     if (k == hotkeys.fHotkeyScrollLeft)
     {
         mScrollLeft = pressed;
+        if (pressed)
+            mSmoothScrollX = 1;
+        else if (mSmoothScrollX == 1)
+            mSmoothScrollX = mScrollRight ? -1 : 0;
         return true;
     }
     else if (k == hotkeys.fHotkeyScrollRight)
     {
         mScrollRight = pressed;
+        if (pressed)
+            mSmoothScrollX = -1;
+        else if (mSmoothScrollX == -1)
+            mSmoothScrollX = mScrollLeft ? 1 : 0;
         return true;
     }
     else if (k == hotkeys.fHotkeyScrollUp)
     {
         mScrollUp = pressed;
+        if (pressed)
+            mSmoothScrollY = 1;
+        else if (mSmoothScrollY == 1)
+            mSmoothScrollY = mScrollDown ? -1 : 0;
         return true;
     }
     else if (k == hotkeys.fHotkeyScrollDown)
     {
         mScrollDown = pressed;
+        if (pressed)
+            mSmoothScrollY = -1;
+        else if (mSmoothScrollY == -1)
+            mSmoothScrollY = mScrollUp ? 1 : 0;
         return true;
     }
     return false;
@@ -2865,6 +2881,18 @@ void eGameWidget::updateSmoothScrollKeysPressed()
     mScrollRight = smoothScrollKeyPressed(hotkeys.fHotkeyScrollRight);
     mScrollUp = smoothScrollKeyPressed(hotkeys.fHotkeyScrollUp);
     mScrollDown = smoothScrollKeyPressed(hotkeys.fHotkeyScrollDown);
+    if (mSmoothScrollX == 1 && !mScrollLeft)
+        mSmoothScrollX = mScrollRight ? -1 : 0;
+    else if (mSmoothScrollX == -1 && !mScrollRight)
+        mSmoothScrollX = mScrollLeft ? 1 : 0;
+    else if (mSmoothScrollX == 0)
+        mSmoothScrollX = mScrollLeft ? 1 : (mScrollRight ? -1 : 0);
+    if (mSmoothScrollY == 1 && !mScrollUp)
+        mSmoothScrollY = mScrollDown ? -1 : 0;
+    else if (mSmoothScrollY == -1 && !mScrollDown)
+        mSmoothScrollY = mScrollUp ? 1 : 0;
+    else if (mSmoothScrollY == 0)
+        mSmoothScrollY = mScrollUp ? 1 : (mScrollDown ? -1 : 0);
 }
 
 void eGameWidget::smoothScroll()
@@ -2873,14 +2901,8 @@ void eGameWidget::smoothScroll()
     int dx = 0;
     int dy = 0;
     const int d = mKeyScrollSpeed;
-    if (mScrollLeft)
-        dx += d;
-    if (mScrollRight)
-        dx -= d;
-    if (mScrollUp)
-        dy += d;
-    if (mScrollDown)
-        dy -= d;
+    dx = mSmoothScrollX * d;
+    dy = mSmoothScrollY * d;
     if (dx)
         setDX(mDX + dx);
     if (dy)
@@ -2904,6 +2926,8 @@ void eGameWidget::stopSmoothScroll()
     mScrollRight = false;
     mScrollUp = false;
     mScrollDown = false;
+    mSmoothScrollX = 0;
+    mSmoothScrollY = 0;
 }
 
 bool eGameWidget::mousePressEvent(const eMouseEvent &e)

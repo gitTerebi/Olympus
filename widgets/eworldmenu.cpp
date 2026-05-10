@@ -280,7 +280,8 @@ void eWorldMenu::updateLabels() const {
         return;
     }
 
-    const auto rel = mCity->relationship();
+    const auto ppid = mBoard->personPlayer();
+    const auto rel = mCity->relationshipToPlayer(ppid);
     const auto type = mCity->type();
     const bool cc = mCity->isCurrentCity();
     const bool onBoardNeutral = mCity->isOnBoardNeutral();
@@ -301,7 +302,6 @@ void eWorldMenu::updateLabels() const {
     if(cc || onBoardColony) {
         mAttitudeLabel->setText("");
     } else {
-        const auto ppid = mBoard->personPlayer();
         const auto at = mCity->attitudeClass(ppid);
         auto atStr = eWorldCity::sAttitudeName(at);
         const auto att = mCity->attitude(ppid);
