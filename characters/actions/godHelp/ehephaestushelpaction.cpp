@@ -3,7 +3,7 @@
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 #include "characters/monsters/ecalydonianboar.h"
 #include "characters/actions/edefendcityaction.h"
 

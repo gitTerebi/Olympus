@@ -5,7 +5,7 @@
 
 #include "edate.h"
 #include "edifficulty.h"
-#include "egodquest.h"
+#include "engine/egodquest.h"
 #include "engine/boardData/ecityfinances.h"
 
 class eGameBoard;

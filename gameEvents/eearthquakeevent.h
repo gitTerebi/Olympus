@@ -4,8 +4,8 @@
 #include "egameevent.h"
 #include "epointeventvalue.h"
 #include "ecounteventvalue.h"
-#include "egodeventvalue.h"
-#include "egodreasoneventvalue.h"
+#include "gods/egodeventvalue.h"
+#include "gods/egodreasoneventvalue.h"
 
 class eSaveArchive;
 

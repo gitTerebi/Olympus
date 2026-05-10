@@ -4,7 +4,7 @@
 #include "eevent.h"
 #include "eeventdata.h"
 #include "e-worldcity.h"
-#include "gameEvents/e-pay-tribute-event.h"
+#include "gameEvents/requests/e-pay-tribute-event.h"
 #include "gameEvents/ereceivetributeevent.h"
 
 #include <cmath>

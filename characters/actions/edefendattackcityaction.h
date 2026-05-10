@@ -1,7 +1,7 @@
 #ifndef EDEFENDATTACKCITYACTION_H
 #define EDEFENDATTACKCITYACTION_H
 
-#include "egodmonsteraction.h"
+#include "characters/gods/actions/egodmonsteraction.h"
 
 class eSaveArchive;
 

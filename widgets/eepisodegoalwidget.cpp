@@ -4,7 +4,7 @@
 #include "elabel.h"
 
 #include "evaluebutton.h"
-#include "egodbutton.h"
+#include "widgets/gods/egodbutton.h"
 #include "epyramidbutton.h"
 #include "echoosebutton.h"
 #include "emainwindow.h"

@@ -183,11 +183,11 @@ set(SOURCES
     characters/actions/efirefighteraction.cpp
     characters/actions/efollowaction.cpp
     characters/actions/egodactcreator.cpp
-    characters/actions/egodaction.cpp
-    characters/actions/egodattackaction.cpp
-    characters/actions/egodmonsteraction.cpp
-    characters/actions/egodvisitaction.cpp
-    characters/actions/egodworshippedaction.cpp
+    characters/gods/actions/egodaction.cpp
+    characters/gods/actions/egodattackaction.cpp
+    characters/gods/actions/egodmonsteraction.cpp
+    characters/gods/actions/egodvisitaction.cpp
+    characters/gods/actions/egodworshippedaction.cpp
     characters/actions/egroweraction.cpp
     characters/actions/eheroaction.cpp
     characters/actions/ehuntaction.cpp
@@ -354,7 +354,7 @@ set(SOURCES
     efontcolor.cpp
     egamedir.cpp
     ecursors.cpp
-    e-invasion-handler.cpp
+    gameEvents/invasions/e-invasion-handler.cpp
     eiteratesquare.cpp
     elanguage.cpp
     eloadtexthelper.cpp
@@ -388,12 +388,12 @@ set(SOURCES
     engine/eeventtime.cpp
     engine/efunctask.cpp
     engine/e-game-board.cpp
+    gameEvents/gods/egodquest.cpp
     engine/egameundo.cpp
     engine/e-game-board-read.cpp
     engine/egameboardwrite.cpp
     engine/egameevents.cpp
     engine/egifthelpers.cpp
-    engine/egodquest.cpp
     engine/eguidedmovepathtask.cpp
     engine/eknownendpathfinder.cpp
     engine/emapgenerator.cpp
@@ -452,39 +452,38 @@ set(SOURCES
     gameEvents/egameevent.cpp
     gameEvents/egiftfromevent.cpp
     gameEvents/egifttoevent.cpp
-    gameEvents/egodattackevent.cpp
-    gameEvents/egoddisasterevent.cpp
-    gameEvents/egodeventvalue.cpp
-    gameEvents/egodquestevent.cpp
-    gameEvents/egodquesteventbase.cpp
-    gameEvents/egodquestfulfilledevent.cpp
-    gameEvents/egodreasoneventvalue.cpp
-    gameEvents/egodtraderesumesevent.cpp
-    gameEvents/egodvisitevent.cpp
-    gameEvents/einvasionevent.cpp
-    gameEvents/einvasionwarning.cpp
+    gameEvents/gods/egodattackevent.cpp
+    gameEvents/gods/egoddisasterevent.cpp
+    gameEvents/gods/egodeventvalue.cpp
+    gameEvents/gods/egodquestevent.cpp
+    gameEvents/gods/egodquesteventbase.cpp
+    gameEvents/gods/egodquestfulfilledevent.cpp
+    gameEvents/gods/egodreasoneventvalue.cpp
+    gameEvents/gods/egodtraderesumesevent.cpp
+    gameEvents/gods/egodvisitevent.cpp
+    gameEvents/invasions/einvasionevent.cpp
+    gameEvents/invasions/einvasionwarning.cpp
     gameEvents/elandslideevent.cpp
     gameEvents/elavaevent.cpp
     gameEvents/emakerequestevent.cpp
     gameEvents/emilitarychangeevent.cpp
     gameEvents/emonstereventvalue.cpp
-    gameEvents/emonsterincityevent.cpp
-    gameEvents/emonsterinvasionevent.cpp
-    gameEvents/emonsterinvasioneventbase.cpp
+    gameEvents/invasions/emonsterincityevent.cpp
+    gameEvents/invasions/emonsterinvasionevent.cpp
+    gameEvents/invasions/emonsterinvasioneventbase.cpp
     gameEvents/emonsterseventvalue.cpp
-    gameEvents/emonsterunleashedevent.cpp
+    gameEvents/invasions/emonsterunleashedevent.cpp
     engine/e-tribute.cpp
     gameEvents/ereceivetributeevent.cpp
-    gameEvents/e-pay-tribute-event.cpp
+    gameEvents/requests/e-pay-tribute-event.cpp
     gameEvents/eplayerconquestevent.cpp
     gameEvents/eplayerconquesteventbase.cpp
     gameEvents/eplayerraidevent.cpp
     gameEvents/epointeventvalue.cpp
     gameEvents/epricechangeevent.cpp
     gameEvents/eraidresourceevent.cpp
-    gameEvents/receive-request/e-fulfill-request-event.cpp
-    gameEvents/receive-request/e-receive-request-type.cpp
-    gameEvents/receive-request/e-receive-request-postpone.cpp
+    gameEvents/requests/e-fulfill-request-event.cpp
+    gameEvents/requests/e-receive-request-type.cpp
     gameEvents/ereinforcementsevent.cpp
     gameEvents/erequestaidevent.cpp
     gameEvents/erequeststrikeevent.cpp
@@ -647,8 +646,8 @@ set(SOURCES
     widgets/erepair.cpp
     widgets/egiftdialog.cpp
     widgets/egiftsizedialog.cpp
-    widgets/egodbutton.cpp
-    widgets/egodselectionwidget.cpp
+    widgets/gods/egodbutton.cpp
+    widgets/gods/egodselectionwidget.cpp
     widgets/ehelpbutton.cpp
     widgets/eherobutton.cpp
     widgets/elabel.cpp

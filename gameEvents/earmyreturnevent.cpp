@@ -6,7 +6,7 @@
 #include "elanguage.h"
 #include "buildings/eheroshall.h"
 #include "characters/actions/eheroaction.h"
-#include "characters/actions/egodworshippedaction.h"
+#include "characters/gods/actions/egodworshippedaction.h"
 
 eArmyReturnEvent::eArmyReturnEvent(
         const eCityId cid,

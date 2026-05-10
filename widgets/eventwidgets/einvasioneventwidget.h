@@ -3,7 +3,7 @@
 
 #include "../ewidget.h"
 
-#include "gameEvents/einvasionevent.h"
+#include "gameEvents/invasions/einvasionevent.h"
 
 class eLabeledWidget;
 

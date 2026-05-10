@@ -1,7 +1,7 @@
 #include "e-board-player.h"
 
-#include "gameEvents/receive-request/e-fulfill-request-event.h"
-#include "gameEvents/e-pay-tribute-event.h"
+#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/e-pay-tribute-event.h"
 
 #include "e-game-board.h"
 #include "eevent.h"

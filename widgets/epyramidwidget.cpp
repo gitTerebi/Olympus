@@ -2,7 +2,7 @@
 
 #include "buildings/pyramids/epyramid.h"
 #include "eswitchbutton.h"
-#include "egodbutton.h"
+#include "widgets/gods/egodbutton.h"
 
 void ePyramidWidget::initialize(const ePSptr& e, const eAction& updater) {
     setType(eFrameType::message);

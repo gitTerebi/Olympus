@@ -491,9 +491,8 @@ SOURCES += \
         gameEvents/epointeventvalue.cpp \
         gameEvents/epricechangeevent.cpp \
         gameEvents/eraidresourceevent.cpp \
-        gameEvents/receive-request/e-fulfill-request-event.cpp \
-        gameEvents/receive-request/e-receive-request-type.cpp \
-        gameEvents/receive-request/e-receive-request-postpone.cpp \
+        gameEvents/requests/e-fulfill-request-event.cpp \
+        gameEvents/requests/e-receive-request-type.cpp \
         gameEvents/ereinforcementsevent.cpp \
         gameEvents/erequestaidevent.cpp \
         gameEvents/erequeststrikeevent.cpp \
@@ -1203,9 +1202,8 @@ HEADERS += \
     gameEvents/epointeventvalue.h \
     gameEvents/epricechangeevent.h \
     gameEvents/eraidresourceevent.h \
-    gameEvents/receive-request/e-fulfill-request-event.h \
-    gameEvents/receive-request/e-receive-request-type.h \
-    gameEvents/receive-request/e-receive-request-postpone.h \
+    gameEvents/requests/e-fulfill-request-event.h \
+    gameEvents/requests/e-receive-request-type.h \
     gameEvents/ereinforcementsevent.h \
     gameEvents/erequestaidevent.h \
     gameEvents/erequeststrikeevent.h \

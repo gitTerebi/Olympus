@@ -1,7 +1,7 @@
 #ifndef EAPHRODITEHELPACTION_H
 #define EAPHRODITEHELPACTION_H
 
-#include "characters/actions/egodaction.h"
+#include "characters/gods/actions/egodaction.h"
 
 #include "buildings/ehousebase.h"
 

@@ -38,7 +38,7 @@
 #include "fileIO/esavearchive.h"
 
 class eSaveArchive;
-#include "gameEvents/egodquestevent.h"
+#include "gameEvents/gods/egodquestevent.h"
 #include "eepisodegoal.h"
 #include "eemploymentdistributor.h"
 
