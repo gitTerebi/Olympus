@@ -291,9 +291,9 @@ void eWorldWidget::openRequestDialog() {
         const auto& cts = mWorldBoard->cities();
         for(const auto& ct : cts) {
             if(ct->isCurrentCity()) continue;
-            ct->incAttitude(-10, ppid);
+            mBoard->incCityAttitude(ct, -10, ppid);
         }
-        mCity->incAttitude(-10, ppid);
+        mBoard->incCityAttitude(mCity, -10, ppid);
         mWM->updateLabels();
 
         mBoard->requestAid(mCity, cid);

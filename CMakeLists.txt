@@ -382,6 +382,7 @@ set(SOURCES
     engine/ecolonymonumentaction.cpp
     engine/edate.cpp
     engine/edifficulty.cpp
+    engine/e-city-attitude.cpp
     engine/eemploymentdistributor.cpp
     engine/eepisode.cpp
     engine/eepisodegoal.cpp

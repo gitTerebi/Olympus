@@ -44,8 +44,7 @@ void ePlayerRaidEvent::trigger() {
     ed.fCity = mCity;
     const auto rel = mCity->relationship();
     if(rel == eForeignCityRelationship::ally) {
-        const auto wboard = worldBoard();
-        wboard->attackedAlly(pid);
+        board->attackedAllyAttitude(pid);
         board->event(eEvent::allyAttackedByPlayer, ed);
     }
     if(raided) {

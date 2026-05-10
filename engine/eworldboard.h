@@ -62,8 +62,6 @@ public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
 
-    void attackedAlly(const ePlayerId pid);
-
     stdsptr<eWorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);
 

@@ -74,8 +74,7 @@ void ePlayerConquestEvent::trigger() {
         ed.fCity = mCity;
         const auto rel = mCity->relationship();
         if(rel == eForeignCityRelationship::ally) {
-            const auto w = worldBoard();
-            if(w) w->attackedAlly(pid);
+            board->attackedAllyAttitude(pid);
             board->event(eEvent::allyAttackedByPlayer, ed);
         }
         if(conquered) {
@@ -84,7 +83,7 @@ void ePlayerConquestEvent::trigger() {
         if(mCity->isColony()) {
             if(conquered) {
                 board->event(eEvent::colonyRestored, ed);
-                mCity->incAttitude(50, pid);
+                board->incCityAttitude(mCity, 50, pid);
             } else {
                 board->event(eEvent::cityConquerFailed, ed);
             }
@@ -99,7 +98,7 @@ void ePlayerConquestEvent::trigger() {
             } else {
                 board->event(eEvent::cityConquerFailed, ed);
             }
-            mCity->incAttitude(-50, pid);
+            board->incCityAttitude(mCity, -50, pid);
         }
 
         planArmyReturn();

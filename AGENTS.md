@@ -7,6 +7,7 @@ Debug log using printf, not std out
 
 ## Save Serialization
 
+Do not add new saved fields unless the state cannot be derived from existing saved state.
 When adding saved fields, use `eSaveArchive::field(...)` with stable names. Do not append raw `readStream()`/`writeStream()` data to an existing `serialize(eSaveArchive&)`; older tagged saves omit new fields and must remain readable without stream desync.
 
 ## Build

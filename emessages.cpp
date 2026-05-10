@@ -1019,6 +1019,37 @@ bool eMessages::loadImpl() {
                 "rebellion_over_tribute_resumed_title",
                 "rebellion_quelled_tribute_resumed_initial_announcement");
 
+    loadMessage(fAllyResentful,
+                "ally_resentful_title",
+                "ally_resentful_initial_announcement");
+    loadMessage(fRivalHostile,
+                "rival_hostile_title",
+                "rival_hostile_initial_announcement");
+    loadMessage(fVassalRebellious,
+                "vassal_rebellious_title",
+                "vassal_rebellious_initial_announcement");
+    loadMessage(fColonyRebellious,
+                "colony_rebellious_title",
+                "colony_rebellious_initial_announcement");
+    loadMessage(fParentResentful,
+                "parent_resentful_title",
+                "parent_resentful_initial_announcement");
+    loadMessage(fAllyLovesYou,
+                "ally_loves_you_title",
+                "ally_loves_you_initial_announcement");
+    loadMessage(fRivalPleased,
+                "rival_pleased_title",
+                "rival_pleased_initial_announcement");
+    loadMessage(fVassalLovesYou,
+                "vassal_loves_you_title",
+                "vassal_loves_you_initial_announcement");
+    loadMessage(fColonyLovesYou,
+                "colony_loves_you_title",
+                "colony_loves_you_initial_announcement");
+    loadMessage(fParentLovesYou,
+                "parent_loves_you_title",
+                "parent_loves_you_initial_announcement");
+
     loadMessage(fRivalConqueredByAlly,
                 "ally_conquers_rival_title",
                 "ally_conquers_rival_initial_announcement");
