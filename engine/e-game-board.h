@@ -301,6 +301,7 @@ public:
     eDifficulty difficulty(const ePlayerId pid) const;
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d);
+    int savedYear() const { return mSavedYear; }
 
     double appeal(const int tx, const int ty) const;
 
