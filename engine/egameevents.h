@@ -23,8 +23,8 @@ public:
     void loadResources();
 
     void clear();
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     const eCityId mCid;
     eGameBoard& mBoard;

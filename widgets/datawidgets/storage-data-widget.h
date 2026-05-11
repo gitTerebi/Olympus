@@ -1,5 +1,5 @@
-#ifndef ESTORAGEDATAWIDGET_H
-#define ESTORAGEDATAWIDGET_H
+#ifndef STORAGEDATAWIDGET_H
+#define STORAGEDATAWIDGET_H
 
 #include "edatawidget.h"
 
@@ -9,13 +9,14 @@ class eGameBoard;
 class eLabel;
 class eViewModeButton;
 
-class eStorageDataWidget : public eDataWidget {
+class StorageDataWidget : public eDataWidget {
 public:
     using eDataWidget::eDataWidget;
 
-    void initialize();
+    void initialize() override;
+    void openMoreInfoWiget() override;
 protected:
-    void paintEvent(ePainter& p);
+    void paintEvent(ePainter& p) override;
 private:
     eWidget* sdwColumn(const eUIScale uiScale,
             const int iMin, const int iMax,
@@ -27,4 +28,4 @@ private:
     std::vector<eLabel*> mResourceLabels;
 };
 
-#endif // ESTORAGEDATAWIDGET_H
+#endif // STORAGEDATAWIDGET_H

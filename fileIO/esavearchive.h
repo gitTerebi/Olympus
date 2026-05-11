@@ -41,15 +41,21 @@ public:
     }
 
     template <typename T>
-    void field(const char* const name, T& value) {
-        this->field(std::string(name), value);
+    bool field(const char* const name, T& value) {
+        return this->field(std::string(name), value);
     }
 
     template <typename T>
-    void field(const std::string& name, T& value) {
+    bool field(const char* const name, T& value, const T def) {
+        value = def;
+        return this->field(std::string(name), value);
+    }
+
+    template <typename T>
+    bool field(const std::string& name, T& value) {
         if(!tagged()) {
             this->value(value);
-            return;
+            return true;
         }
 
         mTaggedTouched = true;
@@ -62,12 +68,14 @@ public:
             *mDst << name;
             *mDst << static_cast<int32_t>(mFieldBuffer.size());
             mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
+            return true;
         } else {
             auto data = takeField(name);
-            if(data.empty()) return;
+            if(data.empty()) return false;
             eReadSource source(const_cast<char*>(data.data()));
             eReadStream src(source);
             src >> value;
+            return true;
         }
     }
 

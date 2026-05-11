@@ -60,10 +60,9 @@ public:
 
     int employees(const eSector s);
 
+    void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
-private:
-    void serialize(eSaveArchive& ar);
 
     void distribute();
 

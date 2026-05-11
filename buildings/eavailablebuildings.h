@@ -42,8 +42,8 @@ struct eAvailableBuildings {
                   const int id = -1);
 
     void startEpisode(const eAvailableBuildings& o);
-private:    
     void serialize(eSaveArchive& ar);
+private:
 
     void startEpisode(const eAvailableBuildings& o,
                       bool eAvailableBuildings::* ptr);

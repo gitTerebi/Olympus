@@ -1,13 +1,14 @@
-#include "estoragedatawidget.h"
+#include "storage-data-widget.h"
 
 #include "engine/e-game-board.h"
 #include "widgets/elabel.h"
-
+#include "widgets/egamewidget.h"
+#include "widgets/moreinfo/storage-distribution-widget.h"
 #include "eviewmodebutton.h"
 
 #include "elanguage.h"
 
-eWidget* eStorageDataWidget::sdwColumn(
+eWidget* StorageDataWidget::sdwColumn(
         const eUIScale uiScale,
         const int iMin, const int iMax,
         const std::vector<eResourceType>& tps,
@@ -49,7 +50,7 @@ eWidget* eStorageDataWidget::sdwColumn(
     return w0;
 }
 
-void eStorageDataWidget::initialize() {
+void StorageDataWidget::initialize() {
     {
         mSeeDistribution = new eViewModeButton(
                         eLanguage::zeusText(14, 4),
@@ -78,20 +79,30 @@ void eStorageDataWidget::initialize() {
                               iMin1, iMax1, tps,
                               mResourceLabels);
 
+    const int pp = spacing();
+
     const auto w = new eWidget(window());
     w->setNoPadding();
     w->addWidget(w0);
     w->addWidget(w1);
-    const int pp = spacing();
     w->stackHorizontally(10*pp);
     w->fitContent();
 
     inner->addWidget(w);
     w->align(eAlignment::center);
     w->setX(w->x() + 2*pp);
+
+    showMoreInfoButton();
 }
 
-void eStorageDataWidget::paintEvent(ePainter& p) {
+void StorageDataWidget::openMoreInfoWiget() {
+    const auto gw = gameWidget();
+    const auto w = new StorageDistributionWidget(window(), gw);
+    w->initialize(mBoard, viewedCity());
+    gw->openDialog(w);
+}
+
+void StorageDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
         const auto cid = viewedCity();
@@ -106,15 +117,7 @@ void eStorageDataWidget::paintEvent(ePainter& p) {
                 l->fitContent();
                 l->align(eAlignment::right);
             }
-        }/* else {
-            const int iMax = mResourceLabels.size();
-            for(int i = 0; i < iMax; i++) {
-                const auto l = mResourceLabels[i];
-                l->setText("-");
-                l->fitContent();
-                l->align(eAlignment::right);
-            }
-        }*/
+        }
     }
     eWidget::paintEvent(p);
 }

@@ -1,4 +1,13 @@
 #include "eboardcity.h"
+#include <cstdio>
+static void dbgLog(const char* msg) {
+    FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "a");
+    if(f) { fprintf(f, "%s\n", msg); fclose(f); }
+}
+static void dbgLogN(const char* msg, int n) {
+    FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "a");
+    if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
+}
 
 #include "gameEvents/invasions/invasion-handler.h"
 #include "engine/eplague.h"
@@ -9,23 +18,27 @@
 #include "engine/e-game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/efileformat.h"
 
 void eBoardCity::read(eReadStream& src) {
+    { FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "w"); if(f) fclose(f); }
     eSaveArchive ar(src);
     serialize(ar);
 }
 void eBoardCity::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
+    dbgLog("boardcity: id");
     ar.field("id", mId);
 
     ar.field("atlantean", mAtlantean);
 
-    mAvailableBuildings.read(src);
-
-    mCityEvents.read(src);
-
-    mCityPlan.read(src);
+    dbgLog("boardcity: availableBuildings");
+    mAvailableBuildings.serialize(ar);
+    dbgLog("boardcity: cityEvents");
+    mCityEvents.serialize(ar);
+    dbgLog("boardcity: cityPlan");
+    mCityPlan.serialize(ar);
     for(int i = 0; i < mCityPlan.districtCount(); i++) {
         const auto& d = mCityPlan.district(i);
         mEditorDistrictConditions[i] = d.fReadyConditions;
@@ -42,7 +55,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     ar.field("immigrationLimit", mImmigrationLimit);
     ar.field("noFood", mNoFood);
-    mNoFoodSince.read(src);
+    dbgLog("boardcity: noFoodSince");
+    mNoFoodSince.serialize(ar);
 
     int ne;
     ar.field("exportedCityCount", ne);
@@ -61,43 +75,67 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         }
     }
 
-    mEmplDistributor.read(src);
+    dbgLog("boardcity: emplDistributor start");
+    mEmplDistributor.serialize(ar);
+    dbgLog("boardcity: emplDistributor done");
 
     int ns;
+    dbgLog("boardcity: shutdownResourceCount");
     ar.field("shutdownResourceCount", ns);
+    dbgLogN("boardcity: shutdownResourceCount val", ns);
     for(int i = 0; i < ns; i++) {
         eResourceType type;
         ar.field("shutdownResource", type);
         mShutDown.push_back(type);
     }
+    dbgLog("boardcity: shutdownResourceCount done");
 
+    if(!ar.reading() || eFileFormat::hasStockpiledResources(src.formatVersion())) {
+        int nsp;
+        dbgLog("boardcity: stockpiledResourceCount");
+        ar.field("stockpiledResourceCount", nsp, 0);
+        dbgLogN("boardcity: stockpiledResourceCount val", nsp);
+        for(int i = 0; i < nsp; i++) {
+            eResourceType type;
+            ar.field("stockpiledResource", type);
+            mStockpiled.push_back(type);
+        }
+        dbgLog("boardcity: stockpiledResourceCount done");
+    }
+
+    dbgLog("boardcity: manTowers");
     ar.field("manTowers", mManTowers);
-
+    dbgLog("boardcity: shutdownLandTrade");
     ar.field("shutdownLandTrade", mShutdownLandTrade);
+    dbgLog("boardcity: shutdownSeaTrade");
     ar.field("shutdownSeaTrade", mShutdownSeaTrade);
 
+    dbgLog("boardcity: maxRabble");
     ar.field("maxRabble", mMaxRabble);
     ar.field("maxHoplites", mMaxHoplites);
     ar.field("maxHorsemen", mMaxHorsemen);
-
+    dbgLog("boardcity: coverage");
     ar.field("athleticsCoverage", mAthleticsCoverage);
     ar.field("philosophyCoverage", mPhilosophyCoverage);
     ar.field("dramaCoverage", mDramaCoverage);
     ar.field("allDiscCoverage", mAllDiscCoverage);
     ar.field("taxesCoverage", mTaxesCoverage);
+    dbgLog("boardcity: unrest");
     ar.field("unrest", mUnrest);
     ar.field("popularity", mPopularity);
     ar.field("health", mHealth);
     ar.field("excessiveMilitaryServiceCount", mExcessiveMilitaryServiceCount);
     ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
-
+    dbgLog("boardcity: wonGames");
     ar.field("wonGames", mWonGames);
+    dbgLog("boardcity: wonGames done");
 
     {
         int ni;
         ar.field("invasionHandlerCount", ni);
-
+        dbgLogN("boardcity: invasionHandlers", ni);
         for(int i = 0; i < ni; i++) {
+            dbgLogN("boardcity: invasionHandler", i);
             const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
             ii->read(src);
         }
@@ -106,6 +144,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int ngs;
         ar.field("attackingGodCount", ngs);
+        dbgLogN("boardcity: attackingGods", ngs);
         for(int i = 0; i < ngs; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
                 mAttackingGods.push_back(c);
@@ -116,6 +155,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int nms;
         ar.field("monsterCount", nms);
+        dbgLogN("boardcity: monsters", nms);
         for(int i = 0; i < nms; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
                 if(!c) return;
@@ -127,8 +167,9 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int n;
         ar.field("plagueCount", n);
-
+        dbgLogN("boardcity: plagues", n);
         for(int i = 0; i < n; i++) {
+            dbgLogN("boardcity: plague", i);
             const auto p = std::make_shared<ePlague>(mId, mBoard);
             p->read(src);
             mPlagues.push_back(p);
@@ -149,7 +190,9 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int na;
         ar.field("militaryAidCount", na);
+        dbgLogN("boardcity: militaryAid", na);
         for(int i = 0; i < na; i++) {
+            dbgLogN("boardcity: militaryAidItem", i);
             const auto ma = std::make_shared<eMilitaryAid>();
             ma->read(src, &mBoard);
             addMilitaryAid(ma);
@@ -167,11 +210,13 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     ar.field("nextAttackPlanned", mNextAttackPlanned);
-    mNextAttackDate.read(src);
+    dbgLog("boardcity: nextAttackDate");
+    mNextAttackDate.serialize(ar);
 
     {
         int nq;
         ar.field("monsterEventCount", nq);
+        dbgLogN("boardcity: monsterEvents", nq);
         for(int i = 0; i < nq; i++) {
             eMonsterType type;
             ar.field("monsterEventType", type);
@@ -186,6 +231,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int nb;
         ar.field("soldierBannerCount", nb);
+        dbgLogN("boardcity: soldierBanners", nb);
         for(int i = 0; i < nb; i++) {
             eBannerType type;
             ar.field("soldierBannerType", type);
@@ -198,7 +244,9 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int nh;
         ar.field("hippodromeCount", nh);
+        dbgLogN("boardcity: hippodromes", nh);
         for(int i = 0; i < nh; i++) {
+            dbgLogN("boardcity: hippodrome", i);
             const auto h = std::make_shared<eHippodrome>(mId, mBoard);
             h->read(src);
             mHippodromes.push_back(h);
@@ -208,24 +256,28 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     {
         int nr;
         ar.field("reinforcementCount", nr);
+        dbgLogN("boardcity: reinforcements", nr);
         for(int i = 0; i < nr; i++) {
+            dbgLogN("boardcity: reinforcement", i);
             auto& r = mReinforcements.emplace_back();
             r.read(mBoard, src);
         }
     }
 
+    dbgLog("boardcity: defending");
     ar.field("defending", mDefending);
+    dbgLog("boardcity: DONE");
     } else {
         auto& dst = ar.writeStream();
     ar.field("id", mId);
 
     ar.field("atlantean", mAtlantean);
 
-    mAvailableBuildings.write(dst);
+    mAvailableBuildings.serialize(ar);
 
-    mCityEvents.write(dst);
+    mCityEvents.serialize(ar);
 
-    mCityPlan.write(dst);
+    mCityPlan.serialize(ar);
 
     ar.field("wageRate", mWageRate);
     ar.field("taxRate", mTaxRate);
@@ -238,7 +290,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     ar.field("immigrationLimit", mImmigrationLimit);
     ar.field("noFood", mNoFood);
-    mNoFoodSince.write(dst);
+    mNoFoodSince.serialize(ar);
 
     int exportedCityCount = mExported.size();
     ar.field("exportedCityCount", exportedCityCount);
@@ -256,13 +308,20 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         }
     }
 
-    mEmplDistributor.write(dst);
+    mEmplDistributor.serialize(ar);
 
     int shutdownResourceCount = mShutDown.size();
     ar.field("shutdownResourceCount", shutdownResourceCount);
     for(const auto i : mShutDown) {
         auto resource = i;
         ar.field("shutdownResource", resource);
+    }
+
+    int stockpiledResourceCount = mStockpiled.size();
+    ar.field("stockpiledResourceCount", stockpiledResourceCount);
+    for(const auto i : mStockpiled) {
+        auto resource = i;
+        ar.field("stockpiledResource", resource);
     }
 
     ar.field("manTowers", mManTowers);
@@ -348,7 +407,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     ar.field("nextAttackPlanned", mNextAttackPlanned);
-    mNextAttackDate.write(dst);
+    mNextAttackDate.serialize(ar);
 
     int monsterEventCount = mMonsterEvents.size();
     ar.field("monsterEventCount", monsterEventCount);
