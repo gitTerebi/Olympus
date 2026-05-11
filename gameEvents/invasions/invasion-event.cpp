@@ -29,6 +29,7 @@ namespace
 
     constexpr int kInvaderDefeatedAttitudeRestore = 15;
     constexpr int kInvaderWonAttitudeRestore = 35;
+    constexpr int bribeAttackCooldownMonths = 12;
 }
 
 eInvasionEvent::eInvasionEvent(
@@ -116,6 +117,9 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &boa
     {
         return false;
     }
+    const int bribeMonthsAgo = attacker.bribeMonthsAgo();
+    if (bribeMonthsAgo >= 0 && bribeMonthsAgo < bribeAttackCooldownMonths)
+        return false;
 
     auto targetCid = board.personPlayerCapital();
     if (targetCid == eCityId::neutralFriendly ||
@@ -328,6 +332,8 @@ void eInvasionEvent::trigger()
         const auto invadingPid = self->mCity->playerId();
         board->incDrachmas(invadingPid, bribe, eFinanceTarget::tributeReceived);
         board->incDrachmas(pid, -bribe, eFinanceTarget::bribesTributePaid);
+        if (city)
+            city->setBribed();
         eEventData ed(cid);
         ed.fCity = city;
         board->event(eEvent::invasionBribed, ed);

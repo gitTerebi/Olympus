@@ -265,6 +265,8 @@ public:
 
     int wealth() const { return mWealth; }
     void setWealth(const int w) { mWealth = w; }
+    void setBribed() { mBribeMonthsAgo = 0; }
+    int bribeMonthsAgo() const { return mBribeMonthsAgo; }
 
     void setWaterTrade(const bool w, const eCityId cid);
     bool waterTrade(const eCityId cid) const;
@@ -362,6 +364,7 @@ private:
     int mTroops = 0;
     int mYearsElapsed = 0;
     int mWealth = 1; // 1-5
+    int mBribeMonthsAgo = -1;
 
     std::set<eCityId> mWaterTrade;
     bool mVisible = true;

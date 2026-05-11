@@ -448,6 +448,8 @@ std::string eWorldCity::anArmy() const
 void eWorldCity::nextMonth(eGameBoard *const board)
 {
     eInvasionEvent::tryCreateCityInvasion(*this, *board);
+    if (mBribeMonthsAgo >= 0)
+        mBribeMonthsAgo++;
 
     const auto diff = board->personPlayerDifficulty();
     double mult;
@@ -819,6 +821,7 @@ void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
     ar.field("receiveTributeCount", mReceiveTributeCount);
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
+    ar.field("mBribeMonthsAgo", mBribeMonthsAgo, -1); // SAVE_COMPAT_OPTIONAL_FIELD
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count)
