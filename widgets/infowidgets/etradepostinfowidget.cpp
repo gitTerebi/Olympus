@@ -20,12 +20,16 @@ public:
                     const std::string& notBuyingTxt,
                     const std::string& buyingTxt,
                     const eAction& changed,
-                    const bool twoWay) {
+                    const bool twoWay,
+                    std::map<eResourceType, eSwitchButton*>* cartOrderButtons = nullptr,
+                    const eResourceType cartEmpty = eResourceType::none,
+                    const eResourceType cartGet = eResourceType::none) {
         const auto countW = new eWidget(window());
         const auto iconsW = new eWidget(window());
         const auto namesW = new eWidget(window());
         const auto priceW = new eWidget(window());
         const auto buttonsW = new eWidget(window());
+        const auto cartOrderW = new eWidget(window());
         const auto spinsW = new eWidget(window());
         const auto tradedW = new eWidget(window());
 
@@ -34,14 +38,16 @@ public:
         const int rowHeight = mult*23;
         const int countWidth = mult*25;
         const int iconsWidth = mult*40;
-        const int namesWidth = mult*120;
+        const int namesWidth = mult*110;
         const int priceWidth = mult*60;
-        const int buttonsWidth = mult*160;
+        const int buttonsWidth = mult*110;
+        const int cartOrderWidth = mult*70;
         const int spinsWidth = mult*90;
         const int tradedWidth = mult*80;
 
         priceW->setWidth(priceWidth);
         buttonsW->setWidth(buttonsWidth);
+        cartOrderW->setWidth(cartOrderWidth);
 
         for(const auto& trade : importTypes) {
             const auto type = trade.fType;
@@ -127,6 +133,33 @@ public:
 
             buttons[type] = b;
 
+            if(cartOrderButtons) {
+                const auto cb = new eSwitchButton(window());
+                cb->setUnderline(false);
+                cb->setSwitchAction([cb, changed](const int i) {
+                    if(i == 2) cb->setDarkFontColor();
+                    else cb->setLightFontColor();
+                    changed();
+                });
+                cb->setFontSizeS();
+                cb->addValue(eLanguage::zeusText(130, 0)); // accept
+                cb->addValue(eLanguage::zeusText(130, 2)); // get
+                cb->addValue(eLanguage::zeusText(130, 3)); // empty
+                cb->fitContent();
+                cb->setHeight(rowHeight);
+                if(static_cast<bool>(cartEmpty & type)) {
+                    cb->setValue(2);
+                    cb->setDarkFontColor();
+                } else if(static_cast<bool>(cartGet & type)) {
+                    cb->setValue(1);
+                } else {
+                    cb->setValue(0);
+                }
+                (*cartOrderButtons)[type] = cb;
+                cartOrderW->addWidget(cb);
+                cb->align(eAlignment::hcenter);
+            }
+
             const auto s = new eSpinBox(window());
             s->setHeight(rowHeight);
             s->setWidth(spinsWidth);
@@ -178,6 +211,7 @@ public:
         namesW->stackVertically();
         priceW->stackVertically();
         buttonsW->stackVertically();
+        cartOrderW->stackVertically();
         spinsW->stackVertically();
         tradedW->stackVertically();
 
@@ -186,6 +220,7 @@ public:
         namesW->fitContent();
         priceW->fitContent();
         buttonsW->fitContent();
+        cartOrderW->fitContent();
         spinsW->fitContent();
         tradedW->fitContent();
 
@@ -194,6 +229,7 @@ public:
         namesW->setWidth(namesWidth);
         priceW->setWidth(priceWidth);
         buttonsW->setWidth(buttonsWidth);
+        cartOrderW->setWidth(cartOrderWidth);
         spinsW->setWidth(spinsWidth);
         tradedW->setWidth(tradedWidth);
 
@@ -202,10 +238,11 @@ public:
         addWidget(namesW);
         addWidget(priceW);
         addWidget(buttonsW);
+        addWidget(cartOrderW);
         addWidget(spinsW);
         addWidget(tradedW);
 
-        stackHorizontally();
+        stackHorizontally(0);
         setNoPadding();
         fitContent();
     }
@@ -224,7 +261,10 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
 
     eResourceType imports;
     eResourceType exports;
-    stor->getOrders(imports, exports);
+    eResourceType cartEmpty;
+    eResourceType cartGet;
+    eResourceType cartAccept;
+    stor->getOrders(imports, exports, cartEmpty, cartGet, cartAccept);
     const auto& maxCount = stor->maxCount();
 
     const auto stWid = centralWidget();
@@ -233,8 +273,11 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
         std::map<eResourceType, int> maxCount;
         eResourceType imports;
         eResourceType exports;
-        this->get(imports, exports, maxCount);
-        stor->setOrders(imports, exports);
+        eResourceType empty;
+        eResourceType cartGet;
+        eResourceType cartAccept;
+        this->get(imports, exports, empty, cartGet, cartAccept, maxCount);
+        stor->setOrders(imports, exports, empty, cartGet, cartAccept);
         stor->setMaxCount(maxCount);
     };
 
@@ -299,7 +342,8 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
                       mExportButtons, mSpinBoxes, maxCount,
                       eLanguage::zeusText(130, 21),
                       eLanguage::zeusText(130, 13),
-                      changed, twoWay);
+                      changed, twoWay,
+                      &mCartOrderButtons, cartEmpty, cartGet);
 
         wrapper->addWidget(exportsLabel);
         wrapper->addWidget(r);
@@ -338,9 +382,15 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
 
 void eTradePostInfoWidget::get(eResourceType& imports,
                                eResourceType& exports,
+                               eResourceType& empty,
+                               eResourceType& cartGet,
+                               eResourceType& cartAccept,
                                std::map<eResourceType, int>& count) const {
     imports = eResourceType::none;
     exports = eResourceType::none;
+    empty = eResourceType::none;
+    cartGet = eResourceType::none;
+    cartAccept = eResourceType::none;
     for(const auto b : mImportButtons) {
         const auto type = b.first;
         const int val = b.second->currentValue();
@@ -353,6 +403,17 @@ void eTradePostInfoWidget::get(eResourceType& imports,
         const int val = b.second->currentValue();
         if(val == 1) {
             exports = exports | type;
+        }
+    }
+    for(const auto b : mCartOrderButtons) {
+        const auto type = b.first;
+        const int val = b.second->currentValue();
+        if(val == 1) {
+            cartGet = cartGet | type;
+        } else if(val == 0) {
+            cartAccept = cartAccept | type;
+        } else if(val == 2) {
+            empty = empty | type;
         }
     }
     for(const auto s : mSpinBoxes) {

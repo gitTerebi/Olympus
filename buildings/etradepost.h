@@ -27,10 +27,16 @@ public:
     void erase() override;
 
     void setOrders(const eResourceType imports,
-                   const eResourceType exports);
+                   const eResourceType exports,
+                   const eResourceType empty = eResourceType::none,
+                   const eResourceType cartGet = eResourceType::none,
+                   const eResourceType cartAccept = eResourceType::none);
 
     void getOrders(eResourceType& imports,
-                   eResourceType& exports) const;
+                   eResourceType& exports,
+                   eResourceType& empty,
+                   eResourceType& cartGet,
+                   eResourceType& cartAccept) const;
 
     eWorldCity& city() const { return mCity; }
 
@@ -65,6 +71,9 @@ private:
     const eTradePostType mType;
     eResourceType mImports = eResourceType::none;
     eResourceType mExports = eResourceType::none;
+    eResourceType mCartEmpty = eResourceType::none;
+    eResourceType mCartGet = eResourceType::none;
+    eResourceType mCartAccept = eResourceType::none;
     eDiagonalOrientation mO = eDiagonalOrientation::topLeft;
 
     eCharacterCreator mCharGen;

@@ -27,6 +27,9 @@ if not exist "%NINJA%" (
 
 set "PATH=%MINGW%;%PATH%"
 
+powershell -ExecutionPolicy Bypass -File "%ROOT%\tools\check-save-compat.ps1"
+if errorlevel 1 exit /b %errorlevel%
+
 if not exist "%BUILD_DIR%\CMakeCache.txt" (
     cmake -S "%ROOT%" -B "%BUILD_DIR%" -G "Ninja" ^
         -DCMAKE_MAKE_PROGRAM="%NINJA%" ^

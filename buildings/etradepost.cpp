@@ -119,17 +119,29 @@ void eTradePost::erase() {
 }
 
 void eTradePost::setOrders(const eResourceType imports,
-                           const eResourceType exports) {
+                           const eResourceType exports,
+                           const eResourceType empty,
+                           const eResourceType cartGet,
+                           const eResourceType cartAccept) {
     mImports = imports;
     mExports = exports;
+    mCartEmpty = empty;
+    mCartGet = cartGet;
+    mCartAccept = cartAccept;
 
-    eStorageBuilding::setOrders(mExports | mImports, eResourceType::none, eResourceType::none);
+    eStorageBuilding::setOrders(mCartGet, mCartEmpty, mCartAccept);
 }
 
 void eTradePost::getOrders(eResourceType& imports,
-                           eResourceType& exports) const {
+                           eResourceType& exports,
+                           eResourceType& empty,
+                           eResourceType& cartGet,
+                           eResourceType& cartAccept) const {
     imports = mImports;
     exports = mExports;
+    empty = mCartEmpty;
+    cartGet = mCartGet;
+    cartAccept = mCartAccept;
 }
 
 eTile* eTradePost::entryPoint() const {
@@ -296,9 +308,12 @@ void eTradePost::write(eWriteStream& dst) const {
 }
 
 void eTradePost::serialize(eSaveArchive& ar) {
-    ar.field("mImports", mImports);
-    ar.field("mExports", mExports);
-    ar.field("mRouteTimer", mRouteTimer);
+    ar.field("mImports", mImports, eResourceType::none); 
+    ar.field("mExports", mExports, eResourceType::none); 
+    ar.field("mCartEmpty", mCartEmpty, eResourceType::none); 
+    ar.field("mCartGet", mCartGet, eResourceType::none);
+    ar.field("mCartAccept", mCartAccept, eResourceType::none);
+    ar.field("mRouteTimer", mRouteTimer, 0);
 }
 
 bool eTradePost::trades() const {
