@@ -4,7 +4,10 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <type_traits>
 #include <vector>
+#include <cstdio>
+#include <cstdint>
 
 #include "estreams.h"
 
@@ -71,7 +74,15 @@ public:
             return true;
         } else {
             auto data = takeField(name);
-            if(data.empty()) return false;
+            if(data.empty()) {
+                FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
+                if(f) { fprintf(f, "missing %s\n", name.c_str()); fclose(f); }
+                if constexpr(std::is_default_constructible_v<T> &&
+                             std::is_assignable_v<T&, T>) {
+                    value = T{};
+                }
+                return false;
+            }
             eReadSource source(const_cast<char*>(data.data()));
             eReadStream src(source);
             src >> value;
@@ -109,9 +120,38 @@ public:
     }
 
 private:
+    static constexpr int32_t maxFieldNameSize = 256;
+    static constexpr int32_t maxFieldDataSize = 64 * 1024 * 1024;
+
     bool tagged() const {
         if(writing()) return mDst->format() == "eZeus.ez2";
         return mSrc->format() == "eZeus.ez2";
+    }
+
+    bool readFieldHeader(std::string& name, int32_t& size) {
+        int32_t nameSize = 0;
+        *mSrc >> nameSize;
+        if(nameSize < 0 || nameSize > maxFieldNameSize) {
+            mTaggedEnded = true;
+            return false;
+        }
+
+        name.clear();
+        if(nameSize > 0) {
+            name.resize(nameSize);
+            mSrc->read(&name[0], nameSize);
+        }
+
+        *mSrc >> size;
+        if(size < 0) {
+            mTaggedEnded = true;
+            return false;
+        }
+        if(size > maxFieldDataSize) {
+            mTaggedEnded = true;
+            return false;
+        }
+        return true;
     }
 
     std::vector<char> takeField(const std::string& wanted) {
@@ -126,13 +166,8 @@ private:
         while(true) {
             if(mTaggedEnded) return {};
             std::string name;
-            *mSrc >> name;
             int32_t size;
-            *mSrc >> size;
-            if(size < 0) {
-                mTaggedEnded = true;
-                return {};
-            }
+            if(!readFieldHeader(name, size)) return {};
             std::vector<char> data;
             data.resize(size);
             if(size > 0) {
@@ -146,13 +181,8 @@ private:
     void skipRemainingFields() {
         while(!mTaggedEnded) {
             std::string name;
-            *mSrc >> name;
             int32_t size;
-            *mSrc >> size;
-            if(size < 0) {
-                mTaggedEnded = true;
-                return;
-            }
+            if(!readFieldHeader(name, size)) return;
             mSrc->skip(size);
         }
     }

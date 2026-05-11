@@ -2,17 +2,19 @@
 
 #include "widgets/elabel.h"
 #include "widgets/emicrobutton.h"
+#include "widgets/escrollbar.h"
+#include "widgets/elayouthelpers.h"
 #include "elanguage.h"
 #include "emainwindow.h"
 #include "engine/e-game-board.h"
 
 StorageDistributionWidget::StorageDistributionWidget(
-        eMainWindow* const window,
-        eMainWidget* const mw) :
-    eInfoWidget(window, mw, false, false) {}
+    eMainWindow *const window,
+    eMainWidget *const mw) : eInfoWidget(window, mw, false, false) {}
 
 void StorageDistributionWidget::initialize(
-        eGameBoard& board, const eCityId cid) {
+    eGameBoard &board, const eCityId cid)
+{
     const int panelW = std::round(window()->width() * 0.75);
     resize(panelW, height());
 
@@ -22,28 +24,46 @@ void StorageDistributionWidget::initialize(
     const int p = padding();
     const int ww = widgetWidth();
 
-    // fixed button col width — enough for "[S]" / "[M]" text
-    const int btnW = std::round(ww * 0.15);
-    const int iconW = std::round(ww * 0.08);
-    const int amtW  = ww - iconW - 2*btnW - 3*p;
+    const int iconW   = std::round(ww * 0.08);
+    const int nameW   = std::round(ww * 0.10);
+    const int amtW    = std::round(ww * 0.10);
+    const int btnW    = std::round(ww * 0.15);
+    const int tradeW  = std::round(ww * 0.10);
 
     // header row
     {
-        const auto hdr = new eWidget(window());
-        hdr->setNoPadding();
-        int x = iconW + p;
-        const std::string hdrs[3] = { "Amount", "Stockpile", "Mothball" };
-        const int widths[3] = { amtW, btnW, btnW };
-        for(int i = 0; i < 3; i++) {
-            const auto l = new eLabel(hdrs[i], window());
-            l->setFontSizeXS();
-            l->setNoPadding();
-            l->fitContent();
-            l->setX(x);
-            hdr->addWidget(l);
-            x += widths[i] + p;
-        }
-        hdr->fitContent();
+        const auto amtHdr = new eLabel("Amount", window());
+        amtHdr->setFontSizeXS();
+        amtHdr->setNoPadding();
+        amtHdr->fitContent();
+        const auto sHdr = new eLabel("Stockpile", window());
+        sHdr->setFontSizeXS();
+        sHdr->setNoPadding();
+        sHdr->fitContent();
+        const auto mHdr = new eLabel("Mothball", window());
+        mHdr->setFontSizeXS();
+        mHdr->setNoPadding();
+        mHdr->fitContent();
+        const auto twHdr = new eLabel("Trading", window());
+        twHdr->setFontSizeXS();
+        twHdr->setNoPadding();
+        twHdr->fitContent();
+        const auto impHdr = new eLabel("Import", window());
+        impHdr->setFontSizeXS();
+        impHdr->setNoPadding();
+        impHdr->fitContent();
+        const auto expHdr = new eLabel("Export", window());
+        expHdr->setFontSizeXS();
+        expHdr->setNoPadding();
+        expHdr->fitContent();
+        const auto spacer = new eWidget(window());
+        spacer->setNoPadding();
+        const auto nameHdr = new eLabel("Name", window());
+        nameHdr->setFontSizeXS();
+        nameHdr->setNoPadding();
+        nameHdr->fitContent();
+        const auto hdr = eLayoutHelpers::flexRow(
+            window(), ww, {{spacer, iconW, 0}, {nameHdr, nameW, 0}, {amtHdr, amtW, 0}, {sHdr, btnW, 0}, {mHdr, btnW, 0}, {twHdr, tradeW, 0}, {impHdr, tradeW, 0}, {expHdr, tradeW, 0}, {new eWidget(window()), 0, 1}}, {.gap = p});
         addInfoWidget(hdr);
     }
 
@@ -51,76 +71,113 @@ void StorageDistributionWidget::initialize(
     const auto all = eResourceType::allBasic;
     mTypes = eResourceTypeHelpers::extractResourceTypes(all);
     board.updateResources(cid);
-    const auto& src = board.resources(cid);
+    const auto &src = board.resources(cid);
     const auto city = board.boardCityWithId(cid);
 
     const auto res = window()->resolution();
     const auto uiScale = res.uiScale();
 
-    for(int i = 0; i < (int)mTypes.size(); i++) {
+    std::vector<eLayoutHelpers::eFlexItem> rowItems;
+    for (int i = 0; i < (int)mTypes.size(); i++)
+    {
         const auto t = mTypes[i];
-        const auto row = new eWidget(window());
-        row->setNoPadding();
-        int x = 0;
 
-        // icon
-        const auto icon = eResourceTypeHelpers::icon(uiScale, t);
-        const auto ic = new eLabel(window());
-        ic->setTexture(icon);
-        ic->setNoPadding();
-        ic->fitContent();
-        ic->setX(x);
-        row->addWidget(ic);
-        x += iconW + p;
+        const auto icon = new eLabel(window());
+        icon->setTexture(eResourceTypeHelpers::icon(uiScale, t));
+        icon->setNoPadding();
+        icon->fitContent();
 
-        // amount
-        const auto l = new eLabel("-", window());
-        l->setFontSizeXS();
-        l->setNoPadding();
-        if(src) l->setText(std::to_string((*src)[i].second));
-        l->fitContent();
-        l->setX(x);
-        row->addWidget(l);
-        x += amtW + p;
+        const auto nameLabel = new eLabel(eResourceTypeHelpers::typeName(t), window());
+        nameLabel->setFontSizeXS();
+        nameLabel->setNoPadding();
+        nameLabel->fitContent();
 
-        // stockpile button
-        const auto sb = new eMicroButton(window());
-        sb->setNoPadding();
-        sb->setFontSizeXS();
-        sb->setText(city && city->isStockpiled(t) ? "[S]" : "S");
-        sb->setWidth(btnW);
-        sb->fitHeight();
-        sb->setX(x);
-        sb->setPressAction([&board, cid, t, sb]() {
+        const auto amountLabel = new eLabel("-", window());
+        amountLabel->setFontSizeXS();
+        amountLabel->setNoPadding();
+        if (src)
+            amountLabel->setText(std::to_string((*src)[i].second));
+        amountLabel->fitContent();
+
+        const bool stockpiled = city && city->isStockpiled(t);
+        const auto stockpileBtn = new eMicroButton(window());
+        stockpileBtn->setNoPadding();
+        stockpileBtn->setFontSizeXS();
+        if(stockpiled) { stockpileBtn->setText("stockpiling"); stockpileBtn->setDarkFontColor(); }
+        else           { stockpileBtn->setText("using");       stockpileBtn->setLightFontColor(); }
+        stockpileBtn->fitHeight();
+        stockpileBtn->setPressAction([&board, cid, t, stockpileBtn]()
+                                     {
             const auto c = board.boardCityWithId(cid);
             if(!c) return;
-            if(c->isStockpiled(t)) { c->removeStockpile(t); sb->setText("S"); }
-            else { c->addStockpile(t); sb->setText("[S]"); }
-        });
-        mStockpileButtons.push_back(sb);
-        row->addWidget(sb);
-        x += btnW + p;
+            if(c->isStockpiled(t)) { c->removeStockpile(t); stockpileBtn->setText("using");       stockpileBtn->setLightFontColor(); }
+            else                   { c->addStockpile(t);    stockpileBtn->setText("stockpiling"); stockpileBtn->setDarkFontColor(); } });
+        mStockpileButtons.push_back(stockpileBtn);
 
-        // mothball button
-        const auto mb = new eMicroButton(window());
-        mb->setNoPadding();
-        mb->setFontSizeXS();
-        mb->setText(city && city->isShutDown(t) ? "[M]" : "M");
-        mb->setWidth(btnW);
-        mb->fitHeight();
-        mb->setX(x);
-        mb->setPressAction([&board, cid, t, mb]() {
+        const bool shutdown = city && city->isShutDown(t);
+        const auto mothballBtn = new eMicroButton(window());
+        mothballBtn->setNoPadding();
+        mothballBtn->setFontSizeXS();
+        if(shutdown) { mothballBtn->setText("disabled"); mothballBtn->setDarkFontColor(); }
+        else         { mothballBtn->setText("working");  mothballBtn->setLightFontColor(); }
+        mothballBtn->fitHeight();
+        mothballBtn->setPressAction([&board, cid, t, mothballBtn]()
+                                    {
             const auto c = board.boardCityWithId(cid);
             if(!c) return;
-            if(c->isShutDown(t)) { c->removeShutDown(t); mb->setText("M"); }
-            else { c->addShutDown(t); mb->setText("[M]"); }
-        });
-        mMothballButtons.push_back(mb);
-        row->addWidget(mb);
+            if(c->isShutDown(t)) { c->removeShutDown(t); mothballBtn->setText("working");  mothballBtn->setLightFontColor(); }
+            else                 { c->addShutDown(t);    mothballBtn->setText("disabled"); mothballBtn->setDarkFontColor(); } });
+        mMothballButtons.push_back(mothballBtn);
 
-        row->fitContent();
-        addInfoWidget(row, row->height());
+        const auto twLabel = new eLabel("-", window());
+        twLabel->setFontSizeXS();
+        twLabel->setNoPadding();
+        twLabel->fitContent();
+
+        const auto impLabel = new eLabel(city ? std::to_string(city->totalImported(t)) : "-", window());
+        impLabel->setFontSizeXS();
+        impLabel->setNoPadding();
+        impLabel->fitContent();
+
+        const auto expLabel = new eLabel(city ? std::to_string(city->totalExported(t)) : "-", window());
+        expLabel->setFontSizeXS();
+        expLabel->setNoPadding();
+        expLabel->fitContent();
+
+        const auto row = eLayoutHelpers::flexRow(
+            window(), ww,
+            {{icon, iconW, 0}, {nameLabel, nameW, 0}, {amountLabel, amtW, 0}, {stockpileBtn, btnW, 0}, {mothballBtn, btnW, 0}, {twLabel, tradeW, 0}, {impLabel, tradeW, 0}, {expLabel, tradeW, 0}, {new eWidget(window()), 0, 1}},
+            {.gap = p, .align = eLayoutHelpers::eAlign::center});
+
+        rowItems.push_back({row, 0, 0});
     }
 
-    setCloseAction([this]() { eModal::close(); });
+    const int maxH = std::round(window()->height() * 0.5);
+    const auto scrollArea = eLayoutHelpers::flexCol(window(), 0, rowItems, {.gap = p});
+    const int scrollH = std::min(scrollArea->height(), maxH);
+
+    // probe scrollbar width before sizing viewport
+    const auto sb = new eScrollBar(window());
+    sb->initialize(scrollH);
+    const int sbW = sb->width();
+
+    const auto viewport = new eScrollViewport(window());
+    viewport->setNoPadding();
+    viewport->resize(ww - sbW, scrollH);
+    scrollArea->setWidth(ww - sbW);
+    viewport->setPage(scrollArea);
+
+    sb->setViewport(viewport);
+    sb->move(ww - sbW, 0);
+
+    const auto container = new eWidget(window());
+    container->setNoPadding();
+    container->resize(ww, scrollH);
+    container->addWidget(viewport);
+    container->addWidget(sb);
+
+    addInfoWidget(container, scrollH);
+
+    setCloseAction([this]()
+                   { eModal::close(); });
 }

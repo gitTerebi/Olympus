@@ -254,6 +254,8 @@ int eTradePost::sell(const int items) {
             addNotAccept(b.fType, 1);
             b.incUsed(thisPid, 1);
             earned += price;
+            if(const auto thisC = brd.boardCityWithId(thisCid))
+                thisC->addImported(srcCid, b.fType, 1);
         }
         const auto pid = playerId();
         brd.incDrachmas(pid, -earned, eFinanceTarget::importCosts);

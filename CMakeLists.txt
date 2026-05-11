@@ -695,6 +695,7 @@ set(SOURCES
     widgets/erotatebutton.cpp
     widgets/escrollbar.cpp
     widgets/escrollbuttonslist.cpp
+    widgets/elayouthelpers.cpp
     widgets/escrollwidget.cpp
     widgets/escrollwidgetcomplete.cpp
     widgets/eselectcolonywidget.cpp

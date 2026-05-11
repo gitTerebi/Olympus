@@ -544,7 +544,14 @@ void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
                               bool editorMode, eCityId viewedCityId, ePlayerId playerId,
                               const eDrawXY& drawXY, const eDrawTex& drawTex,
                               const eDrawAgora& drawAgora) const {
-    const auto bp = transformedBlueprint();
+    auto bp = transformedBlueprint();
+    // Sort by screen Y for correct painter's algorithm z-order under any view rotation
+    std::sort(bp.begin(), bp.end(), [&](const eStampElement& a, const eStampElement& b) {
+        double rxa, rya, rxb, ryb;
+        drawXY(baseX + a.dx, baseY + a.dy, rxa, rya, 1, 1, 0);
+        drawXY(baseX + b.dx, baseY + b.dy, rxb, ryb, 1, 1, 0);
+        return rya < ryb;
+    });
     // Roads first
     for(const auto& elem : bp) {
         if(elem.type != eBuildingType::road) continue;
@@ -557,7 +564,7 @@ void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
         const bool can = board->canBuild(bx, by, 1, 1, editorMode, viewedCityId, playerId);
         drawTex(rx, ry, eBuildingType::road, 1, can);
     }
-    // Buildings
+    // Buildings (already sorted by screen Y — back to front)
     for(const auto& elem : bp) {
         if(elem.type == eBuildingType::road) continue;
         if(elem.type == eBuildingType::commonAgora && elem.id >= 0) {

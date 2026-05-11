@@ -526,7 +526,9 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             tex->setColorMod(140, 140, 140);
         else if (!can)
             tex->setColorMod(255, 0, 0);
+        tex->setAlpha(120);
         tp.drawTexture(rx, ry, tex, eAlignment::top);
+        tex->clearAlphaMod();
         if (fallback || !can)
             tex->clearColorMod();
     };
@@ -575,7 +577,9 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
                 if (!tex)
                     continue;
                 tex->setColorMod(0, 255, 0);
+                tex->setAlpha(120);
                 tp.drawTexture(rx, ry, tex, eAlignment::top);
+                tex->clearAlphaMod();
                 tex->clearColorMod();
             }
         }

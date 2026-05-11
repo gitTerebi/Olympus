@@ -401,15 +401,10 @@ bool eMainWindow::loadGame(const std::string& path) {
     eReadStream src(source);
     src.readFormat();
     const auto& format = src.format();
-    const int version = src.formatVersion();
     if(format != "eZeus.ez2") {
         printf("Invalid file '%s' format '%s', expected 'eZeus.ez2'.\n",
                path.c_str(), format.c_str());
         return false;
-    }
-    if(version > eFileFormat::version) {
-        printf("Attempting to read '%s' format '%s' version '%i' newer than the executable.\n",
-               path.c_str(), format.c_str(), version);
     }
     eGameWidgetSettings s;
     s.read(src);

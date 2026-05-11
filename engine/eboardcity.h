@@ -380,6 +380,13 @@ public:
     int exported(const eCityId cid, const eResourceType type);
     std::map<eResourceType, int> exported(const eCityId cid) const;
 
+    void addImported(const eCityId cid,
+                     const eResourceType type,
+                     const int count);
+    int imported(const eCityId cid, const eResourceType type) const;
+    int totalImported(const eResourceType type) const;
+    int totalExported(const eResourceType type) const;
+
     void incRoadState() { mRoadState++; }
     int roadState() const { return mRoadState; }
 
@@ -528,6 +535,7 @@ private:
                                              {eResourceType::blackMarble, 0}};
 
     std::map<eCityId, std::map<eResourceType, int>> mExported;
+    std::map<eCityId, std::map<eResourceType, int>> mImported;
 
     std::vector<eSanctuary*> mSanctuaries;
     std::vector<eMonument*> mMonuments;
