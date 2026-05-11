@@ -3,6 +3,7 @@
 
 #include "widgets/eresolution.h"
 #include "engine/etile.h"
+#include "engine/edifficulty.h"
 
 #include <SDL2/SDL_scancode.h>
 
@@ -64,6 +65,7 @@ struct eSettings {
     bool fAgorasTakeFromTradingPosts = false;
     bool fEnableYearlyAutosaves = true;
     bool fDisableEdgeScroll = false;
+    eDifficulty fLastDifficulty = eDifficulty::hero;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;
     int fGeneralVolume = 100;
