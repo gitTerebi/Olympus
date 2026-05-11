@@ -354,7 +354,7 @@ set(SOURCES
     efontcolor.cpp
     egamedir.cpp
     ecursors.cpp
-    gameEvents/invasions/e-invasion-handler.cpp
+    gameEvents/invasions/invasion-handler.cpp
     eiteratesquare.cpp
     elanguage.cpp
     eloadtexthelper.cpp
@@ -462,18 +462,18 @@ set(SOURCES
     gameEvents/gods/egodreasoneventvalue.cpp
     gameEvents/gods/egodtraderesumesevent.cpp
     gameEvents/gods/egodvisitevent.cpp
-    gameEvents/invasions/einvasionevent.cpp
-    gameEvents/invasions/einvasionwarning.cpp
+    gameEvents/invasions/invasion-event.cpp
+    gameEvents/invasions/invasion-warning.cpp
     gameEvents/elandslideevent.cpp
     gameEvents/elavaevent.cpp
     gameEvents/emakerequestevent.cpp
     gameEvents/emilitarychangeevent.cpp
     gameEvents/emonstereventvalue.cpp
-    gameEvents/invasions/emonsterincityevent.cpp
-    gameEvents/invasions/emonsterinvasionevent.cpp
-    gameEvents/invasions/emonsterinvasioneventbase.cpp
+    gameEvents/invasions/monster-in-city-event.cpp
+    gameEvents/invasions/monster-invasion-event.cpp
+    gameEvents/invasions/monster-invasion-event-base.cpp
     gameEvents/emonsterseventvalue.cpp
-    gameEvents/invasions/emonsterunleashedevent.cpp
+    gameEvents/invasions/monster-unleashed-event.cpp
     engine/e-tribute.cpp
     gameEvents/ereceivetributeevent.cpp
     gameEvents/requests/e-pay-tribute-event.cpp

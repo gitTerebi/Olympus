@@ -1,7 +1,7 @@
-#ifndef EMONSTERINVASIONEVENT_H
-#define EMONSTERINVASIONEVENT_H
+#ifndef MONSTER_INVASION_EVENT_H
+#define MONSTER_INVASION_EVENT_H
 
-#include "emonsterinvasioneventbase.h"
+#include "monster-invasion-event-base.h"
 
 enum class eMonsterInvasionWarningType {
     warningInitial,
@@ -42,4 +42,4 @@ private:
     eMonsterInvasionWarning* mInitialWarning = nullptr;
 };
 
-#endif // EMONSTERINVASIONEVENT_H
+#endif // MONSTER_INVASION_EVENT_H

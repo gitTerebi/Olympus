@@ -3,7 +3,7 @@
 #include "spawners/ebanner.h"
 #include "fileIO/ebuildingreader.h"
 #include "fileIO/ebuildingwriter.h"
-#include "gameEvents/invasions/e-invasion-handler.h"
+#include "gameEvents/invasions/invasion-handler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"

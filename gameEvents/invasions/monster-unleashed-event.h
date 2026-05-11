@@ -1,7 +1,7 @@
-#ifndef EMONSTERUNLEASHEDEVENT_H
-#define EMONSTERUNLEASHEDEVENT_H
+#ifndef MONSTER_UNLEASHED_EVENT_H
+#define MONSTER_UNLEASHED_EVENT_H
 
-#include "emonsterinvasioneventbase.h"
+#include "monster-invasion-event-base.h"
 
 class eMonsterUnleashedEvent : public eMonsterInvasionEventBase {
 public:
@@ -13,4 +13,4 @@ public:
     std::string longName() const override;
 };
 
-#endif // EMONSTERUNLEASHEDEVENT_H
+#endif // MONSTER_UNLEASHED_EVENT_H

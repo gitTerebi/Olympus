@@ -1,5 +1,5 @@
-#ifndef EINVASIONWARNING_H
-#define EINVASIONWARNING_H
+#ifndef INVASION_WARNING_H
+#define INVASION_WARNING_H
 
 #include "../ewarning.h"
 
@@ -24,4 +24,4 @@ private:
     const eInvasionWarningType mType;
 };
 
-#endif // EINVASIONWARNING_H
+#endif // INVASION_WARNING_H

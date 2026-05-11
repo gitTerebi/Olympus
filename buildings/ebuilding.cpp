@@ -308,6 +308,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     int string = -1;
     switch(type) {
     case eBuildingType::road:
+    case eBuildingType::roadblock:
         string = 28;
         break;
 

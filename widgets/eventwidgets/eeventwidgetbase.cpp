@@ -26,7 +26,7 @@
 #include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "gameEvents/emonsterseventvalue.h"
-#include "gameEvents/invasions/emonsterinvasioneventbase.h"
+#include "gameEvents/invasions/monster-invasion-event-base.h"
 #include "gameEvents/etidalwaveevent.h"
 
 #include "egodattackeventwidget.h"

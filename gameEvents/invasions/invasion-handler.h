@@ -1,5 +1,5 @@
-#ifndef E_INVASION_HANDLER_H
-#define E_INVASION_HANDLER_H
+#ifndef INVASION_HANDLER_H
+#define INVASION_HANDLER_H
 
 #include <vector>
 
@@ -191,4 +191,4 @@ private:
     eInvasionHandler* mInvasion = nullptr;
 };
 
-#endif // EINVASIONHANDLER_H
+#endif // INVASION_HANDLER_H
