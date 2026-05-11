@@ -250,6 +250,7 @@ public:
 
     void setTroops(const int t) { mTroops = t; }
     int troops() const { return mTroops; }
+    int yearsElapsed() const { return mYearsElapsed; }
     void troopsByType(const int troops,
                       int& infantry,
                       int& cavalry,
@@ -261,8 +262,6 @@ public:
     int shields() const;
     int militaryStrength() const { return mMilitaryStrength; }
     void setMilitaryStrength(const int s);
-    void setNextInvasionYear(const int y) { mNextInvasionYear = y; }
-    int nextInvasionYear() const { return mNextInvasionYear; }
 
     int wealth() const { return mWealth; }
     void setWealth(const int w) { mWealth = w; }
@@ -377,8 +376,6 @@ private:
 
     eResourceType mPayTributeType = eResourceType::drachmas;
     int mPayTributeCount = 100;
-
-    int mNextInvasionYear = -1000000;
 };
 
 #endif // EWORLDCITY_H

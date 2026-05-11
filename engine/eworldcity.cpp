@@ -819,7 +819,6 @@ void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
     ar.field("receiveTributeCount", mReceiveTributeCount);
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
-    ar.field("mNextInvasionYear", mNextInvasionYear);
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count)

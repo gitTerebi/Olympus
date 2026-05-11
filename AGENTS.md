@@ -2,38 +2,27 @@
 
 ## Code Style
 
-Where possible, refactor repeated functions into shared local helpers.
-Debug log using printf, not std out
+Refactor repeated functions into shared local helpers where possible.
+Debug log using printf, not std out.
+Create new files in kebab-case.
 
 ## Save Serialization
 
-Do not add new saved fields unless the state cannot be derived from existing saved state.
-When adding saved fields, use `eSaveArchive::field(...)` with stable names. Do not append raw `readStream()`/`writeStream()` data to an existing `serialize(eSaveArchive&)`; older tagged saves omit new fields and must remain readable without stream desync.
+Add new saved fields only if state cannot be derived from existing.
+Use `eSaveArchive::field(...)` with stable names for saved fields. Avoid appending raw streams; older saves omit new fields and must remain readable.
 
 ## Build
 
-Use `.\build.bat` for default build.
-
-Do not use `cmake --build build` or `cmake --build build-cmake` for normal verification.
+Build only when explicitly requested.
+Use `.\build.bat` for builds.
+Avoid `cmake --build build` for verification.
 
 ## Codebase Navigation
 
-**Game build actions:** `widgets/gamebuild/` owns extracted build/preview placement logic; keep shared placement rules there when build and ghost preview must match.
+Game world/state: `engine/egameboard.*` handles tile/building changes, money, undo, city/player checks, terrain scheduling.
 
-**Game world/state:** `engine/egameboard.*` owns tile/building state changes, money, undo snapshots, city/player checks, and terrain update scheduling.
+Text strings: `zeus-text strings/Zeus_Text.xml` READ ONLY - reference strings at runtime, re-use for messages.
 
-**Text strings:** `zeus-text strings/Zeus_Text.xml` READ ONLY reference strings provided by the game at runtime, re-use for messages. READ ONLY.
+Options menu hotkeys: Add `eHotkeyId` + setting in `esettings.h/cpp`, handler in `egamewidget.cpp keyPressEvent`, menu entry in `eoptionsdata.cpp getOptionsPages()`.
 
-**Terrain rendering:** `textures/etiletotexture.cpp` maps `eTerrain` to textures; missing terrain cases return `fInvalidTex`.
-
-**Terrain textures:** `textures/eterraintextures.cpp` loads terrain textures lazily; follow existing loaded-flag patterns for new terrain.
-
-**Render flow:** `egamewidgetpaint.cpp` paint → `updateTerrainTextures` → `eTileToTexture::get`; `tex` null draws black tile.
-
-**Options menu hotkeys:** Add `eHotkeyId` + setting in `esettings.h/cpp`, handler in `egamewidget.cpp keyPressEvent`, menu entry in `eoptionsdata.cpp getOptionsPages()`.
-
-**Popup buttons:** Prefer `eAcceptButton`/`eCancelButton` for confirm/dismiss dialogs; `eOkButton` is smaller/older style.
-
-**Tooltip system:** Widgets use `setTooltip()`; `eTooltip` renders tooltip text from `eWidget::sTooltip()`.
-
-**Toast notifications:** `mTips` and `mToasts` stack after paused/speed notices; position updates live in `updateTipPositions()` and `updateToastPositions()`.
+Popup buttons: Prefer `eAcceptButton`/`eCancelButton` for dialogs; `eOkButton` is smaller/older.

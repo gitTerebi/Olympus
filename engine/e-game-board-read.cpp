@@ -24,7 +24,7 @@ void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
             ar.field("mYearlyProduction.fLastYear", y.fLastYear);
             ar.field("mYearlyProduction.fThisYear", y.fThisYear);
         }
-        ar.field("mSavedYear", mSavedYear);
+        ar.field("mLastAutosaveYear", mLastAutosaveYear);
     } else {
         int np = static_cast<int>(mYearlyProduction.size());
         ar.field("mYearlyProduction.count", np);
@@ -35,7 +35,7 @@ void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
             ar.field("mYearlyProduction.fLastYear", p.second.fLastYear);
             ar.field("mYearlyProduction.fThisYear", p.second.fThisYear);
         }
-        ar.field("mSavedYear", mSavedYear);
+        ar.field("mLastAutosaveYear", mLastAutosaveYear);
     }
 }
 
