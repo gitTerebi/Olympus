@@ -1267,6 +1267,8 @@ void eSounds::playHitSound(eCharacter* const c) {
     case eCharacterType::satyr:
         sInstance->mSatyr.playHit();
         break;
+    case eCharacterType::shepherd:
+        break;
     default:
         sInstance->mGenHit.playRandomSound(eSoundType::event);
         break;
