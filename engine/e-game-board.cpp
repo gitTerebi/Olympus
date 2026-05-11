@@ -2843,9 +2843,9 @@ void eGameBoard::incTime(const int by)
         const int nd = time / dayLen;
         auto date = mDate;
         date.nextDays(nd, nextMonth, nextYear);
-        if (nextYear && date.year() > mSavedYear)
+        if (nextYear && date.year() > mLastAutosaveYear)
         {
-            mSavedYear = date.year();
+            mLastAutosaveYear = date.year();
             if (mAutosaver)
                 mAutosaver();
         }
@@ -3878,7 +3878,7 @@ void eGameBoard::startEpisode(eEpisode *const e,
 
     mGoals.clear();
     const auto &date = e->fStartDate;
-    mSavedYear = date.year();
+    mLastAutosaveYear = date.year();
     setDate(date);
     for (const auto &d : e->fDrachmas)
     {

@@ -301,7 +301,6 @@ public:
     eDifficulty difficulty(const ePlayerId pid) const;
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d);
-    int savedYear() const { return mSavedYear; }
 
     double appeal(const int tx, const int ty) const;
 
@@ -1115,7 +1114,7 @@ private:
 
     std::map<eResourceType, eYearlyProduction> mYearlyProduction;
 
-    int mSavedYear = -100000;
+    int mLastAutosaveYear = -100000;
 
     eGameUndo mUndo;
 };
