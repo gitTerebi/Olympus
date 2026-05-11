@@ -25,7 +25,7 @@
 #include "eeventwidget.h"
 
 #include "egamewidget.h"
-#include "emessagelistwidget.h"
+#include "e-message-list-widget.h"
 
 #include "elanguage.h"
 #include "engine/eresourcetype.h"

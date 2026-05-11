@@ -1,5 +1,5 @@
-#ifndef EMESSAGELISTWIDGET_H
-#define EMESSAGELISTWIDGET_H
+#ifndef E_MESSAGE_LIST_WIDGET_H
+#define E_MESSAGE_LIST_WIDGET_H
 
 #include <functional>
 
@@ -11,6 +11,7 @@
 class eScrollViewport;
 class eScrollBar;
 class eWidget;
+class eGameBoard;
 
 class eMessageListWidget : public eModal {
 public:
@@ -22,6 +23,7 @@ public:
     void addMessage(const eEventData& ed, const eMessage& msg, const eDate& date);
     void addSavedMessage(const eEventData& ed, const eMessage& msg,
                          const eDate& date, const bool read);
+    void setBoard(eGameBoard* board);
     using eReadChangedAction = std::function<void(int)>;
     void setReadChangedAction(const eReadChangedAction& a) { mReadChanged = a; }
 
@@ -79,4 +81,4 @@ private:
     int mUnreadCount = 0;
 };
 
-#endif // EMESSAGELISTWIDGET_H
+#endif // E_MESSAGE_LIST_WIDGET_H

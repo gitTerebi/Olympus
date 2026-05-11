@@ -3,7 +3,7 @@
 #include "ecursors.h"
 
 #include "emodal.h"
-#include "emessagelistwidget.h"
+#include "e-message-list-widget.h"
 #include "eoptionsdata.h"
 #include "engine/e-game-board.h"
 #include "engine/egifthelpers.h"
@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <cmath>
 
-namespace {
 void formatStoredMessage(eMessage& msg,
                          const eEventData& ed,
                          const std::string& playerName) {
@@ -69,7 +68,6 @@ void formatStoredMessage(eMessage& msg,
     };
     formatText(msg.fTitle);
     formatText(msg.fText);
-}
 }
 
 #include "engine/eknownendpathfinder.h"
@@ -1389,27 +1387,6 @@ void eGameWidget::updateHippodromeIds()
     }
 }
 
-void eGameWidget::showMessage(eEventData &ed,
-                              const eMessageType &msg,
-                              const bool prepend)
-{
-    showMessage(ed, msg.fFull, prepend, false, true);
-}
-
-void eGameWidget::showMessage(eEventData &ed,
-                              const eEventMessageType &msg,
-                              const bool prepend)
-{
-    eMessageType m = msg;
-    std::string reason = ed.fReason;
-    if (reason.empty())
-    {
-        reason = msg.fNoReason;
-    }
-    eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
-    showMessage(ed, m.fFull, prepend, false, true);
-}
-
 void eGameWidget::showTip(const ePlayerCityTarget &target,
                           const std::string &tip)
 {
@@ -1519,250 +1496,6 @@ void eGameWidget::updateTipPositions()
         const int wh = w->height();
         y += wh + 2 * p;
     }
-}
-
-void eGameWidget::createToastWidget(eToast &toast)
-{
-    // Create the widget for a toast
-    eEventData edCopy = toast.fEd;
-    const auto msg = toast.fMsg;
-    const auto tw = new eFlatButton(window());
-    tw->setNoPadding();
-    tw->setFontSizeXS();
-    // Truncate title if too long for toast
-    auto title = msg.fTitle;
-    if (const auto &c = toast.fEd.fCity)
-        eStringHelpers::replaceAll(title, "[city_name]", c->name());
-    if (const auto &c = toast.fEd.fRivalCity)
-        eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
-    eStringHelpers::replaceAll(title, "[item]",
-                               eResourceTypeHelpers::typeLongName(toast.fEd.fResourceType));
-    eStringHelpers::replaceAll(title, "[itemshort]",
-                               eResourceTypeHelpers::typeName(toast.fEd.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(toast.fEd.fGod));
-    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(toast.fEd.fMonster));
-    if (title.length() > 40)
-    {
-        title = title.substr(0, 37) + "...";
-    }
-    tw->setText(title);
-    tw->fitContent();
-    tw->setPressAction([this, edCopy, msg, tw]() mutable
-    {
-        // User clicked toast - show the message as popup dialog
-        for (int i = 0; i < int(mToasts.size()); i++)
-        {
-            if (mToasts[i].fWid == tw)
-            {
-                mToasts.erase(mToasts.begin() + i);
-                break;
-            }
-        }
-        tw->deleteLater();
-        updateToastPositions();
-        showMessage(edCopy, msg, false, true, false); // Don't log again - already logged
-    });
-    addWidget(tw);
-    const int p = tw->padding();
-    tw->resize(tw->width() + 2 * p, tw->height() + 2 * p);
-    const int vw = width() - mGm->width();
-    tw->setX((vw - tw->width()) / 2);
-    toast.fWid = tw;
-}
-
-void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
-{
-    // Toast: temporary on-screen notification (5 seconds)
-    // History was already logged when showMessage was called - toast is just UI notification
-    eToast &toast = mToasts.emplace_back();
-    toast.fEd = ed;
-    toast.fMsg = msg;
-    toast.fDate = mBoard->date();
-    // 5 seconds at ~60fps = 300 frames
-    toast.fExpireFrame = mFrame + 300;
-    createToastWidget(toast);
-    updateToastPositions();
-}
-
-void eGameWidget::setMessageListWidget(eMessageListWidget* const w) {
-    mMsgListWidget = w;
-    if(!mMsgListWidget || !mBoard) return;
-    mMsgListWidget->setReadChangedAction([this](const int index) {
-        mBoard->setMessageLogRead(index);
-    });
-    for(const auto& lm : mBoard->messageLog()) {
-        mMsgListWidget->addSavedMessage(lm.fEd, lm.fMsg, lm.fDate, lm.fRead);
-    }
-}
-
-void eGameWidget::updateToastPositions()
-{
-    const int p = padding();
-    int y;
-    if (mPausedLabel)
-    {
-        y = mPausedLabel->y() + mPausedLabel->height() + 2 * p;
-    }
-    else
-    {
-        y = 5 * p;
-    }
-    if (mSpeedLabel && mSpeedLabel->visible())
-    {
-        y += mSpeedLabel->height() + 2 * p;
-    }
-    for (const auto &tip : mTips)
-    {
-        y += tip.fWid->height() + 2 * p;
-    }
-    for (const auto &toast : mToasts)
-    {
-        const auto w = toast.fWid;
-        w->setY(y);
-        y += w->height() + 2 * p;
-    }
-}
-
-void eGameWidget::showMessage(eEventData &ed,
-                                const eMessage &msg,
-                                const bool prepend,
-                                const bool forcePopup,
-                                const bool logToHistory)
-{
-    // ALL messages are logged at origin time (when showMessage is called)
-    // Toast vs popup is just a display decision - history already recorded above
-    if (logToHistory && mMsgListWidget) {
-        auto storedMsg = msg;
-        formatStoredMessage(storedMsg, ed, window()->leader());
-        const eDate messageDate = mBoard->date();
-        mMsgListWidget->addMessage(ed, storedMsg, messageDate);
-        mBoard->addMessageLog(ed, storedMsg, messageDate);
-    }
-
-    const auto &target = ed.fTarget;
-    const auto ppid = mBoard->personPlayer();
-    if (target.isPlayerTarget())
-    {
-        const auto pid = target.playerTarget();
-        if (pid != ppid)
-            return;
-    }
-    else if (target.isCityTarget())
-    {
-        const auto cid = target.cityTarget();
-        const auto pid = mBoard->cityIdToPlayerId(cid);
-        if (pid != ppid)
-            return;
-    }
-
-    const bool requiresAction = ed.fCloseOnAction || !ed.fCityConditionalActions.empty() || ed.fPrimaryAction || ed.fSecondaryAction || ed.fTertiaryAction;
-
-    // Non-actionable messages: show toast notification (history already logged)
-    if (!requiresAction && !forcePopup)
-    {
-        if (mToasts.size() >= 3) {
-            eToast pendingToast;
-            pendingToast.fEd = ed;
-            pendingToast.fMsg = msg;
-            pendingToast.fWid = nullptr;
-            pendingToast.fDate = mBoard->date();
-            pendingToast.fExpireFrame = 0; // Set when promoted
-            mPendingToasts.push_back(pendingToast);
-            return;
-        }
-        showToast(ed, msg);
-        return;
-    }
-
-    // Actionable messages: show popup dialog
-    // ... rest of popup handling
-
-    if (mMsgBox)
-    {
-        auto &smsg = prepend ? mSavedMsgs.emplace_front() : mSavedMsgs.emplace_back();
-        smsg.fEd = ed;
-        smsg.fMsg = msg;
-        smsg.fForcePopup = forcePopup;
-        return;
-    }
-    const auto msgb = new eMessageBox(window());
-    mMsgBox = msgb;
-    const bool wasPaused = mPaused;
-    if (!wasPaused)
-        switchPause();
-    msgb->setHeight(height() / 3);
-    msgb->setWidth(width() / 2);
-    eAction a;
-    if (ed.fChar)
-    {
-        const auto ch = ed.fChar;
-        const auto tile = ed.fTile;
-        a = [this, ch, tile]()
-        {
-            if (ch)
-            {
-                const auto t = ch->tile();
-                viewTile(t);
-            }
-            else
-            {
-                viewTile(tile);
-            }
-        };
-    }
-    else if (ed.fTile)
-    {
-        const auto tile = ed.fTile;
-        a = [this, tile]()
-        {
-            viewTile(tile);
-        };
-    }
-    ed.fDate = mBoard->date();
-    ed.fPlayerName = window()->leader();
-
-    const auto requestActionTaken = std::make_shared<bool>(false);
-    if(ed.fType == eMessageEventType::generalRequestGranted) {
-        const auto wrapAction = [requestActionTaken](eAction& action) {
-            if(!action) return;
-            const auto oldAction = action;
-            action = [requestActionTaken, oldAction]() {
-                *requestActionTaken = true;
-                oldAction();
-            };
-        };
-        wrapAction(ed.fPrimaryAction);
-        wrapAction(ed.fSecondaryAction);
-        wrapAction(ed.fTertiaryAction);
-        for(auto& a : ed.fCityConditionalActions) {
-            wrapAction(a.second);
-        }
-    }
-
-    const auto close = [this, wasPaused, ed, requestActionTaken, msgb]()
-    {
-        if(ed.fType == eMessageEventType::generalRequestGranted &&
-           msgb->closable() &&
-           !*requestActionTaken) {
-            if(ed.fSecondaryAction) ed.fSecondaryAction();
-            else if(ed.fTertiaryAction) ed.fTertiaryAction();
-        }
-        mMsgBox = nullptr;
-        if (!wasPaused)
-            switchPause();
-        if (mSavedMsgs.empty())
-            return;
-        auto &msg = mSavedMsgs.front();
-        showMessage(msg.fEd, msg.fMsg, false, msg.fForcePopup, true);
-        mSavedMsgs.pop_front();
-    };
-
-    msgb->initialize(*mBoard, ed, a, close, msg);
-
-    window()->execDialog(msgb, msgb->closable(), close, this);
-    msgb->align(eAlignment::bottom | eAlignment::hcenter);
-    msgb->setY(msgb->y() - mGm->width() / 10);
-    msgb->setX(msgb->x() - mGm->width() / 2);
 }
 
 bool eGameWidget::roadPath(std::vector<eOrientation> &path)
@@ -3890,4 +3623,10 @@ void eGameWidget::openDialog(eWidget *const d)
 void eGameWidget::updateRequestButtons()
 {
     mGm->updateRequestButtons();
+}
+
+void eGameWidget::setMessageListWidget(eMessageListWidget* const w)
+{
+    mMsgListWidget = w;
+    if(mBoard) w->setBoard(mBoard);
 }
