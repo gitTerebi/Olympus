@@ -29,8 +29,8 @@ public:
 
     void prepareForCollapse() override {
         mNextRipe = 0;
-        mCurrentTile = 0;
-        mCurrentStage = 0;
+        mGrownFields = 0;
+        mFieldStage = 0;
     }
 
     void read(eReadStream& src) override;
@@ -40,8 +40,8 @@ private:
 
     const std::vector<eBuildingTextures>& mTextures;
     double mNextRipe = 0;
-    int mCurrentTile = 0;  // 0 - 4
-    int mCurrentStage = 0; // 0 - 4
+    int mGrownFields = 0;  // 0 - 5
+    int mFieldStage = 0;   // 0 - 4
 
     int mProducedThisYear = 0;
     std::array<int,12> mMonthlyProduced{};

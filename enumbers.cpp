@@ -341,10 +341,10 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("olive_press_processing_period_i", sOlivePressProcessingPeriod, 20000, 1, 1000000);
     loadI("winery_processing_period_i", sWineryProcessingPeriod, 20000, 1, 1000000);
-    loadI("armory_processing_period_i", sArmoryProcessingPeriod, 40000, 1, 1000000);
-    loadI("sculpture_studio_processing_period_i", sSculptureStudioProcessingPeriod, 100000, 1, 1000000);
+    loadI("armory_processing_period_i", sArmoryProcessingPeriod, 21000, 1, 1000000);
+    loadI("sculpture_studio_processing_period_i", sSculptureStudioProcessingPeriod, 21000, 1, 1000000);
 
-    loadI("farm_ripe_period_i", sFarmRipePeriod, 15000, 1, 1000000);
+    loadI("farm_ripe_period_i", sFarmRipePeriod, 25550, 1, 1000000);
 
     loadI("shepherd_goatherd_max_distance_i", sShepherdGoatherdMaxDistance, 40, 1, 1000);
     loadI("shepherd_goatherd_max_groom_i", sShepherdGoatherdMaxGroom, 20, 1, 1000);
@@ -405,7 +405,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("heros_hall_spawn_period_i", sHerosHallSpawnPeriod, 5000, 1, 1000000);
 
     loadI("horse_ranch_wheat_use_period_i", sHorseRanchWheatUsePeriod, 1000, 1, 1000000);
-    loadI("horse_ranch_horse_spawn_period_i", sHorseRanchHorseSpawnPeriod, 40000, 1, 1000000);
+    loadI("horse_ranch_horse_spawn_period_i", sHorseRanchHorseSpawnPeriod, 21000, 1, 1000000);
 
     loadI("patroler_max_distance_i", sPatrolerMaxDistance, 40, 5, 1000);
     loadI("patroler_wait_time_i", sPatrolerWaitTime, 5000, 1, 1000000);
@@ -432,12 +432,12 @@ void eNumbers::sLoad(const std::string& path) {
     loadD("tree_vine_cursed_fully_ripe_period_multiplier_d", sTreeVineCursedFullyRipePeriodMultiplier, 0.333, 0.1, 1.);
     loadD("tree_vine_cursed_ripe_period_multiplier_d", sTreeVineCursedRipePeriodMultiplier, 3., 1, 9);
 
-    loadI("marble_collect_period_i", sMarbleCollectTime, 10000, 1, 1000000);
-    loadI("bronze_collect_period_i", sBronzeCollectTime, 10000, 1, 1000000);
-    loadI("silver_collect_period_i", sSilverCollectTime, 10000, 1, 1000000);
-    loadI("wood_collect_period_i", sWoodCollectTime, 10000, 1, 1000000);
-    loadI("fish_collect_period_i", sFishCollectTime, 10000, 1, 1000000);
-    loadI("urchin_collect_period_i", sUrchinCollectTime, 10000, 1, 1000000);
+    loadI("marble_collect_period_i", sMarbleCollectTime, 9800, 1, 1000000);
+    loadI("bronze_collect_period_i", sBronzeCollectTime, 8500, 1, 1000000);
+    loadI("silver_collect_period_i", sSilverCollectTime, 8500, 1, 1000000);
+    loadI("wood_collect_period_i", sWoodCollectTime, 8500, 1, 1000000);
+    loadI("fish_collect_period_i", sFishCollectTime, 29000, 1, 1000000);
+    loadI("urchin_collect_period_i", sUrchinCollectTime, 29000, 1, 1000000);
 
     loadI("grower_max_distance_i", sGrowerMaxDistance, 40, 5, 1000);
     loadI("grower_max_groom_i", sGrowerMaxGroom, 5, 1, 1000);
