@@ -693,6 +693,7 @@ SOURCES += \
         widgets/erotatebutton.cpp \
         widgets/escrollbar.cpp \
         widgets/escrollbuttonslist.cpp \
+        widgets/elayouthelpers.cpp \
         widgets/escrollwidget.cpp \
         widgets/escrollwidgetcomplete.cpp \
         widgets/eselectcolonywidget.cpp \
@@ -1156,7 +1157,6 @@ HEADERS += \
     exmlparser.h \
     fileIO/ebuildingreader.h \
     fileIO/ebuildingwriter.h \
-    fileIO/efileformat.h \
     fileIO/ereadstream.h \
     fileIO/estreams.h \
     fileIO/ewritestream.h \
@@ -3337,6 +3337,5 @@ DISTFILES += \
     textureTemplates/zeusStairs \
     textureTemplates/zeusStatue \
     textureTemplates/zeusTrees
-
 
 

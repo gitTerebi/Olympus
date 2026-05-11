@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "pointers/estdpointer.h"
-#include "efileformat.h"
 
 class eTile;
 class eBuilding;
@@ -187,14 +186,12 @@ public:
     void handlePostFuncs();
 
     const std::string& format() const { return mFormat; }
-    int formatVersion() const { return mFormatVersion; }
 private:
     std::vector<std::pair<eFunc, const char*>> mPostFuncs;
 
     eReadSource mSrc;
 
     std::string mFormat;
-    int mFormatVersion = 0;
 };
 
 #endif // EREADSTREAM_H

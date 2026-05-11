@@ -1,11 +1,11 @@
 #include "eboardcity.h"
 #include <cstdio>
 static void dbgLog(const char* msg) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "a");
+    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
     if(f) { fprintf(f, "%s\n", msg); fclose(f); }
 }
 static void dbgLogN(const char* msg, int n) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "a");
+    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
     if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
 }
 
@@ -18,10 +18,8 @@ static void dbgLogN(const char* msg, int n) {
 #include "engine/e-game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/efileformat.h"
 
 void eBoardCity::read(eReadStream& src) {
-    { FILE* f = fopen("C:/Users/somtam/Desktop/boardcity_dbg.txt", "w"); if(f) fclose(f); }
     eSaveArchive ar(src);
     serialize(ar);
 }
@@ -58,23 +56,6 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     dbgLog("boardcity: noFoodSince");
     mNoFoodSince.serialize(ar);
 
-    int ne;
-    ar.field("exportedCityCount", ne);
-    for(int i = 0; i < ne; i++) {
-        eCityId cid;
-        ar.field("exportedCityId", cid);
-        auto& e = mExported[cid];
-        int nr;
-        ar.field("exportedResourceCount", nr);
-        for(int j = 0; j < nr; j++) {
-            eResourceType r;
-            ar.field("exportedResource", r);
-            int n;
-            ar.field("exportedAmount", n);
-            e[r] = n;
-        }
-    }
-
     dbgLog("boardcity: emplDistributor start");
     mEmplDistributor.serialize(ar);
     dbgLog("boardcity: emplDistributor done");
@@ -90,18 +71,16 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
     dbgLog("boardcity: shutdownResourceCount done");
 
-    if(!ar.reading() || eFileFormat::hasStockpiledResources(src.formatVersion())) {
-        int nsp;
-        dbgLog("boardcity: stockpiledResourceCount");
-        ar.field("stockpiledResourceCount", nsp, 0);
-        dbgLogN("boardcity: stockpiledResourceCount val", nsp);
-        for(int i = 0; i < nsp; i++) {
-            eResourceType type;
-            ar.field("stockpiledResource", type);
-            mStockpiled.push_back(type);
-        }
-        dbgLog("boardcity: stockpiledResourceCount done");
+    int nsp = 0;
+    dbgLog("boardcity: stockpiledResourceCount");
+    ar.field("stockpiledResourceCount", nsp, 0);
+    dbgLogN("boardcity: stockpiledResourceCount val", nsp);
+    for(int i = 0; i < nsp; i++) {
+        eResourceType type;
+        ar.field("stockpiledResource", type);
+        mStockpiled.push_back(type);
     }
+    dbgLog("boardcity: stockpiledResourceCount done");
 
     dbgLog("boardcity: manTowers");
     ar.field("manTowers", mManTowers);
@@ -131,8 +110,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     dbgLog("boardcity: wonGames done");
 
     {
-        int ni;
-        ar.field("invasionHandlerCount", ni);
+        int ni = 0;
+        ar.field("invasionHandlerCount", ni, 0);
         dbgLogN("boardcity: invasionHandlers", ni);
         for(int i = 0; i < ni; i++) {
             dbgLogN("boardcity: invasionHandler", i);
@@ -142,8 +121,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int ngs;
-        ar.field("attackingGodCount", ngs);
+        int ngs = 0;
+        ar.field("attackingGodCount", ngs, 0);
         dbgLogN("boardcity: attackingGods", ngs);
         for(int i = 0; i < ngs; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
@@ -153,8 +132,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nms;
-        ar.field("monsterCount", nms);
+        int nms = 0;
+        ar.field("monsterCount", nms, 0);
         dbgLogN("boardcity: monsters", nms);
         for(int i = 0; i < nms; i++) {
             src.readCharacter(&mBoard, [this](eCharacter* const c) {
@@ -165,8 +144,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int n;
-        ar.field("plagueCount", n);
+        int n = 0;
+        ar.field("plagueCount", n, 0);
         dbgLogN("boardcity: plagues", n);
         for(int i = 0; i < n; i++) {
             dbgLogN("boardcity: plague", i);
@@ -188,8 +167,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("pop25000", mPop25000);
 
     {
-        int na;
-        ar.field("militaryAidCount", na);
+        int na = 0;
+        ar.field("militaryAidCount", na, 0);
         dbgLogN("boardcity: militaryAid", na);
         for(int i = 0; i < na; i++) {
             dbgLogN("boardcity: militaryAidItem", i);
@@ -200,8 +179,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nh;
-        ar.field("summonedHeroCount", nh);
+        int nh = 0;
+        ar.field("summonedHeroCount", nh, 0);
         for(int i = 0; i < nh; i++) {
             eHeroType h;
             ar.field("summonedHero", h);
@@ -214,8 +193,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     mNextAttackDate.serialize(ar);
 
     {
-        int nq;
-        ar.field("monsterEventCount", nq);
+        int nq = 0;
+        ar.field("monsterEventCount", nq, 0);
         dbgLogN("boardcity: monsterEvents", nq);
         for(int i = 0; i < nq; i++) {
             eMonsterType type;
@@ -229,8 +208,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nb;
-        ar.field("soldierBannerCount", nb);
+        int nb = 0;
+        ar.field("soldierBannerCount", nb, 0);
         dbgLogN("boardcity: soldierBanners", nb);
         for(int i = 0; i < nb; i++) {
             eBannerType type;
@@ -242,8 +221,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nh;
-        ar.field("hippodromeCount", nh);
+        int nh = 0;
+        ar.field("hippodromeCount", nh, 0);
         dbgLogN("boardcity: hippodromes", nh);
         for(int i = 0; i < nh; i++) {
             dbgLogN("boardcity: hippodrome", i);
@@ -254,8 +233,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nr;
-        ar.field("reinforcementCount", nr);
+        int nr = 0;
+        ar.field("reinforcementCount", nr, 0);
         dbgLogN("boardcity: reinforcements", nr);
         for(int i = 0; i < nr; i++) {
             dbgLogN("boardcity: reinforcement", i);
@@ -266,6 +245,54 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     dbgLog("boardcity: defending");
     ar.field("defending", mDefending);
+
+    int ne = 0;
+    dbgLog("boardcity: exportedCityCount");
+    ar.field("exportedCityCount", ne, 0);
+    dbgLogN("boardcity: exportedCityCount val", ne);
+    for(int i = 0; i < ne; i++) {
+        eCityId cid;
+        dbgLogN("boardcity: exportedCityId index", i);
+        ar.field("exportedCityId", cid);
+        auto& e = mExported[cid];
+        int nr = 0;
+        dbgLog("boardcity: exportedResourceCount");
+        ar.field("exportedResourceCount", nr, 0);
+        dbgLogN("boardcity: exportedResourceCount val", nr);
+        for(int j = 0; j < nr; j++) {
+            eResourceType r;
+            dbgLogN("boardcity: exportedResource index", j);
+            ar.field("exportedResource", r);
+            int n = 0;
+            ar.field("exportedAmount", n, 0);
+            e[r] = n;
+        }
+    }
+    dbgLog("boardcity: exported done");
+
+    int ni = 0;
+    dbgLog("boardcity: importedCityCount");
+    ar.field("importedCityCount", ni, 0);
+    dbgLogN("boardcity: importedCityCount val", ni);
+    for(int i = 0; i < ni; i++) {
+        eCityId cid;
+        dbgLogN("boardcity: importedCityId index", i);
+        ar.field("importedCityId", cid);
+        auto& e = mImported[cid];
+        int nr = 0;
+        dbgLog("boardcity: importedResourceCount");
+        ar.field("importedResourceCount", nr, 0);
+        dbgLogN("boardcity: importedResourceCount val", nr);
+        for(int j = 0; j < nr; j++) {
+            eResourceType r;
+            dbgLogN("boardcity: importedResource index", j);
+            ar.field("importedResource", r);
+            int n = 0;
+            ar.field("importedAmount", n, 0);
+            e[r] = n;
+        }
+    }
+    dbgLog("boardcity: imported done");
     dbgLog("boardcity: DONE");
     } else {
         auto& dst = ar.writeStream();
@@ -291,22 +318,6 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("immigrationLimit", mImmigrationLimit);
     ar.field("noFood", mNoFood);
     mNoFoodSince.serialize(ar);
-
-    int exportedCityCount = mExported.size();
-    ar.field("exportedCityCount", exportedCityCount);
-    for(const auto& e : mExported) {
-        auto cityId = e.first;
-        ar.field("exportedCityId", cityId);
-        const auto& map = e.second;
-        int exportedResourceCount = map.size();
-        ar.field("exportedResourceCount", exportedResourceCount);
-        for(const auto& r : map) {
-            auto resource = r.first;
-            auto amount = r.second;
-            ar.field("exportedResource", resource);
-            ar.field("exportedAmount", amount);
-        }
-    }
 
     mEmplDistributor.serialize(ar);
 
@@ -438,5 +449,37 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     }
 
     ar.field("defending", mDefending);
+
+    int exportedCityCount = mExported.size();
+    ar.field("exportedCityCount", exportedCityCount);
+    for(const auto& e : mExported) {
+        auto cityId = e.first;
+        ar.field("exportedCityId", cityId);
+        const auto& map = e.second;
+        int exportedResourceCount = map.size();
+        ar.field("exportedResourceCount", exportedResourceCount);
+        for(const auto& r : map) {
+            auto resource = r.first;
+            auto amount = r.second;
+            ar.field("exportedResource", resource);
+            ar.field("exportedAmount", amount);
+        }
+    }
+
+    int importedCityCount = mImported.size();
+    ar.field("importedCityCount", importedCityCount);
+    for(const auto& e : mImported) {
+        auto cityId = e.first;
+        ar.field("importedCityId", cityId);
+        const auto& map = e.second;
+        int importedResourceCount = map.size();
+        ar.field("importedResourceCount", importedResourceCount);
+        for(const auto& r : map) {
+            auto resource = r.first;
+            auto amount = r.second;
+            ar.field("importedResource", resource);
+            ar.field("importedAmount", amount);
+        }
+    }
     }
 }

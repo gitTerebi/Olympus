@@ -10,6 +10,16 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
+static void campaignDbgLog(const char* msg) {
+    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
+    if(f) { fprintf(f, "%s\n", msg); fclose(f); }
+}
+
+static void campaignDbgLogN(const char* msg, int n) {
+    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
+    if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
+}
+
 eCampaign::eCampaign() {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
@@ -302,8 +312,11 @@ bool eCampaign::sReadGlossary(const std::string& name,
 }
 
 void eCampaign::read(eReadStream& src) {
+    { FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "w"); if(f) fclose(f); }
+    campaignDbgLog("campaign: read start");
     eSaveArchive ar(src);
     serialize(ar);
+    campaignDbgLog("campaign: serialize done");
 
     if(mBriefId != 0 && mCompleteId != 0) {
         const auto& brief = eLanguage::zeusMM(mBriefId);
@@ -314,9 +327,12 @@ void eCampaign::read(eReadStream& src) {
     }
 
     if(src.format() == "eZeus.ez2") { // save file
+        campaignDbgLog("campaign: currentEpisode");
         const auto e = currentEpisode();
         const auto board = e->fBoard;
+        campaignDbgLog("campaign: loadResources");
         board->loadResources();
+        campaignDbgLog("campaign: loadResources done");
     }
 }
 
@@ -328,6 +344,7 @@ void eCampaign::write(eWriteStream& dst) const {
 void eCampaign::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
     auto& src = ar.readStream();
+    campaignDbgLog("campaign: header");
     ar.field("bitmap", mBitmap);
     ar.field("isPak", mIsPak);
     if(mIsPak) {
@@ -340,8 +357,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
     ar.field("currentColonyEpisode", mCurrentColonyEpisode);
     ar.field("currentEpisodeType", mCurrentEpisodeType);
     {
-        int nc;
-        ar.field("drachmasCount", nc);
+        int nc = 0;
+        ar.field("drachmasCount", nc, 0);
+        campaignDbgLogN("campaign: drachmas", nc);
         for(int i = 0; i < nc; i++) {
             ePlayerId pid;
             ar.field("drachmasPlayerId", pid);
@@ -353,13 +371,17 @@ void eCampaign::serialize(eSaveArchive& ar) {
         ar.field("price", p.second);
     }
     ar.field("difficulty", mDifficulty);
+    campaignDbgLog("campaign: world");
     mWorldBoard.read(src);
+    campaignDbgLog("campaign: parent board");
     mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
     mParentBoard->read(src);
+    campaignDbgLog("campaign: parent board done");
 
     {
-        int ne;
-        ar.field("playedColonyEpisodeCount", ne);
+        int ne = 0;
+        ar.field("playedColonyEpisodeCount", ne, 0);
+        campaignDbgLogN("campaign: played colony episodes", ne);
         for(int i = 0; i < ne; i++) {
             int e;
             ar.field("playedColonyEpisode", e);
@@ -368,8 +390,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
     }
 
     {
-        int nc;
-        ar.field("colonyBoardCount", nc);
+        int nc = 0;
+        ar.field("colonyBoardCount", nc, 0);
+        campaignDbgLogN("campaign: colony boards", nc);
         for(int i = 0; i < nc; i++) {
             auto& b = mColonyBoards.emplace_back();
             const bool finished = colonyEpisodeFinished(i);
@@ -380,8 +403,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
     }
 
     {
-        int ne;
-        ar.field("parentCityEpisodeCount", ne);
+        int ne = 0;
+        ar.field("parentCityEpisodeCount", ne, 0);
+        campaignDbgLogN("campaign: parent episodes", ne);
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eParentCityEpisode>();
             e->fBoard = mParentBoard.get();
@@ -392,8 +416,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
     }
 
     {
-        int ne;
-        ar.field("colonyEpisodeCount", ne);
+        int ne = 0;
+        ar.field("colonyEpisodeCount", ne, 0);
+        campaignDbgLogN("campaign: colony episodes", ne);
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eColonyEpisode>();
             e->fBoard = mColonyBoards[i].get();
@@ -404,8 +429,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
     }
 
     {
-        int ne;
-        ar.field("forColonyCount", ne);
+        int ne = 0;
+        ar.field("forColonyCount", ne, 0);
+        campaignDbgLogN("campaign: for colony", ne);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
             set->read(src, &mWorldBoard);
@@ -413,8 +439,9 @@ void eCampaign::serialize(eSaveArchive& ar) {
         }
     }
     {
-        int ne;
-        ar.field("forParentCount", ne);
+        int ne = 0;
+        ar.field("forParentCount", ne, 0);
+        campaignDbgLogN("campaign: for parent", ne);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
             set->read(src, &mWorldBoard);
@@ -517,15 +544,10 @@ bool eCampaign::load(const std::string& name) {
     eReadStream src(source);
     src.readFormat();
     const auto& format = src.format();
-    const int version = src.formatVersion();
     if(format != "eZeus.epak") {
         printf("Invalid file '%s' format '%s', expected 'eZeus.epak'.\n",
                pakFile.c_str(), format.c_str());
         return false;
-    }
-    if(version > eFileFormat::version) {
-        printf("Attempting to read '%s' format '%s' version '%i' newer than the executable.\n",
-               pakFile.c_str(), format.c_str(), version);
     }
     read(src);
     src.handlePostFuncs();

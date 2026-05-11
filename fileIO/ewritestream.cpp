@@ -16,7 +16,7 @@ eWriteStream::eWriteStream(const eWriteTarget& dst) :
 void eWriteStream::writeFormat(const std::string& format) {
     mFormat = format;
     *this << std::string(format);
-    *this << eFileFormat::version;
+    *this << 0;
 }
 
 void eWriteStream::writeTile(eTile* const tile) {

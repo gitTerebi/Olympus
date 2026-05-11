@@ -13,7 +13,8 @@ eReadStream::eReadStream(const eReadSource& src) :
 
 void eReadStream::readFormat() {
     *this >> mFormat;
-    *this >> mFormatVersion;
+    int ignoredLegacyVersion;
+    *this >> ignoredLegacyVersion;
 }
 
 eTile* eReadStream::readTile(eGameBoard& board) {

@@ -2400,6 +2400,44 @@ std::map<eResourceType, int> eBoardCity::exported(const eCityId cid) const {
     return it->second;
 }
 
+void eBoardCity::addImported(const eCityId cid,
+                              const eResourceType type,
+                              const int count) {
+    auto& map = mImported[cid];
+    const auto it = map.find(type);
+    if(it == map.end()) {
+        map[type] = count;
+    } else {
+        map[type] += count;
+    }
+}
+
+int eBoardCity::imported(const eCityId cid, const eResourceType type) const {
+    const auto cit = mImported.find(cid);
+    if(cit == mImported.end()) return 0;
+    const auto it = cit->second.find(type);
+    if(it == cit->second.end()) return 0;
+    return it->second;
+}
+
+int eBoardCity::totalImported(const eResourceType type) const {
+    int total = 0;
+    for(const auto& [cid, map] : mImported) {
+        const auto it = map.find(type);
+        if(it != map.end()) total += it->second;
+    }
+    return total;
+}
+
+int eBoardCity::totalExported(const eResourceType type) const {
+    int total = 0;
+    for(const auto& [cid, map] : mExported) {
+        const auto it = map.find(type);
+        if(it != map.end()) total += it->second;
+    }
+    return total;
+}
+
 void eBoardCity::incTerrainState() {
     mTerrainState++;
     mResourceTilesUpdate = true;
