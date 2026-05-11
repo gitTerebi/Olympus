@@ -43,8 +43,8 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
         o.fAlignTop = true;
         int texId;
         if(i >= usedFields) texId = 0;
-        else if(i < mCurrentTile) texId = 4;
-        else if(i == mCurrentTile) texId = mCurrentStage;
+        else if(i < mGrownFields) texId = 4;
+        else if(i == mGrownFields) texId = mFieldStage;
         else texId = 0;
         const auto type = resourceType();
         switch(type) {
@@ -68,14 +68,9 @@ void eFarmBase::timeChanged(const int by) {
         mNextRipe += by*effectiveness();
         if(mNextRipe > eNumbers::sFarmRipePeriod / 5.0) {
             mNextRipe = 0;
-            if(++mCurrentStage >= 5) {
-                mCurrentStage = 0;
-                if(++mCurrentTile >= 5) {
-                    const int c = addProduced(resourceType(), 4);
-                    mProducedThisYear += c;
-                    mMonthlyProduced[mRingIdx] += c;
-                    mCurrentTile = 0;
-                }
+            if(++mFieldStage >= 5) {
+                mFieldStage = 0;
+                if(mGrownFields < 5) ++mGrownFields;
             }
         }
     }
@@ -87,33 +82,36 @@ void eFarmBase::nextMonth() {
     mProducedThisYear -= mMonthlyProduced[mRingIdx];
     mMonthlyProduced[mRingIdx] = 0;
     if(mProducedThisYear < 0) mProducedThisYear = 0;
+
+    if(getBoard().date().month() == eMonth::july) {
+        // harvest whatever has grown this year, then reset
+        const int steps = mGrownFields * 5 + mFieldStage;
+        const int c = addProduced(resourceType(), steps * 8 / 25);
+        mProducedThisYear += c;
+        mMonthlyProduced[mRingIdx] += c;
+        mNextRipe = 0;
+        mGrownFields = 0;
+        mFieldStage = 0;
+    }
 }
 
 int eFarmBase::productionPercent() const {
-    const int currentStep = mCurrentTile * 5 + mCurrentStage;
+    const int currentStep = mGrownFields * 5 + mFieldStage;
     return currentStep * 100 / 25;
 }
 
 eMonth eFarmBase::nextHarvestMonth() const {
-    const int currentStep = mCurrentTile * 5 + mCurrentStage;
-    const int remainingSteps = 25 - currentStep;
-    const double fullStepTime = eNumbers::sFarmRipePeriod / 5.0 / effectiveness();
-    const double partialStepTime = (eNumbers::sFarmRipePeriod / 5.0 - mNextRipe) / effectiveness();
-    const double remainingTimeMs = partialStepTime + (remainingSteps - 1) * fullStepTime;
-    const int remainingDays = std::round(remainingTimeMs / eNumbers::sDayLength);
-    const eDate currentDate = getBoard().date();
-    eDate harvestDate = currentDate + remainingDays;
-    return harvestDate.month();
+    return eMonth::july;
 }
 
 void eFarmBase::serialize(eSaveArchive& ar) {
     ar.field("mNextRipe", mNextRipe);
     int combined;
-    if(ar.writing()) combined = mCurrentTile * 5 + mCurrentStage;
+    if(ar.writing()) combined = mGrownFields * 5 + mFieldStage;
     ar.field("combined", combined);
     if(ar.reading()) {
-        mCurrentTile  = std::clamp(combined / 5, 0, 4);
-        mCurrentStage = std::clamp(combined % 5, 0, 4);
+        mGrownFields  = std::clamp(combined / 5, 0, 5);
+        mFieldStage = std::clamp(combined % 5, 0, 4);
     }
     ar.field("mProducedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
