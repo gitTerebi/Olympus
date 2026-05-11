@@ -638,6 +638,8 @@ set(SOURCES
     widgets/egamemenu.cpp
     widgets/egamemenubase.cpp
     widgets/egamewidget.cpp
+    widgets/toasts/toast-manager.cpp
+    widgets/toasts/popup-message.cpp
      widgets/gameworld/ehitdetection.cpp
      widgets/egamewidgetbuild.cpp
      widgets/gamebuild/ecommonhousingbuild.cpp
@@ -663,7 +665,7 @@ set(SOURCES
     widgets/emainwidget.cpp
     widgets/emenuloadingwidget.cpp
     widgets/e-message-box.cpp
-    widgets/emessagelistwidget.cpp
+    widgets/e-message-list-widget.cpp
     widgets/emessagewidget.cpp
     widgets/emicrobutton.cpp
     widgets/emilitarymoreinfowidget.cpp
