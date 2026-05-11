@@ -41,8 +41,8 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     eCityId mCid;
 

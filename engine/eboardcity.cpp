@@ -1363,6 +1363,18 @@ void eBoardCity::removeShutDown(const eResourceType type) {
     distributeEmployees();
 }
 
+bool eBoardCity::isStockpiled(const eResourceType type) const {
+    return eVectorHelpers::contains(mStockpiled, type);
+}
+
+void eBoardCity::addStockpile(const eResourceType type) {
+    if(!isStockpiled(type)) mStockpiled.push_back(type);
+}
+
+void eBoardCity::removeStockpile(const eResourceType type) {
+    eVectorHelpers::remove(mStockpiled, type);
+}
+
 int eBoardCity::industryJobVacancies(const eResourceType type) const {
     const auto bs = eIndustryHelpers::sBuildings(type);
     int result = 0;

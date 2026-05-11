@@ -120,7 +120,11 @@ std::vector<eCartTask> eStorageBuilding::cartTasks() const {
     const auto gets = eResourceTypeHelpers::extractResourceTypes(mGet);
     const auto empties = eResourceTypeHelpers::extractResourceTypes(mEmpty);
 
+    const auto& board = getBoard();
+    const auto city = board.boardCityWithId(cityId());
+
     for(const auto g : gets) {
+        if(city && city->isStockpiled(g)) continue;
         const int space = spaceLeft(g);
         if(space > 0) {
             eCartTask task;
@@ -144,6 +148,7 @@ std::vector<eCartTask> eStorageBuilding::cartTasks() const {
 
     const auto& stash = this->stash();
     for(const auto& s : stash) {
+        if(city && city->isStockpiled(s.fType)) continue;
         const bool g = static_cast<bool>(mGet & s.fType);
         if(g) continue;
         eCartTask task;

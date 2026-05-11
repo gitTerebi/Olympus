@@ -10,6 +10,7 @@ namespace eFileFormat {
         ruinsSavedBuilding,
         yearlyProduction,
         ruinsRestoreBundle,
+        stockpiledResources,
 
         nextVersion
     };
@@ -46,6 +47,10 @@ namespace eFileFormat {
 
     inline bool hasRuinsRestoreBundle(const int version) {
         return version >= ruinsRestoreBundle;
+    }
+
+    inline bool hasStockpiledResources(const int version) {
+        return version >= stockpiledResources;
     }
 
 }

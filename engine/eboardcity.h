@@ -161,6 +161,10 @@ public:
     void removeShutDown(const eResourceType type);
     int industryJobVacancies(const eResourceType type) const;
 
+    bool isStockpiled(const eResourceType type) const;
+    void addStockpile(const eResourceType type);
+    void removeStockpile(const eResourceType type);
+
     using eBuildingValidator = std::function<bool(eBuilding*)>;
     std::vector<eBuilding*> buildings(const eBuildingValidator& v) const;
     std::vector<eBuilding*> buildings(const eBuildingType type) const;
@@ -605,6 +609,7 @@ private:
 
     eEmploymentDistributor mEmplDistributor;
     std::vector<eResourceType> mShutDown;
+    std::vector<eResourceType> mStockpiled;
     std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
 
     eAvailableBuildings mAvailableBuildings;

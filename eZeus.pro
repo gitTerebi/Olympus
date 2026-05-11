@@ -1,4 +1,4 @@
-TEMPLATE = app
+﻿TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 CONFIG -= app_bundle
@@ -586,7 +586,7 @@ SOURCES += \
         widgets/datawidgets/e-overview-data-widget.cpp \
         widgets/datawidgets/epopulationdatawidget.cpp \
         widgets/datawidgets/esciencedatawidget.cpp \
-        widgets/datawidgets/estoragedatawidget.cpp \
+        widgets/datawidgets/storage-data-widget.cpp \
         widgets/datawidgets/eviewmodebutton.cpp \
         widgets/eacceptbutton.cpp \
         widgets/eactionlistwidget.cpp \
@@ -736,7 +736,8 @@ SOURCES += \
         widgets/infowidgets/etradepostinfowidget.cpp \
         widgets/infowidgets/etriremewharfinfowidget.cpp \
         widgets/moreinfo/ecityfinanceswidget.cpp \
-        widgets/moreinfo/eworkforceallocationwidget.cpp
+        widgets/moreinfo/eworkforceallocationwidget.cpp \
+        widgets/moreinfo/storage-distribution-widget.cpp
 
 HEADERS += \
     audio/egodsounds.h \
@@ -2805,7 +2806,7 @@ HEADERS += \
     widgets/datawidgets/e-overview-data-widget.h \
     widgets/datawidgets/epopulationdatawidget.h \
     widgets/datawidgets/esciencedatawidget.h \
-    widgets/datawidgets/estoragedatawidget.h \
+    widgets/datawidgets/storage-data-widget.h \
     widgets/datawidgets/eviewmodebutton.h \
     widgets/eacceptbutton.h \
     widgets/eactionlistwidget.h \
@@ -2951,7 +2952,8 @@ HEADERS += \
     widgets/infowidgets/etradepostinfowidget.h \
     widgets/infowidgets/etriremewharfinfowidget.h \
     widgets/moreinfo/ecityfinanceswidget.h \
-    widgets/moreinfo/eworkforceallocationwidget.h
+    widgets/moreinfo/eworkforceallocationwidget.h \
+    widgets/moreinfo/storage-distribution-widget.h \
 
 DISTFILES += \
     Adventures/The Founding of Athens/The Founding of Athens.epak \
@@ -3335,3 +3337,6 @@ DISTFILES += \
     textureTemplates/zeusStairs \
     textureTemplates/zeusStatue \
     textureTemplates/zeusTrees
+
+
+
