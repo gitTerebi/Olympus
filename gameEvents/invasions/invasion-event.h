@@ -1,5 +1,5 @@
-#ifndef EINVASIONEVENT_H
-#define EINVASIONEVENT_H
+#ifndef INVASION_EVENT_H
+#define INVASION_EVENT_H
 
 #include "../egameevent.h"
 #include "../epointeventvalue.h"
@@ -106,4 +106,4 @@ private:
     ePlayerId mSentByPlayer = ePlayerId::neutralFriendly;
 };
 
-#endif // EINVASIONEVENT_H
+#endif // INVASION_EVENT_H

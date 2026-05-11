@@ -50,8 +50,8 @@
 #include "emessageeventtype.h"
 
 #include "gameEvents/gods/egodattackevent.h"
-#include "gameEvents/invasions/emonsterunleashedevent.h"
-#include "gameEvents/invasions/einvasionevent.h"
+#include "gameEvents/invasions/monster-unleashed-event.h"
+#include "gameEvents/invasions/invasion-event.h"
 #include "gameEvents/ereceivetributeevent.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
 #include "gameEvents/emakerequestevent.h"
@@ -65,7 +65,7 @@
 
 #include "eeventdata.h"
 
-#include "gameEvents/invasions/e-invasion-handler.h"
+#include "gameEvents/invasions/invasion-handler.h"
 #include "characters/actions/emonsteraction.h"
 
 #include "evectorhelpers.h"

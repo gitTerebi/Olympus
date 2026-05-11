@@ -1,4 +1,4 @@
-#include "emonsterincityevent.h"
+#include "monster-in-city-event.h"
 
 #include "elanguage.h"
 #include "engine/e-game-board.h"

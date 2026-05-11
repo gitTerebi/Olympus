@@ -28,6 +28,7 @@ int costBase(const eBuildingType type)
     case eBuildingType::erase:
         return 1;
     case eBuildingType::road:
+    case eBuildingType::roadblock:
         return 2;
     case eBuildingType::bridge:
         return 5;

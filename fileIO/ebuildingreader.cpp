@@ -54,6 +54,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::road: {
         b = e::make_shared<eRoad>(board, cid);
     } break;
+    case eBuildingType::roadblock: {
+        b = e::make_shared<eRoad>(board, cid);
+    } break;
     case eBuildingType::commonAgora: {
         eAgoraOrientation o;
         src >> o;

@@ -27,7 +27,7 @@
 #include "characters/echaracter.h"
 
 #include "spawners/eentrypoint.h"
-#include "gameEvents/invasions/e-invasion-handler.h"
+#include "gameEvents/invasions/invasion-handler.h"
 
 stdsptr<eCharActFunc> eCharActFunc::sCreate(
         eGameBoard& board,

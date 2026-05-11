@@ -1,4 +1,4 @@
-#include "e-invasion-handler.h"
+#include "invasion-handler.h"
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
@@ -52,7 +52,7 @@
 #include "etilehelper.h"
 #include "buildings/epalace.h"
 
-#include "einvasionevent.h"
+#include "invasion-event.h"
 #include "gameEvents/eplayerconquestevent.h"
 
 #include "engine/eknownendpathfinder.h"

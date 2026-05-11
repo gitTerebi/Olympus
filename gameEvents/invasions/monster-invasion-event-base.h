@@ -1,5 +1,5 @@
-#ifndef EMONSTERINVASIONEVENTBASE_H
-#define EMONSTERINVASIONEVENTBASE_H
+#ifndef MONSTER_INVASION_EVENT_BASE_H
+#define MONSTER_INVASION_EVENT_BASE_H
 
 #include "../egameevent.h"
 #include "../epointeventvalue.h"
@@ -49,4 +49,4 @@ private:
     std::vector<eMonsterType> mSpawned;
 };
 
-#endif // EMONSTERINVASIONEVENTBASE_H
+#endif // MONSTER_INVASION_EVENT_BASE_H

@@ -20,6 +20,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     const auto type = b->type();
     switch(type) {
     case eBuildingType::road:
+    case eBuildingType::roadblock:
         break;
     case eBuildingType::commonAgora: {
         const auto ca = static_cast<const eCommonAgora*>(b);

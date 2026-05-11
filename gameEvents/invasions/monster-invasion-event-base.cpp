@@ -1,4 +1,4 @@
-#include "emonsterinvasioneventbase.h"
+#include "monster-invasion-event-base.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"

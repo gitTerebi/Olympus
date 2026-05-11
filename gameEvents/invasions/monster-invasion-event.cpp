@@ -1,4 +1,4 @@
-#include "emonsterinvasionevent.h"
+#include "monster-invasion-event.h"
 
 #include "elanguage.h"
 #include "engine/e-game-board.h"

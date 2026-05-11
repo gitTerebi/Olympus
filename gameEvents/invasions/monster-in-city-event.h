@@ -1,7 +1,7 @@
-#ifndef EMONSTERINCITYEVENT_H
-#define EMONSTERINCITYEVENT_H
+#ifndef MONSTER_IN_CITY_EVENT_H
+#define MONSTER_IN_CITY_EVENT_H
 
-#include "emonsterinvasioneventbase.h"
+#include "monster-invasion-event-base.h"
 
 class eMonsterInCityEvent : public eMonsterInvasionEventBase {
 public:
@@ -13,4 +13,4 @@ public:
     std::string longName() const override;
 };
 
-#endif // EMONSTERINCITYEVENT_H
+#endif // MONSTER_IN_CITY_EVENT_H
