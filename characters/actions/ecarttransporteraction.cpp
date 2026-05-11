@@ -49,7 +49,15 @@ bool eCartTransporterAction::decide() {
             mNoTarget = false;
             const bool hr = c->hasResource();
             if(!hr || mWaitOutside) wait(1000);
-            else if(hr) waitOutside();
+            else if(hr) {
+                const auto rt = c->resType();
+                const int cc = c->resCount();
+                eCartTask task;
+                task.fMaxCount = cc;
+                task.fResource = rt;
+                task.fType = eCartActionType::give;
+                findTarget(task);
+            }
             mTarget = nullptr;
         } else {
             int cc = c->resCount();
@@ -135,8 +143,16 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
 
     const auto bType = mBuilding->type();
 
+    // Producers prefer granaries over storehouses/trading posts
+    const bool isProducer = bType != eBuildingType::warehouse &&
+                            bType != eBuildingType::granary &&
+                            bType != eBuildingType::tradePost;
+    const bool hasGiveTasks = std::any_of(tasks.begin(), tasks.end(),
+        [](const eCartTask& t) { return t.fType == eCartActionType::give; });
+    const auto granaryOnly = std::make_shared<bool>(isProducer && hasGiveTasks);
+
     // 2. Check each tile for valid target buildings
-    const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by]
+    const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by, granaryOnly]
                            (eThreadTile* const t) {
         // 2.1 Skip tiles without buildings
         if(!t->isUnderBuilding()) return false;
@@ -148,7 +164,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         bool found = false;
         const auto& ub = t->underBuilding();
 
-        // 2.3 Skip trading posts for agora vendors when setting disabled
+        // 2.3 Producers: first pass accepts only granaries
+        if(*granaryOnly && ub.type() != eBuildingType::granary) return false;
+
+        // 2.4 Skip trading posts for agora vendors when setting disabled
         if(ub.type() == eBuildingType::tradePost) {
             if(!board().agorasTakeFromTradingPosts()) {
                 const auto v = dynamic_cast<eVendor*>(mBuilding);
@@ -156,16 +175,11 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
             }
         }
 
-        // 2.4 Check if building can fulfill any cart tasks
+        // 2.5 Check if building can fulfill any cart tasks
         for(const auto& task : tasks) {
             const auto res = task.fResource;
 
             if(task.fType == eCartActionType::take) {
-                // Skip storage buildings that accept/buy this resource
-                if(bType == eBuildingType::warehouse ||
-                   bType == eBuildingType::granary) {
-                    if(ub.gets(res)) continue;
-                }
                 if(ub.resourceHas(res)) found = true;
             } else { // give
                 if(ub.empties(res)) continue;
@@ -173,13 +187,13 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
             }
 
             if(found) {
-                // 2.5 Calculate transferable amount
+                // 2.6 Calculate transferable amount
                 int mc = (task.fType == eCartActionType::take) ?
                     std::min(ub.resourceCount(res), task.fMaxCount) :
                     std::min(ub.resourceSpaceLeft(res), task.fMaxCount);
                 if(mc <= 0) continue;
 
-                // 2.6 Valid target found
+                // 2.7 Valid target found
                 *ttask = task;
                 *bx = t->x();
                 *by = t->y();
@@ -193,34 +207,44 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
     const auto finishAction = std::make_shared<eCTA_findTargetFinish>(
                                   board(), this);
 
-    const auto a = e::make_shared<eMoveToAction>(c);
-    a->setStateRelevance(eStateRelevance::resourcesInBuildings |
-                         eStateRelevance::buildings);
-    a->setFinishAction(finishAction);
+    const auto startSearch = [this, tptr, c, tasks, finalTile, finishAction,
+                               ttask, bx, by, granaryOnly]() {
+        const auto a = e::make_shared<eMoveToAction>(c);
+        a->setStateRelevance(eStateRelevance::resourcesInBuildings |
+                             eStateRelevance::buildings);
+        a->setFinishAction(finishAction);
 
-    a->setFoundAction([tptr, this, c, ttask, bx, by, finishAction]() {
-        finishAction->setXY(*bx, *by);
-        if(!tptr) return;
-        const auto& board = this->board();
-        const auto b = board.buildingAt(*bx, *by);
-        mTarget = b;
-        mWaitOutside = false;
-        mTask = *ttask;
-        startResourceAction(mTask);
-        c->setActionType(eCharacterActionType::walk);
-    });
-    a->setFindFailAction([tptr, this]() {
-        if(!tptr) return;
-        mNoTarget = true;
-    });
-    a->setRemoveLastTurn(true);
-    if(const auto cart = dynamic_cast<eCartTransporter*>(c)) {
-        a->setMaxFindDistance(cart->maxDistance());
-    }
-    const auto w = getWalkable();
-    a->start(finalTile, w);
+        a->setFoundAction([tptr, this, c, ttask, bx, by, finishAction]() {
+            finishAction->setXY(*bx, *by);
+            if(!tptr) return;
+            const auto& board = this->board();
+            const auto b = board.buildingAt(*bx, *by);
+            mTarget = b;
+            mWaitOutside = false;
+            mTask = *ttask;
+            startResourceAction(mTask);
+            c->setActionType(eCharacterActionType::walk);
+        });
+        a->setFindFailAction([tptr, this, granaryOnly, tasks]() {
+            if(!tptr) return;
+            if(*granaryOnly) {
+                // No granary found — retry without granary restriction
+                *granaryOnly = false;
+                findTarget(tasks);
+            } else {
+                mNoTarget = true;
+            }
+        });
+        a->setRemoveLastTurn(true);
+        if(const auto cart = dynamic_cast<eCartTransporter*>(c)) {
+            a->setMaxFindDistance(cart->maxDistance());
+        }
+        const auto w = getWalkable();
+        a->start(finalTile, w);
+        setCurrentAction(a);
+    };
 
-    setCurrentAction(a);
+    startSearch();
 }
 
 void eCartTransporterAction::goBack() {

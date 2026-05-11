@@ -20,10 +20,14 @@ public:
                     const ePrevNextAction& prevNext);
     void get(eResourceType& imports,
              eResourceType& exports,
+             eResourceType& empty,
+             eResourceType& cartGet,
+             eResourceType& cartAccept,
              std::map<eResourceType, int>& count) const;
 private:
     std::map<eResourceType, eSwitchButton*> mImportButtons;
     std::map<eResourceType, eSwitchButton*> mExportButtons;
+    std::map<eResourceType, eSwitchButton*> mCartOrderButtons;
     std::map<eResourceType, eSpinBox*> mSpinBoxes;
 };
 
