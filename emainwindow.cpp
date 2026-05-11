@@ -229,6 +229,11 @@ void eMainWindow::setEnableYearlyAutosaves(const bool b) {
     mSettings.write();
 }
 
+void eMainWindow::setLastDifficulty(const eDifficulty d) {
+    mSettings.fLastDifficulty = d;
+    mSettings.write();
+}
+
 void eMainWindow::startGameAction(eGameBoard* const board,
                                   const eGameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {

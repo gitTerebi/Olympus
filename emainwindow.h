@@ -55,6 +55,7 @@ public:
     void setDoubleCartCapacity(const bool b);
     void setAgorasTakeFromTradingPosts(const bool b);
     void setEnableYearlyAutosaves(const bool b);
+    void setLastDifficulty(const eDifficulty d);
 
     void startGameAction(eGameBoard* const board,
                          const eGameWidgetSettings& settings);

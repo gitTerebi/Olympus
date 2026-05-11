@@ -199,16 +199,17 @@ void eEpisodeIntroductionWidget::initialize(
         diffLabel->setNoPadding();
         diffLabel->setFontSizeS();
         const auto diffText = eLanguage::zeusText(44, 219);
-        const auto defDiff = eDifficulty::hero;
+        const auto defDiff = window()->settings().fLastDifficulty;
         const auto diff = std::make_shared<eDifficulty>(defDiff);
         c->setDifficulty(defDiff);
         const auto hdiff = eDifficultyHelpers::name(*diff);
         diffLabel->setText("  " + diffText + "  " + hdiff);
         diffLabel->fitContent();
 
-        const auto down = new eDownButton(window());
+        const auto w = window();
+        const auto down = new eDownButton(w);
         diffW->addWidget(down);
-        down->setPressAction([diff, diffLabel, diffText, c, diffW]() {
+        down->setPressAction([diff, diffLabel, diffText, c, diffW, w]() {
             if(*diff == eDifficulty::beginner) return;
             const int diffi = static_cast<int>(*diff);
             *diff = static_cast<eDifficulty>(diffi - 1);
@@ -216,11 +217,12 @@ void eEpisodeIntroductionWidget::initialize(
             diffLabel->setText("  " + diffText + " " + hdiff);
             diffLabel->fitContent();
             c->setDifficulty(*diff);
+            w->setLastDifficulty(*diff);
         });
 
-        const auto up = new eUpButton(window());
+        const auto up = new eUpButton(w);
         diffW->addWidget(up);
-        up->setPressAction([diff, diffLabel, diffText, c, diffW]() {
+        up->setPressAction([diff, diffLabel, diffText, c, diffW, w]() {
             if(*diff == eDifficulty::olympian) return;
             const int diffi = static_cast<int>(*diff);
             *diff = static_cast<eDifficulty>(diffi + 1);
@@ -228,6 +230,7 @@ void eEpisodeIntroductionWidget::initialize(
             diffLabel->setText("  " + diffText + "  " + hdiff);
             diffLabel->fitContent();
             c->setDifficulty(*diff);
+            w->setLastDifficulty(*diff);
         });
 
         diffW->addWidget(diffLabel);
