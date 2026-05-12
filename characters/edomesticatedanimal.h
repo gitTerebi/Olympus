@@ -15,12 +15,16 @@ public:
 
     void groom();
     int collect();
+    void nextMonth();
     bool canCollect() const { return mResource; }
+    int monthsGrown() const { return mMonthsGrown; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
+
 private:
     void serialize(eSaveArchive& ar);
+    void resetGrowthProgress();
 
     virtual void setNakedTexture() {}
     virtual void setFleecedTexture() {}
@@ -28,6 +32,7 @@ private:
     const int mMaxGroom;
     int mGroomed = 0;
     int mResource = 0;
+    int mMonthsGrown = 0;
 };
 
 #endif // EDOMESTICATEDANIMAL_H

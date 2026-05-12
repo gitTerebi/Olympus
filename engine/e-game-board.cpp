@@ -10,6 +10,10 @@
 #include "buildings/eagorabase.h"
 #include "e-tribute.h"
 #include "characters/echaracter.h"
+#include "characters/edomesticatedanimal.h"
+#include "characters/esheep.h"
+#include "characters/egoat.h"
+#include "characters/ecattle.h"
 #include "buildings/ebuilding.h"
 #include "spawners/espawner.h"
 
@@ -90,7 +94,6 @@
 #include "enumbers.h"
 
 #include "characters/actions/eanimalaction.h"
-#include "buildings/eanimalbuilding.h"
 
 #include "buildings/eplaceholder.h"
 #include "buildings/sanctuaries/ezeussanctuary.h"
@@ -226,6 +229,24 @@ void eGameBoard::clear()
         }
     }
     mTiles.clear();
+    mActiveCitiesOnBoard.clear();
+    mArmyEvents.clear();
+    mCharacterActions.clear();
+    mTimedBuildings.clear();
+    mAllBuildings.clear();
+    mSpawners.clear();
+    mBanners.clear();
+    mInvasions.clear();
+    mAllSoldierBanners.clear();
+    mCharacters.clear();
+    mSoldiers.clear();
+    mMissiles.clear();
+    mSelectedBanners.clear();
+    mSelectedTriremes.clear();
+    mPlannedActions.clear();
+    mAllGameEvents.clear();
+    mMarbleTiles.clear();
+    mBlackMarbleTiles.clear();
     mWidth = 0;
     mHeight = 0;
     emptyRubbish();
@@ -2776,6 +2797,7 @@ eBanner *eGameBoard::banner(const eCityId cid,
 void eGameBoard::registerBanner(eBanner *const b)
 {
     const auto t = b->tile();
+    if(!t) return;
     const auto cid = t->cityId();
     const auto c = boardCityWithId(cid);
     if (!c)
@@ -3076,6 +3098,11 @@ void eGameBoard::incTime(const int by)
         if (c->isSoldier())
             continue;
         c->incTime(by);
+        if (nextMonth && !c->deleteScheduled())
+        {
+            if (const auto da = dynamic_cast<eDomesticatedAnimal *>(c))
+                da->nextMonth();
+        }
     }
     const auto solds = mSoldiers;
     for (const auto c : solds)
@@ -5113,20 +5140,49 @@ bool eGameBoard::buildAnimal(eTile *const tile,
 {
     const int tx = tile->x();
     const int ty = tile->y();
-    const bool cb = canBuild(tx, ty, 1, 2, editorDisplay, cid, pid, true, true);
+    const int sw = 1;
+    const int sh = 1;
+    const bool cb = canBuild(tx, ty, sw, sh, editorDisplay, cid, pid, true, true);
     if (!cb)
         return false;
-    const auto sh = creator(*this);
-    sh->changeTile(tile);
+    if (countAllowed(cid, type) <= 0)
+        return false;
+    for (const auto c : mCharacters)
+    {
+        if (!c)
+            continue;
+        const auto aa = dynamic_cast<eAnimalAction *>(c->action());
+        if (!aa)
+            continue;
+        if (aa->spawnerX() != tx || aa->spawnerY() != ty)
+            continue;
+        const auto ct = c->type();
+        const bool match =
+            (type == eBuildingType::sheep && ct == eCharacterType::sheep) ||
+            (type == eBuildingType::goat && ct == eCharacterType::goat) ||
+            (type == eBuildingType::cattle &&
+             (ct == eCharacterType::cattle1 ||
+              ct == eCharacterType::cattle2 ||
+              ct == eCharacterType::cattle3 ||
+              ct == eCharacterType::bull));
+        if (match)
+            return false;
+    }
+    const auto a = creator(*this);
+    a->changeTile(tile);
     const auto o = static_cast<eOrientation>(eRand::rand() % 8);
-    sh->setOrientation(o);
+    a->setOrientation(o);
     const auto w = eWalkableObject::sCreateFertile();
-    const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
-    sh->setAction(a);
+    const auto aa = e::make_shared<eAnimalAction>(a.get(), tx, ty, w);
+    a->setAction(aa);
+    if (!editorDisplay)
+    {
+        const auto diff = difficulty(pid);
+        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        incDrachmas(pid, -cost, eFinanceTarget::construction);
+    }
 
-    return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]()
-                 { return e::make_shared<eAnimalBuilding>(
-                       *this, sh.get(), type, cid); }, true, true, 0, false);
+    return true;
 }
 
 void eGameBoard::removeAllBuildings()

@@ -38,18 +38,20 @@ public:
     std::vector<eStampElement> transformedBlueprint() const;
     std::vector<eStampBuildCommand> buildCommands() const;
     int estimatedCost(eDifficulty diff) const;
-    void setRotation(int r) { mRotation = r % 4; }
+    void setRotation(int r) { mRotation = (r % 4 + 4) % 4; }
     int rotation() const { return mRotation; }
-    void setMirror(int m) { mMirror = m % 2; }
+    void setMirror(int m) { mMirror = (m % 2 + 2) % 2; }
     int mirror() const { return mMirror; }
     using eDrawXY  = std::function<void(int tx, int ty, double& rx, double& ry, int sw, int sh, int alt)>;
     using eDrawTex = std::function<void(double rx, double ry, eBuildingType type, int sw, bool canBuild)>;
     using eDrawAgora = std::function<void(int tx, int ty, int id)>;
+    using eDrawStampAgora = std::function<void(const eStampBuildCommand& cmd)>;
 
     void paintPreview(int baseX, int baseY, class eGameBoard* board,
                       bool editorMode, eCityId viewedCityId, ePlayerId playerId,
                       const eDrawXY& drawXY, const eDrawTex& drawTex,
-                      const eDrawAgora& drawAgora) const;
+                      const eDrawAgora& drawAgora,
+                      const eDrawStampAgora& drawStampAgora) const;
 
 private:
     static void buildingSize(eBuildingType type, int& sw, int& sh);

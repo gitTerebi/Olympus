@@ -5,7 +5,6 @@
 
 #include "characters/echaracter.h"
 #include "characters/actions/eanimalaction.h"
-#include "buildings/eanimalbuilding.h"
 
 class eSaveArchive;
 

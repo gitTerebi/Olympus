@@ -9,6 +9,15 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
+namespace {
+bool sUseTileChance(eTileBase* const tile, const int div, const int pass) {
+    const unsigned long long x = static_cast<unsigned long long>(tile->x());
+    const unsigned long long y = static_cast<unsigned long long>(tile->y());
+    return ((x*73856093) ^ (y*19349663)) % div ==
+           static_cast<unsigned long long>(pass);
+}
+}
+
 eShepherdAction::eShepherdAction(
         eShepherBuildingBase* const shed,
         eResourceCollectorBase* const c,
@@ -22,12 +31,6 @@ eShepherdAction::eShepherdAction(eCharacter* const c) :
     eShepherdAction(nullptr, static_cast<eResourceCollectorBase*>(c),
                     eCharacterType::sheep) {}
 
-bool hasAnimal(eTileBase* const tile, const eCharacterType type) {
-    return tile->hasCharacter([&type](const eCharacterBase& c) {
-        if(eRand::rand() % 2) return false;
-        return c.type() == type && !c.busy();
-    });
-}
 
 enum class eCollectType {
     groom,
@@ -54,6 +57,10 @@ eDomesticatedAnimal* tryToCollect(eTile* const tile,
 }
 
 bool eShepherdAction::decide() {
+    if(!mCharacter || !mShed) {
+        setState(eCharacterActionState::finished);
+        return true;
+    }
     const bool r = eActionWithComeback::decide();
     if(r) return r;
 
@@ -108,12 +115,7 @@ bool eShepherdAction::decide() {
             mNoResource = false;
             goBackDecision();
         } else {
-            if(mGroomed > eNumbers::sShepherdGoatherdMaxGroom) {
-                mGroomed = 0;
-                goBackDecision();
-            } else {
-                findResourceDecision();
-            }
+            findResourceDecision();
         }
     }
     return true;
@@ -149,33 +151,83 @@ void eShepherdAction::serialize(eSaveArchive& ar) {
 }
 
 bool eShepherdAction::findResourceDecision() {
+    if(!mCharacter) {
+        mGroomedThisTrip = 0;
+        return true;
+    }
     const stdptr<eShepherdAction> tptr(this);
 
     const auto aType = mAnimalType;
-    const auto hha = [aType](eTileBase* const tile) {
-        return hasAnimal(tile, aType);
+    const stdptr<eDomesticatedAnimal> lastAnimal = mLastAnimal;
+    // Predicates run on pathfinder worker thread; keep them stateless.
+    const auto readyRand = [aType, lastAnimal](eTileBase* const tile) {
+        return tile->hasCharacter([&](const eCharacterBase& c) {
+            if(c.type() != aType || c.busy()) return false;
+            if(static_cast<const eDomesticatedAnimal*>(&c) == lastAnimal.get()) return false;
+            if(!static_cast<const eDomesticatedAnimal*>(&c)->canCollect()) return false;
+            return !sUseTileChance(tile, 3, 0);
+        });
+    };
+    const auto readyAny = [aType, lastAnimal](eTileBase* const tile) {
+        return tile->hasCharacter([&](const eCharacterBase& c) {
+            if(c.type() != aType || c.busy()) return false;
+            if(static_cast<const eDomesticatedAnimal*>(&c) == lastAnimal.get()) return false;
+            return static_cast<const eDomesticatedAnimal*>(&c)->canCollect();
+        });
+    };
+    const auto hha = [aType, lastAnimal](eTileBase* const tile) {
+        return tile->hasCharacter([&](const eCharacterBase& c) {
+            if(c.type() != aType || c.busy()) return false;
+            if(static_cast<const eDomesticatedAnimal*>(&c) == lastAnimal.get()) return false;
+            return sUseTileChance(tile, 2, 0);
+        });
     };
 
-    const auto a = e::make_shared<eMoveToAction>(mCharacter);
-    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
-                         eStateRelevance::buildings |
-                         eStateRelevance::terrain);
-    a->setFoundAction([tptr, this]() {
+    const auto a = makeFindAnimalMove();
+    const auto findFailFunc = [tptr, readyAny, hha]() {
         if(!tptr) return;
-        if(!mCharacter) return;
-        mCharacter->setActionType(eCharacterActionType::walk);
-    });
-    const auto findFailFunc = [tptr, this]() {
-        if(tptr) mNoResource = true;
+        const auto action = tptr.get();
+        if(!action->mCharacter) return;
+        const auto a2 = action->makeFindAnimalMove();
+        a2->setFindFailAction([tptr, hha]() {
+            if(!tptr) return;
+            const auto action = tptr.get();
+            if(!action->mCharacter) return;
+            const auto a3 = action->makeFindAnimalMove();
+            a3->setFindFailAction([tptr]() {
+                if(tptr) tptr.get()->mNoResource = true;
+            });
+            a3->start(hha);
+            action->setCurrentAction(a3);
+        });
+        a2->start(readyAny);
+        action->setCurrentAction(a2);
     };
     a->setFindFailAction(findFailFunc);
-    a->setMaxFindDistance(eNumbers::sShepherdGoatherdMaxDistance);
-    a->start(hha);
+    a->start(readyRand);
     setCurrentAction(a);
     return true;
 }
 
+stdsptr<eMoveToAction> eShepherdAction::makeFindAnimalMove() {
+    const stdptr<eShepherdAction> tptr(this);
+    const auto m = e::make_shared<eMoveToAction>(mCharacter);
+    m->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
+    m->setFoundAction([tptr]() {
+        if(!tptr) return;
+        const auto action = tptr.get();
+        if(!action->mCharacter) return;
+        action->mCharacter->setActionType(eCharacterActionType::walk);
+    });
+    m->setMaxFindDistance(eNumbers::sShepherdGoatherdMaxDistance);
+    return m;
+}
+
 void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
+    if(!mCharacter) return;
+    mLastAnimal = a;
     a->setBusy(true);
     a->setVisible(false);
     mCharacter->setActionType(eCharacterActionType::collect);
@@ -194,6 +246,8 @@ void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
 }
 
 void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
+    if(!mCharacter) return;
+    mLastAnimal = a;
     a->setBusy(true);
     mCharacter->setActionType(eCharacterActionType::fight);
     const stdptr<eCharacterAction> tptr(this);
@@ -211,6 +265,8 @@ void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
 }
 
 void eShepherdAction::goBackDecision() {
+    if(!mCharacter || !mShed) return;
+    mGroomedThisTrip = 0;
     if(mCharacter->collected()) {
         mCharacter->setActionType(eCharacterActionType::carry);
     } else {
@@ -221,5 +277,6 @@ void eShepherdAction::goBackDecision() {
 }
 
 void eShepherdAction::waitDecision() {
+    if(!mCharacter) return;
     wait(eNumbers::sShepherdGoatherdWaitTime);
 }

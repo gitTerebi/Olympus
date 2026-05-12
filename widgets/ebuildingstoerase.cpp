@@ -16,6 +16,8 @@
 #include "engine/etile.h"
 
 #include "characters/ehomeless.h"
+#include "characters/echaracter.h"
+#include "characters/actions/eanimalaction.h"
 #include "characters/actions/esettleraction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "buildings/ehousebase.h"
@@ -42,6 +44,37 @@ bool isNonEmptyAgora(eBuilding* const b) {
     if(!isa) return false;
     const auto a = static_cast<eAgoraBase*>(b);
     return a->hasVendors();
+}
+
+bool isAnimalPen(const eBuildingType t) {
+    return t == eBuildingType::sheep ||
+           t == eBuildingType::goat ||
+           t == eBuildingType::cattle;
+}
+
+bool isAnimalForPen(const eCharacterType ct, const eBuildingType bt) {
+    return (bt == eBuildingType::sheep && ct == eCharacterType::sheep) ||
+           (bt == eBuildingType::goat && ct == eCharacterType::goat) ||
+           (bt == eBuildingType::cattle &&
+            (ct == eCharacterType::cattle1 ||
+             ct == eCharacterType::cattle2 ||
+             ct == eCharacterType::cattle3 ||
+             ct == eCharacterType::bull));
+}
+
+void killAnimalPenAnimals(eBuilding* const b) {
+    const auto bt = b->type();
+    if(!isAnimalPen(bt)) return;
+    const auto rect = b->tileRect();
+    const auto chars = b->getBoard().characters();
+    for(const auto c : chars) {
+        if(!c) continue;
+        if(!isAnimalForPen(c->type(), bt)) continue;
+        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        if(!aa) continue;
+        if(aa->spawnerX() != rect.x || aa->spawnerY() != rect.y) continue;
+        c->kill();
+    }
 }
 
 void eBuildingsToErase::addBuilding(eBuilding* const b) {
@@ -83,7 +116,13 @@ void eBuildingsToErase::addBuilding(eBuilding* const b) {
     }
 }
 
+void eBuildingsToErase::addCharacter(eCharacter* const c) {
+    if(!c) return;
+    mCs.insert(c);
+}
+
 void eBuildingsToErase::erase(eBuilding* const b) {
+    killAnimalPenAnimals(b);
     switch(b->type()) {
     case eBuildingType::eliteHousing:
     case eBuildingType::commonHouse: {
@@ -110,6 +149,11 @@ void eBuildingsToErase::erase(eBuilding* const b) {
 
 int eBuildingsToErase::erase(const bool important) {
     int total = 0;
+    for(const auto c : mCs) {
+        c->kill();
+    }
+    total += mCs.size();
+    mCs.clear();
     for(const auto b : mBs) {
         erase(b);
     }
