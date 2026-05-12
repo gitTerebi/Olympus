@@ -1,5 +1,6 @@
 #include "ebanner.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 
@@ -57,10 +58,15 @@ void eBanner::serialize(eSaveArchive& ar) {
     ar.field("mIOID", mIOID);
 }
 
-eBanner* eBanner::sCreate(const int id,
-                          eTile* const tile,
-                          eGameBoard& board,
-                          const eBannerTypeS type) {
+void eBanner::serializeJson(eJsonArchive& ar) {
+    ar.field("mIOID", mIOID);
+    ar.tile("mTile", mTile, mBoard);
+}
+
+stdsptr<eBanner> eBanner::sCreate(const int id,
+                                  eTile* const tile,
+                                  eGameBoard& board,
+                                  const eBannerTypeS type) {
     stdsptr<eBanner> b;
     switch(type) {
     case eBannerTypeS::none:
@@ -105,6 +111,6 @@ eBanner* eBanner::sCreate(const int id,
         b = std::make_shared<eWolfSpawner>(id, tile, board);
         break;
     }
-    tile->addBanner(b);
-    return b.get();
+    if(tile) tile->addBanner(b);
+    return b;
 }

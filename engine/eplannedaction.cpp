@@ -3,6 +3,7 @@
 #include "fileIO/ereadstream.h"
 #include "fileIO/ewritestream.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "eregrowforestaction.h"
 #include "ecolonymonumentaction.h"
@@ -30,6 +31,14 @@ void ePlannedAction::write(eWriteStream& dst) const {
 }
 
 void ePlannedAction::serialize(eSaveArchive& ar) {
+    ar.field("mRecurring", mRecurring);
+    ar.field("mActionTime", mActionTime);
+    ar.field("mFinished", mFinished);
+    ar.field("mTime", mTime);
+}
+
+void ePlannedAction::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    (void)board;
     ar.field("mRecurring", mRecurring);
     ar.field("mActionTime", mActionTime);
     ar.field("mFinished", mFinished);

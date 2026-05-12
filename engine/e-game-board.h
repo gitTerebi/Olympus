@@ -36,6 +36,7 @@
 #include "emessage.h"
 #include "eeventdata.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 #include "gameEvents/gods/egodquestevent.h"
@@ -947,6 +948,16 @@ private:
             }
             ar.field("lastDim", fLastDim);
         }
+
+        void serializeJson(eJsonArchive& ar, eGameBoard& board) {
+            ar.tile("startTile", fStartTile, board);
+            int n = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
+            ar.field("tileCount", n);
+            if(ar.reading()) fTiles.resize(n, nullptr);
+            for(int i = 0; i < n; i++)
+                ar.tile(("tile." + std::to_string(i)).c_str(), fTiles[i], board);
+            ar.field("lastDim", fLastDim);
+        }
     };
 
     int mProgressEarthquakes = 0;
@@ -1003,6 +1014,27 @@ private:
             ar.field("permanent", fPermanent);
             ar.field("regres", fRegres);
         }
+
+        void serializeJson(eJsonArchive& ar, eGameBoard& board) {
+            int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
+            ar.field("tileGroupCount", nv);
+            if(ar.reading()) fTiles.resize(nv);
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles[i];
+                int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
+                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                if(ar.reading()) v.resize(nt, {nullptr, eTerrain::dry, eOrientation::topRight});
+                for(int j = 0; j < nt; j++) {
+                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    ar.tile((pre + "tile").c_str(), v[j].fTile, board);
+                    ar.field((pre + "terrain").c_str(), v[j].fSaved);
+                    ar.field((pre + "o").c_str(), v[j].fO);
+                }
+            }
+            ar.field("lastId", fLastId);
+            ar.field("permanent", fPermanent);
+            ar.field("regres", fRegres);
+        }
     };
 
     struct eLavaDirection {
@@ -1042,6 +1074,24 @@ private:
                 for(const auto t : v) {
                     dst.writeTile(t.fTile);
                     ar.field("orientation", const_cast<eOrientation&>(t.fO));
+                }
+            }
+            ar.field("lastId", fLastId);
+        }
+
+        void serializeJson(eJsonArchive& ar, eGameBoard& board) {
+            int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
+            ar.field("tileGroupCount", nv);
+            if(ar.reading()) fTiles.resize(nv);
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles[i];
+                int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
+                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                if(ar.reading()) v.resize(nt, {nullptr, eOrientation::topRight});
+                for(int j = 0; j < nt; j++) {
+                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    ar.tile((pre + "tile").c_str(), v[j].fTile, board);
+                    ar.field((pre + "o").c_str(), v[j].fO);
                 }
             }
             ar.field("lastId", fLastId);
@@ -1089,6 +1139,25 @@ private:
                     dst.writeTile(t.fTile);
                     ar.field("newAltitude", const_cast<int&>(t.fNewAltitude));
                     ar.field("orientation", const_cast<eOrientation&>(t.fO));
+                }
+            }
+            ar.field("lastId", fLastId);
+        }
+
+        void serializeJson(eJsonArchive& ar, eGameBoard& board) {
+            int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
+            ar.field("tileGroupCount", nv);
+            if(ar.reading()) fTiles.resize(nv);
+            for(int i = 0; i < nv; i++) {
+                auto& v = fTiles[i];
+                int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
+                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                if(ar.reading()) v.resize(nt, {nullptr, 0, eOrientation::topRight});
+                for(int j = 0; j < nt; j++) {
+                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    ar.tile((pre + "tile").c_str(), v[j].fTile, board);
+                    ar.field((pre + "alt").c_str(), v[j].fNewAltitude);
+                    ar.field((pre + "o").c_str(), v[j].fO);
                 }
             }
             ar.field("lastId", fLastId);

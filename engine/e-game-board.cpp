@@ -2776,6 +2776,7 @@ eBanner *eGameBoard::banner(const eCityId cid,
 void eGameBoard::registerBanner(eBanner *const b)
 {
     const auto t = b->tile();
+    if(!t) return;
     const auto cid = t->cityId();
     const auto c = boardCityWithId(cid);
     if (!c)

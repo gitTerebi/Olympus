@@ -7,6 +7,7 @@
 #include "vec2.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 class eTile;
 class eSaveArchive;
@@ -155,6 +156,7 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(eJsonArchive& ar, eGameBoard& board);
 
     template <class T>
     static stdsptr<T> sCreate(eGameBoard& brd,

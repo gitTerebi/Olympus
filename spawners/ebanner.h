@@ -1,11 +1,14 @@
 #ifndef EBANNER_H
 #define EBANNER_H
 
+#include "pointers/estdpointer.h"
+
 class eGameBoard;
 class eReadStream;
 class eWriteStream;
 class eTile;
 class eSaveArchive;
+class eJsonArchive;
 enum class eCityId;
 
 enum class eBannerTypeS {
@@ -49,15 +52,16 @@ public:
 
     virtual void read(eReadStream& src);;
     virtual void write(eWriteStream& dst) const;;
+    virtual void serializeJson(eJsonArchive& ar);
 
-    static eBanner* sCreate(const int id, eTile* const tile,
-                            eGameBoard& board,
-                            const eBannerTypeS type);
+    static stdsptr<eBanner> sCreate(const int id, eTile* const tile,
+                                    eGameBoard& board,
+                                    const eBannerTypeS type);
 private:
     void serialize(eSaveArchive& ar);
     const eBannerTypeS mType;
     const int mId;
-    eTile* const mTile;
+    eTile* mTile;
     eGameBoard& mBoard;
     int mIOID = -1;
 };

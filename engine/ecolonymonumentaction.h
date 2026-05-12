@@ -17,6 +17,7 @@ public:
 
     void read(eReadStream& src, eGameBoard& board) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar, eGameBoard& board) override;
 private:
     void serialize(eSaveArchive& ar, eGameBoard* board);
 

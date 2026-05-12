@@ -18,6 +18,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    void serializeJson(eJsonArchive& ar, eGameBoard& board) override;
 private:
     eCharacterType mCharType;
     eCharacterActionType mActionType;

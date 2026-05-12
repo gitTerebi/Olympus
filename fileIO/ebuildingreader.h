@@ -9,7 +9,7 @@ namespace eBuildingReader {
     stdsptr<eBuilding> sRead(
             eGameBoard& board, const eBuildingType type,
             eReadStream& src);
-    stdsptr<eBuilding> sReadJson(
+    [[nodiscard]] stdsptr<eBuilding> sReadJson(
             eGameBoard& board, const eBuildingType type,
             eJsonArchive& ar);
 };

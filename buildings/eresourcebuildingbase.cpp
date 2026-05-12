@@ -30,9 +30,14 @@ void eResourceBuildingBase::timeChanged(const int by) {
         if(!mCart) {
             mCart = spawnCart(eCartActionTypeSupport::give);
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
-        } else if(mCart && mCart->waiting() && mResource > 0) {
-            const int a = mCart->add(mResType, mResource);
-            mResource -= a;
+        } else {
+            if(const auto action = dynamic_cast<eCartTransporterAction*>(mCart->action())) {
+                if(!action->src()) action->setBuilding(this);
+            }
+            if(mCart->waiting() && mResource > 0) {
+                const int a = mCart->add(mResType, mResource);
+                mResource -= a;
+            }
         }
     }
     eEmployingBuilding::timeChanged(by);
