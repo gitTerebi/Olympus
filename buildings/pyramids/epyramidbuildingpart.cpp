@@ -2,6 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePyramidBuildingPart::ePyramidBuildingPart(
         const std::vector<eSanctCost>& cost,
@@ -73,3 +74,10 @@ void ePyramidBuildingPart::serialize(eSaveArchive& ar) {
     }
     ar.field("mPaintDir", mPaintDir);
 }
+
+void ePyramidBuildingPart::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("mPaintDir", mPaintDir);
+    // mPaint cross-ref not saved in JSON path
+}
+

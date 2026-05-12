@@ -4,6 +4,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <algorithm>
 
@@ -101,4 +102,10 @@ void eResourceBuildingBase::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mCart);
     }
+}
+
+void eResourceBuildingBase::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mResource", mResource);
+    // mCart restored by character load pass
 }

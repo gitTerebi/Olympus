@@ -4,6 +4,7 @@
 #include "elanguage.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eArtemisSanctuary::eArtemisSanctuary(
         const int sw, const int sh, eGameBoard& board,
@@ -101,3 +102,10 @@ void eSanctuaryWithWarriors::serialize(eSaveArchive& ar) {
         }
     }
 }
+
+void eSanctuaryWithWarriors::serializeJson(eJsonArchive& ar) {
+    eSanctuary::serializeJson(ar);
+    ar.field("mSoldierSpawn", mSoldierSpawn);
+    // mSoldierBanners not saved in JSON path
+}
+

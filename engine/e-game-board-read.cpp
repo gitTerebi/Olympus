@@ -11,6 +11,8 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
 
 static void boardDbgLog(const char* msg) {
     FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
@@ -20,6 +22,16 @@ static void boardDbgLog(const char* msg) {
 static void boardDbgLogN(const char* msg, int n) {
     FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
     if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
+}
+
+static void boardDbgLogBuilding(const int i, const eBuildingType type,
+                                const size_t pos) {
+    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
+    if(f) {
+        fprintf(f, "board: building %d type %d pos %zu\n",
+                i, static_cast<int>(type), pos);
+        fclose(f);
+    }
 }
 
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
@@ -84,6 +96,8 @@ void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
 void eGameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
+        FILE* dbg = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "w");
+        if(dbg) { fprintf(dbg, "board: load start\n"); fclose(dbg); }
     boardDbgLog("board: size");
     int w;
     ar.field("mWidth", w, 0);
@@ -152,7 +166,9 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         for(int i = 0; i < nbs; i++) {
             eBuildingType type;
             ar.field("mAllBuildings.type", type);
-            eBuildingReader::sRead(*this, type, src);
+            boardDbgLogBuilding(i, type, src.position());
+            const auto b = eBuildingReader::sRead(*this, type, src);
+            if(!b) boardDbgLogN("board: building null", i);
             boardDbgLogN("board: building done", i);
         }
     }
@@ -467,5 +483,498 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     serializeYearlyProduction(ar);
     serializeMessageLog(ar);
+    }
+}
+
+static FILE* sDbgLog() {
+    static FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
+    return f;
+}
+#define JLOG(msg) do { if(auto* f = sDbgLog()) { fprintf(f, "%s\n", msg); fflush(f); } } while(0)
+#define JLOGF(fmt, ...) do { if(auto* f = sDbgLog()) { fprintf(f, fmt "\n", __VA_ARGS__); fflush(f); } } while(0)
+
+void eGameBoard::serializeJson(eJsonArchive& ar) {
+    if(ar.reading()) {
+        JLOG("serializeJson: start");
+        int w = 0, h = 0;
+        ar.field("mWidth", w);
+        ar.field("mHeight", h);
+        initialize(w, h);
+        JLOGF("serializeJson: init %dx%d", w, h);
+
+        ar.field("mFogOfWar", mFogOfWar);
+        ar.field("mEpisodeLost", mEpisodeLost);
+        ar.field("mWageMultiplier", mWageMultiplier);
+
+        for(auto& p : mPrices) {
+            const auto key = "price." + std::to_string(static_cast<int>(p.first));
+            ar.field(key.c_str(), p.second);
+        }
+
+        { auto da = ar.child("mDate"); mDate.serializeJson(da); }
+        ar.field("mFrame", mFrame);
+        ar.field("mTime", mTime);
+        ar.field("mTotalTime", mTotalTime);
+        ar.field("mSoldiersUpdate", mSoldiersUpdate);
+
+        // cities
+        {
+            int nc = 0;
+            ar.field("mCitiesOnBoard.count", nc);
+            for(int i = 0; i < nc; i++) {
+                eCityId cid{};
+                ar.field(("mCitiesOnBoard." + std::to_string(i) + ".id").c_str(), cid);
+                const auto c = addCityToBoard(cid);
+                const auto key = "mCitiesOnBoard." + std::to_string(i);
+                auto ca = ar.child(key.c_str());
+                c->serializeJson(ca);
+                scheduleAppealMapUpdate(cid);
+            }
+        }
+
+        // players
+        {
+            int np = 0;
+            ar.field("mPlayersOnBoard.count", np);
+            for(int i = 0; i < np; i++) {
+                ePlayerId pid{};
+                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".id").c_str(), pid);
+                std::string blob;
+                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto p = std::make_shared<eBoardPlayer>(pid, *this);
+                replayRead(blob, [&p](eReadStream& s){ p->read(s); });
+                mPlayersOnBoard.push_back(p);
+            }
+        }
+
+        JLOG("after players, before tilesBlob");
+        // tiles — one blob for the whole grid
+        {
+            std::string blob;
+            ar.field("tilesBlob", blob);
+            JLOGF("tilesBlob: size %zu", blob.size());
+            replayRead(blob, [this](eReadStream& s){
+                for(const auto& ts : mTiles)
+                    for(const auto& t : ts)
+                        t->read(s);
+            });
+            JLOG("tilesBlob: done");
+        }
+
+        // buildings
+        {
+            int nb = 0;
+            ar.field("mAllBuildingsCount", nb);
+            JLOGF("buildings: loading %d", nb);
+            for(int i = 0; i < nb; i++) {
+                auto bAr = ar.childAt("mAllBuildings", i);
+                eBuildingType type{};
+                bAr.field("type", type);
+                JLOGF("building %d: type %d", i, (int)type);
+                eBuildingReader::sReadJson(*this, type, bAr);
+                JLOGF("building %d: done", i);
+            }
+            JLOGF("buildings: runPostFuncs count=%zu", ar.postFuncCount());
+            try {
+                ar.runPostFuncs([&](int idx){ JLOGF("postFunc %d start", idx); },
+                                [&](int idx){ JLOGF("postFunc %d done",  idx); });
+            } catch(const std::exception& e) { JLOGF("runPostFuncs exception: %s", e.what()); throw; } catch(...) { JLOG("runPostFuncs unknown exception"); throw; }
+            JLOG("buildings: done");
+        }
+
+        // characters
+        {
+            int nc = 0;
+            ar.field("mCharacters.count", nc);
+            for(int i = 0; i < nc; i++) {
+                eCharacterType type{};
+                ar.field(("mCharacters." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob;
+                ar.field(("mCharacters." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto c = eCharacter::sCreate(type, *this);
+                replayRead(blob, [&c](eReadStream& s){ c->read(s); });
+            }
+        }
+
+        // missiles
+        {
+            int nm = 0;
+            ar.field("mMissiles.count", nm);
+            for(int i = 0; i < nm; i++) {
+                eMissileType type{};
+                ar.field(("mMissiles." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob;
+                ar.field(("mMissiles." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto m = eMissile::sCreate(*this, type);
+                replayRead(blob, [&m](eReadStream& s){ m->read(s); });
+            }
+        }
+
+        // goals
+        {
+            int ng = 0;
+            ar.field("mGoals.count", ng);
+            for(int i = 0; i < ng; i++) {
+                const auto g = std::make_shared<eEpisodeGoal>();
+                const auto key = "mGoals." + std::to_string(i);
+                auto ga = ar.child(key.c_str());
+                g->serializeJson(ga);
+                mGoals.push_back(g);
+            }
+        }
+        ar.field("mGoalsFulfilled", mGoalsFulfilled);
+
+        ar.field("mProgressEarthquakes", mProgressEarthquakes);
+        {
+            int ne = 0;
+            ar.field("mEarthquakes.count", ne);
+            for(int i = 0; i < ne; i++) {
+                std::string blob;
+                ar.field(("mEarthquakes." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto e = std::make_shared<eEarthquake>();
+                replayRead(blob, [&](eReadStream& s){ e->read(s, *this); });
+                mEarthquakes.push_back(e);
+            }
+        }
+
+        ar.field("mProgressWaves", mProgressWaves);
+        {
+            int nw = 0;
+            ar.field("mTidalWaves.count", nw);
+            for(int i = 0; i < nw; i++) {
+                std::string blob;
+                ar.field(("mTidalWaves." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto w = std::make_shared<eTidalWave>();
+                replayRead(blob, [&](eReadStream& s){ w->read(s, *this); });
+                mTidalWaves.push_back(w);
+            }
+        }
+
+        ar.field("mProgressLavaFlows", mProgressLavaFlows);
+        {
+            int nl = 0;
+            ar.field("mLavaFlows.count", nl);
+            for(int i = 0; i < nl; i++) {
+                std::string blob;
+                ar.field(("mLavaFlows." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto lf = std::make_shared<eLavaFlow>();
+                replayRead(blob, [&](eReadStream& s){ lf->read(s, *this); });
+                mLavaFlows.push_back(lf);
+            }
+        }
+
+        ar.field("mProgressLandSlides", mProgressLandSlides);
+        {
+            int ns = 0;
+            ar.field("mLandSlides.count", ns);
+            for(int i = 0; i < ns; i++) {
+                std::string blob;
+                ar.field(("mLandSlides." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto ls = std::make_shared<eLandSlide>();
+                replayRead(blob, [&](eReadStream& s){ ls->read(s, *this); });
+                mLandSlides.push_back(ls);
+            }
+        }
+
+        // conqueredBy
+        {
+            int nd = 0;
+            ar.field("mConqueredBy.count", nd);
+            for(int i = 0; i < nd; i++) {
+                eCityId cid{};
+                ar.field(("mConqueredBy." + std::to_string(i) + ".id").c_str(), cid);
+                int nc = 0;
+                ar.field(("mConqueredBy." + std::to_string(i) + ".count").c_str(), nc);
+                for(int j = 0; j < nc; j++) {
+                    std::string blob;
+                    ar.field(("mConqueredBy." + std::to_string(i) + ".city." + std::to_string(j)).c_str(), blob);
+                    replayRead(blob, [&](eReadStream& s){
+                        s.readCity(this, [this, cid](const stdsptr<eWorldCity>& c){
+                            mConqueredBy[cid].push_back(c);
+                        });
+                    });
+                }
+            }
+        }
+
+        // planned actions
+        {
+            int npa = 0;
+            ar.field("mPlannedActions.count", npa);
+            for(int i = 0; i < npa; i++) {
+                ePlannedActionType type{};
+                ar.field(("mPlannedActions." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob;
+                ar.field(("mPlannedActions." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto a = ePlannedAction::sCreate(type);
+                replayRead(blob, [&](eReadStream& s){ a->read(s, *this); });
+                mPlannedActions.push_back(a);
+            }
+        }
+
+        // yearly production
+        {
+            int np = 0;
+            ar.field("mYearlyProduction.count", np);
+            for(int i = 0; i < np; i++) {
+                eResourceType type{};
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".type").c_str(), type);
+                auto& y = mYearlyProduction[type];
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".best").c_str(), y.fBest);
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".last").c_str(), y.fLastYear);
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".this").c_str(), y.fThisYear);
+            }
+            ar.field("mLastAutosaveYear", mLastAutosaveYear);
+        }
+
+        // message log
+        {
+            int nm = 0;
+            ar.field("messageLog.count", nm);
+            for(int i = 0; i < nm; i++) {
+                eLoggedMessage lm;
+                ar.field(("messageLog." + std::to_string(i) + ".title").c_str(), lm.fMsg.fTitle);
+                ar.field(("messageLog." + std::to_string(i) + ".text").c_str(), lm.fMsg.fText);
+                { auto da = ar.child(("messageLog." + std::to_string(i) + ".date").c_str()); lm.fDate.serializeJson(da); }
+                ar.field(("messageLog." + std::to_string(i) + ".player").c_str(), lm.fEd.fPlayerName);
+                ar.field(("messageLog." + std::to_string(i) + ".read").c_str(), lm.fRead);
+                lm.fEd.fDate = lm.fDate;
+                lm.fEd.fType = eMessageEventType::common;
+                mMessageLog.push_back(lm);
+            }
+        }
+
+        updateMarbleTiles();
+        updateTerritoryBorders();
+        for(const auto& c : mCitiesOnBoard) c->updateResources();
+
+        // post-load: wire up active requests
+        // (no eReadStream here so use direct loop)
+        for(const auto e : mAllGameEvents) {
+            const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
+            if(request && request->isMainEvent() && request->isActiveCityRequest())
+                addCityRequest(request);
+            const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
+            if(tribute && tribute->isMainEvent() && !tribute->finished())
+                addTributeRequest(tribute);
+        }
+
+    } else {
+        ar.field("mWidth", mWidth);
+        ar.field("mHeight", mHeight);
+        ar.field("mFogOfWar", mFogOfWar);
+        ar.field("mEpisodeLost", mEpisodeLost);
+        ar.field("mWageMultiplier", mWageMultiplier);
+
+        for(const auto& p : mPrices) {
+            const auto key = "price." + std::to_string(static_cast<int>(p.first));
+            int val = p.second;
+            ar.field(key.c_str(), val);
+        }
+
+        { auto da = ar.child("mDate"); mDate.serializeJson(da); }
+        ar.field("mFrame", mFrame);
+        ar.field("mTime", mTime);
+        ar.field("mTotalTime", mTotalTime);
+        ar.field("mSoldiersUpdate", mSoldiersUpdate);
+
+        // assign IOIDs before writing
+        { int id = 0; for(const auto b : mAllBuildings)      b->setIOID(id++); }
+        { int id = 0; for(const auto c : mCharacters)        c->setIOID(id++); }
+        { int id = 0; for(const auto ca : mCharacterActions) ca->setIOID(id++); }
+        { int id = 0; for(const auto b : mBanners)           b->setIOID(id++); }
+        { int id = 0; for(const auto b : mAllSoldierBanners) b->setIOID(id++); }
+        { int id = 0; for(const auto e : mAllGameEvents)     e->setIOID(id++); }
+        { int id = 0; for(const auto& c : mCitiesOnBoard)    c->setInvasionHandlersIOIDs(id); }
+
+        // cities
+        {
+            int nc = static_cast<int>(mCitiesOnBoard.size());
+            ar.field("mCitiesOnBoard.count", nc);
+            for(int i = 0; i < nc; i++) {
+                eCityId cid = mCitiesOnBoard[i]->id();
+                ar.field(("mCitiesOnBoard." + std::to_string(i) + ".id").c_str(), cid);
+                const auto key = "mCitiesOnBoard." + std::to_string(i);
+                auto ca = ar.child(key.c_str());
+                mCitiesOnBoard[i]->serializeJson(ca);
+            }
+        }
+
+        // players
+        {
+            int np = static_cast<int>(mPlayersOnBoard.size());
+            ar.field("mPlayersOnBoard.count", np);
+            for(int i = 0; i < np; i++) {
+                ePlayerId pid = mPlayersOnBoard[i]->id();
+                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".id").c_str(), pid);
+                std::string blob = captureWrite([&](eWriteStream& d){ mPlayersOnBoard[i]->write(d); });
+                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        // tiles
+        {
+            std::string blob = captureWrite([this](eWriteStream& d){
+                for(const auto& ts : mTiles)
+                    for(const auto& t : ts)
+                        t->write(d);
+            });
+            ar.field("tilesBlob", blob);
+        }
+
+        // buildings
+        {
+            int nb = static_cast<int>(mAllBuildings.size());
+            ar.field("mAllBuildingsCount", nb);
+            int i = 0;
+            for(const auto b : mAllBuildings) {
+                auto bAr = ar.childAt("mAllBuildings", i);
+                eBuildingType type = b->type();
+                bAr.field("type", type);
+                eBuildingWriter::sWriteJson(b, bAr);
+                i++;
+            }
+        }
+
+        // characters
+        {
+            int nc = static_cast<int>(mCharacters.size());
+            ar.field("mCharacters.count", nc);
+            int i = 0;
+            for(const auto c : mCharacters) {
+                eCharacterType type = c->type();
+                ar.field(("mCharacters." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob = captureWrite([&](eWriteStream& d){ c->write(d); });
+                ar.field(("mCharacters." + std::to_string(i) + ".blob").c_str(), blob);
+                i++;
+            }
+        }
+
+        // missiles
+        {
+            int nm = static_cast<int>(mMissiles.size());
+            ar.field("mMissiles.count", nm);
+            int i = 0;
+            for(const auto m : mMissiles) {
+                eMissileType type = m->type();
+                ar.field(("mMissiles." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob = captureWrite([&](eWriteStream& d){ m->write(d); });
+                ar.field(("mMissiles." + std::to_string(i) + ".blob").c_str(), blob);
+                i++;
+            }
+        }
+
+        // goals
+        {
+            int ng = static_cast<int>(mGoals.size());
+            ar.field("mGoals.count", ng);
+            for(int i = 0; i < ng; i++) {
+                const auto key = "mGoals." + std::to_string(i);
+                auto ga = ar.child(key.c_str());
+                mGoals[i]->serializeJson(ga);
+            }
+        }
+        ar.field("mGoalsFulfilled", mGoalsFulfilled);
+
+        ar.field("mProgressEarthquakes", mProgressEarthquakes);
+        {
+            int ne = static_cast<int>(mEarthquakes.size());
+            ar.field("mEarthquakes.count", ne);
+            for(int i = 0; i < ne; i++) {
+                std::string blob = captureWrite([&](eWriteStream& d){ mEarthquakes[i]->write(d); });
+                ar.field(("mEarthquakes." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        ar.field("mProgressWaves", mProgressWaves);
+        {
+            int nw = static_cast<int>(mTidalWaves.size());
+            ar.field("mTidalWaves.count", nw);
+            for(int i = 0; i < nw; i++) {
+                std::string blob = captureWrite([&](eWriteStream& d){ mTidalWaves[i]->write(d); });
+                ar.field(("mTidalWaves." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        ar.field("mProgressLavaFlows", mProgressLavaFlows);
+        {
+            int nl = static_cast<int>(mLavaFlows.size());
+            ar.field("mLavaFlows.count", nl);
+            for(int i = 0; i < nl; i++) {
+                std::string blob = captureWrite([&](eWriteStream& d){ mLavaFlows[i]->write(d); });
+                ar.field(("mLavaFlows." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        ar.field("mProgressLandSlides", mProgressLandSlides);
+        {
+            int ns = static_cast<int>(mLandSlides.size());
+            ar.field("mLandSlides.count", ns);
+            for(int i = 0; i < ns; i++) {
+                std::string blob = captureWrite([&](eWriteStream& d){ mLandSlides[i]->write(d); });
+                ar.field(("mLandSlides." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        // conqueredBy
+        {
+            int nd = static_cast<int>(mConqueredBy.size());
+            ar.field("mConqueredBy.count", nd);
+            int i = 0;
+            for(const auto& p : mConqueredBy) {
+                eCityId cid = p.first;
+                ar.field(("mConqueredBy." + std::to_string(i) + ".id").c_str(), cid);
+                int nc = static_cast<int>(p.second.size());
+                ar.field(("mConqueredBy." + std::to_string(i) + ".count").c_str(), nc);
+                for(int j = 0; j < nc; j++) {
+                    std::string blob = captureWrite([&](eWriteStream& d){ d.writeCity(p.second[j].get()); });
+                    ar.field(("mConqueredBy." + std::to_string(i) + ".city." + std::to_string(j)).c_str(), blob);
+                }
+                i++;
+            }
+        }
+
+        // planned actions
+        {
+            int npa = static_cast<int>(mPlannedActions.size());
+            ar.field("mPlannedActions.count", npa);
+            for(int i = 0; i < npa; i++) {
+                ePlannedActionType type = mPlannedActions[i]->type();
+                ar.field(("mPlannedActions." + std::to_string(i) + ".type").c_str(), type);
+                std::string blob = captureWrite([&](eWriteStream& d){ mPlannedActions[i]->write(d); });
+                ar.field(("mPlannedActions." + std::to_string(i) + ".blob").c_str(), blob);
+            }
+        }
+
+        // yearly production
+        {
+            int np = static_cast<int>(mYearlyProduction.size());
+            ar.field("mYearlyProduction.count", np);
+            int i = 0;
+            for(const auto& p : mYearlyProduction) {
+                eResourceType type = p.first;
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".type").c_str(), type);
+                int best = p.second.fBest, last = p.second.fLastYear, thisY = p.second.fThisYear;
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".best").c_str(), best);
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".last").c_str(), last);
+                ar.field(("mYearlyProduction." + std::to_string(i) + ".this").c_str(), thisY);
+                i++;
+            }
+            ar.field("mLastAutosaveYear", mLastAutosaveYear);
+        }
+
+        // message log
+        {
+            int nm = static_cast<int>(mMessageLog.size());
+            ar.field("messageLog.count", nm);
+            for(int i = 0; i < nm; i++) {
+                auto& lm = mMessageLog[i];
+                ar.field(("messageLog." + std::to_string(i) + ".title").c_str(), lm.fMsg.fTitle);
+                ar.field(("messageLog." + std::to_string(i) + ".text").c_str(), lm.fMsg.fText);
+                { auto da = ar.child(("messageLog." + std::to_string(i) + ".date").c_str()); lm.fDate.serializeJson(da); }
+                ar.field(("messageLog." + std::to_string(i) + ".player").c_str(), lm.fEd.fPlayerName);
+                ar.field(("messageLog." + std::to_string(i) + ".read").c_str(), lm.fRead);
+            }
+        }
     }
 }

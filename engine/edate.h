@@ -64,6 +64,7 @@ public:
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
+    void serializeJson(class eJsonArchive& ar);
 private:
     int mDay;
     eMonth mMonth;

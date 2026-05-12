@@ -15,6 +15,7 @@ struct eEpisode {
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    virtual void serializeJson(class eJsonArchive& ar);
 
     bool availableBuilding(const eBuildingType type,
                            const int id = -1) const;
@@ -60,6 +61,8 @@ struct eParentCityEpisode : public eEpisode {
         ar.field("nextEpisode", const_cast<eEpisodeType&>(fNextEpisode));
     }
 
+    void serializeJson(class eJsonArchive& ar) override;
+
     eEpisodeType fNextEpisode{eEpisodeType::parentCity};
 };
 
@@ -75,6 +78,8 @@ struct eColonyEpisode : public eEpisode {
         eEpisode::write(dst);
         dst.writeCity(fCity.get());
     }
+
+    void serializeJson(class eJsonArchive& ar) override;
 
     std::string fSelection;
 

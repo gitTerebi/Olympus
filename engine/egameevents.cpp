@@ -4,6 +4,8 @@
 #include "evectorhelpers.h"
 #include "e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
 
 eGameEvents::eGameEvents(const eCityId cid, eGameBoard& board) :
     mCid(cid), mBoard(board) {}
@@ -92,6 +94,26 @@ void eGameEvents::serialize(eSaveArchive& ar) {
             addEvent(e);
         } else {
             mGameEvents[i]->write(ar.writeStream());
+        }
+    }
+}
+
+void eGameEvents::serializeJson(eJsonArchive& ar) {
+    int nevs = ar.reading() ? 0 : static_cast<int>(mGameEvents.size());
+    ar.field("count", nevs);
+    for(int i = 0; i < nevs; i++) {
+        auto ca = ar.childAt("events", i);
+        eGameEventType type{};
+        if(!ar.reading()) type = mGameEvents[i]->type();
+        ca.field("type", type);
+        if(ar.reading()) {
+            std::string blob; ca.field("blob", blob);
+            const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::root, mBoard);
+            replayRead(blob, [&e](eReadStream& s){ e->read(s); });
+            addEvent(e);
+        } else {
+            std::string blob = captureWrite([&](eWriteStream& d){ mGameEvents[i]->write(d); });
+            ca.field("blob", blob);
         }
     }
 }

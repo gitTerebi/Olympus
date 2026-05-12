@@ -1,5 +1,6 @@
 #include "eaidistrict.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 
@@ -1100,4 +1101,35 @@ void eDistrictReadyCondition::serialize(eSaveArchive& ar) {
     ar.field("fResource", fResource);
     ar.field("fSanctuary", fSanctuary);
     ar.field("fValue", fValue);
+}
+
+void eDistrictReadyCondition::serializeJson(eJsonArchive& ar) {
+    ar.field("fType", fType);
+    ar.field("fResource", fResource);
+    ar.field("fSanctuary", fSanctuary);
+    ar.field("fValue", fValue);
+}
+
+void eAIDistrict::serializeJson(eJsonArchive& ar) {
+    int nb = ar.reading() ? 0 : static_cast<int>(fBuildings.size());
+    ar.field("buildingCount", nb);
+    if(ar.reading()) fBuildings.clear();
+    for(int i = 0; i < nb; i++) {
+        auto ca = ar.childAt("buildings", i);
+        eAIBuilding b;
+        if(!ar.reading()) b = fBuildings[i];
+        b.serializeJson(ca);
+        if(ar.reading()) fBuildings.push_back(b);
+    }
+
+    int nc = ar.reading() ? 0 : static_cast<int>(fReadyConditions.size());
+    ar.field("conditionCount", nc);
+    if(ar.reading()) fReadyConditions.clear();
+    for(int i = 0; i < nc; i++) {
+        auto ca = ar.childAt("conditions", i);
+        eDistrictReadyCondition c;
+        if(!ar.reading()) c = fReadyConditions[i];
+        c.serializeJson(ca);
+        if(ar.reading()) fReadyConditions.push_back(c);
+    }
 }

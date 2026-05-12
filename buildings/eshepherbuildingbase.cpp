@@ -3,6 +3,7 @@
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
         eGameBoard& board,
@@ -86,6 +87,19 @@ void eShepherBuildingBase::serialize(eSaveArchive& ar) {
     for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
     ar.field("mRingIdx", mRingIdx);
 }
+
+void eShepherBuildingBase::serializeJson(eJsonArchive& ar) {
+    eResourceBuildingBase::serializeJson(ar);
+    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        const auto k = "mMonthlyProduced." + std::to_string(i);
+        ar.field(k.c_str(), mMonthlyProduced[i]);
+    }
+    ar.field("mRingIdx", mRingIdx);
+    // mShepherd restored by character load pass
+}
+
 
 void eShepherBuildingBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);

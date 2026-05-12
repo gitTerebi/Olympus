@@ -1,5 +1,6 @@
 #include "etemplealtarbuilding.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 
@@ -89,6 +90,13 @@ void eTempleAltarBuilding::serialize(eSaveArchive& ar) {
     ar.field("mSacrifice", mSacrifice);
     ar.field("mSacrificeTime", mSacrificeTime);
 }
+
+void eTempleAltarBuilding::serializeJson(eJsonArchive& ar) {
+    eSanctBuilding::serializeJson(ar);
+    ar.field("mSacrifice", mSacrifice);
+    ar.field("mSacrificeTime", mSacrificeTime);
+}
+
 
 void eTempleAltarBuilding::startSacrifice(const eSacrifice s) {
     mSacrifice = s;

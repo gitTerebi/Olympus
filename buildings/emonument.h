@@ -35,6 +35,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     void setRotated(const bool r) { mRotated = r; }
     bool rotated() const { return mRotated; }

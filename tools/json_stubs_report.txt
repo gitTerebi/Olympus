@@ -1,0 +1,241 @@
+SERIALIZE -> serializeJson PORTING REPORT
+======================================================================
+Total serialize() methods found: 181
+Already have serializeJson():    0
+Remaining to port:               181
+
+CLEAN (auto-portable, 63 classes):
+  eAgoraBase                                 0 fields  buildings/eagorabase.cpp
+  eCorral                                    6 fields  buildings/ecorral.cpp
+  eEliteHousing                              4 fields  buildings/eelitehousing.cpp
+  eEmployingBuilding                         3 fields  buildings/eemployingbuilding.cpp
+  ePatrolSourceBuilding                      2 fields [has loop]  buildings/epatrolsourcebuilding.cpp
+  ePatrolTarget                              1 fields  buildings/epatroltarget.cpp
+  eResourceBuilding                          5 fields  buildings/eresourcebuilding.cpp
+  eResourceCollectBuildingBase               3 fields [has loop]  buildings/eresourcecollectbuildingbase.cpp
+  eRuins                                     6 fields  buildings/eruins.cpp
+  eTradePost                                 6 fields  buildings/etradepost.cpp
+  ePyramidElement                            1 fields  buildings/pyramids/epyramidelement.cpp
+  eSanctBuilding                             3 fields  buildings/sanctuaries/esanctbuilding.cpp
+  eTempleAltarBuilding                       2 fields  buildings/sanctuaries/etemplealtarbuilding.cpp
+  eTempleBuilding                            1 fields  buildings/sanctuaries/etemplebuilding.cpp
+  eCattle                                    3 fields  characters/ecattle.cpp
+  eCharacterBase                             8 fields  characters/echaracterbase.cpp
+  eDomesticatedAnimal                        2 fields  characters/edomesticatedanimal.cpp
+  eFightingCharacter                         1 fields  characters/efightingcharacter.cpp
+  eRacingHorse                               1 fields  characters/eracinghorse.cpp
+  eSettler                                   1 fields  characters/esettler.cpp
+  eActionWithComeback                        5 fields  characters/actions/eactionwithcomeback.cpp
+  eAttackCityAction                          1 fields  characters/actions/eattackcityaction.cpp
+  eBuildAction                               2 fields  characters/actions/ebuildaction.cpp
+  eCollectAction                             3 fields  characters/actions/ecollectaction.cpp
+  eComplexAction                             0 fields  characters/actions/ecomplexaction.cpp
+  eDieAction                                 1 fields  characters/actions/edieaction.cpp
+  eFireFighterAction                         3 fields  characters/actions/efirefighteraction.cpp
+  eHeroAction                                4 fields  characters/actions/eheroaction.cpp
+  eMonsterAction                             3 fields  characters/actions/emonsteraction.cpp
+  eMoveAroundAction                          4 fields  characters/actions/emovearoundaction.cpp
+  eSoldierAction                             1 fields  characters/actions/esoldieraction.cpp
+  eWaitAction                                1 fields  characters/actions/ewaitaction.cpp
+  eAphroditeHelpAction                       1 fields  characters/actions/godHelp/eaphroditehelpaction.cpp
+  eApolloHelpAction                          1 fields  characters/actions/godHelp/eapollohelpaction.cpp
+  eAresHelpAction                            1 fields  characters/actions/godHelp/eareshelpaction.cpp
+  eHephaestusHelpAction                      1 fields  characters/actions/godHelp/ehephaestushelpaction.cpp
+  eHermesHelpAction                          1 fields  characters/actions/godHelp/ehermeshelpaction.cpp
+  eZeusHelpAction                            1 fields  characters/actions/godHelp/ezeushelpaction.cpp
+  eGod                                       1 fields  characters/gods/egod.cpp
+  eGodVisitAction                            3 fields  characters/gods/actions/egodvisitaction.cpp
+  eGodWorshippedAction                       5 fields  characters/gods/actions/egodworshippedaction.cpp
+  eDate                                      3 fields  engine/edate.cpp
+  eEmploymentDistributor                     1 fields [has loop]  engine/eemploymentdistributor.cpp
+  eEpisodeGoal                               5 fields  engine/eepisodegoal.cpp
+  ePlannedAction                             4 fields  engine/eplannedaction.cpp
+  eDistrictReadyCondition                    4 fields  engine/ai/eaidistrict.cpp
+  eCountEventValue                           3 fields  gameEvents/ecounteventvalue.cpp
+  eEarthquakeEvent                           0 fields  gameEvents/eearthquakeevent.cpp
+  eLandSlideEvent                            0 fields  gameEvents/elandslideevent.cpp
+  eLavaEvent                                 0 fields  gameEvents/elavaevent.cpp
+  eMonsterEventValue                         1 fields  gameEvents/emonstereventvalue.cpp
+  ePlayerRaidEvent                           1 fields  gameEvents/eplayerraidevent.cpp
+  eResourceEventValue                        2 fields [has loop]  gameEvents/eresourceeventvalue.cpp
+  eSinkLandEvent                             0 fields  gameEvents/esinklandevent.cpp
+  eTidalWaveEvent                            1 fields  gameEvents/etidalwaveevent.cpp
+  eWageChangeEvent                           0 fields  gameEvents/ewagechangeevent.cpp
+  eGodEventValue                             1 fields  gameEvents/gods/egodeventvalue.cpp
+  eGodQuestEvent                             1 fields  gameEvents/gods/egodquestevent.cpp
+  eGodReasonEventValue                       1 fields  gameEvents/gods/egodreasoneventvalue.cpp
+  eGodTradeResumesEvent                      1 fields  gameEvents/gods/egodtraderesumesevent.cpp
+  eGodMissile                                2 fields  missiles/egodmissile.cpp
+  eBanner                                    1 fields  spawners/ebanner.cpp
+  eSpawner                                   2 fields  spawners/espawner.cpp
+
+HAS RAW OPS (manual, 13 classes):
+  eMonument                                  3 fields  buildings/emonument.cpp
+    raw: mStored.read(ar.readStream());
+    raw: mUsed.read(ar.readStream());
+    raw: mStored.write(ar.writeStream());
+    ... +1 more
+  eFightingAction                            9 fields  characters/actions/efightingaction.cpp
+    raw: mAttackTarget.read(board(), ar.readStream());
+    raw: mAttackTarget.write(ar.writeStream());
+  eBoardPlayer                               8 fields  engine/e-board-player.cpp
+    raw: if(ar.reading()) q.read(ar.readStream());
+    raw: else q.write(ar.writeStream());
+    raw: if(ar.reading()) mInDebtSince.read(ar.readStream());
+    ... +3 more
+  eBoardCity                               134 fields  engine/eboardcityread.cpp
+    raw: r.read(mBoard, src);
+    raw: r.write(dst);
+  eCampaign                                 42 fields  engine/ecampaign.cpp
+    raw: mDate.read(src);
+    raw: mWorldBoard.read(src);
+    raw: mDate.write(dst);
+    ... +1 more
+  eEpisode                                  19 fields  engine/eepisode.cpp
+    raw: if(ar.reading()) fStartDate.read(ar.readStream());
+    raw: else fStartDate.write(ar.writeStream());
+    raw: if(ar.reading()) ab.read(ar.readStream());
+    ... +1 more
+  eWorldBoard                               10 fields  engine/eworldboard.cpp
+    raw: r.read(ar.readStream());
+    raw: r.write(ar.writeStream());
+  eArmyEventBase                             0 fields  gameEvents/earmyeventbase.cpp
+    raw: mForces.read(*board, ar.readStream());
+    raw: mForces.write(ar.writeStream());
+  eGameEvent                                15 fields  gameEvents/egameevent.cpp
+    raw: if(ar.reading()) mNextDate.read(ar.readStream());
+    raw: else mNextDate.write(ar.writeStream());
+  eRequestAidEvent                           1 fields  gameEvents/erequestaidevent.cpp
+    raw: mArrivalDate.read(ar.readStream());
+    raw: mArrivalDate.write(ar.writeStream());
+  eGodQuestEventBase                         0 fields  gameEvents/gods/egodquesteventbase.cpp
+    raw: mQuest.read(ar.readStream());
+    raw: mQuest.write(ar.writeStream());
+  eInvasionEvent                             3 fields  gameEvents/invasions/invasion-event.cpp
+    raw: mFirstWarning.read(ar.readStream());
+    raw: mFirstWarning.write(ar.writeStream());
+  eMissile                                   2 fields  missiles/emissile.cpp
+    raw: mPath.read(ar.readStream());
+    raw: mPath.write(ar.writeStream());
+
+HAS SPLIT read/write (needs merge, 118 classes):
+  eAnimalBuilding                            0 fields  buildings/eanimalbuilding.cpp
+  eArtisansGuild                             1 fields  buildings/eartisansguild.cpp
+  eAvailableBuildings                       63 fields  buildings/eavailablebuildings.cpp
+  eBuilding                                 15 fields  buildings/ebuilding.cpp
+  eBuildingWithResource                      4 fields  buildings/ebuildingwithresource.cpp
+  eChariotFactory                            3 fields  buildings/echariotfactory.cpp
+  eFarmBase                                  4 fields  buildings/efarmbase.cpp
+  eFishery                                   3 fields  buildings/efishery.cpp
+  eGrowersLodge                              8 fields  buildings/egrowerslodge.cpp
+  eHerosHall                                 8 fields  buildings/eheroshall.cpp
+  eHippodrome                                4 fields  buildings/ehippodrome.cpp
+  eHippodromePiece                           1 fields  buildings/ehippodromepiece.cpp
+  eHorseRanch                                3 fields  buildings/ehorseranch.cpp
+  eHorseRanchEnclosure                       1 fields  buildings/ehorseranchenclosure.cpp
+  eHouseBase                                14 fields  buildings/ehousebase.cpp
+  eHuntingLodge                              1 fields  buildings/ehuntinglodge.cpp
+  eMonument                                  3 fields  buildings/emonument.cpp
+  ePalace                                    1 fields  buildings/epalace.cpp
+  ePatrolBuildingBase                        8 fields  buildings/epatrolbuildingbase.cpp
+  eProcessingBuilding                        4 fields  buildings/eprocessingbuilding.cpp
+  eResourceBuildingBase                      1 fields  buildings/eresourcebuildingbase.cpp
+  eResourceCollectBuilding                  10 fields  buildings/eresourcecollectbuilding.cpp
+  eShepherBuildingBase                       3 fields  buildings/eshepherbuildingbase.cpp
+  eStorageBuilding                           8 fields  buildings/estoragebuilding.cpp
+  eTower                                     6 fields  buildings/etower.cpp
+  eTriremeWharf                              4 fields  buildings/etriremewharf.cpp
+  eUrchinQuay                                3 fields  buildings/eurchinquay.cpp
+  eVendor                                    2 fields  buildings/evendor.cpp
+  ePyramid                                   2 fields  buildings/pyramids/epyramid.cpp
+  ePyramidBuildingPart                       1 fields  buildings/pyramids/epyramidbuildingpart.cpp
+  eSanctuaryWithWarriors                     1 fields  buildings/sanctuaries/eartemissanctuary.cpp
+  eSanctuary                                 7 fields  buildings/sanctuaries/esanctuary.cpp
+  eAmazon                                    1 fields  characters/eamazon.cpp
+  eCartTransporter                          10 fields  characters/ecarttransporter.cpp
+  eCharacter                                18 fields  characters/echaracter.cpp
+  eEnlistedForces                            7 fields  characters/eenlistedforces.cpp
+  eHunter                                    1 fields  characters/ehunter.cpp
+  eSoldier                                   0 fields  characters/esoldier.cpp
+  eSoldierBanner                            13 fields  characters/esoldierbanner.cpp
+  eTrailer                                   3 fields  characters/etrailer.cpp
+  eWildAnimal                                0 fields  characters/ewildanimal.cpp
+  eAnimalAction                              4 fields  characters/actions/eanimalaction.cpp
+  eArcherAction                              4 fields  characters/actions/earcheraction.cpp
+  eArtisanAction                             1 fields  characters/actions/eartisanaction.cpp
+  eCartTransporterAction                     6 fields  characters/actions/ecarttransporteraction.cpp
+  eCharacterAction                           2 fields  characters/actions/echaracteraction.cpp
+  eCollectResourceAction                     7 fields  characters/actions/ecollectresourceaction.cpp
+  eDefendAttackCityAction                    8 fields  characters/actions/edefendattackcityaction.cpp
+  eDefendCityAction                          0 fields  characters/actions/edefendcityaction.cpp
+  eDionysusFollowAction                      0 fields  characters/actions/edionysusfollowaction.cpp
+  eFightAction                               1 fields  characters/actions/efightaction.cpp
+  eFightingAction                            9 fields  characters/actions/efightingaction.cpp
+  eFollowAction                              4 fields  characters/actions/efollowaction.cpp
+  eGrowerAction                              4 fields  characters/actions/egroweraction.cpp
+  eHuntAction                                1 fields  characters/actions/ehuntaction.cpp
+  eMoveAction                                6 fields  characters/actions/emoveaction.cpp
+  eMovePathAction                            4 fields  characters/actions/emovepathaction.cpp
+  ePatrolAction                              5 fields  characters/actions/epatrolaction.cpp
+  ePatrolMoveAction                          4 fields  characters/actions/epatrolmoveaction.cpp
+  eReplaceCattleAction                       0 fields  characters/actions/ereplacecattleaction.cpp
+  eSettlerAction                             3 fields  characters/actions/esettleraction.cpp
+  eShepherdAction                            4 fields  characters/actions/eshepherdaction.cpp
+  eSickDisgruntledAction                     1 fields  characters/actions/esickdisgruntledaction.cpp
+  eTakeCattleAction                          2 fields  characters/actions/etakecattleaction.cpp
+  eTraderAction                              5 fields  characters/actions/etraderaction.cpp
+  eTriremeAction                             0 fields  characters/actions/etriremeaction.cpp
+  eAtlasHelpAction                           1 fields  characters/actions/godHelp/eatlashelpaction.cpp
+  eHadesHelpAction                           1 fields  characters/actions/godHelp/ehadeshelpaction.cpp
+  eHeraHelpAction                            2 fields  characters/actions/godHelp/eherahelpaction.cpp
+  eProvideResourceHelpAction                 3 fields  characters/actions/godHelp/eprovideresourcehelpaction.cpp
+  eHasNonBusyResourceObject                  0 fields  characters/actions/walkable/ehasnonbusyresourceobject.cpp
+  eHasResourceWalkableObject                 0 fields  characters/actions/walkable/ehasresourcewalkableobject.cpp
+  eRectWalkableObject                        1 fields  characters/actions/walkable/erectwalkableobject.cpp
+  eGodAttackAction                           7 fields  characters/gods/actions/egodattackaction.cpp
+  eGodMonsterAction                          5 fields  characters/gods/actions/egodmonsteraction.cpp
+  eBoardPlayer                               8 fields  engine/e-board-player.cpp
+  eGameBoard                                70 fields  engine/e-game-board-read.cpp
+  eBoardCity                               134 fields  engine/eboardcityread.cpp
+  eCampaign                                 42 fields  engine/ecampaign.cpp
+  eColonyMonumentAction                      0 fields  engine/ecolonymonumentaction.cpp
+  eEpisode                                  19 fields  engine/eepisode.cpp
+  eGameEvents                                2 fields  engine/egameevents.cpp
+  eMilitaryAid                               1 fields  engine/emilitaryaid.cpp
+  ePlague                                    2 fields  engine/eplague.cpp
+  eRegrowForestAction                        0 fields  engine/eregrowforestaction.cpp
+  eReinforcements                            1 fields  engine/ereinforcements.cpp
+  eTile                                      6 fields  engine/etile.cpp
+  eTileBase                                  6 fields  engine/etilebase.cpp
+  eWorldBoard                               10 fields  engine/eworldboard.cpp
+  eWorldCity                                39 fields  engine/eworldcity.cpp
+  eAIBuilding                               16 fields  engine/ai/eaibuilding.cpp
+  eAICityPlan                                5 fields  engine/ai/eaicityplan.cpp
+  eAIDistrict                                2 fields  engine/ai/eaidistrict.cpp
+  eArmyEventBase                             0 fields  gameEvents/earmyeventbase.cpp
+  eAttackingCityEventValue                   0 fields  gameEvents/eattackingcityeventvalue.cpp
+  eCityBecomesEvent                          1 fields  gameEvents/ecitybecomesevent.cpp
+  eCityEventValue                            2 fields  gameEvents/ecityeventvalue.cpp
+  eEconomicMilitaryChangeEventBase           0 fields  gameEvents/eeconomicmilitarychangeeventbase.cpp
+  eEventTrigger                              2 fields  gameEvents/eeventtrigger.cpp
+  eGameEvent                                15 fields  gameEvents/egameevent.cpp
+  eGiftToEvent                               2 fields  gameEvents/egifttoevent.cpp
+  ePlayerConquestEvent                       0 fields  gameEvents/eplayerconquestevent.cpp
+  eReceiveTributeEvent                       0 fields  gameEvents/ereceivetributeevent.cpp
+  eRequestAidEvent                           1 fields  gameEvents/erequestaidevent.cpp
+  eRequestStrikeEvent                        1 fields  gameEvents/erequeststrikeevent.cpp
+  eResourceGrantedEventBase                  1 fields  gameEvents/eresourcegrantedeventbase.cpp
+  eRivalArmyAwayEvent                        0 fields  gameEvents/erivalarmyawayevent.cpp
+  eSupplyDemandChangeEvent                   0 fields  gameEvents/esupplydemandchangeevent.cpp
+  eTroopsRequestEvent                        4 fields  gameEvents/etroopsrequestevent.cpp
+  eGodAttackEvent                            4 fields  gameEvents/gods/egodattackevent.cpp
+  eGodDisasterEvent                          2 fields  gameEvents/gods/egoddisasterevent.cpp
+  eGodQuestEventBase                         0 fields  gameEvents/gods/egodquesteventbase.cpp
+  eGodVisitEvent                             4 fields  gameEvents/gods/egodvisitevent.cpp
+  eInvasionEvent                             3 fields  gameEvents/invasions/invasion-event.cpp
+  eMonsterInvasionEventBase                  7 fields  gameEvents/invasions/monster-invasion-event-base.cpp
+  eFulfillRequestEvent                      16 fields  gameEvents/requests/e-fulfill-request-event.cpp
+  ePayTributeEvent                          16 fields  gameEvents/requests/e-pay-tribute-event.cpp
+  eMissile                                   2 fields  missiles/emissile.cpp
+
+ALREADY DONE (0 classes):

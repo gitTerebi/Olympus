@@ -3,6 +3,7 @@
 #include "engine/e-game-board.h"
 #include "engine/eguidedmovepathtask.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePatrolBuildingBase::ePatrolBuildingBase(
         eGameBoard& board,
@@ -155,6 +156,30 @@ void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
         if(ar.reading()) mPatrolGuides.push_back(pg);
     }
 }
+
+void ePatrolBuildingBase::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mBothDirections", mBothDirections);
+    ar.field("mLastDirection", mLastDirection);
+    ar.field("mSpawnPatrolers", mSpawnPatrolers);
+    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("mSpawnRoadId", mSpawnRoadId);
+    int n = 0;
+    if(ar.writing()) n = static_cast<int>(mPatrolGuides.size());
+    ar.field("n", n);
+    if(ar.reading()) mPatrolGuides.clear();
+    for(int i = 0; i < n; i++) {
+        ePatrolGuide pg;
+        if(ar.writing()) pg = mPatrolGuides[i];
+        const auto xk = "pg.fX." + std::to_string(i);
+        const auto yk = "pg.fY." + std::to_string(i);
+        ar.field(xk.c_str(), pg.fX);
+        ar.field(yk.c_str(), pg.fY);
+        if(ar.reading()) mPatrolGuides.push_back(pg);
+    }
+    // mDirTimes/mChar restored by character load pass
+}
+
 
 bool ePatrolBuildingBase::updatePathIfNeeded() {
     if(mPatrolGuides.empty()) {

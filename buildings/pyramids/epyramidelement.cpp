@@ -1,5 +1,6 @@
 #include "epyramidelement.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "epyramid.h"
 #include "textures/egametextures.h"
@@ -166,6 +167,12 @@ void ePyramidElement::write(eWriteStream& dst) const {
 void ePyramidElement::serialize(eSaveArchive& ar) {
     ar.field("mCurrentElevation", mCurrentElevation);
 }
+
+void ePyramidElement::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("mCurrentElevation", mCurrentElevation);
+}
+
 
 eTextureSpace ePyramidElement::getBuildingTextureSpace(
         const int tx, const int ty,

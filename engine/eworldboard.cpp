@@ -2,6 +2,7 @@
 
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <iterator>
 
@@ -252,6 +253,86 @@ void eWorldBoard::serialize(eSaveArchive &ar)
             ar.field("tid", tid);
             if (ar.reading())
                 mPlayerToTeam[pid] = tid;
+        }
+    }
+}
+
+void eWorldBoard::serializeJson(eJsonArchive& ar) {
+    ar.field("mMap", mMap);
+
+    int nr = ar.writing() ? static_cast<int>(mRegions.size()) : 0;
+    ar.field("nr", nr);
+    if(ar.reading()) mRegions.clear();
+    for(int i = 0; i < nr; i++) {
+        eWorldRegion r;
+        if(ar.writing()) r = mRegions[i];
+        auto rar = ar.childAt("regions", i);
+        r.serializeJson(rar);
+        if(ar.reading()) mRegions.push_back(r);
+    }
+
+    // assign IOIDs before writing cities so mConqueredBy lookup works
+    if(ar.writing()) setIOIDs();
+
+    int nc = ar.writing() ? static_cast<int>(mCities.size()) : 0;
+    ar.field("nc", nc);
+    if(ar.reading()) mCities.clear();
+    for(int i = 0; i < nc; i++) {
+        if(ar.reading()) {
+            const auto c = std::make_shared<eWorldCity>();
+            auto car = ar.childAt("cities", i);
+            c->serializeJson(car, nullptr); // board=null; resolve conqueredBy after
+            addCity(c);
+        } else {
+            auto car = ar.childAt("cities", i);
+            mCities[i]->serializeJson(car, nullptr);
+        }
+    }
+    if(ar.reading()) {
+        setIOIDs();
+        // resolve mConqueredBy cross-references now that all cities are loaded
+        for(const auto& city : mCities) {
+            auto car = ar.childAt("cities", static_cast<int>(city->ioID()));
+            int conqueredByIOID = -1;
+            car.field("mConqueredByIOID", conqueredByIOID);
+            if(conqueredByIOID >= 0)
+                city->setConqueredBy(cityWithIOID(conqueredByIOID));
+        }
+    }
+
+    {
+        int nc2 = ar.writing() ? static_cast<int>(mCityToPlayer.size()) : 0;
+        ar.field("ncp", nc2);
+        if(ar.reading()) mCityToPlayer.clear();
+        for(int i = 0; i < nc2; i++) {
+            eCityId cid{}; ePlayerId pid{};
+            if(ar.writing()) {
+                auto it = mCityToPlayer.begin();
+                std::advance(it, i);
+                cid = it->first; pid = it->second;
+            }
+            ar.field(("cp." + std::to_string(i) + ".cid").c_str(), cid);
+            ar.field(("cp." + std::to_string(i) + ".pid").c_str(), pid);
+            if(ar.reading()) mCityToPlayer[cid] = pid;
+        }
+    }
+
+    ar.field("mPersonPlayer", mPersonPlayer);
+
+    {
+        int np = ar.writing() ? static_cast<int>(mPlayerToTeam.size()) : 0;
+        ar.field("npt", np);
+        if(ar.reading()) mPlayerToTeam.clear();
+        for(int i = 0; i < np; i++) {
+            ePlayerId pid{}; eTeamId tid{};
+            if(ar.writing()) {
+                auto it = mPlayerToTeam.begin();
+                std::advance(it, i);
+                pid = it->first; tid = it->second;
+            }
+            ar.field(("pt." + std::to_string(i) + ".pid").c_str(), pid);
+            ar.field(("pt." + std::to_string(i) + ".tid").c_str(), tid);
+            if(ar.reading()) mPlayerToTeam[pid] = tid;
         }
     }
 }

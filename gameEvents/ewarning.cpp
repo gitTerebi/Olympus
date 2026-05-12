@@ -1,6 +1,7 @@
 #include "ewarning.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eWarning::eWarning(const int warningMonths,
                    const bool initialWarning,
@@ -36,6 +37,12 @@ void eWarning::write(eWriteStream &dst) const {
 void eWarning::read(eReadStream &src) {
     eSaveArchive ar(src);
     if(ar.reading()) mNextDate.read(ar.readStream());
+    ar.field("mFinished", mFinished);
+    ar.field("mWarningMonths", mWarningMonths);
+}
+
+void eWarning::serializeJson(eJsonArchive& ar) {
+    { auto a = ar.child("nextDate"); mNextDate.serializeJson(a); }
     ar.field("mFinished", mFinished);
     ar.field("mWarningMonths", mWarningMonths);
 }

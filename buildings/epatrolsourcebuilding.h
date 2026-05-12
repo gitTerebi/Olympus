@@ -33,6 +33,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
 

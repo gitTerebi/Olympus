@@ -8,6 +8,7 @@
 #include "eworldregion.h"
 
 class eSaveArchive;
+class eJsonArchive;
 
 enum class eWorldMap {
     greece1,
@@ -61,6 +62,7 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
+    void serializeJson(eJsonArchive& ar);
 
     stdsptr<eWorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);

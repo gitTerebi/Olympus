@@ -18,6 +18,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     void addRaw() override {}
     void hunterDelivered(const eResourceType type, const int count);

@@ -1,4 +1,5 @@
 #include "eemploymentdistributor.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <iostream>
 #include <vector>
@@ -70,6 +71,13 @@ void eEmploymentDistributor::write(eWriteStream& dst) const {
 void eEmploymentDistributor::serialize(eSaveArchive& ar) {
     for(auto& e : mPriorities) {
         ar.field("e.second", e.second);
+    }
+}
+
+void eEmploymentDistributor::serializeJson(eJsonArchive& ar) {
+    int i = 0;
+    for(auto& e : mPriorities) {
+        ar.field(("priority." + std::to_string(i++)).c_str(), e.second);
     }
 }
 

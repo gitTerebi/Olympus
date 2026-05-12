@@ -24,6 +24,7 @@ public:
 
     void clear();
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
 private:
 
     const eCityId mCid;

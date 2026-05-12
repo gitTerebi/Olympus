@@ -25,6 +25,7 @@ struct ePyramidAvailable {
 struct eAvailableBuildings {
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(class eJsonArchive& ar);
 
     void allowPyramid(const eBuildingType type,
                       const std::vector<bool>& levels);

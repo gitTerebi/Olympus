@@ -61,6 +61,7 @@ public:
     int employees(const eSector s);
 
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 

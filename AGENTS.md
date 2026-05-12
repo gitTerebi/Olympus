@@ -8,13 +8,18 @@ New files: kebab-case, no `e` or `e-` prefix (e.g. `storage-widget.cpp` not `est
 New classes: PascalCase, no `e` prefix (e.g. `StorageWidget` not `eStorageWidget`).
 New include guards: no `E` prefix (e.g. `STORAGE_WIDGET_H` not `ESTORAGE_WIDGET_H`).
 
-## Save Serialization
+## JSON Save Transition
 
-Add new saved fields only if state cannot be derived from existing.
-Use `eSaveArchive::field(...)` with stable names for saved fields. Avoid appending raw streams; older saves omit new fields and must remain readable.
-For optional/new fields, use the 3-arg overload `ar.field("name", var, defaultValue)` — sets default before read so missing fields in old saves don't leave variables uninitialized.
-New optional fields must be placed at the end of the current tagged archive or in a scoped/compat block; adding them in the middle can end the archive early and make later fields default.
-Run `powershell -ExecutionPolicy Bypass -File tools/check-save-compat.ps1` before committing save changes. If a new optional field is intentionally safe, add `// SAVE_COMPAT_OPTIONAL_FIELD` on the same line.
+Prefer JSON props over `blob` for small, self-contained state that already has `serializeJson(eJsonArchive&)`.
+Do not convert blob state to JSON unless every nested type/ref it saves has JSON support.
+Good small candidates: flat structs/classes with existing `serializeJson`, no post-load refs, no nested action graphs.
+Bad candidates until expanded: characters/actions, players with event refs, tiles, and large systems with many raw `read/write` deps.
+When storing counted JSON objects with keys like `x.count`, store children under object paths (`x.0`, `x.1`) using `ar.child("x.N")`.
+Do not use `ar.childAt("x", i)` when the same key also stores `x.count`; `childAt` expects an array and will conflict with object-style count fields.
+Use `childAt` only with a separate array key, e.g. `thingCount` + `things[]`.
+Keep read/write JSON shapes identical. If read uses `ar.child("x.N")`, write must use the same.
+For old/new JSON format transitions, first decide if old saves must load; if yes, add explicit compat based on field presence, not a blind blob fallback.
+After save-format edits, test loading a save made before the edit and a save made after the edit.
 
 ## Build
 

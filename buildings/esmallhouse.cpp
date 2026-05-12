@@ -18,6 +18,7 @@
 #include "elanguage.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eSmallHouse::eSmallHouse(eGameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
                                                                             {8, 16, 24, 32, 40, 48, 60}, cid)
@@ -637,4 +638,20 @@ void eSmallHouse::spawnDisgruntled()
     mDisg->setOnCityId(cid);
     mDisg->setCityId(eCityId::neutralAggresive);
     spawnCharacter(c);
+}
+
+
+void eSmallHouse::serializeJson(eJsonArchive& ar) {
+    eHouseBase::serializeJson(ar);
+    ar.field("mWater", mWater);
+    ar.field("mHygiene", mHygiene);
+    ar.field("mPlague", mPlague);
+    ar.field("mDisgruntled", mDisgruntled);
+    ar.field("mSatisfaction", mSatisfaction);
+    ar.field("mFoodSatisfaction", mFoodSatisfaction);
+    ar.field("mWaterSatisfaction", mWaterSatisfaction);
+    ar.field("mWorkSatisfaction", mWorkSatisfaction);
+    ar.field("mTaxSatisfaction", mTaxSatisfaction);
+    ar.field("mDevolveDelay", mDevolveDelay);
+    ar.field("mEvictDelay", mEvictDelay);
 }

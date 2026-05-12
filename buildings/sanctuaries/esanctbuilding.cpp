@@ -2,6 +2,7 @@
 
 #include "esanctuary.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eSanctCost totalCost(const std::vector<eSanctCost>& cost) {
     eSanctCost result{0, 0, 0};
@@ -82,6 +83,14 @@ void eSanctBuilding::serialize(eSaveArchive& ar) {
     ar.field("mProgress", mProgress);
     ar.field("mHalted", mHalted);
 }
+
+void eSanctBuilding::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("mWorkedOn", mWorkedOn);
+    ar.field("mProgress", mProgress);
+    ar.field("mHalted", mHalted);
+}
+
 
 void eSanctBuilding::scheduleTerrainUpdate() {
     const auto bt = type();

@@ -8,6 +8,7 @@
 
 #include "etilehelper.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAICityPlan::eAICityPlan(const eCityId cid) :
     mCid(cid) {}
@@ -154,6 +155,35 @@ void eAICityPlan::serialize(eSaveArchive& ar) {
         }
         ar.field("did", did);
         b.serialize(ar);
+        if(ar.reading()) mScheduledBuildings.push_back({did, b});
+    }
+}
+
+void eAICityPlan::serializeJson(eJsonArchive& ar) {
+    ar.field("mCid", mCid);
+    ar.field("mLastBuildDistrict", mLastBuildDistrict);
+
+    int ds = ar.reading() ? 0 : static_cast<int>(mDistricts.size());
+    ar.field("districtCount", ds);
+    if(ar.reading()) mDistricts.clear();
+    for(int i = 0; i < ds; i++) {
+        auto ca = ar.childAt("districts", i);
+        eAIDistrict d;
+        if(!ar.reading()) d = mDistricts[i];
+        d.serializeJson(ca);
+        if(ar.reading()) mDistricts.push_back(d);
+    }
+
+    int ns = ar.reading() ? 0 : static_cast<int>(mScheduledBuildings.size());
+    ar.field("scheduledCount", ns);
+    if(ar.reading()) mScheduledBuildings.clear();
+    for(int i = 0; i < ns; i++) {
+        auto ca = ar.childAt("scheduled", i);
+        int did = 0;
+        eAIBuilding b;
+        if(!ar.reading()) { did = mScheduledBuildings[i].first; b = mScheduledBuildings[i].second; }
+        ca.field("did", did);
+        b.serializeJson(ca);
         if(ar.reading()) mScheduledBuildings.push_back({did, b});
     }
 }

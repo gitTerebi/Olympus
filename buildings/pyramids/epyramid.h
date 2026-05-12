@@ -26,6 +26,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     eSanctCost swapMarbleIfDark(const int e, eSanctCost cost) const;
 

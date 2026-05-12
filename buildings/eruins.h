@@ -15,6 +15,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     void setWasType(const eBuildingType type) { mWasType = type; }
     eBuildingType wasType() const { return mWasType; }

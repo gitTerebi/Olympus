@@ -81,7 +81,7 @@ void eLoadGame::intialize(const std::string& title,
     deleteB->setPressAction([this]() {
         const auto name = mLineEdit->text();
         if(name.empty()) return;
-        const auto path = mFolder + name + ".ez2";
+        const auto path = mFolder + name + ".ez3";
         if(!std::filesystem::exists(path)) return;
         const auto q = new eQuestionWidget(window());
         const auto acceptA = [this, path]() {
@@ -142,15 +142,21 @@ void eLoadGame::intialize(const std::string& title,
     mFilesWidget = new eWidget(window());
 
     std::map<time_t, fs::path> sorted;
+    std::map<std::string, fs::path> byName;
     if(std::filesystem::exists(folder)) {
         for(const auto& entry : fs::directory_iterator(folder)) {
             const auto path = entry.path();
             const auto ext = path.extension();
-            if(ext != ".ez2") continue;
-            const auto lwt = fs::last_write_time(path);
-            const auto time = to_time_t(lwt);
-            sorted[-time] = path;
+            if(ext != ".ez3" && ext != ".ez3") continue;
+            const auto stem = path.filename().stem().u8string();
+            auto it = byName.find(stem);
+            if(it == byName.end() || ext == ".ez3") byName[stem] = path;
         }
+    }
+    for(const auto& [stem, path] : byName) {
+        const auto lwt = fs::last_write_time(path);
+        const auto time = to_time_t(lwt);
+        sorted[-time] = path;
     }
 
     int y = 0;
@@ -192,7 +198,10 @@ void eLoadGame::setFileName(const std::string& path) {
 }
 
 std::string eLoadGame::filePath() const {
-    return mFolder + mLineEdit->text() + ".ez2";
+    const auto name = mLineEdit->text();
+    const auto ez3 = mFolder + name + ".ez3";
+    if(std::filesystem::exists(ez3)) return ez3;
+    return mFolder + name + ".ez3";
 }
 
 void eLoadGame::rebuildFileList() {
@@ -206,15 +215,21 @@ void eLoadGame::rebuildFileList() {
     const int swwidth = mSwWidth;
 
     std::map<time_t, fs::path> sorted;
+    std::map<std::string, fs::path> byName;
     if(std::filesystem::exists(mFolder)) {
         for(const auto& entry : fs::directory_iterator(mFolder)) {
             const auto path = entry.path();
             const auto ext = path.extension();
-            if(ext != ".ez2") continue;
-            const auto lwt = fs::last_write_time(path);
-            const auto time = to_time_t(lwt);
-            sorted[-time] = path;
+            if(ext != ".ez3" && ext != ".ez3") continue;
+            const auto stem = path.filename().stem().u8string();
+            auto it = byName.find(stem);
+            if(it == byName.end() || ext == ".ez3") byName[stem] = path;
         }
+    }
+    for(const auto& [stem, path] : byName) {
+        const auto lwt = fs::last_write_time(path);
+        const auto time = to_time_t(lwt);
+        sorted[-time] = path;
     }
 
     int y = 0;

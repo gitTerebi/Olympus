@@ -5,6 +5,7 @@
 #include "characters/actions/ehuntaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <algorithm>
 
@@ -80,6 +81,13 @@ void eHuntingLodge::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mHunter);
     }
 }
+
+void eHuntingLodge::serializeJson(eJsonArchive& ar) {
+    eResourceCollectBuildingBase::serializeJson(ar);
+    ar.field("mSpawnTime", mSpawnTime);
+    // mHunter restored by character load pass
+}
+
 
 void eHuntingLodge::hunterDelivered(const eResourceType type, const int count) {
     const int c = addProduced(type, count);

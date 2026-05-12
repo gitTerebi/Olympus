@@ -463,6 +463,7 @@ public:
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
     void serializeMessageLog(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
 
     eBuilding* buildingWithIOID(const int id) const;
     eCharacter* characterWithIOID(const int id) const;

@@ -11,6 +11,7 @@
 #include "engine/ecityid.h"
 
 class eWorldBoard;
+class eJsonArchive;
 
 enum class eNationality {
     greek,
@@ -309,6 +310,7 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eWorldBoard* const board);
+    void serializeJson(eJsonArchive& ar, eWorldBoard* board);
 
     void gifted(const eResourceType type, const int count);
     bool acceptsGift(const eResourceType type, const int count) const;

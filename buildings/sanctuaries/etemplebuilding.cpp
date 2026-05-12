@@ -1,5 +1,6 @@
 #include "etemplebuilding.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
@@ -78,6 +79,12 @@ void eTempleBuilding::write(eWriteStream& dst) const {
 void eTempleBuilding::serialize(eSaveArchive& ar) {
     ar.field("mId", mId);
 }
+
+void eTempleBuilding::serializeJson(eJsonArchive& ar) {
+    eSanctBuilding::serializeJson(ar);
+    ar.field("mId", mId);
+}
+
 
 bool eTempleBuilding::hasNeighbour() const {
     const auto& board = getBoard();

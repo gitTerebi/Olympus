@@ -45,18 +45,23 @@ public:
         assert(fFile || fMem);
         if(fFile) {
             fFile->read(static_cast<char*>(data), len);
+            fBytesRead += len;
             return len;
         } else if(fMem) {
             std::memcpy(data, static_cast<char*>(fMem) + fMemPos, len);
             fMemPos += len;
+            fBytesRead += len;
             return len;
         }
         return 0;
     }
+
+    size_t position() const { return fBytesRead; }
 private:
     std::ifstream* fFile = nullptr;
     void* fMem = nullptr;
     size_t fMemPos = 0;
+    size_t fBytesRead = 0;
 };
 
 #define EREAD_TAG(name) (name "@" __FILE__ ":" EREAD_STRINGIFY(__LINE__))
@@ -72,6 +77,8 @@ public:
     inline size_t read(void* const data, const size_t len) {
         return mSrc.read(data, len);
     }
+
+    size_t position() const { return mSrc.position(); }
 
     void skip(const size_t len) {
         std::vector<char> buffer(len);

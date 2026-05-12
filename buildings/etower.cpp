@@ -10,6 +10,7 @@
 #include "audio/esounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eTower::eTower(eGameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
 {
@@ -298,6 +299,17 @@ void eTower::serialize(eSaveArchive &ar)
     {
         ar.writeStream().writeCharacter(mArcher);
     }
+}
+
+void eTower::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mMissile", mMissile);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mAttack", mAttack);
+    ar.field("mAttackOrientation", mAttackOrientation);
+    ar.field("mSpawnTime", mSpawnTime);
+    // mAttackTarget and mArcher restored by character load pass
 }
 
 bool eTower::spawn()

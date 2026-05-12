@@ -61,6 +61,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 protected:
     void setLevel(const int l);
     int evict();

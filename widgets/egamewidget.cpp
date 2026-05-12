@@ -249,13 +249,13 @@ void eGameWidget::setBoard(eGameBoard *const board)
         std::string yearStr;
         if(year < 0) yearStr = std::to_string(-(year  + 1)) + " BC";
         else yearStr = std::to_string(year);
-        const auto filename = "autosave year " + yearStr + ".ez2";
+        const auto filename = "autosave year " + yearStr + ".ez3";
         w->saveGame(dir + filename);
         // Clean up old autosaves, keep only 5 most recent
         std::vector<std::pair<std::filesystem::file_time_type, std::filesystem::path>> autosaves;
         for(const auto& entry : std::filesystem::directory_iterator(dir)) {
             const auto path = entry.path();
-            if(path.extension() != ".ez2") continue;
+            if(path.extension() != ".ez3") continue;
             const auto name = path.stem().string();
             if(name.find("autosave year ") == 0) {
                 autosaves.emplace_back(entry.last_write_time(), path);
@@ -3348,8 +3348,10 @@ void eGameWidget::showGraphicsMenu()
 void eGameWidget::showStampManager()
 {
     mGm->setMode(eBuildingMode::none);
+    const auto ppid = mBoard->personPlayer();
+    const auto diff = mBoard->difficulty(ppid);
     const auto d = new eStampManager(window());
-    d->initialize(mStampTool.get());
+    d->initialize(mStampTool.get(), diff);
     d->setTemplateSelectedAction([this]() {
         mGm->setMode(eBuildingMode::stamp);
     });

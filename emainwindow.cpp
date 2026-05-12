@@ -21,6 +21,7 @@
 #include "egamedir.h"
 
 #include "fileIO/ereadstream.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <chrono>
 #include <filesystem>
@@ -267,7 +268,7 @@ void eMainWindow::showEpisodeIntroduction(
     const auto proceedA = [this]() {
         mCampaign->startEpisode();
         const auto dir = leaderSaveDir();
-        saveGame(dir + "autosave replay.ez2");
+        saveGame(dir + "autosave replay.ez3");
         startGameAction([this]() {
             eGameWidgetSettings settings;
             settings.fPaused = true;
@@ -303,7 +304,8 @@ std::string eMainWindow::mostRecentSavePath() const {
     std::filesystem::path bestPath;
     for(const auto& entry : std::filesystem::directory_iterator(folder)) {
         const auto path = entry.path();
-        if(path.extension() != ".ez2") continue;
+        const auto ext = path.extension();
+        if(ext != ".ez3" && ext != ".ez3") continue;
         const auto time = std::filesystem::last_write_time(path);
         if(!found || time > bestTime) {
             found = true;
@@ -389,20 +391,70 @@ void eMainWindow::episodeLost() {
 }
 
 bool eMainWindow::saveGame(const std::string& path) {
-    auto ez2Path = std::filesystem::path(path);
-    ez2Path.replace_extension(".ez2");
-    return writeGameSaveFile(ez2Path.string(), "eZeus.ez2", mGW, mCampaign);
+    // save .ez3 (JSON)
+    auto ez3Path = std::filesystem::path(path);
+    ez3Path.replace_extension(".ez3");
+    std::filesystem::create_directories(ez3Path.parent_path());
+
+    njson root;
+    root["format"]  = "eZeus.ez3";
+    root["version"] = 1;
+
+    if(mGW) {
+        eGameWidgetSettings s = mGW->settings();
+        eJsonArchive ar(root["widget"]);
+        s.serialize(ar);
+    }
+
+    {
+        eJsonArchive ar(root["campaign"]);
+        mCampaign->serializeJson(ar);
+    }
+
+    return eJsonArchive::saveToFile(root, ez3Path.string());
 }
 
 bool eMainWindow::loadGame(const std::string& path) {
-    std::ifstream file(path, std::ios::in | std::ios::binary);
+    // try .ez3 first
+    auto ez3Path = std::filesystem::path(path);
+    ez3Path.replace_extension(".ez3");
+    if(std::filesystem::exists(ez3Path)) {
+        njson root;
+        if(!eJsonArchive::loadFromFile(ez3Path.string(), root)) {
+            printf("Failed to parse '%s'\n", ez3Path.string().c_str());
+            return false;
+        }
+        if(!root.contains("format") || root["format"] != "eZeus.ez3") {
+            printf("Bad format in '%s'\n", ez3Path.string().c_str());
+            return false;
+        }
+        eGameWidgetSettings s;
+        if(root.contains("widget")) {
+            const njson& w = root["widget"];
+            eJsonArchive ar(w);
+            s.serialize(ar);
+        }
+        const auto c = std::make_shared<eCampaign>();
+        if(root.contains("campaign")) {
+            const njson& camp = root["campaign"];
+            eJsonArchive ar(camp);
+            c->serializeJson(ar);
+        }
+        c->loadStrings();
+        c->loadNumbers();
+        startGameAction(c, s);
+        return true;
+    }
+
+    // fall back to binary .ez3
+    std::ifstream file(ez3Path.string(), std::ios::in | std::ios::binary);
     if(!file) return false;
     eReadSource source(&file);
     eReadStream src(source);
     src.readFormat();
     const auto& format = src.format();
-    if(format != "eZeus.ez2") {
-        printf("Invalid file '%s' format '%s', expected 'eZeus.ez2'.\n",
+    if(format != "eZeus.ez3") {
+        printf("Invalid file '%s' format '%s', expected 'eZeus.ez3'.\n",
                path.c_str(), format.c_str());
         return false;
     }
@@ -414,7 +466,6 @@ bool eMainWindow::loadGame(const std::string& path) {
     c->loadNumbers();
     src.handlePostFuncs();
     file.close();
-
     startGameAction(c, s);
     return true;
 }

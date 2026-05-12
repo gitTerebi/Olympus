@@ -26,6 +26,7 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src);
+    void serializeJson(class eJsonArchive& ar);
 
     void addEvent(const stdsptr<eGameEvent>& e);
     void removeEvent(const stdsptr<eGameEvent>& e);

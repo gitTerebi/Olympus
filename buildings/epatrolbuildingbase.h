@@ -60,6 +60,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     bool updatePathIfNeeded();
     using eAction = std::function<void()>;

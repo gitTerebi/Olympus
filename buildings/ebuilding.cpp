@@ -21,6 +21,7 @@
 #include "fileIO/ebuildingwriter.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
+#include "fileIO/ejsonarchive.h"
 
 eBuilding::eBuilding(eGameBoard& board,
                      const eBuildingType type,
@@ -2798,6 +2799,54 @@ void eBuilding::read(eReadStream& src) {
 void eBuilding::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
     const_cast<eBuilding*>(this)->serialize(ar);
+}
+
+void eBuilding::serializeJson(eJsonArchive& ar) {
+    ar.field("mIOID", mIOID);
+    ar.field("mTileRect.x", mTileRect.x);
+    ar.field("mTileRect.y", mTileRect.y);
+    ar.field("mTileRect.w", mTileRect.w);
+    ar.field("mTileRect.h", mTileRect.h);
+    ar.field("mDistrictId", mDistrictId);
+
+    auto& board = getBoard();
+
+    if(ar.reading()) {
+        int ntiles = 0;
+        ar.field("ntiles", ntiles);
+        for(int i = 0; i < ntiles; i++) {
+            eTile* t = nullptr;
+            const auto key = "tile." + std::to_string(i);
+            ar.tile(key.c_str(), t, board);
+            mUnderBuilding.push_back(t);
+            bool setUnder = false;
+            const auto setKey = "setUnder." + std::to_string(i);
+            ar.field(setKey.c_str(), setUnder);
+            if(setUnder && t) t->setUnderBuilding(ref<eBuilding>());
+        }
+    } else {
+        int ntiles = static_cast<int>(mUnderBuilding.size());
+        ar.field("ntiles", ntiles);
+        for(int i = 0; i < ntiles; i++) {
+            eTile* t = mUnderBuilding[i];
+            const auto key = "tile." + std::to_string(i);
+            ar.tile(key.c_str(), t, board);
+            bool setUnder = t && t->underBuilding() == this;
+            const auto setKey = "setUnder." + std::to_string(i);
+            ar.field(setKey.c_str(), setUnder);
+        }
+    }
+
+    ar.tile("mCenterTile", mCenterTile, board);
+
+    ar.field("mSeed", mSeed);
+    ar.field("mCityId", mCityId);
+    ar.field("mHp", mHp);
+    ar.field("mMaintance", mMaintance);
+    ar.field("mEnabled", mEnabled);
+    ar.field("mBlessed", mBlessed);
+    ar.field("mBlessTime", mBlessTime);
+    ar.field("mOnFire", mOnFire);
 }
 
 void eBuilding::setIOID(const int id) {

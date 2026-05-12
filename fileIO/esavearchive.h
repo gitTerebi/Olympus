@@ -124,8 +124,8 @@ private:
     static constexpr int32_t maxFieldDataSize = 64 * 1024 * 1024;
 
     bool tagged() const {
-        if(writing()) return mDst->format() == "eZeus.ez2";
-        return mSrc->format() == "eZeus.ez2";
+        if(writing()) return mDst->format() == "eZeus.ez3";
+        return mSrc->format() == "eZeus.ez3";
     }
 
     bool readFieldHeader(std::string& name, int32_t& size) {
