@@ -2,6 +2,7 @@
 
 #include "etilehelper.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAtlasHelpAction::eAtlasHelpAction(
         eCharacter* const c) :
@@ -43,6 +44,14 @@ void eAtlasHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
     eSaveArchive ar(dst);
     const_cast<eAtlasHelpAction*>(this)->serialize(ar);
+}
+
+void eAtlasHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+    eBuilding* raw = mTarget.get();
+    ar.buildingRef("mTarget", raw, board());
+    if(ar.reading()) mTarget = static_cast<eMonument*>(raw);
 }
 
 void eAtlasHelpAction::serialize(eSaveArchive& ar) {

@@ -61,6 +61,21 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mPtr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mPtr ? mPtr->ioID() : -1;
+            ar.field("mPtr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mPtr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mPtr = static_cast<eFireFighterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+    }
 private:
     stdptr<eFireFighterAction> mPtr;
 };
@@ -92,6 +107,22 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
         dst.writeTile(mTile);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mCptr ? mCptr->ioID() : -1;
+            ar.field("mCptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mCptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mCptr = resolveChar(ioid);
+                });
+            }
+        }
+        ar.tile("mTile", mTile, board());
     }
 private:
     stdptr<eCharacter> mCptr;

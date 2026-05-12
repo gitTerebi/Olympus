@@ -5,6 +5,7 @@
 
 class eSmallHouse;
 class eSaveArchive;
+class eJsonArchive;
 
 class eSickDisgruntledAction : public eActionWithComeback {
 public:
@@ -15,6 +16,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     void patrol();
     void goBackDecision(const stdsptr<eWalkableObject>& w =

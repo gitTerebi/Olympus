@@ -7,6 +7,7 @@
 
 class eHuntingLodge;
 class eSaveArchive;
+class eJsonArchive;
 
 class eHuntAction : public eActionWithComeback {
 public:
@@ -19,6 +20,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void findResourceDecision();
     void goBackDecision();

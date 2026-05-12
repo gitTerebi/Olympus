@@ -4,6 +4,7 @@
 #include "characters/gods/actions/egodaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eDefendCityAction::eDefendCityAction(eCharacter* const c) :
     eDefendAttackCityAction(c, eCharActionType::defendCityAction) {
@@ -87,6 +88,18 @@ void eDefendCityAction::serialize(eSaveArchive& ar) {
         });
     } else {
         ar.writeStream().writeGameEvent(mEvent);
+    }
+}
+
+void eDefendCityAction::serializeJson(eJsonArchive& ar) {
+    eDefendAttackCityAction::serializeJson(ar);
+    if(ar.writing()) {
+        eGameEvent* raw = mEvent.get();
+        ar.gameEventRef("mEvent", raw, board());
+    } else {
+        ar.gameEventRef("mEvent", [this](eGameEvent* e) {
+            mEvent = static_cast<eInvasionEvent*>(e);
+        }, board());
     }
 }
 

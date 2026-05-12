@@ -2,6 +2,7 @@
 
 #include "etilehelper.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eProvideResourceHelpAction::eProvideResourceHelpAction(
         eCharacter* const c,
@@ -53,6 +54,16 @@ void eProvideResourceHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
     eSaveArchive ar(dst);
     const_cast<eProvideResourceHelpAction*>(this)->serialize(ar);
+}
+
+void eProvideResourceHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+    eBuilding* raw = mTarget.get();
+    ar.buildingRef("mTarget", raw, board());
+    if(ar.reading()) mTarget = static_cast<eStorageBuilding*>(raw);
+    ar.field("mResource", mResource);
+    ar.field("mCount", mCount);
 }
 
 void eProvideResourceHelpAction::serialize(eSaveArchive& ar) {

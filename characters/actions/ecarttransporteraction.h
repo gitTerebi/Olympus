@@ -102,6 +102,23 @@ public:
         mBx = x;
         mBy = y;
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eCartTransporterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+        ar.field("mBx", mBx);
+        ar.field("mBy", mBy);
+    }
 private:
     stdptr<eCartTransporterAction> mTptr;
     int mBx = -1;
@@ -132,6 +149,21 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eCartTransporterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+    }
 private:
     stdptr<eCartTransporterAction> mTptr;
 };
@@ -158,6 +190,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mCptr ? mCptr->ioID() : -1;
+            ar.field("mCptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mCptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mCptr = resolveChar(ioid);
+                });
+            }
+        }
     }
 private:
     stdptr<eCharacter> mCptr;

@@ -4,7 +4,6 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eFishingBoat;
-class eSaveArchive;
 
 enum class eFisheryState {
     none,
@@ -31,12 +30,12 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     eDiagonalOrientation orientation() const { return mO; }
 
     eFisheryState state() const { return mState; }
 private:
-    void serialize(eSaveArchive& ar);
 
     void spawnBoat();
     void updateDisabled();

@@ -1,9 +1,11 @@
 #include "efollowaction.h"
 
+#include <string>
 #include "../echaracter.h"
 
 #include "walkable/ewalkableobject.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eFollowAction::eFollowAction(eCharacter* const f,
                              eCharacter* const c,
@@ -69,6 +71,24 @@ void eFollowAction::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             mTiles.push_back(n);
         }
+    }
+}
+
+void eFollowAction::serializeJson(eJsonArchive& ar) {
+    eMoveAction::serializeJson(ar);
+    ar.characterRef("mFollow", [this](eCharacter* c){ mFollow = c; }, board());
+    ar.field("mCatchUp", mCatchUp);
+    ar.field("mDistance", mDistance);
+    int s = static_cast<int>(mTiles.size());
+    ar.field("mTiles.s", s);
+    if(ar.reading()) mTiles.clear();
+    for(int i = 0; i < s; i++) {
+        auto sub = ar.child(("mTiles." + std::to_string(i)).c_str());
+        ePathNode n;
+        if(ar.writing()) n = mTiles[i];
+        sub.tile("fTile", n.fTile, board());
+        sub.field("fO", n.fO);
+        if(ar.reading()) mTiles.push_back(n);
     }
 }
 

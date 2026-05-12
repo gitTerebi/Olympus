@@ -7,6 +7,7 @@
 #include "characters/etrireme.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eTriremeAction::eTriremeAction(eTriremeWharf* const home,
                                eCharacter* const trireme) :
@@ -43,6 +44,18 @@ void eTriremeAction::serialize(eSaveArchive& ar) {
         });
     } else {
         ar.writeStream().writeBuilding(mHome);
+    }
+}
+
+void eTriremeAction::serializeJson(eJsonArchive& ar) {
+    eFightingAction::serializeJson(ar);
+    if(ar.writing()) {
+        eBuilding* raw = mHome.get();
+        ar.buildingRef("mHome", raw, board());
+    } else {
+        ar.buildingRef("mHome", [this](eBuilding* b) {
+            mHome = static_cast<eTriremeWharf*>(b);
+        }, board());
     }
 }
 

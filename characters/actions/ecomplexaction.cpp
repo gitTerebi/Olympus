@@ -2,6 +2,7 @@
 
 #include "ewaitaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 void eComplexAction::increment(const int by) {
     if(mCurrentAction) {
@@ -26,6 +27,33 @@ void eComplexAction::read(eReadStream& src) {
 void eComplexAction::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
     const_cast<eComplexAction*>(this)->serialize(ar);
+}
+
+void eComplexAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
+    if(ar.writing()) {
+        int hasCA = mCurrentAction ? 1 : 0;
+        ar.field("hasCurrentAction", hasCA);
+        if(mCurrentAction) {
+            int type = static_cast<int>(mCurrentAction->type());
+            ar.field("currentActionType", type);
+            auto sub = ar.child("currentAction");
+            mCurrentAction->serializeJson(sub);
+        }
+    } else {
+        int hasCA = 0;
+        ar.field("hasCurrentAction", hasCA);
+        if(hasCA) {
+            int type = 0;
+            ar.field("currentActionType", type);
+            mCurrentAction = eCharacterAction::sCreate(
+                character(), static_cast<eCharActionType>(type));
+            if(mCurrentAction) {
+                auto sub = ar.child("currentAction");
+                mCurrentAction->serializeJson(sub);
+            }
+        }
+    }
 }
 
 void eComplexAction::serialize(eSaveArchive& ar) {

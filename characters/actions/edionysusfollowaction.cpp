@@ -2,6 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eDionysusFollowAction::eDionysusFollowAction(
         eCharacter* const f, eCharacter* const c) :
@@ -35,6 +36,11 @@ void eDionysusFollowAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mFollower);
     }
+}
+
+void eDionysusFollowAction::serializeJson(eJsonArchive& ar) {
+    eFollowAction::serializeJson(ar);
+    ar.characterRef("mFollower", [this](eCharacter* c){ mFollower = c; }, board());
 }
 
 bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {

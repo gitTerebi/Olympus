@@ -17,6 +17,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     static bool sHelpNeeded(const ePlayerId pid,
                             const eGameBoard& board);

@@ -21,6 +21,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void decCount(const int by);
 
@@ -90,6 +91,27 @@ public:
         ar.field("resource", const_cast<eResourceType&>(mResource));
         ar.field("count", const_cast<int&>(mCount));
         dst.writeCharacterAction(mAction);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        eBuilding* rawTarget = mTarget.get();
+        ar.buildingRef("mTarget", rawTarget, board());
+        if(ar.reading()) mTarget = static_cast<eStorageBuilding*>(rawTarget);
+        ar.field("mResource", mResource);
+        ar.field("mCount", mCount);
+        if(ar.writing()) {
+            int ioid = mAction ? mAction->ioID() : -1;
+            ar.field("mAction", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mAction", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mAction = static_cast<eProvideResourceHelpAction*>(
+                        board().characterActionWithIOID(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eProvideResourceHelpAction> mAction;

@@ -2311,6 +2311,11 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         if (mSpeedId != oldSpeedId)
             showSpeedLabel();
     }
+    else if (k == hotkeys.fHotkeyRotatePreview && e.shiftPressed())
+    {
+        if (mGm->mode() == eBuildingMode::stamp)
+            mStampTool->setMirror(1 - mStampTool->mirror());
+    }
     else if (k == hotkeys.fHotkeyRotatePreview)
     {
         mRotate = !mRotate;
@@ -2320,11 +2325,6 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
             mRotateId = 0;
         if (mGm->mode() == eBuildingMode::stamp)
             mStampTool->setRotation(mRotateId);
-    }
-    else if (k == SDL_Scancode::SDL_SCANCODE_R && e.shiftPressed())
-    {
-        if (mGm->mode() == eBuildingMode::stamp)
-            mStampTool->setMirror(1 - mStampTool->mirror());
     }
     else if (k == hotkeys.fHotkeyPause)
     {

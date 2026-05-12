@@ -6,6 +6,7 @@
 #include "characters/eartisan.h"
 
 class eSaveArchive;
+class eJsonArchive;
 
 class eBuildAction : public eCharacterAction {
 public:
@@ -15,8 +16,9 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
-    void serialize(eSaveArchive& ar);
+    void serializeJson(eJsonArchive& ar) override;
 private:
+    void serialize(eSaveArchive& ar);
     int mSoundTime = 0;
     int mTime = 0;
 };

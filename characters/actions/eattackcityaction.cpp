@@ -1,5 +1,6 @@
 #include "eattackcityaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "enumbers.h"
@@ -86,6 +87,11 @@ void eAttackCityAction::write(eWriteStream& dst) const {
 }
 
 void eAttackCityAction::serialize(eSaveArchive& ar) {
+    ar.field("mLookForGod", mLookForGod);
+}
+
+void eAttackCityAction::serializeJson(eJsonArchive& ar) {
+    eDefendAttackCityAction::serializeJson(ar);
     ar.field("mLookForGod", mLookForGod);
 }
 

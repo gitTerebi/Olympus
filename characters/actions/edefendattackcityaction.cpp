@@ -7,6 +7,7 @@
 #include "characters/gods/actions/egodaction.h"
 #include "vec2.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 void eDefendAttackCityAction::read(eReadStream& src) {
     eGodMonsterAction::read(src);
@@ -259,4 +260,18 @@ int eDefendAttackCityAction::range() const {
         return 0;
     }
     return 0;
+}
+
+void eDefendAttackCityAction::serializeJson(eJsonArchive& ar) {
+    eGodMonsterAction::serializeJson(ar);
+    ar.tile("mStartTile", mStartTile, board());
+    ar.field("mStage", mStage);
+    ar.field("mAttack", mAttack);
+    ar.field("mLookForEnemy", mLookForEnemy);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mAngle", mAngle);
+    ar.field("mMissile", mMissile);
+    ar.field("mMaxKilled", mMaxKilled);
+    ar.field("mKilled", mKilled);
 }

@@ -5,6 +5,7 @@
 #include "engine/emovedirection.h"
 #include "ewalkablehelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <SDL2/SDL_rect.h>
 
@@ -55,6 +56,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
 

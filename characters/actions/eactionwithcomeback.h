@@ -7,6 +7,7 @@
 #include "walkable/ewalkableobject.h"
 
 #include <SDL2/SDL_rect.h>
+#include "fileIO/ejsonarchive.h"
 
 class eBuilding;
 class eSaveArchive;
@@ -32,6 +33,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void goBack(stdsptr<eWalkableObject> walkable);
     void goBack(eBuilding* const b,
@@ -84,6 +86,22 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeWalkable(mWalkable.get());
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eActionWithComeback*>(resolveCharAction(ioid));
+                });
+            }
+        }
+        // TODO: walkable JSON
+    }
 private:
     stdptr<eActionWithComeback> mTptr;
     stdsptr<eWalkableObject> mWalkable;
@@ -111,6 +129,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eActionWithComeback*>(resolveCharAction(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eActionWithComeback> mTptr;

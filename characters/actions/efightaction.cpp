@@ -7,6 +7,7 @@
 #include "characters/eresourcecollector.h"
 #include "characters/eanimal.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eFightAction::eFightAction(eCharacter* const c, eCharacter* const o) :
     eCharacterAction(c, eCharActionType::fightAction),
@@ -43,5 +44,11 @@ void eFightAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCharacter(mOpponent);
     }
+    ar.field("mTime", mTime);
+}
+
+void eFightAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
+    ar.characterRef("mOpponent", [this](eCharacter* c){ mOpponent = c; }, board());
     ar.field("mTime", mTime);
 }

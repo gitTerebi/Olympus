@@ -1,5 +1,6 @@
 #include "ehermeshelpaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
@@ -43,6 +44,11 @@ void eHermesHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHermesHelpAction::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+}
+
+void eHermesHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
     ar.field("mStage", mStage);
 }
 

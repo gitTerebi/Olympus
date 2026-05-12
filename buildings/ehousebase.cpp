@@ -133,8 +133,20 @@ void eHouseBase::serialize(eSaveArchive& ar) {
 
 void eHouseBase::serializeJson(eJsonArchive& ar) {
     eBuilding::serializeJson(ar);
-    ar.field("mLevel", mLevel);
-    ar.field("mPeople", mPeople);
+    if(ar.reading()) {
+        int level;
+        ar.field("mLevel", level);
+        setLevel(level);
+    } else {
+        ar.field("mLevel", mLevel);
+    }
+    if(ar.reading()) {
+        int people;
+        ar.field("mPeople", people);
+        setPeople(people);
+    } else {
+        ar.field("mPeople", mPeople);
+    }
     ar.field("mFood", mFood);
     ar.field("mFleece", mFleece);
     ar.field("mOil", mOil);

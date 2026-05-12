@@ -1,5 +1,6 @@
 #include "eareshelpaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
@@ -44,6 +45,11 @@ void eAresHelpAction::write(eWriteStream& dst) const {
 }
 
 void eAresHelpAction::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+}
+
+void eAresHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
     ar.field("mStage", mStage);
 }
 

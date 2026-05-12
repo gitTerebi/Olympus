@@ -10,6 +10,7 @@
 class eTile;
 class eMovePathAction;
 class eSaveArchive;
+class eJsonArchive;
 
 class eFollowAction : public eMoveAction {
 protected:
@@ -26,6 +27,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     void increment(const int by) override;
 private:

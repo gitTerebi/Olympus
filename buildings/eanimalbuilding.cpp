@@ -1,6 +1,6 @@
 #include "eanimalbuilding.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAnimalBuilding::eAnimalBuilding(
          eGameBoard& board,
@@ -23,25 +23,14 @@ void eAnimalBuilding::nextMonth() {
 
 void eAnimalBuilding::read(eReadStream& src) {
     eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eAnimalBuilding::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAnimalBuilding*>(this)->serialize(ar);
 }
 
-void eAnimalBuilding::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mA = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mA);
-    }
+void eAnimalBuilding::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
 }
 
 void eAnimalBuilding::setAnimal(eCharacter* const a) {

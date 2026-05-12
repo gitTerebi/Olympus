@@ -4,8 +4,6 @@
 #include "ebuilding.h"
 #include "characters/echaracter.h"
 
-class eSaveArchive;
-
 class eAnimalBuilding : public eBuilding {
 public:
     eAnimalBuilding(eGameBoard& board,
@@ -21,11 +19,11 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     eCharacter* animal() const { return mA; }
     void setAnimal(eCharacter* const a);
 private:
-    void serialize(eSaveArchive& ar);
 
     stdptr<eCharacter> mA;
 };

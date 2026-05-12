@@ -86,6 +86,23 @@ public:
         eSaveArchive ar(dst);
         ar.field("buildingType", const_cast<eBuildingType&>(mType));
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGrowerAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+        ar.tile("mTile", mTile, board());
+        ar.field("mType", mType);
+    }
 private:
     stdptr<eGrowerAction> mTptr;
     eTile* mTile = nullptr;
@@ -110,6 +127,10 @@ public:
 
     void write(eWriteStream& dst) const {
         dst.writeTile(mTile);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        ar.tile("mTile", mTile, board());
     }
 private:
     eTile* mTile = nullptr;

@@ -1,5 +1,6 @@
 #include "ewaitaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eWaitAction::eWaitAction(eCharacter* const c) :
     eCharacterAction(c, eCharActionType::waitAction) {}
@@ -28,5 +29,10 @@ void eWaitAction::write(eWriteStream& dst) const {
 }
 
 void eWaitAction::serialize(eSaveArchive& ar) {
+    ar.field("mRemTime", mRemTime);
+}
+
+void eWaitAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
     ar.field("mRemTime", mRemTime);
 }

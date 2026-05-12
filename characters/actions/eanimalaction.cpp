@@ -5,6 +5,7 @@
 #include "ewaitaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
                              const int spawnerX, const int spawnerY,
@@ -56,6 +57,15 @@ void eAnimalAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeWalkable(mTileWalkable.get());
     }
+    ar.field("mLayTime", mLayTime);
+    ar.field("mWalkTime", mWalkTime);
+}
+
+void eAnimalAction::serializeJson(eJsonArchive& ar) {
+    eComplexAction::serializeJson(ar);
+    ar.field("mSpawnerX", mSpawnerX);
+    ar.field("mSpawnerY", mSpawnerY);
+    ar.walkableRef("mTileWalkable", mTileWalkable);
     ar.field("mLayTime", mLayTime);
     ar.field("mWalkTime", mWalkTime);
 }

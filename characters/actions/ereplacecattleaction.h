@@ -56,6 +56,39 @@ public:
         dst.writeCharacter(mButcher);
         dst.writeCharacter(mCattle);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mButcherA ? mButcherA->ioID() : -1;
+            ar.field("mButcherA", ioid);
+            int ioid2 = mButcher ? mButcher->ioID() : -1;
+            ar.field("mButcher", ioid2);
+            int ioid3 = mCattle ? mCattle->ioID() : -1;
+            ar.field("mCattle", ioid3);
+        } else {
+            int ioid = -1;
+            ar.field("mButcherA", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mButcherA = static_cast<eReplaceCattleAction*>(resolveCharAction(ioid));
+                });
+            }
+            int ioid2 = -1;
+            ar.field("mButcher", ioid2);
+            if(ioid2 >= 0) {
+                ar.addPostFunc([this, ioid2]() {
+                    mButcher = resolveChar(ioid2);
+                });
+            }
+            int ioid3 = -1;
+            ar.field("mCattle", ioid3);
+            if(ioid3 >= 0) {
+                ar.addPostFunc([this, ioid3]() {
+                    mCattle = resolveChar(ioid3);
+                });
+            }
+        }
+    }
 private:
     stdptr<eReplaceCattleAction> mButcherA;
     stdptr<eCharacter> mButcher;
@@ -81,6 +114,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCattle);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mCattle ? mCattle->ioID() : -1;
+            ar.field("mCattle", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mCattle", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mCattle = resolveChar(ioid);
+                });
+            }
+        }
     }
 private:
     stdptr<eCharacter> mCattle;

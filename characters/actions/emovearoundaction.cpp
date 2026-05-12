@@ -1,5 +1,6 @@
 #include "emovearoundaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/echaracter.h"
 
@@ -40,6 +41,14 @@ void eMoveAroundAction::write(eWriteStream& dst) const {
 }
 
 void eMoveAroundAction::serialize(eSaveArchive& ar) {
+    ar.field("mStartTX", mStartTX);
+    ar.field("mStartTY", mStartTY);
+    ar.field("mMaxDist", mMaxDist);
+    ar.field("mRemTime", mRemTime);
+}
+
+void eMoveAroundAction::serializeJson(eJsonArchive& ar) {
+    eMoveAction::serializeJson(ar);
     ar.field("mStartTX", mStartTX);
     ar.field("mStartTY", mStartTY);
     ar.field("mMaxDist", mMaxDist);

@@ -3,6 +3,7 @@
 
 #include "ecomplexaction.h"
 #include "pointers/estdpointer.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -48,6 +49,8 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override;
 private:
     stdptr<eCharacterAction> mTptr;
 };
@@ -75,6 +78,8 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override;
 private:
     stdptr<eCharacterAction> mTptr;
 };

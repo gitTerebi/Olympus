@@ -5,6 +5,7 @@
 
 class eCorral;
 class eSaveArchive;
+class eJsonArchive;
 
 enum class eTakeCattleActionStage {
     none, get, goBack
@@ -20,6 +21,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
 

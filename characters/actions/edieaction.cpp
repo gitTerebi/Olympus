@@ -1,5 +1,6 @@
 #include "edieaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/echaracter.h"
 
@@ -29,5 +30,10 @@ void eDieAction::write(eWriteStream& dst) const {
 }
 
 void eDieAction::serialize(eSaveArchive& ar) {
+    ar.field("mTime", mTime);
+}
+
+void eDieAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
     ar.field("mTime", mTime);
 }

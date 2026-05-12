@@ -1,5 +1,6 @@
 #include "egodaction.h"
 
+#include "fileIO/ejsonarchive.h"
 #include "engine/e-game-board.h"
 #include "audio/esounds.h"
 #include "etilehelper.h"
@@ -12,6 +13,10 @@ eGodAction::eGodAction(eCharacter* const c,
                        const eCharActionType type) :
     eGodMonsterAction(c, type),
     mType(eGod::sCharacterToGodType(c->type())) {}
+
+void eGodAction::serializeJson(eJsonArchive& ar) {
+    eGodMonsterAction::serializeJson(ar);
+}
 
 bool eGodAction::lookForBlessCurse(
         const int dtime,

@@ -1,4 +1,5 @@
 #include "ebuildingwithresource.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
@@ -89,32 +90,24 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
 
 void eBuildingWithResource::read(eReadStream& src) {
     eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eBuildingWithResource::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eBuildingWithResource*>(this)->serialize(ar);
 }
 
-void eBuildingWithResource::serialize(eSaveArchive& ar) {
+void eBuildingWithResource::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
     ar.field("mStashable", mStashable);
-    int ns = mStash.size();
+    int ns = ar.reading() ? 0 : static_cast<int>(mStash.size());
     ar.field("ns", ns);
-    if(ar.reading()) {
-        mStash.clear();
-    }
+    if(ar.reading()) mStash.clear();
     for(int i = 0; i < ns; i++) {
         eStash s;
-        if(ar.writing()) {
-            s = mStash[i];
-        }
-        ar.field("s.fType", s.fType);
-        ar.field("s.fCount", s.fCount);
-        if(ar.reading()) {
-            mStash.push_back(s);
-        }
+        if(ar.writing()) s = mStash[i];
+        const auto p = std::to_string(i) + ".";
+        ar.field((p + "fType").c_str(), s.fType);
+        ar.field((p + "fCount").c_str(), s.fCount);
+        if(ar.reading()) mStash.push_back(s);
     }
 }

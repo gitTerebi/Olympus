@@ -1,5 +1,5 @@
 #include "eelitehousing.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "erand.h"
@@ -302,17 +302,14 @@ eHouseMissing eEliteHousing::missing() const {
 
 void eEliteHousing::read(eReadStream& src) {
     eHouseBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eEliteHousing::write(eWriteStream& dst) const {
     eHouseBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eEliteHousing*>(this)->serialize(ar);
 }
 
-void eEliteHousing::serialize(eSaveArchive& ar) {
+void eEliteHousing::serializeJson(eJsonArchive& ar) {
+    eHouseBase::serializeJson(ar);
     ar.field("mUpdateLevel", mUpdateLevel);
     ar.field("mWine", mWine);
     ar.field("mArms", mArms);

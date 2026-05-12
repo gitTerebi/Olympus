@@ -539,10 +539,10 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
             for(int i = 0; i < np; i++) {
                 ePlayerId pid{};
                 ar.field(("mPlayersOnBoard." + std::to_string(i) + ".id").c_str(), pid);
-                std::string blob;
-                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".blob").c_str(), blob);
                 const auto p = std::make_shared<eBoardPlayer>(pid, *this);
-                replayRead(blob, [&p](eReadStream& s){ p->read(s); });
+                const auto key = "mPlayersOnBoard." + std::to_string(i);
+                auto pa = ar.child(key.c_str());
+                p->serializeJson(pa);
                 mPlayersOnBoard.push_back(p);
             }
         }
@@ -587,13 +587,14 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
             int nc = 0;
             ar.field("mCharacters.count", nc);
             for(int i = 0; i < nc; i++) {
+                const auto key = "mCharacters." + std::to_string(i);
+                auto cAr = ar.child(key.c_str());
                 eCharacterType type{};
-                ar.field(("mCharacters." + std::to_string(i) + ".type").c_str(), type);
-                std::string blob;
-                ar.field(("mCharacters." + std::to_string(i) + ".blob").c_str(), blob);
+                cAr.field("type", type);
                 const auto c = eCharacter::sCreate(type, *this);
-                replayRead(blob, [&c](eReadStream& s){ c->read(s); });
+                c->serializeJson(cAr);
             }
+            ar.runPostFuncs();
         }
 
         // missiles
@@ -807,8 +808,9 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
             for(int i = 0; i < np; i++) {
                 ePlayerId pid = mPlayersOnBoard[i]->id();
                 ar.field(("mPlayersOnBoard." + std::to_string(i) + ".id").c_str(), pid);
-                std::string blob = captureWrite([&](eWriteStream& d){ mPlayersOnBoard[i]->write(d); });
-                ar.field(("mPlayersOnBoard." + std::to_string(i) + ".blob").c_str(), blob);
+                const auto key = "mPlayersOnBoard." + std::to_string(i);
+                auto pa = ar.child(key.c_str());
+                mPlayersOnBoard[i]->serializeJson(pa);
             }
         }
 
@@ -842,10 +844,11 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
             ar.field("mCharacters.count", nc);
             int i = 0;
             for(const auto c : mCharacters) {
+                const auto key = "mCharacters." + std::to_string(i);
+                auto cAr = ar.child(key.c_str());
                 eCharacterType type = c->type();
-                ar.field(("mCharacters." + std::to_string(i) + ".type").c_str(), type);
-                std::string blob = captureWrite([&](eWriteStream& d){ c->write(d); });
-                ar.field(("mCharacters." + std::to_string(i) + ".blob").c_str(), blob);
+                cAr.field("type", type);
+                c->serializeJson(cAr);
                 i++;
             }
         }

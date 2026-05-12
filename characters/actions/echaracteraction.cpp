@@ -3,6 +3,7 @@
 #include "engine/e-game-board.h"
 #include "characters/echaracter.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eCharacterAction::eCharacterAction(
         eCharacter* const c, const eCharActionType type) :
@@ -65,6 +66,14 @@ void eCharacterAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharActFunc(mFailAction.get());
         ar.writeStream().writeCharActFunc(mDeleteFailAction.get());
     }
+}
+
+void eCharacterAction::serializeJson(eJsonArchive& ar) {
+    ar.field("mIOID", mIOID);
+    ar.field("mState", mState);
+    ar.charActFuncRef("mFinishAction", mFinishAction, board());
+    ar.charActFuncRef("mFailAction", mFailAction, board());
+    ar.charActFuncRef("mDeleteFailAction", mDeleteFailAction, board());
 }
 
 void eCharacterAction::read(eReadStream& src) {

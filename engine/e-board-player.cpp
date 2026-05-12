@@ -1,4 +1,6 @@
 #include "e-board-player.h"
+#include "fileIO/ejsonarchive.h"
+#include "gameEvents/gods/egodquestevent.h"
 
 #include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
@@ -223,6 +225,61 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
 
     if(ar.reading()) mFinances.read(ar.readStream());
     else mFinances.write(ar.writeStream());
+}
+
+void eBoardPlayer::serializeJson(eJsonArchive& ar) {
+    ar.field("mId",             mId);
+    ar.field("mDifficulty",     mDifficulty);
+    ar.field("mDrachmas",       mDrachmas);
+    ar.field("mGodAttackTimer", mGodAttackTimer);
+
+    { auto a = ar.child("mInDebtSince"); mInDebtSince.serializeJson(a); }
+    { auto a = ar.child("mFinances");    mFinances.serializeJson(a); }
+
+    // fulfilled quests
+    int nfq = static_cast<int>(mFulfilledQuests.size());
+    ar.field("mFulfilledQuests.count", nfq);
+    if(ar.reading()) mFulfilledQuests.clear();
+    for(int i = 0; i < nfq; i++) {
+        const std::string pfx = "mFulfilledQuests." + std::to_string(i) + ".";
+        eGodQuest q;
+        if(ar.writing()) q = mFulfilledQuests[i];
+        ar.field((pfx + "god").c_str(),  q.fGod);
+        ar.field((pfx + "id").c_str(),   q.fId);
+        ar.field((pfx + "hero").c_str(), q.fHero);
+        if(ar.reading()) mFulfilledQuests.push_back(q);
+    }
+
+    // slayed monsters
+    int nsm = static_cast<int>(mSlayedMonsters.size());
+    ar.field("mSlayedMonsters.count", nsm);
+    if(ar.reading()) mSlayedMonsters.clear();
+    for(int i = 0; i < nsm; i++) {
+        eMonsterType m{};
+        if(ar.writing()) m = mSlayedMonsters[i];
+        ar.field(("mSlayedMonsters." + std::to_string(i)).c_str(), m);
+        if(ar.reading()) mSlayedMonsters.push_back(m);
+    }
+
+    // god quest event refs — stored as IOIDs, resolved post-load
+    int ngq = static_cast<int>(mGodQuests.size());
+    ar.field("mGodQuests.count", ngq);
+    if(ar.reading()) {
+        mGodQuests.clear();
+        for(int i = 0; i < ngq; i++) {
+            int ioid = 0;
+            ar.field(("mGodQuests." + std::to_string(i) + ".ioid").c_str(), ioid);
+            ar.addPostFunc([this, ioid]() {
+                const auto e = mBoard.eventWithIOID(ioid);
+                if(e) mGodQuests.push_back(static_cast<eGodQuestEvent*>(e));
+            });
+        }
+    } else {
+        for(int i = 0; i < ngq; i++) {
+            int ioid = mGodQuests[i]->ioID();
+            ar.field(("mGodQuests." + std::to_string(i) + ".ioid").c_str(), ioid);
+        }
+    }
 }
 
 void eBoardPlayer::giftAllies() {

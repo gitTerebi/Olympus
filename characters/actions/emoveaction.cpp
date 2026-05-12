@@ -5,6 +5,7 @@
 
 #include "vec2.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eMoveAction::eMoveAction(eCharacter* const c,
                          const stdsptr<eWalkableObject>& tileWalkable,
@@ -121,6 +122,19 @@ void eMoveAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeObsticleHandler(mObstHandler.get());
     }
+}
+
+void eMoveAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
+    ar.walkableRef("mTileWalkable", mTileWalkable);
+    ar.field("mOrientation", mOrientation);
+    ar.tile("mTargetTile", mTargetTile, board());
+    ar.field("mWait", mWait);
+    ar.field("mStartX", mStartX);
+    ar.field("mStartY", mStartY);
+    ar.field("mTargetX", mTargetX);
+    ar.field("mTargetY", mTargetY);
+    ar.obsticleHandlerRef("mObstHandler", mObstHandler, board());
 }
 
 void eMoveAction::moveBy(const double inc) {

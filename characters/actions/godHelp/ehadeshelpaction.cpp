@@ -3,6 +3,7 @@
 #include "etilehelper.h"
 #include "buildings/epalace.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHadesHelpAction::eHadesHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::hadesHelpAction) {}
@@ -43,6 +44,14 @@ void eHadesHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
     eSaveArchive ar(dst);
     const_cast<eHadesHelpAction*>(this)->serialize(ar);
+}
+
+void eHadesHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+    eBuilding* raw = mTarget.get();
+    ar.buildingRef("mTarget", raw, board());
+    if(ar.reading()) mTarget = raw;
 }
 
 void eHadesHelpAction::serialize(eSaveArchive& ar) {

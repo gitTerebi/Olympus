@@ -4,6 +4,7 @@
 #include "characters/gods/actions/egodmonsteraction.h"
 
 #include "characters/gods/egod.h"
+#include "fileIO/ejsonarchive.h"
 #include "engine/e-game-board.h"
 #include "audio/esounds.h"
 #include "buildings/esmallhouse.h"
@@ -45,6 +46,7 @@ public:
 
     virtual void read(eReadStream& src) = 0;
     virtual void write(eWriteStream& dst) const = 0;
+    virtual void serializeJson(eJsonArchive& ar) {}
 
     static stdsptr<eGodAct> sCreate(eGameBoard& board, const eGodActType t);
 private:
@@ -527,6 +529,8 @@ public:
     void goBackToSanctuary();
     void goToTarget();
 
+    void serializeJson(eJsonArchive& ar) override;
+
     eGodType type() const { return mType; }
 private:
     const eGodType mType;
@@ -560,6 +564,22 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeTile(mTile);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+        ar.tile("mTile", mTile, board());
+    }
 private:
     stdptr<eGodAction> mTptr;
     eTile* mTile = nullptr;
@@ -586,6 +606,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eGodAction> mTptr;
@@ -618,6 +653,22 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeTile(mTile);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+        ar.tile("mTile", mTile, board());
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -662,6 +713,31 @@ public:
         eSaveArchive ar(dst);
         ar.field("appear", const_cast<bool&>(mAppear));
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+            int ioid2 = mCptr ? mCptr->ioID() : -1;
+            ar.field("mCptr", ioid2);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+            int ioid2 = -1;
+            ar.field("mCptr", ioid2);
+            if(ioid2 >= 0) {
+                ar.addPostFunc([this, ioid2]() {
+                    mCptr = resolveChar(ioid2);
+                });
+            }
+        }
+        ar.field("mAppear", mAppear);
+    }
 private:
     stdptr<eGodMonsterAction> mTptr;
     stdptr<eCharacter> mCptr;
@@ -701,6 +777,22 @@ public:
 
         eSaveArchive ar(dst);
         ar.field("sound", const_cast<eGodSound&>(mSound));
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mCptr ? mCptr->ioID() : -1;
+            ar.field("mCptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mCptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mCptr = resolveChar(ioid);
+                });
+            }
+        }
+        ar.field("mSound", mSound);
     }
 private:
     stdptr<eCharacter> mCptr;

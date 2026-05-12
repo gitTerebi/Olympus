@@ -15,6 +15,7 @@
 #include "actions/earcheraction.h"
 #include "actions/edieaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 class eGameBoard;
 class eCharacterAction;
@@ -88,6 +89,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
@@ -160,6 +162,8 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mTptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override;
 private:
     stdptr<eCharacter> mTptr;
 };
@@ -194,6 +198,8 @@ public:
         ar.field("withCorpse", const_cast<bool&>(mWithCorpse));
         dst.writeCharacter(mTptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override;
 private:
     bool mWithCorpse;
     stdptr<eCharacter> mTptr;

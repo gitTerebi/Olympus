@@ -49,6 +49,11 @@ void eApolloHelpAction::serialize(eSaveArchive& ar) {
     ar.field("mStage", mStage);
 }
 
+void eApolloHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+}
+
 bool eApolloHelpAction::sHelpNeeded(const eCityId cid,
                                     const eGameBoard& board) {
     const auto& ps = board.plagues(cid);

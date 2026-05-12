@@ -7,6 +7,7 @@
 
 class eTileBase;
 class eSaveArchive;
+class eJsonArchive;
 
 class eAnimalAction : public eComplexAction {
 public:
@@ -28,6 +29,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     int mSpawnerX;
     int mSpawnerY;

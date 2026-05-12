@@ -74,6 +74,21 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mLoserPtr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mLoserPtr ? mLoserPtr->ioID() : -1;
+            ar.field("mLoserPtr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mLoserPtr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mLoserPtr = static_cast<eGodMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+    }
 private:
     stdptr<eGodMonsterAction> mLoserPtr;
 };
@@ -110,6 +125,26 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeBuilding(mBptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+            eBuilding* braw = mBptr.get();
+            ar.buildingRef("mBptr", braw, board());
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodAttackAction*>(resolveCharAction(ioid));
+                });
+            }
+            ar.buildingRef("mBptr", [this](eBuilding* b) {
+                mBptr = b;
+            }, board());
+        }
     }
 private:
     stdptr<eGodAttackAction> mTptr;

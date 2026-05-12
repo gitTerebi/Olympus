@@ -4,6 +4,7 @@
 #include "ecomplexaction.h"
 
 #include "characters/echaracter.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -26,6 +27,7 @@ public:
 
     void read(eGameBoard& board, eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(const char* key, eJsonArchive& ar, eGameBoard& board);
 private:
     stdptr<eCharacter> mC;
     stdptr<eBuilding> mB;
@@ -51,6 +53,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     using eAction = std::function<void()>;
     void goTo(const int fx, const int fy,
@@ -112,6 +115,21 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mCptr ? mCptr->ioID() : -1;
+            ar.field("mCptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mCptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mCptr = resolveChar(ioid);
+                });
+            }
+        }
+    }
 private:
     stdptr<eCharacter> mCptr;
 };
@@ -137,6 +155,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mAptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mAptr ? mAptr->ioID() : -1;
+            ar.field("mAptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mAptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mAptr = static_cast<eFightingAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eFightingAction> mAptr;

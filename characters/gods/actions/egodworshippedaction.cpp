@@ -1,5 +1,6 @@
 #include "egodworshippedaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/actions/edefendcityaction.h"
 #include "characters/actions/emovetoaction.h"
@@ -119,6 +120,15 @@ void eGodWorshippedAction::write(eWriteStream& dst) const {
 }
 
 void eGodWorshippedAction::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+    ar.field("mLookForBless", mLookForBless);
+    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
+    ar.field("mLookForCityDefense", mLookForCityDefense);
+    ar.field("mLookForMonster", mLookForMonster);
+}
+
+void eGodWorshippedAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
     ar.field("mStage", mStage);
     ar.field("mLookForBless", mLookForBless);
     ar.field("mLookForSoldierAttack", mLookForSoldierAttack);

@@ -15,6 +15,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     eCharacterAction* currentAction() const { return mCurrentAction.get(); }
     void setCurrentAction(const stdsptr<eCharacterAction>& a);

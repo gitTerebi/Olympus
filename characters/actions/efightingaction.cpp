@@ -473,6 +473,32 @@ void eFightingAction::serialize(eSaveArchive& ar) {
     ar.field("mOverwrittableAction", mOverwrittableAction);
 }
 
+void eAttackTarget::serializeJson(const char* key, eJsonArchive& ar, eGameBoard& board) {
+    ar.characterRef((std::string(key) + ".mC").c_str(), [this](eCharacter* c){ mC = c; }, board);
+    if(ar.writing()) {
+        eBuilding* raw = mB.get();
+        ar.buildingRef((std::string(key) + ".mB").c_str(), raw, board);
+    } else {
+        ar.buildingRef((std::string(key) + ".mB").c_str(), [this](eBuilding* b) {
+            mB = b;
+        }, board);
+    }
+}
+
+void eFightingAction::serializeJson(eJsonArchive& ar) {
+    eComplexAction::serializeJson(ar);
+    ar.field("mAngle", mAngle);
+    ar.field("mMissile", mMissile);
+    ar.field("mRangeAttack", mRangeAttack);
+    ar.field("mBuildingAttack", mBuildingAttack);
+    ar.field("mLookForEnemy", mLookForEnemy);
+    ar.field("mAttackTime", mAttackTime);
+    ar.field("mAttack", mAttack);
+    mAttackTarget.serializeJson("mAttackTarget", ar, board());
+    ar.field("mSavedAction", mSavedAction);
+    ar.field("mOverwrittableAction", mOverwrittableAction);
+}
+
 void eFightingAction::waitAndGoHome(const int w) {
     const auto c = character();
     c->setActionType(eCharacterActionType::none);
