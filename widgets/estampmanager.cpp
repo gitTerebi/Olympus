@@ -90,7 +90,7 @@ void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty di
     f->addWidget(sidebar);
     sidebar->setViewport(mViewport);
 
-    mListWidth = vpW;
+    mListWidth = vpW - 2 * tp;
     mFilesWidget = new eWidget(window());
     mFilesWidget->setNoPadding();
     rebuildList();
@@ -122,7 +122,41 @@ void eStampManager::rebuildList()
     const auto drachmaIcon = intrfc.fDrachmasTopMenu;
     const int iconH = res.fontSizeS();
 
-    int y = 0;
+    const int pp = res.paddingXXS();
+    const int rowH = iconH + 2 * pp;
+
+    // measure icon widths once (same for all rows)
+    int popIconW = 0, drIconW = 0;
+    {
+        const auto tmp = new eScaledTextureLabel(window());
+        tmp->setNoPadding();
+        tmp->setTexture(popIcon);
+        tmp->setDrawHeight(iconH);
+        tmp->setFitToDrawSize(true);
+        popIconW = tmp->width();
+
+        const auto tmp2 = new eScaledTextureLabel(window());
+        tmp2->setNoPadding();
+        tmp2->setTexture(drachmaIcon);
+        tmp2->setDrawHeight(iconH);
+        tmp2->setFitToDrawSize(true);
+        drIconW = tmp2->width();
+    }
+
+    struct eRowData {
+        std::string name, path;
+        int pop, cost;
+        eButtonBase* b;
+        eLabel* nameL;
+        eLabel* popL;
+        eLabel* costL;
+        eScaledTextureLabel* popIconL;
+        eScaledTextureLabel* drIconL;
+    };
+
+    // first pass: create widgets, measure text widths
+    std::vector<eRowData> rows;
+    int maxPopW = 0, maxCostW = 0;
     for (const auto &path : paths)
     {
         const auto name = path.stem().u8string();
@@ -135,17 +169,14 @@ void eStampManager::rebuildList()
 
         const auto b = new eButtonBase("", window());
         b->setFontSizeS();
-        b->setPaddingXXS();
-        b->fitContent();
+        b->setNoPadding();
 
-        // name label
         const auto nameL = new eLabel(name, window());
         nameL->setFontSizeS();
         nameL->setNoPadding();
         nameL->fitContent();
         b->addWidget(nameL);
 
-        // pop icon
         const auto popIconL = new eScaledTextureLabel(window());
         popIconL->setNoPadding();
         popIconL->setTexture(popIcon);
@@ -153,14 +184,12 @@ void eStampManager::rebuildList()
         popIconL->setFitToDrawSize(true);
         b->addWidget(popIconL);
 
-        // pop count
         const auto popL = new eLabel(std::to_string(pop), window());
         popL->setFontSizeS();
         popL->setNoPadding();
         popL->fitContent();
         b->addWidget(popL);
 
-        // drachma icon
         const auto drIconL = new eScaledTextureLabel(window());
         drIconL->setNoPadding();
         drIconL->setTexture(drachmaIcon);
@@ -168,39 +197,60 @@ void eStampManager::rebuildList()
         drIconL->setFitToDrawSize(true);
         b->addWidget(drIconL);
 
-        // cost label
         const auto costL = new eLabel(std::to_string(cost), window());
         costL->setFontSizeS();
         costL->setNoPadding();
         costL->fitContent();
         b->addWidget(costL);
 
-        // layout children left-to-right
-        const int pp = res.paddingXXS();
-        int cx = pp;
-        nameL->setX(cx); cx += nameL->width() + pp;
-        popIconL->setX(cx); cx += popIconL->width() + pp / 2;
-        popL->setX(cx); cx += popL->width() + pp;
-        drIconL->setX(cx); cx += drIconL->width() + pp / 2;
-        costL->setX(cx);
+        maxPopW  = std::max(maxPopW,  popL->width());
+        maxCostW = std::max(maxCostW, costL->width());
 
-        nameL->align(eAlignment::vcenter);
-        popIconL->align(eAlignment::vcenter);
-        popL->align(eAlignment::vcenter);
-        drIconL->align(eAlignment::vcenter);
-        costL->align(eAlignment::vcenter);
-
-        mFilesWidget->addWidget(b);
-        b->setY(y);
-        y += b->height();
-
+        rows.push_back({name, pathString, pop, cost, b, nameL, popL, costL, popIconL, drIconL});
         mButtons.push_back({name, pathString, pop, cost, b, nameL});
-        b->setPressAction([this, name, pathString]()
-                          { selectTemplate(name, pathString); });
-        b->setMouseEnterAction([nameL]()
-                               { nameL->setYellowFontColor(); });
-        b->setMouseLeaveAction([this]()
-                               { updateButtonColors(); });
+    }
+
+    // fixed column positions (right-aligned block)
+    // layout: | ... name ... | popIcon | popCol | drIcon | costCol | margin |
+    const int margin   = 4 * pp;
+    const int costColW = maxCostW;
+    const int drColX   = mListWidth - margin - costColW;
+    const int drIconX  = drColX - 4 * pp - drIconW;
+    const int popColW  = maxPopW;
+    const int popColX  = drIconX - 4 * pp - popColW;
+    const int popIconX = popColX - pp / 2 - popIconW;
+
+    int y = 0;
+    for (auto &row : rows)
+    {
+        row.b->resize(mListWidth, rowH);
+
+        row.nameL->setX(pp);
+        row.popIconL->setX(popIconX);
+        row.popL->setX(popColX);
+        row.drIconL->setX(drIconX);
+        row.costL->setX(drColX);
+
+        // right-align numbers within their column
+        row.popL->setX(popColX + popColW - row.popL->width());
+        row.costL->setX(drColX + costColW - row.costL->width());
+
+        row.nameL->align(eAlignment::vcenter);
+        row.popIconL->align(eAlignment::vcenter);
+        row.popL->align(eAlignment::vcenter);
+        row.drIconL->align(eAlignment::vcenter);
+        row.costL->align(eAlignment::vcenter);
+
+        mFilesWidget->addWidget(row.b);
+        row.b->setY(y);
+        y += rowH + pp;
+
+        row.b->setPressAction([this, name = row.name, path = row.path]()
+                              { selectTemplate(name, path); });
+        row.b->setMouseEnterAction([nameL = row.nameL]()
+                                   { nameL->setYellowFontColor(); });
+        row.b->setMouseLeaveAction([this]()
+                                   { updateButtonColors(); });
     }
 
     if (paths.empty())

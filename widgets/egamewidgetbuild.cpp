@@ -2117,16 +2117,16 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
         } break;
 
         case eBuildingMode::stamp: {
-            bool agoraBuilt = false;
+            bool implicitAgoraBuilt = false;
             for(const auto& cmd : mStampTool->buildCommands()) {
                 const int tx = pressedTX + cmd.dx;
                 const int ty = pressedTY + cmd.dy;
                 if(cmd.mode == eBuildingMode::commonAgora) {
-                    if(agoraBuilt) continue;
+                    if(!cmd.agoraRect && implicitAgoraBuilt) continue;
                     eAgoraOrientation bt;
                     const auto p = stampAgoraBuildPlace(cmd, pressedTX, pressedTY, bt);
                     if(p.empty()) continue;
-                    agoraBuilt = true;
+                    if(!cmd.agoraRect) implicitAgoraBuilt = true;
                     if(cmd.agoraOrientation >= 0 || !cmd.agoraRoads.empty()) {
                         buildStampAgora(p, bt, cid, ppid);
                         continue;
