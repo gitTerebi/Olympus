@@ -6,7 +6,6 @@
 #include "walkable/ewalkableobject.h"
 
 class eTileBase;
-class eSaveArchive;
 class eJsonArchive;
 
 class eAnimalAction : public eComplexAction {
@@ -27,15 +26,11 @@ public:
     int spawnerX() const { return mSpawnerX; }
     int spawnerY() const { return mSpawnerY; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serializeJson(eJsonArchive& ar) override;
 protected:
     int mSpawnerX;
     int mSpawnerY;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<eWalkableObject> mTileWalkable;
 
     int mLayTime = 2000;

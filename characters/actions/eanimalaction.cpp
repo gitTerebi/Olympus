@@ -4,7 +4,6 @@
 #include "characters/echaracter.h"
 #include "ewaitaction.h"
 #include "enumbers.h"
-#include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
@@ -35,30 +34,6 @@ bool eAnimalAction::decide() {
         setCurrentAction(w);
     }
     return true;
-}
-
-void eAnimalAction::read(eReadStream& src) {
-    eComplexAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAnimalAction::write(eWriteStream& dst) const {
-    eComplexAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAnimalAction*>(this)->serialize(ar);
-}
-
-void eAnimalAction::serialize(eSaveArchive& ar) {
-    ar.field("mSpawnerX", mSpawnerX);
-    ar.field("mSpawnerY", mSpawnerY);
-    if(ar.reading()) {
-        mTileWalkable = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeWalkable(mTileWalkable.get());
-    }
-    ar.field("mLayTime", mLayTime);
-    ar.field("mWalkTime", mWalkTime);
 }
 
 void eAnimalAction::serializeJson(eJsonArchive& ar) {

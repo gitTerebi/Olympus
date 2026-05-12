@@ -251,8 +251,7 @@ int eNumbers::sTriremeWharfBuildTime;
 int eNumbers::sTriremeWharfBuildStages;
 
 void eNumbers::sLoad() {
-    const auto path = eGameDir::numbersPath();
-    sLoad(path);
+    sLoad("");
 }
 
 void eNumbers::sLoad(const std::string& path) {

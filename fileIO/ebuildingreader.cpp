@@ -8,12 +8,10 @@
 
 static void buildingReadDbg(const char* msg, const eBuildingType type,
                             const int n, const size_t pos) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) {
-        fprintf(f, "%s type %d n %d pos %zu\n",
-                msg, static_cast<int>(type), n, pos);
-        fclose(f);
-    }
+    (void)msg;
+    (void)type;
+    (void)n;
+    (void)pos;
 }
 
 template <typename T>

@@ -56,6 +56,10 @@ void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {
 
 void eActionWithComeback::goBack(eBuilding* const b,
                                  const stdsptr<eWalkableObject>& walkable) {
+    if(!b) {
+        goBack(walkable);
+        return;
+    }
     const auto type = b->type();
     if(type == eBuildingType::commonAgora ||
        type == eBuildingType::grandAgora) {

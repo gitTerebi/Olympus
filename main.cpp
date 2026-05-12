@@ -6,6 +6,15 @@
 #include <string>
 
 #include <filesystem>
+#include <cstdio>
+#ifdef _WIN32
+#include <windows.h>
+#include <dbghelp.h>
+#include <ctime>
+#ifdef interface
+#undef interface
+#endif
+#endif
 
 #include "emainwindow.h"
 #include "textures/egametextures.h"
@@ -16,6 +25,96 @@
 #include "audio/emusic.h"
 #include "audio/esounds.h"
 #include "ecursors.h"
+
+#ifdef _WIN32
+static bool shouldWriteCrashDump(const DWORD code) {
+    switch(code) {
+    case EXCEPTION_ACCESS_VIOLATION:
+    case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+    case EXCEPTION_DATATYPE_MISALIGNMENT:
+    case EXCEPTION_FLT_DENORMAL_OPERAND:
+    case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+    case EXCEPTION_FLT_INEXACT_RESULT:
+    case EXCEPTION_FLT_INVALID_OPERATION:
+    case EXCEPTION_FLT_OVERFLOW:
+    case EXCEPTION_FLT_STACK_CHECK:
+    case EXCEPTION_FLT_UNDERFLOW:
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+    case EXCEPTION_IN_PAGE_ERROR:
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:
+    case EXCEPTION_INT_OVERFLOW:
+    case EXCEPTION_INVALID_DISPOSITION:
+    case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+    case EXCEPTION_PRIV_INSTRUCTION:
+    case EXCEPTION_STACK_OVERFLOW:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isSdlExceptionAddress(void* const address) {
+    HMODULE module = nullptr;
+    if(!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                           GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                           reinterpret_cast<LPCSTR>(address), &module)) {
+        return false;
+    }
+
+    char modulePath[MAX_PATH];
+    const DWORD len = GetModuleFileNameA(module, modulePath, sizeof(modulePath));
+    if(len == 0) return false;
+
+    const std::filesystem::path path(modulePath);
+    const auto name = path.filename().string();
+    return name == "SDL2.dll";
+}
+
+static LONG WINAPI unhandledCrashHandler(EXCEPTION_POINTERS* info) {
+    const auto code = info && info->ExceptionRecord ?
+                      info->ExceptionRecord->ExceptionCode : 0;
+    void* address = info && info->ExceptionRecord ?
+                    info->ExceptionRecord->ExceptionAddress : nullptr;
+    if(!shouldWriteCrashDump(code)) {
+        printf("Unhandled non-crash exception code=0x%08lx address=%p; no dump\n",
+               code, address);
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
+    if(isSdlExceptionAddress(address)) {
+        printf("Unhandled SDL exception code=0x%08lx address=%p; no dump\n",
+               code, address);
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
+
+    char dumpPath[MAX_PATH];
+    const std::time_t now = std::time(nullptr);
+    snprintf(dumpPath, sizeof(dumpPath),
+             "C:/Users/somtam/Desktop/ezeus_crash_%lld.dmp",
+             static_cast<long long>(now));
+
+    HANDLE file = CreateFileA(dumpPath, GENERIC_WRITE, 0, nullptr,
+                              CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if(file != INVALID_HANDLE_VALUE) {
+        MINIDUMP_EXCEPTION_INFORMATION mei;
+        mei.ThreadId = GetCurrentThreadId();
+        mei.ExceptionPointers = info;
+        mei.ClientPointers = FALSE;
+        MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file,
+                          MiniDumpWithDataSegs, &mei, nullptr, nullptr);
+        CloseHandle(file);
+    }
+
+    printf("Unhandled crash code=0x%08lx address=%p dump=%s\n",
+           code, address, dumpPath);
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+static void installCrashHandler() {
+    SetUnhandledExceptionFilter(unhandledCrashHandler);
+}
+#else
+static void installCrashHandler() {}
+#endif
 
 bool init() {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -101,6 +200,7 @@ bool getDisplayResolutions(std::vector<SDL_DisplayMode>& resolutions) {
 }
 
 int main() {
+    installCrashHandler();
     if(!init()) {
         printf("Failed to initialize!\n");
         close();

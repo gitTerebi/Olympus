@@ -5,8 +5,6 @@
 Refactor repeated functions into shared local helpers where possible.
 Debug log using printf, not std out.
 New files: kebab-case, no `e` or `e-` prefix (e.g. `storage-widget.cpp` not `estorage-widget.cpp` or `e-storage-widget.cpp`).
-New classes: PascalCase, no `e` prefix (e.g. `StorageWidget` not `eStorageWidget`).
-New include guards: no `E` prefix (e.g. `STORAGE_WIDGET_H` not `ESTORAGE_WIDGET_H`).
 
 ## JSON Save Transition
 
