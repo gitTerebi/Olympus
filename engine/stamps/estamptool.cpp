@@ -421,13 +421,17 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
 
 int eStampTool::estimatedCost(const eDifficulty diff) const {
     int cost = 0;
-    bool agoraCounted = false;
+    bool implicitAgoraCounted = false;
     for(const auto& cmd : buildCommands()) {
         eBuildingType bt = eBuildingType::none;
         if(cmd.mode == eBuildingMode::commonAgora) {
-            if(agoraCounted) continue;
-            agoraCounted = true;
-            bt = eBuildingType::commonAgora;
+            if(cmd.agoraRect) {
+                bt = eBuildingType::commonAgora;
+            } else {
+                if(implicitAgoraCounted) continue;
+                implicitAgoraCounted = true;
+                bt = eBuildingType::commonAgora;
+            }
         } else {
             bt = eBuildingModeHelpers::toBuildingType(cmd.mode);
         }
