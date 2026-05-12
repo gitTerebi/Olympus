@@ -14,14 +14,12 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
     void serializeJson(eJsonArchive& ar) override;
 private:
     void goBack();
     void findPrey();
 
-    bool mHunting = false;
+    mutable bool mHunting = false;
 };
 
 #endif // EWOLFACTION_H

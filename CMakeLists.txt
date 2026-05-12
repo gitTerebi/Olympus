@@ -792,6 +792,7 @@ target_link_libraries(eZeus
 if(WIN32)
     target_link_libraries(eZeus 
         pthread
+        dbghelp
     )
 endif()
 

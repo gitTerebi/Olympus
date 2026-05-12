@@ -15,23 +15,19 @@
 #include "fileIO/eblob.h"
 
 static void boardDbgLog(const char* msg) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s\n", msg); fclose(f); }
+    (void)msg;
 }
 
 static void boardDbgLogN(const char* msg, int n) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
+    (void)msg;
+    (void)n;
 }
 
 static void boardDbgLogBuilding(const int i, const eBuildingType type,
                                 const size_t pos) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) {
-        fprintf(f, "board: building %d type %d pos %zu\n",
-                i, static_cast<int>(type), pos);
-        fclose(f);
-    }
+    (void)i;
+    (void)type;
+    (void)pos;
 }
 
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
@@ -96,8 +92,6 @@ void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
 void eGameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
-        FILE* dbg = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "w");
-        if(dbg) { fprintf(dbg, "board: load start\n"); fclose(dbg); }
     boardDbgLog("board: size");
     int w;
     ar.field("mWidth", w, 0);
@@ -486,12 +480,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 }
 
-static FILE* sDbgLog() {
-    static FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    return f;
-}
-#define JLOG(msg) do { if(auto* f = sDbgLog()) { fprintf(f, "%s\n", msg); fflush(f); } } while(0)
-#define JLOGF(fmt, ...) do { if(auto* f = sDbgLog()) { fprintf(f, fmt "\n", __VA_ARGS__); fflush(f); } } while(0)
+#define JLOG(msg) do { (void)sizeof(msg); } while(0)
+#define JLOGF(fmt, ...) do { (void)sizeof(fmt); } while(0)
 
 void eGameBoard::serializeJson(eJsonArchive& ar) {
     if(ar.reading()) {

@@ -1,12 +1,11 @@
 #include "eboardcity.h"
 #include <cstdio>
 static void dbgLog(const char* msg) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s\n", msg); fclose(f); }
+    (void)msg;
 }
 static void dbgLogN(const char* msg, int n) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
+    (void)msg;
+    (void)n;
 }
 
 #include "gameEvents/invasions/invasion-handler.h"

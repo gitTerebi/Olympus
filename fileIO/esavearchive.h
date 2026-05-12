@@ -75,8 +75,6 @@ public:
         } else {
             auto data = takeField(name);
             if(data.empty()) {
-                FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-                if(f) { fprintf(f, "missing %s\n", name.c_str()); fclose(f); }
                 if constexpr(std::is_default_constructible_v<T> &&
                              std::is_assignable_v<T&, T>) {
                     value = T{};

@@ -8,6 +8,7 @@
 
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eShepherdAction::eShepherdAction(
         eShepherBuildingBase* const shed,
@@ -54,6 +55,10 @@ eDomesticatedAnimal* tryToCollect(eTile* const tile,
 }
 
 bool eShepherdAction::decide() {
+    if(!mCharacter || !mShed) {
+        setState(eCharacterActionState::finished);
+        return true;
+    }
     const bool r = eActionWithComeback::decide();
     if(r) return r;
 
@@ -129,6 +134,27 @@ void eShepherdAction::write(eWriteStream& dst) const {
     const_cast<eShepherdAction*>(this)->serialize(ar);
 }
 
+void eShepherdAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    ar.field("mAnimalType", mAnimalType);
+    if(ar.writing()) {
+        eCharacter* rawCharacter = mCharacter;
+        ar.characterRef("mCharacter", rawCharacter, board());
+        eBuilding* rawShed = mShed;
+        ar.buildingRef("mShed", rawShed, board());
+    } else {
+        ar.characterRef("mCharacter", [this](eCharacter* c) {
+            mCharacter = dynamic_cast<eResourceCollectorBase*>(c);
+        }, board());
+        ar.buildingRef("mShed", [this](eBuilding* b) {
+            mShed = dynamic_cast<eShepherBuildingBase*>(b);
+        }, board());
+    }
+    ar.field("mFinishOnce", mFinishOnce);
+    ar.field("mGroomed", mGroomed);
+    ar.field("mNoResource", mNoResource);
+}
+
 void eShepherdAction::serialize(eSaveArchive& ar) {
     eActionWithComeback::serialize(ar);
     ar.field("mAnimalType", mAnimalType);
@@ -149,6 +175,7 @@ void eShepherdAction::serialize(eSaveArchive& ar) {
 }
 
 bool eShepherdAction::findResourceDecision() {
+    if(!mCharacter) return true;
     const stdptr<eShepherdAction> tptr(this);
 
     const auto aType = mAnimalType;
@@ -176,6 +203,7 @@ bool eShepherdAction::findResourceDecision() {
 }
 
 void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
+    if(!mCharacter) return;
     a->setBusy(true);
     a->setVisible(false);
     mCharacter->setActionType(eCharacterActionType::collect);
@@ -194,6 +222,7 @@ void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
 }
 
 void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
+    if(!mCharacter) return;
     a->setBusy(true);
     mCharacter->setActionType(eCharacterActionType::fight);
     const stdptr<eCharacterAction> tptr(this);
@@ -211,6 +240,7 @@ void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
 }
 
 void eShepherdAction::goBackDecision() {
+    if(!mCharacter || !mShed) return;
     if(mCharacter->collected()) {
         mCharacter->setActionType(eCharacterActionType::carry);
     } else {
@@ -221,5 +251,6 @@ void eShepherdAction::goBackDecision() {
 }
 
 void eShepherdAction::waitDecision() {
+    if(!mCharacter) return;
     wait(eNumbers::sShepherdGoatherdWaitTime);
 }
