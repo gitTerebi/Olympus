@@ -1,5 +1,6 @@
 #include "edate.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 
@@ -183,6 +184,12 @@ void eDate::serialize(eSaveArchive& ar) {
 void eDate::read(eReadStream& src) {
     eSaveArchive ar(src);
     serialize(ar);
+}
+
+void eDate::serializeJson(eJsonArchive& ar) {
+    ar.field("day",   mDay);
+    ar.field("month", mMonth);
+    ar.field("year",  mYear);
 }
 
 std::string eMonthHelper::name(const eMonth m) {

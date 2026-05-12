@@ -41,6 +41,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     int rawCount() const { return mRawCount; }
     eResourceType rawMaterial() const { return mRawMaterial; }

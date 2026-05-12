@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eRuins::eRuins(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::ruins, 1, 1, cid) {
@@ -54,6 +55,16 @@ void eRuins::serialize(eSaveArchive& ar) {
     ar.field("mSavedPierRect", mSavedPierRect);
     byteVecField(ar, "mRestoreBundle", mRestoreBundle);
 }
+
+void eRuins::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("mWasType", mWasType);
+    ar.field("mOriginX", mOriginX);
+    ar.field("mOriginY", mOriginY);
+    ar.field("mOriginW", mOriginW);
+    ar.field("mOriginH", mOriginH);
+}
+
 
 void eRuins::read(eReadStream& src) {
     eBuilding::read(src);

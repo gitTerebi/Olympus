@@ -41,6 +41,7 @@ struct eEpisodeGoal {
     void write(eWriteStream& dst) const;
 
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
     bool met() const;
 
     static std::string sText(const eEpisodeGoalType type);

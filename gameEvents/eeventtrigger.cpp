@@ -4,6 +4,8 @@
 #include "evectorhelpers.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
 
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
@@ -69,4 +71,28 @@ void eEventTrigger::removeEvent(const stdsptr<eGameEvent>& e) {
 
 eWorldBoard* eEventTrigger::worldBoard() const {
     return &mBoard.world();
+}
+
+void eEventTrigger::serializeJson(eJsonArchive& ar) {
+    int n = static_cast<int>(mEvents.size());
+    ar.field("n", n);
+    if(ar.reading()) mEvents.clear();
+    for(int i = 0; i < n; i++) {
+        eGameEventType type{};
+        if(ar.writing()) type = mEvents[i]->type();
+        const auto key = std::to_string(i);
+        ar.field((key + ".type").c_str(), type);
+        if(ar.writing()) {
+            std::string blob = captureWrite([&](eWriteStream& d){ mEvents[i]->write(d); });
+            ar.field((key + ".blob").c_str(), blob);
+        } else {
+            std::string blob;
+            ar.field((key + ".blob").c_str(), blob);
+            replayRead(blob, [&](eReadStream& s){
+                const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::trigger, mBoard);
+                e->read(s);
+                mEvents.emplace_back(e);
+            });
+        }
+    }
 }

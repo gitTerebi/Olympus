@@ -5,6 +5,7 @@
 
 #include "fileIO/estreams.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 
@@ -33,6 +34,13 @@ struct eWorldRegion {
         ar.field("nameId", const_cast<int&>(fNameId));
         ar.field("x", const_cast<double&>(fX));
         ar.field("y", const_cast<double&>(fY));
+    }
+
+    void serializeJson(eJsonArchive& ar) {
+        ar.field("name",   fName);
+        ar.field("nameId", fNameId);
+        ar.field("x",      fX);
+        ar.field("y",      fY);
     }
 };
 

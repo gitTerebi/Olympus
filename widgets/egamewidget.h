@@ -11,6 +11,7 @@ constexpr int kFpsClamp = 60;
 
 #include "engine/etile.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/eterraintextures.h"
 #include "textures/ebuildingtextures.h"
@@ -86,6 +87,32 @@ struct eGameWidgetSettings {
             ar.field("bookmarkX", b.first);
             ar.field("bookmarkY", b.second);
         }
+    }
+
+    void serialize(eJsonArchive& ar) {
+        ar.field("paused",    fPaused);
+        ar.field("speedId",   fSpeedId);
+        ar.field("speed",     fSpeed);
+        ar.field("dx",        fDX);
+        ar.field("dy",        fDY);
+        ar.field("tileSize",  fTileSize);
+        ar.field("direction", fDir);
+        int n = static_cast<int>(fBookmarks.size());
+        ar.loop("bookmarkCount", n, [&](int i) {
+            if(ar.reading()) {
+                int id = 0, x = 0, y = 0;
+                ar.field(("bm." + std::to_string(i) + ".id").c_str(), id);
+                ar.field(("bm." + std::to_string(i) + ".x").c_str(),  x);
+                ar.field(("bm." + std::to_string(i) + ".y").c_str(),  y);
+                fBookmarks[id] = {x, y};
+            } else {
+                auto it = std::next(fBookmarks.begin(), i);
+                int id = it->first, x = it->second.first, y = it->second.second;
+                ar.field(("bm." + std::to_string(i) + ".id").c_str(), id);
+                ar.field(("bm." + std::to_string(i) + ".x").c_str(),  x);
+                ar.field(("bm." + std::to_string(i) + ".y").c_str(),  y);
+            }
+        });
     }
 
     void write(eWriteStream& dst) const {

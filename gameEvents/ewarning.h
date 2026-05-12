@@ -36,6 +36,7 @@ public:
 
     virtual void write(eWriteStream& dst) const;
     virtual void read(eReadStream& src);
+    void serializeJson(class eJsonArchive& ar);
 private:
     eGameEvent& mParent;
     const eCityId mCid;

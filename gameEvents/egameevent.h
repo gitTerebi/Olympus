@@ -92,6 +92,7 @@ public:
 
     virtual void write(eWriteStream& dst) const;
     virtual void read(eReadStream& src);
+    virtual void serializeJson(class eJsonArchive& ar);
 
     virtual void loadResources() const;
 

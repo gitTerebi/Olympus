@@ -1,5 +1,6 @@
 #include "eresourcebuilding.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 #include "textures/ebuildingtextures.h"
@@ -146,6 +147,15 @@ void eResourceBuilding::write(eWriteStream& dst) const {
 }
 
 void eResourceBuilding::serialize(eSaveArchive& ar) {
+    ar.field("mSanctuary", mSanctuary);
+    ar.field("mWorkedOn", mWorkedOn);
+    ar.field("mNextRipe", mNextRipe);
+    ar.field("mRipe", mRipe);
+    ar.field("mResource", mResource);
+}
+
+void eResourceBuilding::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
     ar.field("mSanctuary", mSanctuary);
     ar.field("mWorkedOn", mWorkedOn);
     ar.field("mNextRipe", mNextRipe);

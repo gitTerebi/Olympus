@@ -45,6 +45,7 @@ class eMonsterInvasionEventBase;
 struct eEpisode;
 class eHippodrome;
 class eSaveArchive;
+class eJsonArchive;
 
 enum class eImmigrationLimitedBy {
     none,
@@ -436,6 +437,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(eJsonArchive& ar);
 private:
     void serialize(eSaveArchive& ar);
 

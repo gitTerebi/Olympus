@@ -42,6 +42,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
 private:
 
     eCityId mCid;

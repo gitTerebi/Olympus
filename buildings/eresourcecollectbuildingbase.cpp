@@ -2,6 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 void eResourceCollectBuildingBase::nextMonth() {
     mRingIdx = (mRingIdx + 1) % 12;
@@ -19,6 +20,17 @@ void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
     ar.field("mNoTarget", mNoTarget);
     ar.field("mProducedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
+}
+
+void eResourceCollectBuildingBase::serializeJson(eJsonArchive& ar) {
+    eResourceBuildingBase::serializeJson(ar);
+    ar.field("mNoTarget", mNoTarget);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        const auto k = "mMonthlyProduced." + std::to_string(i);
+        ar.field(k.c_str(), mMonthlyProduced[i]);
+    }
     ar.field("mRingIdx", mRingIdx);
 }
 

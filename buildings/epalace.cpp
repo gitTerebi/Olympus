@@ -4,6 +4,7 @@
 #include "textures/egametextures.h"
 #include "epalacetile.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePalace::ePalace(eGameBoard& board, const bool r,
                  const eCityId cid) :
@@ -150,3 +151,9 @@ void ePalace::serialize(eSaveArchive& ar) {
         }
     }
 }
+
+void ePalace::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    // mTiles linked via buildingRef in reader/writer
+}
+

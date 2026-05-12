@@ -7,6 +7,7 @@
 #include "engine/edifficulty.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "erand.h"
 
 #include <iterator>
@@ -822,6 +823,133 @@ void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
     ar.field("mBribeMonthsAgo", mBribeMonthsAgo, -1); // SAVE_COMPAT_OPTIONAL_FIELD
+}
+
+static void serializeResourceTradesJson(eJsonArchive& ar,
+                                        const char* name,
+                                        std::vector<eResourceTrade>& v) {
+    int n = ar.writing() ? static_cast<int>(v.size()) : 0;
+    const auto countKey = std::string(name) + ".count";
+    ar.field(countKey.c_str(), n);
+    if(ar.reading()) v.clear();
+    for(int i = 0; i < n; i++) {
+        auto& vv = ar.reading() ? v.emplace_back() : v[i];
+        const auto pre = std::string(name) + "." + std::to_string(i) + ".";
+        ar.field((pre + "fType").c_str(), vv.fType);
+        int nu = ar.writing() ? static_cast<int>(vv.fUsed.size()) : 0;
+        ar.field((pre + "fUsed.count").c_str(), nu);
+        if(ar.reading()) vv.fUsed.clear();
+        for(int j = 0; j < nu; j++) {
+            ePlayerId pid{}; int c = 0;
+            if(ar.writing()) {
+                auto it = vv.fUsed.begin();
+                std::advance(it, j);
+                pid = it->first; c = it->second;
+            }
+            ar.field((pre + "fUsed." + std::to_string(j) + ".pid").c_str(), pid);
+            ar.field((pre + "fUsed." + std::to_string(j) + ".c").c_str(), c);
+            if(ar.reading()) vv.fUsed[pid] = c;
+        }
+        ar.field((pre + "fMax").c_str(), vv.fMax);
+    }
+}
+
+void eWorldCity::serializeJson(eJsonArchive& ar, eWorldBoard* board) {
+    ar.field("mIOID",           mIOID);
+    ar.field("mCityId",         mCityId);
+    int conqueredByIOID = ar.writing() ? (mConqueredBy ? mConqueredBy->ioID() : -1) : -1;
+    ar.field("mConqueredByIOID", conqueredByIOID);
+    // mConqueredBy resolved by eWorldBoard::serializeJson after all cities loaded
+    ar.field("mPlayerId",       mPlayerId);
+    ar.field("mCapitalOf",      mCapitalOf);
+    ar.field("mIsCurrentCity",  mIsCurrentCity);
+    ar.field("mIsOnBoard",      mIsOnBoard);
+    ar.field("mType",           mType);
+    ar.field("mNationality",    mNationality);
+    ar.field("mDirection",      mDirection);
+    ar.field("mState",          mState);
+    ar.field("mNamePlace",      mNamePlace);
+    ar.field("mName",           mName);
+    ar.field("mNameString",     mNameString);
+    ar.field("mLeader",         mLeader);
+    ar.field("mLeaderString",   mLeaderString);
+    ar.field("mX",              mX);
+    ar.field("mY",              mY);
+    ar.field("mTradeShutdown",  mTradeShutdown);
+    ar.field("mRebellion",      mRebellion);
+    ar.field("mRel",            mRel);
+
+    {
+        int nrec = ar.writing() ? static_cast<int>(mReceived.size()) : 0;
+        ar.field("nrec", nrec);
+        if(ar.reading()) mReceived.clear();
+        for(int i = 0; i < nrec; i++) {
+            eResourceType type{}; int count = 0;
+            if(ar.writing()) {
+                auto it = mReceived.begin();
+                std::advance(it, i);
+                type = it->first; count = it->second;
+            }
+            ar.field(("rec." + std::to_string(i) + ".type").c_str(), type);
+            ar.field(("rec." + std::to_string(i) + ".count").c_str(), count);
+            if(ar.reading()) mReceived[type] = count;
+        }
+    }
+
+    {
+        int natt = ar.writing() ? static_cast<int>(mAtt.size()) : 0;
+        ar.field("natt", natt);
+        if(ar.reading()) mAtt.clear();
+        for(int i = 0; i < natt; i++) {
+            ePlayerId pid{}; double att = 0;
+            if(ar.writing()) {
+                auto it = mAtt.begin();
+                std::advance(it, i);
+                pid = it->first; att = it->second;
+            }
+            ar.field(("att." + std::to_string(i) + ".pid").c_str(), pid);
+            ar.field(("att." + std::to_string(i) + ".att").c_str(), att);
+            if(ar.reading()) mAtt[pid] = att;
+        }
+    }
+
+    ar.field("mAbroad",               mAbroad);
+    ar.field("mMilitaryStrength",     mMilitaryStrength);
+    ar.field("mTroops",               mTroops);
+    ar.field("mYearsElapsed",         mYearsElapsed);
+    ar.field("mWealth",               mWealth);
+
+    {
+        int nc = ar.writing() ? static_cast<int>(mWaterTrade.size()) : 0;
+        ar.field("nwt", nc);
+        if(ar.reading()) mWaterTrade.clear();
+        for(int i = 0; i < nc; i++) {
+            eCityId cid{};
+            if(ar.writing()) {
+                auto it = mWaterTrade.begin();
+                std::advance(it, i);
+                cid = *it;
+            }
+            ar.field(("wt." + std::to_string(i)).c_str(), cid);
+            if(ar.reading()) mWaterTrade.insert(cid);
+        }
+    }
+
+    ar.field("mVisible", mVisible);
+    serializeResourceTradesJson(ar, "mBuys",  mBuys);
+    serializeResourceTradesJson(ar, "mSells", mSells);
+    ar.field("receiveTributeType",  mReceiveTributeType);
+    ar.field("receiveTributeCount", mReceiveTributeCount);
+    ar.field("payTributeType",      mPayTributeType);
+    ar.field("payTributeCount",     mPayTributeCount);
+    ar.field("mBribeMonthsAgo",     mBribeMonthsAgo);
+
+    if(ar.reading()) {
+        if(mNameString > -1 && mNameString < 82)
+            mName = eLanguage::zeusText(21, mNameString);
+        if(mLeaderString > -1 && mLeaderString < 84)
+            mLeader = eLanguage::zeusText(139, mLeaderString);
+    }
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count)

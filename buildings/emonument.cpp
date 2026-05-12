@@ -2,6 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eMonument::eMonument(eGameBoard& board,
                        const eBuildingType type,
@@ -167,6 +168,21 @@ void eMonument::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mCart);
     }
 }
+
+void eMonument::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mRotated", mRotated);
+    ar.field("mHaltConstruction", mHaltConstruction);
+    ar.field("mStored.fWood", mStored.fWood);
+    ar.field("mStored.fMarble", mStored.fMarble);
+    ar.field("mStored.fSculpture", mStored.fSculpture);
+    ar.field("mUsed.fWood", mUsed.fWood);
+    ar.field("mUsed.fMarble", mUsed.fMarble);
+    ar.field("mUsed.fSculpture", mUsed.fSculpture);
+    ar.field("mAltitude", mAltitude);
+    // mCart restored by character load pass
+}
+
 
 eSanctCost eMonument::cost() const {
     eSanctCost c{0, 0, 0};

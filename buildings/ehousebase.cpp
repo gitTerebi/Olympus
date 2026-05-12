@@ -9,6 +9,7 @@
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHouseBase::eHouseBase(eGameBoard& board,
                        const eBuildingType type,
@@ -129,6 +130,22 @@ void eHouseBase::serialize(eSaveArchive& ar) {
     ar.field("mUpdateCulture", mUpdateCulture);
     // mPendingEvict and mEvictDelay not saved
 }
+
+void eHouseBase::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("mLevel", mLevel);
+    ar.field("mPeople", mPeople);
+    ar.field("mFood", mFood);
+    ar.field("mFleece", mFleece);
+    ar.field("mOil", mOil);
+    ar.field("mPhilosophers", mPhilosophers);
+    ar.field("mActors", mActors);
+    ar.field("mAthletes", mAthletes);
+    ar.field("mCompetitors", mCompetitors);
+    ar.field("mPaidTaxes", mPaidTaxes);
+    ar.field("mPaidTaxesLastMonth", mPaidTaxesLastMonth);
+}
+
 
 void eHouseBase::setLevel(const int l) {
     if(mLevel == l) return;

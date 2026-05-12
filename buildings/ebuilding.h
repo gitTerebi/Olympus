@@ -374,6 +374,7 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(class eJsonArchive& ar);
 
     void setIOID(const int id);
     int ioID() const { return mIOID; }

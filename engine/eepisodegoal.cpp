@@ -1,5 +1,6 @@
 #include "eepisodegoal.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
@@ -34,6 +35,14 @@ void eEpisodeGoal::serialize(eSaveArchive& ar) {
     ar.field("fEnumInt2", fEnumInt2);
     ar.field("fRequiredCount", fRequiredCount);
     ar.field("fStatusCount", fStatusCount);
+}
+
+void eEpisodeGoal::serializeJson(eJsonArchive& ar) {
+    ar.field("fType",          fType);
+    ar.field("fEnumInt1",      fEnumInt1);
+    ar.field("fEnumInt2",      fEnumInt2);
+    ar.field("fRequiredCount", fRequiredCount);
+    ar.field("fStatusCount",   fStatusCount);
 }
 
 bool eEpisodeGoal::met() const {

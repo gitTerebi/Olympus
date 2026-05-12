@@ -5,6 +5,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <algorithm>
 #include <cmath>
@@ -135,6 +136,19 @@ void eProcessingBuilding::serialize(eSaveArchive& ar) {
     ar.field("mLastMonth", mLastMonth);
     for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
 }
+
+void eProcessingBuilding::serializeJson(eJsonArchive& ar) {
+    eResourceBuildingBase::serializeJson(ar);
+    ar.field("mLastMonth", mLastMonth);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        const auto k = "mMonthlyProduced." + std::to_string(i);
+        ar.field(k.c_str(), mMonthlyProduced[i]);
+    }
+    ar.field("mRingIdx", mRingIdx);
+    ar.field("mRawCount", mRawCount);
+}
+
 
 void eProcessingBuilding::read(eReadStream& src) {
     eResourceBuildingBase::read(src);

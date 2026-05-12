@@ -9,6 +9,7 @@
 
 #include "characters/epeddler.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAgoraBase::eAgoraBase(eGameBoard& board,
                        const eBuildingType type,
@@ -66,6 +67,13 @@ void eAgoraBase::serialize(eSaveArchive& ar) {
     setMaxEmployees(0);
     fillSpaces();
 }
+
+void eAgoraBase::serializeJson(eJsonArchive& ar) {
+    ePatrolBuildingBase::serializeJson(ar);
+    setMaxEmployees(0);
+    fillSpaces();
+}
+
 
 int eAgoraBase::add(const eResourceType type, const int count) {
     const auto v = vendor(type);

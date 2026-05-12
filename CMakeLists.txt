@@ -437,6 +437,7 @@ set(SOURCES
     exmlparser.cpp
     fileIO/ebuildingreader.cpp
     fileIO/ebuildingwriter.cpp
+    fileIO/ejsonarchive.cpp
     fileIO/ereadstream.cpp
     fileIO/ewritestream.cpp
     gameEvents/earmyeventbase.cpp

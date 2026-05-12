@@ -4,6 +4,7 @@
 #include "characters/ecarttransporter.h"
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "buildings/eagorabase.h"
 #include "enumbers.h"
 
@@ -211,3 +212,12 @@ void eVendor::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mCart);
     }
 }
+
+void eVendor::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mResource", mResource);
+    ar.field("mVendorEnabled", mVendorEnabled);
+    // mCart restored by character load pass
+    // agora ref set by reader postFunc via "agora" key
+}
+

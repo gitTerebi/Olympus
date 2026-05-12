@@ -10,6 +10,9 @@
 #include "egamedir.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/estampblueprint.h"
+#include "engine/edifficulty.h"
+#include "textures/egametextures.h"
+#include "elabelbase.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -36,9 +39,10 @@ int calculateMaxPop(const std::string &path)
 
 namespace fs = std::filesystem;
 
-void eStampManager::initialize(eStampTool *const stampTool)
+void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty difficulty)
 {
     mStampTool = stampTool;
+    mDifficulty = difficulty;
 
     const auto res = window()->resolution();
     const int ww = res.centralWidgetSmallWidth();
@@ -110,27 +114,91 @@ void eStampManager::rebuildList()
     }
     std::sort(paths.begin(), paths.end());
 
+    const auto res = resolution();
+    const auto uiScale = res.uiScale();
+    const int icoll = static_cast<int>(uiScale);
+    const auto& intrfc = eGameTextures::interface()[icoll];
+    const auto popIcon = intrfc.fPopulationTopMenu;
+    const auto drachmaIcon = intrfc.fDrachmasTopMenu;
+    const int iconH = res.fontSizeS();
+
     int y = 0;
     for (const auto &path : paths)
     {
         const auto name = path.stem().u8string();
         const auto pathString = path.u8string();
         const int pop = calculateMaxPop(pathString);
-        const auto buttonText = name + " (" + std::to_string(pop) + ")";
-        const auto b = new eButtonBase(buttonText, window());
+
+        eStampTool tmpTool;
+        tmpTool.setTemplate(name, pathString);
+        const int cost = tmpTool.estimatedCost(mDifficulty);
+
+        const auto b = new eButtonBase("", window());
         b->setFontSizeS();
-        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setPaddingXXS();
         b->fitContent();
+
+        // name label
+        const auto nameL = new eLabel(name, window());
+        nameL->setFontSizeS();
+        nameL->setNoPadding();
+        nameL->fitContent();
+        b->addWidget(nameL);
+
+        // pop icon
+        const auto popIconL = new eScaledTextureLabel(window());
+        popIconL->setNoPadding();
+        popIconL->setTexture(popIcon);
+        popIconL->setDrawHeight(iconH);
+        popIconL->setFitToDrawSize(true);
+        b->addWidget(popIconL);
+
+        // pop count
+        const auto popL = new eLabel(std::to_string(pop), window());
+        popL->setFontSizeS();
+        popL->setNoPadding();
+        popL->fitContent();
+        b->addWidget(popL);
+
+        // drachma icon
+        const auto drIconL = new eScaledTextureLabel(window());
+        drIconL->setNoPadding();
+        drIconL->setTexture(drachmaIcon);
+        drIconL->setDrawHeight(iconH);
+        drIconL->setFitToDrawSize(true);
+        b->addWidget(drIconL);
+
+        // cost label
+        const auto costL = new eLabel(std::to_string(cost), window());
+        costL->setFontSizeS();
+        costL->setNoPadding();
+        costL->fitContent();
+        b->addWidget(costL);
+
+        // layout children left-to-right
+        const int pp = res.paddingXXS();
+        int cx = pp;
+        nameL->setX(cx); cx += nameL->width() + pp;
+        popIconL->setX(cx); cx += popIconL->width() + pp / 2;
+        popL->setX(cx); cx += popL->width() + pp;
+        drIconL->setX(cx); cx += drIconL->width() + pp / 2;
+        costL->setX(cx);
+
+        nameL->align(eAlignment::vcenter);
+        popIconL->align(eAlignment::vcenter);
+        popL->align(eAlignment::vcenter);
+        drIconL->align(eAlignment::vcenter);
+        costL->align(eAlignment::vcenter);
+
         mFilesWidget->addWidget(b);
         b->setY(y);
         y += b->height();
 
-        mButtons.push_back({name, pathString, pop, b});
+        mButtons.push_back({name, pathString, pop, cost, b, nameL});
         b->setPressAction([this, name, pathString]()
                           { selectTemplate(name, pathString); });
-        b->setMouseEnterAction([b]()
-                               { b->setYellowFontColor(); });
+        b->setMouseEnterAction([nameL]()
+                               { nameL->setYellowFontColor(); });
         b->setMouseLeaveAction([this]()
                                { updateButtonColors(); });
     }
@@ -173,18 +241,17 @@ void eStampManager::updateButtonColors()
     const std::string active = mStampTool ? mStampTool->templateName() : "";
     for (auto &entry : mButtons)
     {
-        const auto buttonText = entry.fName + " (" + std::to_string(entry.fPop) + ")";
         if (entry.fName == active)
         {
-            entry.fButton->setText("> " + buttonText + " <");
-            entry.fButton->setYellowFontColor();
+            entry.fNameLabel->setText("> " + entry.fName + " <");
+            entry.fNameLabel->setYellowFontColor();
         }
         else
         {
-            entry.fButton->setText(buttonText);
-            entry.fButton->setLightFontColor();
+            entry.fNameLabel->setText(entry.fName);
+            entry.fNameLabel->setLightFontColor();
         }
-        entry.fButton->fitContent();
+        entry.fNameLabel->fitContent();
         entry.fButton->setWidth(mListWidth);
     }
 }

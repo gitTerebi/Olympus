@@ -26,6 +26,7 @@ struct eDistrictReadyCondition {
     void write(eWriteStream& dst) const;
 
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
     eType fType;
     eResourceType fResource = eResourceType::drachmas;
     eGodType fSanctuary = eGodType::zeus;
@@ -54,6 +55,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    void serializeJson(class eJsonArchive& ar);
 
     std::vector<eAIBuilding> fBuildings;
     std::vector<eDistrictReadyCondition> fReadyConditions;

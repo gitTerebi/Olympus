@@ -33,6 +33,7 @@
 #include "ehephaestussanctuary.h"
 #include "ezeussanctuary.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "etemplealtarbuilding.h"
 #include "enumbers.h"
@@ -413,6 +414,33 @@ void eSanctuary::serialize(eSaveArchive& ar) {
         if(ar.reading()) mSpecialTiles.push_back(t);
     }
 }
+
+void eSanctuary::serializeJson(eJsonArchive& ar) {
+    eMonument::serializeJson(ar);
+    auto& board = getBoard();
+    int nw = 0;
+    if(ar.writing()) nw = static_cast<int>(mWarriorTiles.size());
+    ar.field("nw", nw);
+    if(ar.reading()) mWarriorTiles.clear();
+    for(int i = 0; i < nw; i++) {
+        eTile* t = ar.writing() ? mWarriorTiles[i] : nullptr;
+        const auto k = "wt." + std::to_string(i);
+        ar.tile(k.c_str(), t, board);
+        if(ar.reading() && t) mWarriorTiles.push_back(t);
+    }
+    int ns = 0;
+    if(ar.writing()) ns = static_cast<int>(mSpecialTiles.size());
+    ar.field("ns", ns);
+    if(ar.reading()) mSpecialTiles.clear();
+    for(int i = 0; i < ns; i++) {
+        eTile* t = ar.writing() ? mSpecialTiles[i] : nullptr;
+        const auto k = "st." + std::to_string(i);
+        ar.tile(k.c_str(), t, board);
+        if(ar.reading() && t) mSpecialTiles.push_back(t);
+    }
+    // mGod/mSoldierBanners not saved in JSON path
+}
+
 
 std::vector<eTile*> eSanctuary::warriorTiles() const {
     return mWarriorTiles;

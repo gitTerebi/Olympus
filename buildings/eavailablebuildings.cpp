@@ -3,6 +3,7 @@
 #include "fileIO/ereadstream.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "buildings/ebuilding.h"
 
@@ -120,6 +121,113 @@ void eAvailableBuildings::serialize(eSaveArchive& ar) {
             bool l;
             if(ar.writing()) l = a.fLevels[j];
             ar.field("l", l);
+            if(ar.reading()) a.fLevels.push_back(l);
+        }
+        if(ar.reading()) fPyramids[type] = a;
+    }
+}
+
+void eAvailableBuildings::serializeJson(eJsonArchive& ar) {
+    ar.field("fEliteHousing", fEliteHousing);
+
+    ar.field("fWheatFarm", fWheatFarm);
+    ar.field("fCarrotsFarm", fCarrotsFarm);
+    ar.field("fOnionFarm", fOnionFarm);
+
+    ar.field("fVine", fVine);
+    ar.field("fOliveTree", fOliveTree);
+    ar.field("fOrangeTree", fOrangeTree);
+
+    ar.field("fDairy", fDairy);
+    ar.field("fCardingShed", fCardingShed);
+
+    ar.field("fFishery", fFishery);
+    ar.field("fUrchinQuay", fUrchinQuay);
+    ar.field("fHuntingLodge", fHuntingLodge);
+    ar.field("fCorral", fCorral);
+
+    ar.field("fMint", fMint);
+    ar.field("fFoundry", fFoundry);
+    ar.field("fTimberMill", fTimberMill);
+    ar.field("fMasonryShop", fMasonryShop);
+    ar.field("fRefinery", fRefinery);
+    ar.field("fBlackMarbleWorkshop", fBlackMarbleWorkshop);
+
+    ar.field("fWinery", fWinery);
+    ar.field("fOlivePress", fOlivePress);
+    ar.field("fSculptureStudio", fSculptureStudio);
+
+    ar.field("fArmory", fArmory);
+    ar.field("fHorseRanch", fHorseRanch);
+    ar.field("fChariotFactory", fChariotFactory);
+    ar.field("fTriremeWharf", fTriremeWharf);
+    ar.field("fHippodrome", fHippodrome);
+
+    ar.field("fAphroditeSanctuary",  fAphroditeSanctuary);
+    ar.field("fApolloSanctuary",     fApolloSanctuary);
+    ar.field("fAresSanctuary",       fAresSanctuary);
+    ar.field("fArtemisSanctuary",    fArtemisSanctuary);
+    ar.field("fAthenaSanctuary",     fAthenaSanctuary);
+    ar.field("fAtlasSanctuary",      fAtlasSanctuary);
+    ar.field("fDemeterSanctuary",    fDemeterSanctuary);
+    ar.field("fDionysusSanctuary",   fDionysusSanctuary);
+    ar.field("fHadesSanctuary",      fHadesSanctuary);
+    ar.field("fHephaestusSanctuary", fHephaestusSanctuary);
+    ar.field("fHeraSanctuary",       fHeraSanctuary);
+    ar.field("fHermesSanctuary",     fHermesSanctuary);
+    ar.field("fPoseidonSanctuary",   fPoseidonSanctuary);
+    ar.field("fZeusSanctuary",       fZeusSanctuary);
+
+    ar.field("fAchillesHall",    fAchillesHall);
+    ar.field("fAtalantaHall",    fAtalantaHall);
+    ar.field("fBellerophonHall", fBellerophonHall);
+    ar.field("fHerculesHall",    fHerculesHall);
+    ar.field("fJasonHall",       fJasonHall);
+    ar.field("fOdysseusHall",    fOdysseusHall);
+    ar.field("fPerseusHall",     fPerseusHall);
+    ar.field("fTheseusHall",     fTheseusHall);
+
+    ar.field("fPopulationMonument",  fPopulationMonument);
+    ar.field("fVictoryMonument",     fVictoryMonument);
+    ar.field("fColonyMonument",      fColonyMonument);
+    ar.field("fAthleteMonument",     fAthleteMonument);
+    ar.field("fConquestMonument",    fConquestMonument);
+    ar.field("fHappinessMonument",   fHappinessMonument);
+    ar.field("fHeroicMonument",      fHeroicMonument);
+    ar.field("fDiplomacyMonument",   fDiplomacyMonument);
+    ar.field("fScholarMonument",     fScholarMonument);
+
+    const int iMax = static_cast<int>(eGodType::zeus) + 1;
+    for(int i = 0; i < iMax; i++) {
+        const auto t = static_cast<eGodType>(i);
+        const auto key = "mGodMonuments." + std::to_string(i);
+        ar.field(key.c_str(), mGodMonuments[t]);
+    }
+
+    int np = 0;
+    if(ar.writing()) np = static_cast<int>(fPyramids.size());
+    ar.field("np", np);
+    if(ar.reading()) fPyramids.clear();
+    for(int i = 0; i < np; i++) {
+        eBuildingType type{};
+        ePyramidAvailable a;
+        if(ar.writing()) {
+            auto it = fPyramids.begin();
+            std::advance(it, i);
+            type = it->first;
+            a = it->second;
+        }
+        const auto key = std::to_string(i);
+        ar.field((key + ".type").c_str(), type);
+        ar.field((key + ".fA").c_str(),   a.fA);
+        int nl = 0;
+        if(ar.writing()) nl = static_cast<int>(a.fLevels.size());
+        ar.field((key + ".nl").c_str(), nl);
+        if(ar.reading()) a.fLevels.clear();
+        for(int j = 0; j < nl; j++) {
+            bool l = false;
+            if(ar.writing()) l = a.fLevels[j];
+            ar.field((key + ".l." + std::to_string(j)).c_str(), l);
             if(ar.reading()) a.fLevels.push_back(l);
         }
         if(ar.reading()) fPyramids[type] = a;

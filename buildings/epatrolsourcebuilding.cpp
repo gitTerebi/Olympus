@@ -13,6 +13,7 @@
 #include "estadium.h"
 #include "emuseum.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
                                              const eBaseTex baseTex,
@@ -68,6 +69,18 @@ void ePatrolSourceBuilding::serialize(eSaveArchive& ar) {
         ar.field("tt.fLastId", tt.fLastId);
     }
 }
+
+void ePatrolSourceBuilding::serializeJson(eJsonArchive& ar) {
+    ePatrolBuilding::serializeJson(ar);
+    for(int i = 0; i < static_cast<int>(mTargetData.size()); i++) {
+        auto& tt = mTargetData[i];
+        const auto stk = "tt.fSpawnTime." + std::to_string(i);
+        const auto lik = "tt.fLastId." + std::to_string(i);
+        ar.field(stk.c_str(), tt.fSpawnTime);
+        ar.field(lik.c_str(), tt.fLastId);
+    }
+}
+
 
 bool operator==(const SDL_Rect& r1, const SDL_Rect& r2) {
     return r1.x == r2.x && r1.y == r2.y &&

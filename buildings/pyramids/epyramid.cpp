@@ -15,6 +15,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePyramid::ePyramid(eGameBoard& board,
                    const eBuildingType type,
@@ -1207,6 +1208,21 @@ void ePyramid::serialize(eSaveArchive& ar) {
         if(ar.reading()) mDark.push_back(d);
     }
 }
+
+void ePyramid::serializeJson(eJsonArchive& ar) {
+    eMonument::serializeJson(ar);
+    int ds = 0;
+    if(ar.writing()) ds = static_cast<int>(mDark.size());
+    ar.field("ds", ds);
+    if(ar.reading()) mDark.clear();
+    for(int i = 0; i < ds; i++) {
+        bool d = ar.writing() ? mDark[i] : false;
+        const auto k = "d." + std::to_string(i);
+        ar.field(k.c_str(), d);
+        if(ar.reading()) mDark.push_back(d);
+    }
+}
+
 
 eSanctCost ePyramid::swapMarbleIfDark(const int e, eSanctCost cost) const {
     const bool isDark = darkLevel(e);

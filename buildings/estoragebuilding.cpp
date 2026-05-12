@@ -1,5 +1,6 @@
 #include "estoragebuilding.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "characters/ecarttransporter.h"
@@ -298,3 +299,35 @@ void eStorageBuilding::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mCart2);
     }
 }
+
+void eStorageBuilding::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mGet", mGet);
+    ar.field("mEmpty", mEmpty);
+    ar.field("mAccept", mAccept);
+    for(int i = 0; i < 15; i++) {
+        const auto k = "mResourceCount." + std::to_string(i);
+        ar.field(k.c_str(), mResourceCount[i]);
+    }
+    for(int i = 0; i < 15; i++) {
+        const auto k = "mResource." + std::to_string(i);
+        ar.field(k.c_str(), mResource[i]);
+    }
+    int nc = 0;
+    if(ar.writing()) nc = static_cast<int>(mMaxCount.size());
+    ar.field("nc", nc);
+    if(ar.reading()) mMaxCount.clear();
+    auto it = mMaxCount.begin();
+    for(int i = 0; i < nc; i++) {
+        eResourceType rt{};
+        int c = 0;
+        if(ar.writing()) { rt = it->first; c = it->second; ++it; }
+        const auto rk = "rt." + std::to_string(i);
+        const auto ck = "c." + std::to_string(i);
+        ar.field(rk.c_str(), rt);
+        ar.field(ck.c_str(), c);
+        if(ar.reading()) mMaxCount[rt] = c;
+    }
+    // mCart1/mCart2 restored by character load pass
+}
+

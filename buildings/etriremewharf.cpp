@@ -7,6 +7,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eTriremeWharf::eTriremeWharf(eGameBoard& board,
                              const eDiagonalOrientation o,
@@ -231,6 +232,15 @@ void eTriremeWharf::serialize(eSaveArchive& ar) {
     ar.field("mTriremeBuildingStage", mTriremeBuildingStage);
     ar.field("mTriremeBuildingTime", mTriremeBuildingTime);
 }
+
+void eTriremeWharf::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mAbroad", mAbroad);
+    ar.field("mTriremeBuildingStage", mTriremeBuildingStage);
+    ar.field("mTriremeBuildingTime", mTriremeBuildingTime);
+    // mTakeCart/mTrireme restored by character load pass
+}
+
 
 void eTriremeWharf::triremeCameBack() {
     mAbroad = false;

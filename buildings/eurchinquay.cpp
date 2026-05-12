@@ -4,6 +4,7 @@
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 
@@ -241,3 +242,12 @@ void eUrchinQuay::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mGatherer);
     }
 }
+
+void eUrchinQuay::serializeJson(eJsonArchive& ar) {
+    eResourceCollectBuildingBase::serializeJson(ar);
+    ar.field("mDisabled", mDisabled);
+    ar.field("mStateCount", mStateCount);
+    ar.field("mState", mState);
+    // mGatherer restored by character load pass
+}
+

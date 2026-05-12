@@ -6,6 +6,7 @@
 #include "eepisodegoal.h"
 
 class eSaveArchive;
+class eJsonArchive;
 
 struct eSetAside {
     eResourceType fRes;
@@ -77,6 +78,7 @@ public:
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
+    void serializeJson(eJsonArchive& ar);
 
     void readPak(const std::string& title,
                  const std::string& path);

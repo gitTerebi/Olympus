@@ -6,6 +6,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eResourceCollectBuilding::eResourceCollectBuilding(
         eGameBoard& board,
@@ -188,6 +189,22 @@ void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
     ar.field("mWaitTime", mWaitTime);
     ar.field("mSpawnTime", mSpawnTime);
 }
+
+void eResourceCollectBuilding::serializeJson(eJsonArchive& ar) {
+    eResourceCollectBuildingBase::serializeJson(ar);
+    ar.field("mCollectedAction", mCollectedAction);
+    ar.field("mSpawnEnabled", mSpawnEnabled);
+    ar.field("mAddResource", mAddResource);
+    ar.field("mRawCount", mRawCount);
+    ar.field("mRawCountCollect", mRawCountCollect);
+    ar.field("mRawInc", mRawInc);
+    ar.field("mProcessDuration", mProcessDuration);
+    ar.field("mProcessTime", mProcessTime);
+    ar.field("mWaitTime", mWaitTime);
+    ar.field("mSpawnTime", mSpawnTime);
+    // mCollector restored by character load pass
+}
+
 
 bool eResourceCollectBuilding::spawn() {
     if(resource() >= maxResource()) return false;

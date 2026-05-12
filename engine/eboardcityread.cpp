@@ -18,6 +18,12 @@ static void dbgLogN(const char* msg, int n) {
 #include "engine/e-game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
+#include "buildings/eavailablebuildings.h"
+#include "engine/ai/eaicityplan.h"
+#include "engine/eemploymentdistributor.h"
+#include "engine/egameevents.h"
 
 void eBoardCity::read(eReadStream& src) {
     eSaveArchive ar(src);
@@ -481,5 +487,282 @@ void eBoardCity::serialize(eSaveArchive& ar) {
             ar.field("importedAmount", amount);
         }
     }
+    }
+}
+
+void eBoardCity::serializeJson(eJsonArchive& ar) {
+    ar.field("id", mId);
+    ar.field("atlantean", mAtlantean);
+
+    { auto a = ar.child("availableBuildings"); mAvailableBuildings.serializeJson(a); }
+    { auto a = ar.child("cityEvents"); mCityEvents.serializeJson(a); }
+    { auto a = ar.child("cityPlan"); mCityPlan.serializeJson(a); }
+
+    ar.field("wageRate", mWageRate);
+    ar.field("taxRate", mTaxRate);
+    ar.field("taxesPaidLastYear", mTaxesPaidLastYear);
+    ar.field("taxesPaidThisYear", mTaxesPaidThisYear);
+    ar.field("peoplePaidTaxesLastYear", mPeoplePaidTaxesLastYear);
+    ar.field("peoplePaidTaxesThisYear", mPeoplePaidTaxesThisYear);
+    ar.field("maxSanctuaries", mMaxSanctuaries);
+    ar.field("immigrationLimit", mImmigrationLimit);
+    ar.field("noFood", mNoFood);
+    { auto a = ar.child("noFoodSince"); mNoFoodSince.serializeJson(a); }
+    { auto a = ar.child("emplDistributor"); mEmplDistributor.serializeJson(a); }
+
+    {
+        int ns = ar.reading() ? 0 : static_cast<int>(mShutDown.size());
+        ar.field("shutdownCount", ns);
+        for(int i = 0; i < ns; i++) {
+            eResourceType type = ar.reading() ? eResourceType::none : mShutDown[i];
+            ar.field(("shutdown." + std::to_string(i)).c_str(), type);
+            if(ar.reading()) mShutDown.push_back(type);
+        }
+    }
+    {
+        int ns = ar.reading() ? 0 : static_cast<int>(mStockpiled.size());
+        ar.field("stockpiledCount", ns);
+        for(int i = 0; i < ns; i++) {
+            eResourceType type = ar.reading() ? eResourceType::none : mStockpiled[i];
+            ar.field(("stockpiled." + std::to_string(i)).c_str(), type);
+            if(ar.reading()) mStockpiled.push_back(type);
+        }
+    }
+
+    ar.field("manTowers", mManTowers);
+    ar.field("shutdownLandTrade", mShutdownLandTrade);
+    ar.field("shutdownSeaTrade", mShutdownSeaTrade);
+    ar.field("maxRabble", mMaxRabble);
+    ar.field("maxHoplites", mMaxHoplites);
+    ar.field("maxHorsemen", mMaxHorsemen);
+    ar.field("athleticsCoverage", mAthleticsCoverage);
+    ar.field("philosophyCoverage", mPhilosophyCoverage);
+    ar.field("dramaCoverage", mDramaCoverage);
+    ar.field("allDiscCoverage", mAllDiscCoverage);
+    ar.field("taxesCoverage", mTaxesCoverage);
+    ar.field("unrest", mUnrest);
+    ar.field("popularity", mPopularity);
+    ar.field("health", mHealth);
+    ar.field("excessiveMilitaryServiceCount", mExcessiveMilitaryServiceCount);
+    ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
+    ar.field("wonGames", mWonGames);
+
+    // invasion handlers — binary sub-objects
+    {
+        int ni = ar.reading() ? 0 : static_cast<int>(mInvasionHandlers.size());
+        ar.field("invasionHandlerCount", ni);
+        for(int i = 0; i < ni; i++) {
+            auto ca = ar.childAt("invasionHandlers", i);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
+                replayRead(blob, [ii](eReadStream& s){ ii->read(s); });
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mInvasionHandlers[i]->write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    // attacking gods — character IOIDs
+    {
+        int ngs = ar.reading() ? 0 : static_cast<int>(mAttackingGods.size());
+        ar.field("attackingGodCount", ngs);
+        for(int i = 0; i < ngs; i++) {
+            if(ar.reading()) {
+                ar.addPostFunc([this, &ar](){
+                    // resolved via character load pass
+                });
+            } else {
+                // characters serialized separately — skip
+            }
+        }
+    }
+
+    // monsters — skip (restored via character load pass)
+
+    // plagues
+    {
+        int np = ar.reading() ? 0 : static_cast<int>(mPlagues.size());
+        ar.field("plagueCount", np);
+        for(int i = 0; i < np; i++) {
+            auto ca = ar.childAt("plagues", i);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                const auto p = std::make_shared<ePlague>(mId, mBoard);
+                replayRead(blob, [&p](eReadStream& s){ p->read(s); });
+                mPlagues.push_back(p);
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mPlagues[i]->write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    ar.field("pop100", mPop100);
+    ar.field("pop500", mPop500);
+    ar.field("pop1000", mPop1000);
+    ar.field("pop2000", mPop2000);
+    ar.field("pop3000", mPop3000);
+    ar.field("pop5000", mPop5000);
+    ar.field("pop10000", mPop10000);
+    ar.field("pop15000", mPop15000);
+    ar.field("pop20000", mPop20000);
+    ar.field("pop25000", mPop25000);
+
+    // military aid
+    {
+        int na = ar.reading() ? 0 : static_cast<int>(mMilitaryAid.size());
+        ar.field("militaryAidCount", na);
+        for(int i = 0; i < na; i++) {
+            auto ca = ar.childAt("militaryAid", i);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                const auto ma = std::make_shared<eMilitaryAid>();
+                replayRead(blob, [&ma, this](eReadStream& s){ ma->read(s, &mBoard); });
+                addMilitaryAid(ma);
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mMilitaryAid[i]->write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    {
+        int nh = ar.reading() ? 0 : static_cast<int>(mSummonedHeroes.size());
+        ar.field("summonedHeroCount", nh);
+        for(int i = 0; i < nh; i++) {
+            eHeroType h = ar.reading() ? eHeroType::theseus : mSummonedHeroes[i];
+            ar.field(("summonedHero." + std::to_string(i)).c_str(), h);
+            if(ar.reading()) mSummonedHeroes.push_back(h);
+        }
+    }
+
+    ar.field("nextAttackPlanned", mNextAttackPlanned);
+    { auto a = ar.child("nextAttackDate"); mNextAttackDate.serializeJson(a); }
+
+    // monster events — game event cross-refs (skip; restored via event load pass)
+
+    // soldier banners
+    {
+        int nb = ar.reading() ? 0 : static_cast<int>(mSoldierBanners.size());
+        ar.field("soldierBannerCount", nb);
+        for(int i = 0; i < nb; i++) {
+            auto ca = ar.childAt("soldierBanners", i);
+            eBannerType type = ar.reading() ? eBannerType::hoplite : mSoldierBanners[i]->type();
+            ca.field("type", type);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
+                replayRead(blob, [&b](eReadStream& s){ b->read(s); });
+                registerSoldierBanner(b);
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mSoldierBanners[i]->write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    // hippodromes
+    {
+        int nh = ar.reading() ? 0 : static_cast<int>(mHippodromes.size());
+        ar.field("hippodromeCount", nh);
+        for(int i = 0; i < nh; i++) {
+            auto ca = ar.childAt("hippodromes", i);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                const auto h = std::make_shared<eHippodrome>(mId, mBoard);
+                replayRead(blob, [&h](eReadStream& s){ h->read(s); });
+                mHippodromes.push_back(h);
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mHippodromes[i]->write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    // reinforcements
+    {
+        int nr = ar.reading() ? 0 : static_cast<int>(mReinforcements.size());
+        ar.field("reinforcementCount", nr);
+        for(int i = 0; i < nr; i++) {
+            auto ca = ar.childAt("reinforcements", i);
+            if(ar.reading()) {
+                std::string blob; ca.field("blob", blob);
+                auto& r = mReinforcements.emplace_back();
+                replayRead(blob, [&r, this](eReadStream& s){ r.read(mBoard, s); });
+            } else {
+                std::string blob = captureWrite([&](eWriteStream& d){ mReinforcements[i].write(d); });
+                ca.field("blob", blob);
+            }
+        }
+    }
+
+    ar.field("defending", mDefending);
+
+    // exported
+    {
+        int ne = ar.reading() ? 0 : static_cast<int>(mExported.size());
+        ar.field("exportedCityCount", ne);
+        int ei = 0;
+        if(ar.reading()) {
+            for(int i = 0; i < ne; i++) {
+                auto ca = ar.childAt("exported", i);
+                eCityId cid{}; ca.field("cid", cid);
+                auto& e = mExported[cid];
+                int nr2 = 0; ca.field("resourceCount", nr2);
+                for(int j = 0; j < nr2; j++) {
+                    auto ra = ca.childAt("resources", j);
+                    eResourceType r{}; ra.field("type", r);
+                    int n = 0; ra.field("amount", n);
+                    e[r] = n;
+                }
+            }
+        } else {
+            for(const auto& [cid, map] : mExported) {
+                auto ca = ar.childAt("exported", ei++);
+                auto cidv = cid; ca.field("cid", cidv);
+                int nr2 = static_cast<int>(map.size()); ca.field("resourceCount", nr2);
+                int ji = 0;
+                for(const auto& [r, n] : map) {
+                    auto ra = ca.childAt("resources", ji++);
+                    auto rv = r; ra.field("type", rv);
+                    auto nv = n; ra.field("amount", nv);
+                }
+            }
+        }
+    }
+
+    // imported
+    {
+        int ni2 = ar.reading() ? 0 : static_cast<int>(mImported.size());
+        ar.field("importedCityCount", ni2);
+        if(ar.reading()) {
+            for(int i = 0; i < ni2; i++) {
+                auto ca = ar.childAt("imported", i);
+                eCityId cid{}; ca.field("cid", cid);
+                auto& e = mImported[cid];
+                int nr2 = 0; ca.field("resourceCount", nr2);
+                for(int j = 0; j < nr2; j++) {
+                    auto ra = ca.childAt("resources", j);
+                    eResourceType r{}; ra.field("type", r);
+                    int n = 0; ra.field("amount", n);
+                    e[r] = n;
+                }
+            }
+        } else {
+            int ii2 = 0;
+            for(const auto& [cid, map] : mImported) {
+                auto ca = ar.childAt("imported", ii2++);
+                auto cidv = cid; ca.field("cid", cidv);
+                int nr2 = static_cast<int>(map.size()); ca.field("resourceCount", nr2);
+                int ji = 0;
+                for(const auto& [r, n] : map) {
+                    auto ra = ca.childAt("resources", ji++);
+                    auto rv = r; ra.field("type", rv);
+                    auto nv = n; ra.field("amount", nv);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 #include "epatroltarget.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/actions/epatrolaction.h"
 #include "textures/egametextures.h"
@@ -54,3 +55,9 @@ void ePatrolTarget::write(eWriteStream& dst) const {
 void ePatrolTarget::serialize(eSaveArchive& ar) {
     ar.field("mAvailable", mAvailable);
 }
+
+void ePatrolTarget::serializeJson(eJsonArchive& ar) {
+    ePatrolBuilding::serializeJson(ar);
+    ar.field("mAvailable", mAvailable);
+}
+

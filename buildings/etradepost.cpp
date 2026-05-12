@@ -1,5 +1,6 @@
 #include "etradepost.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 
@@ -315,6 +316,17 @@ void eTradePost::serialize(eSaveArchive& ar) {
     ar.field("mCartAccept", mCartAccept, eResourceType::none);
     ar.field("mRouteTimer", mRouteTimer, 0);
 }
+
+void eTradePost::serializeJson(eJsonArchive& ar) {
+    eStorageBuilding::serializeJson(ar);
+    ar.field("mImports", mImports, eResourceType::none);
+    ar.field("mExports", mExports, eResourceType::none);
+    ar.field("mCartEmpty", mCartEmpty, eResourceType::none);
+    ar.field("mCartGet", mCartGet, eResourceType::none);
+    ar.field("mCartAccept", mCartAccept, eResourceType::none);
+    ar.field("mRouteTimer", mRouteTimer, 0);
+}
+
 
 bool eTradePost::trades() const {
     if(!mCity.trades()) return false;

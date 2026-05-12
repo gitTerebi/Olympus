@@ -2,6 +2,8 @@
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
 
 #include "gameEvents/gods/egodvisitevent.h"
 #include "gameEvents/gods/egodattackevent.h"
@@ -444,6 +446,61 @@ void eGameEvent::serialize(eSaveArchive& ar) {
     }
 
     ar.field("mEpisodeEvent", mEpisodeEvent);
+}
+
+void eGameEvent::serializeJson(eJsonArchive& ar) {
+    ar.field("mIOID",                mIOID);
+    ar.field("mDatePlusDays",        mDatePlusDays);
+    ar.field("mDatePlusMonths",      mDatePlusMonths);
+    ar.field("mDatePlusYearsMin",    mDatePlusYearsMin);
+    ar.field("mDatePlusYearsMax",    mDatePlusYearsMax);
+    { auto a = ar.child("mNextDate"); mNextDate.serializeJson(a); }
+    ar.field("mPeriodDaysMin",       mPeriodDaysMin);
+    ar.field("mPeriodDaysMax",       mPeriodDaysMax);
+    ar.field("mWarningMonths",       mWarningMonths);
+    ar.field("mRemNRuns",            mRemNRuns);
+    ar.field("mReason",              mReason);
+    ar.field("mEpisodeCompleteEvent",mEpisodeCompleteEvent);
+    ar.field("mEpisodeEvent",        mEpisodeEvent);
+
+    // warnings — JSON sub-objects
+    int nw = static_cast<int>(mWarnings.size());
+    ar.field("nw", nw);
+    for(int i = 0; i < nw; i++) {
+        auto wAr = ar.childAt("warnings", i);
+        mWarnings[i]->serializeJson(wAr);
+    }
+
+    // consequences — blobs (each is a full eGameEvent subtype)
+    int ncs = static_cast<int>(mConsequences.size());
+    ar.field("ncs", ncs);
+    if(ar.reading()) mConsequences.clear();
+    for(int i = 0; i < ncs; i++) {
+        eGameEventType ctype{};
+        eGameEventBranch cbr{};
+        if(ar.writing()) { ctype = mConsequences[i]->type(); cbr = mConsequences[i]->branch(); }
+        const auto key = std::to_string(i);
+        ar.field((key + ".type").c_str(), ctype);
+        ar.field((key + ".br").c_str(),   cbr);
+        if(ar.writing()) {
+            std::string blob = captureWrite([&](eWriteStream& d){ mConsequences[i]->write(d); });
+            ar.field((key + ".blob").c_str(), blob);
+        } else {
+            std::string blob;
+            ar.field((key + ".blob").c_str(), blob);
+            replayRead(blob, [&](eReadStream& s){
+                const auto e = eGameEvent::sCreate(mCid, ctype, cbr, mBoard);
+                e->read(s);
+                addConsequence(e);
+            });
+        }
+    }
+
+    // triggers — JSON sub-objects (eEventTrigger::serializeJson)
+    for(const auto& et : mTriggers) {
+        auto a = ar.child(et->name().c_str());
+        et->serializeJson(a);
+    }
 }
 
 void eGameEvent::loadResources() const {

@@ -94,6 +94,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     const std::vector<eSanctCost>& costs() const { return mCost; }
 private:
