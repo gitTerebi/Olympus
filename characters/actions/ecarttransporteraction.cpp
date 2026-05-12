@@ -55,7 +55,8 @@ bool eCartTransporterAction::decide() {
         if(mNoTarget) {
             mNoTarget = false;
             const bool hr = c->hasResource();
-            if(!hr || mWaitOutside) wait(1000);
+            if(!hr) { wait(1000); mTarget = nullptr; }
+            else if(mWaitOutside) { waitOutside(); }
             else if(hr) {
                 const auto rt = c->resType();
                 const int cc = c->resCount();
@@ -65,7 +66,6 @@ bool eCartTransporterAction::decide() {
                 task.fType = eCartActionType::give;
                 findTarget(task);
             }
-            mTarget = nullptr;
         } else {
             int cc = c->resCount();
             if(cc > 0) {
@@ -157,7 +157,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                             bType != eBuildingType::granary &&
                             bType != eBuildingType::tradePost;
     const bool hasGiveTasks = std::any_of(tasks.begin(), tasks.end(),
-        [](const eCartTask& t) { return t.fType == eCartActionType::give; });
+        [](const eCartTask& t) {
+            return t.fType == eCartActionType::give &&
+                   static_cast<bool>(t.fResource & eResourceType::food);
+        });
     const auto granaryOnly = std::make_shared<bool>(isProducer && hasGiveTasks);
 
     // 2. Check each tile for valid target buildings
@@ -179,7 +182,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         // 2.4 Skip trading posts for agora vendors when setting disabled
         if(ub.type() == eBuildingType::tradePost) {
             if(!board().agorasTakeFromTradingPosts()) {
-                const auto v = dynamic_cast<eVendor*>(mBuilding);
+                const auto v = dynamic_cast<eVendor*>(mBuilding.get());
                 if(v && v->agora()) return false;
             }
         }
@@ -435,7 +438,7 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
     w = eWalkableObject::sCreateRect(buildingRect, w);
     const auto type = mBuilding->type();
     if(type == eBuildingType::horseRanch) {
-        const auto hr = static_cast<eHorseRanch*>(mBuilding);
+        const auto hr = static_cast<eHorseRanch*>(mBuilding.get());
         const auto e = hr->enclosure();
         const auto eRect = e->tileRect();
         w = eWalkableObject::sCreateRect(eRect, w);

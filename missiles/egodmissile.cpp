@@ -83,3 +83,9 @@ void eGodMissile::serialize(eSaveArchive& ar) {
     ar.field("mCharType", mCharType);
     ar.field("mActionType", mActionType);
 }
+
+void eGodMissile::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    eMissile::serializeJson(ar, board);
+    ar.field("mCharType", mCharType);
+    ar.field("mActionType", mActionType);
+}

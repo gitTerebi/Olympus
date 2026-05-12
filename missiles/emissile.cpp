@@ -12,6 +12,8 @@
 #include "elavamissile.h"
 #include "edustmissile.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "fileIO/eblob.h"
 #include "characters/eracinghorse.h"
 
 eMissile::eMissile(eGameBoard& board, const eMissileType type,
@@ -97,6 +99,33 @@ void eMissile::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeGodAct(mFinish.get());
         ar.writeStream().writeTile(mTile);
+    }
+}
+
+void eMissile::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    (void)board;
+    if(ar.writing()) {
+        std::string pathBlob = captureWrite([this](eWriteStream& d){ mPath.write(d); });
+        ar.field("pathBlob", pathBlob);
+    } else {
+        std::string pathBlob;
+        ar.field("pathBlob", pathBlob);
+        replayRead(pathBlob, [this](eReadStream& s){ mPath.read(s); });
+    }
+    ar.field("mTime", mTime);
+    ar.field("mSpeed", mSpeed);
+    if(ar.writing()) {
+        std::string finishBlob = captureWrite([this](eWriteStream& d){ d.writeGodAct(mFinish.get()); });
+        ar.field("finishBlob", finishBlob);
+        eTile* t = mTile;
+        ar.tile("tile", t, mBoard);
+    } else {
+        std::string finishBlob;
+        ar.field("finishBlob", finishBlob);
+        replayRead(finishBlob, [this](eReadStream& s){ mFinish = s.readGodAct(mBoard); });
+        eTile* t = nullptr;
+        ar.tile("tile", t, mBoard);
+        changeTile(t);
     }
 }
 

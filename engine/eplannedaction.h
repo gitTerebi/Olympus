@@ -3,6 +3,7 @@
 
 class eReadStream;
 class eWriteStream;
+class eJsonArchive;
 
 class eGameBoard;
 class eSaveArchive;
@@ -24,6 +25,7 @@ public:
 
     virtual void read(eReadStream& src, eGameBoard& board);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(eJsonArchive& ar, eGameBoard& board);
 
     static ePlannedAction* sCreate(const ePlannedActionType type);
 

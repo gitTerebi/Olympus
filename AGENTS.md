@@ -34,3 +34,11 @@ Text strings: `zeus-text strings/Zeus_Text.xml` READ ONLY - reference strings at
 Options menu hotkeys: Add `eHotkeyId` + setting in `esettings.h/cpp`, handler in `egamewidget.cpp keyPressEvent`, menu entry in `eoptionsdata.cpp getOptionsPages()`.
 
 Popup buttons: Prefer `eAcceptButton`/`eCancelButton` for dialogs; `eOkButton` is smaller/older.
+
+<!-- lean-ctx-compression -->
+OUTPUT STYLE: concise
+- Bullet points over paragraphs
+- Skip filler words and hedging ("I think", "probably", "it seems")
+- 1-sentence explanations max, then code/action
+- No repeating what the user said
+<!-- /lean-ctx-compression -->

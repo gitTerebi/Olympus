@@ -970,15 +970,17 @@ void eGameWidget::paintEvent(ePainter &p)
             i--;
         }
     }
-    // Promote pending toasts if space available
-    while (mToasts.size() < 3 && !mPendingToasts.empty())
-    {
-        eToast toast = mPendingToasts.front();
-        mPendingToasts.pop_front();
-        toast.fExpireFrame = mFrame + 300; // 5 seconds
-        createToastWidget(toast);
-        mToasts.push_back(toast);
-        updateToasts = true;
+    // Promote pending toasts if space available (skip in turbo mode)
+    if (mSpeedId != sMaxSpeedId) {
+        while (mToasts.size() < 3 && !mPendingToasts.empty())
+        {
+            eToast toast = mPendingToasts.front();
+            mPendingToasts.pop_front();
+            toast.fExpireFrame = mFrame + 300; // 5 seconds
+            createToastWidget(toast);
+            mToasts.push_back(toast);
+            updateToasts = true;
+        }
     }
     if (updateToasts)
         updateToastPositions();
@@ -1015,8 +1017,6 @@ void eGameWidget::paintEvent(ePainter &p)
             }
         }
         mBoard->emptyRubbish();
-        if (iterate)
-            mBoard->waitUntilFinished();
         if (!incTime)
             break;
     }
