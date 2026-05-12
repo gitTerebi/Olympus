@@ -25,6 +25,8 @@ public:
 
     eBuilding* src() const { return mBuilding; }
     eBuilding* target() const { return mTarget; }
+    bool noDestination() const { return mWaitOutside; }
+    void setBuilding(eBuildingWithResource* b) { mBuilding = b; }
 
     bool waiting();
 protected:
@@ -56,7 +58,7 @@ private:
 
     void disappear();
 
-    eBuildingWithResource* mBuilding = nullptr;
+    stdptr<eBuildingWithResource> mBuilding;
     stdptr<eBuilding> mTarget;
 
     eCartTask mTask;

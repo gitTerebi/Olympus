@@ -19,6 +19,8 @@
 
 #include "spawners/elandinvasionpoint.h"
 
+#include <algorithm>
+
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "characters/actions/ecarttransporteraction.h"
@@ -584,9 +586,47 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             }
         }
     };
+    const auto doDrawStampAgora = [&](const eStampBuildCommand &cmd)
+    {
+        if (cmd.agoraRoads.empty())
+            return;
+
+        const auto drawCell = [&](const int x, const int y, const bool road)
+        {
+            const auto tile = mBoard->tile(x, y);
+            if (!tile)
+                return;
+            double rx;
+            double ry;
+            drawXY(x, y, rx, ry, 1, 1, tile->altitude());
+            stdsptr<eTexture> tex;
+            if (road)
+            {
+                tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
+                                                     builTexs.fAgoraRoad.size());
+            }
+            else
+            {
+                tex = builTexs.fAgora.getTexture(tile->seed() %
+                                                 builTexs.fAgora.size());
+            }
+            if (!tex)
+                return;
+            tex->setColorMod(0, 255, 0);
+            tex->setAlpha(120);
+            tp.drawTexture(rx, ry, tex, eAlignment::top);
+            tex->clearAlphaMod();
+            tex->clearColorMod();
+        };
+        for (const auto &space : cmd.agoraSpaces)
+            drawCell(tx + space.first, ty + space.second, false);
+        for (const auto &road : cmd.agoraRoads)
+            drawCell(tx + road.first, ty + road.second, true);
+    };
 
     mStampTool->paintPreview(tx, ty, mBoard, mEditorMode, mViewedCityId, ppid,
-                             doDrawXY, doDrawTex, doDrawAgora);
+                             doDrawXY, doDrawTex, doDrawAgora,
+                             doDrawStampAgora);
 }
 
 stdsptr<eTexture> eGameWidget::getBasementTexture(
@@ -970,15 +1010,17 @@ void eGameWidget::paintEvent(ePainter &p)
             i--;
         }
     }
-    // Promote pending toasts if space available
-    while (mToasts.size() < 3 && !mPendingToasts.empty())
-    {
-        eToast toast = mPendingToasts.front();
-        mPendingToasts.pop_front();
-        toast.fExpireFrame = mFrame + 300; // 5 seconds
-        createToastWidget(toast);
-        mToasts.push_back(toast);
-        updateToasts = true;
+    // Promote pending toasts if space available (skip in turbo mode)
+    if (mSpeedId != sMaxSpeedId) {
+        while (mToasts.size() < 3 && !mPendingToasts.empty())
+        {
+            eToast toast = mPendingToasts.front();
+            mPendingToasts.pop_front();
+            toast.fExpireFrame = mFrame + 300; // 5 seconds
+            createToastWidget(toast);
+            mToasts.push_back(toast);
+            updateToasts = true;
+        }
     }
     if (updateToasts)
         updateToastPositions();
@@ -1010,13 +1052,16 @@ void eGameWidget::paintEvent(ePainter &p)
             else
             {
                 mTime += mSpeed;
-                mBoard->incTime(mSpeed);
+                int remaining = mSpeed;
+                while(remaining > 0) {
+                    const int step = std::min(remaining, sSpeeds[2]);
+                    mBoard->incTime(step);
+                    remaining -= step;
+                }
                 mGm->update();
             }
         }
         mBoard->emptyRubbish();
-        if (iterate)
-            mBoard->waitUntilFinished();
         if (!incTime)
             break;
     }
@@ -1048,6 +1093,7 @@ void eGameWidget::paintEvent(ePainter &p)
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto &numbers = mNumbers[mTileSize];
     std::vector<std::pair<int, int>> trackingBoxes;
+    std::vector<std::pair<int, int>> cartProblemBoxes;
 
     const auto ppid = mBoard->personPlayer();
 
@@ -2412,6 +2458,14 @@ void eGameWidget::paintEvent(ePainter &p)
                         if(charHighlighted && drawDot) {
                             trackingBoxes.push_back({dx, dy});
                         }
+                        if(mViewMode == eViewMode::distribution &&
+                           ct == eCharacterType::cartTransporter) {
+                            const auto cart = static_cast<eCartTransporter*>(c.get());
+                            const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
+                            if(cart->hasResource() && ca && ca->noDestination()) {
+                                cartProblemBoxes.push_back({dx, dy});
+                            }
+                        }
                     };
                     if(tex) drawCharTex(tex, x, y, true);
                     if(c->hasSecondaryTexture()) {
@@ -3316,6 +3370,72 @@ void eGameWidget::paintEvent(ePainter &p)
     {
         drawBuildText(std::to_string(buildCount));
     };
+    const auto animalBuildTexture = [&](const eBuildingMode mode) {
+        auto& charTexs = eGameTextures::characters()[static_cast<int>(mTileSize)];
+        const eAnimalTextures* animalTexs = nullptr;
+        const eCattleTextures* cattleTexs = nullptr;
+        switch(mode) {
+        case eBuildingMode::sheep:
+            eGameTextures::loadSheep();
+            animalTexs = &charTexs.fNudeSheep;
+            break;
+        case eBuildingMode::goat:
+            eGameTextures::loadGoat();
+            animalTexs = &charTexs.fGoat;
+            break;
+        case eBuildingMode::cattle:
+            eGameTextures::loadCattle();
+            cattleTexs = &charTexs.fCattle2;
+            break;
+        default:
+            break;
+        }
+        if(animalTexs && !animalTexs->fWalk.empty()) {
+            return animalTexs->fWalk[0].getTexture(0);
+        }
+        if(cattleTexs && !cattleTexs->fWalk.empty()) {
+            return cattleTexs->fWalk[0].getTexture(0);
+        }
+        return std::shared_ptr<eTexture>{};
+    };
+    const auto drawAnimalBuildGhost = [&](eTile* const tile,
+                                          const bool valid) {
+        if(!tile) return;
+        const auto tex = animalBuildTexture(mode);
+        if(!tex) return;
+        const int tx = tile->x();
+        const int ty = tile->y();
+        int rtx;
+        int rty;
+        eTileHelper::tileIdToRotatedTileId(tx, ty,
+                                           rtx, rty, dir,
+                                           boardw, boardh);
+        const int da = tile->characterDoubleAltitude();
+        double x;
+        double y;
+        if(dir == eWorldDirection::N) {
+            x = tx - da*0.5 + 0.75;
+            y = ty - da*0.5 + 0.75;
+        } else if(dir == eWorldDirection::E) {
+            x = rtx - da*0.5 + 0.75;
+            y = rty - da*0.5 + 0.75;
+        } else if(dir == eWorldDirection::S) {
+            x = rtx - da*0.5 + 0.75;
+            y = rty - da*0.5 + 0.75;
+        } else {
+            x = rtx - da*0.5 + 0.75;
+            y = rty - da*0.5 + 0.75;
+        }
+        const double offX = mTileH*tex->offsetX()/30.;
+        const double offY = mTileH*tex->offsetY()/30.;
+        const int dx = std::round(mDX + 0.5*(x - y)*mTileW - offX);
+        const int dy = std::round(mDY + 0.5*(x + y)*mTileH - offY);
+        tex->setColorMod(valid ? 0 : 255, valid ? 255 : 0, 0);
+        tex->setAlpha(160);
+        tex->render(p.renderer(), dx, dy, false);
+        tex->clearAlphaMod();
+        tex->clearColorMod();
+    };
 
     if ((mode == eBuildingMode::road ||
          mode == eBuildingMode::doricColumn ||
@@ -3436,10 +3556,10 @@ void eGameWidget::paintEvent(ePainter &p)
             mode == eBuildingMode::cattle)
         {
             int buildCount = 0;
-            const auto tex = trrTexs.fBuildingBase;
-            tex->setColorMod(0, 255, 0);
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
             const int allowed = mBoard->countAllowed(mViewedCityId, bt);
+            const int animalW = 1;
+            const int animalH = 1;
             int n = 1;
             for (int x = sMinX; x <= sMaxX; x++)
             {
@@ -3448,34 +3568,17 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto t = mBoard->tile(x, y);
                     if (!t)
                         continue;
-                    if (t->underBuilding())
+                    if (!mBoard->canBuild(x, y, animalW, animalH,
+                                          mEditorMode, mViewedCityId, ppid,
+                                          true, true))
                         continue;
-                    const auto t2 = mBoard->tile(x, y + 1);
-                    if (!t2)
-                        continue;
-                    if (t2->underBuilding())
-                        continue;
-                    if (t2->terrain() != eTerrain::fertile &&
-                        t->terrain() != eTerrain::fertile)
-                        continue;
-                    double rx;
-                    double ry;
-                    const int a = t->altitude();
                     const bool exccess = n > allowed;
-                    if (exccess)
-                    {
-                        tex->setColorMod(255, 0, 0);
-                    }
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
-                    tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-                    y++;
+                    drawAnimalBuildGhost(t, !exccess);
                     n++;
 
                     buildCount++;
                 }
             }
-            tex->clearColorMod();
 
             drawBuildCount(buildCount);
         }
@@ -3557,25 +3660,19 @@ void eGameWidget::paintEvent(ePainter &p)
             return;
         const auto bt = eBuildingModeHelpers::toBuildingType(mode);
         const int allowed = mBoard->countAllowed(mViewedCityId, bt);
-        double rx;
-        double ry;
         const auto t = mBoard->tile(mHoverTX, mHoverTY);
         if (!t)
             return;
         const int tx = t->x();
         const int ty = t->y();
+        const int animalW = 1;
+        const int animalH = 1;
         const bool cb = allowed > 0 && mBoard->canBuild(
-                                           tx, ty, 1, 2,
+                                           tx, ty, animalW, animalH,
                                            mEditorMode,
                                            mViewedCityId, ppid,
                                            true, true);
-        const auto &tex = trrTexs.fBuildingBase;
-        tex->setColorMod(cb ? 0 : 255, cb ? 255 : 0, 0);
-        const int a = t->altitude();
-        drawXY(mHoverTX, mHoverTY, rx, ry, 1, 1, a);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
-        tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-        tex->clearColorMod();
+        drawAnimalBuildGhost(t, cb);
         return;
     }
 
@@ -5634,5 +5731,17 @@ void eGameWidget::paintEvent(ePainter &p)
         SDL_RenderFillRect(r, &dot);
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &dot);
+    }
+    for (const auto &pos : cartProblemBoxes)
+    {
+        const int dx = pos.first;
+        const int dy = pos.second;
+        constexpr int ds = 18;
+        const SDL_Rect box{dx - ds / 2, dy - 2 * ds, ds, ds};
+        auto r = p.renderer();
+        SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+        SDL_RenderFillRect(r, &box);
+        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+        SDL_RenderDrawRect(r, &box);
     }
 }

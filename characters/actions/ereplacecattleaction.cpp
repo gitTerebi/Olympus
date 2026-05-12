@@ -41,11 +41,12 @@ void eReplaceCattleAction::serialize(eSaveArchive& ar) {
 void eReplaceCattleAction::goCattle() {
     const auto c = character();
 
-    const auto hha = [](eThreadTile* const tile) {
-        const auto ub = tile->underBuilding();
-        const auto ubt = ub.type();
-        if(ubt != eBuildingType::cattle) return false;
-        return !ub.hasAnimal();
+    const auto ca = dynamic_cast<eAnimalAction*>(mCattle ? mCattle->action() : nullptr);
+    if(!ca) return;
+    const int hx = ca->spawnerX();
+    const int hy = ca->spawnerY();
+    const auto hha = [hx, hy](eThreadTile* const tile) {
+        return tile->x() == hx && tile->y() == hy;
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
@@ -73,11 +74,12 @@ void eRC_finishAction::call() {
     if(!mCattle) return;
     const auto c = mCattle.get();
 
-    const auto hha = [](eThreadTile* const tile) {
-        const auto ub = tile->underBuilding();
-        const auto ubt = ub.type();
-        if(ubt != eBuildingType::cattle) return false;
-        return !ub.hasAnimal();
+    const auto ca = dynamic_cast<eAnimalAction*>(c->action());
+    if(!ca) return;
+    const int hx = ca->spawnerX();
+    const int hy = ca->spawnerY();
+    const auto hha = [hx, hy](eThreadTile* const tile) {
+        return tile->x() == hx && tile->y() == hy;
     };
 
     const auto a = e::make_shared<eMoveToAction>(c);
@@ -95,12 +97,6 @@ void eRC_finishAction::call() {
 void eRC_finishWalkingAction::call() {
     const auto t = mCattle->tile();
     if(!t) return;
-    const auto ub = t->underBuilding();
-    if(!ub) return;
-    const auto ubt = ub->type();
-    if(ubt != eBuildingType::cattle) return;
-    const auto ab = static_cast<eAnimalBuilding*>(ub);
-    ab->setAnimal(mCattle);
     const int tx = t->x();
     const int ty = t->y();
     const auto walkable = eWalkableObject::sCreateFertile();

@@ -104,7 +104,6 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/eagorabase.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/evendor.h"
-#include "buildings/eanimalbuilding.h"
 #include "buildings/eroad.h"
 #include "buildings/eruins.h"
 #include "buildings/ebuildingrenderer.h"
@@ -2311,6 +2310,11 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         if (mSpeedId != oldSpeedId)
             showSpeedLabel();
     }
+    else if (k == hotkeys.fHotkeyRotatePreview && e.shiftPressed())
+    {
+        if (mGm->mode() == eBuildingMode::stamp)
+            mStampTool->setMirror(1 - mStampTool->mirror());
+    }
     else if (k == hotkeys.fHotkeyRotatePreview)
     {
         mRotate = !mRotate;
@@ -2319,12 +2323,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         if (mRotateId > 3)
             mRotateId = 0;
         if (mGm->mode() == eBuildingMode::stamp)
-            mStampTool->setRotation(mRotateId);
-    }
-    else if (k == SDL_Scancode::SDL_SCANCODE_R && e.shiftPressed())
-    {
-        if (mGm->mode() == eBuildingMode::stamp)
-            mStampTool->setMirror(1 - mStampTool->mirror());
+            mStampTool->setRotation(mStampTool->rotation() + 1);
     }
     else if (k == hotkeys.fHotkeyPause)
     {
@@ -3348,8 +3347,10 @@ void eGameWidget::showGraphicsMenu()
 void eGameWidget::showStampManager()
 {
     mGm->setMode(eBuildingMode::none);
+    const auto ppid = mBoard->personPlayer();
+    const auto diff = mBoard->difficulty(ppid);
     const auto d = new eStampManager(window());
-    d->initialize(mStampTool.get());
+    d->initialize(mStampTool.get(), diff);
     d->setTemplateSelectedAction([this]() {
         mGm->setMode(eBuildingMode::stamp);
     });

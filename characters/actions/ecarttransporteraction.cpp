@@ -19,11 +19,17 @@ eCartTransporterAction::eCartTransporterAction(eCharacter* const c) :
     eCartTransporterAction(c, nullptr){}
 
 void eCartTransporterAction::increment(const int by) {
+    if(!mBuilding) {
+        return;
+    }
     updateWaiting();
     eActionWithComeback::increment(by);
 }
 
 bool eCartTransporterAction::decide() {
+    if(!mBuilding) {
+        return true;
+    }
     const auto c = static_cast<eCartTransporter*>(character());
     const bool r = eWalkableHelpers::sTileUnderBuilding(
                        c->tile(), mBuilding);
@@ -48,17 +54,8 @@ bool eCartTransporterAction::decide() {
         if(mNoTarget) {
             mNoTarget = false;
             const bool hr = c->hasResource();
-            if(!hr || mWaitOutside) wait(1000);
-            else if(hr) {
-                const auto rt = c->resType();
-                const int cc = c->resCount();
-                eCartTask task;
-                task.fMaxCount = cc;
-                task.fResource = rt;
-                task.fType = eCartActionType::give;
-                findTarget(task);
-            }
-            mTarget = nullptr;
+            if(!hr) { wait(1000); mTarget = nullptr; }
+            else { waitOutside(); }
         } else {
             int cc = c->resCount();
             if(cc > 0) {
@@ -106,6 +103,7 @@ eResourceType eCartTransporterAction::supportsResource() const {
 }
 
 void eCartTransporterAction::findTarget() {
+    if(!mBuilding) return;
     const auto tasks = mBuilding->cartTasks();
     const auto supp = support();
     if(supp == eCartActionTypeSupport::both) {
@@ -131,6 +129,7 @@ void eCartTransporterAction::findTarget(const eCartTask& task) {
 }
 
 void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
+    if(!mBuilding) return;
     if(tasks.empty()) return;
     const auto c = character();
 
@@ -148,7 +147,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                             bType != eBuildingType::granary &&
                             bType != eBuildingType::tradePost;
     const bool hasGiveTasks = std::any_of(tasks.begin(), tasks.end(),
-        [](const eCartTask& t) { return t.fType == eCartActionType::give; });
+        [](const eCartTask& t) {
+            return t.fType == eCartActionType::give &&
+                   static_cast<bool>(t.fResource & eResourceType::food);
+        });
     const auto granaryOnly = std::make_shared<bool>(isProducer && hasGiveTasks);
 
     // 2. Check each tile for valid target buildings
@@ -161,7 +163,6 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
         if(r) return false;
 
-        bool found = false;
         const auto& ub = t->underBuilding();
 
         // 2.3 Producers: first pass accepts only granaries
@@ -170,7 +171,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         // 2.4 Skip trading posts for agora vendors when setting disabled
         if(ub.type() == eBuildingType::tradePost) {
             if(!board().agorasTakeFromTradingPosts()) {
-                const auto v = dynamic_cast<eVendor*>(mBuilding);
+                const auto v = dynamic_cast<eVendor*>(mBuilding.get());
                 if(v && v->agora()) return false;
             }
         }
@@ -178,8 +179,11 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         // 2.5 Check if building can fulfill any cart tasks
         for(const auto& task : tasks) {
             const auto res = task.fResource;
+            bool found = false;
 
             if(task.fType == eCartActionType::take) {
+                const auto city = board().boardCityWithId(t->cityId());
+                if(city && city->isStockpiled(res)) continue;
                 if(ub.resourceHas(res)) found = true;
             } else { // give
                 if(ub.empties(res)) continue;
@@ -197,10 +201,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                 *ttask = task;
                 *bx = t->x();
                 *by = t->y();
-                break;
+                return true;
             }
         }
-        return found;
+        return false;
     };
     const stdptr<eCartTransporterAction> tptr(this);
 
@@ -248,6 +252,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
 }
 
 void eCartTransporterAction::goBack() {
+    if(!mBuilding) return;
     const auto w = getWalkable();
     eActionWithComeback::goBack(w);
     mTarget = mBuilding;
@@ -265,9 +270,11 @@ void eCartTransporterAction::targetResourceAction(const int bx, const int by) {
 }
 
 void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const rb) {
+    if(!mBuilding) return;
     if(!rb) return;
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
+    const int startCount = ct->resCount();
     const int takenGiven = targetProcessTask(rb, mTask);
     mTask.fMaxCount -= takenGiven;
 
@@ -285,6 +292,16 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         }
         targetProcessTask(rb, task);
     }
+    const int count = ct->resCount();
+    if(count > 0 && mTask.fType == eCartActionType::give) {
+        const auto res = ct->resType();
+        const int added = rb->add(res, count);
+        ct->setResource(res, count - added);
+    }
+    if(startCount == 0 && ct->resCount() == 0 &&
+       mTask.fType == eCartActionType::take && mTask.fMaxCount > 0) {
+        findTarget(mTask);
+    }
 }
 
 int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
@@ -296,6 +313,8 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
     const auto tres = task.fResource;
     const int max = tres == eResourceType::sculpture ? 1 : 4;
     if(task.fType == eCartActionType::take) {
+        const auto city = board().boardCityWithId(rb->cityId());
+        if(city && city->isStockpiled(tres)) return 0;
         if(count > 0 && res != tres) return 0;
         const int space = max - count;
         if(space <= 0) return 0;
@@ -315,6 +334,7 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
 }
 
 void eCartTransporterAction::startResourceAction(const eCartTask& task) {
+    if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
     if(c->resCount() > 0) return;
     if(task.fMaxCount <= 0) return;
@@ -334,6 +354,7 @@ void eCartTransporterAction::startResourceAction(const eCartTask& task) {
 }
 
 void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
+    if(!mBuilding) return disappear();
     const auto c = static_cast<eCartTransporter*>(character());
     if(c->resCount() <= 0) return disappear();
     if(task.fMaxCount <= 0) return;
@@ -387,12 +408,13 @@ void eCartTransporterAction::write(eWriteStream& dst) const {
 }
 
 stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
+    if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
     const auto buildingRect = mBuilding->tileRect();
     auto w = eWalkableObject::sCreateRoadAvenue();
     w = eWalkableObject::sCreateRect(buildingRect, w);
     const auto type = mBuilding->type();
     if(type == eBuildingType::horseRanch) {
-        const auto hr = static_cast<eHorseRanch*>(mBuilding);
+        const auto hr = static_cast<eHorseRanch*>(mBuilding.get());
         const auto e = hr->enclosure();
         const auto eRect = e->tileRect();
         w = eWalkableObject::sCreateRect(eRect, w);
@@ -401,6 +423,7 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
 }
 
 void eCartTransporterAction::updateWaiting() {
+    if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
     const bool r = eWalkableHelpers::sTileUnderBuilding(
                        c->tile(), mBuilding);
@@ -408,6 +431,7 @@ void eCartTransporterAction::updateWaiting() {
 }
 
 void eCartTransporterAction::waitOutside() {
+    if(!mBuilding) return;
     if(mWaitOutside) return;
     const auto neighs = mBuilding->neighbours();
     if(neighs.empty()) return;

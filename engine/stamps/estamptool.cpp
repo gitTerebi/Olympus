@@ -176,32 +176,6 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                             const eStampElement& elem) {
         result.push_back({mode, elem.dx, elem.dy});
     };
-    const auto transformedAgoraOrientation = [this](eAgoraOrientation o) {
-        if(mMirror) {
-            if(o == eAgoraOrientation::bottomRight) {
-                o = eAgoraOrientation::topLeft;
-            } else if(o == eAgoraOrientation::topLeft) {
-                o = eAgoraOrientation::bottomRight;
-            }
-        }
-        for(int i = 0; i < mRotation; i++) {
-            switch(o) {
-            case eAgoraOrientation::bottomLeft:
-                o = eAgoraOrientation::bottomRight;
-                break;
-            case eAgoraOrientation::bottomRight:
-                o = eAgoraOrientation::topRight;
-                break;
-            case eAgoraOrientation::topRight:
-                o = eAgoraOrientation::topLeft;
-                break;
-            case eAgoraOrientation::topLeft:
-                o = eAgoraOrientation::bottomLeft;
-                break;
-            }
-        }
-        return o;
-    };
     const auto anchorTopLeft = [](const int dx, const int dy,
                                   const int sw, const int sh,
                                   int& x0, int& y0) {
@@ -262,6 +236,45 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
         result.push_back({eBuildingMode::commonAgora, dx, dy,
                           static_cast<int>(orientation)});
     };
+    const auto appendExplicitAgora = [&](const eStampElement& elem) {
+        const auto orientation = static_cast<eAgoraOrientation>(elem.id);
+        const auto transformed = transformedElement(elem);
+        std::vector<std::pair<int, int>> roads;
+        std::vector<std::pair<int, int>> spaces;
+        switch(orientation) {
+        case eAgoraOrientation::bottomLeft:
+            for(int i = 0; i < 6; i++) {
+                roads.push_back({elem.dx + i, elem.dy});
+                spaces.push_back({elem.dx + i, elem.dy + 1});
+                spaces.push_back({elem.dx + i, elem.dy + 2});
+            }
+            break;
+        case eAgoraOrientation::topRight:
+            for(int i = 0; i < 6; i++) {
+                roads.push_back({elem.dx + i, elem.dy + 2});
+                spaces.push_back({elem.dx + i, elem.dy});
+                spaces.push_back({elem.dx + i, elem.dy + 1});
+            }
+            break;
+        case eAgoraOrientation::bottomRight:
+            for(int i = 0; i < 6; i++) {
+                roads.push_back({elem.dx, elem.dy + i});
+                spaces.push_back({elem.dx + 1, elem.dy + i});
+                spaces.push_back({elem.dx + 2, elem.dy + i});
+            }
+            break;
+        case eAgoraOrientation::topLeft:
+            for(int i = 0; i < 6; i++) {
+                roads.push_back({elem.dx + 2, elem.dy + i});
+                spaces.push_back({elem.dx, elem.dy + i});
+                spaces.push_back({elem.dx + 1, elem.dy + i});
+            }
+            break;
+        }
+        result.push_back({eBuildingMode::commonAgora, transformed.dx,
+                          transformed.dy, -1, transformedRoads(roads),
+                          transformedCells(spaces)});
+    };
     const auto appendAgoraForVendor = [&](const eStampElement& elem) {
         int sw;
         int sh;
@@ -276,7 +289,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                               transformed.dy, -1, transformedRoads(roads),
                               transformedCells(spaces)});
         };
-        for(int start = x0 - 4; start <= x0 + sw - 1; start++) {
+        for(int start = x0; start <= x0 + sw - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -296,7 +309,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = x0 - 4; start <= x0 + sw - 1; start++) {
+        for(int start = x0; start <= x0 + sw - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -316,7 +329,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = y0 - 4; start <= y0 + sh - 1; start++) {
+        for(int start = y0; start <= y0 + sh - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -336,7 +349,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = y0 - 4; start <= y0 + sh - 1; start++) {
+        for(int start = y0; start <= y0 + sh - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -377,26 +390,26 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
 
     for(const auto& elem : mBlueprint) {
         if(elem.type != eBuildingType::commonAgora || elem.id < 0) continue;
-        const auto transformed = transformedElement(elem);
-        result.push_back({eBuildingMode::commonAgora, transformed.dx,
-                          transformed.dy, transformed.id, {}, {}, true});
+        appendExplicitAgora(elem);
     }
 
-    for(const auto& elem : mBlueprint) {
-        if(!isVendor(elem.type)) continue;
-        if(!hasExplicitAgora && appendAgoraForVendor(elem)) continue;
-        const auto transformed = transformedElement(elem);
-        for(int dy = 1; dy <= 2; dy++) {
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx, transformed.dy - dy});
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx, transformed.dy + dy});
-        }
-        for(int dx = 1; dx <= 2; dx++) {
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx - dx, transformed.dy});
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx + dx, transformed.dy});
+    if(!hasExplicitAgora) {
+        for(const auto& elem : mBlueprint) {
+            if(!isVendor(elem.type)) continue;
+            if(appendAgoraForVendor(elem)) continue;
+            const auto transformed = transformedElement(elem);
+            for(int dy = 1; dy <= 2; dy++) {
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx, transformed.dy - dy});
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx, transformed.dy + dy});
+            }
+            for(int dx = 1; dx <= 2; dx++) {
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx - dx, transformed.dy});
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx + dx, transformed.dy});
+            }
         }
     }
 
@@ -421,13 +434,17 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
 
 int eStampTool::estimatedCost(const eDifficulty diff) const {
     int cost = 0;
-    bool agoraCounted = false;
+    bool implicitAgoraCounted = false;
     for(const auto& cmd : buildCommands()) {
         eBuildingType bt = eBuildingType::none;
         if(cmd.mode == eBuildingMode::commonAgora) {
-            if(agoraCounted) continue;
-            agoraCounted = true;
-            bt = eBuildingType::commonAgora;
+            if(cmd.agoraRect) {
+                bt = eBuildingType::commonAgora;
+            } else {
+                if(implicitAgoraCounted) continue;
+                implicitAgoraCounted = true;
+                bt = eBuildingType::commonAgora;
+            }
         } else {
             bt = eBuildingModeHelpers::toBuildingType(cmd.mode);
         }
@@ -543,8 +560,10 @@ void eStampTool::buildingDrawOffset(const int sw, const int sh,
 void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
                               bool editorMode, eCityId viewedCityId, ePlayerId playerId,
                               const eDrawXY& drawXY, const eDrawTex& drawTex,
-                              const eDrawAgora& drawAgora) const {
+                              const eDrawAgora& drawAgora,
+                              const eDrawStampAgora& drawStampAgora) const {
     auto bp = transformedBlueprint();
+    const auto cmds = buildCommands();
     // Sort by screen Y for correct painter's algorithm z-order under any view rotation
     std::sort(bp.begin(), bp.end(), [&](const eStampElement& a, const eStampElement& b) {
         double rxa, rya, rxb, ryb;
@@ -564,13 +583,19 @@ void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
         const bool can = board->canBuild(bx, by, 1, 1, editorMode, viewedCityId, playerId);
         drawTex(rx, ry, eBuildingType::road, 1, can);
     }
+    // Keep stamp ghost order matched to build order: roads, agora, then vendors/buildings.
+    for(const auto& cmd : cmds) {
+        if(cmd.mode != eBuildingMode::commonAgora) continue;
+        if(cmd.agoraRect && cmd.agoraOrientation >= 0) {
+            drawAgora(baseX + cmd.dx, baseY + cmd.dy, cmd.agoraOrientation);
+        } else {
+            drawStampAgora(cmd);
+        }
+    }
     // Buildings (already sorted by screen Y — back to front)
     for(const auto& elem : bp) {
-        if(elem.type == eBuildingType::road) continue;
-        if(elem.type == eBuildingType::commonAgora && elem.id >= 0) {
-            drawAgora(baseX + elem.dx, baseY + elem.dy, elem.id);
-            continue;
-        }
+        if(elem.type == eBuildingType::road ||
+           elem.type == eBuildingType::commonAgora) continue;
         const int bx = baseX + elem.dx;
         const int by = baseY + elem.dy;
         const auto btile = board->tile(bx, by);

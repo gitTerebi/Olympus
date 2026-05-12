@@ -438,6 +438,7 @@ public:
     void write(eWriteStream& dst) const;
 private:
     void serialize(eSaveArchive& ar);
+    int countAnimalCharacters(const eBuildingType t) const;
 
     void setFriendlyGods(const std::vector<eGodType>& gods);
 
@@ -552,7 +553,7 @@ private:
     std::vector<eBuilding*> mCommemorativeBuildings;
     std::vector<eBuilding*> mTreesAndVines;
     std::vector<eBuilding*> mAnimalBuildings;
-    bool mAnimalBuildingsSurroundingUpdate = false;
+    bool mAnimalBuildingsSurroundingUpdate = true;
     std::vector<eTile*> mAnimalBuildingsSurrounding;
     std::vector<eTile*> mResourceTiles;
     bool mResourceTilesUpdate = true;

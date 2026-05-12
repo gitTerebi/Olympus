@@ -12,6 +12,7 @@
 #include "characters/esheep.h"
 #include "characters/egoat.h"
 #include "characters/ecattle.h"
+#include "characters/actions/eanimalaction.h"
 
 #include "evectorhelpers.h"
 #include "spawners/eboarspawner.h"
@@ -767,6 +768,12 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                 if(b->isOnFire()) return;
                 eraser.addBuilding(b);
             };
+            const auto addAnimal = [&](eCharacter* const c) {
+                if(!c) return;
+                const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+                if(!aa) return;
+                eraser.addCharacter(c);
+            };
             for(int x = minX; x <= maxX; x++) {
                 for(int y = minY; y <= maxY; y++) {
                     const auto tile = mBoard->tile(x, y);
@@ -778,6 +785,16 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                     if(b) {
                         addBuilding(b);
                     } else {
+                        for(const auto& c : tile->characters()) {
+                            addAnimal(c.get());
+                        }
+                        for(const auto c : mBoard->characters()) {
+                            const auto aa = c ? dynamic_cast<eAnimalAction*>(c->action()) : nullptr;
+                            if(!aa) continue;
+                            if(aa->spawnerX() == x && aa->spawnerY() == y) {
+                                addAnimal(c);
+                            }
+                        }
                         const auto t = tile->terrain();
                         if(t == eTerrain::forest || t == eTerrain::choppedForest) {
                             tile->setTerrain(eTerrain::dry);
@@ -2117,16 +2134,16 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
         } break;
 
         case eBuildingMode::stamp: {
-            bool agoraBuilt = false;
+            bool implicitAgoraBuilt = false;
             for(const auto& cmd : mStampTool->buildCommands()) {
                 const int tx = pressedTX + cmd.dx;
                 const int ty = pressedTY + cmd.dy;
                 if(cmd.mode == eBuildingMode::commonAgora) {
-                    if(agoraBuilt) continue;
+                    if(!cmd.agoraRect && implicitAgoraBuilt) continue;
                     eAgoraOrientation bt;
                     const auto p = stampAgoraBuildPlace(cmd, pressedTX, pressedTY, bt);
                     if(p.empty()) continue;
-                    agoraBuilt = true;
+                    if(!cmd.agoraRect) implicitAgoraBuilt = true;
                     if(cmd.agoraOrientation >= 0 || !cmd.agoraRoads.empty()) {
                         buildStampAgora(p, bt, cid, ppid);
                         continue;

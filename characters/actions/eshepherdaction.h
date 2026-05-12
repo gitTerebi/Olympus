@@ -8,6 +8,7 @@
 #include "characters/edomesticatedanimal.h"
 
 class eDomesticatedAnimal;
+class eMoveToAction;
 class eSaveArchive;
 
 class eShepherdAction : public eActionWithComeback {
@@ -25,6 +26,7 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     bool findResourceDecision();
+    stdsptr<eMoveToAction> makeFindAnimalMove();
     void collectDecision(eDomesticatedAnimal* const a);
     void groomDecision(eDomesticatedAnimal* const a);
     void goBackDecision();
@@ -34,11 +36,13 @@ private:
     eCharacterType mAnimalType;
 
     eResourceCollectorBase* mCharacter = nullptr;
-    eShepherBuildingBase* mShed = nullptr;
+    stdptr<eShepherBuildingBase> mShed;
 
-    bool mFinishOnce = true;
+    bool mFinishOnce = false;
     int mGroomed = 0;
     bool mNoResource = false;
+    stdptr<eDomesticatedAnimal> mLastAnimal;
+    int mGroomedThisTrip = 0;
 };
 
 class eSA_collectDecisionFinish : public eCharActFunc {
@@ -75,6 +79,7 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeCharacter(mAptr);
     }
+
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
@@ -125,6 +130,13 @@ public:
         }
         if(!mTptr) return;
         mTptr->mGroomed++;
+        mTptr->mGroomedThisTrip++;
+        if(mTptr->mGroomedThisTrip >= 3) {
+            mTptr->mGroomedThisTrip = 0;
+            mTptr->goBackDecision();
+        } else {
+            mTptr->findResourceDecision();
+        }
     }
 
     void read(eReadStream& src) override {
@@ -140,6 +152,7 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeCharacter(mAptr);
     }
+
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
