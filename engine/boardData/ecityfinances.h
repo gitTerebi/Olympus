@@ -160,6 +160,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(class eJsonArchive& ar);
 private:
     eFinanceYear mLastYear;
     eFinanceYear mThisYear;

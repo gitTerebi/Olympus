@@ -1,4 +1,5 @@
 #include "egrowerslodge.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 #include "characters/actions/ecarttransporteraction.h"
@@ -237,42 +238,28 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eGrowersLodge::serialize(eSaveArchive& ar) {
+void eGrowersLodge::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
     ar.field("mNoTarget", mNoTarget);
     ar.field("mSpawnEnabled", mSpawnEnabled);
     ar.field("mGrapes", mGrapes);
     ar.field("mOlives", mOlives);
     ar.field("mOranges", mOranges);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
     ar.field("mSpawnTime", mSpawnTime);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mGrower = static_cast<eGrower*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mGrower);
-    }
     ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    for(int i = 0; i < 12; i++) {
+        const auto k = "mMonthlyProduced." + std::to_string(i);
+        ar.field(k.c_str(), mMonthlyProduced[i]);
+    }
     ar.field("mRingIdx", mRingIdx);
 }
 
 void eGrowersLodge::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eGrowersLodge::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGrowersLodge*>(this)->serialize(ar);
 }
 
 bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {

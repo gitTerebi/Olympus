@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eChariotFactory::eChariotFactory(
         eGameBoard& board, const eCityId cid) :
@@ -163,30 +163,15 @@ std::vector<eCartTask> eChariotFactory::cartTasks() const {
 
 void eChariotFactory::read(eReadStream& src) {
     eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eChariotFactory::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eChariotFactory*>(this)->serialize(ar);
 }
 
-void eChariotFactory::serialize(eSaveArchive& ar) {
+void eChariotFactory::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
     ar.field("mWood", mWood);
     ar.field("mHorses", mHorses);
     ar.field("mChariots", mChariots);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mWoodCart = static_cast<eCartTransporter*>(c);
-        });
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mHorseCart = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mWoodCart);
-        ar.writeStream().writeCharacter(mHorseCart);
-    }
 }

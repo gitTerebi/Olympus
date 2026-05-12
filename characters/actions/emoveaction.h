@@ -8,6 +8,7 @@
 class eTileBase;
 class eTile;
 class eSaveArchive;
+class eJsonArchive;
 
 class eMoveAction : public eCharacterAction {
 public:
@@ -24,6 +25,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     bool nextTurn();
     void setWait(const bool w) { mWait = w; }

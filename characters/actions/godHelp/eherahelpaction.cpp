@@ -1,5 +1,6 @@
 #include "eherahelpaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHeraHelpAction::eHeraHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::heraHelpAction) {}
@@ -44,6 +45,31 @@ void eHeraHelpAction::write(eWriteStream& dst) const {
     eGodAction::write(dst);
     eSaveArchive ar(dst);
     const_cast<eHeraHelpAction*>(this)->serialize(ar);
+}
+
+void eHeraHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+    {
+        eBuilding* raw = mTarget.get();
+        ar.buildingRef("mTarget", raw, board());
+        if(ar.reading()) mTarget = static_cast<eAgoraBase*>(raw);
+    }
+    int nt = static_cast<int>(mFutureTargets.size());
+    ar.field("nt", nt);
+    if(ar.reading()) {
+        mFutureTargets.clear();
+        for(int i = 0; i < nt; i++) {
+            eBuilding* ft = nullptr;
+            ar.buildingRef(("ft" + std::to_string(i)).c_str(), ft, board());
+            mFutureTargets.push_back(static_cast<eAgoraBase*>(ft));
+        }
+    } else {
+        for(int i = 0; i < nt; i++) {
+            eBuilding* ft = mFutureTargets[i].get();
+            ar.buildingRef(("ft" + std::to_string(i)).c_str(), ft, board());
+        }
+    }
 }
 
 void eHeraHelpAction::serialize(eSaveArchive& ar) {

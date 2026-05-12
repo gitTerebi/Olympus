@@ -56,6 +56,17 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeBuilding(mBptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            eBuilding* raw = mBptr.get();
+            ar.buildingRef("mBptr", raw, board());
+        } else {
+            ar.buildingRef("mBptr", [this](eBuilding* b) {
+                mBptr = static_cast<eSanctBuilding*>(b);
+            }, board());
+        }
+    }
 private:
     stdptr<eSanctBuilding> mBptr;
 };
@@ -82,6 +93,17 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeBuilding(mBptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            eBuilding* raw = mBptr.get();
+            ar.buildingRef("mBptr", raw, board());
+        } else {
+            ar.buildingRef("mBptr", [this](eBuilding* b) {
+                mBptr = static_cast<eSanctBuilding*>(b);
+            }, board());
+        }
     }
 private:
     stdptr<eSanctBuilding> mBptr;

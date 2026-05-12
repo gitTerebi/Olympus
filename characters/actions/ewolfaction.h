@@ -3,6 +3,8 @@
 
 #include "eanimalaction.h"
 
+class eJsonArchive;
+
 class eWolfAction : public eAnimalAction {
 public:
     eWolfAction(eCharacter* const c,
@@ -14,6 +16,7 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void goBack();
     void findPrey();

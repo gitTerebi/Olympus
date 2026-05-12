@@ -5,6 +5,7 @@
 #include "emovetoaction.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eWolfAction::eWolfAction(eCharacter* const c,
                          const int spawnerX, const int spawnerY) :
@@ -67,6 +68,11 @@ void eWolfAction::read(eReadStream &src) {
     eAnimalAction::read(src);
     eSaveArchive ar(src);
     ar.field("hunting", mHunting);
+}
+
+void eWolfAction::serializeJson(eJsonArchive& ar) {
+    eAnimalAction::serializeJson(ar);
+    ar.field("mHunting", mHunting);
 }
 
 void eWolfAction::goBack() {

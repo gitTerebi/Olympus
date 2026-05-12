@@ -276,7 +276,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                               transformed.dy, -1, transformedRoads(roads),
                               transformedCells(spaces)});
         };
-        for(int start = x0 - 4; start <= x0 + sw - 1; start++) {
+        for(int start = x0; start <= x0 + sw - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -296,7 +296,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = x0 - 4; start <= x0 + sw - 1; start++) {
+        for(int start = x0; start <= x0 + sw - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -316,7 +316,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = y0 - 4; start <= y0 + sh - 1; start++) {
+        for(int start = y0; start <= y0 + sh - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -336,7 +336,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                 return true;
             }
         }
-        for(int start = y0 - 4; start <= y0 + sh - 1; start++) {
+        for(int start = y0; start <= y0 + sh - 1; start++) {
             bool run = true;
             std::vector<std::pair<int, int>> roads;
             std::vector<std::pair<int, int>> spaces;
@@ -382,21 +382,23 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
                           transformed.dy, transformed.id, {}, {}, true});
     }
 
-    for(const auto& elem : mBlueprint) {
-        if(!isVendor(elem.type)) continue;
-        if(!hasExplicitAgora && appendAgoraForVendor(elem)) continue;
-        const auto transformed = transformedElement(elem);
-        for(int dy = 1; dy <= 2; dy++) {
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx, transformed.dy - dy});
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx, transformed.dy + dy});
-        }
-        for(int dx = 1; dx <= 2; dx++) {
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx - dx, transformed.dy});
-            result.push_back({eBuildingMode::commonAgora,
-                              transformed.dx + dx, transformed.dy});
+    if(!hasExplicitAgora) {
+        for(const auto& elem : mBlueprint) {
+            if(!isVendor(elem.type)) continue;
+            if(appendAgoraForVendor(elem)) continue;
+            const auto transformed = transformedElement(elem);
+            for(int dy = 1; dy <= 2; dy++) {
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx, transformed.dy - dy});
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx, transformed.dy + dy});
+            }
+            for(int dx = 1; dx <= 2; dx++) {
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx - dx, transformed.dy});
+                result.push_back({eBuildingMode::commonAgora,
+                                  transformed.dx + dx, transformed.dy});
+            }
         }
     }
 

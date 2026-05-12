@@ -1,5 +1,5 @@
 #include "ecorral.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 #include "characters/ebutcher.h"
@@ -92,17 +92,14 @@ std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
 
 void eCorral::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eCorral::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCorral*>(this)->serialize(ar);
 }
 
-void eCorral::serialize(eSaveArchive& ar) {
+void eCorral::serializeJson(eJsonArchive& ar) {
+    eResourceBuildingBase::serializeJson(ar);
     ar.field("mNoCattle", mNoCattle);
     ar.field("mProcessing", mProcessing);
     ar.field("mNCattle", mNCattle);

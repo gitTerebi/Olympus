@@ -8,6 +8,7 @@
 #include "characters/actions/walkable/ewalkableobject.h"
 
 #include "textures/edestructiontextures.h"
+#include "fileIO/ejsonarchive.h"
 
 class eGod;
 class eGodAct;
@@ -155,6 +156,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void appear();
     void disappear(const bool die = false,
@@ -204,6 +206,32 @@ public:
         eSaveArchive ar(dst);
         ar.field("winnerGodType", const_cast<eGodType&>(mWt));
         ar.field("loserGodType", const_cast<eGodType&>(mLt));
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mWinnerPtr ? mWinnerPtr->ioID() : -1;
+            ar.field("mWinnerPtr", ioid);
+            int ioid2 = mLoserPtr ? mLoserPtr->ioID() : -1;
+            ar.field("mLoserPtr", ioid2);
+        } else {
+            int ioid = -1;
+            ar.field("mWinnerPtr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mWinnerPtr = static_cast<eGodMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+            int ioid2 = -1;
+            ar.field("mLoserPtr", ioid2);
+            if(ioid2 >= 0) {
+                ar.addPostFunc([this, ioid2]() {
+                    mLoserPtr = static_cast<eGodMonsterAction*>(resolveCharAction(ioid2));
+                });
+            }
+        }
+        ar.field("mWt", mWt);
+        ar.field("mLt", mLt);
     }
 private:
     stdptr<eGodMonsterAction> mWinnerPtr;

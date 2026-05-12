@@ -10,6 +10,8 @@
 #include "heroes/ehero.h"
 #include "audio/esounds.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
+#include "actions/echaracteraction.h"
 
 #include "esoldier.h"
 
@@ -380,6 +382,90 @@ void eCharacter::serialize(eSaveArchive& ar) {
     }
 }
 
+void eCharacter::serializeJson(eJsonArchive& ar) {
+    eCharacterBase::serializeJson(ar);
+    ar.field("mIOID", mIOID);
+    ar.field("mVisible", mVisible);
+    ar.field("mProvide", mProvide);
+    ar.field("mProvideCount", mProvideCount);
+    ar.tile("mTile", mTile, getBoard());
+    if(ar.reading() && mTile) {
+        const auto sptr = ref<eCharacter>();
+        mTile->addCharacter(sptr, false);
+    }
+    ar.field("mOrientation", mOrientation);
+    ar.field("mX", mX);
+    ar.field("mY", mY);
+    ar.field("mPlayFightSound", mPlayFightSound);
+    ar.field("mSoundPlayTime", mSoundPlayTime);
+    ar.field("mTime", mTime);
+    ar.field("mHasSecondaryTexture", mHasSecondaryTexture);
+    // mAction
+    {
+        bool hasAction = mAction != nullptr;
+        ar.field("mAction.has", hasAction);
+        if(hasAction) {
+            if(ar.reading()) {
+                eCharActionType type{};
+                ar.field("mAction.type", type);
+                mAction = eCharacterAction::sCreate(this, type);
+            } else {
+                eCharActionType type = mAction->type();
+                ar.field("mAction.type", type);
+            }
+            auto sub = ar.child("mAction.data");
+            mAction->serializeJson(sub);
+        } else if(ar.reading()) {
+            mAction = nullptr;
+        }
+    }
+    if(ar.reading() &&
+       (actionType() == eCharacterActionType::fight ||
+        actionType() == eCharacterActionType::fight2)) {
+        mPlayFightSound = true;
+    }
+    ar.field("mActionStartTime", mActionStartTime);
+    // mPausedActions
+    if(ar.reading()) {
+        int s = 0;
+        ar.field("mPausedActions.count", s);
+        for(int i = 0; i < s; i++) {
+            auto& a = mPausedActions.emplace_back();
+            const auto key = "mPausedActions." + std::to_string(i);
+            auto sub = ar.child(key.c_str());
+            sub.field("fAt", a.fAt);
+            sub.field("fO", a.fO);
+            bool hasA = false;
+            sub.field("fA.has", hasA);
+            if(hasA) {
+                eCharActionType type{};
+                sub.field("fA.type", type);
+                a.fA = eCharacterAction::sCreate(this, type);
+                auto dsub = sub.child("fA.data");
+                a.fA->serializeJson(dsub);
+            }
+        }
+    } else {
+        int s = static_cast<int>(mPausedActions.size());
+        ar.field("mPausedActions.count", s);
+        for(int i = 0; i < s; i++) {
+            auto& a = mPausedActions[i];
+            const auto key = "mPausedActions." + std::to_string(i);
+            auto sub = ar.child(key.c_str());
+            sub.field("fAt", a.fAt);
+            sub.field("fO", a.fO);
+            bool hasA = a.fA != nullptr;
+            sub.field("fA.has", hasA);
+            if(hasA) {
+                eCharActionType type = a.fA->type();
+                sub.field("fA.type", type);
+                auto dsub = sub.child("fA.data");
+                a.fA->serializeJson(dsub);
+            }
+        }
+    }
+}
+
 void eCharacter::read(eReadStream& src) {
     eCharacterBase::read(src);
     eSaveArchive ar(src);
@@ -390,4 +476,35 @@ void eCharacter::write(eWriteStream& dst) const {
     eCharacterBase::write(dst);
     eSaveArchive ar(dst);
     const_cast<eCharacter*>(this)->serialize(ar);
+}
+
+void eChar_fightFinish::serializeJson(eJsonArchive& ar) {
+    if(ar.writing()) {
+        int ioid = mTptr ? mTptr->ioID() : -1;
+        ar.field("mTptr", ioid);
+    } else {
+        int ioid = -1;
+        ar.field("mTptr", ioid);
+        if(ioid >= 0) {
+            ar.addPostFunc([this, ioid]() {
+                mTptr = board().characterWithIOID(ioid);
+            });
+        }
+    }
+}
+
+void eChar_killWithCorpseFinish::serializeJson(eJsonArchive& ar) {
+    ar.field("withCorpse", mWithCorpse);
+    if(ar.writing()) {
+        int ioid = mTptr ? mTptr->ioID() : -1;
+        ar.field("mTptr", ioid);
+    } else {
+        int ioid = -1;
+        ar.field("mTptr", ioid);
+        if(ioid >= 0) {
+            ar.addPostFunc([this, ioid]() {
+                mTptr = board().characterWithIOID(ioid);
+            });
+        }
+    }
 }

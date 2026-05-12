@@ -12,6 +12,7 @@
 
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eMonsterAction::eMonsterAction(eCharacter* const c) :
     eGodMonsterAction(c, eCharActionType::monsterAction),
@@ -370,4 +371,12 @@ int eMonsterAction::moveAroundPeriod() const {
         }
         return eNumbers::sPassiveLandMonsterMoveAroundPeriod;
     }
+}
+
+void eMonsterAction::serializeJson(eJsonArchive& ar) {
+    eGodMonsterAction::serializeJson(ar);
+    ar.tile("mHomeTile", mHomeTile, board());
+    ar.field("mStage", mStage);
+    ar.field("mAggressivness", mAggressivness);
+    ar.field("mLookForAttack", mLookForAttack);
 }

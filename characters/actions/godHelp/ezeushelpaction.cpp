@@ -42,6 +42,11 @@ void eZeusHelpAction::write(eWriteStream& dst) const {
     const_cast<eZeusHelpAction*>(this)->serialize(ar);
 }
 
+void eZeusHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+}
+
 void eZeusHelpAction::serialize(eSaveArchive& ar) {
     ar.field("mStage", mStage);
 }

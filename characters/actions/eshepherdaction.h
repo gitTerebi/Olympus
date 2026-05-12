@@ -75,6 +75,30 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeCharacter(mAptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+            int ioid2 = mAptr ? mAptr->ioID() : -1;
+            ar.field("mAptr", ioid2);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eShepherdAction*>(resolveCharAction(ioid));
+                });
+            }
+            int ioid2 = -1;
+            ar.field("mAptr", ioid2);
+            if(ioid2 >= 0) {
+                ar.addPostFunc([this, ioid2]() {
+                    mAptr = static_cast<eDomesticatedAnimal*>(resolveChar(ioid2));
+                });
+            }
+        }
+    }
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
@@ -103,6 +127,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mAptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mAptr ? mAptr->ioID() : -1;
+            ar.field("mAptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mAptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mAptr = static_cast<eDomesticatedAnimal*>(resolveChar(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eDomesticatedAnimal> mAptr;
@@ -140,6 +179,30 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeCharacter(mAptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+            int ioid2 = mAptr ? mAptr->ioID() : -1;
+            ar.field("mAptr", ioid2);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eShepherdAction*>(resolveCharAction(ioid));
+                });
+            }
+            int ioid2 = -1;
+            ar.field("mAptr", ioid2);
+            if(ioid2 >= 0) {
+                ar.addPostFunc([this, ioid2]() {
+                    mAptr = static_cast<eDomesticatedAnimal*>(resolveChar(ioid2));
+                });
+            }
+        }
+    }
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
@@ -167,6 +230,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacter(mAptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mAptr ? mAptr->ioID() : -1;
+            ar.field("mAptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mAptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mAptr = static_cast<eDomesticatedAnimal*>(resolveChar(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eDomesticatedAnimal> mAptr;

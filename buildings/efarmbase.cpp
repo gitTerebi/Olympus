@@ -1,4 +1,5 @@
 #include "efarmbase.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
@@ -104,28 +105,30 @@ eMonth eFarmBase::nextHarvestMonth() const {
     return eMonth::july;
 }
 
-void eFarmBase::serialize(eSaveArchive& ar) {
+void eFarmBase::serializeJson(eJsonArchive& ar) {
+    eResourceBuildingBase::serializeJson(ar);
     ar.field("mNextRipe", mNextRipe);
-    int combined;
-    if(ar.writing()) combined = mGrownFields * 5 + mFieldStage;
-    ar.field("combined", combined);
     if(ar.reading()) {
-        mGrownFields  = std::clamp(combined / 5, 0, 5);
-        mFieldStage = std::clamp(combined % 5, 0, 4);
+        int combined = 0;
+        ar.field("combined", combined);
+        mGrownFields = std::clamp(combined / 5, 0, 5);
+        mFieldStage  = std::clamp(combined % 5, 0, 4);
+    } else {
+        int combined = mGrownFields * 5 + mFieldStage;
+        ar.field("combined", combined);
     }
     ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    for(int i = 0; i < 12; i++) {
+        const auto k = "mMonthlyProduced." + std::to_string(i);
+        ar.field(k.c_str(), mMonthlyProduced[i]);
+    }
     ar.field("mRingIdx", mRingIdx);
 }
 
 void eFarmBase::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eFarmBase::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFarmBase*>(this)->serialize(ar);
 }

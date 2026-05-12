@@ -8,6 +8,7 @@
 #include "engine/eregrowforestaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eCollectAction::eCollectAction(eCharacter* const c,
                                const eTranformFunc tf) :
@@ -114,5 +115,13 @@ void eCollectAction::serialize(eSaveArchive& ar) {
     ar.field("mSoundTime", mSoundTime);
     ar.field("mTime", mTime);
     ar.tile(mTile, board());
+    ar.field("mTransFunc", mTransFunc);
+}
+
+void eCollectAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
+    ar.field("mSoundTime", mSoundTime);
+    ar.field("mTime", mTime);
+    ar.tile("mTile", mTile, board());
     ar.field("mTransFunc", mTransFunc);
 }

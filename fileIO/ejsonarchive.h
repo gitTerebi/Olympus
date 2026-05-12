@@ -15,6 +15,11 @@ using njson = nlohmann::json;
 class eGameBoard;
 class eTile;
 class eBuilding;
+class eCharacter;
+class eCharacterActionFunction;
+class eWalkableObject;
+class eObsticleHandler;
+class eGameEvent;
 
 class eJsonArchive {
 public:
@@ -113,6 +118,25 @@ public:
     // building cross-reference: stored as IOID int; on read, deferred via postFunc
     void buildingRef(const char* key, eBuilding*& b, eGameBoard& board);
     void buildingRef(const char* key, const std::function<void(eBuilding*)>& cb, eGameBoard& board);
+
+    // character cross-reference: stored as IOID int; resolved in postFunc
+    void characterRef(const char* key, eCharacter*& c, eGameBoard& board);
+    void characterRef(const char* key, const std::function<void(eCharacter*)>& cb, eGameBoard& board);
+
+    // eCharActFunc JSON round-trip: write type+fields, read type+create+fields
+    void charActFuncRef(const char* key,
+                        std::shared_ptr<eCharacterActionFunction>& f,
+                        eGameBoard& board);
+
+    // walkable: stored as {valid, type}; simple types only (no extra state)
+    void walkableRef(const char* key, std::shared_ptr<eWalkableObject>& w);
+
+    // obsticle handler: stored as {valid, type}; needs board for sCreate
+    void obsticleHandlerRef(const char* key, std::shared_ptr<eObsticleHandler>& oh, eGameBoard& board);
+
+    // game event cross-reference: stored as IOID int; resolved in postFunc
+    void gameEventRef(const char* key, eGameEvent*& e, eGameBoard& board);
+    void gameEventRef(const char* key, const std::function<void(eGameEvent*)>& cb, eGameBoard& board);
 
     // deferred callbacks (analogous to eReadStream::addPostFunc)
     using PostFunc = std::function<void()>;

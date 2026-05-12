@@ -99,6 +99,22 @@ public:
         dst.writeTile(mTile);
         dst.writeCharacterAction(mPtr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        ar.tile("mTile", mTile, board());
+        if(ar.writing()) {
+            int ioid = mPtr ? mPtr->ioID() : -1;
+            ar.field("mPtr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mPtr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mPtr = static_cast<eCollectResourceAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
+    }
 private:
     stdptr<eCollectResourceAction> mPtr;
     eTile* mTile = nullptr;
@@ -123,6 +139,10 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeTile(mTile);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        ar.tile("mTile", mTile, board());
     }
 private:
     eTile* mTile = nullptr;
@@ -150,6 +170,17 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeBuilding(mBptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            eBuilding* raw = mBptr.get();
+            ar.buildingRef("mBptr", raw, board());
+        } else {
+            ar.buildingRef("mBptr", [this](eBuilding* b) {
+                mBptr = static_cast<eResourceCollectBuildingBase*>(b);
+            }, board());
+        }
     }
 private:
     stdptr<eResourceCollectBuildingBase> mBptr;

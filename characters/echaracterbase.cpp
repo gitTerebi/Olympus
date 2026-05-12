@@ -1,6 +1,7 @@
 #include "echaracterbase.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "actions/edieaction.h"
 
@@ -83,6 +84,17 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
 }
 
 void eCharacterBase::serialize(eSaveArchive& ar) {
+    ar.field("mActionType", mActionType);
+    ar.field("mCityId", mCityId);
+    ar.field("mOnCityId", mOnCityId);
+    ar.field("mBusy", mBusy);
+    ar.field("mHP", mHP);
+    ar.field("mAttack", mAttack);
+    ar.field("mSpeed", mSpeed);
+    ar.field("mAtlantean", mAtlantean);
+}
+
+void eCharacterBase::serializeJson(eJsonArchive& ar) {
     ar.field("mActionType", mActionType);
     ar.field("mCityId", mCityId);
     ar.field("mOnCityId", mOnCityId);

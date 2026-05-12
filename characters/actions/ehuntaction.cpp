@@ -10,6 +10,7 @@
 
 #include "buildings/ehuntinglodge.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHuntAction::eHuntAction(eHuntingLodge* const b, eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::huntAction),
@@ -136,6 +137,27 @@ void eHuntAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mLodge);
         ar.writeStream().writeCharacter(mHunter);
+    }
+    ar.field("mNoResource", mNoResource);
+}
+
+void eHuntAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    if(ar.writing()) {
+        eBuilding* rawLodge = mLodge;
+        ar.buildingRef("mLodge", rawLodge, board());
+    } else {
+        ar.buildingRef("mLodge", [this](eBuilding* b) {
+            mLodge = static_cast<eHuntingLodge*>(b);
+        }, board());
+    }
+    if(ar.writing()) {
+        eCharacter* rawHunter = mHunter;
+        ar.characterRef("mHunter", rawHunter, board());
+    } else {
+        ar.characterRef("mHunter", [this](eCharacter* c) {
+            mHunter = static_cast<eHunter*>(c);
+        }, board());
     }
     ar.field("mNoResource", mNoResource);
 }

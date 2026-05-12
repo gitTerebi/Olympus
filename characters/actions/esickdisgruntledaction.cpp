@@ -5,6 +5,7 @@
 #include "epatrolmoveaction.h"
 #include "emovearoundaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eSickDisgruntledAction::eSickDisgruntledAction(eCharacter* const c,
                                                eSmallHouse* const ch) :
@@ -45,6 +46,19 @@ void eSickDisgruntledAction::serialize(eSaveArchive& ar) {
         });
     } else {
         ar.writeStream().writeBuilding(mBuilding);
+    }
+    ar.field("mGoBackNext", mGoBackNext);
+}
+
+void eSickDisgruntledAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    if(ar.writing()) {
+        eBuilding* raw = mBuilding;
+        ar.buildingRef("mBuilding", raw, board());
+    } else {
+        ar.buildingRef("mBuilding", [this](eBuilding* b) {
+            mBuilding = static_cast<eSmallHouse*>(b);
+        }, board());
     }
     ar.field("mGoBackNext", mGoBackNext);
 }

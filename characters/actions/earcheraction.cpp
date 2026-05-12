@@ -161,3 +161,33 @@ void eArcherAction::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mAttackTarget.get());
     }
 }
+
+void eAA_patrolFail::serializeJson(eJsonArchive& ar) {
+    if(ar.writing()) {
+        int ioid = mTptr ? mTptr->ioID() : -1;
+        ar.field("mTptr", ioid);
+    } else {
+        int ioid = -1;
+        ar.field("mTptr", ioid);
+        if(ioid >= 0) {
+            ar.addPostFunc([this, ioid]() {
+                mTptr = board().characterActionWithIOID(ioid);
+            });
+        }
+    }
+}
+
+void eAA_patrolFinish::serializeJson(eJsonArchive& ar) {
+    if(ar.writing()) {
+        int ioid = mTptr ? mTptr->ioID() : -1;
+        ar.field("mTptr", ioid);
+    } else {
+        int ioid = -1;
+        ar.field("mTptr", ioid);
+        if(ioid >= 0) {
+            ar.addPostFunc([this, ioid]() {
+                mTptr = board().characterActionWithIOID(ioid);
+            });
+        }
+    }
+}

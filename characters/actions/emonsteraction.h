@@ -23,6 +23,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     eMonsterAttackStage stage() const { return mStage; }
 
@@ -119,6 +120,26 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeBuilding(mBptr);
     }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+            eBuilding* braw = mBptr.get();
+            ar.buildingRef("mBptr", braw, board());
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+            ar.buildingRef("mBptr", [this](eBuilding* b) {
+                mBptr = b;
+            }, board());
+        }
+    }
 private:
     stdptr<eMonsterAction> mTptr;
     stdptr<eBuilding> mBptr;
@@ -145,6 +166,21 @@ public:
 
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eMonsterAction*>(resolveCharAction(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eMonsterAction> mTptr;

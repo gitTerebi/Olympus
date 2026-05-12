@@ -1,5 +1,6 @@
 #include "ehephaestushelpaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
@@ -45,6 +46,11 @@ void eHephaestusHelpAction::write(eWriteStream& dst) const {
 }
 
 void eHephaestusHelpAction::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+}
+
+void eHephaestusHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
     ar.field("mStage", mStage);
 }
 

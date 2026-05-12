@@ -19,6 +19,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void lookForMonster();
 private:
@@ -57,6 +58,22 @@ public:
 
     void write(eWriteStream& dst) const {
         dst.writeCharacterAction(mTptr);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", ioid);
+        } else {
+            int ioid = -1;
+            ar.field("mTptr", ioid);
+            if(ioid >= 0) {
+                ar.addPostFunc([this, ioid]() {
+                    mTptr = static_cast<eGodWorshippedAction*>(
+                        resolveCharAction(ioid));
+                });
+            }
+        }
     }
 private:
     stdptr<eGodWorshippedAction> mTptr;

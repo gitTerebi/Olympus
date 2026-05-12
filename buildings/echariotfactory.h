@@ -5,8 +5,6 @@
 
 #include <algorithm>
 
-class eSaveArchive;
-
 class eChariotFactory : public eEmployingBuilding {
 public:
     eChariotFactory(eGameBoard& board, const eCityId cid);
@@ -27,12 +25,12 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(class eJsonArchive& ar) override;
 
     int wood() const { return mWood; }
     int horses() const { return mHorses; }
     int chariotCount() const { return std::min(mHorses, mChariots); }
 private:
-    void serialize(eSaveArchive& ar);
 
     int mWood = 0;
     int mChariotBuildingTime = 0;

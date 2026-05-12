@@ -1,5 +1,6 @@
 #include "ebuildaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "audio/esounds.h"
@@ -38,6 +39,12 @@ void eBuildAction::write(eWriteStream& dst) const {
 }
 
 void eBuildAction::serialize(eSaveArchive& ar) {
+    ar.field("mSoundTime", mSoundTime);
+    ar.field("mTime", mTime);
+}
+
+void eBuildAction::serializeJson(eJsonArchive& ar) {
+    eCharacterAction::serializeJson(ar);
     ar.field("mSoundTime", mSoundTime);
     ar.field("mTime", mTime);
 }

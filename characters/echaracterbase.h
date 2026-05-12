@@ -8,6 +8,7 @@
 #include "engine/ecityid.h"
 
 class eSaveArchive;
+class eJsonArchive;
 
 enum class eCharacterType {
     none,
@@ -217,6 +218,7 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(eJsonArchive& ar);
 private:
     void serialize(eSaveArchive& ar);
 

@@ -10,6 +10,7 @@
 
 class eCharacter;
 class eSaveArchive;
+class eJsonArchive;
 
 enum class eCityId;
 
@@ -105,6 +106,7 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(eJsonArchive& ar);
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }

@@ -5,6 +5,7 @@
 
 class eTriremeWharf;
 class eSaveArchive;
+class eJsonArchive;
 
 class eTriremeAction : public eFightingAction {
 public:
@@ -17,6 +18,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void goHome() override;
     void goAbroad() override;

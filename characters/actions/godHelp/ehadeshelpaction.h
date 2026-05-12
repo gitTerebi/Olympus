@@ -18,6 +18,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
@@ -57,6 +58,10 @@ public:
     void write(eWriteStream& dst) const {
         eSaveArchive ar(dst);
         ar.field("cityId", const_cast<eCityId&>(mCityId));
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        ar.field("mCityId", mCityId);
     }
 private:
     eCityId mCityId;

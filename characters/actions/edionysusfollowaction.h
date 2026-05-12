@@ -5,6 +5,7 @@
 
 enum class eCharacterType;
 class eSaveArchive;
+class eJsonArchive;
 
 class eDionysusFollowAction : public eFollowAction {
 public:
@@ -18,6 +19,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
 

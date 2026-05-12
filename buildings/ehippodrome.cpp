@@ -1,5 +1,5 @@
 #include "ehippodrome.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/eracinghorse.h"
 
@@ -134,48 +134,31 @@ void eHippodrome::nextCleaningPartId() {
 }
 
 void eHippodrome::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eHippodrome*>(this)->serialize(ar);
+    (void)dst;
 }
 
 void eHippodrome::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
 }
 
-void eHippodrome::serialize(eSaveArchive& ar) {
+void eHippodrome::serializeJson(eJsonArchive& ar) {
     ar.field("mFinish", mFinish);
     ar.field("mNHorses", mNHorses);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
-    int n = mPieces.size();
+    int n = ar.reading() ? 0 : static_cast<int>(mPieces.size());
     ar.field("n", n);
-    if(ar.reading()) mPieces.clear();
-    for(int i = 0; i < n; i++) {
-        eN p;
-        if(ar.writing()) p = mPieces[i];
-        ar.field("p.fO", p.fO);
-        if(ar.reading()) {
-            mPieces.push_back(p);
-            ar.readStream().readBuilding(&mBoard, [this, i](eBuilding* const b) {
-                const auto hp = static_cast<eHippodromePiece*>(b);
-                mPieces[i].fPtr = hp;
-                hp->setHippodrome(this);
-                hp->setPartId(i);
-            });
-        } else {
-            ar.writeStream().writeBuilding(p.fPtr);
-        }
-    }
     if(ar.reading()) {
-        ar.readStream().addPostFunc([this]() {
-            updatePaths();
-        });
+        mPieces.clear();
+        for(int i = 0; i < n; i++) {
+            eN p;
+            ar.field(("p.fO." + std::to_string(i)).c_str(), p.fO);
+            mPieces.push_back(p);
+        }
+        updatePaths();
+    } else {
+        for(int i = 0; i < n; i++) {
+            eN p = mPieces[i];
+            ar.field(("p.fO." + std::to_string(i)).c_str(), p.fO);
+        }
     }
 }
 

@@ -3,6 +3,8 @@
 
 #include "fileIO/estreams.h"
 
+class eJsonArchive;
+
 enum class eCharacterActionFunctionType {
     AWC_goBackFail,
     AWC_goBackFinish,
@@ -101,8 +103,13 @@ public:
 
     virtual void read(eReadStream& src) = 0;
     virtual void write(eWriteStream& dst) const = 0;
+    virtual void serializeJson(eJsonArchive& ar) {}
 
     virtual void call() = 0;
+
+    eCharacterAction* resolveCharAction(int ioid);
+    eCharacter* resolveChar(int ioid);
+    eBuilding* resolveBuilding(int ioid);
 
     static stdsptr<eCharacterActionFunction> sCreate(
             eGameBoard& board,

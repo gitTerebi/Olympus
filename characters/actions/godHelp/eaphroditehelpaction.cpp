@@ -45,6 +45,11 @@ void eAphroditeHelpAction::write(eWriteStream& dst) const {
     const_cast<eAphroditeHelpAction*>(this)->serialize(ar);
 }
 
+void eAphroditeHelpAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
+    ar.field("mStage", mStage);
+}
+
 void eAphroditeHelpAction::serialize(eSaveArchive& ar) {
     ar.field("mStage", mStage);
 }

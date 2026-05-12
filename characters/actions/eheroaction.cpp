@@ -1,5 +1,6 @@
 #include "eheroaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/monsters/emonster.h"
 #include "characters/heroes/ehero.h"
@@ -334,4 +335,12 @@ bool eHeroAction::rangedHero() const {
     const auto ht = heroType();
     const bool r = eHero::sRangedHero(ht);
     return r;
+}
+
+void eHeroAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    ar.field("mStage", mStage);
+    ar.field("mQuestWaiting", mQuestWaiting);
+    ar.field("mLookForMonster", mLookForMonster);
+    ar.field("mLookForCityDefense", mLookForCityDefense);
 }

@@ -1,4 +1,5 @@
 #include "eheroshall.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "textures/egametextures.h"
 
@@ -442,17 +443,14 @@ void eHerosHall::sendHeroOnQuest() {
 
 void eHerosHall::read(eReadStream& src) {
     eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eHerosHall::write(eWriteStream& dst) const {
     eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHerosHall*>(this)->serialize(ar);
 }
 
-void eHerosHall::serialize(eSaveArchive& ar) {
+void eHerosHall::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
     ar.field("mStage", mStage);
     ar.field("mArrivalCountdown", mArrivalCountdown);
     ar.field("mPhilosophers", mPhilosophers);
@@ -461,13 +459,6 @@ void eHerosHall::serialize(eSaveArchive& ar) {
     ar.field("mUpdateCulture", mUpdateCulture);
     ar.field("mHeroOnQuest", mHeroOnQuest);
     ar.field("mSpawnWait", mSpawnWait);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mHero = static_cast<eHero*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mHero);
-    }
 }
 
 void eHerosHall::addRequirement(const eHeroRequirement& hr) {

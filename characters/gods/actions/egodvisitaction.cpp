@@ -1,5 +1,6 @@
 #include "egodvisitaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/echaracter.h"
 #include "enumbers.h"
@@ -62,6 +63,13 @@ void eGodVisitAction::write(eWriteStream& dst) const {
 }
 
 void eGodVisitAction::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+    ar.field("mLookForBless", mLookForBless);
+    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
+}
+
+void eGodVisitAction::serializeJson(eJsonArchive& ar) {
+    eGodAction::serializeJson(ar);
     ar.field("mStage", mStage);
     ar.field("mLookForBless", mLookForBless);
     ar.field("mLookForSoldierAttack", mLookForSoldierAttack);

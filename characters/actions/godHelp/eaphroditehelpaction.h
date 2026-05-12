@@ -19,6 +19,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
@@ -62,6 +63,12 @@ public:
 
     void write(eWriteStream& dst) const {
         dst.writeBuilding(mTarget);
+    }
+
+    void serializeJson(eJsonArchive& ar) override {
+        eBuilding* raw = mTarget.get();
+        ar.buildingRef("mTarget", raw, board());
+        if(ar.reading()) mTarget = static_cast<eHouseBase*>(raw);
     }
 private:
     stdptr<eHouseBase> mTarget;

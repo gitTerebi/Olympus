@@ -7,6 +7,7 @@
 #include "efollowaction.h"
 #include "emovetoaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eTakeCattleAction::eTakeCattleAction(
         eCharacter* const c, eCorral* const cc) :
@@ -67,6 +68,20 @@ void eTakeCattleAction::serialize(eSaveArchive& ar) {
         });
     } else {
         ar.writeStream().writeBuilding(mCorral);
+    }
+    ar.field("mNoCattle", mNoCattle);
+}
+
+void eTakeCattleAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    ar.field("mStage", mStage);
+    if(ar.writing()) {
+        eBuilding* raw = mCorral.get();
+        ar.buildingRef("mCorral", raw, board());
+    } else {
+        ar.buildingRef("mCorral", [this](eBuilding* b) {
+            mCorral = static_cast<eCorral*>(b);
+        }, board());
     }
     ar.field("mNoCattle", mNoCattle);
 }

@@ -17,6 +17,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     int maxKilled() const { return mMaxKilled; }
     void setMaxKilled(const int max) { mMaxKilled = max; }

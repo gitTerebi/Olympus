@@ -6,6 +6,7 @@
 #include "elimits.h"
 
 class eSaveArchive;
+class eJsonArchive;
 
 class eWaitAction : public eCharacterAction {
 public:
@@ -15,6 +16,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 
     void setTime(const int t);
 private:

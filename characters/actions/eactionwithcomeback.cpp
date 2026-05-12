@@ -1,4 +1,5 @@
 #include "eactionwithcomeback.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/echaracter.h"
 #include "emovetoaction.h"
@@ -130,4 +131,13 @@ void eActionWithComeback::teleportDecision() {
     if(mFinishOnComeback) {
         setState(eCharacterActionState::finished);
     }
+}
+
+void eActionWithComeback::serializeJson(eJsonArchive& ar) {
+    eComplexAction::serializeJson(ar);
+    ar.tile("mStartTile", mStartTile, board());
+    ar.field("mFinishOnComeback", mFinishOnComeback);
+    ar.field("mDiagonalOnly", mDiagonalOnly);
+    ar.field("mDefaultTry", mDefaultTry);
+    ar.field("mGoBackFail", mGoBackFail);
 }

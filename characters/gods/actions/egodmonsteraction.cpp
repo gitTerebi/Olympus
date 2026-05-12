@@ -1,6 +1,7 @@
 #include "egodmonsteraction.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/emovetoaction.h"
@@ -493,6 +494,49 @@ void eGodMonsterAction::write(eWriteStream& dst) const {
     eComplexAction::write(dst);
     eSaveArchive ar(dst);
     const_cast<eGodMonsterAction*>(this)->serialize(ar);
+}
+
+void eGodMonsterAction::serializeJson(eJsonArchive& ar) {
+    eComplexAction::serializeJson(ar);
+    int s = static_cast<int>(mPausedActions.size());
+    ar.field("pausedActionsCount", s);
+    if(ar.reading()) {
+        mPausedActions.clear();
+        for(int i = 0; i < s; i++) {
+            ePausedAction a;
+            std::string prefix = "pa" + std::to_string(i);
+            ar.field((prefix + ".fAt").c_str(), a.fAt);
+            ar.field((prefix + ".fO").c_str(), a.fO);
+            int hasA = 0;
+            ar.field((prefix + ".hasA").c_str(), hasA);
+            if(hasA) {
+                int type = 0;
+                ar.field((prefix + ".type").c_str(), type);
+                a.fA = eCharacterAction::sCreate(
+                    character(), static_cast<eCharActionType>(type));
+                if(a.fA) {
+                    auto sub = ar.child((prefix + ".action").c_str());
+                    a.fA->serializeJson(sub);
+                }
+            }
+            mPausedActions.push_back(a);
+        }
+    } else {
+        for(int i = 0; i < s; i++) {
+            const auto& a = mPausedActions[i];
+            std::string prefix = "pa" + std::to_string(i);
+            ar.field((prefix + ".fAt").c_str(), const_cast<eCharacterActionType&>(a.fAt));
+            ar.field((prefix + ".fO").c_str(), const_cast<eOrientation&>(a.fO));
+            int hasA = a.fA ? 1 : 0;
+            ar.field((prefix + ".hasA").c_str(), hasA);
+            if(a.fA) {
+                int type = static_cast<int>(a.fA->type());
+                ar.field((prefix + ".type").c_str(), type);
+                auto sub = ar.child((prefix + ".action").c_str());
+                a.fA->serializeJson(sub);
+            }
+        }
+    }
 }
 
 void eGodMonsterAction::serialize(eSaveArchive& ar) {

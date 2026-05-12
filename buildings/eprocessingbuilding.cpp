@@ -121,22 +121,6 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
     return tasks;
 }
 
-void eProcessingBuilding::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTakeCart = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mTakeCart);
-    }
-
-    ar.field("mRawCount", mRawCount);
-    ar.field("mProcessTime", mProcessTime);
-    ar.field("mProducedThisYear", mProducedThisYear);
-    ar.field("mLastMonth", mLastMonth);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
-}
-
 void eProcessingBuilding::serializeJson(eJsonArchive& ar) {
     eResourceBuildingBase::serializeJson(ar);
     ar.field("mLastMonth", mLastMonth);
@@ -152,14 +136,10 @@ void eProcessingBuilding::serializeJson(eJsonArchive& ar) {
 
 void eProcessingBuilding::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 void eProcessingBuilding::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eProcessingBuilding*>(this)->serialize(ar);
 }
 
 int eProcessingBuilding::productionPercent() const {
