@@ -13,8 +13,22 @@
 #include "edustmissile.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
-#include "fileIO/eblob.h"
 #include "characters/eracinghorse.h"
+
+static void godActJson(eJsonArchive& ar, const char* const key,
+                       stdsptr<eGodAct>& act, eGameBoard& board) {
+    auto aa = ar.child(key);
+    bool valid = aa.writing() ? act != nullptr : false;
+    aa.field("valid", valid);
+    if(!valid) {
+        if(aa.reading()) act = nullptr;
+        return;
+    }
+    eGodActType type = aa.writing() ? act->type() : eGodActType::lookForBless;
+    aa.field("type", type);
+    if(aa.reading()) act = eGodAct::sCreate(board, type);
+    if(act) act->serializeJson(aa);
+}
 
 eMissile::eMissile(eGameBoard& board, const eMissileType type,
                    const std::vector<ePathPoint>& path) :
@@ -104,25 +118,14 @@ void eMissile::serialize(eSaveArchive& ar) {
 
 void eMissile::serializeJson(eJsonArchive& ar, eGameBoard& board) {
     (void)board;
-    if(ar.writing()) {
-        std::string pathBlob = captureWrite([this](eWriteStream& d){ mPath.write(d); });
-        ar.field("pathBlob", pathBlob);
-    } else {
-        std::string pathBlob;
-        ar.field("pathBlob", pathBlob);
-        replayRead(pathBlob, [this](eReadStream& s){ mPath.read(s); });
-    }
+    { auto pa = ar.child("path"); mPath.serializeJson(pa); }
     ar.field("mTime", mTime);
     ar.field("mSpeed", mSpeed);
+    godActJson(ar, "finish", mFinish, mBoard);
     if(ar.writing()) {
-        std::string finishBlob = captureWrite([this](eWriteStream& d){ d.writeGodAct(mFinish.get()); });
-        ar.field("finishBlob", finishBlob);
         eTile* t = mTile;
         ar.tile("tile", t, mBoard);
     } else {
-        std::string finishBlob;
-        ar.field("finishBlob", finishBlob);
-        replayRead(finishBlob, [this](eReadStream& s){ mFinish = s.readGodAct(mBoard); });
         eTile* t = nullptr;
         ar.tile("tile", t, mBoard);
         changeTile(t);

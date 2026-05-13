@@ -24,6 +24,10 @@ public:
 
     void read(eReadStream&) override {}
     void write(eWriteStream&) const override {}
+    void serializeJson(eJsonArchive& ar) override {
+        // empty read — no fields to serialize
+    }
+
 };
 
 class eRiverEntryPoint : public eBanner {

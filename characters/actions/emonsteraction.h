@@ -70,21 +70,32 @@ public:
         eFindFailFunc(board, eFindFailFuncType::tryAgain),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         (void)tile;
         if(!mTptr) return;
         mTptr->setCurrentAction(nullptr);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eMonsterAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eMonsterAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+    }
+
 private:
     stdptr<eMonsterAction> mTptr;
 };
@@ -215,6 +226,17 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eMonsterAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+    }
+
 private:
     stdptr<eMonsterAction> mTptr;
 };

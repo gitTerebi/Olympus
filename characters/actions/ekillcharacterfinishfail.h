@@ -14,9 +14,9 @@ public:
         eCharActFunc(board, eCharActFuncType::killCharacterFinishFail),
         mCptr(c) {}
 
-    void call();
+    void call() override;
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mCptr = static_cast<eCharacter*>(c);
         });

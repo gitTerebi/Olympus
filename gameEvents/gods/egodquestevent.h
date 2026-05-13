@@ -23,6 +23,11 @@ public:
     void fulfilled();
 
     eEventTrigger& fulfilledTrigger() { return *mFulfilledTrigger; }
+void serializeJson(eJsonArchive& ar) override {
+        eGodQuestEventBase::serializeJson(ar);
+        ar.field("mFulfilled", mFulfilled);
+}
+
 private:
     void serialize(eSaveArchive& ar);
     stdsptr<eEventTrigger> mFulfilledTrigger;

@@ -841,38 +841,29 @@ void eCampaign::serializeJson(eJsonArchive& ar) {
         });
     }
 
-    // forColony / forParent set-asides — blobs (use eReadStream directly)
     {
         int n = static_cast<int>(mForColony.size());
         ar.loop("forColonyCount", n, [&](int i) {
+            auto ca = ar.childAt("forColony", i);
             if(ar.reading()) {
-                std::string blob;
-                ar.field(("forColony." + std::to_string(i)).c_str(), blob);
-                replayRead(blob, [this](eReadStream& s) {
-                    const auto sa = std::make_shared<eSetAside>();
-                    sa->read(s, &mWorldBoard);
-                    mForColony.push_back(sa);
-                });
+                const auto sa = std::make_shared<eSetAside>();
+                sa->serializeJson(ca, mWorldBoard);
+                mForColony.push_back(sa);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mForColony[i]->write(d); });
-                ar.field(("forColony." + std::to_string(i)).c_str(), blob);
+                mForColony[i]->serializeJson(ca, mWorldBoard);
             }
         });
     }
     {
         int n = static_cast<int>(mForParent.size());
         ar.loop("forParentCount", n, [&](int i) {
+            auto ca = ar.childAt("forParent", i);
             if(ar.reading()) {
-                std::string blob;
-                ar.field(("forParent." + std::to_string(i)).c_str(), blob);
-                replayRead(blob, [this](eReadStream& s) {
-                    const auto sa = std::make_shared<eSetAside>();
-                    sa->read(s, &mWorldBoard);
-                    mForParent.push_back(sa);
-                });
+                const auto sa = std::make_shared<eSetAside>();
+                sa->serializeJson(ca, mWorldBoard);
+                mForParent.push_back(sa);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mForParent[i]->write(d); });
-                ar.field(("forParent." + std::to_string(i)).c_str(), blob);
+                mForParent[i]->serializeJson(ca, mWorldBoard);
             }
         });
     }

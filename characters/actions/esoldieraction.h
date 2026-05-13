@@ -6,6 +6,7 @@
 #include "characters/echaracter.h"
 #include "walkable/eobsticlehandler.h"
 #include "buildings/ebuilding.h"
+#include "engine/e-game-board.h"
 
 class eSoldier;
 
@@ -32,6 +33,11 @@ public:
                                 const eGameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
+void serializeJson(eJsonArchive& ar) override {
+        eFightingAction::serializeJson(ar);
+        ar.field("mSpreadPeriod", mSpreadPeriod);
+}
+
 private:
     void serialize(eSaveArchive& ar);
     stdsptr<eObsticleHandler> obsticleHandler() override;
@@ -69,6 +75,17 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eSoldierAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+}
+
 private:
     stdptr<eSoldierAction> mTptr;
 };

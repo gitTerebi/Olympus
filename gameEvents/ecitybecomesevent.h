@@ -4,6 +4,7 @@
 #include "egameevent.h"
 #include "ecityeventvalue.h"
 #include "eattackingcityeventvalue.h"
+#include "fileIO/ejsonarchive.h"
 
 enum class eCityBecomesType {
     ally, rival, vassal,
@@ -30,6 +31,13 @@ public:
 
     void setType(const eCityBecomesType t) { mType = t; }
     eCityBecomesType type() const { return mType; }
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        eCityEventValue::serializeJson(ar, *gameBoard());
+        eAttackingCityEventValue::serializeJson(ar, *gameBoard());
+        ar.field("mType", mType);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

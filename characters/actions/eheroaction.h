@@ -58,7 +58,7 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_patrolFail),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         const auto t = mTptr.get();
         const auto c = t->character();
@@ -66,13 +66,13 @@ public:
         t->goBack(eWalkableObject::sCreateDefault());
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eHeroAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
 
@@ -102,18 +102,18 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_huntMonsterFinish),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         mTptr->lookForMonster();
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eHeroAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
 
@@ -143,7 +143,7 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_fightMonsterDie),
         mMptr(m) {}
 
-    void call() {
+    void call() override {
         if(!mMptr || mMptr->dead()) return;
         auto& board = eCharActFunc::board();
         const auto cid = mMptr->onCityId();
@@ -157,13 +157,13 @@ public:
         board.addSlayedMonster(cid, mt);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mMptr = static_cast<eMonster*>(c);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacter(mMptr);
     }
 

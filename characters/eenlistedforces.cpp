@@ -5,6 +5,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 std::map<eCityId, eEnlistedForces>
 eEnlistedForces::splitIntoCities() const {
@@ -85,6 +86,55 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
         }
     }
 
+    ar.field("fAres", fAres);
+    ar.field("fAresCity", fAresCity);
+}
+
+void eEnlistedForces::serializeJson(eJsonArchive& ar, eGameBoard* board) {
+    {
+        int ns = static_cast<int>(fSoldiers.size());
+        ar.field("ns", ns);
+        if(ar.reading()) fSoldiers.clear();
+        for(int i = 0; i < ns; i++) {
+            const auto key = "s" + std::to_string(i);
+            if(ar.reading()) {
+                ar.soldierBannerRef(key.c_str(), [this](const stdsptr<eSoldierBanner>& b) {
+                    if(b) fSoldiers.push_back(b);
+                }, *board);
+            } else {
+                int ioid = fSoldiers[i] ? fSoldiers[i]->ioID() : -1;
+                ar.field(key.c_str(), ioid, -1);
+            }
+        }
+    }
+    {
+        int nh = static_cast<int>(fHeroes.size());
+        ar.field("nh", nh);
+        if(ar.reading()) fHeroes.clear();
+        for(int i = 0; i < nh; i++) {
+            std::pair<eCityId, eHeroType> h;
+            if(ar.writing()) h = fHeroes[i];
+            ar.field(("h" + std::to_string(i) + ".first").c_str(), h.first);
+            ar.field(("h" + std::to_string(i) + ".second").c_str(), h.second);
+            if(ar.reading()) fHeroes.push_back(h);
+        }
+    }
+    {
+        int nc = static_cast<int>(fAllies.size());
+        ar.field("nc", nc);
+        if(ar.reading()) fAllies.clear();
+        for(int i = 0; i < nc; i++) {
+            const auto key = "ally" + std::to_string(i);
+            if(ar.reading()) {
+                ar.cityRef(key.c_str(), [this](const stdsptr<eWorldCity>& c) {
+                    if(c) fAllies.push_back(c);
+                }, *board);
+            } else {
+                int ioid = fAllies[i] ? fAllies[i]->ioID() : -1;
+                ar.field(key.c_str(), ioid, -1);
+            }
+        }
+    }
     ar.field("fAres", fAres);
     ar.field("fAresCity", fAresCity);
 }

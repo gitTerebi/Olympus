@@ -26,6 +26,12 @@ protected:
     void planArmyReturn(const int travelTime);
 
     void removeArmyEvent();
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        mForces.serializeJson(ar, gameBoard());
+        ar.cityRef("mCity", mCity, *gameBoard());
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 protected:

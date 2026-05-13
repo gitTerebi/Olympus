@@ -2,6 +2,7 @@
 #define ESPAWNER_H
 
 #include "ebanner.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -29,6 +30,12 @@ public:
     int count() const { return mCount; }
 
     void setSpawnPeriod(const int p);
+void serializeJson(eJsonArchive& ar) override {
+        eBanner::serializeJson(ar);
+        ar.field("mCount", mCount);
+        ar.field("mTime", mTime);
+}
+
 private:
     void serialize(eSaveArchive& ar);
     const int mMaxCount;

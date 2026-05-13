@@ -1,5 +1,7 @@
 #include "epatrolaction.h"
 
+#include <string>
+
 #include "../echaracter.h"
 #include "engine/etile.h"
 #include "epatrolmoveaction.h"
@@ -77,6 +79,21 @@ void ePatrolAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeDirectionTimes(mDirTimes.get());
     }
+}
+
+void ePatrolAction::serializeJson(eJsonArchive& ar) {
+    eActionWithComeback::serializeJson(ar);
+    int n = ar.writing() ? static_cast<int>(mPath.size()) : 0;
+    ar.field("path.count", n);
+    if(ar.reading()) mPath.resize(n);
+    for(int i = 0; i < n; i++) {
+        ar.field(("path." + std::to_string(i)).c_str(), mPath[i]);
+    }
+    eBuilding* b = mBuilding.get();
+    ar.buildingRef("mBuilding", b, board());
+    if(ar.reading()) mBuilding = dynamic_cast<ePatrolBuildingBase*>(b);
+    ar.field("mDone", mDone);
+    ar.directionTimesRef("mDirTimes", mDirTimes, board());
 }
 
 void ePatrolAction::patrol() {

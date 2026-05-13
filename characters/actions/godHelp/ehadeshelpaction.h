@@ -40,22 +40,22 @@ public:
     eGodProvideDrachmasAct(eGameBoard& board) :
         eGodProvideDrachmasAct(board, eCityId::neutralFriendly) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         board().addResource(mCityId, eResourceType::drachmas, 1500);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         eSaveArchive ar(src);
         ar.field("cityId", mCityId);
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         eSaveArchive ar(dst);
         ar.field("cityId", const_cast<eCityId&>(mCityId));
     }

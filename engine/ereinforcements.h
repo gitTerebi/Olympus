@@ -19,6 +19,7 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eGameBoard& board, eReadStream& src);
+    void serializeJson(class eJsonArchive& ar, eGameBoard& board);
 private:
     void serialize(eSaveArchive& ar, eGameBoard* board);
 

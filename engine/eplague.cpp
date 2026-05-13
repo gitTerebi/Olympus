@@ -4,6 +4,7 @@
 #include "e-game-board.h"
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePlague::ePlague(const eCityId cid, eGameBoard& board) :
     mBoard(board), mCityId(cid) {}
@@ -81,6 +82,24 @@ void ePlague::serialize(eSaveArchive& ar) {
             });
         } else {
             ar.writeStream().writeBuilding(mHouses[i]);
+        }
+    }
+}
+
+void ePlague::serializeJson(eJsonArchive& ar) {
+    ar.field("mCityId", mCityId);
+    int n = static_cast<int>(mHouses.size());
+    ar.field("n", n);
+    if(ar.reading()) mHouses.clear();
+    for(int i = 0; i < n; i++) {
+        const auto key = std::to_string(i);
+        if(ar.reading()) {
+            ar.buildingRef(key.c_str(), [this](eBuilding* b) {
+                if(b) mHouses.push_back(static_cast<eSmallHouse*>(b));
+            }, mBoard);
+        } else {
+            eBuilding* b = mHouses[i];
+            ar.buildingRef(key.c_str(), b, mBoard);
         }
     }
 }

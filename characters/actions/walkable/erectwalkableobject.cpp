@@ -2,6 +2,7 @@
 
 #include "engine/etilebase.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eRectWalkableObject::eRectWalkableObject(
         const stdsptr<eWalkableObject>& other,
@@ -46,4 +47,12 @@ void eRectWalkableObject::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeWalkable(mOther.get());
     }
+}
+
+void eRectWalkableObject::serializeJson(eJsonArchive& ar) {
+    ar.field("rect.x", mRect.x);
+    ar.field("rect.y", mRect.y);
+    ar.field("rect.w", mRect.w);
+    ar.field("rect.h", mRect.h);
+    ar.walkableRef("other", mOther);
 }

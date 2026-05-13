@@ -9,6 +9,7 @@
 
 #include "textures/edestructiontextures.h"
 #include "fileIO/ejsonarchive.h"
+#include "engine/e-game-board.h"
 
 class eGod;
 class eGodAct;
@@ -67,6 +68,7 @@ public:
 
     virtual void read(eReadStream& src) = 0;
     virtual void write(eWriteStream& dst) const = 0;
+    virtual void serializeJson(eJsonArchive& ar) {}
 
     static stdsptr<eFindFailFunc> sCreate(eGameBoard& board,
                                           const eFindFailFuncType type);
@@ -266,6 +268,18 @@ public:
         dst.writeCharacterAction(mTptr);
         dst.writeCharActFunc(mFinishAct.get());
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eGodMonsterAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+        ar.charActFuncRef("mFinishAct", mFinishAct, board());
+    }
+
 private:
     stdptr<eGodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
@@ -302,6 +316,10 @@ public:
         eSaveArchive ar(dst);
         ar.field("distance", const_cast<int&>(mDist));
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("distance", mDist);
+}
+
 private:
     stdptr<eGodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
@@ -339,6 +357,10 @@ public:
         eSaveArchive ar(dst);
         ar.field("distance", const_cast<int&>(mDist));
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("distance", mDist);
+}
+
 private:
     stdptr<eGodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
@@ -387,6 +409,12 @@ public:
         dst.writeGodAct(mHitAct.get());
         dst.writeCharActFunc(mFinishAttackA.get());
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("actionType", mAt);
+        ar.field("characterType", mChart);
+        ar.tile("mTarget", mTarget, board());
+}
+
 private:
     stdptr<eCharacter> mCptr;
     eCharacterActionType mAt;
@@ -450,6 +478,13 @@ public:
         dst.writeCharActFunc(mFinishA.get());
         ar.field("missileCount", const_cast<int&>(mNMissiles));
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("actionType", mAt);
+        ar.field("characterType", mChart);
+        ar.field("attackTime", mAttackTime);
+        ar.field("missileCount", mNMissiles);
+}
+
 private:
     stdptr<eGodMonsterAction> mTptr;
     eCharacterActionType mAt;
@@ -499,6 +534,25 @@ public:
             mFunc->write(dst);
         }
     }
+    void serializeJson(eJsonArchive& ar) override {
+        ar.tile("mTile", mTile, board());
+        bool hasFunc = mFunc != nullptr;
+        ar.field("hasFindFailFunc", hasFunc);
+        if(ar.writing()) {
+            if(hasFunc) {
+                auto type = mFunc->type();
+                ar.field("findFailFuncType", type);
+            }
+        } else {
+            if(hasFunc) {
+                eFindFailFuncType type{};
+                ar.field("findFailFuncType", type);
+                mFunc = eFindFailFunc::sCreate(board(), type);
+                mFunc->serializeJson(ar);
+            }
+        }
+}
+
 private:
     eTile* mTile = nullptr;
     stdsptr<eFindFailFunc> mFunc;

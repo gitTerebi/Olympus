@@ -5,7 +5,6 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
-#include "fileIO/eblob.h"
 
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
@@ -82,17 +81,13 @@ void eEventTrigger::serializeJson(eJsonArchive& ar) {
         if(ar.writing()) type = mEvents[i]->type();
         const auto key = std::to_string(i);
         ar.field((key + ".type").c_str(), type);
-        if(ar.writing()) {
-            std::string blob = captureWrite([&](eWriteStream& d){ mEvents[i]->write(d); });
-            ar.field((key + ".blob").c_str(), blob);
+        auto ca = ar.childAt("events", i);
+        if(ar.reading()) {
+            const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::trigger, mBoard);
+            e->serializeJson(ca);
+            mEvents.emplace_back(e);
         } else {
-            std::string blob;
-            ar.field((key + ".blob").c_str(), blob);
-            replayRead(blob, [&](eReadStream& s){
-                const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::trigger, mBoard);
-                e->read(s);
-                mEvents.emplace_back(e);
-            });
+            mEvents[i]->serializeJson(ca);
         }
     }
 }

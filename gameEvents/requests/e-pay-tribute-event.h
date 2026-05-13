@@ -2,6 +2,7 @@
 #define EPAYTRIBUTEEVENT_H
 
 #include "../egameevent.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-worldcity.h"
 #include "engine/ecityrequest.h"
@@ -38,6 +39,20 @@ public:
     std::string dispatchText(int stock, const eDate& currentDate) const;
     std::string overdueStatusText(const eDate& currentDate) const;
     bool isPostponed() const;
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ar.cityRef("mCity", mCity, *worldBoard());
+        ar.field("count", mCount);
+        ar.field("active", mActive);
+        ar.field("postponed", mPostponed);
+        ar.field("event", mEvent);
+        ar.field("complyEvent", mComplyEvent);
+        ar.field("requestStep", mRequestStep);
+        { auto sub = ar.child("mRequestDate"); mRequestDate.serializeJson(sub); }
+        { auto sub = ar.child("mRequestDeadline"); mRequestDeadline.serializeJson(sub); }
+        { auto sub = ar.child("mComplyStartDate"); mComplyStartDate.serializeJson(sub); }
+    }
+
 private:
     void serialize(eSaveArchive& ar);
     void activate();

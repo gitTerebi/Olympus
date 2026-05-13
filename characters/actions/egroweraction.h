@@ -48,7 +48,7 @@ public:
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionFinish),
         mTptr(ca), mTile(tile), mType(type) {}
 
-    void call() {
+    void call() override {
         mTile->setBusy(false);
         if(!mTptr) return;
         const auto t = mTptr.get();
@@ -71,7 +71,7 @@ public:
         t->mGroomed++;
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eGrowerAction*>(ca);
         });
@@ -80,7 +80,7 @@ public:
         ar.field("buildingType", mType);
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
         dst.writeTile(mTile);
         eSaveArchive ar(dst);
@@ -117,15 +117,15 @@ public:
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionDeleteFail),
         mTile(tile) {}
 
-    void call() {
+    void call() override {
         mTile->setBusy(false);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         mTile = src.readTile(board());
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeTile(mTile);
     }
 

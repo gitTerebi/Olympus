@@ -59,6 +59,12 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        eBuilding* _mTptr = mTptr.get();
+        ar.buildingRef("mTptr", _mTptr, board());
+        if(ar.reading()) mTptr = static_cast<ePatrolTarget*>(_mTptr);
+    }
+
 private:
     stdptr<ePatrolTarget> mTptr;
 };

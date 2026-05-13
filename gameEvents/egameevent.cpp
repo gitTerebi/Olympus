@@ -471,7 +471,6 @@ void eGameEvent::serializeJson(eJsonArchive& ar) {
         mWarnings[i]->serializeJson(wAr);
     }
 
-    // consequences — blobs (each is a full eGameEvent subtype)
     int ncs = static_cast<int>(mConsequences.size());
     ar.field("ncs", ncs);
     if(ar.reading()) mConsequences.clear();
@@ -482,17 +481,13 @@ void eGameEvent::serializeJson(eJsonArchive& ar) {
         const auto key = std::to_string(i);
         ar.field((key + ".type").c_str(), ctype);
         ar.field((key + ".br").c_str(),   cbr);
-        if(ar.writing()) {
-            std::string blob = captureWrite([&](eWriteStream& d){ mConsequences[i]->write(d); });
-            ar.field((key + ".blob").c_str(), blob);
+        auto ca = ar.childAt("consequences", i);
+        if(ar.reading()) {
+            const auto e = eGameEvent::sCreate(mCid, ctype, cbr, mBoard);
+            e->serializeJson(ca);
+            addConsequence(e);
         } else {
-            std::string blob;
-            ar.field((key + ".blob").c_str(), blob);
-            replayRead(blob, [&](eReadStream& s){
-                const auto e = eGameEvent::sCreate(mCid, ctype, cbr, mBoard);
-                e->read(s);
-                addConsequence(e);
-            });
+            mConsequences[i]->serializeJson(ca);
         }
     }
 

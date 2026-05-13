@@ -1,4 +1,5 @@
 #include "ecityeventvalue.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "estringhelpers.h"
 #include "elanguage.h"
@@ -80,4 +81,10 @@ void eCityEventValue::longNameReplaceCity(
     const auto city = this->city();
     const auto ctstr = city ? city->name() : none;
     eStringHelpers::replace(tmpl, id, ctstr);
+}
+
+void eCityEventValue::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    ar.cityRef("mCity", mCity, board);
+    ar.field("mMinCityId", mMinCityId);
+    ar.field("mMaxCityId", mMaxCityId);
 }

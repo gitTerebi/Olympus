@@ -2,6 +2,7 @@
 
 #include "ehasresourceobject.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHasResourceWalkableObject::eHasResourceWalkableObject(
         const stdsptr<eHasResourceObject>& hr,
@@ -34,4 +35,9 @@ void eHasResourceWalkableObject::serialize(eSaveArchive& ar) {
         ar.writeStream().writeHasResource(mHr.get());
         ar.writeStream().writeWalkable(mW.get());
     }
+}
+
+void eHasResourceWalkableObject::serializeJson(eJsonArchive& ar) {
+    ar.hasResourceRef("hasResource", mHr);
+    ar.walkableRef("walkable", mW);
 }

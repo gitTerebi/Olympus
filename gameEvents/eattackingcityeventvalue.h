@@ -9,6 +9,7 @@ class eAttackingCityEventValue {
 public:
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eGameBoard& board);
+    void serializeJson(eJsonArchive& ar, eGameBoard& board);
 
     void setAttackingCity(const stdsptr<eWorldCity>& c) { mAttackingCity = c; }
     const stdsptr<eWorldCity>& attackingCity() const { return mAttackingCity; }

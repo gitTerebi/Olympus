@@ -48,6 +48,17 @@ public:
 
     void won();
     void lost();
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        eCityEventValue::serializeJson(ar, *gameBoard());
+        eMonsterEventValue::serializeJson(ar);
+        eAttackingCityEventValue::serializeJson(ar, *gameBoard());
+        ar.field("mType", mType);
+        ar.field("mEffect", mEffect);
+        ar.field("mFinish", mFinish);
+        ar.field("mPostpone", mPostpone);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

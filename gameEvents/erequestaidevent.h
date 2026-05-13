@@ -2,6 +2,7 @@
 #define EREQUESTAIDEVENT_H
 
 #include "egameevent.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -25,6 +26,13 @@ public:
 
     void setArrivalDate(const eDate& d) { mArrivalDate = d; }
     const eDate& arrivalDate() const { return mArrivalDate; }
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ar.cityRef("mCity", mCity, *worldBoard());
+        mArrivalDate.serializeJson(ar);
+        ar.field("mEnd", mEnd);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

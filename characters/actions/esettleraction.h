@@ -25,6 +25,12 @@ protected:
     void goBack2();
     void leave();
     bool enterHouse();
+    void serializeJson(eJsonArchive& ar) override {
+        eActionWithComeback::serializeJson(ar);
+        ar.field("mNPeople", mNPeople);
+        ar.field("mNoHouses", mNoHouses);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

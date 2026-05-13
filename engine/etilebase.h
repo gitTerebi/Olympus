@@ -157,6 +157,7 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+    virtual void serializeJson(class eJsonArchive& ar);
 private:
     void serialize(eSaveArchive& ar);
 

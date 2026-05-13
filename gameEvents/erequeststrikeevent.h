@@ -2,6 +2,7 @@
 #define EREQUESTSTRIKEEVENT_H
 
 #include "egameevent.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -25,6 +26,13 @@ public:
 
     void setRivalCity(const stdsptr<eWorldCity>& c) { mRivalCity = c; }
     const stdsptr<eWorldCity>& rivalCity() const { return mRivalCity; }
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ar.cityRef("mCity", mCity, *worldBoard());
+        ar.cityRef("mRivalCity", mRivalCity, *worldBoard());
+        ar.field("mEnd", mEnd);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

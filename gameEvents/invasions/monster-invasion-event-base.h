@@ -37,6 +37,31 @@ public:
     eEventTrigger& killedTrigger() { return *mKilledTrigger; }
 protected:
     eMonster* triggerBase();
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ePointEventValue::serializeJson(ar);
+        eMonstersEventValue::serializeJson(ar);
+        ar.field("mChooseMonster", mChooseMonster);
+        ar.field("mAggressivness", mAggressivness);
+        ar.field("mValid", mValid);
+        int ns = ar.writing() ? (int)mSpawned.size() : 0;
+        ar.field("ns", ns);
+        if(ar.reading()) mSpawned.clear();
+        for(int i = 0; i < ns; i++) {
+            eMonsterType s = ar.writing() ? mSpawned[i] : eMonsterType::calydonianBoar;
+            ar.field(("mSpawned" + std::to_string(i)).c_str(), s);
+            if(ar.reading()) mSpawned.push_back(s);
+        }
+        int nk = ar.writing() ? (int)mKilled.size() : 0;
+        ar.field("nk", nk);
+        if(ar.reading()) mKilled.clear();
+        for(int i = 0; i < nk; i++) {
+            eMonsterType k = ar.writing() ? mKilled[i] : eMonsterType::calydonianBoar;
+            ar.field(("mKilled" + std::to_string(i)).c_str(), k);
+            if(ar.reading()) mKilled.push_back(k);
+        }
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

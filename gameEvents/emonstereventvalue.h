@@ -2,6 +2,7 @@
 #define EMONSTEREVENTVALUE_H
 
 #include "characters/monsters/emonstertype.h"
+#include "fileIO/ejsonarchive.h"
 
 class eWriteStream;
 class eReadStream;
@@ -17,6 +18,10 @@ public:
     eMonsterType monster() const { return mMonster; }
 protected:
     eMonsterType mMonster = eMonsterType::calydonianBoar;
+    virtual void serializeJson(eJsonArchive& ar) {
+        ar.field("mMonster", mMonster);
+}
+
 };
 
 #endif // EMONSTEREVENTVALUE_H

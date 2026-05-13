@@ -1,4 +1,5 @@
 #include "eattackingcityeventvalue.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-worldcity.h"
 #include "fileIO/esavearchive.h"
@@ -22,4 +23,8 @@ void eAttackingCityEventValue::serialize(eSaveArchive& ar, eGameBoard* board) {
     } else {
         ar.writeStream().writeCity(mAttackingCity.get());
     }
+}
+
+void eAttackingCityEventValue::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    ar.cityRef("mAttackingCity", mAttackingCity, board);
 }

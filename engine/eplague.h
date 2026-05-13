@@ -32,6 +32,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(class eJsonArchive& ar);
 private:
     void serialize(eSaveArchive& ar);
 

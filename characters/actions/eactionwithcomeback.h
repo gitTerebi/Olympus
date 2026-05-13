@@ -100,7 +100,7 @@ public:
                 });
             }
         }
-        // TODO: walkable JSON
+        ar.walkableRef("mWalkable", mWalkable);
     }
 private:
     stdptr<eActionWithComeback> mTptr;

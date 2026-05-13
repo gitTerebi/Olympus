@@ -2,6 +2,7 @@
 #define EWALKABLEOBJECT_H
 
 #include "fileIO/estreams.h"
+#include "fileIO/ejsonarchive.h"
 #include "pointers/estdpointer.h"
 #include "engine/eorientation.h"
 
@@ -71,6 +72,10 @@ public:
     static stdsptr<eWalkableObject> sCreateHasResource(
             const stdsptr<eHasResourceObject>& hr,
             const stdsptr<eWalkableObject>& w);
+    virtual void serializeJson(eJsonArchive& ar) {
+        // empty read — no fields to serialize
+    }
+
 private:
     const eWalkableObjectType mType;
 };

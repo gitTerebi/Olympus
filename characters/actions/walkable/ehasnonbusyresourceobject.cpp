@@ -2,6 +2,7 @@
 
 #include "engine/etilebase.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHasNonBusyResourceObject::eHasNonBusyResourceObject(
         const stdsptr<eHasResourceObject>& other) :
@@ -31,4 +32,8 @@ void eHasNonBusyResourceObject::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeHasResource(mOther.get());
     }
+}
+
+void eHasNonBusyResourceObject::serializeJson(eJsonArchive& ar) {
+    ar.hasResourceRef("other", mOther);
 }

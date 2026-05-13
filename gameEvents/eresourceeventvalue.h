@@ -2,6 +2,7 @@
 #define ERESOURCEEVENTVALUE_H
 
 #include "engine/eresourcetype.h"
+#include "fileIO/ejsonarchive.h"
 
 class eWriteStream;
 class eReadStream;
@@ -34,6 +35,13 @@ protected:
                                              eResourceType::none};
 
     eResourceType mResource = eResourceType::fleece;
+    virtual void serializeJson(eJsonArchive& ar) {
+        ar.field("mResource", mResource);
+        for(int i = 0; i < 3; i++) {
+            ar.field(("mResources" + std::to_string(i)).c_str(), mResources[i]);
+        }
+    }
+
 };
 
 #endif // ERESOURCEEVENTVALUE_H

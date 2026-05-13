@@ -12,10 +12,10 @@ class eBuildAction : public eCharacterAction {
 public:
     eBuildAction(eCharacter* const c);
 
-    void increment(const int by);
+    void increment(const int by) override;
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
     void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);

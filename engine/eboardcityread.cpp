@@ -13,12 +13,13 @@ static void dbgLogN(const char* msg, int n) {
 #include "characters/monsters/emonster.h"
 #include "gameEvents/invasions/monster-invasion-event-base.h"
 #include "engine/emilitaryaid.h"
+#include "engine/ereinforcements.h"
+#include "characters/esoldierbanner.h"
 #include "gameEvents/egameevent.h"
 #include "engine/e-game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
-#include "fileIO/eblob.h"
 #include "buildings/eavailablebuildings.h"
 #include "engine/ai/eaicityplan.h"
 #include "engine/eemploymentdistributor.h"
@@ -546,19 +547,16 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
     ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
     ar.field("wonGames", mWonGames);
 
-    // invasion handlers — binary sub-objects
     {
         int ni = ar.reading() ? 0 : static_cast<int>(mInvasionHandlers.size());
         ar.field("invasionHandlerCount", ni);
         for(int i = 0; i < ni; i++) {
             auto ca = ar.childAt("invasionHandlers", i);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
-                replayRead(blob, [ii](eReadStream& s){ ii->read(s); });
+                ii->serializeJson(ca);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mInvasionHandlers[i]->write(d); });
-                ca.field("blob", blob);
+                mInvasionHandlers[i]->serializeJson(ca);
             }
         }
     }
@@ -580,20 +578,17 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
 
     // monsters — skip (restored via character load pass)
 
-    // plagues
     {
         int np = ar.reading() ? 0 : static_cast<int>(mPlagues.size());
         ar.field("plagueCount", np);
         for(int i = 0; i < np; i++) {
             auto ca = ar.childAt("plagues", i);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 const auto p = std::make_shared<ePlague>(mId, mBoard);
-                replayRead(blob, [&p](eReadStream& s){ p->read(s); });
+                p->serializeJson(ca);
                 mPlagues.push_back(p);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mPlagues[i]->write(d); });
-                ca.field("blob", blob);
+                mPlagues[i]->serializeJson(ca);
             }
         }
     }
@@ -609,20 +604,17 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
     ar.field("pop20000", mPop20000);
     ar.field("pop25000", mPop25000);
 
-    // military aid
     {
         int na = ar.reading() ? 0 : static_cast<int>(mMilitaryAid.size());
         ar.field("militaryAidCount", na);
         for(int i = 0; i < na; i++) {
             auto ca = ar.childAt("militaryAid", i);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 const auto ma = std::make_shared<eMilitaryAid>();
-                replayRead(blob, [&ma, this](eReadStream& s){ ma->read(s, &mBoard); });
+                ma->serializeJson(ca, mBoard);
                 addMilitaryAid(ma);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mMilitaryAid[i]->write(d); });
-                ca.field("blob", blob);
+                mMilitaryAid[i]->serializeJson(ca, mBoard);
             }
         }
     }
@@ -642,7 +634,6 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
 
     // monster events — game event cross-refs (skip; restored via event load pass)
 
-    // soldier banners
     {
         int nb = ar.reading() ? 0 : static_cast<int>(mSoldierBanners.size());
         ar.field("soldierBannerCount", nb);
@@ -651,48 +642,40 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
             eBannerType type = ar.reading() ? eBannerType::hoplite : mSoldierBanners[i]->type();
             ca.field("type", type);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
-                replayRead(blob, [&b](eReadStream& s){ b->read(s); });
+                b->serializeJson(ca);
                 registerSoldierBanner(b);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mSoldierBanners[i]->write(d); });
-                ca.field("blob", blob);
+                mSoldierBanners[i]->serializeJson(ca);
             }
         }
     }
 
-    // hippodromes
     {
         int nh = ar.reading() ? 0 : static_cast<int>(mHippodromes.size());
         ar.field("hippodromeCount", nh);
         for(int i = 0; i < nh; i++) {
             auto ca = ar.childAt("hippodromes", i);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 const auto h = std::make_shared<eHippodrome>(mId, mBoard);
-                replayRead(blob, [&h](eReadStream& s){ h->read(s); });
+                h->serializeJson(ca);
                 mHippodromes.push_back(h);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mHippodromes[i]->write(d); });
-                ca.field("blob", blob);
+                mHippodromes[i]->serializeJson(ca);
             }
         }
     }
 
-    // reinforcements
     {
         int nr = ar.reading() ? 0 : static_cast<int>(mReinforcements.size());
         ar.field("reinforcementCount", nr);
         for(int i = 0; i < nr; i++) {
             auto ca = ar.childAt("reinforcements", i);
             if(ar.reading()) {
-                std::string blob; ca.field("blob", blob);
                 auto& r = mReinforcements.emplace_back();
-                replayRead(blob, [&r, this](eReadStream& s){ r.read(mBoard, s); });
+                r.serializeJson(ca, mBoard);
             } else {
-                std::string blob = captureWrite([&](eWriteStream& d){ mReinforcements[i].write(d); });
-                ca.field("blob", blob);
+                mReinforcements[i].serializeJson(ca, mBoard);
             }
         }
     }

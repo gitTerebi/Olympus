@@ -3,6 +3,7 @@
 #include "buildings/ebuilding.h"
 #include "spawners/ebanner.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include <algorithm>
 
@@ -190,6 +191,19 @@ void eTileBase::read(eReadStream& src) {
 void eTileBase::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
     const_cast<eTileBase*>(this)->serialize(ar);
+}
+
+void eTileBase::serializeJson(eJsonArchive& ar) {
+    ar.field("seed", mSeed);
+    ar.field("terrain", mTerr);
+    ar.field("marbleLevel", mMarbleLevel);
+    ar.field("resource", mResource);
+    ar.field("cityId", mCityId);
+    ar.field("elevation", mElevation);
+    ar.field("walkableElevation", mWalkableElev);
+    ar.field("hasUrchin", mHasUrchin);
+    ar.field("hasFish", mHasFish);
+    ar.field("roadblock", mRoadblock);
 }
 
 void eTileBase::serialize(eSaveArchive& ar) {

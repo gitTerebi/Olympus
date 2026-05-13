@@ -14,10 +14,10 @@ public:
     eArtisanAction(eCharacter* const c, eArtisansGuild* const guild);
     eArtisanAction(eCharacter* const c);
 
-    bool decide();
+    bool decide() override;
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
 private:
     void serialize(eSaveArchive& ar);
 

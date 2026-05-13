@@ -36,6 +36,10 @@ public:
         eSaveArchive ar(dst);
         ar.field("time", const_cast<std::vector<int>&>(mTime));
     }
+    void serializeJson(eJsonArchive& ar) {
+        for(int i = 0; i < 8; i++) { const auto key = "time" + std::to_string(i); ar.field(key.c_str(), mTime[i]); }
+}
+
 private:
     std::vector<int> mTime;
 };

@@ -28,6 +28,12 @@ struct eSetAside {
         ar.field("count", const_cast<int&>(fCount));
         dst.writeCity(fFrom.get());
     }
+
+    void serializeJson(eJsonArchive& ar, eWorldBoard& board) {
+        ar.field("resource", fRes);
+        ar.field("count", fCount);
+        ar.cityRef("fFrom", fFrom, board);
+    }
 };
 
 struct eCampaignGlossary {

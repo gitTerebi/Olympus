@@ -58,13 +58,13 @@ public:
         eGodProvideResourceAct(board, nullptr, nullptr,
                                eResourceType::meat, 0) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             const int added = mTarget->add(mResource, mCount);
             if(mAction) {
@@ -73,7 +73,7 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eStorageBuilding*>(b);
         });
@@ -85,7 +85,7 @@ public:
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
         eSaveArchive ar(dst);
         ar.field("resource", const_cast<eResourceType&>(mResource));

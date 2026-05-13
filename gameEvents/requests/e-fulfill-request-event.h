@@ -62,6 +62,23 @@ public:
     bool isActiveCityRequest() const;
     int requestId() const { return mRequestId; }
 
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        eResourceEventValue::serializeJson(ar);
+        eCountEventValue::serializeJson(ar);
+        eCityEventValue::serializeJson(ar, *gameBoard());
+        ar.field("mRequestResult", mRequestResult);
+        ar.field("mRequestFinished", mRequestFinished);
+        ar.field("mRequestStep", mRequestStep);
+        ar.field("mRequestId", mRequestId);
+        ar.field("mComplyStep", mComplyStep);
+        ar.field("mPostponed", mPostponed);
+        { auto sub = ar.child("mRequestDate"); mRequestDate.serializeJson(sub); }
+        { auto sub = ar.child("mRequestDeadline"); mRequestDeadline.serializeJson(sub); }
+        { auto sub = ar.child("mComplyStartDate"); mComplyStartDate.serializeJson(sub); }
+    }
+
+
 private:
     void serialize(eSaveArchive& ar);
 

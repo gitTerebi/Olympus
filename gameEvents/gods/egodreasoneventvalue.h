@@ -4,6 +4,7 @@
 class eWriteStream;
 class eReadStream;
 
+#include "fileIO/ejsonarchive.h"
 class eSaveArchive;
 class eGodReasonEventValue {
 public:
@@ -13,6 +14,9 @@ public:
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
+    virtual void serializeJson(eJsonArchive& ar) {
+        ar.field("mGodReason", mGodReason);
+    }
 protected:
     bool mGodReason = false;
 };

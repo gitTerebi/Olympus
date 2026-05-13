@@ -50,45 +50,10 @@ void ePatrolMoveAction::serializeJson(eJsonArchive& ar) {
     eMoveAction::serializeJson(ar);
     ar.field("mDiagonalOnly", mDiagonalOnly);
     ar.walkableRef("mWalkable", mWalkable);
+    ar.directionTimesRef("mOs", mOs, board());
     ar.field("mO", mO);
     ar.field("mMaxWalkDistance", mMaxWalkDistance);
     ar.field("mWalkedDistance", mWalkedDistance);
-    if(ar.writing()) {
-        int n = static_cast<int>(mOs->size());
-        ar.field("mOs.n", n);
-        int i = 0;
-        for(auto& kv : *mOs) {
-            auto sub = ar.child(("mOs." + std::to_string(i++)).c_str());
-            int tx = kv.first->x(), ty = kv.first->y();
-            sub.field("x", tx);
-            sub.field("y", ty);
-            for(int j = 0; j < 8; j++) {
-                auto o = static_cast<eOrientation>(j);
-                int t = kv.second.time(o);
-                sub.field(("t" + std::to_string(j)).c_str(), t);
-            }
-        }
-    } else {
-        if(!mOs) mOs = std::make_shared<eDirectionTimes>();
-        int n = 0;
-        ar.field("mOs.n", n);
-        auto& brd = board();
-        for(int i = 0; i < n; i++) {
-            auto sub = ar.child(("mOs." + std::to_string(i)).c_str());
-            int x = 0, y = 0;
-            sub.field("x", x);
-            sub.field("y", y);
-            auto* tile = brd.tile(x, y);
-            if(tile) {
-                auto& entry = (*mOs)[tile];
-                for(int j = 0; j < 8; j++) {
-                    int t = 0;
-                    sub.field(("t" + std::to_string(j)).c_str(), t);
-                    entry.time(static_cast<eOrientation>(j)) = t;
-                }
-            }
-        }
-    }
 }
 
 eCharacterActionState ePatrolMoveAction::nextTurn(eOrientation& t) {
