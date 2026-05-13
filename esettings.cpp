@@ -153,6 +153,14 @@ void eSettings::write() const {
             (fAgorasTakeFromTradingPosts ? "\"true\"" : "\"false\"") << "\n";
     file << "enable_yearly_autosaves" << " " <<
             (fEnableYearlyAutosaves ? "\"true\"" : "\"false\"") << "\n";
+    file << "popup_for_invasion" << " " <<
+            (fPopupForInvasion ? "\"true\"" : "\"false\"") << "\n";
+    file << "popup_for_requests" << " " <<
+            (fPopupForRequests ? "\"true\"" : "\"false\"") << "\n";
+    file << "popup_for_tributes" << " " <<
+            (fPopupForTributes ? "\"true\"" : "\"false\"") << "\n";
+    file << "popup_for_troops" << " " <<
+            (fPopupForTroops ? "\"true\"" : "\"false\"") << "\n";
     file << "disable_edge_scroll" << " " <<
             (fDisableEdgeScroll ? "\"true\"" : "\"false\"") << "\n";
     file << "last_difficulty" << " " << "\"" <<
@@ -267,6 +275,14 @@ void eSettings::read() {
     if(!enableYearlyAutosavesStr.empty()) {
         fEnableYearlyAutosaves = enableYearlyAutosavesStr == "true";
     }
+    const auto popupForInvasionStr = settings["popup_for_invasion"];
+    if(!popupForInvasionStr.empty()) fPopupForInvasion = popupForInvasionStr == "true";
+    const auto popupForRequestsStr = settings["popup_for_requests"];
+    if(!popupForRequestsStr.empty()) fPopupForRequests = popupForRequestsStr == "true";
+    const auto popupForTributesStr = settings["popup_for_tributes"];
+    if(!popupForTributesStr.empty()) fPopupForTributes = popupForTributesStr == "true";
+    const auto popupForTroopsStr = settings["popup_for_troops"];
+    if(!popupForTroopsStr.empty()) fPopupForTroops = popupForTroopsStr == "true";
     fDisableEdgeScroll = settings["disable_edge_scroll"] == "true";
     const auto lastDiffStr = settings["last_difficulty"];
     if(!lastDiffStr.empty()) {

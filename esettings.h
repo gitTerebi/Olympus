@@ -64,6 +64,10 @@ struct eSettings {
     bool fDoubleCartCapacity = false;
     bool fAgorasTakeFromTradingPosts = false;
     bool fEnableYearlyAutosaves = true;
+    bool fPopupForInvasion = true;
+    bool fPopupForRequests = true;
+    bool fPopupForTributes = true;
+    bool fPopupForTroops = true;
     bool fDisableEdgeScroll = false;
     eDifficulty fLastDifficulty = eDifficulty::hero;
     int fKeyScrollSpeed = 18;
