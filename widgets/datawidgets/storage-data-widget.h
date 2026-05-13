@@ -21,11 +21,13 @@ private:
     eWidget* sdwColumn(const eUIScale uiScale,
             const int iMin, const int iMax,
             const std::vector<eResourceType>& tps,
-            std::vector<eLabel*>& lbls);
+            std::vector<eLabel*>& lbls,
+            std::vector<eLabel*>& icons);
 
     eViewModeButton* mSeeDistribution = nullptr;
 
     std::vector<eLabel*> mResourceLabels;
+    std::vector<eLabel*> mResourceIcons;
 };
 
 #endif // STORAGEDATAWIDGET_H

@@ -17,9 +17,12 @@ public:
     void initialize(eAgoraBase* const a,
                     const eResourceType res);
 
-    void updateStateLabel(eAgoraBase* const a,
-                          const eResourceType res) {
+    void updateLabels(eAgoraBase* const a,
+                      const eResourceType res) {
         const int c = a->agoraCount(res);
+        mCountLabel->setText(std::to_string(c));
+        mCountLabel->fitContent();
+
         std::string text;
         bool dark = true;
         if(const auto v = a->vendor(res)) {
@@ -39,13 +42,23 @@ public:
         mStateLabel->setText(text);
         mStateLabel->fitContent();
     }
+
+    void paintEvent(ePainter& p) override {
+        updateLabels(mAgora, mResource);
+        eFramedButton::paintEvent(p);
+    }
 private:
+    eAgoraBase* mAgora = nullptr;
+    eResourceType mResource = eResourceType::none;
+    eLabel* mCountLabel = nullptr;
     eLabel* mStateLabel = nullptr;
 };
 
 void eAgoraButton::initialize(eAgoraBase* const a,
                               const eResourceType res) {
     const int c = a->agoraCount(res);
+    mAgora = a;
+    mResource = res;
     const auto reso = resolution();
     const auto uiScale = reso.uiScale();
     const double m = reso.multiplier();
@@ -77,6 +90,7 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     countLabel->setFontSizeS();
     countLabel->setText(std::to_string(c));
     countLabel->fitContent();
+    mCountLabel = countLabel;
     iw->addWidget(countLabel);
     countLabel->setX(iconLabel->width());
 
@@ -88,7 +102,7 @@ void eAgoraButton::initialize(eAgoraBase* const a,
     stateLabel->setPaddingXS();
     stateLabel->setFontSizeS();
     mStateLabel = stateLabel;
-    updateStateLabel(a, res);
+    updateLabels(a, res);
     stateLabel->fitContent();
     cw->addWidget(stateLabel);
     stateLabel->setY(iw->y() + iw->height());
@@ -124,7 +138,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        food->updateStateLabel(a, eResourceType::food);
+        food->updateLabels(a, eResourceType::food);
     });
 
     x += food->width() + d;
@@ -138,7 +152,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        fleece->updateStateLabel(a, eResourceType::fleece);
+        fleece->updateLabels(a, eResourceType::fleece);
     });
 
     x += food->width() + d;
@@ -152,7 +166,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        oil->updateStateLabel(a, eResourceType::oliveOil);
+        oil->updateLabels(a, eResourceType::oliveOil);
     });
 
     x = 0;
@@ -167,7 +181,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        wine->updateStateLabel(a, eResourceType::wine);
+        wine->updateLabels(a, eResourceType::wine);
     });
 
     x += food->width() + d;
@@ -181,7 +195,7 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        arms->updateStateLabel(a, eResourceType::armor);
+        arms->updateLabels(a, eResourceType::armor);
     });
 
     x += food->width() + d;
@@ -198,6 +212,6 @@ void eAgoraInfoWidget::initialize(eAgoraBase* const a) {
         if(!v) return;
         const bool ve = v->vendorEnabled();
         v->setVendorEnabled(!ve);
-        horse->updateStateLabel(a, horseRes);
+        horse->updateLabels(a, horseRes);
     });
 }

@@ -20,9 +20,6 @@ public:
 
     virtual void incTime(const int by);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void decCount();
 
     void spawnMax();

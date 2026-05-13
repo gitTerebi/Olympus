@@ -173,6 +173,7 @@ public:
     int countBuildings(const eBuildingType t) const;
     bool hasBuilding(const eBuildingType t) const;
     int countAllowed(const eBuildingType t) const;
+    bool cullExcessSheep();
     eBuilding* randomBuilding(const eBuildingValidator& v) const;
     eTile* randomTile() const;
     const std::vector<eBuilding*>& commemorativeBuildings() const
@@ -639,6 +640,7 @@ private:
 
     int mUpdateResources = 999999;
     int mCoverageUpdate = 10000;
+    int mExcessSheepCullUpdate = 0;
 
     int mRoadState = 0;
     int mAllBuildingsState = 0;

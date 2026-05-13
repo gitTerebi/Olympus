@@ -1972,11 +1972,12 @@ eCharMessage gCharMessage(eCharacter *const c)
     {
         if (const auto da = dynamic_cast<eDomesticatedAnimal*>(c))
         {
+            const std::string resource = type == eCharacterType::goat ? "Cheese" : "Fleece";
             if (da->canCollect()) {
-                result.fText += "\n\nFleece: Ready for shearing";
+                result.fText += "\n\n" + resource + ": Ready for collection";
             } else {
                 const int pct = da->monthsGrown() * 100 / 12;
-                result.fText += "\n\nFleece: " + std::to_string(pct) + "% grown";
+                result.fText += "\n\n" + resource + ": " + std::to_string(pct) + "% grown";
             }
         }
     }

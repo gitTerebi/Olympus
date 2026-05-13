@@ -33,6 +33,7 @@
 #include "elanguage.h"
 #include "emessages.h"
 #include "eeventdata.h"
+#include "enumbers.h"
 
 #include "eplague.h"
 
@@ -95,6 +96,13 @@ void eBoardCity::incTime(const int by) {
     if(mCoverageUpdate > cup) {
         mCoverageUpdate -= cup;
         updateCoverage();
+    }
+
+    mExcessSheepCullUpdate += by;
+    const int cullWait = 3*eNumbers::sDayLength;
+    while(mExcessSheepCullUpdate >= cullWait) {
+        mExcessSheepCullUpdate -= cullWait;
+        cullExcessSheep();
     }
 
     const auto& msgs = &eMessages::instance;
@@ -1447,6 +1455,25 @@ int eBoardCity::countAllowed(const eBuildingType t) const {
     const int already = countBuildings(t);
 
     return 8*countBuildings(parent) - already;
+}
+
+bool eBoardCity::cullExcessSheep() {
+    const int allowed = 8*countBuildings(eBuildingType::cardingShed);
+    const int sheep = countAnimalCharacters(eBuildingType::sheep);
+    if(sheep <= allowed) return false;
+
+    for(const auto c : mBoard.characters()) {
+        if(!c) continue;
+        if(c->type() != eCharacterType::sheep) continue;
+        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        if(!aa) continue;
+        const auto tile = mBoard.tile(aa->spawnerX(), aa->spawnerY());
+        if(!tile || tile->cityId() != mId) continue;
+        c->kill();
+        mAnimalBuildingsSurroundingUpdate = true;
+        return true;
+    }
+    return false;
 }
 
 static bool animalTypeMatchesBuilding(const eCharacterType ct,
