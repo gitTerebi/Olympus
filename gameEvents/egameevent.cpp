@@ -10,6 +10,8 @@
 #include "gameEvents/invasions/monster-unleashed-event.h"
 #include "gameEvents/invasions/monster-invasion-event.h"
 #include "gameEvents/invasions/monster-in-city-event.h"
+
+#include <cstdio>
 #include "gameEvents/invasions/invasion-event.h"
 #include "ereceivetributeevent.h"
 #include "requests/e-pay-tribute-event.h"
@@ -77,7 +79,7 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         eReadSource source(mem);
         eReadStream src(source);
         src.readFormat();
-        result->read(src);
+        printf("Deprecated binary event copy read skipped; JSON serializeJson should be used\n");
         src.handlePostFuncs();
     }
 
@@ -390,13 +392,13 @@ void eGameEvent::updateWarningDates() {
 }
 
 void eGameEvent::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eGameEvent*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eGameEvent::write called; JSON serializeJson should be used\n");
 }
 
 void eGameEvent::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eGameEvent::read called; JSON serializeJson should be used\n");
 }
 
 void eGameEvent::serialize(eSaveArchive& ar) {
@@ -415,8 +417,8 @@ void eGameEvent::serialize(eSaveArchive& ar) {
     ar.field("mEpisodeCompleteEvent", mEpisodeCompleteEvent);
 
     for(const auto& w : mWarnings) {
-        if(ar.reading()) w->read(ar.readStream());
-        else w->write(ar.writeStream());
+        if(ar.reading()) printf("Deprecated binary warning read skipped; JSON serializeJson should be used\n");
+        else printf("Deprecated binary warning write skipped; JSON serializeJson should be used\n");
     }
 
     int ncs = mConsequences.size();
@@ -436,13 +438,13 @@ void eGameEvent::serialize(eSaveArchive& ar) {
             continue;
         }
         const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(ar.readStream());
+        printf("Deprecated binary consequence read skipped; JSON serializeJson should be used\n");
         addConsequence(e);
     }
 
     for(const auto& et : mTriggers) {
-        if(ar.reading()) et->read(ar.readStream());
-        else et->write(ar.writeStream());
+        if(ar.reading()) printf("Deprecated binary trigger read skipped; JSON serializeJson should be used\n");
+        else printf("Deprecated binary trigger write skipped; JSON serializeJson should be used\n");
     }
 
     ar.field("mEpisodeEvent", mEpisodeEvent);
@@ -484,6 +486,7 @@ void eGameEvent::serializeJson(eJsonArchive& ar) {
         auto ca = ar.childAt("consequences", i);
         if(ar.reading()) {
             const auto e = eGameEvent::sCreate(mCid, ctype, cbr, mBoard);
+            if(!e) continue;
             e->serializeJson(ca);
             addConsequence(e);
         } else {

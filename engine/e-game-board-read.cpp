@@ -10,6 +10,8 @@
 #include "spawners/eentrypoint.h"
 #include "spawners/eexitpoint.h"
 #include "spawners/edisasterpoint.h"
+
+#include <cstdio>
 #include "spawners/elandslidepoint.h"
 #include "spawners/ewolfspawner.h"
 #include "fileIO/ebuildingreader.h"
@@ -70,8 +72,8 @@ void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
 }
 
 void eGameBoard::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eGameBoard::read called; JSON serializeJson should be used\n");
 }
 
 void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
@@ -137,7 +139,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
             eCityId cid;
             ar.field("mCitiesOnBoard.id", cid);
             const auto c = addCityToBoard(cid);
-            c->read(src);
+            printf("Deprecated binary board city read skipped; JSON serializeJson should be used\n");
             boardDbgLogN("board: city done", i);
             scheduleAppealMapUpdate(cid);
         }
@@ -151,7 +153,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
             ePlayerId pid;
             ar.field("mPlayersOnBoard.id", pid);
             const auto p = std::make_shared<eBoardPlayer>(pid, *this);
-            p->read(src);
+            printf("Deprecated binary board player read skipped; JSON serializeJson should be used\n");
             mPlayersOnBoard.push_back(p);
             boardDbgLogN("board: player done", i);
         }
@@ -160,7 +162,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLog("board: tiles");
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
-            t->read(src);
+            printf("Deprecated binary tile read skipped; JSON serializeJson should be used\n");
         }
     }
     boardDbgLog("board: tiles done");
@@ -189,7 +191,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
             eCharacterType type;
             ar.field("mCharacters.type", type);
             const auto c = eCharacter::sCreate(type, *this);
-            c->read(src);
+            printf("Deprecated binary character read skipped; JSON serializeJson should be used\n");
             boardDbgLogN("board: char done", i);
         }
     }
@@ -203,7 +205,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
             eMissileType type;
             ar.field("mMissiles.type", type);
             const auto c = eMissile::sCreate(*this, type);
-            c->read(src);
+            printf("Deprecated binary missile read skipped; JSON serializeJson should be used\n");
             boardDbgLogN("board: missile done", i);
         }
     }
@@ -213,7 +215,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLogN("board: goals", ng);
     for(int i = 0; i < ng; i++) {
         const auto g = std::make_shared<eEpisodeGoal>();
-        g->read(src);
+            printf("Deprecated binary goal read skipped; JSON serializeJson should be used\n");
         mGoals.push_back(g);
     }
     ar.field("mGoalsFulfilled", mGoalsFulfilled);
@@ -224,7 +226,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLogN("board: earthquakes", ne);
     for(int i = 0; i < ne; i++) {
         const auto e = std::make_shared<eEarthquake>();
-        e->read(src, *this);
+            printf("Deprecated binary earthquake read skipped; JSON serializeJson should be used\n");
         mEarthquakes.push_back(e);
     }
 
@@ -234,7 +236,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLogN("board: waves", nw);
     for(int i = 0; i < nw; i++) {
         const auto w = std::make_shared<eTidalWave>();
-        w->read(src, *this);
+            printf("Deprecated binary wave read skipped; JSON serializeJson should be used\n");
         mTidalWaves.push_back(w);
     }
 
@@ -244,7 +246,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLogN("board: lava", nl);
     for(int i = 0; i < nl; i++) {
         const auto w = std::make_shared<eLavaFlow>();
-        w->read(src, *this);
+            printf("Deprecated binary lava read skipped; JSON serializeJson should be used\n");
         mLavaFlows.push_back(w);
     }
 
@@ -254,7 +256,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     boardDbgLogN("board: slides", ns);
     for(int i = 0; i < ns; i++) {
         const auto w = std::make_shared<eLandSlide>();
-        w->read(src, *this);
+            printf("Deprecated binary land slide read skipped; JSON serializeJson should be used\n");
         mLandSlides.push_back(w);
     }
 
@@ -280,7 +282,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         ePlannedActionType type;
         ar.field("mPlannedActions.type", type);
         const auto a = ePlannedAction::sCreate(type);
-        a->read(src, *this);
+            printf("Deprecated binary planned action read skipped; JSON serializeJson should be used\n");
         mPlannedActions.push_back(a);
     }
 
@@ -590,6 +592,7 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
                 eCharacterType type{};
                 cAr.field("type", type);
                 const auto c = eCharacter::sCreate(type, *this);
+                if(!c) continue;
                 c->serializeJson(cAr);
             }
             ar.runPostFuncs();
@@ -625,6 +628,7 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
                 eMissileType type{};
                 ar.field(("mMissiles." + std::to_string(i) + ".type").c_str(), type);
                 const auto m = eMissile::sCreate(*this, type);
+                if(!m) continue;
                 auto ma = ar.child(("mMissiles." + std::to_string(i)).c_str());
                 m->serializeJson(ma, *this);
             }
@@ -645,49 +649,49 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
         }
         ar.field("mGoalsFulfilled", mGoalsFulfilled);
 
-        ar.field("earthquakeProgress", mProgressEarthquakes);
+        ar.field("mProgressEarthquakes", mProgressEarthquakes);
         {
             int ne = 0;
-            ar.field("earthquakeCount", ne);
+            ar.field("mEarthquakes.count", ne);
             for(int i = 0; i < ne; i++) {
                 const auto e = std::make_shared<eEarthquake>();
-                auto ea = ar.childAt("earthquakes", i);
+                auto ea = ar.child(("mEarthquakes." + std::to_string(i)).c_str());
                 e->serializeJson(ea, *this);
                 mEarthquakes.push_back(e);
             }
         }
 
-        ar.field("tidalWaveProgress", mProgressWaves);
+        ar.field("mProgressWaves", mProgressWaves);
         {
             int nw = 0;
-            ar.field("tidalWaveCount", nw);
+            ar.field("mTidalWaves.count", nw);
             for(int i = 0; i < nw; i++) {
                 const auto w = std::make_shared<eTidalWave>();
-                auto wa = ar.childAt("tidalWaves", i);
+                auto wa = ar.child(("mTidalWaves." + std::to_string(i)).c_str());
                 w->serializeJson(wa, *this);
                 mTidalWaves.push_back(w);
             }
         }
 
-        ar.field("lavaFlowProgress", mProgressLavaFlows);
+        ar.field("mProgressLavaFlows", mProgressLavaFlows);
         {
             int nl = 0;
-            ar.field("lavaFlowCount", nl);
+            ar.field("mLavaFlows.count", nl);
             for(int i = 0; i < nl; i++) {
                 const auto lf = std::make_shared<eLavaFlow>();
-                auto la = ar.childAt("lavaFlows", i);
+                auto la = ar.child(("mLavaFlows." + std::to_string(i)).c_str());
                 lf->serializeJson(la, *this);
                 mLavaFlows.push_back(lf);
             }
         }
 
-        ar.field("landSlideProgress", mProgressLandSlides);
+        ar.field("mProgressLandSlides", mProgressLandSlides);
         {
             int ns = 0;
-            ar.field("landSlideCount", ns);
+            ar.field("mLandSlides.count", ns);
             for(int i = 0; i < ns; i++) {
                 const auto ls = std::make_shared<eLandSlide>();
-                auto sa = ar.childAt("landSlides", i);
+                auto sa = ar.child(("mLandSlides." + std::to_string(i)).c_str());
                 ls->serializeJson(sa, *this);
                 mLandSlides.push_back(ls);
             }
@@ -720,6 +724,7 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
                 ePlannedActionType type{};
                 ar.field(("mPlannedActions." + std::to_string(i) + ".type").c_str(), type);
                 const auto a = ePlannedAction::sCreate(type);
+                if(!a) continue;
                 auto aa = ar.child(("mPlannedActions." + std::to_string(i)).c_str());
                 a->serializeJson(aa, *this);
                 mPlannedActions.push_back(a);
@@ -854,10 +859,15 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
 
         // characters
         {
-            int nc = static_cast<int>(mCharacters.size());
+            int nc = 0;
+            for(const auto c : mCharacters) {
+                if(!c || c->deleteScheduled()) continue;
+                nc++;
+            }
             ar.field("mCharacters.count", nc);
             int i = 0;
             for(const auto c : mCharacters) {
+                if(!c || c->deleteScheduled()) continue;
                 const auto key = "mCharacters." + std::to_string(i);
                 auto cAr = ar.child(key.c_str());
                 eCharacterType type = c->type();

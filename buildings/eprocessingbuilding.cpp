@@ -131,17 +131,46 @@ void eProcessingBuilding::serializeJson(eJsonArchive& ar) {
     }
     ar.field("mRingIdx", mRingIdx);
     ar.field("mRawCount", mRawCount);
+    ar.field("mProcessTime", mProcessTime);
+    if(ar.writing()) {
+        eCharacter* raw = mTakeCart.get();
+        ar.characterRef("mTakeCart", raw, getBoard());
+    } else {
+        ar.characterRef("mTakeCart", [this](eCharacter* c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
 }
 
 
 void eProcessingBuilding::read(eReadStream& src) {
     eResourceBuildingBase::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eProcessingBuilding::write(eWriteStream& dst) const {
     eResourceBuildingBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eProcessingBuilding*>(this)->serialize(ar);
 }
 
 int eProcessingBuilding::productionPercent() const {
     return std::min(100, (int)std::round(mProcessTime / mProcessWaitTime * 100.0));
+}
+
+void eProcessingBuilding::serialize(eSaveArchive& ar) {
+    ar.field("mLastMonth", mLastMonth);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
+    ar.field("mRawCount", mRawCount);
+    ar.field("mProcessTime", mProcessTime);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mTakeCart.get());
+    }
 }

@@ -3,6 +3,8 @@
 
 #include "engine/e-game-board.h"
 
+#include <cstdio>
+
 eSpawner::eSpawner(const eBannerTypeS type,
                    const int id, eTile* const tile,
                    const int maxCount,
@@ -18,15 +20,13 @@ eSpawner::~eSpawner() {
 }
 
 void eSpawner::read(eReadStream& src) {
-    eBanner::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eSpawner::read called; JSON serializeJson should be used\n");
 }
 
 void eSpawner::write(eWriteStream& dst) const {
-    eBanner::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSpawner*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eSpawner::write called; JSON serializeJson should be used\n");
 }
 
 void eSpawner::serialize(eSaveArchive& ar) {

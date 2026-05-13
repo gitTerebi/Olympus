@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include <cstdio>
 #include <filesystem>
 
 #include "evectorhelpers.h"
@@ -308,20 +309,13 @@ bool eCampaign::sReadGlossary(const std::string& name,
 }
 
 void eCampaign::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-    if(mBriefId != 0 && mCompleteId != 0) {
-        const auto& brief = eLanguage::zeusMM(mBriefId);
-        mTitle = brief.fTitle;
-        mIntroduction = brief.fContent;
-        const auto complete = eLanguage::zeusMM(mCompleteId);
-        mComplete = complete.fContent;
-    }
+    (void)src;
+    printf("Deprecated binary eCampaign::read called; JSON serializeJson should be used\n");
 }
 
 void eCampaign::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCampaign*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eCampaign::write called; JSON serializeJson should be used\n");
 }
 
 void eCampaign::serialize(eSaveArchive& ar) {
@@ -367,7 +361,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eParentCityEpisode>();
             e->fWorldBoard = &mWorldBoard;
-            e->read(src);
+            printf("Deprecated binary parent episode read skipped; JSON serializeJson should be used\n");
             mParentCityEpisodes.push_back(e);
         }
     }
@@ -377,7 +371,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eColonyEpisode>();
             e->fWorldBoard = &mWorldBoard;
-            e->read(src);
+            printf("Deprecated binary colony episode read skipped; JSON serializeJson should be used\n");
             mColonyEpisodes.push_back(e);
         }
     }
@@ -386,7 +380,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         ar.field("forColonyCount", ne, 0);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
-            set->read(src, &mWorldBoard);
+            printf("Deprecated binary set read skipped; JSON serializeJson should be used\n");
             mForColony.push_back(set);
         }
     }
@@ -395,7 +389,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         ar.field("forParentCount", ne, 0);
         for(int i = 0; i < ne; i++) {
             const auto set = std::make_shared<eSetAside>();
-            set->read(src, &mWorldBoard);
+            printf("Deprecated binary set read skipped; JSON serializeJson should be used\n");
             mForParent.push_back(set);
         }
     }
@@ -672,7 +666,7 @@ void eCampaign::copyEpisodeSettings(eEpisode* const from,
         eReadSource source(mem);
         eReadStream src(source);
         src.readFormat();
-        to->read(src);
+        printf("Deprecated binary city read skipped; JSON serializeJson should be used\n");
         src.handlePostFuncs();
     }
 

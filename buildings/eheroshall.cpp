@@ -443,10 +443,14 @@ void eHerosHall::sendHeroOnQuest() {
 
 void eHerosHall::read(eReadStream& src) {
     eBuilding::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHerosHall::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eHerosHall*>(this)->serialize(ar);
 }
 
 void eHerosHall::serializeJson(eJsonArchive& ar) {
@@ -459,6 +463,32 @@ void eHerosHall::serializeJson(eJsonArchive& ar) {
     ar.field("mUpdateCulture", mUpdateCulture);
     ar.field("mHeroOnQuest", mHeroOnQuest);
     ar.field("mSpawnWait", mSpawnWait);
+    if(ar.writing()) {
+        eCharacter* raw = mHero.get();
+        ar.characterRef("mHero", raw, getBoard());
+    } else {
+        ar.characterRef("mHero", [this](eCharacter* c) {
+            mHero = static_cast<eHero*>(c);
+        }, getBoard());
+    }
+}
+
+void eHerosHall::serialize(eSaveArchive& ar) {
+    ar.field("mStage", mStage);
+    ar.field("mArrivalCountdown", mArrivalCountdown);
+    ar.field("mPhilosophers", mPhilosophers);
+    ar.field("mActors", mActors);
+    ar.field("mAthletes", mAthletes);
+    ar.field("mUpdateCulture", mUpdateCulture);
+    ar.field("mHeroOnQuest", mHeroOnQuest);
+    ar.field("mSpawnWait", mSpawnWait);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mHero = static_cast<eHero*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mHero.get());
+    }
 }
 
 void eHerosHall::addRequirement(const eHeroRequirement& hr) {

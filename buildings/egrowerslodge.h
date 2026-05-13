@@ -44,6 +44,8 @@ public:
     void setNoTarget(const bool t);
     bool noTarget() const { return mNoTarget; }
 private:
+    void serialize(class eSaveArchive& ar);
+
     const int mMaxResource = 8;
 
     const eGrowerType mType;

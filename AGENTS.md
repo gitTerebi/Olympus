@@ -6,18 +6,8 @@ Refactor repeated functions into shared local helpers where possible.
 Debug log using printf, not std out.
 New files: kebab-case, no `e` or `e-` prefix (e.g. `storage-widget.cpp` not `estorage-widget.cpp` or `e-storage-widget.cpp`).
 
-## JSON Save Transition
-
-Prefer JSON props over `blob` for small, self-contained state that already has `serializeJson(eJsonArchive&)`.
-Do not convert blob state to JSON unless every nested type/ref it saves has JSON support.
-Good small candidates: flat structs/classes with existing `serializeJson`, no post-load refs, no nested action graphs.
-Bad candidates until expanded: characters/actions, players with event refs, tiles, and large systems with many raw `read/write` deps.
-When storing counted JSON objects with keys like `x.count`, store children under object paths (`x.0`, `x.1`) using `ar.child("x.N")`.
-Do not use `ar.childAt("x", i)` when the same key also stores `x.count`; `childAt` expects an array and will conflict with object-style count fields.
-Use `childAt` only with a separate array key, e.g. `thingCount` + `things[]`.
-Keep read/write JSON shapes identical. If read uses `ar.child("x.N")`, write must use the same.
-For old/new JSON format transitions, first decide if old saves must load; if yes, add explicit compat based on field presence, not a blind blob fallback.
-After save-format edits, test loading a save made before the edit and a save made after the edit.
+## JSON Saves
+G:\games\eZeus\eZeus-0.8.2-beta\Save\Tim
 
 ## C++ Style
 

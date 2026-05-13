@@ -5,27 +5,17 @@
 #include "fileIO/ejsonarchive.h"
 #include "fileIO/eblob.h"
 
+#include <cstdio>
 #include <iterator>
 
 void eEpisode::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-
-    if(fIntroId != 0 && fCompleteId != 0) {
-        const auto intro = eLanguage::zeusMM(fIntroId);
-        fTitle = intro.fTitle;
-        fIntroduction = intro.fContent;
-        if(const auto cep = dynamic_cast<eColonyEpisode*>(this)) {
-            cep->fSelection = intro.fSubtitle;
-        }
-        const auto complete = eLanguage::zeusMM(fCompleteId);
-        fComplete = complete.fContent;
-    }
+    (void)src;
+    printf("Deprecated binary eEpisode::read called; JSON serializeJson should be used\n");
 }
 
 void eEpisode::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEpisode*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eEpisode::write called; JSON serializeJson should be used\n");
 }
 
 void eEpisode::serialize(eSaveArchive& ar) {
@@ -102,10 +92,10 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 if(ar.reading()) {
                     const auto branch = eGameEventBranch::root;
                     const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
-                    e->read(ar.readStream());
+                    printf("Deprecated binary episode event read skipped; JSON serializeJson should be used\n");
                     fEvents[cid].push_back(e);
                 } else {
-                    events[j]->write(ar.writeStream());
+                    printf("Deprecated binary episode event write skipped; JSON serializeJson should be used\n");
                 }
             }
         }
@@ -118,10 +108,10 @@ void eEpisode::serialize(eSaveArchive& ar) {
         for(int i = 0; i < ng; i++) {
             if(ar.reading()) {
                 const auto g = std::make_shared<eEpisodeGoal>();
-                g->read(ar.readStream());
+                printf("Deprecated binary episode goal read skipped; JSON serializeJson should be used\n");
                 fGoals.push_back(g);
             } else {
-                fGoals[i]->write(ar.writeStream());
+                printf("Deprecated binary episode goal write skipped; JSON serializeJson should be used\n");
             }
         }
     }

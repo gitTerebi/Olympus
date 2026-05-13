@@ -81,7 +81,7 @@ public:
                 }
                 return false;
             }
-            eReadSource source(const_cast<char*>(data.data()));
+            eReadSource source(const_cast<char*>(data.data()), data.size());
             eReadStream src(source);
             src >> value;
             return true;
@@ -109,11 +109,11 @@ public:
             eCharActionType type;
             this->value(type);
             action = create(type);
-            action->read(*mSrc);
+            printf("Deprecated binary characterAction read skipped; JSON serializeJson should be used\n");
         } else {
             eCharActionType type = action->type();
             this->value(type);
-            action->write(*mDst);
+            printf("Deprecated binary characterAction write skipped; JSON serializeJson should be used\n");
         }
     }
 

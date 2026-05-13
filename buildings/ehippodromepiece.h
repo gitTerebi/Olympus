@@ -53,6 +53,7 @@ public:
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
     void serializeJson(class eJsonArchive& ar) override;
+    void serialize(class eSaveArchive& ar);
 private:
 
     void crossTile(eTile* const t,

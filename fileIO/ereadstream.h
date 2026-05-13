@@ -9,6 +9,7 @@
 #include <fstream>
 #include <cstdint>
 #include <cstring>
+#include <algorithm>
 #include <cassert>
 #include <vector>
 
@@ -38,20 +39,31 @@ class eReadSource {
 public:
     eReadSource(std::ifstream* const file) :
         fFile(file) {}
-    eReadSource(void* mem) :
-        fMem(mem) {}
+    eReadSource(void* mem, const size_t memSize = SIZE_MAX) :
+        fMem(mem), fMemSize(memSize) {}
 
     inline size_t read(void* const data, const size_t len) {
         assert(fFile || fMem);
         if(fFile) {
             fFile->read(static_cast<char*>(data), len);
-            fBytesRead += len;
-            return len;
+            const auto read = static_cast<size_t>(fFile->gcount());
+            if(read < len) {
+                std::memset(static_cast<char*>(data) + read, 0, len - read);
+            }
+            fBytesRead += read;
+            return read;
         } else if(fMem) {
-            std::memcpy(data, static_cast<char*>(fMem) + fMemPos, len);
-            fMemPos += len;
-            fBytesRead += len;
-            return len;
+            const auto available = fMemPos < fMemSize ? fMemSize - fMemPos : 0;
+            const auto toRead = std::min(len, available);
+            if(toRead > 0) {
+                std::memcpy(data, static_cast<char*>(fMem) + fMemPos, toRead);
+            }
+            if(toRead < len) {
+                std::memset(static_cast<char*>(data) + toRead, 0, len - toRead);
+            }
+            fMemPos += toRead;
+            fBytesRead += toRead;
+            return toRead;
         }
         return 0;
     }
@@ -60,6 +72,7 @@ public:
 private:
     std::ifstream* fFile = nullptr;
     void* fMem = nullptr;
+    size_t fMemSize = 0;
     size_t fMemPos = 0;
     size_t fBytesRead = 0;
 };

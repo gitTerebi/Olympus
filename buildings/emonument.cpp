@@ -180,7 +180,14 @@ void eMonument::serializeJson(eJsonArchive& ar) {
     ar.field("mUsed.fMarble", mUsed.fMarble);
     ar.field("mUsed.fSculpture", mUsed.fSculpture);
     ar.field("mAltitude", mAltitude);
-    // mCart restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mCart.get();
+        ar.characterRef("mCart", raw, getBoard());
+    } else {
+        ar.characterRef("mCart", [this](eCharacter* c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
 }
 
 

@@ -36,6 +36,8 @@ public:
 
     eFisheryState state() const { return mState; }
 private:
+    void serialize(class eSaveArchive& ar);
+
 
     void spawnBoat();
     void updateDisabled();

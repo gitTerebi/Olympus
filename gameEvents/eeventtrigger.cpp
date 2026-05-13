@@ -6,6 +6,8 @@
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
 
+#include <cstdio>
+
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
                              eGameBoard& board) :
@@ -55,7 +57,7 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
         }
         const auto branch = eGameEventBranch::trigger;
         const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(ar.readStream());
+        printf("Deprecated binary trigger event read skipped; JSON serializeJson should be used\n");
         mEvents.emplace_back(e);
     }
 }
@@ -84,6 +86,7 @@ void eEventTrigger::serializeJson(eJsonArchive& ar) {
         auto ca = ar.childAt("events", i);
         if(ar.reading()) {
             const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::trigger, mBoard);
+            if(!e) continue;
             e->serializeJson(ca);
             mEvents.emplace_back(e);
         } else {

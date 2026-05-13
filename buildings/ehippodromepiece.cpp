@@ -3,6 +3,7 @@
 #include "etilehelper.h"
 #include "textures/egametextures.h"
 #include "fileIO/ejsonarchive.h"
+#include "fileIO/esavearchive.h"
 #include "engine/e-game-board.h"
 #include "buildings/eroad.h"
 #include "ehippodrome.h"
@@ -636,13 +637,38 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
 
 void eHippodromePiece::write(eWriteStream& dst) const {
     eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eHippodromePiece*>(this)->serialize(ar);
 }
 
 void eHippodromePiece::read(eReadStream& src) {
     eBuilding::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eHippodromePiece::serializeJson(eJsonArchive& ar) {
     eBuildingWithResource::serializeJson(ar);
     ar.field("mId", mId);
+    if(ar.writing()) {
+        eCharacter* raw = mCart.get();
+        ar.characterRef("mCart", raw, getBoard());
+    } else {
+        ar.characterRef("mCart", [this](eCharacter* c) {
+            mCart = static_cast<eCartTransporter*>(c);
+            if(mHippodrome) mHippodrome->setCart(mCart);
+        }, getBoard());
+    }
+}
+
+void eHippodromePiece::serialize(eSaveArchive& ar) {
+    ar.field("mId", mId);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+            if(mHippodrome) mHippodrome->setCart(mCart);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart.get());
+    }
 }

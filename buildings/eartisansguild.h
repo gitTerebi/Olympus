@@ -22,6 +22,8 @@ public:
     void write(eWriteStream& dst) const override;
     void serializeJson(class eJsonArchive& ar) override;
 private:
+    void serialize(class eSaveArchive& ar);
+
 
     stdptr<eArtisan> mArtisan;
 

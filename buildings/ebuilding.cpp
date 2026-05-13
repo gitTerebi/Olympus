@@ -11,6 +11,8 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/etower.h"
 
+#include <cstdio>
+
 #include "buildings/allbuildings.h"
 
 #include "evectorhelpers.h"
@@ -2792,13 +2794,13 @@ void eBuilding::serialize(eSaveArchive& ar) {
 }
 
 void eBuilding::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eBuilding::read called; JSON serializeJson should be used\n");
 }
 
 void eBuilding::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eBuilding*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eBuilding::write called; JSON serializeJson should be used\n");
 }
 
 void eBuilding::serializeJson(eJsonArchive& ar) {

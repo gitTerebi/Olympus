@@ -238,7 +238,22 @@ void eTriremeWharf::serializeJson(eJsonArchive& ar) {
     ar.field("mAbroad", mAbroad);
     ar.field("mTriremeBuildingStage", mTriremeBuildingStage);
     ar.field("mTriremeBuildingTime", mTriremeBuildingTime);
-    // mTakeCart/mTrireme restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mTakeCart.get();
+        ar.characterRef("mTakeCart", raw, getBoard());
+    } else {
+        ar.characterRef("mTakeCart", [this](eCharacter* c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
+    if(ar.writing()) {
+        eCharacter* raw = mTrireme.get();
+        ar.characterRef("mTrireme", raw, getBoard());
+    } else {
+        ar.characterRef("mTrireme", [this](eCharacter* c) {
+            mTrireme = static_cast<eTrireme*>(c);
+        }, getBoard());
+    }
 }
 
 

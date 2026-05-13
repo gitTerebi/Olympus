@@ -32,7 +32,8 @@ enum class eCollectType {
 
 eDomesticatedAnimal* tryToCollect(eTile* const tile,
                                   const eCharacterType type,
-                                  eCollectType& collType) {
+                                  eCollectType& collType,
+                                  const bool allowGroom = true) {
     const auto cs = tile->characters();
     for(const auto& c : cs) {
         const auto t = c->type();
@@ -41,8 +42,10 @@ eDomesticatedAnimal* tryToCollect(eTile* const tile,
         if(s->busy()) return nullptr;
         if(s->canCollect()) {
             collType = eCollectType::collect;
-        } else {
+        } else if(allowGroom) {
             collType = eCollectType::groom;
+        } else {
+            continue;
         }
         return s;
     }
@@ -82,7 +85,7 @@ bool eShepherdAction::decide() {
         }
     } else {
         eCollectType collType;
-        if(const auto a = tryToCollect(t, mAnimalType, collType)) {
+        if(const auto a = tryToCollect(t, mAnimalType, collType, !inShed)) {
             switch(collType) {
             case eCollectType::collect:
                 collectDecision(a);

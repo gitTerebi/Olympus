@@ -31,6 +31,8 @@ public:
     int horses() const { return mHorses; }
     int chariotCount() const { return std::min(mHorses, mChariots); }
 private:
+    void serialize(class eSaveArchive& ar);
+
 
     int mWood = 0;
     int mChariotBuildingTime = 0;

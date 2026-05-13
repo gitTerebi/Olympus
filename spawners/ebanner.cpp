@@ -16,6 +16,8 @@
 #include "elandslidepoint.h"
 #include "ewolfspawner.h"
 
+#include <cstdio>
+
 eBanner::eBanner(const eBannerTypeS type,
                  const int id,
                  eTile* const tile,
@@ -45,13 +47,13 @@ bool eBanner::buildable() const {
 }
 
 void eBanner::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eBanner::read called; JSON serializeJson should be used\n");
 }
 
 void eBanner::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eBanner*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eBanner::write called; JSON serializeJson should be used\n");
 }
 
 void eBanner::serialize(eSaveArchive& ar) {
