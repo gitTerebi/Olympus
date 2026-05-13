@@ -14,6 +14,8 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/ehippodromepiece.h"
 #include "engine/etile.h"
+#include "engine/e-game-board.h"
+#include "engine/eboardcity.h"
 
 #include "characters/ehomeless.h"
 #include "characters/echaracter.h"
@@ -77,6 +79,39 @@ void killAnimalPenAnimals(eBuilding* const b) {
     }
 }
 
+void killExcessAnimalsForParent(eBuilding* const b) {
+    eBuildingType animalType;
+    switch(b->type()) {
+    case eBuildingType::cardingShed:
+        animalType = eBuildingType::sheep;
+        break;
+    default:
+        return;
+    }
+
+    auto& board = b->getBoard();
+    const auto city = board.boardCityWithId(b->cityId());
+    if(!city) return;
+
+    const int parentCount = std::max(0, city->countBuildings(b->type()) - 1);
+    const int maxAnimals = 8*parentCount;
+    int excess = city->countBuildings(animalType) - maxAnimals;
+    if(excess <= 0) return;
+
+    const auto chars = board.characters();
+    for(const auto c : chars) {
+        if(excess <= 0) return;
+        if(!c) continue;
+        if(!isAnimalForPen(c->type(), animalType)) continue;
+        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        if(!aa) continue;
+        const auto tile = board.tile(aa->spawnerX(), aa->spawnerY());
+        if(!tile || tile->cityId() != b->cityId()) continue;
+        c->kill();
+        excess--;
+    }
+}
+
 void eBuildingsToErase::addBuilding(eBuilding* const b) {
     eBuilding* bb = b;
     const auto t = b->type();
@@ -122,6 +157,7 @@ void eBuildingsToErase::addCharacter(eCharacter* const c) {
 }
 
 void eBuildingsToErase::erase(eBuilding* const b) {
+    killExcessAnimalsForParent(b);
     killAnimalPenAnimals(b);
     switch(b->type()) {
     case eBuildingType::eliteHousing:

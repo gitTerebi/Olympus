@@ -12,6 +12,36 @@
 #include "ehorse.h"
 #include "echariot.h"
 
+namespace {
+template <typename T>
+void killAndClear(stdptr<T>& c) {
+    c.clear();
+}
+
+eCharacter* liveCharacter(eCharacter* const c) {
+    if(!c) return nullptr;
+    if(c->deleteScheduled()) return nullptr;
+    return c;
+}
+
+void assignOx(stdptr<eOx>& ox, eCharacter* const c) {
+    ox = dynamic_cast<eOx*>(liveCharacter(c));
+}
+
+void assignTrailer(stdptr<eTrailer>& trailer, eCharacter* const c) {
+    trailer = dynamic_cast<eTrailer*>(liveCharacter(c));
+}
+
+int liveFollowerCount(const std::vector<stdptr<eCharacter>>& followers) {
+    int result = 0;
+    for(const auto& f : followers) {
+        if(!f) break;
+        result++;
+    }
+    return result;
+}
+}
+
 eCartTransporter::eCartTransporter(eGameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fTransporter,
                    eCharacterType::cartTransporter) {
@@ -22,10 +52,10 @@ eCartTransporter::eCartTransporter(eGameBoard& board) :
 
 eCartTransporter::~eCartTransporter() {
     setResourceValue(eResourceType::none, 0);
-    if(mOx) mOx->kill();
-    if(mTrailer) mTrailer->kill();
+    killAndClear(mOx);
+    killAndClear(mTrailer);
     for(const auto& f : mFollowers) {
-        if(f) f->kill();
+        (void)f;
     }
 }
 
@@ -173,8 +203,8 @@ void eCartTransporter::setType(const eCartTransporterType t) {
     if(mType == t) return;
     mType = t;
     updateTextures();
-    if(mOx) mOx->kill();
-    if(mTrailer) mTrailer->kill();
+    killAndClear(mOx);
+    killAndClear(mTrailer);
     if(mType == eCartTransporterType::ox) {
         const auto t = tile();
         auto& board = getBoard();
@@ -259,23 +289,17 @@ void eCartTransporter::setResource(const eResourceType type,
         {
             const int iMax = mFollowers.size();
             for(int i = count*nFollPerRes; i < iMax; i++) {
-                const auto f = mFollowers.back();
                 mFollowers.pop_back();
-                if(f) f->kill();
             }
         }
         const int iMax = count - mFollowers.size()/nFollPerRes;
-        for(int i = 0; i < iMax; i++) {
-            eCharacter* follow;
-            if(mFollowers.empty()) {
-                follow = this;
-            } else {
-                const int iMax = mFollowers.size() - 1;
-                for(int i = iMax; i >= 0; i--) {
-                    follow = mFollowers[i].get();
-                    if(follow) break;
-                }
-            }
+    for(int i = 0; i < iMax; i++) {
+        eCharacter* follow;
+        if(mFollowers.empty()) {
+            follow = this;
+        } else {
+            follow = this;
+        }
 
             const auto t = tile();
             auto& board = getBoard();
@@ -337,6 +361,7 @@ void eCartTransporter::setActionType(const eCharacterActionType t) {
 
 void eCartTransporter::catchUp() {
     const auto cCatchUp = [](eCharacter* const c) {
+        if(!c) return;
         const auto ca = c->action();
         if(const auto a = dynamic_cast<eFollowAction*>(ca)) {
             a->catchUp();
@@ -383,10 +408,10 @@ void eCartTransporter::serializeJson(eJsonArchive& ar) {
         ar.characterRef("mTrailer", rawTrailer, getBoard());
     } else {
         ar.characterRef("mOx", [this](eCharacter* c) {
-            mOx = static_cast<eOx*>(c);
+            assignOx(mOx, c);
         }, getBoard());
         ar.characterRef("mTrailer", [this](eCharacter* c) {
-            mTrailer = static_cast<eTrailer*>(c);
+            assignTrailer(mTrailer, c);
         }, getBoard());
     }
     int nf = ar.writing() ? static_cast<int>(mFollowers.size()) : 0;
@@ -402,6 +427,11 @@ void eCartTransporter::serializeJson(eJsonArchive& ar) {
                 mFollowers.push_back(c);
             }, getBoard());
         }
+    }
+    if(ar.reading()) {
+        ar.addCharPostFunc([this]() {
+            cleanupFollowers();
+        });
     }
     if(ar.reading()) updateTextures();
 }
@@ -423,16 +453,16 @@ void eCartTransporter::serialize(eSaveArchive& ar) {
     ar.field("mMaxDistance", mMaxDistance);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mOx = static_cast<eOx*>(c);
+            assignOx(mOx, c);
         });
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTrailer = static_cast<eTrailer*>(c);
+            assignTrailer(mTrailer, c);
         });
     } else {
-        ar.writeStream().writeCharacter(mOx);
-        ar.writeStream().writeCharacter(mTrailer);
+        ar.writeStream().writeCharacter(mOx.get());
+        ar.writeStream().writeCharacter(mTrailer.get());
     }
-    int nf = mFollowers.size();
+    int nf = static_cast<int>(mFollowers.size());
     ar.field("nf", nf);
     if(ar.reading()) mFollowers.clear();
     for(int i = 0; i < nf; i++) {
@@ -441,7 +471,7 @@ void eCartTransporter::serialize(eSaveArchive& ar) {
                 mFollowers.push_back(c);
             });
         } else {
-            ar.writeStream().writeCharacter(mFollowers[i]);
+            ar.writeStream().writeCharacter(mFollowers[i].get());
         }
     }
 }

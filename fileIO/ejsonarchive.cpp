@@ -66,8 +66,9 @@ void eJsonArchive::characterRef(const char* key, eCharacter*& c, eGameBoard& boa
         int ioid = -1;
         field(key, ioid, -1);
         if(ioid < 0) { c = nullptr; return; }
-        addCharPostFunc([&c, &board, ioid]() {
+        addCharPostFunc([&c, &board, ioid, key = std::string(key)]() {
             c = board.characterWithIOID(ioid);
+            if(!c) printf("Missing character ref %s ioid=%d\n", key.c_str(), ioid);
         });
     } else {
         int ioid = c ? c->ioID() : -1;
@@ -80,8 +81,10 @@ void eJsonArchive::characterRef(const char* key, const std::function<void(eChara
         int ioid = -1;
         field(key, ioid, -1);
         if(ioid < 0) { cb(nullptr); return; }
-        addCharPostFunc([&board, ioid, cb]() {
-            cb(board.characterWithIOID(ioid));
+        addCharPostFunc([&board, ioid, cb, key = std::string(key)]() {
+            const auto c = board.characterWithIOID(ioid);
+            if(!c) printf("Missing character ref %s ioid=%d\n", key.c_str(), ioid);
+            cb(c);
         });
     }
 }

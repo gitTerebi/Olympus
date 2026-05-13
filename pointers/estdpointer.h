@@ -62,8 +62,9 @@ public:
     }
 
     inline T* data() const {
-        if(wp.expired()) return nullptr;
-        return static_cast<T*>(rp);
+        const std::shared_ptr<eStdSelfRef> sp = wp.lock();
+        if(!sp) return nullptr;
+        return static_cast<T*>(sp.get());
     }
 
     inline T* get() const { return data(); }

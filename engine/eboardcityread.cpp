@@ -54,6 +54,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("taxesPaidThisYear", mTaxesPaidThisYear);
     ar.field("peoplePaidTaxesLastYear", mPeoplePaidTaxesLastYear);
     ar.field("peoplePaidTaxesThisYear", mPeoplePaidTaxesThisYear);
+    ar.field("excessSheepCullUpdate", mExcessSheepCullUpdate, 0);
 
     ar.field("maxSanctuaries", mMaxSanctuaries);
 
@@ -504,6 +505,7 @@ void eBoardCity::serializeJson(eJsonArchive& ar) {
     ar.field("taxesPaidThisYear", mTaxesPaidThisYear);
     ar.field("peoplePaidTaxesLastYear", mPeoplePaidTaxesLastYear);
     ar.field("peoplePaidTaxesThisYear", mPeoplePaidTaxesThisYear);
+    ar.field("excessSheepCullUpdate", mExcessSheepCullUpdate);
     ar.field("maxSanctuaries", mMaxSanctuaries);
     ar.field("immigrationLimit", mImmigrationLimit);
     ar.field("noFood", mNoFood);

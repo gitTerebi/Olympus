@@ -8,11 +8,33 @@
 
 #include "elanguage.h"
 
+namespace {
+class StockpileResourceIcon : public eLabel {
+public:
+    using eLabel::eLabel;
+
+    void setPressAction(const eAction& action) {
+        mPressAction = action;
+    }
+
+protected:
+    bool mousePressEvent(const eMouseEvent& e) override {
+        (void)e;
+        if(mPressAction) mPressAction();
+        return true;
+    }
+
+private:
+    eAction mPressAction;
+};
+}
+
 eWidget* StorageDataWidget::sdwColumn(
         const eUIScale uiScale,
         const int iMin, const int iMax,
         const std::vector<eResourceType>& tps,
-        std::vector<eLabel*>& lbls) {
+        std::vector<eLabel*>& lbls,
+        std::vector<eLabel*>& icons) {
     const int pp = spacing();
     const auto w0 = new eWidget(window());
     w0->setNoPadding();
@@ -21,15 +43,23 @@ eWidget* StorageDataWidget::sdwColumn(
         const auto icon = eResourceTypeHelpers::icon(uiScale, t);
         const auto w = new eWidget(window());
         w->setNoPadding();
-        const auto ic = new eLabel(window());
+        const auto ic = new StockpileResourceIcon(window());
         ic->setTexture(icon);
         ic->setNoPadding();
         ic->fitContent();
+        ic->setPressAction([this, t]() {
+            const auto c = mBoard.boardCityWithId(viewedCity());
+            if(!c) return;
+            if(c->isStockpiled(t)) c->removeStockpile(t);
+            else c->addStockpile(t);
+        });
+        icons.push_back(ic);
 
         const auto lw = new eWidget(window());
         lw->setNoPadding();
         const auto l = new eLabel("-", window());
         l->setFontSizeXS();
+        l->setDarkFontColor();
         l->setNoPadding();
         l->fitContent();
         lbls.push_back(l);
@@ -72,12 +102,14 @@ void StorageDataWidget::initialize() {
     const int iMax0 = tps.size()/2 + 1;
     const auto w0 = sdwColumn(uiScale,
                               iMin0, iMax0, tps,
-                              mResourceLabels);
+                              mResourceLabels,
+                              mResourceIcons);
     const int iMin1 = iMax0;
     const int iMax1 = tps.size();
     const auto w1 = sdwColumn(uiScale,
                               iMin1, iMax1, tps,
-                              mResourceLabels);
+                              mResourceLabels,
+                              mResourceIcons);
 
     const int pp = spacing();
 
@@ -110,12 +142,17 @@ void StorageDataWidget::paintEvent(ePainter& p) {
         const auto& src = mBoard.resources(cid);
         if(src) {
             const int iMax = mResourceLabels.size();
+            const auto city = mBoard.boardCityWithId(cid);
             for(int i = 0; i < iMax; i++) {
                 const auto c = (*src)[i].second;
                 const auto l = mResourceLabels[i];
                 l->setText(std::to_string(c));
                 l->fitContent();
                 l->align(eAlignment::right);
+                const auto icon = mResourceIcons[i];
+                const bool stockpiled = city && city->isStockpiled((*src)[i].first);
+                if(stockpiled) icon->setTextureColorMod(80, 80, 80);
+                else icon->setTextureColorMod(255, 255, 255);
             }
         }
     }

@@ -164,7 +164,6 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
         if(r) return false;
 
-        bool found = false;
         const auto& ub = t->underBuilding();
 
         // 2.3 Producers: first pass accepts only granaries
@@ -181,8 +180,11 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         // 2.5 Check if building can fulfill any cart tasks
         for(const auto& task : tasks) {
             const auto res = task.fResource;
+            bool found = false;
 
             if(task.fType == eCartActionType::take) {
+                const auto city = board().boardCityWithId(t->cityId());
+                if(city && city->isStockpiled(res)) continue;
                 if(ub.resourceHas(res)) found = true;
             } else { // give
                 if(ub.empties(res)) continue;
@@ -200,10 +202,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                 *ttask = task;
                 *bx = t->x();
                 *by = t->y();
-                break;
+                return true;
             }
         }
-        return found;
+        return false;
     };
     const stdptr<eCartTransporterAction> tptr(this);
 
@@ -273,6 +275,7 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
     if(!rb) return;
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
+    const int startCount = ct->resCount();
     const int takenGiven = targetProcessTask(rb, mTask);
     mTask.fMaxCount -= takenGiven;
 
@@ -291,10 +294,14 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         targetProcessTask(rb, task);
     }
     const int count = ct->resCount();
-    if(count > 0) {
+    if(count > 0 && mTask.fType == eCartActionType::give) {
         const auto res = ct->resType();
         const int added = rb->add(res, count);
         ct->setResource(res, count - added);
+    }
+    if(startCount == 0 && ct->resCount() == 0 &&
+       mTask.fType == eCartActionType::take && mTask.fMaxCount > 0) {
+        findTarget(mTask);
     }
 }
 
@@ -307,6 +314,8 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
     const auto tres = task.fResource;
     const int max = tres == eResourceType::sculpture ? 1 : 4;
     if(task.fType == eCartActionType::take) {
+        const auto city = board().boardCityWithId(rb->cityId());
+        if(city && city->isStockpiled(tres)) return 0;
         if(count > 0 && res != tres) return 0;
         const int space = max - count;
         if(space <= 0) return 0;

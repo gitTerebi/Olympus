@@ -19,16 +19,6 @@ eSpawner::~eSpawner() {
     board().unregisterSpawner(this);
 }
 
-void eSpawner::read(eReadStream& src) {
-    (void)src;
-    printf("Deprecated binary eSpawner::read called; JSON serializeJson should be used\n");
-}
-
-void eSpawner::write(eWriteStream& dst) const {
-    (void)dst;
-    printf("Deprecated binary eSpawner::write called; JSON serializeJson should be used\n");
-}
-
 void eSpawner::serialize(eSaveArchive& ar) {
     ar.field("mCount", mCount);
     ar.field("mTime", mTime);

@@ -2962,7 +2962,6 @@ void eGameBoard::incTime(const int by)
     const int nd = mTime / dayLen;
     mDate.nextDays(nd, nextMonth, nextYear);
     mTime -= nd * dayLen;
-
     if (nextYear)
     {
         for (auto &y : mYearlyProduction)
