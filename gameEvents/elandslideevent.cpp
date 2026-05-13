@@ -1,5 +1,6 @@
 #include "elandslideevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 
@@ -51,6 +52,11 @@ void eLandSlideEvent::write(eWriteStream& dst) const {
 
 void eLandSlideEvent::serialize(eSaveArchive& ar) {
 
+}
+
+void eLandSlideEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ePointEventValue::serializeJson(ar);
 }
 
 void eLandSlideEvent::read(eReadStream& src) {

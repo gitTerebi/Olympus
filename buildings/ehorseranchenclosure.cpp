@@ -7,6 +7,7 @@
 
 #include "ehorseranch.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eHorseRanchEnclosure::eHorseRanchEnclosure(eGameBoard& board,
                                            const eCityId cid) :
@@ -114,6 +115,24 @@ void eHorseRanchEnclosure::write(eWriteStream& dst) const {
     eBuilding::write(dst);
     eSaveArchive ar(dst);
     const_cast<eHorseRanchEnclosure*>(this)->serialize(ar);
+}
+
+void eHorseRanchEnclosure::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    int nh = ar.writing() ? static_cast<int>(mHorses.size()) : 0;
+    ar.field("nh", nh);
+    if(ar.reading()) mHorses.clear();
+    for(int i = 0; i < nh; i++) {
+        const auto key = "horse." + std::to_string(i);
+        if(ar.writing()) {
+            eCharacter* raw = mHorses[i].get();
+            ar.characterRef(key.c_str(), raw, getBoard());
+        } else {
+            ar.characterRef(key.c_str(), [this](eCharacter* c) {
+                if(c) mHorses.push_back(c->ref<eHorse>());
+            }, getBoard());
+        }
+    }
 }
 
 void eHorseRanchEnclosure::serialize(eSaveArchive& ar) {

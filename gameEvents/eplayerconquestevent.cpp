@@ -7,6 +7,7 @@
 
 #include "gameEvents/invasions/invasion-event.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 ePlayerConquestEvent::ePlayerConquestEvent(
         const eCityId cid,
@@ -134,6 +135,13 @@ void ePlayerConquestEvent::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeGameEvent(mInvasionEvent);
     }
+}
+
+void ePlayerConquestEvent::serializeJson(eJsonArchive& ar) {
+    ePlayerConquestEventBase::serializeJson(ar);
+    eGameEvent* raw = mInvasionEvent;
+    ar.gameEventRef("mInvasionEvent", raw, *gameBoard());
+    if(ar.reading()) mInvasionEvent = static_cast<eInvasionEvent*>(raw);
 }
 
 bool ePlayerConquestEvent::warned() const {

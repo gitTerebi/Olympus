@@ -55,6 +55,7 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
     const eGodType mType;

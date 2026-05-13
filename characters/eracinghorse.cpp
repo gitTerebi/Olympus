@@ -1,6 +1,7 @@
 #include "eracinghorse.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eRacingHorse::eRacingHorse(eGameBoard& board, const int id,
                            const std::vector<ePathPoint>& path) :
@@ -61,5 +62,10 @@ void eRacingHorse::write(eWriteStream& dst) const {
 }
 
 void eRacingHorse::serialize(eSaveArchive& ar) {
+    ar.field("mId", mId);
+}
+
+void eRacingHorse::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    eMissile::serializeJson(ar, board);
     ar.field("mId", mId);
 }

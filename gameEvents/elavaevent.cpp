@@ -1,5 +1,6 @@
 #include "elavaevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 
@@ -55,6 +56,13 @@ void eLavaEvent::write(eWriteStream& dst) const {
 
 void eLavaEvent::serialize(eSaveArchive& ar) {
 
+}
+
+void eLavaEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ePointEventValue::serializeJson(ar);
+    eGodEventValue::serializeJson(ar);
+    eGodReasonEventValue::serializeJson(ar);
 }
 
 void eLavaEvent::read(eReadStream& src) {

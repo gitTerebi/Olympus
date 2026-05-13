@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "ehorseranchenclosure.h"
 #include "engine/e-game-board.h"
@@ -150,6 +151,21 @@ void eHorseRanch::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
     eSaveArchive ar(dst);
     const_cast<eHorseRanch*>(this)->serialize(ar);
+}
+
+void eHorseRanch::serializeJson(eJsonArchive& ar) {
+    eEmployingBuilding::serializeJson(ar);
+    ar.field("mWheat", mWheat);
+    ar.field("mWheatTime", mWheatTime);
+    ar.field("mHorseTime", mHorseTime);
+    if(ar.writing()) {
+        eCharacter* raw = mTakeCart.get();
+        ar.characterRef("mTakeCart", raw, getBoard());
+    } else {
+        ar.characterRef("mTakeCart", [this](eCharacter* c) {
+            mTakeCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
 }
 
 void eHorseRanch::serialize(eSaveArchive& ar) {

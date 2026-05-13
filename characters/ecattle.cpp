@@ -7,6 +7,7 @@
 #include "buildings/eanimalpen.h"
 #include "actions/eanimalaction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 int eCattle::sId = 0;
 
@@ -108,6 +109,13 @@ void eCattle::write(eWriteStream& dst) const {
 }
 
 void eCattle::serialize(eSaveArchive& ar) {
+    ar.field("mId", mId);
+    ar.field("mMatureWait", mMatureWait);
+    ar.field("sId", sId);
+}
+
+void eCattle::serializeJson(eJsonArchive& ar) {
+    eCharacter::serializeJson(ar);
     ar.field("mId", mId);
     ar.field("mMatureWait", mMatureWait);
     ar.field("sId", sId);

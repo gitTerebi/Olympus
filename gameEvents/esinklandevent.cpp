@@ -1,5 +1,6 @@
 #include "esinklandevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "elanguage.h"
 
@@ -42,6 +43,13 @@ void eSinkLandEvent::write(eWriteStream& dst) const {
 
 void eSinkLandEvent::serialize(eSaveArchive& ar) {
 
+}
+
+void eSinkLandEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
+    eGodEventValue::serializeJson(ar);
+    eGodReasonEventValue::serializeJson(ar);
 }
 
 void eSinkLandEvent::read(eReadStream& src) {

@@ -1,6 +1,7 @@
 #include "eeconomicmilitarychangeeventbase.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eEconomicMilitaryChangeEventBase::eEconomicMilitaryChangeEventBase(
     const eCityId cid, const eGameEventType type,
@@ -28,4 +29,10 @@ void eEconomicMilitaryChangeEventBase::serialize(eSaveArchive& ar) {
         eCountEventValue::write(ar.writeStream());
         eCityEventValue::write(ar.writeStream());
     }
+}
+
+void eEconomicMilitaryChangeEventBase::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
+    eCityEventValue::serializeJson(ar, *gameBoard());
 }

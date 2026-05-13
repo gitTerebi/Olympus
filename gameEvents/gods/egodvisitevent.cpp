@@ -6,6 +6,7 @@
 #include "characters/gods/actions/egodvisitaction.h"
 #include "elanguage.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eGodVisitEvent::eGodVisitEvent(const eCityId cid,
                                const eGameEventBranch branch,
@@ -96,6 +97,26 @@ void eGodVisitEvent::serialize(eSaveArchive& ar) {
         if(ar.writing()) t = mTypes[i];
         ar.field("t", t);
         if(ar.reading()) mTypes.push_back(t);
+    }
+    ar.field("mRandom", mRandom);
+    ar.field("mNextId", mNextId);
+}
+
+void eGodVisitEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    int n = ar.writing() ? static_cast<int>(mTypes.size()) : 0;
+    ar.field("n", n);
+    if(ar.reading()) mTypes.clear();
+    for(int i = 0; i < n; i++) {
+        const auto key = "t" + std::to_string(i);
+        if(ar.writing()) {
+            eGodType t = mTypes[i];
+            ar.field(key.c_str(), t);
+        } else {
+            eGodType t;
+            ar.field(key.c_str(), t);
+            mTypes.push_back(t);
+        }
     }
     ar.field("mRandom", mRandom);
     ar.field("mNextId", mNextId);

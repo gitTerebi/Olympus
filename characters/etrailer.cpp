@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eTrailer::eTrailer(eGameBoard& board) :
     eCharacter(board, eCharacterType::trailer) {
@@ -90,6 +91,21 @@ void eTrailer::serialize(eSaveArchive& ar) {
         });
     } else {
         ar.writeStream().writeCharacter(mFollow);
+    }
+    ar.field("mIsBig", mIsBig);
+    ar.field("mResCount", mResCount);
+    ar.field("mResType", mResType);
+}
+
+void eTrailer::serializeJson(eJsonArchive& ar) {
+    eCharacter::serializeJson(ar);
+    if(ar.writing()) {
+        eCharacter* raw = mFollow.get();
+        ar.characterRef("mFollow", raw, getBoard());
+    } else {
+        ar.characterRef("mFollow", [this](eCharacter* c) {
+            mFollow = static_cast<eCartTransporter*>(c);
+        }, getBoard());
     }
     ar.field("mIsBig", mIsBig);
     ar.field("mResCount", mResCount);

@@ -1,5 +1,6 @@
 #include "egod.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "eathena.h"
 #include "edemeter.h"
@@ -651,5 +652,10 @@ void eGod::write(eWriteStream& dst) const {
 }
 
 void eGod::serialize(eSaveArchive& ar) {
+    ar.field("mAttitude", mAttitude);
+}
+
+void eGod::serializeJson(eJsonArchive& ar) {
+    eCharacter::serializeJson(ar);
     ar.field("mAttitude", mAttitude);
 }

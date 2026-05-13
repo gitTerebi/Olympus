@@ -2,6 +2,7 @@
 
 #include "spawners/espawner.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eWildAnimal::eWildAnimal(eGameBoard& board,
                          const eCharTexs charTexs,
@@ -32,4 +33,9 @@ void eWildAnimal::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBanner(mSpawner);
     }
+}
+
+void eWildAnimal::serializeJson(eJsonArchive& ar) {
+    eAnimal::serializeJson(ar);
+    // mSpawner (eSpawner/eBanner) has no JSON cross-reference support; not saved
 }

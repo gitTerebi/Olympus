@@ -23,6 +23,7 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+    void serializeJson(eJsonArchive& ar) override;
 
     bool warned() const;
 

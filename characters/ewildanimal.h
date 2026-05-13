@@ -20,6 +20,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(eJsonArchive& ar) override;
 private:
     void serialize(eSaveArchive& ar);
 

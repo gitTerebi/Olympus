@@ -1,5 +1,6 @@
 #include "eearthquakeevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -49,6 +50,14 @@ void eEarthquakeEvent::write(eWriteStream& dst) const {
 
 void eEarthquakeEvent::serialize(eSaveArchive& ar) {
 
+}
+
+void eEarthquakeEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ePointEventValue::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
+    eGodEventValue::serializeJson(ar);
+    eGodReasonEventValue::serializeJson(ar);
 }
 
 void eEarthquakeEvent::read(eReadStream& src) {

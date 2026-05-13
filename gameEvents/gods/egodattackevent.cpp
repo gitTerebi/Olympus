@@ -6,6 +6,7 @@
 #include "characters/gods/actions/egodattackaction.h"
 #include "gameEvents/gods/egodtraderesumesevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eGodAttackEvent::eGodAttackEvent(
         const eCityId cid,
@@ -129,4 +130,27 @@ void eGodAttackEvent::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mSanctuary);
     }
+}
+
+void eGodAttackEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    int n = ar.writing() ? static_cast<int>(mTypes.size()) : 0;
+    ar.field("n", n);
+    if(ar.reading()) mTypes.clear();
+    for(int i = 0; i < n; i++) {
+        const auto key = "t" + std::to_string(i);
+        if(ar.writing()) {
+            eGodType t = mTypes[i];
+            ar.field(key.c_str(), t);
+        } else {
+            eGodType t;
+            ar.field(key.c_str(), t);
+            mTypes.push_back(t);
+        }
+    }
+    ar.field("mRandom", mRandom);
+    ar.field("mNextId", mNextId);
+    eBuilding* raw = mSanctuary;
+    ar.buildingRef("mSanctuary", raw, *gameBoard());
+    if(ar.reading()) mSanctuary = static_cast<eSanctuary*>(raw);
 }

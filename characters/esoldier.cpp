@@ -4,6 +4,7 @@
 #include "esoldierbanner.h"
 #include "actions/esoldieraction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eSoldier::eSoldier(eGameBoard& board,
                    const eCharTexs charTexs,
@@ -81,6 +82,14 @@ void eSoldier::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeSoldierBanner(mBanner);
     }
+}
+
+void eSoldier::serializeJson(eJsonArchive& ar) {
+    eFightingPatroler::serializeJson(ar);
+    eFightingCharacter::serializeJson(ar);
+    ar.soldierBannerRef("mBanner", [this](const stdsptr<eSoldierBanner>& b) {
+        mBanner = b.get();
+    }, getBoard());
 }
 
 eSoldierAction *eSoldier::soldierAction() const {

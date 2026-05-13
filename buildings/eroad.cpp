@@ -8,6 +8,7 @@
 #include "ehippodromepiece.h"
 #include "elanguage.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eRoad::eRoad(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::road, 1, 1, cid) {}
@@ -502,6 +503,30 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
         else break;
         bl = bl->bottomLeft<eTile>();
     }
+}
+
+void eRoad::serializeJson(eJsonArchive& ar) {
+    eBuilding::serializeJson(ar);
+    ar.field("roadblock", mRoadblock);
+    if(ar.writing()) {
+        eBuilding* raw = mUnderAgora;
+        ar.buildingRef("mUnderAgora", raw, getBoard());
+        raw = mUnderGatehouse;
+        ar.buildingRef("mUnderGatehouse", raw, getBoard());
+        raw = mAboveHippodrome;
+        ar.buildingRef("mAboveHippodrome", raw, getBoard());
+    } else {
+        ar.buildingRef("mUnderAgora", [this](eBuilding* b) {
+            setUnderAgora(static_cast<eAgoraBase*>(b));
+        }, getBoard());
+        ar.buildingRef("mUnderGatehouse", [this](eBuilding* b) {
+            setUnderGatehouse(static_cast<eGatehouse*>(b));
+        }, getBoard());
+        ar.buildingRef("mAboveHippodrome", [this](eBuilding* b) {
+            setAboveHippodrome(static_cast<eHippodromePiece*>(b));
+        }, getBoard());
+    }
+    ar.field("characterAltitude", mCharacterAltitude);
 }
 
 void eRoad::write(eWriteStream &dst) const {
