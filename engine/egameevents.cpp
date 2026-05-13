@@ -1,6 +1,7 @@
 #include "egameevents.h"
 
 #include <algorithm>
+#include <cstdio>
 #include "evectorhelpers.h"
 #include "e-game-board.h"
 #include "fileIO/esavearchive.h"
@@ -89,10 +90,10 @@ void eGameEvents::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             const auto branch = eGameEventBranch::root;
             const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            e->read(ar.readStream());
+            printf("Deprecated binary game event read skipped; JSON serializeJson should be used\n");
             addEvent(e);
         } else {
-            mGameEvents[i]->write(ar.writeStream());
+            printf("Deprecated binary game event write skipped; JSON serializeJson should be used\n");
         }
     }
 }
@@ -107,6 +108,7 @@ void eGameEvents::serializeJson(eJsonArchive& ar) {
         ca.field("type", type);
         if(ar.reading()) {
             const auto e = eGameEvent::sCreate(mCid, type, eGameEventBranch::root, mBoard);
+            if(!e) continue;
             e->serializeJson(ca);
             addEvent(e);
         } else {

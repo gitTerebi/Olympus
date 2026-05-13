@@ -1,6 +1,7 @@
 #include "etile.h"
 
 #include <algorithm>
+#include <cstdio>
 
 #include "buildings/ebuilding.h"
 #include "buildings/eroad.h"
@@ -362,15 +363,13 @@ void eTile::setMarbleLevel(const int l) {
 }
 
 void eTile::read(eReadStream& src) {
-    eTileBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eTile::read called; JSON serializeJson should be used\n");
 }
 
 void eTile::write(eWriteStream& dst) const {
-    eTileBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTile*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eTile::write called; JSON serializeJson should be used\n");
 }
 
 void eTile::serializeJson(eJsonArchive& ar) {
@@ -399,6 +398,7 @@ void eTile::serializeJson(eJsonArchive& ar) {
             bAr.field("type", type);
             bAr.field("id", id);
             const auto b = eBanner::sCreate(id, this, mBoard, type);
+            if(!b) continue;
             b->serializeJson(bAr);
             mBanners.push_back(b);
         }
@@ -440,9 +440,10 @@ void eTile::serialize(eSaveArchive& ar) {
         ar.field("id", id);
         if(ar.reading()) {
             const auto b = eBanner::sCreate(id, this, mBoard, type);
-            b->read(ar.readStream());
+            (void)b;
+            printf("Deprecated binary tile banner read skipped; JSON serializeJson should be used\n");
         } else {
-            mBanners[i]->write(ar.writeStream());
+            printf("Deprecated binary tile banner write skipped; JSON serializeJson should be used\n");
         }
     }
 }

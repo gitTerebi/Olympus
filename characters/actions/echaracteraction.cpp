@@ -5,6 +5,8 @@
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
 
+#include <cstdio>
+
 eCharacterAction::eCharacterAction(
         eCharacter* const c, const eCharActionType type) :
     mBoard(c->getBoard()), mCharacter(c), mType(type) {
@@ -77,11 +79,11 @@ void eCharacterAction::serializeJson(eJsonArchive& ar) {
 }
 
 void eCharacterAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    (void)src;
+    printf("Deprecated binary eCharacterAction::read called; JSON serializeJson should be used\n");
 }
 
 void eCharacterAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCharacterAction*>(this)->serialize(ar);
+    (void)dst;
+    printf("Deprecated binary eCharacterAction::write called; JSON serializeJson should be used\n");
 }

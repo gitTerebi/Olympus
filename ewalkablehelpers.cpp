@@ -12,6 +12,7 @@ bool eWalkableHelpers::sRoadWalkable(eTileBase* const t) {
 
 eWalkableHelpers::eWalkable eWalkableHelpers::sBuildingWalkable(
         eBuilding* const b, const eWalkable& w) {
+    if(!b) return w;
     const auto rect = b->tileRect();
     return sBuildingWalkable(rect, w);
 }
@@ -28,11 +29,13 @@ eWalkableHelpers::eWalkable eWalkableHelpers::sBuildingWalkable(
 
 bool eWalkableHelpers::sTileUnderBuilding(
         eTileBase* const t, eBuilding* const b) {
+    if(!t || !b) return false;
     return sTileUnderBuilding(t, b->tileRect());
 }
 
 bool eWalkableHelpers::sTileUnderBuilding(
         eTileBase* const t, const SDL_Rect& b) {
+    if(!t) return false;
     const SDL_Point p{t->x(), t->y()};
     return SDL_PointInRect(&p, &b);
 }

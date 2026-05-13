@@ -248,6 +248,13 @@ void eUrchinQuay::serializeJson(eJsonArchive& ar) {
     ar.field("mDisabled", mDisabled);
     ar.field("mStateCount", mStateCount);
     ar.field("mState", mState);
-    // mGatherer restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mGatherer.get();
+        ar.characterRef("mGatherer", raw, getBoard());
+    } else {
+        ar.characterRef("mGatherer", [this](eCharacter* c) {
+            mGatherer = static_cast<eUrchinGatherer*>(c);
+        }, getBoard());
+    }
 }
 

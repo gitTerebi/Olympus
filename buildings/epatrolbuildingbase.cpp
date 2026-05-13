@@ -177,7 +177,15 @@ void ePatrolBuildingBase::serializeJson(eJsonArchive& ar) {
         ar.field(yk.c_str(), pg.fY);
         if(ar.reading()) mPatrolGuides.push_back(pg);
     }
-    // mDirTimes/mChar restored by character load pass
+    ar.directionTimesRef("mDirTimes", mDirTimes, getBoard());
+    if(ar.writing()) {
+        eCharacter* raw = mChar;
+        ar.characterRef("mChar", raw, getBoard());
+    } else {
+        ar.characterRef("mChar", [this](eCharacter* c) {
+            mChar = c;
+        }, getBoard());
+    }
 }
 
 

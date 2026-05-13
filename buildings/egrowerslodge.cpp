@@ -252,14 +252,31 @@ void eGrowersLodge::serializeJson(eJsonArchive& ar) {
         ar.field(k.c_str(), mMonthlyProduced[i]);
     }
     ar.field("mRingIdx", mRingIdx);
+    if(ar.writing()) {
+        eCharacter* cart = mCart.get();
+        eCharacter* grower = mGrower.get();
+        ar.characterRef("mCart", cart, getBoard());
+        ar.characterRef("mGrower", grower, getBoard());
+    } else {
+        ar.characterRef("mCart", [this](eCharacter* c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+        ar.characterRef("mGrower", [this](eCharacter* c) {
+            mGrower = static_cast<eGrower*>(c);
+        }, getBoard());
+    }
 }
 
 void eGrowersLodge::read(eReadStream& src) {
     eEmployingBuilding::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eGrowersLodge::write(eWriteStream& dst) const {
     eEmployingBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eGrowersLodge*>(this)->serialize(ar);
 }
 
 bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {
@@ -277,4 +294,27 @@ bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {
 
 void eGrowersLodge::setNoTarget(const bool t) {
     mNoTarget = t;
+}
+
+void eGrowersLodge::serialize(eSaveArchive& ar) {
+    ar.field("mNoTarget", mNoTarget);
+    ar.field("mSpawnEnabled", mSpawnEnabled);
+    ar.field("mGrapes", mGrapes);
+    ar.field("mOlives", mOlives);
+    ar.field("mOranges", mOranges);
+    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("mProducedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("mRingIdx", mRingIdx);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        });
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mGrower = static_cast<eGrower*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mCart.get());
+        ar.writeStream().writeCharacter(mGrower.get());
+    }
 }

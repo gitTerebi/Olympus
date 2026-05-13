@@ -261,10 +261,14 @@ void eFishery::updateDisabled() {
 
 void eFishery::read(eReadStream& src) {
     eResourceCollectBuildingBase::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eFishery::write(eWriteStream& dst) const {
     eResourceCollectBuildingBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eFishery*>(this)->serialize(ar);
 }
 
 void eFishery::serializeJson(eJsonArchive& ar) {
@@ -272,4 +276,25 @@ void eFishery::serializeJson(eJsonArchive& ar) {
     ar.field("mDisabled", mDisabled);
     ar.field("mStateCount", mStateCount);
     ar.field("mState", mState);
+    if(ar.writing()) {
+        eCharacter* raw = mBoat.get();
+        ar.characterRef("mBoat", raw, getBoard());
+    } else {
+        ar.characterRef("mBoat", [this](eCharacter* c) {
+            mBoat = static_cast<eFishingBoat*>(c);
+        }, getBoard());
+    }
+}
+
+void eFishery::serialize(eSaveArchive& ar) {
+    ar.field("mDisabled", mDisabled);
+    ar.field("mStateCount", mStateCount);
+    ar.field("mState", mState);
+    if(ar.reading()) {
+        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            mBoat = static_cast<eFishingBoat*>(c);
+        });
+    } else {
+        ar.writeStream().writeCharacter(mBoat.get());
+    }
 }

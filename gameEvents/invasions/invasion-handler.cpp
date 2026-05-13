@@ -4,6 +4,8 @@
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
 
+#include <cstdio>
+
 #include "engine/eeventdata.h"
 
 #include "characters/actions/esoldieraction.h"
@@ -884,7 +886,7 @@ void eInvasionHandler::read(eReadStream& src) {
             eBannerType type;
             ar.field("bannerType", type);
             const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
-            b->read(src);
+            printf("Deprecated binary invasion banner read skipped; JSON serializeJson should be used\n");
             mBanners.push_back(b);
         }
     }

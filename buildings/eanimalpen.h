@@ -28,6 +28,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
     void serializeJson(class eJsonArchive& ar) override;
+    void serialize(class eSaveArchive& ar);
 
     eCharacter* animal() const { return mA; }
     void setAnimal(eCharacter* const a);

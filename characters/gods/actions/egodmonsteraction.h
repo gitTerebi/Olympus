@@ -11,6 +11,8 @@
 #include "fileIO/ejsonarchive.h"
 #include "engine/e-game-board.h"
 
+#include <cstdio>
+
 class eGod;
 class eGodAct;
 class eSaveArchive;
@@ -519,7 +521,7 @@ public:
             eFindFailFuncType type;
             ar.field("findFailFuncType", type);
             mFunc = eFindFailFunc::sCreate(board(), type);
-            mFunc->read(src);
+            printf("Deprecated binary find-fail func read skipped; JSON serializeJson should be used\n");
         }
     }
 
@@ -531,7 +533,7 @@ public:
         if(hasFunc) {
             auto type = mFunc->type();
             ar.field("findFailFuncType", type);
-            mFunc->write(dst);
+            printf("Deprecated binary find-fail func write skipped; JSON serializeJson should be used\n");
         }
     }
     void serializeJson(eJsonArchive& ar) override {

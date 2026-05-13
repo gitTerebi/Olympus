@@ -122,7 +122,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         for(int i = 0; i < ni; i++) {
             dbgLogN("boardcity: invasionHandler", i);
             const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
-            ii->read(src);
+            printf("Deprecated binary invasion handler read skipped; JSON serializeJson should be used\n");
         }
     }
 
@@ -156,7 +156,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         for(int i = 0; i < n; i++) {
             dbgLogN("boardcity: plague", i);
             const auto p = std::make_shared<ePlague>(mId, mBoard);
-            p->read(src);
+            printf("Deprecated binary plague read skipped; JSON serializeJson should be used\n");
             mPlagues.push_back(p);
         }
     }
@@ -179,7 +179,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         for(int i = 0; i < na; i++) {
             dbgLogN("boardcity: militaryAidItem", i);
             const auto ma = std::make_shared<eMilitaryAid>();
-            ma->read(src, &mBoard);
+            printf("Deprecated binary military aid read skipped; JSON serializeJson should be used\n");
             addMilitaryAid(ma);
         }
     }
@@ -221,7 +221,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
             eBannerType type;
             ar.field("soldierBannerType", type);
             const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
-            b->read(src);
+            printf("Deprecated binary board-city building read skipped; JSON serializeJson should be used\n");
             registerSoldierBanner(b);
         }
     }
@@ -233,7 +233,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         for(int i = 0; i < nh; i++) {
             dbgLogN("boardcity: hippodrome", i);
             const auto h = std::make_shared<eHippodrome>(mId, mBoard);
-            h->read(src);
+            printf("Deprecated binary board-city hall read skipped; JSON serializeJson should be used\n");
             mHippodromes.push_back(h);
         }
     }

@@ -654,4 +654,20 @@ void eSmallHouse::serializeJson(eJsonArchive& ar) {
     ar.field("mTaxSatisfaction", mTaxSatisfaction);
     ar.field("mDevolveDelay", mDevolveDelay);
     ar.field("mEvictDelay", mEvictDelay);
+    if(ar.writing()) {
+        eCharacter* raw = mSick.get();
+        ar.characterRef("mSick", raw, getBoard());
+    } else {
+        ar.characterRef("mSick", [this](eCharacter* c) {
+            mSick = static_cast<eSick*>(c);
+        }, getBoard());
+    }
+    if(ar.writing()) {
+        eCharacter* raw = mDisg.get();
+        ar.characterRef("mDisg", raw, getBoard());
+    } else {
+        ar.characterRef("mDisg", [this](eCharacter* c) {
+            mDisg = static_cast<eDisgruntled*>(c);
+        }, getBoard());
+    }
 }

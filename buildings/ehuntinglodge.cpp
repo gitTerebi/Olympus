@@ -85,7 +85,14 @@ void eHuntingLodge::serialize(eSaveArchive& ar) {
 void eHuntingLodge::serializeJson(eJsonArchive& ar) {
     eResourceCollectBuildingBase::serializeJson(ar);
     ar.field("mSpawnTime", mSpawnTime);
-    // mHunter restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mHunter;
+        ar.characterRef("mHunter", raw, getBoard());
+    } else {
+        ar.characterRef("mHunter", [this](eCharacter* c) {
+            mHunter = static_cast<eHunter*>(c);
+        }, getBoard());
+    }
 }
 
 

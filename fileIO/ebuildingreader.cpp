@@ -705,7 +705,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     }
     if(b) {
         buildingReadDbg("building: before body", type, b->ioID(), src.position());
-        b->read(src);
+        printf("Deprecated binary building body read skipped; JSON serializeJson should be used\n");
         buildingReadDbg("building: after body", type, b->ioID(), src.position());
     } else {
         buildingReadDbg("building: null", type, static_cast<int>(cid), src.position());

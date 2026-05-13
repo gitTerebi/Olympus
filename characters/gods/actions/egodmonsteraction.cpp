@@ -11,6 +11,8 @@
 #include "engine/boardData/eheatmapdivisor.h"
 #include "engine/boardData/eheatmaptask.h"
 
+#include <cstdio>
+
 #include "etilehelper.h"
 #include "missiles/egodmissile.h"
 
@@ -555,9 +557,9 @@ void eGodMonsterAction::serialize(eSaveArchive& ar) {
             ar.field("type", type);
             if(ar.reading()) {
                 a.fA = eCharacterAction::sCreate(character(), type);
-                a.fA->read(ar.readStream());
+                printf("Deprecated binary paused action read skipped; JSON serializeJson should be used\n");
             } else {
-                a.fA->write(ar.writeStream());
+                printf("Deprecated binary paused action write skipped; JSON serializeJson should be used\n");
             }
         }
         ar.field("a.fO", a.fO);

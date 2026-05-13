@@ -128,6 +128,7 @@ private:
 
     void addRequirement(const eHeroRequirement& hr);
     void updateRequirementStatus(eHeroRequirement& hr);
+    void serialize(class eSaveArchive& ar);
 
     eHeroType mType;
 

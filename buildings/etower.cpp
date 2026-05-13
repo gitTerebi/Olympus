@@ -309,7 +309,22 @@ void eTower::serializeJson(eJsonArchive& ar) {
     ar.field("mAttack", mAttack);
     ar.field("mAttackOrientation", mAttackOrientation);
     ar.field("mSpawnTime", mSpawnTime);
-    // mAttackTarget and mArcher restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mAttackTarget.get();
+        ar.characterRef("mAttackTarget", raw, getBoard());
+    } else {
+        ar.characterRef("mAttackTarget", [this](eCharacter* c) {
+            mAttackTarget = c;
+        }, getBoard());
+    }
+    if(ar.writing()) {
+        eCharacter* raw = mArcher.get();
+        ar.characterRef("mArcher", raw, getBoard());
+    } else {
+        ar.characterRef("mArcher", [this](eCharacter* c) {
+            mArcher = static_cast<eArcher*>(c);
+        }, getBoard());
+    }
 }
 
 bool eTower::spawn()
