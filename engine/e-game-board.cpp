@@ -226,6 +226,24 @@ void eGameBoard::clear()
         }
     }
     mTiles.clear();
+    mActiveCitiesOnBoard.clear();
+    mArmyEvents.clear();
+    mCharacterActions.clear();
+    mTimedBuildings.clear();
+    mAllBuildings.clear();
+    mSpawners.clear();
+    mBanners.clear();
+    mInvasions.clear();
+    mAllSoldierBanners.clear();
+    mCharacters.clear();
+    mSoldiers.clear();
+    mMissiles.clear();
+    mSelectedBanners.clear();
+    mSelectedTriremes.clear();
+    mPlannedActions.clear();
+    mAllGameEvents.clear();
+    mMarbleTiles.clear();
+    mBlackMarbleTiles.clear();
     mWidth = 0;
     mHeight = 0;
     emptyRubbish();

@@ -299,6 +299,12 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         }
         targetProcessTask(rb, task);
     }
+    const int count = ct->resCount();
+    if(count > 0) {
+        const auto res = ct->resType();
+        const int added = rb->add(res, count);
+        ct->setResource(res, count - added);
+    }
 }
 
 int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,

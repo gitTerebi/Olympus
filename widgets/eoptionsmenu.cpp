@@ -277,6 +277,10 @@ void eOptionsMenu::showPage(const int id) {
         if(page.fCheckboxes.size() >= 2) page.fCheckboxes[1].fValue = settings.fDoubleCartCapacity;
         if(page.fCheckboxes.size() >= 3) page.fCheckboxes[2].fValue = settings.fAgorasTakeFromTradingPosts;
         if(page.fCheckboxes.size() >= 4) page.fCheckboxes[3].fValue = settings.fEnableYearlyAutosaves;
+        if(page.fCheckboxes.size() >= 5) page.fCheckboxes[4].fValue = settings.fPopupForInvasion;
+        if(page.fCheckboxes.size() >= 6) page.fCheckboxes[5].fValue = settings.fPopupForRequests;
+        if(page.fCheckboxes.size() >= 7) page.fCheckboxes[6].fValue = settings.fPopupForTributes;
+        if(page.fCheckboxes.size() >= 8) page.fCheckboxes[7].fValue = settings.fPopupForTroops;
     } else if(id == 3) { // Sound
         if(page.fSliders.size() >= 1) page.fSliders[0].fValue = settings.fGeneralVolume;
         if(page.fSliders.size() >= 2) page.fSliders[1].fValue = settings.fMusicVolume;

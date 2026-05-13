@@ -60,8 +60,19 @@ void eGameWidget::showMessage(eEventData &ed,
 
     const bool requiresAction = ed.fCloseOnAction || !ed.fCityConditionalActions.empty() ||
                                  ed.fPrimaryAction || ed.fSecondaryAction || ed.fTertiaryAction;
+    const auto& setts = window()->settings();
+    const bool popupForThisType = [&]() {
+        switch (ed.fType) {
+        case eMessageEventType::invasion:        return setts.fPopupForInvasion;
+        case eMessageEventType::generalRequestGranted:
+        case eMessageEventType::resourceGranted: return setts.fPopupForRequests;
+        case eMessageEventType::requestTributeGranted: return setts.fPopupForTributes;
+        case eMessageEventType::troopsRequest:   return setts.fPopupForTroops;
+        default: return true;
+        }
+    }();
 
-    if (!requiresAction && !forcePopup)
+    if ((!requiresAction && !forcePopup) || (requiresAction && !forcePopup && !popupForThisType))
     {
         eToast pendingToast;
         pendingToast.fEd = ed;
@@ -119,7 +130,7 @@ void eGameWidget::showMessage(eEventData &ed,
     ed.fPlayerName = window()->leader();
 
     const auto requestActionTaken = std::make_shared<bool>(false);
-    if (ed.fType == eMessageEventType::generalRequestGranted) {
+    {
         const auto wrapAction = [requestActionTaken](eAction& action) {
             if (!action) return;
             const auto oldAction = action;
@@ -134,15 +145,38 @@ void eGameWidget::showMessage(eEventData &ed,
         for (auto& a : ed.fCityConditionalActions) {
             wrapAction(a.second);
         }
+        if (ed.fCloseOnAction) {
+            const auto oldClose = ed.fCloseOnAction;
+            ed.fCloseOnAction = [requestActionTaken, oldClose](const eAction& close) {
+                *requestActionTaken = true;
+                oldClose(close);
+            };
+        }
     }
 
     const auto close = [this, wasPaused, ed, requestActionTaken, msgb]()
     {
-        if (ed.fType == eMessageEventType::generalRequestGranted &&
-            msgb->closable() &&
-            !*requestActionTaken) {
-            if (ed.fSecondaryAction) ed.fSecondaryAction();
-            else if (ed.fTertiaryAction) ed.fTertiaryAction();
+        if (msgb->closable() && !*requestActionTaken) {
+            switch (ed.fType) {
+            case eMessageEventType::generalRequestGranted:
+                // default: postpone, else decline
+                if (ed.fSecondaryAction) ed.fSecondaryAction();
+                else if (ed.fTertiaryAction) ed.fTertiaryAction();
+                break;
+            case eMessageEventType::invasion:
+                // default: fight
+                if (ed.fTertiaryAction) ed.fTertiaryAction();
+                break;
+            case eMessageEventType::requestTributeGranted:
+            case eMessageEventType::resourceGranted:
+            case eMessageEventType::troopsRequest:
+                // default: postpone, else decline/refuse
+                if (ed.fSecondaryAction) ed.fSecondaryAction();
+                else if (ed.fTertiaryAction) ed.fTertiaryAction();
+                break;
+            default:
+                break;
+            }
         }
         mMsgBox = nullptr;
         if (!wasPaused)
