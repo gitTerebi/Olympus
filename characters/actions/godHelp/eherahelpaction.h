@@ -44,13 +44,13 @@ public:
     eGodProvideAgoraAct(eGameBoard& board) :
         eGodProvideAgoraAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             mTarget->add(eResourceType::food, 8);
             mTarget->add(eResourceType::fleece, 8);
@@ -59,13 +59,13 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eAgoraBase*>(b);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
     }
 

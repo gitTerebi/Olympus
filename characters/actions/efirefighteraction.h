@@ -22,6 +22,13 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override {
+        ePatrolAction::serializeJson(ar);
+        ar.field("mFireFighting", mFireFighting);
+        ar.field("mFireCheck", mFireCheck);
+        ar.field("mUsedWater", mUsedWater);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
     bool lookForFire(const bool second);

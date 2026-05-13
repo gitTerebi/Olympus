@@ -17,8 +17,18 @@ public:
     int collect();
     bool canCollect() const { return mResource; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
+    void serializeJson(eJsonArchive& ar) override {
+        eAnimal::serializeJson(ar);
+        ar.field("mGroomed", mGroomed);
+        ar.field("mResource", mResource);
+        if(ar.reading()) {
+            if(mResource == 0) setNakedTexture();
+            else setFleecedTexture();
+        }
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

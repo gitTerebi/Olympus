@@ -98,6 +98,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(class eJsonArchive& ar);
 
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX, int& toY) const;

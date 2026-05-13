@@ -7,10 +7,11 @@
 #include "../ecounteventvalue.h"
 
 #include "engine/e-worldcity.h"
+#include "engine/e-game-board.h"
 #include "characters/eenlistedforces.h"
 
 class eInvasionHandler;
-class ePlayerConquestEvent;
+#include "gameEvents/eplayerconquestevent.h"
 class eInvasionWarning;
 class eSaveArchive;
 
@@ -75,6 +76,26 @@ public:
 
     void invadersWon();
     void invadersDefeated();
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ePointEventValue::serializeJson(ar);
+        eCityEventValue::serializeJson(ar, *gameBoard());
+        eCountEventValue::serializeJson(ar);
+        ar.field("mHardcoded", mHardcoded);
+        ar.field("mSentByPlayer", mSentByPlayer);
+        if(ar.writing()) {
+            eGameEvent* conquestRaw = static_cast<eGameEvent*>(mConquestEvent.get());
+            ar.gameEventRef("mConquestEvent", conquestRaw, *gameBoard());
+        } else {
+            ar.gameEventRef("mConquestEvent", [this](eGameEvent* e) {
+                mConquestEvent = dynamic_cast<ePlayerConquestEvent*>(e);
+                if(mWarned) { gameBoard()->addInvasion(this); updateDisembarkAndShoreTile(); }
+            }, *gameBoard());
+        }
+        ar.field("mWarned", mWarned);
+        mFirstWarning.serializeJson(ar);
+    }
+
 private:
     void useGeneratedCityWarnings();
     void sendInitialAnnouncement();

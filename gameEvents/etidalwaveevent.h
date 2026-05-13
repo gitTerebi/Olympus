@@ -27,6 +27,14 @@ public:
 
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
+void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ePointEventValue::serializeJson(ar);
+        eGodEventValue::serializeJson(ar);
+        eGodReasonEventValue::serializeJson(ar);
+        ar.field("mPermanent", mPermanent);
+}
+
 private:
     void serialize(eSaveArchive& ar);
     bool mPermanent = false;

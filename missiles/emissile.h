@@ -31,6 +31,12 @@ struct ePathPoint {
         ar.field("y", const_cast<double&>(fY));
         ar.field("height", const_cast<double&>(fHeight));
     }
+
+    void serializeJson(eJsonArchive& ar) {
+        ar.field("x", fX);
+        ar.field("y", fY);
+        ar.field("height", fHeight);
+    }
 };
 
 class eMissilePath {
@@ -97,6 +103,22 @@ public:
             pt.write(dst);
         }
     }
+    void serializeJson(eJsonArchive& ar) {
+        ar.field("angle", mAngle);
+        {
+            auto pa = ar.child("pos");
+            mPos.serializeJson(pa);
+        }
+        ar.field("pointId", mPtId);
+        int n = ar.writing() ? static_cast<int>(mPts.size()) : 0;
+        ar.field("pointCount", n);
+        if(ar.reading()) mPts.resize(n);
+        for(int i = 0; i < n; i++) {
+            auto pa = ar.child(("points." + std::to_string(i)).c_str());
+            mPts[i].serializeJson(pa);
+        }
+    }
+
 private:
     double mAngle;
     ePathPoint mPos;

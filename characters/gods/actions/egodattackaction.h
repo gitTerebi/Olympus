@@ -25,6 +25,20 @@ public:
     void write(eWriteStream& dst) const override;
 
     void setSanctuary(const stdptr<eSanctuary>& s);
+    void serializeJson(eJsonArchive& ar) override {
+        eGodAction::serializeJson(ar);
+        ar.field("mStage", mStage);
+        ar.field("mLookForCurse", mLookForCurse);
+        ar.field("mLookForTargetedCurse", mLookForTargetedCurse);
+        ar.field("mLookForAttack", mLookForAttack);
+        ar.field("mLookForTargetedAttack", mLookForTargetedAttack);
+        ar.field("mLookForGod", mLookForGod);
+        ar.field("mLookForSpecial", mLookForSpecial);
+        eBuilding* _mSanctuary = mSanctuary.get();
+        ar.buildingRef("mSanctuary", _mSanctuary, board());
+        if(ar.reading()) mSanctuary = static_cast<eSanctuary*>(_mSanctuary);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
     void initialize();
@@ -159,7 +173,7 @@ public:
         eFindFailFunc(board, eFindFailFuncType::teleport),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         if(!mTptr) return;
         const auto c = mTptr->character();
         auto& board = c->getBoard();
@@ -167,15 +181,26 @@ public:
         mTptr->teleport(r);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eGodAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eGodAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+}
+
 private:
     stdptr<eGodAction> mTptr;
 };
@@ -209,6 +234,17 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eGodAttackAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+}
+
 private:
     stdptr<eGodAttackAction> mTptr;
 };

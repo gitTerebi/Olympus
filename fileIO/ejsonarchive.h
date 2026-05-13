@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <map>
 #include "json.hpp"
 
 using njson = nlohmann::json;
@@ -18,8 +19,15 @@ class eBuilding;
 class eCharacter;
 class eCharacterActionFunction;
 class eWalkableObject;
+class eHasResourceObject;
 class eObsticleHandler;
 class eGameEvent;
+class eInvasionHandler;
+class eWorldCity;
+class eWorldBoard;
+class eSoldierBanner;
+class eDirectionLastUseTime;
+using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
 
 class eJsonArchive {
 public:
@@ -130,13 +138,27 @@ public:
 
     // walkable: stored as {valid, type}; simple types only (no extra state)
     void walkableRef(const char* key, std::shared_ptr<eWalkableObject>& w);
+    void hasResourceRef(const char* key, std::shared_ptr<eHasResourceObject>& h);
+    void directionTimesRef(const char* key, std::shared_ptr<eDirectionTimes>& d, eGameBoard& board);
 
     // obsticle handler: stored as {valid, type}; needs board for sCreate
     void obsticleHandlerRef(const char* key, std::shared_ptr<eObsticleHandler>& oh, eGameBoard& board);
 
+    // invasion handler cross-reference: stored as IOID int; resolved in postFunc
+    void invasionHandlerRef(const char* key, eInvasionHandler*& h, eGameBoard& board);
+
     // game event cross-reference: stored as IOID int; resolved in postFunc
     void gameEventRef(const char* key, eGameEvent*& e, eGameBoard& board);
     void gameEventRef(const char* key, const std::function<void(eGameEvent*)>& cb, eGameBoard& board);
+
+    // world city cross-reference: stored as IOID int; resolved in postFunc
+    void cityRef(const char* key, const std::function<void(const std::shared_ptr<eWorldCity>&)>& cb, eGameBoard& board);
+    void cityRef(const char* key, std::shared_ptr<eWorldCity>& c, eGameBoard& board);
+    void cityRef(const char* key, const std::function<void(const std::shared_ptr<eWorldCity>&)>& cb, eWorldBoard& board);
+    void cityRef(const char* key, std::shared_ptr<eWorldCity>& c, eWorldBoard& board);
+
+    // soldier banner cross-reference: stored as IOID int; resolved in postFunc
+    void soldierBannerRef(const char* key, const std::function<void(const std::shared_ptr<eSoldierBanner>&)>& cb, eGameBoard& board);
 
     // deferred callbacks (analogous to eReadStream::addPostFunc)
     using PostFunc = std::function<void()>;
@@ -158,7 +180,7 @@ public:
     static bool saveToFile(const njson& root, const std::string& path) {
         std::ofstream f(path);
         if(!f) return false;
-        f << root.dump(2);
+        f << root.dump(-1);
         return f.good();
     }
     static bool loadFromFile(const std::string& path, njson& root) {

@@ -20,6 +20,7 @@ struct eEnlistedForces {
               eReadStream& src);
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar, eGameBoard* board);
+    void serializeJson(class eJsonArchive& ar, eGameBoard* board);
 
     void clear();
 

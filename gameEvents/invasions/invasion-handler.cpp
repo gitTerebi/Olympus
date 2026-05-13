@@ -2,6 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/eeventdata.h"
 
@@ -1001,6 +1002,114 @@ void eInvasionHandler::write(eWriteStream& dst) const {
     ar.field("boatCount", boatCount);
     for(const auto& b : mBoats) {
         dst.writeCharacter(b);
+    }
+}
+
+void eInvasionHandler::serializeJson(eJsonArchive& ar) {
+    ar.field("ioId", mIOID);
+    ar.cityRef("mCity", mCity, mBoard);
+    ar.tile("mTile", mTile, mBoard);
+    ar.tile("mCurrentTile", mCurrentTile, mBoard);
+    ar.field("stage", mStage);
+
+    {
+        int nb = ar.reading() ? 0 : static_cast<int>(mBanners.size());
+        ar.field("bannerCount", nb);
+        if(ar.reading()) mBanners.clear();
+        for(int i = 0; i < nb; i++) {
+            auto ca = ar.childAt("banners", i);
+            eBannerType type = ar.reading() ? eBannerType::hoplite : mBanners[i]->type();
+            ca.field("type", type);
+            if(ar.reading()) {
+                const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
+                b->serializeJson(ca);
+                mBanners.push_back(b);
+            } else {
+                mBanners[i]->serializeJson(ca);
+            }
+        }
+    }
+
+    ar.field("wait", mWait);
+    if(ar.reading()) {
+        ar.gameEventRef("mEvent", [this](eGameEvent* e) {
+            mEvent = static_cast<eInvasionEvent*>(e);
+            if(mEvent) mEvent->addInvasionHandler(this);
+        }, mBoard);
+        ar.gameEventRef("mConquestEvent", [this](eGameEvent* e) {
+            mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
+        }, mBoard);
+    } else {
+        eGameEvent* ev = mEvent.get();
+        ar.gameEventRef("mEvent", ev, mBoard);
+        eGameEvent* ceq = mConquestEvent.get();
+        ar.gameEventRef("mConquestEvent", ceq, mBoard);
+    }
+
+    {
+        int nhg = ar.reading() ? 0 : static_cast<int>(mHeroesAndGods.size());
+        ar.field("heroesAndGodsCount", nhg);
+        if(ar.reading()) mHeroesAndGods.clear();
+        for(int i = 0; i < nhg; i++) {
+            if(ar.reading()) {
+                ar.characterRef(("hg" + std::to_string(i)).c_str(), [this](eCharacter* ch) {
+                    mHeroesAndGods.push_back(ch);
+                }, mBoard);
+            } else {
+                eCharacter* c = mHeroesAndGods[i].get();
+                ar.characterRef(("hg" + std::to_string(i)).c_str(), c, mBoard);
+            }
+        }
+    }
+
+    ar.field("infantryLeft", mInfantryLeft);
+    ar.field("cavalryLeft", mCavalryLeft);
+    ar.field("archersLeft", mArchersLeft);
+
+    {
+        int nf = ar.reading() ? 0 : static_cast<int>(mForcesLeft.size());
+        ar.field("forcesLeftCount", nf);
+        if(ar.reading()) mForcesLeft.clear();
+        for(int i = 0; i < nf; i++) {
+            ePlayerSoldierType type = ar.reading() ? ePlayerSoldierType::greekHoplite : mForcesLeft[i].first;
+            int count = ar.reading() ? 0 : mForcesLeft[i].second;
+            ar.field(("fl" + std::to_string(i) + ".type").c_str(), type);
+            ar.field(("fl" + std::to_string(i) + ".count").c_str(), count);
+            if(ar.reading()) mForcesLeft.push_back({type, count});
+        }
+    }
+
+    ar.field("aresLeft", mAresLeft);
+
+    {
+        int nh = ar.reading() ? 0 : static_cast<int>(mHeroesLeft.size());
+        ar.field("heroesLeftCount", nh);
+        if(ar.reading()) mHeroesLeft.clear();
+        for(int i = 0; i < nh; i++) {
+            eHeroType h = ar.reading() ? eHeroType::theseus : mHeroesLeft[i];
+            ar.field(("hl" + std::to_string(i)).c_str(), h);
+            if(ar.reading()) mHeroesLeft.push_back(h);
+        }
+    }
+
+    ar.tile("mBoatsTile", mBoatsTile, mBoard);
+    ar.tile("mDisembarkTile", mDisembarkTile, mBoard);
+    ar.field("boatsLeft", mBoatsLeft);
+
+    {
+        int nb2 = ar.reading() ? 0 : static_cast<int>(mBoats.size());
+        ar.field("boatCount", nb2);
+        if(ar.reading()) mBoats.clear();
+        for(int i = 0; i < nb2; i++) {
+            if(ar.reading()) {
+                ar.characterRef(("boat" + std::to_string(i)).c_str(), [this](eCharacter* ch) {
+                    mBoats.push_back(ch);
+                }, mBoard);
+            } else {
+                eCharacter* c = mBoats[i].get();
+                ar.characterRef(("boat" + std::to_string(i)).c_str(), c, mBoard);
+            }
+        }
     }
 }
 

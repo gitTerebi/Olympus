@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "spawners/ebanner.h"
+#include "fileIO/ejsonarchive.h"
 
 class ePointEventValue {
 public:
@@ -25,6 +26,12 @@ protected:
     int pointId() const { return mPointId; }
 
     void choosePointId();
+    virtual void serializeJson(eJsonArchive& ar) {
+        ar.field("mPointId", mPointId);
+        ar.field("mMinPointId", mMinPointId);
+        ar.field("mMaxPointId", mMaxPointId);
+    }
+
 private:
     const eBannerTypeS mBType;
     const eCityId mCid;

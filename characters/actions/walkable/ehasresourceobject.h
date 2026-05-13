@@ -60,6 +60,10 @@ public:
 
     static stdsptr<eHasResourceObject> sCreateNonBusy(
             const stdsptr<eHasResourceObject>& other);
+    virtual void serializeJson(eJsonArchive& ar) {
+        // empty read — no fields to serialize
+    }
+
 private:
     const eHasResourceObjectType mType;
 };

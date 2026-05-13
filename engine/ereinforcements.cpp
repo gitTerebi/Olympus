@@ -2,6 +2,7 @@
 
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eReinforcements::eReinforcements() {}
 
@@ -26,6 +27,11 @@ void eReinforcements::write(eWriteStream& dst) const {
 void eReinforcements::read(eGameBoard& board, eReadStream& src) {
     eSaveArchive ar(src);
     serialize(ar, &board);
+}
+
+void eReinforcements::serializeJson(eJsonArchive& ar, eGameBoard& board) {
+    ar.field("mFromCid", mFromCid);
+    mForces.serializeJson(ar, &board);
 }
 
 void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {

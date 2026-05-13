@@ -45,18 +45,18 @@ public:
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         mTptr->lookForMonster();
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eGodWorshippedAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
 

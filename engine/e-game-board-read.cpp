@@ -549,18 +549,14 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
             }
         }
 
-        JLOG("after players, before tilesBlob");
-        // tiles — one blob for the whole grid
+        // tiles
         {
-            std::string blob;
-            ar.field("tilesBlob", blob);
-            JLOGF("tilesBlob: size %zu", blob.size());
-            replayRead(blob, [this](eReadStream& s){
-                for(const auto& ts : mTiles)
-                    for(const auto& t : ts)
-                        t->read(s);
-            });
-            JLOG("tilesBlob: done");
+            int tileIdx = 0;
+            for(const auto& ts : mTiles)
+                for(const auto& t : ts) {
+                    auto tAr = ar.childAt("tiles", tileIdx++);
+                    t->serializeJson(tAr);
+                }
         }
 
         // buildings
@@ -649,49 +645,49 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
         }
         ar.field("mGoalsFulfilled", mGoalsFulfilled);
 
-        ar.field("mProgressEarthquakes", mProgressEarthquakes);
+        ar.field("earthquakeProgress", mProgressEarthquakes);
         {
             int ne = 0;
-            ar.field("mEarthquakes.count", ne);
+            ar.field("earthquakeCount", ne);
             for(int i = 0; i < ne; i++) {
                 const auto e = std::make_shared<eEarthquake>();
-                auto ea = ar.child(("mEarthquakes." + std::to_string(i)).c_str());
+                auto ea = ar.childAt("earthquakes", i);
                 e->serializeJson(ea, *this);
                 mEarthquakes.push_back(e);
             }
         }
 
-        ar.field("mProgressWaves", mProgressWaves);
+        ar.field("tidalWaveProgress", mProgressWaves);
         {
             int nw = 0;
-            ar.field("mTidalWaves.count", nw);
+            ar.field("tidalWaveCount", nw);
             for(int i = 0; i < nw; i++) {
                 const auto w = std::make_shared<eTidalWave>();
-                auto wa = ar.child(("mTidalWaves." + std::to_string(i)).c_str());
+                auto wa = ar.childAt("tidalWaves", i);
                 w->serializeJson(wa, *this);
                 mTidalWaves.push_back(w);
             }
         }
 
-        ar.field("mProgressLavaFlows", mProgressLavaFlows);
+        ar.field("lavaFlowProgress", mProgressLavaFlows);
         {
             int nl = 0;
-            ar.field("mLavaFlows.count", nl);
+            ar.field("lavaFlowCount", nl);
             for(int i = 0; i < nl; i++) {
                 const auto lf = std::make_shared<eLavaFlow>();
-                auto la = ar.child(("mLavaFlows." + std::to_string(i)).c_str());
+                auto la = ar.childAt("lavaFlows", i);
                 lf->serializeJson(la, *this);
                 mLavaFlows.push_back(lf);
             }
         }
 
-        ar.field("mProgressLandSlides", mProgressLandSlides);
+        ar.field("landSlideProgress", mProgressLandSlides);
         {
             int ns = 0;
-            ar.field("mLandSlides.count", ns);
+            ar.field("landSlideCount", ns);
             for(int i = 0; i < ns; i++) {
                 const auto ls = std::make_shared<eLandSlide>();
-                auto sa = ar.child(("mLandSlides." + std::to_string(i)).c_str());
+                auto sa = ar.childAt("landSlides", i);
                 ls->serializeJson(sa, *this);
                 mLandSlides.push_back(ls);
             }
@@ -834,12 +830,12 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
 
         // tiles
         {
-            std::string blob = captureWrite([this](eWriteStream& d){
-                for(const auto& ts : mTiles)
-                    for(const auto& t : ts)
-                        t->write(d);
-            });
-            ar.field("tilesBlob", blob);
+            int tileIdx = 0;
+            for(const auto& ts : mTiles)
+                for(const auto& t : ts) {
+                    auto tAr = ar.childAt("tiles", tileIdx++);
+                    t->serializeJson(tAr);
+                }
         }
 
         // buildings

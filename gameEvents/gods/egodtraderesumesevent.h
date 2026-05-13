@@ -21,6 +21,11 @@ public:
 
     void setGod(const eGodType god) { mGod = god; }
     eGodType god() const { return mGod; }
+void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        ar.field("mGod", mGod);
+}
+
 private:
     void serialize(eSaveArchive& ar);
     eGodType mGod = eGodType::zeus;

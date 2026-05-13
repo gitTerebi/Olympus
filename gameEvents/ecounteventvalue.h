@@ -2,6 +2,7 @@
 #define ECOUNTEVENTVALUE_H
 
 #include "eresourceeventvalue.h"
+#include "fileIO/ejsonarchive.h"
 
 class eSaveArchive;
 
@@ -18,6 +19,11 @@ public:
     void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
+    void serializeJson(eJsonArchive& ar) {
+        ar.field("mMinCount", mMinCount);
+        ar.field("mMaxCount", mMaxCount);
+        ar.field("mCount", mCount);
+    }
 protected:
     void chooseCount();
 

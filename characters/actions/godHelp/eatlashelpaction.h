@@ -41,13 +41,13 @@ public:
     eAtlasHelpAct(eGameBoard& board) :
         eAtlasHelpAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             mTarget->add(eResourceType::wood, 8);
             const int m = mTarget->add(eResourceType::marble, 12);
@@ -57,13 +57,13 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eMonument*>(b);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
     }
 

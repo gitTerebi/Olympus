@@ -4,6 +4,7 @@
 #include <string>
 
 #include "characters/gods/egodtype.h"
+#include "fileIO/ejsonarchive.h"
 
 class eWriteStream;
 class eReadStream;
@@ -22,6 +23,10 @@ protected:
                             std::string& tmpl) const;
 
     eGodType mGod = eGodType::zeus;
+    virtual void serializeJson(eJsonArchive& ar) {
+        ar.field("mGod", mGod);
+}
+
 };
 
 #endif // EGODEVENTVALUE_H

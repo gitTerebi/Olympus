@@ -13,6 +13,7 @@ public:
 
     void write(eWriteStream& dst) const;
     void read(eReadStream& src, eGameBoard& board);
+    void serializeJson(eJsonArchive& ar, eGameBoard& board);
 
     void setSingleCity(const stdsptr<eWorldCity>& c);
     const stdsptr<eWorldCity>& city() const { return mCity; }

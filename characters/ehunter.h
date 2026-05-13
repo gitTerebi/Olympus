@@ -14,6 +14,13 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+void serializeJson(eJsonArchive& ar) override {
+        eResourceCollector::serializeJson(ar);
+        bool deerHunter = mDeerHunter;
+        ar.field("deerHunter", deerHunter);
+        if(ar.reading()) setDeerHunter(deerHunter);
+}
+
 private:
     void serialize(eSaveArchive& ar);
 

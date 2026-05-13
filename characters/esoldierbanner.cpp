@@ -9,6 +9,7 @@
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "eiteratesquare.h"
 
 #include "evectorhelpers.h"
@@ -451,6 +452,62 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         ar.field("ns", ns);
         for(const auto s : mSoldiers) {
             ar.writeStream().writeCharacter(s);
+        }
+    }
+}
+
+void eSoldierBanner::serializeJson(eJsonArchive& ar) {
+    ar.field("mIOID", mIOID);
+    ar.field("mMilitaryAid", mMilitaryAid);
+    ar.field("mHome", mHome);
+    ar.field("mAbroad", mAbroad);
+    ar.tile("mTile", mTile, mBoard);
+    ar.field("mCount", mCount);
+    ar.field("mCityId", mCityId);
+    ar.field("mOnCityId", mOnCityId);
+    if(ar.reading()) {
+        int facing = 0;
+        ar.field("mFacing", facing);
+        setFacingOnLoad(facing);
+    } else {
+        ar.field("mFacing", mFacing);
+    }
+    {
+        int np = ar.reading() ? 0 : static_cast<int>(mPlaces.size());
+        ar.field("np", np);
+        if(ar.reading()) {
+            for(int i = 0; i < np; i++) {
+                eTile* t = nullptr;
+                ar.tile(("place" + std::to_string(i) + ".t").c_str(), t, mBoard);
+                ar.characterRef(("place" + std::to_string(i) + ".c").c_str(), [this, t](eCharacter* c) {
+                    if(c) mPlaces[static_cast<eSoldier*>(c)] = t;
+                }, mBoard);
+            }
+        } else {
+            int ii = 0;
+            for(const auto& p : mPlaces) {
+                eTile* t = p.second;
+                ar.tile(("place" + std::to_string(ii) + ".t").c_str(), t, mBoard);
+                eCharacter* c = p.first;
+                ar.characterRef(("place" + std::to_string(ii) + ".c").c_str(), c, mBoard);
+                ii++;
+            }
+        }
+    }
+    {
+        int ns = ar.reading() ? 0 : static_cast<int>(mSoldiers.size());
+        ar.field("ns", ns);
+        if(ar.reading()) {
+            for(int i = 0; i < ns; i++) {
+                ar.characterRef(("sol" + std::to_string(i)).c_str(), [this](eCharacter* c) {
+                    if(c) mSoldiers.push_back(static_cast<eSoldier*>(c));
+                }, mBoard);
+            }
+        } else {
+            for(int i = 0; i < ns; i++) {
+                eCharacter* c = mSoldiers[i];
+                ar.characterRef(("sol" + std::to_string(i)).c_str(), c, mBoard);
+            }
         }
     }
 }

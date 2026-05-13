@@ -63,13 +63,13 @@ public:
     ePlayMonsterBuildingAttackSoundGodAct(eGameBoard& board) :
         ePlayMonsterBuildingAttackSoundGodAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(!mBuilding) return;
         const auto b = mBuilding.get();
         auto& board = b->getBoard();
@@ -78,14 +78,19 @@ public:
         });
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mBuilding = b;
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mBuilding);
+    }
+    void serializeJson(eJsonArchive& ar) override {
+        eBuilding* b = mBuilding.get();
+        ar.buildingRef("mBuilding", b, board());
+        if(ar.reading()) mBuilding = b;
     }
 private:
     stdptr<eBuilding> mBuilding;
@@ -99,27 +104,32 @@ public:
     ePlayFightGodHitSoundGodAct(eGameBoard& board) :
         ePlayFightGodHitSoundGodAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(!mG) return;
         board().ifVisible(mG->tile(), [&]() {
             eSounds::playGodSound(mG->type(), eGodSound::hit);
         });
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const g) {
             mG = static_cast<eGod*>(g);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacter(mG);
+    }
+    void serializeJson(eJsonArchive& ar) override {
+        eCharacter* c = mG.get();
+        ar.characterRef("mG", c, board());
+        if(ar.reading()) mG = static_cast<eGod*>(c);
     }
 private:
     stdptr<eGod> mG;
@@ -130,7 +140,7 @@ public:
     eLookForPlagueGodAct(eGameBoard& board) :
         eGodAct(board, eGodActType::lookForPlague) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -151,22 +161,28 @@ public:
         return tile;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             auto& board = this->board();
             board.startPlague(mTarget);
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eSmallHouse*>(b);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
     }
+void serializeJson(eJsonArchive& ar) override {
+        eBuilding* _mTarget = mTarget.get();
+        ar.buildingRef("mTarget", _mTarget, board());
+        if(ar.reading()) mTarget = static_cast<eSmallHouse*>(_mTarget);
+    }
+
 private:
     stdptr<eSmallHouse> mTarget;
 };
@@ -176,7 +192,7 @@ public:
     eLookForEvictGodAct(eGameBoard& board) :
         eGodAct(board, eGodActType::lookForEvict) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -191,21 +207,27 @@ public:
         return b->centerTile();
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             mTarget->leave();
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eHouseBase*>(b);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
     }
+void serializeJson(eJsonArchive& ar) override {
+        eBuilding* _mTarget = mTarget.get();
+        ar.buildingRef("mTarget", _mTarget, board());
+        if(ar.reading()) mTarget = static_cast<eHouseBase*>(_mTarget);
+    }
+
 private:
     stdptr<eHouseBase> mTarget;
 };
@@ -215,7 +237,7 @@ class eLookForBlessGodActBase : public eGodAct {
 public:
     using eGodAct::eGodAct;
 
-    void act() {
+    void act() override {
         if(mTarget) {
             const auto type = mTarget->type();
             const bool batch = type == eBuildingType::oliveTree ||
@@ -241,7 +263,7 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = b;
         });
@@ -249,7 +271,7 @@ public:
         ar.field("bless", mBless);
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
         eSaveArchive ar(dst);
         ar.field("bless", const_cast<double&>(mBless));
@@ -257,6 +279,10 @@ public:
 protected:
     stdptr<eBuilding> mTarget;
     double mBless = 0;
+    void serializeJson(eJsonArchive& ar) override {
+        ar.field("bless", mBless);
+    }
+
 };
 
 class eLookForTargetedBlessGodAct : public eLookForBlessGodActBase {
@@ -270,7 +296,7 @@ public:
     eLookForTargetedBlessGodAct(eGameBoard& board) :
         eLookForTargetedBlessGodAct(board, 0, eGodType::zeus) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) {
@@ -293,17 +319,22 @@ public:
         return b->centerTile();
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         eLookForBlessGodActBase::read(src);
         eSaveArchive ar(src);
         ar.field("godType", mType);
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         eLookForBlessGodActBase::write(dst);
         eSaveArchive ar(dst);
         ar.field("godType", const_cast<eGodType&>(mType));
     }
+void serializeJson(eJsonArchive& ar) override {
+        eLookForBlessGodActBase::serializeJson(ar);
+        ar.field("godType", mType);
+}
+
 private:
     eGodType mType;
 };
@@ -317,7 +348,7 @@ public:
     eLookForBlessGodAct(eGameBoard& board) :
         eLookForBlessGodAct(board, 0) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -336,7 +367,7 @@ public:
     eLookForSoldierAttackGodAct(eGameBoard& board) :
         eLookForSoldierAttackGodAct(board, eTeamId::neutralFriendly) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto& chars = t->characters();
         if(chars.empty()) return null;
@@ -352,13 +383,13 @@ public:
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget && !mTarget->dead()) {
             mTarget->killWithCorpse();
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         eSaveArchive ar(src);
         ar.field("godTeam", mGodTeam);
         src.readCharacter(&board(), [this](eCharacter* const c) {
@@ -366,11 +397,15 @@ public:
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         eSaveArchive ar(dst);
         ar.field("godTeam", const_cast<eTeamId&>(mGodTeam));
         dst.writeCharacter(mTarget);
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("godTeam", mGodTeam);
+}
+
 private:
     eTeamId mGodTeam;
     stdptr<eCharacter> mTarget;
@@ -385,7 +420,7 @@ public:
     eLookForTargetedAttackGodAct(eGameBoard& board) :
         eLookForTargetedAttackGodAct(board, eGodType::zeus) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -396,14 +431,14 @@ public:
         return b->centerTile();
     }
 
-    void act() {
+    void act() override {
         if(mBTarget) {
             mBTarget->collapse();
             eSounds::playCollapseSound();
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         eSaveArchive ar(src);
         ar.field("godType", mType);
         src.readBuilding(&board(), [this](eBuilding* const b) {
@@ -411,11 +446,15 @@ public:
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         eSaveArchive ar(dst);
         ar.field("godType", const_cast<eGodType&>(mType));
         dst.writeBuilding(mBTarget);
     }
+void serializeJson(eJsonArchive& ar) override {
+        ar.field("godType", mType);
+}
+
 private:
     eGodType mType;
     stdptr<eBuilding> mBTarget;
@@ -429,7 +468,7 @@ public:
         eGodAct(board, eGodActType::lookForAttack),
         mCptr(c) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         if(!mCptr) return null;
         if(mCptr->tile() == t) return null;
@@ -458,7 +497,7 @@ public:
         }
     }
 
-    void act() {
+    void act() override {
         if(!mCptr) return;
         if(mBTarget) {
             const auto type = mCptr->type();
@@ -473,7 +512,7 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mCptr = c;
         });
@@ -485,11 +524,23 @@ public:
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
         dst.writeCharacter(mCTarget);
         dst.writeBuilding(mBTarget);
     }
+void serializeJson(eJsonArchive& ar) override {
+        eCharacter* _mCptr = mCptr.get();
+        ar.characterRef("mCptr", _mCptr, board());
+        if(ar.reading()) mCptr = _mCptr;
+        eCharacter* _mCTarget = mCTarget.get();
+        ar.characterRef("mCTarget", _mCTarget, board());
+        if(ar.reading()) mCTarget = _mCTarget;
+        eBuilding* _mBTarget = mBTarget.get();
+        ar.buildingRef("mBTarget", _mBTarget, board());
+        if(ar.reading()) mBTarget = _mBTarget;
+    }
+
 private:
     stdptr<eCharacter> mCptr;
     stdptr<eCharacter> mCTarget;
@@ -807,20 +858,31 @@ public:
         eFindFailFunc(board, eFindFailFuncType::teleport2),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         if(!mTptr) return;
         mTptr->teleport(tile);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
             mTptr = static_cast<eGodMonsterAction*>(ca);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacterAction(mTptr);
     }
+void serializeJson(eJsonArchive& ar) override {
+        if(ar.writing()) {
+            int _ioid = mTptr ? mTptr->ioID() : -1;
+            ar.field("mTptr", _ioid);
+        } else {
+            int _ioid = -1;
+            ar.field("mTptr", _ioid);
+            if(_ioid >= 0) ar.addPostFunc([this, _ioid]() { mTptr = static_cast<eGodMonsterAction*>(board().characterActionWithIOID(_ioid)); });
+        }
+    }
+
 private:
     stdptr<eGodMonsterAction> mTptr;
 };

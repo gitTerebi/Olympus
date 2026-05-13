@@ -955,7 +955,7 @@ private:
             ar.field("tileCount", n);
             if(ar.reading()) fTiles.resize(n, nullptr);
             for(int i = 0; i < n; i++)
-                ar.tile(("tile." + std::to_string(i)).c_str(), fTiles[i], board);
+                ar.tile(("tiles." + std::to_string(i)).c_str(), fTiles[i], board);
             ar.field("lastDim", fLastDim);
         }
     };
@@ -1017,23 +1017,23 @@ private:
 
         void serializeJson(eJsonArchive& ar, eGameBoard& board) {
             int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
-            ar.field("tileGroupCount", nv);
+            ar.field("groupCount", nv);
             if(ar.reading()) fTiles.resize(nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles[i];
                 int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
-                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                ar.field(("groups." + std::to_string(i) + ".count").c_str(), nt);
                 if(ar.reading()) v.resize(nt, {nullptr, eTerrain::dry, eOrientation::topRight});
                 for(int j = 0; j < nt; j++) {
-                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    const auto pre = "groups." + std::to_string(i) + ".tiles." + std::to_string(j) + ".";
                     ar.tile((pre + "tile").c_str(), v[j].fTile, board);
                     ar.field((pre + "terrain").c_str(), v[j].fSaved);
-                    ar.field((pre + "o").c_str(), v[j].fO);
+                    ar.field((pre + "orientation").c_str(), v[j].fO);
                 }
             }
             ar.field("lastId", fLastId);
             ar.field("permanent", fPermanent);
-            ar.field("regres", fRegres);
+            ar.field("regressing", fRegres);
         }
     };
 
@@ -1081,17 +1081,17 @@ private:
 
         void serializeJson(eJsonArchive& ar, eGameBoard& board) {
             int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
-            ar.field("tileGroupCount", nv);
+            ar.field("groupCount", nv);
             if(ar.reading()) fTiles.resize(nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles[i];
                 int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
-                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                ar.field(("groups." + std::to_string(i) + ".count").c_str(), nt);
                 if(ar.reading()) v.resize(nt, {nullptr, eOrientation::topRight});
                 for(int j = 0; j < nt; j++) {
-                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    const auto pre = "groups." + std::to_string(i) + ".tiles." + std::to_string(j) + ".";
                     ar.tile((pre + "tile").c_str(), v[j].fTile, board);
-                    ar.field((pre + "o").c_str(), v[j].fO);
+                    ar.field((pre + "orientation").c_str(), v[j].fO);
                 }
             }
             ar.field("lastId", fLastId);
@@ -1146,18 +1146,18 @@ private:
 
         void serializeJson(eJsonArchive& ar, eGameBoard& board) {
             int nv = ar.writing() ? static_cast<int>(fTiles.size()) : 0;
-            ar.field("tileGroupCount", nv);
+            ar.field("groupCount", nv);
             if(ar.reading()) fTiles.resize(nv);
             for(int i = 0; i < nv; i++) {
                 auto& v = fTiles[i];
                 int nt = ar.writing() ? static_cast<int>(v.size()) : 0;
-                ar.field(("g." + std::to_string(i) + ".count").c_str(), nt);
+                ar.field(("groups." + std::to_string(i) + ".count").c_str(), nt);
                 if(ar.reading()) v.resize(nt, {nullptr, 0, eOrientation::topRight});
                 for(int j = 0; j < nt; j++) {
-                    const auto pre = "g." + std::to_string(i) + "." + std::to_string(j) + ".";
+                    const auto pre = "groups." + std::to_string(i) + ".tiles." + std::to_string(j) + ".";
                     ar.tile((pre + "tile").c_str(), v[j].fTile, board);
-                    ar.field((pre + "alt").c_str(), v[j].fNewAltitude);
-                    ar.field((pre + "o").c_str(), v[j].fO);
+                    ar.field((pre + "newAltitude").c_str(), v[j].fNewAltitude);
+                    ar.field((pre + "orientation").c_str(), v[j].fO);
                 }
             }
             ar.field("lastId", fLastId);

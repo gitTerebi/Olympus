@@ -27,6 +27,14 @@ public:
 
     void setDuration(const int d) { mDuration = d; }
     int duration() const { return mDuration; }
+    void serializeJson(eJsonArchive& ar) override {
+        eGameEvent::serializeJson(ar);
+        eGodEventValue::serializeJson(ar);
+        eCityEventValue::serializeJson(ar, *gameBoard());
+        ar.field("mDuration", mDuration);
+        ar.field("mEnd", mEnd);
+    }
+
 private:
     void serialize(eSaveArchive& ar);
 

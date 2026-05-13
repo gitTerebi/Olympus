@@ -3,6 +3,7 @@
 
 #include "pointers/estdpointer.h"
 #include "fileIO/estreams.h"
+#include "fileIO/ejsonarchive.h"
 
 class eTile;
 
@@ -29,6 +30,10 @@ public:
     static stdsptr<eObsticleHandler> sCreate(
             eGameBoard& board,
             const eObsticleHandlerType type);
+    virtual void serializeJson(eJsonArchive& ar) {
+        // empty read — no fields to serialize
+    }
+
 private:
     eGameBoard& mBoard;
     const eObsticleHandlerType mType;

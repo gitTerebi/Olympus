@@ -73,6 +73,7 @@ public:
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
+    void serializeJson(class eJsonArchive& ar);
 
     void killAllWithCorpse();
 
@@ -168,12 +169,12 @@ public:
         eCharActFunc(board, eCharActFuncType::enemyBoatFinish),
         mCptr(c), mInvasion(invasion) {}
 
-    void call() {
+    void call() override {
         if(mCptr) mCptr->kill();
         mInvasion->disembark();
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readCharacter(&board(), [this](eCharacter* const c) {
             mCptr = static_cast<eCharacter*>(c);
         });
@@ -182,10 +183,17 @@ public:
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeCharacter(mCptr);
         dst.writeInvasionHandler(mInvasion);
     }
+void serializeJson(eJsonArchive& ar) override {
+        eCharacter* _mCptr = mCptr.get();
+        ar.characterRef("mCptr", _mCptr, board());
+        if(ar.reading()) mCptr = static_cast<eCharacter*>(_mCptr);
+        ar.invasionHandlerRef("mInvasion", mInvasion, board());
+    }
+
 private:
     stdptr<eCharacter> mCptr;
     eInvasionHandler* mInvasion = nullptr;

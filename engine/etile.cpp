@@ -10,6 +10,7 @@
 #include "evectorhelpers.h"
 #include "spawners/ebanner.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "eiteratesquare.h"
 
@@ -370,6 +371,38 @@ void eTile::write(eWriteStream& dst) const {
     eTileBase::write(dst);
     eSaveArchive ar(dst);
     const_cast<eTile*>(this)->serialize(ar);
+}
+
+void eTile::serializeJson(eJsonArchive& ar) {
+    eTileBase::serializeJson(ar);
+    ar.field("doubleAltitude", mDoubleAltitude);
+    ar.field("scrub", mScrub);
+    ar.field("tidalWaveZone", mTidalWaveZone);
+    ar.field("lavaZone", mLavaZone);
+    ar.field("landSlideZone", mLandSlideZone);
+    ar.field("rainforest", mRainforest);
+    ar.field("halfSlope", mHalfSlope);
+
+    int nb = ar.writing() ? static_cast<int>(mBanners.size()) : 0;
+    ar.field("bannerCount", nb);
+    for(int i = 0; i < nb; i++) {
+        auto bAr = ar.childAt("banners", i);
+        if(ar.writing()) {
+            eBannerTypeS type = mBanners[i]->type();
+            int id = mBanners[i]->id();
+            bAr.field("type", type);
+            bAr.field("id", id);
+            mBanners[i]->serializeJson(bAr);
+        } else {
+            eBannerTypeS type{};
+            int id = -1;
+            bAr.field("type", type);
+            bAr.field("id", id);
+            const auto b = eBanner::sCreate(id, this, mBoard, type);
+            b->serializeJson(bAr);
+            mBanners.push_back(b);
+        }
+    }
 }
 
 void eTile::serialize(eSaveArchive& ar) {

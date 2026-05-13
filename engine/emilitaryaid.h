@@ -24,6 +24,7 @@ struct eMilitaryAid {
     void write(eWriteStream& dst);
     void read(eReadStream& src, eGameBoard* const board);
     void serialize(eSaveArchive& ar, eGameBoard* board);
+    void serializeJson(class eJsonArchive& ar, eGameBoard& board);
 
     stdsptr<eWorldCity> fCity;
     std::vector<stdsptr<eSoldierBanner>> fSoldiers;

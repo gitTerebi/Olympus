@@ -41,25 +41,25 @@ public:
     eApolloHelpAct(eGameBoard& board) :
         eApolloHelpAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         auto& board = eGodAct::board();
         const auto p = board.plagueForHouse(mTarget);
         if(p) board.healPlague(p);
     }
 
-    void read(eReadStream& src) {
+    void read(eReadStream& src) override {
         src.readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = static_cast<eSmallHouse*>(b);
         });
     }
 
-    void write(eWriteStream& dst) const {
+    void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTarget);
     }
 
