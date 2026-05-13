@@ -3485,6 +3485,9 @@ void eGameWidget::paintEvent(ePainter &p)
             tex->setColorMod(0, 255, 0);
             const auto bt = eBuildingModeHelpers::toBuildingType(mode);
             const int allowed = mBoard->countAllowed(mViewedCityId, bt);
+            int animalW;
+            int animalH;
+            eAnimalBuilding::sDimensions(animalW, animalH);
             int n = 1;
             for (int x = sMinX; x <= sMaxX; x++)
             {
@@ -3493,15 +3496,9 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto t = mBoard->tile(x, y);
                     if (!t)
                         continue;
-                    if (t->underBuilding())
-                        continue;
-                    const auto t2 = mBoard->tile(x, y + 1);
-                    if (!t2)
-                        continue;
-                    if (t2->underBuilding())
-                        continue;
-                    if (t2->terrain() != eTerrain::fertile &&
-                        t->terrain() != eTerrain::fertile)
+                    if (!mBoard->canBuild(x, y, animalW, animalH,
+                                          mEditorMode, mViewedCityId, ppid,
+                                          true, true))
                         continue;
                     double rx;
                     double ry;
@@ -3513,8 +3510,6 @@ void eGameWidget::paintEvent(ePainter &p)
                     }
                     drawXY(x, y, rx, ry, 1, 1, a);
                     tp.drawTexture(rx, ry, tex, eAlignment::top);
-                    tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-                    y++;
                     n++;
 
                     buildCount++;
@@ -3609,8 +3604,11 @@ void eGameWidget::paintEvent(ePainter &p)
             return;
         const int tx = t->x();
         const int ty = t->y();
+        int animalW;
+        int animalH;
+        eAnimalBuilding::sDimensions(animalW, animalH);
         const bool cb = allowed > 0 && mBoard->canBuild(
-                                           tx, ty, 1, 2,
+                                           tx, ty, animalW, animalH,
                                            mEditorMode,
                                            mViewedCityId, ppid,
                                            true, true);
@@ -3619,7 +3617,6 @@ void eGameWidget::paintEvent(ePainter &p)
         const int a = t->altitude();
         drawXY(mHoverTX, mHoverTY, rx, ry, 1, 1, a);
         tp.drawTexture(rx, ry, tex, eAlignment::top);
-        tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
         tex->clearColorMod();
         return;
     }

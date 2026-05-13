@@ -2,12 +2,17 @@
 
 #include "fileIO/ejsonarchive.h"
 
+void eAnimalBuilding::sDimensions(int& sw, int& sh) {
+    sw = sBuildW;
+    sh = sBuildH;
+}
+
 eAnimalBuilding::eAnimalBuilding(
          eGameBoard& board,
          eCharacter* const a,
          const eBuildingType type,
          const eCityId cid) :
-    eBuilding(board, type, 1, 2, cid),
+    eBuilding(board, type, sBuildW, sBuildH, cid),
     mA(a) {
 
 }

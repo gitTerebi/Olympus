@@ -5132,20 +5132,23 @@ bool eGameBoard::buildAnimal(eTile *const tile,
 {
     const int tx = tile->x();
     const int ty = tile->y();
-    const bool cb = canBuild(tx, ty, 1, 2, editorDisplay, cid, pid, true, true);
+    int sw;
+    int sh;
+    eAnimalBuilding::sDimensions(sw, sh);
+    const bool cb = canBuild(tx, ty, sw, sh, editorDisplay, cid, pid, true, true);
     if (!cb)
         return false;
-    const auto sh = creator(*this);
-    sh->changeTile(tile);
+    const auto a = creator(*this);
+    a->changeTile(tile);
     const auto o = static_cast<eOrientation>(eRand::rand() % 8);
-    sh->setOrientation(o);
+    a->setOrientation(o);
     const auto w = eWalkableObject::sCreateFertile();
-    const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
-    sh->setAction(a);
+    const auto aa = e::make_shared<eAnimalAction>(a.get(), tx, ty, w);
+    a->setAction(aa);
 
-    return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]()
+    return build(tx, ty, sw, sh, cid, pid, editorDisplay, [this, a, type, cid]()
                  { return e::make_shared<eAnimalBuilding>(
-                       *this, sh.get(), type, cid); }, true, true, 0, false);
+                       *this, a.get(), type, cid); }, true, true, 0, false);
 }
 
 void eGameBoard::removeAllBuildings()

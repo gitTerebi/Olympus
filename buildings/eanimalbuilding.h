@@ -12,6 +12,10 @@ public:
                     const eCityId cid);
     ~eAnimalBuilding();
 
+    static void sDimensions(int& sw, int& sh);
+    static constexpr int sBuildW = 1;
+    static constexpr int sBuildH = 1;
+
     std::shared_ptr<eTexture> getTexture(
             const eTileSize) const override { return nullptr; };
 
