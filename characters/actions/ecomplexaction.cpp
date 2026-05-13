@@ -3,18 +3,29 @@
 #include "ewaitaction.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
+#include <algorithm>
 
 void eComplexAction::increment(const int by) {
-    if(mCurrentAction) {
+    int remaining = by;
+    for(int i = 0; i < 16; i++) {
+        if(!mCurrentAction) {
+            decide();
+            if(!mCurrentAction) return;
+        }
         const auto state = mCurrentAction->state();
         if(state == eCharacterActionState::running) {
-            mCurrentAction->increment(by);
-            return;
-        } else {
-            mCurrentAction = nullptr;
-            decide();
+            int step = remaining;
+            if(const auto w = dynamic_cast<eWaitAction*>(mCurrentAction.get())) {
+                step = std::min(remaining, w->remainingTime());
+            }
+            mCurrentAction->increment(step);
+            remaining -= step;
+            if(!mCurrentAction ||
+               mCurrentAction->state() == eCharacterActionState::running) return;
         }
-    } else {
+        mCurrentAction = nullptr;
+        if(this->state() != eCharacterActionState::running) return;
+        if(remaining <= 0) return;
         decide();
     }
 }

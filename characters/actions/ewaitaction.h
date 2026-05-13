@@ -19,6 +19,7 @@ public:
     void serializeJson(eJsonArchive& ar) override;
 
     void setTime(const int t);
+    int remainingTime() const { return mRemTime; }
 private:
     void serialize(eSaveArchive& ar);
     int mRemTime{__INT_MAX__};

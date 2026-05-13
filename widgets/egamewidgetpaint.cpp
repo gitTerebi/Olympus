@@ -19,6 +19,8 @@
 
 #include "spawners/elandinvasionpoint.h"
 
+#include <algorithm>
+
 #include "characters/esoldier.h"
 #include "characters/actions/esoldieraction.h"
 #include "characters/actions/ecarttransporteraction.h"
@@ -1012,7 +1014,12 @@ void eGameWidget::paintEvent(ePainter &p)
             else
             {
                 mTime += mSpeed;
-                mBoard->incTime(mSpeed);
+                int remaining = mSpeed;
+                while(remaining > 0) {
+                    const int step = std::min(remaining, sSpeeds[2]);
+                    mBoard->incTime(step);
+                    remaining -= step;
+                }
                 mGm->update();
             }
         }
