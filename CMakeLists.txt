@@ -36,7 +36,6 @@ set(SOURCES
     buildings/eaestheticsbuilding.cpp
     buildings/eagorabase.cpp
     buildings/eagoraspace.cpp
-    buildings/eanimalpen.cpp
     buildings/earmory.cpp
     buildings/earmsvendor.cpp
     buildings/eartisansguild.cpp
@@ -805,5 +804,4 @@ if(UNIX)
     )
     target_compile_options(eZeus PRIVATE -m64 -O3)
 endif()
-
 

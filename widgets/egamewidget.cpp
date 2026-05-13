@@ -8,6 +8,8 @@
 #include "engine/e-game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/e-worldcity.h"
+#include "characters/echaracter.h"
+#include "characters/actions/eanimalaction.h"
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "elanguage.h"
@@ -104,7 +106,6 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/eagorabase.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/evendor.h"
-#include "buildings/eanimalpen.h"
 #include "buildings/eroad.h"
 #include "buildings/eruins.h"
 #include "buildings/ebuildingrenderer.h"
@@ -1968,6 +1969,27 @@ bool eGameWidget::inErase(const SDL_Rect &rect)
 eBuilding* eGameWidget::eraseBuildingAt(const int tx, const int ty) const
 {
     if(const auto b = mBoard->buildingAt(tx, ty)) return b;
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return nullptr;
+    for(const auto& c : tile->characters()) {
+        const auto ct = c->type();
+        const bool animal =
+            ct == eCharacterType::sheep ||
+            ct == eCharacterType::goat ||
+            ct == eCharacterType::cattle1 ||
+            ct == eCharacterType::cattle2 ||
+            ct == eCharacterType::cattle3 ||
+            ct == eCharacterType::bull;
+        if(!animal) continue;
+        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        if(!aa) continue;
+        const auto b = mBoard->buildingAt(aa->spawnerX(), aa->spawnerY());
+        if(!b) continue;
+        const auto bt = b->type();
+        if(bt == eBuildingType::sheep ||
+           bt == eBuildingType::goat ||
+           bt == eBuildingType::cattle) return b;
+    }
     return nullptr;
 }
 

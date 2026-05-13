@@ -110,9 +110,6 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     } break;
     case eBuildingType::dairy:
     case eBuildingType::cardingShed:
-    case eBuildingType::sheep:
-    case eBuildingType::goat:
-    case eBuildingType::cattle:
     case eBuildingType::wheatFarm:
     case eBuildingType::onionsFarm:
     case eBuildingType::carrotsFarm:
@@ -534,9 +531,6 @@ void eBuildingWriter::sWriteJson(const eBuilding* b, eJsonArchive& ar) {
     } break;
     case eBuildingType::dairy:
     case eBuildingType::cardingShed:
-    case eBuildingType::sheep:
-    case eBuildingType::goat:
-    case eBuildingType::cattle:
     case eBuildingType::wheatFarm:
     case eBuildingType::onionsFarm:
     case eBuildingType::carrotsFarm:

@@ -12,6 +12,7 @@
 #include "characters/esheep.h"
 #include "characters/egoat.h"
 #include "characters/ecattle.h"
+#include "characters/actions/eanimalaction.h"
 
 #include "evectorhelpers.h"
 #include "spawners/eboarspawner.h"
@@ -767,6 +768,12 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                 if(b->isOnFire()) return;
                 eraser.addBuilding(b);
             };
+            const auto addAnimal = [&](eCharacter* const c) {
+                if(!c) return;
+                const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+                if(!aa) return;
+                eraser.addCharacter(c);
+            };
             for(int x = minX; x <= maxX; x++) {
                 for(int y = minY; y <= maxY; y++) {
                     const auto tile = mBoard->tile(x, y);
@@ -778,6 +785,16 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                     if(b) {
                         addBuilding(b);
                     } else {
+                        for(const auto& c : tile->characters()) {
+                            addAnimal(c.get());
+                        }
+                        for(const auto c : mBoard->characters()) {
+                            const auto aa = c ? dynamic_cast<eAnimalAction*>(c->action()) : nullptr;
+                            if(!aa) continue;
+                            if(aa->spawnerX() == x && aa->spawnerY() == y) {
+                                addAnimal(c);
+                            }
+                        }
                         const auto t = tile->terrain();
                         if(t == eTerrain::forest || t == eTerrain::choppedForest) {
                             tile->setTerrain(eTerrain::dry);
