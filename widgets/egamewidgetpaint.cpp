@@ -586,9 +586,47 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             }
         }
     };
+    const auto doDrawStampAgora = [&](const eStampBuildCommand &cmd)
+    {
+        if (cmd.agoraRoads.empty())
+            return;
+
+        const auto drawCell = [&](const int x, const int y, const bool road)
+        {
+            const auto tile = mBoard->tile(x, y);
+            if (!tile)
+                return;
+            double rx;
+            double ry;
+            drawXY(x, y, rx, ry, 1, 1, tile->altitude());
+            stdsptr<eTexture> tex;
+            if (road)
+            {
+                tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
+                                                     builTexs.fAgoraRoad.size());
+            }
+            else
+            {
+                tex = builTexs.fAgora.getTexture(tile->seed() %
+                                                 builTexs.fAgora.size());
+            }
+            if (!tex)
+                return;
+            tex->setColorMod(0, 255, 0);
+            tex->setAlpha(120);
+            tp.drawTexture(rx, ry, tex, eAlignment::top);
+            tex->clearAlphaMod();
+            tex->clearColorMod();
+        };
+        for (const auto &space : cmd.agoraSpaces)
+            drawCell(tx + space.first, ty + space.second, false);
+        for (const auto &road : cmd.agoraRoads)
+            drawCell(tx + road.first, ty + road.second, true);
+    };
 
     mStampTool->paintPreview(tx, ty, mBoard, mEditorMode, mViewedCityId, ppid,
-                             doDrawXY, doDrawTex, doDrawAgora);
+                             doDrawXY, doDrawTex, doDrawAgora,
+                             doDrawStampAgora);
 }
 
 stdsptr<eTexture> eGameWidget::getBasementTexture(

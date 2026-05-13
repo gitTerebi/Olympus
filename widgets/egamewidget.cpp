@@ -2324,7 +2324,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         if (mRotateId > 3)
             mRotateId = 0;
         if (mGm->mode() == eBuildingMode::stamp)
-            mStampTool->setRotation(mRotateId);
+            mStampTool->setRotation(mStampTool->rotation() + 1);
     }
     else if (k == hotkeys.fHotkeyPause)
     {
