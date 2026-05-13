@@ -33,7 +33,7 @@ private:
 
     std::vector<eOrientation> mPath;
     stdsptr<eDirectionTimes> mDirTimes;
-    ePatrolBuildingBase* mBuilding = nullptr;
+    stdptr<ePatrolBuildingBase> mBuilding;
 
     bool mDone = false;
 };

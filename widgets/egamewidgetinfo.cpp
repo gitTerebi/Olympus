@@ -231,6 +231,8 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(sb, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
+            const std::string holdsStr = eLanguage::zeusText(123, 2) + " " + std::to_string(sb->resource()) + " " + eLanguage::zeusText(123, 3);
+            ebWid->addText(holdsStr);
             constexpr int maxYearly = 8;
             const double eff = (double)sb->producedThisYear() / maxYearly;
             const int effPercent = static_cast<int>(eff * 100 + 0.5);

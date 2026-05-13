@@ -22,6 +22,10 @@ ePatrolAction::ePatrolAction(eCharacter* const c,
     ePatrolAction(c, nullptr, {}, nullptr, at) {}
 
 bool ePatrolAction::decide() {
+    if(!mBuilding) {
+        setState(eCharacterActionState::finished);
+        return true;
+    }
     const bool r = eActionWithComeback::decide();
     if(r) return r;
     if(mDone) {
@@ -62,7 +66,7 @@ void ePatrolAction::serialize(eSaveArchive& ar) {
     }
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = static_cast<ePatrolBuildingBase*>(b);
+            mBuilding = dynamic_cast<ePatrolBuildingBase*>(b);
         });
     } else {
         ar.writeStream().writeBuilding(mBuilding);
