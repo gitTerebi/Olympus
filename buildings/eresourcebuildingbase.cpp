@@ -118,5 +118,12 @@ void eResourceBuildingBase::serialize(eSaveArchive& ar) {
 void eResourceBuildingBase::serializeJson(eJsonArchive& ar) {
     eEmployingBuilding::serializeJson(ar);
     ar.field("mResource", mResource);
-    // mCart restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mCart;
+        ar.characterRef("mCart", raw, getBoard());
+    } else {
+        ar.characterRef("mCart", [this](eCharacter* c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
 }

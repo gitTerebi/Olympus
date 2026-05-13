@@ -100,7 +100,14 @@ void eShepherBuildingBase::serializeJson(eJsonArchive& ar) {
         ar.field(k.c_str(), mMonthlyProduced[i]);
     }
     ar.field("mRingIdx", mRingIdx);
-    // mShepherd restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mShepherd.get();
+        ar.characterRef("mShepherd", raw, getBoard());
+    } else {
+        ar.characterRef("mShepherd", [this](eCharacter* c) {
+            mShepherd = static_cast<eResourceCollectorBase*>(c);
+        }, getBoard());
+    }
 }
 
 

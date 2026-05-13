@@ -328,6 +328,18 @@ void eStorageBuilding::serializeJson(eJsonArchive& ar) {
         ar.field(ck.c_str(), c);
         if(ar.reading()) mMaxCount[rt] = c;
     }
-    // mCart1/mCart2 restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw1 = mCart1;
+        ar.characterRef("mCart1", raw1, getBoard());
+        eCharacter* raw2 = mCart2;
+        ar.characterRef("mCart2", raw2, getBoard());
+    } else {
+        ar.characterRef("mCart1", [this](eCharacter* c) {
+            mCart1 = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+        ar.characterRef("mCart2", [this](eCharacter* c) {
+            mCart2 = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
 }
 

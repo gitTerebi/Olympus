@@ -202,7 +202,14 @@ void eResourceCollectBuilding::serializeJson(eJsonArchive& ar) {
     ar.field("mProcessTime", mProcessTime);
     ar.field("mWaitTime", mWaitTime);
     ar.field("mSpawnTime", mSpawnTime);
-    // mCollector restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mCollector;
+        ar.characterRef("mCollector", raw, getBoard());
+    } else {
+        ar.characterRef("mCollector", [this](eCharacter* c) {
+            mCollector = static_cast<eResourceCollectorBase*>(c);
+        }, getBoard());
+    }
 }
 
 

@@ -14,7 +14,7 @@ public:
                eCharacter* const a,
                const eBuildingType type,
                const eCityId cid);
-    ~eAnimalPen();
+    ~eAnimalPen() override;
 
     static void sDimensions(int& sw, int& sh);
     static constexpr int sBuildW = 1;
@@ -24,6 +24,7 @@ public:
             const eTileSize) const override { return nullptr; };
 
     void nextMonth() override;
+    void erase() override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
@@ -33,6 +34,7 @@ public:
     eCharacter* animal() const { return mA; }
     void setAnimal(eCharacter* const a);
 private:
+    void killAnimal();
     stdptr<eCharacter> mA;
 };
 
