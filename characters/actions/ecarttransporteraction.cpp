@@ -56,16 +56,7 @@ bool eCartTransporterAction::decide() {
             mNoTarget = false;
             const bool hr = c->hasResource();
             if(!hr) { wait(1000); mTarget = nullptr; }
-            else if(mWaitOutside) { waitOutside(); }
-            else if(hr) {
-                const auto rt = c->resType();
-                const int cc = c->resCount();
-                eCartTask task;
-                task.fMaxCount = cc;
-                task.fResource = rt;
-                task.fType = eCartActionType::give;
-                findTarget(task);
-            }
+            else { waitOutside(); }
         } else {
             int cc = c->resCount();
             if(cc > 0) {

@@ -47,7 +47,7 @@ SOURCES += \
         buildings/eaestheticsbuilding.cpp \
         buildings/eagorabase.cpp \
         buildings/eagoraspace.cpp \
-        buildings/eanimalbuilding.cpp \
+        buildings/eanimalpen.cpp \
         buildings/earmory.cpp \
         buildings/earmsvendor.cpp \
         buildings/eartisansguild.cpp \
@@ -752,7 +752,7 @@ HEADERS += \
     buildings/eaestheticsbuilding.h \
     buildings/eagorabase.h \
     buildings/eagoraspace.h \
-    buildings/eanimalbuilding.h \
+    buildings/eanimalpen.h \
     buildings/earmory.h \
     buildings/earmsvendor.h \
     buildings/eartisansguild.h \

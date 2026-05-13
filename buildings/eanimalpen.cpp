@@ -1,43 +1,46 @@
-#include "eanimalbuilding.h"
+#include "eanimalpen.h"
 
 #include "fileIO/ejsonarchive.h"
+#include "characters/edomesticatedanimal.h"
 
-void eAnimalBuilding::sDimensions(int& sw, int& sh) {
+void eAnimalPen::sDimensions(int& sw, int& sh) {
     sw = sBuildW;
     sh = sBuildH;
 }
 
-eAnimalBuilding::eAnimalBuilding(
+eAnimalPen::eAnimalPen(
          eGameBoard& board,
          eCharacter* const a,
          const eBuildingType type,
          const eCityId cid) :
     eBuilding(board, type, sBuildW, sBuildH, cid),
     mA(a) {
-
 }
 
-eAnimalBuilding::~eAnimalBuilding() {
+eAnimalPen::~eAnimalPen() {
     if(mA) mA->kill();
 }
 
-void eAnimalBuilding::nextMonth() {
+void eAnimalPen::nextMonth() {
     const bool isCattle = type() == eBuildingType::cattle;
     if(!mA && !isCattle) erase();
+    if(const auto da = dynamic_cast<eDomesticatedAnimal*>(mA.get())) {
+        da->nextMonth();
+    }
 }
 
-void eAnimalBuilding::read(eReadStream& src) {
+void eAnimalPen::read(eReadStream& src) {
     eBuilding::read(src);
 }
 
-void eAnimalBuilding::write(eWriteStream& dst) const {
+void eAnimalPen::write(eWriteStream& dst) const {
     eBuilding::write(dst);
 }
 
-void eAnimalBuilding::serializeJson(eJsonArchive& ar) {
+void eAnimalPen::serializeJson(eJsonArchive& ar) {
     eBuilding::serializeJson(ar);
 }
 
-void eAnimalBuilding::setAnimal(eCharacter* const a) {
+void eAnimalPen::setAnimal(eCharacter* const a) {
     mA = a;
 }

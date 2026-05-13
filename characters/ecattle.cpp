@@ -4,7 +4,7 @@
 #include "engine/e-game-board.h"
 #include "textures/egametextures.h"
 #include "enumbers.h"
-#include "buildings/eanimalbuilding.h"
+#include "buildings/eanimalpen.h"
 #include "actions/eanimalaction.h"
 #include "fileIO/esavearchive.h"
 
@@ -124,7 +124,7 @@ bool eCattle::shouldBecomeBull() const {
             if(tt && tt->underBuildingType() == eBuildingType::cattle) {
                 nCattle++;
                 const auto ub = tt->underBuilding();
-                const auto ab = static_cast<eAnimalBuilding*>(ub);
+                const auto ab = static_cast<eAnimalPen*>(ub);
                 const auto a = ab->animal();
                 hasBull = a && a->type() == eCharacterType::bull;
             }

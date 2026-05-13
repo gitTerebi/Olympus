@@ -35,33 +35,6 @@
 
 #include "widgets/eeventbackground.h"
 
-namespace {
-bool writeGameSaveFile(const std::string& path,
-                       const std::string& format,
-                       eGameWidget* const gameWidget,
-                       const stdsptr<eCampaign>& campaign) {
-    const auto fsp = std::filesystem::path(path);
-    const auto fspd = fsp.parent_path();
-    std::filesystem::create_directories(fspd);
-    std::ofstream file(path, std::ios::out | std::ios::binary |
-                       std::ios::trunc);
-    if(!file) return false;
-    eWriteTarget target(&file);
-    eWriteStream dst(target);
-    dst.writeFormat(format);
-    if(gameWidget) {
-        const auto s = gameWidget->settings();
-        s.write(dst);
-    } else {
-        eGameWidgetSettings s;
-        s.fPaused = true;
-        s.write(dst);
-    }
-    campaign->write(dst);
-    file.close();
-    return true;
-}
-}
 #include "widgets/eepisodeintroductionwidget.h"
 #include "widgets/eepisodelostwidget.h"
 #include "widgets/erosterofleaders.h"
@@ -466,28 +439,7 @@ bool eMainWindow::loadGame(const std::string& path) {
         return true;
     }
 
-    // fall back to binary .ez3
-    std::ifstream file(ez3Path.string(), std::ios::in | std::ios::binary);
-    if(!file) return false;
-    eReadSource source(&file);
-    eReadStream src(source);
-    src.readFormat();
-    const auto& format = src.format();
-    if(format != "eZeus.ez3") {
-        printf("Invalid file '%s' format '%s', expected 'eZeus.ez3'.\n",
-               path.c_str(), format.c_str());
-        return false;
-    }
-    eGameWidgetSettings s;
-    s.read(src);
-    const auto c = std::make_shared<eCampaign>();
-    c->read(src);
-    c->loadStrings();
-    c->loadNumbers();
-    src.handlePostFuncs();
-    file.close();
-    startGameAction(c, s);
-    return true;
+    return false;
 }
 
 void eMainWindow::closeGame() {

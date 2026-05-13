@@ -36,6 +36,8 @@ public:
     void write(eWriteStream& dst) const override;
     void serializeJson(class eJsonArchive& ar) override;
 protected:
+    virtual int maxCartLoad() const;
+
     void serialize(eSaveArchive& ar);
 
 private:

@@ -83,7 +83,7 @@
 #include "buildings/ecolumn.h"
 #include "buildings/eavenue.h"
 
-#include "buildings/eanimalbuilding.h"
+#include "buildings/eanimalpen.h"
 
 #include "buildings/eelitehousing.h"
 #include "buildings/eelitehousingrenderer.h"

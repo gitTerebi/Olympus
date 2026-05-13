@@ -4,6 +4,8 @@
 #include "characters/actions/eshepherdaction.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
+#include "engine/e-game-board.h"
+#include "characters/echaracter.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
         eGameBoard& board,
@@ -66,6 +68,7 @@ void eShepherBuildingBase::nextMonth() {
     mProducedThisYear -= mMonthlyProduced[mRingIdx];
     mMonthlyProduced[mRingIdx] = 0;
     if(mProducedThisYear < 0) mProducedThisYear = 0;
+
 }
 
 void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int count) {
