@@ -1,6 +1,7 @@
 #include "esettler.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "textures/egametextures.h"
 
 #include "erand.h"
@@ -19,6 +20,11 @@ void eSettler::setEmigrant(const bool e) {
 }
 
 void eSettler::serialize(eSaveArchive& ar) {
+    ar.field("mEmigrant", mEmigrant);
+}
+
+void eSettler::serializeJson(eJsonArchive& ar) {
+    eBasicPatroler::serializeJson(ar);
     ar.field("mEmigrant", mEmigrant);
 }
 

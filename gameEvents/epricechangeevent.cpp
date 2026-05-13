@@ -1,6 +1,7 @@
 #include "epricechangeevent.h"
 
 #include "engine/e-game-board.h"
+#include "fileIO/ejsonarchive.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
@@ -40,4 +41,10 @@ void ePriceChangeEvent::read(eReadStream &src) {
     eGameEvent::read(src);
     eResourceEventValue::read(src);
     eCountEventValue::read(src);
+}
+
+void ePriceChangeEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eResourceEventValue::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
 }

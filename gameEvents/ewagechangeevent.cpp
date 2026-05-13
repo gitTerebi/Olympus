@@ -1,5 +1,6 @@
 #include "ewagechangeevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -22,6 +23,11 @@ void eWageChangeEvent::write(eWriteStream& dst) const {
 
 void eWageChangeEvent::serialize(eSaveArchive& ar) {
 
+}
+
+void eWageChangeEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
 }
 
 void eWageChangeEvent::read(eReadStream& src) {

@@ -38,6 +38,7 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+    void serializeJson(eJsonArchive& ar) override;
 protected:
     bool mPostpone = true;
 private:

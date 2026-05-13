@@ -1,6 +1,7 @@
 #include "esupplydemandchangeevent.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eSupplyDemandChangeEvent::eSupplyDemandChangeEvent(
     const eCityId cid, const eGameEventType type,
@@ -30,4 +31,11 @@ void eSupplyDemandChangeEvent::serialize(eSaveArchive& ar) {
         eCountEventValue::write(ar.writeStream());
         eCityEventValue::write(ar.writeStream());
     }
+}
+
+void eSupplyDemandChangeEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eResourceEventValue::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
+    eCityEventValue::serializeJson(ar, *gameBoard());
 }

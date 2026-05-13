@@ -2,6 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eMovePathAction::eMovePathAction(eCharacter* const c,
                                  const std::vector<eOrientation>& path,
@@ -53,6 +54,26 @@ void eMovePathAction::serialize(eSaveArchive& ar) {
         }
         ar.field("o", o);
         if(ar.reading()) {
+            mTurns.push_back(o);
+        }
+    }
+    ar.field("mMaxDistance", mMaxDistance);
+    ar.field("mWalkedDistance", mWalkedDistance);
+}
+
+void eMovePathAction::serializeJson(eJsonArchive& ar) {
+    eMoveAction::serializeJson(ar);
+    int n = ar.writing() ? static_cast<int>(mTurns.size()) : 0;
+    ar.field("n", n);
+    if(ar.reading()) mTurns.clear();
+    for(int i = 0; i < n; i++) {
+        const auto key = "o" + std::to_string(i);
+        if(ar.writing()) {
+            eOrientation o = mTurns[i];
+            ar.field(key.c_str(), o);
+        } else {
+            eOrientation o;
+            ar.field(key.c_str(), o);
             mTurns.push_back(o);
         }
     }

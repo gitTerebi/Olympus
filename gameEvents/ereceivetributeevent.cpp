@@ -4,6 +4,7 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eReceiveTributeEvent::eReceiveTributeEvent(
         const eCityId cid,
@@ -51,4 +52,9 @@ void eReceiveTributeEvent::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCity(mCity.get());
     }
+}
+
+void eReceiveTributeEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ar.cityRef("mCity", mCity, *worldBoard());
 }

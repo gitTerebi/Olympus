@@ -1,5 +1,6 @@
 #include "eplayerraidevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -89,6 +90,11 @@ void ePlayerRaidEvent::write(eWriteStream& dst) const {
 }
 
 void ePlayerRaidEvent::serialize(eSaveArchive& ar) {
+    ar.field("mResource", mResource);
+}
+
+void ePlayerRaidEvent::serializeJson(eJsonArchive& ar) {
+    ePlayerConquestEventBase::serializeJson(ar);
     ar.field("mResource", mResource);
 }
 

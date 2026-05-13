@@ -5,6 +5,7 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eRivalArmyAwayEvent::eRivalArmyAwayEvent(
         const eCityId cid,
@@ -48,4 +49,9 @@ void eRivalArmyAwayEvent::serialize(eSaveArchive& ar) {
     } else {
         eCityEventValue::write(ar.writeStream());
     }
+}
+
+void eRivalArmyAwayEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCityEventValue::serializeJson(ar, *gameBoard());
 }

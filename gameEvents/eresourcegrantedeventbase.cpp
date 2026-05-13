@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eCityId cid,
@@ -197,5 +198,13 @@ void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
         eResourceEventValue::write(ar.writeStream());
         eCountEventValue::write(ar.writeStream());
     }
+    ar.field("mPostpone", mPostpone);
+}
+
+void eResourceGrantedEventBase::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCityEventValue::serializeJson(ar, *gameBoard());
+    eResourceEventValue::serializeJson(ar);
+    eCountEventValue::serializeJson(ar);
     ar.field("mPostpone", mPostpone);
 }

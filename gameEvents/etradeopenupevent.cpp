@@ -1,6 +1,7 @@
 #include "etradeopenupevent.h"
 
 #include "engine/e-game-board.h"
+#include "fileIO/ejsonarchive.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "estringhelpers.h"
@@ -38,4 +39,9 @@ void eTradeOpenUpEvent::write(eWriteStream &dst) const {
 void eTradeOpenUpEvent::read(eReadStream &src) {
     eGameEvent::read(src);
     eCityEventValue::read(src, *gameBoard());
+}
+
+void eTradeOpenUpEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    eCityEventValue::serializeJson(ar, *gameBoard());
 }

@@ -4,6 +4,7 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eGiftToEvent::eGiftToEvent(
         const eCityId cid,
@@ -59,4 +60,11 @@ void eGiftToEvent::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeCity(mCity.get());
     }
+}
+
+void eGiftToEvent::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ar.field("mCount", mCount);
+    ar.field("mResource", mResource);
+    ar.cityRef("mCity", mCity, *worldBoard());
 }

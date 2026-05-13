@@ -5,6 +5,7 @@
 #include "characters/actions/efollowaction.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 #include "etrailer.h"
 #include "eox.h"
 #include "eporter.h"
@@ -359,6 +360,50 @@ void eCartTransporter::write(eWriteStream& dst) const {
     eBasicPatroler::write(dst);
     eSaveArchive ar(dst);
     const_cast<eCartTransporter*>(this)->serialize(ar);
+}
+
+void eCartTransporter::serializeJson(eJsonArchive& ar) {
+    eCharacter::serializeJson(ar);
+    ar.field("count", mResourceCount);
+    ar.field("mType", mType);
+    ar.field("type", mResourceType);
+    if(ar.reading()) {
+        setResourceValue(mResourceType, mResourceCount);
+    }
+    ar.field("mSupports", mSupports);
+    ar.field("mSupport", mSupport);
+    ar.field("mWaiting", mWaiting);
+    ar.field("mIsOx", mIsOx);
+    ar.field("mBigTrailer", mBigTrailer);
+    ar.field("mMaxDistance", mMaxDistance);
+    if(ar.writing()) {
+        eCharacter* rawOx = mOx.get();
+        ar.characterRef("mOx", rawOx, getBoard());
+        eCharacter* rawTrailer = mTrailer.get();
+        ar.characterRef("mTrailer", rawTrailer, getBoard());
+    } else {
+        ar.characterRef("mOx", [this](eCharacter* c) {
+            mOx = static_cast<eOx*>(c);
+        }, getBoard());
+        ar.characterRef("mTrailer", [this](eCharacter* c) {
+            mTrailer = static_cast<eTrailer*>(c);
+        }, getBoard());
+    }
+    int nf = ar.writing() ? static_cast<int>(mFollowers.size()) : 0;
+    ar.field("nf", nf);
+    if(ar.reading()) mFollowers.clear();
+    for(int i = 0; i < nf; i++) {
+        const auto key = "follower." + std::to_string(i);
+        if(ar.writing()) {
+            eCharacter* raw = mFollowers[i].get();
+            ar.characterRef(key.c_str(), raw, getBoard());
+        } else {
+            ar.characterRef(key.c_str(), [this](eCharacter* c) {
+                mFollowers.push_back(c);
+            }, getBoard());
+        }
+    }
+    if(ar.reading()) updateTextures();
 }
 
 void eCartTransporter::serialize(eSaveArchive& ar) {

@@ -1,6 +1,7 @@
 #include "egodquesteventbase.h"
 
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 void eGodQuestEventBase::setGod(const eGodType g) {
     mQuest.fGod = g;
@@ -32,4 +33,11 @@ void eGodQuestEventBase::serialize(eSaveArchive& ar) {
     } else {
         mQuest.write(ar.writeStream());
     }
+}
+
+void eGodQuestEventBase::serializeJson(eJsonArchive& ar) {
+    eGameEvent::serializeJson(ar);
+    ar.field("fGod", mQuest.fGod);
+    ar.field("fId", mQuest.fId);
+    ar.field("fHero", mQuest.fHero);
 }

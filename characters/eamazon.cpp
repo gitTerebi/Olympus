@@ -3,6 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "fileIO/ejsonarchive.h"
 
 eAmazon::eAmazon(eGameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::amazon) {
@@ -39,6 +40,13 @@ void eAmazon::write(eWriteStream& dst) const {
 }
 
 void eAmazon::serialize(eSaveArchive& ar) {
+    bool archer = mIsArcher;
+    ar.field("archer", archer);
+    if(ar.reading()) setIsArcher(archer);
+}
+
+void eAmazon::serializeJson(eJsonArchive& ar) {
+    eSoldier::serializeJson(ar);
     bool archer = mIsArcher;
     ar.field("archer", archer);
     if(ar.reading()) setIsArcher(archer);
