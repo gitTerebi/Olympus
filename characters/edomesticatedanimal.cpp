@@ -14,8 +14,14 @@ eDomesticatedAnimal::eDomesticatedAnimal(
 void eDomesticatedAnimal::groom() {
     if(mResource >= 1) return;
     mGroomed++;
-    if(mGroomed >= mMaxGroom) {
-        mGroomed = 0;
+    if(mGroomed >= mMaxGroom) mGroomed = 0;
+}
+
+void eDomesticatedAnimal::nextMonth() {
+    if(mResource >= 1) return;
+    mMonthsGrown++;
+    if(mMonthsGrown >= 12) {
+        mMonthsGrown = 0;
         mResource = 1;
         setFleecedTexture();
     }
@@ -52,4 +58,5 @@ void eDomesticatedAnimal::write(eWriteStream& dst) const {
 void eDomesticatedAnimal::serialize(eSaveArchive& ar) {
     ar.field("mGroomed", mGroomed);
     ar.field("mResource", mResource);
+    ar.field("mMonthsGrown", mMonthsGrown);
 }

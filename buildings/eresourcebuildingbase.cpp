@@ -35,12 +35,18 @@ void eResourceBuildingBase::timeChanged(const int by) {
                 if(!action->src()) action->setBuilding(this);
             }
             if(mCart->waiting() && mResource > 0) {
-                const int a = mCart->add(mResType, mResource);
+                const int a = mCart->add(mResType,
+                                         std::min(mResource, maxCartLoad()));
                 mResource -= a;
             }
         }
     }
     eEmployingBuilding::timeChanged(by);
+}
+
+int eResourceBuildingBase::maxCartLoad() const {
+    return eResourceTypeHelpers::transportSize(mResType,
+                                               getBoard().doubleCartCapacity());
 }
 
 int eResourceBuildingBase::add(const eResourceType type,

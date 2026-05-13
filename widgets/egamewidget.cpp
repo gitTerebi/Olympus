@@ -104,7 +104,7 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/eagorabase.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/evendor.h"
-#include "buildings/eanimalbuilding.h"
+#include "buildings/eanimalpen.h"
 #include "buildings/eroad.h"
 #include "buildings/eruins.h"
 #include "buildings/ebuildingrenderer.h"

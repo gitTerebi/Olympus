@@ -41,3 +41,8 @@ std::vector<eOverlay> eCardingShed::getOverlays(const eTileSize size) const {
     return os;
 }
 
+int eCardingShed::maxCartLoad() const {
+    return 1;
+}
+
+

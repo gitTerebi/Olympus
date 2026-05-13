@@ -25,6 +25,7 @@ public:
 
     eBuilding* src() const { return mBuilding; }
     eBuilding* target() const { return mTarget; }
+    bool noDestination() const { return mWaitOutside; }
     void setBuilding(eBuildingWithResource* b) { mBuilding = b; }
 
     bool waiting();

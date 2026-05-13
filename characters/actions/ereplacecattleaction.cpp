@@ -99,7 +99,7 @@ void eRC_finishWalkingAction::call() {
     if(!ub) return;
     const auto ubt = ub->type();
     if(ubt != eBuildingType::cattle) return;
-    const auto ab = static_cast<eAnimalBuilding*>(ub);
+    const auto ab = static_cast<eAnimalPen*>(ub);
     ab->setAnimal(mCattle);
     const int tx = t->x();
     const int ty = t->y();

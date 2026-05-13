@@ -11,6 +11,7 @@
 #include "e-tribute.h"
 #include "characters/echaracter.h"
 #include "buildings/ebuilding.h"
+#include "buildings/eanimalpen.h"
 #include "spawners/espawner.h"
 
 #include "buildings/estoragebuilding.h"
@@ -90,7 +91,7 @@
 #include "enumbers.h"
 
 #include "characters/actions/eanimalaction.h"
-#include "buildings/eanimalbuilding.h"
+#include "buildings/eanimalpen.h"
 
 #include "buildings/eplaceholder.h"
 #include "buildings/sanctuaries/ezeussanctuary.h"
@@ -5134,7 +5135,7 @@ bool eGameBoard::buildAnimal(eTile *const tile,
     const int ty = tile->y();
     int sw;
     int sh;
-    eAnimalBuilding::sDimensions(sw, sh);
+    eAnimalPen::sDimensions(sw, sh);
     const bool cb = canBuild(tx, ty, sw, sh, editorDisplay, cid, pid, true, true);
     if (!cb)
         return false;
@@ -5147,7 +5148,7 @@ bool eGameBoard::buildAnimal(eTile *const tile,
     a->setAction(aa);
 
     return build(tx, ty, sw, sh, cid, pid, editorDisplay, [this, a, type, cid]()
-                 { return e::make_shared<eAnimalBuilding>(
+                 { return e::make_shared<eAnimalPen>(
                        *this, a.get(), type, cid); }, true, true, 0, false);
 }
 

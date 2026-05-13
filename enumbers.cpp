@@ -348,7 +348,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("shepherd_goatherd_max_distance_i", sShepherdGoatherdMaxDistance, 40, 1, 1000);
     loadI("shepherd_goatherd_max_groom_i", sShepherdGoatherdMaxGroom, 20, 1, 1000);
     loadI("shepherd_goatherd_groom_time_i", sShepherdGoatherdGroomTime, 720, 1, 10000);
-    loadI("shepherd_goatherd_collect_time_i", sShepherdGoatherdCollectTime, 2000, 1, 10000);
+    loadI("shepherd_goatherd_collect_time_i", sShepherdGoatherdCollectTime, 400, 1, 10000);
     loadI("shepherd_goatherd_wait_time_i", sShepherdGoatherdWaitTime, 2000, 1, 100000);
 
     loadI("sheep_max_groom_i", sSheepMaxGroom, 15, 1, 1000);

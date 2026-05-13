@@ -31,11 +31,15 @@ public:
                          const eCityId cid);
     ~eShepherBuildingBase();
 
+    bool spawnsCartWalkers() const override { return false; }
+
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
     void nextMonth() override;
+
+    virtual int animalsPerBuilding() const { return 8; }
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

@@ -1,10 +1,7 @@
 #include "eworldboard.h"
 
 #include "evectorhelpers.h"
-#include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
-
-#include <iterator>
 
 eWorldBoard::eWorldBoard() {}
 
@@ -144,118 +141,6 @@ void eWorldBoard::setIOIDs() const
     }
 }
 
-void eWorldBoard::write(eWriteStream &dst) const
-{
-    setIOIDs();
-    eSaveArchive ar(dst);
-    const_cast<eWorldBoard *>(this)->serialize(ar);
-}
-
-void eWorldBoard::read(eReadStream &src)
-{
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eWorldBoard::serialize(eSaveArchive &ar)
-{
-    ar.field("mMap", mMap);
-
-    int nr;
-    if (ar.writing())
-        nr = mRegions.size();
-    ar.field("nr", nr);
-    if (ar.reading())
-        mRegions.clear();
-    for (int i = 0; i < nr; i++)
-    {
-        eWorldRegion r;
-        if (ar.writing())
-            r = mRegions[i];
-        if (ar.reading())
-            r.read(ar.readStream());
-        else
-            r.write(ar.writeStream());
-        if (ar.reading())
-            mRegions.push_back(r);
-    }
-
-    int nc;
-    if (ar.writing())
-        nc = mCities.size();
-    ar.field("nc", nc);
-    if (ar.reading())
-        mCities.clear();
-    for (int i = 0; i < nc; i++)
-    {
-        if (ar.reading())
-        {
-            const auto c = std::make_shared<eWorldCity>();
-            c->read(ar.readStream(), this);
-            addCity(c);
-        }
-        else
-        {
-            mCities[i]->write(ar.writeStream());
-        }
-    }
-    if (ar.reading())
-    {
-        setIOIDs();
-    }
-
-    {
-        int nc;
-        if (ar.writing())
-            nc = mCityToPlayer.size();
-        ar.field("nc", nc);
-        if (ar.reading())
-            mCityToPlayer.clear();
-        for (int i = 0; i < nc; i++)
-        {
-            eCityId cid;
-            ePlayerId pid;
-            if (ar.writing())
-            {
-                auto it = mCityToPlayer.begin();
-                std::advance(it, i);
-                cid = it->first;
-                pid = it->second;
-            }
-            ar.field("cid", cid);
-            ar.field("pid", pid);
-            if (ar.reading())
-                mCityToPlayer[cid] = pid;
-        }
-    }
-
-    ar.field("mPersonPlayer", mPersonPlayer);
-
-    {
-        int np;
-        if (ar.writing())
-            np = mPlayerToTeam.size();
-        ar.field("np", np);
-        if (ar.reading())
-            mPlayerToTeam.clear();
-        for (int i = 0; i < np; i++)
-        {
-            ePlayerId pid;
-            eTeamId tid;
-            if (ar.writing())
-            {
-                auto it = mPlayerToTeam.begin();
-                std::advance(it, i);
-                pid = it->first;
-                tid = it->second;
-            }
-            ar.field("pid", pid);
-            ar.field("tid", tid);
-            if (ar.reading())
-                mPlayerToTeam[pid] = tid;
-        }
-    }
-}
 
 void eWorldBoard::serializeJson(eJsonArchive& ar) {
     ar.field("mMap", mMap);

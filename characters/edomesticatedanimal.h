@@ -15,7 +15,9 @@ public:
 
     void groom();
     int collect();
+    void nextMonth();
     bool canCollect() const { return mResource; }
+    int monthsGrown() const { return mMonthsGrown; }
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
@@ -23,6 +25,7 @@ public:
         eAnimal::serializeJson(ar);
         ar.field("mGroomed", mGroomed);
         ar.field("mResource", mResource);
+        ar.field("mMonthsGrown", mMonthsGrown);
         if(ar.reading()) {
             if(mResource == 0) setNakedTexture();
             else setFleecedTexture();
@@ -38,6 +41,7 @@ private:
     const int mMaxGroom;
     int mGroomed = 0;
     int mResource = 0;
+    int mMonthsGrown = 0;
 };
 
 #endif // EDOMESTICATEDANIMAL_H

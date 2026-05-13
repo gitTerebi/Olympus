@@ -1093,6 +1093,7 @@ void eGameWidget::paintEvent(ePainter &p)
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto &numbers = mNumbers[mTileSize];
     std::vector<std::pair<int, int>> trackingBoxes;
+    std::vector<std::pair<int, int>> cartProblemBoxes;
 
     const auto ppid = mBoard->personPlayer();
 
@@ -2457,6 +2458,14 @@ void eGameWidget::paintEvent(ePainter &p)
                         if(charHighlighted && drawDot) {
                             trackingBoxes.push_back({dx, dy});
                         }
+                        if(mViewMode == eViewMode::distribution &&
+                           ct == eCharacterType::cartTransporter) {
+                            const auto cart = static_cast<eCartTransporter*>(c.get());
+                            const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
+                            if(cart->hasResource() && ca && ca->noDestination()) {
+                                cartProblemBoxes.push_back({dx, dy});
+                            }
+                        }
                     };
                     if(tex) drawCharTex(tex, x, y, true);
                     if(c->hasSecondaryTexture()) {
@@ -3487,7 +3496,7 @@ void eGameWidget::paintEvent(ePainter &p)
             const int allowed = mBoard->countAllowed(mViewedCityId, bt);
             int animalW;
             int animalH;
-            eAnimalBuilding::sDimensions(animalW, animalH);
+            eAnimalPen::sDimensions(animalW, animalH);
             int n = 1;
             for (int x = sMinX; x <= sMaxX; x++)
             {
@@ -3606,7 +3615,7 @@ void eGameWidget::paintEvent(ePainter &p)
         const int ty = t->y();
         int animalW;
         int animalH;
-        eAnimalBuilding::sDimensions(animalW, animalH);
+        eAnimalPen::sDimensions(animalW, animalH);
         const bool cb = allowed > 0 && mBoard->canBuild(
                                            tx, ty, animalW, animalH,
                                            mEditorMode,
@@ -5676,5 +5685,17 @@ void eGameWidget::paintEvent(ePainter &p)
         SDL_RenderFillRect(r, &dot);
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &dot);
+    }
+    for (const auto &pos : cartProblemBoxes)
+    {
+        const int dx = pos.first;
+        const int dy = pos.second;
+        constexpr int ds = 18;
+        const SDL_Rect box{dx - ds / 2, dy - 2 * ds, ds, ds};
+        auto r = p.renderer();
+        SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+        SDL_RenderFillRect(r, &box);
+        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+        SDL_RenderDrawRect(r, &box);
     }
 }

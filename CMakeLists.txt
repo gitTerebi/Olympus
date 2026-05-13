@@ -36,7 +36,7 @@ set(SOURCES
     buildings/eaestheticsbuilding.cpp
     buildings/eagorabase.cpp
     buildings/eagoraspace.cpp
-    buildings/eanimalbuilding.cpp
+    buildings/eanimalpen.cpp
     buildings/earmory.cpp
     buildings/earmsvendor.cpp
     buildings/eartisansguild.cpp

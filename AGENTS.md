@@ -19,6 +19,14 @@ Keep read/write JSON shapes identical. If read uses `ar.child("x.N")`, write mus
 For old/new JSON format transitions, first decide if old saves must load; if yes, add explicit compat based on field presence, not a blind blob fallback.
 After save-format edits, test loading a save made before the edit and a save made after the edit.
 
+## C++ Style
+
+Always mark virtual overrides with `override`. Always mark `const` methods `const`. Never omit either.
+
+## Git
+
+NEVER run `git checkout <file>` or `git restore <file>` to revert changes. It destroys uncommitted work. To undo only your own edits, use Edit to manually revert the specific lines you changed.
+
 ## Build
 
 Build only when explicitly requested.

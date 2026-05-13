@@ -21,6 +21,7 @@
 #include "audio/esounds.h"
 #include "audio/esoundvector.h"
 #include "eiteratesquare.h"
+#include "characters/edomesticatedanimal.h"
 
 eCharacterInfoWidget::eCharacterInfoWidget(
     eMainWindow *const window,
@@ -1966,6 +1967,19 @@ eCharMessage gCharMessage(eCharacter *const c)
 
     result.fText = eLanguage::zeusText(groupId, stringId);
     result.fSoundId = stringId;
+
+    if (type == eCharacterType::sheep || type == eCharacterType::goat)
+    {
+        if (const auto da = dynamic_cast<eDomesticatedAnimal*>(c))
+        {
+            if (da->canCollect()) {
+                result.fText += "\n\nFleece: Ready for shearing";
+            } else {
+                const int pct = da->monthsGrown() * 100 / 12;
+                result.fText += "\n\nFleece: " + std::to_string(pct) + "% grown";
+            }
+        }
+    }
 
     if (type == eCharacterType::homeless || type == eCharacterType::settler)
     {
