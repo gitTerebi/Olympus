@@ -33,10 +33,12 @@ class eJsonArchive {
 public:
     explicit eJsonArchive(njson& root)
         : mRoot(&root), mReading(false),
-          mPostFuncs(std::make_shared<std::vector<PostFunc>>()) {}
+          mPostFuncs(std::make_shared<std::vector<PostFunc>>()),
+          mCharPostFuncs(std::make_shared<std::vector<PostFunc>>()) {}
     explicit eJsonArchive(const njson& root)
         : mRootConst(&root), mReading(true),
-          mPostFuncs(std::make_shared<std::vector<PostFunc>>()) {}
+          mPostFuncs(std::make_shared<std::vector<PostFunc>>()),
+          mCharPostFuncs(std::make_shared<std::vector<PostFunc>>()) {}
 
     bool reading() const { return mReading; }
     bool writing() const { return !mReading; }
@@ -101,9 +103,9 @@ public:
         if(mReading) {
             const njson* n = get(key);
             static const njson sNull;
-            return eJsonArchive(n ? *n : sNull, mPostFuncs);
+            return eJsonArchive(n ? *n : sNull, mPostFuncs, mCharPostFuncs);
         }
-        return eJsonArchive(set(key), mPostFuncs);
+        return eJsonArchive(set(key), mPostFuncs, mCharPostFuncs);
     }
     // sub-archive for an indexed array element (dot-path aware)
     eJsonArchive childAt(const char* key, int i) {
@@ -111,13 +113,13 @@ public:
             const njson* n = get(key);
             static const njson sNull;
             if(!n || !n->is_array() || i < 0 || i >= static_cast<int>(n->size()))
-                return eJsonArchive(sNull, mPostFuncs);
-            return eJsonArchive((*n)[i], mPostFuncs);
+                return eJsonArchive(sNull, mPostFuncs, mCharPostFuncs);
+            return eJsonArchive((*n)[i], mPostFuncs, mCharPostFuncs);
         }
         njson& arr = set(key);
         if(!arr.is_array()) arr = njson::array();
         while(static_cast<int>(arr.size()) <= i) arr.push_back(njson::object());
-        return eJsonArchive(arr[i], mPostFuncs);
+        return eJsonArchive(arr[i], mPostFuncs, mCharPostFuncs);
     }
 
     // tile: stored as {valid, x, y}
@@ -163,6 +165,8 @@ public:
     // deferred callbacks (analogous to eReadStream::addPostFunc)
     using PostFunc = std::function<void()>;
     void addPostFunc(PostFunc f) { mPostFuncs->push_back(std::move(f)); }
+    // character-ref callbacks: deferred until after characters are loaded
+    void addCharPostFunc(PostFunc f) { mCharPostFuncs->push_back(std::move(f)); }
     using IndexCb = std::function<void(int)>;
     void runPostFuncs(IndexCb before = {}, IndexCb after = {}) {
         int idx = 0;
@@ -173,6 +177,10 @@ public:
             idx++;
         }
         mPostFuncs->clear();
+    }
+    void runCharPostFuncs() {
+        for(auto& f : *mCharPostFuncs) f();
+        mCharPostFuncs->clear();
     }
     size_t postFuncCount() const { return mPostFuncs ? mPostFuncs->size() : 0; }
 
@@ -191,15 +199,20 @@ public:
     }
 
 private:
-    eJsonArchive(njson& root, std::shared_ptr<std::vector<PostFunc>> pf)
-        : mRoot(&root), mReading(false), mPostFuncs(std::move(pf)) {}
-    eJsonArchive(const njson& root, std::shared_ptr<std::vector<PostFunc>> pf)
-        : mRootConst(&root), mReading(true), mPostFuncs(std::move(pf)) {}
+    eJsonArchive(njson& root, std::shared_ptr<std::vector<PostFunc>> pf,
+                 std::shared_ptr<std::vector<PostFunc>> cpf)
+        : mRoot(&root), mReading(false),
+          mPostFuncs(std::move(pf)), mCharPostFuncs(std::move(cpf)) {}
+    eJsonArchive(const njson& root, std::shared_ptr<std::vector<PostFunc>> pf,
+                 std::shared_ptr<std::vector<PostFunc>> cpf)
+        : mRootConst(&root), mReading(true),
+          mPostFuncs(std::move(pf)), mCharPostFuncs(std::move(cpf)) {}
 
     njson*       mRoot      = nullptr;
     const njson* mRootConst = nullptr;
     bool         mReading;
     std::shared_ptr<std::vector<PostFunc>> mPostFuncs;
+    std::shared_ptr<std::vector<PostFunc>> mCharPostFuncs;
 
     const njson* get(const char* path) const {
         const njson* n = mReading ? mRootConst : mRoot;

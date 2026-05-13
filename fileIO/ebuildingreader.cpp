@@ -246,18 +246,6 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::cardingShed: {
         b = e::make_shared<eCardingShed>(board, cid);
     } break;
-    case eBuildingType::sheep: {
-        b = e::make_shared<eAnimalPen>(
-                board, nullptr, eBuildingType::sheep, cid);
-    } break;
-    case eBuildingType::goat: {
-        b = e::make_shared<eAnimalPen>(
-                board, nullptr, eBuildingType::goat, cid);
-    } break;
-    case eBuildingType::cattle: {
-        b = e::make_shared<eAnimalPen>(
-                board, nullptr, eBuildingType::cattle, cid);
-    } break;
     case eBuildingType::wheatFarm: {
         b = e::make_shared<eWheatFarm>(board, cid);
     } break;
@@ -925,15 +913,6 @@ stdsptr<eBuilding> eBuildingReader::sReadJson(
     } break;
     case eBuildingType::cardingShed: {
         b = e::make_shared<eCardingShed>(board, cid);
-    } break;
-    case eBuildingType::sheep: {
-        b = e::make_shared<eAnimalPen>(board, nullptr, eBuildingType::sheep, cid);
-    } break;
-    case eBuildingType::goat: {
-        b = e::make_shared<eAnimalPen>(board, nullptr, eBuildingType::goat, cid);
-    } break;
-    case eBuildingType::cattle: {
-        b = e::make_shared<eAnimalPen>(board, nullptr, eBuildingType::cattle, cid);
     } break;
     case eBuildingType::wheatFarm: {
         b = e::make_shared<eWheatFarm>(board, cid);

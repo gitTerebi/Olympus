@@ -5,7 +5,6 @@
 #include "buildings/eresourcebuildingbase.h"
 #include "buildings/eresourcebuilding.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
-#include "buildings/eanimalpen.h"
 #include "buildings/echariotfactory.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
@@ -170,12 +169,6 @@ void eThreadBuilding::load(eBuilding* const src) {
             } else {
                 mResourcesAvailable = b->resourcesAvailable();
             }
-        } break;
-        case eBuildingType::sheep:
-        case eBuildingType::goat:
-        case eBuildingType::cattle: {
-            const auto b = static_cast<eAnimalPen*>(src);
-            mWorkedOn = b->animal();
         } break;
         default:
             break;

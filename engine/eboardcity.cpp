@@ -17,6 +17,8 @@
 #include "buildings/etriremewharf.h"
 #include "buildings/etower.h"
 #include "buildings/pyramids/epyramid.h"
+#include "characters/echaracter.h"
+#include "characters/actions/eanimalaction.h"
 
 #include "evectorhelpers.h"
 
@@ -1406,6 +1408,11 @@ int eBoardCity::countBuildings(const eBuildingValidator& v) const {
 }
 
 int eBoardCity::countBuildings(const eBuildingType t) const {
+    if(t == eBuildingType::sheep ||
+       t == eBuildingType::goat ||
+       t == eBuildingType::cattle) {
+        return countAnimalCharacters(t);
+    }
     return countBuildings([t](eBuilding* const b) {
         const auto bt = b->type();
         return bt == t;
@@ -1413,6 +1420,11 @@ int eBoardCity::countBuildings(const eBuildingType t) const {
 }
 
 bool eBoardCity::hasBuilding(const eBuildingType t) const {
+    if(t == eBuildingType::sheep ||
+       t == eBuildingType::goat ||
+       t == eBuildingType::cattle) {
+        return countBuildings(t) > 0;
+    }
     for(const auto b : mTimedBuildings) {
         const bool r = t == b->type();
         if(r) return true;
@@ -1435,6 +1447,31 @@ int eBoardCity::countAllowed(const eBuildingType t) const {
     const int already = countBuildings(t);
 
     return 8*countBuildings(parent) - already;
+}
+
+static bool animalTypeMatchesBuilding(const eCharacterType ct,
+                                      const eBuildingType bt) {
+    return (bt == eBuildingType::sheep && ct == eCharacterType::sheep) ||
+           (bt == eBuildingType::goat && ct == eCharacterType::goat) ||
+           (bt == eBuildingType::cattle &&
+            (ct == eCharacterType::cattle1 ||
+             ct == eCharacterType::cattle2 ||
+             ct == eCharacterType::cattle3 ||
+             ct == eCharacterType::bull));
+}
+
+int eBoardCity::countAnimalCharacters(const eBuildingType t) const {
+    int result = 0;
+    for(const auto c : mBoard.characters()) {
+        if(!c) continue;
+        if(!animalTypeMatchesBuilding(c->type(), t)) continue;
+        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        if(!aa) continue;
+        const auto tile = mBoard.tile(aa->spawnerX(), aa->spawnerY());
+        if(!tile || tile->cityId() != mId) continue;
+        result++;
+    }
+    return result;
 }
 
 eBuilding* eBoardCity::randomBuilding(const eBuildingValidator& v) const {
@@ -2449,13 +2486,40 @@ void eBoardCity::incForestsState() {
 }
 
 const std::vector<eTile*>& eBoardCity::animalBuildingsTiles() {
-    if(mAnimalBuildingsSurroundingUpdate) {
+    if(true) {
         mAnimalBuildingsSurrounding.clear();
         const int range = eNumbers::sAnimalMoveRange + 2;
         for(const auto b : mAnimalBuildings) {
             const auto center = b->centerTile();
             const int x = center->x();
             const int y = center->y();
+            for(int i = x - range; i <= x + range; i++) {
+                for(int j = y - range; j <= y + range; j++) {
+                    const auto tile = mBoard.tile(i, j);
+                    if(!tile) continue;
+                    const auto cid = tile->cityId();
+                    if(cid != mId) continue;
+                    const bool r = eVectorHelpers::contains(
+                                       mAnimalBuildingsSurrounding, tile);
+                    if(r) continue;
+                    mAnimalBuildingsSurrounding.push_back(tile);
+                }
+            }
+        }
+        for(const auto c : mBoard.characters()) {
+            if(!c) continue;
+            const auto ct = c->type();
+            const bool animal = ct == eCharacterType::sheep ||
+                                ct == eCharacterType::goat ||
+                                ct == eCharacterType::cattle1 ||
+                                ct == eCharacterType::cattle2 ||
+                                ct == eCharacterType::cattle3 ||
+                                ct == eCharacterType::bull;
+            if(!animal) continue;
+            const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+            if(!aa) continue;
+            const int x = aa->spawnerX();
+            const int y = aa->spawnerY();
             for(int i = x - range; i <= x + range; i++) {
                 for(int j = y - range; j <= y + range; j++) {
                     const auto tile = mBoard.tile(i, j);

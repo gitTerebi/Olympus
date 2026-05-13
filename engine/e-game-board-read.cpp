@@ -596,6 +596,8 @@ void eGameBoard::serializeJson(eJsonArchive& ar) {
                 c->serializeJson(cAr);
             }
             ar.runPostFuncs();
+            // resolve building→character refs now that characters exist
+            ar.runCharPostFuncs();
         }
 
         // banners

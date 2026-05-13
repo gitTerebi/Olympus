@@ -36,7 +36,7 @@ private:
     int mVacancies{0};
 
     bool mResourcesAvailable = false; // for sanctuary buildings
-    bool mWorkedOn = false; // also has animal for eAnimalPens
+    bool mWorkedOn = false;
 
     int mSpaceCount;
     int mResourceCount[15] = {0};

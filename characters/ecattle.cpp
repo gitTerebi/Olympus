@@ -4,7 +4,6 @@
 #include "engine/e-game-board.h"
 #include "textures/egametextures.h"
 #include "enumbers.h"
-#include "buildings/eanimalpen.h"
 #include "actions/eanimalaction.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ejsonarchive.h"
@@ -129,12 +128,22 @@ bool eCattle::shouldBecomeBull() const {
     for(int k = 0; k < 10; k++) {
         eIterateSquare::iterateSquare(k, [&](const int dx, const int dy) {
             const auto tt = t->tileRel<eTile>(dx, dy);
-            if(tt && tt->underBuildingType() == eBuildingType::cattle) {
-                nCattle++;
-                const auto ub = tt->underBuilding();
-                const auto ab = static_cast<eAnimalPen*>(ub);
-                const auto a = ab->animal();
-                hasBull = a && a->type() == eCharacterType::bull;
+            if(tt) {
+                for(const auto c : getBoard().characters()) {
+                    if(!c) continue;
+                    const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+                    if(!aa) continue;
+                    if(aa->spawnerX() != tt->x() || aa->spawnerY() != tt->y()) continue;
+                    const auto ct = c->type();
+                    const bool cattle = ct == eCharacterType::cattle1 ||
+                                        ct == eCharacterType::cattle2 ||
+                                        ct == eCharacterType::cattle3 ||
+                                        ct == eCharacterType::bull;
+                    if(!cattle) continue;
+                    nCattle++;
+                    hasBull = ct == eCharacterType::bull;
+                    if(hasBull) break;
+                }
             }
             if(hasBull) return true;
             return false;
