@@ -217,7 +217,14 @@ void eVendor::serializeJson(eJsonArchive& ar) {
     eEmployingBuilding::serializeJson(ar);
     ar.field("mResource", mResource);
     ar.field("mVendorEnabled", mVendorEnabled);
-    // mCart restored by character load pass
+    if(ar.writing()) {
+        eCharacter* raw = mCart;
+        ar.characterRef("mCart", raw, getBoard());
+    } else {
+        ar.characterRef("mCart", [this](eCharacter* c) {
+            mCart = static_cast<eCartTransporter*>(c);
+        }, getBoard());
+    }
     // agora ref set by reader postFunc via "agora" key
 }
 

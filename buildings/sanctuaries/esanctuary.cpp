@@ -438,7 +438,14 @@ void eSanctuary::serializeJson(eJsonArchive& ar) {
         ar.tile(k.c_str(), t, board);
         if(ar.reading() && t) mSpecialTiles.push_back(t);
     }
-    // mGod/mSoldierBanners not saved in JSON path
+    if(ar.writing()) {
+        eCharacter* raw = mGod.get();
+        ar.characterRef("mGod", raw, board);
+    } else {
+        ar.characterRef("mGod", [this](eCharacter* c) {
+            mGod = static_cast<eGod*>(c);
+        }, board);
+    }
 }
 
 
