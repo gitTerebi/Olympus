@@ -87,7 +87,7 @@ void eFarmBase::nextMonth() {
     if(getBoard().date().month() == eMonth::july) {
         // harvest whatever has grown this year, then reset
         const int steps = mGrownFields * 5 + mFieldStage;
-        const int c = addProduced(resourceType(), steps * 8 / 25);
+        const int c = addProduced(resourceType(), std::lround(steps * 8.0 / 25.0));
         mProducedThisYear += c;
         mMonthlyProduced[mRingIdx] += c;
         mNextRipe = 0;
