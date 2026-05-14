@@ -2207,6 +2207,8 @@ void eGameWidget::paintEvent(ePainter &p)
                 drawBlessedCursed(rx + 0.75, ry);
         }
     };
+
+
     iterateOverVisibleTiles([&](eTile *const tile)
                             {
         const int tx = tile->x();
