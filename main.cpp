@@ -16,6 +16,7 @@
 #include "audio/emusic.h"
 #include "audio/esounds.h"
 #include "ecursors.h"
+#include "debug/windows-dump.h"
 
 bool init() {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -101,11 +102,14 @@ bool getDisplayResolutions(std::vector<SDL_DisplayMode>& resolutions) {
 }
 
 int main() {
+    installWindowsDumpHandler();
+
     if(!init()) {
         printf("Failed to initialize!\n");
         close();
         return 1;
     }
+    installWindowsDumpHandler();
 
     eGameDir::initialize();
 

@@ -12,16 +12,6 @@
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
 
-static void boardDbgLog(const char* msg) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s\n", msg); fclose(f); }
-}
-
-static void boardDbgLogN(const char* msg, int n) {
-    FILE* f = fopen("C:/Users/somtam/Desktop/load_dbg.txt", "a");
-    if(f) { fprintf(f, "%s %d\n", msg, n); fclose(f); }
-}
-
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     if(ar.reading()) {
         int np;
@@ -84,14 +74,12 @@ void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
 void eGameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         auto& src = ar.readStream();
-    boardDbgLog("board: size");
     int w;
     ar.field("mWidth", w, 0);
     int h;
     ar.field("mHeight", h, 0);
     initialize(w, h);
 
-    boardDbgLog("board: scalars");
     ar.field("mFogOfWar", mFogOfWar);
 
     ar.field("mEpisodeLost", mEpisodeLost);
@@ -112,13 +100,11 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     {
         int nc = 0;
         ar.field("mCitiesOnBoard.count", nc, 0);
-        boardDbgLogN("board: cities", nc);
         for(int i = 0; i < nc; i++) {
             eCityId cid;
             ar.field("mCitiesOnBoard.id", cid);
             const auto c = addCityToBoard(cid);
             c->read(src);
-            boardDbgLogN("board: city done", i);
             scheduleAppealMapUpdate(cid);
         }
     }
@@ -126,34 +112,28 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     {
         int np = 0;
         ar.field("mPlayersOnBoard.count", np, 0);
-        boardDbgLogN("board: players", np);
         for(int i = 0; i < np; i++) {
             ePlayerId pid;
             ar.field("mPlayersOnBoard.id", pid);
             const auto p = std::make_shared<eBoardPlayer>(pid, *this);
             p->read(src);
             mPlayersOnBoard.push_back(p);
-            boardDbgLogN("board: player done", i);
         }
     }
 
-    boardDbgLog("board: tiles");
     for(const auto& ts : mTiles) {
         for(const auto& t : ts) {
             t->read(src);
         }
     }
-    boardDbgLog("board: tiles done");
 
     {
         int nbs = 0;
         ar.field("mAllBuildings.count", nbs, 0);
-        boardDbgLogN("board: buildings", nbs);
         for(int i = 0; i < nbs; i++) {
             eBuildingType type;
             ar.field("mAllBuildings.type", type);
             eBuildingReader::sRead(*this, type, src);
-            boardDbgLogN("board: building done", i);
         }
     }
 
@@ -161,34 +141,29 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     {
         int ncs = 0;
         ar.field("mCharacters.count", ncs, 0);
-        boardDbgLogN("board: chars", ncs);
 
         for(int i = 0; i < ncs; i++) {
             eCharacterType type;
             ar.field("mCharacters.type", type);
             const auto c = eCharacter::sCreate(type, *this);
             c->read(src);
-            boardDbgLogN("board: char done", i);
         }
     }
 
     {
         int ncs = 0;
         ar.field("mMissiles.count", ncs, 0);
-        boardDbgLogN("board: missiles", ncs);
 
         for(int i = 0; i < ncs; i++) {
             eMissileType type;
             ar.field("mMissiles.type", type);
             const auto c = eMissile::sCreate(*this, type);
             c->read(src);
-            boardDbgLogN("board: missile done", i);
         }
     }
 
     int ng = 0;
     ar.field("mGoals.count", ng, 0);
-    boardDbgLogN("board: goals", ng);
     for(int i = 0; i < ng; i++) {
         const auto g = std::make_shared<eEpisodeGoal>();
         g->read(src);
@@ -199,7 +174,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     ar.field("mProgressEarthquakes", mProgressEarthquakes);
     int ne = 0;
     ar.field("mEarthquakes.count", ne, 0);
-    boardDbgLogN("board: earthquakes", ne);
     for(int i = 0; i < ne; i++) {
         const auto e = std::make_shared<eEarthquake>();
         e->read(src, *this);
@@ -209,7 +183,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     ar.field("mProgressWaves", mProgressWaves);
     int nw = 0;
     ar.field("mTidalWaves.count", nw, 0);
-    boardDbgLogN("board: waves", nw);
     for(int i = 0; i < nw; i++) {
         const auto w = std::make_shared<eTidalWave>();
         w->read(src, *this);
@@ -219,7 +192,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     ar.field("mProgressLavaFlows", mProgressLavaFlows);
     int nl = 0;
     ar.field("mLavaFlows.count", nl, 0);
-    boardDbgLogN("board: lava", nl);
     for(int i = 0; i < nl; i++) {
         const auto w = std::make_shared<eLavaFlow>();
         w->read(src, *this);
@@ -229,7 +201,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     ar.field("mProgressLandSlides", mProgressLandSlides);
     int ns = 0;
     ar.field("mLandSlides.count", ns, 0);
-    boardDbgLogN("board: slides", ns);
     for(int i = 0; i < ns; i++) {
         const auto w = std::make_shared<eLandSlide>();
         w->read(src, *this);
@@ -238,7 +209,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     int nd = 0;
     ar.field("mConqueredBy.count", nd, 0);
-    boardDbgLogN("board: conqueredBy", nd);
     for(int i = 0; i < nd; i++) {
         eCityId cid;
         ar.field("mConqueredBy.id", cid);
@@ -253,7 +223,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
 
     int npa = 0;
     ar.field("mPlannedActions.count", npa, 0);
-    boardDbgLogN("board: plannedActions", npa);
     for(int i = 0; i < npa; i++) {
         ePlannedActionType type;
         ar.field("mPlannedActions.type", type);
@@ -263,9 +232,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     serializeYearlyProduction(ar);
-    boardDbgLog("board: yearly done");
     serializeMessageLog(ar);
-    boardDbgLog("board: messages done");
 
     updateMarbleTiles();
     updateTerritoryBorders();
@@ -286,7 +253,6 @@ void eGameBoard::serialize(eSaveArchive& ar) {
             }
         }
     }, "requests");
-    boardDbgLog("board: DONE");
     } else {
         auto& dst = ar.writeStream();
     ar.field("mWidth", mWidth);
