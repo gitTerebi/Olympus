@@ -73,7 +73,36 @@ void eGameWidget::showMessage(eEventData &ed,
         }
     }();
 
-    if ((!requiresAction && !forcePopup) || (requiresAction && !forcePopup && !popupForThisType))
+    if (requiresAction && !forcePopup && !popupForThisType)
+    {
+        switch (ed.fType) {
+        case eMessageEventType::invasion:
+            if (ed.fSecondaryAction) ed.fSecondaryAction();
+            else if (ed.fTertiaryAction) ed.fTertiaryAction();
+            break;
+        case eMessageEventType::generalRequestGranted:
+        case eMessageEventType::resourceGranted:
+        case eMessageEventType::requestTributeGranted:
+        case eMessageEventType::troopsRequest:
+            if (ed.fSecondaryAction) ed.fSecondaryAction();
+            else if (ed.fTertiaryAction) ed.fTertiaryAction();
+            break;
+        default: break;
+        }
+        ed.fPrimaryAction = nullptr;
+        ed.fSecondaryAction = nullptr;
+        ed.fTertiaryAction = nullptr;
+        eToast pendingToast;
+        pendingToast.fEd = ed;
+        pendingToast.fMsg = msg;
+        pendingToast.fWid = nullptr;
+        pendingToast.fDate = mBoard->date();
+        pendingToast.fExpireFrame = 0;
+        pendingToast.fQueued = false;
+        mPendingToasts.push_back(pendingToast);
+        return;
+    }
+    if (!requiresAction && !forcePopup)
     {
         eToast pendingToast;
         pendingToast.fEd = ed;

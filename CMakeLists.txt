@@ -800,7 +800,6 @@ if(WIN32)
     target_link_libraries(eZeus 
         pthread
         dbghelp
-        psapi
     )
 endif()
 

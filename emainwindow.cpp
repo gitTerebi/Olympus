@@ -434,6 +434,12 @@ bool eMainWindow::loadGame(const std::string& path) {
     c->loadNumbers();
     src.handlePostFuncs();
     file.close();
+    if(!c->hasCurrentEpisode()) {
+        c->printCurrentEpisodeDebug();
+        printf("Invalid save '%s': no current campaign episode.\n",
+               path.c_str());
+        return false;
+    }
 
     startGameAction(c, s);
     return true;
@@ -599,6 +605,7 @@ void eMainWindow::showGame(const stdsptr<eCampaign>& c,
                            const eGameWidgetSettings& settings) {
     mCampaign = c;
     const auto e = c->currentEpisode();
+    if(!e) return;
     showGame(e->fBoard, settings);
 }
 

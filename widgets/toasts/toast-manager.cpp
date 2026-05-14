@@ -53,13 +53,13 @@ void eGameWidget::createToastWidget(eToast &toast)
 
 void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
 {
-    eToast &toast = mToasts.emplace_back();
-    toast.fEd = ed;
-    toast.fMsg = msg;
-    toast.fDate = mBoard->date();
-    toast.fExpireFrame = mFrame + 300;
-    createToastWidget(toast);
-    updateToastPositions();
+    eToast pendingToast;
+    pendingToast.fEd = ed;
+    pendingToast.fMsg = msg;
+    pendingToast.fDate = mBoard->date();
+    pendingToast.fExpireFrame = 0;
+    pendingToast.fQueued = false;
+    mPendingToasts.push_back(pendingToast);
 }
 
 void eGameWidget::updateToastPositions()

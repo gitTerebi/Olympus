@@ -1,4 +1,5 @@
 #include "egamewidget.h"
+#include "emainwindow.h"
 
 #include "audio/esounds.h"
 #include "emessages.h"
@@ -289,8 +290,7 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         break;
 
     case eEvent::invasionInitial: {
-        // Configurable: true for popup, false for toast
-        const bool forcePopup = true;
+        const bool forcePopup = window()->settings().fPopupForInvasion;
         const auto msg = eMessages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime);
         showMessage(ed, msg.fFull, false, forcePopup, true);
     } break;
