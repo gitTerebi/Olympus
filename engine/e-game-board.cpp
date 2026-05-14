@@ -2194,17 +2194,12 @@ void eGameBoard::handleGamesEnd(const eGames game)
             eEventData ed(cid);
             showMessage(ed, msgs->fWon);
             city->incWonGames();
-            int id = 0;
+            int id = 3;
             switch (game)
             {
             case eGames::isthmian:
-                id = 8;
-                break;
             case eGames::nemean:
-                id = 3;
-                break;
             case eGames::pythian:
-                id = 8;
                 break;
             case eGames::olympian:
             {
@@ -2214,7 +2209,6 @@ void eGameBoard::handleGamesEnd(const eGames game)
                 {
                     changeCityAttitude(c, 10., pid);
                 }
-                id = 8;
             }
             break;
             }

@@ -103,6 +103,41 @@ public:
         }
     }
 
+    // Serialize an object that has read(eReadStream&) / write(eWriteStream&)
+    // as a single tagged payload field. The object's bytes are length-prefixed
+    // so its internal framing (including its own tagged archive terminator)
+    // cannot desync the outer archive.
+    template <typename T>
+    bool objectField(const char* const name, T& obj) {
+        if(!tagged()) {
+            if(reading()) obj.read(*mSrc);
+            else obj.write(*mDst);
+            return true;
+        }
+        mTaggedTouched = true;
+        if(writing()) {
+            mFieldBuffer.clear();
+            eWriteTarget target(&mFieldBuffer);
+            eWriteStream tmp(target);
+            tmp.setFormat(mDst->format());
+            obj.write(tmp);
+
+            const std::string nameStr(name);
+            *mDst << nameStr;
+            *mDst << static_cast<int32_t>(mFieldBuffer.size());
+            mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
+            return true;
+        } else {
+            auto data = takeField(std::string(name));
+            if(data.empty()) return false;
+            eReadSource source(const_cast<char*>(data.data()));
+            eReadStream src(source);
+            src.setFormat(mSrc->format());
+            obj.read(src);
+            return true;
+        }
+    }
+
     void tile(eTile*& tile, eGameBoard& board) {
         if(reading()) {
             tile = mSrc->readTile(board);

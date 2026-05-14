@@ -204,6 +204,7 @@ public:
     eMessageType fInvasionDefeat;
     eMessageType fInvasionVictory;
     eMessageType fInvasionVictoryMonument;
+    eMessageType fInvasionBribedMonument;
 
     eMessageType fTributePaidGranted;
     eMessageType fTributePaidAccepted;

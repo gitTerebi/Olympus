@@ -21,7 +21,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     ar.field("atlantean", mAtlantean);
 
-    mAvailableBuildings.serialize(ar);
+    ar.objectField("mAvailableBuildings", mAvailableBuildings);
     mCityEvents.serialize(ar);
     mCityPlan.serialize(ar);
     for(int i = 0; i < mCityPlan.districtCount(); i++) {
@@ -235,7 +235,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     ar.field("atlantean", mAtlantean);
 
-    mAvailableBuildings.serialize(ar);
+    ar.objectField("mAvailableBuildings", mAvailableBuildings);
 
     mCityEvents.serialize(ar);
 
