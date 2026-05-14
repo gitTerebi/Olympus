@@ -4,13 +4,23 @@
 
 #include <windows.h>
 #include <dbghelp.h>
+#include <psapi.h>
 #include <tlhelp32.h>
 
 #include <cstdio>
 #include <cstring>
+#include <sstream>
 #include <string>
 
 namespace {
+struct ModuleInfo {
+    DWORD64 base = 0;
+    DWORD64 symbolBase = 0;
+    DWORD size = 0;
+    std::string name;
+    std::string path;
+};
+
 std::string dumpBasePath() {
     SYSTEMTIME st;
     GetLocalTime(&st);
@@ -26,6 +36,79 @@ std::string dumpBasePath() {
                   st.wYear, st.wMonth, st.wDay,
                   st.wHour, st.wMinute, st.wSecond);
     return name;
+}
+
+std::string quote(const std::string& value) {
+    return "\"" + value + "\"";
+}
+
+std::string addr2linePath() {
+    std::string path = EZEUS_SOURCE_DIR;
+    path += "\\build-deps\\llvm-mingw\\bin\\addr2line.exe";
+    return path;
+}
+
+std::string currentExePath() {
+    char path[MAX_PATH];
+    const DWORD size = GetModuleFileNameA(nullptr, path, sizeof(path));
+    if(!size || size >= sizeof(path)) return "";
+    return path;
+}
+
+bool getMainModule(ModuleInfo& info) {
+    const HMODULE module = GetModuleHandleA(nullptr);
+    MODULEINFO moduleInfo;
+    if(!GetModuleInformation(GetCurrentProcess(), module, &moduleInfo,
+                             sizeof(moduleInfo))) {
+        return false;
+    }
+    info.base = reinterpret_cast<DWORD64>(moduleInfo.lpBaseOfDll);
+    const auto dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(info.base);
+    const auto nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(
+                info.base + dos->e_lfanew);
+    info.symbolBase = nt->OptionalHeader.ImageBase;
+    info.size = moduleInfo.SizeOfImage;
+    info.path = currentExePath();
+    info.name = info.path;
+    const auto slash = info.name.find_last_of("\\/");
+    if(slash != std::string::npos) info.name = info.name.substr(slash + 1);
+    return true;
+}
+
+std::string readCommand(const std::string& command) {
+    FILE* const pipe = _popen(command.c_str(), "r");
+    if(!pipe) return "";
+
+    std::string result;
+    char buffer[512];
+    while(std::fgets(buffer, sizeof(buffer), pipe)) {
+        result += buffer;
+    }
+    _pclose(pipe);
+    return result;
+}
+
+std::string symbolizeAddress(const DWORD64 address, const ModuleInfo& module) {
+    if(address < module.base || address >= module.base + module.size) return "";
+    if(module.path.empty()) return "";
+
+    const DWORD64 symbolAddress = module.symbolBase + address - module.base;
+    std::ostringstream command;
+    command << quote(addr2linePath())
+            << " -f -C -e " << quote(module.path)
+            << " 0x" << std::hex << symbolAddress;
+
+    auto result = readCommand(command.str());
+    while(!result.empty() && (result.back() == '\n' || result.back() == '\r')) {
+        result.pop_back();
+    }
+    if(result.empty() || result == "??\n??:0" || result == "??\r\n??:0") {
+        return "";
+    }
+    for(auto& c : result) {
+        if(c == '\r' || c == '\n') c = ' ';
+    }
+    return result;
 }
 
 void writeException(FILE* const file, EXCEPTION_POINTERS* const ep) {
@@ -84,6 +167,9 @@ void writeModules(FILE* const file) {
 
 void writeStack(FILE* const file, EXCEPTION_POINTERS* const ep) {
     std::fprintf(file, "\n[stack]\n");
+    ModuleInfo mainModule;
+    const bool haveMainModule = getMainModule(mainModule);
+
     const HANDLE process = GetCurrentProcess();
     const HANDLE thread = GetCurrentThread();
     SymInitialize(process, nullptr, TRUE);
@@ -134,6 +220,13 @@ void writeStack(FILE* const file, EXCEPTION_POINTERS* const ep) {
             std::fprintf(file, "#%02d 0x%llx\n",
                          i,
                          static_cast<unsigned long long>(frame.AddrPC.Offset));
+        }
+        if(haveMainModule) {
+            const auto resolved = symbolizeAddress(frame.AddrPC.Offset,
+                                                   mainModule);
+            if(!resolved.empty()) {
+                std::fprintf(file, "    %s\n", resolved.c_str());
+            }
         }
     }
     SymCleanup(process);

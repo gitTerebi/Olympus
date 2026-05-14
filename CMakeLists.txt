@@ -784,6 +784,9 @@ target_compile_definitions(eZeus PRIVATE
     EZEUS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+target_compile_options(eZeus PRIVATE -g)
+target_link_options(eZeus PRIVATE -g)
+
 # Link libraries
 target_link_libraries(eZeus
     ${SDL2_LIBRARY}
@@ -797,6 +800,7 @@ if(WIN32)
     target_link_libraries(eZeus 
         pthread
         dbghelp
+        psapi
     )
 endif()
 
