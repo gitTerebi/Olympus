@@ -43,45 +43,29 @@ void eEnlistedForces::write(eWriteStream& dst) const {
 void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     eWorldBoard* wboard = board ? &board->world() : nullptr;
     {
-        int ns = fSoldiers.size();
-        ar.field("ns", ns);
-        if(ar.reading()) fSoldiers.clear();
-        for(int i = 0; i < ns; i++) {
-            if(ar.reading()) {
-                const auto func = [this](const stdsptr<eSoldierBanner>& b) {
-                    if(b) fSoldiers.push_back(b);
-                };
-                ar.readStream().readSoldierBanner(board, func);
-            } else {
-                ar.writeStream().writeSoldierBanner(fSoldiers[i].get());
-            }
+        ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& ar, auto& soldier) {
+            ar.soldierBanner(board, soldier);
+        });
+        if(ar.reading()) {
+            fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),
+                                           [](const auto& s) { return !s; }),
+                            fSoldiers.end());
         }
     }
     {
-        int nh = fHeroes.size();
-        ar.field("nh", nh);
-        if(ar.reading()) fHeroes.clear();
-        for(int i = 0; i < nh; i++) {
-            std::pair<eCityId, eHeroType> h;
-            if(ar.writing()) h = fHeroes[i];
+        ar.arrayField("heroes", fHeroes, [](eSaveArchive& ar, auto& h) {
             ar.field("h.first", h.first);
             ar.field("h.second", h.second);
-            if(ar.reading()) fHeroes.push_back(h);
-        }
+        });
     }
     {
-        int nc = fAllies.size();
-        ar.field("nc", nc);
-        if(ar.reading()) fAllies.clear();
-        for(int i = 0; i < nc; i++) {
-            if(ar.reading()) {
-                const auto func = [this](const stdsptr<eWorldCity>& c) {
-                    fAllies.push_back(c);
-                };
-                ar.readStream().readCity(wboard, func);
-            } else {
-                ar.writeStream().writeCity(fAllies[i].get());
-            }
+        ar.arrayField("allies", fAllies, [wboard](eSaveArchive& ar, auto& ally) {
+            ar.city(wboard, ally);
+        });
+        if(ar.reading()) {
+            fAllies.erase(std::remove_if(fAllies.begin(), fAllies.end(),
+                                         [](const auto& a) { return !a; }),
+                          fAllies.end());
         }
     }
 

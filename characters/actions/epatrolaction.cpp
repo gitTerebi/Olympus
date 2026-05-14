@@ -45,21 +45,9 @@ void ePatrolAction::write(eWriteStream& dst) const {
 }
 
 void ePatrolAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        int n;
-        ar.field("n", n);
-        mPath.clear();
-        for(int i = 0; i < n; i++) {
-            auto& o = mPath.emplace_back();
-            ar.field("o", o);
-        }
-    } else {
-        int n = static_cast<int>(mPath.size());
-        ar.field("n", n);
-        for(auto o : mPath) {
-            ar.field("o", o);
-        }
-    }
+    ar.arrayField("path", mPath, [](eSaveArchive& ar, eOrientation& o) {
+        ar.field("o", o);
+    });
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
             mBuilding = static_cast<ePatrolBuildingBase*>(b);

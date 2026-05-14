@@ -356,28 +356,13 @@ void eCharacter::serialize(eSaveArchive& ar) {
     }
     ar.field("mActionStartTime", mActionStartTime);
 
-    if(ar.reading()) {
-        int s;
-        ar.field("s", s);
-        for(int i = 0; i < s; i++) {
-            auto& a = mPausedActions.emplace_back();
-            ar.field("a.fAt", a.fAt);
-            ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
-                return eCharacterAction::sCreate(this, type);
-            });
-            ar.field("a.fO", a.fO);
-        }
-    } else {
-        int s = static_cast<int>(mPausedActions.size());
-        ar.field("s", s);
-        for(auto& a : mPausedActions) {
-            ar.field("a.fAt", a.fAt);
-            ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
-                return eCharacterAction::sCreate(this, type);
-            });
-            ar.field("a.fO", a.fO);
-        }
-    }
+    ar.arrayField("pausedActions", mPausedActions, [this](eSaveArchive& ar, auto& a) {
+        ar.field("a.fAt", a.fAt);
+        ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
+            return eCharacterAction::sCreate(this, type);
+        });
+        ar.field("a.fO", a.fO);
+    });
 }
 
 void eCharacter::read(eReadStream& src) {

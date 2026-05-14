@@ -110,15 +110,9 @@ void eGodAttackEvent::read(eReadStream& src) {
 }
 
 void eGodAttackEvent::serialize(eSaveArchive& ar) {
-    int n = mTypes.size();
-    ar.field("n", n);
-    if(ar.reading()) mTypes.clear();
-    for(int i = 0; i < n; i++) {
-        eGodType t;
-        if(ar.writing()) t = mTypes[i];
+    ar.arrayField("types", mTypes, [](eSaveArchive& ar, eGodType& t) {
         ar.field("t", t);
-        if(ar.reading()) mTypes.push_back(t);
-    }
+    });
     ar.field("mRandom", mRandom);
     ar.field("mNextId", mNextId);
     if(ar.reading()) {

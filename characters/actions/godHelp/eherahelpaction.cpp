@@ -55,19 +55,9 @@ void eHeraHelpAction::serialize(eSaveArchive& ar) {
     } else {
         ar.writeStream().writeBuilding(mTarget);
     }
-    int nt = mFutureTargets.size();
-    ar.field("nt", nt);
-    if(ar.reading()) mFutureTargets.clear();
-    for(int i = 0; i < nt; i++) {
-        if(ar.reading()) {
-            ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-                const auto a = static_cast<eAgoraBase*>(b);
-                mFutureTargets.push_back(a);
-            });
-        } else {
-            ar.writeStream().writeBuilding(mFutureTargets[i].get());
-        }
-    }
+    ar.arrayField("futureTargets", mFutureTargets, [this](eSaveArchive& ar, auto& target) {
+        ar.buildingAs(&board(), target);
+    });
 }
 
 bool eHeraHelpAction::sHelpNeeded(const eCityId cid,

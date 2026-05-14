@@ -68,7 +68,40 @@ namespace eResourceTypeHelpers {
     std::string typeName(const eResourceType type);
     std::string typeLongName(const eResourceType type);
     std::shared_ptr<eTexture> icon(const eUIScale scale, const eResourceType type);
-    int transportSize(const eResourceType type, const bool doubleCapacity = false);
+    inline int transportSize(const eResourceType type,
+                             const bool doubleCapacity = false) {
+        int base = 0;
+        switch(type) {
+        case eResourceType::urchin:
+        case eResourceType::fish:
+        case eResourceType::meat:
+        case eResourceType::cheese:
+        case eResourceType::carrots:
+        case eResourceType::onions:
+        case eResourceType::wheat:
+        case eResourceType::oranges:
+        case eResourceType::food:
+        case eResourceType::grapes:
+        case eResourceType::olives:
+        case eResourceType::wine:
+        case eResourceType::oliveOil:
+        case eResourceType::fleece:
+        case eResourceType::wood:
+        case eResourceType::bronze:
+        case eResourceType::marble:
+        case eResourceType::orichalc:
+        case eResourceType::blackMarble:
+        case eResourceType::armor:
+            base = 4;
+            break;
+        case eResourceType::sculpture:
+            base = 1;
+            break;
+        default:
+            break;
+        }
+        return doubleCapacity ? base * 2 : base;
+    }
     int defaultPrice(const eResourceType type);
     bool isSingleType(const eResourceType type);
 }

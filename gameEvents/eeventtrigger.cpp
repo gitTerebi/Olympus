@@ -40,23 +40,20 @@ void eEventTrigger::read(eReadStream& src) {
 }
 
 void eEventTrigger::serialize(eSaveArchive& ar) {
-    int ncs = mEvents.size();
-    ar.field("ncs", ncs);
-    for(int i = 0; i < ncs; i++) {
+    ar.arrayField("events", mEvents, [this](eSaveArchive& ar, auto& e) {
         eGameEventType type;
         if(ar.writing()) {
-            type = mEvents[i]->type();
+            type = e->type();
         }
         ar.field("type", type);
         if(ar.writing()) {
-            mEvents[i]->write(ar.writeStream());
-            continue;
+            ar.object(e);
+        } else {
+            const auto branch = eGameEventBranch::trigger;
+            e = eGameEvent::sCreate(mCid, type, branch, mBoard);
+            ar.object(e);
         }
-        const auto branch = eGameEventBranch::trigger;
-        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(ar.readStream());
-        mEvents.emplace_back(e);
-    }
+    });
 }
 
 void eEventTrigger::addEvent(const stdsptr<eGameEvent>& e) {

@@ -412,36 +412,34 @@ void eGameEvent::serialize(eSaveArchive& ar) {
     ar.field("mReason", mReason);
     ar.field("mEpisodeCompleteEvent", mEpisodeCompleteEvent);
 
-    for(const auto& w : mWarnings) {
-        if(ar.reading()) w->read(ar.readStream());
-        else w->write(ar.writeStream());
-    }
+    ar.fixedArrayField("warnings.count", mWarnings, [](eSaveArchive& ar, auto& w) {
+        ar.object(w);
+    });
 
-    int ncs = mConsequences.size();
-    ar.field("ncs", ncs);
-    if(ar.reading()) mConsequences.clear();
-    for(int i = 0; i < ncs; i++) {
+    ar.arrayField("consequences", mConsequences, [this](eSaveArchive& ar, auto& e) {
         eGameEventType type;
         eGameEventBranch branch;
         if(ar.writing()) {
-            type = mConsequences[i]->type();
-            branch = mConsequences[i]->branch();
+            type = e->type();
+            branch = e->branch();
         }
         ar.field("type", type);
         ar.field("branch", branch);
         if(ar.writing()) {
-            mConsequences[i]->write(ar.writeStream());
-            continue;
+            ar.object(e);
+        } else {
+            e = eGameEvent::sCreate(mCid, type, branch, mBoard);
+            ar.object(e);
+            if(e->branch() == eGameEventBranch::child) {
+                e->setReason(reason());
+            }
+            e->mParent = this;
         }
-        const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-        e->read(ar.readStream());
-        addConsequence(e);
-    }
+    });
 
-    for(const auto& et : mTriggers) {
-        if(ar.reading()) et->read(ar.readStream());
-        else et->write(ar.writeStream());
-    }
+    ar.fixedArrayField("triggers.count", mTriggers, [](eSaveArchive& ar, auto& et) {
+        ar.object(et);
+    });
 
     ar.field("mEpisodeEvent", mEpisodeEvent);
 }

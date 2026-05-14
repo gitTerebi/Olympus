@@ -4,6 +4,9 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <cstdio>
+#include <algorithm>
+#include <deque>
 #include <type_traits>
 #include <vector>
 #include <cstdint>
@@ -11,8 +14,13 @@
 #include "estreams.h"
 
 class eGameBoard;
+class eBuilding;
+class eCharacter;
 class eCharacterAction;
 class eTile;
+class eSoldierBanner;
+class eWorldBoard;
+class eWorldCity;
 enum class eCharActionType;
 
 class eSaveArchive {
@@ -30,7 +38,11 @@ public:
 
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
+
+    [[deprecated("Use eSaveArchive helpers; raw readStream() is legacy save code only.")]]
     eReadStream& readStream() const { return *mSrc; }
+
+    [[deprecated("Use eSaveArchive helpers; raw writeStream() is legacy save code only.")]]
     eWriteStream& writeStream() const { return *mDst; }
 
     template <typename T>
@@ -96,6 +108,142 @@ public:
         } else {
             mDst->writeTile(tile);
         }
+    }
+
+    template <typename Ptr>
+    void character(eGameBoard* board, Ptr& value) {
+        if(reading()) {
+            mSrc->readCharacter(board, [&value](eCharacter* const c) {
+                value = c;
+            });
+        } else {
+            mDst->writeCharacter(value.get());
+        }
+    }
+
+    template <typename Ptr>
+    void building(eGameBoard* board, Ptr& value) {
+        if(reading()) {
+            mSrc->readBuilding(board, [&value](eBuilding* const b) {
+                value = b;
+            });
+        } else {
+            mDst->writeBuilding(value.get());
+        }
+    }
+
+    template <typename T>
+    void buildingAs(eGameBoard* board, stdptr<T>& value) {
+        if(reading()) {
+            mSrc->readBuilding(board, [&value](eBuilding* const b) {
+                value = static_cast<T*>(b);
+            });
+        } else {
+            mDst->writeBuilding(value.get());
+        }
+    }
+
+    void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
+        if(reading()) {
+            mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
+                value = c;
+            });
+        } else {
+            mDst->writeCity(value.get());
+        }
+    }
+
+    void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
+        if(reading()) {
+            mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
+                value = c;
+            });
+        } else {
+            mDst->writeCity(value.get());
+        }
+    }
+
+    void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
+        if(reading()) {
+            mSrc->readSoldierBanner(board, [&value](const stdsptr<eSoldierBanner>& b) {
+                value = b;
+            });
+        } else {
+            mDst->writeSoldierBanner(value.get());
+        }
+    }
+
+    template <typename T>
+    void object(T& value) {
+        if(reading()) value.read(*mSrc);
+        else value.write(*mDst);
+    }
+
+    template <typename T>
+    void object(std::shared_ptr<T>& value) {
+        if(reading()) value->read(*mSrc);
+        else value->write(*mDst);
+    }
+
+    // Saved arrays must use these helpers. Raw stream loops are legacy-only.
+    template <typename T, typename Func>
+    bool arrayField(const char* const name,
+                    std::vector<T>& values,
+                    const Func& itemFunc) {
+        int count = static_cast<int>(values.size());
+        this->field(name, count);
+        if(reading()) values.resize(count);
+        for(int i = 0; i < count; i++) {
+            itemFunc(*this, values[i]);
+        }
+        return true;
+    }
+
+    template <typename T, typename Func>
+    bool dequeField(const char* const name,
+                    std::deque<T>& values,
+                    const Func& itemFunc) {
+        int count = static_cast<int>(values.size());
+        this->field(name, count);
+        if(reading()) values.resize(count);
+        for(int i = 0; i < count; i++) {
+            itemFunc(*this, values[i]);
+        }
+        return true;
+    }
+
+    template <typename Func>
+    bool countedArrayField(const char* const name,
+                           const int writeCount,
+                           const Func& itemFunc) {
+        int count = writeCount;
+        this->field(name, count);
+        for(int i = 0; i < count; i++) {
+            itemFunc(*this, i);
+        }
+        return true;
+    }
+
+    template <typename T, typename Func>
+    bool fixedArrayField(const char* const name,
+                         std::vector<T>& values,
+                         const Func& itemFunc) {
+        const int expected = static_cast<int>(values.size());
+        int count = expected;
+        this->field(name, count);
+        if(count != expected) {
+            printf("Invalid save: fixed array '%s' count mismatch expected=%d saved=%d.\n",
+                   name, expected, count);
+        }
+        const int readCount = std::min(count, expected);
+        for(int i = 0; i < readCount; i++) {
+            itemFunc(*this, values[i]);
+        }
+        for(int i = readCount; i < count; i++) {
+            std::decay_t<decltype(values[0])> scratch;
+            itemFunc(*this, scratch);
+        }
+        return count == expected;
     }
 
     template <typename T>
