@@ -41,6 +41,7 @@ public:
                                       eGameBoard& board);
 
     void trigger() override;
+    void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
 
     void write(eWriteStream& dst) const override;
@@ -76,6 +77,15 @@ public:
     void invadersWon();
     void invadersDefeated();
 private:
+    enum class eResponse {
+        surrender,
+        bribe,
+        fight
+    };
+
+    void surrender();
+    void bribe();
+    void fight();
     void useGeneratedCityWarnings();
     void sendInitialAnnouncement();
     void serialize(eSaveArchive& ar);

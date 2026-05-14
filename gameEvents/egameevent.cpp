@@ -452,3 +452,5 @@ void eGameEvent::loadResources() const {
         et->loadResources();
     }
 }
+
+void eGameEvent::respond(int, eCityId) {}

@@ -21,6 +21,7 @@ class eTile;
 class eSoldierBanner;
 class eWorldBoard;
 class eWorldCity;
+class eGameEvent;
 enum class eCharActionType;
 
 class eSaveArchive {
@@ -113,6 +114,7 @@ public:
     template <typename Ptr>
     void character(eGameBoard* board, Ptr& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readCharacter(board, [&value](eCharacter* const c) {
                 value = c;
             });
@@ -124,6 +126,7 @@ public:
     template <typename Ptr>
     void building(eGameBoard* board, Ptr& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readBuilding(board, [&value](eBuilding* const b) {
                 value = b;
             });
@@ -135,6 +138,7 @@ public:
     template <typename T>
     void buildingAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
+            value.clear();
             mSrc->readBuilding(board, [&value](eBuilding* const b) {
                 value = static_cast<T*>(b);
             });
@@ -146,6 +150,7 @@ public:
     template <typename T>
     void characterAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
+            value.clear();
             mSrc->readCharacter(board, [&value](eCharacter* const c) {
                 value = static_cast<T*>(c);
             });
@@ -157,6 +162,7 @@ public:
     template <typename T>
     void characterAs(eGameBoard* board, T*& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readCharacter(board, [&value](eCharacter* const c) {
                 value = static_cast<T*>(c);
             });
@@ -167,6 +173,7 @@ public:
 
     void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
                 value = c;
             });
@@ -177,6 +184,7 @@ public:
 
     void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
                 value = c;
             });
@@ -187,6 +195,7 @@ public:
 
     void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
         if(reading()) {
+            value = nullptr;
             mSrc->readSoldierBanner(board, [&value](const stdsptr<eSoldierBanner>& b) {
                 value = b;
             });
@@ -205,6 +214,30 @@ public:
     void object(std::shared_ptr<T>& value) {
         if(reading()) value->read(*mSrc);
         else value->write(*mDst);
+    }
+
+    template <typename T>
+    void gameEvent(eGameBoard* board, T*& val) {
+        if(reading()) {
+            val = nullptr;
+            mSrc->readGameEvent(board, [&val](eGameEvent* const e) {
+                val = static_cast<T*>(e);
+            });
+        } else {
+            mDst->writeGameEvent(val);
+        }
+    }
+
+    template <typename T>
+    void gameEvent(eGameBoard* board, stdptr<T>& val) {
+        if(reading()) {
+            val.clear();
+            mSrc->readGameEvent(board, [&val](eGameEvent* const e) {
+                val = static_cast<T*>(e);
+            });
+        } else {
+            mDst->writeGameEvent(val.get());
+        }
     }
 
     // Saved arrays must use these helpers. Raw stream loops are legacy-only.

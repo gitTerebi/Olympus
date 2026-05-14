@@ -58,8 +58,9 @@ void eGameWidget::showMessage(eEventData &ed,
             return;
     }
 
-    const bool requiresAction = ed.fCloseOnAction || !ed.fCityConditionalActions.empty() ||
-                                 ed.fPrimaryAction || ed.fSecondaryAction || ed.fTertiaryAction;
+    const bool requiresAction = ed.fCloseResponse >= 0 || !ed.fCityConditionalResponses.empty() ||
+                                 ed.fPrimaryResponse >= 0 || ed.fSecondaryResponse >= 0 ||
+                                 ed.fTertiaryResponse >= 0;
 
     const auto& setts = window()->settings();
     const bool popupForThisType = [&]() {
@@ -77,21 +78,23 @@ void eGameWidget::showMessage(eEventData &ed,
     {
         switch (ed.fType) {
         case eMessageEventType::invasion:
-            if (ed.fSecondaryAction) ed.fSecondaryAction();
-            else if (ed.fTertiaryAction) ed.fTertiaryAction();
+            if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
             break;
         case eMessageEventType::generalRequestGranted:
         case eMessageEventType::resourceGranted:
         case eMessageEventType::requestTributeGranted:
         case eMessageEventType::troopsRequest:
-            if (ed.fSecondaryAction) ed.fSecondaryAction();
-            else if (ed.fTertiaryAction) ed.fTertiaryAction();
+            if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
             break;
         default: break;
         }
-        ed.fPrimaryAction = nullptr;
-        ed.fSecondaryAction = nullptr;
-        ed.fTertiaryAction = nullptr;
+        ed.fCloseResponse = -1;
+        ed.fPrimaryResponse = -1;
+        ed.fCityConditionalResponses.clear();
+        ed.fSecondaryResponse = -1;
+        ed.fTertiaryResponse = -1;
         eToast pendingToast;
         pendingToast.fEd = ed;
         pendingToast.fMsg = msg;
@@ -159,47 +162,22 @@ void eGameWidget::showMessage(eEventData &ed,
     ed.fDate = mBoard->date();
     ed.fPlayerName = window()->leader();
 
-    const auto requestActionTaken = std::make_shared<bool>(false);
+    const auto close = [this, wasPaused, ed, msgb]()
     {
-        const auto wrapAction = [requestActionTaken](eAction& action) {
-            if (!action) return;
-            const auto oldAction = action;
-            action = [requestActionTaken, oldAction]() {
-                *requestActionTaken = true;
-                oldAction();
-            };
-        };
-        wrapAction(ed.fPrimaryAction);
-        wrapAction(ed.fSecondaryAction);
-        wrapAction(ed.fTertiaryAction);
-        for (auto& a : ed.fCityConditionalActions) {
-            wrapAction(a.second);
-        }
-        if (ed.fCloseOnAction) {
-            const auto oldClose = ed.fCloseOnAction;
-            ed.fCloseOnAction = [requestActionTaken, oldClose](const eAction& close) {
-                *requestActionTaken = true;
-                oldClose(close);
-            };
-        }
-    }
-
-    const auto close = [this, wasPaused, ed, requestActionTaken, msgb]()
-    {
-        if (msgb->closable() && !*requestActionTaken) {
+        if (mBoard && msgb->closable() && !msgb->actionTaken()) {
             switch (ed.fType) {
             case eMessageEventType::generalRequestGranted:
-                if (ed.fSecondaryAction) ed.fSecondaryAction();
-                else if (ed.fTertiaryAction) ed.fTertiaryAction();
+                if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+                else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
                 break;
             case eMessageEventType::invasion:
-                if (ed.fTertiaryAction) ed.fTertiaryAction();
+                if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
                 break;
             case eMessageEventType::requestTributeGranted:
             case eMessageEventType::resourceGranted:
             case eMessageEventType::troopsRequest:
-                if (ed.fSecondaryAction) ed.fSecondaryAction();
-                else if (ed.fTertiaryAction) ed.fTertiaryAction();
+                if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+                else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
                 break;
             default: break;
             }

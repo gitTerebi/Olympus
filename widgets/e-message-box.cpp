@@ -36,6 +36,7 @@ void eMessageBox::initialize(eGameBoard& board,
                              const eAction& viewTile,
                              const eAction& closeFunc,
                              eMessage msg) {
+    const auto boardPtr = &board;
     mCloseFunc = closeFunc;
     setType(eFrameType::message);
 
@@ -183,7 +184,9 @@ void eMessageBox::initialize(eGameBoard& board,
 
     eOkButton* ok = nullptr;
     eWidget* wid = nullptr;
-    const bool addOk = !ed.fCloseOnAction && ed.fCityConditionalActions.empty() && !ed.fPrimaryAction && !ed.fSecondaryAction && !ed.fTertiaryAction;
+    const bool addOk = ed.fCloseResponse < 0 && ed.fCityConditionalResponses.empty() &&
+                       ed.fPrimaryResponse < 0 && ed.fSecondaryResponse < 0 &&
+                       ed.fTertiaryResponse < 0;
     if(addOk) {
         ok = new eOkButton(window());
         ok->setPressAction([this]() {
@@ -201,13 +204,14 @@ void eMessageBox::initialize(eGameBoard& board,
         surrenderB->setText(eLanguage::zeusText(44, 282));
         surrenderB->fitContent();
         wid->addWidget(surrenderB);
-        surrenderB->setPressAction([this, ed]() {
-            if(ed.fPrimaryAction) ed.fPrimaryAction();
+        surrenderB->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fPrimaryResponse);
+            mActionTaken = true;
             close();
         });
-        surrenderB->setVisible(bool(ed.fPrimaryAction));
+        surrenderB->setVisible(ed.fPrimaryResponse >= 0);
 
-        const bool canBribe = bool(ed.fSecondaryAction);
+        const bool canBribe = ed.fSecondaryResponse >= 0;
         const auto bribeB = canBribe ?
             static_cast<eButton*>(new eFramedButton(window())) :
             new eButton(window());
@@ -219,14 +223,15 @@ void eMessageBox::initialize(eGameBoard& board,
         bribeB->setText(bribeStr);
         bribeB->fitContent();
         wid->addWidget(bribeB);
-        bribeB->setPressAction([this, ed]() {
-            if(!ed.fSecondaryAction) return;
-            ed.fSecondaryAction();
+        bribeB->setPressAction([this, boardPtr, ed]() {
+            if(ed.fSecondaryResponse < 0) return;
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            mActionTaken = true;
             close();
         });
         bribeB->setVisible(true);
         const auto bribeAmount = std::to_string(ed.fBribe) + " drachmas";
-        bribeB->setTooltip(ed.fSecondaryAction ? "Bribe demanded: " + bribeAmount :
+        bribeB->setTooltip(ed.fSecondaryResponse >= 0 ? "Bribe demanded: " + bribeAmount :
                            "Need " + bribeAmount + " to bribe");
 
         const auto fightToDefend = new eFramedButton(window());
@@ -235,8 +240,9 @@ void eMessageBox::initialize(eGameBoard& board,
         fightToDefend->setText(eLanguage::zeusText(44, 283));
         fightToDefend->fitContent();
         wid->addWidget(fightToDefend);
-        fightToDefend->setPressAction([this, ed]() {
-            if(ed.fTertiaryAction) ed.fTertiaryAction();
+        fightToDefend->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
+            mActionTaken = true;
             close();
         });
 
@@ -271,17 +277,19 @@ void eMessageBox::initialize(eGameBoard& board,
             acceptB->fitContent();
             if(type == eResourceType::drachmas) {
                 wid->addWidget(acceptB);
-                acceptB->setPressAction([this, ed]() {
-            if(ed.fPrimaryAction) ed.fPrimaryAction();
+                acceptB->setPressAction([this, boardPtr, ed]() {
+                    boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fPrimaryResponse);
+                    mActionTaken = true;
                     close();
                 });
             } else if(ed.fCityNames.size() == 1) {
                 const auto iniC = ed.fCityNames.begin();
                 const auto iniCid = iniC->first;
                 wid->addWidget(acceptB);
-                acceptB->setPressAction([this, ed, iniCid]() {
-                    const auto a0 = ed.fCityConditionalActions.at(iniCid);
-                    if(a0) a0();
+                acceptB->setPressAction([this, boardPtr, ed, iniCid]() {
+                    const auto a0 = ed.fCityConditionalResponses.at(iniCid);
+                    boardPtr->respondToEvent(ed.fEventRuntimeId, a0, iniCid);
+                    mActionTaken = true;
                     close();
                 });
                 if(spaceLabel) {
@@ -297,7 +305,7 @@ void eMessageBox::initialize(eGameBoard& board,
 
                 const auto cityB = new eBoardCitySwitchButton(window());
                 cityB->setFontSizeS();
-                const auto setCid = [this, ed, acceptB, spaceLabel, count](const eCityId cid) {
+                const auto setCid = [this, boardPtr, ed, acceptB, spaceLabel, count](const eCityId cid) {
                     const int space = ed.fCSpaceCount.at(cid);
                     if(spaceLabel) {
                         const int c = std::min(space, count);
@@ -305,9 +313,10 @@ void eMessageBox::initialize(eGameBoard& board,
                         spaceLabel->setText(cStr);
                     }
                     acceptB->setVisible(space > 0);
-                    acceptB->setPressAction([this, ed, cid]() {
-                        const auto a0 = ed.fCityConditionalActions.at(cid);
-                        if(a0) a0();
+                    acceptB->setPressAction([this, boardPtr, ed, cid]() {
+                        const auto a0 = ed.fCityConditionalResponses.at(cid);
+                        boardPtr->respondToEvent(ed.fEventRuntimeId, a0, cid);
+                        mActionTaken = true;
                         close();
                     });
                 };
@@ -325,11 +334,12 @@ void eMessageBox::initialize(eGameBoard& board,
             postponeB->setText(eLanguage::zeusText(44, 211));
             postponeB->fitContent();
             wid->addWidget(postponeB);
-            postponeB->setPressAction([this, ed]() {
-                if(ed.fSecondaryAction) ed.fSecondaryAction();
+            postponeB->setPressAction([this, boardPtr, ed]() {
+                boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+                mActionTaken = true;
                 close();
             });
-            postponeB->setVisible(ed.fSecondaryAction && type != eResourceType::drachmas);
+            postponeB->setVisible(ed.fSecondaryResponse >= 0 && type != eResourceType::drachmas);
 
             const auto declineB = new eFramedButton(window());
             declineB->setFontSizeS();
@@ -337,8 +347,9 @@ void eMessageBox::initialize(eGameBoard& board,
             declineB->setText(eLanguage::zeusText(44, 210));
             declineB->fitContent();
             wid->addWidget(declineB);
-            declineB->setPressAction([this, ed]() {
-            if(ed.fTertiaryAction) ed.fTertiaryAction();
+            declineB->setPressAction([this, boardPtr, ed]() {
+                boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
+                mActionTaken = true;
                 close();
             });
 
@@ -391,19 +402,21 @@ void eMessageBox::initialize(eGameBoard& board,
 
         if(type == eResourceType::drachmas) {
             wid->addWidget(a0B);
-            a0B->setPressAction([this, ed]() {
-                if(ed.fPrimaryAction) ed.fPrimaryAction();
+            a0B->setPressAction([this, boardPtr, ed]() {
+                boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fPrimaryResponse);
+                mActionTaken = true;
                 close();
             });
-            a0B->setVisible(ed.fPrimaryAction != nullptr);
+            a0B->setVisible(ed.fPrimaryResponse >= 0);
         } else if(ed.fCityNames.size() == 1) {
             const auto iniC = ed.fCityNames.begin();
             const auto iniCid = iniC->first;
             wid->addWidget(a0B);
             a0B->setVisible(ed.fCSpaceCount.at(iniCid) >= ed.fResourceCount);
-            a0B->setPressAction([this, ed, iniCid]() {
-                const auto a0 = ed.fCityConditionalActions.at(iniCid);
-                if(a0) a0();
+            a0B->setPressAction([this, boardPtr, ed, iniCid]() {
+                const auto a0 = ed.fCityConditionalResponses.at(iniCid);
+                boardPtr->respondToEvent(ed.fEventRuntimeId, a0, iniCid);
+                mActionTaken = true;
                 close();
             });
         } else {
@@ -413,12 +426,13 @@ void eMessageBox::initialize(eGameBoard& board,
 
             const auto cityB = new eBoardCitySwitchButton(window());
             cityB->setFontSizeS();
-            const auto setCid = [this, ed, a0B](const eCityId cid) {
+            const auto setCid = [this, boardPtr, ed, a0B](const eCityId cid) {
                 const int count = ed.fCSpaceCount.at(cid);
                 a0B->setVisible(count >= ed.fResourceCount);
-                a0B->setPressAction([this, ed, cid]() {
-                    const auto a0 = ed.fCityConditionalActions.at(cid);
-                    if(a0) a0();
+                a0B->setPressAction([this, boardPtr, ed, cid]() {
+                    const auto a0 = ed.fCityConditionalResponses.at(cid);
+                    boardPtr->respondToEvent(ed.fEventRuntimeId, a0, cid);
+                    mActionTaken = true;
                     close();
                 });
             };
@@ -436,11 +450,12 @@ void eMessageBox::initialize(eGameBoard& board,
         a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
-        a1B->setPressAction([this, ed]() {
-            if(ed.fSecondaryAction) ed.fSecondaryAction();
+        a1B->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            mActionTaken = true;
             close();
         });
-        a1B->setVisible(ed.fSecondaryAction != nullptr);
+        a1B->setVisible(ed.fSecondaryResponse >= 0);
 
         eButton* a2B;
         if(ed.fType == eMessageEventType::generalRequestGranted && ed.fTime == 0) {
@@ -453,8 +468,9 @@ void eMessageBox::initialize(eGameBoard& board,
             a2B->fitContent();
         }
         wid->addWidget(a2B);
-        a2B->setPressAction([this, ed]() {
-            if(ed.fTertiaryAction) ed.fTertiaryAction();
+        a2B->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
+            mActionTaken = true;
             close();
         });
 
@@ -486,17 +502,20 @@ void eMessageBox::initialize(eGameBoard& board,
         a0B->setText(eLanguage::zeusText(44, 275));
         a0B->fitContent();
         wid->addWidget(a0B);
-        if(ed.fCloseOnAction) {
-            a0B->setPressAction([this, ed]() {
-                ed.fCloseOnAction([this]() { close(); });
+        if(ed.fCloseResponse >= 0) {
+            a0B->setPressAction([this, boardPtr, ed]() {
+                mActionTaken = true;
+                boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fCloseResponse);
+                close();
             });
         } else {
-            a0B->setPressAction([this, ed]() {
-                if(ed.fPrimaryAction) ed.fPrimaryAction();
+            a0B->setPressAction([this, boardPtr, ed]() {
+                boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fPrimaryResponse);
+                mActionTaken = true;
                 close();
             });
         }
-        a0B->setVisible(ed.fPrimaryAction != nullptr || ed.fCloseOnAction != nullptr);
+        a0B->setVisible(ed.fPrimaryResponse >= 0 || ed.fCloseResponse >= 0);
 
         const auto a1B = new eFramedButton(window());
         a1B->setFontSizeS();
@@ -504,11 +523,12 @@ void eMessageBox::initialize(eGameBoard& board,
         a1B->setText(eLanguage::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
-        a1B->setPressAction([this, ed]() {
-            if(ed.fSecondaryAction) ed.fSecondaryAction();
+        a1B->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            mActionTaken = true;
             close();
         });
-        a1B->setVisible(ed.fSecondaryAction != nullptr);
+        a1B->setVisible(ed.fSecondaryResponse >= 0);
 
         const auto a2B = new eFramedButton(window());
         a2B->setFontSizeS();
@@ -516,11 +536,12 @@ void eMessageBox::initialize(eGameBoard& board,
         a2B->setText(eLanguage::zeusText(44, 212));
         a2B->fitContent();
         wid->addWidget(a2B);
-        a2B->setPressAction([this, ed]() {
-            if(ed.fTertiaryAction) ed.fTertiaryAction();
+        a2B->setPressAction([this, boardPtr, ed]() {
+            boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
+            mActionTaken = true;
             close();
         });
-        a2B->setVisible(ed.fTertiaryAction != nullptr);
+        a2B->setVisible(ed.fTertiaryResponse >= 0);
 
         const int w = width() - 4*p;
         wid->setWidth(w);
@@ -550,16 +571,6 @@ void eMessageBox::initialize(eGameBoard& board,
         ok->setX(ok->x() - 1.5*p);
         ok->setY(ok->y() - 1.5*p);
     }
-//    if(ed.fTertiaryAction) {
-//        mDone = [this, ed]() {
-//            ed.fTertiaryAction();
-//            close();
-//        };
-//    } else {
-//        mDone = [this]() {
-//            close();
-//        };
-//    }
     if(wid) {
         wid->align(eAlignment::hcenter);
         wid->setY(wid->y() + p/2);

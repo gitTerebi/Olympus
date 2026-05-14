@@ -97,11 +97,12 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
 {
     eLoggedMessage lm;
     lm.fEd = ed;
-    lm.fEd.fCloseOnAction = nullptr;
-    lm.fEd.fPrimaryAction = nullptr;
-    lm.fEd.fCityConditionalActions.clear();
-    lm.fEd.fSecondaryAction = nullptr;
-    lm.fEd.fTertiaryAction = nullptr;
+    lm.fEd.fEventRuntimeId = -1;
+    lm.fEd.fCloseResponse = -1;
+    lm.fEd.fPrimaryResponse = -1;
+    lm.fEd.fCityConditionalResponses.clear();
+    lm.fEd.fSecondaryResponse = -1;
+    lm.fEd.fTertiaryResponse = -1;
     lm.fEd.fType = eMessageEventType::common;
     lm.fMsg = msg;
     lm.fRead = false;

@@ -127,13 +127,7 @@ void ePlayerConquestEvent::read(eReadStream& src) {
 }
 
 void ePlayerConquestEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readGameEvent(gameBoard(), [this](eGameEvent* const e) {
-            mInvasionEvent = static_cast<eInvasionEvent*>(e);
-        });
-    } else {
-        ar.writeStream().writeGameEvent(mInvasionEvent);
-    }
+    ar.gameEvent(gameBoard(), mInvasionEvent);
 }
 
 bool ePlayerConquestEvent::warned() const {
