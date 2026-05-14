@@ -32,6 +32,22 @@ namespace
     constexpr int kInvaderWonAttitudeRestore = 35;
     constexpr int kInvaderBribedAttitudeRestore = 25;
     constexpr int bribeAttackCooldownMonths = 12;
+    constexpr int kInvasionVictoryMonumentId = 1;
+
+    bool hasCommemorativeMonument(eGameBoard &board, const eCityId cid, const int id)
+    {
+        if (board.availableBuilding(cid, eBuildingType::commemorative, id))
+            return true;
+
+        for (const auto b : board.commemorativeBuildings(cid))
+        {
+            if (b->type() != eBuildingType::commemorative)
+                continue;
+            if (static_cast<eCommemorative *>(b)->id() == id)
+                return true;
+        }
+        return false;
+    }
 }
 
 eInvasionEvent::eInvasionEvent(
@@ -414,11 +430,9 @@ void eInvasionEvent::bribe()
     eEventData ed(cityId());
     ed.fCity = mCity;
     const auto cid = cityId();
-    const bool hasVictoryMonn = board->availableBuilding(cid, eBuildingType::commemorative, 1) ||
-        [&]() { for(const auto b : board->commemorativeBuildings(cid)) { if(b->type() != eBuildingType::commemorative) continue; if(static_cast<eCommemorative*>(b)->id() == 1) return true; } return false; }();
-    const bool monn = !hasVictoryMonn && eRand::rand() % 2;
+    const bool monn = !hasCommemorativeMonument(*board, cid, kInvasionVictoryMonumentId);
     if (monn) {
-        board->allow(cid, eBuildingType::commemorative, 1);
+        board->allow(cid, eBuildingType::commemorative, kInvasionVictoryMonumentId);
         board->event(eEvent::invasionBribedMonn, ed);
     } else {
         board->event(eEvent::invasionBribed, ed);
@@ -801,12 +815,10 @@ void eInvasionEvent::invadersDefeated()
     eEventData ed(targetCity);
     ed.fCity = mCity;
 
-    const bool hasVictoryMonn = board.availableBuilding(targetCity, eBuildingType::commemorative, 1) ||
-        [&]() { for(const auto b : board.commemorativeBuildings(targetCity)) { if(b->type() != eBuildingType::commemorative) continue; if(static_cast<eCommemorative*>(b)->id() == 1) return true; } return false; }();
-    const bool monn = !hasVictoryMonn && eRand::rand() % 2;
+    const bool monn = !hasCommemorativeMonument(board, targetCity, kInvasionVictoryMonumentId);
     if (monn)
     {
-        board.allow(targetCity, eBuildingType::commemorative, 1);
+        board.allow(targetCity, eBuildingType::commemorative, kInvasionVictoryMonumentId);
         board.event(eEvent::invasionVictoryMonn, ed);
     }
     else
