@@ -55,6 +55,10 @@ public:
     void setDoubleCartCapacity(const bool b);
     void setAgorasTakeFromTradingPosts(const bool b);
     void setEnableYearlyAutosaves(const bool b);
+    void setPopupForInvasion(const bool b);
+    void setPopupForRequests(const bool b);
+    void setPopupForTributes(const bool b);
+    void setPopupForTroops(const bool b);
     void setLastDifficulty(const eDifficulty d);
 
     void startGameAction(eGameBoard* const board,

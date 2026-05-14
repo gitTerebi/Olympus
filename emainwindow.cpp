@@ -229,6 +229,26 @@ void eMainWindow::setEnableYearlyAutosaves(const bool b) {
     mSettings.write();
 }
 
+void eMainWindow::setPopupForInvasion(const bool b) {
+    mSettings.fPopupForInvasion = b;
+    mSettings.write();
+}
+
+void eMainWindow::setPopupForRequests(const bool b) {
+    mSettings.fPopupForRequests = b;
+    mSettings.write();
+}
+
+void eMainWindow::setPopupForTributes(const bool b) {
+    mSettings.fPopupForTributes = b;
+    mSettings.write();
+}
+
+void eMainWindow::setPopupForTroops(const bool b) {
+    mSettings.fPopupForTroops = b;
+    mSettings.write();
+}
+
 void eMainWindow::setLastDifficulty(const eDifficulty d) {
     mSettings.fLastDifficulty = d;
     mSettings.write();

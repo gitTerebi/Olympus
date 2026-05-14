@@ -239,6 +239,38 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
                         window->setEnableYearlyAutosaves(b);
                     },
                     "Save automatically at the start of each year."
+                },
+                {
+                    "Popup for invasions",
+                    settings.fPopupForInvasion,
+                    [window](const bool b) {
+                        window->setPopupForInvasion(b);
+                    },
+                    "Show invasion events as popups. When disabled, auto-fights."
+                },
+                {
+                    "Popup for requests",
+                    settings.fPopupForRequests,
+                    [window](const bool b) {
+                        window->setPopupForRequests(b);
+                    },
+                    "Show resource/gift requests as popups. When disabled, auto-postpones."
+                },
+                {
+                    "Popup for tributes",
+                    settings.fPopupForTributes,
+                    [window](const bool b) {
+                        window->setPopupForTributes(b);
+                    },
+                    "Show tribute demands as popups. When disabled, auto-postpones."
+                },
+                {
+                    "Popup for troops",
+                    settings.fPopupForTroops,
+                    [window](const bool b) {
+                        window->setPopupForTroops(b);
+                    },
+                    "Show troop req events as popups. When disabled, auto-postpones."
                 }
             }
         },
