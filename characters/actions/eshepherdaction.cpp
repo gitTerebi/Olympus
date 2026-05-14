@@ -134,17 +134,8 @@ void eShepherdAction::write(eWriteStream& dst) const {
 void eShepherdAction::serialize(eSaveArchive& ar) {
     eActionWithComeback::serialize(ar);
     ar.field("mAnimalType", mAnimalType);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mCharacter = static_cast<eResourceCollectorBase*>(c);
-        });
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mShed = static_cast<eShepherBuildingBase*>(b);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mCharacter);
-        ar.writeStream().writeBuilding(mShed);
-    }
+    ar.characterAs(&board(), mCharacter);
+    ar.buildingAs(&board(), mShed);
     ar.field("mFinishOnce", mFinishOnce);
     ar.field("mGroomed", mGroomed);
     ar.field("mNoResource", mNoResource);
