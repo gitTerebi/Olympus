@@ -370,18 +370,13 @@ void eInvasionEvent::trigger()
         ed.fTertiaryAction = startInvasion; // fight
         mWaitingForResponse = true;
         board->event(eEvent::invasion, ed);
-        eMusic::playRandomBattleMusic();
     }
 }
 
 void eInvasionEvent::useGeneratedCityWarnings()
 {
-    clearWarnings();
-    mInitialWarning = nullptr;
-    const auto cid = cityId();
-    auto &board = *gameBoard();
-    addWarning(std::make_shared<eInvasionWarning>(
-        1, *this, cid, board, eInvasionWarningType::warning1));
+    mHardcoded = false;
+    setWarningMonths(1);
 }
 
 void eInvasionEvent::sendInitialAnnouncement()

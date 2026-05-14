@@ -1010,13 +1010,14 @@ void eGameWidget::paintEvent(ePainter &p)
             i--;
         }
     }
-    // Promote pending toasts if space available (skip in turbo mode)
-    if (mSpeedId != sMaxSpeedId) {
-        while (mToasts.size() < 3 && !mPendingToasts.empty())
+    // Promote pending toasts; in turbo promote all at once with no cap
+    {
+        const bool turbo = mSpeedId == sMaxSpeedId;
+        while (!mPendingToasts.empty() && (turbo || mToasts.size() < 3))
         {
             eToast toast = mPendingToasts.front();
             mPendingToasts.pop_front();
-            toast.fExpireFrame = mFrame + 300; // 5 seconds
+            toast.fExpireFrame = mFrame + (turbo ? 60 : 300);
             createToastWidget(toast);
             mToasts.push_back(toast);
             updateToasts = true;

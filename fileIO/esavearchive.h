@@ -49,8 +49,11 @@ public:
 
     template <typename T>
     bool field(const char* const name, T& value, const T def) {
+        if(!reading()) return this->field(std::string(name), value);
         value = def;
-        return this->field(std::string(name), value);
+        const bool found = this->field(std::string(name), value);
+        if(!found) value = def;
+        return found;
     }
 
     template <typename T>

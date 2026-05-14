@@ -85,6 +85,8 @@ public:
     bool save() const;
 
     eEpisode* currentEpisode() const;
+    bool hasCurrentEpisode() const;
+    void printCurrentEpisodeDebug() const;
     void setCurrentColonyEpisode(const int e);
     void startEpisode();
     void episodeFinished();

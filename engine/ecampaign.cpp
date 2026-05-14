@@ -314,9 +314,10 @@ void eCampaign::read(eReadStream& src) {
     }
 
     if(src.format() == "eZeus.ez2") { // save file
-        const auto e = currentEpisode();
-        const auto board = e->fBoard;
-        board->loadResources();
+        if(hasCurrentEpisode()) {
+            const auto e = currentEpisode();
+            e->fBoard->loadResources();
+        }
     }
 }
 
@@ -369,7 +370,10 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int nc = 0;
-        ar.field("colonyBoardCount", nc, 0);
+        const bool hasColonyBoardCount = ar.field("colonyBoardCount", nc, 0); // SAVE_COMPAT_OPTIONAL_FIELD
+        if(!hasColonyBoardCount && src.format() == "eZeus.ez2") {
+            printf("Invalid save: missing colonyBoardCount after board read.\n");
+        }
         for(int i = 0; i < nc; i++) {
             auto& b = mColonyBoards.emplace_back();
             const bool finished = colonyEpisodeFinished(i);
@@ -381,7 +385,10 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int ne = 0;
-        ar.field("parentCityEpisodeCount", ne, 0);
+        const bool hasParentCityEpisodeCount = ar.field("parentCityEpisodeCount", ne, 0); // SAVE_COMPAT_OPTIONAL_FIELD
+        if(!hasParentCityEpisodeCount && src.format() == "eZeus.ez2") {
+            printf("Invalid save: missing parentCityEpisodeCount after board read.\n");
+        }
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eParentCityEpisode>();
             e->fBoard = mParentBoard.get();
@@ -393,7 +400,10 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     {
         int ne = 0;
-        ar.field("colonyEpisodeCount", ne, 0);
+        const bool hasColonyEpisodeCount = ar.field("colonyEpisodeCount", ne, 0); // SAVE_COMPAT_OPTIONAL_FIELD
+        if(!hasColonyEpisodeCount && src.format() == "eZeus.ez2") {
+            printf("Invalid save: missing colonyEpisodeCount after board read.\n");
+        }
         for(int i = 0; i < ne; i++) {
             const auto e = std::make_shared<eColonyEpisode>();
             e->fBoard = mColonyBoards[i].get();
@@ -551,11 +561,29 @@ bool eCampaign::save() const {
 }
 
 eEpisode* eCampaign::currentEpisode() const {
+    if(!hasCurrentEpisode()) return nullptr;
     if(mCurrentEpisodeType == eEpisodeType::colony) {
         return mColonyEpisodes[mCurrentColonyEpisode].get();
     } else {
         return mParentCityEpisodes[mCurrentParentEpisode].get();
     }
+}
+
+bool eCampaign::hasCurrentEpisode() const {
+    if(mCurrentEpisodeType == eEpisodeType::colony) {
+        return mCurrentColonyEpisode >= 0 &&
+               mCurrentColonyEpisode < int(mColonyEpisodes.size());
+    } else {
+        return mCurrentParentEpisode >= 0 &&
+               mCurrentParentEpisode < int(mParentCityEpisodes.size());
+    }
+}
+
+void eCampaign::printCurrentEpisodeDebug() const {
+    printf("Campaign episode state: type=%d parent=%d/%d colony=%d/%d.\n",
+           static_cast<int>(mCurrentEpisodeType),
+           mCurrentParentEpisode, int(mParentCityEpisodes.size()),
+           mCurrentColonyEpisode, int(mColonyEpisodes.size()));
 }
 
 void eCampaign::setCurrentColonyEpisode(const int e) {
