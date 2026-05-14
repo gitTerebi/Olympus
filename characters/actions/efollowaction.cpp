@@ -54,22 +54,10 @@ void eFollowAction::serialize(eSaveArchive& ar) {
     }
     ar.field("mCatchUp", mCatchUp);
     ar.field("mDistance", mDistance);
-    int s = mTiles.size();
-    ar.field("s", s);
-    if(ar.reading()) {
-        mTiles.clear();
-    }
-    for(int i = 0; i < s; i++) {
-        ePathNode n;
-        if(ar.writing()) {
-            n = mTiles[i];
-        }
+    ar.dequeField("tiles", mTiles, [this](eSaveArchive& ar, ePathNode& n) {
         ar.tile(n.fTile, board());
         ar.field("n.fO", n.fO);
-        if(ar.reading()) {
-            mTiles.push_back(n);
-        }
-    }
+    });
 }
 
 eOrientation sOrientation(eTile* const from,

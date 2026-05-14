@@ -747,6 +747,30 @@ set(SOURCES
 # Add executable
 add_executable(eZeus ${SOURCES})
 
+option(EZEUS_BUILD_TESTS "Build eZeus test executables" OFF)
+if(EZEUS_BUILD_TESTS)
+    enable_testing()
+    add_executable(save-archive-array-test
+        tests/save-archive-array-test.cpp
+    )
+    add_executable(resource-transport-size-test
+        tests/resource-transport-size-test.cpp
+    )
+    target_include_directories(save-archive-array-test PRIVATE
+        .
+        ${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/include
+    )
+    target_include_directories(resource-transport-size-test PRIVATE
+        .
+        ${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/include
+        ${SDL2_DIR}/SDL2_image-2.8.2/x86_64-w64-mingw32/include
+        ${SDL2_DIR}/SDL2_ttf-2.22.0/x86_64-w64-mingw32/include
+        ${SDL2_DIR}/SDL2_mixer-2.8.0/x86_64-w64-mingw32/include
+    )
+    add_test(NAME save-archive-array-test COMMAND save-archive-array-test)
+    add_test(NAME resource-transport-size-test COMMAND resource-transport-size-test)
+endif()
+
 set(RUNTIME_DLLS
     "${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/bin/SDL2.dll"
     "${SDL2_DIR}/SDL2_image-2.8.2/x86_64-w64-mingw32/bin/SDL2_image.dll"

@@ -53,25 +53,13 @@ void eMonsterInvasionEventBase::serialize(eSaveArchive& ar) {
     ar.field("mAggressivness", mAggressivness);
     ar.field("mValid", mValid);
 
-    int ns = mSpawned.size();
-    ar.field("ns", ns);
-    if(ar.reading()) mSpawned.clear();
-    for(int i = 0; i < ns; i++) {
-        eMonsterType s;
-        if(ar.writing()) s = mSpawned[i];
+    ar.arrayField("spawned", mSpawned, [](eSaveArchive& ar, eMonsterType& s) {
         ar.field("s", s);
-        if(ar.reading()) mSpawned.push_back(s);
-    }
+    });
 
-    int nk = mKilled.size();
-    ar.field("nk", nk);
-    if(ar.reading()) mKilled.clear();
-    for(int i = 0; i < nk; i++) {
-        eMonsterType k;
-        if(ar.writing()) k = mKilled[i];
+    ar.arrayField("killed", mKilled, [](eSaveArchive& ar, eMonsterType& k) {
         ar.field("k", k);
-        if(ar.reading()) mKilled.push_back(k);
-    }
+    });
 }
 
 bool eMonsterInvasionEventBase::finished() const {

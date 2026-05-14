@@ -79,14 +79,10 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("monthsOfMilitaryService", mMonthsOfMilitaryService);
     ar.field("wonGames", mWonGames);
 
-    {
-        int ni = 0;
-        ar.field("invasionHandlerCount", ni, 0);
-        for(int i = 0; i < ni; i++) {
-            const auto ii = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
-            ii->read(src);
-        }
-    }
+    ar.countedArrayField("invasionHandlerCount", 0, [this](eSaveArchive& ar, const int) {
+        const auto i = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
+        ar.object(*i);
+    });
 
     {
         int ngs = 0;
@@ -296,14 +292,11 @@ void eBoardCity::serialize(eSaveArchive& ar) {
 
     ar.field("wonGames", mWonGames);
 
-    {
-        const int ni = mInvasionHandlers.size();
-        auto invasionHandlerCount = ni;
-        ar.field("invasionHandlerCount", invasionHandlerCount);
-        for(const auto i : mInvasionHandlers) {
-            i->write(dst);
-        }
-    }
+    ar.countedArrayField("invasionHandlerCount",
+                         static_cast<int>(mInvasionHandlers.size()),
+                         [this](eSaveArchive& ar, const int i) {
+        ar.object(*mInvasionHandlers[i]);
+    });
 
     {
         const int ngs = mAttackingGods.size();

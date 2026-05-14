@@ -20,7 +20,7 @@ Game world/state: `engine/egameboard.*` handles tile/building changes, money, un
 
 Text strings: `zeus-text strings/Zeus_Text.xml` READ ONLY - reference strings at runtime, re-use for messages.
 
-Save archive: `eSaveArchive::field()` tags only top-level fields in `eZeus.ez2`; raw `val()`, direct stream helper calls, base/derived read/write order, duplicate field names, and nested payload layout remain order-dependent. Add new save members in shared `serialize(eSaveArchive&)` with unique stable names and defaults: `ar.field("mName", mName, def);`. Never rename old field names. Append raw legacy data only. Keep base calls and pointer/tile/character helper order matched between read/write.
+Save archive: `eSaveArchive::field()` tags only top-level fields in `eZeus.ez2`; raw `val()`, direct stream helper calls, base/derived read/write order, duplicate field names, and nested payload layout remain order-dependent. Add new save members in shared `serialize(eSaveArchive&)` with unique stable names and defaults: `ar.field("mName", mName, def);`. Never rename old field names. Append raw legacy data only. Keep base calls and pointer/tile/character helper order matched between read/write. New saved arrays must use `ar.arrayField()`, `ar.dequeField()`, `ar.countedArrayField()`, or `ar.fixedArrayField()`; do not add implicit loops over current container size. `readStream()` and `writeStream()` are deprecated legacy escape hatches; use `field()`, `object()`, `tile()`, `characterAction()`, or array helpers instead.
 
 Options menu hotkeys: Add `eHotkeyId` + setting in `esettings.h/cpp`, handler in `egamewidget.cpp keyPressEvent`, menu entry in `eoptionsdata.cpp getOptionsPages()`.
 

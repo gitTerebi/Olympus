@@ -387,18 +387,9 @@ void eCartTransporter::serialize(eSaveArchive& ar) {
         ar.writeStream().writeCharacter(mOx);
         ar.writeStream().writeCharacter(mTrailer);
     }
-    int nf = mFollowers.size();
-    ar.field("nf", nf);
-    if(ar.reading()) mFollowers.clear();
-    for(int i = 0; i < nf; i++) {
-        if(ar.reading()) {
-            ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mFollowers.push_back(c);
-            });
-        } else {
-            ar.writeStream().writeCharacter(mFollowers[i]);
-        }
-    }
+    ar.arrayField("followers", mFollowers, [this](eSaveArchive& ar, auto& f) {
+        ar.character(&getBoard(), f);
+    });
 }
 
 void eCartTransporter::updateTextures() {
