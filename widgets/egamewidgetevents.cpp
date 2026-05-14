@@ -313,6 +313,10 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         showMessage(ed, inst.fInvasionBribed);
         return;
     } break;
+    case eEvent::invasionBribedMonn: {
+        showMessage(ed, inst.fInvasionBribedMonument);
+        return;
+    } break;
     case eEvent::invasionDefeat: {
         showMessage(ed, inst.fInvasionDefeat);
         return;

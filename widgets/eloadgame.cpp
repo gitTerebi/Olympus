@@ -153,18 +153,22 @@ void eLoadGame::intialize(const std::string& title,
         }
     }
 
+    bool first = true;
     int y = 0;
     for(const auto& entry : sorted) {
         const auto path = entry.second;
         const auto name = path.filename().stem().u8string();
+        if(first) { setFileName(name); first = false; }
         const auto b = new eButtonBase(name, window());
         b->setFontSizeXS();
-        b->setLightFontColor();
+        if(name == mLineEdit->text()) b->setYellowFontColor();
+        else b->setLightFontColor();
         b->setMouseEnterAction([b]() {
             b->setYellowFontColor();
         });
-        b->setMouseLeaveAction([b]() {
-            b->setLightFontColor();
+        b->setMouseLeaveAction([this, b, name]() {
+            if(name == mLineEdit->text()) b->setYellowFontColor();
+            else b->setLightFontColor();
         });
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setNoPadding();
@@ -175,6 +179,7 @@ void eLoadGame::intialize(const std::string& title,
         y += b->height();
         b->setPressAction([this, name]() {
             setFileName(name);
+            rebuildFileList();
         });
     }
     mFilesWidget->setNoPadding();
@@ -224,12 +229,14 @@ void eLoadGame::rebuildFileList() {
 
         const auto b = new eButtonBase(name, window());
         b->setFontSizeXS();
-        b->setLightFontColor();
+        if(name == mLineEdit->text()) b->setYellowFontColor();
+        else b->setLightFontColor();
         b->setMouseEnterAction([b]() {
             b->setYellowFontColor();
         });
-        b->setMouseLeaveAction([b]() {
-            b->setLightFontColor();
+        b->setMouseLeaveAction([this, b, name]() {
+            if(name == mLineEdit->text()) b->setYellowFontColor();
+            else b->setLightFontColor();
         });
         b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
         b->setNoPadding();
@@ -240,6 +247,7 @@ void eLoadGame::rebuildFileList() {
         b->setX(0);
         b->setPressAction([this, name]() {
             setFileName(name);
+            rebuildFileList();
         });
 
         y += b->height();

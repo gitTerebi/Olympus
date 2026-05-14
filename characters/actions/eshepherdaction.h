@@ -27,6 +27,9 @@ public:
 private:
     bool findResourceDecision();
     stdsptr<eMoveToAction> makeFindAnimalMove();
+    eDomesticatedAnimal* findAnimal(bool wantShearable);
+    void reserveAnimal(eDomesticatedAnimal* a);
+    void releaseAnimal(eDomesticatedAnimal* a);
     void collectDecision(eDomesticatedAnimal* const a);
     void groomDecision(eDomesticatedAnimal* const a);
     void goBackDecision();
@@ -42,7 +45,7 @@ private:
     int mGroomed = 0;
     bool mNoResource = false;
     stdptr<eDomesticatedAnimal> mLastAnimal;
-    int mGroomedThisTrip = 0;
+    stdptr<eDomesticatedAnimal> mTargetAnimal;
 };
 
 class eSA_collectDecisionFinish : public eCharActFunc {
@@ -61,6 +64,7 @@ public:
             c = a->collect();
             a->setBusy(false);
             a->setVisible(true);
+            a->resumeAction();
         }
         if(!mTptr) return;
         mTptr->mCharacter->incCollected(c);
@@ -98,6 +102,7 @@ public:
         const auto a = mAptr.get();
         a->setBusy(false);
         a->setVisible(true);
+        a->resumeAction();
     }
 
     void read(eReadStream& src) override {
@@ -127,16 +132,11 @@ public:
             const auto a = mAptr.get();
             a->groom();
             a->setBusy(false);
+            a->resumeAction();
         }
         if(!mTptr) return;
         mTptr->mGroomed++;
-        mTptr->mGroomedThisTrip++;
-        if(mTptr->mGroomedThisTrip >= 1) {
-            mTptr->mGroomedThisTrip = 0;
-            mTptr->goBackDecision();
-        } else {
-            mTptr->findResourceDecision();
-        }
+        mTptr->goBackDecision();
     }
 
     void read(eReadStream& src) override {
@@ -170,6 +170,7 @@ public:
         if(!mAptr) return;
         const auto a = mAptr.get();
         a->setBusy(false);
+        a->resumeAction();
     }
 
     void read(eReadStream& src) override {

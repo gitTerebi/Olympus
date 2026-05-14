@@ -55,6 +55,7 @@ enum class eEvent {
     invasionVictoryMonn,
     invasionVictory,
     invasionBribed,
+    invasionBribedMonn,
 
     playerInvasion,
     playerGodAttack,

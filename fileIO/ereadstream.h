@@ -186,6 +186,7 @@ public:
     void handlePostFuncs();
 
     const std::string& format() const { return mFormat; }
+    void setFormat(const std::string& format) { mFormat = format; }
 private:
     std::vector<std::pair<eFunc, const char*>> mPostFuncs;
 

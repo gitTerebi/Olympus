@@ -70,6 +70,7 @@ public:
     eWriteStream(const eWriteTarget& dst);
 
     void writeFormat(const std::string& format);
+    void setFormat(const std::string& format) { mFormat = format; }
     const std::string& format() const { return mFormat; }
 
     inline size_t write(const void* const data, const size_t len) {

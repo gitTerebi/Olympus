@@ -1,4 +1,5 @@
 #include "invasion-event.h"
+#include "buildings/eaestheticsbuilding.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eevent.h"
@@ -412,7 +413,16 @@ void eInvasionEvent::bribe()
     board->changeCityAttitude(mCity, kInvaderBribedAttitudeRestore, pid);
     eEventData ed(cityId());
     ed.fCity = mCity;
-    board->event(eEvent::invasionBribed, ed);
+    const auto cid = cityId();
+    const bool hasVictoryMonn = board->availableBuilding(cid, eBuildingType::commemorative, 1) ||
+        [&]() { for(const auto b : board->commemorativeBuildings(cid)) { if(b->type() != eBuildingType::commemorative) continue; if(static_cast<eCommemorative*>(b)->id() == 1) return true; } return false; }();
+    const bool monn = !hasVictoryMonn && eRand::rand() % 2;
+    if (monn) {
+        board->allow(cid, eBuildingType::commemorative, 1);
+        board->event(eEvent::invasionBribedMonn, ed);
+    } else {
+        board->event(eEvent::invasionBribed, ed);
+    }
     board->updateMusic();
     if (mConquestEvent)
         mConquestEvent->planArmyReturn();
@@ -791,7 +801,9 @@ void eInvasionEvent::invadersDefeated()
     eEventData ed(targetCity);
     ed.fCity = mCity;
 
-    const bool monn = eRand::rand() % 2;
+    const bool hasVictoryMonn = board.availableBuilding(targetCity, eBuildingType::commemorative, 1) ||
+        [&]() { for(const auto b : board.commemorativeBuildings(targetCity)) { if(b->type() != eBuildingType::commemorative) continue; if(static_cast<eCommemorative*>(b)->id() == 1) return true; } return false; }();
+    const bool monn = !hasVictoryMonn && eRand::rand() % 2;
     if (monn)
     {
         board.allow(targetCity, eBuildingType::commemorative, 1);

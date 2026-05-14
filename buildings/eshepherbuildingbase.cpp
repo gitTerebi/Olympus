@@ -74,13 +74,7 @@ void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int
 }
 
 void eShepherBuildingBase::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mShepherd = static_cast<eResourceCollectorBase*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mShepherd.get());
-    }
+    ar.characterAs(&getBoard(), mShepherd);
     ar.field("mSpawnTime", mSpawnTime);
     ar.field("mProducedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
