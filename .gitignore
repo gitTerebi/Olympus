@@ -81,3 +81,5 @@ Thumbs.db
 /.kilo
 /.claude
 /.lean-ctx
+/debug/*.dmp
+/debug/*.txt

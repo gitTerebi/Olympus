@@ -26,6 +26,7 @@ set(SDL2_MIXER_LIBRARY "${SDL2_DIR}/SDL2_mixer-2.8.0/x86_64-w64-mingw32/lib/libS
 # Add all source files
 set(SOURCES
     main.cpp
+    debug/windows-dump.cpp
     audio/egodsounds.cpp
     audio/eherosounds.cpp
     audio/emonstersounds.cpp
@@ -779,6 +780,10 @@ target_include_directories(eZeus PRIVATE
     ${SDL2_DIR}/SDL2_mixer-2.8.0/x86_64-w64-mingw32/include
 )
 
+target_compile_definitions(eZeus PRIVATE
+    EZEUS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 # Link libraries
 target_link_libraries(eZeus
     ${SDL2_LIBRARY}
@@ -791,6 +796,7 @@ target_link_libraries(eZeus
 if(WIN32)
     target_link_libraries(eZeus 
         pthread
+        dbghelp
     )
 endif()
 
