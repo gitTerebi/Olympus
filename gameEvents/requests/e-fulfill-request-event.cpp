@@ -193,6 +193,7 @@ eEventData eFulfillRequestEvent::createEventData(eGameBoard &board) const
     ed.fResourceCount = mCount;
     ed.fTime = displayMonthsForRequestStep(this, mRequestStep);
     ed.fGod = mGod;
+    ed.fEventRuntimeId = runtimeId();
     return ed;
 }
 
@@ -262,11 +263,7 @@ void eFulfillRequestEvent::addDrachmasFulfillButton(
     if (avCount >= mCount && !cids.empty())
     {
         const auto cid = cids[0];
-        auto dispatchAction = [this, cid]()
-        {
-            dispatch(cid);
-        };
-        ed.fPrimaryAction = dispatchAction;
+        ed.fPrimaryResponse = static_cast<int>(eResponse::dispatch);
     }
 }
 
@@ -283,11 +280,7 @@ void eFulfillRequestEvent::addResourceFulfillButtons(
 
         if (avCount >= mCount)
         {
-            auto dispatchNowAction = [this, cid]()
-            {
-                dispatch(cid);
-            };
-            ed.fCityConditionalActions[cid] = dispatchNowAction;
+            ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::dispatch);
         }
     }
 }
@@ -307,24 +300,43 @@ void eFulfillRequestEvent::addPostponeButton(
     const auto request = mainEvent<eFulfillRequestEvent>();
     if (canPostponeRequestStep(mRequestStep))
     {
-        auto postponeAction = [this]()
-        {
-            postpone();
-        };
-        ed.fSecondaryAction = postponeAction;
+        ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     }
 }
 
 void eFulfillRequestEvent::addRefuseButton(eGameBoard &board, eEventData &ed)
 {
-    const auto request = mainEvent<eFulfillRequestEvent>();
-    auto refuseAction = [request, &board]()
+    ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
+}
+
+void eFulfillRequestEvent::respond(const int response, const eCityId city)
+{
+    switch (static_cast<eResponse>(response))
     {
-        if (!request)
-            return;
-        request->finish(eReceiveRequestResult::refuse);
-    };
-    ed.fTertiaryAction = refuseAction;
+    case eResponse::dispatch:
+        if (city == eCityId::neutralAggresive)
+        {
+            const auto board = gameBoard();
+            if (!board)
+                return;
+            const auto pid = mRequestType == eReceiveRequestType::tribute ? board->personPlayer() : playerId();
+            const auto cids = board->playerCitiesOnBoard(pid);
+            if (!cids.empty())
+                dispatch(cids[0]);
+        }
+        else
+        {
+            dispatch(city);
+        }
+        break;
+    case eResponse::postpone:
+        postpone();
+        break;
+    case eResponse::refuse:
+        if (const auto request = mainEvent<eFulfillRequestEvent>())
+            request->finish(eReceiveRequestResult::refuse);
+        break;
+    }
 }
 
 void eFulfillRequestEvent::postpone()

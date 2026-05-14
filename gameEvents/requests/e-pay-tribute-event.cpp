@@ -132,6 +132,7 @@ void ePayTributeEvent::trigger()
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
     ed.fTime = popupComplyMonths();
+    ed.fEventRuntimeId = runtimeId();
 
     const bool canDispatch = !payTributeTerminalState(mEvent);
     if (canDispatch && mResource == eResourceType::drachmas)
@@ -140,10 +141,7 @@ void ePayTributeEvent::trigger()
         if (!cids.empty() && board->drachmas(board->personPlayer()) >= mCount)
         {
             const auto cid = cids[0];
-            ed.fPrimaryAction = [this, cid]()
-            {
-                dispatch(cid);
-            };
+            ed.fPrimaryResponse = static_cast<int>(eResponse::dispatch);
         }
     }
     else if (canDispatch)
@@ -156,30 +154,46 @@ void ePayTributeEvent::trigger()
             ed.fCSpaceCount[cid] = avCount;
             if (avCount >= mCount)
             {
-                ed.fCityConditionalActions[cid] = [this, cid]()
-                {
-                    dispatch(cid);
-                };
+                ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::dispatch);
             }
         }
     }
 
     if (!payTributeTerminalState(mEvent))
     {
-        ed.fSecondaryAction = [this]()
-        {
-            postpone();
-        };
+        ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     }
 
-    ed.fTertiaryAction = [this]()
-    {
-        const auto request = mainEvent<ePayTributeEvent>();
-        if (request)
-            request->finish(ePayTributeResult::refuse);
-    };
+    ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
 
     board->event(stepEvent(), ed);
+}
+
+void ePayTributeEvent::respond(const int response, const eCityId city)
+{
+    switch (static_cast<eResponse>(response))
+    {
+    case eResponse::dispatch:
+        if (city == eCityId::neutralAggresive)
+        {
+            const auto board = gameBoard();
+            const auto cids = board ? board->personPlayerCitiesOnBoard() : std::vector<eCityId>();
+            if (!cids.empty())
+                dispatch(cids[0]);
+        }
+        else
+        {
+            dispatch(city);
+        }
+        break;
+    case eResponse::postpone:
+        postpone();
+        break;
+    case eResponse::refuse:
+        if (const auto request = mainEvent<ePayTributeEvent>())
+            request->finish(ePayTributeResult::refuse);
+        break;
+    }
 }
 
 std::string ePayTributeEvent::longName() const

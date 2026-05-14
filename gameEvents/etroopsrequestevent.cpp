@@ -127,6 +127,7 @@ void eTroopsRequestEvent::trigger() {
     ed.fCity = mCity;
     ed.fRivalCity = mAttackingCity;
     ed.fTime = warningMonths();
+    ed.fEventRuntimeId = runtimeId();
 
     if(mFinish) {
         if(mPostpone > 2) {
@@ -137,30 +138,13 @@ void eTroopsRequestEvent::trigger() {
         return;
     }
 
-    ed.fCloseOnAction = [this](const eAction& close) { // dispatch now
-        dispatch(close);
-    };
+    ed.fCloseResponse = static_cast<int>(eResponse::dispatchNow);
 
     if(mPostpone < 2) {
-        ed.fSecondaryAction = [this, board]() { // postpone
-            const auto e = e::make_shared<eTroopsRequestEvent>(
-                               cityId(), eGameEventBranch::child, *board);
-            e->set(*this, mPostpone + 1);
-            const auto date = board->date() + 30*warningMonths();
-            e->initializeDate(date);
-            addConsequence(e);
-        };
+        ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     }
 
-    ed.fTertiaryAction = [this, board]() { // refuse
-        board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
-        const auto e = e::make_shared<eTroopsRequestEvent>(
-                           cityId(), eGameEventBranch::child, *board);
-        e->set(*this, 5, true);
-        const auto date = board->date() + 31;
-        e->initializeDate(date);
-        addConsequence(e);
-    };
+    ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
 
 
     ed.fType = eMessageEventType::troopsRequest;
@@ -259,6 +243,46 @@ void eTroopsRequestEvent::trigger() {
         }
     } break;
     }
+}
+
+void eTroopsRequestEvent::respond(const int response, eCityId)
+{
+    switch(static_cast<eResponse>(response)) {
+    case eResponse::dispatchNow:
+        dispatch();
+        break;
+    case eResponse::postpone:
+        postponeResponse();
+        break;
+    case eResponse::refuse:
+        refuse();
+        break;
+    }
+}
+
+void eTroopsRequestEvent::postponeResponse()
+{
+    const auto board = gameBoard();
+    if(!board) return;
+    const auto e = e::make_shared<eTroopsRequestEvent>(
+                       cityId(), eGameEventBranch::child, *board);
+    e->set(*this, mPostpone + 1);
+    const auto date = board->date() + 30*warningMonths();
+    e->initializeDate(date);
+    addConsequence(e);
+}
+
+void eTroopsRequestEvent::refuse()
+{
+    const auto board = gameBoard();
+    if(!board) return;
+    board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
+    const auto e = e::make_shared<eTroopsRequestEvent>(
+                       cityId(), eGameEventBranch::child, *board);
+    e->set(*this, 5, true);
+    const auto date = board->date() + 31;
+    e->initializeDate(date);
+    addConsequence(e);
 }
 
 void eTroopsRequestEvent::dispatch(const eAction& close) {

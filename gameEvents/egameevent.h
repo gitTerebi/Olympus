@@ -94,6 +94,7 @@ public:
     virtual void read(eReadStream& src);
 
     virtual void loadResources() const;
+    virtual void respond(int response, eCityId city = eCityId::neutralAggresive);
 
     static stdsptr<eGameEvent> sCreate(const eCityId cid,
                                        const eGameEventType type,
@@ -104,6 +105,8 @@ public:
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
+    void setRuntimeId(const int id) { mRuntimeId = id; }
+    int runtimeId() const { return mRuntimeId; }
 
     eCityId cityId() const { return mCid; }
     ePlayerId playerId() const;
@@ -240,6 +243,7 @@ private:
     int mWarningMonths = 2;
 
     int mIOID = -1;
+    int mRuntimeId = -1;
 };
 
 #endif // EGAMEEVENT_H

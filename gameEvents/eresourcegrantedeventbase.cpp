@@ -66,6 +66,7 @@ void eResourceGrantedEventBase::trigger() {
     }
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
+    ed.fEventRuntimeId = runtimeId();
 
     const auto postpone = [this, board]() {
         const auto branch = eGameEventBranch::child;
@@ -125,37 +126,19 @@ void eResourceGrantedEventBase::trigger() {
             ed.fType = eMessageEventType::requestTributeGranted;
             if(maxSpace != 0) {
                 if(mResource == eResourceType::drachmas) {
-                    ed.fPrimaryAction = acceptDrachmas;
+                    ed.fPrimaryResponse = static_cast<int>(eResponse::accept);
                 } else {
                     for(const auto cid : cids) {
-                        ed.fCityConditionalActions[cid] = [acceptResource, cid]() { // accept
-                            acceptResource(cid);
-                        };
+                        ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::accept);
                     }
                 }
             }
 
             if(mPostpone) {
-                ed.fSecondaryAction = [this, board, postpone]() { // postpone
-                    eEventData ed(playerId());
-                    ed.fType = eMessageEventType::resourceGranted;
-                    ed.fCity = mCity;
-                    ed.fResourceType = mResource;
-                    ed.fResourceCount = mCount;
-                    board->event(mGiftPostponed, ed);
-
-                    postpone();
-                };
+                ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
             }
 
-            ed.fTertiaryAction = [this, board]() { // decline
-                eEventData ed(playerId());
-                ed.fType = eMessageEventType::resourceGranted;
-                ed.fCity = mCity;
-                ed.fResourceType = mResource;
-                ed.fResourceCount = mCount;
-                board->event(mGiftRefused, ed);
-            };
+            ed.fTertiaryResponse = static_cast<int>(eResponse::decline);
         }
         if(!mPostpone) {
             if(maxSpace == 0) {
@@ -173,6 +156,72 @@ void eResourceGrantedEventBase::trigger() {
             board->event(mGiftPartialSpace, ed);
         }
     }
+}
+
+void eResourceGrantedEventBase::respond(const int response, const eCityId city)
+{
+    switch(static_cast<eResponse>(response)) {
+    case eResponse::accept:
+        accept(city);
+        break;
+    case eResponse::postpone:
+        postpone();
+        break;
+    case eResponse::decline:
+        decline();
+        break;
+    }
+}
+
+void eResourceGrantedEventBase::accept(const eCityId city)
+{
+    const auto board = gameBoard();
+    if(!board) return;
+    if(mResource == eResourceType::drachmas) {
+        const auto p = board->boardPlayerWithId(playerId());
+        if(p) p->incDrachmas(mCount, eFinanceTarget::giftsReceived);
+        return;
+    }
+    const int a = board->addResource(city, mResource, mCount);
+    eEventData ed(city);
+    ed.fType = eMessageEventType::resourceGranted;
+    ed.fCity = mCity;
+    ed.fResourceType = mResource;
+    ed.fResourceCount = a;
+    if(a != mCount) {
+        board->event(mGiftAccepted, ed);
+    }
+}
+
+void eResourceGrantedEventBase::postpone()
+{
+    const auto board = gameBoard();
+    if(!board) return;
+    eEventData ed(playerId());
+    ed.fType = eMessageEventType::resourceGranted;
+    ed.fCity = mCity;
+    ed.fResourceType = mResource;
+    ed.fResourceCount = mCount;
+    board->event(mGiftPostponed, ed);
+    const auto branch = eGameEventBranch::child;
+    const auto e = eGameEvent::sCreate(cityId(), type(), branch, *board);
+    const auto ee = static_cast<eResourceGrantedEventBase*>(e.get());
+    ee->initialize(false, mResource, mCount, mCity);
+    const auto date = board->date() + 31;
+    e->initializeDate(date);
+    addConsequence(e);
+}
+
+void eResourceGrantedEventBase::decline()
+{
+    const auto board = gameBoard();
+    if(!board) return;
+    eEventData ed(playerId());
+    ed.fType = eMessageEventType::resourceGranted;
+    ed.fCity = mCity;
+    ed.fResourceType = mResource;
+    ed.fResourceCount = mCount;
+    board->event(mGiftRefused, ed);
 }
 
 void eResourceGrantedEventBase::write(eWriteStream& dst) const {

@@ -349,6 +349,8 @@ public:
     void setMessageShower(const eMessageShower& msg);
 
     void showMessage(eEventData& ed, const eMessageType& msg);
+    void respondToEvent(int runtimeId, int response,
+                        eCityId city = eCityId::neutralAggresive);
 
     struct eLoggedMessage {
         eEventData fEd;
@@ -455,6 +457,7 @@ public:
 
     void addGameEvent(eGameEvent* const e);
     void removeGameEvent(eGameEvent* const e);
+    eGameEvent* eventWithRuntimeId(int id) const;
 
     using eGoals = std::vector<stdsptr<eEpisodeGoal>>;
     const eGoals& goals() const { return mGoals; }
@@ -913,8 +916,8 @@ private:
     eAction mButtonVisUpdater;
     eMessageShower mMsgShower;
     std::vector<eLoggedMessage> mMessageLog;
-
     std::vector<eGameEvent*> mAllGameEvents;
+    int mNextGameEventRuntimeId = 1;
     int mGoalsCheckTime = 0;
     std::vector<stdsptr<eEpisodeGoal>> mGoals;
     bool mGoalsFulfilled = false;

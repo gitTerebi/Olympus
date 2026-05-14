@@ -245,6 +245,7 @@ void eGameBoard::clear()
     mSelectedTriremes.clear();
     mPlannedActions.clear();
     mAllGameEvents.clear();
+    mNextGameEventRuntimeId = 1;
     mMarbleTiles.clear();
     mBlackMarbleTiles.clear();
     mWidth = 0;
@@ -2086,12 +2087,26 @@ void eGameBoard::removeRootGameEvent(const stdsptr<eGameEvent> &e)
 
 void eGameBoard::addGameEvent(eGameEvent *const e)
 {
+    e->setRuntimeId(mNextGameEventRuntimeId++);
     mAllGameEvents.push_back(e);
 }
 
 void eGameBoard::removeGameEvent(eGameEvent *const e)
 {
     eVectorHelpers::remove(mAllGameEvents, e);
+    e->setRuntimeId(-1);
+}
+
+eGameEvent *eGameBoard::eventWithRuntimeId(const int id) const
+{
+    if (id < 0)
+        return nullptr;
+    for (const auto e : mAllGameEvents)
+    {
+        if (e && e->runtimeId() == id)
+            return e;
+    }
+    return nullptr;
 }
 
 void eGameBoard::handleGamesBegin(const eGames game)
@@ -3511,17 +3526,27 @@ void eGameBoard::showMessage(eEventData &ed,
     mMsgShower(ed, msg);
 }
 
+void eGameBoard::respondToEvent(const int runtimeId, const int response,
+                                const eCityId city)
+{
+    const auto event = eventWithRuntimeId(runtimeId);
+    if (!event)
+        return;
+    event->respond(response, city);
+}
+
 void eGameBoard::addMessageLog(const eEventData &ed,
                                const eMessage &msg,
                                const eDate &date)
 {
     auto &lm = mMessageLog.emplace_back();
     lm.fEd = ed;
-    lm.fEd.fCloseOnAction = nullptr;
-    lm.fEd.fPrimaryAction = nullptr;
-    lm.fEd.fCityConditionalActions.clear();
-    lm.fEd.fSecondaryAction = nullptr;
-    lm.fEd.fTertiaryAction = nullptr;
+    lm.fEd.fEventRuntimeId = -1;
+    lm.fEd.fCloseResponse = -1;
+    lm.fEd.fPrimaryResponse = -1;
+    lm.fEd.fCityConditionalResponses.clear();
+    lm.fEd.fSecondaryResponse = -1;
+    lm.fEd.fTertiaryResponse = -1;
     lm.fEd.fType = eMessageEventType::common;
     lm.fMsg = msg;
     lm.fDate = date;

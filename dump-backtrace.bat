@@ -41,3 +41,9 @@ echo Dump: "%DMP%"
   -o "thread backtrace all" ^
   -o "frame variable" ^
   -o "register read"
+set "LLDB_EXIT=%ERRORLEVEL%"
+
+if /i "%~xDMP%"==".dmp" if exist "%DMP%" del /q "%DMP%" >nul 2>nul
+for %%F in ("%ROOT%debug\ezeus-*.dmp") do if exist "%%~fF" del /q "%%~fF" >nul 2>nul
+
+exit /b %LLDB_EXIT%

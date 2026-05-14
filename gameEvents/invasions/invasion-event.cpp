@@ -29,6 +29,7 @@ namespace
 
     constexpr int kInvaderDefeatedAttitudeRestore = 15;
     constexpr int kInvaderWonAttitudeRestore = 35;
+    constexpr int kInvaderBribedAttitudeRestore = 25;
     constexpr int bribeAttackCooldownMonths = 12;
 }
 
@@ -334,6 +335,7 @@ void eInvasionEvent::trigger()
         board->incDrachmas(pid, -bribe, eFinanceTarget::bribesTributePaid);
         if (city)
             city->setBribed();
+        board->changeCityAttitude(self->mCity, kInvaderBribedAttitudeRestore, pid);
         eEventData ed(cid);
         ed.fCity = city;
         board->event(eEvent::invasionBribed, ed);
@@ -356,20 +358,102 @@ void eInvasionEvent::trigger()
         ed.fBribe = bribe;
         ed.fReason = reason();
 
-        ed.fPrimaryAction = [self, board]() { // surrender
-            self->mWaitingForResponse = false;
-            board->updateMusic();
-            self->invadersWon();
-        };
+        ed.fEventRuntimeId = runtimeId();
+        ed.fPrimaryResponse = static_cast<int>(eResponse::surrender);
         if (drachmas >= bribe)
         { // bribe
-            ed.fSecondaryAction = bribeFunc;
+            ed.fSecondaryResponse = static_cast<int>(eResponse::bribe);
         }
 
         ed.fTile = tile;
-        ed.fTertiaryAction = startInvasion; // fight
+        ed.fTertiaryResponse = static_cast<int>(eResponse::fight);
         mWaitingForResponse = true;
         board->event(eEvent::invasion, ed);
+    }
+}
+
+void eInvasionEvent::respond(const int response, eCityId)
+{
+    switch (static_cast<eResponse>(response))
+    {
+    case eResponse::surrender:
+        surrender();
+        break;
+    case eResponse::bribe:
+        bribe();
+        break;
+    case eResponse::fight:
+        fight();
+        break;
+    }
+}
+
+void eInvasionEvent::surrender()
+{
+    mWaitingForResponse = false;
+    const auto board = gameBoard();
+    if (board)
+        board->updateMusic();
+    invadersWon();
+}
+
+void eInvasionEvent::bribe()
+{
+    const auto board = gameBoard();
+    if (!board || !mCity)
+        return;
+    mWaitingForResponse = false;
+    const auto pid = board->cityIdToPlayerId(cityId());
+    const int bribe = bribeCost();
+    const auto invadingPid = mCity->playerId();
+    board->incDrachmas(invadingPid, bribe, eFinanceTarget::tributeReceived);
+    board->incDrachmas(pid, -bribe, eFinanceTarget::bribesTributePaid);
+    mCity->setBribed();
+    board->changeCityAttitude(mCity, kInvaderBribedAttitudeRestore, pid);
+    eEventData ed(cityId());
+    ed.fCity = mCity;
+    board->event(eEvent::invasionBribed, ed);
+    board->updateMusic();
+    if (mConquestEvent)
+        mConquestEvent->planArmyReturn();
+}
+
+void eInvasionEvent::fight()
+{
+    mWaitingForResponse = false;
+    const auto board = gameBoard();
+    if (!board)
+        return;
+    const bool wasPerson = isPersonPlayer();
+    if (wasPerson)
+    {
+        const auto tile = invasionTile();
+        if (!tile)
+            return;
+        const auto cid = cityId();
+        const auto invadingCid = mCity ? mCity->cityId() : eCityId::neutralAggresive;
+        const auto invadingC = board->boardCityWithId(invadingCid);
+        int infantry;
+        int cavalry;
+        int archers;
+        soldiersByType(infantry, cavalry, archers);
+        eInvasionHandler *eh = new eInvasionHandler(*board, cid, mCity, this);
+        if (tile->hasWater())
+        {
+            if (!mDisembarkTile || !mShoreTile)
+                return;
+            if (invadingC)
+                eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile, mForces, mConquestEvent);
+            else
+                eh->initializeSeaInvasion(tile, mDisembarkTile, mShoreTile, infantry, cavalry, archers);
+        }
+        else
+        {
+            if (invadingC)
+                eh->initializeLandInvasion(tile, mForces, mConquestEvent);
+            else
+                eh->initializeLandInvasion(tile, infantry, cavalry, archers);
+        }
     }
 }
 
@@ -427,7 +511,9 @@ void eInvasionEvent::read(eReadStream &src)
     serialize(ar);
     if (mWarned)
     {
-        board->addInvasion(this);
+        const auto &inv = board->invasions();
+        if (std::find(inv.begin(), inv.end(), this) == inv.end())
+            board->addInvasion(this);
         updateDisembarkAndShoreTile();
     }
 }
@@ -438,26 +524,11 @@ void eInvasionEvent::serialize(eSaveArchive &ar)
     ar.field("mSentByPlayer", mSentByPlayer);
 
     const auto board = gameBoard();
-    if (ar.reading())
-    {
-        ar.readStream().readGameEvent(board, [this](eGameEvent *const e)
-                                      { mConquestEvent = static_cast<ePlayerConquestEvent *>(e); });
-    }
-    else
-    {
-        ar.writeStream().writeGameEvent(mConquestEvent);
-    }
+    ar.gameEvent(board, mConquestEvent);
     mForces.serialize(ar, board);
 
     ar.field("mWarned", mWarned);
-    if (ar.reading())
-    {
-        mFirstWarning.read(ar.readStream());
-    }
-    else
-    {
-        mFirstWarning.write(ar.writeStream());
-    }
+    ar.object(mFirstWarning);
 }
 
 bool eInvasionEvent::finished() const
@@ -497,19 +568,10 @@ void eInvasionEvent::setFirstWarning(const eDate &w)
     choosePointId();
     if (!mCity)
         chooseCity();
-    if (!mCity)
-    {
-        printf("invasion warning aborted: no attacker target=%i point=%i\n",
-               static_cast<int>(cityId()), pointId());
-        return;
-    }
     updateDisembarkAndShoreTile();
     board->addInvasion(this);
     mFirstWarning = w;
     mWarned = true;
-    printf("invasion warning set: attacker=%s target=%i point=%i tile=%p first_warning_year=%i\n",
-           mCity->name().c_str(), static_cast<int>(cityId()), pointId(),
-           static_cast<void *>(invasionTile()), w.year());
 }
 
 bool eInvasionEvent::activeInvasions() const

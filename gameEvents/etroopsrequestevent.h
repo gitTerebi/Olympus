@@ -32,6 +32,7 @@ public:
    ~eTroopsRequestEvent();
 
     void trigger() override;
+    void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
 
     void write(eWriteStream& dst) const override;
@@ -49,6 +50,14 @@ public:
     void won();
     void lost();
 private:
+    enum class eResponse {
+        dispatchNow,
+        postpone,
+        refuse
+    };
+
+    void postponeResponse();
+    void refuse();
     void serialize(eSaveArchive& ar);
 
     void finished(eEventTrigger& t, const eReason& r);

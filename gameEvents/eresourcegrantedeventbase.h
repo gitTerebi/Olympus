@@ -35,12 +35,22 @@ public:
                     const stdsptr<eWorldCity>& c);
 
     void trigger() override;
+    void respond(int response, eCityId city = eCityId::neutralAggresive) override;
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
 protected:
     bool mPostpone = true;
 private:
+    enum class eResponse {
+        accept,
+        postpone,
+        decline
+    };
+
+    void accept(eCityId city);
+    void postpone();
+    void decline();
     void serialize(eSaveArchive& ar);
 
     eEvent mGiftCashAccepted;

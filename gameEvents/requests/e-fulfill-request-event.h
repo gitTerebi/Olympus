@@ -39,6 +39,7 @@ public:
     ~eFulfillRequestEvent();
 
     void trigger() override;
+    void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
 
     void write(eWriteStream& dst) const override;
@@ -63,6 +64,12 @@ public:
     int requestId() const { return mRequestId; }
 
 private:
+    enum class eResponse {
+        dispatch,
+        postpone,
+        refuse
+    };
+
     void serialize(eSaveArchive& ar);
 
     bool startRequest(eGameBoard& board);

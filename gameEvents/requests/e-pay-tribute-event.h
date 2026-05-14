@@ -26,6 +26,7 @@ public:
     void initialize(const stdsptr<eWorldCity>& c);
 
     void trigger() override;
+    void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
     bool finished() const override;
 
@@ -39,6 +40,12 @@ public:
     std::string overdueStatusText(const eDate& currentDate) const;
     bool isPostponed() const;
 private:
+    enum class eResponse {
+        dispatch,
+        postpone,
+        refuse
+    };
+
     void serialize(eSaveArchive& ar);
     void activate();
     void scheduleStep(int step, const eDate& date);

@@ -7,9 +7,6 @@
 #include "ecityid.h"
 #include "e-city-attitude.h"
 
-using eAction = std::function<void()>;
-using eCloseOnAction = std::function<void(const eAction&)>;
-
 enum class eGodType;
 enum class eHeroType;
 enum class eGodQuestId;
@@ -28,12 +25,13 @@ struct eEventData {
     eTile* fTile = nullptr;
     stdptr<eCharacter> fChar;
     int fBribe = 0;
-    eCloseOnAction fCloseOnAction = nullptr;
-    eAction fPrimaryAction = nullptr;
+    int fEventRuntimeId = -1;
+    int fCloseResponse = -1;
+    int fPrimaryResponse = -1;
     std::map<eCityId, std::string> fCityNames;
-    std::map<eCityId, eAction> fCityConditionalActions;
-    eAction fSecondaryAction = nullptr;
-    eAction fTertiaryAction = nullptr;
+    std::map<eCityId, int> fCityConditionalResponses;
+    int fSecondaryResponse = -1;
+    int fTertiaryResponse = -1;
     stdsptr<eWorldCity> fCity;
     stdsptr<eWorldCity> fRivalCity;
     eResourceType fResourceType = eResourceType::drachmas;
