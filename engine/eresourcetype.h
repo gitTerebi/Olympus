@@ -7,7 +7,8 @@
 #include "etexture.h"
 #include "widgets/eresolution.h"
 
-enum class eResourceType {
+enum class eResourceType
+{
     none = 0,
 
     urchin = 1 << 0,
@@ -50,28 +51,34 @@ enum class eResourceType {
     drachmas = 1 << 23
 };
 
-inline eResourceType operator|(const eResourceType a, const eResourceType b) {
+inline eResourceType operator|(const eResourceType a, const eResourceType b)
+{
     return static_cast<eResourceType>(static_cast<int>(a) | static_cast<int>(b));
 }
 
-inline eResourceType operator&(const eResourceType a, const eResourceType b) {
+inline eResourceType operator&(const eResourceType a, const eResourceType b)
+{
     return static_cast<eResourceType>(static_cast<int>(a) & static_cast<int>(b));
 }
 
-inline eResourceType operator~(const eResourceType a) {
+inline eResourceType operator~(const eResourceType a)
+{
     return static_cast<eResourceType>(~static_cast<int>(a));
 }
 
-namespace eResourceTypeHelpers {
+namespace eResourceTypeHelpers
+{
     std::vector<eResourceType> extractResourceTypes(
-            const eResourceType from);
+        const eResourceType from);
     std::string typeName(const eResourceType type);
     std::string typeLongName(const eResourceType type);
     std::shared_ptr<eTexture> icon(const eUIScale scale, const eResourceType type);
     inline int transportSize(const eResourceType type,
-                             const bool doubleCapacity = false) {
+                             const bool doubleCapacity = false)
+    {
         int base = 0;
-        switch(type) {
+        switch (type)
+        {
         case eResourceType::urchin:
         case eResourceType::fish:
         case eResourceType::meat:
@@ -85,7 +92,6 @@ namespace eResourceTypeHelpers {
         case eResourceType::olives:
         case eResourceType::wine:
         case eResourceType::oliveOil:
-        case eResourceType::fleece:
         case eResourceType::wood:
         case eResourceType::bronze:
         case eResourceType::marble:
@@ -94,6 +100,7 @@ namespace eResourceTypeHelpers {
         case eResourceType::armor:
             base = 4;
             break;
+        case eResourceType::fleece:
         case eResourceType::sculpture:
             base = 1;
             break;

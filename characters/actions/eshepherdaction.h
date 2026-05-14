@@ -131,7 +131,7 @@ public:
         if(!mTptr) return;
         mTptr->mGroomed++;
         mTptr->mGroomedThisTrip++;
-        if(mTptr->mGroomedThisTrip >= 3) {
+        if(mTptr->mGroomedThisTrip >= 1) {
             mTptr->mGroomedThisTrip = 0;
             mTptr->goBackDecision();
         } else {

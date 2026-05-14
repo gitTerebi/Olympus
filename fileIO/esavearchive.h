@@ -143,6 +143,28 @@ public:
         }
     }
 
+    template <typename T>
+    void characterAs(eGameBoard* board, stdptr<T>& value) {
+        if(reading()) {
+            mSrc->readCharacter(board, [&value](eCharacter* const c) {
+                value = static_cast<T*>(c);
+            });
+        } else {
+            mDst->writeCharacter(value.get());
+        }
+    }
+
+    template <typename T>
+    void characterAs(eGameBoard* board, T*& value) {
+        if(reading()) {
+            mSrc->readCharacter(board, [&value](eCharacter* const c) {
+                value = static_cast<T*>(c);
+            });
+        } else {
+            mDst->writeCharacter(value);
+        }
+    }
+
     void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
