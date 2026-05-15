@@ -13,6 +13,7 @@
 #include "eheroaction.h"
 #include "emonsteraction.h"
 #include "esettleraction.h"
+#include "ewolfaction.h"
 #include "eshepherdaction.h"
 #include "esoldieraction.h"
 #include "etraderaction.h"

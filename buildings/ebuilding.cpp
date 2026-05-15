@@ -2689,7 +2689,7 @@ void eBuilding::setOverlayEnabledFunc(const std::function<bool()>& e) {
     mOverlayEnabled = e;
 }
 
-bool eBuilding::defend(const double a) {
+bool eBuilding::takeDamage(const double a) {
     if(mHp <= 0) return true;
     mHp -= a;
     if(mHp <= 0) {

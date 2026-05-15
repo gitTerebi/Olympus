@@ -167,7 +167,7 @@ void eTower::timeChanged(const int by)
             if (mAttackTarget && !mAttackTarget->dead())
             {
                 const double att = by * attack;
-                const bool d = mAttackTarget->defend(att);
+                const bool d = mAttackTarget->takeDamage(att);
                 if (d)
                     finishAttack = true;
             }

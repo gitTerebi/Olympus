@@ -337,7 +337,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("wolf_max_count_i", sWolfMaxCount, 8, 2, 100);
     loadI("wolf_spawn_period_i", sWolfSpawnPeriod, 4000, 1, 100000);
     loadI("wolf_hunt_wait_i", sWolfHuntWait, 20, 1, 1000);
-    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 15, 1, 1000);
+    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 30, 1, 1000);
 
     loadI("olive_press_processing_period_i", sOlivePressProcessingPeriod, 20000, 1, 1000000);
     loadI("winery_processing_period_i", sWineryProcessingPeriod, 20000, 1, 1000000);

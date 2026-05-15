@@ -15,7 +15,7 @@ Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransp
 ## Save
 Goal: robust saves. New save data must be labeled and bounded so vars can be added/removed without crashing old/new loads.
 Use `ar.field("name", value, default)` for new simple members. Defaults are required for old saves.
-Use stable unique field names. Never rename old fields. Never reuse a field name for a different type/meaning.
+Use stable unique field names. Never rename old fields. Never reuse a field name for a different type/meaning. Names must be semantically meaningful — describe the data, not the variable. Bad: `"tptr"`, `"val"`, `"data"`. Good: `"wolfAction"`, `"targetBuilding"`, `"huntDistance"`.
 Use `objectField()` for child/subobject payloads. Use array helpers for arrays.
 For pointer refs use tagged helpers grouped under `ar.archiveField("groupName", [&](eSaveArchive& refsAr) { ... })`:
   `refsAr.buildingAsField("name", &board(), ptr)` / `characterAsField` / `tileAsField`

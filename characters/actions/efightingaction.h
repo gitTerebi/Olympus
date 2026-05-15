@@ -15,7 +15,7 @@ public:
 
     eTile* tile() const;
     bool valid() const;
-    bool defend(const double a);
+    bool takeDamage(const double a);
     bool dead() const;
     void clear();
 

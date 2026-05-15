@@ -137,7 +137,7 @@ void eDefendAttackCityAction::increment(const int by) {
                             mAttackTime > 1000;
         if(mAttackTarget && !mAttackTarget->dead()) {
             const double att = by*c->attack();
-            const bool d = mAttackTarget->defend(att);
+            const bool d = mAttackTarget->takeDamage(att);
             if(d) finishAttack = true;
         }
         if(finishAttack) {
