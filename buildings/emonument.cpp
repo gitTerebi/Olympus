@@ -94,7 +94,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
     if(m > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::marble;
         task.fMaxCount = m;
         tasks.push_back(task);
@@ -102,7 +102,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
     if(w > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::wood;
         task.fMaxCount = w;
         tasks.push_back(task);
@@ -110,7 +110,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
     if(s > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::sculpture;
         task.fMaxCount = s;
         tasks.push_back(task);
@@ -118,7 +118,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
     if(o > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::orichalc;
         task.fMaxCount = o;
         tasks.push_back(task);
@@ -126,7 +126,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
     if(bm > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::blackMarble;
         task.fMaxCount = bm;
         tasks.push_back(task);
@@ -185,7 +185,7 @@ void eMonument::setConstructionHalted(const bool h) {
     mHaltConstruction = h;
 }
 void eMonument::timeChanged(const int by) {
-    if(!mCart) mCart = spawnCart(eCartActionTypeSupport::take);
+    if(!mCart) mCart = spawnCart(eCartActionTypeSupport::get);
     eEmployingBuilding::timeChanged(by);
 }
 

@@ -84,11 +84,11 @@ eChariotFactory::getOverlays(const eTileSize size) const {
 void eChariotFactory::timeChanged(const int by) {
     if(enabled()) {
         if(!mWoodCart) {
-            mWoodCart = spawnCart(eCartActionTypeSupport::take);
+            mWoodCart = spawnCart(eCartActionTypeSupport::get);
             mWoodCart->setSupportResource(eResourceType::wood);
         }
         if(!mHorseCart) {
-            mHorseCart = spawnCart(eCartActionTypeSupport::take);
+            mHorseCart = spawnCart(eCartActionTypeSupport::get);
             mHorseCart->setSupportResource(eResourceType::horse);
             mHorseCart->setType(eCartTransporterType::horse);
         }
@@ -145,14 +145,14 @@ std::vector<eCartTask> eChariotFactory::cartTasks() const {
 
     if(mWood < 8) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::wood;
         task.fMaxCount = std::max(0, 8 - mWood);
         tasks.push_back(task);
     }
     if(mHorses < 4) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::horse;
         task.fMaxCount = std::max(0, 4 - mHorses);
         tasks.push_back(task);

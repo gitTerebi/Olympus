@@ -9,7 +9,7 @@
 class eSaveArchive;
 
 enum class eCartActionType {
-    take, give
+    get, deliver
 };
 
 struct eCartTask {

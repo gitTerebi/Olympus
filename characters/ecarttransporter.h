@@ -10,9 +10,9 @@ class eTrailer;
 class eSaveArchive;
 
 enum eCartActionTypeSupport {
-    take = 1 << 0,
-    give = 1 << 1,
-    both = take | give
+    get = 1 << 0,
+    deliver = 1 << 1,
+    both = get | deliver
 };
 
 enum class eCartTransporterType {

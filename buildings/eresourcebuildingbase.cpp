@@ -27,7 +27,7 @@ eResourceBuildingBase::~eResourceBuildingBase() {
 void eResourceBuildingBase::timeChanged(const int by) {
     if(enabled()) {
         if(!mCart) {
-            mCart = spawnCart(eCartActionTypeSupport::give);
+            mCart = spawnCart(eCartActionTypeSupport::deliver);
         }
         if(mCart) {
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
@@ -74,7 +74,7 @@ std::vector<eCartTask> eResourceBuildingBase::cartTasks() const {
 
     if(mResource > 0) {
         eCartTask task;
-        task.fType = eCartActionType::give;
+        task.fType = eCartActionType::deliver;
         task.fResource = mResType;
         task.fMaxCount = mResource;
         tasks.push_back(task);
