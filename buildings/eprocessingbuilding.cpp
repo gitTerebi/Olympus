@@ -59,7 +59,7 @@ std::vector<eOverlay> eProcessingBuilding::getOverlays(
 void eProcessingBuilding::timeChanged(const int by) {
     if(enabled()) {
         if(!mTakeCart) {
-            mTakeCart = spawnCart(eCartActionTypeSupport::take);
+            mTakeCart = spawnCart(eCartActionTypeSupport::get);
         }
         if(mTakeCart) {
             mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
@@ -113,7 +113,7 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
 
     if(mMaxRaw > mRawCount) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = mRawMaterial;
         task.fMaxCount = mMaxRaw - mRawCount;
         tasks.push_back(task);

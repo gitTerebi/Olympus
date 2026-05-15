@@ -108,7 +108,7 @@ int eVendor::spaceLeft(const eResourceType type) const {
 void eVendor::timeChanged(const int by) {
     if(enabled()) {
         if(!mCart) {
-            mCart = spawnCart(eCartActionTypeSupport::take);
+            mCart = spawnCart(eCartActionTypeSupport::get);
             switch(mResType) {
             case eResourceType::food:
                 mCart->setType(eCartTransporterType::food);
@@ -162,7 +162,7 @@ std::vector<eCartTask> eVendor::cartTasks() const {
 
     if(space > 0) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = mResType;
         task.fMaxCount = space;
         return {task};

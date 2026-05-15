@@ -50,7 +50,7 @@ int eHippodromePiece::spaceLeft(const eResourceType type) const {
 std::vector<eCartTask> eHippodromePiece::cartTasks() const {
     const int space = spaceLeft(eResourceType::horse);
     if(space <= 0) return {};
-    return {{eCartActionType::take,
+    return {{eCartActionType::get,
              eResourceType::horse,
              space}};
 }
@@ -84,7 +84,7 @@ void eHippodromePiece::timeChanged(const int by) {
     if(h) return;
     if(!r) return;
     if(!mCart) {
-        mCart = spawnCart(eCartActionTypeSupport::take);
+        mCart = spawnCart(eCartActionTypeSupport::get);
         mCart->setType(eCartTransporterType::horse);
         mHippodrome->setCart(mCart);
     }

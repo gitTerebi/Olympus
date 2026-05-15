@@ -107,7 +107,7 @@ void eGrowersLodge::timeChanged(const int by) {
     if(enabled()) {
         const bool hasRes = mGrapes > 0 || mOlives > 0 || mOranges > 0;
         if(!mCart) {
-            mCart = spawnCart(eCartActionTypeSupport::give);
+            mCart = spawnCart(eCartActionTypeSupport::deliver);
         }
         if(mCart) {
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
@@ -203,7 +203,7 @@ std::vector<eCartTask> eGrowersLodge::cartTasks() const {
 
     if(mGrapes > 0) {
         eCartTask task;
-        task.fType = eCartActionType::give;
+        task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::grapes;
         task.fMaxCount = mGrapes;
         tasks.push_back(task);
@@ -211,7 +211,7 @@ std::vector<eCartTask> eGrowersLodge::cartTasks() const {
 
     if(mOlives > 0) {
         eCartTask task;
-        task.fType = eCartActionType::give;
+        task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::olives;
         task.fMaxCount = mOlives;
         tasks.push_back(task);
@@ -219,7 +219,7 @@ std::vector<eCartTask> eGrowersLodge::cartTasks() const {
 
     if(mOranges > 0) {
         eCartTask task;
-        task.fType = eCartActionType::give;
+        task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::oranges;
         task.fMaxCount = mOranges;
         tasks.push_back(task);

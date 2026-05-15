@@ -128,7 +128,7 @@ std::vector<eCartTask> eStorageBuilding::cartTasks() const {
         const int space = spaceLeft(g);
         if(space > 0) {
             eCartTask task;
-            task.fType = eCartActionType::take;
+            task.fType = eCartActionType::get;
             task.fResource = g;
             task.fMaxCount = space;
             tasks.push_back(task);
@@ -139,7 +139,7 @@ std::vector<eCartTask> eStorageBuilding::cartTasks() const {
         const int c = count(e);
         if(c > 0) {
             eCartTask task;
-            task.fType = eCartActionType::give;
+            task.fType = eCartActionType::deliver;
             task.fResource = e;
             task.fMaxCount = c;
             tasks.push_back(task);
@@ -152,7 +152,7 @@ std::vector<eCartTask> eStorageBuilding::cartTasks() const {
         const bool g = static_cast<bool>(mGet & s.fType);
         if(g) continue;
         eCartTask task;
-        task.fType = eCartActionType::give;
+        task.fType = eCartActionType::deliver;
         task.fResource = s.fType;
         task.fMaxCount = s.fCount;
         tasks.push_back(task);

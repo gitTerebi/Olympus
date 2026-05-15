@@ -59,7 +59,7 @@ std::vector<eOverlay> eHorseRanch::getOverlays(
 void eHorseRanch::timeChanged(const int by) {
     if(enabled()) {
         if(!mTakeCart) {
-            mTakeCart = spawnCart(eCartActionTypeSupport::take);
+            mTakeCart = spawnCart(eCartActionTypeSupport::get);
         }
         if(mWheat > 0) {
             mWheatTime += by;
@@ -114,7 +114,7 @@ std::vector<eCartTask> eHorseRanch::cartTasks() const {
 
     if(800 > mWheat) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::wheat;
         task.fMaxCount = 8 - mWheat/100;
         tasks.push_back(task);

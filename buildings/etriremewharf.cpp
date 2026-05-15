@@ -126,7 +126,7 @@ void eTriremeWharf::timeChanged(const int by) {
     if(enabled()) {
         const auto eff = effectiveness();
         if(!mTakeCart) {
-            mTakeCart = spawnCart(eCartActionTypeSupport::take);
+            mTakeCart = spawnCart(eCartActionTypeSupport::get);
             mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
         }
         if(!mTrireme && mWoodCount > 1 && mArmorCount > 0) {
@@ -185,7 +185,7 @@ std::vector<eCartTask> eTriremeWharf::cartTasks() const {
 
     if(mMaxWood > mWoodCount) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::wood;
         task.fMaxCount = mMaxWood - mWoodCount;
         tasks.push_back(task);
@@ -193,7 +193,7 @@ std::vector<eCartTask> eTriremeWharf::cartTasks() const {
 
     if(mMaxArmor > mArmorCount) {
         eCartTask task;
-        task.fType = eCartActionType::take;
+        task.fType = eCartActionType::get;
         task.fResource = eResourceType::armor;
         task.fMaxCount = mMaxArmor - mArmorCount;
         tasks.push_back(task);
