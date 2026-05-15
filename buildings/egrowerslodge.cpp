@@ -108,7 +108,11 @@ void eGrowersLodge::timeChanged(const int by) {
         const bool hasRes = mGrapes > 0 || mOlives > 0 || mOranges > 0;
         if(!mCart) {
             mCart = spawnCart(eCartActionTypeSupport::give);
-        } else if(mCart && mCart->waiting() && hasRes) {
+        }
+        if(mCart) {
+            mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
+        }
+        if(mCart && mCart->waiting() && hasRes) {
             if(mGrapes > 0) {
                 const int a = mCart->add(eResourceType::grapes, mGrapes);
                 mGrapes -= a;

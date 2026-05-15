@@ -53,9 +53,16 @@ bool eCartTransporterAction::decide() {
         }
         if(mNoTarget) {
             mNoTarget = false;
-            const bool hr = c->hasResource();
-            if(!hr) { waitOutside(); mTarget = nullptr; }
-            else { waitOutside(); }
+            mTarget = nullptr;
+            if(!c->hasResource()) {
+                const auto giveTasks = mBuilding->cartTasks();
+                for(const auto& task : giveTasks) {
+                    if(task.fType != eCartActionType::give) continue;
+                    startResourceAction(task);
+                    if(c->resCount() > 0) break;
+                }
+            }
+            if(c->hasResource()) { waitOutside(); }
         } else {
             int cc = c->resCount();
             if(cc > 0) {
@@ -80,16 +87,14 @@ bool eCartTransporterAction::decide() {
                 }
             } else {
                 const auto supp = support();
-                if(supp == eCartActionTypeSupport::give) {
-                    const auto tasks = mBuilding->cartTasks();
-                    if(!tasks.empty()) {
-                        startResourceAction(tasks.front());
-                        if(c->resCount() > 0) {
-                            waitOutside();
-                            return true;
-                        }
+                const auto tasks = mBuilding->cartTasks();
+                for(const auto& task : tasks) {
+                    if(task.fType != eCartActionType::give) continue;
+                    startResourceAction(task);
+                    if(c->resCount() > 0) {
+                        waitOutside();
+                        return true;
                     }
-                    return true;
                 }
                 findTarget();
             }
@@ -158,7 +163,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided,
                                         const bool preferGranaryFirst) {
     if(!mBuilding) return;
-    if(tasks.empty()) return;
+    if(tasks.empty()) { mNoTarget = true; return; }
     const auto c = character();
 
     const auto buildingRect = mBuilding->tileRect();
