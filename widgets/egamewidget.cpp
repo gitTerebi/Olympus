@@ -32,6 +32,8 @@ void formatStoredMessage(eMessage& msg,
                                    eMonster::sMonsterName(ed.fMonster));
         eStringHelpers::replaceAll(text, "[amount]",
                                    std::to_string(ed.fResourceCount));
+        eStringHelpers::replaceAll(text, "[amount_granted]",
+                                   std::to_string(ed.fResourceCount));
         eStringHelpers::replaceAll(text, "[item]",
                                    eResourceTypeHelpers::typeLongName(ed.fResourceType));
         eStringHelpers::replaceAll(text, "[itemshort]",

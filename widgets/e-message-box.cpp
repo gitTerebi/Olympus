@@ -135,6 +135,8 @@ void eMessageBox::initialize(eGameBoard& board,
 
     eStringHelpers::replaceAll(msg.fText, "[amount]",
                                countStr);
+    eStringHelpers::replaceAll(msg.fText, "[amount_granted]",
+                               countStr);
     eStringHelpers::replaceAll(msg.fText, "[item]",
                                item);
     eStringHelpers::replaceAll(msg.fText, "[itemshort]",

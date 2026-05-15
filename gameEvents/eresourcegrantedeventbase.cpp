@@ -92,12 +92,8 @@ void eResourceGrantedEventBase::trigger() {
         ed.fCity = mCity;
         ed.fResourceType = mResource;
         ed.fResourceCount = a;
-        if(mResource == eResourceType::drachmas) {
-            board->event(mGiftCashAccepted, ed);
-        } else {
-            if(a == mCount) return;
-            board->event(mGiftAccepted, ed);
-        }
+        if(a == mCount) return;
+        board->event(mGiftAccepted, ed);
     };
 
     if(!isPersonPlayer()) {
@@ -139,6 +135,10 @@ void eResourceGrantedEventBase::trigger() {
             }
 
             ed.fTertiaryResponse = static_cast<int>(eResponse::decline);
+            mAwaitingResponse = ed.fPrimaryResponse >= 0 ||
+                                !ed.fCityConditionalResponses.empty() ||
+                                ed.fSecondaryResponse >= 0 ||
+                                ed.fTertiaryResponse >= 0;
         }
         if(!mPostpone) {
             if(maxSpace == 0) {
@@ -156,6 +156,11 @@ void eResourceGrantedEventBase::trigger() {
             board->event(mGiftPartialSpace, ed);
         }
     }
+}
+
+bool eResourceGrantedEventBase::finished() const
+{
+    return eGameEvent::finished() && !mAwaitingResponse;
 }
 
 void eResourceGrantedEventBase::respond(const int response, const eCityId city)
@@ -177,9 +182,16 @@ void eResourceGrantedEventBase::accept(const eCityId city)
 {
     const auto board = gameBoard();
     if(!board) return;
+    mAwaitingResponse = false;
     if(mResource == eResourceType::drachmas) {
         const auto p = board->boardPlayerWithId(playerId());
         if(p) p->incDrachmas(mCount, eFinanceTarget::giftsReceived);
+        eEventData ed(playerId());
+        ed.fType = eMessageEventType::resourceGranted;
+        ed.fCity = mCity;
+        ed.fResourceType = mResource;
+        ed.fResourceCount = mCount;
+        board->event(mGiftCashAccepted, ed);
         return;
     }
     const int a = board->addResource(city, mResource, mCount);
@@ -197,6 +209,7 @@ void eResourceGrantedEventBase::postpone()
 {
     const auto board = gameBoard();
     if(!board) return;
+    mAwaitingResponse = false;
     eEventData ed(playerId());
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = mCity;
@@ -216,6 +229,7 @@ void eResourceGrantedEventBase::decline()
 {
     const auto board = gameBoard();
     if(!board) return;
+    mAwaitingResponse = false;
     eEventData ed(playerId());
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = mCity;
@@ -247,4 +261,5 @@ void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
         eCountEventValue::write(ar.writeStream());
     }
     ar.field("mPostpone", mPostpone);
+    ar.field("mAwaitingResponse", mAwaitingResponse, false); // SAVE_COMPAT_OPTIONAL_FIELD
 }
