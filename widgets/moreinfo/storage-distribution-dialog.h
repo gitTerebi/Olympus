@@ -1,5 +1,5 @@
-#ifndef STORAGEDISTRIBUTIONWIDGET_H
-#define STORAGEDISTRIBUTIONWIDGET_H
+#ifndef STORAGEDISTRIBUTIONDIALOG_H
+#define STORAGEDISTRIBUTIONDIALOG_H
 
 #include "../infowidgets/einfowidget.h"
 
@@ -8,9 +8,9 @@ class eMicroButton;
 enum class eCityId;
 enum class eResourceType;
 
-class StorageDistributionWidget : public eInfoWidget {
+class StorageDistributionDialog : public eInfoWidget {
 public:
-    StorageDistributionWidget(eMainWindow* const window,
+    StorageDistributionDialog(eMainWindow* const window,
                                eMainWidget* const mw);
     void initialize(eGameBoard& board, const eCityId cid);
 private:
@@ -20,4 +20,4 @@ private:
     std::vector<eMicroButton*> mMothballButtons;
 };
 
-#endif // STORAGEDISTRIBUTIONWIDGET_H
+#endif // STORAGEDISTRIBUTIONDIALOG_H

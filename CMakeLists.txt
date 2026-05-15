@@ -579,7 +579,7 @@ set(SOURCES
     widgets/datawidgets/e-overview-data-widget.cpp
     widgets/datawidgets/epopulationdatawidget.cpp
     widgets/datawidgets/esciencedatawidget.cpp
-    widgets/datawidgets/storage-data-widget.cpp
+    widgets/datawidgets/storage-sidebar-panel.cpp
     widgets/datawidgets/eviewmodebutton.cpp
     widgets/eoptionsdata.cpp
     widgets/eacceptbutton.cpp
@@ -742,7 +742,7 @@ set(SOURCES
     widgets/infowidgets/etriremewharfinfowidget.cpp
     widgets/moreinfo/ecityfinanceswidget.cpp
     widgets/moreinfo/eworkforceallocationwidget.cpp
-    widgets/moreinfo/storage-distribution-widget.cpp
+    widgets/moreinfo/storage-distribution-dialog.cpp
 )
 
 # Add executable
