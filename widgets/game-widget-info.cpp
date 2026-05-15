@@ -191,6 +191,9 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             case eBuildingType::huntingLodge:
                 group = 154;
                 break;
+            case eBuildingType::growersLodge:
+                group = 179;
+                break;
 
             case eBuildingType::chariotFactory:
                 group = 281;
@@ -198,6 +201,14 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             default:
                 group = 122;
                 break;
+            }
+            std::string storedStr = eLanguage::zeusText(group, 12);
+            if(storedStr.empty()) {
+                storedStr = eLanguage::zeusText(group, 11);
+            }
+            if(!storedStr.empty()) {
+                storedStr += " " + std::to_string(pb->rawCount());
+                ebWid->addText(storedStr);
             }
             std::string prodStr = eLanguage::zeusText(group, 2) + " " + std::to_string(p) + "% " + eLanguage::zeusText(group, 3);
             ebWid->addText(prodStr);
@@ -265,6 +276,19 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(gl, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
+            std::string line;
+            std::string storedStr = eLanguage::zeusText(179, 11); // olives
+            if(!storedStr.empty()) {
+                line += storedStr + " " + std::to_string(gl->count(eResourceType::olives));
+            }
+            storedStr = eLanguage::zeusText(179, 12); // grapes
+            if(!storedStr.empty()) {
+                if(!line.empty()) line += "       ";
+                line += storedStr + " " + std::to_string(gl->count(eResourceType::grapes));
+            }
+            if(!line.empty()) {
+                ebWid->addText(line);
+            }
             constexpr int maxYearly = 20;
             const double eff = (double)gl->producedThisYear() / maxYearly;
             const int effPercent = static_cast<int>(eff * 100 + 0.5);
