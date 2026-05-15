@@ -134,6 +134,8 @@ void eVendor::timeChanged(const int by) {
             default:
                 break;
             }
+        }
+        if(mCart) {
             switch(mResType) {
             case eResourceType::food:
             case eResourceType::fleece:

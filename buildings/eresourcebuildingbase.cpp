@@ -28,8 +28,11 @@ void eResourceBuildingBase::timeChanged(const int by) {
     if(enabled()) {
         if(!mCart) {
             mCart = spawnCart(eCartActionTypeSupport::give);
+        }
+        if(mCart) {
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
-        } else if(mCart && mCart->waiting() && mResource > 0) {
+        }
+        if(mCart && mCart->waiting() && mResource > 0) {
             const int a = mCart->add(mResType, mResource);
             mResource -= a;
         }

@@ -60,6 +60,8 @@ void eProcessingBuilding::timeChanged(const int by) {
     if(enabled()) {
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
+        }
+        if(mTakeCart) {
             mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
         }
         mProcessTime += by*effectiveness();

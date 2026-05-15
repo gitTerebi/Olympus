@@ -54,7 +54,7 @@ bool eCartTransporterAction::decide() {
         if(mNoTarget) {
             mNoTarget = false;
             const bool hr = c->hasResource();
-            if(!hr) { wait(1000); mTarget = nullptr; }
+            if(!hr) { waitOutside(); mTarget = nullptr; }
             else { waitOutside(); }
         } else {
             int cc = c->resCount();
