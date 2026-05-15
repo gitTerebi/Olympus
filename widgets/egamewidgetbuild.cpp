@@ -979,7 +979,8 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                     const auto ub = t->underBuilding();
                     if(ub) continue;
                     r = mBoard->build(t->x(), t->y(), 1, 1, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); }) || r;
+                          [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); },
+                          false, true) || r;
                 }
                 mBoard->game_undo_finish_build();
             }
