@@ -13,10 +13,15 @@ Build only when asked. Use `.\build.bat`. Do not verify with `cmake --build buil
 Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/etradepost.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `zeus-text strings/Zeus_Text.xml` is read-only; reuse runtime strings.
 
 ## Save
-`eSaveArchive::field()` tags top-level fields only. Raw `val()`, stream helpers, base/derived order, duplicate names, and nested raw payloads stay order-dependent. New saved members go in shared `serialize(eSaveArchive&)` with stable unique names + defaults. Never rename old fields. Append raw legacy data only. Keep read/write base calls and pointer/tile/character helper order matched. New arrays use archive array helpers, not current-size loops. Avoid legacy `readStream()`/`writeStream()`; use field/object/tile/characterAction/array helpers.
+Goal: robust saves. New save data must be labeled and bounded so vars can be added/removed without crashing old/new loads.
+Use `ar.field("name", value, default)` for new simple members. Defaults are required for old saves.
+Use stable unique field names. Never rename old fields. Never reuse a field name for a different type/meaning.
+Use `objectField()` for child/subobject payloads. Use array helpers for arrays. Use pointer/tile/character helpers for refs.
+Do not add new raw `val()`, `readStream()`, or `writeStream()` data. Raw data is legacy only and stays order-dependent.
+If migrating old raw bytes, first put a length-prefixed boundary around the parent payload, then add tagged fields inside it.
+Old-save fallback branches must be marked `SAVE_COMPAT_LEGACY_FALLBACK` so later cleanup can find and review them.
+`payloadField()` is for immediate next-field payloads only; do not use it as a normal out-of-order field lookup.
+Keep read/write base calls and pointer/tile/character helper order matched. Append raw legacy data only.
 
 ## Save Subobjects
 Critical: do not call `child.serialize(ar)` on a parent archive that interleaves raw stream writes. Missing-field scan can enter raw bytes and corrupt/bail. Trigger: any new child field absent from old saves. Fix: `ar.objectField("name", child)` length-prefixed sub-archive; child needs `read(eReadStream&)` and `write(eWriteStream&) const`. One-time subtree format break. Applied: `mAvailableBuildings` in `eboardcityread.cpp`.
-
-## UI
-Hotkeys: add `eHotkeyId` + setting in `esettings.*`, handler in `egamewidget.cpp`, menu entry in `eoptionsdata.cpp`. Dialogs: prefer `eAcceptButton`/`eCancelButton`; `eOkButton` is smaller/older.

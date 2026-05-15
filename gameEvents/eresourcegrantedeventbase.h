@@ -9,6 +9,7 @@
 #include "engine/eevent.h"
 
 class eSaveArchive;
+class eResourceGrantedEventValues;
 
 class eResourceGrantedEventBase : public eGameEvent,
                                   public eCityEventValue,
@@ -43,6 +44,8 @@ public:
 protected:
     bool mPostpone = true;
 private:
+    friend class eResourceGrantedEventValues;
+
     enum class eResponse {
         accept,
         postpone,
@@ -53,6 +56,8 @@ private:
     void postpone();
     void decline();
     void serialize(eSaveArchive& ar);
+    void readEventValues(eReadStream& src);
+    void writeEventValues(eWriteStream& dst) const;
 
     eEvent mGiftCashAccepted;
     eEvent mGiftAccepted;

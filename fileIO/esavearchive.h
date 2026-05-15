@@ -109,18 +109,28 @@ public:
     // cannot desync the outer archive.
     template <typename T>
     bool objectField(const char* const name, T& obj) {
+        return payloadField(name,
+                            [&obj](eWriteStream& dst) { obj.write(dst); },
+                            [&obj](eReadStream& src) { obj.read(src); });
+    }
+
+    template <typename WriteFunc, typename ReadFunc>
+    bool payloadField(const char* const name,
+                      const WriteFunc& writeFunc,
+                      const ReadFunc& readFunc) {
         if(!tagged()) {
-            if(reading()) obj.read(*mSrc);
-            else obj.write(*mDst);
+            if(reading()) readFunc(*mSrc);
+            else writeFunc(*mDst);
             return true;
         }
+
         mTaggedTouched = true;
         if(writing()) {
             mFieldBuffer.clear();
             eWriteTarget target(&mFieldBuffer);
             eWriteStream tmp(target);
             tmp.setFormat(mDst->format());
-            obj.write(tmp);
+            writeFunc(tmp);
 
             const std::string nameStr(name);
             *mDst << nameStr;
@@ -128,12 +138,20 @@ public:
             mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
             return true;
         } else {
-            auto data = takeField(std::string(name));
+            const auto pos = mSrc->pos();
+            const bool taggedEnded = mTaggedEnded;
+            std::string fieldName;
+            std::vector<char> data;
+            if(!readField(fieldName, data) || fieldName != name) {
+                mSrc->seek(pos);
+                mTaggedEnded = taggedEnded;
+                return false;
+            }
             if(data.empty()) return false;
             eReadSource source(const_cast<char*>(data.data()));
             eReadStream src(source);
             src.setFormat(mSrc->format());
-            obj.read(src);
+            readFunc(src);
             return true;
         }
     }
@@ -414,6 +432,17 @@ private:
             if(name == wanted) return data;
             mFields[name].push_back(data);
         }
+    }
+
+    bool readField(std::string& name, std::vector<char>& data) {
+        if(mTaggedEnded) return false;
+        int32_t size;
+        if(!readFieldHeader(name, size)) return false;
+        data.resize(size);
+        if(size > 0) {
+            mSrc->read(data.data(), size);
+        }
+        return true;
     }
 
     void skipRemainingFields() {

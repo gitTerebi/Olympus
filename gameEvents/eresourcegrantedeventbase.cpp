@@ -5,6 +5,22 @@
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
 
+class eResourceGrantedEventValues {
+public:
+    explicit eResourceGrantedEventValues(eResourceGrantedEventBase& event) :
+        mEvent(event) {}
+
+    void read(eReadStream& src) {
+        mEvent.readEventValues(src);
+    }
+
+    void write(eWriteStream& dst) const {
+        mEvent.writeEventValues(dst);
+    }
+private:
+    eResourceGrantedEventBase& mEvent;
+};
+
 eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eCityId cid,
         const eEvent giftCashAccepted,
@@ -250,15 +266,30 @@ void eResourceGrantedEventBase::read(eReadStream& src) {
     serialize(ar);
 }
 
+void eResourceGrantedEventBase::readEventValues(eReadStream& src) {
+    eSaveArchive childAr(src);
+    eCityEventValue::serialize(childAr, *gameBoard());
+    eResourceEventValue::serialize(childAr);
+    eCountEventValue::serialize(childAr);
+}
+
+void eResourceGrantedEventBase::writeEventValues(eWriteStream& dst) const {
+    eSaveArchive childAr(dst);
+    auto& self = const_cast<eResourceGrantedEventBase&>(*this);
+    self.eCityEventValue::serialize(childAr, *gameBoard());
+    self.eResourceEventValue::serialize(childAr);
+    self.eCountEventValue::serialize(childAr);
+}
+
 void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
+    eResourceGrantedEventValues values(*this);
+    if(ar.writing()) {
+        ar.objectField("eventValues", values);
+    } else if(!ar.objectField("eventValues", values)) {
+        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored these values inline.
         eCityEventValue::read(ar.readStream(), *gameBoard());
         eResourceEventValue::read(ar.readStream());
         eCountEventValue::read(ar.readStream());
-    } else {
-        eCityEventValue::write(ar.writeStream());
-        eResourceEventValue::write(ar.writeStream());
-        eCountEventValue::write(ar.writeStream());
     }
     ar.field("mPostpone", mPostpone);
     ar.field("mAwaitingResponse", mAwaitingResponse, false); // SAVE_COMPAT_OPTIONAL_FIELD
