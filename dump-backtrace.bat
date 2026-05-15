@@ -43,7 +43,28 @@ echo Dump: "%DMP%"
   -o "register read"
 set "LLDB_EXIT=%ERRORLEVEL%"
 
-if /i "%~xDMP%"==".dmp" if exist "%DMP%" del /q "%DMP%" >nul 2>nul
-for %%F in ("%ROOT%debug\ezeus-*.dmp") do if exist "%%~fF" del /q "%%~fF" >nul 2>nul
+echo Deleting DMP files...
+if /i "%DMP:~-4%"==".dmp" if exist "%DMP%" (
+  echo Deleting "%DMP%"
+  call :delete_file "%DMP%"
+)
+for %%F in ("%ROOT%debug\ezeus-*.dmp") do if exist "%%~fF" (
+  echo Deleting "%%~fF"
+  call :delete_file "%%~fF"
+)
+goto :eof
+
+:delete_file
+setlocal
+set "file=%~1"
+:retry_del
+del /q "%file%" >nul 2>nul
+if exist "%file%" (
+  echo Retrying delete for "%file%"
+  timeout /t 1 /nobreak >nul
+  goto retry_del
+)
+echo Successfully deleted "%file%"
+goto :eof
 
 exit /b %LLDB_EXIT%
