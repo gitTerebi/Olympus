@@ -114,8 +114,8 @@ void eTraderAction::trade() {
 
 void eTraderAction::tradeIncrement() {
     if(!mTradePost) return;
-    const int bought = mTradePost->buy(mCash);
-    const int sold = mTradePost->sell(mItems);
+    const int bought = mTradePost->buy(mCash, mBought);
+    const int sold = mTradePost->sell(mItems, mSold);
     if(bought == 0 && sold == 0) {
         mFinishedTrade = true;
     } else {

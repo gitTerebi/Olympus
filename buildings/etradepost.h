@@ -47,6 +47,9 @@ public:
     int buy(const int cash);
     int sell(const int items);
 
+    int buy(const int cash, std::map<eResourceType, int>& bought);
+    int sell(const int items, std::map<eResourceType, int>& sold);
+
     void setWalkable(const stdsptr<eWalkableObject>& w);
     void setUnpackBuilding(eBuilding* const b);
     void setOrientation(const eDiagonalOrientation o);

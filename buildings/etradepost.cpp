@@ -188,6 +188,16 @@ bool eTradePost::playerTwoWay() const {
 }
 
 int eTradePost::buy(const int cash) {
+    std::map<eResourceType, int> bought;
+    return buy(cash, bought);
+}
+
+int eTradePost::sell(const int items) {
+    std::map<eResourceType, int> sold;
+    return sell(items, sold);
+}
+
+int eTradePost::buy(const int cash, std::map<eResourceType, int>& bought) {
     if(!trades()) return 0;
     int spent = 0;
     auto& brd = getBoard();
@@ -210,6 +220,7 @@ int eTradePost::buy(const int cash) {
             take(e, 1);
             thisC->addExported(targetCid, e, 1);
             spent += price;
+            bought[e] += 1;
         }
     } else {
         for(auto& b : mCity.buys()) {
@@ -224,6 +235,7 @@ int eTradePost::buy(const int cash) {
             take(b.fType, 1);
             b.incUsed(thisPid, 1);
             spent += price;
+            bought[b.fType] += 1;
         }
         const auto pid = playerId();
         brd.incDrachmas(pid, spent, eFinanceTarget::exports);
@@ -231,7 +243,7 @@ int eTradePost::buy(const int cash) {
     return spent;
 }
 
-int eTradePost::sell(const int items) {
+int eTradePost::sell(const int items, std::map<eResourceType, int>& sold) {
     if(!trades()) return 0;
     int earned = 0;
     auto& brd = getBoard();
@@ -252,6 +264,7 @@ int eTradePost::sell(const int items) {
             addNotAccept(e.first, 1);
             srcC->removeExported(thisCid, e.first, 1);
             earned += price;
+            sold[e.first] += 1;
         }
     } else {
         for(auto& b : mCity.sells()) {
@@ -266,6 +279,7 @@ int eTradePost::sell(const int items) {
             addNotAccept(b.fType, 1);
             b.incUsed(thisPid, 1);
             earned += price;
+            sold[b.fType] += 1;
             if(const auto thisC = brd.boardCityWithId(thisCid))
                 thisC->addImported(srcCid, b.fType, 1);
         }
