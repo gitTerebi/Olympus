@@ -65,6 +65,7 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     void serialize(eSaveArchive& ar);
+    eCartTransporter* spawnVendorCart();
 
     int mResMult = 100;
     stdsptr<eAgoraBase> mAgora;

@@ -1,9 +1,9 @@
-#ifndef GET_CART_ACTION_H
-#define GET_CART_ACTION_H
+#ifndef VENDOR_CART_ACTION_H
+#define VENDOR_CART_ACTION_H
 
 #include "ecarttransporteraction.h"
 
-enum class eGetState {
+enum class eVendorCartState {
     idle,
     findTarget,
     moving,
@@ -11,9 +11,9 @@ enum class eGetState {
     returning
 };
 
-class eGetCartAction : public eCartTransporterAction {
+class eVendorCartAction : public eCartTransporterAction {
 public:
-    eGetCartAction(eCharacter* const c, eBuildingWithResource* const b);
+    eVendorCartAction(eCharacter* const c, eBuildingWithResource* const b);
 
     bool decide() override;
 
@@ -24,19 +24,17 @@ public:
     void onFoundTarget() override;
 
 private:
-    // transitions
     void toFindTarget();
     void toAtOrReturn();
-    void toIdle();
+    void toDeposit();
 
-    // actions
     void enterIdle();
     void enterReturning();
 
-    void serializeGet(eSaveArchive& ar);
+    void serializeVendor(eSaveArchive& ar);
 
-    eGetState mGetState = eGetState::idle;
+    eVendorCartState mState = eVendorCartState::idle;
     static const int kFindRetryWait = 1000;
 };
 
-#endif // GET_CART_ACTION_H
+#endif // VENDOR_CART_ACTION_H
