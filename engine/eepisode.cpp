@@ -1,6 +1,7 @@
 #include "eepisode.h"
 
 #include "elanguage.h"
+#include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
 
 #include <iterator>
@@ -88,6 +89,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 std::advance(it, i);
                 cid = it->first;
                 events = it->second;
+                eVectorHelpers::removeAll(events, stdsptr<eGameEvent>(nullptr));
             }
             ar.field("cid", cid);
             int ne;

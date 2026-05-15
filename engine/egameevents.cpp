@@ -9,7 +9,10 @@ eGameEvents::eGameEvents(const eCityId cid, eGameBoard& board) :
     mCid(cid), mBoard(board) {}
 
 void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {
-    if(!e) return;
+    if(!e) {
+        printf("Ignoring null root game event.\n");
+        return;
+    }
     mGameEvents.push_back(e);
 }
 
