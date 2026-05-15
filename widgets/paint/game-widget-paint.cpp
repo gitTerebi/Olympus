@@ -1,8 +1,8 @@
-#include "egamewidget.h"
+#include "widgets/egamewidget.h"
 
 #include "characters/actions/walkable/ewalkableobject.h"
 
-#include "eterraineditmenu.h"
+#include "widgets/eterraineditmenu.h"
 
 #include "textures/etiletotexture.h"
 #include "textures/egametextures.h"
@@ -28,7 +28,7 @@
 #include "evectorhelpers.h"
 #include "etilehelper.h"
 #include "emainwindow.h"
-#include "eminimap.h"
+#include "widgets/eminimap.h"
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 
 #include "eiteratesquare.h"
@@ -1636,17 +1636,34 @@ void eGameWidget::paintEvent(ePainter &p)
         }
         else
         {
-            const auto roads = mPatrolBuilding->surroundingRoad(false, true);
-            if (!roads.empty())
+            const auto bt = mPatrolBuilding->type();
+            const bool agora = bt == eBuildingType::commonAgora ||
+                               bt == eBuildingType::grandAgora;
+            if (agora)
             {
-                patrolRoadStart = roads.front();
-                patrolRoadReturn = roads.back();
-                const auto walkable = eWalkableObject::sCreateRoadblock();
-                addRoamerPreview(patrolRoadStart, patrolRoadPreview, walkable);
-                if (mPatrolBuilding->bothDirections() &&
-                    patrolRoadReturn != patrolRoadStart)
+                const auto start = mPatrolBuilding->patrolStartTile();
+                if (start)
                 {
-                    addRoamerPreview(patrolRoadReturn, patrolRoadPreview, walkable);
+                    patrolRoadStart = start;
+                    patrolRoadReturn = start;
+                    const auto walkable = eWalkableObject::sCreateRoadblock();
+                    addRoamerPreview(start, patrolRoadPreview, walkable);
+                }
+            }
+            else
+            {
+                const auto roads = mPatrolBuilding->surroundingRoad(false, true);
+                if (!roads.empty())
+                {
+                    patrolRoadStart = roads.front();
+                    patrolRoadReturn = roads.back();
+                    const auto walkable = eWalkableObject::sCreateRoadblock();
+                    addRoamerPreview(patrolRoadStart, patrolRoadPreview, walkable);
+                    if (mPatrolBuilding->bothDirections() &&
+                        patrolRoadReturn != patrolRoadStart)
+                    {
+                        addRoamerPreview(patrolRoadReturn, patrolRoadPreview, walkable);
+                    }
                 }
             }
         }

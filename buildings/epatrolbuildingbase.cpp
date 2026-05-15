@@ -1,8 +1,13 @@
 #include "epatrolbuildingbase.h"
 
 #include "engine/e-game-board.h"
+#include "engine/etile.h"
 #include "engine/eguidedmovepathtask.h"
 #include "fileIO/esavearchive.h"
+
+eTile* ePatrolBuildingBase::patrolStartTile() const {
+    return centerTile();
+}
 
 ePatrolBuildingBase::ePatrolBuildingBase(
         eGameBoard& board,
@@ -81,7 +86,7 @@ bool ePatrolBuildingBase::spawn() {
         const auto bt = type();
         if(bt == eBuildingType::commonAgora ||
            bt == eBuildingType::grandAgora) {
-            t = centerTile();
+            t = patrolStartTile();
         } else {
             const auto ts = surroundingRoad(false, true);
             if(!ts.empty()) {
@@ -93,7 +98,7 @@ bool ePatrolBuildingBase::spawn() {
         if(!t) return false;
         chr->changeTile(t);
     } else {
-        chr->changeTile(centerTile());
+        chr->changeTile(patrolStartTile());
     }
     bool reverse = false;
     if(mBothDirections) {

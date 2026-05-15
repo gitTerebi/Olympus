@@ -55,6 +55,8 @@ public:
 
     eAgoraOrientation orientation() const { return mO; }
     eDiagonalOrientation diagonalOrientation() const;
+
+    eTile* patrolStartTile() const override;
 private:
     void serialize(eSaveArchive& ar);
 

@@ -67,6 +67,8 @@ public:
 
     const std::vector<eOrientation>& path() const { return mPath; }
     const std::vector<eOrientation>& reversePath() const { return mReversePath; }
+
+    virtual eTile* patrolStartTile() const;
 private:
     void serialize(eSaveArchive& ar);
 
