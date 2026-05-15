@@ -436,6 +436,22 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             }
             rWid->addText(info);
             wid = rWid;
+        } else if(const auto rb = dynamic_cast<eResourceBuilding*>(b)) {
+            const auto rbWid = new eInfoWidget(window(), this, true, true);
+            const auto title = eBuilding::sNameForBuilding(b);
+            rbWid->initialize(title);
+            int group = 115;
+            switch(rb->type()) {
+            case eResourceBuildingType::oliveTree:  group = 115; break; // "Fruit is" / "ripe."
+            case eResourceBuildingType::vine:       group = 116; break; // "Fruit is" / "ripe."
+            case eResourceBuildingType::orangeTree: group = 107; break; // "Oranges are" / "ripe."
+            }
+            const int pct = rb->ripe() * 100 / 5;
+            const std::string ripeStr = eLanguage::zeusText(group, 2) + " " +
+                                        std::to_string(pct) + "% " +
+                                        eLanguage::zeusText(group, 3);
+            rbWid->addText(ripeStr);
+            wid = rbWid;
         } else {
             const auto bWid = new eInfoWidget(window(), this, true, true);
             if(const auto r = dynamic_cast<eRoad*>(b)) {
