@@ -8,6 +8,7 @@ class eEmployingBuilding;
 class eEmployingBuildingInfoWidget : public eInfoWidget {
 public:
     using eInfoWidget::eInfoWidget;
+    using eInfoWidget::initialize;
 
     void initialize(const std::string& title,
                     eEmployingBuilding* const b);
@@ -17,7 +18,8 @@ public:
                     eEmployingBuilding* const b,
                     const std::string& subText);
 
-    void addEmploymentWidget(eEmployingBuilding* const b);
+    void addEmploymentWidget(eEmployingBuilding* const b,
+                             const std::string& infoStr = std::string());
 };
 
 #endif // EEMPLOYINGBUILDINGINFOWIDGET_H
