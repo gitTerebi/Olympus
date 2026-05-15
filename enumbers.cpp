@@ -546,11 +546,11 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("attack_city_max_killed_i", sAttackCityMaxKilled, 4, 1, 100);
     loadI("attack_city_ares_max_killed_i", sAttackCityAresMaxKilled, 8, 1, 100);
 
-    loadI("basic_vendor_max_resource_take_distance_i", sBasicVendorMaxResourceTakeDistance, 60, 5, 1000);
+    loadI("basic_vendor_max_resource_take_distance_i", sBasicVendorMaxResourceTakeDistance, 999, 5, 1000);
     loadI("horse_vendor_max_resource_take_distance_i", sHorseVendorMaxResourceTakeDistance, 200, 5, 1000);
 
-    loadI("resource_building_max_resource_give_distance_i", sResourceBuildingMaxResourceGiveDistance, 60, 5, 1000);
-    loadI("processing_building_max_resource_take_distance_i", sProcessingBuildingMaxResourceTakeDistance, 60, 5, 1000);
+    loadI("resource_building_max_resource_give_distance_i", sResourceBuildingMaxResourceGiveDistance, 999, 5, 1000);
+    loadI("processing_building_max_resource_take_distance_i", sProcessingBuildingMaxResourceTakeDistance, 999, 5, 1000);
     loadI("trireme_wharf_max_resource_take_distance_i", sTriremeWharfMaxResourceTakeDistance, 60, 5, 1000);
     loadI("trireme_wharf_build_time_i", sTriremeWharfBuildTime, 100000, 1, 1000000);
     loadI("trireme_wharf_build_stages_i", sTriremeWharfBuildStages, 3, 1, 10);
