@@ -71,6 +71,10 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         write(dst);
     }
     const auto result = sCreate(mCid, mType, mBranch, mBoard);
+    if(!result) {
+        free(mem);
+        return nullptr;
+    }
     {
         eReadSource source(mem);
         eReadStream src(source);

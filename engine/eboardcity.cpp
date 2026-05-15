@@ -2696,7 +2696,15 @@ void eBoardCity::startEpisode(eEpisode* const e) {
     const auto date = mBoard.date();
     mCityEvents.fastForward(date);
     for(const auto& ee : es) {
+        if(!ee) {
+            printf("Skipping null episode game event.\n");
+            continue;
+        }
         const auto eee = ee->makeCopy();
+        if(!eee) {
+            printf("Skipping episode game event with no runtime type.\n");
+            continue;
+        }
         eee->setupStartDate(date);
         mCityEvents.addEvent(eee);
         eee->loadResources();
