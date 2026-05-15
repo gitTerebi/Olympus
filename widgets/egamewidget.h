@@ -1,9 +1,14 @@
 #ifndef EGAMEWIDGET_H
 #define EGAMEWIDGET_H
 
-constexpr int kBaseFPS = 10;
-constexpr int kFpsClamp = 60;
+constexpr int kSimHz = 60;
+constexpr int kAnimFPS = 10;
+constexpr int kRenderFpsCap = 240;
+constexpr double kSimStepMs = 1000.0 / kSimHz;
+constexpr double kAnimStepMs = 1000.0 / kAnimFPS;
+constexpr double kBaseRenderMs = 1000.0 / 60.0;
 
+#include <chrono>
 #include <deque>
 
 #include "emainwidget.h"
@@ -378,6 +383,12 @@ private:
     int mFrame{0};
     int mAnimFrame{0};
     int mRotateFrame{0};
+    double mSimAccumMs{0.0};
+    double mAnimAccumMs{0.0};
+    double mRotateAccumMs{0.0};
+    double mLastDtMs{kBaseRenderMs};
+    std::chrono::steady_clock::time_point mLastPaintTp{};
+    bool mLastPaintTpValid{false};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
     int mLastAmbientSoundTime{0};

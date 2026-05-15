@@ -978,10 +978,38 @@ void eGameWidget::paintEvent(ePainter &p)
             setPatrolBuilding(nullptr);
         }
     }
+    const auto nowTp = std::chrono::steady_clock::now();
+    double dtMs = 0.0;
+    if(mLastPaintTpValid) {
+        using ms_t = std::chrono::duration<double, std::milli>;
+        dtMs = std::chrono::duration_cast<ms_t>(nowTp - mLastPaintTp).count();
+        if(dtMs > 250.0) dtMs = 250.0;
+    } else {
+        mLastPaintTpValid = true;
+    }
+    mLastPaintTp = nowTp;
+    if(dtMs <= 0.0) dtMs = kBaseRenderMs;
+    mLastDtMs = dtMs;
+    const double dtScale = dtMs / kBaseRenderMs;
+
     mFrame++;
     const int prevAnimFrame = mAnimFrame;
-    mAnimFrame = mFrame * kBaseFPS / kFpsClamp;
-    mRotateFrame++;
+    int simTicks = 0;
+    mSimAccumMs += dtMs;
+    while(mSimAccumMs >= kSimStepMs) {
+        mSimAccumMs -= kSimStepMs;
+        simTicks++;
+    }
+    mAnimAccumMs += dtMs;
+    while(mAnimAccumMs >= kAnimStepMs) {
+        mAnimAccumMs -= kAnimStepMs;
+        mAnimFrame++;
+    }
+    mRotateAccumMs += dtMs;
+    while(mRotateAccumMs >= kBaseRenderMs) {
+        mRotateAccumMs -= kBaseRenderMs;
+        mRotateFrame++;
+    }
     bool updateTips = false;
     for (int i = 0; i < int(mTips.size()); i++)
     {
@@ -1034,7 +1062,7 @@ void eGameWidget::paintEvent(ePainter &p)
         mBoard->incFrame();
 
     const bool iterate = mSpeedId == sMaxSpeedId;
-    const int iMax = iterate ? 5 : 1;
+    const int iMax = (iterate ? 5 : 1) * simTicks;
     for (int i = 0; i < iMax; i++)
     {
         mBoard->scheduleDataUpdate();
@@ -1069,21 +1097,22 @@ void eGameWidget::paintEvent(ePainter &p)
 
     if (!window()->settings().fDisableEdgeScroll)
     {
+        const int edgeStep = std::max(1, int(std::lround(35.0 * dtScale)));
         if (mHoverX == 0)
         {
-            setDX(mDX + 35);
+            setDX(mDX + edgeStep);
         }
         else if (mHoverX == width() - 1)
         {
-            setDX(mDX - 35);
+            setDX(mDX - edgeStep);
         }
         if (mHoverY == 0)
         {
-            setDY(mDY + 35);
+            setDY(mDY + edgeStep);
         }
         else if (mHoverY == height() - 1)
         {
-            setDY(mDY - 35);
+            setDY(mDY - edgeStep);
         }
     }
     smoothScroll();

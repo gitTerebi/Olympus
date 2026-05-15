@@ -2652,11 +2652,10 @@ void eGameWidget::updateSmoothScrollKeysPressed()
 void eGameWidget::smoothScroll()
 {
     updateSmoothScrollKeysPressed();
-    int dx = 0;
-    int dy = 0;
-    const int d = mKeyScrollSpeed;
-    dx = mSmoothScrollX * d;
-    dy = mSmoothScrollY * d;
+    const double scale = mLastDtMs / kBaseRenderMs;
+    const double d = mKeyScrollSpeed * scale;
+    const int dx = int(std::lround(mSmoothScrollX * d));
+    const int dy = int(std::lround(mSmoothScrollY * d));
     if (dx)
         setDX(mDX + dx);
     if (dy)
