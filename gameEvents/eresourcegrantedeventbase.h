@@ -36,6 +36,7 @@ public:
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
+    bool finished() const override;
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
@@ -62,6 +63,7 @@ private:
     eEvent mGiftLastChance;
     eEvent mGiftInsufficientSpace;
     eEvent mGiftPartialSpace;
+    bool mAwaitingResponse = false;
 };
 
 #endif // ERESOURCEGRANTEDEVENTBASE_H
