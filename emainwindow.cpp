@@ -13,8 +13,8 @@
 #include "widgets/eselectcolonywidget.h"
 #include "widgets/etooltip.h"
 
-#include "audio/emusic.h"
-#include "audio/esounds.h"
+#include "audio/music.h"
+#include "audio/sounds.h"
 
 #include "engine/ethreadpool.h"
 

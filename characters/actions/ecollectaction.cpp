@@ -1,7 +1,7 @@
 #include "ecollectaction.h"
 
 #include "engine/e-game-board.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 
 #include "textures/emarbletile.h"
 

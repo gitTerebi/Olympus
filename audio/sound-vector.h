@@ -1,5 +1,5 @@
-#ifndef ESOUNDVECTOR_H
-#define ESOUNDVECTOR_H
+#ifndef SOUND_VECTOR_H
+#define SOUND_VECTOR_H
 
 #include <string>
 #include <vector>
@@ -18,6 +18,7 @@ public:
 
     static void setGeneralVolume(const int volume);
     static void setVolume(const eSoundType type, const int volume);
+    static void reapplyVolumes();
 
     int soundCount() const { return mPaths.size(); }
     void addPath(const std::string& path);
@@ -28,4 +29,4 @@ private:
     std::vector<std::pair<Mix_Chunk*, std::string>> mPaths;
 };
 
-#endif // ESOUNDVECTOR_H
+#endif // SOUND_VECTOR_H

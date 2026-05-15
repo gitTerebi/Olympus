@@ -18,8 +18,8 @@
 #include "widgets/ebuttonbase.h"
 #include "widgets/ebasicbutton.h"
 #include "engine/e-game-board.h"
-#include "audio/esounds.h"
-#include "audio/esoundvector.h"
+#include "audio/sounds.h"
+#include "audio/sound-vector.h"
 #include "eiteratesquare.h"
 #include "characters/edomesticatedanimal.h"
 

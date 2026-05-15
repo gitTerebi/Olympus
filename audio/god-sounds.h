@@ -1,7 +1,7 @@
-#ifndef EGODSOUNDS_H
-#define EGODSOUNDS_H
+#ifndef GOD_SOUNDS_H
+#define GOD_SOUNDS_H
 
-#include "esoundvector.h"
+#include "sound-vector.h"
 
 #include "characters/gods/egod.h"
 
@@ -111,4 +111,4 @@ private:
     bool mLoaded = false;
 };
 
-#endif // EGODSOUNDS_H
+#endif // GOD_SOUNDS_H

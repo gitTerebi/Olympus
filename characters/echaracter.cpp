@@ -8,7 +8,7 @@
 
 #include "gods/egod.h"
 #include "heroes/ehero.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "fileIO/esavearchive.h"
 
 #include "esoldier.h"

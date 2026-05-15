@@ -27,13 +27,14 @@ set(SDL2_MIXER_LIBRARY "${SDL2_DIR}/SDL2_mixer-2.8.0/x86_64-w64-mingw32/lib/libS
 set(SOURCES
     main.cpp
     debug/windows-dump.cpp
-    audio/egodsounds.cpp
-    audio/eherosounds.cpp
-    audio/emonstersounds.cpp
-    audio/emusic.cpp
-    audio/emusicvector.cpp
-    audio/esounds.cpp
-    audio/esoundvector.cpp
+    audio/god-sounds.cpp
+    audio/hero-sounds.cpp
+    audio/monster-sounds.cpp
+    audio/audio-device.cpp
+    audio/music.cpp
+    audio/music-vector.cpp
+    audio/sounds.cpp
+    audio/sound-vector.cpp
     buildings/eaestheticsbuilding.cpp
     buildings/eagorabase.cpp
     buildings/eagoraspace.cpp

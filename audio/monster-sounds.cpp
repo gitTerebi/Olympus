@@ -1,7 +1,7 @@
-#include "emonstersounds.h"
+#include "monster-sounds.h"
 
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "egamedir.h"
 
 eMonsterSounds::eMonsterSounds(const std::string& shortName,

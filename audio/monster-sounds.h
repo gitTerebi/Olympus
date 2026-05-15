@@ -1,7 +1,7 @@
-#ifndef EMONSTERSOUNDS_H
-#define EMONSTERSOUNDS_H
+#ifndef MONSTER_SOUNDS_H
+#define MONSTER_SOUNDS_H
 
-#include "esoundvector.h"
+#include "sound-vector.h"
 
 #include "characters/monsters/emonster.h"
 
@@ -58,4 +58,4 @@ private:
     bool mLoaded = false;
 };
 
-#endif // EMONSTERSOUNDS_H
+#endif // MONSTER_SOUNDS_H

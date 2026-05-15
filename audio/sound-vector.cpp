@@ -1,5 +1,6 @@
-#include "esoundvector.h"
+#include "sound-vector.h"
 
+#include "audio-device.h"
 #include "erand.h"
 #include <filesystem>
 #include <algorithm>
@@ -78,7 +79,16 @@ void setGroupVolume(const int tag, const int volume) {
 }
 }
 
+void eSoundVector::reapplyVolumes() {
+    sChannelsConfigured = false;
+    configureChannels();
+    setGroupVolume(sVoiceTag, applyGeneralVolume(sVoiceVolume));
+    setGroupVolume(sEventTag, applyGeneralVolume(sEventVolume));
+    setGroupVolume(sAmbientTag, applyGeneralVolume(sAmbientVolume));
+}
+
 Mix_Chunk* loadSound(const std::string& path) {
+    if(!ensureAudioDeviceOpen()) return nullptr;
     const auto wav = Mix_LoadWAV(path.c_str());
     if(!wav) {
         printf("Failed to load sound '%s'!\n SDL_mixer Error: %s\n",

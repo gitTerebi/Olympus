@@ -13,16 +13,22 @@
 #include "egamedir.h"
 #include "enumbers.h"
 
-#include "audio/emusic.h"
-#include "audio/esounds.h"
+#include "audio/music.h"
+#include "audio/sounds.h"
+#include "audio/audio-device.h"
 #include "ecursors.h"
 #include "debug/windows-dump.h"
 
 bool init() {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n",
                SDL_GetError());
         return false;
+    }
+
+    if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+        printf("SDL audio subsystem could not initialize! SDL Error: %s\n",
+               SDL_GetError());
     }
 
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
@@ -36,10 +42,15 @@ bool init() {
         return false;
     }
 
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    const int mixFlags = MIX_INIT_MP3 | MIX_INIT_OGG;
+    if((Mix_Init(mixFlags) & mixFlags) != mixFlags) {
+        printf("SDL_mixer codec init incomplete! Mix Error: %s\n",
+               Mix_GetError());
+    }
+
+    if(!ensureAudioDeviceOpen()) {
         printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n",
                Mix_GetError());
-        return false;
     }
 
     if(TTF_Init()) {

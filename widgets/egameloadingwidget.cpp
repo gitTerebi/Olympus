@@ -1,8 +1,8 @@
 #include "egameloadingwidget.h"
 
 #include "textures/egametextures.h"
-#include "audio/emusic.h"
-#include "audio/esounds.h"
+#include "audio/music.h"
+#include "audio/sounds.h"
 #include "emessages.h"
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
 #include "emainwindow.h"

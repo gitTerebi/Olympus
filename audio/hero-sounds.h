@@ -1,7 +1,7 @@
-#ifndef EHEROSOUNDS_H
-#define EHEROSOUNDS_H
+#ifndef HERO_SOUNDS_H
+#define HERO_SOUNDS_H
 
-#include "esoundvector.h"
+#include "sound-vector.h"
 
 #include "characters/heroes/ehero.h"
 
@@ -48,4 +48,4 @@ private:
     bool mLoaded = false;
 };
 
-#endif // EHEROSOUNDS_H
+#endif // HERO_SOUNDS_H
