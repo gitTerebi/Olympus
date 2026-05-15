@@ -171,6 +171,7 @@ set(SOURCES
     characters/actions/ecarttransporteraction.cpp
     characters/actions/deliver-cart-action.cpp
     characters/actions/get-cart-action.cpp
+    characters/actions/vendor-cart-action.cpp
     characters/actions/echaracteraction.cpp
     characters/actions/echaracteractioncreator.cpp
     characters/actions/echaracteractionfunction.cpp

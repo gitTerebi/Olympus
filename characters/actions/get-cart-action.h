@@ -21,6 +21,7 @@ public:
     void write(eWriteStream& dst) const override;
 
     void onFindTargetFail() override;
+    void onFoundTarget() override;
 
 private:
     // transitions

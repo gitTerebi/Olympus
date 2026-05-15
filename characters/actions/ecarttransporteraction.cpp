@@ -348,9 +348,11 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             mTask = *ttask;
             startResourceAction(mTask);
             c->setActionType(eCharacterActionType::walk);
+            onFoundTarget();
         });
         a->setFindFailAction([tptr, this, c, preferGranary, tasks, avoidedPtr]() {
             if(!tptr) return;
+            printf("[findTarget] findFailAction fired preferGranary=%d\n", (int)*preferGranary);
             if(*preferGranary) {
                 // No granary found — retry without granary restriction
                 *preferGranary = false;
@@ -364,8 +366,8 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             a->setMaxFindDistance(cart->maxDistance());
         }
         const auto w = getWalkable();
-        a->start(finalTile, w);
         setCurrentAction(a);
+        a->start(finalTile, w);
     };
 
     startSearch();
@@ -560,9 +562,21 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
     const auto supp = support();
     if(supp & eCartActionTypeSupport::get) {
         const auto buildingRect = mBuilding->tileRect();
+        const auto type = mBuilding->type();
+        const bool isVendor = type == eBuildingType::foodVendor ||
+                              type == eBuildingType::fleeceVendor ||
+                              type == eBuildingType::oilVendor ||
+                              type == eBuildingType::wineVendor ||
+                              type == eBuildingType::armsVendor ||
+                              type == eBuildingType::horseTrainer ||
+                              type == eBuildingType::chariotVendor;
+        if(isVendor) {
+            auto w = eWalkableObject::sCreateRoadAvenue();
+            w = eWalkableObject::sCreateRect(buildingRect, w);
+            return w;
+        }
         auto w = eWalkableObject::sCreateAll();
         w = eWalkableObject::sCreateRect(buildingRect, w);
-        const auto type = mBuilding->type();
         if(type == eBuildingType::horseRanch) {
             const auto hr = static_cast<eHorseRanch*>(mBuilding.get());
             const auto e = hr->enclosure();

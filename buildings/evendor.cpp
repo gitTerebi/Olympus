@@ -5,6 +5,9 @@
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
 #include "buildings/eagorabase.h"
+#include "characters/actions/eactionwithcomeback.h"
+#include "characters/actions/vendor-cart-action.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 
 #include <algorithm>
@@ -105,10 +108,32 @@ int eVendor::spaceLeft(const eResourceType type) const {
     return (mMaxResource - mResource)/mResMult;
 }
 
+eCartTransporter* eVendor::spawnVendorCart() {
+    const auto t = centerTile();
+    auto& board = getBoard();
+    const auto c = e::make_shared<eCartTransporter>(board);
+    c->setBothCityIds(cityId());
+    c->setAtlantean(atlantean());
+    c->changeTile(t);
+    const auto a = e::make_shared<eVendorCartAction>(c.get(), this);
+    c->setAction(a);
+    c->setSupport(eCartActionTypeSupport::get);
+    return c.get();
+}
+
 void eVendor::timeChanged(const int by) {
     if(enabled()) {
         if(!mCart) {
-            mCart = spawnCart(eCartActionTypeSupport::get);
+            mCart = spawnVendorCart();
+            if(mCart && mAgora) {
+                const auto st = mAgora->patrolStartTile();
+                if(st) {
+                    mCart->changeTile(st);
+                    const auto a = dynamic_cast<eActionWithComeback*>(
+                                       mCart->action());
+                    if(a) a->setStartTile(st);
+                }
+            }
             switch(mResType) {
             case eResourceType::food:
                 mCart->setType(eCartTransporterType::food);

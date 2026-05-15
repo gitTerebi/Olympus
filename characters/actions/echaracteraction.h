@@ -76,7 +76,8 @@ enum class eCharActionType {
     triremeAction,
     wolfAction,
     deliverCartAction,
-    getCartAction
+    getCartAction,
+    vendorCartAction
 };
 
 class eCharacterAction : public eStdSelfRef {

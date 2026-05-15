@@ -79,6 +79,8 @@ protected:
 
     // subclass hook — called when findTarget BFS fails
     virtual void onFindTargetFail() {}
+    // subclass hook — called when findTarget BFS succeeds and path starts
+    virtual void onFoundTarget() {}
 
     eBuildingWithResource* building() const { return mBuilding.get(); }
     eCartTransporter* cart() const {
