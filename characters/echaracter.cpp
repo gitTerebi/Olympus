@@ -260,7 +260,7 @@ void eCharacter::setProvide(const eProvide p, const int n) {
     mProvideCount = n;
 }
 
-bool eCharacter::defend(const double a) {
+bool eCharacter::takeDamage(const double a) {
     if(dead()) return true;
 
     bool isMonster = false;

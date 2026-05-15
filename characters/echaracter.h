@@ -81,7 +81,7 @@ public:
     bool visible() const { return mVisible; }
     void setVisible(const bool v) { mVisible = v; }
 
-    bool defend(const double a);
+    bool takeDamage(const double a);
 
     static stdsptr<eCharacter> sCreate(
             const eCharacterType t, eGameBoard& board);

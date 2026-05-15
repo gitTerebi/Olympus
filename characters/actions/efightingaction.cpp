@@ -45,9 +45,9 @@ bool eAttackTarget::valid() const {
     return mC || mB;
 }
 
-bool eAttackTarget::defend(const double a) {
-    if(mC) return mC->defend(a);
-    if(mB) return mB->defend(a);
+bool eAttackTarget::takeDamage(const double a) {
+    if(mC) return mC->takeDamage(a);
+    if(mB) return mB->takeDamage(a);
     return true;
 }
 
@@ -196,7 +196,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                             (mAttackTime > 1000 && !mAttackTarget.building());
         if(mAttackTarget.valid() && !mAttackTarget.dead()) {
             const double att = by*c->attack();
-            const bool d = mAttackTarget.defend(att);
+            const bool d = mAttackTarget.takeDamage(att);
             if(d) finishAttack = true;
         }
         if(finishAttack) {

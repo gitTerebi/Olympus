@@ -361,7 +361,7 @@ public:
     eCityId cityId() const { return mCityId; }
     void setCityId(const eCityId cid) { mCityId = cid; }
 
-    bool defend(const double a);
+    bool takeDamage(const double a);
     bool dead() const;
 
     std::vector<eTile*> neighbours() const;
