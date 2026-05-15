@@ -9,6 +9,17 @@
 
 class eSaveArchive;
 
+enum class eCartState {
+    idle,            // at home, nothing to do
+    loadingDeliver,  // taking deliver stock from home building
+    loadingGet,      // searching for a GET target (no deliver stock)
+    waitOutside,     // standing on road outside, waiting to path to target
+    movingToTarget,  // pathfinding to target
+    atTarget,        // performing exchange at target
+    idleOutside,     // on road, delivered, searching for next target
+    returning        // walking home
+};
+
 class eCartTransporterAction : public eActionWithComeback {
     friend class eCTA_findTargetFinish;
     friend class eCTA_waitOutsideFinish;
@@ -25,11 +36,25 @@ public:
 
     eBuilding* src() const { return mBuilding; }
     eBuilding* target() const { return mTarget; }
-    bool noDestination() const { return mWaitOutside; }
+    bool noDestination() const { return mState == eCartState::waitOutside; }
     void setBuilding(eBuildingWithResource* b) { mBuilding = b; }
 
+    eCartState state() const { return mState; }
     bool waiting();
 protected:
+    eCartTransporterAction(eCharacter* const c,
+                           eBuildingWithResource* const b,
+                           const eCharActionType type);
+
+    // FSM enter-state methods
+    void enterIdle();
+    void enterLoadingDeliver();
+    void enterLoadingGet();
+    void enterWaitOutside();
+
+    void enterMovingToTarget(const eCartTask& task);
+    void enterReturning();
+
     void findTarget();
     void findTarget(const eCartTask& task);
     void findTarget(const eCartTask& task, eBuilding* avoided);
@@ -51,6 +76,22 @@ protected:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    // subclass hook — called when findTarget BFS fails
+    virtual void onFindTargetFail() {}
+
+    eBuildingWithResource* building() const { return mBuilding.get(); }
+    eCartTransporter* cart() const {
+        return static_cast<eCartTransporter*>(character());
+    }
+
+    stdptr<eBuildingWithResource> mBuilding;
+    stdptr<eBuilding> mTarget;
+    eCartTask mTask;
+
+    void waitOutside();
+    void clearTask();
+
 private:
     void serialize(eSaveArchive& ar);
 
@@ -58,16 +99,9 @@ private:
 
     void updateWaiting();
 
-    void waitOutside();
     void spread();
-    void clearTask();
 
     void disappear();
-
-    stdptr<eBuildingWithResource> mBuilding;
-    stdptr<eBuilding> mTarget;
-
-    eCartTask mTask;
 
     int mUpdateWaiting = 0;
 
@@ -75,8 +109,7 @@ private:
     static const int kMaxDropoffRetries = 250;
     static const int kRetryWaitTicks = 1000;
 
-    bool mNoTarget = false;
-    bool mWaitOutside = false;
+    eCartState mState = eCartState::idle;
 };
 
 class eCTA_findTargetFinish : public eCharActFunc {

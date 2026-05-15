@@ -11,9 +11,15 @@
 
 eCartTransporterAction::eCartTransporterAction(
         eCharacter* const c,
-        eBuildingWithResource* const b) :
-    eActionWithComeback(c, eCharActionType::cartTransporterAction),
+        eBuildingWithResource* const b,
+        const eCharActionType type) :
+    eActionWithComeback(c, type),
     mBuilding(b) {}
+
+eCartTransporterAction::eCartTransporterAction(
+        eCharacter* const c,
+        eBuildingWithResource* const b) :
+    eCartTransporterAction(c, b, eCharActionType::cartTransporterAction) {}
 
 eCartTransporterAction::eCartTransporterAction(eCharacter* const c) :
     eCartTransporterAction(c, nullptr){}
@@ -27,84 +33,154 @@ void eCartTransporterAction::increment(const int by) {
 }
 
 bool eCartTransporterAction::decide() {
-    if(!mBuilding) {
-        return true;
-    }
+    if(!mBuilding) return true;
     const auto c = static_cast<eCartTransporter*>(character());
-    const bool r = eWalkableHelpers::sTileUnderBuilding(
-                       c->tile(), mBuilding);
-    const int count = c->resCount();
-    const auto res = c->resType();
-    bool continuee = false;
-    if(mTask.fMaxCount > 0 && mTask.fResource == res) {
-        if(mTask.fType == eCartActionType::get) {
-            const int max = res == eResourceType::sculpture ? 1 : 4;
-            const int space = max - count;
-            continuee = space > 0;
-        } else { // give
-            continuee = count > 0;
+
+    switch(mState) {
+    case eCartState::idle:
+        enterLoadingDeliver();
+        break;
+
+    case eCartState::waitOutside: {
+        // cart reached road — now path to delivery target
+        if(c->hasResource()) {
+            eCartTask task;
+            task.fMaxCount = c->resCount();
+            task.fResource = c->resType();
+            task.fType = eCartActionType::deliver;
+            enterMovingToTarget(task);
+        } else {
+            enterLoadingDeliver();
         }
+        break;
     }
-    if(r || mWaitOutside) {
-        if(!mWaitOutside) c->catchUp();
+
+    case eCartState::loadingDeliver:
+    case eCartState::loadingGet:
+        // stale state with no current action — restart
+        enterLoadingDeliver();
+        break;
+
+    case eCartState::movingToTarget:
+    case eCartState::atTarget: {
+        const int count = c->resCount();
+        const auto res = c->resType();
+        bool continuee = false;
+        if(mTask.fMaxCount > 0 && mTask.fResource == res) {
+            if(mTask.fType == eCartActionType::get) {
+                const int max = res == eResourceType::sculpture ? 1 : 4;
+                continuee = (max - count) > 0;
+            } else {
+                continuee = count > 0;
+            }
+        }
+        if(continuee) {
+            findTarget(mTask);
+        } else {
+            enterReturning();
+        }
+        break;
+    }
+
+    case eCartState::idleOutside: {
+        // standing on road — retry deliver target search
+        const auto tasks = mBuilding->cartTasks();
+        bool hasDeliver = false;
+        for(const auto& task : tasks) {
+            if(task.fType != eCartActionType::deliver) continue;
+            if(task.fMaxCount > 0) { hasDeliver = true; break; }
+        }
+        if(hasDeliver) {
+            enterLoadingDeliver();
+        } else {
+            enterReturning();
+        }
+        break;
+    }
+
+    case eCartState::returning: {
+        // arrived home — deposit any fetched GET resource
+        if(c->hasResource()) {
+            const auto supp = support();
+            if(supp & eCartActionTypeSupport::get) {
+                const auto rt = c->resType();
+                const int given = mBuilding->add(rt, c->resCount());
+                c->take(rt, given);
+                const int leftover = c->resCount();
+                if(leftover > 0) {
+                    mBuilding->stash(rt, leftover);
+                    c->take(rt, leftover);
+                }
+            }
+            // deliver cart came home with leftover — try again
+            if(c->hasResource() && (support() & eCartActionTypeSupport::deliver)) {
+                eCartTask task;
+                task.fMaxCount = c->resCount();
+                task.fResource = c->resType();
+                task.fType = eCartActionType::deliver;
+                enterMovingToTarget(task);
+                break;
+            }
+        }
         if(mTask.fMaxCount > 0) {
+            c->catchUp();
             finishResourceAction(mTask);
             clearTask();
         }
-        if(mNoTarget) {
-            mNoTarget = false;
-            mTarget = nullptr;
-            if(!c->hasResource()) {
-                const auto giveTasks = mBuilding->cartTasks();
-                for(const auto& task : giveTasks) {
-                    if(task.fType != eCartActionType::deliver) continue;
-                    startResourceAction(task);
-                    if(c->resCount() > 0) break;
-                }
-            }
-            if(c->hasResource()) { waitOutside(); }
-        } else {
-            int cc = c->resCount();
-            if(cc > 0) {
-                const auto supp = support();
-                if(supp & eCartActionTypeSupport::get) {
-                    const auto rt = c->resType();
-                    const int r = mBuilding->add(rt, cc);
-                    c->take(rt, r);
-                    cc = c->resCount();
-                    if(cc > 0) {
-                        const int s = mBuilding->stash(rt, cc);
-                        c->take(rt, s);
-                        cc = c->resCount();
-                    }
-                }
-                if(cc > 0 && supp & eCartActionTypeSupport::deliver) {
-                    eCartTask task;
-                    task.fMaxCount = cc;
-                    task.fResource = c->resType();
-                    task.fType = eCartActionType::deliver;
-                    findTarget(task);
-                }
-            } else {
-                const auto supp = support();
-                const auto tasks = mBuilding->cartTasks();
-                for(const auto& task : tasks) {
-                    if(task.fType != eCartActionType::deliver) continue;
-                    startResourceAction(task);
-                    if(c->resCount() > 0) {
-                        waitOutside();
-                        return true;
-                    }
-                }
-                findTarget();
-            }
-        }
-    } else if(continuee && !mNoTarget) {
-        findTarget(mTask);
-    } else {
-        goBack();
+        enterLoadingDeliver();
+        break;
+    }
     }
     return true;
+}
+
+void eCartTransporterAction::enterIdle() {
+    mState = eCartState::idle;
+    mTarget = nullptr;
+    clearTask();
+}
+
+void eCartTransporterAction::enterLoadingDeliver() {
+    mState = eCartState::loadingDeliver;
+    mTarget = nullptr;
+    const auto c = static_cast<eCartTransporter*>(character());
+    const auto tasks = mBuilding->cartTasks();
+    for(const auto& task : tasks) {
+        if(task.fType != eCartActionType::deliver) continue;
+        startResourceAction(task);
+        if(c->resCount() > 0) {
+            enterWaitOutside();
+            return;
+        }
+    }
+    // no deliver stock — try GET if supported, else idle
+    const auto supp = support();
+    if(supp & eCartActionTypeSupport::get) {
+        enterLoadingGet();
+    } else {
+        enterIdle();
+    }
+}
+
+void eCartTransporterAction::enterLoadingGet() {
+    mState = eCartState::loadingGet;
+    mTarget = nullptr;
+    findTarget(); // BFS for GET target
+}
+
+void eCartTransporterAction::enterWaitOutside() {
+    mState = eCartState::waitOutside;
+    waitOutside(); // moves cart to adjacent road tile; on arrive → spread() → decide()
+}
+
+void eCartTransporterAction::enterMovingToTarget(const eCartTask& task) {
+    mState = eCartState::movingToTarget;
+    findTarget(task);
+}
+
+void eCartTransporterAction::enterReturning() {
+    mState = eCartState::returning;
+    goBack(); // sets mTarget = mBuilding internally
 }
 
 eCartActionTypeSupport eCartTransporterAction::support() const {
@@ -163,7 +239,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided,
                                         const bool preferGranaryFirst) {
     if(!mBuilding) return;
-    if(tasks.empty()) { mNoTarget = true; return; }
+    if(tasks.empty()) { enterIdle(); return; }
     const auto c = character();
 
     const auto buildingRect = mBuilding->tileRect();
@@ -268,7 +344,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             const auto& board = this->board();
             const auto b = board.buildingAt(*bx, *by);
             mTarget = b;
-            mWaitOutside = false;
+            mState = eCartState::movingToTarget;
             mTask = *ttask;
             startResourceAction(mTask);
             c->setActionType(eCharacterActionType::walk);
@@ -280,13 +356,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                 *preferGranary = false;
                 findTarget(tasks, avoidedPtr.get(), false);
             } else {
-                const auto cart = static_cast<eCartTransporter*>(c);
-                if(cart->resCount() > 0 &&
-                   mTask.fType == eCartActionType::deliver) {
-                    throttleDropoffRetry();
-                } else {
-                    mNoTarget = true;
-                }
+                onFindTargetFail();
             }
         });
         a->setRemoveLastTurn(true);
@@ -305,7 +375,7 @@ void eCartTransporterAction::throttleDropoffRetry() {
     if(!mBuilding) return;
     if(mRetryCount >= kMaxDropoffRetries) {
         mRetryCount = 0;
-        mNoTarget = true;
+        enterIdle();
         return;
     }
     mRetryCount++;
@@ -333,6 +403,7 @@ void eCartTransporterAction::targetResourceAction(const int bx, const int by) {
 void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const rb) {
     if(!mBuilding) return;
     if(!rb) return;
+    mState = eCartState::atTarget;
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     const int startCount = ct->resCount();
@@ -360,18 +431,7 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         ct->setResource(res, count - added);
         if(added > 0) mRetryCount = 0;
     }
-    if(ct->resCount() > 0 && mTask.fType == eCartActionType::deliver) {
-        eCartTask task;
-        task.fType = eCartActionType::deliver;
-        task.fResource = ct->resType();
-        task.fMaxCount = ct->resCount();
-        findTarget(task, rb);
-        return;
-    }
-    if(startCount == 0 && ct->resCount() == 0 &&
-       mTask.fType == eCartActionType::get && mTask.fMaxCount > 0) {
-        findTarget(mTask);
-    }
+    // subclass FSM drives next transition via decide()
 }
 
 int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
@@ -406,19 +466,19 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
 void eCartTransporterAction::startResourceAction(const eCartTask& task) {
     if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
-    if(c->resCount() > 0) return;
     if(task.fMaxCount <= 0) return;
     if(task.fType == eCartActionType::get) {
         if(c->resCount() == 0) c->setResource(task.fResource, 0);
         return;
-    } else { //give
+    } else { // deliver — top-up to capacity
+        if(c->resCount() > 0 && c->resType() != task.fResource) return;
         const int max = eResourceTypeHelpers::transportSize(task.fResource, board().doubleCartCapacity());
-        const int mmax = std::min(max, task.fMaxCount);
-        const int t = mBuilding->take(task.fResource, mmax);
-        if(t <= 0) {
-            clearTask();
-        } else {
-            c->setResource(task.fResource, t);
+        const int space = max - c->resCount();
+        if(space <= 0) return;
+        const int toTake = std::min(space, task.fMaxCount);
+        const int t = mBuilding->take(task.fResource, toTake);
+        if(t > 0) {
+            c->setResource(task.fResource, c->resCount() + t);
         }
     }
 }
@@ -453,8 +513,26 @@ void eCartTransporterAction::serialize(eSaveArchive& ar) {
     ar.field("mTask.fType", mTask.fType);
 
     ar.field("mUpdateWaiting", mUpdateWaiting);
-    ar.field("mNoTarget", mNoTarget);
-    ar.field("mWaitOutside", mWaitOutside);
+
+    // compatibility: old saves wrote two bools; new writes same two bools
+    // derived from mState so byte layout is identical in both directions
+    if(ar.reading()) {
+        bool mNoTarget = false;
+        bool mWaitOutside = false;
+        ar.field("mNoTarget",    mNoTarget);
+        ar.field("mWaitOutside", mWaitOutside);
+        if(mWaitOutside)   mState = eCartState::waitOutside;
+        else if(mNoTarget) mState = eCartState::returning;
+        else               mState = eCartState::idle;
+    } else {
+        bool noTarget   = (mState != eCartState::idle &&
+                           mState != eCartState::loadingDeliver &&
+                           mState != eCartState::loadingGet &&
+                           mState != eCartState::waitOutside);
+        bool waitOutside = (mState == eCartState::waitOutside);
+        ar.field("mNoTarget",    noTarget);
+        ar.field("mWaitOutside", waitOutside);
+    }
 
     if(ar.reading()) {
         ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
@@ -504,12 +582,12 @@ void eCartTransporterAction::updateWaiting() {
     const auto c = static_cast<eCartTransporter*>(character());
     const bool r = eWalkableHelpers::sTileUnderBuilding(
                        c->tile(), mBuilding);
-    c->setWaiting(mWaitOutside || r);
+    c->setWaiting(mState == eCartState::waitOutside || r);
 }
 
 void eCartTransporterAction::waitOutside() {
     if(!mBuilding) return;
-    if(mWaitOutside) return;
+    // guard removed — enterWaitOutside() is the sole caller; it sets state first
     const auto neighs = mBuilding->neighbours();
     if(neighs.empty()) return;
     const auto c = character();
@@ -520,7 +598,6 @@ void eCartTransporterAction::waitOutside() {
         break;
     }
     if(!tt) return;
-    mWaitOutside = true;
 
     const auto stand = std::make_shared<eCTA_waitOutsideFinish>(
                            board(), this);
