@@ -584,6 +584,7 @@ set(SOURCES
     widgets/eoptionsdata.cpp
     widgets/eacceptbutton.cpp
     widgets/eactionlistwidget.cpp
+    widgets/eeventtimewidget.cpp
     widgets/earmymenu.cpp
      widgets/ebasicbutton.cpp
      widgets/ebitmapwidget.cpp
@@ -743,6 +744,7 @@ set(SOURCES
     widgets/moreinfo/ecityfinanceswidget.cpp
     widgets/moreinfo/eworkforceallocationwidget.cpp
     widgets/moreinfo/storage-distribution-dialog.cpp
+    widgets/moreinfo/storage-distribution-widget.cpp
 )
 
 # Add executable

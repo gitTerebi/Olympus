@@ -191,7 +191,7 @@ void StorageDistributionDialog::initialize(
         rowItems.push_back({row, 0, 0});
     }
 
-    const int maxH = std::round(window()->height() * 0.75);
+    const int maxH = std::round(window()->height() * 0.59);
     const auto scrollArea = eLayoutHelpers::flexCol(window(), 0, rowItems, {.gap = p});
     const int scrollH = std::min(scrollArea->height(), maxH);
 
