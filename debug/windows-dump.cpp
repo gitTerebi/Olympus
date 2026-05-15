@@ -6,6 +6,7 @@
 #include <dbghelp.h>
 
 #include <cstdio>
+#include <cctype>
 #include <string>
 
 namespace {
@@ -26,7 +27,36 @@ std::string dumpBasePath() {
     return name;
 }
 
+bool shouldSuppress(EXCEPTION_POINTERS* ep) {
+    if(!ep || !ep->ExceptionRecord) return false;
+    const DWORD code = ep->ExceptionRecord->ExceptionCode;
+    if(code == 0x40010006 /*DBG_PRINTEXCEPTION_C*/ ||
+       code == 0x4001000A /*DBG_PRINTEXCEPTION_WIDE_C*/ ||
+       code == 0x406D1388 /*MS_VC_EXCEPTION thread name*/) return true;
+    if((code & 0xF0000000) != 0xC0000000) return true;
+
+    const void* addr = ep->ExceptionRecord->ExceptionAddress;
+    if(!addr) return false;
+    HMODULE mod = nullptr;
+    if(GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                          GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                          static_cast<LPCSTR>(addr), &mod) && mod) {
+        char name[MAX_PATH] = {0};
+        if(GetModuleFileNameA(mod, name, sizeof(name))) {
+            std::string s = name;
+            for(auto& c : s) c = static_cast<char>(tolower(c));
+            if(s.find("sdl2.dll") != std::string::npos ||
+               s.find("ntdll.dll") != std::string::npos ||
+               s.find("kernel32.dll") != std::string::npos ||
+               s.find("kernelbase.dll") != std::string::npos) return true;
+        }
+    }
+    return false;
+}
+
 LONG WINAPI writeDump(EXCEPTION_POINTERS* exceptionPointers) {
+    if(shouldSuppress(exceptionPointers)) return EXCEPTION_CONTINUE_SEARCH;
+
     const auto basePath = dumpBasePath();
     const auto path = basePath + ".dmp";
 
