@@ -20,6 +20,8 @@ void eAIBuilding::serialize(eSaveArchive& ar) {
     ar.field("fGet", fGet);
     ar.field("fEmpty", fEmpty);
     ar.field("fAccept", fAccept);
+    ar.field("fTradeImports", fTradeImports, static_cast<eResourceType>(0)); // SAVE_COMPAT_OPTIONAL_FIELD
+    ar.field("fTradeExports", fTradeExports, static_cast<eResourceType>(0)); // SAVE_COMPAT_OPTIONAL_FIELD
 
     int ns;
     if(ar.writing()) ns = fSpace.size();

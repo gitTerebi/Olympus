@@ -14,6 +14,7 @@ void eEventTrigger::trigger(eGameEvent& parent,
                             const eDate& date,
                             const std::string& reason) {
     for(const auto& e : mEvents) {
+        if(!e) continue;
         const auto c = e->makeCopy();
         if(!c) continue;
         c->setReason(reason);
@@ -25,6 +26,7 @@ void eEventTrigger::trigger(eGameEvent& parent,
 
 void eEventTrigger::loadResources() const {
     for(const auto& c : mEvents) {
+        if(!c) continue;
         c->loadResources();
     }
 }
@@ -40,6 +42,9 @@ void eEventTrigger::read(eReadStream& src) {
 }
 
 void eEventTrigger::serialize(eSaveArchive& ar) {
+    if(ar.writing()) {
+        eVectorHelpers::removeAll(mEvents, stdsptr<eGameEvent>(nullptr));
+    }
     ar.arrayField("events", mEvents, [this](eSaveArchive& ar, auto& e) {
         eGameEventType type;
         if(ar.writing()) {
@@ -60,6 +65,7 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
 }
 
 void eEventTrigger::addEvent(const stdsptr<eGameEvent>& e) {
+    if(!e) return;
     mEvents.push_back(e);
 }
 

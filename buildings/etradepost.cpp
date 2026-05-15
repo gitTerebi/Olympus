@@ -127,7 +127,7 @@ void eTradePost::setOrders(const eResourceType imports,
     mExports = exports;
     mCartEmpty = empty;
     mCartGet = cartGet;
-    mCartAccept = cartAccept;
+    mCartAccept = cartAccept | (exports & ~(empty | cartGet));
 
     eStorageBuilding::setOrders(mCartGet, mCartEmpty, mCartAccept);
 }
@@ -299,6 +299,7 @@ void eTradePost::read(eReadStream& src) {
     eStorageBuilding::read(src);
     eSaveArchive ar(src);
     serialize(ar);
+    setOrders(mImports, mExports, mCartEmpty, mCartGet, mCartAccept);
 }
 
 void eTradePost::write(eWriteStream& dst) const {

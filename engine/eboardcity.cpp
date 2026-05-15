@@ -623,6 +623,10 @@ void eBoardCity::saveEditorCityPlan() {
             ab.fAccept = sb->accepts();
             ab.fSpace = sb->maxCount();
             if(const auto p = dynamic_cast<eTradePost*>(b)) {
+                eResourceType cartAccept;
+                p->getOrders(ab.fTradeImports, ab.fTradeExports,
+                             ab.fEmpty, ab.fGet, cartAccept);
+                ab.fAccept = cartAccept | ab.fGet;
                 ab.fO = p->orientation();
                 ab.fTradePostType = p->tpType();
                 const auto city = p->city();

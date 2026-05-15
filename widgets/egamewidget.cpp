@@ -3402,6 +3402,8 @@ void eGameWidget::selectHoveredBuildingMode()
 
     if (mode == eBuildingMode::none)
         return;
+    if (!eBuildingModeHelpers::isCloneable(mode))
+        return;
     if (!mBoard->supportsBuilding(mViewedCityId, mode))
         return;
     mGm->setMode(mode);

@@ -27,6 +27,9 @@ eShepherdAction::eShepherdAction(eCharacter* const c) :
     eShepherdAction(nullptr, static_cast<eResourceCollectorBase*>(c),
                     eCharacterType::sheep) {}
 
+eShepherdAction::~eShepherdAction() {
+    releaseAnimal(mTargetAnimal.get());
+}
 
 enum class eCollectType {
     groom,
@@ -238,6 +241,9 @@ bool eShepherdAction::findResourceDecision() {
         tptr.get()->releaseAnimal(aptr.get());
         tptr.get()->mNoResource = true;
     });
+    const auto deleteFail = std::make_shared<eSA_groomDecisionDeleteFail>(
+                                board(), animal);
+    a->setDeleteFailAction(deleteFail);
     a->start(animal->tile());
     setCurrentAction(a);
     return true;

@@ -697,7 +697,15 @@ bool gBuild(const eAIBuilding& b,
                                                        b.fTradePostType);
             tpPtr = tp.get();
             tp->setOrientation(b.fO);
-            tp->setOrders(b.fEmpty, b.fGet, eResourceType::none);
+            const bool hasTradeOrders =
+                b.fTradeImports != eResourceType::none ||
+                b.fTradeExports != eResourceType::none;
+            const auto imports = hasTradeOrders ? b.fTradeImports : b.fEmpty;
+            const auto exports = hasTradeOrders ? b.fTradeExports : b.fGet;
+            const auto cartEmpty = hasTradeOrders ? b.fEmpty : eResourceType::none;
+            const auto cartGet = hasTradeOrders ? b.fGet : eResourceType::none;
+            const auto cartAccept = hasTradeOrders ? (b.fAccept & ~b.fGet) : b.fAccept;
+            tp->setOrders(imports, exports, cartEmpty, cartGet, cartAccept);
             tp->setMaxCount(b.fSpace);
             return tp;
         };

@@ -9,6 +9,7 @@ eGameEvents::eGameEvents(const eCityId cid, eGameBoard& board) :
     mCid(cid), mBoard(board) {}
 
 void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {
+    if(!e) return;
     mGameEvents.push_back(e);
 }
 

@@ -32,7 +32,12 @@ public:
 protected:
     void findTarget();
     void findTarget(const eCartTask& task);
+    void findTarget(const eCartTask& task, eBuilding* avoided);
     void findTarget(const std::vector<eCartTask>& tasks);
+    void findTarget(const std::vector<eCartTask>& tasks, eBuilding* avoided);
+    void findTarget(const std::vector<eCartTask>& tasks,
+                    eBuilding* avoided,
+                    bool granaryFirst);
     void goBack();
 
     void targetResourceAction(const int bx, const int by);
