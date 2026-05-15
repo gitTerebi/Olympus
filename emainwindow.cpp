@@ -23,6 +23,7 @@
 #include "fileIO/ereadstream.h"
 
 #include <chrono>
+#include <thread>
 #include <filesystem>
 #include <fstream>
 #include <algorithm>
@@ -679,11 +680,13 @@ int eMainWindow::exec() {
     eTooltip tooltip(*this);
 
     const bool showFPS = false;
-    const double fpsClamp = kFpsClamp;
+    const double fpsClamp = kRenderFpsCap;
 
     int c = 0;
     int fpsVal = 0;
     bool resetRenderTargets = false;
+    const duration<double, std::milli> frameDt(1000./fpsClamp);
+    auto nextFrame = high_resolution_clock::now();
     while(!mQuit) {
         const auto fpsStart = high_resolution_clock::now();
 
@@ -823,11 +826,19 @@ int eMainWindow::exec() {
             s();
         }
 
-        const auto fpsEnd = high_resolution_clock::now();
-        const duration<double, std::milli> fpsElapsed = fpsEnd - fpsStart;
-        const duration<double, std::milli> fpsDuration(1000./fpsClamp);
-        const duration<double, std::milli> fpsSleep(fpsDuration - fpsElapsed);
-        std::this_thread::sleep_for(fpsSleep);
+        nextFrame += duration_cast<high_resolution_clock::duration>(frameDt);
+        const auto now = high_resolution_clock::now();
+        if(nextFrame < now - duration_cast<high_resolution_clock::duration>(5*frameDt)) {
+            nextFrame = now;
+        } else {
+            const auto spinAt = nextFrame - 1ms;
+            if(high_resolution_clock::now() < spinAt) {
+                std::this_thread::sleep_until(spinAt);
+            }
+            while(high_resolution_clock::now() < nextFrame) {
+                std::this_thread::yield();
+            }
+        }
 
         if(showFPS) {
             c++;
