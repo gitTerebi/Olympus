@@ -47,11 +47,21 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
         }
         ar.field("type", type);
         if(ar.writing()) {
-            ar.object(e);
+            ar.payloadField(
+                "eventPayload",
+                [&e](eWriteStream& dst) { e->write(dst); },
+                [](eReadStream&) {});
         } else {
             const auto branch = eGameEventBranch::trigger;
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            ar.object(e);
+            const bool hasPayload = ar.payloadField(
+                "eventPayload",
+                [](eWriteStream&) {},
+                [&e](eReadStream& src) { e->read(src); });
+            if(!hasPayload) {
+                // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored trigger event bytes inline.
+                ar.object(e);
+            }
         }
     });
     if(!ar.writing()) {

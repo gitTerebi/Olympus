@@ -92,10 +92,21 @@ void eGameEvents::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             const auto branch = eGameEventBranch::root;
             const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            e->read(ar.readStream());
+            const bool hasPayload = ar.payloadField(
+                "eventPayload",
+                [](eWriteStream&) {},
+                [&e](eReadStream& src) { e->read(src); });
+            if(!hasPayload) {
+                // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored event bytes inline.
+                e->read(ar.readStream());
+            }
             addEvent(e);
         } else {
-            mGameEvents[i]->write(ar.writeStream());
+            const auto& e = mGameEvents[i];
+            ar.payloadField(
+                "eventPayload",
+                [&e](eWriteStream& dst) { e->write(dst); },
+                [](eReadStream&) {});
         }
     }
 }

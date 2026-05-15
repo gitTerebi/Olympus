@@ -53,6 +53,19 @@ public:
         }
         return 0;
     }
+
+    inline int64_t pos() const {
+        if(fFile) return fFile->tellg();
+        return static_cast<int64_t>(fMemPos);
+    }
+
+    inline void seek(const int64_t pos) {
+        if(fFile) {
+            fFile->seekg(pos);
+        } else if(fMem) {
+            fMemPos = static_cast<size_t>(pos);
+        }
+    }
 private:
     std::ifstream* fFile = nullptr;
     void* fMem = nullptr;
@@ -72,6 +85,9 @@ public:
     inline size_t read(void* const data, const size_t len) {
         return mSrc.read(data, len);
     }
+
+    int64_t pos() const { return mSrc.pos(); }
+    void seek(const int64_t pos) { mSrc.seek(pos); }
 
     void skip(const size_t len) {
         std::vector<char> buffer(len);
