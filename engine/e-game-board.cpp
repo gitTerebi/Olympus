@@ -751,9 +751,11 @@ void eGameBoard::eMarbleTiles::restock() const
         const int l = t->marbleLevel();
         if (l == maxLevel)
         {
-            if (maxLevel == 2)
+            if (maxLevel >= 2)
             {
-                t->setResource(99999);
+                const bool e = eMarbleTile::edge(t);
+                if (!e)
+                    t->setResource(99999);
             }
             else
             {
