@@ -82,7 +82,7 @@ void formatStoredMessage(eMessage& msg,
 
 #include "characters/esoldierbanner.h"
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 
 #include "engine/boardData/eheatmaptask.h"
 #include "engine/epathfinder.h"
@@ -130,7 +130,7 @@ void formatStoredMessage(eMessage& msg,
 #include "widgets/eepisodeintroductionwidget.h"
 #include "widgets/eworldwidget.h"
 #include "engine/ecampaign.h"
-#include "audio/emusic.h"
+#include "audio/music.h"
 #include "spawners/ebanner.h"
 
 #include "ebuildablehelpers.h"

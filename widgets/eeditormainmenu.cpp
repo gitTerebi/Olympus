@@ -6,7 +6,7 @@
 #include "eworldwidget.h"
 #include "egamewidget.h"
 #include "emainwindow.h"
-#include "audio/emusic.h"
+#include "audio/music.h"
 #include "ebitmapwidget.h"
 #include "eepisodeswidget.h"
 #include "etextscroller.h"

@@ -54,6 +54,9 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
             ar.object(e);
         }
     });
+    if(!ar.writing()) {
+        eVectorHelpers::removeAll(mEvents, stdsptr<eGameEvent>(nullptr));
+    }
 }
 
 void eEventTrigger::addEvent(const stdsptr<eGameEvent>& e) {

@@ -16,7 +16,7 @@
 #include "evectorhelpers.h"
 
 #include "elanguage.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 
 #include "fileIO/ebuildingwriter.h"
 #include "fileIO/esavearchive.h"

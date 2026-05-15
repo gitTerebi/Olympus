@@ -5,7 +5,7 @@
 
 #include "characters/gods/egod.h"
 #include "engine/e-game-board.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eresourcebuilding.h"
 

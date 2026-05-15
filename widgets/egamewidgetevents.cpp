@@ -1,7 +1,7 @@
 #include "egamewidget.h"
 #include "emainwindow.h"
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "emessages.h"
 #include "engine/eevent.h"
 #include "estringhelpers.h"

@@ -37,13 +37,14 @@ win32 {
 LIBS += -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 SOURCES += \
-        audio/egodsounds.cpp \
-        audio/eherosounds.cpp \
-        audio/emonstersounds.cpp \
-        audio/emusic.cpp \
-        audio/emusicvector.cpp \
-        audio/esounds.cpp \
-        audio/esoundvector.cpp \
+        audio/god-sounds.cpp \
+        audio/hero-sounds.cpp \
+        audio/monster-sounds.cpp \
+        audio/audio-device.cpp \
+        audio/music.cpp \
+        audio/music-vector.cpp \
+        audio/sounds.cpp \
+        audio/sound-vector.cpp \
         buildings/eaestheticsbuilding.cpp \
         buildings/eagorabase.cpp \
         buildings/eagoraspace.cpp \
@@ -741,13 +742,14 @@ SOURCES += \
         widgets/moreinfo/storage-distribution-widget.cpp
 
 HEADERS += \
-    audio/egodsounds.h \
-    audio/eherosounds.h \
-    audio/emonstersounds.h \
-    audio/emusic.h \
-    audio/emusicvector.h \
-    audio/esounds.h \
-    audio/esoundvector.h \
+    audio/god-sounds.h \
+    audio/hero-sounds.h \
+    audio/monster-sounds.h \
+    audio/audio-device.h \
+    audio/music.h \
+    audio/music-vector.h \
+    audio/sounds.h \
+    audio/sound-vector.h \
     buildings/allbuildings.h \
     buildings/eaestheticsbuilding.h \
     buildings/eagorabase.h \

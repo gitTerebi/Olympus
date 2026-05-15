@@ -1,6 +1,6 @@
 #include "erotatebutton.h"
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "elanguage.h"
 
 eRotateButton::eRotateButton(eMainWindow* const window) :

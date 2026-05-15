@@ -1,5 +1,5 @@
-#ifndef EMUSICVECTOR_H
-#define EMUSICVECTOR_H
+#ifndef MUSIC_VECTOR_H
+#define MUSIC_VECTOR_H
 
 #include <SDL2/SDL_mixer.h>
 
@@ -18,4 +18,4 @@ private:
     std::vector<std::pair<Mix_Music*, std::string>> mPaths;
 };
 
-#endif // EMUSICVECTOR_H
+#endif // MUSIC_VECTOR_H

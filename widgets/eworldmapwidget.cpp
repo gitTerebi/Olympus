@@ -11,7 +11,7 @@
 #include "gameEvents/ereinforcementsevent.h"
 #include "gameEvents/eplayerraidevent.h"
 #include "elanguage.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "estringhelpers.h"
 #include "evectorhelpers.h"
 #include "enumbers.h"

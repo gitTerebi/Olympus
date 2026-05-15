@@ -1,7 +1,7 @@
-#ifndef EMUSIC_H
-#define EMUSIC_H
+#ifndef MUSIC_H
+#define MUSIC_H
 
-#include "emusicvector.h"
+#include "music-vector.h"
 
 #include <memory>
 #include <map>
@@ -32,6 +32,7 @@ public:
     static void setGeneralVolume(const int volume);
     static void setVolume(const int volume);
     static void setVoiceVolume(const int volume);
+    static void reapplyVolumes();
 private:
     void incTimeImpl();
 
@@ -61,4 +62,4 @@ private:
     eMusicVector mCampaignVictory;
 };
 
-#endif // EMUSIC_H
+#endif // MUSIC_H

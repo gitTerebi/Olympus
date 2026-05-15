@@ -84,7 +84,7 @@
 #include "buildings/eroad.h"
 #include "buildings/egatehouse.h"
 #include "eplague.h"
-#include "audio/emusic.h"
+#include "audio/music.h"
 
 #include "ecampaign.h"
 #include "eiteratesquare.h"

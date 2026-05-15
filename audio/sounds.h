@@ -1,11 +1,11 @@
-﻿#ifndef ESOUNDS_H
-#define ESOUNDS_H
+﻿#ifndef SOUNDS_H
+#define SOUNDS_H
 
-#include "esoundvector.h"
+#include "sound-vector.h"
 
-#include "egodsounds.h"
-#include "eherosounds.h"
-#include "emonstersounds.h"
+#include "god-sounds.h"
+#include "hero-sounds.h"
+#include "monster-sounds.h"
 
 class eTile;
 
@@ -511,4 +511,4 @@ private:
     eSoundVector mAmazonVoices;
 };
 
-#endif // ESOUNDS_H
+#endif // SOUNDS_H

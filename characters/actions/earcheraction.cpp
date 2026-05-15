@@ -14,7 +14,7 @@
 #include "missiles/earrowmissile.h"
 
 #include "edieaction.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

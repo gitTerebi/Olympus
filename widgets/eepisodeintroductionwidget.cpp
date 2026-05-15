@@ -16,7 +16,7 @@
 #include "eframedbutton.h"
 #include "estringhelpers.h"
 
-#include "audio/emusic.h"
+#include "audio/music.h"
 
 
 class eTooltipWidget : public eWidget {

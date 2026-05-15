@@ -1,4 +1,4 @@
-﻿#include "emusic.h"
+﻿#include "music.h"
 
 #include <fstream>
 #include <algorithm>
@@ -87,6 +87,10 @@ void eMusic::setVolume(const int volume) {
 
 void eMusic::setVoiceVolume(const int volume) {
     sVoiceVolume = clampPercent(volume);
+}
+
+void eMusic::reapplyVolumes() {
+    Mix_VolumeMusic(applyGeneralVolume(sMusicVolume));
 }
 
 void eMusic::incTimeImpl() {

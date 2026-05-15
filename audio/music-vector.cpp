@@ -1,8 +1,10 @@
-#include "emusicvector.h"
+#include "music-vector.h"
 
+#include "audio-device.h"
 #include "erand.h"
 
 Mix_Music* loadMusic(const std::string& path) {
+    if(!ensureAudioDeviceOpen()) return nullptr;
     const auto music = Mix_LoadMUS(path.c_str());
     if(!music) {
         printf("Failed to load music! SDL_mixer Error: %s\n",

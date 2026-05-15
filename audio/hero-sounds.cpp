@@ -1,6 +1,6 @@
-#include "eherosounds.h"
+#include "hero-sounds.h"
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "egamedir.h"
 
 eHeroSounds::eHeroSounds(const std::string& shortName,

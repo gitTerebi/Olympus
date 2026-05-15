@@ -1,6 +1,6 @@
-#include "egodsounds.h"
+#include "god-sounds.h"
 
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "egamedir.h"
 
 eGodSounds::eGodSounds(const std::string& shortName,

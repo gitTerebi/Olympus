@@ -7,7 +7,7 @@
 #include "gameEvents/invasions/invasion-handler.h"
 #include "elanguage.h"
 #include "gameEvents/invasions/invasion-warning.h"
-#include "audio/emusic.h"
+#include "audio/music.h"
 #include "evectorhelpers.h"
 #include "gameEvents/eplayerconquestevent.h"
 #include "engine/edifficulty.h"
@@ -152,6 +152,10 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &boa
     const bool hasActiveInvasion = board.hasActiveInvasions(targetCid);
     if (hasActiveInvasion || targetCity->yearsElapsed() < 2)
         return false;
+    for (const auto i : board.invasions()) {
+        if (i && i->cityId() == targetCid)
+            return false;
+    }
 
     if (eRand::rand() % 12 != 0)
         return false;

@@ -7,7 +7,7 @@
 #include "missiles/earrowmissile.h"
 #include "characters/efightingcharacter.h"
 #include "characters/actions/efightingaction.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

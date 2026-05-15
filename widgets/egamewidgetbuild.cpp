@@ -31,7 +31,7 @@
 
 #include "elanguage.h"
 #include "estringhelpers.h"
-#include "audio/esounds.h"
+#include "audio/sounds.h"
 
 #include "erepair.h"
 
