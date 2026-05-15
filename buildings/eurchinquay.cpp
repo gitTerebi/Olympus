@@ -32,7 +32,7 @@ void eUrchinQuay::timeChanged(const int by) {
             if(mStateCount > eNumbers::sUrchinQuayUnpackTime) {
                 mStateCount = 0;
                 mState = eUrchinQuayState::waiting;
-                addProduced(eResourceType::urchin, 3);
+                trackProduced(addProduced(eResourceType::urchin, 3));
                 updateDisabled();
             }
         } break;

@@ -141,6 +141,7 @@ void eResourceCollectBuilding::timeChanged(const int by) {
                     mRawCount--;
                 } else {
                     const int c = addProduced(type, 1);
+                    trackProduced(c);
                     mRawCount -= c;
                 }
                 if(mRawCount <= mRawCountCollect) enableSpawn();
