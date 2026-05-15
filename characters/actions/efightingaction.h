@@ -24,8 +24,8 @@ public:
     double absX() const;
     double absY() const;
 
-    void read(eGameBoard& board, eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar, eGameBoard& board);
+    void readLegacy(eGameBoard& board, eReadStream& src);
 private:
     stdptr<eCharacter> mC;
     stdptr<eBuilding> mB;

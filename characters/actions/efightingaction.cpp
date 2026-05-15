@@ -15,6 +15,17 @@
 #include "missiles/earrowmissile.h"
 #include "missiles/espearmissile.h"
 
+namespace {
+bool sCanAttackCharacter(const eCharacter* const c) {
+    if(c->isSoldier()) return true;
+    const auto type = c->type();
+    return type == eCharacterType::wolf ||
+           type == eCharacterType::enemyBoat ||
+           type == eCharacterType::trireme ||
+           c->isImmortal();
+}
+}
+
 eAttackTarget::eAttackTarget() :
     mC(nullptr), mB(nullptr) {}
 
@@ -75,18 +86,18 @@ double eAttackTarget::absY() const {
     return 0.;
 }
 
-void eAttackTarget::read(eGameBoard &board, eReadStream &src) {
+void eAttackTarget::serialize(eSaveArchive& ar, eGameBoard& board) {
+    ar.characterField("character", &board, mC);
+    ar.buildingField("building", &board, mB);
+}
+
+void eAttackTarget::readLegacy(eGameBoard& board, eReadStream& src) {
     src.readCharacter(&board, [this](eCharacter* const c) {
         mC = c;
     });
     src.readBuilding(&board, [this](eBuilding* const b) {
         mB = b;
     });
-}
-
-void eAttackTarget::write(eWriteStream &dst) const {
-    dst.writeCharacter(mC);
-    dst.writeBuilding(mB);
 }
 
 void eFightingAction::sSignalBeingAttack(
@@ -241,11 +252,12 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                 const vec2d posdif = ccpos - cpos;
                 const double dist = posdif.length();
                 if(dist > 1.) continue;
-                if(!cc->isSoldier()) {
+                if(!sCanAttackCharacter(cc.get())) continue;
+                if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
                     if(cc->isImmortal()) {
                         thirdOption = cc;
                     } else if(cctype == eCharacterType::enemyBoat ||
-                              cctype == eCharacterType::trireme) {
+                               cctype == eCharacterType::trireme) {
                         secondOption = cc;
                     }
                     continue;
@@ -282,11 +294,12 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
-                        if(!cc->isSoldier()) {
-                            if(cc->isImmortal()) {
-                                thirdOption = cc;
-                            } else if(cctype == eCharacterType::enemyBoat ||
-                                      cctype == eCharacterType::trireme) {
+                if(!sCanAttackCharacter(cc.get())) continue;
+                if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
+                    if(cc->isImmortal()) {
+                        thirdOption = cc;
+                    } else if(cctype == eCharacterType::enemyBoat ||
+                               cctype == eCharacterType::trireme) {
                                 secondOption = cc;
                             }
                             continue;
@@ -326,7 +339,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                     if(!t) continue;
                     const auto& chars = t->characters();
                     for(const auto& cc : chars) {
-                        if(!cc->isFighter()) continue;
+                        if(!sCanAttackCharacter(cc.get())) continue;
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
@@ -464,10 +477,14 @@ void eFightingAction::serialize(eSaveArchive& ar) {
     ar.field("mLookForEnemy", mLookForEnemy);
     ar.field("mAttackTime", mAttackTime);
     ar.field("mAttack", mAttack);
-    if(ar.reading()) {
-        mAttackTarget.read(board(), ar.readStream());
-    } else {
-        mAttackTarget.write(ar.writeStream());
+    const bool hasAttackTarget = ar.archiveField(
+        "mAttackTarget",
+        [this](eSaveArchive& targetAr) {
+            mAttackTarget.serialize(targetAr, board());
+        });
+    if(ar.reading() && !hasAttackTarget) {
+        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored attack target refs inline.
+        mAttackTarget.readLegacy(board(), ar.legacyReadStream());
     }
     ar.field("mSavedAction", mSavedAction);
     ar.field("mOverwrittableAction", mOverwrittableAction);

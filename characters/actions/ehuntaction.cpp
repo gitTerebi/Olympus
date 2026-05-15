@@ -126,16 +126,20 @@ void eHuntAction::write(eWriteStream& dst) const {
 }
 
 void eHuntAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+    const bool hasHuntRefs = ar.archiveField(
+        "huntRefs",
+        [this](eSaveArchive& refsAr) {
+            refsAr.buildingAsField("lodge", &board(), mLodge);
+            refsAr.characterAsField("hunter", &board(), mHunter);
+        });
+    if(ar.reading() && !hasHuntRefs) {
+        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored hunt refs inline.
+        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
             mLodge = static_cast<eHuntingLodge*>(b);
         });
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
+        ar.legacyReadStream().readCharacter(&board(), [this](eCharacter* const c) {
             mHunter = static_cast<eHunter*>(c);
         });
-    } else {
-        ar.writeStream().writeBuilding(mLodge);
-        ar.writeStream().writeCharacter(mHunter);
     }
     ar.field("mNoResource", mNoResource);
 }

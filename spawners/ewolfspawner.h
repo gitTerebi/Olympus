@@ -9,6 +9,8 @@ public:
                  eGameBoard& board);
 
     stdsptr<eWildAnimal> create(eGameBoard& board) override;
+    void incTime(const int by) override;
+    void spawnMax() override;
 };
 
 #endif // EWOLFSPAWNER_H
