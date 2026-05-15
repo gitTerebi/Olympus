@@ -1,4 +1,4 @@
-#include "estorageinfowidget.h"
+#include "storage-info-widget.h"
 
 #include "engine/e-game-board.h"
 

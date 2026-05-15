@@ -647,7 +647,7 @@ set(SOURCES
      widgets/egamewidgetbuild.cpp
      widgets/gamebuild/ecommonhousingbuild.cpp
      widgets/egamewidgetevents.cpp
-    widgets/egamewidgetinfo.cpp
+    widgets/game-widget-info.cpp
     widgets/egamewidgetpaint.cpp
     widgets/erepair.cpp
     widgets/egiftdialog.cpp
@@ -738,8 +738,8 @@ set(SOURCES
     widgets/infowidgets/ehippodromeinfowidget.cpp
     widgets/infowidgets/einfowidget.cpp
     widgets/infowidgets/esanctuaryinfowidget.cpp
-    widgets/infowidgets/estorageinfowidget.cpp
-    widgets/infowidgets/etradepostinfowidget.cpp
+    widgets/infowidgets/storage-info-widget.cpp
+    widgets/infowidgets/trade-post-info-widget.cpp
     widgets/infowidgets/etriremewharfinfowidget.cpp
     widgets/moreinfo/ecityfinanceswidget.cpp
     widgets/moreinfo/eworkforceallocationwidget.cpp
