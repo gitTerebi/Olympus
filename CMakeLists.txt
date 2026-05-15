@@ -742,8 +742,8 @@ set(SOURCES
     widgets/infowidgets/storage-info-widget.cpp
     widgets/infowidgets/trade-post-info-widget.cpp
     widgets/infowidgets/etriremewharfinfowidget.cpp
-    widgets/moreinfo/ecityfinanceswidget.cpp
-    widgets/moreinfo/eworkforceallocationwidget.cpp
+    widgets/moreinfo/city-finances-widget.cpp
+    widgets/moreinfo/workforce-allocation-widget.cpp
     widgets/moreinfo/storage-distribution-dialog.cpp
     widgets/moreinfo/storage-distribution-widget.cpp
 )

@@ -78,6 +78,7 @@ Thumbs.db
 .claude/settings.local.json
 /out/build/x64-Debug
 /.vs
+/.vscode
 /.kilo
 /.claude
 /.lean-ctx

@@ -11,7 +11,7 @@
 
 #include "elanguage.h"
 #include "widgets/emultilinelabel.h"
-#include "widgets/moreinfo/ecityfinanceswidget.h"
+#include "widgets/moreinfo/city-finances-widget.h"
 
 void eAdminDataWidget::initialize() {
     {
