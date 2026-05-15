@@ -2,6 +2,8 @@
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/deliver-cart-action.h"
+#include "characters/actions/get-cart-action.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
@@ -80,8 +82,14 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
     c->setAtlantean(atlantean());
     c->changeTile(t);
 
-    const auto a = e::make_shared<eCartTransporterAction>(
-                       c.get(), this);
+    stdsptr<eCartTransporterAction> a;
+    if(s == eCartActionTypeSupport::deliver) {
+        a = e::make_shared<eDeliverCartAction>(c.get(), this);
+    } else if(s == eCartActionTypeSupport::get) {
+        a = e::make_shared<eGetCartAction>(c.get(), this);
+    } else {
+        a = e::make_shared<eCartTransporterAction>(c.get(), this); // both
+    }
     c->setAction(a);
     c->setSupport(s);
     return c.get();

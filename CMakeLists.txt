@@ -169,6 +169,8 @@ set(SOURCES
     characters/actions/eattackcityaction.cpp
     characters/actions/ebuildaction.cpp
     characters/actions/ecarttransporteraction.cpp
+    characters/actions/deliver-cart-action.cpp
+    characters/actions/get-cart-action.cpp
     characters/actions/echaracteraction.cpp
     characters/actions/echaracteractioncreator.cpp
     characters/actions/echaracteractionfunction.cpp
