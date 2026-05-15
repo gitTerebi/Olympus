@@ -262,7 +262,15 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
     const auto& city = stor->city();
     const auto title = eLanguage::zeusText(28, 62) + ": " + city.name();
 
-    eEmployingBuildingInfoWidget::initialize(title, stor);
+    std::string sTitle;
+    std::string sInfo;
+    std::string sEmpl;
+    std::string sAdd;
+    eBuilding::sInfoText(stor, sTitle, sInfo, sEmpl, sAdd);
+
+    eInfoWidget::initialize(title);
+    addCentralWidget();
+    addEmploymentWidget(stor);
 
     eResourceType imports;
     eResourceType exports;
@@ -360,6 +368,15 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
         wrapper->align(eAlignment::hcenter);
     }
 
+    if(!sEmpl.empty()) {
+        const auto emplLabel = new eLabel(window());
+        emplLabel->setFontSizeS();
+        emplLabel->setWrapWidth(stWid->width());
+        emplLabel->setText(sEmpl);
+        emplLabel->fitContent();
+        stWid->addWidget(emplLabel);
+        emplLabel->align(eAlignment::hcenter);
+    }
     stWid->layoutVertically();
 
     if(prevNext) {
