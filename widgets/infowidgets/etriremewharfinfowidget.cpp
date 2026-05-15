@@ -42,9 +42,7 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
 
     addText(info);
 
-    addText(employmentInfo);
-
-    addEmploymentWidget(b);
+    addEmploymentWidget(b, employmentInfo);
 
     addText(additionalInfo);
 

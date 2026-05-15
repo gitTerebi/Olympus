@@ -22,15 +22,17 @@ void eEmployingBuildingInfoWidget::initialize(
         const std::string& subText) {
     eInfoWidget::initialize(title);
     if(!info.empty()) addText(info);
-    if(!text.empty()) addText(text);
-    addEmploymentWidget(b);
+    addEmploymentWidget(b, text);
     if(!subText.empty()) addText(subText);
 }
 
-void eEmployingBuildingInfoWidget::addEmploymentWidget(eEmployingBuilding* const b) {
+void eEmployingBuildingInfoWidget::addEmploymentWidget(
+        eEmployingBuilding* const b,
+        const std::string& infoStr) {
     const int p = padding();
 
-    const auto wid = addFramedWidget(8*p);
+    const int frameH = infoStr.empty() ? 6*p : 10*p;
+    const auto wid = addFramedWidget(frameH);
     const int e = b->employed();
     const int me = b->maxEmployees();
     const auto estr = std::to_string(e);
@@ -44,5 +46,17 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(eEmployingBuilding* const
     empl->setPaddingS();
     empl->fitContent();
     wid->addWidget(empl);
-    empl->align(eAlignment::hcenter);
+    if(infoStr.empty()) {
+        empl->align(eAlignment::hcenter);
+    } else {
+        const auto info = new eLabel(infoStr, window());
+        info->setFontSizeS();
+        info->setPaddingS();
+        info->setWrapWidth(wid->width());
+        info->fitContent();
+        wid->addWidget(info);
+        wid->stackVertically(p);
+        empl->align(eAlignment::hcenter);
+        info->align(eAlignment::hcenter);
+    }
 }

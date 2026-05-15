@@ -67,9 +67,8 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                                  employmentInfo,
                                  additionalInfo);
         }
-        addText(employmentInfo);
         const auto cw = addCentralWidget();
-        addEmploymentWidget(m);
+        addEmploymentWidget(m, employmentInfo);
         const auto gt = s->godType();
 
         const int cww = cw->width();

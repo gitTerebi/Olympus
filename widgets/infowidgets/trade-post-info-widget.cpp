@@ -270,7 +270,7 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
 
     eInfoWidget::initialize(title);
     addCentralWidget();
-    addEmploymentWidget(stor);
+    addEmploymentWidget(stor, sEmpl);
 
     eResourceType imports;
     eResourceType exports;
@@ -368,15 +368,6 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
         wrapper->align(eAlignment::hcenter);
     }
 
-    if(!sEmpl.empty()) {
-        const auto emplLabel = new eLabel(window());
-        emplLabel->setFontSizeS();
-        emplLabel->setWrapWidth(stWid->width());
-        emplLabel->setText(sEmpl);
-        emplLabel->fitContent();
-        stWid->addWidget(emplLabel);
-        emplLabel->align(eAlignment::hcenter);
-    }
     stWid->layoutVertically();
 
     if(prevNext) {
