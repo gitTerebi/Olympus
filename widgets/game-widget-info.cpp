@@ -17,8 +17,8 @@
 #include "infowidgets/eheroshallinfowidget.h"
 #include "infowidgets/ehippodromeinfowidget.h"
 #include "infowidgets/esanctuaryinfowidget.h"
-#include "infowidgets/estorageinfowidget.h"
-#include "infowidgets/etradepostinfowidget.h"
+#include "infowidgets/storage-info-widget.h"
+#include "infowidgets/trade-post-info-widget.h"
 #include "infowidgets/etriremewharfinfowidget.h"
 
 #include "engine/e-game-board.h"

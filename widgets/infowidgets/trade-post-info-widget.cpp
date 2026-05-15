@@ -1,4 +1,4 @@
-#include "etradepostinfowidget.h"
+#include "trade-post-info-widget.h"
 
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"

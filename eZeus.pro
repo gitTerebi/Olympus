@@ -646,7 +646,7 @@ SOURCES += \
         widgets/egamewidget.cpp \
         widgets/egamewidgetbuild.cpp \
         widgets/egamewidgetevents.cpp \
-        widgets/egamewidgetinfo.cpp \
+        widgets/game-widget-info.cpp \
         widgets/egamewidgetpaint.cpp \
         widgets/egiftdialog.cpp \
         widgets/egiftsizedialog.cpp \
@@ -2950,8 +2950,8 @@ HEADERS += \
     widgets/infowidgets/ehippodromeinfowidget.h \
     widgets/infowidgets/einfowidget.h \
     widgets/infowidgets/esanctuaryinfowidget.h \
-    widgets/infowidgets/estorageinfowidget.h \
-    widgets/infowidgets/etradepostinfowidget.h \
+    widgets/infowidgets/storage-info-widget.h \
+    widgets/infowidgets/trade-post-info-widget.h \
     widgets/infowidgets/etriremewharfinfowidget.h \
     widgets/moreinfo/ecityfinanceswidget.h \
     widgets/moreinfo/eworkforceallocationwidget.h \
