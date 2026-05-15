@@ -1,4 +1,4 @@
-#include "storage-distribution-widget.h"
+#include "storage-distribution-dialog.h"
 
 #include "widgets/elabel.h"
 #include "widgets/emicrobutton.h"
@@ -8,36 +8,29 @@
 #include "emainwindow.h"
 #include "engine/e-game-board.h"
 
-namespace
-{
-    class eClickWidget : public eWidget
-    {
-    public:
-        eClickWidget(eMainWindow *w, std::function<void()> onClick)
-            : eWidget(w), mOnClick(std::move(onClick)) { setNoPadding(); }
-
-    protected:
-        bool mousePressEvent(const eMouseEvent &) override
-        {
-            if (mOnClick)
-                mOnClick();
-            return true;
-        }
-
-    private:
-        std::function<void()> mOnClick;
-    };
+namespace {
+class eClickWidget : public eWidget {
+public:
+    eClickWidget(eMainWindow* w, std::function<void()> onClick)
+        : eWidget(w), mOnClick(std::move(onClick)) { setNoPadding(); }
+protected:
+    bool mousePressEvent(const eMouseEvent&) override {
+        if(mOnClick) mOnClick();
+        return true;
+    }
+private:
+    std::function<void()> mOnClick;
+};
 }
 
-StorageDistributionWidget::StorageDistributionWidget(
+StorageDistributionDialog::StorageDistributionDialog(
     eMainWindow *const window,
     eMainWidget *const mw) : eInfoWidget(window, mw, false, false) {}
 
-void StorageDistributionWidget::initialize(
+void StorageDistributionDialog::initialize(
     eGameBoard &board, const eCityId cid)
 {
-    const int panelW = std::round(window()->width() * 0.80);
-
+    const int panelW = std::round(window()->width() * 0.75);
     resize(panelW, height());
 
     eInfoWidget::initialize("");
@@ -46,11 +39,11 @@ void StorageDistributionWidget::initialize(
     const int p = padding();
     const int ww = widgetWidth();
 
-    const int iconW = std::round(ww * 0.08);
-    const int nameW = std::round(ww * 0.10);
-    const int amtW = std::round(ww * 0.10);
-    const int btnW = std::round(ww * 0.15);
-    const int tradeW = std::round(ww * 0.10);
+    const int iconW   = std::round(ww * 0.08);
+    const int nameW   = std::round(ww * 0.10);
+    const int amtW    = std::round(ww * 0.10);
+    const int btnW    = std::round(ww * 0.15);
+    const int tradeW  = std::round(ww * 0.10);
 
     // header row
     {
@@ -127,17 +120,13 @@ void StorageDistributionWidget::initialize(
         stockpileBtn->setFontSizeXS();
         stockpileBtn->fitHeight();
 
-        auto applyStockpileVisual = [icon, nameLabel, stockpileBtn](bool s)
-        {
-            if (s)
-            {
+        auto applyStockpileVisual = [icon, nameLabel, stockpileBtn](bool s) {
+            if(s) {
                 icon->setTextureColorMod(128, 128, 128);
                 nameLabel->setDarkFontColor();
                 stockpileBtn->setText("stockpiling");
                 stockpileBtn->setDarkFontColor();
-            }
-            else
-            {
+            } else {
                 icon->setTextureColorMod(255, 255, 255);
                 nameLabel->setLightFontColor();
                 stockpileBtn->setText("using");
@@ -146,16 +135,11 @@ void StorageDistributionWidget::initialize(
         };
         applyStockpileVisual(stockpiled);
 
-        auto toggleStockpile = [&board, cid, t, applyStockpileVisual]()
-        {
+        auto toggleStockpile = [&board, cid, t, applyStockpileVisual]() {
             const auto c = board.boardCityWithId(cid);
-            if (!c)
-                return;
+            if(!c) return;
             const bool nowS = !c->isStockpiled(t);
-            if (nowS)
-                c->addStockpile(t);
-            else
-                c->removeStockpile(t);
+            if(nowS) c->addStockpile(t); else c->removeStockpile(t);
             applyStockpileVisual(nowS);
         };
         stockpileBtn->setPressAction(toggleStockpile);
@@ -173,16 +157,8 @@ void StorageDistributionWidget::initialize(
         const auto mothballBtn = new eMicroButton(window());
         mothballBtn->setNoPadding();
         mothballBtn->setFontSizeXS();
-        if (shutdown)
-        {
-            mothballBtn->setText("disabled");
-            mothballBtn->setDarkFontColor();
-        }
-        else
-        {
-            mothballBtn->setText("working");
-            mothballBtn->setLightFontColor();
-        }
+        if(shutdown) { mothballBtn->setText("disabled"); mothballBtn->setDarkFontColor(); }
+        else         { mothballBtn->setText("working");  mothballBtn->setLightFontColor(); }
         mothballBtn->fitHeight();
         mothballBtn->setPressAction([&board, cid, t, mothballBtn]()
                                     {
@@ -215,7 +191,7 @@ void StorageDistributionWidget::initialize(
         rowItems.push_back({row, 0, 0});
     }
 
-    const int maxH = std::round(window()->height() * 0.70);
+    const int maxH = std::round(window()->height() * 0.75);
     const auto scrollArea = eLayoutHelpers::flexCol(window(), 0, rowItems, {.gap = p});
     const int scrollH = std::min(scrollArea->height(), maxH);
 

@@ -12,7 +12,7 @@ class eGameBoard;
 class ePopulationDataWidget;
 class eEmploymentDataWidget;
 class eAdminDataWidget;
-class StorageDataWidget;
+class StorageSidebarPanel;
 class eAppealDataWidget;
 class eHygieneSafetyDataWidget;
 class eHusbandryDataWidget;
@@ -121,7 +121,7 @@ private:
     ePopulationDataWidget* mPopDataW = nullptr;
     eEmploymentDataWidget* mEmplDataW = nullptr;
     eHusbandryDataWidget* mHusbDataW = nullptr;
-    StorageDataWidget* mStrgDataW = nullptr;
+    StorageSidebarPanel* mStrgDataW = nullptr;
     eAppealDataWidget* mApplDataW = nullptr;
     eHygieneSafetyDataWidget* mHySaDataW = nullptr;
     eAdminDataWidget* mAdminDataW = nullptr;

@@ -11,7 +11,7 @@
 #include "widgets/datawidgets/epopulationdatawidget.h"
 #include "widgets/datawidgets/eemploymentdatawidget.h"
 #include "widgets/datawidgets/eappealdatawidget.h"
-#include "widgets/datawidgets/storage-data-widget.h"
+#include "widgets/datawidgets/storage-sidebar-panel.h"
 #include "widgets/datawidgets/ehygienesafetydatawidget.h"
 #include "widgets/datawidgets/eculturedatawidget.h"
 #include "widgets/datawidgets/esciencedatawidget.h"
@@ -809,7 +809,7 @@ void eGameMenu::initialize(eGameBoard *const b,
         openBuildWidget(cmx, cmy, cs);
     };
 
-    mStrgDataW = new StorageDataWidget(*b, window());
+    mStrgDataW = new StorageSidebarPanel(*b, window());
 
     const int cost4 = eDifficultyHelpers::buildingCost(
         diff, eBuildingType::granary);

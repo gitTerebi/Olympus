@@ -587,7 +587,7 @@ SOURCES += \
         widgets/datawidgets/e-overview-data-widget.cpp \
         widgets/datawidgets/epopulationdatawidget.cpp \
         widgets/datawidgets/esciencedatawidget.cpp \
-        widgets/datawidgets/storage-data-widget.cpp \
+        widgets/datawidgets/storage-sidebar-panel.cpp \
         widgets/datawidgets/eviewmodebutton.cpp \
         widgets/eacceptbutton.cpp \
         widgets/eactionlistwidget.cpp \
@@ -739,7 +739,7 @@ SOURCES += \
         widgets/infowidgets/etriremewharfinfowidget.cpp \
         widgets/moreinfo/ecityfinanceswidget.cpp \
         widgets/moreinfo/eworkforceallocationwidget.cpp \
-        widgets/moreinfo/storage-distribution-widget.cpp
+        widgets/moreinfo/storage-distribution-dialog.cpp
 
 HEADERS += \
     audio/god-sounds.h \
@@ -2808,7 +2808,7 @@ HEADERS += \
     widgets/datawidgets/e-overview-data-widget.h \
     widgets/datawidgets/epopulationdatawidget.h \
     widgets/datawidgets/esciencedatawidget.h \
-    widgets/datawidgets/storage-data-widget.h \
+    widgets/datawidgets/storage-sidebar-panel.h \
     widgets/datawidgets/eviewmodebutton.h \
     widgets/eacceptbutton.h \
     widgets/eactionlistwidget.h \
@@ -2955,7 +2955,7 @@ HEADERS += \
     widgets/infowidgets/etriremewharfinfowidget.h \
     widgets/moreinfo/ecityfinanceswidget.h \
     widgets/moreinfo/eworkforceallocationwidget.h \
-    widgets/moreinfo/storage-distribution-widget.h \
+    widgets/moreinfo/storage-distribution-dialog.h \
 
 DISTFILES += \
     Adventures/The Founding of Athens/The Founding of Athens.epak \
