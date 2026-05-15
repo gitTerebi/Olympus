@@ -22,6 +22,7 @@ private:
     eLabel* mMsgLabel = nullptr;
     eWidget* mLoadsWidget = nullptr;
     eLabel* mAdditionalInfo = nullptr;
+    eWidget* mTradeWidget = nullptr;
 
     eAction mSpeakAction;
 };

@@ -2,6 +2,7 @@
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/etraderaction.h"
 #include "engine/eresourcetype.h"
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
@@ -2119,6 +2120,10 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
     mAdditionalInfo->fitContent();
     addWidget(mAdditionalInfo);
 
+    mTradeWidget = new eWidget(window());
+    mTradeWidget->setNoPadding();
+    addWidget(mTradeWidget);
+
     setCharacter(c);
 }
 
@@ -2155,7 +2160,44 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
     mContent->fitHeight();
 
     std::string additionalTxt;
-    if (const auto cta = dynamic_cast<eCartTransporterAction *>(c->action()))
+    mTradeWidget->removeAllWidgets();
+    if (const auto tra = dynamic_cast<eTraderAction *>(c->action()))
+    {
+        const auto& bought = tra->bought();
+        const auto& sold = tra->sold();
+        const auto addRow = [&](const std::string& label,
+                                const eResourceType type,
+                                const int n)
+        {
+            const auto row = new eWidget(window());
+            row->setNoPadding();
+            const auto l = new eLabel(label + " " + std::to_string(n), window());
+            l->setFontSizeS();
+            l->setNoPadding();
+            l->fitContent();
+            row->addWidget(l);
+            const auto icon = new eLabel(window());
+            icon->setNoPadding();
+            icon->setTexture(eResourceTypeHelpers::icon(res.uiScale(), type));
+            icon->fitContent();
+            row->addWidget(icon);
+            const auto n2 = new eLabel(eResourceTypeHelpers::typeName(type), window());
+            n2->setFontSizeS();
+            n2->setNoPadding();
+            n2->fitContent();
+            row->addWidget(n2);
+            row->stackHorizontally(res.paddingXS());
+            row->fitContent();
+            mTradeWidget->addWidget(row);
+        };
+        for (const auto& e : bought)
+            addRow(eLanguage::zeusText(129, 4), e.first, e.second);
+        for (const auto& e : sold)
+            addRow(eLanguage::zeusText(129, 5), e.first, e.second);
+        mTradeWidget->stackVertically(res.paddingXS());
+        mTradeWidget->fitContent();
+    }
+    else if (const auto cta = dynamic_cast<eCartTransporterAction *>(c->action()))
     {
         const auto from = cta->src();
         const auto to = cta->target();
@@ -2182,4 +2224,9 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
     mAdditionalInfo->fitContent();
     const int hp = res.paddingXL();
     mAdditionalInfo->move(hp, height() - hp - mAdditionalInfo->height());
+
+    if (!mTradeWidget->children().empty())
+    {
+        mTradeWidget->move(hp, mAdditionalInfo->y() - res.paddingS() - mTradeWidget->height());
+    }
 }

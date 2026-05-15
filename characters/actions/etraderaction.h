@@ -1,6 +1,8 @@
 #ifndef ETRADERACTION_H
 #define ETRADERACTION_H
 
+#include <map>
+
 #include "eactionwithcomeback.h"
 #include "buildings/etradepost.h"
 #include "ewalkablehelpers.h"
@@ -23,6 +25,9 @@ public:
     void setUnpackBuilding(eBuilding* const b);
 
     void setWalkable(const stdsptr<eWalkableObject>& w);
+
+    const std::map<eResourceType, int>& bought() const { return mBought; }
+    const std::map<eResourceType, int>& sold() const { return mSold; }
 private:
     void goToTradePost();
     void trade();
@@ -39,6 +44,9 @@ private:
     bool mAtTradePost = false;
     bool mFinishedTrade = false;
     bool mNotFound = false;
+
+    std::map<eResourceType, int> mBought;
+    std::map<eResourceType, int> mSold;
 };
 
 class eTA_tradeFail : public eCharActFunc {
