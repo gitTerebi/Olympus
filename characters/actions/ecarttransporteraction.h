@@ -37,7 +37,8 @@ protected:
     void findTarget(const std::vector<eCartTask>& tasks, eBuilding* avoided);
     void findTarget(const std::vector<eCartTask>& tasks,
                     eBuilding* avoided,
-                    bool granaryFirst);
+                    bool preferGranaryFirst);
+    void throttleDropoffRetry();
     void goBack();
 
     void targetResourceAction(const int bx, const int by);
@@ -69,6 +70,10 @@ private:
     eCartTask mTask;
 
     int mUpdateWaiting = 0;
+
+    int mRetryCount = 0;
+    static const int kMaxDropoffRetries = 250;
+    static const int kRetryWaitTicks = 1000;
 
     bool mNoTarget = false;
     bool mWaitOutside = false;
