@@ -647,7 +647,8 @@ SOURCES += \
         widgets/egamewidgetbuild.cpp \
         widgets/egamewidgetevents.cpp \
         widgets/game-widget-info.cpp \
-        widgets/egamewidgetpaint.cpp \
+        widgets/paint/game-widget-paint.cpp \
+        widgets/paint/patrol-path-data.cpp \
         widgets/egiftdialog.cpp \
         widgets/egiftsizedialog.cpp \
         widgets/egodbutton.cpp \

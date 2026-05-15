@@ -24,7 +24,7 @@ eGuidedMovePathTask::eGuidedMovePathTask(ePatrolBuildingBase * const b,
     }
     mGuides = mB->patrolGuides();
     {
-        const auto c = b->centerTile();
+        const auto c = b->patrolStartTile();
         const int x = c->x();
         const int y = c->y();
         mStartGuide = {x, y};

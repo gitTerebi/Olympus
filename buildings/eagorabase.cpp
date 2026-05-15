@@ -2,6 +2,7 @@
 
 #include "eagoraspace.h"
 #include "engine/e-game-board.h"
+#include "engine/etile.h"
 
 #include "evendor.h"
 
@@ -257,6 +258,21 @@ eVendor* eAgoraBase::vendor(const eResourceType r) const {
         if(re) return v;
     }
     return nullptr;
+}
+
+eTile* eAgoraBase::patrolStartTile() const {
+    auto& brd = const_cast<eAgoraBase*>(this)->getBoard();
+    const auto rect = tileRect();
+    for(int x = rect.x; x < rect.x + rect.w; x++) {
+        for(int y = rect.y; y < rect.y + rect.h; y++) {
+            const auto t = brd.tile(x, y);
+            if(!t) continue;
+            const auto ub = t->underBuilding();
+            if(!ub) continue;
+            if(ub->type() == eBuildingType::road) return t;
+        }
+    }
+    return centerTile();
 }
 
 eDiagonalOrientation eAgoraBase::diagonalOrientation() const {
