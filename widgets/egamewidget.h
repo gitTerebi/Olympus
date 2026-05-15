@@ -413,10 +413,6 @@ private:
     bool mRightPanning = false;
     bool mRightFormationFacing = false;
     bool mMovedSincePress = false;
-    bool mScrollLeft = false;
-    bool mScrollRight = false;
-    bool mScrollUp = false;
-    bool mScrollDown = false;
     int mSmoothScrollX = 0;
     int mSmoothScrollY = 0;
     int mKeyScrollSpeed = 18;
