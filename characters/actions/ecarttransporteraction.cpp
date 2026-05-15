@@ -79,6 +79,18 @@ bool eCartTransporterAction::decide() {
                     findTarget(task);
                 }
             } else {
+                const auto supp = support();
+                if(supp == eCartActionTypeSupport::give) {
+                    const auto tasks = mBuilding->cartTasks();
+                    if(!tasks.empty()) {
+                        startResourceAction(tasks.front());
+                        if(c->resCount() > 0) {
+                            waitOutside();
+                            return true;
+                        }
+                    }
+                    return true;
+                }
                 findTarget();
             }
         }
