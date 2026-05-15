@@ -1,4 +1,4 @@
-#include "eworkforceallocationwidget.h"
+#include "workforce-allocation-widget.h"
 
 #include "widgets/esmallupbutton.h"
 #include "widgets/esmalldownbutton.h"

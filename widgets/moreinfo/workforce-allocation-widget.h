@@ -1,5 +1,5 @@
-#ifndef EWORKFORCEALLOCATIONWIDGET_H
-#define EWORKFORCEALLOCATIONWIDGET_H
+#ifndef WORKFORCEALLOCATIONWIDGET_H
+#define WORKFORCEALLOCATIONWIDGET_H
 
 #include "../infowidgets/einfowidget.h"
 
@@ -22,4 +22,4 @@ private:
     std::map<eSector, eLabel*> mEmplLabels;
 };
 
-#endif // EWORKFORCEALLOCATIONWIDGET_H
+#endif // WORKFORCEALLOCATIONWIDGET_H

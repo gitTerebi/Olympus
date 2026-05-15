@@ -1,4 +1,4 @@
-#include "ecityfinanceswidget.h"
+#include "city-finances-widget.h"
 
 #include "widgets/elabel.h"
 #include "widgets/elinewidget.h"

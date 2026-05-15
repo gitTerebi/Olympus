@@ -1,5 +1,5 @@
-#ifndef ECITYFINANCESWIDGET_H
-#define ECITYFINANCESWIDGET_H
+#ifndef CITYFINANCESWIDGET_H
+#define CITYFINANCESWIDGET_H
 
 #include "../infowidgets/einfowidget.h"
 
@@ -14,4 +14,4 @@ public:
     void initialize(eGameBoard& board, const eCityId cid);
 };
 
-#endif // ECITYFINANCESWIDGET_H
+#endif // CITYFINANCESWIDGET_H
