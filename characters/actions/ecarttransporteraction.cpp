@@ -144,7 +144,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
 
 void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided,
-                                        const bool granaryFirst) {
+                                        const bool preferGranaryFirst) {
     if(!mBuilding) return;
     if(tasks.empty()) return;
     const auto c = character();
@@ -171,13 +171,13 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             return t.fType == eCartActionType::give &&
                    static_cast<bool>(t.fResource & eResourceType::food);
         });
-    const auto granaryOnly = std::make_shared<bool>(granaryFirst &&
+    const auto preferGranary = std::make_shared<bool>(preferGranaryFirst &&
                                                     isProducer &&
                                                     hasGiveTasks);
 
     // 2. Check each tile for valid target buildings
     const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by,
-                            granaryOnly, hasAvoided, avoidedRect]
+                            preferGranary, hasAvoided, avoidedRect]
                            (eThreadTile* const t) {
         // 2.1 Skip tiles without buildings
         if(!t->isUnderBuilding()) return false;
@@ -193,7 +193,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         const auto& ub = t->underBuilding();
 
         // 2.3 Producers: first pass accepts only granaries
-        if(*granaryOnly && ub.type() != eBuildingType::granary) return false;
+        if(*preferGranary && ub.type() != eBuildingType::granary) return false;
 
         // 2.4 Skip trading posts for agora vendors when setting disabled
         if(ub.type() == eBuildingType::tradePost) {
@@ -239,7 +239,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                   board(), this);
 
     const auto startSearch = [this, tptr, c, tasks, finalTile, finishAction,
-                               ttask, bx, by, granaryOnly, avoidedPtr]() {
+                               ttask, bx, by, preferGranary, avoidedPtr]() {
         const auto a = e::make_shared<eMoveToAction>(c);
         a->setStateRelevance(eStateRelevance::resourcesInBuildings |
                              eStateRelevance::buildings);
@@ -256,14 +256,20 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             startResourceAction(mTask);
             c->setActionType(eCharacterActionType::walk);
         });
-        a->setFindFailAction([tptr, this, granaryOnly, tasks, avoidedPtr]() {
+        a->setFindFailAction([tptr, this, c, preferGranary, tasks, avoidedPtr]() {
             if(!tptr) return;
-            if(*granaryOnly) {
+            if(*preferGranary) {
                 // No granary found — retry without granary restriction
-                *granaryOnly = false;
+                *preferGranary = false;
                 findTarget(tasks, avoidedPtr.get(), false);
             } else {
-                mNoTarget = true;
+                const auto cart = static_cast<eCartTransporter*>(c);
+                if(cart->resCount() > 0 &&
+                   mTask.fType == eCartActionType::give) {
+                    throttleDropoffRetry();
+                } else {
+                    mNoTarget = true;
+                }
             }
         });
         a->setRemoveLastTurn(true);
@@ -276,6 +282,17 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
     };
 
     startSearch();
+}
+
+void eCartTransporterAction::throttleDropoffRetry() {
+    if(!mBuilding) return;
+    if(mRetryCount >= kMaxDropoffRetries) {
+        mRetryCount = 0;
+        mNoTarget = true;
+        return;
+    }
+    mRetryCount++;
+    wait(kRetryWaitTicks);
 }
 
 void eCartTransporterAction::goBack() {
@@ -324,6 +341,7 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         const auto res = ct->resType();
         const int added = rb->add(res, count);
         ct->setResource(res, count - added);
+        if(added > 0) mRetryCount = 0;
     }
     if(ct->resCount() > 0 && mTask.fType == eCartActionType::give) {
         eCartTask task;
