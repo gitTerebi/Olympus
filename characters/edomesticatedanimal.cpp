@@ -46,11 +46,6 @@ void eDomesticatedAnimal::read(eReadStream& src) {
     eAnimal::read(src);
     eSaveArchive ar(src);
     serialize(ar);
-    if(mResource == 0) {
-        setNakedTexture();
-    } else {
-        setFleecedTexture();
-    }
 }
 
 void eDomesticatedAnimal::write(eWriteStream& dst) const {
@@ -63,6 +58,14 @@ void eDomesticatedAnimal::serialize(eSaveArchive& ar) {
     ar.field("mGroomed", mGroomed);
     ar.field("mResource", mResource);
     ar.field("mMonthsGrown", mMonthsGrown);
+    if(ar.reading()) {
+        setBusy(false);
+        if(mResource == 0) {
+            setNakedTexture();
+        } else {
+            setFleecedTexture();
+        }
+    }
 }
 
 void eDomesticatedAnimal::resetGrowthProgress() {
