@@ -6,6 +6,7 @@
 #include "enumbers.h"
 #include "../eleftbutton.h"
 #include "../erightbutton.h"
+#include "../ebuttonbase.h"
 
 class eResourceStorageStack : public eWidget {
 public:
@@ -176,7 +177,7 @@ public:
 
             spinBoxes[type] = s;
 
-            const auto t = new eLabel(window());
+            const auto t = new eButtonBase(window());
             t->setFontSizeS();
             const auto pid = stor->playerId();
             const int cc = trade.used(pid);
@@ -184,6 +185,10 @@ public:
             t->setText(std::to_string(cc) + " " + eLanguage::zeusText(44, 148) + " " + std::to_string(ccc));
             t->fitContent();
             t->setHeight(rowHeight);
+            t->setPressAction([s, ccc, changed]() {
+                s->setValue(ccc);
+                changed();
+            });
 
             countW->addWidget(count);
             iconsW->addWidget(icon);
