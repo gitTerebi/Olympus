@@ -128,12 +128,32 @@ void eCartTransporterAction::findTarget(const eCartTask& task) {
     findTarget(std::vector<eCartTask>{task});
 }
 
+void eCartTransporterAction::findTarget(const eCartTask& task,
+                                        eBuilding* const avoided) {
+    findTarget(std::vector<eCartTask>{task}, avoided);
+}
+
 void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
+    findTarget(tasks, nullptr);
+}
+
+void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
+                                        eBuilding* const avoided) {
+    findTarget(tasks, avoided, true);
+}
+
+void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
+                                        eBuilding* const avoided,
+                                        const bool granaryFirst) {
     if(!mBuilding) return;
     if(tasks.empty()) return;
     const auto c = character();
 
     const auto buildingRect = mBuilding->tileRect();
+    const bool hasAvoided = avoided;
+    const SDL_Rect avoidedRect = hasAvoided ?
+                                     avoided->tileRect() : SDL_Rect{0, 0, 0, 0};
+    const stdptr<eBuilding> avoidedPtr(avoided);
 
     // 1. Store target coordinates and task
     const auto bx = std::make_shared<int>(0);
@@ -151,10 +171,13 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
             return t.fType == eCartActionType::give &&
                    static_cast<bool>(t.fResource & eResourceType::food);
         });
-    const auto granaryOnly = std::make_shared<bool>(isProducer && hasGiveTasks);
+    const auto granaryOnly = std::make_shared<bool>(granaryFirst &&
+                                                    isProducer &&
+                                                    hasGiveTasks);
 
     // 2. Check each tile for valid target buildings
-    const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by, granaryOnly]
+    const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by,
+                            granaryOnly, hasAvoided, avoidedRect]
                            (eThreadTile* const t) {
         // 2.1 Skip tiles without buildings
         if(!t->isUnderBuilding()) return false;
@@ -162,6 +185,10 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         // 2.2 Skip tiles part of cart's home building
         const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
         if(r) return false;
+        if(hasAvoided) {
+            const SDL_Point p{t->x(), t->y()};
+            if(SDL_PointInRect(&p, &avoidedRect)) return false;
+        }
 
         const auto& ub = t->underBuilding();
 
@@ -212,7 +239,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
                                   board(), this);
 
     const auto startSearch = [this, tptr, c, tasks, finalTile, finishAction,
-                               ttask, bx, by, granaryOnly]() {
+                               ttask, bx, by, granaryOnly, avoidedPtr]() {
         const auto a = e::make_shared<eMoveToAction>(c);
         a->setStateRelevance(eStateRelevance::resourcesInBuildings |
                              eStateRelevance::buildings);
@@ -229,12 +256,12 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
             startResourceAction(mTask);
             c->setActionType(eCharacterActionType::walk);
         });
-        a->setFindFailAction([tptr, this, granaryOnly, tasks]() {
+        a->setFindFailAction([tptr, this, granaryOnly, tasks, avoidedPtr]() {
             if(!tptr) return;
             if(*granaryOnly) {
                 // No granary found — retry without granary restriction
                 *granaryOnly = false;
-                findTarget(tasks);
+                findTarget(tasks, avoidedPtr.get(), false);
             } else {
                 mNoTarget = true;
             }
@@ -297,6 +324,14 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
         const auto res = ct->resType();
         const int added = rb->add(res, count);
         ct->setResource(res, count - added);
+    }
+    if(ct->resCount() > 0 && mTask.fType == eCartActionType::give) {
+        eCartTask task;
+        task.fType = eCartActionType::give;
+        task.fResource = ct->resType();
+        task.fMaxCount = ct->resCount();
+        findTarget(task, rb);
+        return;
     }
     if(startCount == 0 && ct->resCount() == 0 &&
        mTask.fType == eCartActionType::take && mTask.fMaxCount > 0) {

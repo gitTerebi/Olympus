@@ -246,6 +246,7 @@ namespace eBuildingModeHelpers {
     eBuildingMode fromBuildingType(const eBuildingType type);
     int toCommemorativeId(const eBuildingMode mode);
     eGodType toGodType(const eBuildingMode mode);
+    bool isCloneable(const eBuildingMode mode);
 }
 
 #endif // EBUILDINGMODE_H

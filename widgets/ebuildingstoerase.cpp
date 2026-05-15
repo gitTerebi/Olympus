@@ -71,8 +71,12 @@ void killAnimalPenAnimals(eBuilding* const b) {
         if(!c) continue;
         if(!isAnimalForPen(c->type(), bt)) continue;
         const auto aa = dynamic_cast<eAnimalAction*>(c->action());
-        if(!aa) continue;
-        if(aa->spawnerX() != rect.x || aa->spawnerY() != rect.y) continue;
+        if(aa) {
+            if(aa->spawnerX() != rect.x || aa->spawnerY() != rect.y) continue;
+        } else {
+            const auto tile = c->tile();
+            if(!tile || tile->x() != rect.x || tile->y() != rect.y) continue;
+        }
         c->kill();
     }
 }

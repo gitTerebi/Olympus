@@ -19,6 +19,7 @@ public:
                     eResourceCollectorBase* const c,
                     const eCharacterType animalType);
     eShepherdAction(eCharacter* const c);
+    ~eShepherdAction();
 
     bool decide() override;
 

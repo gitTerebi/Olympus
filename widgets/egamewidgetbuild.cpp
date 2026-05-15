@@ -770,8 +770,14 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             };
             const auto addAnimal = [&](eCharacter* const c) {
                 if(!c) return;
-                const auto aa = dynamic_cast<eAnimalAction*>(c->action());
-                if(!aa) return;
+                const auto type = c->type();
+                const bool animal = type == eCharacterType::sheep ||
+                                    type == eCharacterType::goat ||
+                                    type == eCharacterType::cattle1 ||
+                                    type == eCharacterType::cattle2 ||
+                                    type == eCharacterType::cattle3 ||
+                                    type == eCharacterType::bull;
+                if(!animal) return;
                 eraser.addCharacter(c);
             };
             for(int x = minX; x <= maxX; x++) {

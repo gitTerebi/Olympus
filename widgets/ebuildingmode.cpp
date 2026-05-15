@@ -432,6 +432,129 @@ eBuildingMode eBuildingModeHelpers::fromBuildingType(const eBuildingType type) {
     return eBuildingMode::none;
 }
 
+bool eBuildingModeHelpers::isCloneable(const eBuildingMode mode) {
+    switch(mode) {
+    case eBuildingMode::tradePost:
+    case eBuildingMode::pier:
+    case eBuildingMode::palace:
+    case eBuildingMode::bridge:
+    case eBuildingMode::hippodromePiece:
+    case eBuildingMode::crosswalk:
+    case eBuildingMode::triremeWharf:
+    case eBuildingMode::stadium:
+
+    case eBuildingMode::pyramidToThePantheon:
+    case eBuildingMode::altarOfOlympus:
+    case eBuildingMode::templeOfOlympus:
+    case eBuildingMode::observatoryKosmika:
+    case eBuildingMode::museumAtlantika:
+    case eBuildingMode::modestPyramid:
+    case eBuildingMode::pyramid:
+    case eBuildingMode::greatPyramid:
+    case eBuildingMode::majesticPyramid:
+    case eBuildingMode::smallMonumentToTheSky:
+    case eBuildingMode::monumentToTheSky:
+    case eBuildingMode::grandMonumentToTheSky:
+
+    case eBuildingMode::achillesHall:
+    case eBuildingMode::atalantaHall:
+    case eBuildingMode::bellerophonHall:
+    case eBuildingMode::herculesHall:
+    case eBuildingMode::jasonHall:
+    case eBuildingMode::odysseusHall:
+    case eBuildingMode::perseusHall:
+    case eBuildingMode::theseusHall:
+
+    case eBuildingMode::populationMonument:
+    case eBuildingMode::victoryMonument:
+    case eBuildingMode::colonyMonument:
+    case eBuildingMode::athleteMonument:
+    case eBuildingMode::conquestMonument:
+    case eBuildingMode::happinessMonument:
+    case eBuildingMode::heroicFigureMonument:
+    case eBuildingMode::diplomacyMonument:
+    case eBuildingMode::scholarMonument:
+
+    case eBuildingMode::aphroditeMonument:
+    case eBuildingMode::apolloMonument:
+    case eBuildingMode::aresMonument:
+    case eBuildingMode::artemisMonument:
+    case eBuildingMode::athenaMonument:
+    case eBuildingMode::atlasMonument:
+    case eBuildingMode::demeterMonument:
+    case eBuildingMode::dionysusMonument:
+    case eBuildingMode::hadesMonument:
+    case eBuildingMode::hephaestusMonument:
+    case eBuildingMode::heraMonument:
+    case eBuildingMode::hermesMonument:
+    case eBuildingMode::poseidonMonument:
+    case eBuildingMode::zeusMonument:
+
+    case eBuildingMode::templeAphrodite:
+    case eBuildingMode::templeApollo:
+    case eBuildingMode::templeAres:
+    case eBuildingMode::templeArtemis:
+    case eBuildingMode::templeAthena:
+    case eBuildingMode::templeAtlas:
+    case eBuildingMode::templeDemeter:
+    case eBuildingMode::templeDionysus:
+    case eBuildingMode::templeHades:
+    case eBuildingMode::templeHephaestus:
+    case eBuildingMode::templeHera:
+    case eBuildingMode::templeHermes:
+    case eBuildingMode::templePoseidon:
+    case eBuildingMode::templeZeus:
+
+    case eBuildingMode::minorShrineAphrodite:
+    case eBuildingMode::minorShrineApollo:
+    case eBuildingMode::minorShrineAres:
+    case eBuildingMode::minorShrineArtemis:
+    case eBuildingMode::minorShrineAthena:
+    case eBuildingMode::minorShrineAtlas:
+    case eBuildingMode::minorShrineDemeter:
+    case eBuildingMode::minorShrineDionysus:
+    case eBuildingMode::minorShrineHades:
+    case eBuildingMode::minorShrineHephaestus:
+    case eBuildingMode::minorShrineHera:
+    case eBuildingMode::minorShrineHermes:
+    case eBuildingMode::minorShrinePoseidon:
+    case eBuildingMode::minorShrineZeus:
+
+    case eBuildingMode::shrineAphrodite:
+    case eBuildingMode::shrineApollo:
+    case eBuildingMode::shrineAres:
+    case eBuildingMode::shrineArtemis:
+    case eBuildingMode::shrineAthena:
+    case eBuildingMode::shrineAtlas:
+    case eBuildingMode::shrineDemeter:
+    case eBuildingMode::shrineDionysus:
+    case eBuildingMode::shrineHades:
+    case eBuildingMode::shrineHephaestus:
+    case eBuildingMode::shrineHera:
+    case eBuildingMode::shrineHermes:
+    case eBuildingMode::shrinePoseidon:
+    case eBuildingMode::shrineZeus:
+
+    case eBuildingMode::majorShrineAphrodite:
+    case eBuildingMode::majorShrineApollo:
+    case eBuildingMode::majorShrineAres:
+    case eBuildingMode::majorShrineArtemis:
+    case eBuildingMode::majorShrineAthena:
+    case eBuildingMode::majorShrineAtlas:
+    case eBuildingMode::majorShrineDemeter:
+    case eBuildingMode::majorShrineDionysus:
+    case eBuildingMode::majorShrineHades:
+    case eBuildingMode::majorShrineHephaestus:
+    case eBuildingMode::majorShrineHera:
+    case eBuildingMode::majorShrineHermes:
+    case eBuildingMode::majorShrinePoseidon:
+    case eBuildingMode::majorShrineZeus:
+        return false;
+    default:
+        return true;
+    }
+}
+
 int eBuildingModeHelpers::toCommemorativeId(const eBuildingMode mode) {
     switch(mode) {
     case eBuildingMode::populationMonument:
