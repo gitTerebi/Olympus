@@ -12,6 +12,7 @@
 #include "buildings/etower.h"
 
 #include "buildings/allbuildings.h"
+#include "characters/etradeboat.h"
 
 #include "evectorhelpers.h"
 
@@ -1298,15 +1299,44 @@ void eBuilding::sInfoText(eBuilding* const b,
         }
     } break;
     case eBuildingType::tradePost: {
-        group = 69;
-        if(e == maxE) {
-            employmentInfoString = 15;
-        } else if(e == 0) {
-            employmentInfoString = 9;
-        } else if(e < 14) {
-            employmentInfoString = 13;
+        const auto tp = static_cast<eTradePost*>(b);
+        if(tp->tpType() == eTradePostType::pier) {
+            bool shipDocked = false;
+            const auto unp = tp->unpackBuilding();
+            if(const auto pier = dynamic_cast<ePier*>(unp)) {
+                const auto ct = pier->centerTile();
+                if(ct) {
+                    const auto& chars = ct->characters();
+                    for(const auto& c : chars) {
+                        if(dynamic_cast<eTradeBoat*>(c.get())) {
+                            shipDocked = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            group = 101;
+            int base = shipDocked ? 2 : 6;
+            if(e == 0) {
+                employmentInfoString = base;
+            } else if(e < 8) {
+                employmentInfoString = base + 1;
+            } else if(e < maxE) {
+                employmentInfoString = base + 2;
+            } else {
+                employmentInfoString = base + 3;
+            }
         } else {
-            employmentInfoString = 14;
+            group = 69;
+            if(e == maxE) {
+                employmentInfoString = 15;
+            } else if(e == 0) {
+                employmentInfoString = 9;
+            } else if(e < 14) {
+                employmentInfoString = 13;
+            } else {
+                employmentInfoString = 14;
+            }
         }
     } break;
     case eBuildingType::fishery: {
