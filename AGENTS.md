@@ -16,10 +16,13 @@ Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransp
 Goal: robust saves. New save data must be labeled and bounded so vars can be added/removed without crashing old/new loads.
 Use `ar.field("name", value, default)` for new simple members. Defaults are required for old saves.
 Use stable unique field names. Never rename old fields. Never reuse a field name for a different type/meaning.
-Use `objectField()` for child/subobject payloads. Use array helpers for arrays. Use pointer/tile/character helpers for refs.
+Use `objectField()` for child/subobject payloads. Use array helpers for arrays.
+For pointer refs use tagged helpers grouped under `ar.archiveField("groupName", [&](eSaveArchive& refsAr) { ... })`:
+  `refsAr.buildingAsField("name", &board(), ptr)` / `characterAsField` / `tileAsField`
+`archiveField` returns bool (field present); on false + `ar.reading()`, fall back via `ar.legacyReadStream()`.
+Old-save fallback branches must be marked `SAVE_COMPAT_LEGACY_FALLBACK` so later cleanup can find and review them.
 Do not add new raw `val()`, `readStream()`, or `writeStream()` data. Raw data is legacy only and stays order-dependent.
 If migrating old raw bytes, first put a length-prefixed boundary around the parent payload, then add tagged fields inside it.
-Old-save fallback branches must be marked `SAVE_COMPAT_LEGACY_FALLBACK` so later cleanup can find and review them.
 `payloadField()` is for immediate next-field payloads only; do not use it as a normal out-of-order field lookup.
 Keep read/write base calls and pointer/tile/character helper order matched. Append raw legacy data only.
 

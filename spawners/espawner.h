@@ -24,11 +24,13 @@ public:
 
     void decCount();
 
-    void spawnMax();
+    virtual void spawnMax();
 
     int count() const { return mCount; }
+    int maxCount() const { return mMaxCount; }
 
     void setSpawnPeriod(const int p);
+    void disableSpawning();
 private:
     void serialize(eSaveArchive& ar);
     const int mMaxCount;
@@ -36,6 +38,7 @@ private:
 
     int mCount = 0;
     int mTime = 0;
+    bool mSpawningEnabled = true;
 };
 
 #endif // ESPAWNER_H

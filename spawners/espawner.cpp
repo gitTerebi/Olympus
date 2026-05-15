@@ -32,9 +32,11 @@ void eSpawner::write(eWriteStream& dst) const {
 void eSpawner::serialize(eSaveArchive& ar) {
     ar.field("mCount", mCount);
     ar.field("mTime", mTime);
+    ar.field("mSpawningEnabled", mSpawningEnabled, true); // SAVE_COMPAT_OPTIONAL_FIELD
 }
 
 void eSpawner::incTime(const int by) {
+    if(!mSpawningEnabled) return;
     mTime += by;
     if(mTime >= mSpawnPeriod && mCount < mMaxCount) {
         spawn(tile());
@@ -69,4 +71,8 @@ void eSpawner::spawnMax() {
 
 void eSpawner::setSpawnPeriod(const int p) {
     mSpawnPeriod = p;
+}
+
+void eSpawner::disableSpawning() {
+    mSpawningEnabled = false;
 }

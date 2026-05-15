@@ -16,3 +16,13 @@ stdsptr<eWildAnimal> eWolfSpawner::create(eGameBoard& board) {
     b->setOnCityId(cityId());
     return b;
 }
+
+void eWolfSpawner::incTime(const int by) {
+    eSpawner::incTime(by);
+    if(count() >= maxCount()) disableSpawning();
+}
+
+void eWolfSpawner::spawnMax() {
+    eSpawner::spawnMax();
+    disableSpawning();
+}

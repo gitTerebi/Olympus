@@ -46,13 +46,14 @@ public:
     [[deprecated("Use eSaveArchive helpers; raw writeStream() is legacy save code only.")]]
     eWriteStream& writeStream() const { return *mDst; }
 
+    // Use only in SAVE_COMPAT_LEGACY_FALLBACK branches after tagged payload lookup fails.
+    [[deprecated("Use tagged eSaveArchive helpers; legacyReadStream() is old-save fallback only.")]]
+    eReadStream& legacyReadStream() const { return *mSrc; }
+
     template <typename T>
+    [[deprecated("Use field(name, value) or another tagged helper; value() is legacy order-dependent save code.")]]
     void value(T& value) {
-        if(reading()) {
-            *mSrc >> value;
-        } else {
-            *mDst << value;
-        }
+        rawValue(value);
     }
 
     template <typename T>
@@ -72,7 +73,7 @@ public:
     template <typename T>
     bool field(const std::string& name, T& value) {
         if(!tagged()) {
-            this->value(value);
+            this->rawValue(value);
             return true;
         }
 
@@ -112,6 +113,20 @@ public:
         return payloadField(name,
                             [&obj](eWriteStream& dst) { obj.write(dst); },
                             [&obj](eReadStream& src) { obj.read(src); });
+    }
+
+    template <typename Func>
+    bool archiveField(const char* const name, const Func& func) {
+        return payloadField(
+            name,
+            [&func](eWriteStream& dst) {
+                eSaveArchive childAr(dst);
+                func(childAr);
+            },
+            [&func](eReadStream& src) {
+                eSaveArchive childAr(src);
+                func(childAr);
+            });
     }
 
     template <typename WriteFunc, typename ReadFunc>
@@ -156,6 +171,7 @@ public:
         }
     }
 
+    [[deprecated("Use a tagged tile helper/payload; tile() is legacy order-dependent save code.")]]
     void tile(eTile*& tile, eGameBoard& board) {
         if(reading()) {
             tile = mSrc->readTile(board);
@@ -165,6 +181,7 @@ public:
     }
 
     template <typename Ptr>
+    [[deprecated("Use characterField(name, board, value); character() is legacy order-dependent save code.")]]
     void character(eGameBoard* board, Ptr& value) {
         if(reading()) {
             value = nullptr;
@@ -177,6 +194,7 @@ public:
     }
 
     template <typename Ptr>
+    [[deprecated("Use buildingField(name, board, value); building() is legacy order-dependent save code.")]]
     void building(eGameBoard* board, Ptr& value) {
         if(reading()) {
             value = nullptr;
@@ -188,7 +206,38 @@ public:
         }
     }
 
+    template <typename Ptr>
+    bool characterField(const char* const name,
+                        eGameBoard* board,
+                        Ptr& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeCharacter(value.get()); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readCharacter(board, [&value](eCharacter* const c) {
+                    value = c;
+                });
+            });
+    }
+
+    template <typename Ptr>
+    bool buildingField(const char* const name,
+                       eGameBoard* board,
+                       Ptr& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeBuilding(value.get()); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readBuilding(board, [&value](eBuilding* const b) {
+                    value = b;
+                });
+            });
+    }
+
     template <typename T>
+    [[deprecated("Use buildingAsField(name, board, value); buildingAs() is legacy order-dependent save code.")]]
     void buildingAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
             value.clear();
@@ -201,6 +250,37 @@ public:
     }
 
     template <typename T>
+    bool buildingAsField(const char* const name,
+                         eGameBoard* board,
+                         stdptr<T>& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeBuilding(value.get()); },
+            [board, &value](eReadStream& src) {
+                value.clear();
+                src.readBuilding(board, [&value](eBuilding* const b) {
+                    value = static_cast<T*>(b);
+                });
+            });
+    }
+
+    template <typename T>
+    bool buildingAsField(const char* const name,
+                         eGameBoard* board,
+                         T*& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeBuilding(value); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readBuilding(board, [&value](eBuilding* const b) {
+                    value = static_cast<T*>(b);
+                });
+            });
+    }
+
+    template <typename T>
+    [[deprecated("Use characterAsField(name, board, value); characterAs() is legacy order-dependent save code.")]]
     void characterAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
             value.clear();
@@ -213,6 +293,22 @@ public:
     }
 
     template <typename T>
+    bool characterAsField(const char* const name,
+                          eGameBoard* board,
+                          stdptr<T>& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeCharacter(value.get()); },
+            [board, &value](eReadStream& src) {
+                value.clear();
+                src.readCharacter(board, [&value](eCharacter* const c) {
+                    value = static_cast<T*>(c);
+                });
+            });
+    }
+
+    template <typename T>
+    [[deprecated("Use characterAsField(name, board, value); characterAs() is legacy order-dependent save code.")]]
     void characterAs(eGameBoard* board, T*& value) {
         if(reading()) {
             value = nullptr;
@@ -224,6 +320,22 @@ public:
         }
     }
 
+    template <typename T>
+    bool characterAsField(const char* const name,
+                          eGameBoard* board,
+                          T*& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeCharacter(value); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readCharacter(board, [&value](eCharacter* const c) {
+                    value = static_cast<T*>(c);
+                });
+            });
+    }
+
+    [[deprecated("Use a tagged city helper/payload; city() is legacy order-dependent save code.")]]
     void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             value = nullptr;
@@ -235,6 +347,7 @@ public:
         }
     }
 
+    [[deprecated("Use a tagged city helper/payload; city() is legacy order-dependent save code.")]]
     void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             value = nullptr;
@@ -246,6 +359,7 @@ public:
         }
     }
 
+    [[deprecated("Use a tagged soldier banner helper/payload; soldierBanner() is legacy order-dependent save code.")]]
     void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
         if(reading()) {
             value = nullptr;
@@ -258,18 +372,21 @@ public:
     }
 
     template <typename T>
+    [[deprecated("Use objectField(name, value); object() is legacy order-dependent save code.")]]
     void object(T& value) {
         if(reading()) value.read(*mSrc);
         else value.write(*mDst);
     }
 
     template <typename T>
+    [[deprecated("Use objectField(name, value); object() is legacy order-dependent save code.")]]
     void object(std::shared_ptr<T>& value) {
         if(reading()) value->read(*mSrc);
         else value->write(*mDst);
     }
 
     template <typename T>
+    [[deprecated("Use a tagged game event helper/payload; gameEvent() is legacy order-dependent save code.")]]
     void gameEvent(eGameBoard* board, T*& val) {
         if(reading()) {
             val = nullptr;
@@ -282,6 +399,7 @@ public:
     }
 
     template <typename T>
+    [[deprecated("Use a tagged game event helper/payload; gameEvent() is legacy order-dependent save code.")]]
     void gameEvent(eGameBoard* board, stdptr<T>& val) {
         if(reading()) {
             val.clear();
@@ -355,9 +473,10 @@ public:
     }
 
     template <typename T>
+    [[deprecated("Use a tagged character action helper/payload; characterAction() is legacy order-dependent save code.")]]
     void characterAction(std::shared_ptr<T>& action, const std::function<std::shared_ptr<T>(eCharActionType)>& create) {
         bool hasAction = action != nullptr;
-        this->value(hasAction);
+        this->rawValue(hasAction);
         if(!hasAction) {
             if(reading()) action = nullptr;
             return;
@@ -365,17 +484,26 @@ public:
 
         if(reading()) {
             eCharActionType type;
-            this->value(type);
+            this->rawValue(type);
             action = create(type);
             action->read(*mSrc);
         } else {
             eCharActionType type = action->type();
-            this->value(type);
+            this->rawValue(type);
             action->write(*mDst);
         }
     }
 
 private:
+    template <typename T>
+    void rawValue(T& value) {
+        if(reading()) {
+            *mSrc >> value;
+        } else {
+            *mDst << value;
+        }
+    }
+
     static constexpr int32_t maxFieldNameSize = 256;
     static constexpr int32_t maxFieldDataSize = 64 * 1024 * 1024;
 
