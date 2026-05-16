@@ -618,8 +618,6 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             tex->clearAlphaMod();
             tex->clearColorMod();
         };
-        for (const auto &space : cmd.agoraSpaces)
-            drawCell(tx + space.first, ty + space.second, false);
         for (const auto &road : cmd.agoraRoads)
             drawCell(tx + road.first, ty + road.second, true);
     };

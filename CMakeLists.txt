@@ -647,6 +647,7 @@ set(SOURCES
     widgets/toasts/toast-manager.cpp
     widgets/toasts/popup-message.cpp
      widgets/gameworld/ehitdetection.cpp
+     widgets/agora-build-place.cpp
      widgets/egamewidgetbuild.cpp
      widgets/gamebuild/ecommonhousingbuild.cpp
      widgets/egamewidgetevents.cpp
