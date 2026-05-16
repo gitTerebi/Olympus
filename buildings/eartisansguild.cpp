@@ -71,13 +71,12 @@ void eArtisansGuild::write(eWriteStream& dst) const {
 }
 
 void eArtisansGuild::serialize(eSaveArchive& ar) {
-    ar.field("mSpawnTime", mSpawnTime);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mArtisan = static_cast<eArtisan*>(c);
+    ar.field("spawnTime", mSpawnTime);
+    ar.payloadField("artisan",
+        [this](eWriteStream& dst) { dst.writeCharacter(mArtisan); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mArtisan = static_cast<eArtisan*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mArtisan);
-    }
 }

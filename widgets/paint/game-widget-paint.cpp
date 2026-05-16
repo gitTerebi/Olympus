@@ -3414,6 +3414,23 @@ void eGameWidget::paintEvent(ePainter &p)
     {
         drawBuildText(std::to_string(buildCount));
     };
+    const auto drawStampTemplateSelection = [&]()
+    {
+        const auto &tex = trrTexs.fBuildingBase;
+        tex->setColorMod(0, 96, 255);
+        tex->setAlpha(140);
+        for(const auto tile : mStampTemplateTiles) {
+            if(!tile) continue;
+            double rx;
+            double ry;
+            drawXY(tile->x(), tile->y(), rx, ry, 1, 1, tile->altitude());
+            tp.drawTexture(rx, ry, tex, eAlignment::top);
+        }
+        tex->clearAlphaMod();
+        tex->clearColorMod();
+    };
+    if(mCreatingStampTemplate) drawStampTemplateSelection();
+
     const auto animalBuildTexture = [&](const eBuildingMode mode) {
         auto& charTexs = eGameTextures::characters()[static_cast<int>(mTileSize)];
         const eAnimalTextures* animalTexs = nullptr;

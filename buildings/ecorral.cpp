@@ -103,12 +103,12 @@ void eCorral::write(eWriteStream& dst) const {
 }
 
 void eCorral::serialize(eSaveArchive& ar) {
-    ar.field("mNoCattle", mNoCattle);
-    ar.field("mProcessing", mProcessing);
-    ar.field("mNCattle", mNCattle);
-    ar.field("mTakeWait", mTakeWait);
-    ar.field("mKillWait", mKillWait);
-    ar.field("mReplaceWait", mReplaceWait);
+    ar.field("noCattle", mNoCattle);
+    ar.field("processing", mProcessing);
+    ar.field("cattleCount", mNCattle);
+    ar.field("takeWait", mTakeWait);
+    ar.field("killWait", mKillWait);
+    ar.field("replaceWait", mReplaceWait);
 }
 
 void eCorral::timeChanged(const int by) {

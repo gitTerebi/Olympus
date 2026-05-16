@@ -242,29 +242,32 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
 }
 
 void eGrowersLodge::serialize(eSaveArchive& ar) {
-    ar.field("mNoTarget", mNoTarget);
-    ar.field("mSpawnEnabled", mSpawnEnabled);
-    ar.field("mGrapes", mGrapes);
-    ar.field("mOlives", mOlives);
-    ar.field("mOranges", mOranges);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
+    ar.field("noTarget", mNoTarget);
+    ar.field("spawnEnabled", mSpawnEnabled);
+    ar.field("grapes", mGrapes);
+    ar.field("olives", mOlives);
+    ar.field("oranges", mOranges);
+    ar.payloadField("cart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
-    ar.field("mSpawnTime", mSpawnTime);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mGrower = static_cast<eGrower*>(c);
+    ar.field("spawnTime", mSpawnTime);
+    ar.payloadField("grower",
+        [this](eWriteStream& dst) { dst.writeCharacter(mGrower); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mGrower = static_cast<eGrower*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mGrower);
+    ar.field("producedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
+                 mMonthlyProduced[i]);
     }
-    ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
-    ar.field("mRingIdx", mRingIdx);
+    ar.field("ringIdx", mRingIdx);
 }
 
 void eGrowersLodge::read(eReadStream& src) {

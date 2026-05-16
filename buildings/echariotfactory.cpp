@@ -174,19 +174,21 @@ void eChariotFactory::write(eWriteStream& dst) const {
 }
 
 void eChariotFactory::serialize(eSaveArchive& ar) {
-    ar.field("mWood", mWood);
-    ar.field("mHorses", mHorses);
-    ar.field("mChariots", mChariots);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mWoodCart = static_cast<eCartTransporter*>(c);
+    ar.field("wood", mWood);
+    ar.field("horses", mHorses);
+    ar.field("chariots", mChariots);
+    ar.payloadField("woodCart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mWoodCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mWoodCart = static_cast<eCartTransporter*>(c);
+            });
         });
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mHorseCart = static_cast<eCartTransporter*>(c);
+    ar.payloadField("horseCart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mHorseCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mHorseCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mWoodCart);
-        ar.writeStream().writeCharacter(mHorseCart);
-    }
 }

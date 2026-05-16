@@ -271,14 +271,14 @@ void eFishery::write(eWriteStream& dst) const {
 }
 
 void eFishery::serialize(eSaveArchive& ar) {
-    ar.field("mDisabled", mDisabled);
-    ar.field("mStateCount", mStateCount);
-    ar.field("mState", mState);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mBoat = static_cast<eFishingBoat*>(c);
+    ar.field("disabled", mDisabled);
+    ar.field("stateCount", mStateCount);
+    ar.field("state", mState);
+    ar.payloadField("boat",
+        [this](eWriteStream& dst) { dst.writeCharacter(mBoat); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mBoat = static_cast<eFishingBoat*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mBoat);
-    }
 }

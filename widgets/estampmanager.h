@@ -39,6 +39,7 @@ private:
 
     void rebuildList();
     void selectTemplate(const std::string& name, const std::string& path);
+    void deleteSelectedTemplate();
     void updateButtonColors();
 
     eStampTool* mStampTool = nullptr;

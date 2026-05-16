@@ -130,6 +130,10 @@ public:
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
+
+    void read(eReadStream& src) override;
+    void write(eWriteStream& dst) const override;
+    void serialize(eSaveArchive& ar);
 private:
     int mId = 0;
 };

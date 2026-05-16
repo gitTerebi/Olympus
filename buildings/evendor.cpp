@@ -228,13 +228,13 @@ void eVendor::write(eWriteStream& dst) const {
 }
 
 void eVendor::serialize(eSaveArchive& ar) {
-    ar.field("mResource", mResource);
-    ar.field("mVendorEnabled", mVendorEnabled);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
+    ar.field("resource", mResource);
+    ar.field("vendorEnabled", mVendorEnabled);
+    ar.payloadField("cart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
 }

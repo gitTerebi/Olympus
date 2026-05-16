@@ -74,11 +74,20 @@ void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int
 }
 
 void eShepherBuildingBase::serialize(eSaveArchive& ar) {
-    ar.characterAs(&getBoard(), mShepherd);
-    ar.field("mSpawnTime", mSpawnTime);
-    ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
-    ar.field("mRingIdx", mRingIdx);
+    ar.payloadField("shepherd",
+        [this](eWriteStream& dst) { dst.writeCharacter(mShepherd.get()); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mShepherd = static_cast<eResourceCollectorBase*>(c);
+            });
+        });
+    ar.field("spawnTime", mSpawnTime);
+    ar.field("producedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
+                 mMonthlyProduced[i]);
+    }
+    ar.field("ringIdx", mRingIdx);
 }
 
 void eShepherBuildingBase::read(eReadStream& src) {

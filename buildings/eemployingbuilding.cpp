@@ -60,7 +60,7 @@ void eEmployingBuilding::write(eWriteStream& dst) const {
 }
 
 void eEmployingBuilding::serialize(eSaveArchive& ar) {
-    ar.field("mShutDown", mShutDown);
-    ar.field("mMaxEmployees", mMaxEmployees);
-    ar.field("mEmployed", mEmployed);
+    ar.field("shutDown", mShutDown);
+    ar.field("maxEmployees", mMaxEmployees);
+    ar.field("employed", mEmployed);
 }

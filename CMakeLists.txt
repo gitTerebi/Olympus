@@ -156,6 +156,7 @@ set(SOURCES
     buildings/sanctuaries/estairsrenderer.cpp
     engine/stamps/estampblueprint.cpp
     engine/stamps/estamptool.cpp
+    engine/stamps/stamp-template-writer.cpp
     buildings/sanctuaries/etemplealtarbuilding.cpp
     buildings/sanctuaries/etemplebuilding.cpp
     buildings/sanctuaries/etemplemonumentbuilding.cpp
@@ -844,5 +845,4 @@ if(UNIX)
     )
     target_compile_options(eZeus PRIVATE -m64 -O3)
 endif()
-
 

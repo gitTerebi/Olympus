@@ -363,32 +363,35 @@ void eCartTransporter::write(eWriteStream& dst) const {
 
 void eCartTransporter::serialize(eSaveArchive& ar) {
     int count = mResourceCount;
-    ar.field("count", count);
-    ar.field("mType", mType);
+    ar.field("resourceCount", count);
+    ar.field("cartType", mType);
     eResourceType type = mResourceType;
-    ar.field("type", type);
+    ar.field("resourceType", type);
     if(ar.reading()) {
         setResourceValue(type, count);
     }
-    ar.field("mSupports", mSupports);
-    ar.field("mSupport", mSupport);
-    ar.field("mWaiting", mWaiting);
-    ar.field("mIsOx", mIsOx);
-    ar.field("mBigTrailer", mBigTrailer);
-    ar.field("mMaxDistance", mMaxDistance);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mOx = static_cast<eOx*>(c);
+    ar.field("supports", mSupports);
+    ar.field("support", mSupport);
+    ar.field("waiting", mWaiting);
+    ar.field("isOx", mIsOx);
+    ar.field("bigTrailer", mBigTrailer);
+    ar.field("maxDistance", mMaxDistance);
+    ar.payloadField("ox",
+        [this](eWriteStream& dst) { dst.writeCharacter(mOx); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mOx = static_cast<eOx*>(c);
+            });
         });
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTrailer = static_cast<eTrailer*>(c);
+    ar.payloadField("trailer",
+        [this](eWriteStream& dst) { dst.writeCharacter(mTrailer); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mTrailer = static_cast<eTrailer*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mOx);
-        ar.writeStream().writeCharacter(mTrailer);
-    }
-    ar.arrayField("followers", mFollowers, [this](eSaveArchive& ar, auto& f) {
-        ar.character(&getBoard(), f);
+    ar.arrayField("followers", mFollowers, [this](eSaveArchive& itemAr, auto& f) {
+        itemAr.character(&getBoard(), f);
     });
 }
 

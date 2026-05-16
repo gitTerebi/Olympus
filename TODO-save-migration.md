@@ -589,45 +589,45 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 
 ### C — Buildings
 
-- [ ] `eBuilding`
-- [ ] `eAestheticsBuilding`
-- [ ] `eWaterPark`
-- [ ] `eCommemorative`
-- [ ] `eGodMonument`
-- [ ] `eGodMonumentTile`
-- [ ] `eAgoraSpace`
-- [ ] `eAnimalBuilding`
-- [ ] `eAvenue`
-- [ ] `eBuildingWithResource`
-- [ ] `eEmployingBuilding`
-- [ ] `eResourceBuildingBase`
-- [ ] `eCorral`
-- [ ] `eFarmBase`
-- [ ] `eProcessingBuilding`
-- [ ] `eResourceCollectBuildingBase`
-- [ ] `eFishery`
-- [ ] `eHuntingLodge`
-- [ ] `eResourceCollectBuilding`
-- [ ] `eUrchinQuay`
-- [ ] `eShepherBuildingBase`
-- [ ] `eArtisansGuild`
-- [ ] `eChariotFactory`
-- [ ] `eGrowersLodge`
-- [ ] `eHorseRanch`
-- [ ] `eMonument`
+- [x] `eBuilding`
+- [x] `eAestheticsBuilding` — no fields
+- [x] `eWaterPark` — mId via serialize
+- [x] `eCommemorative` — const mId via ctor branch
+- [x] `eGodMonument` — const mGod/mId via ctor branch; mTiles rebuilt via tile backref
+- [x] `eGodMonumentTile` — monument backref via writeBuilding/readBuilding
+- [x] `eAgoraSpace` — agora ref reattached via eAgoraBase owner
+- [x] `eAnimalBuilding` — already migrated (characterField)
+- [x] `eAvenue` — no fields
+- [x] `eBuildingWithResource`
+- [x] `eEmployingBuilding`
+- [x] `eResourceBuildingBase`
+- [x] `eCorral`
+- [x] `eFarmBase`
+- [x] `eProcessingBuilding`
+- [x] `eResourceCollectBuildingBase`
+- [x] `eFishery`
+- [x] `eHuntingLodge`
+- [x] `eResourceCollectBuilding`
+- [x] `eUrchinQuay`
+- [x] `eShepherBuildingBase`
+- [x] `eArtisansGuild`
+- [x] `eChariotFactory`
+- [x] `eGrowersLodge`
+- [x] `eHorseRanch`
+- [x] `eMonument`
 - [ ] `ePyramid`
 - [ ] `eSanctuary`
 - [ ] `eSanctuaryWithWarriors`
 - [ ] `eHephaestusSanctuary`
-- [ ] `ePatrolBuildingBase`
-- [ ] `eAgoraBase`
+- [x] `ePatrolBuildingBase`
+- [x] `eAgoraBase` — no fields (inherits patrol base)
 - [ ] `ePatrolBuilding`
-- [ ] `eStorageBuilding`
+- [x] `eStorageBuilding`
 - [ ] `eTower`
 - [ ] `eTradePost`
 - [ ] `eTriremeWharf`
-- [ ] `eVendor`
-- [ ] `eHippodromePiece`
+- [x] `eVendor`
+- [x] `eHippodromePiece`
 - [ ] `eHorseRanchEnclosure`
 - [ ] `eGatehouse`
 - [ ] `eHerosHall`
@@ -654,8 +654,8 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 
 ### D — Characters
 
-- [ ] `eCharacterBase`
-- [ ] `eCharacter`
+- [x] `eCharacterBase`
+- [x] `eCharacter`
 - [ ] `eAnimal`
 - [ ] `eArcher`
 - [ ] `eArtisan`
@@ -663,7 +663,7 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [ ] `eActor`
 - [ ] `eAstronomer`
 - [ ] `eButcher`
-- [ ] `eCartTransporter`
+- [x] `eCartTransporter`
 - [ ] `eCompetitor`
 - [ ] `eCurator`
 - [ ] `eDonkey`

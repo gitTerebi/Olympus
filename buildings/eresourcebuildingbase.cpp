@@ -92,17 +92,12 @@ void eResourceBuildingBase::write(eWriteStream& dst) const {
 }
 
 void eResourceBuildingBase::serialize(eSaveArchive& ar) {
-    ar.field("mResource", mResource);
-    const bool hasCart = ar.payloadField("mCart",
+    ar.field("resource", mResource);
+    ar.payloadField("cart",
         [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
         [this](eReadStream& src) {
             src.readCharacter(&getBoard(), [this](eCharacter* const c) {
                 mCart = static_cast<eCartTransporter*>(c);
             });
         });
-    if(!hasCart && ar.reading()) {
-        ar.legacyReadStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
-        });
-    }
 }

@@ -171,23 +171,23 @@ void eResourceCollectBuilding::write(eWriteStream& dst) const {
 }
 
 void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
-    ar.field("mCollectedAction", mCollectedAction);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCollector = static_cast<eResourceCollectorBase*>(c);
+    ar.field("collectedAction", mCollectedAction);
+    ar.payloadField("collector",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCollector); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCollector = static_cast<eResourceCollectorBase*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mCollector);
-    }
-    ar.field("mSpawnEnabled", mSpawnEnabled);
-    ar.field("mAddResource", mAddResource);
-    ar.field("mRawCount", mRawCount);
-    ar.field("mRawCountCollect", mRawCountCollect);
-    ar.field("mRawInc", mRawInc);
-    ar.field("mProcessDuration", mProcessDuration);
-    ar.field("mProcessTime", mProcessTime);
-    ar.field("mWaitTime", mWaitTime);
-    ar.field("mSpawnTime", mSpawnTime);
+    ar.field("spawnEnabled", mSpawnEnabled);
+    ar.field("addResource", mAddResource);
+    ar.field("rawCount", mRawCount);
+    ar.field("rawCountCollect", mRawCountCollect);
+    ar.field("rawInc", mRawInc);
+    ar.field("processDuration", mProcessDuration);
+    ar.field("processTime", mProcessTime);
+    ar.field("waitTime", mWaitTime);
+    ar.field("spawnTime", mSpawnTime);
 }
 
 bool eResourceCollectBuilding::spawn() {

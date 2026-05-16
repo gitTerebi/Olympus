@@ -1,10 +1,12 @@
 #include "egamewidget.h"
 #include "engine/stamps/estamptool.h"
+#include "engine/stamps/stamp-template-writer.h"
 #include "ecursors.h"
 
 #include "emodal.h"
 #include "e-message-list-widget.h"
 #include "eoptionsdata.h"
+#include "egamedir.h"
 #include "engine/e-game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/e-worldcity.h"
@@ -15,10 +17,14 @@
 
 #include "eflatbutton.h"
 #include "eframedlabel.h"
+#include "elineedit.h"
 
 #include <filesystem>
 #include <algorithm>
+#include <cctype>
+#include <climits>
 #include <cmath>
+#include <set>
 
 void formatStoredMessage(eMessage& msg,
                          const eEventData& ed,
@@ -2193,6 +2199,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
 {
     if (mLocked)
         return true;
+    if (mStampTemplateNameDialogOpen)
+        return true;
     const auto k = e.key();
     const auto &hotkeys = window()->settings();
     if (updateSmoothScrollKey(k, true))
@@ -2517,6 +2525,11 @@ bool eGameWidget::smoothScrollKeyPressed(const SDL_Scancode k) const
 void eGameWidget::updateSmoothScrollKeysPressed()
 {
     if(mLocked) return;
+    if(mStampTemplateNameDialogOpen) {
+        mSmoothScrollX = 0;
+        mSmoothScrollY = 0;
+        return;
+    }
     const auto &hotkeys = window()->settings();
     const bool scrollLeft = smoothScrollKeyPressed(hotkeys.fHotkeyScrollLeft) ||
                             smoothScrollKeyPressed(SDL_Scancode::SDL_SCANCODE_LEFT);
@@ -2601,6 +2614,13 @@ bool eGameWidget::mousePressEvent(const eMouseEvent &e)
         mPressedX = e.x();
         mPressedY = e.y();
         const auto tile = mBoard->tile(tx, ty);
+        if (mCreatingStampTemplate)
+        {
+            mHoverTX = tx;
+            mHoverTY = ty;
+            updateStampTemplateSelection();
+            return true;
+        }
         if (mTem->visible())
         {
             mInflTiles = mHoverTiles;
@@ -2683,6 +2703,11 @@ bool eGameWidget::rightClickRelease(const eMouseEvent &e)
     int ty;
     pixToId(e.x(), e.y(), tx, ty);
     const auto tile = mBoard->tile(tx, ty);
+    if (mCreatingStampTemplate)
+    {
+        cancelStampTemplateCreate();
+        return true;
+    }
     if (!tile)
         return true;
     const auto b = tile->underBuilding();
@@ -2899,6 +2924,7 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent &e)
         mHoverX = e.x();
         mHoverY = e.y();
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
+        const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
 
         if (mGm->mode() == eBuildingMode::stamp) {
             mHoverTiles.clear();
@@ -2910,7 +2936,12 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent &e)
             }
         }
 
-        const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
+        if (mCreatingStampTemplate)
+        {
+            if (left) updateStampTemplateSelection();
+            return true;
+        }
+
         if (left && mTem->visible())
         {
             //            const auto btype = mTem->brushType();
@@ -2945,6 +2976,13 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
         mBoard->clearBannerSelection();
         mBoard->clearTriremeSelection();
         mLeftPressed = false;
+        if (mCreatingStampTemplate)
+        {
+            updateStampTemplateSelection();
+            mPressedTX = -1;
+            mPressedTY = -1;
+            return true;
+        }
         const bool r = buildMouseRelease();
         mGm->update();
         if (!r && mGm->mode() == eBuildingMode::none)
@@ -3240,8 +3278,322 @@ void eGameWidget::showStampManager()
     d->setTemplateSelectedAction([this]() {
         mGm->setMode(eBuildingMode::stamp);
     });
+    d->setCreateTemplateAction([this]() {
+        beginStampTemplateCreate();
+    });
     window()->execDialog(d);
     d->align(eAlignment::center);
+}
+
+void eGameWidget::beginStampTemplateCreate()
+{
+    mGm->clearMode();
+    mGm->closeBuildWidget();
+    setPatrolBuilding(nullptr);
+    eCursors::set(eCursorType::defaultCursor);
+
+    mCreatingStampTemplate = true;
+    mStampTemplateTiles.clear();
+
+    if(mStampTemplatePanel) {
+        mStampTemplatePanel->deleteLater();
+        mStampTemplatePanel = nullptr;
+        mStampTemplateStats = nullptr;
+    }
+
+    const auto panel = new eFramedWidget(window());
+    panel->setType(eFrameType::message);
+    const int p = panel->padding();
+
+    mStampTemplateStats = new eLabel(window());
+    mStampTemplateStats->setFontSizeS();
+    mStampTemplateStats->setNoPadding();
+    panel->addWidget(mStampTemplateStats);
+    mStampTemplateStats->move(p, p);
+
+    const auto saveB = new eFramedButton(window());
+    saveB->setUnderline(false);
+    saveB->setFontSizeS();
+    saveB->setPaddingS();
+    saveB->setText("Save");
+    saveB->fitContent();
+    saveB->setPressAction([this]() {
+        showStampTemplateNameDialog();
+    });
+    panel->addWidget(saveB);
+
+    const auto cancelB = new eFramedButton(window());
+    cancelB->setUnderline(false);
+    cancelB->setFontSizeS();
+    cancelB->setPaddingS();
+    cancelB->setText("Cancel");
+    cancelB->fitContent();
+    cancelB->setPressAction([this]() {
+        cancelStampTemplateCreate();
+    });
+    panel->addWidget(cancelB);
+
+    updateStampTemplatePanel();
+    saveB->setY(mStampTemplateStats->y() + mStampTemplateStats->height() + p);
+    cancelB->setY(saveB->y());
+    saveB->setX(p);
+    cancelB->setX(saveB->x() + saveB->width() + p);
+    const int panelW = std::max(mStampTemplateStats->x() + mStampTemplateStats->width(),
+                                cancelB->x() + cancelB->width()) + p;
+    const int panelH = cancelB->y() + cancelB->height() + p;
+    panel->resize(panelW, panelH);
+    addWidget(panel);
+    panel->align(eAlignment::bottom | eAlignment::hcenter);
+    panel->setY(panel->y() - 2 * padding());
+    mStampTemplatePanel = panel;
+}
+
+void eGameWidget::cancelStampTemplateCreate()
+{
+    mCreatingStampTemplate = false;
+    mStampTemplateTiles.clear();
+    if(mStampTemplatePanel) {
+        mStampTemplatePanel->deleteLater();
+        mStampTemplatePanel = nullptr;
+        mStampTemplateStats = nullptr;
+    }
+    eCursors::set(eCursorType::defaultCursor);
+}
+
+void eGameWidget::updateStampTemplateSelection()
+{
+    mStampTemplateTiles.clear();
+    if(!mBoard) return;
+
+    const int minX = std::min(mPressedTX, mHoverTX);
+    const int minY = std::min(mPressedTY, mHoverTY);
+    const int maxX = std::max(mPressedTX, mHoverTX);
+    const int maxY = std::max(mPressedTY, mHoverTY);
+
+    std::set<eBuilding*> buildings;
+    for(int x = minX; x <= maxX; x++) {
+        for(int y = minY; y <= maxY; y++) {
+            const auto tile = mBoard->tile(x, y);
+            if(!tile) continue;
+            auto b = tile->underBuilding();
+            if(const auto space = dynamic_cast<eAgoraSpace*>(b)) {
+                b = space->agora();
+            }
+            if(b) buildings.insert(b);
+        }
+    }
+
+    std::set<eTile*> tiles;
+    for(const auto b : buildings) {
+        for(const auto tile : b->tilesUnder()) {
+            if(tile && tiles.insert(tile).second) {
+                mStampTemplateTiles.push_back(tile);
+            }
+        }
+    }
+    updateStampTemplatePanel();
+}
+
+void eGameWidget::updateStampTemplatePanel()
+{
+    if(!mStampTemplateStats) return;
+    int buildings = 0;
+    int roads = 0;
+    stampTemplateElements(&buildings, &roads);
+    mStampTemplateStats->setText("Buildings: " + std::to_string(buildings) +
+                                 "  Roads: " + std::to_string(roads));
+    mStampTemplateStats->fitContent();
+    if(mStampTemplatePanel) {
+        const int neededW = mStampTemplateStats->x() +
+                            mStampTemplateStats->width() +
+                            2 * mStampTemplatePanel->padding();
+        if(neededW > mStampTemplatePanel->width()) {
+            mStampTemplatePanel->resize(neededW, mStampTemplatePanel->height());
+            mStampTemplatePanel->align(eAlignment::bottom | eAlignment::hcenter);
+            mStampTemplatePanel->setY(mStampTemplatePanel->y() - 2 * padding());
+        }
+    }
+}
+
+void eGameWidget::showStampTemplateNameDialog()
+{
+    if(stampTemplateElements().empty()) return;
+    mStampTemplateNameDialogOpen = true;
+
+    const auto d = new eFramedWidget(window());
+    d->setType(eFrameType::message);
+    const int p = d->padding();
+
+    const auto title = new eLabel("Template name", window());
+    title->setFontSizeS();
+    title->fitContent();
+    d->addWidget(title);
+    title->move(p, p);
+
+    const auto edit = new eLineEdit(window());
+    edit->setRenderBg(true);
+    edit->setText("template");
+    edit->fitContent();
+    edit->setWidth(3 * edit->width() / 2);
+    d->addWidget(edit);
+    edit->move(p, title->y() + title->height() + p);
+
+    const auto okB = new eFramedButton(window());
+    okB->setUnderline(false);
+    okB->setFontSizeS();
+    okB->setPaddingS();
+    okB->setText("OK");
+    okB->fitContent();
+    okB->setPressAction([this, d, edit]() {
+        saveStampTemplate(edit->text());
+        mStampTemplateNameDialogOpen = false;
+        d->deleteLater();
+    });
+    d->addWidget(okB);
+
+    const auto cancelB = new eFramedButton(window());
+    cancelB->setUnderline(false);
+    cancelB->setFontSizeS();
+    cancelB->setPaddingS();
+    cancelB->setText("Cancel");
+    cancelB->fitContent();
+    cancelB->setPressAction([this, d]() {
+        mStampTemplateNameDialogOpen = false;
+        d->deleteLater();
+    });
+    d->addWidget(cancelB);
+
+    okB->move(p, edit->y() + edit->height() + p);
+    cancelB->move(okB->x() + okB->width() + p, okB->y());
+    const int w = std::max(edit->x() + edit->width(),
+                           cancelB->x() + cancelB->width()) + p;
+    const int h = cancelB->y() + cancelB->height() + p;
+    d->resize(w, h);
+
+    window()->execDialog(d);
+    d->align(eAlignment::center);
+    edit->grabKeyboard();
+}
+
+void eGameWidget::saveStampTemplate(const std::string& name)
+{
+    const auto elements = stampTemplateElements();
+    if(elements.empty()) return;
+
+    auto safeName = name;
+    for(auto& c : safeName) {
+        const auto uc = static_cast<unsigned char>(c);
+        if(!std::isalnum(uc) && c != '-' && c != '_') c = '-';
+    }
+    while(!safeName.empty() && safeName.front() == '-') safeName.erase(safeName.begin());
+    while(!safeName.empty() && safeName.back() == '-') safeName.pop_back();
+    if(safeName.empty()) safeName = "template";
+
+    namespace fs = std::filesystem;
+    const fs::path dir = eGameDir::stampsDir();
+    fs::path path = dir / (safeName + ".txt");
+    int suffix = 2;
+    while(fs::exists(path)) {
+        path = dir / (safeName + "-" + std::to_string(suffix++) + ".txt");
+    }
+
+    const auto pathString = path.u8string();
+    if(!eWriteStampTemplate(pathString, elements)) {
+        printf("Failed to write stamp template: %s\n", pathString.c_str());
+        return;
+    }
+
+    mStampTool->setTemplate(path.stem().u8string(), pathString);
+    cancelStampTemplateCreate();
+    mGm->setMode(eBuildingMode::stamp);
+}
+
+std::vector<eStampElement> eGameWidget::stampTemplateElements(
+        int* const buildingCount,
+        int* const roadCount) const
+{
+    if(buildingCount) *buildingCount = 0;
+    if(roadCount) *roadCount = 0;
+
+    std::set<eBuilding*> buildings;
+    for(const auto tile : mStampTemplateTiles) {
+        if(!tile) continue;
+        auto b = tile->underBuilding();
+        if(const auto space = dynamic_cast<eAgoraSpace*>(b)) {
+            b = space->agora();
+        }
+        if(b) buildings.insert(b);
+    }
+
+    const auto anchor = [](const eBuilding* const b, int& x, int& y) {
+        const auto& r = b->tileRect();
+        x = r.x;
+        y = r.y;
+        const int sw = r.w;
+        const int sh = r.h;
+        if(sw == 2 && sh == 2) {
+            y += 1;
+        } else if(sw == 3 && sh == 3) {
+            x += 1;
+            y += 1;
+        } else if(sw == 4 || sh == 4) {
+            x += 1;
+            y += 2;
+        } else if(sw == 5 || sh == 5) {
+            x += 2;
+            y += 2;
+        } else if(sw == 6 || sh == 6) {
+            x += 2;
+            y += 2;
+        }
+    };
+
+    int minX = INT_MAX;
+    int minY = INT_MAX;
+    for(const auto b : buildings) {
+        if(b->type() == eBuildingType::agoraSpace) continue;
+        int x;
+        int y;
+        anchor(b, x, y);
+        minX = std::min(minX, x);
+        minY = std::min(minY, y);
+    }
+    if(minX == INT_MAX || minY == INT_MAX) return {};
+
+    std::vector<eStampElement> result;
+    for(const auto b : buildings) {
+        const auto type = b->type();
+        if(type == eBuildingType::agoraSpace) continue;
+
+        int x;
+        int y;
+        anchor(b, x, y);
+        int id = -1;
+        if(type == eBuildingType::commonAgora) {
+            if(const auto agora = dynamic_cast<const eAgoraBase*>(b)) {
+                id = static_cast<int>(agora->orientation());
+            }
+        }
+
+        if(type == eBuildingType::road || type == eBuildingType::roadblock) {
+            if(roadCount) (*roadCount)++;
+        } else {
+            if(buildingCount) (*buildingCount)++;
+        }
+        result.push_back({type, x - minX, y - minY, id});
+    }
+
+    std::sort(result.begin(), result.end(),
+              [](const eStampElement& a, const eStampElement& b) {
+        const bool ar = a.type == eBuildingType::road ||
+                        a.type == eBuildingType::roadblock;
+        const bool br = b.type == eBuildingType::road ||
+                        b.type == eBuildingType::roadblock;
+        if(ar != br) return ar;
+        if(a.dy != b.dy) return a.dy < b.dy;
+        return a.dx < b.dx;
+    });
+    return result;
 }
 
 void eGameWidget::selectHoveredBuildingMode()

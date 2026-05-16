@@ -16,10 +16,13 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
 }
 
 void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
-    ar.field("mNoTarget", mNoTarget);
-    ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
-    ar.field("mRingIdx", mRingIdx);
+    ar.field("noTarget", mNoTarget);
+    ar.field("producedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
+                 mMonthlyProduced[i]);
+    }
+    ar.field("ringIdx", mRingIdx);
 }
 
 void eResourceCollectBuildingBase::read(eReadStream& src) {

@@ -6,6 +6,7 @@
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "emainwindow.h"
+#include "equestionwidget.h"
 #include "escrollbar.h"
 
 #include "egamedir.h"
@@ -68,7 +69,9 @@ void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty di
 
     const auto createB = new eFramedButton(window());
     createB->setUnderline(false);
-    createB->setText("Create Template");
+    createB->setFontSizeS();
+    createB->setPaddingS();
+    createB->setText("Create");
     createB->fitContent();
     f->addWidget(createB);
     createB->align(eAlignment::bottom | eAlignment::left);
@@ -78,6 +81,17 @@ void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty di
         const auto action = mCreateTemplateAction;
         close();
         if(action) action(); });
+
+    const auto deleteB = new eFramedButton(window());
+    deleteB->setUnderline(false);
+    deleteB->setFontSizeS();
+    deleteB->setPaddingS();
+    deleteB->setText("Delete");
+    deleteB->fitContent();
+    f->addWidget(deleteB);
+    deleteB->move(createB->x() + createB->width() + p, createB->y());
+    deleteB->setPressAction([this]()
+                            { deleteSelectedTemplate(); });
 
     const int vpY = title->y() + title->height() + 2 * p;
     const int vpH = f->height() - vpY - closeB->height() - 4 * p;
@@ -113,6 +127,7 @@ void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty di
 void eStampManager::rebuildList()
 {
     mButtons.clear();
+    if(mFilesWidget) mFilesWidget->removeAllWidgets();
 
     std::vector<fs::path> paths;
     const auto folder = eGameDir::stampsDir();
@@ -297,6 +312,32 @@ void eStampManager::selectTemplate(const std::string &name,
         close();
         if (mTemplateSelectedAction)
             mTemplateSelectedAction();
+    }
+}
+
+void eStampManager::deleteSelectedTemplate()
+{
+    if(!mStampTool) return;
+    const auto active = mStampTool->templateName();
+    for(const auto& entry : mButtons) {
+        if(entry.fName != active) continue;
+        const auto path = entry.fPath;
+        const auto name = entry.fName;
+        const auto q = new eQuestionWidget(window());
+        const auto acceptA = [this, path]() {
+            std::error_code ec;
+            fs::remove(path, ec);
+            if(ec) {
+                printf("Failed to delete stamp template: %s\n", path.c_str());
+                return;
+            }
+            rebuildList();
+        };
+        std::string msg = "Delete '" + name + "'?";
+        q->initialize("Confirm Delete", msg, acceptA, nullptr);
+        window()->execDialog(q);
+        q->align(eAlignment::center);
+        return;
     }
 }
 

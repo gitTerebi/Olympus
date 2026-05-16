@@ -47,6 +47,7 @@ class eGameBoard;
 class eAgoraBase;
 class eInfoWidget;
 class eFramedButton;
+class eFramedWidget;
 
 enum class eAgoraOrientation;
 enum class eGodType;
@@ -201,6 +202,15 @@ private:
     void showOptionsMenu();
     void showGraphicsMenu();
     void showStampManager();
+    void beginStampTemplateCreate();
+    void cancelStampTemplateCreate();
+    void updateStampTemplateSelection();
+    void updateStampTemplatePanel();
+    void showStampTemplateNameDialog();
+    void saveStampTemplate(const std::string& name);
+    std::vector<eStampElement> stampTemplateElements(
+            int* buildingCount = nullptr,
+            int* roadCount = nullptr) const;
     void selectHoveredBuildingMode();
     void toggleViewMode(const eViewMode m);
 
@@ -463,6 +473,11 @@ private:
     eGameMenu* mGm = nullptr;
     eArmyMenu* mAm = nullptr;
     stdsptr<eStampTool> mStampTool;
+    bool mCreatingStampTemplate = false;
+    std::vector<eTile*> mStampTemplateTiles;
+    eFramedWidget* mStampTemplatePanel = nullptr;
+    eLabel* mStampTemplateStats = nullptr;
+    bool mStampTemplateNameDialogOpen = false;
 
     eWorldWidget* mWW = nullptr;
 
