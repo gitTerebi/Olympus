@@ -12,20 +12,26 @@ struct eSetAside {
     int fCount;
     stdsptr<eWorldCity> fFrom;
 
-    void read(eReadStream& src, eWorldBoard* const board) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar, eWorldBoard* const board) {
         ar.field("resource", fRes);
         ar.field("count", fCount);
-        src.readCity(board, [this](const stdsptr<eWorldCity>& city) {
-            fFrom = city;
-        });
+        ar.payloadField("from",
+            [this](eWriteStream& dst) { dst.writeCity(fFrom.get()); },
+            [this, board](eReadStream& src) {
+                src.readCity(board, [this](const stdsptr<eWorldCity>& city) {
+                    fFrom = city;
+                });
+            });
+    }
+
+    void read(eReadStream& src, eWorldBoard* const board) {
+        eSaveArchive ar(src);
+        serialize(ar, board);
     }
 
     void write(eWriteStream& dst) const {
         eSaveArchive ar(dst);
-        ar.field("resource", const_cast<eResourceType&>(fRes));
-        ar.field("count", const_cast<int&>(fCount));
-        dst.writeCity(fFrom.get());
+        const_cast<eSetAside*>(this)->serialize(ar, nullptr);
     }
 };
 
@@ -87,6 +93,7 @@ public:
     eEpisode* currentEpisode() const;
     bool hasCurrentEpisode() const;
     void printCurrentEpisodeDebug() const;
+    void setCurrentParentEpisode(const int e);
     void setCurrentColonyEpisode(const int e);
     void startEpisode();
     void episodeFinished();

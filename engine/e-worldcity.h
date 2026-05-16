@@ -135,26 +135,34 @@ struct eResourceTrade {
     }
 
     void serialize(eSaveArchive& ar) {
-        ar.field("fType", fType);
+        ar.field("type", fType);
 
-        int nu = ar.writing() ? static_cast<int>(fUsed.size()) : 0;
-        ar.field("fUsed.count", nu);
-        if(ar.reading()) fUsed.clear();
-        for(int i = 0; i < nu; i++) {
-            ePlayerId pid;
-            int c;
-            if(ar.writing()) {
-                auto it = fUsed.begin();
-                std::advance(it, i);
-                pid = it->first;
-                c = it->second;
+        int nu = static_cast<int>(fUsed.size());
+        ar.field("used.count", nu);
+        if(ar.reading()) {
+            fUsed.clear();
+            for(int i = 0; i < nu; i++) {
+                ePlayerId pid; int c;
+                ar.archiveField(("used." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("count", c);
+                    });
+                fUsed[pid] = c;
             }
-            ar.field("fUsed.pid", pid);
-            ar.field("fUsed.count", c);
-            if(ar.reading()) fUsed[pid] = c;
+        } else {
+            int i = 0;
+            for(auto& kv : fUsed) {
+                ePlayerId pid = kv.first; int c = kv.second;
+                ar.archiveField(("used." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("count", c);
+                    });
+            }
         }
 
-        ar.field("fMax", fMax);
+        ar.field("max", fMax);
     }
 };
 

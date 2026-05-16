@@ -13,30 +13,34 @@
 #include "fileIO/esavearchive.h"
 
 void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
+    int productionCount = ar.writing() ? static_cast<int>(mYearlyProduction.size()) : 0;
+    ar.field("yearlyProduction.count", productionCount);
     if(ar.reading()) {
-        int np;
-        ar.field("mYearlyProduction.count", np);
-        for(int i = 0; i < np; i++) {
+        for(int i = 0; i < productionCount; i++) {
             eResourceType type;
-            ar.field("mYearlyProduction.type", type);
-            auto& y = mYearlyProduction[type];
-            ar.field("mYearlyProduction.fBest", y.fBest);
-            ar.field("mYearlyProduction.fLastYear", y.fLastYear);
-            ar.field("mYearlyProduction.fThisYear", y.fThisYear);
+            ar.archiveField(("yearlyProduction." + std::to_string(i)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("resource", type);
+                    auto& y = mYearlyProduction[type];
+                    it.field("best", y.fBest);
+                    it.field("lastYear", y.fLastYear);
+                    it.field("thisYear", y.fThisYear);
+                });
         }
-        ar.field("mLastAutosaveYear", mLastAutosaveYear);
     } else {
-        int np = static_cast<int>(mYearlyProduction.size());
-        ar.field("mYearlyProduction.count", np);
+        int i = 0;
         for(auto& p : mYearlyProduction) {
             eResourceType type = p.first;
-            ar.field("mYearlyProduction.type", type);
-            ar.field("mYearlyProduction.fBest", p.second.fBest);
-            ar.field("mYearlyProduction.fLastYear", p.second.fLastYear);
-            ar.field("mYearlyProduction.fThisYear", p.second.fThisYear);
+            ar.archiveField(("yearlyProduction." + std::to_string(i++)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("resource", type);
+                    it.field("best", p.second.fBest);
+                    it.field("lastYear", p.second.fLastYear);
+                    it.field("thisYear", p.second.fThisYear);
+                });
         }
-        ar.field("mLastAutosaveYear", mLastAutosaveYear);
     }
+    ar.field("lastAutosaveYear", mLastAutosaveYear);
 }
 
 void eGameBoard::read(eReadStream& src) {
@@ -45,393 +49,467 @@ void eGameBoard::read(eReadStream& src) {
 }
 
 void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
-    int n = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
-    ar.field("messageLog.count", n);
+    int messageCount = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
+    ar.field("messageLog.count", messageCount);
     if(ar.reading()) {
         mMessageLog.clear();
-        for(int i = 0; i < n; i++) {
+        for(int i = 0; i < messageCount; i++) {
             eLoggedMessage lm;
-            ar.field("messageLog.title", lm.fMsg.fTitle);
-            ar.field("messageLog.text", lm.fMsg.fText);
-            lm.fDate.serialize(ar);
-            ar.field("messageLog.player", lm.fEd.fPlayerName);
-            ar.field("messageLog.read", lm.fRead);
+            ar.archiveField(("message." + std::to_string(i)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("title", lm.fMsg.fTitle);
+                    it.field("text", lm.fMsg.fText);
+                    it.archiveField("date", [&](eSaveArchive& dAr) { lm.fDate.serialize(dAr); });
+                    it.field("playerName", lm.fEd.fPlayerName);
+                    it.field("read", lm.fRead);
+                });
             lm.fEd.fDate = lm.fDate;
             lm.fEd.fType = eMessageEventType::common;
             mMessageLog.push_back(lm);
         }
     } else {
+        int i = 0;
         for(auto& lm : mMessageLog) {
-            ar.field("messageLog.title", lm.fMsg.fTitle);
-            ar.field("messageLog.text", lm.fMsg.fText);
-            lm.fDate.serialize(ar);
-            ar.field("messageLog.player", lm.fEd.fPlayerName);
-            ar.field("messageLog.read", lm.fRead);
+            ar.archiveField(("message." + std::to_string(i++)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("title", lm.fMsg.fTitle);
+                    it.field("text", lm.fMsg.fText);
+                    it.archiveField("date", [&](eSaveArchive& dAr) { lm.fDate.serialize(dAr); });
+                    it.field("playerName", lm.fEd.fPlayerName);
+                    it.field("read", lm.fRead);
+                });
         }
     }
 }
 
 void eGameBoard::serialize(eSaveArchive& ar) {
+    // assign ids before write
+    if(ar.writing()) {
+        int id = 0;
+        for(const auto b : mAllBuildings) b->setIOID(id++);
+        id = 0;
+        for(const auto c : mCharacters) c->setIOID(id++);
+        id = 0;
+        for(const auto ca : mCharacterActions) ca->setIOID(id++);
+        id = 0;
+        for(const auto b : mBanners) b->setIOID(id++);
+        id = 0;
+        for(const auto b : mAllSoldierBanners) b->setIOID(id++);
+        id = 0;
+        for(const auto e : mAllGameEvents) e->setIOID(id++);
+        id = 0;
+        for(const auto& c : mCitiesOnBoard) c->setInvasionHandlersIOIDs(id);
+    }
+
+    int width = ar.writing() ? mWidth : 0;
+    int height = ar.writing() ? mHeight : 0;
+    ar.field("width", width);
+    ar.field("height", height);
+    if(ar.reading()) initialize(width, height);
+
+    ar.field("fogOfWar", mFogOfWar);
+    ar.field("episodeLost", mEpisodeLost);
+    ar.field("wageMultiplier", mWageMultiplier);
+
+    // prices map<eResourceType, int>
+    {
+        int i = 0;
+        for(auto& p : mPrices) {
+            ar.field(("price." + std::to_string(static_cast<int>(p.first))).c_str(),
+                     p.second);
+            i++;
+        }
+    }
+
+    ar.archiveField("date", [this](eSaveArchive& it) { mDate.serialize(it); });
+    ar.field("frame", mFrame);
+    ar.field("time", mTime);
+    ar.field("totalTime", mTotalTime);
+    ar.field("soldiersUpdate", mSoldiersUpdate);
+
+    // citiesOnBoard
+    {
+        int cityCount = ar.writing() ? static_cast<int>(mCitiesOnBoard.size()) : 0;
+        ar.field("citiesOnBoard.count", cityCount);
+        if(ar.reading()) {
+            for(int i = 0; i < cityCount; i++) {
+                eCityId cid;
+                ar.archiveField(("cityOnBoard." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("cityId", cid);
+                        const auto c = addCityToBoard(cid);
+                        it.payloadField("city",
+                            [](eWriteStream&) {},
+                            [c](eReadStream& src) { c->read(src); });
+                    });
+                scheduleAppealMapUpdate(cid);
+            }
+        } else {
+            int i = 0;
+            for(const auto& c : mCitiesOnBoard) {
+                ar.archiveField(("cityOnBoard." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        eCityId cid = c->id();
+                        it.field("cityId", cid);
+                        it.payloadField("city",
+                            [&c](eWriteStream& dst) { c->write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    // playersOnBoard
+    {
+        int playerCount = ar.writing() ? static_cast<int>(mPlayersOnBoard.size()) : 0;
+        ar.field("playersOnBoard.count", playerCount);
+        if(ar.reading()) {
+            for(int i = 0; i < playerCount; i++) {
+                ePlayerId pid;
+                ar.archiveField(("playerOnBoard." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        const auto p = std::make_shared<eBoardPlayer>(pid, *this);
+                        it.payloadField("player",
+                            [](eWriteStream&) {},
+                            [p](eReadStream& src) { p->read(src); });
+                        mPlayersOnBoard.push_back(p);
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto& p : mPlayersOnBoard) {
+                ar.archiveField(("playerOnBoard." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        ePlayerId pid = p->id();
+                        it.field("playerId", pid);
+                        it.payloadField("player",
+                            [&p](eWriteStream& dst) { p->write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    // tiles (fixed dim, no count needed)
+    {
+        int i = 0;
+        for(const auto& ts : mTiles) {
+            int j = 0;
+            for(const auto& t : ts) {
+                ar.payloadField(
+                    ("tile." + std::to_string(i) + "." + std::to_string(j)).c_str(),
+                    [&t](eWriteStream& dst) { t->write(dst); },
+                    [&t](eReadStream& src) { t->read(src); });
+                j++;
+            }
+            i++;
+        }
+    }
+
+    // buildings
+    {
+        int buildingCount = ar.writing() ? static_cast<int>(mAllBuildings.size()) : 0;
+        ar.field("buildings.count", buildingCount);
+        if(ar.reading()) {
+            for(int i = 0; i < buildingCount; i++) {
+                eBuildingType type;
+                ar.archiveField(("building." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("buildingType", type);
+                        it.payloadField("buildingData",
+                            [](eWriteStream&) {},
+                            [this, &type](eReadStream& src) {
+                                eBuildingReader::sRead(*this, type, src);
+                            });
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto b : mAllBuildings) {
+                ar.archiveField(("building." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        eBuildingType type = b->type();
+                        it.field("buildingType", type);
+                        it.payloadField("buildingData",
+                            [b](eWriteStream& dst) { eBuildingWriter::sWrite(b, dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    // characters
+    {
+        int characterCount = ar.writing() ? static_cast<int>(mCharacters.size()) : 0;
+        ar.field("characters.count", characterCount);
+        if(ar.reading()) {
+            for(int i = 0; i < characterCount; i++) {
+                eCharacterType type;
+                ar.archiveField(("character." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("characterType", type);
+                        const auto c = eCharacter::sCreate(type, *this);
+                        it.payloadField("characterData",
+                            [](eWriteStream&) {},
+                            [c](eReadStream& src) { c->read(src); });
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto c : mCharacters) {
+                ar.archiveField(("character." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        eCharacterType type = c->type();
+                        it.field("characterType", type);
+                        it.payloadField("characterData",
+                            [c](eWriteStream& dst) { c->write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    // missiles
+    {
+        int missileCount = ar.writing() ? static_cast<int>(mMissiles.size()) : 0;
+        ar.field("missiles.count", missileCount);
+        if(ar.reading()) {
+            for(int i = 0; i < missileCount; i++) {
+                eMissileType type;
+                ar.archiveField(("missile." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("missileType", type);
+                        const auto c = eMissile::sCreate(*this, type);
+                        it.payloadField("missileData",
+                            [](eWriteStream&) {},
+                            [c](eReadStream& src) { c->read(src); });
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto c : mMissiles) {
+                ar.archiveField(("missile." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        eMissileType type = c->type();
+                        it.field("missileType", type);
+                        it.payloadField("missileData",
+                            [c](eWriteStream& dst) { c->write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    // goals
+    {
+        int goalCount = ar.writing() ? static_cast<int>(mGoals.size()) : 0;
+        ar.field("goals.count", goalCount);
+        if(ar.reading()) {
+            for(int i = 0; i < goalCount; i++) {
+                const auto g = std::make_shared<eEpisodeGoal>();
+                ar.payloadField(("goal." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [g](eReadStream& src) { g->read(src); });
+                mGoals.push_back(g);
+            }
+        } else {
+            int i = 0;
+            for(const auto& g : mGoals) {
+                ar.payloadField(("goal." + std::to_string(i++)).c_str(),
+                    [&g](eWriteStream& dst) { g->write(dst); },
+                    [](eReadStream&) {});
+            }
+        }
+    }
+    ar.field("goalsFulfilled", mGoalsFulfilled);
+
+    ar.field("progressEarthquakes", mProgressEarthquakes);
+    {
+        int earthquakeCount = ar.writing() ? static_cast<int>(mEarthquakes.size()) : 0;
+        ar.field("earthquakes.count", earthquakeCount);
+        if(ar.reading()) {
+            for(int i = 0; i < earthquakeCount; i++) {
+                const auto e = std::make_shared<eEarthquake>();
+                ar.payloadField(("earthquake." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this, e](eReadStream& src) { e->read(src, *this); });
+                mEarthquakes.push_back(e);
+            }
+        } else {
+            int i = 0;
+            for(const auto& e : mEarthquakes) {
+                ar.payloadField(("earthquake." + std::to_string(i++)).c_str(),
+                    [&e](eWriteStream& dst) { e->write(dst); },
+                    [](eReadStream&) {});
+            }
+        }
+    }
+
+    ar.field("progressWaves", mProgressWaves);
+    {
+        int tidalWaveCount = ar.writing() ? static_cast<int>(mTidalWaves.size()) : 0;
+        ar.field("tidalWaves.count", tidalWaveCount);
+        if(ar.reading()) {
+            for(int i = 0; i < tidalWaveCount; i++) {
+                const auto w = std::make_shared<eTidalWave>();
+                ar.payloadField(("tidalWave." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this, w](eReadStream& src) { w->read(src, *this); });
+                mTidalWaves.push_back(w);
+            }
+        } else {
+            int i = 0;
+            for(const auto& w : mTidalWaves) {
+                ar.payloadField(("tidalWave." + std::to_string(i++)).c_str(),
+                    [&w](eWriteStream& dst) { w->write(dst); },
+                    [](eReadStream&) {});
+            }
+        }
+    }
+
+    ar.field("progressLavaFlows", mProgressLavaFlows);
+    {
+        int lavaFlowCount = ar.writing() ? static_cast<int>(mLavaFlows.size()) : 0;
+        ar.field("lavaFlows.count", lavaFlowCount);
+        if(ar.reading()) {
+            for(int i = 0; i < lavaFlowCount; i++) {
+                const auto w = std::make_shared<eLavaFlow>();
+                ar.payloadField(("lavaFlow." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this, w](eReadStream& src) { w->read(src, *this); });
+                mLavaFlows.push_back(w);
+            }
+        } else {
+            int i = 0;
+            for(const auto& w : mLavaFlows) {
+                ar.payloadField(("lavaFlow." + std::to_string(i++)).c_str(),
+                    [&w](eWriteStream& dst) { w->write(dst); },
+                    [](eReadStream&) {});
+            }
+        }
+    }
+
+    ar.field("progressLandSlides", mProgressLandSlides);
+    {
+        int landSlideCount = ar.writing() ? static_cast<int>(mLandSlides.size()) : 0;
+        ar.field("landSlides.count", landSlideCount);
+        if(ar.reading()) {
+            for(int i = 0; i < landSlideCount; i++) {
+                const auto w = std::make_shared<eLandSlide>();
+                ar.payloadField(("landSlide." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this, w](eReadStream& src) { w->read(src, *this); });
+                mLandSlides.push_back(w);
+            }
+        } else {
+            int i = 0;
+            for(const auto& w : mLandSlides) {
+                ar.payloadField(("landSlide." + std::to_string(i++)).c_str(),
+                    [&w](eWriteStream& dst) { w->write(dst); },
+                    [](eReadStream&) {});
+            }
+        }
+    }
+
+    // conqueredBy map<eCityId, vector<stdsptr<eWorldCity>>>
+    {
+        int conqueredByCount = ar.writing() ? static_cast<int>(mConqueredBy.size()) : 0;
+        ar.field("conqueredBy.count", conqueredByCount);
+        if(ar.reading()) {
+            for(int i = 0; i < conqueredByCount; i++) {
+                eCityId cid;
+                ar.archiveField(("conqueredBy." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("cityId", cid);
+                        int cityRefCount = 0;
+                        it.field("cities.count", cityRefCount);
+                        for(int j = 0; j < cityRefCount; j++) {
+                            it.payloadField(("city." + std::to_string(j)).c_str(),
+                                [](eWriteStream&) {},
+                                [this, cid](eReadStream& src) {
+                                    src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
+                                        mConqueredBy[cid].push_back(c);
+                                    });
+                                });
+                        }
+                    });
+            }
+        } else {
+            int i = 0;
+            for(auto& p : mConqueredBy) {
+                eCityId cid = p.first;
+                auto& cities = p.second;
+                ar.archiveField(("conqueredBy." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("cityId", cid);
+                        int cityRefCount = static_cast<int>(cities.size());
+                        it.field("cities.count", cityRefCount);
+                        for(int j = 0; j < cityRefCount; j++) {
+                            auto& c = cities[j];
+                            it.payloadField(("city." + std::to_string(j)).c_str(),
+                                [&c](eWriteStream& dst) { dst.writeCity(c.get()); },
+                                [](eReadStream&) {});
+                        }
+                    });
+            }
+        }
+    }
+
+    // plannedActions
+    {
+        int plannedActionCount = ar.writing() ? static_cast<int>(mPlannedActions.size()) : 0;
+        ar.field("plannedActions.count", plannedActionCount);
+        if(ar.reading()) {
+            for(int i = 0; i < plannedActionCount; i++) {
+                ePlannedActionType type;
+                ar.archiveField(("plannedAction." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("actionType", type);
+                        const auto a = ePlannedAction::sCreate(type);
+                        it.payloadField("actionData",
+                            [](eWriteStream&) {},
+                            [this, a](eReadStream& src) { a->read(src, *this); });
+                        mPlannedActions.push_back(a);
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto a : mPlannedActions) {
+                ar.archiveField(("plannedAction." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        ePlannedActionType type = a->type();
+                        it.field("actionType", type);
+                        it.payloadField("actionData",
+                            [a](eWriteStream& dst) { a->write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
+        }
+    }
+
+    serializeYearlyProduction(ar);
+    serializeMessageLog(ar);
+
     if(ar.reading()) {
-        auto& src = ar.readStream();
-    int w;
-    ar.field("mWidth", w, 0);
-    int h;
-    ar.field("mHeight", h, 0);
-    initialize(w, h);
-
-    ar.field("mFogOfWar", mFogOfWar);
-
-    ar.field("mEpisodeLost", mEpisodeLost);
-
-    ar.field("mWageMultiplier", mWageMultiplier);
-
-    for(auto& p : mPrices) {
-        ar.field("mPrices.value", p.second);
-    }
-
-    mDate.serialize(ar);
-    ar.field("mFrame", mFrame);
-    ar.field("mTime", mTime);
-    ar.field("mTotalTime", mTotalTime);
-
-    ar.field("mSoldiersUpdate", mSoldiersUpdate);
-
-    {
-        int nc = 0;
-        ar.field("mCitiesOnBoard.count", nc, 0);
-        for(int i = 0; i < nc; i++) {
-            eCityId cid;
-            ar.field("mCitiesOnBoard.id", cid);
-            const auto c = addCityToBoard(cid);
-            c->read(src);
-            scheduleAppealMapUpdate(cid);
-        }
-    }
-
-    {
-        int np = 0;
-        ar.field("mPlayersOnBoard.count", np, 0);
-        for(int i = 0; i < np; i++) {
-            ePlayerId pid;
-            ar.field("mPlayersOnBoard.id", pid);
-            const auto p = std::make_shared<eBoardPlayer>(pid, *this);
-            p->read(src);
-            mPlayersOnBoard.push_back(p);
-        }
-    }
-
-    for(const auto& ts : mTiles) {
-        for(const auto& t : ts) {
-            t->read(src);
-        }
-    }
-
-    {
-        int nbs = 0;
-        ar.field("mAllBuildings.count", nbs, 0);
-        for(int i = 0; i < nbs; i++) {
-            eBuildingType type;
-            ar.field("mAllBuildings.type", type);
-            eBuildingReader::sRead(*this, type, src);
-        }
-    }
-
-
-    {
-        int ncs = 0;
-        ar.field("mCharacters.count", ncs, 0);
-
-        for(int i = 0; i < ncs; i++) {
-            eCharacterType type;
-            ar.field("mCharacters.type", type);
-            const auto c = eCharacter::sCreate(type, *this);
-            c->read(src);
-        }
-    }
-
-    {
-        int ncs = 0;
-        ar.field("mMissiles.count", ncs, 0);
-
-        for(int i = 0; i < ncs; i++) {
-            eMissileType type;
-            ar.field("mMissiles.type", type);
-            const auto c = eMissile::sCreate(*this, type);
-            c->read(src);
-        }
-    }
-
-    int ng = 0;
-    ar.field("mGoals.count", ng, 0);
-    for(int i = 0; i < ng; i++) {
-        const auto g = std::make_shared<eEpisodeGoal>();
-        g->read(src);
-        mGoals.push_back(g);
-    }
-    ar.field("mGoalsFulfilled", mGoalsFulfilled);
-
-    ar.field("mProgressEarthquakes", mProgressEarthquakes);
-    int ne = 0;
-    ar.field("mEarthquakes.count", ne, 0);
-    for(int i = 0; i < ne; i++) {
-        const auto e = std::make_shared<eEarthquake>();
-        e->read(src, *this);
-        mEarthquakes.push_back(e);
-    }
-
-    ar.field("mProgressWaves", mProgressWaves);
-    int nw = 0;
-    ar.field("mTidalWaves.count", nw, 0);
-    for(int i = 0; i < nw; i++) {
-        const auto w = std::make_shared<eTidalWave>();
-        w->read(src, *this);
-        mTidalWaves.push_back(w);
-    }
-
-    ar.field("mProgressLavaFlows", mProgressLavaFlows);
-    int nl = 0;
-    ar.field("mLavaFlows.count", nl, 0);
-    for(int i = 0; i < nl; i++) {
-        const auto w = std::make_shared<eLavaFlow>();
-        w->read(src, *this);
-        mLavaFlows.push_back(w);
-    }
-
-    ar.field("mProgressLandSlides", mProgressLandSlides);
-    int ns = 0;
-    ar.field("mLandSlides.count", ns, 0);
-    for(int i = 0; i < ns; i++) {
-        const auto w = std::make_shared<eLandSlide>();
-        w->read(src, *this);
-        mLandSlides.push_back(w);
-    }
-
-    int nd = 0;
-    ar.field("mConqueredBy.count", nd, 0);
-    for(int i = 0; i < nd; i++) {
-        eCityId cid;
-        ar.field("mConqueredBy.id", cid);
-        int nc = 0;
-        ar.field("mConqueredBy.cities.count", nc, 0);
-        for(int j = 0; j < nc; j++) {
-            src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
-                mConqueredBy[cid].push_back(c);
-            });
-        }
-    }
-
-    int npa = 0;
-    ar.field("mPlannedActions.count", npa, 0);
-    for(int i = 0; i < npa; i++) {
-        ePlannedActionType type;
-        ar.field("mPlannedActions.type", type);
-        const auto a = ePlannedAction::sCreate(type);
-        a->read(src, *this);
-        mPlannedActions.push_back(a);
-    }
-
-    serializeYearlyProduction(ar);
-    serializeMessageLog(ar);
-
-    updateMarbleTiles();
-    updateTerritoryBorders();
-    for(const auto& c : mCitiesOnBoard) {
-        c->updateResources();
-    }
-    src.addPostFunc([this]() {
-        for(const auto e : mAllGameEvents) {
-            const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
-            if(request && request->isMainEvent() &&
-               request->isActiveCityRequest()) {
-                addCityRequest(request);
-            }
-            const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
-            if(tribute && tribute->isMainEvent() &&
-               !tribute->finished()) {
-                addTributeRequest(tribute);
-            }
-        }
-    }, "requests");
-    } else {
-        auto& dst = ar.writeStream();
-    ar.field("mWidth", mWidth);
-    ar.field("mHeight", mHeight);
-
-    ar.field("mFogOfWar", mFogOfWar);
-
-    ar.field("mEpisodeLost", mEpisodeLost);
-
-    ar.field("mWageMultiplier", mWageMultiplier);
-
-    for(const auto& p : mPrices) {
-        int price = p.second;
-        ar.field("mPrices.value", price);
-    }
-
-    mDate.serialize(ar);
-    ar.field("mFrame", mFrame);
-    ar.field("mTime", mTime);
-    ar.field("mTotalTime", mTotalTime);
-
-    ar.field("mSoldiersUpdate", mSoldiersUpdate);
-
-    {
-        int id = 0;
-        for(const auto b : mAllBuildings) {
-            b->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
-        for(const auto c : mCharacters) {
-            c->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
-        for(const auto ca : mCharacterActions) {
-            ca->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
-        for(const auto b : mBanners) {
-            b->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
-        for(const auto b : mAllSoldierBanners) {
-            b->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
-        for(const auto e : mAllGameEvents) {
-            e->setIOID(id++);
-        }
-    }
-    {
-        int id = 0;
+        updateMarbleTiles();
+        updateTerritoryBorders();
         for(const auto& c : mCitiesOnBoard) {
-            c->setInvasionHandlersIOIDs(id);
+            c->updateResources();
         }
-    }
-
-
-    {
-        int count = static_cast<int>(mCitiesOnBoard.size());
-        ar.field("mCitiesOnBoard.count", count);
-        for(const auto& c : mCitiesOnBoard) {
-            eCityId id = c->id();
-            ar.field("mCitiesOnBoard.id", id);
-            c->write(dst);
-        }
-    }
-
-    {
-        int count = static_cast<int>(mPlayersOnBoard.size());
-        ar.field("mPlayersOnBoard.count", count);
-        for(const auto& p : mPlayersOnBoard) {
-            ePlayerId id = p->id();
-            ar.field("mPlayersOnBoard.id", id);
-            p->write(dst);
-        }
-    }
-
-    for(const auto& ts : mTiles) {
-        for(const auto& t : ts) {
-            t->write(dst);
-        }
-    }
-
-    {
-        int nbs = static_cast<int>(mAllBuildings.size());
-        ar.field("mAllBuildings.count", nbs);
-        for(const auto b : mAllBuildings) {
-            eBuildingType type = b->type();
-            ar.field("mAllBuildings.type", type);
-            eBuildingWriter::sWrite(b, dst);
-        }
-    }
-
-    {
-        int ncs = static_cast<int>(mCharacters.size());
-        ar.field("mCharacters.count", ncs);
-        for(const auto c : mCharacters) {
-            eCharacterType type = c->type();
-            ar.field("mCharacters.type", type);
-            c->write(dst);
-        }
-    }
-
-    {
-        int ncs = static_cast<int>(mMissiles.size());
-        ar.field("mMissiles.count", ncs);
-        for(const auto c : mMissiles) {
-            eMissileType type = c->type();
-            ar.field("mMissiles.type", type);
-            c->write(dst);
-        }
-    }
-
-    int goalsCount = static_cast<int>(mGoals.size());
-    ar.field("mGoals.count", goalsCount);
-    for(const auto& g : mGoals) {
-        g->write(dst);
-    }
-    ar.field("mGoalsFulfilled", mGoalsFulfilled);
-
-    ar.field("mProgressEarthquakes", mProgressEarthquakes);
-    int earthquakesCount = static_cast<int>(mEarthquakes.size());
-    ar.field("mEarthquakes.count", earthquakesCount);
-    for(const auto& e : mEarthquakes) {
-        e->write(dst);
-    }
-
-    ar.field("mProgressWaves", mProgressWaves);
-    int tidalWavesCount = static_cast<int>(mTidalWaves.size());
-    ar.field("mTidalWaves.count", tidalWavesCount);
-    for(const auto& w : mTidalWaves) {
-        w->write(dst);
-    }
-
-    ar.field("mProgressLavaFlows", mProgressLavaFlows);
-    int lavaFlowsCount = static_cast<int>(mLavaFlows.size());
-    ar.field("mLavaFlows.count", lavaFlowsCount);
-    for(const auto& w : mLavaFlows) {
-        w->write(dst);
-    }
-
-    ar.field("mProgressLandSlides", mProgressLandSlides);
-    int landSlidesCount = static_cast<int>(mLandSlides.size());
-    ar.field("mLandSlides.count", landSlidesCount);
-    for(const auto& w : mLandSlides) {
-        w->write(dst);
-    }
-
-    int conqueredByCount = static_cast<int>(mConqueredBy.size());
-    ar.field("mConqueredBy.count", conqueredByCount);
-    for(const auto& p : mConqueredBy) {
-        eCityId cid = p.first;
-        ar.field("mConqueredBy.id", cid);
-        int nc = static_cast<int>(p.second.size());
-        ar.field("mConqueredBy.cities.count", nc);
-        for(const auto& c : p.second) {
-            dst.writeCity(c.get());
-        }
-    }
-
-    int plannedActionsCount = static_cast<int>(mPlannedActions.size());
-    ar.field("mPlannedActions.count", plannedActionsCount);
-    for(const auto a : mPlannedActions) {
-        ePlannedActionType type = a->type();
-        ar.field("mPlannedActions.type", type);
-        a->write(dst);
-    }
-
-    serializeYearlyProduction(ar);
-    serializeMessageLog(ar);
+        ar.readStream().addPostFunc([this]() {
+            for(const auto e : mAllGameEvents) {
+                const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
+                if(request && request->isMainEvent() &&
+                   request->isActiveCityRequest()) {
+                    addCityRequest(request);
+                }
+                const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
+                if(tribute && tribute->isMainEvent() &&
+                   !tribute->finished()) {
+                    addTributeRequest(tribute);
+                }
+            }
+        }, "requests");
     }
 }

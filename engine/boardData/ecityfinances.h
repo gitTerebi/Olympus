@@ -81,17 +81,13 @@ struct eFinanceYear {
         }
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
-        // income
+    void serialize(eSaveArchive& ar) {
         ar.field("taxesIn", fTaxesIn);
         ar.field("exports", fExports);
         ar.field("giftsReceived", fGiftsReceived);
         ar.field("minedSilver", fMinedSilver);
         ar.field("tributeReceived", fTributeReceived);
         ar.field("hippodrome", fHippodrome);
-
-        // expenses
         ar.field("importCosts", fImportCosts);
         ar.field("wages", fWages);
         ar.field("construction", fConstruction);
@@ -99,22 +95,14 @@ struct eFinanceYear {
         ar.field("giftsAndAidGiven", fGiftsAndAidGiven);
     }
 
+    void read(eReadStream& src) {
+        eSaveArchive ar(src);
+        serialize(ar);
+    }
+
     void write(eWriteStream& dst) const {
         eSaveArchive ar(dst);
-        // income
-        ar.field("taxesIn", const_cast<int&>(fTaxesIn));
-        ar.field("exports", const_cast<int&>(fExports));
-        ar.field("giftsReceived", const_cast<int&>(fGiftsReceived));
-        ar.field("minedSilver", const_cast<int&>(fMinedSilver));
-        ar.field("tributeReceived", const_cast<int&>(fTributeReceived));
-        ar.field("hippodrome", const_cast<int&>(fHippodrome));
-
-        // expenses
-        ar.field("importCosts", const_cast<int&>(fImportCosts));
-        ar.field("wages", const_cast<int&>(fWages));
-        ar.field("construction", const_cast<int&>(fConstruction));
-        ar.field("bribesTributePaid", const_cast<int&>(fBribesTributePaid));
-        ar.field("giftsAndAidGiven", const_cast<int&>(fGiftsAndAidGiven));
+        const_cast<eFinanceYear*>(this)->serialize(ar);
     }
 
     int totalIncome() const {
@@ -158,6 +146,7 @@ public:
     const eFinanceYear& lastYear() const { return mLastYear; }
     const eFinanceYear& thisYear() const { return mThisYear; }
 
+    void serialize(eSaveArchive& ar);
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;
 private:

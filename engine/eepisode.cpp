@@ -28,147 +28,222 @@ void eEpisode::write(eWriteStream& dst) const {
 }
 
 void eEpisode::serialize(eSaveArchive& ar) {
+    // drachmas map<ePlayerId, int>
     {
-        int nc;
-        if(ar.writing()) nc = fDrachmas.size();
-        ar.field("nc", nc);
-        if(ar.reading()) fDrachmas.clear();
-        for(int i = 0; i < nc; i++) {
-            ePlayerId pid;
-            int d;
-            if(ar.writing()) {
-                auto it = fDrachmas.begin();
-                std::advance(it, i);
-                pid = it->first;
-                d = it->second;
+        int drachmasCount = ar.writing() ? static_cast<int>(fDrachmas.size()) : 0;
+        ar.field("drachmas.count", drachmasCount);
+        if(ar.reading()) {
+            fDrachmas.clear();
+            for(int i = 0; i < drachmasCount; i++) {
+                ePlayerId pid; int amount;
+                ar.archiveField(("drachmas." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("amount", amount);
+                    });
+                fDrachmas[pid] = amount;
             }
-            ar.field("pid", pid);
-            ar.field("d", d);
-            if(ar.reading()) fDrachmas[pid] = d;
+        } else {
+            int i = 0;
+            for(auto& kv : fDrachmas) {
+                ePlayerId pid = kv.first; int amount = kv.second;
+                ar.archiveField(("drachmas." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("amount", amount);
+                    });
+            }
         }
     }
-    if(ar.reading()) fStartDate.read(ar.readStream());
-    else fStartDate.write(ar.writeStream());
+
+    ar.payloadField("startDate",
+        [this](eWriteStream& dst) { fStartDate.write(dst); },
+        [this](eReadStream& src) { fStartDate.read(src); });
+
+    // friendlyGods map<eCityId, vector<eGodType>>
     {
-        int nc;
-        if(ar.writing()) nc = fFriendlyGods.size();
-        ar.field("nc", nc);
-        if(ar.reading()) fFriendlyGods.clear();
-        for(int j = 0; j < nc; j++) {
-            eCityId cid;
-            std::vector<eGodType> fgs;
-            if(ar.writing()) {
-                auto it = fFriendlyGods.begin();
-                std::advance(it, j);
-                cid = it->first;
-                fgs = it->second;
+        int cityCount = ar.writing() ? static_cast<int>(fFriendlyGods.size()) : 0;
+        ar.field("friendlyGods.count", cityCount);
+        if(ar.reading()) {
+            fFriendlyGods.clear();
+            for(int i = 0; i < cityCount; i++) {
+                eCityId cid;
+                std::vector<eGodType> gods;
+                ar.archiveField(("friendlyGods." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        int godCount = 0;
+                        cityAr.field("gods.count", godCount);
+                        for(int j = 0; j < godCount; j++) {
+                            eGodType g;
+                            cityAr.field(("god." + std::to_string(j)).c_str(), g);
+                            gods.push_back(g);
+                        }
+                    });
+                fFriendlyGods[cid] = gods;
             }
-            ar.field("cid", cid);
-            int nfg;
-            if(ar.writing()) nfg = fgs.size();
-            ar.field("nfg", nfg);
-            for(int i = 0; i < nfg; i++) {
-                eGodType g;
-                if(ar.writing()) g = fgs[i];
-                ar.field("g", g);
-                if(ar.reading()) fgs.push_back(g);
+        } else {
+            int i = 0;
+            for(auto& kv : fFriendlyGods) {
+                eCityId cid = kv.first;
+                auto& gods = kv.second;
+                ar.archiveField(("friendlyGods." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        int godCount = static_cast<int>(gods.size());
+                        cityAr.field("gods.count", godCount);
+                        for(int j = 0; j < godCount; j++) {
+                            eGodType g = gods[j];
+                            cityAr.field(("god." + std::to_string(j)).c_str(), g);
+                        }
+                    });
             }
-            if(ar.reading()) fFriendlyGods[cid] = fgs;
         }
     }
+
+    // events map<eCityId, vector<eGameEvent>>
     {
-        int ncs;
-        if(ar.writing()) ncs = fEvents.size();
-        ar.field("ncs", ncs);
-        if(ar.reading()) fEvents.clear();
-        for(int i = 0; i < ncs; i++) {
-            eCityId cid;
-            std::vector<stdsptr<eGameEvent>> events;
-            if(ar.writing()) {
-                auto it = fEvents.begin();
-                std::advance(it, i);
-                cid = it->first;
-                events = it->second;
+        int cityCount = ar.writing() ? static_cast<int>(fEvents.size()) : 0;
+        ar.field("events.count", cityCount);
+        if(ar.reading()) {
+            fEvents.clear();
+            for(int i = 0; i < cityCount; i++) {
+                eCityId cid;
+                ar.archiveField(("events." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        int eventCount = 0;
+                        cityAr.field("events.count", eventCount);
+                        for(int j = 0; j < eventCount; j++) {
+                            eGameEventType type;
+                            cityAr.archiveField(("event." + std::to_string(j)).c_str(),
+                                [&](eSaveArchive& evtAr) {
+                                    evtAr.field("type", type);
+                                    evtAr.payloadField("eventData",
+                                        [](eWriteStream&) {},
+                                        [&](eReadStream& src) {
+                                            const auto branch = eGameEventBranch::root;
+                                            const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
+                                            e->read(src);
+                                            fEvents[cid].push_back(e);
+                                        });
+                                });
+                        }
+                    });
+            }
+        } else {
+            int i = 0;
+            for(auto& kv : fEvents) {
+                eCityId cid = kv.first;
+                auto events = kv.second;
                 eVectorHelpers::removeAll(events, stdsptr<eGameEvent>(nullptr));
-            }
-            ar.field("cid", cid);
-            int ne;
-            if(ar.writing()) ne = events.size();
-            ar.field("ne", ne);
-            for(int j = 0; j < ne; j++) {
-                eGameEventType type;
-                if(ar.writing()) type = events[j]->type();
-                ar.field("type", type);
-                if(ar.reading()) {
-                    const auto branch = eGameEventBranch::root;
-                    const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
-                    e->read(ar.readStream());
-                    fEvents[cid].push_back(e);
-                } else {
-                    events[j]->write(ar.writeStream());
-                }
+                ar.archiveField(("events." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        int eventCount = static_cast<int>(events.size());
+                        cityAr.field("events.count", eventCount);
+                        for(int j = 0; j < eventCount; j++) {
+                            eGameEventType type = events[j]->type();
+                            auto& evt = events[j];
+                            cityAr.archiveField(("event." + std::to_string(j)).c_str(),
+                                [&](eSaveArchive& evtAr) {
+                                    evtAr.field("type", type);
+                                    evtAr.payloadField("eventData",
+                                        [&evt](eWriteStream& dst) { evt->write(dst); },
+                                        [](eReadStream&) {});
+                                });
+                        }
+                    });
             }
         }
     }
+
+    // goals
     {
-        int ng;
-        if(ar.writing()) ng = fGoals.size();
-        ar.field("ng", ng);
-        if(ar.reading()) fGoals.clear();
-        for(int i = 0; i < ng; i++) {
-            if(ar.reading()) {
+        int goalCount = ar.writing() ? static_cast<int>(fGoals.size()) : 0;
+        ar.field("goals.count", goalCount);
+        if(ar.reading()) {
+            fGoals.clear();
+            for(int i = 0; i < goalCount; i++) {
                 const auto g = std::make_shared<eEpisodeGoal>();
-                g->read(ar.readStream());
+                ar.payloadField(("goal." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [g](eReadStream& src) { g->read(src); });
                 fGoals.push_back(g);
-            } else {
-                fGoals[i]->write(ar.writeStream());
+            }
+        } else {
+            for(int i = 0; i < goalCount; i++) {
+                ar.payloadField(("goal." + std::to_string(i)).c_str(),
+                    [this, i](eWriteStream& dst) { fGoals[i]->write(dst); },
+                    [](eReadStream&) {});
             }
         }
     }
 
+    // availableBuildings map<eCityId, eAvailableBuildings>
     {
-        int nc;
-        if(ar.writing()) nc = fAvailableBuildings.size();
-        ar.field("nc", nc);
-        if(ar.reading()) fAvailableBuildings.clear();
-        for(int i = 0; i < nc; i++) {
-            eCityId cid;
-            eAvailableBuildings ab;
-            if(ar.writing()) {
-                auto it = fAvailableBuildings.begin();
-                std::advance(it, i);
-                cid = it->first;
-                ab = it->second;
+        int cityCount = ar.writing() ? static_cast<int>(fAvailableBuildings.size()) : 0;
+        ar.field("availableBuildings.count", cityCount);
+        if(ar.reading()) {
+            fAvailableBuildings.clear();
+            for(int i = 0; i < cityCount; i++) {
+                eCityId cid;
+                eAvailableBuildings ab;
+                ar.archiveField(("availableBuildings." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        cityAr.payloadField("buildings",
+                            [](eWriteStream&) {},
+                            [&ab](eReadStream& src) { ab.read(src); });
+                    });
+                fAvailableBuildings[cid] = ab;
             }
-            ar.field("cid", cid);
-            if(ar.reading()) ab.read(ar.readStream());
-            else ab.write(ar.writeStream());
-            if(ar.reading()) fAvailableBuildings[cid] = ab;
+        } else {
+            int i = 0;
+            for(auto& kv : fAvailableBuildings) {
+                eCityId cid = kv.first;
+                eAvailableBuildings& ab = kv.second;
+                ar.archiveField(("availableBuildings." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& cityAr) {
+                        cityAr.field("cityId", cid);
+                        cityAr.payloadField("buildings",
+                            [&ab](eWriteStream& dst) { ab.write(dst); },
+                            [](eReadStream&) {});
+                    });
+            }
         }
     }
 
+    // maxSanctuaries map<eCityId, int>
     {
-        int nc;
-        if(ar.writing()) nc = fMaxSanctuaries.size();
-        ar.field("nc", nc);
-        if(ar.reading()) fMaxSanctuaries.clear();
-        for(int i = 0; i < nc; i++) {
-            eCityId cid;
-            int m;
-            if(ar.writing()) {
-                auto it = fMaxSanctuaries.begin();
-                std::advance(it, i);
-                cid = it->first;
-                m = it->second;
+        int cityCount = ar.writing() ? static_cast<int>(fMaxSanctuaries.size()) : 0;
+        ar.field("maxSanctuaries.count", cityCount);
+        if(ar.reading()) {
+            fMaxSanctuaries.clear();
+            for(int i = 0; i < cityCount; i++) {
+                eCityId cid; int maxValue;
+                ar.archiveField(("maxSanctuaries." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("cityId", cid);
+                        it.field("max", maxValue);
+                    });
+                fMaxSanctuaries[cid] = maxValue;
             }
-            ar.field("cid", cid);
-            ar.field("m", m);
-            if(ar.reading()) fMaxSanctuaries[cid] = m;
+        } else {
+            int i = 0;
+            for(auto& kv : fMaxSanctuaries) {
+                eCityId cid = kv.first; int maxValue = kv.second;
+                ar.archiveField(("maxSanctuaries." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("cityId", cid);
+                        it.field("max", maxValue);
+                    });
+            }
         }
     }
 
-    ar.field("fIntroId", fIntroId);
-    ar.field("fCompleteId", fCompleteId);
+    ar.field("introId", fIntroId);
+    ar.field("completeId", fCompleteId);
 }
 
 void eEpisode::clear() {

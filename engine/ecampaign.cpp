@@ -344,185 +344,140 @@ void eCampaign::write(eWriteStream& dst) const {
 }
 
 void eCampaign::serialize(eSaveArchive& ar) {
+    ar.field("bitmap", mBitmap);
+    ar.field("isPak", mIsPak);
+    if(mIsPak) ar.field("pakFilename", mPakFilename);
+
     if(ar.reading()) {
-    auto& src = ar.readStream();
-    ar.field("bitmap", mBitmap);
-    ar.field("isPak", mIsPak);
-    if(mIsPak) {
-        ar.field("pakFilename", mPakFilename);
-    }
-    std::string name;
-    ar.field("name", name);
-    if(mName.empty()) mName = name;
-    ar.field("currentParentEpisode", mCurrentParentEpisode);
-    ar.field("currentColonyEpisode", mCurrentColonyEpisode);
-    ar.field("currentEpisodeType", mCurrentEpisodeType);
-    {
-        int nc = 0;
-        ar.field("drachmasCount", nc, 0);
-        for(int i = 0; i < nc; i++) {
-            ePlayerId pid;
-            ar.field("drachmasPlayerId", pid);
-            ar.field("drachmas", mDrachmas[pid]);
-        }
-    }
-    mDate.read(src);
-    for(auto& p : mPrices) {
-        ar.field("price", p.second);
-    }
-    ar.field("difficulty", mDifficulty);
-    mWorldBoard.read(src);
-    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
-    mParentBoard->read(src);
-
-    {
-        int ne = 0;
-        ar.field("playedColonyEpisodeCount", ne, 0);
-        for(int i = 0; i < ne; i++) {
-            int e;
-            ar.field("playedColonyEpisode", e);
-            mPlayedColonyEpisodes.push_back(e);
-        }
-    }
-
-    {
-        int nc = 0;
-        const bool hasColonyBoardCount = ar.field("colonyBoardCount", nc, 0); // SAVE_COMPAT_OPTIONAL_FIELD
-        if(!hasColonyBoardCount && src.format() == "eZeus.ez2") {
-            printf("Invalid save: missing colonyBoardCount after board read.\n");
-        }
-        for(int i = 0; i < nc; i++) {
-            auto& b = mColonyBoards.emplace_back();
-            const bool finished = colonyEpisodeFinished(i);
-            b = e::make_shared<eGameBoard>(mWorldBoard);
-            if(finished) continue;
-            b->read(src);
-        }
-    }
-
-    {
-        int ne = 0;
-        const bool hasParentCityEpisodeCount = ar.field("parentCityEpisodeCount", ne, 0); // SAVE_COMPAT_OPTIONAL_FIELD
-        if(!hasParentCityEpisodeCount && src.format() == "eZeus.ez2") {
-            printf("Invalid save: missing parentCityEpisodeCount after board read.\n");
-        }
-        for(int i = 0; i < ne; i++) {
-            const auto e = std::make_shared<eParentCityEpisode>();
-            e->fBoard = mParentBoard.get();
-            e->fWorldBoard = &mWorldBoard;
-            e->read(src);
-            mParentCityEpisodes.push_back(e);
-        }
-    }
-
-    {
-        int ne = 0;
-        const bool hasColonyEpisodeCount = ar.field("colonyEpisodeCount", ne, 0); // SAVE_COMPAT_OPTIONAL_FIELD
-        if(!hasColonyEpisodeCount && src.format() == "eZeus.ez2") {
-            printf("Invalid save: missing colonyEpisodeCount after board read.\n");
-        }
-        for(int i = 0; i < ne; i++) {
-            const auto e = std::make_shared<eColonyEpisode>();
-            e->fBoard = mColonyBoards[i].get();
-            e->fWorldBoard = &mWorldBoard;
-            e->read(src);
-            mColonyEpisodes.push_back(e);
-        }
-    }
-
-    {
-        int ne = 0;
-        ar.field("forColonyCount", ne, 0);
-        for(int i = 0; i < ne; i++) {
-            const auto set = std::make_shared<eSetAside>();
-            set->read(src, &mWorldBoard);
-            mForColony.push_back(set);
-        }
-    }
-    {
-        int ne = 0;
-        ar.field("forParentCount", ne, 0);
-        for(int i = 0; i < ne; i++) {
-            const auto set = std::make_shared<eSetAside>();
-            set->read(src, &mWorldBoard);
-            mForParent.push_back(set);
-        }
-    }
-
-    ar.field("briefId", mBriefId);
-    ar.field("completeId", mCompleteId);
-
+        std::string name;
+        ar.field("name", name);
+        if(mName.empty()) mName = name;
     } else {
-    auto& dst = ar.writeStream();
-    ar.field("bitmap", mBitmap);
-    ar.field("isPak", mIsPak);
-    if(mIsPak) {
-        ar.field("pakFilename", mPakFilename);
+        ar.field("name", mName);
     }
-    ar.field("name", mName);
+
     ar.field("currentParentEpisode", mCurrentParentEpisode);
     ar.field("currentColonyEpisode", mCurrentColonyEpisode);
     ar.field("currentEpisodeType", mCurrentEpisodeType);
-    int nc = mDrachmas.size();
-    ar.field("drachmasCount", nc);
-    for(const auto& d : mDrachmas) {
-        auto playerId = d.first;
-        auto drachmas = d.second;
-        ar.field("drachmasPlayerId", playerId);
-        ar.field("drachmas", drachmas);
+
+    // drachmas map<ePlayerId, int>
+    {
+        int nc = static_cast<int>(mDrachmas.size());
+        ar.field("drachmasCount", nc);
+        if(ar.reading()) {
+            for(int i = 0; i < nc; i++) {
+                ePlayerId pid;
+                int val = 0;
+                ar.archiveField(("drachmas." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("playerId", pid);
+                        itemAr.field("drachmas", val);
+                    });
+                mDrachmas[pid] = val;
+            }
+        } else {
+            int i = 0;
+            for(auto& d : mDrachmas) {
+                ePlayerId pid = d.first;
+                int val = d.second;
+                ar.archiveField(("drachmas." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("playerId", pid);
+                        itemAr.field("drachmas", val);
+                    });
+            }
+        }
     }
-    mDate.write(dst);
-    for(const auto& p : mPrices) {
-        auto price = p.second;
-        ar.field("price", price);
+
+    ar.payloadField("date",
+        [this](eWriteStream& dst) { mDate.write(dst); },
+        [this](eReadStream& src) { mDate.read(src); });
+
+    for(auto& p : mPrices) {
+        ar.field(("price." + std::to_string(static_cast<int>(p.first))).c_str(),
+                 p.second);
     }
+
     ar.field("difficulty", mDifficulty);
-    mWorldBoard.write(dst);
-    mParentBoard->write(dst);
 
-    int playedColonyEpisodeCount = mPlayedColonyEpisodes.size();
-    ar.field("playedColonyEpisodeCount", playedColonyEpisodeCount);
-    for(const int e : mPlayedColonyEpisodes) {
-        auto episode = e;
-        ar.field("playedColonyEpisode", episode);
+    ar.payloadField("worldBoard",
+        [this](eWriteStream& dst) { mWorldBoard.write(dst); },
+        [this](eReadStream& src) { mWorldBoard.read(src); });
+
+    if(ar.reading()) {
+        mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
+    }
+    ar.payloadField("parentBoard",
+        [this](eWriteStream& dst) { mParentBoard->write(dst); },
+        [this](eReadStream& src) { mParentBoard->read(src); });
+
+    ar.arrayField("playedColonyEpisodes", mPlayedColonyEpisodes,
+        [](eSaveArchive& itemAr, int& v) { itemAr.field("episode", v); });
+
+    // colony boards — finished ones not written, placeholder kept
+    {
+        int nc = static_cast<int>(mColonyBoards.size());
+        ar.field("colonyBoards.count", nc);
+        if(ar.reading()) mColonyBoards.resize(nc);
+        for(int i = 0; i < nc; i++) {
+            const bool finished = colonyEpisodeFinished(i);
+            if(ar.reading() && !mColonyBoards[i]) {
+                mColonyBoards[i] = e::make_shared<eGameBoard>(mWorldBoard);
+            }
+            if(finished) continue;
+            ar.payloadField(("colonyBoard." + std::to_string(i)).c_str(),
+                [this, i](eWriteStream& dst) { mColonyBoards[i]->write(dst); },
+                [this, i](eReadStream& src) { mColonyBoards[i]->read(src); });
+        }
     }
 
-    int colonyBoardCount = mColonyBoards.size();
-    ar.field("colonyBoardCount", colonyBoardCount);
-    int cid = 0;
-    for(const auto& b : mColonyBoards) {
-        const bool finished = colonyEpisodeFinished(cid++);
-        if(finished) continue;
-        b->write(dst);
+    ar.arrayField("parentCityEpisodes", mParentCityEpisodes,
+        [this](eSaveArchive& itemAr, stdsptr<eParentCityEpisode>& e) {
+            if(itemAr.reading() && !e) {
+                e = std::make_shared<eParentCityEpisode>();
+                e->fBoard = mParentBoard.get();
+                e->fWorldBoard = &mWorldBoard;
+            }
+            itemAr.payloadField("episode",
+                [&](eWriteStream& dst) { e->write(dst); },
+                [&](eReadStream& src) { e->read(src); });
+        });
+
+    // colonyEpisodes — need index for fBoard wiring on read
+    {
+        int nc = static_cast<int>(mColonyEpisodes.size());
+        ar.field("colonyEpisodes.count", nc);
+        if(ar.reading()) mColonyEpisodes.resize(nc);
+        for(int i = 0; i < nc; i++) {
+            if(ar.reading() && !mColonyEpisodes[i]) {
+                mColonyEpisodes[i] = std::make_shared<eColonyEpisode>();
+                mColonyEpisodes[i]->fBoard = mColonyBoards[i].get();
+                mColonyEpisodes[i]->fWorldBoard = &mWorldBoard;
+            }
+            ar.payloadField(("colonyEpisode." + std::to_string(i)).c_str(),
+                [this, i](eWriteStream& dst) { mColonyEpisodes[i]->write(dst); },
+                [this, i](eReadStream& src) { mColonyEpisodes[i]->read(src); });
+        }
     }
 
-    int parentCityEpisodeCount = mParentCityEpisodes.size();
-    ar.field("parentCityEpisodeCount", parentCityEpisodeCount);
-    for(const auto& e : mParentCityEpisodes) {
-        e->write(dst);
-    }
+    ar.arrayField("forColony", mForColony,
+        [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
+            if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
+            itemAr.payloadField("setAside",
+                [&](eWriteStream& dst) { s->write(dst); },
+                [this, &s](eReadStream& src) { s->read(src, &mWorldBoard); });
+        });
 
-    int colonyEpisodeCount = mColonyEpisodes.size();
-    ar.field("colonyEpisodeCount", colonyEpisodeCount);
-    for(const auto& e : mColonyEpisodes) {
-        e->write(dst);
-    }
-
-    int forColonyCount = mForColony.size();
-    ar.field("forColonyCount", forColonyCount);
-    for(const auto& e : mForColony) {
-        e->write(dst);
-    }
-
-    int forParentCount = mForParent.size();
-    ar.field("forParentCount", forParentCount);
-    for(const auto& e : mForParent) {
-        e->write(dst);
-    }
+    ar.arrayField("forParent", mForParent,
+        [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
+            if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
+            itemAr.payloadField("setAside",
+                [&](eWriteStream& dst) { s->write(dst); },
+                [this, &s](eReadStream& src) { s->read(src, &mWorldBoard); });
+        });
 
     ar.field("briefId", mBriefId);
     ar.field("completeId", mCompleteId);
-    }
 }
 
 
@@ -605,6 +560,11 @@ void eCampaign::printCurrentEpisodeDebug() const {
 
 void eCampaign::setCurrentColonyEpisode(const int e) {
     mCurrentColonyEpisode = e;
+}
+
+void eCampaign::setCurrentParentEpisode(const int e) {
+    mCurrentEpisodeType = eEpisodeType::parentCity;
+    mCurrentParentEpisode = e;
 }
 
 void eCampaign::startEpisode() {

@@ -373,43 +373,54 @@ void eTile::write(eWriteStream& dst) const {
 }
 
 void eTile::serialize(eSaveArchive& ar) {
-    ar.field("mDoubleAltitude", mDoubleAltitude);
-    ar.field("mScrub", mScrub);
+    ar.field("doubleAltitude", mDoubleAltitude);
+    ar.field("scrub", mScrub);
 
-    unsigned char bools;
+    unsigned char zoneFlags = 0;
     if(ar.writing()) {
-        bools = 0;
-        if(mTidalWaveZone) bools |= 1 << 0;
-        if(mLavaZone) bools |= 1 << 1;
-        if(mLandSlideZone) bools |= 1 << 2;
-        if(mRainforest) bools |= 1 << 3;
-        if(mHalfSlope) bools |= 1 << 4;
+        if(mTidalWaveZone) zoneFlags |= 1 << 0;
+        if(mLavaZone) zoneFlags |= 1 << 1;
+        if(mLandSlideZone) zoneFlags |= 1 << 2;
+        if(mRainforest) zoneFlags |= 1 << 3;
+        if(mHalfSlope) zoneFlags |= 1 << 4;
     }
-    ar.field("bools", bools);
-    mTidalWaveZone = bools & 1 << 0;
-    mLavaZone = bools & 1 << 1;
-    mLandSlideZone = bools & 1 << 2;
-    mRainforest = bools & 1 << 3;
-    mHalfSlope = bools & 1 << 4;
+    ar.field("zoneFlags", zoneFlags);
+    mTidalWaveZone = zoneFlags & 1 << 0;
+    mLavaZone = zoneFlags & 1 << 1;
+    mLandSlideZone = zoneFlags & 1 << 2;
+    mRainforest = zoneFlags & 1 << 3;
+    mHalfSlope = zoneFlags & 1 << 4;
 
-    unsigned char nb;
-    if(ar.writing()) nb = mBanners.size();
-    ar.field("nb", nb);
-    for(unsigned char i = 0; i < nb; i++) {
-        eBannerTypeS type;
-        int id;
-        if(ar.writing()) {
-            const auto& b = mBanners[i];
-            type = b->type();
-            id = b->id();
+    int bannerCount = static_cast<int>(mBanners.size());
+    ar.field("banners.count", bannerCount);
+    if(ar.reading()) {
+        for(int i = 0; i < bannerCount; i++) {
+            eBannerTypeS bannerType;
+            int bannerId;
+            ar.archiveField(("banner." + std::to_string(i)).c_str(),
+                [&](eSaveArchive& itemAr) {
+                    itemAr.field("bannerType", bannerType);
+                    itemAr.field("bannerId", bannerId);
+                    itemAr.payloadField("bannerData",
+                        [](eWriteStream&) {},
+                        [&](eReadStream& src) {
+                            const auto b = eBanner::sCreate(bannerId, this, mBoard, bannerType);
+                            b->read(src);
+                        });
+                });
         }
-        ar.field("type", type);
-        ar.field("id", id);
-        if(ar.reading()) {
-            const auto b = eBanner::sCreate(id, this, mBoard, type);
-            b->read(ar.readStream());
-        } else {
-            mBanners[i]->write(ar.writeStream());
+    } else {
+        for(int i = 0; i < bannerCount; i++) {
+            eBannerTypeS bannerType = mBanners[i]->type();
+            int bannerId = mBanners[i]->id();
+            ar.archiveField(("banner." + std::to_string(i)).c_str(),
+                [&, i](eSaveArchive& itemAr) {
+                    itemAr.field("bannerType", bannerType);
+                    itemAr.field("bannerId", bannerId);
+                    itemAr.payloadField("bannerData",
+                        [&, i](eWriteStream& dst) { mBanners[i]->write(dst); },
+                        [](eReadStream&) {});
+                });
         }
     }
 }

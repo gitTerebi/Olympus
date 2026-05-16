@@ -29,10 +29,8 @@ void eReinforcements::read(eGameBoard& board, eReadStream& src) {
 }
 
 void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {
-    ar.field("mFromCid", mFromCid);
-    if(ar.reading()) {
-        mForces.serialize(ar, board);
-    } else {
-        mForces.serialize(ar, nullptr);
-    }
+    ar.field("fromCityId", mFromCid);
+    ar.archiveField("forces", [this, board](eSaveArchive& itemAr) {
+        mForces.serialize(itemAr, itemAr.reading() ? board : nullptr);
+    });
 }

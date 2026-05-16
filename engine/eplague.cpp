@@ -69,18 +69,18 @@ void ePlague::write(eWriteStream& dst) const {
 }
 
 void ePlague::serialize(eSaveArchive& ar) {
-    ar.field("mCityId", mCityId);
-    int n = mHouses.size();
-    ar.field("n", n);
+    ar.field("cityId", mCityId);
+    int houseCount = ar.writing() ? static_cast<int>(mHouses.size()) : 0;
+    ar.field("houses.count", houseCount);
     if(ar.reading()) mHouses.clear();
-    for(int i = 0 ; i < n; i++) {
-        if(ar.reading()) {
-            ar.readStream().readBuilding(&mBoard, [this](eBuilding* const b) {
-                const auto ch = static_cast<eSmallHouse*>(b);
-                mHouses.push_back(ch);
+    for(int i = 0; i < houseCount; i++) {
+        ar.payloadField(("house." + std::to_string(i)).c_str(),
+            [this, i](eWriteStream& dst) { dst.writeBuilding(mHouses[i]); },
+            [this](eReadStream& src) {
+                src.readBuilding(&mBoard, [this](eBuilding* const b) {
+                    const auto ch = static_cast<eSmallHouse*>(b);
+                    mHouses.push_back(ch);
+                });
             });
-        } else {
-            ar.writeStream().writeBuilding(mHouses[i]);
-        }
     }
 }

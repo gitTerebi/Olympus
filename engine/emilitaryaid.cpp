@@ -31,15 +31,15 @@ void eMilitaryAid::read(eReadStream& src, eGameBoard* const board) {
 }
 
 void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
-    if(ar.reading()) {
-        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
-            fCity = c;
+    ar.payloadField("city",
+        [this](eWriteStream& dst) { dst.writeCity(fCity.get()); },
+        [this, board](eReadStream& src) {
+            src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
+                fCity = c;
+            });
         });
-    } else {
-        ar.writeStream().writeCity(fCity.get());
-    }
-    ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& ar, auto& soldier) {
-        ar.soldierBanner(board, soldier);
+    ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& itemAr, auto& soldier) {
+        itemAr.soldierBanner(board, soldier);
     });
     if(ar.reading()) {
         fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),

@@ -498,6 +498,8 @@ void eStampTool::buildingSize(const eBuildingType type, int& sw, int& sh) {
     case eBuildingType::inventorsWorkshop:
     case eBuildingType::university:
     case eBuildingType::wheatFarm:
+    case eBuildingType::carrotsFarm:
+    case eBuildingType::onionsFarm:
         sw = 3;
         sh = 3;
         break;
@@ -604,7 +606,11 @@ void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
         elementSize(elem, sw, sh);
         double rx, ry;
         drawXY(bx, by, rx, ry, sw, sh, btile->altitude());
-        const bool can = board->canBuild(bx, by, sw, sh, editorMode, viewedCityId, playerId);
+        const bool fertile = elem.type == eBuildingType::wheatFarm ||
+                             elem.type == eBuildingType::carrotsFarm ||
+                             elem.type == eBuildingType::onionsFarm;
+        const bool can = board->canBuild(bx, by, sw, sh, editorMode,
+                                         viewedCityId, playerId, fertile);
         drawTex(rx, ry, elem.type, sw, can);
     }
 }

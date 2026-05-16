@@ -11,12 +11,17 @@ void eCityFinances::nextYear() {
     mThisYear = eFinanceYear();
 }
 
+void eCityFinances::serialize(eSaveArchive& ar) {
+    ar.archiveField("lastYear", [this](eSaveArchive& itemAr) { mLastYear.serialize(itemAr); });
+    ar.archiveField("thisYear", [this](eSaveArchive& itemAr) { mThisYear.serialize(itemAr); });
+}
+
 void eCityFinances::read(eReadStream &src) {
-    mLastYear.read(src);
-    mThisYear.read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
 }
 
 void eCityFinances::write(eWriteStream &dst) const {
-    mLastYear.write(dst);
-    mThisYear.write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eCityFinances*>(this)->serialize(ar);
 }

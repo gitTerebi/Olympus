@@ -558,32 +558,34 @@ After migration has zero callers:
 
 ### B — Board / Campaign Roots
 
-- [ ] `eCampaign`
-- [ ] `eWorldBoard`
-- [ ] `eWorldCity`
-- [ ] `eGameBoard`
-- [ ] `eBoardCity`
-- [ ] `eBoardPlayer`
-- [ ] `eTile`
-- [ ] `eAvailableBuildings`
-- [ ] `eAICityPlan`
-- [ ] `eAIDistrict`
-- [ ] `eEmploymentDistributor`
-- [ ] `ePopulationData`
-- [ ] `eHusbandryData`
-- [ ] `eEmploymentData`
-- [ ] `eCityFinances`
-- [ ] `eMilitaryAid`
-- [ ] `ePlague`
-- [ ] `eReinforcements`
-- [ ] `eEpisode`
-- [ ] `eParentCityEpisode`
-- [ ] `eColonyEpisode`
-- [ ] `eEpisodeGoal`
-- [ ] `eSetAside`
-- [ ] `eCityRequest`
-- [ ] `eTributePayment`
-- [ ] `eGodQuest`
+When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them default-constructible with `setBoard()` / `setWorldBoard()` post-construct wiring. After that, return to `eCampaign::serialize` and strip the remaining `ar.reading()` branches that construct children with ctor args.
+
+- [~] `eCampaign` — done except `reading()` branches for child construction (revisit after children migrated)
+- [~] `eWorldBoard` — done except `reading()` for `eWorldCity` construction (revisit after `eWorldCity`)
+- [~] `eWorldCity` — done except `reading()` for `mConqueredBy` city ref (revisit when killing reading() branches globally)
+- [~] `eGameBoard` — done except `reading()` branches for ctor-required children
+- [~] `eBoardCity` — done except `reading()` branches for ctor-required children (plagues/aid/banners/hippodromes)
+- [x] `eBoardPlayer`
+- [x] `eTile`
+- [x] `eAvailableBuildings`
+- [x] `eAICityPlan`
+- [x] `eAIDistrict`
+- [x] `eEmploymentDistributor`
+- [x] `ePopulationData` — not a save node (pure runtime, no serialize)
+- [x] `eHusbandryData` — not a save node
+- [x] `eEmploymentData` — not a save node
+- [x] `eCityFinances`
+- [~] `eMilitaryAid` — done except `payloadField` for city ref (uses raw stream callback via lambda; OK)
+- [x] `ePlague`
+- [x] `eReinforcements`
+- [~] `eEpisode` — done except `reading()` for `eGameEvent` factory construction
+- [x] `eParentCityEpisode` — inherits `eEpisode` serialization
+- [x] `eColonyEpisode` — inherits `eEpisode` serialization
+- [x] `eEpisodeGoal`
+- [x] `eSetAside`
+- [x] `eCityRequest`
+- [x] `eTributePayment` — not a save node (no read/write)
+- [x] `eGodQuest`
 
 ### C — Buildings
 

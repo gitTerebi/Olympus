@@ -125,35 +125,15 @@ void eAICityPlan::write(eWriteStream& dst) const {
 }
 
 void eAICityPlan::serialize(eSaveArchive& ar) {
-    ar.field("mCid", mCid);
+    ar.field("cityId", mCid);
+    ar.field("lastBuildDistrict", mLastBuildDistrict);
 
-    ar.field("mLastBuildDistrict", mLastBuildDistrict);
+    ar.arrayField("districts", mDistricts,
+        [](eSaveArchive& itemAr, eAIDistrict& d) { d.serialize(itemAr); });
 
-    int ds;
-    if(ar.writing()) ds = mDistricts.size();
-    ar.field("ds", ds);
-    if(ar.reading()) mDistricts.clear();
-    for(int i = 0; i < ds; i++) {
-        eAIDistrict d;
-        if(ar.writing()) d = mDistricts[i];
-        d.serialize(ar);
-        if(ar.reading()) mDistricts.push_back(d);
-    }
-
-    int ns;
-    if(ar.writing()) ns = mScheduledBuildings.size();
-    ar.field("ns", ns);
-    if(ar.reading()) mScheduledBuildings.clear();
-    for(int i = 0; i < ns; i++) {
-        int did;
-        eAIBuilding b;
-        if(ar.writing()) {
-            const auto& bp = mScheduledBuildings[i];
-            did = bp.first;
-            b = bp.second;
-        }
-        ar.field("did", did);
-        b.serialize(ar);
-        if(ar.reading()) mScheduledBuildings.push_back({did, b});
-    }
+    ar.arrayField("scheduledBuildings", mScheduledBuildings,
+        [](eSaveArchive& itemAr, std::pair<int, eAIBuilding>& bp) {
+            itemAr.field("districtId", bp.first);
+            bp.second.serialize(itemAr);
+        });
 }

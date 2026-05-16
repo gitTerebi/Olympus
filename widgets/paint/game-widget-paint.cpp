@@ -259,15 +259,15 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             break;
         case eBuildingType::wheatFarm:
             eGameTextures::loadPlantation();
-            tex = firstTex(builTexs.fWheat);
+            tex = builTexs.fPlantation;
             break;
         case eBuildingType::carrotsFarm:
             eGameTextures::loadPlantation();
-            tex = firstTex(builTexs.fCarrots);
+            tex = builTexs.fPlantation;
             break;
         case eBuildingType::onionsFarm:
             eGameTextures::loadPlantation();
-            tex = firstTex(builTexs.fOnions);
+            tex = builTexs.fPlantation;
             break;
         case eBuildingType::huntingLodge:
             eGameTextures::loadHuntingLodge();
@@ -512,6 +512,7 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             tex = builTexs.fAgora.getTexture(0);
             break;
         case eBuildingType::granary:
+            eGameTextures::loadGranary();
             tex = builTexs.fGranary;
             break;
         case eBuildingType::warehouse:
