@@ -683,16 +683,19 @@ void eWorldCity::write(eWriteStream &dst) const
 
 void serializeResourceTrades(eSaveArchive &ar,
                              const char *const name,
-                             std::vector<eResourceTrade> &v)
+                             std::vector<eResourceTrade> &trades)
 {
-    int n = ar.writing() ? static_cast<int>(v.size()) : 0;
-    ar.field(std::string(name) + ".count", n);
-    if (ar.reading())
-        v.clear();
-    for (int i = 0; i < n; i++)
-    {
-        auto &vv = ar.reading() ? v.emplace_back() : v[i];
-        vv.serialize(ar);
+    int tradeCount = static_cast<int>(trades.size());
+    ar.field(std::string(name) + ".count", tradeCount);
+    if (ar.reading()) {
+        trades.clear();
+        trades.resize(tradeCount);
+    }
+    for (int i = 0; i < tradeCount; i++) {
+        ar.archiveField((std::string(name) + "." + std::to_string(i)).c_str(),
+            [&](eSaveArchive& itemAr) {
+                trades[i].serialize(itemAr);
+            });
     }
 }
 
@@ -712,116 +715,128 @@ void eWorldCity::read(eReadStream &src, eWorldBoard *const board)
 
 void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
 {
-    ar.field("mIOID", mIOID);
-    ar.field("mCityId", mCityId);
-    if (ar.reading())
-    {
-        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity> &c)
-                                 { mConqueredBy = c; });
-    }
-    else
-    {
-        ar.writeStream().writeCity(mConqueredBy.get());
-    }
-    ar.field("mPlayerId", mPlayerId);
-    ar.field("mCapitalOf", mCapitalOf);
-    ar.field("mIsCurrentCity", mIsCurrentCity);
-    ar.field("mIsOnBoard", mIsOnBoard);
-    ar.field("mType", mType);
-    ar.field("mNationality", mNationality);
-    ar.field("mDirection", mDirection);
-    ar.field("mState", mState);
-    ar.field("mNamePlace", mNamePlace);
-    ar.field("mName", mName);
-    ar.field("mNameString", mNameString);
-    ar.field("mLeader", mLeader);
-    ar.field("mLeaderString", mLeaderString);
-    ar.field("mX", mX);
-    ar.field("mY", mY);
-    ar.field("mTradeShutdown", mTradeShutdown);
-    ar.field("mRebellion", mRebellion);
-    ar.field("mRel", mRel);
+    ar.field("ioId", mIOID);
+    ar.field("cityId", mCityId);
 
-    int nrec;
-    if (ar.writing())
-        nrec = mReceived.size();
-    ar.field("nrec", nrec);
-    if (ar.reading())
-        mReceived.clear();
-    for (int i = 0; i < nrec; i++)
+    ar.payloadField("conqueredBy",
+        [this](eWriteStream& dst) { dst.writeCity(mConqueredBy.get()); },
+        [this, board](eReadStream& src) {
+            src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
+                mConqueredBy = c;
+            });
+        });
+
+    ar.field("playerId", mPlayerId);
+    ar.field("capitalOf", mCapitalOf);
+    ar.field("isCurrentCity", mIsCurrentCity);
+    ar.field("isOnBoard", mIsOnBoard);
+    ar.field("type", mType);
+    ar.field("nationality", mNationality);
+    ar.field("direction", mDirection);
+    ar.field("state", mState);
+    ar.field("namePlace", mNamePlace);
+    ar.field("name", mName);
+    ar.field("nameString", mNameString);
+    ar.field("leader", mLeader);
+    ar.field("leaderString", mLeaderString);
+    ar.field("x", mX);
+    ar.field("y", mY);
+    ar.field("tradeShutdown", mTradeShutdown);
+    ar.field("rebellion", mRebellion);
+    ar.field("rel", mRel);
+
+    // received map<eResourceType, int>
     {
-        eResourceType type;
-        int count;
-        if (ar.writing())
-        {
-            auto it = mReceived.begin();
-            std::advance(it, i);
-            type = it->first;
-            count = it->second;
+        int n = static_cast<int>(mReceived.size());
+        ar.field("received.count", n);
+        if (ar.reading()) {
+            mReceived.clear();
+            for (int i = 0; i < n; i++) {
+                eResourceType type; int count;
+                ar.archiveField(("received." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("type", type);
+                        it.field("count", count);
+                    });
+                mReceived[type] = count;
+            }
+        } else {
+            int i = 0;
+            for (auto& kv : mReceived) {
+                eResourceType type = kv.first; int count = kv.second;
+                ar.archiveField(("received." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("type", type);
+                        it.field("count", count);
+                    });
+            }
         }
-        ar.field("type", type);
-        ar.field("count", count);
-        if (ar.reading())
-            mReceived[type] = count;
     }
 
-    int natt;
-    if (ar.writing())
-        natt = mAtt.size();
-    ar.field("natt", natt);
-    if (ar.reading())
-        mAtt.clear();
-    for (int i = 0; i < natt; i++)
+    // attitude map<ePlayerId, double>
     {
-        ePlayerId pid;
-        double att;
-        if (ar.writing())
-        {
-            auto it = mAtt.begin();
-            std::advance(it, i);
-            pid = it->first;
-            att = it->second;
+        int n = static_cast<int>(mAtt.size());
+        ar.field("attitude.count", n);
+        if (ar.reading()) {
+            mAtt.clear();
+            for (int i = 0; i < n; i++) {
+                ePlayerId pid; double att;
+                ar.archiveField(("attitude." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("attitude", att);
+                    });
+                mAtt[pid] = att;
+            }
+        } else {
+            int i = 0;
+            for (auto& kv : mAtt) {
+                ePlayerId pid = kv.first; double att = kv.second;
+                ar.archiveField(("attitude." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) {
+                        it.field("playerId", pid);
+                        it.field("attitude", att);
+                    });
+            }
         }
-        ar.field("pid", pid);
-        ar.field("att", att);
-        if (ar.reading())
-            mAtt[pid] = att;
     }
 
-    ar.field("mAbroad", mAbroad);
-    ar.field("mMilitaryStrength", mMilitaryStrength);
-    ar.field("mTroops", mTroops);
-    ar.field("mYearsElapsed", mYearsElapsed);
-    ar.field("mWealth", mWealth);
+    ar.field("abroad", mAbroad);
+    ar.field("militaryStrength", mMilitaryStrength);
+    ar.field("troops", mTroops);
+    ar.field("yearsElapsed", mYearsElapsed);
+    ar.field("wealth", mWealth);
 
-    int nc;
-    if (ar.writing())
-        nc = mWaterTrade.size();
-    ar.field("nc", nc);
-    if (ar.reading())
-        mWaterTrade.clear();
-    for (int i = 0; i < nc; i++)
+    // waterTrade set<eCityId>
     {
-        eCityId cid;
-        if (ar.writing())
-        {
-            auto it = mWaterTrade.begin();
-            std::advance(it, i);
-            cid = *it;
+        int n = static_cast<int>(mWaterTrade.size());
+        ar.field("waterTrade.count", n);
+        if (ar.reading()) {
+            mWaterTrade.clear();
+            for (int i = 0; i < n; i++) {
+                eCityId cid;
+                ar.archiveField(("waterTrade." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) { it.field("cityId", cid); });
+                mWaterTrade.insert(cid);
+            }
+        } else {
+            int i = 0;
+            for (auto cid : mWaterTrade) {
+                eCityId v = cid;
+                ar.archiveField(("waterTrade." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& it) { it.field("cityId", v); });
+            }
         }
-        ar.field("cid", cid);
-        if (ar.reading())
-            mWaterTrade.insert(cid);
     }
 
-    ar.field("mVisible", mVisible);
-    serializeResourceTrades(ar, "mBuys", mBuys);
-    serializeResourceTrades(ar, "mSells", mSells);
+    ar.field("visible", mVisible);
+    serializeResourceTrades(ar, "buys", mBuys);
+    serializeResourceTrades(ar, "sells", mSells);
     ar.field("receiveTributeType", mReceiveTributeType);
     ar.field("receiveTributeCount", mReceiveTributeCount);
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
-    ar.field("mBribeMonthsAgo", mBribeMonthsAgo, -1); // SAVE_COMPAT_OPTIONAL_FIELD
+    ar.field("bribeMonthsAgo", mBribeMonthsAgo);
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count)

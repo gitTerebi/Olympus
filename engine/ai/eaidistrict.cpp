@@ -1012,27 +1012,11 @@ void eAIDistrict::write(eWriteStream& dst) const {
 }
 
 void eAIDistrict::serialize(eSaveArchive& ar) {
-    int nb;
-    if(ar.writing()) nb = fBuildings.size();
-    ar.field("nb", nb);
-    if(ar.reading()) fBuildings.clear();
-    for(int i = 0; i < nb; i++) {
-        eAIBuilding b;
-        if(ar.writing()) b = fBuildings[i];
-        b.serialize(ar);
-        if(ar.reading()) fBuildings.push_back(b);
-    }
+    ar.arrayField("buildings", fBuildings,
+        [](eSaveArchive& itemAr, eAIBuilding& b) { b.serialize(itemAr); });
 
-    int nc;
-    if(ar.writing()) nc = fReadyConditions.size();
-    ar.field("nc", nc);
-    if(ar.reading()) fReadyConditions.clear();
-    for(int i = 0; i < nc; i++) {
-        eDistrictReadyCondition c;
-        if(ar.writing()) c = fReadyConditions[i];
-        c.serialize(ar);
-        if(ar.reading()) fReadyConditions.push_back(c);
-    }
+    ar.arrayField("readyConditions", fReadyConditions,
+        [](eSaveArchive& itemAr, eDistrictReadyCondition& c) { c.serialize(itemAr); });
 }
 
 std::string eDistrictReadyCondition::sName(const eType type) {

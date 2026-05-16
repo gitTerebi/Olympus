@@ -29,11 +29,11 @@ void eEpisodeGoal::write(eWriteStream& dst) const {
 }
 
 void eEpisodeGoal::serialize(eSaveArchive& ar) {
-    ar.field("fType", fType);
-    ar.field("fEnumInt1", fEnumInt1);
-    ar.field("fEnumInt2", fEnumInt2);
-    ar.field("fRequiredCount", fRequiredCount);
-    ar.field("fStatusCount", fStatusCount);
+    ar.field("goalType", fType);
+    ar.field("enumInt1", fEnumInt1);
+    ar.field("enumInt2", fEnumInt2);
+    ar.field("requiredCount", fRequiredCount);
+    ar.field("statusCount", fStatusCount);
 }
 
 bool eEpisodeGoal::met() const {

@@ -6,20 +6,26 @@
 #include "fileIO/esavearchive.h"
 
 struct eCityRequest {
+    void serialize(eSaveArchive& ar, eGameBoard* board) {
+        ar.payloadField("city",
+            [this](eWriteStream& dst) { dst.writeCity(fCity.get()); },
+            [this, board](eReadStream& src) {
+                src.readCity(board, [this](const stdsptr<eWorldCity>& city) {
+                    fCity = city;
+                });
+            });
+        ar.field("resource", fType);
+        ar.field("count", fCount);
+    }
+
     void write(eWriteStream& dst) const {
-        dst.writeCity(fCity.get());
         eSaveArchive ar(dst);
-        ar.field("type", const_cast<eResourceType&>(fType));
-        ar.field("count", const_cast<int&>(fCount));
+        const_cast<eCityRequest*>(this)->serialize(ar, nullptr);
     }
 
     void read(eGameBoard& board, eReadStream& src) {
-        src.readCity(&board, [this](const stdsptr<eWorldCity>& city) {
-            fCity = city;
-        });
         eSaveArchive ar(src);
-        ar.field("type", fType);
-        ar.field("count", fCount);
+        serialize(ar, &board);
     }
 
     bool operator==(const eCityRequest& o) const {

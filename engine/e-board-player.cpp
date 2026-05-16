@@ -168,61 +168,57 @@ void eBoardPlayer::write(eWriteStream& dst) const {
 }
 
 void eBoardPlayer::serialize(eSaveArchive& ar) {
-    ar.field("mId", mId);
-    ar.field("mDifficulty", mDifficulty);
+    ar.field("playerId", mId);
+    ar.field("difficulty", mDifficulty);
 
-    {
-        int nq;
-        if(ar.writing()) nq = mFulfilledQuests.size();
-        ar.field("nq", nq);
-        if(ar.reading()) mFulfilledQuests.clear();
-        for(int i = 0; i < nq; i++) {
-            eGodQuest q;
-            if(ar.writing()) q = mFulfilledQuests[i];
-            if(ar.reading()) q.read(ar.readStream());
-            else q.write(ar.writeStream());
-            if(ar.reading()) mFulfilledQuests.push_back(q);
-        }
-    }
+    ar.arrayField("fulfilledQuests", mFulfilledQuests,
+        [](eSaveArchive& itemAr, eGodQuest& q) {
+            itemAr.payloadField("quest",
+                [&](eWriteStream& dst) { q.write(dst); },
+                [&](eReadStream& src) { q.read(src); });
+        });
 
-    {
-        int nm;
-        if(ar.writing()) nm = mSlayedMonsters.size();
-        ar.field("nm", nm);
-        if(ar.reading()) mSlayedMonsters.clear();
-        for(int i = 0; i < nm; i++) {
-            eMonsterType m;
-            if(ar.writing()) m = mSlayedMonsters[i];
-            ar.field("m", m);
-            if(ar.reading()) mSlayedMonsters.push_back(m);
-        }
-    }
+    ar.arrayField("slayedMonsters", mSlayedMonsters,
+        [](eSaveArchive& itemAr, eMonsterType& m) {
+            itemAr.field("monsterType", m);
+        });
 
+    // godQuests: list of eGodQuestEvent* refs
     {
-        int nq;
-        if(ar.writing()) nq = mGodQuests.size();
-        ar.field("nq", nq);
-        if(ar.reading()) mGodQuests.clear();
-        for(int i = 0; i < nq; i++) {
-            if(ar.reading()) {
-                ar.readStream().readGameEvent(&mBoard, [this](eGameEvent* const e) {
-                    const auto ge = static_cast<eGodQuestEvent*>(e);
-                    mGodQuests.push_back(ge);
-                });
-            } else {
-                ar.writeStream().writeGameEvent(mGodQuests[i]);
+        int godQuestCount = static_cast<int>(mGodQuests.size());
+        ar.field("godQuests.count", godQuestCount);
+        if(ar.reading()) {
+            mGodQuests.clear();
+            for(int i = 0; i < godQuestCount; i++) {
+                ar.payloadField(("godQuest." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this](eReadStream& src) {
+                        src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
+                            const auto ge = static_cast<eGodQuestEvent*>(e);
+                            mGodQuests.push_back(ge);
+                        });
+                    });
+            }
+        } else {
+            for(int i = 0; i < godQuestCount; i++) {
+                ar.payloadField(("godQuest." + std::to_string(i)).c_str(),
+                    [this, i](eWriteStream& dst) { dst.writeGameEvent(mGodQuests[i]); },
+                    [](eReadStream&) {});
             }
         }
     }
 
-    ar.field("mDrachmas", mDrachmas);
-    if(ar.reading()) mInDebtSince.read(ar.readStream());
-    else mInDebtSince.write(ar.writeStream());
+    ar.field("drachmas", mDrachmas);
 
-    ar.field("mGodAttackTimer", mGodAttackTimer);
+    ar.payloadField("inDebtSince",
+        [this](eWriteStream& dst) { mInDebtSince.write(dst); },
+        [this](eReadStream& src) { mInDebtSince.read(src); });
 
-    if(ar.reading()) mFinances.read(ar.readStream());
-    else mFinances.write(ar.writeStream());
+    ar.field("godAttackTimer", mGodAttackTimer);
+
+    ar.payloadField("finances",
+        [this](eWriteStream& dst) { mFinances.write(dst); },
+        [this](eReadStream& src) { mFinances.read(src); });
 }
 
 void eBoardPlayer::giftAllies() {

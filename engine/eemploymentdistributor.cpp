@@ -68,8 +68,9 @@ void eEmploymentDistributor::write(eWriteStream& dst) const {
 }
 
 void eEmploymentDistributor::serialize(eSaveArchive& ar) {
-    for(auto& e : mPriorities) {
-        ar.field("e.second", e.second);
+    for(auto& entry : mPriorities) {
+        const int sectorId = static_cast<int>(entry.first);
+        ar.field(("priority." + std::to_string(sectorId)).c_str(), entry.second);
     }
 }
 

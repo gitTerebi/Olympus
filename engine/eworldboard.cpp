@@ -158,100 +158,95 @@ void eWorldBoard::read(eReadStream &src)
 
 void eWorldBoard::serialize(eSaveArchive &ar)
 {
-    ar.field("mMap", mMap);
+    ar.field("map", mMap);
 
-    int nr;
-    if (ar.writing())
-        nr = mRegions.size();
-    ar.field("nr", nr);
-    if (ar.reading())
-        mRegions.clear();
-    for (int i = 0; i < nr; i++)
-    {
-        eWorldRegion r;
-        if (ar.writing())
-            r = mRegions[i];
-        if (ar.reading())
-            r.read(ar.readStream());
-        else
-            r.write(ar.writeStream());
-        if (ar.reading())
-            mRegions.push_back(r);
-    }
+    ar.arrayField("regions", mRegions,
+        [](eSaveArchive& itemAr, eWorldRegion& r) {
+            itemAr.payloadField("region",
+                [&](eWriteStream& dst) { r.write(dst); },
+                [&](eReadStream& src) { r.read(src); });
+        });
 
-    int nc;
-    if (ar.writing())
-        nc = mCities.size();
-    ar.field("nc", nc);
-    if (ar.reading())
-        mCities.clear();
-    for (int i = 0; i < nc; i++)
+    // cities — ctor-free, read takes board ptr
     {
-        if (ar.reading())
-        {
-            const auto c = std::make_shared<eWorldCity>();
-            c->read(ar.readStream(), this);
-            addCity(c);
+        int nc = static_cast<int>(mCities.size());
+        ar.field("cities.count", nc);
+        if (ar.reading()) {
+            mCities.clear();
+            for (int i = 0; i < nc; i++) {
+                const auto c = std::make_shared<eWorldCity>();
+                ar.payloadField(("city." + std::to_string(i)).c_str(),
+                    [](eWriteStream&) {},
+                    [this, c](eReadStream& src) { c->read(src, this); });
+                addCity(c);
+            }
+        } else {
+            for (int i = 0; i < nc; i++) {
+                ar.payloadField(("city." + std::to_string(i)).c_str(),
+                    [this, i](eWriteStream& dst) { mCities[i]->write(dst); },
+                    [](eReadStream&) {});
+            }
         }
-        else
-        {
-            mCities[i]->write(ar.writeStream());
-        }
-    }
-    if (ar.reading())
-    {
-        setIOIDs();
+        if (ar.reading()) setIOIDs();
     }
 
+    // cityToPlayer map
     {
-        int nc;
-        if (ar.writing())
-            nc = mCityToPlayer.size();
-        ar.field("nc", nc);
-        if (ar.reading())
+        int nc = static_cast<int>(mCityToPlayer.size());
+        ar.field("cityToPlayer.count", nc);
+        if (ar.reading()) {
             mCityToPlayer.clear();
-        for (int i = 0; i < nc; i++)
-        {
-            eCityId cid;
-            ePlayerId pid;
-            if (ar.writing())
-            {
-                auto it = mCityToPlayer.begin();
-                std::advance(it, i);
-                cid = it->first;
-                pid = it->second;
-            }
-            ar.field("cid", cid);
-            ar.field("pid", pid);
-            if (ar.reading())
+            for (int i = 0; i < nc; i++) {
+                eCityId cid; ePlayerId pid;
+                ar.archiveField(("cityToPlayer." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("cityId", cid);
+                        itemAr.field("playerId", pid);
+                    });
                 mCityToPlayer[cid] = pid;
+            }
+        } else {
+            int i = 0;
+            for (auto& kv : mCityToPlayer) {
+                eCityId cid = kv.first;
+                ePlayerId pid = kv.second;
+                ar.archiveField(("cityToPlayer." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("cityId", cid);
+                        itemAr.field("playerId", pid);
+                    });
+            }
         }
     }
 
-    ar.field("mPersonPlayer", mPersonPlayer);
+    ar.field("personPlayer", mPersonPlayer);
 
+    // playerToTeam map
     {
-        int np;
-        if (ar.writing())
-            np = mPlayerToTeam.size();
-        ar.field("np", np);
-        if (ar.reading())
+        int np = static_cast<int>(mPlayerToTeam.size());
+        ar.field("playerToTeam.count", np);
+        if (ar.reading()) {
             mPlayerToTeam.clear();
-        for (int i = 0; i < np; i++)
-        {
-            ePlayerId pid;
-            eTeamId tid;
-            if (ar.writing())
-            {
-                auto it = mPlayerToTeam.begin();
-                std::advance(it, i);
-                pid = it->first;
-                tid = it->second;
-            }
-            ar.field("pid", pid);
-            ar.field("tid", tid);
-            if (ar.reading())
+            for (int i = 0; i < np; i++) {
+                ePlayerId pid; eTeamId tid;
+                ar.archiveField(("playerToTeam." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("playerId", pid);
+                        itemAr.field("teamId", tid);
+                    });
                 mPlayerToTeam[pid] = tid;
+            }
+        } else {
+            int i = 0;
+            for (auto& kv : mPlayerToTeam) {
+                ePlayerId pid = kv.first;
+                eTeamId tid = kv.second;
+                ar.archiveField(("playerToTeam." + std::to_string(i++)).c_str(),
+                    [&](eSaveArchive& itemAr) {
+                        itemAr.field("playerId", pid);
+                        itemAr.field("teamId", tid);
+                    });
+            }
         }
     }
 }

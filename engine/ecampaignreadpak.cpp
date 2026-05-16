@@ -70,7 +70,7 @@ eResourceType pakCityResourceByteToType(
         return eResourceType::orichalc;
     }
 
-    printf("Invalid city resource byte %i\n", byte);
+    //printf("Invalid city resource byte %i\n", byte);
     return eResourceType::none;
 }
 
@@ -303,7 +303,7 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     else if(id == 28) return ePakEventType::sinkLand;
 
     valid = false;
-    printf("Invalid event type id %i\n", id);
+    // printf("Invalid event type id %i\n", id);
     return ePakEventType::receiveRequest;
 }
 
@@ -313,7 +313,7 @@ eReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
     else if(id == 4) return eReceiveRequestType::project;
     else if(id == 5) return eReceiveRequestType::famine;
     else if(id == 6) return eReceiveRequestType::financialWoes;
-    printf("Invalid receive request type %i\n", id);
+    // printf("Invalid receive request type %i\n", id);
     return eReceiveRequestType::general;
 }
 
@@ -333,7 +333,7 @@ eGodType pakIdToGodType(const uint8_t id, bool& valid) {
     else if(id == 11) return eGodType::hades;
     else if(id == 12) return eGodType::hera;
     else if(id == 13) return eGodType::atlas;
-    printf("Invalid god id %i\n", id);
+    // printf("Invalid god id %i\n", id);
     valid = false;
     return eGodType::zeus;
 }
@@ -355,7 +355,7 @@ eMonsterType pakIdToMonsterType(const uint8_t id, bool& valid) {
     else if(id == 13) return eMonsterType::chimera;
     else if(id == 14) return eMonsterType::harpies;
     else if(id == 15) return eMonsterType::echidna;
-    printf("Invalid monster id %i\n", id);
+    // printf("Invalid monster id %i\n", id);
     valid = false;
     return eMonsterType::calydonianBoar;
 }
@@ -376,7 +376,7 @@ enum class eMonsterTarget {
 
 eMonsterTarget pakIdToMonsterTarget(const uint16_t id) {
     if(id > 10) {
-        printf("Invalid monster target id %i\n", id);
+        // printf("Invalid monster target id %i\n", id);
         return eMonsterTarget::food;
     }
     return static_cast<eMonsterTarget>(id);
@@ -532,7 +532,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 } else if(subType == 7) {
                     type = eTroopsRequestEventType::greekCityTerrorized;
                 } else {
-                    printf("Invalid troops request type id %i\n", subType);
+                    // printf("Invalid troops request type id %i\n", subType);
                     events.push_back(nullptr);
                     continue;
                 }
@@ -549,7 +549,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 } else if(effectOnCityId == 2) {
                     effect = eTroopsRequestEventEffect::conquered;
                 } else {
-                    printf("Invalid effect on city id %i\n", effectOnCityId);
+                    // printf("Invalid effect on city id %i\n", effectOnCityId);
                     continue;
                 }
                 ee->setEffect(effect);
@@ -596,13 +596,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
             addType(value2);
             addType(value3);
             if(types.empty()) {
-                printf("No monster types to choose from\n");
+                // printf("No monster types to choose from\n");
                 events.push_back(nullptr);
                 continue;
             }
             eMonsterAggressivness aggressivness{eMonsterAggressivness::passive};
             if(aggressivnessId > 3) {
-                printf("Invalid monster aggressivness id %i\n", aggressivnessId);
+                // printf("Invalid monster aggressivness id %i\n", aggressivnessId);
             } else {
                 aggressivness = static_cast<eMonsterAggressivness>(
                                     aggressivnessId);
@@ -625,7 +625,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     cid, eGameEventBranch::root, *ep.fBoard);
                 ee->setWarningMonths(duration);
             } else {
-                printf("Invalid monster invasion subtype %i\n", subType);
+                // printf("Invalid monster invasion subtype %i\n", subType);
                 events.push_back(nullptr);
                 continue;
             }
@@ -646,7 +646,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     const auto monster = eMonster::sGodsMinion(o.fType);
                     hero = eMonster::sSlayer(monster);
                 } else {
-                    printf("No hero with id %i\n", godMonsterHeroId);
+                    // printf("No hero with id %i\n", godMonsterHeroId);
                     events.push_back(nullptr);
                     continue;
                 }
@@ -656,7 +656,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                     const auto monster = eMonster::sGodsMinion(o.fType);
                     hero = eMonster::sSlayer(monster);
                 } else {
-                    printf("No hero with id %i\n", godMonsterHeroId);
+                    // printf("No hero with id %i\n", godMonsterHeroId);
                     events.push_back(nullptr);
                     continue;
                 }
@@ -1327,7 +1327,7 @@ void eCampaign::readPak(const std::string& title,
     ePakMonster independentMonster;
 
     for(int i = 0; i < nParentEps; i++) {
-        printf("parent episode %i:\n\n", i);
+        // printf("parent episode %i:\n\n", i);
 
         const auto ep = addParentCityEpisode();
         file.seek(104 + i*356);
@@ -1354,7 +1354,7 @@ void eCampaign::readPak(const std::string& title,
                 if(v.fValid) {
                     // removed printf
                 } else {
-                    printf("No opponent god %i\n", i);
+                    // printf("No opponent god %i\n", i);
                 }
             }
             file.seek(35784 + i*epInc);
@@ -1366,7 +1366,7 @@ void eCampaign::readPak(const std::string& title,
                 if(v.fValid) {
                     // removed printf
                 } else {
-                    printf("No friendly god %i\n", i);
+                    //  printf("No friendly god %i\n", i);
                 }
             }
             file.seek(35832 + i*epInc);
