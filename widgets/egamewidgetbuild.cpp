@@ -712,7 +712,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::university)) {
                 showTip(cid, eLanguage::zeusText(19, 248)); // build universities
             }
-            mGm->clearMode();
         } break;
 
         case eBuildingMode::fountain: {
@@ -783,7 +782,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             r = mBoard->build(t1->x(), t1->y(), sw, sh, cid, pid, mEditorMode, [&]() {
                 return e::make_shared<eStadium>(*mBoard, mRotate, mViewedCityId);
             });
-            mGm->clearMode();
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::gymnasium)) {
                 showTip(cid, eLanguage::zeusText(19, 227)); // build gymnsaium
@@ -865,8 +863,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             r = mBoard->build(tx, ty, sw, sh, cid, pid, mEditorMode, [&]() {
                 return s;
             });
-
-            mGm->clearMode();
         } break;
         case eBuildingMode::eliteHousing: {
             const auto t1 = mBoard->tile(hoverTX, hoverTY);
@@ -1122,8 +1118,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                     tp->setUnpackBuilding(b.get());
                     mBoard->build(tx, ty, 4, 4, cid, pid, mEditorMode, [&]() { return tp; });
                     b->setTradePost(tp.get());
-
-                    mGm->clearMode();
                 } else {
                     showTip(cid, eLanguage::zeusText(19, 25));
                 }
@@ -1264,7 +1258,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
                 const auto tp = e::make_shared<eTradePost>(*mBoard, *ct, mViewedCityId);
                 return tp;
             });
-            mGm->clearMode();
         } break;
 
 
@@ -1603,8 +1596,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             const bool r = mBoard->build(hoverTX, hoverTY, 3, 3, cid, pid, mEditorMode, builder);
             if(r) {
                 mBoard->built(mViewedCityId, eBuildingType::commemorative, id);
-                const bool s = mBoard->supportsBuilding(mViewedCityId, mode);
-                if(!s) mGm->clearMode();
             }
         } break;
 
@@ -1656,8 +1647,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             }
             if(b) {
                 mBoard->built(mViewedCityId, eBuildingType::godMonument, id);
-                const bool ss = mBoard->supportsBuilding(mViewedCityId, mode);
-                if(!ss) mGm->clearMode();
             }
         } break;
 
