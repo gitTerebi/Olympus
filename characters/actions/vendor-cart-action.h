@@ -17,8 +17,7 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void serializeFields(eSaveArchive& ar) override;
 
     void onFindTargetFail() override;
     void onFoundTarget() override;
@@ -30,8 +29,6 @@ private:
 
     void enterIdle();
     void enterReturning();
-
-    void serializeVendor(eSaveArchive& ar);
 
     eVendorCartState mState = eVendorCartState::idle;
     static const int kFindRetryWait = 1000;

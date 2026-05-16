@@ -13,18 +13,44 @@ Build only when asked. Use `.\build.bat`. Do not verify with `cmake --build buil
 Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/etradepost.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `zeus-text strings/Zeus_Text.xml` is read-only; reuse runtime strings.
 
 ## Save
-Goal: robust saves. New save data must be labeled and bounded so vars can be added/removed without crashing old/new loads.
-Use `ar.field("name", value, default)` for new simple members. Defaults are required for old saves.
-Use stable unique field names. Never rename old fields. Never reuse a field name for a different type/meaning. Names must be semantically meaningful — describe the data, not the variable. Bad: `"tptr"`, `"val"`, `"data"`. Good: `"wolfAction"`, `"targetBuilding"`, `"huntDistance"`.
-Use `objectField()` for child/subobject payloads. Use array helpers for arrays.
-For pointer refs use tagged helpers grouped under `ar.archiveField("groupName", [&](eSaveArchive& refsAr) { ... })`:
-  `refsAr.buildingAsField("name", &board(), ptr)` / `characterAsField` / `tileAsField`
-`archiveField` returns bool (field present); on false + `ar.reading()`, fall back via `ar.legacyReadStream()`.
-Old-save fallback branches must be marked `SAVE_COMPAT_LEGACY_FALLBACK` so later cleanup can find and review them.
-Do not add new raw `val()`, `readStream()`, or `writeStream()` data. Raw data is legacy only and stays order-dependent.
-If migrating old raw bytes, first put a length-prefixed boundary around the parent payload, then add tagged fields inside it.
-`payloadField()` is for immediate next-field payloads only; do not use it as a normal out-of-order field lookup.
-Keep read/write base calls and pointer/tile/character helper order matched. Append raw legacy data only.
+Goal: robust saves. New data must be labeled and bounded so fields can be added/removed without crashing old/new loads.
+Use stable unique field names. Never rename or reuse. Names describe data, not variables. Bad: `"val"`. Good: `"huntDistance"`.
+Before any save migration, read `payloadField` + `takeField` + `readField` in `fileIO/esavearchive.h` — the impl answers stream behavior questions.
+Do not add new raw `val()`, `readStream()`, or `writeStream()` calls. Raw bytes are legacy only and order-dependent.
 
-## Save Subobjects
-Critical: do not call `child.serialize(ar)` on a parent archive that interleaves raw stream writes. Missing-field scan can enter raw bytes and corrupt/bail. Trigger: any new child field absent from old saves. Fix: `ar.objectField("name", child)` length-prefixed sub-archive; child needs `read(eReadStream&)` and `write(eWriteStream&) const`. One-time subtree format break. Applied: `mAvailableBuildings` in `eboardcityread.cpp`.
+### Simple value
+```cpp
+ar.field("name", value, default);  // default required for old-save compat
+```
+
+### Pointer refs (building / character / tile)
+```cpp
+const bool hasRefs = ar.archiveField("refs", [&](eSaveArchive& refsAr) {
+    refsAr.buildingAsField("sourceBuilding", &board(), mBuilding);
+    refsAr.buildingField("targetBuilding", &board(), mTarget);
+});
+if(!hasRefs && ar.reading()) {
+    // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote these raw
+    ar.legacyReadStream().readBuilding(...);
+}
+```
+`payloadField` seeks back on tag mismatch — `legacyReadStream()` fallback always reads from the correct position.
+Mark all fallback branches `SAVE_COMPAT_LEGACY_FALLBACK` for later cleanup.
+
+### Child subobject
+```cpp
+ar.objectField("name", child);  // child needs read(eReadStream&) / write(eWriteStream&)
+```
+Never call `child.serialize(ar)` on a parent archive that has raw stream writes — tag scan corrupts on missing fields.
+
+### Subclass fields — use serializeFields, never override read/write
+```cpp
+void MyAction::serializeFields(eSaveArchive& ar) {
+    ParentAction::serializeFields(ar);  // always call parent first
+    ar.field("myField", mMyField, default);
+}
+```
+Parent `read`/`write` open one archive and call `serializeFields` — subclasses never touch `read`/`write` directly.
+
+### Arrays
+Use `ar.arrayField()` / `ar.dequeField()` / `ar.countedArrayField()`. Never loop raw reads/writes.

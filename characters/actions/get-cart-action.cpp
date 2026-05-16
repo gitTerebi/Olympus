@@ -72,18 +72,7 @@ void eGetCartAction::onFindTargetFail() {
 
 // ── serialize ────────────────────────────────────────────────────────────────
 
-void eGetCartAction::serializeGet(eSaveArchive& ar) {
+void eGetCartAction::serializeFields(eSaveArchive& ar) {
+    eCartTransporterAction::serializeFields(ar);
     ar.field("mGetState", mGetState);
-}
-
-void eGetCartAction::read(eReadStream& src) {
-    eCartTransporterAction::read(src);
-    eSaveArchive ar(src);
-    serializeGet(ar);
-}
-
-void eGetCartAction::write(eWriteStream& dst) const {
-    eCartTransporterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGetCartAction*>(this)->serializeGet(ar);
 }

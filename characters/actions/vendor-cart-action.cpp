@@ -88,18 +88,7 @@ void eVendorCartAction::onFindTargetFail() {
 
 // ── serialize ─────────────────────────────────────────────────────────────────
 
-void eVendorCartAction::serializeVendor(eSaveArchive& ar) {
+void eVendorCartAction::serializeFields(eSaveArchive& ar) {
+    eCartTransporterAction::serializeFields(ar);
     ar.field("mState", mState);
-}
-
-void eVendorCartAction::read(eReadStream& src) {
-    eCartTransporterAction::read(src);
-    eSaveArchive ar(src);
-    serializeVendor(ar);
-}
-
-void eVendorCartAction::write(eWriteStream& dst) const {
-    eCartTransporterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eVendorCartAction*>(this)->serializeVendor(ar);
 }
