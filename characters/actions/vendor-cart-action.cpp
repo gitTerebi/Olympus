@@ -25,6 +25,8 @@ bool eVendorCartAction::decide() {
 // ── transitions ───────────────────────────────────────────────────────────────
 
 void eVendorCartAction::toFindTarget() {
+    const auto tasks = building() ? building()->cartTasks() : std::vector<eCartTask>{};
+    if(tasks.empty()) { enterReturning(); return; }
     mState = eVendorCartState::findTarget;
     findTarget();
 }
@@ -34,7 +36,10 @@ void eVendorCartAction::toAtOrReturn() {
     const int count = c->resCount();
     const auto res = c->resType();
     const int max = res == eResourceType::sculpture ? 1 : 4;
-    const bool canTakeMore = mTask.fMaxCount > 0 &&
+    const auto tasks = building() ? building()->cartTasks() : std::vector<eCartTask>{};
+    const bool vendorWantsMore = !tasks.empty();
+    const bool canTakeMore = vendorWantsMore &&
+                             mTask.fMaxCount > 0 &&
                              mTask.fResource == res &&
                              mTask.fType == eCartActionType::get &&
                              (max - count) > 0;
