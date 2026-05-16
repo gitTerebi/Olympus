@@ -352,7 +352,6 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         });
         a->setFindFailAction([tptr, this, c, preferGranary, tasks, avoidedPtr]() {
             if(!tptr) return;
-            printf("[findTarget] findFailAction fired preferGranary=%d\n", (int)*preferGranary);
             if(*preferGranary) {
                 // No granary found — retry without granary restriction
                 *preferGranary = false;
@@ -501,13 +500,15 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
     }
 }
 
-void eCartTransporterAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
+    const bool hasSourceRef = ar.archiveField("sourceRef", [&](eSaveArchive& refsAr) {
+        refsAr.buildingAsField("sourceBuilding", &board(), mBuilding);
+    });
+    if(!hasSourceRef && ar.reading()) {
+        // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote mBuilding raw before tagged fields
+        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
             mBuilding = static_cast<eBuildingWithResource*>(b);
         });
-    } else {
-        ar.writeStream().writeBuilding(mBuilding);
     }
 
     ar.field("mTask.fMaxCount", mTask.fMaxCount);
@@ -536,25 +537,27 @@ void eCartTransporterAction::serialize(eSaveArchive& ar) {
         ar.field("mWaitOutside", waitOutside);
     }
 
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
+    const bool hasTargetRef = ar.archiveField("targetRef", [&](eSaveArchive& refsAr) {
+        refsAr.buildingField("targetBuilding", &board(), mTarget);
+    });
+    if(!hasTargetRef && ar.reading()) {
+        // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote mTarget raw after tagged fields
+        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
             mTarget = b;
         });
-    } else {
-        ar.writeStream().writeBuilding(mTarget);
     }
 }
 
 void eCartTransporterAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
     eSaveArchive ar(src);
-    serialize(ar);
+    serializeFields(ar);
 }
 
 void eCartTransporterAction::write(eWriteStream& dst) const {
     eActionWithComeback::write(dst);
     eSaveArchive ar(dst);
-    const_cast<eCartTransporterAction*>(this)->serialize(ar);
+    const_cast<eCartTransporterAction*>(this)->serializeFields(ar);
 }
 
 stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {

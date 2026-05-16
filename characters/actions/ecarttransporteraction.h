@@ -77,6 +77,8 @@ protected:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 
+    virtual void serializeFields(eSaveArchive& ar);
+
     // subclass hook — called when findTarget BFS fails
     virtual void onFindTargetFail() {}
     // subclass hook — called when findTarget BFS succeeds and path starts
@@ -95,8 +97,6 @@ protected:
     void clearTask();
 
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<eWalkableObject> getWalkable() const;
 
     void updateWaiting();

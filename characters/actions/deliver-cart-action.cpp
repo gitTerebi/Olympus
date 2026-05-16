@@ -125,19 +125,8 @@ void eDeliverCartAction::onFindTargetFail() {
 
 // ── serialize ────────────────────────────────────────────────────────────────
 
-void eDeliverCartAction::serializeDeliver(eSaveArchive& ar) {
+void eDeliverCartAction::serializeFields(eSaveArchive& ar) {
+    eCartTransporterAction::serializeFields(ar);
     ar.field("mDeliverState", mDeliverState);
     ar.field("mFindRetry", mFindRetry);
-}
-
-void eDeliverCartAction::read(eReadStream& src) {
-    eCartTransporterAction::read(src);
-    eSaveArchive ar(src);
-    serializeDeliver(ar);
-}
-
-void eDeliverCartAction::write(eWriteStream& dst) const {
-    eCartTransporterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDeliverCartAction*>(this)->serializeDeliver(ar);
 }

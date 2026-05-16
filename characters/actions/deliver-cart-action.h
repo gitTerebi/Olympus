@@ -20,8 +20,7 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void serializeFields(eSaveArchive& ar) override;
 
     void onFindTargetFail() override;
 
@@ -39,8 +38,6 @@ private:
     void enterWaitOutside();
     void enterIdleOutside();
     void enterReturning();
-
-    void serializeDeliver(eSaveArchive& ar);
 
     eDeliverState mDeliverState = eDeliverState::idle;
     int mFindRetry = 0;

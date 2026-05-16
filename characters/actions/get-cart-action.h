@@ -17,8 +17,7 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void serializeFields(eSaveArchive& ar) override;
 
     void onFindTargetFail() override;
     void onFoundTarget() override;
@@ -32,8 +31,6 @@ private:
     // actions
     void enterIdle();
     void enterReturning();
-
-    void serializeGet(eSaveArchive& ar);
 
     eGetState mGetState = eGetState::idle;
     static const int kFindRetryWait = 1000;
