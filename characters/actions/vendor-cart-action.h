@@ -4,7 +4,7 @@
 #include "ecarttransporteraction.h"
 
 enum class eVendorCartState {
-    idle,
+    waitAtHome,
     findTarget,
     moving,
     atTarget,
@@ -24,13 +24,12 @@ public:
 
 private:
     void toFindTarget();
-    void toAtOrReturn();
     void toDeposit();
 
-    void enterIdle();
+    void enterWaitAtHome();
     void enterReturning();
 
-    eVendorCartState mState = eVendorCartState::idle;
+    eVendorCartState mState = eVendorCartState::waitAtHome;
     static const int kFindRetryWait = 1000;
 };
 

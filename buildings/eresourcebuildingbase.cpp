@@ -32,10 +32,6 @@ void eResourceBuildingBase::timeChanged(const int by) {
         if(mCart) {
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
         }
-        if(mCart && mCart->waiting() && mResource > 0) {
-            const int a = mCart->add(mResType, mResource);
-            mResource -= a;
-        }
     }
     eEmployingBuilding::timeChanged(by);
 }
@@ -99,6 +95,7 @@ void eResourceBuildingBase::serialize(eSaveArchive& ar) {
     ar.field("mResource", mResource);
     if(ar.reading()) {
         ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
+            if(mCart && mCart != c) mCart->kill();
             mCart = static_cast<eCartTransporter*>(c);
         });
     } else {
