@@ -160,6 +160,31 @@ void testCountedArrayFieldKeepsFollowingFieldsAligned() {
             check(after == 15, "field after counted array remains aligned");
         });
 }
+
+void testDuplicateFieldNamesReadInWriteOrder() {
+    roundTrip(
+        [](eWriteStream& dst) {
+            eSaveArchive ar(dst);
+            int first = 11;
+            int second = 22;
+            int after = 33;
+            ar.field("value", first);
+            ar.field("value", second);
+            ar.field("after", after);
+        },
+        [](eReadStream& src) {
+            eSaveArchive ar(src);
+            int first = 0;
+            int second = 0;
+            int after = 0;
+            ar.field("value", first);
+            ar.field("after", after);
+            ar.field("value", second);
+            check(first == 11 && second == 22,
+                  "duplicate field names read in write order");
+            check(after == 33, "cached duplicate fields keep later fields aligned");
+        });
+}
 }
 
 int main() {
@@ -167,6 +192,7 @@ int main() {
     testDequeFieldKeepsFollowingFieldsAligned();
     testFixedArrayFieldConsumesMismatchPayload();
     testCountedArrayFieldKeepsFollowingFieldsAligned();
+    testDuplicateFieldNamesReadInWriteOrder();
 
     if(sFailures == 0) {
         std::printf("PASS: save archive array tests\n");

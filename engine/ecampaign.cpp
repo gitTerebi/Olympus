@@ -10,6 +10,10 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
+namespace {
+const int currentSaveVersion = 1;
+}
+
 eCampaign::eCampaign() {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
                            eResourceType::allBasic);
@@ -303,6 +307,15 @@ bool eCampaign::sReadGlossary(const std::string& name,
 
 void eCampaign::read(eReadStream& src) {
     eSaveArchive ar(src);
+    if(src.format() == "eZeus.ez2") {
+        int saveVersion = 0;
+        ar.field("saveVersion", saveVersion, 0);
+        if(saveVersion != currentSaveVersion) {
+            printf("Invalid save: unsupported saveVersion %d expected %d.\n",
+                   saveVersion, currentSaveVersion);
+            return;
+        }
+    }
     serialize(ar);
 
     if(mBriefId != 0 && mCompleteId != 0) {
@@ -323,6 +336,10 @@ void eCampaign::read(eReadStream& src) {
 
 void eCampaign::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
+    if(dst.format() == "eZeus.ez2") {
+        int saveVersion = currentSaveVersion;
+        ar.field("saveVersion", saveVersion);
+    }
     const_cast<eCampaign*>(this)->serialize(ar);
 }
 

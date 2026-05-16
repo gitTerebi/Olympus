@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <vector>
 #include <cstdint>
+#include <string>
 
 #include "estreams.h"
 
@@ -40,18 +41,14 @@ public:
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
 
-    [[deprecated("Use eSaveArchive helpers; raw readStream() is legacy save code only.")]]
     eReadStream& readStream() const { return *mSrc; }
 
-    [[deprecated("Use eSaveArchive helpers; raw writeStream() is legacy save code only.")]]
     eWriteStream& writeStream() const { return *mDst; }
 
     // Use only in SAVE_COMPAT_LEGACY_FALLBACK branches after tagged payload lookup fails.
-    [[deprecated("Use tagged eSaveArchive helpers; legacyReadStream() is old-save fallback only.")]]
     eReadStream& legacyReadStream() const { return *mSrc; }
 
     template <typename T>
-    [[deprecated("Use field(name, value) or another tagged helper; value() is legacy order-dependent save code.")]]
     void value(T& value) {
         rawValue(value);
     }
@@ -153,16 +150,11 @@ public:
             mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
             return true;
         } else {
-            const auto pos = mSrc->pos();
-            const bool taggedEnded = mTaggedEnded;
-            std::string fieldName;
-            std::vector<char> data;
-            if(!readField(fieldName, data) || fieldName != name) {
-                mSrc->seek(pos);
-                mTaggedEnded = taggedEnded;
+            auto data = takeField(std::string(name));
+            if(data.empty()) {
+                printf("Invalid save: missing payload '%s'.\n", name);
                 return false;
             }
-            if(data.empty()) return false;
             eReadSource source(const_cast<char*>(data.data()));
             eReadStream src(source);
             src.setFormat(mSrc->format());
@@ -171,7 +163,6 @@ public:
         }
     }
 
-    [[deprecated("Use a tagged tile helper/payload; tile() is legacy order-dependent save code.")]]
     void tile(eTile*& tile, eGameBoard& board) {
         if(reading()) {
             tile = mSrc->readTile(board);
@@ -181,7 +172,6 @@ public:
     }
 
     template <typename Ptr>
-    [[deprecated("Use characterField(name, board, value); character() is legacy order-dependent save code.")]]
     void character(eGameBoard* board, Ptr& value) {
         if(reading()) {
             value = nullptr;
@@ -194,7 +184,6 @@ public:
     }
 
     template <typename Ptr>
-    [[deprecated("Use buildingField(name, board, value); building() is legacy order-dependent save code.")]]
     void building(eGameBoard* board, Ptr& value) {
         if(reading()) {
             value = nullptr;
@@ -237,7 +226,6 @@ public:
     }
 
     template <typename T>
-    [[deprecated("Use buildingAsField(name, board, value); buildingAs() is legacy order-dependent save code.")]]
     void buildingAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
             value.clear();
@@ -280,7 +268,6 @@ public:
     }
 
     template <typename T>
-    [[deprecated("Use characterAsField(name, board, value); characterAs() is legacy order-dependent save code.")]]
     void characterAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
             value.clear();
@@ -308,7 +295,6 @@ public:
     }
 
     template <typename T>
-    [[deprecated("Use characterAsField(name, board, value); characterAs() is legacy order-dependent save code.")]]
     void characterAs(eGameBoard* board, T*& value) {
         if(reading()) {
             value = nullptr;
@@ -335,7 +321,6 @@ public:
             });
     }
 
-    [[deprecated("Use a tagged city helper/payload; city() is legacy order-dependent save code.")]]
     void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             value = nullptr;
@@ -347,7 +332,6 @@ public:
         }
     }
 
-    [[deprecated("Use a tagged city helper/payload; city() is legacy order-dependent save code.")]]
     void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             value = nullptr;
@@ -359,7 +343,6 @@ public:
         }
     }
 
-    [[deprecated("Use a tagged soldier banner helper/payload; soldierBanner() is legacy order-dependent save code.")]]
     void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
         if(reading()) {
             value = nullptr;
@@ -372,21 +355,18 @@ public:
     }
 
     template <typename T>
-    [[deprecated("Use objectField(name, value); object() is legacy order-dependent save code.")]]
     void object(T& value) {
         if(reading()) value.read(*mSrc);
         else value.write(*mDst);
     }
 
     template <typename T>
-    [[deprecated("Use objectField(name, value); object() is legacy order-dependent save code.")]]
     void object(std::shared_ptr<T>& value) {
         if(reading()) value->read(*mSrc);
         else value->write(*mDst);
     }
 
     template <typename T>
-    [[deprecated("Use a tagged game event helper/payload; gameEvent() is legacy order-dependent save code.")]]
     void gameEvent(eGameBoard* board, T*& val) {
         if(reading()) {
             val = nullptr;
@@ -399,7 +379,6 @@ public:
     }
 
     template <typename T>
-    [[deprecated("Use a tagged game event helper/payload; gameEvent() is legacy order-dependent save code.")]]
     void gameEvent(eGameBoard* board, stdptr<T>& val) {
         if(reading()) {
             val.clear();
@@ -417,10 +396,18 @@ public:
                     std::vector<T>& values,
                     const Func& itemFunc) {
         int count = static_cast<int>(values.size());
-        this->field(name, count);
+        const std::string countName = std::string(name) + ".count";
+        this->field(countName, count);
+        if(count < 0) {
+            printf("Invalid save: array '%s' bad count %d.\n", name, count);
+            return false;
+        }
         if(reading()) values.resize(count);
         for(int i = 0; i < count; i++) {
-            itemFunc(*this, values[i]);
+            const std::string itemName = std::string(name) + "." + std::to_string(i);
+            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+                itemFunc(itemAr, values[i]);
+            });
         }
         return true;
     }
@@ -430,10 +417,18 @@ public:
                     std::deque<T>& values,
                     const Func& itemFunc) {
         int count = static_cast<int>(values.size());
-        this->field(name, count);
+        const std::string countName = std::string(name) + ".count";
+        this->field(countName, count);
+        if(count < 0) {
+            printf("Invalid save: deque '%s' bad count %d.\n", name, count);
+            return false;
+        }
         if(reading()) values.resize(count);
         for(int i = 0; i < count; i++) {
-            itemFunc(*this, values[i]);
+            const std::string itemName = std::string(name) + "." + std::to_string(i);
+            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+                itemFunc(itemAr, values[i]);
+            });
         }
         return true;
     }
@@ -443,9 +438,17 @@ public:
                            const int writeCount,
                            const Func& itemFunc) {
         int count = writeCount;
-        this->field(name, count);
+        const std::string countName = std::string(name) + ".count";
+        this->field(countName, count);
+        if(count < 0) {
+            printf("Invalid save: counted array '%s' bad count %d.\n", name, count);
+            return false;
+        }
         for(int i = 0; i < count; i++) {
-            itemFunc(*this, i);
+            const std::string itemName = std::string(name) + "." + std::to_string(i);
+            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+                itemFunc(itemAr, i);
+            });
         }
         return true;
     }
@@ -456,24 +459,34 @@ public:
                          const Func& itemFunc) {
         const int expected = static_cast<int>(values.size());
         int count = expected;
-        this->field(name, count);
+        const std::string countName = std::string(name) + ".count";
+        this->field(countName, count);
+        if(count < 0) {
+            printf("Invalid save: fixed array '%s' bad count %d.\n", name, count);
+            return false;
+        }
         if(count != expected) {
             printf("Invalid save: fixed array '%s' count mismatch expected=%d saved=%d.\n",
                    name, expected, count);
         }
         const int readCount = std::min(count, expected);
         for(int i = 0; i < readCount; i++) {
-            itemFunc(*this, values[i]);
+            const std::string itemName = std::string(name) + "." + std::to_string(i);
+            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+                itemFunc(itemAr, values[i]);
+            });
         }
         for(int i = readCount; i < count; i++) {
             std::decay_t<decltype(values[0])> scratch;
-            itemFunc(*this, scratch);
+            const std::string itemName = std::string(name) + "." + std::to_string(i);
+            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+                itemFunc(itemAr, scratch);
+            });
         }
         return count == expected;
     }
 
     template <typename T>
-    [[deprecated("Use a tagged character action helper/payload; characterAction() is legacy order-dependent save code.")]]
     void characterAction(std::shared_ptr<T>& action, const std::function<std::shared_ptr<T>(eCharActionType)>& create) {
         bool hasAction = action != nullptr;
         this->rawValue(hasAction);
