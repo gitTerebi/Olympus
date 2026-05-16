@@ -208,7 +208,7 @@ set(SOURCES
     characters/actions/esettleraction.cpp
     characters/actions/eshepherdaction.cpp
     characters/actions/esickdisgruntledaction.cpp
-    characters/actions/esoldieraction.cpp
+    characters/actions/soldier-action.cpp
     characters/actions/etakecattleaction.cpp
     characters/actions/etraderaction.cpp
     characters/actions/etriremeaction.cpp

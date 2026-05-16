@@ -493,7 +493,7 @@ void eBoardCity::updateCityDefense() {
     } else {
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
-            b->moveToDefault();
+            b->moveToPalace();
             b->goHome();
         }
         mDefending = false;
@@ -1871,7 +1871,7 @@ void eBoardCity::consolidateSoldiers() {
     for(const auto& s : mPalaceSoldierBanners) {
         if(s->isAbroad()) continue;
         const auto tile = s->tile();
-        if(!tile) s->moveToDefault();
+        if(!tile) s->moveToPalace();
         if(!s->isHome()) continue;
         switch(s->type()) {
         case eBannerType::rockThrower:
@@ -1952,7 +1952,7 @@ void eBoardCity::addSoldier(const eCharacterType st) {
     b->setBothCityIds(mId);
     registerSoldierBanner(b);
     b->incCount();
-    b->moveToDefault();
+    b->moveToPalace();
 }
 
 void eBoardCity::removeSoldier(const eCharacterType st,

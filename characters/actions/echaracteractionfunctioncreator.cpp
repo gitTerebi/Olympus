@@ -15,7 +15,7 @@
 #include "esettleraction.h"
 #include "ewolfaction.h"
 #include "eshepherdaction.h"
-#include "esoldieraction.h"
+#include "soldier-action.h"
 #include "etraderaction.h"
 #include "ekillcharacterfinishfail.h"
 #include "ereplacecattleaction.h"

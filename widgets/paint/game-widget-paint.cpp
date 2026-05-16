@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include "characters/esoldier.h"
-#include "characters/actions/esoldieraction.h"
+#include "characters/actions/soldier-action.h"
 #include "characters/actions/ecarttransporteraction.h"
 
 #include "evectorhelpers.h"
@@ -3220,8 +3220,9 @@ void eGameWidget::paintEvent(ePainter &p)
             int lineDX;
             int lineDY;
             rightDragFormationLine(lineDX, lineDY);
-            const int bannerDist = banners.size() > 1 ? 4 : 3;
-            const int start = -static_cast<int>(banners.size() - 1)/2;
+            const int dist = 3;
+            const auto slots = eSoldierBanner::sFormationPositions(
+                banners, mPressedTX, mPressedTY, lineDX, lineDY, dist);
 
             eGameTextures::loadBanners();
             const auto drawGhostTile = [&](eTile* const tile,
@@ -3315,19 +3316,14 @@ void eGameWidget::paintEvent(ePainter &p)
                 }
             };
 
-            for (int i = 0; i < static_cast<int>(banners.size()); i++)
-            {
-                const int side = start + i;
-                const int bx = mPressedTX + side*bannerDist*lineDX;
-                const int by = mPressedTY + side*bannerDist*lineDY;
-                const auto tile = mBoard->tile(bx, by);
+            for(const auto& slot : slots) {
+                const auto tile = mBoard->tile(slot.tx, slot.ty);
                 const bool valid = tile &&
-                    tile->cityId() == banners[i]->onCityId() &&
+                    tile->cityId() == slot.banner->onCityId() &&
                     tile->walkable() &&
-                    (!tile->soldierBanner() ||
-                     tile->soldierBanner() == banners[i]);
+                    (!tile->soldierBanner() || tile->soldierBanner() == slot.banner);
                 drawGhostTile(tile, valid);
-                drawGhostBanner(banners[i], tile, valid);
+                drawGhostBanner(slot.banner, tile, valid);
             }
         }
 

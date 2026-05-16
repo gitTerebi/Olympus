@@ -2,7 +2,7 @@
 
 #include "characters/actions/emonsteraction.h"
 #include "characters/gods/actions/egodattackaction.h"
-#include "characters/actions/esoldieraction.h"
+#include "characters/actions/soldier-action.h"
 
 stdsptr<eObsticleHandler> eObsticleHandler::sCreate(
         eGameBoard& board,

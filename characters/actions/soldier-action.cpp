@@ -1,4 +1,4 @@
-#include "esoldieraction.h"
+#include "soldier-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/esoldier.h"
@@ -35,15 +35,15 @@ void eSoldierAction::increment(const int by) {
     if(!currentAction()) {
         mGoToBannerCountdown -= by;
         if(mGoToBannerCountdown < 0) {
-            mGoToBannerCountdown = 1000;
+            mGoToBannerCountdown = 250;
             const stdptr<eSoldierAction> tptr(this);
             const auto taskFinished = [tptr]() {
                 if(!tptr) return;
-                tptr->mGoToBannerCountdown = 500;
+                tptr->mGoToBannerCountdown = 100;
             };
             const auto taskFindFailed = [tptr]() {
                 if(!tptr) return;
-                tptr->mGoToBannerCountdown = 5000;
+                tptr->mGoToBannerCountdown = 1000;
             };
 
             const auto c = character();
@@ -81,7 +81,9 @@ stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {
 }
 
 void eSoldierAction::goHome() {
+    mArrivedAtBanner = false;
     const auto c = character();
+    c->setSpeed(1.0);
     const auto& brd = c->getBoard();
     const auto type = c->type();
     const auto cid = cityId();
@@ -209,6 +211,10 @@ void eSoldierAction::goBackToBanner(const eOrientation facing,
     if(!b) return;
 
     const auto standAtBanner = [&]() {
+        if(!mArrivedAtBanner) {
+            mArrivedAtBanner = true;
+            c->setSpeed(1.0);
+        }
         setCurrentAction(nullptr);
         c->setOrientation(facing);
         c->setActionType(eCharacterActionType::stand);
@@ -228,6 +234,8 @@ void eSoldierAction::goBackToBanner(const eOrientation facing,
     const int ttx = tt->x();
     const int tty = tt->y();
 
+    const bool isPersonPlayer = board().cityIdToPlayerId(cityId()) == board().personPlayer();
+    if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(2.0);
     const auto type = b->type();
     setOverwrittableAction(type == eBannerType::enemy);
     goTo(ttx, tty, 0, findFailAct, findFinishAct);

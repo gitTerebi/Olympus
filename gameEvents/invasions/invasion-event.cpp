@@ -181,6 +181,7 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &boa
     auto date = board.date() + invasionDelayDays;
     e->initializeDate(date);
     board.addRootGameEvent(e);
+    board.addInvasion(e.get());
     e->sendInitialAnnouncement();
     return true;
 }
@@ -593,11 +594,14 @@ void eInvasionEvent::setFirstWarning(const eDate &w)
     const auto board = gameBoard();
     if (!board)
         return;
-    choosePointId();
-    if (!mCity)
+    if (!mCity) {
+        choosePointId();
         chooseCity();
+    }
     updateDisembarkAndShoreTile();
-    board->addInvasion(this);
+    const auto &inv = board->invasions();
+    if (std::find(inv.begin(), inv.end(), this) == inv.end())
+        board->addInvasion(this);
     mFirstWarning = w;
     mWarned = true;
 }

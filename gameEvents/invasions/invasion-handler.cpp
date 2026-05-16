@@ -5,7 +5,7 @@
 
 #include "engine/eeventdata.h"
 
-#include "characters/actions/esoldieraction.h"
+#include "characters/actions/soldier-action.h"
 
 #include "characters/egreekhoplite.h"
 #include "characters/egreekhorseman.h"

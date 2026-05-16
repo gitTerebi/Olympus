@@ -3087,7 +3087,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
             if (tile && tile->cityId() == mViewedCityId)
             {
                 const auto &solds = mBoard->selectedSoldiers();
-                eSoldierBanner::sPlace(solds, mHoverTX, mHoverTY, *mBoard, 3, 2);
+                eSoldierBanner::sPlaceFacing(solds, mHoverTX, mHoverTY, *mBoard, 180, 1, 0, 3, 2);
                 const auto &trims = mBoard->selectedTriremes();
                 eTrireme::sPlace(trims, mHoverTX, mHoverTY, *mBoard, 3, 2);
             }
