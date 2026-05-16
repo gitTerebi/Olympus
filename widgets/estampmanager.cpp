@@ -2,6 +2,7 @@
 
 #include "ebuttonbase.h"
 #include "ecancelbutton.h"
+#include "eframedbutton.h"
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "emainwindow.h"
@@ -64,6 +65,19 @@ void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty di
     closeB->move(closeB->x() - 2 * p, closeB->y() - 2 * p);
     closeB->setPressAction([this]()
                            { close(); });
+
+    const auto createB = new eFramedButton(window());
+    createB->setUnderline(false);
+    createB->setText("Create Template");
+    createB->fitContent();
+    f->addWidget(createB);
+    createB->align(eAlignment::bottom | eAlignment::left);
+    createB->move(createB->x() + 2 * p, createB->y() - 2 * p);
+    createB->setPressAction([this]()
+                            {
+        const auto action = mCreateTemplateAction;
+        close();
+        if(action) action(); });
 
     const int vpY = title->y() + title->height() + 2 * p;
     const int vpH = f->height() - vpY - closeB->height() - 4 * p;

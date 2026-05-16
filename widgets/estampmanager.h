@@ -24,6 +24,9 @@ public:
     void setTemplateSelectedAction(const eAction& action) {
         mTemplateSelectedAction = action;
     }
+    void setCreateTemplateAction(const eAction& action) {
+        mCreateTemplateAction = action;
+    }
 private:
     struct eTemplateButton {
         std::string fName;
@@ -41,6 +44,7 @@ private:
     eStampTool* mStampTool = nullptr;
     eDifficulty mDifficulty = eDifficulty::mortal;
     eAction mTemplateSelectedAction;
+    eAction mCreateTemplateAction;
     eScrollViewport* mViewport = nullptr;
     eWidget* mFilesWidget = nullptr;
     int mListWidth = 0;
