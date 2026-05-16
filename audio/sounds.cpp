@@ -1563,6 +1563,7 @@ void eSounds::loadImpl() {
                              "wind5.wav",
                              "wind6.wav",
                              "wind7.wav",
+                             "wind_02s.wav",
                              "shimmer3.wav",
                              "wind_sparkle2.wav",
                              "dark2.wav",
@@ -1576,7 +1577,11 @@ void eSounds::loadImpl() {
                              "chime2.wav",
                              "voice.wav",
                              "shimmer6.wav",
-                             "shimmer7.wav"}) {
+                             "shimmer7.wav",
+                             "bird2.wav",
+                             "bird5.wav",
+                             "sparrow1.wav",
+                             "water_space2.wav"}) {
             mEnvironment.addPath(layer1Dir + s);
         }
     }
@@ -1823,9 +1828,14 @@ void eSounds::loadImpl() {
     }
 
     for(const auto& s : {"cheer.wav",
-                         "javelin.wav",
-                         "wrestling.wav",
-                         "cheer2.wav"}) {
+                          "javelin.wav",
+                          "wrestling.wav",
+                          "cheer2.wav",
+                          "mammaldrome1.wav",
+                          "mammaldrome2.wav",
+                          "mammaldrome3.wav",
+                          "racetrack1.wav",
+                          "racetrack2.wav"}) {
         mStadium.addPath(layer2Dir + s);
     }
 
@@ -1868,9 +1878,10 @@ void eSounds::loadImpl() {
 
 
     for(const auto& s : {"bird7.wav",
-                         "finch2.wav",
-                         "sparrow1.wav",
-                         "bird3.wav"}) {
+                          "finch2.wav",
+                          "sparrow1.wav",
+                          "bird3.wav",
+                          "cicada.wav"}) {
         mMeadow.addPath(layer2Dir + s);
     }
 
@@ -1890,8 +1901,10 @@ void eSounds::loadImpl() {
     }
 
     for(const auto& s : {"rumble.wav",
-                         "rockslide1.wav",
-                         "rockslide2.wav"}) {
+                          "rockslide1.wav",
+                          "rockslide2.wav",
+                          "wind1.wav",
+                          "wind2.wav"}) {
         mRocky.addPath(layer2Dir + s);
     }
 
@@ -1951,9 +1964,11 @@ void eSounds::loadImpl() {
     }
 
     for(const auto& s : {"reading1.wav",
-                         "reading2.wav",
-                         "get_book.wav",
-                         "close_book.wav"}) {
+                          "reading2.wav",
+                          "get_book.wav",
+                          "close_book.wav",
+                          "paper4.wav",
+                          "writing1.wav"}) {
         mBibliotheke.addPath(layer2Dir + s);
     }
 
