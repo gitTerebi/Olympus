@@ -189,13 +189,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::hedgeMaze:
     case eBuildingType::fishPond:
     case eBuildingType::orrery:
-        break;
-
-    case eBuildingType::waterPark: {
-        const auto p = static_cast<const eWaterPark*>(b);
-        dst << p->id();
-    } break;
-
+    case eBuildingType::waterPark:
     case eBuildingType::birdBath:
     case eBuildingType::shortObelisk:
     case eBuildingType::tallObelisk:

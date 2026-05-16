@@ -395,11 +395,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     } break;
 
     case eBuildingType::waterPark: {
-        int id;
-        src >> id;
-        const auto wp = e::make_shared<eWaterPark>(board, cid);
-        b = wp;
-        wp->setId(id);
+        b = e::make_shared<eWaterPark>(board, cid);
     } break;
 
     case eBuildingType::birdBath: {

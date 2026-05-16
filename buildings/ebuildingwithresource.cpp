@@ -108,9 +108,9 @@ void eBuildingWithResource::write(eWriteStream& dst) const {
 }
 
 void eBuildingWithResource::serialize(eSaveArchive& ar) {
-    ar.field("mStashable", mStashable);
-    ar.arrayField("stash", mStash, [](eSaveArchive& ar, eStash& s) {
-        ar.field("s.fType", s.fType);
-        ar.field("s.fCount", s.fCount);
+    ar.field("stashable", mStashable);
+    ar.arrayField("stash", mStash, [](eSaveArchive& itemAr, eStash& s) {
+        itemAr.field("resource", s.fType);
+        itemAr.field("count", s.fCount);
     });
 }

@@ -148,24 +148,22 @@ void eMonument::write(eWriteStream& dst) const {
 }
 
 void eMonument::serialize(eSaveArchive& ar) {
-    ar.field("mRotated", mRotated);
-    ar.field("mHaltConstruction", mHaltConstruction);
-    if(ar.reading()) {
-        mStored.read(ar.readStream());
-        mUsed.read(ar.readStream());
-    } else {
-        mStored.write(ar.writeStream());
-        mUsed.write(ar.writeStream());
-    }
-    ar.field("mAltitude", mAltitude);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
+    ar.field("rotated", mRotated);
+    ar.field("haltConstruction", mHaltConstruction);
+    ar.payloadField("stored",
+        [this](eWriteStream& dst) { mStored.write(dst); },
+        [this](eReadStream& src) { mStored.read(src); });
+    ar.payloadField("used",
+        [this](eWriteStream& dst) { mUsed.write(dst); },
+        [this](eReadStream& src) { mUsed.read(src); });
+    ar.field("altitude", mAltitude);
+    ar.payloadField("cart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
 }
 
 eSanctCost eMonument::cost() const {

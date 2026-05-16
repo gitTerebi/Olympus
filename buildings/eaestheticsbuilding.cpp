@@ -1,5 +1,6 @@
 #include "eaestheticsbuilding.h"
 
+#include "fileIO/esavearchive.h"
 #include "textures/egametextures.h"
 
 #include "sanctuaries/esanctuary.h"
@@ -167,6 +168,22 @@ eWaterPark::eWaterPark(eGameBoard& board, const eCityId cid) :
 
 void eWaterPark::setId(const int i) {
     mId = i % 8;
+}
+
+void eWaterPark::read(eReadStream& src) {
+    eBuilding::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eWaterPark::write(eWriteStream& dst) const {
+    eBuilding::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eWaterPark*>(this)->serialize(ar);
+}
+
+void eWaterPark::serialize(eSaveArchive& ar) {
+    ar.field("id", mId, 0);
 }
 
 std::shared_ptr<eTexture> eWaterPark::getTexture(

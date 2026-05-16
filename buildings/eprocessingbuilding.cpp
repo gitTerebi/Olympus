@@ -123,19 +123,22 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
 }
 
 void eProcessingBuilding::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTakeCart = static_cast<eCartTransporter*>(c);
+    ar.payloadField("takeCart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mTakeCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mTakeCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mTakeCart);
-    }
 
-    ar.field("mRawCount", mRawCount);
-    ar.field("mProcessTime", mProcessTime);
-    ar.field("mProducedThisYear", mProducedThisYear);
-    ar.field("mLastMonth", mLastMonth);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
+    ar.field("rawCount", mRawCount);
+    ar.field("processTime", mProcessTime);
+    ar.field("producedThisYear", mProducedThisYear);
+    ar.field("lastMonth", mLastMonth);
+    for(int i = 0; i < 12; i++) {
+        ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
+                 mMonthlyProduced[i]);
+    }
 }
 
 void eProcessingBuilding::read(eReadStream& src) {

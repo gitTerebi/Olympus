@@ -230,14 +230,14 @@ void eUrchinQuay::write(eWriteStream& dst) const {
 }
 
 void eUrchinQuay::serialize(eSaveArchive& ar) {
-    ar.field("mDisabled", mDisabled);
-    ar.field("mStateCount", mStateCount);
-    ar.field("mState", mState);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mGatherer = static_cast<eUrchinGatherer*>(c);
+    ar.field("disabled", mDisabled);
+    ar.field("stateCount", mStateCount);
+    ar.field("state", mState);
+    ar.payloadField("gatherer",
+        [this](eWriteStream& dst) { dst.writeCharacter(mGatherer); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mGatherer = static_cast<eUrchinGatherer*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mGatherer);
-    }
 }

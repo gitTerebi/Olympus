@@ -330,38 +330,42 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
 }
 
 void eCharacter::serialize(eSaveArchive& ar) {
-    ar.field("mIOID", mIOID);
-    ar.field("mVisible", mVisible);
-    ar.field("mProvide", mProvide);
-    ar.field("mProvideCount", mProvideCount);
-    ar.tile(mTile, getBoard());
+    ar.field("ioId", mIOID);
+    ar.field("visible", mVisible);
+    ar.field("provide", mProvide);
+    ar.field("provideCount", mProvideCount);
+    ar.archiveField("tile", [this](eSaveArchive& it) {
+        it.tile(mTile, getBoard());
+    });
     if(ar.reading() && mTile) {
         const auto sptr = ref<eCharacter>();
         mTile->addCharacter(sptr, false);
     }
-    ar.field("mOrientation", mOrientation);
-    ar.field("mX", mX);
-    ar.field("mY", mY);
-    ar.field("mPlayFightSound", mPlayFightSound);
-    ar.field("mSoundPlayTime", mSoundPlayTime);
-    ar.field("mTime", mTime);
-    ar.field("mHasSecondaryTexture", mHasSecondaryTexture);
-    ar.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
-        return eCharacterAction::sCreate(this, type);
+    ar.field("orientation", mOrientation);
+    ar.field("x", mX);
+    ar.field("y", mY);
+    ar.field("playFightSound", mPlayFightSound);
+    ar.field("soundPlayTime", mSoundPlayTime);
+    ar.field("time", mTime);
+    ar.field("hasSecondaryTexture", mHasSecondaryTexture);
+    ar.archiveField("action", [this](eSaveArchive& it) {
+        it.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
+            return eCharacterAction::sCreate(this, type);
+        });
     });
     if(ar.reading() &&
        (actionType() == eCharacterActionType::fight ||
         actionType() == eCharacterActionType::fight2)) {
         mPlayFightSound = true;
     }
-    ar.field("mActionStartTime", mActionStartTime);
+    ar.field("actionStartTime", mActionStartTime);
 
-    ar.arrayField("pausedActions", mPausedActions, [this](eSaveArchive& ar, auto& a) {
-        ar.field("a.fAt", a.fAt);
-        ar.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
+    ar.arrayField("pausedActions", mPausedActions, [this](eSaveArchive& itemAr, auto& a) {
+        itemAr.field("at", a.fAt);
+        itemAr.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
             return eCharacterAction::sCreate(this, type);
         });
-        ar.field("a.fO", a.fO);
+        itemAr.field("orientation", a.fO);
     });
 }
 

@@ -34,14 +34,7 @@ void eAnimalBuilding::write(eWriteStream& dst) const {
 }
 
 void eAnimalBuilding::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mA = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mA);
-    }
+    ar.characterField("animal", &getBoard(), mA);
 }
 
 void eAnimalBuilding::setAnimal(eCharacter* const a) {

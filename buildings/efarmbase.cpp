@@ -105,17 +105,19 @@ eMonth eFarmBase::nextHarvestMonth() const {
 }
 
 void eFarmBase::serialize(eSaveArchive& ar) {
-    ar.field("mNextRipe", mNextRipe);
-    int combined;
-    if(ar.writing()) combined = mGrownFields * 5 + mFieldStage;
-    ar.field("combined", combined);
+    ar.field("nextRipe", mNextRipe);
+    int growthSteps = ar.writing() ? (mGrownFields * 5 + mFieldStage) : 0;
+    ar.field("growthSteps", growthSteps);
     if(ar.reading()) {
-        mGrownFields  = std::clamp(combined / 5, 0, 5);
-        mFieldStage = std::clamp(combined % 5, 0, 4);
+        mGrownFields = std::clamp(growthSteps / 5, 0, 5);
+        mFieldStage = std::clamp(growthSteps % 5, 0, 4);
     }
-    ar.field("mProducedThisYear", mProducedThisYear);
-    for(int i = 0; i < 12; i++) ar.field("mMonthlyProduced[i]", mMonthlyProduced[i]);
-    ar.field("mRingIdx", mRingIdx);
+    ar.field("producedThisYear", mProducedThisYear);
+    for(int i = 0; i < 12; i++) {
+        ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
+                 mMonthlyProduced[i]);
+    }
+    ar.field("ringIdx", mRingIdx);
 }
 
 void eFarmBase::read(eReadStream& src) {

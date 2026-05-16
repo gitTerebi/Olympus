@@ -166,6 +166,7 @@ SOURCES += \
         buildings/sanctuaries/estairsrenderer.cpp \
         engine/stamps/estampblueprint.cpp \
         engine/stamps/estamptool.cpp \
+        engine/stamps/stamp-template-writer.cpp \
         buildings/sanctuaries/etemplealtarbuilding.cpp \
         buildings/sanctuaries/etemplebuilding.cpp \
         buildings/sanctuaries/etemplemonumentbuilding.cpp \
@@ -873,6 +874,7 @@ HEADERS += \
     buildings/sanctuaries/estairsrenderer.h \
     engine/stamps/estampblueprint.h \
     engine/stamps/estamptool.h \
+    engine/stamps/stamp-template-writer.h \
     buildings/sanctuaries/etemplealtarbuilding.h \
     buildings/sanctuaries/etemplebuilding.h \
     buildings/sanctuaries/etemplemonumentbuilding.h \
@@ -3340,5 +3342,4 @@ DISTFILES += \
     textureTemplates/zeusStairs \
     textureTemplates/zeusStatue \
     textureTemplates/zeusTrees
-
 

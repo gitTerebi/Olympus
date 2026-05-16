@@ -153,15 +153,14 @@ void eHorseRanch::write(eWriteStream& dst) const {
 }
 
 void eHorseRanch::serialize(eSaveArchive& ar) {
-    ar.field("mWheat", mWheat);
-    ar.field("mWheatTime", mWheatTime);
-    ar.field("mHorseTime", mHorseTime);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mTakeCart = static_cast<eCartTransporter*>(c);
+    ar.field("wheat", mWheat);
+    ar.field("wheatTime", mWheatTime);
+    ar.field("horseTime", mHorseTime);
+    ar.payloadField("takeCart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mTakeCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mTakeCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mTakeCart);
-    }
 }

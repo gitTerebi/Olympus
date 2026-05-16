@@ -258,43 +258,53 @@ void eStorageBuilding::write(eWriteStream& dst) const {
 }
 
 void eStorageBuilding::serialize(eSaveArchive& ar) {
-    ar.field("mGet", mGet);
-    ar.field("mEmpty", mEmpty);
-    ar.field("mAccept", mAccept);
+    ar.field("get", mGet);
+    ar.field("empty", mEmpty);
+    ar.field("accept", mAccept);
     for(int i = 0; i < 15; i++) {
-        ar.field("mResourceCount[i]", mResourceCount[i]);
+        ar.field(("resourceCount." + std::to_string(i)).c_str(), mResourceCount[i]);
     }
     for(int i = 0; i < 15; i++) {
-        ar.field("mResource[i]", mResource[i]);
+        ar.field(("resource." + std::to_string(i)).c_str(), mResource[i]);
     }
 
-    int nc = mMaxCount.size();
-    ar.field("nc", nc);
-    if(ar.reading()) mMaxCount.clear();
-    for(int i = 0; i < nc; i++) {
-        eResourceType rt;
-        int c;
-        if(ar.writing()) {
-            auto it = mMaxCount.begin();
-            std::advance(it, i);
-            rt = it->first;
-            c = it->second;
-        }
-        ar.field("rt", rt);
-        ar.field("c", c);
-        if(ar.reading()) {
+    int maxCountCount = static_cast<int>(mMaxCount.size());
+    ar.field("maxCount.count", maxCountCount);
+    if(ar.reading()) {
+        mMaxCount.clear();
+        for(int i = 0; i < maxCountCount; i++) {
+            eResourceType rt; int c;
+            ar.archiveField(("maxCount." + std::to_string(i)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("resource", rt);
+                    it.field("count", c);
+                });
             mMaxCount[rt] = c;
         }
-    }
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart1 = static_cast<eCartTransporter*>(c);
-        });
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mCart2 = static_cast<eCartTransporter*>(c);
-        });
     } else {
-        ar.writeStream().writeCharacter(mCart1);
-        ar.writeStream().writeCharacter(mCart2);
+        int i = 0;
+        for(auto& kv : mMaxCount) {
+            eResourceType rt = kv.first; int c = kv.second;
+            ar.archiveField(("maxCount." + std::to_string(i++)).c_str(),
+                [&](eSaveArchive& it) {
+                    it.field("resource", rt);
+                    it.field("count", c);
+                });
+        }
     }
+
+    ar.payloadField("cart1",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart1); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart1 = static_cast<eCartTransporter*>(c);
+            });
+        });
+    ar.payloadField("cart2",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart2); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart2 = static_cast<eCartTransporter*>(c);
+            });
+        });
 }

@@ -647,13 +647,12 @@ void eHippodromePiece::read(eReadStream& src) {
 }
 
 void eHippodromePiece::serialize(eSaveArchive& ar) {
-    ar.field("mId", mId);
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
+    ar.field("hippodromeId", mId);
+    ar.payloadField("cart",
+        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
+        [this](eReadStream& src) {
+            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                mCart = static_cast<eCartTransporter*>(c);
+            });
         });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
 }
