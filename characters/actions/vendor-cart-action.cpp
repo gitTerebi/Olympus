@@ -13,11 +13,11 @@ eVendorCartAction::eVendorCartAction(eCharacter* const c,
 bool eVendorCartAction::decide() {
     if(!building()) return true;
     switch(mState) {
-    case eVendorCartState::idle:        toFindTarget();  break;
-    case eVendorCartState::findTarget:  toFindTarget();  break;
-    case eVendorCartState::moving:      toAtOrReturn();  break;
-    case eVendorCartState::atTarget:    toAtOrReturn();  break;
-    case eVendorCartState::returning:   toDeposit();     break;
+    case eVendorCartState::waitAtHome:  toFindTarget();   break;
+    case eVendorCartState::findTarget:  toFindTarget();   break;
+    case eVendorCartState::moving:      mState = eVendorCartState::atTarget; break;
+    case eVendorCartState::atTarget:    enterReturning(); break;
+    case eVendorCartState::returning:   toDeposit();      break;
     }
     return true;
 }
@@ -26,54 +26,39 @@ bool eVendorCartAction::decide() {
 
 void eVendorCartAction::toFindTarget() {
     const auto tasks = building() ? building()->cartTasks() : std::vector<eCartTask>{};
-    if(tasks.empty()) { enterReturning(); return; }
+    if(tasks.empty()) { enterWaitAtHome(); return; }
     mState = eVendorCartState::findTarget;
     findTarget();
 }
 
-void eVendorCartAction::toAtOrReturn() {
-    const auto c = cart();
-    const int count = c->resCount();
-    const auto res = c->resType();
-    const int max = res == eResourceType::sculpture ? 1 : 4;
-    const auto tasks = building() ? building()->cartTasks() : std::vector<eCartTask>{};
-    const bool vendorWantsMore = !tasks.empty();
-    const bool canTakeMore = vendorWantsMore &&
-                             mTask.fMaxCount > 0 &&
-                             mTask.fResource == res &&
-                             mTask.fType == eCartActionType::get &&
-                             (max - count) > 0;
-    if(canTakeMore) {
-        mState = eVendorCartState::findTarget;
-        findTarget(mTask);
-    } else {
-        enterReturning();
-    }
-}
-
 void eVendorCartAction::toDeposit() {
-    // arrived home — deposit to vendor building
     const auto c = cart();
     const auto b = building();
-    if(c && b && c->hasResource()) {
+    if(c && b) {
         const auto rt = c->resType();
         const int crc = c->resCount();
-        const int given = b->add(rt, crc);
-        c->setResource(rt, crc - given);
-        const int leftover = c->resCount();
-        if(leftover > 0) {
-            b->stash(rt, leftover);
-            c->setResource(rt, 0);
+        if(crc > 0) {
+            const int given = b->add(rt, crc);
+            c->setResource(rt, crc - given);
+            const int leftover = c->resCount();
+            if(leftover > 0) {
+                b->stash(rt, leftover);
+                c->setResource(rt, 0);
+            }
         }
     }
-    enterIdle();
+    enterWaitAtHome();
 }
 
 // ── enter ─────────────────────────────────────────────────────────────────────
 
-void eVendorCartAction::enterIdle() {
-    mState = eVendorCartState::idle;
+void eVendorCartAction::enterWaitAtHome() {
+    mState = eVendorCartState::waitAtHome;
     clearTask();
+    const auto b = building();
+    const auto c = cart();
+    if(b && c) c->changeTile(b->centerTile());
+    wait(kFindRetryWait);
 }
 
 void eVendorCartAction::enterReturning() {
