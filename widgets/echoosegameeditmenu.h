@@ -6,6 +6,8 @@
 #include "engine/ecampaign.h"
 
 class eBitmapWidget;
+class eButtonBase;
+class eScrollViewport;
 
 class eChooseGameEditMenu : public eMainMenuBase {
 public:
@@ -17,7 +19,12 @@ public:
     bool keyPressEvent(const eKeyPressEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;
 private:
+    void updateEpisodeList();
+
     eCampaignGlossary mSelected;
+    int mSelectedEpisode = 0;
+    eScrollViewport* mEpisodeViewport = nullptr;
+    eButtonBase* mSelectedEpisodeButton = nullptr;
     eBitmapWidget* mBitmap = nullptr;
     eLabel* mTitle = nullptr;
     eLabel* mDesc = nullptr;
