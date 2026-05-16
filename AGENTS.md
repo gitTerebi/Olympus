@@ -13,44 +13,55 @@ Build only when asked. Use `.\build.bat`. Do not verify with `cmake --build buil
 Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/etradepost.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `zeus-text strings/Zeus_Text.xml` is read-only; reuse runtime strings.
 
 ## Save
-Goal: robust saves. New data must be labeled and bounded so fields can be added/removed without crashing old/new loads.
+Goal: all save data is tagged, named, bounded, and safe to add/remove/reorder.
+
+No new raw save bytes. Do not add `val()`, `readStream()`, `writeStream()`, `readStream().read*`, or `writeStream().write*`.
+
 Use stable unique field names. Never rename or reuse. Names describe data, not variables. Bad: `"val"`. Good: `"huntDistance"`.
-Before any save migration, read `payloadField` + `takeField` + `readField` in `fileIO/esavearchive.h` — the impl answers stream behavior questions.
-Do not add new raw `val()`, `readStream()`, or `writeStream()` calls. Raw bytes are legacy only and order-dependent.
 
-### Simple value
-```cpp
-ar.field("name", value, default);  // default required for old-save compat
-```
+Before save work, read `payloadField` + `takeField` + `readField` in `fileIO/esavearchive.h`.
 
-### Pointer refs (building / character / tile)
-```cpp
-const bool hasRefs = ar.archiveField("refs", [&](eSaveArchive& refsAr) {
-    refsAr.buildingAsField("sourceBuilding", &board(), mBuilding);
-    refsAr.buildingField("targetBuilding", &board(), mTarget);
-});
-if(!hasRefs && ar.reading()) {
-    // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote these raw
-    ar.legacyReadStream().readBuilding(...);
-}
-```
-`payloadField` seeks back on tag mismatch — `legacyReadStream()` fallback always reads from the correct position.
-Mark all fallback branches `SAVE_COMPAT_LEGACY_FALLBACK` for later cleanup.
+Base `read`/`write` are entry points. They open one `eSaveArchive` and call the virtual field serializer.
 
-### Child subobject
-```cpp
-ar.objectField("name", child);  // child needs read(eReadStream&) / write(eWriteStream&)
-```
-Never call `child.serialize(ar)` on a parent archive that has raw stream writes — tag scan corrupts on missing fields.
+Children do not override `read`/`write`. Children serialize fields by calling parent first.
 
-### Subclass fields — use serializeFields, never override read/write
 ```cpp
 void MyAction::serializeFields(eSaveArchive& ar) {
-    ParentAction::serializeFields(ar);  // always call parent first
+    ParentAction::serializeFields(ar);
     ar.field("myField", mMyField, default);
 }
 ```
-Parent `read`/`write` open one archive and call `serializeFields` — subclasses never touch `read`/`write` directly.
 
-### Arrays
-Use `ar.arrayField()` / `ar.dequeField()` / `ar.countedArrayField()`. Never loop raw reads/writes.
+Simple values:
+
+```cpp
+ar.field("name", value, default);
+```
+
+Pointer refs:
+
+```cpp
+ar.buildingAsField("sourceBuilding", &board(), mBuilding);
+ar.characterField("worker", &board(), mWorker);
+ar.tileField("targetTile", board(), mTargetTile);
+```
+
+Child object:
+
+```cpp
+ar.objectField("name", child);
+```
+
+Collections:
+
+```cpp
+ar.arrayField("items", items, [](eSaveArchive& itemAr, Item& item) {
+    itemAr.field("count", item.count, 0);
+});
+```
+
+Use `archiveField()` for grouped subfields.
+
+Use `arrayField()` / `dequeField()` / `countedArrayField()` for collections.
+
+Never loop raw reads/writes.
