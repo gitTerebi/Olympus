@@ -78,6 +78,8 @@ protected:
     void write(eWriteStream& dst) const override;
 
     virtual void serializeFields(eSaveArchive& ar);
+    virtual void resumeFromSavedState();
+    virtual bool savesCartState() const;
 
     // subclass hook — called when findTarget BFS fails
     virtual void onFindTargetFail() {}

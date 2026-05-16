@@ -17,6 +17,7 @@ public:
     void write(eWriteStream& dst) const override;
 
     eCharacterAction* currentAction() const { return mCurrentAction.get(); }
+    const stdsptr<eCharacterAction>& currentActionPtr() const { return mCurrentAction; }
     void setCurrentAction(const stdsptr<eCharacterAction>& a);
 protected:
     void wait(const int t);

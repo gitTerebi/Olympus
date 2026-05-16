@@ -199,6 +199,7 @@ public:
 
     using eFunc = std::function<void()>;
     void addPostFunc(const eFunc& func, const char* tag = "?");
+    void transferPostFuncsTo(eReadStream& dst);
     void handlePostFuncs();
 
     const std::string& format() const { return mFormat; }
