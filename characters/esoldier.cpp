@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "esoldierbanner.h"
-#include "actions/esoldieraction.h"
+#include "actions/soldier-action.h"
 #include "fileIO/esavearchive.h"
 
 eSoldier::eSoldier(eGameBoard& board,

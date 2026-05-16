@@ -29,7 +29,7 @@
 #include "epatrolaction.h"
 #include "esettleraction.h"
 #include "eshepherdaction.h"
-#include "esoldieraction.h"
+#include "soldier-action.h"
 #include "etraderaction.h"
 #include "ewaitaction.h"
 #include "esickdisgruntledaction.h"

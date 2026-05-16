@@ -7,7 +7,7 @@
 #include "engine/e-game-board.h"
 #include "engine/eorientation.h"
 #include "characters/esoldier.h"
-#include "characters/actions/esoldieraction.h"
+#include "characters/actions/soldier-action.h"
 #include "fileIO/esavearchive.h"
 #include "eiteratesquare.h"
 
@@ -96,8 +96,9 @@ void eSoldierBanner::commandFormation(const int facing,
     const int depthDX = -sideDY;
     const int depthDY = sideDX;
     const int slds = mSoldiers.size();
-    const int ranks = slds > 1 ? 2 : 1;
-    const int files = (slds + ranks - 1)/ranks;
+    const bool missile = mType == eBannerType::rockThrower;
+    const int files = slds > 1 ? (missile ? 2 : (slds + 1) / 2) : 1;
+    const int ranks = (slds + files - 1) / files;
     std::map<eSoldier*, eTile*> places;
     int isld = 0;
     for(int rank = 0; rank < ranks; rank++) {
@@ -188,7 +189,7 @@ void eSoldierBanner::moveTo(const int x, const int y) {
     if(!mHome) callSoldiers();
 }
 
-void eSoldierBanner::moveToDefault() {
+void eSoldierBanner::moveToPalace() {
     const auto onCid = onCityId();
     const auto cid = cityId();
     if(onCid != cid) return;
@@ -279,7 +280,7 @@ void eSoldierBanner::backFromAbroad(int& wait) {
         return;
     }
     mAbroad = false;
-    moveToDefault();
+    moveToPalace();
     const auto cid = cityId();
     const auto entryPoint = mBoard.entryPoint(cid);
     if(entryPoint) {
@@ -492,7 +493,7 @@ void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,
                     if(bbt == eBannerType::hoplite ||
                        bbt == eBannerType::rockThrower ||
                        bbt == eBannerType::horseman) {
-                        bb->moveToDefault();
+                        bb->moveToPalace();
                         eVectorHelpers::remove(bs, bb);
                         i--;
                     }
@@ -506,7 +507,7 @@ void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,
                     const auto bbt = bb->type();
                     if((bbt == eBannerType::amazon && gt == eGodType::artemis) ||
                        (bbt == eBannerType::aresWarrior && gt == eGodType::ares)) {
-                        bb->moveToDefault();
+                        bb->moveToPalace();
                         eVectorHelpers::remove(bs, bb);
                         i--;
                     }
@@ -648,6 +649,58 @@ void eSoldierBanner::sPlace(std::vector<eSoldierBanner*> bs,
     }
 }
 
+std::vector<eSoldierBanner::sFormationSlot>
+eSoldierBanner::sFormationPositions(
+        std::vector<eSoldierBanner*> bs,
+        const int ctx, const int cty,
+        const int lineDX, const int lineDY,
+        const int dist) {
+    // hoplites rear (depth=0), missiles front (max depth)
+    std::stable_sort(bs.begin(), bs.end(), [](const eSoldierBanner* a, const eSoldierBanner* b) {
+        auto order = [](eBannerType t) {
+            switch(t) {
+            case eBannerType::rockThrower: return 0;
+            case eBannerType::horseman:    return 1;
+            case eBannerType::hoplite:     return 2;
+            default:                       return 3;
+            }
+        };
+        return order(a->type()) > order(b->type());
+    });
+
+    const int depthDX = -lineDY;
+    const int depthDY =  lineDX;
+
+    const bool cardinal = (lineDX == 0 || lineDY == 0);
+    const int missileSlot = cardinal ? 2 : 1;
+    const int otherSlot   = cardinal ? 4 : 2;
+    const int groupGap    = cardinal ? dist + 1 : dist;
+
+    std::vector<sFormationSlot> result;
+    result.reserve(bs.size());
+    int depth = 0;
+    int gi = 0;
+    while(gi < (int)bs.size()) {
+        const eBannerType gtype = bs[gi]->type();
+        int gend = gi;
+        while(gend < (int)bs.size() && bs[gend]->type() == gtype) gend++;
+        const int count = gend - gi;
+        const int slotW = gtype == eBannerType::rockThrower ? missileSlot : otherSlot;
+        const int total = count * slotW;
+        int cur = -(total / 2);
+        for(int i = 0; i < count; i++) {
+            const int side = cur + slotW / 2;
+            cur += slotW;
+            result.push_back({bs[gi + i],
+                              ctx + side*lineDX + depth*depthDX,
+                              cty + side*lineDY + depth*depthDY});
+        }
+        depth += groupGap;
+        gi = gend;
+    }
+    return result;
+}
+
 void eSoldierBanner::sPlaceFacing(std::vector<eSoldierBanner*> bs,
                                   const int ctx, const int cty,
                                   eGameBoard& board,
@@ -657,23 +710,22 @@ void eSoldierBanner::sPlaceFacing(std::vector<eSoldierBanner*> bs,
                                   const int dist,
                                   const int minDistFromEdge) {
     if(bs.empty()) return;
+    sPlaceDefault(bs, ctx, cty, board);
+    if(bs.empty()) return;
+
+    const auto slots = sFormationPositions(bs, ctx, cty, lineDX, lineDY, dist);
 
     if(bs.size() == 1) {
         sPlace(bs, ctx, cty, board, dist, minDistFromEdge);
     } else {
-        const int bannerDist = dist + 1;
-        const int start = -static_cast<int>(bs.size() - 1)/2;
         std::vector<eSoldierBanner*> fallback;
-        for(int i = 0; i < static_cast<int>(bs.size()); i++) {
-            const int side = start + i;
-            const int bx = ctx + side*bannerDist*lineDX;
-            const int by = cty + side*bannerDist*lineDY;
-            const auto tile = board.tile(bx, by);
-            if(tile && tile->cityId() == bs[i]->onCityId() &&
+        for(const auto& slot : slots) {
+            const auto tile = board.tile(slot.tx, slot.ty);
+            if(tile && tile->cityId() == slot.banner->onCityId() &&
                tile->walkable() && !tile->soldierBanner()) {
-                bs[i]->moveTo(bx, by);
+                slot.banner->moveTo(slot.tx, slot.ty);
             } else {
-                fallback.push_back(bs[i]);
+                fallback.push_back(slot.banner);
             }
         }
         if(!fallback.empty()) {
@@ -681,8 +733,8 @@ void eSoldierBanner::sPlaceFacing(std::vector<eSoldierBanner*> bs,
         }
     }
 
-    for(const auto b : bs) {
-        b->commandFormation(facing, lineDX, lineDY);
+    for(const auto& slot : slots) {
+        slot.banner->commandFormation(facing, lineDX, lineDY);
     }
 }
 
@@ -808,8 +860,9 @@ void eSoldierBanner::updatePlaces() {
         }
     };
 
-    const int ranks = slds > 1 ? 2 : 1;
-    const int files = (slds + ranks - 1)/ranks;
+    const bool missile = mType == eBannerType::rockThrower;
+    const int files = slds > 1 ? (missile ? 2 : (slds + 1) / 2) : 1;
+    const int ranks = (slds + files - 1) / files;
     std::vector<SDL_Point> offsets;
     offsets.reserve(slds);
     for(int rank = 0; rank < ranks; rank++) {

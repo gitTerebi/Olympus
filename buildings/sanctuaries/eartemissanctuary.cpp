@@ -43,7 +43,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             mSoldierBanners.push_back(b);
             b->setBothCityIds(cityId());
             board.registerSoldierBanner(b);
-            b->moveToDefault();
+            b->moveToPalace();
             id++;
         }
         mSoldierSpawn += by;

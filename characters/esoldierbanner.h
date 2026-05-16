@@ -44,7 +44,7 @@ public:
     void setMilitaryAid(const bool a) { mMilitaryAid = a; }
 
     void moveTo(const int x, const int y);
-    void moveToDefault();
+    void moveToPalace();
     void goHome();
     void backFromHome();
     void goAbroad();
@@ -125,6 +125,14 @@ public:
                              const int lineDY,
                              const int dist,
                              const int minDistFromEdge);
+
+    struct sFormationSlot { eSoldierBanner* banner; int tx; int ty; };
+    static std::vector<sFormationSlot> sFormationPositions(
+                             std::vector<eSoldierBanner*> bs,
+                             const int ctx, const int cty,
+                             const int lineDX, const int lineDY,
+                             const int dist);
+
     static std::vector<eSoldierBanner*> sPlayerBanners(
             const std::vector<eSoldierBanner*>& bs,
             const ePlayerId playerId);

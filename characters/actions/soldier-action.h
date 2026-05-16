@@ -38,6 +38,7 @@ private:
 
     int mGoToBannerCountdown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
+    bool mArrivedAtBanner = false;
 };
 
 class eSoldierObsticleHandler : public eObsticleHandler {
