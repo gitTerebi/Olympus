@@ -20,6 +20,9 @@ Old positional saves must not be half-read. Either migrate them deliberately or 
 - Parent fields serialize first.
 - Child classes do not open a second archive on the same stream.
 - Child classes should not override `read`/`write` once the base entry point is virtual-safe.
+- Action saves must store stable FSM intent/state, not transient runtime actions.
+- Runtime pathfinding, lambdas, queued searches, and current child movement actions are rebuilt after load from saved FSM state.
+- Parent action FSM is the source of truth; `mCurrentAction` is transient execution detail.
 
 ## Read First
 
@@ -723,10 +726,10 @@ After migration has zero callers:
 - [ ] `eComplexAction`
 - [ ] `eActionWithComeback`
 - [ ] `eArtisanAction`
-- [ ] `eCartTransporterAction`
-- [ ] `eDeliverCartAction`
-- [ ] `eGetCartAction`
-- [ ] `eVendorCartAction`
+- [x] `eCartTransporterAction`
+- [x] `eDeliverCartAction`
+- [x] `eGetCartAction`
+- [x] `eVendorCartAction`
 - [ ] `eCollectResourceAction`
 - [ ] `eGrowerAction`
 - [ ] `eHeroAction`

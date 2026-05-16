@@ -80,5 +80,26 @@ void eVendorCartAction::onFindTargetFail() {
 
 void eVendorCartAction::serializeFields(eSaveArchive& ar) {
     eCartTransporterAction::serializeFields(ar);
-    ar.field("mState", mState);
+    ar.field("vendorState", mState);
+}
+
+void eVendorCartAction::resumeFromSavedState() {
+    setCurrentAction(nullptr);
+    switch(mState) {
+    case eVendorCartState::waitAtHome:
+        enterWaitAtHome();
+        break;
+    case eVendorCartState::findTarget:
+    case eVendorCartState::moving:
+        toFindTarget();
+        break;
+    case eVendorCartState::atTarget:
+    case eVendorCartState::returning:
+        enterReturning();
+        break;
+    }
+}
+
+bool eVendorCartAction::savesCartState() const {
+    return false;
 }

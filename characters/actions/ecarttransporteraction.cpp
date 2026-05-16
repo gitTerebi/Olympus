@@ -501,63 +501,73 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
 }
 
 void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
-    const bool hasSourceRef = ar.archiveField("sourceRef", [&](eSaveArchive& refsAr) {
+    ar.archiveField("sourceRef", [&](eSaveArchive& refsAr) {
         refsAr.buildingAsField("sourceBuilding", &board(), mBuilding);
     });
-    if(!hasSourceRef && ar.reading()) {
-        // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote mBuilding raw before tagged fields
-        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = static_cast<eBuildingWithResource*>(b);
-        });
+
+    ar.field("taskMaxCount", mTask.fMaxCount);
+    ar.field("taskResource", mTask.fResource);
+    ar.field("taskType", mTask.fType);
+
+    ar.field("updateWaiting", mUpdateWaiting);
+
+    if(savesCartState()) {
+        ar.field("cartState", mState);
     }
 
-    ar.field("mTask.fMaxCount", mTask.fMaxCount);
-    ar.field("mTask.fResource", mTask.fResource);
-    ar.field("mTask.fType", mTask.fType);
-
-    ar.field("mUpdateWaiting", mUpdateWaiting);
-
-    // compatibility: old saves wrote two bools; new writes same two bools
-    // derived from mState so byte layout is identical in both directions
-    if(ar.reading()) {
-        bool mNoTarget = false;
-        bool mWaitOutside = false;
-        ar.field("mNoTarget",    mNoTarget);
-        ar.field("mWaitOutside", mWaitOutside);
-        if(mWaitOutside)   mState = eCartState::waitOutside;
-        else if(mNoTarget) mState = eCartState::returning;
-        else               mState = eCartState::idle;
-    } else {
-        bool noTarget   = (mState != eCartState::idle &&
-                           mState != eCartState::loadingDeliver &&
-                           mState != eCartState::loadingGet &&
-                           mState != eCartState::waitOutside);
-        bool waitOutside = (mState == eCartState::waitOutside);
-        ar.field("mNoTarget",    noTarget);
-        ar.field("mWaitOutside", waitOutside);
-    }
-
-    const bool hasTargetRef = ar.archiveField("targetRef", [&](eSaveArchive& refsAr) {
+    ar.archiveField("targetRef", [&](eSaveArchive& refsAr) {
         refsAr.buildingField("targetBuilding", &board(), mTarget);
     });
-    if(!hasTargetRef && ar.reading()) {
-        // SAVE_COMPAT_LEGACY_FALLBACK: old saves wrote mTarget raw after tagged fields
-        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = b;
-        });
+}
+
+void eCartTransporterAction::resumeFromSavedState() {
+    setCurrentAction(nullptr);
+    switch(mState) {
+    case eCartState::idle:
+        break;
+    case eCartState::loadingDeliver:
+    case eCartState::loadingGet:
+    case eCartState::atTarget:
+    case eCartState::idleOutside:
+        decide();
+        break;
+    case eCartState::waitOutside:
+        enterWaitOutside();
+        break;
+    case eCartState::movingToTarget:
+        if(mTask.fMaxCount > 0) enterMovingToTarget(mTask);
+        else decide();
+        break;
+    case eCartState::returning:
+        enterReturning();
+        break;
     }
+}
+
+bool eCartTransporterAction::savesCartState() const {
+    return true;
 }
 
 void eCartTransporterAction::read(eReadStream& src) {
     eActionWithComeback::read(src);
     eSaveArchive ar(src);
     serializeFields(ar);
+    const stdptr<eCartTransporterAction> tptr(this);
+    src.addPostFunc([tptr]() {
+        if(tptr) tptr->resumeFromSavedState();
+    }, "cartTransporterAction");
 }
 
 void eCartTransporterAction::write(eWriteStream& dst) const {
+    // do not serialize "feet" (mCurrentAction walk/wait child); rebuilt on load
+    // from saved plan (mState + mTask) via resumeFromSavedState.
+    const auto self = const_cast<eCartTransporterAction*>(this);
+    auto savedFeet = self->currentActionPtr();
+    self->setCurrentAction(nullptr);
     eActionWithComeback::write(dst);
+    self->setCurrentAction(savedFeet);
     eSaveArchive ar(dst);
-    const_cast<eCartTransporterAction*>(this)->serializeFields(ar);
+    self->serializeFields(ar);
 }
 
 stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {

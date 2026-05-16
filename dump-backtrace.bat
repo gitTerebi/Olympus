@@ -35,13 +35,32 @@ if not exist "%DMP%" (
 )
 
 echo Dump: "%DMP%"
+set "SUMMARY=%DMP%.crash-thread.txt"
+set "FULL=%DMP%.all-threads.txt"
+
+echo.
+echo ===== Crash thread summary =====
+"%LLDB%" -b ^
+  -o "target create \"%EXE%\" --core \"%DMP%\"" ^
+  -o "process status" ^
+  -o "thread info" ^
+  -o "thread backtrace" ^
+  -o "frame info" ^
+  -o "frame variable" ^
+  -o "register read" ^
+  -o "thread list" ^
+  > "%SUMMARY%" 2>&1
+set "LLDB_EXIT=%ERRORLEVEL%"
+type "%SUMMARY%"
+
+echo.
+echo ===== Full all-thread backtrace saved to =====
+echo "%FULL%"
 "%LLDB%" -b ^
   -o "target create \"%EXE%\" --core \"%DMP%\"" ^
   -o "thread list" ^
   -o "thread backtrace all" ^
-  -o "frame variable" ^
-  -o "register read"
-set "LLDB_EXIT=%ERRORLEVEL%"
+  > "%FULL%" 2>&1
 
 echo Deleting DMP files...
 if /i "%DMP:~-4%"==".dmp" if exist "%DMP%" (

@@ -127,6 +127,37 @@ void eDeliverCartAction::onFindTargetFail() {
 
 void eDeliverCartAction::serializeFields(eSaveArchive& ar) {
     eCartTransporterAction::serializeFields(ar);
-    ar.field("mDeliverState", mDeliverState);
-    ar.field("mFindRetry", mFindRetry);
+    ar.field("deliverState", mDeliverState);
+    ar.field("findRetry", mFindRetry);
+}
+
+void eDeliverCartAction::resumeFromSavedState() {
+    setCurrentAction(nullptr);
+    switch(mDeliverState) {
+    case eDeliverState::idle:
+        break;
+    case eDeliverState::loading:
+        toWaitOrIdle();
+        break;
+    case eDeliverState::waitOutside:
+        enterWaitOutside();
+        break;
+    case eDeliverState::findTarget:
+    case eDeliverState::moving:
+        toFindTarget();
+        break;
+    case eDeliverState::atTarget:
+        toAtOrReturn();
+        break;
+    case eDeliverState::idleOutside:
+        enterIdleOutside();
+        break;
+    case eDeliverState::returning:
+        enterReturning();
+        break;
+    }
+}
+
+bool eDeliverCartAction::savesCartState() const {
+    return false;
 }

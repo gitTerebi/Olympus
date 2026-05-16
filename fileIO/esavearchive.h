@@ -40,7 +40,6 @@ public:
 
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
-
     eReadStream& readStream() const { return *mSrc; }
 
     eWriteStream& writeStream() const { return *mDst; }
@@ -159,6 +158,7 @@ public:
             eReadStream src(source);
             src.setFormat(mSrc->format());
             readFunc(src);
+            src.transferPostFuncsTo(*mSrc);
             return true;
         }
     }

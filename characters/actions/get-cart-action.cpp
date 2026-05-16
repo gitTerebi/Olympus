@@ -74,5 +74,27 @@ void eGetCartAction::onFindTargetFail() {
 
 void eGetCartAction::serializeFields(eSaveArchive& ar) {
     eCartTransporterAction::serializeFields(ar);
-    ar.field("mGetState", mGetState);
+    ar.field("getState", mGetState);
+}
+
+void eGetCartAction::resumeFromSavedState() {
+    setCurrentAction(nullptr);
+    switch(mGetState) {
+    case eGetState::idle:
+        break;
+    case eGetState::findTarget:
+    case eGetState::moving:
+        toFindTarget();
+        break;
+    case eGetState::atTarget:
+        toAtOrReturn();
+        break;
+    case eGetState::returning:
+        enterReturning();
+        break;
+    }
+}
+
+bool eGetCartAction::savesCartState() const {
+    return false;
 }

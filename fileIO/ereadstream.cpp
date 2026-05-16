@@ -217,6 +217,13 @@ void eReadStream::addPostFunc(const eFunc& func, const char* tag) {
     mPostFuncs.push_back({func, tag});
 }
 
+void eReadStream::transferPostFuncsTo(eReadStream& dst) {
+    for(const auto& f : mPostFuncs) {
+        dst.mPostFuncs.push_back(f);
+    }
+    mPostFuncs.clear();
+}
+
 void eReadStream::handlePostFuncs() {
     const int n = (int)mPostFuncs.size();
     for(int i = 0; i < n; i++) {

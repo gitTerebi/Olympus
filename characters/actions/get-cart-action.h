@@ -18,6 +18,8 @@ public:
     bool decide() override;
 
     void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
+    bool savesCartState() const override;
 
     void onFindTargetFail() override;
     void onFoundTarget() override;
