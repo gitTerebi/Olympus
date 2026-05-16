@@ -545,13 +545,13 @@ After migration has zero callers:
 
 ### A — Archive Engine
 
-- [ ] Add outer save version gate.
-- [ ] Make `payloadField` use `takeField`.
-- [ ] Scope `arrayField`.
-- [ ] Scope `dequeField`.
-- [ ] Scope `countedArrayField`.
-- [ ] Verify duplicate field names still work where intended.
-- [ ] Add debug `printf` for bad version, bad count, and missing required payload.
+- [x] Add outer save version gate.
+- [x] Make `payloadField` use `takeField`.
+- [x] Scope `arrayField`.
+- [x] Scope `dequeField`.
+- [x] Scope `countedArrayField`.
+- [x] Verify duplicate field names still work where intended.
+- [x] Add debug `printf` for bad version, bad count, and missing required payload.
 
 ### B — Board / Campaign Roots
 
