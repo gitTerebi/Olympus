@@ -146,25 +146,110 @@ bool eShepherdAction::decide() {
     return true;
 }
 
-void eShepherdAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+void eShepherdAction::increment(const int by) {
+    if((mStage == eShepherdActionStage::collecting ||
+        mStage == eShepherdActionStage::grooming ||
+        mStage == eShepherdActionStage::waiting) &&
+       mWaitRemaining > 0) {
+        mWaitRemaining -= by;
+        if(mWaitRemaining < 0) mWaitRemaining = 0;
+    }
+    eActionWithComeback::increment(by);
 }
 
-void eShepherdAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eShepherdAction*>(this)->serialize(ar);
+void eShepherdAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.field("animalType", mAnimalType);
+    ar.characterAsField("shepherd", &board(), mCharacter);
+    const auto shepherd = static_cast<eResourceCollectorBase*>(character());
+    int carriedResourceCount = shepherd ? shepherd->collected() : 0;
+    ar.field("carriedResourceCount", carriedResourceCount, 0);
+    ar.buildingAsField("shed", &board(), mShed);
+    ar.field("finishOnce", mFinishOnce);
+    ar.field("groomed", mGroomed);
+    ar.field("noResource", mNoResource);
+    ar.field("stage", mStage, eShepherdActionStage::idle);
+    ar.field("waitRemaining", mWaitRemaining, 0);
+    ar.characterAsField("lastAnimal", &board(), mLastAnimal);
+    ar.characterAsField("targetAnimal", &board(), mTargetAnimal);
+    if(ar.reading()) {
+        const stdptr<eShepherdAction> tptr(this);
+        ar.addPostFunc([tptr, carriedResourceCount]() {
+            if(!tptr) return;
+            const auto a = tptr.get();
+            const auto shepherd = static_cast<eResourceCollectorBase*>(
+                                      a->character());
+            if(!shepherd) return;
+            a->mCharacter = shepherd;
+            shepherd->incCollected(carriedResourceCount -
+                                   shepherd->collected());
+        }, "shepherdCarriedResourceCount");
+    }
 }
 
-void eShepherdAction::serialize(eSaveArchive& ar) {
-    eActionWithComeback::serialize(ar);
-    ar.field("mAnimalType", mAnimalType);
-    ar.characterAs(&board(), mCharacter);
-    ar.buildingAs(&board(), mShed);
-    ar.field("mFinishOnce", mFinishOnce);
-    ar.field("mGroomed", mGroomed);
-    ar.field("mNoResource", mNoResource);
-    ar.characterAs(&board(), mTargetAnimal);
+void eShepherdAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eShepherdAction::rebuildCurrentStage() {
+    if(!mCharacter || !mShed) {
+        setState(eCharacterActionState::finished);
+        return;
+    }
+    switch(mStage) {
+    case eShepherdActionStage::findingAnimal:
+        rebuildFindAnimal();
+        return;
+    case eShepherdActionStage::collecting:
+        if(mTargetAnimal) return collectDecision(mTargetAnimal.get());
+        mStage = eShepherdActionStage::idle;
+        decide();
+        return;
+    case eShepherdActionStage::grooming:
+        if(mTargetAnimal) return groomDecision(mTargetAnimal.get());
+        mStage = eShepherdActionStage::idle;
+        decide();
+        return;
+    case eShepherdActionStage::goingBack:
+        goBackDecision();
+        return;
+    case eShepherdActionStage::waiting:
+        if(mWaitRemaining > 0) {
+            wait(mWaitRemaining);
+        } else {
+            mStage = eShepherdActionStage::idle;
+            decide();
+        }
+        return;
+    case eShepherdActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        return;
+    }
+}
+
+void eShepherdAction::rebuildFindAnimal() {
+    const auto a = mTargetAnimal.get();
+    if(!a || !a->tile()) {
+        mTargetAnimal = nullptr;
+        mNoResource = true;
+        mStage = eShepherdActionStage::idle;
+        decide();
+        return;
+    }
+    reserveAnimal(a);
+    const stdptr<eDomesticatedAnimal> aptr(a);
+    const stdptr<eShepherdAction> tptr(this);
+    const auto move = makeFindAnimalMove();
+    move->setFindFailAction([tptr, aptr]() {
+        if(!tptr) return;
+        tptr.get()->releaseAnimal(aptr.get());
+        tptr.get()->mNoResource = true;
+    });
+    const auto deleteFail = std::make_shared<eSA_groomDecisionDeleteFail>(
+                                board(), a);
+    move->setDeleteFailAction(deleteFail);
+    move->start(a->tile());
+    setCurrentAction(move);
 }
 
 eDomesticatedAnimal* eShepherdAction::findAnimal(
@@ -232,6 +317,7 @@ bool eShepherdAction::findResourceDecision() {
         mNoResource = true;
         return true;
     }
+    mStage = eShepherdActionStage::findingAnimal;
     reserveAnimal(animal);
     const stdptr<eDomesticatedAnimal> aptr(animal);
     const stdptr<eShepherdAction> tptr(this);
@@ -267,6 +353,11 @@ stdsptr<eMoveToAction> eShepherdAction::makeFindAnimalMove() {
 
 void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
     if(!mCharacter) return;
+    mStage = eShepherdActionStage::collecting;
+    mTargetAnimal = a;
+    if(mWaitRemaining <= 0) {
+        mWaitRemaining = eNumbers::sShepherdGoatherdCollectTime;
+    }
     mLastAnimal = a;
     a->setBusy(true);
     a->setVisible(false);
@@ -279,12 +370,17 @@ void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
     const auto deleteFail = std::make_shared<eSA_collectDecisionDeleteFail>(
                                 board(), a);
     wait->setDeleteFailAction(deleteFail);
-    wait->setTime(eNumbers::sShepherdGoatherdCollectTime);
+    wait->setTime(mWaitRemaining);
     setCurrentAction(wait);
 }
 
 void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     if(!mCharacter) return;
+    mStage = eShepherdActionStage::grooming;
+    mTargetAnimal = a;
+    if(mWaitRemaining <= 0) {
+        mWaitRemaining = eNumbers::sShepherdGoatherdGroomTime;
+    }
     mLastAnimal = a;
     a->setBusy(true);
     mCharacter->setActionType(eCharacterActionType::fight);
@@ -296,12 +392,14 @@ void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     const auto deleteFail = std::make_shared<eSA_groomDecisionDeleteFail>(
                                 board(), a);
     wait->setDeleteFailAction(deleteFail);
-    wait->setTime(eNumbers::sShepherdGoatherdGroomTime);
+    wait->setTime(mWaitRemaining);
     setCurrentAction(wait);
 }
 
 void eShepherdAction::goBackDecision() {
     if(!mCharacter || !mShed) return;
+    mStage = eShepherdActionStage::goingBack;
+    mWaitRemaining = 0;
     if(mCharacter->collected()) {
         mCharacter->setActionType(eCharacterActionType::carry);
     } else {
@@ -313,5 +411,9 @@ void eShepherdAction::goBackDecision() {
 
 void eShepherdAction::waitDecision() {
     if(!mCharacter) return;
-    wait(eNumbers::sShepherdGoatherdWaitTime);
+    mStage = eShepherdActionStage::waiting;
+    if(mWaitRemaining <= 0) {
+        mWaitRemaining = eNumbers::sShepherdGoatherdWaitTime;
+    }
+    wait(mWaitRemaining);
 }

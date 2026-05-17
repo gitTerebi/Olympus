@@ -79,6 +79,7 @@ struct eGrowerTextures : public eBasicCharacterTextures {
     std::vector<eTextureCollection> fWorkOnGrapes;
     std::vector<eTextureCollection> fWorkOnOlives;
 
+    std::vector<eTextureCollection> fCarry;
     std::vector<eTextureCollection> fCollectGrapes;
     std::vector<eTextureCollection> fCollectOlives;
 };

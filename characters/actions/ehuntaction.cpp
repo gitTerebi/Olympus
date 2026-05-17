@@ -40,6 +40,10 @@ bool tryToCollect(eTile* const tile) {
 }
 
 void eHuntAction::increment(const int by) {
+    if(mStage == eHuntActionStage::waiting && mWaitRemaining > 0) {
+        mWaitRemaining -= by;
+        if(mWaitRemaining < 0) mWaitRemaining = 0;
+    }
     if(mHunter) {
         const auto t = mHunter->tile();
         if(t && tryToCollect(t)) {
@@ -113,38 +117,56 @@ bool eHuntAction::decide() {
     return true;
 }
 
-void eHuntAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHuntAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHuntAction*>(this)->serialize(ar);
-}
-
-void eHuntAction::serialize(eSaveArchive& ar) {
-    const bool hasHuntRefs = ar.archiveField(
-        "huntRefs",
-        [this](eSaveArchive& refsAr) {
-            refsAr.buildingAsField("lodge", &board(), mLodge);
-            refsAr.characterAsField("hunter", &board(), mHunter);
-        });
-    if(ar.reading() && !hasHuntRefs) {
-        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored hunt refs inline.
-        ar.legacyReadStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mLodge = static_cast<eHuntingLodge*>(b);
-        });
-        ar.legacyReadStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mHunter = static_cast<eHunter*>(c);
-        });
+void eHuntAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.buildingAsField("lodge", &board(), mLodge);
+    ar.characterAsField("hunter", &board(), mHunter);
+    const auto hunter = static_cast<eHunter*>(character());
+    int carriedResourceCount = hunter ? hunter->collected() : 0;
+    ar.field("carriedResourceCount", carriedResourceCount, 0);
+    ar.field("noResource", mNoResource);
+    ar.field("stage", mStage, eHuntActionStage::idle);
+    ar.field("waitRemaining", mWaitRemaining, 0);
+    if(ar.reading()) {
+        const stdptr<eHuntAction> tptr(this);
+        ar.addPostFunc([tptr, carriedResourceCount]() {
+            if(!tptr) return;
+            const auto a = tptr.get();
+            const auto hunter = static_cast<eHunter*>(a->character());
+            if(!hunter) return;
+            a->mHunter = hunter;
+            hunter->incCollected(carriedResourceCount - hunter->collected());
+        }, "hunterCarriedResourceCount");
     }
-    ar.field("mNoResource", mNoResource);
+}
+
+void eHuntAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eHuntAction::rebuildCurrentStage() {
+    switch(mStage) {
+    case eHuntActionStage::findingResource:
+        return findResourceDecision();
+    case eHuntActionStage::goingBack:
+        return goBackDecision();
+    case eHuntActionStage::waiting:
+        if(mWaitRemaining > 0) {
+            const auto w = e::make_shared<eWaitAction>(mHunter);
+            w->setTime(mWaitRemaining);
+            setCurrentAction(w);
+        } else {
+            mStage = eHuntActionStage::idle;
+            decide();
+        }
+        return;
+    case eHuntActionStage::idle:
+        return eActionWithComeback::resumeFromSavedState();
+    }
 }
 
 void eHuntAction::findResourceDecision() {
+    mStage = eHuntActionStage::findingResource;
     const auto c = character();
 
     const stdptr<eHuntAction> tptr(this);
@@ -184,13 +206,18 @@ void eHuntAction::findResourceDecision() {
 }
 
 void eHuntAction::goBackDecision() {
+    mStage = eHuntActionStage::goingBack;
     mHunter->setActionType(eCharacterActionType::carry);
     const auto rect = mLodge->tileRect();
     eActionWithComeback::goBack(rect, eWalkableObject::sCreateDefault());
 }
 
 void eHuntAction::waitDecision() {
+    mStage = eHuntActionStage::waiting;
+    if(mWaitRemaining <= 0) {
+        mWaitRemaining = 5000;
+    }
     const auto w = e::make_shared<eWaitAction>(mHunter);
-    w->setTime(5000);
+    w->setTime(mWaitRemaining);
     setCurrentAction(w);
 }

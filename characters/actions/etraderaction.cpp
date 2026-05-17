@@ -4,6 +4,8 @@
 #include "ewaitaction.h"
 #include "fileIO/esavearchive.h"
 
+#include <vector>
+
 eTraderAction::eTraderAction(eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::traderAction) {}
 
@@ -23,40 +25,42 @@ bool eTraderAction::decide() {
     return true;
 }
 
-void eTraderAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTraderAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTraderAction*>(this)->serialize(ar);
-}
-
-void eTraderAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        mWalkable = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeWalkable(mWalkable.get());
-    }
-    ar.field("mCash", mCash);
-    ar.field("mItems", mItems);
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTradePost = static_cast<eTradePost*>(b);
+void eTraderAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.walkableField("walkable", mWalkable);
+    ar.field("cash", mCash);
+    ar.field("items", mItems);
+    ar.buildingAsField("tradePost", &board(), mTradePost);
+    ar.buildingField("unpackBuilding", &board(), mUnpackBuilding);
+    ar.field("atTradePost", mAtTradePost);
+    ar.field("finishedTrade", mFinishedTrade);
+    ar.field("notFound", mNotFound);
+    struct TradeEntry {
+        eResourceType resource;
+        int count;
+    };
+    auto tradeMapField = [&ar](const char* const name,
+                               std::map<eResourceType, int>& values) {
+        std::vector<TradeEntry> entries;
+        if(ar.writing()) {
+            for(const auto& v : values) {
+                entries.push_back({v.first, v.second});
+            }
+        }
+        ar.arrayField(name, entries, [](eSaveArchive& itemAr,
+                                        TradeEntry& entry) {
+            itemAr.field("resource", entry.resource);
+            itemAr.field("count", entry.count, 0);
         });
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mUnpackBuilding = b;
-        });
-    } else {
-        ar.writeStream().writeBuilding(mTradePost);
-        ar.writeStream().writeBuilding(mUnpackBuilding);
-    }
-    ar.field("mAtTradePost", mAtTradePost);
-    ar.field("mFinishedTrade", mFinishedTrade);
-    ar.field("mNotFound", mNotFound);
+        if(ar.reading()) {
+            values.clear();
+            for(const auto& entry : entries) {
+                values[entry.resource] = entry.count;
+            }
+        }
+    };
+    tradeMapField("bought", mBought);
+    tradeMapField("sold", mSold);
 }
 
 void eTraderAction::setTradePost(eTradePost* const tp) {
