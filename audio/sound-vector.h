@@ -27,6 +27,8 @@ public:
     void playRandomSound(const eSoundType type = eSoundType::event);
 private:
     std::vector<std::pair<Mix_Chunk*, std::string>> mPaths;
+    std::vector<int> mRecent;
+    static constexpr int kRecentMax = 3;
 };
 
 #endif // SOUND_VECTOR_H
