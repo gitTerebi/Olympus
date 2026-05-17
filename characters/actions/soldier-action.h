@@ -10,6 +10,11 @@
 class eSoldier;
 
 class eSaveArchive;
+
+enum class eSoldierActionStage {
+    idle, banner, home, abroad
+};
+
 class eSoldierAction : public eFightingAction {
 public:
     eSoldierAction(eCharacter* const c);
@@ -17,9 +22,6 @@ public:
     bool decide() override;
 
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 
     void goHome() override;
     void goAbroad() override;
@@ -32,13 +34,17 @@ public:
                                 const eGameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     stdsptr<eObsticleHandler> obsticleHandler() override;
+    void rebuildCurrentStage();
 
     int mGoToBannerCountdown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
+    eSoldierActionStage mStage = eSoldierActionStage::idle;
 };
 
 class eSoldierObsticleHandler : public eObsticleHandler {

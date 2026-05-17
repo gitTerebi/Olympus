@@ -8,6 +8,10 @@
 class eTileBase;
 class eSaveArchive;
 
+enum class eAnimalActionStage {
+    idle, walking, laying
+};
+
 class eAnimalAction : public eComplexAction {
 public:
     eAnimalAction(eCharacter* const c,
@@ -25,19 +29,19 @@ public:
 
     int spawnerX() const { return mSpawnerX; }
     int spawnerY() const { return mSpawnerY; }
-
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
+    void walkAround();
+    void lay();
     int mSpawnerX;
     int mSpawnerY;
-private:
-    void serialize(eSaveArchive& ar);
 
     stdsptr<eWalkableObject> mTileWalkable;
 
     int mLayTime = 2000;
     int mWalkTime = 3000;
+    eAnimalActionStage mStage = eAnimalActionStage::idle;
 };
 
 #endif // EANIMALACTION_H

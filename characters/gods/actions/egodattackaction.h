@@ -9,8 +9,11 @@
 class eSaveArchive;
 
 enum class eGodAttackStage {
-    none, appear, goTo1, patrol1, goTo2, patrol2, disappear
+    none, appear, goTo1, patrol1, goTo2, patrol2, disappear,
+    attacking, destroyingBuilding
 };
+
+enum class eGodSound;
 
 class eGodAttackAction : public eGodAction {
     friend class eGodObsticleHandler;
@@ -21,12 +24,15 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setSanctuary(const stdptr<eSanctuary>& s);
+
+    void rebuildCurrentStage();
+    void finishAttacking();
+    void finishBuildingAttack();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     void initialize();
 
     bool lookForAttack(const int dtime, int& time,
@@ -34,9 +40,27 @@ private:
     bool lookForTargetedAttack(const int dtime, int& time,
                                const int freq, const int range);
 
+    bool lookForRangeAction(const int dtime, int& time,
+                            const int freq, const int range,
+                            const eCharacterActionType at,
+                            const stdsptr<eGodAct>& act,
+                            const eCharacterType chart,
+                            const eGodSound missileSound,
+                            const int nMissiles = 1) override;
+
     void goToTarget();
     stdsptr<eObsticleHandler> obsticleHandler();
     void destroyBuilding(eBuilding* const b);
+
+    void beginAttacking(const eMissileTarget& target,
+                        const eGodActType kind,
+                        const eCharacterActionType at,
+                        const eGodSound sound,
+                        const int nMissiles,
+                        const double bless,
+                        const eGodAttackStage prevStage);
+    void spawnAttackMissile();
+    stdsptr<eGodAct> rebuildAttackAct();
 
     eGodAttackStage mStage{eGodAttackStage::none};
 
@@ -48,6 +72,16 @@ private:
     int mLookForSpecial = eRand::rand() % 2000;
 
     stdptr<eSanctuary> mSanctuary;
+
+    eGodAttackStage mPreAttackStage{eGodAttackStage::none};
+    eGodActType mAttackKind{eGodActType::lookForAttack};
+    eMissileTarget mAttackTarget;
+    eCharacterActionType mAttackActionType{eCharacterActionType::fight2};
+    int mAttackSoundInt = 0;
+    int mAttackNMissiles = 1;
+    double mAttackBless = 0.0;
+
+    stdptr<eBuilding> mAttackBuilding;
 };
 
 class eGAA_loserDisappearFinish : public eCharActFunc {
@@ -90,9 +124,12 @@ public:
         mTptr(tptr), mBptr(b) {}
 
     void call() override {
-        if(!mTptr) return;
+        const stdptr<eGodAttackAction> t = mTptr;
+        if(!t) return;
         const auto b = mBptr;
-        mTptr->resumeAction(); // can delete instance
+        t->finishBuildingAttack();
+        t->resumeAction(); // can delete instance
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
         if(!b) return;
         b->collapse();
         eSounds::playCollapseSound();
@@ -114,6 +151,35 @@ public:
 private:
     stdptr<eGodAttackAction> mTptr;
     stdptr<eBuilding> mBptr;
+};
+
+class eGAA_rangeAttackFinish : public eCharActFunc {
+public:
+    eGAA_rangeAttackFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish) {}
+    eGAA_rangeAttackFinish(eGameBoard& board, eGodAttackAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eGodAttackAction> t = mTptr;
+        if(!t) return;
+        t->finishAttacking();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eGodAttackAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eGodAttackAction> mTptr;
 };
 
 class eTeleportFindFailFunc : public eFindFailFunc {

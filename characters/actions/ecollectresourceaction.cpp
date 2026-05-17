@@ -132,43 +132,54 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
     }
 }
 
-void eCollectResourceAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+void eCollectResourceAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.hasResourceField("hasResource", mHasResource);
+    ar.buildingAsField("building", &board(), mBuilding);
+    ar.field("collectedAction", mCollectedAction);
+    ar.walkableField("walkable", mWalkable);
+    ar.field("disabled", mDisabled);
+    ar.field("waitTime", mWaitTime);
+    ar.field("finishOnce", mFinishOnce);
+    ar.field("addResource", mAddResource);
+    ar.field("getAtTile", mGetAtTile);
+    ar.field("noTarget", mNoTarget);
+    ar.field("stage", mStage);
+    ar.tileField("targetTile", board(), mTargetTile);
 }
 
-void eCollectResourceAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCollectResourceAction*>(this)->serialize(ar);
+void eCollectResourceAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eCollectResourceActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case eCollectResourceActionStage::findingResource:
+        findResourceDecision();
+        break;
+    case eCollectResourceActionStage::collecting:
+        if(mTargetTile) collect(mTargetTile);
+        else eActionWithComeback::resumeFromSavedState();
+        break;
+    case eCollectResourceActionStage::goingBack:
+        goBackDecision();
+        break;
+    case eCollectResourceActionStage::waiting:
+        waitDecision();
+        break;
+    }
 }
 
-void eCollectResourceAction::serialize(eSaveArchive& ar) {
-    eActionWithComeback::serialize(ar);
-    if(ar.reading()) {
-        mHasResource = ar.readStream().readHasResource();
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = static_cast<eResourceCollectBuildingBase*>(b);
-        });
-    } else {
-        ar.writeStream().writeHasResource(mHasResource.get());
-        ar.writeStream().writeBuilding(mBuilding);
-    }
-    ar.field("mCollectedAction", mCollectedAction);
-    if(ar.reading()) {
-        mWalkable = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeWalkable(mWalkable.get());
-    }
-    ar.field("mDisabled", mDisabled);
-    ar.field("mWaitTime", mWaitTime);
-    ar.field("mFinishOnce", mFinishOnce);
-    ar.field("mAddResource", mAddResource);
-    ar.field("mGetAtTile", mGetAtTile);
-    ar.field("mNoTarget", mNoTarget);
+void eCollectResourceAction::finishCollecting(eTile* const tile) {
+    if(!tile) return;
+    tile->setBusy(false);
+    if(mTargetTile == tile) mTargetTile = nullptr;
+    mStage = eCollectResourceActionStage::idle;
+    callCollectedAction(tile);
 }
 
 bool eCollectResourceAction::findResourceDecision() {
     const auto c = character();
+    mStage = eCollectResourceActionStage::findingResource;
 
     const stdptr<eCollectResourceAction> tptr(this);
 
@@ -219,6 +230,8 @@ bool eCollectResourceAction::findResourceDecision() {
 }
 
 bool eCollectResourceAction::collect(eTile* const tile) {
+    mStage = eCollectResourceActionStage::collecting;
+    mTargetTile = tile;
     tile->setBusy(true);
     const auto c = character();
     c->setActionType(eCharacterActionType::collect);
@@ -246,6 +259,7 @@ bool eCollectResourceAction::collect(eTile* const tile) {
 }
 
 void eCollectResourceAction::goBackDecision() {
+    mStage = eCollectResourceActionStage::goingBack;
     const auto c = character();
     const auto cc = static_cast<eResourceCollectorBase*>(c);
 
@@ -260,6 +274,7 @@ void eCollectResourceAction::goBackDecision() {
 }
 
 void eCollectResourceAction::waitDecision() {
+    mStage = eCollectResourceActionStage::waiting;
     const auto c = character();
     c->setActionType(eCharacterActionType::stand);
     wait(mWaitTime);

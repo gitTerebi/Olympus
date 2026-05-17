@@ -18,30 +18,14 @@ ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
     mO = c->orientation();
 }
 
-void ePatrolMoveAction::read(eReadStream& src) {
-    eMoveAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePatrolMoveAction::write(eWriteStream& dst) const {
-    eMoveAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePatrolMoveAction*>(this)->serialize(ar);
-}
-
-void ePatrolMoveAction::serialize(eSaveArchive& ar) {
-    ar.field("mDiagonalOnly", mDiagonalOnly);
-    if(ar.reading()) {
-        mWalkable = ar.readStream().readWalkable();
-        mOs = ar.readStream().readDirectionTimes(board());
-    } else {
-        ar.writeStream().writeWalkable(mWalkable.get());
-        ar.writeStream().writeDirectionTimes(mOs.get());
-    }
-    ar.field("mO", mO);
-    ar.field("mMaxWalkDistance", mMaxWalkDistance);
-    ar.field("mWalkedDistance", mWalkedDistance);
+void ePatrolMoveAction::serializeFields(eSaveArchive& ar) {
+    eMoveAction::serializeFields(ar);
+    ar.field("diagonalOnly", mDiagonalOnly);
+    ar.walkableField("walkable", mWalkable);
+    ar.directionTimesField("directionTimes", board(), mOs);
+    ar.field("orientation", mO);
+    ar.field("maxWalkDistance", mMaxWalkDistance);
+    ar.field("walkedDistance", mWalkedDistance);
 }
 
 eCharacterActionState ePatrolMoveAction::nextTurn(eOrientation& t) {

@@ -25,19 +25,8 @@ void eBuildAction::increment(const int by) {
     }
 }
 
-void eBuildAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eBuildAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eBuildAction*>(this)->serialize(ar);
-}
-
-void eBuildAction::serialize(eSaveArchive& ar) {
-    ar.field("mSoundTime", mSoundTime);
-    ar.field("mTime", mTime);
+void eBuildAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.field("soundTime", mSoundTime);
+    ar.field("time", mTime);
 }

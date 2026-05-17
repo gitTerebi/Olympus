@@ -15,13 +15,12 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const ePlayerId pid,
                             const eGameBoard& board);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     void goToTarget();
 
     eAresHelpStage mStage{eAresHelpStage::none};

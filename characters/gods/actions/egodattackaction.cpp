@@ -119,6 +119,61 @@ void eGodAttackAction::increment(const int by) {
     eGodAction::increment(by);
 }
 
+bool eGodAttackAction::lookForRangeAction(const int dtime,
+                                          int& time, const int freq,
+                                          const int range,
+                                          const eCharacterActionType at,
+                                          const stdsptr<eGodAct>& act,
+                                          const eCharacterType chart,
+                                          const eGodSound missileSound,
+                                          const int nMissiles) {
+    (void)chart;
+    const auto c = character();
+    const auto cat = c->actionType();
+    const bool walking = cat == eCharacterActionType::walk;
+    if(!walking) return false;
+    auto& brd = c->getBoard();
+    const auto ct = c->tile();
+    if(!ct) return false;
+    const int tx = ct->x();
+    const int ty = ct->y();
+
+    time += dtime;
+    if(time > freq) {
+        time = 0;
+        std::vector<eTile*> tiles;
+        const int rr = 2*range + 1;
+        tiles.reserve(rr*rr);
+        for(int i = -range; i <= range; i++) {
+            for(int j = -range; j <= range; j++) {
+                const int ttx = tx + i;
+                const int tty = ty + j;
+                const auto t = brd.tile(ttx, tty);
+                if(!t) continue;
+                tiles.push_back(t);
+            }
+        }
+        std::random_shuffle(tiles.begin(), tiles.end());
+        for(const auto t : tiles) {
+            const auto tt = act->find(t);
+            if(!tt.target()) continue;
+            pauseAction();
+            double bless = 0.0;
+            const auto kind = act->type();
+            if(kind == eGodActType::lookForBless ||
+               kind == eGodActType::lookForTargetedBless) {
+                const auto bb = static_cast<eLookForBlessGodActBase*>(act.get());
+                bless = bb->bless();
+            }
+            beginAttacking(tt, kind, at, missileSound, nMissiles, bless, mStage);
+            spawnAttackMissile();
+            return true;
+        }
+        time += freq/2;
+    }
+    return false;
+}
+
 bool eGodAttackAction::lookForAttack(const int dtime,
                                      int& time, const int freq,
                                      const int range) {
@@ -153,11 +208,14 @@ stdsptr<eObsticleHandler> eGodAttackAction::obsticleHandler() {
 }
 
 void eGodAttackAction::destroyBuilding(eBuilding* const b) {
+    pauseAction();
+    mPreAttackStage = mStage;
+    mAttackBuilding = b;
+    mStage = eGodAttackStage::destroyingBuilding;
     const auto finishAttackA = std::make_shared<eGAA_destroyBuildingFinish>(
                                    board(), this, b);
     const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
                                   board(), b);
-    pauseAction();
     const auto at = eCharacterActionType::fight2;
     const auto s = eGodSound::attack;
     const auto c = character();
@@ -207,6 +265,31 @@ bool eGodAttackAction::decide() {
         mStage = eGodAttackStage::disappear;
         disappear();
         break;
+    case eGodAttackStage::attacking:
+        if(!mAttackTarget.target()) {
+            finishAttacking();
+            return decide();
+        }
+        spawnAttackMissile();
+        break;
+    case eGodAttackStage::destroyingBuilding:
+        if(!mAttackBuilding) {
+            finishBuildingAttack();
+            return decide();
+        }
+        {
+            const auto chart = c->type();
+            const auto b = mAttackBuilding.get();
+            const auto finishCb = std::make_shared<eGAA_destroyBuildingFinish>(
+                                      board(), this, b);
+            const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
+                                          board(), b);
+            spawnGodMultipleMissiles(eCharacterActionType::fight2,
+                                     chart, b->centerTile(),
+                                     eGodSound::attack, playHitSound,
+                                     finishCb, 3);
+        }
+        break;
     case eGodAttackStage::disappear:
         c->kill();
         break;
@@ -214,34 +297,121 @@ bool eGodAttackAction::decide() {
     return true;
 }
 
-void eGodAttackAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eGodAttackAction::beginAttacking(const eMissileTarget& target,
+                                      const eGodActType kind,
+                                      const eCharacterActionType at,
+                                      const eGodSound sound,
+                                      const int nMissiles,
+                                      const double bless,
+                                      const eGodAttackStage prevStage) {
+    mPreAttackStage = prevStage;
+    mAttackTarget = target;
+    mAttackKind = kind;
+    mAttackActionType = at;
+    mAttackSoundInt = static_cast<int>(sound);
+    mAttackNMissiles = nMissiles;
+    mAttackBless = bless;
+    mStage = eGodAttackStage::attacking;
 }
 
-void eGodAttackAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodAttackAction*>(this)->serialize(ar);
+void eGodAttackAction::finishAttacking() {
+    mStage = mPreAttackStage;
+    mPreAttackStage = eGodAttackStage::none;
+    mAttackTarget = eMissileTarget();
 }
 
-void eGodAttackAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.field("mLookForCurse", mLookForCurse);
-    ar.field("mLookForTargetedCurse", mLookForTargetedCurse);
-    ar.field("mLookForAttack", mLookForAttack);
-    ar.field("mLookForTargetedAttack", mLookForTargetedAttack);
-    ar.field("mLookForGod", mLookForGod);
-    ar.field("mLookForSpecial", mLookForSpecial);
-    if(ar.reading()) {
-        auto& board = this->board();
-        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
-            mSanctuary = static_cast<eSanctuary*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mSanctuary);
+void eGodAttackAction::finishBuildingAttack() {
+    mStage = mPreAttackStage;
+    mPreAttackStage = eGodAttackStage::none;
+    mAttackBuilding = nullptr;
+}
+
+stdsptr<eGodAct> eGodAttackAction::rebuildAttackAct() {
+    const auto c = character();
+    const auto team = c->teamId();
+    const auto gt = type();
+    auto& brd = board();
+    switch(mAttackKind) {
+    case eGodActType::lookForAttack:
+        return std::make_shared<eLookForAttackGodAct>(brd, c);
+    case eGodActType::lookForTargetedAttack:
+        return std::make_shared<eLookForTargetedAttackGodAct>(brd, gt);
+    case eGodActType::lookForBless:
+        return std::make_shared<eLookForBlessGodAct>(brd, mAttackBless);
+    case eGodActType::lookForTargetedBless:
+        return std::make_shared<eLookForTargetedBlessGodAct>(brd, mAttackBless, gt);
+    case eGodActType::lookForSoldierAttack:
+        return std::make_shared<eLookForSoldierAttackGodAct>(brd, team);
+    case eGodActType::lookForPlague:
+        return std::make_shared<eLookForPlagueGodAct>(brd);
+    case eGodActType::lookForEvict:
+        return std::make_shared<eLookForEvictGodAct>(brd);
+    default:
+        return nullptr;
     }
+}
+
+void eGodAttackAction::spawnAttackMissile() {
+    const auto act = rebuildAttackAct();
+    if(!act) {
+        finishAttacking();
+        decide();
+        return;
+    }
+    const auto c = character();
+    const auto chart = c->type();
+    const auto sound = static_cast<eGodSound>(mAttackSoundInt);
+    const auto finishCb = std::make_shared<eGAA_rangeAttackFinish>(board(), this);
+    if(mAttackNMissiles == 1) {
+        spawnGodMissile(mAttackActionType, chart, mAttackTarget,
+                        sound, act, finishCb);
+    } else {
+        spawnGodMultipleMissiles(mAttackActionType, chart, mAttackTarget,
+                                 sound, act, finishCb, mAttackNMissiles);
+    }
+}
+
+void eGodAttackAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eGodAttackAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eGodAttackStage::attacking:
+    case eGodAttackStage::destroyingBuilding:
+        decide();
+        return;
+    case eGodAttackStage::none:
+    case eGodAttackStage::appear:
+    case eGodAttackStage::goTo1:
+    case eGodAttackStage::patrol1:
+    case eGodAttackStage::goTo2:
+    case eGodAttackStage::patrol2:
+    case eGodAttackStage::disappear:
+        eGodAction::resumeFromSavedState();
+        return;
+    }
+}
+
+void eGodAttackAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("lookForCurse", mLookForCurse);
+    ar.field("lookForTargetedCurse", mLookForTargetedCurse);
+    ar.field("lookForAttack", mLookForAttack);
+    ar.field("lookForTargetedAttack", mLookForTargetedAttack);
+    ar.field("lookForGod", mLookForGod);
+    ar.field("lookForSpecial", mLookForSpecial);
+    ar.buildingAsField("sanctuary", &board(), mSanctuary);
+    ar.field("preAttackStage", mPreAttackStage);
+    ar.field("attackKind", mAttackKind);
+    missileTargetField(ar, "attackTarget", board(), mAttackTarget);
+    ar.field("attackActionType", mAttackActionType);
+    ar.field("attackSoundInt", mAttackSoundInt);
+    ar.field("attackNMissiles", mAttackNMissiles);
+    ar.field("attackBless", mAttackBless);
+    ar.buildingField("attackBuilding", &board(), mAttackBuilding);
 }
 
 void eGodAttackAction::setSanctuary(const stdptr<eSanctuary>& s) {

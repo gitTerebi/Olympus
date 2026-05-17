@@ -25,6 +25,13 @@ bool eAphroditeHelpAction::decide() {
     case eAphroditeHelpStage::populate:
         goToTarget();
         break;
+    case eAphroditeHelpStage::populating:
+        if(!mPopulateTarget) {
+            finishPopulating();
+            return decide();
+        }
+        spawnPopulateMissile(mPopulateTarget.get());
+        break;
     case eAphroditeHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -33,20 +40,50 @@ bool eAphroditeHelpAction::decide() {
     return true;
 }
 
-void eAphroditeHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eAphroditeHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("prePopulatingStage", mPrePopulatingStage);
+    ar.buildingAsField("populateTarget", &board(), mPopulateTarget);
 }
 
-void eAphroditeHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAphroditeHelpAction*>(this)->serialize(ar);
+void eAphroditeHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eAphroditeHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eAphroditeHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eAphroditeHelpStage::populating:
+        if(!mPopulateTarget) {
+            finishPopulating();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eAphroditeHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eAphroditeHelpStage::appear:
+        appear();
+        return;
+    case eAphroditeHelpStage::goTo:
+        goToTarget();
+        return;
+    case eAphroditeHelpStage::populate:
+        decide();
+        return;
+    case eAphroditeHelpStage::disappear:
+        disappear();
+        return;
+    }
+}
+
+void eAphroditeHelpAction::finishPopulating() {
+    mStage = mPrePopulatingStage;
+    mPrePopulatingStage = eAphroditeHelpStage::none;
+    mPopulateTarget = nullptr;
 }
 
 bool eAphroditeHelpAction::sHelpNeeded(const eCityId cid,
@@ -116,17 +153,22 @@ void eAphroditeHelpAction::goToTarget() {
 }
 
 void eAphroditeHelpAction::populate() {
-    const auto c = character();
     const auto house = nearestHouseWithVacancies();
     if(!house) return;
-    const auto targetTile = house->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA = std::make_shared<eGA_LFRAF>(
-                                   board(), this);
-    const auto act = std::make_shared<eAphroditeHelpAct>(board(), house);
+    mPrePopulatingStage = mStage;
+    mStage = eAphroditeHelpStage::populating;
+    mPopulateTarget = house;
     pauseAction();
+    spawnPopulateMissile(house);
+}
+
+void eAphroditeHelpAction::spawnPopulateMissile(eHouseBase* const target) {
+    const auto c = character();
+    const auto targetTile = target->centerTile();
+    const auto finishCb = std::make_shared<eAHA_populateFinish>(board(), this);
+    const auto act = std::make_shared<eAphroditeHelpAct>(board(), target);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
+                    finishCb);
 }

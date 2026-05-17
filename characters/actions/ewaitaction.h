@@ -13,12 +13,10 @@ public:
 
     void increment(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setTime(const int t);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     int mRemTime{__INT_MAX__};
 };
 

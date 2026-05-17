@@ -21,11 +21,9 @@ public:
     eCollectAction(eCharacter* const c);
 
     void increment(const int by);
-
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
 
     int mSoundTime = 0;
     int mTime = 0;

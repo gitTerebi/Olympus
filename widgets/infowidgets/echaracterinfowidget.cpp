@@ -1973,11 +1973,14 @@ eCharMessage gCharMessage(eCharacter *const c)
     {
         if (const auto da = dynamic_cast<eDomesticatedAnimal*>(c))
         {
+            const eResourceType rt = type == eCharacterType::goat ? eResourceType::cheese : eResourceType::fleece;
+            // xml: group 23, string 4 (cheese) / 14 (fleece) via typeName
+            const std::string label = eResourceTypeHelpers::typeName(rt);
             if (da->canCollect()) {
-                result.fText += "\n\nFleece: Ready for shearing";
+                result.fText += "\n\n" + label + ": 100%";
             } else {
                 const int pct = da->monthsGrown() * 100 / 12;
-                result.fText += "\n\nFleece: " + std::to_string(pct) + "% grown";
+                result.fText += "\n\n" + label + ": " + std::to_string(pct) + "%";
             }
         }
     }

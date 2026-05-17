@@ -12,12 +12,10 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void invasionFinished();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     bool goToNearestSoldier();
 
     int mLookForGod = eRand::rand() % 2000;

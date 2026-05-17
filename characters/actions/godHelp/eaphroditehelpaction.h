@@ -8,7 +8,7 @@
 class eSaveArchive;
 
 enum class eAphroditeHelpStage {
-    none, appear, goTo, populate, disappear
+    none, appear, goTo, populate, populating, disappear
 };
 
 class eAphroditeHelpAction : public eGodAction {
@@ -17,19 +17,53 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
+
+    void rebuildCurrentStage();
+    void finishPopulating();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     eHouseBase* nearestHouseWithVacancies();
 
     void goToTarget();
     void populate();
+    void spawnPopulateMissile(eHouseBase* const target);
 
     eAphroditeHelpStage mStage{eAphroditeHelpStage::none};
+    eAphroditeHelpStage mPrePopulatingStage{eAphroditeHelpStage::none};
+    stdptr<eHouseBase> mPopulateTarget;
+};
+
+class eAHA_populateFinish : public eCharActFunc {
+public:
+    eAHA_populateFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::AHA_populateFinish) {}
+    eAHA_populateFinish(eGameBoard& board, eAphroditeHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::AHA_populateFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eAphroditeHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishPopulating();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eAphroditeHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eAphroditeHelpAction> mTptr;
 };
 
 class eAphroditeHelpAct : public eGodAct {

@@ -26,6 +26,22 @@ void eMonsterAction::increment(const int by) {
                       eNumbers::sMonsterAttackRange);
     }
 
+    if(mStage == eMonsterAttackStage::wait && mWaitRemaining > 0) {
+        mWaitRemaining -= by;
+        if(mWaitRemaining <= 0) {
+            mWaitRemaining = 0;
+            setCurrentAction(nullptr);
+        }
+    }
+
+    if(mStage == eMonsterAttackStage::patrol && mPatrolRemaining > 0) {
+        mPatrolRemaining -= by;
+        if(mPatrolRemaining <= 0) {
+            mPatrolRemaining = 0;
+            setCurrentAction(nullptr);
+        }
+    }
+
     eGodMonsterAction::increment(by);
 }
 
@@ -42,6 +58,10 @@ bool eMonsterAction::decide() {
         }
         break;
     case eMonsterAttackStage::wait: {
+        if(mWaitRemaining > 0) {
+            rebuildWait();
+            break;
+        }
         mStage = eMonsterAttackStage::goTo;
         goToTarget();
         auto& board = this->board();
@@ -57,37 +77,115 @@ bool eMonsterAction::decide() {
         break;
     case eMonsterAttackStage::goBack: {
         mStage = eMonsterAttackStage::wait;
-        if(mType == eMonsterType::scylla ||
-           mType == eMonsterType::kraken) {
-            moveAround(nullptr, invadePeriod(),
-                       eWalkableObject::sCreateDeepWater());
-        } else {
-            moveAround(nullptr, invadePeriod());
-        }
+        enterWait();
         auto& board = this->board();
         board.updateMusic();
+    } break;
+    case eMonsterAttackStage::attacking: {
+        if(!mAttackTarget.target()) {
+            finishAttack();
+            return decide();
+        }
+        const auto chart = c->type();
+        const auto act = std::make_shared<eLookForAttackGodAct>(board(), c);
+        const auto finishAttackA = std::make_shared<eMA_lookForRangeActionFinishAttack>(
+                                       board(), this);
+        spawnMissile(mAttackActionType, chart, mAttackTime,
+                     mAttackTarget, nullptr, act, finishAttackA);
+    } break;
+    case eMonsterAttackStage::destroyingBuilding: {
+        if(!mAttackBuilding) {
+            finishBuildingAttack();
+            return decide();
+        }
+        const auto at = eCharacterActionType::fight2;
+        const auto chart = c->type();
+        const auto b = mAttackBuilding.get();
+        const auto finishAttackA = std::make_shared<eMA_destroyBuildingFinish>(
+                                       board(), this, b);
+        const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
+                                      board(), b);
+        spawnMultipleMissiles(at, chart, 500, b->centerTile(),
+                              nullptr, playHitSound, finishAttackA, 3);
     } break;
     }
     return true;
 }
 
-void eMonsterAction::read(eReadStream& src) {
-    eGodMonsterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eMonsterAction::beginAttack(const eMissileTarget& target,
+                                 const eCharacterActionType at,
+                                 const eMonsterAttackStage prevStage) {
+    mPreAttackStage = prevStage;
+    mAttackTarget = target;
+    mAttackActionType = at;
+    mAttackTime = eMonster::sMonsterAttackTime(mType);
+    mStage = eMonsterAttackStage::attacking;
+    mLookForAttack = 0;
 }
 
-void eMonsterAction::write(eWriteStream& dst) const {
-    eGodMonsterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMonsterAction*>(this)->serialize(ar);
+void eMonsterAction::finishAttack() {
+    mStage = mPreAttackStage;
+    mPreAttackStage = eMonsterAttackStage::none;
+    mAttackTarget = eMissileTarget();
+    mAttackTime = 0;
 }
 
-void eMonsterAction::serialize(eSaveArchive& ar) {
-    ar.tile(mHomeTile, board());
-    ar.field("mAggressivness", mAggressivness);
-    ar.field("mStage", mStage);
-    ar.field("mLookForAttack", mLookForAttack);
+void eMonsterAction::serializeFields(eSaveArchive& ar) {
+    eGodMonsterAction::serializeFields(ar);
+    ar.tileField("homeTile", board(), mHomeTile);
+    ar.field("aggressivness", mAggressivness);
+    ar.field("stage", mStage);
+    ar.field("lookForAttack", mLookForAttack);
+    ar.field("preAttackStage", mPreAttackStage);
+    missileTargetField(ar, "attackTarget", board(), mAttackTarget);
+    ar.field("attackActionType", mAttackActionType);
+    ar.field("attackTime", mAttackTime);
+    ar.buildingField("attackBuilding", &board(), mAttackBuilding);
+    ar.field("waitRemaining", mWaitRemaining);
+    ar.field("patrolRemaining", mPatrolRemaining);
+}
+
+void eMonsterAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eMonsterAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eMonsterAttackStage::attacking:
+        if(!mAttackTarget.target()) {
+            finishAttack();
+            rebuildCurrentStage();
+            return;
+        }
+        decide();
+        return;
+    case eMonsterAttackStage::destroyingBuilding:
+        if(!mAttackBuilding) {
+            finishBuildingAttack();
+            rebuildCurrentStage();
+            return;
+        }
+        decide();
+        return;
+    case eMonsterAttackStage::wait:
+        if(mWaitRemaining > 0) rebuildWait();
+        else eGodMonsterAction::resumeFromSavedState();
+        return;
+    case eMonsterAttackStage::goTo:
+        goToTarget();
+        return;
+    case eMonsterAttackStage::patrol:
+        if(mPatrolRemaining > 0) rebuildMonsterPatrol();
+        else monsterPatrol();
+        return;
+    case eMonsterAttackStage::goBack:
+        goBack();
+        return;
+    case eMonsterAttackStage::none:
+        eGodMonsterAction::resumeFromSavedState();
+        return;
+    }
 }
 
 eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
@@ -215,9 +313,24 @@ void eMonsterAction::goBack() {
 }
 
 void eMonsterAction::monsterPatrol() {
+    enterMonsterPatrol();
+}
+
+void eMonsterAction::enterMonsterPatrol() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
-        moveAround(nullptr, moveAroundPeriod(), eWalkableObject::sCreateDeepWater());
+        mPatrolRemaining = moveAroundPeriod();
+        rebuildMonsterPatrol();
+    } else {
+        mPatrolRemaining = 0;
+        goToNearestRoad();
+    }
+}
+
+void eMonsterAction::rebuildMonsterPatrol() {
+    if(mType == eMonsterType::scylla ||
+       mType == eMonsterType::kraken) {
+        moveAround(nullptr, mPatrolRemaining, eWalkableObject::sCreateDeepWater());
     } else {
         goToNearestRoad();
     }
@@ -233,8 +346,38 @@ void eMonsterAction::destroyBuilding(eBuilding* const b) {
     const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
                                   board(), b);
     pauseAction();
+    beginBuildingAttack(b, mStage);
     spawnMultipleMissiles(at, chart, 500, b->centerTile(),
                           nullptr, playHitSound, finishAttackA, 3);
+}
+
+void eMonsterAction::beginBuildingAttack(eBuilding* const b,
+                                         const eMonsterAttackStage prevStage) {
+    mPreAttackStage = prevStage;
+    mAttackBuilding = b;
+    mStage = eMonsterAttackStage::destroyingBuilding;
+    mLookForAttack = 0;
+}
+
+void eMonsterAction::finishBuildingAttack() {
+    mStage = mPreAttackStage;
+    mPreAttackStage = eMonsterAttackStage::none;
+    mAttackBuilding = nullptr;
+}
+
+void eMonsterAction::enterWait() {
+    mWaitRemaining = invadePeriod();
+    rebuildWait();
+}
+
+void eMonsterAction::rebuildWait() {
+    if(mType == eMonsterType::scylla ||
+       mType == eMonsterType::kraken) {
+        moveAround(nullptr, mWaitRemaining,
+                   eWalkableObject::sCreateDeepWater());
+    } else {
+        moveAround(nullptr, mWaitRemaining);
+    }
 }
 
 bool eMonsterAction::lookForAttack(const int dtime,
@@ -291,6 +434,7 @@ bool eMonsterAction::lookForRangeAction(const int dtime,
                                            board(), this);
 
             pauseAction();
+            beginAttack(eMissileTarget(tt), at, mStage);
             const int attackTime = eMonster::sMonsterAttackTime(mType);
             spawnMissile(at, chart, attackTime, tt,
                          missileSound, act, finishAttackA);

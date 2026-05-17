@@ -3,6 +3,10 @@
 
 #include "eanimalaction.h"
 
+enum class eWolfActionStage {
+    idle, hunting, goingBack, attackingWall
+};
+
 class eWolfAction : public eAnimalAction
 {
 public:
@@ -12,17 +16,17 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void write(eWriteStream &dst) const override;
-    void read(eReadStream &src) override;
-
-public:
     void findPrey();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 
 private:
     void goBack();
     void attackWall(eBuilding *wall);
 
     bool mHunting = false;
+    eWolfActionStage mStage = eWolfActionStage::idle;
     stdptr<eBuilding> mWallTarget;
 };
 

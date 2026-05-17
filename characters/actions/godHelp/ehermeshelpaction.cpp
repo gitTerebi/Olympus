@@ -22,6 +22,9 @@ bool eHermesHelpAction::decide() {
         mStage = eHermesHelpStage::disappear;
         disappear();
         break;
+    case eHermesHelpStage::providing:
+        spawnProvideMissile();
+        break;
     case eHermesHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -30,20 +33,41 @@ bool eHermesHelpAction::decide() {
     return true;
 }
 
-void eHermesHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eHermesHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("preProvidingStage", mPreProvidingStage);
+    ar.field("requestFulfilled", mRequestFulfilled);
 }
 
-void eHermesHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHermesHelpAction*>(this)->serialize(ar);
+void eHermesHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eHermesHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eHermesHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eHermesHelpStage::providing:
+        decide();
+        return;
+    case eHermesHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eHermesHelpStage::appear:
+        appear();
+        return;
+    case eHermesHelpStage::provide:
+        decide();
+        return;
+    case eHermesHelpStage::disappear:
+        disappear();
+        return;
+    }
+}
+
+void eHermesHelpAction::finishProviding() {
+    mStage = mPreProvidingStage;
+    mPreProvidingStage = eHermesHelpStage::none;
 }
 
 bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,
@@ -53,6 +77,23 @@ bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,
 }
 
 void eHermesHelpAction::provide() {
+    mPreProvidingStage = mStage;
+    mStage = eHermesHelpStage::providing;
+    pauseAction();
+    if(!mRequestFulfilled) {
+        auto& board = eHermesHelpAction::board();
+        const auto cid = cityId();
+        const auto pid = board.cityIdToPlayerId(cid);
+        const auto& crs = board.cityRequests(pid);
+        if(!crs.empty()) {
+            crs[0]->finish(eReceiveRequestResult::comply);
+        }
+        mRequestFulfilled = true;
+    }
+    spawnProvideMissile();
+}
+
+void eHermesHelpAction::spawnProvideMissile() {
     auto& board = eHermesHelpAction::board();
     const auto c = character();
     const auto cid = cityId();
@@ -61,16 +102,9 @@ void eHermesHelpAction::provide() {
     const int bh = board.height();
     const auto centerTile = board.dtile(bw/2, bh/2);
     const auto targetTile = p ? p->centerTile() : centerTile;
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA = std::make_shared<eGA_LFRAF>(
-                                   board, this);
-    pauseAction();
+    const auto finishCb = std::make_shared<eHmHA_provideFinish>(board, this);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, nullptr,
-                    finishAttackA);
-    const auto pid = board.cityIdToPlayerId(cid);
-    const auto& crs = board.cityRequests(pid);
-    if(crs.empty()) return;
-    crs[0]->finish(eReceiveRequestResult::comply);
+                    finishCb);
 }

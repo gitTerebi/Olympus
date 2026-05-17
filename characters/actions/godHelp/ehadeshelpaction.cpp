@@ -25,6 +25,13 @@ bool eHadesHelpAction::decide() {
         mStage = eHadesHelpStage::disappear;
         disappear();
         break;
+    case eHadesHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            return decide();
+        }
+        spawnGiveMissile(mTarget.get());
+        break;
     case eHadesHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -33,27 +40,49 @@ bool eHadesHelpAction::decide() {
     return true;
 }
 
-void eHadesHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eHadesHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.buildingField("target", &board(), mTarget);
+    ar.field("preGivingStage", mPreGivingStage);
 }
 
-void eHadesHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHadesHelpAction*>(this)->serialize(ar);
+void eHadesHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eHadesHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = b;
-        });
-    } else {
-        ar.writeStream().writeBuilding(mTarget);
+void eHadesHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eHadesHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eHadesHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eHadesHelpStage::appear:
+        appear();
+        return;
+    case eHadesHelpStage::goTo:
+        goToTarget();
+        return;
+    case eHadesHelpStage::give:
+        decide();
+        return;
+    case eHadesHelpStage::disappear:
+        disappear();
+        return;
     }
+}
+
+void eHadesHelpAction::finishGiving() {
+    mStage = mPreGivingStage;
+    mPreGivingStage = eHadesHelpStage::none;
 }
 
 bool eHadesHelpAction::sHelpNeeded(const eCityId cid,
@@ -80,18 +109,21 @@ void eHadesHelpAction::goToTarget() {
 
 void eHadesHelpAction::give() {
     if(!mTarget) return;
-    const auto c = character();
-    const auto targetTile = mTarget->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA =
-            std::make_shared<eGA_LFRAF>(
-                board(), this);
-    using eGPDA = eGodProvideDrachmasAct;
-    const auto cid = mTarget->cityId();
-    const auto act = std::make_shared<eGPDA>(board(), cid);
+    mPreGivingStage = mStage;
+    mStage = eHadesHelpStage::giving;
     pauseAction();
+    spawnGiveMissile(mTarget.get());
+}
+
+void eHadesHelpAction::spawnGiveMissile(eBuilding* const target) {
+    const auto c = character();
+    const auto targetTile = target->centerTile();
+    const auto finishCb = std::make_shared<eHdHA_giveFinish>(board(), this);
+    using eGPDA = eGodProvideDrachmasAct;
+    const auto cid = target->cityId();
+    const auto act = std::make_shared<eGPDA>(board(), cid);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
+                    finishCb);
 }

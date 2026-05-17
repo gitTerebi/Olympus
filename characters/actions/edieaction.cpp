@@ -16,18 +16,15 @@ void eDieAction::increment(const int by) {
     if(mTime > 2048) setState(eCharacterActionState::finished);
 }
 
-void eDieAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eDieAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.field("time", mTime);
 }
 
-void eDieAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDieAction*>(this)->serialize(ar);
-}
-
-void eDieAction::serialize(eSaveArchive& ar) {
-    ar.field("mTime", mTime);
+void eDieAction::resumeFromSavedState() {
+    const auto c = character();
+    const auto aType = c->actionType();
+    if(aType != eCharacterActionType::none) {
+        c->setActionType(eCharacterActionType::die);
+    }
 }

@@ -25,6 +25,13 @@ bool eAtlasHelpAction::decide() {
         mStage = eAtlasHelpStage::disappear;
         disappear();
         break;
+    case eAtlasHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            return decide();
+        }
+        spawnGiveMissile(mTarget.get());
+        break;
     case eAtlasHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -33,27 +40,49 @@ bool eAtlasHelpAction::decide() {
     return true;
 }
 
-void eAtlasHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eAtlasHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.buildingAsField("target", &board(), mTarget);
+    ar.field("preGivingStage", mPreGivingStage);
 }
 
-void eAtlasHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAtlasHelpAction*>(this)->serialize(ar);
+void eAtlasHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eAtlasHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eSanctuary*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mTarget);
+void eAtlasHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eAtlasHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eAtlasHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eAtlasHelpStage::appear:
+        appear();
+        return;
+    case eAtlasHelpStage::goTo:
+        goToTarget();
+        return;
+    case eAtlasHelpStage::give:
+        decide();
+        return;
+    case eAtlasHelpStage::disappear:
+        disappear();
+        return;
     }
+}
+
+void eAtlasHelpAction::finishGiving() {
+    mStage = mPreGivingStage;
+    mPreGivingStage = eAtlasHelpStage::none;
 }
 
 bool eAtlasHelpAction::sHelpNeeded(const eCityId cid,
@@ -84,17 +113,19 @@ void eAtlasHelpAction::goToTarget() {
 
 void eAtlasHelpAction::give() {
     if(!mTarget) return;
-    const auto c = character();
-    const auto targetTile = mTarget->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA =
-            std::make_shared<eGA_LFRAF>(
-                board(), this);
-    const auto act = std::make_shared<eAtlasHelpAct>(
-                board(), mTarget);
+    mPreGivingStage = mStage;
+    mStage = eAtlasHelpStage::giving;
     pauseAction();
+    spawnGiveMissile(mTarget.get());
+}
+
+void eAtlasHelpAction::spawnGiveMissile(eMonument* const target) {
+    const auto c = character();
+    const auto targetTile = target->centerTile();
+    const auto finishCb = std::make_shared<eAtHA_giveFinish>(board(), this);
+    const auto act = std::make_shared<eAtlasHelpAct>(board(), target);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
+                    finishCb);
 }

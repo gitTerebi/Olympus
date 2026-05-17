@@ -7,7 +7,7 @@
 class eSaveArchive;
 
 enum class eZeusHelpStage {
-    none, appear, kill, disappear
+    none, appear, kill, killing, disappear
 };
 
 class eZeusHelpAction : public eGodAction {
@@ -16,14 +16,14 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     void kill();
+    void spawnKillWait();
 
     eZeusHelpStage mStage{eZeusHelpStage::none};
 };

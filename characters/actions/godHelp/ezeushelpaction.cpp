@@ -19,6 +19,10 @@ bool eZeusHelpAction::decide() {
         kill();
         break;
     case eZeusHelpStage::kill:
+        mStage = eZeusHelpStage::killing;
+        spawnKillWait();
+        break;
+    case eZeusHelpStage::killing:
         mStage = eZeusHelpStage::disappear;
         disappear();
         break;
@@ -30,20 +34,30 @@ bool eZeusHelpAction::decide() {
     return true;
 }
 
-void eZeusHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eZeusHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
 }
 
-void eZeusHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eZeusHelpAction*>(this)->serialize(ar);
-}
-
-void eZeusHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eZeusHelpAction::resumeFromSavedState() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eZeusHelpStage::killing:
+        spawnKillWait();
+        return;
+    case eZeusHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eZeusHelpStage::appear:
+        appear();
+        return;
+    case eZeusHelpStage::kill:
+        decide();
+        return;
+    case eZeusHelpStage::disappear:
+        disappear();
+        return;
+    }
 }
 
 bool eZeusHelpAction::sHelpNeeded(const eCityId cid,
@@ -53,6 +67,10 @@ bool eZeusHelpAction::sHelpNeeded(const eCityId cid,
 }
 
 void eZeusHelpAction::kill() {
+    spawnKillWait();
+}
+
+void eZeusHelpAction::spawnKillWait() {
     const auto c = character();
     c->setActionType(eCharacterActionType::fight2);
     const auto a = e::make_shared<eWaitAction>(c);

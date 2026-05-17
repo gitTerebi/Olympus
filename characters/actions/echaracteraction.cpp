@@ -51,28 +51,21 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
     mDeleteFailAction = d;
 }
 
-void eCharacterAction::serialize(eSaveArchive& ar) {
-    ar.field("mIOID", mIOID);
-
-    ar.field("mState", mState);
-
-    if(ar.reading()) {
-        mFinishAction = ar.readStream().readCharActFunc(board());
-        mFailAction = ar.readStream().readCharActFunc(board());
-        mDeleteFailAction = ar.readStream().readCharActFunc(board());
-    } else {
-        ar.writeStream().writeCharActFunc(mFinishAction.get());
-        ar.writeStream().writeCharActFunc(mFailAction.get());
-        ar.writeStream().writeCharActFunc(mDeleteFailAction.get());
-    }
+void eCharacterAction::serializeFields(eSaveArchive& ar) {
+    ar.field("ioID", mIOID);
+    ar.field("state", mState);
 }
 
 void eCharacterAction::read(eReadStream& src) {
     eSaveArchive ar(src);
-    serialize(ar);
+    serializeFields(ar);
+    const stdptr<eCharacterAction> tptr(this);
+    ar.addPostFunc([tptr]() {
+        if(tptr) tptr->resumeFromSavedState();
+    }, "resumeFromSavedState");
 }
 
 void eCharacterAction::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
-    const_cast<eCharacterAction*>(this)->serialize(ar);
+    const_cast<eCharacterAction*>(this)->serializeFields(ar);
 }

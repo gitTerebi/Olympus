@@ -51,6 +51,16 @@ enum class eCharacterActionFunctionType {
     MA_destroyBuildingFinish,
     MA_lookForRangeActionFinishAttack,
 
+    AHA_populateFinish,
+    ApHA_healFinish,
+    AtHA_giveFinish,
+    HdHA_giveFinish,
+    HfHA_provideFinish,
+    HrHA_giveFinish,
+    HmHA_provideFinish,
+    PRHA_giveFinish,
+    GAA_rangeAttackFinish,
+
     PA_patrolFail,
     PA_patrolFinish,
 

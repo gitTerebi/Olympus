@@ -15,11 +15,9 @@ public:
 
     void increment(const int by) override;
     bool decide() override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     eGodVisitStage mStage{eGodVisitStage::none};
 
     int mLookForBless = 0;

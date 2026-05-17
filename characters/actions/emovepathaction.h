@@ -13,12 +13,10 @@ public:
     eMovePathAction(eCharacter* const c);
 
     void setMaxDistance(const int dist) { mMaxDistance = dist; }
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
-    void serialize(eSaveArchive& ar);
 
     std::vector<eOrientation> mTurns;
 

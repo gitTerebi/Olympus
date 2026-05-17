@@ -213,6 +213,8 @@ class eLookForBlessGodActBase : public eGodAct {
 public:
     using eGodAct::eGodAct;
 
+    double bless() const { return mBless; }
+
     void act() {
         if(mTarget) {
             const auto type = mTarget->type();
@@ -499,7 +501,7 @@ public:
     eGodAction(eCharacter* const c, const eCharActionType type);
 
     using eTexPtr = eTextureCollection eDestructionTextures::*;
-    bool lookForRangeAction(const int dtime,
+    virtual bool lookForRangeAction(const int dtime,
                             int& time, const int freq,
                             const int range,
                             const eCharacterActionType at,

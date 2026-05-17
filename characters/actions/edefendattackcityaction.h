@@ -14,10 +14,9 @@ public:
     using eGodMonsterAction::eGodMonsterAction;
 
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
     int maxKilled() const { return mMaxKilled; }
     void setMaxKilled(const int max) { mMaxKilled = max; }
 
@@ -30,8 +29,6 @@ protected:
     eDefendAttackCityStage mStage{eDefendAttackCityStage::none};
     eTile* mStartTile = nullptr;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eCharacter> mAttackTarget;
     bool mAttack = false;
     int mLookForEnemy = 0;

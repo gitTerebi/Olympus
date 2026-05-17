@@ -17,12 +17,10 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void lookForMonster();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     void defendCity();
     void lookForMonsterFight();
     bool fightMonster(eMonster* const m);

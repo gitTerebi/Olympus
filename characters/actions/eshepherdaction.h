@@ -11,6 +11,10 @@ class eDomesticatedAnimal;
 class eMoveToAction;
 class eSaveArchive;
 
+enum class eShepherdActionStage {
+    idle, findingAnimal, collecting, grooming, goingBack, waiting
+};
+
 class eShepherdAction : public eActionWithComeback {
     friend class eSA_collectDecisionFinish;
     friend class eSA_groomDecisionFinish;
@@ -22,10 +26,13 @@ public:
     ~eShepherdAction();
 
     bool decide() override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void increment(const int by) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
+    void rebuildCurrentStage();
+    void rebuildFindAnimal();
     bool findResourceDecision();
     stdsptr<eMoveToAction> makeFindAnimalMove();
     eDomesticatedAnimal* findAnimal(bool wantShearable);
@@ -35,7 +42,6 @@ private:
     void groomDecision(eDomesticatedAnimal* const a);
     void goBackDecision();
     void waitDecision();
-    void serialize(eSaveArchive& ar);
 
     eCharacterType mAnimalType;
 
@@ -45,6 +51,8 @@ private:
     bool mFinishOnce = false;
     int mGroomed = 0;
     bool mNoResource = false;
+    eShepherdActionStage mStage = eShepherdActionStage::idle;
+    int mWaitRemaining = 0;
     stdptr<eDomesticatedAnimal> mLastAnimal;
     stdptr<eDomesticatedAnimal> mTargetAnimal;
 };

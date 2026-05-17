@@ -46,28 +46,31 @@ bool eSettlerAction::decide() {
     return true;
 }
 
-void eSettlerAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eSettlerAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    int nPeople = mNPeople;
+    ar.field("nPeople", nPeople);
+    if(ar.reading()) setNumberPeople(nPeople);
+    ar.field("noHouses", mNoHouses);
+    ar.field("initialWait", mInitialWait, 0);
+    ar.field("stage", mStage);
 }
 
-void eSettlerAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSettlerAction*>(this)->serialize(ar);
-}
-
-void eSettlerAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        int nPeople;
-        ar.field("nPeople", nPeople);
-        setNumberPeople(nPeople);
-    } else {
-        ar.field("mNPeople", mNPeople);
+void eSettlerAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eSettlerActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case eSettlerActionStage::findingHouse:
+        findHouse();
+        break;
+    case eSettlerActionStage::goingBack:
+        goBack2();
+        break;
+    case eSettlerActionStage::leaving:
+        leave();
+        break;
     }
-    ar.field("mNoHouses", mNoHouses);
-    if(ar.reading()) mInitialWait = 0; // reset on load
 }
 
 void eSettlerAction::setNumberPeople(const int p) {
@@ -89,6 +92,7 @@ void eSettlerAction::setInitialWait(const int w) {
 
 void eSettlerAction::findHouse() {
     if(mNoHouses) return;
+    mStage = eSettlerActionStage::findingHouse;
     const auto c = character();
 
     const auto finalTile = [](eThreadTile* const t) {
@@ -127,10 +131,12 @@ void eSettlerAction::findHouse() {
 }
 
 void eSettlerAction::goBack2() {
+    mStage = eSettlerActionStage::goingBack;
     eActionWithComeback::goBack(eWalkableObject::sCreateDefault());
 }
 
 void eSettlerAction::leave() {
+    mStage = eSettlerActionStage::leaving;
     auto& board = eSettlerAction::board();
     const auto c = character();
     const stdptr<eCharacter> cptr(c);
@@ -147,7 +153,7 @@ void eSettlerAction::leave() {
     a->setFindFailAction([cptr]() {
         if(cptr) cptr->kill();
     });
-    c->setAction(a);
+    setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
     const auto edgeTile = [](eTileBase* const tile) {
         return tile->isCityEdge();

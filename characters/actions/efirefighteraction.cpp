@@ -94,26 +94,33 @@ bool eFireFighterAction::decide() {
     return true;
 }
 
-void eFireFighterAction::read(eReadStream& src) {
-    ePatrolAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eFireFighterAction::serializeFields(eSaveArchive& ar) {
+    ePatrolAction::serializeFields(ar);
+    ar.field("fireFighting", mFireFighting);
+    ar.field("fireCheck", mFireCheck);
+    ar.field("usedWater", mUsedWater);
+    ar.field("fireFighterStage", mStage);
+    ar.tileField("fireTile", board(), mFireTile);
 }
 
-void eFireFighterAction::write(eWriteStream& dst) const {
-    ePatrolAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFireFighterAction*>(this)->serialize(ar);
-}
-
-void eFireFighterAction::serialize(eSaveArchive& ar) {
-    ar.field("mFireFighting", mFireFighting);
-    ar.field("mFireCheck", mFireCheck);
-    ar.field("mUsedWater", mUsedWater);
+void eFireFighterAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eFireFighterActionStage::idle:
+        ePatrolAction::resumeFromSavedState();
+        break;
+    case eFireFighterActionStage::lookingForFire:
+        lookForFire(true);
+        break;
+    case eFireFighterActionStage::puttingOutFire:
+        if(mFireTile && mFireTile->onFire()) putOutFire(mFireTile);
+        else ePatrolAction::resumeFromSavedState();
+        break;
+    }
 }
 
 bool eFireFighterAction::lookForFire(const bool second) {
     const auto c = character();
+    mStage = eFireFighterActionStage::lookingForFire;
 
     const auto failFunc = std::make_shared<eFFA_lookForFireFail>(
                               board(), this);
@@ -149,6 +156,8 @@ bool eFireFighterAction::lookForFire(const bool second) {
 }
 
 void eFireFighterAction::putOutFire(eTile* const tile) {
+    mStage = eFireFighterActionStage::puttingOutFire;
+    mFireTile = tile;
     const auto c = character();
     c->setActionType(eCharacterActionType::fight);
     const auto finish = std::make_shared<eFFA_putOutFireFinish>(

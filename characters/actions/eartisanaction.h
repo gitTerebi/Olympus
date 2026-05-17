@@ -9,25 +9,36 @@
 
 class eSaveArchive;
 
+enum class eArtisanActionStage {
+    idle, findingTarget, working, goingBack, waiting
+};
+
 class eArtisanAction : public eActionWithComeback {
 public:
     eArtisanAction(eCharacter* const c, eArtisansGuild* const guild);
     eArtisanAction(eCharacter* const c);
 
     bool decide();
-
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void increment(const int by) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
-
+    void rebuildCurrentStage();
     bool findTargetDecision();
     void workOnDecision(eTile* const tile);
+    void finishWork();
+    void releaseWorkTarget();
     void goBackDecision();
 
     eArtisansGuild* mGuild = nullptr;
 
     bool mNoTarget = false;
+    eArtisanActionStage mStage = eArtisanActionStage::idle;
+    int mWaitRemaining = 0;
+    int mWorkRemaining = 0;
+    eTile* mTargetTile = nullptr;
+    stdptr<eSanctBuilding> mTargetBuilding;
 };
 
 class eArtA_buildFinish : public eCharActFunc {

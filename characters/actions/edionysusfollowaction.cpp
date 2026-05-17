@@ -15,26 +15,29 @@ void eDionysusFollowAction::setFollower(eCharacter* const f) {
     mFollower = f;
 }
 
-void eDionysusFollowAction::read(eReadStream& src) {
-    eFollowAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eDionysusFollowAction::serializeFields(eSaveArchive& ar) {
+    eFollowAction::serializeFields(ar);
+    ar.characterField("follower", &board(), mFollower);
+    ar.field("killOnFinish", mKillOnFinish);
 }
 
-void eDionysusFollowAction::write(eWriteStream& dst) const {
-    eFollowAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDionysusFollowAction*>(this)->serialize(ar);
+void eDionysusFollowAction::resumeFromSavedState() {
+    eFollowAction::resumeFromSavedState();
+    if(mKillOnFinish) attachKillCallback();
 }
 
-void eDionysusFollowAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter * const c) {
-            mFollower = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mFollower);
-    }
+void eDionysusFollowAction::setKillFollowerOnFinish() {
+    mKillOnFinish = true;
+    attachKillCallback();
+}
+
+void eDionysusFollowAction::attachKillCallback() {
+    const auto c = character();
+    if(!c) return;
+    const auto killA = std::make_shared<eChar_killWithCorpseFinish>(
+        board(), c, true);
+    setFinishAction(killA);
+    setFailAction(killA);
 }
 
 bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {
@@ -89,10 +92,7 @@ void eDionysusFollowAction::increment(const int by) {
             if(cca && cca->type() == eDFA) continue;
             const auto fa = e::make_shared<eDionysusFollowAction>(c, cc.get());
             cc->setAction(fa);
-            const auto killA = std::make_shared<eChar_killWithCorpseFinish>(
-                board, cc.get(), true);
-            fa->setFinishAction(killA);
-            fa->setFailAction(killA);
+            fa->setKillFollowerOnFinish();
             mFollower = cc.get();
             break;
         }

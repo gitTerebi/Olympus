@@ -91,15 +91,6 @@ void eAttackTarget::serialize(eSaveArchive& ar, eGameBoard& board) {
     ar.buildingField("building", &board, mB);
 }
 
-void eAttackTarget::readLegacy(eGameBoard& board, eReadStream& src) {
-    src.readCharacter(&board, [this](eCharacter* const c) {
-        mC = c;
-    });
-    src.readBuilding(&board, [this](eBuilding* const b) {
-        mB = b;
-    });
-}
-
 void eFightingAction::sSignalBeingAttack(
     eCharacter* const attacked,
     eCharacter* const by,
@@ -139,6 +130,16 @@ void eFightingAction::sSignalBeingAttack(eCharacter * const attacked,
 }
 
 eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
+    if(mSavedMove == eFightingSavedMove::waitGoHome) {
+        mWaitGoHomeRemaining -= by;
+        if(mWaitGoHomeRemaining <= 0) {
+            mWaitGoHomeRemaining = 0;
+            mSavedMove = eFightingSavedMove::none;
+            setCurrentAction(nullptr);
+            goHome();
+        }
+        return eLookForEnemyState::none;
+    }
     const int rangeAttackCheck = 500;
     const int lookForEnemyCheck = 500;
     const int missileCheck = 200;
@@ -389,7 +390,14 @@ void eFightingAction::goTo(const int fx, const int fy,
     const auto t = c->tile();
     const int sx = t->x();
     const int sy = t->y();
-    if(abs(fx - sx) <= dist && abs(fy - sy) <= dist) return;
+    if(abs(fx - sx) <= dist && abs(fy - sy) <= dist) {
+        mSavedMove = eFightingSavedMove::none;
+        return;
+    }
+    mSavedMove = eFightingSavedMove::goTo;
+    mSavedMoveX = fx;
+    mSavedMoveY = fy;
+    mSavedMoveDistance = dist;
 
     const auto hha = [fx, fy, dist](eThreadTile* const t) {
         return abs(t->x() - fx) <= dist && abs(t->y() - fy) <= dist;
@@ -457,42 +465,89 @@ void eFightingAction::beingAttacked(const int ttx, const int tty) {
     goTo(ttx, tty);
 }
 
-void eFightingAction::read(eReadStream& src) {
-    eComplexAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eFightingAction::serializeFields(eSaveArchive& ar) {
+    eComplexAction::serializeFields(ar);
+    ar.field("angle", mAngle);
+    ar.field("missile", mMissile);
+    ar.field("rangeAttack", mRangeAttack);
+    ar.field("buildingAttack", mBuildingAttack);
+    ar.field("lookForEnemy", mLookForEnemy);
+    ar.field("attackTime", mAttackTime);
+    ar.field("attack", mAttack);
+    ar.archiveField("attackTarget", [this](eSaveArchive& targetAr) {
+        mAttackTarget.serialize(targetAr, board());
+    });
+    ar.field("savedAction", mSavedAction);
+    ar.field("overwrittableAction", mOverwrittableAction);
+    ar.field("savedMove", mSavedMove, eFightingSavedMove::none);
+    ar.field("savedMoveX", mSavedMoveX, 0);
+    ar.field("savedMoveY", mSavedMoveY, 0);
+    ar.field("savedMoveDistance", mSavedMoveDistance, 0);
+    ar.field("waitGoHomeRemaining", mWaitGoHomeRemaining, 0);
 }
 
-void eFightingAction::write(eWriteStream& dst) const {
-    eComplexAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFightingAction*>(this)->serialize(ar);
+void eFightingAction::resumeFromSavedState() {
+    rebuildSavedRuntime();
 }
 
-void eFightingAction::serialize(eSaveArchive& ar) {
-    ar.field("mAngle", mAngle);
-    ar.field("mMissile", mMissile);
-    ar.field("mRangeAttack", mRangeAttack);
-    ar.field("mBuildingAttack", mBuildingAttack);
-    ar.field("mLookForEnemy", mLookForEnemy);
-    ar.field("mAttackTime", mAttackTime);
-    ar.field("mAttack", mAttack);
-    const bool hasAttackTarget = ar.archiveField(
-        "mAttackTarget",
-        [this](eSaveArchive& targetAr) {
-            mAttackTarget.serialize(targetAr, board());
-        });
-    if(ar.reading() && !hasAttackTarget) {
-        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored attack target refs inline.
-        mAttackTarget.readLegacy(board(), ar.legacyReadStream());
+bool eFightingAction::atSavedMoveTarget() const {
+    const auto c = character();
+    const auto t = c->tile();
+    if(!t) return true;
+    return abs(mSavedMoveX - t->x()) <= mSavedMoveDistance &&
+           abs(mSavedMoveY - t->y()) <= mSavedMoveDistance;
+}
+
+void eFightingAction::rebuildSavedRuntime() {
+    const auto c = character();
+    if(mAttack) {
+        if(!mAttackTarget.valid() || mAttackTarget.dead()) {
+            mAttack = false;
+            mAttackTarget.clear();
+            mAttackTime = 0;
+            c->setPlayFightSound(false);
+            c->setActionType(mSavedAction);
+        } else {
+            c->setPlayFightSound(true);
+            int range = 0;
+            if(const auto s = dynamic_cast<eFightingCharacter*>(c)) {
+                range = s->range();
+            }
+            c->setActionType(range > 0 ? eCharacterActionType::fight2 :
+                                        eCharacterActionType::fight);
+            const vec2d cpos{c->absX(), c->absY()};
+            const vec2d tpos{mAttackTarget.absX(), mAttackTarget.absY()};
+            mAngle = (tpos - cpos).angle();
+            c->setOrientation(sAngleOrientation(mAngle));
+            return;
+        }
     }
-    ar.field("mSavedAction", mSavedAction);
-    ar.field("mOverwrittableAction", mOverwrittableAction);
+    if(mSavedMove == eFightingSavedMove::waitGoHome) {
+        if(mWaitGoHomeRemaining <= 0) {
+            mSavedMove = eFightingSavedMove::none;
+            goHome();
+        } else {
+            waitAndGoHome(mWaitGoHomeRemaining);
+        }
+        return;
+    }
+    if(mSavedMove == eFightingSavedMove::goTo) {
+        if(atSavedMoveTarget()) {
+            mSavedMove = eFightingSavedMove::none;
+            c->setActionType(eCharacterActionType::stand);
+        } else {
+            goTo(mSavedMoveX, mSavedMoveY, mSavedMoveDistance);
+        }
+        return;
+    }
+    eComplexAction::resumeFromSavedState();
 }
 
 void eFightingAction::waitAndGoHome(const int w) {
     const auto c = character();
     c->setActionType(eCharacterActionType::none);
+    mSavedMove = eFightingSavedMove::waitGoHome;
+    mWaitGoHomeRemaining = w;
     const auto finish = std::make_shared<eSA_waitAndGoHomeFinish>(
         board(), this);
     const auto a = e::make_shared<eWaitAction>(c);

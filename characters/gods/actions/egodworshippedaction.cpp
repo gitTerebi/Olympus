@@ -106,24 +106,13 @@ void eGodWorshippedAction::lookForMonster() {
     }
 }
 
-void eGodWorshippedAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodWorshippedAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodWorshippedAction*>(this)->serialize(ar);
-}
-
-void eGodWorshippedAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.field("mLookForBless", mLookForBless);
-    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
-    ar.field("mLookForCityDefense", mLookForCityDefense);
-    ar.field("mLookForMonster", mLookForMonster);
+void eGodWorshippedAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("lookForBless", mLookForBless);
+    ar.field("lookForSoldierAttack", mLookForSoldierAttack);
+    ar.field("lookForCityDefense", mLookForCityDefense);
+    ar.field("lookForMonster", mLookForMonster);
 }
 
 void eGodWorshippedAction::defendCity() {

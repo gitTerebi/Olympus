@@ -22,15 +22,7 @@ eHeroAction::eHeroAction(eCharacter* const c) :
 bool eHeroAction::decide() {
     const auto c = character();
     if(mStage == eHeroActionStage::none) {
-        mStage = eHeroActionStage::patrol;
-        const auto failFunc = std::make_shared<eHA_patrolFail>(
-                                  board(), this);
-        const auto pa = e::make_shared<ePatrolMoveAction>(c);
-        pa->setFailAction(failFunc);
-        pa->setFinishAction(failFunc);
-        pa->setMaxWalkDistance(200);
-        setCurrentAction(pa);
-        c->setActionType(eCharacterActionType::walk);
+        startPatrol();
     } else if(mStage == eHeroActionStage::goBack) {
         return false;
     } else {
@@ -47,6 +39,14 @@ bool eHeroAction::decide() {
 }
 
 void eHeroAction::increment(const int by) {
+    if(mStage == eHeroActionStage::waitToHall && mWaitToHallRemaining > 0) {
+        mWaitToHallRemaining -= by;
+        if(mWaitToHallRemaining <= 0) {
+            mWaitToHallRemaining = 0;
+            setCurrentAction(nullptr);
+            goBackToHall();
+        }
+    }
     if(mStage == eHeroActionStage::patrol ||
        mStage == eHeroActionStage::goBack) {
         const int lookForMonsterCheck = 10000;
@@ -68,23 +68,84 @@ void eHeroAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eHeroAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eHeroAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("lookForMonster", mLookForMonster);
+    ar.field("lookForCityDefense", mLookForCityDefense);
+    ar.field("questWaiting", mQuestWaiting);
+    ar.field("waitToHallRemaining", mWaitToHallRemaining, 0);
+    ar.characterAsField("targetMonster", &board(), mTargetMonster);
 }
 
-void eHeroAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHeroAction*>(this)->serialize(ar);
+void eHeroAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eHeroAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.field("mLookForMonster", mLookForMonster);
-    ar.field("mLookForCityDefense", mLookForCityDefense);
-    ar.field("mQuestWaiting", mQuestWaiting);
+void eHeroAction::startPatrol() {
+    mStage = eHeroActionStage::patrol;
+    const auto c = character();
+    const auto failFunc = std::make_shared<eHA_patrolFail>(
+                              board(), this);
+    const auto pa = e::make_shared<ePatrolMoveAction>(c);
+    pa->setFailAction(failFunc);
+    pa->setFinishAction(failFunc);
+    pa->setMaxWalkDistance(200);
+    setCurrentAction(pa);
+    c->setActionType(eCharacterActionType::walk);
+}
+
+void eHeroAction::rebuildCurrentStage() {
+    switch(mStage) {
+    case eHeroActionStage::none:
+        return eActionWithComeback::resumeFromSavedState();
+    case eHeroActionStage::patrol:
+        return startPatrol();
+    case eHeroActionStage::hunt:
+        if(mTargetMonster && !mTargetMonster->dead()) {
+            return huntMonster(mTargetMonster.get(), true);
+        }
+        lookForMonster();
+        if(!currentAction()) {
+            mStage = eHeroActionStage::goBack;
+            character()->setActionType(eCharacterActionType::walk);
+            goBack(defaultWalkable());
+        }
+        return;
+    case eHeroActionStage::fight:
+        if(mTargetMonster && !mTargetMonster->dead()) {
+            fightMonster(mTargetMonster.get());
+            return;
+        }
+        mStage = eHeroActionStage::goBack;
+        character()->setActionType(eCharacterActionType::walk);
+        return goBack(defaultWalkable());
+    case eHeroActionStage::goBack:
+        character()->setActionType(eCharacterActionType::walk);
+        return goBack(defaultWalkable());
+    case eHeroActionStage::defend:
+        return defendCity();
+    case eHeroActionStage::quest:
+        return sendOnQuest();
+    case eHeroActionStage::waitToHall:
+        return rebuildWaitToHall();
+    case eHeroActionStage::goBackToHall:
+        return goBackToHall();
+    }
+}
+
+void eHeroAction::rebuildWaitToHall() {
+    if(mWaitToHallRemaining <= 0) {
+        return goBackToHall();
+    }
+    const auto c = character();
+    c->setActionType(eCharacterActionType::none);
+    const auto finish = std::make_shared<eHA_waitAndGoToHallFinish>(
+                            board(), this);
+    const auto a = e::make_shared<eWaitAction>(c);
+    a->setFinishAction(finish);
+    a->setTime(mWaitToHallRemaining);
+    setCurrentAction(a);
 }
 
 void eHeroAction::lookForMonster() {
@@ -108,6 +169,7 @@ void eHeroAction::sendOnQuest() {
         mQuestWaiting = true;
         return;
     }
+    mStage = eHeroActionStage::quest;
     const auto c = character();
     auto& board = eHeroAction::board();
     const auto cid = cityId();
@@ -141,6 +203,7 @@ void eHeroAction::sendOnQuest() {
 }
 
 void eHeroAction::goBackToHall() {
+    mStage = eHeroActionStage::goBackToHall;
     auto& board = eHeroAction::board();
     const auto hh = board.heroHall(cityId(), heroType());
     if(!hh) return;
@@ -166,14 +229,9 @@ void eHeroAction::goBackToHall() {
 }
 
 void eHeroAction::waitAndGoBackToHall(const int w) {
-    const auto c = character();
-    c->setActionType(eCharacterActionType::none);
-    const auto finish = std::make_shared<eHA_waitAndGoToHallFinish>(
-                            board(), this);
-    const auto a = e::make_shared<eWaitAction>(c);
-    a->setFinishAction(finish);
-    a->setTime(w);
-    setCurrentAction(a);
+    mStage = eHeroActionStage::waitToHall;
+    mWaitToHallRemaining = w;
+    rebuildWaitToHall();
 }
 
 void eHeroAction::defendCity() {
@@ -223,6 +281,7 @@ void eHeroAction::lookForMonsterFight() {
 }
 
 bool eHeroAction::fightMonster(eMonster* const m) {
+    mTargetMonster = m;
     const bool ranged = rangedHero();
 
     const auto c = character();
@@ -274,6 +333,7 @@ bool eHeroAction::fightMonster(eMonster* const m) {
 void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     const auto mt = m->tile();
     if(!mt) return;
+    mTargetMonster = m;
     const auto mtype = m->type();
 
     const auto c = character();

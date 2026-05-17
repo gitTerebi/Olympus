@@ -27,11 +27,6 @@ void eHasResourceWalkableObject::write(eWriteStream& dst) const {
 }
 
 void eHasResourceWalkableObject::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        mHr = ar.readStream().readHasResource();
-        mW = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeHasResource(mHr.get());
-        ar.writeStream().writeWalkable(mW.get());
-    }
+    ar.hasResourceField("hasResource", mHr);
+    ar.walkableField("walkable", mW);
 }

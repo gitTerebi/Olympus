@@ -8,6 +8,10 @@
 class ePatrolBuildingBase;
 class eSaveArchive;
 
+enum class ePatrolActionStage {
+    idle, patrolling, goingBack
+};
+
 class ePatrolAction : public eActionWithComeback {
     friend class ePA_patrolFail;
     friend class ePA_patrolFinish;
@@ -21,21 +25,19 @@ public:
                   const eCharActionType at = eCharActionType::patrolAction);
 
     bool decide() override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
     void patrol();
     void goBackDecision(const stdsptr<eWalkableObject>& w =
                             eWalkableObject::sCreateRoadAvenue());
-private:
-    void serialize(eSaveArchive& ar);
 
     std::vector<eOrientation> mPath;
     stdsptr<eDirectionTimes> mDirTimes;
     ePatrolBuildingBase* mBuilding = nullptr;
 
     bool mDone = false;
+    ePatrolActionStage mStage = ePatrolActionStage::idle;
 };
 
 class ePA_patrolFail : public eCharActFunc {

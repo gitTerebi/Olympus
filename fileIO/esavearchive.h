@@ -47,6 +47,13 @@ public:
     // Use only in SAVE_COMPAT_LEGACY_FALLBACK branches after tagged payload lookup fails.
     eReadStream& legacyReadStream() const { return *mSrc; }
 
+    // Subclasses needing a post-load fixup hook call this on the archive
+    // instead of reaching for readStream(). No-op while writing.
+    template <typename Func>
+    void addPostFunc(const Func& func, const char* tag = "?") {
+        if(mSrc) mSrc->addPostFunc(func, tag);
+    }
+
     template <typename T>
     void value(T& value) {
         rawValue(value);
@@ -400,6 +407,38 @@ public:
         } else {
             mDst->writeGameEvent(val.get());
         }
+    }
+
+    template <typename T>
+    bool gameEventField(const char* const name, eGameBoard* board, stdptr<T>& val) {
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeGameEvent(val.get()); },
+            [board, &val](eReadStream& src) {
+                val.clear();
+                src.readGameEvent(board, [&val](eGameEvent* const e) {
+                    val = static_cast<T*>(e);
+                });
+            });
+    }
+
+    bool walkableField(const char* const name, stdsptr<eWalkableObject>& val) {
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeWalkable(val.get()); },
+            [&val](eReadStream& src) { val = src.readWalkable(); });
+    }
+
+    bool hasResourceField(const char* const name, stdsptr<eHasResourceObject>& val) {
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeHasResource(val.get()); },
+            [&val](eReadStream& src) { val = src.readHasResource(); });
+    }
+
+    bool directionTimesField(const char* const name,
+                             eGameBoard& board,
+                             stdsptr<eDirectionTimes>& val) {
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeDirectionTimes(val.get()); },
+            [&board, &val](eReadStream& src) { val = src.readDirectionTimes(board); });
     }
 
     // Saved arrays must use these helpers. Raw stream loops are legacy-only.

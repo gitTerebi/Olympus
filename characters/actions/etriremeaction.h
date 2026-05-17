@@ -6,6 +6,10 @@
 class eTriremeWharf;
 class eSaveArchive;
 
+enum class eTriremeActionStage {
+    idle, home, abroad
+};
+
 class eTriremeAction : public eFightingAction {
 public:
     eTriremeAction(eTriremeWharf * const home,
@@ -15,19 +19,20 @@ public:
 
     void increment(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void goHome() override;
     void goAbroad() override;
 
     eTriremeWharf* home() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eTile* exitPoint() const;
+    void markLeaving();
 
     stdptr<eTriremeWharf> mHome;
+    eTriremeActionStage mStage = eTriremeActionStage::idle;
+    bool mLeavingNotified = false;
 };
 
 #endif // ETRIREMEACTION_H

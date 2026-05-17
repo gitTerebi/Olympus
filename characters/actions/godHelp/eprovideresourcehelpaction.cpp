@@ -35,6 +35,13 @@ bool eProvideResourceHelpAction::decide() {
             disappear();
         }
     } break;
+    case eProvideResourceHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            return decide();
+        }
+        spawnGiveMissile();
+        break;
     case eProvideResourceHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -43,29 +50,51 @@ bool eProvideResourceHelpAction::decide() {
     return true;
 }
 
-void eProvideResourceHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eProvideResourceHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.buildingAsField("target", &board(), mTarget);
+    ar.field("resource", mResource);
+    ar.field("count", mCount);
+    ar.field("preGivingStage", mPreGivingStage);
 }
 
-void eProvideResourceHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eProvideResourceHelpAction*>(this)->serialize(ar);
+void eProvideResourceHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eProvideResourceHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eStorageBuilding*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mTarget);
+void eProvideResourceHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eProvideResourceHelpStage::giving:
+        if(!mTarget) {
+            finishGiving();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eProvideResourceHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eProvideResourceHelpStage::appear:
+        appear();
+        return;
+    case eProvideResourceHelpStage::goTo:
+        goToTarget();
+        return;
+    case eProvideResourceHelpStage::give:
+        decide();
+        return;
+    case eProvideResourceHelpStage::disappear:
+        disappear();
+        return;
     }
-    ar.field("mResource", mResource);
-    ar.field("mCount", mCount);
+}
+
+void eProvideResourceHelpAction::finishGiving() {
+    mStage = mPreGivingStage;
+    mPreGivingStage = eProvideResourceHelpStage::none;
 }
 
 void eProvideResourceHelpAction::decCount(const int by) {
@@ -102,20 +131,24 @@ void eProvideResourceHelpAction::goToTarget() {
 
 void eProvideResourceHelpAction::give() {
     if(!mTarget) return;
+    mPreGivingStage = mStage;
+    mStage = eProvideResourceHelpStage::giving;
+    pauseAction();
+    spawnGiveMissile();
+}
+
+void eProvideResourceHelpAction::spawnGiveMissile() {
+    if(!mTarget) return;
     const auto c = character();
     const auto targetTile = mTarget->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA =
-            std::make_shared<eGA_LFRAF>(
-                board(), this);
+    const auto finishCb = std::make_shared<ePRHA_giveFinish>(board(), this);
     using eGPRA = eGodProvideResourceAct;
     const auto act = std::make_shared<eGPRA>(
                 board(), this, mTarget,
                 mResource, mCount);
-    pauseAction();
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
+                    finishCb);
 }
 

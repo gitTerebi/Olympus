@@ -30,9 +30,6 @@ public:
     void setDiagonalOnly(const bool d)
     { mDiagonalOnly = d; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void goBack(stdsptr<eWalkableObject> walkable);
     void goBack(eBuilding* const b,
                 const stdsptr<eWalkableObject>& walkable);
@@ -42,7 +39,7 @@ public:
     eTile* startTile() const { return mStartTile; }
     void setStartTile(eTile* const t) { mStartTile = t; }
 protected:
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 
 private:
     void goBackInternal(stdsptr<eWalkableObject> walkable);

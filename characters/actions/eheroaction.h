@@ -13,7 +13,7 @@
 class eSaveArchive;
 
 enum class eHeroActionStage {
-    none, patrol, hunt, fight, goBack, defend
+    none, patrol, hunt, fight, goBack, defend, quest, waitToHall, goBackToHall
 };
 
 class eHeroAction : public eActionWithComeback {
@@ -23,15 +23,17 @@ public:
     bool decide() override;
     void increment(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void lookForMonster();
     void sendOnQuest();
     void goBackToHall();
     void waitAndGoBackToHall(const int w);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
+    void startPatrol();
+    void rebuildCurrentStage();
+    void rebuildWaitToHall();
     void defendCity();
     void lookForMonsterFight();
     bool fightMonster(eMonster* const m);
@@ -47,6 +49,8 @@ private:
     eHeroActionStage mStage = eHeroActionStage::none;
     int mLookForMonster = 0;
     int mLookForCityDefense = 0;
+    int mWaitToHallRemaining = 0;
+    stdptr<eMonster> mTargetMonster;
 };
 
 class eHA_patrolFail : public eCharActFunc {

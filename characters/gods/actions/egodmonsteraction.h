@@ -6,12 +6,12 @@
 
 #include "buildings/eheatgetters.h"
 #include "characters/actions/walkable/ewalkableobject.h"
+#include "fileIO/esavearchive.h"
 
 #include "textures/edestructiontextures.h"
 
 class eGod;
 class eGodAct;
-class eSaveArchive;
 enum class eGodSound;
 
 enum class eFindFailFuncType {
@@ -52,6 +52,13 @@ private:
     eTile* mTile = nullptr;
     stdptr<eCharacter> mChar;
 };
+
+inline bool missileTargetField(eSaveArchive& ar, const char* name,
+                               eGameBoard& board, eMissileTarget& val) {
+    return ar.payloadField(name,
+        [&val](eWriteStream& dst) { val.write(dst); },
+        [&val, &board](eReadStream& src) { val.read(src, board); });
+}
 
 class eFindFailFunc {
 public:
@@ -153,9 +160,6 @@ public:
     void pauseAction();
     void resumeAction();
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void appear();
     void disappear(const bool die = false,
                    const stdsptr<eCharActFunc>& finish = nullptr);
@@ -165,9 +169,9 @@ public:
 
     void playAppearSound();
     void playDisappearSound();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void hermesRun(const bool appear);
 
     std::vector<ePausedAction> mPausedActions;

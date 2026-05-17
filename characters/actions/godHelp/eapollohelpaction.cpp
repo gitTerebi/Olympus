@@ -25,6 +25,13 @@ bool eApolloHelpAction::decide() {
     case eApolloHelpStage::heal:
         goToTarget();
         break;
+    case eApolloHelpStage::healing:
+        if(!mHealTarget) {
+            finishHealing();
+            return decide();
+        }
+        spawnHealMissile(mHealTarget.get());
+        break;
     case eApolloHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -33,20 +40,50 @@ bool eApolloHelpAction::decide() {
     return true;
 }
 
-void eApolloHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eApolloHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("preHealingStage", mPreHealingStage);
+    ar.buildingAsField("healTarget", &board(), mHealTarget);
 }
 
-void eApolloHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eApolloHelpAction*>(this)->serialize(ar);
+void eApolloHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eApolloHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eApolloHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eApolloHelpStage::healing:
+        if(!mHealTarget) {
+            finishHealing();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eApolloHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eApolloHelpStage::appear:
+        appear();
+        return;
+    case eApolloHelpStage::goTo:
+        goToTarget();
+        return;
+    case eApolloHelpStage::heal:
+        decide();
+        return;
+    case eApolloHelpStage::disappear:
+        disappear();
+        return;
+    }
+}
+
+void eApolloHelpAction::finishHealing() {
+    mStage = mPreHealingStage;
+    mPreHealingStage = eApolloHelpStage::none;
+    mHealTarget = nullptr;
 }
 
 bool eApolloHelpAction::sHelpNeeded(const eCityId cid,
@@ -113,14 +150,21 @@ eSmallHouse* sClosestPlagueHouseTile(
 void eApolloHelpAction::heal() {
     const auto c = character();
     const auto house = sClosestPlagueHouseTile(c->tile(), board());
-    const auto targetTile = house->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA = std::make_shared<eGA_LFRAF>(
-                                   board(), this);
-    const auto act = std::make_shared<eApolloHelpAct>(board(), house);
+    if(!house) return;
+    mPreHealingStage = mStage;
+    mStage = eApolloHelpStage::healing;
+    mHealTarget = house;
     pauseAction();
+    spawnHealMissile(house);
+}
+
+void eApolloHelpAction::spawnHealMissile(eSmallHouse* const target) {
+    const auto c = character();
+    const auto targetTile = target->centerTile();
+    const auto finishCb = std::make_shared<eApHA_healFinish>(board(), this);
+    const auto act = std::make_shared<eApolloHelpAct>(board(), target);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
+                    finishCb);
 }

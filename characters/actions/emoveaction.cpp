@@ -91,35 +91,23 @@ void eMoveAction::increment(const int by) {
     moveBy(c->speed()*0.005 * by);
 }
 
-void eMoveAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eMoveAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.walkableField("tileWalkable", mTileWalkable);
+    ar.field("orientation", mOrientation);
+    ar.tileField("targetTile", board(), mTargetTile);
+    ar.field("wait", mWait);
+    ar.field("startX", mStartX);
+    ar.field("startY", mStartY);
+    ar.field("targetX", mTargetX);
+    ar.field("targetY", mTargetY);
 }
 
-void eMoveAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMoveAction*>(this)->serialize(ar);
-}
-
-void eMoveAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        mTileWalkable = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeWalkable(mTileWalkable.get());
-    }
-    ar.field("mOrientation", mOrientation);
-    ar.tile(mTargetTile, board());
-    ar.field("mWait", mWait);
-    ar.field("mStartX", mStartX);
-    ar.field("mStartY", mStartY);
-    ar.field("mTargetX", mTargetX);
-    ar.field("mTargetY", mTargetY);
-    if(ar.reading()) {
-        mObstHandler = ar.readStream().readObsticleHandler(board());
-    } else {
-        ar.writeStream().writeObsticleHandler(mObstHandler.get());
+void eMoveAction::resumeFromSavedState() {
+    if(state() != eCharacterActionState::running) return;
+    const auto c = character();
+    if(c->actionType() == eCharacterActionType::none) {
+        c->setActionType(eCharacterActionType::walk);
     }
 }
 

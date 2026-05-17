@@ -8,21 +8,28 @@
 
 class eSaveArchive;
 
+enum class eReplaceCattleActionStage {
+    idle, goingToCattle, goingBack
+};
+
 class eReplaceCattleAction : public eActionWithComeback {
 public:
     eReplaceCattleAction(eCharacter* const c,
                          eCharacter* const cc = nullptr);
 
     bool decide() override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void finishReplacing();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void goCattle();
+    void sendCattleHome();
 
     stdptr<eCharacter> mCattle;
+    eReplaceCattleActionStage mStage = eReplaceCattleActionStage::idle;
+    int mCattleHomeX = 0;
+    int mCattleHomeY = 0;
 };
 
 class eRC_finishAction : public eCharActFunc {

@@ -12,11 +12,10 @@ public:
 
     void increment(const int by);
     bool decide();
-
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
 
     int mMissile = 0;
     int mRangeAttack = 0;

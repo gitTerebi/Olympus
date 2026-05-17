@@ -24,6 +24,9 @@ bool eHephaestusHelpAction::decide() {
         mStage = eHephaestusHelpStage::disappear;
         disappear();
         break;
+    case eHephaestusHelpStage::providing:
+        spawnProvideMissile();
+        break;
     case eHephaestusHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -32,20 +35,41 @@ bool eHephaestusHelpAction::decide() {
     return true;
 }
 
-void eHephaestusHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eHephaestusHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("preProvidingStage", mPreProvidingStage);
+    ar.field("talosSpawned", mTalosSpawned);
 }
 
-void eHephaestusHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHephaestusHelpAction*>(this)->serialize(ar);
+void eHephaestusHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
 }
 
-void eHephaestusHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eHephaestusHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eHephaestusHelpStage::providing:
+        decide();
+        return;
+    case eHephaestusHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eHephaestusHelpStage::appear:
+        appear();
+        return;
+    case eHephaestusHelpStage::provide:
+        decide();
+        return;
+    case eHephaestusHelpStage::disappear:
+        disappear();
+        return;
+    }
+}
+
+void eHephaestusHelpAction::finishProviding() {
+    mStage = mPreProvidingStage;
+    mPreProvidingStage = eHephaestusHelpStage::none;
 }
 
 bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,
@@ -54,6 +78,23 @@ bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,
 }
 
 void eHephaestusHelpAction::provide() {
+    mPreProvidingStage = mStage;
+    mStage = eHephaestusHelpStage::providing;
+    pauseAction();
+    if(!mTalosSpawned) {
+        auto& board = eHephaestusHelpAction::board();
+        const auto c = character();
+        const auto talos = e::make_shared<eTalos>(board);
+        const auto tile = c->tile();
+        talos->changeTile(tile);
+        const auto da = e::make_shared<eDefendCityAction>(talos.get());
+        talos->setAction(da);
+        mTalosSpawned = true;
+    }
+    spawnProvideMissile();
+}
+
+void eHephaestusHelpAction::spawnProvideMissile() {
     auto& board = eHephaestusHelpAction::board();
     const auto c = character();
     const auto cid = cityId();
@@ -62,18 +103,9 @@ void eHephaestusHelpAction::provide() {
     const int bh = board.height();
     const auto centerTile = board.dtile(bw/2, bh/2);
     const auto targetTile = p ? p->centerTile() : centerTile;
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA = std::make_shared<eGA_LFRAF>(
-                                   board, this);
-    pauseAction();
+    const auto finishCb = std::make_shared<eHfHA_provideFinish>(board, this);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, nullptr,
-                    finishAttackA);
-
-    const auto talos = e::make_shared<eTalos>(board);
-    const auto tile = c->tile();
-    talos->changeTile(tile);
-    const auto da = e::make_shared<eDefendCityAction>(talos.get());
-    talos->setAction(da);
+                    finishCb);
 }
