@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include <algorithm>
 
 eOlivePress::eOlivePress(eGameBoard& board,
                          const eCityId cid) :
@@ -15,4 +16,22 @@ eOlivePress::eOlivePress(eGameBoard& board,
                         eNumbers::sOlivePressProcessingPeriod,
                         cid) {
     eGameTextures::loadOlivePress();
+}
+
+std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
+    auto os = eProcessingBuilding::getOverlays(size);
+    const int olives = rawCount();
+    if(olives > 0) {
+        const int sizeId = static_cast<int>(size);
+        const auto& texs = eGameTextures::buildings()[sizeId];
+        const auto& coll = texs.fWaitingOlives;
+        const int resMax = coll.size() - 1;
+        const int res = std::clamp(olives - 1, 0, resMax);
+        eOverlay o;
+        o.fTex = coll.getTexture(res);
+        o.fX = -0.2;
+        o.fY = -1.85;
+        os.push_back(o);
+    }
+    return os;
 }
