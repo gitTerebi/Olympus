@@ -17,12 +17,10 @@ public:
 
     bool decide() override;
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void goGetCattle();
 
     eTakeCattleActionStage mStage = eTakeCattleActionStage::none;

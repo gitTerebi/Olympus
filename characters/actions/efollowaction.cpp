@@ -29,34 +29,18 @@ void eFollowAction::setDistance(const int d) {
     mDistance = d;
 }
 
-void eFollowAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eFollowAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eFollowAction*>(this)->serialize(ar);
-}
-
-void eFollowAction::serialize(eSaveArchive& ar) {
-    eMoveAction::serialize(ar);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mFollow = c;
-            if(c) {
-                const auto cc = character();
-                cc->setSpeed(c->speed());
-            }
-        });
-    } else {
-        ar.writeStream().writeCharacter(mFollow);
+void eFollowAction::serializeFields(eSaveArchive& ar) {
+    eMoveAction::serializeFields(ar);
+    ar.characterField("follow", &board(), mFollow);
+    if(ar.reading() && mFollow) {
+        const auto cc = character();
+        cc->setSpeed(mFollow->speed());
     }
-    ar.field("mCatchUp", mCatchUp);
-    ar.field("mDistance", mDistance);
-    ar.dequeField("tiles", mTiles, [this](eSaveArchive& ar, ePathNode& n) {
-        ar.tile(n.fTile, board());
-        ar.field("n.fO", n.fO);
+    ar.field("catchUp", mCatchUp);
+    ar.field("distance", mDistance);
+    ar.dequeField("tiles", mTiles, [this](eSaveArchive& itemAr, ePathNode& n) {
+        itemAr.tileField("tile", board(), n.fTile);
+        itemAr.field("orientation", n.fO);
     });
 }
 

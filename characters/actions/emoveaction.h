@@ -21,13 +21,11 @@ public:
     void setObsticleHandler(const stdsptr<eObsticleHandler>& oh);
 
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
     bool nextTurn();
     void setWait(const bool w) { mWait = w; }
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 
 private:
     virtual eCharacterActionState nextTurn(eOrientation& turn) = 0;

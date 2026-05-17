@@ -27,23 +27,12 @@ void eMoveAroundAction::setMaxDistance(const int md) {
     mMaxDist = md;
 }
 
-void eMoveAroundAction::read(eReadStream& src) {
-    eMoveAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eMoveAroundAction::write(eWriteStream& dst) const {
-    eMoveAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMoveAroundAction*>(this)->serialize(ar);
-}
-
-void eMoveAroundAction::serialize(eSaveArchive& ar) {
-    ar.field("mStartTX", mStartTX);
-    ar.field("mStartTY", mStartTY);
-    ar.field("mMaxDist", mMaxDist);
-    ar.field("mRemTime", mRemTime);
+void eMoveAroundAction::serializeFields(eSaveArchive& ar) {
+    eMoveAction::serializeFields(ar);
+    ar.field("startTX", mStartTX);
+    ar.field("startTY", mStartTY);
+    ar.field("maxDist", mMaxDist);
+    ar.field("remTime", mRemTime);
 }
 
 eCharacterActionState eMoveAroundAction::nextTurn(eOrientation& turn) {

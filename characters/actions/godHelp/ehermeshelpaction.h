@@ -6,7 +6,7 @@
 class eSaveArchive;
 
 enum class eHermesHelpStage {
-    none, appear, provide, disappear
+    none, appear, provide, providing, disappear
 };
 
 class eHermesHelpAction : public eGodAction {
@@ -15,16 +15,50 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const ePlayerId pid,
                             const eGameBoard& board);
+
+    void rebuildCurrentStage();
+    void finishProviding();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     void provide();
+    void spawnProvideMissile();
 
     eHermesHelpStage mStage{eHermesHelpStage::none};
+    eHermesHelpStage mPreProvidingStage{eHermesHelpStage::none};
+    bool mRequestFulfilled = false;
+};
+
+class eHmHA_provideFinish : public eCharActFunc {
+public:
+    eHmHA_provideFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::HmHA_provideFinish) {}
+    eHmHA_provideFinish(eGameBoard& board, eHermesHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::HmHA_provideFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eHermesHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishProviding();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eHermesHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eHermesHelpAction> mTptr;
 };
 
 #endif // EHERMESHELPACTION_H

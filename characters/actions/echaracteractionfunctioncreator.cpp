@@ -22,6 +22,14 @@
 #include "characters/gods/actions/egodworshippedaction.h"
 
 #include "godHelp/ezeushelpaction.h"
+#include "godHelp/eaphroditehelpaction.h"
+#include "godHelp/eapollohelpaction.h"
+#include "godHelp/eatlashelpaction.h"
+#include "godHelp/ehadeshelpaction.h"
+#include "godHelp/ehephaestushelpaction.h"
+#include "godHelp/eherahelpaction.h"
+#include "godHelp/ehermeshelpaction.h"
+#include "godHelp/eprovideresourcehelpaction.h"
 
 #include "buildings/epatroltarget.h"
 
@@ -117,6 +125,25 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
         return std::make_shared<eMA_destroyBuildingFinish>(board);
     case eCharActFuncType::MA_lookForRangeActionFinishAttack:
         return std::make_shared<eMA_lookForRangeActionFinishAttack>(board);
+
+    case eCharActFuncType::AHA_populateFinish:
+        return std::make_shared<eAHA_populateFinish>(board);
+    case eCharActFuncType::ApHA_healFinish:
+        return std::make_shared<eApHA_healFinish>(board);
+    case eCharActFuncType::AtHA_giveFinish:
+        return std::make_shared<eAtHA_giveFinish>(board);
+    case eCharActFuncType::HdHA_giveFinish:
+        return std::make_shared<eHdHA_giveFinish>(board);
+    case eCharActFuncType::HfHA_provideFinish:
+        return std::make_shared<eHfHA_provideFinish>(board);
+    case eCharActFuncType::HrHA_giveFinish:
+        return std::make_shared<eHrHA_giveFinish>(board);
+    case eCharActFuncType::HmHA_provideFinish:
+        return std::make_shared<eHmHA_provideFinish>(board);
+    case eCharActFuncType::PRHA_giveFinish:
+        return std::make_shared<ePRHA_giveFinish>(board);
+    case eCharActFuncType::GAA_rangeAttackFinish:
+        return std::make_shared<eGAA_rangeAttackFinish>(board);
 
     case eCharActFuncType::PA_patrolFail:
         return std::make_shared<ePA_patrolFail>(board);

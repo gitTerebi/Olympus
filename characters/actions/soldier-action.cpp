@@ -59,20 +59,46 @@ void eSoldierAction::increment(const int by) {
     eComplexAction::increment(by);
 }
 
-void eSoldierAction::read(eReadStream& src) {
-    eFightingAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eSoldierAction::serializeFields(eSaveArchive& ar) {
+    eFightingAction::serializeFields(ar);
+    ar.field("spreadPeriod", mSpreadPeriod);
+    ar.field("goToBannerCountdown", mGoToBannerCountdown, 0);
+    ar.field("arrivedAtBanner", mArrivedAtBanner, false);
+    ar.field("soldierStage", mStage, eSoldierActionStage::idle);
 }
 
-void eSoldierAction::write(eWriteStream& dst) const {
-    eFightingAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSoldierAction*>(this)->serialize(ar);
+void eSoldierAction::resumeFromSavedState() {
+    if(isAttacking()) {
+        return eFightingAction::resumeFromSavedState();
+    }
+    rebuildCurrentStage();
 }
 
-void eSoldierAction::serialize(eSaveArchive& ar) {
-    ar.field("mSpreadPeriod", mSpreadPeriod);
+void eSoldierAction::rebuildCurrentStage() {
+    switch(mStage) {
+    case eSoldierActionStage::home:
+        return goHome();
+    case eSoldierActionStage::abroad:
+        return goAbroad();
+    case eSoldierActionStage::banner: {
+        const stdptr<eSoldierAction> tptr(this);
+        const auto taskFinished = [tptr]() {
+            if(!tptr) return;
+            tptr->mGoToBannerCountdown = 100;
+        };
+        const auto taskFindFailed = [tptr]() {
+            if(!tptr) return;
+            tptr->mGoToBannerCountdown = 1000;
+        };
+        const auto s = static_cast<eSoldier*>(character());
+        const auto b = s->banner();
+        if(b) goBackToBanner(b->soldierOrientation(),
+                             taskFindFailed, taskFinished);
+        return;
+    }
+    case eSoldierActionStage::idle:
+        return eFightingAction::resumeFromSavedState();
+    }
 }
 
 stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {
@@ -81,6 +107,7 @@ stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {
 }
 
 void eSoldierAction::goHome() {
+    mStage = eSoldierActionStage::home;
     mArrivedAtBanner = false;
     const auto c = character();
     c->setSpeed(1.0);
@@ -112,6 +139,7 @@ void eSoldierAction::goHome() {
 }
 
 void eSoldierAction::goAbroad() {
+    mStage = eSoldierActionStage::abroad;
     const auto c = character();
     auto& board = eSoldierAction::board();
     const auto cid = onCityId();
@@ -205,6 +233,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
 void eSoldierAction::goBackToBanner(const eOrientation facing,
                                     const eAction& findFailAct,
                                     const eAction& findFinishAct) {
+    mStage = eSoldierActionStage::banner;
     const auto c = character();
     const auto s = static_cast<eSoldier*>(c);
     const auto b = s->banner();

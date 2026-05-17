@@ -26,25 +26,14 @@ bool eActionWithComeback::decide() {
     return false;
 }
 
-void eActionWithComeback::read(eReadStream& src) {
-    eComplexAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eActionWithComeback::write(eWriteStream& dst) const {
-    eComplexAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eActionWithComeback*>(this)->serialize(ar);
-}
-
-void eActionWithComeback::serialize(eSaveArchive& ar) {
-    ar.tile(mStartTile, board());
-    ar.field("mGoBackRect", mGoBackRect);
-    ar.field("mFinishOnComeback", mFinishOnComeback);
-    ar.field("mDefaultTry", mDefaultTry);
-    ar.field("mGoBackFail", mGoBackFail);
-    ar.field("mDiagonalOnly", mDiagonalOnly);
+void eActionWithComeback::serializeFields(eSaveArchive& ar) {
+    eComplexAction::serializeFields(ar);
+    ar.tileField("startTile", board(), mStartTile);
+    ar.field("goBackRect", mGoBackRect);
+    ar.field("finishOnComeback", mFinishOnComeback);
+    ar.field("defaultTry", mDefaultTry);
+    ar.field("goBackFailed", mGoBackFail);
+    ar.field("diagonalOnly", mDiagonalOnly);
 }
 
 void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {

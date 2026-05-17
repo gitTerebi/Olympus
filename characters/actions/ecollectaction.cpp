@@ -98,21 +98,10 @@ void eCollectAction::increment(const int by) {
     }
 }
 
-void eCollectAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eCollectAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCollectAction*>(this)->serialize(ar);
-}
-
-void eCollectAction::serialize(eSaveArchive& ar) {
-    ar.field("mSoundTime", mSoundTime);
-    ar.field("mTime", mTime);
-    ar.tile(mTile, board());
-    ar.field("mTransFunc", mTransFunc);
+void eCollectAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.field("soundTime", mSoundTime);
+    ar.field("time", mTime);
+    ar.tileField("tile", board(), mTile);
+    ar.field("transformFunc", mTransFunc);
 }

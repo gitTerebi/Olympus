@@ -8,35 +8,42 @@
 #include "vec2.h"
 #include "fileIO/esavearchive.h"
 
-void eDefendAttackCityAction::read(eReadStream& src) {
-    eGodMonsterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eDefendAttackCityAction::serializeFields(eSaveArchive& ar) {
+    eGodMonsterAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.tileField("startTile", eGodMonsterAction::board(), mStartTile);
+    ar.characterAsField("attackTarget", &board(), mAttackTarget);
+    ar.field("attack", mAttack);
+    ar.field("lookForEnemy", mLookForEnemy);
+    ar.field("attackTime", mAttackTime);
+    ar.field("rangeAttack", mRangeAttack);
+    ar.field("angle", mAngle);
+    ar.field("missile", mMissile);
+    ar.field("killed", mKilled);
 }
 
-void eDefendAttackCityAction::write(eWriteStream& dst) const {
-    eGodMonsterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDefendAttackCityAction*>(this)->serialize(ar);
-}
-
-void eDefendAttackCityAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.tile(mStartTile, eGodMonsterAction::board());
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mAttackTarget = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mAttackTarget);
+void eDefendAttackCityAction::resumeFromSavedState() {
+    if(mAttack && mAttackTarget && !mAttackTarget->dead()) {
+        character()->setActionType(range() > 0 ?
+                                   eCharacterActionType::fight2 :
+                                   eCharacterActionType::fight);
+        return;
     }
-    ar.field("mAttack", mAttack);
-    ar.field("mLookForEnemy", mLookForEnemy);
-    ar.field("mAttackTime", mAttackTime);
-    ar.field("mRangeAttack", mRangeAttack);
-    ar.field("mAngle", mAngle);
-    ar.field("mMissile", mMissile);
-    ar.field("mKilled", mKilled);
+    switch(mStage) {
+    case eDefendAttackCityStage::none:
+    case eDefendAttackCityStage::appear:
+    case eDefendAttackCityStage::goTo:
+    case eDefendAttackCityStage::wait:
+    case eDefendAttackCityStage::fight:
+        decide();
+        break;
+    case eDefendAttackCityStage::comeback:
+        goBack();
+        break;
+    case eDefendAttackCityStage::disappear:
+        disappear();
+        break;
+    }
 }
 
 bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {

@@ -18,21 +18,13 @@ void eComplexAction::increment(const int by) {
     }
 }
 
-void eComplexAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+void eComplexAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
 }
 
-void eComplexAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eComplexAction*>(this)->serialize(ar);
-}
-
-void eComplexAction::serialize(eSaveArchive& ar) {
-    eCharacterAction::serialize(ar);
-    ar.characterAction<eCharacterAction>(mCurrentAction, [this](const eCharActionType type) {
-        return eCharacterAction::sCreate(character(), type);
-    });
+void eComplexAction::resumeFromSavedState() {
+    eCharacterAction::resumeFromSavedState();
+    if(state() == eCharacterActionState::running) decide();
 }
 
 void eComplexAction::setCurrentAction(const stdsptr<eCharacterAction>& a) {

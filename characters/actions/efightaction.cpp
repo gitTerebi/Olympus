@@ -23,25 +23,17 @@ void eFightAction::increment(const int by) {
     }
 }
 
-void eFightAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eFightAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.characterField("opponent", &board(), mOpponent);
+    ar.field("time", mTime);
 }
 
-void eFightAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFightAction*>(this)->serialize(ar);
-}
-
-void eFightAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mOpponent = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mOpponent);
+void eFightAction::resumeFromSavedState() {
+    const auto c = character();
+    if(!mOpponent || mOpponent->dead() || c->dead()) {
+        setState(eCharacterActionState::finished);
+        return;
     }
-    ar.field("mTime", mTime);
+    c->setActionType(eCharacterActionType::fight);
 }

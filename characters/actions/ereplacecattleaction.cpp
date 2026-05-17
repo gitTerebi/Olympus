@@ -15,36 +15,39 @@ bool eReplaceCattleAction::decide() {
     return true;
 }
 
-void eReplaceCattleAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eReplaceCattleAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.characterField("cattle", &board(), mCattle);
+    ar.field("stage", mStage);
+    ar.field("cattleHomeX", mCattleHomeX, 0);
+    ar.field("cattleHomeY", mCattleHomeY, 0);
 }
 
-void eReplaceCattleAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eReplaceCattleAction*>(this)->serialize(ar);
-}
-
-void eReplaceCattleAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = this->board();
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mCattle = c;
-        });
-    } else {
-        ar.writeStream().writeCharacter(mCattle);
+void eReplaceCattleAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eReplaceCattleActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case eReplaceCattleActionStage::goingToCattle:
+        goCattle();
+        break;
+    case eReplaceCattleActionStage::goingBack:
+        sendCattleHome();
+        goBack(eWalkableObject::sCreateDefault());
+        break;
     }
 }
 
 void eReplaceCattleAction::goCattle() {
     const auto c = character();
+    mStage = eReplaceCattleActionStage::goingToCattle;
 
     const auto ca = dynamic_cast<eAnimalAction*>(mCattle ? mCattle->action() : nullptr);
     if(!ca) return;
-    const int hx = ca->spawnerX();
-    const int hy = ca->spawnerY();
+    mCattleHomeX = ca->spawnerX();
+    mCattleHomeY = ca->spawnerY();
+    const int hx = mCattleHomeX;
+    const int hy = mCattleHomeY;
     const auto hha = [hx, hy](eThreadTile* const tile) {
         return tile->x() == hx && tile->y() == hy;
     };
@@ -66,10 +69,37 @@ void eReplaceCattleAction::goCattle() {
     setCurrentAction(a);
 }
 
+void eReplaceCattleAction::finishReplacing() {
+    mStage = eReplaceCattleActionStage::goingBack;
+    goBack(eWalkableObject::sCreateDefault());
+    sendCattleHome();
+}
+
+void eReplaceCattleAction::sendCattleHome() {
+    if(!mCattle) return;
+    const auto c = mCattle.get();
+    const int hx = mCattleHomeX;
+    const int hy = mCattleHomeY;
+    const auto hha = [hx, hy](eThreadTile* const tile) {
+        return tile->x() == hx && tile->y() == hy;
+    };
+
+    const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
+
+    const auto finish = std::make_shared<eRC_finishWalkingAction>(
+                            board(), c);
+    a->setFinishAction(finish);
+    a->start(hha);
+    c->setAction(a);
+}
+
 void eRC_finishAction::call() {
     if(mButcherA) {
-        const auto walkable = eWalkableObject::sCreateDefault();
-        mButcherA->goBack(walkable);
+        mButcherA->finishReplacing();
+        return;
     }
     if(!mCattle) return;
     const auto c = mCattle.get();

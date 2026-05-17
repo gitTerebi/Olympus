@@ -8,7 +8,7 @@
 class eSaveArchive;
 
 enum class eApolloHelpStage {
-    none, appear, goTo, heal, disappear
+    none, appear, goTo, heal, healing, disappear
 };
 
 class eApolloHelpAction : public eGodAction {
@@ -17,17 +17,51 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
+
+    void rebuildCurrentStage();
+    void finishHealing();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     void goToTarget();
     void heal();
+    void spawnHealMissile(eSmallHouse* const target);
 
     eApolloHelpStage mStage{eApolloHelpStage::none};
+    eApolloHelpStage mPreHealingStage{eApolloHelpStage::none};
+    stdptr<eSmallHouse> mHealTarget;
+};
+
+class eApHA_healFinish : public eCharActFunc {
+public:
+    eApHA_healFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::ApHA_healFinish) {}
+    eApHA_healFinish(eGameBoard& board, eApolloHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::ApHA_healFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eApolloHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishHealing();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eApolloHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eApolloHelpAction> mTptr;
 };
 
 class eApolloHelpAct : public eGodAct {

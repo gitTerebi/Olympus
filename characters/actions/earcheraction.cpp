@@ -137,27 +137,21 @@ bool eArcherAction::decide() {
     return true;
 }
 
-void eArcherAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+void eArcherAction::serializeFields(eSaveArchive& ar) {
+    eComplexAction::serializeFields(ar);
+    ar.field("missile", mMissile);
+    ar.field("rangeAttack", mRangeAttack);
+    ar.field("attackTime", mAttackTime);
+    ar.field("attack", mAttack);
+    ar.characterField("attackTarget", &board(), mAttackTarget);
 }
 
-void eArcherAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eArcherAction*>(this)->serialize(ar);
-}
-
-void eArcherAction::serialize(eSaveArchive& ar) {
-    eComplexAction::serialize(ar);
-    ar.field("mMissile", mMissile);
-    ar.field("mRangeAttack", mRangeAttack);
-    ar.field("mAttackTime", mAttackTime);
-    ar.field("mAttack", mAttack);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mAttackTarget = c;
-        });
+void eArcherAction::resumeFromSavedState() {
+    if(mAttack && mAttackTarget && !mAttackTarget->dead()) {
+        character()->setActionType(eCharacterActionType::fight);
     } else {
-        ar.writeStream().writeCharacter(mAttackTarget.get());
+        mAttack = false;
+        mAttackTarget = nullptr;
+        eComplexAction::resumeFromSavedState();
     }
 }

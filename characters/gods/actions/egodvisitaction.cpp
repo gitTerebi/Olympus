@@ -49,20 +49,9 @@ bool eGodVisitAction::decide() {
     return true;
 }
 
-void eGodVisitAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodVisitAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodVisitAction*>(this)->serialize(ar);
-}
-
-void eGodVisitAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.field("mLookForBless", mLookForBless);
-    ar.field("mLookForSoldierAttack", mLookForSoldierAttack);
+void eGodVisitAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.field("lookForBless", mLookForBless);
+    ar.field("lookForSoldierAttack", mLookForSoldierAttack);
 }

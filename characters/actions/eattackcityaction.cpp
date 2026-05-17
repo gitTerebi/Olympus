@@ -73,20 +73,9 @@ bool eAttackCityAction::decide() {
     return true;
 }
 
-void eAttackCityAction::read(eReadStream& src) {
-    eDefendAttackCityAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAttackCityAction::write(eWriteStream& dst) const {
-    eDefendAttackCityAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAttackCityAction*>(this)->serialize(ar);
-}
-
-void eAttackCityAction::serialize(eSaveArchive& ar) {
-    ar.field("mLookForGod", mLookForGod);
+void eAttackCityAction::serializeFields(eSaveArchive& ar) {
+    eDefendAttackCityAction::serializeFields(ar);
+    ar.field("lookForGod", mLookForGod);
 }
 
 void eAttackCityAction::invasionFinished() {

@@ -22,11 +22,9 @@ public:
     void setTime(const int t);
 
     void setMaxDistance(const int md);
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     eCharacterActionState nextTurn(eOrientation& turn) override;
 
     int mStartTX;

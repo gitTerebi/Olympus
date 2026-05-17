@@ -97,23 +97,41 @@ bool eWolfAction::decide()
     return eAnimalAction::decide();
 }
 
-void eWolfAction::write(eWriteStream &dst) const
+void eWolfAction::serializeFields(eSaveArchive& ar)
 {
-    eAnimalAction::write(dst);
-    eSaveArchive ar(dst);
-    ar.field("hunting", const_cast<bool &>(mHunting));
+    eAnimalAction::serializeFields(ar);
+    ar.field("hunting", mHunting);
+    ar.field("stage", mStage);
+    ar.buildingAsField("wallTarget", &board(), mWallTarget);
 }
 
-void eWolfAction::read(eReadStream &src)
+void eWolfAction::resumeFromSavedState()
 {
-    eAnimalAction::read(src);
-    eSaveArchive ar(src);
-    ar.field("hunting", mHunting);
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eWolfActionStage::idle:
+        eComplexAction::resumeFromSavedState();
+        break;
+    case eWolfActionStage::hunting:
+        findPrey();
+        break;
+    case eWolfActionStage::goingBack:
+        goBack();
+        break;
+    case eWolfActionStage::attackingWall:
+        if(mWallTarget) {
+            character()->setActionType(eCharacterActionType::fight);
+        } else {
+            findPrey();
+        }
+        break;
+    }
 }
 
 void eWolfAction::goBack()
 {
     mHunting = false;
+    mStage = eWolfActionStage::goingBack;
     mWallTarget.clear();
 
     const auto c = character();
@@ -150,6 +168,8 @@ void eWolfAction::goBack()
 
 void eWolfAction::findPrey()
 {
+    mHunting = true;
+    mStage = eWolfActionStage::hunting;
     const auto c = character();
 
     const stdptr<eCharacter> cptr(c);
@@ -216,5 +236,6 @@ void eWolfAction::attackWall(eBuilding *const wall)
 {
     setCurrentAction(nullptr);
     mWallTarget = wall;
+    mStage = eWolfActionStage::attackingWall;
     character()->setActionType(eCharacterActionType::fight);
 }

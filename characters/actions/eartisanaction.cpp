@@ -5,6 +5,7 @@
 #include "characters/actions/ebuildaction.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
+#include "enumbers.h"
 
 eArtisanAction::eArtisanAction(eCharacter* const c,
                                eArtisansGuild* const guild) :
@@ -33,7 +34,9 @@ bool eArtisanAction::decide() {
     if(inGuild) {
         if(mNoTarget) {
             mNoTarget = false;
-            wait(5000);
+            mStage = eArtisanActionStage::waiting;
+            mWaitRemaining = 5000;
+            wait(mWaitRemaining);
         } else {
             findTargetDecision();
         }
@@ -70,30 +73,68 @@ bool eArtisanAction::decide() {
     return true;
 }
 
-void eArtisanAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eArtisanAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eArtisanAction*>(this)->serialize(ar);
-}
-
-void eArtisanAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mGuild = static_cast<eArtisansGuild*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mGuild);
+void eArtisanAction::increment(const int by) {
+    if(mStage == eArtisanActionStage::working && mWorkRemaining > 0) {
+        if(mWorkRemaining <= by) {
+            mWorkRemaining = 0;
+            setCurrentAction(nullptr);
+            finishWork();
+            return;
+        }
+        mWorkRemaining -= by;
+    } else if(mStage == eArtisanActionStage::waiting && mWaitRemaining > 0) {
+        mWaitRemaining -= by;
+        if(mWaitRemaining < 0) mWaitRemaining = 0;
     }
-    ar.field("mNoTarget", mNoTarget);
+    eActionWithComeback::increment(by);
+}
+
+void eArtisanAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.buildingAsField("guild", &board(), mGuild);
+    ar.field("noTarget", mNoTarget);
+    ar.field("stage", mStage, eArtisanActionStage::idle);
+    ar.field("waitRemaining", mWaitRemaining, 0);
+    ar.field("workRemaining", mWorkRemaining, 0);
+    ar.tileField("targetTile", board(), mTargetTile);
+    ar.buildingAsField("targetBuilding", &board(), mTargetBuilding);
+}
+
+void eArtisanAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eArtisanAction::rebuildCurrentStage() {
+    switch(mStage) {
+    case eArtisanActionStage::findingTarget:
+        return static_cast<void>(findTargetDecision());
+    case eArtisanActionStage::working:
+        if(mTargetBuilding) mTargetBuilding->setWorkedOn(false);
+        if(mTargetTile && mTargetBuilding &&
+           !mTargetBuilding->finished() &&
+           mTargetBuilding->resourcesAvailable()) {
+            return workOnDecision(mTargetTile);
+        }
+        releaseWorkTarget();
+        mStage = eArtisanActionStage::idle;
+        return static_cast<void>(decide());
+    case eArtisanActionStage::goingBack:
+        return goBackDecision();
+    case eArtisanActionStage::waiting:
+        if(mWaitRemaining > 0) {
+            wait(mWaitRemaining);
+        } else {
+            mStage = eArtisanActionStage::idle;
+            decide();
+        }
+        return;
+    case eArtisanActionStage::idle:
+        return eActionWithComeback::resumeFromSavedState();
+    }
 }
 
 bool eArtisanAction::findTargetDecision() {
+    mStage = eArtisanActionStage::findingTarget;
     const stdptr<eArtisanAction> tptr(this);
 
     const auto c = character();
@@ -134,6 +175,12 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
     if(!bb || bb->workedOn() || bb->finished() ||
        !bb->resourcesAvailable()) return;
     bb->setWorkedOn(true);
+    mStage = eArtisanActionStage::working;
+    mTargetTile = tile;
+    mTargetBuilding = bb;
+    if(mWorkRemaining <= 0) {
+        mWorkRemaining = eNumbers::sArtisanBuildTime;
+    }
     const auto c = character();
     c->setActionType(eCharacterActionType::build);
     const auto t = c->tile();
@@ -161,15 +208,32 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
     }
     c->setOrientation(o);
     const auto w = e::make_shared<eBuildAction>(c);
-    const auto finish = std::make_shared<eArtA_buildFinish>(board(), bb);
-    w->setFailAction(finish);
-    w->setFinishAction(finish);
+    const auto fail = std::make_shared<eArtA_buildDelete>(board(), bb);
+    w->setFailAction(fail);
     const auto deleteFail = std::make_shared<eArtA_buildDelete>(board(), bb);
     w->setDeleteFailAction(deleteFail);
     setCurrentAction(w);
 }
 
+void eArtisanAction::finishWork() {
+    const auto b = mTargetBuilding.get();
+    releaseWorkTarget();
+    mStage = eArtisanActionStage::idle;
+    if(!b) return;
+    if(b->resourcesAvailable()) {
+        b->incProgress();
+    }
+}
+
+void eArtisanAction::releaseWorkTarget() {
+    if(mTargetBuilding) mTargetBuilding->setWorkedOn(false);
+    mTargetBuilding = nullptr;
+    mTargetTile = nullptr;
+    mWorkRemaining = 0;
+}
+
 void eArtisanAction::goBackDecision() {
+    mStage = eArtisanActionStage::goingBack;
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
     goBack(mGuild, eWalkableObject::sCreateArtisan());

@@ -8,7 +8,7 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 
 enum class eMonsterAttackStage {
-    none, wait, goTo, patrol, goBack
+    none, wait, goTo, patrol, goBack, attacking, destroyingBuilding
 };
 
 class eSaveArchive;
@@ -21,9 +21,6 @@ public:
     void increment(const int by) override;
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eMonsterAttackStage stage() const { return mStage; }
 
     eMonsterAggressivness aggressivness() const
@@ -34,9 +31,21 @@ public:
     void goToTarget();
     void goBack();
     void monsterPatrol();
-private:
-    void serialize(eSaveArchive& ar);
 
+    void beginAttack(const eMissileTarget& target,
+                     const eCharacterActionType at,
+                     const eMonsterAttackStage prevStage);
+    void finishAttack();
+
+    void beginBuildingAttack(eBuilding* const b,
+                             const eMonsterAttackStage prevStage);
+    void finishBuildingAttack();
+
+    void rebuildCurrentStage();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
+private:
     void destroyBuilding(eBuilding* const b);
     eTile* closestEmptySpace(const int rdx, const int rdy) const;
     void randomPlaceOnBoard();
@@ -59,6 +68,21 @@ private:
     eMonsterAttackStage mStage{eMonsterAttackStage::none};
     const eMonsterType mType;
     int mLookForAttack = 0;
+
+    eMonsterAttackStage mPreAttackStage{eMonsterAttackStage::none};
+    eMissileTarget mAttackTarget;
+    eCharacterActionType mAttackActionType{eCharacterActionType::fight2};
+    int mAttackTime = 0;
+
+    stdptr<eBuilding> mAttackBuilding;
+
+    int mWaitRemaining = 0;
+    int mPatrolRemaining = 0;
+
+    void enterWait();
+    void rebuildWait();
+    void enterMonsterPatrol();
+    void rebuildMonsterPatrol();
 };
 
 class eGoToTargetTryAgain : public eFindFailFunc {
@@ -98,9 +122,12 @@ public:
         mTptr(ca), mBptr(b) {}
 
     void call() override {
-        if(!mTptr) return;
+        const stdptr<eMonsterAction> t = mTptr;
+        if(!t) return;
         const auto b = mBptr;
-        mTptr->resumeAction(); // can delete instance
+        t->finishBuildingAttack();
+        t->resumeAction(); // can delete instance
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
         if(!b) return;
         b->collapse();
         eSounds::playCollapseSound();
@@ -133,8 +160,11 @@ public:
         mTptr(ca) {}
 
     void call() override {
-        if(!mTptr) return;
-        mTptr->resumeAction();
+        const stdptr<eMonsterAction> t = mTptr;
+        if(!t) return;
+        t->finishAttack();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
     void read(eReadStream& src) override {

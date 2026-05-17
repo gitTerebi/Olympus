@@ -5,6 +5,10 @@
 
 class eSaveArchive;
 
+enum class eSettlerActionStage {
+    idle, findingHouse, goingBack, leaving
+};
+
 class eSettlerAction : public eActionWithComeback {
     friend class eSA_findHouseFail;
     friend class eSA_findHouseFinish;
@@ -14,23 +18,21 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setNumberPeople(const int p);
     void setInitialWait(const int w);
     int nPeople() const { return mNPeople; }
 protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
     void findHouse();
     void goBack2();
     void leave();
     bool enterHouse();
-private:
-    void serialize(eSaveArchive& ar);
 
     int mNPeople = 0;
     int mInitialWait = 0;
     bool mNoHouses = false;
+    eSettlerActionStage mStage = eSettlerActionStage::idle;
 };
 
 class eSA_findHouseFail : public eCharActFunc {

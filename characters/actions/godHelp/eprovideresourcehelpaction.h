@@ -5,7 +5,7 @@
 #include "fileIO/esavearchive.h"
 
 enum class eProvideResourceHelpStage {
-    none, appear, goTo, give, disappear
+    none, appear, goTo, give, giving, disappear
 };
 
 class eSaveArchive;
@@ -19,25 +19,28 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void decCount(const int by);
 
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board,
                             const eResourceType res,
                             const int minSpace);
-private:
-    void serialize(eSaveArchive& ar);
 
+    void rebuildCurrentStage();
+    void finishGiving();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
+private:
     void goToTarget();
     void give();
+    void spawnGiveMissile();
 
     eProvideResourceHelpStage mStage{eProvideResourceHelpStage::none};
     stdptr<eStorageBuilding> mTarget;
     eResourceType mResource = eResourceType::wheat;
     int mCount = 32;
+    eProvideResourceHelpStage mPreGivingStage{eProvideResourceHelpStage::none};
 };
 
 class eGodProvideResourceAct : public eGodAct {
@@ -96,6 +99,35 @@ private:
     stdptr<eStorageBuilding> mTarget;
     eResourceType mResource;
     int mCount;
+};
+
+class ePRHA_giveFinish : public eCharActFunc {
+public:
+    ePRHA_giveFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::PRHA_giveFinish) {}
+    ePRHA_giveFinish(eGameBoard& board, eProvideResourceHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::PRHA_giveFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eProvideResourceHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishGiving();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eProvideResourceHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eProvideResourceHelpAction> mTptr;
 };
 
 #endif // EPROVIDERESOURCEHELPACTION_H

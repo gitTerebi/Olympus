@@ -67,27 +67,9 @@ bool eDefendCityAction::decide() {
     return true;
 }
 
-void eDefendCityAction::read(eReadStream& src) {
-    eDefendAttackCityAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eDefendCityAction::write(eWriteStream& dst) const {
-    eDefendAttackCityAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDefendCityAction*>(this)->serialize(ar);
-}
-
-void eDefendCityAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = eDefendCityAction::board();
-        ar.readStream().readGameEvent(&board, [this](eGameEvent* const e) {
-            mEvent = static_cast<eInvasionEvent*>(e);
-        });
-    } else {
-        ar.writeStream().writeGameEvent(mEvent);
-    }
+void eDefendCityAction::serializeFields(eSaveArchive& ar) {
+    eDefendAttackCityAction::serializeFields(ar);
+    ar.gameEventField("event", &board(), mEvent);
 }
 
 void eDefendCityAction::goToTarget() {

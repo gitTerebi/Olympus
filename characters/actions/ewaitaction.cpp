@@ -15,18 +15,7 @@ void eWaitAction::increment(const int by) {
     }
 }
 
-void eWaitAction::read(eReadStream& src) {
-    eCharacterAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eWaitAction::write(eWriteStream& dst) const {
-    eCharacterAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eWaitAction*>(this)->serialize(ar);
-}
-
-void eWaitAction::serialize(eSaveArchive& ar) {
-    ar.field("mRemTime", mRemTime);
+void eWaitAction::serializeFields(eSaveArchive& ar) {
+    eCharacterAction::serializeFields(ar);
+    ar.field("remTime", mRemTime);
 }

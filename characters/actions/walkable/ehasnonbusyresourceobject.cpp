@@ -26,9 +26,5 @@ void eHasNonBusyResourceObject::write(eWriteStream& dst) const {
 }
 
 void eHasNonBusyResourceObject::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        mOther = ar.readStream().readHasResource();
-    } else {
-        ar.writeStream().writeHasResource(mOther.get());
-    }
+    ar.hasResourceField("other", mOther);
 }

@@ -1129,8 +1129,7 @@ void eCharacterTextures::loadGrower() {
         loader.loadSkipFlipped(5505, 5505, 5601, fGrower.fWalk);
         loader.loadSkipFlipped(5505, 5609, 5689, fGrower.fWorkOnGrapes);
         loader.loadSkipFlipped(5505, 5689, 5769, fGrower.fWorkOnOlives);
-        loader.loadSkipFlipped(5505, 5609, 5689, fGrower.fCollectGrapes);
-        loader.loadSkipFlipped(5505, 5769, 5849, fGrower.fCarry);
+        loader.loadSkipFlipped(5505, 5769, 5849, fGrower.fCollectGrapes);
         loader.loadSkipFlipped(5505, 5849, 5929, fGrower.fCollectOlives);
 
         for(int i = 5601; i < 5609; i++) {

@@ -46,29 +46,25 @@ void eTakeCattleAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eTakeCattleAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eTakeCattleAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.buildingAsField("corral", &board(), mCorral);
+    ar.field("noCattle", mNoCattle);
 }
 
-void eTakeCattleAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTakeCattleAction*>(this)->serialize(ar);
-}
-
-void eTakeCattleAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    if(ar.reading()) {
-        auto& board = this->board();
-        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
-            mCorral = static_cast<eCorral*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mCorral);
+void eTakeCattleAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eTakeCattleActionStage::none:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case eTakeCattleActionStage::get:
+        goGetCattle();
+        break;
+    case eTakeCattleActionStage::goBack:
+        goBack(eWalkableObject::sCreateDefault());
+        break;
     }
-    ar.field("mNoCattle", mNoCattle);
 }
 
 bool hasCattle(eTileBase* const tile, const eCharacterType t) {

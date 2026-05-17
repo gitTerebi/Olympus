@@ -26,31 +26,30 @@ bool eSickDisgruntledAction::decide() {
     return true;
 }
 
-void eSickDisgruntledAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eSickDisgruntledAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.buildingAsField("building", &board(), mBuilding);
+    ar.field("goBackNext", mGoBackNext);
+    ar.field("sickDisgruntledStage", mStage);
 }
 
-void eSickDisgruntledAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSickDisgruntledAction*>(this)->serialize(ar);
-}
-
-void eSickDisgruntledAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = static_cast<eSmallHouse*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mBuilding);
+void eSickDisgruntledAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eSickDisgruntledActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case eSickDisgruntledActionStage::patrolling:
+        patrol();
+        break;
+    case eSickDisgruntledActionStage::goingBack:
+        goBackDecision();
+        break;
     }
-    ar.field("mGoBackNext", mGoBackNext);
 }
 
 void eSickDisgruntledAction::patrol() {
     const auto c = character();
+    mStage = eSickDisgruntledActionStage::patrolling;
     if(!c) return;
     const auto t = c->tile();
     if(!t) return;
@@ -77,5 +76,6 @@ void eSickDisgruntledAction::patrol() {
 }
 
 void eSickDisgruntledAction::goBackDecision(const stdsptr<eWalkableObject>& w) {
+    mStage = eSickDisgruntledActionStage::goingBack;
     goBack(mBuilding, w);
 }

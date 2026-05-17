@@ -22,6 +22,10 @@ enum class eTileActionType {
     blackMasonry
 };
 
+enum class eCollectResourceActionStage {
+    idle, findingResource, collecting, goingBack, waiting
+};
+
 class eCollectResourceAction : public eActionWithComeback {
 public:
     eCollectResourceAction(eResourceCollectBuildingBase* const b,
@@ -42,15 +46,15 @@ public:
     void setWaitTime(const int w) { mWaitTime = w; }
 
     void setDisabled(const bool d) { mDisabled = d; }
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void finishCollecting(eTile* const tile);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
     bool findResourceDecision();
     bool collect(eTile* const tile);
     void goBackDecision();
     void waitDecision();
-    void serialize(eSaveArchive& ar);
 
     stdsptr<eHasResourceObject> mHasResource;
     eResourceCollectBuildingBase* mBuilding = nullptr;
@@ -68,6 +72,8 @@ private:
     bool mGetAtTile = true;
 
     bool mNoTarget = false;
+    eCollectResourceActionStage mStage = eCollectResourceActionStage::idle;
+    eTile* mTargetTile = nullptr;
 };
 
 class eCRA_collectFinish : public eCharActFunc {
@@ -82,10 +88,12 @@ public:
 
     void call() override {
         if(!mTile) return;
-        mTile->setBusy(false);
-        if(!mPtr) return;
-        const auto t = mPtr.get();
-        t->callCollectedAction(mTile);
+        if(mPtr) {
+            const auto t = mPtr.get();
+            t->finishCollecting(mTile);
+        } else {
+            mTile->setBusy(false);
+        }
     }
 
     void read(eReadStream& src) override {

@@ -8,7 +8,7 @@
 class eSaveArchive;
 
 enum class eHeraHelpStage {
-    none, appear, goTo, give, disappear
+    none, appear, goTo, give, giving, disappear
 };
 
 class eHeraHelpAction : public eGodAction {
@@ -17,20 +17,55 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void goToTarget();
     void give();
+    void spawnGiveMissile(eAgoraBase* const target);
 
     eHeraHelpStage mStage{eHeraHelpStage::none};
     stdptr<eAgoraBase> mTarget;
     std::vector<stdptr<eAgoraBase>> mFutureTargets;
+    eHeraHelpStage mPreGivingStage{eHeraHelpStage::none};
+    stdptr<eAgoraBase> mGiveTarget;
+
+public:
+    void rebuildCurrentStage();
+    void finishGiving();
+protected:
+    void resumeFromSavedState() override;
+};
+
+class eHrHA_giveFinish : public eCharActFunc {
+public:
+    eHrHA_giveFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::HrHA_giveFinish) {}
+    eHrHA_giveFinish(eGameBoard& board, eHeraHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::HrHA_giveFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eHeraHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishGiving();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eHeraHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eHeraHelpAction> mTptr;
 };
 
 class eGodProvideAgoraAct : public eGodAct {

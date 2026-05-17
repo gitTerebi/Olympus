@@ -8,6 +8,10 @@
 
 class eSaveArchive;
 
+enum class eFireFighterActionStage {
+    idle, lookingForFire, puttingOutFire
+};
+
 class eFireFighterAction : public ePatrolAction {
     friend class eFFA_lookForFireFail;
 public:
@@ -19,11 +23,10 @@ public:
 
     bool decide() override;
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
     bool lookForFire(const bool second);
     void putOutFire(eTile* const tile);
 
@@ -31,6 +34,8 @@ private:
     int mFireCheck{0};
 
     int mUsedWater = 0;
+    eFireFighterActionStage mStage = eFireFighterActionStage::idle;
+    eTile* mFireTile = nullptr;
 };
 
 class eFFA_lookForFireFail : public eCharActFunc {

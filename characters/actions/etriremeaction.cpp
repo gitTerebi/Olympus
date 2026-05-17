@@ -23,31 +23,33 @@ void eTriremeAction::increment(const int by) {
     eComplexAction::increment(by);
 }
 
-void eTriremeAction::read(eReadStream& src) {
-    eFightingAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eTriremeAction::serializeFields(eSaveArchive& ar) {
+    eFightingAction::serializeFields(ar);
+    ar.buildingAsField("home", &board(), mHome);
+    ar.field("stage", mStage);
+    ar.field("leavingNotified", mLeavingNotified);
 }
 
-void eTriremeAction::write(eWriteStream& dst) const {
-    eFightingAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTriremeAction*>(this)->serialize(ar);
-}
-
-void eTriremeAction::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = eTriremeAction::board();
-        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
-            mHome = static_cast<eTriremeWharf*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mHome);
+void eTriremeAction::resumeFromSavedState() {
+    if(isAttacking()) {
+        eFightingAction::resumeFromSavedState();
+        return;
+    }
+    switch(mStage) {
+    case eTriremeActionStage::idle:
+        break;
+    case eTriremeActionStage::home:
+        goHome();
+        break;
+    case eTriremeActionStage::abroad:
+        goAbroad();
+        break;
     }
 }
 
 void eTriremeAction::goHome() {
     const auto c = character();
+    mStage = eTriremeActionStage::home;
 
     const auto tile = mHome->triremeTile();
     const stdptr<eCharacter> cptr(c);
@@ -68,12 +70,22 @@ eTile* eTriremeAction::exitPoint() const {
     return board.riverExitPoint(cid);
 }
 
-void eTriremeAction::goAbroad() {
+void eTriremeAction::markLeaving() {
+    if(mLeavingNotified || !mHome) return;
     const auto c = character();
     auto& board = eFightingAction::board();
     const auto trireme = static_cast<eTrireme*>(c);
     board.deselectTrireme(trireme);
     mHome->triremeLeaving();
+    mLeavingNotified = true;
+}
+
+void eTriremeAction::goAbroad() {
+    const auto c = character();
+    auto& board = eFightingAction::board();
+    const auto trireme = static_cast<eTrireme*>(c);
+    mStage = eTriremeActionStage::abroad;
+    markLeaving();
     const stdptr<eTrireme> cptr(trireme);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
         board, trireme);

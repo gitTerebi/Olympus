@@ -26,6 +26,13 @@ bool eHeraHelpAction::decide() {
     case eHeraHelpStage::give:
         goToTarget();
         break;
+    case eHeraHelpStage::giving:
+        if(!mGiveTarget) {
+            finishGiving();
+            return decide();
+        }
+        spawnGiveMissile(mGiveTarget.get());
+        break;
     case eHeraHelpStage::disappear:
         const auto c = character();
         c->kill();
@@ -34,30 +41,55 @@ bool eHeraHelpAction::decide() {
     return true;
 }
 
-void eHeraHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHeraHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHeraHelpAction*>(this)->serialize(ar);
-}
-
-void eHeraHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eAgoraBase*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mTarget);
-    }
-    ar.arrayField("futureTargets", mFutureTargets, [this](eSaveArchive& ar, auto& target) {
-        ar.buildingAs(&board(), target);
+void eHeraHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
+    ar.buildingAsField("target", &board(), mTarget);
+    ar.arrayField("futureTargets", mFutureTargets,
+                  [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
+        itemAr.buildingAsField("agora", &board(), target);
     });
+    ar.field("preGivingStage", mPreGivingStage);
+    ar.buildingAsField("giveTarget", &board(), mGiveTarget);
+}
+
+void eHeraHelpAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eHeraHelpAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eHeraHelpStage::giving:
+        if(!mGiveTarget) {
+            finishGiving();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        decide();
+        return;
+    case eHeraHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        return;
+    case eHeraHelpStage::appear:
+        appear();
+        return;
+    case eHeraHelpStage::goTo:
+        goToTarget();
+        return;
+    case eHeraHelpStage::give:
+        decide();
+        return;
+    case eHeraHelpStage::disappear:
+        disappear();
+        return;
+    }
+}
+
+void eHeraHelpAction::finishGiving() {
+    mStage = mPreGivingStage;
+    mPreGivingStage = eHeraHelpStage::none;
+    mGiveTarget = nullptr;
 }
 
 bool eHeraHelpAction::sHelpNeeded(const eCityId cid,
@@ -94,19 +126,22 @@ void eHeraHelpAction::goToTarget() {
 
 void eHeraHelpAction::give() {
     if(!mTarget) return;
-    const auto c = character();
-    const auto targetTile = mTarget->centerTile();
-    using eGA_LFRAF = eGA_lookForRangeActionFinish;
-    const auto finishAttackA =
-            std::make_shared<eGA_LFRAF>(
-                board(), this);
-    using eGPAA = eGodProvideAgoraAct;
-    const auto act = std::make_shared<eGPAA>(
-                board(), mTarget);
+    mPreGivingStage = mStage;
+    mStage = eHeraHelpStage::giving;
+    mGiveTarget = mTarget;
+    mTarget = nullptr;
     pauseAction();
+    spawnGiveMissile(mGiveTarget.get());
+}
+
+void eHeraHelpAction::spawnGiveMissile(eAgoraBase* const target) {
+    const auto c = character();
+    const auto targetTile = target->centerTile();
+    const auto finishCb = std::make_shared<eHrHA_giveFinish>(board(), this);
+    using eGPAA = eGodProvideAgoraAct;
+    const auto act = std::make_shared<eGPAA>(board(), target);
     spawnGodMissile(eCharacterActionType::bless,
                     c->type(), targetTile,
                     eGodSound::santcify, act,
-                    finishAttackA);
-    mTarget = nullptr;
+                    finishCb);
 }

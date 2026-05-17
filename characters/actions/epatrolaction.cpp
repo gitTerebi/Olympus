@@ -32,39 +32,34 @@ bool ePatrolAction::decide() {
     return true;
 }
 
-void ePatrolAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePatrolAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePatrolAction*>(this)->serialize(ar);
-}
-
-void ePatrolAction::serialize(eSaveArchive& ar) {
-    ar.arrayField("path", mPath, [](eSaveArchive& ar, eOrientation& o) {
-        ar.field("o", o);
+void ePatrolAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.arrayField("path", mPath, [](eSaveArchive& itemAr, eOrientation& o) {
+        itemAr.field("orientation", o);
     });
-    if(ar.reading()) {
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = static_cast<ePatrolBuildingBase*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mBuilding);
-    }
-    ar.field("mDone", mDone);
-    if(ar.reading()) {
-        mDirTimes = ar.readStream().readDirectionTimes(board());
-    } else {
-        ar.writeStream().writeDirectionTimes(mDirTimes.get());
+    ar.buildingAsField("building", &board(), mBuilding);
+    ar.field("done", mDone);
+    ar.directionTimesField("dirTimes", board(), mDirTimes);
+    ar.field("patrolStage", mStage);
+}
+
+void ePatrolAction::resumeFromSavedState() {
+    switch(mStage) {
+    case ePatrolActionStage::idle:
+        eActionWithComeback::resumeFromSavedState();
+        break;
+    case ePatrolActionStage::patrolling:
+        patrol();
+        break;
+    case ePatrolActionStage::goingBack:
+        goBackDecision();
+        break;
     }
 }
 
 void ePatrolAction::patrol() {
     const auto c = character();
+    mStage = ePatrolActionStage::patrolling;
     c->setActionType(eCharacterActionType::walk);
     const auto failFunc = std::make_shared<ePA_patrolFail>(
                               board(), this);
@@ -91,5 +86,6 @@ void ePatrolAction::patrol() {
 }
 
 void ePatrolAction::goBackDecision(const stdsptr<eWalkableObject>& w) {
+    mStage = ePatrolActionStage::goingBack;
     goBack(mBuilding, w);
 }

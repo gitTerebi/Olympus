@@ -18,44 +18,55 @@ eAnimalAction::eAnimalAction(eCharacter* const c) :
     eAnimalAction(c, 0, 0) {}
 
 bool eAnimalAction::decide() {
-    const auto c = character();
     if(eRand::rand() % 2 == 0) {
-        c->setActionType(eCharacterActionType::walk);
-        const auto m = e::make_shared<eMoveAroundAction>(
-                           c, mSpawnerX, mSpawnerY,
-                           mTileWalkable);
-        m->setMaxDistance(eNumbers::sAnimalMoveRange);
-        m->setTime(mWalkTime);
-        setCurrentAction(m);
+        walkAround();
     } else {
-        c->setActionType(eCharacterActionType::lay);
-        const auto w = e::make_shared<eWaitAction>(c);
-        w->setTime(mLayTime);
-        setCurrentAction(w);
+        lay();
     }
     return true;
 }
 
-void eAnimalAction::read(eReadStream& src) {
-    eComplexAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eAnimalAction::serializeFields(eSaveArchive& ar) {
+    eComplexAction::serializeFields(ar);
+    ar.field("spawnerX", mSpawnerX);
+    ar.field("spawnerY", mSpawnerY);
+    ar.walkableField("tileWalkable", mTileWalkable);
+    ar.field("layTime", mLayTime);
+    ar.field("walkTime", mWalkTime);
+    ar.field("animalStage", mStage);
 }
 
-void eAnimalAction::write(eWriteStream& dst) const {
-    eComplexAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAnimalAction*>(this)->serialize(ar);
-}
-
-void eAnimalAction::serialize(eSaveArchive& ar) {
-    ar.field("mSpawnerX", mSpawnerX);
-    ar.field("mSpawnerY", mSpawnerY);
-    if(ar.reading()) {
-        mTileWalkable = ar.readStream().readWalkable();
-    } else {
-        ar.writeStream().writeWalkable(mTileWalkable.get());
+void eAnimalAction::resumeFromSavedState() {
+    switch(mStage) {
+    case eAnimalActionStage::idle:
+        eComplexAction::resumeFromSavedState();
+        break;
+    case eAnimalActionStage::walking:
+        walkAround();
+        break;
+    case eAnimalActionStage::laying:
+        lay();
+        break;
     }
-    ar.field("mLayTime", mLayTime);
-    ar.field("mWalkTime", mWalkTime);
+}
+
+void eAnimalAction::walkAround() {
+    mStage = eAnimalActionStage::walking;
+    const auto c = character();
+    c->setActionType(eCharacterActionType::walk);
+    const auto m = e::make_shared<eMoveAroundAction>(
+                       c, mSpawnerX, mSpawnerY,
+                       mTileWalkable);
+    m->setMaxDistance(eNumbers::sAnimalMoveRange);
+    m->setTime(mWalkTime);
+    setCurrentAction(m);
+}
+
+void eAnimalAction::lay() {
+    mStage = eAnimalActionStage::laying;
+    const auto c = character();
+    c->setActionType(eCharacterActionType::lay);
+    const auto w = e::make_shared<eWaitAction>(c);
+    w->setTime(mLayTime);
+    setCurrentAction(w);
 }

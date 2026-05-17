@@ -12,11 +12,10 @@ public:
                  eCharacter* const o = nullptr);
 
     void increment(const int by) override;
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
 
     stdptr<eCharacter> mOpponent;
 

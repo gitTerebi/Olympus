@@ -18,9 +18,6 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setTradePost(eTradePost* const tp);
     void setUnpackBuilding(eBuilding* const b);
 
@@ -28,11 +25,12 @@ public:
 
     const std::map<eResourceType, int>& bought() const { return mBought; }
     const std::map<eResourceType, int>& sold() const { return mSold; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     void goToTradePost();
     void trade();
     void tradeIncrement();
-    void serialize(eSaveArchive& ar);
 
     stdsptr<eWalkableObject> mWalkable =
             eWalkableObject::sCreateDefault();

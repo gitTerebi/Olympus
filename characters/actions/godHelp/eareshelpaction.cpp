@@ -31,20 +31,24 @@ bool eAresHelpAction::sHelpNeeded(const ePlayerId pid,
     return !cs.empty();
 }
 
-void eAresHelpAction::read(eReadStream& src) {
-    eGodAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eAresHelpAction::serializeFields(eSaveArchive& ar) {
+    eGodAction::serializeFields(ar);
+    ar.field("stage", mStage);
 }
 
-void eAresHelpAction::write(eWriteStream& dst) const {
-    eGodAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAresHelpAction*>(this)->serialize(ar);
-}
-
-void eAresHelpAction::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
+void eAresHelpAction::resumeFromSavedState() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eAresHelpStage::none:
+        eGodAction::resumeFromSavedState();
+        break;
+    case eAresHelpStage::appear:
+        appear();
+        break;
+    case eAresHelpStage::go:
+        goToTarget();
+        break;
+    }
 }
 
 void eAresHelpAction::goToTarget() {

@@ -4,7 +4,7 @@
 #include "characters/gods/actions/egodaction.h"
 
 enum class eAtlasHelpStage {
-    none, appear, goTo, give, disappear
+    none, appear, goTo, give, giving, disappear
 };
 
 class eSaveArchive;
@@ -15,19 +15,51 @@ public:
 
     bool decide() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static bool sHelpNeeded(const eCityId cid,
                             const eGameBoard& board);
-private:
-    void serialize(eSaveArchive& ar);
 
+    void rebuildCurrentStage();
+    void finishGiving();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
+private:
     void goToTarget();
     void give();
+    void spawnGiveMissile(eMonument* const target);
 
     eAtlasHelpStage mStage{eAtlasHelpStage::none};
     stdptr<eMonument> mTarget;
+    eAtlasHelpStage mPreGivingStage{eAtlasHelpStage::none};
+};
+
+class eAtHA_giveFinish : public eCharActFunc {
+public:
+    eAtHA_giveFinish(eGameBoard& board) :
+        eCharActFunc(board, eCharActFuncType::AtHA_giveFinish) {}
+    eAtHA_giveFinish(eGameBoard& board, eAtlasHelpAction* const ca) :
+        eCharActFunc(board, eCharActFuncType::AtHA_giveFinish),
+        mTptr(ca) {}
+
+    void call() override {
+        const stdptr<eAtlasHelpAction> t = mTptr;
+        if(!t) return;
+        t->finishGiving();
+        t->resumeAction();
+        if(t && !t->currentAction()) t->rebuildCurrentStage();
+    }
+
+    void read(eReadStream& src) override {
+        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
+            mTptr = static_cast<eAtlasHelpAction*>(ca);
+        });
+    }
+
+    void write(eWriteStream& dst) const override {
+        dst.writeCharacterAction(mTptr);
+    }
+private:
+    stdptr<eAtlasHelpAction> mTptr;
 };
 
 class eAtlasHelpAct : public eGodAct {

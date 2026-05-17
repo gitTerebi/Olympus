@@ -25,7 +25,6 @@ public:
     double absY() const;
 
     void serialize(eSaveArchive& ar, eGameBoard& board);
-    void readLegacy(eGameBoard& board, eReadStream& src);
 private:
     stdptr<eCharacter> mC;
     stdptr<eBuilding> mB;
@@ -33,6 +32,10 @@ private:
 
 enum class eLookForEnemyState {
     dead, attacking, none
+};
+
+enum class eFightingSavedMove {
+    none, goTo, waitGoHome
 };
 
 class eFightingAction : public eComplexAction {
@@ -48,9 +51,6 @@ public:
                                    eGameBoard& brd);
 
     eLookForEnemyState lookForEnemy(const int by);
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 
     using eAction = std::function<void()>;
     void goTo(const int fx, const int fy,
@@ -69,11 +69,13 @@ public:
     { mOverwrittableAction = o; }
 protected:
     bool isAttacking() const { return mAttack; }
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
-    void serialize(eSaveArchive& ar);
-
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     bool attackBuilding(eTile* const t, const bool range);
+    void rebuildSavedRuntime();
+    bool atSavedMoveTarget() const;
 
     double mAngle{0.};
 
@@ -88,6 +90,11 @@ private:
     bool mAttack = false;
     bool mOverwrittableAction = false;
     eAttackTarget mAttackTarget;
+    eFightingSavedMove mSavedMove = eFightingSavedMove::none;
+    int mSavedMoveX = 0;
+    int mSavedMoveY = 0;
+    int mSavedMoveDistance = 0;
+    int mWaitGoHomeRemaining = 0;
 };
 
 class eSA_goToFinish : public eCharActFunc {

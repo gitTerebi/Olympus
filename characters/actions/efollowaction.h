@@ -23,14 +23,11 @@ public:
 
     void catchUp();
     void setDistance(const int d);
-
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
     void increment(const int by) override;
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
-    void serialize(eSaveArchive& ar);
 
     stdptr<eCharacter> mFollow;
 

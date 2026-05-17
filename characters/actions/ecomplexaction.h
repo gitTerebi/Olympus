@@ -13,16 +13,14 @@ public:
 
     void increment(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eCharacterAction* currentAction() const { return mCurrentAction.get(); }
     const stdsptr<eCharacterAction>& currentActionPtr() const { return mCurrentAction; }
     void setCurrentAction(const stdsptr<eCharacterAction>& a);
 protected:
     void wait(const int t);
     void wait();
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 
 private:
     stdsptr<eCharacterAction> mCurrentAction;

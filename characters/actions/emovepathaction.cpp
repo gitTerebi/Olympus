@@ -28,22 +28,11 @@ eCharacterActionState eMovePathAction::nextTurn(eOrientation& turn) {
     return eCharacterActionState::running;
 }
 
-void eMovePathAction::read(eReadStream& src) {
-    eMoveAction::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eMovePathAction::write(eWriteStream& dst) const {
-    eMoveAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMovePathAction*>(this)->serialize(ar);
-}
-
-void eMovePathAction::serialize(eSaveArchive& ar) {
-    ar.arrayField("turns", mTurns, [](eSaveArchive& ar, eOrientation& o) {
-        ar.field("o", o);
+void eMovePathAction::serializeFields(eSaveArchive& ar) {
+    eMoveAction::serializeFields(ar);
+    ar.arrayField("turns", mTurns, [](eSaveArchive& itemAr, eOrientation& o) {
+        itemAr.field("orientation", o);
     });
-    ar.field("mMaxDistance", mMaxDistance);
-    ar.field("mWalkedDistance", mWalkedDistance);
+    ar.field("maxDistance", mMaxDistance);
+    ar.field("walkedDistance", mWalkedDistance);
 }
