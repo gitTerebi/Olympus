@@ -387,7 +387,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             c->setActionType(eCharacterActionType::walk);
             onFoundTarget();
         });
-        a->setFindFailAction([tptr, this, c, preferGranary, tasks, avoidedPtr]() {
+        a->setFindFailAction([tptr, this, preferGranary, tasks, avoidedPtr]() {
             if(!tptr) return;
             if(*preferGranary) {
                 // No granary found — retry without granary restriction
@@ -401,10 +401,18 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         if(const auto cart = dynamic_cast<eCartTransporter*>(c)) {
             a->setMaxFindDistance(cart->maxDistance());
         }
-        // pick walkable per dominant task: GET widens to offroad, otherwise road.
+        // GET carts may cross land, but roads stay cheapest.
         eCartActionType scanType = eCartActionType::deliver;
         for(const auto& tk : tasks) {
             if(tk.fType == eCartActionType::get) { scanType = eCartActionType::get; break; }
+        }
+        if(scanType == eCartActionType::get) {
+            a->setTileDistance([](eTileBase* const tile) {
+                const auto type = tile->underBuildingType();
+                if(type == eBuildingType::road ||
+                   type == eBuildingType::avenue) return 1;
+                return 64;
+            });
         }
         const auto w = getWalkableForTask(true, scanType);
         setCurrentAction(a);
@@ -614,7 +622,7 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkableForTask(
         bool excludeHomeRect, eCartActionType taskType) const {
     if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
     const auto supp = support();
-    // storage-yard rule: GET = offroad, DELIVER/EMPTY = road
+    // storage-yard rule: GET fallback = open ground, DELIVER/EMPTY = road
     const bool isStorageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
     if(isStorageHome && taskType != eCartActionType::get) {
         const auto buildingRect = mBuilding->tileRect();
@@ -637,7 +645,7 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkableForTask(
             w = eWalkableObject::sCreateRect(buildingRect, w);
             return w;
         }
-        auto w = eWalkableObject::sCreateAll();
+        auto w = eWalkableObject::sCreateDefault();
         w = eWalkableObject::sCreateRect(buildingRect, w);
         if(type == eBuildingType::horseRanch) {
             const auto hr = static_cast<eHorseRanch*>(mBuilding.get());
