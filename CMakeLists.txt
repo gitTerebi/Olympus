@@ -172,6 +172,7 @@ set(SOURCES
     characters/actions/ecarttransporteraction.cpp
     characters/actions/deliver-cart-action.cpp
     characters/actions/get-cart-action.cpp
+    characters/actions/storage-delivery-cart.cpp
     characters/actions/vendor-cart-action.cpp
     characters/actions/echaracteraction.cpp
     characters/actions/echaracteractioncreator.cpp
@@ -845,4 +846,3 @@ if(UNIX)
     )
     target_compile_options(eZeus PRIVATE -m64 -O3)
 endif()
-

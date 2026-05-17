@@ -2,6 +2,7 @@
 
 #include "../echaracter.h"
 #include "buildings/ebuildingwithresource.h"
+#include "buildings/estoragebuilding.h"
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/evendor.h"
@@ -112,14 +113,34 @@ bool eCartTransporterAction::decide() {
                     c->take(rt, leftover);
                 }
             }
-            // deliver cart came home with leftover — try again
+            // deliver cart came home with leftover — re-try only if a real
+            // deliver target exists; else dump back to home to break loop.
             if(c->hasResource() && (support() & eCartActionTypeSupport::deliver)) {
-                eCartTask task;
-                task.fMaxCount = c->resCount();
-                task.fResource = c->resType();
-                task.fType = eCartActionType::deliver;
-                enterMovingToTarget(task);
-                break;
+                const auto tks = mBuilding->cartTasks();
+                bool hasDeliver = false;
+                for(const auto& t : tks) {
+                    if(t.fType == eCartActionType::deliver && t.fMaxCount > 0) {
+                        hasDeliver = true; break;
+                    }
+                }
+                if(hasDeliver) {
+                    eCartTask task;
+                    task.fMaxCount = c->resCount();
+                    task.fResource = c->resType();
+                    task.fType = eCartActionType::deliver;
+                    enterMovingToTarget(task);
+                    break;
+                }
+                // no deliver targets — dump back to yard
+                const auto rt = c->resType();
+                const int n = c->resCount();
+                const int added = mBuilding->add(rt, n);
+                c->take(rt, added);
+                const int leftover = c->resCount();
+                if(leftover > 0) {
+                    mBuilding->stash(rt, leftover);
+                    c->take(rt, leftover);
+                }
             }
         }
         if(mTask.fMaxCount > 0) {
@@ -193,6 +214,12 @@ eResourceType eCartTransporterAction::supportsResource() const {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     return ct->supportsResource();
+}
+
+int eCartTransporterAction::cartCapacity(const eResourceType res) const {
+    if(!mBuilding) return eResourceTypeHelpers::transportSize(
+        res, board().doubleCartCapacity());
+    return mBuilding->cartCapacity(res, board().doubleCartCapacity());
 }
 
 void eCartTransporterAction::findTarget() {
@@ -300,6 +327,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         for(const auto& task : tasks) {
             const auto res = task.fResource;
             bool found = false;
+            if(!acceptsTargetForTask(task, ub)) continue;
 
             if(task.fType == eCartActionType::get) {
                 const auto city = board().boardCityWithId(t->cityId());
@@ -312,9 +340,18 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
 
             if(found) {
                 // 2.6 Calculate transferable amount
+                int space = ub.resourceSpaceLeft(res);
+                if(task.fType == eCartActionType::deliver) {
+                    // subtract stock other yard carts already heading here
+                    const auto realB = board().buildingAt(t->x(), t->y());
+                    const int reserved = eStorageBuilding::incomingReservedFor(
+                        realB, res, board(), t->cityId());
+                    space -= reserved;
+                    if(space <= 0) continue;
+                }
                 int mc = (task.fType == eCartActionType::get) ?
                     std::min(ub.resourceCount(res), task.fMaxCount) :
-                    std::min(ub.resourceSpaceLeft(res), task.fMaxCount);
+                    std::min(space, task.fMaxCount);
                 if(mc <= 0) continue;
 
                 // 2.7 Valid target found
@@ -364,7 +401,12 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         if(const auto cart = dynamic_cast<eCartTransporter*>(c)) {
             a->setMaxFindDistance(cart->maxDistance());
         }
-        const auto w = getWalkable(true);
+        // pick walkable per dominant task: GET widens to offroad, otherwise road.
+        eCartActionType scanType = eCartActionType::deliver;
+        for(const auto& tk : tasks) {
+            if(tk.fType == eCartActionType::get) { scanType = eCartActionType::get; break; }
+        }
+        const auto w = getWalkableForTask(true, scanType);
         setCurrentAction(a);
         a->start(finalTile, w);
     };
@@ -474,7 +516,7 @@ void eCartTransporterAction::startResourceAction(const eCartTask& task) {
         return;
     } else { // deliver — top-up to capacity
         if(c->resCount() > 0 && c->resType() != task.fResource) return;
-        const int max = eResourceTypeHelpers::transportSize(task.fResource, board().doubleCartCapacity());
+        const int max = cartCapacity(task.fResource);
         const int space = max - c->resCount();
         if(space <= 0) return;
         const int toTake = std::min(space, task.fMaxCount);
@@ -499,6 +541,17 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
     } else { //give
         return;
     }
+}
+
+bool eCartTransporterAction::acceptsTargetForTask(
+        const eCartTask& task,
+        const eThreadBuilding& target) const {
+    const bool storageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
+    if(storageHome &&
+       (task.fType == eCartActionType::deliver ||
+        task.fType == eCartActionType::get) &&
+       target.type() == eBuildingType::tradePost) return false;
+    return true;
 }
 
 void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
@@ -557,9 +610,18 @@ bool eCartTransporterAction::savesCartState() const {
     return true;
 }
 
-stdsptr<eWalkableObject> eCartTransporterAction::getWalkable(bool excludeHomeRect) const {
+stdsptr<eWalkableObject> eCartTransporterAction::getWalkableForTask(
+        bool excludeHomeRect, eCartActionType taskType) const {
     if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
     const auto supp = support();
+    // storage-yard rule: GET = offroad, DELIVER/EMPTY = road
+    const bool isStorageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
+    if(isStorageHome && taskType != eCartActionType::get) {
+        const auto buildingRect = mBuilding->tileRect();
+        auto w = eWalkableObject::sCreateRoadAvenue();
+        if(!excludeHomeRect) w = eWalkableObject::sCreateRect(buildingRect, w);
+        return w;
+    }
     if(supp & eCartActionTypeSupport::get) {
         const auto buildingRect = mBuilding->tileRect();
         const auto type = mBuilding->type();
@@ -589,6 +651,10 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkable(bool excludeHomeRec
     auto w = eWalkableObject::sCreateRoadAvenue();
     if(!excludeHomeRect) w = eWalkableObject::sCreateRect(buildingRect, w);
     return w;
+}
+
+stdsptr<eWalkableObject> eCartTransporterAction::getWalkable(bool excludeHomeRect) const {
+    return getWalkableForTask(excludeHomeRect, mTask.fType);
 }
 
 void eCartTransporterAction::updateWaiting() {

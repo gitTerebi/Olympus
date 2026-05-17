@@ -77,7 +77,8 @@ enum class eCharActionType {
     wolfAction,
     deliverCartAction,
     getCartAction,
-    vendorCartAction
+    vendorCartAction,
+    storageDeliveryCartAction
 };
 
 class eCharacterAction : public eStdSelfRef {
@@ -106,15 +107,16 @@ public:
             eCharacter* const c,
             const eCharActionType type);
 
-    virtual void read(eReadStream& src);
-    virtual void write(eWriteStream& dst) const;
+    virtual void read(eReadStream& src) final;
+    virtual void write(eWriteStream& dst) const final;
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
     eGameBoard& board() { return mBoard; }
 protected:
-    void serialize(eSaveArchive& ar);
+    virtual void serializeFields(eSaveArchive& ar);
+    virtual void resumeFromSavedState() {}
 
 private:
     eGameBoard& mBoard;

@@ -4,6 +4,7 @@
 #include "eemployingbuilding.h"
 
 class eSaveArchive;
+class eCartTransporter;
 
 class eStorageBuilding : public eEmployingBuilding {
 public:
@@ -31,6 +32,8 @@ public:
     int spaceLeftDontAccept(const eResourceType type) const;
 
     std::vector<eCartTask> cartTasks() const override;
+    bool deliveryTargetExists(const eResourceType res,
+                              const bool allowStorageTargets) const;
 
     static int sCount(const eResourceType type,
                       const int resourceCount[15],
@@ -89,10 +92,24 @@ public:
 
     void prepareForCollapse() override { clearStorage(); }
 
+    eCartTransporter* cart1() const { return mCart1.get(); }
+    eCartTransporter* cart2() const { return mCart2.get(); }
+
+    // sum of res of type `res` already en-route to `target` from any
+    // yard in `cityId` (live; no save state).
+    static int incomingReservedFor(const eBuilding* target,
+                                   eResourceType res,
+                                   const eGameBoard& board,
+                                   eCityId cid);
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
     void serialize(eSaveArchive& ar);
+    stdptr<eCartTransporter> spawnStorageDeliveryCart();
+    std::vector<eCartTask> orderCartTasks() const;
+    std::vector<eCartTask> pushCartTasks() const;
+    bool getTargetExists(const eResourceType res) const;
 
     const eResourceType mCanAccept;
 

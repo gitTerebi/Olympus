@@ -3,6 +3,8 @@
 #include "textures/egametextures.h"
 
 #include "characters/actions/efollowaction.h"
+#include "characters/actions/ecarttransporteraction.h"
+#include "buildings/ebuildingwithresource.h"
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 #include "etrailer.h"
@@ -313,7 +315,12 @@ int eCartTransporter::add(const eResourceType type, const int count) {
     const bool comp = mResourceType == type ||
                       mResourceCount <= 0;
     if(!comp) return 0;
-    const int maxResource = eResourceTypeHelpers::transportSize(type, getBoard().doubleCartCapacity());
+    int maxResource = eResourceTypeHelpers::transportSize(type, getBoard().doubleCartCapacity());
+    // home building may override (storage yards use 4-per-resource rule)
+    const auto act = dynamic_cast<eCartTransporterAction*>(action());
+    if(act) {
+        maxResource = act->cartCapacity(type);
+    }
     const int r = std::clamp(mResourceCount + count, 0, maxResource);
     const int result = r - mResourceCount;
     setResource(type, r);

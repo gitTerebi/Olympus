@@ -259,6 +259,8 @@ public:
 
     void registerStorBuilding(eStorageBuilding* const b);
     bool unregisterStorBuilding(eStorageBuilding* const b);
+    const std::vector<eStorageBuilding*>& storBuildings() const
+    { return mStorBuildings; }
 
     void registerSanctuary(eSanctuary* const b);
     bool unregisterSanctuary(eSanctuary* const b);

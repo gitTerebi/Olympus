@@ -30,13 +30,15 @@ public:
                    const eResourceType exports,
                    const eResourceType empty = eResourceType::none,
                    const eResourceType cartGet = eResourceType::none,
-                   const eResourceType cartAccept = eResourceType::none);
+                   const eResourceType cartAccept = eResourceType::none,
+                   const eResourceType cartDontAccept = eResourceType::none);
 
     void getOrders(eResourceType& imports,
                    eResourceType& exports,
                    eResourceType& empty,
                    eResourceType& cartGet,
-                   eResourceType& cartAccept) const;
+                   eResourceType& cartAccept,
+                   eResourceType& cartDontAccept) const;
 
     eWorldCity& city() const { return mCity; }
 
@@ -77,6 +79,7 @@ private:
     eResourceType mCartEmpty = eResourceType::none;
     eResourceType mCartGet = eResourceType::none;
     eResourceType mCartAccept = eResourceType::none;
+    eResourceType mCartDontAccept = eResourceType::none;
     eDiagonalOrientation mO = eDiagonalOrientation::topLeft;
 
     eCharacterCreator mCharGen;

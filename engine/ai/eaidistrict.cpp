@@ -705,7 +705,10 @@ bool gBuild(const eAIBuilding& b,
             const auto cartEmpty = hasTradeOrders ? b.fEmpty : eResourceType::none;
             const auto cartGet = hasTradeOrders ? b.fGet : eResourceType::none;
             const auto cartAccept = hasTradeOrders ? (b.fAccept & ~b.fGet) : b.fAccept;
-            tp->setOrders(imports, exports, cartEmpty, cartGet, cartAccept);
+            const auto cartDontAccept = hasTradeOrders ? b.fTradeDontAccept :
+                                                         eResourceType::none;
+            tp->setOrders(imports, exports, cartEmpty, cartGet,
+                          cartAccept, cartDontAccept);
             tp->setMaxCount(b.fSpace);
             return tp;
         };

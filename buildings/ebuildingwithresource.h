@@ -16,6 +16,7 @@ struct eCartTask {
     eCartActionType fType;
     eResourceType fResource;
     int fMaxCount = 0;
+    bool fStoragePush = false;
 };
 
 struct eStash {
@@ -50,6 +51,13 @@ public:
 
     virtual std::vector<eCartTask> cartTasks() const {
         return {};
+    }
+
+    // cart capacity per resource for carts owned by this building.
+    // default uses producer/deliver-cart rule (transportSize).
+    // overridden by storage buildings for their 4-per-slot rule.
+    virtual int cartCapacity(const eResourceType res, bool doubled) const {
+        return eResourceTypeHelpers::transportSize(res, doubled);
     }
 
     int addProduced(const eResourceType type, const int count);

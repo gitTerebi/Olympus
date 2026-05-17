@@ -9,6 +9,7 @@
 #include "deliver-cart-action.h"
 #include "get-cart-action.h"
 #include "vendor-cart-action.h"
+#include "storage-delivery-cart.h"
 #include "ecollectaction.h"
 #include "ecollectresourceaction.h"
 #include "edieaction.h"
@@ -77,6 +78,8 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
         return e::make_shared<eGetCartAction>(c, nullptr);
     case eCharActionType::vendorCartAction:
         return e::make_shared<eVendorCartAction>(c, nullptr);
+    case eCharActionType::storageDeliveryCartAction:
+        return e::make_shared<eStorageDeliveryCartAction>(c, nullptr);
     case eCharActionType::collectAction:
         return e::make_shared<eCollectAction>(c);
     case eCharActionType::collectResourceAction:

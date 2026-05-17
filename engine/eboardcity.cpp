@@ -624,9 +624,12 @@ void eBoardCity::saveEditorCityPlan() {
             ab.fSpace = sb->maxCount();
             if(const auto p = dynamic_cast<eTradePost*>(b)) {
                 eResourceType cartAccept;
+                eResourceType cartDontAccept;
                 p->getOrders(ab.fTradeImports, ab.fTradeExports,
-                             ab.fEmpty, ab.fGet, cartAccept);
+                             ab.fEmpty, ab.fGet,
+                             cartAccept, cartDontAccept);
                 ab.fAccept = cartAccept | ab.fGet;
+                ab.fTradeDontAccept = cartDontAccept;
                 ab.fO = p->orientation();
                 ab.fTradePostType = p->tpType();
                 const auto city = p->city();
@@ -1603,6 +1606,9 @@ int eBoardCity::addResource(const eResourceType type, const int count) {
     }
     int rem = count;
     using eValidator = std::function<bool(eStorageBuilding*)>;
+    const auto isTradePost = [](eStorageBuilding* const s) {
+        return s->type() == eBuildingType::tradePost;
+    };
     const auto addFunc = [&](const eValidator& v) {
         if(rem <= 0) return;
         for(const auto s : mStorBuildings) {
@@ -1613,7 +1619,13 @@ int eBoardCity::addResource(const eResourceType type, const int count) {
         }
     };
     addFunc([&](eStorageBuilding* const s) {
-        return s->get(type);
+        return !isTradePost(s) && s->get(type);
+    });
+    addFunc([&](eStorageBuilding* const s) {
+        return !isTradePost(s);
+    });
+    addFunc([&](eStorageBuilding* const s) {
+        return isTradePost(s) && s->get(type);
     });
     addFunc([&](eStorageBuilding* const s) {
         (void)s;
