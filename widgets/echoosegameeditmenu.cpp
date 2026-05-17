@@ -130,7 +130,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     chooseW->setType(eFrameType::message);
     const int p = res.paddingL();
     const int cw = 400*mult;
-    const int ch = 520*mult;
+    const int ch = 400*mult;
     chooseW->resize(cw, ch);
     iww->addWidget(chooseW);
 
@@ -184,34 +184,6 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     scrollCont->addWidget(scrollbar);
     scrollbar->setViewport(viewport);
-
-    const auto episodeLabel = new eLabel(window());
-    episodeLabel->setFontSizeS();
-    episodeLabel->setNoPadding();
-    episodeLabel->setText(eLanguage::zeusText(195, 21));
-    episodeLabel->fitContent();
-    iw->addWidget(episodeLabel);
-    episodeLabel->align(eAlignment::hcenter);
-
-    const auto episodeCont = new eWidget(window());
-    episodeCont->setNoPadding();
-    iw->addWidget(episodeCont);
-
-    const auto episodeScrollbar = new eScrollBar(window());
-    episodeScrollbar->resize(scrollbar->width(), 1);
-    const int episodeVpW = scrollW - episodeScrollbar->width();
-
-    const auto episodeFrame = new eFramedWidget(window());
-    episodeFrame->setNoPadding();
-    episodeFrame->setType(eFrameType::inner);
-    episodeCont->addWidget(episodeFrame);
-
-    mEpisodeViewport = new eScrollViewport(window());
-    mEpisodeViewport->setNoPadding();
-    episodeFrame->addWidget(mEpisodeViewport);
-
-    episodeCont->addWidget(episodeScrollbar);
-    episodeScrollbar->setViewport(mEpisodeViewport);
 
     if(editor) {
         const auto buttonsW = new eWidget(window());
@@ -379,7 +351,6 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             if(mSelected.fIsPak) c->readPak(mSelected.fTitle,
                                             mSelected.fPakPath);
             else c->load(mSelected.fFolderName);
-            c->setCurrentParentEpisode(mSelectedEpisode);
             w->showEpisodeIntroduction(c);
         }
     });
@@ -400,25 +371,15 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     {
         int fixedH = 0;
         for(const auto w : iw->children()) {
-            if(w != scrollCont && w != episodeCont) {
-                fixedH += w->height() + layoutGap;
-            }
+            if(w != scrollCont) fixedH += w->height() + layoutGap;
         }
-        const int flexH = iw->height() - fixedH - layoutGap;
-        const int scrollH = 2*flexH/3;
-        const int episodeH = flexH - scrollH;
+        const int scrollH = iw->height() - fixedH;
         scrollCont->resize(scrollW, scrollH);
         scrollbar->initialize(scrollH);
         scrollbar->move(vpW, 0);
         innerFrame->resize(vpW, scrollH);
         viewport->resize(vpW - 2*tp, scrollH - 2*tp);
         viewport->move(tp, tp);
-        episodeCont->resize(scrollW, episodeH);
-        episodeScrollbar->initialize(episodeH);
-        episodeScrollbar->move(episodeVpW, 0);
-        episodeFrame->resize(episodeVpW, episodeH);
-        mEpisodeViewport->resize(episodeVpW - 2*tp, episodeH - 2*tp);
-        mEpisodeViewport->move(tp, tp);
     }
     iw->layoutVertically(layoutGap, eAlignment::top);
 
@@ -565,8 +526,6 @@ bool eChooseGameEditMenu::mouseReleaseEvent(const eMouseEvent& e) {
 
 void eChooseGameEditMenu::setGlossary(const eCampaignGlossary& g) {
     mSelected = g;
-    mSelectedEpisode = 0;
-    mSelectedEpisodeButton = nullptr;
     mBitmap->setBitmap(g.fBitmap);
     mTitle->setText(g.fTitle);
     mTitle->fitContent();
@@ -575,58 +534,4 @@ void eChooseGameEditMenu::setGlossary(const eCampaignGlossary& g) {
     eStringHelpers::replaceSpecial(textPrep);
     mDesc->setText(textPrep);
     mDesc->fitContent();
-    updateEpisodeList();
-}
-
-void eChooseGameEditMenu::updateEpisodeList() {
-    if(!mEpisodeViewport) return;
-
-    const auto scrollArea = new eWidget(window());
-    scrollArea->setNoPadding();
-
-    eCampaign c;
-    if(mSelected.fIsPak) {
-        if(mSelected.fPakPath.empty()) return;
-        c.readPak(mSelected.fTitle, mSelected.fPakPath);
-    } else {
-        if(mSelected.fFolderName.empty()) return;
-        c.load(mSelected.fFolderName);
-    }
-
-    const auto& episodes = c.parentCityEpisodes();
-    const int n = episodes.size();
-    for(int i = 0; i < n; i++) {
-        const auto& e = episodes[i];
-        if(!e) continue;
-        const auto w = new eButtonBase(window());
-        w->setFontSizeXS();
-        w->setNoPadding();
-        const auto prefix = std::to_string(i + 1) + ". ";
-        w->setText(prefix + e->fTitle);
-        w->fitContent();
-        w->setMouseEnterAction([w]() {
-            w->setYellowFontColor();
-        });
-        w->setMouseLeaveAction([this, w]() {
-            if(mSelectedEpisodeButton != w) w->setLightFontColor();
-        });
-        w->setPressAction([this, w, i]() {
-            if(mSelectedEpisodeButton) {
-                mSelectedEpisodeButton->setLightFontColor();
-            }
-            mSelectedEpisode = i;
-            mSelectedEpisodeButton = w;
-            w->setYellowFontColor();
-        });
-        if(i == mSelectedEpisode) {
-            mSelectedEpisodeButton = w;
-            w->setYellowFontColor();
-        }
-        scrollArea->addWidget(w);
-    }
-
-    scrollArea->stackVertically();
-    scrollArea->fitContent();
-    scrollArea->setWidth(mEpisodeViewport->width());
-    mEpisodeViewport->setPage(scrollArea);
 }
