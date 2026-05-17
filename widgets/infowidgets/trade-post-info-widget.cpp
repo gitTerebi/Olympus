@@ -24,7 +24,9 @@ public:
                     const bool twoWay,
                     std::map<eResourceType, eSwitchButton*>* cartOrderButtons = nullptr,
                     const eResourceType cartEmpty = eResourceType::none,
-                    const eResourceType cartGet = eResourceType::none) {
+                    const eResourceType cartGet = eResourceType::none,
+                    const eResourceType cartAccept = eResourceType::none,
+                    const eResourceType cartDontAccept = eResourceType::none) {
         const auto countW = new eWidget(window());
         const auto iconsW = new eWidget(window());
         const auto namesW = new eWidget(window());
@@ -42,7 +44,7 @@ public:
         const int namesWidth = mult*110;
         const int priceWidth = mult*60;
         const int buttonsWidth = mult*110;
-        const int cartOrderWidth = mult*70;
+        const int cartOrderWidth = mult*105;
         const int spinsWidth = mult*90;
         const int tradedWidth = mult*80;
 
@@ -138,23 +140,32 @@ public:
                 const auto cb = new eSwitchButton(window());
                 cb->setUnderline(false);
                 cb->setSwitchAction([cb, changed](const int i) {
-                    if(i == 2) cb->setDarkFontColor();
+                    if(i == 0 || i == 3) cb->setDarkFontColor();
                     else cb->setLightFontColor();
                     changed();
                 });
                 cb->setFontSizeS();
+                cb->addValue(eLanguage::zeusText(130, 1)); // don't accept
                 cb->addValue(eLanguage::zeusText(130, 0)); // accept
                 cb->addValue(eLanguage::zeusText(130, 2)); // get
                 cb->addValue(eLanguage::zeusText(130, 3)); // empty
                 cb->fitContent();
                 cb->setHeight(rowHeight);
                 if(static_cast<bool>(cartEmpty & type)) {
-                    cb->setValue(2);
+                    cb->setValue(3);
                     cb->setDarkFontColor();
                 } else if(static_cast<bool>(cartGet & type)) {
+                    cb->setValue(2);
+                } else if(static_cast<bool>(cartDontAccept & type)) {
+                    cb->setValue(0);
+                    cb->setDarkFontColor();
+                } else if(static_cast<bool>(cartAccept & type)) {
+                    cb->setValue(1);
+                } else if(static_cast<bool>(imports & type)) {
                     cb->setValue(1);
                 } else {
                     cb->setValue(0);
+                    cb->setDarkFontColor();
                 }
                 (*cartOrderButtons)[type] = cb;
                 cartOrderW->addWidget(cb);
@@ -277,7 +288,9 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
     eResourceType cartEmpty;
     eResourceType cartGet;
     eResourceType cartAccept;
-    stor->getOrders(imports, exports, cartEmpty, cartGet, cartAccept);
+    eResourceType cartDontAccept;
+    stor->getOrders(imports, exports, cartEmpty, cartGet,
+                    cartAccept, cartDontAccept);
     const auto& maxCount = stor->maxCount();
 
     const auto stWid = centralWidget();
@@ -289,8 +302,11 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
         eResourceType empty;
         eResourceType cartGet;
         eResourceType cartAccept;
-        this->get(imports, exports, empty, cartGet, cartAccept, maxCount);
-        stor->setOrders(imports, exports, empty, cartGet, cartAccept);
+        eResourceType cartDontAccept;
+        this->get(imports, exports, empty, cartGet,
+                  cartAccept, cartDontAccept, maxCount);
+        stor->setOrders(imports, exports, empty, cartGet,
+                        cartAccept, cartDontAccept);
         stor->setMaxCount(maxCount);
     };
 
@@ -356,7 +372,8 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
                       eLanguage::zeusText(130, 21),
                       eLanguage::zeusText(130, 13),
                       changed, twoWay,
-                      &mCartOrderButtons, cartEmpty, cartGet);
+                      &mCartOrderButtons, cartEmpty, cartGet,
+                      cartAccept, cartDontAccept);
 
         wrapper->addWidget(exportsLabel);
         wrapper->addWidget(r);
@@ -398,12 +415,14 @@ void eTradePostInfoWidget::get(eResourceType& imports,
                                eResourceType& empty,
                                eResourceType& cartGet,
                                eResourceType& cartAccept,
+                               eResourceType& cartDontAccept,
                                std::map<eResourceType, int>& count) const {
     imports = eResourceType::none;
     exports = eResourceType::none;
     empty = eResourceType::none;
     cartGet = eResourceType::none;
     cartAccept = eResourceType::none;
+    cartDontAccept = eResourceType::none;
     for(const auto b : mImportButtons) {
         const auto type = b.first;
         const int val = b.second->currentValue();
@@ -421,11 +440,13 @@ void eTradePostInfoWidget::get(eResourceType& imports,
     for(const auto b : mCartOrderButtons) {
         const auto type = b.first;
         const int val = b.second->currentValue();
-        if(val == 1) {
-            cartGet = cartGet | type;
-        } else if(val == 0) {
+        if(val == 0) {
+            cartDontAccept = cartDontAccept | type;
+        } else if(val == 1) {
             cartAccept = cartAccept | type;
         } else if(val == 2) {
+            cartGet = cartGet | type;
+        } else if(val == 3) {
             empty = empty | type;
         }
     }

@@ -8,6 +8,7 @@
 #include "fileIO/esavearchive.h"
 
 class eSaveArchive;
+class eThreadBuilding;
 
 enum class eCartState {
     idle,            // at home, nothing to do
@@ -38,6 +39,7 @@ public:
     eBuilding* target() const { return mTarget; }
     bool noDestination() const { return mState == eCartState::waitOutside; }
     void setBuilding(eBuildingWithResource* b) { mBuilding = b; }
+    virtual int cartCapacity(const eResourceType res) const;
 
     eCartState state() const { return mState; }
     bool waiting();
@@ -71,8 +73,10 @@ protected:
     int targetProcessTask(eBuildingWithResource* const rb,
                           const eCartTask& task);
 
-    void startResourceAction(const eCartTask& task);
+    virtual void startResourceAction(const eCartTask& task);
     void finishResourceAction(const eCartTask& task);
+    virtual bool acceptsTargetForTask(const eCartTask& task,
+                                      const eThreadBuilding& target) const;
 
     void serializeFields(eSaveArchive& ar) override;
     virtual void resumeFromSavedState();
@@ -99,6 +103,8 @@ protected:
 
 private:
     stdsptr<eWalkableObject> getWalkable(bool excludeHomeRect = false) const;
+    stdsptr<eWalkableObject> getWalkableForTask(bool excludeHomeRect,
+                                                eCartActionType taskType) const;
 
     void updateWaiting();
 
@@ -112,6 +118,7 @@ private:
     static const int kMaxDropoffRetries = 250;
     static const int kRetryWaitTicks = 1000;
 
+protected:
     eCartState mState = eCartState::idle;
 };
 

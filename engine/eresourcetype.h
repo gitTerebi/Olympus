@@ -86,10 +86,7 @@ namespace eResourceTypeHelpers
         case eResourceType::carrots:
         case eResourceType::onions:
         case eResourceType::wheat:
-        case eResourceType::oranges:
         case eResourceType::food:
-        case eResourceType::grapes:
-        case eResourceType::olives:
         case eResourceType::wine:
         case eResourceType::oliveOil:
         case eResourceType::wood:
@@ -102,6 +99,9 @@ namespace eResourceTypeHelpers
             break;
         case eResourceType::fleece:
         case eResourceType::sculpture:
+        case eResourceType::grapes:
+        case eResourceType::olives:
+        case eResourceType::oranges:
             base = 1;
             break;
         default:

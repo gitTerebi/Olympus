@@ -23,6 +23,7 @@ public:
              eResourceType& empty,
              eResourceType& cartGet,
              eResourceType& cartAccept,
+             eResourceType& cartDontAccept,
              std::map<eResourceType, int>& count) const;
 private:
     std::map<eResourceType, eSwitchButton*> mImportButtons;

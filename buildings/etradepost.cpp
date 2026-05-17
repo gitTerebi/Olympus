@@ -122,12 +122,14 @@ void eTradePost::setOrders(const eResourceType imports,
                            const eResourceType exports,
                            const eResourceType empty,
                            const eResourceType cartGet,
-                           const eResourceType cartAccept) {
+                           const eResourceType cartAccept,
+                           const eResourceType cartDontAccept) {
     mImports = imports;
     mExports = exports;
     mCartEmpty = empty;
     mCartGet = cartGet;
-    mCartAccept = cartAccept | (exports & ~(empty | cartGet));
+    mCartDontAccept = cartDontAccept;
+    mCartAccept = cartAccept | (exports & ~(empty | cartGet | cartDontAccept));
 
     eStorageBuilding::setOrders(mCartGet, mCartEmpty, mCartAccept);
 }
@@ -136,12 +138,14 @@ void eTradePost::getOrders(eResourceType& imports,
                            eResourceType& exports,
                            eResourceType& empty,
                            eResourceType& cartGet,
-                           eResourceType& cartAccept) const {
+                           eResourceType& cartAccept,
+                           eResourceType& cartDontAccept) const {
     imports = mImports;
     exports = mExports;
     empty = mCartEmpty;
     cartGet = mCartGet;
     cartAccept = mCartAccept;
+    cartDontAccept = mCartDontAccept;
 }
 
 eTile* eTradePost::entryPoint() const {
@@ -313,7 +317,8 @@ void eTradePost::read(eReadStream& src) {
     eStorageBuilding::read(src);
     eSaveArchive ar(src);
     serialize(ar);
-    setOrders(mImports, mExports, mCartEmpty, mCartGet, mCartAccept);
+    setOrders(mImports, mExports, mCartEmpty, mCartGet,
+              mCartAccept, mCartDontAccept);
 }
 
 void eTradePost::write(eWriteStream& dst) const {
@@ -328,6 +333,7 @@ void eTradePost::serialize(eSaveArchive& ar) {
     ar.field("cartEmpty", mCartEmpty, eResourceType::none);
     ar.field("cartGet", mCartGet, eResourceType::none);
     ar.field("cartAccept", mCartAccept, eResourceType::none);
+    ar.field("cartDontAccept", mCartDontAccept, eResourceType::none);
     ar.field("routeTimer", mRouteTimer, 0);
 }
 

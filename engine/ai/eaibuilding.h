@@ -16,6 +16,7 @@ struct eAIBuilding {
     eResourceType fAccept = static_cast<eResourceType>(0);
     eResourceType fTradeImports = static_cast<eResourceType>(0);
     eResourceType fTradeExports = static_cast<eResourceType>(0);
+    eResourceType fTradeDontAccept = static_cast<eResourceType>(0);
     std::map<eResourceType, int> fSpace;
     std::vector<ePatrolGuide> fGuides;
     bool fGuidesBothDirections;
