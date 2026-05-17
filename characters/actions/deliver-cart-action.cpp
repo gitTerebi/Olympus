@@ -123,6 +123,14 @@ void eDeliverCartAction::onFindTargetFail() {
     }
 }
 
+void eDeliverCartAction::onFoundTarget() {
+    mDeliverState = eDeliverState::moving;
+}
+
+void eDeliverCartAction::onAtTarget() {
+    mDeliverState = eDeliverState::atTarget;
+}
+
 // ── serialize ────────────────────────────────────────────────────────────────
 
 void eDeliverCartAction::serializeFields(eSaveArchive& ar) {

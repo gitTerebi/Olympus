@@ -23,6 +23,7 @@ public:
 
     void onFindTargetFail() override;
     void onFoundTarget() override;
+    void onAtTarget() override;
 
 private:
     // transitions

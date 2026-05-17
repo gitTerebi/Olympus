@@ -66,6 +66,10 @@ void eGetCartAction::onFoundTarget() {
     mGetState = eGetState::moving;
 }
 
+void eGetCartAction::onAtTarget() {
+    mGetState = eGetState::atTarget;
+}
+
 void eGetCartAction::onFindTargetFail() {
     wait(kFindRetryWait); // sleep → decide() → toFindTarget() retry forever
 }
