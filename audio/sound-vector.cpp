@@ -164,6 +164,14 @@ void eSoundVector::play(const int id, const eSoundType type, const int chn) {
 void eSoundVector::playRandomSound(const eSoundType type) {
     const int sc = soundCount();
     if(sc <= 0) return;
-    const int id = eRand::rand() % sc;
+    int id = eRand::rand() % sc;
+    if(sc > kRecentMax) {
+        int tries = 0;
+        while(std::find(mRecent.begin(), mRecent.end(), id) != mRecent.end() && tries++ < 8) {
+            id = eRand::rand() % sc;
+        }
+    }
+    mRecent.push_back(id);
+    if(static_cast<int>(mRecent.size()) > kRecentMax) mRecent.erase(mRecent.begin());
     play(id, type);
 }
