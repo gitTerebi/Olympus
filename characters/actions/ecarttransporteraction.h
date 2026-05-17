@@ -83,7 +83,7 @@ protected:
     virtual bool savesCartState() const;
 
     // subclass hook — called when findTarget BFS fails
-    virtual void onFindTargetFail() {}
+    virtual void onFindTargetFail();
     // subclass hook — called when findTarget BFS succeeds and path starts
     virtual void onFoundTarget() {}
     // subclass hook — called when movement reaches target and exchange runs

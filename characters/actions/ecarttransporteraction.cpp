@@ -437,6 +437,15 @@ void eCartTransporterAction::throttleDropoffRetry() {
     wait(kRetryWaitTicks);
 }
 
+void eCartTransporterAction::onFindTargetFail() {
+    const auto c = cart();
+    if(c->hasResource()) {
+        enterReturning();
+    } else {
+        enterIdle();
+    }
+}
+
 void eCartTransporterAction::goBack() {
     if(!mBuilding) return;
     const auto w = getWalkable();
@@ -502,7 +511,16 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
         const auto city = board().boardCityWithId(rb->cityId());
         if(city && city->isStockpiled(tres)) return 0;
         if(count > 0 && res != tres) return 0;
-        const int space = max - count;
+        int destinationSpace = mBuilding->spaceLeft(tres);
+        if(const auto storage = dynamic_cast<eStorageBuilding*>(mBuilding.get())) {
+            for(eCartTransporter* const other : {storage->cart1(), storage->cart2()}) {
+                if(!other || other == c) continue;
+                if(!other->hasResource()) continue;
+                if(other->resType() != tres) continue;
+                destinationSpace -= other->resCount();
+            }
+        }
+        const int space = std::min(max - count, std::max(0, destinationSpace));
         if(space <= 0) return 0;
         const int toTake = std::min(space, task.fMaxCount);
         const int taken = rb->take(tres, toTake);
