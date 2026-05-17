@@ -3,6 +3,8 @@
 #include "textures/egametextures.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/egroweraction.h"
+#include "buildings/eresourcebuilding.h"
+#include "engine/e-game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
@@ -27,8 +29,29 @@ eGrowersLodge::eGrowersLodge(eGameBoard& board, const eGrowerType type,
 }
 
 eGrowersLodge::~eGrowersLodge() {
-    if(mCart) mCart->kill();
-    if(mGrower) mGrower->kill();
+    killWalkers();
+}
+
+void eGrowersLodge::erase() {
+    killWalkers();
+    eBuilding::erase();
+}
+
+void eGrowersLodge::killWalkers() {
+    if(mCart) {
+        mCart->kill();
+        mCart.clear();
+    }
+    if(mGrower) {
+        mGrower->kill();
+        mGrower.clear();
+    }
+    for(const auto& h : mOliveHarvesters) {
+        if(h) h->kill();
+    }
+    for(auto& h : mOliveHarvesters) {
+        h.clear();
+    }
 }
 
 std::shared_ptr<eTexture> eGrowersLodge::getTexture(const eTileSize size) const {
@@ -105,32 +128,62 @@ std::vector<eOverlay> eGrowersLodge::
 
 void eGrowersLodge::timeChanged(const int by) {
     if(enabled()) {
-        const bool hasRes = mGrapes > 0 || mOlives > 0 || mOranges > 0;
         if(!mCart) {
             mCart = spawnCart(eCartActionTypeSupport::deliver);
         }
         if(mCart) {
             mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
         }
-        if(mCart && mCart->waiting() && hasRes) {
-            if(mGrapes > 0) {
-                const int a = mCart->add(eResourceType::grapes, mGrapes);
-                mGrapes -= a;
-            } else if(mOlives > 0) {
-                const int a = mCart->add(eResourceType::olives, mOlives);
-                mOlives -= a;
-            } else if(mOranges > 0) {
-                const int a = mCart->add(eResourceType::oranges, mOranges);
-                mOranges -= a;
-            }
-        }
         if(mSpawnEnabled) {
-            if(!mGrower) {
-                const double eff = effectiveness();
-                mSpawnTime += by*eff;
-                if(mSpawnTime > eNumbers::sGrowerSpawnWaitTime) {
-                    mSpawnTime = 0;
-                    spawnGrower(&eGrowersLodge::mGrower);
+            const int readyOlives = readyOliveCount();
+            const int oliveSpace = spaceLeft(eResourceType::olives);
+            const bool canOliveHarvest =
+                mType == eGrowerType::grapesAndOlives &&
+                oliveSpace > 0 &&
+                readyOlives > 0;
+            const bool needGrower = !mGrower;
+            int oliveHarvesters = 0;
+            for(const auto& h : mOliveHarvesters) {
+                if(h) oliveHarvesters++;
+            }
+            const int fieldCap = 4;
+            auto aliveCount = [&]() {
+                return (mGrower ? 1 : 0) + oliveHarvesters;
+            };
+            const double eff = effectiveness();
+            const double waitMax = eNumbers::sGrowerSpawnWaitTime;
+            const bool needOliveHarvester =
+                canOliveHarvest && oliveHarvesters < fieldCap;
+            if(needOliveHarvester) {
+                for(int i = 0; i < static_cast<int>(mOliveHarvesters.size()); i++) {
+                    auto& h = mOliveHarvesters[i];
+                    auto& spawnTime = mOliveHarvesterSpawnTimes[i];
+                    if(h) continue;
+                    spawnTime += by*eff;
+                    if(spawnTime <= waitMax) continue;
+                    if(aliveCount() >= fieldCap) {
+                        spawnTime = waitMax;
+                        continue;
+                    }
+                    if(spawnGrower(h, true)) {
+                        spawnTime = 0;
+                        oliveHarvesters++;
+                    }
+                }
+            }
+            const bool olivesRipe =
+                mType == eGrowerType::grapesAndOlives &&
+                readyOliveCount() > 0;
+            if(needGrower) {
+                mGrowerSpawnTime += by*eff;
+                if(mGrowerSpawnTime > waitMax) {
+                    const bool blocked = aliveCount() >= fieldCap ||
+                                         olivesRipe;
+                    if(!blocked && spawnGrower(mGrower)) {
+                        mGrowerSpawnTime = 0;
+                    } else {
+                        mGrowerSpawnTime = waitMax;
+                    }
                 }
             }
         }
@@ -233,6 +286,12 @@ void eGrowersLodge::nextMonth() {
     mProducedThisYear -= mMonthlyProduced[mRingIdx];
     mMonthlyProduced[mRingIdx] = 0;
     if(mProducedThisYear < 0) mProducedThisYear = 0;
+    if(mType == eGrowerType::grapesAndOlives &&
+       getBoard().date().month() == eMonth::january) {
+        for(auto& t : mOliveHarvesterSpawnTimes) {
+            t = eNumbers::sGrowerSpawnWaitTime;
+        }
+    }
 }
 
 void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
@@ -247,21 +306,25 @@ void eGrowersLodge::serialize(eSaveArchive& ar) {
     ar.field("grapes", mGrapes);
     ar.field("olives", mOlives);
     ar.field("oranges", mOranges);
-    ar.payloadField("cart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterAsField("cart", &getBoard(), mCart);
     ar.field("spawnTime", mSpawnTime);
-    ar.payloadField("grower",
-        [this](eWriteStream& dst) { dst.writeCharacter(mGrower); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mGrower = static_cast<eGrower*>(c);
-            });
+    ar.field("growerSpawnTime", mGrowerSpawnTime, mSpawnTime);
+    ar.characterAsField("grower", &getBoard(), mGrower);
+    ar.countedArrayField(
+        "oliveHarvesters",
+        static_cast<int>(mOliveHarvesters.size()),
+        [this](eSaveArchive& itemAr, const int i) {
+            if(i >= 0 && i < static_cast<int>(mOliveHarvesters.size())) {
+                itemAr.characterAsField("harvester", &getBoard(), mOliveHarvesters[i]);
+            } else {
+                stdptr<eGrower> ignored;
+                itemAr.characterAsField("harvester", &getBoard(), ignored);
+            }
         });
+    for(int i = 0; i < static_cast<int>(mOliveHarvesterSpawnTimes.size()); i++) {
+        ar.field(("oliveHarvesterSpawnTime." + std::to_string(i)).c_str(),
+                 mOliveHarvesterSpawnTimes[i], mSpawnTime);
+    }
     ar.field("producedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) {
         ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
@@ -282,16 +345,41 @@ void eGrowersLodge::write(eWriteStream& dst) const {
     const_cast<eGrowersLodge*>(this)->serialize(ar);
 }
 
-bool eGrowersLodge::spawnGrower(const eGrowerPtr grower) {
+bool eGrowersLodge::hasReadyOlives() const {
+    return readyOliveCount() > 0;
+}
+
+int eGrowersLodge::readyOliveCount() const {
+    const auto m = getBoard().date().month();
+    const bool harvestMonth = m == eMonth::january ||
+                              m == eMonth::february ||
+                              m == eMonth::march;
+    if(!harvestMonth) return 0;
+    int result = 0;
+    for(const auto b : getBoard().buildings()) {
+        if(!b || b->cityId() != cityId()) continue;
+        if(b->type() != eBuildingType::oliveTree) continue;
+        const auto rb = static_cast<eResourceBuilding*>(b);
+        if(rb->resource() > 0) result++;
+    }
+    return result;
+}
+
+bool eGrowersLodge::spawnGrower(stdptr<eGrower>& grower,
+                                const bool oliveHarvester) {
     const auto t = centerTile();
     const auto g = e::make_shared<eGrower>(getBoard());
     g->setGrowerType(mType);
     g->setBothCityIds(cityId());
     g->changeTile(t);
+    const auto mode = oliveHarvester ? eGrowerActionMode::oliveHarvester :
+        (mType == eGrowerType::grapesAndOlives ?
+             eGrowerActionMode::oliveGroomer :
+             eGrowerActionMode::normal);
     const auto a = e::make_shared<eGrowerAction>(
-                       mType, this, g.get());
+                       mType, this, g.get(), mode);
     g->setAction(a);
-    this->*grower = g.get();
+    grower = g.get();
     return true;
 }
 

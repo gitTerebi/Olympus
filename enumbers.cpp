@@ -339,7 +339,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("wolf_max_count_i", sWolfMaxCount, 8, 2, 100);
     loadI("wolf_spawn_period_i", sWolfSpawnPeriod, 4000, 1, 100000);
     loadI("wolf_hunt_wait_i", sWolfHuntWait, 20, 1, 1000);
-    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 30, 1, 1000);
+    loadI("wolf_hunt_distance_i", sWolfHuntDistance, 15, 1, 1000);
 
     loadI("olive_press_processing_period_i", sOlivePressProcessingPeriod, 20000, 1, 1000000);
     loadI("winery_processing_period_i", sWineryProcessingPeriod, 20000, 1, 1000000);
@@ -425,7 +425,7 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("chariot_building_time_i", sChariotBuildingTime, 20000, 1, 1000000);
 
-    loadI("olive_tree_ripe_period_i", sOliveTreeRipePeriod, 40000, 1, 1000000);
+    loadI("olive_tree_ripe_period_i", sOliveTreeRipePeriod, 12600, 1, 1000000);
     loadI("vine_ripe_period_i", sVineRipePeriod, 40000, 1, 1000000);
     loadI("orange_tree_ripe_period_i", sOrangeTreeRipePeriod, 40000, 1, 1000000);
 
@@ -446,7 +446,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("grower_max_distance_i", sGrowerMaxDistance, 40, 5, 1000);
     loadI("grower_max_groom_i", sGrowerMaxGroom, 5, 1, 1000);
     loadI("grower_work_time_i", sGrowerWorkTime, 2000, 1, 1000000);
-    loadI("grower_spawn_wait_time_i", sGrowerSpawnWaitTime, 5000, 1, 1000000);
+    loadI("grower_spawn_wait_time_i", sGrowerSpawnWaitTime, 1500, 1, 1000000);
 
     loadI("monster_attack_range_i", sMonsterAttackRange, 10, 1, 20);
     loadI("passive_monster_attack_period_i", sPassiveMonsterAttackPeriod, 14000, 1, 1000000);

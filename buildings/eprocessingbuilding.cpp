@@ -1,9 +1,7 @@
 #include "eprocessingbuilding.h"
 
-#include "characters/actions/ecarttransporteraction.h"
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
-#include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
 #include <algorithm>
@@ -35,9 +33,7 @@ eProcessingBuilding::eProcessingBuilding(
     });
 }
 
-eProcessingBuilding::~eProcessingBuilding() {
-    if(mTakeCart) mTakeCart->kill();
-}
+eProcessingBuilding::~eProcessingBuilding() {}
 
 std::shared_ptr<eTexture> eProcessingBuilding::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
@@ -58,12 +54,6 @@ std::vector<eOverlay> eProcessingBuilding::getOverlays(
 
 void eProcessingBuilding::timeChanged(const int by) {
     if(enabled()) {
-        if(!mTakeCart) {
-            mTakeCart = spawnCart(eCartActionTypeSupport::get);
-        }
-        if(mTakeCart) {
-            mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
-        }
         mProcessTime += by*effectiveness();
         if(mProcessTime > mProcessWaitTime) {
             mProcessTime -= mProcessWaitTime;
@@ -111,26 +101,10 @@ int eProcessingBuilding::spaceLeft(const eResourceType type) const {
 std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
     auto tasks = eResourceBuildingBase::cartTasks();
 
-    if(mMaxRaw > mRawCount) {
-        eCartTask task;
-        task.fType = eCartActionType::get;
-        task.fResource = mRawMaterial;
-        task.fMaxCount = mMaxRaw - mRawCount;
-        tasks.push_back(task);
-    }
-
     return tasks;
 }
 
 void eProcessingBuilding::serialize(eSaveArchive& ar) {
-    ar.payloadField("takeCart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mTakeCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mTakeCart = static_cast<eCartTransporter*>(c);
-            });
-        });
-
     ar.field("rawCount", mRawCount);
     ar.field("processTime", mProcessTime);
     ar.field("producedThisYear", mProducedThisYear);

@@ -3,6 +3,8 @@
 
 #include "textures/egametextures.h"
 #include "textures/ebuildingtextures.h"
+#include "engine/e-game-board.h"
+#include "engine/edate.h"
 #include "enumbers.h"
 
 #include <algorithm>
@@ -29,6 +31,12 @@ int resourceTypeToRipePeriod(const eResourceBuildingType r) {
         return eNumbers::sOrangeTreeRipePeriod;
     }
     return eNumbers::sOliveTreeRipePeriod;
+}
+
+static bool isOliveHarvestMonth(const eMonth m) {
+    return m == eMonth::january ||
+           m == eMonth::february ||
+           m == eMonth::march;
 }
 
 eResourceBuilding::eResourceBuilding(
@@ -81,10 +89,16 @@ bool eResourceBuilding::sIsResourceBuilding(const eBuildingType type) {
 
 int eResourceBuilding::takeResource(const int by) {
     if(mResource == 0) return 0;
+    if(mType == eResourceBuildingType::oliveTree &&
+       !isOliveHarvestMonth(getBoard().date().month())) {
+        return 0;
+    }
     const int take = std::clamp(by, 0, mResource);
     mResource -= take;
     if(mResource == 0) {
         mRipe = 0;
+        mNextRipe = 0;
+        mWorkedOn = false;
         const auto tile = centerTile();
         tile->scheduleTerrainUpdate();
     }
@@ -102,6 +116,20 @@ void eResourceBuilding::setSanctuary(const bool s) {
 
 void eResourceBuilding::timeChanged(const int by) {
     mNextRipe += by;
+    if(mType == eResourceBuildingType::oliveTree &&
+       getBoard().date().month() == eMonth::april &&
+       mRipe >= 3) {
+        mNextRipe = 0;
+        mRipe = 0;
+        mResource = 0;
+        mWorkedOn = false;
+        const auto tile = centerTile();
+        tile->scheduleTerrainUpdate();
+        return;
+    }
+    if(mType == eResourceBuildingType::oliveTree && mRipe >= 5) {
+        return;
+    }
     const double mult = eNumbers::sTreeVineFullyRipePeriodMultiplier;
     int wait = mRipe >= 5 ? mult*mRipePeriod : mRipePeriod;
     if(mSanctuary || blessed()) {
@@ -119,13 +147,27 @@ void eResourceBuilding::timeChanged(const int by) {
     }
     if((mWorkedOn || mRipe >= 5) && mNextRipe > wait) {
         mNextRipe -= wait;
-        mWorkedOn = false;
+        if(mType != eResourceBuildingType::oliveTree) {
+            mWorkedOn = false;
+        }
         if(mRipe >= 5) {
             mRipe = 0;
             mResource = 0;
+            mWorkedOn = false;
             return;
         }
-        if(++mRipe == 5) {
+        ++mRipe;
+        if(mType == eResourceBuildingType::oliveTree &&
+           getBoard().date().month() == eMonth::april &&
+           mRipe >= 3) {
+            mRipe = 0;
+            mResource = 0;
+            mWorkedOn = false;
+            const auto tile = centerTile();
+            tile->scheduleTerrainUpdate();
+            return;
+        }
+        if(mRipe == 5) {
             mResource = 1;
         }
         const auto tile = centerTile();

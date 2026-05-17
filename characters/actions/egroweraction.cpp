@@ -9,17 +9,26 @@
 
 eGrowerAction::eGrowerAction(const eGrowerType type,
                              eGrowersLodge* const lodge,
-                             eCharacter* const c) :
+                             eCharacter* const c,
+                             const eGrowerActionMode mode) :
     eActionWithComeback(c, eCharActionType::growerAction),
     mType(type), mGrower(static_cast<eGrower*>(c)),
-    mLodge(lodge) {}
+    mLodge(lodge), mMode(mode) {}
 
 eGrowerAction::eGrowerAction(eCharacter* const c) :
     eGrowerAction(eGrowerType::grapesAndOlives, nullptr, c) {}
 
+static bool isOliveHarvestMonth(const eMonth m) {
+    return m == eMonth::january ||
+           m == eMonth::february ||
+           m == eMonth::march;
+}
+
 bool hasResource(eThreadTile* const tile, const eGrowerType gt,
-                 const bool grapesDisabled, const bool olivesDisabled) {
-    if(eRand::rand() % 2) return false;
+                 const bool grapesDisabled, const bool olivesDisabled,
+                 const eGrowerActionMode mode,
+                 const bool canHarvestOlives) {
+    if(mode != eGrowerActionMode::oliveGroomer && eRand::rand() % 2) return false;
     const auto ub = tile->underBuildingType();
     bool r;
     switch(gt) {
@@ -33,8 +42,17 @@ bool hasResource(eThreadTile* const tile, const eGrowerType gt,
     }
 
     if(!r) return false;
+    if(tile->busy()) return false;
     const auto& b = tile->underBuilding();
-    return !b.workedOn() && !tile->busy();
+    const bool hasRes = b.treeResource() > 0;
+    if(mode == eGrowerActionMode::oliveHarvester) {
+        return ub == eBuildingType::oliveTree && hasRes && canHarvestOlives;
+    }
+    if(mode == eGrowerActionMode::oliveGroomer) {
+        return ub == eBuildingType::oliveTree && !hasRes && !b.workedOn();
+    }
+    if(b.workedOn()) return false;
+    return true;
 }
 
 enum class eCollectType {
@@ -44,12 +62,13 @@ enum class eCollectType {
 
 eResourceBuilding* tryToCollect(eTile* const tile,
                                 const eGrowerType type,
+                                const eGrowerActionMode mode,
+                                const bool canHarvestOlives,
                                 eCollectType& collType) {
     if(tile->busy()) return nullptr;
     const auto b = tile->underBuilding();
     if(b) {
         const auto s = static_cast<eResourceBuilding*>(b);
-        if(s->workedOn()) return nullptr;
         const auto t = b->type();
         switch(type) {
         case eGrowerType::grapesAndOlives:
@@ -65,7 +84,20 @@ eResourceBuilding* tryToCollect(eTile* const tile,
            break;
         }
 
-        if(s->resource() > 0) {
+        const bool hasRes = s->resource() > 0;
+        if(mode == eGrowerActionMode::oliveHarvester) {
+            if(t != eBuildingType::oliveTree ||
+               !hasRes ||
+               !canHarvestOlives) return nullptr;
+        } else if(mode == eGrowerActionMode::oliveGroomer) {
+            if(t != eBuildingType::oliveTree || hasRes || s->workedOn()) {
+                return nullptr;
+            }
+        } else if(s->workedOn()) {
+            return nullptr;
+        }
+
+        if(hasRes) {
             collType = eCollectType::collect;
         } else {
             collType = eCollectType::groom;
@@ -86,6 +118,7 @@ bool eGrowerAction::decide() {
     const int oranges = mGrower->oranges();
 
     const bool inLodge = eWalkableHelpers::sTileUnderBuilding(t, mLodge);
+    const bool canHarvestOlives = isOliveHarvestMonth(board().date().month());
 
     if(grapes > 0 || olives > 0 || oranges > 0) {
         if(inLodge) {
@@ -108,7 +141,8 @@ bool eGrowerAction::decide() {
         }
     } else {
         eCollectType collType;
-        if(const auto a = tryToCollect(t, mType, collType)) {
+        if(const auto a = tryToCollect(t, mType, mMode,
+                                       canHarvestOlives, collType)) {
             workOnDecision(t);
         } else if(inLodge) {
             int space = 0;
@@ -121,7 +155,16 @@ bool eGrowerAction::decide() {
                 break;
             }
 
-            if(space <= 0 || !mLodge->enabled()) {
+            const bool oliveGroomingDone =
+                mMode == eGrowerActionMode::oliveGroomer &&
+                mOliveGroomsThisMonth >= 4;
+            if(oliveGroomingDone) {
+                setState(eCharacterActionState::finished);
+                return true;
+            }
+            const bool spaceBlocked =
+                mMode != eGrowerActionMode::oliveGroomer && space <= 0;
+            if(spaceBlocked || !mLodge->enabled()) {
                 waitDecision();
             } else {
                 if(mNoResource) {
@@ -135,7 +178,14 @@ bool eGrowerAction::decide() {
             mNoResource = false;
             goBackDecision();
         } else {
-            if(mGroomed > eNumbers::sGrowerMaxGroom) {
+            if(mMode == eGrowerActionMode::oliveGroomer &&
+               mOliveGroomsThisMonth >= 4) {
+                setFinishOnComeback(true);
+                goBackDecision();
+                return true;
+            }
+            if(mMode != eGrowerActionMode::oliveGroomer &&
+               mGroomed > eNumbers::sGrowerMaxGroom) {
                 mGroomed = 0;
                 goBackDecision();
             } else {
@@ -146,37 +196,73 @@ bool eGrowerAction::decide() {
     return true;
 }
 
-void eGrowerAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGrowerAction::write(eWriteStream& dst) const {
-    eActionWithComeback::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGrowerAction*>(this)->serialize(ar);
-}
-
-void eGrowerAction::serialize(eSaveArchive& ar) {
-    ar.field("mType", mType);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board(), [this](eCharacter* const c) {
-            mGrower = static_cast<eGrower*>(c);
-        });
-        ar.readStream().readBuilding(&board(), [this](eBuilding* const b) {
-            mLodge = static_cast<eGrowersLodge*>(b);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mGrower);
-        ar.writeStream().writeBuilding(mLodge);
+void eGrowerAction::increment(const int by) {
+    if(mStage == eGrowerActionStage::working && mWorkRemaining > 0) {
+        if(mWorkRemaining <= by) {
+            mWorkRemaining = 0;
+            setCurrentAction(nullptr);
+            finishWorkOn(mTargetTile, mTargetBuildingType);
+            return;
+        }
+        mWorkRemaining -= by;
+    } else if(mStage == eGrowerActionStage::waiting && mWaitRemaining > 0) {
+        mWaitRemaining -= by;
+        if(mWaitRemaining < 0) mWaitRemaining = 0;
     }
-    ar.field("mFinishOnce", mFinishOnce);
-    ar.field("mGroomed", mGroomed);
-    ar.field("mNoResource", mNoResource);
+    eActionWithComeback::increment(by);
+}
+
+void eGrowerAction::serializeFields(eSaveArchive& ar) {
+    eActionWithComeback::serializeFields(ar);
+    ar.field("growerType", mType);
+    ar.characterAsField("grower", &board(), mGrower);
+    ar.buildingAsField("lodge", &board(), mLodge);
+    ar.field("finishOnce", mFinishOnce);
+    ar.field("groomed", mGroomed);
+    ar.field("noResource", mNoResource);
+    ar.field("mode", mMode, eGrowerActionMode::normal);
+    ar.field("oliveGroomsThisMonth", mOliveGroomsThisMonth, 0);
+    ar.field("oliveGroomMonth", mOliveGroomMonth, -1);
+    ar.field("stage", mStage, eGrowerActionStage::idle);
+    ar.field("waitRemaining", mWaitRemaining, 0);
+    ar.field("workRemaining", mWorkRemaining, 0);
+    ar.tileField("targetTile", board(), mTargetTile);
+    ar.field("targetBuildingType", mTargetBuildingType, eBuildingType::none);
+}
+
+void eGrowerAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eGrowerAction::rebuildCurrentStage() {
+    switch(mStage) {
+    case eGrowerActionStage::findingResource:
+        return static_cast<void>(findResourceDecision());
+    case eGrowerActionStage::working:
+        if(mTargetTile) mTargetTile->setBusy(false);
+        if(mTargetTile && mTargetTile->underBuilding()) {
+            return workOnDecision(mTargetTile);
+        }
+        releaseWorkTile();
+        mStage = eGrowerActionStage::idle;
+        return static_cast<void>(decide());
+    case eGrowerActionStage::goingBack:
+        return goBackDecision();
+    case eGrowerActionStage::waiting:
+        if(mWaitRemaining > 0) {
+            wait(mWaitRemaining);
+        } else {
+            mStage = eGrowerActionStage::idle;
+            decide();
+        }
+        return;
+    case eGrowerActionStage::idle:
+        return eActionWithComeback::resumeFromSavedState();
+    }
 }
 
 bool eGrowerAction::findResourceDecision() {
+    mStage = eGrowerActionStage::findingResource;
     const stdptr<eGrowerAction> tptr(this);
 
     const auto gt = mType;
@@ -184,8 +270,11 @@ bool eGrowerAction::findResourceDecision() {
     const auto cid = cityId();
     const bool gd = board.isShutDown(cid, eResourceType::grapes);
     const bool od = board.isShutDown(cid, eResourceType::olives);
-    const auto hha = [gt, gd, od](eThreadTile* const tile) {
-        return hasResource(tile, gt, gd, od);
+    const auto mode = mMode;
+    const bool canHarvestOlives =
+        isOliveHarvestMonth(board.date().month());
+    const auto hha = [gt, gd, od, mode, canHarvestOlives](eThreadTile* const tile) {
+        return hasResource(tile, gt, gd, od, mode, canHarvestOlives);
     };
 
     const auto a = e::make_shared<eMoveToAction>(mGrower);
@@ -222,6 +311,12 @@ void eGrowerAction::workOnDecision(eTile* const tile) {
         if(type != eBuildingType::orangeTree) return;
         break;
     }
+    mStage = eGrowerActionStage::working;
+    mTargetTile = tile;
+    mTargetBuildingType = type;
+    if(mWorkRemaining <= 0) {
+        mWorkRemaining = eNumbers::sGrowerWorkTime;
+    }
     tile->setBusy(true);
     const auto b = tile->underBuilding();
     const auto bb = dynamic_cast<eResourceBuilding*>(b);
@@ -243,25 +338,68 @@ void eGrowerAction::workOnDecision(eTile* const tile) {
         }
     }
 
-    const stdptr<eCharacterAction> tptr(this);
-    const auto finish = std::make_shared<eGRA_workOnDecisionFinish>(
-                            board(), this, tile, type);
-
     const auto w = e::make_shared<eWaitAction>(mGrower);
-    w->setFailAction(finish);
-    w->setFinishAction(finish);
+    const auto fail = std::make_shared<eGRA_workOnDecisionDeleteFail>(
+                            board(), tile);
+    w->setFailAction(fail);
     const auto deleteFail = std::make_shared<eGRA_workOnDecisionDeleteFail>(
                             board(), tile);
     w->setDeleteFailAction(deleteFail);
-    w->setTime(eNumbers::sGrowerWorkTime);
+    w->setTime(mWorkRemaining);
     setCurrentAction(w);
 }
 
+void eGrowerAction::finishWorkOn(eTile* const tile, const eBuildingType type) {
+    if(!tile) {
+        releaseWorkTile();
+        mStage = eGrowerActionStage::idle;
+        return;
+    }
+    tile->setBusy(false);
+    if(const auto b = tile->underBuilding()) {
+        if(const auto bb = dynamic_cast<eResourceBuilding*>(b)) {
+            const bool collecting = bb->resource() > 0;
+            if(!collecting) {
+                bb->workOn();
+            }
+            const int took = bb->takeResource(1);
+            if(took > 0) {
+                if(type == eBuildingType::vine) {
+                    mGrower->incGrapes();
+                } else if(type == eBuildingType::oliveTree) {
+                    mGrower->incOlives();
+                } else if(type == eBuildingType::orangeTree) {
+                    mGrower->incOranges();
+                }
+                mGroomed += 5;
+            } else if(mMode == eGrowerActionMode::oliveGroomer &&
+                      type == eBuildingType::oliveTree) {
+                mOliveGroomsThisMonth++;
+            }
+        }
+    }
+    mGroomed++;
+    releaseWorkTile();
+    mStage = eGrowerActionStage::idle;
+}
+
+void eGrowerAction::releaseWorkTile() {
+    if(mTargetTile) mTargetTile->setBusy(false);
+    mTargetTile = nullptr;
+    mTargetBuildingType = eBuildingType::none;
+    mWorkRemaining = 0;
+}
+
 void eGrowerAction::goBackDecision() {
+    mStage = eGrowerActionStage::goingBack;
     mGrower->setActionType(eCharacterActionType::carry);
     goBack(mLodge, eWalkableObject::sCreateDefault());
 }
 
 void eGrowerAction::waitDecision() {
-    wait(eNumbers::sGrowerSpawnWaitTime);
+    mStage = eGrowerActionStage::waiting;
+    if(mWaitRemaining <= 0) {
+        mWaitRemaining = eNumbers::sGrowerSpawnWaitTime;
+    }
+    wait(mWaitRemaining);
 }
