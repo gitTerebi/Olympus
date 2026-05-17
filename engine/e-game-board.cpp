@@ -3989,6 +3989,21 @@ bool eGameBoard::checkGoalsFulfilled() const
     return result;
 }
 
+void eGameBoard::completeGoalsByPlayer()
+{
+    for(const auto& g : mGoals) {
+        g->skipByPlayer();
+    }
+    mGoalsFulfilled = true;
+    const bool r = handleEpisodeCompleteEvents();
+    if(!r && mEpisodeFinishedHandler) {
+        mGoalsFulfilled = false;
+        mEpisodeFinishedHandler();
+    } else {
+        mGoalsCheckTime = 5050;
+    }
+}
+
 void eGameBoard::musterAllSoldiers(const eCityId cid)
 {
     const auto c = boardCityWithId(cid);

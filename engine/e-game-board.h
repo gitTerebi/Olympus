@@ -628,6 +628,7 @@ public:
     void loadResources();
 
     bool checkGoalsFulfilled() const;
+    void completeGoalsByPlayer();
 
     void musterAllSoldiers(const eCityId cid);
     void sendAllSoldiersHome(const eCityId cid);
