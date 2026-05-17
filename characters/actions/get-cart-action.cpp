@@ -23,6 +23,17 @@ bool eGetCartAction::decide() {
 // ── transition helpers ────────────────────────────────────────────────────────
 
 void eGetCartAction::toIdle() {
+    const auto c = cart();
+    if(c->hasResource()) {
+        const auto rt = c->resType();
+        const int given = building()->add(rt, c->resCount());
+        c->take(rt, given);
+        const int leftover = c->resCount();
+        if(leftover > 0) {
+            building()->stash(rt, leftover);
+            c->take(rt, leftover);
+        }
+    }
     enterIdle();
 }
 
@@ -32,26 +43,14 @@ void eGetCartAction::toFindTarget() {
 }
 
 void eGetCartAction::toAtOrReturn() {
-    const auto c = cart();
-    const int count = c->resCount();
-    const auto res = c->resType();
-    const int max = res == eResourceType::sculpture ? 1 : 4;
-    const bool canTakeMore = mTask.fMaxCount > 0 &&
-                             mTask.fResource == res &&
-                             mTask.fType == eCartActionType::get &&
-                             (max - count) > 0;
-    if(canTakeMore) {
-        mGetState = eGetState::findTarget;
-        findTarget(mTask);
-    } else {
-        enterReturning();
-    }
+    enterReturning();
 }
 
 // ── enter: actions (side effects) ────────────────────────────────────────────
 
 void eGetCartAction::enterIdle() {
     mGetState = eGetState::idle;
+    cart()->setSupportResource(eResourceType::allTransportable);
     clearTask();
 }
 
@@ -71,6 +70,10 @@ void eGetCartAction::onAtTarget() {
 }
 
 void eGetCartAction::onFindTargetFail() {
+    if(cart()->hasResource()) {
+        enterReturning();
+        return;
+    }
     wait(kFindRetryWait); // sleep → decide() → toFindTarget() retry forever
 }
 

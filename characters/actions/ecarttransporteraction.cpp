@@ -9,6 +9,7 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 #include "emovetoaction.h"
+#include "ewaitaction.h"
 
 eCartTransporterAction::eCartTransporterAction(
         eCharacter* const c,
@@ -31,6 +32,9 @@ void eCartTransporterAction::increment(const int by) {
     }
     updateWaiting();
     eActionWithComeback::increment(by);
+    if(dynamic_cast<eWaitAction*>(currentAction())) {
+        character()->setActionType(eCharacterActionType::stand);
+    }
 }
 
 bool eCartTransporterAction::decide() {
@@ -555,10 +559,15 @@ bool eCartTransporterAction::acceptsTargetForTask(
         const eCartTask& task,
         const eThreadBuilding& target) const {
     const bool storageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
+    const auto targetType = target.type();
+    const bool storageTarget = targetType == eBuildingType::warehouse ||
+                               targetType == eBuildingType::granary;
+    if(storageHome && task.fType == eCartActionType::get) {
+        return storageTarget;
+    }
     if(storageHome &&
-       (task.fType == eCartActionType::deliver ||
-        task.fType == eCartActionType::get) &&
-       target.type() == eBuildingType::tradePost) return false;
+       task.fType == eCartActionType::deliver &&
+       targetType == eBuildingType::tradePost) return false;
     return true;
 }
 
@@ -736,6 +745,7 @@ void eCartTransporterAction::clearTask() {
     mTask.fMaxCount = 0;
     setCurrentAction(nullptr);
     mTarget = nullptr;
+    character()->setActionType(eCharacterActionType::stand);
 }
 
 void eCartTransporterAction::disappear() {

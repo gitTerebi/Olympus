@@ -118,6 +118,7 @@ private:
     eResourceType mGet = eResourceType::none;
     eResourceType mEmpty = eResourceType::none;
     eResourceType mAccept = mCanAccept; // includes get
+    int mNextGetCartTask = 0;
 
     int mResourceCount[15] = {0};
     eResourceType mResource[15] = {eResourceType::none,

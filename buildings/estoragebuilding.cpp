@@ -1,6 +1,8 @@
 #include "estoragebuilding.h"
 #include "fileIO/esavearchive.h"
 
+#include <algorithm>
+
 #include "engine/e-game-board.h"
 #include "engine/eboardcity.h"
 #include "characters/ecarttransporter.h"
@@ -45,6 +47,11 @@ void eStorageBuilding::timeChanged(const int by) {
             if(task.fType == eCartActionType::deliver) hasDeliverWork = true;
             if(task.fType == eCartActionType::get) hasGetWork = true;
         }
+        std::vector<eResourceType> getResources;
+        for(const auto& task : tasks) {
+            if(task.fType != eCartActionType::get) continue;
+            getResources.push_back(task.fResource);
+        }
         const auto idleAndEmpty = [](eCartTransporter* const c) {
             if(!c) return false;
             if(c->hasResource()) return false;
@@ -84,6 +91,20 @@ void eStorageBuilding::timeChanged(const int by) {
             if(isGet(mCart2.get())) result++;
             return result;
         };
+        const auto assignNextGet = [this, &getResources](eCartTransporter* const c) {
+            if(!c || getResources.empty()) return;
+            const auto current = c->supportsResource();
+            if(current != eResourceType::allTransportable) {
+                const bool stillValid = std::find(getResources.begin(), getResources.end(),
+                                                  current) != getResources.end();
+                if(stillValid) return;
+            }
+            if(mNextGetCartTask >= static_cast<int>(getResources.size())) {
+                mNextGetCartTask = 0;
+            }
+            c->setSupportResource(getResources[mNextGetCartTask]);
+            mNextGetCartTask = (mNextGetCartTask + 1) % getResources.size();
+        };
         const auto spawnDeliverCart = [this]() {
             if(type() == eBuildingType::warehouse) {
                 return spawnStorageDeliveryCart();
@@ -95,6 +116,10 @@ void eStorageBuilding::timeChanged(const int by) {
         if(!hasDeliverWork && idleAndEmpty(mCart2.get()) && isDeliver(mCart2.get())) killCart(mCart2);
         if(!hasGetWork && idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) killCart(mCart1);
         if(!hasGetWork && idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) killCart(mCart2);
+        if(hasGetWork && !hasDeliverWork) {
+            if(idleAndEmpty(mCart1.get()) && !isGet(mCart1.get())) killCart(mCart1);
+            if(idleAndEmpty(mCart2.get()) && !isGet(mCart2.get())) killCart(mCart2);
+        }
         if(hasDeliverWork && deliveryCount() == 0) {
             if(activeCount() >= 2 && idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) killCart(mCart1);
             if(activeCount() >= 2 && idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) killCart(mCart2);
@@ -106,7 +131,13 @@ void eStorageBuilding::timeChanged(const int by) {
 
         const int getSlots = hasGetWork ? (hasDeliverWork ? 1 : 2) : 0;
         while(getCount() < getSlots && activeCount() < 2) {
-            putCart(spawnCart(eCartActionTypeSupport::get));
+            const auto cart = spawnCart(eCartActionTypeSupport::get);
+            assignNextGet(cart.get());
+            putCart(cart);
+        }
+        if(hasGetWork) {
+            if(idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) assignNextGet(mCart1.get());
+            if(idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) assignNextGet(mCart2.get());
         }
     }
 }
@@ -295,6 +326,10 @@ bool eStorageBuilding::getTargetExists(const eResourceType res) const {
                                          eBuilding* const b) {
         if(!b) return false;
         if(b == this) return false;
+        const auto type = b->type();
+        const bool storageTarget = type == eBuildingType::warehouse ||
+                                   type == eBuildingType::granary;
+        if(!storageTarget) return false;
         const auto city = board.boardCityWithId(b->cityId());
         if(city && city->isStockpiled(res)) return false;
         const auto rb = dynamic_cast<eBuildingWithResource*>(b);
@@ -457,6 +492,7 @@ void eStorageBuilding::serialize(eSaveArchive& ar) {
     ar.field("get", mGet);
     ar.field("empty", mEmpty);
     ar.field("accept", mAccept);
+    ar.field("nextGetCartTask", mNextGetCartTask, 0);
     for(int i = 0; i < 15; i++) {
         ar.field(("resourceCount." + std::to_string(i)).c_str(), mResourceCount[i]);
     }
