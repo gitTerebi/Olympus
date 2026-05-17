@@ -77,7 +77,11 @@ void eVendorCartAction::onAtTarget() {
 }
 
 void eVendorCartAction::onFindTargetFail() {
-    wait(kFindRetryWait);
+    if(cart()->hasResource()) {
+        enterReturning();
+    } else {
+        enterWaitAtHome();
+    }
 }
 
 // ── serialize ─────────────────────────────────────────────────────────────────
