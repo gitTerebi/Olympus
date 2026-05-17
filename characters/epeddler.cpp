@@ -3,6 +3,8 @@
 #include "buildings/eagorabase.h"
 #include "textures/echaractertextures.h"
 #include "textures/egametextures.h"
+#include "fileIO/esavearchive.h"
+#include "engine/e-game-board.h"
 
 ePeddler::ePeddler(eGameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fPeddler,
@@ -22,4 +24,20 @@ void ePeddler::setAgora(eAgoraBase* const a) {
 
 eAgoraBase *ePeddler::agora() const {
     return mAgora.get();
+}
+
+void ePeddler::read(eReadStream& src) {
+    eBasicPatroler::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void ePeddler::write(eWriteStream& dst) const {
+    eBasicPatroler::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<ePeddler*>(this)->serialize(ar);
+}
+
+void ePeddler::serialize(eSaveArchive& ar) {
+    ar.buildingAsField("agora", &getBoard(), mAgora);
 }

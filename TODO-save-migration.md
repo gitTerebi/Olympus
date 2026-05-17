@@ -615,110 +615,110 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [x] `eGrowersLodge`
 - [x] `eHorseRanch`
 - [x] `eMonument`
-- [ ] `ePyramid`
-- [ ] `eSanctuary`
-- [ ] `eSanctuaryWithWarriors`
-- [ ] `eHephaestusSanctuary`
+- [x] `ePyramid`
+- [x] `eSanctuary`
+- [x] `eSanctuaryWithWarriors`
+- [x] `eHephaestusSanctuary` — inherits, no own read/write
 - [x] `ePatrolBuildingBase`
 - [x] `eAgoraBase` — no fields (inherits patrol base)
-- [ ] `ePatrolBuilding`
+- [x] `ePatrolBuilding` — inherits, no own read/write
 - [x] `eStorageBuilding`
-- [ ] `eTower`
-- [ ] `eTradePost`
-- [ ] `eTriremeWharf`
+- [x] `eTower`
+- [x] `eTradePost`
+- [x] `eTriremeWharf`
 - [x] `eVendor`
 - [x] `eHippodromePiece`
-- [ ] `eHorseRanchEnclosure`
-- [ ] `eGatehouse`
-- [ ] `eHerosHall`
-- [ ] `eHouseBase`
-- [ ] `eEliteHousing`
-- [ ] `eSmallHouse`
-- [ ] `ePalace`
-- [ ] `ePalaceTile`
-- [ ] `ePark`
-- [ ] `ePier`
-- [ ] `ePlaceholder`
-- [ ] `eResourceBuilding`
-- [ ] `eRoad`
-- [ ] `eRuins`
-- [ ] `eSanctBuilding`
-- [ ] `ePyramidElement`
-- [ ] `eTempleAltarBuilding`
-- [ ] `eTempleBuilding`
-- [ ] `eTempleMonumentBuilding`
-- [ ] `eTempleStatueBuilding`
-- [ ] `eTempleTileBuilding`
-- [ ] `eWall`
-- [ ] `eHippodrome`
+- [x] `eHorseRanchEnclosure`
+- [x] `eGatehouse` — inherits, no own read/write
+- [x] `eHerosHall`
+- [x] `eHouseBase`
+- [x] `eEliteHousing`
+- [x] `eSmallHouse`
+- [x] `ePalace`
+- [x] `ePalaceTile` — inherits, no own read/write
+- [x] `ePark` — inherits, no own read/write
+- [x] `ePier` — inherits, no own read/write
+- [x] `ePlaceholder` — inherits, no own read/write
+- [x] `eResourceBuilding`
+- [x] `eRoad`
+- [x] `eRuins`
+- [x] `eSanctBuilding`
+- [x] `ePyramidElement`
+- [x] `eTempleAltarBuilding`
+- [x] `eTempleBuilding`
+- [x] `eTempleMonumentBuilding` — inherits, no own read/write
+- [x] `eTempleStatueBuilding` — inherits, no own read/write
+- [x] `eTempleTileBuilding` — inherits, no own read/write
+- [x] `eWall` — inherits, no own read/write
+- [x] `eHippodrome`
 
 ### D — Characters
 
 - [x] `eCharacterBase`
 - [x] `eCharacter`
-- [ ] `eAnimal`
-- [ ] `eArcher`
-- [ ] `eArtisan`
-- [ ] `eBasicPatroler`
-- [ ] `eActor`
-- [ ] `eAstronomer`
-- [ ] `eButcher`
+- [x] `eAnimal` — no own read/write, inherits eCharacter
+- [x] `eArcher` — no own read/write, inherits eCharacter
+- [x] `eArtisan` — no own read/write, inherits eCharacter
+- [x] `eBasicPatroler` — no own read/write, inherits eCharacter
+- [x] `eActor` — inherits eBasicPatroler, no own read/write
+- [x] `eAstronomer` — inherits eBasicPatroler, no own read/write
+- [x] `eButcher` — inherits eBasicPatroler, no own read/write
 - [x] `eCartTransporter`
-- [ ] `eCompetitor`
-- [ ] `eCurator`
-- [ ] `eDonkey`
-- [ ] `eGymnast`
-- [ ] `eHealer`
-- [ ] `eHomeless`
-- [ ] `eInventor`
-- [ ] `eOx`
-- [ ] `ePeddler`
-- [ ] `ePhilosopher`
-- [ ] `ePorter`
-- [ ] `eScholar`
-- [ ] `eSettler`
-- [ ] `eTaxCollector`
-- [ ] `eTrader`
-- [ ] `eWaterDistributor`
-- [ ] `eBoatBase`
-- [ ] `eEnemyBoat`
-- [ ] `eTradeBoat`
-- [ ] `eTrireme`
-- [ ] `eCattle`
-- [ ] `eChariot`
-- [ ] `eFightingPatroler`
-- [ ] `eDisgruntled`
-- [ ] `eEliteCitizen`
-- [ ] `eSick`
-- [ ] `eSoldier`
-- [ ] `eAmazon`
-- [ ] `eArcherBase`
-- [ ] `eAresWarrior`
-- [ ] `eChariotBase`
-- [ ] `eHopliteBase`
-- [ ] `eHorsemanBase`
-- [ ] `eRangeSoldier`
-- [ ] `eSpearthrowerBase`
-- [ ] `eWatchman`
-- [ ] `eFireFighter`
-- [ ] `eGod`
-- [ ] `eBasicGod`
-- [ ] `eDionysus`
-- [ ] `eExtendedGod`
-- [ ] `eHermes`
-- [ ] `eGrower`
-- [ ] `eHero`
-- [ ] `eBasicHero`
-- [ ] `eHorse`
-- [ ] `eMonster`
-- [ ] `eBasicMonster`
-- [ ] `eWaterMonster`
-- [ ] `eResourceCollectorBase`
-- [ ] `eFishingBoat`
-- [ ] `eResourceCollector`
-- [ ] `eShepherdBase`
-- [ ] `eUrchinGatherer`
-- [ ] `eTrailer`
+- [x] `eCompetitor` — inherits eBasicPatroler, no own read/write
+- [x] `eCurator` — inherits eBasicPatroler, no own read/write
+- [x] `eDonkey` — inherits eBasicPatroler, no own read/write
+- [x] `eGymnast` — inherits eBasicPatroler, no own read/write
+- [x] `eHealer` — inherits eBasicPatroler, no own read/write
+- [x] `eHomeless` — inherits eBasicPatroler, no own read/write
+- [x] `eInventor` — inherits eBasicPatroler, no own read/write
+- [x] `eOx` — inherits eBasicPatroler, no own read/write
+- [x] `ePeddler` — inherits, no own read/write (mAgora ref not saved — pre-existing gap)
+- [x] `ePhilosopher` — inherits eBasicPatroler, no own read/write
+- [x] `ePorter` — inherits eBasicPatroler, no own read/write
+- [x] `eScholar` — inherits eBasicPatroler, no own read/write
+- [x] `eSettler`
+- [x] `eTaxCollector` — inherits eBasicPatroler, no own read/write
+- [x] `eTrader` — inherits, no own read/write (mFollowers donkeys saved as board chars; trader vec rebuilt is pre-existing gap)
+- [x] `eWaterDistributor` — inherits eBasicPatroler, no own read/write
+- [x] `eBoatBase` — inherits eCharacter, no own read/write
+- [x] `eEnemyBoat` — inherits eBoatBase, no own read/write
+- [x] `eTradeBoat` — inherits eBoatBase, no own read/write
+- [x] `eTrireme` — inherits, no own read/write
+- [x] `eCattle`
+- [x] `eChariot` — inherits eCharacter, no own read/write
+- [x] `eFightingPatroler` — inherits eCharacter, no own read/write
+- [x] `eDisgruntled` — inherits eFightingPatroler, no own read/write
+- [x] `eEliteCitizen` — inherits eFightingPatroler, no own read/write
+- [x] `eSick` — inherits eFightingPatroler, no own read/write
+- [x] `eSoldier`
+- [x] `eAmazon`
+- [x] `eArcherBase` — inherits eSoldier, no own read/write
+- [x] `eAresWarrior` — inherits eSoldier, no own read/write
+- [x] `eChariotBase` — inherits eSoldier, no own read/write
+- [x] `eHopliteBase` — inherits eSoldier, no own read/write
+- [x] `eHorsemanBase` — inherits eSoldier, no own read/write
+- [x] `eRangeSoldier` — inherits eSoldier, no own read/write
+- [x] `eSpearthrowerBase` — inherits eSoldier, no own read/write
+- [x] `eWatchman` — inherits eFightingPatroler, no own read/write
+- [x] `eFireFighter` — inherits eCharacter, no own read/write
+- [x] `eGod`
+- [x] `eBasicGod` — inherits eGod, no own read/write
+- [x] `eDionysus` — inherits eGod, no own read/write
+- [x] `eExtendedGod` — inherits eGod, no own read/write
+- [x] `eHermes` — inherits eGod, no own read/write
+- [x] `eGrower` — inherits eCharacter, no own read/write (mGrapes/mOlives/mOranges runtime accum, pre-existing gap)
+- [x] `eHero` — inherits eCharacter, no own read/write
+- [x] `eBasicHero` — inherits eHero, no own read/write
+- [x] `eHorse` — inherits eCharacter, no own read/write
+- [x] `eMonster` — inherits eCharacter, no own read/write
+- [x] `eBasicMonster` — inherits eMonster, no own read/write
+- [x] `eWaterMonster` — inherits eMonster, no own read/write
+- [x] `eResourceCollectorBase` — inherits eCharacter, no own read/write
+- [x] `eFishingBoat` — inherits, no own read/write
+- [x] `eResourceCollector` — inherits eResourceCollectorBase, no own read/write
+- [x] `eShepherdBase` — inherits eResourceCollectorBase, no own read/write
+- [x] `eUrchinGatherer` — inherits eResourceCollectorBase, no own read/write
+- [x] `eTrailer`
 
 ### E — Character Actions
 

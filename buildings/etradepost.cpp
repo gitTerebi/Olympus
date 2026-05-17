@@ -323,12 +323,12 @@ void eTradePost::write(eWriteStream& dst) const {
 }
 
 void eTradePost::serialize(eSaveArchive& ar) {
-    ar.field("mImports", mImports, eResourceType::none); 
-    ar.field("mExports", mExports, eResourceType::none); 
-    ar.field("mCartEmpty", mCartEmpty, eResourceType::none); 
-    ar.field("mCartGet", mCartGet, eResourceType::none);
-    ar.field("mCartAccept", mCartAccept, eResourceType::none);
-    ar.field("mRouteTimer", mRouteTimer, 0);
+    ar.field("imports", mImports, eResourceType::none);
+    ar.field("exports", mExports, eResourceType::none);
+    ar.field("cartEmpty", mCartEmpty, eResourceType::none);
+    ar.field("cartGet", mCartGet, eResourceType::none);
+    ar.field("cartAccept", mCartAccept, eResourceType::none);
+    ar.field("routeTimer", mRouteTimer, 0);
 }
 
 bool eTradePost::trades() const {

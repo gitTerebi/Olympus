@@ -44,15 +44,15 @@ static void byteVecField(eSaveArchive& ar, const char* const name,
 }
 
 void eRuins::serialize(eSaveArchive& ar) {
-    ar.field("mWasType", mWasType);
-    ar.field("mOriginX", mOriginX);
-    ar.field("mOriginY", mOriginY);
-    ar.field("mOriginW", mOriginW);
-    ar.field("mOriginH", mOriginH);
-    byteVecField(ar, "mSavedBuilding", mSavedBuilding);
-    byteVecField(ar, "mSavedPier", mSavedPier);
-    ar.field("mSavedPierRect", mSavedPierRect);
-    byteVecField(ar, "mRestoreBundle", mRestoreBundle);
+    ar.field("wasType", mWasType);
+    ar.field("originX", mOriginX);
+    ar.field("originY", mOriginY);
+    ar.field("originW", mOriginW);
+    ar.field("originH", mOriginH);
+    byteVecField(ar, "savedBuilding", mSavedBuilding);
+    byteVecField(ar, "savedPier", mSavedPier);
+    ar.field("savedPierRect", mSavedPierRect);
+    byteVecField(ar, "restoreBundle", mRestoreBundle);
 }
 
 void eRuins::read(eReadStream& src) {

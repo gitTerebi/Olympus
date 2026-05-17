@@ -144,34 +144,32 @@ void eHippodrome::read(eReadStream& src) {
 }
 
 void eHippodrome::serialize(eSaveArchive& ar) {
-    ar.field("mFinish", mFinish);
-    ar.field("mNHorses", mNHorses);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
-            mCart = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mCart);
-    }
-    int n = mPieces.size();
-    ar.field("n", n);
+    ar.field("finish", mFinish);
+    ar.field("nHorses", mNHorses);
+    ar.characterAsField("cart", &mBoard, mCart);
+    const int n = ar.writing() ? static_cast<int>(mPieces.size()) : 0;
     if(ar.reading()) mPieces.clear();
-    for(int i = 0; i < n; i++) {
-        eN p;
-        if(ar.writing()) p = mPieces[i];
-        ar.field("p.fO", p.fO);
-        if(ar.reading()) {
-            mPieces.push_back(p);
-            ar.readStream().readBuilding(&mBoard, [this, i](eBuilding* const b) {
-                const auto hp = static_cast<eHippodromePiece*>(b);
-                mPieces[i].fPtr = hp;
-                hp->setHippodrome(this);
-                hp->setPartId(i);
-            });
-        } else {
-            ar.writeStream().writeBuilding(p.fPtr);
-        }
-    }
+    ar.countedArrayField("pieces", n,
+        [this](eSaveArchive& itemAr, const int i) {
+            eN p;
+            if(itemAr.writing()) p = mPieces[i];
+            itemAr.field("orientation", p.fO);
+            if(itemAr.reading()) {
+                mPieces.push_back(p);
+            }
+            itemAr.payloadField("piece",
+                [this, i](eWriteStream& dst) {
+                    dst.writeBuilding(mPieces[i].fPtr);
+                },
+                [this, i](eReadStream& src) {
+                    src.readBuilding(&mBoard, [this, i](eBuilding* const b) {
+                        const auto hp = static_cast<eHippodromePiece*>(b);
+                        mPieces[i].fPtr = hp;
+                        hp->setHippodrome(this);
+                        hp->setPartId(i);
+                    });
+                });
+        });
     if(ar.reading()) {
         ar.readStream().addPostFunc([this]() {
             updatePaths();

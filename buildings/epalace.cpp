@@ -134,19 +134,18 @@ void ePalace::write(eWriteStream& dst) const {
 }
 
 void ePalace::serialize(eSaveArchive& ar) {
-    int tiles = mTiles.size();
-    ar.field("tiles", tiles);
-    if(ar.reading()) {
-        mTiles.clear();
-    }
-    for(int i = 0; i < tiles; i++) {
-        if(ar.reading()) {
-            ar.readStream().readBuilding(&getBoard(), [this](eBuilding* const b) {
-                const auto pt = static_cast<ePalaceTile*>(b);
-                addTile(pt);
-            });
-        } else {
-            ar.writeStream().writeBuilding(mTiles[i]);
-        }
-    }
+    const int tiles = ar.writing() ? static_cast<int>(mTiles.size()) : 0;
+    if(ar.reading()) mTiles.clear();
+    ar.countedArrayField("tiles", tiles,
+        [this](eSaveArchive& itemAr, const int i) {
+            itemAr.payloadField("tile",
+                [this, i](eWriteStream& dst) {
+                    dst.writeBuilding(mTiles[i]);
+                },
+                [this](eReadStream& src) {
+                    src.readBuilding(&getBoard(), [this](eBuilding* const b) {
+                        addTile(static_cast<ePalaceTile*>(b));
+                    });
+                });
+        });
 }

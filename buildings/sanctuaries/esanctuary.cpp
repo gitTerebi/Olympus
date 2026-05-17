@@ -377,41 +377,31 @@ void eSanctuary::write(eWriteStream& dst) const {
 
 void eSanctuary::serialize(eSaveArchive& ar) {
     auto& board = getBoard();
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&board, [this](eCharacter* const c) {
-            mGod = static_cast<eGod*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mGod);
-    }
-    ar.field("mSpawnWait", mSpawnWait);
-    ar.field("mGodAbroad", mGodAbroad);
+    ar.characterAsField("god", &board, mGod);
+    ar.field("spawnWait", mSpawnWait);
+    ar.field("godAbroad", mGodAbroad);
 
-    ar.field("mAskedForHelp", mAskedForHelp);
-    ar.field("mCheckHelpNeeded", mCheckHelpNeeded);
-    ar.field("mHelpTimer", mHelpTimer);
+    ar.field("askedForHelp", mAskedForHelp);
+    ar.field("checkHelpNeeded", mCheckHelpNeeded);
+    ar.field("helpTimer", mHelpTimer);
 
-    int nw;
-    if(ar.writing()) nw = mWarriorTiles.size();
-    ar.field("nw", nw);
+    const int nw = ar.writing() ? static_cast<int>(mWarriorTiles.size()) : 0;
     if(ar.reading()) mWarriorTiles.clear();
-    for(int i = 0; i < nw; i++) {
-        eTile* t = nullptr;
-        if(ar.writing()) t = mWarriorTiles[i];
-        ar.tile(t, board);
-        if(ar.reading()) mWarriorTiles.push_back(t);
-    }
+    ar.countedArrayField("warriorTiles", nw,
+        [this, &board](eSaveArchive& itemAr, const int i) {
+            eTile* t = itemAr.writing() ? mWarriorTiles[i] : nullptr;
+            itemAr.tileField("tile", board, t);
+            if(itemAr.reading()) mWarriorTiles.push_back(t);
+        });
 
-    int ns;
-    if(ar.writing()) ns = mSpecialTiles.size();
-    ar.field("ns", ns);
+    const int ns = ar.writing() ? static_cast<int>(mSpecialTiles.size()) : 0;
     if(ar.reading()) mSpecialTiles.clear();
-    for(int i = 0; i < ns; i++) {
-        eTile* t = nullptr;
-        if(ar.writing()) t = mSpecialTiles[i];
-        ar.tile(t, board);
-        if(ar.reading()) mSpecialTiles.push_back(t);
-    }
+    ar.countedArrayField("specialTiles", ns,
+        [this, &board](eSaveArchive& itemAr, const int i) {
+            eTile* t = itemAr.writing() ? mSpecialTiles[i] : nullptr;
+            itemAr.tileField("tile", board, t);
+            if(itemAr.reading()) mSpecialTiles.push_back(t);
+        });
 }
 
 std::vector<eTile*> eSanctuary::warriorTiles() const {

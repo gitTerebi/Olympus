@@ -75,29 +75,30 @@ void eSanctuaryWithWarriors::write(eWriteStream& dst) const {
 
 void eSanctuaryWithWarriors::serialize(eSaveArchive& ar) {
     auto& board = getBoard();
-    int nb;
-    if(ar.writing()) nb = mSoldierBanners.size();
-    ar.field("nb", nb);
+    const int nb = ar.writing() ? static_cast<int>(mSoldierBanners.size()) : 0;
     if(ar.reading()) mSoldierBanners.clear();
-    for(int i = 0; i < nb; i++) {
-        if(ar.reading()) {
-            ar.readStream().readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
-                if(!b) return;
-                const auto gt = godType();
-                int string = -1;
-                if(gt == eGodType::artemis) {
-                    string = 30 + i;
-                } else if(gt == eGodType::ares) {
-                    string = 32 + i;
-                } else {
-                    return;
-                }
-                const auto name = eLanguage::zeusText(138, string);
-                b->setName(name);
-                mSoldierBanners.push_back(b);
-            });
-        } else {
-            ar.writeStream().writeSoldierBanner(mSoldierBanners[i].get());
-        }
-    }
+    ar.countedArrayField("soldierBanners", nb,
+        [this, &board](eSaveArchive& itemAr, const int i) {
+            itemAr.payloadField("banner",
+                [this, i](eWriteStream& dst) {
+                    dst.writeSoldierBanner(mSoldierBanners[i].get());
+                },
+                [this, &board, i](eReadStream& src) {
+                    src.readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
+                        if(!b) return;
+                        const auto gt = godType();
+                        int string = -1;
+                        if(gt == eGodType::artemis) {
+                            string = 30 + i;
+                        } else if(gt == eGodType::ares) {
+                            string = 32 + i;
+                        } else {
+                            return;
+                        }
+                        const auto name = eLanguage::zeusText(138, string);
+                        b->setName(name);
+                        mSoldierBanners.push_back(b);
+                    });
+                });
+        });
 }

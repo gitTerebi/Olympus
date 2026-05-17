@@ -73,14 +73,14 @@ void eSoldier::write(eWriteStream& dst) const {
 }
 
 void eSoldier::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
-            mBanner = b;
+    ar.payloadField("banner",
+        [this](eWriteStream& dst) { dst.writeSoldierBanner(mBanner.get()); },
+        [this](eReadStream& src) {
+            auto& board = getBoard();
+            src.readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
+                mBanner = b;
+            });
         });
-    } else {
-        ar.writeStream().writeSoldierBanner(mBanner);
-    }
 }
 
 eSoldierAction *eSoldier::soldierAction() const {

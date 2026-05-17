@@ -78,9 +78,9 @@ void eSanctBuilding::write(eWriteStream& dst) const {
 }
 
 void eSanctBuilding::serialize(eSaveArchive& ar) {
-    ar.field("mWorkedOn", mWorkedOn);
-    ar.field("mProgress", mProgress);
-    ar.field("mHalted", mHalted);
+    ar.field("workedOn", mWorkedOn);
+    ar.field("progress", mProgress);
+    ar.field("halted", mHalted);
 }
 
 void eSanctBuilding::scheduleTerrainUpdate() {

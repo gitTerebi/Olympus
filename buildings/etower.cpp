@@ -274,30 +274,14 @@ void eTower::write(eWriteStream &dst) const
 
 void eTower::serialize(eSaveArchive &ar)
 {
-    ar.field("mMissile", mMissile);
-    ar.field("mRangeAttack", mRangeAttack);
-    ar.field("mAttackTime", mAttackTime);
-    ar.field("mAttack", mAttack);
-    ar.field("mAttackOrientation", mAttackOrientation);
-    if (ar.reading())
-    {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter *const c)
-                                      { mAttackTarget = c; });
-    }
-    else
-    {
-        ar.writeStream().writeCharacter(mAttackTarget);
-    }
-    ar.field("mSpawnTime", mSpawnTime);
-    if (ar.reading())
-    {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter *const c)
-                                      { mArcher = static_cast<eArcher *>(c); });
-    }
-    else
-    {
-        ar.writeStream().writeCharacter(mArcher);
-    }
+    ar.field("missile", mMissile);
+    ar.field("rangeAttack", mRangeAttack);
+    ar.field("attackTime", mAttackTime);
+    ar.field("attack", mAttack);
+    ar.field("attackOrientation", mAttackOrientation);
+    ar.characterField("attackTarget", &getBoard(), mAttackTarget);
+    ar.field("spawnTime", mSpawnTime);
+    ar.characterAsField("archer", &getBoard(), mArcher);
 }
 
 bool eTower::spawn()

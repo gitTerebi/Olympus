@@ -84,13 +84,7 @@ void eTrailer::write(eWriteStream& dst) const {
 }
 
 void eTrailer::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mFollow = static_cast<eCartTransporter*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mFollow);
-    }
+    ar.characterAsField("follow", &getBoard(), mFollow);
     ar.field("mIsBig", mIsBig);
     ar.field("mResCount", mResCount);
     ar.field("mResType", mResType);

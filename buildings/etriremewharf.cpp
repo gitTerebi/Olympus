@@ -215,21 +215,12 @@ void eTriremeWharf::write(eWriteStream& dst) const {
 }
 
 void eTriremeWharf::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTakeCart = static_cast<eCartTransporter*>(c);
-        });
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mTrireme = static_cast<eTrireme*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mTakeCart);
-        ar.writeStream().writeCharacter(mTrireme);
-    }
-    ar.field("mWoodCount", mWoodCount);
-    ar.field("mArmorCount", mArmorCount);
-    ar.field("mTriremeBuildingStage", mTriremeBuildingStage);
-    ar.field("mTriremeBuildingTime", mTriremeBuildingTime);
+    ar.characterAsField("takeCart", &getBoard(), mTakeCart);
+    ar.characterAsField("trireme", &getBoard(), mTrireme);
+    ar.field("woodCount", mWoodCount);
+    ar.field("armorCount", mArmorCount);
+    ar.field("triremeBuildingStage", mTriremeBuildingStage);
+    ar.field("triremeBuildingTime", mTriremeBuildingTime);
 }
 
 void eTriremeWharf::triremeCameBack() {

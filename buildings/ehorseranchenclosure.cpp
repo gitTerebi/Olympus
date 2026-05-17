@@ -117,19 +117,19 @@ void eHorseRanchEnclosure::write(eWriteStream& dst) const {
 }
 
 void eHorseRanchEnclosure::serialize(eSaveArchive& ar) {
-    int nh = mHorses.size();
-    ar.field("nh", nh);
-    if(ar.reading()) {
-        mHorses.clear();
-    }
-    for(int i = 0; i < nh; i++) {
-        if(ar.reading()) {
-            ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-                if(!c) return;
-                mHorses.push_back(c->ref<eHorse>());
-            });
-        } else {
-            ar.writeStream().writeCharacter(mHorses[i].get());
-        }
-    }
+    const int nh = ar.writing() ? static_cast<int>(mHorses.size()) : 0;
+    if(ar.reading()) mHorses.clear();
+    ar.countedArrayField("horses", nh,
+        [this](eSaveArchive& itemAr, const int i) {
+            itemAr.payloadField("horse",
+                [this, i](eWriteStream& dst) {
+                    dst.writeCharacter(mHorses[i].get());
+                },
+                [this](eReadStream& src) {
+                    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
+                        if(!c) return;
+                        mHorses.push_back(c->ref<eHorse>());
+                    });
+                });
+        });
 }
