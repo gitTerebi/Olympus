@@ -72,6 +72,10 @@ void eVendorCartAction::onFoundTarget() {
     mState = eVendorCartState::moving;
 }
 
+void eVendorCartAction::onAtTarget() {
+    mState = eVendorCartState::atTarget;
+}
+
 void eVendorCartAction::onFindTargetFail() {
     wait(kFindRetryWait);
 }

@@ -25,6 +25,8 @@ public:
     bool savesCartState() const override;
 
     void onFindTargetFail() override;
+    void onFoundTarget() override;
+    void onAtTarget() override;
 
 private:
     // transitions
