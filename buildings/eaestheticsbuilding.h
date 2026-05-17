@@ -128,8 +128,8 @@ public:
     int id() const { return mId; }
     void setId(const int i);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

@@ -150,7 +150,9 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &boa
         return false;
 
     const bool hasActiveInvasion = board.hasActiveInvasions(targetCid);
-    if (hasActiveInvasion || targetCity->yearsElapsed() < 2)
+    if (hasActiveInvasion)
+        return false;
+    if (targetCity->yearsElapsed() < 1)
         return false;
     for (const auto i : board.invasions()) {
         if (i && i->cityId() == targetCid)

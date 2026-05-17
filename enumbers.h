@@ -103,8 +103,10 @@ struct eNumbers {
     static int sHorseRanchHorseSpawnPeriod;
 
     static int sPatrolerMaxDistance;
-    static int sPatrolerWaitTime;
-    static int sPatrolerSourceSpawnPeriod;
+    static int sPatrolWalkerSpawnCooldown;
+    static int sWaterCarrierSpawnCooldown;
+    static int sInfirmarySpawnCooldown;
+    static int sScheduledWalkerSpawnInterval;
 
     static int sArtisanWaitTime;
     static int sArtisanBuildTime;

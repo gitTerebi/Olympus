@@ -48,9 +48,9 @@ ePatrolBuildingBase::~ePatrolBuildingBase() {
 void ePatrolBuildingBase::timeChanged(const int by) {
     if(mSpawnPatrolers && enabled()) {
         if(!mChar) {
-            mSpawnTime += by*effectiveness();
-            if(mSpawnTime > mWaitTime) {
-                mSpawnTime = 0;
+            mSpawnTimer += by*effectiveness();
+            if(mSpawnTimer > spawnCooldown()) {
+                mSpawnTimer = 0;
                 const bool r = updatePathIfNeeded();
                 if(r) mSpawnOnPathSet = true;
                 else spawn();
@@ -136,7 +136,7 @@ void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
     ar.field("bothDirections", mBothDirections);
     ar.field("lastDirection", mLastDirection);
     ar.field("spawnPatrolers", mSpawnPatrolers);
-    ar.field("spawnTime", mSpawnTime);
+    ar.field("spawnTime", mSpawnTimer);
     ar.field("spawnRoadId", mSpawnRoadId);
 
     ar.payloadField("directionTimes",
