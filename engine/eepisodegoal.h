@@ -34,6 +34,7 @@ struct eEpisodeGoal {
     int fRequiredCount = 0;
     int fStatusCount = 0;
     int fPreviewCount = 0;
+    bool fSkippedByPlayer = false;
 
     stdsptr<eEpisodeGoal> makeCopy() const;
 
@@ -42,6 +43,7 @@ struct eEpisodeGoal {
 
     void serialize(eSaveArchive& ar);
     bool met() const;
+    void skipByPlayer();
 
     static std::string sText(const eEpisodeGoalType type);
     std::string text(const bool colonyEpisode, const bool atlantean,

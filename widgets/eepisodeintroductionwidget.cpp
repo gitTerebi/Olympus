@@ -124,10 +124,33 @@ void eEpisodeIntroductionWidget::initialize(
             l->setText(t);
             l->fitContent();
             w->addWidget(l);
+
+            eFramedButton* complete = nullptr;
+            if(type == eEpisodeIntroType::goals && !g->met()) {
+                complete = new eFramedButton(window());
+                complete->setUnderline(false);
+                complete->setRenderBg(true);
+                complete->setPaddingXS();
+                complete->setFontSizeS();
+                complete->setText("Complete");
+                complete->fitContent();
+                complete->setPressAction([board, g, complete,
+                                          checkBox, ctexs, proceedA]() {
+                    g->skipByPlayer();
+                    complete->hide();
+                    checkBox->setTexture(ctexs.getTexture(0));
+                    if(board->checkGoalsFulfilled()) {
+                        board->completeGoalsByPlayer();
+                        proceedA();
+                    }
+                });
+                w->addWidget(complete);
+            }
             w->stackHorizontally(p);
             w->fitHeight();
             checkBox->align(eAlignment::vcenter);
             l->align(eAlignment::vcenter);
+            if(complete) complete->align(eAlignment::vcenter);
             goalsInner->addWidget(w);
 
             if(type == eEpisodeIntroType::goals) {
@@ -268,6 +291,7 @@ void eEpisodeIntroductionWidget::initialize(
         rpc->fitContent();
         lowerButtons->addWidget(rpc);
         rpc->align(eAlignment::hcenter);
+
     } else if(type == eEpisodeIntroType::victory ||
               type == eEpisodeIntroType::campaingVictory) {
         const auto p = new eFramedButton(window());

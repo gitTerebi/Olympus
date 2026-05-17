@@ -34,10 +34,17 @@ void eEpisodeGoal::serialize(eSaveArchive& ar) {
     ar.field("enumInt2", fEnumInt2);
     ar.field("requiredCount", fRequiredCount);
     ar.field("statusCount", fStatusCount);
+    ar.field("skippedByPlayer", fSkippedByPlayer, false);
 }
 
 bool eEpisodeGoal::met() const {
+    if(fSkippedByPlayer) return true;
     return fStatusCount >= fRequiredCount;
+}
+
+void eEpisodeGoal::skipByPlayer() {
+    fSkippedByPlayer = true;
+    fStatusCount = fRequiredCount;
 }
 
 std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
@@ -351,6 +358,7 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
 }
 
 void eEpisodeGoal::update(const eGameBoard& b) {
+    if(fSkippedByPlayer) return;
     const auto ppid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
