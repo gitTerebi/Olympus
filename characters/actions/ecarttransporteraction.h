@@ -74,10 +74,7 @@ protected:
     void startResourceAction(const eCartTask& task);
     void finishResourceAction(const eCartTask& task);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
-    virtual void serializeFields(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
     virtual void resumeFromSavedState();
     virtual bool savesCartState() const;
 
@@ -85,6 +82,8 @@ protected:
     virtual void onFindTargetFail() {}
     // subclass hook — called when findTarget BFS succeeds and path starts
     virtual void onFoundTarget() {}
+    // subclass hook — called when movement reaches target and exchange runs
+    virtual void onAtTarget() {}
 
     eBuildingWithResource* building() const { return mBuilding.get(); }
     eCartTransporter* cart() const {
@@ -99,7 +98,7 @@ protected:
     void clearTask();
 
 private:
-    stdsptr<eWalkableObject> getWalkable() const;
+    stdsptr<eWalkableObject> getWalkable(bool excludeHomeRect = false) const;
 
     void updateWaiting();
 

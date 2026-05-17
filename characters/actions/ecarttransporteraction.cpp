@@ -364,7 +364,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         if(const auto cart = dynamic_cast<eCartTransporter*>(c)) {
             a->setMaxFindDistance(cart->maxDistance());
         }
-        const auto w = getWalkable();
+        const auto w = getWalkable(true);
         setCurrentAction(a);
         a->start(finalTile, w);
     };
@@ -405,6 +405,7 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
     if(!mBuilding) return;
     if(!rb) return;
     mState = eCartState::atTarget;
+    onAtTarget();
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     const int startCount = ct->resCount();
@@ -501,9 +502,19 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
 }
 
 void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
-    ar.archiveField("sourceRef", [&](eSaveArchive& refsAr) {
-        refsAr.buildingAsField("sourceBuilding", &board(), mBuilding);
-    });
+    // skip mCurrentAction (walk/wait "feet") on write; rebuilt from FSM state on load.
+    const bool writing = ar.writing();
+    stdsptr<eCharacterAction> savedFeet;
+    if(writing) {
+        savedFeet = currentActionPtr();
+        setCurrentAction(nullptr);
+    }
+    eActionWithComeback::serializeFields(ar);
+    if(writing) {
+        setCurrentAction(savedFeet);
+    }
+
+    ar.buildingAsField("sourceBuilding", &board(), mBuilding);
 
     ar.field("taskMaxCount", mTask.fMaxCount);
     ar.field("taskResource", mTask.fResource);
@@ -515,9 +526,7 @@ void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
         ar.field("cartState", mState);
     }
 
-    ar.archiveField("targetRef", [&](eSaveArchive& refsAr) {
-        refsAr.buildingField("targetBuilding", &board(), mTarget);
-    });
+    ar.buildingField("targetBuilding", &board(), mTarget);
 }
 
 void eCartTransporterAction::resumeFromSavedState() {
@@ -548,29 +557,7 @@ bool eCartTransporterAction::savesCartState() const {
     return true;
 }
 
-void eCartTransporterAction::read(eReadStream& src) {
-    eActionWithComeback::read(src);
-    eSaveArchive ar(src);
-    serializeFields(ar);
-    const stdptr<eCartTransporterAction> tptr(this);
-    src.addPostFunc([tptr]() {
-        if(tptr) tptr->resumeFromSavedState();
-    }, "cartTransporterAction");
-}
-
-void eCartTransporterAction::write(eWriteStream& dst) const {
-    // do not serialize "feet" (mCurrentAction walk/wait child); rebuilt on load
-    // from saved plan (mState + mTask) via resumeFromSavedState.
-    const auto self = const_cast<eCartTransporterAction*>(this);
-    auto savedFeet = self->currentActionPtr();
-    self->setCurrentAction(nullptr);
-    eActionWithComeback::write(dst);
-    self->setCurrentAction(savedFeet);
-    eSaveArchive ar(dst);
-    self->serializeFields(ar);
-}
-
-stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
+stdsptr<eWalkableObject> eCartTransporterAction::getWalkable(bool excludeHomeRect) const {
     if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
     const auto supp = support();
     if(supp & eCartActionTypeSupport::get) {
@@ -600,7 +587,7 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkable() const {
     }
     const auto buildingRect = mBuilding->tileRect();
     auto w = eWalkableObject::sCreateRoadAvenue();
-    w = eWalkableObject::sCreateRect(buildingRect, w);
+    if(!excludeHomeRect) w = eWalkableObject::sCreateRect(buildingRect, w);
     return w;
 }
 
