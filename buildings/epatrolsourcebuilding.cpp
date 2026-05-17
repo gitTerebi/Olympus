@@ -30,7 +30,7 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
     mTargets(targets) {
     for(const auto& t : mTargets) {
         (void)t;
-        mTargetData.push_back({eRand::rand() % mSpawnWaitTime, -1});
+        mTargetData.push_back({eRand::rand() % mSpawnInterval, -1});
     }
 }
 
@@ -41,7 +41,7 @@ void ePatrolSourceBuilding::timeChanged(const int by) {
         for(int i = 0; i < iMax; i++) {
             int& spawnTime = mTargetData[i].fSpawnTime;
             spawnTime += by;
-            if(spawnTime > mSpawnWaitTime) {
+            if(spawnTime > mSpawnInterval) {
                 spawnTime = 0;
                 spawn(i);
             }

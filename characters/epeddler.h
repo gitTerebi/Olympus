@@ -10,7 +10,7 @@ class ePeddler : public eBasicPatroler {
 public:
     ePeddler(eGameBoard& board);
 
-    void provideToBuilding(eBuilding* const b);
+    void provideToBuilding(eBuilding* const b) override;
 
     void setAgora(eAgoraBase* const a);
     eAgoraBase* agora() const;

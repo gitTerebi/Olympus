@@ -102,8 +102,10 @@ int eNumbers::sHorseRanchWheatUsePeriod;
 int eNumbers::sHorseRanchHorseSpawnPeriod;
 
 int eNumbers::sPatrolerMaxDistance;
-int eNumbers::sPatrolerWaitTime;
-int eNumbers::sPatrolerSourceSpawnPeriod;
+int eNumbers::sPatrolWalkerSpawnCooldown;
+int eNumbers::sWaterCarrierSpawnCooldown;
+int eNumbers::sInfirmarySpawnCooldown;
+int eNumbers::sScheduledWalkerSpawnInterval;
 
 int eNumbers::sArtisanWaitTime;
 int eNumbers::sArtisanBuildTime;
@@ -408,8 +410,10 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("horse_ranch_horse_spawn_period_i", sHorseRanchHorseSpawnPeriod, 21000, 1, 1000000);
 
     loadI("patroler_max_distance_i", sPatrolerMaxDistance, 40, 5, 1000);
-    loadI("patroler_wait_time_i", sPatrolerWaitTime, 5000, 1, 1000000);
-    loadI("patroler_source_spawn_period_i", sPatrolerSourceSpawnPeriod, 10000, 1, 1000000);
+    loadI("patrol_walker_spawn_cooldown_i", sPatrolWalkerSpawnCooldown, 1000, 0, 1000000);
+    loadI("water_carrier_spawn_cooldown_i", sWaterCarrierSpawnCooldown, 4000, 0, 1000000);
+    loadI("infirmary_spawn_cooldown_i", sInfirmarySpawnCooldown, 1000, 0, 1000000);
+    loadI("scheduled_walker_spawn_interval_i", sScheduledWalkerSpawnInterval, 2000, 1, 1000000);
 
     loadI("artisan_wait_time_i", sArtisanWaitTime, 2000, 1, 1000000);
     loadI("artisan_build_time_i", sArtisanBuildTime, 6000, 1, 1000000);

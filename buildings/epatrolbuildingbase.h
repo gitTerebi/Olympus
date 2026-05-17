@@ -69,6 +69,8 @@ public:
     const std::vector<eOrientation>& reversePath() const { return mReversePath; }
 
     virtual eTile* patrolStartTile() const;
+
+    virtual int spawnCooldown() const { return eNumbers::sPatrolWalkerSpawnCooldown; }
 private:
     void serialize(eSaveArchive& ar);
 
@@ -95,8 +97,7 @@ private:
 
     const int mMaxDistance = eNumbers::sPatrolerMaxDistance;
 
-    const int mWaitTime = eNumbers::sPatrolerWaitTime;
-    double mSpawnTime = 1000000;
+    double mSpawnTimer = 1000000;
     stdptr<eCharacter> mChar;
 
     ePatrolGuides mPatrolGuides;

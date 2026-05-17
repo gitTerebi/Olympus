@@ -41,7 +41,7 @@ private:
 
     const eTargets mTargets;
 
-    const int mSpawnWaitTime = eNumbers::sPatrolerSourceSpawnPeriod;
+    const int mSpawnInterval = eNumbers::sScheduledWalkerSpawnInterval;
     std::vector<eTargetData> mTargetData;
 };
 
