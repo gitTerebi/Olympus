@@ -313,10 +313,10 @@ void eEliteHousing::write(eWriteStream& dst) const {
 }
 
 void eEliteHousing::serialize(eSaveArchive& ar) {
-    ar.field("mUpdateLevel", mUpdateLevel);
-    ar.field("mWine", mWine);
-    ar.field("mArms", mArms);
-    ar.field("mHorses", mHorses);
+    ar.field("updateLevel", mUpdateLevel);
+    ar.field("wine", mWine);
+    ar.field("arms", mArms);
+    ar.field("horses", mHorses);
 }
 
 std::string eEliteHousing::sName(const int level) {

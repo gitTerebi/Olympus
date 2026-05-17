@@ -419,8 +419,19 @@ eHouseMissing eSmallHouse::missing() const
 void eSmallHouse::read(eReadStream &src)
 {
     eHouseBase::read(src);
-
     eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eSmallHouse::write(eWriteStream &dst) const
+{
+    eHouseBase::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eSmallHouse*>(this)->serialize(ar);
+}
+
+void eSmallHouse::serialize(eSaveArchive& ar)
+{
     ar.field("satisfactionProvidedThisMonth", mSatisfactionProvidedThisMonth);
     ar.field("updateSatisfaction", mUpdateSatisfaction);
     ar.field("satisfaction", mSatisfaction);
@@ -439,41 +450,9 @@ void eSmallHouse::read(eReadStream &src)
     ar.field("disgruntled", mDisgruntled);
 
     ar.field("spawnSick", mSpawnSick);
-    src.readCharacter(&getBoard(), [this](eCharacter *const c)
-                      { mSick = static_cast<eSick *>(c); });
+    ar.characterAsField("sick", &getBoard(), mSick);
     ar.field("spawnDisgruntled", mSpawnDisg);
-    src.readCharacter(&getBoard(), [this](eCharacter *const c)
-                      { mDisg = static_cast<eDisgruntled *>(c); });
-    // mDevolveDelay not saved for compatibility
-}
-
-void eSmallHouse::write(eWriteStream &dst) const
-{
-    eHouseBase::write(dst);
-
-    eSaveArchive ar(dst);
-    ar.field("satisfactionProvidedThisMonth", const_cast<bool&>(mSatisfactionProvidedThisMonth));
-    ar.field("updateSatisfaction", const_cast<int&>(mUpdateSatisfaction));
-    ar.field("satisfaction", const_cast<int&>(mSatisfaction));
-    ar.field("foodSatisfaction", const_cast<int&>(mFoodSatisfaction));
-    ar.field("waterSatisfaction", const_cast<int&>(mWaterSatisfaction));
-    ar.field("workSatisfaction", const_cast<int&>(mWorkSatisfaction));
-    ar.field("taxSatisfaction", const_cast<int&>(mTaxSatisfaction));
-
-    ar.field("updateWater", const_cast<int&>(mUpdateWater));
-    ar.field("updateHygiene", const_cast<int&>(mUpdateHygiene));
-    ar.field("updateLevel", const_cast<int&>(mUpdateLevel));
-
-    ar.field("water", const_cast<int&>(mWater));
-    ar.field("hygiene", const_cast<int&>(mHygiene));
-    ar.field("plague", const_cast<bool&>(mPlague));
-    ar.field("disgruntled", const_cast<bool&>(mDisgruntled));
-
-    ar.field("spawnSick", const_cast<int&>(mSpawnSick));
-    dst.writeCharacter(mSick.get());
-    ar.field("spawnDisgruntled", const_cast<int&>(mSpawnDisg));
-    dst.writeCharacter(mDisg.get());
-    // mDevolveDelay not saved for compatibility
+    ar.characterAsField("disgruntled", &getBoard(), mDisg);
 }
 
 std::string eSmallHouse::sName(const int level)

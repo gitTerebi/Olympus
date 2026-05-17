@@ -171,6 +171,18 @@ public:
         }
     }
 
+    bool tileField(const char* const name,
+                   eGameBoard& board,
+                   eTile*& value) {
+        return payloadField(name,
+            [this, &value](eWriteStream& dst) {
+                dst.writeTile(value);
+            },
+            [this, &board, &value](eReadStream& src) {
+                value = src.readTile(board);
+            });
+    }
+
     template <typename Ptr>
     void character(eGameBoard* board, Ptr& value) {
         if(reading()) {

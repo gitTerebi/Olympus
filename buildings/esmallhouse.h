@@ -5,6 +5,7 @@
 
 class eSick;
 class eDisgruntled;
+class eSaveArchive;
 
 class eSmallHouse : public eHouseBase {
 public:
@@ -46,6 +47,8 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+
+    void serialize(eSaveArchive& ar);
 
     static std::string sName(const int level);
 private:

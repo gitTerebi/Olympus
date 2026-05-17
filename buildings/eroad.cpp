@@ -507,26 +507,38 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
 void eRoad::write(eWriteStream &dst) const {
     eBuilding::write(dst);
     eSaveArchive ar(dst);
-    ar.field("roadblock", const_cast<bool&>(mRoadblock));
-    dst.writeBuilding(mUnderAgora);
-    dst.writeBuilding(mUnderGatehouse);
-    dst.writeBuilding(mAboveHippodrome);
-    ar.field("characterAltitude", const_cast<char&>(mCharacterAltitude));
+    const_cast<eRoad*>(this)->serialize(ar);
 }
 
 void eRoad::read(eReadStream &src) {
     eBuilding::read(src);
-    auto& board = getBoard();
     eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eRoad::serialize(eSaveArchive& ar) {
+    auto& board = getBoard();
     ar.field("roadblock", mRoadblock);
-    src.readBuilding(&board, [this](eBuilding* const bb) {
-        setUnderAgora(static_cast<eAgoraBase*>(bb));
-    });
-    src.readBuilding(&board, [this](eBuilding* const bb) {
-        setUnderGatehouse(static_cast<eGatehouse*>(bb));
-    });
-    src.readBuilding(&board, [this](eBuilding* const bb) {
-        setAboveHippodrome(static_cast<eHippodromePiece*>(bb));
-    });
+    ar.payloadField("underAgora",
+        [this](eWriteStream& dst) { dst.writeBuilding(mUnderAgora); },
+        [this, &board](eReadStream& src) {
+            src.readBuilding(&board, [this](eBuilding* const bb) {
+                setUnderAgora(static_cast<eAgoraBase*>(bb));
+            });
+        });
+    ar.payloadField("underGatehouse",
+        [this](eWriteStream& dst) { dst.writeBuilding(mUnderGatehouse); },
+        [this, &board](eReadStream& src) {
+            src.readBuilding(&board, [this](eBuilding* const bb) {
+                setUnderGatehouse(static_cast<eGatehouse*>(bb));
+            });
+        });
+    ar.payloadField("aboveHippodrome",
+        [this](eWriteStream& dst) { dst.writeBuilding(mAboveHippodrome); },
+        [this, &board](eReadStream& src) {
+            src.readBuilding(&board, [this](eBuilding* const bb) {
+                setAboveHippodrome(static_cast<eHippodromePiece*>(bb));
+            });
+        });
     ar.field("characterAltitude", mCharacterAltitude);
 }

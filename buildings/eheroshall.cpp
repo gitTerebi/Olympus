@@ -453,21 +453,15 @@ void eHerosHall::write(eWriteStream& dst) const {
 }
 
 void eHerosHall::serialize(eSaveArchive& ar) {
-    ar.field("mStage", mStage);
-    ar.field("mArrivalCountdown", mArrivalCountdown);
-    ar.field("mPhilosophers", mPhilosophers);
-    ar.field("mActors", mActors);
-    ar.field("mAthletes", mAthletes);
-    ar.field("mUpdateCulture", mUpdateCulture);
-    ar.field("mHeroOnQuest", mHeroOnQuest);
-    ar.field("mSpawnWait", mSpawnWait);
-    if(ar.reading()) {
-        ar.readStream().readCharacter(&getBoard(), [this](eCharacter* const c) {
-            mHero = static_cast<eHero*>(c);
-        });
-    } else {
-        ar.writeStream().writeCharacter(mHero);
-    }
+    ar.field("stage", mStage);
+    ar.field("arrivalCountdown", mArrivalCountdown);
+    ar.field("philosophers", mPhilosophers);
+    ar.field("actors", mActors);
+    ar.field("athletes", mAthletes);
+    ar.field("updateCulture", mUpdateCulture);
+    ar.field("heroOnQuest", mHeroOnQuest);
+    ar.field("spawnWait", mSpawnWait);
+    ar.characterAsField("hero", &getBoard(), mHero);
 }
 
 void eHerosHall::addRequirement(const eHeroRequirement& hr) {

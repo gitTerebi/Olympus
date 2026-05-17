@@ -1196,16 +1196,14 @@ void ePyramid::write(eWriteStream& dst) const {
 }
 
 void ePyramid::serialize(eSaveArchive& ar) {
-    int ds;
-    if(ar.writing()) ds = mDark.size();
-    ar.field("ds", ds);
+    const int writeCount = ar.writing() ? static_cast<int>(mDark.size()) : 0;
     if(ar.reading()) mDark.clear();
-    for(int i = 0; i < ds; i++) {
-        bool d;
-        if(ar.writing()) d = mDark[i];
-        ar.field("d", d);
-        if(ar.reading()) mDark.push_back(d);
-    }
+    ar.countedArrayField("dark", writeCount,
+        [this](eSaveArchive& itemAr, const int i) {
+            bool d = itemAr.writing() ? static_cast<bool>(mDark[i]) : false;
+            itemAr.field("dark", d, false);
+            if(itemAr.reading()) mDark.push_back(d);
+        });
 }
 
 eSanctCost ePyramid::swapMarbleIfDark(const int e, eSanctCost cost) const {

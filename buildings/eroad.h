@@ -6,6 +6,7 @@
 class eGatehouse;
 class eAgoraBase;
 class eHippodromePiece;
+class eSaveArchive;
 
 class eRoad : public eBuilding {
 public:
@@ -38,6 +39,7 @@ public:
 
     void write(eWriteStream& dst) const override;
     void read(eReadStream& src) override;
+    void serialize(eSaveArchive& ar);
 private:
     eGatehouse* mUnderGatehouse = nullptr;
     eAgoraBase* mUnderAgora = nullptr;

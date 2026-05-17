@@ -106,28 +106,22 @@ void eHouseBase::write(eWriteStream& dst) const {
 }
 
 void eHouseBase::serialize(eSaveArchive& ar) {
-    ar.field("mPaidTaxes", mPaidTaxes);
-    ar.field("mPaidTaxesLastMonth", mPaidTaxesLastMonth);
-    if(ar.reading()) {
-        int level;
-        ar.field("mLevel", level);
-        setLevel(level);
-        int people;
-        ar.field("mPeople", people);
-        setPeople(people);
-    } else {
-        ar.field("mLevel", mLevel);
-        ar.field("mPeople", mPeople);
-    }
-    ar.field("mFood", mFood);
-    ar.field("mFleece", mFleece);
-    ar.field("mOil", mOil);
-    ar.field("mPhilosophers", mPhilosophers);
-    ar.field("mActors", mActors);
-    ar.field("mAthletes", mAthletes);
-    ar.field("mCompetitors", mCompetitors);
-    ar.field("mUpdateCulture", mUpdateCulture);
-    // mPendingEvict and mEvictDelay not saved
+    ar.field("paidTaxes", mPaidTaxes);
+    ar.field("paidTaxesLastMonth", mPaidTaxesLastMonth);
+    int level = ar.writing() ? mLevel : 0;
+    ar.field("level", level);
+    if(ar.reading()) setLevel(level);
+    int people = ar.writing() ? mPeople : 0;
+    ar.field("people", people);
+    if(ar.reading()) setPeople(people);
+    ar.field("food", mFood);
+    ar.field("fleece", mFleece);
+    ar.field("oil", mOil);
+    ar.field("philosophers", mPhilosophers);
+    ar.field("actors", mActors);
+    ar.field("athletes", mAthletes);
+    ar.field("competitors", mCompetitors);
+    ar.field("updateCulture", mUpdateCulture);
 }
 
 void eHouseBase::setLevel(const int l) {

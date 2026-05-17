@@ -164,7 +164,7 @@ void ePyramidElement::write(eWriteStream& dst) const {
 }
 
 void ePyramidElement::serialize(eSaveArchive& ar) {
-    ar.field("mCurrentElevation", mCurrentElevation);
+    ar.field("currentElevation", mCurrentElevation);
 }
 
 eTextureSpace ePyramidElement::getBuildingTextureSpace(
