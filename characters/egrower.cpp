@@ -1,5 +1,6 @@
 #include "egrower.h"
 
+#include "fileIO/esavearchive.h"
 #include "textures/egametextures.h"
 
 eGrower::eGrower(eGameBoard& board) :
@@ -17,6 +18,25 @@ void eGrower::incOlives(const int i) {
 
 void eGrower::incOranges(const int i) {
     mOranges += i;
+}
+
+void eGrower::read(eReadStream& src) {
+    eCharacter::read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
+}
+
+void eGrower::write(eWriteStream& dst) const {
+    eCharacter::write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eGrower*>(this)->serialize(ar);
+}
+
+void eGrower::serialize(eSaveArchive& ar) {
+    ar.field("growerType", mType, eGrowerType::grapesAndOlives);
+    ar.field("grapesCount", mGrapes, 0);
+    ar.field("olivesCount", mOlives, 0);
+    ar.field("orangesCount", mOranges, 0);
 }
 
 std::shared_ptr<eTexture> eGrower::getTexture(const eTileSize size) const {
@@ -55,9 +75,11 @@ std::shared_ptr<eTexture> eGrower::getGrapesAndOlivesTex(
     case eCharacterActionType::collectOlives:
         coll = &charTexs.fCollectOlives[oid];
         break;
-    case eCharacterActionType::carry:
     case eCharacterActionType::walk:
         coll = &charTexs.fWalk[oid];
+        break;
+    case eCharacterActionType::carry:
+        coll = &charTexs.fCarry[oid];
         break;
     case eCharacterActionType::die:
         wrap = false;
@@ -86,10 +108,13 @@ std::shared_ptr<eTexture> eGrower::getOrangesTex(
     case eCharacterActionType::collectOranges:
         coll = &charTexs.fCollect[oid];
         break;
-    case eCharacterActionType::carry:
     case eCharacterActionType::walk:
         coll = &charTexs.fWalk[oid];
         break;
+    case eCharacterActionType::carry: {
+        const auto& growerTexs = texs.fGrower;
+        coll = &growerTexs.fCarry[oid];
+    } break;
     case eCharacterActionType::die:
         wrap = false;
         coll = &charTexs.fDie;
