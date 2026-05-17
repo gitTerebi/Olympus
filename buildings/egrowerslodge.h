@@ -14,6 +14,7 @@ public:
     eGrowersLodge(eGameBoard& board, const eGrowerType type,
                   const eCityId cid);
     ~eGrowersLodge();
+    void erase() override;
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
@@ -38,13 +39,17 @@ public:
     int producedThisYear() const { return mProducedThisYear; }
     void growerDelivered(const eResourceType type, const int count);
 
-    using eGrowerPtr = stdptr<eGrower> eGrowersLodge::*;
-    bool spawnGrower(const eGrowerPtr grower);
+    bool spawnGrower(stdptr<eGrower>& grower,
+                     const bool oliveHarvester = false);
 
     void setNoTarget(const bool t);
     bool noTarget() const { return mNoTarget; }
+
+    bool hasReadyOlives() const;
 private:
     void serialize(eSaveArchive& ar);
+    void killWalkers();
+    int readyOliveCount() const;
 
     const int mMaxResource = 8;
 
@@ -61,8 +66,12 @@ private:
     stdptr<eCartTransporter> mCart;
 
     double mSpawnTime = 1000000;
+    double mGrowerSpawnTime = 1000000;
 
     stdptr<eGrower> mGrower;
+    std::array<stdptr<eGrower>, 4> mOliveHarvesters;
+    std::array<double, 4> mOliveHarvesterSpawnTimes{
+        1000000, 1000000, 1000000, 1000000};
 
     int mProducedThisYear = 0;
     std::array<int,12> mMonthlyProduced{};

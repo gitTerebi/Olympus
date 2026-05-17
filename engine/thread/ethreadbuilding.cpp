@@ -19,6 +19,7 @@ void eThreadBuilding::load(eBuilding* const src) {
 
         mResourcesAvailable = false;
         mWorkedOn = false;
+        mTreeResource = 0;
 
         mSpaceCount = 0;
         memset(mResourceCount, 0, sizeof(mResourceCount));
@@ -143,6 +144,7 @@ void eThreadBuilding::load(eBuilding* const src) {
         case eBuildingType::orangeTree: {
             const auto b = static_cast<eResourceBuilding*>(src);
             mWorkedOn = b->workedOn();
+            mTreeResource = b->resource();
         } break;
         case eBuildingType::temple:
         case eBuildingType::templeAltar:

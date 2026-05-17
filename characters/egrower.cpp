@@ -79,7 +79,7 @@ std::shared_ptr<eTexture> eGrower::getGrapesAndOlivesTex(
         coll = &charTexs.fWalk[oid];
         break;
     case eCharacterActionType::carry:
-        coll = &charTexs.fCarry[oid];
+        coll = &charTexs.fWalk[oid];
         break;
     case eCharacterActionType::die:
         wrap = false;
@@ -111,10 +111,9 @@ std::shared_ptr<eTexture> eGrower::getOrangesTex(
     case eCharacterActionType::walk:
         coll = &charTexs.fWalk[oid];
         break;
-    case eCharacterActionType::carry: {
-        const auto& growerTexs = texs.fGrower;
-        coll = &growerTexs.fCarry[oid];
-    } break;
+    case eCharacterActionType::carry:
+        coll = &charTexs.fWalk[oid];
+        break;
     case eCharacterActionType::die:
         wrap = false;
         coll = &charTexs.fDie;

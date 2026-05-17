@@ -14,6 +14,7 @@ public:
     bool workedOn() const { return mWorkedOn; }
 
     bool hasAnimal() const { return mWorkedOn; }
+    int treeResource() const { return mTreeResource; }
 
     int resourceCount(const eResourceType type) const;
     int resourceSpaceLeft(const eResourceType type) const;
@@ -37,6 +38,7 @@ private:
 
     bool mResourcesAvailable = false; // for sanctuary buildings
     bool mWorkedOn = false;
+    int mTreeResource = 0;
 
     int mSpaceCount;
     int mResourceCount[15] = {0};

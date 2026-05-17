@@ -4,7 +4,6 @@
 #include "eresourcebuildingbase.h"
 #include "textures/ebuildingtextures.h"
 
-class eCartTransporter;
 class eSaveArchive;
 
 class eProcessingBuilding : public eResourceBuildingBase {
@@ -59,8 +58,6 @@ private:
     const double mOverlayY;
 
     const eResourceType mRawMaterial;
-
-    stdptr<eCartTransporter> mTakeCart;
 
     const int mMaxRaw = 4;
     const int mRawUse;
