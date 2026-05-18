@@ -26,18 +26,7 @@ eAgoraBase *ePeddler::agora() const {
     return mAgora.get();
 }
 
-void ePeddler::read(eReadStream& src) {
-    eBasicPatroler::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePeddler::write(eWriteStream& dst) const {
-    eBasicPatroler::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePeddler*>(this)->serialize(ar);
-}
-
-void ePeddler::serialize(eSaveArchive& ar) {
+void ePeddler::serializeFields(eSaveArchive& ar) {
+    eBasicPatroler::serializeFields(ar);
     ar.buildingAsField("agora", &getBoard(), mAgora);
 }

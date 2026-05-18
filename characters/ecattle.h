@@ -14,11 +14,9 @@ public:
 
     void incTime(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     bool mature();
     bool shouldBecomeBull() const;
     eTile* getSpawnerTile() const;

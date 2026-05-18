@@ -60,7 +60,7 @@ void eHadesHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnGiveMissile(mTarget.get());
         return;
     case eHadesHelpStage::none:
         eGodAction::resumeFromSavedState();

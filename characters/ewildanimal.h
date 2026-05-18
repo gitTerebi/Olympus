@@ -18,11 +18,9 @@ public:
     void setSpawner(eSpawner* const s)
     { mSpawner = s; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eSpawner* mSpawner = nullptr;
 };
 

@@ -49,6 +49,22 @@ bool eGodVisitAction::decide() {
     return true;
 }
 
+void eGodVisitAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eGodVisitAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eGodVisitStage::none:
+    case eGodVisitStage::appear:
+    case eGodVisitStage::patrol:
+    case eGodVisitStage::disappear:
+        eGodAction::resumeFromSavedState();
+        return;
+    }
+}
+
 void eGodVisitAction::serializeFields(eSaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);

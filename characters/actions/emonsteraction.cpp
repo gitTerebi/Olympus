@@ -81,33 +81,20 @@ bool eMonsterAction::decide() {
         auto& board = this->board();
         board.updateMusic();
     } break;
-    case eMonsterAttackStage::attacking: {
+    case eMonsterAttackStage::attacking:
         if(!mAttackTarget.target()) {
             finishAttack();
             return decide();
         }
-        const auto chart = c->type();
-        const auto act = std::make_shared<eLookForAttackGodAct>(board(), c);
-        const auto finishAttackA = std::make_shared<eMA_lookForRangeActionFinishAttack>(
-                                       board(), this);
-        spawnMissile(mAttackActionType, chart, mAttackTime,
-                     mAttackTarget, nullptr, act, finishAttackA);
-    } break;
-    case eMonsterAttackStage::destroyingBuilding: {
+        spawnAttackMissile();
+        break;
+    case eMonsterAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
             finishBuildingAttack();
             return decide();
         }
-        const auto at = eCharacterActionType::fight2;
-        const auto chart = c->type();
-        const auto b = mAttackBuilding.get();
-        const auto finishAttackA = std::make_shared<eMA_destroyBuildingFinish>(
-                                       board(), this, b);
-        const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
-                                      board(), b);
-        spawnMultipleMissiles(at, chart, 500, b->centerTile(),
-                              nullptr, playHitSound, finishAttackA, 3);
-    } break;
+        spawnBuildingAttackMissiles();
+        break;
     }
     return true;
 }
@@ -128,6 +115,29 @@ void eMonsterAction::finishAttack() {
     mPreAttackStage = eMonsterAttackStage::none;
     mAttackTarget = eMissileTarget();
     mAttackTime = 0;
+}
+
+void eMonsterAction::spawnAttackMissile() {
+    const auto c = character();
+    const auto chart = c->type();
+    const auto act = std::make_shared<eLookForAttackGodAct>(board(), c);
+    const auto finishAttackA = std::make_shared<eMA_lookForRangeActionFinishAttack>(
+                                   board(), this);
+    spawnMissile(mAttackActionType, chart, mAttackTime,
+                 mAttackTarget, nullptr, act, finishAttackA);
+}
+
+void eMonsterAction::spawnBuildingAttackMissiles() {
+    const auto at = eCharacterActionType::fight2;
+    const auto c = character();
+    const auto chart = c->type();
+    const auto b = mAttackBuilding.get();
+    const auto finishAttackA = std::make_shared<eMA_destroyBuildingFinish>(
+                                   board(), this, b);
+    const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
+                                  board(), b);
+    spawnMultipleMissiles(at, chart, 500, b->centerTile(),
+                          nullptr, playHitSound, finishAttackA, 3);
 }
 
 void eMonsterAction::serializeFields(eSaveArchive& ar) {
@@ -158,7 +168,7 @@ void eMonsterAction::rebuildCurrentStage() {
             rebuildCurrentStage();
             return;
         }
-        decide();
+        spawnAttackMissile();
         return;
     case eMonsterAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
@@ -166,7 +176,7 @@ void eMonsterAction::rebuildCurrentStage() {
             rebuildCurrentStage();
             return;
         }
-        decide();
+        spawnBuildingAttackMissiles();
         return;
     case eMonsterAttackStage::wait:
         if(mWaitRemaining > 0) rebuildWait();

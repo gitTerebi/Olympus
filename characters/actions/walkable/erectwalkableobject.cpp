@@ -29,17 +29,7 @@ eWalkableObjectType eRectWalkableObject::rootType() const {
     return mOther->rootType();
 }
 
-void eRectWalkableObject::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRectWalkableObject::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eRectWalkableObject*>(this)->serialize(ar);
-}
-
-void eRectWalkableObject::serialize(eSaveArchive& ar) {
+void eRectWalkableObject::serializeFields(eSaveArchive& ar) {
     ar.field("rect", mRect);
     ar.walkableField("other", mOther);
 }

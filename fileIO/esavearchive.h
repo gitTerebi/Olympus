@@ -13,6 +13,8 @@
 #include <string>
 
 #include "estreams.h"
+#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/ehasresourceobject.h"
 
 class eGameBoard;
 class eBuilding;
@@ -21,9 +23,11 @@ class eCharacterAction;
 class eCharacterActionFunction;
 class eTile;
 class eSoldierBanner;
+class eBanner;
 class eWorldBoard;
 class eWorldCity;
 class eGameEvent;
+class eInvasionHandler;
 enum class eCharActionType;
 
 class eSaveArchive {
@@ -93,8 +97,12 @@ public:
             mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
             return true;
         } else {
-            auto data = takeField(name);
-            if(data.empty()) {
+            std::vector<char> data;
+            if(!takeField(name, data)) {
+#ifdef SAVE_DEBUG
+                printf("[saveLoad] missing field '%s'; using default.\n",
+                       name.c_str());
+#endif
                 if constexpr(std::is_default_constructible_v<T> &&
                              std::is_assignable_v<T&, T>) {
                     value = T{};
@@ -157,8 +165,8 @@ public:
             mDst->write(mFieldBuffer.data(), mFieldBuffer.size());
             return true;
         } else {
-            auto data = takeField(std::string(name));
-            if(data.empty()) {
+            std::vector<char> data;
+            if(!takeField(std::string(name), data)) {
                 printf("Invalid save: missing payload '%s'.\n", name);
                 return false;
             }
@@ -219,13 +227,29 @@ public:
     bool characterField(const char* const name,
                         eGameBoard* board,
                         Ptr& value) {
+        using T = typename std::remove_reference<decltype(*value)>::type;
         return payloadField(
             name,
             [&value](eWriteStream& dst) { dst.writeCharacter(value.get()); },
             [board, &value](eReadStream& src) {
                 value = nullptr;
                 src.readCharacter(board, [&value](eCharacter* const c) {
-                    value = c;
+                    value = static_cast<T*>(c);
+                });
+            });
+    }
+
+    template <typename T>
+    bool characterField(const char* const name,
+                        eGameBoard* board,
+                        T*& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) { dst.writeCharacter(value); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readCharacter(board, [&value](eCharacter* const c) {
+                    value = static_cast<T*>(c);
                 });
             });
     }
@@ -374,6 +398,34 @@ public:
         }
     }
 
+    template <typename Ptr>
+    bool soldierBannerField(const char* const name,
+                            eGameBoard* board,
+                            Ptr& value) {
+        return payloadField(name,
+            [&value](eWriteStream& dst) { dst.writeSoldierBanner(value.get()); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readSoldierBanner(board, [&value](const stdsptr<eSoldierBanner>& b) {
+                    value = b;
+                });
+            });
+    }
+
+    template <typename T>
+    bool bannerField(const char* const name,
+                     eGameBoard* board,
+                     T*& value) {
+        return payloadField(name,
+            [&value](eWriteStream& dst) { dst.writeBanner(value); },
+            [board, &value](eReadStream& src) {
+                value = nullptr;
+                src.readBanner(board, [&value](eBanner* const b) {
+                    value = static_cast<T*>(b);
+                });
+            });
+    }
+
     template <typename T>
     void object(T& value) {
         if(reading()) value.read(*mSrc);
@@ -423,15 +475,51 @@ public:
     }
 
     bool walkableField(const char* const name, stdsptr<eWalkableObject>& val) {
-        return payloadField(name,
-            [&val](eWriteStream& dst) { dst.writeWalkable(val.get()); },
-            [&val](eReadStream& src) { val = src.readWalkable(); });
+        bool hasValue = val != nullptr;
+        const std::string hasName = std::string(name) + ".has";
+        this->field(hasName.c_str(), hasValue, false);
+        if(!hasValue) {
+            if(reading()) val = nullptr;
+            return true;
+        }
+        eWalkableObjectType type = writing() ? val->type() : eWalkableObjectType::ddefault;
+        const std::string typeName = std::string(name) + ".type";
+        this->field(typeName.c_str(), type);
+        if(reading()) val = eWalkableObject::sCreate(type);
+        if(!val) {
+            printf("[saveLoad] walkableField '%s' unknown type %d.\n",
+                   name, static_cast<int>(type));
+            return false;
+        }
+        const bool ok = archiveField(name, [&](eSaveArchive& childAr) {
+            val->serialize(childAr);
+        });
+        if(!ok) printf("[saveLoad] walkableField '%s' missing data.\n", name);
+        return ok;
     }
 
     bool hasResourceField(const char* const name, stdsptr<eHasResourceObject>& val) {
-        return payloadField(name,
-            [&val](eWriteStream& dst) { dst.writeHasResource(val.get()); },
-            [&val](eReadStream& src) { val = src.readHasResource(); });
+        bool hasValue = val != nullptr;
+        const std::string hasName = std::string(name) + ".has";
+        this->field(hasName.c_str(), hasValue, false);
+        if(!hasValue) {
+            if(reading()) val = nullptr;
+            return true;
+        }
+        eHasResourceObjectType type = writing() ? val->type() : eHasResourceObjectType::nonBusy;
+        const std::string typeName = std::string(name) + ".type";
+        this->field(typeName.c_str(), type);
+        if(reading()) val = eHasResourceObject::sCreate(type);
+        if(!val) {
+            printf("[saveLoad] hasResourceField '%s' unknown type %d.\n",
+                   name, static_cast<int>(type));
+            return false;
+        }
+        const bool ok = archiveField(name, [&](eSaveArchive& childAr) {
+            val->serialize(childAr);
+        });
+        if(!ok) printf("[saveLoad] hasResourceField '%s' missing data.\n", name);
+        return ok;
     }
 
     bool directionTimesField(const char* const name,
@@ -440,6 +528,51 @@ public:
         return payloadField(name,
             [&val](eWriteStream& dst) { dst.writeDirectionTimes(val.get()); },
             [&board, &val](eReadStream& src) { val = src.readDirectionTimes(board); });
+    }
+
+    bool godActField(const char* const name,
+                     eGameBoard& board,
+                     stdsptr<eGodAct>& val) {
+        bool hasValue = val != nullptr;
+        const std::string hasName = std::string(name) + ".has";
+        this->field(hasName.c_str(), hasValue, false);
+        if(!hasValue) {
+            if(reading()) val = nullptr;
+            return true;
+        }
+        return payloadField(name,
+             [&val](eWriteStream& dst) { dst.writeGodAct(val.get()); },
+             [&board, &val](eReadStream& src) { val = src.readGodAct(board); });
+    }
+
+    template <typename T>
+    bool characterActionAsField(const char* const name,
+                                eGameBoard* board,
+                                stdptr<T>& value) {
+        return payloadField(
+            name,
+            [&value](eWriteStream& dst) {
+                dst.writeCharacterAction(value.get());
+            },
+            [board, &value](eReadStream& src) {
+                value.clear();
+                src.readCharacterAction(board, [&value](eCharacterAction* const a) {
+                    value = static_cast<T*>(a);
+                });
+            });
+    }
+
+    bool invasionHandlerField(const char* const name,
+                              eGameBoard* board,
+                              eInvasionHandler*& val) {
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeInvasionHandler(val); },
+            [board, &val](eReadStream& src) {
+                val = nullptr;
+                src.readInvasionHandler(board, [&val](eInvasionHandler* const i) {
+                    val = i;
+                });
+            });
     }
 
     bool charActFuncField(const char* const name,
@@ -596,6 +729,7 @@ private:
         int32_t nameSize = 0;
         *mSrc >> nameSize;
         if(nameSize < 0 || nameSize > maxFieldNameSize) {
+            printf("[saveLoad] invalid field name size %d.\n", nameSize);
             mTaggedEnded = true;
             return false;
         }
@@ -607,37 +741,48 @@ private:
         }
 
         *mSrc >> size;
+        if(name.empty() && size == -1) {
+            mTaggedEnded = true;
+            return false;
+        }
         if(size < 0) {
+            printf("[saveLoad] invalid field '%s' size %d.\n",
+                   name.c_str(), size);
             mTaggedEnded = true;
             return false;
         }
         if(size > maxFieldDataSize) {
+            printf("[saveLoad] oversized field '%s' size %d.\n",
+                   name.c_str(), size);
             mTaggedEnded = true;
             return false;
         }
         return true;
     }
 
-    std::vector<char> takeField(const std::string& wanted) {
+    bool takeField(const std::string& wanted, std::vector<char>& out) {
         mTaggedTouched = true;
         auto cached = mFields.find(wanted);
         if(cached != mFields.end() && !cached->second.empty()) {
-            auto data = cached->second.front();
+            out = cached->second.front();
             cached->second.erase(cached->second.begin());
-            return data;
+            return true;
         }
 
         while(true) {
-            if(mTaggedEnded) return {};
+            if(mTaggedEnded) return false;
             std::string name;
             int32_t size;
-            if(!readFieldHeader(name, size)) return {};
+            if(!readFieldHeader(name, size)) return false;
             std::vector<char> data;
             data.resize(size);
             if(size > 0) {
                 mSrc->read(data.data(), size);
             }
-            if(name == wanted) return data;
+            if(name == wanted) {
+                out = data;
+                return true;
+            }
             mFields[name].push_back(data);
         }
     }

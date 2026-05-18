@@ -54,15 +54,9 @@ public:
         t->mDone = true;
         t->setState(eCharacterActionState::failed);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<ePatrolAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<ePatrolAction> mTptr;
@@ -81,15 +75,9 @@ public:
         const auto t = mTptr.get();
         t->mDone = true;
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<ePatrolAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<ePatrolAction> mTptr;

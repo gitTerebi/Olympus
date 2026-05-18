@@ -20,7 +20,10 @@ public:
     void lookForMonster();
 protected:
     void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
+    void rebuildCurrentStage();
+
     void defendCity();
     void lookForMonsterFight();
     bool fightMonster(eMonster* const m);
@@ -47,14 +50,9 @@ public:
         mTptr->lookForMonster();
     }
 
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodWorshippedAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodWorshippedAction> mTptr;

@@ -96,6 +96,7 @@ void eHeroAction::startPatrol() {
 }
 
 void eHeroAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
     switch(mStage) {
     case eHeroActionStage::none:
         return eActionWithComeback::resumeFromSavedState();

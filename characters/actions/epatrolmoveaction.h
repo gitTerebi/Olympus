@@ -26,14 +26,8 @@ public:
         return mTime[id];
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("time", mTime);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("time", const_cast<std::vector<int>&>(mTime));
     }
 private:
     std::vector<int> mTime;

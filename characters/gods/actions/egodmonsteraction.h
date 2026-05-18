@@ -6,6 +6,7 @@
 
 #include "buildings/eheatgetters.h"
 #include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/eobsticlehandler.h"
 #include "fileIO/esavearchive.h"
 
 #include "textures/edestructiontextures.h"
@@ -37,16 +38,9 @@ public:
         return mTile;
     }
 
-    void read(eReadStream& src, eGameBoard& board) {
-        mTile = src.readTile(board);
-        src.readCharacter(&board, [this](eCharacter* const c) {
-            mChar = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeTile(mTile);
-        dst.writeCharacter(mChar);
+    void serialize(eSaveArchive& ar, eGameBoard& board) {
+        ar.tileField("tile", board, mTile);
+        ar.characterField("character", &board, mChar);
     }
 private:
     eTile* mTile = nullptr;
@@ -55,15 +49,18 @@ private:
 
 inline bool missileTargetField(eSaveArchive& ar, const char* name,
                                eGameBoard& board, eMissileTarget& val) {
-    return ar.payloadField(name,
-        [&val](eWriteStream& dst) { val.write(dst); },
-        [&val, &board](eReadStream& src) { val.read(src, board); });
+    const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
+        val.serialize(childAr, board);
+    });
+    if(!ok) printf("[saveLoad] missileTargetField '%s' missing data.\n", name);
+    return ok;
 }
 
 class eFindFailFunc {
 public:
     eFindFailFunc(eGameBoard& board, const eFindFailFuncType type) :
         mBoard(board), mType(type) {}
+    virtual ~eFindFailFunc() = default;
 
     virtual void call(eTile* const tile) = 0;
 
@@ -71,15 +68,41 @@ public:
 
     eGameBoard& board() { return mBoard; }
 
-    virtual void read(eReadStream& src) = 0;
-    virtual void write(eWriteStream& dst) const = 0;
+    void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     static stdsptr<eFindFailFunc> sCreate(eGameBoard& board,
                                           const eFindFailFuncType type);
+protected:
+    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     eGameBoard& mBoard;
     const eFindFailFuncType mType;
 };
+
+inline bool findFailFuncField(eSaveArchive& ar, const char* name,
+                              eGameBoard& board, stdsptr<eFindFailFunc>& val) {
+    bool hasValue = val != nullptr;
+    const std::string hasName = std::string(name) + ".has";
+    ar.field(hasName.c_str(), hasValue, false);
+    if(!hasValue) {
+        if(ar.reading()) val = nullptr;
+        return true;
+    }
+    eFindFailFuncType type = ar.writing() ? val->type() : eFindFailFuncType::teleport;
+    const std::string typeName = std::string(name) + ".type";
+    ar.field(typeName.c_str(), type);
+    if(ar.reading()) val = eFindFailFunc::sCreate(board, type);
+    if(!val) {
+        printf("[saveLoad] findFailFuncField '%s' unknown type %d.\n",
+               name, static_cast<int>(type));
+        return false;
+    }
+    const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
+        val->serialize(childAr);
+    });
+    if(!ok) printf("[saveLoad] findFailFuncField '%s' missing data.\n", name);
+    return ok;
+}
 
 class eGodMonsterAction : public eComplexAction {
 public:
@@ -190,24 +213,12 @@ public:
 
     void call() override;
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mWinnerPtr = static_cast<eGodMonsterAction*>(ca);
-        });
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mLoserPtr = static_cast<eGodMonsterAction*>(ca);
-        });
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("winner", &board(), mWinnerPtr);
+        ar.characterActionAsField("loser", &board(), mLoserPtr);
         ar.field("winnerGodType", mWt);
         ar.field("loserGodType", mLt);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mWinnerPtr);
-        dst.writeCharacterAction(mLoserPtr);
-        eSaveArchive ar(dst);
-        ar.field("winnerGodType", const_cast<eGodType&>(mWt));
-        ar.field("loserGodType", const_cast<eGodType&>(mLt));
     }
 private:
     stdptr<eGodMonsterAction> mWinnerPtr;
@@ -231,16 +242,10 @@ public:
         t->moveAround(mFinishAct, 15000);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        mFinishAct = src.readCharActFunc(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharActFunc(mFinishAct.get());
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.charActFuncField("finishAction", board(), mFinishAct);
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -263,20 +268,11 @@ public:
         t->patrol(mFinishAct, mDist);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        mFinishAct = src.readCharActFunc(board());
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.charActFuncField("finishAction", board(), mFinishAct);
         ar.field("distance", mDist);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharActFunc(mFinishAct.get());
-        eSaveArchive ar(dst);
-        ar.field("distance", const_cast<int&>(mDist));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -300,20 +296,11 @@ public:
         mTptr->goToNearestRoad(mFinishAct, mDist);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        mFinishAct = src.readCharActFunc(board());
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.charActFuncField("finishAction", board(), mFinishAct);
         ar.field("distance", mDist);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharActFunc(mFinishAct.get());
-        eSaveArchive ar(dst);
-        ar.field("distance", const_cast<int&>(mDist));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -340,28 +327,14 @@ public:
 
     void call() override;
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
         ar.field("actionType", mAt);
         ar.field("characterType", mChart);
-        mTarget = src.readTile(board());
-
-        mHitAct = src.readGodAct(board());
-        mFinishAttackA = src.readCharActFunc(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
-        eSaveArchive ar(dst);
-        ar.field("actionType", const_cast<eCharacterActionType&>(mAt));
-        ar.field("characterType", const_cast<eCharacterType&>(mChart));
-        dst.writeTile(mTarget);
-
-        dst.writeGodAct(mHitAct.get());
-        dst.writeCharActFunc(mFinishAttackA.get());
+        ar.tileField("targetTile", board(), mTarget);
+        ar.godActField("hitAction", board(), mHitAct);
+        ar.charActFuncField("finishAttackAction", board(), mFinishAttackA);
     }
 private:
     stdptr<eCharacter> mCptr;
@@ -399,32 +372,17 @@ public:
                                      mFinishA, mNMissiles - 1);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
         ar.field("actionType", mAt);
         ar.field("characterType", mChart);
         ar.field("attackTime", mAttackTime);
-        mTarget.read(src, board());
-        mPlaySound = src.readCharActFunc(board());
-        mPlayHitSound = src.readGodAct(board());
-        mFinishA = src.readCharActFunc(board());
+        missileTargetField(ar, "missileTarget", board(), mTarget);
+        ar.charActFuncField("playSoundAction", board(), mPlaySound);
+        ar.godActField("playHitSoundAction", board(), mPlayHitSound);
+        ar.charActFuncField("finishAction", board(), mFinishA);
         ar.field("missileCount", mNMissiles);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        eSaveArchive ar(dst);
-        ar.field("actionType", const_cast<eCharacterActionType&>(mAt));
-        ar.field("characterType", const_cast<eCharacterType&>(mChart));
-        ar.field("attackTime", const_cast<int&>(mAttackTime));
-        mTarget.write(dst);
-        dst.writeCharActFunc(mPlaySound.get());
-        dst.writeGodAct(mPlayHitSound.get());
-        dst.writeCharActFunc(mFinishA.get());
-        ar.field("missileCount", const_cast<int&>(mNMissiles));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -451,29 +409,10 @@ public:
         if(mFunc) mFunc->call(mTile);
     }
 
-    void read(eReadStream& src) override {
-        mTile = src.readTile(board());
-        bool hasFunc;
-        eSaveArchive ar(src);
-        ar.field("hasFindFailFunc", hasFunc);
-        if(hasFunc) {
-            eFindFailFuncType type;
-            ar.field("findFailFuncType", type);
-            mFunc = eFindFailFunc::sCreate(board(), type);
-            mFunc->read(src);
-        }
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeTile(mTile);
-        const bool hasFunc = mFunc != nullptr;
-        eSaveArchive ar(dst);
-        ar.field("hasFindFailFunc", const_cast<bool&>(hasFunc));
-        if(hasFunc) {
-            auto type = mFunc->type();
-            ar.field("findFailFuncType", type);
-            mFunc->write(dst);
-        }
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.tileField("tile", board(), mTile);
+        findFailFuncField(ar, "findFailFunc", board(), mFunc);
     }
 private:
     eTile* mTile = nullptr;

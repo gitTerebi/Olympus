@@ -400,7 +400,7 @@ bool eSoldierBanner::fighting() const {
     return false;
 }
 
-void eSoldierBanner::serialize(eSaveArchive& ar) {
+void eSoldierBanner::serializeFields(eSaveArchive& ar) {
     ar.field("mIOID", mIOID);
     ar.field("mMilitaryAid", mMilitaryAid);
     ar.field("mHome", mHome);
@@ -426,13 +426,7 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         ar.arrayField("places", places,
             [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
                 itemAr.tileField("tile", mBoard, p.second);
-                itemAr.payloadField("soldier",
-                    [&p](eWriteStream& dst) { dst.writeCharacter(p.first); },
-                    [this, &p](eReadStream& src) {
-                        src.readCharacter(&mBoard, [&p](eCharacter* const c) {
-                            p.first = c ? static_cast<eSoldier*>(c) : nullptr;
-                        });
-                    });
+                itemAr.characterField("soldier", &mBoard, p.first);
             });
         if(ar.reading()) {
             mPlaces.clear();
@@ -446,13 +440,7 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         if(!ar.reading()) soldiers = mSoldiers;
         ar.arrayField("soldiers", soldiers,
             [this](eSaveArchive& itemAr, eSoldier*& s) {
-                itemAr.payloadField("soldier",
-                    [&s](eWriteStream& dst) { dst.writeCharacter(s); },
-                    [this, &s](eReadStream& src) {
-                        src.readCharacter(&mBoard, [&s](eCharacter* const c) {
-                            s = c ? static_cast<eSoldier*>(c) : nullptr;
-                        });
-                    });
+                itemAr.characterField("soldier", &mBoard, s);
             });
         if(ar.reading()) {
             mSoldiers.clear();
@@ -465,18 +453,20 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
 
 void eSoldierBanner::read(eReadStream& src) {
     eSaveArchive ar(src);
-    serialize(ar);
+    serializeFields(ar);
 
-    if(visibleOnTile() && mTile) {
-        mTile->setSoldierBanner(this);
-    }
-    updatePlaces();
-    if(!mHome) callSoldiers();
+    ar.addPostFunc([this]() {
+        if(visibleOnTile() && mTile) {
+            mTile->setSoldierBanner(this);
+        }
+        updatePlaces();
+        if(!mHome) callSoldiers();
+    }, "eSoldierBanner::postLoad");
 }
 
 void eSoldierBanner::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
-    const_cast<eSoldierBanner*>(this)->serialize(ar);
+    const_cast<eSoldierBanner*>(this)->serializeFields(ar);
 }
 
 void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,

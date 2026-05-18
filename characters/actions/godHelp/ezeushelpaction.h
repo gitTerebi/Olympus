@@ -38,14 +38,9 @@ public:
 
     void call() override;
 
-    void read(eReadStream& src) override {
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
         ar.field("cityId", mCid);
-    }
-
-    void write(eWriteStream& dst) const override {
-        eSaveArchive ar(dst);
-        ar.field("cityId", const_cast<eCityId&>(mCid));
     }
 private:
     eCityId mCid;

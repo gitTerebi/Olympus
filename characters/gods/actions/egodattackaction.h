@@ -60,6 +60,7 @@ private:
                         const double bless,
                         const eGodAttackStage prevStage);
     void spawnAttackMissile();
+    void spawnDestroyBuildingMissile(eBuilding* const b);
     stdsptr<eGodAct> rebuildAttackAct();
 
     eGodAttackStage mStage{eGodAttackStage::none};
@@ -99,14 +100,9 @@ public:
         c->kill();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mLoserPtr = static_cast<eGodAction*>(ca);
-        });;
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mLoserPtr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("loser", &board(), mLoserPtr);
     }
 private:
     stdptr<eGodMonsterAction> mLoserPtr;
@@ -135,18 +131,10 @@ public:
         eSounds::playCollapseSound();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAttackAction*>(ca);
-        });
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBptr = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeBuilding(mBptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.buildingField("building", &board(), mBptr);
     }
 private:
     stdptr<eGodAttackAction> mTptr;
@@ -169,14 +157,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAttackAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodAttackAction> mTptr;
@@ -198,14 +181,9 @@ public:
         mTptr->teleport(r);
     }
 
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodAction> mTptr;
@@ -231,14 +209,9 @@ public:
         return true;
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAttackAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodAttackAction> mTptr;

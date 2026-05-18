@@ -12,11 +12,9 @@ public:
 
     bool has(eTileBase* const t) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<eHasResourceObject> mOther;
 };
 

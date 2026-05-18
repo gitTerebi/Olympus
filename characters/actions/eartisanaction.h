@@ -58,14 +58,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBptr = static_cast<eSanctBuilding*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeBuilding(mBptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("sanctuary", &board(), mBptr);
     }
 private:
     stdptr<eSanctBuilding> mBptr;
@@ -85,14 +80,9 @@ public:
         b->setWorkedOn(false);
     }
 
-    void read(eReadStream& src) override {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBptr = static_cast<eSanctBuilding*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeBuilding(mBptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("sanctuary", &board(), mBptr);
     }
 private:
     stdptr<eSanctBuilding> mBptr;

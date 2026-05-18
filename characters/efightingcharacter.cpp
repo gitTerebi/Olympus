@@ -11,16 +11,6 @@ eFightingAction* eFightingCharacter::fightingAction() const {
     return dynamic_cast<eFightingAction*>(a);
 }
 
-void eFightingCharacter::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eFightingCharacter::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eFightingCharacter*>(this)->serialize(ar);
-}
-
-void eFightingCharacter::serialize(eSaveArchive& ar) {
+void eFightingCharacter::serializeFields(eSaveArchive& ar) {
     ar.field("mRange", mRange);
 }

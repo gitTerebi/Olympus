@@ -60,15 +60,9 @@ public:
         const auto t = mTptr.get();
         t->goBack(t->mWalkable);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eTraderAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eTraderAction> mTptr;
@@ -87,15 +81,9 @@ public:
         const auto t = mTptr.get();
         t->tradeIncrement();
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eTraderAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eTraderAction> mTptr;
@@ -134,14 +122,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eTraderAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eTraderAction> mTptr;

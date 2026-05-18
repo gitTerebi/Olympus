@@ -12,11 +12,9 @@ public:
     bool deerHunter() const { return mDeerHunter; }
     void setDeerHunter(const bool h);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     bool mDeerHunter{false};
 };
 

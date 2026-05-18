@@ -51,16 +51,11 @@ public:
         t->arrived();
     }
 
-    void read(eReadStream& src) override {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTptr = static_cast<ePatrolTarget*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeBuilding(mTptr);
-    }
     ePatrolTarget* target() const { return mTptr.get(); }
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("patrolTarget", &board(), mTptr);
+    }
 private:
     stdptr<ePatrolTarget> mTptr;
 };

@@ -51,14 +51,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eApolloHelpAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eApolloHelpAction> mTptr;
@@ -86,14 +81,8 @@ public:
         if(p) board.healPlague(p);
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eSmallHouse*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
     stdptr<eSmallHouse> mTarget;

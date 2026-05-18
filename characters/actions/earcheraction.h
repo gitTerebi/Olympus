@@ -37,15 +37,9 @@ public:
         const auto t = mTptr.get();
         t->setState(eCharacterActionState::failed);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = ca;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eCharacterAction> mTptr;
@@ -64,15 +58,9 @@ public:
         const auto t = mTptr.get();
         t->setState(eCharacterActionState::finished);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = ca;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eCharacterAction> mTptr;

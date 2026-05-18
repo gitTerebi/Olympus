@@ -14,15 +14,9 @@ public:
         mCptr(c) {}
 
     void call();
-
-    void read(eReadStream& src) {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = static_cast<eCharacter*>(c);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mCptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
     }
 private:
     stdptr<eCharacter> mCptr;

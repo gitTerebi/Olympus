@@ -374,6 +374,9 @@ public:
 
     virtual void read(eReadStream& src);
     virtual void write(eWriteStream& dst) const;
+protected:
+    virtual void serializeFields(eSaveArchive& ar);
+public:
 
     void setIOID(const int id);
     int ioID() const { return mIOID; }

@@ -14,7 +14,6 @@ public:
                     const eAction& saveAct,
                     const eAction& loadAct,
                     const eAction& optionsAct,
-                    const eAction& clearStuckAct,
                     const eAction& exitAct);
 };
 

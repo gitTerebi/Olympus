@@ -83,20 +83,16 @@ void eMissile::write(eWriteStream& dst) const {
 }
 
 void eMissile::serialize(eSaveArchive& ar) {
+    ar.objectField("path", mPath);
+    ar.field("time", mTime);
+    ar.field("speed", mSpeed);
+    ar.godActField("finishAction", mBoard, mFinish);
     if(ar.reading()) {
-        mPath.read(ar.readStream());
-    } else {
-        mPath.write(ar.writeStream());
-    }
-    ar.field("mTime", mTime);
-    ar.field("mSpeed", mSpeed);
-    if(ar.reading()) {
-        mFinish = ar.readStream().readGodAct(mBoard);
-        const auto t = ar.readStream().readTile(mBoard);
+        eTile* t = nullptr;
+        ar.tileField("tile", mBoard, t);
         changeTile(t);
     } else {
-        ar.writeStream().writeGodAct(mFinish.get());
-        ar.writeStream().writeTile(mTile);
+        ar.tileField("tile", mBoard, mTile);
     }
 }
 

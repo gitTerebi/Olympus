@@ -21,9 +21,6 @@ public:
         eCharActFunc(board, eCharActFuncType::SS_spawnFinish) {}
 
     void call() override;
-
-    void read(eReadStream&) override {}
-    void write(eWriteStream&) const override {}
 };
 
 class eRiverEntryPoint : public eBanner {

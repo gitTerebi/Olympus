@@ -16,17 +16,7 @@ bool eHasResourceWalkableObject::walkable(eTileBase* const t) const {
     return mHr->has(t) || mW->walkable(t);
 }
 
-void eHasResourceWalkableObject::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHasResourceWalkableObject::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eHasResourceWalkableObject*>(this)->serialize(ar);
-}
-
-void eHasResourceWalkableObject::serialize(eSaveArchive& ar) {
+void eHasResourceWalkableObject::serializeFields(eSaveArchive& ar) {
     ar.hasResourceField("hasResource", mHr);
     ar.walkableField("walkable", mW);
 }

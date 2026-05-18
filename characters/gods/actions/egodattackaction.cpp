@@ -277,18 +277,7 @@ bool eGodAttackAction::decide() {
             finishBuildingAttack();
             return decide();
         }
-        {
-            const auto chart = c->type();
-            const auto b = mAttackBuilding.get();
-            const auto finishCb = std::make_shared<eGAA_destroyBuildingFinish>(
-                                      board(), this, b);
-            const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
-                                          board(), b);
-            spawnGodMultipleMissiles(eCharacterActionType::fight2,
-                                     chart, b->centerTile(),
-                                     eGodSound::attack, playHitSound,
-                                     finishCb, 3);
-        }
+        spawnDestroyBuildingMissile(mAttackBuilding.get());
         break;
     case eGodAttackStage::disappear:
         c->kill();
@@ -371,6 +360,19 @@ void eGodAttackAction::spawnAttackMissile() {
     }
 }
 
+void eGodAttackAction::spawnDestroyBuildingMissile(eBuilding* const b) {
+    const auto c = character();
+    const auto chart = c->type();
+    const auto finishCb = std::make_shared<eGAA_destroyBuildingFinish>(
+                              board(), this, b);
+    const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
+                                  board(), b);
+    spawnGodMultipleMissiles(eCharacterActionType::fight2,
+                             chart, b->centerTile(),
+                             eGodSound::attack, playHitSound,
+                             finishCb, 3);
+}
+
 void eGodAttackAction::resumeFromSavedState() {
     rebuildCurrentStage();
 }
@@ -379,8 +381,20 @@ void eGodAttackAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
     case eGodAttackStage::attacking:
+        if(!mAttackTarget.target()) {
+            finishAttacking();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        spawnAttackMissile();
+        return;
     case eGodAttackStage::destroyingBuilding:
-        decide();
+        if(!mAttackBuilding) {
+            finishBuildingAttack();
+            eGodAction::resumeFromSavedState();
+            return;
+        }
+        destroyBuilding(mAttackBuilding.get());
         return;
     case eGodAttackStage::none:
     case eGodAttackStage::appear:

@@ -55,14 +55,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eHeraHelpAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eHeraHelpAction> mTptr;
@@ -93,14 +88,8 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eAgoraBase*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetAgora", &board(), mTarget);
     }
 private:
     stdptr<eAgoraBase> mTarget;

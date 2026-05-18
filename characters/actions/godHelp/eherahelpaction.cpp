@@ -66,7 +66,7 @@ void eHeraHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnGiveMissile(mGiveTarget.get());
         return;
     case eHeraHelpStage::none:
         eGodAction::resumeFromSavedState();

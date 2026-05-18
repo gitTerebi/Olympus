@@ -69,10 +69,9 @@ public:
 
     void catchUp();
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     void updateTextures();
     void cleanupFollowers();
 

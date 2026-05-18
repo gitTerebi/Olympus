@@ -4,6 +4,8 @@
 #include "fileIO/estreams.h"
 #include "engine/etilebase.h"
 
+class eSaveArchive;
+
 enum class eHasResourceObjectType {
     nonBusy,
     fish,
@@ -20,6 +22,7 @@ class eHasResourceObject {
 public:
     eHasResourceObject(const eHasResourceObjectType t) :
         mType(t) {}
+    virtual ~eHasResourceObject() = default;
 
     virtual bool has(eTileBase* const t) const {
         switch(mType) {
@@ -50,8 +53,7 @@ public:
         }
     }
 
-    virtual void read(eReadStream&) {}
-    virtual void write(eWriteStream&) const {}
+    void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     eHasResourceObjectType type() const { return mType; }
 
@@ -60,6 +62,8 @@ public:
 
     static stdsptr<eHasResourceObject> sCreateNonBusy(
             const stdsptr<eHasResourceObject>& other);
+protected:
+    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     const eHasResourceObjectType mType;
 };

@@ -215,11 +215,11 @@ public:
     bool isMonster() const;
     bool isImmortal() const;
 
-    virtual void read(eReadStream& src);
-    virtual void write(eWriteStream& dst) const;
+    virtual void read(eReadStream& src) final;
+    virtual void write(eWriteStream& dst) const final;
+protected:
+    virtual void serializeFields(eSaveArchive& ar);
 private:
-    void serialize(eSaveArchive& ar);
-
     eCharacterType mType;
     eCharacterActionType mActionType{eCharacterActionType::none};
 

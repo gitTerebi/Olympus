@@ -7,6 +7,7 @@
 #include "engine/thread/ethreadtile.h"
 #include "ewalkablehelpers.h"
 #include "engine/estaterelevance.h"
+#include "walkable/eobsticlehandler.h"
 
 class eThreadBoard;
 class eSaveArchive;

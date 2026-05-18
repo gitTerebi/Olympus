@@ -20,19 +20,8 @@ void eGrower::incOranges(const int i) {
     mOranges += i;
 }
 
-void eGrower::read(eReadStream& src) {
-    eCharacter::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGrower::write(eWriteStream& dst) const {
-    eCharacter::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGrower*>(this)->serialize(ar);
-}
-
-void eGrower::serialize(eSaveArchive& ar) {
+void eGrower::serializeFields(eSaveArchive& ar) {
+    eCharacter::serializeFields(ar);
     ar.field("growerType", mType, eGrowerType::grapesAndOlives);
     ar.field("grapesCount", mGrapes, 0);
     ar.field("olivesCount", mOlives, 0);

@@ -86,9 +86,6 @@ public:
     static stdsptr<eCharacter> sCreate(
             const eCharacterType t, eGameBoard& board);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
@@ -103,9 +100,8 @@ protected:
             const eTextureCollection* const coll,
             const bool wrap, const bool reverse,
             const bool disappear = false) const;
-private:    
-    void serialize(eSaveArchive& ar);
-
+    void serializeFields(eSaveArchive& ar) override;
+private:
     std::vector<ePausedAction> mPausedActions;
 
     int mIOID = -1;
@@ -150,15 +146,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            if(!c) return;
-            mTptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mTptr);
     }
 private:
     stdptr<eCharacter> mTptr;
@@ -180,19 +170,10 @@ public:
         else t->kill();
     }
 
-    void read(eReadStream& src) override {
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
         ar.field("withCorpse", mWithCorpse);
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            if(!c) return;
-            mTptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        eSaveArchive ar(dst);
-        ar.field("withCorpse", const_cast<bool&>(mWithCorpse));
-        dst.writeCharacter(mTptr);
+        ar.characterField("character", &board(), mTptr);
     }
 private:
     bool mWithCorpse;

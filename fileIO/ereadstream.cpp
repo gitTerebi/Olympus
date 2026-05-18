@@ -7,6 +7,8 @@
 #include "characters/gods/actions/egodaction.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolaction.h"
+#include "characters/actions/epatrolmoveaction.h"
+#include "esavearchive.h"
 
 eReadStream::eReadStream(const eReadSource& src) :
     mSrc(src) {}
@@ -70,34 +72,6 @@ void eReadStream::readCharacterAction(eGameBoard* board,
     }, tag);
 }
 
-stdsptr<eWalkableObject> eReadStream::readWalkable() {
-    bool valid;
-    *this >> valid;
-    if(valid) {
-        eWalkableObjectType type;
-        *this >> type;
-        const auto r = eWalkableObject::sCreate(type);
-        r->read(*this);
-        return r;
-    } else {
-        return nullptr;
-    }
-}
-
-stdsptr<eHasResourceObject> eReadStream::readHasResource() {
-    bool valid;
-    *this >> valid;
-    if(valid) {
-        eHasResourceObjectType type;
-        *this >> type;
-        const auto r = eHasResourceObject::sCreate(type);
-        r->read(*this);
-        return r;
-    } else {
-        return nullptr;
-    }
-}
-
 stdsptr<eCharacterActionFunction> eReadStream::readCharActFunc(
         eGameBoard& board) {
     bool hasFinish;
@@ -125,21 +99,6 @@ stdsptr<eGodAct> eReadStream::readGodAct(eGameBoard& board) {
     return nullptr;
 }
 
-stdsptr<eObsticleHandler> eReadStream::readObsticleHandler(
-        eGameBoard& board) {
-    bool valid;
-    *this >> valid;
-    if(valid) {
-        eObsticleHandlerType type;
-        *this >> type;
-        const auto r = eObsticleHandler::sCreate(board, type);
-        r->read(*this);
-        return r;
-    } else {
-        return nullptr;
-    }
-}
-
 stdsptr<eDirectionTimes> eReadStream::readDirectionTimes(
         eGameBoard& board) {
     const auto r = std::make_shared<eDirectionTimes>();
@@ -148,7 +107,8 @@ stdsptr<eDirectionTimes> eReadStream::readDirectionTimes(
     for(int i = 0; i < n; i++) {
         const auto tile = readTile(board);
         eDirectionLastUseTime u;
-        u.read(*this);
+        eSaveArchive ar(*this);
+        u.serialize(ar);
         (*r)[tile] = u;
     }
     return r;

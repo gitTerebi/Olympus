@@ -638,18 +638,7 @@ void eGod::sLoadTextures(const eGodType g) {
     }
 }
 
-void eGod::read(eReadStream& src) {
-    eCharacter::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGod::write(eWriteStream& dst) const {
-    eCharacter::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGod*>(this)->serialize(ar);
-}
-
-void eGod::serialize(eSaveArchive& ar) {
+void eGod::serializeFields(eSaveArchive& ar) {
+    eCharacter::serializeFields(ar);
     ar.field("mAttitude", mAttitude);
 }

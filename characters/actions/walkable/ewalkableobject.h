@@ -6,6 +6,7 @@
 #include "engine/eorientation.h"
 
 class eTileBase;
+class eSaveArchive;
 
 enum class eWalkableObjectType {
     ddefault,
@@ -32,11 +33,11 @@ class eWalkableObject {
 public:
     eWalkableObject(const eWalkableObjectType t) :
         mType(t) {}
+    virtual ~eWalkableObject() = default;
 
     virtual bool walkable(eTileBase* const t) const;
 
-    virtual void read(eReadStream&) {}
-    virtual void write(eWriteStream&) const {}
+    void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     virtual eWalkableObjectType rootType() const {
         return mType;
@@ -71,6 +72,8 @@ public:
     static stdsptr<eWalkableObject> sCreateHasResource(
             const stdsptr<eHasResourceObject>& hr,
             const stdsptr<eWalkableObject>& w);
+protected:
+    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     const eWalkableObjectType mType;
 };

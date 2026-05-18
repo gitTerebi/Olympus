@@ -75,24 +75,11 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eStorageBuilding*>(b);
-        });
-        eSaveArchive ar(src);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetStorage", &board(), mTarget);
         ar.field("resource", mResource);
         ar.field("count", mCount);
-        src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
-            mAction = static_cast<eProvideResourceHelpAction*>(a);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
-        eSaveArchive ar(dst);
-        ar.field("resource", const_cast<eResourceType&>(mResource));
-        ar.field("count", const_cast<int&>(mCount));
-        dst.writeCharacterAction(mAction);
+        ar.characterActionAsField("sourceAction", &board(), mAction);
     }
 private:
     stdptr<eProvideResourceHelpAction> mAction;
@@ -117,14 +104,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eProvideResourceHelpAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eProvideResourceHelpAction> mTptr;

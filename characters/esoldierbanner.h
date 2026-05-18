@@ -155,12 +155,13 @@ public:
             const int minDistFromEdge);
     static std::string sName(const eBannerType type,
                              const bool atlantean);
+protected:
+    void serializeFields(eSaveArchive& ar);
 private:
     void updatePlaces();
     void updateCount();
     void callSoldier(eSoldier* const s);
     void purgeDead();
-    void serialize(eSaveArchive& ar);
 
     const eBannerType mType;
     const int mId;
