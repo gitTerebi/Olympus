@@ -935,7 +935,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::stadium: {
         const auto s = static_cast<eStadium*>(b);
-        const bool a = s->available();
+        const bool a = s->isActive();
         group = 80;
         if(cursed) {
             employmentInfoString = 13;
@@ -953,7 +953,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::podium: {
         const auto p = static_cast<ePodium*>(b);
-        const bool a = p->available();
+        const bool a = p->isActive();
         group = 81;
         if(cursed) {
             employmentInfoString = 13;
@@ -971,7 +971,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::theater: {
         const auto t = static_cast<eTheater*>(b);
-        const bool a = t->available();
+        const bool a = t->isActive();
         group = 82;
         if(cursed) {
             employmentInfoString = 13;
@@ -1055,7 +1055,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::observatory: {
         const auto t = static_cast<eObservatory*>(b);
-        const bool a = t->available();
+        const bool a = t->isActive();
         group = 337;
         if(cursed) {
             employmentInfoString = 13;
@@ -1073,7 +1073,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::laboratory: {
         const auto t = static_cast<eLaboratory*>(b);
-        const bool a = t->available();
+        const bool a = t->isActive();
         group = 338;
         if(cursed) {
             employmentInfoString = 13;
@@ -1091,7 +1091,7 @@ void eBuilding::sInfoText(eBuilding* const b,
     } break;
     case eBuildingType::museum: {
         const auto t = static_cast<eMuseum*>(b);
-        const bool a = t->available();
+        const bool a = t->isActive();
         group = 339;
         if(cursed) {
             employmentInfoString = 13;

@@ -2,6 +2,7 @@
 
 #include "characters/eactor.h"
 #include "textures/egametextures.h"
+#include "enumbers.h"
 
 eTheater::eTheater(eGameBoard& board, const eCityId cid) :
     ePatrolTarget(board,
@@ -11,4 +12,8 @@ eTheater::eTheater(eGameBoard& board, const eCityId cid) :
                   [this]() { return e::make_shared<eActor>(getBoard()); },
                   eBuildingType::theater, 5, 5, 18, cid) {
     eGameTextures::loadTheater();
+}
+
+int eTheater::spawnCooldown() const {
+    return eNumbers::sTheaterPatrolSpawnCooldown;
 }

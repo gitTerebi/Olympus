@@ -9,6 +9,8 @@
 #include "engine/estaterelevance.h"
 
 class eThreadBoard;
+class eSaveArchive;
+class eBuilding;
 
 using eAction = std::function<void()>;
 using eTileGetter = std::function<eThreadTile*(eThreadBoard&)>;
@@ -76,7 +78,19 @@ public:
     void setTileDistance(const eTileDistance& dist);
 
     void setStateRelevance(const eStateRelevance rel) { mRelevance = rel; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
+    enum class eSavedGoal {
+        none, custom, tile, rect, building, buildingType
+    };
+    void startInternal(const eTileFinal& final,
+                       stdsptr<eWalkableObject> pathFindWalkable,
+                       stdsptr<eWalkableObject> moveWalkable,
+                       const eTileGetter& endTile);
+    bool restartSavedGoal();
+
     eStateRelevance mRelevance = eStateRelevance::all;
     eAction mFoundAction;
     eAction mFindFailAction;
@@ -88,6 +102,13 @@ private:
     int mPathLength = 0;
     stdsptr<eObsticleHandler> mObstHandler;
     eTileDistance mDistance;
+    eSavedGoal mSavedGoal = eSavedGoal::none;
+    eTile* mSavedTile = nullptr;
+    SDL_Rect mSavedRect{};
+    stdptr<eBuilding> mSavedBuilding;
+    eBuildingType mSavedBuildingType{};
+    stdsptr<eWalkableObject> mSavedPathFindWalkable;
+    stdsptr<eWalkableObject> mSavedMoveWalkable;
 };
 
 #endif // EMOVETOACTION_H

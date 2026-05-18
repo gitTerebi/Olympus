@@ -247,9 +247,14 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [~] `eBoardCity` - done except `reading()` branches for ctor-required children (plagues/aid/banners/hippodromes)
 - [x] `eBoardPlayer`
 - [x] `eTile`
+- [x] `eTileBase`
 - [x] `eAvailableBuildings`
+- [x] `eAIBuilding`
 - [x] `eAICityPlan`
 - [x] `eAIDistrict`
+- [x] `eDistrictReadyCondition`
+- [x] `eDate`
+- [x] `ePlannedAction`
 - [x] `eEmploymentDistributor`
 - [x] `ePopulationData`
 - [x] `eHusbandryData`
@@ -303,6 +308,8 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [x] `ePatrolBuildingBase`
 - [x] `eAgoraBase`
 - [x] `ePatrolBuilding`
+- [x] `ePatrolSourceBuilding`
+- [x] `ePatrolTarget`
 - [x] `eStorageBuilding`
 - [x] `eTower`
 - [x] `eTradePost`
@@ -332,6 +339,7 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [x] `eTempleTileBuilding`
 - [x] `eWall`
 - [x] `eHippodrome`
+- [x] `ePyramidBuildingPart`
 
 ### D - Characters
 
@@ -400,6 +408,17 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [x] `eShepherdBase`
 - [x] `eUrchinGatherer`
 - [x] `eTrailer`
+- [x] `eDomesticatedAnimal`
+- [x] `eHunter`
+- [x] `eRacingHorse`
+- [x] `eSoldierBanner`
+- [x] `eWildAnimal`
+- [x] `eFightingCharacter`
+- [x] `eEnlistedForces`
+- [x] `eAttackTarget`
+- [x] `eGodMissile`
+- [x] `eBanner`
+- [x] `eSpawner`
 
 ### E - Character Actions
 
@@ -448,7 +467,7 @@ When migrating child classes (`eGameBoard`, episodes, `eSetAside`), make them de
 - [x] `eZeusHelpAction`
 - [ ] `eGodMonsterActionInd`
 - [x] `eMonsterAction`
-- [ ] `eMoveToAction`
+- [x] `eMoveToAction`
 - [x] `eDieAction`
 - [x] `eFightAction`
 - [x] `eMoveAction`

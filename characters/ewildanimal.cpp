@@ -25,11 +25,11 @@ void eWildAnimal::write(eWriteStream& dst) const {
 }
 
 void eWildAnimal::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readBanner(&getBoard(), [this](eBanner* const b) {
-            mSpawner = static_cast<eSpawner*>(b);
+    ar.payloadField("spawner",
+        [this](eWriteStream& dst) { dst.writeBanner(mSpawner); },
+        [this](eReadStream& src) {
+            src.readBanner(&getBoard(), [this](eBanner* const b) {
+                mSpawner = static_cast<eSpawner*>(b);
+            });
         });
-    } else {
-        ar.writeStream().writeBanner(mSpawner);
-    }
 }

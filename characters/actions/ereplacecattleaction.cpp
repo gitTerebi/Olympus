@@ -1,6 +1,7 @@
 #include "ereplacecattleaction.h"
 
 #include "emovetoaction.h"
+#include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
 eReplaceCattleAction::eReplaceCattleAction(
@@ -46,11 +47,7 @@ void eReplaceCattleAction::goCattle() {
     if(!ca) return;
     mCattleHomeX = ca->spawnerX();
     mCattleHomeY = ca->spawnerY();
-    const int hx = mCattleHomeX;
-    const int hy = mCattleHomeY;
-    const auto hha = [hx, hy](eThreadTile* const tile) {
-        return tile->x() == hx && tile->y() == hy;
-    };
+    const auto homeTile = board().tile(mCattleHomeX, mCattleHomeY);
 
     const auto a = e::make_shared<eMoveToAction>(c);
     const stdptr<eCharacter> cptr(c);
@@ -65,7 +62,8 @@ void eReplaceCattleAction::goCattle() {
     const auto finish = std::make_shared<eRC_finishAction>(
                             board(), this, c, mCattle);
     a->setFinishAction(finish);
-    a->start(hha);
+    if(homeTile) a->start(homeTile);
+    else a->setState(eCharacterActionState::failed);
     setCurrentAction(a);
 }
 
@@ -78,11 +76,7 @@ void eReplaceCattleAction::finishReplacing() {
 void eReplaceCattleAction::sendCattleHome() {
     if(!mCattle) return;
     const auto c = mCattle.get();
-    const int hx = mCattleHomeX;
-    const int hy = mCattleHomeY;
-    const auto hha = [hx, hy](eThreadTile* const tile) {
-        return tile->x() == hx && tile->y() == hy;
-    };
+    const auto homeTile = board().tile(mCattleHomeX, mCattleHomeY);
 
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::domesticatedAnimals |
@@ -92,7 +86,8 @@ void eReplaceCattleAction::sendCattleHome() {
     const auto finish = std::make_shared<eRC_finishWalkingAction>(
                             board(), c);
     a->setFinishAction(finish);
-    a->start(hha);
+    if(homeTile) a->start(homeTile);
+    else a->setState(eCharacterActionState::failed);
     c->setAction(a);
 }
 
@@ -106,11 +101,7 @@ void eRC_finishAction::call() {
 
     const auto ca = dynamic_cast<eAnimalAction*>(c->action());
     if(!ca) return;
-    const int hx = ca->spawnerX();
-    const int hy = ca->spawnerY();
-    const auto hha = [hx, hy](eThreadTile* const tile) {
-        return tile->x() == hx && tile->y() == hy;
-    };
+    const auto homeTile = board().tile(ca->spawnerX(), ca->spawnerY());
 
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::domesticatedAnimals |
@@ -120,7 +111,8 @@ void eRC_finishAction::call() {
     const auto finish = std::make_shared<eRC_finishWalkingAction>(
                             board(), c);
     a->setFinishAction(finish);
-    a->start(hha);
+    if(homeTile) a->start(homeTile);
+    else a->setState(eCharacterActionState::failed);
     c->setAction(a);
 }
 

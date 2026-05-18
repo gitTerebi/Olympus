@@ -102,6 +102,7 @@ public:
     void setFinishAction(const stdsptr<eCharActFunc>& f);
     void setFailAction(const stdsptr<eCharActFunc>& f);
     void setDeleteFailAction(const stdsptr<eCharActFunc>& d);
+    eCharActFunc* finishAction() const { return mFinishAction.get(); }
 
     static stdsptr<eCharacterAction> sCreate(
             eCharacter* const c,

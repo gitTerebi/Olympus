@@ -417,41 +417,48 @@ void eSoldierBanner::serialize(eSaveArchive& ar) {
         ar.field("mFacing", mFacing);
     }
 
-    if(ar.reading()) {
-        int np;
-        ar.field("np", np);
-        for(int i = 0; i < np; i++) {
-            eTile* t = nullptr;
-            ar.tile(t, mBoard);
-            ar.readStream().readCharacter(&mBoard, [this, t](eCharacter* const c) {
-                if(!c) return;
-                const auto s = static_cast<eSoldier*>(c);
-                mPlaces[s] = t;
+    {
+        std::vector<std::pair<eSoldier*, eTile*>> places;
+        if(!ar.reading()) {
+            places.reserve(mPlaces.size());
+            for(const auto& p : mPlaces) places.emplace_back(p.first, p.second);
+        }
+        ar.arrayField("places", places,
+            [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
+                itemAr.tileField("tile", mBoard, p.second);
+                itemAr.payloadField("soldier",
+                    [&p](eWriteStream& dst) { dst.writeCharacter(p.first); },
+                    [this, &p](eReadStream& src) {
+                        src.readCharacter(&mBoard, [&p](eCharacter* const c) {
+                            p.first = c ? static_cast<eSoldier*>(c) : nullptr;
+                        });
+                    });
             });
+        if(ar.reading()) {
+            mPlaces.clear();
+            for(const auto& p : places) {
+                if(p.first) mPlaces[p.first] = p.second;
+            }
         }
-
-        int ns;
-        ar.field("ns", ns);
-        for(int i = 0; i < ns; i++) {
-            ar.readStream().readCharacter(&mBoard, [this](eCharacter* const c) {
-                if(!c) return;
-                const auto s = static_cast<eSoldier*>(c);
-                mSoldiers.push_back(s);
+    }
+    {
+        std::vector<eSoldier*> soldiers;
+        if(!ar.reading()) soldiers = mSoldiers;
+        ar.arrayField("soldiers", soldiers,
+            [this](eSaveArchive& itemAr, eSoldier*& s) {
+                itemAr.payloadField("soldier",
+                    [&s](eWriteStream& dst) { dst.writeCharacter(s); },
+                    [this, &s](eReadStream& src) {
+                        src.readCharacter(&mBoard, [&s](eCharacter* const c) {
+                            s = c ? static_cast<eSoldier*>(c) : nullptr;
+                        });
+                    });
             });
-        }
-    } else {
-        int np = static_cast<int>(mPlaces.size());
-        ar.field("np", np);
-        for(const auto& p : mPlaces) {
-            eTile* t = p.second;
-            ar.tile(t, mBoard);
-            ar.writeStream().writeCharacter(p.first);
-        }
-
-        int ns = static_cast<int>(mSoldiers.size());
-        ar.field("ns", ns);
-        for(const auto s : mSoldiers) {
-            ar.writeStream().writeCharacter(s);
+        if(ar.reading()) {
+            mSoldiers.clear();
+            for(const auto s : soldiers) {
+                if(s) mSoldiers.push_back(s);
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ class eGameBoard;
 class eBuilding;
 class eCharacter;
 class eCharacterAction;
+class eCharacterActionFunction;
 class eTile;
 class eSoldierBanner;
 class eWorldBoard;
@@ -439,6 +440,21 @@ public:
         return payloadField(name,
             [&val](eWriteStream& dst) { dst.writeDirectionTimes(val.get()); },
             [&board, &val](eReadStream& src) { val = src.readDirectionTimes(board); });
+    }
+
+    bool charActFuncField(const char* const name,
+                          eGameBoard& board,
+                          stdsptr<eCharacterActionFunction>& val) {
+        bool hasValue = val != nullptr;
+        const std::string hasName = std::string(name) + ".has";
+        this->field(hasName.c_str(), hasValue, false);
+        if(!hasValue) {
+            if(reading()) val = nullptr;
+            return true;
+        }
+        return payloadField(name,
+            [&val](eWriteStream& dst) { dst.writeCharActFunc(val.get()); },
+            [&board, &val](eReadStream& src) { val = src.readCharActFunc(board); });
     }
 
     // Saved arrays must use these helpers. Raw stream loops are legacy-only.

@@ -106,7 +106,11 @@ struct eNumbers {
     static int sPatrolWalkerSpawnCooldown;
     static int sWaterCarrierSpawnCooldown;
     static int sInfirmarySpawnCooldown;
-    static int sScheduledWalkerSpawnInterval;
+    static int sScheduledWalkerSpawnCooldown;
+    static int sDestinationWalkerSpawnCooldown;
+    static int sCulturePatrolSpawnCooldown;
+    static int sTheaterPatrolSpawnCooldown;
+    static int sCultureActiveTime;
 
     static int sArtisanWaitTime;
     static int sArtisanBuildTime;

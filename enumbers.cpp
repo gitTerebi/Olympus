@@ -105,7 +105,11 @@ int eNumbers::sPatrolerMaxDistance;
 int eNumbers::sPatrolWalkerSpawnCooldown;
 int eNumbers::sWaterCarrierSpawnCooldown;
 int eNumbers::sInfirmarySpawnCooldown;
-int eNumbers::sScheduledWalkerSpawnInterval;
+int eNumbers::sScheduledWalkerSpawnCooldown;
+int eNumbers::sDestinationWalkerSpawnCooldown;
+int eNumbers::sCulturePatrolSpawnCooldown;
+int eNumbers::sTheaterPatrolSpawnCooldown;
+int eNumbers::sCultureActiveTime;
 
 int eNumbers::sArtisanWaitTime;
 int eNumbers::sArtisanBuildTime;
@@ -411,9 +415,15 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("patroler_max_distance_i", sPatrolerMaxDistance, 40, 5, 1000);
     loadI("patrol_walker_spawn_cooldown_i", sPatrolWalkerSpawnCooldown, 1000, 0, 1000000);
+
     loadI("water_carrier_spawn_cooldown_i", sWaterCarrierSpawnCooldown, 4000, 0, 1000000);
     loadI("infirmary_spawn_cooldown_i", sInfirmarySpawnCooldown, 1000, 0, 1000000);
-    loadI("scheduled_walker_spawn_interval_i", sScheduledWalkerSpawnInterval, 2000, 1, 1000000);
+    loadI("scheduled_walker_spawn_cooldown_i", sScheduledWalkerSpawnCooldown, 2000, 1, 1000000);
+
+    loadI("destination_walker_spawn_cooldown_i", sDestinationWalkerSpawnCooldown, 10000, 1, 1000000);
+    loadI("culture_patrol_spawn_cooldown_i", sCulturePatrolSpawnCooldown, 10000, 0, 1000000);
+    loadI("theater_patrol_spawn_cooldown_i", sTheaterPatrolSpawnCooldown, 5000, 0, 1000000);
+    loadI("culture_active_time_i", sCultureActiveTime, 250000, 0, 1000000);
 
     loadI("artisan_wait_time_i", sArtisanWaitTime, 2000, 1, 1000000);
     loadI("artisan_build_time_i", sArtisanBuildTime, 6000, 1, 1000000);
