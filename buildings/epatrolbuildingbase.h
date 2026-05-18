@@ -71,6 +71,8 @@ public:
     virtual eTile* patrolStartTile() const;
 
     virtual int spawnCooldown() const { return eNumbers::sPatrolWalkerSpawnCooldown; }
+protected:
+    void resetSpawnTimer();
 private:
     void serialize(eSaveArchive& ar);
 

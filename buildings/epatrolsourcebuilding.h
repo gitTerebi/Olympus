@@ -3,10 +3,14 @@
 
 #include "epatrolbuilding.h"
 #include "textures/ebuildingtextures.h"
+#include "pointers/estdpointer.h"
+
+class eCharacter;
 
 struct eTargetData {
     int fSpawnTime;
     int fLastId;
+    stdptr<eCharacter> fWalker;
 };
 
 class eSaveArchive;
@@ -35,13 +39,14 @@ public:
     void write(eWriteStream& dst) const override;
 private:
     void serialize(eSaveArchive& ar);
+    bool targetWalkerInFlight(const int id) const;
 
     void spawn(const int id);
     void spawn(const int id, eBuilding* const targetBuilding);
 
     const eTargets mTargets;
 
-    const int mSpawnInterval = eNumbers::sScheduledWalkerSpawnInterval;
+    const int mSpawnInterval = eNumbers::sDestinationWalkerSpawnCooldown;
     std::vector<eTargetData> mTargetData;
 };
 

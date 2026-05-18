@@ -5761,20 +5761,23 @@ void eGameWidget::paintEvent(ePainter &p)
                 tex->clearColorMod();
             }
 
-            const auto overlays = eb.fBR->getOverlays(tp.size());
-            for (const auto &o : overlays)
-            {
-                const auto &ttex = o.fTex;
-                if (cbg)
-                    ttex->setColorMod(0, 255, 0);
-                else
-                    ttex->setColorMod(255, 0, 0);
-                if (o.fAlignTop)
-                    tp.drawTexture(rx + o.fX, ry + o.fY, ttex,
-                                   eAlignment::top);
-                else
-                    tp.drawTexture(rx + o.fX, ry + o.fY, ttex);
-                ttex->clearColorMod();
+            const bool skipOverlays = dynamic_cast<ePatrolBuilding*>(eb.fB.get()) != nullptr;
+            if (!skipOverlays) {
+                const auto overlays = eb.fBR->getOverlays(tp.size());
+                for (const auto &o : overlays)
+                {
+                    const auto &ttex = o.fTex;
+                    if (cbg)
+                        ttex->setColorMod(0, 255, 0);
+                    else
+                        ttex->setColorMod(255, 0, 0);
+                    if (o.fAlignTop)
+                        tp.drawTexture(rx + o.fX, ry + o.fY, ttex,
+                                       eAlignment::top);
+                    else
+                        tp.drawTexture(rx + o.fX, ry + o.fY, ttex);
+                    ttex->clearColorMod();
+                }
             }
         }
         drawRoadAccessPreview(ebs, cbg);

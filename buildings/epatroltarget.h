@@ -18,11 +18,13 @@ public:
                   const int maxEmployees,
                   const eCityId cid);
 
-    bool available() const { return mAvailable > 0; }
+    bool isActive() const { return mActiveTimer > 0; }
+    bool hasSpawnPool() const { return mSpawnPool > 0; }
 
     void arrived();
 
     void timeChanged(const int by) override;
+    int spawnCooldown() const override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
@@ -30,9 +32,9 @@ private:
     void serialize(eSaveArchive& ar);
     const eCharGenerator mCharGen;
 
-    int mAvailable = -1;
-
-    const int mAvailableWaitTime = 100000;
+    int mSpawnPool = 0;
+    bool mHadPatroler = false;
+    int mActiveTimer = 0;
 };
 
 class ePT_spawnGetActorFinish : public eCharActFunc {
@@ -58,6 +60,7 @@ public:
     void write(eWriteStream& dst) const override {
         dst.writeBuilding(mTptr);
     }
+    ePatrolTarget* target() const { return mTptr.get(); }
 private:
     stdptr<ePatrolTarget> mTptr;
 };

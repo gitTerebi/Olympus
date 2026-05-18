@@ -63,13 +63,12 @@ void ePyramidBuildingPart::write(eWriteStream& dst) const {
 }
 
 void ePyramidBuildingPart::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        auto& board = getBoard();
-        ar.readStream().readBuilding(&board, [this](eBuilding* const b) {
-            mPaint = static_cast<ePyramidElement*>(b);
+    ar.payloadField("paint",
+        [this](eWriteStream& dst) { dst.writeBuilding(mPaint); },
+        [this](eReadStream& src) {
+            src.readBuilding(&getBoard(), [this](eBuilding* const b) {
+                mPaint = static_cast<ePyramidElement*>(b);
+            });
         });
-    } else {
-        ar.writeStream().writeBuilding(mPaint);
-    }
     ar.field("mPaintDir", mPaintDir);
 }

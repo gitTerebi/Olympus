@@ -116,6 +116,10 @@ void ePatrolBuildingBase::setSpawnPatrolers(const bool s) {
     mSpawnPatrolers = s;
 }
 
+void ePatrolBuildingBase::resetSpawnTimer() {
+    mSpawnTimer = 0;
+}
+
 bool ePatrolBuildingBase::spawnsPatrolers() const {
     return mCharGenerator && mActGenerator;
 }

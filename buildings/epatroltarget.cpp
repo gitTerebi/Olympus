@@ -26,17 +26,38 @@ ePatrolTarget::ePatrolTarget(eGameBoard& board,
                     overlays, charGen,
                     type, sw, sh,
                     maxEmployees, cid),
-    mCharGen(charGen) {}
+    mCharGen(charGen) {
+    setSpawnPatrolers(false);
+    setOverlayEnabledFunc([this]() {
+        return enabled() && isActive();
+    });
+}
 
 void ePatrolTarget::arrived() {
-    mAvailable = mAvailableWaitTime;
+    const bool startPatrolCooldown = mSpawnPool == 0 && patroler() == nullptr;
+    mSpawnPool++;
+    mActiveTimer = eNumbers::sCultureActiveTime;
+    if(startPatrolCooldown) resetSpawnTimer();
     setSpawnPatrolers(true);
 }
 
+int ePatrolTarget::spawnCooldown() const {
+    return eNumbers::sCulturePatrolSpawnCooldown;
+}
+
 void ePatrolTarget::timeChanged(const int by) {
-    mAvailable -= by;
-    if(mAvailable < 0) setSpawnPatrolers(false);
+    const bool hadBefore = mHadPatroler;
     ePatrolBuilding::timeChanged(by);
+    const bool hasNow = patroler() != nullptr;
+    if(hasNow && !hadBefore) {
+        if(mSpawnPool > 0) mSpawnPool--;
+        if(mSpawnPool <= 0) setSpawnPatrolers(false);
+    }
+    mHadPatroler = hasNow;
+    if(mActiveTimer > 0) {
+        mActiveTimer -= by;
+        if(mActiveTimer < 0) mActiveTimer = 0;
+    }
 }
 
 void ePatrolTarget::read(eReadStream& src) {
@@ -52,5 +73,7 @@ void ePatrolTarget::write(eWriteStream& dst) const {
 }
 
 void ePatrolTarget::serialize(eSaveArchive& ar) {
-    ar.field("mAvailable", mAvailable);
+    ar.field("spawnPool", mSpawnPool);
+    ar.field("hadPatroler", mHadPatroler);
+    ar.field("activeTimer", mActiveTimer);
 }

@@ -146,7 +146,7 @@ void eScienceDataWidget::updateCoverage() {
 
     {
         const auto m = mBoard.museum(cid);
-        const bool exhibits = m ? m->available() : false;
+        const bool exhibits = m ? m->isActive() : false;
         const auto ddtt = eLanguage::zeusText(18, exhibits ? 1 : 0);
         mExhibits->setText(ddtt);
         mExhibits->fitContent();

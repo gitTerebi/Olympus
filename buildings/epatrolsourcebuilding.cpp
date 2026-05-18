@@ -30,7 +30,7 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
     mTargets(targets) {
     for(const auto& t : mTargets) {
         (void)t;
-        mTargetData.push_back({eRand::rand() % mSpawnInterval, -1});
+        mTargetData.push_back({eRand::rand() % mSpawnInterval, -1, nullptr});
     }
 }
 
@@ -39,6 +39,7 @@ void ePatrolSourceBuilding::timeChanged(const int by) {
     if(enabled()) {
         const int iMax = mTargetData.size();
         for(int i = 0; i < iMax; i++) {
+            if(targetWalkerInFlight(i)) continue;
             int& spawnTime = mTargetData[i].fSpawnTime;
             spawnTime += by;
             if(spawnTime > mSpawnInterval) {
@@ -62,11 +63,21 @@ void ePatrolSourceBuilding::write(eWriteStream& dst) const {
 }
 
 void ePatrolSourceBuilding::serialize(eSaveArchive& ar) {
-    for(const auto& t : mTargetData) {
-        auto& tt = const_cast<eTargetData&>(t);
-        ar.field("tt.fSpawnTime", tt.fSpawnTime);
-        ar.field("tt.fLastId", tt.fLastId);
-    }
+    ar.fixedArrayField("targetData", mTargetData,
+        [this](eSaveArchive& itemAr, eTargetData& td) {
+            itemAr.field("fSpawnTime", td.fSpawnTime);
+            itemAr.field("fLastId", td.fLastId);
+            itemAr.characterField("walker", &getBoard(), td.fWalker);
+    });
+}
+
+bool ePatrolSourceBuilding::targetWalkerInFlight(const int id) const {
+    if(id < 0 || id >= static_cast<int>(mTargets.size())) return false;
+    const auto c = mTargetData[id].fWalker.get();
+    if(!c) return false;
+    const auto a = c->action();
+    if(!a) return false;
+    return a->state() == eCharacterActionState::running;
 }
 
 bool operator==(const SDL_Rect& r1, const SDL_Rect& r2) {
@@ -154,6 +165,7 @@ void ePatrolSourceBuilding::spawn(const int id, eBuilding* const targetBuilding)
     const auto c = eCharacter::sCreate(target.first, board);
     c->setBothCityIds(cityId());
     c->changeTile(centerTile());
+    mTargetData[id].fWalker = c.get();
 
     const auto finishAction = std::make_shared<ePT_spawnGetActorFinish>(
                                   board, patrolTarget);

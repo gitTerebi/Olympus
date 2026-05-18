@@ -54,6 +54,9 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
 void eCharacterAction::serializeFields(eSaveArchive& ar) {
     ar.field("ioID", mIOID);
     ar.field("state", mState);
+    ar.charActFuncField("finishAction", mBoard, mFinishAction);
+    ar.charActFuncField("failAction", mBoard, mFailAction);
+    ar.charActFuncField("deleteFailAction", mBoard, mDeleteFailAction);
 }
 
 void eCharacterAction::read(eReadStream& src) {

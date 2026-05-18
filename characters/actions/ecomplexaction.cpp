@@ -24,7 +24,7 @@ void eComplexAction::serializeFields(eSaveArchive& ar) {
 
 void eComplexAction::resumeFromSavedState() {
     eCharacterAction::resumeFromSavedState();
-    if(state() == eCharacterActionState::running) decide();
+    if(state() == eCharacterActionState::running && !mCurrentAction) decide();
 }
 
 void eComplexAction::setCurrentAction(const stdsptr<eCharacterAction>& a) {
