@@ -50,14 +50,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eHadesHelpAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eHadesHelpAction> mTptr;
@@ -81,14 +76,8 @@ public:
         board().addResource(mCityId, eResourceType::drachmas, 1500);
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serializeFields(eSaveArchive& ar) override {
         ar.field("cityId", mCityId);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("cityId", const_cast<eCityId&>(mCityId));
     }
 private:
     eCityId mCityId;

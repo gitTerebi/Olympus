@@ -45,22 +45,11 @@ public:
 
     void call() override;
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
-            mButcherA = static_cast<eReplaceCattleAction*>(a);
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mButcher = c;
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCattle = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mButcherA);
-        dst.writeCharacter(mButcher);
-        dst.writeCharacter(mCattle);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("butcherAction", &board(), mButcherA);
+        ar.characterField("butcher", &board(), mButcher);
+        ar.characterField("cattle", &board(), mCattle);
     }
 private:
     stdptr<eReplaceCattleAction> mButcherA;
@@ -79,14 +68,9 @@ public:
 
     void call() override;
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCattle = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCattle);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("cattle", &board(), mCattle);
     }
 private:
     stdptr<eCharacter> mCattle;

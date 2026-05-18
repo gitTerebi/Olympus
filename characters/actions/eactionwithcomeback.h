@@ -70,17 +70,10 @@ public:
         const auto t = mTptr.get();
         t->goBackInternal(mWalkable);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eActionWithComeback*>(ca);
-        });
-        mWalkable = src.readWalkable();
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeWalkable(mWalkable.get());
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.walkableField("walkable", mWalkable);
     }
 private:
     stdptr<eActionWithComeback> mTptr;
@@ -100,15 +93,9 @@ public:
         const auto t = mTptr.get();
         t->setState(eCharacterActionState::finished);
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eActionWithComeback*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eActionWithComeback> mTptr;

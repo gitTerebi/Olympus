@@ -106,6 +106,28 @@ void eGodWorshippedAction::lookForMonster() {
     }
 }
 
+void eGodWorshippedAction::resumeFromSavedState() {
+    rebuildCurrentStage();
+}
+
+void eGodWorshippedAction::rebuildCurrentStage() {
+    if(state() != eCharacterActionState::running) return;
+    switch(mStage) {
+    case eGodWorshippedStage::none:
+    case eGodWorshippedStage::appear:
+    case eGodWorshippedStage::goTo1:
+    case eGodWorshippedStage::patrol1:
+    case eGodWorshippedStage::goTo2:
+    case eGodWorshippedStage::patrol2:
+    case eGodWorshippedStage::disappear:
+    case eGodWorshippedStage::defend:
+    case eGodWorshippedStage::huntMonster:
+    case eGodWorshippedStage::fightMonster:
+        eGodAction::resumeFromSavedState();
+        return;
+    }
+}
+
 void eGodWorshippedAction::serializeFields(eSaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);

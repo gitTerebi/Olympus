@@ -48,7 +48,7 @@ void eHermesHelpAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
     case eHermesHelpStage::providing:
-        decide();
+        spawnProvideMissile();
         return;
     case eHermesHelpStage::none:
         eGodAction::resumeFromSavedState();

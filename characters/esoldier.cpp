@@ -58,29 +58,10 @@ void eSoldier::beingKilled() {
     }
 }
 
-void eSoldier::read(eReadStream& src) {
-    eFightingPatroler::read(src);
-    eFightingCharacter::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSoldier::write(eWriteStream& dst) const {
-    eFightingPatroler::write(dst);
-    eFightingCharacter::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSoldier*>(this)->serialize(ar);
-}
-
-void eSoldier::serialize(eSaveArchive& ar) {
-    ar.payloadField("banner",
-        [this](eWriteStream& dst) { dst.writeSoldierBanner(mBanner.get()); },
-        [this](eReadStream& src) {
-            auto& board = getBoard();
-            src.readSoldierBanner(&board, [this](const stdsptr<eSoldierBanner>& b) {
-                mBanner = b;
-            });
-        });
+void eSoldier::serializeFields(eSaveArchive& ar) {
+    eFightingPatroler::serializeFields(ar);
+    eFightingCharacter::serializeFields(ar);
+    ar.soldierBannerField("banner", &getBoard(), mBanner);
 }
 
 eSoldierAction *eSoldier::soldierAction() const {

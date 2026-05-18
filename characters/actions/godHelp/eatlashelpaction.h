@@ -49,14 +49,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eAtlasHelpAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eAtlasHelpAction> mTptr;
@@ -88,14 +83,8 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eMonument*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetMonument", &board(), mTarget);
     }
 private:
     stdptr<eMonument> mTarget;

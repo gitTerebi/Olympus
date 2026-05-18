@@ -18,18 +18,7 @@ void eSettler::setEmigrant(const bool e) {
     mEmigrant = e;
 }
 
-void eSettler::serialize(eSaveArchive& ar) {
+void eSettler::serializeFields(eSaveArchive& ar) {
+    eBasicPatroler::serializeFields(ar);
     ar.field("mEmigrant", mEmigrant);
-}
-
-void eSettler::read(eReadStream& src) {
-    eBasicPatroler::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSettler::write(eWriteStream& dst) const {
-    eBasicPatroler::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSettler*>(this)->serialize(ar);
 }

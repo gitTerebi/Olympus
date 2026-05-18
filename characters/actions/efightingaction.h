@@ -4,6 +4,7 @@
 #include "ecomplexaction.h"
 
 #include "characters/echaracter.h"
+#include "walkable/eobsticlehandler.h"
 
 class eSaveArchive;
 
@@ -110,14 +111,9 @@ public:
         mCptr->setActionType(eCharacterActionType::stand);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
     }
 private:
     stdptr<eCharacter> mCptr;
@@ -136,14 +132,9 @@ public:
         mAptr->goHome();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
-            mAptr = static_cast<eFightingAction*>(a);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mAptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mAptr);
     }
 private:
     stdptr<eFightingAction> mAptr;

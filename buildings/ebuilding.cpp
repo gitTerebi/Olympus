@@ -2779,7 +2779,7 @@ eTeamId eBuilding::teamId() const {
     return board.playerIdToTeamId(pid);
 }
 
-void eBuilding::serialize(eSaveArchive& ar) {
+void eBuilding::serializeFields(eSaveArchive& ar) {
     ar.field("ioId", mIOID);
     ar.field("tileRect", mTileRect);
     ar.field("districtId", mDistrictId);
@@ -2829,12 +2829,12 @@ void eBuilding::serialize(eSaveArchive& ar) {
 
 void eBuilding::read(eReadStream& src) {
     eSaveArchive ar(src);
-    serialize(ar);
+    serializeFields(ar);
 }
 
 void eBuilding::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
-    const_cast<eBuilding*>(this)->serialize(ar);
+    const_cast<eBuilding*>(this)->serializeFields(ar);
 }
 
 void eBuilding::setIOID(const int id) {

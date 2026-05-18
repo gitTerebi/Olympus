@@ -2,6 +2,7 @@
 #define ECHARACTERACTIONFUNCTION_H
 
 #include "fileIO/estreams.h"
+#include "fileIO/esavearchive.h"
 
 enum class eCharacterActionFunctionType {
     AWC_goBackFail,
@@ -105,18 +106,27 @@ class eCharacterActionFunction {
 public:
     eCharacterActionFunction(eGameBoard& board,
                              const eCharActFuncType t);
+    virtual ~eCharacterActionFunction() = default;
 
     eCharActFuncType type() const { return mType; }
     eGameBoard& board() { return mBoard; }
 
-    virtual void read(eReadStream& src) = 0;
-    virtual void write(eWriteStream& dst) const = 0;
+    virtual void read(eReadStream& src) final {
+        eSaveArchive ar(src);
+        serializeFields(ar);
+    }
+    virtual void write(eWriteStream& dst) const final {
+        eSaveArchive ar(dst);
+        const_cast<eCharacterActionFunction*>(this)->serializeFields(ar);
+    }
 
     virtual void call() = 0;
 
     static stdsptr<eCharacterActionFunction> sCreate(
             eGameBoard& board,
             const eCharActFuncType type);
+protected:
+    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     eGameBoard& mBoard;
     const eCharActFuncType mType;

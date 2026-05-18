@@ -1,6 +1,7 @@
 #include "ewritestream.h"
 
 #include "engine/e-game-board.h"
+#include "esavearchive.h"
 #include "characters/actions/echaracteraction.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
@@ -42,22 +43,6 @@ void eWriteStream::writeCharacterAction(eCharacterAction* const ca) {
     *this << bid;
 }
 
-void eWriteStream::writeWalkable(eWalkableObject* const w) {
-    *this << bool(w);
-    if(w) {
-        *this << w->type();
-        w->write(*this);
-    }
-}
-
-void eWriteStream::writeHasResource(eHasResourceObject* const hr) {
-    *this << bool(hr);
-    if(hr) {
-        *this << hr->type();
-        hr->write(*this);
-    }
-}
-
 void eWriteStream::writeCharActFunc(eCharacterActionFunction* const caf) {
     const bool hasFinish = caf != nullptr;
     *this << hasFinish;
@@ -76,19 +61,12 @@ void eWriteStream::writeGodAct(eGodAct* const ga) {
     }
 }
 
-void eWriteStream::writeObsticleHandler(eObsticleHandler* const w) {
-    *this << bool(w);
-    if(w) {
-        *this << w->type();
-        w->write(*this);
-    }
-}
-
 void eWriteStream::writeDirectionTimes(eDirectionTimes* const d) {
     *this << d->size();
     for(const auto& dt : *d) {
         writeTile(dt.first);
-        dt.second.write(*this);
+        eSaveArchive ar(*this);
+        const_cast<eDirectionLastUseTime&>(dt.second).serialize(ar);
     }
 }
 

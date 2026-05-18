@@ -50,7 +50,7 @@ void eHephaestusHelpAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
     case eHephaestusHelpStage::providing:
-        decide();
+        spawnProvideMissile();
         return;
     case eHephaestusHelpStage::none:
         eGodAction::resumeFromSavedState();

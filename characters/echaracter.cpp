@@ -329,7 +329,8 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
     return coll->getTexture(texId);
 }
 
-void eCharacter::serialize(eSaveArchive& ar) {
+void eCharacter::serializeFields(eSaveArchive& ar) {
+    eCharacterBase::serializeFields(ar);
     ar.field("ioId", mIOID);
     ar.field("visible", mVisible);
     ar.field("provide", mProvide);
@@ -367,16 +368,4 @@ void eCharacter::serialize(eSaveArchive& ar) {
         });
         itemAr.field("orientation", a.fO);
     });
-}
-
-void eCharacter::read(eReadStream& src) {
-    eCharacterBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eCharacter::write(eWriteStream& dst) const {
-    eCharacterBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCharacter*>(this)->serialize(ar);
 }

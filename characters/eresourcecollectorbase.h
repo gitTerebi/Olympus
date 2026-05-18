@@ -10,11 +10,9 @@ public:
     int collected() const { return mResCollected; }
     void incCollected(const int by = 1) { mResCollected += by; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     int mResCollected = 0;
 };
 

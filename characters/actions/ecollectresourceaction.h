@@ -96,16 +96,10 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        mTile = src.readTile(board());
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mPtr = static_cast<eCollectResourceAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeTile(mTile);
-        dst.writeCharacterAction(mPtr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.tileField("tile", board(), mTile);
+        ar.characterActionAsField("target", &board(), mPtr);
     }
 private:
     stdptr<eCollectResourceAction> mPtr;
@@ -125,12 +119,9 @@ public:
         mTile->setBusy(false);
     }
 
-    void read(eReadStream& src) override {
-        mTile = src.readTile(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeTile(mTile);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.tileField("tile", board(), mTile);
     }
 private:
     eTile* mTile = nullptr;
@@ -150,14 +141,9 @@ public:
         mBptr->addRaw();
     }
 
-    void read(eReadStream& src) override {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBptr = static_cast<eResourceCollectBuildingBase*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeBuilding(mBptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("collectBuilding", &board(), mBptr);
     }
 private:
     stdptr<eResourceCollectBuildingBase> mBptr;

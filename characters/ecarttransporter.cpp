@@ -355,20 +355,8 @@ void eCartTransporter::catchUp() {
     }
 }
 
-void eCartTransporter::read(eReadStream& src) {
-    eBasicPatroler::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-    updateTextures();
-}
-
-void eCartTransporter::write(eWriteStream& dst) const {
-    eBasicPatroler::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCartTransporter*>(this)->serialize(ar);
-}
-
-void eCartTransporter::serialize(eSaveArchive& ar) {
+void eCartTransporter::serializeFields(eSaveArchive& ar) {
+    eBasicPatroler::serializeFields(ar);
     int count = mResourceCount;
     ar.field("resourceCount", count);
     ar.field("cartType", mType);
@@ -383,23 +371,12 @@ void eCartTransporter::serialize(eSaveArchive& ar) {
     ar.field("isOx", mIsOx);
     ar.field("bigTrailer", mBigTrailer);
     ar.field("maxDistance", mMaxDistance);
-    ar.payloadField("ox",
-        [this](eWriteStream& dst) { dst.writeCharacter(mOx); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mOx = static_cast<eOx*>(c);
-            });
-        });
-    ar.payloadField("trailer",
-        [this](eWriteStream& dst) { dst.writeCharacter(mTrailer); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mTrailer = static_cast<eTrailer*>(c);
-            });
-        });
+    ar.characterField("ox", &getBoard(), mOx);
+    ar.characterField("trailer", &getBoard(), mTrailer);
     ar.arrayField("followers", mFollowers, [this](eSaveArchive& itemAr, auto& f) {
         itemAr.character(&getBoard(), f);
     });
+    if(ar.reading()) updateTextures();
 }
 
 void eCartTransporter::updateTextures() {

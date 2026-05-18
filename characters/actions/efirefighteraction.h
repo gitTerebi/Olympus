@@ -57,14 +57,9 @@ public:
         t->goBackDecision(eWalkableObject::sCreateDefault());
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mPtr = static_cast<eFireFighterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mPtr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mPtr);
     }
 private:
     stdptr<eFireFighterAction> mPtr;
@@ -87,16 +82,10 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-        mTile = src.readTile(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
-        dst.writeTile(mTile);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
+        ar.tileField("tile", board(), mTile);
     }
 private:
     stdptr<eCharacter> mCptr;

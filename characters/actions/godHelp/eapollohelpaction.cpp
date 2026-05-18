@@ -60,7 +60,7 @@ void eApolloHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnHealMissile(mHealTarget.get());
         return;
     case eApolloHelpStage::none:
         eGodAction::resumeFromSavedState();

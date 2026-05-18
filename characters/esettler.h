@@ -12,11 +12,9 @@ public:
     void setEmigrant(const bool e);
     bool emigrant() const { return mEmigrant; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     bool mEmigrant = false;
 };
 

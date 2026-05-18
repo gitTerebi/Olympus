@@ -27,11 +27,9 @@ public:
     void incOlives(const int i = 1);
     void incOranges(const int i = 1);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     std::shared_ptr<eTexture> getGrapesAndOlivesTex(
             const eCharacterTextures& texs) const;
     std::shared_ptr<eTexture> getOrangesTex(

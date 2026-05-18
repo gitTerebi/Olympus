@@ -71,19 +71,8 @@ eTrailer::getTexture(const eTileSize size) const {
     return coll->getTexture(oid);
 }
 
-void eTrailer::read(eReadStream& src) {
-    eCharacter::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTrailer::write(eWriteStream& dst) const {
-    eCharacter::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTrailer*>(this)->serialize(ar);
-}
-
-void eTrailer::serialize(eSaveArchive& ar) {
+void eTrailer::serializeFields(eSaveArchive& ar) {
+    eCharacter::serializeFields(ar);
     ar.characterAsField("follow", &getBoard(), mFollow);
     ar.field("mIsBig", mIsBig);
     ar.field("mResCount", mResCount);

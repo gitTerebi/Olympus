@@ -82,7 +82,7 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
     mActionType = t;
 }
 
-void eCharacterBase::serialize(eSaveArchive& ar) {
+void eCharacterBase::serializeFields(eSaveArchive& ar) {
     ar.field("actionType", mActionType);
     ar.field("cityId", mCityId);
     ar.field("onCityId", mOnCityId);
@@ -95,10 +95,10 @@ void eCharacterBase::serialize(eSaveArchive& ar) {
 
 void eCharacterBase::read(eReadStream& src) {
     eSaveArchive ar(src);
-    serialize(ar);
+    serializeFields(ar);
 }
 
 void eCharacterBase::write(eWriteStream& dst) const {
     eSaveArchive ar(dst);
-    const_cast<eCharacterBase*>(this)->serialize(ar);
+    const_cast<eCharacterBase*>(this)->serializeFields(ar);
 }

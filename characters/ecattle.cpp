@@ -94,22 +94,15 @@ void eCattle::incTime(const int by) {
     }
 }
 
-void eCattle::read(eReadStream& src) {
-    eCharacter::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eCattle::write(eWriteStream& dst) const {
-    eCharacter::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCattle*>(this)->serialize(ar);
-}
-
-void eCattle::serialize(eSaveArchive& ar) {
+void eCattle::serializeFields(eSaveArchive& ar) {
+    eCharacter::serializeFields(ar);
     ar.field("mId", mId);
     ar.field("mMatureWait", mMatureWait);
-    ar.field("sId", sId);
+    if(ar.reading()) {
+        ar.addPostFunc([this]() {
+            if(mId + 1 > sId) sId = mId + 1;
+        }, "eCattle::sId");
+    }
 }
 
 bool eCattle::shouldBecomeBull() const {

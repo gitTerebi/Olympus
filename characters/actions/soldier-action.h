@@ -67,14 +67,9 @@ public:
         return true;
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eSoldierAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eSoldierAction> mTptr;
@@ -92,15 +87,9 @@ public:
         if(!mCptr) return;
         mCptr->kill();
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
     }
 private:
     stdptr<eCharacter> mCptr;

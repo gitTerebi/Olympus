@@ -173,18 +173,10 @@ public:
         mInvasion->disembark();
     }
 
-    void read(eReadStream& src) {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = static_cast<eCharacter*>(c);
-        });
-        src.readInvasionHandler(&board(), [this](eInvasionHandler* const invasion) {
-            mInvasion = invasion;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mCptr);
-        dst.writeInvasionHandler(mInvasion);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
+        ar.invasionHandlerField("invasion", &board(), mInvasion);
     }
 private:
     stdptr<eCharacter> mCptr;

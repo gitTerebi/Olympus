@@ -19,11 +19,9 @@ public:
     bool canCollect() const { return mResource; }
     int monthsGrown() const { return mMonthsGrown; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     void resetGrowthProgress();
 
     virtual void setNakedTexture() {}

@@ -8,8 +8,10 @@
 #include "audio/sounds.h"
 #include "buildings/esmallhouse.h"
 #include "buildings/eresourcebuilding.h"
+#include "fileIO/esavearchive.h"
 
 class eDestructionTextures;
+class eSaveArchive;
 enum class eGodSound;
 
 enum class eGodActType {
@@ -43,10 +45,19 @@ public:
     eGodActType type() const { return mType; }
     eGameBoard& board() { return mBoard; }
 
-    virtual void read(eReadStream& src) = 0;
-    virtual void write(eWriteStream& dst) const = 0;
+    virtual void read(eReadStream& src) final {
+        eSaveArchive ar(src);
+        serializeFields(ar);
+    }
+
+    virtual void write(eWriteStream& dst) const final {
+        eSaveArchive ar(dst);
+        const_cast<eGodAct*>(this)->serializeFields(ar);
+    }
 
     static stdsptr<eGodAct> sCreate(eGameBoard& board, const eGodActType t);
+protected:
+    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     const eGodActType mType;
     eGameBoard& mBoard;
@@ -76,14 +87,8 @@ public:
         });
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBuilding = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mBuilding);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingField("building", &board(), mBuilding);
     }
 private:
     stdptr<eBuilding> mBuilding;
@@ -110,14 +115,8 @@ public:
         });
     }
 
-    void read(eReadStream& src) {
-        src.readCharacter(&board(), [this](eCharacter* const g) {
-            mG = static_cast<eGod*>(g);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mG);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterAsField("god", &board(), mG);
     }
 private:
     stdptr<eGod> mG;
@@ -156,14 +155,8 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eSmallHouse*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
     stdptr<eSmallHouse> mTarget;
@@ -195,14 +188,8 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = static_cast<eHouseBase*>(b);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
     stdptr<eHouseBase> mTarget;
@@ -241,18 +228,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mTarget = b;
-        });
-        eSaveArchive ar(src);
-        ar.field("bless", mBless);
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeBuilding(mTarget);
-        eSaveArchive ar(dst);
-        ar.field("bless", const_cast<double&>(mBless));
+    void serializeFields(eSaveArchive& ar) override {
+        ar.buildingField("targetBuilding", &board(), mTarget);
+        ar.field("blessAmount", mBless);
     }
 protected:
     stdptr<eBuilding> mTarget;
@@ -293,16 +271,9 @@ public:
         return b->centerTile();
     }
 
-    void read(eReadStream& src) {
-        eLookForBlessGodActBase::read(src);
-        eSaveArchive ar(src);
+    void serializeFields(eSaveArchive& ar) override {
+        eLookForBlessGodActBase::serializeFields(ar);
         ar.field("godType", mType);
-    }
-
-    void write(eWriteStream& dst) const {
-        eLookForBlessGodActBase::write(dst);
-        eSaveArchive ar(dst);
-        ar.field("godType", const_cast<eGodType&>(mType));
     }
 private:
     eGodType mType;
@@ -358,18 +329,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serializeFields(eSaveArchive& ar) override {
         ar.field("godTeam", mGodTeam);
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mTarget = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("godTeam", const_cast<eTeamId&>(mGodTeam));
-        dst.writeCharacter(mTarget);
+        ar.characterField("targetCharacter", &board(), mTarget);
     }
 private:
     eTeamId mGodTeam;
@@ -403,18 +365,9 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serializeFields(eSaveArchive& ar) override {
         ar.field("godType", mType);
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBTarget = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("godType", const_cast<eGodType&>(mType));
-        dst.writeBuilding(mBTarget);
+        ar.buildingField("targetBuilding", &board(), mBTarget);
     }
 private:
     eGodType mType;
@@ -473,22 +426,10 @@ public:
         }
     }
 
-    void read(eReadStream& src) {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCTarget = c;
-        });
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBTarget = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mCptr);
-        dst.writeCharacter(mCTarget);
-        dst.writeBuilding(mBTarget);
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("sourceCharacter", &board(), mCptr);
+        ar.characterField("targetCharacter", &board(), mCTarget);
+        ar.buildingField("targetBuilding", &board(), mBTarget);
     }
 private:
     stdptr<eCharacter> mCptr;
@@ -551,16 +492,10 @@ public:
         t->appear();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAction*>(ca);
-        });
-        mTile = src.readTile(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeTile(mTile);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.tileField("tile", board(), mTile);
     }
 private:
     stdptr<eGodAction> mTptr;
@@ -580,14 +515,9 @@ public:
         mTptr->resumeAction();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodAction> mTptr;
@@ -610,16 +540,10 @@ public:
         t->appear();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        mTile = src.readTile(board());
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeTile(mTile);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.tileField("tile", board(), mTile);
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -645,24 +569,11 @@ public:
         }
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.characterField("character", &board(), mCptr);
         ar.field("appear", mAppear);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharacter(mCptr);
-
-        eSaveArchive ar(dst);
-        ar.field("appear", const_cast<bool&>(mAppear));
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
@@ -689,20 +600,10 @@ public:
         });
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
         ar.field("sound", mSound);
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
-
-        eSaveArchive ar(dst);
-        ar.field("sound", const_cast<eGodSound&>(mSound));
     }
 private:
     stdptr<eCharacter> mCptr;
@@ -722,14 +623,9 @@ public:
         mTptr->teleport(tile);
     }
 
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGodMonsterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eGodMonsterAction> mTptr;

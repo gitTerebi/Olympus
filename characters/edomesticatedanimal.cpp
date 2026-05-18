@@ -42,19 +42,8 @@ int eDomesticatedAnimal::collect() {
     return r;
 }
 
-void eDomesticatedAnimal::read(eReadStream& src) {
-    eAnimal::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eDomesticatedAnimal::write(eWriteStream& dst) const {
-    eAnimal::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eDomesticatedAnimal*>(this)->serialize(ar);
-}
-
-void eDomesticatedAnimal::serialize(eSaveArchive& ar) {
+void eDomesticatedAnimal::serializeFields(eSaveArchive& ar) {
+    eAnimal::serializeFields(ar);
     ar.field("mGroomed", mGroomed);
     ar.field("mResource", mResource);
     ar.field("mMonthsGrown", mMonthsGrown);

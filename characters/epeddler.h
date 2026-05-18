@@ -15,11 +15,9 @@ public:
     void setAgora(eAgoraBase* const a);
     eAgoraBase* agora() const;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eAgoraBase> mAgora;
 };
 

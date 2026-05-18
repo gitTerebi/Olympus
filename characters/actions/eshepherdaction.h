@@ -79,20 +79,11 @@ public:
         mTptr->mCharacter->incCollected(c);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eShepherdAction*>(ca);
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mAptr = static_cast<eDomesticatedAnimal*>(c);
-        });
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.characterAsField("animal", &board(), mAptr);
     }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharacter(mAptr);
-    }
-
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
@@ -114,14 +105,9 @@ public:
         a->resumeAction();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mAptr = static_cast<eDomesticatedAnimal*>(c);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mAptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterAsField("animal", &board(), mAptr);
     }
 private:
     stdptr<eDomesticatedAnimal> mAptr;
@@ -148,20 +134,11 @@ public:
         mTptr->goBackDecision();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eShepherdAction*>(ca);
-        });
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mAptr = static_cast<eDomesticatedAnimal*>(c);
-        });
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.characterAsField("animal", &board(), mAptr);
     }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeCharacter(mAptr);
-    }
-
 private:
     stdptr<eShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
@@ -182,14 +159,9 @@ public:
         a->resumeAction();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mAptr = static_cast<eDomesticatedAnimal*>(c);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mAptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterAsField("animal", &board(), mAptr);
     }
 private:
     stdptr<eDomesticatedAnimal> mAptr;

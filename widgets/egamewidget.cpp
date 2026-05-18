@@ -2449,49 +2449,6 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
             {
                 showOptionsMenu();
             };
-            const auto clearStuckAct = [this]()
-            {
-                const auto& chars = mBoard->characters();
-                printf("[clearStuck] scanning %zu characters\n", chars.size());
-                int nActPhil = 0;
-                int nNoAction = 0;
-                int nStalledMoveTo = 0;
-                int nNoTile = 0;
-                int nInvisible = 0;
-                std::vector<eCharacter*> toKill;
-                for(const auto c : chars) {
-                    if(!c) continue;
-                    const auto t = c->type();
-                    if(t != eCharacterType::actor &&
-                       t != eCharacterType::philosopher) continue;
-                    nActPhil++;
-                    const auto a = c->action();
-                    const auto tile = c->tile();
-                    const bool vis = c->visible();
-                    if(!a) nNoAction++;
-                    const auto ca = dynamic_cast<eComplexAction*>(a);
-                    const bool stalledMoveTo =
-                        a && a->type() == eCharActionType::moveToAction &&
-                        ca && !ca->currentAction();
-                    if(stalledMoveTo) nStalledMoveTo++;
-                    if(!tile) nNoTile++;
-                    if(!vis) nInvisible++;
-                    printf("[clearStuck] char=%p type=%d action=%p stalledMoveTo=%d tile=%p vis=%d x=%.2f y=%.2f tStart=%d tNow=%d\n",
-                           (void*)c, (int)t, (void*)a, stalledMoveTo ? 1 : 0,
-                           (void*)tile, vis ? 1 : 0,
-                           c->x(), c->y(), c->actionStartTime(), c->textureTime());
-                    toKill.push_back(c);
-                }
-                printf("[clearStuck] actors+philosophers=%d noAction=%d stalledMoveTo=%d noTile=%d invisible=%d killing=%zu\n",
-                       nActPhil, nNoAction, nStalledMoveTo,
-                       nNoTile, nInvisible, toKill.size());
-                for(const auto c : toKill) {
-                    printf("[clearStuck] killing char=%p\n", (void*)c);
-                    c->setAction(nullptr);
-                    c->kill();
-                }
-                printf("[clearStuck] post-kill chars=%zu\n", mBoard->characters().size());
-            };
             stopSmoothScroll();
             const auto closeMenu = [this, wasPaused, menu]()
             {
@@ -2500,7 +2457,7 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
                 menu->deleteLater();
             };
             menu->initialize(resumeAct, saveAct, loadAct, optionsAct,
-                             clearStuckAct, exitAct);
+                             exitAct);
             addWidget(menu);
             menu->align(eAlignment::center);
             w->execDialog(menu, true, closeMenu);

@@ -26,19 +26,8 @@ void eAmazon::setIsArcher(const bool a) {
     }
 }
 
-void eAmazon::read(eReadStream& src) {
-    eSoldier::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAmazon::write(eWriteStream& dst) const {
-    eSoldier::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAmazon*>(this)->serialize(ar);
-}
-
-void eAmazon::serialize(eSaveArchive& ar) {
+void eAmazon::serializeFields(eSaveArchive& ar) {
+    eSoldier::serializeFields(ar);
     bool archer = mIsArcher;
     ar.field("archer", archer);
     if(ar.reading()) setIsArcher(archer);

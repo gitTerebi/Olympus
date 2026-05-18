@@ -19,19 +19,8 @@ void eHunter::setDeerHunter(const bool h) {
     }
 }
 
-void eHunter::read(eReadStream& src) {
-    eResourceCollector::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHunter::write(eWriteStream& dst) const {
-    eResourceCollector::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHunter*>(this)->serialize(ar);
-}
-
-void eHunter::serialize(eSaveArchive& ar) {
+void eHunter::serializeFields(eSaveArchive& ar) {
+    eResourceCollector::serializeFields(ar);
     bool deerHunter = mDeerHunter;
     ar.field("deerHunter", deerHunter);
     if(ar.reading()) setDeerHunter(deerHunter);

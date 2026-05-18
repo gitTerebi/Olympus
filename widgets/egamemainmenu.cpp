@@ -11,7 +11,6 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
                                const eAction& saveAct,
                                const eAction& loadAct,
                                const eAction& optionsAct,
-                               const eAction& clearStuckAct,
                                const eAction& exitAct) {
     setType(eFrameType::message);
 
@@ -54,14 +53,6 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     exitButt->setPressAction(exitAct);
     addWidget(exitButt);
     exitButt->align(eAlignment::hcenter);
-
-    const auto clearButt = new eFramedButton(window());
-    clearButt->setUnderline(false);
-    clearButt->setText("Clear Stuck Walkers");
-    clearButt->fitContent();
-    clearButt->setPressAction(clearStuckAct);
-    addWidget(clearButt);
-    clearButt->align(eAlignment::hcenter);
 
     layoutVertically();
 }

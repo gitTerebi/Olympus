@@ -68,15 +68,9 @@ public:
         c->setActionType(eCharacterActionType::walk);
         t->goBack(eWalkableObject::sCreateDefault());
     }
-
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eHeroAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eHeroAction> mTptr;
@@ -94,15 +88,9 @@ public:
         if(!mTptr) return;
         mTptr->lookForMonster();
     }
-
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eHeroAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eHeroAction> mTptr;
@@ -130,14 +118,9 @@ public:
         board.addSlayedMonster(cid, mt);
     }
 
-    void read(eReadStream& src) {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mMptr = static_cast<eMonster*>(c);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacter(mMptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterAsField("monster", &board(), mMptr);
     }
 private:
     stdptr<eMonster> mMptr;
@@ -155,15 +138,9 @@ public:
         if(!mAptr) return;
         mAptr->goBackToHall();
     }
-
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const a) {
-            mAptr = static_cast<eHeroAction*>(a);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mAptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mAptr);
     }
 private:
     stdptr<eHeroAction> mAptr;

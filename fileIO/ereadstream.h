@@ -19,11 +19,8 @@ class eBuilding;
 class eCharacter;
 class eCharacterAction;
 class eGameBoard;
-class eWalkableObject;
-class eHasResourceObject;
 class eCharacterActionFunction;
 class eGodAct;
-class eObsticleHandler;
 class eDirectionLastUseTime;
 class eWorldCity;
 class eBanner;
@@ -176,13 +173,9 @@ public:
     void readCharacterAction(eGameBoard* board,
                              const eCharActFunc& func,
                              const char* tag = "characterAction");
-    stdsptr<eWalkableObject> readWalkable();
-    stdsptr<eHasResourceObject> readHasResource();
     stdsptr<eCharacterActionFunction> readCharActFunc(
             eGameBoard& board);
     stdsptr<eGodAct> readGodAct(eGameBoard& board);
-    stdsptr<eObsticleHandler> readObsticleHandler(
-            eGameBoard& board);
     stdsptr<eDirectionTimes> readDirectionTimes(
             eGameBoard& board);
     using eCityFunc = std::function<void(stdsptr<eWorldCity>)>;

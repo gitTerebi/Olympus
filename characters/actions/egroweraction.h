@@ -74,20 +74,11 @@ public:
         t->finishWorkOn(mTile, mType);
     }
 
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eGrowerAction*>(ca);
-        });
-        mTile = src.readTile(board());
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.tileField("tile", board(), mTile);
         ar.field("buildingType", mType);
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
-        dst.writeTile(mTile);
-        eSaveArchive ar(dst);
-        ar.field("buildingType", const_cast<eBuildingType&>(mType));
     }
 private:
     stdptr<eGrowerAction> mTptr;
@@ -107,12 +98,9 @@ public:
         mTile->setBusy(false);
     }
 
-    void read(eReadStream& src) {
-        mTile = src.readTile(board());
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeTile(mTile);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.tileField("tile", board(), mTile);
     }
 private:
     eTile* mTile = nullptr;

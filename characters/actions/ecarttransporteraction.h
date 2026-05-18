@@ -137,22 +137,13 @@ public:
         t->targetResourceAction(mBx, mBy);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eCartTransporterAction*>(ca);
-        });
-        eSaveArchive ar(src);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
         ar.field("buildingX", mBx);
         ar.field("buildingY", mBy);
     }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        eSaveArchive ar(dst);
-        ar.field("buildingX", const_cast<int&>(mBx));
-        ar.field("buildingY", const_cast<int&>(mBy));
-    }
-
+public:
     void setXY(const int x, const int y) {
         mBx = x;
         mBy = y;
@@ -178,14 +169,9 @@ public:
         t->spread();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eCartTransporterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eCartTransporterAction> mTptr;
@@ -205,14 +191,9 @@ public:
         c->setActionType(eCharacterActionType::stand);
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacter(&board(), [this](eCharacter* const c) {
-            mCptr = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacter(mCptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterField("character", &board(), mCptr);
     }
 private:
     stdptr<eCharacter> mCptr;

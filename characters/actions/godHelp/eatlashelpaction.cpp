@@ -60,7 +60,7 @@ void eAtlasHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnGiveMissile(mTarget.get());
         return;
     case eAtlasHelpStage::none:
         eGodAction::resumeFromSavedState();

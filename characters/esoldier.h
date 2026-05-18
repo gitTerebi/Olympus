@@ -19,16 +19,13 @@ public:
 
     void beingKilled() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eSoldierAction* soldierAction() const;
 
     eSoldierBanner* banner() const;
     void setBanner(eSoldierBanner* const b);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eSoldierBanner> mBanner;
 };
 

@@ -17,7 +17,10 @@ public:
     bool decide() override;
 protected:
     void serializeFields(eSaveArchive& ar) override;
+    void resumeFromSavedState() override;
 private:
+    void rebuildCurrentStage();
+
     eGodVisitStage mStage{eGodVisitStage::none};
 
     int mLookForBless = 0;

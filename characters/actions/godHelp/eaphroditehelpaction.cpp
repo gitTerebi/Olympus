@@ -60,7 +60,7 @@ void eAphroditeHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnPopulateMissile(mPopulateTarget.get());
         return;
     case eAphroditeHelpStage::none:
         eGodAction::resumeFromSavedState();

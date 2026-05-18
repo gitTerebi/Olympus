@@ -12,16 +12,13 @@ class eFightingCharacter {
 public:
     eFightingCharacter(eCharacter* const c);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void serializeFields(eSaveArchive& ar);
 
     eFightingAction* fightingAction() const;
 
     int range() const { return mRange; }
     void setRange(const int r) { mRange = r; }
 private:
-    void serialize(eSaveArchive& ar);
-
     eCharacter* const mChar;
 
     int mRange = 0;

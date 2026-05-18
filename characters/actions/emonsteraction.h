@@ -47,6 +47,8 @@ protected:
     void resumeFromSavedState() override;
 private:
     void destroyBuilding(eBuilding* const b);
+    void spawnAttackMissile();
+    void spawnBuildingAttackMissiles();
     eTile* closestEmptySpace(const int rdx, const int rdy) const;
     void randomPlaceOnBoard();
     stdsptr<eObsticleHandler> obsticleHandler();
@@ -99,14 +101,9 @@ public:
         mTptr->setCurrentAction(nullptr);
     }
 
-    void read(eReadStream& src) {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eMonsterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eMonsterAction> mTptr;
@@ -133,18 +130,10 @@ public:
         eSounds::playCollapseSound();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eMonsterAction*>(ca);
-        });
-        src.readBuilding(&board(), [this](eBuilding* const b) {
-            mBptr = b;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
-        dst.writeBuilding(mBptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
+        ar.buildingField("building", &board(), mBptr);
     }
 private:
     stdptr<eMonsterAction> mTptr;
@@ -167,14 +156,9 @@ public:
         if(t && !t->currentAction()) t->rebuildCurrentStage();
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eMonsterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eMonsterAction> mTptr;
@@ -200,14 +184,9 @@ public:
         return true;
     }
 
-    void read(eReadStream& src) override {
-        src.readCharacterAction(&board(), [this](eCharacterAction* const ca) {
-            mTptr = static_cast<eMonsterAction*>(ca);
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        dst.writeCharacterAction(mTptr);
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
     stdptr<eMonsterAction> mTptr;

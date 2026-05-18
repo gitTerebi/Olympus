@@ -72,7 +72,7 @@ void eProvideResourceHelpAction::rebuildCurrentStage() {
             eGodAction::resumeFromSavedState();
             return;
         }
-        decide();
+        spawnGiveMissile();
         return;
     case eProvideResourceHelpStage::none:
         eGodAction::resumeFromSavedState();
