@@ -1,9 +1,6 @@
 #ifndef EPLANNEDACTION_H
 #define EPLANNEDACTION_H
 
-class eReadStream;
-class eWriteStream;
-
 class eGameBoard;
 class eSaveArchive;
 
@@ -22,8 +19,7 @@ public:
 
     virtual void trigger(eGameBoard& board) = 0;
 
-    virtual void read(eReadStream& src, eGameBoard& board);
-    virtual void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar, eGameBoard* board);
 
     static ePlannedAction* sCreate(const ePlannedActionType type);
 
@@ -32,7 +28,7 @@ public:
     void incTime(const int by, eGameBoard& board);
     bool finished() const { return mFinished; }
 protected:
-    void serialize(eSaveArchive& ar);
+    virtual void serializeFields(eSaveArchive& ar, eGameBoard* board);
 private:
     const ePlannedActionType mType;
     bool mRecurring;

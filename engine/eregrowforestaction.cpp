@@ -17,22 +17,7 @@ void eRegrowForestAction::trigger(eGameBoard& board) {
     mTile->setTerrain(eTerrain::forest);
 }
 
-void eRegrowForestAction::read(eReadStream& src, eGameBoard& board) {
-    ePlannedAction::read(src, board);
-    eSaveArchive ar(src);
-    serialize(ar, &board);
-}
-
-void eRegrowForestAction::write(eWriteStream& dst) const {
-    ePlannedAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRegrowForestAction*>(this)->serialize(ar, nullptr);
-}
-
-void eRegrowForestAction::serialize(eSaveArchive& ar, eGameBoard* board) {
-    if(ar.reading()) {
-        ar.tile(mTile, *board);
-    } else {
-        ar.writeStream().writeTile(mTile);
-    }
+void eRegrowForestAction::serializeFields(eSaveArchive& ar, eGameBoard* board) {
+    ePlannedAction::serializeFields(ar, board);
+    ar.tile(mTile, *board);
 }

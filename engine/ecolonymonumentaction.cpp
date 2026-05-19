@@ -23,24 +23,7 @@ void eColonyMonumentAction::trigger(eGameBoard& board) {
     board.allow(cid, eBuildingType::commemorative, 2);
 }
 
-void eColonyMonumentAction::read(eReadStream& src, eGameBoard& board) {
-    ePlannedAction::read(src, board);
-    eSaveArchive ar(src);
-    serialize(ar, &board);
-}
-
-void eColonyMonumentAction::write(eWriteStream& dst) const {
-    ePlannedAction::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eColonyMonumentAction*>(this)->serialize(ar, nullptr);
-}
-
-void eColonyMonumentAction::serialize(eSaveArchive& ar, eGameBoard* board) {
-    if(ar.reading()) {
-        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& city) {
-            mCity = city;
-        });
-    } else {
-        ar.writeStream().writeCity(mCity.get());
-    }
+void eColonyMonumentAction::serializeFields(eSaveArchive& ar, eGameBoard* board) {
+    ePlannedAction::serializeFields(ar, board);
+    ar.city(board, mCity);
 }

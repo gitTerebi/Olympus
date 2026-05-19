@@ -12,12 +12,9 @@ public:
     eRegrowForestAction();
 
     void trigger(eGameBoard& board) override;
-
-    void read(eReadStream& src, eGameBoard& board) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar, eGameBoard* board) override;
 private:
-    void serialize(eSaveArchive& ar, eGameBoard* board);
-
     eTile* mTile = nullptr;
 };
 

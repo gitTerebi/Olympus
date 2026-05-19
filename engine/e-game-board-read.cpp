@@ -459,9 +459,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         it.field("actionType", type);
                         const auto a = ePlannedAction::sCreate(type);
-                        it.payloadField("actionData",
-                            [](eWriteStream&) {},
-                            [this, a](eReadStream& src) { a->read(src, *this); });
+                        a->serialize(it, this);
                         mPlannedActions.push_back(a);
                     });
             }
@@ -472,9 +470,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         ePlannedActionType type = a->type();
                         it.field("actionType", type);
-                        it.payloadField("actionData",
-                            [a](eWriteStream& dst) { a->write(dst); },
-                            [](eReadStream&) {});
+                        a->serialize(it, this);
                     });
             }
         }

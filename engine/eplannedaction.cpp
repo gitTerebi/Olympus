@@ -1,7 +1,5 @@
 #include "eplannedaction.h"
 
-#include "fileIO/ereadstream.h"
-#include "fileIO/ewritestream.h"
 #include "fileIO/esavearchive.h"
 
 #include "eregrowforestaction.h"
@@ -18,22 +16,16 @@ ePlannedAction::ePlannedAction(const ePlannedActionType type) :
 
 ePlannedAction::~ePlannedAction() {}
 
-void ePlannedAction::read(eReadStream& src, eGameBoard& board) {
+void ePlannedAction::serialize(eSaveArchive& ar, eGameBoard* board) {
+    serializeFields(ar, board);
+}
+
+void ePlannedAction::serializeFields(eSaveArchive& ar, eGameBoard* board) {
     (void)board;
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePlannedAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<ePlannedAction*>(this)->serialize(ar);
-}
-
-void ePlannedAction::serialize(eSaveArchive& ar) {
-    ar.field("mRecurring", mRecurring);
-    ar.field("mActionTime", mActionTime);
-    ar.field("mFinished", mFinished);
-    ar.field("mTime", mTime);
+    ar.field("recurring", mRecurring);
+    ar.field("actionTime", mActionTime);
+    ar.field("finished", mFinished);
+    ar.field("time", mTime);
 }
 
 ePlannedAction* ePlannedAction::sCreate(const ePlannedActionType type) {
@@ -43,6 +35,7 @@ ePlannedAction* ePlannedAction::sCreate(const ePlannedActionType type) {
     case ePlannedActionType::colonyMonument:
         return new eColonyMonumentAction();
     }
+    return nullptr;
 }
 
 void ePlannedAction::incTime(const int by, eGameBoard& board) {
