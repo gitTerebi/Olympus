@@ -5,6 +5,9 @@
 
 #include "spawners/ebanner.h"
 
+class eWriteStream;
+class eReadStream;
+
 class ePointEventValue {
 public:
     using eValidator = std::function<bool(eTile*)>;

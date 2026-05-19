@@ -391,38 +391,27 @@ void eTile::serialize(eSaveArchive& ar) {
     mRainforest = zoneFlags & 1 << 3;
     mHalfSlope = zoneFlags & 1 << 4;
 
-    int bannerCount = static_cast<int>(mBanners.size());
-    ar.field("banners.count", bannerCount);
-    if(ar.reading()) {
-        for(int i = 0; i < bannerCount; i++) {
-            eBannerTypeS bannerType;
-            int bannerId;
-            ar.archiveField(("banner." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& itemAr) {
-                    itemAr.field("bannerType", bannerType);
-                    itemAr.field("bannerId", bannerId);
-                    itemAr.payloadField("bannerData",
-                        [](eWriteStream&) {},
-                        [&](eReadStream& src) {
-                            const auto b = eBanner::sCreate(bannerId, this, mBoard, bannerType);
-                            b->read(src);
-                        });
+    const int bannerCount = static_cast<int>(mBanners.size());
+    ar.countedArrayField("banners", bannerCount,
+        [&](eSaveArchive& itemAr, const int i) {
+            eBannerTypeS bannerType = ar.writing() ? mBanners[i]->type() : eBannerTypeS::none;
+            int bannerId = ar.writing() ? mBanners[i]->id() : -1;
+            itemAr.archiveField("factory",
+                [&](eSaveArchive& factoryAr) {
+                    factoryAr.field("bannerType", bannerType);
+                    factoryAr.field("bannerId", bannerId);
                 });
-        }
-    } else {
-        for(int i = 0; i < bannerCount; i++) {
-            eBannerTypeS bannerType = mBanners[i]->type();
-            int bannerId = mBanners[i]->id();
-            ar.archiveField(("banner." + std::to_string(i)).c_str(),
-                [&, i](eSaveArchive& itemAr) {
-                    itemAr.field("bannerType", bannerType);
-                    itemAr.field("bannerId", bannerId);
-                    itemAr.payloadField("bannerData",
-                        [&, i](eWriteStream& dst) { mBanners[i]->write(dst); },
-                        [](eReadStream&) {});
+            eBanner* b = nullptr;
+            if(ar.reading()) {
+                b = eBanner::sCreate(bannerId, this, mBoard, bannerType);
+            } else {
+                b = mBanners[i].get();
+            }
+            itemAr.archiveField("state",
+                [&](eSaveArchive& stateAr) {
+                    if(b) b->serialize(stateAr);
                 });
-        }
-    }
+        });
 }
 
 void eTile::addCharacter(const stdsptr<eCharacter>& c,
