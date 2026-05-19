@@ -17,6 +17,32 @@ void writePyramidElementCost(
 void eBuildingWriter::sWrite(const eBuilding* const b,
                              eSaveArchive& ar) {
     const auto type = b->type();
+    if(type == eBuildingType::palace) {
+        const auto p = static_cast<const ePalace*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            bool rotated = p->rotated();
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+        });
+        ar.payloadField("state",
+            [b](eWriteStream& dst) { b->write(dst); },
+            [](eReadStream&) {});
+        return;
+    }
+    if(type == eBuildingType::palaceTile) {
+        const auto p = static_cast<const ePalaceTile*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            bool other = p->other();
+            it.field("cityId", cid);
+            it.field("other", other);
+        });
+        ar.payloadField("state",
+            [b](eWriteStream& dst) { b->write(dst); },
+            [](eReadStream&) {});
+        return;
+    }
     bool skipState = false;
     ar.payloadField("factoryLegacy",
         [&](eWriteStream& dst) {
@@ -58,15 +84,10 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         const auto s = static_cast<const eStadium*>(b);
         dst << s->rotated();
     } break;
-    case eBuildingType::palace: {
-        const auto p = static_cast<const ePalace*>(b);
-        dst << p->rotated();
-    } break;
-    case eBuildingType::palaceTile: {
-        const auto p = static_cast<const ePalaceTile*>(b);
-        dst << p->other();
-        dst.writeBuilding(p->palace());
-    } break;
+    case eBuildingType::palace:
+    case eBuildingType::palaceTile:
+        skipState = true; // handled before legacy wrapper, unreachable
+        return;
     case eBuildingType::eliteHousing:
     case eBuildingType::taxOffice:
     case eBuildingType::mint:
