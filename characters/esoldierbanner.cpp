@@ -39,7 +39,7 @@ eSoldierBanner::eSoldierBanner(const eBannerType type,
 
 eSoldierBanner::~eSoldierBanner() {
     killAll();
-    board().unregisterAllSoldierBanner(this);
+    mBoard.unregisterAllSoldierBanner(this);
 }
 
 eGameBoard& eSoldierBanner::board() const {

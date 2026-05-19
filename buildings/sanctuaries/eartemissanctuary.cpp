@@ -68,16 +68,21 @@ void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
     auto& board = getBoard();
     if(ar.reading()) {
         const stdptr<eSanctuaryWithWarriors> tptr(this);
-        auto banners = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+        auto banners = std::make_shared<std::vector<std::shared_ptr<stdsptr<eSoldierBanner>>>>();
         mSoldierBanners.clear();
         ar.countedArrayField("soldierBanners", 0,
             [&board, banners](eSaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(banners->size())) banners->resize(i + 1);
-                itemAr.soldierBannerField("banner", &board, (*banners)[i]);
+                if(!(*banners)[i]) (*banners)[i] = std::make_shared<stdsptr<eSoldierBanner>>();
+                itemAr.soldierBannerField("banner", &board, *(*banners)[i]);
             });
         ar.addPostFunc([tptr, banners]() {
             if(!tptr) return;
-            tptr->mSoldierBanners = *banners;
+            tptr->mSoldierBanners.clear();
+            tptr->mSoldierBanners.reserve(banners->size());
+            for(const auto& b : *banners) {
+                tptr->mSoldierBanners.push_back(b ? *b : nullptr);
+            }
             for(int i = 0; i < static_cast<int>(tptr->mSoldierBanners.size()); i++) {
                 const auto b = tptr->mSoldierBanners[i];
                 if(!b) continue;

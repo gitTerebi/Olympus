@@ -150,17 +150,22 @@ void eHippodrome::serialize(eSaveArchive& ar) {
     ar.field("nHorses", mNHorses);
     ar.characterAsField("cart", &mBoard, mCart);
     if(ar.reading()) {
-        auto pieces = std::make_shared<std::vector<eN>>();
+        auto pieces = std::make_shared<std::vector<std::shared_ptr<eN>>>();
         mPieces.clear();
         ar.countedArrayField("pieces", 0,
             [this, pieces](eSaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(pieces->size())) pieces->resize(i + 1);
-                auto& p = (*pieces)[i];
+                if(!(*pieces)[i]) (*pieces)[i] = std::make_shared<eN>();
+                auto& p = *(*pieces)[i];
                 itemAr.field("orientation", p.fO);
                 itemAr.buildingAsField("piece", &mBoard, p.fPtr);
             });
         ar.addPostFunc([this, pieces]() {
-            mPieces = *pieces;
+            mPieces.clear();
+            mPieces.reserve(pieces->size());
+            for(const auto& p : *pieces) {
+                if(p) mPieces.push_back(*p);
+            }
             for(int i = 0; i < static_cast<int>(mPieces.size()); i++) {
                 const auto hp = mPieces[i].fPtr;
                 if(!hp) continue;
