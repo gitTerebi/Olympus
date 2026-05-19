@@ -16,12 +16,12 @@ ePalace::ePalace(eGameBoard& board, const bool r,
 }
 
 ePalace::~ePalace() {
-    auto& b = getBoard();
+    auto& b = ownerBoard();
     b.unregisterPalace(cityId());
 }
 
 void ePalace::erase() {
-    for(const auto& t : mTiles) {
+    for(const auto& t : mPalaceTilesCache) {
         t->eBuilding::erase();
     }
     eBuilding::erase();
@@ -118,34 +118,15 @@ std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
 }
 
 void ePalace::addTile(ePalaceTile* const tile) {
-    mTiles.push_back(tile);
+    for(const auto t : mPalaceTilesCache) {
+        if(t == tile) return;
+    }
+    mPalaceTilesCache.push_back(tile);
 }
 
-void ePalace::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePalace::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePalace*>(this)->serialize(ar);
-}
-
-void ePalace::serialize(eSaveArchive& ar) {
-    const int tiles = ar.writing() ? static_cast<int>(mTiles.size()) : 0;
-    if(ar.reading()) mTiles.clear();
-    ar.countedArrayField("tiles", tiles,
-        [this](eSaveArchive& itemAr, const int i) {
-            itemAr.payloadField("tile",
-                [this, i](eWriteStream& dst) {
-                    dst.writeBuilding(mTiles[i]);
-                },
-                [this](eReadStream& src) {
-                    src.readBuilding(&getBoard(), [this](eBuilding* const b) {
-                        addTile(static_cast<ePalaceTile*>(b));
-                    });
-                });
-        });
+void ePalace::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
+    if(ar.reading()) {
+        mPalaceTilesCache.clear();
+    }
 }

@@ -50,25 +50,8 @@ void ePyramidBuildingPart::setPaint(ePyramidElement* const paint,
     mPaintDir = dir;
 }
 
-void ePyramidBuildingPart::read(eReadStream& src) {
-    ePyramidElement::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePyramidBuildingPart::write(eWriteStream& dst) const {
-    ePyramidElement::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePyramidBuildingPart*>(this)->serialize(ar);
-}
-
-void ePyramidBuildingPart::serialize(eSaveArchive& ar) {
-    ar.payloadField("paint",
-        [this](eWriteStream& dst) { dst.writeBuilding(mPaint); },
-        [this](eReadStream& src) {
-            src.readBuilding(&getBoard(), [this](eBuilding* const b) {
-                mPaint = static_cast<ePyramidElement*>(b);
-            });
-        });
+void ePyramidBuildingPart::serializeFields(eSaveArchive& ar) {
+    ePyramidElement::serializeFields(ar);
+    ar.buildingAsField("paint", &getBoard(), mPaint);
     ar.field("mPaintDir", mPaintDir);
 }

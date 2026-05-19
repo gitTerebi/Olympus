@@ -1,6 +1,7 @@
 #include "eenlistedforces.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "engine/e-game-board.h"
 #include "enumbers.h"
@@ -43,13 +44,21 @@ void eEnlistedForces::write(eWriteStream& dst) const {
 void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     eWorldBoard* wboard = board ? &board->world() : nullptr;
     {
-        ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& ar, auto& soldier) {
-            ar.soldierBanner(board, soldier);
-        });
         if(ar.reading()) {
-            fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),
-                                           [](const auto& s) { return !s; }),
-                            fSoldiers.end());
+            const auto soldiers = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+            ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& ar, auto& soldier) {
+                ar.soldierBanner(board, soldier);
+            });
+            ar.addPostFunc([this, soldiers]() {
+                fSoldiers = *soldiers;
+                fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),
+                                               [](const auto& s) { return !s; }),
+                                fSoldiers.end());
+            }, "eEnlistedForces::soldiers");
+        } else {
+            ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& ar, auto& soldier) {
+                ar.soldierBanner(board, soldier);
+            });
         }
     }
     {
@@ -59,13 +68,21 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
         });
     }
     {
-        ar.arrayField("allies", fAllies, [wboard](eSaveArchive& ar, auto& ally) {
-            ar.city(wboard, ally);
-        });
         if(ar.reading()) {
-            fAllies.erase(std::remove_if(fAllies.begin(), fAllies.end(),
-                                         [](const auto& a) { return !a; }),
-                          fAllies.end());
+            const auto allies = std::make_shared<std::vector<stdsptr<eWorldCity>>>();
+            ar.arrayField("allies", *allies, [wboard](eSaveArchive& ar, auto& ally) {
+                ar.city(wboard, ally);
+            });
+            ar.addPostFunc([this, allies]() {
+                fAllies = *allies;
+                fAllies.erase(std::remove_if(fAllies.begin(), fAllies.end(),
+                                             [](const auto& a) { return !a; }),
+                              fAllies.end());
+            }, "eEnlistedForces::allies");
+        } else {
+            ar.arrayField("allies", fAllies, [wboard](eSaveArchive& ar, auto& ally) {
+                ar.city(wboard, ally);
+            });
         }
     }
 

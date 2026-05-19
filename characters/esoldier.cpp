@@ -14,7 +14,7 @@ eSoldier::eSoldier(eGameBoard& board,
 }
 
 eSoldier::~eSoldier() {
-    auto& brd = getBoard();
+    auto& brd = ownerBoard();
     brd.unregisterSoldier(this);
     setBanner(nullptr);
 }

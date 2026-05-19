@@ -33,9 +33,6 @@ public:
 
     virtual void buildingProgressed() {}
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setRotated(const bool r) { mRotated = r; }
     bool rotated() const { return mRotated; }
 
@@ -56,7 +53,7 @@ public:
     void setConstructionHalted(const bool h);
     bool constructionHalted() const { return mHaltConstruction; }
 protected:
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 
     stdptr<eCartTransporter> mCart;
 

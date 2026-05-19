@@ -58,9 +58,6 @@ public:
     const stdsptr<eDirectionTimes>& dirTimes() const
     { return mDirTimes; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     bool updatePathIfNeeded();
     using eAction = std::function<void()>;
     bool updatePath(const eAction &finish = nullptr);
@@ -73,9 +70,8 @@ public:
     virtual int spawnCooldown() const { return eNumbers::sPatrolWalkerSpawnCooldown; }
 protected:
     void resetSpawnTimer();
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     bool spawn();
 
     const eCharGenerator mCharGenerator;

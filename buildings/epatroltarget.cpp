@@ -60,19 +60,8 @@ void ePatrolTarget::timeChanged(const int by) {
     }
 }
 
-void ePatrolTarget::read(eReadStream& src) {
-    ePatrolBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePatrolTarget::write(eWriteStream& dst) const {
-    ePatrolBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePatrolTarget*>(this)->serialize(ar);
-}
-
-void ePatrolTarget::serialize(eSaveArchive& ar) {
+void ePatrolTarget::serializeFields(eSaveArchive& ar) {
+    ePatrolBuildingBase::serializeFields(ar);
     ar.field("spawnPool", mSpawnPool);
     ar.field("hadPatroler", mHadPatroler);
     ar.field("activeTimer", mActiveTimer);

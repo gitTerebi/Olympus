@@ -35,10 +35,9 @@ public:
 
     void timeChanged(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     bool targetWalkerInFlight(const int id) const;
 
     void spawn(const int id);

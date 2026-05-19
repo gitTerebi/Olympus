@@ -173,7 +173,7 @@ public:
         eFindFailFunc(board, eFindFailFuncType::teleport),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         if(!mTptr) return;
         const auto c = mTptr->character();
         auto& board = c->getBoard();

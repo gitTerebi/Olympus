@@ -53,12 +53,10 @@ public:
 
     eHouseMissing missing() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     static std::string sName(const int level);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     const eTextureCollection& getTextureCollection(
             const eTileSize size) const;
 

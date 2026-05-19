@@ -102,10 +102,9 @@ public:
                                    const eGameBoard& board,
                                    eCityId cid);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     stdptr<eCartTransporter> spawnStorageDeliveryCart();
     std::vector<eCartTask> orderCartTasks() const;
     std::vector<eCartTask> pushCartTasks() const;

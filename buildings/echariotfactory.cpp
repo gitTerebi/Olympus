@@ -161,34 +161,11 @@ std::vector<eCartTask> eChariotFactory::cartTasks() const {
     return tasks;
 }
 
-void eChariotFactory::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eChariotFactory::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eChariotFactory*>(this)->serialize(ar);
-}
-
-void eChariotFactory::serialize(eSaveArchive& ar) {
+void eChariotFactory::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("wood", mWood);
     ar.field("horses", mHorses);
     ar.field("chariots", mChariots);
-    ar.payloadField("woodCart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mWoodCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mWoodCart = static_cast<eCartTransporter*>(c);
-            });
-        });
-    ar.payloadField("horseCart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mHorseCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mHorseCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("woodCart", &getBoard(), mWoodCart);
+    ar.characterField("horseCart", &getBoard(), mHorseCart);
 }

@@ -1,6 +1,8 @@
 #include "eherahelpaction.h"
 #include "fileIO/esavearchive.h"
 
+#include <memory>
+
 eHeraHelpAction::eHeraHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::heraHelpAction) {}
 
@@ -45,10 +47,23 @@ void eHeraHelpAction::serializeFields(eSaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.buildingAsField("target", &board(), mTarget);
-    ar.arrayField("futureTargets", mFutureTargets,
-                  [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
-        itemAr.buildingAsField("agora", &board(), target);
-    });
+    if(ar.reading()) {
+        const stdptr<eHeraHelpAction> tptr(this);
+        auto futureTargets = std::make_shared<std::vector<stdptr<eAgoraBase>>>();
+        ar.arrayField("futureTargets", *futureTargets,
+                      [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
+            itemAr.buildingAsField("agora", &board(), target);
+        });
+        ar.addPostFunc([tptr, futureTargets]() {
+            if(!tptr) return;
+            tptr->mFutureTargets = *futureTargets;
+        }, "eHeraHelpAction::futureTargets");
+    } else {
+        ar.arrayField("futureTargets", mFutureTargets,
+                      [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
+            itemAr.buildingAsField("agora", &board(), target);
+        });
+    }
     ar.field("preGivingStage", mPreGivingStage);
     ar.buildingAsField("giveTarget", &board(), mGiveTarget);
 }

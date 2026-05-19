@@ -217,27 +217,10 @@ void eUrchinQuay::updateDisabled() {
     mDisabled = d;
 }
 
-void eUrchinQuay::read(eReadStream& src) {
-    eResourceCollectBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eUrchinQuay::write(eWriteStream& dst) const {
-    eResourceCollectBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eUrchinQuay*>(this)->serialize(ar);
-}
-
-void eUrchinQuay::serialize(eSaveArchive& ar) {
+void eUrchinQuay::serializeFields(eSaveArchive& ar) {
+    eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("disabled", mDisabled);
     ar.field("stateCount", mStateCount);
     ar.field("state", mState);
-    ar.payloadField("gatherer",
-        [this](eWriteStream& dst) { dst.writeCharacter(mGatherer); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mGatherer = static_cast<eUrchinGatherer*>(c);
-            });
-        });
+    ar.characterField("gatherer", &getBoard(), mGatherer);
 }

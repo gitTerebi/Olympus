@@ -14,6 +14,7 @@
 #include "edisasterpoint.h"
 #include "elandslidepoint.h"
 #include "ewolfspawner.h"
+#include "engine/etile.h"
 
 eBanner::eBanner(const eBannerTypeS type,
                  const int id,
@@ -24,7 +25,12 @@ eBanner::eBanner(const eBannerTypeS type,
 }
 
 eBanner::~eBanner() {
-    mBoard.unregisterBanner(this);
+    board().unregisterBanner(this);
+}
+
+eGameBoard& eBanner::board() {
+    if(mTile) return mTile->board();
+    return mBoard;
 }
 
 eCityId eBanner::cityId() const {

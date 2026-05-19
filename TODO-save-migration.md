@@ -12,21 +12,21 @@ No migrated save-node code may add:
 - `readStream()` / `writeStream()` / `legacyReadStream()`
 - `readStream().read*` / `writeStream().write*`
 - raw stream loops
-- direct `payloadField()` for refs/runtime objects
+- direct `raw payload fields` for refs/runtime objects
 
-`payloadField()` is allowed only:
+`raw payload fields` is allowed only:
 - inside central typed helpers, writing one primitive/ref id behind schema API (`characterField`, `buildingField`, `tileField`, `bannerField`, etc.)
 - in `SAVE_COMPAT_LEGACY_FALLBACK` branches
 
 Not done:
-- moving raw stream code into `payloadField()`
-- `payloadField("cart"/"worker"/"boat"/"building"/"tile"/"banner"/"soldier"/"trailer"/"ox")` in migrated save code
+- moving raw stream code into `raw payload fields`
+- `raw payload refs such as cart/worker/boat/building/tile/banner/soldier/trailer/ox` in migrated save code
 - raw object bytes inside helper unless legacy fallback
 
 Schema-readability gate:
 - reading `serializeFields(ar)` must show what is saved
 - good: `ar.characterField("trailer", &board, mTrailer)`
-- bad: `ar.payloadField("trailer", ...)`
+- bad: `raw trailer payload`
 
 ## Save Root Patterns
 
@@ -62,6 +62,20 @@ Use for nested helper families not saved as top-level objects.
 - refs use typed helpers
 - collections use `arrayField` / `dequeField` / `countedArrayField`
 - post-load fixups use `ar.addPostFunc`, not stream access
+
+## Load Timing Rule
+- rebuild owned skeleton/state immediately during `serializeFields(ar)` read
+- use `ar.addPostFunc` only for refs needing other saved objects
+- do not move old immediate lifetime/setup code into post-load blindly
+- old `read()` extra work must be classified before deletion:
+  - own containers/slots/shells -> immediate read rebuild
+  - refs to other roots -> post-load fixup
+  - runtime callbacks/actions -> rebuild from stable fields after load
+
+Example:
+- `eAgoraBase::fillSpaces()` is owned skeleton/lifetime setup
+- it must run immediately on read, not as post-func
+- vendor slot attach can be post-load because it depends on building refs
 
 ## Runtime Rebuild Rule
 Do not save runtime action/callback truth.
@@ -107,131 +121,109 @@ Stop and ask if:
 
 ## Current State
 
-### A — action-adjacent helper roots: DONE, audit only
-- `eFindFailFunc` family migrated strict helper-root pattern
-- `eObsticleHandler` family migrated strict helper-root pattern
-- audit: no direct `payloadField` in `findFailFuncField` / `obsticleHandlerField`
+- A action-adjacent helper roots: DONE, verified.
+- B remaining action helper roots: DONE, verified.
+- C character save roots: DONE, verified.
+- D building save roots: PARTIAL. Base/child `serializeFields` exists, but building root still uses raw factory bytes through `eBuildingReader::sRead` / `eBuildingWriter::sWrite`.
+- A-C scans: no forbidden direct raw payload-field hits in migrated dirs.
+- D scan failed reality check: `buildingData` is hybrid raw factory bytes + tagged `b->write()`.
+- `git diff --check`: clean.
 
-### B — remaining action helper roots: DONE, audit only
-- `eWalkableObject`
-- `eHasResourceObject`
-- `eMissileTarget`
-- `ePatrolMoveAction`
-- helper roots use `serialize(ar)` + `archiveField`, not direct payload call sites
+Known gaps:
+- Build not run. Use `.\build.bat` only when asked.
+- Smoke save/load not run.
+- Runtime load semantics not proven beyond code review.
+- D load/save semantics not proven. Palace/god monument exposed duplicate owner refs because legacy raw owner refs still coexist with new tagged owner fields.
+- Existing non-migrated E/F areas still contain legacy payload/raw stream patterns.
 
-### C — character save roots: DONE, audit/fix leftovers only
-Completed spine:
-- `eCharacterBase` P1 final read/write
-- `eCharacter` + subclasses use parent-first `serializeFields`
-- `eSoldierBanner` standalone root uses archive + post-load hook
-- `eRacingHorse` excluded; it is `eMissile`, not character spine
+Intentional boundaries:
+- `eSoldierBanner` is a standalone save root, not part of the character spine.
+- `eRacingHorse` is missile-side, not part of C.
+- `eMissileTarget` helper is done; broader missile roots can be migrated as a later chunk.
 
-Known C audit targets:
-- `eCartTransporter` ox/trailer refs ? must be `characterField`
-- `eSoldier` banner ref ? `soldierBannerField`
-- `eWildAnimal` spawner ref ? `bannerField`
-- `eSoldierBanner` places/soldiers arrays ? `characterField`, not payload refs
+## Work Left
 
-C clean audit expected:
-```powershell
-rg -n "readStream\(|writeStream\(|legacyReadStream\(|payloadField\(" characters -g "!actions/**" -g "!eracinghorse.*"
-rg -n "void\s+(read|write)\s*\(\s*e(Read|Write)Stream" characters -g "!actions/**" -g "!eracinghorse.*"
-```
-Allowed read/write only:
-- `characters/echaracterbase.*`
-- `characters/esoldierbanner.*`
+### D - building save roots: REOPENED
 
-### D — building save roots: NEXT
-Status:
-- `eBuilding::serialize` already renamed/prepped as protected virtual `serializeFields(ar)`
-- `eBuilding::read/write` still virtual, NOT final
-- subclasses still old two-archive pattern
-- do not call D done until all subclass overrides are gone and base is final
+Problem:
+- `eGameBoard` writes each building as `payloadField("buildingData")`.
+- Inside that payload, `eBuildingWriter::sWrite()` writes raw factory/type-specific bytes.
+- Then `b->write()` writes tagged `serializeFields`.
+- `eBuildingReader::sRead()` reads raw factory/type-specific bytes before object creation, then calls `b->read()`.
+- Result: building save is not fully schema-readable, not reorder-safe, and migrated child fields can duplicate legacy raw refs.
 
-#### D-stage1 — mechanical building spine
-Goal: one archive across full building inheritance tree.
-Do not rewrite payload bodies in stage1.
-For every building subclass:
-- header: remove `read/write` override decls
-- header: replace private `serialize(ar)` with protected `serializeFields(ar) override`
-- cpp: rename `Klass::serialize` ? `Klass::serializeFields`
-- first line: `Parent::serializeFields(ar)`
-- delete `Klass::read` / `Klass::write`
-- preserve post-load logic at end of `serializeFields`; use `ar.addPostFunc` if refs must resolve first
+Reset D progress:
+- D0: treat current building migration as scaffolding only, not done.
+- D1: rewrite `engine/e-game-board-read.cpp` building loop framing. Replace raw `payloadField("buildingData")` with named `factory` + `state` archives.
+- D2: make `eBuildingReader/Writer` thin factory helpers over `eSaveArchive&`, or delete them after call sites are clean.
+- D3: move `cityId` into tagged factory field.
+- D4: move constructor args into tagged factory fields: agora orientation, commemorative id, god/id, palace rotation, monument dimensions, sanctuary/pyramid args, etc.
+- D5: move legacy owner refs from `eBuildingReader/Writer` into named typed fields or post-load restore owned by the child class.
+- D6: remove duplicate owner writes for palace/god monument after factory fields are tagged.
+- D7: scan D for `src >>`, `dst <<`, `readBuilding`, `writeBuilding`, raw loops outside typed helpers.
+- D8: save/load smoke mid-state with palace, god monument, vendors, agora, sanctuary/pyramid pieces when possible.
 
-Final D-stage1 step:
-- make `eBuilding::read/write final`
-- only after last subclass override is removed
+D verification:
+- `rg -n "eBuildingWriter::sWrite|eBuildingReader::sRead" engine fileIO buildings` shows no active building save path usage.
+- `rg -n "src >>|dst <<|readBuilding\(|writeBuilding\(" fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp` shows none, or those files are deleted.
+- `rg -n "readStream\(|writeStream\(|legacyReadStream\|\.val\(" buildings fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp` shows none outside central helpers / explicit legacy fallback.
+- `engine/e-game-board-read.cpp` building loop writes named fields only: type, named `buildingData`, named factory fields, then `serializeFields`.
+- smoke test: palace save/reload/delete, god monument save/reload/delete, agora/vendor save/reload, sanctuary/pyramid save/reload.
+- build passes with `.\build.bat` when requested.
 
-D-stage1 chunks:
-1. simple/base: `eaestheticsbuilding`, `eagorabase`, `eanimalbuilding`, `ebuildingwithresource`, `ecorral`, `eelitehousing`, `eemployingbuilding`, `efarmbase`, `egrowerslodge`, `ehousebase`, `eheroshall`, `eprocessingbuilding`, `eresourcebuilding`, `eresourcecollectbuildingbase`, `epatrolsourcebuilding`, `epatroltarget`
-2. resource/farm extras: `efishery`, `ehuntinglodge`, missed resource collectors
-3. storage/trade/agora/vendor: `estoragebuilding`, `etradepost`, `evendor`, `eartisansguild`, `echariotfactory`, `eurchinquay`
-4. sanctuaries/monuments/pyramids: `esanctbuilding`, `esanctuary`, `etemplebuilding`, `etemplealtarbuilding`, `eartemissanctuary`, `emonument`, `epyramid*`
-5. roads/hippodrome/specials: `eroad`, `ehippodrome`, `ehippodromepiece`, `epatrolbuildingbase`, `ehorseranch`, `ehorseranchenclosure`, `eshepherbuildingbase`, `epalace`; then flip `eBuilding` final
+Stop and ask before D rewrite if:
+- constructor field name is unclear.
+- a raw field is needed only to instantiate an object before typed refs can resolve.
 
-D-stage1 audit:
-```powershell
-rg -n "void\s+(read|write)\s*\(\s*e(Read|Write)Stream" buildings
-```
-Expected after stage1: only `eBuilding` root and documented non-building helper/value types.
+### E - game events: IN PROGRESS
 
-#### D-stage2 — building payload refs ? typed helpers
-Do only after D-stage1 builds.
-Known ref-style payloads to inspect/fix:
-- `eartisansguild`: artisan ? `characterField`
-- `echariotfactory`: woodCart/horseCart ? `characterField`
-- `efishery`: boat ? `characterField`
-- `ehippodromepiece`: cart ? `characterField`
-- `ehorseranch`: takeCart ? `characterField`
-- `ehorseranchenclosure`: horse array ? `characterField`
-- `ehuntinglodge`: hunter ? `characterField`
-- `emonument`: cart ? `characterField`; stored/used inspect ownership/value
-- `epalace`: tile ? `tileField` if ref
-- `epatrolbuildingbase`: directionTimes ? typed helper; patroler ? `characterField`
-- `eresourcebuildingbase`: cart ? `characterField`
-- `eresourcecollectbuilding`: collector ? `characterField`
-- `eroad`: underAgora/underGatehouse/aboveHippodrome ? `buildingField`
-- `eshepherbuildingbase`: shepherd ? `characterField`
-- `estoragebuilding`: cart1/cart2 ? `characterField`
-- `eurchinquay`: gatherer ? `characterField`
-- `evendor`: cart ? `characterField`
-- `eartemissanctuary`: banner ? `soldierBannerField` / `bannerField`
-- `epyramidbuildingpart`: paint inspect; likely value/archive field
-- `ehippodrome`: piece inspect ownership; ref vs owned decides `buildingField` vs archive subobject
-
-Add missing helpers before caller migration:
-- raw pointer `buildingField(name, board, T*& value)` if needed
-- any banner/soldierBanner helper if absent
-
-D-stage2 audit:
-```powershell
-rg -n "payloadField\(" buildings
-rg -n "readStream\(|writeStream\(|legacyReadStream\(" buildings
-```
-No direct payload refs allowed.
-
-### E — game events: NOT STARTED
-Targets:
-- `eGameEvents`
-- `eGameEvent`
-- all event subclasses
-- event value classes
-- `eEventTrigger`
+Audit findings (initial scan):
+- `eGameEvents` container: already on `serialize(ar)` + helpers. Done.
+- `eGameEvent` base: `read/write` thin wrappers over `serialize(ar)`. Uses `payloadField` + `SAVE_COMPAT_LEGACY_FALLBACK` for child events. Warning array via `fixedArrayField`. mNextDate still uses raw `readStream/writeStream`.
+- `eEventTrigger`: standalone, uses `payloadField` already; may be fine â€” verify.
+- `ewarning`: virtual `read/write`; mNextDate raw stream.
+- ~44 subclass headers still declare `read/write` overrides.
+- ~21 subclass cpp files use raw `readStream()/writeStream()` (city refs, building refs, dates, parent calls to value helpers).
+- Value classes (`eCityEventValue`, `eCountEventValue`, `eResourceEventValue`, `eAttackingCityEventValue`, `eMonsterEventValue`, `eMonstersEventValue`, `ePointEventValue`, `eGodEventValue`, `eGodReasonEventValue`): all on raw stream API, called via `parent::read(ar.readStream(), board)` from subclasses.
 
 Rules:
-- migrate base root first
-- keep type discriminator stable
-- children call parent first
-- replace `eventData` payload blobs with type + archive serializer
-- replace event value payload blobs with typed value helpers
+- migrate `eGameEvent` spine to P1 owned polymorphic root (virtual `serializeFields(ar)`); base owns `read/write`.
+- children drop `read/write`, override `serializeFields(ar)`, call `Parent::serializeFields(ar)` first.
+- replace mNextDate raw stream with typed date field (add helper or use composite `ar.object`/`ar.objectField`).
+- replace city refs (`ar.readStream().readCity`) with typed `worldCityField` / `cityField` helper (verify name in esavearchive).
+- replace building refs with `buildingField`.
+- promote value classes to **helper polymorphic root** (P2): public `serialize(ar)` thin wrapper, protected `serializeFields(ar)`; subclasses compose via `ar.objectField("cityValue", *this)` style or direct call to `parent::serializeFields(ar)`.
+- `eEventTrigger`: convert to `serialize(ar)` if not already; review payloadField uses for schema readability.
+- `ewarning`: same P1 treatment if subclassed; otherwise inline `serializeFields`.
+- keep type discriminator stable in `eGameEvent` consequences array (already correct).
+- runtime/cached fields (`mParent`, `mBoard`, computed warnings) must not be saved.
+
+Work breakdown (do in order):
+- [ ] E1: base `eGameEvent` â€” split `read/write` â†’ final base, virtual `serializeFields(ar)`. Replace mNextDate raw stream with date helper.
+- [ ] E2: `ewarning` â€” same treatment; ensure no subclass overrides remain.
+- [ ] E3: value classes â€” migrate to helper polymorphic root. Update all call sites in subclasses.
+- [ ] E4: `eEventTrigger` â€” verify or migrate to `serialize(ar)`.
+- [ ] E5: subclass batch 1 (army/raid/conquest): `earmyeventbase`, `earmyreturnevent`, `eattackingcityeventvalue` callers, `eplayerconquestevent(base)`, `eplayerraidevent`, `erivalarmyawayevent`.
+- [ ] E6: subclass batch 2 (disaster/landscape): `eearthquakeevent`, `elandslideevent`, `elavaevent`, `esinklandevent`, `etidalwaveevent`.
+- [ ] E7: subclass batch 3 (economic/trade/wage): `edemandchangeevent`, `eeconomicchangeevent`, `eeconomicmilitarychangeeventbase`, `epricechangeevent`, `esupplychangeevent`, `esupplydemandchangeevent`, `ewagechangeevent`, `etradeopenupevent`, `etradeshutdownevent`, `emilitarychangeevent`.
+- [ ] E8: subclass batch 4 (city interactions): `ecitybecomesevent`, `egiftfromevent`, `egifttoevent`, `ereceivetributeevent`, `emakerequestevent`, `eraidresourceevent`, `eresourcegrantedeventbase`.
+- [ ] E9: subclass batch 5 (military/aid/requests): `erequestaidevent`, `erequeststrikeevent`, `ereinforcementsevent`, `etroopsrequestevent`, `etroopsrequestfulfilledevent`, `requests/e-fulfill-request-event`, `requests/e-pay-tribute-event`.
+- [ ] E10: gods family: `egodattackevent`, `egoddisasterevent`, `egodquestevent(base)`, `egodquestfulfilledevent`, `egodtraderesumesevent`, `egodvisitevent`, `egodquest`.
+- [ ] E11: invasions family: `invasions/invasion-event`, `invasion-handler`, `invasion-warning`, `monster-*-event*`.
+- [ ] E12: final scan, build (when asked), `git diff --check`, document done.
+
+Stop and ask if:
+- value class is shared across non-event call sites (call hierarchy needs check before reshaping).
+- `eGameEvent` consequences legacy fallback path is touched (don't drop `SAVE_COMPAT_LEGACY_FALLBACK` branch).
+- mNextDate or eDate has no typed helper â€” propose helper before forcing inline.
 
 Audit:
 ```powershell
-rg -n "void\s+(read|write)\s*\(e(Read|Write)Stream&|payloadField\(" gameEvents
+rg -n "void\s+(read|write)\s*\(e(Read|Write)Stream&|payload" gameEvents
+rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(" gameEvents
 ```
 
-### F — engine/world graph: NOT STARTED
+### F - engine/world graph: NOT STARTED
 Targets:
 - `eCampaign`
 - `eWorldBoard`
@@ -243,17 +235,17 @@ Targets:
 - military aid, plague, reinforcements, finances, episode goals
 
 Rules:
-- top-level graph last
-- keep load ordering explicit
-- named sections for cities/players/buildings/chars/missiles/events/goals/disasters
-- arrays use helpers, not raw numbered loops
-- post-load only through `ar.addPostFunc`
+- top-level graph last.
+- keep load ordering explicit.
+- named sections for cities/players/buildings/chars/missiles/events/goals/disasters.
+- arrays use helpers, not raw numbered loops.
+- post-load only through `ar.addPostFunc`.
 
 ## Resume Commands
 ```powershell
 git status
 git diff --check
-rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(|payloadField\(" <changed-files>
+rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(|payload" <changed-files>
 rg -n "void\s+(read|write)\s*\(\s*e(Read|Write)Stream" <target-dir>
 ```
 

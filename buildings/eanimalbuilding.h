@@ -19,14 +19,11 @@ public:
 
     void nextMonth() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eCharacter* animal() const { return mA; }
     void setAnimal(eCharacter* const a);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eCharacter> mA;
 };
 

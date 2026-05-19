@@ -68,7 +68,7 @@ public:
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionFinish),
         mTptr(ca), mTile(tile), mType(type) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         const auto t = mTptr.get();
         t->finishWorkOn(mTile, mType);
@@ -94,7 +94,7 @@ public:
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionDeleteFail),
         mTile(tile) {}
 
-    void call() {
+    void call() override {
         mTile->setBusy(false);
     }
 

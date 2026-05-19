@@ -25,15 +25,12 @@ public:
 
     std::vector<eCartTask> cartTasks() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     int wood() const { return mWood; }
     int horses() const { return mHorses; }
     int chariotCount() const { return std::min(mHorses, mChariots); }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     int mWood = 0;
     int mChariotBuildingTime = 0;
     int mHorses = 0;

@@ -21,7 +21,6 @@ class eCharacterAction;
 class eGameBoard;
 class eCharacterActionFunction;
 class eGodAct;
-class eDirectionLastUseTime;
 class eWorldCity;
 class eBanner;
 class eSoldierBanner;
@@ -29,7 +28,7 @@ class eGameEvent;
 class eWorldBoard;
 class eInvasionHandler;
 
-using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
+#include "engine/edirectionlastusetime.h"
 
 class eReadSource {
 public:

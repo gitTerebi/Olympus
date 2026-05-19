@@ -34,7 +34,7 @@ eStorageBuilding::eStorageBuilding(eGameBoard& board,
 eStorageBuilding::~eStorageBuilding() {
     if(mCart1) mCart1->kill();
     if(mCart2) mCart2->kill();
-    getBoard().unregisterStorBuilding(this);
+    ownerBoard().unregisterStorBuilding(this);
 }
 
 void eStorageBuilding::timeChanged(const int by) {
@@ -476,19 +476,8 @@ void eStorageBuilding::getOrders(eResourceType& get,
     accept = mAccept;
 }
 
-void eStorageBuilding::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eStorageBuilding::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eStorageBuilding*>(this)->serialize(ar);
-}
-
-void eStorageBuilding::serialize(eSaveArchive& ar) {
+void eStorageBuilding::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("get", mGet);
     ar.field("empty", mEmpty);
     ar.field("accept", mAccept);
@@ -525,18 +514,6 @@ void eStorageBuilding::serialize(eSaveArchive& ar) {
         }
     }
 
-    ar.payloadField("cart1",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart1); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart1 = static_cast<eCartTransporter*>(c);
-            });
-        });
-    ar.payloadField("cart2",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart2); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart2 = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("cart1", &getBoard(), mCart1);
+    ar.characterField("cart2", &getBoard(), mCart2);
 }

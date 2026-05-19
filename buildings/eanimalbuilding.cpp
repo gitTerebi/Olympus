@@ -21,19 +21,8 @@ void eAnimalBuilding::nextMonth() {
     if(!mA && !isCattle) erase();
 }
 
-void eAnimalBuilding::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAnimalBuilding::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eAnimalBuilding*>(this)->serialize(ar);
-}
-
-void eAnimalBuilding::serialize(eSaveArchive& ar) {
+void eAnimalBuilding::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.characterField("animal", &getBoard(), mA);
 }
 

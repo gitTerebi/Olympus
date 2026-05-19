@@ -73,14 +73,9 @@ void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eShepherBuildingBase::serialize(eSaveArchive& ar) {
-    ar.payloadField("shepherd",
-        [this](eWriteStream& dst) { dst.writeCharacter(mShepherd.get()); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mShepherd = static_cast<eResourceCollectorBase*>(c);
-            });
-        });
+void eShepherBuildingBase::serializeFields(eSaveArchive& ar) {
+    eResourceBuildingBase::serializeFields(ar);
+    ar.characterField("shepherd", &getBoard(), mShepherd);
     ar.field("spawnTime", mSpawnTime);
     ar.field("producedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) {
@@ -90,17 +85,6 @@ void eShepherBuildingBase::serialize(eSaveArchive& ar) {
     ar.field("ringIdx", mRingIdx);
 }
 
-void eShepherBuildingBase::read(eReadStream& src) {
-    eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eShepherBuildingBase::write(eWriteStream& dst) const {
-    eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eShepherBuildingBase*>(this)->serialize(ar);
-}
 
 bool eShepherBuildingBase::spawn() {
     if(resource() >= maxResource()) return false;

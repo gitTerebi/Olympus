@@ -90,19 +90,8 @@ std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
     return result;
 }
 
-void eCorral::read(eReadStream& src) {
-    eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eCorral::write(eWriteStream& dst) const {
-    eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCorral*>(this)->serialize(ar);
-}
-
-void eCorral::serialize(eSaveArchive& ar) {
+void eCorral::serializeFields(eSaveArchive& ar) {
+    eResourceBuildingBase::serializeFields(ar);
     ar.field("noCattle", mNoCattle);
     ar.field("processing", mProcessing);
     ar.field("cattleCount", mNCattle);

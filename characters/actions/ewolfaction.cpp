@@ -206,9 +206,10 @@ void eWolfAction::findPrey()
             goBack();
             return;
         }
-        const auto wallWalkable = std::bind(&eWalkableObject::walkable,
-                                            eWalkableObject::sCreateWall().get(),
-                                            std::placeholders::_1);
+        const auto wallWalkableObject = eWalkableObject::sCreateWall();
+        const auto wallWalkable = [wallWalkableObject](eTileBase* const t) {
+            return wallWalkableObject->walkable(t);
+        };
         const auto pf = std::make_shared<ePathFinder>(wallWalkable, hha);
         const auto &board = this->board();
         const SDL_Rect r{0, 0, board.width(), board.height()};

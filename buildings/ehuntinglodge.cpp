@@ -58,27 +58,10 @@ void eHuntingLodge::timeChanged(const int by) {
     }
 }
 
-void eHuntingLodge::read(eReadStream& src) {
-    eResourceCollectBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHuntingLodge::write(eWriteStream& dst) const {
-    eResourceCollectBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHuntingLodge*>(this)->serialize(ar);
-}
-
-void eHuntingLodge::serialize(eSaveArchive& ar) {
+void eHuntingLodge::serializeFields(eSaveArchive& ar) {
+    eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("spawnTime", mSpawnTime);
-    ar.payloadField("hunter",
-        [this](eWriteStream& dst) { dst.writeCharacter(mHunter); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mHunter = static_cast<eHunter*>(c);
-            });
-        });
+    ar.characterField("hunter", &getBoard(), mHunter);
 }
 
 void eHuntingLodge::hunterDelivered(const eResourceType type, const int count) {

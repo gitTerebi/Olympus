@@ -72,13 +72,13 @@ public:
     ePlayMonsterBuildingAttackSoundGodAct(eGameBoard& board) :
         ePlayMonsterBuildingAttackSoundGodAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(!mBuilding) return;
         const auto b = mBuilding.get();
         auto& board = b->getBoard();
@@ -102,13 +102,13 @@ public:
     ePlayFightGodHitSoundGodAct(eGameBoard& board) :
         ePlayFightGodHitSoundGodAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(!mG) return;
         board().ifVisible(mG->tile(), [&]() {
             eSounds::playGodSound(mG->type(), eGodSound::hit);
@@ -127,7 +127,7 @@ public:
     eLookForPlagueGodAct(eGameBoard& board) :
         eGodAct(board, eGodActType::lookForPlague) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -148,7 +148,7 @@ public:
         return tile;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             auto& board = this->board();
             board.startPlague(mTarget);
@@ -167,7 +167,7 @@ public:
     eLookForEvictGodAct(eGameBoard& board) :
         eGodAct(board, eGodActType::lookForEvict) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -182,7 +182,7 @@ public:
         return b->centerTile();
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             mTarget->leave();
         }
@@ -202,7 +202,7 @@ public:
 
     double bless() const { return mBless; }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             const auto type = mTarget->type();
             const bool batch = type == eBuildingType::oliveTree ||
@@ -248,7 +248,7 @@ public:
     eLookForTargetedBlessGodAct(eGameBoard& board) :
         eLookForTargetedBlessGodAct(board, 0, eGodType::zeus) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) {
@@ -288,7 +288,7 @@ public:
     eLookForBlessGodAct(eGameBoard& board) :
         eLookForBlessGodAct(board, 0) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -307,7 +307,7 @@ public:
     eLookForSoldierAttackGodAct(eGameBoard& board) :
         eLookForSoldierAttackGodAct(board, eTeamId::neutralFriendly) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto& chars = t->characters();
         if(chars.empty()) return null;
@@ -323,7 +323,7 @@ public:
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget && !mTarget->dead()) {
             mTarget->killWithCorpse();
         }
@@ -347,7 +347,7 @@ public:
     eLookForTargetedAttackGodAct(eGameBoard& board) :
         eLookForTargetedAttackGodAct(board, eGodType::zeus) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         const auto b = t->underBuilding();
         if(!b) return null;
@@ -358,7 +358,7 @@ public:
         return b->centerTile();
     }
 
-    void act() {
+    void act() override {
         if(mBTarget) {
             mBTarget->collapse();
             eSounds::playCollapseSound();
@@ -382,7 +382,7 @@ public:
         eGodAct(board, eGodActType::lookForAttack),
         mCptr(c) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
         if(!mCptr) return null;
         if(mCptr->tile() == t) return null;
@@ -411,7 +411,7 @@ public:
         }
     }
 
-    void act() {
+    void act() override {
         if(!mCptr) return;
         if(mBTarget) {
             const auto type = mCptr->type();
@@ -618,7 +618,7 @@ public:
         eFindFailFunc(board, eFindFailFuncType::teleport2),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         if(!mTptr) return;
         mTptr->teleport(tile);
     }

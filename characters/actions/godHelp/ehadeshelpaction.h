@@ -66,13 +66,13 @@ public:
     eGodProvideDrachmasAct(eGameBoard& board) :
         eGodProvideDrachmasAct(board, eCityId::neutralFriendly) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         board().addResource(mCityId, eResourceType::drachmas, 1500);
     }
 

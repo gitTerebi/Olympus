@@ -31,7 +31,6 @@ public:
     }
 
     void erase() override;
-    void read(eReadStream& src) override;
 
     int add(const eResourceType type, const int count) override;
     int spaceLeft(const eResourceType type) const override;
@@ -57,9 +56,9 @@ public:
     eDiagonalOrientation diagonalOrientation() const;
 
     eTile* patrolStartTile() const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     const int mNPts;
 protected:
     const eAgoraOrientation mO;

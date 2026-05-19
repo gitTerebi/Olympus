@@ -1,5 +1,7 @@
 #include "ecarttransporter.h"
 
+#include <memory>
+
 #include "textures/egametextures.h"
 
 #include "characters/actions/efollowaction.h"
@@ -373,10 +375,22 @@ void eCartTransporter::serializeFields(eSaveArchive& ar) {
     ar.field("maxDistance", mMaxDistance);
     ar.characterField("ox", &getBoard(), mOx);
     ar.characterField("trailer", &getBoard(), mTrailer);
-    ar.arrayField("followers", mFollowers, [this](eSaveArchive& itemAr, auto& f) {
-        itemAr.character(&getBoard(), f);
-    });
-    if(ar.reading()) updateTextures();
+    if(ar.reading()) {
+        const stdptr<eCartTransporter> tptr(this);
+        auto followers = std::make_shared<std::vector<stdptr<eCharacter>>>();
+        ar.arrayField("followers", *followers, [this](eSaveArchive& itemAr, auto& f) {
+            itemAr.character(&getBoard(), f);
+        });
+        ar.addPostFunc([tptr, followers]() {
+            if(!tptr) return;
+            tptr->mFollowers = *followers;
+            tptr->updateTextures();
+        }, "eCartTransporter::followers");
+    } else {
+        ar.arrayField("followers", mFollowers, [this](eSaveArchive& itemAr, auto& f) {
+            itemAr.character(&getBoard(), f);
+        });
+    }
 }
 
 void eCartTransporter::updateTextures() {

@@ -12,9 +12,6 @@ public:
 
     virtual void addRaw() = 0;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void nextMonth() override;
 
     int producedThisYear() const { return mProducedThisYear; }
@@ -23,7 +20,7 @@ public:
     bool noTarget() const { return mNoTarget; }
 protected:
     void trackProduced(const int c);
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 
 private:
     bool mNoTarget = true;

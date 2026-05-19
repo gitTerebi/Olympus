@@ -63,19 +63,8 @@ std::vector<eOverlay> eTempleBuilding::getOverlays(const eTileSize size) const {
     return {o};
 }
 
-void eTempleBuilding::read(eReadStream& src) {
-    eSanctBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTempleBuilding::write(eWriteStream& dst) const {
-    eSanctBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTempleBuilding*>(this)->serialize(ar);
-}
-
-void eTempleBuilding::serialize(eSaveArchive& ar) {
+void eTempleBuilding::serializeFields(eSaveArchive& ar) {
+    eSanctBuilding::serializeFields(ar);
     ar.field("id", mId);
 }
 

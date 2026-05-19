@@ -9,6 +9,7 @@
 #include "fileIO/esavearchive.h"
 
 #include <algorithm>
+#include <memory>
 
 eGrowersLodge::eGrowersLodge(eGameBoard& board, const eGrowerType type,
                              const eCityId cid) :
@@ -300,7 +301,8 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eGrowersLodge::serialize(eSaveArchive& ar) {
+void eGrowersLodge::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("noTarget", mNoTarget);
     ar.field("spawnEnabled", mSpawnEnabled);
     ar.field("grapes", mGrapes);
@@ -317,8 +319,9 @@ void eGrowersLodge::serialize(eSaveArchive& ar) {
             if(i >= 0 && i < static_cast<int>(mOliveHarvesters.size())) {
                 itemAr.characterAsField("harvester", &getBoard(), mOliveHarvesters[i]);
             } else {
-                stdptr<eGrower> ignored;
-                itemAr.characterAsField("harvester", &getBoard(), ignored);
+                auto ignored = std::make_shared<stdptr<eGrower>>();
+                itemAr.characterAsField("harvester", &getBoard(), *ignored);
+                itemAr.addPostFunc([ignored]() {}, "eGrowersLodge::ignoredHarvester");
             }
         });
     for(int i = 0; i < static_cast<int>(mOliveHarvesterSpawnTimes.size()); i++) {
@@ -333,17 +336,6 @@ void eGrowersLodge::serialize(eSaveArchive& ar) {
     ar.field("ringIdx", mRingIdx);
 }
 
-void eGrowersLodge::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGrowersLodge::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGrowersLodge*>(this)->serialize(ar);
-}
 
 bool eGrowersLodge::hasReadyOlives() const {
     return readyOliveCount() > 0;

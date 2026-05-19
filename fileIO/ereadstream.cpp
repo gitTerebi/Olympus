@@ -38,10 +38,20 @@ void eReadStream::readBuilding(eGameBoard* board,
                                const char* tag) {
     int bid;
     *this >> bid;
-    addPostFunc([board, func, bid]() {
+#ifdef SAVE_DEBUG
+    printf("[saveLoad] readBuilding tag='%s' ioid=%d\n",
+           tag ? tag : "?", bid);
+#endif
+    addPostFunc([board, func, bid, tag]() {
         if(bid < 0) return;
         const auto b = board->buildingWithIOID(bid);
-        if(!b) return;
+        if(!b) {
+#ifdef SAVE_DEBUG
+            printf("[saveLoad] readBuilding tag='%s' ioid=%d UNRESOLVED\n",
+                   tag ? tag : "?", bid);
+#endif
+            return;
+        }
         func(b);
     }, tag);
 }
@@ -51,10 +61,20 @@ void eReadStream::readCharacter(eGameBoard* board,
                                 const char* tag) {
     int cid;
     *this >> cid;
-    addPostFunc([board, func, cid]() {
+#ifdef SAVE_DEBUG
+    printf("[saveLoad] readCharacter tag='%s' ioid=%d\n",
+           tag ? tag : "?", cid);
+#endif
+    addPostFunc([board, func, cid, tag]() {
         if(cid < 0) return;
         const auto b = board->characterWithIOID(cid);
-        if(!b) return;
+        if(!b) {
+#ifdef SAVE_DEBUG
+            printf("[saveLoad] readCharacter tag='%s' ioid=%d UNRESOLVED\n",
+                   tag ? tag : "?", cid);
+#endif
+            return;
+        }
         func(b);
     }, tag);
 }
@@ -64,10 +84,20 @@ void eReadStream::readCharacterAction(eGameBoard* board,
                                       const char* tag) {
     int caid;
     *this >> caid;
-    addPostFunc([board, func, caid]() {
+#ifdef SAVE_DEBUG
+    printf("[saveLoad] readCharacterAction tag='%s' ioid=%d\n",
+           tag ? tag : "?", caid);
+#endif
+    addPostFunc([board, func, caid, tag]() {
         if(caid < 0) return;
         const auto b = board->characterActionWithIOID(caid);
-        if(!b) return;
+        if(!b) {
+#ifdef SAVE_DEBUG
+            printf("[saveLoad] readCharacterAction tag='%s' ioid=%d UNRESOLVED\n",
+                   tag ? tag : "?", caid);
+#endif
+            return;
+        }
         func(b);
     }, tag);
 }

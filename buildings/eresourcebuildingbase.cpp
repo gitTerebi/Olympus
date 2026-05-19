@@ -79,25 +79,8 @@ std::vector<eCartTask> eResourceBuildingBase::cartTasks() const {
     return tasks;
 }
 
-void eResourceBuildingBase::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eResourceBuildingBase::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eResourceBuildingBase*>(this)->serialize(ar);
-}
-
-void eResourceBuildingBase::serialize(eSaveArchive& ar) {
+void eResourceBuildingBase::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("resource", mResource);
-    ar.payloadField("cart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("cart", &getBoard(), mCart);
 }

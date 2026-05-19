@@ -18,7 +18,7 @@ public:
     eArtisanAction(eCharacter* const c, eArtisansGuild* const guild);
     eArtisanAction(eCharacter* const c);
 
-    bool decide();
+    bool decide() override;
     void increment(const int by) override;
 protected:
     void serializeFields(eSaveArchive& ar) override;

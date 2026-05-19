@@ -13,7 +13,7 @@ public:
         eCharActFunc(board, eCharActFuncType::killCharacterFinishFail),
         mCptr(c) {}
 
-    void call();
+    void call() override;
 protected:
     void serializeFields(eSaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);

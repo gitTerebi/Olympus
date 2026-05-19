@@ -15,7 +15,8 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
+void eResourceCollectBuildingBase::serializeFields(eSaveArchive& ar) {
+    eResourceBuildingBase::serializeFields(ar);
     ar.field("noTarget", mNoTarget);
     ar.field("producedThisYear", mProducedThisYear);
     for(int i = 0; i < 12; i++) {
@@ -23,18 +24,6 @@ void eResourceCollectBuildingBase::serialize(eSaveArchive& ar) {
                  mMonthlyProduced[i]);
     }
     ar.field("ringIdx", mRingIdx);
-}
-
-void eResourceCollectBuildingBase::read(eReadStream& src) {
-    eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eResourceCollectBuildingBase::write(eWriteStream& dst) const {
-    eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eResourceCollectBuildingBase*>(this)->serialize(ar);
 }
 
 void eResourceCollectBuildingBase::setNoTarget(const bool t) {

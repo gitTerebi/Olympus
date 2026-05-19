@@ -1,5 +1,7 @@
 #include "eartemissanctuary.h"
 
+#include <memory>
+
 #include "engine/e-game-board.h"
 #include "elanguage.h"
 #include "enumbers.h"
@@ -61,44 +63,42 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
     eSanctuary::timeChanged(by);
 }
 
-void eSanctuaryWithWarriors::read(eReadStream& src) {
-    eSanctuary::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSanctuaryWithWarriors::write(eWriteStream& dst) const {
-    eSanctuary::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSanctuaryWithWarriors*>(this)->serialize(ar);
-}
-
-void eSanctuaryWithWarriors::serialize(eSaveArchive& ar) {
+void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
+    eSanctuary::serializeFields(ar);
     auto& board = getBoard();
-    const int nb = ar.writing() ? static_cast<int>(mSoldierBanners.size()) : 0;
-    if(ar.reading()) mSoldierBanners.clear();
-    ar.countedArrayField("soldierBanners", nb,
-        [this, &board](eSaveArchive& itemAr, const int i) {
-            itemAr.payloadField("banner",
-                [this, i](eWriteStream& dst) {
-                    dst.writeSoldierBanner(mSoldierBanners[i].get());
-                },
-                [this, &board, i](eReadStream& src) {
-                    src.readSoldierBanner(&board, [this, i](const stdsptr<eSoldierBanner>& b) {
-                        if(!b) return;
-                        const auto gt = godType();
-                        int string = -1;
-                        if(gt == eGodType::artemis) {
-                            string = 30 + i;
-                        } else if(gt == eGodType::ares) {
-                            string = 32 + i;
-                        } else {
-                            return;
-                        }
-                        const auto name = eLanguage::zeusText(138, string);
-                        b->setName(name);
-                        mSoldierBanners.push_back(b);
-                    });
-                });
-        });
+    if(ar.reading()) {
+        const stdptr<eSanctuaryWithWarriors> tptr(this);
+        auto banners = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+        mSoldierBanners.clear();
+        ar.countedArrayField("soldierBanners", 0,
+            [&board, banners](eSaveArchive& itemAr, const int i) {
+                if(i >= static_cast<int>(banners->size())) banners->resize(i + 1);
+                itemAr.soldierBannerField("banner", &board, (*banners)[i]);
+            });
+        ar.addPostFunc([tptr, banners]() {
+            if(!tptr) return;
+            tptr->mSoldierBanners = *banners;
+            for(int i = 0; i < static_cast<int>(tptr->mSoldierBanners.size()); i++) {
+                const auto b = tptr->mSoldierBanners[i];
+                if(!b) continue;
+                const auto gt = tptr->godType();
+                int string = -1;
+                if(gt == eGodType::artemis) {
+                    string = 30 + i;
+                } else if(gt == eGodType::ares) {
+                    string = 32 + i;
+                } else {
+                    continue;
+                }
+                const auto name = eLanguage::zeusText(138, string);
+                b->setName(name);
+            }
+        }, "eSanctuaryWithWarriors::banners");
+    } else {
+        const int nb = static_cast<int>(mSoldierBanners.size());
+        ar.countedArrayField("soldierBanners", nb,
+            [&board, this](eSaveArchive& itemAr, const int i) {
+                itemAr.soldierBannerField("banner", &board, mSoldierBanners[i]);
+            });
+    }
 }

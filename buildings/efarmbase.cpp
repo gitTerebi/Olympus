@@ -104,7 +104,8 @@ eMonth eFarmBase::nextHarvestMonth() const {
     return eMonth::july;
 }
 
-void eFarmBase::serialize(eSaveArchive& ar) {
+void eFarmBase::serializeFields(eSaveArchive& ar) {
+    eResourceBuildingBase::serializeFields(ar);
     ar.field("nextRipe", mNextRipe);
     int growthSteps = ar.writing() ? (mGrownFields * 5 + mFieldStage) : 0;
     ar.field("growthSteps", growthSteps);
@@ -118,16 +119,4 @@ void eFarmBase::serialize(eSaveArchive& ar) {
                  mMonthlyProduced[i]);
     }
     ar.field("ringIdx", mRingIdx);
-}
-
-void eFarmBase::read(eReadStream& src) {
-    eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eFarmBase::write(eWriteStream& dst) const {
-    eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFarmBase*>(this)->serialize(ar);
 }

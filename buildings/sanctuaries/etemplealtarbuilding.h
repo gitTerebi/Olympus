@@ -24,13 +24,11 @@ public:
 
     void timeChanged(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void startSacrifice(const eSacrifice s);
     bool sacrificing() const { return mSacrifice != eSacrifice::none; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     eSacrifice mSacrifice = eSacrifice::none;
     int mSacrificeTime = 600000;
 };

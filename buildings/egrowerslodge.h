@@ -31,9 +31,6 @@ public:
 
     std::vector<eCartTask> cartTasks() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void nextMonth() override;
 
     int producedThisYear() const { return mProducedThisYear; }
@@ -46,8 +43,9 @@ public:
     bool noTarget() const { return mNoTarget; }
 
     bool hasReadyOlives() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     void killWalkers();
     int readyOliveCount() const;
 

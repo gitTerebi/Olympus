@@ -61,10 +61,9 @@ public:
     bool vendorEnabled() const { return mVendorEnabled; }
     void setVendorEnabled(const bool e) { mVendorEnabled = e; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     eCartTransporter* spawnVendorCart();
 
     int mResMult = 100;

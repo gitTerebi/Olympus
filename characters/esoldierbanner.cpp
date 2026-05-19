@@ -1,6 +1,7 @@
 #include "esoldierbanner.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "engine/etile.h"
@@ -38,7 +39,12 @@ eSoldierBanner::eSoldierBanner(const eBannerType type,
 
 eSoldierBanner::~eSoldierBanner() {
     killAll();
-    mBoard.unregisterAllSoldierBanner(this);
+    board().unregisterAllSoldierBanner(this);
+}
+
+eGameBoard& eSoldierBanner::board() const {
+    if(mTile) return mTile->board();
+    return mBoard;
 }
 
 void eSoldierBanner::setFacing(const int facing) {
@@ -339,17 +345,24 @@ eTile* eSoldierBanner::place(eSoldier* const s) const {
 }
 
 void eSoldierBanner::killAll() {
-    for(const auto s : mSoldiers) {
+    const auto soldiers = mSoldiers;
+    for(const auto s : soldiers) {
+        if(!s) continue;
         s->kill();
+        if(s->banner() == this) s->setBanner(nullptr);
     }
     mSoldiers.clear();
+    mPlaces.clear();
 }
 
 void eSoldierBanner::killAllWithCorpse() {
-    for(const auto s : mSoldiers) {
+    const auto soldiers = mSoldiers;
+    for(const auto s : soldiers) {
+        if(!s) continue;
         s->killWithCorpse();
     }
     mSoldiers.clear();
+    mPlaces.clear();
 }
 
 void eSoldierBanner::setBothCityIds(const eCityId cid) {
@@ -417,37 +430,51 @@ void eSoldierBanner::serializeFields(eSaveArchive& ar) {
         ar.field("mFacing", mFacing);
     }
 
-    {
+    if(ar.reading()) {
+        const stdptr<eSoldierBanner> tptr(this);
+        auto places = std::make_shared<std::vector<std::pair<eSoldier*, eTile*>>>();
+        ar.arrayField("places", *places,
+            [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
+                itemAr.tileField("tile", mBoard, p.second);
+                itemAr.characterField("soldier", &mBoard, p.first);
+            });
+        ar.addPostFunc([tptr, places]() {
+            if(!tptr) return;
+            tptr->mPlaces.clear();
+            for(const auto& p : *places) {
+                if(p.first) tptr->mPlaces[p.first] = p.second;
+            }
+        }, "eSoldierBanner::places");
+    } else {
         std::vector<std::pair<eSoldier*, eTile*>> places;
-        if(!ar.reading()) {
-            places.reserve(mPlaces.size());
-            for(const auto& p : mPlaces) places.emplace_back(p.first, p.second);
-        }
+        places.reserve(mPlaces.size());
+        for(const auto& p : mPlaces) places.emplace_back(p.first, p.second);
         ar.arrayField("places", places,
             [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
                 itemAr.tileField("tile", mBoard, p.second);
                 itemAr.characterField("soldier", &mBoard, p.first);
             });
-        if(ar.reading()) {
-            mPlaces.clear();
-            for(const auto& p : places) {
-                if(p.first) mPlaces[p.first] = p.second;
-            }
-        }
     }
-    {
-        std::vector<eSoldier*> soldiers;
-        if(!ar.reading()) soldiers = mSoldiers;
+    if(ar.reading()) {
+        const stdptr<eSoldierBanner> tptr(this);
+        auto soldiers = std::make_shared<std::vector<eSoldier*>>();
+        ar.arrayField("soldiers", *soldiers,
+            [this](eSaveArchive& itemAr, eSoldier*& s) {
+                itemAr.characterField("soldier", &mBoard, s);
+            });
+        ar.addPostFunc([tptr, soldiers]() {
+            if(!tptr) return;
+            tptr->mSoldiers.clear();
+            for(const auto s : *soldiers) {
+                if(s) tptr->mSoldiers.push_back(s);
+            }
+        }, "eSoldierBanner::soldiers");
+    } else {
+        std::vector<eSoldier*> soldiers = mSoldiers;
         ar.arrayField("soldiers", soldiers,
             [this](eSaveArchive& itemAr, eSoldier*& s) {
                 itemAr.characterField("soldier", &mBoard, s);
             });
-        if(ar.reading()) {
-            mSoldiers.clear();
-            for(const auto s : soldiers) {
-                if(s) mSoldiers.push_back(s);
-            }
-        }
     }
 }
 
@@ -455,12 +482,14 @@ void eSoldierBanner::read(eReadStream& src) {
     eSaveArchive ar(src);
     serializeFields(ar);
 
-    ar.addPostFunc([this]() {
-        if(visibleOnTile() && mTile) {
-            mTile->setSoldierBanner(this);
+    const stdptr<eSoldierBanner> tptr(this);
+    ar.addPostFunc([tptr]() {
+        if(!tptr) return;
+        if(tptr->visibleOnTile() && tptr->mTile) {
+            tptr->mTile->setSoldierBanner(tptr.get());
         }
-        updatePlaces();
-        if(!mHome) callSoldiers();
+        tptr->updatePlaces();
+        if(!tptr->mHome) tptr->callSoldiers();
     }, "eSoldierBanner::postLoad");
 }
 

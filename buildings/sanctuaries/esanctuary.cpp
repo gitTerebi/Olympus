@@ -50,7 +50,7 @@ eSanctuary::eSanctuary(eGameBoard& board,
 }
 
 eSanctuary::~eSanctuary() {
-    auto& board = getBoard();
+    auto& board = ownerBoard();
     board.unregisterSanctuary(this);
     board.destroyed(cityId(), type());
 }
@@ -363,19 +363,8 @@ void eSanctuary::nextMonth() {
     }
 }
 
-void eSanctuary::read(eReadStream& src) {
-    eMonument::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSanctuary::write(eWriteStream& dst) const {
-    eMonument::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSanctuary*>(this)->serialize(ar);
-}
-
-void eSanctuary::serialize(eSaveArchive& ar) {
+void eSanctuary::serializeFields(eSaveArchive& ar) {
+    eMonument::serializeFields(ar);
     auto& board = getBoard();
     ar.characterAsField("god", &board, mGod);
     ar.field("spawnWait", mSpawnWait);

@@ -1,5 +1,7 @@
 #include "ehorseranchenclosure.h"
 
+#include <memory>
+
 #include "textures/egametextures.h"
 
 #include "characters/ehorse.h"
@@ -104,32 +106,30 @@ void eHorseRanchEnclosure::setRanch(eHorseRanch* const ranch) {
     mRanch = ranch;
 }
 
-void eHorseRanchEnclosure::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHorseRanchEnclosure::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHorseRanchEnclosure*>(this)->serialize(ar);
-}
-
-void eHorseRanchEnclosure::serialize(eSaveArchive& ar) {
-    const int nh = ar.writing() ? static_cast<int>(mHorses.size()) : 0;
-    if(ar.reading()) mHorses.clear();
-    ar.countedArrayField("horses", nh,
-        [this](eSaveArchive& itemAr, const int i) {
-            itemAr.payloadField("horse",
-                [this, i](eWriteStream& dst) {
-                    dst.writeCharacter(mHorses[i].get());
-                },
-                [this](eReadStream& src) {
-                    src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                        if(!c) return;
-                        mHorses.push_back(c->ref<eHorse>());
-                    });
-                });
-        });
+void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
+    eBuildingWithResource::serializeFields(ar);
+    if(ar.reading()) {
+        const stdptr<eHorseRanchEnclosure> tptr(this);
+        auto horses = std::make_shared<std::vector<eHorse*>>();
+        mHorses.clear();
+        ar.countedArrayField("horses", 0,
+            [this, horses](eSaveArchive& itemAr, const int i) {
+                if(i >= static_cast<int>(horses->size())) horses->resize(i + 1);
+                itemAr.characterField("horse", &getBoard(), (*horses)[i]);
+            });
+        ar.addPostFunc([tptr, horses]() {
+            if(!tptr) return;
+            tptr->mHorses.clear();
+            for(const auto h : *horses) {
+                if(h) tptr->mHorses.push_back(h->ref<eHorse>());
+            }
+        }, "eHorseRanchEnclosure::horses");
+    } else {
+        const int nh = static_cast<int>(mHorses.size());
+        ar.countedArrayField("horses", nh,
+            [this](eSaveArchive& itemAr, const int i) {
+                eHorse* raw = mHorses[i].get();
+                itemAr.characterField("horse", &getBoard(), raw);
+            });
+    }
 }

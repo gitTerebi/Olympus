@@ -3,6 +3,7 @@
 
 #include "emoveaction.h"
 #include "engine/emovedirection.h"
+#include "engine/edirectionlastusetime.h"
 #include "ewalkablehelpers.h"
 #include "fileIO/esavearchive.h"
 
@@ -11,29 +12,6 @@
 class eMovePathAction;
 
 class eBuilding;
-class eSaveArchive;
-
-class eDirectionLastUseTime {
-public:
-    eDirectionLastUseTime() {
-        for(int i = 0; i < 8; i++) {
-            mTime.push_back(0);
-        }
-    }
-
-    int& time(const eOrientation o) {
-        const int id = static_cast<int>(o);
-        return mTime[id];
-    }
-
-    void serialize(eSaveArchive& ar) {
-        ar.field("time", mTime);
-    }
-private:
-    std::vector<int> mTime;
-};
-
-using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
 
 class ePatrolMoveAction : public eMoveAction {
 public:

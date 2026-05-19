@@ -175,19 +175,8 @@ void eResourceBuilding::timeChanged(const int by) {
     }
 }
 
-void eResourceBuilding::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eResourceBuilding::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eResourceBuilding*>(this)->serialize(ar);
-}
-
-void eResourceBuilding::serialize(eSaveArchive& ar) {
+void eResourceBuilding::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("sanctuary", mSanctuary);
     ar.field("workedOn", mWorkedOn);
     ar.field("nextRipe", mNextRipe);

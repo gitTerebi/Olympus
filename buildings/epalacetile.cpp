@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "epalace.h"
+#include "fileIO/esavearchive.h"
 
 ePalaceTile::ePalaceTile(eGameBoard& board,
                          const bool other,
@@ -29,4 +30,22 @@ int ePalaceTile::provide(const eProvide p, const int n) {
 
 void ePalaceTile::setPalace(ePalace* const palace) {
     mPalace = palace;
+}
+
+ePalace* ePalaceTile::palace() const {
+    return mPalace;
+}
+
+void ePalaceTile::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
+    ar.buildingAsField("palace", &getBoard(), mPalace);
+    if(ar.reading()) {
+        const stdptr<ePalaceTile> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(!tptr) return;
+            const auto palace = tptr->palace();
+            if(!palace) return;
+            palace->addTile(tptr.get());
+        }, "ePalaceTile::palace");
+    }
 }

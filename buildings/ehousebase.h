@@ -59,9 +59,8 @@ public:
 
     int vacancies() const;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
     void setLevel(const int l);
     int evict();
     void setPeople(const int p);
@@ -86,8 +85,6 @@ protected:
     int mPendingEvict = 0;
     int mEvictDelay = 0;
 private:
-    void serialize(eSaveArchive& ar);
-
     ePopulationData& popData();
 
     const std::vector<int> mMaxPeople;

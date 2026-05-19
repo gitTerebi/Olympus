@@ -32,10 +32,8 @@ public:
     int resource() const { return mResource; }
     int maxResource() const { return mMaxResource; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 
 private:
     const int mMaxResource = 8;

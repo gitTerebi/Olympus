@@ -37,16 +37,14 @@ public:
     void timeChanged(const int by) override;
     void nextMonth() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     int producedThisYear() const { return mProducedThisYear; }
 
     void shepherdDelivered(const eResourceType type, const int count);
 
     bool spawn();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
 
     const eCharGenerator mCharGenerator;
     const std::vector<eBuildingTextures>& mTextures;

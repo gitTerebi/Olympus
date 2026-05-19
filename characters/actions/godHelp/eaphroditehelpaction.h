@@ -71,13 +71,13 @@ public:
     eAphroditeHelpAct(eGameBoard& board) :
         eAphroditeHelpAct(board, nullptr) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(!mTarget) return;
         const int v = mTarget->vacancies();
         mTarget->moveIn(v);

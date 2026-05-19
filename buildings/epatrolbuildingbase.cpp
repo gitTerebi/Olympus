@@ -124,34 +124,17 @@ bool ePatrolBuildingBase::spawnsPatrolers() const {
     return mCharGenerator && mActGenerator;
 }
 
-void ePatrolBuildingBase::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePatrolBuildingBase::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePatrolBuildingBase*>(this)->serialize(ar);
-}
-
-void ePatrolBuildingBase::serialize(eSaveArchive& ar) {
+void ePatrolBuildingBase::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("bothDirections", mBothDirections);
     ar.field("lastDirection", mLastDirection);
     ar.field("spawnPatrolers", mSpawnPatrolers);
     ar.field("spawnTime", mSpawnTimer);
     ar.field("spawnRoadId", mSpawnRoadId);
 
-    ar.payloadField("directionTimes",
-        [this](eWriteStream& dst) { dst.writeDirectionTimes(mDirTimes.get()); },
-        [this](eReadStream& src) { mDirTimes = src.readDirectionTimes(getBoard()); });
+    ar.directionTimesField("directionTimes", getBoard(), mDirTimes);
 
-    ar.payloadField("patroler",
-        [this](eWriteStream& dst) { dst.writeCharacter(mChar); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) { mChar = c; });
-        });
+    ar.characterField("patroler", &getBoard(), mChar);
 
     ar.arrayField("patrolGuides", mPatrolGuides,
         [](eSaveArchive& itemAr, ePatrolGuide& pg) {

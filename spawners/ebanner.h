@@ -35,7 +35,7 @@ public:
 
     eTile* tile() const { return mTile; }
     eCityId cityId() const;
-    eGameBoard& board() { return mBoard; }
+    eGameBoard& board();
 
     int id() const { return mId; }
 

@@ -120,13 +120,10 @@ public:
     void setHeroOnQuest(const bool b);
     void sendHeroOnQuest();
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void updateRequirementsStatus();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void addRequirement(const eHeroRequirement& hr);
     void updateRequirementStatus(eHeroRequirement& hr);
 

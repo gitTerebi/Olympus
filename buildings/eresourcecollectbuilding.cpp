@@ -158,27 +158,10 @@ void eResourceCollectBuilding::timeChanged(const int by) {
     }
 }
 
-void eResourceCollectBuilding::read(eReadStream& src) {
-    eResourceCollectBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eResourceCollectBuilding::write(eWriteStream& dst) const {
-    eResourceCollectBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eResourceCollectBuilding*>(this)->serialize(ar);
-}
-
-void eResourceCollectBuilding::serialize(eSaveArchive& ar) {
+void eResourceCollectBuilding::serializeFields(eSaveArchive& ar) {
+    eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("collectedAction", mCollectedAction);
-    ar.payloadField("collector",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCollector); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCollector = static_cast<eResourceCollectorBase*>(c);
-            });
-        });
+    ar.characterField("collector", &getBoard(), mCollector);
     ar.field("spawnEnabled", mSpawnEnabled);
     ar.field("addResource", mAddResource);
     ar.field("rawCount", mRawCount);

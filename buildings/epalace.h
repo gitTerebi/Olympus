@@ -26,17 +26,15 @@ public:
 
     void addTile(ePalaceTile* const tile);
 
-    const std::vector<ePalaceTile*>& tiles() const { return mTiles; }
+    const std::vector<ePalaceTile*>& tiles() const { return mPalaceTilesCache; }
 
     bool rotated() const { return mRotated; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     const bool mRotated;
-    std::vector<ePalaceTile*> mTiles;
+    std::vector<ePalaceTile*> mPalaceTilesCache;
 };
 
 #endif // EPALACE_H

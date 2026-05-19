@@ -11,10 +11,23 @@ eCharacterAction::eCharacterAction(
 }
 
 eCharacterAction::~eCharacterAction() {
-    mBoard.unregisterCharacterAction(this);
+    board().unregisterCharacterAction(this);
     if(mState == eCharacterActionState::running) {
         if(mDeleteFailAction) mDeleteFailAction->call();
     }
+}
+
+eGameBoard& eCharacterAction::board() const {
+    if(mCharacter) {
+        const auto t = mCharacter->tile();
+        if(t) return t->board();
+        return mCharacter->getBoard();
+    }
+    return mBoard;
+}
+
+eGameBoard& eCharacterAction::board() {
+    return const_cast<const eCharacterAction*>(this)->board();
 }
 
 eCityId eCharacterAction::cityId() const {
@@ -54,9 +67,10 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
 void eCharacterAction::serializeFields(eSaveArchive& ar) {
     ar.field("ioID", mIOID);
     ar.field("state", mState);
-    ar.charActFuncField("finishAction", mBoard, mFinishAction);
-    ar.charActFuncField("failAction", mBoard, mFailAction);
-    ar.charActFuncField("deleteFailAction", mBoard, mDeleteFailAction);
+    auto& brd = board();
+    ar.charActFuncField("finishAction", brd, mFinishAction);
+    ar.charActFuncField("failAction", brd, mFailAction);
+    ar.charActFuncField("deleteFailAction", brd, mDeleteFailAction);
 }
 
 void eCharacterAction::read(eReadStream& src) {

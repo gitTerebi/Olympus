@@ -19,7 +19,7 @@ eStadium::eStadium(eGameBoard& board, const bool r,
 }
 
 eStadium::~eStadium() {
-    auto& b = getBoard();
+    auto& b = ownerBoard();
     b.unregisterStadium(cityId());
 }
 

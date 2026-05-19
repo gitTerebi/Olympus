@@ -1182,20 +1182,9 @@ void ePyramid::buildingProgressed() {
     }
 }
 
-void ePyramid::read(eReadStream& src) {
-    eMonument::read(src);
-    mSelf = ref<ePyramid>();
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePyramid::write(eWriteStream& dst) const {
-    eMonument::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePyramid*>(this)->serialize(ar);
-}
-
-void ePyramid::serialize(eSaveArchive& ar) {
+void ePyramid::serializeFields(eSaveArchive& ar) {
+    eMonument::serializeFields(ar);
+    if(ar.reading()) mSelf = ref<ePyramid>();
     const int writeCount = ar.writing() ? static_cast<int>(mDark.size()) : 0;
     if(ar.reading()) mDark.clear();
     ar.countedArrayField("dark", writeCount,

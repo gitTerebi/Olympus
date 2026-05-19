@@ -64,12 +64,10 @@ public:
 
     eBuilding* unpackBuilding() const { return mUnpackBuilding; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     bool trades() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     eTile* entryPoint() const;
 
     eWorldCity& mCity;

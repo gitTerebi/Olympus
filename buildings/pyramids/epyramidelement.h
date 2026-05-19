@@ -36,10 +36,9 @@ public:
 
     bool renderBuilding() const;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     const int mElevation = 0;
     const int mDim = 1;
     int mCurrentElevation = 0;

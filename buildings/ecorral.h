@@ -12,17 +12,15 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void timeChanged(const int by) override;
 
     int cattleCount() const { return mNCattle; }
     void addCattle();
     bool noCattle() const { return mNoCattle; }
     void setNoCattle(const bool c);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     bool killCattle();
 
     bool takeCattle();

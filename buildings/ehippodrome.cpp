@@ -1,6 +1,8 @@
 #include "ehippodrome.h"
 #include "fileIO/esavearchive.h"
 
+#include <memory>
+
 #include "characters/eracinghorse.h"
 
 eHippodrome::eHippodrome(const eCityId cid, eGameBoard& board) :
@@ -147,33 +149,34 @@ void eHippodrome::serialize(eSaveArchive& ar) {
     ar.field("finish", mFinish);
     ar.field("nHorses", mNHorses);
     ar.characterAsField("cart", &mBoard, mCart);
-    const int n = ar.writing() ? static_cast<int>(mPieces.size()) : 0;
-    if(ar.reading()) mPieces.clear();
-    ar.countedArrayField("pieces", n,
-        [this](eSaveArchive& itemAr, const int i) {
-            eN p;
-            if(itemAr.writing()) p = mPieces[i];
-            itemAr.field("orientation", p.fO);
-            if(itemAr.reading()) {
-                mPieces.push_back(p);
-            }
-            itemAr.payloadField("piece",
-                [this, i](eWriteStream& dst) {
-                    dst.writeBuilding(mPieces[i].fPtr);
-                },
-                [this, i](eReadStream& src) {
-                    src.readBuilding(&mBoard, [this, i](eBuilding* const b) {
-                        const auto hp = static_cast<eHippodromePiece*>(b);
-                        mPieces[i].fPtr = hp;
-                        hp->setHippodrome(this);
-                        hp->setPartId(i);
-                    });
-                });
-        });
     if(ar.reading()) {
-        ar.readStream().addPostFunc([this]() {
+        auto pieces = std::make_shared<std::vector<eN>>();
+        mPieces.clear();
+        ar.countedArrayField("pieces", 0,
+            [this, pieces](eSaveArchive& itemAr, const int i) {
+                if(i >= static_cast<int>(pieces->size())) pieces->resize(i + 1);
+                auto& p = (*pieces)[i];
+                itemAr.field("orientation", p.fO);
+                itemAr.buildingAsField("piece", &mBoard, p.fPtr);
+            });
+        ar.addPostFunc([this, pieces]() {
+            mPieces = *pieces;
+            for(int i = 0; i < static_cast<int>(mPieces.size()); i++) {
+                const auto hp = mPieces[i].fPtr;
+                if(!hp) continue;
+                hp->setHippodrome(this);
+                hp->setPartId(i);
+            }
             updatePaths();
-        });
+        }, "eHippodrome::pieces");
+    } else {
+        const int n = static_cast<int>(mPieces.size());
+        ar.countedArrayField("pieces", n,
+            [this](eSaveArchive& itemAr, const int i) {
+                auto& p = mPieces[i];
+                itemAr.field("orientation", p.fO);
+                itemAr.buildingAsField("piece", &mBoard, p.fPtr);
+            });
     }
 }
 

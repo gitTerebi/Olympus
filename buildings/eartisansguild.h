@@ -20,11 +20,9 @@ public:
     using eArtisanPtr = stdptr<eArtisan> eArtisansGuild::*;
     bool spawnArtisan(const eArtisanPtr artisan);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eArtisan> mArtisan;
 
     const int mWaitTime = eNumbers::sArtisanWaitTime;

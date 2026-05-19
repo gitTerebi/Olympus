@@ -51,11 +51,9 @@ public:
 
     void setPartId(const int i) { mPartId = i; }
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void crossTile(eTile* const t,
                    std::vector<eOverlay>& result,
                    const eWorldDirection dir,

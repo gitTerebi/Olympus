@@ -151,19 +151,8 @@ bool ePyramidElement::renderBuilding() const {
     return p > 4*mElevation;
 }
 
-void ePyramidElement::read(eReadStream& src) {
-    eSanctBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePyramidElement::write(eWriteStream& dst) const {
-    eSanctBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePyramidElement*>(this)->serialize(ar);
-}
-
-void ePyramidElement::serialize(eSaveArchive& ar) {
+void ePyramidElement::serializeFields(eSaveArchive& ar) {
+    eSanctBuilding::serializeFields(ar);
     ar.field("currentElevation", mCurrentElevation);
 }
 

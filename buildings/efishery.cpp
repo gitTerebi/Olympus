@@ -258,27 +258,10 @@ void eFishery::updateDisabled() {
     mDisabled = d;
 }
 
-void eFishery::read(eReadStream& src) {
-    eResourceCollectBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eFishery::write(eWriteStream& dst) const {
-    eResourceCollectBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFishery*>(this)->serialize(ar);
-}
-
-void eFishery::serialize(eSaveArchive& ar) {
+void eFishery::serializeFields(eSaveArchive& ar) {
+    eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("disabled", mDisabled);
     ar.field("stateCount", mStateCount);
     ar.field("state", mState);
-    ar.payloadField("boat",
-        [this](eWriteStream& dst) { dst.writeCharacter(mBoat); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mBoat = static_cast<eFishingBoat*>(c);
-            });
-        });
+    ar.characterField("boat", &getBoard(), mBoat);
 }

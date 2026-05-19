@@ -504,41 +504,30 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
     }
 }
 
-void eRoad::write(eWriteStream &dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRoad*>(this)->serialize(ar);
-}
-
-void eRoad::read(eReadStream &src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRoad::serialize(eSaveArchive& ar) {
+void eRoad::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     auto& board = getBoard();
     ar.field("roadblock", mRoadblock);
-    ar.payloadField("underAgora",
-        [this](eWriteStream& dst) { dst.writeBuilding(mUnderAgora); },
-        [this, &board](eReadStream& src) {
-            src.readBuilding(&board, [this](eBuilding* const bb) {
-                setUnderAgora(static_cast<eAgoraBase*>(bb));
-            });
-        });
-    ar.payloadField("underGatehouse",
-        [this](eWriteStream& dst) { dst.writeBuilding(mUnderGatehouse); },
-        [this, &board](eReadStream& src) {
-            src.readBuilding(&board, [this](eBuilding* const bb) {
-                setUnderGatehouse(static_cast<eGatehouse*>(bb));
-            });
-        });
-    ar.payloadField("aboveHippodrome",
-        [this](eWriteStream& dst) { dst.writeBuilding(mAboveHippodrome); },
-        [this, &board](eReadStream& src) {
-            src.readBuilding(&board, [this](eBuilding* const bb) {
-                setAboveHippodrome(static_cast<eHippodromePiece*>(bb));
-            });
-        });
+    ar.buildingAsField("underAgora", &board, mUnderAgora);
+    if(ar.reading()) {
+        const stdptr<eRoad> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(tptr) tptr->setUnderAgora(tptr->mUnderAgora);
+        }, "eRoad::underAgora");
+    }
+    ar.buildingAsField("underGatehouse", &board, mUnderGatehouse);
+    if(ar.reading()) {
+        const stdptr<eRoad> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(tptr) tptr->setUnderGatehouse(tptr->mUnderGatehouse);
+        }, "eRoad::underGatehouse");
+    }
+    ar.buildingAsField("aboveHippodrome", &board, mAboveHippodrome);
+    if(ar.reading()) {
+        const stdptr<eRoad> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(tptr) tptr->setAboveHippodrome(tptr->mAboveHippodrome);
+        }, "eRoad::aboveHippodrome");
+    }
     ar.field("characterAltitude", mCharacterAltitude);
 }

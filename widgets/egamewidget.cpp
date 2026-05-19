@@ -2385,6 +2385,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent &e)
         if (!mMsgBox && !mBoard->editorMode())
         {
             mBoard->waitUntilFinished();
+            if (mGm->mode() != eBuildingMode::none)
+                mGm->clearMode();
             const auto menu = new eGameMainMenu(window());
             menu->resize(width() / 4, height() / 2);
             const auto w = window();

@@ -22,7 +22,7 @@ public:
                         eCharActionType::animalAction);
     eAnimalAction(eCharacter* const c);
 
-    bool decide();
+    bool decide() override;
 
     void setLayTime(const int l) { mLayTime = l; }
     void setWalkTime(const int w) { mWalkTime = w; }

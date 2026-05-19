@@ -58,25 +58,8 @@ bool eArtisansGuild::spawnArtisan(const eArtisanPtr artisan) {
     return true;
 }
 
-void eArtisansGuild::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eArtisansGuild::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eArtisansGuild*>(this)->serialize(ar);
-}
-
-void eArtisansGuild::serialize(eSaveArchive& ar) {
+void eArtisansGuild::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("spawnTime", mSpawnTime);
-    ar.payloadField("artisan",
-        [this](eWriteStream& dst) { dst.writeCharacter(mArtisan); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mArtisan = static_cast<eArtisan*>(c);
-            });
-        });
+    ar.characterField("artisan", &getBoard(), mArtisan);
 }
