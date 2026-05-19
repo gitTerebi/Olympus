@@ -45,7 +45,7 @@ public:
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         mTptr->lookForMonster();
     }

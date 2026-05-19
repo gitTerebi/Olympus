@@ -15,7 +15,7 @@ eEmployingBuilding::eEmployingBuilding(
 }
 
 eEmployingBuilding::~eEmployingBuilding() {
-    auto& board = getBoard();
+    auto& board = ownerBoard();
     board.unregisterEmplBuilding(this);
 }
 
@@ -46,21 +46,14 @@ void eEmployingBuilding::setShutDown(const bool sd) {
     if(sd) setEmployed(0);
 }
 
-void eEmployingBuilding::read(eReadStream& src) {
-    eBuildingWithResource::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-    setEnabled(mEmployed > 0);
-}
-
-void eEmployingBuilding::write(eWriteStream& dst) const {
-    eBuildingWithResource::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eEmployingBuilding*>(this)->serialize(ar);
-}
-
-void eEmployingBuilding::serialize(eSaveArchive& ar) {
+void eEmployingBuilding::serializeFields(eSaveArchive& ar) {
+    eBuildingWithResource::serializeFields(ar);
     ar.field("shutDown", mShutDown);
     ar.field("maxEmployees", mMaxEmployees);
     ar.field("employed", mEmployed);
+    const stdptr<eEmployingBuilding> tptr(this);
+    ar.addPostFunc([tptr]() {
+        if(!tptr) return;
+        tptr->setEnabled(tptr->mEmployed > 0);
+    }, "eEmployingBuilding::setEnabled");
 }

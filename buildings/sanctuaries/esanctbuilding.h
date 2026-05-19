@@ -40,8 +40,7 @@ struct eSanctCost {
         return c;
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("wood", fWood);
         ar.field("marble", fMarble);
         ar.field("sculpture", fSculpture);
@@ -49,13 +48,14 @@ struct eSanctCost {
         ar.field("blackMarble", fBlackMarble);
     }
 
+    void read(eReadStream& src) {
+        eSaveArchive ar(src);
+        serialize(ar);
+    }
+
     void write(eWriteStream& dst) const {
         eSaveArchive ar(dst);
-        ar.field("wood", const_cast<int&>(fWood));
-        ar.field("marble", const_cast<int&>(fMarble));
-        ar.field("sculpture", const_cast<int&>(fSculpture));
-        ar.field("orichalc", const_cast<int&>(fOrichalc));
-        ar.field("blackMarble", const_cast<int&>(fBlackMarble));
+        const_cast<eSanctCost*>(this)->serialize(ar);
     }
 };
 
@@ -92,13 +92,10 @@ public:
     void setMonument(eMonument* const s);
     eMonument* monument() const { return mMonument; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     const std::vector<eSanctCost>& costs() const { return mCost; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void scheduleTerrainUpdate();
     void updateNextCost();
 

@@ -13,9 +13,6 @@ public:
 
     stdsptr<eTexture> getTexture(const eTileSize size) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void setWasType(const eBuildingType type) { mWasType = type; }
     eBuildingType wasType() const { return mWasType; }
 
@@ -41,9 +38,9 @@ public:
     const SDL_Rect& savedPierRect() const { return mSavedPierRect; }
     bool hasSavedPier() const { return !mSavedPier.empty(); }
 
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eBuildingType mWasType = eBuildingType::none;
     int mOriginX = -1;
     int mOriginY = -1;

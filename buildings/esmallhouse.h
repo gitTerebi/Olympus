@@ -45,12 +45,9 @@ public:
 
     eHouseMissing missing() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
-    void serialize(eSaveArchive& ar);
-
     static std::string sName(const int level);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     bool hasRequiredForLevel(const int level) const;
     void updateLevel();

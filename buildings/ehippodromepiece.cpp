@@ -634,25 +634,8 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
     return result;
 }
 
-void eHippodromePiece::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHippodromePiece*>(this)->serialize(ar);
-}
-
-void eHippodromePiece::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHippodromePiece::serialize(eSaveArchive& ar) {
+void eHippodromePiece::serializeFields(eSaveArchive& ar) {
+    eBuildingWithResource::serializeFields(ar);
     ar.field("hippodromeId", mId);
-    ar.payloadField("cart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("cart", &getBoard(), mCart);
 }

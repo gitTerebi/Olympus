@@ -131,9 +131,8 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-    void serialize(eSaveArchive& ar);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     int mId = 0;
 };
@@ -150,6 +149,7 @@ private:
 };
 
 class eGodMonumentTile;
+class eSaveArchive;
 
 class eGodMonument : public eBuilding {
 public:
@@ -164,23 +164,27 @@ public:
     eGodType god() const { return mGod; }
     eGodQuestId id() const { return mId; }
     void addTile(eGodMonumentTile* const tile);
-    const std::vector<eGodMonumentTile*>& tiles() const { return mTiles; }
+    const std::vector<eGodMonumentTile*>& tiles() const { return mMonumentTilesCache; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     const eGodType mGod;
     const eGodQuestId mId;
-    std::vector<eGodMonumentTile*> mTiles;
+    std::vector<eGodMonumentTile*> mMonumentTilesCache;
 };
 
 class eGodMonumentTile : public eBuilding {
 public:
     eGodMonumentTile(eGameBoard& board, const eCityId cid);
 
-    void erase();
+    void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
     void setMonument(eGodMonument* const mon);
     eGodMonument* monument() const { return mMonument; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eGodMonument* mMonument = nullptr;
 };

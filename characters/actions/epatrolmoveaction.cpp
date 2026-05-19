@@ -7,6 +7,10 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
+void eDirectionLastUseTime::serialize(eSaveArchive& ar) {
+    ar.field("time", mTime);
+}
+
 ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
                                      const bool diagonalOnly,
                                      const stdsptr<eWalkableObject>& walkable,

@@ -62,9 +62,6 @@ public:
 
     int addProduced(const eResourceType type, const int count);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     const std::vector<eStash>& stash() const { return mStash; }
     int stash(const eResourceType type, const int count);
     int stashCount(const eResourceType type) const;
@@ -75,7 +72,7 @@ protected:
 
     stdptr<eCartTransporter> spawnCart(const eCartActionTypeSupport s =
                                     eCartActionTypeSupport::both);
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eResourceType mStashable = eResourceType::none;
     std::vector<eStash> mStash;

@@ -122,7 +122,7 @@ public:
              const std::vector<ePathPoint>& path = {});
     ~eMissile();
 
-    eGameBoard& board() const { return mBoard; }
+    eGameBoard& board() const;
 
     void incTime(const int by);
 

@@ -440,19 +440,8 @@ void eHerosHall::sendHeroOnQuest() {
     }
 }
 
-void eHerosHall::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHerosHall::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHerosHall*>(this)->serialize(ar);
-}
-
-void eHerosHall::serialize(eSaveArchive& ar) {
+void eHerosHall::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("arrivalCountdown", mArrivalCountdown);
     ar.field("philosophers", mPhilosophers);
@@ -807,7 +796,7 @@ eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
 }
 
 eHerosHall::~eHerosHall() {
-    auto& board = getBoard();
+    auto& board = ownerBoard();
     board.destroyed(cityId(), type());
     board.unregisterHeroHall(this);
     if(mHero) mHero->kill();

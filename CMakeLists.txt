@@ -818,7 +818,7 @@ target_compile_definitions(eZeus PRIVATE
     EZEUS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_options(eZeus PRIVATE -g)
+target_compile_options(eZeus PRIVATE -g -Werror=inconsistent-missing-override)
 target_link_options(eZeus PRIVATE -g)
 
 # Link libraries

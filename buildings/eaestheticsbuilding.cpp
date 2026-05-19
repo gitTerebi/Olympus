@@ -170,19 +170,8 @@ void eWaterPark::setId(const int i) {
     mId = i % 8;
 }
 
-void eWaterPark::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eWaterPark::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eWaterPark*>(this)->serialize(ar);
-}
-
-void eWaterPark::serialize(eSaveArchive& ar) {
+void eWaterPark::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("id", mId, 0);
 }
 
@@ -252,7 +241,7 @@ eGodMonument::eGodMonument(const eGodType god,
 }
 
 void eGodMonument::erase() {
-    for(const auto& t : mTiles) {
+    for(const auto& t : mMonumentTilesCache) {
         t->eBuilding::erase();
     }
     eBuilding::erase();
@@ -266,7 +255,17 @@ std::shared_ptr<eTexture> eGodMonument::getTexture(const eTileSize size) const {
 }
 
 void eGodMonument::addTile(eGodMonumentTile* const tile) {
-    mTiles.push_back(tile);
+    for(const auto t : mMonumentTilesCache) {
+        if(t == tile) return;
+    }
+    mMonumentTilesCache.push_back(tile);
+}
+
+void eGodMonument::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
+    if(ar.reading()) {
+        mMonumentTilesCache.clear();
+    }
 }
 
 eGodMonumentTile::eGodMonumentTile(eGameBoard& board, const eCityId cid) :
@@ -287,4 +286,18 @@ std::shared_ptr<eTexture> eGodMonumentTile::getTexture(const eTileSize size) con
 
 void eGodMonumentTile::setMonument(eGodMonument *const mon) {
     mMonument = mon;
+}
+
+void eGodMonumentTile::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
+    ar.buildingAsField("monument", &getBoard(), mMonument);
+    if(ar.reading()) {
+        const stdptr<eGodMonumentTile> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(!tptr) return;
+            const auto monument = tptr->monument();
+            if(!monument) return;
+            monument->addTile(tptr.get());
+        }, "eGodMonumentTile::monument");
+    }
 }

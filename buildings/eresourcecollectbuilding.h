@@ -42,9 +42,8 @@ public:
 
     void setAddResource(const bool b) { mAddResource = b; }
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
     void enableSpawn() { mSpawnEnabled = true; }
     void disableSpawn() { mSpawnEnabled = false; }
 
@@ -55,8 +54,6 @@ protected:
 
     void setRawCountCollect(const int r) { mRawCountCollect = r; }
 private:
-    void serialize(eSaveArchive& ar);
-
     const eCharGenerator mCharGenerator;
     const std::vector<eBuildingTextures>& mTextures;
 

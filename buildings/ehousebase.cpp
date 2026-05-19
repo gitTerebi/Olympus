@@ -93,19 +93,8 @@ int eHouseBase::vacancies() const {
     return mMaxPeople[mLevel] - mPeople;
 }
 
-void eHouseBase::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHouseBase::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHouseBase*>(this)->serialize(ar);
-}
-
-void eHouseBase::serialize(eSaveArchive& ar) {
+void eHouseBase::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("paidTaxes", mPaidTaxes);
     ar.field("paidTaxesLastMonth", mPaidTaxesLastMonth);
     int level = ar.writing() ? mLevel : 0;

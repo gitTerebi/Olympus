@@ -35,7 +35,7 @@ eSmallHouse::~eSmallHouse()
         mSick->kill();
     if (mDisg)
         mDisg->kill();
-    auto &board = getBoard();
+    auto &board = ownerBoard();
     board.unregisterCommonHouse(this);
 }
 
@@ -416,22 +416,9 @@ eHouseMissing eSmallHouse::missing() const
     return eHouseMissing::food;
 }
 
-void eSmallHouse::read(eReadStream &src)
+void eSmallHouse::serializeFields(eSaveArchive& ar)
 {
-    eHouseBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSmallHouse::write(eWriteStream &dst) const
-{
-    eHouseBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSmallHouse*>(this)->serialize(ar);
-}
-
-void eSmallHouse::serialize(eSaveArchive& ar)
-{
+    eHouseBase::serializeFields(ar);
     ar.field("satisfactionProvidedThisMonth", mSatisfactionProvidedThisMonth);
     ar.field("updateSatisfaction", mUpdateSatisfaction);
     ar.field("satisfaction", mSatisfaction);

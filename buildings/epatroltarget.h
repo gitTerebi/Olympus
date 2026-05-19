@@ -26,10 +26,9 @@ public:
     void timeChanged(const int by) override;
     int spawnCooldown() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     const eCharGenerator mCharGen;
 
     int mSpawnPool = 0;

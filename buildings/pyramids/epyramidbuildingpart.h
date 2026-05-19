@@ -27,11 +27,9 @@ public:
     void setPaint(ePyramidElement* const paint,
                   const eWorldDirection dir);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     ePyramidElement* mPaint = nullptr;
     eWorldDirection mPaintDir;
 };

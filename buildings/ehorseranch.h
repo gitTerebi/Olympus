@@ -36,11 +36,9 @@ public:
     int horseCount() const;
     bool takeHorse();
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     int mWheat = 0;
     int mWheatTime = 0;
     int mHorseTime = 0;

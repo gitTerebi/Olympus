@@ -140,27 +140,10 @@ bool eHorseRanch::takeHorse() {
     return mEnclosure ? mEnclosure->takeHorse() : false;
 }
 
-void eHorseRanch::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eHorseRanch::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eHorseRanch*>(this)->serialize(ar);
-}
-
-void eHorseRanch::serialize(eSaveArchive& ar) {
+void eHorseRanch::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("wheat", mWheat);
     ar.field("wheatTime", mWheatTime);
     ar.field("horseTime", mHorseTime);
-    ar.payloadField("takeCart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mTakeCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mTakeCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("takeCart", &getBoard(), mTakeCart);
 }

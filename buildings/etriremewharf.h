@@ -25,9 +25,6 @@ public:
 
     std::vector<eCartTask> cartTasks() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eDiagonalOrientation orientation() const { return mO; }
 
     void triremeCameBack();
@@ -37,8 +34,9 @@ public:
     bool isAtWharf() const;
 
     eTile* triremeTile() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     void spawnTrireme();
 
     const eDiagonalOrientation mO;

@@ -43,6 +43,7 @@ public:
     eTile(const int x, const int y,
           const int dx, const int dy,
           eGameBoard& board);
+    eGameBoard& board() const { return mBoard; }
 
     int scrubId(const int nLevels) const;
     double scrub() const { return mScrub; }

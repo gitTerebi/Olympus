@@ -300,19 +300,8 @@ eHouseMissing eEliteHousing::missing() const {
     return eHouseMissing::food;
 }
 
-void eEliteHousing::read(eReadStream& src) {
-    eHouseBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eEliteHousing::write(eWriteStream& dst) const {
-    eHouseBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eEliteHousing*>(this)->serialize(ar);
-}
-
-void eEliteHousing::serialize(eSaveArchive& ar) {
+void eEliteHousing::serializeFields(eSaveArchive& ar) {
+    eHouseBase::serializeFields(ar);
     ar.field("updateLevel", mUpdateLevel);
     ar.field("wine", mWine);
     ar.field("arms", mArms);

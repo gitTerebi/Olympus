@@ -11,6 +11,7 @@
 #include "enumbers.h"
 
 #include <algorithm>
+#include <cstdio>
 
 eVendor::eVendor(eGameBoard& board,
                  const eResourceType resType,
@@ -215,26 +216,35 @@ int eVendor::takeForPeddler(const int t) {
     return tt;
 }
 
-void eVendor::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eVendor::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eVendor*>(this)->serialize(ar);
-}
-
-void eVendor::serialize(eSaveArchive& ar) {
+void eVendor::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
+    int agoraId = ar.writing() && mAgora ? mAgora->ioID() : -1;
+    int agoraSpaceId = ar.writing() ? this->agoraSpaceId() : -1;
+    ar.field("agoraId", agoraId, -1);
+    ar.field("agoraSpaceId", agoraSpaceId, -1);
+    if(ar.reading()) {
+        const stdptr<eVendor> tptr(this);
+        ar.addPostFunc([tptr, agoraId, agoraSpaceId]() {
+            if(!tptr) return;
+            if(agoraId < 0 || agoraSpaceId < 0) return;
+            const auto a = tptr->getBoard().buildingWithIOID(agoraId);
+            if(!a) {
+                printf("vendor load: missing tagged agora aid=%d sid=%d\n",
+                       agoraId, agoraSpaceId);
+                return;
+            }
+            const auto agora = dynamic_cast<eAgoraBase*>(a);
+            if(!agora) {
+                printf("vendor load: bad tagged agora aid=%d sid=%d\n",
+                       agoraId, agoraSpaceId);
+                return;
+            }
+            const auto aa = agora->ref<eAgoraBase>();
+            tptr->setAgora(aa);
+            aa->setBuilding(agoraSpaceId, tptr->ref<eBuilding>());
+        }, "eVendor::agora");
+    }
     ar.field("resource", mResource);
     ar.field("vendorEnabled", mVendorEnabled);
-    ar.payloadField("cart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("cart", &getBoard(), mCart);
 }

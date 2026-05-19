@@ -60,13 +60,13 @@ public:
         eGodProvideResourceAct(board, nullptr, nullptr,
                                eResourceType::meat, 0) {}
 
-    eMissileTarget find(eTile* const t) {
+    eMissileTarget find(eTile* const t) override {
         (void)t;
         const auto null = static_cast<eTile*>(nullptr);
         return null;
     }
 
-    void act() {
+    void act() override {
         if(mTarget) {
             const int added = mTarget->add(mResource, mCount);
             if(mAction) {

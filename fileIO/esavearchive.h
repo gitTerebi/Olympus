@@ -202,9 +202,10 @@ public:
     template <typename Ptr>
     void character(eGameBoard* board, Ptr& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readCharacter(board, [&value](eCharacter* const c) {
-                value = c;
+            Ptr* const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readCharacter(board, [tgt](eCharacter* const c) {
+                *tgt = c;
             });
         } else {
             mDst->writeCharacter(value.get());
@@ -214,9 +215,10 @@ public:
     template <typename Ptr>
     void building(eGameBoard* board, Ptr& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readBuilding(board, [&value](eBuilding* const b) {
-                value = b;
+            Ptr* const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readBuilding(board, [tgt](eBuilding* const b) {
+                *tgt = b;
             });
         } else {
             mDst->writeBuilding(value.get());
@@ -228,13 +230,14 @@ public:
                         eGameBoard* board,
                         Ptr& value) {
         using T = typename std::remove_reference<decltype(*value)>::type;
+        Ptr* const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeCharacter(value.get()); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readCharacter(board, [&value](eCharacter* const c) {
-                    value = static_cast<T*>(c);
+            [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readCharacter(board, [tgt](eCharacter* const c) {
+                    *tgt = static_cast<T*>(c);
                 });
             });
     }
@@ -243,13 +246,14 @@ public:
     bool characterField(const char* const name,
                         eGameBoard* board,
                         T*& value) {
+        T** const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeCharacter(value); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readCharacter(board, [&value](eCharacter* const c) {
-                    value = static_cast<T*>(c);
+            [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readCharacter(board, [tgt](eCharacter* const c) {
+                    *tgt = static_cast<T*>(c);
                 });
             });
     }
@@ -258,13 +262,14 @@ public:
     bool buildingField(const char* const name,
                        eGameBoard* board,
                        Ptr& value) {
+        Ptr* const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeBuilding(value.get()); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readBuilding(board, [&value](eBuilding* const b) {
-                    value = b;
+            [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readBuilding(board, [tgt](eBuilding* const b) {
+                    *tgt = b;
                 });
             });
     }
@@ -272,9 +277,10 @@ public:
     template <typename T>
     void buildingAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
-            value.clear();
-            mSrc->readBuilding(board, [&value](eBuilding* const b) {
-                value = static_cast<T*>(b);
+            stdptr<T>* const tgt = &value;
+            tgt->clear();
+            mSrc->readBuilding(board, [tgt](eBuilding* const b) {
+                *tgt = static_cast<T*>(b);
             });
         } else {
             mDst->writeBuilding(value.get());
@@ -285,13 +291,14 @@ public:
     bool buildingAsField(const char* const name,
                          eGameBoard* board,
                          stdptr<T>& value) {
+        stdptr<T>* const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeBuilding(value.get()); },
-            [board, &value](eReadStream& src) {
-                value.clear();
-                src.readBuilding(board, [&value](eBuilding* const b) {
-                    value = static_cast<T*>(b);
+            [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                tgt->clear();
+                src.readBuilding(board, [tgt](eBuilding* const b) {
+                    *tgt = static_cast<T*>(b);
                 });
             });
     }
@@ -300,13 +307,14 @@ public:
     bool buildingAsField(const char* const name,
                          eGameBoard* board,
                          T*& value) {
+        T** const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeBuilding(value); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readBuilding(board, [&value](eBuilding* const b) {
-                    value = static_cast<T*>(b);
+            [tgt](eWriteStream& dst) { dst.writeBuilding(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readBuilding(board, [tgt](eBuilding* const b) {
+                    *tgt = static_cast<T*>(b);
                 });
             });
     }
@@ -314,9 +322,10 @@ public:
     template <typename T>
     void characterAs(eGameBoard* board, stdptr<T>& value) {
         if(reading()) {
-            value.clear();
-            mSrc->readCharacter(board, [&value](eCharacter* const c) {
-                value = static_cast<T*>(c);
+            stdptr<T>* const tgt = &value;
+            tgt->clear();
+            mSrc->readCharacter(board, [tgt](eCharacter* const c) {
+                *tgt = static_cast<T*>(c);
             });
         } else {
             mDst->writeCharacter(value.get());
@@ -327,13 +336,14 @@ public:
     bool characterAsField(const char* const name,
                           eGameBoard* board,
                           stdptr<T>& value) {
+        stdptr<T>* const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeCharacter(value.get()); },
-            [board, &value](eReadStream& src) {
-                value.clear();
-                src.readCharacter(board, [&value](eCharacter* const c) {
-                    value = static_cast<T*>(c);
+            [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                tgt->clear();
+                src.readCharacter(board, [tgt](eCharacter* const c) {
+                    *tgt = static_cast<T*>(c);
                 });
             });
     }
@@ -341,9 +351,10 @@ public:
     template <typename T>
     void characterAs(eGameBoard* board, T*& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readCharacter(board, [&value](eCharacter* const c) {
-                value = static_cast<T*>(c);
+            T** const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readCharacter(board, [tgt](eCharacter* const c) {
+                *tgt = static_cast<T*>(c);
             });
         } else {
             mDst->writeCharacter(value);
@@ -354,22 +365,24 @@ public:
     bool characterAsField(const char* const name,
                           eGameBoard* board,
                           T*& value) {
+        T** const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) { dst.writeCharacter(value); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readCharacter(board, [&value](eCharacter* const c) {
-                    value = static_cast<T*>(c);
+            [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readCharacter(board, [tgt](eCharacter* const c) {
+                    *tgt = static_cast<T*>(c);
                 });
             });
     }
 
     void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
-                value = c;
+            stdsptr<eWorldCity>* const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                *tgt = c;
             });
         } else {
             mDst->writeCity(value.get());
@@ -378,9 +391,10 @@ public:
 
     void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readCity(board, [&value](const stdsptr<eWorldCity>& c) {
-                value = c;
+            stdsptr<eWorldCity>* const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                *tgt = c;
             });
         } else {
             mDst->writeCity(value.get());
@@ -389,9 +403,10 @@ public:
 
     void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
         if(reading()) {
-            value = nullptr;
-            mSrc->readSoldierBanner(board, [&value](const stdsptr<eSoldierBanner>& b) {
-                value = b;
+            stdsptr<eSoldierBanner>* const tgt = &value;
+            *tgt = nullptr;
+            mSrc->readSoldierBanner(board, [tgt](const stdsptr<eSoldierBanner>& b) {
+                *tgt = b;
             });
         } else {
             mDst->writeSoldierBanner(value.get());
@@ -402,12 +417,13 @@ public:
     bool soldierBannerField(const char* const name,
                             eGameBoard* board,
                             Ptr& value) {
+        Ptr* const tgt = &value;
         return payloadField(name,
-            [&value](eWriteStream& dst) { dst.writeSoldierBanner(value.get()); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readSoldierBanner(board, [&value](const stdsptr<eSoldierBanner>& b) {
-                    value = b;
+            [tgt](eWriteStream& dst) { dst.writeSoldierBanner(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readSoldierBanner(board, [tgt](const stdsptr<eSoldierBanner>& b) {
+                    *tgt = b;
                 });
             });
     }
@@ -416,12 +432,13 @@ public:
     bool bannerField(const char* const name,
                      eGameBoard* board,
                      T*& value) {
+        T** const tgt = &value;
         return payloadField(name,
-            [&value](eWriteStream& dst) { dst.writeBanner(value); },
-            [board, &value](eReadStream& src) {
-                value = nullptr;
-                src.readBanner(board, [&value](eBanner* const b) {
-                    value = static_cast<T*>(b);
+            [tgt](eWriteStream& dst) { dst.writeBanner(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readBanner(board, [tgt](eBanner* const b) {
+                    *tgt = static_cast<T*>(b);
                 });
             });
     }
@@ -441,9 +458,10 @@ public:
     template <typename T>
     void gameEvent(eGameBoard* board, T*& val) {
         if(reading()) {
-            val = nullptr;
-            mSrc->readGameEvent(board, [&val](eGameEvent* const e) {
-                val = static_cast<T*>(e);
+            T** const tgt = &val;
+            *tgt = nullptr;
+            mSrc->readGameEvent(board, [tgt](eGameEvent* const e) {
+                *tgt = static_cast<T*>(e);
             });
         } else {
             mDst->writeGameEvent(val);
@@ -453,9 +471,10 @@ public:
     template <typename T>
     void gameEvent(eGameBoard* board, stdptr<T>& val) {
         if(reading()) {
-            val.clear();
-            mSrc->readGameEvent(board, [&val](eGameEvent* const e) {
-                val = static_cast<T*>(e);
+            stdptr<T>* const tgt = &val;
+            tgt->clear();
+            mSrc->readGameEvent(board, [tgt](eGameEvent* const e) {
+                *tgt = static_cast<T*>(e);
             });
         } else {
             mDst->writeGameEvent(val.get());
@@ -464,12 +483,13 @@ public:
 
     template <typename T>
     bool gameEventField(const char* const name, eGameBoard* board, stdptr<T>& val) {
+        stdptr<T>* const tgt = &val;
         return payloadField(name,
-            [&val](eWriteStream& dst) { dst.writeGameEvent(val.get()); },
-            [board, &val](eReadStream& src) {
-                val.clear();
-                src.readGameEvent(board, [&val](eGameEvent* const e) {
-                    val = static_cast<T*>(e);
+            [tgt](eWriteStream& dst) { dst.writeGameEvent(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                tgt->clear();
+                src.readGameEvent(board, [tgt](eGameEvent* const e) {
+                    *tgt = static_cast<T*>(e);
                 });
             });
     }
@@ -525,9 +545,21 @@ public:
     bool directionTimesField(const char* const name,
                              eGameBoard& board,
                              stdsptr<eDirectionTimes>& val) {
+        if(reading()) {
+            val = std::make_shared<eDirectionTimes>();
+            if(!tagged()) {
+                const auto ignored = mSrc->readDirectionTimes(board);
+                (void)ignored;
+                return true;
+            }
+            std::vector<char> ignored;
+            takeField(std::string(name), ignored);
+            return true;
+        }
+        eDirectionTimes empty;
         return payloadField(name,
-            [&val](eWriteStream& dst) { dst.writeDirectionTimes(val.get()); },
-            [&board, &val](eReadStream& src) { val = src.readDirectionTimes(board); });
+            [&empty](eWriteStream& dst) { dst.writeDirectionTimes(&empty); },
+            [](eReadStream&) {});
     }
 
     bool godActField(const char* const name,
@@ -549,15 +581,16 @@ public:
     bool characterActionAsField(const char* const name,
                                 eGameBoard* board,
                                 stdptr<T>& value) {
+        stdptr<T>* const tgt = &value;
         return payloadField(
             name,
-            [&value](eWriteStream& dst) {
-                dst.writeCharacterAction(value.get());
+            [tgt](eWriteStream& dst) {
+                dst.writeCharacterAction(tgt->get());
             },
-            [board, &value](eReadStream& src) {
-                value.clear();
-                src.readCharacterAction(board, [&value](eCharacterAction* const a) {
-                    value = static_cast<T*>(a);
+            [board, tgt](eReadStream& src) {
+                tgt->clear();
+                src.readCharacterAction(board, [tgt](eCharacterAction* const a) {
+                    *tgt = static_cast<T*>(a);
                 });
             });
     }
@@ -565,12 +598,13 @@ public:
     bool invasionHandlerField(const char* const name,
                               eGameBoard* board,
                               eInvasionHandler*& val) {
+        eInvasionHandler** const tgt = &val;
         return payloadField(name,
-            [&val](eWriteStream& dst) { dst.writeInvasionHandler(val); },
-            [board, &val](eReadStream& src) {
-                val = nullptr;
-                src.readInvasionHandler(board, [&val](eInvasionHandler* const i) {
-                    val = i;
+            [tgt](eWriteStream& dst) { dst.writeInvasionHandler(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readInvasionHandler(board, [tgt](eInvasionHandler* const i) {
+                    *tgt = i;
                 });
             });
     }
@@ -677,10 +711,11 @@ public:
             });
         }
         for(int i = readCount; i < count; i++) {
-            std::decay_t<decltype(values[0])> scratch;
+            auto scratch = std::make_shared<std::decay_t<decltype(values[0])>>();
             const std::string itemName = std::string(name) + "." + std::to_string(i);
             archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
-                itemFunc(itemAr, scratch);
+                itemFunc(itemAr, *scratch);
+                itemAr.addPostFunc([scratch]() {}, "fixedArrayField::scratch");
             });
         }
         return count == expected;

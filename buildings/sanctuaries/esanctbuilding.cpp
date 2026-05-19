@@ -64,23 +64,15 @@ void eSanctBuilding::setMonument(eMonument* const s) {
     mMonument = s;
 }
 
-void eSanctBuilding::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-    updateNextCost();
-}
-
-void eSanctBuilding::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSanctBuilding*>(this)->serialize(ar);
-}
-
-void eSanctBuilding::serialize(eSaveArchive& ar) {
+void eSanctBuilding::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("workedOn", mWorkedOn);
     ar.field("progress", mProgress);
     ar.field("halted", mHalted);
+    const stdptr<eSanctBuilding> tptr(this);
+    ar.addPostFunc([tptr]() {
+        if(tptr) tptr->updateNextCost();
+    }, "eSanctBuilding::updateNextCost");
 }
 
 void eSanctBuilding::scheduleTerrainUpdate() {

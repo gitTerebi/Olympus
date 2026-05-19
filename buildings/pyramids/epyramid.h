@@ -24,9 +24,6 @@ public:
 
     void buildingProgressed() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eSanctCost swapMarbleIfDark(const int e, eSanctCost cost) const;
 
     bool darkLevel(const int n) const { return mDark[n]; }
@@ -38,9 +35,9 @@ public:
     static eBuildingType sSwitchGod(const eBuildingType srcType,
                                     const eGodType god);
     static bool sIsToGod(const eBuildingType type);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<ePyramid> mSelf;
 
     std::vector<bool> mDark;

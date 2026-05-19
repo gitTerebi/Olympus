@@ -23,10 +23,8 @@ public:
     bool shutDown() const { return mShutDown; }
     void setShutDown(const bool sd);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
 protected:
-    void serialize(eSaveArchive& ar);
+    void serializeFields(eSaveArchive& ar) override;
 
 private:
     bool mShutDown = false;

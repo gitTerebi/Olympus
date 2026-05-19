@@ -79,7 +79,7 @@ protected:
                                       const eThreadBuilding& target) const;
 
     void serializeFields(eSaveArchive& ar) override;
-    virtual void resumeFromSavedState();
+    void resumeFromSavedState() override;
     virtual bool savesCartState() const;
 
     // subclass hook — called when findTarget BFS fails

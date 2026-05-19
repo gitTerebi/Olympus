@@ -101,6 +101,7 @@ protected:
             const bool wrap, const bool reverse,
             const bool disappear = false) const;
     void serializeFields(eSaveArchive& ar) override;
+    eGameBoard& ownerBoard() const;
 private:
     std::vector<ePausedAction> mPausedActions;
 

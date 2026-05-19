@@ -168,7 +168,7 @@ public:
         eCharActFunc(board, eCharActFuncType::enemyBoatFinish),
         mCptr(c), mInvasion(invasion) {}
 
-    void call() {
+    void call() override {
         if(mCptr) mCptr->kill();
         mInvasion->disembark();
     }

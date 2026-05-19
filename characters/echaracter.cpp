@@ -21,7 +21,13 @@ eCharacter::eCharacter(eGameBoard& board,
 }
 
 eCharacter::~eCharacter() {
-    getBoard().unregisterCharacter(this);
+    ownerBoard().unregisterCharacter(this);
+}
+
+eGameBoard& eCharacter::ownerBoard() const {
+    if(!getBoard().registerBuildingsEnabled()) return getBoard();
+    if(mTile) return mTile->board();
+    return getBoard();
 }
 
 bool eCharacter::canFight(eCharacter* const c) {
@@ -325,7 +331,7 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
     if(disappear && t >= s) return nullptr;
     if(reverse) t = s - t - 1;
     if(!wrap) t = std::clamp(t, 0, s - 1);
-    const int texId = t % s;
+    const int texId = ((t % s) + s) % s;
     return coll->getTexture(texId);
 }
 

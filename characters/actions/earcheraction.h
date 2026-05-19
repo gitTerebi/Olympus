@@ -10,8 +10,8 @@ class eArcherAction : public eComplexAction {
 public:
     eArcherAction(eCharacter* const c);
 
-    void increment(const int by);
-    bool decide();
+    void increment(const int by) override;
+    bool decide() override;
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;

@@ -16,6 +16,6 @@ eMuseum::eMuseum(eGameBoard& board,
 }
 
 eMuseum::~eMuseum() {
-    auto& b = getBoard();
+    auto& b = ownerBoard();
     b.unregisterMuseum(cityId());
 }

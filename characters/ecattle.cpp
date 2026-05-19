@@ -99,8 +99,9 @@ void eCattle::serializeFields(eSaveArchive& ar) {
     ar.field("mId", mId);
     ar.field("mMatureWait", mMatureWait);
     if(ar.reading()) {
-        ar.addPostFunc([this]() {
-            if(mId + 1 > sId) sId = mId + 1;
+        const int id = mId;
+        ar.addPostFunc([id]() {
+            if(id + 1 > sId) sId = id + 1;
         }, "eCattle::sId");
     }
 }

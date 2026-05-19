@@ -29,15 +29,12 @@ public:
 
     int take(const eResourceType type, const int count) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     eDiagonalOrientation orientation() const { return mO; }
 
     eFisheryState state() const { return mState; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     void spawnBoat();
     void updateDisabled();
 

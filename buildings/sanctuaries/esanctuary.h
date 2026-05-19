@@ -33,9 +33,6 @@ public:
 
     void buildingProgressed() override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     std::vector<eTile*> warriorTiles() const;
     void addWarriorTile(eTile* const t);
     void addSpecialTile(eTile* const t);
@@ -66,9 +63,9 @@ public:
     void setSpawnWait(const int w);
 
     bool sacrificing() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eGod> mGod;
     bool mGodAbroad = false;
     int mSpawnWait = 0;

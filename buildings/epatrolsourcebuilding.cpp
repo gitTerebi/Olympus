@@ -1,5 +1,7 @@
 #include "epatrolsourcebuilding.h"
 
+#include <memory>
+
 #include "textures/egametextures.h"
 
 #include "characters/actions/emovetoaction.h"
@@ -50,25 +52,29 @@ void ePatrolSourceBuilding::timeChanged(const int by) {
     }
 }
 
-void ePatrolSourceBuilding::read(eReadStream& src) {
-    ePatrolBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePatrolSourceBuilding::write(eWriteStream& dst) const {
-    ePatrolBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePatrolSourceBuilding*>(this)->serialize(ar);
-}
-
-void ePatrolSourceBuilding::serialize(eSaveArchive& ar) {
-    ar.fixedArrayField("targetData", mTargetData,
-        [this](eSaveArchive& itemAr, eTargetData& td) {
-            itemAr.field("fSpawnTime", td.fSpawnTime);
-            itemAr.field("fLastId", td.fLastId);
-            itemAr.characterField("walker", &getBoard(), td.fWalker);
-    });
+void ePatrolSourceBuilding::serializeFields(eSaveArchive& ar) {
+    ePatrolBuildingBase::serializeFields(ar);
+    if(ar.reading()) {
+        const stdptr<ePatrolSourceBuilding> tptr(this);
+        auto targetData = std::make_shared<std::vector<eTargetData>>(mTargetData);
+        ar.fixedArrayField("targetData", *targetData,
+            [this](eSaveArchive& itemAr, eTargetData& td) {
+                itemAr.field("fSpawnTime", td.fSpawnTime);
+                itemAr.field("fLastId", td.fLastId);
+                itemAr.characterField("walker", &getBoard(), td.fWalker);
+        });
+        ar.addPostFunc([tptr, targetData]() {
+            if(!tptr) return;
+            tptr->mTargetData = *targetData;
+        }, "ePatrolSourceBuilding::targetData");
+    } else {
+        ar.fixedArrayField("targetData", mTargetData,
+            [this](eSaveArchive& itemAr, eTargetData& td) {
+                itemAr.field("fSpawnTime", td.fSpawnTime);
+                itemAr.field("fLastId", td.fLastId);
+                itemAr.characterField("walker", &getBoard(), td.fWalker);
+        });
+    }
 }
 
 bool ePatrolSourceBuilding::targetWalkerInFlight(const int id) const {
@@ -128,9 +134,11 @@ void ePatrolSourceBuilding::spawn(const int id) {
     const auto rw = eWalkableObject::sCreateRoadAvenue();
     const auto walkable = eWalkableObject::sCreateRect(tRect, rw);
     using ePath = std::vector<eOrientation>;
-    const auto finishFunc = [this, walkable, targetRects, id](const ePath&) {
+    const stdptr<ePatrolSourceBuilding> tptr(this);
+    const auto finishFunc = [tptr, walkable, targetRects, id](const ePath&) {
+        if(!tptr) return;
         if(targetRects->empty()) return;
-        auto& targetData = mTargetData[id];
+        auto& targetData = tptr->mTargetData[id];
         const int lastId = targetData.fLastId;
         const int nTargets = targetRects->size();
         int newId = lastId + 1;
@@ -139,12 +147,12 @@ void ePatrolSourceBuilding::spawn(const int id) {
         const auto& targetRect = (*targetRects)[newId];
         targetData.fLastId = newId;
 
-        auto& board = getBoard();
+        auto& board = tptr->getBoard();
         const auto targetTile = board.tile(targetRect.x, targetRect.y);
-        if(!targetTile) return spawn(id);
+        if(!targetTile) return tptr->spawn(id);
         const auto targetBuilding = targetTile->underBuilding();
-        if(!targetBuilding) return spawn(id);
-        spawn(id, targetBuilding);
+        if(!targetBuilding) return tptr->spawn(id);
+        tptr->spawn(id, targetBuilding);
     };
 
     const auto tileBRect = board.boardCityTileBRect(cid);

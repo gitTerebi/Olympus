@@ -258,22 +258,9 @@ void eTower::setEmployed(const int e)
     }
 }
 
-void eTower::read(eReadStream &src)
+void eTower::serializeFields(eSaveArchive &ar)
 {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTower::write(eWriteStream &dst) const
-{
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTower *>(this)->serialize(ar);
-}
-
-void eTower::serialize(eSaveArchive &ar)
-{
+    eEmployingBuilding::serializeFields(ar);
     ar.field("missile", mMissile);
     ar.field("rangeAttack", mRangeAttack);
     ar.field("attackTime", mAttackTime);

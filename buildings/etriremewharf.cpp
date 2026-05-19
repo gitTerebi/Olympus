@@ -202,19 +202,8 @@ std::vector<eCartTask> eTriremeWharf::cartTasks() const {
     return tasks;
 }
 
-void eTriremeWharf::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTriremeWharf::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTriremeWharf*>(this)->serialize(ar);
-}
-
-void eTriremeWharf::serialize(eSaveArchive& ar) {
+void eTriremeWharf::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.characterAsField("takeCart", &getBoard(), mTakeCart);
     ar.characterAsField("trireme", &getBoard(), mTrireme);
     ar.field("woodCount", mWoodCount);

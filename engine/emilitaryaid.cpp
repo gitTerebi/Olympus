@@ -1,6 +1,7 @@
 #include "emilitaryaid.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "characters/esoldierbanner.h"
 #include "fileIO/esavearchive.h"
@@ -38,12 +39,20 @@ void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
                 fCity = c;
             });
         });
-    ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& itemAr, auto& soldier) {
-        itemAr.soldierBanner(board, soldier);
-    });
     if(ar.reading()) {
-        fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),
-                                       [](const auto& s) { return !s; }),
-                        fSoldiers.end());
+        auto soldiers = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+        ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& itemAr, auto& soldier) {
+            itemAr.soldierBanner(board, soldier);
+        });
+        ar.addPostFunc([this, soldiers]() {
+            fSoldiers = *soldiers;
+            fSoldiers.erase(std::remove_if(fSoldiers.begin(), fSoldiers.end(),
+                                           [](const auto& s) { return !s; }),
+                            fSoldiers.end());
+        }, "eMilitaryAid::soldiers");
+    } else {
+        ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& itemAr, auto& soldier) {
+            itemAr.soldierBanner(board, soldier);
+        });
     }
 }

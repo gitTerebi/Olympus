@@ -73,19 +73,8 @@ void eTempleAltarBuilding::timeChanged(const int by) {
     }
 }
 
-void eTempleAltarBuilding::read(eReadStream& src) {
-    eSanctBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTempleAltarBuilding::write(eWriteStream& dst) const {
-    eSanctBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTempleAltarBuilding*>(this)->serialize(ar);
-}
-
-void eTempleAltarBuilding::serialize(eSaveArchive& ar) {
+void eTempleAltarBuilding::serializeFields(eSaveArchive& ar) {
+    eSanctBuilding::serializeFields(ar);
     ar.field("sacrifice", mSacrifice);
     ar.field("sacrificeTime", mSacrificeTime);
 }

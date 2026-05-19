@@ -20,7 +20,7 @@ class eMoveToAction : public eComplexAction {
 public:
     eMoveToAction(eCharacter* const c);
 
-    bool decide() { return false; }
+    bool decide() override { return false; }
 
     using eTileFinal = std::function<bool(eThreadTile* const)>;
     void start(const eTileFinal& final,

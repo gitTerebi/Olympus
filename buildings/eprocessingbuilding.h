@@ -38,17 +38,15 @@ public:
 
     std::vector<eCartTask> cartTasks() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     int rawCount() const { return mRawCount; }
     eResourceType rawMaterial() const { return mRawMaterial; }
     int processWaitTime() const { return mProcessWaitTime; }
     int producedThisYear() const { return mProducedThisYear; }
 
     int productionPercent() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
 
     const std::vector<eBuildingTextures>& mTextures;
 

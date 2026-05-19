@@ -4,6 +4,7 @@
 #include "ebuilding.h"
 
 class ePalace;
+class eSaveArchive;
 
 class ePalaceTile : public eBuilding {
 public:
@@ -18,9 +19,11 @@ public:
     int provide(const eProvide p, const int n) override;
 
     void setPalace(ePalace* const palace);
-    ePalace* palace() const { return mPalace; }
+    ePalace* palace() const;
 
     bool other() const { return mOther; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     ePalace* mPalace = nullptr;
     const bool mOther;

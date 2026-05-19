@@ -104,7 +104,8 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
     return tasks;
 }
 
-void eProcessingBuilding::serialize(eSaveArchive& ar) {
+void eProcessingBuilding::serializeFields(eSaveArchive& ar) {
+    eResourceBuildingBase::serializeFields(ar);
     ar.field("rawCount", mRawCount);
     ar.field("processTime", mProcessTime);
     ar.field("producedThisYear", mProducedThisYear);
@@ -113,18 +114,6 @@ void eProcessingBuilding::serialize(eSaveArchive& ar) {
         ar.field(("monthlyProduced." + std::to_string(i)).c_str(),
                  mMonthlyProduced[i]);
     }
-}
-
-void eProcessingBuilding::read(eReadStream& src) {
-    eResourceBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eProcessingBuilding::write(eWriteStream& dst) const {
-    eResourceBuildingBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eProcessingBuilding*>(this)->serialize(ar);
 }
 
 int eProcessingBuilding::productionPercent() const {

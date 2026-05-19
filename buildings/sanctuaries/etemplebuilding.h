@@ -17,10 +17,9 @@ public:
     std::vector<eOverlay>
     getOverlays(const eTileSize size) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     bool hasNeighbour() const;
 
     int rotatedId() const;

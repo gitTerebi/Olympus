@@ -61,7 +61,7 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_patrolFail),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         const auto t = mTptr.get();
         const auto c = t->character();
@@ -84,7 +84,7 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_huntMonsterFinish),
         mTptr(ca) {}
 
-    void call() {
+    void call() override {
         if(!mTptr) return;
         mTptr->lookForMonster();
     }
@@ -104,7 +104,7 @@ public:
         eCharActFunc(board, eCharActFuncType::HA_fightMonsterDie),
         mMptr(m) {}
 
-    void call() {
+    void call() override {
         if(!mMptr || mMptr->dead()) return;
         auto& board = eCharActFunc::board();
         const auto cid = mMptr->onCityId();

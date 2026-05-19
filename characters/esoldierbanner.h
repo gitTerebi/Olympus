@@ -158,6 +158,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar);
 private:
+    eGameBoard& board() const;
     void updatePlaces();
     void updateCount();
     void callSoldier(eSoldier* const s);

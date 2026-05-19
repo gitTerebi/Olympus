@@ -36,10 +36,9 @@ public:
     void setSanctuary(const bool s);
     void timeChanged(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     const eResourceBuildingType mType;
     const int mRipePeriod;
     bool mSanctuary = false;

@@ -17,14 +17,13 @@ class eCharacter;
 class eCharacterAction;
 class eCharacterActionFunction;
 class eGodAct;
-class eDirectionLastUseTime;
 class eWorldCity;
 class eBanner;
 class eSoldierBanner;
 class eGameEvent;
 class eInvasionHandler;
 
-using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
+#include "engine/edirectionlastusetime.h"
 
 class eWriteTarget {
 public:

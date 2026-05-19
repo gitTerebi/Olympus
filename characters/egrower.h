@@ -14,7 +14,7 @@ class eGrower : public eCharacter {
 public:
     eGrower(eGameBoard& board);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
     void setGrowerType(const eGrowerType t) { mType = t; }
     eGrowerType growerType() const { return mType; }

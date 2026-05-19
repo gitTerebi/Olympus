@@ -20,7 +20,7 @@ eMonument::eMonument(eGameBoard& board,
 
 eMonument::~eMonument() {
     if(mCart) mCart->kill();
-    auto& board = getBoard();
+    auto& board = ownerBoard();
     board.unregisterMonument(this);
     board.destroyed(cityId(), type());
 }
@@ -135,35 +135,14 @@ std::vector<eCartTask> eMonument::cartTasks() const {
     return tasks;
 }
 
-void eMonument::read(eReadStream& src) {
-    eEmployingBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eMonument::write(eWriteStream& dst) const {
-    eEmployingBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMonument*>(this)->serialize(ar);
-}
-
-void eMonument::serialize(eSaveArchive& ar) {
+void eMonument::serializeFields(eSaveArchive& ar) {
+    eEmployingBuilding::serializeFields(ar);
     ar.field("rotated", mRotated);
     ar.field("haltConstruction", mHaltConstruction);
-    ar.payloadField("stored",
-        [this](eWriteStream& dst) { mStored.write(dst); },
-        [this](eReadStream& src) { mStored.read(src); });
-    ar.payloadField("used",
-        [this](eWriteStream& dst) { mUsed.write(dst); },
-        [this](eReadStream& src) { mUsed.read(src); });
+    ar.objectField("stored", mStored);
+    ar.objectField("used", mUsed);
     ar.field("altitude", mAltitude);
-    ar.payloadField("cart",
-        [this](eWriteStream& dst) { dst.writeCharacter(mCart); },
-        [this](eReadStream& src) {
-            src.readCharacter(&getBoard(), [this](eCharacter* const c) {
-                mCart = static_cast<eCartTransporter*>(c);
-            });
-        });
+    ar.characterField("cart", &getBoard(), mCart);
 }
 
 eSanctCost eMonument::cost() const {

@@ -95,7 +95,7 @@ public:
         eFindFailFunc(board, eFindFailFuncType::tryAgain),
         mTptr(ca) {}
 
-    void call(eTile* const tile) {
+    void call(eTile* const tile) override {
         (void)tile;
         if(!mTptr) return;
         mTptr->setCurrentAction(nullptr);

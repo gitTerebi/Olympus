@@ -37,9 +37,8 @@ public:
 
     void bridgeConnectedTiles(std::vector<eTile*>& tiles) const;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-    void serialize(eSaveArchive& ar);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eGatehouse* mUnderGatehouse = nullptr;
     eAgoraBase* mUnderAgora = nullptr;

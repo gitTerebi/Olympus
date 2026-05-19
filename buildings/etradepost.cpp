@@ -41,7 +41,7 @@ eTradePost::eTradePost(eGameBoard& board, eWorldCity& city,
 }
 
 eTradePost::~eTradePost() {
-    getBoard().unregisterTradePost(this);
+    ownerBoard().unregisterTradePost(this);
 }
 
 std::shared_ptr<eTexture> eTradePost::getTexture(const eTileSize size) const {
@@ -313,21 +313,8 @@ void eTradePost::setCharacterCreator(const eCharacterCreator& c) {
     mCharGen = c;
 }
 
-void eTradePost::read(eReadStream& src) {
-    eStorageBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-    setOrders(mImports, mExports, mCartEmpty, mCartGet,
-              mCartAccept, mCartDontAccept);
-}
-
-void eTradePost::write(eWriteStream& dst) const {
-    eStorageBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTradePost*>(this)->serialize(ar);
-}
-
-void eTradePost::serialize(eSaveArchive& ar) {
+void eTradePost::serializeFields(eSaveArchive& ar) {
+    eStorageBuilding::serializeFields(ar);
     ar.field("imports", mImports, eResourceType::none);
     ar.field("exports", mExports, eResourceType::none);
     ar.field("cartEmpty", mCartEmpty, eResourceType::none);
@@ -335,6 +322,12 @@ void eTradePost::serialize(eSaveArchive& ar) {
     ar.field("cartAccept", mCartAccept, eResourceType::none);
     ar.field("cartDontAccept", mCartDontAccept, eResourceType::none);
     ar.field("routeTimer", mRouteTimer, 0);
+    const stdptr<eTradePost> tptr(this);
+    ar.addPostFunc([tptr]() {
+        if(!tptr) return;
+        tptr->setOrders(tptr->mImports, tptr->mExports, tptr->mCartEmpty,
+                        tptr->mCartGet, tptr->mCartAccept, tptr->mCartDontAccept);
+    }, "eTradePost::setOrders");
 }
 
 bool eTradePost::trades() const {

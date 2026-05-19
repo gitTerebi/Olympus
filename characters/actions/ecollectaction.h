@@ -20,7 +20,7 @@ public:
                    const eTranformFunc tf);
     eCollectAction(eCharacter* const c);
 
-    void increment(const int by);
+    void increment(const int by) override;
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:

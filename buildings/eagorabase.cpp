@@ -11,6 +11,8 @@
 #include "characters/epeddler.h"
 #include "fileIO/esavearchive.h"
 
+#include <cstdio>
+
 eAgoraBase::eAgoraBase(eGameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
@@ -56,16 +58,12 @@ void eAgoraBase::erase() {
     eBuilding::erase();
 }
 
-void eAgoraBase::read(eReadStream& src) {
-    ePatrolBuildingBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAgoraBase::serialize(eSaveArchive& ar) {
-    (void)ar;
-    setMaxEmployees(0);
-    fillSpaces();
+void eAgoraBase::serializeFields(eSaveArchive& ar) {
+    ePatrolBuildingBase::serializeFields(ar);
+    if(ar.reading()) {
+        setMaxEmployees(0);
+        fillSpaces();
+    }
 }
 
 int eAgoraBase::add(const eResourceType type, const int count) {
@@ -120,12 +118,19 @@ SDL_Point eAgoraBase::pt(const int rx, const int ry,
 }
 
 eBuilding* eAgoraBase::building(const int id) const {
+    if(id < 0 || id >= static_cast<int>(mBs.size())) return nullptr;
     return mBs[id].get();
 }
 
 void eAgoraBase::setBuilding(const int id, const stdsptr<eBuilding>& b) {
+    if(id < 0 || id >= static_cast<int>(mBs.size())) {
+        printf("agora setBuilding: bad id=%d count=%d\n",
+               id, static_cast<int>(mBs.size()));
+        return;
+    }
     int ebefore = 0;
     auto& before = mBs[id];
+    if(before.get() == b.get()) return;
     if(dynamic_cast<eVendor*>(before.get())) ebefore = 4;
     before = b;
     const int me1 = maxEmployees() - ebefore;
@@ -164,14 +169,10 @@ void eAgoraBase::setBuilding(eBuilding* const space,
 }
 
 int eAgoraBase::buildingId(const eBuilding* const b) const {
-    int id = -1;
-    for(const auto& bb : mBs) {
-        id++;
-        if(bb.get() == b) {
-            break;
-        }
+    for(int id = 0; id < static_cast<int>(mBs.size()); id++) {
+        if(mBs[id].get() == b) return id;
     }
-    return id;
+    return -1;
 }
 
 void eAgoraBase::fillSpaces() {

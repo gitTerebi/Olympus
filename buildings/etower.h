@@ -29,16 +29,14 @@ public:
     bool enabled() const override;
     void setEmployed(const int e) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     bool spawn();
 
     void setDeleteArchers(const bool d) { mDeleteArchers = d; }
 
     eTowerEmploymentState employmentState(const bool mManTowers, const bool hasPalace) const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
 
     bool mDeleteArchers = true;
 

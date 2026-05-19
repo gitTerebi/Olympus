@@ -21,7 +21,12 @@ eMissile::eMissile(eGameBoard& board, const eMissileType type,
 }
 
 eMissile::~eMissile() {
-    mBoard.unregisterMissile(this);
+    board().unregisterMissile(this);
+}
+
+eGameBoard& eMissile::board() const {
+    if(mTile) return mTile->board();
+    return mBoard;
 }
 
 void eMissile::incTime(const int by) {

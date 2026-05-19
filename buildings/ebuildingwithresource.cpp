@@ -95,19 +95,8 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
     return c.get();
 }
 
-void eBuildingWithResource::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eBuildingWithResource::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eBuildingWithResource*>(this)->serialize(ar);
-}
-
-void eBuildingWithResource::serialize(eSaveArchive& ar) {
+void eBuildingWithResource::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("stashable", mStashable);
     ar.arrayField("stash", mStash, [](eSaveArchive& itemAr, eStash& s) {
         itemAr.field("resource", s.fType);

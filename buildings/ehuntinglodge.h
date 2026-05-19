@@ -16,14 +16,11 @@ public:
 
     void timeChanged(const int by) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void addRaw() override {}
     void hunterDelivered(const eResourceType type, const int count);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     bool spawn();
 
     stdptr<eHunter> mHunter;

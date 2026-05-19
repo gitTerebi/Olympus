@@ -43,7 +43,8 @@ static void byteVecField(eSaveArchive& ar, const char* const name,
     ar.field(name, ref);
 }
 
-void eRuins::serialize(eSaveArchive& ar) {
+void eRuins::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
     ar.field("wasType", mWasType);
     ar.field("originX", mOriginX);
     ar.field("originY", mOriginY);
@@ -53,16 +54,4 @@ void eRuins::serialize(eSaveArchive& ar) {
     byteVecField(ar, "savedPier", mSavedPier);
     ar.field("savedPierRect", mSavedPierRect);
     byteVecField(ar, "restoreBundle", mRestoreBundle);
-}
-
-void eRuins::read(eReadStream& src) {
-    eBuilding::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRuins::write(eWriteStream& dst) const {
-    eBuilding::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRuins*>(this)->serialize(ar);
 }
