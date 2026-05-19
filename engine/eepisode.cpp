@@ -192,9 +192,10 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 ar.archiveField(("availableBuildings." + std::to_string(i)).c_str(),
                     [&](eSaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
-                        cityAr.payloadField("buildings",
-                            [](eWriteStream&) {},
-                            [&ab](eReadStream& src) { ab.read(src); });
+                        cityAr.archiveField("buildings",
+                            [&ab](eSaveArchive& buildingsAr) {
+                                ab.serialize(buildingsAr);
+                            });
                     });
                 fAvailableBuildings[cid] = ab;
             }
@@ -206,9 +207,10 @@ void eEpisode::serialize(eSaveArchive& ar) {
                 ar.archiveField(("availableBuildings." + std::to_string(i++)).c_str(),
                     [&](eSaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
-                        cityAr.payloadField("buildings",
-                            [&ab](eWriteStream& dst) { ab.write(dst); },
-                            [](eReadStream&) {});
+                        cityAr.archiveField("buildings",
+                            [&ab](eSaveArchive& buildingsAr) {
+                                ab.serialize(buildingsAr);
+                            });
                     });
             }
         }

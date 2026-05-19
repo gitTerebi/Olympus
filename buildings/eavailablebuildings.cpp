@@ -1,23 +1,11 @@
 #include "eavailablebuildings.h"
 
-#include "fileIO/ereadstream.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/ewritestream.h"
 
 #include "buildings/ebuilding.h"
 
 #include <algorithm>
 #include <iterator>
-
-void eAvailableBuildings::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAvailableBuildings::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eAvailableBuildings*>(this)->serialize(ar);
-}
 
 void eAvailableBuildings::serialize(eSaveArchive& ar) {
     ar.field("eliteHousing", fEliteHousing);

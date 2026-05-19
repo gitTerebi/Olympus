@@ -134,4 +134,5 @@ void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
                 itemAr.characterField("horse", &getBoard(), raw);
             });
     }
+    ar.buildingAsField("ranch", &getBoard(), mRanch);
 }

@@ -146,4 +146,5 @@ void eHorseRanch::serializeFields(eSaveArchive& ar) {
     ar.field("wheatTime", mWheatTime);
     ar.field("horseTime", mHorseTime);
     ar.characterField("takeCart", &getBoard(), mTakeCart);
+    ar.buildingAsField("enclosure", &getBoard(), mEnclosure);
 }

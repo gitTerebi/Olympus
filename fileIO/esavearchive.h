@@ -16,6 +16,12 @@
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 
+#if defined(__cplusplus) && __cplusplus >= 201402L
+#define ESAVE_DEPRECATED(MSG) [[deprecated(MSG)]]
+#else
+#define ESAVE_DEPRECATED(MSG)
+#endif
+
 class eGameBoard;
 class eBuilding;
 class eCharacter;
@@ -45,11 +51,14 @@ public:
 
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
+    ESAVE_DEPRECATED("Use named eSaveArchive fields/helpers instead of raw readStream().")
     eReadStream& readStream() const { return *mSrc; }
 
+    ESAVE_DEPRECATED("Use named eSaveArchive fields/helpers instead of raw writeStream().")
     eWriteStream& writeStream() const { return *mDst; }
 
     // Use only in SAVE_COMPAT_LEGACY_FALLBACK branches after tagged payload lookup fails.
+    ESAVE_DEPRECATED("Legacy raw fallback only; do not use for new save fields.")
     eReadStream& legacyReadStream() const { return *mSrc; }
 
     // Subclasses needing a post-load fixup hook call this on the archive
@@ -60,6 +69,7 @@ public:
     }
 
     template <typename T>
+    ESAVE_DEPRECATED("Use named field()/objectField()/arrayField() helpers instead of raw value().")
     void value(T& value) {
         rawValue(value);
     }
@@ -122,14 +132,14 @@ public:
     // cannot desync the outer archive.
     template <typename T>
     bool objectField(const char* const name, T& obj) {
-        return payloadField(name,
+        return payloadFieldImpl(name,
                             [&obj](eWriteStream& dst) { obj.write(dst); },
                             [&obj](eReadStream& src) { obj.read(src); });
     }
 
     template <typename Func>
     bool archiveField(const char* const name, const Func& func) {
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [&func](eWriteStream& dst) {
                 eSaveArchive childAr(dst);
@@ -142,9 +152,17 @@ public:
     }
 
     template <typename WriteFunc, typename ReadFunc>
+    ESAVE_DEPRECATED("Use archiveField(), objectField(), arrayField(), or typed field helpers instead of direct payloadField().")
     bool payloadField(const char* const name,
                       const WriteFunc& writeFunc,
                       const ReadFunc& readFunc) {
+        return payloadFieldImpl(name, writeFunc, readFunc);
+    }
+
+    template <typename WriteFunc, typename ReadFunc>
+    bool payloadFieldImpl(const char* const name,
+                          const WriteFunc& writeFunc,
+                          const ReadFunc& readFunc) {
         if(!tagged()) {
             if(reading()) readFunc(*mSrc);
             else writeFunc(*mDst);
@@ -190,7 +208,7 @@ public:
     bool tileField(const char* const name,
                    eGameBoard& board,
                    eTile*& value) {
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [this, &value](eWriteStream& dst) {
                 dst.writeTile(value);
             },
@@ -231,7 +249,7 @@ public:
                         Ptr& value) {
         using T = typename std::remove_reference<decltype(*value)>::type;
         Ptr* const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
             [board, tgt](eReadStream& src) {
@@ -247,7 +265,7 @@ public:
                         eGameBoard* board,
                         T*& value) {
         T** const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
             [board, tgt](eReadStream& src) {
@@ -263,7 +281,7 @@ public:
                        eGameBoard* board,
                        Ptr& value) {
         Ptr* const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
             [board, tgt](eReadStream& src) {
@@ -292,7 +310,7 @@ public:
                          eGameBoard* board,
                          stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
             [board, tgt](eReadStream& src) {
@@ -308,7 +326,7 @@ public:
                          eGameBoard* board,
                          T*& value) {
         T** const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeBuilding(*tgt); },
             [board, tgt](eReadStream& src) {
@@ -337,7 +355,7 @@ public:
                           eGameBoard* board,
                           stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
             [board, tgt](eReadStream& src) {
@@ -366,7 +384,7 @@ public:
                           eGameBoard* board,
                           T*& value) {
         T** const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
             [board, tgt](eReadStream& src) {
@@ -418,7 +436,7 @@ public:
                             eGameBoard* board,
                             Ptr& value) {
         Ptr* const tgt = &value;
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeSoldierBanner(tgt->get()); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
@@ -433,7 +451,7 @@ public:
                      eGameBoard* board,
                      T*& value) {
         T** const tgt = &value;
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeBanner(*tgt); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
@@ -484,7 +502,7 @@ public:
     template <typename T>
     bool gameEventField(const char* const name, eGameBoard* board, stdptr<T>& val) {
         stdptr<T>* const tgt = &val;
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeGameEvent(tgt->get()); },
             [board, tgt](eReadStream& src) {
                 tgt->clear();
@@ -557,7 +575,7 @@ public:
             return true;
         }
         eDirectionTimes empty;
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [&empty](eWriteStream& dst) { dst.writeDirectionTimes(&empty); },
             [](eReadStream&) {});
     }
@@ -572,7 +590,7 @@ public:
             if(reading()) val = nullptr;
             return true;
         }
-        return payloadField(name,
+        return payloadFieldImpl(name,
              [&val](eWriteStream& dst) { dst.writeGodAct(val.get()); },
              [&board, &val](eReadStream& src) { val = src.readGodAct(board); });
     }
@@ -582,7 +600,7 @@ public:
                                 eGameBoard* board,
                                 stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
-        return payloadField(
+        return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) {
                 dst.writeCharacterAction(tgt->get());
@@ -599,7 +617,7 @@ public:
                               eGameBoard* board,
                               eInvasionHandler*& val) {
         eInvasionHandler** const tgt = &val;
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeInvasionHandler(*tgt); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
@@ -619,7 +637,7 @@ public:
             if(reading()) val = nullptr;
             return true;
         }
-        return payloadField(name,
+        return payloadFieldImpl(name,
             [&val](eWriteStream& dst) { dst.writeCharActFunc(val.get()); },
             [&board, &val](eReadStream& src) { val = src.readCharActFunc(board); });
     }

@@ -93,12 +93,6 @@ void eCharacterBase::serializeFields(eSaveArchive& ar) {
     ar.field("atlantean", mAtlantean);
 }
 
-void eCharacterBase::read(eReadStream& src) {
-    eSaveArchive ar(src);
+void eCharacterBase::serialize(eSaveArchive& ar) {
     serializeFields(ar);
-}
-
-void eCharacterBase::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCharacterBase*>(this)->serializeFields(ar);
 }

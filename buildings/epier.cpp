@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
+#include "fileIO/esavearchive.h"
 
 ePier::ePier(eGameBoard& board, const eDiagonalOrientation o,
              const eCityId cid) :
@@ -49,4 +50,9 @@ void ePier::collapse() {
 
 void ePier::setTradePost(eBuilding* const b) {
     mTradePost = b;
+}
+
+void ePier::serializeFields(eSaveArchive& ar) {
+    eBuilding::serializeFields(ar);
+    ar.buildingAsField("tradePost", &getBoard(), mTradePost);
 }

@@ -135,16 +135,6 @@ void eHippodrome::nextCleaningPartId() {
     mCleaningPartId = (mCleaningPartId + 1) % l;
 }
 
-void eHippodrome::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eHippodrome*>(this)->serialize(ar);
-}
-
-void eHippodrome::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eHippodrome::serialize(eSaveArchive& ar) {
     ar.field("finish", mFinish);
     ar.field("nHorses", mNHorses);

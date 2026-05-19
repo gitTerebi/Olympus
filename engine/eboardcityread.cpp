@@ -18,7 +18,8 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("id", mId);
     ar.field("atlantean", mAtlantean);
 
-    ar.objectField("availableBuildings", mAvailableBuildings);
+    ar.archiveField("availableBuildings",
+        [this](eSaveArchive& itemAr) { mAvailableBuildings.serialize(itemAr); });
 
     // mCityEvents/mCityPlan/etc dump fields into parent scope; wrap each in own archive
     ar.archiveField("cityEvents", [this](eSaveArchive& itemAr) { mCityEvents.serialize(itemAr); });
@@ -248,17 +249,15 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < hippodromeCount; i++) {
                 const auto h = std::make_shared<eHippodrome>(mId, mBoard);
-                ar.payloadField(("hippodrome." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [h](eReadStream& src) { h->read(src); });
+                ar.archiveField(("hippodrome." + std::to_string(i)).c_str(),
+                    [h](eSaveArchive& itemAr) { h->serialize(itemAr); });
                 mHippodromes.push_back(h);
             }
         } else {
             int i = 0;
             for(const auto& h : mHippodromes) {
-                ar.payloadField(("hippodrome." + std::to_string(i++)).c_str(),
-                    [&h](eWriteStream& dst) { h->write(dst); },
-                    [](eReadStream&) {});
+                ar.archiveField(("hippodrome." + std::to_string(i++)).c_str(),
+                    [&h](eSaveArchive& itemAr) { h->serialize(itemAr); });
             }
         }
     }

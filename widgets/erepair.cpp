@@ -159,7 +159,7 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
             eBuildingType type;
             eSaveArchive bar(bsrc);
             bar.field("buildingType", type);
-            const auto b = eBuildingReader::sRead(board, type, bar);
+            const auto b = eBuildingArchive::load(board, type, bar);
             if (!b)
                 continue;
             buildings.push_back(b);

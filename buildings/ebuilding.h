@@ -372,8 +372,6 @@ public:
 
     bool accessToRoad() const;
 
-    virtual void read(eReadStream& src) final;
-    virtual void write(eWriteStream& dst) const final;
 protected:
     virtual void serializeFields(eSaveArchive& ar);
     eGameBoard& ownerBoard() const;
@@ -392,7 +390,7 @@ public:
     int districtId() const { return mDistrictId; }
 
     double appeal() const;
-protected:
+
     void serialize(eSaveArchive& ar);
 
 private:

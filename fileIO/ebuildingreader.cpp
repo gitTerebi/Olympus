@@ -7,55 +7,13 @@
 #include <cstdio>
 
 template <typename T>
-stdsptr<eBuilding> createVendor(eGameBoard& board,
-                                eReadStream& src,
-                                const eCityId cid) {
-    const auto v = e::make_shared<T>(board, cid);
-    int aid;
-    src >> aid;
-    int sid;
-    src >> sid;
-    src.addPostFunc([aid, sid, v]() {
-        const auto& board = v->getBoard();
-        const auto a = board.buildingWithIOID(aid);
-        if(!a) {
-            printf("vendor load: missing agora aid=%d sid=%d\n", aid, sid);
-            return;
-        }
-        const auto agora = dynamic_cast<eAgoraBase*>(a);
-        if(!agora) {
-            printf("vendor load: bad agora aid=%d sid=%d\n", aid, sid);
-            return;
-        }
-        const auto aa = agora->template ref<eAgoraBase>();
-        v->setAgora(aa);
-        aa->setBuilding(sid, v);
-    });
-    return v;
+stdsptr<eBuilding> createVendorTagged(eGameBoard& board,
+                                     eSaveArchive&,
+                                     const eCityId cid) {
+    return e::make_shared<T>(board, cid);
 }
 
-void readSanctBuildingMonument(
-        eGameBoard& board, eReadStream& src,
-        const stdsptr<eSanctBuilding>& ts) {
-    src.readBuilding(&board, [ts](eBuilding* const bb) {
-        const auto ss = static_cast<eMonument*>(bb);
-        ts->setMonument(ss);
-        ss->registerElement(ts);
-    });
-}
-
-std::vector<eSanctCost> readPyramidElementCost(eReadStream& src) {
-    int n;
-    src >> n;
-    std::vector<eSanctCost> result;
-    for(int i = 0; i < n; i++) {
-        auto& r = result.emplace_back();
-        r.read(src);
-    }
-    return result;
-}
-
-stdsptr<eBuilding> eBuildingReader::sRead(
+stdsptr<eBuilding> eBuildingArchive::load(
         eGameBoard& board, const eBuildingType type,
         eSaveArchive& ar) {
     stdsptr<eBuilding> b;
@@ -67,9 +25,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
             it.field("rotated", rotated);
             b = e::make_shared<ePalace>(board, rotated, cid);
         });
-        ar.payloadField("state",
-            [](eWriteStream&) {},
-            [&](eReadStream& src) { b->read(src); });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
         return b;
     }
     if(type == eBuildingType::palaceTile) {
@@ -80,649 +38,606 @@ stdsptr<eBuilding> eBuildingReader::sRead(
             it.field("other", other);
             b = e::make_shared<ePalaceTile>(board, other, cid);
         });
-        ar.payloadField("state",
-            [](eWriteStream&) {},
-            [&](eReadStream& src) { b->read(src); });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
         return b;
     }
-    ar.payloadField("factoryLegacy",
-        [](eWriteStream&) {},
-        [&](eReadStream& src) {
-    const auto& wrld = board.world();
-    eCityId cid;
-    src >> cid;
-    switch(type) {
-    case eBuildingType::road: {
-        b = e::make_shared<eRoad>(board, cid);
-    } break;
-    case eBuildingType::roadblock: {
-        b = e::make_shared<eRoad>(board, cid);
-    } break;
-    case eBuildingType::commonAgora: {
-        eAgoraOrientation o;
-        src >> o;
-        b = e::make_shared<eCommonAgora>(o, board, cid);
-    } break;
-    case eBuildingType::grandAgora: {
-        eAgoraOrientation o;
-        src >> o;
-        b = e::make_shared<eGrandAgora>(o, board, cid);
-    } break;
-    case eBuildingType::agoraSpace:
-        return;
-    case eBuildingType::commonHouse: {
-        b = e::make_shared<eSmallHouse>(board, cid);
-    } break;
-    case eBuildingType::gymnasium: {
-        b = e::make_shared<eGymnasium>(board, cid);
-    } break;
-    case eBuildingType::podium: {
-        b = e::make_shared<ePodium>(board, cid);
-    } break;
-    case eBuildingType::fountain: {
-        b = e::make_shared<eFountain>(board, cid);
-    } break;
-    case eBuildingType::watchPost: {
-        b = e::make_shared<eWatchpost>(board, cid);
-    } break;
-    case eBuildingType::maintenanceOffice: {
-        b = e::make_shared<eMaintenanceOffice>(board, cid);
-    } break;
-    case eBuildingType::college: {
-        b = e::make_shared<eCollege>(board, cid);
-    } break;
-    case eBuildingType::dramaSchool: {
-        b = e::make_shared<eDramaSchool>(board, cid);
-    } break;
-    case eBuildingType::theater: {
-        b = e::make_shared<eTheater>(board, cid);
-    } break;
-    case eBuildingType::hospital: {
-        b = e::make_shared<eHospital>(board, cid);
-    } break;
-    case eBuildingType::stadium: {
-        bool rotated;
-        src >> rotated;
-        b = e::make_shared<eStadium>(board, rotated, cid);
-    } break;
-    case eBuildingType::bibliotheke: {
-        b = e::make_shared<eBibliotheke>(board, cid);
-    } break;
-    case eBuildingType::observatory: {
-        b = e::make_shared<eObservatory>(board, cid);
-    } break;
-    case eBuildingType::university: {
-        b = e::make_shared<eUniversity>(board, cid);
-    } break;
-    case eBuildingType::laboratory: {
-        b = e::make_shared<eLaboratory>(board, cid);
-    } break;
-    case eBuildingType::inventorsWorkshop: {
-        b = e::make_shared<eInventorsWorkshop>(board, cid);
-    } break;
-    case eBuildingType::museum: {
-        b = e::make_shared<eMuseum>(board, cid);
-    } break;
-    case eBuildingType::palace:
-    case eBuildingType::palaceTile:
-        return; // handled before legacy wrapper
-    case eBuildingType::eliteHousing: {
-        b = e::make_shared<eEliteHousing>(board, cid);
-    } break;
-    case eBuildingType::taxOffice: {
-        b = e::make_shared<eTaxOffice>(board, cid);
-    } break;
-    case eBuildingType::mint: {
-        b = e::make_shared<eMint>(board, cid);
-    } break;
-    case eBuildingType::foundry: {
-        b = e::make_shared<eFoundry>(board, cid);
-    } break;
-    case eBuildingType::refinery: {
-        b = e::make_shared<eRefinery>(board, cid);
-    } break;
-    case eBuildingType::blackMarbleWorkshop: {
-        b = e::make_shared<eBlackMarbleWorkshop>(board, cid);
-    } break;
-    case eBuildingType::timberMill: {
-        b = e::make_shared<eTimberMill>(board, cid);
-    } break;
-    case eBuildingType::masonryShop: {
-        b = e::make_shared<eMasonryShop>(board, cid);
-    } break;
-
-    case eBuildingType::oliveTree: {
-        b = e::make_shared<eResourceBuilding>(
-                board, eResourceBuildingType::oliveTree, cid);
-    } break;
-    case eBuildingType::vine: {
-        b = e::make_shared<eResourceBuilding>(
-                board, eResourceBuildingType::vine, cid);
-    } break;
-    case eBuildingType::orangeTree: {
-        b = e::make_shared<eResourceBuilding>(
-                board, eResourceBuildingType::orangeTree, cid);
-    } break;
-
-    case eBuildingType::huntingLodge: {
-        b = e::make_shared<eHuntingLodge>(board, cid);
-    } break;
-    case eBuildingType::corral: {
-        b = e::make_shared<eCorral>(board, cid);
-    } break;
-
-    case eBuildingType::urchinQuay: {
-        eDiagonalOrientation o;
-        src >> o;
-        b = e::make_shared<eUrchinQuay>(board, o, cid);
-    } break;
-    case eBuildingType::fishery: {
-        eDiagonalOrientation o;
-        src >> o;
-        b = e::make_shared<eFishery>(board, o, cid);
-    } break;
-    case eBuildingType::triremeWharf: {
-        eDiagonalOrientation o;
-        src >> o;
-        b = e::make_shared<eTriremeWharf>(board, o, cid);
-    } break;
-
-    case eBuildingType::pier: {
-        eDiagonalOrientation o;
-        src >> o;
-        const auto p = e::make_shared<ePier>(board, o, cid);
-        b = p;
-        src.readBuilding(&board, [p](eBuilding* const bb) {
-             p->setTradePost(bb);
-        });
-    } break;
-
-    case eBuildingType::tradePost: {
-        eTradePostType tpt;
-        src >> tpt;
-        eDiagonalOrientation o;
-        src >> o;
-
-        eCityId ctid;
-        src >> ctid;
-        const auto ct = wrld.cityWithId(ctid);
-
-        const auto tp = e::make_shared<eTradePost>(board, *ct, cid, tpt);
-        b = tp;
-        tp->setOrientation(o);
-
-        if(tpt == eTradePostType::pier) {
-            src.readBuilding(&board, [tp](eBuilding* const bb) {
-                 tp->setUnpackBuilding(bb);
-            });
+    {
+        auto makeSimple = [&](eGameBoard& brd, eCityId cid) -> stdsptr<eBuilding> {
+            switch(type) {
+            case eBuildingType::commonHouse: return e::make_shared<eSmallHouse>(brd, cid);
+            case eBuildingType::eliteHousing: return e::make_shared<eEliteHousing>(brd, cid);
+            case eBuildingType::road: return e::make_shared<eRoad>(brd, cid);
+            case eBuildingType::roadblock: return e::make_shared<eRoad>(brd, cid);
+            case eBuildingType::gymnasium: return e::make_shared<eGymnasium>(brd, cid);
+            case eBuildingType::podium: return e::make_shared<ePodium>(brd, cid);
+            case eBuildingType::fountain: return e::make_shared<eFountain>(brd, cid);
+            case eBuildingType::watchPost: return e::make_shared<eWatchpost>(brd, cid);
+            case eBuildingType::maintenanceOffice: return e::make_shared<eMaintenanceOffice>(brd, cid);
+            case eBuildingType::college: return e::make_shared<eCollege>(brd, cid);
+            case eBuildingType::dramaSchool: return e::make_shared<eDramaSchool>(brd, cid);
+            case eBuildingType::theater: return e::make_shared<eTheater>(brd, cid);
+            case eBuildingType::hospital: return e::make_shared<eHospital>(brd, cid);
+            case eBuildingType::bibliotheke: return e::make_shared<eBibliotheke>(brd, cid);
+            case eBuildingType::observatory: return e::make_shared<eObservatory>(brd, cid);
+            case eBuildingType::university: return e::make_shared<eUniversity>(brd, cid);
+            case eBuildingType::laboratory: return e::make_shared<eLaboratory>(brd, cid);
+            case eBuildingType::inventorsWorkshop: return e::make_shared<eInventorsWorkshop>(brd, cid);
+            case eBuildingType::museum: return e::make_shared<eMuseum>(brd, cid);
+            case eBuildingType::taxOffice: return e::make_shared<eTaxOffice>(brd, cid);
+            case eBuildingType::mint: return e::make_shared<eMint>(brd, cid);
+            case eBuildingType::foundry: return e::make_shared<eFoundry>(brd, cid);
+            case eBuildingType::refinery: return e::make_shared<eRefinery>(brd, cid);
+            case eBuildingType::blackMarbleWorkshop: return e::make_shared<eBlackMarbleWorkshop>(brd, cid);
+            case eBuildingType::timberMill: return e::make_shared<eTimberMill>(brd, cid);
+            case eBuildingType::masonryShop: return e::make_shared<eMasonryShop>(brd, cid);
+            case eBuildingType::huntingLodge: return e::make_shared<eHuntingLodge>(brd, cid);
+            case eBuildingType::corral: return e::make_shared<eCorral>(brd, cid);
+            case eBuildingType::dairy: return e::make_shared<eDairy>(brd, cid);
+            case eBuildingType::cardingShed: return e::make_shared<eCardingShed>(brd, cid);
+            case eBuildingType::wheatFarm: return e::make_shared<eWheatFarm>(brd, cid);
+            case eBuildingType::onionsFarm: return e::make_shared<eOnionFarm>(brd, cid);
+            case eBuildingType::carrotsFarm: return e::make_shared<eCarrotFarm>(brd, cid);
+            case eBuildingType::granary: return e::make_shared<eGranary>(brd, cid);
+            case eBuildingType::warehouse: return e::make_shared<eWarehouse>(brd, cid);
+            case eBuildingType::wall: return e::make_shared<eWall>(brd, cid);
+            case eBuildingType::tower: return e::make_shared<eTower>(brd, cid);
+            case eBuildingType::armory: return e::make_shared<eArmory>(brd, cid);
+            case eBuildingType::olivePress: return e::make_shared<eOlivePress>(brd, cid);
+            case eBuildingType::winery: return e::make_shared<eWinery>(brd, cid);
+            case eBuildingType::sculptureStudio: return e::make_shared<eSculptureStudio>(brd, cid);
+            case eBuildingType::artisansGuild: return e::make_shared<eArtisansGuild>(brd, cid);
+            case eBuildingType::chariotFactory: return e::make_shared<eChariotFactory>(brd, cid);
+            case eBuildingType::park: return e::make_shared<ePark>(brd, cid);
+            case eBuildingType::doricColumn: return e::make_shared<eDoricColumn>(brd, cid);
+            case eBuildingType::ionicColumn: return e::make_shared<eIonicColumn>(brd, cid);
+            case eBuildingType::corinthianColumn: return e::make_shared<eCorinthianColumn>(brd, cid);
+            case eBuildingType::avenue: return e::make_shared<eAvenue>(brd, cid);
+            case eBuildingType::bench: return e::make_shared<eBench>(brd, cid);
+            case eBuildingType::flowerGarden: return e::make_shared<eFlowerGarden>(brd, cid);
+            case eBuildingType::gazebo: return e::make_shared<eGazebo>(brd, cid);
+            case eBuildingType::hedgeMaze: return e::make_shared<eHedgeMaze>(brd, cid);
+            case eBuildingType::fishPond: return e::make_shared<eFishPond>(brd, cid);
+            case eBuildingType::waterPark: return e::make_shared<eWaterPark>(brd, cid);
+            case eBuildingType::birdBath: return e::make_shared<eBirdBath>(brd, cid);
+            case eBuildingType::shortObelisk: return e::make_shared<eShortObelisk>(brd, cid);
+            case eBuildingType::tallObelisk: return e::make_shared<eTallObelisk>(brd, cid);
+            case eBuildingType::shellGarden: return e::make_shared<eShellGarden>(brd, cid);
+            case eBuildingType::sundial: return e::make_shared<eSundial>(brd, cid);
+            case eBuildingType::dolphinSculpture: return e::make_shared<eDolphinSculpture>(brd, cid);
+            case eBuildingType::spring: return e::make_shared<eSpring>(brd, cid);
+            case eBuildingType::orrery: return e::make_shared<eOrrery>(brd, cid);
+            case eBuildingType::topiary: return e::make_shared<eTopiary>(brd, cid);
+            case eBuildingType::baths: return e::make_shared<eBaths>(brd, cid);
+            case eBuildingType::stoneCircle: return e::make_shared<eStoneCircle>(brd, cid);
+            case eBuildingType::oliveTree: return e::make_shared<eResourceBuilding>(brd, eResourceBuildingType::oliveTree, cid);
+            case eBuildingType::vine: return e::make_shared<eResourceBuilding>(brd, eResourceBuildingType::vine, cid);
+            case eBuildingType::orangeTree: return e::make_shared<eResourceBuilding>(brd, eResourceBuildingType::orangeTree, cid);
+            case eBuildingType::sheep: return e::make_shared<eAnimalBuilding>(brd, nullptr, eBuildingType::sheep, cid);
+            case eBuildingType::goat: return e::make_shared<eAnimalBuilding>(brd, nullptr, eBuildingType::goat, cid);
+            case eBuildingType::cattle: return e::make_shared<eAnimalBuilding>(brd, nullptr, eBuildingType::cattle, cid);
+            case eBuildingType::growersLodge: return e::make_shared<eGrowersLodge>(brd, eGrowerType::grapesAndOlives, cid);
+            case eBuildingType::orangeTendersLodge: return e::make_shared<eGrowersLodge>(brd, eGrowerType::oranges, cid);
+            default: return nullptr;
+            }
+        };
+        bool simple = false;
+        switch(type) {
+        case eBuildingType::commonHouse:
+        case eBuildingType::eliteHousing:
+        case eBuildingType::road:
+        case eBuildingType::roadblock:
+        case eBuildingType::gymnasium:
+        case eBuildingType::podium:
+        case eBuildingType::fountain:
+        case eBuildingType::watchPost:
+        case eBuildingType::maintenanceOffice:
+        case eBuildingType::college:
+        case eBuildingType::dramaSchool:
+        case eBuildingType::theater:
+        case eBuildingType::hospital:
+        case eBuildingType::bibliotheke:
+        case eBuildingType::observatory:
+        case eBuildingType::university:
+        case eBuildingType::laboratory:
+        case eBuildingType::inventorsWorkshop:
+        case eBuildingType::museum:
+        case eBuildingType::taxOffice:
+        case eBuildingType::mint:
+        case eBuildingType::foundry:
+        case eBuildingType::refinery:
+        case eBuildingType::blackMarbleWorkshop:
+        case eBuildingType::timberMill:
+        case eBuildingType::masonryShop:
+        case eBuildingType::huntingLodge:
+        case eBuildingType::corral:
+        case eBuildingType::dairy:
+        case eBuildingType::cardingShed:
+        case eBuildingType::wheatFarm:
+        case eBuildingType::onionsFarm:
+        case eBuildingType::carrotsFarm:
+        case eBuildingType::granary:
+        case eBuildingType::warehouse:
+        case eBuildingType::wall:
+        case eBuildingType::tower:
+        case eBuildingType::armory:
+        case eBuildingType::olivePress:
+        case eBuildingType::winery:
+        case eBuildingType::sculptureStudio:
+        case eBuildingType::artisansGuild:
+        case eBuildingType::chariotFactory:
+        case eBuildingType::park:
+        case eBuildingType::doricColumn:
+        case eBuildingType::ionicColumn:
+        case eBuildingType::corinthianColumn:
+        case eBuildingType::avenue:
+        case eBuildingType::bench:
+        case eBuildingType::flowerGarden:
+        case eBuildingType::gazebo:
+        case eBuildingType::hedgeMaze:
+        case eBuildingType::fishPond:
+        case eBuildingType::waterPark:
+        case eBuildingType::birdBath:
+        case eBuildingType::shortObelisk:
+        case eBuildingType::tallObelisk:
+        case eBuildingType::shellGarden:
+        case eBuildingType::sundial:
+        case eBuildingType::dolphinSculpture:
+        case eBuildingType::spring:
+        case eBuildingType::orrery:
+        case eBuildingType::topiary:
+        case eBuildingType::baths:
+        case eBuildingType::stoneCircle:
+        case eBuildingType::oliveTree:
+        case eBuildingType::vine:
+        case eBuildingType::orangeTree:
+        case eBuildingType::sheep:
+        case eBuildingType::goat:
+        case eBuildingType::cattle:
+        case eBuildingType::growersLodge:
+        case eBuildingType::orangeTendersLodge:
+            simple = true;
+            break;
+        default:
+            break;
         }
-    } break;
-
-    case eBuildingType::dairy: {
-        b = e::make_shared<eDairy>(board, cid);
-    } break;
-    case eBuildingType::cardingShed: {
-        b = e::make_shared<eCardingShed>(board, cid);
-    } break;
-    case eBuildingType::sheep: {
-        b = e::make_shared<eAnimalBuilding>(
-                board, nullptr, eBuildingType::sheep, cid);
-    } break;
-    case eBuildingType::goat: {
-        b = e::make_shared<eAnimalBuilding>(
-                board, nullptr, eBuildingType::goat, cid);
-    } break;
-    case eBuildingType::cattle: {
-        b = e::make_shared<eAnimalBuilding>(
-                board, nullptr, eBuildingType::cattle, cid);
-    } break;
-    case eBuildingType::wheatFarm: {
-        b = e::make_shared<eWheatFarm>(board, cid);
-    } break;
-    case eBuildingType::onionsFarm: {
-        b = e::make_shared<eOnionFarm>(board, cid);
-    } break;
-    case eBuildingType::carrotsFarm: {
-        b = e::make_shared<eCarrotFarm>(board, cid);
-    } break;
-    case eBuildingType::growersLodge: {
-        b = e::make_shared<eGrowersLodge>(
-                board, eGrowerType::grapesAndOlives, cid);
-    } break;
-    case eBuildingType::orangeTendersLodge: {
-        b = e::make_shared<eGrowersLodge>(
-                board, eGrowerType::oranges, cid);
-    } break;
-    case eBuildingType::granary: {
-        b = e::make_shared<eGranary>(board, cid);
-    } break;
-    case eBuildingType::warehouse: {
-        b = e::make_shared<eWarehouse>(board, cid);
-    } break;
-    case eBuildingType::wall: {
-        b = e::make_shared<eWall>(board, cid);
-    } break;
-    case eBuildingType::tower: {
-        b = e::make_shared<eTower>(board, cid);
-    } break;
-
-    case eBuildingType::gatehouse: {
-        bool rotated;
-        src >> rotated;
-        b = e::make_shared<eGatehouse>(board, rotated, cid);
-    } break;
-
-    case eBuildingType::armory: {
-        b = e::make_shared<eArmory>(board, cid);
-    } break;
-
-    case eBuildingType::horseRanch: {
-        const auto hr = e::make_shared<eHorseRanch>(board, cid);
-        b = hr;
-
-        src.readBuilding(&board, [hr](eBuilding* const bb) {
-             hr->setEnclosure(static_cast<eHorseRanchEnclosure*>(bb));
-        });
-    } break;
-    case eBuildingType::horseRanchEnclosure: {
-        const auto hre = e::make_shared<eHorseRanchEnclosure>(board, cid);
-        b = hre;
-        src.readBuilding(&board, [hre](eBuilding* const bb) {
-            hre->setRanch(static_cast<eHorseRanch*>(bb));
-        });
-    } break;
-
-    case eBuildingType::olivePress: {
-        b = e::make_shared<eOlivePress>(board, cid);
-    } break;
-    case eBuildingType::winery: {
-        b = e::make_shared<eWinery>(board, cid);
-    } break;
-    case eBuildingType::sculptureStudio: {
-        b = e::make_shared<eSculptureStudio>(board, cid);
-    } break;
-    case eBuildingType::artisansGuild: {
-        b = e::make_shared<eArtisansGuild>(board, cid);
-    } break;
-
-    case eBuildingType::foodVendor: {
-        b = createVendor<eFoodVendor>(board, src, cid);
-    } break;
-    case eBuildingType::fleeceVendor: {
-        b = createVendor<eFleeceVendor>(board, src, cid);
-    } break;
-    case eBuildingType::oilVendor: {
-        b = createVendor<eOilVendor>(board, src, cid);
-    } break;
-    case eBuildingType::wineVendor: {
-        b = createVendor<eWineVendor>(board, src, cid);
-    } break;
-    case eBuildingType::armsVendor: {
-        b = createVendor<eArmsVendor>(board, src, cid);
-    } break;
-    case eBuildingType::horseTrainer: {
-        b = createVendor<eHorseVendor>(board, src, cid);
-    } break;
-    case eBuildingType::chariotVendor: {
-        b = createVendor<eChariotVendor>(board, src, cid);
-    } break;
-
-    case eBuildingType::chariotFactory: {
-        b = e::make_shared<eChariotFactory>(board, cid);
-    } break;
-
-    case eBuildingType::park: {
-        b = e::make_shared<ePark>(board, cid);
-    } break;
-    case eBuildingType::doricColumn: {
-        b = e::make_shared<eDoricColumn>(board, cid);
-    } break;
-    case eBuildingType::ionicColumn: {
-        b = e::make_shared<eIonicColumn>(board, cid);
-    } break;
-    case eBuildingType::corinthianColumn: {
-        b = e::make_shared<eCorinthianColumn>(board, cid);
-    } break;
-    case eBuildingType::avenue: {
-        b = e::make_shared<eAvenue>(board, cid);
-    } break;
-
-    case eBuildingType::commemorative: {
-        int id;
-        src >> id;
-        b = e::make_shared<eCommemorative>(id, board, cid);
-    } break;
-
-    case eBuildingType::godMonument: {
-        eGodType type;
-        src >> type;
-        eGodQuestId id;
-        src >> id;
-        b = e::make_shared<eGodMonument>(type, id, board, cid);
-    } break;
-    case eBuildingType::godMonumentTile: {
-        const auto pt = e::make_shared<eGodMonumentTile>(board, cid);
-        b = pt;
-        src.readBuilding(&board, [pt](eBuilding* const bb) {
-             const auto monument = static_cast<eGodMonument*>(bb);
-             pt->setMonument(monument);
-             if(monument) monument->addTile(pt.get());
-        });
-    } break;
-
-    case eBuildingType::bench: {
-        b = e::make_shared<eBench>(board, cid);
-    } break;
-    case eBuildingType::flowerGarden: {
-        b = e::make_shared<eFlowerGarden>(board, cid);
-    } break;
-    case eBuildingType::gazebo: {
-        b = e::make_shared<eGazebo>(board, cid);
-    } break;
-    case eBuildingType::hedgeMaze: {
-        b = e::make_shared<eHedgeMaze>(board, cid);
-    } break;
-    case eBuildingType::fishPond: {
-        b = e::make_shared<eFishPond>(board, cid);
-    } break;
-
-    case eBuildingType::waterPark: {
-        b = e::make_shared<eWaterPark>(board, cid);
-    } break;
-
-    case eBuildingType::birdBath: {
-        b = e::make_shared<eBirdBath>(board, cid);
-    } break;
-    case eBuildingType::shortObelisk: {
-        b = e::make_shared<eShortObelisk>(board, cid);
-    } break;
-    case eBuildingType::tallObelisk: {
-        b = e::make_shared<eTallObelisk>(board, cid);
-    } break;
-    case eBuildingType::shellGarden: {
-        b = e::make_shared<eShellGarden>(board, cid);
-    } break;
-    case eBuildingType::sundial: {
-        b = e::make_shared<eSundial>(board, cid);
-    } break;
-    case eBuildingType::dolphinSculpture: {
-        b = e::make_shared<eDolphinSculpture>(board, cid);
-    } break;
-    case eBuildingType::spring: {
-        b = e::make_shared<eSpring>(board, cid);
-    } break;
-    case eBuildingType::orrery: {
-        b = e::make_shared<eOrrery>(board, cid);
-    } break;
-    case eBuildingType::topiary: {
-        b = e::make_shared<eTopiary>(board, cid);
-    } break;
-    case eBuildingType::baths: {
-        b = e::make_shared<eBaths>(board, cid);
-    } break;
-    case eBuildingType::stoneCircle: {
-        b = e::make_shared<eStoneCircle>(board, cid);
-    } break;
-
-    case eBuildingType::templeAphrodite:
-    case eBuildingType::templeApollo:
-    case eBuildingType::templeAres:
-    case eBuildingType::templeArtemis:
-    case eBuildingType::templeAthena:
-    case eBuildingType::templeAtlas:
-    case eBuildingType::templeDemeter:
-    case eBuildingType::templeDionysus:
-    case eBuildingType::templeHades:
-    case eBuildingType::templeHephaestus:
-    case eBuildingType::templeHera:
-    case eBuildingType::templeHermes:
-    case eBuildingType::templePoseidon:
-    case eBuildingType::templeZeus: {
-        int sw;
-        src >> sw;
-        int sh;
-        src >> sh;
-
-        b = eSanctuary::sCreate(type, sw, sh, board, cid);
-    } break;
-    case eBuildingType::templeStatue: {
-        eGodType godType;
-        src >> godType;
-        int id;
-        src >> id;
-        const auto ts = e::make_shared<eTempleStatueBuilding>(godType, id, board, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::templeMonument: {
-        eGodType godType;
-        src >> godType;
-        int id;
-        src >> id;
-        const auto ts = e::make_shared<eTempleMonumentBuilding>(godType, id, board, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::templeAltar: {
-        const auto ts = e::make_shared<eTempleAltarBuilding>(board, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::temple: {
-        const auto ts = e::make_shared<eTempleBuilding>(board, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::templeTile: {
-        int id;
-        src >> id;
-        const auto ts = e::make_shared<eTempleTileBuilding>(id, board, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-
-    case eBuildingType::modestPyramid:
-    case eBuildingType::pyramid:
-    case eBuildingType::greatPyramid:
-    case eBuildingType::majesticPyramid:
-
-    case eBuildingType::smallMonumentToTheSky:
-    case eBuildingType::monumentToTheSky:
-    case eBuildingType::grandMonumentToTheSky:
-
-    case eBuildingType::minorShrineAphrodite:
-    case eBuildingType::minorShrineApollo:
-    case eBuildingType::minorShrineAres:
-    case eBuildingType::minorShrineArtemis:
-    case eBuildingType::minorShrineAthena:
-    case eBuildingType::minorShrineAtlas:
-    case eBuildingType::minorShrineDemeter:
-    case eBuildingType::minorShrineDionysus:
-    case eBuildingType::minorShrineHades:
-    case eBuildingType::minorShrineHephaestus:
-    case eBuildingType::minorShrineHera:
-    case eBuildingType::minorShrineHermes:
-    case eBuildingType::minorShrinePoseidon:
-    case eBuildingType::minorShrineZeus:
-
-    case eBuildingType::shrineAphrodite:
-    case eBuildingType::shrineApollo:
-    case eBuildingType::shrineAres:
-    case eBuildingType::shrineArtemis:
-    case eBuildingType::shrineAthena:
-    case eBuildingType::shrineAtlas:
-    case eBuildingType::shrineDemeter:
-    case eBuildingType::shrineDionysus:
-    case eBuildingType::shrineHades:
-    case eBuildingType::shrineHephaestus:
-    case eBuildingType::shrineHera:
-    case eBuildingType::shrineHermes:
-    case eBuildingType::shrinePoseidon:
-    case eBuildingType::shrineZeus:
-
-    case eBuildingType::majorShrineAphrodite:
-    case eBuildingType::majorShrineApollo:
-    case eBuildingType::majorShrineAres:
-    case eBuildingType::majorShrineArtemis:
-    case eBuildingType::majorShrineAthena:
-    case eBuildingType::majorShrineAtlas:
-    case eBuildingType::majorShrineDemeter:
-    case eBuildingType::majorShrineDionysus:
-    case eBuildingType::majorShrineHades:
-    case eBuildingType::majorShrineHephaestus:
-    case eBuildingType::majorShrineHera:
-    case eBuildingType::majorShrineHermes:
-    case eBuildingType::majorShrinePoseidon:
-    case eBuildingType::majorShrineZeus:
-
-    case eBuildingType::pyramidOfThePantheon:
-    case eBuildingType::altarOfOlympus:
-    case eBuildingType::templeOfOlympus:
-    case eBuildingType::observatoryKosmika:
-    case eBuildingType::museumAtlantika: {
-        int sw;
-        int sh;
-        ePyramid::sDimensions(type, sw, sh);
-        b = e::make_shared<ePyramid>(board, type, sw, sh, cid);
-    } break;
-    case eBuildingType::pyramidWall: {
-        eOrientation o;
-        src >> o;
-        int elevation;
-        src >> elevation;
-        int special;
-        src >> special;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidWall>(
-                            costs, board, o, elevation, special, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidTop: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidTop>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidTile: {
-        int elevation;
-        src >> elevation;
-        int type;
-        src >> type;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidTile>(
-                            costs, board, elevation, type, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidPart: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidBuildingPart>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidAltar: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidAltar>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidStatue: {
-        int elevation;
-        src >> elevation;
-        eGodType type;
-        src >> type;
-        int id;
-        src >> id;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidStatue>(
-                            costs, board, elevation, type, id, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidMonument: {
-        int elevation;
-        src >> elevation;
-        eGodType type;
-        src >> type;
-        int id;
-        src >> id;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidMonument>(
-                            costs, board, elevation, type, id, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidTemple: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidTemple>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidObservatory: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidObservatory>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-    case eBuildingType::pyramidMuseum: {
-        int elevation;
-        src >> elevation;
-        const auto costs = readPyramidElementCost(src);
-        const auto ts = e::make_shared<ePyramidMuseum>(
-                            costs, board, elevation, cid);
-        b = ts;
-        readSanctBuildingMonument(board, src, ts);
-    } break;
-
-    case eBuildingType::achillesHall:
-    case eBuildingType::atalantaHall:
-    case eBuildingType::bellerophonHall:
-    case eBuildingType::herculesHall:
-    case eBuildingType::jasonHall:
-    case eBuildingType::odysseusHall:
-    case eBuildingType::perseusHall:
-    case eBuildingType::theseusHall: {
-        const auto hero = eHerosHall::sHallTypeToHeroType(type);
-        b = e::make_shared<eHerosHall>(hero, board, cid);
-    } break;
-
-    case eBuildingType::ruins: {
-        b = e::make_shared<eRuins>(board, cid);
-    } break;
-    case eBuildingType::placeholder: {
-        b = e::make_shared<ePlaceholder>(board, cid);
-    } break;
-
-    case eBuildingType::hippodromePiece: {
-        b = e::make_shared<eHippodromePiece>(board, cid);
-    } break;
-
-    case eBuildingType::none:
-    case eBuildingType::erase:
-    case eBuildingType::bridge:
-    case eBuildingType::crosswalk:
-        return;
+        if(simple) {
+            ar.archiveField("factory", [&](eSaveArchive& it) {
+                eCityId cid;
+                it.field("cityId", cid);
+                b = makeSimple(board, cid);
+            });
+            ar.archiveField("state", [&](eSaveArchive& it) {
+                if(b) b->serialize(it);
+            });
+            return b;
+        }
     }
-    });
-    if(!b) return nullptr;
-    ar.payloadField("state",
-        [](eWriteStream&) {},
-        [&](eReadStream& src) { b->read(src); });
+    if(type == eBuildingType::stadium) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            bool rotated;
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+            b = e::make_shared<eStadium>(board, rotated, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::gatehouse) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            bool rotated;
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+            b = e::make_shared<eGatehouse>(board, rotated, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::pier) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eDiagonalOrientation o;
+            it.field("cityId", cid);
+            it.field("orientation", o);
+            b = e::make_shared<ePier>(board, o, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::tradePost) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            const auto& wrld = board.world();
+            eCityId cid;
+            eTradePostType tpt;
+            eDiagonalOrientation o;
+            eCityId ctid;
+            it.field("cityId", cid);
+            it.field("tpType", tpt);
+            it.field("orientation", o);
+            it.field("worldCityId", ctid);
+            const auto ct = wrld.cityWithId(ctid);
+            const auto tp = e::make_shared<eTradePost>(board, *ct, cid, tpt);
+            b = tp;
+            tp->setOrientation(o);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::horseRanch) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eHorseRanch>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::horseRanchEnclosure) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eHorseRanchEnclosure>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::foodVendor ||
+       type == eBuildingType::fleeceVendor ||
+       type == eBuildingType::oilVendor ||
+       type == eBuildingType::wineVendor ||
+       type == eBuildingType::armsVendor ||
+       type == eBuildingType::horseTrainer ||
+       type == eBuildingType::chariotVendor) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            switch(type) {
+            case eBuildingType::foodVendor: b = createVendorTagged<eFoodVendor>(board, it, cid); break;
+            case eBuildingType::fleeceVendor: b = createVendorTagged<eFleeceVendor>(board, it, cid); break;
+            case eBuildingType::oilVendor: b = createVendorTagged<eOilVendor>(board, it, cid); break;
+            case eBuildingType::wineVendor: b = createVendorTagged<eWineVendor>(board, it, cid); break;
+            case eBuildingType::armsVendor: b = createVendorTagged<eArmsVendor>(board, it, cid); break;
+            case eBuildingType::horseTrainer: b = createVendorTagged<eHorseVendor>(board, it, cid); break;
+            case eBuildingType::chariotVendor: b = createVendorTagged<eChariotVendor>(board, it, cid); break;
+            default: break;
+            }
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::urchinQuay ||
+       type == eBuildingType::fishery ||
+       type == eBuildingType::triremeWharf) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eDiagonalOrientation o;
+            it.field("cityId", cid);
+            it.field("orientation", o);
+            switch(type) {
+            case eBuildingType::urchinQuay:
+                b = e::make_shared<eUrchinQuay>(board, o, cid); break;
+            case eBuildingType::fishery:
+                b = e::make_shared<eFishery>(board, o, cid); break;
+            case eBuildingType::triremeWharf:
+                b = e::make_shared<eTriremeWharf>(board, o, cid); break;
+            default: break;
+            }
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::commonAgora ||
+       type == eBuildingType::grandAgora) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eAgoraOrientation o;
+            it.field("cityId", cid);
+            it.field("orientation", o);
+            switch(type) {
+            case eBuildingType::commonAgora:
+                b = e::make_shared<eCommonAgora>(o, board, cid); break;
+            case eBuildingType::grandAgora:
+                b = e::make_shared<eGrandAgora>(o, board, cid); break;
+            default: break;
+            }
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::agoraSpace) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            (void)cid;
+        });
+        return b;
+    }
+    if(type == eBuildingType::commemorative) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            int id;
+            it.field("cityId", cid);
+            it.field("id", id);
+            b = e::make_shared<eCommemorative>(id, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::godMonument) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eGodType gtype;
+            eGodQuestId qid;
+            it.field("cityId", cid);
+            it.field("god", gtype);
+            it.field("questId", qid);
+            b = e::make_shared<eGodMonument>(gtype, qid, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(eBuilding::sSanctuaryBuilding(type) &&
+       type != eBuildingType::templeStatue &&
+       type != eBuildingType::templeMonument &&
+       type != eBuildingType::templeAltar &&
+       type != eBuildingType::temple &&
+       type != eBuildingType::templeTile) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            int sw;
+            int sh;
+            it.field("cityId", cid);
+            it.field("spanW", sw);
+            it.field("spanH", sh);
+            b = eSanctuary::sCreate(type, sw, sh, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::templeStatue) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eGodType godType;
+            int id;
+            it.field("cityId", cid);
+            it.field("godType", godType);
+            it.field("id", id);
+            b = e::make_shared<eTempleStatueBuilding>(godType, id, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::templeMonument) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            eGodType godType;
+            int id;
+            it.field("cityId", cid);
+            it.field("godType", godType);
+            it.field("id", id);
+            b = e::make_shared<eTempleMonumentBuilding>(godType, id, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::templeAltar) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eTempleAltarBuilding>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::temple) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eTempleBuilding>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::templeTile) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            int id;
+            it.field("cityId", cid);
+            it.field("id", id);
+            b = e::make_shared<eTempleTileBuilding>(id, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::godMonumentTile) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eGodMonumentTile>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(eBuilding::sHeroHall(type)) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            const auto hero = eHerosHall::sHallTypeToHeroType(type);
+            b = e::make_shared<eHerosHall>(hero, board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(eBuilding::sPyramidBuilding(type) &&
+       type != eBuildingType::pyramidWall &&
+       type != eBuildingType::pyramidTop &&
+       type != eBuildingType::pyramidTile &&
+       type != eBuildingType::pyramidPart &&
+       type != eBuildingType::pyramidAltar &&
+       type != eBuildingType::pyramidStatue &&
+       type != eBuildingType::pyramidMonument &&
+       type != eBuildingType::pyramidTemple &&
+       type != eBuildingType::pyramidObservatory &&
+       type != eBuildingType::pyramidMuseum) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            int sw;
+            int sh;
+            ePyramid::sDimensions(type, sw, sh);
+            b = e::make_shared<ePyramid>(board, type, sw, sh, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    {
+        const bool isPyramidElem =
+            type == eBuildingType::pyramidWall ||
+            type == eBuildingType::pyramidTop ||
+            type == eBuildingType::pyramidTile ||
+            type == eBuildingType::pyramidPart ||
+            type == eBuildingType::pyramidAltar ||
+            type == eBuildingType::pyramidStatue ||
+            type == eBuildingType::pyramidMonument ||
+            type == eBuildingType::pyramidTemple ||
+            type == eBuildingType::pyramidObservatory ||
+            type == eBuildingType::pyramidMuseum;
+        if(isPyramidElem) {
+            ar.archiveField("factory", [&](eSaveArchive& it) {
+                eCityId cid;
+                it.field("cityId", cid);
+                int elevation = 0;
+                eOrientation o = eOrientation::topRight;
+                int special = 0;
+                int subType = 0;
+                eGodType godType = eGodType::aphrodite;
+                int gid = 0;
+                if(type == eBuildingType::pyramidWall) {
+                    it.field("orientation", o);
+                    it.field("elevation", elevation);
+                    it.field("special", special);
+                } else if(type == eBuildingType::pyramidTile) {
+                    it.field("elevation", elevation);
+                    it.field("subType", subType);
+                } else if(type == eBuildingType::pyramidStatue ||
+                          type == eBuildingType::pyramidMonument) {
+                    it.field("elevation", elevation);
+                    it.field("godType", godType);
+                    it.field("godId", gid);
+                } else {
+                    it.field("elevation", elevation);
+                }
+                std::vector<eSanctCost> costs;
+                it.arrayField("costs", costs, [](eSaveArchive& ia, eSanctCost& c) {
+                    c.serialize(ia);
+                });
+                stdsptr<eSanctBuilding> ts;
+                switch(type) {
+                case eBuildingType::pyramidWall:
+                    ts = e::make_shared<ePyramidWall>(costs, board, o, elevation, special, cid); break;
+                case eBuildingType::pyramidTop:
+                    ts = e::make_shared<ePyramidTop>(costs, board, elevation, cid); break;
+                case eBuildingType::pyramidTile:
+                    ts = e::make_shared<ePyramidTile>(costs, board, elevation, subType, cid); break;
+                case eBuildingType::pyramidPart:
+                    ts = e::make_shared<ePyramidBuildingPart>(costs, board, elevation, cid); break;
+                case eBuildingType::pyramidAltar:
+                    ts = e::make_shared<ePyramidAltar>(costs, board, elevation, cid); break;
+                case eBuildingType::pyramidStatue:
+                    ts = e::make_shared<ePyramidStatue>(costs, board, elevation, godType, gid, cid); break;
+                case eBuildingType::pyramidMonument:
+                    ts = e::make_shared<ePyramidMonument>(costs, board, elevation, godType, gid, cid); break;
+                case eBuildingType::pyramidTemple:
+                    ts = e::make_shared<ePyramidTemple>(costs, board, elevation, cid); break;
+                case eBuildingType::pyramidObservatory:
+                    ts = e::make_shared<ePyramidObservatory>(costs, board, elevation, cid); break;
+                case eBuildingType::pyramidMuseum:
+                    ts = e::make_shared<ePyramidMuseum>(costs, board, elevation, cid); break;
+                default: break;
+                }
+                b = ts;
+            });
+            ar.archiveField("state", [&](eSaveArchive& it) {
+                if(b) b->serialize(it);
+            });
+            return b;
+        }
+    }
+    if(type == eBuildingType::ruins) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eRuins>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::placeholder) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<ePlaceholder>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
+    if(type == eBuildingType::hippodromePiece) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            it.field("cityId", cid);
+            b = e::make_shared<eHippodromePiece>(board, cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            if(b) b->serialize(it);
+        });
+        return b;
+    }
     return b;
 }

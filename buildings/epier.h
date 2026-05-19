@@ -15,6 +15,8 @@ public:
     eBuilding* tradePost() const { return mTradePost; }
 
     eDiagonalOrientation orientation() const { return mO; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     const eDiagonalOrientation mO;
     eBuilding* mTradePost = nullptr;

@@ -215,8 +215,7 @@ public:
     bool isMonster() const;
     bool isImmortal() const;
 
-    virtual void read(eReadStream& src) final;
-    virtual void write(eWriteStream& dst) const final;
+    void serialize(eSaveArchive& ar);
 protected:
     virtual void serializeFields(eSaveArchive& ar);
 private:

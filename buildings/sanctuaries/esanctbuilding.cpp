@@ -69,10 +69,15 @@ void eSanctBuilding::serializeFields(eSaveArchive& ar) {
     ar.field("workedOn", mWorkedOn);
     ar.field("progress", mProgress);
     ar.field("halted", mHalted);
+    ar.buildingAsField("monument", &getBoard(), mMonument);
     const stdptr<eSanctBuilding> tptr(this);
     ar.addPostFunc([tptr]() {
-        if(tptr) tptr->updateNextCost();
-    }, "eSanctBuilding::updateNextCost");
+        if(!tptr) return;
+        tptr->updateNextCost();
+        const auto mon = tptr->monument();
+        if(!mon) return;
+        mon->registerElement(tptr->ref<eSanctBuilding>());
+    }, "eSanctBuilding::monument");
 }
 
 void eSanctBuilding::scheduleTerrainUpdate() {
