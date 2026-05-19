@@ -17,6 +17,7 @@ class eWriteStream;
 class eWorldCity;
 class eSoldierBanner;
 class ePlayerConquestEvent;
+class eSaveArchive;
 enum class eCityId;
 enum class eNationality;
 
@@ -71,8 +72,7 @@ public:
 
     void incTime(const int by);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     void killAllWithCorpse();
 

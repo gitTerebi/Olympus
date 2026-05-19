@@ -80,11 +80,8 @@ public:
 
     bool askFor(const eResourceType type, const eCityId cid);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-private:
     void serialize(eSaveArchive& ar);
-
+private:
     void giftAllies();
     bool askForDrachmas();
 

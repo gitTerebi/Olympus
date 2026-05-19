@@ -436,10 +436,8 @@ public:
     void reinforcementsGoHome(const stdsptr<eSoldierBanner>& b);
     void sendAllReinforcementsHome();
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-private:
     void serialize(eSaveArchive& ar);
+private:
     int countAnimalCharacters(const eBuildingType t) const;
 
     void setFriendlyGods(const std::vector<eGodType>& gods);

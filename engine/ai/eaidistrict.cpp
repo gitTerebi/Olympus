@@ -1004,16 +1004,6 @@ void eAIDistrict::addBuilding(const eAIBuilding& a) {
     fBuildings.push_back(a);
 }
 
-void eAIDistrict::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAIDistrict::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eAIDistrict*>(this)->serialize(ar);
-}
-
 void eAIDistrict::serialize(eSaveArchive& ar) {
     ar.arrayField("buildings", fBuildings,
         [](eSaveArchive& itemAr, eAIBuilding& b) { b.serialize(itemAr); });
@@ -1078,16 +1068,6 @@ std::string eDistrictReadyCondition::name() const {
         return "";
     }
     return result;
-}
-
-void eDistrictReadyCondition::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eDistrictReadyCondition::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eDistrictReadyCondition*>(this)->serialize(ar);
 }
 
 void eDistrictReadyCondition::serialize(eSaveArchive& ar) {

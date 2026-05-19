@@ -305,8 +305,7 @@ public:
     eResourceType payTributeType() const { return mPayTributeType; }
     int payTributeCount() const { return mPayTributeCount; }
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src, eWorldBoard* const board);
+    void serialize(eSaveArchive& ar, eWorldBoard* board);
 
     void gifted(const eResourceType type, const int count);
     bool acceptsGift(const eResourceType type, const int count) const;
@@ -320,8 +319,6 @@ public:
     void setCapitalOf(const ePlayerId pid);
     bool isCapitalOf(const ePlayerId pid) const;
 private:
-    void serialize(eSaveArchive& ar, eWorldBoard* board);
-
     int mIOID = -1;
 
     stdsptr<eWorldCity> mConqueredBy;

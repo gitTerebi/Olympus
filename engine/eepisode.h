@@ -12,9 +12,8 @@ enum class eEpisodeType {
 };
 
 struct eEpisode {
-    virtual void read(eReadStream& src);
-    virtual void write(eWriteStream& dst) const;
-    void serialize(eSaveArchive& ar);
+    virtual ~eEpisode() = default;
+    virtual void serialize(eSaveArchive& ar);
 
     bool availableBuilding(const eBuildingType type,
                            const int id = -1) const;
@@ -48,32 +47,18 @@ struct eEpisode {
 };
 
 struct eParentCityEpisode : public eEpisode {
-    void read(eReadStream& src) override {
-        eEpisode::read(src);
-        eSaveArchive ar(src);
-        ar.field("nextEpisode", fNextEpisode);
-    }
-
-    void write(eWriteStream& dst) const override {
-        eEpisode::write(dst);
-        eSaveArchive ar(dst);
-        ar.field("nextEpisode", const_cast<eEpisodeType&>(fNextEpisode));
+    void serialize(eSaveArchive& ar) override {
+        eEpisode::serialize(ar);
+        ar.field("nextEpisode", fNextEpisode, eEpisodeType::parentCity);
     }
 
     eEpisodeType fNextEpisode{eEpisodeType::parentCity};
 };
 
 struct eColonyEpisode : public eEpisode {
-    void read(eReadStream& src) override {
-        eEpisode::read(src);
-        src.readCity(fWorldBoard, [this](const stdsptr<eWorldCity>& c) {
-            fCity = c;
-        });
-    }
-
-    void write(eWriteStream& dst) const override {
-        eEpisode::write(dst);
-        dst.writeCity(fCity.get());
+    void serialize(eSaveArchive& ar) override {
+        eEpisode::serialize(ar);
+        ar.worldCityField("city", fWorldBoard, fCity);
     }
 
     std::string fSelection;

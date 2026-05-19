@@ -462,8 +462,6 @@ public:
     using eGoals = std::vector<stdsptr<eEpisodeGoal>>;
     const eGoals& goals() const { return mGoals; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
     void serializeMessageLog(eSaveArchive& ar);
 
@@ -928,26 +926,12 @@ private:
         std::vector<eTile*> fTiles;
         int fLastDim = 0;
 
-        void read(eReadStream& src, eGameBoard& board) {
-            eSaveArchive ar(src);
-            fStartTile = src.readTile(board);
-            int nt;
-            ar.field("tileCount", nt);
-            for(int i = 0; i < nt; i++) {
-                const auto t = src.readTile(board);
-                fTiles.push_back(t);
-            }
-            ar.field("lastDim", fLastDim);
-        }
-
-        void write(eWriteStream& dst) {
-            eSaveArchive ar(dst);
-            dst.writeTile(fStartTile);
-            int tileCount = fTiles.size();
-            ar.field("tileCount", tileCount);
-            for(const auto t : fTiles) {
-                dst.writeTile(t);
-            }
+        void serialize(eSaveArchive& ar, eGameBoard& board) {
+            ar.tileField("startTile", board, fStartTile);
+            ar.arrayField("tiles", fTiles,
+                [&board](eSaveArchive& itemAr, eTile*& t) {
+                    itemAr.tileField("tile", board, t);
+                });
             ar.field("lastDim", fLastDim);
         }
     };
@@ -967,41 +951,16 @@ private:
         bool fPermanent = false;
         bool fRegres = false;
 
-        void read(eReadStream& src, eGameBoard& board) {
-            eSaveArchive ar(src);
-            int nv;
-            ar.field("tileGroupCount", nv);
-            for(int i = 0; i < nv; i++) {
-                auto& v = fTiles.emplace_back();
-                int nt;
-                ar.field("tileCount", nt);
-                for(int j = 0; j < nt; j++) {
-                    const auto t = src.readTile(board);
-                    eTerrain terr;
-                    ar.field("savedTerrain", terr);
-                    eOrientation o;
-                    ar.field("orientation", o);
-                    v.push_back({t, terr, o});
-                }
-            }
-            ar.field("lastId", fLastId);
-            ar.field("permanent", fPermanent);
-            ar.field("regres", fRegres);
-        }
-
-        void write(eWriteStream& dst) {
-            eSaveArchive ar(dst);
-            int tileGroupCount = fTiles.size();
-            ar.field("tileGroupCount", tileGroupCount);
-            for(const auto& v : fTiles) {
-                int tileCount = v.size();
-                ar.field("tileCount", tileCount);
-                for(const auto t : v) {
-                    dst.writeTile(t.fTile);
-                    ar.field("savedTerrain", const_cast<eTerrain&>(t.fSaved));
-                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
-                }
-            }
+        void serialize(eSaveArchive& ar, eGameBoard& board) {
+            ar.arrayField("tileGroups", fTiles,
+                [&board](eSaveArchive& groupAr, std::vector<eWaveDirection>& v) {
+                    groupAr.arrayField("tiles", v,
+                        [&board](eSaveArchive& tAr, eWaveDirection& d) {
+                            tAr.tileField("tile", board, d.fTile);
+                            tAr.field("savedTerrain", d.fSaved);
+                            tAr.field("orientation", d.fO);
+                        });
+                });
             ar.field("lastId", fLastId);
             ar.field("permanent", fPermanent);
             ar.field("regres", fRegres);
@@ -1017,36 +976,15 @@ private:
         std::vector<std::vector<eLavaDirection>> fTiles;
         int fLastId = 0;
 
-        void read(eReadStream& src, eGameBoard& board) {
-            eSaveArchive ar(src);
-            int nv;
-            ar.field("tileGroupCount", nv);
-            for(int i = 0; i < nv; i++) {
-                auto& v = fTiles.emplace_back();
-                int nt;
-                ar.field("tileCount", nt);
-                for(int j = 0; j < nt; j++) {
-                    const auto t = src.readTile(board);
-                    eOrientation o;
-                    ar.field("orientation", o);
-                    v.push_back({t, o});
-                }
-            }
-            ar.field("lastId", fLastId);
-        }
-
-        void write(eWriteStream& dst) {
-            eSaveArchive ar(dst);
-            int tileGroupCount = fTiles.size();
-            ar.field("tileGroupCount", tileGroupCount);
-            for(const auto& v : fTiles) {
-                int tileCount = v.size();
-                ar.field("tileCount", tileCount);
-                for(const auto t : v) {
-                    dst.writeTile(t.fTile);
-                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
-                }
-            }
+        void serialize(eSaveArchive& ar, eGameBoard& board) {
+            ar.arrayField("tileGroups", fTiles,
+                [&board](eSaveArchive& groupAr, std::vector<eLavaDirection>& v) {
+                    groupAr.arrayField("tiles", v,
+                        [&board](eSaveArchive& tAr, eLavaDirection& d) {
+                            tAr.tileField("tile", board, d.fTile);
+                            tAr.field("orientation", d.fO);
+                        });
+                });
             ar.field("lastId", fLastId);
         }
     };
@@ -1061,39 +999,16 @@ private:
         std::vector<std::vector<eLandSlideDirection>> fTiles;
         int fLastId = 0;
 
-        void read(eReadStream& src, eGameBoard& board) {
-            eSaveArchive ar(src);
-            int nv;
-            ar.field("tileGroupCount", nv);
-            for(int i = 0; i < nv; i++) {
-                auto& v = fTiles.emplace_back();
-                int nt;
-                ar.field("tileCount", nt);
-                for(int j = 0; j < nt; j++) {
-                    const auto t = src.readTile(board);
-                    int newAltitude;
-                    ar.field("newAltitude", newAltitude);
-                    eOrientation o;
-                    ar.field("orientation", o);
-                    v.push_back({t, newAltitude, o});
-                }
-            }
-            ar.field("lastId", fLastId);
-        }
-
-        void write(eWriteStream& dst) {
-            eSaveArchive ar(dst);
-            int tileGroupCount = fTiles.size();
-            ar.field("tileGroupCount", tileGroupCount);
-            for(const auto& v : fTiles) {
-                int tileCount = v.size();
-                ar.field("tileCount", tileCount);
-                for(const auto t : v) {
-                    dst.writeTile(t.fTile);
-                    ar.field("newAltitude", const_cast<int&>(t.fNewAltitude));
-                    ar.field("orientation", const_cast<eOrientation&>(t.fO));
-                }
-            }
+        void serialize(eSaveArchive& ar, eGameBoard& board) {
+            ar.arrayField("tileGroups", fTiles,
+                [&board](eSaveArchive& groupAr, std::vector<eLandSlideDirection>& v) {
+                    groupAr.arrayField("tiles", v,
+                        [&board](eSaveArchive& tAr, eLandSlideDirection& d) {
+                            tAr.tileField("tile", board, d.fTile);
+                            tAr.field("newAltitude", d.fNewAltitude);
+                            tAr.field("orientation", d.fO);
+                        });
+                });
             ar.field("lastId", fLastId);
         }
     };

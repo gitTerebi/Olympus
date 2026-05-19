@@ -360,18 +360,6 @@ void eTile::setMarbleLevel(const int l) {
     scheduleNeighboursTerrainUpdate();
 }
 
-void eTile::read(eReadStream& src) {
-    eTileBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTile::write(eWriteStream& dst) const {
-    eTileBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTile*>(this)->serialize(ar);
-}
-
 void eTile::serialize(eSaveArchive& ar) {
     ar.field("doubleAltitude", mDoubleAltitude);
     ar.field("scrub", mScrub);

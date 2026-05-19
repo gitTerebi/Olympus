@@ -6,27 +6,6 @@
 
 #include <iterator>
 
-void eEpisode::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-
-    if(fIntroId != 0 && fCompleteId != 0) {
-        const auto intro = eLanguage::zeusMM(fIntroId);
-        fTitle = intro.fTitle;
-        fIntroduction = intro.fContent;
-        if(const auto cep = dynamic_cast<eColonyEpisode*>(this)) {
-            cep->fSelection = intro.fSubtitle;
-        }
-        const auto complete = eLanguage::zeusMM(fCompleteId);
-        fComplete = complete.fContent;
-    }
-}
-
-void eEpisode::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEpisode*>(this)->serialize(ar);
-}
-
 void eEpisode::serialize(eSaveArchive& ar) {
     // drachmas map<ePlayerId, int>
     {
@@ -227,6 +206,17 @@ void eEpisode::serialize(eSaveArchive& ar) {
 
     ar.field("introId", fIntroId);
     ar.field("completeId", fCompleteId);
+
+    if(ar.reading() && fIntroId != 0 && fCompleteId != 0) {
+        const auto intro = eLanguage::zeusMM(fIntroId);
+        fTitle = intro.fTitle;
+        fIntroduction = intro.fContent;
+        if(const auto cep = dynamic_cast<eColonyEpisode*>(this)) {
+            cep->fSelection = intro.fSubtitle;
+        }
+        const auto complete = eLanguage::zeusMM(fCompleteId);
+        fComplete = complete.fContent;
+    }
 }
 
 void eEpisode::clear() {

@@ -38,9 +38,6 @@ struct eEpisodeGoal {
 
     stdsptr<eEpisodeGoal> makeCopy() const;
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-
     void serialize(eSaveArchive& ar);
     bool met() const;
     void skipByPlayer();

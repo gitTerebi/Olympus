@@ -865,143 +865,62 @@ void eInvasionHandler::incTime(const int by) {
     }
 }
 
-void eInvasionHandler::read(eReadStream& src) {
-    eSaveArchive ar(src);
+void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("ioId", mIOID);
-    src.readCity(&mBoard, [this](const stdsptr<eWorldCity>& c) {
-        mCity = c;
-    });
-    mTile = src.readTile(mBoard);
-    mCurrentTile = src.readTile(mBoard);
+    ar.worldCityField("city", &mBoard, mCity);
+    ar.tileField("tile", mBoard, mTile);
+    ar.tileField("currentTile", mBoard, mCurrentTile);
     ar.field("stage", mStage);
 
-    {
-        int nb;
-        ar.field("bannerCount", nb);
-
-        for(int i = 0; i < nb; i++) {
-            eBannerType type;
-            ar.field("bannerType", type);
-            const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
-            b->read(src);
-            mBanners.push_back(b);
-        }
-    }
+    ar.arrayField("banners", mBanners,
+        [this](eSaveArchive& itemAr, stdsptr<eSoldierBanner>& b) {
+            eBannerType type = b ? b->type() : eBannerType::hoplite;
+            itemAr.field("type", type);
+            if(itemAr.reading()) {
+                b = e::make_shared<eSoldierBanner>(type, mBoard);
+            }
+            b->serialize(itemAr);
+        });
 
     ar.field("wait", mWait);
-    src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
-        mEvent = static_cast<eInvasionEvent*>(e);
-        if(mEvent) mEvent->addInvasionHandler(this);
-    });
-    src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
-        mConquestEvent = static_cast<ePlayerConquestEvent*>(e);
-    });
-
-    int nhg;
-    ar.field("heroesAndGodsCount", nhg);
-    for(int i = 0; i < nhg; i++) {
-        src.readCharacter(&mBoard, [this](eCharacter* const c) {
-            mHeroesAndGods.push_back(c);
-        });
+    ar.gameEventField("event", &mBoard, mEvent);
+    if(ar.reading()) {
+        ar.addPostFunc([this]() {
+            if(mEvent) mEvent->addInvasionHandler(this);
+        }, "eInvasionHandler::event.addHandler");
     }
+    ar.gameEventField("conquestEvent", &mBoard, mConquestEvent);
+
+    ar.arrayField("heroesAndGods", mHeroesAndGods,
+        [this](eSaveArchive& itemAr, stdptr<eCharacter>& c) {
+            itemAr.characterField("c", &mBoard, c);
+        });
 
     ar.field("infantryLeft", mInfantryLeft);
     ar.field("cavalryLeft", mCavalryLeft);
     ar.field("archersLeft", mArchersLeft);
 
-    int nf;
-    ar.field("forcesLeftCount", nf);
-    for(int i = 0; i < nf; i++) {
-        ePlayerSoldierType type;
-        ar.field("forceType", type);
-        int count;
-        ar.field("forceCount", count);
-        mForcesLeft.push_back({type, count});
-    }
+    ar.arrayField("forcesLeft", mForcesLeft,
+        [](eSaveArchive& itemAr, std::pair<ePlayerSoldierType, int>& s) {
+            itemAr.field("type", s.first);
+            itemAr.field("count", s.second);
+        });
 
     ar.field("aresLeft", mAresLeft);
 
-    int nh;
-    ar.field("heroesLeftCount", nh);
-    for(int i = 0; i < nh; i++) {
-        eHeroType h;
-        ar.field("heroLeft", h);
-        mHeroesLeft.push_back(h);
-    }
+    ar.arrayField("heroesLeft", mHeroesLeft,
+        [](eSaveArchive& itemAr, eHeroType& h) {
+            itemAr.field("hero", h);
+        });
 
-    mBoatsTile = src.readTile(mBoard);
-    mDisembarkTile = src.readTile(mBoard);
+    ar.tileField("boatsTile", mBoard, mBoatsTile);
+    ar.tileField("disembarkTile", mBoard, mDisembarkTile);
     ar.field("boatsLeft", mBoatsLeft);
 
-    int nb;
-    ar.field("boatCount", nb);
-    for(int i = 0; i < nb; i++) {
-        src.readCharacter(&mBoard, [this](eCharacter* const b) {
-            mBoats.push_back(b);
+    ar.arrayField("boats", mBoats,
+        [this](eSaveArchive& itemAr, stdptr<eCharacter>& b) {
+            itemAr.characterField("c", &mBoard, b);
         });
-    }
-}
-
-void eInvasionHandler::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    ar.field("ioId", const_cast<int&>(mIOID));
-    dst.writeCity(mCity.get());
-    dst.writeTile(mTile);
-    dst.writeTile(mCurrentTile);
-    ar.field("stage", const_cast<eInvasionStage&>(mStage));
-
-    {
-        const int nb = mBanners.size();
-        auto bannerCount = nb;
-        ar.field("bannerCount", bannerCount);
-        for(const auto& b : mBanners) {
-            auto type = b->type();
-            ar.field("bannerType", type);
-            b->write(dst);
-        }
-    }
-
-    ar.field("wait", const_cast<int&>(mWait));
-    dst.writeGameEvent(mEvent);
-    dst.writeGameEvent(mConquestEvent);
-
-    int heroesAndGodsCount = mHeroesAndGods.size();
-    ar.field("heroesAndGodsCount", heroesAndGodsCount);
-    for(const auto& c : mHeroesAndGods) {
-        dst.writeCharacter(c.get());
-    }
-
-    ar.field("infantryLeft", const_cast<int&>(mInfantryLeft));
-    ar.field("cavalryLeft", const_cast<int&>(mCavalryLeft));
-    ar.field("archersLeft", const_cast<int&>(mArchersLeft));
-
-    int forcesLeftCount = mForcesLeft.size();
-    ar.field("forcesLeftCount", forcesLeftCount);
-    for(const auto& s : mForcesLeft) {
-        auto type = s.first;
-        auto count = s.second;
-        ar.field("forceType", type);
-        ar.field("forceCount", count);
-    }
-
-    ar.field("aresLeft", const_cast<bool&>(mAresLeft));
-
-    int heroesLeftCount = mHeroesLeft.size();
-    ar.field("heroesLeftCount", heroesLeftCount);
-    for(const auto h : mHeroesLeft) {
-        auto hero = h;
-        ar.field("heroLeft", hero);
-    }
-
-    dst.writeTile(mBoatsTile);
-    dst.writeTile(mDisembarkTile);
-    ar.field("boatsLeft", const_cast<int&>(mBoatsLeft));
-
-    int boatCount = mBoats.size();
-    ar.field("boatCount", boatCount);
-    for(const auto& b : mBoats) {
-        dst.writeCharacter(b);
-    }
 }
 
 void eInvasionHandler::killAllWithCorpse() {

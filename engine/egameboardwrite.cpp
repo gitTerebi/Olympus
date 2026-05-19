@@ -1,14 +1,1 @@
-#include "e-game-board.h"
-
-#include "spawners/ebanner.h"
-#include "fileIO/ebuildingwriter.h"
-#include "fileIO/esavearchive.h"
-#include "gameEvents/invasions/invasion-handler.h"
-#include "missiles/emissile.h"
-#include "gameEvents/egameevent.h"
-#include "eplague.h"
-
-void eGameBoard::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eGameBoard*>(this)->serialize(ar);
-}
+// intentionally empty: eGameBoard now uses unified serialize() in e-game-board-read.cpp

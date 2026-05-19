@@ -96,8 +96,7 @@ public:
     const std::string& name() const { return mName; }
     void setName(const std::string& n) { mName = n; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX, int& toY) const;
