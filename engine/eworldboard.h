@@ -59,8 +59,7 @@ public:
     stdsptr<eWorldCity> cityWithIOID(const int id) const;
     void setIOIDs() const;
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
+    void serialize(eSaveArchive& ar);
 
     stdsptr<eWorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);
@@ -84,8 +83,6 @@ public:
     void setPersonPlayer(const ePlayerId pid) { mPersonPlayer = pid; }
     ePlayerId personPlayer() const { return mPersonPlayer; }
 private:
-    void serialize(eSaveArchive& ar);
-
     bool mEditorMode = false;
     eWorldMap mMap{eWorldMap::greece8};
     std::vector<stdsptr<eWorldCity>> mCities;

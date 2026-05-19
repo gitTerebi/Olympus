@@ -545,6 +545,19 @@ public:
             });
     }
 
+    template <typename T>
+    bool gameEventField(const char* const name, eGameBoard* board, T*& val) {
+        T** const tgt = &val;
+        return payloadFieldImpl(name,
+            [tgt](eWriteStream& dst) { dst.writeGameEvent(*tgt); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readGameEvent(board, [tgt](eGameEvent* const e) {
+                    *tgt = static_cast<T*>(e);
+                });
+            });
+    }
+
     bool walkableField(const char* const name, stdsptr<eWalkableObject>& val) {
         bool hasValue = val != nullptr;
         const std::string hasName = std::string(name) + ".has";
@@ -785,11 +798,11 @@ public:
             eCharActionType type;
             this->rawValue(type);
             action = create(type);
-            action->read(*mSrc);
+            action->serialize(*this);
         } else {
             eCharActionType type = action->type();
             this->rawValue(type);
-            action->write(*mDst);
+            action->serialize(*this);
         }
     }
 

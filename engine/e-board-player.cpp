@@ -157,16 +157,6 @@ void eBoardPlayer::removeConquest(ePlayerConquestEventBase* const q) {
     eVectorHelpers::remove(mConquests, q);
 }
 
-void eBoardPlayer::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eBoardPlayer::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eBoardPlayer*>(this)->serialize(ar);
-}
-
 void eBoardPlayer::serialize(eSaveArchive& ar) {
     ar.field("playerId", mId);
     ar.field("difficulty", mDifficulty);
@@ -181,37 +171,13 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
             itemAr.field("monsterType", m);
         });
 
-    // godQuests: list of eGodQuestEvent* refs
-    {
-        int godQuestCount = static_cast<int>(mGodQuests.size());
-        ar.field("godQuests.count", godQuestCount);
-        if(ar.reading()) {
-            mGodQuests.clear();
-            for(int i = 0; i < godQuestCount; i++) {
-                ar.payloadField(("godQuest." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this](eReadStream& src) {
-                        src.readGameEvent(&mBoard, [this](eGameEvent* const e) {
-                            const auto ge = static_cast<eGodQuestEvent*>(e);
-                            mGodQuests.push_back(ge);
-                        });
-                    });
-            }
-        } else {
-            for(int i = 0; i < godQuestCount; i++) {
-                ar.payloadField(("godQuest." + std::to_string(i)).c_str(),
-                    [this, i](eWriteStream& dst) { dst.writeGameEvent(mGodQuests[i]); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("godQuests", mGodQuests,
+        [this](eSaveArchive& itemAr, eGodQuestEvent*& q) {
+            itemAr.gameEventField("event", &mBoard, q);
+        });
 
     ar.field("drachmas", mDrachmas);
-
-    ar.payloadField("inDebtSince",
-        [this](eWriteStream& dst) { mInDebtSince.write(dst); },
-        [this](eReadStream& src) { mInDebtSince.read(src); });
-
+    ar.dateField("inDebtSince", mInDebtSince);
     ar.field("godAttackTimer", mGodAttackTimer);
 
     ar.archiveField("finances",

@@ -4,16 +4,6 @@
 
 #include <iterator>
 
-void eAIBuilding::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAIBuilding::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eAIBuilding*>(this)->serialize(ar);
-}
-
 void eAIBuilding::serialize(eSaveArchive& ar) {
     ar.field("fType", fType);
     ar.field("fRect", fRect);

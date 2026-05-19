@@ -143,48 +143,31 @@ void eWorldBoard::setIOIDs() const
     }
 }
 
-void eWorldBoard::write(eWriteStream &dst) const
-{
-    setIOIDs();
-    eSaveArchive ar(dst);
-    const_cast<eWorldBoard *>(this)->serialize(ar);
-}
-
-void eWorldBoard::read(eReadStream &src)
-{
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eWorldBoard::serialize(eSaveArchive &ar)
 {
+    if (ar.writing()) setIOIDs();
+
     ar.field("map", mMap);
 
     ar.arrayField("regions", mRegions,
         [](eSaveArchive& itemAr, eWorldRegion& r) {
-            itemAr.payloadField("region",
-                [&](eWriteStream& dst) { r.write(dst); },
-                [&](eReadStream& src) { r.read(src); });
+            r.serialize(itemAr);
         });
 
-    // cities — ctor-free, read takes board ptr
+    // cities — ctor-free, serialize takes board ptr
     {
         int nc = static_cast<int>(mCities.size());
         ar.field("cities.count", nc);
-        if (ar.reading()) {
-            mCities.clear();
-            for (int i = 0; i < nc; i++) {
+        if (ar.reading()) mCities.clear();
+        for (int i = 0; i < nc; i++) {
+            if (ar.reading()) {
                 const auto c = std::make_shared<eWorldCity>();
-                ar.payloadField(("city." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, c](eReadStream& src) { c->read(src, this); });
+                ar.archiveField(("city." + std::to_string(i)).c_str(),
+                    [this, &c](eSaveArchive& cAr) { c->serialize(cAr, this); });
                 addCity(c);
-            }
-        } else {
-            for (int i = 0; i < nc; i++) {
-                ar.payloadField(("city." + std::to_string(i)).c_str(),
-                    [this, i](eWriteStream& dst) { mCities[i]->write(dst); },
-                    [](eReadStream&) {});
+            } else {
+                ar.archiveField(("city." + std::to_string(i)).c_str(),
+                    [this, i](eSaveArchive& cAr) { mCities[i]->serialize(cAr, this); });
             }
         }
         if (ar.reading()) setIOIDs();

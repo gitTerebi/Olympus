@@ -108,8 +108,7 @@ public:
             eCharacter* const c,
             const eCharActionType type);
 
-    virtual void read(eReadStream& src) final;
-    virtual void write(eWriteStream& dst) const final;
+    void serialize(eSaveArchive& ar);
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }

@@ -169,20 +169,10 @@ int eDate::operator-(const eDate& d) const {
     return nd;
 }
 
-void eDate::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eDate*>(this)->serialize(ar);
-}
-
 void eDate::serialize(eSaveArchive& ar) {
     ar.field("day", mDay, 1);
     ar.field("month", mMonth, eMonth::january);
     ar.field("year", mYear, 0);
-}
-
-void eDate::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
 }
 
 bool eSaveArchive::dateField(const char* const name, eDate& d) {

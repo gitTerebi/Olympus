@@ -15,13 +15,7 @@ struct eSetAside {
     void serialize(eSaveArchive& ar, eWorldBoard* const board) {
         ar.field("resource", fRes, eResourceType::none);
         ar.field("count", fCount, 0);
-        ar.payloadField("from",
-            [this](eWriteStream& dst) { dst.writeCity(fFrom.get()); },
-            [this, board](eReadStream& src) {
-                src.readCity(board, [this](const stdsptr<eWorldCity>& city) {
-                    fFrom = city;
-                });
-            });
+        ar.worldCityField("from", board, fFrom);
     }
 };
 
@@ -70,8 +64,6 @@ public:
 
     static bool sReadGlossary(const std::string& name,
                               eCampaignGlossary& glossary);
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
 
     void readPak(const std::string& title,

@@ -155,10 +155,8 @@ public:
     eCityId cityId() const { return mCityId; }
     void setCityId(const eCityId id) { mCityId = id; }
 
-    virtual void read(eReadStream& src);
-    virtual void write(eWriteStream& dst) const;
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     unsigned char mSeed;
 

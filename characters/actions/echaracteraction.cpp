@@ -73,16 +73,12 @@ void eCharacterAction::serializeFields(eSaveArchive& ar) {
     ar.charActFuncField("deleteFailAction", brd, mDeleteFailAction);
 }
 
-void eCharacterAction::read(eReadStream& src) {
-    eSaveArchive ar(src);
+void eCharacterAction::serialize(eSaveArchive& ar) {
     serializeFields(ar);
-    const stdptr<eCharacterAction> tptr(this);
-    ar.addPostFunc([tptr]() {
-        if(tptr) tptr->resumeFromSavedState();
-    }, "resumeFromSavedState");
-}
-
-void eCharacterAction::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCharacterAction*>(this)->serializeFields(ar);
+    if(ar.reading()) {
+        const stdptr<eCharacterAction> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(tptr) tptr->resumeFromSavedState();
+        }, "resumeFromSavedState");
+    }
 }

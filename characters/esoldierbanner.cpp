@@ -478,24 +478,19 @@ void eSoldierBanner::serializeFields(eSaveArchive& ar) {
     }
 }
 
-void eSoldierBanner::read(eReadStream& src) {
-    eSaveArchive ar(src);
+void eSoldierBanner::serialize(eSaveArchive& ar) {
     serializeFields(ar);
-
-    const stdptr<eSoldierBanner> tptr(this);
-    ar.addPostFunc([tptr]() {
-        if(!tptr) return;
-        if(tptr->visibleOnTile() && tptr->mTile) {
-            tptr->mTile->setSoldierBanner(tptr.get());
-        }
-        tptr->updatePlaces();
-        if(!tptr->mHome) tptr->callSoldiers();
-    }, "eSoldierBanner::postLoad");
-}
-
-void eSoldierBanner::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eSoldierBanner*>(this)->serializeFields(ar);
+    if(ar.reading()) {
+        const stdptr<eSoldierBanner> tptr(this);
+        ar.addPostFunc([tptr]() {
+            if(!tptr) return;
+            if(tptr->visibleOnTile() && tptr->mTile) {
+                tptr->mTile->setSoldierBanner(tptr.get());
+            }
+            tptr->updatePlaces();
+            if(!tptr->mHome) tptr->callSoldiers();
+        }, "eSoldierBanner::postLoad");
+    }
 }
 
 void eSoldierBanner::sPlaceDefault(std::vector<eSoldierBanner*>& bs,

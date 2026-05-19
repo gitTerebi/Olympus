@@ -114,16 +114,6 @@ void eAICityPlan::editorDisplayBuildings(eGameBoard& board) {
     }
 }
 
-void eAICityPlan::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eAICityPlan::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eAICityPlan*>(this)->serialize(ar);
-}
-
 void eAICityPlan::serialize(eSaveArchive& ar) {
     ar.field("cityId", mCid);
     ar.field("lastBuildDistrict", mLastBuildDistrict);

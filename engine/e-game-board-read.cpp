@@ -43,11 +43,6 @@ void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     ar.field("lastAutosaveYear", mLastAutosaveYear);
 }
 
-void eGameBoard::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
     int messageCount = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
     ar.field("messageLog.count", messageCount);
@@ -138,9 +133,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         it.field("cityId", cid);
                         const auto c = addCityToBoard(cid);
-                        it.payloadField("city",
-                            [](eWriteStream&) {},
-                            [c](eReadStream& src) { c->read(src); });
+                        it.archiveField("city",
+                            [&c](eSaveArchive& cAr) { c->serialize(cAr); });
                     });
                 scheduleAppealMapUpdate(cid);
             }
@@ -151,9 +145,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eCityId cid = c->id();
                         it.field("cityId", cid);
-                        it.payloadField("city",
-                            [&c](eWriteStream& dst) { c->write(dst); },
-                            [](eReadStream&) {});
+                        it.archiveField("city",
+                            [&c](eSaveArchive& cAr) { c->serialize(cAr); });
                     });
             }
         }
@@ -170,9 +163,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         it.field("playerId", pid);
                         const auto p = std::make_shared<eBoardPlayer>(pid, *this);
-                        it.payloadField("player",
-                            [](eWriteStream&) {},
-                            [p](eReadStream& src) { p->read(src); });
+                        it.archiveField("player",
+                            [&p](eSaveArchive& playerAr) { p->serialize(playerAr); });
                         mPlayersOnBoard.push_back(p);
                     });
             }
@@ -183,9 +175,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         ePlayerId pid = p->id();
                         it.field("playerId", pid);
-                        it.payloadField("player",
-                            [&p](eWriteStream& dst) { p->write(dst); },
-                            [](eReadStream&) {});
+                        it.archiveField("player",
+                            [&p](eSaveArchive& playerAr) { p->serialize(playerAr); });
                     });
             }
         }
@@ -197,10 +188,12 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         for(const auto& ts : mTiles) {
             int j = 0;
             for(const auto& t : ts) {
-                ar.payloadField(
+                ar.archiveField(
                     ("tile." + std::to_string(i) + "." + std::to_string(j)).c_str(),
-                    [&t](eWriteStream& dst) { t->write(dst); },
-                    [&t](eReadStream& src) { t->read(src); });
+                    [&t](eSaveArchive& tAr) {
+                        t->eTileBase::serialize(tAr);
+                        t->serialize(tAr);
+                    });
                 j++;
             }
             i++;
@@ -292,115 +285,40 @@ void eGameBoard::serialize(eSaveArchive& ar) {
     }
 
     // goals
-    {
-        int goalCount = ar.writing() ? static_cast<int>(mGoals.size()) : 0;
-        ar.field("goals.count", goalCount);
-        if(ar.reading()) {
-            for(int i = 0; i < goalCount; i++) {
-                const auto g = std::make_shared<eEpisodeGoal>();
-                ar.payloadField(("goal." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [g](eReadStream& src) { g->read(src); });
-                mGoals.push_back(g);
-            }
-        } else {
-            int i = 0;
-            for(const auto& g : mGoals) {
-                ar.payloadField(("goal." + std::to_string(i++)).c_str(),
-                    [&g](eWriteStream& dst) { g->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("goals", mGoals,
+        [](eSaveArchive& itemAr, stdsptr<eEpisodeGoal>& g) {
+            if(itemAr.reading() && !g) g = std::make_shared<eEpisodeGoal>();
+            g->serialize(itemAr);
+        });
     ar.field("goalsFulfilled", mGoalsFulfilled);
 
     ar.field("progressEarthquakes", mProgressEarthquakes);
-    {
-        int earthquakeCount = ar.writing() ? static_cast<int>(mEarthquakes.size()) : 0;
-        ar.field("earthquakes.count", earthquakeCount);
-        if(ar.reading()) {
-            for(int i = 0; i < earthquakeCount; i++) {
-                const auto e = std::make_shared<eEarthquake>();
-                ar.payloadField(("earthquake." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, e](eReadStream& src) { e->read(src, *this); });
-                mEarthquakes.push_back(e);
-            }
-        } else {
-            int i = 0;
-            for(const auto& e : mEarthquakes) {
-                ar.payloadField(("earthquake." + std::to_string(i++)).c_str(),
-                    [&e](eWriteStream& dst) { e->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("earthquakes", mEarthquakes,
+        [this](eSaveArchive& itemAr, stdsptr<eEarthquake>& e) {
+            if(itemAr.reading() && !e) e = std::make_shared<eEarthquake>();
+            e->serialize(itemAr, *this);
+        });
 
     ar.field("progressWaves", mProgressWaves);
-    {
-        int tidalWaveCount = ar.writing() ? static_cast<int>(mTidalWaves.size()) : 0;
-        ar.field("tidalWaves.count", tidalWaveCount);
-        if(ar.reading()) {
-            for(int i = 0; i < tidalWaveCount; i++) {
-                const auto w = std::make_shared<eTidalWave>();
-                ar.payloadField(("tidalWave." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, w](eReadStream& src) { w->read(src, *this); });
-                mTidalWaves.push_back(w);
-            }
-        } else {
-            int i = 0;
-            for(const auto& w : mTidalWaves) {
-                ar.payloadField(("tidalWave." + std::to_string(i++)).c_str(),
-                    [&w](eWriteStream& dst) { w->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("tidalWaves", mTidalWaves,
+        [this](eSaveArchive& itemAr, stdsptr<eTidalWave>& w) {
+            if(itemAr.reading() && !w) w = std::make_shared<eTidalWave>();
+            w->serialize(itemAr, *this);
+        });
 
     ar.field("progressLavaFlows", mProgressLavaFlows);
-    {
-        int lavaFlowCount = ar.writing() ? static_cast<int>(mLavaFlows.size()) : 0;
-        ar.field("lavaFlows.count", lavaFlowCount);
-        if(ar.reading()) {
-            for(int i = 0; i < lavaFlowCount; i++) {
-                const auto w = std::make_shared<eLavaFlow>();
-                ar.payloadField(("lavaFlow." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, w](eReadStream& src) { w->read(src, *this); });
-                mLavaFlows.push_back(w);
-            }
-        } else {
-            int i = 0;
-            for(const auto& w : mLavaFlows) {
-                ar.payloadField(("lavaFlow." + std::to_string(i++)).c_str(),
-                    [&w](eWriteStream& dst) { w->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("lavaFlows", mLavaFlows,
+        [this](eSaveArchive& itemAr, stdsptr<eLavaFlow>& w) {
+            if(itemAr.reading() && !w) w = std::make_shared<eLavaFlow>();
+            w->serialize(itemAr, *this);
+        });
 
     ar.field("progressLandSlides", mProgressLandSlides);
-    {
-        int landSlideCount = ar.writing() ? static_cast<int>(mLandSlides.size()) : 0;
-        ar.field("landSlides.count", landSlideCount);
-        if(ar.reading()) {
-            for(int i = 0; i < landSlideCount; i++) {
-                const auto w = std::make_shared<eLandSlide>();
-                ar.payloadField(("landSlide." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, w](eReadStream& src) { w->read(src, *this); });
-                mLandSlides.push_back(w);
-            }
-        } else {
-            int i = 0;
-            for(const auto& w : mLandSlides) {
-                ar.payloadField(("landSlide." + std::to_string(i++)).c_str(),
-                    [&w](eWriteStream& dst) { w->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("landSlides", mLandSlides,
+        [this](eSaveArchive& itemAr, stdsptr<eLandSlide>& w) {
+            if(itemAr.reading() && !w) w = std::make_shared<eLandSlide>();
+            w->serialize(itemAr, *this);
+        });
 
     // conqueredBy map<eCityId, vector<stdsptr<eWorldCity>>>
     {
@@ -408,21 +326,15 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         ar.field("conqueredBy.count", conqueredByCount);
         if(ar.reading()) {
             for(int i = 0; i < conqueredByCount; i++) {
-                eCityId cid;
                 ar.archiveField(("conqueredBy." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [this](eSaveArchive& it) {
+                        eCityId cid;
                         it.field("cityId", cid);
-                        int cityRefCount = 0;
-                        it.field("cities.count", cityRefCount);
-                        for(int j = 0; j < cityRefCount; j++) {
-                            it.payloadField(("city." + std::to_string(j)).c_str(),
-                                [](eWriteStream&) {},
-                                [this, cid](eReadStream& src) {
-                                    src.readCity(this, [this, cid](const stdsptr<eWorldCity>& c) {
-                                        mConqueredBy[cid].push_back(c);
-                                    });
-                                });
-                        }
+                        auto& cities = mConqueredBy[cid];
+                        it.arrayField("cities", cities,
+                            [this](eSaveArchive& itemAr, stdsptr<eWorldCity>& c) {
+                                itemAr.worldCityField("city", this, c);
+                            });
                     });
             }
         } else {
@@ -431,16 +343,12 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 eCityId cid = p.first;
                 auto& cities = p.second;
                 ar.archiveField(("conqueredBy." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [this, &cid, &cities](eSaveArchive& it) {
                         it.field("cityId", cid);
-                        int cityRefCount = static_cast<int>(cities.size());
-                        it.field("cities.count", cityRefCount);
-                        for(int j = 0; j < cityRefCount; j++) {
-                            auto& c = cities[j];
-                            it.payloadField(("city." + std::to_string(j)).c_str(),
-                                [&c](eWriteStream& dst) { dst.writeCity(c.get()); },
-                                [](eReadStream&) {});
-                        }
+                        it.arrayField("cities", cities,
+                            [this](eSaveArchive& itemAr, stdsptr<eWorldCity>& c) {
+                                itemAr.worldCityField("city", this, c);
+                            });
                     });
             }
         }
@@ -483,7 +391,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
         for(const auto& c : mCitiesOnBoard) {
             c->updateResources();
         }
-        ar.readStream().addPostFunc([this]() {
+        ar.addPostFunc([this]() {
             for(const auto e : mAllGameEvents) {
                 const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
                 if(request && request->isMainEvent() &&

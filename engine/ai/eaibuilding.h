@@ -25,8 +25,6 @@ struct eAIBuilding {
     eTradePostType fTradePostType;
     SDL_Rect fOtherRect;
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
 };
 

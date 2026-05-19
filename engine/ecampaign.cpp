@@ -305,44 +305,6 @@ bool eCampaign::sReadGlossary(const std::string& name,
     return true;
 }
 
-void eCampaign::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    if(src.format() == "eZeus.ez2") {
-        int saveVersion = 0;
-        ar.field("saveVersion", saveVersion, 0);
-        if(saveVersion != currentSaveVersion) {
-            printf("Invalid save: unsupported saveVersion %d expected %d.\n",
-                   saveVersion, currentSaveVersion);
-            return;
-        }
-    }
-    serialize(ar);
-
-    if(mBriefId != 0 && mCompleteId != 0) {
-        const auto& brief = eLanguage::zeusMM(mBriefId);
-        mTitle = brief.fTitle;
-        mIntroduction = brief.fContent;
-        const auto complete = eLanguage::zeusMM(mCompleteId);
-        mComplete = complete.fContent;
-    }
-
-    if(src.format() == "eZeus.ez2") { // save file
-        if(hasCurrentEpisode()) {
-            const auto e = currentEpisode();
-            e->fBoard->loadResources();
-        }
-    }
-}
-
-void eCampaign::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    if(dst.format() == "eZeus.ez2") {
-        int saveVersion = currentSaveVersion;
-        ar.field("saveVersion", saveVersion);
-    }
-    const_cast<eCampaign*>(this)->serialize(ar);
-}
-
 void eCampaign::serialize(eSaveArchive& ar) {
     ar.field("bitmap", mBitmap);
     ar.field("isPak", mIsPak);
@@ -389,9 +351,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         }
     }
 
-    ar.payloadField("date",
-        [this](eWriteStream& dst) { mDate.write(dst); },
-        [this](eReadStream& src) { mDate.read(src); });
+    ar.dateField("date", mDate);
 
     for(auto& p : mPrices) {
         ar.field(("price." + std::to_string(static_cast<int>(p.first))).c_str(),
@@ -400,16 +360,14 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
     ar.field("difficulty", mDifficulty);
 
-    ar.payloadField("worldBoard",
-        [this](eWriteStream& dst) { mWorldBoard.write(dst); },
-        [this](eReadStream& src) { mWorldBoard.read(src); });
+    ar.archiveField("worldBoard",
+        [this](eSaveArchive& itemAr) { mWorldBoard.serialize(itemAr); });
 
     if(ar.reading()) {
         mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
     }
-    ar.payloadField("parentBoard",
-        [this](eWriteStream& dst) { mParentBoard->write(dst); },
-        [this](eReadStream& src) { mParentBoard->read(src); });
+    ar.archiveField("parentBoard",
+        [this](eSaveArchive& itemAr) { mParentBoard->serialize(itemAr); });
 
     ar.arrayField("playedColonyEpisodes", mPlayedColonyEpisodes,
         [](eSaveArchive& itemAr, int& v) { itemAr.field("episode", v); });
@@ -425,9 +383,8 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 mColonyBoards[i] = e::make_shared<eGameBoard>(mWorldBoard);
             }
             if(finished) continue;
-            ar.payloadField(("colonyBoard." + std::to_string(i)).c_str(),
-                [this, i](eWriteStream& dst) { mColonyBoards[i]->write(dst); },
-                [this, i](eReadStream& src) { mColonyBoards[i]->read(src); });
+            ar.archiveField(("colonyBoard." + std::to_string(i)).c_str(),
+                [this, i](eSaveArchive& itemAr) { mColonyBoards[i]->serialize(itemAr); });
         }
     }
 
@@ -438,9 +395,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 e->fBoard = mParentBoard.get();
                 e->fWorldBoard = &mWorldBoard;
             }
-            itemAr.payloadField("episode",
-                [&](eWriteStream& dst) { e->write(dst); },
-                [&](eReadStream& src) { e->read(src); });
+            e->serialize(itemAr);
         });
 
     // colonyEpisodes — need index for fBoard wiring on read
@@ -454,9 +409,10 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 mColonyEpisodes[i]->fBoard = mColonyBoards[i].get();
                 mColonyEpisodes[i]->fWorldBoard = &mWorldBoard;
             }
-            ar.payloadField(("colonyEpisode." + std::to_string(i)).c_str(),
-                [this, i](eWriteStream& dst) { mColonyEpisodes[i]->write(dst); },
-                [this, i](eReadStream& src) { mColonyEpisodes[i]->read(src); });
+            ar.archiveField(("colonyEpisode." + std::to_string(i)).c_str(),
+                [this, i](eSaveArchive& itemAr) {
+                    mColonyEpisodes[i]->serialize(itemAr);
+                });
         }
     }
 
@@ -500,7 +456,8 @@ bool eCampaign::load(const std::string& name) {
                pakFile.c_str(), format.c_str());
         return false;
     }
-    read(src);
+    eSaveArchive ar(src);
+    serialize(ar);
     src.handlePostFuncs();
     file.close();
 
@@ -523,7 +480,8 @@ bool eCampaign::save() const {
     eWriteTarget target(&file);
     eWriteStream dst(target);
     dst.writeFormat("eZeus.epak");
-    write(dst);
+    eSaveArchive ar(dst);
+    const_cast<eCampaign*>(this)->serialize(ar);
     file.close();
     return true;
 }
@@ -709,13 +667,15 @@ void eCampaign::copyEpisodeSettings(eEpisode* const from,
         eWriteTarget target(mem);
         eWriteStream dst(target);
         dst.writeFormat("eZeus");
-        from->write(dst);
+        eSaveArchive ar(dst);
+        from->serialize(ar);
     }
     {
         eReadSource source(mem);
         eReadStream src(source);
         src.readFormat();
-        to->read(src);
+        eSaveArchive ar(src);
+        to->serialize(ar);
         src.handlePostFuncs();
     }
 

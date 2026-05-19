@@ -21,6 +21,7 @@
 #include "egamedir.h"
 
 #include "fileIO/ereadstream.h"
+#include "fileIO/esavearchive.h"
 
 #include <chrono>
 #include <thread>
@@ -57,7 +58,10 @@ bool writeGameSaveFile(const std::string& path,
         s.fPaused = true;
         s.write(dst);
     }
-    campaign->write(dst);
+    {
+        eSaveArchive campaignAr(dst);
+        campaign->serialize(campaignAr);
+    }
     file.close();
     return true;
 }
@@ -430,7 +434,10 @@ bool eMainWindow::loadGame(const std::string& path) {
     eGameWidgetSettings s;
     s.read(src);
     const auto c = std::make_shared<eCampaign>();
-    c->read(src);
+    {
+        eSaveArchive campaignAr(src);
+        c->serialize(campaignAr);
+    }
     c->loadStrings();
     c->loadNumbers();
     src.handlePostFuncs();

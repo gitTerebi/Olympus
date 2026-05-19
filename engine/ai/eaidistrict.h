@@ -22,9 +22,6 @@ struct eDistrictReadyCondition {
 
     std::string name() const;
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-
     void serialize(eSaveArchive& ar);
     eType fType;
     eResourceType fResource = eResourceType::drachmas;
@@ -51,8 +48,6 @@ public:
 
     void addBuilding(const eAIBuilding& a);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
 
     std::vector<eAIBuilding> fBuildings;

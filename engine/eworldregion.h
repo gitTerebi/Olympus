@@ -19,20 +19,11 @@ struct eWorldRegion {
         return eLanguage::zeusText(196, fNameId);
     }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("name", fName);
         ar.field("nameId", fNameId);
         ar.field("x", fX);
         ar.field("y", fY);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("name", const_cast<std::string&>(fName));
-        ar.field("nameId", const_cast<int&>(fNameId));
-        ar.field("x", const_cast<double&>(fX));
-        ar.field("y", const_cast<double&>(fY));
     }
 };
 

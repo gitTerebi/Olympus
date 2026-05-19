@@ -39,8 +39,6 @@ public:
 
     void editorDisplayBuildings(eGameBoard& board);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
 private:
 

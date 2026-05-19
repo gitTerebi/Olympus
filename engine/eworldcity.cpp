@@ -675,12 +675,6 @@ void eWorldCity::addSells(const eResourceTrade &s)
     mSells.push_back(s);
 }
 
-void eWorldCity::write(eWriteStream &dst) const
-{
-    eSaveArchive ar(dst);
-    const_cast<eWorldCity *>(this)->serialize(ar, nullptr);
-}
-
 void serializeResourceTrades(eSaveArchive &ar,
                              const char *const name,
                              std::vector<eResourceTrade> &trades)
@@ -699,32 +693,12 @@ void serializeResourceTrades(eSaveArchive &ar,
     }
 }
 
-void eWorldCity::read(eReadStream &src, eWorldBoard *const board)
-{
-    eSaveArchive ar(src);
-    serialize(ar, board);
-    if (mNameString > -1 && mNameString < 82)
-    {
-        mName = eLanguage::zeusText(21, mNameString);
-    }
-    if (mLeaderString > -1 && mLeaderString < 84)
-    {
-        mLeader = eLanguage::zeusText(139, mLeaderString);
-    }
-}
-
 void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
 {
     ar.field("ioId", mIOID);
     ar.field("cityId", mCityId);
 
-    ar.payloadField("conqueredBy",
-        [this](eWriteStream& dst) { dst.writeCity(mConqueredBy.get()); },
-        [this, board](eReadStream& src) {
-            src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-                mConqueredBy = c;
-            });
-        });
+    ar.worldCityField("conqueredBy", board, mConqueredBy);
 
     ar.field("playerId", mPlayerId);
     ar.field("capitalOf", mCapitalOf);
@@ -837,6 +811,15 @@ void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
     ar.field("bribeMonthsAgo", mBribeMonthsAgo);
+
+    if (ar.reading()) {
+        if (mNameString > -1 && mNameString < 82) {
+            mName = eLanguage::zeusText(21, mNameString);
+        }
+        if (mLeaderString > -1 && mLeaderString < 84) {
+            mLeader = eLanguage::zeusText(139, mLeaderString);
+        }
+    }
 }
 
 void eWorldCity::gifted(const eResourceType type, const int count)

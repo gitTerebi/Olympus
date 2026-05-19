@@ -196,6 +196,8 @@ rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(" gameEvents
 ```
 
 ### F - engine/world graph: IN PROGRESS
+Detailed batch: `TODO-f-batch.md`.
+
 Targets:
 - `eCampaign`
 - `eWorldBoard`

@@ -61,9 +61,7 @@ public:
     eDate operator-(const int d) const;
     int operator-(const eDate& d) const;
 
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
-    void read(eReadStream& src);
 private:
     int mDay;
     eMonth mMonth;

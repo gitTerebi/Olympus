@@ -182,21 +182,11 @@ void eTileBase::setBottomLeft(eTileBase* const bl) {
     mBottomLeft = bl;
 }
 
-void eTileBase::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTileBase::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eTileBase*>(this)->serialize(ar);
-}
-
 void eTileBase::serialize(eSaveArchive& ar) {
-    ar.field("mSeed", mSeed);
-    ar.field("mTerr", mTerr);
-    ar.field("mMarbleLevel", mMarbleLevel);
-    ar.field("mResource", mResource);
+    ar.field("seed", mSeed);
+    ar.field("terr", mTerr);
+    ar.field("marbleLevel", mMarbleLevel);
+    ar.field("resource", mResource);
 
     unsigned char bools;
     if(ar.writing()) {
@@ -214,6 +204,6 @@ void eTileBase::serialize(eSaveArchive& ar) {
     mHasFish = bools & 1 << 3;
     mRoadblock = bools & 1 << 4;
 
-    ar.field("mCityId", mCityId);
+    ar.field("cityId", mCityId);
 }
 

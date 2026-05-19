@@ -18,16 +18,6 @@ stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     return result;
 }
 
-void eEpisodeGoal::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eEpisodeGoal::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEpisodeGoal*>(this)->serialize(ar);
-}
-
 void eEpisodeGoal::serialize(eSaveArchive& ar) {
     ar.field("goalType", fType);
     ar.field("enumInt1", fEnumInt1);

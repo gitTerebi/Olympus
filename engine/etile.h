@@ -162,10 +162,8 @@ public:
     void setTerrain(const eTerrain terr) override;
     void setMarbleLevel(const int l) override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     void updateIsElevationTile();
 

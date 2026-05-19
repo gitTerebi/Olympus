@@ -10,10 +10,6 @@
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
 
-void eBoardCity::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
 void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("id", mId);
     ar.field("atlantean", mAtlantean);
@@ -72,46 +68,25 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         ar.countedArrayField("invasionHandlers", 0, [this](eSaveArchive& itemAr, const int) {
             const auto handler = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
-            itemAr.object(*handler);
+            handler->serialize(itemAr);
         });
     } else {
         ar.countedArrayField("invasionHandlers",
                              static_cast<int>(mInvasionHandlers.size()),
                              [this](eSaveArchive& itemAr, const int i) {
-            itemAr.object(*mInvasionHandlers[i]);
+            mInvasionHandlers[i]->serialize(itemAr);
         });
     }
 
-    // attackingGods — character refs
-    {
-        int attackingGodCount = ar.writing() ? static_cast<int>(mAttackingGods.size()) : 0;
-        ar.field("attackingGods.count", attackingGodCount);
-        for(int i = 0; i < attackingGodCount; i++) {
-            ar.payloadField(("attackingGod." + std::to_string(i)).c_str(),
-                [this, i](eWriteStream& dst) { dst.writeCharacter(mAttackingGods[i]); },
-                [this](eReadStream& src) {
-                    src.readCharacter(&mBoard, [this](eCharacter* const c) {
-                        mAttackingGods.push_back(c);
-                    });
-                });
-        }
-    }
+    ar.arrayField("attackingGods", mAttackingGods,
+        [this](eSaveArchive& itemAr, eCharacter*& c) {
+            itemAr.characterField("character", &mBoard, c);
+        });
 
-    // monsters — character refs
-    {
-        int monsterCount = ar.writing() ? static_cast<int>(mMonsters.size()) : 0;
-        ar.field("monsters.count", monsterCount);
-        for(int i = 0; i < monsterCount; i++) {
-            ar.payloadField(("monster." + std::to_string(i)).c_str(),
-                [this, i](eWriteStream& dst) { dst.writeCharacter(mMonsters[i]); },
-                [this](eReadStream& src) {
-                    src.readCharacter(&mBoard, [this](eCharacter* const c) {
-                        if(!c) return;
-                        mMonsters.push_back(static_cast<eMonster*>(c));
-                    });
-                });
-        }
-    }
+    ar.arrayField("monsters", mMonsters,
+        [this](eSaveArchive& itemAr, eMonster*& m) {
+            itemAr.characterField("character", &mBoard, m);
+        });
 
     // plagues
     {
@@ -169,38 +144,28 @@ void eBoardCity::serialize(eSaveArchive& ar) {
     ar.field("nextAttackPlanned", mNextAttackPlanned);
     ar.archiveField("nextAttackDate", [this](eSaveArchive& itemAr) { mNextAttackDate.serialize(itemAr); });
 
-    // monsterEvents map
     {
         int monsterEventCount = ar.writing() ? static_cast<int>(mMonsterEvents.size()) : 0;
         ar.field("monsterEvents.count", monsterEventCount);
         if(ar.reading()) {
             for(int i = 0; i < monsterEventCount; i++) {
-                eMonsterType type;
                 ar.archiveField(("monsterEvent." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [this](eSaveArchive& itemAr) {
+                        eMonsterType type;
                         itemAr.field("monsterType", type);
-                        itemAr.payloadField("event",
-                            [](eWriteStream&) {},
-                            [this, &type](eReadStream& src) {
-                                src.readGameEvent(&mBoard, [this, type](eGameEvent* const e) {
-                                    if(!e) return;
-                                    const auto me = static_cast<eMonsterInvasionEventBase*>(e);
-                                    mMonsterEvents[type] = me;
-                                });
-                            });
+                        auto& slot = mMonsterEvents[type];
+                        slot = nullptr;
+                        itemAr.gameEventField("event", &mBoard, slot);
                     });
             }
         } else {
             int i = 0;
             for(auto& kv : mMonsterEvents) {
-                eMonsterType type = kv.first;
-                eMonsterInvasionEventBase* event = kv.second;
                 ar.archiveField(("monsterEvent." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&kv, this](eSaveArchive& itemAr) {
+                        eMonsterType type = kv.first;
                         itemAr.field("monsterType", type);
-                        itemAr.payloadField("event",
-                            [event](eWriteStream& dst) { dst.writeGameEvent(event); },
-                            [](eReadStream&) {});
+                        itemAr.gameEventField("event", &mBoard, kv.second);
                     });
             }
         }
@@ -212,14 +177,12 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         ar.field("soldierBanners.count", bannerCount);
         if(ar.reading()) {
             for(int i = 0; i < bannerCount; i++) {
-                eBannerType type;
                 ar.archiveField(("soldierBanner." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [this](eSaveArchive& itemAr) {
+                        eBannerType type;
                         itemAr.field("bannerType", type);
                         const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
-                        itemAr.payloadField("bannerData",
-                            [](eWriteStream&) {},
-                            [b](eReadStream& src) { b->read(src); });
+                        b->serialize(itemAr);
                         registerSoldierBanner(b);
                     });
             }
@@ -227,12 +190,10 @@ void eBoardCity::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto& s : mSoldierBanners) {
                 ar.archiveField(("soldierBanner." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&s](eSaveArchive& itemAr) {
                         eBannerType type = s->type();
                         itemAr.field("bannerType", type);
-                        itemAr.payloadField("bannerData",
-                            [&s](eWriteStream& dst) { s->write(dst); },
-                            [](eReadStream&) {});
+                        s->serialize(itemAr);
                     });
             }
         }
