@@ -5,6 +5,7 @@
 
 class eSaveArchive;
 class eCartTransporter;
+class eBuildingWithResource;
 
 class eStorageBuilding : public eEmployingBuilding {
 public:
@@ -34,6 +35,8 @@ public:
     std::vector<eCartTask> cartTasks() const override;
     bool deliveryTargetExists(const eResourceType res,
                               const bool allowStorageTargets) const;
+    static bool acceptsInputDelivery(eBuildingWithResource* target,
+                                     eResourceType res);
 
     static int sCount(const eResourceType type,
                       const int resourceCount[15],

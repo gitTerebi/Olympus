@@ -362,10 +362,22 @@ bool eStorageBuilding::deliveryTargetExists(
         const auto storage = dynamic_cast<eStorageBuilding*>(rb);
         if(storage && storage->empties(res)) return false;
 
+        if(!allowStorageTargets && !acceptsInputDelivery(rb, res)) return false;
         const int reserved = incomingReservedFor(b, res, board, cid);
         return rb->spaceLeft(res) - reserved > 0;
     });
     return !targets.empty();
+}
+
+bool eStorageBuilding::acceptsInputDelivery(eBuildingWithResource* const target,
+                                            const eResourceType res) {
+    if(!target) return false;
+    for(const auto& task : target->cartTasks()) {
+        if(task.fType != eCartActionType::get) continue;
+        if(task.fMaxCount <= 0) continue;
+        if(static_cast<bool>(task.fResource & res)) return true;
+    }
+    return false;
 }
 
 int eStorageBuilding::incomingReservedFor(const eBuilding* target,
