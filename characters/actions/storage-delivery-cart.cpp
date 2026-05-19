@@ -174,6 +174,9 @@ bool eStorageDeliveryCartAction::hasDeliveryTarget(
         if(!rb) return false;
         const auto storage = dynamic_cast<eStorageBuilding*>(rb);
         if(storage && storage->empties(res)) return false;
+        if(storagePush && !eStorageBuilding::acceptsInputDelivery(rb, res)) {
+            return false;
+        }
         const int reserved = eStorageBuilding::incomingReservedFor(
             b, res, board(), cid);
         return rb->spaceLeft(res) - reserved > 0;
