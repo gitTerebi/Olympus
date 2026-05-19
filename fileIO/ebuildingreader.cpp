@@ -59,6 +59,32 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         eGameBoard& board, const eBuildingType type,
         eSaveArchive& ar) {
     stdsptr<eBuilding> b;
+    if(type == eBuildingType::palace) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            bool rotated;
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+            b = e::make_shared<ePalace>(board, rotated, cid);
+        });
+        ar.payloadField("state",
+            [](eWriteStream&) {},
+            [&](eReadStream& src) { b->read(src); });
+        return b;
+    }
+    if(type == eBuildingType::palaceTile) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid;
+            bool other;
+            it.field("cityId", cid);
+            it.field("other", other);
+            b = e::make_shared<ePalaceTile>(board, other, cid);
+        });
+        ar.payloadField("state",
+            [](eWriteStream&) {},
+            [&](eReadStream& src) { b->read(src); });
+        return b;
+    }
     ar.payloadField("factoryLegacy",
         [](eWriteStream&) {},
         [&](eReadStream& src) {
@@ -137,22 +163,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::museum: {
         b = e::make_shared<eMuseum>(board, cid);
     } break;
-    case eBuildingType::palace: {
-        bool rotated;
-        src >> rotated;
-        b = e::make_shared<ePalace>(board, rotated, cid);
-    } break;
-    case eBuildingType::palaceTile: {
-        bool other;
-        src >> other;
-        const auto pt = e::make_shared<ePalaceTile>(board, other, cid);
-        b = pt;
-        src.readBuilding(&board, [pt](eBuilding* const bb) {
-             const auto palace = static_cast<ePalace*>(bb);
-             pt->setPalace(palace);
-             if(palace) palace->addTile(pt.get());
-        });
-    } break;
+    case eBuildingType::palace:
+    case eBuildingType::palaceTile:
+        return; // handled before legacy wrapper
     case eBuildingType::eliteHousing: {
         b = e::make_shared<eEliteHousing>(board, cid);
     } break;
