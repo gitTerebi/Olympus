@@ -110,7 +110,8 @@ stdsptr<eCharacterActionFunction> eReadStream::readCharActFunc(
         eCharActFuncType type;
         *this >> type;
         const auto f = eCharacterActionFunction::sCreate(board, type);
-        f->read(*this);
+        eSaveArchive ar(*this);
+        f->serialize(ar);
         return f;
     }
     return nullptr;
@@ -123,7 +124,8 @@ stdsptr<eGodAct> eReadStream::readGodAct(eGameBoard& board) {
         eGodActType type;
         *this >> type;
         const auto f = eGodAct::sCreate(board, type);
-        f->read(*this);
+        eSaveArchive ar(*this);
+        f->serialize(ar);
         return f;
     }
     return nullptr;

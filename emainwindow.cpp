@@ -51,12 +51,14 @@ bool writeGameSaveFile(const std::string& path,
     eWriteStream dst(target);
     dst.writeFormat(format);
     if(gameWidget) {
-        const auto s = gameWidget->settings();
-        s.write(dst);
+        auto s = gameWidget->settings();
+        eSaveArchive settingsAr(dst);
+        s.serialize(settingsAr);
     } else {
         eGameWidgetSettings s;
         s.fPaused = true;
-        s.write(dst);
+        eSaveArchive settingsAr(dst);
+        s.serialize(settingsAr);
     }
     {
         eSaveArchive campaignAr(dst);
@@ -432,7 +434,10 @@ bool eMainWindow::loadGame(const std::string& path) {
         return false;
     }
     eGameWidgetSettings s;
-    s.read(src);
+    {
+        eSaveArchive settingsAr(src);
+        s.serialize(settingsAr);
+    }
     const auto c = std::make_shared<eCampaign>();
     {
         eSaveArchive campaignAr(src);

@@ -111,14 +111,7 @@ public:
     eCharActFuncType type() const { return mType; }
     eGameBoard& board() { return mBoard; }
 
-    virtual void read(eReadStream& src) final {
-        eSaveArchive ar(src);
-        serializeFields(ar);
-    }
-    virtual void write(eWriteStream& dst) const final {
-        eSaveArchive ar(dst);
-        const_cast<eCharacterActionFunction*>(this)->serializeFields(ar);
-    }
+    void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     virtual void call() = 0;
 
