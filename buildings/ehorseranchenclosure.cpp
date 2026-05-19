@@ -110,17 +110,19 @@ void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     if(ar.reading()) {
         const stdptr<eHorseRanchEnclosure> tptr(this);
-        auto horses = std::make_shared<std::vector<eHorse*>>();
+        auto horses = std::make_shared<std::vector<std::shared_ptr<eHorse*>>>();
         mHorses.clear();
         ar.countedArrayField("horses", 0,
             [this, horses](eSaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(horses->size())) horses->resize(i + 1);
-                itemAr.characterField("horse", &getBoard(), (*horses)[i]);
+                if(!(*horses)[i]) (*horses)[i] = std::make_shared<eHorse*>(nullptr);
+                itemAr.characterField("horse", &getBoard(), *(*horses)[i]);
             });
         ar.addPostFunc([tptr, horses]() {
             if(!tptr) return;
             tptr->mHorses.clear();
-            for(const auto h : *horses) {
+            for(const auto& hptr : *horses) {
+                const auto h = hptr ? *hptr : nullptr;
                 if(h) tptr->mHorses.push_back(h->ref<eHorse>());
             }
         }, "eHorseRanchEnclosure::horses");
