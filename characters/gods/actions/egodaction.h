@@ -45,15 +45,7 @@ public:
     eGodActType type() const { return mType; }
     eGameBoard& board() { return mBoard; }
 
-    virtual void read(eReadStream& src) final {
-        eSaveArchive ar(src);
-        serializeFields(ar);
-    }
-
-    virtual void write(eWriteStream& dst) const final {
-        eSaveArchive ar(dst);
-        const_cast<eGodAct*>(this)->serializeFields(ar);
-    }
+    void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     static stdsptr<eGodAct> sCreate(eGameBoard& board, const eGodActType t);
 protected:

@@ -17,18 +17,10 @@ struct ePathPoint {
     double fY;
     double fHeight;
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("x", fX);
         ar.field("y", fY);
         ar.field("height", fHeight);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("x", const_cast<double&>(fX));
-        ar.field("y", const_cast<double&>(fY));
-        ar.field("height", const_cast<double&>(fHeight));
     }
 };
 
@@ -72,29 +64,13 @@ public:
     double angle() const { return mAngle; }
     double height() const { return mPos.fHeight; }
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("angle", mAngle);
-        mPos.read(src);
+        ar.objectField("position", mPos);
         ar.field("pointId", mPtId);
-        int n;
-        ar.field("pointCount", n);
-        for(int i = 0; i < n; i++) {
-            auto& pt = mPts.emplace_back();
-            pt.read(src);
-        }
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("angle", const_cast<double&>(mAngle));
-        mPos.write(dst);
-        ar.field("pointId", const_cast<int&>(mPtId));
-        int pointCount = mPts.size();
-        ar.field("pointCount", pointCount);
-        for(const auto& pt : mPts) {
-            pt.write(dst);
-        }
+        ar.arrayField("points", mPts, [](eSaveArchive& itemAr, ePathPoint& pt) {
+            pt.serialize(itemAr);
+        });
     }
 private:
     double mAngle;

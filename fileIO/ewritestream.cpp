@@ -48,7 +48,8 @@ void eWriteStream::writeCharActFunc(eCharacterActionFunction* const caf) {
     *this << hasFinish;
     if(hasFinish) {
         *this << caf->type();
-        caf->write(*this);
+        eSaveArchive ar(*this);
+        caf->serialize(ar);
     }
 }
 
@@ -57,7 +58,8 @@ void eWriteStream::writeGodAct(eGodAct* const ga) {
     *this << hasFinish;
     if(hasFinish) {
         *this << ga->type();
-        ga->write(*this);
+        eSaveArchive ar(*this);
+        ga->serialize(ar);
     }
 }
 

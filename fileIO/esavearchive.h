@@ -52,27 +52,12 @@ public:
 
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
-    ESAVE_DEPRECATED("Use named eSaveArchive fields/helpers instead of raw readStream().")
-    eReadStream& readStream() const { return *mSrc; }
-
-    ESAVE_DEPRECATED("Use named eSaveArchive fields/helpers instead of raw writeStream().")
-    eWriteStream& writeStream() const { return *mDst; }
-
-    // Use only in SAVE_COMPAT_LEGACY_FALLBACK branches after tagged payload lookup fails.
-    ESAVE_DEPRECATED("Legacy raw fallback only; do not use for new save fields.")
-    eReadStream& legacyReadStream() const { return *mSrc; }
 
     // Subclasses needing a post-load fixup hook call this on the archive
     // instead of reaching for readStream(). No-op while writing.
     template <typename Func>
     void addPostFunc(const Func& func, const char* tag = "?") {
         if(mSrc) mSrc->addPostFunc(func, tag);
-    }
-
-    template <typename T>
-    ESAVE_DEPRECATED("Use named field()/objectField()/arrayField() helpers instead of raw value().")
-    void value(T& value) {
-        rawValue(value);
     }
 
     template <typename T>
@@ -91,11 +76,6 @@ public:
 
     template <typename T>
     bool field(const std::string& name, T& value) {
-        if(!tagged()) {
-            this->rawValue(value);
-            return true;
-        }
-
         mTaggedTouched = true;
         if(writing()) {
             mFieldBuffer.clear();
@@ -127,15 +107,11 @@ public:
         }
     }
 
-    // Serialize an object that has read(eReadStream&) / write(eWriteStream&)
-    // as a single tagged payload field. The object's bytes are length-prefixed
-    // so its internal framing (including its own tagged archive terminator)
-    // cannot desync the outer archive.
     template <typename T>
     bool objectField(const char* const name, T& obj) {
-        return payloadFieldImpl(name,
-                            [&obj](eWriteStream& dst) { obj.write(dst); },
-                            [&obj](eReadStream& src) { obj.read(src); });
+        return archiveField(name, [&obj](eSaveArchive& childAr) {
+            obj.serialize(childAr);
+        });
     }
 
     template <typename Func>
@@ -153,23 +129,9 @@ public:
     }
 
     template <typename WriteFunc, typename ReadFunc>
-    ESAVE_DEPRECATED("Use archiveField(), objectField(), arrayField(), or typed field helpers instead of direct payloadField().")
-    bool payloadField(const char* const name,
-                      const WriteFunc& writeFunc,
-                      const ReadFunc& readFunc) {
-        return payloadFieldImpl(name, writeFunc, readFunc);
-    }
-
-    template <typename WriteFunc, typename ReadFunc>
     bool payloadFieldImpl(const char* const name,
                           const WriteFunc& writeFunc,
                           const ReadFunc& readFunc) {
-        if(!tagged()) {
-            if(reading()) readFunc(*mSrc);
-            else writeFunc(*mDst);
-            return true;
-        }
-
         mTaggedTouched = true;
         if(writing()) {
             mFieldBuffer.clear();
@@ -611,11 +573,6 @@ public:
                              stdsptr<eDirectionTimes>& val) {
         if(reading()) {
             val = std::make_shared<eDirectionTimes>();
-            if(!tagged()) {
-                const auto ignored = mSrc->readDirectionTimes(board);
-                (void)ignored;
-                return true;
-            }
             std::vector<char> ignored;
             takeField(std::string(name), ignored);
             return true;

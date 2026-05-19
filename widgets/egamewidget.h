@@ -73,8 +73,7 @@ struct eGameWidgetSettings {
     eWorldDirection fDir = eWorldDirection::N;
     std::map<int, std::pair<int, int>> fBookmarks;
 
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
+    void serialize(eSaveArchive& ar) {
         ar.field("paused", fPaused);
         ar.field("speedId", fSpeedId);
         ar.field("speed", fSpeed);
@@ -82,37 +81,28 @@ struct eGameWidgetSettings {
         ar.field("dy", fDY);
         ar.field("tileSize", fTileSize);
         ar.field("direction", fDir);
-
-        int n;
-        ar.field("bookmarkCount", n);
-        for(int i = 0; i < n; i++) {
-            int id;
-            ar.field("bookmarkId", id);
-            auto& b = fBookmarks[id];
-            ar.field("bookmarkX", b.first);
-            ar.field("bookmarkY", b.second);
-        }
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        ar.field("paused", const_cast<bool&>(fPaused));
-        ar.field("speedId", const_cast<int&>(fSpeedId));
-        ar.field("speed", const_cast<int&>(fSpeed));
-        ar.field("dx", const_cast<int&>(fDX));
-        ar.field("dy", const_cast<int&>(fDY));
-        ar.field("tileSize", const_cast<eTileSize&>(fTileSize));
-        ar.field("direction", const_cast<eWorldDirection&>(fDir));
-
-        int bookmarkCount = fBookmarks.size();
-        ar.field("bookmarkCount", bookmarkCount);
-        for(const auto& b : fBookmarks) {
-            auto id = b.first;
-            auto x = b.second.first;
-            auto y = b.second.second;
-            ar.field("bookmarkId", id);
-            ar.field("bookmarkX", x);
-            ar.field("bookmarkY", y);
+        if(ar.reading()) {
+            fBookmarks.clear();
+            ar.countedArrayField("bookmarks", 0,
+                [this](eSaveArchive& itemAr, const int) {
+                    int id = 0;
+                    itemAr.field("id", id);
+                    auto& b = fBookmarks[id];
+                    itemAr.field("x", b.first);
+                    itemAr.field("y", b.second);
+                });
+        } else {
+            auto it = fBookmarks.begin();
+            ar.countedArrayField("bookmarks", static_cast<int>(fBookmarks.size()),
+                [&it](eSaveArchive& itemAr, const int) {
+                    int id = it->first;
+                    int x = it->second.first;
+                    int y = it->second.second;
+                    itemAr.field("id", id);
+                    itemAr.field("x", x);
+                    itemAr.field("y", y);
+                    ++it;
+                });
         }
     }
 };
