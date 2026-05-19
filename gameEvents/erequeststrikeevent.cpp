@@ -73,29 +73,9 @@ std::string eRequestStrikeEvent::longName() const {
     return eLanguage::text("request_strike_long_name");
 }
 
-void eRequestStrikeEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRequestStrikeEvent*>(this)->serialize(ar);
-}
-
-void eRequestStrikeEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRequestStrikeEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-            mCity = c;
-        });
-        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-            mRivalCity = c;
-        });
-    } else {
-        ar.writeStream().writeCity(mCity.get());
-        ar.writeStream().writeCity(mRivalCity.get());
-    }
-    ar.field("mEnd", mEnd);
+void eRequestStrikeEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ar.worldCityField("city", worldBoard(), mCity);
+    ar.worldCityField("rivalCity", worldBoard(), mRivalCity);
+    ar.field("end", mEnd, false);
 }

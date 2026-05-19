@@ -90,9 +90,6 @@ public:
 
     stdsptr<eGameEvent> makeCopy() const;
 
-    virtual void write(eWriteStream& dst) const;
-    virtual void read(eReadStream& src);
-
     virtual void loadResources() const;
     virtual void respond(int response, eCityId city = eCityId::neutralAggresive);
 
@@ -204,10 +201,12 @@ public:
     void setIsEpisodeEvent(const bool e) { mEpisodeEvent = e; }
 
     eEventTrigger& baseTrigger() { return *mBaseTrigger; }
+
+    void serialize(eSaveArchive& ar);
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
     void callBaseTrigger();
-    void serialize(eSaveArchive& ar);
+    virtual void serializeFields(eSaveArchive& ar);
 
     int mDatePlusDays = 0;
     int mDatePlusMonths = 0;

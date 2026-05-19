@@ -16,9 +16,6 @@ struct eEnlistedForces {
 
     std::map<eCityId, eEnlistedForces> splitIntoCities() const;
 
-    void read(eGameBoard& board,
-              eReadStream& src);
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar, eGameBoard* board);
 
     void clear();

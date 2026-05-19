@@ -1,4 +1,5 @@
 #include "etradeopenupevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -30,12 +31,7 @@ std::string eTradeOpenUpEvent::longName() const {
     return eLanguage::zeusText(35, 3);
 }
 
-void eTradeOpenUpEvent::write(eWriteStream &dst) const {
-    eGameEvent::write(dst);
-    eCityEventValue::write(dst);
-}
-
-void eTradeOpenUpEvent::read(eReadStream &src) {
-    eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
+void eTradeOpenUpEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
 }

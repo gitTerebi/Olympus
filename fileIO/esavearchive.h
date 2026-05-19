@@ -34,6 +34,7 @@ class eWorldBoard;
 class eWorldCity;
 class eGameEvent;
 class eInvasionHandler;
+class eDate;
 enum class eCharActionType;
 
 class eSaveArchive {
@@ -196,6 +197,8 @@ public:
             return true;
         }
     }
+
+    bool dateField(const char* const name, eDate& d);
 
     void tile(eTile*& tile, eGameBoard& board) {
         if(reading()) {
@@ -417,6 +420,36 @@ public:
         } else {
             mDst->writeCity(value.get());
         }
+    }
+
+    bool worldCityField(const char* const name,
+                        eGameBoard* board,
+                        stdsptr<eWorldCity>& value) {
+        stdsptr<eWorldCity>* const tgt = &value;
+        return payloadFieldImpl(
+            name,
+            [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                    *tgt = c;
+                });
+            });
+    }
+
+    bool worldCityField(const char* const name,
+                        eWorldBoard* board,
+                        stdsptr<eWorldCity>& value) {
+        stdsptr<eWorldCity>* const tgt = &value;
+        return payloadFieldImpl(
+            name,
+            [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
+            [board, tgt](eReadStream& src) {
+                *tgt = nullptr;
+                src.readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                    *tgt = c;
+                });
+            });
     }
 
     void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {

@@ -153,8 +153,7 @@ public:
 
     eMissileType type() const { return mType; }
 
-    virtual void read(eReadStream& src);
-    virtual void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     template <class T>
     static stdsptr<T> sCreate(eGameBoard& brd,
@@ -165,9 +164,9 @@ public:
                               const double dh);
     static stdsptr<eMissile> sCreate(eGameBoard& brd,
                                      const eMissileType type);
+protected:
+    virtual void serializeFields(eSaveArchive& ar);
 private:
-    void serialize(eSaveArchive& ar);
-
     void changeTile(eTile* const t);
 
     const eMissileType mType;

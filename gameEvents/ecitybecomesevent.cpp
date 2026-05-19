@@ -199,25 +199,9 @@ std::string eCityBecomesEvent::longName() const {
     return "";
 }
 
-void eCityBecomesEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eCityBecomesEvent*>(this)->serialize(ar);
-}
-
-void eCityBecomesEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eCityBecomesEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-        eAttackingCityEventValue::read(ar.readStream(), *gameBoard());
-    } else {
-        eCityEventValue::write(ar.writeStream());
-        eAttackingCityEventValue::write(ar.writeStream());
-    }
-    ar.field("mType", mType);
+void eCityBecomesEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
+    eAttackingCityEventValue::serialize(ar, gameBoard());
+    ar.field("type", mType, eCityBecomesType::ally);
 }

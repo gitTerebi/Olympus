@@ -77,17 +77,11 @@ void eMissile::setFinishAction(const stdsptr<eGodAct>& act) {
     mFinish = act;
 }
 
-void eMissile::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eMissile::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eMissile*>(this)->serialize(ar);
-}
-
 void eMissile::serialize(eSaveArchive& ar) {
+    serializeFields(ar);
+}
+
+void eMissile::serializeFields(eSaveArchive& ar) {
     ar.objectField("path", mPath);
     ar.field("time", mTime);
     ar.field("speed", mSpeed);

@@ -4,8 +4,6 @@
 #include <map>
 #include <vector>
 
-#include "fileIO/ewritestream.h"
-#include "fileIO/ereadstream.h"
 
 enum class eBuildingType;
 class eEmploymentData;
@@ -61,8 +59,6 @@ public:
     int employees(const eSector s);
 
     void serialize(eSaveArchive& ar);
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
 
     void distribute();
 

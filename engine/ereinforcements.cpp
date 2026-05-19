@@ -1,4 +1,5 @@
 #include "ereinforcements.h"
+#include "ecityid.h"
 
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
@@ -18,18 +19,8 @@ bool eReinforcements::checkEmpty() const {
     return mForces.fSoldiers.empty();
 }
 
-void eReinforcements::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eReinforcements*>(this)->serialize(ar, nullptr);
-}
-
-void eReinforcements::read(eGameBoard& board, eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar, &board);
-}
-
 void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {
-    ar.field("fromCityId", mFromCid);
+    ar.field("fromCityId", mFromCid, eCityId::neutralFriendly);
     ar.archiveField("forces", [this, board](eSaveArchive& itemAr) {
         mForces.serialize(itemAr, itemAr.reading() ? board : nullptr);
     });

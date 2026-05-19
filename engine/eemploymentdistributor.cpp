@@ -57,20 +57,12 @@ int eEmploymentDistributor::employees(const eSector s) {
     return mEmployees[s];
 }
 
-void eEmploymentDistributor::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eEmploymentDistributor::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEmploymentDistributor*>(this)->serialize(ar);
-}
-
 void eEmploymentDistributor::serialize(eSaveArchive& ar) {
     for(auto& entry : mPriorities) {
         const int sectorId = static_cast<int>(entry.first);
-        ar.field(("priority." + std::to_string(sectorId)).c_str(), entry.second);
+        const auto defaultPriority = entry.second;
+        ar.field(("priority." + std::to_string(sectorId)).c_str(),
+                 entry.second, defaultPriority);
     }
 }
 

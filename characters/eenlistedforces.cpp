@@ -30,17 +30,6 @@ eEnlistedForces::splitIntoCities() const {
     return forces;
 }
 
-void eEnlistedForces::read(eGameBoard& board,
-                           eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar, &board);
-}
-
-void eEnlistedForces::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEnlistedForces*>(this)->serialize(ar, nullptr);
-}
-
 void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     eWorldBoard* wboard = board ? &board->world() : nullptr;
     {

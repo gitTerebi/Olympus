@@ -29,37 +29,18 @@ void eMonstersEventValue::setMonsterTypes(const std::vector<eMonsterType> &types
     }
 }
 
-void eMonstersEventValue::write(eWriteStream &dst) const {
-    eSaveArchive ar(dst);
-    ar.field("mMonster", const_cast<eMonsterType&>(mMonster));
-
+void eMonstersEventValue::serialize(eSaveArchive& ar) {
+    ar.field("monster", mMonster, eMonsterType::calydonianBoar);
     const char* const typeNames[] = {
-        "mMonster0Type", "mMonster1Type", "mMonster2Type"
+        "monster0Type", "monster1Type", "monster2Type"
     };
     const char* const validNames[] = {
-        "mMonster0Valid", "mMonster1Valid", "mMonster2Valid"
-    };
-    for(int i = 0; i < 3; i++) {
-        auto& v = const_cast<eMonsterTypeValid&>(mMonsters[i]);
-        ar.field(typeNames[i], v.fType);
-        ar.field(validNames[i], v.fValid);
-    }
-}
-
-void eMonstersEventValue::read(eReadStream &src) {
-    eSaveArchive ar(src);
-    ar.field("mMonster", mMonster);
-
-    const char* const typeNames[] = {
-        "mMonster0Type", "mMonster1Type", "mMonster2Type"
-    };
-    const char* const validNames[] = {
-        "mMonster0Valid", "mMonster1Valid", "mMonster2Valid"
+        "monster0Valid", "monster1Valid", "monster2Valid"
     };
     for(int i = 0; i < 3; i++) {
         auto& v = mMonsters[i];
-        ar.field(typeNames[i], v.fType);
-        ar.field(validNames[i], v.fValid);
+        ar.field(typeNames[i], v.fType, eMonsterType::calydonianBoar);
+        ar.field(validNames[i], v.fValid, false);
     }
 }
 

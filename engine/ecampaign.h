@@ -8,13 +8,13 @@
 class eSaveArchive;
 
 struct eSetAside {
-    eResourceType fRes;
-    int fCount;
+    eResourceType fRes = eResourceType::none;
+    int fCount = 0;
     stdsptr<eWorldCity> fFrom;
 
     void serialize(eSaveArchive& ar, eWorldBoard* const board) {
-        ar.field("resource", fRes);
-        ar.field("count", fCount);
+        ar.field("resource", fRes, eResourceType::none);
+        ar.field("count", fCount, 0);
         ar.payloadField("from",
             [this](eWriteStream& dst) { dst.writeCity(fFrom.get()); },
             [this, board](eReadStream& src) {
@@ -22,16 +22,6 @@ struct eSetAside {
                     fFrom = city;
                 });
             });
-    }
-
-    void read(eReadStream& src, eWorldBoard* const board) {
-        eSaveArchive ar(src);
-        serialize(ar, board);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        const_cast<eSetAside*>(this)->serialize(ar, nullptr);
     }
 };
 

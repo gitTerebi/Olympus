@@ -46,26 +46,12 @@ std::string eTidalWaveEvent::longName() const {
     return eLanguage::zeusText(48, 69);
 }
 
-void eTidalWaveEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eGodEventValue::write(dst);
-    eGodReasonEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTidalWaveEvent*>(this)->serialize(ar);
-}
-
-void eTidalWaveEvent::serialize(eSaveArchive& ar) {
-    ar.field("mPermanent", mPermanent);
-}
-
-void eTidalWaveEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
-    eGodEventValue::read(src);
-    eGodReasonEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eTidalWaveEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
+    eGodEventValue::serialize(ar);
+    eGodReasonEventValue::serialize(ar);
+    ar.field("permanent", mPermanent, false);
 }
 
 void eTidalWaveEvent::loadResources() const {

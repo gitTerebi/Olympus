@@ -19,15 +19,12 @@ public:
 
     void trigger() override;
     std::string longName() const override;
-
-    void write(eWriteStream& dst) const override ;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<eWorldCity> mCity;
-    eResourceType mResource;
-    int mCount;
+    eResourceType mResource{};
+    int mCount = 0;
 };
 
 #endif // EGIFTTOEVENT_H

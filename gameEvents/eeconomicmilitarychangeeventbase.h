@@ -16,11 +16,8 @@ public:
         const eGameEventType type,
         const eGameEventBranch branch,
         eGameBoard& board);
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-private:
-    void serialize(eSaveArchive& ar);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 };
 
 #endif // EECONOMICMILITARYCHANGEEVENTBASE_H

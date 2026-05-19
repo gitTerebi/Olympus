@@ -173,9 +173,7 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
 
     ar.arrayField("fulfilledQuests", mFulfilledQuests,
         [](eSaveArchive& itemAr, eGodQuest& q) {
-            itemAr.payloadField("quest",
-                [&](eWriteStream& dst) { q.write(dst); },
-                [&](eReadStream& src) { q.read(src); });
+            q.serialize(itemAr);
         });
 
     ar.arrayField("slayedMonsters", mSlayedMonsters,
@@ -216,9 +214,8 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
 
     ar.field("godAttackTimer", mGodAttackTimer);
 
-    ar.payloadField("finances",
-        [this](eWriteStream& dst) { mFinances.write(dst); },
-        [this](eReadStream& src) { mFinances.read(src); });
+    ar.archiveField("finances",
+        [this](eSaveArchive& itemAr) { mFinances.serialize(itemAr); });
 }
 
 void eBoardPlayer::giftAllies() {

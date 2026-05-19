@@ -1,9 +1,7 @@
 #ifndef ECITYFINANCES_H
 #define ECITYFINANCES_H
 
-#include "fileIO/ereadstream.h"
 #include "fileIO/esavearchive.h"
-#include "fileIO/ewritestream.h"
 
 enum class eFinanceTarget {
     // income
@@ -82,27 +80,17 @@ struct eFinanceYear {
     }
 
     void serialize(eSaveArchive& ar) {
-        ar.field("taxesIn", fTaxesIn);
-        ar.field("exports", fExports);
-        ar.field("giftsReceived", fGiftsReceived);
-        ar.field("minedSilver", fMinedSilver);
-        ar.field("tributeReceived", fTributeReceived);
-        ar.field("hippodrome", fHippodrome);
-        ar.field("importCosts", fImportCosts);
-        ar.field("wages", fWages);
-        ar.field("construction", fConstruction);
-        ar.field("bribesTributePaid", fBribesTributePaid);
-        ar.field("giftsAndAidGiven", fGiftsAndAidGiven);
-    }
-
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
-        serialize(ar);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        const_cast<eFinanceYear*>(this)->serialize(ar);
+        ar.field("taxesIn", fTaxesIn, 0);
+        ar.field("exports", fExports, 0);
+        ar.field("giftsReceived", fGiftsReceived, 0);
+        ar.field("minedSilver", fMinedSilver, 0);
+        ar.field("tributeReceived", fTributeReceived, 0);
+        ar.field("hippodrome", fHippodrome, 0);
+        ar.field("importCosts", fImportCosts, 0);
+        ar.field("wages", fWages, 0);
+        ar.field("construction", fConstruction, 0);
+        ar.field("bribesTributePaid", fBribesTributePaid, 0);
+        ar.field("giftsAndAidGiven", fGiftsAndAidGiven, 0);
     }
 
     int totalIncome() const {
@@ -147,8 +135,6 @@ public:
     const eFinanceYear& thisYear() const { return mThisYear; }
 
     void serialize(eSaveArchive& ar);
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
 private:
     eFinanceYear mLastYear;
     eFinanceYear mThisYear;

@@ -8,18 +8,8 @@
 
 #include "characters/gods/egod.h"
 
-void eGodEventValue::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eGodEventValue*>(this)->serialize(ar);
-}
-
 void eGodEventValue::serialize(eSaveArchive& ar) {
-    ar.field("mGod", mGod);
-}
-
-void eGodEventValue::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    ar.field("god", mGod, eGodType::zeus);
 }
 
 void eGodEventValue::longNameReplaceGod(

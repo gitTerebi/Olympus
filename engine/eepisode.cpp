@@ -56,9 +56,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
         }
     }
 
-    ar.payloadField("startDate",
-        [this](eWriteStream& dst) { fStartDate.write(dst); },
-        [this](eReadStream& src) { fStartDate.read(src); });
+    ar.dateField("startDate", fStartDate);
 
     // friendlyGods map<eCityId, vector<eGodType>>
     {
@@ -119,12 +117,11 @@ void eEpisode::serialize(eSaveArchive& ar) {
                             cityAr.archiveField(("event." + std::to_string(j)).c_str(),
                                 [&](eSaveArchive& evtAr) {
                                     evtAr.field("type", type);
-                                    evtAr.payloadField("eventData",
-                                        [](eWriteStream&) {},
-                                        [&](eReadStream& src) {
+                                    evtAr.archiveField("eventData",
+                                        [&](eSaveArchive& childAr) {
                                             const auto branch = eGameEventBranch::root;
                                             const auto e = eGameEvent::sCreate(cid, type, branch, *fBoard);
-                                            e->read(src);
+                                            e->serialize(childAr);
                                             fEvents[cid].push_back(e);
                                         });
                                 });
@@ -148,9 +145,8 @@ void eEpisode::serialize(eSaveArchive& ar) {
                             cityAr.archiveField(("event." + std::to_string(j)).c_str(),
                                 [&](eSaveArchive& evtAr) {
                                     evtAr.field("type", type);
-                                    evtAr.payloadField("eventData",
-                                        [&evt](eWriteStream& dst) { evt->write(dst); },
-                                        [](eReadStream&) {});
+                                    evtAr.archiveField("eventData",
+                                        [&evt](eSaveArchive& childAr) { evt->serialize(childAr); });
                                 });
                         }
                     });
@@ -158,27 +154,12 @@ void eEpisode::serialize(eSaveArchive& ar) {
         }
     }
 
-    // goals
-    {
-        int goalCount = ar.writing() ? static_cast<int>(fGoals.size()) : 0;
-        ar.field("goals.count", goalCount);
-        if(ar.reading()) {
-            fGoals.clear();
-            for(int i = 0; i < goalCount; i++) {
-                const auto g = std::make_shared<eEpisodeGoal>();
-                ar.payloadField(("goal." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [g](eReadStream& src) { g->read(src); });
-                fGoals.push_back(g);
-            }
-        } else {
-            for(int i = 0; i < goalCount; i++) {
-                ar.payloadField(("goal." + std::to_string(i)).c_str(),
-                    [this, i](eWriteStream& dst) { fGoals[i]->write(dst); },
-                    [](eReadStream&) {});
-            }
-        }
-    }
+    ar.arrayField("goals", fGoals, [](eSaveArchive& ar, auto& g) {
+        if(ar.reading()) g = std::make_shared<eEpisodeGoal>();
+        ar.archiveField("state", [&g](eSaveArchive& childAr) {
+            g->serialize(childAr);
+        });
+    });
 
     // availableBuildings map<eCityId, eAvailableBuildings>
     {

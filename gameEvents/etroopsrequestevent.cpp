@@ -89,32 +89,15 @@ std::string eTroopsRequestEvent::longName() const {
     return eLanguage::zeusText(290, 6);
 }
 
-void eTroopsRequestEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eTroopsRequestEvent*>(this)->serialize(ar);
-}
-
-void eTroopsRequestEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eTroopsRequestEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-        eMonsterEventValue::read(ar.readStream());
-        eAttackingCityEventValue::read(ar.readStream(), *gameBoard());
-    } else {
-        eCityEventValue::write(ar.writeStream());
-        eMonsterEventValue::write(ar.writeStream());
-        eAttackingCityEventValue::write(ar.writeStream());
-    }
-    ar.field("mType", mType);
-    ar.field("mEffect", mEffect);
-    ar.field("mFinish", mFinish);
-    ar.field("mPostpone", mPostpone);
+void eTroopsRequestEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
+    eMonsterEventValue::serialize(ar);
+    eAttackingCityEventValue::serialize(ar, gameBoard());
+    ar.field("type", mType, eTroopsRequestEventType::cityUnderAttack);
+    ar.field("effect", mEffect, eTroopsRequestEventEffect::unaffected);
+    ar.field("finish", mFinish, false);
+    ar.field("postpone", mPostpone, 0);
 }
 
 void eTroopsRequestEvent::trigger() {

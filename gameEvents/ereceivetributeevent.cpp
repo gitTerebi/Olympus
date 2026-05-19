@@ -125,24 +125,7 @@ std::string eReceiveTributeEvent::longName() const {
     return tmpl;
 }
 
-void eReceiveTributeEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eReceiveTributeEvent*>(this)->serialize(ar);
-}
-
-void eReceiveTributeEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eReceiveTributeEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-            mCity = c;
-        });
-    } else {
-        ar.writeStream().writeCity(mCity.get());
-    }
+void eReceiveTributeEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ar.worldCityField("city", worldBoard(), mCity);
 }

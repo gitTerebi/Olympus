@@ -32,26 +32,14 @@ void eMonsterInvasionEventBase::chooseMonster() {
     mValid = eMonstersEventValue::chooseMonster(mSpawned);
 }
 
-void eMonsterInvasionEventBase::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eMonstersEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eMonsterInvasionEventBase*>(this)->serialize(ar);
-}
+void eMonsterInvasionEventBase::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
+    eMonstersEventValue::serialize(ar);
 
-void eMonsterInvasionEventBase::read(eReadStream& src) {
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
-    eMonstersEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eMonsterInvasionEventBase::serialize(eSaveArchive& ar) {
-    ar.field("mChooseMonster", mChooseMonster);
-    ar.field("mAggressivness", mAggressivness);
-    ar.field("mValid", mValid);
+    ar.field("chooseMonster", mChooseMonster, false);
+    ar.field("aggressivness", mAggressivness, eMonsterAggressivness::passive);
+    ar.field("valid", mValid, false);
 
     ar.arrayField("spawned", mSpawned, [](eSaveArchive& ar, eMonsterType& s) {
         ar.field("s", s);

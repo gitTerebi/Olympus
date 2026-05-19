@@ -30,15 +30,14 @@ public:
     std::string longName() const override;
     bool finished() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     eCityRequest cityRequest() const;
     void dispatch(eCityId cid);
     void postpone();
     std::string dispatchText(int stock, const eDate& currentDate) const;
     std::string overdueStatusText(const eDate& currentDate) const;
     bool isPostponed() const;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     enum class eResponse {
         dispatch,
@@ -46,7 +45,6 @@ private:
         refuse
     };
 
-    void serialize(eSaveArchive& ar);
     void activate();
     void scheduleStep(int step, const eDate& date);
     void copyFrom(const ePayTributeEvent& src, int step, eEvent event);

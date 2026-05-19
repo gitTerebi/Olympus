@@ -44,26 +44,11 @@ std::string eLavaEvent::longName() const {
     return eLanguage::zeusText(48, 68);
 }
 
-void eLavaEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eGodEventValue::write(dst);
-    eGodReasonEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eLavaEvent*>(this)->serialize(ar);
-}
-
-void eLavaEvent::serialize(eSaveArchive& ar) {
-
-}
-
-void eLavaEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
-    eGodEventValue::read(src);
-    eGodReasonEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eLavaEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
+    eGodEventValue::serialize(ar);
+    eGodReasonEventValue::serialize(ar);
 }
 
 void eLavaEvent::loadResources() const {

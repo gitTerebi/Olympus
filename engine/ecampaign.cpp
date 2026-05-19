@@ -463,17 +463,13 @@ void eCampaign::serialize(eSaveArchive& ar) {
     ar.arrayField("forColony", mForColony,
         [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
             if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
-            itemAr.payloadField("setAside",
-                [&](eWriteStream& dst) { s->write(dst); },
-                [this, &s](eReadStream& src) { s->read(src, &mWorldBoard); });
+            s->serialize(itemAr, &mWorldBoard);
         });
 
     ar.arrayField("forParent", mForParent,
         [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
             if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
-            itemAr.payloadField("setAside",
-                [&](eWriteStream& dst) { s->write(dst); },
-                [this, &s](eReadStream& src) { s->read(src, &mWorldBoard); });
+            s->serialize(itemAr, &mWorldBoard);
         });
 
     ar.field("briefId", mBriefId);

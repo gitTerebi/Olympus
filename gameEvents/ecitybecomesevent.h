@@ -25,14 +25,11 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     void setType(const eCityBecomesType t) { mType = t; }
     eCityBecomesType type() const { return mType; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eCityBecomesType mType = eCityBecomesType::ally;
 };
 

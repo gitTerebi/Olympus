@@ -10,19 +10,9 @@ struct eGodQuest {
             const eGodType gt, const eGodQuestId gqi);
 
     void serialize(eSaveArchive& ar) {
-        ar.field("god", fGod);
-        ar.field("questId", fId);
-        ar.field("hero", fHero);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        const_cast<eGodQuest*>(this)->serialize(ar);
-    }
-
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
-        serialize(ar);
+        ar.field("god", fGod, eGodType::zeus);
+        ar.field("questId", fId, eGodQuestId::godQuest1);
+        ar.field("hero", fHero, eGodQuest::sDefaultHero(fGod, fId));
     }
 
     bool operator==(const eGodQuest& o) const {

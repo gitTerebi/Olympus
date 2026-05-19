@@ -3,6 +3,8 @@
 Source: `TODO-save-migration.md` D1-D8.
 
 Goal: every building save is tagged, named, bounded, and safe to add/remove/reorder.
+No save-version handling in this batch.
+No version bumps, version gates, version readers, migration readers, or old-shape readers.
 
 ## Target Shape
 

@@ -99,9 +99,9 @@ enum class eNamePlace {
 };
 
 struct eResourceTrade {
-    eResourceType fType;
+    eResourceType fType = eResourceType::none;
     std::map<ePlayerId, int> fUsed;
-    int fMax;
+    int fMax = 0;
 
     int used(const ePlayerId pid) const {
         const auto it = fUsed.find(pid);
@@ -124,18 +124,8 @@ struct eResourceTrade {
         }
     }
 
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        const_cast<eResourceTrade*>(this)->serialize(ar);
-    }
-
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
-        serialize(ar);
-    }
-
     void serialize(eSaveArchive& ar) {
-        ar.field("type", fType);
+        ar.field("type", fType, eResourceType::none);
 
         int nu = static_cast<int>(fUsed.size());
         ar.field("used.count", nu);
@@ -162,7 +152,7 @@ struct eResourceTrade {
             }
         }
 
-        ar.field("max", fMax);
+        ar.field("max", fMax, 0);
     }
 };
 

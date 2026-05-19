@@ -141,27 +141,9 @@ std::string eRequestAidEvent::longName() const {
     return eLanguage::text("request_aid_long_name");
 }
 
-void eRequestAidEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRequestAidEvent*>(this)->serialize(ar);
-}
-
-void eRequestAidEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRequestAidEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        ar.readStream().readCity(worldBoard(), [this](const stdsptr<eWorldCity>& c) {
-            mCity = c;
-        });
-        mArrivalDate.read(ar.readStream());
-    } else {
-        ar.writeStream().writeCity(mCity.get());
-        mArrivalDate.write(ar.writeStream());
-    }
-    ar.field("mEnd", mEnd);
+void eRequestAidEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ar.worldCityField("city", worldBoard(), mCity);
+    ar.dateField("arrivalDate", mArrivalDate);
+    ar.field("end", mEnd, false);
 }

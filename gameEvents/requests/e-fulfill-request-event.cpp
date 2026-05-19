@@ -409,77 +409,26 @@ std::string eFulfillRequestEvent::longName() const
     return tmpl;
 }
 
-void eFulfillRequestEvent::write(eWriteStream &dst) const
+void eFulfillRequestEvent::serializeFields(eSaveArchive &ar)
 {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eFulfillRequestEvent *>(this)->serialize(ar);
-}
-
-void eFulfillRequestEvent::read(eReadStream &src)
-{
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eFulfillRequestEvent::serialize(eSaveArchive &ar)
-{
-    if (ar.reading())
+    eGameEvent::serializeFields(ar);
+    eResourceEventValue::serialize(ar);
+    eCountEventValue::serialize(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
+    eGodEventValue::serialize(ar);
+    ar.field("requestType", mRequestType, eReceiveRequestType::general);
+    ar.field("requestResult", mRequestResult, eReceiveRequestResult::comply);
+    ar.field("requestFinished", mRequestFinished, false);
+    ar.field("requestStep", mRequestStep, 0);
+    ar.field("requestId", mRequestId, 0);
+    ar.field("complyStep", mComplyStep, 0);
+    ar.field("postponed", mPostponed, false);
+    ar.dateField("requestDate", mRequestDate);
+    ar.dateField("requestDeadline", mRequestDeadline);
+    ar.dateField("complyStartDate", mComplyStartDate);
+    if (ar.reading() && mPostponed && mRequestStep == 0)
     {
-        eResourceEventValue::read(ar.readStream());
-        eCountEventValue::read(ar.readStream());
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-        eGodEventValue::read(ar.readStream());
-    }
-    else
-    {
-        eResourceEventValue::write(ar.writeStream());
-        eCountEventValue::write(ar.writeStream());
-        eCityEventValue::write(ar.writeStream());
-        eGodEventValue::write(ar.writeStream());
-    }
-    ar.field("mRequestType", mRequestType);
-    ar.field("mRequestResult", mRequestResult);
-    ar.field("mRequestFinished", mRequestFinished);
-    ar.field("mRequestStep", mRequestStep);
-    ar.field("mRequestId", mRequestId);
-    ar.field("mComplyStep", mComplyStep);
-    ar.field("mPostponed", mPostponed);
-    int requestDay = mRequestDate.day();
-    auto requestMonth = mRequestDate.month();
-    int requestYear = mRequestDate.year();
-    ar.field("mRequestDate.day", requestDay);
-    ar.field("mRequestDate.month", requestMonth);
-    ar.field("mRequestDate.year", requestYear);
-    if (ar.reading())
-    {
-        mRequestDate = eDate(requestDay, requestMonth, requestYear);
-    }
-    int deadlineDay = mRequestDeadline.day();
-    auto deadlineMonth = mRequestDeadline.month();
-    int deadlineYear = mRequestDeadline.year();
-    ar.field("mRequestDeadline.day", deadlineDay);
-    ar.field("mRequestDeadline.month", deadlineMonth);
-    ar.field("mRequestDeadline.year", deadlineYear);
-    if (ar.reading())
-    {
-        mRequestDeadline = eDate(deadlineDay, deadlineMonth, deadlineYear);
-        if (mPostponed && mRequestStep == 0)
-        {
-            mRequestStep = 2;
-        }
-    }
-    int complyStartDay = mComplyStartDate.day();
-    auto complyStartMonth = mComplyStartDate.month();
-    int complyStartYear = mComplyStartDate.year();
-    ar.field("complyStartDate.day", complyStartDay);
-    ar.field("complyStartDate.month", complyStartMonth);
-    ar.field("complyStartDate.year", complyStartYear);
-    if (ar.reading())
-    {
-        mComplyStartDate = eDate(
-            complyStartDay, complyStartMonth, complyStartYear);
+        mRequestStep = 2;
     }
 }
 

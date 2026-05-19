@@ -37,26 +37,10 @@ std::string eEarthquakeEvent::longName() const {
     return eLanguage::text("earthquake_long_name");
 }
 
-void eEarthquakeEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eCountEventValue::write(dst);
-    eGodEventValue::write(dst);
-    eGodReasonEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eEarthquakeEvent*>(this)->serialize(ar);
-}
-
-void eEarthquakeEvent::serialize(eSaveArchive& ar) {
-
-}
-
-void eEarthquakeEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
-    eCountEventValue::read(src);
-    eGodEventValue::read(src);
-    eGodReasonEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eEarthquakeEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
+    eCountEventValue::serialize(ar);
+    eGodEventValue::serialize(ar);
+    eGodReasonEventValue::serialize(ar);
 }

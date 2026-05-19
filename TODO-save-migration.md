@@ -4,7 +4,8 @@ Single active guide. Keep terse. Do not add diary notes.
 
 ## Goal
 All save data is tagged, named, bounded, schema-readable, and safe to add/remove/reorder.
-Old saves may be refused by save-version bump.
+Do not add save-version handling in migration batches.
+Do not add version bumps, version gates, version readers, migration readers, or old-shape readers unless explicitly asked.
 
 ## Hard Rules
 No migrated save-node code may add:
@@ -13,6 +14,9 @@ No migrated save-node code may add:
 - `readStream().read*` / `writeStream().write*`
 - raw stream loops
 - direct `raw payload fields` for refs/runtime objects
+- save-version handling
+- version bumps/gates/readers
+- migration readers or old-shape readers
 
 `raw payload fields` is allowed only:
 - inside central typed helpers, writing one primitive/ref id behind schema API (`characterField`, `buildingField`, `tileField`, `bannerField`, etc.)
@@ -125,7 +129,8 @@ Stop and ask if:
 - C character save roots: DONE, verified.
 - D building save roots: DONE, scan-verified.
 - F-tile (eTile/eBanner/eSpawner): DONE, scan-verified.
-- A-D, F-tile scans: no forbidden direct raw payload-field hits in migrated dirs.
+- F quick wins (`eCityFinances`, `eEmploymentDistributor`, `eReinforcements`, `eMilitaryAid`, `ePlague`): DONE, scan-verified.
+- A-D, F-tile, F quick-win scans: no forbidden direct raw payload-field hits in migrated dirs.
 - `git diff --check`: clean.
 
 Known gaps:
@@ -141,7 +146,7 @@ Intentional boundaries:
 
 ## Work Left
 
-### E - game events: IN PROGRESS
+### E - game events: DONE
 Detailed batch: `TODO-e-batch.md`.
 
 Audit findings (initial scan):
@@ -166,18 +171,18 @@ Rules:
 - runtime/cached fields (`mParent`, `mBoard`, computed warnings) must not be saved.
 
 Work breakdown (do in order):
-- [ ] E1: base `eGameEvent` — split `read/write` → final base, virtual `serializeFields(ar)`. Replace mNextDate raw stream with date helper.
-- [ ] E2: `ewarning` — same treatment; ensure no subclass overrides remain.
-- [ ] E3: value classes — migrate to helper polymorphic root. Update all call sites in subclasses.
-- [ ] E4: `eEventTrigger` — verify or migrate to `serialize(ar)`.
-- [ ] E5: subclass batch 1 (army/raid/conquest): `earmyeventbase`, `earmyreturnevent`, `eattackingcityeventvalue` callers, `eplayerconquestevent(base)`, `eplayerraidevent`, `erivalarmyawayevent`.
-- [ ] E6: subclass batch 2 (disaster/landscape): `eearthquakeevent`, `elandslideevent`, `elavaevent`, `esinklandevent`, `etidalwaveevent`.
-- [ ] E7: subclass batch 3 (economic/trade/wage): `edemandchangeevent`, `eeconomicchangeevent`, `eeconomicmilitarychangeeventbase`, `epricechangeevent`, `esupplychangeevent`, `esupplydemandchangeevent`, `ewagechangeevent`, `etradeopenupevent`, `etradeshutdownevent`, `emilitarychangeevent`.
-- [ ] E8: subclass batch 4 (city interactions): `ecitybecomesevent`, `egiftfromevent`, `egifttoevent`, `ereceivetributeevent`, `emakerequestevent`, `eraidresourceevent`, `eresourcegrantedeventbase`.
-- [ ] E9: subclass batch 5 (military/aid/requests): `erequestaidevent`, `erequeststrikeevent`, `ereinforcementsevent`, `etroopsrequestevent`, `etroopsrequestfulfilledevent`, `requests/e-fulfill-request-event`, `requests/e-pay-tribute-event`.
-- [ ] E10: gods family: `egodattackevent`, `egoddisasterevent`, `egodquestevent(base)`, `egodquestfulfilledevent`, `egodtraderesumesevent`, `egodvisitevent`, `egodquest`.
-- [ ] E11: invasions family: `invasions/invasion-event`, `invasion-handler`, `invasion-warning`, `monster-*-event*`.
-- [ ] E12: final scan, build (when asked), `git diff --check`, document done.
+- [x] E1: base `eGameEvent` — split `read/write` → final base, virtual `serializeFields(ar)`. Replace mNextDate raw stream with date helper.
+- [x] E2: `ewarning` — same treatment; ensure no subclass overrides remain.
+- [x] E3: value classes — migrate to helper polymorphic root. Update all call sites in subclasses.
+- [x] E4: `eEventTrigger` — verify or migrate to `serialize(ar)`.
+- [x] E5: subclass batch 1 (army/raid/conquest): `earmyeventbase`, `earmyreturnevent`, `eattackingcityeventvalue` callers, `eplayerconquestevent(base)`, `eplayerraidevent`, `erivalarmyawayevent`.
+- [x] E6: subclass batch 2 (disaster/landscape): `eearthquakeevent`, `elandslideevent`, `elavaevent`, `esinklandevent`, `etidalwaveevent`.
+- [x] E7: subclass batch 3 (economic/trade/wage): `edemandchangeevent`, `eeconomicchangeevent`, `eeconomicmilitarychangeeventbase`, `epricechangeevent`, `esupplychangeevent`, `esupplydemandchangeevent`, `ewagechangeevent`, `etradeopenupevent`, `etradeshutdownevent`, `emilitarychangeevent`.
+- [x] E8: subclass batch 4 (city interactions): `ecitybecomesevent`, `egiftfromevent`, `egifttoevent`, `ereceivetributeevent`, `emakerequestevent`, `eraidresourceevent`, `eresourcegrantedeventbase`.
+- [x] E9: subclass batch 5 (military/aid/requests): `erequestaidevent`, `erequeststrikeevent`, `ereinforcementsevent`, `etroopsrequestevent`, `etroopsrequestfulfilledevent`, `requests/e-fulfill-request-event`, `requests/e-pay-tribute-event`.
+- [x] E10: gods family: `egodattackevent`, `egoddisasterevent`, `egodquestevent(base)`, `egodquestfulfilledevent`, `egodtraderesumesevent`, `egodvisitevent`, `egodquest`.
+- [x] E11: invasions family: `invasions/invasion-event`, `invasion-handler`, `invasion-warning`, `monster-*-event*`.
+- [x] E12: final scan, build (when asked), `git diff --check`, document done.
 
 Stop and ask if:
 - value class is shared across non-event call sites (call hierarchy needs check before reshaping).
@@ -190,7 +195,7 @@ rg -n "void\s+(read|write)\s*\(e(Read|Write)Stream&|payload" gameEvents
 rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(" gameEvents
 ```
 
-### F - engine/world graph: NOT STARTED
+### F - engine/world graph: IN PROGRESS
 Targets:
 - `eCampaign`
 - `eWorldBoard`
@@ -199,7 +204,14 @@ Targets:
 - `eBoardCity`
 - `eBoardPlayer`
 - `eTile`
-- military aid, plague, reinforcements, finances, episode goals
+- episode goals
+
+Done:
+- [x] `eCityFinances`
+- [x] `eEmploymentDistributor`
+- [x] `eReinforcements`
+- [x] `eMilitaryAid`
+- [x] `ePlague`
 
 Rules:
 - top-level graph last.

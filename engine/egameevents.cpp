@@ -71,44 +71,23 @@ bool eGameEvents::handleEpisodeCompleteEvents() {
     return result;
 }
 
-void eGameEvents::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eGameEvents*>(this)->serialize(ar);
-}
-
-void eGameEvents::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eGameEvents::serialize(eSaveArchive& ar) {
-    int nevs;
-    if(ar.writing()) nevs = mGameEvents.size();
-    ar.field("nevs", nevs);
-    for(int i = 0; i < nevs; i++) {
+    ar.arrayField("events", mGameEvents, [this](eSaveArchive& ar, stdsptr<eGameEvent>& e) {
         eGameEventType type;
-        if(ar.writing()) type = mGameEvents[i]->type();
-        ar.field("type", type);
-        if(ar.reading()) {
-            const auto branch = eGameEventBranch::root;
-            const auto e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            const bool hasPayload = ar.payloadField(
-                "eventPayload",
-                [](eWriteStream&) {},
-                [&e](eReadStream& src) { e->read(src); });
-            if(!hasPayload) {
-                // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored event bytes inline.
-                e->read(ar.readStream());
-            }
-            addEvent(e);
-        } else {
-            const auto& e = mGameEvents[i];
-            ar.payloadField(
-                "eventPayload",
-                [&e](eWriteStream& dst) { e->write(dst); },
-                [](eReadStream&) {});
+        eGameEventBranch branch = eGameEventBranch::root;
+        if(ar.writing()) {
+            type = e->type();
+            branch = e->branch();
         }
-    }
+        ar.field("type", type);
+        ar.field("branch", branch, eGameEventBranch::root);
+        if(ar.reading()) {
+            e = eGameEvent::sCreate(mCid, type, branch, mBoard);
+        }
+        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+            e->serialize(childAr);
+        });
+    });
 }
 
 void eGameEvents::loadResources() {

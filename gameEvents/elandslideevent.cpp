@@ -42,22 +42,9 @@ std::string eLandSlideEvent::longName() const {
     return eLanguage::zeusText(156, 5);
 }
 
-void eLandSlideEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eLandSlideEvent*>(this)->serialize(ar);
-}
-
-void eLandSlideEvent::serialize(eSaveArchive& ar) {
-
-}
-
-void eLandSlideEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eLandSlideEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
 }
 
 void eLandSlideEvent::loadResources() const {

@@ -273,9 +273,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         it.field("missileType", type);
                         const auto c = eMissile::sCreate(*this, type);
-                        it.payloadField("missileData",
-                            [](eWriteStream&) {},
-                            [c](eReadStream& src) { c->read(src); });
+                        it.archiveField("missileData",
+                            [c](eSaveArchive& childAr) { c->serialize(childAr); });
                     });
             }
         } else {
@@ -285,9 +284,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eMissileType type = c->type();
                         it.field("missileType", type);
-                        it.payloadField("missileData",
-                            [c](eWriteStream& dst) { c->write(dst); },
-                            [](eReadStream&) {});
+                        it.archiveField("missileData",
+                            [c](eSaveArchive& childAr) { c->serialize(childAr); });
                     });
             }
         }

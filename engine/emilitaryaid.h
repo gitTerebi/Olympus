@@ -5,8 +5,6 @@
 
 #include "pointers/estdselfref.h"
 
-class eWriteStream;
-class eReadStream;
 class eGameBoard;
 class eWorldCity;
 class eSoldierBanner;
@@ -21,8 +19,6 @@ struct eMilitaryAid {
 
     void goBack();
 
-    void write(eWriteStream& dst);
-    void read(eReadStream& src, eGameBoard* const board);
     void serialize(eSaveArchive& ar, eGameBoard* board);
 
     stdsptr<eWorldCity> fCity;

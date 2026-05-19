@@ -31,26 +31,11 @@ std::string eSinkLandEvent::longName() const {
     return eLanguage::zeusText(156, 28);
 }
 
-void eSinkLandEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eCountEventValue::write(dst);
-    eGodEventValue::write(dst);
-    eGodReasonEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSinkLandEvent*>(this)->serialize(ar);
-}
-
-void eSinkLandEvent::serialize(eSaveArchive& ar) {
-
-}
-
-void eSinkLandEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eCountEventValue::read(src);
-    eGodEventValue::read(src);
-    eGodReasonEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eSinkLandEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCountEventValue::serialize(ar);
+    eGodEventValue::serialize(ar);
+    eGodReasonEventValue::serialize(ar);
 }
 
 void eSinkLandEvent::loadResources() const {

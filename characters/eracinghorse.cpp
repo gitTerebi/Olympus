@@ -48,18 +48,7 @@ eRacingHorse::getTexture(const eTileSize size) const {
     return coll.getTexture(time % coll.size());
 }
 
-void eRacingHorse::read(eReadStream& src) {
-    eMissile::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRacingHorse::write(eWriteStream& dst) const {
-    eMissile::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRacingHorse*>(this)->serialize(ar);
-}
-
-void eRacingHorse::serialize(eSaveArchive& ar) {
+void eRacingHorse::serializeFields(eSaveArchive& ar) {
+    eMissile::serializeFields(ar);
     ar.field("mId", mId);
 }

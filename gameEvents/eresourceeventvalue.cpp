@@ -38,19 +38,13 @@ void eResourceEventValue::longNameReplaceResource(
     eStringHelpers::replace(tmpl, id, resName);
 }
 
-void eResourceEventValue::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eResourceEventValue*>(this)->serialize(ar);
-}
-
-void eResourceEventValue::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eResourceEventValue::serialize(eSaveArchive& ar) {
-    ar.field("mResource", mResource);
+    ar.field("resource", mResource, eResourceType::fleece);
+    const char* const names[] = {"resource0", "resource1", "resource2"};
+    const eResourceType defaults[] = {eResourceType::fleece,
+                                       eResourceType::none,
+                                       eResourceType::none};
     for(int i = 0; i < 3; i++) {
-        ar.field("mResources[i]", mResources[i]);
+        ar.field(names[i], mResources[i], defaults[i]);
     }
 }

@@ -14,11 +14,9 @@ public:
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     int mId;
 };
 

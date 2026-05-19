@@ -1,6 +1,7 @@
 #include "eplague.h"
 
 #include "buildings/esmallhouse.h"
+#include "ecityid.h"
 #include "e-game-board.h"
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
@@ -58,29 +59,10 @@ void ePlague::removeHouse(eSmallHouse* const h) {
     eVectorHelpers::remove(mHouses, h);
 }
 
-void ePlague::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePlague::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<ePlague*>(this)->serialize(ar);
-}
-
 void ePlague::serialize(eSaveArchive& ar) {
-    ar.field("cityId", mCityId);
-    int houseCount = ar.writing() ? static_cast<int>(mHouses.size()) : 0;
-    ar.field("houses.count", houseCount);
-    if(ar.reading()) mHouses.clear();
-    for(int i = 0; i < houseCount; i++) {
-        ar.payloadField(("house." + std::to_string(i)).c_str(),
-            [this, i](eWriteStream& dst) { dst.writeBuilding(mHouses[i]); },
-            [this](eReadStream& src) {
-                src.readBuilding(&mBoard, [this](eBuilding* const b) {
-                    const auto ch = static_cast<eSmallHouse*>(b);
-                    mHouses.push_back(ch);
-                });
-            });
-    }
+    const auto defaultCityId = mCityId;
+    ar.field("cityId", mCityId, defaultCityId);
+    ar.arrayField("houses", mHouses, [this](eSaveArchive& itemAr, eSmallHouse*& h) {
+        itemAr.buildingAsField("house", &mBoard, h);
+    });
 }

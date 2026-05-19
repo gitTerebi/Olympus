@@ -24,8 +24,7 @@ public:
 
     void loadResources() const;
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
+    void serialize(eSaveArchive& ar);
 
     void addEvent(const stdsptr<eGameEvent>& e);
     void removeEvent(const stdsptr<eGameEvent>& e);
@@ -39,8 +38,6 @@ public:
     void setGameBoard(eGameBoard* const b);
     void setWorldBoard(eWorldBoard* const b);
 private:
-    void serialize(eSaveArchive& ar);
-
     const eCityId mCid;
     eGameBoard& mBoard;
 

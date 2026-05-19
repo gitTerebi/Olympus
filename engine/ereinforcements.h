@@ -17,10 +17,8 @@ public:
     bool remove(const stdsptr<eSoldierBanner>& b);
     bool checkEmpty() const;
 
-    void write(eWriteStream& dst) const;
-    void read(eGameBoard& board, eReadStream& src);
-private:
     void serialize(eSaveArchive& ar, eGameBoard* board);
+private:
 
     eEnlistedForces mForces;
     eCityId mFromCid;

@@ -14,9 +14,6 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
     const stdsptr<eWorldCity>& city() const { return mCity; }
 
@@ -25,9 +22,9 @@ public:
 
     void setArrivalDate(const eDate& d) { mArrivalDate = d; }
     const eDate& arrivalDate() const { return mArrivalDate; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eDate mArrivalDate;
     bool mEnd = false;
     stdsptr<eWorldCity> mCity;

@@ -18,9 +18,8 @@ public:
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     enum class eResponse {
         accept,
@@ -31,7 +30,6 @@ private:
     void accept(eCityId city);
     void postpone();
     void decline();
-    void serialize(eSaveArchive& ar);
 
     stdsptr<eWorldCity> mCity;
 };

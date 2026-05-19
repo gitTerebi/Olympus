@@ -13,9 +13,8 @@ public:
 
     void trigger() override;
     std::string longName() const override;
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 };
 
 #endif // ETRADESHUTDOWNEVENT_H

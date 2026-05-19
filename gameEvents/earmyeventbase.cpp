@@ -24,29 +24,13 @@ void eArmyEventBase::removeArmyEvent() {
     board->removeArmyEvent(this);
 }
 
-void eArmyEventBase::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eArmyEventBase*>(this)->serialize(ar);
-}
-
-void eArmyEventBase::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eArmyEventBase::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        const auto board = gameBoard();
-        mForces.read(*board, ar.readStream());
-        ar.readStream().readCity(board, [this](const stdsptr<eWorldCity>& c) {
-            mCity = c;
-        });
-    } else {
-        mForces.write(ar.writeStream());
-        ar.writeStream().writeCity(mCity.get());
-    }
+void eArmyEventBase::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    const auto board = gameBoard();
+    ar.archiveField("forces", [this, board](eSaveArchive& childAr) {
+        mForces.serialize(childAr, board);
+    });
+    ar.worldCityField("city", board, mCity);
 }
 
 void eArmyEventBase::planArmyReturn() {

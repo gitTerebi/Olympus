@@ -19,17 +19,14 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     void setEnd(const int e) { mEnd = e; }
     bool end() const { return mEnd; }
 
     void setDuration(const int d) { mDuration = d; }
     int duration() const { return mDuration; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     int mDuration = 180;
     bool mEnd = false;
 };

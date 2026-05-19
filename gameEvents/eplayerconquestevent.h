@@ -21,15 +21,12 @@ public:
 
     bool finished() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     bool warned() const;
 
     using ePlayerConquestEventBase::planArmyReturn;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdptr<eInvasionEvent> mInvasionEvent;
 };
 

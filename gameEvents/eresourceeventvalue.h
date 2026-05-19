@@ -18,8 +18,6 @@ public:
     void setResourceType(const int id, const eResourceType type)
     { mResources[id] = type; }
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
 protected:
     void serialize(eSaveArchive& ar);
 
