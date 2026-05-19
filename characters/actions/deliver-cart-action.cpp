@@ -67,10 +67,12 @@ void eDeliverCartAction::toAtOrReturn() {
 void eDeliverCartAction::toLoadOrIdle() {
     const auto c = cart();
     if(c->hasResource()) {
-        enterLoading();
-    } else {
-        enterIdle();
+        const auto res = c->resType();
+        const int count = c->resCount();
+        const int added = building()->add(res, count);
+        c->setResource(res, count - added);
     }
+    enterIdle();
 }
 
 // ── enter: actions (side effects) ────────────────────────────────────────────
@@ -79,6 +81,11 @@ void eDeliverCartAction::enterIdle() {
     mDeliverState = eDeliverState::idle;
     mFindRetry = 0;
     clearTask();
+    if(!cart()->hasResource()) {
+        cart()->setType(eCartTransporterType::basic);
+    }
+    cart()->setVisible(false);
+    wait(kIdleWait);
 }
 
 void eDeliverCartAction::enterLoading() {
@@ -96,17 +103,20 @@ void eDeliverCartAction::enterLoading() {
 
 void eDeliverCartAction::enterWaitOutside() {
     mDeliverState = eDeliverState::waitOutside;
+    cart()->setVisible(true);
     waitOutside(); // walk to road/adjacent tile; on arrive → spread() → decide()
 }
 
 void eDeliverCartAction::enterIdleOutside() {
     mDeliverState = eDeliverState::idleOutside;
+    cart()->setVisible(true);
     wait(kIdleOutsideWait); // sleep → decide() fires → toFindTarget()
 }
 
 void eDeliverCartAction::enterReturning() {
     mDeliverState = eDeliverState::returning;
     mFindRetry = 0;
+    cart()->setVisible(true);
     goBack();
 }
 
@@ -143,6 +153,7 @@ void eDeliverCartAction::resumeFromSavedState() {
     setCurrentAction(nullptr);
     switch(mDeliverState) {
     case eDeliverState::idle:
+        enterIdle();
         break;
     case eDeliverState::loading:
         toWaitOrIdle();

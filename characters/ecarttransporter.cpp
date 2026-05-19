@@ -343,6 +343,15 @@ void eCartTransporter::setActionType(const eCharacterActionType t) {
     if(mOx) mOx->setActionType(t);
 }
 
+void eCartTransporter::setVisible(const bool v) {
+    eCharacter::setVisible(v);
+    if(mOx) mOx->setVisible(v);
+    if(mTrailer) mTrailer->setVisible(v);
+    for(const auto& f : mFollowers) {
+        if(f) f->setVisible(v);
+    }
+}
+
 void eCartTransporter::catchUp() {
     const auto cCatchUp = [](eCharacter* const c) {
         const auto ca = c->action();

@@ -5,6 +5,10 @@
 
 #include "engine/e-game-board.h"
 #include "engine/eboardcity.h"
+#include "echariotfactory.h"
+#include "ehorseranch.h"
+#include "eprocessingbuilding.h"
+#include "etriremewharf.h"
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/storage-delivery-cart.h"
@@ -372,10 +376,24 @@ bool eStorageBuilding::deliveryTargetExists(
 bool eStorageBuilding::acceptsInputDelivery(eBuildingWithResource* const target,
                                             const eResourceType res) {
     if(!target) return false;
-    for(const auto& task : target->cartTasks()) {
-        if(task.fType != eCartActionType::get) continue;
-        if(task.fMaxCount <= 0) continue;
-        if(static_cast<bool>(task.fResource & res)) return true;
+    const auto type = target->type();
+    if(type == eBuildingType::godMonument ||
+       eBuilding::sSanctuaryBuilding(type)) {
+        return false;
+    }
+    if(const auto b = dynamic_cast<eProcessingBuilding*>(target)) {
+        return b->rawMaterial() == res;
+    }
+    if(dynamic_cast<eHorseRanch*>(target)) {
+        return res == eResourceType::wheat;
+    }
+    if(dynamic_cast<eChariotFactory*>(target)) {
+        return res == eResourceType::wood ||
+               res == eResourceType::horse;
+    }
+    if(dynamic_cast<eTriremeWharf*>(target)) {
+        return res == eResourceType::wood ||
+               res == eResourceType::armor;
     }
     return false;
 }

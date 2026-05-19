@@ -45,6 +45,7 @@ private:
 
     eDeliverState mDeliverState = eDeliverState::idle;
     int mFindRetry = 0;
+    static const int kIdleWait = 1000;
     static const int kMaxFindRetries = 250;
     static const int kFindRetryWait = 1000;
     static const int kIdleOutsideWait = 1000;
