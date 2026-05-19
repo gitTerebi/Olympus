@@ -17,22 +17,11 @@ eSpawner::~eSpawner() {
     board().unregisterSpawner(this);
 }
 
-void eSpawner::read(eReadStream& src) {
-    eBanner::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eSpawner::write(eWriteStream& dst) const {
-    eBanner::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eSpawner*>(this)->serialize(ar);
-}
-
 void eSpawner::serialize(eSaveArchive& ar) {
-    ar.field("mCount", mCount);
-    ar.field("mTime", mTime);
-    ar.field("mSpawningEnabled", mSpawningEnabled, true); // SAVE_COMPAT_OPTIONAL_FIELD
+    eBanner::serialize(ar);
+    ar.field("count", mCount, 0);
+    ar.field("time", mTime, 0);
+    ar.field("spawningEnabled", mSpawningEnabled, true);
 }
 
 void eSpawner::incTime(const int by) {

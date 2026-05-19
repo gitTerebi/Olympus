@@ -2,8 +2,6 @@
 #define EBANNER_H
 
 class eGameBoard;
-class eReadStream;
-class eWriteStream;
 class eTile;
 class eSaveArchive;
 enum class eCityId;
@@ -47,14 +45,12 @@ public:
     static bool sBuildable(const eBannerTypeS type);
     bool buildable() const;
 
-    virtual void read(eReadStream& src);;
-    virtual void write(eWriteStream& dst) const;;
+    virtual void serialize(eSaveArchive& ar);
 
     static eBanner* sCreate(const int id, eTile* const tile,
                             eGameBoard& board,
                             const eBannerTypeS type);
 private:
-    void serialize(eSaveArchive& ar);
     const eBannerTypeS mType;
     const int mId;
     eTile* const mTile;

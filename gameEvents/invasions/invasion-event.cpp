@@ -246,10 +246,7 @@ void eInvasionEvent::trigger()
     const auto board = gameBoard();
     if (!board)
         return;
-    printf("invasion trigger: target=%i warned=%i attacker=%s point=%i next_date=%s\n",
-           static_cast<int>(cityId()), mWarned,
-           mCity ? mCity->name().c_str() : "null",
-           pointId(), nextDate().shortString().c_str());
+
     if (!mWarned)
     {
         choosePointId();
@@ -262,9 +259,6 @@ void eInvasionEvent::trigger()
     const auto tile = invasionTile();
     if (!mCity || !tile)
     {
-        printf("invasion trigger aborted: attacker=%s tile=%p point=%i\n",
-               mCity ? mCity->name().c_str() : "null",
-               static_cast<void *>(tile), pointId());
         if (mConquestEvent)
         {
             mConquestEvent->planArmyReturn();

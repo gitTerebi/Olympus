@@ -4,7 +4,7 @@ Single active guide. Keep terse. Do not add diary notes.
 
 ## Goal
 All save data is tagged, named, bounded, schema-readable, and safe to add/remove/reorder.
-Old saves may be refused by save-version bump. No dual-path compatibility unless explicitly marked.
+Old saves may be refused by save-version bump.
 
 ## Hard Rules
 No migrated save-node code may add:
@@ -16,12 +16,11 @@ No migrated save-node code may add:
 
 `raw payload fields` is allowed only:
 - inside central typed helpers, writing one primitive/ref id behind schema API (`characterField`, `buildingField`, `tileField`, `bannerField`, etc.)
-- in `SAVE_COMPAT_LEGACY_FALLBACK` branches
 
 Not done:
 - moving raw stream code into `raw payload fields`
 - `raw payload refs such as cart/worker/boat/building/tile/banner/soldier/trailer/ox` in migrated save code
-- raw object bytes inside helper unless legacy fallback
+- raw object bytes inside helper
 
 Schema-readability gate:
 - reading `serializeFields(ar)` must show what is saved
@@ -57,7 +56,7 @@ Use for nested helper families not saved as top-level objects.
 ## Field Rules
 - names describe durable data, not member vars
 - no `m` prefix for new fields
-- never rename shipped field names
+- never reuse field names
 - use defaults for addable fields
 - refs use typed helpers
 - collections use `arrayField` / `dequeField` / `countedArrayField`
@@ -124,16 +123,15 @@ Stop and ask if:
 - A action-adjacent helper roots: DONE, verified.
 - B remaining action helper roots: DONE, verified.
 - C character save roots: DONE, verified.
-- D building save roots: PARTIAL. Base/child `serializeFields` exists, but building root still uses raw factory bytes through `eBuildingReader::sRead` / `eBuildingWriter::sWrite`.
-- A-C scans: no forbidden direct raw payload-field hits in migrated dirs.
-- D scan failed reality check: `buildingData` is hybrid raw factory bytes + tagged `b->write()`.
+- D building save roots: DONE, scan-verified.
+- F-tile (eTile/eBanner/eSpawner): DONE, scan-verified.
+- A-D, F-tile scans: no forbidden direct raw payload-field hits in migrated dirs.
 - `git diff --check`: clean.
 
 Known gaps:
 - Build not run. Use `.\build.bat` only when asked.
 - Smoke save/load not run.
 - Runtime load semantics not proven beyond code review.
-- D load/save semantics not proven. Palace/god monument exposed duplicate owner refs because legacy raw owner refs still coexist with new tagged owner fields.
 - Existing non-migrated E/F areas still contain legacy payload/raw stream patterns.
 
 Intentional boundaries:
@@ -143,43 +141,12 @@ Intentional boundaries:
 
 ## Work Left
 
-### D - building save roots: REOPENED
-
-Problem:
-- `eGameBoard` writes each building as `payloadField("buildingData")`.
-- Inside that payload, `eBuildingWriter::sWrite()` writes raw factory/type-specific bytes.
-- Then `b->write()` writes tagged `serializeFields`.
-- `eBuildingReader::sRead()` reads raw factory/type-specific bytes before object creation, then calls `b->read()`.
-- Result: building save is not fully schema-readable, not reorder-safe, and migrated child fields can duplicate legacy raw refs.
-
-Reset D progress:
-- D0: treat current building migration as scaffolding only, not done.
-- D1: rewrite `engine/e-game-board-read.cpp` building loop framing. Replace raw `payloadField("buildingData")` with named `factory` + `state` archives.
-- D2: make `eBuildingReader/Writer` thin factory helpers over `eSaveArchive&`, or delete them after call sites are clean.
-- D3: move `cityId` into tagged factory field.
-- D4: move constructor args into tagged factory fields: agora orientation, commemorative id, god/id, palace rotation, monument dimensions, sanctuary/pyramid args, etc.
-- D5: move legacy owner refs from `eBuildingReader/Writer` into named typed fields or post-load restore owned by the child class.
-- D6: remove duplicate owner writes for palace/god monument after factory fields are tagged.
-- D7: scan D for `src >>`, `dst <<`, `readBuilding`, `writeBuilding`, raw loops outside typed helpers.
-- D8: save/load smoke mid-state with palace, god monument, vendors, agora, sanctuary/pyramid pieces when possible.
-
-D verification:
-- `rg -n "eBuildingWriter::sWrite|eBuildingReader::sRead" engine fileIO buildings` shows no active building save path usage.
-- `rg -n "src >>|dst <<|readBuilding\(|writeBuilding\(" fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp` shows none, or those files are deleted.
-- `rg -n "readStream\(|writeStream\(|legacyReadStream\|\.val\(" buildings fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp` shows none outside central helpers / explicit legacy fallback.
-- `engine/e-game-board-read.cpp` building loop writes named fields only: type, named `buildingData`, named factory fields, then `serializeFields`.
-- smoke test: palace save/reload/delete, god monument save/reload/delete, agora/vendor save/reload, sanctuary/pyramid save/reload.
-- build passes with `.\build.bat` when requested.
-
-Stop and ask before D rewrite if:
-- constructor field name is unclear.
-- a raw field is needed only to instantiate an object before typed refs can resolve.
-
 ### E - game events: IN PROGRESS
+Detailed batch: `TODO-e-batch.md`.
 
 Audit findings (initial scan):
 - `eGameEvents` container: already on `serialize(ar)` + helpers. Done.
-- `eGameEvent` base: `read/write` thin wrappers over `serialize(ar)`. Uses `payloadField` + `SAVE_COMPAT_LEGACY_FALLBACK` for child events. Warning array via `fixedArrayField`. mNextDate still uses raw `readStream/writeStream`.
+- `eGameEvent` base: `read/write` thin wrappers over `serialize(ar)`. Uses `payloadField` for child events. Warning array via `fixedArrayField`. mNextDate still uses raw `readStream/writeStream`.
 - `eEventTrigger`: standalone, uses `payloadField` already; may be fine — verify.
 - `ewarning`: virtual `read/write`; mNextDate raw stream.
 - ~44 subclass headers still declare `read/write` overrides.
@@ -214,7 +181,7 @@ Work breakdown (do in order):
 
 Stop and ask if:
 - value class is shared across non-event call sites (call hierarchy needs check before reshaping).
-- `eGameEvent` consequences legacy fallback path is touched (don't drop `SAVE_COMPAT_LEGACY_FALLBACK` branch).
+- `eGameEvent` consequences payload ownership is unclear.
 - mNextDate or eDate has no typed helper — propose helper before forcing inline.
 
 Audit:
@@ -240,6 +207,26 @@ Rules:
 - named sections for cities/players/buildings/chars/missiles/events/goals/disasters.
 - arrays use helpers, not raw numbered loops.
 - post-load only through `ar.addPostFunc`.
+
+#### F-tile - `eTile` save root
+Detailed batch: `TODO-f-tile-batch.md`.
+
+Scope:
+- files: `engine/etile.*`, `engine/etilebase.*`, `spawners/ebanner.*`, `spawners/espawner.*`.
+- do not migrate whole F graph.
+
+Plan:
+- remove `eBanner` / `eSpawner` raw `read/write` wrappers.
+- make `eBanner::serialize(eSaveArchive& ar)` the helper root entry point.
+- make `eSpawner::serialize(eSaveArchive& ar)` override and call `eBanner::serialize(ar)` first.
+- keep tile banner factory fields: `bannerType`, `bannerId`.
+- replace `bannerData` payload with named `factory` + `state` archives.
+- prefer `countedArrayField("banners", count, ...)`; manual named count is okay if clearer.
+
+Verify:
+- `rg -n "bannerData|payloadField\(" engine/etile.cpp spawners` shows none.
+- `rg -n "void\s+(read|write)\s*\(\s*e(Read|Write)Stream" spawners/ebanner.h spawners/espawner.h spawners/ebanner.cpp spawners/espawner.cpp` shows none.
+- `git diff --check` clean.
 
 ## Resume Commands
 ```powershell

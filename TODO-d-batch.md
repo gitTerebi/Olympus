@@ -88,6 +88,8 @@ No raw `readBuilding()` / `writeBuilding()` owner refs in building reader/writer
 
 - [x] Factory fields are named.
 - [x] Factory field names are stable and durable.
+- [x] New field names do not use member prefixes like `m`.
+- [x] Renamed/addable fields use explicit defaults.
 - [x] `cityId` is in `factory`.
 - [x] Constructor args are in `factory`.
 - [x] Owner refs are in child `serializeFields()` or post-load.
@@ -115,6 +117,7 @@ No raw `readBuilding()` / `writeBuilding()` owner refs in building reader/writer
 rg -n "buildingData|factoryLegacy|payloadField\(\"state\"" engine fileIO buildings
 rg -n "src >>|dst <<|readBuilding\(|writeBuilding\(" fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp
 rg -n "readStream\(|writeStream\(|legacyReadStream\(|\.val\(" buildings fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp
+rg -n "field\(\"m" buildings fileIO/ebuildingreader.cpp fileIO/ebuildingwriter.cpp
 git diff --check
 ```
 

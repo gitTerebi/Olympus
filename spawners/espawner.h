@@ -19,8 +19,7 @@ public:
 
     virtual void incTime(const int by);
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
+    void serialize(eSaveArchive& ar) override;
 
     void decCount();
 
@@ -32,7 +31,6 @@ public:
     void setSpawnPeriod(const int p);
     void disableSpawning();
 private:
-    void serialize(eSaveArchive& ar);
     const int mMaxCount;
     int mSpawnPeriod = 100;
 

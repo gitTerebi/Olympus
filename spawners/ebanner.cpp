@@ -49,18 +49,8 @@ bool eBanner::buildable() const {
     return sBuildable(mType);
 }
 
-void eBanner::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eBanner::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eBanner*>(this)->serialize(ar);
-}
-
 void eBanner::serialize(eSaveArchive& ar) {
-    ar.field("mIOID", mIOID);
+    ar.field("ioId", mIOID, -1);
 }
 
 eBanner* eBanner::sCreate(const int id,
