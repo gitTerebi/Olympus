@@ -6,8 +6,8 @@
 
 class eSaveArchive;
 
-namespace eBuildingReader {
-    stdsptr<eBuilding> sRead(
+namespace eBuildingArchive {
+    stdsptr<eBuilding> load(
             eGameBoard& board, const eBuildingType type,
             eSaveArchive& ar);
 };

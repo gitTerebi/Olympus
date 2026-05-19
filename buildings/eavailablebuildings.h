@@ -5,8 +5,6 @@
 
 #include "characters/gods/egod.h"
 
-class eReadStream;
-class eWriteStream;
 class eSaveArchive;
 
 enum class eBuildingType;
@@ -23,8 +21,7 @@ struct ePyramidAvailable {
 };
 
 struct eAvailableBuildings {
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
+    void serialize(eSaveArchive& ar);
 
     void allowPyramid(const eBuildingType type,
                       const std::vector<bool>& levels);
@@ -42,7 +39,6 @@ struct eAvailableBuildings {
                   const int id = -1);
 
     void startEpisode(const eAvailableBuildings& o);
-    void serialize(eSaveArchive& ar);
 private:
 
     void startEpisode(const eAvailableBuildings& o,

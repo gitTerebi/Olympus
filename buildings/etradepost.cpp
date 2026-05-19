@@ -322,6 +322,9 @@ void eTradePost::serializeFields(eSaveArchive& ar) {
     ar.field("cartAccept", mCartAccept, eResourceType::none);
     ar.field("cartDontAccept", mCartDontAccept, eResourceType::none);
     ar.field("routeTimer", mRouteTimer, 0);
+    if(mType == eTradePostType::pier) {
+        ar.buildingAsField("unpackBuilding", &getBoard(), mUnpackBuilding);
+    }
     const stdptr<eTradePost> tptr(this);
     ar.addPostFunc([tptr]() {
         if(!tptr) return;

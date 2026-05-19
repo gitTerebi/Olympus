@@ -6,9 +6,9 @@
 
 class eSaveArchive;
 
-namespace eBuildingWriter {
-    void sWrite(const eBuilding* const b,
-                eSaveArchive& ar);
+namespace eBuildingArchive {
+    void save(const eBuilding* const b,
+              eSaveArchive& ar);
 };
 
 #endif // EBUILDINGWRITER_H

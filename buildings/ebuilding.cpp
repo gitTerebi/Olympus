@@ -2496,7 +2496,7 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
         eSaveArchive ar(dst);
         auto btype = b->type();
         ar.field("buildingType", btype);
-        eBuildingWriter::sWrite(b, ar);
+        eBuildingArchive::save(b, ar);
     }
     const size_t written = dst.memPos();
     std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
@@ -2834,14 +2834,8 @@ void eBuilding::serializeFields(eSaveArchive& ar) {
     ar.field("onFire", mOnFire);
 }
 
-void eBuilding::read(eReadStream& src) {
-    eSaveArchive ar(src);
+void eBuilding::serialize(eSaveArchive& ar) {
     serializeFields(ar);
-}
-
-void eBuilding::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eBuilding*>(this)->serializeFields(ar);
 }
 
 void eBuilding::setIOID(const int id) {

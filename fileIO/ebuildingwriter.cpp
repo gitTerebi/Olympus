@@ -4,18 +4,8 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
-void writePyramidElementCost(
-        const ePyramidElement* const e,
-        eWriteStream& dst) {
-    const auto& cost = e->costs();
-    dst << cost.size();
-    for(const auto& c : cost) {
-        c.write(dst);
-    }
-}
-
-void eBuildingWriter::sWrite(const eBuilding* const b,
-                             eSaveArchive& ar) {
+void eBuildingArchive::save(const eBuilding* const b,
+                            eSaveArchive& ar) {
     const auto type = b->type();
     if(type == eBuildingType::palace) {
         const auto p = static_cast<const ePalace*>(b);
@@ -25,9 +15,9 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
             it.field("cityId", cid);
             it.field("rotated", rotated);
         });
-        ar.payloadField("state",
-            [b](eWriteStream& dst) { b->write(dst); },
-            [](eReadStream&) {});
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
         return;
     }
     if(type == eBuildingType::palaceTile) {
@@ -38,411 +28,449 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
             it.field("cityId", cid);
             it.field("other", other);
         });
-        ar.payloadField("state",
-            [b](eWriteStream& dst) { b->write(dst); },
-            [](eReadStream&) {});
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
         return;
     }
-    bool skipState = false;
-    ar.payloadField("factoryLegacy",
-        [&](eWriteStream& dst) {
-    const auto cid = b->cityId();
-    dst << cid;
-    switch(type) {
-    case eBuildingType::road:
-    case eBuildingType::roadblock:
-        break;
-    case eBuildingType::commonAgora: {
-        const auto ca = static_cast<const eCommonAgora*>(b);
-        dst << ca->orientation();
-    } break;
-    case eBuildingType::grandAgora: {
-        const auto ga = static_cast<const eGrandAgora*>(b);
-        dst << ga->orientation();
-    } break;
-    case eBuildingType::agoraSpace:
-        skipState = true;
-        return;
-    case eBuildingType::commonHouse:
-    case eBuildingType::gymnasium:
-    case eBuildingType::podium:
-    case eBuildingType::fountain:
-    case eBuildingType::watchPost:
-    case eBuildingType::maintenanceOffice:
-    case eBuildingType::college:
-    case eBuildingType::dramaSchool:
-    case eBuildingType::theater:
-    case eBuildingType::hospital:
-    case eBuildingType::bibliotheke:
-    case eBuildingType::observatory:
-    case eBuildingType::university:
-    case eBuildingType::laboratory:
-    case eBuildingType::inventorsWorkshop:
-    case eBuildingType::museum:
-        break;
-    case eBuildingType::stadium: {
-        const auto s = static_cast<const eStadium*>(b);
-        dst << s->rotated();
-    } break;
-    case eBuildingType::palace:
-    case eBuildingType::palaceTile:
-        skipState = true; // handled before legacy wrapper, unreachable
-        return;
-    case eBuildingType::eliteHousing:
-    case eBuildingType::taxOffice:
-    case eBuildingType::mint:
-    case eBuildingType::foundry:
-    case eBuildingType::timberMill:
-    case eBuildingType::refinery:
-    case eBuildingType::blackMarbleWorkshop:
-    case eBuildingType::masonryShop:
-    case eBuildingType::oliveTree:
-    case eBuildingType::vine:
-    case eBuildingType::orangeTree:
-    case eBuildingType::huntingLodge:
-    case eBuildingType::corral:
-    case eBuildingType::chariotFactory:
-        break;
-    case eBuildingType::urchinQuay: {
-        const auto p = static_cast<const eUrchinQuay*>(b);
-        dst << p->orientation();
-    } break;
-    case eBuildingType::fishery: {
-        const auto p = static_cast<const eFishery*>(b);
-        dst << p->orientation();
-    } break;
-    case eBuildingType::triremeWharf: {
-        const auto p = static_cast<const eTriremeWharf*>(b);
-        dst << p->orientation();
-    } break;
-    case eBuildingType::pier: {
-        const auto p = static_cast<const ePier*>(b);
-        dst << p->orientation();
-        const auto tp = p->tradePost();
-        dst.writeBuilding(tp);
-    } break;
-    case eBuildingType::tradePost: {
-        const auto tp = static_cast<const eTradePost*>(b);
-        const auto tpt = tp->tpType();
-        dst << tpt;
-        dst << tp->orientation();
-        const auto& c = tp->city();
-        dst << c.cityId();
-
-        if(tpt == eTradePostType::pier) {
-            const auto ub = tp->unpackBuilding();
-            dst.writeBuilding(ub);
+    {
+        bool simple = false;
+        switch(type) {
+        case eBuildingType::commonHouse:
+        case eBuildingType::eliteHousing:
+        case eBuildingType::road:
+        case eBuildingType::roadblock:
+        case eBuildingType::gymnasium:
+        case eBuildingType::podium:
+        case eBuildingType::fountain:
+        case eBuildingType::watchPost:
+        case eBuildingType::maintenanceOffice:
+        case eBuildingType::college:
+        case eBuildingType::dramaSchool:
+        case eBuildingType::theater:
+        case eBuildingType::hospital:
+        case eBuildingType::bibliotheke:
+        case eBuildingType::observatory:
+        case eBuildingType::university:
+        case eBuildingType::laboratory:
+        case eBuildingType::inventorsWorkshop:
+        case eBuildingType::museum:
+        case eBuildingType::taxOffice:
+        case eBuildingType::mint:
+        case eBuildingType::foundry:
+        case eBuildingType::refinery:
+        case eBuildingType::blackMarbleWorkshop:
+        case eBuildingType::timberMill:
+        case eBuildingType::masonryShop:
+        case eBuildingType::huntingLodge:
+        case eBuildingType::corral:
+        case eBuildingType::dairy:
+        case eBuildingType::cardingShed:
+        case eBuildingType::wheatFarm:
+        case eBuildingType::onionsFarm:
+        case eBuildingType::carrotsFarm:
+        case eBuildingType::granary:
+        case eBuildingType::warehouse:
+        case eBuildingType::wall:
+        case eBuildingType::tower:
+        case eBuildingType::armory:
+        case eBuildingType::olivePress:
+        case eBuildingType::winery:
+        case eBuildingType::sculptureStudio:
+        case eBuildingType::artisansGuild:
+        case eBuildingType::chariotFactory:
+        case eBuildingType::park:
+        case eBuildingType::doricColumn:
+        case eBuildingType::ionicColumn:
+        case eBuildingType::corinthianColumn:
+        case eBuildingType::avenue:
+        case eBuildingType::bench:
+        case eBuildingType::flowerGarden:
+        case eBuildingType::gazebo:
+        case eBuildingType::hedgeMaze:
+        case eBuildingType::fishPond:
+        case eBuildingType::waterPark:
+        case eBuildingType::birdBath:
+        case eBuildingType::shortObelisk:
+        case eBuildingType::tallObelisk:
+        case eBuildingType::shellGarden:
+        case eBuildingType::sundial:
+        case eBuildingType::dolphinSculpture:
+        case eBuildingType::spring:
+        case eBuildingType::orrery:
+        case eBuildingType::topiary:
+        case eBuildingType::baths:
+        case eBuildingType::stoneCircle:
+            simple = true;
+            break;
+        default:
+            break;
         }
-    } break;
-    case eBuildingType::dairy:
-    case eBuildingType::cardingShed:
-    case eBuildingType::sheep:
-    case eBuildingType::goat:
-    case eBuildingType::cattle:
-    case eBuildingType::wheatFarm:
-    case eBuildingType::onionsFarm:
-    case eBuildingType::carrotsFarm:
-    case eBuildingType::growersLodge:
-    case eBuildingType::orangeTendersLodge:
-    case eBuildingType::granary:
-    case eBuildingType::warehouse:
-    case eBuildingType::wall:
-    case eBuildingType::tower:
-        break;
-    case eBuildingType::gatehouse: {
-        const auto p = static_cast<const eGatehouse*>(b);
-        dst << p->rotated();
-    } break;
-    case eBuildingType::armory:
-        break;
-
-    case eBuildingType::horseRanch: {
-        const auto hr = static_cast<const eHorseRanch*>(b);
-        const auto hre = hr->enclosure();
-        dst.writeBuilding(hre);
-    } break;
-    case eBuildingType::horseRanchEnclosure: {
-        const auto hre = static_cast<const eHorseRanchEnclosure*>(b);
-        const auto hr = hre->ranch();
-        dst.writeBuilding(hr);
-    } break;
-
-    case eBuildingType::olivePress:
-    case eBuildingType::winery:
-    case eBuildingType::sculptureStudio:
-    case eBuildingType::artisansGuild:
-        break;
-
-    case eBuildingType::foodVendor:
-    case eBuildingType::fleeceVendor:
-    case eBuildingType::oilVendor:
-    case eBuildingType::wineVendor:
-    case eBuildingType::armsVendor:
-    case eBuildingType::horseTrainer:
-    case eBuildingType::chariotVendor: {
-        const auto v = static_cast<const eVendor*>(b);
-        const auto a = v->agora();
-        dst.writeBuilding(a);
-        const int sid = v->agoraSpaceId();
-        dst << sid;
-    } break;
-
-    case eBuildingType::park:
-    case eBuildingType::doricColumn:
-    case eBuildingType::ionicColumn:
-    case eBuildingType::corinthianColumn:
-    case eBuildingType::avenue:
-        break;
-
-    case eBuildingType::commemorative: {
-        const auto p = static_cast<const eCommemorative*>(b);
-        dst << p->id();
-    } break;
-
-    case eBuildingType::godMonument: {
-        const auto gm = static_cast<const eGodMonument*>(b);
-        dst << gm->god();
-        dst << gm->id();
-    } break;
-    case eBuildingType::godMonumentTile: {
-        const auto gmt = static_cast<const eGodMonumentTile*>(b);
-        dst.writeBuilding(gmt->monument());
-    } break;
-
-    case eBuildingType::bench:
-    case eBuildingType::flowerGarden:
-    case eBuildingType::gazebo:
-    case eBuildingType::hedgeMaze:
-    case eBuildingType::fishPond:
-    case eBuildingType::orrery:
-    case eBuildingType::waterPark:
-    case eBuildingType::birdBath:
-    case eBuildingType::shortObelisk:
-    case eBuildingType::tallObelisk:
-    case eBuildingType::shellGarden:
-    case eBuildingType::sundial:
-    case eBuildingType::dolphinSculpture:
-    case eBuildingType::spring:
-    case eBuildingType::topiary:
-    case eBuildingType::baths:
-    case eBuildingType::stoneCircle:
-        break;
-
-    case eBuildingType::templeAphrodite:
-    case eBuildingType::templeApollo:
-    case eBuildingType::templeAres:
-    case eBuildingType::templeArtemis:
-    case eBuildingType::templeAthena:
-    case eBuildingType::templeAtlas:
-    case eBuildingType::templeDemeter:
-    case eBuildingType::templeDionysus:
-    case eBuildingType::templeHades:
-    case eBuildingType::templeHephaestus:
-    case eBuildingType::templeHera:
-    case eBuildingType::templeHermes:
-    case eBuildingType::templePoseidon:
-    case eBuildingType::templeZeus: {
-        const auto s = static_cast<const eSanctuary*>(b);
-        dst << s->spanW();
-        dst << s->spanH();
-    } break;
-    case eBuildingType::templeStatue: {
-        const auto s = static_cast<const eTempleStatueBuilding*>(b);
-        dst << s->godType();
-        dst << s->id();
-        const auto sanct = s->monument();
-        dst << sanct->ioID();
-    } break;
-    case eBuildingType::templeMonument: {
-        const auto s = static_cast<const eTempleMonumentBuilding*>(b);
-        dst << s->godType();
-        dst << s->id();
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::templeAltar: {
-        const auto s = static_cast<const eTempleAltarBuilding*>(b);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::temple: {
-        const auto s = static_cast<const eTempleBuilding*>(b);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::templeTile: {
-        const auto s = static_cast<const eTempleTileBuilding*>(b);
-        dst << s->id();
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-
-    case eBuildingType::modestPyramid:
-    case eBuildingType::pyramid:
-    case eBuildingType::greatPyramid:
-    case eBuildingType::majesticPyramid:
-
-    case eBuildingType::smallMonumentToTheSky:
-    case eBuildingType::monumentToTheSky:
-    case eBuildingType::grandMonumentToTheSky:
-
-    case eBuildingType::minorShrineAphrodite:
-    case eBuildingType::minorShrineApollo:
-    case eBuildingType::minorShrineAres:
-    case eBuildingType::minorShrineArtemis:
-    case eBuildingType::minorShrineAthena:
-    case eBuildingType::minorShrineAtlas:
-    case eBuildingType::minorShrineDemeter:
-    case eBuildingType::minorShrineDionysus:
-    case eBuildingType::minorShrineHades:
-    case eBuildingType::minorShrineHephaestus:
-    case eBuildingType::minorShrineHera:
-    case eBuildingType::minorShrineHermes:
-    case eBuildingType::minorShrinePoseidon:
-    case eBuildingType::minorShrineZeus:
-
-    case eBuildingType::shrineAphrodite:
-    case eBuildingType::shrineApollo:
-    case eBuildingType::shrineAres:
-    case eBuildingType::shrineArtemis:
-    case eBuildingType::shrineAthena:
-    case eBuildingType::shrineAtlas:
-    case eBuildingType::shrineDemeter:
-    case eBuildingType::shrineDionysus:
-    case eBuildingType::shrineHades:
-    case eBuildingType::shrineHephaestus:
-    case eBuildingType::shrineHera:
-    case eBuildingType::shrineHermes:
-    case eBuildingType::shrinePoseidon:
-    case eBuildingType::shrineZeus:
-
-    case eBuildingType::majorShrineAphrodite:
-    case eBuildingType::majorShrineApollo:
-    case eBuildingType::majorShrineAres:
-    case eBuildingType::majorShrineArtemis:
-    case eBuildingType::majorShrineAthena:
-    case eBuildingType::majorShrineAtlas:
-    case eBuildingType::majorShrineDemeter:
-    case eBuildingType::majorShrineDionysus:
-    case eBuildingType::majorShrineHades:
-    case eBuildingType::majorShrineHephaestus:
-    case eBuildingType::majorShrineHera:
-    case eBuildingType::majorShrineHermes:
-    case eBuildingType::majorShrinePoseidon:
-    case eBuildingType::majorShrineZeus:
-
-    case eBuildingType::pyramidOfThePantheon:
-    case eBuildingType::altarOfOlympus:
-    case eBuildingType::templeOfOlympus:
-    case eBuildingType::observatoryKosmika:
-    case eBuildingType::museumAtlantika:
-        break;
-    case eBuildingType::pyramidWall: {
-        const auto s = static_cast<const ePyramidWall*>(b);
-        dst << s->orientation();
-        dst << s->elevation();
-        dst << s->special();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidTop: {
-        const auto s = static_cast<const ePyramidTop*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidTile: {
-        const auto s = static_cast<const ePyramidTile*>(b);
-        dst << s->elevation();
-        dst << s->type();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidPart: {
-        const auto s = static_cast<const ePyramidBuildingPart*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidAltar: {
-        const auto s = static_cast<const ePyramidAltar*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidStatue: {
-        const auto s = static_cast<const ePyramidStatue*>(b);
-        dst << s->elevation();
-        dst << s->type();
-        dst << s->id();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidMonument: {
-        const auto s = static_cast<const ePyramidMonument*>(b);
-        dst << s->elevation();
-        dst << s->type();
-        dst << s->id();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidTemple: {
-        const auto s = static_cast<const ePyramidTemple*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidObservatory: {
-        const auto s = static_cast<const ePyramidObservatory*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-    case eBuildingType::pyramidMuseum: {
-        const auto s = static_cast<const ePyramidMuseum*>(b);
-        dst << s->elevation();
-        writePyramidElementCost(s, dst);
-        const auto sanct = s->monument();
-        dst.writeBuilding(sanct);
-    } break;
-
-    case eBuildingType::ruins:
-    case eBuildingType::placeholder:
-        break;
-
-    case eBuildingType::achillesHall:
-    case eBuildingType::atalantaHall:
-    case eBuildingType::bellerophonHall:
-    case eBuildingType::herculesHall:
-    case eBuildingType::jasonHall:
-    case eBuildingType::odysseusHall:
-    case eBuildingType::perseusHall:
-    case eBuildingType::theseusHall:
-        break;
-
-    case eBuildingType::hippodromePiece:
-        break;
-
-    case eBuildingType::none:
-    case eBuildingType::erase:
-    case eBuildingType::bridge:
-    case eBuildingType::crosswalk:
-        skipState = true;
+        if(simple) {
+            ar.archiveField("factory", [&](eSaveArchive& it) {
+                eCityId cid = b->cityId();
+                it.field("cityId", cid);
+            });
+            ar.archiveField("state", [&](eSaveArchive& it) {
+                const_cast<eBuilding*>(b)->serialize(it);
+            });
+            return;
+        }
+    }
+    if(type == eBuildingType::stadium) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            bool rotated = static_cast<const eStadium*>(b)->rotated();
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
         return;
     }
-        },
-        [](eReadStream&) {});
-    if(skipState) return;
-    ar.payloadField("state",
-        [b](eWriteStream& dst) { b->write(dst); },
-        [](eReadStream&) {});
+    if(type == eBuildingType::gatehouse) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            bool rotated = static_cast<const eGatehouse*>(b)->rotated();
+            it.field("cityId", cid);
+            it.field("rotated", rotated);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::pier) {
+        const auto p = static_cast<const ePier*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eDiagonalOrientation o = p->orientation();
+            it.field("cityId", cid);
+            it.field("orientation", o);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::tradePost) {
+        const auto tp = static_cast<const eTradePost*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eTradePostType tpt = tp->tpType();
+            eDiagonalOrientation o = tp->orientation();
+            eCityId ctid = tp->city().cityId();
+            it.field("cityId", cid);
+            it.field("tpType", tpt);
+            it.field("orientation", o);
+            it.field("worldCityId", ctid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::horseRanch) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::horseRanchEnclosure) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::foodVendor ||
+       type == eBuildingType::fleeceVendor ||
+       type == eBuildingType::oilVendor ||
+       type == eBuildingType::wineVendor ||
+       type == eBuildingType::armsVendor ||
+       type == eBuildingType::horseTrainer ||
+       type == eBuildingType::chariotVendor) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::urchinQuay ||
+       type == eBuildingType::fishery ||
+       type == eBuildingType::triremeWharf) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eDiagonalOrientation o = eDiagonalOrientation::topRight;
+            switch(type) {
+            case eBuildingType::urchinQuay:
+                o = static_cast<const eUrchinQuay*>(b)->orientation(); break;
+            case eBuildingType::fishery:
+                o = static_cast<const eFishery*>(b)->orientation(); break;
+            case eBuildingType::triremeWharf:
+                o = static_cast<const eTriremeWharf*>(b)->orientation(); break;
+            default: break;
+            }
+            it.field("cityId", cid);
+            it.field("orientation", o);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::commonAgora ||
+       type == eBuildingType::grandAgora) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eAgoraOrientation o = (type == eBuildingType::commonAgora) ?
+                static_cast<const eCommonAgora*>(b)->orientation() :
+                static_cast<const eGrandAgora*>(b)->orientation();
+            it.field("cityId", cid);
+            it.field("orientation", o);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::agoraSpace) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        return;
+    }
+    if(type == eBuildingType::commemorative) {
+        const auto p = static_cast<const eCommemorative*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            int id = p->id();
+            it.field("cityId", cid);
+            it.field("id", id);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::godMonument) {
+        const auto gm = static_cast<const eGodMonument*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eGodType gtype = gm->god();
+            eGodQuestId qid = gm->id();
+            it.field("cityId", cid);
+            it.field("god", gtype);
+            it.field("questId", qid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::godMonumentTile) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(eBuilding::sHeroHall(type)) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(eBuilding::sPyramidBuilding(type) &&
+       type != eBuildingType::pyramidWall &&
+       type != eBuildingType::pyramidTop &&
+       type != eBuildingType::pyramidTile &&
+       type != eBuildingType::pyramidPart &&
+       type != eBuildingType::pyramidAltar &&
+       type != eBuildingType::pyramidStatue &&
+       type != eBuildingType::pyramidMonument &&
+       type != eBuildingType::pyramidTemple &&
+       type != eBuildingType::pyramidObservatory &&
+       type != eBuildingType::pyramidMuseum) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    {
+        const bool isPyramidElem =
+            type == eBuildingType::pyramidWall ||
+            type == eBuildingType::pyramidTop ||
+            type == eBuildingType::pyramidTile ||
+            type == eBuildingType::pyramidPart ||
+            type == eBuildingType::pyramidAltar ||
+            type == eBuildingType::pyramidStatue ||
+            type == eBuildingType::pyramidMonument ||
+            type == eBuildingType::pyramidTemple ||
+            type == eBuildingType::pyramidObservatory ||
+            type == eBuildingType::pyramidMuseum;
+        if(isPyramidElem) {
+            const auto se = static_cast<const ePyramidElement*>(b);
+            ar.archiveField("factory", [&](eSaveArchive& it) {
+                eCityId cid = b->cityId();
+                it.field("cityId", cid);
+                int elevation = se->elevation();
+                if(type == eBuildingType::pyramidWall) {
+                    const auto s = static_cast<const ePyramidWall*>(b);
+                    eOrientation o = s->orientation();
+                    int special = s->special();
+                    it.field("orientation", o);
+                    it.field("elevation", elevation);
+                    it.field("special", special);
+                } else if(type == eBuildingType::pyramidTile) {
+                    const auto s = static_cast<const ePyramidTile*>(b);
+                    int subType = s->type();
+                    it.field("elevation", elevation);
+                    it.field("subType", subType);
+                } else if(type == eBuildingType::pyramidStatue) {
+                    const auto s = static_cast<const ePyramidStatue*>(b);
+                    eGodType godType = s->type();
+                    int gid = s->id();
+                    it.field("elevation", elevation);
+                    it.field("godType", godType);
+                    it.field("godId", gid);
+                } else if(type == eBuildingType::pyramidMonument) {
+                    const auto s = static_cast<const ePyramidMonument*>(b);
+                    eGodType godType = s->type();
+                    int gid = s->id();
+                    it.field("elevation", elevation);
+                    it.field("godType", godType);
+                    it.field("godId", gid);
+                } else {
+                    it.field("elevation", elevation);
+                }
+                std::vector<eSanctCost> costs = se->costs();
+                it.arrayField("costs", costs, [](eSaveArchive& ia, eSanctCost& c) {
+                    c.serialize(ia);
+                });
+            });
+            ar.archiveField("state", [&](eSaveArchive& it) {
+                const_cast<eBuilding*>(b)->serialize(it);
+            });
+            return;
+        }
+    }
+    if(type == eBuildingType::ruins ||
+       type == eBuildingType::placeholder ||
+       type == eBuildingType::hippodromePiece) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(eBuilding::sSanctuaryBuilding(type) &&
+       type != eBuildingType::templeStatue &&
+       type != eBuildingType::templeMonument &&
+       type != eBuildingType::templeAltar &&
+       type != eBuildingType::temple &&
+       type != eBuildingType::templeTile) {
+        const auto s = static_cast<const eSanctuary*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            int sw = s->spanW();
+            int sh = s->spanH();
+            it.field("cityId", cid);
+            it.field("spanW", sw);
+            it.field("spanH", sh);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::templeStatue) {
+        const auto s = static_cast<const eTempleStatueBuilding*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eGodType godType = s->godType();
+            int id = s->id();
+            it.field("cityId", cid);
+            it.field("godType", godType);
+            it.field("id", id);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::templeMonument) {
+        const auto s = static_cast<const eTempleMonumentBuilding*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            eGodType godType = s->godType();
+            int id = s->id();
+            it.field("cityId", cid);
+            it.field("godType", godType);
+            it.field("id", id);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::templeAltar) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::temple) {
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            it.field("cityId", cid);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
+    if(type == eBuildingType::templeTile) {
+        const auto s = static_cast<const eTempleTileBuilding*>(b);
+        ar.archiveField("factory", [&](eSaveArchive& it) {
+            eCityId cid = b->cityId();
+            int id = s->id();
+            it.field("cityId", cid);
+            it.field("id", id);
+        });
+        ar.archiveField("state", [&](eSaveArchive& it) {
+            const_cast<eBuilding*>(b)->serialize(it);
+        });
+        return;
+    }
 }

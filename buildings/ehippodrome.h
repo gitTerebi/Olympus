@@ -36,10 +36,8 @@ public:
 
     int finishPartId() const { return mFinish; }
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     using eN = eHippodromePiece::eNeighbour;
     eN* addPiece(const eN& n);

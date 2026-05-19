@@ -14,6 +14,8 @@ Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransp
 
 ## Save
 Goal: all save data is tagged, named, bounded, and safe to add/remove/reorder.
+No backwards compatibility for save migrations unless explicitly asked.
+Do not add legacy readers, optional migration bridges, or old-shape fallbacks by default.
 
 If bug appears after save/reload, inspect serialization first.
 

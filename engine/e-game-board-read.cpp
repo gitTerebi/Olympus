@@ -217,7 +217,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 ar.archiveField(("building." + std::to_string(i)).c_str(),
                     [&](eSaveArchive& it) {
                         it.field("buildingType", type);
-                        eBuildingReader::sRead(*this, type, it);
+                        eBuildingArchive::load(*this, type, it);
                     });
             }
         } else {
@@ -227,7 +227,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eBuildingType type = b->type();
                         it.field("buildingType", type);
-                        eBuildingWriter::sWrite(b, it);
+                        eBuildingArchive::save(b, it);
                     });
             }
         }
@@ -244,9 +244,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         it.field("characterType", type);
                         const auto c = eCharacter::sCreate(type, *this);
-                        it.payloadField("characterData",
-                            [](eWriteStream&) {},
-                            [c](eReadStream& src) { c->read(src); });
+                        it.archiveField("state",
+                            [c](eSaveArchive& charAr) { c->serialize(charAr); });
                     });
             }
         } else {
@@ -256,9 +255,8 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eCharacterType type = c->type();
                         it.field("characterType", type);
-                        it.payloadField("characterData",
-                            [c](eWriteStream& dst) { c->write(dst); },
-                            [](eReadStream&) {});
+                        it.archiveField("state",
+                            [c](eSaveArchive& charAr) { c->serialize(charAr); });
                     });
             }
         }
