@@ -139,8 +139,8 @@ void eMonument::serializeFields(eSaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("rotated", mRotated);
     ar.field("haltConstruction", mHaltConstruction);
-    ar.objectField("stored", mStored);
-    ar.objectField("used", mUsed);
+    ar.archiveField("stored", [this](eSaveArchive& childAr) { mStored.serialize(childAr); });
+    ar.archiveField("used", [this](eSaveArchive& childAr) { mUsed.serialize(childAr); });
     ar.field("altitude", mAltitude);
     ar.characterField("cart", &getBoard(), mCart);
 }

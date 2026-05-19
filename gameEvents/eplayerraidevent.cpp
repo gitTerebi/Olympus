@@ -82,18 +82,7 @@ std::string ePlayerRaidEvent::longName() const {
     return eLanguage::text("player_raid_event_long_name");
 }
 
-void ePlayerRaidEvent::write(eWriteStream& dst) const {
-    ePlayerConquestEventBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePlayerRaidEvent*>(this)->serialize(ar);
-}
-
-void ePlayerRaidEvent::serialize(eSaveArchive& ar) {
-    ar.field("mResource", mResource);
-}
-
-void ePlayerRaidEvent::read(eReadStream& src) {
-    ePlayerConquestEventBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void ePlayerRaidEvent::serializeFields(eSaveArchive& ar) {
+    eArmyEventBase::serializeFields(ar);
+    ar.field("resource", mResource, eResourceType::none);
 }

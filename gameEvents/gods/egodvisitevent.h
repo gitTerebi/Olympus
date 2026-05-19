@@ -22,11 +22,9 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     std::vector<eGodType> mTypes;
     int mNextId = 0;
     bool mRandom = false;

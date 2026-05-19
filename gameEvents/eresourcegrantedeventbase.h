@@ -9,7 +9,6 @@
 #include "engine/eevent.h"
 
 class eSaveArchive;
-class eResourceGrantedEventValues;
 
 class eResourceGrantedEventBase : public eGameEvent,
                                   public eCityEventValue,
@@ -38,14 +37,10 @@ public:
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     bool finished() const override;
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
 protected:
+    void serializeFields(eSaveArchive& ar) override;
     bool mPostpone = true;
 private:
-    friend class eResourceGrantedEventValues;
-
     enum class eResponse {
         accept,
         postpone,
@@ -55,9 +50,6 @@ private:
     void accept(eCityId city);
     void postpone();
     void decline();
-    void serialize(eSaveArchive& ar);
-    void readEventValues(eReadStream& src);
-    void writeEventValues(eWriteStream& dst) const;
 
     eEvent mGiftCashAccepted;
     eEvent mGiftAccepted;

@@ -5,22 +5,6 @@
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
 
-class eResourceGrantedEventValues {
-public:
-    explicit eResourceGrantedEventValues(eResourceGrantedEventBase& event) :
-        mEvent(event) {}
-
-    void read(eReadStream& src) {
-        mEvent.readEventValues(src);
-    }
-
-    void write(eWriteStream& dst) const {
-        mEvent.writeEventValues(dst);
-    }
-private:
-    eResourceGrantedEventBase& mEvent;
-};
-
 eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eCityId cid,
         const eEvent giftCashAccepted,
@@ -254,43 +238,11 @@ void eResourceGrantedEventBase::decline()
     board->event(mGiftRefused, ed);
 }
 
-void eResourceGrantedEventBase::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eResourceGrantedEventBase*>(this)->serialize(ar);
-}
-
-void eResourceGrantedEventBase::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eResourceGrantedEventBase::readEventValues(eReadStream& src) {
-    eSaveArchive childAr(src);
-    eCityEventValue::serialize(childAr, *gameBoard());
-    eResourceEventValue::serialize(childAr);
-    eCountEventValue::serialize(childAr);
-}
-
-void eResourceGrantedEventBase::writeEventValues(eWriteStream& dst) const {
-    eSaveArchive childAr(dst);
-    auto& self = const_cast<eResourceGrantedEventBase&>(*this);
-    self.eCityEventValue::serialize(childAr, *gameBoard());
-    self.eResourceEventValue::serialize(childAr);
-    self.eCountEventValue::serialize(childAr);
-}
-
-void eResourceGrantedEventBase::serialize(eSaveArchive& ar) {
-    eResourceGrantedEventValues values(*this);
-    if(ar.writing()) {
-        ar.objectField("eventValues", values);
-    } else if(!ar.objectField("eventValues", values)) {
-        // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored these values inline.
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-        eResourceEventValue::read(ar.readStream());
-        eCountEventValue::read(ar.readStream());
-    }
-    ar.field("mPostpone", mPostpone);
-    ar.field("mAwaitingResponse", mAwaitingResponse, false); // SAVE_COMPAT_OPTIONAL_FIELD
+void eResourceGrantedEventBase::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
+    eResourceEventValue::serialize(ar);
+    eCountEventValue::serialize(ar);
+    ar.field("postpone", mPostpone, true);
+    ar.field("awaitingResponse", mAwaitingResponse, false);
 }

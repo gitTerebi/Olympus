@@ -7,6 +7,7 @@
 
 class eWriteStream;
 class eReadStream;
+class eSaveArchive;
 
 struct eMonsterTypeValid {
     eMonsterType fType = eMonsterType::calydonianBoar;
@@ -24,8 +25,7 @@ public:
     void setMonsterType(const int id, const eMonsterType type);
     void setMonsterTypes(const std::vector<eMonsterType>& types);
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
+    void serialize(eSaveArchive& ar);
 protected:
     bool chooseMonster(const std::vector<eMonsterType>& skip);
 

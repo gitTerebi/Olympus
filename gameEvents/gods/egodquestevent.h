@@ -16,15 +16,13 @@ public:
     std::string longName() const override;
     bool finished() const override;
 
-    void read(eReadStream& src) override;
-    void write(eWriteStream& dst) const override;
-
     void fulfill();
     void fulfilled();
 
     eEventTrigger& fulfilledTrigger() { return *mFulfilledTrigger; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     stdsptr<eEventTrigger> mFulfilledTrigger;
     bool mFulfilled = false;
 };

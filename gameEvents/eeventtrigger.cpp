@@ -29,16 +29,6 @@ void eEventTrigger::loadResources() const {
     }
 }
 
-void eEventTrigger::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eEventTrigger*>(this)->serialize(ar);
-}
-
-void eEventTrigger::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eEventTrigger::serialize(eSaveArchive& ar) {
     ar.arrayField("events", mEvents, [this](eSaveArchive& ar, auto& e) {
         eGameEventType type;
@@ -46,25 +36,15 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
             type = e->type();
         }
         ar.field("type", type);
-        if(ar.writing()) {
-            ar.payloadField(
-                "eventPayload",
-                [&e](eWriteStream& dst) { e->write(dst); },
-                [](eReadStream&) {});
-        } else {
+        if(ar.reading()) {
             const auto branch = eGameEventBranch::trigger;
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            const bool hasPayload = ar.payloadField(
-                "eventPayload",
-                [](eWriteStream&) {},
-                [&e](eReadStream& src) { e->read(src); });
-            if(!hasPayload) {
-                // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored trigger event bytes inline.
-                ar.object(e);
-            }
         }
+        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+            e->serialize(childAr);
+        });
     });
-    if(!ar.writing()) {
+    if(ar.reading()) {
         eVectorHelpers::removeAll(mEvents, stdsptr<eGameEvent>(nullptr));
     }
 }

@@ -11,18 +11,10 @@ ePointEventValue::ePointEventValue(
     mBType(btype), mCid(cid),
     mBoard(board), mValidator(v) {}
 
-void ePointEventValue::write(eWriteStream &dst) const {
-    eSaveArchive ar(dst);
-    ar.field("mPointId", const_cast<int&>(mPointId));
-    ar.field("mMinPointId", const_cast<int&>(mMinPointId));
-    ar.field("mMaxPointId", const_cast<int&>(mMaxPointId));
-}
-
-void ePointEventValue::read(eReadStream &src) {
-    eSaveArchive ar(src);
-    ar.field("mPointId", mPointId);
-    ar.field("mMinPointId", mMinPointId);
-    ar.field("mMaxPointId", mMaxPointId);
+void ePointEventValue::serialize(eSaveArchive& ar) {
+    ar.field("pointId", mPointId, 1);
+    ar.field("minPointId", mMinPointId, 1);
+    ar.field("maxPointId", mMaxPointId, 1);
 }
 
 void ePointEventValue::choosePointId() {

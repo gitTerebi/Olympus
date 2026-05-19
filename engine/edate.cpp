@@ -175,14 +175,20 @@ void eDate::write(eWriteStream& dst) const {
 }
 
 void eDate::serialize(eSaveArchive& ar) {
-    ar.field("mDay", mDay);
-    ar.field("mMonth", mMonth);
-    ar.field("mYear", mYear);
+    ar.field("day", mDay, 1);
+    ar.field("month", mMonth, eMonth::january);
+    ar.field("year", mYear, 0);
 }
 
 void eDate::read(eReadStream& src) {
     eSaveArchive ar(src);
     serialize(ar);
+}
+
+bool eSaveArchive::dateField(const char* const name, eDate& d) {
+    return archiveField(name, [&d](eSaveArchive& childAr) {
+        d.serialize(childAr);
+    });
 }
 
 std::string eMonthHelper::name(const eMonth m) {

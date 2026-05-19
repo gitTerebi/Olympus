@@ -17,9 +17,6 @@ public:
     void clearAfterLastEpisode();
     bool handleEpisodeCompleteEvents();
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
-
     void loadResources();
 
     void clear();

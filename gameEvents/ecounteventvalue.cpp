@@ -22,18 +22,8 @@ void eCountEventValue::longNameReplaceCount(
     eStringHelpers::replace(tmpl, id, cStr);
 }
 
-void eCountEventValue::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eCountEventValue*>(this)->serialize(ar);
-}
-
 void eCountEventValue::serialize(eSaveArchive& ar) {
-    ar.field("mCount", mCount);
-    ar.field("mMinCount", mMinCount);
-    ar.field("mMaxCount", mMaxCount);
-}
-
-void eCountEventValue::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
+    ar.field("count", mCount, 16);
+    ar.field("minCount", mMinCount, 8);
+    ar.field("maxCount", mMaxCount, 16);
 }

@@ -114,20 +114,9 @@ bool ePlayerConquestEvent::finished() const {
             (!mInvasionEvent || mInvasionEvent->finished());
 }
 
-void ePlayerConquestEvent::write(eWriteStream& dst) const {
-    ePlayerConquestEventBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<ePlayerConquestEvent*>(this)->serialize(ar);
-}
-
-void ePlayerConquestEvent::read(eReadStream& src) {
-    ePlayerConquestEventBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void ePlayerConquestEvent::serialize(eSaveArchive& ar) {
-    ar.gameEvent(gameBoard(), mInvasionEvent);
+void ePlayerConquestEvent::serializeFields(eSaveArchive& ar) {
+    eArmyEventBase::serializeFields(ar);
+    ar.gameEventField("invasionEvent", gameBoard(), mInvasionEvent);
 }
 
 bool ePlayerConquestEvent::warned() const {

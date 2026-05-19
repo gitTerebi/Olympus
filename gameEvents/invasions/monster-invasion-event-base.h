@@ -27,9 +27,6 @@ public:
     void chooseMonster();
     bool valid() const { return mValid; }
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     bool finished() const override;
 
     void killed(const eMonsterType monster);
@@ -37,9 +34,8 @@ public:
     eEventTrigger& killedTrigger() { return *mKilledTrigger; }
 protected:
     eMonster* triggerBase();
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     stdsptr<eEventTrigger> mKilledTrigger;
     bool mChooseMonster = false;
     eMonsterAggressivness mAggressivness = eMonsterAggressivness::passive;

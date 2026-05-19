@@ -20,12 +20,9 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     void loadResources() const override;
-private:
-    void serialize(eSaveArchive& ar);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 };
 
 #endif // ELAVAEVENT_H

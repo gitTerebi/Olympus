@@ -30,22 +30,7 @@ std::string eRivalArmyAwayEvent::longName() const {
     return eLanguage::text("rival_army_away_long_name");
 }
 
-void eRivalArmyAwayEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eRivalArmyAwayEvent*>(this)->serialize(ar);
-}
-
-void eRivalArmyAwayEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eRivalArmyAwayEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-    } else {
-        eCityEventValue::write(ar.writeStream());
-    }
+void eRivalArmyAwayEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
 }

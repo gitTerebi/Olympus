@@ -5,9 +5,9 @@
 #include "fileIO/esavearchive.h"
 
 struct eSanctCost {
-    int fWood;
-    int fMarble;
-    int fSculpture;
+    int fWood = 0;
+    int fMarble = 0;
+    int fSculpture = 0;
     int fOrichalc = 0;
     int fBlackMarble = 0;
 
@@ -41,21 +41,11 @@ struct eSanctCost {
     }
 
     void serialize(eSaveArchive& ar) {
-        ar.field("wood", fWood);
-        ar.field("marble", fMarble);
-        ar.field("sculpture", fSculpture);
-        ar.field("orichalc", fOrichalc);
-        ar.field("blackMarble", fBlackMarble);
-    }
-
-    void read(eReadStream& src) {
-        eSaveArchive ar(src);
-        serialize(ar);
-    }
-
-    void write(eWriteStream& dst) const {
-        eSaveArchive ar(dst);
-        const_cast<eSanctCost*>(this)->serialize(ar);
+        ar.field("wood", fWood, 0);
+        ar.field("marble", fMarble, 0);
+        ar.field("sculpture", fSculpture, 0);
+        ar.field("orichalc", fOrichalc, 0);
+        ar.field("blackMarble", fBlackMarble, 0);
     }
 };
 

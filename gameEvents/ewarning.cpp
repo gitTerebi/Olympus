@@ -26,16 +26,8 @@ void eWarning::handleNewDate(const eDate &date) {
     }
 }
 
-void eWarning::write(eWriteStream &dst) const {
-    eSaveArchive ar(dst);
-    if(ar.writing()) const_cast<eDate&>(mNextDate).write(ar.writeStream());
-    ar.field("mFinished", const_cast<bool&>(mFinished));
-    ar.field("mWarningMonths", const_cast<int&>(mWarningMonths));
-}
-
-void eWarning::read(eReadStream &src) {
-    eSaveArchive ar(src);
-    if(ar.reading()) mNextDate.read(ar.readStream());
-    ar.field("mFinished", mFinished);
-    ar.field("mWarningMonths", mWarningMonths);
+void eWarning::serialize(eSaveArchive& ar) {
+    ar.dateField("nextDate", mNextDate);
+    ar.field("finished", mFinished, true);
+    ar.field("warningMonths", mWarningMonths, 2);
 }

@@ -513,47 +513,31 @@ std::string eInvasionEvent::longName() const
     return eLanguage::zeusText(156, 2);
 }
 
-void eInvasionEvent::write(eWriteStream &dst) const
+void eInvasionEvent::serializeFields(eSaveArchive &ar)
 {
-    eGameEvent::write(dst);
-    ePointEventValue::write(dst);
-    eCityEventValue::write(dst);
-    eCountEventValue::write(dst);
-
-    eSaveArchive ar(dst);
-    const_cast<eInvasionEvent *>(this)->serialize(ar);
-}
-
-void eInvasionEvent::read(eReadStream &src)
-{
-    eGameEvent::read(src);
-    ePointEventValue::read(src);
+    eGameEvent::serializeFields(ar);
+    ePointEventValue::serialize(ar);
     const auto board = gameBoard();
-    eCityEventValue::read(src, *board);
-    eCountEventValue::read(src);
+    eCityEventValue::serialize(ar, *board);
+    eCountEventValue::serialize(ar);
 
-    eSaveArchive ar(src);
-    serialize(ar);
-    if (mWarned)
-    {
+    ar.field("hardcoded", mHardcoded, true);
+    ar.field("sentByPlayer", mSentByPlayer, ePlayerId::neutralFriendly);
+
+    ar.gameEventField("conquestEvent", board, mConquestEvent);
+    ar.archiveField("forces", [this, board](eSaveArchive& childAr) {
+        mForces.serialize(childAr, board);
+    });
+
+    ar.field("warned", mWarned, false);
+    ar.dateField("firstWarning", mFirstWarning);
+
+    if (ar.reading() && mWarned && board) {
         const auto &inv = board->invasions();
         if (std::find(inv.begin(), inv.end(), this) == inv.end())
             board->addInvasion(this);
         updateDisembarkAndShoreTile();
     }
-}
-
-void eInvasionEvent::serialize(eSaveArchive &ar)
-{
-    ar.field("mHardcoded", mHardcoded);
-    ar.field("mSentByPlayer", mSentByPlayer);
-
-    const auto board = gameBoard();
-    ar.gameEvent(board, mConquestEvent);
-    mForces.serialize(ar, board);
-
-    ar.field("mWarned", mWarned);
-    ar.object(mFirstWarning);
 }
 
 bool eInvasionEvent::finished() const

@@ -1,4 +1,5 @@
 #include "epricechangeevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -30,14 +31,8 @@ std::string ePriceChangeEvent::longName() const {
     return tmpl;
 }
 
-void ePriceChangeEvent::write(eWriteStream &dst) const {
-    eGameEvent::write(dst);
-    eResourceEventValue::write(dst);
-    eCountEventValue::write(dst);
-}
-
-void ePriceChangeEvent::read(eReadStream &src) {
-    eGameEvent::read(src);
-    eResourceEventValue::read(src);
-    eCountEventValue::read(src);
+void ePriceChangeEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eResourceEventValue::serialize(ar);
+    eCountEventValue::serialize(ar);
 }

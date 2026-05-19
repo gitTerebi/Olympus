@@ -68,7 +68,8 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         eWriteTarget target(mem);
         eWriteStream dst(target);
         dst.writeFormat("eZeus");
-        write(dst);
+        eSaveArchive ar(dst);
+        const_cast<eGameEvent*>(this)->serialize(ar);
     }
     const auto result = sCreate(mCid, mType, mBranch, mBoard);
     if(!result) {
@@ -79,7 +80,8 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         eReadSource source(mem);
         eReadStream src(source);
         src.readFormat();
-        result->read(src);
+        eSaveArchive ar(src);
+        result->serialize(ar);
         src.handlePostFuncs();
     }
 
@@ -391,33 +393,28 @@ void eGameEvent::updateWarningDates() {
     }
 }
 
-void eGameEvent::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    const_cast<eGameEvent*>(this)->serialize(ar);
-}
-
-void eGameEvent::read(eReadStream& src) {
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
 void eGameEvent::serialize(eSaveArchive& ar) {
-    ar.field("mIOID", mIOID);
-    ar.field("mDatePlusDays", mDatePlusDays);
-    ar.field("mDatePlusMonths", mDatePlusMonths);
-    ar.field("mDatePlusYearsMin", mDatePlusYearsMin);
-    ar.field("mDatePlusYearsMax", mDatePlusYearsMax);
-    if(ar.reading()) mNextDate.read(ar.readStream());
-    else mNextDate.write(ar.writeStream());
-    ar.field("mPeriodDaysMin", mPeriodDaysMin);
-    ar.field("mPeriodDaysMax", mPeriodDaysMax);
-    ar.field("mWarningMonths", mWarningMonths);
-    ar.field("mRemNRuns", mRemNRuns);
-    ar.field("mReason", mReason);
-    ar.field("mEpisodeCompleteEvent", mEpisodeCompleteEvent);
+    serializeFields(ar);
+}
+
+void eGameEvent::serializeFields(eSaveArchive& ar) {
+    ar.field("ioId", mIOID, -1);
+    ar.field("datePlusDays", mDatePlusDays, 0);
+    ar.field("datePlusMonths", mDatePlusMonths, 0);
+    ar.field("datePlusYearsMin", mDatePlusYearsMin, 0);
+    ar.field("datePlusYearsMax", mDatePlusYearsMax, 0);
+    ar.dateField("nextDate", mNextDate);
+    ar.field("periodDaysMin", mPeriodDaysMin, 100);
+    ar.field("periodDaysMax", mPeriodDaysMax, 100);
+    ar.field("warningMonths", mWarningMonths, 2);
+    ar.field("remainingRuns", mRemNRuns, 0);
+    ar.field("reason", mReason, std::string());
+    ar.field("episodeCompleteEvent", mEpisodeCompleteEvent, false);
 
     ar.fixedArrayField("warnings.count", mWarnings, [](eSaveArchive& ar, auto& w) {
-        ar.object(w);
+        ar.archiveField("warning", [&w](eSaveArchive& childAr) {
+            w->serialize(childAr);
+        });
     });
 
     ar.arrayField("consequences", mConsequences, [this](eSaveArchive& ar, auto& e) {
@@ -429,21 +426,13 @@ void eGameEvent::serialize(eSaveArchive& ar) {
         }
         ar.field("type", type);
         ar.field("branch", branch);
-        if(ar.writing()) {
-            ar.payloadField(
-                "eventPayload",
-                [&e](eWriteStream& dst) { e->write(dst); },
-                [](eReadStream&) {});
-        } else {
+        if(ar.reading()) {
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
-            const bool hasPayload = ar.payloadField(
-                "eventPayload",
-                [](eWriteStream&) {},
-                [&e](eReadStream& src) { e->read(src); });
-            if(!hasPayload) {
-                // SAVE_COMPAT_LEGACY_FALLBACK: old saves stored child event bytes inline.
-                ar.object(e);
-            }
+        }
+        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+            e->serialize(childAr);
+        });
+        if(ar.reading()) {
             if(e->branch() == eGameEventBranch::child) {
                 e->setReason(reason());
             }
@@ -452,10 +441,12 @@ void eGameEvent::serialize(eSaveArchive& ar) {
     });
 
     ar.fixedArrayField("triggers.count", mTriggers, [](eSaveArchive& ar, auto& et) {
-        ar.object(et);
+        ar.archiveField("trigger", [&et](eSaveArchive& childAr) {
+            et->serialize(childAr);
+        });
     });
 
-    ar.field("mEpisodeEvent", mEpisodeEvent);
+    ar.field("episodeEvent", mEpisodeEvent, false);
 }
 
 void eGameEvent::loadResources() const {

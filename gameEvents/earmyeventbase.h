@@ -16,9 +16,6 @@ public:
                    eGameBoard& board);
     ~eArmyEventBase();
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     const eEnlistedForces& forces() const { return mForces; }
     const stdsptr<eWorldCity>& city() const { return mCity; }
 protected:
@@ -26,9 +23,8 @@ protected:
     void planArmyReturn(const int travelTime);
 
     void removeArmyEvent();
-private:
-    void serialize(eSaveArchive& ar);
-protected:
+
+    void serializeFields(eSaveArchive& ar) override;
 
     eEnlistedForces mForces;
     stdsptr<eWorldCity> mCity;

@@ -10,27 +10,10 @@ eCityEventValue::eCityEventValue(eGameBoard &board,
                                  const eValidator& v) :
     mBoard(board), mValidator(v) {}
 
-void eCityEventValue::write(eWriteStream& dst) const {
-    eSaveArchive ar(dst);
-    auto& self = const_cast<eCityEventValue&>(*this);
-    self.serialize(ar, mBoard);
-}
-
-void eCityEventValue::read(eReadStream& src, eGameBoard& board) {
-    eSaveArchive ar(src);
-    serialize(ar, board);
-}
-
 void eCityEventValue::serialize(eSaveArchive& ar, eGameBoard& board) {
-    if(ar.reading()) {
-        ar.readStream().readCity(&board, [this](const stdsptr<eWorldCity>& c) {
-            mCity = c;
-        });
-    } else {
-        ar.writeStream().writeCity(mCity.get());
-    }
-    ar.field("mMinCityId", mMinCityId);
-    ar.field("mMaxCityId", mMaxCityId);
+    ar.worldCityField("city", &board, mCity);
+    ar.field("minCityId", mMinCityId, 0);
+    ar.field("maxCityId", mMaxCityId, 0);
 }
 
 void eCityEventValue::setSingleCity(const stdsptr<eWorldCity> &c) {

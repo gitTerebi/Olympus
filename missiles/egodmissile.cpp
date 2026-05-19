@@ -67,19 +67,8 @@ void eGodMissile::setTexture(const eCharacterType ct,
     mActionType = cat;
 }
 
-void eGodMissile::read(eReadStream& src) {
-    eMissile::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodMissile::write(eWriteStream& dst) const {
-    eMissile::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodMissile*>(this)->serialize(ar);
-}
-
-void eGodMissile::serialize(eSaveArchive& ar) {
+void eGodMissile::serializeFields(eSaveArchive& ar) {
+    eMissile::serializeFields(ar);
     ar.field("mCharType", mCharType);
     ar.field("mActionType", mActionType);
 }

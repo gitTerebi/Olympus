@@ -120,16 +120,14 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < plagueCount; i++) {
                 const auto p = std::make_shared<ePlague>(mId, mBoard);
-                ar.payloadField(("plague." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [p](eReadStream& src) { p->read(src); });
+                ar.archiveField(("plague." + std::to_string(i)).c_str(),
+                    [p](eSaveArchive& itemAr) { p->serialize(itemAr); });
                 mPlagues.push_back(p);
             }
         } else {
             for(int i = 0; i < plagueCount; i++) {
-                ar.payloadField(("plague." + std::to_string(i)).c_str(),
-                    [this, i](eWriteStream& dst) { mPlagues[i]->write(dst); },
-                    [](eReadStream&) {});
+                ar.archiveField(("plague." + std::to_string(i)).c_str(),
+                    [this, i](eSaveArchive& itemAr) { mPlagues[i]->serialize(itemAr); });
             }
         }
     }
@@ -152,17 +150,15 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < militaryAidCount; i++) {
                 const auto ma = std::make_shared<eMilitaryAid>();
-                ar.payloadField(("militaryAid." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, ma](eReadStream& src) { ma->read(src, &mBoard); });
+                ar.archiveField(("militaryAid." + std::to_string(i)).c_str(),
+                    [this, ma](eSaveArchive& itemAr) { ma->serialize(itemAr, &mBoard); });
                 addMilitaryAid(ma);
             }
         } else {
             int i = 0;
             for(const auto& a : mMilitaryAid) {
-                ar.payloadField(("militaryAid." + std::to_string(i++)).c_str(),
-                    [&a](eWriteStream& dst) { a->write(dst); },
-                    [](eReadStream&) {});
+                ar.archiveField(("militaryAid." + std::to_string(i++)).c_str(),
+                    [&a](eSaveArchive& itemAr) { a->serialize(itemAr, nullptr); });
             }
         }
     }
@@ -269,16 +265,14 @@ void eBoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < reinforcementCount; i++) {
                 auto& r = mReinforcements.emplace_back();
-                ar.payloadField(("reinforcement." + std::to_string(i)).c_str(),
-                    [](eWriteStream&) {},
-                    [this, &r](eReadStream& src) { r.read(mBoard, src); });
+                ar.archiveField(("reinforcement." + std::to_string(i)).c_str(),
+                    [this, &r](eSaveArchive& itemAr) { r.serialize(itemAr, &mBoard); });
             }
         } else {
             int i = 0;
-            for(const auto& r : mReinforcements) {
-                ar.payloadField(("reinforcement." + std::to_string(i++)).c_str(),
-                    [&r](eWriteStream& dst) { r.write(dst); },
-                    [](eReadStream&) {});
+            for(auto& r : mReinforcements) {
+                ar.archiveField(("reinforcement." + std::to_string(i++)).c_str(),
+                    [&r](eSaveArchive& itemAr) { r.serialize(itemAr, nullptr); });
             }
         }
     }

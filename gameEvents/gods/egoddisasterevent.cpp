@@ -44,26 +44,10 @@ std::string eGodDisasterEvent::longName() const {
     return eLanguage::zeusText(35, 13);
 }
 
-void eGodDisasterEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodDisasterEvent*>(this)->serialize(ar);
-}
-
-void eGodDisasterEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodDisasterEvent::serialize(eSaveArchive& ar) {
-    if(ar.reading()) {
-        eGodEventValue::read(ar.readStream());
-        eCityEventValue::read(ar.readStream(), *gameBoard());
-    } else {
-        eGodEventValue::write(ar.writeStream());
-        eCityEventValue::write(ar.writeStream());
-    }
-    ar.field("mDuration", mDuration);
-    ar.field("mEnd", mEnd);
+void eGodDisasterEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eGodEventValue::serialize(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
+    ar.field("duration", mDuration, 180);
+    ar.field("end", mEnd, false);
 }

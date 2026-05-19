@@ -7,6 +7,7 @@
 
 class eWriteStream;
 class eReadStream;
+class eSaveArchive;
 
 class ePointEventValue {
 public:
@@ -22,8 +23,7 @@ public:
     int maxPointId() const { return mMaxPointId; }
     void setMaxPointId(const int p) { mMaxPointId = p; }
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src);
+    void serialize(eSaveArchive& ar);
 protected:
     int pointId() const { return mPointId; }
 

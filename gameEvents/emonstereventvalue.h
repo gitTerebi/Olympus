@@ -9,9 +9,7 @@ class eReadStream;
 class eSaveArchive;
 class eMonsterEventValue {
 public:
-    void write(eWriteStream& dst) const;
     void serialize(eSaveArchive& ar);
-    void read(eReadStream& src);
 
     void setMonster(const eMonsterType m) { mMonster = m; }
     eMonsterType monster() const { return mMonster; }

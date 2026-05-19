@@ -97,30 +97,12 @@ std::string eGodAttackEvent::longName() const {
     return eLanguage::zeusText(156, 27);
 }
 
-void eGodAttackEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodAttackEvent*>(this)->serialize(ar);
-}
-
-void eGodAttackEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodAttackEvent::serialize(eSaveArchive& ar) {
+void eGodAttackEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
     ar.arrayField("types", mTypes, [](eSaveArchive& ar, eGodType& t) {
         ar.field("t", t);
     });
-    ar.field("mRandom", mRandom);
-    ar.field("mNextId", mNextId);
-    if(ar.reading()) {
-        const auto board = gameBoard();
-        ar.readStream().readBuilding(board, [this](eBuilding* const b) {
-            mSanctuary = static_cast<eSanctuary*>(b);
-        });
-    } else {
-        ar.writeStream().writeBuilding(mSanctuary);
-    }
+    ar.field("random", mRandom, false);
+    ar.field("nextId", mNextId, 0);
+    ar.buildingAsField("sanctuary", gameBoard(), mSanctuary);
 }

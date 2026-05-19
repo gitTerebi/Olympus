@@ -75,22 +75,11 @@ std::string eGodVisitEvent::longName() const {
     return eLanguage::text("god_visit");
 }
 
-void eGodVisitEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodVisitEvent*>(this)->serialize(ar);
-}
-
-void eGodVisitEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodVisitEvent::serialize(eSaveArchive& ar) {
+void eGodVisitEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
     ar.arrayField("types", mTypes, [](eSaveArchive& ar, eGodType& t) {
         ar.field("t", t);
     });
-    ar.field("mRandom", mRandom);
-    ar.field("mNextId", mNextId);
+    ar.field("random", mRandom, false);
+    ar.field("nextId", mNextId, 0);
 }

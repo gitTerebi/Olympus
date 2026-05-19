@@ -42,9 +42,6 @@ public:
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     eCityRequest cityRequest() const;
     void dispatch(const eCityId cid);
     void finish(eReceiveRequestResult result);
@@ -63,14 +60,14 @@ public:
     bool isActiveCityRequest() const;
     int requestId() const { return mRequestId; }
 
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     enum class eResponse {
         dispatch,
         postpone,
         refuse
     };
-
-    void serialize(eSaveArchive& ar);
 
     bool startRequest(eGameBoard& board);
     bool startQueuedRequest(eGameBoard& board);

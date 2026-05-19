@@ -21,24 +21,8 @@ void eMilitaryAid::goBack() {
     fSoldiers.clear();
 }
 
-void eMilitaryAid::write(eWriteStream& dst) {
-    eSaveArchive ar(dst);
-    serialize(ar, nullptr);
-}
-
-void eMilitaryAid::read(eReadStream& src, eGameBoard* const board) {
-    eSaveArchive ar(src);
-    serialize(ar, board);
-}
-
 void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
-    ar.payloadField("city",
-        [this](eWriteStream& dst) { dst.writeCity(fCity.get()); },
-        [this, board](eReadStream& src) {
-            src.readCity(board, [this](const stdsptr<eWorldCity>& c) {
-                fCity = c;
-            });
-        });
+    ar.worldCityField("city", board, fCity);
     if(ar.reading()) {
         auto soldiers = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
         ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& itemAr, auto& soldier) {

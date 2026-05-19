@@ -11,9 +11,6 @@ public:
     eCityEventValue(eGameBoard& board,
                     const eValidator& v = nullptr);
 
-    void write(eWriteStream& dst) const;
-    void read(eReadStream& src, eGameBoard& board);
-
     void setSingleCity(const stdsptr<eWorldCity>& c);
     const stdsptr<eWorldCity>& city() const { return mCity; }
 

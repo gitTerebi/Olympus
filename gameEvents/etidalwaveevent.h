@@ -20,15 +20,13 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     void loadResources() const override;
 
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
     bool mPermanent = false;
 };
 

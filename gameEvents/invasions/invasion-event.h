@@ -44,9 +44,6 @@ public:
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     std::string longName() const override;
 
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
-
     bool finished() const override;
 
     void setWarningMonths(const int ms) override;
@@ -76,6 +73,8 @@ public:
 
     void invadersWon();
     void invadersDefeated();
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     enum class eResponse {
         surrender,
@@ -88,7 +87,6 @@ private:
     void fight();
     void useGeneratedCityWarnings();
     void sendInitialAnnouncement();
-    void serialize(eSaveArchive& ar);
 
     void soldiersByType(int& infantry,
                         int& cavalry,

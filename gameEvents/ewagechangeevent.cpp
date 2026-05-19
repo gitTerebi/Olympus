@@ -13,22 +13,9 @@ eWageChangeEvent::eWageChangeEvent(
     eGameEvent(cid, eGameEventType::wageChange,
                branch, board) {}
 
-void eWageChangeEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eCountEventValue::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eWageChangeEvent*>(this)->serialize(ar);
-}
-
-void eWageChangeEvent::serialize(eSaveArchive& ar) {
-
-}
-
-void eWageChangeEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eCountEventValue::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eWageChangeEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCountEventValue::serialize(ar);
 }
 
 void eWageChangeEvent::trigger() {

@@ -1,4 +1,5 @@
 #include "etradeshutdownevent.h"
+#include "fileIO/esavearchive.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
@@ -29,12 +30,7 @@ std::string eTradeShutDownEvent::longName() const {
     return eLanguage::zeusText(35, 2);
 }
 
-void eTradeShutDownEvent::write(eWriteStream &dst) const {
-    eGameEvent::write(dst);
-    eCityEventValue::write(dst);
-}
-
-void eTradeShutDownEvent::read(eReadStream &src) {
-    eGameEvent::read(src);
-    eCityEventValue::read(src, *gameBoard());
+void eTradeShutDownEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    eCityEventValue::serialize(ar, *gameBoard());
 }

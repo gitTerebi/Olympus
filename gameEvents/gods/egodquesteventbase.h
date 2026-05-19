@@ -21,12 +21,9 @@ public:
 
     eHeroType hero() const { return mQuest.fHero; }
     void setHero(const eHeroType h);
-
-    void write(eWriteStream& dst) const override;
-    void read(eReadStream& src) override;
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
-    void serialize(eSaveArchive& ar);
-
     eGodQuest mQuest;
 };
 

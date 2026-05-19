@@ -33,18 +33,7 @@ std::string eGodTradeResumesEvent::longName() const {
     return eLanguage::text("god_trade_resumes_long_name");
 }
 
-void eGodTradeResumesEvent::write(eWriteStream& dst) const {
-    eGameEvent::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodTradeResumesEvent*>(this)->serialize(ar);
-}
-
-void eGodTradeResumesEvent::serialize(eSaveArchive& ar) {
-    ar.field("mGod", mGod);
-}
-
-void eGodTradeResumesEvent::read(eReadStream& src) {
-    eGameEvent::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
+void eGodTradeResumesEvent::serializeFields(eSaveArchive& ar) {
+    eGameEvent::serializeFields(ar);
+    ar.field("god", mGod, eGodType::zeus);
 }

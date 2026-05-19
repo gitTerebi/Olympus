@@ -59,20 +59,9 @@ bool eGodQuestEvent::finished() const {
     return mFulfilled;
 }
 
-void eGodQuestEvent::read(eReadStream& src) {
-    eGodQuestEventBase::read(src);
-    eSaveArchive ar(src);
-    serialize(ar);
-}
-
-void eGodQuestEvent::write(eWriteStream& dst) const {
-    eGodQuestEventBase::write(dst);
-    eSaveArchive ar(dst);
-    const_cast<eGodQuestEvent*>(this)->serialize(ar);
-}
-
-void eGodQuestEvent::serialize(eSaveArchive& ar) {
-    ar.field("mFulfilled", mFulfilled);
+void eGodQuestEvent::serializeFields(eSaveArchive& ar) {
+    eGodQuestEventBase::serializeFields(ar);
+    ar.field("fulfilled", mFulfilled, false);
 }
 
 void eGodQuestEvent::fulfill() {

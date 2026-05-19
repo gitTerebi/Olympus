@@ -8,8 +8,6 @@
 class eGameBoard;
 class eSmallHouse;
 
-class eReadStream;
-class eWriteStream;
 class eSaveArchive;
 
 enum class eCityId;
@@ -30,10 +28,8 @@ public:
     using eHouses = std::vector<eSmallHouse*>;
     const eHouses& houses() const { return mHouses; }
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-private:
     void serialize(eSaveArchive& ar);
+private:
 
     eGameBoard& mBoard;
     eCityId mCityId;

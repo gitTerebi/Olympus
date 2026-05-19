@@ -10,14 +10,13 @@ public:
     eGodMissile(eGameBoard& board,
                 const std::vector<ePathPoint>& path = {});
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
     void setTexture(const eCharacterType ct,
                     const eCharacterActionType cat);
 
-    void read(eReadStream& src);
-    void write(eWriteStream& dst) const;
-    void serialize(eSaveArchive& ar);
+protected:
+    void serializeFields(eSaveArchive& ar) override;
 private:
     eCharacterType mCharType;
     eCharacterActionType mActionType;
