@@ -4,10 +4,12 @@
 #include "buildings/ebuilding.h"
 #include "fileIO/ereadstream.h"
 
+class eSaveArchive;
+
 namespace eBuildingReader {
     stdsptr<eBuilding> sRead(
             eGameBoard& board, const eBuildingType type,
-            eReadStream& src);
+            eSaveArchive& ar);
 };
 
 #endif // EBUILDINGREADER_H

@@ -36,7 +36,13 @@ eBuilding::eBuilding(eGameBoard& board,
 }
 
 eBuilding::~eBuilding() {
-    getBoard().unregisterBuilding(this);
+    ownerBoard().unregisterBuilding(this);
+}
+
+eGameBoard& eBuilding::ownerBoard() const {
+    if(!getBoard().registerBuildingsEnabled()) return getBoard();
+    if(mCenterTile) return mCenterTile->board();
+    return getBoard();
 }
 
 eTextureSpace eBuilding::getTextureSpace(const int tx, const int ty,
@@ -2486,11 +2492,12 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     eWriteTarget target(mem);
     eWriteStream dst(target);
     dst.writeFormat("eZeus");
-    eSaveArchive ar(dst);
-    auto btype = b->type();
-    ar.field("buildingType", btype);
-    eBuildingWriter::sWrite(b, dst);
-    b->write(dst);
+    {
+        eSaveArchive ar(dst);
+        auto btype = b->type();
+        ar.field("buildingType", btype);
+        eBuildingWriter::sWrite(b, ar);
+    }
     const size_t written = dst.memPos();
     std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
                                 static_cast<const uint8_t*>(mem) + written);

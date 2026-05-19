@@ -2,6 +2,9 @@
 
 #include "buildings/allbuildings.h"
 #include "engine/e-game-board.h"
+#include "fileIO/esavearchive.h"
+
+#include <cstdio>
 
 template <typename T>
 stdsptr<eBuilding> createVendor(eGameBoard& board,
@@ -15,7 +18,16 @@ stdsptr<eBuilding> createVendor(eGameBoard& board,
     src.addPostFunc([aid, sid, v]() {
         const auto& board = v->getBoard();
         const auto a = board.buildingWithIOID(aid);
-        const auto aa = a->template ref<eAgoraBase>();
+        if(!a) {
+            printf("vendor load: missing agora aid=%d sid=%d\n", aid, sid);
+            return;
+        }
+        const auto agora = dynamic_cast<eAgoraBase*>(a);
+        if(!agora) {
+            printf("vendor load: bad agora aid=%d sid=%d\n", aid, sid);
+            return;
+        }
+        const auto aa = agora->template ref<eAgoraBase>();
         v->setAgora(aa);
         aa->setBuilding(sid, v);
     });
@@ -45,11 +57,14 @@ std::vector<eSanctCost> readPyramidElementCost(eReadStream& src) {
 
 stdsptr<eBuilding> eBuildingReader::sRead(
         eGameBoard& board, const eBuildingType type,
-        eReadStream& src) {
+        eSaveArchive& ar) {
+    stdsptr<eBuilding> b;
+    ar.payloadField("factoryLegacy",
+        [](eWriteStream&) {},
+        [&](eReadStream& src) {
     const auto& wrld = board.world();
     eCityId cid;
     src >> cid;
-    stdsptr<eBuilding> b;
     switch(type) {
     case eBuildingType::road: {
         b = e::make_shared<eRoad>(board, cid);
@@ -68,7 +83,7 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         b = e::make_shared<eGrandAgora>(o, board, cid);
     } break;
     case eBuildingType::agoraSpace:
-        return nullptr;
+        return;
     case eBuildingType::commonHouse: {
         b = e::make_shared<eSmallHouse>(board, cid);
     } break;
@@ -133,7 +148,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         const auto pt = e::make_shared<ePalaceTile>(board, other, cid);
         b = pt;
         src.readBuilding(&board, [pt](eBuilding* const bb) {
-             pt->setPalace(static_cast<ePalace*>(bb));
+             const auto palace = static_cast<ePalace*>(bb);
+             pt->setPalace(palace);
+             if(palace) palace->addTile(pt.get());
         });
     } break;
     case eBuildingType::eliteHousing: {
@@ -374,7 +391,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
         const auto pt = e::make_shared<eGodMonumentTile>(board, cid);
         b = pt;
         src.readBuilding(&board, [pt](eBuilding* const bb) {
-             pt->setMonument(static_cast<eGodMonument*>(bb));
+             const auto monument = static_cast<eGodMonument*>(bb);
+             pt->setMonument(monument);
+             if(monument) monument->addTile(pt.get());
         });
     } break;
 
@@ -685,8 +704,12 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::erase:
     case eBuildingType::bridge:
     case eBuildingType::crosswalk:
-        return nullptr;
+        return;
     }
-    if(b) b->read(src);
+    });
+    if(!b) return nullptr;
+    ar.payloadField("state",
+        [](eWriteStream&) {},
+        [&](eReadStream& src) { b->read(src); });
     return b;
 }

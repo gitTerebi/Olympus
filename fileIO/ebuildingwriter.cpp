@@ -2,6 +2,7 @@
 
 #include "buildings/allbuildings.h"
 #include "engine/e-game-board.h"
+#include "fileIO/esavearchive.h"
 
 void writePyramidElementCost(
         const ePyramidElement* const e,
@@ -14,10 +15,13 @@ void writePyramidElementCost(
 }
 
 void eBuildingWriter::sWrite(const eBuilding* const b,
-                             eWriteStream& dst) {
+                             eSaveArchive& ar) {
+    const auto type = b->type();
+    bool skipState = false;
+    ar.payloadField("factoryLegacy",
+        [&](eWriteStream& dst) {
     const auto cid = b->cityId();
     dst << cid;
-    const auto type = b->type();
     switch(type) {
     case eBuildingType::road:
     case eBuildingType::roadblock:
@@ -31,6 +35,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
         dst << ga->orientation();
     } break;
     case eBuildingType::agoraSpace:
+        skipState = true;
         return;
     case eBuildingType::commonHouse:
     case eBuildingType::gymnasium:
@@ -410,7 +415,13 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::erase:
     case eBuildingType::bridge:
     case eBuildingType::crosswalk:
+        skipState = true;
         return;
     }
-    b->write(dst);
+        },
+        [](eReadStream&) {});
+    if(skipState) return;
+    ar.payloadField("state",
+        [b](eWriteStream& dst) { b->write(dst); },
+        [](eReadStream&) {});
 }
