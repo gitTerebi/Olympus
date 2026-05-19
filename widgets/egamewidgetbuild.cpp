@@ -1899,7 +1899,6 @@ bool eGameWidget::buildModeAt(const eBuildingMode mode,
             r = mBoard->buildSanctuary(
                 minX, maxX, minY, maxY,
                 bt, mRotate, mViewedCityId, pid, mEditorMode);
-            if(r) mGm->clearMode();
         } break;
         case eBuildingMode::modestPyramid:
         case eBuildingMode::pyramid:
