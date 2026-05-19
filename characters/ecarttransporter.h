@@ -52,6 +52,7 @@ public:
     int take(const eResourceType type, const int count);
 
     void setActionType(const eCharacterActionType t) override;
+    void setVisible(const bool v);
 
     void setSupport(const eCartActionTypeSupport s) { mSupport = s; }
     eCartActionTypeSupport support() const { return mSupport; }
