@@ -217,11 +217,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 ar.archiveField(("building." + std::to_string(i)).c_str(),
                     [&](eSaveArchive& it) {
                         it.field("buildingType", type);
-                        it.payloadField("buildingData",
-                            [](eWriteStream&) {},
-                            [this, &type](eReadStream& src) {
-                                eBuildingReader::sRead(*this, type, src);
-                            });
+                        eBuildingReader::sRead(*this, type, it);
                     });
             }
         } else {
@@ -231,9 +227,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eBuildingType type = b->type();
                         it.field("buildingType", type);
-                        it.payloadField("buildingData",
-                            [b](eWriteStream& dst) { eBuildingWriter::sWrite(b, dst); },
-                            [](eReadStream&) {});
+                        eBuildingWriter::sWrite(b, it);
                     });
             }
         }

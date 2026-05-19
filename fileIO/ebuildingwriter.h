@@ -4,9 +4,11 @@
 #include "buildings/ebuilding.h"
 #include "fileIO/ewritestream.h"
 
+class eSaveArchive;
+
 namespace eBuildingWriter {
     void sWrite(const eBuilding* const b,
-                eWriteStream& dst);
+                eSaveArchive& ar);
 };
 
 #endif // EBUILDINGWRITER_H
