@@ -1772,8 +1772,13 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         fw->align(eAlignment::bottom);
         fw->move((width() - mGm->width() - fw->width()) / 2, fw->y() - 2 * p);
 
+        const auto fitWaypointText = [](auto* const w) {
+            w->setFontSizeM();
+            w->fitContent();
+        };
+
         const auto title = new eLabel("Waypoints", window());
-        title->fitContent();
+        fitWaypointText(title);
         fw->addWidget(title);
         title->align(eAlignment::hcenter);
         title->setY(p);
@@ -1784,7 +1789,7 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         buttons->move(p, fw->height() - buttons->height() - p);
 
         const auto clearb = new eButton("clear", window());
-        clearb->fitContent();
+        fitWaypointText(clearb);
         clearb->setPressAction([this]()
                                {
             if(!mPatrolBuilding) return;
@@ -1796,7 +1801,7 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         clearb->align(eAlignment::vcenter);
 
         const auto resetb = new eButton("restore", window());
-        resetb->fitContent();
+        fitWaypointText(resetb);
         resetb->setPressAction([this]()
                                {
             auto& pgs = mPatrolBuilding->patrolGuides();
@@ -1808,7 +1813,7 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         const bool bd = pb->bothDirections();
         const auto bothTxt = bd ? "both ways" : "one way";
         const auto bothb = new eButton(bothTxt, window());
-        bothb->fitContent();
+        fitWaypointText(bothb);
         bothb->setPressAction([this, bothb]()
                               {
             const bool bd = mPatrolBuilding->bothDirections();
@@ -1820,7 +1825,7 @@ void eGameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         bothb->align(eAlignment::vcenter);
 
         const auto closeb = new eButton(eLanguage::text("close"), window());
-        closeb->fitContent();
+        fitWaypointText(closeb);
         closeb->setPressAction([this]()
                                { setPatrolBuilding(nullptr); });
         buttons->addWidget(closeb);
