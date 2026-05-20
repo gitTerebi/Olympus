@@ -101,6 +101,14 @@ void eBuildingArchive::save(const eBuilding* const b,
         case eBuildingType::topiary:
         case eBuildingType::baths:
         case eBuildingType::stoneCircle:
+        case eBuildingType::oliveTree:
+        case eBuildingType::vine:
+        case eBuildingType::orangeTree:
+        case eBuildingType::sheep:
+        case eBuildingType::goat:
+        case eBuildingType::cattle:
+        case eBuildingType::growersLodge:
+        case eBuildingType::orangeTendersLodge:
             simple = true;
             break;
         default:
