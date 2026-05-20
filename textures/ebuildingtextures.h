@@ -498,6 +498,7 @@ public:
 
     eTextureCollection fPier1;
     std::shared_ptr<eTexture> fPier2;
+    eTextureCollection fPierOverlay;
 
     std::shared_ptr<eTexture> fTradingPost;
     eTextureCollection fTradingPostOverlay;

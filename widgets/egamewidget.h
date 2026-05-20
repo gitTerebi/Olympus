@@ -461,6 +461,7 @@ private:
     eMessageListWidget* mMsgListWidget = nullptr;
     eTerrainEditMenu* mTem = nullptr;
     eGameMenu* mGm = nullptr;
+    eWidget* mPierDebugPanel = nullptr;
     eArmyMenu* mAm = nullptr;
     stdsptr<eStampTool> mStampTool;
     bool mCreatingStampTemplate = false;
