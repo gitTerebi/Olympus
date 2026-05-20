@@ -127,6 +127,7 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/egatehouse.h"
 #include "buildings/etradepost.h"
 #include "buildings/epier.h"
+#include "epierdebugwidget.h"
 
 #include "elanguage.h"
 
@@ -455,6 +456,15 @@ void eGameWidget::initialize()
         viewFraction(fx, fy); });
 
     const int p = padding();
+
+    {
+        const auto panel = new ePierDebugWidget(window());
+        mPierDebugPanel = panel;
+        addWidget(panel);
+        panel->initialize();
+        panel->move(p, mTopBar->height() + p);
+        panel->hide();
+    }
 
     if (mEditorMode)
     {
@@ -3031,6 +3041,13 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
                 {
                     if (const auto b = tile->underBuilding())
                     {
+                        if (mPierDebugPanel) {
+                            if (dynamic_cast<ePier*>(b)) {
+                                mPierDebugPanel->show();
+                            } else {
+                                mPierDebugPanel->hide();
+                            }
+                        }
                         eSounds::playSoundForBuilding(b);
                         const auto cid = tile->cityId();
                         const auto pid = mBoard->cityIdToPlayerId(cid);

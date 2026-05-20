@@ -5,17 +5,58 @@
 #include "esplitbinary.h"
 #include "egamedir.h"
 
+namespace {
+void applyLooseTextureMasks(SDL_Surface* const surf) {
+    SDL_LockSurface(surf);
+    Uint32* pixels = (Uint32*)surf->pixels;
+    for(int i = 0; i < surf->w * surf->h; i++) {
+        Uint8 r;
+        Uint8 g;
+        Uint8 b;
+        Uint8 a;
+        SDL_GetRGBA(pixels[i], surf->format, &r, &g, &b, &a);
+        if(r == 0 && g == 251 && b == 0) {
+            pixels[i] = SDL_MapRGBA(surf->format, 0, 251, 0, 0);
+        } else if(r >= 250 && g <= 5 && b <= 5) {
+            pixels[i] = SDL_MapRGBA(surf->format, 72, 72, 72, a);
+        }
+    }
+    SDL_UnlockSurface(surf);
+}
+}
+
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
     {
         const auto slash = path.find('/');
         const std::string rel = (slash != std::string::npos) ? path.substr(slash + 1) : path;
-        const std::string loosePath = eGameDir::exeDir() + "../textures/" + rel;
+        const std::string fullLoosePath = eGameDir::exeDir() + "../textures/" + path;
+        const std::string relLoosePath = eGameDir::exeDir() + "../textures/" + rel;
+        std::string loosePath = fullLoosePath;
         std::ifstream loose(loosePath, std::ios::in | std::ios::binary);
+        if(!loose && relLoosePath != fullLoosePath) {
+            loosePath = relLoosePath;
+            loose.open(loosePath, std::ios::in | std::ios::binary);
+        }
         if(loose) {
             loose.close();
             const auto tex = std::make_shared<eTexture>();
-            tex->load(r, loosePath);
+            const auto loadedSurf = IMG_Load(loosePath.c_str());
+            if(!loadedSurf) {
+                printf("Unable to load image %s! SDL_image Error: %s\n",
+                       loosePath.c_str(), IMG_GetError());
+                return nullptr;
+            }
+            const auto surf = SDL_ConvertSurfaceFormat(
+                                  loadedSurf, SDL_PIXELFORMAT_RGBA32, 0);
+            SDL_FreeSurface(loadedSurf);
+            if(!surf) {
+                printf("Unable to convert image %s! SDL Error: %s\n",
+                       loosePath.c_str(), SDL_GetError());
+                return nullptr;
+            }
+            applyLooseTextureMasks(surf);
+            tex->load(r, surf);
             return tex;
         }
     }

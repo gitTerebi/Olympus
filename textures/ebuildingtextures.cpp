@@ -1,5 +1,6 @@
 #include "ebuildingtextures.h"
 
+#include "ebinaryimageloader.h"
 #include "offsets/SprAmbient.h"
 
 #include "spriteData/palaceTiles15.h"
@@ -751,6 +752,7 @@ eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
     fWarehouseOverlay(renderer),
 
     fPier1(renderer),
+    fPierOverlay(renderer),
     fTradingPostOverlay(renderer),
 
     fWarehouseUrchin(renderer),
@@ -3020,6 +3022,55 @@ void eBuildingTextures::loadPier() {
 
         fPier2 = loader.load(25, 25);
         fPier2->setOffset(-88, 90);
+    }
+
+    if(fTileH == 30) {
+        auto loadFrame = [&](const int i) -> std::shared_ptr<eTexture> {
+            char buf[64];
+            snprintf(buf, sizeof(buf), "SprAmbient_%05d.png", i);
+            const std::string path = "30/SprAmbient/" + std::string(buf);
+            auto tex = eBinaryImageLoader::load(fRenderer, path);
+            if(tex) {
+                const auto& off = eSprAmbientOffset[i - 1];
+                tex->setOffset(off.first, off.second);
+                return tex;
+            }
+            return nullptr;
+        };
+        // BR (0-31): mirrored BL frames (134-165)
+        for(int i = 0; i < 32; i++) {
+            const auto src = loadFrame(134 + i);
+            auto& slot = fPierOverlay.addTexture();
+            if(src) {
+                auto flipped = std::make_shared<eTexture>();
+                flipped->setFlipTex(src);
+                flipped->setOffset(src->width() - src->offsetX(),
+                                   src->offsetY());
+                slot = flipped;
+            }
+        }
+        // BL (32-63): 134-165
+        for(int i = 134; i < 166; i++) {
+            auto& slot = fPierOverlay.addTexture();
+            slot = loadFrame(i);
+        }
+        // TL (64-95): mirrored TR frames (198-229)
+        for(int i = 0; i < 32; i++) {
+            const auto src = loadFrame(198 + i);
+            auto& slot = fPierOverlay.addTexture();
+            if(src) {
+                auto flipped = std::make_shared<eTexture>();
+                flipped->setFlipTex(src);
+                flipped->setOffset(src->width() - src->offsetX(),
+                                   src->offsetY());
+                slot = flipped;
+            }
+        }
+        // TR (96-127): 198-229
+        for(int i = 198; i < 230; i++) {
+            auto& slot = fPierOverlay.addTexture();
+            slot = loadFrame(i);
+        }
     }
 }
 

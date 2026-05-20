@@ -644,6 +644,7 @@ SOURCES += \
         widgets/egamemainmenu.cpp \
         widgets/egamemenu.cpp \
         widgets/egamemenubase.cpp \
+        widgets/epierdebugwidget.cpp \
         widgets/egamewidget.cpp \
         widgets/egamewidgetbuild.cpp \
         widgets/egamewidgetevents.cpp \
@@ -2868,6 +2869,7 @@ HEADERS += \
     widgets/egamemenu.h \
     widgets/egamemenubase.h \
     widgets/egamewidget.h \
+    widgets/epierdebugwidget.h \
     widgets/egiftdialog.h \
     widgets/egiftsizedialog.h \
     widgets/egodbutton.h \
@@ -3222,6 +3224,7 @@ DISTFILES += \
     textureTemplates/phoenicianHorseman \
     textureTemplates/pier1 \
     textureTemplates/pier2 \
+    textureTemplates/pierOverlay \
     textureTemplates/plague \
     textureTemplates/plantation \
     textureTemplates/podium \

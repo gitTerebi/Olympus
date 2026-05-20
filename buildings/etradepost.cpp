@@ -62,21 +62,13 @@ std::vector<eOverlay> eTradePost::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
-    if(enabled()) {
+    if(enabled() && mType == eTradePostType::post) {
         const auto& coll = texs.fTradingPostOverlay;
         const int texId = textureTime() % coll.size();
         auto& o = os.emplace_back();
         o.fTex = coll.getTexture(texId);
-        switch(mType) {
-        case eTradePostType::post:
-            o.fX = -3.1;
-            o.fY = -7.2;
-            break;
-        default:
-            o.fX = -1.75;
-            o.fY = -5.85;
-            break;
-        }
+        o.fX = -3.1;
+        o.fY = -7.2;
     }
     const eXY xy = {{-1.5, -3.5},
                     {-1.5, -2.5},
