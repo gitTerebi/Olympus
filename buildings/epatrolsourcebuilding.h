@@ -35,6 +35,8 @@ public:
 
     void timeChanged(const int by) override;
 
+    const eTargets& targets() const { return mTargets; }
+
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:

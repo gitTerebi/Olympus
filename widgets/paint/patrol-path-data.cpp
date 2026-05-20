@@ -4,6 +4,7 @@
 #include "engine/etile.h"
 #include "engine/epathfinder.h"
 #include "buildings/epatrolbuildingbase.h"
+#include "buildings/epatrolsourcebuilding.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
@@ -104,4 +105,56 @@ void eGameWidget::updatePatrolPath()
         mPatrolPath1.clear();
         mExcessPatrolPath1.clear();
     }
+}
+
+void eGameWidget::updateDestinationPath()
+{
+    mDestinationPath.clear();
+    mDestinationTargets.clear();
+    if(!mDestinationBuilding) return;
+    const auto src = mDestinationBuilding.get();
+    const auto srcRoads = src->surroundingRoad(false, true);
+    if(srcRoads.empty()) return;
+    const auto seedTile = srcRoads.front();
+    const auto srcCid = src->cityId();
+    const auto& targets = src->targets();
+    const int w = mBoard->width();
+    const int h = mBoard->height();
+    for(const auto& tg : targets) {
+        const auto targetType = tg.second;
+        for(const auto b : mBoard->buildings()) {
+            if(!b) continue;
+            if(b->type() != targetType) continue;
+            if(b->cityId() != srcCid) continue;
+            mDestinationTargets.push_back(b);
+            const auto destBldg = b;
+            const auto valid = [destBldg](eTileBase* const t) {
+                const auto type = t->underBuildingType();
+                if(type == eBuildingType::road) return true;
+                if(type == eBuildingType::avenue) return true;
+                const auto tt = static_cast<eTile*>(t);
+                return tt->underBuilding() == destBldg;
+            };
+            const auto final = [destBldg](eTileBase* const t) {
+                const auto tt = static_cast<eTile*>(t);
+                return tt->underBuilding() == destBldg;
+            };
+            ePathFinder p(valid, final);
+            const bool r = p.findPath({0, 0, w, h}, seedTile, 200, true, w, h,
+                                      eWalkableHelpers::sRoadAvenueTileDistance);
+            if(!r) continue;
+            std::vector<eTile*> path;
+            p.extractPath(path, *mBoard);
+            for(const auto pt : path) {
+                if(pt->underBuilding() == destBldg) continue;
+                mDestinationPath.emplace_back(pt);
+            }
+        }
+    }
+}
+
+void eGameWidget::setDestinationBuilding(ePatrolSourceBuilding* const sb)
+{
+    mDestinationBuilding = sb;
+    updateDestinationPath();
 }

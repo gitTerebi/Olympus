@@ -111,6 +111,7 @@ void formatStoredMessage(eMessage& msg,
 #include "e-message-box.h"
 
 #include "buildings/eagoraspace.h"
+#include "buildings/epatrolsourcebuilding.h"
 #include "buildings/eagorabase.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/evendor.h"
@@ -3036,6 +3037,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
                 const auto tile = mBoard->tile(mHoverTX, mHoverTY);
                 mWalkerBuilding = nullptr;
                 mPatrolHighlightBuilding = nullptr;
+                setDestinationBuilding(nullptr);
                 if (tile && tile->soldierBanner())
                 {
                     const auto sb = tile->soldierBanner();
@@ -3067,6 +3069,10 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
                             {
                                 if (const auto a = r->underAgora())
                                     setPatrolBuilding(a);
+                            }
+                            else if (const auto sb = dynamic_cast<ePatrolSourceBuilding *>(b))
+                            {
+                                setDestinationBuilding(sb);
                             }
                             else if (const auto pb = dynamic_cast<ePatrolBuilding *>(b))
                             {

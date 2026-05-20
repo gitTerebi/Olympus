@@ -45,6 +45,7 @@ class eMessageBox;
 class eMessageListWidget;
 class eGameBoard;
 class eAgoraBase;
+class ePatrolSourceBuilding;
 class eInfoWidget;
 class eFramedButton;
 class eFramedWidget;
@@ -343,6 +344,9 @@ private:
     void updatePatrolPath();
     void setPatrolBuilding(ePatrolBuildingBase* const pb);
 
+    void setDestinationBuilding(ePatrolSourceBuilding* const sb);
+    void updateDestinationPath();
+
     eInfoWidget* openInfoWidget(eBuilding* const b);
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
     bool hasInfoWidget() const;
@@ -443,6 +447,9 @@ private:
     stdptr<eBuilding> mWalkerBuilding;
     stdptr<ePatrolBuildingBase> mPatrolBuilding;
     stdptr<ePatrolBuildingBase> mPatrolHighlightBuilding;
+    stdptr<ePatrolSourceBuilding> mDestinationBuilding;
+    std::vector<eTile*> mDestinationPath;
+    std::vector<eBuilding*> mDestinationTargets;
     std::vector<eTile*> mPatrolPath;
     std::vector<eTile*> mExcessPatrolPath;
     std::vector<eTile*> mPatrolPath1;
