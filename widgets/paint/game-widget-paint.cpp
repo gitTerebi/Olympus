@@ -1279,6 +1279,12 @@ void eGameWidget::paintEvent(ePainter &p)
                 lavaCm = true;
                 tex->setColorMod(255, 0, 0);
             }
+            else if (mDestinationBuilding && !mDestinationPath.empty() &&
+                     eVectorHelpers::contains(mDestinationPath, tile))
+            {
+                patrolCm = true;
+                tex->setColorMod(175, 255, 175);
+            }
             else if (mPatrolBuilding &&
                      (!mPatrolPath.empty() || !mPatrolPath1.empty()))
             {
@@ -2102,6 +2108,9 @@ void eGameWidget::paintEvent(ePainter &p)
                 const bool erase = inErase(ub);
                 const bool hover = inPatrolBuildingHover(ub);
                 const bool walkerBuildingSelected = mWalkerBuilding && ub == mWalkerBuilding.get();
+                const bool destSrcSelected = mDestinationBuilding && ub == mDestinationBuilding.get();
+                const bool destTargetSelected = mDestinationBuilding &&
+                    eVectorHelpers::contains(mDestinationTargets, ub);
                 const bool buildingHovered = [&]()
                 {
                     if (mode != eBuildingMode::none)
@@ -2121,12 +2130,19 @@ void eGameWidget::paintEvent(ePainter &p)
                     cgreen = 175;
                     cblue = 175;
                 }
-                else if (hover || walkerBuildingSelected)
+                else if (hover || walkerBuildingSelected || destSrcSelected)
                 {
                     colorMod = true;
                     cred = 175;
                     cgreen = 255;
                     cblue = 255;
+                }
+                else if (destTargetSelected)
+                {
+                    colorMod = true;
+                    cred = 175;
+                    cgreen = 255;
+                    cblue = 175;
                 }
                 else if (buildingHovered)
                 {
