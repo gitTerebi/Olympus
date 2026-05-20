@@ -4,11 +4,129 @@
 #include "textures/egametextures.h"
 
 #include "engine/e-game-board.h"
+#include "etilehelper.h"
 
 #include "characters/etrader.h"
 #include "characters/actions/etraderaction.h"
 #include "characters/etradeboat.h"
 #include "enumbers.h"
+
+#include <algorithm>
+#include <vector>
+
+namespace {
+
+struct eTradePostSlot {
+    int fX = 0;
+    int fY = 0;
+};
+
+struct eTradePostDrawSlot {
+    eTradePostSlot fSlot;
+    int fStorageId = -1;
+    bool fDoor = false;
+};
+
+eTradePostSlot sTradePostHomeDoorSlot() {
+    return {0, 0};
+}
+
+std::vector<eTradePostSlot> sTradePostStorageRealSlots() {
+    return {{0, 1},
+            {0, 2},
+            {0, 3},
+            {1, 0},
+            {1, 1},
+            {1, 2},
+            {1, 3},
+            {2, 0},
+            {2, 1},
+            {2, 2},
+            {2, 3},
+            {3, 0},
+            {3, 1},
+            {3, 2},
+            {3, 3}};
+}
+
+std::pair<double, double> sTradePostSlotXY(const eTradePostSlot& slot) {
+    return {double(slot.fX) - 1.5, double(slot.fY) - 4.5};
+}
+
+std::pair<double, double> sTradePostSlotShiftFromHome(
+        const eTradePostSlot& slot) {
+    const auto homeSlot = sTradePostHomeDoorSlot();
+    return {double(slot.fX - homeSlot.fX),
+            double(slot.fY - homeSlot.fY)};
+}
+
+eTradePostSlot sTradePostSlotFromLocalTile(const int x, const int y) {
+    return {x, y};
+}
+
+eTradePostSlot sTradePostSlotFromRealTile(const SDL_Rect& rect,
+                                          const eWorldDirection dir,
+                                          const int boardW,
+                                          const int boardH,
+                                          SDL_Rect& rotatedRect) {
+    const SDL_Point realDoor{rect.x, rect.y};
+    SDL_Point rotatedDoor;
+    rotatedRect = eTileHelper::toRotatedRect(rect, dir, boardW, boardH);
+    eTileHelper::tileIdToRotatedTileId(realDoor.x, realDoor.y,
+                                       rotatedDoor.x, rotatedDoor.y,
+                                       dir, boardW, boardH);
+    return sTradePostSlotFromLocalTile(rotatedDoor.x - rotatedRect.x,
+                                       rotatedDoor.y - rotatedRect.y);
+}
+
+eTradePostSlot sTradePostRotatedSlotFromRealSlot(
+        const SDL_Rect& rect,
+        const SDL_Rect& rotatedRect,
+        const eWorldDirection dir,
+        const int boardW,
+        const int boardH,
+        const eTradePostSlot& slot) {
+    const int tileX = rect.x + slot.fX;
+    const int tileY = rect.y + slot.fY;
+    int rotatedX;
+    int rotatedY;
+    eTileHelper::tileIdToRotatedTileId(tileX, tileY,
+                                       rotatedX, rotatedY,
+                                       dir, boardW, boardH);
+    return sTradePostSlotFromLocalTile(rotatedX - rotatedRect.x,
+                                       rotatedY - rotatedRect.y);
+}
+
+std::vector<eTradePostDrawSlot> sTradePostStorageSlots(
+        const SDL_Rect& rect,
+        const SDL_Rect& rotatedRect,
+        const eWorldDirection dir,
+        const int boardW,
+        const int boardH) {
+    std::vector<eTradePostDrawSlot> result;
+    int storageId = 0;
+    for(const auto& realSlot : sTradePostStorageRealSlots()) {
+        auto& slot = result.emplace_back();
+        slot.fSlot = sTradePostRotatedSlotFromRealSlot(rect, rotatedRect,
+                                                       dir, boardW, boardH,
+                                                       realSlot);
+        slot.fStorageId = storageId++;
+    }
+    return result;
+}
+
+void sSortTradePostDrawSlots(std::vector<eTradePostDrawSlot>& slots) {
+    std::sort(slots.begin(), slots.end(),
+              [](const eTradePostDrawSlot& a,
+                 const eTradePostDrawSlot& b) {
+        if(a.fSlot.fY != b.fSlot.fY) {
+            return a.fSlot.fY < b.fSlot.fY;
+        }
+        return a.fSlot.fX < b.fSlot.fX;
+    });
+}
+
+} // namespace
 
 eTradePost::eTradePost(eGameBoard& board, eWorldCity& city,
                        const eCityId cid,
@@ -17,6 +135,7 @@ eTradePost::eTradePost(eGameBoard& board, eWorldCity& city,
                    eResourceType::tradePost, cid, 15),
     mCity(city), mType(type) {
     eGameTextures::loadTradingPost();
+    if(type == eTradePostType::pier) eGameTextures::loadPier();
     setOverlayEnabledFunc([]() { return true; });
     setOrders(eResourceType::none, eResourceType::none);
     getBoard().registerTradePost(this);
@@ -45,16 +164,16 @@ eTradePost::~eTradePost() {
 }
 
 std::shared_ptr<eTexture> eTradePost::getTexture(const eTileSize size) const {
-    const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
-    const auto& coll = blds[sizeId];
-    switch(mType) {
-    case eTradePostType::post:
-        return coll.fTradingPost;
-    default:
-        return coll.fPier2;
-    }
+    (void)size;
+    return nullptr;
 
+}
+
+eTextureSpace eTradePost::getTextureSpace(const int tx, const int ty,
+                                          const eTileSize size) const {
+    auto result = eBuilding::getTextureSpace(tx, ty, size);
+    result.fClamp = false;
+    return result;
 }
 
 std::vector<eOverlay> eTradePost::getOverlays(const eTileSize size) const {
@@ -62,34 +181,42 @@ std::vector<eOverlay> eTradePost::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
-    if(enabled() && mType == eTradePostType::post) {
-        const auto& coll = texs.fTradingPostOverlay;
-        const int texId = textureTime() % coll.size();
-        auto& o = os.emplace_back();
-        o.fTex = coll.getTexture(texId);
-        o.fX = -3.1;
-        o.fY = -7.2;
+    const eWorldDirection dir = getBoard().direction();
+    const auto rect = tileRect();
+    const int boardW = getBoard().width();
+    const int boardH = getBoard().height();
+    SDL_Rect rotatedRect;
+    const auto doorSlot = sTradePostSlotFromRealTile(rect, dir, boardW,
+                                                     boardH, rotatedRect);
+    const auto doorSlotShift = sTradePostSlotShiftFromHome(doorSlot);
+    auto drawSlots = sTradePostStorageSlots(rect, rotatedRect, dir,
+                                            boardW, boardH);
+    auto& doorSlotInfo = drawSlots.emplace_back();
+    doorSlotInfo.fSlot = doorSlot;
+    doorSlotInfo.fDoor = true;
+    sSortTradePostDrawSlots(drawSlots);
+
+    for(const auto& slot : drawSlots) {
+        if(slot.fDoor) {
+            auto& door = os.emplace_back();
+            door.fTex = mType == eTradePostType::post ?
+                        texs.fTradingPost : texs.fPier2;
+            door.fX = doorSlotShift.first;
+            door.fY = doorSlotShift.second;
+            door.fAlignTop = true;
+            if(enabled() && mType == eTradePostType::post) {
+                const auto& coll = texs.fTradingPostOverlay;
+                const int texId = textureTime() % coll.size();
+                auto& man = os.emplace_back();
+                man.fTex = coll.getTexture(texId);
+                man.fX = doorSlotShift.first - 3.1;
+                man.fY = doorSlotShift.second - 7.2;
+            }
+        } else {
+            getSpaceOverlay(size, os, sTradePostSlotXY(slot.fSlot),
+                            slot.fStorageId);
+        }
     }
-    const eXY xy = {{-1.5, -3.5},
-                    {-1.5, -2.5},
-                    {-1.5, -1.5},
-
-                    {-0.5, -4.5},
-                    {-0.5, -3.5},
-                    {-0.5, -2.5},
-                    {-0.5, -1.5},
-
-                    {0.5, -4.5},
-                    {0.5, -3.5},
-                    {0.5, -2.5},
-                    {0.5, -1.5},
-
-                    {1.5, -4.5},
-                    {1.5, -3.5},
-                    {1.5, -2.5},
-                    {1.5, -1.5}};
-
-    getSpaceOverlays(size, os, xy);
 
     return os;
 }

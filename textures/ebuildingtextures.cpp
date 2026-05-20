@@ -3246,8 +3246,8 @@ void eBuildingTextures::load() {
         eSpriteLoader loader(fTileH, "warehouse", sds,
                              nullptr, fRenderer);
 
-        fWarehouse = loader.load(23, 23);
-        fWarehouse->setOffset(-58, 60);
+        fWarehouseDoor = loader.load(23, 23);
+        fWarehouseDoor->setOffset(-58, 60);
     }
 
     {
