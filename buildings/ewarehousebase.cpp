@@ -4,27 +4,25 @@
 
 #include <algorithm>
 
-void eWarehouseBase::getSpaceOverlays(const eTileSize size,
-                                      std::vector<eOverlay>& os,
-                                      const eXY& xy) const {
+void eWarehouseBase::getSpaceOverlay(const eTileSize size,
+                                     std::vector<eOverlay>& os,
+                                     const std::pair<double, double>& xy,
+                                     const int id) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
-    const int iMax = xy.size();
-    for(int i = 0; i < iMax; i++) {
-        const int count = resourceCount(i);
-        const auto type = resourceType(i);
-        eOverlay& o = os.emplace_back();
-        const auto& xxyy = xy[i];
-        o.fX = xxyy.first;
-        o.fY = xxyy.second;
-        o.fAlignTop = true;
-        if(type == eResourceType::none || count <= 0) {
-            o.fTex = texs.fWarehouseEmpty;
-            continue;
-        }
-        const int texId = std::clamp(count - 1, 0, 3);
-        switch(type) {
+    const int count = resourceCount(id);
+    const auto type = resourceType(id);
+    eOverlay& o = os.emplace_back();
+    o.fX = xy.first;
+    o.fY = xy.second;
+    o.fAlignTop = true;
+    if(type == eResourceType::none || count <= 0) {
+        o.fTex = texs.fWarehouseEmpty;
+        return;
+    }
+    const int texId = std::clamp(count - 1, 0, 3);
+    switch(type) {
         case eResourceType::urchin:
             o.fTex = texs.fWarehouseUrchin.getTexture(texId);
             break;
@@ -88,8 +86,18 @@ void eWarehouseBase::getSpaceOverlays(const eTileSize size,
         case eResourceType::orichalc:
             o.fTex = texs.fWarehouseOrichalc.getTexture(texId);
             break;
-        default: continue;
-        }
+        default:
+            os.pop_back();
+            break;
     }
 
+}
+
+void eWarehouseBase::getSpaceOverlays(const eTileSize size,
+                                      std::vector<eOverlay>& os,
+                                      const eXY& xy) const {
+    const int iMax = xy.size();
+    for(int i = 0; i < iMax; i++) {
+        getSpaceOverlay(size, os, xy[i], i);
+    }
 }

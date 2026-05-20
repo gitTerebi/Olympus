@@ -516,7 +516,7 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
             tex = builTexs.fGranary;
             break;
         case eBuildingType::warehouse:
-            tex = builTexs.fWarehouse;
+            tex = builTexs.fWarehouseDoor;
             break;
         default:
             break;

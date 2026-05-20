@@ -493,7 +493,7 @@ public:
     std::vector<eTextureCollection> fChariotFactoryHorses;
     eTextureCollection fChariotFactoryChariots;
 
-    std::shared_ptr<eTexture> fWarehouse;
+    std::shared_ptr<eTexture> fWarehouseDoor;
     eTextureCollection fWarehouseOverlay;
 
     eTextureCollection fPier1;
