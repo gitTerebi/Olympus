@@ -233,14 +233,18 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             eBuilding::sInfoText(gl, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
             std::string line;
-            std::string storedStr = eLanguage::zeusText(179, 11); // olives
-            if(!storedStr.empty()) {
-                line += storedStr + " " + std::to_string(gl->count(eResourceType::olives));
-            }
-            storedStr = eLanguage::zeusText(179, 12); // grapes
-            if(!storedStr.empty()) {
-                if(!line.empty()) line += "       ";
-                line += storedStr + " " + std::to_string(gl->count(eResourceType::grapes));
+            if(gl->type() == eGrowerType::oranges) {
+                line = "Oranges: " + std::to_string(gl->orangeUnits());
+            } else {
+                std::string storedStr = eLanguage::zeusText(179, 11); // olives
+                if(!storedStr.empty()) {
+                    line += storedStr + " " + std::to_string(gl->oliveUnits());
+                }
+                storedStr = eLanguage::zeusText(179, 12); // grapes
+                if(!storedStr.empty()) {
+                    if(!line.empty()) line += "       ";
+                    line += storedStr + " " + std::to_string(gl->grapeUnits());
+                }
             }
             if(!line.empty()) {
                 ebWid->addText(line);
@@ -441,16 +445,53 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const auto title = eBuilding::sNameForBuilding(b);
             rbWid->initialize(title);
             int group = 115;
+            eMonth harvestStart = eMonth::january;
+            eMonth harvestEnd = eMonth::march;
             switch(rb->type()) {
-            case eResourceBuildingType::oliveTree:  group = 115; break; // "Fruit is" / "ripe."
-            case eResourceBuildingType::vine:       group = 116; break; // "Fruit is" / "ripe."
-            case eResourceBuildingType::orangeTree: group = 107; break; // "Oranges are" / "ripe."
+            // xml group 115 = Olive Tree. ids 2,3 = "Fruit is"/"ripe.", id 14 = "The next olive harvest is in"
+            case eResourceBuildingType::oliveTree:
+                group = 115;
+                harvestStart = eMonth::january;
+                harvestEnd = eMonth::march;
+                break;
+            // xml group 116 = Grapevine. ids 2,3 = "Fruit is"/"ripe.", id 14 = "The next grape harvest is in"
+            case eResourceBuildingType::vine:
+                group = 116;
+                harvestStart = eMonth::october;
+                harvestEnd = eMonth::december;
+                break;
+            // xml group 107 = Orange Tree. ids 2,3 = "Oranges are"/"ripe.", id 14 = "The next orange harvest is in"
+            case eResourceBuildingType::orangeTree:
+                group = 107;
+                harvestStart = eMonth::january;
+                harvestEnd = eMonth::march;
+                break;
             }
             const int pct = rb->ripe() * 100 / 5;
+            // xml strings (groupId, 2) + (groupId, 3) → e.g. "Fruit is 80% ripe."
             const std::string ripeStr = eLanguage::zeusText(group, 2) + " " +
                                         std::to_string(pct) + "% " +
                                         eLanguage::zeusText(group, 3);
             rbWid->addText(ripeStr);
+
+            const auto curMonth = rb->getBoard().date().month();
+            const int cm = static_cast<int>(curMonth);
+            const int hs = static_cast<int>(harvestStart);
+            const int he = static_cast<int>(harvestEnd);
+            const bool inSeason = cm >= hs && cm <= he;
+            // xml group 160 = month names, ids 0..11 = January..December
+            const std::string startName = eLanguage::zeusText(160, hs);
+            const std::string endName = eLanguage::zeusText(160, he);
+            std::string seasonStr;
+            if(inSeason) {
+                // xml (group, 14) = "The next X harvest is in" — reused here to label the season
+                seasonStr = "Harvest available now (" + startName +
+                            "-" + endName + ")";
+            } else {
+                // xml (group, 14) = "The next X harvest is in <start month>"
+                seasonStr = eLanguage::zeusText(group, 14) + " " + startName;
+            }
+            rbWid->addText(seasonStr);
             wid = rbWid;
         } else {
             const auto bWid = new eInfoWidget(window(), this, true, true);

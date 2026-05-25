@@ -37,19 +37,30 @@ public:
     void growerDelivered(const eResourceType type, const int count);
 
     bool spawnGrower(stdptr<eGrower>& grower,
-                     const bool oliveHarvester = false);
+                     const bool oliveHarvester = false,
+                     const bool genericHarvester = false);
 
     void setNoTarget(const bool t);
     bool noTarget() const { return mNoTarget; }
 
     bool hasReadyOlives() const;
+
+    eGrowerType type() const { return mType; }
+    int grapeUnits() const { return mGrapes; }
+    int oliveUnits() const { return mOlives; }
+    int orangeUnits() const { return mOranges; }
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     void killWalkers();
     int readyOliveCount() const;
+    int readyGrapeCount() const;
+    int readyOrangeCount() const;
+    bool isGrapeHarvestMonth() const;
+    bool isOrangeHarvestMonth() const;
 
-    const int mMaxResource = 8;
+    static constexpr int sUnitsPerLoad = 100;
+    static constexpr int sMaxUnits = 500;
 
     const eGrowerType mType;
 
