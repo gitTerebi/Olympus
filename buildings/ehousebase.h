@@ -45,6 +45,8 @@ public:
     int competitorsCurators() const { return mCompetitors; }
     int allCultureScience() const;
 
+    int culturePoints() const;
+
     void levelUp();
     void levelDown();
 

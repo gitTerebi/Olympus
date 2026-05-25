@@ -276,6 +276,8 @@ public:
 
     bool hasStadium() const { return mStadium; }
     bool hasMuseum() const { return mMuseum; }
+    bool stadiumBonusActive() const;
+    bool museumBonusActive() const;
     eStadium* stadium() const { return mStadium; }
     eMuseum* museum() const { return mMuseum; }
 

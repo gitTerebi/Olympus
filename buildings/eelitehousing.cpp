@@ -2,6 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "engine/e-game-board.h"
+#include "engine/edifficulty.h"
 #include "erand.h"
 
 #include "textures/egametextures.h"
@@ -329,27 +330,31 @@ const eTextureCollection& eEliteHousing::getTextureCollection(
 
 void eEliteHousing::updateLevel() {
     const double appeal = eHouseBase::appeal();
-    int nVenues = 0;
-    if(mPhilosophers > 0) nVenues++;
-    if(mActors > 0) nVenues++;
-    if(mAthletes > 0) nVenues++;
-    if(mCompetitors > 0) nVenues++;
-    if(mFood > 0 && mFleece > 0 && mOil > 0 && nVenues > 2 && appeal > 5.0) {
-        if(mArms > 0 && appeal > 7.0) {
-            if(mWine > 0 && appeal > 9.0) {
-                if(mHorses > 0 && nVenues > 3 && appeal > 10.0) {
-                    setLevel(4);
-                } else {
-                    setLevel(3);
-                }
-            } else {
-                setLevel(2);
-            }
-        } else {
-            setLevel(1);
-        }
-    } else {
+    const int pts = culturePoints();
+    const auto& board = getBoard();
+    const auto pid = board.cityIdToPlayerId(cityId());
+    const auto diff = board.difficulty(pid);
+    auto canEvolveTo = [&](const int lvl) {
+        // lvl 0=residence, 1=mansion, 2=manor, 3=estate
+        if(lvl < 0 || lvl > 3) return false;
+        const auto req = eDifficultyHelpers::houseLevelReq(diff, true, lvl);
+        if(appeal < req.fAppE) return false;
+        if(pts < req.fEnt) return false;
+        // baseline resources for residence (lvl 0)
+        if(mFood <= 0 || mFleece <= 0 || mOil <= 0) return false;
+        if(lvl >= 1) { if(mArms <= 0) return false; }
+        if(lvl >= 2) { if(mWine <= 0) return false; }
+        if(lvl >= 3) { if(mHorses <= 0) return false; }
+        return true;
+    };
+    int newLevel = -1;
+    for(int l = 3; l >= 0; l--) {
+        if(canEvolveTo(l)) { newLevel = l; break; }
+    }
+    if(newLevel < 0) {
         setLevel(0);
+    } else {
+        setLevel(newLevel);
     }
     // spawn homeless immediately
     if(mPendingEvict > 0) {

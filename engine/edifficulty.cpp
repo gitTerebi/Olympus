@@ -1,5 +1,7 @@
 #include "edifficulty.h"
 
+#include <algorithm>
+
 #include "characters/echaracterbase.h"
 
 std::string eDifficultyHelpers::name(const eDifficulty diff)
@@ -881,4 +883,50 @@ int eDifficultyHelpers::soliderBribe(const eDifficulty diff,
         return 25;
     }
     return static_cast<int>(mult * base);
+}
+
+eDifficultyHelpers::eHouseLevelReq
+eDifficultyHelpers::houseLevelReq(const eDifficulty diff,
+                                  const bool elite,
+                                  const int level)
+{
+    const bool begTable = (diff == eDifficulty::beginner);
+    if (!elite) {
+        // common: hut,shack,hovel,homestead,tenement,apartment,townhouse
+        static const eHouseLevelReq begCommon[7] = {
+            {-99, -10,  0},
+            { -12,  0,  0},
+            {  -2, 10, 15},
+            {  -2, 10, 15},
+            {   5, 20, 35},
+            {  15, 30, 35},
+            {  25,100, 45},
+        };
+        static const eHouseLevelReq hardCommon[7] = {
+            {-99, -10,  0},
+            { -12,  0,  0},
+            {  -2, 10, 15},
+            {   5, 20, 15},
+            {  15, 30, 35},
+            {  25, 40, 35},
+            {  35,100, 45},
+        };
+        const int idx = std::clamp(level, 0, 6);
+        return begTable ? begCommon[idx] : hardCommon[idx];
+    }
+    // elite: residence, mansion, manor, estate
+    static const eHouseLevelReq begElite[4] = {
+        {36, 50, 40},
+        {46, 60, 50},
+        {56, 70, 60},
+        {66,100, 70},
+    };
+    static const eHouseLevelReq hardElite[4] = {
+        {50, 65, 50},
+        {60, 75, 60},
+        {70, 85, 70},
+        {80,100, 80},
+    };
+    const int idx = std::clamp(level, 0, 3);
+    return begTable ? begElite[idx] : hardElite[idx];
 }

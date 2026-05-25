@@ -39,11 +39,14 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
 void ePatrolSourceBuilding::timeChanged(const int by) {
     ePatrolBuilding::timeChanged(by);
     if(enabled()) {
+        const int me = maxEmployees();
+        const int em = employed();
+        const int scaledBy = (me > 0) ? (by * em) / me : 0;
         const int iMax = mTargetData.size();
         for(int i = 0; i < iMax; i++) {
             if(targetWalkerInFlight(i)) continue;
             int& spawnTime = mTargetData[i].fSpawnTime;
-            spawnTime += by;
+            spawnTime += scaledBy;
             if(spawnTime > mSpawnInterval) {
                 spawnTime = 0;
                 spawn(i);

@@ -16,6 +16,8 @@
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/etriremewharf.h"
 #include "buildings/etower.h"
+#include "buildings/estadium.h"
+#include "buildings/emuseum.h"
 #include "buildings/pyramids/epyramid.h"
 #include "characters/echaracter.h"
 #include "characters/actions/eanimalaction.h"
@@ -1019,6 +1021,16 @@ void eBoardCity::registerMuseum(eMuseum* const s) {
 
 void eBoardCity::unregisterMuseum() {
     mMuseum = nullptr;
+}
+
+bool eBoardCity::stadiumBonusActive() const {
+    if(!mStadium || !mStadium->isActive()) return false;
+    return mStadium->employed() >= mStadium->maxEmployees();
+}
+
+bool eBoardCity::museumBonusActive() const {
+    if(!mMuseum || !mMuseum->isActive()) return false;
+    return mMuseum->employed() >= mMuseum->maxEmployees();
 }
 
 void eBoardCity::registerStorBuilding(eStorageBuilding* const b) {

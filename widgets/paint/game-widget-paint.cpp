@@ -1877,8 +1877,8 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto ch = static_cast<eHouseBase *>(ub);
                     if (ch->people() == 0)
                         return;
-                    const int a = ch->actorsAstronomers() / 2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
+                    const int a = ch->actorsAstronomers() > 0 ? 1 : 0;
+                    if(a > 0) drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             }
             else if (mViewMode == eViewMode::philosophers ||
@@ -1890,8 +1890,8 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto ch = static_cast<eHouseBase *>(ub);
                     if (ch->people() == 0)
                         return;
-                    const int a = ch->philosophersInventors() / 2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
+                    const int a = ch->philosophersInventors() > 0 ? 1 : 0;
+                    if(a > 0) drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             }
             else if (mViewMode == eViewMode::athletes ||
@@ -1903,8 +1903,8 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto ch = static_cast<eHouseBase *>(ub);
                     if (ch->people() == 0)
                         return;
-                    const int a = ch->athletesScholars() / 2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
+                    const int a = ch->athletesScholars() > 0 ? 1 : 0;
+                    if(a > 0) drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             }
             else if (mViewMode == eViewMode::competitors ||
@@ -1916,8 +1916,8 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto ch = static_cast<eHouseBase *>(ub);
                     if (ch->people() == 0)
                         return;
-                    const int a = ch->competitorsCurators() / 2;
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
+                    const int a = ch->competitorsCurators() > 0 ? 1 : 0;
+                    if(a > 0) drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             }
             else if (mViewMode == eViewMode::allCulture ||
@@ -1929,8 +1929,16 @@ void eGameWidget::paintEvent(ePainter &p)
                     const auto ch = static_cast<eHouseBase *>(ub);
                     if (ch->people() == 0)
                         return;
-                    const int a = ch->allCultureScience();
-                    drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
+                    int a = 0;
+                    if(ch->philosophersInventors() > 0) a++;
+                    if(ch->actorsAstronomers() > 0) a++;
+                    if(ch->athletesScholars() > 0) a++;
+                    if(ch->competitorsCurators() > 0) a++;
+                    const auto& bd = ch->getBoard();
+                    const auto bc = bd.boardCityWithId(ch->cityId());
+                    const bool atl = ch->atlantean();
+                    if(bc && (atl ? bc->museumBonusActive() : bc->stadiumBonusActive())) a++;
+                    if(a > 0) drawColumn(tp, a, rx + cdx, ry + cdy, builTexs.fColumn1);
                 }
             }
             else if (mViewMode == eViewMode::supplies)

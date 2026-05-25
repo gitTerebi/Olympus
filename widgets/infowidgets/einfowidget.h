@@ -33,6 +33,8 @@ public:
     eMainWidget* mainWidget() const { return mMW; }
 
     int remainingHeight() const;
+
+    eOkButton* okButton() const { return mOk; }
 private:
     eAction mCloseAction;
     const bool mNarrow;
