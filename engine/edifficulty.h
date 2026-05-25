@@ -43,6 +43,15 @@ namespace eDifficultyHelpers {
                       const eWageRate wageRate);
 
     double costMultiplier(const eDifficulty diff);
+
+    struct eHouseLevelReq {
+        int fAppD;
+        int fAppE;
+        int fEnt;
+    };
+    eHouseLevelReq houseLevelReq(const eDifficulty diff,
+                                 const bool elite,
+                                 const int level);
 }
 
 #endif // EDIFFICULTY_H

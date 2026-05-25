@@ -3,6 +3,8 @@
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "engine/eresourcetype.h"
+#include "engine/e-game-board.h"
+#include "engine/eboardcity.h"
 
 #include "widgets/elabel.h"
 
@@ -280,5 +282,45 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         foodLabel->fitContent();
         fw->addWidget(foodLabel);
         foodLabel->setY(satLabel->y() + satLabel->height());
+    }
+
+    {
+        const bool atl = house->atlantean();
+        const int phi = house->philosophersInventors();
+        const int act = house->actorsAstronomers();
+        const int ath = house->athletesScholars();
+        const int cmp = house->competitorsCurators();
+        const int total = house->culturePoints();
+
+        const auto& board = house->getBoard();
+        const auto bc = board.boardCityWithId(house->cityId());
+        const bool bonus = bc && (atl ? bc->museumBonusActive() : bc->stadiumBonusActive());
+
+        const char* phiA = atl ? "INV" : "PHI";
+        const char* actA = atl ? "AST" : "ACT";
+        const char* athA = atl ? "SCH" : "ATH";
+        const char* cmpA = atl ? "CUR" : "CMP";
+        const char* bonA = atl ? "MUS" : "STA";
+
+        auto part = [](const char* nm, int has, int pts) {
+            return std::string(nm) + ":" + (has > 0 ? "+" + std::to_string(pts) : std::string("-"));
+        };
+
+        std::string s = "Culture: " + std::to_string(total) + "  " +
+                        part(phiA, phi, 15) + " " +
+                        part(actA, act, 25) + " " +
+                        part(athA, ath, 20) + " " +
+                        part(cmpA, cmp, 20) + " " +
+                        part(bonA, bonus ? 1 : 0, 10);
+
+        const auto l = new eLabel(window());
+        l->setFontSizeS();
+        l->setPaddingXS();
+        l->setWidth(fw->width());
+        l->setText(s);
+        l->fitContent();
+        fw->addWidget(l);
+        l->setY(fw->height() - l->height() - p);
+        l->align(eAlignment::hcenter);
     }
 }

@@ -4,6 +4,7 @@
 #include "erand.h"
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
+#include "engine/edifficulty.h"
 #include "engine/eplague.h"
 
 #include "characters/esick.h"
@@ -449,41 +450,41 @@ std::string eSmallHouse::sName(const int level)
 
 bool eSmallHouse::hasRequiredForLevel(const int level) const
 {
+    return hasRequiredForLevelImpl(level, true);
+}
+
+bool eSmallHouse::canStayAtLevel(const int level) const
+{
+    return hasRequiredForLevelImpl(level, false);
+}
+
+bool eSmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) const
+{
+    if (level <= 0) return true;
+    if (level > 6) return false;
     const double appeal = eHouseBase::appeal();
-    int nVenues = 0;
-    if (mPhilosophers > 0)
-        nVenues++;
-    if (mActors > 0)
-        nVenues++;
-    if (mAthletes > 0)
-        nVenues++;
-    if (mCompetitors > 0)
-        nVenues++;
+    const int pts = culturePoints();
+    const auto& board = getBoard();
+    const auto pid = board.cityIdToPlayerId(cityId());
+    const auto diff = board.difficulty(pid);
+    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, level);
+    const double appReq = evolve ? req.fAppE : req.fAppD;
+    if (appeal < appReq) return false;
+    if (pts < req.fEnt) return false;
     switch (level)
     {
-    case 0:
-        return true;
     case 1:
         return mFood > 0;
     case 2:
-        return mFood > 0 && mWater > 0 && nVenues > 0;
+        return mFood > 0 && mWater > 0;
     case 3:
-        return mFood > 0 && mWater > 0 && nVenues > 0 &&
-               mFleece > 0 && appeal > 2.0;
     case 4:
-        return mFood > 0 && mWater > 0 && nVenues > 0 &&
-               mFleece > 0 && appeal > 2.0 && nVenues > 1;
+        return mFood > 0 && mWater > 0 && mFleece > 0;
     case 5:
-        return mFood > 0 && mWater > 0 && nVenues > 0 &&
-               mFleece > 0 && appeal > 2.0 && nVenues > 1 &&
-               mOil > 0 && appeal > 5.0;
     case 6:
-        return mFood > 0 && mWater > 0 && nVenues > 0 &&
-               mFleece > 0 && appeal > 2.0 && nVenues > 1 &&
-               mOil > 0 && appeal > 5.0 && nVenues > 2 && appeal > 8.0;
-    default:
-        return false;
+        return mFood > 0 && mWater > 0 && mFleece > 0 && mOil > 0;
     }
+    return false;
 }
 
 void eSmallHouse::updateLevel()
@@ -493,7 +494,7 @@ void eSmallHouse::updateLevel()
         setLevel(mLevel + 1);
         mDevolveDelay = 0;
     }
-    else if (!hasRequiredForLevel(mLevel))
+    else if (!canStayAtLevel(mLevel))
     {
         if (mDevolveDelay < 10)
         {

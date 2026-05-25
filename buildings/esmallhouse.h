@@ -50,6 +50,8 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     bool hasRequiredForLevel(const int level) const;
+    bool canStayAtLevel(const int level) const;
+    bool hasRequiredForLevelImpl(const int level, const bool evolve) const;
     void updateLevel();
     void updateSatisfaction();
 
