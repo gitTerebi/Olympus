@@ -755,8 +755,15 @@ void eGameWidget::tileViewFraction(eTile *const tile,
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    const double tx = tile->dx() * mTileW;
-    const double ty = 0.5 * tile->dy() * mTileH;
+    const auto dir = mBoard->direction();
+    const int bw = mBoard->width();
+    const int bh = mBoard->height();
+    int rdtx;
+    int rdty;
+    eTileHelper::dTileIdToRotatedDTileId(tile->dx(), tile->dy(),
+                                         rdtx, rdty, dir, bw, bh);
+    const double tx = rdtx * mTileW;
+    const double ty = 0.5 * rdty * mTileH;
     xf = tx / mdx;
     yf = ty / mdy;
 }

@@ -172,6 +172,12 @@ enum class eCharacterType {
     orichalcMiner
 };
 
+inline bool eIsWildAnimal(const eCharacterType t) {
+    return t == eCharacterType::boar ||
+           t == eCharacterType::deer ||
+           t == eCharacterType::wolf;
+}
+
 class eCharacterBase {
 public:
     eCharacterBase(const eCharacterType type);
