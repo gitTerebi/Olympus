@@ -9,10 +9,10 @@ std::string eTaxRateHelpers::name(const eTaxRate tr) {
     case eTaxRate::none:
         string = 0;
         break;
-    case eTaxRate::low:
+    case eTaxRate::veryLow:
         string = 1;
         break;
-    case eTaxRate::veryLow:
+    case eTaxRate::low:
         string = 2;
         break;
     case eTaxRate::normal:
@@ -35,9 +35,9 @@ double eTaxRateHelpers::getRate(const eTaxRate tr) {
     switch(tr) {
     case eTaxRate::none:
         return 0.00;
-    case eTaxRate::low:
-        return 0.03;
     case eTaxRate::veryLow:
+        return 0.03;
+    case eTaxRate::low:
         return 0.07;
     case eTaxRate::normal:
         return 0.09;

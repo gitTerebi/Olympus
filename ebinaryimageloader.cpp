@@ -40,6 +40,7 @@ std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
         }
         if(loose) {
             loose.close();
+            printf("[loose] loading '%s'\n", loosePath.c_str());
             const auto tex = std::make_shared<eTexture>();
             const auto loadedSurf = IMG_Load(loosePath.c_str());
             if(!loadedSurf) {
