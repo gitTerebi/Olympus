@@ -2720,6 +2720,11 @@ bool eGameWidget::rightClickRelease(const eMouseEvent &e)
         setPatrolBuilding(nullptr);
         return true;
     }
+    if (mDestinationBuilding)
+    {
+        setDestinationBuilding(nullptr);
+        return true;
+    }
     int tx;
     int ty;
     pixToId(e.x(), e.y(), tx, ty);
