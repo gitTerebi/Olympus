@@ -111,8 +111,13 @@ void eCharacter::killWithCorpse() {
     const stdptr<eCharacter> c(this);
     const auto finish = std::make_shared<eChar_killWithCorpseFinish>(
                             getBoard(), this);
-    // Play die sound regardless of visibility
-    eSounds::playDieSound(this);
+    if(type() == eCharacterType::hunter || eIsWildAnimal(type())) {
+        getBoard().ifVisible(tile(), [this]() {
+            eSounds::playDieSound(this);
+        });
+    } else {
+        eSounds::playDieSound(this);
+    }
     const auto a = e::make_shared<eDieAction>(this);
     a->setFailAction(finish);
     a->setFinishAction(finish);
@@ -224,11 +229,18 @@ void eCharacter::incTime(const int by) {
         const int soundPlayTime = 500;
         if(mSoundPlayTime > soundPlayTime) {
             mSoundPlayTime -= soundPlayTime;
-            // Play hit/attack sounds regardless of visibility
-            if(eRand::rand() % 2) {
-                eSounds::playHitSound(this);
+            const auto playFn = [&]() {
+                if(eRand::rand() % 2) {
+                    eSounds::playHitSound(this);
+                } else {
+                    eSounds::playAttackSound(this);
+                }
+            };
+            if(type() == eCharacterType::hunter ||
+               eIsWildAnimal(type())) {
+                getBoard().ifVisible(tile(), playFn);
             } else {
-                eSounds::playAttackSound(this);
+                playFn();
             }
         }
     }

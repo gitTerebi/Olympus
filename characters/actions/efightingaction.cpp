@@ -225,8 +225,14 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         mSavedAction = c->actionType();
         c->setActionType(range ? eCharacterActionType::fight2 :
                               eCharacterActionType::fight);
-        // Remove visibility check for attack sounds - players should hear combat
-        eSounds::playAttackSound(c);
+        if(c->type() == eCharacterType::hunter ||
+           eIsWildAnimal(c->type())) {
+            c->getBoard().ifVisible(c->tile(), [&]() {
+                eSounds::playAttackSound(c);
+            });
+        } else {
+            eSounds::playAttackSound(c);
+        }
         mAngle = posdif.angle();
         const auto o = sAngleOrientation(mAngle);
         c->setOrientation(o);
