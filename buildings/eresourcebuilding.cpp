@@ -39,6 +39,18 @@ static bool isOliveHarvestMonth(const eMonth m) {
            m == eMonth::march;
 }
 
+static bool isGrapeHarvestMonth(const eMonth m) {
+    return m == eMonth::october ||
+           m == eMonth::november ||
+           m == eMonth::december;
+}
+
+static bool isOrangeHarvestMonth(const eMonth m) {
+    return m == eMonth::january ||
+           m == eMonth::february ||
+           m == eMonth::march;
+}
+
 eResourceBuilding::eResourceBuilding(
         eGameBoard& board, const eResourceBuildingType type,
         const eCityId cid) :
@@ -88,21 +100,28 @@ bool eResourceBuilding::sIsResourceBuilding(const eBuildingType type) {
 }
 
 int eResourceBuilding::takeResource(const int by) {
-    if(mResource == 0) return 0;
+    if(mRipe < 3) return 0;
+    const auto m = getBoard().date().month();
     if(mType == eResourceBuildingType::oliveTree &&
-       !isOliveHarvestMonth(getBoard().date().month())) {
+       !isOliveHarvestMonth(m)) {
         return 0;
     }
-    const int take = std::clamp(by, 0, mResource);
-    mResource -= take;
-    if(mResource == 0) {
-        mRipe = 0;
-        mNextRipe = 0;
-        mWorkedOn = false;
-        const auto tile = centerTile();
-        tile->scheduleTerrainUpdate();
+    if(mType == eResourceBuildingType::vine &&
+       !isGrapeHarvestMonth(m)) {
+        return 0;
     }
-    return take;
+    if(mType == eResourceBuildingType::orangeTree &&
+       !isOrangeHarvestMonth(m)) {
+        return 0;
+    }
+    (void)by;
+    mResource = 0;
+    mRipe = 0;
+    mNextRipe = 0;
+    mWorkedOn = false;
+    const auto tile = centerTile();
+    tile->scheduleTerrainUpdate();
+    return 1;
 }
 
 void eResourceBuilding::workOn() {
@@ -116,17 +135,6 @@ void eResourceBuilding::setSanctuary(const bool s) {
 
 void eResourceBuilding::timeChanged(const int by) {
     mNextRipe += by;
-    if(mType == eResourceBuildingType::oliveTree &&
-       getBoard().date().month() == eMonth::april &&
-       mRipe >= 3) {
-        mNextRipe = 0;
-        mRipe = 0;
-        mResource = 0;
-        mWorkedOn = false;
-        const auto tile = centerTile();
-        tile->scheduleTerrainUpdate();
-        return;
-    }
     if(mType == eResourceBuildingType::oliveTree && mRipe >= 5) {
         return;
     }
@@ -157,19 +165,27 @@ void eResourceBuilding::timeChanged(const int by) {
             return;
         }
         ++mRipe;
-        if(mType == eResourceBuildingType::oliveTree &&
-           getBoard().date().month() == eMonth::april &&
-           mRipe >= 3) {
-            mRipe = 0;
-            mResource = 0;
-            mWorkedOn = false;
-            const auto tile = centerTile();
-            tile->scheduleTerrainUpdate();
-            return;
-        }
-        if(mRipe == 5) {
+        if(mRipe >= 3) {
             mResource = 1;
         }
+        const auto tile = centerTile();
+        tile->scheduleTerrainUpdate();
+    }
+}
+
+void eResourceBuilding::nextMonth() {
+    const auto m = getBoard().date().month();
+    const bool oliveEnd = mType == eResourceBuildingType::oliveTree &&
+                          m == eMonth::april;
+    const bool orangeEnd = mType == eResourceBuildingType::orangeTree &&
+                           m == eMonth::april;
+    const bool grapeEnd = mType == eResourceBuildingType::vine &&
+                          m == eMonth::january;
+    if((oliveEnd || orangeEnd || grapeEnd) && mRipe >= 3) {
+        mNextRipe = 0;
+        mRipe = 0;
+        mResource = 0;
+        mWorkedOn = false;
         const auto tile = centerTile();
         tile->scheduleTerrainUpdate();
     }

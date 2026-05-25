@@ -24,10 +24,24 @@ static bool isOliveHarvestMonth(const eMonth m) {
            m == eMonth::march;
 }
 
+static bool isGrapeHarvestMonth(const eMonth m) {
+    return m == eMonth::october ||
+           m == eMonth::november ||
+           m == eMonth::december;
+}
+
+static bool isOrangeHarvestMonth(const eMonth m) {
+    return m == eMonth::january ||
+           m == eMonth::february ||
+           m == eMonth::march;
+}
+
 bool hasResource(eThreadTile* const tile, const eGrowerType gt,
                  const bool grapesDisabled, const bool olivesDisabled,
                  const eGrowerActionMode mode,
-                 const bool canHarvestOlives) {
+                 const bool canHarvestOlives,
+                 const bool canHarvestGrapes,
+                 const bool canHarvestOranges) {
     if(mode != eGrowerActionMode::oliveGroomer && eRand::rand() % 2) return false;
     const auto ub = tile->underBuildingType();
     bool r;
@@ -49,9 +63,16 @@ bool hasResource(eThreadTile* const tile, const eGrowerType gt,
         return ub == eBuildingType::oliveTree && hasRes && canHarvestOlives;
     }
     if(mode == eGrowerActionMode::oliveGroomer) {
-        return ub == eBuildingType::oliveTree && !hasRes && !b.workedOn();
+        const bool plant = ub == eBuildingType::oliveTree ||
+                           ub == eBuildingType::vine;
+        return plant && !hasRes && !b.workedOn();
     }
     if(b.workedOn()) return false;
+    if(hasRes) {
+        if(ub == eBuildingType::vine && !canHarvestGrapes) return false;
+        if(ub == eBuildingType::oliveTree && !canHarvestOlives) return false;
+        if(ub == eBuildingType::orangeTree && !canHarvestOranges) return false;
+    }
     return true;
 }
 
@@ -64,6 +85,8 @@ eResourceBuilding* tryToCollect(eTile* const tile,
                                 const eGrowerType type,
                                 const eGrowerActionMode mode,
                                 const bool canHarvestOlives,
+                                const bool canHarvestGrapes,
+                                const bool canHarvestOranges,
                                 eCollectType& collType) {
     if(tile->busy()) return nullptr;
     const auto b = tile->underBuilding();
@@ -90,11 +113,19 @@ eResourceBuilding* tryToCollect(eTile* const tile,
                !hasRes ||
                !canHarvestOlives) return nullptr;
         } else if(mode == eGrowerActionMode::oliveGroomer) {
-            if(t != eBuildingType::oliveTree || hasRes || s->workedOn()) {
+            const bool plant = t == eBuildingType::oliveTree ||
+                               t == eBuildingType::vine;
+            if(!plant || hasRes || s->workedOn()) {
                 return nullptr;
             }
         } else if(s->workedOn()) {
             return nullptr;
+        }
+
+        if(hasRes && mode == eGrowerActionMode::normal) {
+            if(t == eBuildingType::vine && !canHarvestGrapes) return nullptr;
+            if(t == eBuildingType::oliveTree && !canHarvestOlives) return nullptr;
+            if(t == eBuildingType::orangeTree && !canHarvestOranges) return nullptr;
         }
 
         if(hasRes) {
@@ -118,7 +149,10 @@ bool eGrowerAction::decide() {
     const int oranges = mGrower->oranges();
 
     const bool inLodge = eWalkableHelpers::sTileUnderBuilding(t, mLodge);
-    const bool canHarvestOlives = isOliveHarvestMonth(board().date().month());
+    const auto curMonth = board().date().month();
+    const bool canHarvestOlives = isOliveHarvestMonth(curMonth);
+    const bool canHarvestGrapes = isGrapeHarvestMonth(curMonth);
+    const bool canHarvestOranges = isOrangeHarvestMonth(curMonth);
 
     if(grapes > 0 || olives > 0 || oranges > 0) {
         if(inLodge) {
@@ -142,7 +176,9 @@ bool eGrowerAction::decide() {
     } else {
         eCollectType collType;
         if(const auto a = tryToCollect(t, mType, mMode,
-                                       canHarvestOlives, collType)) {
+                                       canHarvestOlives,
+                                       canHarvestGrapes,
+                                       canHarvestOranges, collType)) {
             workOnDecision(t);
         } else if(inLodge) {
             int space = 0;
@@ -271,10 +307,14 @@ bool eGrowerAction::findResourceDecision() {
     const bool gd = board.isShutDown(cid, eResourceType::grapes);
     const bool od = board.isShutDown(cid, eResourceType::olives);
     const auto mode = mMode;
-    const bool canHarvestOlives =
-        isOliveHarvestMonth(board.date().month());
-    const auto hha = [gt, gd, od, mode, canHarvestOlives](eThreadTile* const tile) {
-        return hasResource(tile, gt, gd, od, mode, canHarvestOlives);
+    const auto curMonth = board.date().month();
+    const bool canHarvestOlives = isOliveHarvestMonth(curMonth);
+    const bool canHarvestGrapes = isGrapeHarvestMonth(curMonth);
+    const bool canHarvestOranges = isOrangeHarvestMonth(curMonth);
+    const auto hha = [gt, gd, od, mode, canHarvestOlives,
+                      canHarvestGrapes, canHarvestOranges](eThreadTile* const tile) {
+        return hasResource(tile, gt, gd, od, mode, canHarvestOlives,
+                           canHarvestGrapes, canHarvestOranges);
     };
 
     const auto a = e::make_shared<eMoveToAction>(mGrower);
@@ -362,18 +402,21 @@ void eGrowerAction::finishWorkOn(eTile* const tile, const eBuildingType type) {
             if(!collecting) {
                 bb->workOn();
             }
+            const int ripeStage = bb->ripe();
+            const int units = ripeStage * 20;
             const int took = bb->takeResource(1);
             if(took > 0) {
                 if(type == eBuildingType::vine) {
-                    mGrower->incGrapes();
+                    mGrower->incGrapes(units);
                 } else if(type == eBuildingType::oliveTree) {
-                    mGrower->incOlives();
+                    mGrower->incOlives(units);
                 } else if(type == eBuildingType::orangeTree) {
-                    mGrower->incOranges();
+                    mGrower->incOranges(units);
                 }
                 mGroomed += 5;
             } else if(mMode == eGrowerActionMode::oliveGroomer &&
-                      type == eBuildingType::oliveTree) {
+                      (type == eBuildingType::oliveTree ||
+                       type == eBuildingType::vine)) {
                 mOliveGroomsThisMonth++;
             }
         }

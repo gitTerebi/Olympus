@@ -94,31 +94,34 @@ std::vector<eOverlay> eGrowersLodge::
     } break;
     }
 
-    if(mGrapes > 0) {
+    const int grapeLoads = mGrapes / sUnitsPerLoad;
+    const int oliveLoads = mOlives / sUnitsPerLoad;
+    const int orangeLoads = mOranges / sUnitsPerLoad;
+    if(grapeLoads > 0) {
         eOverlay grapes;
         const auto& coll = texs.fWaitingGrapes;
         const int resMax = coll.size() - 1;
-        const int res = std::clamp(mGrapes - 1, 0, resMax);
+        const int res = std::clamp(grapeLoads - 1, 0, resMax);
         grapes.fTex = coll.getTexture(res);
         grapes.fX = -0.2;
         grapes.fY = -1.7;
         os.push_back(grapes);
     }
-    if(mOlives > 0) {
+    if(oliveLoads > 0) {
         eOverlay olives;
         const auto& coll = texs.fWaitingOlives;
         const int resMax = coll.size() - 1;
-        const int res = std::clamp(mOlives - 1, 0, resMax);
+        const int res = std::clamp(oliveLoads - 1, 0, resMax);
         olives.fTex = coll.getTexture(res);
         olives.fX = -0.5;
         olives.fY = -1.85;
         os.push_back(olives);
     }
-    if(mOranges > 0) {
+    if(orangeLoads > 0) {
         eOverlay oranges;
         const auto& coll = texs.fWaitingOranges;
         const int resMax = coll.size() - 1;
-        const int res = std::clamp(mOranges - 1, 0, resMax);
+        const int res = std::clamp(orangeLoads - 1, 0, resMax);
         oranges.fTex = coll.getTexture(res);
         oranges.fX = 0.00;
         oranges.fY = -1.80;
@@ -137,25 +140,41 @@ void eGrowersLodge::timeChanged(const int by) {
         }
         if(mSpawnEnabled) {
             const int readyOlives = readyOliveCount();
+            const int readyGrapes = readyGrapeCount();
+            const int readyOranges = readyOrangeCount();
             const int oliveSpace = spaceLeft(eResourceType::olives);
+            const int grapeSpace = spaceLeft(eResourceType::grapes);
+            const int orangeSpace = spaceLeft(eResourceType::oranges);
             const bool canOliveHarvest =
                 mType == eGrowerType::grapesAndOlives &&
                 oliveSpace > 0 &&
                 readyOlives > 0;
+            const bool canGrapeHarvest =
+                mType == eGrowerType::grapesAndOlives &&
+                grapeSpace > 0 &&
+                readyGrapes > 0 &&
+                isGrapeHarvestMonth();
+            const bool canOrangeHarvest =
+                mType == eGrowerType::oranges &&
+                orangeSpace > 0 &&
+                readyOranges > 0 &&
+                isOrangeHarvestMonth();
+            const bool canHarvest =
+                canOliveHarvest || canGrapeHarvest || canOrangeHarvest;
             const bool needGrower = !mGrower;
-            int oliveHarvesters = 0;
+            int harvesters = 0;
             for(const auto& h : mOliveHarvesters) {
-                if(h) oliveHarvesters++;
+                if(h) harvesters++;
             }
             const int fieldCap = 4;
             auto aliveCount = [&]() {
-                return (mGrower ? 1 : 0) + oliveHarvesters;
+                return (mGrower ? 1 : 0) + harvesters;
             };
             const double eff = effectiveness();
             const double waitMax = eNumbers::sGrowerSpawnWaitTime;
-            const bool needOliveHarvester =
-                canOliveHarvest && oliveHarvesters < fieldCap;
-            if(needOliveHarvester) {
+            const bool needHarvester =
+                canHarvest && harvesters < fieldCap;
+            if(needHarvester) {
                 for(int i = 0; i < static_cast<int>(mOliveHarvesters.size()); i++) {
                     auto& h = mOliveHarvesters[i];
                     auto& spawnTime = mOliveHarvesterSpawnTimes[i];
@@ -166,20 +185,21 @@ void eGrowersLodge::timeChanged(const int by) {
                         spawnTime = waitMax;
                         continue;
                     }
-                    if(spawnGrower(h, true)) {
+                    const bool ok = canOliveHarvest ?
+                        spawnGrower(h, true) :
+                        spawnGrower(h, false, true);
+                    if(ok) {
                         spawnTime = 0;
-                        oliveHarvesters++;
+                        harvesters++;
                     }
                 }
             }
-            const bool olivesRipe =
-                mType == eGrowerType::grapesAndOlives &&
-                readyOliveCount() > 0;
+            const bool fruitRipe = canHarvest;
             if(needGrower) {
                 mGrowerSpawnTime += by*eff;
                 if(mGrowerSpawnTime > waitMax) {
                     const bool blocked = aliveCount() >= fieldCap ||
-                                         olivesRipe;
+                                         fruitRipe;
                     if(!blocked && spawnGrower(mGrower)) {
                         mGrowerSpawnTime = 0;
                     } else {
@@ -193,59 +213,50 @@ void eGrowersLodge::timeChanged(const int by) {
 }
 
 int eGrowersLodge::add(const eResourceType type, const int count) {
-    const int sl = mMaxResource - mGrapes - mOlives - mOranges;
-    const int r = std::clamp(count, 0, sl);
-    if(type == eResourceType::olives) {
-        mOlives += r;
-    } else if(type == eResourceType::grapes) {
-        mGrapes += r;
-    } else if(type == eResourceType::oranges) {
-        mOranges += r;
-    } else {
-        return 0;
-    }
+    int* bucket = nullptr;
+    if(type == eResourceType::olives) bucket = &mOlives;
+    else if(type == eResourceType::grapes) bucket = &mGrapes;
+    else if(type == eResourceType::oranges) bucket = &mOranges;
+    else return 0;
+    const int unitSpace = sMaxUnits - *bucket;
+    const int loadSpace = unitSpace / sUnitsPerLoad;
+    const int r = std::clamp(count, 0, loadSpace);
+    *bucket += r * sUnitsPerLoad;
     return r;
 }
 
 int eGrowersLodge::take(const eResourceType type, const int count) {
-    if(type == eResourceType::olives) {
-        const int result = std::clamp(count, 0, mOlives);
-        mOlives -= result;
-        return result;
-    } else if(type == eResourceType::grapes) {
-        const int result = std::clamp(count, 0, mGrapes);
-        mGrapes -= result;
-        return result;
-    } else if(type == eResourceType::oranges) {
-        const int result = std::clamp(count, 0, mOranges);
-        mOranges -= result;
-        return result;
-    }
-    return 0;
+    int* bucket = nullptr;
+    if(type == eResourceType::olives) bucket = &mOlives;
+    else if(type == eResourceType::grapes) bucket = &mGrapes;
+    else if(type == eResourceType::oranges) bucket = &mOranges;
+    else return 0;
+    const int loads = *bucket / sUnitsPerLoad;
+    const int result = std::clamp(count, 0, loads);
+    *bucket -= result * sUnitsPerLoad;
+    return result;
 }
 
 int eGrowersLodge::count(const eResourceType type) const {
-    if(type == eResourceType::olives) {
-        return mOlives;
-    } else if(type == eResourceType::grapes) {
-        return mGrapes;
-    } else if(type == eResourceType::oranges) {
-        return mOranges;
-    }
+    if(type == eResourceType::olives) return mOlives / sUnitsPerLoad;
+    if(type == eResourceType::grapes) return mGrapes / sUnitsPerLoad;
+    if(type == eResourceType::oranges) return mOranges / sUnitsPerLoad;
     return 0;
 }
 
 int eGrowersLodge::spaceLeft(const eResourceType type) const {
     switch(mType) {
     case eGrowerType::grapesAndOlives:
-        if(type == eResourceType::olives ||
-           type == eResourceType::grapes) {
-            return mMaxResource - mOlives - mGrapes;
+        if(type == eResourceType::olives) {
+            return (sMaxUnits - mOlives) / sUnitsPerLoad;
+        }
+        if(type == eResourceType::grapes) {
+            return (sMaxUnits - mGrapes) / sUnitsPerLoad;
         }
         break;
     case eGrowerType::oranges:
         if(type == eResourceType::oranges) {
-            return mMaxResource - mOranges;
+            return (sMaxUnits - mOranges) / sUnitsPerLoad;
         }
         break;
     }
@@ -255,27 +266,31 @@ int eGrowersLodge::spaceLeft(const eResourceType type) const {
 std::vector<eCartTask> eGrowersLodge::cartTasks() const {
     std::vector<eCartTask> tasks;
 
-    if(mGrapes > 0) {
+    const int grapeLoads = mGrapes / sUnitsPerLoad;
+    const int oliveLoads = mOlives / sUnitsPerLoad;
+    const int orangeLoads = mOranges / sUnitsPerLoad;
+
+    if(grapeLoads > 0) {
         eCartTask task;
         task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::grapes;
-        task.fMaxCount = mGrapes;
+        task.fMaxCount = grapeLoads;
         tasks.push_back(task);
     }
 
-    if(mOlives > 0) {
+    if(oliveLoads > 0) {
         eCartTask task;
         task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::olives;
-        task.fMaxCount = mOlives;
+        task.fMaxCount = oliveLoads;
         tasks.push_back(task);
     }
 
-    if(mOranges > 0) {
+    if(orangeLoads > 0) {
         eCartTask task;
         task.fType = eCartActionType::deliver;
         task.fResource = eResourceType::oranges;
-        task.fMaxCount = mOranges;
+        task.fMaxCount = orangeLoads;
         tasks.push_back(task);
     }
 
@@ -287,8 +302,14 @@ void eGrowersLodge::nextMonth() {
     mProducedThisYear -= mMonthlyProduced[mRingIdx];
     mMonthlyProduced[mRingIdx] = 0;
     if(mProducedThisYear < 0) mProducedThisYear = 0;
-    if(mType == eGrowerType::grapesAndOlives &&
-       getBoard().date().month() == eMonth::january) {
+    const auto curMonth = getBoard().date().month();
+    const bool startGrape = mType == eGrowerType::grapesAndOlives &&
+                            curMonth == eMonth::october;
+    const bool startOlive = mType == eGrowerType::grapesAndOlives &&
+                            curMonth == eMonth::january;
+    const bool startOrange = mType == eGrowerType::oranges &&
+                             curMonth == eMonth::january;
+    if(startGrape || startOlive || startOrange) {
         for(auto& t : mOliveHarvesterSpawnTimes) {
             t = eNumbers::sGrowerSpawnWaitTime;
         }
@@ -296,9 +317,17 @@ void eGrowersLodge::nextMonth() {
 }
 
 void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
-    const int c = addProduced(type, count);
-    mProducedThisYear += c;
-    mMonthlyProduced[mRingIdx] += c;
+    if(count <= 0) return;
+    int* bucket = nullptr;
+    if(type == eResourceType::olives) bucket = &mOlives;
+    else if(type == eResourceType::grapes) bucket = &mGrapes;
+    else if(type == eResourceType::oranges) bucket = &mOranges;
+    else return;
+    const int unitSpace = sMaxUnits - *bucket;
+    const int added = std::clamp(count, 0, unitSpace);
+    *bucket += added;
+    mProducedThisYear += added;
+    mMonthlyProduced[mRingIdx] += added;
 }
 
 void eGrowersLodge::serializeFields(eSaveArchive& ar) {
@@ -357,17 +386,57 @@ int eGrowersLodge::readyOliveCount() const {
     return result;
 }
 
+int eGrowersLodge::readyGrapeCount() const {
+    if(!isGrapeHarvestMonth()) return 0;
+    int result = 0;
+    for(const auto b : getBoard().buildings()) {
+        if(!b || b->cityId() != cityId()) continue;
+        if(b->type() != eBuildingType::vine) continue;
+        const auto rb = static_cast<eResourceBuilding*>(b);
+        if(rb->resource() > 0) result++;
+    }
+    return result;
+}
+
+int eGrowersLodge::readyOrangeCount() const {
+    if(!isOrangeHarvestMonth()) return 0;
+    int result = 0;
+    for(const auto b : getBoard().buildings()) {
+        if(!b || b->cityId() != cityId()) continue;
+        if(b->type() != eBuildingType::orangeTree) continue;
+        const auto rb = static_cast<eResourceBuilding*>(b);
+        if(rb->resource() > 0) result++;
+    }
+    return result;
+}
+
+bool eGrowersLodge::isGrapeHarvestMonth() const {
+    const auto m = getBoard().date().month();
+    return m == eMonth::october ||
+           m == eMonth::november ||
+           m == eMonth::december;
+}
+
+bool eGrowersLodge::isOrangeHarvestMonth() const {
+    const auto m = getBoard().date().month();
+    return m == eMonth::january ||
+           m == eMonth::february ||
+           m == eMonth::march;
+}
+
 bool eGrowersLodge::spawnGrower(stdptr<eGrower>& grower,
-                                const bool oliveHarvester) {
+                                const bool oliveHarvester,
+                                const bool genericHarvester) {
     const auto t = centerTile();
     const auto g = e::make_shared<eGrower>(getBoard());
     g->setGrowerType(mType);
     g->setBothCityIds(cityId());
     g->changeTile(t);
     const auto mode = oliveHarvester ? eGrowerActionMode::oliveHarvester :
+        (genericHarvester ? eGrowerActionMode::normal :
         (mType == eGrowerType::grapesAndOlives ?
              eGrowerActionMode::oliveGroomer :
-             eGrowerActionMode::normal);
+             eGrowerActionMode::normal));
     const auto a = e::make_shared<eGrowerAction>(
                        mType, this, g.get(), mode);
     g->setAction(a);

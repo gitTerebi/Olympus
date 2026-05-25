@@ -35,6 +35,7 @@ public:
     bool sanctuary() const { return mSanctuary; }
     void setSanctuary(const bool s);
     void timeChanged(const int by) override;
+    void nextMonth() override;
 
 protected:
     void serializeFields(eSaveArchive& ar) override;
