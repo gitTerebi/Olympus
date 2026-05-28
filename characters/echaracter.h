@@ -91,6 +91,7 @@ public:
 
     void pauseAction();
     void resumeAction();
+    void clearPausedActions();
 
     ePlayerId playerId() const;
     eTeamId teamId() const;
@@ -103,6 +104,8 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
     eGameBoard& ownerBoard() const;
 private:
+    void restorePausedAction(const ePausedAction& p);
+
     std::vector<ePausedAction> mPausedActions;
 
     int mIOID = -1;
