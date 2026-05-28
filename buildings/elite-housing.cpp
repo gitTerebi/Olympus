@@ -1,8 +1,9 @@
-#include "eelitehousing.h"
+#include "elite-housing.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
+#include "engine/model-data.h"
 #include "erand.h"
 
 #include "textures/egametextures.h"
@@ -13,12 +14,25 @@
 #include "characters/ehomeless.h"
 #include "characters/actions/esettleraction.h"
 
-eEliteHousing::eEliteHousing(GameBoard& board,
+static std::vector<int> sEliteCapacity(GameBoard& board, const eCityId cid) {
+    const auto pid = board.cityIdToPlayerId(cid);
+    const auto diff = board.difficulty(pid);
+    std::vector<int> v(5, 0);
+    for(int i = 0; i < 4; i++) {
+        if(const auto r = ModelData::instance().houseReq(diff, i, true)) {
+            v[i + 1] = r->capacity;
+        }
+    }
+    v[0] = v[1];
+    return v;
+}
+
+EliteHousing::EliteHousing(GameBoard& board,
                              const eCityId cid) :
     eHouseBase(board, eBuildingType::eliteHousing,
-               4, 4, {6, 6, 10, 16, 20}, cid) {}
+               4, 4, sEliteCapacity(board, cid), cid) {}
 
-eTextureSpace eEliteHousing::getTextureSpace(
+eTextureSpace EliteHousing::getTextureSpace(
         const int tx, const int ty,
         const eTileSize size) const {
     const SDL_Point p{tx, ty};
@@ -95,7 +109,7 @@ eTextureSpace eEliteHousing::getTextureSpace(
     return {};
 }
 
-std::vector<eOverlay> eEliteHousing::getOverlays(const eTileSize size) const {
+std::vector<eOverlay> EliteHousing::getOverlays(const eTileSize size) const {
 //    auto& board = getBoard();
 //    if(board.atlantean()) return {};
 //    return getHorseOverlays(size);
@@ -104,32 +118,32 @@ std::vector<eOverlay> eEliteHousing::getOverlays(const eTileSize size) const {
 }
 
 std::shared_ptr<eTexture>
-eEliteHousing::getLeftTexture(const eTileSize size) const {
+EliteHousing::getLeftTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     const int id = seed() % 2;
     return coll.getTexture(id);
 }
 
 std::shared_ptr<eTexture>
-eEliteHousing::getBottomTexture(const eTileSize size) const {
+EliteHousing::getBottomTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(2);
 }
 
 std::shared_ptr<eTexture>
-eEliteHousing::getTopTexture(const eTileSize size) const {
+EliteHousing::getTopTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(3);
 }
 
 std::shared_ptr<eTexture>
-eEliteHousing::getRightTexture(const eTileSize size) const {
+EliteHousing::getRightTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(4);
 }
 
 std::vector<eOverlay>
-eEliteHousing::getHorseOverlays(const eTileSize size) const {
+EliteHousing::getHorseOverlays(const eTileSize size) const {
     if(mLevel < 3 || mHorses < 1 || mPeople <= 0) {
         return {};
     }
@@ -145,7 +159,7 @@ eEliteHousing::getHorseOverlays(const eTileSize size) const {
     return {h};
 }
 
-int eEliteHousing::provide(const eProvide p, const int n) {
+int EliteHousing::provide(const eProvide p, const int n) {
     if(mPeople <= 0) return 0;
     int max = 8;
     int* value = nullptr;
@@ -217,7 +231,7 @@ int eEliteHousing::provide(const eProvide p, const int n) {
     return add;
 }
 
-void eEliteHousing::timeChanged(const int by) {
+void EliteHousing::timeChanged(const int by) {
     const int lupdate = 1000;
     if(mUpdateLevel > lupdate) {
         mUpdateLevel -= lupdate;
@@ -226,7 +240,7 @@ void eEliteHousing::timeChanged(const int by) {
     eHouseBase::timeChanged(by);
 }
 
-void eEliteHousing::nextMonth() {
+void EliteHousing::nextMonth() {
     mPaidTaxesLastMonth = mPaidTaxes;
     mPaidTaxes = 0;
     const int cfood = round((mPeople + mHorses)*0.25);
@@ -239,23 +253,23 @@ void eEliteHousing::nextMonth() {
     if(mLevel > 2) mWine = std::max(0, mWine - cwine);
 }
 
-bool eEliteHousing::lowFood() const {
+bool EliteHousing::lowFood() const {
     if(!mFood) return true;
     const int cfood = round((mPeople + mHorses)*0.25);
     return mFood < cfood;
 }
 
-void eEliteHousing::removeArmor() {
+void EliteHousing::removeArmor() {
     mArms = std::max(0, mArms - 1);
     updateLevel();
 }
 
-void eEliteHousing::removeHorse() {
+void EliteHousing::removeHorse() {
     mHorses = std::max(0, mHorses - 1);
     updateLevel();
 }
 
-eHouseMissing eEliteHousing::missing() const {
+eHouseMissing EliteHousing::missing() const {
     const double appeal = eHouseBase::appeal();
     int nVenues = 0;
     if(mPhilosophers > 0) nVenues++;
@@ -301,7 +315,7 @@ eHouseMissing eEliteHousing::missing() const {
     return eHouseMissing::food;
 }
 
-void eEliteHousing::serializeFields(eSaveArchive& ar) {
+void EliteHousing::serializeFields(eSaveArchive& ar) {
     eHouseBase::serializeFields(ar);
     ar.field("updateLevel", mUpdateLevel);
     ar.field("wine", mWine);
@@ -309,11 +323,11 @@ void eEliteHousing::serializeFields(eSaveArchive& ar) {
     ar.field("horses", mHorses);
 }
 
-std::string eEliteHousing::sName(const int level) {
+std::string EliteHousing::sName(const int level) {
     return eLanguage::zeusText(28, 10 + level);
 }
 
-const eTextureCollection& eEliteHousing::getTextureCollection(
+const eTextureCollection& EliteHousing::getTextureCollection(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
@@ -328,7 +342,7 @@ const eTextureCollection& eEliteHousing::getTextureCollection(
     }
 }
 
-void eEliteHousing::updateLevel() {
+void EliteHousing::updateLevel() {
     const double appeal = eHouseBase::appeal();
     const int pts = culturePoints();
     const auto& board = getBoard();
@@ -337,14 +351,24 @@ void eEliteHousing::updateLevel() {
     auto canEvolveTo = [&](const int lvl) {
         // lvl 0=residence, 1=mansion, 2=manor, 3=estate
         if(lvl < 0 || lvl > 3) return false;
-        const auto req = eDifficultyHelpers::houseLevelReq(diff, true, lvl);
+        // Threshold lives on SOURCE row: prior elite row's b, or Townhouse.b for lvl 0.
+        eDifficultyHelpers::eHouseLevelReq req;
+        if(lvl == 0) {
+            req = eDifficultyHelpers::houseLevelReq(diff, false, 6); // Townhouse
+        } else {
+            req = eDifficultyHelpers::houseLevelReq(diff, true, lvl - 1);
+        }
         if(appeal < req.fAppE) return false;
-        if(pts < req.fEnt) return false;
-        // baseline resources for residence (lvl 0)
+        // Culture / arms / etc gates use target row.
+        const auto tgt = eDifficultyHelpers::houseLevelReq(diff, true, lvl);
+        if(pts < tgt.fEnt) return false;
         if(mFood <= 0 || mFleece <= 0 || mOil <= 0) return false;
-        if(lvl >= 1) { if(mArms <= 0) return false; }
-        if(lvl >= 2) { if(mWine <= 0) return false; }
-        if(lvl >= 3) { if(mHorses <= 0) return false; }
+        const auto mr = ModelData::instance().houseReq(diff, lvl, true);
+        if(mr) {
+            if(mr->armor  > 0 && mArms   < mr->armor)  return false;
+            if(mr->wine   > 0 && mWine   < mr->wine)   return false;
+            if(mr->horses > 0 && mHorses < mr->horses) return false;
+        }
         return true;
     };
     int newLevel = -1;

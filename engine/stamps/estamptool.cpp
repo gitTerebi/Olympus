@@ -3,7 +3,7 @@
 #include "estampblueprint.h"
 
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "buildings/ebuilding.h"
 #include "buildings/eagorabase.h"
 
@@ -432,7 +432,7 @@ std::vector<eStampBuildCommand> eStampTool::buildCommands() const {
     return result;
 }
 
-int eStampTool::estimatedCost(const eDifficulty diff) const {
+int eStampTool::estimatedCost(const Difficulty diff) const {
     int cost = 0;
     bool implicitAgoraCounted = false;
     for(const auto& cmd : buildCommands()) {

@@ -82,7 +82,7 @@ void eBoardPlayer::incDrachmas(const int by, const eFinanceTarget t) {
     }
 }
 
-void eBoardPlayer::setDifficulty(const eDifficulty d) {
+void eBoardPlayer::setDifficulty(const Difficulty d) {
     mDifficulty = d;
 }
 

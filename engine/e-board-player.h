@@ -4,7 +4,7 @@
 #include "ecityid.h"
 
 #include "edate.h"
-#include "edifficulty.h"
+#include "difficulty.h"
 #include "engine/egodquest.h"
 #include "engine/boardData/ecityfinances.h"
 
@@ -38,8 +38,8 @@ public:
 
     const eCityFinances& finances() const { return mFinances; }
 
-    eDifficulty difficulty() const { return mDifficulty; }
-    void setDifficulty(const eDifficulty d);
+    Difficulty difficulty() const { return mDifficulty; }
+    void setDifficulty(const Difficulty d);
 
     const eDate& inDebtSince() const { return mInDebtSince; }
 
@@ -89,7 +89,7 @@ private:
 
     ePlayerId mId;
 
-    eDifficulty mDifficulty{eDifficulty::beginner};
+    Difficulty mDifficulty{Difficulty::beginner};
 
     std::vector<eGodQuest> mFulfilledQuests;
     std::vector<eMonsterType> mSlayedMonsters;

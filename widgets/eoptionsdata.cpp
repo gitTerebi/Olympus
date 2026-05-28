@@ -361,7 +361,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             page.fDifficulties.push_back({
                 eLanguage::zeusText(44, 219),
                 [board, pid]() { return board->difficulty(pid); },
-                [board, gw](const eDifficulty d) {
+                [board, gw](const Difficulty d) {
                     board->setDifficulty(d);
                     if(gw) gw->rebuildGameMenu();
                 }

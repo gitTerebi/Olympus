@@ -3,7 +3,7 @@
 
 #include "etilehelper.h"
 #include "engine/eplague.h"
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 #include "eiteratesquare.h"
 
 eApolloHelpAction::eApolloHelpAction(eCharacter* const c) :
@@ -119,19 +119,19 @@ void eApolloHelpAction::goToTarget() {
     }
 }
 
-eSmallHouse* sClosestPlagueHouseTile(
+SmallHouse* sClosestPlagueHouseTile(
         eTile* const to, GameBoard& board) {
     if(!to) return nullptr;
     const int rdx = to->x();
     const int rdy = to->y();
-    eSmallHouse* result = nullptr;
+    SmallHouse* result = nullptr;
     const auto prcsTile = [&](const int i, const int j) {
         const int tx = rdx + i;
         const int ty = rdy + j;
         const auto tt = board.tile(tx, ty);
         if(!tt) return false;
         const auto ub = tt->underBuilding();
-        if(const auto ch = dynamic_cast<eSmallHouse*>(ub)) {
+        if(const auto ch = dynamic_cast<SmallHouse*>(ub)) {
             if(ch->plague()) {
                 result = ch;
                 return true;
@@ -158,7 +158,7 @@ void eApolloHelpAction::heal() {
     spawnHealMissile(house);
 }
 
-void eApolloHelpAction::spawnHealMissile(eSmallHouse* const target) {
+void eApolloHelpAction::spawnHealMissile(SmallHouse* const target) {
     const auto c = character();
     const auto targetTile = target->centerTile();
     const auto finishCb = std::make_shared<eApHA_healFinish>(board(), this);

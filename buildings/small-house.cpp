@@ -1,10 +1,11 @@
-#include "esmallhouse.h"
+#include "small-house.h"
 
 #include <algorithm>
 #include "erand.h"
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
+#include "engine/model-data.h"
 #include "engine/eplague.h"
 
 #include "characters/esick.h"
@@ -20,8 +21,20 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eSmallHouse::eSmallHouse(GameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
-                                                                            {8, 16, 24, 32, 40, 48, 60}, cid)
+static std::vector<int> sCommonCapacity(GameBoard& board, const eCityId cid) {
+    const auto pid = board.cityIdToPlayerId(cid);
+    const auto diff = board.difficulty(pid);
+    std::vector<int> v(7, 0);
+    for(int i = 0; i < 7; i++) {
+        if(const auto r = ModelData::instance().houseReq(diff, i, false)) {
+            v[i] = r->capacity;
+        }
+    }
+    return v;
+}
+
+SmallHouse::SmallHouse(GameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
+                                                                            sCommonCapacity(board, cid), cid)
 {
     eGameTextures::loadCommonHouse();
     if (atlantean())
@@ -30,7 +43,7 @@ eSmallHouse::eSmallHouse(GameBoard &board, const eCityId cid) : eHouseBase(board
     }
 }
 
-eSmallHouse::~eSmallHouse()
+SmallHouse::~SmallHouse()
 {
     if (mSick)
         mSick->kill();
@@ -40,7 +53,7 @@ eSmallHouse::~eSmallHouse()
     board.unregisterCommonHouse(this);
 }
 
-std::shared_ptr<eTexture> eSmallHouse::getTexture(const eTileSize size) const
+std::shared_ptr<eTexture> SmallHouse::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
     const auto &blds = eGameTextures::buildings();
@@ -69,7 +82,7 @@ std::shared_ptr<eTexture> eSmallHouse::getTexture(const eTileSize size) const
     return coll->getTexture(texId);
 }
 
-int eSmallHouse::provide(const eProvide p, const int n)
+int SmallHouse::provide(const eProvide p, const int n)
 {
     if (mPeople <= 0)
         return 0;
@@ -151,7 +164,7 @@ int eSmallHouse::provide(const eProvide p, const int n)
     return add;
 }
 
-void eSmallHouse::timeChanged(const int by)
+void SmallHouse::timeChanged(const int by)
 {
     mUpdateLevel += by;
     const int lupdate = 800;
@@ -329,7 +342,7 @@ void eSmallHouse::timeChanged(const int by)
     eHouseBase::timeChanged(by);
 }
 
-void eSmallHouse::nextMonth()
+void SmallHouse::nextMonth()
 {
     mPaidTaxesLastMonth = mPaidTaxes;
     mPaidTaxes = 0;
@@ -342,19 +355,19 @@ void eSmallHouse::nextMonth()
     mOil = std::max(0, mOil - coil);
 }
 
-void eSmallHouse::setPlague(const bool p)
+void SmallHouse::setPlague(const bool p)
 {
     mPlague = p;
     mSpawnSick = eRand::rand() % 10000;
 }
 
-void eSmallHouse::setDisgruntled(const bool d)
+void SmallHouse::setDisgruntled(const bool d)
 {
     mDisgruntled = d;
     mSpawnDisg = __INT_MAX__ / 2;
 }
 
-bool eSmallHouse::lowFood() const
+bool SmallHouse::lowFood() const
 {
     if (!mFood)
         return true;
@@ -362,62 +375,29 @@ bool eSmallHouse::lowFood() const
     return mFood < cfood;
 }
 
-eHouseMissing eSmallHouse::missing() const
+eHouseMissing SmallHouse::missing() const
 {
+    const int next = mLevel + 1;
+    if (next > 6) return eHouseMissing::nothing;
+
+    if (mFood <= 0) return eHouseMissing::food;
+    if (next >= 2 && mWater <= 0) return eHouseMissing::water;
+    if (next >= 3 && mFleece <= 0) return eHouseMissing::fleece;
+    if (next >= 5 && mOil <= 0) return eHouseMissing::oil;
+
     const double appeal = eHouseBase::appeal();
-    int nVenues = 0;
-    if (mPhilosophers > 0)
-        nVenues++;
-    if (mActors > 0)
-        nVenues++;
-    if (mAthletes > 0)
-        nVenues++;
-    if (mCompetitors > 0)
-        nVenues++;
-    if (mFood > 0)
-    {
-        if (mWater > 0)
-        {
-            if (mFleece > 0)
-            {
-                if (nVenues > 0)
-                {
-                    if (mOil > 0)
-                    {
-                        if (appeal > 2.0)
-                        {
-                            if (nVenues > 1)
-                            {
-                                if (appeal > 5.0)
-                                {
-                                    if (nVenues > 2)
-                                    {
-                                        if (appeal > 8.0)
-                                        {
-                                            return eHouseMissing::nothing;
-                                        }
-                                        return eHouseMissing::appeal;
-                                    }
-                                    return eHouseMissing::venues;
-                                }
-                                return eHouseMissing::appeal;
-                            }
-                            return eHouseMissing::venues;
-                        }
-                        return eHouseMissing::appeal;
-                    }
-                    return eHouseMissing::oil;
-                }
-                return eHouseMissing::venues;
-            }
-            return eHouseMissing::fleece;
-        }
-        return eHouseMissing::water;
-    }
-    return eHouseMissing::food;
+    const int pts = culturePoints();
+    const auto& board = getBoard();
+    const auto pid = board.cityIdToPlayerId(cityId());
+    const auto diff = board.difficulty(pid);
+    // Evolve threshold lives on current row (b = appeal to leave).
+    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, mLevel);
+    if (appeal < req.fAppE) return eHouseMissing::appeal;
+    if (pts < req.fEnt) return eHouseMissing::venues;
+    return eHouseMissing::nothing;
 }
 
-void eSmallHouse::serializeFields(eSaveArchive& ar)
+void SmallHouse::serializeFields(eSaveArchive& ar)
 {
     eHouseBase::serializeFields(ar);
     ar.field("satisfactionProvidedThisMonth", mSatisfactionProvidedThisMonth);
@@ -443,22 +423,22 @@ void eSmallHouse::serializeFields(eSaveArchive& ar)
     ar.characterAsField("disgruntled", &getBoard(), mDisg);
 }
 
-std::string eSmallHouse::sName(const int level)
+std::string SmallHouse::sName(const int level)
 {
     return eLanguage::zeusText(28, 2 + level);
 }
 
-bool eSmallHouse::hasRequiredForLevel(const int level) const
+bool SmallHouse::hasRequiredForLevel(const int level) const
 {
     return hasRequiredForLevelImpl(level, true);
 }
 
-bool eSmallHouse::canStayAtLevel(const int level) const
+bool SmallHouse::canStayAtLevel(const int level) const
 {
     return hasRequiredForLevelImpl(level, false);
 }
 
-bool eSmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) const
+bool SmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) const
 {
     if (level <= 0) return true;
     if (level > 6) return false;
@@ -467,7 +447,10 @@ bool eSmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) co
     const auto& board = getBoard();
     const auto pid = board.cityIdToPlayerId(cityId());
     const auto diff = board.difficulty(pid);
-    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, level);
+    // Evolve uses CURRENT level's row (b = appeal to leave for next).
+    // Devolve uses CURRENT level's row (a = appeal to drop below).
+    const int srcLvl = evolve ? std::max(0, level - 1) : level;
+    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, srcLvl);
     const double appReq = evolve ? req.fAppE : req.fAppD;
     if (appeal < appReq) return false;
     if (pts < req.fEnt) return false;
@@ -487,7 +470,7 @@ bool eSmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) co
     return false;
 }
 
-void eSmallHouse::updateLevel()
+void SmallHouse::updateLevel()
 {
     if (hasRequiredForLevel(mLevel + 1))
     {
@@ -527,7 +510,7 @@ void eSmallHouse::updateLevel()
     }
 }
 
-void eSmallHouse::updateSatisfaction()
+void SmallHouse::updateSatisfaction()
 {
     const int weight = 9;
     const int div = weight + 1;
@@ -561,7 +544,7 @@ void eSmallHouse::updateSatisfaction()
     mSatisfaction = (weight * mSatisfaction + sat) / div;
 }
 
-void eSmallHouse::spawnCharacter(const stdsptr<eCharacter> &c)
+void SmallHouse::spawnCharacter(const stdsptr<eCharacter> &c)
 {
     auto ts = surroundingRoad(false, true);
     eTile *tile = nullptr;
@@ -580,7 +563,7 @@ void eSmallHouse::spawnCharacter(const stdsptr<eCharacter> &c)
     c->setAction(a);
 }
 
-void eSmallHouse::spawnSick()
+void SmallHouse::spawnSick()
 {
     if (mSick)
         mSick->kill();
@@ -594,7 +577,7 @@ void eSmallHouse::spawnSick()
     c->setBothCityIds(cid);
 }
 
-void eSmallHouse::spawnDisgruntled()
+void SmallHouse::spawnDisgruntled()
 {
     if (mDisg)
         mDisg->kill();

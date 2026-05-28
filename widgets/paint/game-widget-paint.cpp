@@ -1801,7 +1801,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 if (bt == eBuildingType::commonHouse)
                 {
-                    const auto ch = static_cast<eSmallHouse *>(ub);
+                    const auto ch = static_cast<SmallHouse *>(ub);
                     if (ch->people() == 0)
                         return;
                     const int w = ch->water() / 2;
@@ -1812,7 +1812,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 if (bt == eBuildingType::commonHouse)
                 {
-                    const auto ch = static_cast<eSmallHouse *>(ub);
+                    const auto ch = static_cast<SmallHouse *>(ub);
                     if (ch->people() == 0)
                         return;
                     const int h = ch->hygiene();
@@ -1842,7 +1842,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 if (bt == eBuildingType::commonHouse)
                 {
-                    const auto ch = static_cast<eSmallHouse *>(ub);
+                    const auto ch = static_cast<SmallHouse *>(ub);
                     if (ch->people() == 0)
                         return;
                     const int h = 100 - ch->satisfaction();
@@ -1945,7 +1945,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 if (bt == eBuildingType::commonHouse)
                 {
-                    const auto ch = static_cast<eSmallHouse *>(ub);
+                    const auto ch = static_cast<SmallHouse *>(ub);
                     if (ch->people() == 0)
                         return;
                     double rxx = rx - 2.5;
@@ -1967,7 +1967,7 @@ void GameWidget::paintEvent(ePainter &p)
                 }
                 else if (bt == eBuildingType::eliteHousing)
                 {
-                    const auto ch = static_cast<eEliteHousing *>(ub);
+                    const auto ch = static_cast<EliteHousing *>(ub);
                     if (ch->people() == 0)
                         return;
                     double rxx = rx - 3.5;
@@ -2221,7 +2221,7 @@ void GameWidget::paintEvent(ePainter &p)
                     }
                     if (bt == eBuildingType::commonHouse)
                     {
-                        const auto ch = static_cast<eSmallHouse *>(ub);
+                        const auto ch = static_cast<SmallHouse *>(ub);
                         const bool p = ch->plague();
                         if (p && ch->people())
                         {
@@ -4640,7 +4640,7 @@ void GameWidget::paintEvent(ePainter &p)
         break;
         case eBuildingMode::commonHousing:
         {
-            const auto b1 = e::make_shared<eSmallHouse>(*mBoard, mViewedCityId);
+            const auto b1 = e::make_shared<SmallHouse>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         }
         break;
@@ -4879,7 +4879,7 @@ void GameWidget::paintEvent(ePainter &p)
                 dx4 = 2;
                 dy4 = 2;
             }
-            const auto b1 = e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
+            const auto b1 = e::make_shared<EliteHousing>(*mBoard, mViewedCityId);
             auto &ebs1 = ebs.emplace_back(mHoverTX + dx1, mHoverTY + dy1, b1);
             ebs1.fBR = e::make_shared<eEliteHousingRenderer>(
                 eEliteRendererType::top, b1);

@@ -13,8 +13,8 @@
 #include "emonsterbutton.h"
 #include "eresourcebutton.h"
 #include "eswitchbutton.h"
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "buildings/pyramids/epyramid.h"
 #include "engine/e-game-board.h"
 
@@ -239,9 +239,9 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
                                                eBuildingType::eliteHousing;
             switch(t) {
             case eBuildingType::commonHouse:
-                return eSmallHouse::sName(e->fEnumInt2);
+                return SmallHouse::sName(e->fEnumInt2);
             case eBuildingType::eliteHousing:
-                return eEliteHousing::sName(e->fEnumInt2);
+                return EliteHousing::sName(e->fEnumInt2);
             default:
                 break;
             }
@@ -253,10 +253,10 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             const auto choose = new eChooseButton(window());
             std::vector<std::string> names;
             for(int i = 0; i < 7; i++) {
-                names.push_back(eSmallHouse::sName(i));
+                names.push_back(SmallHouse::sName(i));
             }
             for(int i = 0; i < 5; i++) {
-                names.push_back(eEliteHousing::sName(i));
+                names.push_back(EliteHousing::sName(i));
             }
             const auto act = [e, updateText, type, nameGetter](const int val) {
                 e->fEnumInt1 = val > 6 ? 1 : 0;

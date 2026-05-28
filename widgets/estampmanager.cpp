@@ -12,7 +12,7 @@
 #include "egamedir.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/estampblueprint.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "textures/egametextures.h"
 #include "elabelbase.h"
 
@@ -41,7 +41,7 @@ int calculateMaxPop(const std::string &path)
 
 namespace fs = std::filesystem;
 
-void eStampManager::initialize(eStampTool *const stampTool, const eDifficulty difficulty)
+void eStampManager::initialize(eStampTool *const stampTool, const Difficulty difficulty)
 {
     mStampTool = stampTool;
     mDifficulty = difficulty;

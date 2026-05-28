@@ -256,7 +256,7 @@ void eMainWindow::setPopupForTroops(const bool b) {
     mSettings.write();
 }
 
-void eMainWindow::setLastDifficulty(const eDifficulty d) {
+void eMainWindow::setLastDifficulty(const Difficulty d) {
     mSettings.fLastDifficulty = d;
     mSettings.write();
 }

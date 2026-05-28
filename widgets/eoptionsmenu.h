@@ -4,7 +4,7 @@
 #include "emodal.h"
 #include "esettings.h"
 #include "escrollbar.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 
 #include <functional>
 #include <string>
@@ -44,8 +44,8 @@ public:
 
     struct eDifficultyItem {
         std::string fLabel;
-        std::function<eDifficulty()> fGet;
-        std::function<void(const eDifficulty)> fSet;
+        std::function<Difficulty()> fGet;
+        std::function<void(const Difficulty)> fSet;
     };
 
     struct ePage {

@@ -6,8 +6,8 @@
 #include "buildings/eroad.h"
 #include "buildings/eavenue.h"
 
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 
 #include "buildings/emaintenanceoffice.h"
 #include "buildings/etaxoffice.h"
@@ -139,13 +139,13 @@ bool gBuild(const AIBuilding& b,
 
     case eBuildingType::commonHouse: {
         const auto bc = [boardPtr, cid]() {
-            return e::make_shared<eSmallHouse>(*boardPtr, cid);
+            return e::make_shared<SmallHouse>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
     case eBuildingType::eliteHousing: {
         const auto bc = [boardPtr, cid]() {
-            return e::make_shared<eEliteHousing>(*boardPtr, cid);
+            return e::make_shared<EliteHousing>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;

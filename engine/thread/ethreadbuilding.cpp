@@ -1,7 +1,7 @@
 #include "ethreadbuilding.h"
 
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "buildings/eresourcebuildingbase.h"
 #include "buildings/eresourcebuilding.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
@@ -70,11 +70,11 @@ void eThreadBuilding::load(eBuilding* const src) {
             mCleared = true;
             break;
         case eBuildingType::commonHouse: {
-            const auto h = static_cast<eSmallHouse*>(src);
+            const auto h = static_cast<SmallHouse*>(src);
             mVacancies = h->vacancies();
         } break;
         case eBuildingType::eliteHousing: {
-            const auto h = static_cast<eEliteHousing*>(src);
+            const auto h = static_cast<EliteHousing*>(src);
             mVacancies = h->vacancies();
         } break;
         case eBuildingType::granary:

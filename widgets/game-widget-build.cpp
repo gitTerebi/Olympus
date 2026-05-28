@@ -870,7 +870,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const bool cb = mBoard->canBuild(t1->x() + 1, t1->y() + 1, 4, 4, mEditorMode, cid, pid);
             if(!cb) return true;
             r = mBoard->build(t1->x() + 1, t1->y() + 1, 4, 4, cid, pid, mEditorMode, [&]() {
-                return e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
+                return e::make_shared<EliteHousing>(*mBoard, mViewedCityId);
             });
         } break;
         case eBuildingMode::taxOffice: {

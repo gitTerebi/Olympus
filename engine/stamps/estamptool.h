@@ -10,7 +10,7 @@
 
 enum class eBuildingType;
 enum class eCityId;
-enum class eDifficulty;
+enum class Difficulty;
 enum class ePlayerId;
 
 struct eStampElement {
@@ -37,7 +37,7 @@ public:
     bool setTemplate(const std::string& name, const std::string& path);
     std::vector<eStampElement> transformedBlueprint() const;
     std::vector<eStampBuildCommand> buildCommands() const;
-    int estimatedCost(eDifficulty diff) const;
+    int estimatedCost(Difficulty diff) const;
     void setRotation(int r) { mRotation = (r % 4 + 4) % 4; }
     int rotation() const { return mRotation; }
     void setMirror(int m) { mMirror = (m % 2 + 2) % 2; }

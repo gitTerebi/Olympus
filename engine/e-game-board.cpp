@@ -25,7 +25,7 @@
 
 #include "buildings/trade-post.h"
 
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
@@ -1844,7 +1844,7 @@ void GameBoard::registerAttackingGod(const eCityId cid,
     updateMusic();
 }
 
-void GameBoard::startPlague(eSmallHouse *const h)
+void GameBoard::startPlague(SmallHouse *const h)
 {
     if (!h)
         return;
@@ -1858,7 +1858,7 @@ void GameBoard::startPlague(eSmallHouse *const h)
     event(eEvent::plague, ed);
 }
 
-stdsptr<ePlague> GameBoard::plagueForHouse(eSmallHouse *const h)
+stdsptr<ePlague> GameBoard::plagueForHouse(SmallHouse *const h)
 {
     if (!h)
         return nullptr;
@@ -1880,7 +1880,7 @@ void GameBoard::healPlague(const stdsptr<ePlague> &p)
     return c->healPlague(p);
 }
 
-void GameBoard::healHouse(eSmallHouse *const h)
+void GameBoard::healHouse(SmallHouse *const h)
 {
     const auto p = plagueForHouse(h);
     if (p)
@@ -2520,7 +2520,7 @@ bool GameBoard::unregisterBuilding(eBuilding *const b)
     return true;
 }
 
-bool GameBoard::unregisterCommonHouse(eSmallHouse *const ch)
+bool GameBoard::unregisterCommonHouse(SmallHouse *const ch)
 {
     if (!mRegisterBuildingsEnabled)
         return false;
@@ -3335,26 +3335,26 @@ void GameBoard::payTaxes(const eCityId cid, const int d, const int people)
     p->incDrachmas(d, eFinanceTarget::taxesIn);
 }
 
-void GameBoard::setDifficulty(const eDifficulty d)
+void GameBoard::setDifficulty(const Difficulty d)
 {
-    std::map<eDifficulty, eDifficulty> rivalDiff =
-        {{eDifficulty::beginner, eDifficulty::olympian},
-         {eDifficulty::mortal, eDifficulty::titan},
-         {eDifficulty::hero, eDifficulty::hero},
-         {eDifficulty::titan, eDifficulty::mortal},
-         {eDifficulty::olympian, eDifficulty::beginner}};
-    std::map<eDifficulty, eDifficulty> allyDiff =
-        {{eDifficulty::beginner, eDifficulty::beginner},
-         {eDifficulty::mortal, eDifficulty::mortal},
-         {eDifficulty::hero, eDifficulty::hero},
-         {eDifficulty::titan, eDifficulty::titan},
-         {eDifficulty::olympian, eDifficulty::olympian}};
+    std::map<Difficulty, Difficulty> rivalDiff =
+        {{Difficulty::beginner, Difficulty::olympian},
+         {Difficulty::mortal, Difficulty::titan},
+         {Difficulty::hero, Difficulty::hero},
+         {Difficulty::titan, Difficulty::mortal},
+         {Difficulty::olympian, Difficulty::beginner}};
+    std::map<Difficulty, Difficulty> allyDiff =
+        {{Difficulty::beginner, Difficulty::beginner},
+         {Difficulty::mortal, Difficulty::mortal},
+         {Difficulty::hero, Difficulty::hero},
+         {Difficulty::titan, Difficulty::titan},
+         {Difficulty::olympian, Difficulty::olympian}};
     const auto ppid = personPlayer();
     const auto ptid = playerIdToTeamId(ppid);
     for (const auto &p : mPlayersOnBoard)
     {
         const auto pid = p->id();
-        eDifficulty pd;
+        Difficulty pd;
         if (pid == ppid)
         {
             pd = d;
@@ -3375,7 +3375,7 @@ void GameBoard::setDifficulty(const eDifficulty d)
     }
 }
 
-void GameBoard::setDifficulty(const ePlayerId pid, const eDifficulty d)
+void GameBoard::setDifficulty(const ePlayerId pid, const Difficulty d)
 {
     const auto p = boardPlayerWithId(pid);
     if (!p)
@@ -3383,16 +3383,16 @@ void GameBoard::setDifficulty(const ePlayerId pid, const eDifficulty d)
     p->setDifficulty(d);
 }
 
-eDifficulty GameBoard::personPlayerDifficulty() const
+Difficulty GameBoard::personPlayerDifficulty() const
 {
     return difficulty(personPlayer());
 }
 
-eDifficulty GameBoard::difficulty(const ePlayerId pid) const
+Difficulty GameBoard::difficulty(const ePlayerId pid) const
 {
     const auto p = boardPlayerWithId(pid);
     if (!p)
-        return eDifficulty::beginner;
+        return Difficulty::beginner;
     return p->difficulty();
 }
 

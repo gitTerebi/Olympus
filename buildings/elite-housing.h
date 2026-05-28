@@ -5,9 +5,9 @@
 
 class eSaveArchive;
 
-class eEliteHousing : public eHouseBase {
+class EliteHousing : public eHouseBase {
 public:
-    eEliteHousing(GameBoard& board, const eCityId cid);
+    EliteHousing(GameBoard& board, const eCityId cid);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize) const override { return nullptr; }

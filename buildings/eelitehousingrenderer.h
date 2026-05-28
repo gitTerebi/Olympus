@@ -3,7 +3,7 @@
 
 #include "ebuildingrenderer.h"
 
-class eEliteHousing;
+class EliteHousing;
 
 enum class eEliteRendererType {
     left, bottom, top, right
@@ -12,7 +12,7 @@ enum class eEliteRendererType {
 class eEliteHousingRenderer : public eBuildingRenderer {
 public:
     eEliteHousingRenderer(const eEliteRendererType type,
-                          const stdsptr<eEliteHousing>& b);
+                          const stdsptr<EliteHousing>& b);
 
     std::shared_ptr<eTexture>
         getTexture(const eTileSize size) const;
@@ -27,7 +27,7 @@ public:
     eEliteRendererType etype() const { return mType; }
 private:
     const eEliteRendererType mType;
-    const stdsptr<eEliteHousing> mBuilding;
+    const stdsptr<EliteHousing> mBuilding;
 };
 
 #endif // EELITEHOUSINGRENDERER_H

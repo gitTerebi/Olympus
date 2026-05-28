@@ -1,4 +1,4 @@
-#include "efightaction.h"
+#include "fight-action.h"
 
 #include "characters/echaracter.h"
 
@@ -13,13 +13,13 @@
 #include <cstdlib>
 #include <cstdio>
 
-eFightAction::eFightAction(eCharacter *const c, eCharacter *const o) : eCharacterAction(c, eCharActionType::fightAction),
+FightAction::FightAction(eCharacter *const c, eCharacter *const o) : eCharacterAction(c, eCharActionType::fightAction),
                                                                        mOpponent(o)
 {
     c->setActionType(eCharacterActionType::fight);
 }
 
-void eFightAction::increment(const int by)
+void FightAction::increment(const int by)
 {
     const auto c = character();
     if (!mOpponent)
@@ -52,31 +52,19 @@ void eFightAction::increment(const int by)
     const double arm = mOpponent->armor();
     const double dmg = a - arm;
     const double finalDmg = dmg > 0 ? dmg : 0.;
-    {
-        const auto atype = c->type();
-        const auto ttype = mOpponent->type();
-        const bool log = atype == eCharacterType::wolf ||
-                         atype == eCharacterType::rockThrower ||
-                         ttype == eCharacterType::wolf ||
-                         ttype == eCharacterType::rockThrower;
-        if(log) {
-            printf("[FIGHTACT] %d -> %d | atk=%.2f arm=%.2f dmg=%.2f tgtHP_before=%.2f\n",
-                   (int)atype, (int)ttype, a, arm, finalDmg, mOpponent->hp());
-        }
-    }
     const bool dead = mOpponent->takeMeleeDamage(finalDmg, c);
     if (dead || c->dead())
         setState(eCharacterActionState::finished);
 }
 
-void eFightAction::serializeFields(eSaveArchive &ar)
+void FightAction::serializeFields(eSaveArchive &ar)
 {
     eCharacterAction::serializeFields(ar);
     ar.characterField("opponent", &board(), mOpponent);
     ar.field("time", mTime);
 }
 
-void eFightAction::resumeFromSavedState()
+void FightAction::resumeFromSavedState()
 {
     const auto c = character();
     if (!mOpponent || mOpponent->dead() || c->dead())

@@ -1,10 +1,11 @@
-﻿#include "ecommonhouseinfowidget.h"
+﻿#include "common-house-info-widget.h"
 
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "engine/eresourcetype.h"
 #include "engine/e-game-board.h"
 #include "engine/board-city.h"
+#include "engine/difficulty.h"
 
 #include "widgets/elabel.h"
 
@@ -12,12 +13,12 @@
 
 #include <algorithm>
 
-eCommonHouseInfoWidget::eCommonHouseInfoWidget(
+CommonHouseInfoWidget::CommonHouseInfoWidget(
         eMainWindow* const window,
         eMainWidget* const mw) :
     eInfoWidget(window, mw, true, true) {}
 
-void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
+void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     const int people = house->people();
     const int level = house->level();
     const auto type = house->type();
@@ -101,7 +102,7 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         break;
     }
     std::string msg;
-    const auto sh = dynamic_cast<eSmallHouse*>(house);
+    const auto sh = dynamic_cast<SmallHouse*>(house);
     if(sh && (sh->devolveDelay() > 0 || sh->evictDelay() > 0 || sh->pendingEvict() > 0)) {
         msg = "This house is devolving. It needs ";
         switch(miss) {
@@ -202,7 +203,7 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         w->setY(msgLabel->y() + msgLabel->height() + p);
 
         if(house->type() == eBuildingType::eliteHousing) {
-            const auto eh = static_cast<eEliteHousing*>(house);
+            const auto eh = static_cast<EliteHousing*>(house);
 
             const auto wine = generateSupply(eResourceType::wine, eh->wine());
             const auto arms = generateSupply(eResourceType::armor, eh->arms());
@@ -258,7 +259,7 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         satLabel->setWrapWidth(satLabel->width());
         std::string satstr;
         if(type == eBuildingType::commonHouse) {
-            const auto ch = static_cast<eSmallHouse*>(house);
+            const auto ch = static_cast<SmallHouse*>(house);
             const int sat = ch->satisfaction();
             int n = std::floor((100 - sat)/(100./7));
             n = std::clamp(n, 0, 6);
@@ -322,5 +323,28 @@ void eCommonHouseInfoWidget::initialize(eHouseBase* const house) {
         fw->addWidget(l);
         l->setY(fw->height() - l->height() - p);
         l->align(eAlignment::hcenter);
+
+        const double appeal = house->appeal();
+        const bool isElite = type == eBuildingType::eliteHousing;
+        const int maxLvl = isElite ? 3 : 6;
+        const auto pid = board.cityIdToPlayerId(house->cityId());
+        const auto diff = board.difficulty(pid);
+        std::string ds = "Desirability: " +
+                         std::to_string(static_cast<int>(appeal));
+        if(level < maxLvl) {
+            const auto req = eDifficultyHelpers::houseLevelReq(diff, isElite, level);
+            ds += " / evolve " + std::to_string(req.fAppE);
+        } else {
+            ds += " / max";
+        }
+        const auto dl = new eLabel(window());
+        dl->setFontSizeS();
+        dl->setPaddingXS();
+        dl->setWidth(fw->width());
+        dl->setText(ds);
+        dl->fitContent();
+        fw->addWidget(dl);
+        dl->setY(l->y() - dl->height());
+        dl->align(eAlignment::hcenter);
     }
 }

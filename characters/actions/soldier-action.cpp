@@ -9,8 +9,8 @@
 #include "characters/soldier-banner.h"
 
 #include "emovetoaction.h"
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "ekillcharacterfinishfail.h"
 
@@ -206,7 +206,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::commonHouse) return false;
-            const auto ch = static_cast<eSmallHouse*>(b);
+            const auto ch = static_cast<SmallHouse*>(b);
             if(ch->level() < 2) return false;
             return true;
         };
@@ -215,7 +215,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             if(eh->level() < 2) return false;
             return true;
         };
@@ -224,7 +224,7 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
         v = [](eBuilding* const b) {
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             if(eh->level() < 4) return false;
             return true;
         };

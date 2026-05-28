@@ -3,14 +3,14 @@
 
 class eCharacterBase;
 class GameBoard;
-enum class eDifficulty;
+enum class Difficulty;
 enum class eCharacterType;
 
 namespace VanillaStats {
 
 const char* figureName(eCharacterType type);
 
-void apply(eCharacterBase& c, eDifficulty d, bool isPlayer = false);
+void apply(eCharacterBase& c, Difficulty d, bool isPlayer = false);
 
 void applyForCity(eCharacterBase& c, GameBoard& board);
 

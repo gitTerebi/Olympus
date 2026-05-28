@@ -14,7 +14,7 @@
 #include "evectorhelpers.h"
 #include "infowidgets/eagorainfowidget.h"
 #include "infowidgets/echaracterinfowidget.h"
-#include "infowidgets/ecommonhouseinfowidget.h"
+#include "infowidgets/common-house-info-widget.h"
 #include "infowidgets/eheroshallinfowidget.h"
 #include "infowidgets/ehippodromeinfowidget.h"
 #include "infowidgets/esanctuaryinfowidget.h"
@@ -28,7 +28,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
     eInfoWidget* wid = nullptr;
     eAction closeAct;
     if(const auto house = dynamic_cast<eHouseBase*>(b)) {
-        const auto w = new eCommonHouseInfoWidget(window(), this);
+        const auto w = new CommonHouseInfoWidget(window(), this);
         w->initialize(house);
         wid = w;
     } else if(const auto stor = dynamic_cast<TradePost*>(b)) {

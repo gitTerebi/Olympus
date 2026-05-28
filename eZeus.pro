@@ -69,7 +69,7 @@ SOURCES += \
         buildings/ecorral.cpp \
         buildings/edairy.cpp \
         buildings/edramaschool.cpp \
-        buildings/eelitehousing.cpp \
+        buildings/elite-housing.cpp \
         buildings/eelitehousingrenderer.cpp \
         buildings/eemployingbuilding.cpp \
         buildings/efarmbase.cpp \
@@ -126,7 +126,7 @@ SOURCES += \
         buildings/eruins.cpp \
         buildings/esculpturestudio.cpp \
         buildings/eshepherbuildingbase.cpp \
-        buildings/esmallhouse.cpp \
+        buildings/small-house.cpp \
         buildings/estadium.cpp \
         buildings/estadiumrenderer.cpp \
         buildings/estoragebuilding.cpp \
@@ -191,7 +191,7 @@ SOURCES += \
         characters/actions/edefendcityaction.cpp \
         characters/actions/edieaction.cpp \
         characters/actions/edionysusfollowaction.cpp \
-        characters/actions/efightaction.cpp \
+        characters/actions/fight-action.cpp \
         characters/actions/efightingaction.cpp \
         characters/actions/efirefighteraction.cpp \
         characters/actions/efollowaction.cpp \
@@ -394,7 +394,7 @@ SOURCES += \
         engine/ecityrequest.cpp \
         engine/ecolonymonumentaction.cpp \
         engine/edate.cpp \
-        engine/edifficulty.cpp \
+        engine/difficulty.cpp \
         engine/model-data.cpp \
         engine/vanilla-stats.cpp \
         engine/eemploymentdistributor.cpp \
@@ -735,7 +735,7 @@ SOURCES += \
         widgets/eworldwidget.cpp \
         widgets/infowidgets/eagorainfowidget.cpp \
         widgets/infowidgets/echaracterinfowidget.cpp \
-        widgets/infowidgets/ecommonhouseinfowidget.cpp \
+        widgets/infowidgets/common-house-info-widget.cpp \
         widgets/infowidgets/eemployingbuildinginfowidget.cpp \
         widgets/infowidgets/eheroshallinfowidget.cpp \
         widgets/infowidgets/ehippodromeinfowidget.cpp \
@@ -782,7 +782,7 @@ HEADERS += \
     buildings/ecorral.h \
     buildings/edairy.h \
     buildings/edramaschool.h \
-    buildings/eelitehousing.h \
+    buildings/elite-housing.h \
     buildings/eelitehousingrenderer.h \
     buildings/eemployingbuilding.h \
     buildings/efarmbase.h \
@@ -839,7 +839,7 @@ HEADERS += \
     buildings/eruins.h \
     buildings/esculpturestudio.h \
     buildings/eshepherbuildingbase.h \
-    buildings/esmallhouse.h \
+    buildings/small-house.h \
     buildings/estadium.h \
     buildings/estadiumrenderer.h \
     buildings/estoragebuilding.h \
@@ -903,7 +903,7 @@ HEADERS += \
     characters/actions/edefendcityaction.h \
     characters/actions/edieaction.h \
     characters/actions/edionysusfollowaction.h \
-    characters/actions/efightaction.h \
+    characters/actions/fight-action.h \
     characters/actions/efightingaction.h \
     characters/actions/efirefighteraction.h \
     characters/actions/efollowaction.h \
@@ -1104,7 +1104,7 @@ HEADERS += \
     engine/ecityrequest.h \
     engine/ecolonymonumentaction.h \
     engine/edate.h \
-    engine/edifficulty.h \
+    engine/difficulty.h \
     engine/model-data.h \
     engine/vanilla-stats.h \
     engine/e-tribute.h \
@@ -2957,7 +2957,7 @@ HEADERS += \
     widgets/eworldwidget.h \
     widgets/infowidgets/eagorainfowidget.h \
     widgets/infowidgets/echaracterinfowidget.h \
-    widgets/infowidgets/ecommonhouseinfowidget.h \
+    widgets/infowidgets/common-house-info-widget.h \
     widgets/infowidgets/eemployingbuildinginfowidget.h \
     widgets/infowidgets/eheroshallinfowidget.h \
     widgets/infowidgets/ehippodromeinfowidget.h \

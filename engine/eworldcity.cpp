@@ -4,7 +4,7 @@
 #include "egifthelpers.h"
 #include "evectorhelpers.h"
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "fileIO/esavearchive.h"
 #include "erand.h"
@@ -455,19 +455,19 @@ void eWorldCity::nextMonth(GameBoard *const board)
     double mult;
     switch (diff)
     {
-    case eDifficulty::beginner:
+    case Difficulty::beginner:
         mult = 3;
         break;
-    case eDifficulty::mortal:
+    case Difficulty::mortal:
         mult = 4;
         break;
-    case eDifficulty::hero:
+    case Difficulty::hero:
         mult = 4.5;
         break;
-    case eDifficulty::titan:
+    case Difficulty::titan:
         mult = 5;
         break;
-    case eDifficulty::olympian:
+    case Difficulty::olympian:
     default:
         mult = 6;
         break;

@@ -1,13 +1,13 @@
 #include "esickdisgruntledaction.h"
 
 #include "../echaracter.h"
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 #include "epatrolmoveaction.h"
 #include "emovearoundaction.h"
 #include "fileIO/esavearchive.h"
 
 eSickDisgruntledAction::eSickDisgruntledAction(eCharacter* const c,
-                                               eSmallHouse* const ch) :
+                                               SmallHouse* const ch) :
     eActionWithComeback(c, ch ? ch->centerTile() : nullptr,
                         eCharActionType::sickDisgruntledAction),
     mBuilding(ch) {

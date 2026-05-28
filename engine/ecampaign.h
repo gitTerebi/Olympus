@@ -106,8 +106,8 @@ public:
     const std::string& introductionText() const { return mIntroduction; }
     const std::string& completeText() const { return mComplete; }
 
-    void setDifficulty(const eDifficulty d);
-    eDifficulty difficulty() const { return mDifficulty; }
+    void setDifficulty(const Difficulty d);
+    Difficulty difficulty() const { return mDifficulty; }
 
     void setEditorMode(const bool e);
 
@@ -146,7 +146,7 @@ private:
     double mWageMultiplier = 1.;
     std::map<eResourceType, int> mPrices;
 
-    eDifficulty mDifficulty{eDifficulty::hero};
+    Difficulty mDifficulty{Difficulty::hero};
 
     eWorldBoard mWorldBoard;
     stdsptr<GameBoard> mParentBoard;

@@ -6,9 +6,9 @@
 
 class eSaveArchive;
 
-class eFightAction : public eCharacterAction {
+class FightAction : public eCharacterAction {
 public:
-    eFightAction(eCharacter* const c,
+    FightAction(eCharacter* const c,
                  eCharacter* const o = nullptr);
 
     void increment(const int by) override;

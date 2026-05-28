@@ -1,7 +1,7 @@
 #ifndef ETRIBUTE_H
 #define ETRIBUTE_H
 
-#include "edifficulty.h"
+#include "difficulty.h"
 #include "eresourcetype.h"
 
 class eWorldCity;
@@ -15,7 +15,7 @@ struct eTributePayment {
 namespace eTributeHelpers {
     eTributePayment receiveTribute(const eWorldCity& city);
     eTributePayment payTribute(const eWorldCity& city,
-                               const eDifficulty diff);
+                               const Difficulty diff);
     void receiveTributeFromCity(GameBoard& board,
                                  const ePlayerId pid,
                                  const stdsptr<eWorldCity>& city,

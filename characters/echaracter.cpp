@@ -3,7 +3,7 @@
 #include "engine/e-game-board.h"
 
 #include "actions/edieaction.h"
-#include "actions/efightaction.h"
+#include "actions/fight-action.h"
 #include "actions/earcheraction.h"
 
 #include "gods/egod.h"
@@ -98,7 +98,7 @@ void eCharacter::fight(eCharacter* const c) {
     pauseAction();
     const auto ff = std::make_shared<eChar_fightFinish>(
                         getBoard(), this);
-    const auto fa = e::make_shared<eFightAction>(this, c);
+    const auto fa = e::make_shared<FightAction>(this, c);
     fa->setFailAction(ff);
     fa->setFinishAction(ff);
     setAction(fa);

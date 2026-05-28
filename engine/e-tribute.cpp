@@ -10,7 +10,7 @@
 #include <cmath>
 #include <cstdio>
 
-eTributePayment eTributeHelpers::payTribute(const eWorldCity &city, const eDifficulty diff)
+eTributePayment eTributeHelpers::payTribute(const eWorldCity &city, const Difficulty diff)
 {
     const double mult = eDifficultyHelpers::costMultiplier(diff);
     const int count = std::round(city.payTributeCount() * mult);

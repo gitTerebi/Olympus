@@ -7,10 +7,10 @@ class eSick;
 class eDisgruntled;
 class eSaveArchive;
 
-class eSmallHouse : public eHouseBase {
+class SmallHouse : public eHouseBase {
 public:
-    eSmallHouse(GameBoard& board, const eCityId cid);
-    ~eSmallHouse();
+    SmallHouse(GameBoard& board, const eCityId cid);
+    ~SmallHouse();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 

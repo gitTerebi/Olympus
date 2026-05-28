@@ -1,6 +1,6 @@
 #include "eplague.h"
 
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 #include "ecityid.h"
 #include "e-game-board.h"
 #include "evectorhelpers.h"
@@ -15,7 +15,7 @@ void ePlague::randomSpread() {
     spreadFrom(mHouses[0]);
 }
 
-void ePlague::spreadFrom(eSmallHouse* const h) {
+void ePlague::spreadFrom(SmallHouse* const h) {
     const auto hRect = h->tileRect();
     const int range = 5;
     const SDL_Rect contRect{hRect.x - range, hRect.y - range,
@@ -29,7 +29,7 @@ void ePlague::spreadFrom(eSmallHouse* const h) {
             if(b->centerTile() != t) continue;
             const auto bt = b->type();
             if(bt != eBuildingType::commonHouse) continue;
-            const auto ch = static_cast<eSmallHouse*>(b);
+            const auto ch = static_cast<SmallHouse*>(b);
             if(ch->plague()) continue;
             if(ch != h && eRand::rand() % 2) continue;
             mHouses.push_back(ch);
@@ -45,24 +45,24 @@ void ePlague::healAll() {
     mHouses.clear();
 }
 
-void ePlague::healHouse(eSmallHouse* const h) {
+void ePlague::healHouse(SmallHouse* const h) {
     if(!h) return;
     h->setPlague(false);
     eVectorHelpers::remove(mHouses, h);
 }
 
-bool ePlague::hasHouse(eSmallHouse* const h) const {
+bool ePlague::hasHouse(SmallHouse* const h) const {
     return eVectorHelpers::contains(mHouses, h);
 }
 
-void ePlague::removeHouse(eSmallHouse* const h) {
+void ePlague::removeHouse(SmallHouse* const h) {
     eVectorHelpers::remove(mHouses, h);
 }
 
 void ePlague::serialize(eSaveArchive& ar) {
     const auto defaultCityId = mCityId;
     ar.field("cityId", mCityId, defaultCityId);
-    ar.arrayField("houses", mHouses, [this](eSaveArchive& itemAr, eSmallHouse*& h) {
+    ar.arrayField("houses", mHouses, [this](eSaveArchive& itemAr, SmallHouse*& h) {
         itemAr.buildingAsField("house", &mBoard, h);
     });
 }
