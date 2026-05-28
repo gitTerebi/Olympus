@@ -49,6 +49,8 @@ public:
     int grapeUnits() const { return mGrapes; }
     int oliveUnits() const { return mOlives; }
     int orangeUnits() const { return mOranges; }
+
+    static constexpr int sUnitsPerLoad = 100;
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
@@ -59,7 +61,6 @@ private:
     bool isGrapeHarvestMonth() const;
     bool isOrangeHarvestMonth() const;
 
-    static constexpr int sUnitsPerLoad = 100;
     static constexpr int sMaxUnits = 500;
 
     const eGrowerType mType;

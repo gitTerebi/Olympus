@@ -250,9 +250,10 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
                 ebWid->addText(line);
             }
             constexpr int maxYearly = 20;
-            const double eff = (double)gl->producedThisYear() / maxYearly;
+            const int producedLoads = gl->producedThisYear() / eGrowersLodge::sUnitsPerLoad;
+            const double eff = (double)producedLoads / maxYearly;
             const int effPercent = static_cast<int>(eff * 100 + 0.5);
-            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(gl->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
+            std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(producedLoads) + "/" + std::to_string(maxYearly) + ")";
             ebWid->addText(effStr);
             ebWid->addEmploymentWidget(gl, employmentInfo);
             ebWid->addText(info);

@@ -2487,9 +2487,8 @@ void eBuilding::erase() {
 }
 
 static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
-    const size_t kBufSize = 524288;
-    void* mem = malloc(kBufSize);
-    eWriteTarget target(mem);
+    std::vector<char> mem;
+    eWriteTarget target(&mem);
     eWriteStream dst(target);
     dst.writeFormat("eZeus");
     {
@@ -2498,19 +2497,14 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
         ar.field("buildingType", btype);
         eBuildingArchive::save(b, ar);
     }
-    const size_t written = dst.memPos();
-    std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
-                                static_cast<const uint8_t*>(mem) + written);
-    free(mem);
-    return result;
+    return std::vector<uint8_t>(mem.begin(), mem.end());
 }
 
 static std::vector<uint8_t> sBuildingRestoreBundle(
         const std::vector<eBuilding*>& buildings,
         eGameBoard& board) {
-    const size_t kBufSize = 1048576;
-    void* mem = malloc(kBufSize);
-    eWriteTarget target(mem);
+    std::vector<char> mem;
+    eWriteTarget target(&mem);
     eWriteStream dst(target);
 
     std::vector<std::pair<eBuilding*, int>> oldBuildingIds;
@@ -2550,11 +2544,7 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
         p.first->setIOID(p.second);
     }
 
-    const size_t written = dst.memPos();
-    std::vector<uint8_t> result(static_cast<const uint8_t*>(mem),
-                                static_cast<const uint8_t*>(mem) + written);
-    free(mem);
-    return result;
+    return std::vector<uint8_t>(mem.begin(), mem.end());
 }
 
 void eBuilding::collapse() {
@@ -2594,6 +2584,9 @@ void eBuilding::collapse() {
                          tp == eBuildingType::cattle ||
                          tp == eBuildingType::road;
 
+    const bool onFire = mOnFire;
+    setOnFire(false);
+
     std::vector<uint8_t> restoreBundle;
     const bool snapshotBuilding = !noRuins && tp != eBuildingType::commonHouse;
     if(snapshotBuilding) {
@@ -2613,8 +2606,6 @@ void eBuilding::collapse() {
         restoreBundle = sBuildingRestoreBundle(restoreBuildings, b);
     }
 
-    const bool onFire = mOnFire;
-    setOnFire(false);
     erase();
     if(noRuins) return;
     const int ox = mTileRect.x, oy = mTileRect.y, ow = mTileRect.w, oh = mTileRect.h;

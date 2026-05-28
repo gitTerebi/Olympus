@@ -44,6 +44,8 @@
 #include "ewagechangeevent.h"
 #include "ereinforcementsevent.h"
 
+#include <algorithm>
+
 eGameEvent::eGameEvent(const eCityId cid,
                        const eGameEventType type,
                        const eGameEventBranch branch,
@@ -51,9 +53,11 @@ eGameEvent::eGameEvent(const eCityId cid,
     mCid(cid), mType(type), mBranch(branch), mBoard(board) {
     mBoard.addGameEvent(this);
 
-    const auto e4 = eLanguage::text("base_trigger");
-    mBaseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
-    addTrigger(mBaseTrigger);
+    if(shouldHaveBaseTrigger()) {
+        const auto e4 = eLanguage::text("base_trigger");
+        mBaseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
+        addTrigger(mBaseTrigger);
+    }
 }
 
 eGameEvent::~eGameEvent() {
@@ -61,11 +65,10 @@ eGameEvent::~eGameEvent() {
 }
 
 stdsptr<eGameEvent> eGameEvent::makeCopy() const {
-    const size_t size = 1000000;
-    void* mem = malloc(size);
+    std::vector<char> mem;
     {
         worldBoard()->setIOIDs();
-        eWriteTarget target(mem);
+        eWriteTarget target(&mem);
         eWriteStream dst(target);
         dst.writeFormat("eZeus");
         eSaveArchive ar(dst);
@@ -73,19 +76,16 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
     }
     const auto result = sCreate(mCid, mType, mBranch, mBoard);
     if(!result) {
-        free(mem);
         return nullptr;
     }
     {
-        eReadSource source(mem);
+        eReadSource source(mem.data());
         eReadStream src(source);
         src.readFormat();
         eSaveArchive ar(src);
         result->serialize(ar);
         src.handlePostFuncs();
     }
-
-    free(mem);
 
     return result;
 }
@@ -324,6 +324,11 @@ void eGameEvent::handleNewDate(const eDate& date) {
     for(const auto& c : mConsequences) {
         c->handleNewDate(date);
     }
+    const auto end = std::remove_if(mConsequences.begin(), mConsequences.end(),
+        [](const stdsptr<eGameEvent>& e) {
+            return e->finished() && !e->hasActiveConsequences();
+        });
+    mConsequences.erase(end, mConsequences.end());
     if(mRemNRuns <= 0) return;
     for(const auto& w : mWarnings) {
         w->handleNewDate(date);
@@ -364,10 +369,15 @@ void eGameEvent::addTrigger(const stdsptr<eEventTrigger>& et) {
 }
 
 void eGameEvent::callBaseTrigger() {
+    if(!shouldHaveBaseTrigger()) return;
     const auto board = gameBoard();
     if(!board) return;
     const auto date = board->date();
     mBaseTrigger->trigger(*this, date, "");
+}
+
+bool eGameEvent::shouldHaveBaseTrigger() const {
+    return mBranch != eGameEventBranch::child;
 }
 
 void eGameEvent::updateWarningDates() {

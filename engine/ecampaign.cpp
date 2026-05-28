@@ -660,26 +660,23 @@ void eCampaign::copyParentCityEpisodeSettings(const int from, const int to) {
 void eCampaign::copyEpisodeSettings(eEpisode* const from,
                                     eEpisode* const to) {
     to->clear();
-    const size_t size = 1000000;
-    void* mem = malloc(size);
+    std::vector<char> mem;
     {
         mWorldBoard.setIOIDs();
-        eWriteTarget target(mem);
+        eWriteTarget target(&mem);
         eWriteStream dst(target);
         dst.writeFormat("eZeus");
         eSaveArchive ar(dst);
         from->serialize(ar);
     }
     {
-        eReadSource source(mem);
+        eReadSource source(mem.data());
         eReadStream src(source);
         src.readFormat();
         eSaveArchive ar(src);
         to->serialize(ar);
         src.handlePostFuncs();
     }
-
-    free(mem);
 }
 
 void eCampaign::setDifficulty(const eDifficulty d) {

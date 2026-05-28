@@ -10,6 +10,7 @@
 
 class eBuildingTextures;
 class eSaveArchive;
+class eMonster;
 
 enum class eHelpDenialReason {
     tooSoon,
@@ -46,6 +47,7 @@ public:
 
     eGod* spawnGod();
     void spawnPatrolingGod();
+    void spawnDefenderMinion();
 
     void godComeback();
     bool godAbroad() const { return mGodAbroad; }
@@ -67,6 +69,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     stdptr<eGod> mGod;
+    stdptr<eMonster> mMinion;
     bool mGodAbroad = false;
     int mSpawnWait = 0;
 
