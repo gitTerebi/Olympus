@@ -2,6 +2,9 @@
 #define EQUESTIONWIDGET_H
 
 #include "eframedwidget.h"
+#include "pointers/estdselfref.h"
+
+class eTexture;
 
 class eQuestionWidget : public eFramedWidget {
 public:
@@ -9,6 +12,11 @@ public:
 
     void initialize(const std::string& title,
                     const std::string& text,
+                    const eAction& acceptA,
+                    const eAction& cancelA);
+    void initialize(const std::string& title,
+                    const std::string& text,
+                    const stdsptr<eTexture>& icon,
                     const eAction& acceptA,
                     const eAction& cancelA);
 };

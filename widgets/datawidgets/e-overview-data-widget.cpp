@@ -550,20 +550,8 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
     const auto pid = mBoard.personPlayer();
     const auto& qs = mBoard.cityRequests(pid);
     const auto& tqs = mBoard.tributeRequests(pid);
-    printf("Overview requests: pid=%d cityRequests=%d tributeRequests=%d date=%s\n",
-           static_cast<int>(pid),
-           static_cast<int>(qs.size()),
-           static_cast<int>(tqs.size()),
-           mBoard.date().shortString().c_str());
     for(const auto& qq : qs) {
         const auto q = qq->cityRequest();
-        printf("Overview city request row: runtime=%d type=%d city=%s count=%d resource=%d status=%s\n",
-               qq->runtimeId(),
-               static_cast<int>(qq->requestType()),
-               q.fCity ? q.fCity->name().c_str() : "<none>",
-               q.fCount,
-               static_cast<int>(q.fType),
-               qq->overdueStatusText(mBoard.date()).c_str());
         const auto b = new eResourceRequestButton(window());
         b->setWidth(w->width());
         b->initialize(q.fType, q.fCity, [this, q]() {
@@ -574,24 +562,7 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
             }
             return false;
         }, [this, qq]() {
-            const auto text = qq->overdueStatusText(mBoard.date());
-            if(text == "0" && qq->isActiveCityRequest()) {
-                printf("Overview city request zero heal: ptr=%p runtime=%d requestId=%d type=%d\n",
-                       qq,
-                       qq ? qq->runtimeId() : -1,
-                       qq ? qq->requestId() : -1,
-                       qq ? static_cast<int>(qq->requestType()) : -1);
-                qq->healStuck();
-            }
-            printf("Overview city request status poll: ptr=%p runtime=%d requestId=%d type=%d text=%s active=%d finished=%d\n",
-                   qq,
-                   qq ? qq->runtimeId() : -1,
-                   qq ? qq->requestId() : -1,
-                   qq ? static_cast<int>(qq->requestType()) : -1,
-                   text.c_str(),
-                   qq && qq->isActiveCityRequest() ? 1 : 0,
-                   qq && qq->finished() ? 1 : 0);
-            return text;
+            return qq->overdueStatusText(mBoard.date());
         }, [this, qq]() {
             return qq->isPostponed();
         });
@@ -606,7 +577,7 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
                     };
                     const auto title = eLanguage::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
-                    gw->showQuestion(title, text, acceptA);
+                    gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
                     const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
@@ -617,12 +588,6 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
     }
     for(const auto& qq : tqs) {
         const auto q = qq->cityRequest();
-        printf("Overview pay tribute row: runtime=%d city=%s count=%d resource=%d status=%s\n",
-               qq->runtimeId(),
-               q.fCity ? q.fCity->name().c_str() : "<none>",
-               q.fCount,
-               static_cast<int>(q.fType),
-               qq->overdueStatusText(mBoard.date()).c_str());
         const auto b = new eResourceRequestButton(window());
         b->setWidth(w->width());
         b->initialize(q.fType, q.fCity, [this, q]() {
@@ -652,7 +617,7 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
                     };
                     const auto title = eLanguage::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
-                    gw->showQuestion(title, text, acceptA);
+                    gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
                     const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
@@ -667,7 +632,7 @@ void eOverviewDataWidget::addCityRequests(eWidget* const w) {
                     };
                     const auto title = eLanguage::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
-                    gw->showQuestion(title, text, acceptA);
+                    gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
                     const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
