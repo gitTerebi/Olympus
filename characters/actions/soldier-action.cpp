@@ -28,6 +28,10 @@ void eSoldierAction::increment(const int by) {
         mSpreadPeriod = false;
     }
 
+    if(mStage == eSoldierActionStage::banner && currentAction()) {
+        return eComplexAction::increment(by);
+    }
+
     if(isAttacking() && tooFarFromBanner()) {
         cancelAttack();
         const auto s = static_cast<eSoldier*>(character());
@@ -76,7 +80,7 @@ bool eSoldierAction::tooFarFromBanner() const {
     if(!b || !b->tile() || !c->tile()) return false;
     const int dx = c->tile()->x() - b->tile()->x();
     const int dy = c->tile()->y() - b->tile()->y();
-    const int leash = 8 + c->range()/2;
+    const int leash = 8;
     return dx*dx + dy*dy > leash*leash;
 }
 
