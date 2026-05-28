@@ -44,6 +44,7 @@ public:
     void setMilitaryAid(const bool a) { mMilitaryAid = a; }
 
     void moveTo(const int x, const int y);
+    void detachFromTile();
     void moveToPalace();
     void goHome();
     void backFromHome();

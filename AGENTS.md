@@ -10,34 +10,28 @@ Refactor repeated fns into helpers. Debug log with `printf`. New files: kebab-ca
 After making code changes, build with `.\build.bat` to verify. Do not verify with `cmake --build build`.
 
 ## Map
-Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/etradepost.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `zeus-text strings/Zeus_Text.xml` is read-only; reuse runtime strings.
+Game state: `engine/e-game-board.*`, `engine/e-game-board-read.cpp`, `engine/egameboardwrite.cpp`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/trade-post.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `text/Zeus_Text.xml` is read-only; reuse runtime strings.
 
 ## Save
 Goal: all save data is tagged, named, bounded, and safe to add/remove/reorder.
 No backwards compatibility for save migrations unless explicitly asked.
-Do not add legacy readers, optional migration bridges, or old-shape fallbacks by default.
 
 If bug appears after save/reload, inspect serialization first.
 
-If crash happens after reload, the crash site is only evidence. Do not treat it as source until saved fields and restored invariants are checked.
+If crash happens after reload, crash site is only evidence. Check saved fields and restored invariants first.
 
-Do not fix reload crashes with null guards first. First find the corrupted invariant and fix the writer/reader/owner that creates bad state.
+Do not fix reload crashes with null guards first. Fix the bad writer/reader/owner first.
 
-Null guards are allowed only after the root cause is fixed, the state is truly optional, and the final answer explains why the guard is not hiding corruption.
-
-For save/load bugs, fix source fields and post-load restore before changing callers, deleters, or UI paths.
-
-No new raw save bytes. Do not add `val()`, `readStream()`, `writeStream()`, `readStream().read*`, or `writeStream().write*`.
+No new raw save bytes. Do not add `val()`, `readStream()`, `writeStream()`, raw read loops, or raw write loops.
 
 Use stable unique field names. Never rename or reuse. Names describe data, not variables. Bad: `"val"`. Good: `"huntDistance"`.
 
 Enums saved as raw ints (e.g. `eCharActionType`, action `mStage`) are positional. Pin existing entries to explicit integer values (`triremeAction = 49`) so old saves keep loading. New entries pick an unused number (max + 1). Never change an existing value or reuse a retired one.
 
-Before save work, read `payloadField` + `takeField` + `readField` in `fileIO/esavearchive.h`.
+Before save work, read `fileIO/esavearchive.h`: `field`, `archiveField`, pointer helpers, collection helpers.
 
-For new or migrated save code, base `read`/`write` are entry points. They open one `eSaveArchive` and call the virtual field serializer.
-
-For new or migrated save code, children do not override `read`/`write`. Children serialize fields by calling parent first.
+Base `read`/`write` open one `eSaveArchive` and call virtual `serializeFields`.
+Children serialize fields by calling parent first.
 
 ```cpp
 void MyAction::serializeFields(eSaveArchive& ar) {
@@ -77,5 +71,3 @@ ar.arrayField("items", items, [](eSaveArchive& itemAr, Item& item) {
 Use `archiveField()` for grouped subfields.
 
 Use `arrayField()` / `dequeField()` / `countedArrayField()` for collections.
-
-Never loop raw reads/writes.

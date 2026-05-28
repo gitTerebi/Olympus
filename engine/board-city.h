@@ -227,6 +227,7 @@ public:
                        const bool skipNotHome = true);
     void registerSoldierBanner(const stdsptr<SoldierBanner>& b);
     bool unregisterSoldierBanner(const stdsptr<SoldierBanner>& b);
+    void repackPalaceBanners();
 
     bool personPlayerOwner() const;
     ePlayerId owningPlayerId() const;

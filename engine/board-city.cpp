@@ -46,6 +46,9 @@
 
 #include "spawners/espawner.h"
 #include "buildings/ehippodrome.h"
+#include "buildings/epalace.h"
+#include "buildings/epalacetile.h"
+#include "characters/soldier-banner.h"
 #include "epathfinder.h"
 #include "eevent.h"
 
@@ -1976,7 +1979,7 @@ void BoardCity::addSoldier(const eCharacterType st) {
     b->setBothCityIds(mId);
     registerSoldierBanner(b);
     b->incCount();
-    b->moveToPalace();
+    repackPalaceBanners();
 }
 
 void BoardCity::removeSoldier(const eCharacterType st,
@@ -2024,6 +2027,51 @@ void BoardCity::registerSoldierBanner(const stdsptr<SoldierBanner>& b) {
 bool BoardCity::unregisterSoldierBanner(const stdsptr<SoldierBanner>& b) {
     eVectorHelpers::remove(mPalacSoldierBanners, b);
     return eVectorHelpers::remove(mSoldierBanners, b);
+}
+
+void BoardCity::repackPalaceBanners() {
+    if(!mPalace) return;
+    auto ts = mPalace->tiles();
+    if(ts.empty()) return;
+    // iso N view: screenY ~ (x+y), screenX ~ (x-y).
+    // bottom-left = max screenY, min screenX.
+    const auto screenY = [](eTile* const t) { return t->x() + t->y(); };
+    const auto screenX = [](eTile* const t) { return t->x() - t->y(); };
+    std::sort(ts.begin(), ts.end(),
+              [&](ePalaceTile* const a, ePalaceTile* const b) {
+        const auto ta = a->centerTile();
+        const auto tb = b->centerTile();
+        if(!ta || !tb) return false;
+        const int aY = screenY(ta); const int bY = screenY(tb);
+        if(aY != bY) return aY > bY;
+        return screenX(ta) < screenX(tb);
+    });
+    for(const auto& b : mPalacSoldierBanners) {
+        if(b->isAbroad()) continue;
+        if(!b->isHome()) continue;
+        b->detachFromTile();
+    }
+    const eBannerType order[3] = {
+        eBannerType::rockThrower,
+        eBannerType::hoplite,
+        eBannerType::horseman
+    };
+    size_t ti = 0;
+    for(const auto bt : order) {
+        for(const auto& b : mPalacSoldierBanners) {
+            if(b->type() != bt) continue;
+            if(b->isAbroad()) continue;
+            if(!b->isHome()) continue;
+            while(ti < ts.size()) {
+                const auto pt = ts[ti++];
+                if(pt->other()) continue;
+                const auto tt = pt->centerTile();
+                if(!tt) continue;
+                b->moveTo(tt->x(), tt->y());
+                break;
+            }
+        }
+    }
 }
 
 bool BoardCity::personPlayerOwner() const {

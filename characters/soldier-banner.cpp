@@ -6,6 +6,7 @@
 
 #include "engine/etile.h"
 #include "engine/e-game-board.h"
+#include "engine/board-city.h"
 #include "engine/eworlddirection.h"
 #include "engine/eorientation.h"
 #include "characters/esoldier.h"
@@ -196,6 +197,15 @@ void SoldierBanner::moveTo(const int x, const int y) {
     if(!mHome) callSoldiers();
 }
 
+void SoldierBanner::detachFromTile() {
+    if(mTile) {
+        if(mTile->soldierBanner() == this) {
+            mTile->setSoldierBanner(nullptr);
+        }
+        mTile = nullptr;
+    }
+}
+
 void SoldierBanner::moveToPalace() {
     const auto onCid = onCityId();
     const auto cid = cityId();
@@ -207,29 +217,18 @@ void SoldierBanner::moveToPalace() {
         const auto palace = mBoard.palace(cid);
         if(!palace) return;
         auto ts = palace->tiles();
-        const auto dir = mBoard.direction();
+        // iso N view: screenY ~ (x+y), screenX ~ (x-y).
+        // bottom-left = max screenY, min screenX.
+        const auto screenY = [](eTile* const t) { return t->x() + t->y(); };
+        const auto screenX = [](eTile* const t) { return t->x() - t->y(); };
         std::sort(ts.begin(), ts.end(),
-                  [dir](ePalaceTile* const a, ePalaceTile* const b) {
+                  [&](ePalaceTile* const a, ePalaceTile* const b) {
             const auto ta = a->centerTile();
             const auto tb = b->centerTile();
             if(!ta || !tb) return false;
-            const int ax = ta->x(); const int ay = ta->y();
-            const int bx = tb->x(); const int by = tb->y();
-            switch(dir) {
-            case eWorldDirection::N:
-                if(ax != bx) return ax > bx;
-                return ay > by;
-            case eWorldDirection::E:
-                if(ay != by) return ay > by;
-                return ax < bx;
-            case eWorldDirection::S:
-                if(ax != bx) return ax < bx;
-                return ay < by;
-            case eWorldDirection::W:
-                if(ay != by) return ay < by;
-                return ax > bx;
-            }
-            return false;
+            const int aY = screenY(ta); const int bY = screenY(tb);
+            if(aY != bY) return aY > bY;
+            return screenX(ta) < screenX(tb);
         });
         for(const auto t : ts) {
             if(t->other()) continue;

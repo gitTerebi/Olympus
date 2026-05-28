@@ -10,7 +10,7 @@ namespace VanillaStats {
 
 const char* figureName(eCharacterType type);
 
-void apply(eCharacterBase& c, eDifficulty d);
+void apply(eCharacterBase& c, eDifficulty d, bool isPlayer = false);
 
 void applyForCity(eCharacterBase& c, GameBoard& board);
 
