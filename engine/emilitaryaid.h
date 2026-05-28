@@ -5,7 +5,7 @@
 
 #include "pointers/estdselfref.h"
 
-class eGameBoard;
+class GameBoard;
 class eWorldCity;
 class SoldierBanner;
 class eSaveArchive;
@@ -19,7 +19,7 @@ struct eMilitaryAid {
 
     void goBack();
 
-    void serialize(eSaveArchive& ar, eGameBoard* board);
+    void serialize(eSaveArchive& ar, GameBoard* board);
 
     stdsptr<eWorldCity> fCity;
     std::vector<stdsptr<SoldierBanner>> fSoldiers;

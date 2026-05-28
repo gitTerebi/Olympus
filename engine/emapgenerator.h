@@ -4,7 +4,7 @@
 #ifdef __unix__
 
 enum class eTerrain;
-class eGameBoard;
+class GameBoard;
 
 enum class eCityId;
 
@@ -40,7 +40,7 @@ struct eMapGeneratorSettings {
 
 class eMapGenerator {
 public:
-    eMapGenerator(eGameBoard& board);
+    eMapGenerator(GameBoard& board);
 
     using eMGS = eMapGeneratorSettings;
     void generate(const eMGS& settings);
@@ -52,7 +52,7 @@ private:
     void generateSilverAndBronze(const eMGS& settings);
     void generateAnimals(const eMGS& settings);
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 };
 
 #endif

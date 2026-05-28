@@ -12,7 +12,7 @@ public:
     using eColonySelection = std::vector<stdsptr<eWorldCity>>;
     void setSelectColonyMode(const bool scm, const eColonySelection& s);
 
-    void setBoard(eGameBoard* const b);
+    void setBoard(GameBoard* const b);
     void setWorldBoard(eWorldBoard* const b);
 
     using eSelectCityAction = std::function<void(const stdsptr<eWorldCity>&)>;
@@ -36,7 +36,7 @@ private:
     bool mSelectColonyMode = false;
     std::vector<stdsptr<eWorldCity>> mColonySelection;
 
-    eGameBoard* mGameBoard = nullptr;
+    GameBoard* mGameBoard = nullptr;
     eWorldBoard* mWorldBoard = nullptr;
     int mFrame = 0;
 

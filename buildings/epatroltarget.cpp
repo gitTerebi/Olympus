@@ -11,7 +11,7 @@
 #include "characters/echaracter.h"
 #include "engine/e-game-board.h"
 
-ePatrolTarget::ePatrolTarget(eGameBoard& board,
+ePatrolTarget::ePatrolTarget(GameBoard& board,
                              const eBaseTex baseTex,
                              const double overlayX,
                              const double overlayY,

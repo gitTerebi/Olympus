@@ -10,7 +10,7 @@
 void eGiftSizeDialog::initialize(const eResourceType type,
                                  const stdsptr<eWorldCity>& c,
                                  const eRequestFunction& func,
-                                 const eGameBoard& board,
+                                 const GameBoard& board,
                                  const eCityId cid) {
     const auto r = resolution();
     const double mult = r.multiplier();

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eHealer::eHealer(eGameBoard& board) :
+eHealer::eHealer(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fHealer,
                    eCharacterType::healer) {
     eGameTextures::loadHealer();

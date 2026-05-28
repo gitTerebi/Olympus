@@ -5,7 +5,7 @@
 #include "engine/boardData/ecityfinances.h"
 #include "enumbers.h"
 
-eGameUndo::eGameUndo(eGameBoard& board) :
+eGameUndo::eGameUndo(GameBoard& board) :
     mBoard(board) {}
 
 void eGameUndo::startBuild(eBuildingType type) {

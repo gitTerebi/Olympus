@@ -34,7 +34,7 @@ namespace
     constexpr int bribeAttackCooldownMonths = 12;
     constexpr int kInvasionVictoryMonumentId = 1;
 
-    bool hasCommemorativeMonument(eGameBoard &board, const eCityId cid, const int id)
+    bool hasCommemorativeMonument(GameBoard &board, const eCityId cid, const int id)
     {
         if (board.availableBuilding(cid, eBuildingType::commemorative, id))
             return true;
@@ -53,7 +53,7 @@ namespace
 eInvasionEvent::eInvasionEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    eGameBoard &board) : eGameEvent(cid, eGameEventType::invasion,
+    GameBoard &board) : eGameEvent(cid, eGameEventType::invasion,
                                     branch, board),
                          ePointEventValue(eBannerTypeS::landInvasion,
                                           cid, board),
@@ -125,7 +125,7 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity> &city,
     mConquestEvent = conquestEvent;
 }
 
-bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &board)
+bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &board)
 {
     // canInvade?
     const auto ppid = board.personPlayer();
@@ -188,7 +188,7 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, eGameBoard &boa
     return true;
 }
 
-eTile *nearestDisembarkTile(eTile *const tile, eGameBoard &board,
+eTile *nearestDisembarkTile(eTile *const tile, GameBoard &board,
                             const eCityId cid)
 {
     eTile *final = nullptr;

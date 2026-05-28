@@ -9,7 +9,7 @@ class eSaveArchive;
 
 class eHippodromePiece : public eBuildingWithResource {
 public:
-    eHippodromePiece(eGameBoard& board, const eCityId cid);
+    eHippodromePiece(GameBoard& board, const eCityId cid);
     ~eHippodromePiece();
 
     bool spawnsCartWalkers() const override { return true; }

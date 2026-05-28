@@ -286,7 +286,7 @@ public:
     }
 };
 
-void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
+void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
                                          const eCityId cid) {
     eInfoWidget::initialize("");
 

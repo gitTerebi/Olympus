@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eCurator::eCurator(eGameBoard& board) :
+eCurator::eCurator(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fCurator,
                    eCharacterType::curator) {
     eGameTextures::loadCurator();

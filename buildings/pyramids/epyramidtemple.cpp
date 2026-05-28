@@ -4,7 +4,7 @@
 #include "epyramid.h"
 
 ePyramidTemple::ePyramidTemple(const std::vector<eSanctCost>& cost,
-                               eGameBoard& board,
+                               GameBoard& board,
                                const int elevation,
                                const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidTemple,
@@ -13,7 +13,7 @@ ePyramidTemple::ePyramidTemple(const std::vector<eSanctCost>& cost,
 }
 
 ePyramidTemple::ePyramidTemple(ePyramid* const pyramid,
-                               eGameBoard& board,
+                               GameBoard& board,
                                const int elevation,
                                const eCityId cid) :
     ePyramidElement(pyramid,

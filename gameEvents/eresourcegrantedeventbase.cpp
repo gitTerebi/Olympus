@@ -18,7 +18,7 @@ eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eEvent giftPartialSpace,
         const eGameEventType type,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, type, branch, board),
     eCityEventValue(board),
     mGiftCashAccepted(giftCashAccepted),

@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eArmory::eArmory(eGameBoard& board,
+eArmory::eArmory(GameBoard& board,
                  const eCityId cid) :
     eProcessingBuilding(board,
                         &eBuildingTextures::fArmory,

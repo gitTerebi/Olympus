@@ -5,7 +5,7 @@
 
 class eWatchpost : public ePatrolBuilding {
 public:
-    eWatchpost(eGameBoard& board, const eCityId cid);
+    eWatchpost(GameBoard& board, const eCityId cid);
 };
 
 #endif // EWATCHPOST_H

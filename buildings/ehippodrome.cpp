@@ -5,7 +5,7 @@
 
 #include "characters/eracinghorse.h"
 
-eHippodrome::eHippodrome(const eCityId cid, eGameBoard& board) :
+eHippodrome::eHippodrome(const eCityId cid, GameBoard& board) :
     mCid(cid), mBoard(board) {}
 
 void eHippodrome::nextMonth() {

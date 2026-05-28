@@ -489,7 +489,7 @@ void eGodMonsterAction::serializeFields(eSaveArchive& ar) {
 }
 
 stdsptr<eFindFailFunc> eFindFailFunc::sCreate(
-        eGameBoard& board,
+        GameBoard& board,
         const eFindFailFuncType type) {
     switch(type) {
     case eFindFailFuncType::teleport:

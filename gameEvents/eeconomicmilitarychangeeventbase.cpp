@@ -5,7 +5,7 @@
 
 eEconomicMilitaryChangeEventBase::eEconomicMilitaryChangeEventBase(
     const eCityId cid, const eGameEventType type,
-    const eGameEventBranch branch, eGameBoard &board) :
+    const eGameEventBranch branch, GameBoard &board) :
     eGameEvent(cid, type, branch, board),
     eCityEventValue(board) {}
 

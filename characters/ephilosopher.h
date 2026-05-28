@@ -5,7 +5,7 @@
 
 class ePhilosopher : public eBasicPatroler {
 public:
-    ePhilosopher(eGameBoard& board);
+    ePhilosopher(GameBoard& board);
 };
 
 #endif // EPHILOSOPHER_H

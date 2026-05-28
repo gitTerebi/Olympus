@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class ePatrolTarget : public ePatrolBuilding {
 public:
-    ePatrolTarget(eGameBoard& board,
+    ePatrolTarget(GameBoard& board,
                   const eBaseTex baseTex,
                   const double overlayX,
                   const double overlayY,
@@ -38,9 +38,9 @@ private:
 
 class ePT_spawnGetActorFinish : public eCharActFunc {
 public:
-    ePT_spawnGetActorFinish(eGameBoard& board) :
+    ePT_spawnGetActorFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::PT_spawnGetActorFinish) {}
-    ePT_spawnGetActorFinish(eGameBoard& board, ePatrolTarget* const t) :
+    ePT_spawnGetActorFinish(GameBoard& board, ePatrolTarget* const t) :
         eCharActFunc(board, eCharActFuncType::PT_spawnGetActorFinish),
         mTptr(t) {}
 

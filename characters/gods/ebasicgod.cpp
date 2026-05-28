@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eBasicGod::eBasicGod(eGameBoard& board,
+eBasicGod::eBasicGod(GameBoard& board,
                      const eGodTexs godTexs,
                      const eGodType gt) :
     eGod(board, gt),

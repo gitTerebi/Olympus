@@ -52,7 +52,7 @@ static bool isOrangeHarvestMonth(const eMonth m) {
 }
 
 eResourceBuilding::eResourceBuilding(
-        eGameBoard& board, const eResourceBuildingType type,
+        GameBoard& board, const eResourceBuildingType type,
         const eCityId cid) :
     eBuilding(board, resourceTypeToBuildingType(type), 1, 1, cid),
     mType(type), mRipePeriod(resourceTypeToRipePeriod(type)) {

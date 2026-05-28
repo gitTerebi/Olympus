@@ -10,7 +10,7 @@
 eGodQuestFulfilledEvent::eGodQuestFulfilledEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGodQuestEventBase(cid, eGameEventType::godQuestFulfilled, branch, board) {}
 
 void eGodQuestFulfilledEvent::trigger() {

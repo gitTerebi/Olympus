@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eRockMissile::eRockMissile(eGameBoard& board,
+eRockMissile::eRockMissile(GameBoard& board,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::rock, path) {
     eGameTextures::loadRock();

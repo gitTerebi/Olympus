@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eWineVendor::eWineVendor(eGameBoard& board, const eCityId cid) :
+eWineVendor::eWineVendor(GameBoard& board, const eCityId cid) :
     eVendor(board,
             eResourceType::wine, eProvide::wine,
             &eBuildingTextures::fWineVendor,

@@ -101,7 +101,7 @@ public:
 
     eCharActionType type() const { return mType; }
 
-    eGameBoard& board() const;
+    GameBoard& board() const;
 
     void setFinishAction(const stdsptr<eCharActFunc>& f);
     void setFailAction(const stdsptr<eCharActFunc>& f);
@@ -117,13 +117,13 @@ public:
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
-    eGameBoard& board();
+    GameBoard& board();
 protected:
     virtual void serializeFields(eSaveArchive& ar);
     virtual void resumeFromSavedState() {}
 
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     eCharacter* const mCharacter;
     int mIOID = -1;
     const eCharActionType mType;

@@ -2,7 +2,7 @@
 #define VANILLA_STATS_H
 
 class eCharacterBase;
-class eGameBoard;
+class GameBoard;
 enum class eDifficulty;
 enum class eCharacterType;
 
@@ -12,7 +12,7 @@ const char* figureName(eCharacterType type);
 
 void apply(eCharacterBase& c, eDifficulty d);
 
-void applyForCity(eCharacterBase& c, eGameBoard& board);
+void applyForCity(eCharacterBase& c, GameBoard& board);
 
 }
 

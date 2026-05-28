@@ -39,7 +39,7 @@ void AICityPlan::addDistrict(const AIDistrict& a) {
     mDistricts.push_back(a);
 }
 
-int AICityPlan::districtCost(eGameBoard& board, const int id,
+int AICityPlan::districtCost(GameBoard& board, const int id,
                               int* const marble) const {
     int result = 0;
     const auto d = mDistricts[id];
@@ -63,7 +63,7 @@ int AICityPlan::lastBuiltDistrictId() const {
     return mLastBuildDistrict;
 }
 
-bool AICityPlan::buildNextDistrict(eGameBoard& board) {
+bool AICityPlan::buildNextDistrict(GameBoard& board) {
     const int id = nextDistrictId();
     if(id == -1) return false;
     mLastBuildDistrict = id;
@@ -77,14 +77,14 @@ bool AICityPlan::buildNextDistrict(eGameBoard& board) {
     return true;
 }
 
-void AICityPlan::buildAllDistricts(eGameBoard& board) {
+void AICityPlan::buildAllDistricts(GameBoard& board) {
     const int iMax = mDistricts.size();
     for(int i = 0; i < iMax; i++) {
         buildNextDistrict(board);
     }
 }
 
-void AICityPlan::buildScheduled(eGameBoard& board) {
+void AICityPlan::buildScheduled(GameBoard& board) {
     eDistrictIdTmp idTmp(board);
     const auto pid = board.cityIdToPlayerId(mCid);
     for(int i = 0; i < int(mScheduledBuildings.size()); i++) {
@@ -104,7 +104,7 @@ bool AICityPlan::districtBuilt(const int id) const {
     return id <= mLastBuildDistrict;
 }
 
-void AICityPlan::editorDisplayBuildings(eGameBoard& board) {
+void AICityPlan::editorDisplayBuildings(GameBoard& board) {
     eDistrictIdTmp idTmp(board);
     int i = 0;
     for(const auto& d : mDistricts) {

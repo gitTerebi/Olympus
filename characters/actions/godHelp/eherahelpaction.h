@@ -18,7 +18,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
@@ -41,9 +41,9 @@ protected:
 
 class eHrHA_giveFinish : public eCharActFunc {
 public:
-    eHrHA_giveFinish(eGameBoard& board) :
+    eHrHA_giveFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HrHA_giveFinish) {}
-    eHrHA_giveFinish(eGameBoard& board, eHeraHelpAction* const ca) :
+    eHrHA_giveFinish(GameBoard& board, eHeraHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::HrHA_giveFinish),
         mTptr(ca) {}
 
@@ -65,12 +65,12 @@ private:
 
 class eGodProvideAgoraAct : public eGodAct {
 public:
-    eGodProvideAgoraAct(eGameBoard& board,
+    eGodProvideAgoraAct(GameBoard& board,
                         eAgoraBase* const target) :
         eGodAct(board, eGodActType::provideAgora),
         mTarget(target) {}
 
-    eGodProvideAgoraAct(eGameBoard& board) :
+    eGodProvideAgoraAct(GameBoard& board) :
         eGodProvideAgoraAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {

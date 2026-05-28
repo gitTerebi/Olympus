@@ -13,7 +13,7 @@
 eGodQuestEvent::eGodQuestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGodQuestEventBase(cid, eGameEventType::godQuest, branch, board) {
     const auto e4 = eLanguage::text("fulfilled_trigger");
     mFulfilledTrigger = e::make_shared<eEventTrigger>(cid, e4, board);

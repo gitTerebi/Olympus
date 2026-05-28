@@ -5,7 +5,7 @@
 
 class eOceanidSpearthrower : public eSpearthrowerBase {
 public:
-    eOceanidSpearthrower(eGameBoard& board);
+    eOceanidSpearthrower(GameBoard& board);
 };
 
 #endif // EOCEANIDSPEARTHROWER_H

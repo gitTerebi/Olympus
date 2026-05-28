@@ -23,7 +23,7 @@ std::vector<SoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
     return result;
 }
 
-void eArmyMenu::initialize(eGameBoard &b)
+void eArmyMenu::initialize(GameBoard &b)
 {
     mBoard = &b;
 

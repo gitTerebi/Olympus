@@ -7,7 +7,7 @@
 class eWaterMonster : public eMonster {
 public:
     using eCharTexs = eWaterMonsterTextures eCharacterTextures::*;
-    eWaterMonster(eGameBoard& board,
+    eWaterMonster(GameBoard& board,
                   const eCharTexs charTexs,
                   const eMonsterType type);
 

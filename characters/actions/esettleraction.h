@@ -36,9 +36,9 @@ protected:
 
 class eSA_findHouseFail : public eCharActFunc {
 public:
-    eSA_findHouseFail(eGameBoard& board) :
+    eSA_findHouseFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_findHouseFail) {}
-    eSA_findHouseFail(eGameBoard& board, eSettlerAction* const t) :
+    eSA_findHouseFail(GameBoard& board, eSettlerAction* const t) :
         eCharActFunc(board, eCharActFuncType::SA_findHouseFail),
         mTptr(t) {}
 
@@ -58,9 +58,9 @@ private:
 
 class eSA_findHouseFinish : public eCharActFunc {
 public:
-    eSA_findHouseFinish(eGameBoard& board) :
+    eSA_findHouseFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_findHouseFinish) {}
-    eSA_findHouseFinish(eGameBoard& board, eSettlerAction* const t) :
+    eSA_findHouseFinish(GameBoard& board, eSettlerAction* const t) :
         eCharActFunc(board, eCharActFuncType::SA_findHouseFinish),
         mTptr(t) {}
 

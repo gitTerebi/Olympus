@@ -8,7 +8,7 @@ public:
     eDionysusHelpAction(eCharacter* const c);
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 };
 
 #endif // EDIONYSUSHELPACTION_H

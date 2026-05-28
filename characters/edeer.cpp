@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eDeer::eDeer(eGameBoard& board) :
+eDeer::eDeer(GameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fDeer,
                 eCharacterType::deer) {
     eGameTextures::loadDeer();

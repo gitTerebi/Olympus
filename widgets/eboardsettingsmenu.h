@@ -3,14 +3,14 @@
 
 #include "eframedwidget.h"
 
-class eGameBoard;
+class GameBoard;
 class GameWidget;
 
 class eBoardSettingsMenu : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(GameWidget* const gw, eGameBoard& board);
+    void initialize(GameWidget* const gw, GameBoard& board);
 };
 
 #endif // EBOARDSETTINGSMENU_H

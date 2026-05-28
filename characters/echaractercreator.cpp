@@ -95,7 +95,7 @@
 #include "characters/eorichalcminer.h"
 
 stdsptr<eCharacter> eCharacter::sCreate(
-        const eCharacterType t, eGameBoard& board) {
+        const eCharacterType t, GameBoard& board) {
     switch(t) {
     case eCharacterType::none:
         return nullptr;

@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eHippodrome {
 public:
-    eHippodrome(const eCityId cid, eGameBoard& board);
+    eHippodrome(const eCityId cid, GameBoard& board);
 
     void nextMonth();
 
@@ -46,7 +46,7 @@ private:
     void updatePaths();
 
     const eCityId mCid;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     int mCleaningPartId = 0;
 
     std::vector<eN> mPieces;

@@ -14,7 +14,7 @@ enum class eTradePostType {
 
 class TradePost : public WarehouseBase {
 public:
-    TradePost(eGameBoard& board, eWorldCity& city,
+    TradePost(GameBoard& board, eWorldCity& city,
                const eCityId cid,
                const eTradePostType type = eTradePostType::post);
     ~TradePost();
@@ -61,7 +61,7 @@ public:
     eTradePostType tpType() const { return mType; }
 
     using eCharacterCreator =
-        std::function<stdsptr<eCharacter>(eTile*, eGameBoard&)>;
+        std::function<stdsptr<eCharacter>(eTile*, GameBoard&)>;
     void setCharacterCreator(const eCharacterCreator& c);
 
     eBuilding* unpackBuilding() const { return mUnpackBuilding; }

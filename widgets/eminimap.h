@@ -18,7 +18,7 @@ public:
 
     void renderTargetsReset() override;
 
-    void setBoard(eGameBoard* const board);
+    void setBoard(GameBoard* const board);
 
     void setDirection(const eWorldDirection dir);
 
@@ -65,7 +65,7 @@ private:
 
     int mTDim = 2;
 
-    eGameBoard* mBoard = nullptr;
+    GameBoard* mBoard = nullptr;
 
     std::map<eWorldDirection, eDirectionTexture> mTextures;
     eWorldDirection mDir = eWorldDirection::N;

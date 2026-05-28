@@ -13,7 +13,7 @@
 #include "engine/e-game-board.h"
 #include "engine/model-data.h"
 
-eTower::eTower(eGameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
+eTower::eTower(GameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
 {
     eGameTextures::loadGatehouseAndTower();
     setHP(eNumbers::sTowerHP);

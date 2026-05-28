@@ -720,7 +720,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     }
 }
 
-eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
+eHerosHall::eHerosHall(const eHeroType type, GameBoard& board,
                        const eCityId cid) :
     eBuilding(board, sHeroTypeToHallType(type), 4, 4, cid),
     mType(type) {

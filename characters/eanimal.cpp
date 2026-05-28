@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eAnimal::eAnimal(eGameBoard& board,
+eAnimal::eAnimal(GameBoard& board,
                  const eCharTexs charTexs,
                  const eCharacterType type) :
     eCharacter(board, type),

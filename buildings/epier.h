@@ -5,7 +5,7 @@
 
 class ePier : public eBuilding {
 public:
-    ePier(eGameBoard& board, const eDiagonalOrientation o, const eCityId cid);
+    ePier(GameBoard& board, const eDiagonalOrientation o, const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;

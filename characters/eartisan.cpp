@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eArtisan::eArtisan(eGameBoard& board) :
+eArtisan::eArtisan(GameBoard& board) :
     eCharacter(board, eCharacterType::artisan) {
     eGameTextures::loadArtisan();
 }

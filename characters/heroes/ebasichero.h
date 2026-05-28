@@ -7,7 +7,7 @@
 class eBasicHero : public eHero {
 public:
     using eCharTexs = eHeroTextures eCharacterTextures::*;
-    eBasicHero(eGameBoard& board,
+    eBasicHero(GameBoard& board,
                const eCharTexs charTexs,
                const eHeroType type);
 

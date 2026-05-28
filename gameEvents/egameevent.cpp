@@ -49,7 +49,7 @@
 eGameEvent::eGameEvent(const eCityId cid,
                        const eGameEventType type,
                        const eGameEventBranch branch,
-                       eGameBoard& board) :
+                       GameBoard& board) :
     mCid(cid), mType(type), mBranch(branch), mBoard(board) {
     mBoard.addGameEvent(this);
 
@@ -94,7 +94,7 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         const eCityId cid,
         const eGameEventType type,
         const eGameEventBranch branch,
-        eGameBoard& board) {
+        GameBoard& board) {
     switch(type) {
     case eGameEventType::godVisit:
         return e::make_shared<eGodVisitEvent>(cid, branch, board);

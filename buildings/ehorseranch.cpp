@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-eHorseRanch::eHorseRanch(eGameBoard& board,
+eHorseRanch::eHorseRanch(GameBoard& board,
                          const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::horseRanch, 3, 3, 15, cid) {
     eGameTextures::loadHorseRanch();

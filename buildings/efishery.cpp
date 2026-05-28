@@ -7,7 +7,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 
-eFishery::eFishery(eGameBoard& board,
+eFishery::eFishery(GameBoard& board,
                    const eDiagonalOrientation o,
                    const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::fishery,

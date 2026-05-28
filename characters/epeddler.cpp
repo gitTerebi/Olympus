@@ -6,7 +6,7 @@
 #include "fileIO/esavearchive.h"
 #include "engine/e-game-board.h"
 
-ePeddler::ePeddler(eGameBoard& board) :
+ePeddler::ePeddler(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fPeddler,
                    eCharacterType::peddler) {
     setProvide(eProvide::peddler, 10000);

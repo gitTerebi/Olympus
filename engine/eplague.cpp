@@ -6,7 +6,7 @@
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
 
-ePlague::ePlague(const eCityId cid, eGameBoard& board) :
+ePlague::ePlague(const eCityId cid, GameBoard& board) :
     mBoard(board), mCityId(cid) {}
 
 void ePlague::randomSpread() {

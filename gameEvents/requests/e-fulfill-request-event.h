@@ -35,7 +35,7 @@ class eFulfillRequestEvent : public eGameEvent,
 public:
     eFulfillRequestEvent(const eCityId cid,
                          const eGameEventBranch branch,
-                         eGameBoard& board);
+                         GameBoard& board);
     ~eFulfillRequestEvent();
 
     void trigger() override;
@@ -70,20 +70,20 @@ private:
         refuse
     };
 
-    bool startRequest(eGameBoard& board);
-    bool startQueuedRequest(eGameBoard& board);
-    bool initializeRequest(eGameBoard& board);
-    eEventData createEventData(eGameBoard& board) const;
-    void showRequestFinished(eGameBoard& board, eEventData& ed);
-    void showRequestPopup(eGameBoard& board, eEventData& ed);
-    void addFulfillButton(eGameBoard& board, eEventData& ed);
-    void addDrachmasFulfillButton(eGameBoard& board, eEventData& ed);
-    void addResourceFulfillButtons(eGameBoard& board, eEventData& ed);
-    void addPostponeButton(eGameBoard& board, eEventData& ed);
-    void addRefuseButton(eGameBoard& board, eEventData& ed);
-    void addRequestToSidePanel(eGameBoard& board);
+    bool startRequest(GameBoard& board);
+    bool startQueuedRequest(GameBoard& board);
+    bool initializeRequest(GameBoard& board);
+    eEventData createEventData(GameBoard& board) const;
+    void showRequestFinished(GameBoard& board, eEventData& ed);
+    void showRequestPopup(GameBoard& board, eEventData& ed);
+    void addFulfillButton(GameBoard& board, eEventData& ed);
+    void addDrachmasFulfillButton(GameBoard& board, eEventData& ed);
+    void addResourceFulfillButtons(GameBoard& board, eEventData& ed);
+    void addPostponeButton(GameBoard& board, eEventData& ed);
+    void addRefuseButton(GameBoard& board, eEventData& ed);
+    void addRequestToSidePanel(GameBoard& board);
     void finished(eEventTrigger& t, const eReason& r);
-    void advanceToNextStep(eGameBoard& board);
+    void advanceToNextStep(GameBoard& board);
     eDate complyDate() const;
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 

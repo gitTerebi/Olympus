@@ -8,7 +8,7 @@
 class eFightingPatroler : public eCharacter {
 public:
     using eCharTexs = eFightingCharacterTextures eCharacterTextures::*;
-    eFightingPatroler(eGameBoard& board, const eCharTexs charTexs,
+    eFightingPatroler(GameBoard& board, const eCharTexs charTexs,
                       const eCharacterType type);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;

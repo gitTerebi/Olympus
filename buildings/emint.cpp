@@ -3,7 +3,7 @@
 #include "characters/esilverminer.h"
 #include "textures/egametextures.h"
 
-eMint::eMint(eGameBoard& board, const eCityId cid) :
+eMint::eMint(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fMint,
                              -3.73, -3.73,

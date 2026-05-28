@@ -243,7 +243,7 @@ public:
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
-    void nextMonth(eGameBoard* const board);
+    void nextMonth(GameBoard* const board);
     void nextYear();
 
     void setTroops(const int t) { mTroops = t; }

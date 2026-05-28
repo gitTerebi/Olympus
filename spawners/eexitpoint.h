@@ -7,14 +7,14 @@ class eExitPoint : public eBanner {
 public:
     eExitPoint(const int id,
                eTile* const tile,
-               eGameBoard& board);
+               GameBoard& board);
 };
 
 class eRiverExitPoint : public eBanner {
 public:
     eRiverExitPoint(const int id,
                     eTile* const tile,
-                    eGameBoard& board);
+                    GameBoard& board);
 };
 
 #endif // EEXITPOINT_H

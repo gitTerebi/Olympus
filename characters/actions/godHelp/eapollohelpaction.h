@@ -18,7 +18,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 
     void rebuildCurrentStage();
     void finishHealing();
@@ -37,9 +37,9 @@ private:
 
 class eApHA_healFinish : public eCharActFunc {
 public:
-    eApHA_healFinish(eGameBoard& board) :
+    eApHA_healFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::ApHA_healFinish) {}
-    eApHA_healFinish(eGameBoard& board, eApolloHelpAction* const ca) :
+    eApHA_healFinish(GameBoard& board, eApolloHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::ApHA_healFinish),
         mTptr(ca) {}
 
@@ -61,12 +61,12 @@ private:
 
 class eApolloHelpAct : public eGodAct {
 public:
-    eApolloHelpAct(eGameBoard& board,
+    eApolloHelpAct(GameBoard& board,
                    eSmallHouse* const target) :
         eGodAct(board, eGodActType::apolloHelp),
         mTarget(target) {}
 
-    eApolloHelpAct(eGameBoard& board) :
+    eApolloHelpAct(GameBoard& board) :
         eApolloHelpAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {

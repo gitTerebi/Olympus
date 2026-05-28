@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 eShepherdBase::eShepherdBase(
-        eGameBoard& board, const eCharTexs charTexs,
+        GameBoard& board, const eCharTexs charTexs,
         const eCharacterType type) :
     eResourceCollectorBase(board, type),
     mTextures(eGameTextures::characters()),

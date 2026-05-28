@@ -7,7 +7,7 @@
 
 eWorldBoard::eWorldBoard() {}
 
-void eWorldBoard::nextMonth(eGameBoard *const board)
+void eWorldBoard::nextMonth(GameBoard *const board)
 {
     for (const auto &c : mCities)
     {

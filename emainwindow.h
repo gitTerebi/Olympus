@@ -12,7 +12,7 @@
 
 using eSlot = std::function<void()>;
 
-class eGameBoard;
+class GameBoard;
 class GameWidget;
 class eWorldWidget;
 class eCampaign;
@@ -61,7 +61,7 @@ public:
     void setPopupForTroops(const bool b);
     void setLastDifficulty(const eDifficulty d);
 
-    void startGameAction(eGameBoard* const board,
+    void startGameAction(GameBoard* const board,
                          const GameWidgetSettings& settings);
     void startGameAction(const stdsptr<eCampaign>& c,
                          const GameWidgetSettings& settings);
@@ -84,7 +84,7 @@ public:
     void showChooseGameEditMenu();
     void showGame(const stdsptr<eCampaign>& c,
                   const GameWidgetSettings& settings);
-    void showGame(eGameBoard* b,
+    void showGame(GameBoard* b,
                   const GameWidgetSettings& settings);
     void showWorld();
 
@@ -127,7 +127,7 @@ private:
     int mCtrlPressed = 0;
 
     stdsptr<eCampaign> mCampaign;
-    eGameBoard* mBoard = nullptr;
+    GameBoard* mBoard = nullptr;
     GameWidget* mGW = nullptr;
     eWorldWidget* mWW = nullptr;
 

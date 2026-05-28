@@ -17,7 +17,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
@@ -30,9 +30,9 @@ private:
 
 class eZHA_killFinish : public eCharActFunc {
 public:
-    eZHA_killFinish(eGameBoard& board) :
+    eZHA_killFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::ZHA_killFinish) {}
-    eZHA_killFinish(eGameBoard& board, const eCityId cid) :
+    eZHA_killFinish(GameBoard& board, const eCityId cid) :
         eCharActFunc(board, eCharActFuncType::ZHA_killFinish),
         mCid(cid) {}
 

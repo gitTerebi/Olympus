@@ -7,7 +7,7 @@ class eDisembarkPoint : public eBanner {
 public:
     eDisembarkPoint(const int id,
                     eTile* const tile,
-                    eGameBoard& board);
+                    GameBoard& board);
 };
 
 #endif // EDISEMBARKPOINT_H

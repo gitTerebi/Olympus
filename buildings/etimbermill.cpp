@@ -3,7 +3,7 @@
 #include "characters/elumberjack.h"
 #include "engine/e-game-board.h"
 
-eTimberMill::eTimberMill(eGameBoard& board, const eCityId cid) :
+eTimberMill::eTimberMill(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fTimberMill,
                              -3.65, -3.65,

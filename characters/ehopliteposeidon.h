@@ -5,7 +5,7 @@
 
 class eHoplitePoseidon : public eHopliteBase {
 public:
-    eHoplitePoseidon(eGameBoard& board);
+    eHoplitePoseidon(GameBoard& board);
 };
 
 #endif // EHOPLITEPOSEIDON_H

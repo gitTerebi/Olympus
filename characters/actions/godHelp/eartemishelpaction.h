@@ -8,7 +8,7 @@ public:
     eArtemisHelpAction(eCharacter* const c);
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 };
 
 #endif // EARTEMISHELPACTION_H

@@ -5,7 +5,7 @@
 
 #include "textures/egametextures.h"
 
-eTrader::eTrader(eGameBoard& board) :
+eTrader::eTrader(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fTrader,
                    eCharacterType::trader) {
     eGameTextures::loadTrader();

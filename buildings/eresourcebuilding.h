@@ -13,7 +13,7 @@ enum class eResourceBuildingType {
 
 class eResourceBuilding : public eBuilding {
 public:
-    eResourceBuilding(eGameBoard& board,
+    eResourceBuilding(GameBoard& board,
                       const eResourceBuildingType type,
                       const eCityId cid);
 

@@ -5,7 +5,7 @@
 
 class eSheep : public eDomesticatedAnimal {
 public:
-    eSheep(eGameBoard& board);
+    eSheep(GameBoard& board);
 
 private:
     void setNakedTexture();

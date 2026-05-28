@@ -32,7 +32,7 @@ public:
     eWorldBoard(const eWorldBoard&) = delete;
     eWorldBoard& operator=(const eWorldBoard&) = delete;
 
-    void nextMonth(eGameBoard* const board);
+    void nextMonth(GameBoard* const board);
     void nextYear();
 
     std::vector<stdsptr<eWorldCity>> getTribute() const;

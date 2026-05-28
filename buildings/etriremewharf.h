@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eTriremeWharf : public eEmployingBuilding {
 public:
-    eTriremeWharf(eGameBoard& board,
+    eTriremeWharf(GameBoard& board,
                   const eDiagonalOrientation o,
                   const eCityId cid);
     ~eTriremeWharf();

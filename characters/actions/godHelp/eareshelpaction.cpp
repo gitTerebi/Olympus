@@ -26,7 +26,7 @@ bool eAresHelpAction::decide() {
 }
 
 bool eAresHelpAction::sHelpNeeded(const ePlayerId pid,
-                                  const eGameBoard& board) {
+                                  const GameBoard& board) {
     const auto& cs = board.conquests(pid);
     return !cs.empty();
 }

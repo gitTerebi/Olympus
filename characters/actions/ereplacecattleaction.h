@@ -34,9 +34,9 @@ private:
 
 class eRC_finishAction : public eCharActFunc {
 public:
-    eRC_finishAction(eGameBoard& board) :
+    eRC_finishAction(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::RC_finishAction) {}
-    eRC_finishAction(eGameBoard& board,
+    eRC_finishAction(GameBoard& board,
                      eReplaceCattleAction* const a,
                      eCharacter* const c,
                      eCharacter* const cc) :
@@ -59,9 +59,9 @@ private:
 
 class eRC_finishWalkingAction : public eCharActFunc {
 public:
-    eRC_finishWalkingAction(eGameBoard& board) :
+    eRC_finishWalkingAction(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::RC_finishWalkingAction) {}
-    eRC_finishWalkingAction(eGameBoard& board,
+    eRC_finishWalkingAction(GameBoard& board,
                             eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::RC_finishWalkingAction),
         mCattle(c) {}

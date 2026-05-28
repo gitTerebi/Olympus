@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 
-eHorsemanBase::eHorsemanBase(eGameBoard& board,
+eHorsemanBase::eHorsemanBase(GameBoard& board,
                              const eCharTexs charTexs,
                              const eCharacterType type) :
     eSoldier(board, charTexs, type) {

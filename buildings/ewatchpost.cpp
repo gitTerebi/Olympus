@@ -3,7 +3,7 @@
 #include "characters/ewatchman.h"
 #include "textures/egametextures.h"
 
-eWatchpost::eWatchpost(eGameBoard& board,
+eWatchpost::eWatchpost(GameBoard& board,
                        const eCityId cid) :
     ePatrolBuilding(board, &eBuildingTextures::fWatchPost,
                     -0.25, -2.1,

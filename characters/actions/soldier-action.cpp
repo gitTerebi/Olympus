@@ -199,8 +199,8 @@ void eSoldierAction::goAbroad() {
 
 eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
                                      const eCityId cid,
-                                     const eGameBoard& brd) {
-    eGameBoard::eBuildingValidator v;
+                                     const GameBoard& brd) {
+    GameBoard::eBuildingValidator v;
     if(t == eCharacterType::rockThrower ||
        t == eCharacterType::archerPoseidon) {
         v = [](eBuilding* const b) {

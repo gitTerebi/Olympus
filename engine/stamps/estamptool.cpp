@@ -559,7 +559,7 @@ void eStampTool::buildingDrawOffset(const int sw, const int sh,
     }
 }
 
-void eStampTool::paintPreview(int baseX, int baseY, eGameBoard* board,
+void eStampTool::paintPreview(int baseX, int baseY, GameBoard* board,
                               bool editorMode, eCityId viewedCityId, ePlayerId playerId,
                               const eDrawXY& drawXY, const eDrawTex& drawTex,
                               const eDrawAgora& drawAgora,

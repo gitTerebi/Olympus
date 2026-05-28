@@ -7,7 +7,7 @@
 #include "widgets/game-widget.h"
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
-                                                 eGameBoard* const board,
+                                                 GameBoard* const board,
                                                  GameWidget* const gw) {
     const auto& settings = window->settings();
     std::vector<eOptionsMenu::ePage> pages = {

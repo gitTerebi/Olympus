@@ -5,7 +5,7 @@
 
 class eUrchinGatherer : public eResourceCollectorBase {
 public:
-    eUrchinGatherer(eGameBoard& board);
+    eUrchinGatherer(GameBoard& board);
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };
 

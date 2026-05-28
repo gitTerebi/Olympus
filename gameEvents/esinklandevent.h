@@ -15,7 +15,7 @@ class eSinkLandEvent : public eGameEvent,
 public:
     eSinkLandEvent(const eCityId cid,
                    const eGameEventBranch branch,
-                   eGameBoard& board);
+                   GameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

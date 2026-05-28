@@ -5,7 +5,7 @@
 
 class eTrojanHoplite : public eHopliteBase {
 public:
-    eTrojanHoplite(eGameBoard& board);
+    eTrojanHoplite(GameBoard& board);
 };
 
 #endif // ETROJANHOPLITE_H

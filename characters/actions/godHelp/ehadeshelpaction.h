@@ -17,7 +17,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 
     void rebuildCurrentStage();
     void finishGiving();
@@ -36,9 +36,9 @@ private:
 
 class eHdHA_giveFinish : public eCharActFunc {
 public:
-    eHdHA_giveFinish(eGameBoard& board) :
+    eHdHA_giveFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HdHA_giveFinish) {}
-    eHdHA_giveFinish(eGameBoard& board, eHadesHelpAction* const ca) :
+    eHdHA_giveFinish(GameBoard& board, eHadesHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::HdHA_giveFinish),
         mTptr(ca) {}
 
@@ -60,10 +60,10 @@ private:
 
 class eGodProvideDrachmasAct : public eGodAct {
 public:
-    eGodProvideDrachmasAct(eGameBoard& board, const eCityId cid) :
+    eGodProvideDrachmasAct(GameBoard& board, const eCityId cid) :
         eGodAct(board, eGodActType::provideDrachmas),
         mCityId(cid) {}
-    eGodProvideDrachmasAct(eGameBoard& board) :
+    eGodProvideDrachmasAct(GameBoard& board) :
         eGodProvideDrachmasAct(board, eCityId::neutralFriendly) {}
 
     eMissileTarget find(eTile* const t) override {

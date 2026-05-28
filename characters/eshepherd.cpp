@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eShepherd::eShepherd(eGameBoard& board) :
+eShepherd::eShepherd(GameBoard& board) :
     eShepherdBase(board, &eCharacterTextures::fShepherd,
                   eCharacterType::shepherd) {
     eGameTextures::loadShepherd();

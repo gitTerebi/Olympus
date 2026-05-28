@@ -108,7 +108,7 @@ void eHeraHelpAction::finishGiving() {
 }
 
 bool eHeraHelpAction::sHelpNeeded(const eCityId cid,
-                                  const eGameBoard& board) {
+                                  const GameBoard& board) {
     const auto as = board.agoras(cid);
     for(const auto a : as) {
         int space = 0;

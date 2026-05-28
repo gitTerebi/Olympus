@@ -3,7 +3,7 @@
 
 #include "eframedwidget.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eGameMainMenu : public eFramedWidget {
 public:

@@ -86,7 +86,7 @@ void eAtlasHelpAction::finishGiving() {
 }
 
 bool eAtlasHelpAction::sHelpNeeded(const eCityId cid,
-                                   const eGameBoard& board) {
+                                   const GameBoard& board) {
     eMonument* b = nullptr;
     const int r = board.maxMonumentSpaceForResource(cid, &b);
     return r > 0;

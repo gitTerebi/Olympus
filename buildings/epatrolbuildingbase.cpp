@@ -10,7 +10,7 @@ eTile* ePatrolBuildingBase::patrolStartTile() const {
 }
 
 ePatrolBuildingBase::ePatrolBuildingBase(
-        eGameBoard& board,
+        GameBoard& board,
         const eCharGenerator& charGen,
         const eActGenerator& actGen,
         const eBuildingType type,
@@ -32,7 +32,7 @@ ePatrolBuildingBase::sDefaultActGenerator(
     return e::make_shared<ePatrolAction>(c, b, path, dirTimes);
 }
 
-ePatrolBuildingBase::ePatrolBuildingBase(eGameBoard& board,
+ePatrolBuildingBase::ePatrolBuildingBase(GameBoard& board,
         const eCharGenerator& charGen,
         const eBuildingType type,
         const int sw, const int sh,

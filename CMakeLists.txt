@@ -362,7 +362,7 @@ set(SOURCES
     ebuildablehelpers.cpp
     efontcolor.cpp
     egamedir.cpp
-    ecursors.cpp
+    cursors.cpp
     gameEvents/invasions/invasion-handler.cpp
     eiteratesquare.cpp
     elanguage.cpp

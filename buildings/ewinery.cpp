@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eWinery::eWinery(eGameBoard& board, const eCityId cid) :
+eWinery::eWinery(GameBoard& board, const eCityId cid) :
     eProcessingBuilding(board,
                         &eBuildingTextures::fWinery,
                         -2.2, -3.25,

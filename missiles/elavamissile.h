@@ -5,7 +5,7 @@
 
 class eLavaMissile : public eMissile {
 public:
-    eLavaMissile(eGameBoard& board,
+    eLavaMissile(GameBoard& board,
                  const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture>

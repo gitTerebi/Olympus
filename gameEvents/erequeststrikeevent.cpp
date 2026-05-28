@@ -11,7 +11,7 @@
 eRequestStrikeEvent::eRequestStrikeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::requestStrike, branch, board) {}
 
 const double gStrikeFrac = 0.67;

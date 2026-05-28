@@ -13,7 +13,7 @@ eWorkforceAllocationWidget::eWorkforceAllocationWidget(
     eInfoWidget(window, mw, false, false) {}
 
 void eWorkforceAllocationWidget::initialize(
-        eGameBoard& board, const eCityId cid) {
+        GameBoard& board, const eCityId cid) {
     mBoard = &board;
     mCityId = cid;
 

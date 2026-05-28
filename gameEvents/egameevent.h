@@ -81,7 +81,7 @@ public:
     eGameEvent(const eCityId cid,
                const eGameEventType type,
                const eGameEventBranch branch,
-               eGameBoard& board);
+               GameBoard& board);
     ~eGameEvent();
 
     virtual void trigger() = 0;
@@ -96,7 +96,7 @@ public:
     static stdsptr<eGameEvent> sCreate(const eCityId cid,
                                        const eGameEventType type,
                                        const eGameEventBranch branch,
-                                       eGameBoard& board);
+                                       GameBoard& board);
 
     eGameEventType type() const { return mType; }
 
@@ -192,7 +192,7 @@ public:
 
     eGameEvent* parent() const { return mParent; }
 
-    eGameBoard* gameBoard() const { return &mBoard; }
+    GameBoard* gameBoard() const { return &mBoard; }
     eWorldBoard* worldBoard() const;
 
     void startingNewEpisode();
@@ -224,7 +224,7 @@ private:
     const eCityId mCid;
     const eGameEventType mType;
     const eGameEventBranch mBranch;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     bool mEpisodeEvent = false;
     eWorldBoard* mWorldBoard = nullptr;

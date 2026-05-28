@@ -11,7 +11,7 @@ class eReceiveTributeEvent : public eGameEvent {
 public:
     eReceiveTributeEvent(const eCityId cid,
                          const eGameEventBranch branch,
-                         eGameBoard& board);
+                         GameBoard& board);
 
     void initialize(const stdsptr<eWorldCity>& c);
 

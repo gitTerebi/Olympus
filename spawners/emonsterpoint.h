@@ -7,7 +7,7 @@ class eMonsterPoint : public eBanner {
 public:
     eMonsterPoint(const int id,
                   eTile* const tile,
-                  eGameBoard& board);
+                  GameBoard& board);
 };
 
 #endif // EMONSTERPOINT_H

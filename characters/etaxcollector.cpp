@@ -4,7 +4,7 @@
 
 #include "elimits.h"
 
-eTaxCollector::eTaxCollector(eGameBoard& board) :
+eTaxCollector::eTaxCollector(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fTaxCollector,
                    eCharacterType::taxCollector) {
     eGameTextures::loadTaxCollector();

@@ -13,7 +13,7 @@
 
 #include <cstdio>
 
-eAgoraBase::eAgoraBase(eGameBoard& board,
+eAgoraBase::eAgoraBase(GameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
                        const eAgoraOrientation o,

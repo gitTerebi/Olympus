@@ -5,7 +5,7 @@
 
 ePyramidBuildingPart::ePyramidBuildingPart(
         const std::vector<eSanctCost>& cost,
-        eGameBoard& board, const int elevation,
+        GameBoard& board, const int elevation,
         const eCityId cid) :
     ePyramidElement(cost, board,
                     eBuildingType::pyramidPart,
@@ -13,7 +13,7 @@ ePyramidBuildingPart::ePyramidBuildingPart(
 
 ePyramidBuildingPart::ePyramidBuildingPart(
         ePyramid* const pyramid,
-        eGameBoard& board, const int elevation,
+        GameBoard& board, const int elevation,
         const eCityId cid) :
     ePyramidElement(pyramid, {}, board,
                     eBuildingType::pyramidPart,

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eEnemyBoat::eEnemyBoat(eGameBoard& board) :
+eEnemyBoat::eEnemyBoat(GameBoard& board) :
     eBoatBase(board, &eCharacterTextures::fEnemyBoat,
               eCharacterType::enemyBoat) {
     eGameTextures::loadEnemyBoat();

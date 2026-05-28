@@ -245,7 +245,7 @@ void eWorldWidget::initialize() {
     mSettingsButton->move(xxx, mAddCityButton->y() + mAddCityButton->height() + p);
 }
 
-void eWorldWidget::setBoard(eGameBoard* const board) {
+void eWorldWidget::setBoard(GameBoard* const board) {
     mBoard = board;
     mWMW->setBoard(board);
     mWM->setGameBoard(board);
@@ -472,7 +472,7 @@ bool eWorldWidget::keyPressEvent(const eKeyPressEvent& e) {
     if(edit) return true;
     const auto k = e.key();
     if(k == SDL_SCANCODE_ESCAPE) {
-        window()->showGame(static_cast<eGameBoard*>(nullptr),
+        window()->showGame(static_cast<GameBoard*>(nullptr),
                            GameWidgetSettings());
     }
     return true;

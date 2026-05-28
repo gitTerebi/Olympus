@@ -9,7 +9,7 @@
 eGodTradeResumesEvent::eGodTradeResumesEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::godTradeResumes, branch, board) {}
 
 void eGodTradeResumesEvent::trigger() {

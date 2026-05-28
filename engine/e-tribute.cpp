@@ -22,7 +22,7 @@ eTributePayment eTributeHelpers::receiveTribute(const eWorldCity &city)
     return {city.receiveTributeType(), city.receiveTributeCount()};
 }
 
-void eTributeHelpers::receiveTributeFromCity(eGameBoard &board, const ePlayerId pid, const stdsptr<eWorldCity> &city, const bool postpone)
+void eTributeHelpers::receiveTributeFromCity(GameBoard &board, const ePlayerId pid, const stdsptr<eWorldCity> &city, const bool postpone)
 {
     if (!city)
         return;
@@ -34,7 +34,7 @@ void eTributeHelpers::receiveTributeFromCity(eGameBoard &board, const ePlayerId 
     e->trigger();
 }
 
-void eTributeHelpers::payTributeToCity(eGameBoard &board, const eCityId playerCityId, const stdsptr<eWorldCity> &parentCity)
+void eTributeHelpers::payTributeToCity(GameBoard &board, const eCityId playerCityId, const stdsptr<eWorldCity> &parentCity)
 {
     if (!parentCity)
         return;

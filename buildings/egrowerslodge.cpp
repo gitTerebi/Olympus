@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <memory>
 
-eGrowersLodge::eGrowersLodge(eGameBoard& board, const eGrowerType type,
+eGrowersLodge::eGrowersLodge(GameBoard& board, const eGrowerType type,
                              const eCityId cid) :
     eEmployingBuilding(board,
                        type == eGrowerType::grapesAndOlives ?

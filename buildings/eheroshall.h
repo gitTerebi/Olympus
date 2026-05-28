@@ -84,7 +84,7 @@ class eSaveArchive;
 
 class eHerosHall : public eBuilding {
 public:
-    eHerosHall(const eHeroType type, eGameBoard& board,
+    eHerosHall(const eHeroType type, GameBoard& board,
                const eCityId cid);
     ~eHerosHall();
 

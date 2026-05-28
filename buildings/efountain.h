@@ -6,7 +6,7 @@
 
 class eFountain : public ePatrolBuilding {
 public:
-    eFountain(eGameBoard& board, const eCityId cid);
+    eFountain(GameBoard& board, const eCityId cid);
 
     int spawnCooldown() const override { return eNumbers::sWaterCarrierSpawnCooldown; }
 };

@@ -13,7 +13,7 @@ struct ePyramidSettings {
 
 class ePyramid : public eMonument {
 public:
-    ePyramid(eGameBoard& board,
+    ePyramid(GameBoard& board,
              const eBuildingType type,
              const int sw, const int sh,
              const eCityId cid);

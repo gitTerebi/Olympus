@@ -60,7 +60,7 @@
 
 #include "eiteratesquare.h"
 
-eInvasionHandler::eInvasionHandler(eGameBoard& board,
+eInvasionHandler::eInvasionHandler(GameBoard& board,
                                    const eCityId targetCity,
                                    const stdsptr<eWorldCity>& city,
                                    eInvasionEvent* const event) :
@@ -238,7 +238,7 @@ void eInvasionHandler::initializeSeaInvasion(
 }
 
 template <typename T>
-stdsptr<T> spawnSoldier(eGameBoard& board,
+stdsptr<T> spawnSoldier(GameBoard& board,
                         const eCityId ocid,
                         const eCityId cid,
                         eTile* const tile) {

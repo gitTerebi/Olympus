@@ -105,24 +105,24 @@ using eCharActFuncType = eCharacterActionFunctionType;
 
 class eCharacterActionFunction {
 public:
-    eCharacterActionFunction(eGameBoard& board,
+    eCharacterActionFunction(GameBoard& board,
                              const eCharActFuncType t);
     virtual ~eCharacterActionFunction() = default;
 
     eCharActFuncType type() const { return mType; }
-    eGameBoard& board() { return mBoard; }
+    GameBoard& board() { return mBoard; }
 
     void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
     virtual void call() = 0;
 
     static stdsptr<eCharacterActionFunction> sCreate(
-            eGameBoard& board,
+            GameBoard& board,
             const eCharActFuncType type);
 protected:
     virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const eCharActFuncType mType;
 };
 

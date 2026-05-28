@@ -13,7 +13,7 @@
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/storage-delivery-cart.h"
 
-eStorageBuilding::eStorageBuilding(eGameBoard& board,
+eStorageBuilding::eStorageBuilding(GameBoard& board,
                                    const eBuildingType type,
                                    const int sw, const int sh,
                                    const int maxEmployees,
@@ -400,7 +400,7 @@ bool eStorageBuilding::acceptsInputDelivery(eBuildingWithResource* const target,
 
 int eStorageBuilding::incomingReservedFor(const eBuilding* target,
                                           eResourceType res,
-                                          const eGameBoard& board,
+                                          const GameBoard& board,
                                           eCityId cid) {
     if(!target) return 0;
     const auto city = board.boardCityWithId(cid);

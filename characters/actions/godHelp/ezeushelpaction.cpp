@@ -61,7 +61,7 @@ void eZeusHelpAction::resumeFromSavedState() {
 }
 
 bool eZeusHelpAction::sHelpNeeded(const eCityId cid,
-                                  const eGameBoard& board) {
+                                  const GameBoard& board) {
     const auto& ivs = board.invasionHandlers(cid);
     return !ivs.empty();
 }

@@ -4,14 +4,14 @@
 #include "ebasicpatroler.h"
 #include "engine/ecityid.h"
 
-class eGameBoard;
+class GameBoard;
 class eTile;
 
 class eHomeless : public eBasicPatroler {
 public:
-    eHomeless(eGameBoard& board);
+    eHomeless(GameBoard& board);
 
-    static void spawn(eGameBoard& board, eTile* tile,
+    static void spawn(GameBoard& board, eTile* tile,
                       eCityId cid, int spawnCount, int waitTime);
 };
 

@@ -5,7 +5,7 @@
 
 class eAtlanteanHoplite : public eHopliteBase {
 public:
-    eAtlanteanHoplite(eGameBoard& board);
+    eAtlanteanHoplite(GameBoard& board);
 };
 
 #endif // EATLANTEANHOPLITE_H

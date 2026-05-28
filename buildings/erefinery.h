@@ -5,7 +5,7 @@
 
 class eRefinery : public eResourceCollectBuilding {
 public:
-    eRefinery(eGameBoard& board, const eCityId cid);
+    eRefinery(GameBoard& board, const eCityId cid);
 };
 
 #endif // EREFINERY_H

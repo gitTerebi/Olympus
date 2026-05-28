@@ -8,13 +8,13 @@ enum class eGodType;
 class ePyramidMonument : public ePyramidElement {
 public:
     ePyramidMonument(const std::vector<eSanctCost>& cost,
-                     eGameBoard& board,
+                     GameBoard& board,
                      const int elevation,
                      const eGodType type,
                      const int id,
                      const eCityId cid);
     ePyramidMonument(ePyramid* const pyramid,
-                     eGameBoard& board,
+                     GameBoard& board,
                      const int elevation,
                      const eGodType type,
                      const int id,

@@ -19,7 +19,7 @@
 #include "ecityonboardselectionwidget.h"
 
 void eBoardSettingsMenu::initialize(
-        GameWidget* const gw, eGameBoard& board) {
+        GameWidget* const gw, GameBoard& board) {
     setType(eFrameType::message);
 
     const auto boardPtr = &board;

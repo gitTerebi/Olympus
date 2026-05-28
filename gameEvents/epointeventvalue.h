@@ -14,7 +14,7 @@ public:
     using eValidator = std::function<bool(eTile*)>;
     ePointEventValue(const eBannerTypeS btype,
                      const eCityId cid,
-                     eGameBoard& board,
+                     GameBoard& board,
                      const eValidator& v = nullptr);
 
     int minPointId() const { return mMinPointId; }
@@ -31,7 +31,7 @@ protected:
 private:
     const eBannerTypeS mBType;
     const eCityId mCid;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const eValidator mValidator;
 
     int mPointId = 1;

@@ -9,7 +9,7 @@
 
 int eCattle::sId = 0;
 
-eCattle::eCattle(eGameBoard& board, const eCharacterType type) :
+eCattle::eCattle(GameBoard& board, const eCharacterType type) :
     eCharacter(board, type), mId(sId++) {
     eGameTextures::loadCattle();
 }

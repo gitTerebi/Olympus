@@ -6,7 +6,7 @@
 
 eEntryPoint::eEntryPoint(const int id,
                          eTile* const tile,
-                         eGameBoard& board) :
+                         GameBoard& board) :
     eSpawner(eBannerTypeS::entryPoint, id, tile,
              __INT_MAX__, 500, board) {}
 
@@ -47,5 +47,5 @@ void eEntryPoint::spawn(eTile* const tile) {
 void eSS_spawnFinish::call() {}
 
 eRiverEntryPoint::eRiverEntryPoint(const int id, eTile * const tile,
-                                   eGameBoard &board) :
+                                   GameBoard &board) :
     eBanner(eBannerTypeS::riverEntryPoint, id, tile, board) {}

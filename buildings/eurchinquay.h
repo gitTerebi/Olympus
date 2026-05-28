@@ -13,7 +13,7 @@ enum class eUrchinQuayState {
 
 class eUrchinQuay : public eResourceCollectBuildingBase {
 public:
-    eUrchinQuay(eGameBoard& board,
+    eUrchinQuay(GameBoard& board,
                 const eDiagonalOrientation o,
                 const eCityId cid);
     ~eUrchinQuay();

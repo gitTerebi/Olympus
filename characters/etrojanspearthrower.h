@@ -5,7 +5,7 @@
 
 class eTrojanSpearthrower : public eSpearthrowerBase {
 public:
-    eTrojanSpearthrower(eGameBoard& board);
+    eTrojanSpearthrower(GameBoard& board);
 };
 
 #endif // ETROJANSPEARTHROWER_H

@@ -19,7 +19,7 @@
 eBanner::eBanner(const eBannerTypeS type,
                  const int id,
                  eTile* const tile,
-                 eGameBoard& board) :
+                 GameBoard& board) :
     mType(type), mId(id), mTile(tile), mBoard(board) {
     board.registerBanner(this);
 }
@@ -28,7 +28,7 @@ eBanner::~eBanner() {
     board().unregisterBanner(this);
 }
 
-eGameBoard& eBanner::board() {
+GameBoard& eBanner::board() {
     if(mTile) return mTile->board();
     return mBoard;
 }
@@ -55,7 +55,7 @@ void eBanner::serialize(eSaveArchive& ar) {
 
 eBanner* eBanner::sCreate(const int id,
                           eTile* const tile,
-                          eGameBoard& board,
+                          GameBoard& board,
                           const eBannerTypeS type) {
     stdsptr<eBanner> b;
     switch(type) {

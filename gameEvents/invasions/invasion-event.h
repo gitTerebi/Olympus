@@ -26,7 +26,7 @@ class eInvasionEvent : public eGameEvent,
 public:
     eInvasionEvent(const eCityId cid,
                    const eGameEventBranch branch,
-                   eGameBoard& board);
+                   GameBoard& board);
     ~eInvasionEvent();
 
     void pointerCreated() override;
@@ -38,7 +38,7 @@ public:
                     const eEnlistedForces& forces,
                     ePlayerConquestEvent* const conquestEvent);
     static bool tryCreateCityInvasion(eWorldCity& attacker,
-                                      eGameBoard& board);
+                                      GameBoard& board);
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;

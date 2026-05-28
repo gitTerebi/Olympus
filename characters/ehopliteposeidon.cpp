@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eHoplitePoseidon::eHoplitePoseidon(eGameBoard& board) :
+eHoplitePoseidon::eHoplitePoseidon(GameBoard& board) :
     eHopliteBase(board, &eCharacterTextures::fHoplitePoseidon,
                  eCharacterType::hoplitePoseidon) {
     eGameTextures::loadHoplitePoseidon();

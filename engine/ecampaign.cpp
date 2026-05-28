@@ -25,12 +25,12 @@ eCampaign::eCampaign() {
 void eCampaign::initialize(const std::string& name) {
     mName = name;
 
-    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
+    mParentBoard = e::make_shared<GameBoard>(mWorldBoard);
     mParentBoard->initialize(100, 100);
 
     for(int i = 0; i < 4; i++) {
         auto& board = mColonyBoards.emplace_back();
-        board = e::make_shared<eGameBoard>(mWorldBoard);
+        board = e::make_shared<GameBoard>(mWorldBoard);
         board->initialize(1, 1);
 
         const auto e = std::make_shared<eColonyEpisode>();
@@ -364,7 +364,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         [this](eSaveArchive& itemAr) { mWorldBoard.serialize(itemAr); });
 
     if(ar.reading()) {
-        mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
+        mParentBoard = e::make_shared<GameBoard>(mWorldBoard);
     }
     ar.archiveField("parentBoard",
         [this](eSaveArchive& itemAr) { mParentBoard->serialize(itemAr); });
@@ -380,7 +380,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
         for(int i = 0; i < nc; i++) {
             const bool finished = colonyEpisodeFinished(i);
             if(ar.reading() && !mColonyBoards[i]) {
-                mColonyBoards[i] = e::make_shared<eGameBoard>(mWorldBoard);
+                mColonyBoards[i] = e::make_shared<GameBoard>(mWorldBoard);
             }
             if(finished) continue;
             ar.archiveField(("colonyBoard." + std::to_string(i)).c_str(),

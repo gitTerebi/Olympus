@@ -15,7 +15,7 @@
 
 eTile::eTile(const int x, const int y,
              const int dx, const int dy,
-             eGameBoard &board) :
+             GameBoard &board) :
     mBoard(board) {
     setSeed(eRand::rand());
     setX(x);

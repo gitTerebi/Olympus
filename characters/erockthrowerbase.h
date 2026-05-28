@@ -6,7 +6,7 @@
 class eRockThrowerBase : public eRangeSoldier {
 public:
     using eCharTexs = eRockThrowerTextures eCharacterTextures::*;
-    eRockThrowerBase(eGameBoard& board,
+    eRockThrowerBase(GameBoard& board,
                      const eCharTexs charTexs,
                      const eCharacterType type);
 };

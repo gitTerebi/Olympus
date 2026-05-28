@@ -93,7 +93,7 @@
 #include "estringhelpers.h"
 
 template <class T>
-bool gBuildVendor(eGameBoard& brd,
+bool gBuildVendor(GameBoard& brd,
                   eAgoraBase* const agora,
                   const int spaceId,
                   const ePlayerId pid,
@@ -114,7 +114,7 @@ bool gBuildVendor(eGameBoard& brd,
 bool gBuild(const AIBuilding& b,
             const ePlayerId pid,
             const eCityId cid,
-            eGameBoard& board,
+            GameBoard& board,
             const bool editorDisplay) {
     const auto rect = b.fRect;
     const int minX = rect.x;
@@ -479,21 +479,21 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::sheep: {
         const auto tile = board.tile(minX, minY);
         return board.buildAnimal(tile, eBuildingType::sheep,
-                          [](eGameBoard& board) {
+                          [](GameBoard& board) {
             return e::make_shared<eSheep>(board);
         }, cid, pid, editorDisplay);
     } break;
     case eBuildingType::goat: {
         const auto tile = board.tile(minX, minY);
         return board.buildAnimal(tile, eBuildingType::goat,
-                          [](eGameBoard& board) {
+                          [](GameBoard& board) {
             return e::make_shared<eGoat>(board);
         }, cid, pid, editorDisplay);
     } break;
     case eBuildingType::cattle: {
         const auto tile = board.tile(minX, minY);
         return board.buildAnimal(tile, eBuildingType::cattle,
-                          [](eGameBoard& board) {
+                          [](GameBoard& board) {
             return e::make_shared<eCattle>(board, eCharacterType::cattle2);
         }, cid, pid, editorDisplay);
     } break;
@@ -888,7 +888,7 @@ bool gBuild(const AIBuilding& b,
     return false;
 }
 
-void AIDistrict::build(eGameBoard& board,
+void AIDistrict::build(GameBoard& board,
                         const ePlayerId pid,
                         const eCityId cid,
                         const bool editorDisplay,
@@ -899,7 +899,7 @@ void AIDistrict::build(eGameBoard& board,
     }
 }
 
-bool AIDistrict::sBuild(eGameBoard& board,
+bool AIDistrict::sBuild(GameBoard& board,
                          const ePlayerId pid,
                          const eCityId cid,
                          const bool editorDisplay,

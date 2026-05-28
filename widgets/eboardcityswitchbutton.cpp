@@ -4,7 +4,7 @@
 #include "evectorhelpers.h"
 
 void eBoardCitySwitchButton::initialize(
-        const eGameBoard& board, const eValidator& v,
+        const GameBoard& board, const eValidator& v,
         const eSwitchAction& a) {
     const auto cids = board.citiesOnBoard();
     std::map<eCityId, std::string> map;
@@ -44,7 +44,7 @@ bool eBoardCitySwitchButton::setCurrentCity(const eCityId cid) {
 
 eBoardCitySwitchButton::eValidator
 eBoardCitySwitchButton::sPlayerCityValidator(
-        const eGameBoard& board, const ePlayerId pid) {
+        const GameBoard& board, const ePlayerId pid) {
     const auto boardPtr = &board;
     return [boardPtr, pid](const eCityId cid) {
         const auto cpid = boardPtr->cityIdToPlayerId(cid);
@@ -54,7 +54,7 @@ eBoardCitySwitchButton::sPlayerCityValidator(
 
 eBoardCitySwitchButton::eValidator
 eBoardCitySwitchButton::sPlayerEnemyCityValidator(
-        const eGameBoard& board, const ePlayerId pid) {
+        const GameBoard& board, const ePlayerId pid) {
     const auto boardPtr = &board;
     const auto ptid = board.playerIdToTeamId(pid);
     return [boardPtr, ptid](const eCityId cid) {

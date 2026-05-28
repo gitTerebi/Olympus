@@ -4,7 +4,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eAresWarrior::eAresWarrior(eGameBoard& board) :
+eAresWarrior::eAresWarrior(GameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::aresWarrior) {
     eGameTextures::loadAresWarrior();
     setAttack(eNumbers::sHopliteAttack);

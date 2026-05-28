@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
-stdsptr<eResourceCollectorBase> cardingShedCharGenerator(eGameBoard& board) {
+stdsptr<eResourceCollectorBase> cardingShedCharGenerator(GameBoard& board) {
     return e::make_shared<eShepherd>(board);
 }
 
-eCardingShed::eCardingShed(eGameBoard& board, const eCityId cid) :
+eCardingShed::eCardingShed(GameBoard& board, const eCityId cid) :
     eShepherBuildingBase(board, &eBuildingTextures::fCardingShed,
                          -0.98, -2.15,
                          &eBuildingTextures::fCardingShedOverlay,

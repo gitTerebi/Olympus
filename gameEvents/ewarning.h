@@ -16,7 +16,7 @@ public:
              const bool initialWarning,
              eGameEvent& parent,
              const eCityId cid,
-             eGameBoard& board);
+             GameBoard& board);
 
     virtual void trigger() = 0;
 
@@ -33,7 +33,7 @@ public:
     eGameEvent& parent() const { return mParent; }
 
     eCityId cityId() const { return mCid; }
-    eGameBoard& board() const { return mBoard; }
+    GameBoard& board() const { return mBoard; }
 
     void setFinished(const bool f) { mFinished = f; }
 
@@ -41,7 +41,7 @@ public:
 private:
     eGameEvent& mParent;
     const eCityId mCid;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const bool mInitialWarning;
 
     int mWarningMonths = 2;

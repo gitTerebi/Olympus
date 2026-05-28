@@ -3,7 +3,7 @@
 #include "characters/etaxcollector.h"
 #include "textures/egametextures.h"
 
-eTaxOffice::eTaxOffice(eGameBoard& board, const eCityId cid) :
+eTaxOffice::eTaxOffice(GameBoard& board, const eCityId cid) :
     ePatrolBuilding(board,
                     &eBuildingTextures::fTaxOffice,
                     -0.65, -2.55,

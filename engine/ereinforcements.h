@@ -17,7 +17,7 @@ public:
     bool remove(const stdsptr<SoldierBanner>& b);
     bool checkEmpty() const;
 
-    void serialize(eSaveArchive& ar, eGameBoard* board);
+    void serialize(eSaveArchive& ar, GameBoard* board);
 private:
 
     eEnlistedForces mForces;

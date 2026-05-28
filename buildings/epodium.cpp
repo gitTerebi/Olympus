@@ -3,7 +3,7 @@
 #include "characters/ephilosopher.h"
 #include "textures/egametextures.h"
 
-ePodium::ePodium(eGameBoard& board,
+ePodium::ePodium(GameBoard& board,
                  const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fPodium,

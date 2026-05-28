@@ -3,7 +3,7 @@
 #include "fileIO/esavearchive.h"
 
 eAnimalBuilding::eAnimalBuilding(
-         eGameBoard& board,
+         GameBoard& board,
          eCharacter* const a,
          const eBuildingType type,
          const eCityId cid) :

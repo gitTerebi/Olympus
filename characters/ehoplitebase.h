@@ -6,7 +6,7 @@
 class eHopliteBase : public eSoldier {
 public:
     using eCharTexs = eFightingCharacterTextures eCharacterTextures::*;
-    eHopliteBase(eGameBoard& board,
+    eHopliteBase(GameBoard& board,
                  const eCharTexs charTexs,
                  const eCharacterType type);
 };

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eBoar::eBoar(eGameBoard& board) :
+eBoar::eBoar(GameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fBoar,
     eCharacterType::boar) {
     eGameTextures::loadBoar();

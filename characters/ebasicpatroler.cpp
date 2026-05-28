@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
 
-eBasicPatroler::eBasicPatroler(eGameBoard& board,
+eBasicPatroler::eBasicPatroler(GameBoard& board,
                                const eCharTexs charTexs,
                                const eCharacterType type) :
     eCharacter(board, type),

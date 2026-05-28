@@ -7,7 +7,7 @@
 
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
-                             eGameBoard& board) :
+                             GameBoard& board) :
     mCid(cid), mBoard(board), mName(name) {}
 
 void eEventTrigger::trigger(eGameEvent& parent,

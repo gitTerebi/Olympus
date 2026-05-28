@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eHorseRanch : public eEmployingBuilding {
 public:
-    eHorseRanch(eGameBoard& board, const eCityId cid);
+    eHorseRanch(GameBoard& board, const eCityId cid);
     ~eHorseRanch();
 
     void erase() override;

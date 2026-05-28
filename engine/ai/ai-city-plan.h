@@ -13,7 +13,7 @@ enum class eBuildingType;
 enum class eResourceType;
 enum class ePlayerId;
 enum class eCityId;
-class eGameBoard;
+class GameBoard;
 class eSaveArchive;
 
 class AICityPlan {
@@ -27,17 +27,17 @@ public:
     AIDistrict& district(const int id);
     void addDistrict(const AIDistrict& a);
 
-    int districtCost(eGameBoard& board, const int id,
+    int districtCost(GameBoard& board, const int id,
                      int* const marble = nullptr) const;
     int nextDistrictId() const;
     int lastBuiltDistrictId() const;
 
-    bool buildNextDistrict(eGameBoard& board);
-    void buildAllDistricts(eGameBoard& board);
-    void buildScheduled(eGameBoard& board);
+    bool buildNextDistrict(GameBoard& board);
+    void buildAllDistricts(GameBoard& board);
+    void buildScheduled(GameBoard& board);
     bool districtBuilt(const int id) const;
 
-    void editorDisplayBuildings(eGameBoard& board);
+    void editorDisplayBuildings(GameBoard& board);
 
     void serialize(eSaveArchive& ar);
 private:

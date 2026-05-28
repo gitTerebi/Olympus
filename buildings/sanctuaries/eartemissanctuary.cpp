@@ -8,13 +8,13 @@
 #include "fileIO/esavearchive.h"
 
 eArtemisSanctuary::eArtemisSanctuary(
-        const int sw, const int sh, eGameBoard& board,
+        const int sw, const int sh, GameBoard& board,
         const eCityId cid) :
     eSanctuaryWithWarriors(board, eBuildingType::templeArtemis,
                            sw, sh, 60, cid) {}
 
 eAresSanctuary::eAresSanctuary(
-        const int sw, const int sh, eGameBoard& board,
+        const int sw, const int sh, GameBoard& board,
         const eCityId cid) :
     eSanctuaryWithWarriors(board, eBuildingType::templeAres,
                            sw, sh, 60, cid) {}

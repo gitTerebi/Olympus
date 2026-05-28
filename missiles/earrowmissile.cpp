@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eArrowMissile::eArrowMissile(eGameBoard& board,
+eArrowMissile::eArrowMissile(GameBoard& board,
                              const std::vector<ePathPoint>& path) :
     eArrowSpearBase(board, &eDestructionTextures::fArrow,
                     eMissileType::arrow, path) {

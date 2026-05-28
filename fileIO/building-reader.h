@@ -8,7 +8,7 @@ class eSaveArchive;
 
 namespace BuildingArchive {
     stdsptr<eBuilding> load(
-            eGameBoard& board, const eBuildingType type,
+            GameBoard& board, const eBuildingType type,
             eSaveArchive& ar);
 };
 

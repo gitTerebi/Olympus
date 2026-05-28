@@ -5,7 +5,7 @@
 
 class eArrowMissile : public eArrowSpearBase {
 public:
-    eArrowMissile(eGameBoard& board,
+    eArrowMissile(GameBoard& board,
                   const std::vector<ePathPoint>& path = {});
 };
 

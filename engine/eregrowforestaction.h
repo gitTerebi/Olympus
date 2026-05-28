@@ -11,9 +11,9 @@ public:
     eRegrowForestAction(eTile* const tile);
     eRegrowForestAction();
 
-    void trigger(eGameBoard& board) override;
+    void trigger(GameBoard& board) override;
 protected:
-    void serializeFields(eSaveArchive& ar, eGameBoard* board) override;
+    void serializeFields(eSaveArchive& ar, GameBoard* board) override;
 private:
     eTile* mTile = nullptr;
 };

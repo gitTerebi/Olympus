@@ -1,6 +1,6 @@
 #include "earrowspearbase.h"
 
-eArrowSpearBase::eArrowSpearBase(eGameBoard& board,
+eArrowSpearBase::eArrowSpearBase(GameBoard& board,
                                  const eMissileTexs missileTexs,
                                  const eMissileType type,
                                  const std::vector<ePathPoint>& path) :

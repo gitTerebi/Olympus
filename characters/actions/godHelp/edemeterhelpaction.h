@@ -8,7 +8,7 @@ public:
     eDemeterHelpAction(eCharacter* const c);
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 };
 
 #endif // EDEMETERHELPACTION_H

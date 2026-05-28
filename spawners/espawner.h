@@ -12,7 +12,7 @@ public:
              eTile* const tile,
              const int maxCount,
              const int spawnFreq,
-             eGameBoard& board);
+             GameBoard& board);
     virtual ~eSpawner();
 
     virtual void spawn(eTile* const tile) = 0;

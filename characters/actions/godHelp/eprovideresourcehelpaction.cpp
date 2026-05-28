@@ -102,7 +102,7 @@ void eProvideResourceHelpAction::decCount(const int by) {
 }
 
 bool eProvideResourceHelpAction::sHelpNeeded(const eCityId cid,
-                                             const eGameBoard& board,
+                                             const GameBoard& board,
                                              const eResourceType res,
                                              const int minSpace) {
     const int r = board.spaceForResource(cid, res);

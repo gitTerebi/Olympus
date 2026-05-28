@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eTrojanHoplite::eTrojanHoplite(eGameBoard& board) :
+eTrojanHoplite::eTrojanHoplite(GameBoard& board) :
     eHopliteBase(board, &eCharacterTextures::fTrojanHoplite,
                  eCharacterType::trojanHoplite) {
     eGameTextures::loadTrojanHoplite();

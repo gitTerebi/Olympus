@@ -16,11 +16,11 @@ ePlannedAction::ePlannedAction(const ePlannedActionType type) :
 
 ePlannedAction::~ePlannedAction() {}
 
-void ePlannedAction::serialize(eSaveArchive& ar, eGameBoard* board) {
+void ePlannedAction::serialize(eSaveArchive& ar, GameBoard* board) {
     serializeFields(ar, board);
 }
 
-void ePlannedAction::serializeFields(eSaveArchive& ar, eGameBoard* board) {
+void ePlannedAction::serializeFields(eSaveArchive& ar, GameBoard* board) {
     (void)board;
     ar.field("recurring", mRecurring);
     ar.field("actionTime", mActionTime);
@@ -38,7 +38,7 @@ ePlannedAction* ePlannedAction::sCreate(const ePlannedActionType type) {
     return nullptr;
 }
 
-void ePlannedAction::incTime(const int by, eGameBoard& board) {
+void ePlannedAction::incTime(const int by, GameBoard& board) {
     if(mFinished) return;
     mTime += by;
     while(mTime > mActionTime) {

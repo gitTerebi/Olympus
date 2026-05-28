@@ -5,7 +5,7 @@ eDemeterHelpAction::eDemeterHelpAction(eCharacter* const c) :
                                eResourceType::wheat, 32) {}
 
 bool eDemeterHelpAction::sHelpNeeded(const eCityId cid,
-                                     const eGameBoard& board) {
+                                     const GameBoard& board) {
     return eProvideResourceHelpAction::sHelpNeeded(
                 cid, board, eResourceType::wheat, 18);
 }

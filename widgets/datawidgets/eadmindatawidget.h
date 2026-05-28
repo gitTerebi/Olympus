@@ -5,7 +5,7 @@
 
 #include "engine/etaxrate.h"
 
-class eGameBoard;
+class GameBoard;
 class eLabel;
 class eViewModeButton;
 class eMultiLineLabel;

@@ -5,7 +5,7 @@
 
 class eTaxOffice : public ePatrolBuilding {
 public:
-    eTaxOffice(eGameBoard& board, const eCityId cid);
+    eTaxOffice(GameBoard& board, const eCityId cid);
 };
 
 #endif // ETAXOFFICE_H

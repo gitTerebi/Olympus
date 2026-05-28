@@ -1,6 +1,6 @@
 #include "eplaceholder.h"
 
-ePlaceholder::ePlaceholder(eGameBoard& board, const eCityId cid) :
+ePlaceholder::ePlaceholder(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::placeholder, 1, 1, cid) {}
 
 stdsptr<eTexture> ePlaceholder::getTexture(const eTileSize size) const {

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePersianArcher::ePersianArcher(eGameBoard& board) :
+ePersianArcher::ePersianArcher(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fPersianArcher,
                 eCharacterType::persianArcher) {
     eGameTextures::loadPersianArcher();

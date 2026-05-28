@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eDionysus::eDionysus(eGameBoard& board) :
+eDionysus::eDionysus(GameBoard& board) :
     eGod(board, eGodType::dionysus) {
     eGameTextures::loadDionysus();
 }

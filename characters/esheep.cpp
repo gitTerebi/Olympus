@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eSheep::eSheep(eGameBoard& board) :
+eSheep::eSheep(GameBoard& board) :
     eDomesticatedAnimal(board, &eCharacterTextures::fNudeSheep,
                         eCharacterType::sheep, eNumbers::sSheepMaxGroom) {
     eGameTextures::loadSheep();

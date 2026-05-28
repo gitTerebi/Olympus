@@ -5,7 +5,7 @@
 #include "evectorhelpers.h"
 #include "engine/e-game-board.h"
 
-eThreadPool::eThreadPool(eGameBoard &board) : mBoard(board) {}
+eThreadPool::eThreadPool(GameBoard &board) : mBoard(board) {}
 
 eThreadPool::~eThreadPool()
 {

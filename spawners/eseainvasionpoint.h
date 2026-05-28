@@ -7,7 +7,7 @@ class eSeaInvasionPoint : public eBanner {
 public:
     eSeaInvasionPoint(const int id,
                       eTile* const tile,
-                      eGameBoard& board);
+                      GameBoard& board);
 };
 
 #endif // ESEAINVASIONPOINT_H

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePhilosopher::ePhilosopher(eGameBoard& board) :
+ePhilosopher::ePhilosopher(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fPhilosopher,
                    eCharacterType::philosopher) {
     eGameTextures::loadPhilosopher();

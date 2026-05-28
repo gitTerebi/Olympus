@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eInventor::eInventor(eGameBoard& board) :
+eInventor::eInventor(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fInventor,
                    eCharacterType::inventor) {
     eGameTextures::loadInventor();

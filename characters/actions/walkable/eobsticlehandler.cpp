@@ -5,7 +5,7 @@
 #include "characters/actions/soldier-action.h"
 
 stdsptr<eObsticleHandler> eObsticleHandler::sCreate(
-        eGameBoard& board,
+        GameBoard& board,
         const eObsticleHandlerType type) {
     switch(type) {
     case eObsticleHandlerType::monster:

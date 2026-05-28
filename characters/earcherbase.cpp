@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 
-eArcherBase::eArcherBase(eGameBoard& board,
+eArcherBase::eArcherBase(GameBoard& board,
                          const eCharTexs charTexs,
                          const eCharacterType type) :
     eSoldier(board, charTexs, type) {

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eWaterMonster::eWaterMonster(eGameBoard& board,
+eWaterMonster::eWaterMonster(GameBoard& board,
                              const eCharTexs charTexs,
                              const eMonsterType type) :
     eMonster(board, type), mCharTexs(charTexs) {}

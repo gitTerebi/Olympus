@@ -5,7 +5,7 @@
 
 class eWall : public eBuilding {
 public:
-    eWall(eGameBoard& board, const eCityId cid);
+    eWall(GameBoard& board, const eCityId cid);
     ~eWall();
 
     std::shared_ptr<eTexture>

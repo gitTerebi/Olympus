@@ -3,7 +3,7 @@
 #include "characters/egymnast.h"
 #include "textures/egametextures.h"
 
-eGymnasium::eGymnasium(eGameBoard& board, const eCityId cid) :
+eGymnasium::eGymnasium(GameBoard& board, const eCityId cid) :
     ePatrolSourceBuilding(board,
                     &eBuildingTextures::fGymnasium,
                     -2.63, -4.55,

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePhoenicianArcher::ePhoenicianArcher(eGameBoard& board) :
+ePhoenicianArcher::ePhoenicianArcher(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fPhoenicianArcher,
                 eCharacterType::phoenicianArcher) {
     eGameTextures::loadPhoenicianArcher();

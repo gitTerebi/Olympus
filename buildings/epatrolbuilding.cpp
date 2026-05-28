@@ -4,7 +4,7 @@
 #include "characters/actions/epatrolaction.h"
 #include "textures/egametextures.h"
 
-ePatrolBuilding::ePatrolBuilding(eGameBoard& board,
+ePatrolBuilding::ePatrolBuilding(GameBoard& board,
                                  const eBaseTex baseTex,
                                  const double overlayX,
                                  const double overlayY,
@@ -24,7 +24,7 @@ ePatrolBuilding::ePatrolBuilding(eGameBoard& board,
     });
 }
 
-ePatrolBuilding::ePatrolBuilding(eGameBoard& board,
+ePatrolBuilding::ePatrolBuilding(GameBoard& board,
                                  const eBaseTex baseTex,
                                  const double overlayX,
                                  const double overlayY,

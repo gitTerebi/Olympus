@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eChariot::eChariot(eGameBoard& board) :
+eChariot::eChariot(GameBoard& board) :
     eCharacter(board, eCharacterType::chariot) {
     eGameTextures::loadChariot();
 }

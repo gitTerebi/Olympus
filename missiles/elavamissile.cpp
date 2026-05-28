@@ -1,6 +1,6 @@
 #include "elavamissile.h"
 
-eLavaMissile::eLavaMissile(eGameBoard& board,
+eLavaMissile::eLavaMissile(GameBoard& board,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::lava, path),
     mCollId(eRand::rand()) {

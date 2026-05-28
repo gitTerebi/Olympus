@@ -11,7 +11,7 @@ class eGiftToEvent : public eGameEvent {
 public:
     eGiftToEvent(const eCityId cid,
                  const eGameEventBranch branch,
-                 eGameBoard& board);
+                 GameBoard& board);
 
     void initialize(const stdsptr<eWorldCity>& c,
                     const eResourceType type,

@@ -10,7 +10,7 @@ class eSaveArchive;
 
 class eWildAnimal : public eAnimal {
 public:
-    eWildAnimal(eGameBoard& board,
+    eWildAnimal(GameBoard& board,
                 const eCharTexs charTexs,
                 const eCharacterType type);
     ~eWildAnimal();

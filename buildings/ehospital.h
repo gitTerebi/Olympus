@@ -6,7 +6,7 @@
 
 class eHospital : public ePatrolBuilding {
 public:
-    eHospital(eGameBoard& board, const eCityId cid);
+    eHospital(GameBoard& board, const eCityId cid);
 
     int spawnCooldown() const override { return eNumbers::sInfirmarySpawnCooldown; }
 };

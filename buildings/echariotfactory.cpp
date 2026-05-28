@@ -5,7 +5,7 @@
 #include "fileIO/esavearchive.h"
 
 eChariotFactory::eChariotFactory(
-        eGameBoard& board, const eCityId cid) :
+        GameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::chariotFactory, 4, 4, 30, cid) {
     eGameTextures::loadChariotFactory();
 }

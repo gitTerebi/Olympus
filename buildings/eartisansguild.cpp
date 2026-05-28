@@ -4,7 +4,7 @@
 #include "characters/actions/eartisanaction.h"
 #include "fileIO/esavearchive.h"
 
-eArtisansGuild::eArtisansGuild(eGameBoard& board, const eCityId cid) :
+eArtisansGuild::eArtisansGuild(GameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25, cid) {
     eGameTextures::loadArtisansGuild();
 }

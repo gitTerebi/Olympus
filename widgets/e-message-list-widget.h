@@ -11,7 +11,7 @@
 class eScrollViewport;
 class eScrollBar;
 class eWidget;
-class eGameBoard;
+class GameBoard;
 
 class eMessageListWidget : public eModal {
 public:
@@ -23,7 +23,7 @@ public:
     void addMessage(const eEventData& ed, const eMessage& msg, const eDate& date);
     void addSavedMessage(const eEventData& ed, const eMessage& msg,
                          const eDate& date, const bool read);
-    void setBoard(eGameBoard* board);
+    void setBoard(GameBoard* board);
     using eReadChangedAction = std::function<void(int)>;
     void setReadChangedAction(const eReadChangedAction& a) { mReadChanged = a; }
 

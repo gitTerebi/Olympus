@@ -5,7 +5,7 @@
 
 class eOrichalcMiner : public eResourceCollector {
 public:
-    eOrichalcMiner(eGameBoard& board);
+    eOrichalcMiner(GameBoard& board);
 };
 
 #endif // EORICHALCMINER_H

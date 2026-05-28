@@ -5,7 +5,7 @@
 
 class ePlaceholder : public eBuilding {
 public:
-    ePlaceholder(eGameBoard& board, const eCityId cid);
+    ePlaceholder(GameBoard& board, const eCityId cid);
 
     stdsptr<eTexture> getTexture(const eTileSize size) const override;
 

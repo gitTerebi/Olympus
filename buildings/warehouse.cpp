@@ -118,7 +118,7 @@ void sSortWarehouseDrawSlots(std::vector<WarehouseDrawSlot>& slots) {
 
 }
 
-Warehouse::Warehouse(eGameBoard& board, const eCityId cid) :
+Warehouse::Warehouse(GameBoard& board, const eCityId cid) :
     WarehouseBase(board, eBuildingType::warehouse, 3, 3, 12,
                    eResourceType::warehouse, cid) {
     setOverlayEnabledFunc([]() { return true; });

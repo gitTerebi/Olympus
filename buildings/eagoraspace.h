@@ -8,7 +8,7 @@ class eAgoraBase;
 class eAgoraSpace : public eBuilding {
 public:
     eAgoraSpace(const stdsptr<eAgoraBase>& agora,
-                eGameBoard& board,
+                GameBoard& board,
                 const eCityId cid);
 
     stdsptr<eTexture> getTexture(const eTileSize size) const;

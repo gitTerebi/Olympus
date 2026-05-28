@@ -10,7 +10,7 @@ public:
     void setAttackingCity(const stdsptr<eWorldCity>& c) { mAttackingCity = c; }
     const stdsptr<eWorldCity>& attackingCity() const { return mAttackingCity; }
 protected:
-    void serialize(eSaveArchive& ar, eGameBoard* board);
+    void serialize(eSaveArchive& ar, GameBoard* board);
 
     stdsptr<eWorldCity> mAttackingCity;
 };

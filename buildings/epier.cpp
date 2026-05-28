@@ -18,7 +18,7 @@ int ePier::sOrientIndex(const eDiagonalOrientation o) {
     }
 }
 
-ePier::ePier(eGameBoard &board, const eDiagonalOrientation o,
+ePier::ePier(GameBoard &board, const eDiagonalOrientation o,
              const eCityId cid) : eBuilding(board, eBuildingType::pier, 2, 2, cid),
                                   mO(o)
 {

@@ -5,37 +5,37 @@
 
 class eAphrodite : public eBasicGod {
 public:
-    eAphrodite(eGameBoard& board);
+    eAphrodite(GameBoard& board);
 };
 
 class eAres : public eBasicGod {
 public:
-    eAres(eGameBoard& board);
+    eAres(GameBoard& board);
 };
 
 class eDemeter : public eBasicGod {
 public:
-    eDemeter(eGameBoard& board);
+    eDemeter(GameBoard& board);
 };
 
 class eHades : public eBasicGod {
 public:
-    eHades(eGameBoard& board);
+    eHades(GameBoard& board);
 };
 
 class eHephaestus : public eBasicGod {
 public:
-    eHephaestus(eGameBoard& board);
+    eHephaestus(GameBoard& board);
 };
 
 class eHera : public eBasicGod {
 public:
-    eHera(eGameBoard& board);
+    eHera(GameBoard& board);
 };
 
 class ePoseidon : public eBasicGod {
 public:
-    ePoseidon(eGameBoard& board);
+    ePoseidon(GameBoard& board);
 };
 
 #endif // EDEMETER_H

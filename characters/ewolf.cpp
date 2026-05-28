@@ -7,7 +7,7 @@
 
 #include <vector>
 
-eWolf::eWolf(eGameBoard& board) :
+eWolf::eWolf(GameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fWolf,
                 eCharacterType::wolf) {
     eGameTextures::loadWolf();

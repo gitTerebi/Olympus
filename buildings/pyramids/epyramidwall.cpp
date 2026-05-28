@@ -4,7 +4,7 @@
 #include "epyramid.h"
 
 ePyramidWall::ePyramidWall(const std::vector<eSanctCost>& cost,
-                           eGameBoard& board,
+                           GameBoard& board,
                            const eOrientation o,
                            const int elevation,
                            const int special,
@@ -14,7 +14,7 @@ ePyramidWall::ePyramidWall(const std::vector<eSanctCost>& cost,
     mO(o), mSpecial(special) {}
 
 ePyramidWall::ePyramidWall(ePyramid* const pyramid,
-                           eGameBoard& board,
+                           GameBoard& board,
                            const eOrientation o,
                            const int elevation,
                            const int special,

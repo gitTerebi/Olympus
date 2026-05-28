@@ -16,8 +16,8 @@ public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
     using eRC = eResourceCollectorBase;
-    using eCharGenerator =  std::function<stdsptr<eRC>(eGameBoard&)>;
-    eShepherBuildingBase(eGameBoard& board,
+    using eCharGenerator =  std::function<stdsptr<eRC>(GameBoard&)>;
+    eShepherBuildingBase(GameBoard& board,
                          const eBaseTex baseTex,
                          const double overlayX,
                          const double overlayY,

@@ -19,7 +19,7 @@ bool eReinforcements::checkEmpty() const {
     return mForces.fSoldiers.empty();
 }
 
-void eReinforcements::serialize(eSaveArchive& ar, eGameBoard* board) {
+void eReinforcements::serialize(eSaveArchive& ar, GameBoard* board) {
     ar.field("fromCityId", mFromCid, eCityId::neutralFriendly);
     ar.archiveField("forces", [this, board](eSaveArchive& itemAr) {
         mForces.serialize(itemAr, itemAr.reading() ? board : nullptr);

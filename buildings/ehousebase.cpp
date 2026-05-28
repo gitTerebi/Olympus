@@ -11,7 +11,7 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eHouseBase::eHouseBase(eGameBoard& board,
+eHouseBase::eHouseBase(GameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
                        const std::vector<int>& maxPeople,

@@ -89,19 +89,19 @@ using eAction = std::function<void()>;
 
 class eDistrictIdTmp {
 public:
-    eDistrictIdTmp(eGameBoard& board);
+    eDistrictIdTmp(GameBoard& board);
     ~eDistrictIdTmp();
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const int mTmpId;
 };
 
 using eCities = std::vector<stdsptr<eWorldCity>>;
 
-class eGameBoard : public eStdSelfRef {
+class GameBoard : public eStdSelfRef {
 public:
-    eGameBoard(eWorldBoard& world);
-    ~eGameBoard();
+    GameBoard(eWorldBoard& world);
+    ~GameBoard();
 
     void initialize(const int w, const int h);
     void resize(const int w, const int h);
@@ -380,6 +380,8 @@ public:
     void selectBanner(SoldierBanner* const c);
     const std::vector<SoldierBanner*>& selectedSoldiers() const
     { return mSelectedBanners; }
+    void setBannerSelectionChangedAction(const eAction& a)
+    { mBannerSelectionChanged = a; }
 
     void clearTriremeSelection();
     void deselectTrireme(eTrireme* const c);
@@ -773,7 +775,7 @@ public:
                const bool allowOnWall = false);
 
     using eDA = eCharacter;
-    using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;
+    using eAnimalCreator = std::function<stdsptr<eDA>(GameBoard&)>;
     bool buildAnimal(eTile* const tile,
                      const eBuildingType type,
                      const eAnimalCreator& creator,
@@ -892,6 +894,7 @@ private:
     std::vector<eMissile*> mMissiles;
 
     std::vector<SoldierBanner*> mSelectedBanners;
+    eAction mBannerSelectionChanged;
     std::vector<eTrireme*> mSelectedTriremes;
 
     std::vector<ePlannedAction*> mPlannedActions;
@@ -927,7 +930,7 @@ private:
         std::vector<eTile*> fTiles;
         int fLastDim = 0;
 
-        void serialize(eSaveArchive& ar, eGameBoard& board) {
+        void serialize(eSaveArchive& ar, GameBoard& board) {
             ar.tileField("startTile", board, fStartTile);
             ar.arrayField("tiles", fTiles,
                 [&board](eSaveArchive& itemAr, eTile*& t) {
@@ -952,7 +955,7 @@ private:
         bool fPermanent = false;
         bool fRegres = false;
 
-        void serialize(eSaveArchive& ar, eGameBoard& board) {
+        void serialize(eSaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
                 [&board](eSaveArchive& groupAr, std::vector<eWaveDirection>& v) {
                     groupAr.arrayField("tiles", v,
@@ -977,7 +980,7 @@ private:
         std::vector<std::vector<eLavaDirection>> fTiles;
         int fLastId = 0;
 
-        void serialize(eSaveArchive& ar, eGameBoard& board) {
+        void serialize(eSaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
                 [&board](eSaveArchive& groupAr, std::vector<eLavaDirection>& v) {
                     groupAr.arrayField("tiles", v,
@@ -1000,7 +1003,7 @@ private:
         std::vector<std::vector<eLandSlideDirection>> fTiles;
         int fLastId = 0;
 
-        void serialize(eSaveArchive& ar, eGameBoard& board) {
+        void serialize(eSaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
                 [&board](eSaveArchive& groupAr, std::vector<eLandSlideDirection>& v) {
                     groupAr.arrayField("tiles", v,

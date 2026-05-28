@@ -27,7 +27,7 @@ bool ePathFinderBase::extractPath(
 }
 
 bool ePathFinderBase::extractPath(
-        std::vector<eTile*>& path, eGameBoard& board) {
+        std::vector<eTile*>& path, GameBoard& board) {
     if(!mData.fFound) return false;
     path.clear();
     path.reserve(mData.fDistance);

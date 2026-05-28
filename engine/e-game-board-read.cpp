@@ -12,7 +12,7 @@
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
 
-void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
+void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     int productionCount = ar.writing() ? static_cast<int>(mYearlyProduction.size()) : 0;
     ar.field("yearlyProduction.count", productionCount);
     if(ar.reading()) {
@@ -43,7 +43,7 @@ void eGameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     ar.field("lastAutosaveYear", mLastAutosaveYear);
 }
 
-void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
+void GameBoard::serializeMessageLog(eSaveArchive& ar) {
     int messageCount = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
     ar.field("messageLog.count", messageCount);
     if(ar.reading()) {
@@ -77,7 +77,7 @@ void eGameBoard::serializeMessageLog(eSaveArchive& ar) {
     }
 }
 
-void eGameBoard::serialize(eSaveArchive& ar) {
+void GameBoard::serialize(eSaveArchive& ar) {
     // assign ids before write
     if(ar.writing()) {
         int id = 0;

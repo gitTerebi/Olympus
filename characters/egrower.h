@@ -12,7 +12,7 @@ class eCharacterTextures;
 
 class eGrower : public eCharacter {
 public:
-    eGrower(eGameBoard& board);
+    eGrower(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 

@@ -8,7 +8,7 @@
 
 namespace RoadTool {
 
-std::vector<eTile*> lShapeTiles(eGameBoard* const board,
+std::vector<eTile*> lShapeTiles(GameBoard* const board,
                                 const int ptx, const int pty,
                                 const int htx, const int hty)
 {
@@ -46,7 +46,7 @@ std::vector<eTile*> lShapeTiles(eGameBoard* const board,
     return tiles;
 }
 
-std::vector<eTile*> tilesHoverToPress(eGameBoard* const board,
+std::vector<eTile*> tilesHoverToPress(GameBoard* const board,
                                       const int ptx, const int pty,
                                       const int htx, const int hty)
 {

@@ -5,7 +5,7 @@
 
 class eCentaurHorseman : public eHorsemanBase {
 public:
-    eCentaurHorseman(eGameBoard& board);
+    eCentaurHorseman(GameBoard& board);
 };
 
 #endif // ECENTAURHORSEMAN_H

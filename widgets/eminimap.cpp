@@ -19,7 +19,7 @@ void eMiniMap::renderTargetsReset() {
     scheduleTotalUpdate();
 }
 
-void eMiniMap::setBoard(eGameBoard* const board) {
+void eMiniMap::setBoard(GameBoard* const board) {
     mBoard = board;
     if(mBoard) viewTile(board->width()/2, board->height()/2);
     scheduleTotalUpdate();

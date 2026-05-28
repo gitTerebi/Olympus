@@ -15,7 +15,7 @@
 
 #include "engine/vanilla-stats.h"
 
-eCharacter::eCharacter(eGameBoard& board,
+eCharacter::eCharacter(GameBoard& board,
                        const eCharacterType type) :
     eObject(board), eCharacterBase(type),
     mSeedId(eRand::rand()) {
@@ -31,7 +31,7 @@ eCharacter::~eCharacter() {
     ownerBoard().unregisterCharacter(this);
 }
 
-eGameBoard& eCharacter::ownerBoard() const {
+GameBoard& eCharacter::ownerBoard() const {
     if(!getBoard().registerBuildingsEnabled()) return getBoard();
     if(mTile) return mTile->board();
     return getBoard();

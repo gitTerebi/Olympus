@@ -7,7 +7,7 @@
 
 eReinforcementsEvent::eReinforcementsEvent(const eCityId cid,
                                            const eGameEventBranch branch,
-                                           eGameBoard& board) :
+                                           GameBoard& board) :
     eArmyEventBase(cid, eGameEventType::reinforcementsEvent, branch, board) {}
 
 void eReinforcementsEvent::initialize(const eEnlistedForces& forces,

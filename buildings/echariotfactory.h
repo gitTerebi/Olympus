@@ -9,7 +9,7 @@ class eSaveArchive;
 
 class eChariotFactory : public eEmployingBuilding {
 public:
-    eChariotFactory(eGameBoard& board, const eCityId cid);
+    eChariotFactory(GameBoard& board, const eCityId cid);
     ~eChariotFactory();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

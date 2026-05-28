@@ -3,7 +3,7 @@
 
 #include "infowidgets/einfowidget.h"
 
-class eGameBoard;
+class GameBoard;
 class eWorldCity;
 
 class eFulfillDialog : public eInfoWidget {
@@ -12,7 +12,7 @@ public:
                    eMainWidget* const mw);
 
     using eCity = std::shared_ptr<eWorldCity>;
-    void initialize(eGameBoard* const board,
+    void initialize(GameBoard* const board,
                     const eCity& city);
 };
 

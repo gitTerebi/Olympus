@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eSculptureStudio::eSculptureStudio(eGameBoard& board,
+eSculptureStudio::eSculptureStudio(GameBoard& board,
                                    const eCityId cid) :
     eProcessingBuilding(board,
                         &eBuildingTextures::fSculptureStudio,

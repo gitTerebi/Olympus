@@ -20,7 +20,7 @@ struct eEpisode {
 
     void clear();
 
-    eGameBoard* fBoard = nullptr;
+    GameBoard* fBoard = nullptr;
     eWorldBoard* fWorldBoard = nullptr;
 
     int fDrachmasDelete = 2500;

@@ -261,7 +261,7 @@ void eMainWindow::setLastDifficulty(const eDifficulty d) {
     mSettings.write();
 }
 
-void eMainWindow::startGameAction(eGameBoard* const board,
+void eMainWindow::startGameAction(GameBoard* const board,
                                   const GameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {
         showGame(board, settings);
@@ -622,7 +622,7 @@ void eMainWindow::showGame(const stdsptr<eCampaign>& c,
     showGame(e->fBoard, settings);
 }
 
-void eMainWindow::showGame(eGameBoard* b,
+void eMainWindow::showGame(GameBoard* b,
                            const GameWidgetSettings& settings) {
     if(!b) b = mBoard;
 

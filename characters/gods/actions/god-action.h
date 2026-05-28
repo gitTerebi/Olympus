@@ -36,32 +36,32 @@ enum class eGodActType {
 
 class eGodAct {
 public:
-    eGodAct(eGameBoard& board, const eGodActType type) :
+    eGodAct(GameBoard& board, const eGodActType type) :
         mType(type), mBoard(board) {}
 
     virtual eMissileTarget find(eTile* const t) = 0;
     virtual void act() = 0;
 
     eGodActType type() const { return mType; }
-    eGameBoard& board() { return mBoard; }
+    GameBoard& board() { return mBoard; }
 
     void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
-    static stdsptr<eGodAct> sCreate(eGameBoard& board, const eGodActType t);
+    static stdsptr<eGodAct> sCreate(GameBoard& board, const eGodActType t);
 protected:
     virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
     const eGodActType mType;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 };
 
 class ePlayMonsterBuildingAttackSoundGodAct : public eGodAct {
 public:
     ePlayMonsterBuildingAttackSoundGodAct(
-            eGameBoard& board, eBuilding* const b) :
+            GameBoard& board, eBuilding* const b) :
         eGodAct(board, eGodActType::playMonsterBuildingAttackSound),
         mBuilding(b) {}
-    ePlayMonsterBuildingAttackSoundGodAct(eGameBoard& board) :
+    ePlayMonsterBuildingAttackSoundGodAct(GameBoard& board) :
         ePlayMonsterBuildingAttackSoundGodAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -88,10 +88,10 @@ private:
 
 class ePlayFightGodHitSoundGodAct : public eGodAct {
 public:
-    ePlayFightGodHitSoundGodAct(eGameBoard& board, eGod* const g) :
+    ePlayFightGodHitSoundGodAct(GameBoard& board, eGod* const g) :
         eGodAct(board, eGodActType::playFightGodHitSoundGodAct),
         mG(g) {}
-    ePlayFightGodHitSoundGodAct(eGameBoard& board) :
+    ePlayFightGodHitSoundGodAct(GameBoard& board) :
         ePlayFightGodHitSoundGodAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -116,7 +116,7 @@ private:
 
 class eLookForPlagueGodAct : public eGodAct {
 public:
-    eLookForPlagueGodAct(eGameBoard& board) :
+    eLookForPlagueGodAct(GameBoard& board) :
         eGodAct(board, eGodActType::lookForPlague) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -156,7 +156,7 @@ private:
 
 class eLookForEvictGodAct : public eGodAct {
 public:
-    eLookForEvictGodAct(eGameBoard& board) :
+    eLookForEvictGodAct(GameBoard& board) :
         eGodAct(board, eGodActType::lookForEvict) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -231,13 +231,13 @@ protected:
 
 class eLookForTargetedBlessGodAct : public eLookForBlessGodActBase {
 public:
-    eLookForTargetedBlessGodAct(eGameBoard& board, const double bless,
+    eLookForTargetedBlessGodAct(GameBoard& board, const double bless,
                                 const eGodType type) :
         eLookForBlessGodActBase(board, eGodActType::lookForTargetedBless),
         mType(type) {
         mBless = bless;
     }
-    eLookForTargetedBlessGodAct(eGameBoard& board) :
+    eLookForTargetedBlessGodAct(GameBoard& board) :
         eLookForTargetedBlessGodAct(board, 0, eGodType::zeus) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -273,11 +273,11 @@ private:
 
 class eLookForBlessGodAct : public eLookForBlessGodActBase {
 public:
-    eLookForBlessGodAct(eGameBoard& board, const double bless) :
+    eLookForBlessGodAct(GameBoard& board, const double bless) :
         eLookForBlessGodActBase(board, eGodActType::lookForBless) {
         mBless = bless;
     }
-    eLookForBlessGodAct(eGameBoard& board) :
+    eLookForBlessGodAct(GameBoard& board) :
         eLookForBlessGodAct(board, 0) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -293,10 +293,10 @@ public:
 
 class eLookForSoldierAttackGodAct : public eGodAct {
 public:
-    eLookForSoldierAttackGodAct(eGameBoard& board, const eTeamId team) :
+    eLookForSoldierAttackGodAct(GameBoard& board, const eTeamId team) :
         eGodAct(board, eGodActType::lookForSoldierAttack),
         mGodTeam(team) {}
-    eLookForSoldierAttackGodAct(eGameBoard& board) :
+    eLookForSoldierAttackGodAct(GameBoard& board) :
         eLookForSoldierAttackGodAct(board, eTeamId::neutralFriendly) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -332,11 +332,11 @@ private:
 
 class eLookForTargetedAttackGodAct : public eGodAct {
 public:
-    eLookForTargetedAttackGodAct(eGameBoard& board,
+    eLookForTargetedAttackGodAct(GameBoard& board,
                                  const eGodType type) :
         eGodAct(board, eGodActType::lookForTargetedAttack),
         mType(type) {}
-    eLookForTargetedAttackGodAct(eGameBoard& board) :
+    eLookForTargetedAttackGodAct(GameBoard& board) :
         eLookForTargetedAttackGodAct(board, eGodType::zeus) {}
 
     eMissileTarget find(eTile* const t) override {
@@ -368,9 +368,9 @@ private:
 
 class eLookForAttackGodAct : public eGodAct {
 public:
-    eLookForAttackGodAct(eGameBoard& board) :
+    eLookForAttackGodAct(GameBoard& board) :
         eGodAct(board, eGodActType::lookForAttack) {}
-    eLookForAttackGodAct(eGameBoard& board, eCharacter* const c) :
+    eLookForAttackGodAct(GameBoard& board, eCharacter* const c) :
         eGodAct(board, eGodActType::lookForAttack),
         mCptr(c) {}
 
@@ -472,9 +472,9 @@ private:
 
 class eGA_lookForSoldierAttackFinish : public eCharActFunc {
 public:
-    eGA_lookForSoldierAttackFinish(eGameBoard& board) :
+    eGA_lookForSoldierAttackFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_lookForSoldierAttackFinish) {}
-    eGA_lookForSoldierAttackFinish(eGameBoard& board, eGodAction* const ca,
+    eGA_lookForSoldierAttackFinish(GameBoard& board, eGodAction* const ca,
                                    eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::GA_lookForSoldierAttackFinish),
         mTptr(ca), mTile(tile) {}
@@ -499,9 +499,9 @@ private:
 
 class eGA_lookForRangeActionFinish : public eCharActFunc {
 public:
-    eGA_lookForRangeActionFinish(eGameBoard& board) :
+    eGA_lookForRangeActionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_lookForRangeActionFinish) {}
-    eGA_lookForRangeActionFinish(eGameBoard& board, eGodAction* const ca) :
+    eGA_lookForRangeActionFinish(GameBoard& board, eGodAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GA_lookForRangeActionFinish),
         mTptr(ca) {}
 
@@ -520,9 +520,9 @@ private:
 
 class eGA_teleportFinish : public eCharActFunc {
 public:
-    eGA_teleportFinish(eGameBoard& board) :
+    eGA_teleportFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_teleportFinish) {}
-    eGA_teleportFinish(eGameBoard& board, eGodMonsterAction* const ca,
+    eGA_teleportFinish(GameBoard& board, eGodMonsterAction* const ca,
                        eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::GA_teleportFinish),
         mTptr(ca), mTile(tile) {}
@@ -547,9 +547,9 @@ private:
 
 class eGA_hermesRunFinish : public eCharActFunc {
 public:
-    eGA_hermesRunFinish(eGameBoard& board) :
+    eGA_hermesRunFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_hermesRunFinish) {}
-    eGA_hermesRunFinish(eGameBoard& board, eGodMonsterAction* const ca,
+    eGA_hermesRunFinish(GameBoard& board, eGodMonsterAction* const ca,
                         eCharacter* const c, const bool appear) :
         eCharActFunc(board, eCharActFuncType::GA_hermesRunFinish),
         mTptr(ca), mCptr(c), mAppear(appear) {}
@@ -578,9 +578,9 @@ private:
 
 class eGA_spawnGodMissilePlaySound : public eCharActFunc {
 public:
-    eGA_spawnGodMissilePlaySound(eGameBoard& board) :
+    eGA_spawnGodMissilePlaySound(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_spawnGodMissilePlaySound) {}
-    eGA_spawnGodMissilePlaySound(eGameBoard& board, const eGodSound sound,
+    eGA_spawnGodMissilePlaySound(GameBoard& board, const eGodSound sound,
                                  eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::GA_spawnGodMissilePlaySound),
         mCptr(c), mSound(sound) {}
@@ -607,9 +607,9 @@ private:
 
 class eGoToTargetTeleport : public eFindFailFunc {
 public:
-    eGoToTargetTeleport(eGameBoard& board) :
+    eGoToTargetTeleport(GameBoard& board) :
         eFindFailFunc(board, eFindFailFuncType::teleport2) {}
-    eGoToTargetTeleport(eGameBoard& board, eGodMonsterAction* const ca) :
+    eGoToTargetTeleport(GameBoard& board, eGodMonsterAction* const ca) :
         eFindFailFunc(board, eFindFailFuncType::teleport2),
         mTptr(ca) {}
 

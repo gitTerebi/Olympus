@@ -4,7 +4,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 
-eArcher::eArcher(eGameBoard& board) :
+eArcher::eArcher(GameBoard& board) :
     eCharacter(board, eCharacterType::archer) {
     setAttack(eNumbers::sWallArcherAttack);
 }

@@ -96,9 +96,9 @@ private:
 
 class eGoToTargetTryAgain : public eFindFailFunc {
 public:
-    eGoToTargetTryAgain(eGameBoard& board) :
+    eGoToTargetTryAgain(GameBoard& board) :
         eFindFailFunc(board, eFindFailFuncType::tryAgain) {}
-    eGoToTargetTryAgain(eGameBoard& board, eMonsterAction* const ca) :
+    eGoToTargetTryAgain(GameBoard& board, eMonsterAction* const ca) :
         eFindFailFunc(board, eFindFailFuncType::tryAgain),
         mTptr(ca) {}
 
@@ -118,9 +118,9 @@ private:
 
 class eMA_destroyBuildingFinish : public eCharActFunc {
 public:
-    eMA_destroyBuildingFinish(eGameBoard& board) :
+    eMA_destroyBuildingFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::MA_destroyBuildingFinish) {}
-    eMA_destroyBuildingFinish(eGameBoard& board, eMonsterAction* const ca,
+    eMA_destroyBuildingFinish(GameBoard& board, eMonsterAction* const ca,
                               eBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::MA_destroyBuildingFinish),
         mTptr(ca), mBptr(b) {}
@@ -149,9 +149,9 @@ private:
 
 class eMA_lookForRangeActionFinishAttack : public eCharActFunc {
 public:
-    eMA_lookForRangeActionFinishAttack(eGameBoard& board) :
+    eMA_lookForRangeActionFinishAttack(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::MA_lookForRangeActionFinishAttack) {}
-    eMA_lookForRangeActionFinishAttack(eGameBoard& board, eMonsterAction* const ca) :
+    eMA_lookForRangeActionFinishAttack(GameBoard& board, eMonsterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::MA_lookForRangeActionFinishAttack),
         mTptr(ca) {}
 
@@ -173,9 +173,9 @@ private:
 
 class eMonsterObsticleHandler : public eObsticleHandler {
 public:
-    eMonsterObsticleHandler(eGameBoard& board) :
+    eMonsterObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::monster) {}
-    eMonsterObsticleHandler(eGameBoard& board,
+    eMonsterObsticleHandler(GameBoard& board,
                             eMonsterAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::monster),
         mTptr(t) {}

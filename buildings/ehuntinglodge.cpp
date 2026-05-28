@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-eHuntingLodge::eHuntingLodge(eGameBoard& board,
+eHuntingLodge::eHuntingLodge(GameBoard& board,
                              const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::huntingLodge,
                           2, 2, 8, eResourceType::meat, cid) {

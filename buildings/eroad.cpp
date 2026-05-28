@@ -9,7 +9,7 @@
 #include "elanguage.h"
 #include "fileIO/esavearchive.h"
 
-eRoad::eRoad(eGameBoard& board, const eCityId cid) :
+eRoad::eRoad(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::road, 1, 1, cid) {}
 
 void eRoad::erase() {

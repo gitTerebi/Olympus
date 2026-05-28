@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eWaterDistributor::eWaterDistributor(eGameBoard& board) :
+eWaterDistributor::eWaterDistributor(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fWaterDistributor,
                    eCharacterType::waterDistributor) {
     eGameTextures::loadWaterDistributor();

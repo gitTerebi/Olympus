@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eCattle : public eCharacter {
 public:
-    eCattle(eGameBoard& board, const eCharacterType type);
+    eCattle(GameBoard& board, const eCharacterType type);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;

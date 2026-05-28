@@ -16,7 +16,7 @@ enum class eTowerEmploymentState {
 
 class eTower : public eEmployingBuilding {
 public:
-    eTower(eGameBoard& board, const eCityId cid);
+    eTower(GameBoard& board, const eCityId cid);
     ~eTower();
 
     std::shared_ptr<eTexture>

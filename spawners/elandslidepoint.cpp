@@ -4,5 +4,5 @@
 
 eLandSlidePoint::eLandSlidePoint(const int id,
                                  eTile* const tile,
-                                 eGameBoard& board) :
+                                 GameBoard& board) :
     eBanner(eBannerTypeS::landSlidePoint, id, tile, board) {}

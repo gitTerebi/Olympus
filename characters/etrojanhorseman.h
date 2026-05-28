@@ -5,7 +5,7 @@
 
 class eTrojanHorseman : public eHorsemanBase {
 public:
-    eTrojanHorseman(eGameBoard& board);
+    eTrojanHorseman(GameBoard& board);
 };
 
 #endif // ETROJANHORSEMAN_H

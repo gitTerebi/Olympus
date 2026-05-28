@@ -7,7 +7,7 @@
 #include "engine/e-game-board.h"
 #include "enumbers.h"
 
-eUrchinQuay::eUrchinQuay(eGameBoard& board,
+eUrchinQuay::eUrchinQuay(GameBoard& board,
                          const eDiagonalOrientation o,
                          const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::urchinQuay,

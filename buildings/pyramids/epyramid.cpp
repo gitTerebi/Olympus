@@ -16,7 +16,7 @@
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
 
-ePyramid::ePyramid(eGameBoard& board,
+ePyramid::ePyramid(GameBoard& board,
                    const eBuildingType type,
                    const int sw, const int sh,
                    const eCityId cid) :

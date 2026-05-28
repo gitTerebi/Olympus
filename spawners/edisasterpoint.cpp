@@ -4,5 +4,5 @@
 
 eDisasterPoint::eDisasterPoint(const int id,
                               eTile* const tile,
-                              eGameBoard& board) :
+                              GameBoard& board) :
     eBanner(eBannerTypeS::disasterPoint, id, tile, board) {}

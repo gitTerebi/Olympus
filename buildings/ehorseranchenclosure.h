@@ -9,7 +9,7 @@ class eSaveArchive;
 
 class eHorseRanchEnclosure : public eBuildingWithResource {
 public:
-    eHorseRanchEnclosure(eGameBoard& board, const eCityId cid);
+    eHorseRanchEnclosure(GameBoard& board, const eCityId cid);
     ~eHorseRanchEnclosure();
 
     void erase() override;

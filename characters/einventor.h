@@ -5,7 +5,7 @@
 
 class eInventor : public eBasicPatroler {
 public:
-    eInventor(eGameBoard& board);
+    eInventor(GameBoard& board);
 };
 
 #endif // EINVENTOR_H

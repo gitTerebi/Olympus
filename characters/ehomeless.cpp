@@ -5,13 +5,13 @@
 #include "engine/etile.h"
 #include "characters/actions/esettleraction.h"
 
-eHomeless::eHomeless(eGameBoard& board) :
+eHomeless::eHomeless(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fHomeless,
                    eCharacterType::homeless) {
     eGameTextures::loadHomeless();
 }
 
-void eHomeless::spawn(eGameBoard& board, eTile* tile,
+void eHomeless::spawn(GameBoard& board, eTile* tile,
                       const eCityId cid, const int spawnCount,
                       const int waitTime) {
     const auto c = e::make_shared<eHomeless>(board);

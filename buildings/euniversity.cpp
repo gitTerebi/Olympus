@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eUniversity::eUniversity(eGameBoard& board, const eCityId cid) :
+eUniversity::eUniversity(GameBoard& board, const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fUniversity,
                           -3.25, -4.00,

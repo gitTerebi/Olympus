@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eAtlanteanArcher::eAtlanteanArcher(eGameBoard& board) :
+eAtlanteanArcher::eAtlanteanArcher(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fAtlanteanArcher,
                 eCharacterType::atlanteanArcher) {
     eGameTextures::loadAtlanteanArcher();

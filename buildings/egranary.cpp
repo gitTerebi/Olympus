@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eGranary::eGranary(eGameBoard& board, const eCityId cid) :
+eGranary::eGranary(GameBoard& board, const eCityId cid) :
     eStorageBuilding(board, eBuildingType::granary,
                      4, 4, 18, eResourceType::food, cid),
     mTextures(eGameTextures::buildings()) {

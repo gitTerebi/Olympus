@@ -5,13 +5,13 @@
 
 eDeerSpawner::eDeerSpawner(const int id,
                            eTile* const tile,
-                           eGameBoard& board) :
+                           GameBoard& board) :
     eAnimalSpawner(eBannerTypeS::deer, id, tile,
                    eNumbers::sDeerMaxCount,
                    eNumbers::sDeerSpawnPeriod, board) {}
 
 
-stdsptr<eWildAnimal> eDeerSpawner::create(eGameBoard& board) {
+stdsptr<eWildAnimal> eDeerSpawner::create(GameBoard& board) {
     const auto b = e::make_shared<eDeer>(board);
     b->setOnCityId(cityId());
     return b;

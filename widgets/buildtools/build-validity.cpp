@@ -28,7 +28,7 @@ bool tileBuildable(eTile* const t) {
 
 } // namespace
 
-bool canBuildVendor(eGameBoard* const board, const int tx, const int ty,
+bool canBuildVendor(GameBoard* const board, const int tx, const int ty,
                     const eResourceType resType) {
     if(!board) return false;
     const auto t = board->tile(tx, ty);
@@ -45,7 +45,7 @@ bool canBuildVendor(eGameBoard* const board, const int tx, const int ty,
     return ct->x() == tx && ct->y() == ty;
 }
 
-bool waterTileHasAccessToSea(eGameBoard* const board,
+bool waterTileHasAccessToSea(GameBoard* const board,
                              const eCityId viewedCity,
                              const int tx, const int ty) {
     if(!board) return false;
@@ -62,7 +62,7 @@ bool waterTileHasAccessToSea(eGameBoard* const board,
     return p.findPath({0, 0, w, h}, t, 1000, true, w, h);
 }
 
-bool canBuildFishery(eGameBoard* const board, const int tx, const int ty,
+bool canBuildFishery(GameBoard* const board, const int tx, const int ty,
                      eDiagonalOrientation& o) {
     if(!board) return false;
     for(int x = tx; x < tx + 2; x++) {
@@ -92,7 +92,7 @@ bool canBuildFishery(eGameBoard* const board, const int tx, const int ty,
     return false;
 }
 
-bool canBuildTriremeWharf(eGameBoard* const board, const int tx, const int ty,
+bool canBuildTriremeWharf(GameBoard* const board, const int tx, const int ty,
                           eDiagonalOrientation& o) {
     if(!board) return false;
     for(int x = tx - 1; x < tx - 1 + 3; x++) {
@@ -148,7 +148,7 @@ bool canBuildTriremeWharf(eGameBoard* const board, const int tx, const int ty,
     return false;
 }
 
-bool canBuildPier(eGameBoard* const board, const int tx, const int ty,
+bool canBuildPier(GameBoard* const board, const int tx, const int ty,
                   eDiagonalOrientation& o, const eCityId cid,
                   const ePlayerId pid, const bool forestAllowed) {
     if(!board) return false;
@@ -170,7 +170,7 @@ bool canBuildPier(eGameBoard* const board, const int tx, const int ty,
                                 forestAllowed, cid, pid);
 }
 
-bool canBuildAvenue(eGameBoard* const board, eTile* const t, const eCityId cid,
+bool canBuildAvenue(GameBoard* const board, eTile* const t, const eCityId cid,
                     const ePlayerId pid, const bool forestAllowed) {
     if(!board) return false;
     return board->canBuildAvenue(t, cid, pid, forestAllowed);

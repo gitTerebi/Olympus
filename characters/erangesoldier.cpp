@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eRangeSoldier::eRangeSoldier(eGameBoard& board,
+eRangeSoldier::eRangeSoldier(GameBoard& board,
                              const eCharTexs charTexs,
                              const eCharacterType type,
                              const int range) :

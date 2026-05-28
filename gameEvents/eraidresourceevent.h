@@ -7,7 +7,7 @@ class eRaidResourceEvent : public eResourceGrantedEventBase {
 public:
     eRaidResourceEvent(const eCityId cid,
                        const eGameEventBranch branch,
-                       eGameBoard& board);
+                       GameBoard& board);
 
     std::string longName() const override;
 };

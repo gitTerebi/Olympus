@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eGameEvents {
 public:
-    eGameEvents(const eCityId cid, eGameBoard& board);
+    eGameEvents(const eCityId cid, GameBoard& board);
 
     void addEvent(const stdsptr<eGameEvent>& e);
     void removeEvent(const stdsptr<eGameEvent>& e);
@@ -24,7 +24,7 @@ public:
 private:
 
     const eCityId mCid;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     std::vector<stdsptr<eGameEvent>> mGameEvents;
 };
 

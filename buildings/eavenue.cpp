@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
 
-eAvenue::eAvenue(eGameBoard& board, const eCityId cid) :
+eAvenue::eAvenue(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::avenue, 1, 1, cid) {
     eGameTextures::loadAvenue();
 }

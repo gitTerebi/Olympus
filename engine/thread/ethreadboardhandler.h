@@ -15,7 +15,7 @@ public:
 
     void initialize(const int w, const int h);
 
-    void update(eGameBoard& board, const eCityId cid,
+    void update(GameBoard& board, const eCityId cid,
                 const eStateRelevance rel);
 
     void updateBoard();
@@ -24,7 +24,7 @@ public:
 private:
     void update(const std::vector<eTile*>& tiles);
     void updateSanctuary(const std::vector<eTile*>& tiles);
-    void updateAll(eGameBoard& board, const BoardCity &c);
+    void updateAll(GameBoard& board, const BoardCity &c);
     void updateFinishedMonuments(const BoardCity& c);
 
     bool mInitialized = false;

@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eAmazon : public eSoldier {
 public:
-    eAmazon(eGameBoard& board);
+    eAmazon(GameBoard& board);
 
     bool isArcher() const { return mIsArcher; }
     void setIsArcher(const bool a);

@@ -5,7 +5,7 @@
 
 class eMarbleMiner : public eResourceCollector {
 public:
-    eMarbleMiner(eGameBoard& board);
+    eMarbleMiner(GameBoard& board);
 };
 
 #endif // EMARBLEMINER_H

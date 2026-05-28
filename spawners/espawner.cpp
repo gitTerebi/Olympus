@@ -7,7 +7,7 @@ eSpawner::eSpawner(const eBannerTypeS type,
                    const int id, eTile* const tile,
                    const int maxCount,
                    const int spawnFreq,
-                   eGameBoard& board) :
+                   GameBoard& board) :
     eBanner(type, id, tile, board),
     mMaxCount(maxCount), mSpawnPeriod(spawnFreq) {
     board.registerSpawner(this);

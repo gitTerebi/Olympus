@@ -43,7 +43,7 @@ struct eGodMessages;
 struct eHeroMessages;
 class eMessageBox;
 class eMessageListWidget;
-class eGameBoard;
+class GameBoard;
 class eAgoraBase;
 class ePatrolSourceBuilding;
 class eInfoWidget;
@@ -117,6 +117,8 @@ public:
 
     void rebuildGameMenu();
 
+    void syncBannerCursor();
+
     void pixToId(const int pixX, const int pixY,
                  int& idX, int& idY) const;
 
@@ -132,7 +134,7 @@ public:
     void showBuyCity(const eCityId cid);
     void hideBuyCity();
 
-    void setBoard(eGameBoard* const board);
+    void setBoard(GameBoard* const board);
 
     GameWidgetSettings settings() const;
     void setSettings(const GameWidgetSettings& s);
@@ -447,7 +449,7 @@ private:
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
-    stdptr<eGameBoard> mBoard;
+    stdptr<GameBoard> mBoard;
 
     bool mDrawElevation = true;
     stdptr<eBuilding> mWalkerBuilding;

@@ -11,7 +11,7 @@ eCityFinancesWidget::eCityFinancesWidget(
     eInfoWidget(window, mw, false, true) {}
 
 void eCityFinancesWidget::initialize(
-    eGameBoard& board, const eCityId cid) {
+    GameBoard& board, const eCityId cid) {
     const int p = padding();
     const auto title = eLanguage::zeusText(60, 0);
     eInfoWidget::initialize(title);

@@ -5,7 +5,7 @@
 
 class eCurator : public eBasicPatroler {
 public:
-    eCurator(eGameBoard& board);
+    eCurator(GameBoard& board);
 };
 
 #endif // ECURATOR_H

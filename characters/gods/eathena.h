@@ -5,27 +5,27 @@
 
 class eApollo : public eExtendedGod {
 public:
-    eApollo(eGameBoard& board);
+    eApollo(GameBoard& board);
 };
 
 class eArtemis : public eExtendedGod {
 public:
-    eArtemis(eGameBoard& board);
+    eArtemis(GameBoard& board);
 };
 
 class eAthena : public eExtendedGod {
 public:
-    eAthena(eGameBoard& board);
+    eAthena(GameBoard& board);
 };
 
 class eAtlas : public eExtendedGod {
 public:
-    eAtlas(eGameBoard& board);
+    eAtlas(GameBoard& board);
 };
 
 class eZeus : public eExtendedGod {
 public:
-    eZeus(eGameBoard& board);
+    eZeus(GameBoard& board);
 };
 
 #endif // EATHENA_H

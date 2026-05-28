@@ -5,7 +5,7 @@
 
 class eScholar : public eBasicPatroler {
 public:
-    eScholar(eGameBoard& board);
+    eScholar(GameBoard& board);
 };
 
 #endif // ESCHOLAR_H

@@ -5,7 +5,7 @@
 
 class eGoatherd : public eShepherdBase {
 public:
-    eGoatherd(eGameBoard& board);
+    eGoatherd(GameBoard& board);
 };
 
 #endif // EGOATHERD_H

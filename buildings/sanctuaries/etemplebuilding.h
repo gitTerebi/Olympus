@@ -7,8 +7,8 @@ class eSaveArchive;
 
 class eTempleBuilding : public eSanctBuilding {
 public:
-    eTempleBuilding(eGameBoard& board, const eCityId cid);
-    eTempleBuilding(const int id, eGameBoard& board,
+    eTempleBuilding(GameBoard& board, const eCityId cid);
+    eTempleBuilding(const int id, GameBoard& board,
                     const eCityId cid);
 
     std::shared_ptr<eTexture>

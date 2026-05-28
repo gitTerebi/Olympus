@@ -21,7 +21,7 @@ std::vector<eSanctCost> addElevationCost(ePyramid* const pyramid,
 }
 
 ePyramidElement::ePyramidElement(const std::vector<eSanctCost>& cost,
-                                 eGameBoard& board,
+                                 GameBoard& board,
                                  const eBuildingType type,
                                  const int elevation,
                                  const int dim,
@@ -31,7 +31,7 @@ ePyramidElement::ePyramidElement(const std::vector<eSanctCost>& cost,
 
 ePyramidElement::ePyramidElement(ePyramid* const pyramid,
                                  const std::vector<eSanctCost>& cost,
-                                 eGameBoard& board,
+                                 GameBoard& board,
                                  const eBuildingType type,
                                  const int elevation,
                                  const int dim,

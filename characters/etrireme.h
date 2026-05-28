@@ -9,11 +9,11 @@ class eTriremeAction;
 class eTrireme : public eBoatBase,
                  public eFightingCharacter {
 public:
-    eTrireme(eGameBoard& board);
+    eTrireme(GameBoard& board);
 
     static void sPlace(std::vector<eTrireme*> bs,
                        const int ctx, const int cty,
-                       eGameBoard& board, const int dist,
+                       GameBoard& board, const int dist,
                        const int minDistFromEdge);
 
     eTriremeAction* triremeAction() const;

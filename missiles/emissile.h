@@ -94,11 +94,11 @@ enum class eMissileType {
 
 class eMissile : public eStdSelfRef {
 public:
-    eMissile(eGameBoard& board, const eMissileType type,
+    eMissile(GameBoard& board, const eMissileType type,
              const std::vector<ePathPoint>& path = {});
     ~eMissile();
 
-    eGameBoard& board() const;
+    GameBoard& board() const;
 
     void incTime(const int by);
 
@@ -132,13 +132,13 @@ public:
     void serialize(eSaveArchive& ar);
 
     template <class T>
-    static stdsptr<T> sCreate(eGameBoard& brd,
+    static stdsptr<T> sCreate(GameBoard& brd,
                               const int tx0, const int ty0,
                               const double h0,
                               const int tx1, const int ty1,
                               const double h1,
                               const double dh);
-    static stdsptr<eMissile> sCreate(eGameBoard& brd,
+    static stdsptr<eMissile> sCreate(GameBoard& brd,
                                      const eMissileType type);
 protected:
     virtual void serializeFields(eSaveArchive& ar);
@@ -147,7 +147,7 @@ private:
 
     const eMissileType mType;
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     eMissilePath mPath;
 
     int mTime = 0;
@@ -159,7 +159,7 @@ private:
 };
 
 template<class T>
-stdsptr<T> eMissile::sCreate(eGameBoard& brd,
+stdsptr<T> eMissile::sCreate(GameBoard& brd,
                              const int tx0, const int ty0,
                              const double h0,
                              const int tx1, const int ty1,

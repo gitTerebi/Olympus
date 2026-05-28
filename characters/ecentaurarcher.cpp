@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eCentaurArcher::eCentaurArcher(eGameBoard& board) :
+eCentaurArcher::eCentaurArcher(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fCentaurArcher,
                 eCharacterType::centaurArcher) {
     eGameTextures::loadCentaurArcher();

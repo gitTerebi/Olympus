@@ -5,7 +5,7 @@
 
 class eActor : public eBasicPatroler {
 public:
-    eActor(eGameBoard& board);
+    eActor(GameBoard& board);
 };
 
 #endif // EACTOR_H

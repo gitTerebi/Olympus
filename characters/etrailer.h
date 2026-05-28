@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eTrailer : public eCharacter {
 public:
-    eTrailer(eGameBoard& board);
+    eTrailer(GameBoard& board);
 
     std::shared_ptr<eTexture>
         getTexture(const eTileSize size) const override;

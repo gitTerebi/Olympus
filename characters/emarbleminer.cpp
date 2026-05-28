@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eMarbleMiner::eMarbleMiner(eGameBoard& board) :
+eMarbleMiner::eMarbleMiner(GameBoard& board) :
     eResourceCollector(board, &eCharacterTextures::fMarbleMiner,
                        eCharacterType::marbleMiner) {
     eGameTextures::loadMarbleMiner();

@@ -6,13 +6,13 @@
 
 class eViewModeButton;
 class GameWidget;
-class eGameBoard;
+class GameBoard;
 class eBasicButton;
 enum class eCityId;
 
 class eDataWidget : public eWidget {
 public:
-    eDataWidget(eGameBoard& b, eMainWindow* const w);
+    eDataWidget(GameBoard& b, eMainWindow* const w);
 
     virtual void initialize();
 
@@ -35,7 +35,7 @@ protected:
 
     eCityId viewedCity();
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     int mTime = 0;
 private:
     eCityId mLastPersonCityId = eCityId::neutralFriendly;

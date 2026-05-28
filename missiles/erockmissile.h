@@ -5,7 +5,7 @@
 
 class eRockMissile : public eMissile {
 public:
-    eRockMissile(eGameBoard& board,
+    eRockMissile(GameBoard& board,
                  const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;

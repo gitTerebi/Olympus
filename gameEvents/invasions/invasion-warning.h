@@ -16,7 +16,7 @@ public:
     eInvasionWarning(const int warningDays,
                      eGameEvent& parent,
                      const eCityId cid,
-                     eGameBoard& board,
+                     GameBoard& board,
                      const eInvasionWarningType type);
 
     void trigger() override;

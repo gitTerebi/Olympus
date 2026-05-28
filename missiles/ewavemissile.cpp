@@ -1,6 +1,6 @@
 #include "ewavemissile.h"
 
-eWaveMissile::eWaveMissile(eGameBoard& board,
+eWaveMissile::eWaveMissile(GameBoard& board,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::wave, path) {
     eGameTextures::loadWave();

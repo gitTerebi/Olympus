@@ -9,7 +9,7 @@ class eBuildingWithResource;
 
 class eStorageBuilding : public eEmployingBuilding {
 public:
-    eStorageBuilding(eGameBoard& board,
+    eStorageBuilding(GameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
                      const int maxEmployees,
@@ -102,7 +102,7 @@ public:
     // yard in `cityId` (live; no save state).
     static int incomingReservedFor(const eBuilding* target,
                                    eResourceType res,
-                                   const eGameBoard& board,
+                                   const GameBoard& board,
                                    eCityId cid);
 
 protected:

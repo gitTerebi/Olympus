@@ -16,7 +16,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const ePlayerId pid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;

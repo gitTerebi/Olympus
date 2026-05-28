@@ -3,18 +3,18 @@
 
 #include "estdselfref.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eObject : public eStdSelfRef {
 public:
-    eObject(eGameBoard& board);
+    eObject(GameBoard& board);
 
-    eGameBoard& getBoard() const { return mBoard; }
+    GameBoard& getBoard() const { return mBoard; }
 
     void deleteLater();
     bool deleteScheduled() const { return mDeleteLater; }
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     bool mDeleteLater = false;
 };
 

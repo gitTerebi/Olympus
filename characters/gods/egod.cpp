@@ -12,7 +12,7 @@
 
 #include "textures/egametextures.h"
 
-eGod::eGod(eGameBoard& board, const eGodType gt) :
+eGod::eGod(GameBoard& board, const eGodType gt) :
     eCharacter(board, sGodToCharacterType(gt)),
     mType(gt) {
     setAttack(0.5);
@@ -96,7 +96,7 @@ eCharacterType eGod::sGodToCharacterType(const eGodType type) {
     }
 }
 
-stdsptr<eGod> eGod::sCreateGod(const eGodType type, eGameBoard& board) {
+stdsptr<eGod> eGod::sCreateGod(const eGodType type, GameBoard& board) {
     switch(type) {
     case eGodType::aphrodite:
         return e::make_shared<eAphrodite>(board);

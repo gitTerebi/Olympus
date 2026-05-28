@@ -5,7 +5,7 @@
 #include "elanguage.h"
 #include "engine/e-game-board.h"
 
-eDataWidget::eDataWidget(eGameBoard& b, eMainWindow* const w) :
+eDataWidget::eDataWidget(GameBoard& b, eMainWindow* const w) :
     eWidget(w), mBoard(b) {}
 
 void eDataWidget::initialize() {

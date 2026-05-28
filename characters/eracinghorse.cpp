@@ -2,14 +2,14 @@
 
 #include "fileIO/esavearchive.h"
 
-eRacingHorse::eRacingHorse(eGameBoard& board, const int id,
+eRacingHorse::eRacingHorse(GameBoard& board, const int id,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::racingHorse, path),
     mId(id) {
     eGameTextures::loadRacingHorses();
 }
 
-eRacingHorse::eRacingHorse(eGameBoard& board) :
+eRacingHorse::eRacingHorse(GameBoard& board) :
     eRacingHorse(board, 0, {}) {}
 
 std::shared_ptr<eTexture>

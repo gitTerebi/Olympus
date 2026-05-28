@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 
-eObject::eObject(eGameBoard& board) :
+eObject::eObject(GameBoard& board) :
     mBoard(board) {
 
 }

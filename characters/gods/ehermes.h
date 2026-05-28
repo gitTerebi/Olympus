@@ -5,7 +5,7 @@
 
 class eHermes : public eGod {
 public:
-    eHermes(eGameBoard& board);
+    eHermes(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };

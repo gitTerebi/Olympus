@@ -21,7 +21,7 @@ void eEventSelectionWidget::initialize(
         const eEventsGetter& get,
         const eEventAdder& add,
         const eEventRemover& remove,
-        eGameBoard& board) {
+        GameBoard& board) {
     eScrollButtonsList::initialize();
 
     const auto iniEs = get();

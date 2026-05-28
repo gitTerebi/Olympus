@@ -5,7 +5,7 @@
 
 class eEgyptianChariot : public eChariotBase {
 public:
-    eEgyptianChariot(eGameBoard& board);
+    eEgyptianChariot(GameBoard& board);
 };
 
 #endif // EEGYPTIANCHARIOT_H

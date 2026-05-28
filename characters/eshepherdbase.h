@@ -8,7 +8,7 @@
 class eShepherdBase : public eResourceCollectorBase {
 public:
     using eCharTexs = eShepherdTextures eCharacterTextures::*;
-    eShepherdBase(eGameBoard& board, const eCharTexs charTexs,
+    eShepherdBase(GameBoard& board, const eCharTexs charTexs,
                   const eCharacterType type);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;

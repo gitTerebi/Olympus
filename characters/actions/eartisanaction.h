@@ -43,9 +43,9 @@ private:
 
 class eArtA_buildFinish : public eCharActFunc {
 public:
-    eArtA_buildFinish(eGameBoard& board) :
+    eArtA_buildFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::ArtA_buildFinish) {}
-    eArtA_buildFinish(eGameBoard& board, eSanctBuilding* const b) :
+    eArtA_buildFinish(GameBoard& board, eSanctBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::ArtA_buildFinish),
         mBptr(b) {}
 
@@ -68,9 +68,9 @@ private:
 
 class eArtA_buildDelete : public eCharActFunc {
 public:
-    eArtA_buildDelete(eGameBoard& board) :
+    eArtA_buildDelete(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::ArtA_buildDelete) {}
-    eArtA_buildDelete(eGameBoard& board, eSanctBuilding* const b) :
+    eArtA_buildDelete(GameBoard& board, eSanctBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::ArtA_buildDelete),
         mBptr(b) {}
 

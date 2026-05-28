@@ -5,7 +5,7 @@
 
 ePyramidObservatory::ePyramidObservatory(
         const std::vector<eSanctCost>& cost,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidObservatory,
@@ -15,7 +15,7 @@ ePyramidObservatory::ePyramidObservatory(
 
 ePyramidObservatory::ePyramidObservatory(
         ePyramid* const pyramid,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eCityId cid) :
     ePyramidElement(pyramid,

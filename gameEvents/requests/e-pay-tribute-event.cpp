@@ -70,7 +70,7 @@ namespace
 ePayTributeEvent::ePayTributeEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    eGameBoard &board) : eGameEvent(cid, eGameEventType::payTribute, branch, board) {}
+    GameBoard &board) : eGameEvent(cid, eGameEventType::payTribute, branch, board) {}
 
 ePayTributeEvent::~ePayTributeEvent()
 {
@@ -334,7 +334,7 @@ void ePayTributeEvent::advanceIfNeeded(const eDate &currentDate)
     advanceToNextStep(*board);
 }
 
-void ePayTributeEvent::advanceToNextStep(eGameBoard &board)
+void ePayTributeEvent::advanceToNextStep(GameBoard &board)
 {
     const auto nextEvent = payTributeState(mComplyEvent).fNextEvent;
     if (payTributeTerminalState(nextEvent))

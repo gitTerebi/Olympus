@@ -5,7 +5,7 @@
 
 class eDeer : public eWildAnimal {
 public:
-    eDeer(eGameBoard& board);
+    eDeer(GameBoard& board);
 };
 
 #endif // EDEER_H

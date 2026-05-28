@@ -8,7 +8,7 @@
 
 #include "characters/eenlistedforces.h"
 
-class eGameBoard;
+class GameBoard;
 class eInvasionEvent;
 class eTile;
 class eCharacter;
@@ -40,7 +40,7 @@ enum class ePlayerSoldierType {
 
 class eInvasionHandler {
 public:
-    eInvasionHandler(eGameBoard& board,
+    eInvasionHandler(GameBoard& board,
                      const eCityId targetCity,
                      const stdsptr<eWorldCity>& city,
                      eInvasionEvent* const event);
@@ -115,7 +115,7 @@ private:
 
     void extractSSFromForces(const eEnlistedForces& forces, eSs& ss) const;
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     eCityId mTargetCity;
     stdsptr<eWorldCity> mCity;
     stdptr<eInvasionEvent> mEvent;
@@ -161,9 +161,9 @@ private:
 
 class eEnemyBoatFinish : public eCharActFunc {
 public:
-    eEnemyBoatFinish(eGameBoard& board) :
+    eEnemyBoatFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::enemyBoatFinish) {}
-    eEnemyBoatFinish(eGameBoard& board, eCharacter* const c,
+    eEnemyBoatFinish(GameBoard& board, eCharacter* const c,
                      eInvasionHandler* const invasion) :
         eCharActFunc(board, eCharActFuncType::enemyBoatFinish),
         mCptr(c), mInvasion(invasion) {}

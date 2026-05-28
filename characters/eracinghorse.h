@@ -7,9 +7,9 @@ class eSaveArchive;
 
 class eRacingHorse : public eMissile {
 public:
-    eRacingHorse(eGameBoard& board, const int id,
+    eRacingHorse(GameBoard& board, const int id,
                  const std::vector<ePathPoint>& path = {});
-    eRacingHorse(eGameBoard& board);
+    eRacingHorse(GameBoard& board);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;

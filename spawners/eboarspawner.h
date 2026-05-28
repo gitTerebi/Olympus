@@ -7,9 +7,9 @@ class eBoarSpawner : public eAnimalSpawner {
 public:
     eBoarSpawner(const int id,
                  eTile* const tile,
-                 eGameBoard& board);
+                 GameBoard& board);
 
-    stdsptr<eWildAnimal> create(eGameBoard& board) override;
+    stdsptr<eWildAnimal> create(GameBoard& board) override;
 };
 
 #endif // EBOARSPAWNER_H

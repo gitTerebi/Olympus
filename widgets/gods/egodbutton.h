@@ -5,7 +5,7 @@
 
 #include "characters/gods/egod.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eGodButton : public eFramedButton {
 public:

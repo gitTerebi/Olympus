@@ -4,7 +4,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eTheater::eTheater(eGameBoard& board, const eCityId cid) :
+eTheater::eTheater(GameBoard& board, const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fTheater,
                   -1.25, -6.5,

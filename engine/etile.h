@@ -42,8 +42,8 @@ class eTile : public eTileBase {
 public:
     eTile(const int x, const int y,
           const int dx, const int dy,
-          eGameBoard& board);
-    eGameBoard& board() const { return mBoard; }
+          GameBoard& board);
+    GameBoard& board() const { return mBoard; }
 
     int scrubId(const int nLevels) const;
     double scrub() const { return mScrub; }
@@ -167,7 +167,7 @@ private:
 
     void updateIsElevationTile();
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     eTileTerrainPainter mTerrainPainter;
     eTerritoryBorder mBorder;

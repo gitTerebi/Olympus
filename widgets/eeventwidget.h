@@ -4,7 +4,7 @@
 #include "ewidget.h"
 #include "ebutton.h"
 
-class eGameBoard;
+class GameBoard;
 class eTile;
 enum class eEvent;
 struct eEventData;

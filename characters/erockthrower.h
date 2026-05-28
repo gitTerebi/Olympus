@@ -5,7 +5,7 @@
 
 class eRockThrower : public eRockThrowerBase {
 public:
-    eRockThrower(eGameBoard& board);
+    eRockThrower(GameBoard& board);
 };
 
 #endif // EROCKTHROWER_H

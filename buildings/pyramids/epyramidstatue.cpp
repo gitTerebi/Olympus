@@ -7,7 +7,7 @@
 #include "engine/e-game-board.h"
 
 ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
-                               eGameBoard& board,
+                               GameBoard& board,
                                const int elevation,
                                const eGodType type,
                                const int id,
@@ -19,7 +19,7 @@ ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
 }
 
 ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
-                               eGameBoard& board,
+                               GameBoard& board,
                                const int elevation,
                                const eGodType type,
                                const int id,

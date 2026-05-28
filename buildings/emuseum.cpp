@@ -3,7 +3,7 @@
 #include "characters/ecurator.h"
 #include "engine/e-game-board.h"
 
-eMuseum::eMuseum(eGameBoard& board,
+eMuseum::eMuseum(GameBoard& board,
                  const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fMuseum,

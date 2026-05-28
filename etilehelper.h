@@ -1,7 +1,7 @@
 #ifndef ETILEHELPER_H
 #define ETILEHELPER_H
 
-class eGameBoard;
+class GameBoard;
 class eTile;
 enum class eWorldDirection;
 struct SDL_Rect;
@@ -29,7 +29,7 @@ namespace eTileHelper {
                                const int width, const int height);
 
     eTile* closestRoad(const int rdx, const int rdy,
-                       eGameBoard& board, const int minLen = 1);
+                       GameBoard& board, const int minLen = 1);
 
     SDL_Rect toRotatedRect(const SDL_Rect& r,
                            const eWorldDirection dir,

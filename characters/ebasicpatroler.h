@@ -8,7 +8,7 @@
 class eBasicPatroler : public eCharacter {
 public:
     using eCharTexs = eBasicCharacterTextures eCharacterTextures::*;
-    eBasicPatroler(eGameBoard& board,
+    eBasicPatroler(GameBoard& board,
                    const eCharTexs charTexs,
                    const eCharacterType type);
 

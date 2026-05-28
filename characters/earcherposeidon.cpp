@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eArcherPoseidon::eArcherPoseidon(eGameBoard& board) :
+eArcherPoseidon::eArcherPoseidon(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fArcherPoseidon,
                 eCharacterType::archerPoseidon) {
     eGameTextures::loadArcherPoseidon();

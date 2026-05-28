@@ -39,9 +39,9 @@ private:
 
 class eGWA_huntMonsterFinish : public eCharActFunc {
 public:
-    eGWA_huntMonsterFinish(eGameBoard& board) :
+    eGWA_huntMonsterFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish) {}
-    eGWA_huntMonsterFinish(eGameBoard& board, eGodWorshippedAction* const ca) :
+    eGWA_huntMonsterFinish(GameBoard& board, eGodWorshippedAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish),
         mTptr(ca) {}
 

@@ -59,9 +59,9 @@ private:
 
 class eSA_collectDecisionFinish : public eCharActFunc {
 public:
-    eSA_collectDecisionFinish(eGameBoard& board) :
+    eSA_collectDecisionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionFinish) {}
-    eSA_collectDecisionFinish(eGameBoard& board, eShepherdAction* const t,
+    eSA_collectDecisionFinish(GameBoard& board, eShepherdAction* const t,
                               eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionFinish),
         mTptr(t), mAptr(a) {}
@@ -91,9 +91,9 @@ private:
 
 class eSA_collectDecisionDeleteFail : public eCharActFunc {
 public:
-    eSA_collectDecisionDeleteFail(eGameBoard& board) :
+    eSA_collectDecisionDeleteFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionDeleteFail) {}
-    eSA_collectDecisionDeleteFail(eGameBoard& board, eDomesticatedAnimal* const a) :
+    eSA_collectDecisionDeleteFail(GameBoard& board, eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionDeleteFail),
         mAptr(a) {}
 
@@ -115,9 +115,9 @@ private:
 
 class eSA_groomDecisionFinish : public eCharActFunc {
 public:
-    eSA_groomDecisionFinish(eGameBoard& board) :
+    eSA_groomDecisionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionFinish) {}
-    eSA_groomDecisionFinish(eGameBoard& board, eShepherdAction* const t,
+    eSA_groomDecisionFinish(GameBoard& board, eShepherdAction* const t,
                             eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionFinish),
         mTptr(t), mAptr(a) {}
@@ -146,9 +146,9 @@ private:
 
 class eSA_groomDecisionDeleteFail : public eCharActFunc {
 public:
-    eSA_groomDecisionDeleteFail(eGameBoard& board) :
+    eSA_groomDecisionDeleteFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionDeleteFail) {}
-    eSA_groomDecisionDeleteFail(eGameBoard& board, eDomesticatedAnimal* const a) :
+    eSA_groomDecisionDeleteFail(GameBoard& board, eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionDeleteFail),
         mAptr(a) {}
 

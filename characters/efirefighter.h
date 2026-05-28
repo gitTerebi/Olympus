@@ -8,7 +8,7 @@
 class eFireFighter : public eCharacter {
 public:
     using eCharTexs = eFireFighterTextures eCharacterTextures::*;
-    eFireFighter(eGameBoard& board);
+    eFireFighter(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 

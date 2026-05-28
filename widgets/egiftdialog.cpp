@@ -11,7 +11,7 @@
 
 void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
                              const eRequestFunction& func,
-                             const eGameBoard& board) {
+                             const GameBoard& board) {
     const auto r = resolution();
     const double mult = r.multiplier();
 

@@ -44,13 +44,13 @@ struct eEpisodeGoal {
 
     static std::string sText(const eEpisodeGoalType type);
     std::string text(const bool colonyEpisode, const bool atlantean,
-                     const eGameBoard& b) const;
-    std::string statusText(const eGameBoard& b) const;
+                     const GameBoard& b) const;
+    std::string statusText(const GameBoard& b) const;
 
-    void update(const eGameBoard& b);
+    void update(const GameBoard& b);
 
     eDate date() const; // for surviveUntil and completeBefore
-    void initializeDate(const eGameBoard& b);
+    void initializeDate(const GameBoard& b);
 };
 
 #endif // EEPISODEGOAL_H

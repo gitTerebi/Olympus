@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eHorse::eHorse(eGameBoard& board) :
+eHorse::eHorse(GameBoard& board) :
     eCharacter(board, eCharacterType::horse) {
     eGameTextures::loadHorse();
 }

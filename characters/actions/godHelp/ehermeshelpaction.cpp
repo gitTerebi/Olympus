@@ -71,7 +71,7 @@ void eHermesHelpAction::finishProviding() {
 }
 
 bool eHermesHelpAction::sHelpNeeded(const ePlayerId pid,
-                                    const eGameBoard& board) {
+                                    const GameBoard& board) {
     const auto& crs = board.cityRequests(pid);
     return !crs.empty();
 }

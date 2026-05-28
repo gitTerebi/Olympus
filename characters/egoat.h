@@ -5,7 +5,7 @@
 
 class eGoat : public eDomesticatedAnimal {
 public:
-    eGoat(eGameBoard& board);
+    eGoat(GameBoard& board);
 };
 
 #endif // EGOAT_H

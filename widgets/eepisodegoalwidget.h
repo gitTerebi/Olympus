@@ -6,14 +6,14 @@
 template <class T> using stdsptr = std::shared_ptr<T>;
 
 class eEpisodeGoal;
-class eGameBoard;
+class GameBoard;
 
 class eEpisodeGoalWidget : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
     void initialize(const stdsptr<eEpisodeGoal>& e,
-                    eGameBoard* const board);
+                    GameBoard* const board);
 };
 
 #endif // EEPISODEGOALWIDGET_H

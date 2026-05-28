@@ -1,20 +1,21 @@
-#ifndef ECURSORS_H
-#define ECURSORS_H
+#ifndef CURSORS_H
+#define CURSORS_H
 
 struct SDL_Cursor;
 
-enum class eCursorType {
+enum class CursorType {
     defaultCursor,
     shovel,
     repairMallet,
-    stamp
+    stamp,
+    sword
 };
 
-class eCursors {
+class Cursors {
 public:
     static bool initialize();
     static void destroy();
-    static void set(eCursorType type);
+    static void set(CursorType type);
 
 private:
     static SDL_Cursor* load(const char* filename, int hotX, int hotY);
@@ -23,6 +24,7 @@ private:
     static SDL_Cursor* sShovel;
     static SDL_Cursor* sRepairMallet;
     static SDL_Cursor* sStamp;
+    static SDL_Cursor* sSword;
 };
 
-#endif // ECURSORS_H
+#endif // CURSORS_H

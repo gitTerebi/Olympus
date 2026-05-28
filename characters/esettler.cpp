@@ -5,7 +5,7 @@
 
 #include "erand.h"
 
-eSettler::eSettler(eGameBoard& board) :
+eSettler::eSettler(GameBoard& board) :
     eBasicPatroler(board,
                    eRand::rand() % 2 ? &eCharacterTextures::fSettlers1 :
                                 &eCharacterTextures::fSettlers2,

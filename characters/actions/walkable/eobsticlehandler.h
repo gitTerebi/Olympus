@@ -15,7 +15,7 @@ enum class eObsticleHandlerType {
 
 class eObsticleHandler {
 public:
-    eObsticleHandler(eGameBoard& board,
+    eObsticleHandler(GameBoard& board,
                      const eObsticleHandlerType type) :
         mBoard(board), mType(type) {}
     virtual ~eObsticleHandler() = default;
@@ -24,21 +24,21 @@ public:
 
     void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
-    eGameBoard& board() const { return mBoard; }
+    GameBoard& board() const { return mBoard; }
     eObsticleHandlerType type() const { return mType; }
 
     static stdsptr<eObsticleHandler> sCreate(
-            eGameBoard& board,
+            GameBoard& board,
             const eObsticleHandlerType type);
 protected:
     virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const eObsticleHandlerType mType;
 };
 
 inline bool obsticleHandlerField(eSaveArchive& ar, const char* name,
-                                 eGameBoard& board,
+                                 GameBoard& board,
                                  stdsptr<eObsticleHandler>& val) {
     bool hasValue = val != nullptr;
     const std::string hasName = std::string(name) + ".has";

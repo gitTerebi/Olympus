@@ -6,87 +6,87 @@
 
 class eCalydonianBoar : public eBasicMonster {
 public:
-    eCalydonianBoar(eGameBoard& board);
+    eCalydonianBoar(GameBoard& board);
 };
 
 class eCerberus : public eBasicMonster {
 public:
-    eCerberus(eGameBoard& board);
+    eCerberus(GameBoard& board);
 };
 
 class eChimera : public eBasicMonster {
 public:
-    eChimera(eGameBoard& board);
+    eChimera(GameBoard& board);
 };
 
 class eCyclops : public eBasicMonster {
 public:
-    eCyclops(eGameBoard& board);
+    eCyclops(GameBoard& board);
 };
 
 class eDragon : public eBasicMonster {
 public:
-    eDragon(eGameBoard& board);
+    eDragon(GameBoard& board);
 };
 
 class eEchidna : public eBasicMonster {
 public:
-    eEchidna(eGameBoard& board);
+    eEchidna(GameBoard& board);
 };
 
 class eHarpies : public eBasicMonster {
 public:
-    eHarpies(eGameBoard& board);
+    eHarpies(GameBoard& board);
 };
 
 class eHector : public eBasicMonster {
 public:
-    eHector(eGameBoard& board);
+    eHector(GameBoard& board);
 };
 
 class eHydra : public eBasicMonster {
 public:
-    eHydra(eGameBoard& board);
+    eHydra(GameBoard& board);
 };
 
 class eKraken : public eWaterMonster {
 public:
-    eKraken(eGameBoard& board);
+    eKraken(GameBoard& board);
 };
 
 class eMaenads : public eBasicMonster {
 public:
-    eMaenads(eGameBoard& board);
+    eMaenads(GameBoard& board);
 };
 
 class eMedusa : public eBasicMonster {
 public:
-    eMedusa(eGameBoard& board);
+    eMedusa(GameBoard& board);
 };
 
 class eMinotaur : public eBasicMonster {
 public:
-    eMinotaur(eGameBoard& board);
+    eMinotaur(GameBoard& board);
 };
 
 class eScylla : public eWaterMonster {
 public:
-    eScylla(eGameBoard& board);
+    eScylla(GameBoard& board);
 };
 
 class eSphinx : public eBasicMonster {
 public:
-    eSphinx(eGameBoard& board);
+    eSphinx(GameBoard& board);
 };
 
 class eTalos : public eBasicMonster {
 public:
-    eTalos(eGameBoard& board);
+    eTalos(GameBoard& board);
 };
 
 class eSatyr : public eBasicMonster {
 public:
-    eSatyr(eGameBoard& board);
+    eSatyr(GameBoard& board);
 };
 
 #endif // ECALYDONIANBOAR_H

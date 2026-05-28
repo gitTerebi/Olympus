@@ -9,7 +9,7 @@
 #include "eiteratesquare.h"
 #include "engine/epathfinder.h"
 
-eTrireme::eTrireme(eGameBoard& board) :
+eTrireme::eTrireme(GameBoard& board) :
     eBoatBase(board, &eCharacterTextures::fTrireme,
               eCharacterType::trireme),
     eFightingCharacter(this) {
@@ -20,7 +20,7 @@ eTrireme::eTrireme(eGameBoard& board) :
 
 void eTrireme::sPlace(std::vector<eTrireme*> bs,
                       const int ctx, const int cty,
-                      eGameBoard& board, const int dist,
+                      GameBoard& board, const int dist,
                       const int minDistFromEdge) {
     if(bs.empty()) return;
 

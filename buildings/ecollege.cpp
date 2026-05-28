@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eCollege::eCollege(eGameBoard& board,
+eCollege::eCollege(GameBoard& board,
                    const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fCollege,

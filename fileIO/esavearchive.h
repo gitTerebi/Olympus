@@ -22,7 +22,7 @@
 #define ESAVE_DEPRECATED(MSG)
 #endif
 
-class eGameBoard;
+class GameBoard;
 class eBuilding;
 class eCharacter;
 class eCharacterAction;
@@ -162,7 +162,7 @@ public:
 
     bool dateField(const char* const name, eDate& d);
 
-    void tile(eTile*& tile, eGameBoard& board) {
+    void tile(eTile*& tile, GameBoard& board) {
         if(reading()) {
             tile = mSrc->readTile(board);
         } else {
@@ -171,7 +171,7 @@ public:
     }
 
     bool tileField(const char* const name,
-                   eGameBoard& board,
+                   GameBoard& board,
                    eTile*& value) {
         return payloadFieldImpl(name,
             [this, &value](eWriteStream& dst) {
@@ -183,7 +183,7 @@ public:
     }
 
     template <typename Ptr>
-    void character(eGameBoard* board, Ptr& value) {
+    void character(GameBoard* board, Ptr& value) {
         if(reading()) {
             Ptr* const tgt = &value;
             *tgt = nullptr;
@@ -196,7 +196,7 @@ public:
     }
 
     template <typename Ptr>
-    void building(eGameBoard* board, Ptr& value) {
+    void building(GameBoard* board, Ptr& value) {
         if(reading()) {
             Ptr* const tgt = &value;
             *tgt = nullptr;
@@ -210,7 +210,7 @@ public:
 
     template <typename Ptr>
     bool characterField(const char* const name,
-                        eGameBoard* board,
+                        GameBoard* board,
                         Ptr& value) {
         using T = typename std::remove_reference<decltype(*value)>::type;
         Ptr* const tgt = &value;
@@ -227,7 +227,7 @@ public:
 
     template <typename T>
     bool characterField(const char* const name,
-                        eGameBoard* board,
+                        GameBoard* board,
                         T*& value) {
         T** const tgt = &value;
         return payloadFieldImpl(
@@ -243,7 +243,7 @@ public:
 
     template <typename Ptr>
     bool buildingField(const char* const name,
-                       eGameBoard* board,
+                       GameBoard* board,
                        Ptr& value) {
         Ptr* const tgt = &value;
         return payloadFieldImpl(
@@ -258,7 +258,7 @@ public:
     }
 
     template <typename T>
-    void buildingAs(eGameBoard* board, stdptr<T>& value) {
+    void buildingAs(GameBoard* board, stdptr<T>& value) {
         if(reading()) {
             stdptr<T>* const tgt = &value;
             tgt->clear();
@@ -272,7 +272,7 @@ public:
 
     template <typename T>
     bool buildingAsField(const char* const name,
-                         eGameBoard* board,
+                         GameBoard* board,
                          stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
@@ -288,7 +288,7 @@ public:
 
     template <typename T>
     bool buildingAsField(const char* const name,
-                         eGameBoard* board,
+                         GameBoard* board,
                          T*& value) {
         T** const tgt = &value;
         return payloadFieldImpl(
@@ -303,7 +303,7 @@ public:
     }
 
     template <typename T>
-    void characterAs(eGameBoard* board, stdptr<T>& value) {
+    void characterAs(GameBoard* board, stdptr<T>& value) {
         if(reading()) {
             stdptr<T>* const tgt = &value;
             tgt->clear();
@@ -317,7 +317,7 @@ public:
 
     template <typename T>
     bool characterAsField(const char* const name,
-                          eGameBoard* board,
+                          GameBoard* board,
                           stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
@@ -332,7 +332,7 @@ public:
     }
 
     template <typename T>
-    void characterAs(eGameBoard* board, T*& value) {
+    void characterAs(GameBoard* board, T*& value) {
         if(reading()) {
             T** const tgt = &value;
             *tgt = nullptr;
@@ -346,7 +346,7 @@ public:
 
     template <typename T>
     bool characterAsField(const char* const name,
-                          eGameBoard* board,
+                          GameBoard* board,
                           T*& value) {
         T** const tgt = &value;
         return payloadFieldImpl(
@@ -360,7 +360,7 @@ public:
             });
     }
 
-    void city(eGameBoard* board, stdsptr<eWorldCity>& value) {
+    void city(GameBoard* board, stdsptr<eWorldCity>& value) {
         if(reading()) {
             stdsptr<eWorldCity>* const tgt = &value;
             *tgt = nullptr;
@@ -385,7 +385,7 @@ public:
     }
 
     bool worldCityField(const char* const name,
-                        eGameBoard* board,
+                        GameBoard* board,
                         stdsptr<eWorldCity>& value) {
         stdsptr<eWorldCity>* const tgt = &value;
         return payloadFieldImpl(
@@ -414,7 +414,7 @@ public:
             });
     }
 
-    void soldierBanner(eGameBoard* board, stdsptr<SoldierBanner>& value) {
+    void soldierBanner(GameBoard* board, stdsptr<SoldierBanner>& value) {
         if(reading()) {
             stdsptr<SoldierBanner>* const tgt = &value;
             *tgt = nullptr;
@@ -428,7 +428,7 @@ public:
 
     template <typename Ptr>
     bool soldierBannerField(const char* const name,
-                            eGameBoard* board,
+                            GameBoard* board,
                             Ptr& value) {
         Ptr* const tgt = &value;
         return payloadFieldImpl(name,
@@ -443,7 +443,7 @@ public:
 
     template <typename T>
     bool bannerField(const char* const name,
-                     eGameBoard* board,
+                     GameBoard* board,
                      T*& value) {
         T** const tgt = &value;
         return payloadFieldImpl(name,
@@ -469,7 +469,7 @@ public:
     }
 
     template <typename T>
-    void gameEvent(eGameBoard* board, T*& val) {
+    void gameEvent(GameBoard* board, T*& val) {
         if(reading()) {
             T** const tgt = &val;
             *tgt = nullptr;
@@ -482,7 +482,7 @@ public:
     }
 
     template <typename T>
-    void gameEvent(eGameBoard* board, stdptr<T>& val) {
+    void gameEvent(GameBoard* board, stdptr<T>& val) {
         if(reading()) {
             stdptr<T>* const tgt = &val;
             tgt->clear();
@@ -495,7 +495,7 @@ public:
     }
 
     template <typename T>
-    bool gameEventField(const char* const name, eGameBoard* board, stdptr<T>& val) {
+    bool gameEventField(const char* const name, GameBoard* board, stdptr<T>& val) {
         stdptr<T>* const tgt = &val;
         return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeGameEvent(tgt->get()); },
@@ -508,7 +508,7 @@ public:
     }
 
     template <typename T>
-    bool gameEventField(const char* const name, eGameBoard* board, T*& val) {
+    bool gameEventField(const char* const name, GameBoard* board, T*& val) {
         T** const tgt = &val;
         return payloadFieldImpl(name,
             [tgt](eWriteStream& dst) { dst.writeGameEvent(*tgt); },
@@ -569,7 +569,7 @@ public:
     }
 
     bool directionTimesField(const char* const name,
-                             eGameBoard& board,
+                             GameBoard& board,
                              stdsptr<eDirectionTimes>& val) {
         if(reading()) {
             val = std::make_shared<eDirectionTimes>();
@@ -584,7 +584,7 @@ public:
     }
 
     bool godActField(const char* const name,
-                     eGameBoard& board,
+                     GameBoard& board,
                      stdsptr<eGodAct>& val) {
         bool hasValue = val != nullptr;
         const std::string hasName = std::string(name) + ".has";
@@ -600,7 +600,7 @@ public:
 
     template <typename T>
     bool characterActionAsField(const char* const name,
-                                eGameBoard* board,
+                                GameBoard* board,
                                 stdptr<T>& value) {
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
@@ -617,7 +617,7 @@ public:
     }
 
     bool invasionHandlerField(const char* const name,
-                              eGameBoard* board,
+                              GameBoard* board,
                               eInvasionHandler*& val) {
         eInvasionHandler** const tgt = &val;
         return payloadFieldImpl(name,
@@ -631,7 +631,7 @@ public:
     }
 
     bool charActFuncField(const char* const name,
-                          eGameBoard& board,
+                          GameBoard& board,
                           stdsptr<eCharacterActionFunction>& val) {
         bool hasValue = val != nullptr;
         const std::string hasName = std::string(name) + ".has";

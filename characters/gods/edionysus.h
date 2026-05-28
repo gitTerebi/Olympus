@@ -5,7 +5,7 @@
 
 class eDionysus : public eGod {
 public:
-    eDionysus(eGameBoard& board);
+    eDionysus(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };

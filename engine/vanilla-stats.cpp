@@ -119,7 +119,7 @@ void apply(eCharacterBase& c, const eDifficulty d) {
     if(s->mr > 0) c.setRange(s->mr);
 }
 
-void applyForCity(eCharacterBase& c, eGameBoard& board) {
+void applyForCity(eCharacterBase& c, GameBoard& board) {
     const auto cid = c.cityId();
     const auto pid = board.cityIdToPlayerId(cid);
     const auto d = board.difficulty(pid);

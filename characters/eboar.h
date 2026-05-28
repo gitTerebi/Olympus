@@ -5,7 +5,7 @@
 
 class eBoar : public eWildAnimal {
 public:
-    eBoar(eGameBoard& board);
+    eBoar(GameBoard& board);
 };
 
 #endif // EBOAR_H

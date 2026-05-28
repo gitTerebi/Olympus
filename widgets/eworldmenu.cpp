@@ -127,7 +127,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
             wgw->setPressAction([this](){
                 const bool editor = mBoard && mBoard->editorMode();
                 if(editor) return;
-                window()->showGame(static_cast<eGameBoard*>(nullptr),
+                window()->showGame(static_cast<GameBoard*>(nullptr),
                                    GameWidgetSettings());
             });
             const int wgwx = 20*mult;
@@ -256,7 +256,7 @@ void eWorldMenu::setWorldBoard(eWorldBoard* const b) {
     mBoard = b;
 }
 
-void eWorldMenu::setGameBoard(eGameBoard* const b) {
+void eWorldMenu::setGameBoard(GameBoard* const b) {
     if(mTributeWidget) mTributeWidget->setBoard(b);
 }
 

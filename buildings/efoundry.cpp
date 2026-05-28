@@ -3,7 +3,7 @@
 #include "characters/ebronzeminer.h"
 #include "textures/egametextures.h"
 
-eFoundry::eFoundry(eGameBoard& board, const eCityId cid) :
+eFoundry::eFoundry(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fFoundry,
                              -3.80, -3.78,

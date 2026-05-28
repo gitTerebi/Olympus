@@ -10,7 +10,7 @@ void eEpisodeGoalSelectionWidget::initialize(
         const eEventsGetter& get,
         const eEventAdder& add,
         const eEventRemover& remove,
-        eGameBoard* const board) {
+        GameBoard* const board) {
 
     eScrollButtonsList::initialize();
 

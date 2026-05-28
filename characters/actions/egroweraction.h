@@ -61,9 +61,9 @@ private:
 
 class eGRA_workOnDecisionFinish : public eCharActFunc {
 public:
-    eGRA_workOnDecisionFinish(eGameBoard& board) :
+    eGRA_workOnDecisionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionFinish) {}
-    eGRA_workOnDecisionFinish(eGameBoard& board, eGrowerAction* const ca,
+    eGRA_workOnDecisionFinish(GameBoard& board, eGrowerAction* const ca,
                               eTile* const tile, const eBuildingType type) :
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionFinish),
         mTptr(ca), mTile(tile), mType(type) {}
@@ -88,9 +88,9 @@ private:
 
 class eGRA_workOnDecisionDeleteFail : public eCharActFunc {
 public:
-    eGRA_workOnDecisionDeleteFail(eGameBoard& board) :
+    eGRA_workOnDecisionDeleteFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionDeleteFail) {}
-    eGRA_workOnDecisionDeleteFail(eGameBoard& board, eTile* const tile) :
+    eGRA_workOnDecisionDeleteFail(GameBoard& board, eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionDeleteFail),
         mTile(tile) {}
 

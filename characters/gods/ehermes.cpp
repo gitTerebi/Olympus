@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eHermes::eHermes(eGameBoard& board) :
+eHermes::eHermes(GameBoard& board) :
     eGod(board, eGodType::hermes) {
     eGameTextures::loadHermes();
 }

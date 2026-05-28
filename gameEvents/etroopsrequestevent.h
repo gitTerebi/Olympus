@@ -28,7 +28,7 @@ class eTroopsRequestEvent : public eGameEvent,
 public:
     eTroopsRequestEvent(const eCityId cid,
                         const eGameEventBranch branch,
-                        eGameBoard& board);
+                        GameBoard& board);
    ~eTroopsRequestEvent();
 
     void trigger() override;

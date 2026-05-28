@@ -20,7 +20,7 @@ class ePayTributeEvent : public eGameEvent {
 public:
     ePayTributeEvent(const eCityId cid,
                      const eGameEventBranch branch,
-                     eGameBoard& board);
+                     GameBoard& board);
     ~ePayTributeEvent();
 
     void initialize(const stdsptr<eWorldCity>& c);
@@ -47,7 +47,7 @@ private:
     };
 
     void activate();
-    void advanceToNextStep(eGameBoard& board);
+    void advanceToNextStep(GameBoard& board);
     eEvent stepEvent() const;
     int complyMonths() const;
     int popupComplyMonths() const;

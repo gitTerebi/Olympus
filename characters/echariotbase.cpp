@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "enumbers.h"
 
-eChariotBase::eChariotBase(eGameBoard& board,
+eChariotBase::eChariotBase(GameBoard& board,
                              const eCharTexs charTexs,
                              const eCharacterType type) :
     eSoldier(board, &eCharacterTextures::fHoplite, type),

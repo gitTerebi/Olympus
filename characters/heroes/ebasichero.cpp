@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eBasicHero::eBasicHero(eGameBoard& board,
+eBasicHero::eBasicHero(GameBoard& board,
                        const eCharTexs charTexs,
                        const eHeroType type) :
     eHero(board, type), mCharTexs(charTexs) {}

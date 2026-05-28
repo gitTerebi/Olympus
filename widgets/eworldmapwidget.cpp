@@ -25,7 +25,7 @@ void eWorldMapWidget::setSelectColonyMode(
     mColonySelection = s;
 }
 
-void eWorldMapWidget::setBoard(eGameBoard* const b) {
+void eWorldMapWidget::setBoard(GameBoard* const b) {
     mGameBoard = b;
     setWorldBoard(b ? &b->world() : nullptr);
 }
@@ -61,7 +61,7 @@ struct eMapArmy {
     eArmyReason fReason;
 };
 
-std::vector<eMapArmy> getArmies(eGameBoard& board) {
+std::vector<eMapArmy> getArmies(GameBoard& board) {
     std::vector<eMapArmy> result;
 
     const auto& world = board.world();

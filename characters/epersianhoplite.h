@@ -5,7 +5,7 @@
 
 class ePersianHoplite : public eHopliteBase {
 public:
-    ePersianHoplite(eGameBoard& board);
+    ePersianHoplite(GameBoard& board);
 };
 
 #endif // EPERSIANHOPLITE_H

@@ -9,7 +9,7 @@
 eCityBecomesEvent::eCityBecomesEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::cityBecomes,
                branch, board),
     eCityEventValue(board, [this](eWorldCity& city) {

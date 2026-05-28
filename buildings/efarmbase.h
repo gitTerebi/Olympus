@@ -10,7 +10,7 @@ class eSaveArchive;
 
 class eFarmBase : public eResourceBuildingBase {
 public:
-    eFarmBase(eGameBoard& board,
+    eFarmBase(GameBoard& board,
               const eBuildingType type,
               const int sw, const int sh,
               const eResourceType resType,

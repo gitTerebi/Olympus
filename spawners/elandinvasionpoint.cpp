@@ -4,5 +4,5 @@
 
 eLandInvasionPoint::eLandInvasionPoint(const int id,
                                        eTile* const tile,
-                                       eGameBoard& board) :
+                                       GameBoard& board) :
     eBanner(eBannerTypeS::landInvasion, id, tile, board) {}

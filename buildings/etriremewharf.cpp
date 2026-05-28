@@ -8,7 +8,7 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eTriremeWharf::eTriremeWharf(eGameBoard& board,
+eTriremeWharf::eTriremeWharf(GameBoard& board,
                              const eDiagonalOrientation o,
                              const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::triremeWharf,

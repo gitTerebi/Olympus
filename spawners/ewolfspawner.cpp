@@ -5,13 +5,13 @@
 
 eWolfSpawner::eWolfSpawner(const int id,
                            eTile* const tile,
-                           eGameBoard& board) :
+                           GameBoard& board) :
     eAnimalSpawner(eBannerTypeS::wolf, id, tile,
                    eNumbers::sWolfMaxCount,
                    eNumbers::sWolfSpawnPeriod, board) {}
 
 
-stdsptr<eWildAnimal> eWolfSpawner::create(eGameBoard& board) {
+stdsptr<eWildAnimal> eWolfSpawner::create(GameBoard& board) {
     const auto b = e::make_shared<eWolf>(board);
     b->setOnCityId(cityId());
     return b;
