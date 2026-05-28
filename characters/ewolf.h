@@ -6,6 +6,8 @@
 class eWolf : public eWildAnimal {
 public:
     eWolf(eGameBoard& board);
+
+    bool takeDamage(const double a, eCharacter* const attacker) override;
 };
 
 #endif // EWOLF_H

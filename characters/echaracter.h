@@ -84,7 +84,7 @@ public:
     void setVisible(const bool v) { mVisible = v; }
 
     bool takeDamage(const double a);
-    bool takeDamage(const double a, eCharacter* const attacker);
+    virtual bool takeDamage(const double a, eCharacter* const attacker);
     bool takeMeleeDamage(const double a, eCharacter* const attacker);
 
     static stdsptr<eCharacter> sCreate(

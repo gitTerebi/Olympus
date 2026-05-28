@@ -10,6 +10,9 @@
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "buildings/ebuilding.h"
 #include "audio/sounds.h"
+#include "characters/echaracter.h"
+
+#include <cstdlib>
 
 eWolfAction::eWolfAction(eCharacter *const c, const int spawnerX, const int spawnerY) : eAnimalAction(c, spawnerX, spawnerY,
                                                                                                       eWalkableObject::sCreateDefault(),
@@ -75,6 +78,14 @@ static eBuilding* sAdjacentWall(eTile* const t) {
 
 bool eWolfAction::decide()
 {
+    if(mRetaliationTarget) {
+        if(canAttackRetaliationTarget()) {
+            character()->fight(mRetaliationTarget.get());
+        } else {
+            moveToRetaliationTarget();
+        }
+        return true;
+    }
     if (mHunting)
     {
         findPrey();
@@ -104,6 +115,7 @@ void eWolfAction::serializeFields(eSaveArchive& ar)
     ar.field("hunting", mHunting);
     ar.field("stage", mStage);
     ar.buildingAsField("wallTarget", &board(), mWallTarget);
+    ar.characterField("retaliationTarget", &board(), mRetaliationTarget);
 }
 
 void eWolfAction::resumeFromSavedState()
@@ -127,6 +139,7 @@ void eWolfAction::resumeFromSavedState()
         }
         break;
     }
+    if(mRetaliationTarget) moveToRetaliationTarget();
 }
 
 void eWolfAction::goBack()
@@ -134,6 +147,7 @@ void eWolfAction::goBack()
     mHunting = false;
     mStage = eWolfActionStage::goingBack;
     mWallTarget.clear();
+    mRetaliationTarget.clear();
 
     const auto c = character();
 
@@ -240,4 +254,71 @@ void eWolfAction::attackWall(eBuilding *const wall)
     mWallTarget = wall;
     mStage = eWolfActionStage::attackingWall;
     character()->setActionType(eCharacterActionType::fight);
+}
+
+void eWolfAction::retaliate(eCharacter* const attacker)
+{
+    if(!attacker || attacker->dead()) return;
+    mHunting = false;
+    mWallTarget.clear();
+    mRetaliationTarget = attacker;
+    if(canAttackRetaliationTarget()) {
+        character()->fight(attacker);
+    } else {
+        moveToRetaliationTarget();
+    }
+}
+
+bool eWolfAction::canAttackRetaliationTarget() const
+{
+    if(!mRetaliationTarget || mRetaliationTarget->dead()) return false;
+    const auto c = character();
+    const auto ct = c->tile();
+    const auto tt = mRetaliationTarget->tile();
+    if(!ct || !tt) return false;
+    return abs(ct->x() - tt->x()) <= 1 &&
+           abs(ct->y() - tt->y()) <= 1;
+}
+
+void eWolfAction::moveToRetaliationTarget()
+{
+    if(!mRetaliationTarget || mRetaliationTarget->dead()) {
+        mRetaliationTarget.clear();
+        goBack();
+        return;
+    }
+
+    const auto c = character();
+    const stdptr<eCharacter> cptr(c);
+    const stdptr<eWolfAction> actionPtr(this);
+    const stdptr<eCharacter> targetPtr(mRetaliationTarget.get());
+
+    const auto targetTile = mRetaliationTarget->tile();
+    const int tx = targetTile ? targetTile->x() : 0;
+    const int ty = targetTile ? targetTile->y() : 0;
+    const auto final = [targetPtr, tx, ty](eThreadTile* const t) {
+        if(targetPtr && targetPtr->tile()) {
+            const auto tt = targetPtr->tile();
+            return abs(t->x() - tt->x()) <= 1 &&
+                   abs(t->y() - tt->y()) <= 1;
+        }
+        return abs(t->x() - tx) <= 1 &&
+               abs(t->y() - ty) <= 1;
+    };
+
+    const auto a = e::make_shared<eMoveToAction>(c);
+    a->setStateRelevance(eStateRelevance::domesticatedAnimals |
+                         eStateRelevance::buildings |
+                         eStateRelevance::terrain);
+    a->setFoundAction([cptr]() {
+        if(!cptr) return;
+        cptr->setActionType(eCharacterActionType::walk);
+    });
+    a->setFindFailAction([actionPtr]() {
+        if(!actionPtr) return;
+        actionPtr->goBack();
+    });
+    a->setMaxFindDistance(eNumbers::sWolfHuntDistance * 2);
+    a->start(final);
+    setCurrentAction(a);
 }

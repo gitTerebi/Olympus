@@ -7,6 +7,4 @@ eDeer::eDeer(eGameBoard& board) :
                 eCharacterType::deer) {
     eGameTextures::loadDeer();
     setCityId(eCityId::neutralFriendly);
-    setAttack(0);
-    setHP(100);
 }

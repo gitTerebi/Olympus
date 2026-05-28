@@ -17,6 +17,7 @@ public:
     bool decide() override;
 
     void findPrey();
+    void retaliate(eCharacter* attacker);
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
@@ -24,10 +25,13 @@ protected:
 private:
     void goBack();
     void attackWall(eBuilding *wall);
+    void moveToRetaliationTarget();
+    bool canAttackRetaliationTarget() const;
 
     bool mHunting = false;
     eWolfActionStage mStage = eWolfActionStage::idle;
     stdptr<eBuilding> mWallTarget;
+    stdptr<eCharacter> mRetaliationTarget;
 };
 
 #endif // EWOLFACTION_H
