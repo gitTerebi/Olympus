@@ -10,6 +10,8 @@
 #include "enumbers.h"
 #include "combat-timing.h"
 
+#include <cstdlib>
+
 eFightAction::eFightAction(eCharacter *const c, eCharacter *const o) : eCharacterAction(c, eCharActionType::fightAction),
                                                                        mOpponent(o)
 {
@@ -21,6 +23,14 @@ void eFightAction::increment(const int by)
     const auto c = character();
     if (!mOpponent)
     {
+        setState(eCharacterActionState::finished);
+        return;
+    }
+    const auto ct = c->tile();
+    const auto ot = mOpponent->tile();
+    if(!ct || !ot ||
+       abs(ct->x() - ot->x()) > 1 ||
+       abs(ct->y() - ot->y()) > 1) {
         setState(eCharacterActionState::finished);
         return;
     }

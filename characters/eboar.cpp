@@ -4,9 +4,7 @@
 
 eBoar::eBoar(eGameBoard& board) :
     eWildAnimal(board, &eCharacterTextures::fBoar,
-                eCharacterType::boar) {
+    eCharacterType::boar) {
     eGameTextures::loadBoar();
     setCityId(eCityId::neutralFriendly);
-    setHP(100);
-    setAttack(0);
 }
