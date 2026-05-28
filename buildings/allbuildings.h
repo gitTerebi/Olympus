@@ -3,7 +3,7 @@
 
 #include "buildings/ebuildingrenderer.h"
 
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 #include "buildings/egymnasium.h"
 #include "buildings/eroad.h"
 #include "buildings/epodium.h"
@@ -85,7 +85,7 @@
 
 #include "buildings/eanimalbuilding.h"
 
-#include "buildings/eelitehousing.h"
+#include "buildings/elite-housing.h"
 #include "buildings/eelitehousingrenderer.h"
 
 #include "buildings/sanctuaries/ezeussanctuary.h"

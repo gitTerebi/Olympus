@@ -6,8 +6,8 @@
 #include "engine/etile.h"
 #include "eruins.h"
 
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/etower.h"
 

@@ -679,7 +679,7 @@ void eCampaign::copyEpisodeSettings(eEpisode* const from,
     }
 }
 
-void eCampaign::setDifficulty(const eDifficulty d) {
+void eCampaign::setDifficulty(const Difficulty d) {
     mDifficulty = d;
     mParentBoard->setDifficulty(d);
     for(const auto& b : mColonyBoards) {

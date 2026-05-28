@@ -10,7 +10,7 @@
 #include "audio/music.h"
 #include "evectorhelpers.h"
 #include "gameEvents/eplayerconquestevent.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "engine/epathfinder.h"
 #include "eiteratesquare.h"
 #include "fileIO/esavearchive.h"

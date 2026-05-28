@@ -3,7 +3,7 @@
 
 #include "eactionwithcomeback.h"
 
-class eSmallHouse;
+class SmallHouse;
 class eSaveArchive;
 
 enum class eSickDisgruntledActionStage {
@@ -13,7 +13,7 @@ enum class eSickDisgruntledActionStage {
 class eSickDisgruntledAction : public eActionWithComeback {
 public:
     eSickDisgruntledAction(eCharacter* const c,
-                           eSmallHouse* const ch);
+                           SmallHouse* const ch);
 
     bool decide() override;
 protected:
@@ -23,7 +23,7 @@ protected:
     void goBackDecision(const stdsptr<eWalkableObject>& w =
                             eWalkableObject::sCreateRoadAvenue());
 
-    eSmallHouse* mBuilding = nullptr;
+    SmallHouse* mBuilding = nullptr;
 
     bool mGoBackNext = false;
     eSickDisgruntledActionStage mStage = eSickDisgruntledActionStage::idle;

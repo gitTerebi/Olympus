@@ -5,8 +5,8 @@
 #include "characters/esettler.h"
 #include "engine/ethreadpool.h"
 #include "emovetoaction.h"
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "engine/e-game-board.h"
 #include "ekillcharacterfinishfail.h"
 #include "fileIO/esavearchive.h"
@@ -178,14 +178,14 @@ bool eSettlerAction::enterHouse() {
         if(!b) continue;
         const auto t = b->type();
         if(t == eBuildingType::commonHouse) {
-            const auto ch = static_cast<eSmallHouse*>(b);
+            const auto ch = static_cast<SmallHouse*>(b);
             const int v = ch->vacancies();
             if(v <= 0) continue;
             const int nPeople = mNPeople - ch->moveIn(mNPeople);
             setNumberPeople(nPeople);
             return true;
         } else if(t == eBuildingType::eliteHousing) {
-            const auto ch = static_cast<eEliteHousing*>(b);
+            const auto ch = static_cast<EliteHousing*>(b);
             const int v = ch->vacancies();
             if(v <= 0) continue;
             const int nPeople = mNPeople - ch->moveIn(mNPeople);

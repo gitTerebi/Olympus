@@ -6,7 +6,7 @@
 #include "emainwindow.h"
 #include "echeckablebutton.h"
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 
 #include "widgets/datawidgets/epopulationdatawidget.h"
 #include "widgets/datawidgets/eemploymentdatawidget.h"

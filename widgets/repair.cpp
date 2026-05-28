@@ -11,7 +11,7 @@
 
 #include "evectorhelpers.h"
 #include "ebuildingstoerase.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 
 #include "fileIO/building-reader.h"
 #include "fileIO/ereadstream.h"
@@ -385,7 +385,7 @@ void handleRepair(GameBoard &board, GameWidget *const widget,
                         rr->erase();
                     const auto cid2 = board.tile(g.ox, g.oy) ? board.tile(g.ox, g.oy)->cityId() : cid;
                     board.buildBase(g.ox, g.oy, g.ox + g.ow - 1, g.oy + g.oh - 1, [&board, cid2]()
-                                    { return e::make_shared<eSmallHouse>(board, cid2); }, ppid, cid2, true, false, true);
+                                    { return e::make_shared<SmallHouse>(board, cid2); }, ppid, cid2, true, false, true);
                 }
                 else if (g.originRuins && g.originRuins->hasRestoreBundle())
                 {

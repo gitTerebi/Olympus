@@ -59,7 +59,7 @@ public:
     void setPopupForRequests(const bool b);
     void setPopupForTributes(const bool b);
     void setPopupForTroops(const bool b);
-    void setLastDifficulty(const eDifficulty d);
+    void setLastDifficulty(const Difficulty d);
 
     void startGameAction(GameBoard* const board,
                          const GameWidgetSettings& settings);

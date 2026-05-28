@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-action.h"
 
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 
 class eSaveArchive;
 
@@ -28,11 +28,11 @@ protected:
 private:
     void goToTarget();
     void heal();
-    void spawnHealMissile(eSmallHouse* const target);
+    void spawnHealMissile(SmallHouse* const target);
 
     eApolloHelpStage mStage{eApolloHelpStage::none};
     eApolloHelpStage mPreHealingStage{eApolloHelpStage::none};
-    stdptr<eSmallHouse> mHealTarget;
+    stdptr<SmallHouse> mHealTarget;
 };
 
 class eApHA_healFinish : public eCharActFunc {
@@ -62,7 +62,7 @@ private:
 class eApolloHelpAct : public eGodAct {
 public:
     eApolloHelpAct(GameBoard& board,
-                   eSmallHouse* const target) :
+                   SmallHouse* const target) :
         eGodAct(board, eGodActType::apolloHelp),
         mTarget(target) {}
 
@@ -85,7 +85,7 @@ public:
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
-    stdptr<eSmallHouse> mTarget;
+    stdptr<SmallHouse> mTarget;
 };
 
 #endif // EAPOLLOHELPACTION_H

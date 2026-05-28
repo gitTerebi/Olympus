@@ -6,8 +6,8 @@
 #include "characters/gods/egod.h"
 #include "characters/soldier-banner.h"
 #include "engine/e-worldcity.h"
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "engine/e-game-board.h"
 #include "buildings/pyramids/epyramid.h"
 #include "evectorhelpers.h"
@@ -171,10 +171,10 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
                                            eBuildingType::eliteHousing;
         switch(type) {
         case eBuildingType::commonHouse:
-            level = eSmallHouse::sName(fEnumInt2);
+            level = SmallHouse::sName(fEnumInt2);
             break;
         case eBuildingType::eliteHousing:
-            level = eEliteHousing::sName(fEnumInt2);
+            level = EliteHousing::sName(fEnumInt2);
             break;
         default:
             break;

@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "engine/ecityid.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "buildings/allbuildings.h"
 
 #include <algorithm>
@@ -66,7 +66,7 @@ bool buildCommonHousing(GameBoard* board, eCityId cid, ePlayerId pid, bool edito
             const auto t = board->tile(rect.fX, rect.fY);
             if(!t) continue;
             r = board->build(t->x(), t->y() + 1, 2, 2, cid, pid, editorMode,
-                  [board, viewedCityId]() { return e::make_shared<eSmallHouse>(*board, viewedCityId); }) || r;
+                  [board, viewedCityId]() { return e::make_shared<SmallHouse>(*board, viewedCityId); }) || r;
         }
         board->game_undo_finish_build();
     }

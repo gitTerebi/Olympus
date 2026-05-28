@@ -4,7 +4,7 @@
 #include "emodal.h"
 #include "buildings/ebuilding.h"
 #include "engine/stamps/estamptool.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 
 #include <string>
 #include <vector>
@@ -20,7 +20,7 @@ class eStampManager : public eModal {
 public:
     using eModal::eModal;
 
-    void initialize(eStampTool* stampTool, eDifficulty difficulty);
+    void initialize(eStampTool* stampTool, Difficulty difficulty);
     void setTemplateSelectedAction(const eAction& action) {
         mTemplateSelectedAction = action;
     }
@@ -43,7 +43,7 @@ private:
     void updateButtonColors();
 
     eStampTool* mStampTool = nullptr;
-    eDifficulty mDifficulty = eDifficulty::mortal;
+    Difficulty mDifficulty = Difficulty::mortal;
     eAction mTemplateSelectedAction;
     eAction mCreateTemplateAction;
     eScrollViewport* mViewport = nullptr;

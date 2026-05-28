@@ -6,7 +6,7 @@
 #include "characters/gods/egod.h"
 #include "engine/e-game-board.h"
 #include "audio/sounds.h"
-#include "buildings/esmallhouse.h"
+#include "buildings/small-house.h"
 #include "buildings/eresourcebuilding.h"
 #include "fileIO/esavearchive.h"
 
@@ -125,7 +125,7 @@ public:
         if(!b) return null;
         const auto type = b->type();
         if(type != eBuildingType::commonHouse) return null;
-        const auto ch = static_cast<eSmallHouse*>(b);
+        const auto ch = static_cast<SmallHouse*>(b);
         const bool p = ch->plague();
         if(p) return null;
         const auto tile = b->centerTile();
@@ -136,7 +136,7 @@ public:
         const auto cid = tile->cityId();
         board.nearestPlague(cid, tx, ty, dist);
         if(dist < 10) return null;
-        mTarget = static_cast<eSmallHouse*>(b);
+        mTarget = static_cast<SmallHouse*>(b);
         return tile;
     }
 
@@ -151,7 +151,7 @@ public:
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
-    stdptr<eSmallHouse> mTarget;
+    stdptr<SmallHouse> mTarget;
 };
 
 class eLookForEvictGodAct : public eGodAct {

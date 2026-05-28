@@ -1,10 +1,10 @@
 #include "eelitehousingrenderer.h"
 
-#include "eelitehousing.h"
+#include "elite-housing.h"
 
 eEliteHousingRenderer::eEliteHousingRenderer(
         const eEliteRendererType type,
-        const stdsptr<eEliteHousing>& b) :
+        const stdsptr<EliteHousing>& b) :
     eBuildingRenderer(b, eBuildingRendererType::eliteHousing),
     mType(type),
     mBuilding(b) {

@@ -2,7 +2,7 @@
 
 #include "characters/echaracterbase.h"
 #include "engine/e-game-board.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 #include "engine/model-data.h"
 
 namespace VanillaStats {
@@ -99,7 +99,7 @@ int greekEnemyFigureId(const eCharacterType type) {
     }
 }
 
-void apply(eCharacterBase& c, const eDifficulty d, const bool isPlayer) {
+void apply(eCharacterBase& c, const Difficulty d, const bool isPlayer) {
     const char* name = figureName(c.type());
     const int greekId = greekEnemyFigureId(c.type());
     if(!name && greekId < 0) return;

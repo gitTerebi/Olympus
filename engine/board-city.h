@@ -29,7 +29,7 @@ class eMonster;
 struct eMilitaryAid;
 class eInvasionEvent;
 class ePlague;
-class eSmallHouse;
+class SmallHouse;
 class eBoardPlayer;
 class eAgoraBase;
 class eInvasionHandler;
@@ -273,7 +273,7 @@ public:
     void registerHeroHall(eHerosHall* const b);
     bool unregisterHeroHall(eHerosHall* const b);
 
-    bool unregisterCommonHouse(eSmallHouse* const ch);
+    bool unregisterCommonHouse(SmallHouse* const ch);
 
     bool hasStadium() const { return mStadium; }
     bool hasMuseum() const { return mMuseum; }
@@ -304,8 +304,8 @@ public:
     ePyramid* pyramid(const eBuildingType type) const;
     std::vector<ePyramid*> pyramids() const;
 
-    void startPlague(eSmallHouse* const h);
-    stdsptr<ePlague> plagueForHouse(eSmallHouse* const h);
+    void startPlague(SmallHouse* const h);
+    stdsptr<ePlague> plagueForHouse(SmallHouse* const h);
     void healPlague(const stdsptr<ePlague>& p);
     using ePlagues = std::vector<stdsptr<ePlague>>;
     const ePlagues& plagues() const;

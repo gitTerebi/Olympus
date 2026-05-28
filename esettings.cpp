@@ -286,7 +286,7 @@ void eSettings::read() {
     fDisableEdgeScroll = settings["disable_edge_scroll"] == "true";
     const auto lastDiffStr = settings["last_difficulty"];
     if(!lastDiffStr.empty()) {
-        fLastDifficulty = static_cast<eDifficulty>(std::stoi(lastDiffStr));
+        fLastDifficulty = static_cast<Difficulty>(std::stoi(lastDiffStr));
     }
     const auto keyScrollSpeedStr = settings["key_scroll_speed"];
     if(!keyScrollSpeedStr.empty()) {

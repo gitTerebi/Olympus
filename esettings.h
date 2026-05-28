@@ -3,7 +3,7 @@
 
 #include "widgets/eresolution.h"
 #include "engine/etile.h"
-#include "engine/edifficulty.h"
+#include "engine/difficulty.h"
 
 #include <SDL2/SDL_scancode.h>
 
@@ -69,7 +69,7 @@ struct eSettings {
     bool fPopupForTributes = true;
     bool fPopupForTroops = true;
     bool fDisableEdgeScroll = false;
-    eDifficulty fLastDifficulty = eDifficulty::hero;
+    Difficulty fLastDifficulty = Difficulty::hero;
     int fKeyScrollSpeed = 18;
     int fGameSpeed = sDefaultGameSpeed;
     int fGeneralVolume = 100;

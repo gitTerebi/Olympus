@@ -15,14 +15,14 @@ public:
 };
 }
 
-void eDifficultyWidget::initialize(const eDifficulty diff,
+void eDifficultyWidget::initialize(const Difficulty diff,
                                    const eChangeAction& act) {
     setNoPadding();
 
     const auto w = window();
 
     const auto diffText = eLanguage::zeusText(44, 219);
-    const auto value = std::make_shared<eDifficulty>(diff);
+    const auto value = std::make_shared<Difficulty>(diff);
 
     const auto label = new eLabel(w);
     label->setNoPadding();
@@ -38,9 +38,9 @@ void eDifficultyWidget::initialize(const eDifficulty diff,
     const auto down = new eDownButton(w);
     addWidget(down);
     down->setPressAction([value, updateLabel, act]() {
-        if(*value == eDifficulty::beginner) return;
+        if(*value == Difficulty::beginner) return;
         const int diffi = static_cast<int>(*value);
-        *value = static_cast<eDifficulty>(diffi - 1);
+        *value = static_cast<Difficulty>(diffi - 1);
         updateLabel();
         act(*value);
     });
@@ -48,9 +48,9 @@ void eDifficultyWidget::initialize(const eDifficulty diff,
     const auto up = new eUpButton(w);
     addWidget(up);
     up->setPressAction([value, updateLabel, act]() {
-        if(*value == eDifficulty::olympian) return;
+        if(*value == Difficulty::olympian) return;
         const int diffi = static_cast<int>(*value);
-        *value = static_cast<eDifficulty>(diffi + 1);
+        *value = static_cast<Difficulty>(diffi + 1);
         updateLabel();
         act(*value);
     });

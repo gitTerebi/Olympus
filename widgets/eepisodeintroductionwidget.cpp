@@ -219,7 +219,7 @@ void eEpisodeIntroductionWidget::initialize(
         c->setDifficulty(defDiff);
 
         const auto diffW = new eDifficultyWidget(w);
-        diffW->initialize(defDiff, [c, w](const eDifficulty d) {
+        diffW->initialize(defDiff, [c, w](const Difficulty d) {
             c->setDifficulty(d);
             w->setLastDifficulty(d);
         });

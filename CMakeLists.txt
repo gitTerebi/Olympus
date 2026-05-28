@@ -59,7 +59,7 @@ set(SOURCES
     buildings/ecorral.cpp
     buildings/edairy.cpp
     buildings/edramaschool.cpp
-    buildings/eelitehousing.cpp
+    buildings/elite-housing.cpp
     buildings/eelitehousingrenderer.cpp
     buildings/eemployingbuilding.cpp
     buildings/efarmbase.cpp
@@ -116,7 +116,7 @@ set(SOURCES
     buildings/eruins.cpp
     buildings/esculpturestudio.cpp
     buildings/eshepherbuildingbase.cpp
-    buildings/esmallhouse.cpp
+    buildings/small-house.cpp
     buildings/estadium.cpp
     buildings/estadiumrenderer.cpp
     buildings/estoragebuilding.cpp
@@ -186,7 +186,7 @@ set(SOURCES
     characters/actions/edieaction.cpp
     characters/actions/edionysusfollowaction.cpp
     characters/actions/combat-timing.cpp
-    characters/actions/efightaction.cpp
+    characters/actions/fight-action.cpp
     characters/actions/efightingaction.cpp
     characters/actions/efirefighteraction.cpp
     characters/actions/efollowaction.cpp
@@ -390,7 +390,7 @@ set(SOURCES
     engine/ecityrequest.cpp
     engine/ecolonymonumentaction.cpp
     engine/edate.cpp
-    engine/edifficulty.cpp
+    engine/difficulty.cpp
     engine/model-data.cpp
     engine/vanilla-stats.cpp
     engine/e-city-attitude.cpp
@@ -749,7 +749,7 @@ set(SOURCES
     widgets/eworldwidget.cpp
     widgets/infowidgets/eagorainfowidget.cpp
     widgets/infowidgets/echaracterinfowidget.cpp
-    widgets/infowidgets/ecommonhouseinfowidget.cpp
+    widgets/infowidgets/common-house-info-widget.cpp
     widgets/infowidgets/eemployingbuildinginfowidget.cpp
     widgets/infowidgets/eheroshallinfowidget.cpp
     widgets/infowidgets/ehippodromeinfowidget.cpp

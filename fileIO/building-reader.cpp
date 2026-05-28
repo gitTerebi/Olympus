@@ -46,8 +46,8 @@ stdsptr<eBuilding> BuildingArchive::load(
     {
         auto makeSimple = [&](GameBoard& brd, eCityId cid) -> stdsptr<eBuilding> {
             switch(type) {
-            case eBuildingType::commonHouse: return e::make_shared<eSmallHouse>(brd, cid);
-            case eBuildingType::eliteHousing: return e::make_shared<eEliteHousing>(brd, cid);
+            case eBuildingType::commonHouse: return e::make_shared<SmallHouse>(brd, cid);
+            case eBuildingType::eliteHousing: return e::make_shared<EliteHousing>(brd, cid);
             case eBuildingType::road: return e::make_shared<eRoad>(brd, cid);
             case eBuildingType::roadblock: return e::make_shared<eRoad>(brd, cid);
             case eBuildingType::gymnasium: return e::make_shared<eGymnasium>(brd, cid);

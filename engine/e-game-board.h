@@ -10,7 +10,7 @@
 #include "boardData/eemploymentdata.h"
 #include "boardData/eheatmap.h"
 
-#include "edifficulty.h"
+#include "difficulty.h"
 #include "edate.h"
 
 #include "eresourcetype.h"
@@ -80,7 +80,7 @@ struct eMessageType;
 struct eEventData;
 enum class eEvent;
 class ePlague;
-class eSmallHouse;
+class SmallHouse;
 class eMuseum;
 class eStadium;
 struct eEpisode;
@@ -177,7 +177,7 @@ public:
     void undoLastAction();
     bool undoValid() const { return mUndo.valid(); }
 
-    bool unregisterCommonHouse(eSmallHouse* const ch);
+    bool unregisterCommonHouse(SmallHouse* const ch);
 
     void registerEmplBuilding(eEmployingBuilding* const b);
     bool unregisterEmplBuilding(eEmployingBuilding* const b);
@@ -296,10 +296,10 @@ public:
                     const eBuildingType type) const;
 
     void payTaxes(const eCityId cid, const int d, const int people);
-    void setDifficulty(const eDifficulty d);
-    void setDifficulty(const ePlayerId pid, const eDifficulty d);
-    eDifficulty personPlayerDifficulty() const;
-    eDifficulty difficulty(const ePlayerId pid) const;
+    void setDifficulty(const Difficulty d);
+    void setDifficulty(const ePlayerId pid, const Difficulty d);
+    Difficulty personPlayerDifficulty() const;
+    Difficulty difficulty(const ePlayerId pid) const;
     const eDate& date() const { return mDate; }
     void setDate(const eDate& d);
 
@@ -588,10 +588,10 @@ public:
     eChars attackingGods(const eCityId cid) const;
     void registerAttackingGod(const eCityId cid, eCharacter* const c);
 
-    void startPlague(eSmallHouse* const h);
-    stdsptr<ePlague> plagueForHouse(eSmallHouse* const h);
+    void startPlague(SmallHouse* const h);
+    stdsptr<ePlague> plagueForHouse(SmallHouse* const h);
     void healPlague(const stdsptr<ePlague>& p);
-    void healHouse(eSmallHouse* const h);
+    void healHouse(SmallHouse* const h);
     using ePlagues = std::vector<stdsptr<ePlague>>;
     ePlagues plagues(const eCityId cid) const;
     stdsptr<ePlague> nearestPlague(const eCityId cid,

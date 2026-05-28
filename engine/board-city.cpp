@@ -3,8 +3,8 @@
 #include "buildings/ebuilding.h"
 #include "buildings/eemployingbuilding.h"
 #include "buildings/estoragebuilding.h"
-#include "buildings/esmallhouse.h"
-#include "buildings/eelitehousing.h"
+#include "buildings/small-house.h"
+#include "buildings/elite-housing.h"
 #include "buildings/eheroshall.h"
 #include "buildings/eagorabase.h"
 #include "buildings/trade-post.h"
@@ -304,7 +304,7 @@ void BoardCity::updateCoverage() {
             if(h->paidTaxes()) {
                 taxes += p;
             }
-            if(const auto ch = dynamic_cast<eSmallHouse*>(b)) {
+            if(const auto ch = dynamic_cast<SmallHouse*>(b)) {
                 if(ch->disgruntled()) totalUnrest += p;
                 totalSatisfaction += p*ch->satisfaction();
                 totalHygiene += p*ch->hygiene();
@@ -1076,7 +1076,7 @@ bool BoardCity::unregisterHeroHall(eHerosHall* const b) {
     return eVectorHelpers::remove(mHeroHalls, b);
 }
 
-bool BoardCity::unregisterCommonHouse(eSmallHouse* const ch) {
+bool BoardCity::unregisterCommonHouse(SmallHouse* const ch) {
     const auto p = plagueForHouse(ch);
     if(p) {
         p->removeHouse(ch);
@@ -1718,7 +1718,7 @@ void BoardCity::killCommonFolks(int toKill) {
     for(const auto b : bs) {
         const auto bt = b->type();
         if(bt == eBuildingType::commonHouse) {
-            const auto sh = static_cast<eSmallHouse*>(b);
+            const auto sh = static_cast<SmallHouse*>(b);
             const int pop = sh->people();
             const int shk = std::min(toKill, pop);
             toKill -= shk;
@@ -1742,7 +1742,7 @@ void BoardCity::hopliteKilled() {
     for(const auto b : bs) {
         const auto bt = b->type();
         if(bt == eBuildingType::eliteHousing) {
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             const int pop = eh->people();
             const int shk = std::min(4, pop);
             eh->kill(shk);
@@ -1758,7 +1758,7 @@ void BoardCity::horsemanKilled() {
     for(const auto b : bs) {
         const auto bt = b->type();
         if(bt == eBuildingType::eliteHousing) {
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             const int pop = eh->people();
             const int shk = std::min(4, pop);
             eh->kill(shk);
@@ -1774,7 +1774,7 @@ int BoardCity::missingArmorFromEliteHouses() const {
     for(const auto b : mTimedBuildings) {
         const auto bt = b->type();
         if(bt == eBuildingType::eliteHousing) {
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             const int a = eh->arms();
             result += 4 - a;
         }
@@ -1808,7 +1808,7 @@ void BoardCity::updateMaxSoldiers() {
     for(const auto b : mTimedBuildings) {
         const auto bt = b->type();
         if(bt == eBuildingType::commonHouse) {
-            const auto ch = static_cast<eSmallHouse*>(b);
+            const auto ch = static_cast<SmallHouse*>(b);
             const int l = ch->level();
             if(l < 2) continue;
             int lvlMax = 0;
@@ -1821,7 +1821,7 @@ void BoardCity::updateMaxSoldiers() {
             const int popMax = pop/4;
             mMaxRabble += std::min(lvlMax, popMax);
         } else if(bt == eBuildingType::eliteHousing) {
-            const auto eh = static_cast<eEliteHousing*>(b);
+            const auto eh = static_cast<EliteHousing*>(b);
             const int l = eh->level();
             if(l < 2) continue;
             const int a = eh->arms();
@@ -2175,13 +2175,13 @@ std::vector<ePyramid*> BoardCity::pyramids() const {
     return result;
 }
 
-void BoardCity::startPlague(eSmallHouse* const h) {
+void BoardCity::startPlague(SmallHouse* const h) {
     const auto plague = std::make_shared<ePlague>(mId, mBoard);
     plague->spreadFrom(h);
     mPlagues.push_back(plague);
 }
 
-stdsptr<ePlague> BoardCity::plagueForHouse(eSmallHouse* const h) {
+stdsptr<ePlague> BoardCity::plagueForHouse(SmallHouse* const h) {
     if(!h) return nullptr;
     for(const auto& p : mPlagues) {
         if(p->hasHouse(h)) return p;
