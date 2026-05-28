@@ -25,7 +25,7 @@
 
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
-#include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/sanctuaries/sanctuary.h"
 
 #include "buildings/eavailablebuildings.h"
 

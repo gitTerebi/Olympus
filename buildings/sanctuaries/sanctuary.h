@@ -1,5 +1,5 @@
-#ifndef ESANCTUARY_H
-#define ESANCTUARY_H
+#ifndef SANCTUARY_H
+#define SANCTUARY_H
 
 #include "../eemployingbuilding.h"
 #include "../emonument.h"
@@ -72,6 +72,7 @@ private:
     stdptr<eMonster> mMinion;
     bool mGodAbroad = false;
     int mSpawnWait = 0;
+    int mMinionSpawnWait = 0;
 
     bool mAskedForHelp = false;
     int mCheckHelpNeeded = 0;
@@ -81,4 +82,4 @@ private:
     std::vector<eTile*> mSpecialTiles;
 };
 
-#endif // ESANCTUARY_H
+#endif // SANCTUARY_H

@@ -1,7 +1,7 @@
 #ifndef EARTEMISSANCTUARY_H
 #define EARTEMISSANCTUARY_H
 
-#include "esanctuary.h"
+#include "sanctuary.h"
 
 class eSanctuaryWithWarriors : public eSanctuary {
 public:

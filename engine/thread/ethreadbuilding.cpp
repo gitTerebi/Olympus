@@ -1,4 +1,4 @@
-﻿#include "ethreadbuilding.h"
+#include "ethreadbuilding.h"
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
@@ -8,7 +8,7 @@
 #include "buildings/echariotfactory.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/ehorseranchenclosure.h"
-#include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidelement.h"
 #include "buildings/eprocessingbuilding.h"

@@ -8,7 +8,7 @@
 #include "emovetoaction.h"
 #include "eiteratesquare.h"
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"

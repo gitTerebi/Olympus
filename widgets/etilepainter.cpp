@@ -58,9 +58,24 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
     s.fTex = tex;
 }
 
+void eTilePainter::scheduleDrawTexture(const double x, const double y,
+                                       const std::shared_ptr<eTexture>& tex,
+                                       const eAlignment align) {
+    auto& s = mScheduled.emplace_back();
+    s.fX = x;
+    s.fY = y;
+    s.fTex = tex;
+    s.fHasAlign = true;
+    s.fAlign = align;
+}
+
 void eTilePainter::handleScheduledDraw() {
     for(const auto& s : mScheduled) {
-        drawTexture(s.fX, s.fY, s.fTex);
+        if(s.fHasAlign) {
+            drawTexture(s.fX, s.fY, s.fTex, s.fAlign);
+        } else {
+            drawTexture(s.fX, s.fY, s.fTex);
+        }
     }
     mScheduled.clear();
 }

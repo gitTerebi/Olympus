@@ -1,7 +1,7 @@
 #ifndef EHEPHAESTUSSANCTUARY_H
 #define EHEPHAESTUSSANCTUARY_H
 
-#include "esanctuary.h"
+#include "sanctuary.h"
 
 class eHephaestusSanctuary : public eSanctuary {
 public:

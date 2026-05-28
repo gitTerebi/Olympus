@@ -4,7 +4,7 @@
 #include "widgets/eframedbutton.h"
 #include "characters/gods/egod.h"
 #include "estringhelpers.h"
-#include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/pyramids/epyramid.h"
 #include "engine/e-game-board.h"
 #include "widgets/echoosecitydialog.h"

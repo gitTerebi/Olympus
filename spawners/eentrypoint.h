@@ -3,7 +3,7 @@
 
 #include "espawner.h"
 
-#include "characters/actions/echaracteractionfunction.h"
+#include "characters/actions/character-action-function.h"
 
 class eEntryPoint : public eSpawner {
 public:

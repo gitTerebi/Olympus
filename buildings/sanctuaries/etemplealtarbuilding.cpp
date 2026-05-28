@@ -3,7 +3,7 @@
 
 #include "textures/egametextures.h"
 
-#include "esanctuary.h"
+#include "sanctuary.h"
 #include "engine/e-game-board.h"
 
 eTempleAltarBuilding::eTempleAltarBuilding(eGameBoard& board,

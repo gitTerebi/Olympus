@@ -1,7 +1,7 @@
 #ifndef EHEPHAESTUSHELPACTION_H
 #define EHEPHAESTUSHELPACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 class eSaveArchive;
 

@@ -1,4 +1,4 @@
-﻿TEMPLATE = app
+TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 CONFIG -= app_bundle
@@ -161,7 +161,7 @@ SOURCES += \
         buildings/sanctuaries/eartemissanctuary.cpp \
         buildings/sanctuaries/ehephaestussanctuary.cpp \
         buildings/sanctuaries/esanctbuilding.cpp \
-        buildings/sanctuaries/esanctuary.cpp \
+        buildings/sanctuaries/sanctuary.cpp \
         buildings/sanctuaries/esanctuaryblueprint.cpp \
         buildings/sanctuaries/estairsrenderer.cpp \
         engine/stamps/estampblueprint.cpp \
@@ -180,10 +180,10 @@ SOURCES += \
         characters/actions/eattackcityaction.cpp \
         characters/actions/ebuildaction.cpp \
         characters/actions/ecarttransporteraction.cpp \
-        characters/actions/echaracteraction.cpp \
-        characters/actions/echaracteractioncreator.cpp \
-        characters/actions/echaracteractionfunction.cpp \
-        characters/actions/echaracteractionfunctioncreator.cpp \
+        characters/actions/character-action.cpp \
+        characters/actions/character-action-creator.cpp \
+        characters/actions/character-action-function.cpp \
+        characters/actions/character-action-function-creator.cpp \
         characters/actions/ecollectaction.cpp \
         characters/actions/ecollectresourceaction.cpp \
         characters/actions/ecomplexaction.cpp \
@@ -196,11 +196,12 @@ SOURCES += \
         characters/actions/efirefighteraction.cpp \
         characters/actions/efollowaction.cpp \
         characters/actions/egodactcreator.cpp \
-        characters/actions/egodaction.cpp \
-        characters/actions/egodattackaction.cpp \
-        characters/actions/egodmonsteraction.cpp \
-        characters/actions/egodvisitaction.cpp \
-        characters/actions/egodworshippedaction.cpp \
+        characters/gods/actions/god-action.cpp \
+        characters/gods/actions/egodattackaction.cpp \
+        characters/gods/actions/egodmonsteraction.cpp \
+        characters/gods/actions/egodvisitaction.cpp \
+        characters/gods/actions/egodworshippedaction.cpp \
+        characters/gods/actions/god-minion-action.cpp \
         characters/actions/egroweraction.cpp \
         characters/actions/eheroaction.cpp \
         characters/actions/ehuntaction.cpp \
@@ -871,7 +872,7 @@ HEADERS += \
     buildings/sanctuaries/eartemissanctuary.h \
     buildings/sanctuaries/ehephaestussanctuary.h \
     buildings/sanctuaries/esanctbuilding.h \
-    buildings/sanctuaries/esanctuary.h \
+    buildings/sanctuaries/sanctuary.h \
     buildings/sanctuaries/esanctuaryblueprint.h \
     buildings/sanctuaries/estairsrenderer.h \
     engine/stamps/estampblueprint.h \
@@ -890,8 +891,8 @@ HEADERS += \
     characters/actions/eattackcityaction.h \
     characters/actions/ebuildaction.h \
     characters/actions/ecarttransporteraction.h \
-    characters/actions/echaracteraction.h \
-    characters/actions/echaracteractionfunction.h \
+    characters/actions/character-action.h \
+    characters/actions/character-action-function.h \
     characters/actions/echaracteractiontype.h \
     characters/actions/ecollectaction.h \
     characters/actions/ecollectresourceaction.h \
@@ -904,11 +905,12 @@ HEADERS += \
     characters/actions/efightingaction.h \
     characters/actions/efirefighteraction.h \
     characters/actions/efollowaction.h \
-    characters/actions/egodaction.h \
-    characters/actions/egodattackaction.h \
-    characters/actions/egodmonsteraction.h \
-    characters/actions/egodvisitaction.h \
-    characters/actions/egodworshippedaction.h \
+    characters/gods/actions/god-action.h \
+    characters/gods/actions/egodattackaction.h \
+    characters/gods/actions/egodmonsteraction.h \
+    characters/gods/actions/egodvisitaction.h \
+    characters/gods/actions/egodworshippedaction.h \
+    characters/gods/actions/god-minion-action.h \
     characters/actions/egroweraction.h \
     characters/actions/eheroaction.h \
     characters/actions/ehuntaction.h \

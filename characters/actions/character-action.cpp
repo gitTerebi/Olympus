@@ -1,4 +1,4 @@
-#include "echaracteraction.h"
+#include "character-action.h"
 
 #include "engine/e-game-board.h"
 #include "characters/echaracter.h"

@@ -1,7 +1,7 @@
 #ifndef EAPOLLOHELPACTION_H
 #define EAPOLLOHELPACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 #include "buildings/esmallhouse.h"
 

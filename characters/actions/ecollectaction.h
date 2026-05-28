@@ -1,7 +1,7 @@
 #ifndef ECOLLECTACTION_H
 #define ECOLLECTACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 
 #include "characters/eresourcecollector.h"
 

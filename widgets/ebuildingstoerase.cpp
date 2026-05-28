@@ -10,7 +10,7 @@
 #include "buildings/epalace.h"
 #include "buildings/epier.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
-#include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/ehippodromepiece.h"
 #include "engine/etile.h"

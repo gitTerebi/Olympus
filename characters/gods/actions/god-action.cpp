@@ -1,4 +1,4 @@
-#include "egodaction.h"
+#include "god-action.h"
 
 #include "engine/e-game-board.h"
 #include "audio/sounds.h"

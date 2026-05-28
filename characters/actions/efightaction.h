@@ -1,7 +1,7 @@
 #ifndef EFIGHTACTION_H
 #define EFIGHTACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 #include "characters/echaracter.h"
 
 class eSaveArchive;

@@ -1,7 +1,7 @@
 #ifndef EMOVEACTION_H
 #define EMOVEACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 #include "engine/eorientation.h"
 #include "walkable/eobsticlehandler.h"
 

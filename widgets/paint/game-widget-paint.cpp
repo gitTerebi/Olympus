@@ -2008,12 +2008,7 @@ void eGameWidget::paintEvent(ePainter &p)
             {
                 const auto tex = getBasementTexture(rtx, rty, ub, trrTexs,
                                                     dir, boardw, boardh);
-                const bool erase = inErase(ub);
-                if (erase)
-                    tex->setColorMod(255, 175, 175);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
-                if (erase)
-                    tex->clearColorMod();
+                tp.scheduleDrawTexture(rx, ry, tex, eAlignment::top);
             }
         }
         else if (ub && !eBuilding::sFlatBuilding(bt))

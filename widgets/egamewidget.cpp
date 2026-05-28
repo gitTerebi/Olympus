@@ -119,7 +119,7 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/eruins.h"
 #include "buildings/ebuildingrenderer.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
-#include "buildings/sanctuaries/esanctuary.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
 #include "buildings/ehorseranch.h"

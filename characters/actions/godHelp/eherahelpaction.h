@@ -1,7 +1,7 @@
 #ifndef EHERAHELPACTION_H
 #define EHERAHELPACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 #include "buildings/eagorabase.h"
 

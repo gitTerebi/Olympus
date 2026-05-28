@@ -1,5 +1,5 @@
-#ifndef ECHARACTERACTIONFUNCTION_H
-#define ECHARACTERACTIONFUNCTION_H
+#ifndef CHARACTER_ACTION_FUNCTION_H
+#define CHARACTER_ACTION_FUNCTION_H
 
 #include "fileIO/estreams.h"
 #include "fileIO/esavearchive.h"
@@ -96,6 +96,7 @@ enum class eCharacterActionFunctionType {
     HA_waitAndGoToHallFinish,
 
     GWA_huntMonsterFinish,
+    GMinA_huntMonsterFinish,
 
     enemyBoatFinish
 };
@@ -127,4 +128,4 @@ private:
 
 using eCharActFunc = eCharacterActionFunction;
 
-#endif // ECHARACTERACTIONFUNCTION_H
+#endif // CHARACTER_ACTION_FUNCTION_H

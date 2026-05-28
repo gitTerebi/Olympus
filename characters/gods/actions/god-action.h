@@ -1,5 +1,5 @@
-#ifndef EGODACTION_H
-#define EGODACTION_H
+#ifndef GOD_ACTION_H
+#define GOD_ACTION_H
 
 #include "characters/gods/actions/egodmonsteraction.h"
 
@@ -378,8 +378,10 @@ public:
         const auto null = static_cast<eTile*>(nullptr);
         if(!mCptr) return null;
         if(mCptr->tile() == t) return null;
+        const auto srcTid = mCptr->teamId();
         const auto b = t->underBuilding();
         if(b && eBuilding::sAttackable(b->type())) {
+            if(!eTeamIdHelpers::isEnemy(b->teamId(), srcTid)) return null;
             mBTarget = b;
             return b->centerTile();
         } else {
@@ -396,6 +398,7 @@ public:
                 bool isHero = false;
                 eHero::sCharacterToHeroType(cc->type(), &isHero);
                 if(isHero) continue;
+                if(!eTeamIdHelpers::isEnemy(cc->teamId(), srcTid)) continue;
                 mCTarget = cc;
                 return cc.get();
             }
@@ -623,4 +626,4 @@ private:
     stdptr<eGodMonsterAction> mTptr;
 };
 
-#endif // EGODACTION_H
+#endif // GOD_ACTION_H
