@@ -31,6 +31,7 @@ void eEntryPoint::spawn(eTile* const tile) {
     }
     const auto popData = board.populationData(cid);
     if(!popData) return;
+    board.validateSettlers(cid);
     const int v = popData->vacancies();
     const int s = popData->settlers();
     if(s >= v) return;

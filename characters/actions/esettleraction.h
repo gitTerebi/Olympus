@@ -14,7 +14,6 @@ class eSettlerAction : public eActionWithComeback {
     friend class eSA_findHouseFinish;
 public:
     eSettlerAction(eCharacter* const c);
-    ~eSettlerAction();
 
     bool decide() override;
 
