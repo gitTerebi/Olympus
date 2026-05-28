@@ -264,11 +264,11 @@ public:
     }
 };
 
-eTradePostInfoWidget::eTradePostInfoWidget(
+TradePostInfoWidget::TradePostInfoWidget(
         eMainWindow* const window, eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, false, false) {}
 
-void eTradePostInfoWidget::initialize(eTradePost* const stor,
+void TradePostInfoWidget::initialize(TradePost* const stor,
                                       const ePrevNextAction& prevNext) {
     const auto& city = stor->city();
     const auto title = eLanguage::zeusText(28, 62) + ": " + city.name();
@@ -410,7 +410,7 @@ void eTradePostInfoWidget::initialize(eTradePost* const stor,
     }
 }
 
-void eTradePostInfoWidget::get(eResourceType& imports,
+void TradePostInfoWidget::get(eResourceType& imports,
                                eResourceType& exports,
                                eResourceType& empty,
                                eResourceType& cartGet,

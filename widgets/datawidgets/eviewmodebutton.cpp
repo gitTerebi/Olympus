@@ -1,4 +1,4 @@
-#include "eviewmodebutton.h"
+﻿#include "eviewmodebutton.h"
 
 #include "textures/egametextures.h"
 
@@ -35,7 +35,7 @@ eViewModeButton::eViewModeButton(const std::string& text,
     label->align(eAlignment::center);
 }
 
-void eViewModeButton::setGameWidget(eGameWidget* const gw) {
+void eViewModeButton::setGameWidget(GameWidget* const gw) {
     mGW = gw;
 }
 

@@ -1,4 +1,4 @@
-#include "eheroshall.h"
+﻿#include "eheroshall.h"
 
 #include "textures/egametextures.h"
 
@@ -47,14 +47,14 @@ eHeroType eHerosHall::sHallTypeToHeroType(const eBuildingType type,
     return eHeroType::achilles;
 }
 
-eGodType athenaHephaestus(eBoardCity& c) {
+eGodType athenaHephaestus(BoardCity& c) {
     const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
                         c.hasBuilding(eBuildingType::templeAthena);
     if(athena) return eGodType::athena;
     return eGodType::hephaestus;
 }
 
-std::pair<eGodType, eGodType> athenaHermesZeusHades(eBoardCity& c) {
+std::pair<eGodType, eGodType> athenaHermesZeusHades(BoardCity& c) {
     std::vector<eGodType> allowed;
     const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
                         c.hasBuilding(eBuildingType::templeAthena);
@@ -78,7 +78,7 @@ std::pair<eGodType, eGodType> athenaHermesZeusHades(eBoardCity& c) {
 }
 
 std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
-                                             eBoardCity& c) {
+                                             BoardCity& c) {
     const bool atlantean = c.atlantean();
     const std::string cstr = std::to_string(hr.fRequiredCount);
     switch(hr.fType) {
@@ -192,7 +192,7 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
 }
 
 std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr,
-                                                   eBoardCity &c) {
+                                                   BoardCity &c) {
     const bool atlantean = c.atlantean();
     const int sc = hr.fStatusCount;
     const std::string cstr = std::to_string(sc);

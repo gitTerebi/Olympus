@@ -1,4 +1,4 @@
-#include "egamewidget.h"
+﻿#include "game-widget.h"
 #include "emainwindow.h"
 
 #include "audio/sounds.h"
@@ -7,7 +7,7 @@
 #include "estringhelpers.h"
 #include "engine/e-game-board.h"
 
-void eGameWidget::handleGodQuestEvent(eEventData& ed,
+void GameWidget::handleGodQuestEvent(eEventData& ed,
                                       const bool fulfilled) {
     const auto hero = ed.fHero;
     const auto id = ed.fQuestId;
@@ -42,7 +42,7 @@ void eGameWidget::handleGodQuestEvent(eEventData& ed,
     showMessage(ed, msg);
 }
 
-void eGameWidget::handleGodVisitEvent(eEventData& ed) {
+void GameWidget::handleGodVisitEvent(eEventData& ed) {
     const auto god = ed.fGod;
     const auto& inst = eMessages::instance;
     const auto msgs = inst.godMessages(god);
@@ -60,28 +60,28 @@ void eGameWidget::handleGodVisitEvent(eEventData& ed) {
     }
 }
 
-void eGameWidget::handleGodInvasionEvent(eEventData& ed) {
+void GameWidget::handleGodInvasionEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto msgs = inst.godMessages(ed.fGod);
     showMessage(ed, msgs->fInvades);
     eSounds::playGodSound(ed.fGod, eGodSound::invade);
 }
 
-void eGameWidget::handleGodHelpEvent(eEventData& ed) {
+void GameWidget::handleGodHelpEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto msgs = inst.godMessages(ed.fGod);
     showMessage(ed, msgs->fHelps);
     eSounds::playGodSound(ed.fGod, eGodSound::help);
 }
 
-void eGameWidget::handleSanctuaryComplete(eEventData& ed) {
+void GameWidget::handleSanctuaryComplete(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.godMessages(ed.fGod);
     if(!gm) return;
     showMessage(ed, gm->fSanctuaryComplete);
 }
 
-void eGameWidget::handleMonsterUnleashEvent(eEventData& ed) {
+void GameWidget::handleMonsterUnleashEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.godMessages(ed.fGod);
     if(!gm) return;
@@ -89,7 +89,7 @@ void eGameWidget::handleMonsterUnleashEvent(eEventData& ed) {
     showMessage(ed, gm->fMonster, true);
 }
 
-void eGameWidget::handleMonsterInCityEvent(eEventData& ed) {
+void GameWidget::handleMonsterInCityEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
@@ -97,7 +97,7 @@ void eGameWidget::handleMonsterInCityEvent(eEventData& ed) {
     showMessage(ed, gm->fInCity, true);
 }
 
-void eGameWidget::handleMonsterInvasionInitialEvent(eEventData& ed) {
+void GameWidget::handleMonsterInvasionInitialEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
@@ -113,35 +113,35 @@ void eGameWidget::handleMonsterInvasionInitialEvent(eEventData& ed) {
     showMessage(ed, msg);
 }
 
-void eGameWidget::handleMonsterInvasion24Event(eEventData& ed) {
+void GameWidget::handleMonsterInvasion24Event(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion24);
 }
 
-void eGameWidget::handleMonsterInvasion12Event(eEventData& ed) {
+void GameWidget::handleMonsterInvasion12Event(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion12);
 }
 
-void eGameWidget::handleMonsterInvasion6Event(eEventData& ed) {
+void GameWidget::handleMonsterInvasion6Event(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion6);
 }
 
-void eGameWidget::handleMonsterInvasion1Event(eEventData& ed) {
+void GameWidget::handleMonsterInvasion1Event(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion1);
 }
 
-void eGameWidget::handleMonsterInvasionEvent(eEventData& ed) {
+void GameWidget::handleMonsterInvasionEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
@@ -149,14 +149,14 @@ void eGameWidget::handleMonsterInvasionEvent(eEventData& ed) {
     showMessage(ed, gm->fInvasion, true);
 }
 
-void eGameWidget::handleMonsterSlainEvent(eEventData& ed) {
+void GameWidget::handleMonsterSlainEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fSlain);
 }
 
-void eGameWidget::handleHeroArrivalEvent(eEventData& ed) {
+void GameWidget::handleHeroArrivalEvent(eEventData& ed) {
     const auto& inst = eMessages::instance;
     const auto gm = inst.heroMessages(ed.fHero);
     if(!gm) return;
@@ -164,7 +164,7 @@ void eGameWidget::handleHeroArrivalEvent(eEventData& ed) {
     showMessage(ed, gm->fArrival);
 }
 
-void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
+void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
     const auto& target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
     if(target.isPlayerTarget()) {

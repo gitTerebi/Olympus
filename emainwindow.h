@@ -13,11 +13,11 @@
 using eSlot = std::function<void()>;
 
 class eGameBoard;
-class eGameWidget;
+class GameWidget;
 class eWorldWidget;
 class eCampaign;
 
-struct eGameWidgetSettings;
+struct GameWidgetSettings;
 
 class eMainWindow {
 public:
@@ -62,9 +62,9 @@ public:
     void setLastDifficulty(const eDifficulty d);
 
     void startGameAction(eGameBoard* const board,
-                         const eGameWidgetSettings& settings);
+                         const GameWidgetSettings& settings);
     void startGameAction(const stdsptr<eCampaign>& c,
-                         const eGameWidgetSettings& settings);
+                         const GameWidgetSettings& settings);
     void startGameAction(const eAction& a);
     void episodeFinished();
     void adventureComplete();
@@ -83,9 +83,9 @@ public:
     void showChooseGameMenu();
     void showChooseGameEditMenu();
     void showGame(const stdsptr<eCampaign>& c,
-                  const eGameWidgetSettings& settings);
+                  const GameWidgetSettings& settings);
     void showGame(eGameBoard* b,
-                  const eGameWidgetSettings& settings);
+                  const GameWidgetSettings& settings);
     void showWorld();
 
     eWidget* currentWidget() const { return mWidget; }
@@ -128,7 +128,7 @@ private:
 
     stdsptr<eCampaign> mCampaign;
     eGameBoard* mBoard = nullptr;
-    eGameWidget* mGW = nullptr;
+    GameWidget* mGW = nullptr;
     eWorldWidget* mWW = nullptr;
 
     eWidget* mWidget = nullptr;

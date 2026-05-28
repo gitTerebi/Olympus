@@ -1,4 +1,4 @@
-#include "eemploymentdata.h"
+﻿#include "eemploymentdata.h"
 
 #include "epopulationdata.h"
 #include "engine/edifficulty.h"
@@ -8,7 +8,7 @@
 #include <math.h>
 
 eEmploymentData::eEmploymentData(const ePopulationData& popData,
-                                 const eBoardCity& city,
+                                 const BoardCity& city,
                                  const eGameBoard& board) :
     mPopData(popData), mCity(city), mBoard(board) {
 

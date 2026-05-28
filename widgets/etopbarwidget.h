@@ -1,11 +1,11 @@
-#ifndef ETOPBARWIDGET_H
+﻿#ifndef ETOPBARWIDGET_H
 #define ETOPBARWIDGET_H
 
 #include "eframedwidget.h"
 #include "elabel.h"
 
 class eGameBoard;
-class eGameWidget;
+class GameWidget;
 class eButton;
 
 class eTopWidget : public eWidget
@@ -63,13 +63,13 @@ public:
 
     void initialize();
     void setBoard(eGameBoard *const board);
-    void setGameWidget(eGameWidget *const gw);
+    void setGameWidget(GameWidget *const gw);
 
     void paintEvent(ePainter &p);
 
 private:
     eGameBoard *mBoard = nullptr;
-    eGameWidget *mGW = nullptr;
+    GameWidget *mGW = nullptr;
     eLabel *mCityLabel = nullptr;
     eTopWidget *mDrachmasWidget = nullptr;
     eTopWidget *mPopulationWidget = nullptr;

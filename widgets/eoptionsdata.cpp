@@ -1,14 +1,14 @@
-#include "eoptionsdata.h"
+﻿#include "eoptionsdata.h"
 
 #include "emainwindow.h"
 #include "esettings.h"
 #include "elanguage.h"
 #include "engine/e-game-board.h"
-#include "widgets/egamewidget.h"
+#include "widgets/game-widget.h"
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                                                  eGameBoard* const board,
-                                                 eGameWidget* const gw) {
+                                                 GameWidget* const gw) {
     const auto& settings = window->settings();
     std::vector<eOptionsMenu::ePage> pages = {
         {

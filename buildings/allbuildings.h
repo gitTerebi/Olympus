@@ -42,9 +42,9 @@
 #include "buildings/emuseum.h"
 
 #include "buildings/egranary.h"
-#include "buildings/ewarehouse.h"
+#include "buildings/warehouse.h"
 
-#include "buildings/etradepost.h"
+#include "buildings/trade-post.h"
 
 #include "buildings/egrowerslodge.h"
 

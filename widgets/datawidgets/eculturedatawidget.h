@@ -1,11 +1,11 @@
-#ifndef ECULTUREDATAWIDGET_H
+﻿#ifndef ECULTUREDATAWIDGET_H
 #define ECULTUREDATAWIDGET_H
 
 #include "edatawidget.h"
 
 class eGameBoard;
 class eLabel;
-class eGameWidget;
+class GameWidget;
 
 class eCultureDataWidget : public eDataWidget {
 public:

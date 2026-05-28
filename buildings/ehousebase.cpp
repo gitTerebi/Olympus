@@ -1,7 +1,7 @@
-#include "ehousebase.h"
+﻿#include "ehousebase.h"
 
 #include "engine/e-game-board.h"
-#include "engine/eboardcity.h"
+#include "engine/board-city.h"
 
 #include "characters/esettler.h"
 #include "characters/ehomeless.h"
@@ -54,7 +54,7 @@ int eHouseBase::allCultureScience() const {
 int eHouseBase::culturePoints() const {
     // greek: philosopher=15, actor=25, athlete=20, competitor=20, stadium=+10
     // atlantean: scholar=15, astronomer=25, inventor=20, curator=20, museum=+10
-    // walker fields are shared (philosopherInventor etc.) — same values either side.
+    // walker fields are shared (philosopherInventor etc.) â€” same values either side.
     int pts = 0;
     if(mPhilosophers > 0) pts += 15;
     if(mActors > 0)       pts += 25;

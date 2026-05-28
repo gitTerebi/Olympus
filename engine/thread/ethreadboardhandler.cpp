@@ -1,4 +1,4 @@
-#include "ethreadboardhandler.h"
+﻿#include "ethreadboardhandler.h"
 
 #include "engine/e-game-board.h"
 #include "buildings/ehousebase.h"
@@ -10,7 +10,7 @@ void eThreadBoardHandler::initialize(const int w, const int h) {
     mTmpBoard.initialize(w, h);
 }
 
-void eThreadBoardHandler::updateAll(eGameBoard& board, const eBoardCity& c) {
+void eThreadBoardHandler::updateAll(eGameBoard& board, const BoardCity& c) {
     //    using std::chrono::high_resolution_clock;
 //    using std::chrono::duration_cast;
 //    using std::chrono::duration;
@@ -58,7 +58,7 @@ void eThreadBoardHandler::updateAll(eGameBoard& board, const eBoardCity& c) {
     //    printf("update board: %f ms\n", ms.count());
 }
 
-void eThreadBoardHandler::updateFinishedMonuments(const eBoardCity& c) {
+void eThreadBoardHandler::updateFinishedMonuments(const BoardCity& c) {
     auto& fms = mTmpBoard.finishedMonuments();
     fms.clear();
     const auto& ms = c.monuments();

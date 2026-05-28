@@ -1,4 +1,4 @@
-#include "widgets/egamewidget.h"
+﻿#include "widgets/game-widget.h"
 
 #include "widgets/eflatbutton.h"
 #include "estringhelpers.h"
@@ -7,7 +7,7 @@
 #include "engine/eresourcetype.h"
 #include "engine/e-game-board.h"
 
-void eGameWidget::createToastWidget(eToast &toast)
+void GameWidget::createToastWidget(eToast &toast)
 {
     eEventData edCopy = toast.fEd;
     const auto msg = toast.fMsg;
@@ -51,7 +51,7 @@ void eGameWidget::createToastWidget(eToast &toast)
     addWidget(tw);
 }
 
-void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
+void GameWidget::showToast(eEventData &ed, const eMessage &msg)
 {
     eToast pendingToast;
     pendingToast.fEd = ed;
@@ -62,7 +62,7 @@ void eGameWidget::showToast(eEventData &ed, const eMessage &msg)
     mPendingToasts.push_back(pendingToast);
 }
 
-void eGameWidget::updateToastPositions()
+void GameWidget::updateToastPositions()
 {
     const int p = padding();
     int y;

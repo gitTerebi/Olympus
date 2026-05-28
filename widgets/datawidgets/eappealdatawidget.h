@@ -1,9 +1,9 @@
-#ifndef EAPPEALDATAWIDGET_H
+﻿#ifndef EAPPEALDATAWIDGET_H
 #define EAPPEALDATAWIDGET_H
 
 #include "edatawidget.h"
 
-class eGameWidget;
+class GameWidget;
 class eViewModeButton;
 class eBuilding;
 class eLabel;

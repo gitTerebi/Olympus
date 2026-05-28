@@ -1,4 +1,4 @@
-#ifndef EPOPULATIONDATAWIDGET_H
+﻿#ifndef EPOPULATIONDATAWIDGET_H
 #define EPOPULATIONDATAWIDGET_H
 
 #include "edatawidget.h"
@@ -6,7 +6,7 @@
 class eGameBoard;
 class eLabel;
 class eMultiLineLabel;
-class eGameWidget;
+class GameWidget;
 class eViewModeButton;
 
 class ePopulationDataWidget : public eDataWidget {

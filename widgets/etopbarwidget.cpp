@@ -1,4 +1,4 @@
-#include "etopbarwidget.h"
+﻿#include "etopbarwidget.h"
 
 #include "engine/e-game-board.h"
 #include "engine/boardData/eemploymentdata.h"
@@ -6,7 +6,7 @@
 #include "textures/egametextures.h"
 #include "ebutton.h"
 #include "edatewidget.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 
 #include "emainwindow.h"
 
@@ -121,7 +121,7 @@ void eTopBarWidget::setBoard(eGameBoard* const board) {
     mBoard = board;
 }
 
-void eTopBarWidget::setGameWidget(eGameWidget* const gw) {
+void eTopBarWidget::setGameWidget(GameWidget* const gw) {
     mGW = gw;
 }
 

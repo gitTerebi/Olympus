@@ -1,4 +1,4 @@
-#include "ebuilding.h"
+﻿#include "ebuilding.h"
 
 #include "engine/e-game-board.h"
 #include "engine/eevent.h"
@@ -19,7 +19,7 @@
 #include "elanguage.h"
 #include "audio/sounds.h"
 
-#include "fileIO/ebuildingwriter.h"
+#include "fileIO/building-writer.h"
 #include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
@@ -1305,7 +1305,7 @@ void eBuilding::sInfoText(eBuilding* const b,
         }
     } break;
     case eBuildingType::tradePost: {
-        const auto tp = static_cast<eTradePost*>(b);
+        const auto tp = static_cast<TradePost*>(b);
         if(tp->tpType() == eTradePostType::pier) {
             bool shipDocked = false;
             const auto unp = tp->unpackBuilding();
@@ -2495,7 +2495,7 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
         eSaveArchive ar(dst);
         auto btype = b->type();
         ar.field("buildingType", btype);
-        eBuildingArchive::save(b, ar);
+        BuildingArchive::save(b, ar);
     }
     return std::vector<uint8_t>(mem.begin(), mem.end());
 }
@@ -2594,7 +2594,7 @@ void eBuilding::collapse() {
         for(const auto bld : restoreBuildings) {
             if(bld != this) bld->prepareForCollapse();
         }
-        if(const auto tpb = dynamic_cast<eTradePost*>(this)) {
+        if(const auto tpb = dynamic_cast<TradePost*>(this)) {
             if(tpb->tpType() == eTradePostType::pier) {
                 if(const auto pier = dynamic_cast<ePier*>(tpb->unpackBuilding())) {
                     restoreBuildings.push_back(pier);

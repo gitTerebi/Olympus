@@ -1,1 +1,1 @@
-// intentionally empty: eBoardCity now uses unified serialize() in eboardcityread.cpp
+﻿// intentionally empty: BoardCity now uses unified serialize() in BoardCityread.cpp

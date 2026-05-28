@@ -1,4 +1,4 @@
-#ifndef EARMYMENU_H
+﻿#ifndef EARMYMENU_H
 #define EARMYMENU_H
 
 #include "elabel.h"
@@ -6,7 +6,7 @@
 class eMiniMap;
 class eGameBoard;
 class eBasicButton;
-class eGameWidget;
+class GameWidget;
 class SoldierBanner;
 
 class eArmyMenu : public eLabel {
@@ -14,7 +14,7 @@ public:
     using eLabel::eLabel;
 
     void initialize(eGameBoard& b);
-    void setGameWidget(eGameWidget* const gw) { mGW = gw; }
+    void setGameWidget(GameWidget* const gw) { mGW = gw; }
 
     eMiniMap* miniMap() const { return mMiniMap; }
     void setSoldiersHome(const bool h);
@@ -25,7 +25,7 @@ private:
     eMiniMap* mMiniMap = nullptr;
     eBasicButton* mGoToBanner = nullptr;
     eBasicButton* mGoHome = nullptr;
-    eGameWidget* mGW = nullptr;
+    GameWidget* mGW = nullptr;
 };
 
 #endif // EARMYMENU_H

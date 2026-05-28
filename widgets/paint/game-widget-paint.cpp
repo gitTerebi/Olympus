@@ -1,4 +1,4 @@
-#include "widgets/egamewidget.h"
+﻿#include "widgets/game-widget.h"
 
 #include "characters/actions/walkable/ewalkableobject.h"
 
@@ -89,7 +89,7 @@ bool sAppealRangeContainsTile(const int x, const int y,
     return true;
 }
 
-void eGameWidget::drawXY(int tx, int ty,
+void GameWidget::drawXY(int tx, int ty,
                          double &rx, double &ry,
                          const int wSpan, const int hSpan,
                          const int a)
@@ -138,7 +138,7 @@ void eGameWidget::drawXY(int tx, int ty,
     ry -= a;
 }
 
-void eGameWidget::paintStampPreview(eTilePainter &tp,
+void GameWidget::paintStampPreview(eTilePainter &tp,
                                     const eTerrainTextures &trrTexs,
                                     const eBuildingTextures &builTexs,
                                     int tx, int ty,
@@ -628,7 +628,7 @@ void eGameWidget::paintStampPreview(eTilePainter &tp,
                              doDrawStampAgora);
 }
 
-stdsptr<eTexture> eGameWidget::getBasementTexture(
+stdsptr<eTexture> GameWidget::getBasementTexture(
     const int rtx, const int rty,
     eBuilding *const d,
     const eTerrainTextures &trrTexs,
@@ -701,7 +701,7 @@ stdsptr<eTexture> eGameWidget::getBasementTexture(
     return coll->getTexture(id);
 }
 
-std::vector<eTile *> eGameWidget::selectedTiles() const
+std::vector<eTile *> GameWidget::selectedTiles() const
 {
     std::vector<eTile *> result;
     const int x0 = mPressedX > mHoverX ? mHoverX : mPressedX;
@@ -758,7 +758,7 @@ private:
     eGameBoard &mBoard;
 };
 
-void eGameWidget::setArmyMenuVisible(const bool v)
+void GameWidget::setArmyMenuVisible(const bool v)
 {
     if (mAm->visible() == v)
         return;
@@ -777,7 +777,7 @@ void eGameWidget::setArmyMenuVisible(const bool v)
     }
 }
 
-void eGameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
+void GameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
 {
     std::vector<eTile *> tiles;
     std::function<bool(eTile *)> check;
@@ -885,7 +885,7 @@ void eGameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
     }
 }
 
-void eGameWidget::updateTerrainTextures(eTile *const tile,
+void GameWidget::updateTerrainTextures(eTile *const tile,
                                         const eTerrainTextures &trrTexs,
                                         const eBuildingTextures &builTexs)
 {
@@ -900,7 +900,7 @@ void eGameWidget::updateTerrainTextures(eTile *const tile,
                                        mBoard->direction());
 }
 
-void eGameWidget::updateTerrainTextures()
+void GameWidget::updateTerrainTextures()
 {
     const int tid = static_cast<int>(mTileSize);
     const auto &trrTexs = eGameTextures::terrain().at(tid);
@@ -914,7 +914,7 @@ void eGameWidget::updateTerrainTextures()
                                 { updateTerrainTextures(tile, trrTexs, builTexs); });
 }
 
-void eGameWidget::paintEvent(ePainter &p)
+void GameWidget::paintEvent(ePainter &p)
 {
     if (mUpdateViewedTileScheduled)
     {
@@ -4993,7 +4993,7 @@ void eGameWidget::paintEvent(ePainter &p)
             const int ctid = mGm->tradeCityId();
             const auto &cts = wrld.cities();
             const auto ct = cts[ctid];
-            const auto b2 = e::make_shared<eTradePost>(
+            const auto b2 = e::make_shared<TradePost>(
                 *mBoard, *ct, mViewedCityId, eTradePostType::pier);
             int tx = mHoverTX;
             int ty = mHoverTY;
@@ -5098,7 +5098,7 @@ void eGameWidget::paintEvent(ePainter &p)
         break;
         case eBuildingMode::warehouse:
         {
-            const auto b1 = e::make_shared<eWarehouse>(*mBoard, mViewedCityId);
+            const auto b1 = e::make_shared<Warehouse>(*mBoard, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         }
         break;
@@ -5108,7 +5108,7 @@ void eGameWidget::paintEvent(ePainter &p)
             const int ctid = mGm->tradeCityId();
             const auto &cts = wrld.cities();
             const auto ct = cts[ctid];
-            const auto b1 = e::make_shared<eTradePost>(*mBoard, *ct, mViewedCityId);
+            const auto b1 = e::make_shared<TradePost>(*mBoard, *ct, mViewedCityId);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
         }
         break;

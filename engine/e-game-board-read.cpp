@@ -1,8 +1,8 @@
-#include "e-game-board.h"
+﻿#include "e-game-board.h"
 
 #include "spawners/ebanner.h"
-#include "fileIO/ebuildingreader.h"
-#include "fileIO/ebuildingwriter.h"
+#include "fileIO/building-reader.h"
+#include "fileIO/building-writer.h"
 #include "gameEvents/invasions/invasion-handler.h"
 #include "missiles/emissile.h"
 #include "gameEvents/egameevent.h"
@@ -210,7 +210,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 ar.archiveField(("building." + std::to_string(i)).c_str(),
                     [&](eSaveArchive& it) {
                         it.field("buildingType", type);
-                        eBuildingArchive::load(*this, type, it);
+                        BuildingArchive::load(*this, type, it);
                     });
             }
         } else {
@@ -220,7 +220,7 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                     [&](eSaveArchive& it) {
                         eBuildingType type = b->type();
                         it.field("buildingType", type);
-                        eBuildingArchive::save(b, it);
+                        BuildingArchive::save(b, it);
                     });
             }
         }

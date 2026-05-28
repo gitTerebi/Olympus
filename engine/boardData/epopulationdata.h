@@ -1,9 +1,9 @@
-#ifndef EPOPULATIONDATA_H
+﻿#ifndef EPOPULATIONDATA_H
 #define EPOPULATIONDATA_H
 
 class ePopulationData {
     friend class eGameBoard;
-    friend class eBoardCity;
+    friend class BoardCity;
 public:
     ePopulationData();
 

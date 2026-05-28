@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 project(eZeus)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -124,14 +124,14 @@ set(SOURCES
     buildings/etheater.cpp
     buildings/etimbermill.cpp
     buildings/etower.cpp
-    buildings/etradepost.cpp
+    buildings/trade-post.cpp
     buildings/etriremewharf.cpp
     buildings/euniversity.cpp
     buildings/eurchinquay.cpp
     buildings/evendor.cpp
     buildings/ewall.cpp
-    buildings/ewarehouse.cpp
-    buildings/ewarehousebase.cpp
+    buildings/warehouse.cpp
+    buildings/warehouse-base.cpp
     buildings/ewatchpost.cpp
     buildings/ewheatfarm.cpp
     buildings/ewinery.cpp
@@ -214,7 +214,7 @@ set(SOURCES
     characters/actions/esickdisgruntledaction.cpp
     characters/actions/soldier-action.cpp
     characters/actions/etakecattleaction.cpp
-    characters/actions/etraderaction.cpp
+    characters/actions/trader-action.cpp
     characters/actions/etriremeaction.cpp
     characters/actions/ewaitaction.cpp
     characters/actions/ewolfaction.cpp
@@ -370,9 +370,9 @@ set(SOURCES
     emainwindow.cpp
     emessage.cpp
     emessages.cpp
-    engine/ai/eaibuilding.cpp
-    engine/ai/eaicityplan.cpp
-    engine/ai/eaidistrict.cpp
+    engine/ai/ai-building.cpp
+    engine/ai/ai-city-plan.cpp
+    engine/ai/ai-district.cpp
     engine/boardData/ecityfinances.cpp
     engine/boardData/eemploymentdata.cpp
     engine/boardData/eheatmap.cpp
@@ -380,8 +380,8 @@ set(SOURCES
     engine/boardData/eheatmaptask.cpp
     engine/boardData/ehusbandrydata.cpp
     engine/boardData/epopulationdata.cpp
-    engine/eboardcity.cpp
-    engine/eboardcityread.cpp
+    engine/board-city.cpp
+    engine/board-city-read.cpp
     engine/eboardcitywrite.cpp
     engine/e-board-player.cpp
     engine/ecampaign.cpp
@@ -446,8 +446,8 @@ set(SOURCES
     evectorhelpers.cpp
     ewalkablehelpers.cpp
     exmlparser.cpp
-    fileIO/ebuildingreader.cpp
-    fileIO/ebuildingwriter.cpp
+    fileIO/building-reader.cpp
+    fileIO/building-writer.cpp
     fileIO/ereadstream.cpp
     fileIO/ewritestream.cpp
     gameEvents/earmyeventbase.cpp
@@ -585,7 +585,7 @@ set(SOURCES
     widgets/datawidgets/ehygienesafetydatawidget.cpp
     widgets/datawidgets/emilitarydatawidget.cpp
     widgets/datawidgets/emythologydatawidget.cpp
-    widgets/datawidgets/e-overview-data-widget.cpp
+    widgets/datawidgets/overview-data-widget.cpp
     widgets/datawidgets/epopulationdatawidget.cpp
     widgets/datawidgets/esciencedatawidget.cpp
     widgets/datawidgets/storage-sidebar-panel.cpp
@@ -618,10 +618,10 @@ set(SOURCES
     widgets/ecityonboardselectionwidget.cpp
     widgets/e-city-settings-widget.cpp
     widgets/emodal.cpp
-    widgets/econditionsettingswidget.cpp
+    widgets/condition-settings-widget.cpp
     widgets/edatebutton.cpp
     widgets/edatewidget.cpp
-    widgets/edistrictconditionswidget.cpp
+    widgets/district-conditions-widget.cpp
     widgets/edownbutton.cpp
     widgets/eeditormainmenu.cpp
     widgets/eeditorsettingsmenu.cpp
@@ -650,19 +650,19 @@ set(SOURCES
     widgets/edifficultywidget.cpp
     widgets/egamemenu.cpp
     widgets/egamemenubase.cpp
-    widgets/egamewidget.cpp
+    widgets/game-widget.cpp
     widgets/epierdebugwidget.cpp
     widgets/toasts/toast-manager.cpp
     widgets/toasts/popup-message.cpp
      widgets/gameworld/ehitdetection.cpp
      widgets/agora-build-place.cpp
-     widgets/egamewidgetbuild.cpp
+     widgets/game-widget-build.cpp
      widgets/gamebuild/ecommonhousingbuild.cpp
      widgets/egamewidgetevents.cpp
     widgets/game-widget-info.cpp
     widgets/paint/game-widget-paint.cpp
     widgets/paint/patrol-path-data.cpp
-    widgets/erepair.cpp
+    widgets/repair.cpp
     widgets/egiftdialog.cpp
     widgets/egiftsizedialog.cpp
     widgets/gods/egodbutton.cpp

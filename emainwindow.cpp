@@ -1,9 +1,9 @@
-#include "emainwindow.h"
+﻿#include "emainwindow.h"
 
 #include "widgets/emainmenu.h"
 #include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
-#include "widgets/egamewidget.h"
+#include "widgets/game-widget.h"
 #include "widgets/egameloadingwidget.h"
 #include "widgets/egamemenu.h"
 #include "widgets/emenuloadingwidget.h"
@@ -39,7 +39,7 @@
 namespace {
 bool writeGameSaveFile(const std::string& path,
                        const std::string& format,
-                       eGameWidget* const gameWidget,
+                       GameWidget* const gameWidget,
                        const stdsptr<eCampaign>& campaign) {
     const auto fsp = std::filesystem::path(path);
     const auto fspd = fsp.parent_path();
@@ -55,7 +55,7 @@ bool writeGameSaveFile(const std::string& path,
         eSaveArchive settingsAr(dst);
         s.serialize(settingsAr);
     } else {
-        eGameWidgetSettings s;
+        GameWidgetSettings s;
         s.fPaused = true;
         eSaveArchive settingsAr(dst);
         s.serialize(settingsAr);
@@ -262,7 +262,7 @@ void eMainWindow::setLastDifficulty(const eDifficulty d) {
 }
 
 void eMainWindow::startGameAction(eGameBoard* const board,
-                                  const eGameWidgetSettings& settings) {
+                                  const GameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {
         showGame(board, settings);
     };
@@ -270,7 +270,7 @@ void eMainWindow::startGameAction(eGameBoard* const board,
 }
 
 void eMainWindow::startGameAction(const stdsptr<eCampaign>& c,
-                                  const eGameWidgetSettings& settings) {
+                                  const GameWidgetSettings& settings) {
     const auto show = [this, c, settings]() {
         showGame(c, settings);
     };
@@ -296,7 +296,7 @@ void eMainWindow::showEpisodeIntroduction(
         const auto dir = leaderSaveDir();
         saveGame(dir + "autosave replay.ez2");
         startGameAction([this]() {
-            eGameWidgetSettings settings;
+            GameWidgetSettings settings;
             settings.fPaused = true;
             showGame(mCampaign, settings);
         });
@@ -433,7 +433,7 @@ bool eMainWindow::loadGame(const std::string& path) {
                path.c_str(), format.c_str());
         return false;
     }
-    eGameWidgetSettings s;
+    GameWidgetSettings s;
     {
         eSaveArchive settingsAr(src);
         s.serialize(settingsAr);
@@ -615,7 +615,7 @@ void eMainWindow::showChooseGameEditMenu() {
 }
 
 void eMainWindow::showGame(const stdsptr<eCampaign>& c,
-                           const eGameWidgetSettings& settings) {
+                           const GameWidgetSettings& settings) {
     mCampaign = c;
     const auto e = c->currentEpisode();
     if(!e) return;
@@ -623,7 +623,7 @@ void eMainWindow::showGame(const stdsptr<eCampaign>& c,
 }
 
 void eMainWindow::showGame(eGameBoard* b,
-                           const eGameWidgetSettings& settings) {
+                           const GameWidgetSettings& settings) {
     if(!b) b = mBoard;
 
     if(b == mBoard && mGW) {
@@ -641,7 +641,7 @@ void eMainWindow::showGame(eGameBoard* b,
     if(mBoard) mBoard->setAgorasTakeFromTradingPosts(mSettings.fAgorasTakeFromTradingPosts);
 
     eMusic::playRandomMusic();
-    mGW = new eGameWidget(this);
+    mGW = new GameWidget(this);
     mGW->setBoard(b);
     mGW->resize(width(), height());
     mGW->initialize();
