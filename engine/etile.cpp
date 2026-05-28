@@ -486,7 +486,7 @@ bool eTile::hasPrey() const {
     return false;
 }
 
-void eTile::setSoldierBanner(eSoldierBanner* const b) {
+void eTile::setSoldierBanner(SoldierBanner* const b) {
     mSoldierBanner = b;
 }
 

@@ -181,7 +181,7 @@ void eBoardCity::serialize(eSaveArchive& ar) {
                     [this](eSaveArchive& itemAr) {
                         eBannerType type;
                         itemAr.field("bannerType", type);
-                        const auto b = e::make_shared<eSoldierBanner>(type, mBoard);
+                        const auto b = e::make_shared<SoldierBanner>(type, mBoard);
                         b->serialize(itemAr);
                         registerSoldierBanner(b);
                     });

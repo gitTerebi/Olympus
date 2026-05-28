@@ -14,7 +14,7 @@ public:
     const eEnlistedForces& forces() const { return mForces; }
     eCityId fromCid() const { return mFromCid; }
 
-    bool remove(const stdsptr<eSoldierBanner>& b);
+    bool remove(const stdsptr<SoldierBanner>& b);
     bool checkEmpty() const;
 
     void serialize(eSaveArchive& ar, eGameBoard* board);

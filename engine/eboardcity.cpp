@@ -484,13 +484,13 @@ void eBoardCity::updateCityDefense() {
     if(defendTile) {
         const int tx = defendTile->x();
         const int ty = defendTile->y();
-        std::vector<eSoldierBanner*> bs;
+        std::vector<SoldierBanner*> bs;
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
             b->backFromHome();
             bs.push_back(b.get());
         }
-        eSoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
+        SoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
         mDefending = true;
     } else {
         for(const auto& b : mSoldierBanners) {
@@ -508,7 +508,7 @@ void eBoardCity::nextMonth() {
     {
         int nTot = 0;
         int nCalled = 0;
-        for(const auto& s : mPalaceSoldierBanners) {
+        for(const auto& s : mPalacSoldierBanners) {
             const bool a = s->isAbroad();
             if(a) continue;
             const int c = s->count();
@@ -1784,7 +1784,7 @@ int eBoardCity::maxPalaceBannerCount() const {
     const auto ppid = mBoard.personPlayer();
     int nSpaces = sPalaceTiles;
     if(pid == ppid) return nSpaces;
-    for(const auto& b : mPalaceSoldierBanners) {
+    for(const auto& b : mPalacSoldierBanners) {
         const bool a = b->isAbroad();
         if(a) nSpaces++;
     }
@@ -1852,7 +1852,7 @@ void eBoardCity::distributeSoldiers() {
     int cRabble = 0;
     int cHoplites = 0;
     int cHorsemen = 0;
-    for(const auto& b : mPalaceSoldierBanners) {
+    for(const auto& b : mPalacSoldierBanners) {
         const auto bt = b->type();
         const int c = b->count();
         if(bt == eBannerType::rockThrower) {
@@ -1888,11 +1888,11 @@ void eBoardCity::distributeSoldiers() {
 }
 
 void eBoardCity::consolidateSoldiers() {
-    using eSoldierBanners = std::vector<stdsptr<eSoldierBanner>>;
-    eSoldierBanners rabble;
-    eSoldierBanners hoplites;
-    eSoldierBanners horsemen;
-    for(const auto& s : mPalaceSoldierBanners) {
+    using SoldierBanners = std::vector<stdsptr<SoldierBanner>>;
+    SoldierBanners rabble;
+    SoldierBanners hoplites;
+    SoldierBanners horsemen;
+    for(const auto& s : mPalacSoldierBanners) {
         if(s->isAbroad()) continue;
         const auto tile = s->tile();
         if(!tile) s->moveToPalace();
@@ -1911,7 +1911,7 @@ void eBoardCity::consolidateSoldiers() {
             break;
         }
     }
-    const auto consolidator = [](const eSoldierBanners& banners) {
+    const auto consolidator = [](const SoldierBanners& banners) {
         for(int i = 0; i < static_cast<int>(banners.size()); i++) {
             const auto s = banners[i];
             const int sc = s->count();
@@ -1938,7 +1938,7 @@ void eBoardCity::consolidateSoldiers() {
 
 void eBoardCity::addSoldier(const eCharacterType st) {
     bool found = false;
-    for(const auto& b : mPalaceSoldierBanners) {
+    for(const auto& b : mPalacSoldierBanners) {
         if(b->isAbroad()) continue;
         const auto bt = b->type();
         const int c = b->count();
@@ -1960,7 +1960,7 @@ void eBoardCity::addSoldier(const eCharacterType st) {
     }
     if(found) return;
     const int nSpaces = maxPalaceBannerCount();
-    const int nB = mPalaceSoldierBanners.size();
+    const int nB = mPalacSoldierBanners.size();
     if(nB >= nSpaces) return;
     eBannerType bt;
     if(st == eCharacterType::rockThrower) {
@@ -1972,7 +1972,7 @@ void eBoardCity::addSoldier(const eCharacterType st) {
     } else {
         return;
     }
-    const auto b = e::make_shared<eSoldierBanner>(bt, mBoard);
+    const auto b = e::make_shared<SoldierBanner>(bt, mBoard);
     b->setBothCityIds(mId);
     registerSoldierBanner(b);
     b->incCount();
@@ -1981,7 +1981,7 @@ void eBoardCity::addSoldier(const eCharacterType st) {
 
 void eBoardCity::removeSoldier(const eCharacterType st,
                                const bool skipNotHome) {
-    for(const auto& b : mPalaceSoldierBanners) {
+    for(const auto& b : mPalacSoldierBanners) {
         if(b->isAbroad()) continue;
         if(skipNotHome && !b->isHome()) continue;
         const auto bt = b->type();
@@ -2006,7 +2006,7 @@ void eBoardCity::removeSoldier(const eCharacterType st,
     if(skipNotHome) removeSoldier(st, false);
 }
 
-void eBoardCity::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
+void eBoardCity::registerSoldierBanner(const stdsptr<SoldierBanner>& b) {
     if(b->cityId() != mId) return;
     switch(b->type()) {
     case eBannerType::enemy:
@@ -2015,14 +2015,14 @@ void eBoardCity::registerSoldierBanner(const stdsptr<eSoldierBanner>& b) {
     case eBannerType::rockThrower:
     case eBannerType::hoplite:
     case eBannerType::horseman:
-        mPalaceSoldierBanners.push_back(b);
+        mPalacSoldierBanners.push_back(b);
     default:
         mSoldierBanners.push_back(b);
     }
 }
 
-bool eBoardCity::unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b) {
-    eVectorHelpers::remove(mPalaceSoldierBanners, b);
+bool eBoardCity::unregisterSoldierBanner(const stdsptr<SoldierBanner>& b) {
+    eVectorHelpers::remove(mPalacSoldierBanners, b);
     return eVectorHelpers::remove(mSoldierBanners, b);
 }
 
@@ -2676,7 +2676,7 @@ void eBoardCity::addReinforcements(const eCityId fromCid,
     mReinforcements.emplace_back(eReinforcements{forces, fromCid});
 }
 
-void eBoardCity::reinforcementsGoHome(const stdsptr<eSoldierBanner>& b) {
+void eBoardCity::reinforcementsGoHome(const stdsptr<SoldierBanner>& b) {
     int i = -1;
     for(auto& r : mReinforcements) {
         i++;

@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
 #include "emovetoaction.h"
 #include "buildings/esmallhouse.h"

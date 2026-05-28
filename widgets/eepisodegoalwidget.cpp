@@ -124,13 +124,13 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             };
             std::vector<std::string> names;
             for(const auto t : types) {
-                names.push_back(eSoldierBanner::sName(t, false));
+                names.push_back(SoldierBanner::sName(t, false));
             }
             const auto act = [e, type, updateText, types](const int val) {
                 const auto t = types[val];
                 e->fEnumInt1 = static_cast<int>(t);
                 updateText();
-                type->setText(eSoldierBanner::sName(t, false));
+                type->setText(SoldierBanner::sName(t, false));
             };
             choose->initialize(8, names, act);
 
@@ -138,7 +138,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             choose->align(eAlignment::center);
         });
         const auto t = static_cast<eBannerType>(e->fEnumInt1);
-        type->setText(eSoldierBanner::sName(t, false));
+        type->setText(SoldierBanner::sName(t, false));
         type->fitContent();
         detailsW->addWidget(type);
 

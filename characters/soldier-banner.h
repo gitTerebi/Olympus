@@ -1,5 +1,5 @@
-#ifndef ESOLDIERBANNER_H
-#define ESOLDIERBANNER_H
+#ifndef SOLDIER_BANNER_H
+#define SOLDIER_BANNER_H
 
 #include <vector>
 #include <map>
@@ -25,11 +25,11 @@ enum class eBannerType {
     trireme
 };
 
-class eSoldierBanner : public eObject {
+class SoldierBanner : public eObject {
 public:
-    eSoldierBanner(const eBannerType type,
+    SoldierBanner(const eBannerType type,
                    eGameBoard& board);
-    ~eSoldierBanner();
+    ~SoldierBanner();
 
     eBannerType type() const { return mType; }
     eCharacterType characterType() const;
@@ -105,18 +105,18 @@ public:
 
     void teleportSoldiersToPlaces();
 
-    static void sPlaceDefault(std::vector<eSoldierBanner*>& bs,
+    static void sPlaceDefault(std::vector<SoldierBanner*>& bs,
                               const int ctx, const int cty,
                               eGameBoard& board);
-    static void sPlaceNoPathTrace(std::vector<eSoldierBanner*> bs,
+    static void sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
                                   const int ctx, const int cty,
                                   eGameBoard& board, const int dist,
                                   const int minDistFromEdge);
-    static void sPlace(std::vector<eSoldierBanner*> bs,
+    static void sPlace(std::vector<SoldierBanner*> bs,
                        const int ctx, const int cty,
                        eGameBoard& board, const int dist,
                        const int minDistFromEdge);
-    static void sPlaceFacing(std::vector<eSoldierBanner*> bs,
+    static void sPlaceFacing(std::vector<SoldierBanner*> bs,
                              const int ctx, const int cty,
                              eGameBoard& board,
                              const int facing,
@@ -125,25 +125,25 @@ public:
                              const int dist,
                              const int minDistFromEdge);
 
-    struct sFormationSlot { eSoldierBanner* banner; int tx; int ty; };
+    struct sFormationSlot { SoldierBanner* banner; int tx; int ty; };
     static std::vector<sFormationSlot> sFormationPositions(
-                             std::vector<eSoldierBanner*> bs,
+                             std::vector<SoldierBanner*> bs,
                              const int ctx, const int cty,
                              const int lineDX, const int lineDY,
                              const int dist);
 
-    static std::vector<eSoldierBanner*> sPlayerBanners(
-            const std::vector<eSoldierBanner*>& bs,
+    static std::vector<SoldierBanner*> sPlayerBanners(
+            const std::vector<SoldierBanner*>& bs,
             const ePlayerId playerId);
     static void sRotatePlayerBanners(
-            const std::vector<eSoldierBanner*>& bs,
+            const std::vector<SoldierBanner*>& bs,
             const ePlayerId playerId);
     static void sSetPlayerBannersFacing(
-            const std::vector<eSoldierBanner*>& bs,
+            const std::vector<SoldierBanner*>& bs,
             const ePlayerId playerId,
             const int facing);
     static void sPlacePlayerBannersFacing(
-            const std::vector<eSoldierBanner*>& bs,
+            const std::vector<SoldierBanner*>& bs,
             const ePlayerId playerId,
             const int ctx, const int cty,
             eGameBoard& board,
@@ -189,4 +189,4 @@ private:
     std::vector<eSoldier*> mSoldiers;
 };
 
-#endif // ESOLDIERBANNER_H
+#endif // SOLDIER_BANNER_H

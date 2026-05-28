@@ -172,14 +172,14 @@ void eReadStream::readBanner(eGameBoard* board, const eBannerFunc& func) {
     }, "banner");
 }
 
-void eReadStream::readSoldierBanner(eGameBoard* board, const eSoldierBannerFunc& func) {
+void eReadStream::readSoldierBanner(eGameBoard* board, const SoldierBannerFunc& func) {
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
         if(bid < 0) return;
         const auto b = board->soldierBannerWithIOID(bid);
         if(!b) return;
-        func(b ? b->ref<eSoldierBanner>() : nullptr);
+        func(b ? b->ref<SoldierBanner>() : nullptr);
     }, "soldierBanner");
 }
 

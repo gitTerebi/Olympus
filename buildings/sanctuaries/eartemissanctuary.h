@@ -13,7 +13,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     int mSoldierSpawn = 0;
-    std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
+    std::vector<stdsptr<SoldierBanner>> mSoldierBanners;
 };
 
 class eArtemisSanctuary: public eSanctuaryWithWarriors  {

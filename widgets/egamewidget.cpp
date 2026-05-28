@@ -90,7 +90,7 @@ void formatStoredMessage(eMessage& msg,
 
 #include "characters/actions/eanimalaction.h"
 
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
 #include "audio/sounds.h"
 
@@ -3180,7 +3180,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
                 int lineDX;
                 int lineDY;
                 rightDragFormationLine(lineDX, lineDY);
-                eSoldierBanner::sPlacePlayerBannersFacing(
+                SoldierBanner::sPlacePlayerBannersFacing(
                     mBoard->selectedSoldiers(), mBoard->personPlayer(),
                     mPressedTX, mPressedTY, *mBoard, rightDragFacing(),
                     lineDX, lineDY, 3, 2);
@@ -3204,7 +3204,7 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent &e)
             if (tile && tile->cityId() == mViewedCityId)
             {
                 const auto &solds = mBoard->selectedSoldiers();
-                eSoldierBanner::sPlaceFacing(solds, mHoverTX, mHoverTY, *mBoard, 180, 1, 0, 3, 2);
+                SoldierBanner::sPlaceFacing(solds, mHoverTX, mHoverTY, *mBoard, 180, 1, 0, 3, 2);
                 const auto &trims = mBoard->selectedTriremes();
                 eTrireme::sPlace(trims, mHoverTX, mHoverTY, *mBoard, 3, 2);
             }

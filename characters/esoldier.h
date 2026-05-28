@@ -5,7 +5,7 @@
 #include "efightingcharacter.h"
 
 class eSoldierAction;
-class eSoldierBanner;
+class SoldierBanner;
 class eSaveArchive;
 
 class eSoldier : public eFightingPatroler,
@@ -21,12 +21,12 @@ public:
 
     eSoldierAction* soldierAction() const;
 
-    eSoldierBanner* banner() const;
-    void setBanner(eSoldierBanner* const b);
+    SoldierBanner* banner() const;
+    void setBanner(SoldierBanner* const b);
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    stdptr<eSoldierBanner> mBanner;
+    stdptr<SoldierBanner> mBanner;
 };
 
 #endif // ESOLDIER_H

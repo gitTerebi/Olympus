@@ -334,7 +334,7 @@ SOURCES += \
         characters/esick.cpp \
         characters/esilverminer.cpp \
         characters/esoldier.cpp \
-        characters/esoldierbanner.cpp \
+        characters/soldier-banner.cpp \
         characters/espearthrowerbase.cpp \
         characters/etaxcollector.cpp \
         characters/etradeboat.cpp \
@@ -1044,7 +1044,7 @@ HEADERS += \
     characters/esick.h \
     characters/esilverminer.h \
     characters/esoldier.h \
-    characters/esoldierbanner.h \
+    characters/soldier-banner.h \
     characters/espearthrowerbase.h \
     characters/etaxcollector.h \
     characters/etradeboat.h \

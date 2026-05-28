@@ -54,7 +54,7 @@ class eCharacter;
 class eBuilding;
 class eTradePost;
 class eStorageBuilding;
-class eSoldierBanner;
+class SoldierBanner;
 class ePalace;
 class eLandInvasionPoint;
 class eFulfillRequestEvent;
@@ -227,8 +227,8 @@ public:
     void registerBanner(eBanner* const b);
     void unregisterBanner(eBanner* const b);
 
-    void registerAllSoldierBanner(eSoldierBanner* const b);
-    void unregisterAllSoldierBanner(eSoldierBanner* const b);    
+    void registerAllSoldierBanner(SoldierBanner* const b);
+    void unregisterAllSoldierBanner(SoldierBanner* const b);    
 
     bool manTowers(const eCityId cid) const;
     void setManTowers(const eCityId cid, const bool m);
@@ -256,7 +256,7 @@ public:
     std::vector<eHerosHall*> heroHalls(const eCityId cid) const;
     eHerosHall* heroHall(const eCityId cid, const eHeroType hero) const;
 
-    std::vector<stdsptr<eSoldierBanner>> banners(const eCityId cid) const;
+    std::vector<stdsptr<SoldierBanner>> banners(const eCityId cid) const;
     int countBanners(const eBannerType bt, const eCityId cid) const;
     int countSoldiers(const eBannerType bt, const eCityId cid) const;
     int countWorkingTriremes(const eCityId cid) const;
@@ -376,9 +376,9 @@ public:
     void enlistForces(const eEnlistedForces& forces);
 
     void clearBannerSelection();
-    void deselectBanner(eSoldierBanner* const c);
-    void selectBanner(eSoldierBanner* const c);
-    const std::vector<eSoldierBanner*>& selectedSoldiers() const
+    void deselectBanner(SoldierBanner* const c);
+    void selectBanner(SoldierBanner* const c);
+    const std::vector<SoldierBanner*>& selectedSoldiers() const
     { return mSelectedBanners; }
 
     void clearTriremeSelection();
@@ -470,7 +470,7 @@ public:
     eCharacter* characterWithIOID(const int id) const;
     eCharacterAction* characterActionWithIOID(const int id) const;
     eBanner* bannerWithIOID(const int id) const;
-    eSoldierBanner* soldierBannerWithIOID(const int id) const;
+    SoldierBanner* soldierBannerWithIOID(const int id) const;
     eGameEvent* eventWithIOID(const int id) const;
     eInvasionHandler* invasionHandlerWithIOID(const int id) const;
 
@@ -531,8 +531,8 @@ public:
 
     void waitUntilFinished();
 
-    void registerSoldierBanner(const stdsptr<eSoldierBanner>& b);
-    bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
+    void registerSoldierBanner(const stdsptr<SoldierBanner>& b);
+    bool unregisterSoldierBanner(const stdsptr<SoldierBanner>& b);
 
     void killCommonFolks(const eCityId cid, int toKill);
     void walkerKilled(const eCityId cid);
@@ -886,12 +886,12 @@ private:
     std::vector<eInvasionEvent*> mInvasions;
     // end moved to eBoardCity
 
-    std::vector<eSoldierBanner*> mAllSoldierBanners;
+    std::vector<SoldierBanner*> mAllSoldierBanners;
     std::vector<eCharacter*> mCharacters;
     std::vector<eSoldier*> mSoldiers;
     std::vector<eMissile*> mMissiles;
 
-    std::vector<eSoldierBanner*> mSelectedBanners;
+    std::vector<SoldierBanner*> mSelectedBanners;
     std::vector<eTrireme*> mSelectedTriremes;
 
     std::vector<ePlannedAction*> mPlannedActions;

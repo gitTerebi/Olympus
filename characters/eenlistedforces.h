@@ -1,14 +1,14 @@
 #ifndef EENLISTEDFORCES_H
 #define EENLISTEDFORCES_H
 
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 #include "characters/heroes/ehero.h"
 #include "engine/e-worldcity.h"
 
 class eSaveArchive;
 
 struct eEnlistedForces {
-    std::vector<stdsptr<eSoldierBanner>> fSoldiers;
+    std::vector<stdsptr<SoldierBanner>> fSoldiers;
     std::vector<std::pair<eCityId, eHeroType>> fHeroes;
     std::vector<stdsptr<eWorldCity>> fAllies;
     bool fAres = false;

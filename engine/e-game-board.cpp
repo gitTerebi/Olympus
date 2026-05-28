@@ -21,7 +21,7 @@
 #include "buildings/estoragebuilding.h"
 
 #include "characters/esoldier.h"
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
 #include "buildings/etradepost.h"
 
@@ -400,13 +400,13 @@ void eGameBoard::clearBannerSelection()
     mSelectedBanners.clear();
 }
 
-void eGameBoard::deselectBanner(eSoldierBanner *const c)
+void eGameBoard::deselectBanner(SoldierBanner *const c)
 {
     eVectorHelpers::remove(mSelectedBanners, c);
     c->setSelected(false);
 }
 
-void eGameBoard::selectBanner(eSoldierBanner *const c)
+void eGameBoard::selectBanner(SoldierBanner *const c)
 {
     mSelectedBanners.push_back(c);
     c->setSelected(true);
@@ -442,14 +442,14 @@ void eGameBoard::bannersGoHome()
     {
         t->goHome();
     }
-    std::map<eCityId, std::vector<stdsptr<eSoldierBanner>>> armyReturn;
+    std::map<eCityId, std::vector<stdsptr<SoldierBanner>>> armyReturn;
     const auto banners = mSelectedBanners;
     for (const auto b : banners)
     {
         if (b->militaryAid() && b->isAbroad())
         {
             const auto cid = b->cityId();
-            armyReturn[cid].push_back(b->ref<eSoldierBanner>());
+            armyReturn[cid].push_back(b->ref<SoldierBanner>());
         }
         b->goHome();
     }
@@ -874,7 +874,7 @@ eBanner *eGameBoard::bannerWithIOID(const int id) const
     return nullptr;
 }
 
-eSoldierBanner *eGameBoard::soldierBannerWithIOID(const int id) const
+SoldierBanner *eGameBoard::soldierBannerWithIOID(const int id) const
 {
     if (id == -1)
         return nullptr;
@@ -2045,7 +2045,7 @@ bool eGameBoard::setAtlantean(const eCityId cid, const bool a)
     return true;
 }
 
-void eGameBoard::registerSoldierBanner(const stdsptr<eSoldierBanner> &b)
+void eGameBoard::registerSoldierBanner(const stdsptr<SoldierBanner> &b)
 {
     if (b->militaryAid())
         return;
@@ -2056,7 +2056,7 @@ void eGameBoard::registerSoldierBanner(const stdsptr<eSoldierBanner> &b)
     c->registerSoldierBanner(b);
 }
 
-bool eGameBoard::unregisterSoldierBanner(const stdsptr<eSoldierBanner> &b)
+bool eGameBoard::unregisterSoldierBanner(const stdsptr<SoldierBanner> &b)
 {
     eVectorHelpers::remove(mSelectedBanners, b.get());
     const auto cid = b->cityId();
@@ -2830,12 +2830,12 @@ void eGameBoard::unregisterBanner(eBanner *const b)
     return c->unregisterBanner(b);
 }
 
-void eGameBoard::registerAllSoldierBanner(eSoldierBanner *const b)
+void eGameBoard::registerAllSoldierBanner(SoldierBanner *const b)
 {
     mAllSoldierBanners.push_back(b);
 }
 
-void eGameBoard::unregisterAllSoldierBanner(eSoldierBanner *const b)
+void eGameBoard::unregisterAllSoldierBanner(SoldierBanner *const b)
 {
     eVectorHelpers::remove(mAllSoldierBanners, b);
     eVectorHelpers::remove(mSelectedBanners, b);
@@ -3919,7 +3919,7 @@ eHerosHall *eGameBoard::heroHall(const eCityId cid, const eHeroType hero) const
     return c->heroHall(hero);
 }
 
-std::vector<stdsptr<eSoldierBanner>> eGameBoard::banners(const eCityId cid) const
+std::vector<stdsptr<SoldierBanner>> eGameBoard::banners(const eCityId cid) const
 {
     const auto c = boardCityWithId(cid);
     if (!c)

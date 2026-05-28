@@ -329,7 +329,7 @@ set(SOURCES
     characters/esick.cpp
     characters/esilverminer.cpp
     characters/esoldier.cpp
-    characters/esoldierbanner.cpp
+    characters/soldier-banner.cpp
     characters/espearthrowerbase.cpp
     characters/etaxcollector.cpp
     characters/etradeboat.cpp

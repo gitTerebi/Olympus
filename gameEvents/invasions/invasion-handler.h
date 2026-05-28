@@ -15,7 +15,7 @@ class eCharacter;
 class eReadStream;
 class eWriteStream;
 class eWorldCity;
-class eSoldierBanner;
+class SoldierBanner;
 class ePlayerConquestEvent;
 class eSaveArchive;
 enum class eCityId;
@@ -102,14 +102,14 @@ private:
                             const int archers,
                             const eCityId cid,
                             const eNationality nat,
-                            std::vector<eSoldierBanner*>& solds);
+                            std::vector<SoldierBanner*>& solds);
 
     using eSs = std::vector<std::pair<ePlayerSoldierType, int>>;
     void
     generateSoldiersForCity(eTile* const tile,
                             const eSs& soldTypes,
                             const eCityId cid,
-                            std::vector<eSoldierBanner*>& solds);
+                            std::vector<SoldierBanner*>& solds);
 
     void tellHeroesAndGodsToGoBack() const;
 
@@ -123,7 +123,7 @@ private:
     eTile* mTile = nullptr;
     eTile* mCurrentTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
-    std::vector<stdsptr<eSoldierBanner>> mBanners;
+    std::vector<stdsptr<SoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;
 
     int mWait = 0;
