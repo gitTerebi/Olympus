@@ -397,7 +397,9 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 if(request && request->isMainEvent() &&
                    request->isActiveCityRequest()) {
                     if(request->isStuck(date())) {
-                        request->finish(eReceiveRequestResult::tooLate);
+                        printf("Fulfill tribute load heal trigger: runtime=%d\n",
+                               request->runtimeId());
+                        request->healStuck();
                     } else {
                         addCityRequest(request);
                     }
@@ -405,7 +407,11 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
                 if(tribute && tribute->isMainEvent() &&
                    !tribute->finished()) {
-                    addTributeRequest(tribute);
+                    if(tribute->isStuck(date())) {
+                        tribute->healStuck();
+                    } else {
+                        addTributeRequest(tribute);
+                    }
                 }
             }
         }, "requests");

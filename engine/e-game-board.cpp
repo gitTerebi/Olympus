@@ -1642,6 +1642,19 @@ eGameBoard::eRequests eGameBoard::cityRequests(const ePlayerId pid) const
     const auto p = boardPlayerWithId(pid);
     if (!p)
         return {};
+    printf("GameBoard cityRequests: pid=%d size=%d\n",
+           static_cast<int>(pid),
+           static_cast<int>(p->cityRequests().size()));
+    for (const auto request : p->cityRequests())
+    {
+        printf("GameBoard cityRequests item: ptr=%p runtime=%d requestId=%d type=%d active=%d finished=%d\n",
+               request,
+               request ? request->runtimeId() : -1,
+               request ? request->requestId() : -1,
+               request ? static_cast<int>(request->requestType()) : -1,
+               request && request->isActiveCityRequest() ? 1 : 0,
+               request && request->finished() ? 1 : 0);
+    }
     return p->cityRequests();
 }
 
@@ -2975,6 +2988,28 @@ void eGameBoard::incTime(const int by)
     const int nd = mTime / dayLen;
     mDate.nextDays(nd, nextMonth, nextYear);
     mTime -= nd * dayLen;
+
+    const auto gameEvents = mAllGameEvents;
+    for (const auto event : gameEvents)
+    {
+        const auto tribute = dynamic_cast<ePayTributeEvent *>(event);
+        if (tribute && tribute->isMainEvent() &&
+            !tribute->finished() && tribute->isStuck(mDate))
+        {
+            tribute->healStuck();
+        }
+        const auto request = dynamic_cast<eFulfillRequestEvent *>(event);
+        if (request && request->isMainEvent() &&
+            request->isStuck(mDate))
+        {
+            printf("Fulfill tribute board heal trigger: runtime=%d date=%d/%d/%d\n",
+                   request->runtimeId(),
+                   mDate.day(),
+                   static_cast<int>(mDate.month()),
+                   mDate.year());
+            request->healStuck();
+        }
+    }
 
     if (nextYear)
     {
