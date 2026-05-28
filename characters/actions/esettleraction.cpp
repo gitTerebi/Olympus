@@ -16,10 +16,6 @@ eSettlerAction::eSettlerAction(eCharacter* const c) :
     setFinishOnComeback(true);
 }
 
-eSettlerAction::~eSettlerAction() {
-    //setNumberPeople(0);
-}
-
 bool eSettlerAction::decide() {
     if(mInitialWait > 0) {
         --mInitialWait;

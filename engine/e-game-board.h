@@ -276,6 +276,7 @@ public:
     int population(const eCityId cid) const;
 
     ePopulationData* populationData(const eCityId cid);
+    void validateSettlers(const eCityId cid);
     eHusbandryData* husbandryData(const eCityId cid);
     eEmploymentData* employmentData(const eCityId cid);
     eHeatMap& appealMap() { return mAppealMap; }

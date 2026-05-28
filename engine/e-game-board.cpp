@@ -10,6 +10,7 @@
 #include "buildings/eagorabase.h"
 #include "e-tribute.h"
 #include "characters/echaracter.h"
+#include "characters/actions/esettleraction.h"
 #include "characters/edomesticatedanimal.h"
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -3208,6 +3209,32 @@ ePopulationData *eGameBoard::populationData(const eCityId cid)
     if (!c)
         return nullptr;
     return &c->populationData();
+}
+
+void eGameBoard::validateSettlers(const eCityId cid)
+{
+    const auto popData = populationData(cid);
+    if (!popData)
+        return;
+
+    int liveSettlers = 0;
+    for (const auto ca : mCharacterActions)
+    {
+        const auto sa = dynamic_cast<eSettlerAction *>(ca);
+        if (!sa)
+            continue;
+        const auto c = sa->character();
+        if (!c || c->type() != eCharacterType::settler)
+            continue;
+        if (sa->cityId() != cid)
+            continue;
+        liveSettlers += sa->nPeople();
+    }
+
+    const int storedSettlers = popData->settlers();
+    if (storedSettlers == liveSettlers)
+        return;
+    popData->setSettlers(liveSettlers);
 }
 
 eHusbandryData *eGameBoard::husbandryData(const eCityId cid)

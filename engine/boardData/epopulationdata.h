@@ -9,6 +9,7 @@ public:
 
     void incVacancies(const int v);
     void incSettlers(const int s);
+    void setSettlers(const int s);
     void incLeft(const int s);
     void nextMonth();
 
