@@ -28,7 +28,7 @@ class eCharacter;
 class eCharacterAction;
 class eCharacterActionFunction;
 class eTile;
-class eSoldierBanner;
+class SoldierBanner;
 class eBanner;
 class eWorldBoard;
 class eWorldCity;
@@ -414,15 +414,15 @@ public:
             });
     }
 
-    void soldierBanner(eGameBoard* board, stdsptr<eSoldierBanner>& value) {
+    void soldierBanner(eGameBoard* board, stdsptr<SoldierBanner>& value) {
         if(reading()) {
-            stdsptr<eSoldierBanner>* const tgt = &value;
+            stdsptr<SoldierBanner>* const tgt = &value;
             *tgt = nullptr;
-            mSrc->readSoldierBanner(board, [tgt](const stdsptr<eSoldierBanner>& b) {
+            mSrc->readSoldierBanner(board, [tgt](const stdsptr<SoldierBanner>& b) {
                 *tgt = b;
             });
         } else {
-            mDst->writeSoldierBanner(value.get());
+            mDst->writSoldierBanner(value.get());
         }
     }
 
@@ -432,10 +432,10 @@ public:
                             Ptr& value) {
         Ptr* const tgt = &value;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writeSoldierBanner(tgt->get()); },
+            [tgt](eWriteStream& dst) { dst.writSoldierBanner(tgt->get()); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
-                src.readSoldierBanner(board, [tgt](const stdsptr<eSoldierBanner>& b) {
+                src.readSoldierBanner(board, [tgt](const stdsptr<SoldierBanner>& b) {
                     *tgt = b;
                 });
             });

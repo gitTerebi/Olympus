@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 #include "fileIO/esavearchive.h"
 
 bool eMilitaryAid::count() const {
@@ -24,7 +24,7 @@ void eMilitaryAid::goBack() {
 void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
     ar.worldCityField("city", board, fCity);
     if(ar.reading()) {
-        auto soldiers = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+        auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();
         ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& itemAr, auto& soldier) {
             itemAr.soldierBanner(board, soldier);
         });

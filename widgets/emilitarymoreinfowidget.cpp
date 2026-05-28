@@ -1,7 +1,7 @@
 #include "emilitarymoreinfowidget.h"
 
 #include "engine/e-game-board.h"
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 #include "elabel.h"
 #include "emicrobutton.h"
 #include "elanguage.h"
@@ -12,7 +12,7 @@ eMilitaryMoreInfoWidget::eMilitaryMoreInfoWidget(
         eMainWidget* const mw) :
     eInfoWidget(window, mw, false, false) {}
 
-void sArmySectionButtonUpdate(const stdsptr<eSoldierBanner>& b,
+void sArmySectionButtonUpdate(const stdsptr<SoldierBanner>& b,
                               eMicroButton* const mb) {
     if(b->isAbroad()) { // abroad
         mb->setText(eLanguage::zeusText(51, 24));
@@ -59,7 +59,7 @@ class eArmySection : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    using eBanners = std::vector<stdsptr<eSoldierBanner>>;
+    using eBanners = std::vector<stdsptr<SoldierBanner>>;
     void initialize(const std::string& name,
                     const eBanners& banners,
                     const bool atlantean) {
@@ -314,28 +314,28 @@ void eMilitaryMoreInfoWidget::initialize(eGameBoard& board,
 
     const auto& banners = board.banners(cid);
 
-    std::vector<stdsptr<eSoldierBanner>> horsemenBanners;
+    std::vector<stdsptr<SoldierBanner>> horsemenBanners;
     for(const auto& b : banners) {
         const auto type = b->type();
         if(type != eBannerType::horseman) continue;
         horsemenBanners.push_back(b);
     }
 
-    std::vector<stdsptr<eSoldierBanner>> hopliteBanners;
+    std::vector<stdsptr<SoldierBanner>> hopliteBanners;
     for(const auto& b : banners) {
         const auto type = b->type();
         if(type != eBannerType::hoplite) continue;
         hopliteBanners.push_back(b);
     }
 
-    std::vector<stdsptr<eSoldierBanner>> rabbleBanners;
+    std::vector<stdsptr<SoldierBanner>> rabbleBanners;
     for(const auto& b : banners) {
         const auto type = b->type();
         if(type != eBannerType::rockThrower) continue;
         rabbleBanners.push_back(b);
     }
 
-    std::vector<stdsptr<eSoldierBanner>> mythicalBanners;
+    std::vector<stdsptr<SoldierBanner>> mythicalBanners;
     for(const auto& b : banners) {
         const auto type = b->type();
         if(type != eBannerType::amazon &&

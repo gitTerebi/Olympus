@@ -70,7 +70,7 @@ void eRequestAidEvent::trigger() {
 
         int remRabble = nRabble;
         while(remRabble > 0) {
-            const auto b = e::make_shared<eSoldierBanner>(
+            const auto b = e::make_shared<SoldierBanner>(
                                eBannerType::rockThrower, *board);
             b->setOnCityId(onCid);
             b->setCityId(fromCid);
@@ -86,7 +86,7 @@ void eRequestAidEvent::trigger() {
 
         int remHoplites = nHoplites;
         while(remHoplites > 0) {
-            const auto b = e::make_shared<eSoldierBanner>(
+            const auto b = e::make_shared<SoldierBanner>(
                                eBannerType::hoplite, *board);
             b->setOnCityId(onCid);
             b->setCityId(fromCid);
@@ -102,7 +102,7 @@ void eRequestAidEvent::trigger() {
 
         int remHorsemen = nHorsemen;
         while(remHorsemen > 0) {
-            const auto b = e::make_shared<eSoldierBanner>(
+            const auto b = e::make_shared<SoldierBanner>(
                                eBannerType::horseman, *board);
             b->setOnCityId(onCid);
             b->setCityId(fromCid);
@@ -116,14 +116,14 @@ void eRequestAidEvent::trigger() {
             remHorsemen -= b->count();
         }
 
-        std::vector<eSoldierBanner*> banners;
+        std::vector<SoldierBanner*> banners;
         for(const auto& b : ma->fSoldiers) {
             banners.push_back(b.get());
         }
 
         const int ctx = entryPoint->x();
         const int cty = entryPoint->y();
-        eSoldierBanner::sPlace(banners, ctx, cty, *board, 3, 3);
+        SoldierBanner::sPlace(banners, ctx, cty, *board, 3, 3);
         board->addMilitaryAid(onCid, ma);
     }
 

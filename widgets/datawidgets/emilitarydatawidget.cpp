@@ -28,8 +28,8 @@ void eForcesWidget::initialize(const std::string& title) {
     fitHeight();
 }
 
-void eForcesWidget::setBanners(const eSoldierBanners& ss,
-                               const eSoldierBannerAction& act) {
+void eForcesWidget::setBanners(const SoldierBanners& ss,
+                               const SoldierBannerAction& act) {
     const bool changed = !eVectorHelpers::same(mBanners, ss);
     if(!changed) return;
     mBanners = ss;
@@ -272,10 +272,10 @@ void eMilitaryDataWidget::openMoreInfoWiget() {
 void eMilitaryDataWidget::updateWidgets() {
     const auto cid = viewedCity();
     const auto ss = mBoard.banners(cid);
-    using eSoldierBanners = std::vector<stdptr<eSoldierBanner>>;
-    eSoldierBanners abroad;
-    eSoldierBanners inCity;
-    eSoldierBanners standingDown;
+    using SoldierBanners = std::vector<stdptr<SoldierBanner>>;
+    SoldierBanners abroad;
+    SoldierBanners inCity;
+    SoldierBanners standingDown;
     for(const auto& s : ss) {
         if(s->isAbroad()) {
             abroad.push_back(s);

@@ -19,7 +19,7 @@ class eCharacterActionFunction;
 class eGodAct;
 class eWorldCity;
 class eBanner;
-class eSoldierBanner;
+class SoldierBanner;
 class eGameEvent;
 class eInvasionHandler;
 
@@ -143,7 +143,7 @@ public:
     void writeDirectionTimes(eDirectionTimes* const d);
     void writeCity(eWorldCity* const c);
     void writeBanner(eBanner* const b);
-    void writeSoldierBanner(eSoldierBanner* const b);
+    void writSoldierBanner(SoldierBanner* const b);
     void writeGameEvent(eGameEvent* const e);
     void writeInvasionHandler(eInvasionHandler* const i);
 

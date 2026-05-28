@@ -5,13 +5,13 @@
 #include "pointers/estdselfref.h"
 
 class eGameBoard;
-class eSoldierBanner;
+class SoldierBanner;
 class eMicroButton;
 class eScrollWidget;
 
-using eSB = stdptr<eSoldierBanner>;
-using eSoldierBanners = std::vector<eSB>;
-using eSoldierBannerAction = std::function<void(const eSB&)>;
+using eSB = stdptr<SoldierBanner>;
+using SoldierBanners = std::vector<eSB>;
+using SoldierBannerAction = std::function<void(const eSB&)>;
 
 class eForcesWidget : public eWidget {
 public:
@@ -19,11 +19,11 @@ public:
 
     void initialize(const std::string& title);
 
-    void setBanners(const eSoldierBanners& ss,
-                    const eSoldierBannerAction& act);
+    void setBanners(const SoldierBanners& ss,
+                    const SoldierBannerAction& act);
 private:
     eWidget* mWidget = nullptr;
-    eSoldierBanners mBanners;
+    SoldierBanners mBanners;
 };
 
 class eMilitaryDataWidget : public eDataWidget {

@@ -11,7 +11,7 @@ eReinforcements::eReinforcements(const eEnlistedForces& forces,
     mForces(forces),
     mFromCid(fromCid) {}
 
-bool eReinforcements::remove(const stdsptr<eSoldierBanner>& b) {
+bool eReinforcements::remove(const stdsptr<SoldierBanner>& b) {
     return eVectorHelpers::remove(mForces.fSoldiers, b);
 }
 

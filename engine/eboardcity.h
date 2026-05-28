@@ -225,8 +225,8 @@ public:
     void addSoldier(const eCharacterType st);
     void removeSoldier(const eCharacterType st,
                        const bool skipNotHome = true);
-    void registerSoldierBanner(const stdsptr<eSoldierBanner>& b);
-    bool unregisterSoldierBanner(const stdsptr<eSoldierBanner>& b);
+    void registerSoldierBanner(const stdsptr<SoldierBanner>& b);
+    bool unregisterSoldierBanner(const stdsptr<SoldierBanner>& b);
 
     bool personPlayerOwner() const;
     ePlayerId owningPlayerId() const;
@@ -332,7 +332,7 @@ public:
     void removeInvasionHandler(eInvasionHandler* const i);
     bool hasActiveInvasions() const;
 
-    const std::vector<stdsptr<eSoldierBanner>>& banners() const
+    const std::vector<stdsptr<SoldierBanner>>& banners() const
     { return mSoldierBanners; }
     eBanner* banner(const eBannerTypeS type, const int id = 0) const;
     eTile* entryPoint() const;
@@ -435,7 +435,7 @@ public:
 
     void addReinforcements(const eCityId fromCid,
                            const eEnlistedForces& forces);
-    void reinforcementsGoHome(const stdsptr<eSoldierBanner>& b);
+    void reinforcementsGoHome(const stdsptr<SoldierBanner>& b);
     void sendAllReinforcementsHome();
 
     void serialize(eSaveArchive& ar);
@@ -570,8 +570,8 @@ private:
     std::vector<eMonster*> mMonsters;
     std::vector<eBanner*> mBanners;
 
-    std::vector<stdsptr<eSoldierBanner>> mSoldierBanners;
-    std::vector<stdsptr<eSoldierBanner>> mPalaceSoldierBanners;
+    std::vector<stdsptr<SoldierBanner>> mSoldierBanners;
+    std::vector<stdsptr<SoldierBanner>> mPalacSoldierBanners;
 
     std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
 

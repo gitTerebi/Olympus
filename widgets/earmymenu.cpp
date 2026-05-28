@@ -8,16 +8,16 @@
 #include "eframedwidget.h"
 
 #include "egamewidget.h"
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
-std::vector<eSoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
-    std::vector<eSoldierBanner*> result;
+std::vector<SoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
+    std::vector<SoldierBanner*> result;
     if (!mBoard) return result;
     const auto& selectedBanners = mBoard->selectedSoldiers();
     const auto ppid = mBoard->personPlayer();
     for (const auto* b : selectedBanners) {
         if (b && b->playerId() == ppid) {
-            result.push_back(const_cast<eSoldierBanner*>(b));
+            result.push_back(const_cast<SoldierBanner*>(b));
         }
     }
     return result;
@@ -97,7 +97,7 @@ void eArmyMenu::initialize(eGameBoard &b)
     rc->setPressAction([this]()
                        {
         if (!mBoard || !mGW) return;
-        eSoldierBanner::sRotatePlayerBanners(
+        SoldierBanner::sRotatePlayerBanners(
             mBoard->selectedSoldiers(), mBoard->personPlayer()); });
 
     const auto t4 = &eInterfaceTextures::fOffensiveTactics;

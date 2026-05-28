@@ -15,7 +15,7 @@
 #include "buildings/pyramids/epyramid.h"
 
 #include "missiles/emissile.h"
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
 #include "spawners/elandinvasionpoint.h"
 
@@ -3231,7 +3231,7 @@ void eGameWidget::paintEvent(ePainter &p)
 
     if (mRightFormationFacing)
     {
-        const auto banners = eSoldierBanner::sPlayerBanners(
+        const auto banners = SoldierBanner::sPlayerBanners(
             mBoard->selectedSoldiers(), mBoard->personPlayer());
         if (!banners.empty())
         {
@@ -3239,7 +3239,7 @@ void eGameWidget::paintEvent(ePainter &p)
             int lineDY;
             rightDragFormationLine(lineDX, lineDY);
             const int dist = 3;
-            const auto slots = eSoldierBanner::sFormationPositions(
+            const auto slots = SoldierBanner::sFormationPositions(
                 banners, mPressedTX, mPressedTY, lineDX, lineDY, dist);
 
             eGameTextures::loadBanners();
@@ -3267,7 +3267,7 @@ void eGameWidget::paintEvent(ePainter &p)
                 };
                 p.drawPolygon(pts, color);
             };
-            const auto drawGhostBanner = [&](eSoldierBanner* const b,
+            const auto drawGhostBanner = [&](SoldierBanner* const b,
                                              eTile* const tile,
                                              const bool valid)
             {

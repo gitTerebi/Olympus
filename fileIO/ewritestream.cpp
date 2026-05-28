@@ -82,7 +82,7 @@ void eWriteStream::writeBanner(eBanner* const b) {
     *this << bid;
 }
 
-void eWriteStream::writeSoldierBanner(eSoldierBanner* const b) {
+void eWriteStream::writSoldierBanner(SoldierBanner* const b) {
     const int bid = b ? b->ioID() : -1;
     *this << bid;
 }

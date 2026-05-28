@@ -34,7 +34,7 @@ void eEnlistedForces::serialize(eSaveArchive& ar, eGameBoard* board) {
     eWorldBoard* wboard = board ? &board->world() : nullptr;
     {
         if(ar.reading()) {
-            const auto soldiers = std::make_shared<std::vector<stdsptr<eSoldierBanner>>>();
+            const auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();
             ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& ar, auto& soldier) {
                 ar.soldierBanner(board, soldier);
             });
@@ -159,7 +159,7 @@ int eEnlistedForces::count() const {
         result += b->count();
     }
     for(const auto& f : fAllies) {
-        std::vector<eSoldierBanner*> solds;
+        std::vector<SoldierBanner*> solds;
         int infantry;
         int cavalry;
         int archers;

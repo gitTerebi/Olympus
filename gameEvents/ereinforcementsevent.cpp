@@ -38,7 +38,7 @@ void eReinforcementsEvent::trigger() {
     ed.fTile = entryPoint;
     board->event(eEvent::aidArrives, ed);
 
-    std::vector<eSoldierBanner*> solds;
+    std::vector<SoldierBanner*> solds;
     for(const auto& b : mForces.fSoldiers) {
         solds.push_back(b.get());
         b->killAll();
@@ -52,7 +52,7 @@ void eReinforcementsEvent::trigger() {
 
     const int tx = entryPoint->x();
     const int ty = entryPoint->y();
-    eSoldierBanner::sPlace(solds, tx, ty, *board, 3, 3);
+    SoldierBanner::sPlace(solds, tx, ty, *board, 3, 3);
 
     c->addReinforcements(fromCid, mForces);
 }

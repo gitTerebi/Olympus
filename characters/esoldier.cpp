@@ -1,7 +1,7 @@
 #include "esoldier.h"
 
 #include "engine/e-game-board.h"
-#include "esoldierbanner.h"
+#include "soldier-banner.h"
 #include "actions/soldier-action.h"
 #include "fileIO/esavearchive.h"
 
@@ -18,11 +18,11 @@ eSoldier::~eSoldier() {
     brd.unregisterSoldier(this);
     setBanner(nullptr);
 }
-eSoldierBanner* eSoldier::banner() const {
+SoldierBanner* eSoldier::banner() const {
     return mBanner;
 }
 
-void eSoldier::setBanner(eSoldierBanner* const b) {
+void eSoldier::setBanner(SoldierBanner* const b) {
     if(mBanner) {
         mBanner->removeSoldier(this);
     }

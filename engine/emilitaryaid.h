@@ -7,7 +7,7 @@
 
 class eGameBoard;
 class eWorldCity;
-class eSoldierBanner;
+class SoldierBanner;
 class eSaveArchive;
 
 struct eMilitaryAid {
@@ -22,7 +22,7 @@ struct eMilitaryAid {
     void serialize(eSaveArchive& ar, eGameBoard* board);
 
     stdsptr<eWorldCity> fCity;
-    std::vector<stdsptr<eSoldierBanner>> fSoldiers;
+    std::vector<stdsptr<SoldierBanner>> fSoldiers;
 };
 
 #endif // EMILITARYAID_H

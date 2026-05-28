@@ -37,7 +37,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
                 return;
             }
             const auto name = eLanguage::zeusText(138, string);
-            const auto b = e::make_shared<eSoldierBanner>(bt, board);
+            const auto b = e::make_shared<SoldierBanner>(bt, board);
             for(int i = 0; i < eNumbers::sSoldiersPerAresArtemisBanner; i++) {
                 b->incCount();
             }
@@ -68,12 +68,12 @@ void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
     auto& board = getBoard();
     if(ar.reading()) {
         const stdptr<eSanctuaryWithWarriors> tptr(this);
-        auto banners = std::make_shared<std::vector<std::shared_ptr<stdsptr<eSoldierBanner>>>>();
+        auto banners = std::make_shared<std::vector<std::shared_ptr<stdsptr<SoldierBanner>>>>();
         mSoldierBanners.clear();
         ar.countedArrayField("soldierBanners", 0,
             [&board, banners](eSaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(banners->size())) banners->resize(i + 1);
-                if(!(*banners)[i]) (*banners)[i] = std::make_shared<stdsptr<eSoldierBanner>>();
+                if(!(*banners)[i]) (*banners)[i] = std::make_shared<stdsptr<SoldierBanner>>();
                 itemAr.soldierBannerField("banner", &board, *(*banners)[i]);
             });
         ar.addPostFunc([tptr, banners]() {

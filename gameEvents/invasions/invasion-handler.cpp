@@ -90,7 +90,7 @@ void eInvasionHandler::disembark() {
         }
     }
     if(!ss.empty()) {
-        std::vector<eSoldierBanner*> solds;
+        std::vector<SoldierBanner*> solds;
         generateSoldiersForCity(mTile, ss, cid, solds);
     }
 
@@ -123,7 +123,7 @@ void eInvasionHandler::disembark() {
         }
     }
     {
-        std::vector<eSoldierBanner*> solds;
+        std::vector<SoldierBanner*> solds;
         const auto nat = mCity->nationality();
         generateSoldiersForCity(mTile,
                                 infantry, cavalry, archers,
@@ -160,21 +160,21 @@ void eInvasionHandler::disembark() {
             }
         }
         {
-            std::vector<eSoldierBanner*> solds;
+            std::vector<SoldierBanner*> solds;
             generateSoldiersForCity(mTile,
                                     infantry, cavalry, archers,
                                     f.fCid, f.fNat, solds);
         }
     }
 
-    std::vector<eSoldierBanner*> solds;
+    std::vector<SoldierBanner*> solds;
     for(const auto& b : mBanners) {
         solds.push_back(b.get());
     }
 
     const int tx = mTile->x();
     const int ty = mTile->y();
-    eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
@@ -225,7 +225,7 @@ void eInvasionHandler::initializeSeaInvasion(
     for(const auto& f : forces.fAllies) {
         const auto cid = f->cityId();
         const auto nat = f->nationality();
-        std::vector<eSoldierBanner*> solds;
+        std::vector<SoldierBanner*> solds;
         int infantry;
         int cavalry;
         int archers;
@@ -261,16 +261,16 @@ eInvasionHandler::generateSoldiersForCity(
         const int archers,
         const eCityId cid,
         const eNationality nat,
-        std::vector<eSoldierBanner*>& solds) {
+        std::vector<SoldierBanner*>& solds) {
     const auto ocid = tile->cityId();
 
     const int tx = tile->x();
     const int ty = tile->y();
 
-    stdsptr<eSoldierBanner> b;
+    stdsptr<SoldierBanner> b;
     const auto requestBanner = [&]() {
         if(!b || b->count() >= 8) {
-            b = e::make_shared<eSoldierBanner>(
+            b = e::make_shared<SoldierBanner>(
                     eBannerType::enemy, mBoard);
             b->setOnCityId(ocid);
             b->setCityId(cid);
@@ -427,14 +427,14 @@ void eInvasionHandler::initializeLandInvasion(
 
     const auto cid = mCity->cityId();
     const auto nat = mCity->nationality();
-    std::vector<eSoldierBanner*> solds;
+    std::vector<SoldierBanner*> solds;
     generateSoldiersForCity(tile,
                             infantry, cavalry, archers,
                             cid, nat, solds);
 
     const int tx = tile->x();
     const int ty = tile->y();
-    eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
@@ -452,7 +452,7 @@ void eInvasionHandler::initializeLandInvasion(
     mTile = tile;
 
     const auto cid = mCity->cityId();
-    std::vector<eSoldierBanner*> solds;
+    std::vector<SoldierBanner*> solds;
     {
         eSs ss;
         extractSSFromForces(forces, ss);
@@ -479,7 +479,7 @@ void eInvasionHandler::initializeLandInvasion(
 
     const int tx = tile->x();
     const int ty = tile->y();
-    eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+    SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
@@ -493,16 +493,16 @@ eInvasionHandler::generateSoldiersForCity(
         eTile* const tile,
         const eSs& soldTypes,
         const eCityId cid,
-        std::vector<eSoldierBanner*>& solds) {
+        std::vector<SoldierBanner*>& solds) {
     const auto ocid = tile->cityId();
 
     const int tx = tile->x();
     const int ty = tile->y();
 
-    stdsptr<eSoldierBanner> b;
+    stdsptr<SoldierBanner> b;
     const auto requestBanner = [&]() {
         if(!b || b->count() >= 8) {
-            b = e::make_shared<eSoldierBanner>(
+            b = e::make_shared<SoldierBanner>(
                     eBannerType::enemy, mBoard);
             b->setOnCityId(ocid);
             b->setCityId(cid);
@@ -657,12 +657,12 @@ void eInvasionHandler::incTime(const int by) {
             mReplaceCounter -= wait;
             const int tx = mCurrentTile->x();
             const int ty = mCurrentTile->y();
-            std::vector<eSoldierBanner*> solds;
+            std::vector<SoldierBanner*> solds;
             for(const auto& b : mBanners) {
                 if(b->count() <= 0) continue;
                 solds.push_back(b.get());
             }
-            eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+            SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
         }
     }
 
@@ -703,7 +703,7 @@ void eInvasionHandler::incTime(const int by) {
     }
     int ss = 0;
     int stationary = 0;
-    std::vector<eSoldierBanner*> solds;
+    std::vector<SoldierBanner*> solds;
     for(const auto& b : mBanners) {
         const int c = b->count();
         if(c <= 0) continue;
@@ -735,7 +735,7 @@ void eInvasionHandler::incTime(const int by) {
     const auto goBack = [&]() {
         const int tx = mTile->x();
         const int ty = mTile->y();
-        eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
         mCurrentTile = mTile;
         tellHeroesAndGodsToGoBack();
     };
@@ -769,7 +769,7 @@ void eInvasionHandler::incTime(const int by) {
                 const auto halfTile = path[path.size()/2];
                 const int tx = halfTile->x();
                 const int ty = halfTile->y();
-                eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+                SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
                 mCurrentTile = halfTile;
             }
         }
@@ -819,7 +819,7 @@ void eInvasionHandler::incTime(const int by) {
             if(targetTile) {
                 const int tx = targetTile->x();
                 const int ty = targetTile->y();
-                eSoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
+                SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
                 mCurrentTile = targetTile;
             }
         }
@@ -873,11 +873,11 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("stage", mStage);
 
     ar.arrayField("banners", mBanners,
-        [this](eSaveArchive& itemAr, stdsptr<eSoldierBanner>& b) {
+        [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
             eBannerType type = b ? b->type() : eBannerType::hoplite;
             itemAr.field("type", type);
             if(itemAr.reading()) {
-                b = e::make_shared<eSoldierBanner>(type, mBoard);
+                b = e::make_shared<SoldierBanner>(type, mBoard);
             }
             b->serialize(itemAr);
         });

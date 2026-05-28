@@ -10,7 +10,7 @@
 
 #include "pointers/estdpointer.h"
 
-#include "characters/esoldierbanner.h"
+#include "characters/soldier-banner.h"
 
 #include "etileterrainpainter.h"
 
@@ -23,7 +23,7 @@ class eCharacter;
 class eBuilding;
 class eBuildingRenderer;
 class eBanner;
-class eSoldierBanner;
+class SoldierBanner;
 enum class eWorldDirection;
 class eSaveArchive;
 
@@ -89,8 +89,8 @@ public:
     const std::vector<stdsptr<eBanner>>& banners() const
     { return mBanners; }
 
-    void setSoldierBanner(eSoldierBanner* const b);
-    eSoldierBanner* soldierBanner() const { return mSoldierBanner; }
+    void setSoldierBanner(SoldierBanner* const b);
+    SoldierBanner* soldierBanner() const { return mSoldierBanner; }
 
     // used for stones rendering
     void setDrawDim(const int drawDim);
@@ -189,7 +189,7 @@ private:
     std::vector<stdsptr<eCharacter>> mCharacters;
     stdsptr<eBuilding> mUnderBuilding;
     std::vector<stdsptr<eBanner>> mBanners;
-    stdptr<eSoldierBanner> mSoldierBanner;
+    stdptr<SoldierBanner> mSoldierBanner;
 };
 
 #endif // ETILE_H
