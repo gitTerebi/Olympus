@@ -657,6 +657,10 @@ set(SOURCES
      widgets/gameworld/ehitdetection.cpp
      widgets/agora-build-place.cpp
      widgets/game-widget-build.cpp
+     widgets/buildtools/road-tool.cpp
+     widgets/buildtools/column-tool.cpp
+     widgets/buildtools/bridge-tool.cpp
+     widgets/buildtools/build-validity.cpp
      widgets/gamebuild/ecommonhousingbuild.cpp
      widgets/egamewidgetevents.cpp
     widgets/game-widget-info.cpp

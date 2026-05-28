@@ -3525,35 +3525,54 @@ void GameWidget::paintEvent(ePainter &p)
     {
         int buildW = 0;
         int buildH = 0;
-        const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-        std::vector<eOrientation> path;
-        const bool r = mode == eBuildingMode::road ? roadPath(path) : columnPath(path);
-        if (r)
+        const auto drawBase = [&](eTile *const t)
         {
-            const auto drawBase = [&](eTile *const t)
-            {
-                const auto &tex = trrTexs.fBuildingBase;
-                double rx;
-                double ry;
-                drawXY(t->x(), t->y(), rx, ry, 1, 1, t->altitude());
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
+            const auto &tex = trrTexs.fBuildingBase;
+            double rx;
+            double ry;
+            drawXY(t->x(), t->y(), rx, ry, 1, 1, t->altitude());
+            tp.drawTexture(rx, ry, tex, eAlignment::top);
 
-                buildW = std::max(buildW, 1 + std::abs(mHoverTX - t->x()));
-                buildH = std::max(buildH, 1 + std::abs(mHoverTY - t->y()));
-            };
-            eTile *t = startTile;
-            for (int i = path.size() - 1; i >= 0; i--)
+            buildW = std::max(buildW, 1 + std::abs(mHoverTX - t->x()));
+            buildH = std::max(buildH, 1 + std::abs(mHoverTY - t->y()));
+        };
+        if (mode == eBuildingMode::road)
+        {
+            // Preview must walk identical tile set as build path. Skip orient
+            // round-trip (lossy on iso row parity) and iterate tiles directly.
+            const auto tiles = roadPath();
+            if (!tiles.empty())
             {
-                if (!t)
-                    break;
-                drawBase(t);
-                t = t->neighbour<eTile>(path[i]);
+                for (const auto t : tiles)
+                {
+                    if (!t) continue;
+                    drawBase(t);
+                }
+                drawBuildDims(buildW, buildH);
+                return;
             }
-            if (t)
-                drawBase(t);
+        }
+        else
+        {
+            const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
+            std::vector<eOrientation> path;
+            const bool r = columnPath(path);
+            if (r)
+            {
+                eTile *t = startTile;
+                for (int i = path.size() - 1; i >= 0; i--)
+                {
+                    if (!t)
+                        break;
+                    drawBase(t);
+                    t = t->neighbour<eTile>(path[i]);
+                }
+                if (t)
+                    drawBase(t);
 
-            drawBuildDims(buildW, buildH);
-            return;
+                drawBuildDims(buildW, buildH);
+                return;
+            }
         }
     }
 

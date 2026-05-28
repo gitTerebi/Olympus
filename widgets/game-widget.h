@@ -319,7 +319,6 @@ private:
     void showToast(eEventData& ed, const eMessage& msg);
     void createToastWidget(eToast& toast);
 
-    bool roadPath(std::vector<eOrientation>& path);
     std::vector<eTile*> roadPath() const;
     bool columnPath(std::vector<eOrientation>& path);
     bool bridgeTiles(eTile* const t, const eTerrain terr,

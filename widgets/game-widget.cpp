@@ -1,4 +1,8 @@
 ﻿#include "game-widget.h"
+#include "buildtools/road-tool.h"
+#include "buildtools/column-tool.h"
+#include "buildtools/bridge-tool.h"
+#include "buildtools/build-validity.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
 #include "ecursors.h"
@@ -988,185 +992,24 @@ void GameWidget::playVisibleAmbientSound(const int minX, const int maxX,
 bool GameWidget::canBuildVendor(const int tx, const int ty,
                                  const eResourceType resType) const
 {
-    const auto t = mBoard->tile(tx, ty);
-    if (!t)
-        return false;
-    const auto b = t->underBuilding();
-    if (!b)
-        return false;
-    const auto bt = b->type();
-    if (bt != eBuildingType::agoraSpace)
-        return false;
-    const auto space = static_cast<eAgoraSpace *>(b);
-    const auto agora = space->agora();
-    if (agora->vendor(resType))
-        return false;
-    const auto ct = b->centerTile();
-    if (!ct)
-        return false;
-    return ct->x() == tx && ct->y() == ty;
-}
-
-bool tileBuildable(eTile *const t)
-{
-    if (!t)
-        return false;
-    if (t->underBuilding())
-        return false;
-    const auto &banners = t->banners();
-    for (const auto &b : banners)
-    {
-        if (!b->buildable())
-            return false;
-    }
-    if (t->isElevationTile())
-        return false;
-    const auto &chars = t->characters();
-    if (!chars.empty())
-        return false;
-    return true;
+    return BuildValidity::canBuildVendor(mBoard, tx, ty, resType);
 }
 
 bool GameWidget::waterTileHasAccessToSea(const int tx, const int ty) const
 {
-    const auto t = mBoard->tile(tx, ty);
-    if (!t)
-        return false;
-    if (!t->hasWater())
-        return false;
-    const auto cid = mViewedCityId;
-    const auto riverEntry = mBoard->riverEntryPoint(cid);
-    if (!riverEntry)
-        return false;
-    eKnownEndPathFinder p([](eTileBase *const tile)
-                          { return tile->hasWater(); }, riverEntry);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, t, 1000, true, w, h);
-    return r;
+    return BuildValidity::waterTileHasAccessToSea(mBoard, mViewedCityId, tx, ty);
 }
 
 bool GameWidget::canBuildFishery(const int tx, const int ty,
                                   eDiagonalOrientation &o) const
 {
-    for (int x = tx; x < tx + 2; x++)
-    {
-        for (int y = ty - 1; y < ty - 1 + 2; y++)
-        {
-            const auto t = mBoard->tile(x, y);
-            const bool b = tileBuildable(t);
-            if (!b)
-                return false;
-        }
-    }
-    const auto t = mBoard->tile(tx, ty);
-    if (!t)
-        return false;
-    const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-    if (tr)
-    {
-        o = eDiagonalOrientation::topRight;
-        return true;
-    }
-    const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-    if (br)
-    {
-        o = eDiagonalOrientation::bottomRight;
-        return true;
-    }
-    const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-    if (bl)
-    {
-        o = eDiagonalOrientation::bottomLeft;
-        return true;
-    }
-    const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-    if (tl)
-    {
-        o = eDiagonalOrientation::topLeft;
-        return true;
-    }
-    return false;
+    return BuildValidity::canBuildFishery(mBoard, tx, ty, o);
 }
 
 bool GameWidget::canBuildTriremeWharf(const int tx, const int ty,
                                        eDiagonalOrientation &o) const
 {
-    for (int x = tx - 1; x < tx - 1 + 3; x++)
-    {
-        for (int y = ty - 1; y < ty - 1 + 3; y++)
-        {
-            const auto t = mBoard->tile(x, y);
-            const bool b = tileBuildable(t);
-            if (!b)
-                return false;
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty);
-        if (!t)
-            return false;
-        const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-        if (tr)
-        {
-            const auto br = t->bottomRight<eTile>();
-            const bool tr = eBuildableHelpers::canBuildFisheryTR(br);
-            if (tr)
-            {
-                o = eDiagonalOrientation::topRight;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx, ty);
-        if (!t)
-            return false;
-        const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-        if (br)
-        {
-            const auto bl = t->bottomLeft<eTile>();
-            const bool br = eBuildableHelpers::canBuildFisheryBR(bl);
-            if (br)
-            {
-                o = eDiagonalOrientation::bottomRight;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty + 1);
-        if (!t)
-            return false;
-        const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-        if (bl)
-        {
-            const auto br = t->bottomRight<eTile>();
-            const bool bl = eBuildableHelpers::canBuildFisheryBL(br);
-            if (bl)
-            {
-                o = eDiagonalOrientation::bottomLeft;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty + 1);
-        if (!t)
-            return false;
-        const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-        if (tl)
-        {
-            const auto tr = t->topRight<eTile>();
-            const bool tl = eBuildableHelpers::canBuildFisheryTL(tr);
-            if (tl)
-            {
-                o = eDiagonalOrientation::topLeft;
-                return true;
-            }
-        }
-    }
-    return false;
+    return BuildValidity::canBuildTriremeWharf(mBoard, tx, ty, o);
 }
 
 bool GameWidget::canBuildPier(const int tx, const int ty,
@@ -1175,41 +1018,7 @@ bool GameWidget::canBuildPier(const int tx, const int ty,
                                const ePlayerId pid,
                                const bool forestAllowed) const
 {
-    const bool r = canBuildFishery(tx, ty, o);
-    if (!r)
-        return false;
-    int minX;
-    int minY;
-    switch (o)
-    {
-    case eDiagonalOrientation::topRight:
-    {
-        minX = tx - 1;
-        minY = ty + 1;
-    }
-    break;
-    case eDiagonalOrientation::bottomRight:
-    {
-        minX = tx - 4;
-        minY = ty - 2;
-    }
-    break;
-    case eDiagonalOrientation::bottomLeft:
-    {
-        minX = tx - 1;
-        minY = ty - 5;
-    }
-    break;
-    default:
-    case eDiagonalOrientation::topLeft:
-    {
-        minX = tx + 2;
-        minY = ty - 2;
-    }
-    break;
-    }
-    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4,
-                                forestAllowed, cid, pid);
+    return BuildValidity::canBuildPier(mBoard, tx, ty, o, cid, pid, forestAllowed);
 }
 
 std::vector<ePatrolGuide>::iterator
@@ -1559,243 +1368,30 @@ void GameWidget::updateTipPositions()
     }
 }
 
-bool GameWidget::roadPath(std::vector<eOrientation> &path)
-{
-    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear : eTerrain::buildable;
-    ePathFinder p([allowed](eTileBase *const t)
-                  {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(allowed & terr);
-        if(!tr) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::road ||
-                       bt == eBuildingType::none;
-        if(!r) return false;
-        if(!t->walkableElev() && t->isElevationTile()) return false;
-        return true; }, [&](eTileBase *const t)
-                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
-    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if (!r)
-        return false;
-    return p.extractPath(path);
-}
-
 std::vector<eTile *> GameWidget::roadPath() const
 {
-    std::vector<eOrientation> orients;
-    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear : eTerrain::buildable;
-    ePathFinder p([allowed](eTileBase *const t)
-                  {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(allowed & terr);
-        if(!tr) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::road ||
-                       bt == eBuildingType::none;
-        if(!r) return false;
-        if(!t->walkableElev() && t->isElevationTile()) return false;
-        return true; }, [&](eTileBase *const t)
-                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
-    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    if (!p.findPath({0, 0, w, h}, startTile, 100, true, w, h))
-        return {};
-    if (!p.extractPath(orients))
-        return {};
-    std::vector<eTile *> tiles;
-    eTile *t = startTile;
-    for (int i = orients.size() - 1; i >= 0; i--)
-    {
-        if (!t)
-            break;
-        tiles.push_back(t);
-        t = t->neighbour<eTile>(orients[i]);
-    }
-    if (t)
-        tiles.push_back(t);
-    return tiles;
+    return RoadTool::tilesHoverToPress(mBoard, mPressedTX, mPressedTY,
+                                       mHoverTX, mHoverTY);
 }
 
 bool GameWidget::columnPath(std::vector<eOrientation> &path)
 {
-    ePathFinder p([](eTileBase *const t)
-                  {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(eTerrain::buildable & terr);
-        if(!tr) return false;
-        if(t->isElevationTile()) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::doricColumn ||
-                       bt == eBuildingType::ionicColumn ||
-                       bt == eBuildingType::corinthianColumn ||
-                       bt == eBuildingType::none;
-        if(!r) return false;
-        return true; }, [&](eTileBase *const t)
-                  { return t->x() == mPressedTX && t->y() == mPressedTY; });
-    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if (!r)
-        return false;
-    return p.extractPath(path);
+    return ColumnTool::path(mBoard, mPressedTX, mPressedTY,
+                            mHoverTX, mHoverTY, path);
 }
 
 bool GameWidget::bridgeTiles(eTile *const t, const eTerrain terr,
                               std::vector<eTile *> &tiles,
                               bool &rotated)
 {
-    tiles.clear();
-    rotated = false;
-    if (!t)
-        return false;
-    if (!t->isShoreTile(terr))
-        return false;
-    if (t->underBuilding())
-        return false;
-    const auto tl = t->topLeft<eTile>();
-    if (!tl)
-        return false;
-    const auto tr = t->topRight<eTile>();
-    if (!tr)
-        return false;
-    const auto bl = t->bottomLeft<eTile>();
-    if (!bl)
-        return false;
-    const auto br = t->bottomRight<eTile>();
-    if (!br)
-        return false;
-
-    if (tr->isShoreTile(terr) && bl->isShoreTile(terr))
-    {
-        if (br->hasTerrain(terr))
-        {
-            if (tl->hasTerrain(terr))
-                return false;
-            auto tt = t;
-            tiles.push_back(tt);
-            while (true)
-            {
-                const auto ttt = tt->bottomRight<eTile>();
-                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
-                    break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if (tt->isShoreTile(terr))
-                    break;
-            }
-            if (!tt)
-                return false;
-            const auto tt_tr = tt->topRight<eTile>();
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if (!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr))
-            {
-                return false;
-            }
-            const auto tt_tl = tt->bottomRight<eTile>();
-            if (tt_tl->hasTerrain(terr))
-                return false;
-        }
-        else
-        {
-            auto tt = t;
-            tiles.push_back(tt);
-            while (true)
-            {
-                const auto ttt = tt->topLeft<eTile>();
-                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
-                    break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if (tt->isShoreTile(terr))
-                    break;
-            }
-            if (!tt)
-                return false;
-            const auto tt_tr = tt->topRight<eTile>();
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if (!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr))
-            {
-                return false;
-            }
-            const auto tt_tl = tt->topLeft<eTile>();
-            if (tt_tl->hasTerrain(terr))
-                return false;
-        }
-        return !tr->underBuilding() && !bl->underBuilding();
-    }
-    else if (tl->isShoreTile(terr) && br->isShoreTile(terr))
-    {
-        rotated = true;
-        if (bl->hasTerrain(terr))
-        {
-            if (tr->hasTerrain(terr))
-                return false;
-            auto tt = t;
-            tiles.push_back(tt);
-            while (true)
-            {
-                const auto ttt = tt->bottomLeft<eTile>();
-                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
-                    break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if (tt->isShoreTile(terr))
-                    break;
-            }
-            if (!tt)
-                return false;
-            const auto tt_tl = tt->topLeft<eTile>();
-            const auto tt_br = tt->bottomRight<eTile>();
-            if (!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr))
-            {
-                return false;
-            }
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if (tt_bl->hasTerrain(terr))
-                return false;
-        }
-        else
-        {
-            auto tt = t;
-            tiles.push_back(tt);
-            while (true)
-            {
-                const auto ttt = tt->topRight<eTile>();
-                if (!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr))
-                    break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if (tt->isShoreTile(terr))
-                    break;
-            }
-            if (!tt)
-                return false;
-            const auto tt_tl = tt->topLeft<eTile>();
-            const auto tt_br = tt->bottomRight<eTile>();
-            if (!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr))
-            {
-                return false;
-            }
-            const auto tt_tr = tt->topRight<eTile>();
-            if (tt_tr->hasTerrain(terr))
-                return false;
-        }
-        return !tl->underBuilding() && !br->underBuilding();
-    }
-
-    return false;
+    return BridgeTool::tiles(t, terr, tiles, rotated);
 }
 
 bool GameWidget::canBuildAvenue(eTile *const t, const eCityId cid,
                                  const ePlayerId pid,
                                  const bool forestAllowed) const
 {
-    return mBoard->canBuildAvenue(t, cid, pid, forestAllowed);
+    return BuildValidity::canBuildAvenue(mBoard, t, cid, pid, forestAllowed);
 }
 
 void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
