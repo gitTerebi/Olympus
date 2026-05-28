@@ -1,4 +1,4 @@
-TEMPLATE = app
+﻿TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 CONFIG -= app_bundle
@@ -134,7 +134,7 @@ SOURCES += \
         buildings/etheater.cpp \
         buildings/etimbermill.cpp \
         buildings/etower.cpp \
-        buildings/etradepost.cpp \
+        buildings/trade-post.cpp \
         buildings/etriremewharf.cpp \
         buildings/euniversity.cpp \
         buildings/eurchinquay.cpp \
@@ -219,7 +219,7 @@ SOURCES += \
         characters/actions/esickdisgruntledaction.cpp \
         characters/actions/soldier-action.cpp \
         characters/actions/etakecattleaction.cpp \
-        characters/actions/etraderaction.cpp \
+        characters/actions/trader-action.cpp \
         characters/actions/etriremeaction.cpp \
         characters/actions/ewaitaction.cpp \
         characters/actions/ewolfaction.cpp \
@@ -374,9 +374,9 @@ SOURCES += \
         emainwindow.cpp \
         emessage.cpp \
         emessages.cpp \
-        engine/ai/eaibuilding.cpp \
-        engine/ai/eaicityplan.cpp \
-        engine/ai/eaidistrict.cpp \
+        engine/ai/ai-building.cpp \
+        engine/ai/ai-city-plan.cpp \
+        engine/ai/ai-district.cpp \
         engine/boardData/ecityfinances.cpp \
         engine/boardData/eemploymentdata.cpp \
         engine/boardData/eheatmap.cpp \
@@ -384,9 +384,9 @@ SOURCES += \
         engine/boardData/eheatmaptask.cpp \
         engine/boardData/ehusbandrydata.cpp \
         engine/boardData/epopulationdata.cpp \
-        engine/eboardcity.cpp \
-        engine/eboardcityread.cpp \
-        engine/eboardcitywrite.cpp \
+        engine/board-city.cpp \
+        engine/board-city-read.cpp \
+        engine/BoardCitywrite.cpp \
         engine/e-board-player.cpp \
         engine/ecampaign.cpp \
         engine/ecampaignreadpak.cpp \
@@ -448,8 +448,8 @@ SOURCES += \
         evectorhelpers.cpp \
         ewalkablehelpers.cpp \
         exmlparser.cpp \
-        fileIO/ebuildingreader.cpp \
-        fileIO/ebuildingwriter.cpp \
+        fileIO/building-reader.cpp \
+        fileIO/building-writer.cpp \
         fileIO/ereadstream.cpp \
         fileIO/ewritestream.cpp \
         gameEvents/earmyeventbase.cpp \
@@ -598,7 +598,7 @@ SOURCES += \
         widgets/earmymenu.cpp \
         widgets/ebasicbutton.cpp \
         widgets/ebitmapwidget.cpp \
-        widgets/eboardcityswitchbutton.cpp \
+        widgets/BoardCityswitchbutton.cpp \
         widgets/eboardsettingsmenu.cpp \
         widgets/ebuildbutton.cpp \
         widgets/ebuildingmode.cpp \
@@ -617,10 +617,10 @@ SOURCES += \
         widgets/ecityonboardselectionwidget.cpp \
         widgets/e-city-settings-widget.cpp \
         widgets/eclosabledialog.cpp \
-        widgets/econditionsettingswidget.cpp \
+        widgets/condition-settings-widget.cpp \
         widgets/edatebutton.cpp \
         widgets/edatewidget.cpp \
-        widgets/edistrictconditionswidget.cpp \
+        widgets/district-conditions-widget.cpp \
         widgets/edownbutton.cpp \
         widgets/eeditormainmenu.cpp \
         widgets/eeditorsettingsmenu.cpp \
@@ -649,9 +649,9 @@ SOURCES += \
         widgets/egamemenu.cpp \
         widgets/egamemenubase.cpp \
         widgets/epierdebugwidget.cpp \
-        widgets/egamewidget.cpp \
-        widgets/egamewidgetbuild.cpp \
-        widgets/egamewidgetevents.cpp \
+        widgets/game-widget.cpp \
+        widgets/game-widget-build.cpp \
+        widgets/GameWidgetevents.cpp \
         widgets/game-widget-info.cpp \
         widgets/paint/game-widget-paint.cpp \
         widgets/paint/patrol-path-data.cpp \
@@ -847,7 +847,7 @@ HEADERS += \
     buildings/etheater.h \
     buildings/etimbermill.h \
     buildings/etower.h \
-    buildings/etradepost.h \
+    buildings/trade-post.h \
     buildings/etriremewharf.h \
     buildings/euniversity.h \
     buildings/eurchinquay.h \
@@ -930,7 +930,7 @@ HEADERS += \
     characters/actions/esickdisgruntledaction.h \
     characters/actions/soldier-action.h \
     characters/actions/etakecattleaction.h \
-    characters/actions/etraderaction.h \
+    characters/actions/trader-action.h \
     characters/actions/etriremeaction.h \
     characters/actions/ewaitaction.h \
     characters/actions/ewolfaction.h \
@@ -1087,9 +1087,9 @@ HEADERS += \
     emainwindow.h \
     emessage.h \
     emessages.h \
-    engine/ai/eaibuilding.h \
-    engine/ai/eaicityplan.h \
-    engine/ai/eaidistrict.h \
+    engine/ai/ai-building.h \
+    engine/ai/ai-city-plan.h \
+    engine/ai/ai-district.h \
     engine/boardData/ecityfinances.h \
     engine/boardData/eemploymentdata.h \
     engine/boardData/eheatmap.h \
@@ -1097,7 +1097,7 @@ HEADERS += \
     engine/boardData/eheatmaptask.h \
     engine/boardData/ehusbandrydata.h \
     engine/boardData/epopulationdata.h \
-    engine/eboardcity.h \
+    engine/board-city.h \
     engine/e-board-player.h \
     engine/ecampaign.h \
     engine/ecityid.h \
@@ -1168,8 +1168,8 @@ HEADERS += \
     evectorhelpers.h \
     ewalkablehelpers.h \
     exmlparser.h \
-    fileIO/ebuildingreader.h \
-    fileIO/ebuildingwriter.h \
+    fileIO/building-reader.h \
+    fileIO/building-writer.h \
     fileIO/ereadstream.h \
     fileIO/estreams.h \
     fileIO/ewritestream.h \
@@ -2826,7 +2826,7 @@ HEADERS += \
     widgets/earmymenu.h \
     widgets/ebasicbutton.h \
     widgets/ebitmapwidget.h \
-    widgets/eboardcityswitchbutton.h \
+    widgets/BoardCityswitchbutton.h \
     widgets/eboardsettingsmenu.h \
     widgets/ebuildbutton.h \
     widgets/ebuildingmode.h \
@@ -2845,10 +2845,10 @@ HEADERS += \
     widgets/ecityonboardselectionwidget.h \
     widgets/ecitysettingswidget.h \
     widgets/eclosabledialog.h \
-    widgets/econditionsettingswidget.h \
+    widgets/condition-settings-widget.h \
     widgets/edatebutton.h \
     widgets/edatewidget.h \
-    widgets/edistrictconditionswidget.h \
+    widgets/district-conditions-widget.h \
     widgets/edownbutton.h \
     widgets/eeditormainmenu.h \
     widgets/eeditorsettingsmenu.h \
@@ -2876,7 +2876,7 @@ HEADERS += \
     widgets/edifficultywidget.h \
     widgets/egamemenu.h \
     widgets/egamemenubase.h \
-    widgets/egamewidget.h \
+    widgets/game-widget.h \
     widgets/epierdebugwidget.h \
     widgets/egiftdialog.h \
     widgets/egiftsizedialog.h \

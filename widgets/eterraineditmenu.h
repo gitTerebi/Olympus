@@ -1,4 +1,4 @@
-#ifndef ETERRAINEDITMENU_H
+﻿#ifndef ETERRAINEDITMENU_H
 #define ETERRAINEDITMENU_H
 
 #include "egamemenubase.h"
@@ -8,7 +8,7 @@
 
 class eRotateButton;
 class eMiniMap;
-class eGameWidget;
+class GameWidget;
 class eActionListWidget;
 
 enum class eTerrainEditMode {
@@ -83,7 +83,7 @@ class eTerrainEditMenu : public eGameMenuBase {
 public:
     using eGameMenuBase::eGameMenuBase;
 
-    void initialize(eGameWidget* const gw,
+    void initialize(GameWidget* const gw,
                     eGameBoard* const board);
 
     eTerrainEditMode mode() const;

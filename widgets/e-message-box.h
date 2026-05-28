@@ -1,4 +1,4 @@
-#ifndef EMESSAGEBOX_H
+﻿#ifndef EMESSAGEBOX_H
 #define EMESSAGEBOX_H
 
 #include "eframedwidget.h"
@@ -11,7 +11,7 @@ class eWorldCity;
 struct eEventData;
 enum class eResourceType;
 class eLabel;
-class eGameWidget;
+class GameWidget;
 
 class eMessageBox : public eFramedWidget {
 public:

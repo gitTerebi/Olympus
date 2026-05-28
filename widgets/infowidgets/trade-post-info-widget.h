@@ -8,15 +8,15 @@
 
 #include "engine/eresourcetype.h"
 
-#include "buildings/etradepost.h"
+#include "buildings/trade-post.h"
 
-class eTradePostInfoWidget : public eEmployingBuildingInfoWidget {
+class TradePostInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eTradePostInfoWidget(eMainWindow* const window,
+    TradePostInfoWidget(eMainWindow* const window,
                          eMainWidget* const mw);
 
     using ePrevNextAction = std::function<void(bool)>;
-    void initialize(eTradePost *const stor,
+    void initialize(TradePost *const stor,
                     const ePrevNextAction& prevNext);
     void get(eResourceType& imports,
              eResourceType& exports,

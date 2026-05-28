@@ -1,8 +1,8 @@
-#include "eappealdatawidget.h"
+﻿#include "eappealdatawidget.h"
 
 #include "eviewmodebutton.h"
 
-#include "widgets/egamewidget.h"
+#include "widgets/game-widget.h"
 #include "widgets/emultilinelabel.h"
 #include "engine/e-game-board.h"
 #include "evectorhelpers.h"
@@ -61,7 +61,7 @@ public:
 
     void initialize(const std::string& txt,
                     const std::vector<eTile*>& tiles,
-                    eGameWidget* const gw) {
+                    GameWidget* const gw) {
         mTiles = tiles;
 
         setYellowFontColor();

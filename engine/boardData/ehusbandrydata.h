@@ -1,21 +1,21 @@
-#ifndef EHUSBANDRYDATA_H
+﻿#ifndef EHUSBANDRYDATA_H
 #define EHUSBANDRYDATA_H
 
 class ePopulationData;
-class eBoardCity;
+class BoardCity;
 class eGameBoard;
 
 class eHusbandryData {
 public:
     eHusbandryData(const ePopulationData& popData,
-                   const eBoardCity& city,
+                   const BoardCity& city,
                    const eGameBoard& board);
 
     int canSupport() const;
     int storedFood() const;
 private:
     const ePopulationData& mPopData;
-    const eBoardCity& mCity;
+    const BoardCity& mCity;
     const eGameBoard& mBoard;
 };
 

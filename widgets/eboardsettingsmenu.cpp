@@ -1,4 +1,4 @@
-#include "eboardsettingsmenu.h"
+﻿#include "eboardsettingsmenu.h"
 
 #include "eframedbutton.h"
 #include "elanguage.h"
@@ -11,7 +11,7 @@
 
 #include "engine/e-game-board.h"
 #include "emainwindow.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "eswitchbutton.h"
 
 #include "estringhelpers.h"
@@ -19,7 +19,7 @@
 #include "ecityonboardselectionwidget.h"
 
 void eBoardSettingsMenu::initialize(
-        eGameWidget* const gw, eGameBoard& board) {
+        GameWidget* const gw, eGameBoard& board) {
     setType(eFrameType::message);
 
     const auto boardPtr = &board;

@@ -1,4 +1,4 @@
-#ifndef EGAMEMENU_H
+﻿#ifndef EGAMEMENU_H
 #define EGAMEMENU_H
 
 #include "egamemenubase.h"
@@ -20,9 +20,9 @@ class eMythologyDataWidget;
 class eCultureDataWidget;
 class eScienceDataWidget;
 class eMilitaryDataWidget;
-class eOverviewDataWidget;
+class OverviewDataWidget;
 class eMiniMap;
-class eGameWidget;
+class GameWidget;
 class eEventWidget;
 class eBuildButton;
 class eBuildWidget;
@@ -56,7 +56,7 @@ public:
     void clearMode() { setMode(eBuildingMode::none); }
     void setMode(const eBuildingMode mode);
 
-    void setGameWidget(eGameWidget* const gw);
+    void setGameWidget(GameWidget* const gw);
 
     eMiniMap* miniMap() const;
 
@@ -96,7 +96,7 @@ private:
     eWidget* createPriceWidget(const eInterfaceTextures& coll);
 
     eGameBoard* mBoard{nullptr};
-    eGameWidget* mGW = nullptr;
+    GameWidget* mGW = nullptr;
 
     eBuildWidget* mBuildWidget = nullptr;
 
@@ -129,7 +129,7 @@ private:
     eScienceDataWidget* mScienceDataW = nullptr;
     eMythologyDataWidget* mMythDataW = nullptr;
     eMilitaryDataWidget* mMiltDataW = nullptr;
-    eOverviewDataWidget* mOverDataW = nullptr;
+    OverviewDataWidget* mOverDataW = nullptr;
 
     eRotateButton* mRotateButton = nullptr;
     eButton* mWorldButton = nullptr;

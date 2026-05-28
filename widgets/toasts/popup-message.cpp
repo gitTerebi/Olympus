@@ -1,4 +1,4 @@
-#include "widgets/egamewidget.h"
+﻿#include "widgets/game-widget.h"
 #include "emainwindow.h"
 
 #include "widgets/e-message-list-widget.h"
@@ -9,14 +9,14 @@
 
 void formatStoredMessage(eMessage& msg, const eEventData& ed, const std::string& playerName);
 
-void eGameWidget::showMessage(eEventData &ed,
+void GameWidget::showMessage(eEventData &ed,
                               const eMessageType &msg,
                               const bool prepend)
 {
     showMessage(ed, msg.fFull, prepend, false, true);
 }
 
-void eGameWidget::showMessage(eEventData &ed,
+void GameWidget::showMessage(eEventData &ed,
                               const eEventMessageType &msg,
                               const bool prepend)
 {
@@ -28,7 +28,7 @@ void eGameWidget::showMessage(eEventData &ed,
     showMessage(ed, m.fFull, prepend, false, true);
 }
 
-void eGameWidget::showMessage(eEventData &ed,
+void GameWidget::showMessage(eEventData &ed,
                               const eMessage &msg,
                               const bool prepend,
                               const bool forcePopup,

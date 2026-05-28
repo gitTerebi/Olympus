@@ -1,8 +1,8 @@
-#include "ecityonboardselectionwidget.h"
+﻿#include "ecityonboardselectionwidget.h"
 
 #include "widgets/echoosebutton.h"
 #include "emainwindow.h"
-#include "engine/eboardcity.h"
+#include "engine/board-city.h"
 #include "ecitysettingswidget.h"
 #include "engine/e-game-board.h"
 #include "ecitybutton.h"

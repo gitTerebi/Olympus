@@ -1,11 +1,11 @@
-#ifndef EHYGIENESAFETYDATAWIDGET_H
+﻿#ifndef EHYGIENESAFETYDATAWIDGET_H
 #define EHYGIENESAFETYDATAWIDGET_H
 
 #include "edatawidget.h"
 
 class eGameBoard;
 class eLabel;
-class eGameWidget;
+class GameWidget;
 class eViewModeButton;
 
 class eHygieneSafetyDataWidget : public eDataWidget {

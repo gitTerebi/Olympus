@@ -1,4 +1,4 @@
-#include "egamemenu.h"
+﻿#include "egamemenu.h"
 
 #include <algorithm>
 
@@ -19,12 +19,12 @@
 #include "widgets/datawidgets/ehusbandrydatawidget.h"
 #include "widgets/datawidgets/emythologydatawidget.h"
 #include "widgets/datawidgets/emilitarydatawidget.h"
-#include "widgets/datawidgets/e-overview-data-widget.h"
+#include "widgets/datawidgets/overview-data-widget.h"
 #include "eminimap.h"
 
 #include "eeventwidget.h"
 
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "e-message-list-widget.h"
 
 #include "elanguage.h"
@@ -1239,7 +1239,7 @@ void eGameMenu::initialize(eGameBoard *const b,
     const auto ww10 = createDataWidget(mApplDataW, buttonsVec,
                                        eLanguage::zeusText(88, 9));
 
-    mOverDataW = new eOverviewDataWidget(*b, window());
+    mOverDataW = new OverviewDataWidget(*b, window());
     mMiniMap = new eMiniMap(window());
     mMiniMap->setTDim(1.25 * mult);
     mOverDataW->setMap(mMiniMap);
@@ -1441,7 +1441,7 @@ void eGameMenu::initialize(eGameBoard *const b,
     update();
 }
 
-void eGameMenu::setGameWidget(eGameWidget *const gw)
+void eGameMenu::setGameWidget(GameWidget *const gw)
 {
     mGW = gw;
     mPopDataW->setGameWidget(gw);

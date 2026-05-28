@@ -1,4 +1,4 @@
-#ifndef EGAMEBOARD_H
+﻿#ifndef EGAMEBOARD_H
 #define EGAMEBOARD_H
 
 #include <vector>
@@ -42,7 +42,7 @@ class eSaveArchive;
 #include "eepisodegoal.h"
 #include "eemploymentdistributor.h"
 
-#include "eboardcity.h"
+#include "board-city.h"
 #include "e-board-player.h"
 #include "egameundo.h"
 
@@ -52,7 +52,7 @@ class eSpawner;
 enum class eBannerTypeS;
 class eCharacter;
 class eBuilding;
-class eTradePost;
+class TradePost;
 class eStorageBuilding;
 class SoldierBanner;
 class ePalace;
@@ -182,8 +182,8 @@ public:
     void registerEmplBuilding(eEmployingBuilding* const b);
     bool unregisterEmplBuilding(eEmployingBuilding* const b);
 
-    void registerTradePost(eTradePost* const b);
-    bool unregisterTradePost(eTradePost* const b);
+    void registerTradePost(TradePost* const b);
+    bool unregisterTradePost(TradePost* const b);
     bool hasTradePost(const eCityId cid, const eWorldCity& city);
 
     void registerSpawner(eSpawner* const s);
@@ -714,7 +714,7 @@ public:
     std::vector<eCityId> personPlayerCitiesOnBoard() const;
     ePlayerId personPlayer() const;
     eCityId personPlayerCapital() const;
-    eBoardCity* boardCityWithId(const eCityId cid) const;
+    BoardCity* boardCityWithId(const eCityId cid) const;
     SDL_Rect boardCityTileBRect(const eCityId cid) const;
     eBoardPlayer* boardPlayerWithId(const ePlayerId pid) const;
     std::vector<eCityId> citiesOnBoard() const;
@@ -727,7 +727,7 @@ public:
     eBoardPlayer* addPlayerToBoard(const ePlayerId pid);
     void removePlayerFromBoard(const ePlayerId pid);
 
-    eBoardCity* addCityToBoard(const eCityId cid);
+    BoardCity* addCityToBoard(const eCityId cid);
     void removeCityFromBoard(const eCityId cid);
 
     bool canBuildAvenue(eTile* const t, const eCityId cid,
@@ -848,8 +848,8 @@ private:
     eAction mEpisodeFinishedHandler;
     eAction mAutosaver;
 
-    std::vector<eBoardCity*> mActiveCitiesOnBoard;
-    std::vector<stdsptr<eBoardCity>> mCitiesOnBoard;
+    std::vector<BoardCity*> mActiveCitiesOnBoard;
+    std::vector<stdsptr<BoardCity>> mCitiesOnBoard;
     std::vector<stdsptr<eBoardPlayer>> mPlayersOnBoard;
 
     std::map<eResourceType, int> mPrices;
@@ -876,7 +876,7 @@ private:
     std::vector<eArmyEventBase*> mArmyEvents;
     double mWageMultiplier = 1.;
 
-    // begin moved to eBoardCity
+    // begin moved to BoardCity
     std::vector<eCharacterAction*> mCharacterActions;
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eBuilding*> mAllBuildings;
@@ -884,7 +884,7 @@ private:
     std::vector<eBanner*> mBanners;
 
     std::vector<eInvasionEvent*> mInvasions;
-    // end moved to eBoardCity
+    // end moved to BoardCity
 
     std::vector<SoldierBanner*> mAllSoldierBanners;
     std::vector<eCharacter*> mCharacters;

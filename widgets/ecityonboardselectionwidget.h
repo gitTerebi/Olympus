@@ -1,11 +1,11 @@
-#ifndef ECITYONBOARDSELECTIONWIDGET_H
+﻿#ifndef ECITYONBOARDSELECTIONWIDGET_H
 #define ECITYONBOARDSELECTIONWIDGET_H
 
 #include "escrollbuttonslist.h"
 
 #include "pointers/estdselfref.h"
 
-class eBoardCity;
+class BoardCity;
 class eWorldBoard;
 class eGameBoard;
 

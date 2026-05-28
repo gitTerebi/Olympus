@@ -1,4 +1,4 @@
-#include "eworldmenu.h"
+﻿#include "eworldmenu.h"
 
 #include "textures/egametextures.h"
 
@@ -6,7 +6,7 @@
 #include "emainwindow.h"
 #include "eworldgoodswidget.h"
 #include "eworldtributewidget.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "engine/eworldboard.h"
 
 #include "elanguage.h"
@@ -128,7 +128,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
                 const bool editor = mBoard && mBoard->editorMode();
                 if(editor) return;
                 window()->showGame(static_cast<eGameBoard*>(nullptr),
-                                   eGameWidgetSettings());
+                                   GameWidgetSettings());
             });
             const int wgwx = 20*mult;
             const int wgwy = 285*mult;

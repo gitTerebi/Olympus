@@ -1,4 +1,4 @@
-
+﻿
 #include "e-game-board.h"
 
 #include "e-city-attitude.h"
@@ -23,7 +23,7 @@
 #include "characters/esoldier.h"
 #include "characters/soldier-banner.h"
 
-#include "buildings/etradepost.h"
+#include "buildings/trade-post.h"
 
 #include "buildings/esmallhouse.h"
 
@@ -48,8 +48,8 @@
 
 #include "buildings/eheatgetters.h"
 
-#include "fileIO/ebuildingreader.h"
-#include "fileIO/ebuildingwriter.h"
+#include "fileIO/building-reader.h"
+#include "fileIO/building-writer.h"
 
 #include "eevent.h"
 #include "emessageeventtype.h"
@@ -252,7 +252,7 @@ void eGameBoard::clear()
     mWidth = 0;
     mHeight = 0;
     emptyRubbish();
-    std::vector<stdsptr<eBoardCity>> cities;
+    std::vector<stdsptr<BoardCity>> cities;
     std::swap(mCitiesOnBoard, cities);
     cities.clear();
     mPlayersOnBoard.clear();
@@ -1332,7 +1332,7 @@ eCityId eGameBoard::personPlayerCapital() const
     return playerCapital(ppid);
 }
 
-eBoardCity *eGameBoard::boardCityWithId(const eCityId cid) const
+BoardCity *eGameBoard::boardCityWithId(const eCityId cid) const
 {
     for (const auto &c : mCitiesOnBoard)
     {
@@ -1477,9 +1477,9 @@ void eGameBoard::removePlayerFromBoard(const ePlayerId pid)
     }
 }
 
-eBoardCity *eGameBoard::addCityToBoard(const eCityId cid)
+BoardCity *eGameBoard::addCityToBoard(const eCityId cid)
 {
-    const auto c = std::make_shared<eBoardCity>(cid, *this);
+    const auto c = std::make_shared<BoardCity>(cid, *this);
     mCitiesOnBoard.push_back(c);
     const auto pid = cityIdToPlayerId(cid);
     if (pid != ePlayerId::neutralFriendly &&
@@ -2543,7 +2543,7 @@ bool eGameBoard::unregisterEmplBuilding(eEmployingBuilding *const b)
     return city->unregisterEmplBuilding(b);
 }
 
-void eGameBoard::registerTradePost(eTradePost *const b)
+void eGameBoard::registerTradePost(TradePost *const b)
 {
     if (!mRegisterBuildingsEnabled)
         return;
@@ -2554,7 +2554,7 @@ void eGameBoard::registerTradePost(eTradePost *const b)
         mButtonVisUpdater();
 }
 
-bool eGameBoard::unregisterTradePost(eTradePost *const b)
+bool eGameBoard::unregisterTradePost(TradePost *const b)
 {
     if (!mRegisterBuildingsEnabled)
         return false;

@@ -1,4 +1,4 @@
-#include "e-message-box.h"
+﻿#include "e-message-box.h"
 
 #include "elabel.h"
 #include "eframedwidget.h"
@@ -13,7 +13,7 @@
 
 #include "estringhelpers.h"
 #include "engine/e-worldcity.h"
-#include "widgets/egamewidget.h"
+#include "widgets/game-widget.h"
 
 #include "engine/e-game-board.h"
 #include "emainwindow.h"

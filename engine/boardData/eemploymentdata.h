@@ -1,14 +1,14 @@
-#ifndef EEMPLOYMENTDATA_H
+﻿#ifndef EEMPLOYMENTDATA_H
 #define EEMPLOYMENTDATA_H
 
 class ePopulationData;
-class eBoardCity;
+class BoardCity;
 class eGameBoard;
 
 class eEmploymentData {
 public:
     eEmploymentData(const ePopulationData& popData,
-                    const eBoardCity& city,
+                    const BoardCity& city,
                     const eGameBoard& board);
 
     void incTotalJobVacancies(const int v);
@@ -24,7 +24,7 @@ public:
     double employedFraction() const;
 private:
     const ePopulationData& mPopData;
-    const eBoardCity& mCity;
+    const BoardCity& mCity;
     const eGameBoard& mBoard;
     int mTotalJobVacs{0};
 };

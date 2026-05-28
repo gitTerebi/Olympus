@@ -1,4 +1,4 @@
-#include "widgets/egamewidget.h"
+﻿#include "widgets/game-widget.h"
 
 #include "engine/e-game-board.h"
 #include "engine/etile.h"
@@ -9,7 +9,7 @@
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
 
-void eGameWidget::updatePatrolPath()
+void GameWidget::updatePatrolPath()
 {
     if (!mPatrolBuilding)
     {
@@ -107,7 +107,7 @@ void eGameWidget::updatePatrolPath()
     }
 }
 
-void eGameWidget::updateDestinationPath()
+void GameWidget::updateDestinationPath()
 {
     mDestinationPath.clear();
     mDestinationTargets.clear();
@@ -153,7 +153,7 @@ void eGameWidget::updateDestinationPath()
     }
 }
 
-void eGameWidget::setDestinationBuilding(ePatrolSourceBuilding* const sb)
+void GameWidget::setDestinationBuilding(ePatrolSourceBuilding* const sb)
 {
     mDestinationBuilding = sb;
     updateDestinationPath();

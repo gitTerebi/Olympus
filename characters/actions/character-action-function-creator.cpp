@@ -1,4 +1,4 @@
-#include "character-action-function.h"
+﻿#include "character-action-function.h"
 
 #include "eactionwithcomeback.h"
 #include "earcheraction.h"
@@ -16,7 +16,7 @@
 #include "ewolfaction.h"
 #include "eshepherdaction.h"
 #include "soldier-action.h"
-#include "etraderaction.h"
+#include "trader-action.h"
 #include "ekillcharacterfinishfail.h"
 #include "ereplacecattleaction.h"
 #include "characters/gods/actions/egodworshippedaction.h"

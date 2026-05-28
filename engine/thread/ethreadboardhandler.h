@@ -1,4 +1,4 @@
-#ifndef ETHREADBOARDHANDLER_H
+﻿#ifndef ETHREADBOARDHANDLER_H
 #define ETHREADBOARDHANDLER_H
 
 #include <atomic>
@@ -7,7 +7,7 @@
 #include "engine/thread/ethreadboard.h"
 
 enum class eStateRelevance;
-class eBoardCity;
+class BoardCity;
 
 class eThreadBoardHandler {
 public:
@@ -24,8 +24,8 @@ public:
 private:
     void update(const std::vector<eTile*>& tiles);
     void updateSanctuary(const std::vector<eTile*>& tiles);
-    void updateAll(eGameBoard& board, const eBoardCity &c);
-    void updateFinishedMonuments(const eBoardCity& c);
+    void updateAll(eGameBoard& board, const BoardCity &c);
+    void updateFinishedMonuments(const BoardCity& c);
 
     bool mInitialized = false;
     eThreadBoard mBoard;

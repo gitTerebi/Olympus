@@ -1,10 +1,10 @@
-#include "ecommonhouseinfowidget.h"
+﻿#include "ecommonhouseinfowidget.h"
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
 #include "engine/eresourcetype.h"
 #include "engine/e-game-board.h"
-#include "engine/eboardcity.h"
+#include "engine/board-city.h"
 
 #include "widgets/elabel.h"
 

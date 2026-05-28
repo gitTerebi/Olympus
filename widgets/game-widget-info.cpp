@@ -1,4 +1,4 @@
-#include "egamewidget.h"
+﻿#include "game-widget.h"
 #include "infowidgets/einfowidget.h"
 #include "infowidgets/eemployingbuildinginfowidget.h"
 
@@ -24,19 +24,19 @@
 
 #include "engine/e-game-board.h"
 
-eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
+eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
     eInfoWidget* wid = nullptr;
     eAction closeAct;
     if(const auto house = dynamic_cast<eHouseBase*>(b)) {
         const auto w = new eCommonHouseInfoWidget(window(), this);
         w->initialize(house);
         wid = w;
-    } else if(const auto stor = dynamic_cast<eTradePost*>(b)) {
-        const auto storWid = new eTradePostInfoWidget(window(), this);
+    } else if(const auto stor = dynamic_cast<TradePost*>(b)) {
+        const auto storWid = new TradePostInfoWidget(window(), this);
         const auto prevNext = [this, storWid, stor, closeAct](const bool next) {
             const auto pid = stor->playerId();
             const auto& board = stor->getBoard();
-            std::vector<eTradePost*> posts;
+            std::vector<TradePost*> posts;
             const auto cities = board.playerCitiesOnBoard(pid);
             for(const auto cid : cities) {
                 const auto cboard = board.boardCityWithId(cid);
@@ -469,7 +469,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
                 break;
             }
             const int pct = rb->ripe() * 100 / 5;
-            // xml strings (groupId, 2) + (groupId, 3) → e.g. "Fruit is 80% ripe."
+            // xml strings (groupId, 2) + (groupId, 3) â†’ e.g. "Fruit is 80% ripe."
             const std::string ripeStr = eLanguage::zeusText(group, 2) + " " +
                                         std::to_string(pct) + "% " +
                                         eLanguage::zeusText(group, 3);
@@ -485,7 +485,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
             const std::string endName = eLanguage::zeusText(160, he);
             std::string seasonStr;
             if(inSeason) {
-                // xml (group, 14) = "The next X harvest is in" — reused here to label the season
+                // xml (group, 14) = "The next X harvest is in" â€” reused here to label the season
                 seasonStr = "Harvest available now (" + startName +
                             "-" + endName + ")";
             } else {
@@ -522,7 +522,7 @@ eInfoWidget* eGameWidget::openInfoWidget(eBuilding* const b) {
     return wid;
 }
 
-eInfoWidget *eGameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
+eInfoWidget *GameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
     const auto wid = new eCharacterInfoWidget(window(), this);
     wid->initialize(chars);
     if(wid) {
@@ -536,7 +536,7 @@ eInfoWidget *eGameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
     return wid;
 }
 
-bool eGameWidget::hasInfoWidget() const {
+bool GameWidget::hasInfoWidget() const {
     for(const auto w : children()) {
         if(dynamic_cast<eInfoWidget*>(w) && w->visible()) return true;
     }

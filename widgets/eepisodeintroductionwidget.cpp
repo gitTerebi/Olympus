@@ -1,4 +1,4 @@
-#include "eepisodeintroductionwidget.h"
+﻿#include "eepisodeintroductionwidget.h"
 
 #include "textures/egametextures.h"
 
@@ -11,7 +11,7 @@
 #include "elanguage.h"
 #include "emainwindow.h"
 #include "edifficultywidget.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "eframedbutton.h"
 #include "estringhelpers.h"
 

@@ -1,11 +1,11 @@
-#include "ehusbandrydata.h"
+﻿#include "ehusbandrydata.h"
 
 #include "epopulationdata.h"
 
 #include "engine/e-game-board.h"
 
 eHusbandryData::eHusbandryData(const ePopulationData& popData,
-                               const eBoardCity& city,
+                               const BoardCity& city,
                                const eGameBoard& board) :
     mPopData(popData), mCity(city), mBoard(board) {}
 

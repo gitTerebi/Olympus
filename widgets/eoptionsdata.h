@@ -1,16 +1,16 @@
-#ifndef EOPTIONSDATA_H
+﻿#ifndef EOPTIONSDATA_H
 #define EOPTIONSDATA_H
 
 #include "widgets/eoptionsmenu.h"
 
 class eMainWindow;
 class eGameBoard;
-class eGameWidget;
+class GameWidget;
 
 #include <vector>
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                                                  eGameBoard* const board = nullptr,
-                                                 eGameWidget* const gw = nullptr);
+                                                 GameWidget* const gw = nullptr);
 
 #endif // EOPTIONSDATA_H

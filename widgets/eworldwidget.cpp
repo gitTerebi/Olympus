@@ -1,11 +1,11 @@
-#include "eworldwidget.h"
+﻿#include "eworldwidget.h"
 
 #include "eworldmenu.h"
 #include "eworldmapwidget.h"
 #include "erequestdialog.h"
 #include "egiftdialog.h"
 #include "emainwindow.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "egiftsizedialog.h"
 #include "evectorhelpers.h"
 #include "eframedbutton.h"
@@ -473,7 +473,7 @@ bool eWorldWidget::keyPressEvent(const eKeyPressEvent& e) {
     const auto k = e.key();
     if(k == SDL_SCANCODE_ESCAPE) {
         window()->showGame(static_cast<eGameBoard*>(nullptr),
-                           eGameWidgetSettings());
+                           GameWidgetSettings());
     }
     return true;
 }

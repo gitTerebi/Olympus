@@ -1,4 +1,4 @@
-#include "edatawidget.h"
+﻿#include "edatawidget.h"
 
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
@@ -54,7 +54,7 @@ void eDataWidget::initialize() {
     fitContent();
 }
 
-void eDataWidget::setGameWidget(eGameWidget* const gw) {
+void eDataWidget::setGameWidget(GameWidget* const gw) {
     mGW = gw;
     for(const auto b : mButtons) {
         b->setGameWidget(gw);

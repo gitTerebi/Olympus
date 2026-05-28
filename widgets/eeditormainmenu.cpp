@@ -1,10 +1,10 @@
-#include "eeditormainmenu.h"
+﻿#include "eeditormainmenu.h"
 
 #include "eframedwidget.h"
 #include "eframedbutton.h"
 #include "elanguage.h"
 #include "eworldwidget.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "emainwindow.h"
 #include "audio/music.h"
 #include "ebitmapwidget.h"
@@ -47,11 +47,11 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         w->takeWidget();
         w->startGameAction([this, campaign, w]() {
             eMusic::playRandomMusic();
-            const auto gw = new eGameWidget(w);
+            const auto gw = new GameWidget(w);
             gw->setBoard(&campaign->parentCityBoard());
             gw->resize(w->width(), w->height());
             gw->initialize();
-            eGameWidgetSettings settings;
+            GameWidgetSettings settings;
             settings.fPaused = true;
             gw->setSettings(settings);
             w->setWidget(gw);
@@ -414,11 +414,11 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         w->takeWidget();
         w->startGameAction([this, campaign, id, w]() {
             eMusic::playRandomMusic();
-            const auto gw = new eGameWidget(w);
+            const auto gw = new GameWidget(w);
             gw->setBoard(&campaign->colonyBoard(id));
             gw->resize(w->width(), w->height());
             gw->initialize();
-            eGameWidgetSettings settings;
+            GameWidgetSettings settings;
             settings.fPaused = true;
             gw->setSettings(settings);
             w->setWidget(gw);

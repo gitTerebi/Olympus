@@ -1,4 +1,4 @@
-#include "character-action.h"
+﻿#include "character-action.h"
 
 #include "eanimalaction.h"
 #include "ewolfaction.h"
@@ -32,7 +32,7 @@
 #include "esettleraction.h"
 #include "eshepherdaction.h"
 #include "soldier-action.h"
-#include "etraderaction.h"
+#include "trader-action.h"
 #include "ewaitaction.h"
 #include "esickdisgruntledaction.h"
 #include "etakecattleaction.h"
@@ -132,7 +132,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::soldierAction:
         return e::make_shared<eSoldierAction>(c);
     case eCharActionType::traderAction:
-        return e::make_shared<eTraderAction>(c);
+        return e::make_shared<TraderAction>(c);
     case eCharActionType::waitAction:
         return e::make_shared<eWaitAction>(c);
 

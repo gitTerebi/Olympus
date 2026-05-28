@@ -1,11 +1,11 @@
-#ifndef EDATAWIDGET_H
+﻿#ifndef EDATAWIDGET_H
 #define EDATAWIDGET_H
 
 #include "../ewidget.h"
 #include "engine/ecityid.h"
 
 class eViewModeButton;
-class eGameWidget;
+class GameWidget;
 class eGameBoard;
 class eBasicButton;
 enum class eCityId;
@@ -16,7 +16,7 @@ public:
 
     virtual void initialize();
 
-    void setGameWidget(eGameWidget* const gw);
+    void setGameWidget(GameWidget* const gw);
     virtual void shown();
     void update();
 protected:
@@ -27,7 +27,7 @@ protected:
 
     void addViewButton(eViewModeButton* const b);
     eWidget* innerWidget() const { return mInnerWidget; }
-    eGameWidget* gameWidget() const { return mGW; }
+    GameWidget* gameWidget() const { return mGW; }
     int spacing() const;
     void showMoreInfoButton();
 
@@ -39,7 +39,7 @@ protected:
     int mTime = 0;
 private:
     eCityId mLastPersonCityId = eCityId::neutralFriendly;
-    eGameWidget* mGW = nullptr;
+    GameWidget* mGW = nullptr;
     eBasicButton* mMoreInfo = nullptr;
     eWidget* mInnerWidget = nullptr;
     std::vector<eViewModeButton*> mButtons;

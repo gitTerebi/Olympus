@@ -1,4 +1,4 @@
-#ifndef EHEROSHALL_H
+﻿#ifndef EHEROSHALL_H
 #define EHEROSHALL_H
 
 #include "buildings/ebuilding.h"
@@ -79,7 +79,7 @@ enum class eHeroSummoningStage {
     arrived
 };
 
-class eBoardCity;
+class BoardCity;
 class eSaveArchive;
 
 class eHerosHall : public eBuilding {
@@ -100,9 +100,9 @@ public:
                                          bool* const valid = nullptr);
 
     static std::string sHeroRequirementText(const eHeroRequirement& hr,
-                                            eBoardCity &c);
+                                            BoardCity &c);
     static std::string sHeroRequirementStatusText(const eHeroRequirement& hr,
-                                                  eBoardCity &c);
+                                                  BoardCity &c);
 
     const std::vector<eHeroRequirement>& requirements() const
     { return mRequirements; }

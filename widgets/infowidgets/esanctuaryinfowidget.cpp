@@ -1,4 +1,4 @@
-#include "esanctuaryinfowidget.h"
+﻿#include "esanctuaryinfowidget.h"
 
 #include "elanguage.h"
 #include "widgets/eframedbutton.h"
@@ -9,7 +9,7 @@
 #include "engine/e-game-board.h"
 #include "widgets/echoosecitydialog.h"
 #include "evectorhelpers.h"
-#include "widgets/egamewidget.h"
+#include "widgets/game-widget.h"
 #include "widgets/eprogressbar.h"
 
 eSanctuaryInfoWidget::eSanctuaryInfoWidget(

@@ -1,8 +1,8 @@
-#include "echaracterinfowidget.h"
+﻿#include "echaracterinfowidget.h"
 
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
-#include "characters/actions/etraderaction.h"
+#include "characters/actions/trader-action.h"
 #include "engine/eresourcetype.h"
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
@@ -2169,7 +2169,7 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
 
     std::string additionalTxt;
     mTradeWidget->removeAllWidgets();
-    if (const auto tra = dynamic_cast<eTraderAction *>(c->action()))
+    if (const auto tra = dynamic_cast<TraderAction *>(c->action()))
     {
         const auto& bought = tra->bought();
         const auto& sold = tra->sold();

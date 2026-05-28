@@ -1,4 +1,4 @@
-#include "earmymenu.h"
+﻿#include "earmymenu.h"
 
 #include "elanguage.h"
 #include "textures/egametextures.h"
@@ -7,7 +7,7 @@
 #include "ebasicbutton.h"
 #include "eframedwidget.h"
 
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "characters/soldier-banner.h"
 
 std::vector<SoldierBanner*> eArmyMenu::selectedPlayerBanners() const {

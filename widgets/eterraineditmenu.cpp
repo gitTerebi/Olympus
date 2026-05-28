@@ -1,4 +1,4 @@
-#include "eterraineditmenu.h"
+﻿#include "eterraineditmenu.h"
 
 #include "textures/egametextures.h"
 #include "eactionlistwidget.h"
@@ -6,10 +6,10 @@
 #include "spawners/ebanner.h"
 #include "erotatebutton.h"
 #include "eminimap.h"
-#include "egamewidget.h"
+#include "game-widget.h"
 #include "elanguage.h"
 
-void eTerrainEditMenu::initialize(eGameWidget* const gw,
+void eTerrainEditMenu::initialize(GameWidget* const gw,
                                   eGameBoard* const board) {
     eGameMenuBase::initialize();
 
