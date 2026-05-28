@@ -6,11 +6,13 @@
 #include "buildings/eheatgetters.h"
 
 #include "emovetoaction.h"
+#include "ewaitaction.h"
 #include "eiteratesquare.h"
 
 #include "characters/gods/actions/god-action.h"
 
 #include "enumbers.h"
+#include "erand.h"
 #include "fileIO/esavearchive.h"
 #include "combat-timing.h"
 #include "vec2.h"
@@ -27,11 +29,9 @@ void eMonsterAction::increment(const int by) {
         if(incrementMeleeAttack(by)) return;
     }
     if(at == eCharacterActionType::walk) {
-        if(!lookForMeleeAttack()) {
-            lookForAttack(by, mLookForAttack,
-                          attackPeriod(),
-                          eNumbers::sMonsterAttackRange);
-        }
+        lookForAnyAttack(by, mLookForAttack,
+                         attackPeriod(),
+                         eNumbers::sMonsterAttackRange);
     }
 
     if(mStage == eMonsterAttackStage::wait && mWaitRemaining > 0) {
@@ -456,7 +456,7 @@ bool eMonsterAction::lookForAttack(const int dtime,
                               at, act, nullptr);
 }
 
-bool eMonsterAction::lookForMeleeAttack() {
+bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly) {
     const auto c = character();
     const auto act = std::make_shared<eLookForAttackGodAct>(
                          board(), c);
@@ -477,12 +477,48 @@ bool eMonsterAction::lookForMeleeAttack() {
     for(const auto t : tiles) {
         const auto tt = act->find(t);
         if(!tt) continue;
+        if(charactersOnly && !tt.character()) continue;
         pauseAction();
         beginAttack(tt, eCharacterActionType::fight, mStage);
         spawnMeleeAttack();
         return true;
     }
     return false;
+}
+
+bool eMonsterAction::lookForAnyAttack(const int dtime,
+                                      int& time, const int freq,
+                                      const int range) {
+    time += dtime;
+    if(time <= freq) return false;
+    time -= freq;
+    if(eRand::rand() % 10 == 0) {
+        const auto c = character();
+        pauseAction();
+        c->setActionType(eCharacterActionType::stand);
+        board().ifVisible(c->tile(), [&]() {
+            eSounds::playMonsterSound(mType, eMonsterSound::voice);
+        });
+        const auto w = e::make_shared<eWaitAction>(c);
+        const auto finish = std::make_shared<eMA_lookForRangeActionFinishAttack>(
+                                board(), this);
+        w->setFinishAction(finish);
+        w->setFailAction(finish);
+        w->setTime(700);
+        setCurrentAction(w);
+        return true;
+    }
+    if(lookForMeleeAttack(true)) return true;
+    const bool tryBuildingMeleeFirst = eRand::rand() % 3 == 0;
+    if(tryBuildingMeleeFirst && lookForMeleeAttack(false)) return true;
+    const bool ranged = lookForRangeAction(
+        0, time, 0, range, eCharacterActionType::fight2,
+        std::make_shared<eLookForAttackGodAct>(board(), character()),
+        nullptr);
+    if(ranged) {
+        return true;
+    }
+    return lookForMeleeAttack(false);
 }
 
 bool eMonsterAction::lookForRangeAction(const int dtime,
