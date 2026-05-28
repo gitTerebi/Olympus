@@ -10,7 +10,7 @@
 #include "ehorseranch.h"
 #include "fileIO/esavearchive.h"
 
-eHorseRanchEnclosure::eHorseRanchEnclosure(eGameBoard& board,
+eHorseRanchEnclosure::eHorseRanchEnclosure(GameBoard& board,
                                            const eCityId cid) :
     eBuildingWithResource(board, eBuildingType::horseRanchEnclosure, 4, 4,
                           cid) {

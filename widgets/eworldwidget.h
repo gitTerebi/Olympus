@@ -16,7 +16,7 @@ public:
 
     void initialize();
 
-    void setBoard(eGameBoard* const board);
+    void setBoard(GameBoard* const board);
     void setWorldBoard(eWorldBoard* const board);
 
     void update();
@@ -47,7 +47,7 @@ private:
     eWorldMenu* mWM = nullptr;
     eWorldMapWidget* mWMW = nullptr;
     eWorldBoard* mWorldBoard = nullptr;
-    eGameBoard* mBoard = nullptr;
+    GameBoard* mBoard = nullptr;
     eFramedButton* mMapButton = nullptr;
     eFramedButton* mAddCityButton = nullptr;
     eFramedButton* mSettingsButton = nullptr;

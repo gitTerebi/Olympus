@@ -8,7 +8,7 @@
 #include "godHelp/eaphroditehelpaction.h"
 
 stdsptr<eGodAct> eGodAct::sCreate(
-        eGameBoard& board, const eGodActType t) {
+        GameBoard& board, const eGodActType t) {
     switch(t) {
     case eGodActType::lookForSoldierAttack:
         return std::make_shared<eLookForSoldierAttackGodAct>(board);

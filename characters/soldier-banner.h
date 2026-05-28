@@ -9,7 +9,7 @@
 #include "engine/ecityid.h"
 
 class eSoldier;
-class eGameBoard;
+class GameBoard;
 class eTile;
 class eSaveArchive;
 enum class eCharacterType;
@@ -28,7 +28,7 @@ enum class eBannerType {
 class SoldierBanner : public eObject {
 public:
     SoldierBanner(const eBannerType type,
-                   eGameBoard& board);
+                   GameBoard& board);
     ~SoldierBanner();
 
     eBannerType type() const { return mType; }
@@ -107,18 +107,18 @@ public:
 
     static void sPlaceDefault(std::vector<SoldierBanner*>& bs,
                               const int ctx, const int cty,
-                              eGameBoard& board);
+                              GameBoard& board);
     static void sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
                                   const int ctx, const int cty,
-                                  eGameBoard& board, const int dist,
+                                  GameBoard& board, const int dist,
                                   const int minDistFromEdge);
     static void sPlace(std::vector<SoldierBanner*> bs,
                        const int ctx, const int cty,
-                       eGameBoard& board, const int dist,
+                       GameBoard& board, const int dist,
                        const int minDistFromEdge);
     static void sPlaceFacing(std::vector<SoldierBanner*> bs,
                              const int ctx, const int cty,
-                             eGameBoard& board,
+                             GameBoard& board,
                              const int facing,
                              const int lineDX,
                              const int lineDY,
@@ -146,7 +146,7 @@ public:
             const std::vector<SoldierBanner*>& bs,
             const ePlayerId playerId,
             const int ctx, const int cty,
-            eGameBoard& board,
+            GameBoard& board,
             const int facing,
             const int lineDX,
             const int lineDY,
@@ -157,7 +157,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar);
 private:
-    eGameBoard& board() const;
+    GameBoard& board() const;
     void updatePlaces();
     void updateCount();
     void callSoldier(eSoldier* const s);
@@ -175,7 +175,7 @@ private:
     bool mAbroad = false;
     bool mSelected = false;
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     eTile* mTile = nullptr;
 

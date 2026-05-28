@@ -16,7 +16,7 @@ int calc_adjust_with_percentage(int value, int percentage) {
 
 }
 
-void pixToId(int pixX, int pixY, int &idX, int &idY, int scale, int tileW, int tileH, int dx, int dy, int maxAlt, int minAlt, const eGameBoard *board) {
+void pixToId(int pixX, int pixY, int &idX, int &idY, int scale, int tileW, int tileH, int dx, int dy, int maxAlt, int minAlt, const GameBoard *board) {
     const int scaledX = calc_adjust_with_percentage(pixX, scale);
     const int scaledY = calc_adjust_with_percentage(pixY, scale);
     const double w = tileW;

@@ -4,19 +4,19 @@
 #include "textures/ebuildingtextures.h"
 #include "engine/e-game-board.h"
 
-eDoricColumn::eDoricColumn(eGameBoard& board, const eCityId cid) :
+eDoricColumn::eDoricColumn(GameBoard& board, const eCityId cid) :
     eColumn(board, &eBuildingTextures::fDoricColumn,
             eBuildingType::doricColumn, 1, 1, cid) {
     eGameTextures::loadColumns();
 }
 
-eIonicColumn::eIonicColumn(eGameBoard& board, const eCityId cid) :
+eIonicColumn::eIonicColumn(GameBoard& board, const eCityId cid) :
     eColumn(board, &eBuildingTextures::fIonicColumn,
             eBuildingType::ionicColumn, 1, 1, cid) {
     eGameTextures::loadColumns();
 }
 
-eCorinthianColumn::eCorinthianColumn(eGameBoard& board, const eCityId cid) :
+eCorinthianColumn::eCorinthianColumn(GameBoard& board, const eCityId cid) :
     eColumn(board, &eBuildingTextures::fCorinthianColumn,
             eBuildingType::corinthianColumn, 1, 1, cid) {
     eGameTextures::loadColumns();

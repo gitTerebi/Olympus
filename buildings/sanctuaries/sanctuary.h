@@ -20,7 +20,7 @@ enum class eHelpDenialReason {
 
 class eSanctuary : public eMonument {
 public:
-    eSanctuary(eGameBoard& board,
+    eSanctuary(GameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
                const int maxEmployees,
@@ -58,7 +58,7 @@ public:
     static stdsptr<eSanctuary> sCreate(
             const eBuildingType type,
             const int sw, const int sh,
-            eGameBoard& board, const eCityId cid);
+            GameBoard& board, const eCityId cid);
 
     static void sLoadMonumentTextures(const eGodType type);
 

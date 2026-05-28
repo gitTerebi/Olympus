@@ -19,13 +19,13 @@ private:
 class eArtemisSanctuary: public eSanctuaryWithWarriors  {
 public:
     eArtemisSanctuary(const int sw, const int sh,
-                      eGameBoard& board, const eCityId cid);
+                      GameBoard& board, const eCityId cid);
 };
 
 class eAresSanctuary: public eSanctuaryWithWarriors  {
 public:
     eAresSanctuary(const int sw, const int sh,
-                   eGameBoard& board, const eCityId cid);
+                   GameBoard& board, const eCityId cid);
 };
 
 #endif // EARTEMISSANCTUARY_H

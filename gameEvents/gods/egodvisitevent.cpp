@@ -9,7 +9,7 @@
 
 eGodVisitEvent::eGodVisitEvent(const eCityId cid,
                                const eGameEventBranch branch,
-                               eGameBoard& board) :
+                               GameBoard& board) :
     eGameEvent(cid, eGameEventType::godVisit, branch, board) {}
 
 void eGodVisitEvent::setTypes(const std::vector<eGodType>& types) {

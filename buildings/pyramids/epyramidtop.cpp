@@ -4,14 +4,14 @@
 #include "epyramid.h"
 
 ePyramidTop::ePyramidTop(const std::vector<eSanctCost>& cost,
-                         eGameBoard& board,
+                         GameBoard& board,
                          const int elevation,
                          const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidTop,
                     elevation, 1, cid) {}
 
 ePyramidTop::ePyramidTop(ePyramid* const pyramid,
-                         eGameBoard& board,
+                         GameBoard& board,
                          const int elevation,
                          const eCityId cid) :
     ePyramidElement(pyramid,

@@ -18,7 +18,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 
     void rebuildCurrentStage();
     void finishPopulating();
@@ -39,9 +39,9 @@ private:
 
 class eAHA_populateFinish : public eCharActFunc {
 public:
-    eAHA_populateFinish(eGameBoard& board) :
+    eAHA_populateFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AHA_populateFinish) {}
-    eAHA_populateFinish(eGameBoard& board, eAphroditeHelpAction* const ca) :
+    eAHA_populateFinish(GameBoard& board, eAphroditeHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::AHA_populateFinish),
         mTptr(ca) {}
 
@@ -63,12 +63,12 @@ private:
 
 class eAphroditeHelpAct : public eGodAct {
 public:
-    eAphroditeHelpAct(eGameBoard& board,
+    eAphroditeHelpAct(GameBoard& board,
                       eHouseBase* const target) :
         eGodAct(board, eGodActType::aphroditeHelp),
         mTarget(target) {}
 
-    eAphroditeHelpAct(eGameBoard& board) :
+    eAphroditeHelpAct(GameBoard& board) :
         eAphroditeHelpAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {

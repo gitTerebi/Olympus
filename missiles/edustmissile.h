@@ -5,7 +5,7 @@
 
 class eDustMissile : public eMissile {
 public:
-    eDustMissile(eGameBoard& board,
+    eDustMissile(GameBoard& board,
                  const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture>

@@ -5,7 +5,7 @@
 #include "actions/soldier-action.h"
 #include "fileIO/esavearchive.h"
 
-eSoldier::eSoldier(eGameBoard& board,
+eSoldier::eSoldier(GameBoard& board,
                    const eCharTexs charTexs,
                    const eCharacterType type) :
     eFightingPatroler(board, charTexs, type),

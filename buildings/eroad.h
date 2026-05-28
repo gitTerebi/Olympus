@@ -10,7 +10,7 @@ class eSaveArchive;
 
 class eRoad : public eBuilding {
 public:
-    eRoad(eGameBoard& board, const eCityId cid);
+    eRoad(GameBoard& board, const eCityId cid);
 
     void erase() override;
 

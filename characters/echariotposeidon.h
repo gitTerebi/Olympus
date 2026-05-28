@@ -5,7 +5,7 @@
 
 class eChariotPoseidon : public eChariotBase {
 public:
-    eChariotPoseidon(eGameBoard& board);
+    eChariotPoseidon(GameBoard& board);
 };
 
 #endif // ECHARIOTPOSEIDON_H

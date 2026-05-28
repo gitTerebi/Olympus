@@ -5,7 +5,7 @@ eAthenaHelpAction::eAthenaHelpAction(eCharacter* const c) :
                                eResourceType::oliveOil, 16) {}
 
 bool eAthenaHelpAction::sHelpNeeded(const eCityId cid,
-                                    const eGameBoard& board) {
+                                    const GameBoard& board) {
     return eProvideResourceHelpAction::sHelpNeeded(
                 cid, board, eResourceType::oliveOil, 8);
 }

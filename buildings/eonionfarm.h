@@ -5,7 +5,7 @@
 
 class eOnionFarm : public eFarmBase {
 public:
-    eOnionFarm(eGameBoard& board, const eCityId cid);
+    eOnionFarm(GameBoard& board, const eCityId cid);
 };
 
 #endif // EONIONFARM_H

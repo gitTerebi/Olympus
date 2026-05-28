@@ -5,7 +5,7 @@
 
 class eWaveMissile : public eMissile {
 public:
-    eWaveMissile(eGameBoard& board,
+    eWaveMissile(GameBoard& board,
                  const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture>

@@ -5,7 +5,7 @@
 
 class eWineVendor : public eVendor {
 public:
-    eWineVendor(eGameBoard& board, const eCityId cid);
+    eWineVendor(GameBoard& board, const eCityId cid);
 };
 
 #endif // EWINEVENDOR_H

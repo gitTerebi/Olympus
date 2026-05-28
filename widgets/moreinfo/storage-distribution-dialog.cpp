@@ -28,7 +28,7 @@ StorageDistributionDialog::StorageDistributionDialog(
     eMainWidget *const mw) : eInfoWidget(window, mw, false, false) {}
 
 void StorageDistributionDialog::initialize(
-    eGameBoard &board, const eCityId cid)
+    GameBoard &board, const eCityId cid)
 {
     const int panelW = std::round(window()->width() * 0.75);
     resize(panelW, height());

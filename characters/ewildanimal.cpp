@@ -3,7 +3,7 @@
 #include "spawners/espawner.h"
 #include "fileIO/esavearchive.h"
 
-eWildAnimal::eWildAnimal(eGameBoard& board,
+eWildAnimal::eWildAnimal(GameBoard& board,
                          const eCharTexs charTexs,
                          const eCharacterType type) :
     eAnimal(board, charTexs, type) {}

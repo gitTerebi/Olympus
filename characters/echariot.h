@@ -5,7 +5,7 @@
 
 class eChariot : public eCharacter {
 public:
-    eChariot(eGameBoard& board);
+    eChariot(GameBoard& board);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;

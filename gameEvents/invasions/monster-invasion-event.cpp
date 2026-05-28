@@ -9,7 +9,7 @@
 eMonsterInvasionWarning::eMonsterInvasionWarning(const int warningDays,
                                                            eGameEvent &parent,
                                                            const eCityId cid,
-                                                           eGameBoard &board,
+                                                           GameBoard &board,
                                                            const eMonsterInvasionWarningType type) :
     eWarning(warningDays, type == eMonsterInvasionWarningType::warningInitial,
              parent, cid, board),
@@ -50,7 +50,7 @@ void eMonsterInvasionWarning::trigger() {
 eMonsterInvasionEvent::eMonsterInvasionEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eMonsterInvasionEventBase(cid, eGameEventType::monsterInvasion,
                               branch, board) {}
 

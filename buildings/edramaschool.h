@@ -5,7 +5,7 @@
 
 class eDramaSchool : public ePatrolSourceBuilding {
 public:
-    eDramaSchool(eGameBoard& board, const eCityId cid);
+    eDramaSchool(GameBoard& board, const eCityId cid);
 };
 
 

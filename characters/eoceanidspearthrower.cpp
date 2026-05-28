@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eOceanidSpearthrower::eOceanidSpearthrower(eGameBoard& board) :
+eOceanidSpearthrower::eOceanidSpearthrower(GameBoard& board) :
     eSpearthrowerBase(board, &eCharacterTextures::fOceanidSpearthrower,
                       eCharacterType::oceanidSpearthrower) {
     eGameTextures::loadOceanidSpearthrower();

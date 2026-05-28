@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 eTempleTileBuilding::eTempleTileBuilding(
-        const int id, eGameBoard& board,
+        const int id, GameBoard& board,
         const eCityId cid) :
     eSanctBuilding({{0, 1, 0}}, board,
                    eBuildingType::templeTile,

@@ -4,5 +4,5 @@
 
 eSeaInvasionPoint::eSeaInvasionPoint(const int id,
                                      eTile* const tile,
-                                     eGameBoard& board) :
+                                     GameBoard& board) :
     eBanner(eBannerTypeS::seaInvasion, id, tile, board) {}

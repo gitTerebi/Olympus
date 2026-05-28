@@ -13,7 +13,7 @@
 
 class eThreadPool {
 public:
-    eThreadPool(eGameBoard& board);
+    eThreadPool(GameBoard& board);
     ~eThreadPool();
 
     void initialize(const int w, const int h);
@@ -32,7 +32,7 @@ private:
 
     int mTaskId = 0;
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     bool mInterrupted = false;
     bool mQuit = false;

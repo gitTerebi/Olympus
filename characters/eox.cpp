@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eOx::eOx(eGameBoard& board) :
+eOx::eOx(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fOx,
                    eCharacterType::ox) {
     eGameTextures::loadOx();

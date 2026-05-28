@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eDonkey::eDonkey(eGameBoard& board) :
+eDonkey::eDonkey(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fDonkey,
                    eCharacterType::donkey) {
     eGameTextures::loadDonkey();

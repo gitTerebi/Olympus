@@ -31,7 +31,7 @@ public:
 
     static eBuilding* sFindHome(const eCharacterType t,
                                 const eCityId cid,
-                                const eGameBoard& brd);
+                                const GameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
 protected:
@@ -50,9 +50,9 @@ private:
 
 class eSoldierObsticleHandler : public eObsticleHandler {
 public:
-    eSoldierObsticleHandler(eGameBoard& board) :
+    eSoldierObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::soldier) {}
-    eSoldierObsticleHandler(eGameBoard& board,
+    eSoldierObsticleHandler(GameBoard& board,
                             eSoldierAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::soldier),
         mTptr(t) {}
@@ -78,9 +78,9 @@ private:
 
 class eSA_goHomeFinish : public eCharActFunc {
 public:
-    eSA_goHomeFinish(eGameBoard& board) :
+    eSA_goHomeFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_goHomeFinish) {}
-    eSA_goHomeFinish(eGameBoard& board, eCharacter* const c) :
+    eSA_goHomeFinish(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::SA_goHomeFinish),
         mCptr(c) {}
 

@@ -3,7 +3,7 @@
 
 #include "../infowidgets/einfowidget.h"
 
-class eGameBoard;
+class GameBoard;
 class eMicroButton;
 enum class eCityId;
 enum class eResourceType;
@@ -12,9 +12,9 @@ class StorageDistributionDialog : public eInfoWidget {
 public:
     StorageDistributionDialog(eMainWindow* const window,
                                eMainWidget* const mw);
-    void initialize(eGameBoard& board, const eCityId cid);
+    void initialize(GameBoard& board, const eCityId cid);
 private:
-    void updateButtons(eGameBoard& board, const eCityId cid);
+    void updateButtons(GameBoard& board, const eCityId cid);
     std::vector<eResourceType> mTypes;
     std::vector<eMicroButton*> mStockpileButtons;
     std::vector<eMicroButton*> mMothballButtons;

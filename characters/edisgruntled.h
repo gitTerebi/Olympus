@@ -5,7 +5,7 @@
 
 class eDisgruntled : public eFightingPatroler {
 public:
-    eDisgruntled(eGameBoard& board);
+    eDisgruntled(GameBoard& board);
 };
 
 #endif // EDISGRUNTLED_H

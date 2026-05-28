@@ -5,7 +5,7 @@
 
 eTempleMonumentBuilding::eTempleMonumentBuilding(
         const eGodType god,
-        const int id, eGameBoard& board,
+        const int id, GameBoard& board,
         const eCityId cid) :
     eSanctBuilding({{0, 2, 0}, {0, 3, 0}}, board,
                    eBuildingType::templeMonument,

@@ -32,13 +32,13 @@ struct eDistrictReadyCondition {
 class AIDistrict {
 public:
     using eScheduleBuildingAction = std::function<void(const AIBuilding&)>;
-    void build(eGameBoard& board,
+    void build(GameBoard& board,
                const ePlayerId pid,
                const eCityId cid,
                const bool editorDisplay,
                const eScheduleBuildingAction& scha = nullptr) const;
     using eAction = std::function<void()>;
-    static bool sBuild(eGameBoard& board,
+    static bool sBuild(GameBoard& board,
                        const ePlayerId pid,
                        const eCityId cid,
                        const bool editorDisplay,

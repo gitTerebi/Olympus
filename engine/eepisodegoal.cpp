@@ -77,7 +77,7 @@ std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
 
 std::string eEpisodeGoal::text(const bool colonyEpisode,
                                const bool atlantean,
-                               const eGameBoard& b) const {
+                               const GameBoard& b) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
         auto t = eLanguage::zeusText(194, 17);
@@ -215,7 +215,7 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
     return "";
 }
 
-std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
+std::string eEpisodeGoal::statusText(const GameBoard& b) const {
     const auto ppid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
@@ -347,7 +347,7 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
     return "";
 }
 
-void eEpisodeGoal::update(const eGameBoard& b) {
+void eEpisodeGoal::update(const GameBoard& b) {
     if(fSkippedByPlayer) return;
     const auto ppid = b.personPlayer();
     switch(fType) {
@@ -592,7 +592,7 @@ eDate eEpisodeGoal::date() const {
     return eDate{day, static_cast<eMonth>(month), year};
 }
 
-void eEpisodeGoal::initializeDate(const eGameBoard& b) {
+void eEpisodeGoal::initializeDate(const GameBoard& b) {
     if(fType != eEpisodeGoalType::surviveUntil &&
        fType != eEpisodeGoalType::completeBefore) return;
     auto date = b.date();

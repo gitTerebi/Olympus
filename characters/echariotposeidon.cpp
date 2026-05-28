@@ -3,7 +3,7 @@
 #include "textures/echaractertextures.h"
 #include "textures/egametextures.h"
 
-eChariotPoseidon::eChariotPoseidon(eGameBoard& board) :
+eChariotPoseidon::eChariotPoseidon(GameBoard& board) :
     eChariotBase(board, &eCharacterTextures::fChariotPoseidon,
                  eCharacterType::chariotPoseidon) {
     eGameTextures::loadChariotPoseidon();

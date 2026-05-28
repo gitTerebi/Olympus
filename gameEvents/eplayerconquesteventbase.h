@@ -8,7 +8,7 @@ public:
     ePlayerConquestEventBase(const eCityId cid,
                              const eGameEventType type,
                              const eGameEventBranch branch,
-                             eGameBoard& board);
+                             GameBoard& board);
     ~ePlayerConquestEventBase();
 
     void addAres();

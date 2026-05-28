@@ -14,7 +14,7 @@ eColonyMonumentAction::eColonyMonumentAction(
 eColonyMonumentAction::eColonyMonumentAction() :
     eColonyMonumentAction(nullptr) {}
 
-void eColonyMonumentAction::trigger(eGameBoard& board) {
+void eColonyMonumentAction::trigger(GameBoard& board) {
     const auto capital = board.currentCity();
     const auto cid = capital->cityId();
     eEventData ed(cid);
@@ -23,7 +23,7 @@ void eColonyMonumentAction::trigger(eGameBoard& board) {
     board.allow(cid, eBuildingType::commemorative, 2);
 }
 
-void eColonyMonumentAction::serializeFields(eSaveArchive& ar, eGameBoard* board) {
+void eColonyMonumentAction::serializeFields(eSaveArchive& ar, GameBoard* board) {
     ePlannedAction::serializeFields(ar, board);
     ar.city(board, mCity);
 }

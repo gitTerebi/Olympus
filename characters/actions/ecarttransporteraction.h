@@ -124,9 +124,9 @@ protected:
 
 class eCTA_findTargetFinish : public eCharActFunc {
 public:
-    eCTA_findTargetFinish(eGameBoard& board) :
+    eCTA_findTargetFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CTA_findTargetFinish) {}
-    eCTA_findTargetFinish(eGameBoard& board,
+    eCTA_findTargetFinish(GameBoard& board,
                           eCartTransporterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::CTA_findTargetFinish),
         mTptr(ca) {}
@@ -156,9 +156,9 @@ private:
 
 class eCTA_waitOutsideFinish : public eCharActFunc {
 public:
-    eCTA_waitOutsideFinish(eGameBoard& board) :
+    eCTA_waitOutsideFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CTA_waitOutsideFinish) {}
-    eCTA_waitOutsideFinish(eGameBoard& board,
+    eCTA_waitOutsideFinish(GameBoard& board,
                            eCartTransporterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::CTA_waitOutsideFinish),
         mTptr(ca) {}
@@ -179,9 +179,9 @@ private:
 
 class eCTA_spreadFinish : public eCharActFunc {
 public:
-    eCTA_spreadFinish(eGameBoard& board) :
+    eCTA_spreadFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CTA_spreadFinish) {}
-    eCTA_spreadFinish(eGameBoard& board, eCharacter* const c) :
+    eCTA_spreadFinish(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::CTA_spreadFinish),
         mCptr(c) {}
 

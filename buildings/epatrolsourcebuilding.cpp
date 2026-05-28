@@ -16,7 +16,7 @@
 #include "emuseum.h"
 #include "fileIO/esavearchive.h"
 
-ePatrolSourceBuilding::ePatrolSourceBuilding(eGameBoard& board,
+ePatrolSourceBuilding::ePatrolSourceBuilding(GameBoard& board,
                                              const eBaseTex baseTex,
                                              const double overlayX,
                                              const double overlayY,

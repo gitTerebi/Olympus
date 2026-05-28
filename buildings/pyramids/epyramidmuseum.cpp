@@ -5,7 +5,7 @@
 
 ePyramidMuseum::ePyramidMuseum(
         const std::vector<eSanctCost>& cost,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidMuseum,
@@ -15,7 +15,7 @@ ePyramidMuseum::ePyramidMuseum(
 
 ePyramidMuseum::ePyramidMuseum(
         ePyramid* const pyramid,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eCityId cid) :
     ePyramidElement(pyramid,

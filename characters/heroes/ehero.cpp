@@ -4,7 +4,7 @@
 
 #include "elanguage.h"
 
-eHero::eHero(eGameBoard& board, const eHeroType mt) :
+eHero::eHero(GameBoard& board, const eHeroType mt) :
     eCharacter(board, sHeroToCharacterType(mt)) {
     setAttack(0.5);
 }
@@ -61,7 +61,7 @@ eCharacterType eHero::sHeroToCharacterType(const eHeroType type) {
     }
 }
 
-stdsptr<eHero> eHero::sCreateHero(const eHeroType type, eGameBoard& board) {
+stdsptr<eHero> eHero::sCreateHero(const eHeroType type, GameBoard& board) {
     switch(type) {
     case eHeroType::achilles:
         return e::make_shared<eAchilles>(board);

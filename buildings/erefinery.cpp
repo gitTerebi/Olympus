@@ -3,7 +3,7 @@
 #include "characters/eorichalcminer.h"
 #include "textures/egametextures.h"
 
-eRefinery::eRefinery(eGameBoard& board, const eCityId cid) :
+eRefinery::eRefinery(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fRefinery,
                              -5.47, -5.50,

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePersianHoplite::ePersianHoplite(eGameBoard& board) :
+ePersianHoplite::ePersianHoplite(GameBoard& board) :
     eHopliteBase(board, &eCharacterTextures::fPersianHoplite,
                  eCharacterType::persianHoplite) {
     eGameTextures::loadPersianHoplite();

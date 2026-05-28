@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePorter::ePorter(eGameBoard& board) :
+ePorter::ePorter(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fPorter,
                    eCharacterType::porter) {
     eGameTextures::loadPorter();

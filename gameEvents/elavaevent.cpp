@@ -14,7 +14,7 @@ bool validLavaEventTile(eTile* const tile) {
 eLavaEvent::eLavaEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    eGameBoard& board) :
+    GameBoard& board) :
     eGameEvent(cid, eGameEventType::lavaFlow,
                branch, board),
     ePointEventValue(eBannerTypeS::disasterPoint,

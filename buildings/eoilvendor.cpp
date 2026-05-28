@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eOilVendor::eOilVendor(eGameBoard& board, const eCityId cid) :
+eOilVendor::eOilVendor(GameBoard& board, const eCityId cid) :
     eVendor(board,
             eResourceType::oliveOil, eProvide::oil,
             &eBuildingTextures::fOilVendor,

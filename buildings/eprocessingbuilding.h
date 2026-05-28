@@ -10,7 +10,7 @@ class eProcessingBuilding : public eResourceBuildingBase {
 public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
-    eProcessingBuilding(eGameBoard& board,
+    eProcessingBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const double overlayX,
                         const double overlayY,

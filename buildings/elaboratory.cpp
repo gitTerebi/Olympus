@@ -3,7 +3,7 @@
 #include "characters/einventor.h"
 #include "textures/egametextures.h"
 
-eLaboratory::eLaboratory(eGameBoard& board,
+eLaboratory::eLaboratory(GameBoard& board,
                          const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fLaboratory,

@@ -7,14 +7,14 @@
 #include <cstdio>
 
 template <typename T>
-stdsptr<eBuilding> createVendorTagged(eGameBoard& board,
+stdsptr<eBuilding> createVendorTagged(GameBoard& board,
                                      eSaveArchive&,
                                      const eCityId cid) {
     return e::make_shared<T>(board, cid);
 }
 
 stdsptr<eBuilding> BuildingArchive::load(
-        eGameBoard& board, const eBuildingType type,
+        GameBoard& board, const eBuildingType type,
         eSaveArchive& ar) {
     stdsptr<eBuilding> b;
     if(type == eBuildingType::palace) {
@@ -44,7 +44,7 @@ stdsptr<eBuilding> BuildingArchive::load(
         return b;
     }
     {
-        auto makeSimple = [&](eGameBoard& brd, eCityId cid) -> stdsptr<eBuilding> {
+        auto makeSimple = [&](GameBoard& brd, eCityId cid) -> stdsptr<eBuilding> {
             switch(type) {
             case eBuildingType::commonHouse: return e::make_shared<eSmallHouse>(brd, cid);
             case eBuildingType::eliteHousing: return e::make_shared<eEliteHousing>(brd, cid);

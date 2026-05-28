@@ -9,7 +9,7 @@
 class eAestheticsBuilding : public eBuilding {
 public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    eAestheticsBuilding(eGameBoard& board,
+    eAestheticsBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const eBuildingType type,
                         const int sw, const int sh,
@@ -24,7 +24,7 @@ class eOverlayAesthBuilding : public eAestheticsBuilding {
 public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
-    eOverlayAesthBuilding(eGameBoard& board,
+    eOverlayAesthBuilding(GameBoard& board,
                           const eBaseTex baseTex,
                           const double overlayX,
                           const double overlayY,
@@ -43,87 +43,87 @@ private:
 
 class eBench : public eAestheticsBuilding {
 public:
-    eBench(eGameBoard& board, const eCityId cid);
+    eBench(GameBoard& board, const eCityId cid);
 };
 
 class eFlowerGarden : public eAestheticsBuilding {
 public:
-    eFlowerGarden(eGameBoard& board, const eCityId cid);
+    eFlowerGarden(GameBoard& board, const eCityId cid);
 };
 
 class eGazebo : public eAestheticsBuilding {
 public:
-    eGazebo(eGameBoard& board, const eCityId cid);
+    eGazebo(GameBoard& board, const eCityId cid);
 };
 
 class eHedgeMaze : public eAestheticsBuilding {
 public:
-    eHedgeMaze(eGameBoard& board, const eCityId cid);
+    eHedgeMaze(GameBoard& board, const eCityId cid);
 };
 
 class eFishPond : public eOverlayAesthBuilding {
 public:
-    eFishPond(eGameBoard& board, const eCityId cid);
+    eFishPond(GameBoard& board, const eCityId cid);
 };
 
 class eBirdBath : public eOverlayAesthBuilding {
 public:
-    eBirdBath(eGameBoard& board, const eCityId cid);
+    eBirdBath(GameBoard& board, const eCityId cid);
 };
 
 class eShortObelisk : public eAestheticsBuilding {
 public:
-    eShortObelisk(eGameBoard& board, const eCityId cid);
+    eShortObelisk(GameBoard& board, const eCityId cid);
 };
 
 class eTallObelisk : public eAestheticsBuilding {
 public:
-    eTallObelisk(eGameBoard& board, const eCityId cid);
+    eTallObelisk(GameBoard& board, const eCityId cid);
 };
 
 class eOrrery : public eAestheticsBuilding {
 public:
-    eOrrery(eGameBoard& board, const eCityId cid);
+    eOrrery(GameBoard& board, const eCityId cid);
 };
 
 class eShellGarden : public eAestheticsBuilding {
 public:
-    eShellGarden(eGameBoard& board, const eCityId cid);
+    eShellGarden(GameBoard& board, const eCityId cid);
 };
 
 class eSundial : public eAestheticsBuilding {
 public:
-    eSundial(eGameBoard& board, const eCityId cid);
+    eSundial(GameBoard& board, const eCityId cid);
 };
 
 class eDolphinSculpture : public eAestheticsBuilding {
 public:
-    eDolphinSculpture(eGameBoard& board, const eCityId cid);
+    eDolphinSculpture(GameBoard& board, const eCityId cid);
 };
 
 class eSpring : public eOverlayAesthBuilding {
 public:
-    eSpring(eGameBoard& board, const eCityId cid);
+    eSpring(GameBoard& board, const eCityId cid);
 };
 
 class eTopiary : public eAestheticsBuilding {
 public:
-    eTopiary(eGameBoard& board, const eCityId cid);
+    eTopiary(GameBoard& board, const eCityId cid);
 };
 
 class eBaths : public eOverlayAesthBuilding {
 public:
-    eBaths(eGameBoard& board, const eCityId cid);
+    eBaths(GameBoard& board, const eCityId cid);
 };
 
 class eStoneCircle : public eOverlayAesthBuilding {
 public:
-    eStoneCircle(eGameBoard& board, const eCityId cid);
+    eStoneCircle(GameBoard& board, const eCityId cid);
 };
 
 class eWaterPark : public eBuilding {
 public:
-    eWaterPark(eGameBoard& board, const eCityId cid);
+    eWaterPark(GameBoard& board, const eCityId cid);
 
     int id() const { return mId; }
     void setId(const int i);
@@ -139,7 +139,7 @@ private:
 
 class eCommemorative : public eBuilding {
 public:
-    eCommemorative(const int id, eGameBoard& board, const eCityId cid);
+    eCommemorative(const int id, GameBoard& board, const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 
@@ -155,7 +155,7 @@ class eGodMonument : public eBuilding {
 public:
     eGodMonument(const eGodType god,
                  const eGodQuestId id,
-                 eGameBoard& board, const eCityId cid);
+                 GameBoard& board, const eCityId cid);
 
     void erase() override;
 
@@ -175,7 +175,7 @@ private:
 
 class eGodMonumentTile : public eBuilding {
 public:
-    eGodMonumentTile(eGameBoard& board, const eCityId cid);
+    eGodMonumentTile(GameBoard& board, const eCityId cid);
 
     void erase() override;
 

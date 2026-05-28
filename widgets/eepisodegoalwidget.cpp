@@ -19,7 +19,7 @@
 #include "engine/e-game-board.h"
 
 void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
-                                    eGameBoard* const board) {
+                                    GameBoard* const board) {
     setType(eFrameType::message);
 
     const auto cont = new eWidget(window());

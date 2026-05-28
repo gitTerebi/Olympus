@@ -8,7 +8,7 @@
 #include <cmath>
 
 eProcessingBuilding::eProcessingBuilding(
-        eGameBoard& board,
+        GameBoard& board,
         const eBaseTex baseTex,
         const double overlayX,
         const double overlayY,

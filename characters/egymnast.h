@@ -5,7 +5,7 @@
 
 class eGymnast : public eBasicPatroler {
 public:
-    eGymnast(eGameBoard& board);
+    eGymnast(GameBoard& board);
 };
 
 #endif // EGYMNAST_H

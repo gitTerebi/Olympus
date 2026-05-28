@@ -16,7 +16,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 
     void rebuildCurrentStage();
     void finishProviding();
@@ -34,9 +34,9 @@ private:
 
 class eHfHA_provideFinish : public eCharActFunc {
 public:
-    eHfHA_provideFinish(eGameBoard& board) :
+    eHfHA_provideFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HfHA_provideFinish) {}
-    eHfHA_provideFinish(eGameBoard& board, eHephaestusHelpAction* const ca) :
+    eHfHA_provideFinish(GameBoard& board, eHephaestusHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::HfHA_provideFinish),
         mTptr(ca) {}
 

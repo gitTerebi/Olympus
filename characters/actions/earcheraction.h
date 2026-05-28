@@ -26,9 +26,9 @@ private:
 
 class eAA_patrolFail : public eCharActFunc {
 public:
-    eAA_patrolFail(eGameBoard& board) :
+    eAA_patrolFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AA_patrolFail) {}
-    eAA_patrolFail(eGameBoard& board, eCharacterAction* const t) :
+    eAA_patrolFail(GameBoard& board, eCharacterAction* const t) :
         eCharActFunc(board, eCharActFuncType::AA_patrolFail),
         mTptr(t) {}
 
@@ -47,9 +47,9 @@ private:
 
 class eAA_patrolFinish : public eCharActFunc {
 public:
-    eAA_patrolFinish(eGameBoard& board) :
+    eAA_patrolFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AA_patrolFinish) {}
-    eAA_patrolFinish(eGameBoard& board, eCharacterAction* const t) :
+    eAA_patrolFinish(GameBoard& board, eCharacterAction* const t) :
         eCharActFunc(board, eCharActFuncType::AA_patrolFinish),
         mTptr(t) {}
 

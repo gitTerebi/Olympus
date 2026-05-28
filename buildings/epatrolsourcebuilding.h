@@ -21,7 +21,7 @@ public:
     using eOverlays = eTextureCollection eBuildingTextures::*;
     using eTarget = std::pair<eCharacterType, eBuildingType>;
     using eTargets = std::vector<eTarget>;
-    ePatrolSourceBuilding(eGameBoard& board,
+    ePatrolSourceBuilding(GameBoard& board,
                           const eBaseTex baseTex,
                           const double overlayX,
                           const double overlayY,

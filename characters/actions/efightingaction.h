@@ -29,7 +29,7 @@ public:
     double absX() const;
     double absY() const;
 
-    void serialize(eSaveArchive& ar, eGameBoard& board);
+    void serialize(eSaveArchive& ar, GameBoard& board);
 private:
     stdptr<eCharacter> mC;
     stdptr<eBuilding> mB;
@@ -50,10 +50,10 @@ public:
 
     static void sSignalBeingAttack(eCharacter* const attacked,
                                    eCharacter* const by,
-                                   eGameBoard& brd);
+                                   GameBoard& brd);
     static void sSignalBeingAttack(eCharacter* const attacked,
                                    const int ttx, const int tty,
-                                   eGameBoard& brd);
+                                   GameBoard& brd);
 
     eLookForEnemyState lookForEnemy(const int by);
 
@@ -107,9 +107,9 @@ private:
 
 class eSA_goToFinish : public eCharActFunc {
 public:
-    eSA_goToFinish(eGameBoard& board) :
+    eSA_goToFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_goToFinish) {}
-    eSA_goToFinish(eGameBoard& board, eCharacter* const c) :
+    eSA_goToFinish(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::SA_goToFinish),
         mCptr(c) {}
 
@@ -128,9 +128,9 @@ private:
 
 class eSA_waitAndGoHomeFinish : public eCharActFunc {
 public:
-    eSA_waitAndGoHomeFinish(eGameBoard& board) :
+    eSA_waitAndGoHomeFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish) {}
-    eSA_waitAndGoHomeFinish(eGameBoard& board, eFightingAction* const a) :
+    eSA_waitAndGoHomeFinish(GameBoard& board, eFightingAction* const a) :
         eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish),
         mAptr(a) {}
 

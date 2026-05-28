@@ -9,7 +9,7 @@ class eGodQuestEvent : public eGodQuestEventBase {
 public:
     eGodQuestEvent(const eCityId cid,
                    const eGameEventBranch branch,
-                   eGameBoard& board);
+                   GameBoard& board);
     ~eGodQuestEvent();
 
     void trigger() override;

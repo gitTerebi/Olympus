@@ -5,7 +5,7 @@
 
 class eAstronomer : public eBasicPatroler {
 public:
-    eAstronomer(eGameBoard& board);
+    eAstronomer(GameBoard& board);
 };
 
 #endif // EASTRONOMER_H

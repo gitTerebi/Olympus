@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eFleeceVendor::eFleeceVendor(eGameBoard& board,
+eFleeceVendor::eFleeceVendor(GameBoard& board,
                              const eCityId cid) :
     eVendor(board,
             eResourceType::fleece, eProvide::fleece,

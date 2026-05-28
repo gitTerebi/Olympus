@@ -3,7 +3,7 @@
 
 #include "infowidgets/einfowidget.h"
 
-class eGameBoard;
+class GameBoard;
 enum class eCityId;
 
 class eMilitaryMoreInfoWidget : public eInfoWidget {
@@ -11,9 +11,9 @@ public:
     eMilitaryMoreInfoWidget(eMainWindow* const window,
                             eMainWidget* const mw);
 
-    void initialize(eGameBoard& board, const eCityId cid);
+    void initialize(GameBoard& board, const eCityId cid);
 private:
-    eGameBoard* mBoard = nullptr;
+    GameBoard* mBoard = nullptr;
 };
 
 #endif // EMILITARYMOREINFOWIDGET_H

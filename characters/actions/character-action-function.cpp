@@ -3,5 +3,5 @@
 #include "characters/echaracter.h"
 
 eCharacterActionFunction::eCharacterActionFunction(
-        eGameBoard& board, const eCharActFuncType t) :
+        GameBoard& board, const eCharActFuncType t) :
     mBoard(board), mType(t) {}

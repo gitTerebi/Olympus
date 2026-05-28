@@ -10,7 +10,7 @@
 eTradeOpenUpEvent::eTradeOpenUpEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::tradeOpensUp,
                branch, board),
     eCityEventValue(board) {}

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eFishingBoat::eFishingBoat(eGameBoard& board) :
+eFishingBoat::eFishingBoat(GameBoard& board) :
     eResourceCollectorBase(board, eCharacterType::fishingBoat) {
     eGameTextures::loadFishingBoat();
 }

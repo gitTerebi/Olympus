@@ -5,7 +5,7 @@
 #include "erand.h"
 
 eDomesticatedAnimal::eDomesticatedAnimal(
-        eGameBoard& board,
+        GameBoard& board,
         const eCharTexs charTexs,
         const eCharacterType type,
         const int maxGroom) :

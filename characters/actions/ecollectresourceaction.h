@@ -78,9 +78,9 @@ private:
 
 class eCRA_collectFinish : public eCharActFunc {
 public:
-    eCRA_collectFinish(eGameBoard& board) :
+    eCRA_collectFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CRA_collectFinish) {}
-    eCRA_collectFinish(eGameBoard& board,
+    eCRA_collectFinish(GameBoard& board,
                        eCollectResourceAction* const ca,
                        eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::CRA_collectFinish),
@@ -108,9 +108,9 @@ private:
 
 class eCRA_collectFail : public eCharActFunc {
 public:
-    eCRA_collectFail(eGameBoard& board) :
+    eCRA_collectFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CRA_collectFail) {}
-    eCRA_collectFail(eGameBoard& board, eTile* const tile) :
+    eCRA_collectFail(GameBoard& board, eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::CRA_collectFail),
         mTile(tile) {}
 
@@ -129,9 +129,9 @@ private:
 
 class eCRA_callCollectedActionFinish : public eCharActFunc {
 public:
-    eCRA_callCollectedActionFinish(eGameBoard& board) :
+    eCRA_callCollectedActionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CRA_callCollectedActionFinish) {}
-    eCRA_callCollectedActionFinish(eGameBoard& board,
+    eCRA_callCollectedActionFinish(GameBoard& board,
                                    eResourceCollectBuildingBase* const b) :
         eCharActFunc(board, eCharActFuncType::CRA_callCollectedActionFinish),
         mBptr(b) {}

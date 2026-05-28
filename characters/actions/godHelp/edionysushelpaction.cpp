@@ -5,7 +5,7 @@ eDionysusHelpAction::eDionysusHelpAction(eCharacter* const c) :
                                eResourceType::wine, 16) {}
 
 bool eDionysusHelpAction::sHelpNeeded(const eCityId cid,
-                                      const eGameBoard& board) {
+                                      const GameBoard& board) {
     return eProvideResourceHelpAction::sHelpNeeded(
                 cid, board, eResourceType::wine, 8);
 }

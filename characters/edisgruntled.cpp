@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eDisgruntled::eDisgruntled(eGameBoard& board) :
+eDisgruntled::eDisgruntled(GameBoard& board) :
     eFightingPatroler(board, &eCharacterTextures::fDisgruntled,
                       eCharacterType::disgruntled) {
     eGameTextures::loadDisgruntled();

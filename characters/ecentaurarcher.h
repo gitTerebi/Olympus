@@ -5,7 +5,7 @@
 
 class eCentaurArcher : public eArcherBase {
 public:
-    eCentaurArcher(eGameBoard& board);
+    eCentaurArcher(GameBoard& board);
 };
 
 #endif // ECENTAURARCHER_H

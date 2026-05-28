@@ -40,9 +40,9 @@ private:
 
 class eFFA_lookForFireFail : public eCharActFunc {
 public:
-    eFFA_lookForFireFail(eGameBoard& board) :
+    eFFA_lookForFireFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::FFA_lookForFireFail) {}
-    eFFA_lookForFireFail(eGameBoard& board,
+    eFFA_lookForFireFail(GameBoard& board,
                          eFireFighterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::FFA_lookForFireFail),
         mPtr(ca) {}
@@ -67,9 +67,9 @@ private:
 
 class eFFA_putOutFireFinish : public eCharActFunc {
 public:
-    eFFA_putOutFireFinish(eGameBoard& board) :
+    eFFA_putOutFireFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::FFA_putOutFireFinish) {}
-    eFFA_putOutFireFinish(eGameBoard& board, eCharacter* const c,
+    eFFA_putOutFireFinish(GameBoard& board, eCharacter* const c,
                           eTile* const t) :
         eCharActFunc(board, eCharActFuncType::FFA_putOutFireFinish),
         mCptr(c), mTile(t) {}

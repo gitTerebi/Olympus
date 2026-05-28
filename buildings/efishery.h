@@ -15,7 +15,7 @@ enum class eFisheryState {
 
 class eFishery : public eResourceCollectBuildingBase {
 public:
-    eFishery(eGameBoard& board,
+    eFishery(GameBoard& board,
              const eDiagonalOrientation o,
              const eCityId cid);
     ~eFishery();

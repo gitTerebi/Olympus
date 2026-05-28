@@ -5,7 +5,7 @@
 
 class eLaboratory : public ePatrolTarget {
 public:
-    eLaboratory(eGameBoard& board, const eCityId cid);
+    eLaboratory(GameBoard& board, const eCityId cid);
 };
 
 #endif // ELABORATORY_H

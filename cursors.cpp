@@ -1,16 +1,17 @@
-#include "ecursors.h"
+#include "cursors.h"
 
 #include "egamedir.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-SDL_Cursor* eCursors::sDefault = nullptr;
-SDL_Cursor* eCursors::sShovel  = nullptr;
-SDL_Cursor* eCursors::sRepairMallet = nullptr;
-SDL_Cursor* eCursors::sStamp = nullptr;
+SDL_Cursor* Cursors::sDefault = nullptr;
+SDL_Cursor* Cursors::sShovel  = nullptr;
+SDL_Cursor* Cursors::sRepairMallet = nullptr;
+SDL_Cursor* Cursors::sStamp = nullptr;
+SDL_Cursor* Cursors::sSword = nullptr;
 
-SDL_Cursor* eCursors::load(const char* filename, int hotX, int hotY) {
+SDL_Cursor* Cursors::load(const char* filename, int hotX, int hotY) {
     const auto path = eGameDir::cursorsDir() + filename;
     SDL_Surface* surf = IMG_Load(path.c_str());
     if(!surf) {
@@ -23,38 +24,44 @@ SDL_Cursor* eCursors::load(const char* filename, int hotX, int hotY) {
     return cursor;
 }
 
-bool eCursors::initialize() {
+bool Cursors::initialize() {
     sDefault = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     sShovel  = load("shovel_5_26.png", 5, 26);
     sRepairMallet = load("repair_5_26.png", 5, 26);
     sStamp = load("stamp.png", 5, 26);
-    return sShovel != nullptr && sRepairMallet != nullptr && sStamp != nullptr;
+    sSword = load("sword_0_0.png", 0, 0);
+    return sShovel != nullptr && sRepairMallet != nullptr && sStamp != nullptr && sSword != nullptr;
 }
 
-void eCursors::destroy() {
+void Cursors::destroy() {
     SDL_FreeCursor(sDefault);
     SDL_FreeCursor(sShovel);
     SDL_FreeCursor(sRepairMallet);
     SDL_FreeCursor(sStamp);
+    SDL_FreeCursor(sSword);
     sShovel  = nullptr;
     sRepairMallet = nullptr;
     sStamp = nullptr;
+    sSword = nullptr;
     sDefault = nullptr;
 }
 
-void eCursors::set(const eCursorType type) {
+void Cursors::set(const CursorType type) {
     switch(type) {
-    case eCursorType::defaultCursor:
+    case CursorType::defaultCursor:
         if(sDefault) SDL_SetCursor(sDefault);
         break;
-    case eCursorType::shovel:
+    case CursorType::shovel:
         if(sShovel) SDL_SetCursor(sShovel);
         break;
-    case eCursorType::repairMallet:
+    case CursorType::repairMallet:
         if(sRepairMallet) SDL_SetCursor(sRepairMallet);
         break;
-    case eCursorType::stamp:
+    case CursorType::stamp:
         if(sStamp) SDL_SetCursor(sStamp);
+        break;
+    case CursorType::sword:
+        if(sSword) SDL_SetCursor(sSword);
         break;
     }
 }

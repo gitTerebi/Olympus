@@ -17,7 +17,7 @@ eCharacterAction::~eCharacterAction() {
     }
 }
 
-eGameBoard& eCharacterAction::board() const {
+GameBoard& eCharacterAction::board() const {
     if(mCharacter) {
         const auto t = mCharacter->tile();
         if(t) return t->board();
@@ -26,7 +26,7 @@ eGameBoard& eCharacterAction::board() const {
     return mBoard;
 }
 
-eGameBoard& eCharacterAction::board() {
+GameBoard& eCharacterAction::board() {
     return const_cast<const eCharacterAction*>(this)->board();
 }
 

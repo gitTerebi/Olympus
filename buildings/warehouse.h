@@ -5,7 +5,7 @@
 
 class Warehouse : public WarehouseBase {
 public:
-    Warehouse(eGameBoard& board, const eCityId cid);
+    Warehouse(GameBoard& board, const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
     eTextureSpace getTextureSpace(const int tx, const int ty,

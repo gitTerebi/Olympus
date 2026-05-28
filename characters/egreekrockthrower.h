@@ -5,7 +5,7 @@
 
 class eGreekRockThrower : public eRockThrowerBase {
 public:
-    eGreekRockThrower(eGameBoard& board);
+    eGreekRockThrower(GameBoard& board);
 };
 
 #endif // EGREEKROCKTHROWER_H

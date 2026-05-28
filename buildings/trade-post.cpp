@@ -128,7 +128,7 @@ void sSortTradePostDrawSlots(std::vector<TradePostDrawSlot>& slots) {
 
 } // namespace
 
-TradePost::TradePost(eGameBoard& board, eWorldCity& city,
+TradePost::TradePost(GameBoard& board, eWorldCity& city,
                        const eCityId cid,
                        const eTradePostType type) :
     WarehouseBase(board, eBuildingType::tradePost, 4, 4, 24,
@@ -142,7 +142,7 @@ TradePost::TradePost(eGameBoard& board, eWorldCity& city,
 
     switch(type) {
     case eTradePostType::pier: {
-        setCharacterCreator([](eTile* const tile, eGameBoard& board) {
+        setCharacterCreator([](eTile* const tile, GameBoard& board) {
             const auto r = e::make_shared<eTradeBoat>(board);
             r->changeTile(tile);
             return r;
@@ -150,7 +150,7 @@ TradePost::TradePost(eGameBoard& board, eWorldCity& city,
         setWalkable(eWalkableObject::sCreate(eWalkableObjectType::deepWater));;
     } break;
     case eTradePostType::post: {
-        setCharacterCreator([](eTile* const tile, eGameBoard& board) {
+        setCharacterCreator([](eTile* const tile, GameBoard& board) {
             const auto r = e::make_shared<eTrader>(board);
             r->changeTile(tile);
             return r;

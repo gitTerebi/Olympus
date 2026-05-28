@@ -27,7 +27,7 @@ public:
                               const eEvent giftPartialSpace,
                               const eGameEventType type,
                               const eGameEventBranch branch,
-                              eGameBoard& board);
+                              GameBoard& board);
 
     void initialize(const bool postpone,
                     const eResourceType res,

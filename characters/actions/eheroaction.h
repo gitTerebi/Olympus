@@ -55,9 +55,9 @@ private:
 
 class eHA_patrolFail : public eCharActFunc {
 public:
-    eHA_patrolFail(eGameBoard& board) :
+    eHA_patrolFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HA_patrolFail) {}
-    eHA_patrolFail(eGameBoard& board, eHeroAction* const ca) :
+    eHA_patrolFail(GameBoard& board, eHeroAction* const ca) :
         eCharActFunc(board, eCharActFuncType::HA_patrolFail),
         mTptr(ca) {}
 
@@ -78,9 +78,9 @@ private:
 
 class eHA_huntMonsterFinish : public eCharActFunc {
 public:
-    eHA_huntMonsterFinish(eGameBoard& board) :
+    eHA_huntMonsterFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HA_huntMonsterFinish) {}
-    eHA_huntMonsterFinish(eGameBoard& board, eHeroAction* const ca) :
+    eHA_huntMonsterFinish(GameBoard& board, eHeroAction* const ca) :
         eCharActFunc(board, eCharActFuncType::HA_huntMonsterFinish),
         mTptr(ca) {}
 
@@ -98,9 +98,9 @@ private:
 
 class eHA_fightMonsterDie : public eCharActFunc {
 public:
-    eHA_fightMonsterDie(eGameBoard& board) :
+    eHA_fightMonsterDie(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HA_fightMonsterDie) {}
-    eHA_fightMonsterDie(eGameBoard& board, eMonster* const m) :
+    eHA_fightMonsterDie(GameBoard& board, eMonster* const m) :
         eCharActFunc(board, eCharActFuncType::HA_fightMonsterDie),
         mMptr(m) {}
 
@@ -128,9 +128,9 @@ private:
 
 class eHA_waitAndGoToHallFinish : public eCharActFunc {
 public:
-    eHA_waitAndGoToHallFinish(eGameBoard& board) :
+    eHA_waitAndGoToHallFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::HA_waitAndGoToHallFinish) {}
-    eHA_waitAndGoToHallFinish(eGameBoard& board, eHeroAction* const a) :
+    eHA_waitAndGoToHallFinish(GameBoard& board, eHeroAction* const a) :
         eCharActFunc(board, eCharActFuncType::HA_waitAndGoToHallFinish),
         mAptr(a) {}
 

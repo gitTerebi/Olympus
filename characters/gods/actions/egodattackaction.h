@@ -87,9 +87,9 @@ private:
 
 class eGAA_loserDisappearFinish : public eCharActFunc {
 public:
-    eGAA_loserDisappearFinish(eGameBoard& board) :
+    eGAA_loserDisappearFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish) {}
-    eGAA_loserDisappearFinish(eGameBoard& board, eGodMonsterAction* const ca) :
+    eGAA_loserDisappearFinish(GameBoard& board, eGodMonsterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish),
         mLoserPtr(ca) {}
 
@@ -111,9 +111,9 @@ private:
 
 class eGAA_destroyBuildingFinish : public eCharActFunc {
 public:
-    eGAA_destroyBuildingFinish(eGameBoard& board) :
+    eGAA_destroyBuildingFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_destroyBuildingFinish) {}
-    eGAA_destroyBuildingFinish(eGameBoard& board,
+    eGAA_destroyBuildingFinish(GameBoard& board,
                                eGodAttackAction* const tptr,
                                eBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::GAA_destroyBuildingFinish),
@@ -143,9 +143,9 @@ private:
 
 class eGAA_rangeAttackFinish : public eCharActFunc {
 public:
-    eGAA_rangeAttackFinish(eGameBoard& board) :
+    eGAA_rangeAttackFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish) {}
-    eGAA_rangeAttackFinish(eGameBoard& board, eGodAttackAction* const ca) :
+    eGAA_rangeAttackFinish(GameBoard& board, eGodAttackAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish),
         mTptr(ca) {}
 
@@ -167,9 +167,9 @@ private:
 
 class eTeleportFindFailFunc : public eFindFailFunc {
 public:
-    eTeleportFindFailFunc(eGameBoard& board) :
+    eTeleportFindFailFunc(GameBoard& board) :
         eFindFailFunc(board, eFindFailFuncType::teleport) {}
-    eTeleportFindFailFunc(eGameBoard& board, eGodAction* const ca) :
+    eTeleportFindFailFunc(GameBoard& board, eGodAction* const ca) :
         eFindFailFunc(board, eFindFailFuncType::teleport),
         mTptr(ca) {}
 
@@ -191,9 +191,9 @@ private:
 
 class eGodObsticleHandler : public eObsticleHandler {
 public:
-    eGodObsticleHandler(eGameBoard& board) :
+    eGodObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::god) {}
-    eGodObsticleHandler(eGameBoard& board,
+    eGodObsticleHandler(GameBoard& board,
                         eGodAttackAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::god),
         mTptr(t) {}

@@ -49,7 +49,7 @@
 #include "epathfinder.h"
 #include "eevent.h"
 
-BoardCity::BoardCity(const eCityId cid, eGameBoard& board) :
+BoardCity::BoardCity(const eCityId cid, GameBoard& board) :
     mBoard(board),
     mId(cid),
     mCityEvents(cid, board),

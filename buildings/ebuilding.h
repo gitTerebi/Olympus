@@ -11,7 +11,7 @@
 
 #include "erand.h"
 
-class eGameBoard;
+class GameBoard;
 class eSaveArchive;
 class eTile;
 
@@ -265,7 +265,7 @@ struct eTextureSpace {
 
 class eBuilding : public eObject {
 public:
-    eBuilding(eGameBoard& board,
+    eBuilding(GameBoard& board,
               const eBuildingType type,
               const int sw, const int sh,
               const eCityId cid);
@@ -374,7 +374,7 @@ public:
 
 protected:
     virtual void serializeFields(eSaveArchive& ar);
-    eGameBoard& ownerBoard() const;
+    GameBoard& ownerBoard() const;
 public:
 
     void setIOID(const int id);

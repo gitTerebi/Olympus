@@ -5,7 +5,7 @@ eArtemisHelpAction::eArtemisHelpAction(eCharacter* const c) :
                                eResourceType::meat, 32) {}
 
 bool eArtemisHelpAction::sHelpNeeded(const eCityId cid,
-                                     const eGameBoard& board) {
+                                     const GameBoard& board) {
     return eProvideResourceHelpAction::sHelpNeeded(
                 cid, board, eResourceType::meat, 18);
 }

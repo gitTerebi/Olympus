@@ -47,7 +47,7 @@ public:
     using eDrawAgora = std::function<void(int tx, int ty, int id)>;
     using eDrawStampAgora = std::function<void(const eStampBuildCommand& cmd)>;
 
-    void paintPreview(int baseX, int baseY, class eGameBoard* board,
+    void paintPreview(int baseX, int baseY, class GameBoard* board,
                       bool editorMode, eCityId viewedCityId, ePlayerId playerId,
                       const eDrawXY& drawXY, const eDrawTex& drawTex,
                       const eDrawAgora& drawAgora,

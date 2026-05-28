@@ -70,7 +70,7 @@ std::string attitudeTextToPlayer(const stdsptr<eWorldCity> &c,
 }
 
 void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
-                                     eGameBoard *const board,
+                                     GameBoard *const board,
                                      eWorldBoard *const wb)
 {
     if (!c)

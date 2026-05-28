@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cstdio>
 
-eVendor::eVendor(eGameBoard& board,
+eVendor::eVendor(GameBoard& board,
                  const eResourceType resType,
                  const eProvide provType,
                  const eBaseTex& baseTex,

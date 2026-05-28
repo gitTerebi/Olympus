@@ -3,7 +3,7 @@
 #include "textures/echaractertextures.h"
 #include "textures/egametextures.h"
 
-eAtlanteanChariot::eAtlanteanChariot(eGameBoard& board) :
+eAtlanteanChariot::eAtlanteanChariot(GameBoard& board) :
     eChariotBase(board, &eCharacterTextures::fAtlanteanChariot,
                  eCharacterType::atlanteanChariot) {
     eGameTextures::loadAtlanteanChariot();

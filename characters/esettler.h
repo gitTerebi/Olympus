@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eSettler : public eBasicPatroler {
 public:
-    eSettler(eGameBoard& board);
+    eSettler(GameBoard& board);
 
     void setEmigrant(const bool e);
     bool emigrant() const { return mEmigrant; }

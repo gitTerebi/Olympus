@@ -49,9 +49,9 @@ private:
 
 class eTA_tradeFail : public eCharActFunc {
 public:
-    eTA_tradeFail(eGameBoard& board) :
+    eTA_tradeFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::TA_tradeFail) {}
-    eTA_tradeFail(eGameBoard& board, TraderAction* const t) :
+    eTA_tradeFail(GameBoard& board, TraderAction* const t) :
         eCharActFunc(board, eCharActFuncType::TA_tradeFail),
         mTptr(t) {}
 
@@ -70,9 +70,9 @@ private:
 
 class eTA_tradeFinish : public eCharActFunc {
 public:
-    eTA_tradeFinish(eGameBoard& board) :
+    eTA_tradeFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::TA_tradeFinish) {}
-    eTA_tradeFinish(eGameBoard& board, TraderAction* const t) :
+    eTA_tradeFinish(GameBoard& board, TraderAction* const t) :
         eCharActFunc(board, eCharActFuncType::TA_tradeFinish),
         mTptr(t) {}
 
@@ -91,9 +91,9 @@ private:
 
 class eTA_goToTradePostFinish : public eCharActFunc {
 public:
-    eTA_goToTradePostFinish(eGameBoard& board) :
+    eTA_goToTradePostFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::TA_goToTradePostFinish) {}
-    eTA_goToTradePostFinish(eGameBoard& board, TraderAction* const t) :
+    eTA_goToTradePostFinish(GameBoard& board, TraderAction* const t) :
         eCharActFunc(board, eCharActFuncType::TA_goToTradePostFinish),
         mTptr(t) {}
 

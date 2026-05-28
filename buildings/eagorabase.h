@@ -16,7 +16,7 @@ class eSaveArchive;
 
 class eAgoraBase : public ePatrolBuildingBase {
 public:
-    eAgoraBase(eGameBoard& board,
+    eAgoraBase(GameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
                const eAgoraOrientation o,

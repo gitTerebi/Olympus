@@ -5,7 +5,7 @@
 
 class eCompetitor : public eBasicPatroler {
 public:
-    eCompetitor(eGameBoard& board);
+    eCompetitor(GameBoard& board);
 };
 
 #endif // ECOMPETITOR_H

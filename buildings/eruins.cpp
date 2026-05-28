@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
 
-eRuins::eRuins(eGameBoard& board, const eCityId cid) :
+eRuins::eRuins(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::ruins, 1, 1, cid) {
 
 }

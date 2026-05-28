@@ -9,14 +9,14 @@ class eSaveArchive;
 class ePyramidElement : public eSanctBuilding {
 public:
     ePyramidElement(const std::vector<eSanctCost>& cost,
-                    eGameBoard& board,
+                    GameBoard& board,
                     const eBuildingType type,
                     const int elevation,
                     const int dim,
                     const eCityId cid);
     ePyramidElement(ePyramid* const pyramid,
                     const std::vector<eSanctCost>& cost,
-                    eGameBoard& board,
+                    GameBoard& board,
                     const eBuildingType type,
                     const int elevation,
                     const int dim,

@@ -5,7 +5,7 @@
 
 class eTrader : public eBasicPatroler {
 public:
-    eTrader(eGameBoard& board);
+    eTrader(GameBoard& board);
 
     void createFollowers();
 

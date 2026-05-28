@@ -34,7 +34,7 @@ StorageDistributionWidget::StorageDistributionWidget(
     eMainWidget *const mw) : eInfoWidget(window, mw, false, false) {}
 
 void StorageDistributionWidget::initialize(
-    eGameBoard &board, const eCityId cid)
+    GameBoard &board, const eCityId cid)
 {
     const int panelW = std::round(window()->width() * 0.80);
 

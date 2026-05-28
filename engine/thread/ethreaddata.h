@@ -9,7 +9,7 @@
 
 #include "engine/thread/ethreadboardhandler.h"
 
-class eGameBoard;
+class GameBoard;
 class eTask;
 
 struct eTrueBool {
@@ -28,7 +28,7 @@ public:
     void updateBoard(const eCityId cid);
     eThreadBoard& board(const eCityId cid);
 
-    void update(eGameBoard& board, const eCityId cid,
+    void update(GameBoard& board, const eCityId cid,
                 const eStateRelevance rel);
 
     std::atomic_bool fBusy{false};

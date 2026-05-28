@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eResourceBuildingBase : public eEmployingBuilding {
 public:
-    eResourceBuildingBase(eGameBoard& board,
+    eResourceBuildingBase(GameBoard& board,
                           const eBuildingType type,
                           const int sw, const int sh,
                           const int maxEmployees,

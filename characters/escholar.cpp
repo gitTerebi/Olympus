@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eScholar::eScholar(eGameBoard& board) :
+eScholar::eScholar(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fScholar,
                    eCharacterType::scholar) {
     eGameTextures::loadScholar();

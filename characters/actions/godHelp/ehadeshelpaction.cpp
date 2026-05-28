@@ -86,7 +86,7 @@ void eHadesHelpAction::finishGiving() {
 }
 
 bool eHadesHelpAction::sHelpNeeded(const eCityId cid,
-                                   const eGameBoard& board) {
+                                   const GameBoard& board) {
     return board.hasPalace(cid);
 }
 

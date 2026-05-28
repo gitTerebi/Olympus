@@ -36,9 +36,9 @@ private:
 
 class eGMinA_huntMonsterFinish : public eCharActFunc {
 public:
-    eGMinA_huntMonsterFinish(eGameBoard& board) :
+    eGMinA_huntMonsterFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMinA_huntMonsterFinish) {}
-    eGMinA_huntMonsterFinish(eGameBoard& board, eGodMinionAction* const ca) :
+    eGMinA_huntMonsterFinish(GameBoard& board, eGodMinionAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GMinA_huntMonsterFinish),
         mTptr(ca) {}
 

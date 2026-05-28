@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eActor::eActor(eGameBoard& board) :
+eActor::eActor(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fActor,
                    eCharacterType::actor) {
     setProvide(eProvide::actorAstronomer, 10000);

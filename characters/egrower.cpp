@@ -3,7 +3,7 @@
 #include "fileIO/esavearchive.h"
 #include "textures/egametextures.h"
 
-eGrower::eGrower(eGameBoard& board) :
+eGrower::eGrower(GameBoard& board) :
     eCharacter(board, eCharacterType::grower) {
     eGameTextures::loadGrower();
 }

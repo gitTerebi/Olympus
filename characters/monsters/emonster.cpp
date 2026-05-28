@@ -8,7 +8,7 @@
 
 #include "elanguage.h"
 
-eMonster::eMonster(eGameBoard& board, const eMonsterType mt) :
+eMonster::eMonster(GameBoard& board, const eMonsterType mt) :
     eCharacter(board, sMonsterToCharacterType(mt)) {
     setAttack(0.5);
 }
@@ -74,7 +74,7 @@ int eMonster::sMonsterAttackTime(const eMonsterType type) {
     return 500;
 }
 
-stdsptr<eMonster> eMonster::sCreateMonster(const eMonsterType type, eGameBoard& board) {
+stdsptr<eMonster> eMonster::sCreateMonster(const eMonsterType type, GameBoard& board) {
     switch(type) {
     case eMonsterType::calydonianBoar:
         return e::make_shared<eCalydonianBoar>(board);

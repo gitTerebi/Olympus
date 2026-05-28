@@ -5,7 +5,7 @@
 
 class eEnemyBoat : public eBoatBase {
 public:
-    eEnemyBoat(eGameBoard& board);
+    eEnemyBoat(GameBoard& board);
 };
 
 #endif // EENEMYBOAT_H

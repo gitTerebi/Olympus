@@ -65,9 +65,9 @@ enum class eGames {
 };
 
 class BoardCity {
-    friend class eGameBoard;
+    friend class GameBoard;
 public:
-    BoardCity(const eCityId cid, eGameBoard& board);
+    BoardCity(const eCityId cid, GameBoard& board);
     ~BoardCity();
 
     eCityId id() const { return mId; }
@@ -450,7 +450,7 @@ private:
     void updateForestTiles();
     void updateCityDefense();
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     eCityId mId;
     int mBasePrice = 5000;

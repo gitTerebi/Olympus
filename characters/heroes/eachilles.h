@@ -5,42 +5,42 @@
 
 class eAchilles : public eBasicHero {
 public:
-    eAchilles(eGameBoard& board);
+    eAchilles(GameBoard& board);
 };
 
 class eAtalanta : public eBasicHero {
 public:
-    eAtalanta(eGameBoard& board);
+    eAtalanta(GameBoard& board);
 };
 
 class eBellerophon : public eBasicHero {
 public:
-    eBellerophon(eGameBoard& board);
+    eBellerophon(GameBoard& board);
 };
 
 class eHercules : public eBasicHero {
 public:
-    eHercules(eGameBoard& board);
+    eHercules(GameBoard& board);
 };
 
 class eJason : public eBasicHero {
 public:
-    eJason(eGameBoard& board);
+    eJason(GameBoard& board);
 };
 
 class eOdysseus : public eBasicHero {
 public:
-    eOdysseus(eGameBoard& board);
+    eOdysseus(GameBoard& board);
 };
 
 class ePerseus : public eBasicHero {
 public:
-    ePerseus(eGameBoard& board);
+    ePerseus(GameBoard& board);
 };
 
 class eTheseus : public eBasicHero {
 public:
-    eTheseus(eGameBoard& board);
+    eTheseus(GameBoard& board);
 };
 
 #endif // EACHILLES_H

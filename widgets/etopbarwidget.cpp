@@ -117,7 +117,7 @@ void eTopBarWidget::initialize() {
     layoutHorizontally();
 }
 
-void eTopBarWidget::setBoard(eGameBoard* const board) {
+void eTopBarWidget::setBoard(GameBoard* const board) {
     mBoard = board;
 }
 

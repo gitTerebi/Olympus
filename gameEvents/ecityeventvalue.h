@@ -8,7 +8,7 @@ class eSaveArchive;
 class eCityEventValue {
 public:
     using eValidator = std::function<bool(eWorldCity&)>;
-    eCityEventValue(eGameBoard& board,
+    eCityEventValue(GameBoard& board,
                     const eValidator& v = nullptr);
 
     void setSingleCity(const stdsptr<eWorldCity>& c);
@@ -20,7 +20,7 @@ public:
     int maxCityId() const { return mMaxCityId; }
     void setMaxCityId(const int max) { mMaxCityId = max; }
 protected:
-    void serialize(eSaveArchive& ar, eGameBoard& board);
+    void serialize(eSaveArchive& ar, GameBoard& board);
 
     void chooseCity();
 
@@ -33,7 +33,7 @@ protected:
 private:
     int chooseCityId() const;
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const eValidator mValidator;
 };
 

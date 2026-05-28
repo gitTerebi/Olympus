@@ -3,7 +3,7 @@
 #include "characters/escholar.h"
 #include "textures/egametextures.h"
 
-eBibliotheke::eBibliotheke(eGameBoard& board,
+eBibliotheke::eBibliotheke(GameBoard& board,
                            const eCityId cid) :
     ePatrolBuilding(board,
                     &eBuildingTextures::fBibliotheke,

@@ -21,7 +21,7 @@ void eMilitaryAid::goBack() {
     fSoldiers.clear();
 }
 
-void eMilitaryAid::serialize(eSaveArchive& ar, eGameBoard* board) {
+void eMilitaryAid::serialize(eSaveArchive& ar, GameBoard* board) {
     ar.worldCityField("city", board, fCity);
     if(ar.reading()) {
         auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();

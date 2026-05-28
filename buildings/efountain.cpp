@@ -3,7 +3,7 @@
 #include "characters/ewaterdistributor.h"
 #include "textures/egametextures.h"
 
-eFountain::eFountain(eGameBoard& board,
+eFountain::eFountain(GameBoard& board,
                      const eCityId cid) :
     ePatrolBuilding(board,
                     &eBuildingTextures::fFountain,

@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 
-eHopliteBase::eHopliteBase(eGameBoard& board,
+eHopliteBase::eHopliteBase(GameBoard& board,
                            const eCharTexs charTexs,
                            const eCharacterType type) :
     eSoldier(board, charTexs, type) {

@@ -5,7 +5,7 @@
 
 #include "engine/ewagerate.h"
 
-class eGameBoard;
+class GameBoard;
 class eLabel;
 
 class eEmploymentDataWidget : public eDataWidget {

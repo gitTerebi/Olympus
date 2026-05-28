@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
 
-eHunter::eHunter(eGameBoard& board) :
+eHunter::eHunter(GameBoard& board) :
     eResourceCollector(board, &eCharacterTextures::fHunter,
                        eCharacterType::hunter) {
     eGameTextures::loadHunter();

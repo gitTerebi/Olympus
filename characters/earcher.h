@@ -5,7 +5,7 @@
 
 class eArcher : public eCharacter {
 public:
-    eArcher(eGameBoard& board);
+    eArcher(GameBoard& board);
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const;

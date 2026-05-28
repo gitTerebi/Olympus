@@ -11,7 +11,7 @@ class eSaveArchive;
 
 class eGrowersLodge : public eEmployingBuilding {
 public:
-    eGrowersLodge(eGameBoard& board, const eGrowerType type,
+    eGrowersLodge(GameBoard& board, const eGrowerType type,
                   const eCityId cid);
     ~eGrowersLodge();
     void erase() override;

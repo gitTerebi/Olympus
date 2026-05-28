@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eSick::eSick(eGameBoard& board) :
+eSick::eSick(GameBoard& board) :
     eFightingPatroler(board, &eCharacterTextures::fSick,
                       eCharacterType::sick) {
     eGameTextures::loadSick();

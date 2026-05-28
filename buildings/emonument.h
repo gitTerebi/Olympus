@@ -9,7 +9,7 @@ class eSaveArchive;
 
 class eMonument : public eEmployingBuilding {
 public:
-    eMonument(eGameBoard& board,
+    eMonument(GameBoard& board,
               const eBuildingType type,
               const int sw, const int sh,
               const int maxEmployees,

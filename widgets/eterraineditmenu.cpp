@@ -10,7 +10,7 @@
 #include "elanguage.h"
 
 void eTerrainEditMenu::initialize(GameWidget* const gw,
-                                  eGameBoard* const board) {
+                                  GameBoard* const board) {
     eGameMenuBase::initialize();
 
     int iRes;
@@ -432,7 +432,7 @@ int eTerrainEditMenu::brushSize() const {
     return mBrushSize;
 }
 
-void eTerrainEditMenu::updateCitiesOnBoard(eGameBoard& board) {
+void eTerrainEditMenu::updateCitiesOnBoard(GameBoard& board) {
     for(const auto tb : mTerrioryButtons) {
         tb.second->deleteLater();
     }

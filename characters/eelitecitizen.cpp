@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eEliteCitizen::eEliteCitizen(eGameBoard& board) :
+eEliteCitizen::eEliteCitizen(GameBoard& board) :
     eFightingPatroler(board, &eCharacterTextures::fEliteCitizen,
                       eCharacterType::eliteCitizen) {
     eGameTextures::loadEliteCitizen();

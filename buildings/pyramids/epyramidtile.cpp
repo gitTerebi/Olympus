@@ -4,7 +4,7 @@
 #include "epyramid.h"
 
 ePyramidTile::ePyramidTile(const std::vector<eSanctCost>& cost,
-                           eGameBoard& board,
+                           GameBoard& board,
                            const int elevation,
                            const int type,
                            const eCityId cid) :
@@ -15,7 +15,7 @@ ePyramidTile::ePyramidTile(const std::vector<eSanctCost>& cost,
 }
 
 ePyramidTile::ePyramidTile(ePyramid* const pyramid,
-                           eGameBoard& board,
+                           GameBoard& board,
                            const int elevation,
                            const int type,
                            const eCityId cid) :

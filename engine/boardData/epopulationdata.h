@@ -2,7 +2,7 @@
 #define EPOPULATIONDATA_H
 
 class ePopulationData {
-    friend class eGameBoard;
+    friend class GameBoard;
     friend class BoardCity;
 public:
     ePopulationData();

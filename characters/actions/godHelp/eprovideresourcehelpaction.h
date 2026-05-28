@@ -22,7 +22,7 @@ public:
     void decCount(const int by);
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board,
+                            const GameBoard& board,
                             const eResourceType res,
                             const int minSpace);
 
@@ -45,7 +45,7 @@ private:
 
 class eGodProvideResourceAct : public eGodAct {
 public:
-    eGodProvideResourceAct(eGameBoard& board,
+    eGodProvideResourceAct(GameBoard& board,
                            eProvideResourceHelpAction* const action,
                            eStorageBuilding* const target,
                            const eResourceType resource,
@@ -56,7 +56,7 @@ public:
         mResource(resource),
         mCount(count) {}
 
-    eGodProvideResourceAct(eGameBoard& board) :
+    eGodProvideResourceAct(GameBoard& board) :
         eGodProvideResourceAct(board, nullptr, nullptr,
                                eResourceType::meat, 0) {}
 
@@ -90,9 +90,9 @@ private:
 
 class ePRHA_giveFinish : public eCharActFunc {
 public:
-    ePRHA_giveFinish(eGameBoard& board) :
+    ePRHA_giveFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::PRHA_giveFinish) {}
-    ePRHA_giveFinish(eGameBoard& board, eProvideResourceHelpAction* const ca) :
+    ePRHA_giveFinish(GameBoard& board, eProvideResourceHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::PRHA_giveFinish),
         mTptr(ca) {}
 

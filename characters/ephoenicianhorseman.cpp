@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-ePhoenicianHorseman::ePhoenicianHorseman(eGameBoard& board) :
+ePhoenicianHorseman::ePhoenicianHorseman(GameBoard& board) :
     eHorsemanBase(board, &eCharacterTextures::fPhoenicianHorseman,
                   eCharacterType::phoenicianHorseman) {
     eGameTextures::loadPhoenicianHorseman();

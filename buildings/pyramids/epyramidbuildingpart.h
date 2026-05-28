@@ -8,11 +8,11 @@ class eSaveArchive;
 class ePyramidBuildingPart : public ePyramidElement {
 public:
     ePyramidBuildingPart(const std::vector<eSanctCost>& cost,
-                         eGameBoard& board,
+                         GameBoard& board,
                          const int elevation,
                          const eCityId cid);
     ePyramidBuildingPart(ePyramid* const pyramid,
-                         eGameBoard& board,
+                         GameBoard& board,
                          const int elevation,
                          const eCityId cid);
 

@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eChariotVendor::eChariotVendor(eGameBoard& board,
+eChariotVendor::eChariotVendor(GameBoard& board,
                                const eCityId cid) :
     eVendor(board,
             eResourceType::chariot, eProvide::horses,

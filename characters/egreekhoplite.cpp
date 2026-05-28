@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eGreekHoplite::eGreekHoplite(eGameBoard& board) :
+eGreekHoplite::eGreekHoplite(GameBoard& board) :
     eHopliteBase(board, &eCharacterTextures::fGreekHoplite,
                  eCharacterType::greekHoplite) {
     eGameTextures::loadGreekHoplite();

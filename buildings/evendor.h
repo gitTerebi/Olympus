@@ -11,7 +11,7 @@ public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eCharacter>()>;
-    eVendor(eGameBoard& board,
+    eVendor(GameBoard& board,
             const eResourceType resType,
             const eProvide provType,
             const eBaseTex& baseTex,

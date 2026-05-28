@@ -8,7 +8,7 @@
 #include "fileIO/esavearchive.h"
 
 eResourceCollectBuilding::eResourceCollectBuilding(
-        eGameBoard& board,
+        GameBoard& board,
         const eBaseTex baseTex,
         const double overlayX,
         const double overlayY,

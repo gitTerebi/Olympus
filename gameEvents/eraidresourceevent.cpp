@@ -9,7 +9,7 @@
 eRaidResourceEvent::eRaidResourceEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eResourceGrantedEventBase(
         cid,
         eEvent::raidCashAccepted,

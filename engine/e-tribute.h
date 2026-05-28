@@ -5,7 +5,7 @@
 #include "eresourcetype.h"
 
 class eWorldCity;
-class eGameBoard;
+class GameBoard;
 
 struct eTributePayment {
     eResourceType fType;
@@ -16,11 +16,11 @@ namespace eTributeHelpers {
     eTributePayment receiveTribute(const eWorldCity& city);
     eTributePayment payTribute(const eWorldCity& city,
                                const eDifficulty diff);
-    void receiveTributeFromCity(eGameBoard& board,
+    void receiveTributeFromCity(GameBoard& board,
                                  const ePlayerId pid,
                                  const stdsptr<eWorldCity>& city,
                                  const bool postpone);
-    void payTributeToCity(eGameBoard& board,
+    void payTributeToCity(GameBoard& board,
                           const eCityId playerCityId,
                           const stdsptr<eWorldCity>& parentCity);
 }

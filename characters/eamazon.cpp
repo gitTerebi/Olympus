@@ -4,7 +4,7 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eAmazon::eAmazon(eGameBoard& board) :
+eAmazon::eAmazon(GameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::amazon) {
     setIsArcher(false);
 }

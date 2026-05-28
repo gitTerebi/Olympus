@@ -20,7 +20,7 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eSmallHouse::eSmallHouse(eGameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
+eSmallHouse::eSmallHouse(GameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
                                                                             {8, 16, 24, 32, 40, 48, 60}, cid)
 {
     eGameTextures::loadCommonHouse();

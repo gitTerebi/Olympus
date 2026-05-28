@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <cmath>
 
-eFarmBase::eFarmBase(eGameBoard& board,
+eFarmBase::eFarmBase(GameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
                      const eResourceType resType,

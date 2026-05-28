@@ -5,7 +5,7 @@
 
 class eGreekHorseman : public eHorsemanBase {
 public:
-    eGreekHorseman(eGameBoard& board);
+    eGreekHorseman(GameBoard& board);
 };
 
 #endif // EGREEKHORSEMAN_H

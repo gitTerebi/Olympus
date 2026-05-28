@@ -13,7 +13,7 @@
 #include "eiteratesquare.h"
 #include "engine/e-game-board.h"
 
-eBlackMarbleWorkshop::eBlackMarbleWorkshop(eGameBoard& board, const eCityId cid) :
+eBlackMarbleWorkshop::eBlackMarbleWorkshop(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
                              &eBuildingTextures::fBlackMarbleWorkshop,
                              0, 0, nullptr,

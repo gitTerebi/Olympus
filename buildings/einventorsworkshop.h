@@ -5,7 +5,7 @@
 
 class eInventorsWorkshop : public ePatrolSourceBuilding {
 public:
-    eInventorsWorkshop(eGameBoard& board, const eCityId cid);
+    eInventorsWorkshop(GameBoard& board, const eCityId cid);
 };
 
 #endif // EINVENTORSWORKSHOP_H

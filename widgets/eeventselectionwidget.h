@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class eGameEvent;
-class eGameBoard;
+class GameBoard;
 enum class eCityId;
 
 enum class eGameEventBranch;
@@ -23,7 +23,7 @@ public:
                     const eEventsGetter& get,
                     const eEventAdder& add,
                     const eEventRemover& remove,
-                    eGameBoard& board);
+                    GameBoard& board);
 private:
     const eGameEventBranch mBranch;
 };

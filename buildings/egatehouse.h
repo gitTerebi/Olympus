@@ -5,7 +5,7 @@
 
 class eGatehouse : public eBuilding {
 public:
-    eGatehouse(eGameBoard& board, const bool r,
+    eGatehouse(GameBoard& board, const bool r,
                const eCityId cid);
 
     void erase() override;

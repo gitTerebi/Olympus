@@ -5,7 +5,7 @@
 
 class eMint : public eResourceCollectBuilding {
 public:
-    eMint(eGameBoard& board, const eCityId cid);
+    eMint(GameBoard& board, const eCityId cid);
 };
 
 #endif // EMINT_H

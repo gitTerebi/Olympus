@@ -15,7 +15,7 @@ public:
     void initialize(const eResourceType type,
                     const stdsptr<eWorldCity>& c,
                     const eRequestFunction& func,
-                    const eGameBoard& board,
+                    const GameBoard& board,
                     const eCityId cid);
 private:
     stdsptr<eWorldCity> mCity;

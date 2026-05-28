@@ -6,7 +6,7 @@
 
 class GameWidget;
 
-void handleRepair(eGameBoard& board, GameWidget* const widget,
+void handleRepair(GameBoard& board, GameWidget* const widget,
                   const int minX, const int minY,
                   const int maxX, const int maxY,
                   const eCityId cid,

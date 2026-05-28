@@ -7,9 +7,9 @@
 
 class eKillCharacterFinishFail : public eCharActFunc {
 public:
-    eKillCharacterFinishFail(eGameBoard& board) :
+    eKillCharacterFinishFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::killCharacterFinishFail) {}
-    eKillCharacterFinishFail(eGameBoard& board, eCharacter* const c) :
+    eKillCharacterFinishFail(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::killCharacterFinishFail),
         mCptr(c) {}
 

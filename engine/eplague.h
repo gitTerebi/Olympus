@@ -5,7 +5,7 @@
 
 #include "pointers/estdselfref.h"
 
-class eGameBoard;
+class GameBoard;
 class eSmallHouse;
 
 class eSaveArchive;
@@ -14,7 +14,7 @@ enum class eCityId;
 
 class ePlague {
 public:
-    ePlague(const eCityId cid, eGameBoard& board);
+    ePlague(const eCityId cid, GameBoard& board);
 
     eCityId cityId() const { return mCityId; }
 
@@ -31,7 +31,7 @@ public:
     void serialize(eSaveArchive& ar);
 private:
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     eCityId mCityId;
     eHouses mHouses;
 };

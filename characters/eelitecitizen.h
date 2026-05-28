@@ -5,7 +5,7 @@
 
 class eEliteCitizen : public eFightingPatroler {
 public:
-    eEliteCitizen(eGameBoard& board);
+    eEliteCitizen(GameBoard& board);
 };
 
 #endif // EELITECITIZEN_H

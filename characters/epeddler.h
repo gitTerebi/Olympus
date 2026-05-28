@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class ePeddler : public eBasicPatroler {
 public:
-    ePeddler(eGameBoard& board);
+    ePeddler(GameBoard& board);
 
     void provideToBuilding(eBuilding* const b) override;
 

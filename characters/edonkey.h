@@ -5,7 +5,7 @@
 
 class eDonkey : public eBasicPatroler {
 public:
-    eDonkey(eGameBoard& board);
+    eDonkey(GameBoard& board);
 };
 
 #endif // EDONKEY_H

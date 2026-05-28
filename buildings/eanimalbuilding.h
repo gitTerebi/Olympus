@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eAnimalBuilding : public eBuilding {
 public:
-    eAnimalBuilding(eGameBoard& board,
+    eAnimalBuilding(GameBoard& board,
                     eCharacter* const a,
                     const eBuildingType type,
                     const eCityId cid);

@@ -4,7 +4,7 @@
 #include "eframedwidget.h"
 #include "elabel.h"
 
-class eGameBoard;
+class GameBoard;
 class GameWidget;
 class eButton;
 
@@ -62,13 +62,13 @@ public:
     using eWidget::eWidget;
 
     void initialize();
-    void setBoard(eGameBoard *const board);
+    void setBoard(GameBoard *const board);
     void setGameWidget(GameWidget *const gw);
 
     void paintEvent(ePainter &p);
 
 private:
-    eGameBoard *mBoard = nullptr;
+    GameBoard *mBoard = nullptr;
     GameWidget *mGW = nullptr;
     eLabel *mCityLabel = nullptr;
     eTopWidget *mDrachmasWidget = nullptr;

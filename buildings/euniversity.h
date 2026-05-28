@@ -5,7 +5,7 @@
 
 class eUniversity : public ePatrolSourceBuilding {
 public:
-    eUniversity(eGameBoard& board, const eCityId cid);
+    eUniversity(GameBoard& board, const eCityId cid);
 };
 
 #endif // EUNIVERSITY_H

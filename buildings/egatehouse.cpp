@@ -5,7 +5,7 @@
 
 #include "textures/egametextures.h"
 
-eGatehouse::eGatehouse(eGameBoard& board, const bool r,
+eGatehouse::eGatehouse(GameBoard& board, const bool r,
                        const eCityId cid) :
     eBuilding(board, eBuildingType::gatehouse,
               r ? 2 : 5, r ? 5 : 2, cid),

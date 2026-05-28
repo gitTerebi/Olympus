@@ -233,7 +233,7 @@ void eWolfAction::findPrey()
             return;
         }
         std::vector<eTile *> path;
-        pf->extractPath(path, const_cast<eGameBoard &>(board));
+        pf->extractPath(path, const_cast<GameBoard &>(board));
         eBuilding *wall = nullptr;
         for (const auto &tile : path) {
             const auto ub = tile->underBuilding();

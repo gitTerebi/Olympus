@@ -57,9 +57,9 @@ public:
     void loadNumbers();
 
     eWorldBoard& worldBoard() { return mWorldBoard; }
-    eGameBoard& parentCityBoard()
+    GameBoard& parentCityBoard()
     { return *mParentBoard; }
-    eGameBoard& colonyBoard(const int id)
+    GameBoard& colonyBoard(const int id)
     { return *mColonyBoards[id]; }
 
     static bool sReadGlossary(const std::string& name,
@@ -149,8 +149,8 @@ private:
     eDifficulty mDifficulty{eDifficulty::hero};
 
     eWorldBoard mWorldBoard;
-    stdsptr<eGameBoard> mParentBoard;
-    std::vector<stdsptr<eGameBoard>> mColonyBoards;
+    stdsptr<GameBoard> mParentBoard;
+    std::vector<stdsptr<GameBoard>> mColonyBoards;
 
     std::vector<stdsptr<eParentCityEpisode>> mParentCityEpisodes;
     std::vector<stdsptr<eColonyEpisode>> mColonyEpisodes;

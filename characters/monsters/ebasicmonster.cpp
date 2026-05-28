@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eBasicMonster::eBasicMonster(eGameBoard& board,
+eBasicMonster::eBasicMonster(GameBoard& board,
                              const eCharTexs charTexs,
                              const eMonsterType type) :
     eMonster(board, type), mCharTexs(charTexs) {}

@@ -5,7 +5,7 @@
 
 class eBuilding;
 enum class eBuildingType;
-class eGameBoard;
+class GameBoard;
 
 struct eUndoTile {
     int tx, ty;
@@ -24,7 +24,7 @@ struct eUndoState {
 
 class eGameUndo {
 public:
-    eGameUndo(eGameBoard& board);
+    eGameUndo(GameBoard& board);
 
     void startBuild(eBuildingType type);
     void finishBuild();
@@ -39,7 +39,7 @@ public:
     int& timeoutTicks() { return mState.timeoutTicks; }
 
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     eUndoState mState;
 };
 

@@ -8,7 +8,7 @@
 class eExtendedGod : public eGod {
 public:
     using eGodTexs = eExtendedGodTextures eGodTextures::*;
-    eExtendedGod(eGameBoard& board,
+    eExtendedGod(GameBoard& board,
                  const eGodTexs godTexs,
                  const eGodType gt);
 

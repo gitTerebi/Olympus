@@ -10,7 +10,7 @@
 
 ePyramidMonument::ePyramidMonument(
         const std::vector<eSanctCost>& cost,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eGodType type,
         const int id,
@@ -23,7 +23,7 @@ ePyramidMonument::ePyramidMonument(
 
 ePyramidMonument::ePyramidMonument(
         ePyramid* const pyramid,
-        eGameBoard& board,
+        GameBoard& board,
         const int elevation,
         const eGodType type,
         const int id,

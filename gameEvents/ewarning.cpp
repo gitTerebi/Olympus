@@ -6,7 +6,7 @@ eWarning::eWarning(const int warningMonths,
                    const bool initialWarning,
                    eGameEvent& parent,
                    const eCityId cid,
-                   eGameBoard& board) :
+                   GameBoard& board) :
     mParent(parent),
     mCid(cid),
     mBoard(board),

@@ -28,7 +28,7 @@
 int gNextId = 0;
 
 SoldierBanner::SoldierBanner(const eBannerType type,
-                                eGameBoard& board) :
+                                GameBoard& board) :
     eObject(board),
     mType(type), mId(gNextId++), mBoard(board), mFacing(0) {
     mBoard.registerAllSoldierBanner(this);
@@ -43,7 +43,7 @@ SoldierBanner::~SoldierBanner() {
     mBoard.unregisterAllSoldierBanner(this);
 }
 
-eGameBoard& SoldierBanner::board() const {
+GameBoard& SoldierBanner::board() const {
     if(mTile) return mTile->board();
     return mBoard;
 }
@@ -520,7 +520,7 @@ void SoldierBanner::serialize(eSaveArchive& ar) {
 
 void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
                                    const int ctx, const int cty,
-                                   eGameBoard& board) {
+                                   GameBoard& board) {
     if(bs.empty()) return;
     const auto bsFirst = bs[0];
     const auto cid = bsFirst->cityId();
@@ -565,7 +565,7 @@ void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
 
 void SoldierBanner::sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
                                        const int ctx, const int cty,
-                                       eGameBoard& board, const int dist,
+                                       GameBoard& board, const int dist,
                                        const int minDistFromEdge) {
     sPlaceDefault(bs, ctx, cty, board);
     if(bs.empty()) return;
@@ -616,7 +616,7 @@ void SoldierBanner::sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
 
 void SoldierBanner::sPlace(std::vector<SoldierBanner*> bs,
                             const int ctx, const int cty,
-                            eGameBoard& board, const int dist,
+                            GameBoard& board, const int dist,
                             const int minDistFromEdge) {
     sPlaceDefault(bs, ctx, cty, board);
     if(bs.empty()) return;
@@ -749,7 +749,7 @@ SoldierBanner::sFormationPositions(
 
 void SoldierBanner::sPlaceFacing(std::vector<SoldierBanner*> bs,
                                   const int ctx, const int cty,
-                                  eGameBoard& board,
+                                  GameBoard& board,
                                   const int facing,
                                   const int lineDX,
                                   const int lineDY,
@@ -820,7 +820,7 @@ void SoldierBanner::sPlacePlayerBannersFacing(
         const std::vector<SoldierBanner*>& bs,
         const ePlayerId playerId,
         const int ctx, const int cty,
-        eGameBoard& board,
+        GameBoard& board,
         const int facing,
         const int lineDX,
         const int lineDY,

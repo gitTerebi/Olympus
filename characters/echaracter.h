@@ -16,7 +16,7 @@
 #include "actions/edieaction.h"
 #include "fileIO/esavearchive.h"
 
-class eGameBoard;
+class GameBoard;
 class eCharacterAction;
 class eSaveArchive;
 
@@ -28,7 +28,7 @@ struct ePausedAction {
 
 class eCharacter : public eObject, public eCharacterBase {
 public:
-    eCharacter(eGameBoard& board, const eCharacterType type);
+    eCharacter(GameBoard& board, const eCharacterType type);
     virtual ~eCharacter();
 
     virtual std::shared_ptr<eTexture> getTexture(const eTileSize size) const = 0;
@@ -88,7 +88,7 @@ public:
     bool takeMeleeDamage(const double a, eCharacter* const attacker);
 
     static stdsptr<eCharacter> sCreate(
-            const eCharacterType t, eGameBoard& board);
+            const eCharacterType t, GameBoard& board);
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
@@ -106,7 +106,7 @@ protected:
             const bool wrap, const bool reverse,
             const bool disappear = false) const;
     void serializeFields(eSaveArchive& ar) override;
-    eGameBoard& ownerBoard() const;
+    GameBoard& ownerBoard() const;
 private:
     void restorePausedAction(const ePausedAction& p);
 
@@ -137,9 +137,9 @@ private:
 
 class eChar_fightFinish : public eCharActFunc {
 public:
-    eChar_fightFinish(eGameBoard& board) :
+    eChar_fightFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::Char_fightFinish) {}
-    eChar_fightFinish(eGameBoard& board, eCharacter* const t) :
+    eChar_fightFinish(GameBoard& board, eCharacter* const t) :
         eCharActFunc(board, eCharActFuncType::Char_fightFinish),
         mTptr(t) {}
 
@@ -164,9 +164,9 @@ private:
 
 class eChar_killWithCorpseFinish : public eCharActFunc {
 public:
-    eChar_killWithCorpseFinish(eGameBoard& board) :
+    eChar_killWithCorpseFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::Char_killWithCorpseFinish) {}
-    eChar_killWithCorpseFinish(eGameBoard& board, eCharacter* const t,
+    eChar_killWithCorpseFinish(GameBoard& board, eCharacter* const t,
                                const bool withCorpse = false) :
         eCharActFunc(board, eCharActFuncType::Char_killWithCorpseFinish),
         mWithCorpse(withCorpse), mTptr(t) {}

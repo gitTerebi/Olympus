@@ -55,7 +55,7 @@ class eSaveArchive;
 class eSanctBuilding : public eBuilding {
 public:
     eSanctBuilding(const std::vector<eSanctCost>& cost,
-                   eGameBoard& board,
+                   GameBoard& board,
                    const eBuildingType type,
                    const int sw, const int sh,
                    const eCityId cid);

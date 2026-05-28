@@ -13,7 +13,7 @@ ModelData& ModelData::instance() {
 }
 
 std::string ModelData::modelDir() {
-    return eGameDir::exeDir() + "../Model/";
+    return eGameDir::exeDir() + "../../Model/";
 }
 
 int ModelData::diffIndex(eDifficulty d) {

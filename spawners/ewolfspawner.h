@@ -6,9 +6,9 @@
 class eWolfSpawner : public eAnimalSpawner {
 public:
     eWolfSpawner(const int id, eTile* const tile,
-                 eGameBoard& board);
+                 GameBoard& board);
 
-    stdsptr<eWildAnimal> create(eGameBoard& board) override;
+    stdsptr<eWildAnimal> create(GameBoard& board) override;
     void incTime(const int by) override;
     void spawnMax() override;
 };

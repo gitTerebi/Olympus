@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 
-eRockThrowerBase::eRockThrowerBase(eGameBoard& board,
+eRockThrowerBase::eRockThrowerBase(GameBoard& board,
                                    const eCharTexs charTexs,
                                    const eCharacterType type) :
     eRangeSoldier(board, charTexs, type, eNumbers::sRabbleRange) {

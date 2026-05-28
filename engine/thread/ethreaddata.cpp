@@ -31,7 +31,7 @@ eThreadBoard& eThreadData::board(const eCityId cid) {
     return bh.board();
 }
 
-void eThreadData::update(eGameBoard& board, const eCityId cid,
+void eThreadData::update(GameBoard& board, const eCityId cid,
                          const eStateRelevance rel) {
     auto& b = mBoards[cid];
     b.update(board, cid, rel);

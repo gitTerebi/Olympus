@@ -5,7 +5,7 @@
 
 #include "engine/e-worldcity.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eCityButton : public eFramedButton {
 public:

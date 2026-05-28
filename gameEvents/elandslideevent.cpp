@@ -14,7 +14,7 @@ bool validLandSlideEventTile(eTile* const tile) {
 eLandSlideEvent::eLandSlideEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    eGameBoard& board) :
+    GameBoard& board) :
     eGameEvent(cid, eGameEventType::landSlide,
                branch, board),
     ePointEventValue(eBannerTypeS::landSlidePoint,

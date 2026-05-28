@@ -22,12 +22,12 @@ enum class eGodAttitude {
 
 class eGod : public eCharacter {
 public:
-    eGod(eGameBoard& board, const eGodType gt);
+    eGod(GameBoard& board, const eGodType gt);
 
     static eGodType sCharacterToGodType(const eCharacterType type,
                                         bool* const valid = nullptr);
     static eCharacterType sGodToCharacterType(const eGodType type);
-    static stdsptr<eGod> sCreateGod(const eGodType type, eGameBoard& board);
+    static stdsptr<eGod> sCreateGod(const eGodType type, GameBoard& board);
 
     using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
     static eTexPtr sGodMissile(const eGodType gt);

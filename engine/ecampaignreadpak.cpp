@@ -1282,7 +1282,7 @@ void eCampaign::readPak(const std::string& title,
 
     const auto atlanteanStr = file.isAtlantean() ? "atlantean" : "greek";
 
-    mParentBoard = e::make_shared<eGameBoard>(mWorldBoard);
+    mParentBoard = e::make_shared<GameBoard>(mWorldBoard);
 
     uint8_t bitmapId;
     if(poseidon) {
@@ -1434,7 +1434,7 @@ void eCampaign::readPak(const std::string& title,
 
     for(int i = 0; i < 4; i++) {
         auto& board = mColonyBoards.emplace_back();
-        board = e::make_shared<eGameBoard>(mWorldBoard);
+        board = e::make_shared<GameBoard>(mWorldBoard);
 
         const auto ep = std::make_shared<eColonyEpisode>();
         ep->fBoard = board.get();

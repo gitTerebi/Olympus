@@ -10,7 +10,7 @@
 eGodAttackEvent::eGodAttackEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::godAttack, branch, board) {}
 
 void eGodAttackEvent::setSanctuary(const stdptr<eSanctuary>& s) {

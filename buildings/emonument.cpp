@@ -3,7 +3,7 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
-eMonument::eMonument(eGameBoard& board,
+eMonument::eMonument(GameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
                        const int maxEmployees,

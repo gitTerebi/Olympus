@@ -9,7 +9,7 @@ public:
     using eFramedWidget::eFramedWidget;
 
     void initialize(const stdsptr<eWorldCity>& c,
-                    eGameBoard* const board,
+                    GameBoard* const board,
                     eWorldBoard* const wb);
 };
 

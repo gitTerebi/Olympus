@@ -7,7 +7,7 @@ class eRoad;
 
 class eAvenue : public eBuilding {
 public:
-    eAvenue(eGameBoard& board, const eCityId cid);
+    eAvenue(GameBoard& board, const eCityId cid);
 
     int provide(const eProvide p, const int n);
 

@@ -4,7 +4,7 @@
 #include "edatawidget.h"
 #include "pointers/estdselfref.h"
 
-class eGameBoard;
+class GameBoard;
 class SoldierBanner;
 class eMicroButton;
 class eScrollWidget;

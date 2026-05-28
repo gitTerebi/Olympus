@@ -5,7 +5,7 @@ ePoseidonHelpAction::ePoseidonHelpAction(eCharacter* const c) :
                                eResourceType::fish, 32) {}
 
 bool ePoseidonHelpAction::sHelpNeeded(const eCityId cid,
-                                      const eGameBoard& board) {
+                                      const GameBoard& board) {
     return eProvideResourceHelpAction::sHelpNeeded(
                 cid, board, eResourceType::fish, 18);
 }

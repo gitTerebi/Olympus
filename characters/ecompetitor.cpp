@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eCompetitor::eCompetitor(eGameBoard& board) :
+eCompetitor::eCompetitor(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fCompetitor,
                    eCharacterType::competitor) {
     eGameTextures::loadCompetitor();

@@ -5,7 +5,7 @@
 
 class eArmory : public eProcessingBuilding {
 public:
-    eArmory(eGameBoard& board, const eCityId cid);
+    eArmory(GameBoard& board, const eCityId cid);
 };
 
 #endif // EARMORY_H

@@ -11,7 +11,7 @@ class eAnimalSpawner : public eSpawner {
 public:
     using eSpawner::eSpawner;
 
-    virtual stdsptr<eWildAnimal> create(eGameBoard& board) = 0;
+    virtual stdsptr<eWildAnimal> create(GameBoard& board) = 0;
 
     void spawn(eTile* const tile) override;
 };

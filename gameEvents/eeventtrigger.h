@@ -14,7 +14,7 @@ class eEventTrigger : public eStdSelfRef {
 public:
     eEventTrigger(const eCityId cid,
                   const std::string& name,
-                  eGameBoard& board);
+                  GameBoard& board);
 
     const std::string& name() const { return mName; }
 
@@ -32,14 +32,14 @@ public:
     { return mEvents; }
     int eventCount() const { return mEvents.size(); }
 
-    eGameBoard* gameBoard() const { return &mBoard; }
+    GameBoard* gameBoard() const { return &mBoard; }
     eWorldBoard* worldBoard() const;
 
-    void setGameBoard(eGameBoard* const b);
+    void setGameBoard(GameBoard* const b);
     void setWorldBoard(eWorldBoard* const b);
 private:
     const eCityId mCid;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     std::string mName;
     std::vector<stdsptr<eGameEvent>> mEvents;

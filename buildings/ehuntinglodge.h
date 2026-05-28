@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class eHuntingLodge : public eResourceCollectBuildingBase {
 public:
-    eHuntingLodge(eGameBoard& board, const eCityId cid);
+    eHuntingLodge(GameBoard& board, const eCityId cid);
     ~eHuntingLodge();
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

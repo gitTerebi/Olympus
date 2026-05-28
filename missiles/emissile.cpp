@@ -14,7 +14,7 @@
 #include "fileIO/esavearchive.h"
 #include "characters/eracinghorse.h"
 
-eMissile::eMissile(eGameBoard& board, const eMissileType type,
+eMissile::eMissile(GameBoard& board, const eMissileType type,
                    const std::vector<ePathPoint>& path) :
     mType(type), mBoard(board), mPath(path) {
     mBoard.registerMissile(this);
@@ -24,7 +24,7 @@ eMissile::~eMissile() {
     board().unregisterMissile(this);
 }
 
-eGameBoard& eMissile::board() const {
+GameBoard& eMissile::board() const {
     if(mTile) return mTile->board();
     return mBoard;
 }
@@ -96,7 +96,7 @@ void eMissile::serializeFields(eSaveArchive& ar) {
 }
 
 stdsptr<eMissile> eMissile::sCreate(
-        eGameBoard& brd, const eMissileType type) {
+        GameBoard& brd, const eMissileType type) {
     switch(type) {
     case eMissileType::rock:
         return e::make_shared<eRockMissile>(brd);

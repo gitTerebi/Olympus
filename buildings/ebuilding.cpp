@@ -23,7 +23,7 @@
 #include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
-eBuilding::eBuilding(eGameBoard& board,
+eBuilding::eBuilding(GameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
                      const eCityId cid) :
@@ -39,7 +39,7 @@ eBuilding::~eBuilding() {
     ownerBoard().unregisterBuilding(this);
 }
 
-eGameBoard& eBuilding::ownerBoard() const {
+GameBoard& eBuilding::ownerBoard() const {
     if(!getBoard().registerBuildingsEnabled()) return getBoard();
     if(mCenterTile) return mCenterTile->board();
     return getBoard();
@@ -2502,7 +2502,7 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
 
 static std::vector<uint8_t> sBuildingRestoreBundle(
         const std::vector<eBuilding*>& buildings,
-        eGameBoard& board) {
+        GameBoard& board) {
     std::vector<char> mem;
     eWriteTarget target(&mem);
     eWriteStream dst(target);

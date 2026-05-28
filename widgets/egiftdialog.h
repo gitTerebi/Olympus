@@ -12,7 +12,7 @@ public:
     using eRequestFunction = std::function<void(eResourceType, eCityId)>;
     void initialize(const stdsptr<eWorldCity>& c,
                     const eRequestFunction& func,
-                    const eGameBoard& board);
+                    const GameBoard& board);
 private:
     stdsptr<eWorldCity> mCity;
 };

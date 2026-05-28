@@ -22,7 +22,7 @@ int shCA(const eAgoraOrientation o) {
     }
 }
 
-eCommonAgora::eCommonAgora(const eAgoraOrientation o, eGameBoard& board,
+eCommonAgora::eCommonAgora(const eAgoraOrientation o, GameBoard& board,
                            const eCityId cid) :
     eAgoraBase(board, eBuildingType::commonAgora,
                swCA(o), shCA(o), o, cid, 3) {}

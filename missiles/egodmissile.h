@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eGodMissile : public eMissile {
 public:
-    eGodMissile(eGameBoard& board,
+    eGodMissile(GameBoard& board,
                 const std::vector<ePathPoint>& path = {});
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;

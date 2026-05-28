@@ -5,7 +5,7 @@
 
 class eSick : public eFightingPatroler {
 public:
-    eSick(eGameBoard& board);
+    eSick(GameBoard& board);
 };
 
 #endif // ESICK_H

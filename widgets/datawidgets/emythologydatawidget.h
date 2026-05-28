@@ -3,7 +3,7 @@
 
 #include "edatawidget.h"
 
-class eGameBoard;
+class GameBoard;
 class eTitledWidget;
 
 class eSanctuary;

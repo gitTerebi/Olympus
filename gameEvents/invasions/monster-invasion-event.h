@@ -18,7 +18,7 @@ public:
     eMonsterInvasionWarning(const int warningDays,
                             eGameEvent& parent,
                             const eCityId cid,
-                            eGameBoard& board,
+                            GameBoard& board,
                             const eMonsterInvasionWarningType type);
 
     void trigger() override;
@@ -30,7 +30,7 @@ class eMonsterInvasionEvent : public eMonsterInvasionEventBase {
 public:
     eMonsterInvasionEvent(const eCityId cid,
                           const eGameEventBranch branch,
-                          eGameBoard& board);
+                          GameBoard& board);
 
     void pointerCreated() override;
 

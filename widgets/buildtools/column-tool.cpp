@@ -6,7 +6,7 @@
 
 namespace ColumnTool {
 
-bool path(eGameBoard* const board,
+bool path(GameBoard* const board,
           const int ptx, const int pty,
           const int htx, const int hty,
           std::vector<eOrientation>& out)

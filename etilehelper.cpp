@@ -14,7 +14,7 @@ void eTileHelper::tileIdToDTileId(const int tx, const int ty, int& dtx, int& dty
 }
 
 eTile* eTileHelper::closestRoad(const int rdx, const int rdy,
-                                eGameBoard& board, const int minLen) {
+                                GameBoard& board, const int minLen) {
     const auto init = board.tile(rdx, rdy);
     const auto cid = init->cityId();
     eTile* roadTile = nullptr;

@@ -8,7 +8,7 @@
 #include "engine/egodquest.h"
 #include "engine/boardData/ecityfinances.h"
 
-class eGameBoard;
+class GameBoard;
 enum class eMonsterType;
 
 class eGodQuestEvent;
@@ -21,7 +21,7 @@ class eSaveArchive;
 
 class eBoardPlayer {
 public:
-    eBoardPlayer(const ePlayerId pid, eGameBoard& board);
+    eBoardPlayer(const ePlayerId pid, GameBoard& board);
 
     ePlayerId id() const { return mId; }
     void setId(const ePlayerId id) { mId = id; }
@@ -85,7 +85,7 @@ private:
     void giftAllies();
     bool askForDrachmas();
 
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
 
     ePlayerId mId;
 

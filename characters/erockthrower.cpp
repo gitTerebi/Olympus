@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eRockThrower::eRockThrower(eGameBoard& board) :
+eRockThrower::eRockThrower(GameBoard& board) :
     eRockThrowerBase(board, &eCharacterTextures::fRockThrower,
                      eCharacterType::rockThrower) {
     eGameTextures::loadRockThrower();

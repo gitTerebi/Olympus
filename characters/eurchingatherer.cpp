@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eUrchinGatherer::eUrchinGatherer(eGameBoard& board) :
+eUrchinGatherer::eUrchinGatherer(GameBoard& board) :
     eResourceCollectorBase(board, eCharacterType::urchinGatherer) {
     eGameTextures::loadUrchinGatherer();
 }

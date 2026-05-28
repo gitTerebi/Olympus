@@ -53,7 +53,7 @@ class ZeusFile : public GameFile {
 		* image can't be loaded for whatever reason.
 		* NOTE: call getNumMaps() before calling this function
 		*/
-        bool loadBoard(eGameBoard& board, eCampaign& campaign,
+        bool loadBoard(GameBoard& board, eCampaign& campaign,
                        eCityId& cid);
 	private:
 		int getMapsize();

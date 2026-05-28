@@ -5,7 +5,7 @@
 
 class eStadium : public ePatrolTarget {
 public:
-    eStadium(eGameBoard& board, const bool r,
+    eStadium(GameBoard& board, const bool r,
              const eCityId cid);
     ~eStadium();
 

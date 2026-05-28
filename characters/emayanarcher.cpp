@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eMayanArcher::eMayanArcher(eGameBoard& board) :
+eMayanArcher::eMayanArcher(GameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fMayanArcher,
                 eCharacterType::mayanArcher) {
     eGameTextures::loadMayanArcher();

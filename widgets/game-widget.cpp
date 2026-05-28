@@ -5,7 +5,7 @@
 #include "buildtools/build-validity.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
-#include "ecursors.h"
+#include "cursors.h"
 
 #include "emodal.h"
 #include "e-message-list-widget.h"
@@ -190,7 +190,7 @@ GameWidget::~GameWidget()
     setBoard(nullptr);
 }
 
-void GameWidget::setBoard(eGameBoard *const board)
+void GameWidget::setBoard(GameBoard *const board)
 {
     if (mBoard == board)
         return;
@@ -211,10 +211,13 @@ void GameWidget::setBoard(eGameBoard *const board)
         mBoard->setEpisodeFinishedHandler(nullptr);
         mBoard->setAutosaver(nullptr);
         mBoard->setEnlistForcesRequest(nullptr);
+        mBoard->setBannerSelectionChangedAction(nullptr);
     }
     mBoard = board;
     if (!mBoard)
         return;
+    mBoard->setBannerSelectionChangedAction([this]()
+                                            { syncBannerCursor(); });
     mBoard->setEventHandler([this](const eEvent e, eEventData &ed)
                             { handleEvent(e, ed); });
     mBoard->setRequestUpdateHandler([this]()
@@ -380,6 +383,14 @@ void GameWidget::initializeNumbers()
     }
 }
 
+void GameWidget::syncBannerCursor()
+{
+    if(!mGm || mGm->mode() != eBuildingMode::none) return;
+    if(mCreatingStampTemplate) return;
+    const bool any = mBoard && !mBoard->selectedSoldiers().empty();
+    Cursors::set(any ? CursorType::sword : CursorType::defaultCursor);
+}
+
 void GameWidget::createGameMenu()
 {
     mGm = new eGameMenu(window());
@@ -401,14 +412,14 @@ void GameWidget::createGameMenu()
                               {
         setPatrolBuilding(nullptr);
         if(mGm->mode() == eBuildingMode::erase) {
-            eCursors::set(eCursorType::shovel);
+            Cursors::set(CursorType::shovel);
         } else if(mGm->mode() == eBuildingMode::repair) {
-            eCursors::set(eCursorType::repairMallet);
+            Cursors::set(CursorType::repairMallet);
         } else if(mGm->mode() == eBuildingMode::stamp) {
-            eCursors::set(eCursorType::stamp);
+            Cursors::set(CursorType::stamp);
         }
         else {
-            eCursors::set(eCursorType::defaultCursor);
+            syncBannerCursor();
         } });
 
     const auto mm = mGm->miniMap();
@@ -1080,7 +1091,7 @@ void GameWidget::updateHippodromeIds()
     int minY;
     int maxX;
     int maxY;
-    eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+    GameBoard::sBuildTiles(minX, minY, maxX, maxY,
                             mHoverTX, mHoverTY, 4, 4);
     maxY--;
     maxX--;
@@ -2484,7 +2495,7 @@ void GameWidget::rightDragFormationLine(int& dx, int& dy) const
     }
 }
 
-void brushTiles(eGameBoard *const board, const int bSize,
+void brushTiles(GameBoard *const board, const int bSize,
                 const int cx, const int cy,
                 std::vector<eTile *> &result)
 {
@@ -2518,7 +2529,7 @@ void brushTiles(eGameBoard *const board, const int bSize,
     }
 }
 
-void squareTiles(eGameBoard *const board, const int bSize,
+void squareTiles(GameBoard *const board, const int bSize,
                  const int cx, const int cy,
                  std::vector<eTile *> &result)
 {
@@ -2965,7 +2976,7 @@ void GameWidget::beginStampTemplateCreate()
     mGm->clearMode();
     mGm->closeBuildWidget();
     setPatrolBuilding(nullptr);
-    eCursors::set(eCursorType::defaultCursor);
+    Cursors::set(CursorType::defaultCursor);
 
     mCreatingStampTemplate = true;
     mStampTemplateTiles.clear();
@@ -3032,7 +3043,7 @@ void GameWidget::cancelStampTemplateCreate()
         mStampTemplatePanel = nullptr;
         mStampTemplateStats = nullptr;
     }
-    eCursors::set(eCursorType::defaultCursor);
+    Cursors::set(CursorType::defaultCursor);
 }
 
 void GameWidget::updateStampTemplateSelection()

@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eCorral : public eResourceBuildingBase {
 public:
-    eCorral(eGameBoard& board, const eCityId cid);
+    eCorral(GameBoard& board, const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;

@@ -21,7 +21,7 @@ enum class eHouseMissing {
 
 class eHouseBase : public eBuilding {
 public:
-    eHouseBase(eGameBoard& board,
+    eHouseBase(GameBoard& board,
                const eBuildingType type,
                const int sw, const int sh,
                const std::vector<int>& maxPeople,

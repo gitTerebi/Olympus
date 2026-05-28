@@ -7,29 +7,29 @@
 #include "engine/stamps/estamptool.h"
 
 class eTile;
-class eGameBoard;
+class GameBoard;
 
 bool agoraRoadTile(eTile* const t);
 
-std::vector<eTile*> agoraBuildPlaceBR(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceBR(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid);
-std::vector<eTile*> agoraBuildPlaceTL(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceTL(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid);
-std::vector<eTile*> agoraBuildPlaceBL(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceBL(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid);
-std::vector<eTile*> agoraBuildPlaceTR(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceTR(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid);
 
-std::vector<eTile*> agoraBuildPlaceIter(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                                         eTile* const tile, bool grand,
                                         eAgoraOrientation& bt,
                                         eCityId cid, ePlayerId pid);
 
-std::vector<eTile*> stampAgoraBuildPlace(eGameBoard* board, bool editorMode,
+std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
                                          const eStampBuildCommand& cmd,
                                          int pressedTX, int pressedTY,
                                          eAgoraOrientation& bt,

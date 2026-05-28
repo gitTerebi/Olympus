@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 
-eSpearthrowerBase::eSpearthrowerBase(eGameBoard& board,
+eSpearthrowerBase::eSpearthrowerBase(GameBoard& board,
                                      const eCharTexs charTexs,
                                      const eCharacterType type) :
     eSoldier(board, charTexs, type) {

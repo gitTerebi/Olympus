@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-eCorral::eCorral(eGameBoard& board,
+eCorral::eCorral(GameBoard& board,
                  const eCityId cid) :
     eResourceBuildingBase(board, eBuildingType::corral,
                           4, 4, 25, eResourceType::meat,

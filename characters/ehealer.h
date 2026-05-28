@@ -5,7 +5,7 @@
 
 class eHealer : public eBasicPatroler {
 public:
-    eHealer(eGameBoard& board);
+    eHealer(GameBoard& board);
 };
 
 #endif // EHEALER_H

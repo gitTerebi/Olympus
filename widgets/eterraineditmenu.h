@@ -84,7 +84,7 @@ public:
     using eGameMenuBase::eGameMenuBase;
 
     void initialize(GameWidget* const gw,
-                    eGameBoard* const board);
+                    GameBoard* const board);
 
     eTerrainEditMode mode() const;
     int modeId() const { return mModeId; }
@@ -96,7 +96,7 @@ public:
     eBrushType brushType() const;
     int brushSize() const;
 
-    void updateCitiesOnBoard(eGameBoard& board);
+    void updateCitiesOnBoard(GameBoard& board);
 private:
     eBrushType mBrushType = eBrushType::apply;
     int mBrushSize = 1;

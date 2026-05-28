@@ -4,7 +4,7 @@
 #include "fileIO/esavearchive.h"
 
 eEmployingBuilding::eEmployingBuilding(
-        eGameBoard& board,
+        GameBoard& board,
         const eBuildingType type,
         const int sw, const int sh,
         const int maxEmployees,

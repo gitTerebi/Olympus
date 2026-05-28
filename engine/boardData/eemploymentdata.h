@@ -3,13 +3,13 @@
 
 class ePopulationData;
 class BoardCity;
-class eGameBoard;
+class GameBoard;
 
 class eEmploymentData {
 public:
     eEmploymentData(const ePopulationData& popData,
                     const BoardCity& city,
-                    const eGameBoard& board);
+                    const GameBoard& board);
 
     void incTotalJobVacancies(const int v);
 
@@ -25,7 +25,7 @@ public:
 private:
     const ePopulationData& mPopData;
     const BoardCity& mCity;
-    const eGameBoard& mBoard;
+    const GameBoard& mBoard;
     int mTotalJobVacs{0};
 };
 

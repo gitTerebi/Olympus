@@ -4,7 +4,7 @@
 #include "textures/egametextures.h"
 #include "characters/heroes/ehero.h"
 
-eGodMissile::eGodMissile(eGameBoard& board,
+eGodMissile::eGodMissile(GameBoard& board,
                          const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::god, path) {}
 

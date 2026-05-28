@@ -3,7 +3,7 @@
 
 #include "eswitchbutton.h"
 
-class eGameBoard;
+class GameBoard;
 
 enum class eCityId;
 enum class ePlayerId;
@@ -14,7 +14,7 @@ public:
 
     using eValidator = std::function<bool(eCityId)>;
     using eSwitchAction = std::function<void(eCityId)>;
-    void initialize(const eGameBoard& board, const eValidator& v,
+    void initialize(const GameBoard& board, const eValidator& v,
                     const eSwitchAction& a);
     void initialize(const std::map<eCityId, std::string>& map,
                     const eSwitchAction& a);
@@ -23,9 +23,9 @@ public:
     bool setCurrentCity(const eCityId cid);
 
     static eValidator sPlayerCityValidator(
-            const eGameBoard& board, const ePlayerId pid);
+            const GameBoard& board, const ePlayerId pid);
     static eValidator sPlayerEnemyCityValidator(
-            const eGameBoard& board, const ePlayerId pid);
+            const GameBoard& board, const ePlayerId pid);
 private:
     using eSwitchButton::addValue;
     using eSwitchButton::currentValue;

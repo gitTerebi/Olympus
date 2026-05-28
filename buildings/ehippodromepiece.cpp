@@ -7,7 +7,7 @@
 #include "buildings/eroad.h"
 #include "ehippodrome.h"
 
-eHippodromePiece::eHippodromePiece(eGameBoard &board, const eCityId cid) :
+eHippodromePiece::eHippodromePiece(GameBoard &board, const eCityId cid) :
     eBuildingWithResource(board, eBuildingType::hippodromePiece, 4, 4, cid) {
     eGameTextures::loadHippodrome();
     eGameTextures::loadHippodromeSpectators();
@@ -443,7 +443,7 @@ void eHippodromePiece::horseTile(eTile* const t,
     }
 }
 
-void iterateRenderOrder(const SDL_Rect& rr, const eGameBoard& board,
+void iterateRenderOrder(const SDL_Rect& rr, const GameBoard& board,
                         const eWorldDirection dir,
                         const std::function<void(eTile* const)>& func) {
     switch(dir) {

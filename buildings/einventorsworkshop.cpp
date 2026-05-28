@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eInventorsWorkshop::eInventorsWorkshop(eGameBoard& board,
+eInventorsWorkshop::eInventorsWorkshop(GameBoard& board,
                                        const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fInventorsWorkshop,

@@ -5,7 +5,7 @@
 
 class eObservatory : public ePatrolTarget {
 public:
-    eObservatory(eGameBoard& board, const eCityId cid);
+    eObservatory(GameBoard& board, const eCityId cid);
 };
 
 #endif // EOBSERVATORY_H

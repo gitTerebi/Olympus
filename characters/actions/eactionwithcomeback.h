@@ -57,9 +57,9 @@ private:
 
 class eAWC_goBackFail : public eCharActFunc {
 public:
-    eAWC_goBackFail(eGameBoard& board) :
+    eAWC_goBackFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AWC_goBackFail) {}
-    eAWC_goBackFail(eGameBoard& board,
+    eAWC_goBackFail(GameBoard& board,
                     eActionWithComeback* const t,
                     const stdsptr<eWalkableObject>& walkable) :
         eCharActFunc(board, eCharActFuncType::AWC_goBackFail),
@@ -82,9 +82,9 @@ private:
 
 class eAWC_goBackFinish : public eCharActFunc {
 public:
-    eAWC_goBackFinish(eGameBoard& board) :
+    eAWC_goBackFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AWC_goBackFinish) {}
-    eAWC_goBackFinish(eGameBoard& board, eActionWithComeback* const t) :
+    eAWC_goBackFinish(GameBoard& board, eActionWithComeback* const t) :
         eCharActFunc(board, eCharActFuncType::AWC_goBackFinish),
         mTptr(t) {}
 

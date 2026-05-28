@@ -8,7 +8,7 @@
 class eAnimal : public eCharacter {
 public:
     using eCharTexs = eAnimalTextures eCharacterTextures::*;
-    eAnimal(eGameBoard& board,
+    eAnimal(GameBoard& board,
             const eCharTexs charTexs,
             const eCharacterType type);
 

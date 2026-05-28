@@ -6,7 +6,7 @@
 class eRangeSoldier : public eSoldier {
 public:
     using eCharTexs = eRockThrowerTextures eCharacterTextures::*;
-    eRangeSoldier(eGameBoard& board,
+    eRangeSoldier(GameBoard& board,
                   const eCharTexs charTexs,
                   const eCharacterType type,
                   const int range);

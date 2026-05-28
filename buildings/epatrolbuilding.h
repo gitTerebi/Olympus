@@ -10,7 +10,7 @@ class ePatrolBuilding : public ePatrolBuildingBase {
 public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
-    ePatrolBuilding(eGameBoard& board,
+    ePatrolBuilding(GameBoard& board,
                     const eBaseTex baseTex,
                     const double overlayX,
                     const double overlayY,
@@ -21,7 +21,7 @@ public:
                     const int sw, const int sh,
                     const int maxEmployees,
                     const eCityId cid);
-    ePatrolBuilding(eGameBoard& board,
+    ePatrolBuilding(GameBoard& board,
                     const eBaseTex baseTex,
                     const double overlayX,
                     const double overlayY,

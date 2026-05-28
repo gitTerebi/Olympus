@@ -81,7 +81,7 @@ eCityAttitudeMessage eCityAttitudeMessageForChange(
     return attitudeMessageForStatus(city, pid, newAttitude);
 }
 
-void eGameBoard::changeCityAttitude(const stdsptr<eWorldCity>& c,
+void GameBoard::changeCityAttitude(const stdsptr<eWorldCity>& c,
                                  const double amount,
                                  const ePlayerId pid) {
     if(!c) return;
@@ -98,7 +98,7 @@ void eGameBoard::changeCityAttitude(const stdsptr<eWorldCity>& c,
     event(eEvent::cityAttitudeChanged, ed);
 }
 
-void eGameBoard::sendInitialCityAttitudeMessages() {
+void GameBoard::sendInitialCityAttitudeMessages() {
     const auto pid = personPlayer();
     for(const auto& c : mWorld.cities()) {
         const auto msg = attitudeMessageForInitialStatus(*c, pid);

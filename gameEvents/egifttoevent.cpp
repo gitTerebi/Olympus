@@ -8,7 +8,7 @@
 eGiftToEvent::eGiftToEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::giftTo, branch, board) {}
 
 void eGiftToEvent::initialize(const stdsptr<eWorldCity>& c,

@@ -48,7 +48,7 @@ struct eSubButtonData
 };
 
 void tradePosts(const eCityId cid, std::vector<eSPR> &cs,
-                eGameBoard &board, const bool showAllPossibleBuildings)
+                GameBoard &board, const bool showAllPossibleBuildings)
 {
     const auto pid = board.cityIdToPlayerId(cid);
     const auto ppid = board.personPlayer();
@@ -103,7 +103,7 @@ public:
                eButton *const button,
                eButton *const abutton,
                const std::vector<eSPR> &children,
-               eGameBoard &board) : mMode(mode),
+               GameBoard &board) : mMode(mode),
                                     mButton(button),
                                     mAButton(abutton),
                                     mChildren(children),
@@ -170,7 +170,7 @@ private:
     eButton *const mButton;
     eButton *const mAButton;
     const std::vector<eSPR> mChildren;
-    eGameBoard &mBoard;
+    GameBoard &mBoard;
 };
 
 eWidget *eGameMenu::createPriceWidget(const eInterfaceTextures &coll)
@@ -563,7 +563,7 @@ eGameMenu::~eGameMenu()
     }
 }
 
-void eGameMenu::initialize(eGameBoard *const b,
+void eGameMenu::initialize(GameBoard *const b,
                            const eAction &goalsView)
 {
     mBoard = b;

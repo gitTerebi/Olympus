@@ -8,7 +8,7 @@ class eSaveArchive;
 
 class ePalaceTile : public eBuilding {
 public:
-    ePalaceTile(eGameBoard& board,
+    ePalaceTile(GameBoard& board,
                 const bool other,
                 const eCityId cid);
 

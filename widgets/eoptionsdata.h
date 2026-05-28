@@ -4,13 +4,13 @@
 #include "widgets/eoptionsmenu.h"
 
 class eMainWindow;
-class eGameBoard;
+class GameBoard;
 class GameWidget;
 
 #include <vector>
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
-                                                 eGameBoard* const board = nullptr,
+                                                 GameBoard* const board = nullptr,
                                                  GameWidget* const gw = nullptr);
 
 #endif // EOPTIONSDATA_H

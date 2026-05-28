@@ -6,11 +6,11 @@
 #include "engine/e-game-board.h"
 #include "fileIO/esavearchive.h"
 
-eCityEventValue::eCityEventValue(eGameBoard &board,
+eCityEventValue::eCityEventValue(GameBoard &board,
                                  const eValidator& v) :
     mBoard(board), mValidator(v) {}
 
-void eCityEventValue::serialize(eSaveArchive& ar, eGameBoard& board) {
+void eCityEventValue::serialize(eSaveArchive& ar, GameBoard& board) {
     ar.worldCityField("city", &board, mCity);
     ar.field("minCityId", mMinCityId, 0);
     ar.field("maxCityId", mMaxCityId, 0);

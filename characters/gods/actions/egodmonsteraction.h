@@ -40,7 +40,7 @@ public:
 
     eCharacter* character() const { return mChar.get(); }
 
-    void serialize(eSaveArchive& ar, eGameBoard& board) {
+    void serialize(eSaveArchive& ar, GameBoard& board) {
         ar.tileField("tile", board, mTile);
         ar.characterField("character", &board, mChar);
     }
@@ -50,7 +50,7 @@ private:
 };
 
 inline bool missileTargetField(eSaveArchive& ar, const char* name,
-                               eGameBoard& board, eMissileTarget& val) {
+                               GameBoard& board, eMissileTarget& val) {
     const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
         val.serialize(childAr, board);
     });
@@ -60,7 +60,7 @@ inline bool missileTargetField(eSaveArchive& ar, const char* name,
 
 class eFindFailFunc {
 public:
-    eFindFailFunc(eGameBoard& board, const eFindFailFuncType type) :
+    eFindFailFunc(GameBoard& board, const eFindFailFuncType type) :
         mBoard(board), mType(type) {}
     virtual ~eFindFailFunc() = default;
 
@@ -68,21 +68,21 @@ public:
 
     eFindFailFuncType type() const { return mType; }
 
-    eGameBoard& board() { return mBoard; }
+    GameBoard& board() { return mBoard; }
 
     void serialize(eSaveArchive& ar) { serializeFields(ar); }
 
-    static stdsptr<eFindFailFunc> sCreate(eGameBoard& board,
+    static stdsptr<eFindFailFunc> sCreate(GameBoard& board,
                                           const eFindFailFuncType type);
 protected:
     virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
 private:
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     const eFindFailFuncType mType;
 };
 
 inline bool findFailFuncField(eSaveArchive& ar, const char* name,
-                              eGameBoard& board, stdsptr<eFindFailFunc>& val) {
+                              GameBoard& board, stdsptr<eFindFailFunc>& val) {
     bool hasValue = val != nullptr;
     const std::string hasName = std::string(name) + ".has";
     ar.field(hasName.c_str(), hasValue, false);
@@ -204,9 +204,9 @@ private:
 
 class eGAA_fightFinish : public eCharActFunc {
 public:
-    eGAA_fightFinish(eGameBoard& board) :
+    eGAA_fightFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_fightFinish) {}
-    eGAA_fightFinish(eGameBoard& board, eGodMonsterAction* const winnerA,
+    eGAA_fightFinish(GameBoard& board, eGodMonsterAction* const winnerA,
                      eGodMonsterAction* const loserA, const eGodType wt,
                      const eGodType lt) :
         eCharActFunc(board, eCharActFuncType::GAA_fightFinish),
@@ -231,9 +231,9 @@ private:
 
 class eGMA_patrolFailFail : public eCharActFunc {
 public:
-    eGMA_patrolFailFail(eGameBoard& board) :
+    eGMA_patrolFailFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFail) {}
-    eGMA_patrolFailFail(eGameBoard& board, eGodMonsterAction* const ca,
+    eGMA_patrolFailFail(GameBoard& board, eGodMonsterAction* const ca,
                         const stdsptr<eCharActFunc>& finishAct) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFail),
         mTptr(ca), mFinishAct(finishAct) {}
@@ -256,9 +256,9 @@ private:
 
 class eGMA_patrolFailFinish : public eCharActFunc {
 public:
-    eGMA_patrolFailFinish(eGameBoard& board) :
+    eGMA_patrolFailFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFinish) {}
-    eGMA_patrolFailFinish(eGameBoard& board, eGodMonsterAction* const ca,
+    eGMA_patrolFailFinish(GameBoard& board, eGodMonsterAction* const ca,
                           const stdsptr<eCharActFunc>& finishAct,
                           const int dist) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFinish),
@@ -284,9 +284,9 @@ private:
 
 class eGMA_patrolFail : public eCharActFunc {
 public:
-    eGMA_patrolFail(eGameBoard& board) :
+    eGMA_patrolFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFail) {}
-    eGMA_patrolFail(eGameBoard& board,
+    eGMA_patrolFail(GameBoard& board,
                     eGodMonsterAction* const ca,
                     const stdsptr<eCharActFunc>& finishAct,
                     const int dist) :
@@ -312,9 +312,9 @@ private:
 
 class eGMA_spawnMissileFinish : public eCharActFunc {
 public:
-    eGMA_spawnMissileFinish(eGameBoard& board) :
+    eGMA_spawnMissileFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_spawnMissileFinish) {}
-    eGMA_spawnMissileFinish(eGameBoard& board,
+    eGMA_spawnMissileFinish(GameBoard& board,
                             eCharacter* const c,
                             const eCharacterActionType at,
                             const eCharacterType chart,
@@ -349,9 +349,9 @@ private:
 
 class eGMA_spawnMultipleMissilesFinish : public eCharActFunc {
 public:
-    eGMA_spawnMultipleMissilesFinish(eGameBoard& board) :
+    eGMA_spawnMultipleMissilesFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_spawnMultipleMissilesFinish) {}
-    eGMA_spawnMultipleMissilesFinish(eGameBoard& board,
+    eGMA_spawnMultipleMissilesFinish(GameBoard& board,
                                      eGodMonsterAction* const ca,
                                      const eCharacterActionType at,
                                      const eCharacterType chart,
@@ -400,9 +400,9 @@ private:
 
 class eGMA_goToTargetFail : public eCharActFunc {
 public:
-    eGMA_goToTargetFail(eGameBoard& board) :
+    eGMA_goToTargetFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_goToTargetFail) {}
-    eGMA_goToTargetFail(eGameBoard& board, eTile* const tile,
+    eGMA_goToTargetFail(GameBoard& board, eTile* const tile,
                         const stdsptr<eFindFailFunc>& func) :
         eCharActFunc(board, eCharActFuncType::GMA_goToTargetFail),
         mTile(tile), mFunc(func) {}

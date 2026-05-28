@@ -204,7 +204,7 @@ eNamePlace pakIdToNamePlace(const uint8_t id) {
     return eNamePlace::bottom;
 }
 
-bool ZeusFile::loadBoard(eGameBoard& board, eCampaign& campaign,
+bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
                          eCityId& cid) {
     if(retrievedMaps >= numMaps) {
         return false;

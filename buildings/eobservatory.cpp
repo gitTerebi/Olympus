@@ -3,7 +3,7 @@
 #include "characters/eastronomer.h"
 #include "textures/egametextures.h"
 
-eObservatory::eObservatory(eGameBoard& board,
+eObservatory::eObservatory(GameBoard& board,
                            const eCityId cid) :
     ePatrolTarget(board,
                   &eBuildingTextures::fObservatory,

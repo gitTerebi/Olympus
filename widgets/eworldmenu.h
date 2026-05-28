@@ -11,7 +11,7 @@ class eWorldGoodsWidget;
 class eWorldTributeWidget;
 
 class eWorldBoard;
-class eGameBoard;
+class GameBoard;
 
 class eWorldMenu : public eLabel {
 public:
@@ -26,7 +26,7 @@ public:
 
     void setCity(const stdsptr<eWorldCity>& c);
     void setWorldBoard(eWorldBoard* const b);
-    void setGameBoard(eGameBoard* const b);
+    void setGameBoard(GameBoard* const b);
     void setText(const std::string& text);
     void setArrowActions(const eAction& left, const eAction& right);
     void updateLabels() const;

@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
 
-eTrailer::eTrailer(eGameBoard& board) :
+eTrailer::eTrailer(GameBoard& board) :
     eCharacter(board, eCharacterType::trailer) {
     eGameTextures::loadTrailer();
 }

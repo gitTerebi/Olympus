@@ -29,7 +29,7 @@ enum class eCartTransporterType {
 
 class eCartTransporter : public eBasicPatroler {
 public:
-    eCartTransporter(eGameBoard& board);
+    eCartTransporter(GameBoard& board);
     ~eCartTransporter();
 
     eOverlay getSecondaryTexture(const eTileSize size) const override;

@@ -5,7 +5,7 @@
 #include "epalacetile.h"
 #include "fileIO/esavearchive.h"
 
-ePalace::ePalace(eGameBoard& board, const bool r,
+ePalace::ePalace(GameBoard& board, const bool r,
                  const eCityId cid) :
     eBuilding(board, eBuildingType::palace,
               r ? 4 : 8, r ? 8 : 4, cid),

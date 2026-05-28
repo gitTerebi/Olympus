@@ -7,7 +7,7 @@ class eGodQuestFulfilledEvent : public eGodQuestEventBase {
 public:
     eGodQuestFulfilledEvent(const eCityId cid,
                             const eGameEventBranch branch,
-                            eGameBoard& board);
+                            GameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

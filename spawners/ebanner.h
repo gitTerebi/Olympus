@@ -1,7 +1,7 @@
 #ifndef EBANNER_H
 #define EBANNER_H
 
-class eGameBoard;
+class GameBoard;
 class eTile;
 class eSaveArchive;
 enum class eCityId;
@@ -28,12 +28,12 @@ public:
     eBanner(const eBannerTypeS type,
             const int id,
             eTile* const tile,
-            eGameBoard& board);
+            GameBoard& board);
     virtual ~eBanner();
 
     eTile* tile() const { return mTile; }
     eCityId cityId() const;
-    eGameBoard& board();
+    GameBoard& board();
 
     int id() const { return mId; }
 
@@ -48,13 +48,13 @@ public:
     virtual void serialize(eSaveArchive& ar);
 
     static eBanner* sCreate(const int id, eTile* const tile,
-                            eGameBoard& board,
+                            GameBoard& board,
                             const eBannerTypeS type);
 private:
     const eBannerTypeS mType;
     const int mId;
     eTile* const mTile;
-    eGameBoard& mBoard;
+    GameBoard& mBoard;
     int mIOID = -1;
 };
 

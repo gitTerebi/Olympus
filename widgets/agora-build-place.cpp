@@ -13,14 +13,14 @@ bool agoraRoadTile(eTile* const t) {
     return !r->underAgora();
 }
 
-static bool agoraSpaceTile(eGameBoard* board, bool editorMode,
+static bool agoraSpaceTile(GameBoard* board, bool editorMode,
                             int x, int y, eCityId cid, ePlayerId pid) {
     const auto t = board->tile(x, y);
     if(!t) return false;
     return board->canBuild(x, y, 1, 1, editorMode, cid, pid) || t->hasRoad();
 }
 
-std::vector<eTile*> agoraBuildPlaceBR(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceBR(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid) {
     if(!agoraRoadTile(tile)) return {};
@@ -54,7 +54,7 @@ std::vector<eTile*> agoraBuildPlaceBR(eGameBoard* board, bool editorMode,
     return tiles;
 }
 
-std::vector<eTile*> agoraBuildPlaceTL(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceTL(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid) {
     if(!agoraRoadTile(tile)) return {};
@@ -88,7 +88,7 @@ std::vector<eTile*> agoraBuildPlaceTL(eGameBoard* board, bool editorMode,
     return tiles;
 }
 
-std::vector<eTile*> agoraBuildPlaceBL(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceBL(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid) {
     if(!agoraRoadTile(tile)) return {};
@@ -122,7 +122,7 @@ std::vector<eTile*> agoraBuildPlaceBL(eGameBoard* board, bool editorMode,
     return tiles;
 }
 
-std::vector<eTile*> agoraBuildPlaceTR(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceTR(GameBoard* board, bool editorMode,
                                       eTile* const tile,
                                       eCityId cid, ePlayerId pid) {
     if(!agoraRoadTile(tile)) return {};
@@ -156,7 +156,7 @@ std::vector<eTile*> agoraBuildPlaceTR(eGameBoard* board, bool editorMode,
     return tiles;
 }
 
-std::vector<eTile*> agoraBuildPlaceIter(eGameBoard* board, bool editorMode,
+std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                                         eTile* const tile, bool grand,
                                         eAgoraOrientation& bt,
                                         eCityId cid, ePlayerId pid) {
@@ -268,7 +268,7 @@ std::vector<eTile*> agoraBuildPlaceIter(eGameBoard* board, bool editorMode,
     return {};
 }
 
-std::vector<eTile*> stampAgoraBuildPlace(eGameBoard* board, bool editorMode,
+std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
                                          const eStampBuildCommand& cmd,
                                          int pressedTX, int pressedTY,
                                          eAgoraOrientation& bt,

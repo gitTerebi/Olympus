@@ -10,7 +10,7 @@
 eSinkLandEvent::eSinkLandEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    eGameBoard& board) :
+    GameBoard& board) :
     eGameEvent(cid, eGameEventType::sinkLand,
                branch, board) {}
 

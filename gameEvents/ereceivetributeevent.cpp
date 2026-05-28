@@ -10,7 +10,7 @@
 eReceiveTributeEvent::eReceiveTributeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::receiveTribute, branch, board) {}
 
 void eReceiveTributeEvent::initialize(const stdsptr<eWorldCity>& c) {

@@ -5,7 +5,7 @@
 
 class eSpearthrowerBase : public eSoldier {
 public:
-    eSpearthrowerBase(eGameBoard& board,
+    eSpearthrowerBase(GameBoard& board,
                       const eCharTexs charTexs,
                       const eCharacterType type);
 };

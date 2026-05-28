@@ -6,11 +6,11 @@
 class ePyramidTemple : public ePyramidElement {
 public:
     ePyramidTemple(const std::vector<eSanctCost>& cost,
-                   eGameBoard& board,
+                   GameBoard& board,
                    const int elevation,
                    const eCityId cid);
     ePyramidTemple(ePyramid* const pyramid,
-                   eGameBoard& board,
+                   GameBoard& board,
                    const int elevation,
                    const eCityId cid);
 

@@ -489,7 +489,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
     eWidget::paintEvent(p);
 }
 
-bool sHeroReady(eGameBoard& board, const eHeroType hero) {
+bool sHeroReady(GameBoard& board, const eHeroType hero) {
     eHerosHall* hh = nullptr;
     const auto cids = board.personPlayerCitiesOnBoard();
     for(const auto cid : cids) {

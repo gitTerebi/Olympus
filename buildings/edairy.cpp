@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
-stdsptr<eResourceCollectorBase> dairyCharGenerator(eGameBoard& board) {
+stdsptr<eResourceCollectorBase> dairyCharGenerator(GameBoard& board) {
     return e::make_shared<eGoatherd>(board);
 }
 
-eDairy::eDairy(eGameBoard& board, const eCityId cid) :
+eDairy::eDairy(GameBoard& board, const eCityId cid) :
     eShepherBuildingBase(board, &eBuildingTextures::fDairy,
                          -1.35, -2.95,
                          &eBuildingTextures::fDairyOverlay,

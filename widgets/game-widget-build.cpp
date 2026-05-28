@@ -62,7 +62,7 @@ std::vector<eTile*> GameWidget::agoraBuildPlaceIter(
 }
 
 template <class T>
-bool buildVendor(eGameBoard& brd, const int tx, const int ty,
+bool buildVendor(GameBoard& brd, const int tx, const int ty,
                  const eResourceType resType, const eCityId cid) {
     const auto t = brd.tile(tx, ty);
     if(!t) return false;
@@ -1156,7 +1156,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     return;
                 }
                 r = mBoard->buildAnimal(tile, eBuildingType::sheep,
-                            [](eGameBoard& board) {
+                            [](GameBoard& board) {
                     return e::make_shared<eSheep>(board);
                 }, mViewedCityId, pid, mEditorMode) || r;
             };
@@ -1173,7 +1173,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     return;
                 }
                 r = mBoard->buildAnimal(tile, eBuildingType::goat,
-                            [](eGameBoard& board) {
+                            [](GameBoard& board) {
                     return e::make_shared<eGoat>(board);
                 }, mViewedCityId, pid, mEditorMode) || r;
             };
@@ -1190,7 +1190,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     return;
                 }
                 r = mBoard->buildAnimal(tile, eBuildingType::cattle,
-                            [](eGameBoard& board) {
+                            [](GameBoard& board) {
                     return e::make_shared<eCattle>(
                                 board, eCharacterType::cattle2);
                 }, mViewedCityId, pid, mEditorMode) || r;

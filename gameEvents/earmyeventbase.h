@@ -13,7 +13,7 @@ public:
     eArmyEventBase(const eCityId cid,
                    const eGameEventType type,
                    const eGameEventBranch branch,
-                   eGameBoard& board);
+                   GameBoard& board);
     ~eArmyEventBase();
 
     const eEnlistedForces& forces() const { return mForces; }

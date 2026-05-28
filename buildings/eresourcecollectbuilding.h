@@ -14,7 +14,7 @@ public:
     using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
     using eOverlays = eTextureCollection eBuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eResourceCollectorBase>()>;
-    eResourceCollectBuilding(eGameBoard& board,
+    eResourceCollectBuilding(GameBoard& board,
                              const eBaseTex baseTex,
                              const double overlayX,
                              const double overlayY,

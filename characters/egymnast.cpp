@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eGymnast::eGymnast(eGameBoard& board) :
+eGymnast::eGymnast(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fGymnast,
                    eCharacterType::gymnast) {
     eGameTextures::loadGymnast();

@@ -18,7 +18,7 @@ enum class eHeroType {
 
 class eHero : public eCharacter {
 public:
-    eHero(eGameBoard& board, const eHeroType mt);
+    eHero(GameBoard& board, const eHeroType mt);
 
     static eHeroType sCharacterToHeroType(
             const eCharacterType type, bool* const valid = nullptr);
@@ -31,7 +31,7 @@ public:
     static eCharacterType sHeroToCharacterType(
             const eHeroType type);
     static stdsptr<eHero> sCreateHero(
-            const eHeroType type, eGameBoard& board);
+            const eHeroType type, GameBoard& board);
     static std::string sHeroName(const eHeroType ht);
     static void sHeroStrings(std::vector<eHeroType>& heroes,
                              std::vector<std::string>& heroNames);

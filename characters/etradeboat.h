@@ -5,7 +5,7 @@
 
 class eTradeBoat : public eBoatBase {
 public:
-    eTradeBoat(eGameBoard& board);
+    eTradeBoat(GameBoard& board);
 };
 
 #endif // ETRADEBOAT_H

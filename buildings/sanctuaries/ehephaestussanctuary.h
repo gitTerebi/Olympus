@@ -6,7 +6,7 @@
 class eHephaestusSanctuary : public eSanctuary {
 public:
     eHephaestusSanctuary(const int sw, const int sh,
-                         eGameBoard& board, const eCityId cid);
+                         GameBoard& board, const eCityId cid);
 };
 
 #endif // EHEPHAESTUSSANCTUARY_H

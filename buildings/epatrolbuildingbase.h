@@ -17,14 +17,14 @@ public:
                                 ePatrolBuildingBase* const b,
                                 const std::vector<eOrientation>& path,
                                 const stdsptr<eDirectionTimes>& dirTimes)>;
-    ePatrolBuildingBase(eGameBoard& board,
+    ePatrolBuildingBase(GameBoard& board,
                         const eCharGenerator& charGen,
                         const eActGenerator& actGen,
                         const eBuildingType type,
                         const int sw, const int sh,
                         const int maxEmployees,
                         const eCityId cid);
-    ePatrolBuildingBase(eGameBoard& board,
+    ePatrolBuildingBase(GameBoard& board,
                         const eCharGenerator& charGen,
                         const eBuildingType type,
                         const int sw, const int sh,

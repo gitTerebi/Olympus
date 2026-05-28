@@ -42,9 +42,9 @@ protected:
 
 class ePA_patrolFail : public eCharActFunc {
 public:
-    ePA_patrolFail(eGameBoard& board) :
+    ePA_patrolFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::PA_patrolFail) {}
-    ePA_patrolFail(eGameBoard& board, ePatrolAction* const t) :
+    ePA_patrolFail(GameBoard& board, ePatrolAction* const t) :
         eCharActFunc(board, eCharActFuncType::PA_patrolFail),
         mTptr(t) {}
 
@@ -64,9 +64,9 @@ private:
 
 class ePA_patrolFinish : public eCharActFunc {
 public:
-    ePA_patrolFinish(eGameBoard& board) :
+    ePA_patrolFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::PA_patrolFinish) {}
-    ePA_patrolFinish(eGameBoard& board, ePatrolAction* const t) :
+    ePA_patrolFinish(GameBoard& board, ePatrolAction* const t) :
         eCharActFunc(board, eCharActFuncType::PA_patrolFinish),
         mTptr(t) {}
 

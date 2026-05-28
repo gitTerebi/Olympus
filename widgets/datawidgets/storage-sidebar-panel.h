@@ -5,7 +5,7 @@
 
 #include "engine/eresourcetype.h"
 
-class eGameBoard;
+class GameBoard;
 class eLabel;
 class eViewModeButton;
 

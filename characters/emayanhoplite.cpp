@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eMayanHoplite::eMayanHoplite(eGameBoard& board) :
+eMayanHoplite::eMayanHoplite(GameBoard& board) :
     eHopliteBase(board, &eCharacterTextures::fMayanHoplite,
                  eCharacterType::mayanHoplite) {
     eGameTextures::loadMayanHoplite();

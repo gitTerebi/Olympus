@@ -24,7 +24,7 @@ int shGA(const eAgoraOrientation o) {
     return 0;
 }
 
-eGrandAgora::eGrandAgora(const eAgoraOrientation o, eGameBoard& board,
+eGrandAgora::eGrandAgora(const eAgoraOrientation o, GameBoard& board,
                          const eCityId cid) :
     eAgoraBase(board, eBuildingType::grandAgora,
                swGA(o), shGA(o), o, cid, 6) {}

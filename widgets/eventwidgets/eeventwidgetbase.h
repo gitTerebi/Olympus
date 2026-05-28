@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class eGameEvent;
-class eGameBoard;
+class GameBoard;
 
 class eEventWidgetBase : public eFramedWidget {
 public:

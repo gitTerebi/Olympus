@@ -10,7 +10,7 @@ class eGodVisitEvent : public eGameEvent {
 public:
     eGodVisitEvent(const eCityId cid,
                    const eGameEventBranch branch,
-                   eGameBoard& board);
+                   GameBoard& board);
 
     const std::vector<eGodType>& types() const { return mTypes; }
     void setTypes(const std::vector<eGodType>& types);

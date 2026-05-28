@@ -87,7 +87,7 @@ void eAphroditeHelpAction::finishPopulating() {
 }
 
 bool eAphroditeHelpAction::sHelpNeeded(const eCityId cid,
-                                       const eGameBoard& board) {
+                                       const GameBoard& board) {
     const auto bs = board.buildings(cid, [](eBuilding* const b) {
         const auto type = b->type();
         return type == eBuildingType::commonHouse ||

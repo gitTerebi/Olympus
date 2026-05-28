@@ -13,7 +13,7 @@
 #include "characters/ehomeless.h"
 #include "characters/actions/esettleraction.h"
 
-eEliteHousing::eEliteHousing(eGameBoard& board,
+eEliteHousing::eEliteHousing(GameBoard& board,
                              const eCityId cid) :
     eHouseBase(board, eBuildingType::eliteHousing,
                4, 4, {6, 6, 10, 16, 20}, cid) {}

@@ -1,6 +1,6 @@
 #include "edustmissile.h"
 
-eDustMissile::eDustMissile(eGameBoard& board,
+eDustMissile::eDustMissile(GameBoard& board,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::dust, path),
     mCollId(eRand::rand()) {

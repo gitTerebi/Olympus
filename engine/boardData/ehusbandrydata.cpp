@@ -6,7 +6,7 @@
 
 eHusbandryData::eHusbandryData(const ePopulationData& popData,
                                const BoardCity& city,
-                               const eGameBoard& board) :
+                               const GameBoard& board) :
     mPopData(popData), mCity(city), mBoard(board) {}
 
 int eHusbandryData::canSupport() const {

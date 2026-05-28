@@ -40,7 +40,7 @@
 #include "gameEvents/invasions/invasion-handler.h"
 
 stdsptr<eCharActFunc> eCharActFunc::sCreate(
-        eGameBoard& board,
+        GameBoard& board,
         const eCharActFuncType type) {
     switch(type) {
     case eCharActFuncType::AWC_goBackFail:

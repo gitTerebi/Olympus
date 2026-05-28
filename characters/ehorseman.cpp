@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eHorseman::eHorseman(eGameBoard& board) :
+eHorseman::eHorseman(GameBoard& board) :
     eHorsemanBase(board, &eCharacterTextures::fHorseman,
                   eCharacterType::horseman) {
     eGameTextures::loadHorseman();

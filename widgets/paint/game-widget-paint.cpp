@@ -742,20 +742,20 @@ std::vector<eTile *> GameWidget::selectedTiles() const
     return result;
 }
 
-class eGameBoardRegisterLock
+class GameBoardRegisterLock
 {
 public:
-    eGameBoardRegisterLock(eGameBoard &board) : mBoard(board)
+    GameBoardRegisterLock(GameBoard &board) : mBoard(board)
     {
         mBoard.setRegisterBuildingsEnabled(false);
     }
-    ~eGameBoardRegisterLock()
+    ~GameBoardRegisterLock()
     {
         mBoard.setRegisterBuildingsEnabled(true);
     }
 
 private:
-    eGameBoard &mBoard;
+    GameBoard &mBoard;
 };
 
 void GameWidget::setArmyMenuVisible(const bool v)
@@ -1115,7 +1115,7 @@ void GameWidget::paintEvent(ePainter &p)
         }
     }
     smoothScroll();
-    eGameBoardRegisterLock lock(*mBoard);
+    GameBoardRegisterLock lock(*mBoard);
 
     p.setFont(eFonts::defaultFont(resolution()));
     p.translate(mDX, mDY);
@@ -4434,7 +4434,7 @@ void GameWidget::paintEvent(ePainter &p)
                 int minY;
                 int maxX;
                 int maxY;
-                eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+                GameBoard::sBuildTiles(minX, minY, maxX, maxY,
                                         eb.fTx, eb.fTy, sw, sh);
                 pb->setTileRect({minX, minY, sw, sh});
                 const auto roads = pb->surroundingRoad(false, true);
@@ -5685,7 +5685,7 @@ void GameWidget::paintEvent(ePainter &p)
             int minY;
             int maxX;
             int maxY;
-            eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
+            GameBoard::sBuildTiles(minX, minY, maxX, maxY,
                                     eb.fTx, eb.fTy, sw, sh);
             for (int x = minX - r; x <= minX + sw + r; x++)
             {

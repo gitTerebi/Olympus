@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eDramaSchool::eDramaSchool(eGameBoard& board,
+eDramaSchool::eDramaSchool(GameBoard& board,
                            const eCityId cid) :
     ePatrolSourceBuilding(board,
                           &eBuildingTextures::fDramaSchool,

@@ -5,7 +5,7 @@
 
 #include "characters/monsters/emonstertype.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eMonsterButton : public eFramedButton {
 public:

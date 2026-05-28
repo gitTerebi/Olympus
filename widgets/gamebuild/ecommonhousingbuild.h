@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class eGameBoard;
+class GameBoard;
 
 struct eCommonHousingTileRect {
     int fX;
@@ -15,13 +15,13 @@ struct eCommonHousingTileRect {
 };
 
 std::vector<eCommonHousingTileRect> commonHousingBuildRects(
-        eGameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
+        GameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
         int pressedTX, int pressedTY, int hoverTX, int hoverTY);
 
 eCommonHousingTileRect commonHousingBuildBounds(
         const std::vector<eCommonHousingTileRect>& rects);
 
-bool buildCommonHousing(eGameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
+bool buildCommonHousing(GameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
                         int pressedTX, int pressedTY, int hoverTX, int hoverTY, eCityId viewedCityId);
 
 #endif // ECOMMONHOUSINGBUILD_H

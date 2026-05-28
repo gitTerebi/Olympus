@@ -24,7 +24,7 @@ int eMapGeneratorSettings::sLastTallStones = 5;
 int eMapGeneratorSettings::sLastElevation = 9;
 eCityId eMapGeneratorSettings::sLastCid = static_cast<eCityId>(-1);
 
-eMapGenerator::eMapGenerator(eGameBoard& board) :
+eMapGenerator::eMapGenerator(GameBoard& board) :
     mBoard(board) {
 }
 

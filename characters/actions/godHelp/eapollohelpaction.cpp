@@ -87,7 +87,7 @@ void eApolloHelpAction::finishHealing() {
 }
 
 bool eApolloHelpAction::sHelpNeeded(const eCityId cid,
-                                    const eGameBoard& board) {
+                                    const GameBoard& board) {
     const auto& ps = board.plagues(cid);
     return !ps.empty();
 }
@@ -120,7 +120,7 @@ void eApolloHelpAction::goToTarget() {
 }
 
 eSmallHouse* sClosestPlagueHouseTile(
-        eTile* const to, eGameBoard& board) {
+        eTile* const to, GameBoard& board) {
     if(!to) return nullptr;
     const int rdx = to->x();
     const int rdy = to->y();

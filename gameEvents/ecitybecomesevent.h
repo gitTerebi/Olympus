@@ -20,7 +20,7 @@ class eCityBecomesEvent : public eGameEvent,
 public:
     eCityBecomesEvent(const eCityId cid,
                       const eGameEventBranch branch,
-                      eGameBoard& board);
+                      GameBoard& board);
 
     void trigger() override;
     std::string longName() const override;

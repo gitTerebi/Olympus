@@ -31,7 +31,7 @@ std::string string_format(const std::string& format, Args... args) {
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-void eMessageBox::initialize(eGameBoard& board,
+void eMessageBox::initialize(GameBoard& board,
                              const eEventData& ed,
                              const eAction& viewTile,
                              const eAction& closeFunc,
@@ -591,7 +591,7 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
                                           const int space,
                                           const int months,
                                           eLabel** spaceLabelPtr,
-                                          eGameBoard* board,
+                                          GameBoard* board,
                                           const eCityId cid,
                                           eLabel** stockLabelPtr) {
     const auto res = resolution();

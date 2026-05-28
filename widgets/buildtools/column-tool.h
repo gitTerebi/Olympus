@@ -5,13 +5,13 @@
 
 #include "engine/eorientation.h"
 
-class eGameBoard;
+class GameBoard;
 
 namespace ColumnTool {
 
 // A* path along buildable tiles that already host columns or are empty.
 // From hover to press. Returns false if no path within search budget.
-bool path(eGameBoard* board,
+bool path(GameBoard* board,
           int pressedTX, int pressedTY,
           int hoverTX, int hoverTY,
           std::vector<eOrientation>& out);

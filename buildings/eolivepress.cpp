@@ -10,7 +10,7 @@ constexpr double sIdleX = 0.5;
 constexpr double sIdleY = -1.5;
 }
 
-eOlivePress::eOlivePress(eGameBoard& board,
+eOlivePress::eOlivePress(GameBoard& board,
                          const eCityId cid) :
     eProcessingBuilding(board,
                         &eBuildingTextures::fOlivePress,

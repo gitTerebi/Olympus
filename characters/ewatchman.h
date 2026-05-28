@@ -5,7 +5,7 @@
 
 class eWatchman : public eFightingPatroler {
 public:
-    eWatchman(eGameBoard& board);
+    eWatchman(GameBoard& board);
 };
 
 #endif // EWATCHMAN_H

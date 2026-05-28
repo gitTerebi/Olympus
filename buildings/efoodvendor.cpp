@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eFoodVendor::eFoodVendor(eGameBoard& board,
+eFoodVendor::eFoodVendor(GameBoard& board,
                          const eCityId cid) :
     eVendor(board,
             eResourceType::food, eProvide::food,

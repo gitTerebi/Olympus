@@ -17,7 +17,7 @@ class eMessageBox : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(eGameBoard &board,
+    void initialize(GameBoard &board,
                     const eEventData& ed,
                     const eAction& viewTile,
                     const eAction& closeFunc,
@@ -31,7 +31,7 @@ public:
                                  const int count, const int space,
                                  const int months = -1,
                                  eLabel** spaceLabelPtr = nullptr,
-                                 eGameBoard* board = nullptr,
+                                 GameBoard* board = nullptr,
                                  const eCityId cid = eCityId::neutralAggresive,
                                  eLabel** stockLabelPtr = nullptr);
 protected:

@@ -7,7 +7,7 @@
 
 class BoardCity;
 class eWorldBoard;
-class eGameBoard;
+class GameBoard;
 
 enum class eCityId;
 
@@ -22,7 +22,7 @@ public:
     void initialize(const eCitiesGetter& get,
                     const eCityAdder& add,
                     const eCityRemover& remove,
-                    eGameBoard* const board,
+                    GameBoard* const board,
                     eWorldBoard* const wboard);
 };
 

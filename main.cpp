@@ -17,7 +17,7 @@
 #include "audio/music.h"
 #include "audio/sounds.h"
 #include "audio/audio-device.h"
-#include "ecursors.h"
+#include "cursors.h"
 #include "debug/windows-dump.h"
 
 bool init() {
@@ -197,10 +197,10 @@ int main() {
         const bool i = w.initialize(settings);
         if(!i) return 1;
         const bool e = eGameTextures::initialize(w.renderer());
-        eCursors::initialize();
+        Cursors::initialize();
 
         if(e) r = w.exec();
-        eCursors::destroy();
+        Cursors::destroy();
     }
 
     close();

@@ -16,7 +16,7 @@ enum class eMonsterAggressivness {
 
 class eMonster : public eCharacter {
 public:
-    eMonster(eGameBoard& board, const eMonsterType mt);
+    eMonster(GameBoard& board, const eMonsterType mt);
     ~eMonster();
 
     static eMonsterType sCharacterToMonsterType(
@@ -25,7 +25,7 @@ public:
             const eMonsterType type);
     static int sMonsterAttackTime(const eMonsterType type);
     static stdsptr<eMonster> sCreateMonster(
-            const eMonsterType type, eGameBoard& board);
+            const eMonsterType type, GameBoard& board);
     static eGodType sMonsterSender(const eMonsterType type,
                                    bool* const valid);
     static eMonsterType sGodsMinion(const eGodType type);

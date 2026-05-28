@@ -106,7 +106,7 @@ struct sRepairGroup
 };
 
 static std::vector<stdsptr<eBuilding>> restoreFromBundle(
-    const std::vector<uint8_t> &data, eGameBoard &board)
+    const std::vector<uint8_t> &data, GameBoard &board)
 {
     std::vector<stdsptr<eBuilding>> buildings;
     if (data.empty())
@@ -216,7 +216,7 @@ static bool containsRuins(const std::vector<eRuins *> &tiles,
     return std::find(tiles.begin(), tiles.end(), ruins) != tiles.end();
 }
 
-static bool addBundleRuins(eGameBoard &board, sRepairGroup &g)
+static bool addBundleRuins(GameBoard &board, sRepairGroup &g)
 {
     if (!g.originRuins || !g.originRuins->hasRestoreBundle())
         return true;
@@ -245,7 +245,7 @@ static bool addBundleRuins(eGameBoard &board, sRepairGroup &g)
 }
 
 static std::vector<sRepairGroup> collectRepairGroups(
-    eGameBoard &board, const ePlayerId ppid,
+    GameBoard &board, const ePlayerId ppid,
     const int minX, const int minY,
     const int maxX, const int maxY)
 {
@@ -346,7 +346,7 @@ static std::vector<sRepairGroup> collectRepairGroups(
     return groups;
 }
 
-void handleRepair(eGameBoard &board, GameWidget *const widget,
+void handleRepair(GameBoard &board, GameWidget *const widget,
                   const int minX, const int minY,
                   const int maxX, const int maxY,
                   const eCityId cid,

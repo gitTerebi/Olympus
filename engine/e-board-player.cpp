@@ -12,7 +12,7 @@
 
 #include <algorithm>
 
-eBoardPlayer::eBoardPlayer(const ePlayerId pid, eGameBoard& board) :
+eBoardPlayer::eBoardPlayer(const ePlayerId pid, GameBoard& board) :
     mBoard(board), mId(pid) {}
 
 eTeamId eBoardPlayer::teamId() const {

@@ -7,7 +7,7 @@
 class eBasicMonster : public eMonster {
 public:
     using eCharTexs = eMonsterTextures eCharacterTextures::*;
-    eBasicMonster(eGameBoard& board,
+    eBasicMonster(GameBoard& board,
                   const eCharTexs charTexs,
                   const eMonsterType type);
 

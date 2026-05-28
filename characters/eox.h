@@ -5,7 +5,7 @@
 
 class eOx : public eBasicPatroler {
 public:
-    eOx(eGameBoard& board);
+    eOx(GameBoard& board);
 };
 
 #endif // EOX_H

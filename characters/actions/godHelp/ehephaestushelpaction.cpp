@@ -73,7 +73,7 @@ void eHephaestusHelpAction::finishProviding() {
 }
 
 bool eHephaestusHelpAction::sHelpNeeded(const eCityId cid,
-                                        const eGameBoard& board) {
+                                        const GameBoard& board) {
     return board.invasionToDefend(cid);
 }
 

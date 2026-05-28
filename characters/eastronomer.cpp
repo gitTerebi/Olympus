@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 
-eAstronomer::eAstronomer(eGameBoard& board) :
+eAstronomer::eAstronomer(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fAstronomer,
                    eCharacterType::astronomer) {
     eGameTextures::loadAstronomer();

@@ -103,7 +103,7 @@ double eAttackTarget::absY() const {
     return 0.;
 }
 
-void eAttackTarget::serialize(eSaveArchive& ar, eGameBoard& board) {
+void eAttackTarget::serialize(eSaveArchive& ar, GameBoard& board) {
     ar.characterField("character", &board, mC);
     ar.buildingField("building", &board, mB);
 }
@@ -123,7 +123,7 @@ void eFightingAction::cancelAttack() {
 void eFightingAction::sSignalBeingAttack(
     eCharacter* const attacked,
     eCharacter* const by,
-    eGameBoard& brd) {
+    GameBoard& brd) {
     const auto tt = by->tile();
     if(!tt) return;
     const int ttx = tt->x();
@@ -133,7 +133,7 @@ void eFightingAction::sSignalBeingAttack(
 
 void eFightingAction::sSignalBeingAttack(eCharacter * const attacked,
                                          const int ttx, const int tty,
-                                         eGameBoard &brd) {
+                                         GameBoard &brd) {
     const auto att = attacked->tile();
     if(!att) return;
     const int attx = att->x();

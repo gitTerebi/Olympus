@@ -19,7 +19,7 @@ eFulfillDialog::eFulfillDialog(eMainWindow* const window,
                                eMainWidget* const mw) :
     eInfoWidget(window, mw, true, true) {}
 
-void eFulfillDialog::initialize(eGameBoard* const board,
+void eFulfillDialog::initialize(GameBoard* const board,
                                 const eCity& city) {
     auto title = eLanguage::zeusText(41, 2);
     eStringHelpers::replace(title, "[city_name]", city->name());

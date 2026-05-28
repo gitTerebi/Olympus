@@ -5,7 +5,7 @@
 
 class ePorter : public eBasicPatroler {
 public:
-    ePorter(eGameBoard& board);
+    ePorter(GameBoard& board);
 };
 
 #endif // EPORTER_H

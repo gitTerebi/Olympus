@@ -3,7 +3,7 @@
 #include "characters/ehealer.h"
 #include "textures/egametextures.h"
 
-eHospital::eHospital(eGameBoard& board,
+eHospital::eHospital(GameBoard& board,
                      const eCityId cid) :
     ePatrolBuilding(board, &eBuildingTextures::fHospital,
                     -1.84, -4.5,

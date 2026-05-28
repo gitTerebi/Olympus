@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 eAgoraSpace::eAgoraSpace(const stdsptr<eAgoraBase>& agora,
-                         eGameBoard& board, const eCityId cid) :
+                         GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::agoraSpace, 2, 2, cid),
     mAgora(agora) {}
 

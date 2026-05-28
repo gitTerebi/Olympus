@@ -5,7 +5,7 @@
 
 class eLumberjack : public eResourceCollector {
 public:
-    eLumberjack(eGameBoard& board);
+    eLumberjack(GameBoard& board);
 };
 
 #endif // ELUMBERJACK_H

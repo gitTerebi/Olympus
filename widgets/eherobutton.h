@@ -5,7 +5,7 @@
 
 #include "characters/heroes/ehero.h"
 
-class eGameBoard;
+class GameBoard;
 
 class eHeroButton : public eFramedButton {
 public:

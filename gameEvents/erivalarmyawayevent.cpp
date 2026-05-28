@@ -9,7 +9,7 @@
 eRivalArmyAwayEvent::eRivalArmyAwayEvent(
         const eCityId cid,
         const eGameEventBranch branch,
-        eGameBoard& board) :
+        GameBoard& board) :
     eGameEvent(cid, eGameEventType::rivalArmyAway,
                branch, board),
     eCityEventValue(board) {}

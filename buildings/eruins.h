@@ -9,7 +9,7 @@ class eSaveArchive;
 
 class eRuins : public eBuilding {
 public:
-    eRuins(eGameBoard& board, const eCityId cid);
+    eRuins(GameBoard& board, const eCityId cid);
 
     stdsptr<eTexture> getTexture(const eTileSize size) const override;
 

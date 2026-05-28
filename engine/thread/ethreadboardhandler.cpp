@@ -10,7 +10,7 @@ void eThreadBoardHandler::initialize(const int w, const int h) {
     mTmpBoard.initialize(w, h);
 }
 
-void eThreadBoardHandler::updateAll(eGameBoard& board, const BoardCity& c) {
+void eThreadBoardHandler::updateAll(GameBoard& board, const BoardCity& c) {
     //    using std::chrono::high_resolution_clock;
 //    using std::chrono::duration_cast;
 //    using std::chrono::duration;
@@ -70,7 +70,7 @@ void eThreadBoardHandler::updateFinishedMonuments(const BoardCity& c) {
     }
 }
 
-void eThreadBoardHandler::update(eGameBoard& board, const eCityId cid,
+void eThreadBoardHandler::update(GameBoard& board, const eCityId cid,
                                  const eStateRelevance rel) {
     const auto c = board.boardCityWithId(cid);
 

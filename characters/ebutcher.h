@@ -5,7 +5,7 @@
 
 class eButcher : public eBasicPatroler {
 public:
-    eButcher(eGameBoard& board);
+    eButcher(GameBoard& board);
 };
 
 #endif // EBUTCHER_H

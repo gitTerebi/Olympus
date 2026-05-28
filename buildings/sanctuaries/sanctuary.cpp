@@ -40,7 +40,7 @@
 #include "etemplealtarbuilding.h"
 #include "enumbers.h"
 
-eSanctuary::eSanctuary(eGameBoard& board,
+eSanctuary::eSanctuary(GameBoard& board,
                        const eBuildingType type,
                        const int sw, const int sh,
                        const int maxEmployees,
@@ -252,7 +252,7 @@ double eSanctuary::helpAttackTimeFraction() const {
 stdsptr<eSanctuary> eSanctuary::sCreate(
         const eBuildingType type,
         const int sw, const int sh,
-        eGameBoard& board,
+        GameBoard& board,
         const eCityId cid) {
     switch(type) {
     case eBuildingType::templeAphrodite:

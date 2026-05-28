@@ -18,7 +18,7 @@ class eTile;
 class eBuilding;
 class eCharacter;
 class eCharacterAction;
-class eGameBoard;
+class GameBoard;
 class eCharacterActionFunction;
 class eGodAct;
 class eWorldCity;
@@ -159,35 +159,35 @@ public:
         return *this;
     }
 
-    eTile* readTile(eGameBoard& board);
+    eTile* readTile(GameBoard& board);
     using eBuildingFunc = std::function<void(eBuilding*)>;
-    void readBuilding(eGameBoard* board,
+    void readBuilding(GameBoard* board,
                       const eBuildingFunc& func,
                       const char* tag = "building");
     using eCharFunc = std::function<void(eCharacter*)>;
-    void readCharacter(eGameBoard* board,
+    void readCharacter(GameBoard* board,
                        const eCharFunc& func,
                        const char* tag = "character");
     using eCharActFunc = std::function<void(eCharacterAction*)>;
-    void readCharacterAction(eGameBoard* board,
+    void readCharacterAction(GameBoard* board,
                              const eCharActFunc& func,
                              const char* tag = "characterAction");
     stdsptr<eCharacterActionFunction> readCharActFunc(
-            eGameBoard& board);
-    stdsptr<eGodAct> readGodAct(eGameBoard& board);
+            GameBoard& board);
+    stdsptr<eGodAct> readGodAct(GameBoard& board);
     stdsptr<eDirectionTimes> readDirectionTimes(
-            eGameBoard& board);
+            GameBoard& board);
     using eCityFunc = std::function<void(stdsptr<eWorldCity>)>;
-    void readCity(eGameBoard* board, const eCityFunc& func);
+    void readCity(GameBoard* board, const eCityFunc& func);
     void readCity(eWorldBoard* board, const eCityFunc& func);
     using eBannerFunc = std::function<void(eBanner*)>;
-    void readBanner(eGameBoard* board, const eBannerFunc& func);
+    void readBanner(GameBoard* board, const eBannerFunc& func);
     using SoldierBannerFunc = std::function<void(stdsptr<SoldierBanner>)>;
-    void readSoldierBanner(eGameBoard* board, const SoldierBannerFunc& func);
+    void readSoldierBanner(GameBoard* board, const SoldierBannerFunc& func);
     using eEventFunc = std::function<void(eGameEvent*)>;
-    void readGameEvent(eGameBoard* board, const eEventFunc& func);
+    void readGameEvent(GameBoard* board, const eEventFunc& func);
     using eeInvasionHandlerFunc = std::function<void(eInvasionHandler*)>;
-    void readInvasionHandler(eGameBoard* board, const eeInvasionHandlerFunc& func);
+    void readInvasionHandler(GameBoard* board, const eeInvasionHandlerFunc& func);
 
     using eFunc = std::function<void()>;
     void addPostFunc(const eFunc& func, const char* tag = "?");

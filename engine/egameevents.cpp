@@ -5,7 +5,7 @@
 #include "e-game-board.h"
 #include "fileIO/esavearchive.h"
 
-eGameEvents::eGameEvents(const eCityId cid, eGameBoard& board) :
+eGameEvents::eGameEvents(const eCityId cid, GameBoard& board) :
     mCid(cid), mBoard(board) {}
 
 void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {

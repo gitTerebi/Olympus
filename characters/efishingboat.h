@@ -5,7 +5,7 @@
 
 class eFishingBoat : public eResourceCollectorBase {
 public:
-    eFishingBoat(eGameBoard& board);
+    eFishingBoat(GameBoard& board);
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };
 

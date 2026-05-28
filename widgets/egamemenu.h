@@ -8,7 +8,7 @@ class eCheckableButton;
 class eTextureCollection;
 class eInterfaceTextures;
 class eButton;
-class eGameBoard;
+class GameBoard;
 class ePopulationDataWidget;
 class eEmploymentDataWidget;
 class eAdminDataWidget;
@@ -48,7 +48,7 @@ class eGameMenu : public eGameMenuBase {
 public:
     using eGameMenuBase::eGameMenuBase;
     ~eGameMenu();
-    void initialize(eGameBoard* const b,
+    void initialize(GameBoard* const b,
                     const eAction& goalsView);
 
     int tradeCityId() const { return mTradeCityId; }
@@ -95,7 +95,7 @@ private:
     void displayPrice(const int price, const int loc);
     eWidget* createPriceWidget(const eInterfaceTextures& coll);
 
-    eGameBoard* mBoard{nullptr};
+    GameBoard* mBoard{nullptr};
     GameWidget* mGW = nullptr;
 
     eBuildWidget* mBuildWidget = nullptr;

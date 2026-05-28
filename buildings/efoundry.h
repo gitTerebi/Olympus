@@ -5,7 +5,7 @@
 
 class eFoundry : public eResourceCollectBuilding {
 public:
-    eFoundry(eGameBoard& board, const eCityId cid);
+    eFoundry(GameBoard& board, const eCityId cid);
 };
 
 #endif // EFOUNDRY_H

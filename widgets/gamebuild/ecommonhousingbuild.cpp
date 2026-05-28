@@ -8,7 +8,7 @@
 #include <algorithm>
 
 std::vector<eCommonHousingTileRect> commonHousingBuildRects(
-        eGameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
+        GameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
         int pressedTX, int pressedTY, int hoverTX, int hoverTY) {
     std::vector<eCommonHousingTileRect> rects;
     if(!board) return rects;
@@ -45,7 +45,7 @@ eCommonHousingTileRect commonHousingBuildBounds(
     return {minX, minY, maxX - minX, maxY - minY};
 }
 
-bool buildCommonHousing(eGameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
+bool buildCommonHousing(GameBoard* board, eCityId cid, ePlayerId pid, bool editorMode,
                         int pressedTX, int pressedTY, int hoverTX, int hoverTY, eCityId viewedCityId) {
     const auto rects = commonHousingBuildRects(
                 board, cid, pid, editorMode,

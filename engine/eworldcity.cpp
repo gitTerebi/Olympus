@@ -445,7 +445,7 @@ std::string eWorldCity::anArmy() const
     return eLanguage::zeusText(group, 22 + string);
 }
 
-void eWorldCity::nextMonth(eGameBoard *const board)
+void eWorldCity::nextMonth(GameBoard *const board)
 {
     eInvasionEvent::tryCreateCityInvasion(*this, *board);
     if (mBribeMonthsAgo >= 0)

@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "engine/e-game-board.h"
 
-eFireFighter::eFireFighter(eGameBoard& board) :
+eFireFighter::eFireFighter(GameBoard& board) :
     eCharacter(board, eCharacterType::fireFighter),
     mTextures(eGameTextures::characters()),
     mCharTexs(&eCharacterTextures::fFireFighter) {

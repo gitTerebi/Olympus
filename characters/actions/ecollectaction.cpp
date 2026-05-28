@@ -17,21 +17,21 @@ eCollectAction::eCollectAction(eCharacter* const c,
 eCollectAction::eCollectAction(eCharacter* const c) :
     eCollectAction(c, eTranformFunc::none) {}
 
-void transformMarble(eTile* const t, eGameBoard& board) {
+void transformMarble(eTile* const t, GameBoard& board) {
     if(t->resource() > 0) return;
     const int l = t->marbleLevel();
     t->setMarbleLevel(l + 1);
     board.restockMarbleTiles();
 }
 
-void transformBlackMarble(eTile* const t, eGameBoard& board) {
+void transformBlackMarble(eTile* const t, GameBoard& board) {
     if(t->resource() > 0) return;
     const int l = t->marbleLevel();
     t->setMarbleLevel(l + 1);
     board.restockBlackMarbleTiles();
 }
 
-void transformForest(eTile* const t, eGameBoard& board) {
+void transformForest(eTile* const t, GameBoard& board) {
     t->setTerrain(eTerrain::choppedForest);
     const auto a = new eRegrowForestAction(t);
     board.planAction(a);

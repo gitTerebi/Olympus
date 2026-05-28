@@ -15,7 +15,7 @@
 #include "ehorse.h"
 #include "echariot.h"
 
-eCartTransporter::eCartTransporter(eGameBoard& board) :
+eCartTransporter::eCartTransporter(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fTransporter,
                    eCharacterType::cartTransporter) {
     eGameTextures::loadTransporter();

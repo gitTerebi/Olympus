@@ -3,7 +3,7 @@
 
 #include "../infowidgets/einfowidget.h"
 
-class eGameBoard;
+class GameBoard;
 enum class eSector;
 enum class eCityId;
 
@@ -12,11 +12,11 @@ public:
     eWorkforceAllocationWidget(eMainWindow* const window,
                                eMainWidget* const mw);
 
-    void initialize(eGameBoard& board, const eCityId cid);
+    void initialize(GameBoard& board, const eCityId cid);
 private:
     void updateLabels();
 
-    eGameBoard* mBoard = nullptr;
+    GameBoard* mBoard = nullptr;
     eCityId mCityId;
     std::map<eSector, eLabel*> mEmplMaxLabels;
     std::map<eSector, eLabel*> mEmplLabels;

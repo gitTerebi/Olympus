@@ -16,7 +16,7 @@ public:
     bool decide() override;
 
     static bool sHelpNeeded(const eCityId cid,
-                            const eGameBoard& board);
+                            const GameBoard& board);
 
     void rebuildCurrentStage();
     void finishGiving();
@@ -35,9 +35,9 @@ private:
 
 class eAtHA_giveFinish : public eCharActFunc {
 public:
-    eAtHA_giveFinish(eGameBoard& board) :
+    eAtHA_giveFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::AtHA_giveFinish) {}
-    eAtHA_giveFinish(eGameBoard& board, eAtlasHelpAction* const ca) :
+    eAtHA_giveFinish(GameBoard& board, eAtlasHelpAction* const ca) :
         eCharActFunc(board, eCharActFuncType::AtHA_giveFinish),
         mTptr(ca) {}
 
@@ -59,12 +59,12 @@ private:
 
 class eAtlasHelpAct : public eGodAct {
 public:
-    eAtlasHelpAct(eGameBoard& board,
+    eAtlasHelpAct(GameBoard& board,
                   eMonument* const target) :
         eGodAct(board, eGodActType::atlasHelp),
         mTarget(target) {}
 
-    eAtlasHelpAct(eGameBoard& board) :
+    eAtlasHelpAct(GameBoard& board) :
         eAtlasHelpAct(board, nullptr) {}
 
     eMissileTarget find(eTile* const t) override {

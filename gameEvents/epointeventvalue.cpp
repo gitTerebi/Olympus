@@ -6,7 +6,7 @@
 ePointEventValue::ePointEventValue(
     const eBannerTypeS btype,
     const eCityId cid,
-    eGameBoard& board,
+    GameBoard& board,
     const eValidator &v) :
     mBType(btype), mCid(cid),
     mBoard(board), mValidator(v) {}

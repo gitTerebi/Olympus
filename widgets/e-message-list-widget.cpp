@@ -255,7 +255,7 @@ bool eMessageListWidget::keyPressEvent(const eKeyPressEvent &e)
     return eModal::keyPressEvent(e);
 }
 
-void eMessageListWidget::setBoard(eGameBoard* const board)
+void eMessageListWidget::setBoard(GameBoard* const board)
 {
     for(const auto& lm : board->messageLog())
         addSavedMessage(lm.fEd, lm.fMsg, lm.fDate, lm.fRead);

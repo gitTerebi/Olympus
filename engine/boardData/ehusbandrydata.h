@@ -3,20 +3,20 @@
 
 class ePopulationData;
 class BoardCity;
-class eGameBoard;
+class GameBoard;
 
 class eHusbandryData {
 public:
     eHusbandryData(const ePopulationData& popData,
                    const BoardCity& city,
-                   const eGameBoard& board);
+                   const GameBoard& board);
 
     int canSupport() const;
     int storedFood() const;
 private:
     const ePopulationData& mPopData;
     const BoardCity& mCity;
-    const eGameBoard& mBoard;
+    const GameBoard& mBoard;
 };
 
 #endif // EHUSBANDRYDATA_H

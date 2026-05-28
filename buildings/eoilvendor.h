@@ -5,7 +5,7 @@
 
 class eOilVendor : public eVendor {
 public:
-    eOilVendor(eGameBoard& board, const eCityId cid);
+    eOilVendor(GameBoard& board, const eCityId cid);
 };
 
 #endif // EOILVENDOR_H

@@ -4,5 +4,5 @@
 
 eMonsterPoint::eMonsterPoint(const int id,
                              eTile* const tile,
-                             eGameBoard& board) :
+                             GameBoard& board) :
     eBanner(eBannerTypeS::monsterPoint, id, tile, board) {}

@@ -5,7 +5,7 @@
 
 class eArcherBase : public eSoldier {
 public:
-    eArcherBase(eGameBoard& board,
+    eArcherBase(GameBoard& board,
                 const eCharTexs charTexs,
                 const eCharacterType type);
 };
