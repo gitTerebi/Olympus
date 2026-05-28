@@ -2,6 +2,59 @@
 
 #include "../thread/ethreadboard.h"
 
+#include <array>
+
+namespace {
+
+struct AvenueHeatCell {
+    int x;
+    int y;
+    int value;
+};
+
+const std::array<AvenueHeatCell, 54> kAvenueHeat{{
+    {-3, -3, 1}, {-2, -3, 2}, {-1, -3, 2}, {0, -3, 2}, {1, -3, 2}, {2, -3, 2}, {3, -3, 2}, {4, -3, 1},
+    {-3, -2, 1}, {-2, -2, 3}, {-1, -2, 4}, {0, -2, 4}, {1, -2, 4}, {2, -2, 4}, {3, -2, 3}, {4, -2, 1},
+    {-3, -1, 1}, {-2, -1, 3}, {-1, -1, 5}, {0, -1, 6}, {1, -1, 6}, {2, -1, 5}, {3, -1, 3}, {4, -1, 1},
+    {-3, 0, 1}, {-2, 0, 3}, {-1, 0, 5}, {2, 0, 5}, {3, 0, 3}, {4, 0, 1},
+    {-3, 1, 1}, {-2, 1, 3}, {-1, 1, 5}, {0, 1, 6}, {1, 1, 6}, {2, 1, 5}, {3, 1, 3}, {4, 1, 1},
+    {-3, 2, 1}, {-2, 2, 3}, {-1, 2, 4}, {0, 2, 4}, {1, 2, 4}, {2, 2, 4}, {3, 2, 3}, {4, 2, 1},
+    {-3, 3, 1}, {-2, 3, 2}, {-1, 3, 2}, {0, 3, 2}, {1, 3, 2}, {2, 3, 2}, {3, 3, 2}, {4, 3, 1},
+}};
+
+template <typename Tile>
+Tile* avenueRoad(Tile* const tile) {
+    if(!tile) return nullptr;
+    const auto tl = tile->template topLeft<Tile>();
+    if(tl && tl->hasRoad()) return tl;
+    const auto br = tile->template bottomRight<Tile>();
+    if(br && br->hasRoad()) return br;
+    const auto bl = tile->template bottomLeft<Tile>();
+    if(bl && bl->hasRoad()) return bl;
+    const auto tr = tile->template topRight<Tile>();
+    if(tr && tr->hasRoad()) return tr;
+    return nullptr;
+}
+
+template <typename Tile, typename Add>
+void addAvenueHeat(Tile* const avenueTile, const Add& add) {
+    const auto road = avenueRoad(avenueTile);
+    if(!avenueTile || !road) return;
+    const int ux = road->x() - avenueTile->x();
+    const int uy = road->y() - avenueTile->y();
+    const int vx = -uy;
+    const int vy = ux;
+    for(const auto& cell : kAvenueHeat) {
+        const int tx = cell.x*ux + cell.y*vx;
+        const int ty = cell.x*uy + cell.y*vy;
+        const auto target = avenueTile->template tileRel<Tile>(tx, ty);
+        if(!target) continue;
+        add(target, cell.value);
+    }
+}
+
+}
+
 eHeatMapTask::eHeatMapTask(const eCityId cid,
                            const SDL_Rect& bRect,
                            const eHeatGetter& heatGetter,
@@ -108,6 +161,12 @@ void eHeatMapTask::sRun(eThreadBoard& board,
             const int ttx = t->x();
             const int tty = t->y();
             if(ttx != rect.x || tty != rect.y) continue;
+            if(ubt == eBuildingType::avenue) {
+                addAvenueHeat(t, [&map](eThreadTile* const tile, const int value) {
+                    map.addHeat(tile->dx(), tile->dy(), value);
+                });
+                continue;
+            }
             const auto a = heatGetter(ubt);
             map.addHeat(a, rect);
         }

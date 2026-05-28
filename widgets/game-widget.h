@@ -49,6 +49,8 @@ class ePatrolSourceBuilding;
 class eInfoWidget;
 class eFramedButton;
 class eFramedWidget;
+class eBuildingRenderer;
+class eTilePainter;
 
 enum class eAgoraOrientation;
 enum class eGodType;
@@ -196,6 +198,11 @@ private:
                            const eBuildingTextures& builTexs,
                            int tx, int ty,
                            ePlayerId ppid);
+    void paintAppealBuildPreview(eTilePainter& tp,
+                                 const eTerrainTextures& trrTexs,
+                                 eBuilding* building,
+                                 eBuildingRenderer* renderer,
+                                 int tx, int ty);
 
     void createGameMenu();
     void showGoals();

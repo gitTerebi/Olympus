@@ -5,11 +5,13 @@
 #include "engine/boardData/eheatmap.h"
 
 enum class eGodType;
+enum class Difficulty;
 
 namespace eHeatGetters {
     using eHeatGetter = std::function<eHeat(eBuildingType)>;
 
     eHeat appeal(const eBuildingType type);
+    eHeat appeal(const eBuildingType type, Difficulty diff);
     eHeat housing(const eBuildingType type);
     eHeat culture(const eBuildingType type);
     eHeat industry(const eBuildingType type);
