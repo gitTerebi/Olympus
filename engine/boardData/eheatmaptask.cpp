@@ -22,6 +22,18 @@ const std::array<AvenueHeatCell, 54> kAvenueHeat{{
     {-3, 3, 1}, {-2, 3, 2}, {-1, 3, 2}, {0, 3, 2}, {1, 3, 2}, {2, 3, 2}, {3, 3, 2}, {4, 3, 1},
 }};
 
+const std::array<AvenueHeatCell, 96> kBoulevardHeat{{
+    {-4, -4, 1}, {-3, -4, 2}, {-2, -4, 3}, {-1, -4, 3}, {0, -4, 3}, {1, -4, 3}, {2, -4, 3}, {3, -4, 3}, {4, -4, 3}, {5, -4, 2}, {6, -4, 1},
+    {-4, -3, 1}, {-3, -3, 2}, {-2, -3, 3}, {-1, -3, 3}, {0, -3, 3}, {1, -3, 3}, {2, -3, 3}, {3, -3, 3}, {4, -3, 3}, {5, -3, 2}, {6, -3, 1},
+    {-4, -2, 1}, {-3, -2, 2}, {-2, -2, 5}, {-1, -2, 7}, {0, -2, 9}, {1, -2, 9}, {2, -2, 9}, {3, -2, 7}, {4, -2, 5}, {5, -2, 2}, {6, -2, 1},
+    {-4, -1, 1}, {-3, -1, 2}, {-2, -1, 5}, {-1, -1, 7}, {0, -1, 9}, {1, -1, 9}, {2, -1, 9}, {3, -1, 7}, {4, -1, 5}, {5, -1, 2}, {6, -1, 1},
+    {-4, 0, 1}, {-3, 0, 2}, {-2, 0, 5}, {-1, 0, 7}, {3, 0, 7}, {4, 0, 5}, {5, 0, 2}, {6, 0, 1},
+    {-4, 1, 1}, {-3, 1, 2}, {-2, 1, 5}, {-1, 1, 7}, {0, 1, 9}, {1, 1, 9}, {2, 1, 9}, {3, 1, 7}, {4, 1, 5}, {5, 1, 2}, {6, 1, 1},
+    {-4, 2, 1}, {-3, 2, 2}, {-2, 2, 5}, {-1, 2, 7}, {0, 2, 9}, {1, 2, 9}, {2, 2, 9}, {3, 2, 7}, {4, 2, 5}, {5, 2, 2}, {6, 2, 1},
+    {-4, 3, 1}, {-3, 3, 2}, {-2, 3, 3}, {-1, 3, 3}, {0, 3, 3}, {1, 3, 3}, {2, 3, 3}, {3, 3, 3}, {4, 3, 3}, {5, 3, 2}, {6, 3, 1},
+    {-4, 4, 1}, {-3, 4, 2}, {-2, 4, 3}, {-1, 4, 3}, {0, 4, 3}, {1, 4, 3}, {2, 4, 3}, {3, 4, 3}, {4, 4, 3}, {5, 4, 2}, {6, 4, 1},
+}};
+
 template <typename Tile>
 Tile* avenueRoad(Tile* const tile) {
     if(!tile) return nullptr;
@@ -44,12 +56,25 @@ void addAvenueHeat(Tile* const avenueTile, const Add& add) {
     const int uy = road->y() - avenueTile->y();
     const int vx = -uy;
     const int vy = ux;
-    for(const auto& cell : kAvenueHeat) {
+    const auto opposite = road->template tileRel<Tile>(ux, uy);
+    const bool boulevard = opposite &&
+        opposite->underBuildingType() == eBuildingType::avenue;
+    if(boulevard) {
+        const bool first = avenueTile->x() < opposite->x() ||
+            (avenueTile->x() == opposite->x() && avenueTile->y() < opposite->y());
+        if(!first) return;
+    }
+    const auto addCell = [&](const AvenueHeatCell& cell) {
         const int tx = cell.x*ux + cell.y*vx;
         const int ty = cell.x*uy + cell.y*vy;
         const auto target = avenueTile->template tileRel<Tile>(tx, ty);
-        if(!target) continue;
+        if(!target) return;
         add(target, cell.value);
+    };
+    if(boulevard) {
+        for(const auto& cell : kBoulevardHeat) addCell(cell);
+    } else {
+        for(const auto& cell : kAvenueHeat) addCell(cell);
     }
 }
 
