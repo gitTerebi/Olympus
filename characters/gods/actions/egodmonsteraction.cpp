@@ -95,7 +95,7 @@ void eGodMonsterAction::playDisappearSound() {
 
 void eGodMonsterAction::hermesRun(const bool appear) {
     const auto c = character();
-    c->setSpeed(2.0);
+    c->setSpeed(105.0);
     const auto tile = c->tile();
     const stdptr<eGodMonsterAction> tptr(this);
     using eGA_HRF = eGA_hermesRunFinish;

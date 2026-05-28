@@ -44,6 +44,8 @@ public:
 
     virtual void incTime(const int by);
 
+    void setCityId(const eCityId i) override;
+
     void fight(eCharacter* const c);
     void setPlayFightSound(const bool p);
     void kill();
@@ -82,6 +84,8 @@ public:
     void setVisible(const bool v) { mVisible = v; }
 
     bool takeDamage(const double a);
+    bool takeDamage(const double a, eCharacter* const attacker);
+    bool takeMeleeDamage(const double a, eCharacter* const attacker);
 
     static stdsptr<eCharacter> sCreate(
             const eCharacterType t, eGameBoard& board);

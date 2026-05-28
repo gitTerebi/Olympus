@@ -23,8 +23,9 @@ eArcherAction::eArcherAction(eCharacter* const c) :
 
 void eArcherAction::increment(const int by) {
     const int rangeAttackCheck = 500;
-    const int missileCheck = 200;
-    const int range = eNumbers::sWallArcherRange;
+    const auto cc = character();
+    const int range = cc->range() > 0 ? cc->range() : eNumbers::sWallArcherRange;
+    const int missileCheck = cc->missileFreq() > 0 ? cc->missileFreq() * 10 : 200;
 
     const auto c = character();
     const auto ct = c->tile();
@@ -49,6 +50,7 @@ void eArcherAction::increment(const int by) {
     }
 
     if(mAttack) {
+        bool finishAttack = false;
         if(range > 0 && mAttackTarget) {
             mMissile += by;
             if(mMissile > missileCheck) {
@@ -62,21 +64,24 @@ void eArcherAction::increment(const int by) {
                 board.ifVisible(c->tile(), [&]() {
                     eSounds::playAttackSound(c);
                 });
+                if(!mAttackTarget->dead()) {
+                    const double arm = mAttackTarget->armorVsMissiles();
+                    const double ma = c->missileAttack() > 0 ? c->missileAttack() : c->attack();
+                    const double dmg = ma - arm;
+                    const double att = dmg > 0 ? dmg : 0.01;
+                    const bool d = mAttackTarget->takeDamage(att, c);
+                    if(d) {
+                        const auto a = e::make_shared<eDieAction>(mAttackTarget);
+                        mAttackTarget->setAction(a);
+                        finishAttack = true;
+                    }
+                }
             }
         }
         mAttackTime += by;
-        bool finishAttack = !mAttackTarget ||
-                            mAttackTarget->dead() ||
-                            mAttackTime > 1000;
-        if(mAttackTarget && !mAttackTarget->dead()) {
-            const double att = by*c->attack();
-            const bool d = mAttackTarget->takeDamage(att);
-            if(d) {
-                const auto a = e::make_shared<eDieAction>(mAttackTarget);
-                mAttackTarget->setAction(a);
-                finishAttack = true;
-            }
-        }
+        if(!finishAttack) finishAttack = !mAttackTarget ||
+                                          mAttackTarget->dead() ||
+                                          mAttackTime > 1000;
         if(finishAttack) {
             mAttack = false;
             mAttackTarget = nullptr;

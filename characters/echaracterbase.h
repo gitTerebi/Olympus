@@ -189,17 +189,30 @@ public:
     double attack() const { return mAttack; }
     void setHP(const double hp);
     double hp() const { return mHP; }
+
+    void setArmor(const int a) { mArmor = a; }
+    int armor() const { return mArmor; }
+    void setArmorVsMissiles(const int a) { mArmorVsMissiles = a; }
+    int armorVsMissiles() const { return mArmorVsMissiles; }
+    void setMissileAttack(const int a) { mMissileAttack = a; }
+    int missileAttack() const { return mMissileAttack; }
+    void setAttackFreq(const int f) { mAttackFreq = f; }
+    int attackFreq() const { return mAttackFreq; }
+    void setMissileFreq(const int f) { mMissileFreq = f; }
+    int missileFreq() const { return mMissileFreq; }
+    void setRange(const int r) { mRange = r; }
+    int range() const { return mRange; }
     bool dead() const { return mHP <= 0 ||
                         mActionType == eCharacterActionType::die; }
     bool fighting() const;
 
     double speed() const { return mSpeed; }
-    void setSpeed(const double s) { mSpeed = s; }
+    void setSpeed(const double s);
 
     void setBothCityIds(const eCityId cid);
 
     eCityId cityId() const { return mCityId; }
-    void setCityId(const eCityId i) { mCityId = i; }
+    virtual void setCityId(const eCityId i) { mCityId = i; }
 
     bool atlantean() const { return mAtlantean; }
     void setAtlantean(const bool a) { mAtlantean = a; }
@@ -237,7 +250,14 @@ private:
 
     double mHP = 100;
     double mAttack = 0;
-    double mSpeed = 1;
+    double mSpeed = 52.5;
+
+    int mArmor = 0;
+    int mArmorVsMissiles = 0;
+    int mMissileAttack = 0;
+    int mAttackFreq = 0;
+    int mMissileFreq = 0;
+    int mRange = 0;
 };
 
 #endif // ECHARACTERBASE_H

@@ -543,11 +543,11 @@ void eNumbers::sLoad(const std::string& path) {
     loadD("hoplite_attack_d", sHopliteAttack, 0.5, 0.01, 10);
 
     loadI("chariot_hp_i", sChariotHP, 500, 1, 1000000);
-    loadD("chariot_speed_d", sChariotSpeed, 1.5, 1, 3);
+    loadD("chariot_speed_d", sChariotSpeed, 78.75, 52.5, 157.5);
     loadD("chariot_attack_d", sChariotAttack, 0.6, 0.01, 10);
 
     loadI("horseman_hp_i", sHorsemanHP, 500, 1, 1000000);
-    loadD("horseman_speed_d", sHorsemanSpeed, 1.5, 1, 3);
+    loadD("horseman_speed_d", sHorsemanSpeed, 78.75, 52.5, 157.5);
     loadD("horseman_attack_d", sHorsemanAttack, 0.6, 0.01, 10);
 
     loadI("watchman_hp_i", sWatchmanHP, 200, 1, 1000000);

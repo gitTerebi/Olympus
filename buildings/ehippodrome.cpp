@@ -74,7 +74,7 @@ void eHippodrome::spawnHorses() {
             const auto h = e::make_shared<eRacingHorse>(
                 mBoard, i, j == 0 ? mPath1 : mPath2);
             h->incTime((i/2)*50);
-            h->setSpeed(0.5 + i*0.05);
+            h->setSpeed(52.5 * (0.5 + i*0.05));
             mHorses.push_back(h.get());
         }
     }

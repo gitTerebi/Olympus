@@ -10,6 +10,8 @@
 #include "audio/sounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "engine/e-game-board.h"
+#include "engine/model-data.h"
 
 eTower::eTower(eGameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
 {
@@ -131,9 +133,20 @@ void eTower::timeChanged(const int by)
         }
 
         const int rangeAttackCheck = 500;
-        const int missileCheck = 200;
-        const int range = eNumbers::sTowerRange;
-        const double attack = eNumbers::sTowerAttack;
+        int missileCheck = 200;
+        int range = eNumbers::sTowerRange;
+        double attack = eNumbers::sTowerAttack;
+        {
+            auto& brd = getBoard();
+            const auto pid = brd.cityIdToPlayerId(cityId());
+            const auto diff = brd.difficulty(pid);
+            const auto s = ModelData::instance().figure(diff, "Tower Sentry");
+            if(s) {
+                attack = s->ma;
+                if(s->mr > 0) range = s->mr;
+                if(s->mrf > 0) missileCheck = s->mrf * 10;
+            }
+        }
 
         const auto ct = centerTile();
         const int tx = ct->x();
@@ -144,6 +157,7 @@ void eTower::timeChanged(const int by)
 
         if (mAttack)
         {
+            bool finishAttack = false;
             if (range > 0 && mAttackTarget)
             {
                 mMissile += by;
@@ -158,19 +172,20 @@ void eTower::timeChanged(const int by)
                     auto &board = getBoard();
                     board.ifVisible(centerTile(), [&]()
                                     { eSounds::playAttackSound(eCharacterType::archer); });
+                    if (!mAttackTarget->dead())
+                    {
+                        const double arm = mAttackTarget->armorVsMissiles();
+                        const double dmg = attack - arm;
+                        const double att = dmg > 0 ? dmg : 0.01;
+                        const bool d = mAttackTarget->takeDamage(att);
+                        if (d) finishAttack = true;
+                    }
                 }
             }
             mAttackTime += by;
-            bool finishAttack = !mAttackTarget ||
-                                mAttackTarget->dead() ||
-                                mAttackTime > 1000;
-            if (mAttackTarget && !mAttackTarget->dead())
-            {
-                const double att = by * attack;
-                const bool d = mAttackTarget->takeDamage(att);
-                if (d)
-                    finishAttack = true;
-            }
+            if (!finishAttack) finishAttack = !mAttackTarget ||
+                                              mAttackTarget->dead() ||
+                                              mAttackTime > 1000;
             if (finishAttack)
             {
                 mAttack = false;

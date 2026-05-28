@@ -6,5 +6,5 @@ eCentaurArcher::eCentaurArcher(eGameBoard& board) :
     eArcherBase(board, &eCharacterTextures::fCentaurArcher,
                 eCharacterType::centaurArcher) {
     eGameTextures::loadCentaurArcher();
-    setSpeed(1.5);
+    setSpeed(78.75);
 }

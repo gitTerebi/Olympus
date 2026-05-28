@@ -28,6 +28,16 @@ void eSoldierAction::increment(const int by) {
         mSpreadPeriod = false;
     }
 
+    if(isAttacking() && tooFarFromBanner()) {
+        cancelAttack();
+        const auto s = static_cast<eSoldier*>(character());
+        const auto b = s->banner();
+        if(b) {
+            goBackToBanner(b->soldierOrientation());
+            return eComplexAction::increment(by);
+        }
+    }
+
     const auto r = lookForEnemy(by);
 
     if(r != eLookForEnemyState::none) return;
@@ -57,6 +67,17 @@ void eSoldierAction::increment(const int by) {
     }
 
     eComplexAction::increment(by);
+}
+
+bool eSoldierAction::tooFarFromBanner() const {
+    const auto c = character();
+    const auto s = static_cast<eSoldier*>(c);
+    const auto b = s->banner();
+    if(!b || !b->tile() || !c->tile()) return false;
+    const int dx = c->tile()->x() - b->tile()->x();
+    const int dy = c->tile()->y() - b->tile()->y();
+    const int leash = 8 + c->range()/2;
+    return dx*dx + dy*dy > leash*leash;
 }
 
 void eSoldierAction::serializeFields(eSaveArchive& ar) {
@@ -110,7 +131,7 @@ void eSoldierAction::goHome() {
     mStage = eSoldierActionStage::home;
     mArrivedAtBanner = false;
     const auto c = character();
-    c->setSpeed(1.0);
+    c->setSpeed(52.5);
     const auto& brd = c->getBoard();
     const auto type = c->type();
     const auto cid = cityId();
@@ -242,7 +263,7 @@ void eSoldierAction::goBackToBanner(const eOrientation facing,
     const auto standAtBanner = [&]() {
         if(!mArrivedAtBanner) {
             mArrivedAtBanner = true;
-            c->setSpeed(1.0);
+            c->setSpeed(52.5);
         }
         setCurrentAction(nullptr);
         c->setOrientation(facing);
@@ -264,7 +285,7 @@ void eSoldierAction::goBackToBanner(const eOrientation facing,
     const int tty = tt->y();
 
     const bool isPersonPlayer = board().cityIdToPlayerId(cityId()) == board().personPlayer();
-    if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(2.0);
+    if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(105.0);
     const auto type = b->type();
     setOverwrittableAction(type == eBannerType::enemy);
     goTo(ttx, tty, 0, findFailAct, findFinishAct);

@@ -16,9 +16,13 @@ public:
 
     eTile* tile() const;
     bool valid() const;
-    bool takeDamage(const double a);
+    bool takeDamage(const double a, eCharacter* const attacker = nullptr);
+    bool takeMeleeDamage(const double a, eCharacter* const attacker = nullptr);
     bool dead() const;
     void clear();
+
+    int armor() const;
+    int armorVsMissiles() const;
 
     bool building() const;
 
@@ -70,6 +74,7 @@ public:
     { mOverwrittableAction = o; }
 protected:
     bool isAttacking() const { return mAttack; }
+    void cancelAttack();
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
@@ -81,6 +86,7 @@ private:
     double mAngle{0.};
 
     int mMissile = 0;
+    int mMeleeTime = 0;
 
     int mRangeAttack = 0;
     int mBuildingAttack = 0;
@@ -89,6 +95,7 @@ private:
     int mAttackTime = 0;
     eCharacterActionType mSavedAction = eCharacterActionType::stand;
     bool mAttack = false;
+    bool mAttackRanged = false;
     bool mOverwrittableAction = false;
     eAttackTarget mAttackTarget;
     eFightingSavedMove mSavedMove = eFightingSavedMove::none;

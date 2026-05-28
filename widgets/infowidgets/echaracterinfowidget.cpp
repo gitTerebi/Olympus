@@ -1994,6 +1994,11 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
     }
 
+    {
+        const int hp = static_cast<int>(c->hp());
+        result.fText += "\n\nHP: " + std::to_string(hp);
+    }
+
     return result;
 }
 

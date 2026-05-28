@@ -185,6 +185,7 @@ set(SOURCES
     characters/actions/edefendcityaction.cpp
     characters/actions/edieaction.cpp
     characters/actions/edionysusfollowaction.cpp
+    characters/actions/combat-timing.cpp
     characters/actions/efightaction.cpp
     characters/actions/efightingaction.cpp
     characters/actions/efirefighteraction.cpp
@@ -390,6 +391,8 @@ set(SOURCES
     engine/ecolonymonumentaction.cpp
     engine/edate.cpp
     engine/edifficulty.cpp
+    engine/model-data.cpp
+    engine/vanilla-stats.cpp
     engine/e-city-attitude.cpp
     engine/eemploymentdistributor.cpp
     engine/eepisode.cpp

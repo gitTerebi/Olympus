@@ -2689,6 +2689,7 @@ void eBuilding::setOverlayEnabledFunc(const std::function<bool()>& e) {
 
 bool eBuilding::takeDamage(const double a) {
     if(mHp <= 0) return true;
+    const double hp0 = mHp;
     mHp -= a;
     if(mHp <= 0) {
         collapse();

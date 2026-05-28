@@ -7,31 +7,57 @@
 #include "characters/eresourcecollector.h"
 #include "characters/eanimal.h"
 #include "fileIO/esavearchive.h"
+#include "enumbers.h"
+#include "combat-timing.h"
 
-eFightAction::eFightAction(eCharacter* const c, eCharacter* const o) :
-    eCharacterAction(c, eCharActionType::fightAction),
-    mOpponent(o) {
+eFightAction::eFightAction(eCharacter *const c, eCharacter *const o) : eCharacterAction(c, eCharActionType::fightAction),
+                                                                       mOpponent(o)
+{
     c->setActionType(eCharacterActionType::fight);
 }
 
-void eFightAction::increment(const int by) {
+void eFightAction::increment(const int by)
+{
     const auto c = character();
-    const double a = c->attack();
-    const bool dead = mOpponent ? mOpponent->takeDamage(by*a) : true;
-    if(dead || c->dead()) {
+    if (!mOpponent)
+    {
         setState(eCharacterActionState::finished);
+        return;
     }
+    mTime += by;
+    const int cycleMs = CombatTiming::meleeCycleMs(*c);
+    const int animMs = CombatTiming::meleeAnimationMs(*c);
+    const auto wantedAction = mTime + animMs >= cycleMs ?
+                              eCharacterActionType::fight :
+                              eCharacterActionType::stand;
+    if(c->actionType() != wantedAction) c->setActionType(wantedAction);
+    if (mTime < cycleMs)
+        return;
+    mTime -= cycleMs;
+    if(c->actionType() != eCharacterActionType::fight) {
+        c->setActionType(eCharacterActionType::fight);
+    }
+    const double a = c->attack();
+    const double arm = mOpponent->armor();
+    const double dmg = a - arm;
+    const double finalDmg = dmg > 0 ? dmg : 0.;
+    const bool dead = mOpponent->takeMeleeDamage(finalDmg, c);
+    if (dead || c->dead())
+        setState(eCharacterActionState::finished);
 }
 
-void eFightAction::serializeFields(eSaveArchive& ar) {
+void eFightAction::serializeFields(eSaveArchive &ar)
+{
     eCharacterAction::serializeFields(ar);
     ar.characterField("opponent", &board(), mOpponent);
     ar.field("time", mTime);
 }
 
-void eFightAction::resumeFromSavedState() {
+void eFightAction::resumeFromSavedState()
+{
     const auto c = character();
-    if(!mOpponent || mOpponent->dead() || c->dead()) {
+    if (!mOpponent || mOpponent->dead() || c->dead())
+    {
         setState(eCharacterActionState::finished);
         return;
     }
