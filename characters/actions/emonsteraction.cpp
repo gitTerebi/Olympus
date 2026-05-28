@@ -456,7 +456,8 @@ bool eMonsterAction::lookForAttack(const int dtime,
                               at, act, nullptr);
 }
 
-bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly) {
+bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly,
+                                        const bool buildingsOnly) {
     const auto c = character();
     const auto act = std::make_shared<eLookForAttackGodAct>(
                          board(), c);
@@ -478,6 +479,7 @@ bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly) {
         const auto tt = act->find(t);
         if(!tt) continue;
         if(charactersOnly && !tt.character()) continue;
+        if(buildingsOnly && tt.character()) continue;
         pauseAction();
         beginAttack(tt, eCharacterActionType::fight, mStage);
         spawnMeleeAttack();
@@ -508,17 +510,20 @@ bool eMonsterAction::lookForAnyAttack(const int dtime,
         setCurrentAction(w);
         return true;
     }
-    if(lookForMeleeAttack(true)) return true;
-    const bool tryBuildingMeleeFirst = eRand::rand() % 3 == 0;
-    if(tryBuildingMeleeFirst && lookForMeleeAttack(false)) return true;
-    const bool ranged = lookForRangeAction(
-        0, time, 0, range, eCharacterActionType::fight2,
-        std::make_shared<eLookForAttackGodAct>(board(), character()),
-        nullptr);
-    if(ranged) {
-        return true;
+    const auto rangedBuilding = [this, &time, range]() {
+        return lookForRangeAction(
+            0, time, 0, range, eCharacterActionType::fight2,
+            std::make_shared<eLookForAttackGodAct>(board(), character()),
+            nullptr, true);
+    };
+    const int roll = eRand::rand() % 3;
+    for(int i = 0; i < 3; i++) {
+        const int choice = (roll + i) % 3;
+        if(choice == 0 && lookForMeleeAttack(true)) return true;
+        if(choice == 1 && lookForMeleeAttack(false, true)) return true;
+        if(choice == 2 && rangedBuilding()) return true;
     }
-    return lookForMeleeAttack(false);
+    return false;
 }
 
 bool eMonsterAction::lookForRangeAction(const int dtime,
@@ -526,7 +531,8 @@ bool eMonsterAction::lookForRangeAction(const int dtime,
                                         const int range,
                                         const eCharacterActionType at,
                                         const stdsptr<eGodAct>& act,
-                                        const stdsptr<eCharActFunc>& missileSound) {
+                                        const stdsptr<eCharActFunc>& missileSound,
+                                        const bool buildingsOnly) {
     const auto c = character();
     const auto chart = c->type();
     const auto cat = c->actionType();
@@ -557,6 +563,17 @@ bool eMonsterAction::lookForRangeAction(const int dtime,
         for(const auto t : tiles) {
             const auto tt = act->find(t);
             if(!tt) continue;
+            if(buildingsOnly && tt.character()) continue;
+            if(buildingsOnly && std::abs(t->x() - tx) <= 1 &&
+               std::abs(t->y() - ty) <= 1) {
+                continue;
+            }
+            const auto targetTile = tt.target();
+            if(buildingsOnly && targetTile &&
+               std::abs(targetTile->x() - tx) <= 1 &&
+               std::abs(targetTile->y() - ty) <= 1) {
+                continue;
+            }
 
             const auto finishAttackA = std::make_shared<eMA_lookForRangeActionFinishAttack>(
                                            board(), this);

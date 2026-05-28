@@ -56,7 +56,8 @@ private:
     stdsptr<eObsticleHandler> obsticleHandler();
     bool lookForAttack(const int dtime, int& time,
                        const int freq, const int range);
-    bool lookForMeleeAttack(const bool charactersOnly);
+    bool lookForMeleeAttack(const bool charactersOnly,
+                            const bool buildingsOnly = false);
     bool lookForAnyAttack(const int dtime, int& time,
                           const int freq, const int range);
     bool lookForRangeAction(const int dtime,
@@ -64,7 +65,8 @@ private:
                             const int range,
                             const eCharacterActionType at,
                             const stdsptr<eGodAct>& act,
-                            const stdsptr<eCharActFunc>& missileSound);
+                            const stdsptr<eCharActFunc>& missileSound,
+                            const bool buildingsOnly = false);
 
     int attackPeriod() const;
     int invadePeriod() const;
