@@ -16,6 +16,14 @@ void eQuestionWidget::initialize(const std::string& title,
                                  const std::string& text,
                                  const eAction& acceptA,
                                  const eAction& cancelA) {
+    initialize(title, text, nullptr, acceptA, cancelA);
+}
+
+void eQuestionWidget::initialize(const std::string& title,
+                                 const std::string& text,
+                                 const stdsptr<eTexture>& icon,
+                                 const eAction& acceptA,
+                                 const eAction& cancelA) {
     setType(eFrameType::message);
     const int p = padding();
     const int width = 40*p;
@@ -30,6 +38,15 @@ void eQuestionWidget::initialize(const std::string& title,
     titleLabel->setWidth(width);
     cw->addWidget(titleLabel);
 
+    eLabel* iconLabel = nullptr;
+    if(icon) {
+        iconLabel = new eLabel(window());
+        iconLabel->setNoPadding();
+        iconLabel->setTexture(icon);
+        iconLabel->fitContent();
+        cw->addWidget(iconLabel);
+    }
+
     const auto textLabel = new eLabel(window());
     textLabel->setFontSizeS();
     textLabel->setWrapWidth(width - 2*hpad);
@@ -38,7 +55,12 @@ void eQuestionWidget::initialize(const std::string& title,
     textLabel->fitContent();
     textLabel->setWidth(width);
     cw->addWidget(textLabel);
-    const int tly = titleLabel->y() + titleLabel->height();
+    int tly = titleLabel->y() + titleLabel->height();
+    if(iconLabel) {
+        iconLabel->setY(tly + p/2);
+        iconLabel->align(eAlignment::hcenter);
+        tly = iconLabel->y() + iconLabel->height() + p/2;
+    }
     textLabel->setY(tly);
 
     const auto buttons = new eWidget(window());
@@ -72,5 +94,6 @@ void eQuestionWidget::initialize(const std::string& title,
     resize(cw->width() + 2*p, cw->height() + 2*p);
     centerLabel(titleLabel, cw->width());
     centerLabel(textLabel, cw->width());
+    if(iconLabel) iconLabel->align(eAlignment::hcenter);
     buttons->align(eAlignment::hcenter);
 }

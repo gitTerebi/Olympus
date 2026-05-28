@@ -35,8 +35,7 @@ public:
     void postpone();
     std::string dispatchText(int stock, const eDate& currentDate) const;
     std::string overdueStatusText(const eDate& currentDate) const;
-    bool isStuck(const eDate& currentDate) const;
-    void healStuck();
+    void advanceIfNeeded(const eDate& currentDate);
     bool isPostponed() const;
 protected:
     void serializeFields(eSaveArchive& ar) override;
@@ -48,8 +47,7 @@ private:
     };
 
     void activate();
-    void scheduleStep(int step, const eDate& date);
-    void copyFrom(const ePayTributeEvent& src, int step, eEvent event);
+    void advanceToNextStep(eGameBoard& board);
     eEvent stepEvent() const;
     int complyMonths() const;
     int popupComplyMonths() const;

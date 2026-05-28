@@ -56,8 +56,7 @@ public:
     std::string overdueStatusText(const eDate& currentDate) const;
     bool finished() const override;
     bool isOverdue(const eDate& currentDate) const;
-    bool isStuck(const eDate& currentDate) const;
-    void healStuck();
+    void advanceIfNeeded(const eDate& currentDate);
     bool isPostponed() const;
     bool isActiveCityRequest() const;
     int requestId() const { return mRequestId; }
@@ -84,12 +83,11 @@ private:
     void addRefuseButton(eGameBoard& board, eEventData& ed);
     void addRequestToSidePanel(eGameBoard& board);
     void finished(eEventTrigger& t, const eReason& r);
+    void advanceToNextStep(eGameBoard& board);
     eDate complyDate() const;
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 
     void postpone();
-    void scheduleStep(const int step, const eDate& date);
-    void copyFrom(const eFulfillRequestEvent& src, const int step);
     int complyMonths() const;
 
 

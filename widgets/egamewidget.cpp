@@ -1482,7 +1482,6 @@ void eGameWidget::showQuestion(
     const std::string &q,
     const eAction &action)
 {
-
     const auto cancelA = [this]()
     {
         mLocked = false;
@@ -1496,6 +1495,35 @@ void eGameWidget::showQuestion(
 
     const auto qw = new eQuestionWidget(window());
     qw->initialize(title, q, acceptA, cancelA);
+    addWidget(qw);
+    qw->align(eAlignment::vcenter);
+    const int vw = width() - mGm->width();
+    const int w = qw->width();
+    qw->setX((vw - w) / 2);
+    mLocked = true;
+}
+
+void eGameWidget::showQuestion(
+    const std::string &title,
+    const std::string &q,
+    const eResourceType resource,
+    const eAction &action)
+{
+
+    const auto cancelA = [this]()
+    {
+        mLocked = false;
+    };
+
+    const auto acceptA = [this, action]()
+    {
+        action();
+        mLocked = false;
+    };
+
+    const auto qw = new eQuestionWidget(window());
+    const auto icon = eResourceTypeHelpers::icon(resolution().uiScale(), resource);
+    qw->initialize(title, q, icon, acceptA, cancelA);
     addWidget(qw);
     qw->align(eAlignment::vcenter);
     const int vw = width() - mGm->width();

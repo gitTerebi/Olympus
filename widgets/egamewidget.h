@@ -143,6 +143,10 @@ public:
     void showQuestion(const std::string& title,
                       const std::string& q,
                       const eAction& action);
+    void showQuestion(const std::string& title,
+                      const std::string& q,
+                      const eResourceType resource,
+                      const eAction& action);
 
     void updateViewBoxSize();
     void updateKeyScrollSpeed(const int speed);

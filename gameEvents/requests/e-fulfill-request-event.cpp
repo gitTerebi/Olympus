@@ -103,24 +103,6 @@ void eFulfillRequestEvent::trigger()
     if (!mCity)
         return;
 
-    const auto request = mainEvent<eFulfillRequestEvent>();
-    if (request)
-    {
-        const int popupStep = mRequestStep;
-        const int complyStep = request->mComplyStep;
-        if (isMainEvent() ||
-            request->mComplyStartDate == eDate(1, eMonth::january, 1) ||
-            (request->mPostponed && popupStep > complyStep))
-        {
-            request->mRequestStep = mRequestStep;
-            request->mComplyStep = mRequestStep;
-            request->mComplyStartDate = board->date();
-            request->mRequestDeadline = board->date();
-            request->mRequestDeadline.nextMonths(complyMonths());
-            request->mPostponed = false;
-        }
-    }
-
     auto ed = createEventData(*board);
     if (mRequestFinished)
         showRequestFinished(*board, ed);
@@ -154,8 +136,8 @@ bool eFulfillRequestEvent::startQueuedRequest(eGameBoard &board)
         cityId(), eGameEventBranch::root, board);
     request->setWarningMonths(warningMonths());
     request->setRequestType(mRequestType);
-    addConsequence(request);
     request->initializeDate(board.date());
+    board.addRootGameEvent(request);
     request->trigger();
     request->setRepeat(0);
     return false;
@@ -341,59 +323,11 @@ void eFulfillRequestEvent::respond(const int response, const eCityId city)
 
 void eFulfillRequestEvent::postpone()
 {
-    const auto board = gameBoard();
-    if (!board)
-        return;
     const auto request = mainEvent<eFulfillRequestEvent>();
     if (!request)
         return;
 
     request->mPostponed = true;
-    const int currentStep = request->mRequestStep;
-    request->clearConsequences();
-
-    const auto &states = fulfillRequestStates();
-    const int nextStep = currentStep + 1;
-    if (nextStep < static_cast<int>(states.size()))
-    {
-        auto popupDate = request->mRequestDate;
-        popupDate.nextMonths(states[nextStep].fPopupMonth);
-        request->scheduleStep(nextStep, popupDate);
-    }
-}
-
-void eFulfillRequestEvent::scheduleStep(const int step, const eDate &date)
-{
-    const auto board = gameBoard();
-    if (!board)
-        return;
-    const auto &states = fulfillRequestStates();
-    if (step < 0 || step >= static_cast<int>(states.size()))
-        return;
-    const auto e = e::make_shared<eFulfillRequestEvent>(
-        cityId(), eGameEventBranch::child, *board);
-    e->copyFrom(*this, step);
-    e->initializeDate(date);
-    addConsequence(e);
-}
-
-void eFulfillRequestEvent::copyFrom(
-    const eFulfillRequestEvent &src, const int step)
-{
-    mCity = src.mCity;
-    mResource = src.mResource;
-    mCount = src.mCount;
-    mGod = src.mGod;
-    mRequestType = src.mRequestType;
-    mRequestResult = src.mRequestResult;
-    mRequestFinished = src.mRequestFinished;
-    mRequestStep = step;
-    mRequestId = src.mRequestId;
-    mComplyStep = src.mComplyStep;
-    mPostponed = src.mPostponed;
-    mRequestDate = src.mRequestDate;
-    mRequestDeadline = src.mRequestDeadline;
-    mComplyStartDate = src.mComplyStartDate;
 }
 
 int eFulfillRequestEvent::complyMonths() const
@@ -515,103 +449,46 @@ bool eFulfillRequestEvent::isOverdue(const eDate &currentDate) const
     return currentDate > complyDate();
 }
 
-bool eFulfillRequestEvent::isStuck(const eDate &currentDate) const
-{
-    printf("Fulfill request check: runtime=%d type=%d city=%s active=%d finished=%d step=%d complyStep=%d terminal=%d date=%d/%d/%d deadline=%d/%d/%d start=%d/%d/%d\n",
-           runtimeId(),
-           static_cast<int>(mRequestType),
-           mCity ? mCity->name().c_str() : "<none>",
-           isActiveCityRequest() ? 1 : 0,
-           finished() ? 1 : 0,
-           mRequestStep,
-           mComplyStep,
-           fulfillRequestTerminalState(mComplyStep) ? 1 : 0,
-           currentDate.day(),
-           static_cast<int>(currentDate.month()),
-           currentDate.year(),
-           mRequestDeadline.day(),
-           static_cast<int>(mRequestDeadline.month()),
-           mRequestDeadline.year(),
-           mComplyStartDate.day(),
-           static_cast<int>(mComplyStartDate.month()),
-           mComplyStartDate.year());
-    if (!isActiveCityRequest())
-        return false;
-    if (fulfillRequestTerminalState(mComplyStep))
-    {
-        printf("Fulfill request stuck: terminal runtime=%d type=%d\n",
-               runtimeId(), static_cast<int>(mRequestType));
-        return true;
-    }
-    if (mRequestDeadline != eDate(1, eMonth::january, 1) &&
-        currentDate >= mRequestDeadline)
-    {
-        printf("Fulfill request stuck: deadline runtime=%d type=%d\n",
-               runtimeId(), static_cast<int>(mRequestType));
-        return true;
-    }
-    if (mComplyStartDate == eDate(1, eMonth::january, 1))
-        return false;
-    const int comply = complyMonths();
-    if (comply <= 0)
-        return false;
-    const int elapsed = remainingMonths(currentDate, mComplyStartDate);
-    const bool stuck = elapsed >= comply;
-    if (stuck)
-    {
-        printf("Fulfill request stuck: elapsed runtime=%d type=%d elapsed=%d comply=%d\n",
-               runtimeId(), static_cast<int>(mRequestType), elapsed, comply);
-    }
-    return stuck;
-}
-
-void eFulfillRequestEvent::healStuck()
+void eFulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
 {
     const auto board = gameBoard();
-    if (!board)
+    if (!board || !isMainEvent() || !isActiveCityRequest())
         return;
-    printf("Fulfill request heal: runtime=%d type=%d city=%s active=%d finished=%d step=%d terminal=%d\n",
-           runtimeId(),
-           static_cast<int>(mRequestType),
-           mCity ? mCity->name().c_str() : "<none>",
-           isActiveCityRequest() ? 1 : 0,
-           finished() ? 1 : 0,
-           mRequestStep,
-           fulfillRequestTerminalState(mRequestStep) ? 1 : 0);
-    if (fulfillRequestTerminalState(mRequestStep))
-    {
-        finish(eReceiveRequestResult::refuse);
+    if (mRequestDate == eDate(1, eMonth::january, 1))
         return;
-    }
+    const auto &states = fulfillRequestStates();
+    const int nextStep = mRequestStep + 1;
+    if (nextStep >= static_cast<int>(states.size()))
+        return;
+    auto nextDate = mRequestDate;
+    nextDate.nextMonths(states[nextStep].fPopupMonth);
+    if (currentDate < nextDate)
+        return;
+    advanceToNextStep(*board);
+}
 
+void eFulfillRequestEvent::advanceToNextStep(eGameBoard &board)
+{
     const auto &states = fulfillRequestStates();
     const int nextStep = mRequestStep + 1;
     if (nextStep >= static_cast<int>(states.size()) ||
         fulfillRequestTerminalState(nextStep))
     {
         finish(eReceiveRequestResult::refuse);
+        return;
     }
-    else
-    {
-        clearConsequences();
-        mPostponed = false;
-        mRequestStep = nextStep;
-        mComplyStep = nextStep;
-        mComplyStartDate = board->date();
-        mRequestDeadline = board->date();
-        mRequestDeadline.nextMonths(complyMonths());
 
-        eEventData ed(mRequestType == eReceiveRequestType::tribute ?
-                          board->personPlayer() :
-                          playerId());
-        ed.fCity = mCity;
-        ed.fResourceType = mResource;
-        ed.fResourceCount = mCount;
-        ed.fGod = mGod;
-        ed.fTime = displayMonthsForRequestStep(mRequestStep);
-        ed.fEventRuntimeId = runtimeId();
-        showRequestPopup(*board, ed);
-    }
+    clearConsequences();
+    mPostponed = false;
+    mRequestStep = nextStep;
+    mComplyStep = nextStep;
+    mComplyStartDate = board.date();
+    mRequestDeadline = board.date();
+    mRequestDeadline.nextMonths(complyMonths());
+
+    auto ed = createEventData(board);
+    addRequestToSidePanel(board);
+    showRequestPopup(board, ed);
 }
 
 bool eFulfillRequestEvent::isPostponed() const
@@ -646,29 +523,6 @@ std::string eFulfillRequestEvent::overdueStatusText(const eDate &currentDate) co
     const int elapsedMonths =
         state->mComplyStartDate == eDate(1, eMonth::january, 1) ? 0 : state->remainingMonths(currentDate, state->mComplyStartDate);
     const int remainingMonths = std::max(0, comply - elapsedMonths);
-    printf("Fulfill request sidebar: runtime=%d type=%d city=%s step=%d complyStep=%d comply=%d elapsed=%d remaining=%d active=%d finished=%d date=%d/%d/%d deadline=%d/%d/%d\n",
-           state->runtimeId(),
-           static_cast<int>(state->mRequestType),
-           state->mCity ? state->mCity->name().c_str() : "<none>",
-           state->mRequestStep,
-           state->mComplyStep,
-           comply,
-           elapsedMonths,
-           remainingMonths,
-           state->isActiveCityRequest() ? 1 : 0,
-           state->finished() ? 1 : 0,
-           currentDate.day(),
-           static_cast<int>(currentDate.month()),
-           currentDate.year(),
-           state->mRequestDeadline.day(),
-           static_cast<int>(state->mRequestDeadline.month()),
-           state->mRequestDeadline.year());
-    if (remainingMonths == 0 && state->isStuck(currentDate))
-    {
-        printf("Fulfill request sidebar heal trigger: runtime=%d type=%d\n",
-               state->runtimeId(), static_cast<int>(state->mRequestType));
-        const_cast<eFulfillRequestEvent *>(state)->healStuck();
-    }
     return std::to_string(remainingMonths);
 }
 
@@ -693,8 +547,10 @@ std::string eFulfillRequestEvent::requestInfo(int stock, const eDate &currentDat
                  eLanguage::zeusText(5, 205);
     }
     auto stockText = eLanguage::zeusText(44, 278); // in stock
-    return std::to_string(requested) + " " + resName +
-           " (" + std::to_string(stock) + " " + stockText + "), " + status;
+    auto result = std::to_string(requested) + " " + resName +
+                  " (" + std::to_string(stock) + " " + stockText + ")";
+    if(!status.empty()) result += ", " + status;
+    return result;
 }
 
 std::string eFulfillRequestEvent::dispatchText(int stock, const eDate &currentDate) const

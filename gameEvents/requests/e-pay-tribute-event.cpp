@@ -106,26 +106,6 @@ void ePayTributeEvent::trigger()
     if (!mActive && isMainEvent())
         return;
 
-    const auto request = mainEvent<ePayTributeEvent>();
-    if (request)
-    {
-        const int popupStep = payTributeStateIndex(mEvent);
-        const int complyStep = payTributeStateIndex(
-            request->mComplyEvent);
-        if (isMainEvent() ||
-            request->mComplyStartDate == eDate(1, eMonth::january, 1) ||
-            (request->mPostponed && popupStep > complyStep))
-        {
-            request->mRequestStep = mRequestStep;
-            request->mEvent = mEvent;
-            request->mComplyEvent = mEvent;
-            request->mComplyStartDate = board->date();
-            request->mRequestDeadline = board->date();
-            request->mRequestDeadline.nextMonths(complyMonths());
-            request->mPostponed = false;
-        }
-    }
-
     eEventData ed(board->personPlayer());
     ed.fType = eMessageEventType::generalRequestGranted;
     ed.fCity = mCity;
@@ -137,8 +117,8 @@ void ePayTributeEvent::trigger()
     const bool canDispatch = !payTributeTerminalState(mEvent);
     if (!canDispatch)
     {
-        if (request && !isMainEvent())
-            request->finish(ePayTributeResult::refuse);
+        if (isMainEvent())
+            finish(ePayTributeResult::refuse);
         return;
     }
 
@@ -251,9 +231,6 @@ void ePayTributeEvent::dispatch(const eCityId cid)
 
 void ePayTributeEvent::postpone()
 {
-    const auto board = gameBoard();
-    if (!board)
-        return;
     const auto request = mainEvent<ePayTributeEvent>();
     if (!request)
     {
@@ -261,19 +238,6 @@ void ePayTributeEvent::postpone()
     }
 
     request->mPostponed = true;
-    const int currentStep = payTributeStateIndex(
-        request->mComplyEvent);
-    request->clearConsequences();
-
-    if (currentStep < 0)
-    {
-        return;
-    }
-    const auto nextEvent = payTributeState(request->mComplyEvent).fNextEvent;
-    const auto &nextState = payTributeState(nextEvent);
-    auto popupDate = request->mRequestDate;
-    popupDate.nextMonths(nextState.fPopupMonth);
-    request->scheduleStep(payTributeStateIndex(nextEvent), popupDate);
 }
 
 std::string ePayTributeEvent::dispatchText(
@@ -305,10 +269,6 @@ std::string ePayTributeEvent::overdueStatusText(
             0 :
             state->remainingMonths(currentDate, state->mComplyStartDate);
     const int remainingMonths = std::max(0, comply - elapsedMonths);
-    if (remainingMonths == 0 && !state->finished())
-    {
-        const_cast<ePayTributeEvent *>(state)->healStuck();
-    }
     return std::to_string(remainingMonths);
 }
 
@@ -347,40 +307,8 @@ void ePayTributeEvent::activate()
     mRequestDate = board->date();
     mRequestDeadline = board->date();
     mComplyStartDate = board->date();
+    mRequestDeadline.nextMonths(complyMonths());
     board->addTributeRequest(this);
-}
-
-void ePayTributeEvent::scheduleStep(const int step, const eDate &date)
-{
-    const auto board = gameBoard();
-    if (!board)
-        return;
-    const auto &states = payTributeStates();
-    if (step < 0 || step >= static_cast<int>(states.size()))
-    {
-        return;
-    }
-    const auto e = e::make_shared<ePayTributeEvent>(
-        cityId(), eGameEventBranch::child, *board);
-    e->copyFrom(*this, step, states[step].fEvent);
-    e->initializeDate(date);
-    addConsequence(e);
-}
-
-void ePayTributeEvent::copyFrom(
-    const ePayTributeEvent &src, const int step, const eEvent event)
-{
-    mCity = src.mCity;
-    mResource = src.mResource;
-    mCount = src.mCount;
-    mActive = isMainEvent() && src.mActive;
-    mPostponed = src.mPostponed;
-    mRequestStep = step;
-    mEvent = event;
-    mComplyEvent = src.mComplyEvent;
-    mRequestDate = src.mRequestDate;
-    mRequestDeadline = src.mRequestDeadline;
-    mComplyStartDate = src.mComplyStartDate;
 }
 
 bool ePayTributeEvent::isPostponed() const
@@ -391,37 +319,73 @@ bool ePayTributeEvent::isPostponed() const
     return overdueStep >= 0 && currentStep >= overdueStep;
 }
 
-bool ePayTributeEvent::isStuck(const eDate &currentDate) const
+void ePayTributeEvent::advanceIfNeeded(const eDate &currentDate)
 {
-    if (payTributeTerminalState(mComplyEvent))
-    {
-        return true;
-    }
-    if (mRequestDeadline != eDate(1, eMonth::january, 1) &&
-        currentDate >= mRequestDeadline)
-    {
-        return true;
-    }
-    if (mComplyStartDate == eDate(1, eMonth::january, 1))
-        return false;
-    const int comply = complyMonths();
-    if (comply <= 0)
-        return false;
-    const int elapsed = remainingMonths(currentDate, mComplyStartDate);
-    return elapsed >= comply;
+    const auto board = gameBoard();
+    if (!board || !isMainEvent() || finished())
+        return;
+    if (mRequestDate == eDate(1, eMonth::january, 1))
+        return;
+    const auto nextEvent = payTributeState(mComplyEvent).fNextEvent;
+    auto nextDate = mRequestDate;
+    nextDate.nextMonths(payTributeState(nextEvent).fPopupMonth);
+    if (currentDate < nextDate)
+        return;
+    advanceToNextStep(*board);
 }
 
-void ePayTributeEvent::healStuck()
+void ePayTributeEvent::advanceToNextStep(eGameBoard &board)
 {
-    if (payTributeTerminalState(mComplyEvent) ||
-        payTributeTerminalState(mEvent))
+    const auto nextEvent = payTributeState(mComplyEvent).fNextEvent;
+    if (payTributeTerminalState(nextEvent))
     {
         finish(ePayTributeResult::refuse);
+        return;
+    }
+
+    clearConsequences();
+    mPostponed = false;
+    mRequestStep = payTributeStateIndex(nextEvent);
+    mEvent = nextEvent;
+    mComplyEvent = nextEvent;
+    mComplyStartDate = board.date();
+    mRequestDeadline = board.date();
+    mRequestDeadline.nextMonths(complyMonths());
+
+    eEventData ed(board.personPlayer());
+    ed.fType = eMessageEventType::generalRequestGranted;
+    ed.fCity = mCity;
+    ed.fResourceType = mResource;
+    ed.fResourceCount = mCount;
+    ed.fTime = popupComplyMonths();
+    ed.fEventRuntimeId = runtimeId();
+
+    if (mResource == eResourceType::drachmas)
+    {
+        const auto cids = board.personPlayerCitiesOnBoard();
+        if (!cids.empty() && board.drachmas(board.personPlayer()) >= mCount)
+        {
+            ed.fPrimaryResponse = static_cast<int>(eResponse::dispatch);
+        }
     }
     else
     {
-        postpone();
+        const auto cids = board.personPlayerCitiesOnBoard();
+        for (const auto cid : cids)
+        {
+            const int avCount = board.resourceCount(cid, mResource);
+            ed.fCityNames[cid] = board.cityName(cid);
+            ed.fCSpaceCount[cid] = avCount;
+            if (avCount >= mCount)
+            {
+                ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::dispatch);
+            }
+        }
     }
+
+    ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
+    ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
+    board.event(stepEvent(), ed);
 }
 
 eEvent ePayTributeEvent::stepEvent() const
