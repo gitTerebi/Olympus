@@ -3,6 +3,8 @@
 #include "engine/e-game-board.h"
 #include "characters/gods/egod.h"
 #include "characters/gods/actions/egodworshippedaction.h"
+#include "characters/monsters/emonster.h"
+#include "characters/actions/emonsteraction.h"
 #include "etilehelper.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
@@ -56,6 +58,7 @@ eSanctuary::~eSanctuary() {
 }
 
 void eSanctuary::erase() {
+    if(mMinion) mMinion->kill();
     const auto& board = getBoard();
     for(const auto s : mSpecialTiles) {
         const auto ub = s->underBuilding();
@@ -129,6 +132,22 @@ void eSanctuary::spawnPatrolingGod() {
     const auto ha = e::make_shared<eGodWorshippedAction>(c);
     mGod->setAction(ha);
     mSpawnWait = 5000;
+}
+
+void eSanctuary::spawnDefenderMinion() {
+    auto& board = getBoard();
+    const auto mt = eMonster::sGodsMinion(godType());
+    const auto m = eMonster::sCreateMonster(mt, board);
+    if(!m) return;
+    m->setBothCityIds(cityId());
+    const auto ct = centerTile();
+    const auto cr = eTileHelper::closestRoad(ct->x(), ct->y(), board);
+    if(!cr) return;
+    m->changeTile(cr);
+    const auto a = e::make_shared<eMonsterAction>(m.get());
+    a->setAggressivness(eMonsterAggressivness::passive);
+    m->setAction(a);
+    mMinion = m.get();
 }
 
 void eSanctuary::buildingProgressed() {
@@ -206,6 +225,8 @@ void eSanctuary::buildingProgressed() {
         ed.fGod = g;
         ed.fTile = centerTile();
         board.event(eEvent::sanctuaryComplete, ed);
+
+        if(!mMinion) spawnDefenderMinion();
     }
 }
 
@@ -367,6 +388,7 @@ void eSanctuary::serializeFields(eSaveArchive& ar) {
     eMonument::serializeFields(ar);
     auto& board = getBoard();
     ar.characterAsField("god", &board, mGod);
+    ar.characterAsField("minion", &board, mMinion);
     ar.field("spawnWait", mSpawnWait);
     ar.field("godAbroad", mGodAbroad);
 

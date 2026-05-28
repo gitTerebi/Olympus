@@ -218,6 +218,7 @@ protected:
     int mRemNRuns = 0;
     eDate mNextDate{1, eMonth::january, 1};
 private:
+    bool shouldHaveBaseTrigger() const;
     void updateWarningDates();
 
     const eCityId mCid;
