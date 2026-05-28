@@ -1,7 +1,7 @@
 #ifndef EHERMESHELPACTION_H
 #define EHERMESHELPACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 class eSaveArchive;
 

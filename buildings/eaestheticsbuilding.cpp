@@ -3,7 +3,7 @@
 #include "fileIO/esavearchive.h"
 #include "textures/egametextures.h"
 
-#include "sanctuaries/esanctuary.h"
+#include "sanctuaries/sanctuary.h"
 
 eAestheticsBuilding::eAestheticsBuilding(
         eGameBoard& board,

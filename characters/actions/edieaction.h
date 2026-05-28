@@ -1,7 +1,7 @@
 #ifndef EDIEACTION_H
 #define EDIEACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 
 class eSaveArchive;
 

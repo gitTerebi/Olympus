@@ -1,7 +1,7 @@
 #ifndef EGODATTACKACTION_H
 #define EGODATTACKACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 #include "elanguage.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "etilehelper.h"

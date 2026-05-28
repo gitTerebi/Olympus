@@ -1,6 +1,6 @@
 #include "esanctbuilding.h"
 
-#include "esanctuary.h"
+#include "sanctuary.h"
 #include "fileIO/esavearchive.h"
 
 eSanctCost totalCost(const std::vector<eSanctCost>& cost) {

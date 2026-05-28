@@ -1,10 +1,11 @@
-#include "esanctuary.h"
+#include "sanctuary.h"
 
 #include "engine/e-game-board.h"
 #include "characters/gods/egod.h"
 #include "characters/gods/actions/egodworshippedaction.h"
 #include "characters/monsters/emonster.h"
 #include "characters/actions/emonsteraction.h"
+#include "characters/gods/actions/god-minion-action.h"
 #include "etilehelper.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
@@ -144,10 +145,10 @@ void eSanctuary::spawnDefenderMinion() {
     const auto cr = eTileHelper::closestRoad(ct->x(), ct->y(), board);
     if(!cr) return;
     m->changeTile(cr);
-    const auto a = e::make_shared<eMonsterAction>(m.get());
-    a->setAggressivness(eMonsterAggressivness::passive);
+    const auto a = e::make_shared<eGodMinionAction>(m.get());
     m->setAction(a);
     mMinion = m.get();
+    mMinionSpawnWait = 5000;
 }
 
 void eSanctuary::buildingProgressed() {
@@ -345,6 +346,13 @@ void eSanctuary::timeChanged(const int by) {
         }
     }
 
+    if(!mMinion && finished()) {
+        mMinionSpawnWait -= by;
+        if(mMinionSpawnWait <= 0) {
+            spawnDefenderMinion();
+        }
+    }
+
     if(mAskedForHelp) {
         const int checkInterval = 1000;
         mCheckHelpNeeded += by;
@@ -390,6 +398,7 @@ void eSanctuary::serializeFields(eSaveArchive& ar) {
     ar.characterAsField("god", &board, mGod);
     ar.characterAsField("minion", &board, mMinion);
     ar.field("spawnWait", mSpawnWait);
+    ar.field("minionSpawnWait", mMinionSpawnWait);
     ar.field("godAbroad", mGodAbroad);
 
     ar.field("askedForHelp", mAskedForHelp);

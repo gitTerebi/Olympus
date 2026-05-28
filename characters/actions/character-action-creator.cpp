@@ -1,4 +1,4 @@
-#include "echaracteraction.h"
+#include "character-action.h"
 
 #include "eanimalaction.h"
 #include "ewolfaction.h"
@@ -20,6 +20,7 @@
 #include "characters/gods/actions/egodattackaction.h"
 #include "characters/gods/actions/egodvisitaction.h"
 #include "characters/gods/actions/egodworshippedaction.h"
+#include "characters/gods/actions/god-minion-action.h"
 #include "egroweraction.h"
 #include "eheroaction.h"
 #include "ehuntaction.h"
@@ -100,6 +101,8 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
         return e::make_shared<eGodVisitAction>(c);
     case eCharActionType::godWorshippedAction:
         return e::make_shared<eGodWorshippedAction>(c);
+    case eCharActionType::godMinionAction:
+        return e::make_shared<eGodMinionAction>(c);
     case eCharActionType::growerAction:
         return e::make_shared<eGrowerAction>(c);
     case eCharActionType::heroAction:

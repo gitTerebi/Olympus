@@ -1,7 +1,7 @@
 #ifndef EKILLCHARACTERFINISHFAIL_H
 #define EKILLCHARACTERFINISHFAIL_H
 
-#include "echaracteractionfunction.h"
+#include "character-action-function.h"
 
 #include "characters/echaracter.h"
 

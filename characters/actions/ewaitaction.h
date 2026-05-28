@@ -1,7 +1,7 @@
 #ifndef EWAITACTION_H
 #define EWAITACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 
 #include "elimits.h"
 

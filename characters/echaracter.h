@@ -10,7 +10,7 @@
 #include "etexture.h"
 #include "echaracterbase.h"
 #include "engine/eprovide.h"
-#include "characters/actions/echaracteractionfunction.h"
+#include "characters/actions/character-action-function.h"
 
 #include "actions/earcheraction.h"
 #include "actions/edieaction.h"

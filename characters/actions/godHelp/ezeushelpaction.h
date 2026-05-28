@@ -1,7 +1,7 @@
 #ifndef EZEUSHELPACTION_H
 #define EZEUSHELPACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 #include "fileIO/esavearchive.h"
 
 class eSaveArchive;

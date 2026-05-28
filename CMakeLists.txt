@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 project(eZeus)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -151,7 +151,7 @@ set(SOURCES
     buildings/sanctuaries/eartemissanctuary.cpp
     buildings/sanctuaries/ehephaestussanctuary.cpp
     buildings/sanctuaries/esanctbuilding.cpp
-    buildings/sanctuaries/esanctuary.cpp
+    buildings/sanctuaries/sanctuary.cpp
     buildings/sanctuaries/esanctuaryblueprint.cpp
     buildings/sanctuaries/estairsrenderer.cpp
     engine/stamps/estampblueprint.cpp
@@ -174,10 +174,10 @@ set(SOURCES
     characters/actions/get-cart-action.cpp
     characters/actions/storage-delivery-cart.cpp
     characters/actions/vendor-cart-action.cpp
-    characters/actions/echaracteraction.cpp
-    characters/actions/echaracteractioncreator.cpp
-    characters/actions/echaracteractionfunction.cpp
-    characters/actions/echaracteractionfunctioncreator.cpp
+    characters/actions/character-action.cpp
+    characters/actions/character-action-creator.cpp
+    characters/actions/character-action-function.cpp
+    characters/actions/character-action-function-creator.cpp
     characters/actions/ecollectaction.cpp
     characters/actions/ecollectresourceaction.cpp
     characters/actions/ecomplexaction.cpp
@@ -190,11 +190,12 @@ set(SOURCES
     characters/actions/efirefighteraction.cpp
     characters/actions/efollowaction.cpp
     characters/actions/egodactcreator.cpp
-    characters/gods/actions/egodaction.cpp
+    characters/gods/actions/god-action.cpp
     characters/gods/actions/egodattackaction.cpp
     characters/gods/actions/egodmonsteraction.cpp
     characters/gods/actions/egodvisitaction.cpp
     characters/gods/actions/egodworshippedaction.cpp
+    characters/gods/actions/god-minion-action.cpp
     characters/actions/egroweraction.cpp
     characters/actions/eheroaction.cpp
     characters/actions/ehuntaction.cpp

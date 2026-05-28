@@ -1,7 +1,7 @@
 #ifndef EBUILDACTION_H
 #define EBUILDACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 
 #include "characters/eartisan.h"
 

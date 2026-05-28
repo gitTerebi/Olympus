@@ -31,6 +31,8 @@ No new raw save bytes. Do not add `val()`, `readStream()`, `writeStream()`, `rea
 
 Use stable unique field names. Never rename or reuse. Names describe data, not variables. Bad: `"val"`. Good: `"huntDistance"`.
 
+Enums saved as raw ints (e.g. `eCharActionType`, action `mStage`) are positional. Pin existing entries to explicit integer values (`triremeAction = 49`) so old saves keep loading. New entries pick an unused number (max + 1). Never change an existing value or reuse a retired one.
+
 Before save work, read `payloadField` + `takeField` + `readField` in `fileIO/esavearchive.h`.
 
 For new or migrated save code, base `read`/`write` are entry points. They open one `eSaveArchive` and call the virtual field serializer.

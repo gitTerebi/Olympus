@@ -1,7 +1,7 @@
 #ifndef EGODVISITACTION_H
 #define EGODVISITACTION_H
 
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 class eSaveArchive;
 

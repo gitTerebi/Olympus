@@ -1,4 +1,4 @@
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 
 #include "godHelp/eprovideresourcehelpaction.h"
 #include "godHelp/eatlashelpaction.h"

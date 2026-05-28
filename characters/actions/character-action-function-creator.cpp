@@ -1,4 +1,4 @@
-﻿#include "echaracteractionfunction.h"
+#include "character-action-function.h"
 
 #include "eactionwithcomeback.h"
 #include "earcheraction.h"
@@ -6,7 +6,7 @@
 #include "ecarttransporteraction.h"
 #include "ecollectresourceaction.h"
 #include "efirefighteraction.h"
-#include "characters/gods/actions/egodaction.h"
+#include "characters/gods/actions/god-action.h"
 #include "characters/gods/actions/egodattackaction.h"
 #include "characters/gods/actions/egodmonsteraction.h"
 #include "egroweraction.h"
@@ -20,6 +20,7 @@
 #include "ekillcharacterfinishfail.h"
 #include "ereplacecattleaction.h"
 #include "characters/gods/actions/egodworshippedaction.h"
+#include "characters/gods/actions/god-minion-action.h"
 
 #include "godHelp/ezeushelpaction.h"
 #include "godHelp/eaphroditehelpaction.h"
@@ -202,6 +203,8 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
 
     case eCharActFuncType::GWA_huntMonsterFinish:
         return std::make_shared<eGWA_huntMonsterFinish>(board);
+    case eCharActFuncType::GMinA_huntMonsterFinish:
+        return std::make_shared<eGMinA_huntMonsterFinish>(board);
 
     case eCharActFuncType::enemyBoatFinish:
         return std::make_shared<eEnemyBoatFinish>(board);

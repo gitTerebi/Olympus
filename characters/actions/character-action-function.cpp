@@ -1,4 +1,4 @@
-#include "echaracteractionfunction.h"
+#include "character-action-function.h"
 
 #include "characters/echaracter.h"
 

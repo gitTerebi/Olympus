@@ -1,7 +1,7 @@
 #ifndef ECOMPLEXACTION_H
 #define ECOMPLEXACTION_H
 
-#include "echaracteraction.h"
+#include "character-action.h"
 
 class eSaveArchive;
 
