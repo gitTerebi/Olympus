@@ -4,6 +4,7 @@
 #include "emodal.h"
 #include "esettings.h"
 #include "escrollbar.h"
+#include "engine/edifficulty.h"
 
 #include <functional>
 #include <string>
@@ -41,6 +42,12 @@ public:
         std::string fTooltip;
     };
 
+    struct eDifficultyItem {
+        std::string fLabel;
+        std::function<eDifficulty()> fGet;
+        std::function<void(const eDifficulty)> fSet;
+    };
+
     struct ePage {
         std::string fButtonLabel;
         std::string fTitle;
@@ -48,6 +55,7 @@ public:
         std::vector<eHotkeyItem> fHotkeys;
         std::vector<std::string> fLines;
         std::vector<eCheckboxItem> fCheckboxes;
+        std::vector<eDifficultyItem> fDifficulties;
     };
 
     eOptionsMenu(const std::vector<ePage>& pages,

@@ -31,6 +31,7 @@
 #include "engine/eresourcetype.h"
 
 #include "ebuildwidget.h"
+#include "elayouthelpers.h"
 #include "ebasicbutton.h"
 #include "erotatebutton.h"
 
@@ -180,15 +181,18 @@ eWidget *eGameMenu::createPriceWidget(const eInterfaceTextures &coll)
     plabel->setFontSizeXS();
     plabel->setPaddingXS();
     plabel->fitContent();
-    const auto ilabel = new eLabel(window());
+    const auto ilabel = new eScaledTextureLabel(window());
     ilabel->setTexture(coll.fDrachmasUnit);
     ilabel->setPaddingXS();
-    ilabel->fitContent();
-    r->addWidget(ilabel);
-    r->addWidget(plabel);
-    r->stackHorizontally();
+    ilabel->setMaxDrawHeight(plabel->height());
+    ilabel->setFitToDrawSize(true);
+    using namespace eLayoutHelpers;
+    const auto row = flexRow(window(),
+                             ilabel->width() + plabel->width(),
+                             {{ilabel}, {plabel}},
+                             {.align = eAlign::center});
+    r->addWidget(row);
     r->fitContent();
-    plabel->align(eAlignment::vcenter);
     mPriceWidgets.push_back(r);
     mPriceLabels.push_back(plabel);
     r->hide();
@@ -650,7 +654,7 @@ void eGameMenu::initialize(eGameBoard *const b,
         ww->fitContent();
         addWidget(ww);
         ww->setX(wx);
-        ww->setY(wy + 29 * mult);
+        ww->setY(wy + 32 * mult);
     }
 
     mPopDataW = new ePopulationDataWidget(*b, window());

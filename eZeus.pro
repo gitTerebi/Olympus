@@ -642,6 +642,7 @@ SOURCES += \
         widgets/efulfilldialog.cpp \
         widgets/egameloadingwidget.cpp \
         widgets/egamemainmenu.cpp \
+        widgets/edifficultywidget.cpp \
         widgets/egamemenu.cpp \
         widgets/egamemenubase.cpp \
         widgets/epierdebugwidget.cpp \
@@ -2866,6 +2867,7 @@ HEADERS += \
     widgets/efulfilldialog.h \
     widgets/egameloadingwidget.h \
     widgets/egamemainmenu.h \
+    widgets/edifficultywidget.h \
     widgets/egamemenu.h \
     widgets/egamemenubase.h \
     widgets/egamewidget.h \

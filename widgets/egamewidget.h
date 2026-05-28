@@ -115,6 +115,8 @@ public:
 
     void initialize();
 
+    void rebuildGameMenu();
+
     void pixToId(const int pixX, const int pixY,
                  int& idX, int& idY) const;
 
@@ -189,6 +191,7 @@ private:
                            int tx, int ty,
                            ePlayerId ppid);
 
+    void createGameMenu();
     void showGoals();
     void showOptionsMenu();
     void showGraphicsMenu();

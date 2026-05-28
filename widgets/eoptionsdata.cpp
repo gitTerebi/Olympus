@@ -2,10 +2,15 @@
 
 #include "emainwindow.h"
 #include "esettings.h"
+#include "elanguage.h"
+#include "engine/e-game-board.h"
+#include "widgets/egamewidget.h"
 
-std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
+std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
+                                                 eGameBoard* const board,
+                                                 eGameWidget* const gw) {
     const auto& settings = window->settings();
-    return {
+    std::vector<eOptionsMenu::ePage> pages = {
         {
             "General",
             "General Options",
@@ -348,4 +353,21 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window) {
             {}
         }
     };
+
+    if(board) {
+        for(auto& page : pages) {
+            if(page.fButtonLabel != "Gameplay") continue;
+            const auto pid = board->personPlayer();
+            page.fDifficulties.push_back({
+                eLanguage::zeusText(44, 219),
+                [board, pid]() { return board->difficulty(pid); },
+                [board, gw](const eDifficulty d) {
+                    board->setDifficulty(d);
+                    if(gw) gw->rebuildGameMenu();
+                }
+            });
+        }
+    }
+
+    return pages;
 }

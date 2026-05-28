@@ -376,11 +376,8 @@ void eGameWidget::initializeNumbers()
     }
 }
 
-void eGameWidget::initialize()
+void eGameWidget::createGameMenu()
 {
-    mEditorMode = mBoard->editorMode();
-    mKeyScrollSpeed = window()->settings().fKeyScrollSpeed * 5;
-    initializeNumbers();
     mGm = new eGameMenu(window());
     const auto viewGoals = [this]()
     {
@@ -417,6 +414,25 @@ void eGameWidget::initialize()
         double fy;
         mm->viewedFraction(fx, fy);
         viewFraction(fx, fy); });
+}
+
+void eGameWidget::rebuildGameMenu()
+{
+    if(mGm) {
+        mGm->clearMode();
+        removeWidget(mGm);
+        mGm->deleteLater();
+        mGm = nullptr;
+    }
+    createGameMenu();
+}
+
+void eGameWidget::initialize()
+{
+    mEditorMode = mBoard->editorMode();
+    mKeyScrollSpeed = window()->settings().fKeyScrollSpeed * 5;
+    initializeNumbers();
+    createGameMenu();
 
     mAm = new eArmyMenu(window());
     mAm->initialize(*mBoard);
@@ -3272,7 +3288,7 @@ void eGameWidget::showGoals()
 
 void eGameWidget::showOptionsMenu()
 {
-    const auto d = new eOptionsMenu(getOptionsPages(window()), window());
+    const auto d = new eOptionsMenu(getOptionsPages(window(), mBoard.get(), this), window());
     d->initialize();
     window()->execDialog(d, true, [this]()
                          { window()->setWidget(this); });

@@ -643,6 +643,7 @@ set(SOURCES
     widgets/efulfilldialog.cpp
     widgets/egameloadingwidget.cpp
     widgets/egamemainmenu.cpp
+    widgets/edifficultywidget.cpp
     widgets/egamemenu.cpp
     widgets/egamemenubase.cpp
     widgets/egamewidget.cpp
