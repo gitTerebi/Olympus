@@ -1,6 +1,7 @@
 #include "efightingaction.h"
 
 #include <math.h>
+#include <cstdio>
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/efightingcharacter.h"

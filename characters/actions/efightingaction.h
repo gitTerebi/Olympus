@@ -25,6 +25,7 @@ public:
     int armorVsMissiles() const;
 
     bool building() const;
+    eCharacter* character() const { return mC.get(); }
 
     double absX() const;
     double absY() const;

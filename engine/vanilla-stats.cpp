@@ -99,31 +99,48 @@ int greekEnemyFigureId(const eCharacterType type) {
     }
 }
 
-void apply(eCharacterBase& c, const eDifficulty d) {
+void apply(eCharacterBase& c, const eDifficulty d, const bool isPlayer) {
     const char* name = figureName(c.type());
     const int greekId = greekEnemyFigureId(c.type());
     if(!name && greekId < 0) return;
     const auto& md = ModelData::instance();
     if(!md.loaded()) return;
-    const FigureStats* s = greekId >= 0 ? md.enemyFigure(d, greekId) :
-                                          md.figure(d, name);
-    if(!s) return;
-    c.setHP(s->hp);
-    c.setAttack(s->att);
-    c.setArmor(s->arm);
-    c.setArmorVsMissiles(s->avsm);
-    c.setMissileAttack(s->ma);
-    c.setAttackFreq(s->frq);
-    c.setMissileFreq(s->mrf);
-    if(s->spd > 0) c.setSpeed(s->spd * 9.067);
-    if(s->mr > 0) c.setRange(s->mr);
+
+    const FigureStats* primary = nullptr;
+    const FigureStats* fallback = nullptr;
+    if(isPlayer && name) {
+        primary = md.figure(d, name);
+        if(greekId >= 0) fallback = md.enemyFigure(d, greekId);
+    } else if(greekId >= 0) {
+        primary = md.enemyFigure(d, greekId);
+    } else {
+        primary = md.figure(d, name);
+    }
+    if(!primary) primary = fallback;
+    if(!primary) return;
+
+    const auto pick = [&](int pv, int fv) {
+        return pv > 0 ? pv : (fallback ? fv : pv);
+    };
+    c.setHP(primary->hp);
+    c.setAttack(primary->att);
+    c.setArmor(primary->arm);
+    c.setArmorVsMissiles(primary->avsm);
+    c.setMissileAttack(primary->ma);
+    c.setAttackFreq(pick(primary->frq, fallback ? fallback->frq : 0));
+    c.setMissileFreq(pick(primary->mrf, fallback ? fallback->mrf : 0));
+    const int spd = pick(primary->spd, fallback ? fallback->spd : 0);
+    if(spd > 0) c.setSpeed(spd * 9.067);
+    const int mr = pick(primary->mr, fallback ? fallback->mr : 0);
+    if(mr > 0) c.setRange(mr);
 }
 
 void applyForCity(eCharacterBase& c, GameBoard& board) {
     const auto cid = c.cityId();
     const auto pid = board.cityIdToPlayerId(cid);
     const auto d = board.difficulty(pid);
-    apply(c, d);
+    const bool isPlayer = pid == board.personPlayer();
+    apply(c, d, isPlayer);
 }
 
 }
