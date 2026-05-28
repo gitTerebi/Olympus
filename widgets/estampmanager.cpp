@@ -141,7 +141,15 @@ void eStampManager::rebuildList()
             paths.push_back(path);
         }
     }
-    std::sort(paths.begin(), paths.end());
+    std::sort(paths.begin(), paths.end(),
+              [](const fs::path& a, const fs::path& b) {
+        const auto an = a.filename().u8string();
+        const auto bn = b.filename().u8string();
+        const bool at = !an.empty() && an.front() == '~';
+        const bool bt = !bn.empty() && bn.front() == '~';
+        if(at != bt) return at;
+        return an < bn;
+    });
 
     const auto res = resolution();
     const auto uiScale = res.uiScale();
