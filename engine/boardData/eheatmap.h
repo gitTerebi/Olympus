@@ -4,9 +4,17 @@
 #include <vector>
 #include <SDL2/SDL_rect.h>
 
+// Vanilla Zeus ring formula:
+//   ring N (N=1..) has appeal = fValue + (N-1)*fStepSize
+//   ring N covers tiles dist (N-1)*fStepTiles+1 .. N*fStepTiles
+//   capped at fRange tiles total.
+// For nice buildings fStepSize is negative (fade out),
+// for ugly buildings fStepSize is positive (penalty fades back to 0).
 struct eHeat {
-    int fValue;
-    int fRange;
+    int fValue;       // ring 1 strength
+    int fStepTiles;   // tiles per ring (defaults to 1 if 0)
+    int fStepSize;    // delta per ring (signed)
+    int fRange;       // max range in tiles
 };
 
 class eHeatMap {

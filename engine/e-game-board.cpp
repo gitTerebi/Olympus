@@ -365,8 +365,12 @@ void GameBoard::updateAppealMapIfNeeded()
         };
         const auto cc = boardCityWithId(cid);
         const auto rect = cc->tileBRect();
+        const auto diff = difficulty(cityIdToPlayerId(cid));
+        eHeatMapTask::eHeatGetter appeal = [diff](const eBuildingType type) {
+            return eHeatGetters::appeal(type, diff);
+        };
         const auto task = new eHeatMapTask(cid, rect,
-                                           eHeatGetters::appeal, finish);
+                                           appeal, finish);
         mThreadPool.queueTask(task);
     }
 }

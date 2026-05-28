@@ -83,20 +83,29 @@ void eHeatMap::addHeat(const eHeat& a,
                        const int sw, const int sh) {
     const int r = a.fRange;
     if(r <= 0) return;
-    const double v = a.fValue;
-    for(int x = ax - r; x <= ax + sw + r; x++) {
-        for(int y = ay - r; y <= ay + sh + r; y++) {
-            const double cx = ax + 0.5*sw;
-            const double cy = ay + 0.5*sh;
-            const double dx = std::max(abs(x - cx) - 0.5*sw, 0.);
-            const double dy = std::max(abs(y - cy) - 0.5*sh, 0.);
-            const double dist = std::sqrt(dx * dx + dy * dy);
+    const int step = a.fStepTiles > 0 ? a.fStepTiles : 1;
+    const int delta = a.fStepSize;
+    const int v0 = a.fValue;
+    // Vanilla ring formula. Compute Chebyshev ring index from tile edge.
+    for(int x = ax - r; x <= ax + sw - 1 + r; x++) {
+        for(int y = ay - r; y <= ay + sh - 1 + r; y++) {
+            // distance to nearest tile of footprint (Chebyshev, axis-aligned)
+            int dx = 0;
+            if(x < ax) dx = ax - x;
+            else if(x >= ax + sw) dx = x - (ax + sw - 1);
+            int dy = 0;
+            if(y < ay) dy = ay - y;
+            else if(y >= ay + sh) dy = y - (ay + sh - 1);
+            const int dist = std::max(dx, dy);
+            if(dist <= 0) continue;       // skip building footprint itself
             if(dist > r) continue;
-            const double mult = (r - dist)/r;
+            const int ring = (dist - 1) / step + 1;   // 1-based ring index
+            const int appeal = v0 + (ring - 1) * delta;
+            if(appeal == 0) continue;
             int dtx;
             int dty;
             eTileHelper::tileIdToDTileId(x, y, dtx, dty);
-            addHeat(dtx, dty, mult*v);
+            addHeat(dtx, dty, static_cast<double>(appeal));
         }
     }
 }
@@ -107,7 +116,7 @@ void eHeatMap::addHeat(const int x, const int y,
        x >= mWidth + mDX || y >= mHeight + mDY) return;
     auto& tile = mMap[x - mDX][y - mDY];
     tile.fEnabled = true;
-    tile.fAppeal += a/2;
+    tile.fAppeal += a;
 }
 
 void eHeatMap::setOutsideRange(const int x, const int y) {

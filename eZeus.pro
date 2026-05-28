@@ -653,6 +653,7 @@ SOURCES += \
         widgets/game-widget-build.cpp \
         widgets/GameWidgetevents.cpp \
         widgets/game-widget-info.cpp \
+        widgets/paint/build-preview-paint.cpp \
         widgets/paint/game-widget-paint.cpp \
         widgets/paint/patrol-path-data.cpp \
         widgets/egiftdialog.cpp \
@@ -3353,4 +3354,3 @@ DISTFILES += \
     textureTemplates/zeusStairs \
     textureTemplates/zeusStatue \
     textureTemplates/zeusTrees
-

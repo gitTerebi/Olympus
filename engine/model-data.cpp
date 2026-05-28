@@ -124,13 +124,42 @@ bool ModelData::loadZeusFile(const std::string& path, DifficultySet& out) {
     std::ifstream f(path);
     if(!f.is_open()) return false;
     std::string line;
+    bool inBuildings = false;
     bool inHouses = false;
     while(std::getline(f, line)) {
-        if(line.find("ALL HOUSES") != std::string::npos) { inHouses = true; continue; }
-        if(!inHouses) continue;
+        if(line.find("ALL BUILDINGS") != std::string::npos) {
+            inBuildings = true;
+            inHouses = false;
+            continue;
+        }
+        if(line.find("ALL HOUSES") != std::string::npos) {
+            inBuildings = false;
+            inHouses = true;
+            continue;
+        }
         if(line.find("End of model data") != std::string::npos) break;
         const auto open = line.find('{');
         if(open == std::string::npos) continue;
+        if(inBuildings) {
+            std::string name;
+            std::vector<int> nums;
+            if(!parseRow(line, name, nums)) continue;
+            if(nums.size() < 10) continue;
+            BuildingModelStats s;
+            s.cost                  = nums[0];
+            s.desirability          = nums[1];
+            s.desirabilityStepTiles = nums[2];
+            s.desirabilityStepSize  = nums[3];
+            s.desirabilityRange     = nums[4];
+            s.employment            = nums[5];
+            s.fireRisk              = nums[6];
+            s.damageRisk            = nums[7];
+            s.resourceUsed          = nums[8];
+            s.riskReducer           = nums[9];
+            out.buildings[name] = s;
+            continue;
+        }
+        if(!inHouses) continue;
         const std::string prefix = trim(line.substr(0, open));
         std::string label = prefix;
         if(!label.empty() && label.back() == ',') label.pop_back();
@@ -240,5 +269,12 @@ const MonsterBehavior* ModelData::monster(Difficulty d, const std::string& name)
     const auto& set = mSets[diffIndex(d)];
     auto it = set.monsters.find(name);
     if(it == set.monsters.end()) return nullptr;
+    return &it->second;
+}
+
+const BuildingModelStats* ModelData::building(Difficulty d, const std::string& name) const {
+    const auto& set = mSets[diffIndex(d)];
+    auto it = set.buildings.find(name);
+    if(it == set.buildings.end()) return nullptr;
     return &it->second;
 }

@@ -37,10 +37,24 @@ struct HouseReq {
     bool valid = false;
 };
 
+struct BuildingModelStats {
+    int cost = 0;
+    int desirability = 0;
+    int desirabilityStepTiles = 0;
+    int desirabilityStepSize = 0;
+    int desirabilityRange = 0;
+    int employment = 0;
+    int fireRisk = 0;
+    int damageRisk = 0;
+    int resourceUsed = 0;
+    int riskReducer = 0;
+};
+
 struct DifficultySet {
     std::unordered_map<std::string, FigureStats> figures;
     std::vector<FigureStats> enemies;
     std::unordered_map<std::string, MonsterBehavior> monsters;
+    std::unordered_map<std::string, BuildingModelStats> buildings;
     std::array<HouseReq, 7> commonHouses{};   // Hut..Townhouse
     std::array<HouseReq, 4> eliteHouses{};    // Residence..Estate
 };
@@ -55,6 +69,7 @@ public:
     const FigureStats* figure(Difficulty d, const std::string& name) const;
     const FigureStats* enemyFigure(Difficulty d, int id) const;
     const MonsterBehavior* monster(Difficulty d, const std::string& name) const;
+    const BuildingModelStats* building(Difficulty d, const std::string& name) const;
     const HouseReq* houseReq(Difficulty d, int level, bool elite) const;
 
 private:

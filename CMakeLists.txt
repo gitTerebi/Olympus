@@ -664,6 +664,7 @@ set(SOURCES
      widgets/gamebuild/ecommonhousingbuild.cpp
      widgets/egamewidgetevents.cpp
     widgets/game-widget-info.cpp
+    widgets/paint/build-preview-paint.cpp
     widgets/paint/game-widget-paint.cpp
     widgets/paint/patrol-path-data.cpp
     widgets/repair.cpp
