@@ -2,6 +2,7 @@
 
 #include "actions/efightingaction.h"
 #include "fileIO/esavearchive.h"
+#include "echaracter.h"
 
 eFightingCharacter::eFightingCharacter(eCharacter * const c) :
     mChar(c) {}
@@ -12,5 +13,5 @@ eFightingAction* eFightingCharacter::fightingAction() const {
 }
 
 void eFightingCharacter::serializeFields(eSaveArchive& ar) {
-    ar.field("mRange", mRange);
+    (void)ar;
 }

@@ -395,6 +395,8 @@ SOURCES += \
         engine/ecolonymonumentaction.cpp \
         engine/edate.cpp \
         engine/edifficulty.cpp \
+        engine/model-data.cpp \
+        engine/vanilla-stats.cpp \
         engine/eemploymentdistributor.cpp \
         engine/eepisode.cpp \
         engine/eepisodegoal.cpp \
@@ -1103,6 +1105,8 @@ HEADERS += \
     engine/ecolonymonumentaction.h \
     engine/edate.h \
     engine/edifficulty.h \
+    engine/model-data.h \
+    engine/vanilla-stats.h \
     engine/e-tribute.h \
     engine/eemploymentdistributor.h \
     engine/eepisode.h \

@@ -15,13 +15,8 @@ public:
     void serializeFields(eSaveArchive& ar);
 
     eFightingAction* fightingAction() const;
-
-    int range() const { return mRange; }
-    void setRange(const int r) { mRange = r; }
 private:
     eCharacter* const mChar;
-
-    int mRange = 0;
 };
 
 #endif // EFIGHTINGCHARACTER_H

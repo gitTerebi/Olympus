@@ -47,6 +47,8 @@ protected:
     void resumeFromSavedState() override;
 private:
     void destroyBuilding(eBuilding* const b);
+    bool incrementMeleeAttack(const int by);
+    void spawnMeleeAttack();
     void spawnAttackMissile();
     void spawnBuildingAttackMissiles();
     eTile* closestEmptySpace(const int rdx, const int rdy) const;
@@ -54,6 +56,7 @@ private:
     stdsptr<eObsticleHandler> obsticleHandler();
     bool lookForAttack(const int dtime, int& time,
                        const int freq, const int range);
+    bool lookForMeleeAttack();
     bool lookForRangeAction(const int dtime,
                             int& time, const int freq,
                             const int range,

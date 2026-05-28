@@ -14,6 +14,7 @@
 #include "missiles/erockmissile.h"
 #include "missiles/earrowmissile.h"
 #include "missiles/espearmissile.h"
+#include "combat-timing.h"
 
 namespace {
 bool sCanAttackCharacter(const eCharacter* const c) {
@@ -45,8 +46,14 @@ bool eAttackTarget::valid() const {
     return mC || mB;
 }
 
-bool eAttackTarget::takeDamage(const double a) {
-    if(mC) return mC->takeDamage(a);
+bool eAttackTarget::takeDamage(const double a, eCharacter* const attacker) {
+    if(mC) return mC->takeDamage(a, attacker);
+    if(mB) return mB->takeDamage(a);
+    return true;
+}
+
+bool eAttackTarget::takeMeleeDamage(const double a, eCharacter* const attacker) {
+    if(mC) return mC->takeMeleeDamage(a, attacker);
     if(mB) return mB->takeDamage(a);
     return true;
 }
@@ -60,6 +67,16 @@ bool eAttackTarget::dead() const {
 void eAttackTarget::clear() {
     mC = nullptr;
     mB = nullptr;
+}
+
+int eAttackTarget::armor() const {
+    if(mC) return mC->armor();
+    return 0;
+}
+
+int eAttackTarget::armorVsMissiles() const {
+    if(mC) return mC->armorVsMissiles();
+    return 0;
 }
 
 bool eAttackTarget::building() const {
@@ -89,6 +106,18 @@ double eAttackTarget::absY() const {
 void eAttackTarget::serialize(eSaveArchive& ar, eGameBoard& board) {
     ar.characterField("character", &board, mC);
     ar.buildingField("building", &board, mB);
+}
+
+void eFightingAction::cancelAttack() {
+    mAttack = false;
+    mAttackRanged = false;
+    mAttackTarget.clear();
+    mAttackTime = 0;
+    mMeleeTime = 0;
+    mMissile = 0;
+    const auto c = character();
+    c->setPlayFightSound(false);
+    c->setActionType(mSavedAction);
 }
 
 void eFightingAction::sSignalBeingAttack(
@@ -142,15 +171,11 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
     }
     const int rangeAttackCheck = 500;
     const int lookForEnemyCheck = 500;
-    const int missileCheck = 200;
     const int buildingCheck = 5000;
 
     const auto c = character();
     if(c->dead()) return eLookForEnemyState::dead;
-    int range = 0;
-    if(const auto s = dynamic_cast<eFightingCharacter*>(c)) {
-        range = s->range();
-    }
+    int range = c->range();
     auto& brd = c->getBoard();
     const auto ct = c->tile();
     if(!ct) return eLookForEnemyState::dead;
@@ -159,9 +184,10 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
     const auto tid = c->teamId();
 
     if(mAttack) {
-        const auto at = c->actionType();
-        if(range > 0 && mAttackTarget.valid() &&
-            at == eCharacterActionType::fight2) {
+        bool finishAttack = false;
+        const bool ranged = mAttackRanged;
+        const int missileCheck = c->missileFreq() > 0 ? c->missileFreq() * 10 : 200;
+        if(range > 0 && mAttackTarget.valid() && ranged) {
             mMissile += by;
             if(mMissile > missileCheck) {
                 mMissile = mMissile - missileCheck;
@@ -189,16 +215,40 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                     eMissile::sCreate<eRockMissile>(brd, tx, ty, 0.5,
                                                     ttx, tty, 0.5, 0.5*dist);
                 }
+                if(!mAttackTarget.dead()) {
+                    const double arm = mAttackTarget.armorVsMissiles();
+                    const double atk = c->missileAttack() > 0 ? c->missileAttack() : c->attack();
+                    const double dmg = atk - arm;
+                    const double att = dmg > 0 ? dmg : 0.01;
+                    const bool d = mAttackTarget.takeDamage(att, c);
+                    if(d) finishAttack = true;
+                }
             }
         }
         mAttackTime += by;
-        bool finishAttack = !mAttackTarget.valid() ||
-                            mAttackTarget.dead() ||
-                            (mAttackTime > 1000 && !mAttackTarget.building());
-        if(mAttackTarget.valid() && !mAttackTarget.dead()) {
-            const double att = by*c->attack();
-            const bool d = mAttackTarget.takeDamage(att);
-            if(d) finishAttack = true;
+        if(!finishAttack) finishAttack = !mAttackTarget.valid() ||
+                                          mAttackTarget.dead() ||
+                                          (mAttackTime > 1000 && !mAttackTarget.building());
+        if(!ranged && mAttackTarget.valid() && !mAttackTarget.dead()) {
+            const double arm = mAttackTarget.armor();
+            const double atk = c->attack();
+            const double dmg = atk - arm;
+            const double per = dmg > 0 ? dmg : 0.;
+            mMeleeTime += by;
+            const int cycleMs = CombatTiming::meleeCycleMs(*c);
+            const int animMs = CombatTiming::meleeAnimationMs(*c);
+            const auto wantedAction = mMeleeTime + animMs >= cycleMs ?
+                                      eCharacterActionType::fight :
+                                      eCharacterActionType::stand;
+            if(c->actionType() != wantedAction) c->setActionType(wantedAction);
+            if(mMeleeTime >= cycleMs) {
+                mMeleeTime -= cycleMs;
+                if(c->actionType() != eCharacterActionType::fight) {
+                    c->setActionType(eCharacterActionType::fight);
+                }
+                const bool d = mAttackTarget.takeMeleeDamage(per, c);
+                if(d) finishAttack = true;
+            }
         }
         if(finishAttack) {
             mAttack = false;
@@ -207,6 +257,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
             mRangeAttack = rangeAttackCheck;
             c->setActionType(mSavedAction);
             c->setPlayFightSound(false);
+            mAttackRanged = false;
             mLookForEnemy = lookForEnemyCheck;
         } else {
             return eLookForEnemyState::attacking;
@@ -220,6 +271,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         const vec2d posdif = ccpos - cpos;
         mAttackTarget = eAttackTarget(cc.get());
         mAttack = true;
+        mAttackRanged = range;
         c->setPlayFightSound(true);
         mAttackTime = 0;
         mSavedAction = c->actionType();
@@ -373,6 +425,7 @@ bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
     if(!att) return false;
     mAttackTarget = eAttackTarget(ub);
     mAttack = true;
+    mAttackRanged = range;
     c->setPlayFightSound(true);
     mAttackTime = 0;
     mSavedAction = c->actionType();
@@ -475,11 +528,13 @@ void eFightingAction::serializeFields(eSaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("angle", mAngle);
     ar.field("missile", mMissile);
+    ar.field("meleeTime", mMeleeTime);
     ar.field("rangeAttack", mRangeAttack);
     ar.field("buildingAttack", mBuildingAttack);
     ar.field("lookForEnemy", mLookForEnemy);
     ar.field("attackTime", mAttackTime);
     ar.field("attack", mAttack);
+    ar.field("attackRanged", mAttackRanged, false);
     ar.archiveField("attackTarget", [this](eSaveArchive& targetAr) {
         mAttackTarget.serialize(targetAr, board());
     });
@@ -509,18 +564,15 @@ void eFightingAction::rebuildSavedRuntime() {
     if(mAttack) {
         if(!mAttackTarget.valid() || mAttackTarget.dead()) {
             mAttack = false;
+            mAttackRanged = false;
             mAttackTarget.clear();
             mAttackTime = 0;
             c->setPlayFightSound(false);
             c->setActionType(mSavedAction);
         } else {
             c->setPlayFightSound(true);
-            int range = 0;
-            if(const auto s = dynamic_cast<eFightingCharacter*>(c)) {
-                range = s->range();
-            }
-            c->setActionType(range > 0 ? eCharacterActionType::fight2 :
-                                        eCharacterActionType::fight);
+            c->setActionType(mAttackRanged ? eCharacterActionType::fight2 :
+                                             eCharacterActionType::fight);
             const vec2d cpos{c->absX(), c->absY()};
             const vec2d tpos{mAttackTarget.absX(), mAttackTarget.absY()};
             mAngle = (tpos - cpos).angle();

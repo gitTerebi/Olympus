@@ -38,6 +38,8 @@ public:
         return mTile;
     }
 
+    eCharacter* character() const { return mChar.get(); }
+
     void serialize(eSaveArchive& ar, eGameBoard& board) {
         ar.tileField("tile", board, mTile);
         ar.characterField("character", &board, mChar);

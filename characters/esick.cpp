@@ -6,5 +6,5 @@ eSick::eSick(eGameBoard& board) :
     eFightingPatroler(board, &eCharacterTextures::fSick,
                       eCharacterType::sick) {
     eGameTextures::loadSick();
-    setSpeed(0.35);
+    setSpeed(18.375);
 }

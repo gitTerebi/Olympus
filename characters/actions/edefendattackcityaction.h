@@ -36,6 +36,7 @@ private:
     int mRangeAttack = 0;
     double mAngle{0.};
     int mMissile = 0;
+    int mMeleeTime = 0;
     int mMaxKilled = 6;
     int mKilled = 0;
 };

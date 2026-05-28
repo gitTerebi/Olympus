@@ -1,10 +1,12 @@
 #include "edefendattackcityaction.h"
 
+#include "enumbers.h"
 #include "emovetoaction.h"
 #include "engine/e-game-board.h"
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
 #include "characters/gods/actions/god-action.h"
+#include "characters/actions/combat-timing.h"
 #include "vec2.h"
 #include "fileIO/esavearchive.h"
 
@@ -19,6 +21,7 @@ void eDefendAttackCityAction::serializeFields(eSaveArchive& ar) {
     ar.field("rangeAttack", mRangeAttack);
     ar.field("angle", mAngle);
     ar.field("missile", mMissile);
+    ar.field("meleeTime", mMeleeTime);
     ar.field("killed", mKilled);
 }
 
@@ -108,27 +111,12 @@ void eDefendAttackCityAction::increment(const int by) {
     const auto tid = c->teamId();
     const auto ct = c->type();
 
+    if(c->missileFreq() > 0) missileCheck = c->missileFreq() * 10;
+
     if(mAttack) {
-        if(range > 0 && mAttackTarget && mAttackTarget->tile()) {
-            bool isGod;
-            const auto gt = eGod::sCharacterToGodType(ct, &isGod);
-            if(isGod) {
-                missileCheck = eGod::sGodAttackTime(gt);
-            } else {
-                bool isHero;
-                const auto ht = eHero::sCharacterToHeroType(ct, &isHero);
-                if(isHero) {
-                    missileCheck = eHero::sHeroAttackTime(ht);
-                } else {
-                    bool isMonster;
-                    const auto mt = eMonster::sCharacterToMonsterType(ct, &isMonster);
-                    if(isMonster) {
-                        missileCheck = eMonster::sMonsterAttackTime(mt);
-                    } else {
-                        missileCheck = 200;
-                    }
-                }
-            }
+        bool finishAttack = false;
+        const bool ranged = range > 0;
+        if(ranged && mAttackTarget && mAttackTarget->tile()) {
             mMissile += by;
             if(mMissile > missileCheck) {
                 mMissile -= missileCheck;
@@ -136,16 +124,40 @@ void eDefendAttackCityAction::increment(const int by) {
                 spawnMissile(eCharacterActionType::fight2,
                              ct, missileCheck, tt,
                              nullptr, nullptr);
+                if(!mAttackTarget->dead()) {
+                    const double arm = mAttackTarget->armorVsMissiles();
+                    const double atk = c->missileAttack() > 0 ? c->missileAttack() : c->attack();
+                    const double dmg = atk - arm;
+                    const double att = dmg > 0 ? dmg : 0.01;
+                    const bool d = mAttackTarget->takeDamage(att, c);
+                    if(d) finishAttack = true;
+                }
             }
         }
         mAttackTime += by;
-        bool finishAttack = !mAttackTarget ||
-                            mAttackTarget->dead() ||
-                            mAttackTime > 1000;
-        if(mAttackTarget && !mAttackTarget->dead()) {
-            const double att = by*c->attack();
-            const bool d = mAttackTarget->takeDamage(att);
-            if(d) finishAttack = true;
+        if(!finishAttack) finishAttack = !mAttackTarget ||
+                                          mAttackTarget->dead() ||
+                                          mAttackTime > 1000;
+        if(!ranged && mAttackTarget && !mAttackTarget->dead()) {
+            const double arm = mAttackTarget->armor();
+            const double atk = c->attack();
+            const double dmg = atk - arm;
+            const double per = dmg > 0 ? dmg : 0.;
+            mMeleeTime += by;
+            const int cycleMs = CombatTiming::meleeCycleMs(*c);
+            const int animMs = CombatTiming::meleeAnimationMs(*c);
+            const auto wantedAction = mMeleeTime + animMs >= cycleMs ?
+                                      eCharacterActionType::fight :
+                                      eCharacterActionType::stand;
+            if(c->actionType() != wantedAction) c->setActionType(wantedAction);
+            if(mMeleeTime >= cycleMs) {
+                mMeleeTime -= cycleMs;
+                if(c->actionType() != eCharacterActionType::fight) {
+                    c->setActionType(eCharacterActionType::fight);
+                }
+                const bool d = mAttackTarget->takeMeleeDamage(per, c);
+                if(d) finishAttack = true;
+            }
         }
         if(finishAttack) {
             mAttack = false;
@@ -254,16 +266,5 @@ void eDefendAttackCityAction::increment(const int by) {
 }
 
 int eDefendAttackCityAction::range() const {
-    const auto c = character();
-    const auto ct = c->type();
-    switch(ct) {
-    case eCharacterType::atalanta:
-        return 5;
-    case eCharacterType::artemis:
-    case eCharacterType::apollo:
-        return 5;
-    default:
-        return 0;
-    }
-    return 0;
+    return character()->range();
 }

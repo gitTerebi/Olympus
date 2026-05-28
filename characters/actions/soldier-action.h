@@ -40,6 +40,7 @@ protected:
 private:
     stdsptr<eObsticleHandler> obsticleHandler() override;
     void rebuildCurrentStage();
+    bool tooFarFromBanner() const;
 
     int mGoToBannerCountdown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces

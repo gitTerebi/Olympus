@@ -41,6 +41,7 @@ void eWolfAction::increment(const int by)
     const auto c = character();
     if (mWallTarget) {
         const bool dead = mWallTarget->takeDamage(by * c->attack());
+
         if (dead) {
             eSounds::playCollapseSound();
             mWallTarget.clear();

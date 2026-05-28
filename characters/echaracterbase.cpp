@@ -21,6 +21,11 @@ void eCharacterBase::setHP(const double hp) {
     mHP = hp;
 }
 
+void eCharacterBase::setSpeed(const double s) {
+    const double floor = 10.0;
+    mSpeed = s < floor ? floor : s;
+}
+
 bool eCharacterBase::fighting() const {
     return mActionType == eCharacterActionType::fight ||
             mActionType == eCharacterActionType::fight2;
@@ -90,7 +95,14 @@ void eCharacterBase::serializeFields(eSaveArchive& ar) {
     ar.field("hp", mHP);
     ar.field("attack", mAttack);
     ar.field("speed", mSpeed);
+    if(!ar.writing() && mSpeed < 10.0) mSpeed = 10.0;
     ar.field("atlantean", mAtlantean);
+    ar.field("armor", mArmor);
+    ar.field("armorVsMissiles", mArmorVsMissiles);
+    ar.field("missileAttack", mMissileAttack);
+    ar.field("attackFreq", mAttackFreq);
+    ar.field("missileFreq", mMissileFreq);
+    ar.field("range", mRange);
 }
 
 void eCharacterBase::serialize(eSaveArchive& ar) {

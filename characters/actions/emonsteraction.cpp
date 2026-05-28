@@ -12,6 +12,8 @@
 
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "combat-timing.h"
+#include "vec2.h"
 
 eMonsterAction::eMonsterAction(eCharacter* const c) :
     eGodMonsterAction(c, eCharActionType::monsterAction),
@@ -20,10 +22,16 @@ eMonsterAction::eMonsterAction(eCharacter* const c) :
 void eMonsterAction::increment(const int by) {
     const auto c = character();
     const auto at = c->actionType();
+    if(mStage == eMonsterAttackStage::attacking &&
+       mAttackActionType == eCharacterActionType::fight) {
+        if(incrementMeleeAttack(by)) return;
+    }
     if(at == eCharacterActionType::walk) {
-        lookForAttack(by, mLookForAttack,
-                      attackPeriod(),
-                      eNumbers::sMonsterAttackRange);
+        if(!lookForMeleeAttack()) {
+            lookForAttack(by, mLookForAttack,
+                          attackPeriod(),
+                          eNumbers::sMonsterAttackRange);
+        }
     }
 
     if(mStage == eMonsterAttackStage::wait && mWaitRemaining > 0) {
@@ -86,7 +94,8 @@ bool eMonsterAction::decide() {
             finishAttack();
             return decide();
         }
-        spawnAttackMissile();
+        if(mAttackActionType == eCharacterActionType::fight) spawnMeleeAttack();
+        else spawnAttackMissile();
         break;
     case eMonsterAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
@@ -125,6 +134,49 @@ void eMonsterAction::spawnAttackMissile() {
                                    board(), this);
     spawnMissile(mAttackActionType, chart, mAttackTime,
                  mAttackTarget, nullptr, act, finishAttackA);
+}
+
+void eMonsterAction::spawnMeleeAttack() {
+    const auto c = character();
+    mAttackTime = CombatTiming::meleeAnimationMs(*c);
+    if(c->actionType() != eCharacterActionType::fight) {
+        c->setActionType(eCharacterActionType::fight);
+    }
+    const auto tt = mAttackTarget.target();
+    if(tt) {
+        const vec2d posdif{1. * tt->x() - c->absX(),
+                           1. * tt->y() - c->absY()};
+        c->setOrientation(sAngleOrientation(posdif.angle()));
+    }
+}
+
+bool eMonsterAction::incrementMeleeAttack(const int by) {
+    if(!mAttackTarget.target()) {
+        finishAttack();
+        resumeAction();
+        if(!currentAction()) rebuildCurrentStage();
+        return false;
+    }
+    const auto c = character();
+    if(c->actionType() != eCharacterActionType::fight) {
+        c->setActionType(eCharacterActionType::fight);
+    }
+    mAttackTime -= by;
+    if(mAttackTime > 0) return true;
+
+    if(const auto tc = mAttackTarget.character()) {
+        if(!tc->dead()) tc->killWithCorpse();
+    } else if(const auto tt = mAttackTarget.target()) {
+        const auto b = tt->underBuilding();
+        if(b) {
+            b->collapse();
+            eSounds::playCollapseSound();
+        }
+    }
+    finishAttack();
+    resumeAction();
+    if(!currentAction()) rebuildCurrentStage();
+    return true;
 }
 
 void eMonsterAction::spawnBuildingAttackMissiles() {
@@ -168,7 +220,8 @@ void eMonsterAction::rebuildCurrentStage() {
             rebuildCurrentStage();
             return;
         }
-        spawnAttackMissile();
+        if(mAttackActionType == eCharacterActionType::fight) spawnMeleeAttack();
+        else spawnAttackMissile();
         return;
     case eMonsterAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
@@ -401,6 +454,35 @@ bool eMonsterAction::lookForAttack(const int dtime,
 
     return lookForRangeAction(dtime, time, freq, range,
                               at, act, nullptr);
+}
+
+bool eMonsterAction::lookForMeleeAttack() {
+    const auto c = character();
+    const auto act = std::make_shared<eLookForAttackGodAct>(
+                         board(), c);
+    auto& brd = c->getBoard();
+    const auto ct = c->tile();
+    if(!ct) return false;
+    const int tx = ct->x();
+    const int ty = ct->y();
+    std::vector<eTile*> tiles;
+    tiles.reserve(9);
+    for(int i = -1; i <= 1; i++) {
+        for(int j = -1; j <= 1; j++) {
+            const auto t = brd.tile(tx + i, ty + j);
+            if(t) tiles.push_back(t);
+        }
+    }
+    std::random_shuffle(tiles.begin(), tiles.end());
+    for(const auto t : tiles) {
+        const auto tt = act->find(t);
+        if(!tt) continue;
+        pauseAction();
+        beginAttack(tt, eCharacterActionType::fight, mStage);
+        spawnMeleeAttack();
+        return true;
+    }
+    return false;
 }
 
 bool eMonsterAction::lookForRangeAction(const int dtime,

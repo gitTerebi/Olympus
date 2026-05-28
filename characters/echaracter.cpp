@@ -13,11 +13,18 @@
 
 #include "esoldier.h"
 
+#include "engine/vanilla-stats.h"
+
 eCharacter::eCharacter(eGameBoard& board,
                        const eCharacterType type) :
     eObject(board), eCharacterBase(type),
     mSeedId(eRand::rand()) {
     getBoard().registerCharacter(this);
+}
+
+void eCharacter::setCityId(const eCityId i) {
+    eCharacterBase::setCityId(i);
+    VanillaStats::applyForCity(*this, getBoard());
 }
 
 eCharacter::~eCharacter() {
@@ -279,26 +286,38 @@ void eCharacter::setProvide(const eProvide p, const int n) {
 }
 
 bool eCharacter::takeDamage(const double a) {
+    return takeDamage(a, nullptr);
+}
+
+bool eCharacter::takeDamage(const double a, eCharacter* const attacker) {
     if(dead()) return true;
 
-    bool isMonster = false;
-    eMonster::sCharacterToMonsterType(type(), &isMonster);
-    if(isMonster) return false;
-    bool isGod = false;
-    eGod::sCharacterToGodType(type(), &isGod);
-    if(isGod) return false;
-    bool isHero = false;
-    eHero::sCharacterToHeroType(type(), &isHero);
-    if(isHero) return false;
+    if(isGod()) {
+        const bool allow = attacker && attacker->isImmortal();
+        if(!allow) {
+            return false;
+        }
+    }
 
     setHP(hp() - a);
     if(hp() <= 0) {
         killWithCorpse();
         return true;
-    } else {
-        return false;
     }
-    return dead();
+    return false;
+}
+
+bool eCharacter::takeMeleeDamage(const double a, eCharacter* const attacker) {
+    if(isMonster()) {
+        const bool allow = attacker &&
+                           (attacker->isHero() ||
+                            attacker->isMonster() ||
+                            attacker->isGod());
+        if(!allow) {
+            return false;
+        }
+    }
+    return takeDamage(a, attacker);
 }
 
 void eCharacter::pauseAction() {

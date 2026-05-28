@@ -11,6 +11,7 @@
 #include "textures/egametextures.h"
 
 #include "egamedir.h"
+#include "engine/model-data.h"
 #include "enumbers.h"
 
 #include "audio/music.h"
@@ -123,6 +124,7 @@ int main() {
     installWindowsDumpHandler();
 
     eGameDir::initialize();
+    ModelData::instance().load();
 
 //    SDL_DisplayMode mode;
 //    const bool r0 = getDisplayResolution(mode);

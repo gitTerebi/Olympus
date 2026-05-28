@@ -557,7 +557,7 @@ public:
     void call() override {
         if(!mTptr || !mCptr) return;
         const auto t = mTptr.get();
-        mCptr->setSpeed(1.);
+        mCptr->setSpeed(52.5);
         if(!mAppear) {
             t->playDisappearSound();
             mCptr->kill();
