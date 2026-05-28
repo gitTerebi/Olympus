@@ -57,6 +57,7 @@ public:
     bool finished() const override;
     bool isOverdue(const eDate& currentDate) const;
     bool isStuck(const eDate& currentDate) const;
+    void healStuck();
     bool isPostponed() const;
     bool isActiveCityRequest() const;
     int requestId() const { return mRequestId; }

@@ -115,20 +115,41 @@ void eBoardPlayer::addCityRequest(eFulfillRequestEvent* const q) {
     const auto sameRequest = [q](const eFulfillRequestEvent* r) {
         return r->requestId() == q->requestId();
     };
+    printf("BoardPlayer addCityRequest: pid=%d ptr=%p runtime=%d requestId=%d type=%d active=%d sizeBefore=%d\n",
+           static_cast<int>(mId),
+           q,
+           q ? q->runtimeId() : -1,
+           q ? q->requestId() : -1,
+           q ? static_cast<int>(q->requestType()) : -1,
+           q && q->isActiveCityRequest() ? 1 : 0,
+           static_cast<int>(mCityRequests.size()));
     if(std::find_if(mCityRequests.begin(), mCityRequests.end(),
                     sameRequest) == mCityRequests.end()) {
         mCityRequests.push_back(q);
     }
+    printf("BoardPlayer addCityRequest done: pid=%d sizeAfter=%d\n",
+           static_cast<int>(mId),
+           static_cast<int>(mCityRequests.size()));
 }
 
 void eBoardPlayer::removeCityRequest(eFulfillRequestEvent* const q) {
     const auto sameRequest = [q](const eFulfillRequestEvent* r) {
         return r->requestId() == q->requestId();
     };
+    printf("BoardPlayer removeCityRequest: pid=%d ptr=%p runtime=%d requestId=%d type=%d sizeBefore=%d\n",
+           static_cast<int>(mId),
+           q,
+           q ? q->runtimeId() : -1,
+           q ? q->requestId() : -1,
+           q ? static_cast<int>(q->requestType()) : -1,
+           static_cast<int>(mCityRequests.size()));
     mCityRequests.erase(std::remove_if(mCityRequests.begin(),
                                        mCityRequests.end(),
                                        sameRequest),
                         mCityRequests.end());
+    printf("BoardPlayer removeCityRequest done: pid=%d sizeAfter=%d\n",
+           static_cast<int>(mId),
+           static_cast<int>(mCityRequests.size()));
 }
 
 void eBoardPlayer::addTributeRequest(ePayTributeEvent* const q) {

@@ -135,7 +135,14 @@ void ePayTributeEvent::trigger()
     ed.fEventRuntimeId = runtimeId();
 
     const bool canDispatch = !payTributeTerminalState(mEvent);
-    if (canDispatch && mResource == eResourceType::drachmas)
+    if (!canDispatch)
+    {
+        if (request && !isMainEvent())
+            request->finish(ePayTributeResult::refuse);
+        return;
+    }
+
+    if (mResource == eResourceType::drachmas)
     {
         const auto cids = board->personPlayerCitiesOnBoard();
         if (!cids.empty() && board->drachmas(board->personPlayer()) >= mCount)
@@ -298,13 +305,9 @@ std::string ePayTributeEvent::overdueStatusText(
             0 :
             state->remainingMonths(currentDate, state->mComplyStartDate);
     const int remainingMonths = std::max(0, comply - elapsedMonths);
-    const int currentYear = currentDate.year();
-    const int currentMonth = static_cast<int>(currentDate.month());
-    if (state->mDebugPrintYear != currentYear ||
-        state->mDebugPrintMonth != currentMonth)
+    if (remainingMonths == 0 && !state->finished())
     {
-        state->mDebugPrintYear = currentYear;
-        state->mDebugPrintMonth = currentMonth;
+        const_cast<ePayTributeEvent *>(state)->healStuck();
     }
     return std::to_string(remainingMonths);
 }
@@ -386,6 +389,39 @@ bool ePayTributeEvent::isPostponed() const
         eEvent::generalRequestTributeOverdue);
     const int currentStep = payTributeStateIndex(mComplyEvent);
     return overdueStep >= 0 && currentStep >= overdueStep;
+}
+
+bool ePayTributeEvent::isStuck(const eDate &currentDate) const
+{
+    if (payTributeTerminalState(mComplyEvent))
+    {
+        return true;
+    }
+    if (mRequestDeadline != eDate(1, eMonth::january, 1) &&
+        currentDate >= mRequestDeadline)
+    {
+        return true;
+    }
+    if (mComplyStartDate == eDate(1, eMonth::january, 1))
+        return false;
+    const int comply = complyMonths();
+    if (comply <= 0)
+        return false;
+    const int elapsed = remainingMonths(currentDate, mComplyStartDate);
+    return elapsed >= comply;
+}
+
+void ePayTributeEvent::healStuck()
+{
+    if (payTributeTerminalState(mComplyEvent) ||
+        payTributeTerminalState(mEvent))
+    {
+        finish(ePayTributeResult::refuse);
+    }
+    else
+    {
+        postpone();
+    }
 }
 
 eEvent ePayTributeEvent::stepEvent() const

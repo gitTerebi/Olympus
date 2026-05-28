@@ -35,6 +35,8 @@ public:
     void postpone();
     std::string dispatchText(int stock, const eDate& currentDate) const;
     std::string overdueStatusText(const eDate& currentDate) const;
+    bool isStuck(const eDate& currentDate) const;
+    void healStuck();
     bool isPostponed() const;
 protected:
     void serializeFields(eSaveArchive& ar) override;
@@ -65,8 +67,6 @@ private:
     eDate mRequestDate{1, eMonth::january, 1};
     eDate mRequestDeadline{1, eMonth::january, 1};
     eDate mComplyStartDate{1, eMonth::january, 1};
-    mutable int mDebugPrintYear = -1;
-    mutable int mDebugPrintMonth = -1;
 };
 
 #endif // EPAYTRIBUTEEVENT_H

@@ -111,7 +111,7 @@ bool eDate::operator<=(const eDate& other) const {
 }
 
 bool eDate::operator>=(const eDate& other) const {
-    return other > *this || other == *this;
+    return *this > other || other == *this;
 }
 
 bool eDate::operator==(const eDate& other) const {
