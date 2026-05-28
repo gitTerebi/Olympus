@@ -396,7 +396,11 @@ void eGameBoard::serialize(eSaveArchive& ar) {
                 const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
                 if(request && request->isMainEvent() &&
                    request->isActiveCityRequest()) {
-                    addCityRequest(request);
+                    if(request->isStuck(date())) {
+                        request->finish(eReceiveRequestResult::tooLate);
+                    } else {
+                        addCityRequest(request);
+                    }
                 }
                 const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
                 if(tribute && tribute->isMainEvent() &&

@@ -515,6 +515,18 @@ bool eFulfillRequestEvent::isOverdue(const eDate &currentDate) const
     return currentDate > complyDate();
 }
 
+bool eFulfillRequestEvent::isStuck(const eDate &currentDate) const
+{
+    // Corrupted request: its consequence chain is dead, so it never advances
+    // a step nor resolves. The sidebar counter has read 0 for over a month and
+    // will stay there forever, and clicking it points at a missing message.
+    if (mComplyStartDate == eDate(1, eMonth::january, 1))
+        return false;
+    const int comply = complyMonths();
+    const int elapsed = remainingMonths(currentDate, mComplyStartDate);
+    return elapsed - comply > 1;
+}
+
 bool eFulfillRequestEvent::isPostponed() const
 {
     const int overdueStep = 2;

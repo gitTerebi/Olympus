@@ -310,14 +310,25 @@ void eCharacter::pauseAction() {
     p.fO = orientation();
 }
 
+void eCharacter::restorePausedAction(const ePausedAction& p) {
+    setAction(p.fA);
+    setActionType(p.fAt);
+    setOrientation(p.fO);
+}
+
 void eCharacter::resumeAction() {
     mPlayFightSound = false;
     if(mPausedActions.empty()) return;
     const auto p = mPausedActions.back();
     mPausedActions.pop_back();
-    setAction(p.fA);
-    setActionType(p.fAt);
-    setOrientation(p.fO);
+    restorePausedAction(p);
+}
+
+void eCharacter::clearPausedActions() {
+    if(mPausedActions.empty()) return;
+    const auto p = mPausedActions.front();
+    mPausedActions.clear();
+    restorePausedAction(p);
 }
 
 ePlayerId eCharacter::playerId() const {

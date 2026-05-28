@@ -56,6 +56,7 @@ public:
     std::string overdueStatusText(const eDate& currentDate) const;
     bool finished() const override;
     bool isOverdue(const eDate& currentDate) const;
+    bool isStuck(const eDate& currentDate) const;
     bool isPostponed() const;
     bool isActiveCityRequest() const;
     int requestId() const { return mRequestId; }

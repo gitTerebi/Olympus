@@ -929,8 +929,7 @@ void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
     if (eRand::rand() % 3 != 0)
         return;
 
-    std::vector<eTile *> buildingTiles;
-    std::vector<eTile *> fallbackTiles;
+    std::vector<eTile *> tiles;
     for (int y = minY; y < maxY; y++)
     {
         for (int x = minX; x < maxX; x++)
@@ -938,14 +937,7 @@ void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
             const auto t = mBoard->rotateddtile(x, y);
             if (!t)
                 continue;
-            if (t->underBuilding())
-            {
-                buildingTiles.push_back(t);
-            }
-            else
-            {
-                fallbackTiles.push_back(t);
-            }
+            tiles.push_back(t);
         }
     }
 
@@ -974,9 +966,7 @@ void eGameWidget::playVisibleAmbientSound(const int minX, const int maxX,
         return false;
     };
 
-    if (playFromTiles(buildingTiles))
-        return;
-    playFromTiles(fallbackTiles);
+    playFromTiles(tiles);
 }
 
 bool eGameWidget::canBuildVendor(const int tx, const int ty,

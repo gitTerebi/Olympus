@@ -49,6 +49,7 @@ void eDomesticatedAnimal::serializeFields(eSaveArchive& ar) {
     ar.field("mMonthsGrown", mMonthsGrown);
     if(ar.reading()) {
         setBusy(false);
+        clearPausedActions();
         if(mResource == 0) {
             setNakedTexture();
         } else {
