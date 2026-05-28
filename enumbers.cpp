@@ -459,10 +459,10 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("grower_spawn_wait_time_i", sGrowerSpawnWaitTime, 1500, 1, 1000000);
 
     loadI("monster_attack_range_i", sMonsterAttackRange, 10, 1, 20);
-    loadI("passive_monster_attack_period_i", sPassiveMonsterAttackPeriod, 14000, 1, 1000000);
-    loadI("active_monster_attack_period_i", sActiveMonsterAttackPeriod, 12000, 1, 1000000);
-    loadI("very_active_monster_attack_period_i", sVeryActiveMonsterAttackPeriod, 10000, 1, 1000000);
-    loadI("aggressive_monster_attack_period_i", sAggressiveMonsterAttackPeriod, 8000, 1, 1000000);
+    loadI("passive_monster_attack_period_i", sPassiveMonsterAttackPeriod, 6000, 1, 1000000);
+    loadI("active_monster_attack_period_i", sActiveMonsterAttackPeriod, 4000, 1, 1000000);
+    loadI("very_active_monster_attack_period_i", sVeryActiveMonsterAttackPeriod, 3000, 1, 1000000);
+    loadI("aggressive_monster_attack_period_i", sAggressiveMonsterAttackPeriod, 2000, 1, 1000000);
 
     loadI("passive_land_monster_invade_period_i", sPassiveLandMonsterInvadePeriod, 1000000, 1, 1000000);
     loadI("active_land_monster_invade_period_i", sActiveLandMonsterInvadePeriod, 600000, 1, 1000000);

@@ -56,7 +56,9 @@ private:
     stdsptr<eObsticleHandler> obsticleHandler();
     bool lookForAttack(const int dtime, int& time,
                        const int freq, const int range);
-    bool lookForMeleeAttack();
+    bool lookForMeleeAttack(const bool charactersOnly);
+    bool lookForAnyAttack(const int dtime, int& time,
+                          const int freq, const int range);
     bool lookForRangeAction(const int dtime,
                             int& time, const int freq,
                             const int range,
