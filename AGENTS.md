@@ -7,7 +7,7 @@ ELI5 by default: short, simple, cause -> effect.
 Refactor repeated fns into helpers. Debug log with `printf`. New files: kebab-case, no `e`/`e-` prefix. New classes: PascalCase, no `e` prefix. New include guards: no `E` prefix.
 
 ## Build
-Build only when asked. Use `.\build.bat`. Do not verify with `cmake --build build`.
+After making code changes, build with `.\build.bat` to verify. Do not verify with `cmake --build build`.
 
 ## Map
 Game state: `engine/egameboard.*`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/etradepost.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `zeus-text strings/Zeus_Text.xml` is read-only; reuse runtime strings.

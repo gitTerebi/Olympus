@@ -5,6 +5,7 @@
 #include "eframedbutton.h"
 #include "elabel.h"
 #include "echeckbox.h"
+#include "edifficultywidget.h"
 #include "ebasicbutton.h"
 #include "ecancelbutton.h"
 #include "textures/egametextures.h"
@@ -414,6 +415,12 @@ void eOptionsMenu::showPage(const int id) {
         cb->setY((w->height() - cb->height()) / 2);
         return w;
     };
+
+    for(const auto& diff : page.fDifficulties) {
+        const auto w = new eDifficultyWidget(window());
+        w->initialize(diff.fGet(), diff.fSet);
+        mPage->addWidget(w);
+    }
 
     for(const auto& checkbox : page.fCheckboxes) {
         mPage->addWidget(makeCheckbox(checkbox));

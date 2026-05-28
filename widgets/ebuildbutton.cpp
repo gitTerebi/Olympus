@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "textures/egametextures.h"
+#include "elabel.h"
 
 void eBuildButton::initialize(const std::string& name,
                               const int marbleCost,
@@ -60,10 +61,12 @@ void eBuildButton::initialize(const std::string& name,
         marbleText->setX(marbleIcon->x() + marbleIcon->width());
     }
     if(cost > 0) {
-        const auto drachmaIcon = new eLabel(window());
+        const auto drachmaIcon = new eScaledTextureLabel(window());
         drachmaIcon->setTexture(coll.fDrachmasUnit);
         drachmaIcon->setNoPadding();
         drachmaIcon->fitContent();
+        drachmaIcon->setFitToDrawSize(true);
+        drachmaIcon->setMaxDrawHeight(10*mult);
 
         const auto cstr = std::to_string(cost);
         const auto drachmaText = new eLabel(cstr, window());
