@@ -1,4 +1,4 @@
-#include "eshepherdaction.h"
+#include "shepherd-action.h"
 
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <vector>
 
-eShepherdAction::eShepherdAction(
+ShepherdAction::ShepherdAction(
         eShepherBuildingBase* const shed,
         eResourceCollectorBase* const c,
         const eCharacterType animalType) :
@@ -23,11 +23,11 @@ eShepherdAction::eShepherdAction(
     mCharacter(c),
     mShed(shed) {}
 
-eShepherdAction::eShepherdAction(eCharacter* const c) :
-    eShepherdAction(nullptr, static_cast<eResourceCollectorBase*>(c),
+ShepherdAction::ShepherdAction(eCharacter* const c) :
+    ShepherdAction(nullptr, static_cast<eResourceCollectorBase*>(c),
                     eCharacterType::sheep) {}
 
-eShepherdAction::~eShepherdAction() {
+ShepherdAction::~ShepherdAction() {
     releaseAnimal(mTargetAnimal.get());
 }
 
@@ -80,7 +80,7 @@ eDomesticatedAnimal* tryToCollect(eTile* const tile,
     return nullptr;
 }
 
-bool eShepherdAction::decide() {
+bool ShepherdAction::decide() {
     if(!mCharacter || !mShed) {
         setState(eCharacterActionState::finished);
         return true;
@@ -146,7 +146,7 @@ bool eShepherdAction::decide() {
     return true;
 }
 
-void eShepherdAction::increment(const int by) {
+void ShepherdAction::increment(const int by) {
     if((mStage == eShepherdActionStage::collecting ||
         mStage == eShepherdActionStage::grooming ||
         mStage == eShepherdActionStage::waiting) &&
@@ -157,7 +157,7 @@ void eShepherdAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eShepherdAction::serializeFields(eSaveArchive& ar) {
+void ShepherdAction::serializeFields(eSaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.field("animalType", mAnimalType);
     ar.characterAsField("shepherd", &board(), mCharacter);
@@ -173,7 +173,7 @@ void eShepherdAction::serializeFields(eSaveArchive& ar) {
     ar.characterAsField("lastAnimal", &board(), mLastAnimal);
     ar.characterAsField("targetAnimal", &board(), mTargetAnimal);
     if(ar.reading()) {
-        const stdptr<eShepherdAction> tptr(this);
+        const stdptr<ShepherdAction> tptr(this);
         ar.addPostFunc([tptr, carriedResourceCount]() {
             if(!tptr) return;
             const auto a = tptr.get();
@@ -187,11 +187,11 @@ void eShepherdAction::serializeFields(eSaveArchive& ar) {
     }
 }
 
-void eShepherdAction::resumeFromSavedState() {
+void ShepherdAction::resumeFromSavedState() {
     rebuildCurrentStage();
 }
 
-void eShepherdAction::rebuildCurrentStage() {
+void ShepherdAction::rebuildCurrentStage() {
     if(!mCharacter || !mShed) {
         setState(eCharacterActionState::finished);
         return;
@@ -227,7 +227,7 @@ void eShepherdAction::rebuildCurrentStage() {
     }
 }
 
-void eShepherdAction::rebuildFindAnimal() {
+void ShepherdAction::rebuildFindAnimal() {
     const auto a = mTargetAnimal.get();
     if(!a || !a->tile()) {
         mTargetAnimal = nullptr;
@@ -238,7 +238,7 @@ void eShepherdAction::rebuildFindAnimal() {
     }
     reserveAnimal(a);
     const stdptr<eDomesticatedAnimal> aptr(a);
-    const stdptr<eShepherdAction> tptr(this);
+    const stdptr<ShepherdAction> tptr(this);
     const auto move = makeFindAnimalMove();
     move->setFindFailAction([tptr, aptr]() {
         if(!tptr) return;
@@ -252,7 +252,7 @@ void eShepherdAction::rebuildFindAnimal() {
     setCurrentAction(move);
 }
 
-eDomesticatedAnimal* eShepherdAction::findAnimal(
+eDomesticatedAnimal* ShepherdAction::findAnimal(
         const bool wantShearable) {
     if(!mShed) return nullptr;
     auto& b = board();
@@ -285,7 +285,7 @@ eDomesticatedAnimal* eShepherdAction::findAnimal(
     return candidates[eRand::rand() % candidates.size()];
 }
 
-void eShepherdAction::reserveAnimal(eDomesticatedAnimal* const a) {
+void ShepherdAction::reserveAnimal(eDomesticatedAnimal* const a) {
     if(!a) return;
     a->setBusy(true);
     a->pauseAction();
@@ -295,14 +295,14 @@ void eShepherdAction::reserveAnimal(eDomesticatedAnimal* const a) {
     mTargetAnimal = a;
 }
 
-void eShepherdAction::releaseAnimal(eDomesticatedAnimal* const a) {
+void ShepherdAction::releaseAnimal(eDomesticatedAnimal* const a) {
     if(!a) return;
     a->setBusy(false);
     a->resumeAction();
     if(mTargetAnimal.get() == a) mTargetAnimal = nullptr;
 }
 
-bool eShepherdAction::findResourceDecision() {
+bool ShepherdAction::findResourceDecision() {
     if(!mCharacter) {
         return true;
     }
@@ -320,7 +320,7 @@ bool eShepherdAction::findResourceDecision() {
     mStage = eShepherdActionStage::findingAnimal;
     reserveAnimal(animal);
     const stdptr<eDomesticatedAnimal> aptr(animal);
-    const stdptr<eShepherdAction> tptr(this);
+    const stdptr<ShepherdAction> tptr(this);
     const auto a = makeFindAnimalMove();
     a->setFindFailAction([tptr, aptr]() {
         if(!tptr) return;
@@ -335,8 +335,8 @@ bool eShepherdAction::findResourceDecision() {
     return true;
 }
 
-stdsptr<eMoveToAction> eShepherdAction::makeFindAnimalMove() {
-    const stdptr<eShepherdAction> tptr(this);
+stdsptr<eMoveToAction> ShepherdAction::makeFindAnimalMove() {
+    const stdptr<ShepherdAction> tptr(this);
     const auto m = e::make_shared<eMoveToAction>(mCharacter);
     m->setStateRelevance(eStateRelevance::domesticatedAnimals |
                          eStateRelevance::buildings |
@@ -351,7 +351,7 @@ stdsptr<eMoveToAction> eShepherdAction::makeFindAnimalMove() {
     return m;
 }
 
-void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
+void ShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
     if(!mCharacter) return;
     mStage = eShepherdActionStage::collecting;
     mTargetAnimal = a;
@@ -374,7 +374,7 @@ void eShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
     setCurrentAction(wait);
 }
 
-void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
+void ShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     if(!mCharacter) return;
     mStage = eShepherdActionStage::grooming;
     mTargetAnimal = a;
@@ -383,7 +383,7 @@ void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     }
     mLastAnimal = a;
     a->setBusy(true);
-    mCharacter->setActionType(eCharacterActionType::fight);
+    mCharacter->setActionType(eCharacterActionType::groom);
     const auto finish = std::make_shared<eSA_groomDecisionFinish>(
                             board(), this, a);
     const auto wait = e::make_shared<eWaitAction>(mCharacter);
@@ -396,7 +396,7 @@ void eShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     setCurrentAction(wait);
 }
 
-void eShepherdAction::goBackDecision() {
+void ShepherdAction::goBackDecision() {
     if(!mCharacter || !mShed) return;
     mStage = eShepherdActionStage::goingBack;
     mWaitRemaining = 0;
@@ -409,7 +409,7 @@ void eShepherdAction::goBackDecision() {
     goBack(mShed, eWalkableObject::sCreateDefault());
 }
 
-void eShepherdAction::waitDecision() {
+void ShepherdAction::waitDecision() {
     if(!mCharacter) return;
     mStage = eShepherdActionStage::waiting;
     if(mWaitRemaining <= 0) {

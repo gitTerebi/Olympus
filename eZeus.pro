@@ -215,7 +215,7 @@ SOURCES += \
         characters/actions/epatrolmoveaction.cpp \
         characters/actions/ereplacecattleaction.cpp \
         characters/actions/esettleraction.cpp \
-        characters/actions/eshepherdaction.cpp \
+        characters/actions/shepherd-action.cpp \
         characters/actions/esickdisgruntledaction.cpp \
         characters/actions/soldier-action.cpp \
         characters/actions/etakecattleaction.cpp \
@@ -927,7 +927,7 @@ HEADERS += \
     characters/actions/epatrolmoveaction.h \
     characters/actions/ereplacecattleaction.h \
     characters/actions/esettleraction.h \
-    characters/actions/eshepherdaction.h \
+    characters/actions/shepherd-action.h \
     characters/actions/esickdisgruntledaction.h \
     characters/actions/soldier-action.h \
     characters/actions/etakecattleaction.h \

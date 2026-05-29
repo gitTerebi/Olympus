@@ -22,8 +22,6 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    void resetGrowthProgress();
-
     virtual void setNakedTexture() {}
     virtual void setFleecedTexture() {}
 

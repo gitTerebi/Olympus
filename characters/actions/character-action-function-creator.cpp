@@ -14,7 +14,7 @@
 #include "monster-action.h"
 #include "esettleraction.h"
 #include "ewolfaction.h"
-#include "eshepherdaction.h"
+#include "shepherd-action.h"
 #include "soldier-action.h"
 #include "trader-action.h"
 #include "ekillcharacterfinishfail.h"

@@ -24,7 +24,8 @@ enum class eCharacterActionType {
     patrol,
     build,
     buildStanding,
-    deposit
+    deposit,
+    groom
 };
 
 #endif // ECHARACTERACTIONTYPE_H

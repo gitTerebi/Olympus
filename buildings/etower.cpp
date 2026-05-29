@@ -171,7 +171,7 @@ void eTower::timeChanged(const int by)
                                                      ttx, tty, 0.5, 2);
                     auto &board = getBoard();
                     board.ifVisible(centerTile(), [&]()
-                                    { eSounds::playAttackSound(eCharacterType::archer); });
+                                    { eSounds::playTowerAttackSound(); });
                     if (!mAttackTarget->dead())
                     {
                         const double arm = mAttackTarget->armorVsMissiles();
