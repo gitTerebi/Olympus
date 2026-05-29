@@ -18,14 +18,20 @@ public:
 
     eDiagonalOrientation orientation() const { return mO; }
 
+    void setLoading(const bool b) { mLoading = b; }
+    bool loading() const { return mLoading; }
+
     static double sOvX[4];
     static double sOvY[4];
+    static double sLoadOvX[4];
+    static double sLoadOvY[4];
     static int sOrientIndex(const eDiagonalOrientation o);
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     const eDiagonalOrientation mO;
     eBuilding* mTradePost = nullptr;
+    bool mLoading = false; // transient, never serialized
 };
 
 #endif // EPIER_H

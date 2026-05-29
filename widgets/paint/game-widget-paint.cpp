@@ -2190,6 +2190,24 @@ void GameWidget::paintEvent(ePainter &p)
                         const auto &tex = o.fTex;
                         if (!tex)
                             continue;
+                        if (o.fOnTop)
+                        {
+                            // defer to after the character pass so the pier
+                            // dockworker draws over the docked trade boat
+                            if (o.fAlignTop)
+                            {
+                                tp.scheduleDrawTexture(
+                                    drawX + ts.fX + o.fX,
+                                    drawY + ts.fY + o.fY, tex, eAlignment::top);
+                            }
+                            else
+                            {
+                                tp.scheduleDrawTexture(
+                                    drawX + ts.fX + o.fX,
+                                    drawY + ts.fY + o.fY, tex);
+                            }
+                            continue;
+                        }
                         if (colorMod)
                             tex->setColorMod(cred, cgreen, cblue);
                         if (o.fAlignTop)
