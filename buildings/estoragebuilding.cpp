@@ -12,6 +12,7 @@
 #include "characters/ecarttransporter.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/storage-delivery-cart.h"
+#include "trade-post.h"
 
 eStorageBuilding::eStorageBuilding(GameBoard& board,
                                    const eBuildingType type,
@@ -36,8 +37,7 @@ eStorageBuilding::eStorageBuilding(GameBoard& board,
 }
 
 eStorageBuilding::~eStorageBuilding() {
-    if(mCart1) mCart1->kill();
-    if(mCart2) mCart2->kill();
+    for(auto& c : mCarts) if(c) c->kill();
     ownerBoard().unregisterStorBuilding(this);
 }
 
@@ -74,25 +74,23 @@ void eStorageBuilding::timeChanged(const int by) {
             c = nullptr;
         };
         const auto putCart = [this](const stdptr<eCartTransporter>& c) {
-            if(!mCart1) mCart1 = c;
-            else if(!mCart2) mCart2 = c;
+            for(auto& slot : mCarts) {
+                if(!slot) { slot = c; return; }
+            }
         };
         const auto activeCount = [this]() {
             int result = 0;
-            if(mCart1) result++;
-            if(mCart2) result++;
+            for(const auto& slot : mCarts) if(slot) result++;
             return result;
         };
         const auto deliveryCount = [this, &isDeliver]() {
             int result = 0;
-            if(isDeliver(mCart1.get())) result++;
-            if(isDeliver(mCart2.get())) result++;
+            for(const auto& slot : mCarts) if(isDeliver(slot.get())) result++;
             return result;
         };
         const auto getCount = [this, &isGet]() {
             int result = 0;
-            if(isGet(mCart1.get())) result++;
-            if(isGet(mCart2.get())) result++;
+            for(const auto& slot : mCarts) if(isGet(slot.get())) result++;
             return result;
         };
         const auto assignNextGet = [this, &getResources](eCartTransporter* const c) {
@@ -116,32 +114,31 @@ void eStorageBuilding::timeChanged(const int by) {
             return spawnCart(eCartActionTypeSupport::deliver);
         };
 
-        if(!hasDeliverWork && idleAndEmpty(mCart1.get()) && isDeliver(mCart1.get())) killCart(mCart1);
-        if(!hasDeliverWork && idleAndEmpty(mCart2.get()) && isDeliver(mCart2.get())) killCart(mCart2);
-        if(!hasGetWork && idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) killCart(mCart1);
-        if(!hasGetWork && idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) killCart(mCart2);
-        if(hasGetWork && !hasDeliverWork) {
-            if(idleAndEmpty(mCart1.get()) && !isGet(mCart1.get())) killCart(mCart1);
-            if(idleAndEmpty(mCart2.get()) && !isGet(mCart2.get())) killCart(mCart2);
-        }
-        if(hasDeliverWork && deliveryCount() == 0) {
-            if(activeCount() >= 2 && idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) killCart(mCart1);
-            if(activeCount() >= 2 && idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) killCart(mCart2);
+        const int getMax = hasGetWork ? maxGetCarts() : 0;
+        const int deliverMax = hasDeliverWork ? maxDeliverCarts() : 0;
+
+        // reap idle carts whose role has no work, or that overrun their budget
+        for(auto& slot : mCarts) {
+            const auto c = slot.get();
+            if(!idleAndEmpty(c)) continue;
+            if(isDeliver(c) && deliveryCount() > deliverMax) killCart(slot);
+            else if(isGet(c) && getCount() > getMax) killCart(slot);
         }
 
-        if(hasDeliverWork && deliveryCount() == 0 && activeCount() < 2) {
+        // deliver carts get priority on the shared slots
+        while(deliveryCount() < deliverMax && activeCount() < sMaxCarts) {
             putCart(spawnDeliverCart());
         }
-
-        const int getSlots = hasGetWork ? (hasDeliverWork ? 1 : 2) : 0;
-        while(getCount() < getSlots && activeCount() < 2) {
+        while(getCount() < getMax && activeCount() < sMaxCarts) {
             const auto cart = spawnCart(eCartActionTypeSupport::get);
             assignNextGet(cart.get());
             putCart(cart);
         }
         if(hasGetWork) {
-            if(idleAndEmpty(mCart1.get()) && isGet(mCart1.get())) assignNextGet(mCart1.get());
-            if(idleAndEmpty(mCart2.get()) && isGet(mCart2.get())) assignNextGet(mCart2.get());
+            for(auto& slot : mCarts) {
+                const auto c = slot.get();
+                if(idleAndEmpty(c) && isGet(c)) assignNextGet(c);
+            }
         }
     }
 }
@@ -238,8 +235,8 @@ int eStorageBuilding::spaceLeftDontAccept(const eResourceType type) const {
 
 std::vector<eCartTask> eStorageBuilding::cartTasks() const {
     auto tasks = orderCartTasks();
-    if(type() == eBuildingType::granary ||
-       type() == eBuildingType::tradePost) return tasks;
+    // granary never pushes; trade post pushes imported goods only (see pushAllows)
+    if(type() == eBuildingType::granary) return tasks;
     const auto pushTasks = this->pushCartTasks();
     tasks.insert(tasks.end(), pushTasks.begin(), pushTasks.end());
     return tasks;
@@ -303,15 +300,20 @@ std::vector<eCartTask> eStorageBuilding::pushCartTasks() const {
                c->support() == eCartActionTypeSupport::deliver &&
                c->hasResource();
     };
-    if(!deliveryOut(mCart1.get()) && !deliveryOut(mCart2.get())) {
+    const bool anyPushing = std::any_of(std::begin(mCarts), std::end(mCarts),
+        [&](const stdptr<eCartTransporter>& c) { return deliveryOut(c.get()); });
+    if(!anyPushing) {
         for(int i = 0; i < mSpaceCount; i++) {
             const auto t = mResource[i];
             const int c = mResourceCount[i];
             if(c <= 0 || t == eResourceType::none) continue;
+            if(!pushAllows(t)) continue;
             if(city && city->isStockpiled(t)) continue;
             if(static_cast<bool>(mGet & t)) continue;
             if(static_cast<bool>(mEmpty & t)) continue;
-            if(!deliveryTargetExists(t, false)) continue;
+            // trade post may push imports into storehouses too, like vanilla
+            const bool toStorage = type() == eBuildingType::tradePost;
+            if(!deliveryTargetExists(t, toStorage)) continue;
             eCartTask task;
             task.fType = eCartActionType::deliver;
             task.fResource = t;
@@ -333,6 +335,17 @@ bool eStorageBuilding::getTargetExists(const eResourceType res) const {
         const auto type = b->type();
         const bool storageTarget = type == eBuildingType::warehouse ||
                                    type == eBuildingType::granary;
+        // trade post is a valid source, but only for goods it imports
+        if(const auto tp = dynamic_cast<TradePost*>(b)) {
+            eResourceType imports, exports, empty, cartGet, cartAccept,
+                          cartDontAccept;
+            tp->getOrders(imports, exports, empty, cartGet, cartAccept,
+                          cartDontAccept);
+            if(!static_cast<bool>(imports & res)) return false;
+            const auto city = board.boardCityWithId(b->cityId());
+            if(city && city->isStockpiled(res)) return false;
+            return tp->count(res) > 0;
+        }
         if(!storageTarget) return false;
         const auto city = board.boardCityWithId(b->cityId());
         if(city && city->isStockpiled(res)) return false;
@@ -408,7 +421,8 @@ int eStorageBuilding::incomingReservedFor(const eBuilding* target,
     int total = 0;
     for(const auto y : city->storBuildings()) {
         if(!y) continue;
-        for(eCartTransporter* const cart : {y->cart1(), y->cart2()}) {
+        for(int i = 0; i < sMaxCarts; i++) {
+            eCartTransporter* const cart = y->cart(i);
             if(!cart) continue;
             if(!cart->hasResource()) continue;
             if(cart->resType() != res) continue;
@@ -544,6 +558,8 @@ void eStorageBuilding::serializeFields(eSaveArchive& ar) {
         }
     }
 
-    ar.characterField("cart1", &getBoard(), mCart1);
-    ar.characterField("cart2", &getBoard(), mCart2);
+    for(int i = 0; i < sMaxCarts; i++) {
+        ar.characterField(("cart" + std::to_string(i + 1)).c_str(),
+                          &getBoard(), mCarts[i]);
+    }
 }

@@ -12,6 +12,7 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidelement.h"
 #include "buildings/eprocessingbuilding.h"
+#include "buildings/trade-post.h"
 
 void eThreadBuilding::load(eBuilding* const src) {
     if(!mCleared) {
@@ -27,6 +28,7 @@ void eThreadBuilding::load(eBuilding* const src) {
         mMaxCount.clear();
         mGet = eResourceType::none;
         mEmpty = eResourceType::none;
+        mImports = eResourceType::none;
         mAccepts = eResourceType::none;
         mRawSpaceLeft = 0;
         mCleared = true;
@@ -92,6 +94,13 @@ void eThreadBuilding::load(eBuilding* const src) {
                 mResource[i] = rt[i];
             }
             mMaxCount = s->maxCount();
+            if(const auto tp = dynamic_cast<TradePost*>(src)) {
+                eResourceType imports, exports, empty, cartGet, cartAccept,
+                              cartDontAccept;
+                tp->getOrders(imports, exports, empty, cartGet, cartAccept,
+                              cartDontAccept);
+                mImports = imports;
+            }
         } break;
         case eBuildingType::corral:
         case eBuildingType::carrotsFarm:

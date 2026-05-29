@@ -69,6 +69,12 @@ public:
     bool trades() const;
 protected:
     void serializeFields(eSaveArchive& ar) override;
+    // trade post pushes out imported goods only, never exports it holds
+    bool pushAllows(const eResourceType res) const override
+    { return static_cast<bool>(mImports & res); }
+    // vanilla: 1 retrieve (get) + 1 distribute (deliver)
+    int maxGetCarts() const override { return 1; }
+    int maxDeliverCarts() const override { return 1; }
 private:
     eTile* entryPoint() const;
 
