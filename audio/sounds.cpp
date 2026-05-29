@@ -7,12 +7,27 @@
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
 #include "characters/esettler.h"
+#include "engine/e-game-board.h"
 
 #include "egamedir.h"
 #include <filesystem>
 #include <algorithm>
 
 eSounds* eSounds::sInstance = nullptr;
+
+namespace {
+bool sViewportLimitedCombatSound(const eCharacterType type) {
+    return type == eCharacterType::disgruntled ||
+           type == eCharacterType::hunter ||
+           type == eCharacterType::urchinGatherer ||
+           eIsWildAnimal(type);
+}
+
+bool sCanPlayViewportLimitedCombatSound(eCharacter* const c) {
+    if(!sViewportLimitedCombatSound(c->type())) return true;
+    return c->getBoard().ifVisible(c->tile(), []() {});
+}
+}
 
 eSounds::eSounds() {
     sInstance = this;
@@ -672,8 +687,21 @@ void eSounds::playMonsterSound(const eMonsterType m,
 }
 
 void eSounds::playAttackSound(eCharacter* const c) {
+    if(!sCanPlayViewportLimitedCombatSound(c)) return;
     const auto type = c->type();
+    if(type == eCharacterType::disgruntled) {
+        sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
+        return;
+    }
     playAttackSound(type);
+}
+
+bool eSounds::canPlayCombatSound(eCharacter* const c) {
+    return sCanPlayViewportLimitedCombatSound(c);
+}
+
+void eSounds::playTowerAttackSound() {
+    sInstance->mArcherAttack.playRandomSound(eSoundType::event);
 }
 
 void eSounds::playAttackSound(const eCharacterType type) {
@@ -768,7 +796,6 @@ void eSounds::playAttackSound(const eCharacterType type) {
         sInstance->mAtlanteanChariotAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::disgruntled:
-        sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aresWarrior:
@@ -1078,6 +1105,7 @@ void eSounds::playDieSound(eCharacter* const c) {
 
 void eSounds::playHitSound(eCharacter* const c) {
     const auto ct = c->type();
+    if(!sCanPlayViewportLimitedCombatSound(c)) return;
     switch(ct) {
     case eCharacterType::actor:
         sInstance->mActorHit.playRandomSound(eSoundType::event);
@@ -1266,8 +1294,6 @@ void eSounds::playHitSound(eCharacter* const c) {
         break;
     case eCharacterType::satyr:
         sInstance->mSatyr.playHit();
-        break;
-    case eCharacterType::shepherd:
         break;
     default:
         sInstance->mGenHit.playRandomSound(eSoundType::event);

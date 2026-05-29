@@ -1,5 +1,5 @@
-#ifndef ESHEPHERDACTION_H
-#define ESHEPHERDACTION_H
+#ifndef SHEPHERDACTION_H
+#define SHEPHERDACTION_H
 
 #include "eactionwithcomeback.h"
 
@@ -15,15 +15,15 @@ enum class eShepherdActionStage {
     idle, findingAnimal, collecting, grooming, goingBack, waiting
 };
 
-class eShepherdAction : public eActionWithComeback {
+class ShepherdAction : public eActionWithComeback {
     friend class eSA_collectDecisionFinish;
     friend class eSA_groomDecisionFinish;
 public:
-    eShepherdAction(eShepherBuildingBase* const shed,
+    ShepherdAction(eShepherBuildingBase* const shed,
                     eResourceCollectorBase* const c,
                     const eCharacterType animalType);
-    eShepherdAction(eCharacter* const c);
-    ~eShepherdAction();
+    ShepherdAction(eCharacter* const c);
+    ~ShepherdAction();
 
     bool decide() override;
     void increment(const int by) override;
@@ -61,7 +61,7 @@ class eSA_collectDecisionFinish : public eCharActFunc {
 public:
     eSA_collectDecisionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionFinish) {}
-    eSA_collectDecisionFinish(GameBoard& board, eShepherdAction* const t,
+    eSA_collectDecisionFinish(GameBoard& board, ShepherdAction* const t,
                               eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_collectDecisionFinish),
         mTptr(t), mAptr(a) {}
@@ -85,7 +85,7 @@ protected:
         ar.characterAsField("animal", &board(), mAptr);
     }
 private:
-    stdptr<eShepherdAction> mTptr;
+    stdptr<ShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
 };
 
@@ -117,7 +117,7 @@ class eSA_groomDecisionFinish : public eCharActFunc {
 public:
     eSA_groomDecisionFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionFinish) {}
-    eSA_groomDecisionFinish(GameBoard& board, eShepherdAction* const t,
+    eSA_groomDecisionFinish(GameBoard& board, ShepherdAction* const t,
                             eDomesticatedAnimal* const a) :
         eCharActFunc(board, eCharActFuncType::SA_groomDecisionFinish),
         mTptr(t), mAptr(a) {}
@@ -140,7 +140,7 @@ protected:
         ar.characterAsField("animal", &board(), mAptr);
     }
 private:
-    stdptr<eShepherdAction> mTptr;
+    stdptr<ShepherdAction> mTptr;
     stdptr<eDomesticatedAnimal> mAptr;
 };
 
@@ -167,4 +167,4 @@ private:
     stdptr<eDomesticatedAnimal> mAptr;
 };
 
-#endif // ESHEPHERDACTION_H
+#endif // SHEPHERDACTION_H

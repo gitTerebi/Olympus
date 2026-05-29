@@ -230,25 +230,22 @@ void eCharacter::incTime(const int by) {
     if(deleteScheduled()) return;
     mTime += by;
     const auto at = actionType();
-    if(at == eCharacterActionType::fight ||
-       at == eCharacterActionType::fight2) {
+    if(mPlayFightSound &&
+       (at == eCharacterActionType::fight ||
+        at == eCharacterActionType::fight2)) {
         mSoundPlayTime += by;
         const int soundPlayTime = 500;
         if(mSoundPlayTime > soundPlayTime) {
             mSoundPlayTime -= soundPlayTime;
             const auto playFn = [&]() {
+                if(!eSounds::canPlayCombatSound(this)) return;
                 if(eRand::rand() % 2) {
                     eSounds::playHitSound(this);
                 } else {
                     eSounds::playAttackSound(this);
                 }
             };
-            if(type() == eCharacterType::hunter ||
-               eIsWildAnimal(type())) {
-                getBoard().ifVisible(tile(), playFn);
-            } else {
-                playFn();
-            }
+            playFn();
         }
     }
     if(mAction) {

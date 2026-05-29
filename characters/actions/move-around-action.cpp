@@ -2,6 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
+#include "engine/etile.h"
 
 MoveAroundAction::MoveAroundAction(eCharacter* const c,
                                      const int startX, const int startY,
@@ -57,9 +58,18 @@ eCharacterActionState MoveAroundAction::nextTurn(eOrientation& turn) {
     const int tx = t->x() - mStartTX;
     const int ty = t->y() - mStartTY;
     const int oldDist = std::sqrt(tx*tx + ty*ty);
+    const auto cType = c->type();
     for(const auto o : os) {
-        const auto tt = t->neighbour(o);
+        const auto tt = t->neighbour<eTile>(o);
         if(!tt || !walkable(tt) || tt->cityId() != cid) continue;
+        bool occupied = false;
+        for(const auto& oc : tt->characters()) {
+            if(oc.get() != c && oc->type() == cType) {
+                occupied = true;
+                break;
+            }
+        }
+        if(occupied) continue;
         const int ttx = tt->x() - mStartTX;
         const int tty = tt->y() - mStartTY;
         const int dist = std::sqrt(ttx*ttx + tty*tty);

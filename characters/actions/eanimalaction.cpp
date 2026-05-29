@@ -5,6 +5,7 @@
 #include "ewaitaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
+#include "engine/etile.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
                              const int spawnerX, const int spawnerY,
@@ -18,7 +19,19 @@ eAnimalAction::eAnimalAction(eCharacter* const c) :
     eAnimalAction(c, 0, 0) {}
 
 bool eAnimalAction::decide() {
-    if(eRand::rand() % 2 == 0) {
+    const auto c = character();
+    const auto t = c->tile();
+    bool shared = false;
+    if(t) {
+        const auto cType = c->type();
+        for(const auto& oc : t->characters()) {
+            if(oc.get() != c && oc->type() == cType) {
+                shared = true;
+                break;
+            }
+        }
+    }
+    if(shared || eRand::rand() % 2 == 0) {
         walkAround();
     } else {
         lay();

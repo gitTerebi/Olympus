@@ -7,8 +7,8 @@ class GameBoard;
 class eTile;
 
 // Builds the L-shape road preview/build path from a press tile to the hover
-// tile. Tiles covered by a building are left in the list; the caller draws
-// them red in preview and skips them when building.
+// tile. Unbuildable tiles are left in the list; the caller (GameWidget::
+// roadBlocked) draws them red in preview and skips them when building.
 //
 // Stateful: remembers which axis the drag moved first so the fixed leg stays
 // put and the L extends instead of flipping when the pointer crosses the

@@ -2,7 +2,7 @@
 
 #include "characters/goatherd.h"
 #include "textures/egametextures.h"
-#include "characters/actions/eshepherdaction.h"
+#include "characters/actions/shepherd-action.h"
 
 #include <algorithm>
 

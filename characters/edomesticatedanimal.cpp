@@ -11,7 +11,7 @@ eDomesticatedAnimal::eDomesticatedAnimal(
         const int maxGroom) :
     Animal(board, charTexs, type),
     mMaxGroom(maxGroom) {
-    resetGrowthProgress();
+    mMonthsGrown = eRand::rand() % 3;
 }
 
 void eDomesticatedAnimal::groom() {
@@ -34,7 +34,7 @@ int eDomesticatedAnimal::collect() {
     if(mResource <= 0) return 0;
     const int r = mResource;
     mResource = 0;
-    resetGrowthProgress();
+    mMonthsGrown = 0;
     setNakedTexture();
     if(type() == eCharacterType::sheep) {
         eSounds::playShearingSound();
@@ -56,8 +56,4 @@ void eDomesticatedAnimal::serializeFields(eSaveArchive& ar) {
             setFleecedTexture();
         }
     }
-}
-
-void eDomesticatedAnimal::resetGrowthProgress() {
-    mMonthsGrown = eRand::rand() % 3;
 }

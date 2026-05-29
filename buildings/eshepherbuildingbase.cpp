@@ -1,7 +1,7 @@
 #include "eshepherbuildingbase.h"
 
 #include "textures/egametextures.h"
-#include "characters/actions/eshepherdaction.h"
+#include "characters/actions/shepherd-action.h"
 #include "fileIO/esavearchive.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
@@ -93,7 +93,7 @@ bool eShepherBuildingBase::spawn() {
     s->setBothCityIds(cityId());
     mShepherd = s.get();
     s->changeTile(t);
-    const auto a = e::make_shared<eShepherdAction>(
+    const auto a = e::make_shared<ShepherdAction>(
                        this, s.get(),
                        mAnimalType);
     s->setAction(a);

@@ -210,7 +210,7 @@ set(SOURCES
     characters/actions/epatrolmoveaction.cpp
     characters/actions/ereplacecattleaction.cpp
     characters/actions/esettleraction.cpp
-    characters/actions/eshepherdaction.cpp
+    characters/actions/shepherd-action.cpp
     characters/actions/esickdisgruntledaction.cpp
     characters/actions/soldier-action.cpp
     characters/actions/etakecattleaction.cpp

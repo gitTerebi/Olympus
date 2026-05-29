@@ -127,13 +127,15 @@ public:
                                  const eMonsterSound s);
 
     static void playAttackSound(eCharacter* const c);
-    static void playAttackSound(const eCharacterType type);
+    static void playTowerAttackSound();
+    static bool canPlayCombatSound(eCharacter* const c);
     static void playDieSound(eCharacter* const c);
     static void playHitSound(eCharacter* const c);
 
     static eSoundVector* getCharacterVoices(eCharacter * const c);
 private:
     void loadImpl();
+    static void playAttackSound(const eCharacterType type);
 
     static eSounds* sInstance;
 
