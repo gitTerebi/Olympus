@@ -23,6 +23,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 #include "buildings/epatrolbuilding.h"
 
 #include "widgets/ebuildingmode.h"
+#include "widgets/buildtools/road-tool.h"
 #include "widgets/egamemenu.h"
 #include "engine/stamps/estamptool.h"
 #include "widgets/earmymenu.h"
@@ -120,6 +121,10 @@ public:
     void rebuildGameMenu();
 
     void syncBannerCursor();
+    // Central cursor sync for the current build mode: erase/repair/stamp get
+    // their tool cursor, every other mode (road, roadblock, plain build, none)
+    // falls back to the banner/default cursor. Call after any setMode change.
+    void syncModeCursor();
 
     void pixToId(const int pixX, const int pixY,
                  int& idX, int& idY) const;
@@ -329,6 +334,10 @@ private:
     void createToastWidget(eToast& toast);
 
     std::vector<eTile*> roadPath() const;
+    // True if a road tile can't be placed here (building, water, etc).
+    // Existing road is not blocked. Shared by build loop and red preview.
+    bool roadBlocked(eTile* const t, const eCityId cid,
+                     const ePlayerId pid) const;
     bool columnPath(std::vector<eOrientation>& path);
     bool bridgeTiles(eTile* const t, const eTerrain terr,
                      std::vector<eTile*>& tiles,
@@ -444,6 +453,7 @@ private:
     int mPressedY = -1;
     int mPressedTX = -1;
     int mPressedTY = -1;
+    eRoadTool mRoadTool;
     int mLastX = -1;
     int mLastY = -1;
 

@@ -597,8 +597,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const int costPerTile = DifficultyHelpers::buildingCost(diff, eBuildingType::road);
             for(const auto& t : path) {
                 if(!t) continue;
-                const auto ub = t->underBuilding();
-                if(ub) continue;
+                if(roadBlocked(t, cid, pid)) continue;
                 if(t->x() < minX) minX = t->x();
                 if(t->y() < minY) minY = t->y();
                 if(t->x() > maxX) maxX = t->x();
@@ -610,8 +609,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 mBoard->snapshotTiles(minX, minY, maxX - minX + 1, maxY - minY + 1);
                 for(const auto& t : path) {
                     if(!t) continue;
-                    const auto ub = t->underBuilding();
-                    if(ub) continue;
+                    if(roadBlocked(t, cid, pid)) continue;
                     r = mBoard->build(t->x(), t->y(), 1, 1, cid, pid, mEditorMode,
                           [this]() { return e::make_shared<eRoad>(*mBoard, mViewedCityId); },
                           false, true) || r;
