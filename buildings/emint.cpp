@@ -1,6 +1,6 @@
 #include "emint.h"
 
-#include "characters/esilverminer.h"
+#include "characters/silver-miner.h"
 #include "textures/egametextures.h"
 
 eMint::eMint(GameBoard& board, const eCityId cid) :
@@ -9,7 +9,7 @@ eMint::eMint(GameBoard& board, const eCityId cid) :
                              -3.73, -3.73,
                              &eBuildingTextures::fMintOverlay,
                              3, 0.5, -1.5,
-                             [this]() { return e::make_shared<eSilverMiner>(getBoard()); },
+                             [this]() { return e::make_shared<SilverMiner>(getBoard()); },
                              eBuildingType::mint,
                              eHasResourceObject::sCreate(eHasResourceObjectType::silver),
                              2, 2, 15, eResourceType::silver, cid) {

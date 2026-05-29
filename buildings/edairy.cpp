@@ -1,13 +1,13 @@
 #include "edairy.h"
 
-#include "characters/egoatherd.h"
+#include "characters/goatherd.h"
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
 
 #include <algorithm>
 
 stdsptr<eResourceCollectorBase> dairyCharGenerator(GameBoard& board) {
-    return e::make_shared<eGoatherd>(board);
+    return e::make_shared<Goatherd>(board);
 }
 
 eDairy::eDairy(GameBoard& board, const eCityId cid) :

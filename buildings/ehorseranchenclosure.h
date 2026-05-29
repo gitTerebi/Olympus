@@ -3,7 +3,7 @@
 
 #include "ebuildingwithresource.h"
 
-class eHorse;
+class Horse;
 class eHorseRanch;
 class eSaveArchive;
 
@@ -33,7 +33,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    std::vector<stdsptr<eHorse>> mHorses;
+    std::vector<stdsptr<Horse>> mHorses;
 
     eHorseRanch* mRanch = nullptr;
 };

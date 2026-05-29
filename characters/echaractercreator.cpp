@@ -1,19 +1,19 @@
 #include "echaracter.h"
 
 #include "actor.h"
-#include "earcher.h"
+#include "archer.h"
 #include "eartisan.h"
 #include "eboar.h"
-#include "ebronzeminer.h"
+#include "bronze-miner.h"
 #include "ecarttransporter.h"
-#include "edeer.h"
-#include "ewolf.h"
+#include "deer.h"
+#include "wolf.h"
 #include "edonkey.h"
-#include "efirefighter.h"
+#include "fire-fighter.h"
 #include "efishingboat.h"
 #include "eurchingatherer.h"
 #include "egoat.h"
-#include "egoatherd.h"
+#include "goatherd.h"
 #include "egreekhoplite.h"
 #include "egreekhorseman.h"
 #include "egreekrockthrower.h"
@@ -40,41 +40,41 @@
 #include "eamazon.h"
 #include "eareswarrior.h"
 #include "egrower.h"
-#include "egymnast.h"
-#include "ehealer.h"
-#include "ehoplite.h"
-#include "ehorse.h"
+#include "gymnast.h"
+#include "healer.h"
+#include "hoplite.h"
+#include "horse.h"
 #include "ehorseman.h"
 #include "ehunter.h"
-#include "elumberjack.h"
+#include "lumberjack.h"
 #include "emarbleminer.h"
 #include "eox.h"
 #include "epeddler.h"
-#include "ephilosopher.h"
+#include "philosopher.h"
 #include "eporter.h"
 #include "erockthrower.h"
 #include "esettler.h"
 #include "esheep.h"
-#include "eshepherd.h"
-#include "esilverminer.h"
-#include "etaxcollector.h"
+#include "shepherd.h"
+#include "silver-miner.h"
+#include "tax-collector.h"
 #include "etradeboat.h"
-#include "etrader.h"
+#include "trader.h"
 #include "etrailer.h"
-#include "ewatchman.h"
-#include "ewaterdistributor.h"
+#include "watchman.h"
+#include "water-distributor.h"
 #include "ehomeless.h"
 #include "edisgruntled.h"
 #include "esick.h"
-#include "ebutcher.h"
+#include "butcher.h"
 #include "ecattle.h"
 #include "echariot.h"
 
-#include "escholar.h"
-#include "eastronomer.h"
-#include "einventor.h"
-#include "ecurator.h"
-#include "ecompetitor.h"
+#include "scholar.h"
+#include "astronomer.h"
+#include "inventor.h"
+#include "curator.h"
+#include "competitor.h"
 
 #include "ehopliteposeidon.h"
 #include "earcherposeidon.h"
@@ -107,13 +107,13 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::actor:
         return e::make_shared<Actor>(board);
     case eCharacterType::archer:
-        return e::make_shared<eArcher>(board);
+        return e::make_shared<Archer>(board);
     case eCharacterType::artisan:
         return e::make_shared<eArtisan>(board);
     case eCharacterType::boar:
         return e::make_shared<eBoar>(board);
     case eCharacterType::bronzeMiner:
-        return e::make_shared<eBronzeMiner>(board);
+        return e::make_shared<BronzeMiner>(board);
     case eCharacterType::orichalcMiner:
         return e::make_shared<eOrichalcMiner>(board);
     case eCharacterType::cartTransporter:
@@ -121,13 +121,13 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::chariot:
         return e::make_shared<eChariot>(board);
     case eCharacterType::deer:
-        return e::make_shared<eDeer>(board);
+        return e::make_shared<Deer>(board);
     case eCharacterType::wolf:
-        return e::make_shared<eWolf>(board);
+        return e::make_shared<Wolf>(board);
     case eCharacterType::donkey:
         return e::make_shared<eDonkey>(board);
     case eCharacterType::fireFighter:
-        return e::make_shared<eFireFighter>(board);
+        return e::make_shared<FireFighter>(board);
     case eCharacterType::urchinGatherer:
         return e::make_shared<eUrchinGatherer>(board);
     case eCharacterType::fishingBoat:
@@ -135,7 +135,7 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::goat:
         return e::make_shared<eGoat>(board);
     case eCharacterType::goatherd:
-        return e::make_shared<eGoatherd>(board);
+        return e::make_shared<Goatherd>(board);
     case eCharacterType::greekHoplite:
         return e::make_shared<eGreekHoplite>(board);
     case eCharacterType::greekHorseman:
@@ -189,21 +189,21 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::grower:
         return e::make_shared<eGrower>(board);
     case eCharacterType::gymnast:
-        return e::make_shared<eGymnast>(board);
+        return e::make_shared<Gymnast>(board);
     case eCharacterType::healer:
-        return e::make_shared<eHealer>(board);
+        return e::make_shared<Healer>(board);
     case eCharacterType::hoplite:
-        return e::make_shared<eHoplite>(board);
+        return e::make_shared<Hoplite>(board);
     case eCharacterType::horse:
-        return e::make_shared<eHorse>(board);
+        return e::make_shared<Horse>(board);
     case eCharacterType::horseman:
         return e::make_shared<eHorseman>(board);
     case eCharacterType::hunter:
         return e::make_shared<eHunter>(board);
     case eCharacterType::butcher:
-        return e::make_shared<eButcher>(board);
+        return e::make_shared<Butcher>(board);
     case eCharacterType::lumberjack:
-        return e::make_shared<eLumberjack>(board);
+        return e::make_shared<Lumberjack>(board);
     case eCharacterType::marbleMiner:
         return e::make_shared<eMarbleMiner>(board);
     case eCharacterType::ox:
@@ -211,7 +211,7 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::peddler:
         return e::make_shared<ePeddler>(board);
     case eCharacterType::philosopher:
-        return e::make_shared<ePhilosopher>(board);
+        return e::make_shared<Philosopher>(board);
     case eCharacterType::porter:
         return e::make_shared<ePorter>(board);
     case eCharacterType::rockThrower:
@@ -221,21 +221,21 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::sheep:
         return e::make_shared<eSheep>(board);
     case eCharacterType::shepherd:
-        return e::make_shared<eShepherd>(board);
+        return e::make_shared<Shepherd>(board);
     case eCharacterType::silverMiner:
-        return e::make_shared<eSilverMiner>(board);
+        return e::make_shared<SilverMiner>(board);
     case eCharacterType::taxCollector:
-        return e::make_shared<eTaxCollector>(board);
+        return e::make_shared<TaxCollector>(board);
     case eCharacterType::tradeBoat:
         return e::make_shared<eTradeBoat>(board);
     case eCharacterType::trader:
-        return e::make_shared<eTrader>(board);
+        return e::make_shared<Trader>(board);
     case eCharacterType::trailer:
         return e::make_shared<eTrailer>(board);
     case eCharacterType::watchman:
-        return e::make_shared<eWatchman>(board);
+        return e::make_shared<Watchman>(board);
     case eCharacterType::waterDistributor:
-        return e::make_shared<eWaterDistributor>(board);
+        return e::make_shared<WaterDistributor>(board);
     case eCharacterType::homeless:
         return e::make_shared<eHomeless>(board);
     case eCharacterType::disgruntled:
@@ -325,15 +325,15 @@ stdsptr<eCharacter> eCharacter::sCreate(
         return e::make_shared<Theseus>(board);
 
     case eCharacterType::scholar:
-        return e::make_shared<eScholar>(board);
+        return e::make_shared<Scholar>(board);
     case eCharacterType::astronomer:
-        return e::make_shared<eAstronomer>(board);
+        return e::make_shared<Astronomer>(board);
     case eCharacterType::inventor:
-        return e::make_shared<eInventor>(board);
+        return e::make_shared<Inventor>(board);
     case eCharacterType::curator:
-        return e::make_shared<eCurator>(board);
+        return e::make_shared<Curator>(board);
     case eCharacterType::competitor:
-        return e::make_shared<eCompetitor>(board);
+        return e::make_shared<Competitor>(board);
 
     case eCharacterType::hoplitePoseidon:
         return e::make_shared<eHoplitePoseidon>(board);

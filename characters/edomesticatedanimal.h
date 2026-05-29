@@ -1,11 +1,11 @@
 #ifndef EDOMESTICATEDANIMAL_H
 #define EDOMESTICATEDANIMAL_H
 
-#include "eanimal.h"
+#include "animal.h"
 
 class eSaveArchive;
 
-class eDomesticatedAnimal : public eAnimal {
+class eDomesticatedAnimal : public Animal {
 public:
     using eCharTexs = eAnimalTextures eCharacterTextures::*;
     eDomesticatedAnimal(GameBoard& board,

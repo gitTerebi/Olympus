@@ -12,20 +12,7 @@
 #include <filesystem>
 #include <algorithm>
 
-#include <SDL2/SDL_timer.h>
-
 eSounds* eSounds::sInstance = nullptr;
-
-// disgruntled fights can stack/spam combat sounds (many fighters, fast
-// turbo swings). Gate their attack/hit sounds to at most one per this
-// many real-time milliseconds, regardless of swing rate or game speed.
-static bool sDisgruntledSoundReady() {
-    static Uint32 sLast = 0;
-    const Uint32 now = SDL_GetTicks();
-    if(now - sLast < 600) return false;
-    sLast = now;
-    return true;
-}
 
 eSounds::eSounds() {
     sInstance = this;
@@ -781,9 +768,7 @@ void eSounds::playAttackSound(const eCharacterType type) {
         sInstance->mAtlanteanChariotAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::disgruntled:
-        if(sDisgruntledSoundReady()) {
-            sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
-        }
+        sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aresWarrior:
@@ -1171,9 +1156,7 @@ void eSounds::playHitSound(eCharacter* const c) {
         break;
 
     case eCharacterType::disgruntled:
-        if(sDisgruntledSoundReady()) {
-            sInstance->mOutlawHit.playRandomSound(eSoundType::event);
-        }
+        sInstance->mOutlawHit.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::aresWarrior:
@@ -2096,6 +2079,9 @@ void eSounds::loadImpl() {
     mOutlawAttack.addPath(wavsDir + "outlaw_attack.wav");
     mOutlawDie.addPath(wavsDir + "outlaw_die.wav");
     mOutlawHit.addPath(wavsDir + "outlaw_hit.wav");
+    // disgruntled hit a lot; play their combat sounds only once per 5 hits
+    mOutlawAttack.setPlayEveryNth(5);
+    mOutlawHit.setPlayEveryNth(5);
 
     for(const auto& s : {"hop_spear1.wav",
                          "hop_spear2.wav",

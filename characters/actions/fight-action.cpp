@@ -5,7 +5,7 @@
 #include "characters/ebasicpatroler.h"
 #include "characters/efightingpatroler.h"
 #include "characters/eresourcecollector.h"
-#include "characters/eanimal.h"
+#include "characters/animal.h"
 #include "fileIO/esavearchive.h"
 #include "enumbers.h"
 #include "combat-timing.h"

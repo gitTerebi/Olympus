@@ -6,7 +6,7 @@
 #include "ewaitaction.h"
 
 #include "characters/eboar.h"
-#include "characters/edeer.h"
+#include "characters/deer.h"
 
 #include "buildings/ehuntinglodge.h"
 #include "fileIO/esavearchive.h"
@@ -29,7 +29,7 @@ bool tryToCollect(eTile* const tile) {
                 return true;
             }
         } else if(t == eCharacterType::deer) {
-            const auto d = static_cast<eDeer*>(c.get());
+            const auto d = static_cast<Deer*>(c.get());
             if(d->dead()) {
                 d->kill();
                 return true;

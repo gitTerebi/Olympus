@@ -4,7 +4,7 @@
 
 #include "textures/egametextures.h"
 
-#include "characters/ehorse.h"
+#include "characters/horse.h"
 #include "characters/actions/eanimalaction.h"
 
 #include "ehorseranch.h"
@@ -78,7 +78,7 @@ int eHorseRanchEnclosure::take(const eResourceType type, const int count) {
 
 bool eHorseRanchEnclosure::spawnHorse() {
     if(mHorses.size() > 5) return false;
-    const auto h = e::make_shared<eHorse>(getBoard());
+    const auto h = e::make_shared<Horse>(getBoard());
     h->setBothCityIds(cityId());
     const auto tile = centerTile();
     h->changeTile(tile);
@@ -110,12 +110,12 @@ void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     if(ar.reading()) {
         const stdptr<eHorseRanchEnclosure> tptr(this);
-        auto horses = std::make_shared<std::vector<std::shared_ptr<eHorse*>>>();
+        auto horses = std::make_shared<std::vector<std::shared_ptr<Horse*>>>();
         mHorses.clear();
         ar.countedArrayField("horses", 0,
             [this, horses](eSaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(horses->size())) horses->resize(i + 1);
-                if(!(*horses)[i]) (*horses)[i] = std::make_shared<eHorse*>(nullptr);
+                if(!(*horses)[i]) (*horses)[i] = std::make_shared<Horse*>(nullptr);
                 itemAr.characterField("horse", &getBoard(), *(*horses)[i]);
             });
         ar.addPostFunc([tptr, horses]() {
@@ -123,14 +123,14 @@ void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
             tptr->mHorses.clear();
             for(const auto& hptr : *horses) {
                 const auto h = hptr ? *hptr : nullptr;
-                if(h) tptr->mHorses.push_back(h->ref<eHorse>());
+                if(h) tptr->mHorses.push_back(h->ref<Horse>());
             }
         }, "eHorseRanchEnclosure::horses");
     } else {
         const int nh = static_cast<int>(mHorses.size());
         ar.countedArrayField("horses", nh,
             [this](eSaveArchive& itemAr, const int i) {
-                eHorse* raw = mHorses[i].get();
+                Horse* raw = mHorses[i].get();
                 itemAr.characterField("horse", &getBoard(), raw);
             });
     }

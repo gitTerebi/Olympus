@@ -288,7 +288,7 @@ void eTower::serializeFields(eSaveArchive &ar)
 
 bool eTower::spawn()
 {
-    const auto archer = e::make_shared<eArcher>(getBoard());
+    const auto archer = e::make_shared<Archer>(getBoard());
     archer->setBothCityIds(cityId());
     archer->setAtlantean(atlantean());
     archer->changeTile(centerTile());

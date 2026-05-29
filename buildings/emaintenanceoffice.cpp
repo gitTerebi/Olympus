@@ -1,6 +1,6 @@
 #include "emaintenanceoffice.h"
 
-#include "characters/efirefighter.h"
+#include "characters/fire-fighter.h"
 #include "characters/actions/efirefighteraction.h"
 #include "textures/egametextures.h"
 
@@ -17,7 +17,7 @@ eMaintenanceOffice::eMaintenanceOffice(GameBoard& board,
     ePatrolBuilding(board, &eBuildingTextures::fMaintenanceOffice,
                     -3.85, -4.35,
                     &eBuildingTextures::fMaintenanceOfficeOverlay,
-                    [this]() { return e::make_shared<eFireFighter>(getBoard()); },
+                    [this]() { return e::make_shared<FireFighter>(getBoard()); },
                     gFireFighterActGenerator,
                     eBuildingType::maintenanceOffice, 2, 2, 5, cid)  {
     eGameTextures::loadMaintenanceOffice();

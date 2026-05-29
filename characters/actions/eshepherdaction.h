@@ -3,7 +3,7 @@
 
 #include "eactionwithcomeback.h"
 
-#include "characters/eshepherd.h"
+#include "characters/shepherd.h"
 #include "buildings/eshepherbuildingbase.h"
 #include "characters/edomesticatedanimal.h"
 

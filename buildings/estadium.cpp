@@ -1,6 +1,6 @@
 #include "estadium.h"
 
-#include "characters/ecompetitor.h"
+#include "characters/competitor.h"
 
 #include "engine/e-game-board.h"
 
@@ -10,7 +10,7 @@ eStadium::eStadium(GameBoard& board, const bool r,
                    const eCityId cid) :
     ePatrolTarget(board,
                   nullptr, 0, 0, eOverlays(),
-                  [this]() { return e::make_shared<eCompetitor>(getBoard()); },
+                  [this]() { return e::make_shared<Competitor>(getBoard()); },
                   eBuildingType::stadium, r ? 5 : 10, r ? 10 : 5,
                   45, cid),
     mRotated(r) {

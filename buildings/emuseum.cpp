@@ -1,6 +1,6 @@
 #include "emuseum.h"
 
-#include "characters/ecurator.h"
+#include "characters/curator.h"
 #include "engine/e-game-board.h"
 
 eMuseum::eMuseum(GameBoard& board,
@@ -9,7 +9,7 @@ eMuseum::eMuseum(GameBoard& board,
                   &eBuildingTextures::fMuseum,
                   -11.55, -12.70,
                   &eBuildingTextures::fMuseumOverlay,
-                  [this]() { return e::make_shared<eCurator>(getBoard()); },
+                  [this]() { return e::make_shared<Curator>(getBoard()); },
                   eBuildingType::museum, 6, 6, 50, cid) {
     eGameTextures::loadMuseum();
     board.registerMuseum(this);

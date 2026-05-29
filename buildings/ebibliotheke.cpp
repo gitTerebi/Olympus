@@ -1,6 +1,6 @@
 #include "ebibliotheke.h"
 
-#include "characters/escholar.h"
+#include "characters/scholar.h"
 #include "textures/egametextures.h"
 
 eBibliotheke::eBibliotheke(GameBoard& board,
@@ -9,7 +9,7 @@ eBibliotheke::eBibliotheke(GameBoard& board,
                     &eBuildingTextures::fBibliotheke,
                     -1.12, -3.17,
                     &eBuildingTextures::fBibliothekeOverlay,
-                    [this]() { return e::make_shared<eScholar>(getBoard()); },
+                    [this]() { return e::make_shared<Scholar>(getBoard()); },
                     eBuildingType::bibliotheke, 2, 2, 5, cid) {
     eGameTextures::loadBibliotheke();
 }

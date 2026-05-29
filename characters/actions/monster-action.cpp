@@ -157,6 +157,7 @@ void MonsterAction::spawnAttackMissile() {
     const auto c = character();
     const auto chart = c->type();
     const auto act = std::make_shared<eLookForAttackGodAct>(board(), c);
+    if(const auto target = mAttackTarget.target()) act->find(target);
     const auto finishAttackA = std::make_shared<eMA_lookForRangeActionFinishAttack>(
                                    board(), this);
     spawnMissile(mAttackActionType, chart, mAttackTime,

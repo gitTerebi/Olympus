@@ -6,7 +6,7 @@
 #include "engine/e-game-board.h"
 #include "etilehelper.h"
 
-#include "characters/etrader.h"
+#include "characters/trader.h"
 #include "characters/actions/trader-action.h"
 #include "characters/etradeboat.h"
 #include "enumbers.h"
@@ -151,7 +151,7 @@ TradePost::TradePost(GameBoard& board, eWorldCity& city,
     } break;
     case eTradePostType::post: {
         setCharacterCreator([](eTile* const tile, GameBoard& board) {
-            const auto r = e::make_shared<eTrader>(board);
+            const auto r = e::make_shared<Trader>(board);
             r->changeTile(tile);
             return r;
         });
@@ -288,7 +288,7 @@ void TradePost::spawnTrader() {
     r->setOnCityId(cityId());
     r->setCityId(cityId());
 
-    if(const auto trader = dynamic_cast<eTrader*>(r.get())) {
+    if(const auto trader = dynamic_cast<Trader*>(r.get())) {
         trader->createFollowers();
     }
 

@@ -1,14 +1,14 @@
 #ifndef EWILDANIMAL_H
 #define EWILDANIMAL_H
 
-#include "eanimal.h"
+#include "animal.h"
 
 #include "textures/echaractertextures.h"
 
 class eSpawner;
 class eSaveArchive;
 
-class eWildAnimal : public eAnimal {
+class eWildAnimal : public Animal {
 public:
     eWildAnimal(GameBoard& board,
                 const eCharTexs charTexs,
