@@ -2,7 +2,7 @@
 
 #include "engine/e-game-board.h"
 #include "engine/eeventdata.h"
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 #include "eiteratesquare.h"
 #include "evectorhelpers.h"
 #include "emessages.h"
@@ -84,7 +84,7 @@ eMonster* eMonsterInvasionEventBase::triggerBase() {
     monster->setOnCityId(cid);
     monster->setCityId(eCityId::neutralAggresive);
 
-    const auto a = e::make_shared<eMonsterAction>(monster.get());
+    const auto a = e::make_shared<MonsterAction>(monster.get());
     a->setAggressivness(mAggressivness);
     monster->setAction(a);
     const int ptId = pointId();

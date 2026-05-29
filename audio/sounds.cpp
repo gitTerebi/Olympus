@@ -12,7 +12,20 @@
 #include <filesystem>
 #include <algorithm>
 
+#include <SDL2/SDL_timer.h>
+
 eSounds* eSounds::sInstance = nullptr;
+
+// disgruntled fights can stack/spam combat sounds (many fighters, fast
+// turbo swings). Gate their attack/hit sounds to at most one per this
+// many real-time milliseconds, regardless of swing rate or game speed.
+static bool sDisgruntledSoundReady() {
+    static Uint32 sLast = 0;
+    const Uint32 now = SDL_GetTicks();
+    if(now - sLast < 600) return false;
+    sLast = now;
+    return true;
+}
 
 eSounds::eSounds() {
     sInstance = this;
@@ -768,7 +781,9 @@ void eSounds::playAttackSound(const eCharacterType type) {
         sInstance->mAtlanteanChariotAttack.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::disgruntled:
-        sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
+        if(sDisgruntledSoundReady()) {
+            sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
+        }
         break;
 
     case eCharacterType::aresWarrior:
@@ -1156,7 +1171,9 @@ void eSounds::playHitSound(eCharacter* const c) {
         break;
 
     case eCharacterType::disgruntled:
-        sInstance->mOutlawHit.playRandomSound(eSoundType::event);
+        if(sDisgruntledSoundReady()) {
+            sInstance->mOutlawHit.playRandomSound(eSoundType::event);
+        }
         break;
 
     case eCharacterType::aresWarrior:

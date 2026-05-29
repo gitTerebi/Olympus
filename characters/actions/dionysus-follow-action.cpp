@@ -1,37 +1,37 @@
-#include "edionysusfollowaction.h"
+#include "dionysus-follow-action.h"
 
 #include "characters/echaracter.h"
 #include "fileIO/esavearchive.h"
 
-eDionysusFollowAction::eDionysusFollowAction(
+DionysusFollowAction::DionysusFollowAction(
         eCharacter* const f, eCharacter* const c) :
     eFollowAction(f, c, eCharActionType::dionysusFollowAction) {}
 
-eDionysusFollowAction::eDionysusFollowAction(
+DionysusFollowAction::DionysusFollowAction(
         eCharacter* const c) :
-    eDionysusFollowAction(nullptr, c) {}
+    DionysusFollowAction(nullptr, c) {}
 
-void eDionysusFollowAction::setFollower(eCharacter* const f) {
+void DionysusFollowAction::setFollower(eCharacter* const f) {
     mFollower = f;
 }
 
-void eDionysusFollowAction::serializeFields(eSaveArchive& ar) {
+void DionysusFollowAction::serializeFields(eSaveArchive& ar) {
     eFollowAction::serializeFields(ar);
     ar.characterField("follower", &board(), mFollower);
     ar.field("killOnFinish", mKillOnFinish);
 }
 
-void eDionysusFollowAction::resumeFromSavedState() {
+void DionysusFollowAction::resumeFromSavedState() {
     eFollowAction::resumeFromSavedState();
     if(mKillOnFinish) attachKillCallback();
 }
 
-void eDionysusFollowAction::setKillFollowerOnFinish() {
+void DionysusFollowAction::setKillFollowerOnFinish() {
     mKillOnFinish = true;
     attachKillCallback();
 }
 
-void eDionysusFollowAction::attachKillCallback() {
+void DionysusFollowAction::attachKillCallback() {
     const auto c = character();
     if(!c) return;
     const auto killA = std::make_shared<eChar_killWithCorpseFinish>(
@@ -40,7 +40,7 @@ void eDionysusFollowAction::attachKillCallback() {
     setFailAction(killA);
 }
 
-bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {
+bool DionysusFollowAction::sShouldFollow(const eCharacterType c) {
     switch(c) {
     case eCharacterType::settler:
     case eCharacterType::homeless:
@@ -74,7 +74,7 @@ bool eDionysusFollowAction::sShouldFollow(const eCharacterType c) {
     return false;
 }
 
-void eDionysusFollowAction::increment(const int by) {
+void DionysusFollowAction::increment(const int by) {
     if(!mFollower) {
         auto& board = this->board();
         const auto c = character();
@@ -90,7 +90,7 @@ void eDionysusFollowAction::increment(const int by) {
             const auto cca = cc->action();
             const auto eDFA = eCharActionType::dionysusFollowAction;
             if(cca && cca->type() == eDFA) continue;
-            const auto fa = e::make_shared<eDionysusFollowAction>(c, cc.get());
+            const auto fa = e::make_shared<DionysusFollowAction>(c, cc.get());
             cc->setAction(fa);
             fa->setKillFollowerOnFinish();
             mFollower = cc.get();

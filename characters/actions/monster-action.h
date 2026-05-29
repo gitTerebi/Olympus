@@ -1,5 +1,5 @@
-#ifndef EMONSTERACTION_H
-#define EMONSTERACTION_H
+#ifndef MONSTER_ACTION_H
+#define MONSTER_ACTION_H
 
 #include "characters/gods/actions/egodmonsteraction.h"
 
@@ -13,10 +13,10 @@ enum class eMonsterAttackStage {
 
 class eSaveArchive;
 
-class eMonsterAction : public eGodMonsterAction {
+class MonsterAction : public eGodMonsterAction {
     friend class eMonsterObsticleHandler;
 public:
-    eMonsterAction(eCharacter* const c);
+    MonsterAction(eCharacter* const c);
 
     void increment(const int by) override;
     bool decide() override;
@@ -100,7 +100,7 @@ class eGoToTargetTryAgain : public eFindFailFunc {
 public:
     eGoToTargetTryAgain(GameBoard& board) :
         eFindFailFunc(board, eFindFailFuncType::tryAgain) {}
-    eGoToTargetTryAgain(GameBoard& board, eMonsterAction* const ca) :
+    eGoToTargetTryAgain(GameBoard& board, MonsterAction* const ca) :
         eFindFailFunc(board, eFindFailFuncType::tryAgain),
         mTptr(ca) {}
 
@@ -115,20 +115,20 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eMonsterAction> mTptr;
+    stdptr<MonsterAction> mTptr;
 };
 
 class eMA_destroyBuildingFinish : public eCharActFunc {
 public:
     eMA_destroyBuildingFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::MA_destroyBuildingFinish) {}
-    eMA_destroyBuildingFinish(GameBoard& board, eMonsterAction* const ca,
+    eMA_destroyBuildingFinish(GameBoard& board, MonsterAction* const ca,
                               eBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::MA_destroyBuildingFinish),
         mTptr(ca), mBptr(b) {}
 
     void call() override {
-        const stdptr<eMonsterAction> t = mTptr;
+        const stdptr<MonsterAction> t = mTptr;
         if(!t) return;
         const auto b = mBptr;
         t->finishBuildingAttack();
@@ -145,7 +145,7 @@ protected:
         ar.buildingField("building", &board(), mBptr);
     }
 private:
-    stdptr<eMonsterAction> mTptr;
+    stdptr<MonsterAction> mTptr;
     stdptr<eBuilding> mBptr;
 };
 
@@ -153,12 +153,12 @@ class eMA_lookForRangeActionFinishAttack : public eCharActFunc {
 public:
     eMA_lookForRangeActionFinishAttack(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::MA_lookForRangeActionFinishAttack) {}
-    eMA_lookForRangeActionFinishAttack(GameBoard& board, eMonsterAction* const ca) :
+    eMA_lookForRangeActionFinishAttack(GameBoard& board, MonsterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::MA_lookForRangeActionFinishAttack),
         mTptr(ca) {}
 
     void call() override {
-        const stdptr<eMonsterAction> t = mTptr;
+        const stdptr<MonsterAction> t = mTptr;
         if(!t) return;
         t->finishAttack();
         t->resumeAction();
@@ -170,7 +170,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eMonsterAction> mTptr;
+    stdptr<MonsterAction> mTptr;
 };
 
 class eMonsterObsticleHandler : public eObsticleHandler {
@@ -178,7 +178,7 @@ public:
     eMonsterObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::monster) {}
     eMonsterObsticleHandler(GameBoard& board,
-                            eMonsterAction* const t) :
+                            MonsterAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::monster),
         mTptr(t) {}
 
@@ -198,7 +198,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eMonsterAction> mTptr;
+    stdptr<MonsterAction> mTptr;
 };
 
-#endif // EMONSTERACTION_H
+#endif // MONSTER_ACTION_H

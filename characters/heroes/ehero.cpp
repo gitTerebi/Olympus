@@ -1,6 +1,6 @@
 #include "ehero.h"
 
-#include "eachilles.h"
+#include "achilles.h"
 
 #include "elanguage.h"
 
@@ -64,21 +64,21 @@ eCharacterType eHero::sHeroToCharacterType(const eHeroType type) {
 stdsptr<eHero> eHero::sCreateHero(const eHeroType type, GameBoard& board) {
     switch(type) {
     case eHeroType::achilles:
-        return e::make_shared<eAchilles>(board);
+        return e::make_shared<Achilles>(board);
     case eHeroType::atalanta:
-        return e::make_shared<eAtalanta>(board);
+        return e::make_shared<Atalanta>(board);
     case eHeroType::bellerophon:
-        return e::make_shared<eBellerophon>(board);
+        return e::make_shared<Bellerophon>(board);
     case eHeroType::hercules:
-        return e::make_shared<eHercules>(board);
+        return e::make_shared<Hercules>(board);
     case eHeroType::jason:
-        return e::make_shared<eJason>(board);
+        return e::make_shared<Jason>(board);
     case eHeroType::odysseus:
-        return e::make_shared<eOdysseus>(board);
+        return e::make_shared<Odysseus>(board);
     case eHeroType::perseus:
-        return e::make_shared<ePerseus>(board);
+        return e::make_shared<Perseus>(board);
     case eHeroType::theseus:
-        return e::make_shared<eTheseus>(board);
+        return e::make_shared<Theseus>(board);
     }
 }
 

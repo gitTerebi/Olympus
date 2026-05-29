@@ -1,4 +1,4 @@
-#include "emonsteraction.h"
+#include "monster-action.h"
 
 #include "engine/e-game-board.h"
 
@@ -6,7 +6,6 @@
 #include "buildings/eheatgetters.h"
 
 #include "emovetoaction.h"
-#include "ewaitaction.h"
 #include "eiteratesquare.h"
 
 #include "characters/gods/actions/god-action.h"
@@ -17,18 +16,20 @@
 #include "combat-timing.h"
 #include "vec2.h"
 
-eMonsterAction::eMonsterAction(eCharacter* const c) :
+MonsterAction::MonsterAction(eCharacter* const c) :
     eGodMonsterAction(c, eCharActionType::monsterAction),
     mType(eMonster::sCharacterToMonsterType(c->type())) {}
 
-void eMonsterAction::increment(const int by) {
+void MonsterAction::increment(const int by) {
     const auto c = character();
     const auto at = c->actionType();
     if(mStage == eMonsterAttackStage::attacking &&
        mAttackActionType == eCharacterActionType::fight) {
         if(incrementMeleeAttack(by)) return;
     }
-    if(at == eCharacterActionType::walk) {
+    if(at == eCharacterActionType::walk &&
+       (mStage == eMonsterAttackStage::goTo ||
+        mStage == eMonsterAttackStage::patrol)) {
         lookForAnyAttack(by, mLookForAttack,
                          attackPeriod(),
                          eNumbers::sMonsterAttackRange);
@@ -53,7 +54,7 @@ void eMonsterAction::increment(const int by) {
     eGodMonsterAction::increment(by);
 }
 
-bool eMonsterAction::decide() {
+bool MonsterAction::decide() {
     const auto c = character();
     switch(mStage) {
     case eMonsterAttackStage::none:
@@ -108,7 +109,7 @@ bool eMonsterAction::decide() {
     return true;
 }
 
-void eMonsterAction::beginAttack(const eMissileTarget& target,
+void MonsterAction::beginAttack(const eMissileTarget& target,
                                  const eCharacterActionType at,
                                  const eMonsterAttackStage prevStage) {
     mPreAttackStage = prevStage;
@@ -119,14 +120,14 @@ void eMonsterAction::beginAttack(const eMissileTarget& target,
     mLookForAttack = 0;
 }
 
-void eMonsterAction::finishAttack() {
+void MonsterAction::finishAttack() {
     mStage = mPreAttackStage;
     mPreAttackStage = eMonsterAttackStage::none;
     mAttackTarget = eMissileTarget();
     mAttackTime = 0;
 }
 
-void eMonsterAction::retaliate(eCharacter* const attacker) {
+void MonsterAction::retaliate(eCharacter* const attacker) {
     if(!attacker || attacker->dead()) return;
     const auto c = character();
     if(!c || c->dead()) return;
@@ -152,7 +153,7 @@ void eMonsterAction::retaliate(eCharacter* const attacker) {
     }
 }
 
-void eMonsterAction::spawnAttackMissile() {
+void MonsterAction::spawnAttackMissile() {
     const auto c = character();
     const auto chart = c->type();
     const auto act = std::make_shared<eLookForAttackGodAct>(board(), c);
@@ -162,7 +163,7 @@ void eMonsterAction::spawnAttackMissile() {
                  mAttackTarget, nullptr, act, finishAttackA);
 }
 
-void eMonsterAction::spawnMeleeAttack() {
+void MonsterAction::spawnMeleeAttack() {
     const auto c = character();
     mAttackTime = CombatTiming::meleeAnimationMs(*c);
     if(c->actionType() != eCharacterActionType::fight) {
@@ -176,7 +177,7 @@ void eMonsterAction::spawnMeleeAttack() {
     }
 }
 
-bool eMonsterAction::incrementMeleeAttack(const int by) {
+bool MonsterAction::incrementMeleeAttack(const int by) {
     if(!mAttackTarget.target()) {
         finishAttack();
         resumeAction();
@@ -205,7 +206,7 @@ bool eMonsterAction::incrementMeleeAttack(const int by) {
     return true;
 }
 
-void eMonsterAction::spawnBuildingAttackMissiles() {
+void MonsterAction::spawnBuildingAttackMissiles() {
     const auto at = eCharacterActionType::fight2;
     const auto c = character();
     const auto chart = c->type();
@@ -218,7 +219,7 @@ void eMonsterAction::spawnBuildingAttackMissiles() {
                           nullptr, playHitSound, finishAttackA, 3);
 }
 
-void eMonsterAction::serializeFields(eSaveArchive& ar) {
+void MonsterAction::serializeFields(eSaveArchive& ar) {
     eGodMonsterAction::serializeFields(ar);
     ar.tileField("homeTile", board(), mHomeTile);
     ar.field("aggressivness", mAggressivness);
@@ -233,11 +234,11 @@ void eMonsterAction::serializeFields(eSaveArchive& ar) {
     ar.field("patrolRemaining", mPatrolRemaining);
 }
 
-void eMonsterAction::resumeFromSavedState() {
+void MonsterAction::resumeFromSavedState() {
     rebuildCurrentStage();
 }
 
-void eMonsterAction::rebuildCurrentStage() {
+void MonsterAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
     case eMonsterAttackStage::attacking:
@@ -277,7 +278,7 @@ void eMonsterAction::rebuildCurrentStage() {
     }
 }
 
-eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
+eTile* MonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
     const auto c = character();
     const auto cid = c->onCityId();
     auto& board = c->getBoard();
@@ -303,7 +304,7 @@ eTile* eMonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
     return plainTile;
 }
 
-void eMonsterAction::randomPlaceOnBoard() {
+void MonsterAction::randomPlaceOnBoard() {
     const auto c = character();
     const auto cid = c->onCityId();
     auto& board = c->getBoard();
@@ -316,7 +317,7 @@ void eMonsterAction::randomPlaceOnBoard() {
     c->changeTile(tile);
     mHomeTile = tile;
 //    const auto c = character();
-//    const stdptr<eMonsterAction> tptr(this);
+//    const stdptr<MonsterAction> tptr(this);
 //    const stdptr<eCharacter> cptr(c);
 //    const auto hmFinish = [tptr, this, cptr, c](eHeatMap& map) {
 //        if(!tptr || !cptr) return;
@@ -340,11 +341,11 @@ void eMonsterAction::randomPlaceOnBoard() {
     //    wait();
 }
 
-stdsptr<eObsticleHandler> eMonsterAction::obsticleHandler() {
+stdsptr<eObsticleHandler> MonsterAction::obsticleHandler() {
     return std::make_shared<eMonsterObsticleHandler>(board(), this);
 }
 
-void eMonsterAction::goToTarget() {
+void MonsterAction::goToTarget() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         const auto c = character();
@@ -357,7 +358,7 @@ void eMonsterAction::goToTarget() {
         const auto a = e::make_shared<eMoveToAction>(c);
         a->setStateRelevance(eStateRelevance::buildings |
                              eStateRelevance::terrain);
-        const stdptr<eMonsterAction> tptr(this);
+        const stdptr<MonsterAction> tptr(this);
         a->setFoundAction([tptr, this]() {
             if(!tptr) return;
             const auto c = character();
@@ -368,7 +369,7 @@ void eMonsterAction::goToTarget() {
         a->start(underBuilding, eWalkableObject::sCreateDeepWater());
         setCurrentAction(a);
     } else {
-        const stdptr<eMonsterAction> tptr(this);
+        const stdptr<MonsterAction> tptr(this);
         const auto tryAgain = std::make_shared<eGoToTargetTryAgain>(
                                   board(), this);
         eGodMonsterAction::goToTarget(eHeatGetters::any, tryAgain,
@@ -379,7 +380,7 @@ void eMonsterAction::goToTarget() {
     }
 }
 
-void eMonsterAction::goBack() {
+void MonsterAction::goBack() {
     if(!mHomeTile) return setCurrentAction(nullptr);
     const auto c = character();
 
@@ -401,11 +402,11 @@ void eMonsterAction::goBack() {
     c->setActionType(eCharacterActionType::walk);
 }
 
-void eMonsterAction::monsterPatrol() {
+void MonsterAction::monsterPatrol() {
     enterMonsterPatrol();
 }
 
-void eMonsterAction::enterMonsterPatrol() {
+void MonsterAction::enterMonsterPatrol() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         mPatrolRemaining = moveAroundPeriod();
@@ -416,7 +417,7 @@ void eMonsterAction::enterMonsterPatrol() {
     }
 }
 
-void eMonsterAction::rebuildMonsterPatrol() {
+void MonsterAction::rebuildMonsterPatrol() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         moveAround(nullptr, mPatrolRemaining, eWalkableObject::sCreateDeepWater());
@@ -425,7 +426,7 @@ void eMonsterAction::rebuildMonsterPatrol() {
     }
 }
 
-void eMonsterAction::destroyBuilding(eBuilding* const b) {
+void MonsterAction::destroyBuilding(eBuilding* const b) {
     const auto at = eCharacterActionType::fight2;
     const auto c = character();
     const auto chart = c->type();
@@ -440,7 +441,7 @@ void eMonsterAction::destroyBuilding(eBuilding* const b) {
                           nullptr, playHitSound, finishAttackA, 3);
 }
 
-void eMonsterAction::beginBuildingAttack(eBuilding* const b,
+void MonsterAction::beginBuildingAttack(eBuilding* const b,
                                          const eMonsterAttackStage prevStage) {
     mPreAttackStage = prevStage;
     mAttackBuilding = b;
@@ -448,18 +449,18 @@ void eMonsterAction::beginBuildingAttack(eBuilding* const b,
     mLookForAttack = 0;
 }
 
-void eMonsterAction::finishBuildingAttack() {
+void MonsterAction::finishBuildingAttack() {
     mStage = mPreAttackStage;
     mPreAttackStage = eMonsterAttackStage::none;
     mAttackBuilding = nullptr;
 }
 
-void eMonsterAction::enterWait() {
+void MonsterAction::enterWait() {
     mWaitRemaining = invadePeriod();
     rebuildWait();
 }
 
-void eMonsterAction::rebuildWait() {
+void MonsterAction::rebuildWait() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         moveAround(nullptr, mWaitRemaining,
@@ -469,7 +470,7 @@ void eMonsterAction::rebuildWait() {
     }
 }
 
-bool eMonsterAction::lookForAttack(const int dtime,
+bool MonsterAction::lookForAttack(const int dtime,
                                    int& time, const int freq,
                                    const int range) {
     const auto c = character();
@@ -482,7 +483,7 @@ bool eMonsterAction::lookForAttack(const int dtime,
                               at, act, nullptr);
 }
 
-bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly,
+bool MonsterAction::lookForMeleeAttack(const bool charactersOnly,
                                         const bool buildingsOnly) {
     const auto c = character();
     const auto act = std::make_shared<eLookForAttackGodAct>(
@@ -514,45 +515,35 @@ bool eMonsterAction::lookForMeleeAttack(const bool charactersOnly,
     return false;
 }
 
-bool eMonsterAction::lookForAnyAttack(const int dtime,
+bool MonsterAction::lookForAnyAttack(const int dtime,
                                       int& time, const int freq,
                                       const int range) {
     time += dtime;
     if(time <= freq) return false;
     time -= freq;
-    if(eRand::rand() % 10 == 0) {
-        const auto c = character();
-        pauseAction();
-        c->setActionType(eCharacterActionType::stand);
-        board().ifVisible(c->tile(), [&]() {
-            eSounds::playMonsterSound(mType, eMonsterSound::voice);
-        });
-        const auto w = e::make_shared<eWaitAction>(c);
-        const auto finish = std::make_shared<eMA_lookForRangeActionFinishAttack>(
-                                board(), this);
-        w->setFinishAction(finish);
-        w->setFailAction(finish);
-        w->setTime(700);
-        setCurrentAction(w);
-        return true;
-    }
     const auto rangedBuilding = [this, &time, range]() {
         return lookForRangeAction(
             0, time, 0, range, eCharacterActionType::fight2,
             std::make_shared<eLookForAttackGodAct>(board(), character()),
             nullptr, true);
     };
-    const int roll = eRand::rand() % 3;
-    for(int i = 0; i < 3; i++) {
-        const int choice = (roll + i) % 3;
-        if(choice == 0 && lookForMeleeAttack(true)) return true;
-        if(choice == 1 && lookForMeleeAttack(false, true)) return true;
-        if(choice == 2 && rangedBuilding()) return true;
+    const int roll = eRand::rand() % 4;
+    if(roll < 2) {
+        if(rangedBuilding()) return true;
+        if(lookForMeleeAttack(false, true)) return true;
+        return lookForMeleeAttack(true);
+    } else if(roll == 2) {
+        if(lookForMeleeAttack(true)) return true;
+        if(lookForMeleeAttack(false, true)) return true;
+        return rangedBuilding();
+    } else {
+        if(lookForMeleeAttack(false, true)) return true;
+        if(rangedBuilding()) return true;
+        return lookForMeleeAttack(true);
     }
-    return false;
 }
 
-bool eMonsterAction::lookForRangeAction(const int dtime,
+bool MonsterAction::lookForRangeAction(const int dtime,
                                         int& time, const int freq,
                                         const int range,
                                         const eCharacterActionType at,
@@ -615,7 +606,7 @@ bool eMonsterAction::lookForRangeAction(const int dtime,
     return false;
 }
 
-int eMonsterAction::attackPeriod() const {
+int MonsterAction::attackPeriod() const {
     switch(mAggressivness) {
     case eMonsterAggressivness::passive:
         return eNumbers::sPassiveMonsterAttackPeriod;
@@ -629,7 +620,7 @@ int eMonsterAction::attackPeriod() const {
     return eNumbers::sPassiveMonsterAttackPeriod;
 }
 
-int eMonsterAction::invadePeriod() const {
+int MonsterAction::invadePeriod() const {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         switch(mAggressivness) {
@@ -658,7 +649,7 @@ int eMonsterAction::invadePeriod() const {
     }
 }
 
-int eMonsterAction::moveAroundPeriod() const {
+int MonsterAction::moveAroundPeriod() const {
     if(mType == eMonsterType::scylla ||
         mType == eMonsterType::kraken) {
         switch(mAggressivness) {

@@ -6,7 +6,7 @@
 #include "ecalydonianboar.h"
 #include "engine/e-game-board.h"
 #include "engine/ecityid.h"
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 
 #include "elanguage.h"
 
@@ -19,7 +19,7 @@ bool eMonster::takeDamage(const double a, eCharacter* const attacker) {
     const bool dead = eCharacter::takeDamage(a, attacker);
     if(dead || !attacker || attacker->dead()) return dead;
     if(!eTeamIdHelpers::isEnemy(attacker->teamId(), teamId())) return dead;
-    const auto ma = dynamic_cast<eMonsterAction*>(action());
+    const auto ma = dynamic_cast<MonsterAction*>(action());
     if(!ma) return dead;
     ma->retaliate(attacker);
     return dead;

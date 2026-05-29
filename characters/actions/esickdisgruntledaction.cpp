@@ -3,7 +3,7 @@
 #include "../echaracter.h"
 #include "buildings/small-house.h"
 #include "epatrolmoveaction.h"
-#include "emovearoundaction.h"
+#include "move-around-action.h"
 #include "fileIO/esavearchive.h"
 
 eSickDisgruntledAction::eSickDisgruntledAction(eCharacter* const c,
@@ -66,7 +66,7 @@ void eSickDisgruntledAction::patrol() {
             walkable = eWalkableObject::sCreateRect(ub, walkable);
         }
 
-        const auto a = e::make_shared<eMoveAroundAction>(
+        const auto a = e::make_shared<MoveAroundAction>(
                            c, t->x(), t->y(),
                            eWalkableObject::sCreateDefault());
         a->setTime(5000);

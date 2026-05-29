@@ -7,6 +7,5 @@ eHorsemanBase::eHorsemanBase(GameBoard& board,
                              const eCharacterType type) :
     eSoldier(board, charTexs, type) {
     setAttack(eNumbers::sHorsemanAttack);
-    setSpeed(eNumbers::sHorsemanSpeed);
     setHP(eNumbers::sHorsemanHP);
 }

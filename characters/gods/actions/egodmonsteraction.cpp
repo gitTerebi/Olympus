@@ -4,7 +4,7 @@
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/emovetoaction.h"
-#include "characters/actions/emovearoundaction.h"
+#include "characters/actions/move-around-action.h"
 #include "engine/e-game-board.h"
 #include "engine/boardData/eheatmap.h"
 #include "engine/boardData/eheatmapdivisor.h"
@@ -14,7 +14,7 @@
 #include "missiles/egodmissile.h"
 
 #include "characters/gods/actions/egodattackaction.h"
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 #include "characters/actions/epatrolmoveaction.h"
 
 
@@ -133,7 +133,7 @@ void eGodMonsterAction::moveAround(
     const auto t = c->tile();
     const int tx = t->x();
     const int ty = t->y();
-    const auto a = e::make_shared<eMoveAroundAction>(
+    const auto a = e::make_shared<MoveAroundAction>(
                        c, tx, ty, walkable);
     a->setFinishAction(finishAct);
     a->setFailAction(finishAct);

@@ -1,6 +1,6 @@
 #include "eanimalaction.h"
 
-#include "emovearoundaction.h"
+#include "move-around-action.h"
 #include "characters/echaracter.h"
 #include "ewaitaction.h"
 #include "enumbers.h"
@@ -54,7 +54,7 @@ void eAnimalAction::walkAround() {
     mStage = eAnimalActionStage::walking;
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
-    const auto m = e::make_shared<eMoveAroundAction>(
+    const auto m = e::make_shared<MoveAroundAction>(
                        c, mSpawnerX, mSpawnerY,
                        mTileWalkable);
     m->setMaxDistance(eNumbers::sAnimalMoveRange);

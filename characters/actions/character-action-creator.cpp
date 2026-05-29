@@ -16,7 +16,7 @@
 #include "fight-action.h"
 #include "efirefighteraction.h"
 #include "efollowaction.h"
-#include "edionysusfollowaction.h"
+#include "dionysus-follow-action.h"
 #include "characters/gods/actions/egodattackaction.h"
 #include "characters/gods/actions/egodvisitaction.h"
 #include "characters/gods/actions/egodworshippedaction.h"
@@ -24,8 +24,8 @@
 #include "egroweraction.h"
 #include "eheroaction.h"
 #include "ehuntaction.h"
-#include "emonsteraction.h"
-#include "emovearoundaction.h"
+#include "monster-action.h"
+#include "move-around-action.h"
 #include "emovepathaction.h"
 #include "emovetoaction.h"
 #include "epatrolaction.h"
@@ -94,7 +94,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::followAction:
         return e::make_shared<eFollowAction>(c);
     case eCharActionType::dionysusFollowAction:
-        return e::make_shared<eDionysusFollowAction>(c);
+        return e::make_shared<DionysusFollowAction>(c);
     case eCharActionType::godAttackAction:
         return e::make_shared<eGodAttackAction>(c);
     case eCharActionType::godVisitAction:
@@ -114,9 +114,9 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::huntAction:
         return e::make_shared<eHuntAction>(c);
     case eCharActionType::monsterAction:
-        return e::make_shared<eMonsterAction>(c);
+        return e::make_shared<MonsterAction>(c);
     case eCharActionType::moveAroundAction:
-        return e::make_shared<eMoveAroundAction>(c);
+        return e::make_shared<MoveAroundAction>(c);
     case eCharActionType::movePathAction:
         return e::make_shared<eMovePathAction>(c);
     case eCharActionType::moveToAction:

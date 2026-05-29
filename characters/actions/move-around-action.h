@@ -1,5 +1,5 @@
-#ifndef EMOVEAROUNDACTION_H
-#define EMOVEAROUNDACTION_H
+#ifndef MOVE_AROUND_ACTION_H
+#define MOVE_AROUND_ACTION_H
 
 #include "emoveaction.h"
 
@@ -9,13 +9,13 @@
 
 class eSaveArchive;
 
-class eMoveAroundAction : public eMoveAction {
+class MoveAroundAction : public eMoveAction {
 public:
-    eMoveAroundAction(eCharacter* const c,
+    MoveAroundAction(eCharacter* const c,
                       const int startX, const int startY,
                       const stdsptr<eWalkableObject>& walkable =
                             eWalkableObject::sCreateDefault());
-    eMoveAroundAction(eCharacter* const c);
+    MoveAroundAction(eCharacter* const c);
 
     void increment(const int by) override;
 
@@ -34,4 +34,4 @@ private:
     int mRemTime{__INT_MAX__};
 };
 
-#endif // EMOVEAROUNDACTION_H
+#endif // MOVE_AROUND_ACTION_H

@@ -231,11 +231,9 @@ struct eNumbers {
     static double sHopliteAttack;
 
     static int sChariotHP;
-    static double sChariotSpeed;
     static double sChariotAttack;
 
     static int sHorsemanHP;
-    static double sHorsemanSpeed;
     static double sHorsemanAttack;
 
     static int sWatchmanHP;
