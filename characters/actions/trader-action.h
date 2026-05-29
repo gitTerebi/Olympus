@@ -31,6 +31,7 @@ private:
     void goToTradePost();
     void trade();
     void tradeIncrement();
+    void setPierLoading(const bool b);
 
     stdsptr<eWalkableObject> mWalkable =
             eWalkableObject::sCreateDefault();
@@ -58,6 +59,7 @@ public:
     void call() override {
         if(!mTptr) return;
         const auto t = mTptr.get();
+        t->setPierLoading(false);
         t->goBack(t->mWalkable);
     }
 protected:

@@ -8,6 +8,9 @@
 double ePier::sOvX[4] = {0.30, -0.20, -0.40, 0.00};
 double ePier::sOvY[4] = {-1.90, -1.60, -1.80, -2.40};
 
+double ePier::sLoadOvX[4] = {0.20, -0.10, -0.60, 0.20};
+double ePier::sLoadOvY[4] = {-1.90, -2.10, -2.40, -2.10};
+
 int ePier::sOrientIndex(const eDiagonalOrientation o) {
     switch(o) {
     case eDiagonalOrientation::bottomRight: return 0;
@@ -63,27 +66,31 @@ std::vector<eOverlay> ePier::getOverlays(const eTileSize size) const
     std::vector<eOverlay> os;
     const int sizeId = static_cast<int>(size);
     const auto &blds = eGameTextures::buildings();
-    const auto &coll = blds[sizeId].fPierOverlay;
-    if (coll.size() < 128)
+    const auto &coll = mLoading ? blds[sizeId].fPierLoadOverlay
+                                : blds[sizeId].fPierOverlay;
+    const int per = mLoading ? 34 : 32;
+    if (coll.size() < 4 * per)
         return os;
     auto &board = getBoard();
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);
     const int t = textureTime();
-    int base;
+    int dirIdx;
     switch(o) {
-    case eDiagonalOrientation::bottomRight: base = 0;  break;
-    case eDiagonalOrientation::bottomLeft:  base = 32; break;
-    case eDiagonalOrientation::topLeft:     base = 64; break;
-    case eDiagonalOrientation::topRight:    base = 96; break;
-    default:                                base = 0;  break;
+    case eDiagonalOrientation::bottomRight: dirIdx = 0; break;
+    case eDiagonalOrientation::bottomLeft:  dirIdx = 1; break;
+    case eDiagonalOrientation::topLeft:     dirIdx = 2; break;
+    case eDiagonalOrientation::topRight:    dirIdx = 3; break;
+    default:                                dirIdx = 0; break;
     }
-    const int texId = base + (t % 32);
+    const int texId = dirIdx * per + (t % per);
     auto &ov = os.emplace_back();
     ov.fTex = coll.getTexture(texId);
     const int oi = sOrientIndex(o);
-    ov.fX = sOvX[oi];
-    ov.fY = sOvY[oi];
+    ov.fX = mLoading ? sLoadOvX[oi] : sOvX[oi];
+    ov.fY = mLoading ? sLoadOvY[oi] : sOvY[oi];
+    // dockworker must draw over the docked boat (boat is a "big" char drawn after overlays)
+    ov.fOnTop = mLoading;
     return os;
 }
 

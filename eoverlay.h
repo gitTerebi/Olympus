@@ -8,6 +8,7 @@ struct eOverlay {
     double fY;
     std::shared_ptr<eTexture> fTex;
     bool fAlignTop = false;
+    bool fOnTop = false; // draw after characters (e.g. pier dockworker over docked boat)
 };
 
 #endif // EOVERLAY_H

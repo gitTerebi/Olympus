@@ -12,9 +12,9 @@ public:
     void initialize();
 
 private:
-    void updateLabel(const int facing);
+    void updateLabel(const int row);
 
-    eFramedButton* mLabels[4] = {nullptr, nullptr, nullptr, nullptr};
+    eFramedButton* mLabels[8] = {nullptr};
 };
 
 #endif // EPIERDEBUGWIDGET_H

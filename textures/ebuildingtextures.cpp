@@ -753,6 +753,7 @@ eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
 
     fPier1(renderer),
     fPierOverlay(renderer),
+    fPierLoadOverlay(renderer),
     fTradingPostOverlay(renderer),
 
     fWarehouseUrchin(renderer),
@@ -3069,6 +3070,28 @@ void eBuildingTextures::loadPier() {
         // TR (96-127): 198-229
         for(int i = 198; i < 230; i++) {
             auto& slot = fPierOverlay.addTexture();
+            slot = loadFrame(i);
+        }
+
+        // load/unload anim: 4 real dir blocks, 34 frames each, no mirror
+        // bottomRight = S (0-33): 327-360
+        for(int i = 327; i < 361; i++) {
+            auto& slot = fPierLoadOverlay.addTexture();
+            slot = loadFrame(i);
+        }
+        // bottomLeft = W (34-67): 293-326
+        for(int i = 293; i < 327; i++) {
+            auto& slot = fPierLoadOverlay.addTexture();
+            slot = loadFrame(i);
+        }
+        // topLeft = N (68-101): 361-394
+        for(int i = 361; i < 395; i++) {
+            auto& slot = fPierLoadOverlay.addTexture();
+            slot = loadFrame(i);
+        }
+        // topRight = E (102-135): 395-428
+        for(int i = 395; i < 429; i++) {
+            auto& slot = fPierLoadOverlay.addTexture();
             slot = loadFrame(i);
         }
     }

@@ -206,6 +206,40 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
                 }
             }
         }
+        else if (const auto tp = dynamic_cast<TradePost *>(b.get()))
+        {
+            if (tp->tpType() == eTradePostType::pier &&
+                !dynamic_cast<ePier *>(tp->unpackBuilding()))
+            {
+                for (const auto &bb : buildings)
+                {
+                    const auto pier = dynamic_cast<ePier *>(bb.get());
+                    if (pier)
+                    {
+                        tp->setUnpackBuilding(pier);
+                        if (!pier->tradePost()) pier->setTradePost(tp);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (const auto pier = dynamic_cast<ePier *>(b.get()))
+        {
+            if (!pier->tradePost())
+            {
+                for (const auto &bb : buildings)
+                {
+                    const auto tp = dynamic_cast<TradePost *>(bb.get());
+                    if (tp && tp->tpType() == eTradePostType::pier)
+                    {
+                        pier->setTradePost(tp);
+                        if (!dynamic_cast<ePier *>(tp->unpackBuilding()))
+                            tp->setUnpackBuilding(pier);
+                        break;
+                    }
+                }
+            }
+        }
     }
     return buildings;
 }

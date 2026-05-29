@@ -3,6 +3,7 @@
 #include "emovetoaction.h"
 #include "ewaitaction.h"
 #include "fileIO/esavearchive.h"
+#include "buildings/epier.h"
 
 #include <vector>
 
@@ -14,6 +15,7 @@ bool TraderAction::decide() {
     if(r) return r;
 
     if(mFinishedTrade || !mTradePost || mNotFound) {
+        setPierLoading(false);
         const auto c = character();
         c->setActionType(eCharacterActionType::walk);
         goBack(mWalkable);
@@ -116,14 +118,22 @@ void TraderAction::trade() {
     c->setActionType(eCharacterActionType::stand);
 }
 
+void TraderAction::setPierLoading(const bool b) {
+    if(const auto p = dynamic_cast<ePier*>(mUnpackBuilding.get())) {
+        p->setLoading(b);
+    }
+}
+
 void TraderAction::tradeIncrement() {
     if(!mTradePost) return;
     const int bought = mTradePost->buy(mCash, mBought);
     const int sold = mTradePost->sell(mItems, mSold);
     if(bought == 0 && sold == 0) {
         mFinishedTrade = true;
+        setPierLoading(false);
     } else {
         mCash -= bought;
         mItems -= sold;
+        setPierLoading(true);
     }
 }
