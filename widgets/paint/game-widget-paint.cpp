@@ -3543,10 +3543,19 @@ void GameWidget::paintEvent(ePainter &p)
             const auto tiles = roadPath();
             if (!tiles.empty())
             {
+                const auto &baseTex = trrTexs.fBuildingBase;
+                const auto cid = mViewedCityId;
+                const auto pid = mBoard->personPlayer();
                 for (const auto t : tiles)
                 {
                     if (!t) continue;
+                    // Tile where a road can't go (building, water, etc): tint
+                    // red so the user sees it won't be built. Existing road is
+                    // fine. Mirrors the build loop's roadBlocked() test.
+                    const bool blocked = roadBlocked(t, cid, pid);
+                    if (blocked) baseTex->setColorMod(255, 0, 0);
                     drawBase(t);
+                    if (blocked) baseTex->clearColorMod();
                 }
                 drawBuildDims(buildW, buildH);
                 return;

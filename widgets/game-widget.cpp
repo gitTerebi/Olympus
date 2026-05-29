@@ -391,6 +391,31 @@ void GameWidget::syncBannerCursor()
     Cursors::set(any ? CursorType::sword : CursorType::defaultCursor);
 }
 
+void GameWidget::syncModeCursor()
+{
+    if(!mGm) return;
+    switch(mGm->mode()) {
+    case eBuildingMode::erase:
+        Cursors::set(CursorType::shovel);
+        break;
+    case eBuildingMode::repair:
+        Cursors::set(CursorType::repairMallet);
+        break;
+    case eBuildingMode::stamp:
+        Cursors::set(CursorType::stamp);
+        break;
+    case eBuildingMode::none:
+        // Banner/default cursor (or sword when soldiers selected).
+        syncBannerCursor();
+        break;
+    default:
+        // Every other build mode (road, roadblock, plain building, ...):
+        // drop any leftover tool cursor back to the default pointer.
+        Cursors::set(CursorType::defaultCursor);
+        break;
+    }
+}
+
 void GameWidget::createGameMenu()
 {
     mGm = new eGameMenu(window());
@@ -411,16 +436,7 @@ void GameWidget::createGameMenu()
     mGm->setModeChangedAction([this]()
                               {
         setPatrolBuilding(nullptr);
-        if(mGm->mode() == eBuildingMode::erase) {
-            Cursors::set(CursorType::shovel);
-        } else if(mGm->mode() == eBuildingMode::repair) {
-            Cursors::set(CursorType::repairMallet);
-        } else if(mGm->mode() == eBuildingMode::stamp) {
-            Cursors::set(CursorType::stamp);
-        }
-        else {
-            syncBannerCursor();
-        } });
+        syncModeCursor(); });
 
     const auto mm = mGm->miniMap();
     mm->setChangeAction([this, mm]()
@@ -1381,8 +1397,16 @@ void GameWidget::updateTipPositions()
 
 std::vector<eTile *> GameWidget::roadPath() const
 {
-    return RoadTool::tilesHoverToPress(mBoard, mPressedTX, mPressedTY,
+    return mRoadTool.tilesHoverToPress(mBoard, mPressedTX, mPressedTY,
                                        mHoverTX, mHoverTY);
+}
+
+bool GameWidget::roadBlocked(eTile *const t, const eCityId cid,
+                             const ePlayerId pid) const
+{
+    if (!t) return true;
+    if (t->hasRoad()) return false; // already road, fine to overlay
+    return !mBoard->canBuild(t->x(), t->y(), 1, 1, mEditorMode, cid, pid);
 }
 
 bool GameWidget::columnPath(std::vector<eOrientation> &path)
@@ -2282,6 +2306,7 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
         mPressedTY = ty;
         mPressedX = e.x();
         mPressedY = e.y();
+        mRoadTool.reset();
         const auto tile = mBoard->tile(tx, ty);
         if (mCreatingStampTemplate)
         {
@@ -2599,6 +2624,9 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
         mHoverY = e.y();
         pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
+        if(left && mGm->mode() == eBuildingMode::road) {
+            mRoadTool.noteDrag(mPressedTX, mPressedTY, mHoverTX, mHoverTY);
+        }
 
         if (mGm->mode() == eBuildingMode::stamp) {
             mHoverTiles.clear();
