@@ -192,7 +192,7 @@ SOURCES += \
         characters/actions/edieaction.cpp \
         characters/actions/dionysus-follow-action.cpp \
         characters/actions/fight-action.cpp \
-        characters/actions/efightingaction.cpp \
+        characters/actions/fighting-action.cpp \
         characters/actions/efirefighteraction.cpp \
         characters/actions/efollowaction.cpp \
         characters/actions/egodactcreator.cpp \
@@ -537,7 +537,7 @@ SOURCES += \
         spawners/edeerspawner.cpp \
         spawners/edisasterpoint.cpp \
         spawners/edisembarkpoint.cpp \
-        spawners/eentrypoint.cpp \
+        spawners/entry-point.cpp \
         spawners/eexitpoint.cpp \
         spawners/elandinvasionpoint.cpp \
         spawners/elandslidepoint.cpp \
@@ -589,7 +589,7 @@ SOURCES += \
         widgets/datawidgets/emilitarydatawidget.cpp \
         widgets/datawidgets/emythologydatawidget.cpp \
         widgets/datawidgets/e-overview-data-widget.cpp \
-        widgets/datawidgets/epopulationdatawidget.cpp \
+        widgets/datawidgets/population-data-widget.cpp \
         widgets/datawidgets/esciencedatawidget.cpp \
         widgets/datawidgets/storage-sidebar-panel.cpp \
         widgets/datawidgets/eviewmodebutton.cpp \
@@ -646,8 +646,8 @@ SOURCES += \
         widgets/egameloadingwidget.cpp \
         widgets/egamemainmenu.cpp \
         widgets/edifficultywidget.cpp \
-        widgets/egamemenu.cpp \
-        widgets/egamemenubase.cpp \
+        widgets/game-menu.cpp \
+        widgets/game-menu-base.cpp \
         widgets/epierdebugwidget.cpp \
         widgets/game-widget.cpp \
         widgets/game-widget-build.cpp \
@@ -905,7 +905,7 @@ HEADERS += \
     characters/actions/edieaction.h \
     characters/actions/dionysus-follow-action.h \
     characters/actions/fight-action.h \
-    characters/actions/efightingaction.h \
+    characters/actions/fighting-action.h \
     characters/actions/efirefighteraction.h \
     characters/actions/efollowaction.h \
     characters/gods/actions/god-action.h \
@@ -1315,7 +1315,7 @@ HEADERS += \
     spawners/edeerspawner.h \
     spawners/edisasterpoint.h \
     spawners/edisembarkpoint.h \
-    spawners/eentrypoint.h \
+    spawners/entry-point.h \
     spawners/eexitpoint.h \
     spawners/elandinvasionpoint.h \
     spawners/elandslidepoint.h \
@@ -2818,7 +2818,7 @@ HEADERS += \
     widgets/datawidgets/emilitarydatawidget.h \
     widgets/datawidgets/emythologydatawidget.h \
     widgets/datawidgets/e-overview-data-widget.h \
-    widgets/datawidgets/epopulationdatawidget.h \
+    widgets/datawidgets/population-data-widget.h \
     widgets/datawidgets/esciencedatawidget.h \
     widgets/datawidgets/storage-sidebar-panel.h \
     widgets/datawidgets/eviewmodebutton.h \
@@ -2875,8 +2875,8 @@ HEADERS += \
     widgets/egameloadingwidget.h \
     widgets/egamemainmenu.h \
     widgets/edifficultywidget.h \
-    widgets/egamemenu.h \
-    widgets/egamemenubase.h \
+    widgets/game-menu.h \
+    widgets/game-menu-base.h \
     widgets/game-widget.h \
     widgets/epierdebugwidget.h \
     widgets/egiftdialog.h \

@@ -24,7 +24,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 
 #include "widgets/ebuildingmode.h"
 #include "widgets/buildtools/road-tool.h"
-#include "widgets/egamemenu.h"
+#include "widgets/game-menu.h"
 #include "engine/stamps/estamptool.h"
 #include "widgets/earmymenu.h"
 #include "egamemainmenu.h"
@@ -492,7 +492,7 @@ private:
     std::deque<eSavedMessage> mSavedMsgs;
     eMessageListWidget* mMsgListWidget = nullptr;
     eTerrainEditMenu* mTem = nullptr;
-    eGameMenu* mGm = nullptr;
+    GameMenu* mGm = nullptr;
     eWidget* mPierDebugPanel = nullptr;
     eArmyMenu* mAm = nullptr;
     stdsptr<eStampTool> mStampTool;

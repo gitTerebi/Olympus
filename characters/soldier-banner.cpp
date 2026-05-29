@@ -170,7 +170,7 @@ stdsptr<eSoldier> SoldierBanner::createSoldier(eTile* const t) {
     c->setOnCityId(onCityId());
     const auto s = c->ref<eSoldier>();
     s->setBanner(this);
-    const auto a = e::make_shared<eSoldierAction>(s.get());
+    const auto a = e::make_shared<SoldierAction>(s.get());
     c->setAction(a);
     c->changeTile(t);
     c->setActionType(eCharacterActionType::stand);
@@ -993,7 +993,7 @@ void SoldierBanner::updateCount() {
             case eBannerType::trireme:
                 return;
             }
-            const auto home = eSoldierAction::sFindHome(cht, cid, mBoard);
+            const auto home = SoldierAction::sFindHome(cht, cid, mBoard);
             if(!home) break;
             createSoldier(home->centerTile());
         }

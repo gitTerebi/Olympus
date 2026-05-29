@@ -52,7 +52,7 @@ private:
     bool hasRequiredForLevel(const int level) const;
     bool canStayAtLevel(const int level) const;
     bool hasRequiredForLevelImpl(const int level, const bool evolve) const;
-    void updateLevel();
+    void updateLevel(const int by);
     void updateSatisfaction();
 
     void spawnCharacter(const stdsptr<eCharacter>& c);
@@ -70,7 +70,6 @@ private:
 
     int mUpdateWater = 0;
     int mUpdateHygiene = 8;
-    int mUpdateLevel = 0;
 
     int mWater = 0;
     int mHygiene = 100; // 0-100
@@ -82,7 +81,7 @@ private:
     int mSpawnDisg = 0;
     stdptr<eDisgruntled> mDisg;
 
-    int mDevolveDelay = 0;
+    int mDevolveDelay = 0; // accumulated ticks below level req
 };
 
 #endif // ESMALLHOUSE_H

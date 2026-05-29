@@ -6,7 +6,7 @@ class eWriteStream;
 class eSaveArchive;
 
 class eCharacter;
-class eFightingAction;
+class FightingAction;
 
 class eFightingCharacter {
 public:
@@ -14,7 +14,7 @@ public:
 
     void serializeFields(eSaveArchive& ar);
 
-    eFightingAction* fightingAction() const;
+    FightingAction* fightingAction() const;
 private:
     eCharacter* const mChar;
 };

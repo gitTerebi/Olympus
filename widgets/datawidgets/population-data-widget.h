@@ -1,5 +1,5 @@
-﻿#ifndef EPOPULATIONDATAWIDGET_H
-#define EPOPULATIONDATAWIDGET_H
+﻿#ifndef POPULATION_DATA_WIDGET_H
+#define POPULATION_DATA_WIDGET_H
 
 #include "edatawidget.h"
 
@@ -9,7 +9,7 @@ class eMultiLineLabel;
 class GameWidget;
 class eViewModeButton;
 
-class ePopulationDataWidget : public eDataWidget {
+class PopulationDataWidget : public eDataWidget {
 public:
     using eDataWidget::eDataWidget;
 
@@ -29,4 +29,4 @@ private:
     eWidget* mNewcomersW = nullptr;
 };
 
-#endif // EPOPULATIONDATAWIDGET_H
+#endif // POPULATION_DATA_WIDGET_H

@@ -24,7 +24,7 @@
 #include "buildings/eroad.h"
 #include "etilehelper.h"
 
-#include "spawners/eentrypoint.h"
+#include "spawners/entry-point.h"
 #include "spawners/eexitpoint.h"
 #include "spawners/elandinvasionpoint.h"
 #include "spawners/eseainvasionpoint.h"
@@ -832,7 +832,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
 
     const auto entryTile = tileMap[entryPtY][entryPtX].fTile;
     if(entryTile) {
-        const auto b = std::make_shared<eEntryPoint>(
+        const auto b = std::make_shared<EntryPoint>(
                            1, entryTile, board);
         entryTile->addBanner(b);
     }

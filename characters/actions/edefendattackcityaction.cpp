@@ -229,7 +229,7 @@ void eDefendAttackCityAction::increment(const int by) {
                         const auto o = sAngleOrientation(mAngle);
                         c->setOrientation(o);
                         const auto ss = static_cast<eSoldier*>(cc.get());
-                        eSoldierAction::sSignalBeingAttack(ss, c, brd);
+                        SoldierAction::sSignalBeingAttack(ss, c, brd);
                         return;
                     }
                 }

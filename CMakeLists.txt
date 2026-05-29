@@ -187,7 +187,7 @@ set(SOURCES
     characters/actions/dionysus-follow-action.cpp
     characters/actions/combat-timing.cpp
     characters/actions/fight-action.cpp
-    characters/actions/efightingaction.cpp
+    characters/actions/fighting-action.cpp
     characters/actions/efirefighteraction.cpp
     characters/actions/efollowaction.cpp
     characters/actions/egodactcreator.cpp
@@ -534,7 +534,7 @@ set(SOURCES
     spawners/edeerspawner.cpp
     spawners/edisasterpoint.cpp
     spawners/edisembarkpoint.cpp
-    spawners/eentrypoint.cpp
+    spawners/entry-point.cpp
     spawners/eexitpoint.cpp
     spawners/elandinvasionpoint.cpp
     spawners/elandslidepoint.cpp
@@ -586,7 +586,7 @@ set(SOURCES
     widgets/datawidgets/emilitarydatawidget.cpp
     widgets/datawidgets/emythologydatawidget.cpp
     widgets/datawidgets/overview-data-widget.cpp
-    widgets/datawidgets/epopulationdatawidget.cpp
+    widgets/datawidgets/population-data-widget.cpp
     widgets/datawidgets/esciencedatawidget.cpp
     widgets/datawidgets/storage-sidebar-panel.cpp
     widgets/datawidgets/eviewmodebutton.cpp
@@ -648,8 +648,8 @@ set(SOURCES
     widgets/egameloadingwidget.cpp
     widgets/egamemainmenu.cpp
     widgets/edifficultywidget.cpp
-    widgets/egamemenu.cpp
-    widgets/egamemenubase.cpp
+    widgets/game-menu.cpp
+    widgets/game-menu-base.cpp
     widgets/game-widget.cpp
     widgets/epierdebugwidget.cpp
     widgets/toasts/toast-manager.cpp

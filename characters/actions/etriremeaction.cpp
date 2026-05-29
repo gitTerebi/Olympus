@@ -10,7 +10,7 @@
 
 eTriremeAction::eTriremeAction(eTriremeWharf* const home,
                                eCharacter* const trireme) :
-    eFightingAction(trireme, eCharActionType::triremeAction),
+    FightingAction(trireme, eCharActionType::triremeAction),
     mHome(home) {}
 
 bool eTriremeAction::decide() {
@@ -19,12 +19,12 @@ bool eTriremeAction::decide() {
 
 void eTriremeAction::increment(const int by) {
     const auto r = lookForEnemy(by);
-    if(r == eLookForEnemyState::dead) return;
+    if(r == LookForEnemyState::dead) return;
     eComplexAction::increment(by);
 }
 
 void eTriremeAction::serializeFields(eSaveArchive& ar) {
-    eFightingAction::serializeFields(ar);
+    FightingAction::serializeFields(ar);
     ar.buildingAsField("home", &board(), mHome);
     ar.field("stage", mStage);
     ar.field("leavingNotified", mLeavingNotified);
@@ -32,7 +32,7 @@ void eTriremeAction::serializeFields(eSaveArchive& ar) {
 
 void eTriremeAction::resumeFromSavedState() {
     if(isAttacking()) {
-        eFightingAction::resumeFromSavedState();
+        FightingAction::resumeFromSavedState();
         return;
     }
     switch(mStage) {
@@ -73,7 +73,7 @@ eTile* eTriremeAction::exitPoint() const {
 void eTriremeAction::markLeaving() {
     if(mLeavingNotified || !mHome) return;
     const auto c = character();
-    auto& board = eFightingAction::board();
+    auto& board = FightingAction::board();
     const auto trireme = static_cast<eTrireme*>(c);
     board.deselectTrireme(trireme);
     mHome->triremeLeaving();
@@ -82,7 +82,7 @@ void eTriremeAction::markLeaving() {
 
 void eTriremeAction::goAbroad() {
     const auto c = character();
-    auto& board = eFightingAction::board();
+    auto& board = FightingAction::board();
     const auto trireme = static_cast<eTrireme*>(c);
     mStage = eTriremeActionStage::abroad;
     markLeaving();

@@ -1,7 +1,7 @@
 ﻿#ifndef ETERRAINEDITMENU_H
 #define ETERRAINEDITMENU_H
 
-#include "egamemenubase.h"
+#include "game-menu-base.h"
 
 #include "engine/etile.h"
 #include "echeckablebutton.h"
@@ -79,9 +79,9 @@ enum class eBrushType {
     square
 };
 
-class eTerrainEditMenu : public eGameMenuBase {
+class eTerrainEditMenu : public GameMenuBase {
 public:
-    using eGameMenuBase::eGameMenuBase;
+    using GameMenuBase::GameMenuBase;
 
     void initialize(GameWidget* const gw,
                     GameBoard* const board);

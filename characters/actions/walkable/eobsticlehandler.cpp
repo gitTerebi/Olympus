@@ -13,7 +13,7 @@ stdsptr<eObsticleHandler> eObsticleHandler::sCreate(
     case eObsticleHandlerType::god:
         return std::make_shared<eGodObsticleHandler>(board);
     case eObsticleHandlerType::soldier:
-        return std::make_shared<eSoldierObsticleHandler>(board);
+        return std::make_shared<SoldierObsticleHandler>(board);
     }
     return nullptr;
 }

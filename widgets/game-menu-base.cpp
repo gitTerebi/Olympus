@@ -1,8 +1,8 @@
-#include "egamemenubase.h"
+#include "game-menu-base.h"
 
 #include "datawidgets/edatawidget.h"
 
-void eGameMenuBase::initialize() {
+void GameMenuBase::initialize() {
     int x;
     int y;
     switch(resolution().uiScale()) {
@@ -30,7 +30,7 @@ void eGameMenuBase::initialize() {
     addWidget(mButtonsWidget);
 }
 
-eCheckableButton* eGameMenuBase::addButton(
+eCheckableButton* GameMenuBase::addButton(
         const eTextureCollection& texs,
         const eWid& w) {
     const auto b = eCheckableButton::sCreate(texs, window(), mButtonsWidget);
@@ -39,12 +39,12 @@ eCheckableButton* eGameMenuBase::addButton(
     return b;
 }
 
-void eGameMenuBase::connectAndLayoutButtons() {
+void GameMenuBase::connectAndLayoutButtons() {
     connectButtons();
     layoutButtons();
 }
 
-void eGameMenuBase::layoutButtons() {
+void GameMenuBase::layoutButtons() {
     double margin;
     switch(resolution().uiScale()) {
     case eUIScale::tiny:
@@ -68,7 +68,7 @@ void eGameMenuBase::layoutButtons() {
     mButtonsWidget->fitContent();
 }
 
-void eGameMenuBase::connectButtons() {
+void GameMenuBase::connectButtons() {
     const int iMax = mButtons.size();
     for(int i = 0; i < iMax; i++) {
         const auto b = mButtons[i];
@@ -95,32 +95,32 @@ void eGameMenuBase::connectButtons() {
     }
 }
 
-void eGameMenuBase::selectTab(const int i) {
+void GameMenuBase::selectTab(const int i) {
     if(i < 0 || i >= (int)mButtons.size()) return;
     mButtons[i]->check();
 }
 
-bool eGameMenuBase::mousePressEvent(const eMouseEvent& e) {
+bool GameMenuBase::mousePressEvent(const eMouseEvent& e) {
     (void)e;
     return true;
 }
 
-bool eGameMenuBase::mouseReleaseEvent(const eMouseEvent& e) {
+bool GameMenuBase::mouseReleaseEvent(const eMouseEvent& e) {
     (void)e;
     return true;
 }
 
-bool eGameMenuBase::mouseMoveEvent(const eMouseEvent& e) {
+bool GameMenuBase::mouseMoveEvent(const eMouseEvent& e) {
     (void)e;
     return false;
 }
 
-bool eGameMenuBase::mouseEnterEvent(const eMouseEvent& e) {
+bool GameMenuBase::mouseEnterEvent(const eMouseEvent& e) {
     (void)e;
     return true;
 }
 
-bool eGameMenuBase::mouseLeaveEvent(const eMouseEvent& e) {
+bool GameMenuBase::mouseLeaveEvent(const eMouseEvent& e) {
     (void)e;
     return true;
 }

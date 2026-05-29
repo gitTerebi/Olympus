@@ -11,7 +11,7 @@
 
 void eTerrainEditMenu::initialize(GameWidget* const gw,
                                   GameBoard* const board) {
-    eGameMenuBase::initialize();
+    GameMenuBase::initialize();
 
     int iRes;
     int mult;

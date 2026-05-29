@@ -1,5 +1,5 @@
-#ifndef EFIGHTINGACTION_H
-#define EFIGHTINGACTION_H
+#ifndef FIGHTING_ACTION_H
+#define FIGHTING_ACTION_H
 
 #include "ecomplexaction.h"
 
@@ -8,11 +8,11 @@
 
 class eSaveArchive;
 
-class eAttackTarget {
+class AttackTarget {
 public:
-    eAttackTarget();
-    eAttackTarget(eCharacter* const c);
-    eAttackTarget(eBuilding* const b);
+    AttackTarget();
+    AttackTarget(eCharacter* const c);
+    AttackTarget(eBuilding* const b);
 
     eTile* tile() const;
     bool valid() const;
@@ -36,16 +36,16 @@ private:
     stdptr<eBuilding> mB;
 };
 
-enum class eLookForEnemyState {
+enum class LookForEnemyState {
     dead, attacking, none
 };
 
-enum class eFightingSavedMove {
+enum class FightingSavedMove {
     none, goTo, waitGoHome
 };
 
-class eFightingAction : public eComplexAction {
-    friend class eSoldierObsticleHandler;
+class FightingAction : public eComplexAction {
+    friend class SoldierObsticleHandler;
 public:
     using eComplexAction::eComplexAction;
 
@@ -56,7 +56,15 @@ public:
                                    const int ttx, const int tty,
                                    GameBoard& brd);
 
-    eLookForEnemyState lookForEnemy(const int by);
+    LookForEnemyState lookForEnemy(const int by);
+
+    // How far a ranged unit notices an enemy worth engaging: its firing range
+    // plus a wide-awareness margin. The unit detects this far but only steps a
+    // few tiles toward a firing position; it holds and waits rather than
+    // chasing. Used by both the reposition scan and the banner-return gate so
+    // the two never drift. range 0 (melee) keeps the old tight 3-tile box.
+    static int sRangedDetectRange(const int range)
+    { return range > 0 ? range + 8 : 3; }
 
     using eAction = std::function<void()>;
     void goTo(const int fx, const int fy,
@@ -78,6 +86,12 @@ protected:
     void cancelAttack();
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
+
+    // Anchor tile a ranged unit fires from. It steps at most a couple tiles
+    // from here to bring an enemy into range, then holds — it never walks to
+    // the enemy tile. Default: the unit's current tile. Soldiers override to
+    // return their formation slot so they hold the banner line.
+    virtual eTile* repositionAnchor() const;
 private:
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     bool attackBuilding(eTile* const t, const bool range);
@@ -98,19 +112,19 @@ private:
     bool mAttack = false;
     bool mAttackRanged = false;
     bool mOverwrittableAction = false;
-    eAttackTarget mAttackTarget;
-    eFightingSavedMove mSavedMove = eFightingSavedMove::none;
+    AttackTarget mAttackTarget;
+    FightingSavedMove mSavedMove = FightingSavedMove::none;
     int mSavedMoveX = 0;
     int mSavedMoveY = 0;
     int mSavedMoveDistance = 0;
     int mWaitGoHomeRemaining = 0;
 };
 
-class eSA_goToFinish : public eCharActFunc {
+class SA_goToFinish : public eCharActFunc {
 public:
-    eSA_goToFinish(GameBoard& board) :
+    SA_goToFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_goToFinish) {}
-    eSA_goToFinish(GameBoard& board, eCharacter* const c) :
+    SA_goToFinish(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::SA_goToFinish),
         mCptr(c) {}
 
@@ -127,11 +141,11 @@ private:
     stdptr<eCharacter> mCptr;
 };
 
-class eSA_waitAndGoHomeFinish : public eCharActFunc {
+class SA_waitAndGoHomeFinish : public eCharActFunc {
 public:
-    eSA_waitAndGoHomeFinish(GameBoard& board) :
+    SA_waitAndGoHomeFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish) {}
-    eSA_waitAndGoHomeFinish(GameBoard& board, eFightingAction* const a) :
+    SA_waitAndGoHomeFinish(GameBoard& board, FightingAction* const a) :
         eCharActFunc(board, eCharActFuncType::SA_waitAndGoHomeFinish),
         mAptr(a) {}
 
@@ -145,7 +159,7 @@ protected:
         ar.characterActionAsField("target", &board(), mAptr);
     }
 private:
-    stdptr<eFightingAction> mAptr;
+    stdptr<FightingAction> mAptr;
 };
 
-#endif // EFIGHTINGACTION_H
+#endif // FIGHTING_ACTION_H

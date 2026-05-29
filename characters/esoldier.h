@@ -4,7 +4,7 @@
 #include "efightingpatroler.h"
 #include "efightingcharacter.h"
 
-class eSoldierAction;
+class SoldierAction;
 class SoldierBanner;
 class eSaveArchive;
 
@@ -19,7 +19,7 @@ public:
 
     void beingKilled() override;
 
-    eSoldierAction* soldierAction() const;
+    SoldierAction* soldierAction() const;
 
     SoldierBanner* banner() const;
     void setBanner(SoldierBanner* const b);

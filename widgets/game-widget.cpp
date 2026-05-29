@@ -89,7 +89,7 @@ void formatStoredMessage(eMessage& msg,
 
 #include "textures/egametextures.h"
 
-#include "egamemenu.h"
+#include "game-menu.h"
 #include "eminimap.h"
 
 #include "characters/actions/eanimalaction.h"
@@ -418,7 +418,7 @@ void GameWidget::syncModeCursor()
 
 void GameWidget::createGameMenu()
 {
-    mGm = new eGameMenu(window());
+    mGm = new GameMenu(window());
     const auto viewGoals = [this]()
     {
         showGoals();

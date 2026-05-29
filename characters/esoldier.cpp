@@ -64,7 +64,7 @@ void eSoldier::serializeFields(eSaveArchive& ar) {
     ar.soldierBannerField("banner", &getBoard(), mBanner);
 }
 
-eSoldierAction *eSoldier::soldierAction() const {
+SoldierAction *eSoldier::soldierAction() const {
     const auto a = action();
-    return dynamic_cast<eSoldierAction*>(a);
+    return dynamic_cast<SoldierAction*>(a);
 }
