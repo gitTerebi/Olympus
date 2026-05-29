@@ -109,7 +109,7 @@ int eNumbers::sScheduledWalkerSpawnCooldown;
 int eNumbers::sDestinationWalkerSpawnCooldown;
 int eNumbers::sCulturePatrolSpawnCooldown;
 int eNumbers::sTheaterPatrolSpawnCooldown;
-int eNumbers::sCultureActiveTime;
+int eNumbers::sCultureShowDays;
 
 int eNumbers::sArtisanWaitTime;
 int eNumbers::sArtisanBuildTime;
@@ -421,7 +421,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("destination_walker_spawn_cooldown_i", sDestinationWalkerSpawnCooldown, 10000, 1, 1000000);
     loadI("culture_patrol_spawn_cooldown_i", sCulturePatrolSpawnCooldown, 10000, 0, 1000000);
     loadI("theater_patrol_spawn_cooldown_i", sTheaterPatrolSpawnCooldown, 5000, 0, 1000000);
-    loadI("culture_active_time_i", sCultureActiveTime, 250000, 0, 1000000);
+    loadI("culture_show_days_i", sCultureShowDays, 96, 0, 100000);
 
     loadI("artisan_wait_time_i", sArtisanWaitTime, 2000, 1, 1000000);
     loadI("artisan_build_time_i", sArtisanBuildTime, 6000, 1, 1000000);

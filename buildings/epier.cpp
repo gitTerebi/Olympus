@@ -99,6 +99,15 @@ void ePier::collapse()
     }
 }
 
+void ePier::erase()
+{
+    if (mTradePost)
+    {
+        mTradePost->eBuilding::erase();
+    }
+    eBuilding::erase();
+}
+
 void ePier::setTradePost(eBuilding *const b)
 {
     mTradePost = b;

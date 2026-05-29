@@ -18,6 +18,7 @@ eSounds* eSounds::sInstance = nullptr;
 namespace {
 bool sViewportLimitedCombatSound(const eCharacterType type) {
     return type == eCharacterType::disgruntled ||
+           type == eCharacterType::watchman ||
            type == eCharacterType::hunter ||
            type == eCharacterType::urchinGatherer ||
            eIsWildAnimal(type);
@@ -946,6 +947,7 @@ void eSounds::playAttackSound(const eCharacterType type) {
 }
 
 void eSounds::playDieSound(eCharacter* const c) {
+    if(!sCanPlayViewportLimitedCombatSound(c)) return;
     const auto ct = c->type();
     switch(ct) {
     case eCharacterType::actor:

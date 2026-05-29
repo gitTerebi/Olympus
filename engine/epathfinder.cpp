@@ -58,6 +58,7 @@ bool ePathFinder::findPath(const SDL_Rect& tileBRect,
             mData.fDistance = newDist;
             mData.fFinalX = ttx;
             mData.fFinalY = tty;
+            if(!finishOnFound) mData.fFoundAll.push_back({tt.first, newDist});
             if(finishOnFound) return;
         }
         if(!mWalkable(tt.first)) return;

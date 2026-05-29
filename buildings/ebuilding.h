@@ -315,7 +315,8 @@ public:
     eTile* tileNeighbour(const eMoveDirection o,
                          const eTileValidator& v) const;
     std::vector<eTile*> surroundingRoad(
-            const bool diagonal, const bool jumpAvenue) const;
+            const bool diagonal, const bool jumpAvenue,
+            const bool includeRoadblock = false) const;
 
     int seed() const { return mSeed; }
     void setSeed(const int s) { mSeed = s; }

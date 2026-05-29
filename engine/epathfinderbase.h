@@ -2,6 +2,7 @@
 #define EPATHFINDERBASE_H
 
 #include <functional>
+#include <vector>
 #include <SDL2/SDL_rect.h>
 
 #include "eorientation.h"
@@ -19,6 +20,9 @@ struct ePathFindData {
     int fDistance = -1;
     int fFinalX = -1;
     int fFinalY = -1;
+    // in findAll mode: every tile the finish test matched, with its road
+    // distance from the start (in discovery order).
+    std::vector<std::pair<eTileBase*, int>> fFoundAll;
 };
 
 enum class ePathFinderMode {

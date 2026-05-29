@@ -9,7 +9,6 @@ class eCharacter;
 
 struct eTargetData {
     int fSpawnTime;
-    int fLastId;
     stdptr<eCharacter> fWalker;
 };
 
@@ -36,6 +35,15 @@ public:
     void timeChanged(const int by) override;
 
     const eTargets& targets() const { return mTargets; }
+
+    // Augustus-style dispatch: target score = straight-line distance + load
+    // penalty; pick the single lowest. shared by dispatch (spawn) and the
+    // patrol target highlight so the preview shows where the next walker goes.
+    // mirrors Augustus 2*days_left: a recently-served venue is penalized so
+    // the next walker prefers an idle one.
+    static int sLoadPenalty(const int showDays);
+    // distance bias (tiles) added per remaining show-day at a target.
+    static constexpr int sLoadBias = 2;
 
 protected:
     void serializeFields(eSaveArchive& ar) override;

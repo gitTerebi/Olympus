@@ -34,10 +34,10 @@ ePatrolTarget::ePatrolTarget(GameBoard& board,
 }
 
 void ePatrolTarget::arrived() {
-    const bool startPatrolCooldown = mSpawnPool == 0 && patroler() == nullptr;
-    mSpawnPool++;
-    mActiveTimer = eNumbers::sCultureActiveTime;
-    if(startPatrolCooldown) resetSpawnTimer();
+    const bool wasIdle = !isActive();
+    mShowDays = eNumbers::sCultureShowDays;
+    mDayAccum = 0;
+    if(wasIdle) resetSpawnTimer();
     setSpawnPatrolers(true);
 }
 
@@ -46,23 +46,24 @@ int ePatrolTarget::spawnCooldown() const {
 }
 
 void ePatrolTarget::timeChanged(const int by) {
-    const bool hadBefore = mHadPatroler;
     ePatrolBuilding::timeChanged(by);
-    const bool hasNow = patroler() != nullptr;
-    if(hasNow && !hadBefore) {
-        if(mSpawnPool > 0) mSpawnPool--;
-        if(mSpawnPool <= 0) setSpawnPatrolers(false);
-    }
-    mHadPatroler = hasNow;
-    if(mActiveTimer > 0) {
-        mActiveTimer -= by;
-        if(mActiveTimer < 0) mActiveTimer = 0;
+    if(mShowDays > 0) {
+        mDayAccum += by;
+        const int dayLen = eNumbers::sDayLength;
+        if(dayLen > 0) {
+            const int days = mDayAccum / dayLen;
+            if(days > 0) {
+                mDayAccum -= days * dayLen;
+                mShowDays -= days;
+                if(mShowDays < 0) mShowDays = 0;
+            }
+        }
+        if(mShowDays <= 0) setSpawnPatrolers(false); // timer expired, stop
     }
 }
 
 void ePatrolTarget::serializeFields(eSaveArchive& ar) {
     ePatrolBuildingBase::serializeFields(ar);
-    ar.field("spawnPool", mSpawnPool);
-    ar.field("hadPatroler", mHadPatroler);
-    ar.field("activeTimer", mActiveTimer);
+    ar.field("showDays", mShowDays);
+    // mDayAccum is a transient sub-day remainder; not serialized.
 }

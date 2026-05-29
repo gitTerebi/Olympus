@@ -15,6 +15,9 @@ public:
     using eFinishFunc = std::function<void(const ePath&)>;
     using eFailFunc = std::function<void()>;
     using eTileDistance = std::function<int(eTileBase* const)>;
+    // (tileX, tileY, road distance) for every matched tile in findAll mode
+    using eFoundTiles = std::vector<std::pair<std::pair<int, int>, int>>;
+    using eFoundFunc = std::function<void(const eFoundTiles&)>;
     ePathFindTask(const eCityId cid,
                   const SDL_Rect& tileBRect,
                   const eTileGetter& startTile,
@@ -27,6 +30,10 @@ public:
                   const eTileDistance& distance = nullptr,
                   const eTileGetter& endTile = nullptr,
                   const bool findAll = false);
+
+    // optional: receives all matched tiles (with road distance) on finish.
+    // only populated in findAll mode.
+    void setFoundFunc(const eFoundFunc& f) { mFoundFunc = f; }
 protected:
     void run(eThreadBoard& data);
     void finish();
@@ -45,8 +52,11 @@ private:
 
     void runImpl(eThreadBoard& data, ePathFinderBase& pf0);
 
+    eFoundFunc mFoundFunc;
+
     bool mR{false};
     ePath mPath;
+    eFoundTiles mFound;
 };
 
 #endif // EPATHFINDTASK_H
