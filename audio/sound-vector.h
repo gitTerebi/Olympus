@@ -37,7 +37,7 @@ private:
     // limit how many copies of this sound layer at once, so e.g. 200 units
     // firing in the same instant play a thin volley, not 200 stacked sounds
     std::vector<unsigned int> mPlayTicks;
-    static constexpr int kMaxConcurrent = 5;
+    static constexpr int kMaxConcurrent = 3;
     static constexpr unsigned int kConcurrentWindowMs = 150;
 };
 

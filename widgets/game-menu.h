@@ -1,7 +1,7 @@
-﻿#ifndef EGAMEMENU_H
-#define EGAMEMENU_H
+﻿#ifndef GAME_MENU_H
+#define GAME_MENU_H
 
-#include "egamemenubase.h"
+#include "game-menu-base.h"
 #include "ebuildingmode.h"
 
 class eCheckableButton;
@@ -9,7 +9,7 @@ class eTextureCollection;
 class eInterfaceTextures;
 class eButton;
 class GameBoard;
-class ePopulationDataWidget;
+class PopulationDataWidget;
 class eEmploymentDataWidget;
 class eAdminDataWidget;
 class StorageSidebarPanel;
@@ -44,10 +44,10 @@ struct eSPR {
     int fCity = -1;
 };
 
-class eGameMenu : public eGameMenuBase {
+class GameMenu : public GameMenuBase {
 public:
-    using eGameMenuBase::eGameMenuBase;
-    ~eGameMenu();
+    using GameMenuBase::GameMenuBase;
+    ~GameMenu();
     void initialize(GameBoard* const b,
                     const eAction& goalsView);
 
@@ -118,7 +118,7 @@ private:
     eMessageListWidget* mMsgListW = nullptr;
     eLabel* mMsgBadge = nullptr;
 
-    ePopulationDataWidget* mPopDataW = nullptr;
+    PopulationDataWidget* mPopDataW = nullptr;
     eEmploymentDataWidget* mEmplDataW = nullptr;
     eHusbandryDataWidget* mHusbDataW = nullptr;
     StorageSidebarPanel* mStrgDataW = nullptr;
@@ -155,4 +155,4 @@ private:
     bool mMsgListWasPaused = false;
 };
 
-#endif // EGAMEMENU_H
+#endif // GAME_MENU_H

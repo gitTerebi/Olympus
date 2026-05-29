@@ -1,15 +1,15 @@
 #include "efightingcharacter.h"
 
-#include "actions/efightingaction.h"
+#include "actions/fighting-action.h"
 #include "fileIO/esavearchive.h"
 #include "echaracter.h"
 
 eFightingCharacter::eFightingCharacter(eCharacter * const c) :
     mChar(c) {}
 
-eFightingAction* eFightingCharacter::fightingAction() const {
+FightingAction* eFightingCharacter::fightingAction() const {
     const auto a = mChar->action();
-    return dynamic_cast<eFightingAction*>(a);
+    return dynamic_cast<FightingAction*>(a);
 }
 
 void eFightingCharacter::serializeFields(eSaveArchive& ar) {

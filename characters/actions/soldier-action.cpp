@@ -14,21 +14,33 @@
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "ekillcharacterfinishfail.h"
 
-eSoldierAction::eSoldierAction(eCharacter* const c) :
-    eFightingAction(c, eCharActionType::soldierAction) {}
+SoldierAction::SoldierAction(eCharacter* const c) :
+    FightingAction(c, eCharActionType::soldierAction) {}
 
-bool eSoldierAction::decide() {
+bool SoldierAction::decide() {
     return true;
 }
 
-void eSoldierAction::increment(const int by) {
+eTile* SoldierAction::repositionAnchor() const {
+    const auto c = character();
+    const auto s = static_cast<eSoldier*>(c);
+    const auto b = s->banner();
+    if(!b) return c->tile();
+    const auto slot = b->place(s);
+    // Ranged soldiers fire from their formation slot, stepping out at most a
+    // couple tiles to a tile that can shoot. Fall back to the current tile if
+    // no slot is assigned.
+    return slot ? slot : c->tile();
+}
+
+void SoldierAction::increment(const int by) {
     if(mSpreadPeriod && currentAction()) {
         return eComplexAction::increment(by);
     } else {
         mSpreadPeriod = false;
     }
 
-    if(mStage == eSoldierActionStage::banner && currentAction()) {
+    if(mStage == SoldierActionStage::banner && currentAction()) {
         return eComplexAction::increment(by);
     }
 
@@ -44,36 +56,73 @@ void eSoldierAction::increment(const int by) {
 
     const auto r = lookForEnemy(by);
 
-    if(r != eLookForEnemyState::none) return;
+    if(r != LookForEnemyState::none) return;
 
-    if(!currentAction()) {
-        mGoToBannerCountdown -= by;
-        if(mGoToBannerCountdown < 0) {
-            mGoToBannerCountdown = 250;
-            const stdptr<eSoldierAction> tptr(this);
-            const auto taskFinished = [tptr]() {
-                if(!tptr) return;
-                tptr->mGoToBannerCountdown = 100;
-            };
-            const auto taskFindFailed = [tptr]() {
-                if(!tptr) return;
-                tptr->mGoToBannerCountdown = 1000;
-            };
-
-            const auto c = character();
-            const auto s = static_cast<eSoldier*>(c);
-            const auto b = s->banner();
-            if(b) {
-                goBackToBanner(b->soldierOrientation(),
-                               taskFindFailed, taskFinished);
-            }
-        }
-    }
+    tickBannerReturn(by);
 
     eComplexAction::increment(by);
 }
 
-bool eSoldierAction::tooFarFromBanner() const {
+void SoldierAction::tickBannerReturn(const int by) {
+    // The idle re-form: when a soldier sits with no action, a countdown ticks
+    // and eventually walks it back to its formation slot. This is the "banner
+    // pull". It must NOT fire during combat — in the gap between combat scans
+    // lookForEnemy returns none, and an unguarded pull would drag a ranged unit
+    // off its firing tile, giving the walk-forward-walk-back loop. enemyNear()
+    // gates it: hold while any enemy is in the ranged detect box.
+    if(currentAction() || enemyNear()) return;
+
+    mGoToBannerCountdown -= by;
+    if(mGoToBannerCountdown >= 0) return;
+    mGoToBannerCountdown = 250;
+
+    const stdptr<SoldierAction> tptr(this);
+    const auto taskFinished = [tptr]() {
+        if(!tptr) return;
+        tptr->mGoToBannerCountdown = 100;
+    };
+    const auto taskFindFailed = [tptr]() {
+        if(!tptr) return;
+        tptr->mGoToBannerCountdown = 1000;
+    };
+
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    if(b) {
+        goBackToBanner(b->soldierOrientation(),
+                       taskFindFailed, taskFinished);
+    }
+}
+
+bool SoldierAction::enemyNear() const {
+    const auto c = character();
+    const auto ct = c->tile();
+    if(!ct) return false;
+    const int tx = ct->x();
+    const int ty = ct->y();
+    const auto tid = c->teamId();
+    auto& brd = c->getBoard();
+    // Wide awareness: hold position while any enemy is within the ranged detect
+    // box so the unit waits for it to close rather than being yanked home
+    // between combat scans. Shares the constant with the reposition scan.
+    const int hrange = FightingAction::sRangedDetectRange(c->range());
+    for(int i = -hrange; i <= hrange; i++) {
+        for(int j = -hrange; j <= hrange; j++) {
+            const auto t = brd.tile(tx + i, ty + j);
+            if(!t) continue;
+            for(const auto& cc : t->characters()) {
+                if(cc->dead()) continue;
+                if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
+                if(!cc->isSoldier() && cc->type() != eCharacterType::wolf &&
+                   !cc->isImmortal()) continue;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool SoldierAction::tooFarFromBanner() const {
     const auto c = character();
     const auto s = static_cast<eSoldier*>(c);
     const auto b = s->banner();
@@ -84,29 +133,29 @@ bool eSoldierAction::tooFarFromBanner() const {
     return dx*dx + dy*dy > leash*leash;
 }
 
-void eSoldierAction::serializeFields(eSaveArchive& ar) {
-    eFightingAction::serializeFields(ar);
+void SoldierAction::serializeFields(eSaveArchive& ar) {
+    FightingAction::serializeFields(ar);
     ar.field("spreadPeriod", mSpreadPeriod);
     ar.field("goToBannerCountdown", mGoToBannerCountdown, 0);
     ar.field("arrivedAtBanner", mArrivedAtBanner, false);
-    ar.field("soldierStage", mStage, eSoldierActionStage::idle);
+    ar.field("soldierStage", mStage, SoldierActionStage::idle);
 }
 
-void eSoldierAction::resumeFromSavedState() {
+void SoldierAction::resumeFromSavedState() {
     if(isAttacking()) {
-        return eFightingAction::resumeFromSavedState();
+        return FightingAction::resumeFromSavedState();
     }
     rebuildCurrentStage();
 }
 
-void eSoldierAction::rebuildCurrentStage() {
+void SoldierAction::rebuildCurrentStage() {
     switch(mStage) {
-    case eSoldierActionStage::home:
+    case SoldierActionStage::home:
         return goHome();
-    case eSoldierActionStage::abroad:
+    case SoldierActionStage::abroad:
         return goAbroad();
-    case eSoldierActionStage::banner: {
-        const stdptr<eSoldierAction> tptr(this);
+    case SoldierActionStage::banner: {
+        const stdptr<SoldierAction> tptr(this);
         const auto taskFinished = [tptr]() {
             if(!tptr) return;
             tptr->mGoToBannerCountdown = 100;
@@ -121,18 +170,18 @@ void eSoldierAction::rebuildCurrentStage() {
                              taskFindFailed, taskFinished);
         return;
     }
-    case eSoldierActionStage::idle:
-        return eFightingAction::resumeFromSavedState();
+    case SoldierActionStage::idle:
+        return FightingAction::resumeFromSavedState();
     }
 }
 
-stdsptr<eObsticleHandler> eSoldierAction::obsticleHandler() {
-    return std::make_shared<eSoldierObsticleHandler>(
+stdsptr<eObsticleHandler> SoldierAction::obsticleHandler() {
+    return std::make_shared<SoldierObsticleHandler>(
                 board(), this);
 }
 
-void eSoldierAction::goHome() {
-    mStage = eSoldierActionStage::home;
+void SoldierAction::goHome() {
+    mStage = SoldierActionStage::home;
     mArrivedAtBanner = false;
     const auto c = character();
     c->setSpeed(52.5);
@@ -145,9 +194,9 @@ void eSoldierAction::goHome() {
         return;
     }
 
-    const stdptr<eSoldierAction> tptr(this);
+    const stdptr<SoldierAction> tptr(this);
     const stdptr<eCharacter> cptr(c);
-    const auto finishAct = std::make_shared<eSA_goHomeFinish>(
+    const auto finishAct = std::make_shared<SA_goHomeFinish>(
                                board(), c);
 
     const auto a = e::make_shared<eMoveToAction>(cptr.get());
@@ -163,10 +212,10 @@ void eSoldierAction::goHome() {
     setCurrentAction(a);
 }
 
-void eSoldierAction::goAbroad() {
-    mStage = eSoldierActionStage::abroad;
+void SoldierAction::goAbroad() {
+    mStage = SoldierActionStage::abroad;
     const auto c = character();
-    auto& board = eSoldierAction::board();
+    auto& board = SoldierAction::board();
     const auto cid = onCityId();
     const auto hero = static_cast<eCharacter*>(c);
     const stdptr<eCharacter> cptr(hero);
@@ -197,7 +246,7 @@ void eSoldierAction::goAbroad() {
     }
 }
 
-eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
+eBuilding* SoldierAction::sFindHome(const eCharacterType t,
                                      const eCityId cid,
                                      const GameBoard& brd) {
     GameBoard::eBuildingValidator v;
@@ -255,10 +304,10 @@ eBuilding* eSoldierAction::sFindHome(const eCharacterType t,
     return b;
 }
 
-void eSoldierAction::goBackToBanner(const eOrientation facing,
+void SoldierAction::goBackToBanner(const eOrientation facing,
                                     const eAction& findFailAct,
                                     const eAction& findFinishAct) {
-    mStage = eSoldierActionStage::banner;
+    mStage = SoldierActionStage::banner;
     const auto c = character();
     const auto s = static_cast<eSoldier*>(c);
     const auto b = s->banner();

@@ -1,7 +1,7 @@
 #ifndef ETRIREMEACTION_H
 #define ETRIREMEACTION_H
 
-#include "efightingaction.h"
+#include "fighting-action.h"
 
 class eTriremeWharf;
 class eSaveArchive;
@@ -10,7 +10,7 @@ enum class eTriremeActionStage {
     idle, home, abroad
 };
 
-class eTriremeAction : public eFightingAction {
+class eTriremeAction : public FightingAction {
 public:
     eTriremeAction(eTriremeWharf * const home,
                    eCharacter* const trireme);

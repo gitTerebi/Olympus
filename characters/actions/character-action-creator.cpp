@@ -130,7 +130,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::shepherdAction:
         return e::make_shared<ShepherdAction>(c);
     case eCharActionType::soldierAction:
-        return e::make_shared<eSoldierAction>(c);
+        return e::make_shared<SoldierAction>(c);
     case eCharActionType::traderAction:
         return e::make_shared<TraderAction>(c);
     case eCharActionType::waitAction:

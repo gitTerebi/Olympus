@@ -119,7 +119,7 @@ void eArcherAction::increment(const int by) {
                     const auto tt = cc->tile();
                     const int ttx = tt->x();
                     const int tty = tt->y();
-                    eFightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
+                    FightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
 
                     return;
                 }

@@ -6,7 +6,7 @@
 #include "vec2.h"
 #include "missiles/earrowmissile.h"
 #include "characters/efightingcharacter.h"
-#include "characters/actions/efightingaction.h"
+#include "characters/actions/fighting-action.h"
 #include "audio/sounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
@@ -232,7 +232,7 @@ void eTower::timeChanged(const int by)
                         const auto tt = cc->tile();
                         const int ttx = tt->x();
                         const int tty = tt->y();
-                        eFightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
+                        FightingAction::sSignalBeingAttack(cc.get(), ttx, tty, brd);
 
                         return;
                     }

@@ -5,7 +5,7 @@
 #include "widgets/eoptionsmenu.h"
 #include "widgets/game-widget.h"
 #include "widgets/egameloadingwidget.h"
-#include "widgets/egamemenu.h"
+#include "widgets/game-menu.h"
 #include "widgets/emenuloadingwidget.h"
 #include "widgets/eworldwidget.h"
 #include "widgets/echoosegameeditmenu.h"

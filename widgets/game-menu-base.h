@@ -1,5 +1,5 @@
-#ifndef EGAMEMENUBASE_H
-#define EGAMEMENUBASE_H
+#ifndef GAME_MENU_BASE_H
+#define GAME_MENU_BASE_H
 
 #include "elabel.h"
 
@@ -18,7 +18,7 @@ struct eWid {
     eDataWidget* fDW = nullptr;
 };
 
-class eGameMenuBase : public eLabel {
+class GameMenuBase : public eLabel {
 public:
     using eLabel::eLabel;
 
@@ -41,4 +41,4 @@ private:
     std::vector<eWid> mWidgets;
 };
 
-#endif // EGAMEMENUBASE_H
+#endif // GAME_MENU_BASE_H

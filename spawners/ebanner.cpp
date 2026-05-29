@@ -9,7 +9,7 @@
 #include "eseainvasionpoint.h"
 #include "edisembarkpoint.h"
 #include "emonsterpoint.h"
-#include "eentrypoint.h"
+#include "entry-point.h"
 #include "eexitpoint.h"
 #include "edisasterpoint.h"
 #include "elandslidepoint.h"
@@ -80,7 +80,7 @@ eBanner* eBanner::sCreate(const int id,
         b = std::make_shared<eMonsterPoint>(id, tile, board);
         break;
     case eBannerTypeS::entryPoint:
-        b = std::make_shared<eEntryPoint>(id, tile, board);
+        b = std::make_shared<EntryPoint>(id, tile, board);
         break;
     case eBannerTypeS::exitPoint:
         b = std::make_shared<eExitPoint>(id, tile, board);

@@ -18,7 +18,7 @@
 #include "spawners/eboarspawner.h"
 
 #include "spawners/edeerspawner.h"
-#include "spawners/eentrypoint.h"
+#include "spawners/entry-point.h"
 #include "spawners/eexitpoint.h"
 #include "spawners/emonsterpoint.h"
 #include "spawners/elandinvasionpoint.h"
@@ -230,7 +230,7 @@ GameWidget::eApply GameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::entryPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eEntryPoint>(
+            const auto b = std::make_shared<EntryPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };

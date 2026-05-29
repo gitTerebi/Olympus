@@ -1,7 +1,7 @@
-#ifndef ESOLDIERACTION_H
-#define ESOLDIERACTION_H
+#ifndef SOLDIER_ACTION_H
+#define SOLDIER_ACTION_H
 
-#include "efightingaction.h"
+#include "fighting-action.h"
 
 #include "characters/echaracter.h"
 #include "walkable/eobsticlehandler.h"
@@ -11,13 +11,13 @@ class eSoldier;
 
 class eSaveArchive;
 
-enum class eSoldierActionStage {
+enum class SoldierActionStage {
     idle, banner, home, abroad
 };
 
-class eSoldierAction : public eFightingAction {
+class SoldierAction : public FightingAction {
 public:
-    eSoldierAction(eCharacter* const c);
+    SoldierAction(eCharacter* const c);
 
     bool decide() override;
 
@@ -37,23 +37,26 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
+    eTile* repositionAnchor() const override;
 private:
     stdsptr<eObsticleHandler> obsticleHandler() override;
     void rebuildCurrentStage();
     bool tooFarFromBanner() const;
+    bool enemyNear() const;
+    void tickBannerReturn(const int by);
 
     int mGoToBannerCountdown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
-    eSoldierActionStage mStage = eSoldierActionStage::idle;
+    SoldierActionStage mStage = SoldierActionStage::idle;
 };
 
-class eSoldierObsticleHandler : public eObsticleHandler {
+class SoldierObsticleHandler : public eObsticleHandler {
 public:
-    eSoldierObsticleHandler(GameBoard& board) :
+    SoldierObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::soldier) {}
-    eSoldierObsticleHandler(GameBoard& board,
-                            eSoldierAction* const t) :
+    SoldierObsticleHandler(GameBoard& board,
+                            SoldierAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::soldier),
         mTptr(t) {}
 
@@ -73,14 +76,14 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eSoldierAction> mTptr;
+    stdptr<SoldierAction> mTptr;
 };
 
-class eSA_goHomeFinish : public eCharActFunc {
+class SA_goHomeFinish : public eCharActFunc {
 public:
-    eSA_goHomeFinish(GameBoard& board) :
+    SA_goHomeFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::SA_goHomeFinish) {}
-    eSA_goHomeFinish(GameBoard& board, eCharacter* const c) :
+    SA_goHomeFinish(GameBoard& board, eCharacter* const c) :
         eCharActFunc(board, eCharActFuncType::SA_goHomeFinish),
         mCptr(c) {}
 
@@ -96,4 +99,4 @@ private:
     stdptr<eCharacter> mCptr;
 };
 
-#endif // ESOLDIERACTION_H
+#endif // SOLDIER_ACTION_H

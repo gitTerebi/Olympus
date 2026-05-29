@@ -36,7 +36,7 @@
 
 #include "characters/echaracter.h"
 
-#include "spawners/eentrypoint.h"
+#include "spawners/entry-point.h"
 #include "gameEvents/invasions/invasion-handler.h"
 
 stdsptr<eCharActFunc> eCharActFunc::sCreate(
@@ -166,11 +166,11 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
         return std::make_shared<eSA_groomDecisionDeleteFail>(board);
 
     case eCharActFuncType::SA_goToFinish:
-        return std::make_shared<eSA_goToFinish>(board);
+        return std::make_shared<SA_goToFinish>(board);
     case eCharActFuncType::SA_goHomeFinish:
-        return std::make_shared<eSA_goHomeFinish>(board);
+        return std::make_shared<SA_goHomeFinish>(board);
     case eCharActFuncType::SA_waitAndGoHomeFinish:
-        return std::make_shared<eSA_waitAndGoHomeFinish>(board);
+        return std::make_shared<SA_waitAndGoHomeFinish>(board);
 
     case eCharActFuncType::TA_tradeFail:
         return std::make_shared<eTA_tradeFail>(board);

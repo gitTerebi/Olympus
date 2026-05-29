@@ -1,7 +1,8 @@
-#include "efightingaction.h"
+#include "fighting-action.h"
 
 #include <math.h>
 #include <cstdio>
+#include <algorithm>
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/efightingcharacter.h"
@@ -26,65 +27,108 @@ bool sCanAttackCharacter(const eCharacter* const c) {
            type == eCharacterType::trireme ||
            c->isImmortal();
 }
+
+bool sCanStandOn(eTile* const t) {
+    if(!t) return false;
+    const auto ubt = t->underBuildingType();
+    if(ubt == eBuildingType::none) return true;
+    return eBuilding::sWalkableBuilding(ubt);
 }
 
-eAttackTarget::eAttackTarget() :
+// Best firing tile for a ranged unit: a tile within `spread` of its own anchor
+// (formation slot) from which the enemy at (ex,ey) sits within `range`. Returns
+// the candidate closest to the anchor, or null if none brings the enemy into
+// range. Never returns the enemy tile — the unit holds the line and shoots.
+eTile* sFindFiringTile(FightingAction* const act,
+                       eTile* const anchor,
+                       const int ex, const int ey,
+                       const int range, const int spread) {
+    if(!anchor) return nullptr;
+    auto& brd = act->character()->getBoard();
+    const int ax = anchor->x();
+    const int ay = anchor->y();
+    eTile* best = nullptr;
+    int bestAnchorDist = 0;
+    for(int i = -spread; i <= spread; i++) {
+        for(int j = -spread; j <= spread; j++) {
+            const int cx = ax + i;
+            const int cy = ay + j;
+            const int edx = ex - cx;
+            const int edy = ey - cy;
+            // Enemy must be within firing range of the candidate, but not so
+            // close it forces melee — keep at least 1 tile of standoff.
+            const int enemyDist = std::max(abs(edx), abs(edy));
+            if(enemyDist > range || enemyDist < 1) continue;
+            const auto t = brd.tile(cx, cy);
+            if(!sCanStandOn(t)) continue;
+            const int anchorDist = abs(i) + abs(j);
+            if(!best || anchorDist < bestAnchorDist) {
+                best = t;
+                bestAnchorDist = anchorDist;
+            }
+        }
+    }
+    return best;
+}
+}
+
+AttackTarget::AttackTarget() :
     mC(nullptr), mB(nullptr) {}
 
-eAttackTarget::eAttackTarget(eCharacter* const c) :
+AttackTarget::AttackTarget(eCharacter* const c) :
     mC(c), mB(nullptr) {}
 
-eAttackTarget::eAttackTarget(eBuilding* const b) :
+AttackTarget::AttackTarget(eBuilding* const b) :
     mC(nullptr), mB(b) {}
 
-eTile* eAttackTarget::tile() const {
+eTile* AttackTarget::tile() const {
     if(mC) return mC->tile();
     if(mB) return mB->centerTile();
     return nullptr;
 }
 
-bool eAttackTarget::valid() const {
+bool AttackTarget::valid() const {
     return mC || mB;
 }
 
-bool eAttackTarget::takeDamage(const double a, eCharacter* const attacker) {
+bool AttackTarget::takeDamage(const double a, eCharacter* const attacker) {
     if(mC) return mC->takeDamage(a, attacker);
     if(mB) return mB->takeDamage(a);
     return true;
 }
 
-bool eAttackTarget::takeMeleeDamage(const double a, eCharacter* const attacker) {
+bool AttackTarget::takeMeleeDamage(const double a, eCharacter* const attacker) {
     if(mC) return mC->takeMeleeDamage(a, attacker);
     if(mB) return mB->takeDamage(a);
     return true;
 }
 
-bool eAttackTarget::dead() const {
+bool AttackTarget::dead() const {
     if(mC) return mC->dead();
     if(mB) return false;
     return true;
 }
 
-void eAttackTarget::clear() {
+void AttackTarget::clear() {
     mC = nullptr;
     mB = nullptr;
 }
 
-int eAttackTarget::armor() const {
+int AttackTarget::armor() const {
     if(mC) return mC->armor();
     return 0;
 }
 
-int eAttackTarget::armorVsMissiles() const {
+int AttackTarget::armorVsMissiles() const {
     if(mC) return mC->armorVsMissiles();
     return 0;
 }
 
-bool eAttackTarget::building() const {
+bool AttackTarget::building() const {
     return mB;
 }
 
-double eAttackTarget::absX() const {
+double AttackTarget::absX() const {
     if(mC) return mC->absX();
     if(mB) {
         const auto t = mB->centerTile();
@@ -94,7 +138,7 @@ double eAttackTarget::absX() const {
     return 0.;
 }
 
-double eAttackTarget::absY() const {
+double AttackTarget::absY() const {
     if(mC) return mC->absY();
     if(mB) {
         const auto t = mB->centerTile();
@@ -104,12 +148,12 @@ double eAttackTarget::absY() const {
     return 0.;
 }
 
-void eAttackTarget::serialize(eSaveArchive& ar, GameBoard& board) {
+void AttackTarget::serialize(eSaveArchive& ar, GameBoard& board) {
     ar.characterField("character", &board, mC);
     ar.buildingField("building", &board, mB);
 }
 
-void eFightingAction::cancelAttack() {
+void FightingAction::cancelAttack() {
     mAttack = false;
     mAttackRanged = false;
     mAttackTarget.clear();
@@ -121,7 +165,7 @@ void eFightingAction::cancelAttack() {
     c->setActionType(mSavedAction);
 }
 
-void eFightingAction::sSignalBeingAttack(
+void FightingAction::sSignalBeingAttack(
     eCharacter* const attacked,
     eCharacter* const by,
     GameBoard& brd) {
@@ -132,7 +176,7 @@ void eFightingAction::sSignalBeingAttack(
     sSignalBeingAttack(attacked, ttx, tty, brd);
 }
 
-void eFightingAction::sSignalBeingAttack(eCharacter * const attacked,
+void FightingAction::sSignalBeingAttack(eCharacter * const attacked,
                                          const int ttx, const int tty,
                                          GameBoard &brd) {
     const auto att = attacked->tile();
@@ -159,27 +203,27 @@ void eFightingAction::sSignalBeingAttack(eCharacter * const attacked,
     }
 }
 
-eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
-    if(mSavedMove == eFightingSavedMove::waitGoHome) {
+LookForEnemyState FightingAction::lookForEnemy(const int by) {
+    if(mSavedMove == FightingSavedMove::waitGoHome) {
         mWaitGoHomeRemaining -= by;
         if(mWaitGoHomeRemaining <= 0) {
             mWaitGoHomeRemaining = 0;
-            mSavedMove = eFightingSavedMove::none;
+            mSavedMove = FightingSavedMove::none;
             setCurrentAction(nullptr);
             goHome();
         }
-        return eLookForEnemyState::none;
+        return LookForEnemyState::none;
     }
     const int rangeAttackCheck = 500;
     const int lookForEnemyCheck = 500;
     const int buildingCheck = 5000;
 
     const auto c = character();
-    if(c->dead()) return eLookForEnemyState::dead;
+    if(c->dead()) return LookForEnemyState::dead;
     int range = c->range();
     auto& brd = c->getBoard();
     const auto ct = c->tile();
-    if(!ct) return eLookForEnemyState::dead;
+    if(!ct) return LookForEnemyState::dead;
     const int tx = ct->x();
     const int ty = ct->y();
     const auto tid = c->teamId();
@@ -261,7 +305,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
             mAttackRanged = false;
             mLookForEnemy = lookForEnemyCheck;
         } else {
-            return eLookForEnemyState::attacking;
+            return LookForEnemyState::attacking;
         }
     }
     const vec2d cpos{c->absX(), c->absY()};
@@ -270,7 +314,7 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                                       const bool range) {
         const vec2d ccpos{cc->absX(), cc->absY()};
         const vec2d posdif = ccpos - cpos;
-        mAttackTarget = eAttackTarget(cc.get());
+        mAttackTarget = AttackTarget(cc.get());
         mAttack = true;
         mAttackRanged = range;
         c->setPlayFightSound(true);
@@ -316,21 +360,21 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                     continue;
                 }
         setAttackTarget(cc, false);
-        return eLookForEnemyState::attacking;
+        return LookForEnemyState::attacking;
             }
             if(buildingAttack) {
                 const bool r = attackBuilding(t, false);
-                if(r) return eLookForEnemyState::attacking;
+                if(r) return LookForEnemyState::attacking;
             }
         }
     }
     if(secondOption) {
         setAttackTarget(secondOption, false);
-        return eLookForEnemyState::attacking;
+        return LookForEnemyState::attacking;
     }
     if(thirdOption) {
         setAttackTarget(thirdOption, false);
-        return eLookForEnemyState::attacking;
+        return LookForEnemyState::attacking;
     }
 
     if(range > 0) {
@@ -359,11 +403,11 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                         }
                          setAttackTarget(cc, true);
                          sSignalBeingAttack(cc.get(), c, brd);
-                         return eLookForEnemyState::attacking;
+                         return LookForEnemyState::attacking;
                     }
                     if(buildingAttack) {
                         const bool r = attackBuilding(t, true);
-                        if(r) return eLookForEnemyState::attacking;
+                        if(r) return LookForEnemyState::attacking;
                     }
                 }
             }
@@ -371,11 +415,11 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
 
         if(secondOption) {
             setAttackTarget(secondOption, true);
-            return eLookForEnemyState::attacking;
+            return LookForEnemyState::attacking;
         }
         if(thirdOption) {
             setAttackTarget(thirdOption, true);
-            return eLookForEnemyState::attacking;
+            return LookForEnemyState::attacking;
         }
     }
 
@@ -383,7 +427,13 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
         mLookForEnemy += by;
         if(mLookForEnemy > lookForEnemyCheck) {
             mLookForEnemy -= lookForEnemyCheck;
-            const int erange = 3 + range;
+            // Spot the nearest enemy a short way out. Melee units (range == 0)
+            // chase it; ranged units do NOT — they only use its position to
+            // pick a firing tile near their own slot (see below).
+            // Wide detect: the unit notices distant enemies but only takes a few
+            // steps toward them (walk spread below). Stays put and waits for the
+            // enemy to close rather than charging out.
+            const int erange = sRangedDetectRange(range);
             for(int i = -erange; i <= erange; i++) {
                 for(int j = -erange; j <= erange; j++) {
                     const int ttx = tx + i;
@@ -396,19 +446,46 @@ eLookForEnemyState eFightingAction::lookForEnemy(const int by) {
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
+                        if(range > 0) {
+                            // Already within firing range of where we stand:
+                            // hold and let the range-attack scan above shoot.
+                            // Repositioning here is what made rabble step forward
+                            // then walk back without ever firing.
+                            const int curDist = std::max(abs(ttx - tx),
+                                                         abs(tty - ty));
+                            if(curDist <= range && curDist >= 1) {
+                                return LookForEnemyState::attacking;
+                            }
+                            // Out of range: step at most 4 tiles from the
+                            // formation slot to a tile that brings this enemy
+                            // into firing range, then hold and shoot. Never walk
+                            // to the enemy tile. If none works (enemy too far),
+                            // stay put and wait for it to come closer.
+                            const auto fire = sFindFiringTile(
+                                this, repositionAnchor(), ttx, tty, range, 4);
+                            if(!fire) continue;
+                            setOverwrittableAction(false);
+                            goTo(fire->x(), fire->y(), 0);
+                            return LookForEnemyState::attacking;
+                        }
+                        // Melee: close in on the enemy as before.
                         setOverwrittableAction(false);
-                        goTo(ttx, tty, range);
-                        return eLookForEnemyState::attacking;
+                        goTo(ttx, tty, 0);
+                        return LookForEnemyState::attacking;
                     }
                 }
             }
         }
     }
 
-    return eLookForEnemyState::none;
+    return LookForEnemyState::none;
 }
 
-bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
+eTile* FightingAction::repositionAnchor() const {
+    return character()->tile();
+}
+
+bool FightingAction::attackBuilding(eTile* const t, const bool range) {
     const auto ub = t->underBuilding();
     if(!ub) return false;
     const auto c = character();
@@ -417,7 +494,7 @@ bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
     const vec2d cpos{c->absX(), c->absY()};
     const bool att = eBuilding::sAttackable(ub->type());
     if(!att) return false;
-    mAttackTarget = eAttackTarget(ub);
+    mAttackTarget = AttackTarget(ub);
     mAttack = true;
     mAttackRanged = range;
     c->setPlayFightSound(true);
@@ -434,7 +511,7 @@ bool eFightingAction::attackBuilding(eTile* const t, const bool range) {
     return true;
 }
 
-void eFightingAction::goTo(const int fx, const int fy,
+void FightingAction::goTo(const int fx, const int fy,
                            const int dist,
                            const eAction& findFailAct,
                            const eAction& findFinishAct) {
@@ -443,10 +520,10 @@ void eFightingAction::goTo(const int fx, const int fy,
     const int sx = t->x();
     const int sy = t->y();
     if(abs(fx - sx) <= dist && abs(fy - sy) <= dist) {
-        mSavedMove = eFightingSavedMove::none;
+        mSavedMove = FightingSavedMove::none;
         return;
     }
-    mSavedMove = eFightingSavedMove::goTo;
+    mSavedMove = FightingSavedMove::goTo;
     mSavedMoveX = fx;
     mSavedMoveY = fy;
     mSavedMoveDistance = dist;
@@ -455,7 +532,7 @@ void eFightingAction::goTo(const int fx, const int fy,
         return abs(t->x() - fx) <= dist && abs(t->y() - fy) <= dist;
     };
 
-    const auto finishAct = std::make_shared<eSA_goToFinish>(
+    const auto finishAct = std::make_shared<SA_goToFinish>(
         board(), c);
 
     const auto tcid = t->cityId();
@@ -489,7 +566,7 @@ void eFightingAction::goTo(const int fx, const int fy,
     }
 
     const stdptr<eCharacter> cptr(character());
-    const stdptr<eFightingAction> tptr(this);
+    const stdptr<FightingAction> tptr(this);
     a->setFoundAction([cptr, tptr, findFinishAct]() {
         if(!cptr) return;
         cptr->setActionType(eCharacterActionType::walk);
@@ -503,21 +580,41 @@ void eFightingAction::goTo(const int fx, const int fy,
     setCurrentAction(a);
 }
 
-void eFightingAction::beingAttacked(eCharacter* const ss) {
+void FightingAction::beingAttacked(eCharacter* const ss) {
     const auto tt = ss->tile();
     const int ttx = tt->x();
     const int tty = tt->y();
     beingAttacked(ttx, tty);
 }
 
-void eFightingAction::beingAttacked(const int ttx, const int tty) {
+void FightingAction::beingAttacked(const int ttx, const int tty) {
     if(mAttack) return;
     if(!mOverwrittableAction && currentAction()) return;
+    const int range = character()->range();
+    if(range > 0) {
+        // Ranged: the attacker is NOT the destination. If already within firing
+        // range of where we stand, hold — the range-attack scan shoots back.
+        const auto ct = character()->tile();
+        if(ct) {
+            const int curDist = std::max(abs(ttx - ct->x()),
+                                         abs(tty - ct->y()));
+            if(curDist <= range && curDist >= 1) return;
+        }
+        // Otherwise generate stand tiles around our own formation slot (<= 2
+        // away), pick one from which the attacker is within firing range, and
+        // move there. Hold if none — no chasing a far or moving attacker.
+        const auto fire = sFindFiringTile(
+            this, repositionAnchor(), ttx, tty, range, 2);
+        if(!fire) return;
+        setOverwrittableAction(false);
+        goTo(fire->x(), fire->y(), 0);
+        return;
+    }
     setOverwrittableAction(false);
-    goTo(ttx, tty);
+    goTo(ttx, tty, 0);
 }
 
-void eFightingAction::serializeFields(eSaveArchive& ar) {
+void FightingAction::serializeFields(eSaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("angle", mAngle);
     ar.field("missile", mMissile);
@@ -533,18 +630,18 @@ void eFightingAction::serializeFields(eSaveArchive& ar) {
     });
     ar.field("savedAction", mSavedAction);
     ar.field("overwrittableAction", mOverwrittableAction);
-    ar.field("savedMove", mSavedMove, eFightingSavedMove::none);
+    ar.field("savedMove", mSavedMove, FightingSavedMove::none);
     ar.field("savedMoveX", mSavedMoveX, 0);
     ar.field("savedMoveY", mSavedMoveY, 0);
     ar.field("savedMoveDistance", mSavedMoveDistance, 0);
     ar.field("waitGoHomeRemaining", mWaitGoHomeRemaining, 0);
 }
 
-void eFightingAction::resumeFromSavedState() {
+void FightingAction::resumeFromSavedState() {
     rebuildSavedRuntime();
 }
 
-bool eFightingAction::atSavedMoveTarget() const {
+bool FightingAction::atSavedMoveTarget() const {
     const auto c = character();
     const auto t = c->tile();
     if(!t) return true;
@@ -552,7 +649,7 @@ bool eFightingAction::atSavedMoveTarget() const {
            abs(mSavedMoveY - t->y()) <= mSavedMoveDistance;
 }
 
-void eFightingAction::rebuildSavedRuntime() {
+void FightingAction::rebuildSavedRuntime() {
     const auto c = character();
     if(mAttack) {
         if(!mAttackTarget.valid() || mAttackTarget.dead()) {
@@ -573,18 +670,18 @@ void eFightingAction::rebuildSavedRuntime() {
             return;
         }
     }
-    if(mSavedMove == eFightingSavedMove::waitGoHome) {
+    if(mSavedMove == FightingSavedMove::waitGoHome) {
         if(mWaitGoHomeRemaining <= 0) {
-            mSavedMove = eFightingSavedMove::none;
+            mSavedMove = FightingSavedMove::none;
             goHome();
         } else {
             waitAndGoHome(mWaitGoHomeRemaining);
         }
         return;
     }
-    if(mSavedMove == eFightingSavedMove::goTo) {
+    if(mSavedMove == FightingSavedMove::goTo) {
         if(atSavedMoveTarget()) {
-            mSavedMove = eFightingSavedMove::none;
+            mSavedMove = FightingSavedMove::none;
             c->setActionType(eCharacterActionType::stand);
         } else {
             goTo(mSavedMoveX, mSavedMoveY, mSavedMoveDistance);
@@ -594,12 +691,12 @@ void eFightingAction::rebuildSavedRuntime() {
     eComplexAction::resumeFromSavedState();
 }
 
-void eFightingAction::waitAndGoHome(const int w) {
+void FightingAction::waitAndGoHome(const int w) {
     const auto c = character();
     c->setActionType(eCharacterActionType::none);
-    mSavedMove = eFightingSavedMove::waitGoHome;
+    mSavedMove = FightingSavedMove::waitGoHome;
     mWaitGoHomeRemaining = w;
-    const auto finish = std::make_shared<eSA_waitAndGoHomeFinish>(
+    const auto finish = std::make_shared<SA_waitAndGoHomeFinish>(
         board(), this);
     const auto a = e::make_shared<eWaitAction>(c);
     a->setFinishAction(finish);

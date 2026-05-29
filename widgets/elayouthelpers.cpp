@@ -3,31 +3,11 @@
 #include <algorithm>
 #include <numeric>
 #include <vector>
+#include "elabel.h"
 #include "ewidget.h"
 #include "emainwindow.h"
 
 namespace eLayoutHelpers {
-
-eWidget* hRow(eMainWindow* const window,
-              std::initializer_list<std::pair<eWidget*, int>> cols,
-              const int gap) {
-    const auto row = new eWidget(window);
-    row->setNoPadding();
-    int x = 0;
-    for(const auto& [w, colW] : cols) {
-        row->addWidget(w);
-        w->setX(x);
-        w->setWidth(colW);
-        x += colW + gap;
-    }
-    row->fitContent();
-    return row;
-}
-
-void vStack(eWidget* const parent, const int gap) {
-    parent->stackVertically(gap);
-    parent->fitContent();
-}
 
 // ── flex ─────────────────────────────────────────────────────────────────────
 
@@ -101,11 +81,30 @@ eWidget* flexCol(eMainWindow* const window,
                  const int containerH,
                  const std::vector<eFlexItem>& items,
                  const eFlexParams params) {
+    return flexCol(window, 0, containerH, items, params);
+}
+
+eWidget* flexCol(eMainWindow* const window,
+                 const int containerW,
+                 const int containerH,
+                 const std::vector<eFlexItem>& items,
+                 const eFlexParams params) {
     const int gap     = params.gap;
     const eJustify justify = params.justify;
     const eAlign   align   = params.align;
     std::vector<eFlexItem> its(items);
     const int n = (int)its.size();
+
+    if(align == eAlign::stretch && containerW > 0) {
+        for(auto& it : its) {
+            it.widget->setWidth(containerW);
+            const auto label = dynamic_cast<eLabel*>(it.widget);
+            if(label) {
+                label->setWrapWidth(containerW);
+                label->fitContent();
+            }
+        }
+    }
 
     for(auto& it : its)
         if(it.size == 0) it.size = it.widget->height();
@@ -125,7 +124,7 @@ eWidget* flexCol(eMainWindow* const window,
                 it.size += leftover * it.grow / totalGrow;
     }
 
-    int maxW = 0;
+    int maxW = containerW;
     for(const auto& it : its) maxW = std::max(maxW, it.widget->width());
 
     int startY   = 0;
@@ -153,6 +152,7 @@ eWidget* flexCol(eMainWindow* const window,
         switch(align) {
         case eAlign::center: x = (maxW - it.widget->width()) / 2; break;
         case eAlign::end:    x = maxW - it.widget->width();       break;
+        case eAlign::stretch: it.widget->setWidth(maxW);           break;
         default: break;
         }
         it.widget->move(x, y);
@@ -167,6 +167,15 @@ eWidget* flexCol(eMainWindow* const window,
                  std::initializer_list<eFlexItem> items,
                  const eFlexParams params) {
     return flexCol(window, containerH, std::vector<eFlexItem>(items), params);
+}
+
+eWidget* flexCol(eMainWindow* const window,
+                 const int containerW,
+                 const int containerH,
+                 std::initializer_list<eFlexItem> items,
+                 const eFlexParams params) {
+    return flexCol(window, containerW, containerH,
+                   std::vector<eFlexItem>(items), params);
 }
 
 } // namespace eLayoutHelpers

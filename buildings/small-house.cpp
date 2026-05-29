@@ -160,19 +160,13 @@ int SmallHouse::provide(const eProvide p, const int n)
         add = std::clamp(n, 0, max - *value);
         *value += add;
     }
-    updateLevel();
+    updateLevel(0);
     return add;
 }
 
 void SmallHouse::timeChanged(const int by)
 {
-    mUpdateLevel += by;
-    const int lupdate = 800;
-    if (mUpdateLevel > lupdate)
-    {
-        mUpdateLevel -= lupdate;
-        updateLevel();
-    }
+    updateLevel(by);
     if (mPeople <= 0)
     {
         mHygiene = 100;
@@ -408,7 +402,6 @@ void SmallHouse::serializeFields(eSaveArchive& ar)
 
     ar.field("updateWater", mUpdateWater);
     ar.field("updateHygiene", mUpdateHygiene);
-    ar.field("updateLevel", mUpdateLevel);
 
     ar.field("water", mWater);
     ar.field("hygiene", mHygiene);
@@ -468,8 +461,10 @@ bool SmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) con
     return false;
 }
 
-void SmallHouse::updateLevel()
+void SmallHouse::updateLevel(const int by)
 {
+    // 3 in-game days below requirement before a single level drops.
+    const int devolveTicks = 3 * eNumbers::sDayLength;
     if (hasRequiredForLevel(mLevel + 1))
     {
         setLevel(mLevel + 1);
@@ -477,9 +472,11 @@ void SmallHouse::updateLevel()
     }
     else if (!canStayAtLevel(mLevel))
     {
-        if (mDevolveDelay < 10)
+        if (mDevolveDelay < devolveTicks)
         {
-            ++mDevolveDelay;
+            // Only real elapsed time advances devolve. provide() passes
+            // by=0 so goods deliveries cannot race the counter.
+            mDevolveDelay += by;
         }
         else
         {

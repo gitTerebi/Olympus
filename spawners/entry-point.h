@@ -1,13 +1,13 @@
-#ifndef eentrypoint_H
-#define eentrypoint_H
+#ifndef entry_point_H
+#define entry_point_H
 
 #include "espawner.h"
 
 #include "characters/actions/character-action-function.h"
 
-class eEntryPoint : public eSpawner {
+class EntryPoint : public eSpawner {
 public:
-    eEntryPoint(const int id,
+    EntryPoint(const int id,
                 eTile* const tile,
                 GameBoard& board);
 
@@ -33,4 +33,4 @@ public:
                      GameBoard& board);
 };
 
-#endif // eentrypoint_H
+#endif // entry_point_H

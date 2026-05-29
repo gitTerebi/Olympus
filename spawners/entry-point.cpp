@@ -1,10 +1,10 @@
-#include "eentrypoint.h"
+#include "entry-point.h"
 
 #include "engine/e-game-board.h"
 #include "characters/esettler.h"
 #include "characters/actions/esettleraction.h"
 
-eEntryPoint::eEntryPoint(const int id,
+EntryPoint::EntryPoint(const int id,
                          eTile* const tile,
                          GameBoard& board) :
     eSpawner(eBannerTypeS::entryPoint, id, tile,
@@ -14,10 +14,10 @@ eEntryPoint::eEntryPoint(const int id,
 // throttles immigration, freezing below 50. Unemployment already drags
 // popularity down via house work satisfaction, so this breaks the
 // jobless immigration churn cycle.
-int eEntryPoint::sImmigrationFreezePopularity = 50;
+int EntryPoint::sImmigrationFreezePopularity = 50;
 
-void eEntryPoint::incTime(const int by) {
-    auto& board = eEntryPoint::board();
+void EntryPoint::incTime(const int by) {
+    auto& board = EntryPoint::board();
     const auto tile = this->tile();
     const auto cid = tile->cityId();
     const int pop = board.popularity(cid);
@@ -37,8 +37,8 @@ void eEntryPoint::incTime(const int by) {
     eSpawner::incTime(by);
 }
 
-void eEntryPoint::spawn(eTile* const tile) {
-    auto& board = eEntryPoint::board();
+void EntryPoint::spawn(eTile* const tile) {
+    auto& board = EntryPoint::board();
     const auto cid = tile->cityId();
     const auto& ivs = board.invasionHandlers(cid);
     if(!ivs.empty()) return;

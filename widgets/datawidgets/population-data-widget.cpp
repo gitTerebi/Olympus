@@ -1,14 +1,15 @@
-#include "epopulationdatawidget.h"
+#include "population-data-widget.h"
 
 #include "engine/e-game-board.h"
 
 #include "eviewmodebutton.h"
 #include "widgets/elinewidget.h"
 #include "widgets/emultilinelabel.h"
+#include "widgets/elayouthelpers.h"
 
 #include "elanguage.h"
 
-void ePopulationDataWidget::initialize() {
+void PopulationDataWidget::initialize() {
     mSeeSupplies = new eViewModeButton(
                      eLanguage::zeusText(14, 1),
                      eViewMode::supplies,
@@ -86,35 +87,22 @@ void ePopulationDataWidget::initialize() {
     l2->setY(mPeopleDirection->y() + mPeopleDirection->height() + pp);
 
     {
-        mImiLimitedW = new eWidget(window());
-        mImiLimitedW->setNoPadding();
-
         const auto il1 = new eLabel(window());
-        il1->setWrapWidth(iw);
         il1->setWrapAlignment(eAlignment::hcenter);
         il1->setFontSizeXS();
         il1->setNoPadding();
         il1->setText(eLanguage::zeusText(55, 12)); // immigration limited by
-        il1->fitContent();
-        mImiLimitedW->addWidget(il1);
 
         mImiLimitedReason = new eLabel(window());
-        mImiLimitedReason->setWrapWidth(iw);
         mImiLimitedReason->setWrapAlignment(eAlignment::hcenter);
         mImiLimitedReason->setYellowFontColor();
         mImiLimitedReason->setFontSizeXS();
         mImiLimitedReason->setNoPadding();
         mImiLimitedReason->setText(eLanguage::zeusText(55, 13)); // lack of housing vacancies
-        mImiLimitedReason->fitContent();
-        mImiLimitedW->addWidget(mImiLimitedReason);
 
-
-        mImiLimitedW->stackVertically();
-        mImiLimitedW->fitContent();
-        mImiLimitedW->setWidth(iw - 2*pp);
-
-        il1->align(eAlignment::hcenter);
-        mImiLimitedReason->align(eAlignment::hcenter);
+        mImiLimitedW = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+            {{il1, 0, 0}, {mImiLimitedReason, 0, 0}},
+            {.gap = pp, .align = eLayoutHelpers::eAlign::stretch});
 
         inner->addWidget(mImiLimitedW);
         mImiLimitedW->setY(l2->y() + l2->height() + pp);
@@ -155,7 +143,7 @@ void ePopulationDataWidget::initialize() {
     }
 }
 
-void ePopulationDataWidget::paintEvent(ePainter& p) {
+void PopulationDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
         const auto cid = viewedCity();
@@ -207,8 +195,6 @@ void ePopulationDataWidget::paintEvent(ePainter& p) {
                 ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
             }
             mImiLimitedReason->setText(ilrtxt);
-            mImiLimitedReason->fitContent();
-            mImiLimitedReason->align(eAlignment::hcenter);
         }
     }
     eWidget::paintEvent(p);

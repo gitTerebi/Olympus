@@ -245,7 +245,7 @@ stdsptr<T> spawnSoldier(GameBoard& board,
     const auto h = e::make_shared<T>(board);
     h->setCityId(cid);
     h->setOnCityId(ocid);
-    const auto a = e::make_shared<eSoldierAction>(h.get());
+    const auto a = e::make_shared<SoldierAction>(h.get());
     a->setSpreadPeriod(true);
     h->setAction(a);
     h->changeTile(tile);

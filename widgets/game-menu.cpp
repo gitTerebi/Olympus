@@ -1,4 +1,4 @@
-﻿#include "egamemenu.h"
+﻿#include "game-menu.h"
 
 #include <algorithm>
 
@@ -8,7 +8,7 @@
 #include "engine/e-game-board.h"
 #include "engine/difficulty.h"
 
-#include "widgets/datawidgets/epopulationdatawidget.h"
+#include "widgets/datawidgets/population-data-widget.h"
 #include "widgets/datawidgets/eemploymentdatawidget.h"
 #include "widgets/datawidgets/eappealdatawidget.h"
 #include "widgets/datawidgets/storage-sidebar-panel.h"
@@ -173,7 +173,7 @@ private:
     GameBoard &mBoard;
 };
 
-eWidget *eGameMenu::createPriceWidget(const eInterfaceTextures &coll)
+eWidget *GameMenu::createPriceWidget(const eInterfaceTextures &coll)
 {
     const auto r = new eWidget(window());
     r->setNoPadding();
@@ -199,7 +199,7 @@ eWidget *eGameMenu::createPriceWidget(const eInterfaceTextures &coll)
     return r;
 }
 
-eWidget *eGameMenu::createSubButtons(
+eWidget *GameMenu::createSubButtons(
     const int resoltuionMult,
     const eButtonsDataVec &buttons)
 {
@@ -249,7 +249,7 @@ eWidget *eGameMenu::createSubButtons(
     return result;
 }
 
-eBuildButton *eGameMenu::createBuildButton(const eSPR &c)
+eBuildButton *GameMenu::createBuildButton(const eSPR &c)
 {
     const auto bb = new eBuildButton(window());
     const auto pid = mBoard->personPlayer();
@@ -267,7 +267,7 @@ eBuildButton *eGameMenu::createBuildButton(const eSPR &c)
     return bb;
 }
 
-eBuildButton *eGameMenu::createTradeBuildButton(
+eBuildButton *GameMenu::createTradeBuildButton(
     const eSPR &c, const int tradeIconWidth)
 {
     const auto mode = c.fMode;
@@ -459,7 +459,7 @@ eBuildButton *eGameMenu::createTradeBuildButton(
     return bb;
 }
 
-void eGameMenu::openBuildWidget(const int cmx, const int cmy,
+void GameMenu::openBuildWidget(const int cmx, const int cmy,
                                 const std::vector<eSPR> &cs)
 {
     const auto cid = mGW->viewedCity();
@@ -511,22 +511,22 @@ void eGameMenu::openBuildWidget(const int cmx, const int cmy,
     setBuildWidget(bw);
 }
 
-void eGameMenu::setModeChangedAction(const eAction &func)
+void GameMenu::setModeChangedAction(const eAction &func)
 {
     mModeChangeAct = func;
 }
 
-void eGameMenu::updateRequestButtons()
+void GameMenu::updateRequestButtons()
 {
     mOverDataW->updateRequestButtons();
 }
 
-void eGameMenu::setWorldDirection(const eWorldDirection dir)
+void GameMenu::setWorldDirection(const eWorldDirection dir)
 {
     mRotateButton->setDirection(dir);
 }
 
-void eGameMenu::update()
+void GameMenu::update()
 {
     if (mUndoButton && mBoard)
     {
@@ -534,13 +534,13 @@ void eGameMenu::update()
     }
 }
 
-void eGameMenu::setShowAllPossibleBuildings(const bool b)
+void GameMenu::setShowAllPossibleBuildings(const bool b)
 {
     mShowAllPossibleBuildings = b;
     updateButtonsVisibility();
 }
 
-void eGameMenu::displayPrice(const int price, const int loc)
+void GameMenu::displayPrice(const int price, const int loc)
 {
     const auto w = mPriceWidgets[loc];
     const auto l = mPriceLabels[loc];
@@ -555,7 +555,7 @@ void eGameMenu::displayPrice(const int price, const int loc)
     }
 }
 
-eGameMenu::~eGameMenu()
+GameMenu::~GameMenu()
 {
     for (const auto s : mSubButtons)
     {
@@ -563,11 +563,11 @@ eGameMenu::~eGameMenu()
     }
 }
 
-void eGameMenu::initialize(GameBoard *const b,
+void GameMenu::initialize(GameBoard *const b,
                            const eAction &goalsView)
 {
     mBoard = b;
-    eGameMenuBase::initialize();
+    GameMenuBase::initialize();
 
     int iRes;
     int mult;
@@ -657,7 +657,7 @@ void eGameMenu::initialize(GameBoard *const b,
         ww->setY(wy + 32 * mult);
     }
 
-    mPopDataW = new ePopulationDataWidget(*b, window());
+    mPopDataW = new PopulationDataWidget(*b, window());
 
     const auto pid = mBoard->personPlayer();
     const auto diff = mBoard->difficulty(pid);
@@ -1441,7 +1441,7 @@ void eGameMenu::initialize(GameBoard *const b,
     update();
 }
 
-void eGameMenu::setGameWidget(GameWidget *const gw)
+void GameMenu::setGameWidget(GameWidget *const gw)
 {
     mGW = gw;
     mPopDataW->setGameWidget(gw);
@@ -1495,22 +1495,22 @@ void eGameMenu::setGameWidget(GameWidget *const gw)
     updateButtonsVisibility();
 }
 
-eMiniMap *eGameMenu::miniMap() const
+eMiniMap *GameMenu::miniMap() const
 {
     return mMiniMap;
 }
 
-void eGameMenu::pushEvent(const eEvent e, const eEventData &ed)
+void GameMenu::pushEvent(const eEvent e, const eEventData &ed)
 {
     mEventW->pushEvent(e, ed);
 }
 
-void eGameMenu::setViewTileHandler(const eViewTileHandler &h)
+void GameMenu::setViewTileHandler(const eViewTileHandler &h)
 {
     mEventW->setViewTileHandler(h);
 }
 
-void eGameMenu::closeBuildWidget()
+void GameMenu::closeBuildWidget()
 {
     if (!mBuildWidget)
         return;
@@ -1518,13 +1518,13 @@ void eGameMenu::closeBuildWidget()
     mBuildWidget = nullptr;
 }
 
-void eGameMenu::setBuildWidget(eBuildWidget *const bw)
+void GameMenu::setBuildWidget(eBuildWidget *const bw)
 {
     closeBuildWidget();
     mBuildWidget = bw;
 }
 
-void eGameMenu::updateButtonsVisibility()
+void GameMenu::updateButtonsVisibility()
 {
     const auto cid = mGW ? mGW->viewedCity() : eCityId::neutralFriendly;
     for (const auto s : mSubButtons)
@@ -1563,7 +1563,7 @@ void eGameMenu::updateButtonsVisibility()
     }
 }
 
-void eGameMenu::viewedCityChanged()
+void GameMenu::viewedCityChanged()
 {
     mPopDataW->update();
     mHusbDataW->update();
@@ -1583,7 +1583,7 @@ void eGameMenu::viewedCityChanged()
     setMode(eBuildingMode::none);
 }
 
-void eGameMenu::setMode(const eBuildingMode mode)
+void GameMenu::setMode(const eBuildingMode mode)
 {
     closeBuildWidget();
     mMode = mode;
@@ -1591,8 +1591,8 @@ void eGameMenu::setMode(const eBuildingMode mode)
         mModeChangeAct();
 }
 
-bool eGameMenu::mousePressEvent(const eMouseEvent &e)
+bool GameMenu::mousePressEvent(const eMouseEvent &e)
 {
     closeBuildWidget();
-    return eGameMenuBase::mouseEnterEvent(e);
+    return GameMenuBase::mouseEnterEvent(e);
 }
