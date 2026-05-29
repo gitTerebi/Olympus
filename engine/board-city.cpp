@@ -179,7 +179,7 @@ void BoardCity::incTime(const int by) {
         mImmigrationLimit = eILB::prolongedDebt;
     } else if(static_cast<int>(mWageRate) < static_cast<int>(eWageRate::low)) {
         mImmigrationLimit = eILB::lowWages;
-    } else if(e < 10 ? false : (1.*u/e > 0.25 && u > 50)) {
+    } else if(e < 10 ? false : (1.*u/e > 0.10 && u > 10)) {
         mImmigrationLimit = eILB::unemployment;
     } else if(static_cast<int>(mTaxRate) > static_cast<int>(eTaxRate::high)) {
         mImmigrationLimit = eILB::highTaxes;
@@ -216,6 +216,25 @@ void BoardCity::incTime(const int by) {
         case eILB::none:
             mBoard.showTip(mId, eLanguage::zeusText(19, 124));
         }
+    }
+
+    // Augustus-style emigration: very low popularity (sentiment) pushes
+    // people out, shrinking a miserable city instead of just freezing
+    // immigration. Throttled so it trickles, not drains.
+    if(mPopularity < 40 && pop > 100) {
+        const int emigCheck = 2000;
+        mEmigrationCheck += by;
+        if(mEmigrationCheck > emigCheck) {
+            mEmigrationCheck -= emigCheck;
+            for(const auto h : mHouses) {
+                if(h && h->people() > 0) {
+                    h->leave();
+                    break;
+                }
+            }
+        }
+    } else {
+        mEmigrationCheck = 0;
     }
 
     for(const auto i : mInvasionHandlers) {

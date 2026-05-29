@@ -640,6 +640,7 @@ private:
 
     int mUpdateResources = 999999;
     int mCoverageUpdate = 10000;
+    int mEmigrationCheck = 0; // throttle for low-sentiment emigration
 
     int mRoadState = 0;
     int mAllBuildingsState = 0;

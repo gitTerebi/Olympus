@@ -10,12 +10,30 @@ eEntryPoint::eEntryPoint(const int id,
     eSpawner(eBannerTypeS::entryPoint, id, tile,
              __INT_MAX__, 500, board) {}
 
+// Augustus-style sentiment curve: popularity (avg house satisfaction)
+// throttles immigration, freezing below 50. Unemployment already drags
+// popularity down via house work satisfaction, so this breaks the
+// jobless immigration churn cycle.
+int eEntryPoint::sImmigrationFreezePopularity = 50;
+
 void eEntryPoint::incTime(const int by) {
     auto& board = eEntryPoint::board();
     const auto tile = this->tile();
     const auto cid = tile->cityId();
     const int pop = board.popularity(cid);
-    setSpawnPeriod(500*(115 - pop)/15);
+    const int base = 500*(115 - pop)/15;
+    // Augustus update_status step curve mapped onto base spawn rate.
+    int period;
+    if(pop > 70) {
+        period = base;             // 100% rate
+    } else if(pop > 60) {
+        period = base*4/3;         // 75% rate
+    } else if(pop >= sImmigrationFreezePopularity) {
+        period = base*2;           // 50% rate
+    } else {
+        period = base*2;           // frozen (spawn() returns early)
+    }
+    setSpawnPeriod(period);
     eSpawner::incTime(by);
 }
 
@@ -24,6 +42,8 @@ void eEntryPoint::spawn(eTile* const tile) {
     const auto cid = tile->cityId();
     const auto& ivs = board.invasionHandlers(cid);
     if(!ivs.empty()) return;
+    // Freeze immigration when sentiment (popularity) is low.
+    if(board.popularity(cid) < sImmigrationFreezePopularity) return;
     const auto limit = board.immigrationLimit(cid);
     if(limit != eImmigrationLimitedBy::none &&
        limit != eImmigrationLimitedBy::lackOfVacancies) {
