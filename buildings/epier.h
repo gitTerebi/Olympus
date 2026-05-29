@@ -11,6 +11,7 @@ public:
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
     void collapse() override;
+    void erase() override;
 
     void setTradePost(eBuilding* const b);
     eBuilding* tradePost() const { return mTradePost; }

@@ -2367,7 +2367,8 @@ eTile* eBuilding::tileNeighbour(const eMoveDirection o,
 }
 
 std::vector<eTile*> eBuilding::surroundingRoad(
-        const bool diagonal, const bool jumpAvenue) const {
+        const bool diagonal, const bool jumpAvenue,
+        const bool includeRoadblock) const {
     const auto& board = getBoard();
     const auto tr = tileRect();
     std::vector<eTile*> r;
@@ -2378,22 +2379,27 @@ std::vector<eTile*> eBuilding::surroundingRoad(
         if(!rr) return;
         r.push_back(rr);
     };
+    // destination walkers cross roadblocks, so callers serving them pass
+    // includeRoadblock to seed paths from blocked road tiles too.
+    const auto roadOk = [includeRoadblock](eTile* const t) {
+        return t && t->hasRoad() && (includeRoadblock || !t->hasRoadblock());
+    };
     const int xMin = tr.x + (diagonal ? -1 : 0);
     const int xMax = tr.x + tr.w + (diagonal ? 1 : 0);
     for(int x = xMin; x < xMax; x++) {
         const auto t = board.tile(x, tr.y - 1);
-        if(t && t->hasRoad() && !t->hasRoadblock()) r.push_back(t);
+        if(roadOk(t)) r.push_back(t);
         else if(jumpAvenue && t && t->hasAvenue()) addAvenue(t);
         const auto tt = board.tile(x, tr.y + tr.h);
-        if(tt && tt->hasRoad() && !tt->hasRoadblock()) r.push_back(tt);
+        if(roadOk(tt)) r.push_back(tt);
         else if(jumpAvenue && tt && tt->hasAvenue()) addAvenue(tt);
     }
     for(int y = tr.y; y < tr.y + tr.h; y++) {
         const auto t = board.tile(tr.x - 1, y);
-        if(t && t->hasRoad() && !t->hasRoadblock()) r.push_back(t);
+        if(roadOk(t)) r.push_back(t);
         else if(jumpAvenue && t && t->hasAvenue()) addAvenue(t);
         const auto tt = board.tile(tr.x + tr.w, y);
-        if(tt && tt->hasRoad() && !tt->hasRoadblock()) r.push_back(tt);
+        if(roadOk(tt)) r.push_back(tt);
         else if(jumpAvenue && tt && tt->hasAvenue()) addAvenue(tt);
     }
     return r;

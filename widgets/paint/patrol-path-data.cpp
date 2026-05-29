@@ -1,10 +1,13 @@
 ﻿#include "widgets/game-widget.h"
 
+#include <cmath>
+
 #include "engine/e-game-board.h"
 #include "engine/etile.h"
 #include "engine/epathfinder.h"
 #include "buildings/epatrolbuildingbase.h"
 #include "buildings/epatrolsourcebuilding.h"
+#include "buildings/epatroltarget.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
@@ -113,7 +116,8 @@ void GameWidget::updateDestinationPath()
     mDestinationTargets.clear();
     if(!mDestinationBuilding) return;
     const auto src = mDestinationBuilding.get();
-    const auto srcRoads = src->surroundingRoad(false, true);
+    // destination walkers cross roadblocks, so seed from blocked roads too.
+    const auto srcRoads = src->surroundingRoad(false, true, true);
     if(srcRoads.empty()) return;
     const auto seedTile = srcRoads.front();
     const auto srcCid = src->cityId();
@@ -122,11 +126,17 @@ void GameWidget::updateDestinationPath()
     const int h = mBoard->height();
     for(const auto& tg : targets) {
         const auto targetType = tg.second;
+        // pass 1: gather every reachable target with its road distance and path
+        struct eReachable {
+            eBuilding* fBldg;
+            int fDist;
+            std::vector<eTile*> fPath;
+        };
+        std::vector<eReachable> reachable;
         for(const auto b : mBoard->buildings()) {
             if(!b) continue;
             if(b->type() != targetType) continue;
             if(b->cityId() != srcCid) continue;
-            mDestinationTargets.push_back(b);
             const auto destBldg = b;
             const auto valid = [destBldg](eTileBase* const t) {
                 const auto type = t->underBuildingType();
@@ -145,10 +155,37 @@ void GameWidget::updateDestinationPath()
             if(!r) continue;
             std::vector<eTile*> path;
             p.extractPath(path, *mBoard);
-            for(const auto pt : path) {
-                if(pt->underBuilding() == destBldg) continue;
-                mDestinationPath.emplace_back(pt);
-            }
+            ePathFindData data;
+            p.extractData(data); // swaps out mData, so must come after extractPath
+            reachable.push_back({destBldg, data.fDistance, std::move(path)});
+        }
+        if(reachable.empty()) continue;
+        // pass 2: pick the single target the next walker will go to (Augustus
+        // model: straight-line distance + load penalty, lowest wins) so the
+        // highlight shows exactly where the next walker is dispatched.
+        const auto srcRect = src->tileRect();
+        const int scx = srcRect.x + srcRect.w / 2;
+        const int scy = srcRect.y + srcRect.h / 2;
+        int bestI = -1;
+        int bestScore = -1;
+        for(int i = 0; i < (int)reachable.size(); i++) {
+            const auto& re = reachable[i];
+            const auto br = re.fBldg->tileRect();
+            const long dx = (br.x + br.w / 2) - scx;
+            const long dy = (br.y + br.h / 2) - scy;
+            const int dist = (int)(std::sqrt((double)(dx * dx + dy * dy)) + 0.5);
+            int penalty = 0;
+            const auto pt = dynamic_cast<ePatrolTarget*>(re.fBldg);
+            if(pt) penalty = ePatrolSourceBuilding::sLoadPenalty(pt->showDays());
+            const int score = dist + penalty;
+            if(bestScore < 0 || score < bestScore) { bestScore = score; bestI = i; }
+        }
+        if(bestI < 0) continue;
+        const auto& re = reachable[bestI];
+        mDestinationTargets.push_back(re.fBldg);
+        for(const auto pt : re.fPath) {
+            if(pt->underBuilding() == re.fBldg) continue;
+            mDestinationPath.emplace_back(pt);
         }
     }
 }

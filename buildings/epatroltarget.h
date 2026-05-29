@@ -18,8 +18,11 @@ public:
                   const int maxEmployees,
                   const eCityId cid);
 
-    bool isActive() const { return mActiveTimer > 0; }
-    bool hasSpawnPool() const { return mSpawnPool > 0; }
+    // active = show timer running; venue spawns patrolers while active.
+    bool isActive() const { return mShowDays > 0; }
+    // load signal for dispatch (Augustus days_left): more remaining = more
+    // recently served, so penalize.
+    int showDays() const { return mShowDays; }
 
     void arrived();
 
@@ -31,9 +34,8 @@ protected:
 private:
     const eCharGenerator mCharGen;
 
-    int mSpawnPool = 0;
-    bool mHadPatroler = false;
-    int mActiveTimer = 0;
+    int mShowDays = 0;   // remaining days of shows, like Augustus days1
+    int mDayAccum = 0;   // tick remainder toward the next day boundary
 };
 
 class ePT_spawnGetActorFinish : public eCharActFunc {

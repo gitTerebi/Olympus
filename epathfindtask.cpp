@@ -61,6 +61,7 @@ void ePathFindTask::run(eThreadBoard& data) {
 }
 
 void ePathFindTask::finish() {
+    if(mFoundFunc) mFoundFunc(mFound);
     if(mR) mFinish(mPath);
     else mFailFunc();
 }
@@ -76,5 +77,14 @@ void ePathFindTask::runImpl(eThreadBoard& data, ePathFinderBase& pf0) {
         mR = pf0.extractPath(mPath);
     } else {
         mR = false;
+    }
+    if(mFindAll && mFoundFunc) {
+        ePathFindData fd;
+        pf0.extractData(fd);
+        mFound.reserve(fd.fFoundAll.size());
+        for(const auto& f : fd.fFoundAll) {
+            const auto t = f.first;
+            mFound.push_back({{t->x(), t->y()}, f.second});
+        }
     }
 }

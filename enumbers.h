@@ -110,7 +110,7 @@ struct eNumbers {
     static int sDestinationWalkerSpawnCooldown;
     static int sCulturePatrolSpawnCooldown;
     static int sTheaterPatrolSpawnCooldown;
-    static int sCultureActiveTime;
+    static int sCultureShowDays;
 
     static int sArtisanWaitTime;
     static int sArtisanBuildTime;
