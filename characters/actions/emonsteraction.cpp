@@ -126,6 +126,32 @@ void eMonsterAction::finishAttack() {
     mAttackTime = 0;
 }
 
+void eMonsterAction::retaliate(eCharacter* const attacker) {
+    if(!attacker || attacker->dead()) return;
+    const auto c = character();
+    if(!c || c->dead()) return;
+    // already busy attacking something, leave it be
+    if(mStage == eMonsterAttackStage::attacking ||
+       mStage == eMonsterAttackStage::destroyingBuilding) return;
+    const auto ct = c->tile();
+    const auto at = attacker->tile();
+    if(!ct || !at) return;
+
+    const int dx = std::abs(ct->x() - at->x());
+    const int dy = std::abs(ct->y() - at->y());
+    const int dist = std::max(dx, dy);
+
+    const eMissileTarget target(attacker);
+    pauseAction();
+    if(dist <= 1) {
+        beginAttack(target, eCharacterActionType::fight, mStage);
+        spawnMeleeAttack();
+    } else {
+        beginAttack(target, eCharacterActionType::fight2, mStage);
+        spawnAttackMissile();
+    }
+}
+
 void eMonsterAction::spawnAttackMissile() {
     const auto c = character();
     const auto chart = c->type();

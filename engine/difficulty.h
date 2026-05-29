@@ -12,7 +12,7 @@ enum class Difficulty {
     beginner, mortal, hero, titan, olympian
 };
 
-namespace eDifficultyHelpers {
+namespace DifficultyHelpers {
     std::string name(const Difficulty diff);
 
     int soliderBribe(const Difficulty diff,
@@ -27,8 +27,8 @@ namespace eDifficultyHelpers {
     int fireRisk(const Difficulty diff,
                  const eBuildingType type);
 
-    int plagueRisk(const Difficulty diff);
-    int crimeRisk(const Difficulty diff);
+    int houseDiseaseRisk(const Difficulty diff, const int level, const bool elite);
+    int houseCrimeRisk(const Difficulty diff, const int level, const bool elite);
 
     int damageRisk(const Difficulty diff,
                    const eBuildingType type);

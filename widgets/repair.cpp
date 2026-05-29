@@ -339,7 +339,7 @@ static std::vector<sRepairGroup> collectRepairGroups(
             canRepair = addBundleRuins(board, g);
             if (!canRepair)
                 continue;
-            g.cost = eDifficultyHelpers::buildingCost(diff, wasType) * 1.10;
+            g.cost = DifficultyHelpers::buildingCost(diff, wasType) * 1.10;
             groups.push_back(std::move(g));
         }
     }

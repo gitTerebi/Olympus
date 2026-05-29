@@ -47,7 +47,7 @@ int AICityPlan::districtCost(GameBoard& board, const int id,
     const auto diff = board.difficulty(pid);
     if(marble) *marble = 0;
     for(const auto& b : d.fBuildings) {
-        result += eDifficultyHelpers::buildingCost(diff, b.fType);
+        result += DifficultyHelpers::buildingCost(diff, b.fType);
         if(marble) *marble += eBuilding::sInitialMarbleCost(b.fType);
     }
     return result;

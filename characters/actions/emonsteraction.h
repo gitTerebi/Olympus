@@ -37,6 +37,8 @@ public:
                      const eMonsterAttackStage prevStage);
     void finishAttack();
 
+    void retaliate(eCharacter* const attacker);
+
     void beginBuildingAttack(eBuilding* const b,
                              const eMonsterAttackStage prevStage);
     void finishBuildingAttack();

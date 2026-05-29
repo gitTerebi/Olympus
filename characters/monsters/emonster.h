@@ -19,6 +19,8 @@ public:
     eMonster(GameBoard& board, const eMonsterType mt);
     ~eMonster();
 
+    bool takeDamage(const double a, eCharacter* const attacker) override;
+
     static eMonsterType sCharacterToMonsterType(
             const eCharacterType type, bool* const valid = nullptr);
     static eCharacterType sMonsterToCharacterType(

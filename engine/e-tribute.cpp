@@ -12,7 +12,7 @@
 
 eTributePayment eTributeHelpers::payTribute(const eWorldCity &city, const Difficulty diff)
 {
-    const double mult = eDifficultyHelpers::costMultiplier(diff);
+    const double mult = DifficultyHelpers::costMultiplier(diff);
     const int count = std::round(city.payTributeCount() * mult);
     return {city.payTributeType(), count};
 }

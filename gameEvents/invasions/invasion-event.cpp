@@ -170,7 +170,7 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &boar
 
     const int unitCount =
         static_cast<int>(attacker.militaryStrength() *
-                         eDifficultyHelpers::costMultiplier(
+                         DifficultyHelpers::costMultiplier(
                              board.difficulty(attackingCity->playerId()))) *
         8;
 
@@ -639,11 +639,11 @@ int eInvasionEvent::bribeCost() const
     const auto cid = cityId();
     const auto pid = board->cityIdToPlayerId(cid);
     const auto diff = board->difficulty(pid);
-    const int rt = eDifficultyHelpers::soliderBribe(
+    const int rt = DifficultyHelpers::soliderBribe(
         diff, eCharacterType::rockThrower);
-    const int ht = eDifficultyHelpers::soliderBribe(
+    const int ht = DifficultyHelpers::soliderBribe(
         diff, eCharacterType::hoplite);
-    const int hm = eDifficultyHelpers::soliderBribe(
+    const int hm = DifficultyHelpers::soliderBribe(
         diff, eCharacterType::horseman);
 
     int infantry = 0;

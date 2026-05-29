@@ -539,6 +539,7 @@ void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
                        bbt == eBannerType::rockThrower ||
                        bbt == eBannerType::horseman) {
                         bb->moveToPalace();
+                        bb->goHome();
                         eVectorHelpers::remove(bs, bb);
                         i--;
                     }
@@ -553,6 +554,7 @@ void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
                     if((bbt == eBannerType::amazon && gt == eGodType::artemis) ||
                        (bbt == eBannerType::aresWarrior && gt == eGodType::ares)) {
                         bb->moveToPalace();
+                        bb->goHome();
                         eVectorHelpers::remove(bs, bb);
                         i--;
                     }

@@ -29,7 +29,7 @@ void eDifficultyWidget::initialize(const Difficulty diff,
     label->setFontSizeS();
 
     const auto updateLabel = [label, diffText, value]() {
-        const auto hdiff = eDifficultyHelpers::name(*value);
+        const auto hdiff = DifficultyHelpers::name(*value);
         label->setText("  " + diffText + "  " + hdiff);
         label->fitContent();
     };

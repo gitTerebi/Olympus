@@ -105,7 +105,7 @@ bool gBuildVendor(GameBoard& brd,
     agora->setBuilding(spaceId, fv);
     if(!editorDisplay) {
         const auto diff = brd.difficulty(pid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, fv->type());
+        const int cost = DifficultyHelpers::buildingCost(diff, fv->type());
         brd.incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
     return true;
@@ -569,7 +569,7 @@ bool gBuild(const AIBuilding& b,
 
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);
-            const int cost = eDifficultyHelpers::buildingCost(diff, a->type());
+            const int cost = DifficultyHelpers::buildingCost(diff, a->type());
             board.incDrachmas(pid, -cost, eFinanceTarget::construction);
         }
 
@@ -608,7 +608,7 @@ bool gBuild(const AIBuilding& b,
 
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);
-            const int cost = eDifficultyHelpers::buildingCost(diff, a->type());
+            const int cost = DifficultyHelpers::buildingCost(diff, a->type());
             board.incDrachmas(pid, -cost, eFinanceTarget::construction);
         }
 

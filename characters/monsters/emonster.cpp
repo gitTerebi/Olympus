@@ -5,12 +5,24 @@
 
 #include "ecalydonianboar.h"
 #include "engine/e-game-board.h"
+#include "engine/ecityid.h"
+#include "characters/actions/emonsteraction.h"
 
 #include "elanguage.h"
 
 eMonster::eMonster(GameBoard& board, const eMonsterType mt) :
     eCharacter(board, sMonsterToCharacterType(mt)) {
     setAttack(0.5);
+}
+
+bool eMonster::takeDamage(const double a, eCharacter* const attacker) {
+    const bool dead = eCharacter::takeDamage(a, attacker);
+    if(dead || !attacker || attacker->dead()) return dead;
+    if(!eTeamIdHelpers::isEnemy(attacker->teamId(), teamId())) return dead;
+    const auto ma = dynamic_cast<eMonsterAction*>(action());
+    if(!ma) return dead;
+    ma->retaliate(attacker);
+    return dead;
 }
 
 eMonster::~eMonster() {

@@ -32,6 +32,9 @@ struct HouseReq {
     int horses = 0;     // col h: horses needed
     int wine = 0;       // col l: wine needed
     int armor = 0;      // col m: armor needed
+    int crimeInc = 0;    // col o: crime risk increment
+    int crimeBase = 0;   // col p: crime risk base
+    int diseaseRisk = 0; // col u: disease risk increment
     int capacity = 0;   // col r: population capacity
     int taxMult = 0;    // col s: tax rate mult
     bool valid = false;

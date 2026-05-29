@@ -52,7 +52,7 @@ bool buildCommonHousing(GameBoard* board, eCityId cid, ePlayerId pid, bool edito
                 pressedTX, pressedTY, hoverTX, hoverTY);
     int totalCost = 0;
     const auto diff = board->difficulty(pid);
-    const int costPerHouse = eDifficultyHelpers::buildingCost(diff, eBuildingType::commonHouse);
+    const int costPerHouse = DifficultyHelpers::buildingCost(diff, eBuildingType::commonHouse);
     for(const auto& rect : rects) {
         (void)rect;
         totalCost += costPerHouse;

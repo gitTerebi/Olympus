@@ -1754,8 +1754,8 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 const auto pid = mBoard->personPlayer();
                 const auto diff = mBoard->difficulty(pid);
-                const int fr = eDifficultyHelpers::fireRisk(diff, bt);
-                const int dr = eDifficultyHelpers::damageRisk(diff, bt);
+                const int fr = DifficultyHelpers::fireRisk(diff, bt);
+                const int dr = DifficultyHelpers::damageRisk(diff, bt);
                 if (const auto h = dynamic_cast<eHouseBase *>(ub))
                 {
                     if (h->people() == 0)

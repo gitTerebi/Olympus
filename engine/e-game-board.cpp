@@ -5195,7 +5195,7 @@ bool GameBoard::buildBase(const int minX, const int minY,
     if (!editorDisplay)
     {
         const auto diff = difficulty(pid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+        const int cost = DifficultyHelpers::buildingCost(diff, b->type());
         mUndo.cost() += cost;
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
@@ -5275,7 +5275,7 @@ bool GameBoard::buildAnimal(eTile *const tile,
     if (!editorDisplay)
     {
         const auto diff = difficulty(pid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        const int cost = DifficultyHelpers::buildingCost(diff, type);
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
 
@@ -5324,7 +5324,7 @@ bool GameBoard::buildPyramid(const int minX, const int maxX,
     if (!editorDisplay)
     {
         const auto diff = difficulty(pid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        const int cost = DifficultyHelpers::buildingCost(diff, type);
         incDrachmas(pid, -cost, eFinanceTarget::construction);
         const int m = eBuilding::sInitialMarbleCost(type);
         takeResource(cid, eResourceType::marble, m);
@@ -5360,7 +5360,7 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
     if (!editorDisplay)
     {
         const auto diff = difficulty(pid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, type);
+        const int cost = DifficultyHelpers::buildingCost(diff, type);
         incDrachmas(pid, -cost, eFinanceTarget::construction);
         const int m = eBuilding::sInitialMarbleCost(type);
         takeResource(cid, eResourceType::marble, m);

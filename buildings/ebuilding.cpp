@@ -2436,7 +2436,7 @@ void eBuilding::incTime(const int by) {
     } else if(!isEmptyHome()) {
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
-        const int fireRisk = eDifficultyHelpers::fireRisk(diff, mType);
+        const int fireRisk = DifficultyHelpers::fireRisk(diff, mType);
         if(fireRisk && by && sFlammable(type())) {
             const double pm = eNumbers::sFireRiskPeriodMultiplier;
             const double pbi = eNumbers::sFireRiskPeriodBaseIncrement;
@@ -2450,7 +2450,7 @@ void eBuilding::incTime(const int by) {
                 b.event(eEvent::fire, ed);
             }
         }
-        const int damageRisk = eDifficultyHelpers::damageRisk(diff, mType);
+        const int damageRisk = DifficultyHelpers::damageRisk(diff, mType);
         if(damageRisk && by) {
             const double pm = eNumbers::sCollapseRiskPeriodMultiplier;
             const double pbi = eNumbers::sCollapseRiskPeriodBaseIncrement;
