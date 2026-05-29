@@ -24,6 +24,7 @@ public:
 
     eResourceType gets() const { return mGet; }
     eResourceType empties() const { return mEmpty; }
+    eResourceType imports() const { return mImports; }
 
     bool gets(const eResourceType res) const;
     bool empties(const eResourceType res) const;
@@ -61,6 +62,7 @@ private:
 
     eResourceType mGet = eResourceType::none;
     eResourceType mEmpty = eResourceType::none;
+    eResourceType mImports = eResourceType::none; // trade post imported goods
     eResourceType mAccepts = eResourceType::none; // includes get
     int mRawSpaceLeft{0};
 };

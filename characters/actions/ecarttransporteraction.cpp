@@ -336,6 +336,9 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             if(task.fType == eCartActionType::get) {
                 const auto city = board().boardCityWithId(t->cityId());
                 if(city && city->isStockpiled(res)) continue;
+                // from a trade post, pull only imported goods
+                if(ub.type() == eBuildingType::tradePost &&
+                   !static_cast<bool>(ub.imports() & res)) continue;
                 if(ub.resourceHas(res)) found = true;
             } else { // give
                 if(ub.empties(res)) continue;
@@ -513,7 +516,8 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
         if(count > 0 && res != tres) return 0;
         int destinationSpace = mBuilding->spaceLeft(tres);
         if(const auto storage = dynamic_cast<eStorageBuilding*>(mBuilding.get())) {
-            for(eCartTransporter* const other : {storage->cart1(), storage->cart2()}) {
+            for(int i = 0; i < eStorageBuilding::sMaxCarts; i++) {
+                eCartTransporter* const other = storage->cart(i);
                 if(!other || other == c) continue;
                 if(!other->hasResource()) continue;
                 if(other->resType() != tres) continue;
@@ -581,7 +585,8 @@ bool eCartTransporterAction::acceptsTargetForTask(
     const bool storageTarget = targetType == eBuildingType::warehouse ||
                                targetType == eBuildingType::granary;
     if(storageHome && task.fType == eCartActionType::get) {
-        return storageTarget;
+        // allow pulling imported goods from a trade post too
+        return storageTarget || targetType == eBuildingType::tradePost;
     }
     if(storageHome &&
        task.fType == eCartActionType::deliver &&

@@ -95,8 +95,10 @@ public:
 
     void prepareForCollapse() override { clearStorage(); }
 
-    eCartTransporter* cart1() const { return mCart1.get(); }
-    eCartTransporter* cart2() const { return mCart2.get(); }
+    static const int sMaxCarts = 3;
+    eCartTransporter* cart(const int i) const { return mCarts[i].get(); }
+    eCartTransporter* cart1() const { return mCarts[0].get(); }
+    eCartTransporter* cart2() const { return mCarts[1].get(); }
 
     // sum of res of type `res` already en-route to `target` from any
     // yard in `cityId` (live; no save state).
@@ -107,6 +109,12 @@ public:
 
 protected:
     void serializeFields(eSaveArchive& ar) override;
+    // which held resources this building is allowed to push out to consumers.
+    // trade post overrides this to push imported goods only (not exports).
+    virtual bool pushAllows(const eResourceType) const { return true; }
+    // cart budget: storehouse/granary = 2 get + 1 deliver; trade post = 1 + 1.
+    virtual int maxGetCarts() const { return 2; }
+    virtual int maxDeliverCarts() const { return 1; }
 private:
     stdptr<eCartTransporter> spawnStorageDeliveryCart();
     std::vector<eCartTask> orderCartTasks() const;
@@ -141,8 +149,7 @@ private:
 
     std::map<eResourceType, int> mMaxCount;
 
-    stdptr<eCartTransporter> mCart1;
-    stdptr<eCartTransporter> mCart2;
+    stdptr<eCartTransporter> mCarts[sMaxCarts];
 };
 
 #endif // ESTORAGEBUILDING_H
