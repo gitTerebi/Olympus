@@ -105,6 +105,90 @@ struct sRepairGroup
     int cost = 0;
 };
 
+static void placeBuildingOnTiles(GameBoard &board,
+                                 const stdsptr<eBuilding> &b,
+                                 const SDL_Rect &rect)
+{
+    const int cx = rect.x + rect.w / 2;
+    const int cy = rect.y + rect.h / 2;
+    b->setCenterTile(board.tile(cx, cy));
+    b->setTileRect(rect);
+    for (int x = rect.x; x < rect.x + rect.w; x++)
+    {
+        for (int y = rect.y; y < rect.y + rect.h; y++)
+        {
+            const auto t = board.tile(x, y);
+            if (t)
+            {
+                t->setUnderBuilding(b);
+                b->addUnderBuilding(t);
+            }
+        }
+    }
+}
+
+// Replace a bundle-restored pier (pier-type TradePost + its ePier) with a
+// freshly constructed pair, copying the saved trade settings across. The
+// restored pair links up fine but never resumes spawning trade boats, so a
+// clean rebuild via the normal construction path is more reliable than
+// reviving whatever the snapshot drops.
+static void rebuildPierFresh(std::vector<stdsptr<eBuilding>> &buildings,
+                             GameBoard &board)
+{
+    TradePost *oldPost = nullptr;
+    ePier *oldPier = nullptr;
+    for (const auto &b : buildings)
+    {
+        if (const auto tp = dynamic_cast<TradePost *>(b.get()))
+        {
+            if (tp->tpType() == eTradePostType::pier) oldPost = tp;
+        }
+        else if (const auto p = dynamic_cast<ePier *>(b.get()))
+        {
+            oldPier = p;
+        }
+    }
+    if (!oldPost || !oldPier) return;
+
+    // capture saved settings + footprints before tearing the old pair down
+    const auto postRect = oldPost->tileRect();
+    const auto pierRect = oldPier->tileRect();
+    const auto o = oldPost->orientation();
+    const auto cid = oldPost->cityId();
+    auto &worldCity = oldPost->city();
+    eResourceType imports, exports, empty, cartGet, cartAccept, cartDontAccept;
+    oldPost->getOrders(imports, exports, empty, cartGet,
+                       cartAccept, cartDontAccept);
+
+    // TradePost::erase also erases its unpack building (the pier), so a
+    // single call tears the whole pair down.
+    oldPost->erase();
+
+    std::vector<stdsptr<eBuilding>> kept;
+    kept.reserve(buildings.size());
+    for (const auto &b : buildings)
+    {
+        if (b.get() != oldPost && b.get() != oldPier)
+            kept.push_back(b);
+    }
+    buildings = std::move(kept);
+
+    const auto pier = e::make_shared<ePier>(board, o, cid);
+    placeBuildingOnTiles(board, pier, pierRect);
+
+    const auto post = e::make_shared<TradePost>(
+        board, worldCity, cid, eTradePostType::pier);
+    post->setOrientation(o);
+    post->setUnpackBuilding(pier.get());
+    placeBuildingOnTiles(board, post, postRect);
+    pier->setTradePost(post.get());
+    post->setOrders(imports, exports, empty, cartGet,
+                    cartAccept, cartDontAccept);
+
+    buildings.push_back(pier);
+    buildings.push_back(post);
+}
+
 static std::vector<stdsptr<eBuilding>> restoreFromBundle(
     const std::vector<uint8_t> &data, GameBoard &board)
 {
@@ -241,6 +325,13 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
             }
         }
     }
+
+    // The bundle-restored pier never resumes trade traffic (boats stop
+    // spawning). Rather than chase whatever state the snapshot loses, throw
+    // the restored pier pair away and build a fresh one the same way the
+    // player build does, copying the saved settings across.
+    rebuildPierFresh(buildings, board);
+
     return buildings;
 }
 
