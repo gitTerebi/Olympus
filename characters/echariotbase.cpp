@@ -9,7 +9,6 @@ eChariotBase::eChariotBase(GameBoard& board,
     eSoldier(board, &eCharacterTextures::fHoplite, type),
     mCharTexs(charTexs) {
     setAttack(eNumbers::sChariotAttack);
-    setSpeed(eNumbers::sChariotSpeed);
     setHP(eNumbers::sChariotHP);
 }
 

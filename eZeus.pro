@@ -190,7 +190,7 @@ SOURCES += \
         characters/actions/edefendattackcityaction.cpp \
         characters/actions/edefendcityaction.cpp \
         characters/actions/edieaction.cpp \
-        characters/actions/edionysusfollowaction.cpp \
+        characters/actions/dionysus-follow-action.cpp \
         characters/actions/fight-action.cpp \
         characters/actions/efightingaction.cpp \
         characters/actions/efirefighteraction.cpp \
@@ -206,9 +206,9 @@ SOURCES += \
         characters/actions/eheroaction.cpp \
         characters/actions/ehuntaction.cpp \
         characters/actions/ekillcharacterfinishfail.cpp \
-        characters/actions/emonsteraction.cpp \
+        characters/actions/monster-action.cpp \
         characters/actions/emoveaction.cpp \
-        characters/actions/emovearoundaction.cpp \
+        characters/actions/move-around-action.cpp \
         characters/actions/emovepathaction.cpp \
         characters/actions/emovetoaction.cpp \
         characters/actions/epatrolaction.cpp \
@@ -244,7 +244,7 @@ SOURCES += \
         characters/actions/walkable/eobsticlehandler.cpp \
         characters/actions/walkable/erectwalkableobject.cpp \
         characters/actions/walkable/ewalkableobject.cpp \
-        characters/eactor.cpp \
+        characters/actor.cpp \
         characters/eamazon.cpp \
         characters/eanimal.cpp \
         characters/earcher.cpp \
@@ -356,7 +356,7 @@ SOURCES += \
         characters/gods/eextendedgod.cpp \
         characters/gods/egod.cpp \
         characters/gods/ehermes.cpp \
-        characters/heroes/eachilles.cpp \
+        characters/heroes/achilles.cpp \
         characters/heroes/ebasichero.cpp \
         characters/heroes/ehero.cpp \
         characters/monsters/ebasicmonster.cpp \
@@ -903,7 +903,7 @@ HEADERS += \
     characters/actions/edefendattackcityaction.h \
     characters/actions/edefendcityaction.h \
     characters/actions/edieaction.h \
-    characters/actions/edionysusfollowaction.h \
+    characters/actions/dionysus-follow-action.h \
     characters/actions/fight-action.h \
     characters/actions/efightingaction.h \
     characters/actions/efirefighteraction.h \
@@ -918,9 +918,9 @@ HEADERS += \
     characters/actions/eheroaction.h \
     characters/actions/ehuntaction.h \
     characters/actions/ekillcharacterfinishfail.h \
-    characters/actions/emonsteraction.h \
+    characters/actions/monster-action.h \
     characters/actions/emoveaction.h \
-    characters/actions/emovearoundaction.h \
+    characters/actions/move-around-action.h \
     characters/actions/emovepathaction.h \
     characters/actions/emovetoaction.h \
     characters/actions/epatrolaction.h \
@@ -956,7 +956,7 @@ HEADERS += \
     characters/actions/walkable/eobsticlehandler.h \
     characters/actions/walkable/erectwalkableobject.h \
     characters/actions/walkable/ewalkableobject.h \
-    characters/eactor.h \
+    characters/actor.h \
     characters/eamazon.h \
     characters/eanimal.h \
     characters/earcher.h \
@@ -1068,7 +1068,7 @@ HEADERS += \
     characters/gods/egod.h \
     characters/gods/egodtype.h \
     characters/gods/ehermes.h \
-    characters/heroes/eachilles.h \
+    characters/heroes/achilles.h \
     characters/heroes/ebasichero.h \
     characters/heroes/ehero.h \
     characters/monsters/ebasicmonster.h \

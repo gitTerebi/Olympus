@@ -184,7 +184,7 @@ set(SOURCES
     characters/actions/edefendattackcityaction.cpp
     characters/actions/edefendcityaction.cpp
     characters/actions/edieaction.cpp
-    characters/actions/edionysusfollowaction.cpp
+    characters/actions/dionysus-follow-action.cpp
     characters/actions/combat-timing.cpp
     characters/actions/fight-action.cpp
     characters/actions/efightingaction.cpp
@@ -201,9 +201,9 @@ set(SOURCES
     characters/actions/eheroaction.cpp
     characters/actions/ehuntaction.cpp
     characters/actions/ekillcharacterfinishfail.cpp
-    characters/actions/emonsteraction.cpp
+    characters/actions/monster-action.cpp
     characters/actions/emoveaction.cpp
-    characters/actions/emovearoundaction.cpp
+    characters/actions/move-around-action.cpp
     characters/actions/emovepathaction.cpp
     characters/actions/emovetoaction.cpp
     characters/actions/epatrolaction.cpp
@@ -239,7 +239,7 @@ set(SOURCES
     characters/actions/walkable/eobsticlehandler.cpp
     characters/actions/walkable/erectwalkableobject.cpp
     characters/actions/walkable/ewalkableobject.cpp
-    characters/eactor.cpp
+    characters/actor.cpp
     characters/eamazon.cpp
     characters/eanimal.cpp
     characters/earcher.cpp
@@ -351,7 +351,7 @@ set(SOURCES
     characters/gods/eextendedgod.cpp
     characters/gods/egod.cpp
     characters/gods/ehermes.cpp
-    characters/heroes/eachilles.cpp
+    characters/heroes/achilles.cpp
     characters/heroes/ebasichero.cpp
     characters/heroes/ehero.cpp
     characters/monsters/ebasicmonster.cpp

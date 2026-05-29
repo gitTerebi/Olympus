@@ -11,7 +11,7 @@
 #include "characters/gods/actions/egodmonsteraction.h"
 #include "egroweraction.h"
 #include "eheroaction.h"
-#include "emonsteraction.h"
+#include "monster-action.h"
 #include "esettleraction.h"
 #include "ewolfaction.h"
 #include "eshepherdaction.h"

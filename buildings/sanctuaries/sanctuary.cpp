@@ -4,7 +4,7 @@
 #include "characters/gods/egod.h"
 #include "characters/gods/actions/egodworshippedaction.h"
 #include "characters/monsters/emonster.h"
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 #include "characters/gods/actions/god-minion-action.h"
 #include "etilehelper.h"
 #include "engine/eevent.h"

@@ -2,7 +2,7 @@
 
 #include "buildings/ebuilding.h"
 #include "engine/e-game-board.h"
-#include "characters/actions/edionysusfollowaction.h"
+#include "characters/actions/dionysus-follow-action.h"
 #include "characters/monsters/ecalydonianboar.h"
 #include "characters/actions/ewaitaction.h"
 #include "buildings/epalace.h"
@@ -100,7 +100,7 @@ void eGodAttackAction::increment(const int by) {
             for(const auto& cc : chars) {
                 if(cc.get() == c) continue;
                 const auto cType = cc->type();
-                const bool r = eDionysusFollowAction::sShouldFollow(cType);
+                const bool r = DionysusFollowAction::sShouldFollow(cType);
                 if(!r) continue;
                 const auto ccaa = cc->actionType();
                 if(ccaa == eCharacterActionType::die) continue;
@@ -441,11 +441,11 @@ void eGodAttackAction::initialize() {
     const auto type = this->type();
     if(type == eGodType::dionysus) {
         eCharacter* f = c;
-        eDionysusFollowAction* fa = nullptr;
+        DionysusFollowAction* fa = nullptr;
         for(int i = 0; i < 3; i++) {
             const auto s = e::make_shared<eSatyr>(board);
             s->changeTile(tile);
-            const auto a = e::make_shared<eDionysusFollowAction>(
+            const auto a = e::make_shared<DionysusFollowAction>(
                                f, s.get());
             s->setAction(a);
             f = s.get();
@@ -458,7 +458,7 @@ void eGodAttackAction::initialize() {
         const auto& chars = board.characters();
         for(const auto c : chars) {
             const auto cType = c->type();
-            const bool r = eDionysusFollowAction::sShouldFollow(cType);
+            const bool r = DionysusFollowAction::sShouldFollow(cType);
             if(!r) continue;
             if(c->dead()) continue;
             c->killWithCorpse();

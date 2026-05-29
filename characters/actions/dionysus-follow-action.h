@@ -1,16 +1,16 @@
-#ifndef EDIONYSUSFOLLOWACTION_H
-#define EDIONYSUSFOLLOWACTION_H
+#ifndef DIONYSUS_FOLLOW_ACTION_H
+#define DIONYSUS_FOLLOW_ACTION_H
 
 #include "efollowaction.h"
 
 enum class eCharacterType;
 class eSaveArchive;
 
-class eDionysusFollowAction : public eFollowAction {
+class DionysusFollowAction : public eFollowAction {
 public:
-    eDionysusFollowAction(eCharacter* const f,
+    DionysusFollowAction(eCharacter* const f,
                           eCharacter* const c);
-    eDionysusFollowAction(eCharacter* const c);
+    DionysusFollowAction(eCharacter* const c);
 
     void setFollower(eCharacter* const f);
     void setKillFollowerOnFinish();
@@ -27,4 +27,4 @@ private:
     bool mKillOnFinish = false;
 };
 
-#endif // EDIONYSUSFOLLOWACTION_H
+#endif // DIONYSUS_FOLLOW_ACTION_H

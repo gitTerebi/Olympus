@@ -1,6 +1,6 @@
 #include "echaracter.h"
 
-#include "eactor.h"
+#include "actor.h"
 #include "earcher.h"
 #include "eartisan.h"
 #include "eboar.h"
@@ -87,7 +87,7 @@
 #include "gods/edionysus.h"
 #include "gods/ehermes.h"
 
-#include "heroes/eachilles.h"
+#include "heroes/achilles.h"
 
 #include "characters/eelitecitizen.h"
 #include "characters/etrireme.h"
@@ -105,7 +105,7 @@ stdsptr<eCharacter> eCharacter::sCreate(
     case eCharacterType::bull:
         return e::make_shared<eCattle>(board, t);
     case eCharacterType::actor:
-        return e::make_shared<eActor>(board);
+        return e::make_shared<Actor>(board);
     case eCharacterType::archer:
         return e::make_shared<eArcher>(board);
     case eCharacterType::artisan:
@@ -308,21 +308,21 @@ stdsptr<eCharacter> eCharacter::sCreate(
         return e::make_shared<eZeus>(board);
 
     case eCharacterType::achilles:
-        return e::make_shared<eAchilles>(board);
+        return e::make_shared<Achilles>(board);
     case eCharacterType::atalanta:
-        return e::make_shared<eAtalanta>(board);
+        return e::make_shared<Atalanta>(board);
     case eCharacterType::bellerophon:
-        return e::make_shared<eBellerophon>(board);
+        return e::make_shared<Bellerophon>(board);
     case eCharacterType::hercules:
-        return e::make_shared<eHercules>(board);
+        return e::make_shared<Hercules>(board);
     case eCharacterType::jason:
-        return e::make_shared<eJason>(board);
+        return e::make_shared<Jason>(board);
     case eCharacterType::odysseus:
-        return e::make_shared<eOdysseus>(board);
+        return e::make_shared<Odysseus>(board);
     case eCharacterType::perseus:
-        return e::make_shared<ePerseus>(board);
+        return e::make_shared<Perseus>(board);
     case eCharacterType::theseus:
-        return e::make_shared<eTheseus>(board);
+        return e::make_shared<Theseus>(board);
 
     case eCharacterType::scholar:
         return e::make_shared<eScholar>(board);

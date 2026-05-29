@@ -1,9 +1,9 @@
-#include "emovearoundaction.h"
+#include "move-around-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
 
-eMoveAroundAction::eMoveAroundAction(eCharacter* const c,
+MoveAroundAction::MoveAroundAction(eCharacter* const c,
                                      const int startX, const int startY,
                                      const stdsptr<eWalkableObject>& walkable) :
     eMoveAction(c, walkable, eCharActionType::moveAroundAction) {
@@ -11,23 +11,23 @@ eMoveAroundAction::eMoveAroundAction(eCharacter* const c,
     mStartTY = startY;
 }
 
-eMoveAroundAction::eMoveAroundAction(eCharacter* const c) :
-    eMoveAroundAction(c, 0, 0, nullptr) {}
+MoveAroundAction::MoveAroundAction(eCharacter* const c) :
+    MoveAroundAction(c, 0, 0, nullptr) {}
 
-void eMoveAroundAction::increment(const int by) {
+void MoveAroundAction::increment(const int by) {
     mRemTime -= by;
     eMoveAction::increment(by);
 }
 
-void eMoveAroundAction::setTime(const int t) {
+void MoveAroundAction::setTime(const int t) {
     mRemTime = t;
 }
 
-void eMoveAroundAction::setMaxDistance(const int md) {
+void MoveAroundAction::setMaxDistance(const int md) {
     mMaxDist = md;
 }
 
-void eMoveAroundAction::serializeFields(eSaveArchive& ar) {
+void MoveAroundAction::serializeFields(eSaveArchive& ar) {
     eMoveAction::serializeFields(ar);
     ar.field("startTX", mStartTX);
     ar.field("startTY", mStartTY);
@@ -35,7 +35,7 @@ void eMoveAroundAction::serializeFields(eSaveArchive& ar) {
     ar.field("remTime", mRemTime);
 }
 
-eCharacterActionState eMoveAroundAction::nextTurn(eOrientation& turn) {
+eCharacterActionState MoveAroundAction::nextTurn(eOrientation& turn) {
     if(mRemTime <= 0) {
         return eCharacterActionState::finished;
     }

@@ -1,8 +1,8 @@
-#include "eactor.h"
+#include "actor.h"
 
 #include "textures/egametextures.h"
 
-eActor::eActor(GameBoard& board) :
+Actor::Actor(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fActor,
                    eCharacterType::actor) {
     setProvide(eProvide::actorAstronomer, 10000);

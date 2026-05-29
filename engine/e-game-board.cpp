@@ -71,7 +71,7 @@
 #include "eeventdata.h"
 
 #include "gameEvents/invasions/invasion-handler.h"
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 
 #include "evectorhelpers.h"
 #include "egifthelpers.h"
@@ -1945,7 +1945,7 @@ void GameBoard::updateMusic()
         for (const auto m : c->monsters())
         {
             const auto a = m->action();
-            if (const auto ma = dynamic_cast<eMonsterAction *>(a))
+            if (const auto ma = dynamic_cast<MonsterAction *>(a))
             {
                 const auto stage = ma->stage();
                 if (stage == eMonsterAttackStage::none ||

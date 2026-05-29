@@ -1,6 +1,6 @@
 #include "eobsticlehandler.h"
 
-#include "characters/actions/emonsteraction.h"
+#include "characters/actions/monster-action.h"
 #include "characters/gods/actions/egodattackaction.h"
 #include "characters/actions/soldier-action.h"
 
