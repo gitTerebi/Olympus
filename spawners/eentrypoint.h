@@ -13,6 +13,9 @@ public:
 
     void incTime(const int by) override;
     void spawn(eTile* const tile) override;
+
+    // Popularity below this freezes immigration (Augustus-style sentiment gate).
+    static int sImmigrationFreezePopularity;
 };
 
 class eSS_spawnFinish : public eCharActFunc {
