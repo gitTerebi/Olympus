@@ -210,7 +210,7 @@ int EliteHousing::provide(const eProvide p, const int n) {
         if(!p || p->cursed()) return 0;
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
-        const int taxMult = eDifficultyHelpers::taxMultiplier(
+        const int taxMult = DifficultyHelpers::taxMultiplier(
                                 diff, type(), mLevel);
         const double tax = eNumbers::sEliteHousingTaxMultiplier *
                            mPeople * taxMult * b.taxRateF(cid);
@@ -246,11 +246,11 @@ void EliteHousing::nextMonth() {
     const int cfood = round((mPeople + mHorses)*0.25);
     const int cfleece = 2;
     const int coil = 2;
-    const int cwine = mLevel > 1 ? 2 : 0;
+    const int cwine = mLevel > 2 ? 2 : 0; // manor+ drinks wine
     mFood = std::max(0, mFood - cfood);
     mFleece = std::max(0, mFleece - cfleece);
     mOil = std::max(0, mOil - coil);
-    if(mLevel > 2) mWine = std::max(0, mWine - cwine);
+    mWine = std::max(0, mWine - cwine);
 }
 
 bool EliteHousing::lowFood() const {
@@ -352,15 +352,15 @@ void EliteHousing::updateLevel() {
         // lvl 0=residence, 1=mansion, 2=manor, 3=estate
         if(lvl < 0 || lvl > 3) return false;
         // Threshold lives on SOURCE row: prior elite row's b, or Townhouse.b for lvl 0.
-        eDifficultyHelpers::eHouseLevelReq req;
+        DifficultyHelpers::eHouseLevelReq req;
         if(lvl == 0) {
-            req = eDifficultyHelpers::houseLevelReq(diff, false, 6); // Townhouse
+            req = DifficultyHelpers::houseLevelReq(diff, false, 6); // Townhouse
         } else {
-            req = eDifficultyHelpers::houseLevelReq(diff, true, lvl - 1);
+            req = DifficultyHelpers::houseLevelReq(diff, true, lvl - 1);
         }
         if(appeal < req.fAppE) return false;
         // Culture / arms / etc gates use target row.
-        const auto tgt = eDifficultyHelpers::houseLevelReq(diff, true, lvl);
+        const auto tgt = DifficultyHelpers::houseLevelReq(diff, true, lvl);
         if(pts < tgt.fEnt) return false;
         if(mFood <= 0 || mFleece <= 0 || mOil <= 0) return false;
         const auto mr = ModelData::instance().houseReq(diff, lvl, true);

@@ -5,7 +5,7 @@
 #include "characters/echaracterbase.h"
 #include "model-data.h"
 
-std::string eDifficultyHelpers::name(const Difficulty diff)
+std::string DifficultyHelpers::name(const Difficulty diff)
 {
     switch (diff)
     {
@@ -365,7 +365,7 @@ int costBase(const eBuildingType type)
     }
 }
 
-double eDifficultyHelpers::costMultiplier(const Difficulty diff)
+double DifficultyHelpers::costMultiplier(const Difficulty diff)
 {
     switch (diff)
     {
@@ -383,7 +383,7 @@ double eDifficultyHelpers::costMultiplier(const Difficulty diff)
     return 1;
 }
 
-int eDifficultyHelpers::buildingCost(
+int DifficultyHelpers::buildingCost(
     const Difficulty diff,
     const eBuildingType type)
 {
@@ -393,7 +393,7 @@ int eDifficultyHelpers::buildingCost(
     const int bi = static_cast<int>(type);
     if (bi >= min && bi <= max)
         return base;
-    const double mult = eDifficultyHelpers::costMultiplier(diff);
+    const double mult = DifficultyHelpers::costMultiplier(diff);
     return std::round(mult * base);
 }
 
@@ -499,7 +499,7 @@ double fireRiskMultiplier(const Difficulty diff)
     return 1;
 }
 
-int eDifficultyHelpers::fireRisk(
+int DifficultyHelpers::fireRisk(
     const Difficulty diff,
     const eBuildingType type)
 {
@@ -508,50 +508,20 @@ int eDifficultyHelpers::fireRisk(
     return std::round(mult * base);
 }
 
-double plagueRiskMultiplier(const Difficulty diff)
+int DifficultyHelpers::houseDiseaseRisk(const Difficulty diff,
+                                         const int level, const bool elite)
 {
-    switch (diff)
-    {
-    case Difficulty::beginner:
-        return 1.0;
-    case Difficulty::mortal:
-        return 1.5;
-    case Difficulty::hero:
-        return 1.875;
-    case Difficulty::titan:
-        return 2.25;
-    case Difficulty::olympian:
-        return 2.5;
-    }
-    return 1;
+    const auto r = ModelData::instance().houseReq(diff, level, elite);
+    if (!r) return 0;
+    return r->diseaseRisk;
 }
 
-int eDifficultyHelpers::plagueRisk(const Difficulty diff)
+int DifficultyHelpers::houseCrimeRisk(const Difficulty diff,
+                                       const int level, const bool elite)
 {
-    return plagueRiskMultiplier(diff);
-}
-
-double crimeRiskMultiplier(const Difficulty diff)
-{
-    switch (diff)
-    {
-    case Difficulty::beginner:
-        return 1.0;
-    case Difficulty::mortal:
-        return 1.5;
-    case Difficulty::hero:
-        return 1.875;
-    case Difficulty::titan:
-        return 2.25;
-    case Difficulty::olympian:
-        return 2.5;
-    }
-    return 1;
-}
-
-int eDifficultyHelpers::crimeRisk(const Difficulty diff)
-{
-    return crimeRiskMultiplier(diff);
+    const auto r = ModelData::instance().houseReq(diff, level, elite);
+    if (!r) return 0;
+    return r->crimeBase + r->crimeInc;
 }
 
 int damageRiskBase(const eBuildingType type)
@@ -650,7 +620,7 @@ double damageRiskMultiplier(const Difficulty diff)
     return 1;
 }
 
-int eDifficultyHelpers::damageRisk(
+int DifficultyHelpers::damageRisk(
     const Difficulty diff,
     const eBuildingType type)
 {
@@ -659,7 +629,7 @@ int eDifficultyHelpers::damageRisk(
     return std::round(mult * base);
 }
 
-int eDifficultyHelpers::taxMultiplier(
+int DifficultyHelpers::taxMultiplier(
     const Difficulty diff,
     const eBuildingType type,
     const int level)
@@ -673,7 +643,7 @@ int eDifficultyHelpers::taxMultiplier(
     return 0;
 }
 
-int eDifficultyHelpers::taxSentiment(
+int DifficultyHelpers::taxSentiment(
     const Difficulty diff,
     const eTaxRate taxRate)
 {
@@ -708,7 +678,7 @@ int eDifficultyHelpers::taxSentiment(
     }
 }
 
-double eDifficultyHelpers::workerFrac(
+double DifficultyHelpers::workerFrac(
     const Difficulty diff, const eWageRate wageRate)
 {
     switch (wageRate)
@@ -831,7 +801,7 @@ double soliderBribeMultiplier(const Difficulty diff)
     return 1;
 }
 
-int eDifficultyHelpers::soliderBribe(const Difficulty diff,
+int DifficultyHelpers::soliderBribe(const Difficulty diff,
                                      const eCharacterType type)
 {
     const double mult = soliderBribeMultiplier(diff);
@@ -853,8 +823,8 @@ int eDifficultyHelpers::soliderBribe(const Difficulty diff,
     return static_cast<int>(mult * base);
 }
 
-eDifficultyHelpers::eHouseLevelReq
-eDifficultyHelpers::houseLevelReq(const Difficulty diff,
+DifficultyHelpers::eHouseLevelReq
+DifficultyHelpers::houseLevelReq(const Difficulty diff,
                                   const bool elite,
                                   const int level)
 {

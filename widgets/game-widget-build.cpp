@@ -82,7 +82,7 @@ bool buildVendor(GameBoard& brd, const int tx, const int ty,
     agora->setBuilding(space, fv);
     const auto ppid = brd.personPlayer();
     const auto diff = brd.difficulty(ppid);
-    const int cost = eDifficultyHelpers::buildingCost(diff, fv->type());
+    const int cost = DifficultyHelpers::buildingCost(diff, fv->type());
     brd.incDrachmas(ppid, -cost, eFinanceTarget::construction);
     return true;
 }
@@ -345,7 +345,7 @@ bool GameWidget::buildStampAgora(const std::vector<eTile*>& tiles,
 
     if(!mEditorMode) {
         const auto diff = mBoard->difficulty(ppid);
-        const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+        const int cost = DifficultyHelpers::buildingCost(diff, b->type());
         mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
     }
 
@@ -394,7 +394,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const int maxY = std::max(pressedTY, hoverTY);
 
             const auto diff = mBoard->difficulty(ppid);
-            const int cost = eDifficultyHelpers::buildingCost(
+            const int cost = DifficultyHelpers::buildingCost(
                                  diff, eBuildingType::erase);
             int totalCost = 0;
             const auto addBuilding = [&](eBuilding* const b) {
@@ -524,7 +524,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+                const int cost = DifficultyHelpers::buildingCost(diff, b->type());
                 mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
 
@@ -576,7 +576,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+                const int cost = DifficultyHelpers::buildingCost(diff, b->type());
                 mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
             showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
@@ -594,7 +594,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             int totalCost = 0;
             const auto pid = mBoard->personPlayer();
             const auto diff = mBoard->difficulty(pid);
-            const int costPerTile = eDifficultyHelpers::buildingCost(diff, eBuildingType::road);
+            const int costPerTile = DifficultyHelpers::buildingCost(diff, eBuildingType::road);
             for(const auto& t : path) {
                 if(!t) continue;
                 const auto ub = t->underBuilding();
@@ -646,7 +646,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
                 if(!mEditorMode) {
                     const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
+                    const int cost = DifficultyHelpers::buildingCost(
                                          diff, eBuildingType::bridge);
                     mBoard->incDrachmas(ppid, -path.size()*cost, eFinanceTarget::construction);
                 }
@@ -970,7 +970,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
                 if(!mEditorMode) {
                     const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
+                    const int cost = DifficultyHelpers::buildingCost(
                                          diff, eBuildingType::urchinQuay);
                     mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }
@@ -999,7 +999,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
                 if(!mEditorMode) {
                     const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
+                    const int cost = DifficultyHelpers::buildingCost(
                                          diff, eBuildingType::fishery);
                     mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }
@@ -1044,7 +1044,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
                     if(!mEditorMode) {
                         const auto diff = mBoard->difficulty(ppid);
-                        const int cost = eDifficultyHelpers::buildingCost(
+                        const int cost = DifficultyHelpers::buildingCost(
                                              diff, eBuildingType::triremeWharf);
                         mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                     }
@@ -1370,7 +1370,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             r = true;
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(
+                const int cost = DifficultyHelpers::buildingCost(
                                      diff, eBuildingType::gatehouse);
                 mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
@@ -1756,7 +1756,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
                 if(!mEditorMode) {
                     const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
+                    const int cost = DifficultyHelpers::buildingCost(
                         diff, eBuildingType::crosswalk);
                     mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                 }

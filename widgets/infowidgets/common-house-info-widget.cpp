@@ -332,7 +332,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         std::string ds = "Desirability: " +
                          std::to_string(static_cast<int>(appeal));
         if(level < maxLvl) {
-            const auto req = eDifficultyHelpers::houseLevelReq(diff, isElite, level);
+            const auto req = DifficultyHelpers::houseLevelReq(diff, isElite, level);
             ds += " / evolve " + std::to_string(req.fAppE);
         } else {
             ds += " / max";

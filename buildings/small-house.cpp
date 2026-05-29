@@ -132,7 +132,7 @@ int SmallHouse::provide(const eProvide p, const int n)
             return 0;
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
-        const int taxMult = eDifficultyHelpers::taxMultiplier(
+        const int taxMult = DifficultyHelpers::taxMultiplier(
             diff, type(), mLevel);
         const double tax = eNumbers::sCommonHousingTaxMulitplier *
                            mPeople * taxMult * b.taxRateF(cid);
@@ -233,8 +233,8 @@ void SmallHouse::timeChanged(const int by)
         const int m4 = pm * pow(pbi + mHygiene, pe);
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
-        const int plagueRisk = eDifficultyHelpers::plagueRisk(diff);
-        if (plagueRisk && by)
+        const int plagueRisk = DifficultyHelpers::houseDiseaseRisk(diff, mLevel, false);
+        if (plagueRisk > 0 && by)
         {
             const int plaguePeriod = m4 / (by * plagueRisk);
             if (plaguePeriod && eRand::rand() % plaguePeriod == 0)
@@ -277,8 +277,8 @@ void SmallHouse::timeChanged(const int by)
         const int m4 = pm * pow(pbi + mSatisfaction, pe);
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
-        const int crimeRisk = eDifficultyHelpers::crimeRisk(diff);
-        if (crimeRisk && by)
+        const int crimeRisk = DifficultyHelpers::houseCrimeRisk(diff, mLevel, false);
+        if (crimeRisk > 0 && by)
         {
             const int crimePeriod = m4 / (by * crimeRisk);
             if (crimePeriod && eRand::rand() % crimePeriod == 0)
@@ -297,12 +297,10 @@ void SmallHouse::timeChanged(const int by)
             const double pbi = eNumbers::sHouseLeaveRiskPeriodBaseIncrement;
             const double pe = eNumbers::sHouseLeaveRiskPeriodExponent;
             const int m4 = pm * pow(pbi + mSatisfaction, pe);
-            const auto pid = playerId();
-            const auto diff = b.difficulty(pid);
-            const int leaveRisk = eDifficultyHelpers::crimeRisk(diff);
-            if (leaveRisk && by)
+            // Vanilla: leaving is driven by unmet needs/appeal, not crime.
+            if (by)
             {
-                const int leavePeriod = m4 / (by * leaveRisk);
+                const int leavePeriod = m4 / by;
                 if (leavePeriod && eRand::rand() % leavePeriod == 0)
                 {
                     leave();
@@ -391,7 +389,7 @@ eHouseMissing SmallHouse::missing() const
     const auto pid = board.cityIdToPlayerId(cityId());
     const auto diff = board.difficulty(pid);
     // Evolve threshold lives on current row (b = appeal to leave).
-    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, mLevel);
+    const auto req = DifficultyHelpers::houseLevelReq(diff, false, mLevel);
     if (appeal < req.fAppE) return eHouseMissing::appeal;
     if (pts < req.fEnt) return eHouseMissing::venues;
     return eHouseMissing::nothing;
@@ -450,7 +448,7 @@ bool SmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) con
     // Evolve uses CURRENT level's row (b = appeal to leave for next).
     // Devolve uses CURRENT level's row (a = appeal to drop below).
     const int srcLvl = evolve ? std::max(0, level - 1) : level;
-    const auto req = eDifficultyHelpers::houseLevelReq(diff, false, srcLvl);
+    const auto req = DifficultyHelpers::houseLevelReq(diff, false, srcLvl);
     const double appReq = evolve ? req.fAppE : req.fAppD;
     if (appeal < appReq) return false;
     if (pts < req.fEnt) return false;
@@ -531,7 +529,7 @@ void SmallHouse::updateSatisfaction()
     const auto taxRate = board.taxRate(cid);
     const auto pid = playerId();
     const auto diff = board.difficulty(pid);
-    const int ts = eDifficultyHelpers::taxSentiment(diff, taxRate);
+    const int ts = DifficultyHelpers::taxSentiment(diff, taxRate);
     const int taxSatIfPaid = std::round(100. * (ts + 7.) / 14.);
     const int taxSat = mPaidTaxesLastMonth ? taxSatIfPaid : 100;
     mTaxSatisfaction = (weight * mTaxSatisfaction + taxSat) / div;

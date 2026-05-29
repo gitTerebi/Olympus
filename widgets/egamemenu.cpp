@@ -256,7 +256,7 @@ eBuildButton *eGameMenu::createBuildButton(const eSPR &c)
     const auto diff = mBoard->difficulty(pid);
     const auto mode = c.fMode;
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
-    const int cost = eDifficultyHelpers::buildingCost(diff, t);
+    const int cost = DifficultyHelpers::buildingCost(diff, t);
     const int mult = static_cast<int>(resolution().uiScale()) + 1;
     bb->initialize(c.fName, c.fMarbleCost, cost, 150 * mult);
     bb->setPressAction([this, c]()
@@ -278,7 +278,7 @@ eBuildButton *eGameMenu::createTradeBuildButton(
     const auto pid = mBoard->personPlayer();
     const auto diff = mBoard->difficulty(pid);
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
-    const int cost = eDifficultyHelpers::buildingCost(diff, t);
+    const int cost = DifficultyHelpers::buildingCost(diff, t);
     bb->initialize(c.fName, 0, 0);
     int x = 10;
     {
@@ -661,9 +661,9 @@ void eGameMenu::initialize(GameBoard *const b,
 
     const auto pid = mBoard->personPlayer();
     const auto diff = mBoard->difficulty(pid);
-    const int cost1 = eDifficultyHelpers::buildingCost(
+    const int cost1 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::commonHouse);
-    const int cost2 = eDifficultyHelpers::buildingCost(
+    const int cost2 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::eliteHousing);
 
     const auto cha0 = [this]()
@@ -769,7 +769,7 @@ void eGameMenu::initialize(GameBoard *const b,
     };
 
     mEmplDataW = new eEmploymentDataWidget(*b, window());
-    const int cost3 = eDifficultyHelpers::buildingCost(
+    const int cost3 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::artisansGuild);
     const auto buttonsVec2 = eButtonsDataVec{
         {eBuildingMode::none,
@@ -815,9 +815,9 @@ void eGameMenu::initialize(GameBoard *const b,
 
     mStrgDataW = new StorageSidebarPanel(*b, window());
 
-    const int cost4 = eDifficultyHelpers::buildingCost(
+    const int cost4 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::granary);
-    const int cost5 = eDifficultyHelpers::buildingCost(
+    const int cost5 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::warehouse);
     const auto buttonsVec3 = eButtonsDataVec{
         {eBuildingMode::granary,
@@ -853,13 +853,13 @@ void eGameMenu::initialize(GameBoard *const b,
     };
 
     mHySaDataW = new eHygieneSafetyDataWidget(*b, window());
-    const int cost6 = eDifficultyHelpers::buildingCost(
+    const int cost6 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::fountain);
-    const int cost7 = eDifficultyHelpers::buildingCost(
+    const int cost7 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::hospital);
-    const int cost8 = eDifficultyHelpers::buildingCost(
+    const int cost8 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::maintenanceOffice);
-    const int cost9 = eDifficultyHelpers::buildingCost(
+    const int cost9 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::watchPost);
     const auto buttonsVec4 = eButtonsDataVec{
         {eBuildingMode::fountain,
@@ -891,11 +891,11 @@ void eGameMenu::initialize(GameBoard *const b,
     };
 
     mAdminDataW = new eAdminDataWidget(*b, window());
-    const int cost10 = eDifficultyHelpers::buildingCost(
+    const int cost10 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::palace);
-    const int cost11 = eDifficultyHelpers::buildingCost(
+    const int cost11 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::taxOffice);
-    const int cost12 = eDifficultyHelpers::buildingCost(
+    const int cost12 = DifficultyHelpers::buildingCost(
         diff, eBuildingType::bridge);
     const std::vector<eSPR> d5spr = {eSPR{eBuildingMode::hippodromePiece, eLanguage::zeusText(28, 200)},
                                      eSPR{eBuildingMode::crosswalk, eLanguage::zeusText(28, 201)}};
@@ -945,9 +945,9 @@ void eGameMenu::initialize(GameBoard *const b,
             setMode(eBuildingMode::museum);
         };
         mScienceDataW = new eScienceDataWidget(*mBoard, window());
-        const int cost13 = eDifficultyHelpers::buildingCost(
+        const int cost13 = DifficultyHelpers::buildingCost(
             diff, eBuildingType::bibliotheke);
-        const int cost14 = eDifficultyHelpers::buildingCost(
+        const int cost14 = DifficultyHelpers::buildingCost(
             diff, eBuildingType::museum);
         const auto buttonsVec6 = eButtonsDataVec{
             {eBuildingMode::bibliotheke,
@@ -988,9 +988,9 @@ void eGameMenu::initialize(GameBoard *const b,
         };
 
         mCultureDataW = new eCultureDataWidget(*mBoard, window());
-        const int cost13 = eDifficultyHelpers::buildingCost(
+        const int cost13 = DifficultyHelpers::buildingCost(
             diff, eBuildingType::gymnasium);
-        const int cost14 = eDifficultyHelpers::buildingCost(
+        const int cost14 = DifficultyHelpers::buildingCost(
             diff, eBuildingType::stadium);
         const auto buttonsVec6 = eButtonsDataVec{
             {eBuildingMode::none,

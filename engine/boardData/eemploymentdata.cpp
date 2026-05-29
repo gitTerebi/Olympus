@@ -23,7 +23,7 @@ int eEmploymentData::employable() const {
     const auto pid = mBoard.cityIdToPlayerId(cid);
     const auto diff = mBoard.difficulty(pid);
     const auto wageRate = mCity.wageRate();
-    const double frac = eDifficultyHelpers::workerFrac(
+    const double frac = DifficultyHelpers::workerFrac(
                             diff, wageRate);
     return frac*mPopData.population();
 }

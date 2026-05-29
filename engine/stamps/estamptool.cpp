@@ -449,7 +449,7 @@ int eStampTool::estimatedCost(const Difficulty diff) const {
             bt = eBuildingModeHelpers::toBuildingType(cmd.mode);
         }
         if(bt == eBuildingType::none) continue;
-        cost += eDifficultyHelpers::buildingCost(diff, bt);
+        cost += DifficultyHelpers::buildingCost(diff, bt);
     }
     return cost;
 }

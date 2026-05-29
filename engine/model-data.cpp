@@ -185,8 +185,11 @@ bool ModelData::loadZeusFile(const std::string& path, DifficultySet& out) {
         if(nums.size() > 7)  r.horses   = nums[7];
         if(nums.size() > 11) r.wine     = nums[11];
         if(nums.size() > 12) r.armor    = nums[12];
+        if(nums.size() > 14) r.crimeInc  = nums[14];
+        if(nums.size() > 15) r.crimeBase = nums[15];
         if(nums.size() > 17) r.capacity = nums[17];
         if(nums.size() > 18) r.taxMult  = nums[18];
+        if(nums.size() > 20) r.diseaseRisk = nums[20];
         r.valid = true;
         // map label to slot
         // common: "1: Hut" .. "7: Townhouse"
