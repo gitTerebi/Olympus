@@ -241,21 +241,21 @@ set(SOURCES
     characters/actions/walkable/ewalkableobject.cpp
     characters/actor.cpp
     characters/eamazon.cpp
-    characters/eanimal.cpp
-    characters/earcher.cpp
+    characters/animal.cpp
+    characters/archer.cpp
     characters/earcherbase.cpp
     characters/earcherposeidon.cpp
     characters/eareswarrior.cpp
     characters/eartisan.cpp
-    characters/eastronomer.cpp
+    characters/astronomer.cpp
     characters/eatlanteanarcher.cpp
     characters/eatlanteanchariot.cpp
     characters/eatlanteanhoplite.cpp
     characters/ebasicpatroler.cpp
     characters/eboar.cpp
     characters/eboatbase.cpp
-    characters/ebronzeminer.cpp
-    characters/ebutcher.cpp
+    characters/bronze-miner.cpp
+    characters/butcher.cpp
     characters/ecarttransporter.cpp
     characters/ecattle.cpp
     characters/ecentaurarcher.cpp
@@ -266,9 +266,9 @@ set(SOURCES
     characters/echariot.cpp
     characters/echariotbase.cpp
     characters/echariotposeidon.cpp
-    characters/ecompetitor.cpp
-    characters/ecurator.cpp
-    characters/edeer.cpp
+    characters/competitor.cpp
+    characters/curator.cpp
+    characters/deer.cpp
     characters/edisgruntled.cpp
     characters/edomesticatedanimal.cpp
     characters/edonkey.cpp
@@ -280,26 +280,26 @@ set(SOURCES
     characters/eenlistedforces.cpp
     characters/efightingcharacter.cpp
     characters/efightingpatroler.cpp
-    characters/efirefighter.cpp
+    characters/fire-fighter.cpp
     characters/efishingboat.cpp
     characters/egoat.cpp
-    characters/egoatherd.cpp
+    characters/goatherd.cpp
     characters/egreekhoplite.cpp
     characters/egreekhorseman.cpp
     characters/egreekrockthrower.cpp
     characters/egrower.cpp
-    characters/egymnast.cpp
-    characters/ehealer.cpp
+    characters/gymnast.cpp
+    characters/healer.cpp
     characters/ehomeless.cpp
-    characters/ehoplite.cpp
+    characters/hoplite.cpp
     characters/ehoplitebase.cpp
     characters/ehopliteposeidon.cpp
-    characters/ehorse.cpp
+    characters/horse.cpp
     characters/ehorseman.cpp
     characters/ehorsemanbase.cpp
     characters/ehunter.cpp
-    characters/einventor.cpp
-    characters/elumberjack.cpp
+    characters/inventor.cpp
+    characters/lumberjack.cpp
     characters/emarbleminer.cpp
     characters/emayanarcher.cpp
     characters/emayanhoplite.cpp
@@ -311,7 +311,7 @@ set(SOURCES
     characters/epersianarcher.cpp
     characters/epersianhoplite.cpp
     characters/epersianhorseman.cpp
-    characters/ephilosopher.cpp
+    characters/philosopher.cpp
     characters/ephoenicianarcher.cpp
     characters/ephoenicianhorseman.cpp
     characters/eporter.cpp
@@ -321,29 +321,29 @@ set(SOURCES
     characters/eresourcecollectorbase.cpp
     characters/erockthrower.cpp
     characters/erockthrowerbase.cpp
-    characters/escholar.cpp
+    characters/scholar.cpp
     characters/esettler.cpp
     characters/esheep.cpp
-    characters/eshepherd.cpp
+    characters/shepherd.cpp
     characters/eshepherdbase.cpp
     characters/esick.cpp
-    characters/esilverminer.cpp
+    characters/silver-miner.cpp
     characters/esoldier.cpp
     characters/soldier-banner.cpp
     characters/espearthrowerbase.cpp
-    characters/etaxcollector.cpp
+    characters/tax-collector.cpp
     characters/etradeboat.cpp
-    characters/etrader.cpp
+    characters/trader.cpp
     characters/etrailer.cpp
     characters/etrireme.cpp
     characters/etrojanhoplite.cpp
     characters/etrojanhorseman.cpp
     characters/etrojanspearthrower.cpp
     characters/eurchingatherer.cpp
-    characters/ewatchman.cpp
-    characters/ewaterdistributor.cpp
+    characters/watchman.cpp
+    characters/water-distributor.cpp
     characters/ewildanimal.cpp
-    characters/ewolf.cpp
+    characters/wolf.cpp
     characters/gods/eathena.cpp
     characters/gods/ebasicgod.cpp
     characters/gods/edemeter.cpp

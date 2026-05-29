@@ -1,6 +1,6 @@
 #include "efountain.h"
 
-#include "characters/ewaterdistributor.h"
+#include "characters/water-distributor.h"
 #include "textures/egametextures.h"
 
 eFountain::eFountain(GameBoard& board,
@@ -9,7 +9,7 @@ eFountain::eFountain(GameBoard& board,
                     &eBuildingTextures::fFountain,
                     -1.15, -2.37,
                     &eBuildingTextures::fFountainOverlay,
-                    [this]() { return e::make_shared<eWaterDistributor>(getBoard()); },
+                    [this]() { return e::make_shared<WaterDistributor>(getBoard()); },
                     eBuildingType::fountain, 2, 2, 4, cid)  {
     eGameTextures::loadFountain();
 }

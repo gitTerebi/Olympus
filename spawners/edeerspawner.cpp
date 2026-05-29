@@ -1,6 +1,6 @@
 #include "edeerspawner.h"
 
-#include "characters/edeer.h"
+#include "characters/deer.h"
 #include "enumbers.h"
 
 eDeerSpawner::eDeerSpawner(const int id,
@@ -12,7 +12,7 @@ eDeerSpawner::eDeerSpawner(const int id,
 
 
 stdsptr<eWildAnimal> eDeerSpawner::create(GameBoard& board) {
-    const auto b = e::make_shared<eDeer>(board);
+    const auto b = e::make_shared<Deer>(board);
     b->setOnCityId(cityId());
     return b;
 }

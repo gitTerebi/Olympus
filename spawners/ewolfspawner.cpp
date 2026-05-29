@@ -1,6 +1,6 @@
 #include "ewolfspawner.h"
 
-#include "characters/ewolf.h"
+#include "characters/wolf.h"
 #include "enumbers.h"
 
 eWolfSpawner::eWolfSpawner(const int id,
@@ -12,7 +12,7 @@ eWolfSpawner::eWolfSpawner(const int id,
 
 
 stdsptr<eWildAnimal> eWolfSpawner::create(GameBoard& board) {
-    const auto b = e::make_shared<eWolf>(board);
+    const auto b = e::make_shared<Wolf>(board);
     b->setOnCityId(cityId());
     return b;
 }

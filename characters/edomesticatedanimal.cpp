@@ -9,7 +9,7 @@ eDomesticatedAnimal::eDomesticatedAnimal(
         const eCharTexs charTexs,
         const eCharacterType type,
         const int maxGroom) :
-    eAnimal(board, charTexs, type),
+    Animal(board, charTexs, type),
     mMaxGroom(maxGroom) {
     resetGrowthProgress();
 }
@@ -43,7 +43,7 @@ int eDomesticatedAnimal::collect() {
 }
 
 void eDomesticatedAnimal::serializeFields(eSaveArchive& ar) {
-    eAnimal::serializeFields(ar);
+    Animal::serializeFields(ar);
     ar.field("mGroomed", mGroomed);
     ar.field("mResource", mResource);
     ar.field("mMonthsGrown", mMonthsGrown);

@@ -1,6 +1,6 @@
 #include "egymnasium.h"
 
-#include "characters/egymnast.h"
+#include "characters/gymnast.h"
 #include "textures/egametextures.h"
 
 eGymnasium::eGymnasium(GameBoard& board, const eCityId cid) :
@@ -10,6 +10,6 @@ eGymnasium::eGymnasium(GameBoard& board, const eCityId cid) :
                     &eBuildingTextures::fGymnasiumOverlay,
                     {{eCharacterType::competitor, eBuildingType::stadium}},
                     eBuildingType::gymnasium, 3, 3, 7, cid,
-                    [this]() { return e::make_shared<eGymnast>(getBoard()); }) {
+                    [this]() { return e::make_shared<Gymnast>(getBoard()); }) {
     eGameTextures::loadGymnasium();
 }

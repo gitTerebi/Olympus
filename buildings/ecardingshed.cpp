@@ -1,13 +1,13 @@
 #include "ecardingshed.h"
 
-#include "characters/eshepherd.h"
+#include "characters/shepherd.h"
 #include "textures/egametextures.h"
 #include "characters/actions/eshepherdaction.h"
 
 #include <algorithm>
 
 stdsptr<eResourceCollectorBase> cardingShedCharGenerator(GameBoard& board) {
-    return e::make_shared<eShepherd>(board);
+    return e::make_shared<Shepherd>(board);
 }
 
 eCardingShed::eCardingShed(GameBoard& board, const eCityId cid) :

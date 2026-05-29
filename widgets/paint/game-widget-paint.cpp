@@ -2008,7 +2008,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 const auto tex = getBasementTexture(rtx, rty, ub, trrTexs,
                                                     dir, boardw, boardh);
-                tp.scheduleDrawTexture(rx, ry, tex, eAlignment::top);
+                tp.drawTexture(rx, ry, tex, eAlignment::top);
             }
         }
         else if (ub && !eBuilding::sFlatBuilding(bt))

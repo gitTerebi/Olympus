@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
-#include "characters/ebutcher.h"
+#include "characters/butcher.h"
 #include "characters/ecattle.h"
 #include "characters/actions/efollowaction.h"
 #include "characters/actions/etakecattleaction.h"
@@ -154,7 +154,7 @@ bool eCorral::killCattle() {
 bool eCorral::takeCattle() {
     if(mNCattle >= 3) return false;
     auto& board = getBoard();
-    const auto c = e::make_shared<eButcher>(board);
+    const auto c = e::make_shared<Butcher>(board);
     const auto cid = cityId();
     c->setBothCityIds(cid);
     const auto tile = centerTile();
@@ -166,7 +166,7 @@ bool eCorral::takeCattle() {
 
 void eCorral::replaceCattle() {
     auto& board = getBoard();
-    const auto c = e::make_shared<eButcher>(board);
+    const auto c = e::make_shared<Butcher>(board);
     const auto cid = cityId();
     c->setBothCityIds(cid);
     const auto tile = centerTile();

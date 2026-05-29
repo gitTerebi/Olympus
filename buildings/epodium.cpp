@@ -1,6 +1,6 @@
 #include "epodium.h"
 
-#include "characters/ephilosopher.h"
+#include "characters/philosopher.h"
 #include "textures/egametextures.h"
 
 ePodium::ePodium(GameBoard& board,
@@ -9,7 +9,7 @@ ePodium::ePodium(GameBoard& board,
                   &eBuildingTextures::fPodium,
                   -2.25, -3.78,
                   &eBuildingTextures::fPodiumOverlay,
-                  [this]() { return e::make_shared<ePhilosopher>(getBoard()); },
+                  [this]() { return e::make_shared<Philosopher>(getBoard()); },
                   eBuildingType::podium, 2, 2, 4, cid) {
     eGameTextures::loadPodium();
 }

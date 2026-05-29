@@ -1,6 +1,6 @@
 #include "elaboratory.h"
 
-#include "characters/einventor.h"
+#include "characters/inventor.h"
 #include "textures/egametextures.h"
 
 eLaboratory::eLaboratory(GameBoard& board,
@@ -9,7 +9,7 @@ eLaboratory::eLaboratory(GameBoard& board,
                   &eBuildingTextures::fLaboratory,
                   -5.55, -7.48,
                   &eBuildingTextures::fLaboratoryOverlay,
-                  [this]() { return e::make_shared<eInventor>(getBoard()); },
+                  [this]() { return e::make_shared<Inventor>(getBoard()); },
                   eBuildingType::laboratory, 4, 4, 9, cid) {
     eGameTextures::loadLaboratory();
 }

@@ -246,21 +246,21 @@ SOURCES += \
         characters/actions/walkable/ewalkableobject.cpp \
         characters/actor.cpp \
         characters/eamazon.cpp \
-        characters/eanimal.cpp \
-        characters/earcher.cpp \
+        characters/animal.cpp \
+        characters/archer.cpp \
         characters/earcherbase.cpp \
         characters/earcherposeidon.cpp \
         characters/eareswarrior.cpp \
         characters/eartisan.cpp \
-        characters/eastronomer.cpp \
+        characters/astronomer.cpp \
         characters/eatlanteanarcher.cpp \
         characters/eatlanteanchariot.cpp \
         characters/eatlanteanhoplite.cpp \
         characters/ebasicpatroler.cpp \
         characters/eboar.cpp \
         characters/eboatbase.cpp \
-        characters/ebronzeminer.cpp \
-        characters/ebutcher.cpp \
+        characters/bronze-miner.cpp \
+        characters/butcher.cpp \
         characters/ecarttransporter.cpp \
         characters/ecattle.cpp \
         characters/ecentaurarcher.cpp \
@@ -271,9 +271,9 @@ SOURCES += \
         characters/echariot.cpp \
         characters/echariotbase.cpp \
         characters/echariotposeidon.cpp \
-        characters/ecompetitor.cpp \
-        characters/ecurator.cpp \
-        characters/edeer.cpp \
+        characters/competitor.cpp \
+        characters/curator.cpp \
+        characters/deer.cpp \
         characters/edisgruntled.cpp \
         characters/edomesticatedanimal.cpp \
         characters/edonkey.cpp \
@@ -285,26 +285,26 @@ SOURCES += \
         characters/eenlistedforces.cpp \
         characters/efightingcharacter.cpp \
         characters/efightingpatroler.cpp \
-        characters/efirefighter.cpp \
+        characters/fire-fighter.cpp \
         characters/efishingboat.cpp \
         characters/egoat.cpp \
-        characters/egoatherd.cpp \
+        characters/goatherd.cpp \
         characters/egreekhoplite.cpp \
         characters/egreekhorseman.cpp \
         characters/egreekrockthrower.cpp \
         characters/egrower.cpp \
-        characters/egymnast.cpp \
-        characters/ehealer.cpp \
+        characters/gymnast.cpp \
+        characters/healer.cpp \
         characters/ehomeless.cpp \
-        characters/ehoplite.cpp \
+        characters/hoplite.cpp \
         characters/ehoplitebase.cpp \
         characters/ehopliteposeidon.cpp \
-        characters/ehorse.cpp \
+        characters/horse.cpp \
         characters/ehorseman.cpp \
         characters/ehorsemanbase.cpp \
         characters/ehunter.cpp \
-        characters/einventor.cpp \
-        characters/elumberjack.cpp \
+        characters/inventor.cpp \
+        characters/lumberjack.cpp \
         characters/emarbleminer.cpp \
         characters/emayanarcher.cpp \
         characters/emayanhoplite.cpp \
@@ -316,7 +316,7 @@ SOURCES += \
         characters/epersianarcher.cpp \
         characters/epersianhoplite.cpp \
         characters/epersianhorseman.cpp \
-        characters/ephilosopher.cpp \
+        characters/philosopher.cpp \
         characters/ephoenicianarcher.cpp \
         characters/ephoenicianhorseman.cpp \
         characters/eporter.cpp \
@@ -326,29 +326,29 @@ SOURCES += \
         characters/eresourcecollectorbase.cpp \
         characters/erockthrower.cpp \
         characters/erockthrowerbase.cpp \
-        characters/escholar.cpp \
+        characters/scholar.cpp \
         characters/esettler.cpp \
         characters/esheep.cpp \
-        characters/eshepherd.cpp \
+        characters/shepherd.cpp \
         characters/eshepherdbase.cpp \
         characters/esick.cpp \
-        characters/esilverminer.cpp \
+        characters/silver-miner.cpp \
         characters/esoldier.cpp \
         characters/soldier-banner.cpp \
         characters/espearthrowerbase.cpp \
-        characters/etaxcollector.cpp \
+        characters/tax-collector.cpp \
         characters/etradeboat.cpp \
-        characters/etrader.cpp \
+        characters/trader.cpp \
         characters/etrailer.cpp \
         characters/etrireme.cpp \
         characters/etrojanhoplite.cpp \
         characters/etrojanhorseman.cpp \
         characters/etrojanspearthrower.cpp \
         characters/eurchingatherer.cpp \
-        characters/ewatchman.cpp \
-        characters/ewaterdistributor.cpp \
+        characters/watchman.cpp \
+        characters/water-distributor.cpp \
         characters/ewildanimal.cpp \
-        characters/ewolf.cpp \
+        characters/wolf.cpp \
         characters/gods/eathena.cpp \
         characters/gods/ebasicgod.cpp \
         characters/gods/edemeter.cpp \
@@ -958,21 +958,21 @@ HEADERS += \
     characters/actions/walkable/ewalkableobject.h \
     characters/actor.h \
     characters/eamazon.h \
-    characters/eanimal.h \
-    characters/earcher.h \
+    characters/animal.h \
+    characters/archer.h \
     characters/earcherbase.h \
     characters/earcherposeidon.h \
     characters/eareswarrior.h \
     characters/eartisan.h \
-    characters/eastronomer.h \
+    characters/astronomer.h \
     characters/eatlanteanarcher.h \
     characters/eatlanteanchariot.h \
     characters/eatlanteanhoplite.h \
     characters/ebasicpatroler.h \
     characters/eboar.h \
     characters/eboatbase.h \
-    characters/ebronzeminer.h \
-    characters/ebutcher.h \
+    characters/bronze-miner.h \
+    characters/butcher.h \
     characters/ecarttransporter.h \
     characters/ecattle.h \
     characters/ecentaurarcher.h \
@@ -982,9 +982,9 @@ HEADERS += \
     characters/echariot.h \
     characters/echariotbase.h \
     characters/echariotposeidon.h \
-    characters/ecompetitor.h \
-    characters/ecurator.h \
-    characters/edeer.h \
+    characters/competitor.h \
+    characters/curator.h \
+    characters/deer.h \
     characters/edisgruntled.h \
     characters/edomesticatedanimal.h \
     characters/edonkey.h \
@@ -996,26 +996,26 @@ HEADERS += \
     characters/eenlistedforces.h \
     characters/efightingcharacter.h \
     characters/efightingpatroler.h \
-    characters/efirefighter.h \
+    characters/fire-fighter.h \
     characters/efishingboat.h \
     characters/egoat.h \
-    characters/egoatherd.h \
+    characters/goatherd.h \
     characters/egreekhoplite.h \
     characters/egreekhorseman.h \
     characters/egreekrockthrower.h \
     characters/egrower.h \
-    characters/egymnast.h \
-    characters/ehealer.h \
+    characters/gymnast.h \
+    characters/healer.h \
     characters/ehomeless.h \
-    characters/ehoplite.h \
+    characters/hoplite.h \
     characters/ehoplitebase.h \
     characters/ehopliteposeidon.h \
-    characters/ehorse.h \
+    characters/horse.h \
     characters/ehorseman.h \
     characters/ehorsemanbase.h \
     characters/ehunter.h \
-    characters/einventor.h \
-    characters/elumberjack.h \
+    characters/inventor.h \
+    characters/lumberjack.h \
     characters/emarbleminer.h \
     characters/emayanarcher.h \
     characters/emayanhoplite.h \
@@ -1027,7 +1027,7 @@ HEADERS += \
     characters/epersianarcher.h \
     characters/epersianhoplite.h \
     characters/epersianhorseman.h \
-    characters/ephilosopher.h \
+    characters/philosopher.h \
     characters/ephoenicianarcher.h \
     characters/ephoenicianhorseman.h \
     characters/eporter.h \
@@ -1037,29 +1037,29 @@ HEADERS += \
     characters/eresourcecollectorbase.h \
     characters/erockthrower.h \
     characters/erockthrowerbase.h \
-    characters/escholar.h \
+    characters/scholar.h \
     characters/esettler.h \
     characters/esheep.h \
-    characters/eshepherd.h \
+    characters/shepherd.h \
     characters/eshepherdbase.h \
     characters/esick.h \
-    characters/esilverminer.h \
+    characters/silver-miner.h \
     characters/esoldier.h \
     characters/soldier-banner.h \
     characters/espearthrowerbase.h \
-    characters/etaxcollector.h \
+    characters/tax-collector.h \
     characters/etradeboat.h \
-    characters/etrader.h \
+    characters/trader.h \
     characters/etrailer.h \
     characters/etrireme.h \
     characters/etrojanhoplite.h \
     characters/etrojanhorseman.h \
     characters/etrojanspearthrower.h \
     characters/eurchingatherer.h \
-    characters/ewatchman.h \
-    characters/ewaterdistributor.h \
+    characters/watchman.h \
+    characters/water-distributor.h \
     characters/ewildanimal.h \
-    characters/ewolf.h \
+    characters/wolf.h \
     characters/gods/eathena.h \
     characters/gods/ebasicgod.h \
     characters/gods/edemeter.h \

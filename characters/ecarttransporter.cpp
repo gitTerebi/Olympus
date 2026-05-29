@@ -12,7 +12,7 @@
 #include "etrailer.h"
 #include "eox.h"
 #include "eporter.h"
-#include "ehorse.h"
+#include "horse.h"
 #include "echariot.h"
 
 eCartTransporter::eCartTransporter(GameBoard& board) :
@@ -285,9 +285,9 @@ void eCartTransporter::setResource(const eResourceType type,
 
             stdsptr<eCharacter> follower;
             if(mType == eCartTransporterType::horse) {
-                follower = e::make_shared<eHorse>(board);
+                follower = e::make_shared<Horse>(board);
             } else if(mType == eCartTransporterType::chariot) {
-                follower = e::make_shared<eHorse>(board);
+                follower = e::make_shared<Horse>(board);
                 const auto aox = e::make_shared<eFollowAction>(
                                    follow, follower.get());
                 follower->setAction(aox);

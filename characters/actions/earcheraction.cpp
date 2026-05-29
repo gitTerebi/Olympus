@@ -9,7 +9,7 @@
 #include "vec2.h"
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
-#include "characters/earcher.h"
+#include "characters/archer.h"
 
 #include "missiles/earrowmissile.h"
 

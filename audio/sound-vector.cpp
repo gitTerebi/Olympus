@@ -4,6 +4,7 @@
 #include "erand.h"
 #include <filesystem>
 #include <algorithm>
+#include <SDL2/SDL_timer.h>
 
 namespace {
 constexpr int sVoiceTag = 1;
@@ -148,6 +149,20 @@ void eSoundVector::play(const int id, const eSoundType type, const int chn) {
     if(!p.first) p.first = loadSound(p.second);
     if(!p.first) return;
 
+    // cap concurrent copies of this sound (event/combat only): drop the play
+    // if too many already fired within the recent window
+    if(type == eSoundType::event) {
+        const unsigned int now = SDL_GetTicks();
+        mPlayTicks.erase(
+            std::remove_if(mPlayTicks.begin(), mPlayTicks.end(),
+                [now](const unsigned int t) {
+                    return now - t > kConcurrentWindowMs;
+                }),
+            mPlayTicks.end());
+        if(static_cast<int>(mPlayTicks.size()) >= kMaxConcurrent) return;
+        mPlayTicks.push_back(now);
+    }
+
     configureChannels();
     int channel = chn;
     const int tag = tagForType(type);
@@ -164,6 +179,10 @@ void eSoundVector::play(const int id, const eSoundType type, const int chn) {
 void eSoundVector::playRandomSound(const eSoundType type) {
     const int sc = soundCount();
     if(sc <= 0) return;
+    if(mPlayEveryNth > 1) {
+        if(++mPlayCounter < mPlayEveryNth) return;
+        mPlayCounter = 0;
+    }
     int id = eRand::rand() % sc;
     if(sc > kRecentMax) {
         int tries = 0;

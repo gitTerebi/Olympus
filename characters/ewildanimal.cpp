@@ -6,13 +6,13 @@
 eWildAnimal::eWildAnimal(GameBoard& board,
                          const eCharTexs charTexs,
                          const eCharacterType type) :
-    eAnimal(board, charTexs, type) {}
+    Animal(board, charTexs, type) {}
 
 eWildAnimal::~eWildAnimal() {
     if(mSpawner) mSpawner->decCount();
 }
 
 void eWildAnimal::serializeFields(eSaveArchive& ar) {
-    eAnimal::serializeFields(ar);
+    Animal::serializeFields(ar);
     ar.bannerField("spawner", &getBoard(), mSpawner);
 }

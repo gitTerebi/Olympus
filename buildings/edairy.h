@@ -3,7 +3,7 @@
 
 #include "eshepherbuildingbase.h"
 
-class eGoatherd;
+class Goatherd;
 
 class eDairy : public eShepherBuildingBase {
 public:

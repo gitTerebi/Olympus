@@ -3,7 +3,7 @@
 
 #include "eemployingbuilding.h"
 
-#include "characters/earcher.h"
+#include "characters/archer.h"
 
 class eSaveArchive;
 
@@ -49,7 +49,7 @@ private:
 
     int mSpawnTime = 0;
 
-    stdptr<eArcher> mArcher;
+    stdptr<Archer> mArcher;
 };
 
 #endif // ETOWER_H
