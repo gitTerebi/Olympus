@@ -31,6 +31,7 @@
 #include "gameEvents/elavaevent.h"
 #include "gameEvents/esinklandevent.h"
 #include "gameEvents/elandslideevent.h"
+#include "characters/soldier-banner.h"
 
 eResourceType pakCityResourceByteToType(
         const uint8_t byte, const bool poseidon) {

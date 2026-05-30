@@ -8,6 +8,7 @@
 #include "echoosebutton.h"
 #include "eframedlabel.h"
 #include "eswitchbutton.h"
+#include "characters/soldier-banner.h"
 
 enum class eEnlistType {
     horseman, hoplite, navy,

@@ -15,6 +15,7 @@
 #include "elandslidepoint.h"
 #include "ewolfspawner.h"
 #include "engine/etile.h"
+#include "characters/soldier-banner.h"
 
 eBanner::eBanner(const eBannerTypeS type,
                  const int id,

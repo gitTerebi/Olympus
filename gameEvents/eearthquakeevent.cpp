@@ -5,6 +5,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
+#include "characters/soldier-banner.h"
 
 eEarthquakeEvent::eEarthquakeEvent(
         const eCityId cid,

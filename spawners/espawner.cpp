@@ -2,6 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 
 eSpawner::eSpawner(const eBannerTypeS type,
                    const int id, eTile* const tile,

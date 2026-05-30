@@ -2,6 +2,7 @@
 
 #include "engine/e-worldcity.h"
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "gameEvents/requests/e-fulfill-request-event.h"

@@ -28,6 +28,13 @@ enum class eBannerType {
     trireme
 };
 
+enum class eBannerFormationRole {
+    melee,
+    missile,
+    cavalry,
+    other
+};
+
 class SoldierBanner : public eObject {
 public:
     struct CombatAssignment {
@@ -97,6 +104,10 @@ public:
 
     ePlayerId playerId() const;
     eTeamId teamId() const;
+    eBannerFormationRole formationRole() const;
+    void setFormationRole(const eBannerFormationRole role) {
+        mFormationRole = role;
+    }
 
     int count() const { return mCount; }
     void incCount();
@@ -111,17 +122,13 @@ public:
     bool stationary() const;
     bool fighting() const;
 
-    // Morale: 100 when fresh, drops as the banner's soldiers die. Below the rout
-    // threshold the banner breaks and flees (Augustus formation morale rout).
-    int morale() const { return mMorale; }
-    bool routed() const;
-    void updateMorale();
-
-    // Per-tick combat brain for enemy banners (Augustus update_enemy_formation):
-    // closes the formation onto the nearest defender in engage range so soldiers
-    // lock on reactively. Holds the strategic destination otherwise. No-op for
-    // player banners and routed banners. Called every invasion incTime tick.
-    void updateCombat(const int by);
+    // Retaliation brain for enemy banners: only moves the whole banner toward a
+    // defender after this banner was attacked. Strategic movement stays with
+    // InvasionGeneral.
+    void updateRetaliation(const int by);
+    void signalRetaliationTarget(const int tx, const int ty);
+    bool needsHelp() const;
+    bool attackEnemyNearRetaliationPoint();
     bool combatAssignment(eSoldier* const s,
                           CombatAssignment& a) const;
     void setCombatBlockage(eSoldier* const s, eBuilding* const b);
@@ -216,12 +223,14 @@ private:
     int mCount = 0;
     int mFacing = 0; // degrees, 0 = north, 90 = east, etc.
 
-    int mMorale = 100;
-    int mPeakCount = 0; // most soldiers ever held, for the morale ratio
+    eBannerFormationRole mFormationRole = eBannerFormationRole::other;
 
-    // Throttle for updateCombat so the brain doesn't re-issue moveTo every frame.
+    // Throttle for retaliation so the brain doesn't re-issue moveTo every frame.
     // Runtime-only (combat re-derives next tick); never serialized.
     int mCombatRetargetCountdown = 0;
+    int mRetaliationX = 0;
+    int mRetaliationY = 0;
+    int mRetaliationTime = 0;
 
     eCityId mCityId = eCityId::neutralFriendly;
     eCityId mOnCityId = eCityId::neutralFriendly;

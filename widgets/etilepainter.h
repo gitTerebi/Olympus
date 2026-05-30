@@ -33,6 +33,10 @@ public:
     void scheduleDrawTexture(const double x, const double y,
                              const std::shared_ptr<eTexture>& tex,
                              const eAlignment align);
+    void scheduleDrawTexture(const double x, const double y,
+                             const std::shared_ptr<eTexture>& tex,
+                             const eAlignment align,
+                             const SDL_Color& colorMod);
     void handleScheduledDraw();
 
     void drawPolygon(const std::vector<SDL_Point>& pts,
@@ -59,6 +63,8 @@ private:
         std::shared_ptr<eTexture> fTex;
         bool fHasAlign = false;
         eAlignment fAlign = eAlignment::top;
+        bool fHasColorMod = false;
+        SDL_Color fColorMod{255, 255, 255, 255};
     };
 
     std::vector<eScheduledDraw> mScheduled;

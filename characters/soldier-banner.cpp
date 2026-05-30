@@ -439,7 +439,6 @@ bool SoldierBanner::isGoingHome() const {
 
 void SoldierBanner::addSoldier(eSoldier* const s) {
     mSoldiers.push_back(s);
-    updateMorale();
     updatePlaces();
     if(!mHome) callSoldier(s);
 }
@@ -498,6 +497,25 @@ eTeamId SoldierBanner::teamId() const {
     const auto pid = playerId();
     auto& board = getBoard();
     return board.playerIdToTeamId(pid);
+}
+
+eBannerFormationRole SoldierBanner::formationRole() const {
+    if(mFormationRole != eBannerFormationRole::other)
+        return mFormationRole;
+    switch(mType) {
+    case eBannerType::horseman:
+        return eBannerFormationRole::cavalry;
+    case eBannerType::rockThrower:
+        return eBannerFormationRole::missile;
+    case eBannerType::hoplite:
+    case eBannerType::amazon:
+    case eBannerType::aresWarrior:
+        return eBannerFormationRole::melee;
+    case eBannerType::enemy:
+    case eBannerType::trireme:
+        break;
+    }
+    return eBannerFormationRole::other;
 }
 
 void SoldierBanner::incCount() {
@@ -590,8 +608,7 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
                 itemAr.characterField("soldier", &mBoard, s);
             });
     }
-    ar.field("mMorale", mMorale, 100);
-    ar.field("mPeakCount", mPeakCount, 0);
+    ar.field("formationRole", mFormationRole, eBannerFormationRole::other);
 }
 
 void SoldierBanner::serialize(eSaveArchive& ar) {
@@ -794,17 +811,15 @@ SoldierBanner::sFormationPositions(
         const int ctx, const int cty,
         const int lineDX, const int lineDY,
         const int dist) {
-    // hoplites rear (depth=0), missiles front (max depth)
     std::stable_sort(bs.begin(), bs.end(), [](const SoldierBanner* a, const SoldierBanner* b) {
-        auto order = [](eBannerType t) {
-            switch(t) {
-            case eBannerType::rockThrower: return 0;
-            case eBannerType::horseman:    return 1;
-            case eBannerType::hoplite:     return 2;
-            default:                       return 3;
-            }
+        auto order = [](const SoldierBanner* banner) {
+            const auto role = banner->formationRole();
+            if(role == eBannerFormationRole::melee) return 0;
+            if(role == eBannerFormationRole::cavalry) return 1;
+            if(role == eBannerFormationRole::missile) return 2;
+            return 3;
         };
-        return order(a->type()) > order(b->type());
+        return order(a) < order(b);
     });
 
     const int depthDX = -lineDY;
@@ -820,21 +835,32 @@ SoldierBanner::sFormationPositions(
     int depth = 0;
     int gi = 0;
     while(gi < (int)bs.size()) {
-        const eBannerType gtype = bs[gi]->type();
+        const auto gtype = bs[gi]->formationRole();
         int gend = gi;
-        while(gend < (int)bs.size() && bs[gend]->type() == gtype) gend++;
+        while(gend < (int)bs.size() && bs[gend]->formationRole() == gtype) gend++;
         const int count = gend - gi;
-        const int slotW = gtype == eBannerType::rockThrower ? missileSlot : otherSlot;
+        const int slotW = gtype == eBannerFormationRole::missile ?
+                          missileSlot : otherSlot;
         const int total = count * slotW;
         int cur = -(total / 2);
         for(int i = 0; i < count; i++) {
             const int side = cur + slotW / 2;
             cur += slotW;
+            int sideOffset = side;
+            int depthOffset = depth;
+            if(gtype == eBannerFormationRole::cavalry) {
+                const int flank = i % 2 == 0 ? -1 : 1;
+                const int rank = i / 2;
+                sideOffset = flank*(total/2 + otherSlot + rank*otherSlot);
+                depthOffset = 0;
+            }
             result.push_back({bs[gi + i],
-                              ctx + side*lineDX + depth*depthDX,
-                              cty + side*lineDY + depth*depthDY});
+                              ctx + sideOffset*lineDX + depthOffset*depthDX,
+                              cty + sideOffset*lineDY + depthOffset*depthDY});
         }
-        depth += groupGap;
+        if(gtype != eBannerFormationRole::cavalry) {
+            depth += groupGap;
+        }
         gi = gend;
     }
     return result;
@@ -1137,49 +1163,28 @@ void SoldierBanner::purgeDead() {
             i--;
         }
     }
-    updateMorale();
 }
 
-void SoldierBanner::updateMorale() {
-    const int alive = (int)mSoldiers.size();
-    if(alive > mPeakCount) mPeakCount = alive;
-    if(mPeakCount <= 0) {
-        mMorale = 100;
-        return;
-    }
-    // Morale tracks surviving fraction of the banner's peak strength: a banner
-    // that has lost most of its men breaks and runs (see routed()).
-    mMorale = (100*alive)/mPeakCount;
-}
-
-bool SoldierBanner::routed() const {
-    // Only enemy banners rout — player/ally formations hold their ground.
-    if(mType != eBannerType::enemy) return false;
-    if(mPeakCount <= 0) return false;
-    return mMorale < eNumbers::sInvasionBannerRoutMorale;
-}
-
-void SoldierBanner::updateCombat(const int by) {
-    // Augustus per-formation combat brain (update_enemy_formation): the FORMATION
-    // owns movement during a fight, not individual soldiers. Each tick it finds
-    // the nearest defender within engage range and walks the banner adjacent to
-    // it, so the soldiers reform onto/around that foe and lock on reactively (the
-    // adjacency scan in FightingAction). After a kill it re-picks next tick — no
-    // soldier stands idle. Holds the strategic destination (set by the
-    // invasion-handler) when no defender is near.
+void SoldierBanner::updateRetaliation(const int by) {
+    // Pure retaliation: only if this banner was hit recently, move the whole
+    // banner toward a nearby defender. Otherwise keep the general's objective.
     if(mType != eBannerType::enemy) return; // player banners: manual command
-    if(routed()) {
-        mCombatAssignments.clear();
-        return;
-    }
     if(mHome || mAbroad || !mTile) {
         mCombatAssignments.clear();
         return;
     }
 
+    if(mRetaliationTime > 0) {
+        mRetaliationTime -= by;
+    }
     mCombatRetargetCountdown -= by;
     if(mCombatRetargetCountdown > 0) return;
     mCombatRetargetCountdown = 500;
+
+    if(mRetaliationTime <= 0) {
+        mCombatAssignments.clear();
+        return;
+    }
 
     const auto invaderTid = teamId();
     const auto defendCid = onCityId();
@@ -1187,7 +1192,7 @@ void SoldierBanner::updateCombat(const int by) {
     int dx;
     int dy;
     const bool found = InvasionTargeting::nearestDefender(
-        mBoard, defendCid, invaderTid, mTile->x(), mTile->y(), range, dx, dy);
+        mBoard, defendCid, invaderTid, mRetaliationX, mRetaliationY, range, dx, dy);
     if(!found) {
         mCombatAssignments.clear();
         return; // no defender near: hold the strategic destination
@@ -1216,6 +1221,79 @@ void SoldierBanner::updateCombat(const int by) {
         moveTo(dx, dy);
     }
     updateCombatAssignments();
+}
+
+void SoldierBanner::signalRetaliationTarget(const int tx, const int ty) {
+    mRetaliationX = tx;
+    mRetaliationY = ty;
+    mRetaliationTime = 3000;
+}
+
+bool SoldierBanner::needsHelp() const {
+    return mType == eBannerType::enemy &&
+           mRetaliationTime > 0 &&
+           !fighting();
+}
+
+bool SoldierBanner::attackEnemyNearRetaliationPoint() {
+    if(mType != eBannerType::enemy) return false;
+    if(mHome || mAbroad || !mTile) return false;
+    if(fighting()) return false;
+    if(mRetaliationTime <= 0) return false;
+
+    const auto invaderTid = teamId();
+    const auto defendCid = onCityId();
+    const int range = eNumbers::sInvasionEngageDefenderRange;
+    eCharacter* best = nullptr;
+    int bestDist = 0;
+    for(int i = -range; i <= range; i++) {
+        for(int j = -range; j <= range; j++) {
+            const auto t = mBoard.tile(mRetaliationX + i, mRetaliationY + j);
+            if(!t) continue;
+            if(t->cityId() != defendCid) continue;
+            for(const auto& c : t->characters()) {
+                if(c->dead()) continue;
+                if(!eTeamIdHelpers::isEnemy(c->teamId(), invaderTid)) continue;
+                if(!canAttackCharacter(c.get())) continue;
+                if(c->targetedByCount() > 0) continue;
+                const int dx = mTile->x() - t->x();
+                const int dy = mTile->y() - t->y();
+                const int dist = dx*dx + dy*dy;
+                if(!best || dist < bestDist) {
+                    best = c.get();
+                    bestDist = dist;
+                }
+            }
+        }
+    }
+    if(!best) return false;
+    const auto targetTile = best->tile();
+    if(!targetTile) return false;
+    const int dx = targetTile->x();
+    const int dy = targetTile->y();
+
+    int meleeCount = 0;
+    int rangedCount = 0;
+    int minRange = 0;
+    for(const auto s : mSoldiers) {
+        if(s->dead()) continue;
+        const int sr = s->range();
+        if(sr > 0) {
+            rangedCount++;
+            if(!minRange || sr < minRange) minRange = sr;
+        } else {
+            meleeCount++;
+        }
+    }
+
+    if(rangedCount > 0 && meleeCount == 0 && minRange > 1) {
+        const auto t = findRangedBannerTile(mBoard, mTile, dx, dy, minRange);
+        if(t) moveTo(t->x(), t->y());
+    } else {
+        moveTo(dx, dy);
+    }
+    updateCombatAssignments();
+    return true;
 }
 
 bool SoldierBanner::combatAssignment(eSoldier* const s,
@@ -1396,6 +1474,7 @@ bool SoldierBanner::visibleOnTile() const {
     const auto onPid = mBoard.cityIdToPlayerId(onCid);
     const auto ppid = mBoard.personPlayer();
     if(onPid != ppid) return false;
+    if(mType == eBannerType::enemy) return true;
     const auto pid = playerId();
     if(pid == ppid) return true;
     return mMilitaryAid;

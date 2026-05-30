@@ -11,6 +11,7 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
+#include "characters/soldier-banner.h"
 
 void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     int productionCount = ar.writing() ? static_cast<int>(mYearlyProduction.size()) : 0;

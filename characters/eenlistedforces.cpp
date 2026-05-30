@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "characters/soldier-banner.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"

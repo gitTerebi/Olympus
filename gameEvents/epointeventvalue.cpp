@@ -2,6 +2,7 @@
 
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
+#include "characters/soldier-banner.h"
 
 ePointEventValue::ePointEventValue(
     const eBannerTypeS btype,

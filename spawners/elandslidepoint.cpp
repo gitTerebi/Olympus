@@ -1,6 +1,7 @@
 #include "elandslidepoint.h"
 
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 
 eLandSlidePoint::eLandSlidePoint(const int id,
                                  eTile* const tile,

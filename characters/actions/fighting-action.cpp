@@ -17,6 +17,7 @@
 #include "missiles/earrowmissile.h"
 #include "missiles/espearmissile.h"
 #include "combat-timing.h"
+#include "characters/soldier-banner.h"
 
 namespace {
 bool sCanAttackCharacter(const eCharacter* const c) {

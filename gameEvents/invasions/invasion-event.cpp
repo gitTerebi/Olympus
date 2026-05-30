@@ -16,6 +16,7 @@
 #include "fileIO/esavearchive.h"
 
 #include <cstdio>
+#include "characters/soldier-banner.h"
 
 namespace
 {
@@ -244,6 +245,48 @@ eTile *nearestShoreTile(eTile *const tile)
     return result;
 }
 
+eTile* nearestVisibleLandSpawnTile(eTile* const tile)
+{
+    if(!tile || tile->hasWater())
+        return tile;
+    const auto cid = tile->cityId();
+    auto& board = tile->board();
+    const auto tooCloseToCityEdge = [cid](eTile* const t) {
+        if(!t || t->cityId() != cid) return true;
+        for(int i = -5; i <= 5; i++) {
+            for(int j = -5; j <= 5; j++) {
+                const auto tt = t->tileRel<eTile>(i, j);
+                if(!tt || tt->cityId() != cid) return true;
+            }
+        }
+        return false;
+    };
+    if(!tooCloseToCityEdge(tile))
+        return tile;
+    eTile* result = nullptr;
+    const auto prcs = [&](const int dx, const int dy)
+    {
+        const auto t = tile->tileRel<eTile>(dx, dy);
+        if(!t) return false;
+        if(t->cityId() != cid) return false;
+        if(tooCloseToCityEdge(t)) return false;
+        if(!t->walkable()) return false;
+        result = t;
+        return true;
+    };
+    for(int i = 1; i < 16; i++)
+    {
+        eIterateSquare::iterateSquare(i, prcs);
+        if(result)
+        {
+            printf("invasion land spawn nudged from edge band (%i,%i) to (%i,%i)\n",
+                   tile->x(), tile->y(), result->x(), result->y());
+            return result;
+        }
+    }
+    return tile;
+}
+
 void eInvasionEvent::trigger()
 {
     const auto board = gameBoard();
@@ -321,13 +364,14 @@ void eInvasionEvent::trigger()
         else
         {
             eh = new eInvasionHandler(*board, cid, self->mCity, self.get());
+            const auto spawnTile = nearestVisibleLandSpawnTile(tile);
             if (invadingC)
             {
-                eh->initializeLandInvasion(tile, self->mForces, self->mConquestEvent);
+                eh->initializeLandInvasion(spawnTile, self->mForces, self->mConquestEvent);
             }
             else
             {
-                eh->initializeLandInvasion(tile, infantry, cavalry, archers);
+                eh->initializeLandInvasion(spawnTile, infantry, cavalry, archers);
             }
         }
 
@@ -477,10 +521,11 @@ void eInvasionEvent::fight()
         }
         else
         {
+            const auto spawnTile = nearestVisibleLandSpawnTile(tile);
             if (invadingC)
-                eh->initializeLandInvasion(tile, mForces, mConquestEvent);
+                eh->initializeLandInvasion(spawnTile, mForces, mConquestEvent);
             else
-                eh->initializeLandInvasion(tile, infantry, cavalry, archers);
+                eh->initializeLandInvasion(spawnTile, infantry, cavalry, archers);
         }
     }
 }

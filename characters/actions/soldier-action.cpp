@@ -68,20 +68,6 @@ void SoldierAction::increment(const int by) {
         return eComplexAction::increment(by);
     }
 
-    // Routed banner: its soldiers break off and flee the map instead of fighting
-    // to the last man (Augustus morale rout). Drop any attack (releases the
-    // combat claim) and head abroad. Once fleeing (stage abroad) just let the
-    // walk run.
-    {
-        if(b && b->routed()) {
-            if(mStage != SoldierActionStage::abroad) {
-                if(isAttacking()) cancelAttack();
-                goAbroad();
-            }
-            return eComplexAction::increment(by);
-        }
-    }
-
     // Don't yank a soldier back to its banner while a fight is live — that let
     // a player lure one invader past the leash, snap it home, and pick off the
     // formation piecemeal. Hold and finish the fight; the leash only reins the
@@ -254,7 +240,10 @@ void SoldierAction::beingAttacked(int ttx, int tty) {
     // adjacent engages via lookForEnemy regardless.
     const auto s = static_cast<eSoldier*>(character());
     const auto b = s->banner();
-    if(b && b->type() == eBannerType::enemy && !isAttacking()) return;
+    if(b && b->type() == eBannerType::enemy && !isAttacking()) {
+        b->signalRetaliationTarget(ttx, tty);
+        return;
+    }
     FightingAction::beingAttacked(ttx, tty);
 }
 

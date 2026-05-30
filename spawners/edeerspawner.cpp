@@ -2,6 +2,7 @@
 
 #include "characters/deer.h"
 #include "enumbers.h"
+#include "characters/soldier-banner.h"
 
 eDeerSpawner::eDeerSpawner(const int id,
                            eTile* const tile,

@@ -7,7 +7,7 @@
 #include "pointers/estdpointer.h"
 
 #include "characters/eenlistedforces.h"
-#include "invasion-targeting.h"
+#include "invasion-general.h"
 
 class GameBoard;
 class eInvasionEvent;
@@ -78,6 +78,7 @@ public:
     void killAllWithCorpse();
 
     eTile* currentTile() const { return mCurrentTile; }
+    eTile* generalTargetTile() const { return mGeneralTargetTile; }
 
     eInvasionStage stage() const { return mStage; }
     eTile* tile() const { return mTile; }
@@ -113,12 +114,7 @@ private:
                             std::vector<SoldierBanner*>& solds);
 
     void tellHeroesAndGodsToGoBack() const;
-
-    // Destination tile for the current march: a nearby defender (soldier-first,
-    // unless the invasion clearly outpowers the garrison) else the highest
-    // priority building for this invasion's attack type. Null if nothing found.
-    eTile* invasionTargetTile(const int fromX, const int fromY,
-                              const std::vector<SoldierBanner*>& solds);
+    bool generalTargetValid() const;
 
     void extractSSFromForces(const eEnlistedForces& forces, eSs& ss) const;
 
@@ -129,12 +125,14 @@ private:
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
     eTile* mCurrentTile = nullptr;
+    eTile* mGeneralTargetTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
     InvasionAttackType mAttackType = InvasionAttackType::food;
     std::vector<stdsptr<SoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;
 
     int mWait = 0;
+    int mSpawnWait = 0;
 
     int mInfantryLeft = 0;
     int mCavalryLeft = 0;
@@ -161,8 +159,6 @@ private:
     std::vector<stdptr<eCharacter>> mBoats;
 
     const int mSoldiersPerBoat = 4*8;
-
-    int mReplaceCounter = 0;
 
     int mIOID = -1;
 };

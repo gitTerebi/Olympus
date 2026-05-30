@@ -1898,16 +1898,16 @@ void GameWidget::paintEvent(ePainter &p)
                 hover = tx == mHoverTX && ty == mHoverTY;
             }
 
+            SDL_Color bnrMod{255, 255, 255, 255};
+            if(hover) bnrMod = SDL_Color{175, 255, 255, 255};
+            else if(enemy) bnrMod = SDL_Color{255, 55, 55, 255};
+            else if(aid) bnrMod = SDL_Color{255, 125, 125, 255};
             {
                 eGameTextures::loadBanners();
                 const auto& rods = charTexs.fBannerRod;
                 const auto& rod = rods.getTexture(0);
-                if(hover) rod->setColorMod(175, 255, 255);
-                else if(enemy) rod->setColorMod(255, 55, 55);
-                else if(aid) rod->setColorMod(255, 125, 125);
-                tp.drawTexture(rx, ry - 1, rod,
-                               eAlignment::hcenter | eAlignment::top);
-                if(hover || enemy || aid) rod->clearColorMod();
+                tp.scheduleDrawTexture(rx, ry - 1, rod,
+                               eAlignment::hcenter | eAlignment::top, bnrMod);
             }
             {
                 const int id = b->id();
@@ -1920,12 +1920,8 @@ void GameWidget::paintEvent(ePainter &p)
                     texId = 6;
                 }
                 const auto& tex = bnr.getTexture(texId);
-                if(hover) tex->setColorMod(175, 255, 255);
-                else if(enemy) tex->setColorMod(255, 55, 55);
-                else if(aid) tex->setColorMod(255, 125, 125);
-                tp.drawTexture(rx - 1, ry - 2.6, tex,
-                               eAlignment::hcenter | eAlignment::top);
-                if(hover || enemy || aid) tex->clearColorMod();
+                tp.scheduleDrawTexture(rx - 1, ry - 2.6, tex,
+                               eAlignment::hcenter | eAlignment::top, bnrMod);
             }
             {
                 const auto type = b->type();
@@ -1945,12 +1941,8 @@ void GameWidget::paintEvent(ePainter &p)
                     }
                     if(itype != -1) {
                         const auto& top = tps.getTexture(itype);
-                        if(hover) top->setColorMod(175, 255, 255);
-                        else if(enemy) top->setColorMod(255, 55, 55);
-                        else if(aid) top->setColorMod(255, 125, 125);
-                        tp.drawTexture(rx - 2.5, ry -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top);
-                        if(hover || enemy || aid) top->clearColorMod();
+                        tp.scheduleDrawTexture(rx - 2.5, ry -  3.5, top,
+                                       eAlignment::hcenter | eAlignment::top, bnrMod);
                     }
                 } else {
                     int itype = -1;
@@ -1963,12 +1955,8 @@ void GameWidget::paintEvent(ePainter &p)
                     }
                     if(itype != -1) {
                         const auto& top = pTps.getTexture(itype);
-                        if(hover) top->setColorMod(175, 255, 255);
-                        else if(enemy) top->setColorMod(255, 55, 55);
-                        else if(aid) top->setColorMod(255, 125, 125);
-                        tp.drawTexture(rx - 2.5, ry -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top);
-                        if(hover || enemy || aid) top->clearColorMod();
+                        tp.scheduleDrawTexture(rx - 2.5, ry -  3.5, top,
+                                       eAlignment::hcenter | eAlignment::top, bnrMod);
                     }
                 }
             }

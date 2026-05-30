@@ -2,6 +2,7 @@
 
 #include "characters/eboar.h"
 #include "enumbers.h"
+#include "characters/soldier-banner.h"
 
 eBoarSpawner::eBoarSpawner(const int id,
                            eTile* const tile,

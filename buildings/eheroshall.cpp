@@ -4,6 +4,7 @@
 
 #include "elanguage.h"
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 #include "buildings/epalace.h"
 #include "buildings/eroad.h"
 #include "eiteratesquare.h"

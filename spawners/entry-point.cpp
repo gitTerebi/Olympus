@@ -3,6 +3,7 @@
 #include "engine/game-board.h"
 #include "characters/esettler.h"
 #include "characters/actions/esettleraction.h"
+#include "characters/soldier-banner.h"
 
 EntryPoint::EntryPoint(const int id,
                          eTile* const tile,

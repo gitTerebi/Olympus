@@ -4,6 +4,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "enumbers.h"
+#include "characters/soldier-banner.h"
 
 eReinforcementsEvent::eReinforcementsEvent(const eCityId cid,
                                            const eGameEventBranch branch,
