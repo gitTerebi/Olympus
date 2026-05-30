@@ -5,6 +5,7 @@
 #include "engine/game-board.h"
 #include "textures/eterraintextures.h"
 #include "widgets/etilepainter.h"
+#include "widgets/paint/draw/dont-draw-appeal.h"
 
 #include <algorithm>
 #include <array>
@@ -39,16 +40,6 @@ const std::array<AvenueHeatCell, 96> kBoulevardHeat{{
     {-4, 3, 1}, {-3, 3, 2}, {-2, 3, 3}, {-1, 3, 3}, {0, 3, 3}, {1, 3, 3}, {2, 3, 3}, {3, 3, 3}, {4, 3, 3}, {5, 3, 2}, {6, 3, 1},
     {-4, 4, 1}, {-3, 4, 2}, {-2, 4, 3}, {-1, 4, 3}, {0, 4, 3}, {1, 4, 3}, {2, 4, 3}, {3, 4, 3}, {4, 4, 3}, {5, 4, 2}, {6, 4, 1},
 }};
-
-bool dontDrawAppealPreview(const eTerrain terr) {
-    return terr == eTerrain::stones ||
-           terr == eTerrain::flatStones ||
-           terr == eTerrain::tallStones ||
-           terr == eTerrain::copper ||
-           terr == eTerrain::silver ||
-           terr == eTerrain::orichalc ||
-           terr == eTerrain::water;
-}
 
 eTile* avenueRoad(eTile* const tile) {
     if(!tile) return nullptr;
@@ -100,7 +91,7 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
 
     const auto drawPreviewTile = [&](eTile* const tile, const int app) {
         if(!tile) return;
-        if(dontDrawAppealPreview(tile->terrain())) return;
+        if(dontDrawAppeal(tile->terrain())) return;
         if(tile->isElevationTile()) return;
 
         const int strength = std::clamp(std::abs(app), 1, 30);
