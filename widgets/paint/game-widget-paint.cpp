@@ -16,6 +16,9 @@
 
 #include "missiles/emissile.h"
 #include "characters/soldier-banner.h"
+#include "widgets/paint/invasion-debug-paint.h"
+#include "widgets/paint/draw/draw-column.h"
+#include "widgets/paint/draw/dont-draw-appeal.h"
 
 #include "spawners/elandinvasionpoint.h"
 
@@ -39,709 +42,6 @@
 #include <set>
 #include <string>
 
-bool sDontDrawAppeal(const eTerrain terr)
-{
-    return terr == eTerrain::stones ||
-           terr == eTerrain::flatStones ||
-           terr == eTerrain::tallStones ||
-           terr == eTerrain::copper ||
-           terr == eTerrain::silver ||
-           terr == eTerrain::orichalc ||
-           terr == eTerrain::water;
-}
-
-void drawColumn(eTilePainter &tp, const int n,
-                const double rx, const double ry,
-                const eTextureCollection &coll)
-{
-    double y = 0;
-    const auto top = coll.getTexture(0);
-    const auto mid = coll.getTexture(1);
-    const auto btm = coll.getTexture(2);
-
-    tp.drawTexture(rx + 1 - y, ry - y, btm,
-                   eAlignment::hcenter | eAlignment::top);
-    y += 0.75;
-    for (int i = 0; i < n; i++)
-    {
-        tp.drawTexture(rx + 1 - y, ry - y, mid,
-                       eAlignment::hcenter | eAlignment::top);
-        y += 0.33;
-    }
-    tp.drawTexture(rx + 1 - y, ry - y, top,
-                   eAlignment::hcenter | eAlignment::top);
-}
-
-bool sAppealRangeContainsTile(const int x, const int y,
-                              const int ax, const int ay,
-                              const int sw, const int sh,
-                              const int r,
-                              double &mult)
-{
-    const double cx = ax + 0.5 * sw;
-    const double cy = ay + 0.5 * sh;
-    const double dx = std::max(std::abs(x - cx) - 0.5 * sw, 0.);
-    const double dy = std::max(std::abs(y - cy) - 0.5 * sh, 0.);
-    const double dist = std::sqrt(dx * dx + dy * dy);
-    if (dist > r)
-        return false;
-    mult = (r - dist) / r;
-    return true;
-}
-
-void GameWidget::drawXY(int tx, int ty,
-                         double &rx, double &ry,
-                         const int wSpan, const int hSpan,
-                         const int a)
-{
-    if (mBoard)
-    {
-        const auto dir = mBoard->direction();
-        if (dir != eWorldDirection::N)
-        {
-            const int width = mBoard->width();
-            const int height = mBoard->height();
-            eTileHelper::tileIdToRotatedTileId(tx, ty, tx, ty,
-                                               dir, width, height);
-        }
-    }
-
-    rx = tx + 0.5;
-    ry = ty + 1.5;
-
-    if (wSpan == 2 && hSpan == 2)
-    {
-        rx += 0.5;
-        ry += 0.5;
-    }
-    else if (wSpan == 3 && hSpan == 3)
-    {
-        rx += 0.0;
-        ry += 2.0;
-    }
-    else if (wSpan == 4 && hSpan == 4)
-    {
-        rx += 0.5;
-        ry += 2.5;
-    }
-    else if (wSpan == 5 && hSpan == 5)
-    {
-        rx += 0.0;
-        ry += 4.0;
-    }
-    else if (wSpan == 6 && hSpan == 6)
-    {
-        rx += 0.5;
-        ry += 5.5;
-    }
-    rx -= a;
-    ry -= a;
-}
-
-void GameWidget::paintStampPreview(eTilePainter &tp,
-                                    const eTerrainTextures &trrTexs,
-                                    const eBuildingTextures &builTexs,
-                                    int tx, int ty,
-                                    ePlayerId ppid)
-{
-    eGameTextures::loadCommonHouse();
-    eGameTextures::loadFoodVendor();
-    eGameTextures::loadFleeceVendor();
-    eGameTextures::loadOilVendor();
-    eGameTextures::loadGranary();
-    eGameTextures::loadMaintenanceOffice();
-    eGameTextures::loadPark();
-    eGameTextures::loadAgora();
-
-    const auto doDrawXY = [&](int bx, int by, double &rx, double &ry,
-                              int sw, int sh, int alt)
-    {
-        drawXY(bx, by, rx, ry, sw, sh, alt);
-    };
-
-    const auto doDrawTex = [&](double rx, double ry,
-                               eBuildingType type, int sw, bool can)
-    {
-        stdsptr<eTexture> tex;
-        const auto firstTex = [](const eTextureCollection &coll) -> stdsptr<eTexture>
-        {
-            if (coll.size() <= 0)
-                return nullptr;
-            return coll.getTexture(0);
-        };
-        switch (type)
-        {
-        case eBuildingType::road:
-            tex = trrTexs.fRoad.getTexture(12);
-            break;
-        case eBuildingType::roadblock:
-            eGameTextures::loadRoadblock();
-            tex = builTexs.fRoadblock;
-            break;
-        case eBuildingType::commonHouse:
-            if (builTexs.fCommonHouse.empty() || builTexs.fCommonHouse[0].size() == 0)
-                return;
-            tex = builTexs.fCommonHouse[0].getTexture(0);
-            break;
-        case eBuildingType::eliteHousing:
-            eGameTextures::loadEliteHouse();
-            if (builTexs.fEliteHouse.empty() || builTexs.fEliteHouse[0].size() == 0)
-                return;
-            tex = builTexs.fEliteHouse[0].getTexture(0);
-            break;
-        case eBuildingType::gymnasium:
-            eGameTextures::loadGymnasium();
-            tex = builTexs.fGymnasium;
-            break;
-        case eBuildingType::college:
-            eGameTextures::loadCollege();
-            tex = builTexs.fCollege;
-            break;
-        case eBuildingType::dramaSchool:
-            eGameTextures::loadDramaSchool();
-            tex = builTexs.fDramaSchool;
-            break;
-        case eBuildingType::podium:
-            eGameTextures::loadPodium();
-            tex = builTexs.fPodium;
-            break;
-        case eBuildingType::theater:
-            eGameTextures::loadTheater();
-            tex = builTexs.fTheater;
-            break;
-        case eBuildingType::stadium:
-            eGameTextures::loadStadium();
-            tex = builTexs.fStadium1H;
-            break;
-        case eBuildingType::bibliotheke:
-            eGameTextures::loadBibliotheke();
-            tex = builTexs.fBibliotheke;
-            break;
-        case eBuildingType::observatory:
-            eGameTextures::loadObservatory();
-            tex = builTexs.fObservatory;
-            break;
-        case eBuildingType::university:
-            eGameTextures::loadUniversity();
-            tex = builTexs.fUniversity;
-            break;
-        case eBuildingType::laboratory:
-            eGameTextures::loadLaboratory();
-            tex = builTexs.fLaboratory;
-            break;
-        case eBuildingType::inventorsWorkshop:
-            eGameTextures::loadInventorsWorkshop();
-            tex = builTexs.fInventorsWorkshop;
-            break;
-        case eBuildingType::museum:
-            eGameTextures::loadMuseum();
-            tex = builTexs.fMuseum;
-            break;
-        case eBuildingType::fountain:
-            eGameTextures::loadFountain();
-            tex = builTexs.fFountain;
-            break;
-        case eBuildingType::hospital:
-            eGameTextures::loadHospital();
-            tex = builTexs.fHospital;
-            break;
-        case eBuildingType::oliveTree:
-            eGameTextures::loadOliveTree();
-            tex = firstTex(builTexs.fOliveTree);
-            break;
-        case eBuildingType::vine:
-            eGameTextures::loadVine();
-            tex = firstTex(builTexs.fVine);
-            break;
-        case eBuildingType::orangeTree:
-            eGameTextures::loadPlantation();
-            tex = firstTex(builTexs.fOrangeTree);
-            break;
-        case eBuildingType::wheatFarm:
-            eGameTextures::loadPlantation();
-            tex = builTexs.fPlantation;
-            break;
-        case eBuildingType::carrotsFarm:
-            eGameTextures::loadPlantation();
-            tex = builTexs.fPlantation;
-            break;
-        case eBuildingType::onionsFarm:
-            eGameTextures::loadPlantation();
-            tex = builTexs.fPlantation;
-            break;
-        case eBuildingType::huntingLodge:
-            eGameTextures::loadHuntingLodge();
-            tex = builTexs.fHuntingLodge;
-            break;
-        case eBuildingType::fishery:
-            eGameTextures::loadFishery();
-            tex = firstTex(builTexs.fFishery);
-            break;
-        case eBuildingType::urchinQuay:
-            eGameTextures::loadUrchinQuay();
-            tex = firstTex(builTexs.fUrchinQuay);
-            break;
-        case eBuildingType::cardingShed:
-            eGameTextures::loadCardingShed();
-            tex = builTexs.fCardingShed;
-            break;
-        case eBuildingType::dairy:
-            eGameTextures::loadDairy();
-            tex = builTexs.fDairy;
-            break;
-        case eBuildingType::growersLodge:
-            eGameTextures::loadGrowersLodge();
-            tex = builTexs.fGrowersLodge;
-            break;
-        case eBuildingType::orangeTendersLodge:
-            eGameTextures::loadOrangeTendersLodge();
-            tex = builTexs.fOrangeTendersLodge;
-            break;
-        case eBuildingType::corral:
-            eGameTextures::loadCorral();
-            tex = builTexs.fCorral;
-            break;
-        case eBuildingType::tradePost:
-            eGameTextures::loadTradingPost();
-            tex = builTexs.fTradingPost;
-            break;
-        case eBuildingType::pier:
-            eGameTextures::loadPier();
-            tex = firstTex(builTexs.fPier1);
-            break;
-        case eBuildingType::foodVendor:
-            tex = builTexs.fFoodVendor;
-            break;
-        case eBuildingType::fleeceVendor:
-            tex = builTexs.fFleeceVendor;
-            break;
-        case eBuildingType::oilVendor:
-            tex = builTexs.fOilVendor;
-            break;
-        case eBuildingType::wineVendor:
-            eGameTextures::loadWineVendorBuilding();
-            tex = builTexs.fWineVendor;
-            break;
-        case eBuildingType::armsVendor:
-            eGameTextures::loadArmsVendor();
-            tex = builTexs.fArmsVendor;
-            break;
-        case eBuildingType::horseTrainer:
-            eGameTextures::loadHorseVendor();
-            tex = builTexs.fHorseTrainer;
-            break;
-        case eBuildingType::chariotVendor:
-            eGameTextures::loadChariotVendor();
-            tex = builTexs.fChariotVendor;
-            break;
-        case eBuildingType::timberMill:
-            eGameTextures::loadTimberMill();
-            tex = builTexs.fTimberMill;
-            break;
-        case eBuildingType::masonryShop:
-            eGameTextures::loadMasonryShop();
-            tex = builTexs.fMasonryShop;
-            break;
-        case eBuildingType::mint:
-            eGameTextures::loadMint();
-            tex = builTexs.fMint;
-            break;
-        case eBuildingType::foundry:
-            eGameTextures::loadFoundry();
-            tex = builTexs.fFoundry;
-            break;
-        case eBuildingType::olivePress:
-            eGameTextures::loadOlivePress();
-            tex = builTexs.fOlivePress;
-            break;
-        case eBuildingType::winery:
-            eGameTextures::loadWinery();
-            tex = builTexs.fWinery;
-            break;
-        case eBuildingType::sculptureStudio:
-            eGameTextures::loadSculptureStudio();
-            tex = builTexs.fSculptureStudio;
-            break;
-        case eBuildingType::artisansGuild:
-            eGameTextures::loadArtisansGuild();
-            tex = builTexs.fArtisansGuild;
-            break;
-        case eBuildingType::wall:
-            eGameTextures::loadWall();
-            tex = firstTex(builTexs.fWall);
-            break;
-        case eBuildingType::tower:
-            eGameTextures::loadGatehouseAndTower();
-            tex = builTexs.fTower;
-            break;
-        case eBuildingType::triremeWharf:
-            eGameTextures::loadTriremeWharf();
-            tex = firstTex(builTexs.fTriremeWharf);
-            break;
-        case eBuildingType::horseRanch:
-            eGameTextures::loadHorseRanch();
-            tex = builTexs.fHorseRanch;
-            break;
-        case eBuildingType::horseRanchEnclosure:
-            eGameTextures::loadHorseRanch();
-            tex = builTexs.fHorseRanchEnclosure;
-            break;
-        case eBuildingType::chariotFactory:
-            eGameTextures::loadChariotFactory();
-            tex = builTexs.fChariotFactory;
-            break;
-        case eBuildingType::armory:
-            eGameTextures::loadArmory();
-            tex = builTexs.fArmory;
-            break;
-        case eBuildingType::maintenanceOffice:
-            eGameTextures::loadMaintenanceOffice();
-            tex = builTexs.fMaintenanceOffice;
-            break;
-        case eBuildingType::taxOffice:
-            eGameTextures::loadTaxOffice();
-            tex = builTexs.fTaxOffice;
-            break;
-        case eBuildingType::watchPost:
-            eGameTextures::loadWatchpost();
-            tex = builTexs.fWatchPost;
-            break;
-        case eBuildingType::palace:
-            eGameTextures::loadPalace();
-            tex = builTexs.fPalace1H;
-            break;
-        case eBuildingType::park:
-            tex = builTexs.fPark.getTexture(0);
-            break;
-        case eBuildingType::doricColumn:
-            eGameTextures::loadColumns();
-            tex = builTexs.fDoricColumn;
-            break;
-        case eBuildingType::ionicColumn:
-            eGameTextures::loadColumns();
-            tex = builTexs.fIonicColumn;
-            break;
-        case eBuildingType::corinthianColumn:
-            eGameTextures::loadColumns();
-            tex = builTexs.fCorinthianColumn;
-            break;
-        case eBuildingType::avenue:
-            eGameTextures::loadAvenue();
-            tex = !builTexs.fAvenue.empty() ? firstTex(builTexs.fAvenue[0]) : nullptr;
-            break;
-        case eBuildingType::commemorative:
-            eGameTextures::loadCommemorative();
-            tex = firstTex(builTexs.fCommemorative);
-            break;
-        case eBuildingType::bench:
-            eGameTextures::loadBench();
-            tex = builTexs.fBench;
-            break;
-        case eBuildingType::flowerGarden:
-            eGameTextures::loadFlowerGarden();
-            tex = builTexs.fFlowerGarden;
-            break;
-        case eBuildingType::gazebo:
-            eGameTextures::loadGazebo();
-            tex = builTexs.fGazebo;
-            break;
-        case eBuildingType::hedgeMaze:
-            eGameTextures::loadHedgeMaze();
-            tex = builTexs.fHedgeMaze;
-            break;
-        case eBuildingType::fishPond:
-            eGameTextures::loadFishPond();
-            tex = builTexs.fFishPond;
-            break;
-        case eBuildingType::waterPark:
-            eGameTextures::loadWaterPark();
-            tex = builTexs.fWaterPark1;
-            break;
-        case eBuildingType::birdBath:
-            eGameTextures::loadBirdBath();
-            tex = builTexs.fBirdBath;
-            break;
-        case eBuildingType::shortObelisk:
-            eGameTextures::loadShortObelisk();
-            tex = builTexs.fShortObelisk;
-            break;
-        case eBuildingType::tallObelisk:
-            eGameTextures::loadTallObelisk();
-            tex = builTexs.fTallObelisk;
-            break;
-        case eBuildingType::shellGarden:
-            eGameTextures::loadShellGarden();
-            tex = builTexs.fShellGarden;
-            break;
-        case eBuildingType::sundial:
-            eGameTextures::loadSundial();
-            tex = builTexs.fSundial;
-            break;
-        case eBuildingType::dolphinSculpture:
-            eGameTextures::loadDolphinSculpture();
-            tex = builTexs.fDolphinSculpture;
-            break;
-        case eBuildingType::orrery:
-            eGameTextures::loadOrrery();
-            tex = builTexs.fOrrery;
-            break;
-        case eBuildingType::spring:
-            eGameTextures::loadSpring();
-            tex = firstTex(builTexs.fSpring);
-            break;
-        case eBuildingType::topiary:
-            eGameTextures::loadTopiary();
-            tex = builTexs.fTopiary;
-            break;
-        case eBuildingType::baths:
-            eGameTextures::loadBaths();
-            tex = builTexs.fBaths;
-            break;
-        case eBuildingType::stoneCircle:
-            eGameTextures::loadStoneCircle();
-            tex = builTexs.fStoneCircle;
-            break;
-        case eBuildingType::refinery:
-            eGameTextures::loadRefinery();
-            tex = builTexs.fRefinery;
-            break;
-        case eBuildingType::blackMarbleWorkshop:
-            tex = builTexs.fBlackMarbleWorkshop;
-            break;
-        case eBuildingType::commonAgora:
-            tex = builTexs.fAgora.getTexture(0);
-            break;
-        case eBuildingType::granary:
-            eGameTextures::loadGranary();
-            tex = builTexs.fGranary;
-            break;
-        case eBuildingType::warehouse:
-            tex = builTexs.fWarehouseDoor;
-            break;
-        default:
-            break;
-        }
-        const bool fallback = !tex;
-        if (fallback)
-            tex = trrTexs.fBuildingBase;
-        if (!tex) return;
-        if (fallback)
-            tex->setColorMod(140, 140, 140);
-        else if (!can)
-            tex->setColorMod(255, 0, 0);
-        tex->setAlpha(120);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
-        tex->clearAlphaMod();
-        if (fallback || !can)
-            tex->clearColorMod();
-    };
-    const auto doDrawAgora = [&](const int ax, const int ay, const int id)
-    {
-        const auto o = static_cast<eAgoraOrientation>(id);
-        const bool horizontal = o == eAgoraOrientation::bottomLeft ||
-                                o == eAgoraOrientation::topRight;
-        const int w = horizontal ? 6 : 3;
-        const int h = horizontal ? 3 : 6;
-        const auto isRoad = [&](const int x, const int y)
-        {
-            switch (o)
-            {
-            case eAgoraOrientation::bottomLeft:
-                return y == ay;
-            case eAgoraOrientation::topRight:
-                return y == ay + h - 1;
-            case eAgoraOrientation::bottomRight:
-                return x == ax;
-            case eAgoraOrientation::topLeft:
-                return x == ax + w - 1;
-            }
-        };
-        for (int y = ay; y < ay + h; y++)
-        {
-            for (int x = ax; x < ax + w; x++)
-            {
-                const auto tile = mBoard->tile(x, y);
-                if (!tile)
-                    continue;
-                double rx;
-                double ry;
-                drawXY(x, y, rx, ry, 1, 1, tile->altitude());
-                stdsptr<eTexture> tex;
-                if (isRoad(x, y))
-                {
-                    tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
-                                                         builTexs.fAgoraRoad.size());
-                }
-                else
-                {
-                    tex = builTexs.fAgora.getTexture(tile->seed() %
-                                                     builTexs.fAgora.size());
-                }
-                if (!tex)
-                    continue;
-                tex->setColorMod(0, 255, 0);
-                tex->setAlpha(120);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
-                tex->clearAlphaMod();
-                tex->clearColorMod();
-            }
-        }
-    };
-    const auto doDrawStampAgora = [&](const eStampBuildCommand &cmd)
-    {
-        if (cmd.agoraRoads.empty())
-            return;
-
-        const auto drawCell = [&](const int x, const int y, const bool road)
-        {
-            const auto tile = mBoard->tile(x, y);
-            if (!tile)
-                return;
-            double rx;
-            double ry;
-            drawXY(x, y, rx, ry, 1, 1, tile->altitude());
-            stdsptr<eTexture> tex;
-            if (road)
-            {
-                tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
-                                                     builTexs.fAgoraRoad.size());
-            }
-            else
-            {
-                tex = builTexs.fAgora.getTexture(tile->seed() %
-                                                 builTexs.fAgora.size());
-            }
-            if (!tex)
-                return;
-            tex->setColorMod(0, 255, 0);
-            tex->setAlpha(120);
-            tp.drawTexture(rx, ry, tex, eAlignment::top);
-            tex->clearAlphaMod();
-            tex->clearColorMod();
-        };
-        for (const auto &road : cmd.agoraRoads)
-            drawCell(tx + road.first, ty + road.second, true);
-    };
-
-    mStampTool->paintPreview(tx, ty, mBoard, mEditorMode, mViewedCityId, ppid,
-                             doDrawXY, doDrawTex, doDrawAgora,
-                             doDrawStampAgora);
-}
-
-stdsptr<eTexture> GameWidget::getBasementTexture(
-    const int rtx, const int rty,
-    eBuilding *const d,
-    const eTerrainTextures &trrTexs,
-    const eWorldDirection dir,
-    const int boardw,
-    const int boardh)
-{
-    auto tr = d->tileRect();
-    tr = eTileHelper::toRotatedRect(tr, dir, boardw, boardh);
-    const int right = tr.x + tr.w - 1;
-    const int bottom = tr.y + tr.h - 1;
-    int id = 0;
-    if (tr.w == 1 && tr.h == 1)
-    {
-        id = 0;
-    }
-    else if (rtx == tr.x)
-    {
-        if (rty == tr.y)
-        {
-            id = 2;
-        }
-        else if (rty == bottom)
-        {
-            id = 8;
-        }
-        else
-        {
-            id = 9;
-        }
-    }
-    else if (rtx == right)
-    {
-        if (rty == tr.y)
-        {
-            id = 4;
-        }
-        else if (rty == bottom)
-        {
-            id = 6;
-        }
-        else
-        {
-            id = 5;
-        }
-    }
-    else if (rty == tr.y)
-    {
-        id = 3;
-    }
-    else if (rty == bottom)
-    {
-        id = 7;
-    }
-    else
-    {
-        id = 1;
-    }
-    const eTextureCollection *coll = nullptr;
-    const auto type = d->type();
-    if (type == eBuildingType::commonHouse ||
-        type == eBuildingType::eliteHousing)
-    {
-        coll = &trrTexs.fBuildingBase3;
-    }
-    else
-    {
-        coll = &trrTexs.fBuildingBase2;
-    }
-    return coll->getTexture(id);
-}
-
-std::vector<eTile *> GameWidget::selectedTiles() const
-{
-    std::vector<eTile *> result;
-    const int x0 = mPressedX > mHoverX ? mHoverX : mPressedX;
-    const int y0 = mPressedY > mHoverY ? mHoverY : mPressedY;
-    const int x1 = mPressedX > mHoverX ? mPressedX : mHoverX;
-    const int y1 = mPressedY > mHoverY ? mPressedY : mHoverY;
-    int t0x;
-    int t0y;
-    int t1x;
-    int t1y;
-    pixToId(x0, y0, t0x, t0y);
-    pixToId(x1, y1, t1x, t1y);
-
-    int dt0x;
-    int dt0y;
-    eTileHelper::tileIdToDTileId(t0x, t0y, dt0x, dt0y);
-    int dt1x;
-    int dt1y;
-    eTileHelper::tileIdToDTileId(t1x, t1y, dt1x, dt1y);
-
-    const int xMin = std::min(dt0x, dt1x);
-    const int xMax = std::max(dt0x, dt1x);
-    const int yMin = std::min(dt0y, dt1y);
-    const int yMax = std::max(dt0y, dt1y);
-    for (int x = xMin; x < xMax; x++)
-    {
-        for (int y = yMin; y < yMax; y++)
-        {
-            const auto tile = mBoard->dtile(x, y);
-            if (!tile)
-                continue;
-            const auto cid = tile->cityId();
-            if (cid != mViewedCityId)
-                continue;
-            result.push_back(tile);
-        }
-    }
-    return result;
-}
-
 class GameBoardRegisterLock
 {
 public:
@@ -758,161 +58,6 @@ private:
     GameBoard &mBoard;
 };
 
-void GameWidget::setArmyMenuVisible(const bool v)
-{
-    if (mAm->visible() == v)
-        return;
-    mAm->setVisible(v);
-    if (v)
-    {
-        mGm->show();
-        mTem->hide();
-        const auto map = mAm->miniMap();
-        map->scheduleUpdate();
-    }
-    else
-    {
-        mTem->setVisible(mTerrainEditMode);
-        mGm->setVisible(!mTerrainEditMode);
-    }
-}
-
-void GameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
-{
-    std::vector<eTile *> tiles;
-    std::function<bool(eTile *)> check;
-    std::function<void(eTile *)> prcs;
-    prcs = [&](eTile *const tile)
-    {
-        if (!tile)
-            return;
-        if (!check(tile))
-            return;
-        if (eVectorHelpers::contains(tiles, tile))
-            return;
-        tiles.push_back(tile);
-        tile->scheduleTerrainUpdate();
-        tile->setDrawDim(1);
-        tile->setUnderTile(nullptr);
-        const auto tr = tile->topRight<eTile>();
-        prcs(tr);
-        const auto br = tile->bottomRight<eTile>();
-        prcs(br);
-        const auto bl = tile->bottomLeft<eTile>();
-        prcs(bl);
-        const auto tl = tile->topLeft<eTile>();
-        prcs(tl);
-    };
-
-    const auto terr = startTile->terrain();
-    if (static_cast<bool>(terr & eTerrain::stones))
-    {
-        check = [terr](eTile *const tile)
-        {
-            return tile->terrain() == terr;
-        };
-        prcs(startTile);
-    }
-    else if (startTile->underBuildingType() == eBuildingType::park)
-    {
-        check = [](eTile *const tile)
-        {
-            return tile->underBuildingType() == eBuildingType::park;
-        };
-        prcs(startTile);
-    }
-    else
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            for (int dy = -1; dy <= 1; dy++)
-            {
-                const auto t = startTile->tileRel<eTile>(dx, dy);
-                if (!t)
-                    continue;
-                t->scheduleTerrainUpdate();
-            }
-        }
-    }
-    std::sort(tiles.begin(), tiles.end(),
-              [this](eTile *const t1, eTile *const t2)
-              {
-                  const auto dir = mBoard->direction();
-                  const int t1dx = t1->dx();
-                  const int t1dy = t1->dy();
-                  const int t2dx = t2->dx();
-                  const int t2dy = t2->dy();
-                  switch (dir)
-                  {
-                  case eWorldDirection::N:
-                  {
-                      if (t1dy != t2dy)
-                          return t1dy < t2dy;
-                      return t1dx < t2dx;
-                  }
-                  break;
-                  case eWorldDirection::E:
-                  {
-                      if (t1dx != t2dx)
-                          return t1dx < t2dx;
-                      return t1dy < t2dy;
-                  }
-                  break;
-                  case eWorldDirection::S:
-                  {
-                      if (t1dy != t2dy)
-                          return t1dy > t2dy;
-                      return t1dx > t2dx;
-                  }
-                  break;
-                  case eWorldDirection::W:
-                  {
-                      if (t1dx != t2dx)
-                          return t1dx > t2dx;
-                      return t1dy > t2dy;
-                  }
-                  break;
-                  }
-              });
-
-    const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
-    const auto &builTexs = eGameTextures::buildings().at(tid);
-
-    for (const auto tile : tiles)
-    {
-        updateTerrainTextures(tile, trrTexs, builTexs);
-    }
-}
-
-void GameWidget::updateTerrainTextures(eTile *const tile,
-                                        const eTerrainTextures &trrTexs,
-                                        const eBuildingTextures &builTexs)
-{
-    tile->setUnderTile(nullptr);
-    auto &painter = tile->terrainPainter();
-
-    painter.fColl = nullptr;
-    painter.fTex = eTileToTexture::get(tile, trrTexs, builTexs,
-                                       mTileSize, mDrawElevation,
-                                       painter.fDrawDim,
-                                       &painter.fColl,
-                                       mBoard->direction());
-}
-
-void GameWidget::updateTerrainTextures()
-{
-    const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
-    const auto &builTexs = eGameTextures::buildings().at(tid);
-
-    mBoard->iterateOverAllTiles([&](eTile *const tile)
-                                {
-        tile->setDrawDim(1);
-        tile->setUnderTile(nullptr); });
-    mBoard->iterateOverAllTiles([&](eTile *const tile)
-                                { updateTerrainTextures(tile, trrTexs, builTexs); });
-}
 
 void GameWidget::paintEvent(ePainter &p)
 {
@@ -2350,7 +1495,7 @@ void GameWidget::paintEvent(ePainter &p)
 
         const auto drawAppeal = [&]() {
             const auto terr = tile->terrain();
-            if(sDontDrawAppeal(terr)) return;
+            if(dontDrawAppeal(terr)) return;
             if(tile->isElevationTile()) return;
             if(!v && mViewMode == eViewMode::appeal) {
                 const auto& am = mBoard->appealMap();
@@ -2738,6 +1883,7 @@ void GameWidget::paintEvent(ePainter &p)
             const auto b = tile->soldierBanner();
             if(!b) return;
             const bool aid = b->militaryAid();
+            const bool enemy = b->type() == eBannerType::enemy;
             bool hover;
             if(mLeftPressed && mMovedSincePress) {
                 hover = false;
@@ -2757,10 +1903,11 @@ void GameWidget::paintEvent(ePainter &p)
                 const auto& rods = charTexs.fBannerRod;
                 const auto& rod = rods.getTexture(0);
                 if(hover) rod->setColorMod(175, 255, 255);
+                else if(enemy) rod->setColorMod(255, 55, 55);
                 else if(aid) rod->setColorMod(255, 125, 125);
                 tp.drawTexture(rx, ry - 1, rod,
                                eAlignment::hcenter | eAlignment::top);
-                if(hover || aid) rod->clearColorMod();
+                if(hover || enemy || aid) rod->clearColorMod();
             }
             {
                 const int id = b->id();
@@ -2774,10 +1921,11 @@ void GameWidget::paintEvent(ePainter &p)
                 }
                 const auto& tex = bnr.getTexture(texId);
                 if(hover) tex->setColorMod(175, 255, 255);
+                else if(enemy) tex->setColorMod(255, 55, 55);
                 else if(aid) tex->setColorMod(255, 125, 125);
                 tp.drawTexture(rx - 1, ry - 2.6, tex,
                                eAlignment::hcenter | eAlignment::top);
-                if(hover || aid) tex->clearColorMod();
+                if(hover || enemy || aid) tex->clearColorMod();
             }
             {
                 const auto type = b->type();
@@ -2798,10 +1946,11 @@ void GameWidget::paintEvent(ePainter &p)
                     if(itype != -1) {
                         const auto& top = tps.getTexture(itype);
                         if(hover) top->setColorMod(175, 255, 255);
+                        else if(enemy) top->setColorMod(255, 55, 55);
                         else if(aid) top->setColorMod(255, 125, 125);
                         tp.drawTexture(rx - 2.5, ry -  3.5, top,
                                        eAlignment::hcenter | eAlignment::top);
-                        if(hover || aid) top->clearColorMod();
+                        if(hover || enemy || aid) top->clearColorMod();
                     }
                 } else {
                     int itype = -1;
@@ -2815,10 +1964,11 @@ void GameWidget::paintEvent(ePainter &p)
                     if(itype != -1) {
                         const auto& top = pTps.getTexture(itype);
                         if(hover) top->setColorMod(175, 255, 255);
+                        else if(enemy) top->setColorMod(255, 55, 55);
                         else if(aid) top->setColorMod(255, 125, 125);
                         tp.drawTexture(rx - 2.5, ry -  3.5, top,
                                        eAlignment::hcenter | eAlignment::top);
-                        if(hover || aid) top->clearColorMod();
+                        if(hover || enemy || aid) top->clearColorMod();
                     }
                 }
             }
@@ -2838,7 +1988,7 @@ void GameWidget::paintEvent(ePainter &p)
             if(!terrUb || flatSanct ||
                eBuilding::sFlatBuilding(terrBt)) {
                 if(mViewMode == eViewMode::appeal && !terrUb &&
-                   !sDontDrawAppeal(terr) && !tile->isElevationTile()) {
+                   !dontDrawAppeal(terr) && !tile->isElevationTile()) {
                     const auto& am = mBoard->appealMap();
                     const int ttdx = tile->dx();
                     const int ttdy = tile->dy();
@@ -3246,6 +2396,9 @@ void GameWidget::paintEvent(ePainter &p)
         } });
 
     tp.handleScheduledDraw();
+
+    paintInvasionDebugTargets(*mBoard, mViewedCityId, p,
+                              mTileW, mTileH, mAnimFrame);
 
     if (mRightFormationFacing)
     {

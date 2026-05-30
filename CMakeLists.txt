@@ -666,8 +666,17 @@ set(SOURCES
      widgets/egamewidgetevents.cpp
     widgets/game-widget-info.cpp
     widgets/paint/build-preview-paint.cpp
+    widgets/paint/draw-xy.cpp
+    widgets/paint/draw/draw-column.cpp
+    widgets/paint/draw/dont-draw-appeal.cpp
     widgets/paint/game-widget-paint.cpp
+    widgets/paint/get-basement-texture.cpp
+    widgets/paint/selected-tiles.cpp
+    widgets/paint/paint-stamp-preview.cpp
     widgets/paint/patrol-path-data.cpp
+    widgets/paint/schedule-connected-terrain-update.cpp
+    widgets/paint/set-army-menu-visible.cpp
+    widgets/paint/update-terrain-textures.cpp
     widgets/repair.cpp
     widgets/egiftdialog.cpp
     widgets/egiftsizedialog.cpp
