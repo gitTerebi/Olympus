@@ -13,6 +13,7 @@
 #include "buildings/elite-housing.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "ekillcharacterfinishfail.h"
+#include "enumbers.h"
 
 SoldierAction::SoldierAction(eCharacter* const c) :
     FightingAction(c, eCharActionType::soldierAction) {}
@@ -40,25 +41,23 @@ void SoldierAction::increment(const int by) {
         mSpreadPeriod = false;
     }
 
-    // Tick the banner's shared enemy-proximity cache once here (it self-throttles
-    // to one box scan per ~250ms). All per-tick combat reactions below gate on
-    // this instead of each soldier running its own range^2 scan every tick.
     const auto s = static_cast<eSoldier*>(character());
     const auto b = s->banner();
-    const bool enNear = b ? b->enemyNear(by) : false;
+    const bool bannerEnemy = b && b->type() == eBannerType::enemy;
+    const bool enNear = bannerEnemy ? false : (b ? b->enemyNear(by) : false);
 
-    // Marching to the banner slot: let the walk run UNLESS an enemy is near.
-    // Without the enemyNear gate a soldier walks straight past a free adjacent
-    // foe to reach its slot and never engages — the "enemy next and free but
-    // just stands there" bug. With an enemy near, fall through to lookForEnemy
-    // so it breaks off and fights.
-    if(followBannerDirector()) {
+    mFollowDirectorCooldown -= by;
+    if(mFollowDirectorCooldown <= 0) {
+        mFollowDirectorCooldown = 500;
+        if(followBannerDirector()) {
+            return eComplexAction::increment(by);
+        }
+    } else if(mStage == SoldierActionStage::chase) {
         return eComplexAction::increment(by);
     }
 
-    const bool bannerDirected = b && b->type() == eBannerType::enemy;
     if(mStage == SoldierActionStage::banner && currentAction() &&
-       (bannerDirected || !enNear)) {
+       !isAttacking() && (bannerEnemy || !enNear)) {
         return eComplexAction::increment(by);
     }
 
@@ -77,7 +76,7 @@ void SoldierAction::increment(const int by) {
     // scan entirely, just run the cheap banner-return tick. Exception: if the
     // banner is parked ON an enemy building (general pinned it there to attack),
     // directly attack the building tile so soldiers grind it from adjacent slots.
-    if(!isAttacking() && !enNear) {
+    if(!isAttacking() && !enNear && !bannerEnemy) {
         if(b && !currentAction()) {
             const auto bt = b->tile();
             if(bt) {
@@ -92,34 +91,6 @@ void SoldierAction::increment(const int by) {
         }
         tickBannerReturn(by);
         return eComplexAction::increment(by);
-    }
-
-    // Enemy-banner leash: in defensive mode ban all walker fights; outside
-    // defensive mode still ban if far from slot (prevents chasing random walkers
-    // and committing a non-overwrittable goTo that blocks general orders).
-    if(b && b->type() == eBannerType::enemy) {
-        if(b->isDefending()) {
-            // If banner assigned a target, fall through to lookForEnemy so the
-            // soldier actually attacks once at its slot. Without an assignment
-            // skip independent hunting so walkers aren't chased.
-            SoldierBanner::CombatAssignment a;
-            if(!b->combatAssignment(s, a) || !a.standTile) {
-                tickBannerReturn(by);
-                return eComplexAction::increment(by);
-            }
-        }
-        const auto slot = b->place(s);
-        const auto ct = s->tile();
-        if(slot && ct) {
-            const int dx = slot->x() - ct->x();
-            const int dy = slot->y() - ct->y();
-            if(dx*dx + dy*dy > 100) {
-                if(isAttacking()) cancelAttack();
-                setCurrentAction(nullptr);
-                tickBannerReturn(by);
-                return eComplexAction::increment(by);
-            }
-        }
     }
 
     // Don't yank a soldier back to its banner while a fight is live — that let
@@ -140,31 +111,80 @@ bool SoldierAction::followBannerDirector() {
     const auto s = static_cast<eSoldier*>(c);
     const auto b = s->banner();
     if(!b) return false;
+
     SoldierBanner::CombatAssignment a;
-    if(!b->combatAssignment(s, a)) return false;
-    if(a.target && a.target->dead()) return false;
+    const bool hasAssignment = b->combatAssignment(s, a);
+
+    const auto exitChase = [&]() {
+        if(mStage == SoldierActionStage::chase) {
+            mStage = SoldierActionStage::idle;
+            if(!isAttacking()) {
+                setCurrentAction(nullptr);
+                setOverwrittableAction(true);
+            }
+        }
+    };
+
+    if(!hasAssignment || (a.target && a.target->dead())) {
+        exitChase();
+        return false;
+    }
     if(isAttacking()) return false;
+    if(currentAction() && !overwrittableAction()) return true;
+    const auto cat = c->actionType();
+    if(cat == eCharacterActionType::fight ||
+       cat == eCharacterActionType::fight2) return false;
 
     const auto ct = c->tile();
     if(!ct) return false;
+
+    // If an enemy is already adjacent, don't issue a new walk — let the
+    // adjacency scan in lookForEnemy lock on and fight.
+    if(c->range() == 0) {
+        auto& brd = c->getBoard();
+        const auto tid = c->teamId();
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+                if(!i && !j) continue;
+                const auto t = brd.tile(ct->x() + i, ct->y() + j);
+                if(!t) continue;
+                for(const auto& cc : t->characters()) {
+                    if(cc->dead()) continue;
+                    if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
+                    if(!cc->isSoldier() && !cc->isImmortal()) continue;
+                    exitChase();
+                    return false;
+                }
+            }
+        }
+    }
+
     if(a.intent == SoldierBanner::CombatAssignment::Intent::clearObstacle) {
         if(c->range() > 0) return false;
         if(!a.targetBuilding) return false;
         const auto bt = a.targetBuilding->centerTile();
         if(!bt) return false;
+        exitChase();
         setCurrentAction(nullptr);
         attackBuilding(bt, false);
         return true;
     }
 
-    if(!a.standTile) return false;
+    if(!a.standTile) { exitChase(); return false; }
+
     if(ct == a.standTile) {
-        setCurrentAction(nullptr);
-        setOverwrittableAction(true);
+        exitChase();
         return false;
     }
-    if(currentAction() && !overwrittableAction()) return true;
 
+    // Already chasing this tile — let the walk continue.
+    if(mStage == SoldierActionStage::chase &&
+       currentAction() && !overwrittableAction()) {
+        return true;
+    }
+
+    // Enter chase state and issue the walk.
+    mStage = SoldierActionStage::chase;
     setOverwrittableAction(false);
     goTo(a.standTile->x(), a.standTile->y(), 0);
     return true;
@@ -184,7 +204,13 @@ void SoldierAction::tickBannerReturn(const int by) {
     // lookForEnemy returns none, and an unguarded pull would drag a ranged unit
     // off its firing tile, giving the walk-forward-walk-back loop. enemyNear()
     // gates it: hold while any enemy is in the ranged detect box.
-    if(currentAction() || enemyNear()) return;
+    if(currentAction()) return;
+    const auto s2 = static_cast<eSoldier*>(character());
+    const auto b2 = s2->banner();
+    if(b2 && b2->type() == eBannerType::enemy) {
+        SoldierBanner::CombatAssignment a;
+        if(b2->combatAssignment(s2, a)) return; // has a job, don't pull back
+    } else if(enemyNear()) return;
 
     mGoToBannerCountdown -= by;
     if(mGoToBannerCountdown >= 0) return;
@@ -203,6 +229,9 @@ void SoldierAction::tickBannerReturn(const int by) {
     const auto s = static_cast<eSoldier*>(character());
     const auto b = s->banner();
     if(b) {
+        // Already at formation slot: stand, no walk needed.
+        const auto slot = b->place(s);
+        if(slot && character()->tile() == slot) return;
         goBackToBanner(b->soldierOrientation(),
                        taskFindFailed, taskFinished);
     }
@@ -221,6 +250,7 @@ void SoldierAction::serializeFields(eSaveArchive& ar) {
     FightingAction::serializeFields(ar);
     ar.field("spreadPeriod", mSpreadPeriod);
     ar.field("goToBannerCountdown", mGoToBannerCountdown, 0);
+    ar.field("followDirectorCooldown", mFollowDirectorCooldown, 0);
     ar.field("arrivedAtBanner", mArrivedAtBanner, false);
     ar.field("soldierStage", mStage, SoldierActionStage::idle);
 }
@@ -254,9 +284,19 @@ void SoldierAction::rebuildCurrentStage() {
                              taskFindFailed, taskFinished);
         return;
     }
+    case SoldierActionStage::chase:
+        mStage = SoldierActionStage::idle; // re-derive on next tick
+        return FightingAction::resumeFromSavedState();
     case SoldierActionStage::idle:
         return FightingAction::resumeFromSavedState();
     }
+}
+
+bool SoldierAction::allowsSelfPositioning() const {
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    if(!b || b->type() != eBannerType::enemy) return true;
+    return character()->range() > 0; // ranged invaders reposition; melee hold slot
 }
 
 bool SoldierAction::prefersPathAround() const {
@@ -282,10 +322,7 @@ void SoldierAction::beingAttacked(int ttx, int tty) {
     // adjacent engages via lookForEnemy regardless.
     const auto s = static_cast<eSoldier*>(character());
     const auto b = s->banner();
-    if(b && b->type() == eBannerType::enemy && !isAttacking()) {
-        b->signalRetaliationTarget(ttx, tty);
-        return;
-    }
+    if(b && b->type() == eBannerType::enemy) return;
     FightingAction::beingAttacked(ttx, tty);
 }
 
@@ -416,6 +453,7 @@ eBuilding* SoldierAction::sFindHome(const eCharacterType t,
 void SoldierAction::goBackToBanner(const eOrientation facing,
                                     const eAction& findFailAct,
                                     const eAction& findFinishAct) {
+    cancelAndClearAction();
     mStage = SoldierActionStage::banner;
     const auto c = character();
     const auto s = static_cast<eSoldier*>(c);
@@ -433,12 +471,8 @@ void SoldierAction::goBackToBanner(const eOrientation facing,
     };
 
     const auto ct = c->tile();
-    const auto tt = b->place(s);
-    if(!tt) {
-        standAtBanner();
-        return;
-    }
-    if(ct == tt) {
+    const auto tt = b->place(s) ? b->place(s) : b->tile();
+    if(!tt || ct == tt) {
         standAtBanner();
         return;
     }
@@ -446,9 +480,12 @@ void SoldierAction::goBackToBanner(const eOrientation facing,
     const int ttx = tt->x();
     const int tty = tt->y();
 
-    const bool isPersonPlayer = board().cityIdToPlayerId(cityId()) == board().personPlayer();
-    if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(105.0);
-    const auto type = b->type();
-    setOverwrittableAction(type == eBannerType::enemy);
+    if(b->type() == eBannerType::enemy) {
+        setOverwrittableAction(true);
+    } else {
+        const bool isPersonPlayer = board().cityIdToPlayerId(cityId()) == board().personPlayer();
+        if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(105.0);
+        setOverwrittableAction(false);
+    }
     goTo(ttx, tty, 0, findFailAct, findFinishAct);
 }
