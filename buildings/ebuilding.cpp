@@ -2693,6 +2693,21 @@ void eBuilding::setOverlayEnabledFunc(const std::function<bool()>& e) {
     mOverlayEnabled = e;
 }
 
+double eBuilding::sMaxHp(const eBuildingType bt) {
+    switch(bt) {
+    // Fortifications + seat of power: built to take a siege. Tanky.
+    case eBuildingType::wall:
+    case eBuildingType::palace:
+        return 2000;
+    case eBuildingType::tower:
+    case eBuildingType::gatehouse:
+        return 1500;
+    // Everything else: ordinary structures, fall fast under the hammer.
+    default:
+        return 100;
+    }
+}
+
 bool eBuilding::takeDamage(const double a) {
     if(mHp <= 0) return true;
     const double hp0 = mHp;

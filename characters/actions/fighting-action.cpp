@@ -70,6 +70,55 @@ eTile* sFindFiringTile(FightingAction* const act,
     }
     return best;
 }
+
+// Hard cap of attackers that may LOCK onto one enemy at attack time. Augustus
+// uses 2 (combat.c: `num_attackers >= 2` ⇒ skip). A would-be 3rd attacker looks
+// elsewhere this tick. Enforced where the attack target is set, not at walk time.
+const int sMaxAttackersPerEnemy = 2;
+
+// Nearest attackable enemy to `c` within a square of `range`. Two-pass like
+// Augustus figure_combat_get_target_for_enemy: prefer the nearest enemy that no
+// one is at the cap on yet (free), and only if none is free fall back to the
+// nearest of any. NO soft distance penalty during the approach — penalizing a
+// close foe made a soldier walk past the man beside him toward a distant free
+// one, then re-pick mid-walk when that one got claimed, dithering between them.
+// The 2-cap (checked here via `free`) does the spreading; raw distance keeps
+// each soldier committed to whoever is actually closest. Buildings ignored.
+eCharacter* sNearestEnemy(eCharacter* const c, const int range) {
+    const auto ct = c->tile();
+    if(!ct) return nullptr;
+    const int tx = ct->x();
+    const int ty = ct->y();
+    const auto tid = c->teamId();
+    auto& brd = c->getBoard();
+    eCharacter* nearestFree = nullptr;
+    int nearestFreeDist = 0;
+    eCharacter* nearestAny = nullptr;
+    int nearestAnyDist = 0;
+    for(int i = -range; i <= range; i++) {
+        for(int j = -range; j <= range; j++) {
+            const auto t = brd.tile(tx + i, ty + j);
+            if(!t) continue;
+            for(const auto& cc : t->characters()) {
+                if(cc->dead()) continue;
+                if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
+                if(!sCanAttackCharacter(cc.get())) continue;
+                const int dist = std::max(abs(i), abs(j));
+                if(!nearestAny || dist < nearestAnyDist) {
+                    nearestAny = cc.get();
+                    nearestAnyDist = dist;
+                }
+                if(cc->targetedByCount() < sMaxAttackersPerEnemy) {
+                    if(!nearestFree || dist < nearestFreeDist) {
+                        nearestFree = cc.get();
+                        nearestFreeDist = dist;
+                    }
+                }
+            }
+        }
+    }
+    return nearestFree ? nearestFree : nearestAny;
+}
 }
 
 AttackTarget::AttackTarget() :
@@ -153,6 +202,10 @@ void AttackTarget::serialize(eSaveArchive& ar, GameBoard& board) {
     ar.buildingField("building", &board, mB);
 }
 
+FightingAction::~FightingAction() {
+    releaseClaim();
+}
+
 void FightingAction::cancelAttack() {
     mAttack = false;
     mAttackRanged = false;
@@ -160,9 +213,23 @@ void FightingAction::cancelAttack() {
     mAttackTime = 0;
     mMeleeTime = 0;
     mMissile = 0;
+    releaseClaim();
     const auto c = character();
     c->setPlayFightSound(false);
     c->setActionType(mSavedAction);
+}
+
+void FightingAction::releaseClaim() {
+    if(!mClaimedTarget) return;
+    mClaimedTarget->decTargetedBy();
+    mClaimedTarget = nullptr;
+}
+
+void FightingAction::claimTarget(eCharacter* const c) {
+    releaseClaim();
+    if(!c) return;
+    c->incTargetedBy();
+    mClaimedTarget = c;
 }
 
 void FightingAction::sSignalBeingAttack(
@@ -216,7 +283,13 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
     }
     const int rangeAttackCheck = 500;
     const int lookForEnemyCheck = 500;
-    const int buildingCheck = 5000;
+    // Building engage is checked every scan, not throttled. The old 5s gate meant
+    // each soldier only got a chance to START hitting a wall once per 5 seconds,
+    // and only if already adjacent — so razing a building crawled and most of the
+    // formation stood idle between gate openings. Actual damage is still paced by
+    // the melee/missile cycle once an attack locks; this gate only governed when a
+    // soldier may begin, so opening it every tick just lets them all engage.
+    const int buildingCheck = 0;
 
     const auto c = character();
     if(c->dead()) return LookForEnemyState::dead;
@@ -298,6 +371,7 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         if(finishAttack) {
             mAttack = false;
             mAttackTarget.clear();
+            releaseClaim();
             mAttackTime = 0;
             mRangeAttack = rangeAttackCheck;
             c->setActionType(mSavedAction);
@@ -315,6 +389,11 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         const vec2d ccpos{cc->absX(), cc->absY()};
         const vec2d posdif = ccpos - cpos;
         mAttackTarget = AttackTarget(cc.get());
+        // Count ourselves as an attacker of this foe (Augustus num_attackers),
+        // but ONLY for melee. The 2-cap is a melee-adjacency lock; ranged units
+        // pepper freely and must not consume a melee slot, else archers would
+        // push melee soldiers off a target. Released on finish/cancel/dtor.
+        if(!range) claimTarget(cc.get());
         mAttack = true;
         mAttackRanged = range;
         c->setPlayFightSound(true);
@@ -335,6 +414,9 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
     }
     stdsptr<eCharacter> secondOption;
     stdsptr<eCharacter> thirdOption;
+    stdsptr<eCharacter> cappedAdjacent; // already-full foe, but it's right here
+    // Unit pass first: enemy units always win over buildings, so a soldier
+    // turns on whoever is hitting him instead of clubbing an adjacent house.
     for(int i = -1; i <= 1; i++) {
         for(int j = -1; j <= 1; j++) {
             const auto t = brd.tile(tx + i, ty + j);
@@ -345,10 +427,11 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                 const auto cctid = cc->teamId();
                 if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                 if(cc->dead()) continue;
-                const vec2d ccpos{cc->absX(), cc->absY()};
-                const vec2d posdif = ccpos - cpos;
-                const double dist = posdif.length();
-                if(dist > 1.) continue;
+                // FightAction allows all neighboring tiles, including
+                // diagonals. Keep this scan on the same Chebyshev rule; using
+                // real distance made diagonal foes look "not adjacent", then
+                // the close logic below held forever because tile distance was
+                // already <= 1.
                 if(!sCanAttackCharacter(cc.get())) continue;
                 if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
                     if(cc->isImmortal()) {
@@ -359,14 +442,23 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                     }
                     continue;
                 }
-        setAttackTarget(cc, false);
-        return LookForEnemyState::attacking;
-            }
-            if(buildingAttack) {
-                const bool r = attackBuilding(t, false);
-                if(r) return LookForEnemyState::attacking;
+                // Soft 2-cap: prefer not to be the 3rd to lock onto this foe
+                // (Augustus num_attackers >= 2) so the line spreads. But the cap
+                // only steers spreading — a unit already standing adjacent must
+                // still fight rather than stand idle. Remember the capped foe and
+                // attack it if no uncapped adjacent enemy turns up this scan.
+                if(cc->targetedByCount() >= sMaxAttackersPerEnemy) {
+                    if(!cappedAdjacent) cappedAdjacent = cc;
+                    continue;
+                }
+                setAttackTarget(cc, false);
+                return LookForEnemyState::attacking;
             }
         }
+    }
+    if(cappedAdjacent) {
+        setAttackTarget(cappedAdjacent, false);
+        return LookForEnemyState::attacking;
     }
     if(secondOption) {
         setAttackTarget(secondOption, false);
@@ -376,11 +468,23 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         setAttackTarget(thirdOption, false);
         return LookForEnemyState::attacking;
     }
+    // Building pass only after no enemy unit was attackable this tick.
+    if(buildingAttack) {
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+                const auto t = brd.tile(tx + i, ty + j);
+                if(!t) continue;
+                const bool r = attackBuilding(t, false);
+                if(r) return LookForEnemyState::attacking;
+            }
+        }
+    }
 
     if(range > 0) {
         mRangeAttack += by;
         if(mRangeAttack > rangeAttackCheck) {
             mRangeAttack -= rangeAttackCheck;
+            // Unit pass first: shoot an enemy unit in range before any building.
             for(int i = -range; i <= range; i++) {
                 for(int j = -range; j <= range; j++) {
                     const auto t = brd.tile(tx + i, ty + j);
@@ -391,86 +495,168 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                         const auto cctid = cc->teamId();
                         if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
                         if(cc->dead()) continue;
-                if(!sCanAttackCharacter(cc.get())) continue;
-                if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
-                    if(cc->isImmortal()) {
-                        thirdOption = cc;
-                    } else if(cctype == eCharacterType::enemyBoat ||
-                               cctype == eCharacterType::trireme) {
+                        if(!sCanAttackCharacter(cc.get())) continue;
+                        if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
+                            if(cc->isImmortal()) {
+                                thirdOption = cc;
+                            } else if(cctype == eCharacterType::enemyBoat ||
+                                       cctype == eCharacterType::trireme) {
                                 secondOption = cc;
                             }
                             continue;
                         }
-                         setAttackTarget(cc, true);
-                         sSignalBeingAttack(cc.get(), c, brd);
-                         return LookForEnemyState::attacking;
+                        // No attacker cap on ranged: many archers may pepper one
+                        // target. The 2-cap is a melee-adjacency lock only
+                        // (Augustus num_attackers), not for arrows.
+                        setAttackTarget(cc, true);
+                        sSignalBeingAttack(cc.get(), c, brd);
+                        return LookForEnemyState::attacking;
                     }
-                    if(buildingAttack) {
+                }
+            }
+
+            if(secondOption) {
+                setAttackTarget(secondOption, true);
+                return LookForEnemyState::attacking;
+            }
+            if(thirdOption) {
+                setAttackTarget(thirdOption, true);
+                return LookForEnemyState::attacking;
+            }
+
+            // Building pass only after no enemy unit was attackable this tick.
+            if(buildingAttack) {
+                for(int i = -range; i <= range; i++) {
+                    for(int j = -range; j <= range; j++) {
+                        const auto t = brd.tile(tx + i, ty + j);
+                        if(!t) continue;
                         const bool r = attackBuilding(t, true);
                         if(r) return LookForEnemyState::attacking;
                     }
                 }
             }
         }
-
-        if(secondOption) {
-            setAttackTarget(secondOption, true);
-            return LookForEnemyState::attacking;
-        }
-        if(thirdOption) {
-            setAttackTarget(thirdOption, true);
-            return LookForEnemyState::attacking;
-        }
     }
 
+    // Self-positioning. The banner march (SoldierBanner::updateCombat, the
+    // Augustus per-formation brain) brings the formation onto the defenders;
+    // this lets each idle soldier close the last few tiles onto its OWN nearest
+    // free target. Without it only the front two ranks are adjacent and lock —
+    // the rest stand in formation soaking hits. Augustus enemy_fighting does the
+    // same: every fighting figure that has no opponent walks to its nearest
+    // non-targeted legion (soft penalty + 2-cap spread it across the line).
     if(!currentAction() || mOverwrittableAction) {
         mLookForEnemy += by;
         if(mLookForEnemy > lookForEnemyCheck) {
             mLookForEnemy -= lookForEnemyCheck;
-            // Spot the nearest enemy a short way out. Melee units (range == 0)
-            // chase it; ranged units do NOT — they only use its position to
-            // pick a firing tile near their own slot (see below).
-            // Wide detect: the unit notices distant enemies but only takes a few
-            // steps toward them (walk spread below). Stays put and waits for the
-            // enemy to close rather than charging out.
             const int erange = sRangedDetectRange(range);
-            for(int i = -erange; i <= erange; i++) {
-                for(int j = -erange; j <= erange; j++) {
-                    const int ttx = tx + i;
-                    const int tty = ty + j;
-                    const auto t = brd.tile(ttx, tty);
-                    if(!t) continue;
-                    const auto& chars = t->characters();
-                    for(const auto& cc : chars) {
-                        if(!sCanAttackCharacter(cc.get())) continue;
-                        const auto cctid = cc->teamId();
-                        if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
-                        if(cc->dead()) continue;
-                        if(range > 0) {
-                            // Already within firing range of where we stand:
-                            // hold and let the range-attack scan above shoot.
-                            // Repositioning here is what made rabble step forward
-                            // then walk back without ever firing.
-                            const int curDist = std::max(abs(ttx - tx),
-                                                         abs(tty - ty));
-                            if(curDist <= range && curDist >= 1) {
-                                return LookForEnemyState::attacking;
-                            }
-                            // Out of range: step at most 4 tiles from the
-                            // formation slot to a tile that brings this enemy
-                            // into firing range, then hold and shoot. Never walk
-                            // to the enemy tile. If none works (enemy too far),
-                            // stay put and wait for it to come closer.
-                            const auto fire = sFindFiringTile(
-                                this, repositionAnchor(), ttx, tty, range, 4);
-                            if(!fire) continue;
+            const auto tgt = sNearestEnemy(c, erange);
+            if(tgt) {
+                const auto tt = tgt->tile();
+                if(tt) {
+                    const int ttx = tt->x();
+                    const int tty = tt->y();
+                    const int curDist = std::max(abs(ttx - tx), abs(tty - ty));
+                    if(range > 0) {
+                        // Ranged: hold if already in firing range, else step to
+                        // a firing tile near our slot. Never charge the enemy.
+                        if(curDist <= range && curDist >= 1) {
+                            return LookForEnemyState::attacking;
+                        }
+                        const auto fire = sFindFiringTile(
+                            this, repositionAnchor(), ttx, tty, range, 4);
+                        if(fire) {
                             setOverwrittableAction(false);
                             goTo(fire->x(), fire->y(), 0);
                             return LookForEnemyState::attacking;
                         }
-                        // Melee: close in on the enemy as before.
+                    } else {
+                        // Melee: already adjacent ⇒ the adjacency scan locks on
+                        // next tick, hold. Otherwise walk onto the target tile
+                        // (dist 1) so we end up adjacent. Picks the nearest free
+                        // foe, so surplus soldiers fan out to other defenders
+                        // rather than queueing behind the front two.
+                        if(curDist <= 1) {
+                            return LookForEnemyState::attacking;
+                        }
+                        // Commit to the walk: mark it non-overwrittable so the
+                        // next tick's re-pick and any beingAttacked signal don't
+                        // yank us toward a different foe mid-stride. Cleared on
+                        // arrival by goTo's finish action, so we re-evaluate only
+                        // once we get there. Without this the soldier re-paths
+                        // every 500ms and bounces between targets, never landing.
                         setOverwrittableAction(false);
-                        goTo(ttx, tty, 0);
+                        goTo(ttx, tty, 1);
+                        return LookForEnemyState::attacking;
+                    }
+                }
+            }
+            // No enemy unit in range. Melee soldiers close on the nearest enemy
+            // building so the WHOLE formation razes it, not just the front rank
+            // that happened to arrive adjacent. Without this, back ranks have no
+            // unit to chase and no building in their own path, so they stand idle
+            // while two soldiers slowly chip the wall — the "takes a month, most
+            // stand by" bug. Ranged units skip this; their range building pass
+            // above already shoots structures from the line.
+            if(!tgt && range == 0) {
+                const int berange = sRangedDetectRange(range);
+                eBuilding* nb = nullptr;
+                int nbx = 0;
+                int nby = 0;
+                int nbDist = 0;
+                for(int i = -berange; i <= berange; i++) {
+                    for(int j = -berange; j <= berange; j++) {
+                        const auto t = brd.tile(tx + i, ty + j);
+                        if(!t) continue;
+                        const auto ub = t->underBuilding();
+                        if(!ub) continue;
+                        if(!eTeamIdHelpers::isEnemy(ub->teamId(), tid)) continue;
+                        if(!eBuilding::sAttackable(ub->type())) continue;
+                        const int d = std::max(abs(i), abs(j));
+                        if(!nb || d < nbDist) {
+                            nb = ub;
+                            nbx = t->x();
+                            nby = t->y();
+                            nbDist = d;
+                        }
+                    }
+                }
+                if(nb) {
+                    if(nbDist <= 1) {
+                        // Adjacent: the building pass locks on next scan, hold.
+                        return LookForEnemyState::attacking;
+                    }
+                    // Walk to a free tile beside the building so soldiers ring it
+                    // instead of stacking one tile. Same spread as the unit close.
+                    eTile* dst = nullptr;
+                    int dstDist = 0;
+                    for(int ai = -1; ai <= 1; ai++) {
+                        for(int aj = -1; aj <= 1; aj++) {
+                            if(!ai && !aj) continue;
+                            const auto at = brd.tile(nbx + ai, nby + aj);
+                            if(!sCanStandOn(at)) continue;
+                            bool occupied = false;
+                            for(const auto& oc : at->characters()) {
+                                if(oc.get() == c) continue;
+                                if(oc->dead()) continue;
+                                if(oc->isSoldier() || oc->isImmortal() ||
+                                   oc->type() == eCharacterType::wolf) {
+                                    occupied = true;
+                                    break;
+                                }
+                            }
+                            if(occupied) continue;
+                            const int d = std::max(abs(at->x() - tx),
+                                                   abs(at->y() - ty));
+                            if(!dst || d < dstDist) {
+                                dst = at;
+                                dstDist = d;
+                            }
+                        }
+                    }
+                    if(dst) {
+                        setOverwrittableAction(false);
+                        goTo(dst->x(), dst->y(), 0);
                         return LookForEnemyState::attacking;
                     }
                 }
@@ -535,11 +721,25 @@ void FightingAction::goTo(const int fx, const int fy,
     const auto finishAct = std::make_shared<SA_goToFinish>(
         board(), c);
 
-    const auto tcid = t->cityId();
     auto& board = this->board();
-    const auto ttid = board.cityIdToTeamId(tcid);
     const auto tid = c->teamId();
-    const bool attackBuildings = eTeamIdHelpers::isEnemy(tid, ttid);
+    // Attacker pathing (ignore buildings, smash any in the way) keys off enmity
+    // to the GROUND being crossed — but check both ends. A unit standing on a
+    // neutral path tile next to the besieged city would otherwise get plain
+    // walkable and the planner, unable to cross the enemy buildings around the
+    // destination, falls back to a degenerate straight line clipping through
+    // them. Treat the move as an assault if either the start tile OR the
+    // destination tile belongs to an enemy city, matching Augustus enemies
+    // (TERRAIN_USAGE_ENEMY): they path through and destroy obstructions.
+    const auto startTid = board.cityIdToTeamId(t->cityId());
+    bool attackBuildings = eTeamIdHelpers::isEnemy(tid, startTid);
+    if(!attackBuildings) {
+        const auto dt = board.tile(fx, fy);
+        if(dt) {
+            const auto destTid = board.cityIdToTeamId(dt->cityId());
+            attackBuildings = eTeamIdHelpers::isEnemy(tid, destTid);
+        }
+    }
     stdsptr<eWalkableObject> pathFindWalkable;
     stdsptr<eWalkableObject> moveWalkable;
     if(c->isBoat()) {
@@ -587,7 +787,7 @@ void FightingAction::beingAttacked(eCharacter* const ss) {
     beingAttacked(ttx, tty);
 }
 
-void FightingAction::beingAttacked(const int ttx, const int tty) {
+void FightingAction::beingAttacked(int ttx, int tty) {
     if(mAttack) return;
     if(!mOverwrittableAction && currentAction()) return;
     const int range = character()->range();
@@ -600,9 +800,8 @@ void FightingAction::beingAttacked(const int ttx, const int tty) {
                                          abs(tty - ct->y()));
             if(curDist <= range && curDist >= 1) return;
         }
-        // Otherwise generate stand tiles around our own formation slot (<= 2
-        // away), pick one from which the attacker is within firing range, and
-        // move there. Hold if none — no chasing a far or moving attacker.
+        // Otherwise step to a firing tile near our slot from which the attacker
+        // is in range. Hold if none — no chasing a far or moving attacker.
         const auto fire = sFindFiringTile(
             this, repositionAnchor(), ttx, tty, range, 2);
         if(!fire) return;
@@ -610,8 +809,21 @@ void FightingAction::beingAttacked(const int ttx, const int tty) {
         goTo(fire->x(), fire->y(), 0);
         return;
     }
+    // Melee: turn and close on whoever is hitting us. Already adjacent ⇒ the
+    // adjacency scan locks next tick, hold. Else step onto the attacker tile
+    // (dist 1). Bounded to the attacker's position (no open-ended chase), so a
+    // back-rank soldier taking hits engages instead of standing in its slot.
+    // Commit (non-overwrittable): a soldier hit by several foes gets a signal
+    // per attacker; without this each one re-issues goTo to a different tile and
+    // the soldier bounces, never reaching anyone. The gate at the top already
+    // blocks re-entry once committed; cleared on arrival by goTo's finish.
+    const auto ct = character()->tile();
+    if(ct) {
+        const int curDist = std::max(abs(ttx - ct->x()), abs(tty - ct->y()));
+        if(curDist <= 1) return;
+    }
     setOverwrittableAction(false);
-    goTo(ttx, tty, 0);
+    goTo(ttx, tty, 1);
 }
 
 void FightingAction::serializeFields(eSaveArchive& ar) {

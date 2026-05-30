@@ -9,6 +9,8 @@
 #include "engine/ecityid.h"
 
 class eSoldier;
+class eCharacter;
+class eBuilding;
 class GameBoard;
 class eTile;
 class eSaveArchive;
@@ -27,6 +29,20 @@ enum class eBannerType {
 
 class SoldierBanner : public eObject {
 public:
+    struct CombatAssignment {
+        enum class Intent {
+            hold,
+            moveToSlot,
+            clearObstacle
+        };
+
+        eSoldier* soldier = nullptr;
+        Intent intent = Intent::hold;
+        eCharacter* target = nullptr;
+        eBuilding* targetBuilding = nullptr;
+        eTile* standTile = nullptr;
+    };
+
     SoldierBanner(const eBannerType type,
                    GameBoard& board);
     ~SoldierBanner();
@@ -93,6 +109,21 @@ public:
 
     bool stationary() const;
     bool fighting() const;
+
+    // Morale: 100 when fresh, drops as the banner's soldiers die. Below the rout
+    // threshold the banner breaks and flees (Augustus formation morale rout).
+    int morale() const { return mMorale; }
+    bool routed() const;
+    void updateMorale();
+
+    // Per-tick combat brain for enemy banners (Augustus update_enemy_formation):
+    // closes the formation onto the nearest defender in engage range so soldiers
+    // lock on reactively. Holds the strategic destination otherwise. No-op for
+    // player banners and routed banners. Called every invasion incTime tick.
+    void updateCombat(const int by);
+    bool combatAssignment(eSoldier* const s,
+                          CombatAssignment& a) const;
+    void setCombatBlockage(eSoldier* const s, eBuilding* const b);
 
     const std::string& name() const { return mName; }
     void setName(const std::string& n) { mName = n; }
@@ -163,6 +194,7 @@ private:
     void updateCount();
     void callSoldier(eSoldier* const s);
     void purgeDead();
+    void updateCombatAssignments();
 
     const eBannerType mType;
     const int mId;
@@ -183,11 +215,20 @@ private:
     int mCount = 0;
     int mFacing = 0; // degrees, 0 = north, 90 = east, etc.
 
+    int mMorale = 100;
+    int mPeakCount = 0; // most soldiers ever held, for the morale ratio
+
+    // Throttle for updateCombat so the brain doesn't re-issue moveTo every frame.
+    // Runtime-only (combat re-derives next tick); never serialized.
+    int mCombatRetargetCountdown = 0;
+
     eCityId mCityId = eCityId::neutralFriendly;
     eCityId mOnCityId = eCityId::neutralFriendly;
 
     std::map<eSoldier*, eTile*> mPlaces;
     std::vector<eSoldier*> mSoldiers;
+    std::map<eSoldier*, CombatAssignment> mCombatAssignments;
+    std::map<eSoldier*, eBuilding*> mCombatBlockages;
 };
 
 #endif // SOLDIER_BANNER_H

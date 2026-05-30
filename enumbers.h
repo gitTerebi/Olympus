@@ -206,6 +206,9 @@ struct eNumbers {
 
     static int sSoldierBeingAttackedCallRange;
 
+    static int sInvasionEngageDefenderRange;
+    static int sInvasionBannerRoutMorale;
+
     static int sTowerHP;
     static int sTowerRange;
     static double sTowerAttack;

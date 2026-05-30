@@ -364,6 +364,7 @@ set(SOURCES
     egamedir.cpp
     cursors.cpp
     gameEvents/invasions/invasion-handler.cpp
+    gameEvents/invasions/invasion-targeting.cpp
     eiteratesquare.cpp
     elanguage.cpp
     eloadtexthelper.cpp

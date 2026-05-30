@@ -185,6 +185,16 @@ public:
     bool busy() const { return mBusy; }
     void setBusy(const bool b) { mBusy = b; }
 
+    // Runtime-only count of attackers that have CLAIMED this character as their
+    // melee target (Augustus-style targeted_by). Set at target-pick time, before
+    // the attacker arrives, so several retaliators picking on the same tick don't
+    // all collapse onto one enemy — once an enemy is claimed enough times the
+    // next picker looks elsewhere. NOT serialized: loads start at 0 and units
+    // re-claim on the next combat tick.
+    int targetedByCount() const { return mTargetedByCount; }
+    void incTargetedBy() { mTargetedByCount++; }
+    void decTargetedBy() { if(mTargetedByCount > 0) mTargetedByCount--; }
+
     void setAttack(const double a);
     double attack() const { return mAttack; }
     void setHP(const double hp);
@@ -247,6 +257,7 @@ private:
     bool mAtlantean = false;
 
     bool mBusy = false;
+    int mTargetedByCount = 0; // runtime-only; see targetedByCount()
 
     double mHP = 100;
     double mAttack = 0;
