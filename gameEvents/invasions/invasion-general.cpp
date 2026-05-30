@@ -3,9 +3,25 @@
 #include "engine/game-board.h"
 #include "engine/eknownendpathfinder.h"
 #include "engine/etile.h"
+#include "enumbers.h"
 #include "buildings/ebuilding.h"
 #include "characters/soldier-banner.h"
 #include "characters/formation-facing.h"
+
+namespace {
+
+// Counts a day-length countdown down by one tick. Returns true while the timer
+// is still running (caller should hold), false once it hits zero. Shared by the
+// 14-day spawn wait and the 7-day half-step move wait.
+bool drainWait(int& counter, const int by) {
+    if(counter <= 0) return false;
+    counter -= by;
+    if(counter > 0) return true;
+    counter = 0;
+    return false;
+}
+
+}
 
 InvasionGeneral::InvasionGeneral(GameBoard& board,
                                  const eCityId targetCity,
@@ -24,43 +40,37 @@ bool InvasionGeneral::advance(eGeneralState& s,
     // handler decides defeat (it owns immortals/conquest reporting), so just
     // hold here and let the handler see ss==0 on its own banner scan.
     int ss = 0;
-    int stationary = 0;
-    int fighting = 0;
     for(const auto b : banners) {
         if(!b) continue;
         const int c = b->count();
         if(c <= 0) continue;
         ss += c;
-        if(b->stationary()) stationary += c;
-        if(b->fighting()) fighting += c;
     }
     if(ss == 0) return false; // handler handles a wiped force
 
     // 14-day pre-invade wait during the initial spread phase.
-    if(s.fPhase == eGeneralPhase::spread && s.fSpawnWait > 0) {
-        s.fSpawnWait -= by;
-        if(s.fSpawnWait > 0) return false;
-        s.fSpawnWait = 0;
+    if(s.fPhase == eGeneralPhase::spread && drainWait(s.fSpawnWait, by)) {
+        return false;
+    }
+
+    // 7-day pause after the half-step waypoint move: units stand on the mid spot
+    // a full week before the march order goes out. Only the half-step (a
+    // repositioning move) sets this; the formation move + pin are direct target
+    // actions and are not gated. Drained above the cycle gate so the full tick
+    // is subtracted every frame, not only on gate-pass ticks (else it would take
+    // far longer than the intended week to elapse).
+    if(s.fPhase == eGeneralPhase::march && drainWait(s.fMoveWait, by)) {
+        return false;
     }
 
     // Banners that took fire chase their attacker first.
     if(attackEnemiesNear(banners)) return false;
 
-    // Hold until the formation has gathered before the first march. Gate on the
-    // spread phase itself: target selection happens after this, so the gate is
-    // not bypassed the instant a priority building exists.
-    const bool waitingForInitialFormation =
-            s.fPhase == eGeneralPhase::spread && fighting == 0;
-    if(waitingForInitialFormation && stationary < 0.8*ss) return false;
-
-    // Drop a stale target (building destroyed) before (re)selecting.
+    // Drop a stale target (building destroyed) so the phase logic below sees
+    // the kill. Do NOT repick here: invade owns the repick + march-on order,
+    // and silently swapping in a fresh target here would make invade always
+    // see a valid target and hold forever, so no new order is ever issued.
     if(!generalTargetValid(s)) s.fTargetTile = nullptr;
-    if(!s.fTargetTile) {
-        const auto cur = s.fCurrentTile ? s.fCurrentTile : landingTile;
-        if(cur) {
-            s.fTargetTile = chooseTargetTile(cur->x(), cur->y());
-        }
-    }
 
     // Cycle gate: no throttle on the very first spread step, 3000ms after.
     const int wait = s.fPhase == eGeneralPhase::spread ? 0 : 3000;
@@ -75,52 +85,72 @@ bool InvasionGeneral::advance(eGeneralState& s,
     case eGeneralPhase::spread:
     case eGeneralPhase::wait: {
         s.fPhase = eGeneralPhase::march;
-        if(!s.fTargetTile && landingTile) {
-            s.fTargetTile = chooseTargetTile(
-                        landingTile->x(), landingTile->y());
-        }
-        const auto target = s.fTargetTile;
+        const auto target = ensureTarget(s, landingTile);
         if(target) {
             // Half-step from where the formation actually is, so a re-spread
-            // after invade does not yank units back to the landing tile.
+            // after invade does not yank units back to the landing tile. This is
+            // a repositioning move: pause 7 days once units arrive.
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
             const auto halfTile = moveHalfwayToTarget(from, target, banners);
-            if(halfTile) s.fCurrentTile = halfTile;
+            if(halfTile) {
+                s.fMoveFrom = from;
+                s.fMoveTo = halfTile;
+                s.fCurrentTile = halfTile;
+                s.fMoveWait = 7*eNumbers::sDayLength;
+            }
         }
     } break;
     case eGeneralPhase::march: {
         s.fPhase = eGeneralPhase::invade;
-        const auto target = s.fTargetTile;
+        const auto target = ensureTarget(s, landingTile);
         if(target) {
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
+            // Two orders back to back, no wait: formation move all banners up to
+            // the building, then shove one banner onto the building tile so its
+            // soldiers bump it and the fighting-action building pass razes it.
             moveToTarget(from, target, banners);
+            pinOnTarget(s, banners);
+            s.fMoveFrom = from;
+            s.fMoveTo = target;
             s.fCurrentTile = target;
         }
     } break;
     case eGeneralPhase::invade: {
         if(generalTargetValid(s)) {
-            // Target still stands: hold the formation on it and keep hammering
-            // until destroyed. No new orders until the goal is achieved.
-            const auto target = s.fTargetTile;
-            const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
-            moveToTarget(from, target, banners);
+            // Target still stands: hold. The formation move + pin already landed;
+            // re-issuing every cycle re-homes soldiers and jiggles the formation.
+            // Local defenders are handled by banner combat brains.
         } else {
-            // Building fell: pick the next objective and march on it.
+            // Building fell: route back through march to re-run the formation
+            // move + pin on the next objective (no half-step, so no wait). Pick
+            // the next target now so a null means the campaign is over.
             const auto cur = s.fCurrentTile ? s.fCurrentTile : landingTile;
-            s.fTargetTile = cur ? chooseTargetTile(
-                        cur->x(), cur->y()) : nullptr;
-            if(!s.fTargetTile) {
+            const auto target = ensureTarget(s, landingTile);
+            if(!target) {
                 // No valid targets remain: campaign complete.
                 s.fPhase = eGeneralPhase::done;
                 return true;
             }
-            s.fPhase = eGeneralPhase::march;
+            moveToTarget(cur, target, banners);
+            pinOnTarget(s, banners);
+            s.fMoveFrom = cur;
+            s.fMoveTo = target;
+            s.fCurrentTile = target;
         }
     } break;
     case eGeneralPhase::done:
         return true;
     }
     return false;
+}
+
+eTile* InvasionGeneral::ensureTarget(
+        eGeneralState& s, eTile* const landingTile) const {
+    if(s.fTargetTile) return s.fTargetTile;
+    const auto cur = s.fCurrentTile ? s.fCurrentTile : landingTile;
+    if(!cur) return nullptr;
+    s.fTargetTile = chooseTargetTile(cur->x(), cur->y());
+    return s.fTargetTile;
 }
 
 eTile* InvasionGeneral::chooseTargetTile(
@@ -179,6 +209,31 @@ void InvasionGeneral::moveToTarget(
                                           facing, lineDX, lineDY);
     SoldierBanner::sPlaceFacing(banners, target->x(), target->y(), mBoard,
                                 facing, lineDX, lineDY, 3, 3);
+}
+
+bool InvasionGeneral::pinOnTarget(
+        eGeneralState& s,
+        const std::vector<SoldierBanner*>& banners) const {
+    const auto target = s.fTargetTile;
+    if(!target) return false;
+    // Pick the banner already closest to the building so the parked unit travels
+    // the least and the formation screen stays mostly intact.
+    SoldierBanner* best = nullptr;
+    int bestD = -1;
+    for(const auto b : banners) {
+        if(!b || b->count() <= 0) continue;
+        const auto t = b->tile();
+        if(!t) continue;
+        const int dx = t->x() - target->x();
+        const int dy = t->y() - target->y();
+        const int d = dx*dx + dy*dy;
+        if(bestD < 0 || d < bestD) { bestD = d; best = b; }
+    }
+    if(!best) return false;
+    // Park it ON the building tile: soldiers home onto it, bump the building and
+    // the fighting-action building pass razes it.
+    best->moveTo(target->x(), target->y());
+    return true;
 }
 
 bool InvasionGeneral::attackEnemiesNear(

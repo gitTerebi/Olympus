@@ -40,6 +40,13 @@ void SoldierAction::increment(const int by) {
         mSpreadPeriod = false;
     }
 
+    // Tick the banner's shared enemy-proximity cache once here (it self-throttles
+    // to one box scan per ~250ms). All per-tick combat reactions below gate on
+    // this instead of each soldier running its own range^2 scan every tick.
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    const bool enNear = b ? b->enemyNear(by) : false;
+
     // Marching to the banner slot: let the walk run UNLESS an enemy is near.
     // Without the enemyNear gate a soldier walks straight past a free adjacent
     // foe to reach its slot and never engages — the "enemy next and free but
@@ -49,11 +56,9 @@ void SoldierAction::increment(const int by) {
         return eComplexAction::increment(by);
     }
 
-    const auto s = static_cast<eSoldier*>(character());
-    const auto b = s->banner();
     const bool bannerDirected = b && b->type() == eBannerType::enemy;
     if(mStage == SoldierActionStage::banner && currentAction() &&
-       (bannerDirected || !enemyNear())) {
+       (bannerDirected || !enNear)) {
         return eComplexAction::increment(by);
     }
 
@@ -65,6 +70,13 @@ void SoldierAction::increment(const int by) {
     if((mStage == SoldierActionStage::home ||
         mStage == SoldierActionStage::abroad) && currentAction()) {
         if(isAttacking()) cancelAttack();
+        return eComplexAction::increment(by);
+    }
+
+    // Idle: no enemy near the formation and not mid-attack -> skip the combat
+    // scan entirely, just run the cheap banner-return tick.
+    if(!isAttacking() && !enNear) {
+        tickBannerReturn(by);
         return eComplexAction::increment(by);
     }
 
@@ -155,31 +167,12 @@ void SoldierAction::tickBannerReturn(const int by) {
 }
 
 bool SoldierAction::enemyNear() const {
-    const auto c = character();
-    const auto ct = c->tile();
-    if(!ct) return false;
-    const int tx = ct->x();
-    const int ty = ct->y();
-    const auto tid = c->teamId();
-    auto& brd = c->getBoard();
-    // Wide awareness: hold position while any enemy is within the ranged detect
-    // box so the unit waits for it to close rather than being yanked home
-    // between combat scans. Shares the constant with the reposition scan.
-    const int hrange = FightingAction::sRangedDetectRange(c->range());
-    for(int i = -hrange; i <= hrange; i++) {
-        for(int j = -hrange; j <= hrange; j++) {
-            const auto t = brd.tile(tx + i, ty + j);
-            if(!t) continue;
-            for(const auto& cc : t->characters()) {
-                if(cc->dead()) continue;
-                if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
-                if(!cc->isSoldier() && cc->type() != eCharacterType::wolf &&
-                   !cc->isImmortal()) continue;
-                return true;
-            }
-        }
-    }
-    return false;
+    // Delegate to the banner's shared cache (ticked in increment). Reading with
+    // by=0 just returns the cached result — no extra scan.
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    if(!b) return false;
+    return b->enemyNear(0);
 }
 
 void SoldierAction::serializeFields(eSaveArchive& ar) {
@@ -222,6 +215,12 @@ void SoldierAction::rebuildCurrentStage() {
     case SoldierActionStage::idle:
         return FightingAction::resumeFromSavedState();
     }
+}
+
+bool SoldierAction::prefersPathAround() const {
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    return b && b->type() == eBannerType::enemy;
 }
 
 stdsptr<eObsticleHandler> SoldierAction::obsticleHandler() {

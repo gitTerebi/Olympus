@@ -1,5 +1,7 @@
 ﻿#include "widgets/game-widget.h"
 
+#include <functional>
+
 #include "characters/actions/walkable/ewalkableobject.h"
 
 #include "widgets/eterraineditmenu.h"
@@ -267,6 +269,8 @@ void GameWidget::paintEvent(ePainter &p)
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto &numbers = mNumbers[mTileSize];
     std::vector<std::pair<int, int>> trackingBoxes;
+    // enemy banners scheduled after all tiles so they sit on top of everything
+    std::vector<std::function<void()>> deferredEnemyBanners;
     std::vector<std::pair<int, int>> cartProblemBoxes;
 
     const auto ppid = mBoard->personPlayer();
@@ -1879,6 +1883,85 @@ void GameWidget::paintEvent(ePainter &p)
             }
         };
 
+        // takes everything by param (no tile/rx refs) so it can be deferred and
+        // replayed after the tile loop for enemy banners — keep it that way
+        const auto drawBannerTextures = [this, &tp, &charTexs]
+            (SoldierBanner* const b, const double rx, const double ry,
+             const SDL_Color bnrMod) {
+            const auto mod = [&](const std::shared_ptr<eTexture>& t) {
+                t->setColorMod(bnrMod.r, bnrMod.g, bnrMod.b);
+            };
+            const auto unmod = [&](const std::shared_ptr<eTexture>& t) {
+                t->clearColorMod();
+            };
+            {
+                eGameTextures::loadBanners();
+                const auto& rods = charTexs.fBannerRod;
+                const auto& rod = rods.getTexture(0);
+                mod(rod);
+                tp.drawTexture(rx, ry - 1, rod,
+                               eAlignment::hcenter | eAlignment::top);
+                unmod(rod);
+            }
+            {
+                const int id = b->id();
+                const auto& bnrs = charTexs.fBanners;
+                const auto& bnr = bnrs[id % bnrs.size()];
+                int texId;
+                if(b->selected()) {
+                    texId = (mAnimFrame/5) % 6;
+                } else {
+                    texId = 6;
+                }
+                const auto& tex = bnr.getTexture(texId);
+                mod(tex);
+                tp.drawTexture(rx - 1, ry - 2.6, tex,
+                               eAlignment::hcenter | eAlignment::top);
+                unmod(tex);
+            }
+            {
+                const auto type = b->type();
+                const auto& tps = charTexs.fBannerTops;
+                const auto& pTps = charTexs.fPoseidonBannerTops;
+                const bool p = b->atlantean();
+                if(!p ||
+                   type == eBannerType::aresWarrior ||
+                   type == eBannerType::amazon) {
+                    int itype = -1;
+                    if(type == eBannerType::aresWarrior) {
+                        itype = 0;
+                    } else if(type == eBannerType::amazon) {
+                        itype = -1;
+                    } else if(type != eBannerType::enemy) {
+                        itype = static_cast<int>(type);
+                    }
+                    if(itype != -1) {
+                        const auto& top = tps.getTexture(itype);
+                        mod(top);
+                        tp.drawTexture(rx - 2.5, ry -  3.5, top,
+                                       eAlignment::hcenter | eAlignment::top);
+                        unmod(top);
+                    }
+                } else {
+                    int itype = -1;
+                    if(type == eBannerType::horseman) {
+                        itype = 0;
+                    } else if(type == eBannerType::rockThrower) {
+                        itype = 1;
+                    } else if(type == eBannerType::hoplite) {
+                        itype = 2;
+                    }
+                    if(itype != -1) {
+                        const auto& top = pTps.getTexture(itype);
+                        mod(top);
+                        tp.drawTexture(rx - 2.5, ry -  3.5, top,
+                                       eAlignment::hcenter | eAlignment::top);
+                        unmod(top);
+                    }
+                }
+            }
+        };
+
         const auto drawBanners = [&]() {
             const auto b = tile->soldierBanner();
             if(!b) return;
@@ -1902,63 +1985,14 @@ void GameWidget::paintEvent(ePainter &p)
             if(hover) bnrMod = SDL_Color{175, 255, 255, 255};
             else if(enemy) bnrMod = SDL_Color{255, 55, 55, 255};
             else if(aid) bnrMod = SDL_Color{255, 125, 125, 255};
-            {
-                eGameTextures::loadBanners();
-                const auto& rods = charTexs.fBannerRod;
-                const auto& rod = rods.getTexture(0);
-                tp.scheduleDrawTexture(rx, ry - 1, rod,
-                               eAlignment::hcenter | eAlignment::top, bnrMod);
-            }
-            {
-                const int id = b->id();
-                const auto& bnrs = charTexs.fBanners;
-                const auto& bnr = bnrs[id % bnrs.size()];
-                int texId;
-                if(b->selected()) {
-                    texId = (mAnimFrame/5) % 6;
-                } else {
-                    texId = 6;
-                }
-                const auto& tex = bnr.getTexture(texId);
-                tp.scheduleDrawTexture(rx - 1, ry - 2.6, tex,
-                               eAlignment::hcenter | eAlignment::top, bnrMod);
-            }
-            {
-                const auto type = b->type();
-                const auto& tps = charTexs.fBannerTops;
-                const auto& pTps = charTexs.fPoseidonBannerTops;
-                const bool p = b->atlantean();
-                if(!p ||
-                   type == eBannerType::aresWarrior ||
-                   type == eBannerType::amazon) {
-                    int itype = -1;
-                    if(type == eBannerType::aresWarrior) {
-                        itype = 0;
-                    } else if(type == eBannerType::amazon) {
-                        itype = -1;
-                    } else if(type != eBannerType::enemy) {
-                        itype = static_cast<int>(type);
-                    }
-                    if(itype != -1) {
-                        const auto& top = tps.getTexture(itype);
-                        tp.scheduleDrawTexture(rx - 2.5, ry -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top, bnrMod);
-                    }
-                } else {
-                    int itype = -1;
-                    if(type == eBannerType::horseman) {
-                        itype = 0;
-                    } else if(type == eBannerType::rockThrower) {
-                        itype = 1;
-                    } else if(type == eBannerType::hoplite) {
-                        itype = 2;
-                    }
-                    if(itype != -1) {
-                        const auto& top = pTps.getTexture(itype);
-                        tp.scheduleDrawTexture(rx - 2.5, ry -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top, bnrMod);
-                    }
-                }
+
+            if(enemy) {
+                // capture by value (b stays alive, owned by board); run after the
+                // scheduled-draw flush so enemy banners land on top of everything
+                deferredEnemyBanners.push_back(
+                    [=]() { drawBannerTextures(b, rx, ry, bnrMod); });
+            } else {
+                drawBannerTextures(b, rx, ry, bnrMod);
             }
         };
 
@@ -2384,6 +2418,9 @@ void GameWidget::paintEvent(ePainter &p)
         } });
 
     tp.handleScheduledDraw();
+
+    // enemy banners drawn after flush so they sit on top of everything
+    for(const auto& d : deferredEnemyBanners) d();
 
     paintInvasionDebugTargets(*mBoard, mViewedCityId, p,
                               mTileW, mTileH, mAnimFrame);

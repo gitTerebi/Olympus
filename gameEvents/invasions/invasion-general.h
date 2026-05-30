@@ -20,9 +20,12 @@ enum class eGeneralPhase {
 struct eGeneralState {
     eGeneralPhase fPhase = eGeneralPhase::spread;
     eTile* fTargetTile = nullptr;   // building the general is closing on
-    eTile* fCurrentTile = nullptr;  // where the formation actually is
+    eTile* fCurrentTile = nullptr;  // logical position used for pathing/repick
+    eTile* fMoveFrom = nullptr;     // where the last order started (debug FROM)
+    eTile* fMoveTo = nullptr;       // where the last order sends them (debug GOAL)
     int fWait = 0;                  // 3000ms cycle gate
     int fSpawnWait = 0;             // 14-day pre-invade countdown
+    int fMoveWait = 0;              // 7-day pause after a repositioning move
 };
 
 class InvasionGeneral {
@@ -42,12 +45,20 @@ public:
 
 private:
     eTile* chooseTargetTile(const int fromX, const int fromY) const;
+    // The single target-picker ("one cook"): keeps a valid target, or picks a
+    // fresh one from where the formation currently is. Stale targets are
+    // dropped at the top of advance(), so a null here means "needs a target".
+    eTile* ensureTarget(eGeneralState& s, eTile* const landingTile) const;
     eTile* moveHalfwayToTarget(eTile* const from,
                                eTile* const target,
                                const std::vector<SoldierBanner*>& banners) const;
     void moveToTarget(eTile* const from,
                       eTile* const target,
                       const std::vector<SoldierBanner*>& banners) const;
+    // Shoves the banner nearest the target ON the building tile so its soldiers
+    // bump and raze it. Returns true once a banner is moved.
+    bool pinOnTarget(eGeneralState& s,
+                     const std::vector<SoldierBanner*>& banners) const;
     bool attackEnemiesNear(const std::vector<SoldierBanner*>& banners) const;
 
     // True while fTargetTile still holds an attackable building of the target

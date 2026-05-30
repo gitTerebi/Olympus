@@ -22,9 +22,13 @@ const eBuildingType kFood[] = {
     eBuildingType::huntingLodge, eBuildingType::none
 };
 
+// Political is the conquest attack type: raze the city's political buildings
+// first, then the palace LAST. Killing the palace auto-conquers the city (the
+// handler turns the campaign into invadersWon), so it must be the final target,
+// not the first, or the city would fall before the rest is sacked.
 const eBuildingType kPolitical[] = {
-    eBuildingType::palace, eBuildingType::grandAgora,
-    eBuildingType::commonAgora, eBuildingType::none
+    eBuildingType::grandAgora, eBuildingType::commonAgora,
+    eBuildingType::palace, eBuildingType::none
 };
 
 const eBuildingType kRich[] = {
@@ -87,12 +91,16 @@ eBuilding* pickPriorityTarget(GameBoard& board, const eCityId target,
         if(b) return b;
     }
     // Nothing in this attack type left: fall back through every other type so a
-    // mostly-razed city still draws invaders to whatever remains.
+    // mostly-razed city still draws invaders to whatever remains. Skip the palace
+    // for raids (every non-political type): razing the palace auto-conquers the
+    // city, which only the political conquest type is allowed to do.
+    const bool isConquest = type == InvasionAttackType::political;
     for(int t = 0; t < int(InvasionAttackType::count); t++) {
         const auto at = InvasionAttackType(t);
         if(at == type) continue;
         const eBuildingType* ot = tiersFor(at);
         for(int i = 0; ot[i] != eBuildingType::none; i++) {
+            if(!isConquest && ot[i] == eBuildingType::palace) continue;
             const auto b = closestOfType(board, target, ot[i], fromX, fromY);
             if(b) return b;
         }

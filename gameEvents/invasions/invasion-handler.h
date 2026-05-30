@@ -78,6 +78,8 @@ public:
     void killAllWithCorpse();
 
     eTile* currentTile() const { return mGState.fCurrentTile; }
+    eTile* moveFromTile() const { return mGState.fMoveFrom; }
+    eTile* moveToTile() const { return mGState.fMoveTo; }
     eTile* generalTargetTile() const { return mGState.fTargetTile; }
 
     eInvasionStage stage() const { return mStage; }
