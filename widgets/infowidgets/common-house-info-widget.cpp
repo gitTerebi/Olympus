@@ -3,7 +3,7 @@
 #include "buildings/small-house.h"
 #include "buildings/elite-housing.h"
 #include "engine/eresourcetype.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/board-city.h"
 #include "engine/difficulty.h"
 

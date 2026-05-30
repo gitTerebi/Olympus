@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "engine/etile.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/board-city.h"
 #include "engine/eworlddirection.h"
 #include "engine/eorientation.h"
@@ -60,6 +60,58 @@ bool hasLiveCombatUnit(eTile* const t, eCharacter* const except) {
         }
     }
     return false;
+}
+
+eTile* findRangedBannerTile(GameBoard& board,
+                            eTile* const from,
+                            const int tx,
+                            const int ty,
+                            const int range) {
+    if(!from) return nullptr;
+    eTile* best = nullptr;
+    int bestDist = 0;
+    const int scan = std::max(range, 2);
+    for(int i = -scan; i <= scan; i++) {
+        for(int j = -scan; j <= scan; j++) {
+            const int distToTarget = std::max(abs(i), abs(j));
+            if(distToTarget > range || distToTarget < 2) continue;
+            const auto t = board.tile(tx + i, ty + j);
+            if(!canStandOn(t)) continue;
+            const int dist = std::max(abs(t->x() - from->x()),
+                                      abs(t->y() - from->y()));
+            if(!best || dist < bestDist) {
+                best = t;
+                bestDist = dist;
+            }
+        }
+    }
+    return best;
+}
+
+eTile* findFiringTile(GameBoard& board,
+                      eTile* const anchor,
+                      const int tx,
+                      const int ty,
+                      const int range) {
+    if(!anchor) return nullptr;
+    eTile* best = nullptr;
+    int bestDist = 0;
+    const int spread = 4;
+    for(int i = -spread; i <= spread; i++) {
+        for(int j = -spread; j <= spread; j++) {
+            const auto t = board.tile(anchor->x() + i, anchor->y() + j);
+            if(!canStandOn(t)) continue;
+            const int targetDist = std::max(abs(t->x() - tx),
+                                            abs(t->y() - ty));
+            if(targetDist > range || targetDist < 1) continue;
+            const int dist = abs(i) + abs(j);
+            if(!best || dist < bestDist) {
+                best = t;
+                bestDist = dist;
+            }
+        }
+    }
+    return best;
 }
 }
 
@@ -394,6 +446,8 @@ void SoldierBanner::addSoldier(eSoldier* const s) {
 
 void SoldierBanner::removeSoldier(eSoldier* const s) {
     mPlaces.erase(s);
+    mCombatAssignments.erase(s);
+    mCombatBlockages.erase(s);
     const bool r = eVectorHelpers::remove(mSoldiers, s);
     if(r) updatePlaces();
 }
@@ -1139,9 +1193,28 @@ void SoldierBanner::updateCombat(const int by) {
         return; // no defender near: hold the strategic destination
     }
 
-    // Walk the banner to a tile adjacent to the defender so the line closes and
-    // soldiers engage by adjacency. moveTo no-ops if already there.
-    moveTo(dx, dy);
+    int meleeCount = 0;
+    int rangedCount = 0;
+    int minRange = 0;
+    for(const auto s : mSoldiers) {
+        if(s->dead()) continue;
+        const int sr = s->range();
+        if(sr > 0) {
+            rangedCount++;
+            if(!minRange || sr < minRange) minRange = sr;
+        } else {
+            meleeCount++;
+        }
+    }
+
+    if(rangedCount > 0 && meleeCount == 0 && minRange > 1) {
+        const auto t = findRangedBannerTile(mBoard, mTile, dx, dy, minRange);
+        if(t) moveTo(t->x(), t->y());
+    } else {
+        // Walk the banner to a tile adjacent to the defender so the line closes
+        // and melee soldiers engage by adjacency. moveTo no-ops if already there.
+        moveTo(dx, dy);
+    }
     updateCombatAssignments();
 }
 
@@ -1151,6 +1224,12 @@ bool SoldierBanner::combatAssignment(eSoldier* const s,
     if(it == mCombatAssignments.end()) return false;
     a = it->second;
     return a.soldier && a.standTile;
+}
+
+void SoldierBanner::setCombatBlockage(eSoldier* const s, eBuilding* const b) {
+    if(!s) return;
+    if(b) mCombatBlockages[s] = b;
+    else mCombatBlockages.erase(s);
 }
 
 void SoldierBanner::updateCombatAssignments() {
@@ -1186,9 +1265,61 @@ void SoldierBanner::updateCombatAssignments() {
 
     std::vector<eTile*> usedTiles;
     for(const auto s : mSoldiers) {
-        if(s->dead() || s->range() > 0) continue;
+        if(s->dead()) continue;
         const auto st = s->tile();
         if(!st) continue;
+
+        if(s->range() > 0) {
+            CombatAssignment best;
+            int bestDist = 0;
+            for(const auto enemy : enemies) {
+                const auto et = enemy->tile();
+                if(!et) continue;
+                const auto anchor = place(s) ? place(s) : st;
+                const auto fire = findFiringTile(
+                    mBoard, anchor, et->x(), et->y(), s->range());
+                if(!fire) continue;
+                if(hasLiveCombatUnit(fire, s)) continue;
+                if(std::find(usedTiles.begin(), usedTiles.end(), fire) !=
+                   usedTiles.end()) continue;
+                const int d = std::max(abs(fire->x() - st->x()),
+                                       abs(fire->y() - st->y()));
+                if(!best.target || d < bestDist) {
+                    best = {
+                        s, CombatAssignment::Intent::moveToSlot,
+                        enemy, nullptr, fire
+                    };
+                    bestDist = d;
+                }
+            }
+            if(best.target && best.standTile) {
+                mCombatAssignments[s] = best;
+                usedTiles.push_back(best.standTile);
+            } else {
+                const auto pt = place(s);
+                if(pt) {
+                    mCombatAssignments[s] = {
+                        s, CombatAssignment::Intent::moveToSlot,
+                        nullptr, nullptr, pt
+                    };
+                }
+            }
+            continue;
+        }
+
+        const auto blocked = mCombatBlockages.find(s);
+        if(blocked != mCombatBlockages.end()) {
+            const auto b = blocked->second;
+            if(b && eTeamIdHelpers::isEnemy(b->teamId(), tid) &&
+               eBuilding::sAttackable(b->type())) {
+                mCombatAssignments[s] = {
+                    s, CombatAssignment::Intent::clearObstacle,
+                    nullptr, b, st
+                };
+                continue;
+            }
+            mCombatBlockages.erase(blocked);
+        }
 
         CombatAssignment best;
         int bestDist = 0;
@@ -1217,7 +1348,10 @@ void SoldierBanner::updateCombatAssignments() {
             if(!best.target || bestTileDist < bestDist ||
                (bestTileDist == bestDist &&
                 enemy->targetedByCount() < best.target->targetedByCount())) {
-                best = {s, enemy, bestTile};
+                best = {
+                    s, CombatAssignment::Intent::moveToSlot,
+                    enemy, nullptr, bestTile
+                };
                 bestDist = bestTileDist;
             }
         }
@@ -1226,7 +1360,12 @@ void SoldierBanner::updateCombatAssignments() {
             usedTiles.push_back(best.standTile);
         } else {
             const auto pt = place(s);
-            if(pt) mCombatAssignments[s] = {s, nullptr, pt};
+            if(pt) {
+                mCombatAssignments[s] = {
+                    s, CombatAssignment::Intent::moveToSlot,
+                    nullptr, nullptr, pt
+                };
+            }
         }
     }
 }

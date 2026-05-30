@@ -400,10 +400,10 @@ set(SOURCES
     engine/eepisodegoal.cpp
     engine/eeventtime.cpp
     engine/efunctask.cpp
-    engine/e-game-board.cpp
+    engine/game-board.cpp
     gameEvents/gods/egodquest.cpp
     engine/egameundo.cpp
-    engine/e-game-board-read.cpp
+    engine/game-board-read.cpp
     engine/egameboardwrite.cpp
     engine/egameevents.cpp
     engine/egifthelpers.cpp

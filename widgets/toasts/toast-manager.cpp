@@ -5,7 +5,7 @@
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 void GameWidget::createToastWidget(eToast &toast)
 {

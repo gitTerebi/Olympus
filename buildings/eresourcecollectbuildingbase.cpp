@@ -1,6 +1,6 @@
 #include "eresourcecollectbuildingbase.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 void eResourceCollectBuildingBase::nextMonth() {

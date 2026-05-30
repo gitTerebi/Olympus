@@ -1,7 +1,7 @@
 #include "eeconomicmilitarychangeeventbase.h"
 
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eEconomicMilitaryChangeEventBase::eEconomicMilitaryChangeEventBase(
     const eCityId cid, const eGameEventType type,

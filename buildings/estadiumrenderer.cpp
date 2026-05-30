@@ -1,6 +1,6 @@
 #include "estadiumrenderer.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eStadium1Renderer::eStadium1Renderer(
         const stdsptr<eStadium>& b) :

@@ -1,7 +1,7 @@
 #include "eprocessingbuilding.h"
 
 #include "textures/egametextures.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include <algorithm>

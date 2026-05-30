@@ -11,7 +11,7 @@
 #include "epyramidtemple.h"
 #include "epyramidmuseum.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"

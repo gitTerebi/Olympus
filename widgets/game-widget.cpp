@@ -11,7 +11,7 @@
 #include "e-message-list-widget.h"
 #include "eoptionsdata.h"
 #include "egamedir.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/e-worldcity.h"
 #include "characters/gods/egod.h"

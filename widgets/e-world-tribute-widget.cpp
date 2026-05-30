@@ -1,7 +1,7 @@
 #include "eworldtributewidget.h"
 
 #include "elanguage.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/e-tribute.h"
 #include "evectorhelpers.h"
 

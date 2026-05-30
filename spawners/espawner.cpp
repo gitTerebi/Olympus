@@ -1,7 +1,7 @@
 #include "espawner.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eSpawner::eSpawner(const eBannerTypeS type,
                    const int id, eTile* const tile,

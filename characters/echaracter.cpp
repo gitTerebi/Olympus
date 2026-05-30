@@ -1,6 +1,6 @@
 #include "echaracter.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "actions/edieaction.h"
 #include "actions/fight-action.h"

@@ -7,7 +7,7 @@
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
 #include "characters/esettler.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "egamedir.h"
 #include <filesystem>

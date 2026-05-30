@@ -7,7 +7,7 @@
 #include "buildings/eagorabase.h"
 #include "characters/actions/eactionwithcomeback.h"
 #include "characters/actions/vendor-cart-action.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 
 #include <algorithm>

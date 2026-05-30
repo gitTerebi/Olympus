@@ -4,7 +4,7 @@
 #include "characters/actions/ecarttransporteraction.h"
 #include "characters/actions/deliver-cart-action.h"
 #include "characters/actions/get-cart-action.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 int eBuildingWithResource::addProduced(const eResourceType type, const int count) {

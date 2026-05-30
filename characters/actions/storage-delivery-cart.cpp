@@ -1,6 +1,6 @@
 #include "storage-delivery-cart.h"
 #include "buildings/estoragebuilding.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/thread/ethreadbuilding.h"
 #include "fileIO/esavearchive.h"
 

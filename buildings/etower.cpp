@@ -10,7 +10,7 @@
 #include "audio/sounds.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/model-data.h"
 
 eTower::eTower(GameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)

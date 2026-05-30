@@ -29,7 +29,7 @@
 
 #include "textures/eparktexture.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 std::shared_ptr<eTexture> getStonesTexture(eTile* const tile,
                           const eTextureCollection& small,

@@ -6,7 +6,7 @@
 #include "gameEvents/invasions/monster-invasion-event-base.h"
 #include "engine/emilitaryaid.h"
 #include "gameEvents/egameevent.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
 

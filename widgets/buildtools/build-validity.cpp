@@ -1,6 +1,6 @@
 #include "build-validity.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/etile.h"
 #include "engine/etilebase.h"
 #include "engine/eknownendpathfinder.h"

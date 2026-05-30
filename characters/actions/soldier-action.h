@@ -26,6 +26,7 @@ public:
     void goHome() override;
     void goAbroad() override;
     void beingAttacked(int ttx, int tty) override;
+    void setCombatBlockage(eBuilding* const b);
     void goBackToBanner(eOrientation facing,
                         const eAction& findFailAct = nullptr,
                         const eAction& findFinishAct = nullptr);
@@ -68,6 +69,7 @@ public:
         const auto ubt = ub->type();
         const bool r = eBuilding::sWalkableBuilding(ubt);
         if(r) return false;
+        mTptr->setCombatBlockage(ub);
         mTptr->attackBuilding(tile, false);
         return true;
     }

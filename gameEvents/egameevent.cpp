@@ -1,6 +1,6 @@
 #include "egameevent.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include "gameEvents/gods/egodvisitevent.h"

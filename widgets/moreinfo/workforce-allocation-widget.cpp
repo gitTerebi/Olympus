@@ -4,7 +4,7 @@
 #include "widgets/esmalldownbutton.h"
 
 #include "engine/eemploymentdistributor.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 
 eWorkforceAllocationWidget::eWorkforceAllocationWidget(

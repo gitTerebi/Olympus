@@ -4,7 +4,7 @@
 #include <map>
 
 #include "engine/etilebase.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePathFinder::ePathFinder(const eTileWalkable& walkable,
                          const eTileFinish& finish) :

@@ -2,7 +2,7 @@
 
 #include "enumbers.h"
 #include "emovetoaction.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
 #include "characters/gods/actions/god-action.h"

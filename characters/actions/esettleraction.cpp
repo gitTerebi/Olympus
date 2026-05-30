@@ -7,7 +7,7 @@
 #include "emovetoaction.h"
 #include "buildings/small-house.h"
 #include "buildings/elite-housing.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "ekillcharacterfinishfail.h"
 #include "fileIO/esavearchive.h"
 

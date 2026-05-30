@@ -1,7 +1,7 @@
 #include "ecattle.h"
 
 #include "eiteratesquare.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "textures/egametextures.h"
 #include "enumbers.h"
 #include "actions/eanimalaction.h"

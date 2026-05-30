@@ -4,7 +4,7 @@
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 
 eFishery::eFishery(GameBoard& board,

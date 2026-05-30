@@ -1,6 +1,6 @@
 #include "eplayerconquesteventbase.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePlayerConquestEventBase::ePlayerConquestEventBase(
         const eCityId cid,

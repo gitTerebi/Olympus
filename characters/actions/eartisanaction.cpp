@@ -3,7 +3,7 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/ebuildaction.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 #include "enumbers.h"
 

@@ -5,7 +5,7 @@
 
 #include "pointers/estdselfref.h"
 #include "vec2.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 class eTile;

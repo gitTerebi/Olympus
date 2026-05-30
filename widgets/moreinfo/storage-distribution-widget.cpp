@@ -6,7 +6,7 @@
 #include "widgets/elayouthelpers.h"
 #include "elanguage.h"
 #include "emainwindow.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 namespace
 {

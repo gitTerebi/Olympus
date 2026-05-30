@@ -6,7 +6,7 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/eheroaction.h"
 #include "characters/gods/actions/god-action.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "vec2.h"
 
 eGodMinionAction::eGodMinionAction(eCharacter* const c) :

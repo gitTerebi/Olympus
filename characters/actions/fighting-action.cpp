@@ -35,6 +35,13 @@ bool sCanStandOn(eTile* const t) {
     return eBuilding::sWalkableBuilding(ubt);
 }
 
+int sAttackerTileDistance(eTileBase* const tile) {
+    const auto ubt = tile->underBuildingType();
+    if(ubt == eBuildingType::none) return 1;
+    if(eBuilding::sWalkableBuilding(ubt)) return 1;
+    return 100;
+}
+
 // Best firing tile for a ranged unit: a tile within `spread` of its own anchor
 // (formation slot) from which the enemy at (ex,ey) sits within `range`. Returns
 // the candidate closest to the anchor, or null if none brings the enemy into
@@ -763,6 +770,7 @@ void FightingAction::goTo(const int fx, const int fy,
     a->setFindFailAction(findFailAct);
     if(attackBuildings) {
         a->setObsticleHandler(obsticleHandler());
+        a->setTileDistance(sAttackerTileDistance);
     }
 
     const stdptr<eCharacter> cptr(character());

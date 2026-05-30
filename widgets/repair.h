@@ -1,7 +1,7 @@
 ﻿#ifndef REPAIR_H
 #define REPAIR_H
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "buildings/ebuilding.h"
 
 class GameWidget;

@@ -1,6 +1,6 @@
 #include "eemployingbuilding.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 eEmployingBuilding::eEmployingBuilding(

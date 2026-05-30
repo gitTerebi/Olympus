@@ -1,7 +1,7 @@
 #include "etilehelper.h"
 
 #include "eiteratesquare.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 void eTileHelper::dtileIdToTileId(const int dtx, const int dty, int& tx, int& ty) {
     tx = dtx + (dty + 1)/2;

@@ -5,7 +5,7 @@
 #include "textures/egametextures.h"
 #include "emainwindow.h"
 #include "echeckablebutton.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/difficulty.h"
 
 #include "widgets/datawidgets/population-data-widget.h"

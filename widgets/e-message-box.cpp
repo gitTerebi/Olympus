@@ -15,7 +15,7 @@
 #include "engine/e-worldcity.h"
 #include "widgets/game-widget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "emainwindow.h"
 #include "eboardcityswitchbutton.h"
 

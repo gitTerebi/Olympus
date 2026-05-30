@@ -1,6 +1,6 @@
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/ecityid.h"
 #include "engine/difficulty.h"
 #include "buildings/allbuildings.h"

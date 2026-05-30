@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "textures/ebuildingtextures.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eDoricColumn::eDoricColumn(GameBoard& board, const eCityId cid) :
     eColumn(board, &eBuildingTextures::fDoricColumn,

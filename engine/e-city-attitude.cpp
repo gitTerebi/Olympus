@@ -1,6 +1,6 @@
 #include "e-city-attitude.h"
 
-#include "e-game-board.h"
+#include "game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
 

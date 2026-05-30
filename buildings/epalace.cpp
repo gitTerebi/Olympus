@@ -1,6 +1,6 @@
 #include "epalace.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "textures/egametextures.h"
 #include "epalacetile.h"
 #include "fileIO/esavearchive.h"

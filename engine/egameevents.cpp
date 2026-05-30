@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include "evectorhelpers.h"
-#include "e-game-board.h"
+#include "game-board.h"
 #include "fileIO/esavearchive.h"
 
 eGameEvents::eGameEvents(const eCityId cid, GameBoard& board) :

@@ -1,7 +1,7 @@
 #include "eattackcityaction.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 
 eAttackCityAction::eAttackCityAction(eCharacter* const c) :

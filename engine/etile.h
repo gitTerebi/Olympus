@@ -10,8 +10,6 @@
 
 #include "pointers/estdpointer.h"
 
-#include "characters/soldier-banner.h"
-
 #include "etileterrainpainter.h"
 
 enum class eTileSize : int {
@@ -90,7 +88,7 @@ public:
     { return mBanners; }
 
     void setSoldierBanner(SoldierBanner* const b);
-    SoldierBanner* soldierBanner() const { return mSoldierBanner; }
+    SoldierBanner* soldierBanner() const;
 
     // used for stones rendering
     void setDrawDim(const int drawDim);

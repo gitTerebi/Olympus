@@ -2,7 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "eactionlistwidget.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "spawners/ebanner.h"
 #include "erotatebutton.h"
 #include "eminimap.h"

@@ -1,7 +1,7 @@
 #include "ebuildaction.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "enumbers.h"

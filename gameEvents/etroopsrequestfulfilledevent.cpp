@@ -3,7 +3,7 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "engine/eeventdata.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "etroopsrequestevent.h"
 
 eTroopsRequestFulfilledEvent::eTroopsRequestFulfilledEvent(

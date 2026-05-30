@@ -3,7 +3,7 @@
 #include "elanguage.h"
 #include "elabel.h"
 #include "eframedbuttonwithicon.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 #include "estringhelpers.h"
 

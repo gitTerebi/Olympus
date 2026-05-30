@@ -1,6 +1,6 @@
 #include "god-action.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "etilehelper.h"
 

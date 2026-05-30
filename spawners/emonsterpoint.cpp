@@ -1,6 +1,6 @@
 #include "emonsterpoint.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eMonsterPoint::eMonsterPoint(const int id,
                              eTile* const tile,

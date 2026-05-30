@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "textures/egametextures.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eTempleBuilding::eTempleBuilding(GameBoard& board,
                                  const eCityId cid) :

@@ -1,7 +1,7 @@
 #include "elite-housing.h"
 #include "fileIO/esavearchive.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "engine/model-data.h"
 #include "erand.h"

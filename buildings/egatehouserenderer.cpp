@@ -2,7 +2,7 @@
 
 #include "egatehouse.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eGatehouseRenderer::eGatehouseRenderer(
         const bool rotated,

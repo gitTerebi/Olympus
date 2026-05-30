@@ -3,7 +3,7 @@
 #include "widgets/elabel.h"
 #include "widgets/elinewidget.h"
 #include "elanguage.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eCityFinancesWidget::eCityFinancesWidget(
     eMainWindow * const window,

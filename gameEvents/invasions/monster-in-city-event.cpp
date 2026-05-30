@@ -1,7 +1,7 @@
 #include "monster-in-city-event.h"
 
 #include "elanguage.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "emessages.h"

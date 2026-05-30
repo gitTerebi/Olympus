@@ -3,7 +3,7 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "engine/e-worldcity.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 eCityEventValue::eCityEventValue(GameBoard &board,

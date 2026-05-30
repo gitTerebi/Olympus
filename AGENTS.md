@@ -10,7 +10,7 @@ Refactor repeated fns into helpers. Debug log with `printf`. New files: kebab-ca
 After making code changes, build with `.\build.bat` to verify. Do not verify with `cmake --build build`.
 
 ## Map
-Game state: `engine/e-game-board.*`, `engine/e-game-board-read.cpp`, `engine/egameboardwrite.cpp`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/trade-post.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `text/Zeus_Text.xml` is read-only; reuse runtime strings.
+Game state: `engine/game-board.*`, `engine/game-board-read.cpp`, `engine/egameboardwrite.cpp`. Cart pathing: `characters/actions/ecarttransporteraction.*`; deliver=`give`, pickup=`take`, max dist=`eCartTransporter::maxDistance()`. Storage/trade orders: `buildings/estoragebuilding.*`, `buildings/trade-post.*`; `setOrders()` maps exports to accept unless explicit get/empty. Text: `text/Zeus_Text.xml` is read-only; reuse runtime strings.
 
 ## Save
 Goal: all save data is tagged, named, bounded, and safe to add/remove/reorder.

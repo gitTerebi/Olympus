@@ -3,7 +3,7 @@
 #include "elanguage.h"
 #include "egifthelpers.h"
 #include "evectorhelpers.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "fileIO/esavearchive.h"

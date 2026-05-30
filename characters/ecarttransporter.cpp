@@ -7,7 +7,7 @@
 #include "characters/actions/efollowaction.h"
 #include "characters/actions/ecarttransporteraction.h"
 #include "buildings/ebuildingwithresource.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 #include "etrailer.h"
 #include "eox.h"

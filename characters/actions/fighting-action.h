@@ -103,9 +103,9 @@ protected:
     // the enemy tile. Default: the unit's current tile. Soldiers override to
     // return their formation slot so they hold the banner line.
     virtual eTile* repositionAnchor() const;
+    bool attackBuilding(eTile* const t, const bool range);
 private:
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
-    bool attackBuilding(eTile* const t, const bool range);
     void rebuildSavedRuntime();
     bool atSavedMoveTarget() const;
 

@@ -4,7 +4,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "ehorseranchenclosure.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 
 #include <algorithm>
