@@ -32,7 +32,8 @@ const char* figureName(const eCharacterType type) {
     case eCharacterType::hunter:
         return "Hunter";
     case eCharacterType::watchman:
-        return "Watchman";
+    case eCharacterType::gymnast:
+        return "Hoplite/Spearman";
     case eCharacterType::aphrodite:
     case eCharacterType::apollo:
     case eCharacterType::ares:

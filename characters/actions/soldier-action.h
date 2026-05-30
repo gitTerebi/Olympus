@@ -36,6 +36,11 @@ public:
                                 const GameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
+    void cancelAndClearAction() {
+        cancelAttack();
+        character()->setActionType(eCharacterActionType::stand);
+        setCurrentAction(nullptr);
+    }
 protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;

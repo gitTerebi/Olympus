@@ -26,6 +26,8 @@ struct eGeneralState {
     int fWait = 0;                  // 3000ms cycle gate
     int fSpawnWait = 0;             // 14-day pre-invade countdown
     int fMoveWait = 0;              // 7-day pause after a repositioning move
+    bool fDefending = false;        // true while any banner is in retaliation
+    int fDefendHold = 0;            // min hold timer; DEFEND can't exit until 0
 };
 
 class InvasionGeneral {
@@ -59,7 +61,12 @@ private:
     // bump and raze it. Returns true once a banner is moved.
     bool pinOnTarget(eGeneralState& s,
                      const std::vector<SoldierBanner*>& banners) const;
-    bool attackEnemiesNear(const std::vector<SoldierBanner*>& banners) const;
+    bool attackEnemiesNear(const std::vector<SoldierBanner*>& banners,
+                           const int by) const;
+    void issueDefensiveOrders(const std::vector<SoldierBanner*>& banners) const;
+    void reissueCurrentOrder(eGeneralState& s,
+                             eTile* const landingTile,
+                             const std::vector<SoldierBanner*>& banners) const;
 
     // True while fTargetTile still holds an attackable building of the target
     // city. False once it is destroyed/disabled, so the general picks the next.

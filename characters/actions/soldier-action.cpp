@@ -74,10 +74,52 @@ void SoldierAction::increment(const int by) {
     }
 
     // Idle: no enemy near the formation and not mid-attack -> skip the combat
-    // scan entirely, just run the cheap banner-return tick.
+    // scan entirely, just run the cheap banner-return tick. Exception: if the
+    // banner is parked ON an enemy building (general pinned it there to attack),
+    // directly attack the building tile so soldiers grind it from adjacent slots.
     if(!isAttacking() && !enNear) {
+        if(b && !currentAction()) {
+            const auto bt = b->tile();
+            if(bt) {
+                const auto ub = bt->underBuilding();
+                const auto tid = character()->teamId();
+                if(ub && eBuilding::sAttackable(ub->type()) &&
+                   eTeamIdHelpers::isEnemy(ub->teamId(), tid)) {
+                    attackBuilding(bt, false);
+                    return eComplexAction::increment(by);
+                }
+            }
+        }
         tickBannerReturn(by);
         return eComplexAction::increment(by);
+    }
+
+    // Enemy-banner leash: in defensive mode ban all walker fights; outside
+    // defensive mode still ban if far from slot (prevents chasing random walkers
+    // and committing a non-overwrittable goTo that blocks general orders).
+    if(b && b->type() == eBannerType::enemy) {
+        if(b->isDefending()) {
+            // If banner assigned a target, fall through to lookForEnemy so the
+            // soldier actually attacks once at its slot. Without an assignment
+            // skip independent hunting so walkers aren't chased.
+            SoldierBanner::CombatAssignment a;
+            if(!b->combatAssignment(s, a) || !a.standTile) {
+                tickBannerReturn(by);
+                return eComplexAction::increment(by);
+            }
+        }
+        const auto slot = b->place(s);
+        const auto ct = s->tile();
+        if(slot && ct) {
+            const int dx = slot->x() - ct->x();
+            const int dy = slot->y() - ct->y();
+            if(dx*dx + dy*dy > 100) {
+                if(isAttacking()) cancelAttack();
+                setCurrentAction(nullptr);
+                tickBannerReturn(by);
+                return eComplexAction::increment(by);
+            }
+        }
     }
 
     // Don't yank a soldier back to its banner while a fight is live — that let
@@ -222,6 +264,7 @@ bool SoldierAction::prefersPathAround() const {
     const auto b = s->banner();
     return b && b->type() == eBannerType::enemy;
 }
+
 
 stdsptr<eObsticleHandler> SoldierAction::obsticleHandler() {
     return std::make_shared<SoldierObsticleHandler>(
