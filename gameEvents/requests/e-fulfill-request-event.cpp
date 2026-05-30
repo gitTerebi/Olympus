@@ -1,7 +1,7 @@
 #include "e-fulfill-request-event.h"
 #include "e-receive-request-type.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "engine/eeventdata.h"

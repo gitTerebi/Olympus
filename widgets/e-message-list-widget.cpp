@@ -1,6 +1,6 @@
 #include "e-message-list-widget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "escrollbar.h"
 #include "eflatbutton.h"
 #include "elabel.h"

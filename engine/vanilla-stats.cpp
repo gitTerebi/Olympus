@@ -1,7 +1,7 @@
 #include "vanilla-stats.h"
 
 #include "characters/echaracterbase.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "engine/model-data.h"
 

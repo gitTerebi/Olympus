@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/board-city.h"
 #include "engine/etile.h"
 #include "buildings/ebuilding.h"

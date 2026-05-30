@@ -1,6 +1,6 @@
 #include "emilitarymoreinfowidget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 #include "elabel.h"
 #include "emicrobutton.h"

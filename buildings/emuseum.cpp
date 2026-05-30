@@ -1,7 +1,7 @@
 #include "emuseum.h"
 
 #include "characters/curator.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eMuseum::eMuseum(GameBoard& board,
                  const eCityId cid) :

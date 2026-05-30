@@ -4,7 +4,7 @@
 
 #include "elanguage.h"
 #include "widgets/elinewidget.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "widgets/ebuttonbase.h"
 #include "evectorhelpers.h"
 

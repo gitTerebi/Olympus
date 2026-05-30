@@ -1,6 +1,6 @@
 #include "e-tribute.h"
 
-#include "e-game-board.h"
+#include "game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
 #include "e-worldcity.h"

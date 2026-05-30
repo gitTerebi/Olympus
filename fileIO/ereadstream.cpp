@@ -1,6 +1,6 @@
 #include "ereadstream.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 #include "characters/actions/character-action.h"

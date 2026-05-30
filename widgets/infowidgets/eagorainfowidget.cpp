@@ -6,7 +6,7 @@
 #include "buildings/egrandagora.h"
 #include "buildings/evendor.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "elanguage.h"
 

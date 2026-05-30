@@ -2,7 +2,7 @@
 
 #include "epopulationdata.h"
 #include "engine/difficulty.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 
 #include <math.h>

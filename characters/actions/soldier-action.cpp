@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "characters/esoldier.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include <math.h>
 
@@ -103,12 +103,21 @@ bool SoldierAction::followBannerDirector() {
     SoldierBanner::CombatAssignment a;
     if(!b->combatAssignment(s, a)) return false;
     if(a.target && a.target->dead()) return false;
-    if(!a.standTile) return false;
-    if(c->range() > 0) return false;
     if(isAttacking()) return false;
 
     const auto ct = c->tile();
     if(!ct) return false;
+    if(a.intent == SoldierBanner::CombatAssignment::Intent::clearObstacle) {
+        if(c->range() > 0) return false;
+        if(!a.targetBuilding) return false;
+        const auto bt = a.targetBuilding->centerTile();
+        if(!bt) return false;
+        setCurrentAction(nullptr);
+        attackBuilding(bt, false);
+        return true;
+    }
+
+    if(!a.standTile) return false;
     if(ct == a.standTile) {
         setCurrentAction(nullptr);
         setOverwrittableAction(true);
@@ -119,6 +128,13 @@ bool SoldierAction::followBannerDirector() {
     setOverwrittableAction(false);
     goTo(a.standTile->x(), a.standTile->y(), 0);
     return true;
+}
+
+void SoldierAction::setCombatBlockage(eBuilding* const b) {
+    const auto s = static_cast<eSoldier*>(character());
+    const auto banner = s->banner();
+    if(!banner) return;
+    banner->setCombatBlockage(s, b);
 }
 
 void SoldierAction::tickBannerReturn(const int by) {

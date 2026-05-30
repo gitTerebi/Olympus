@@ -4,7 +4,7 @@
 #include "epyramid.h"
 
 #include "characters/gods/egod.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
                                GameBoard& board,

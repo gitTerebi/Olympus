@@ -11,7 +11,7 @@
 #include "characters/actions/emovetoaction.h"
 
 #include "eiteratesquare.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eBlackMarbleWorkshop::eBlackMarbleWorkshop(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,

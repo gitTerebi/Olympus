@@ -1,6 +1,6 @@
 ﻿#include "ebuilding.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "engine/etile.h"

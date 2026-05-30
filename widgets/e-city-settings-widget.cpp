@@ -10,7 +10,7 @@
 #include "echoosebutton.h"
 #include "enamewidget.h"
 #include "engine/eworldboard.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "ewatertradewidget.h"
 #include "eswitchbutton.h"
 

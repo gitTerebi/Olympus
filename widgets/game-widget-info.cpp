@@ -22,7 +22,7 @@
 #include "infowidgets/trade-post-info-widget.h"
 #include "infowidgets/etriremewharfinfowidget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
     eInfoWidget* wid = nullptr;

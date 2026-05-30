@@ -1,6 +1,6 @@
 #include "egifttoevent.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "fileIO/esavearchive.h"

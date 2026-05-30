@@ -1,6 +1,6 @@
 #include "monster-invasion-event-base.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "characters/actions/monster-action.h"
 #include "eiteratesquare.h"

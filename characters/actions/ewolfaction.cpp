@@ -3,7 +3,7 @@
 #include "erand.h"
 #include "enumbers.h"
 #include "emovetoaction.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/epathfinder.h"

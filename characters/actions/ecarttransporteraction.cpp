@@ -6,7 +6,7 @@
 #include "buildings/ehorseranchenclosure.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/evendor.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 #include "emovetoaction.h"
 #include "ewaitaction.h"

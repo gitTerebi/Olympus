@@ -2,7 +2,7 @@
 #define EWORLDWIDGET_H
 
 #include "emainwidget.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "widgets/eenlistforcesdialog.h"
 

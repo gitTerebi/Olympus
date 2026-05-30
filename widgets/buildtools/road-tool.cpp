@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/etile.h"
 
 void eRoadTool::noteDrag(const int pressedTX, const int pressedTY,

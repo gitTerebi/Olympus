@@ -4,7 +4,7 @@
 #include "textures/echaractertextures.h"
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePeddler::ePeddler(GameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fPeddler,

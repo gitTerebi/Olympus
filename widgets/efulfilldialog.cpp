@@ -1,7 +1,7 @@
 #include "efulfilldialog.h"
 
 #include "engine/e-worldcity.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "gameEvents/requests/e-fulfill-request-event.h"

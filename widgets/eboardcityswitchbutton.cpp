@@ -1,6 +1,6 @@
 #include "eboardcityswitchbutton.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "evectorhelpers.h"
 
 void eBoardCitySwitchButton::initialize(

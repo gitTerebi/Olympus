@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "../echaracter.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "emovetoaction.h"
 #include "ewaitaction.h"
 

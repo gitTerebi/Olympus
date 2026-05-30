@@ -18,7 +18,7 @@
 #include "buildings/eagorabase.h"
 #include "widgets/ebuttonbase.h"
 #include "widgets/ebasicbutton.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "audio/sound-vector.h"
 #include "eiteratesquare.h"

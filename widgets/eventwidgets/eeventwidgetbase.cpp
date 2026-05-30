@@ -4,7 +4,7 @@
 
 #include "widgets/evaluebutton.h"
 #include "widgets/etypebutton.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "widgets/elabeledwidget.h"
 #include "elanguage.h"
 #include "emainwindow.h"

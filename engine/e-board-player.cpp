@@ -3,7 +3,7 @@
 #include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
 
-#include "e-game-board.h"
+#include "game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
 #include "evectorhelpers.h"

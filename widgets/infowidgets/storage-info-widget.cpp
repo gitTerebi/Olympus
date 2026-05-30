@@ -1,6 +1,6 @@
 #include "storage-info-widget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "elanguage.h"
 

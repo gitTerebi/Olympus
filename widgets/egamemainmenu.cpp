@@ -4,7 +4,7 @@
 
 #include "elanguage.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/ewritestream.h"
 
 void eGameMainMenu::initialize(const eAction& resumeAct,

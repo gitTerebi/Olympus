@@ -1,6 +1,6 @@
 #include "epalacerenderer.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePalace1Renderer::ePalace1Renderer(
         const stdsptr<ePalace>& b) :

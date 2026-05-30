@@ -1,6 +1,6 @@
 #include "entry-point.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "characters/esettler.h"
 #include "characters/actions/esettleraction.h"
 

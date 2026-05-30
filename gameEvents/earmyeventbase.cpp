@@ -1,6 +1,6 @@
 #include "earmyeventbase.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "earmyreturnevent.h"
 #include "enumbers.h"

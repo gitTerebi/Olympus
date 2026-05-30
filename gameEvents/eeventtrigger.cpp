@@ -2,7 +2,7 @@
 
 #include "egameevent.h"
 #include "evectorhelpers.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 eEventTrigger::eEventTrigger(const eCityId cid,

@@ -1,6 +1,6 @@
 ﻿#include "ethreadboardhandler.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "buildings/ehousebase.h"
 
 eThreadBoardHandler::eThreadBoardHandler() {}

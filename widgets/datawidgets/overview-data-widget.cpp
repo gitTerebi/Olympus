@@ -7,7 +7,7 @@
 #include "widgets/escrollwidget.h"
 
 #include "elanguage.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"

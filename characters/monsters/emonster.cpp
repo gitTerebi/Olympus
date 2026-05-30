@@ -4,7 +4,7 @@
 #include "characters/heroes/ehero.h"
 
 #include "ecalydonianboar.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/ecityid.h"
 #include "characters/actions/monster-action.h"
 

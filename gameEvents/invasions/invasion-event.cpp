@@ -1,7 +1,7 @@
 #include "invasion-event.h"
 #include "buildings/eaestheticsbuilding.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "gameEvents/invasions/invasion-handler.h"
@@ -175,8 +175,11 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &boar
         8;
 
     e->setSingleCity(attackingCity);
+    // Land invasion points are ids 1-8 (sea points are 9-16, which spawn far
+    // out at open-water markers and leave units off-screen/stuck). A rival
+    // land assault must only roll land points.
     e->setMinPointId(1);
-    e->setMaxPointId(16);
+    e->setMaxPointId(8);
     e->setMinCount(static_cast<int>(unitCount / 2));
     e->setMaxCount(unitCount);
     e->useGeneratedCityWarnings();

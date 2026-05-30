@@ -2,7 +2,7 @@
 
 #include "buildings/small-house.h"
 #include "ecityid.h"
-#include "e-game-board.h"
+#include "game-board.h"
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
 

@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "textures/einterfacetextures.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "gameEvents/earmyreturnevent.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "gameEvents/etroopsrequestfulfilledevent.h"

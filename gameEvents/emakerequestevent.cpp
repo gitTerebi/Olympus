@@ -1,6 +1,6 @@
 #include "emakerequestevent.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "engine/eeventdata.h"

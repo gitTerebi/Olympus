@@ -5,6 +5,7 @@
 #include <map>
 
 #include "pointers/eobject.h"
+#include "pointers/estdpointer.h"
 #include "fileIO/estreams.h"
 #include "engine/ecityid.h"
 
@@ -39,7 +40,7 @@ public:
         eSoldier* soldier = nullptr;
         Intent intent = Intent::hold;
         eCharacter* target = nullptr;
-        eBuilding* targetBuilding = nullptr;
+        stdptr<eBuilding> targetBuilding = nullptr;
         eTile* standTile = nullptr;
     };
 
@@ -228,7 +229,7 @@ private:
     std::map<eSoldier*, eTile*> mPlaces;
     std::vector<eSoldier*> mSoldiers;
     std::map<eSoldier*, CombatAssignment> mCombatAssignments;
-    std::map<eSoldier*, eBuilding*> mCombatBlockages;
+    std::map<eSoldier*, stdptr<eBuilding>> mCombatBlockages;
 };
 
 #endif // SOLDIER_BANNER_H

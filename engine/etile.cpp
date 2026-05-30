@@ -5,7 +5,8 @@
 #include "buildings/ebuilding.h"
 #include "buildings/eroad.h"
 #include "characters/echaracter.h"
-#include "e-game-board.h"
+#include "characters/soldier-banner.h"
+#include "game-board.h"
 
 #include "evectorhelpers.h"
 #include "spawners/ebanner.h"
@@ -488,6 +489,10 @@ bool eTile::hasPrey() const {
 
 void eTile::setSoldierBanner(SoldierBanner* const b) {
     mSoldierBanner = b;
+}
+
+SoldierBanner* eTile::soldierBanner() const {
+    return mSoldierBanner;
 }
 
 void eTile::setDrawDim(const int drawDim) {

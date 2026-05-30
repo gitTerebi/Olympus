@@ -1,5 +1,5 @@
 ﻿
-#include "e-game-board.h"
+#include "game-board.h"
 
 #include "e-city-attitude.h"
 
@@ -944,7 +944,8 @@ eTile *GameBoard::seaInvasionTile(const eCityId cid, const int id) const
 
 eTile *GameBoard::invasionTile(const eCityId cid, const int id) const
 {
-    if (id > 7)
+    // Land points are ids 1-8, sea points 9-16 (see zeus-file.cpp loader).
+    if (id > 8)
         return seaInvasionTile(cid, id);
     return landInvasionTile(cid, id);
 }

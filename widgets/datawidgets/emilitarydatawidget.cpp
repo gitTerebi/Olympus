@@ -2,7 +2,7 @@
 
 #include "eviewmodebutton.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 #include "evectorhelpers.h"
 #include "widgets/emicrobutton.h"

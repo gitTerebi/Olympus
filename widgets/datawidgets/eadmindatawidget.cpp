@@ -1,6 +1,6 @@
 #include "eadmindatawidget.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "../elabel.h"
 

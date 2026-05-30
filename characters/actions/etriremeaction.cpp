@@ -5,7 +5,7 @@
 #include "characters/actions/emovetoaction.h"
 #include "buildings/etriremewharf.h"
 #include "characters/etrireme.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 eTriremeAction::eTriremeAction(eTriremeWharf* const home,

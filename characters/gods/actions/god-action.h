@@ -4,7 +4,7 @@
 #include "characters/gods/actions/egodmonsteraction.h"
 
 #include "characters/gods/egod.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "buildings/small-house.h"
 #include "buildings/eresourcebuilding.h"

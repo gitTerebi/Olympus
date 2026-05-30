@@ -9,7 +9,7 @@ using namespace noise;
 #include "spawners/eboarspawner.h"
 #include "spawners/edeerspawner.h"
 
-#include "e-game-board.h"
+#include "game-board.h"
 
 #include "eiteratesquare.h"
 

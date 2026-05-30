@@ -1,6 +1,6 @@
 #include "egameundo.h"
 
-#include "e-game-board.h"
+#include "game-board.h"
 #include "buildings/ebuilding.h"
 #include "engine/boardData/ecityfinances.h"
 #include "enumbers.h"

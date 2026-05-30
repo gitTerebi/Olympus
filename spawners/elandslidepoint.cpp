@@ -1,6 +1,6 @@
 #include "elandslidepoint.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eLandSlidePoint::eLandSlidePoint(const int id,
                                  eTile* const tile,

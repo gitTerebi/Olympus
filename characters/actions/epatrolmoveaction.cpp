@@ -4,7 +4,7 @@
 #include "engine/etile.h"
 #include "emovepathaction.h"
 #include "engine/epathfinder.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 void eDirectionLastUseTime::serialize(eSaveArchive& ar) {

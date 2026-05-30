@@ -1,7 +1,7 @@
 #include "eresourcebuildingbase.h"
 
 #include "characters/actions/ecarttransporteraction.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 

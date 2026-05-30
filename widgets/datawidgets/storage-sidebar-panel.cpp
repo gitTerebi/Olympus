@@ -1,6 +1,6 @@
 ﻿#include "storage-sidebar-panel.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "widgets/elabel.h"
 #include "widgets/game-widget.h"
 #include "widgets/moreinfo/storage-distribution-dialog.h"

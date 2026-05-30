@@ -4,7 +4,7 @@
 #include "emainwindow.h"
 #include "engine/board-city.h"
 #include "ecitysettingswidget.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "ecitybutton.h"
 #include "echoosecitydialog.h"
 #include "condition-settings-widget.h"

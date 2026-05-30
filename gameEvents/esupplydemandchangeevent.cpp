@@ -1,7 +1,7 @@
 #include "esupplydemandchangeevent.h"
 
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eSupplyDemandChangeEvent::eSupplyDemandChangeEvent(
     const eCityId cid, const eGameEventType type,

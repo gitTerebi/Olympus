@@ -39,7 +39,7 @@
 #include "eplague.h"
 
 #include "engine/eepisode.h"
-#include "e-game-board.h"
+#include "game-board.h"
 
 #include "eiteratesquare.h"
 #include "etilehelper.h"

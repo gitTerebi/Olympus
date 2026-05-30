@@ -1,6 +1,6 @@
 #include "monster-action.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 #include "engine/boardData/eheatmaptask.h"
 #include "buildings/eheatgetters.h"

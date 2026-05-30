@@ -1,6 +1,6 @@
 #include "agora-build-place.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "buildings/eroad.h"
 #include "engine/etile.h"
 

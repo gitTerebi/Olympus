@@ -8,7 +8,7 @@
 
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "erand.h"
 
 #include <cstdlib>

@@ -3,7 +3,7 @@
 #include "emainwindow.h"
 #include "esettings.h"
 #include "elanguage.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "widgets/game-widget.h"
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,

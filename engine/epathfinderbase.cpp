@@ -1,6 +1,6 @@
 #include "epathfinderbase.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 ePathFinderBase::ePathFinderBase(const eTileWalkable& walkable) :
     mWalkable(walkable) {}

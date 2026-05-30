@@ -1,6 +1,6 @@
 #include "invasion-handler.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/eeventdata.h"

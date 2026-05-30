@@ -1,6 +1,6 @@
 #include "warehouse.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "etilehelper.h"
 #include "textures/egametextures.h"
 

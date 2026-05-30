@@ -1,7 +1,7 @@
 #include "epier.h"
 
 #include "textures/egametextures.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 // index: 0=bottomRight 1=bottomLeft 2=topLeft 3=topRight

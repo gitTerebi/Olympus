@@ -2,7 +2,7 @@
 
 #include "buildings/eheatgetters.h"
 #include "buildings/ebuildingrenderer.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "textures/eterraintextures.h"
 #include "widgets/etilepainter.h"
 

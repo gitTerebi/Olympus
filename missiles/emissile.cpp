@@ -1,6 +1,6 @@
 #include "emissile.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "engine/etile.h"
 #include "characters/gods/actions/god-action.h"
 

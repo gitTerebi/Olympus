@@ -1,6 +1,6 @@
 #include "eobject.h"
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 
 eObject::eObject(GameBoard& board) :
     mBoard(board) {

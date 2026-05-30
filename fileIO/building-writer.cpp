@@ -1,7 +1,7 @@
 ﻿#include "building-writer.h"
 
 #include "buildings/allbuildings.h"
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
 void BuildingArchive::save(const eBuilding* const b,

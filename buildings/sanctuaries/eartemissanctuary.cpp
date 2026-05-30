@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "engine/e-game-board.h"
+#include "engine/game-board.h"
 #include "elanguage.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
