@@ -8,6 +8,7 @@
 
 #include "elanguage.h"
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"

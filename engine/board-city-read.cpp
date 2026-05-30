@@ -9,6 +9,7 @@
 #include "engine/game-board.h"
 #include "buildings/ehippodrome.h"
 #include "fileIO/esavearchive.h"
+#include "characters/soldier-banner.h"
 
 void BoardCity::serialize(eSaveArchive& ar) {
     ar.field("id", mId);

@@ -7,6 +7,7 @@
 #include "fileIO/esavearchive.h"
 #include "elanguage.h"
 #include "enumbers.h"
+#include "characters/soldier-banner.h"
 
 eRequestAidEvent::eRequestAidEvent(
         const eCityId cid,

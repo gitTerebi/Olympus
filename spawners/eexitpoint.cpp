@@ -1,4 +1,5 @@
 #include "eexitpoint.h"
+#include "characters/soldier-banner.h"
 
 eExitPoint::eExitPoint(const int id, eTile* const tile,
                        GameBoard& board) :

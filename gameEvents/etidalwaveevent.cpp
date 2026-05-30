@@ -6,6 +6,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
+#include "characters/soldier-banner.h"
 
 bool validWaveEventTile(eTile* const tile) {
     return tile->tidalWaveZone();

@@ -2,6 +2,7 @@
 
 #include "characters/wolf.h"
 #include "enumbers.h"
+#include "characters/soldier-banner.h"
 
 eWolfSpawner::eWolfSpawner(const int id,
                            eTile* const tile,

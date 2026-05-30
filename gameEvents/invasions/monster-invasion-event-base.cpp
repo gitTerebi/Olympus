@@ -7,6 +7,7 @@
 #include "evectorhelpers.h"
 #include "emessages.h"
 #include "fileIO/esavearchive.h"
+#include "characters/soldier-banner.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eCityId cid,

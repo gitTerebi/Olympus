@@ -9,6 +9,7 @@
 #include "characters/actions/epatrolaction.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "esavearchive.h"
+#include "characters/soldier-banner.h"
 
 eReadStream::eReadStream(const eReadSource& src) :
     mSrc(src) {}

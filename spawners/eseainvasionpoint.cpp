@@ -1,6 +1,7 @@
 #include "eseainvasionpoint.h"
 
 #include "engine/game-board.h"
+#include "characters/soldier-banner.h"
 
 eSeaInvasionPoint::eSeaInvasionPoint(const int id,
                                      eTile* const tile,

@@ -8,6 +8,7 @@
 #include "eminimap.h"
 #include "game-widget.h"
 #include "elanguage.h"
+#include "characters/soldier-banner.h"
 
 void eTerrainEditMenu::initialize(GameWidget* const gw,
                                   GameBoard* const board) {

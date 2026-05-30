@@ -4,6 +4,7 @@
 #include "characters/eenlistedforces.h"
 
 class eSaveArchive;
+class SoldierBanner;
 
 class eReinforcements {
 public:

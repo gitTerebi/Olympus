@@ -3,6 +3,7 @@
 
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
+#include "characters/soldier-banner.h"
 
 eReinforcements::eReinforcements() {}
 

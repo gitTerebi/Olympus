@@ -10,6 +10,7 @@
 #include "characters/actions/epatrolmoveaction.h"
 #include "spawners/ebanner.h"
 #include "gameEvents/invasions/invasion-handler.h"
+#include "characters/soldier-banner.h"
 
 eWriteStream::eWriteStream(const eWriteTarget& dst) :
     mDst(dst) {}

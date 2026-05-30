@@ -69,12 +69,32 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
     s.fAlign = align;
 }
 
+void eTilePainter::scheduleDrawTexture(const double x, const double y,
+                                       const std::shared_ptr<eTexture>& tex,
+                                       const eAlignment align,
+                                       const SDL_Color& colorMod) {
+    auto& s = mScheduled.emplace_back();
+    s.fX = x;
+    s.fY = y;
+    s.fTex = tex;
+    s.fHasAlign = true;
+    s.fAlign = align;
+    s.fHasColorMod = true;
+    s.fColorMod = colorMod;
+}
+
 void eTilePainter::handleScheduledDraw() {
     for(const auto& s : mScheduled) {
+        if(s.fHasColorMod && s.fTex) {
+            s.fTex->setColorMod(s.fColorMod.r, s.fColorMod.g, s.fColorMod.b);
+        }
         if(s.fHasAlign) {
             drawTexture(s.fX, s.fY, s.fTex, s.fAlign);
         } else {
             drawTexture(s.fX, s.fY, s.fTex);
+        }
+        if(s.fHasColorMod && s.fTex) {
+            s.fTex->clearColorMod();
         }
     }
     mScheduled.clear();

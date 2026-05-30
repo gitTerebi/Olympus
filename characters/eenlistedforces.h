@@ -1,11 +1,11 @@
 #ifndef EENLISTEDFORCES_H
 #define EENLISTEDFORCES_H
 
-#include "characters/soldier-banner.h"
 #include "characters/heroes/ehero.h"
 #include "engine/e-worldcity.h"
 
 class eSaveArchive;
+class SoldierBanner;
 
 struct eEnlistedForces {
     std::vector<stdsptr<SoldierBanner>> fSoldiers;

@@ -49,6 +49,7 @@ class eSaveArchive;
 class eGameEvent;
 
 class eSpawner;
+enum class eBannerType;
 enum class eBannerTypeS;
 class eCharacter;
 class eBuilding;

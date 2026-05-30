@@ -16,6 +16,7 @@
 #include "egameevents.h"
 #include "ereinforcements.h"
 
+class SoldierBanner;
 class ePalace;
 class eSanctuary;
 class eMonument;
@@ -39,6 +40,7 @@ class eHouseBase;
 enum class eCharacterType;
 enum class eBuildingMode;
 enum struct eHeroType;
+enum class eBannerType;
 enum class eBannerTypeS;
 enum class eMonsterType;
 class eMonsterInvasionEventBase;
