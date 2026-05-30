@@ -114,12 +114,12 @@ void paintInvasionDebugTargets(GameBoard& board,
     (void)viewedCity;
     for(const auto invasion : activeInvasionHandlers(board)) {
         if(!invasion) continue;
-        const auto target = invasion->generalTargetTile();
-        if(!target) continue;
-
-        const auto from = invasion->currentTile() ?
-                          invasion->currentTile() : invasion->tile();
-        if(!from) continue;
+        // Draw the last order the general issued: FROM = where the army was when
+        // it was given, GOAL = where the order sends them (half-step or building).
+        // Both are captured per-order so the arrow re-aims on every new move.
+        const auto from = invasion->moveFromTile();
+        const auto target = invasion->moveToTile();
+        if(!from || !target) continue;
 
         const auto a = tilePoint(board, from, tileW, tileH);
         const auto b = tilePoint(board, target, tileW, tileH);

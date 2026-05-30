@@ -127,6 +127,11 @@ public:
     // InvasionGeneral.
     void updateRetaliation(const int by);
     void signalRetaliationTarget(const int tx, const int ty);
+
+    // One box scan per banner per ~250ms; cached result gates each soldier's
+    // per-tick combat reaction so they don't each run a range^2 scan every tick.
+    // by advances the shared countdown; pass the tick ms.
+    bool enemyNear(const int by);
     bool needsHelp() const;
     bool attackEnemyNearRetaliationPoint();
     bool combatAssignment(eSoldier* const s,
@@ -229,6 +234,12 @@ private:
     // Throttle for retaliation so the brain doesn't re-issue moveTo every frame.
     // Runtime-only (combat re-derives next tick); never serialized.
     int mCombatRetargetCountdown = 0;
+
+    // Runtime-only enemy-proximity cache shared by this banner's soldiers.
+    // Never serialized; re-derived next tick.
+    int mEnemyNearCountdown = 0;
+    bool mEnemyNear = false;
+
     int mRetaliationX = 0;
     int mRetaliationY = 0;
     int mRetaliationTime = 0;

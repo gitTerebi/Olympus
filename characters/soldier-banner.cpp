@@ -1177,6 +1177,47 @@ void SoldierBanner::purgeDead() {
     }
 }
 
+bool SoldierBanner::enemyNear(const int by) {
+    mEnemyNearCountdown -= by;
+    if(mEnemyNearCountdown > 0) return mEnemyNear;
+    mEnemyNearCountdown = 250;
+
+    if(mHome || mAbroad || !mTile) {
+        mEnemyNear = false;
+        return false;
+    }
+
+    // Single box scan around the banner anchor covering the formation spread
+    // plus each soldier's detect range. Replaces per-soldier per-tick scans.
+    int maxRange = 0;
+    for(const auto s : mSoldiers) {
+        if(s->dead()) continue;
+        const int sr = s->range();
+        if(sr > maxRange) maxRange = sr;
+    }
+    const int spread = 3; // formation half-extent used by sPlace
+    const int hrange = spread + FightingAction::sRangedDetectRange(maxRange);
+    const int tx = mTile->x();
+    const int ty = mTile->y();
+    const auto tid = teamId();
+    for(int i = -hrange; i <= hrange; i++) {
+        for(int j = -hrange; j <= hrange; j++) {
+            const auto t = mBoard.tile(tx + i, ty + j);
+            if(!t) continue;
+            for(const auto& cc : t->characters()) {
+                if(cc->dead()) continue;
+                if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
+                if(!cc->isSoldier() && cc->type() != eCharacterType::wolf &&
+                   !cc->isImmortal()) continue;
+                mEnemyNear = true;
+                return true;
+            }
+        }
+    }
+    mEnemyNear = false;
+    return false;
+}
+
 void SoldierBanner::updateRetaliation(const int by) {
     // Pure retaliation: only if this banner was hit recently, move the whole
     // banner toward a nearby defender. Otherwise keep the general's objective.
@@ -1252,6 +1293,13 @@ bool SoldierBanner::attackEnemyNearRetaliationPoint() {
     if(mHome || mAbroad || !mTile) return false;
     if(fighting()) return false;
     if(mRetaliationTime <= 0) return false;
+    // Share the retarget clock with updateRetaliation. Without this gate the
+    // 625-tile scan below + per-soldier updateCombatAssignments ran every tick
+    // from InvasionGeneral::advance, ungated. Hold to the 500ms cadence and
+    // wind the clock here too, so a tick where updateRetaliation early-returned
+    // (no defender) still throttles this scan instead of firing every tick.
+    if(mCombatRetargetCountdown > 0) return false;
+    mCombatRetargetCountdown = 500;
 
     const auto invaderTid = teamId();
     const auto defendCid = onCityId();

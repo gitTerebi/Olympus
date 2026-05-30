@@ -423,9 +423,16 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
     stdsptr<eCharacter> secondOption;
     stdsptr<eCharacter> thirdOption;
     stdsptr<eCharacter> cappedAdjacent; // already-full foe, but it's right here
+    // Throttle the 3x3 unit pass: it ran every tick. A short gate cuts per-tick
+    // cost while keeping engage lag under ~150ms (the melee/missile cycle paces
+    // actual damage anyway once a target locks).
+    const int adjacencyCheckMs = 150;
+    mAdjacencyCheck += by;
+    const bool adjacencyScan = mAdjacencyCheck > adjacencyCheckMs;
+    if(adjacencyScan) mAdjacencyCheck -= adjacencyCheckMs;
     // Unit pass first: enemy units always win over buildings, so a soldier
     // turns on whoever is hitting him instead of clubbing an adjacent house.
-    for(int i = -1; i <= 1; i++) {
+    if(adjacencyScan) for(int i = -1; i <= 1; i++) {
         for(int j = -1; j <= 1; j++) {
             const auto t = brd.tile(tx + i, ty + j);
             if(!t) continue;
@@ -709,6 +716,14 @@ void FightingAction::goTo(const int fx, const int fy,
                            const int dist,
                            const eAction& findFailAct,
                            const eAction& findFinishAct) {
+    goToInternal(fx, fy, dist, findFailAct, findFinishAct, false);
+}
+
+void FightingAction::goToInternal(const int fx, const int fy,
+                                   const int dist,
+                                   const eAction& findFailAct,
+                                   const eAction& findFinishAct,
+                                   const bool forceAttacker) {
     const auto c = character();
     const auto t = c->tile();
     const int sx = t->x();
@@ -748,19 +763,36 @@ void FightingAction::goTo(const int fx, const int fy,
             attackBuildings = eTeamIdHelpers::isEnemy(tid, destTid);
         }
     }
+    // Invaders route AROUND buildings by default; only fall back to bulldozing
+    // (sCreateAttacker + obstacle handler) when no path around exists, which the
+    // wrapped find-fail below detects and retries with forceAttacker=true.
+    const bool pathAround = attackBuildings && prefersPathAround() &&
+                            !forceAttacker;
+
     stdsptr<eWalkableObject> pathFindWalkable;
     stdsptr<eWalkableObject> moveWalkable;
     if(c->isBoat()) {
         pathFindWalkable =
             eWalkableObject::sCreateDeepWater();
+    } else if(attackBuildings && !pathAround) {
+        pathFindWalkable = eWalkableObject::sCreateAttacker();
+        moveWalkable = eWalkableObject::sCreateDefault();
     } else {
-        if(attackBuildings) {
-            pathFindWalkable = eWalkableObject::sCreateAttacker();
-            moveWalkable = eWalkableObject::sCreateDefault();
-        } else {
-            pathFindWalkable =
-                eWalkableObject::sCreateDefault();
-        }
+        pathFindWalkable =
+            eWalkableObject::sCreateDefault();
+    }
+
+    eAction failAct = findFailAct;
+    if(pathAround) {
+        const stdptr<FightingAction> tptr(this);
+        failAct = [tptr, fx, fy, dist, findFailAct, findFinishAct]() {
+            if(!tptr) {
+                if(findFailAct) findFailAct();
+                return;
+            }
+            // No route around: walled off, smash through to the target.
+            tptr->goToInternal(fx, fy, dist, findFailAct, findFinishAct, true);
+        };
     }
 
     const auto a = e::make_shared<eMoveToAction>(c);
@@ -768,8 +800,8 @@ void FightingAction::goTo(const int fx, const int fy,
                          eStateRelevance::terrain);
     a->setFailAction(finishAct);
     a->setFinishAction(finishAct);
-    a->setFindFailAction(findFailAct);
-    if(attackBuildings) {
+    a->setFindFailAction(failAct);
+    if(attackBuildings && !pathAround) {
         a->setObsticleHandler(obsticleHandler());
         a->setTileDistance(sAttackerTileDistance);
     }
@@ -856,6 +888,7 @@ void FightingAction::serializeFields(eSaveArchive& ar) {
     ar.field("savedMoveY", mSavedMoveY, 0);
     ar.field("savedMoveDistance", mSavedMoveDistance, 0);
     ar.field("waitGoHomeRemaining", mWaitGoHomeRemaining, 0);
+    ar.field("adjacencyCheck", mAdjacencyCheck, 0);
 }
 
 void FightingAction::resumeFromSavedState() {

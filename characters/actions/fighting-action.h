@@ -75,6 +75,10 @@ public:
               const eAction& findFailAct = nullptr,
               const eAction& findFinishAct = nullptr);
 
+    // Invader soldiers path AROUND buildings and only smash through when walled
+    // in. Other attackers (immortals/heroes/gods) bulldoze as before.
+    virtual bool prefersPathAround() const { return false; }
+
     void beingAttacked(eCharacter* const ss);
     virtual void beingAttacked(int ttx, int tty);
 
@@ -105,6 +109,12 @@ protected:
     virtual eTile* repositionAnchor() const;
     bool attackBuilding(eTile* const t, const bool range);
 private:
+    void goToInternal(const int fx, const int fy,
+                      const int dist,
+                      const eAction& findFailAct,
+                      const eAction& findFinishAct,
+                      const bool forceAttacker);
+
     virtual stdsptr<eObsticleHandler> obsticleHandler() { return nullptr; }
     void rebuildSavedRuntime();
     bool atSavedMoveTarget() const;
@@ -118,6 +128,7 @@ private:
     int mBuildingAttack = 0;
 
     int mLookForEnemy = 0;
+    int mAdjacencyCheck = 0;
     int mAttackTime = 0;
     eCharacterActionType mSavedAction = eCharacterActionType::stand;
     bool mAttack = false;

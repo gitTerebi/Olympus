@@ -41,6 +41,7 @@ protected:
     void resumeFromSavedState() override;
     eTile* repositionAnchor() const override;
 private:
+    bool prefersPathAround() const override;
     stdsptr<eObsticleHandler> obsticleHandler() override;
     void rebuildCurrentStage();
     bool enemyNear() const;

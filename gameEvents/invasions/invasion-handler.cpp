@@ -833,8 +833,11 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("gPhase", mGState.fPhase, eGeneralPhase::spread);
     ar.tileField("gTargetTile", mBoard, mGState.fTargetTile);
     ar.tileField("gCurrentTile", mBoard, mGState.fCurrentTile);
+    ar.tileField("gMoveFrom", mBoard, mGState.fMoveFrom);
+    ar.tileField("gMoveTo", mBoard, mGState.fMoveTo);
     ar.field("gWait", mGState.fWait, 0);
     ar.field("gSpawnWait", mGState.fSpawnWait, 0);
+    ar.field("gMoveWait", mGState.fMoveWait, 0);
 
     ar.arrayField("banners", mBanners,
         [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
