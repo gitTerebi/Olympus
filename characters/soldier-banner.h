@@ -169,6 +169,7 @@ public:
     static std::vector<sFormationSlot> sFormationPositions(
                              std::vector<SoldierBanner*> bs,
                              const int ctx, const int cty,
+                             const int facing,
                              const int lineDX, const int lineDY,
                              const int dist);
 
