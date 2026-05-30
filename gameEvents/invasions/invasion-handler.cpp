@@ -53,7 +53,12 @@
 #include "buildings/epalace.h"
 
 #include "invasion-event.h"
+#include "invasion-targeting.h"
 #include "gameEvents/eplayerconquestevent.h"
+#include "characters/soldier-banner.h"
+#include "engine/etile.h"
+#include "buildings/ebuilding.h"
+#include "erand.h"
 
 #include "engine/eknownendpathfinder.h"
 #include "engine/boardData/eheatmaptask.h"
@@ -67,6 +72,10 @@ eInvasionHandler::eInvasionHandler(GameBoard& board,
     mBoard(board), mTargetCity(targetCity), mCity(city), mEvent(event) {
     board.addInvasionHandler(targetCity, this);
     if(event) event->addInvasionHandler(this);
+    // Each invasion favours one class of target (Augustus attack_type, random).
+    const int t = ((eRand::rand() % int(InvasionAttackType::count)) +
+                   int(InvasionAttackType::count)) % int(InvasionAttackType::count);
+    mAttackType = InvasionAttackType(t);
 }
 
 eInvasionHandler::~eInvasionHandler() {
@@ -666,6 +675,19 @@ void eInvasionHandler::incTime(const int by) {
         }
     }
 
+    // Per-tick combat brain (Augustus per-formation targeting): each enemy banner
+    // closes onto the nearest defender in engage range, driving soldiers to lock
+    // on reactively. Runs every tick — the slow stage machine below only sets the
+    // strategic building destination; this overrides with a nearer defender. Skip
+    // while still arriving or once heading home.
+    if(mStage != eInvasionStage::arrive &&
+       mStage != eInvasionStage::comeback) {
+        for(const auto& b : mBanners) {
+            if(b->count() <= 0) continue;
+            b->updateCombat(by);
+        }
+    }
+
     const auto invadingCid = mCity->cityId();
     const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
     const auto invasionDefeated = [&]() {
@@ -753,18 +775,19 @@ void eInvasionHandler::incTime(const int by) {
     case eInvasionStage::spread:
     case eInvasionStage::wait: {
         mStage = eInvasionStage::march;
-        const auto p = mBoard.palace(mTargetCity);
-        if(p) {
-            const auto t = p->centerTile();
-            eKnownEndPathFinder p([](eTileBase* const t) {
+        // Advance halfway toward the chosen target (defender or priority
+        // building), so the formation closes in stages like vanilla.
+        const auto target = invasionTargetTile(mTile->x(), mTile->y(), solds);
+        if(target) {
+            eKnownEndPathFinder pf([](eTileBase* const t) {
                 return t->walkableTerrain();
-            }, t);
+            }, target);
             const int w = mBoard.width();
             const int h = mBoard.height();
-            const bool r = p.findPath({0, 0, w, h}, mTile, 1000, false, w, h);
+            const bool r = pf.findPath({0, 0, w, h}, mTile, 1000, false, w, h);
             if(r) {
                 std::vector<eTile*> path;
-                p.extractPath(path, mBoard);
+                pf.extractPath(path, mBoard);
                 if(path.empty()) return;
                 const auto halfTile = path[path.size()/2];
                 const int tx = halfTile->x();
@@ -776,52 +799,13 @@ void eInvasionHandler::incTime(const int by) {
     } break;
     case eInvasionStage::march: {
         mStage = eInvasionStage::invade;
-        const auto p = mBoard.palace(mTargetCity);
-        if(p) {
-            const auto t = p->centerTile();
+        const auto cur = mCurrentTile ? mCurrentTile : mTile;
+        const auto target = invasionTargetTile(cur->x(), cur->y(), solds);
+        if(target) {
             for(const auto& b : mBanners) {
-                b->moveTo(t->x(), t->y());
+                b->moveTo(target->x(), target->y());
             }
-            mCurrentTile = t;
-        } else {
-            eHeatMap map;
-            const auto bRect = mBoard.boardCityTileBRect(mTargetCity);
-            map.initialize(bRect.x, bRect.y, bRect.w, bRect.h);
-            for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
-                for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
-                    const auto t = mBoard.dtile(tx, ty);
-                    if(t->cityId() != mTargetCity) map.setOutsideRange(tx, ty);
-                    const auto ub = t->underBuilding();
-                    if(!ub) continue;
-                    const auto ubt = ub->type();
-                    if(ubt == eBuildingType::none) continue;
-                    const auto rect = ub->tileRect();
-                    const int ttx = t->x();
-                    const int tty = t->y();
-                    if(ttx != rect.x || tty != rect.y) continue;
-                    const auto a = eHeatGetters::any(ubt);
-                    map.addHeat(a, rect);
-                }
-            }
-            double maxHeat = -10000;
-            eTile* targetTile = nullptr;
-            for(int tx = bRect.x; tx < bRect.x + bRect.w; tx++) {
-                for(int ty = bRect.y; ty < bRect.y + bRect.h; ty++) {
-                    const bool e = map.enabled(tx, ty);
-                    if(!e) continue;
-                    const double h = map.heat(tx, ty);
-                    if(h > maxHeat) {
-                        maxHeat = h;
-                        targetTile = mBoard.dtile(tx, ty);
-                    }
-                }
-            }
-            if(targetTile) {
-                const int tx = targetTile->x();
-                const int ty = targetTile->y();
-                SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 3);
-                mCurrentTile = targetTile;
-            }
+            mCurrentTile = target;
         }
     } break;
     case eInvasionStage::invade: {
@@ -871,6 +855,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.tileField("tile", mBoard, mTile);
     ar.tileField("currentTile", mBoard, mCurrentTile);
     ar.field("stage", mStage);
+    ar.field("attackType", mAttackType, InvasionAttackType::food);
 
     ar.arrayField("banners", mBanners,
         [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
@@ -944,6 +929,31 @@ void eInvasionHandler::killAllWithCorpse() {
             c->killWithCorpse();
         }
     }
+}
+
+eTile* eInvasionHandler::invasionTargetTile(
+        const int fromX, const int fromY,
+        const std::vector<SoldierBanner*>& solds) {
+    // Soldier-first: engage defenders within range, unless we clearly outpower
+    // the garrison — then ignore them and push for buildings (Augustus
+    // ignore_roman_soldiers).
+    const bool stronger = InvasionTargeting::invadersStrongerThanDefenders(
+                mBoard, mTargetCity, solds);
+    if(!stronger) {
+        const auto invaderTid = mBoard.cityIdToTeamId(mCity->cityId());
+        const int range = eNumbers::sInvasionEngageDefenderRange;
+        int dx;
+        int dy;
+        if(InvasionTargeting::nearestDefender(mBoard, mTargetCity, invaderTid,
+                                              fromX, fromY, range, dx, dy)) {
+            return mBoard.tile(dx, dy);
+        }
+    }
+    // Else march on the highest-priority building for this invasion's type.
+    const auto b = InvasionTargeting::pickPriorityTarget(
+                mBoard, mTargetCity, mAttackType, fromX, fromY);
+    if(b) return b->centerTile();
+    return nullptr;
 }
 
 bool eInvasionHandler::nearestSoldier(const int fromX, const int fromY,

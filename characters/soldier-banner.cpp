@@ -19,14 +19,49 @@
 
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
+#include "buildings/ebuilding.h"
 
 #include "eiteratesquare.h"
 #include "engine/epathfinder.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
+#include "enumbers.h"
+
+#include "gameEvents/invasions/invasion-targeting.h"
 
 int gNextId = 0;
+
+namespace {
+bool canAttackCharacter(const eCharacter* const c) {
+    if(c->isSoldier()) return true;
+    const auto type = c->type();
+    return type == eCharacterType::wolf ||
+           type == eCharacterType::enemyBoat ||
+           type == eCharacterType::trireme ||
+           c->isImmortal();
+}
+
+bool canStandOn(eTile* const t) {
+    if(!t) return false;
+    const auto ubt = t->underBuildingType();
+    if(ubt == eBuildingType::none) return true;
+    return eBuilding::sWalkableBuilding(ubt);
+}
+
+bool hasLiveCombatUnit(eTile* const t, eCharacter* const except) {
+    if(!t) return false;
+    for(const auto& c : t->characters()) {
+        if(c.get() == except) continue;
+        if(c->dead()) continue;
+        if(c->isSoldier() || c->isImmortal() ||
+           c->type() == eCharacterType::wolf) {
+            return true;
+        }
+    }
+    return false;
+}
+}
 
 SoldierBanner::SoldierBanner(const eBannerType type,
                                 GameBoard& board) :
@@ -352,6 +387,7 @@ bool SoldierBanner::isGoingHome() const {
 
 void SoldierBanner::addSoldier(eSoldier* const s) {
     mSoldiers.push_back(s);
+    updateMorale();
     updatePlaces();
     if(!mHome) callSoldier(s);
 }
@@ -500,6 +536,8 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
                 itemAr.characterField("soldier", &mBoard, s);
             });
     }
+    ar.field("mMorale", mMorale, 100);
+    ar.field("mPeakCount", mPeakCount, 0);
 }
 
 void SoldierBanner::serialize(eSaveArchive& ar) {
@@ -1043,6 +1081,152 @@ void SoldierBanner::purgeDead() {
         if(dead) {
             removeSoldier(s);
             i--;
+        }
+    }
+    updateMorale();
+}
+
+void SoldierBanner::updateMorale() {
+    const int alive = (int)mSoldiers.size();
+    if(alive > mPeakCount) mPeakCount = alive;
+    if(mPeakCount <= 0) {
+        mMorale = 100;
+        return;
+    }
+    // Morale tracks surviving fraction of the banner's peak strength: a banner
+    // that has lost most of its men breaks and runs (see routed()).
+    mMorale = (100*alive)/mPeakCount;
+}
+
+bool SoldierBanner::routed() const {
+    // Only enemy banners rout — player/ally formations hold their ground.
+    if(mType != eBannerType::enemy) return false;
+    if(mPeakCount <= 0) return false;
+    return mMorale < eNumbers::sInvasionBannerRoutMorale;
+}
+
+void SoldierBanner::updateCombat(const int by) {
+    // Augustus per-formation combat brain (update_enemy_formation): the FORMATION
+    // owns movement during a fight, not individual soldiers. Each tick it finds
+    // the nearest defender within engage range and walks the banner adjacent to
+    // it, so the soldiers reform onto/around that foe and lock on reactively (the
+    // adjacency scan in FightingAction). After a kill it re-picks next tick — no
+    // soldier stands idle. Holds the strategic destination (set by the
+    // invasion-handler) when no defender is near.
+    if(mType != eBannerType::enemy) return; // player banners: manual command
+    if(routed()) {
+        mCombatAssignments.clear();
+        return;
+    }
+    if(mHome || mAbroad || !mTile) {
+        mCombatAssignments.clear();
+        return;
+    }
+
+    mCombatRetargetCountdown -= by;
+    if(mCombatRetargetCountdown > 0) return;
+    mCombatRetargetCountdown = 500;
+
+    const auto invaderTid = teamId();
+    const auto defendCid = onCityId();
+    const int range = eNumbers::sInvasionEngageDefenderRange;
+    int dx;
+    int dy;
+    const bool found = InvasionTargeting::nearestDefender(
+        mBoard, defendCid, invaderTid, mTile->x(), mTile->y(), range, dx, dy);
+    if(!found) {
+        mCombatAssignments.clear();
+        return; // no defender near: hold the strategic destination
+    }
+
+    // Walk the banner to a tile adjacent to the defender so the line closes and
+    // soldiers engage by adjacency. moveTo no-ops if already there.
+    moveTo(dx, dy);
+    updateCombatAssignments();
+}
+
+bool SoldierBanner::combatAssignment(eSoldier* const s,
+                                      CombatAssignment& a) const {
+    const auto it = mCombatAssignments.find(s);
+    if(it == mCombatAssignments.end()) return false;
+    a = it->second;
+    return a.soldier && a.standTile;
+}
+
+void SoldierBanner::updateCombatAssignments() {
+    mCombatAssignments.clear();
+    purgeDead();
+    if(mSoldiers.empty()) return;
+
+    const auto tid = teamId();
+    const int range = eNumbers::sInvasionEngageDefenderRange;
+    std::vector<eCharacter*> enemies;
+    for(const auto s : mSoldiers) {
+        const auto st = s->tile();
+        if(!st) continue;
+        const int sx = st->x();
+        const int sy = st->y();
+        for(int i = -range; i <= range; i++) {
+            for(int j = -range; j <= range; j++) {
+                const auto t = mBoard.tile(sx + i, sy + j);
+                if(!t) continue;
+                for(const auto& c : t->characters()) {
+                    if(c->dead()) continue;
+                    if(!eTeamIdHelpers::isEnemy(c->teamId(), tid)) continue;
+                    if(!canAttackCharacter(c.get())) continue;
+                    if(std::find(enemies.begin(), enemies.end(), c.get()) ==
+                       enemies.end()) {
+                        enemies.push_back(c.get());
+                    }
+                }
+            }
+        }
+    }
+    if(enemies.empty()) return;
+
+    std::vector<eTile*> usedTiles;
+    for(const auto s : mSoldiers) {
+        if(s->dead() || s->range() > 0) continue;
+        const auto st = s->tile();
+        if(!st) continue;
+
+        CombatAssignment best;
+        int bestDist = 0;
+        for(const auto enemy : enemies) {
+            const auto et = enemy->tile();
+            if(!et) continue;
+            eTile* bestTile = nullptr;
+            int bestTileDist = 0;
+            for(int ai = -1; ai <= 1; ai++) {
+                for(int aj = -1; aj <= 1; aj++) {
+                    if(!ai && !aj) continue;
+                    const auto at = mBoard.tile(et->x() + ai, et->y() + aj);
+                    if(!canStandOn(at)) continue;
+                    if(hasLiveCombatUnit(at, s)) continue;
+                    if(std::find(usedTiles.begin(), usedTiles.end(), at) !=
+                       usedTiles.end()) continue;
+                    const int d = std::max(abs(at->x() - st->x()),
+                                           abs(at->y() - st->y()));
+                    if(!bestTile || d < bestTileDist) {
+                        bestTile = at;
+                        bestTileDist = d;
+                    }
+                }
+            }
+            if(!bestTile) continue;
+            if(!best.target || bestTileDist < bestDist ||
+               (bestTileDist == bestDist &&
+                enemy->targetedByCount() < best.target->targetedByCount())) {
+                best = {s, enemy, bestTile};
+                bestDist = bestTileDist;
+            }
+        }
+        if(best.target && best.standTile) {
+            mCombatAssignments[s] = best;
+            usedTiles.push_back(best.standTile);
+        } else {
+            const auto pt = place(s);
+            if(pt) mCombatAssignments[s] = {s, nullptr, pt};
         }
     }
 }

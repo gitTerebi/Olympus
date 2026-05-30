@@ -149,20 +149,6 @@ void eSoundVector::play(const int id, const eSoundType type, const int chn) {
     if(!p.first) p.first = loadSound(p.second);
     if(!p.first) return;
 
-    // cap concurrent copies of this sound (event/combat only): drop the play
-    // if too many already fired within the recent window
-    if(type == eSoundType::event) {
-        const unsigned int now = SDL_GetTicks();
-        mPlayTicks.erase(
-            std::remove_if(mPlayTicks.begin(), mPlayTicks.end(),
-                [now](const unsigned int t) {
-                    return now - t > kConcurrentWindowMs;
-                }),
-            mPlayTicks.end());
-        if(static_cast<int>(mPlayTicks.size()) >= kMaxConcurrent) return;
-        mPlayTicks.push_back(now);
-    }
-
     configureChannels();
     int channel = chn;
     const int tag = tagForType(type);

@@ -40,20 +40,52 @@ void SoldierAction::increment(const int by) {
         mSpreadPeriod = false;
     }
 
-    if(mStage == SoldierActionStage::banner && currentAction()) {
+    // Marching to the banner slot: let the walk run UNLESS an enemy is near.
+    // Without the enemyNear gate a soldier walks straight past a free adjacent
+    // foe to reach its slot and never engages — the "enemy next and free but
+    // just stands there" bug. With an enemy near, fall through to lookForEnemy
+    // so it breaks off and fights.
+    if(followBannerDirector()) {
         return eComplexAction::increment(by);
     }
 
-    if(isAttacking() && tooFarFromBanner()) {
-        cancelAttack();
-        const auto s = static_cast<eSoldier*>(character());
-        const auto b = s->banner();
-        if(b) {
-            goBackToBanner(b->soldierOrientation());
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    const bool bannerDirected = b && b->type() == eBannerType::enemy;
+    if(mStage == SoldierActionStage::banner && currentAction() &&
+       (bannerDirected || !enemyNear())) {
+        return eComplexAction::increment(by);
+    }
+
+    // Player ordered retreat: goHome/goAbroad set the walk and the stage. Let
+    // that walk run even with enemies near — otherwise lookForEnemy below short
+    // circuits every tick and the soldier stands and fights instead of obeying
+    // the dismiss-to-palace command. Drop any live attack first so the walk owns
+    // the soldier.
+    if((mStage == SoldierActionStage::home ||
+        mStage == SoldierActionStage::abroad) && currentAction()) {
+        if(isAttacking()) cancelAttack();
+        return eComplexAction::increment(by);
+    }
+
+    // Routed banner: its soldiers break off and flee the map instead of fighting
+    // to the last man (Augustus morale rout). Drop any attack (releases the
+    // combat claim) and head abroad. Once fleeing (stage abroad) just let the
+    // walk run.
+    {
+        if(b && b->routed()) {
+            if(mStage != SoldierActionStage::abroad) {
+                if(isAttacking()) cancelAttack();
+                goAbroad();
+            }
             return eComplexAction::increment(by);
         }
     }
 
+    // Don't yank a soldier back to its banner while a fight is live — that let
+    // a player lure one invader past the leash, snap it home, and pick off the
+    // formation piecemeal. Hold and finish the fight; the leash only reins the
+    // soldier in once no enemy is near.
     const auto r = lookForEnemy(by);
 
     if(r != LookForEnemyState::none) return;
@@ -61,6 +93,32 @@ void SoldierAction::increment(const int by) {
     tickBannerReturn(by);
 
     eComplexAction::increment(by);
+}
+
+bool SoldierAction::followBannerDirector() {
+    const auto c = character();
+    const auto s = static_cast<eSoldier*>(c);
+    const auto b = s->banner();
+    if(!b) return false;
+    SoldierBanner::CombatAssignment a;
+    if(!b->combatAssignment(s, a)) return false;
+    if(a.target && a.target->dead()) return false;
+    if(!a.standTile) return false;
+    if(c->range() > 0) return false;
+    if(isAttacking()) return false;
+
+    const auto ct = c->tile();
+    if(!ct) return false;
+    if(ct == a.standTile) {
+        setCurrentAction(nullptr);
+        setOverwrittableAction(true);
+        return false;
+    }
+    if(currentAction() && !overwrittableAction()) return true;
+
+    setOverwrittableAction(false);
+    goTo(a.standTile->x(), a.standTile->y(), 0);
+    return true;
 }
 
 void SoldierAction::tickBannerReturn(const int by) {
@@ -122,17 +180,6 @@ bool SoldierAction::enemyNear() const {
     return false;
 }
 
-bool SoldierAction::tooFarFromBanner() const {
-    const auto c = character();
-    const auto s = static_cast<eSoldier*>(c);
-    const auto b = s->banner();
-    if(!b || !b->tile() || !c->tile()) return false;
-    const int dx = c->tile()->x() - b->tile()->x();
-    const int dy = c->tile()->y() - b->tile()->y();
-    const int leash = 8;
-    return dx*dx + dy*dy > leash*leash;
-}
-
 void SoldierAction::serializeFields(eSaveArchive& ar) {
     FightingAction::serializeFields(ar);
     ar.field("spreadPeriod", mSpreadPeriod);
@@ -178,6 +225,21 @@ void SoldierAction::rebuildCurrentStage() {
 stdsptr<eObsticleHandler> SoldierAction::obsticleHandler() {
     return std::make_shared<SoldierObsticleHandler>(
                 board(), this);
+}
+
+void SoldierAction::beingAttacked(int ttx, int tty) {
+    // Enemy-banner soldiers do NOT individually charge whoever pinged them. When
+    // one missile hits the banner, the old per-soldier response sent every man
+    // beelining to the single attacker tile — 8 soldiers stacked on one spot,
+    // formation gone. Instead let the BANNER brain (updateCombat) walk the whole
+    // block toward the foe in formation; the soldiers hold their slots, the line
+    // bumps into the enemy, and the reactive adjacency scan starts the fight. So
+    // swallow the signal here: only matters before contact, and a soldier already
+    // adjacent engages via lookForEnemy regardless.
+    const auto s = static_cast<eSoldier*>(character());
+    const auto b = s->banner();
+    if(b && b->type() == eBannerType::enemy && !isAttacking()) return;
+    FightingAction::beingAttacked(ttx, tty);
 }
 
 void SoldierAction::goHome() {

@@ -7,6 +7,7 @@
 #include "pointers/estdpointer.h"
 
 #include "characters/eenlistedforces.h"
+#include "invasion-targeting.h"
 
 class GameBoard;
 class eInvasionEvent;
@@ -113,6 +114,12 @@ private:
 
     void tellHeroesAndGodsToGoBack() const;
 
+    // Destination tile for the current march: a nearby defender (soldier-first,
+    // unless the invasion clearly outpowers the garrison) else the highest
+    // priority building for this invasion's attack type. Null if nothing found.
+    eTile* invasionTargetTile(const int fromX, const int fromY,
+                              const std::vector<SoldierBanner*>& solds);
+
     void extractSSFromForces(const eEnlistedForces& forces, eSs& ss) const;
 
     GameBoard& mBoard;
@@ -123,6 +130,7 @@ private:
     eTile* mTile = nullptr;
     eTile* mCurrentTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
+    InvasionAttackType mAttackType = InvasionAttackType::food;
     std::vector<stdsptr<SoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;
 

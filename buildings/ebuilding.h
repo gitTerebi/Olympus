@@ -365,6 +365,9 @@ public:
     bool takeDamage(const double a);
     bool dead() const;
 
+    // Max/starting HP by type: fortifications tank, ordinary buildings fall fast.
+    static double sMaxHp(const eBuildingType bt);
+
     std::vector<eTile*> neighbours() const;
 
     void setBlessed(const double b);
@@ -408,7 +411,7 @@ private:
     const int mSpanH;
 
     eCityId mCityId{eCityId::neutralFriendly};
-    double mHp = 1000;
+    double mHp = sMaxHp(mType);
 
     int mMaintance = 100;
 

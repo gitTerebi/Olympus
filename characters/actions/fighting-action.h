@@ -48,6 +48,7 @@ class FightingAction : public eComplexAction {
     friend class SoldierObsticleHandler;
 public:
     using eComplexAction::eComplexAction;
+    ~FightingAction();
 
     static void sSignalBeingAttack(eCharacter* const attacked,
                                    eCharacter* const by,
@@ -58,13 +59,15 @@ public:
 
     LookForEnemyState lookForEnemy(const int by);
 
-    // How far a ranged unit notices an enemy worth engaging: its firing range
-    // plus a wide-awareness margin. The unit detects this far but only steps a
-    // few tiles toward a firing position; it holds and waits rather than
-    // chasing. Used by both the reposition scan and the banner-return gate so
-    // the two never drift. range 0 (melee) keeps the old tight 3-tile box.
+    // How far a unit notices an enemy worth engaging. Ranged: firing range plus
+    // a wide-awareness margin; it detects this far but only steps a few tiles to
+    // a firing position, then holds. Melee: a short box — the banner march
+    // already drops them next to the enemy, this just lets each soldier close
+    // the last couple tiles onto its own nearest free target (Augustus
+    // enemy_fighting per-figure approach) so back ranks engage instead of
+    // standing in slots while only the front two fight.
     static int sRangedDetectRange(const int range)
-    { return range > 0 ? range + 8 : 3; }
+    { return range > 0 ? range + 2 : 4; }
 
     using eAction = std::function<void()>;
     void goTo(const int fx, const int fy,
@@ -73,7 +76,7 @@ public:
               const eAction& findFinishAct = nullptr);
 
     void beingAttacked(eCharacter* const ss);
-    void beingAttacked(const int ttx, const int tty);
+    virtual void beingAttacked(int ttx, int tty);
 
     void waitAndGoHome(const int w);
     virtual void goHome() = 0;
@@ -81,9 +84,17 @@ public:
 
     void setOverwrittableAction(const bool o)
     { mOverwrittableAction = o; }
+    bool overwrittableAction() const { return mOverwrittableAction; }
 protected:
     bool isAttacking() const { return mAttack; }
     void cancelAttack();
+
+    // Claim/release a melee retaliation target so attackers spread across the
+    // enemy line instead of dogpiling one foe (Augustus targeted_by model).
+    // claimTarget releases any prior claim first. releaseClaim is safe to call
+    // when nothing is claimed.
+    void claimTarget(eCharacter* const c);
+    void releaseClaim();
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
 
@@ -113,6 +124,7 @@ private:
     bool mAttackRanged = false;
     bool mOverwrittableAction = false;
     AttackTarget mAttackTarget;
+    stdptr<eCharacter> mClaimedTarget; // runtime-only; see claimTarget/releaseClaim
     FightingSavedMove mSavedMove = FightingSavedMove::none;
     int mSavedMoveX = 0;
     int mSavedMoveY = 0;

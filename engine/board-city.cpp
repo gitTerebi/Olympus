@@ -2437,6 +2437,12 @@ bool BoardCity::nearestEnemySoldier(const eTeamId tid,
         kNoTles = false;
         const auto& chars = tile->characters();
         for(const auto& c : chars) {
+            if(c->dead()) continue;
+            // Only soldiers count as defenders — not citizens/walkers. Without
+            // this the invasion brain walks the formation toward the nearest
+            // market lady and the line mills around an unattackable walker
+            // instead of retaliating against the actual garrison.
+            if(!c->isSoldier()) continue;
             const auto ctid = c->teamId();
             const bool e = eTeamIdHelpers::isEnemy(tid, ctid);
             if(e) {

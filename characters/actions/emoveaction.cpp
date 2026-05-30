@@ -161,7 +161,16 @@ bool eMoveAction::nextTurn() {
         return false;
     }
     if(!walkable(mTargetTile)) {
+        // Blocking tile (a building, since the mover uses default walkable while
+        // the path was found with attacker walkable). The handler turns the unit
+        // onto the building (FightingAction::attackBuilding). It must NOT step
+        // onto the tile — stop the move so the fight loop grinds the building
+        // down in place; once it dies the unit re-paths. Returning true here and
+        // continuing would glide the unit through the building (the old bug).
         if(mObstHandler && mObstHandler->handle(mTargetTile)) {
+            mTargetTile = nullptr;
+            setState(eCharacterActionState::failed);
+            return false;
         } else {
             setState(eCharacterActionState::failed);
             return false;

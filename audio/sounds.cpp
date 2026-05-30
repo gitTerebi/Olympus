@@ -12,6 +12,7 @@
 #include "egamedir.h"
 #include <filesystem>
 #include <algorithm>
+#include <unordered_map>
 
 eSounds* eSounds::sInstance = nullptr;
 
@@ -687,9 +688,29 @@ void eSounds::playMonsterSound(const eMonsterType m,
     monster->play(s);
 }
 
+namespace {
+// Stop the same combat sound restacking: when many units of one type swing or
+// get hit at once the clips pile into a wall of noise. Allow only one play of a
+// given sound per type per cooldown window (wall-clock ms, so it tracks what the
+// ear hears regardless of game speed). Attack and hit keep separate timers so an
+// attack clip doesn't suppress the matching hit clip.
+bool sCombatSoundOnCooldown(std::unordered_map<int, Uint32>& last,
+                            const eCharacterType type) {
+    const Uint32 cooldownMs = 120;
+    const Uint32 now = SDL_GetTicks();
+    const int key = static_cast<int>(type);
+    const auto it = last.find(key);
+    if(it != last.end() && now - it->second < cooldownMs) return true;
+    last[key] = now;
+    return false;
+}
+}
+
 void eSounds::playAttackSound(eCharacter* const c) {
     if(!sCanPlayViewportLimitedCombatSound(c)) return;
     const auto type = c->type();
+    static std::unordered_map<int, Uint32> sLast;
+    if(sCombatSoundOnCooldown(sLast, type)) return;
     if(type == eCharacterType::disgruntled) {
         sInstance->mOutlawAttack.playRandomSound(eSoundType::event);
         return;
@@ -1108,6 +1129,8 @@ void eSounds::playDieSound(eCharacter* const c) {
 void eSounds::playHitSound(eCharacter* const c) {
     const auto ct = c->type();
     if(!sCanPlayViewportLimitedCombatSound(c)) return;
+    static std::unordered_map<int, Uint32> sLast;
+    if(sCombatSoundOnCooldown(sLast, ct)) return;
     switch(ct) {
     case eCharacterType::actor:
         sInstance->mActorHit.playRandomSound(eSoundType::event);

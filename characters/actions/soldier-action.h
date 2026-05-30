@@ -25,6 +25,7 @@ public:
 
     void goHome() override;
     void goAbroad() override;
+    void beingAttacked(int ttx, int tty) override;
     void goBackToBanner(eOrientation facing,
                         const eAction& findFailAct = nullptr,
                         const eAction& findFinishAct = nullptr);
@@ -41,9 +42,9 @@ protected:
 private:
     stdsptr<eObsticleHandler> obsticleHandler() override;
     void rebuildCurrentStage();
-    bool tooFarFromBanner() const;
     bool enemyNear() const;
     void tickBannerReturn(const int by);
+    bool followBannerDirector();
 
     int mGoToBannerCountdown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
