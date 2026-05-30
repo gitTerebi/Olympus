@@ -1,5 +1,7 @@
 #include "soldier-banner.h"
 
+#include "formation-facing.h"
+
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -809,6 +811,7 @@ std::vector<SoldierBanner::sFormationSlot>
 SoldierBanner::sFormationPositions(
         std::vector<SoldierBanner*> bs,
         const int ctx, const int cty,
+        const int facing,
         const int lineDX, const int lineDY,
         const int dist) {
     std::stable_sort(bs.begin(), bs.end(), [](const SoldierBanner* a, const SoldierBanner* b) {
@@ -822,8 +825,17 @@ SoldierBanner::sFormationPositions(
         return order(a) < order(b);
     });
 
-    const int depthDX = -lineDY;
-    const int depthDY =  lineDX;
+    // Depth must grow behind the facing direction so the leading group (melee)
+    // sits at the front and missiles fall to the rear, regardless of facing.
+    int depthDX = -lineDY;
+    int depthDY =  lineDX;
+    int frontX = 0;
+    int frontY = 0;
+    eFormationFacing::facingFrontVector(facing, frontX, frontY);
+    if(depthDX*frontX + depthDY*frontY > 0) {
+        depthDX = -depthDX;
+        depthDY = -depthDY;
+    }
 
     const bool cardinal = (lineDX == 0 || lineDY == 0);
     const int missileSlot = cardinal ? 2 : 1;
@@ -878,7 +890,7 @@ void SoldierBanner::sPlaceFacing(std::vector<SoldierBanner*> bs,
     sPlaceDefault(bs, ctx, cty, board);
     if(bs.empty()) return;
 
-    const auto slots = sFormationPositions(bs, ctx, cty, lineDX, lineDY, dist);
+    const auto slots = sFormationPositions(bs, ctx, cty, facing, lineDX, lineDY, dist);
 
     if(bs.size() == 1) {
         sPlace(bs, ctx, cty, board, dist, minDistFromEdge);

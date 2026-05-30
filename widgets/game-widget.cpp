@@ -95,6 +95,7 @@ void formatStoredMessage(eMessage& msg,
 #include "characters/actions/eanimalaction.h"
 
 #include "characters/soldier-banner.h"
+#include "characters/formation-facing.h"
 
 #include "audio/sounds.h"
 
@@ -2452,52 +2453,12 @@ bool GameWidget::selectedPlayerBanners() const
     return false;
 }
 
-namespace {
-void snapBiased8Way(const int rawDX, const int rawDY,
-                    int& dx, int& dy)
-{
-    const int ax = std::abs(rawDX);
-    const int ay = std::abs(rawDY);
-    dx = rawDX == 0 ? 0 : (rawDX > 0 ? 1 : -1);
-    dy = rawDY == 0 ? 0 : (rawDY > 0 ? 1 : -1);
-
-    if(ax == 0 || ay == 0) return;
-
-    const bool xDominant = ax > ay;
-    const int major = xDominant ? ax : ay;
-    const int minor = xDominant ? ay : ax;
-
-    // Iso tile drags hit diagonals very easily; require a near-even drag
-    // before snapping to a diagonal formation axis.
-    if(minor*3 < major*2) {
-        if(xDominant) {
-            dy = 0;
-        } else {
-            dx = 0;
-        }
-    }
-}
-
-int snappedDragFacing(const int dx, const int dy)
-{
-    if(dx < 0 && dy < 0) return 0;
-    if(dx == 0 && dy < 0) return 45;
-    if(dx > 0 && dy < 0) return 90;
-    if(dx > 0 && dy == 0) return 135;
-    if(dx > 0 && dy > 0) return 180;
-    if(dx == 0 && dy > 0) return 225;
-    if(dx < 0 && dy > 0) return 270;
-    if(dx < 0 && dy == 0) return 315;
-    return 0;
-}
-}
-
 int GameWidget::rightDragFacing() const
 {
     int lineDX;
     int lineDY;
     rightDragFormationLine(lineDX, lineDY);
-    return snappedDragFacing(-lineDY, lineDX);
+    return eFormationFacing::snappedDragFacing(-lineDY, lineDX);
 }
 
 void GameWidget::rightDragFormationLine(int& dx, int& dy) const
@@ -2506,12 +2467,12 @@ void GameWidget::rightDragFormationLine(int& dx, int& dy) const
     const int dragDY = mHoverTY - mPressedTY;
     const int perpDX = dragDY;
     const int perpDY = -dragDX;
-    snapBiased8Way(perpDX, perpDY, dx, dy);
+    eFormationFacing::snapBiased8Way(perpDX, perpDY, dx, dy);
     if(dx == 0 && dy == 0)
     {
         const int pixDX = mHoverX - mPressedX;
         const int pixDY = mHoverY - mPressedY;
-        snapBiased8Way(pixDY, -pixDX, dx, dy);
+        eFormationFacing::snapBiased8Way(pixDY, -pixDX, dx, dy);
     }
     if(dx == 0 && dy == 0)
     {

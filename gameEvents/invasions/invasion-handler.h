@@ -23,7 +23,7 @@ enum class eCityId;
 enum class eNationality;
 
 enum class eInvasionStage {
-    arrive, spread, wait, march, invade, comeback
+    arrive, active, comeback
 };
 
 enum class ePlayerSoldierType {
@@ -77,8 +77,8 @@ public:
 
     void killAllWithCorpse();
 
-    eTile* currentTile() const { return mCurrentTile; }
-    eTile* generalTargetTile() const { return mGeneralTargetTile; }
+    eTile* currentTile() const { return mGState.fCurrentTile; }
+    eTile* generalTargetTile() const { return mGState.fTargetTile; }
 
     eInvasionStage stage() const { return mStage; }
     eTile* tile() const { return mTile; }
@@ -114,7 +114,11 @@ private:
                             std::vector<SoldierBanner*>& solds);
 
     void tellHeroesAndGodsToGoBack() const;
-    bool generalTargetValid() const;
+
+    // Facing/line for a formation spawned at (fromX,fromY) so it points toward
+    // the target city centre (provisional aim until the general picks a target).
+    void spawnFacingTowardTarget(int fromX, int fromY,
+                                 int& facing, int& lineDX, int& lineDY) const;
 
     void extractSSFromForces(const eEnlistedForces& forces, eSs& ss) const;
 
@@ -124,15 +128,16 @@ private:
     stdptr<eInvasionEvent> mEvent;
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
-    eTile* mCurrentTile = nullptr;
-    eTile* mGeneralTargetTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
     InvasionAttackType mAttackType = InvasionAttackType::food;
     std::vector<stdsptr<SoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;
 
+    // Campaign state the general drives (it stays stateless and reads/writes
+    // this through advance()). Serialized here so it persists across save/load.
+    eGeneralState mGState;
+
     int mWait = 0;
-    int mSpawnWait = 0;
 
     int mInfantryLeft = 0;
     int mCavalryLeft = 0;

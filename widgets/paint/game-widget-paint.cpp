@@ -2397,9 +2397,10 @@ void GameWidget::paintEvent(ePainter &p)
             int lineDX;
             int lineDY;
             rightDragFormationLine(lineDX, lineDY);
+            const int facing = rightDragFacing();
             const int dist = 3;
             const auto slots = SoldierBanner::sFormationPositions(
-                banners, mPressedTX, mPressedTY, lineDX, lineDY, dist);
+                banners, mPressedTX, mPressedTY, facing, lineDX, lineDY, dist);
 
             eGameTextures::loadBanners();
             const auto drawGhostTile = [&](eTile* const tile,

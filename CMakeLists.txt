@@ -330,6 +330,7 @@ set(SOURCES
     characters/silver-miner.cpp
     characters/esoldier.cpp
     characters/soldier-banner.cpp
+    characters/formation-facing.cpp
     characters/espearthrowerbase.cpp
     characters/tax-collector.cpp
     characters/etradeboat.cpp

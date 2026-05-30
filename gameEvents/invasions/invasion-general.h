@@ -10,6 +10,21 @@ class GameBoard;
 class SoldierBanner;
 class eTile;
 
+// Campaign phases owned by the general. State lives on the handler (so it gets
+// serialized there); the general is stateless and just drives transitions on a
+// state struct passed by reference.
+enum class eGeneralPhase {
+    spread, wait, march, invade, done
+};
+
+struct eGeneralState {
+    eGeneralPhase fPhase = eGeneralPhase::spread;
+    eTile* fTargetTile = nullptr;   // building the general is closing on
+    eTile* fCurrentTile = nullptr;  // where the formation actually is
+    int fWait = 0;                  // 3000ms cycle gate
+    int fSpawnWait = 0;             // 14-day pre-invade countdown
+};
+
 class InvasionGeneral {
 public:
     InvasionGeneral(GameBoard& board,
@@ -17,16 +32,28 @@ public:
                     const eCityId invadingCity,
                     const InvasionAttackType attackType);
 
-    eTile* chooseTargetTile(const int fromX, const int fromY,
-                            const std::vector<SoldierBanner*>& banners) const;
+    // Drives spread -> wait/march -> invade across all objectives. Returns true
+    // when the campaign is complete (no valid targets left), so the handler can
+    // issue comeback. State is read/written through s; the general holds none.
+    bool advance(eGeneralState& s,
+                 eTile* const landingTile,
+                 const std::vector<SoldierBanner*>& banners,
+                 const int by) const;
+
+private:
+    eTile* chooseTargetTile(const int fromX, const int fromY) const;
     eTile* moveHalfwayToTarget(eTile* const from,
                                eTile* const target,
                                const std::vector<SoldierBanner*>& banners) const;
-    void moveToTarget(eTile* const target,
+    void moveToTarget(eTile* const from,
+                      eTile* const target,
                       const std::vector<SoldierBanner*>& banners) const;
     bool attackEnemiesNear(const std::vector<SoldierBanner*>& banners) const;
 
-private:
+    // True while fTargetTile still holds an attackable building of the target
+    // city. False once it is destroyed/disabled, so the general picks the next.
+    bool generalTargetValid(const eGeneralState& s) const;
+
     GameBoard& mBoard;
     eCityId mTargetCity;
     eCityId mInvadingCity;

@@ -56,6 +56,7 @@
 #include "invasion-general.h"
 #include "gameEvents/eplayerconquestevent.h"
 #include "characters/soldier-banner.h"
+#include "characters/formation-facing.h"
 #include "engine/etile.h"
 #include "buildings/ebuilding.h"
 #include "engine/boardData/eheatmaptask.h"
@@ -181,14 +182,18 @@ void eInvasionHandler::disembark() {
 
     const int tx = mTile->x();
     const int ty = mTile->y();
-    SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, 180, 1, 0, 3, 3);
+    int facing;
+    int lineDX;
+    int lineDY;
+    spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
+    SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
-    mCurrentTile = mTile;
-    mSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fCurrentTile = mTile;
+    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
 }
 
 void eInvasionHandler::initializeSeaInvasion(
@@ -200,7 +205,7 @@ void eInvasionHandler::initializeSeaInvasion(
         const int archers) {
     mDisembarkTile = disembarkTile;
     mTile = shoreTile;
-    mCurrentTile = mTile;
+    mGState.fCurrentTile = mTile;
 
     mInfantryLeft = infantry;
     mCavalryLeft = cavalry;
@@ -431,7 +436,8 @@ void eInvasionHandler::initializeLandInvasion(
         const int infantry,
         const int cavalry,
         const int archers) {
-    mStage = eInvasionStage::spread;
+    mStage = eInvasionStage::active;
+    mGState.fPhase = eGeneralPhase::spread;
     mTile = tile;
 
     const auto cid = mCity->cityId();
@@ -443,21 +449,26 @@ void eInvasionHandler::initializeLandInvasion(
 
     const int tx = tile->x();
     const int ty = tile->y();
-        SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, 180, 1, 0, 3, 3);
+    int facing;
+    int lineDX;
+    int lineDY;
+    spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
+    SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
-    mCurrentTile = tile;
-    mSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fCurrentTile = tile;
+    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
 }
 
 void eInvasionHandler::initializeLandInvasion(
         eTile* const tile,
         const eEnlistedForces& forces,
         ePlayerConquestEvent* const conquestEvent) {
-    mStage = eInvasionStage::spread;
+    mStage = eInvasionStage::active;
+    mGState.fPhase = eGeneralPhase::spread;
     mConquestEvent = conquestEvent;
     mTile = tile;
 
@@ -489,14 +500,18 @@ void eInvasionHandler::initializeLandInvasion(
 
     const int tx = tile->x();
     const int ty = tile->y();
-    SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, 180, 1, 0, 3, 3);
+    int facing;
+    int lineDX;
+    int lineDY;
+    spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
+    SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
     if(eNumbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
-    mCurrentTile = tile;
-    mSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fCurrentTile = tile;
+    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
 }
 
 void
@@ -684,8 +699,6 @@ void eInvasionHandler::incTime(const int by) {
         }
     }
 
-    const auto invadingCid = mCity->cityId();
-    const auto invadingPid = mBoard.cityIdToPlayerId(invadingCid);
     const auto invasionDefeated = [&]() {
         tellHeroesAndGodsToGoBack();
         if(mEvent) mEvent->invadersDefeated();
@@ -714,53 +727,41 @@ void eInvasionHandler::incTime(const int by) {
             } else {
                 generateImmortals(mTile, mCity->cityId(),
                                   mAresLeft, mHeroesLeft);
-                mStage = eInvasionStage::spread;
+                mStage = eInvasionStage::active;
+                mGState.fPhase = eGeneralPhase::spread;
+                mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
             }
         }
         return;
     }
+    // Active campaign. Gather live banners + total strength for the wipe check.
     int ss = 0;
-    int stationary = 0;
-    int fighting = 0;
     std::vector<SoldierBanner*> solds;
     for(const auto& b : mBanners) {
         const int c = b->count();
         if(c <= 0) continue;
         solds.push_back(b.get());
         ss += c;
-        const bool r = b->stationary();
-        if(r) stationary += c;
-        if(b->fighting()) fighting += c;
     }
 
-    if(mStage == eInvasionStage::spread && mSpawnWait > 0) {
-        mSpawnWait -= by;
-        if(mSpawnWait > 0) return;
-        mSpawnWait = 0;
-    }
+    const auto goBack = [&]() {
+        const int tx = mTile->x();
+        const int ty = mTile->y();
+        SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        mGState.fCurrentTile = mTile;
+        mGState.fTargetTile = nullptr;
+        tellHeroesAndGodsToGoBack();
+    };
 
-    if(!generalTargetValid()) mGeneralTargetTile = nullptr;
-    if(ss > 0 && !mGeneralTargetTile) {
-        const auto cur = mCurrentTile ? mCurrentTile : mTile;
-        if(cur) {
-            const InvasionGeneral general(mBoard, mTargetCity,
-                                          mCity->cityId(), mAttackType);
-            mGeneralTargetTile = general.chooseTargetTile(
-                        cur->x(), cur->y(), solds);
+    if(mStage == eInvasionStage::comeback) {
+        for(const auto& b : mBanners) {
+            b->killAll();
         }
-    }
-    if(ss > 0) {
-        const InvasionGeneral general(mBoard, mTargetCity,
-                                      mCity->cityId(), mAttackType);
-        if(general.attackEnemiesNear(solds)) return;
+        delete this;
+        return;
     }
 
-    const bool waitingForInitialFormation =
-            mStage == eInvasionStage::spread &&
-            !mGeneralTargetTile &&
-            fighting == 0;
-    if(waitingForInitialFormation && stationary < 0.8*ss) return;
-
+    // Force wiped: defenders won the field. Handler owns defeat reporting.
     if(ss == 0) {
         if(!immortalsFighting()) {
             invasionDefeated();
@@ -768,125 +769,72 @@ void eInvasionHandler::incTime(const int by) {
         }
         return;
     }
-    const int wait = mStage == eInvasionStage::spread ? 0 : 3000;
-    mWait += by;
-    if(mWait < wait) {
-        if(mStage == eInvasionStage::spread) {
-            mStage = eInvasionStage::wait;
-        }
-        return;
-    }
-    if(wait > 0) mWait -= wait;
-    else mWait = 0;
 
-    const auto goBack = [&]() {
-        const int tx = mTile->x();
-        const int ty = mTile->y();
-        SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
-        mCurrentTile = mTile;
-        tellHeroesAndGodsToGoBack();
-    };
-
+    // Friendly team (e.g. ally turned non-hostile): break off, go home.
+    const auto invadingPid = mBoard.cityIdToPlayerId(mCity->cityId());
     const auto invadingTid = mBoard.playerIdToTeamId(invadingPid);
     const auto invadedTid = mBoard.cityIdToTeamId(mTargetCity);
     if(invadingTid == invadedTid) {
-        mStage = eInvasionStage::comeback;
         goBack();
+        mStage = eInvasionStage::comeback;
+        return;
     }
 
-    switch(mStage) {
-    case eInvasionStage::arrive:
-        break;
-    case eInvasionStage::spread:
-    case eInvasionStage::wait: {
-        mStage = eInvasionStage::march;
-        // Advance halfway toward the chosen target (defender or priority
-        // building), so the formation closes in stages like vanilla.
-        if(!mGeneralTargetTile) {
-            const InvasionGeneral general(mBoard, mTargetCity, mCity->cityId(),
-                                          mAttackType);
-            mGeneralTargetTile = general.chooseTargetTile(
-                        mTile->x(), mTile->y(), solds);
-        }
-        const auto target = mGeneralTargetTile;
-        if(target) {
-            const InvasionGeneral general(mBoard, mTargetCity, mCity->cityId(),
-                                          mAttackType);
-            const auto halfTile = general.moveHalfwayToTarget(
-                        mTile, target, solds);
-            if(halfTile) mCurrentTile = halfTile;
-        }
-    } break;
-    case eInvasionStage::march: {
-        mStage = eInvasionStage::invade;
-        const auto target = mGeneralTargetTile;
-        if(target) {
-            const InvasionGeneral general(mBoard, mTargetCity, mCity->cityId(),
-                                          mAttackType);
-            general.moveToTarget(target, solds);
-            mCurrentTile = target;
-        }
-    } break;
-    case eInvasionStage::invade: {
-        mStage = eInvasionStage::comeback;
-        const auto p = mBoard.palace(mTargetCity);
-        int ss = 0;
-        for(const auto& b : mBanners) {
-            ss += b->count();
-        }
+    // Drive the campaign. General is stateless; it reads/writes mGState.
+    const InvasionGeneral general(mBoard, mTargetCity,
+                                  mCity->cityId(), mAttackType);
+    const bool done = general.advance(mGState, mTile, solds, by);
+    if(!done) return;
 
-        if(ss == 0) {
-            if(!immortalsFighting()) {
-                invasionDefeated();
-            }
-        } else if(p) {
-            mGeneralTargetTile = nullptr;
-            mStage = eInvasionStage::spread;
-        } else {
-            goBack();
-            if(mConquestEvent) {
-                const auto& forces = mConquestEvent->forces();
-                const int iniCount = forces.count();
+    // Campaign complete: no attackable targets of the attack type remain.
+    if(!mBoard.palace(mTargetCity)) {
+        // Palace gone: the city is taken.
+        goBack();
+        if(mConquestEvent) {
+            const auto& forces = mConquestEvent->forces();
+            const int iniCount = forces.count();
+            if(iniCount > 0) {
                 int count = 0;
                 for(const auto& b : mBanners) {
                     count += b->count();
                 }
                 forces.kill(1 - double(count)/iniCount);
             }
-            // Defenders won, so invader is defeated
-            const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
-            mBoard.conqueredBy(mCity->cityId(), targetWCity);
-            assert(mEvent);
-            mEvent->invadersWon();
         }
-    } break;
-    case eInvasionStage::comeback: {
-        mGeneralTargetTile = nullptr;
-        for(const auto& b : mBanners) {
-            b->killAll();
-        }
-        delete this;
-    } break;
+        const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
+        mBoard.conqueredBy(mCity->cityId(), targetWCity);
+        assert(mEvent);
+        mEvent->invadersWon();
+    } else {
+        // Palace stands: raid over, troops retreat. City NOT conquered.
+        goBack();
     }
+    mStage = eInvasionStage::comeback;
 }
 
-bool eInvasionHandler::generalTargetValid() const {
-    if(!mGeneralTargetTile) return false;
-    if(mGeneralTargetTile->cityId() != mTargetCity) return false;
-    const auto b = mGeneralTargetTile->underBuilding();
-    if(!b) return false;
-    if(b->cityId() != mTargetCity) return false;
-    if(!b->enabled()) return false;
-    return eBuilding::sAttackable(b->type());
+void eInvasionHandler::spawnFacingTowardTarget(
+        const int fromX, const int fromY,
+        int& facing, int& lineDX, int& lineDY) const {
+    const auto rect = mBoard.boardCityTileBRect(mTargetCity);
+    const int cx = rect.x + rect.w/2;
+    const int cy = rect.y + rect.h/2;
+    eFormationFacing::facingAndLineToward(cx - fromX, cy - fromY,
+                                          facing, lineDX, lineDY);
 }
 
 void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("ioId", mIOID);
     ar.worldCityField("city", &mBoard, mCity);
     ar.tileField("tile", mBoard, mTile);
-    ar.tileField("currentTile", mBoard, mCurrentTile);
     ar.field("stage", mStage);
     ar.field("attackType", mAttackType, InvasionAttackType::food);
+
+    // General campaign state (general is stateless; handler owns + persists it).
+    ar.field("gPhase", mGState.fPhase, eGeneralPhase::spread);
+    ar.tileField("gTargetTile", mBoard, mGState.fTargetTile);
+    ar.tileField("gCurrentTile", mBoard, mGState.fCurrentTile);
+    ar.field("gWait", mGState.fWait, 0);
+    ar.field("gSpawnWait", mGState.fSpawnWait, 0);
 
     ar.arrayField("banners", mBanners,
         [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
@@ -899,7 +847,6 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
         });
 
     ar.field("wait", mWait);
-    ar.field("spawnWait", mSpawnWait, 0);
     ar.gameEventField("event", &mBoard, mEvent);
     if(ar.reading()) {
         ar.addPostFunc([this]() {
