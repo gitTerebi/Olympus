@@ -517,7 +517,7 @@ void eNumbers::sLoad(const std::string& path) {
 
     loadI("soldier_being_attacked_call_range_i", sSoldierBeingAttackedCallRange, 2, 0, 100);
 
-    loadI("invasion_engage_defender_range_i", sInvasionEngageDefenderRange, 12, 0, 200);
+    loadI("invasion_engage_defender_range_i", sInvasionEngageDefenderRange, 15, 0, 200);
 
     loadI("tower_hp_i", sTowerHP, 5000, 1, 1000000);
     loadI("tower_range_i", sTowerRange, 8, 2, 100);

@@ -483,7 +483,8 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         setAttackTarget(thirdOption, false);
         return LookForEnemyState::attacking;
     }
-    // Building pass only after no enemy unit was attackable this tick.
+    // Building pass only after no enemy unit was attackable this tick. Ranged
+    // units skip melee building pass — they shoot from range or hold.
     if(buildingAttack) {
         for(int i = -1; i <= 1; i++) {
             for(int j = -1; j <= 1; j++) {
@@ -539,17 +540,6 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                 return LookForEnemyState::attacking;
             }
 
-            // Building pass only after no enemy unit was attackable this tick.
-            if(buildingAttack) {
-                for(int i = -range; i <= range; i++) {
-                    for(int j = -range; j <= range; j++) {
-                        const auto t = brd.tile(tx + i, ty + j);
-                        if(!t) continue;
-                        const bool r = attackBuilding(t, true);
-                        if(r) return LookForEnemyState::attacking;
-                    }
-                }
-            }
         }
     }
 
@@ -560,7 +550,7 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
     // the rest stand in formation soaking hits. Augustus enemy_fighting does the
     // same: every fighting figure that has no opponent walks to its nearest
     // non-targeted legion (soft penalty + 2-cap spread it across the line).
-    if(!currentAction() || mOverwrittableAction) {
+    if(allowsSelfPositioning() && (!currentAction() || mOverwrittableAction)) {
         mLookForEnemy += by;
         if(mLookForEnemy > lookForEnemyCheck) {
             mLookForEnemy -= lookForEnemyCheck;

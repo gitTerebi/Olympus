@@ -78,6 +78,9 @@ public:
     // Invader soldiers path AROUND buildings and only smash through when walled
     // in. Other attackers (immortals/heroes/gods) bulldoze as before.
     virtual bool prefersPathAround() const { return false; }
+    // Return false to suppress independent enemy-hunting (self-positioning).
+    // Enemy-banner melee soldiers are directed by the banner brain instead.
+    virtual bool allowsSelfPositioning() const { return true; }
 
     void beingAttacked(eCharacter* const ss);
     virtual void beingAttacked(int ttx, int tty);

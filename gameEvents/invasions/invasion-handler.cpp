@@ -695,7 +695,7 @@ void eInvasionHandler::incTime(const int by) {
        mStage != eInvasionStage::comeback) {
         for(const auto& b : mBanners) {
             if(b->count() <= 0) continue;
-            b->updateRetaliation(by);
+            b->tickCombat(by);
         }
     }
 

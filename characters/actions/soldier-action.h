@@ -12,7 +12,7 @@ class eSoldier;
 class eSaveArchive;
 
 enum class SoldierActionStage {
-    idle, banner, home, abroad
+    idle, banner, home, abroad, chase
 };
 
 class SoldierAction : public FightingAction {
@@ -38,7 +38,6 @@ public:
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
     void cancelAndClearAction() {
         cancelAttack();
-        character()->setActionType(eCharacterActionType::stand);
         setCurrentAction(nullptr);
     }
 protected:
@@ -47,6 +46,7 @@ protected:
     eTile* repositionAnchor() const override;
 private:
     bool prefersPathAround() const override;
+    bool allowsSelfPositioning() const override;
     stdsptr<eObsticleHandler> obsticleHandler() override;
     void rebuildCurrentStage();
     bool enemyNear() const;
@@ -54,6 +54,7 @@ private:
     bool followBannerDirector();
 
     int mGoToBannerCountdown = 0;
+    int mFollowDirectorCooldown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
     SoldierActionStage mStage = SoldierActionStage::idle;
